@@ -14,7 +14,10 @@
     "preview": "pnpm --filter @astra/client preview",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint . && prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:up": "docker compose --project-directory . -f infra/docker-compose.yml up -d --wait && docker compose --project-directory . -f infra/docker-compose.yml ps --format \"{{.Service}}: {{.Health}}\"",
+    "db:down": "docker compose --project-directory . -f infra/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @astra/server db:migrate"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
