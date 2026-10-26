@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { collectLods, parseSpec, pickLod, showLod } from './review.js';
+import { applyGameLook, collectLods, gameLook, parseSpec, pickLod, showLod } from './review.js';
 
 // A node tree in the export layout (art bible 8), as GLTFLoader builds it: three.js names sanitised, Blender's names
 // kept in userData.name.
@@ -106,5 +106,45 @@ describe('review: parseSpec', () => {
     expect(parseSpec('ship')).toEqual({ file: 'ship', url: '/models/ship.glb', asset: null, variant: null });
     expect(parseSpec('flora/trees:Round/Round_b')).toEqual({ file: 'flora/trees', url: '/models/flora/trees.glb', asset: 'Round', variant: 'Round_b' });
     expect(parseSpec('props/pods:Cargo')).toMatchObject({ asset: 'Cargo', variant: null });
+  });
+});
+
+// A mesh painted with a colour-region mask: every vertex pure R (primary), G (secondary) or B (accent), occlusion 1.
+function masked(name, rgb) {
+  const m = mesh(name);
+  const n = m.geometry.attributes.position.count;
+  const c = new Float32Array(n * 4);
+  for (let i = 0; i < n; i++) c.set([...rgb, 1], i * 4);
+  m.geometry.setAttribute('color', new THREE.BufferAttribute(c, 4));
+  return m;
+}
+
+describe('review: the game look', () => {
+  it('fills a creature mask with the creature palette, as the game does, instead of drawing the raw mask', () => {
+    const root = new THREE.Group();
+    const body = masked('grazer_body', [1, 0, 0]);
+    root.add(node('quad_grazer_0', body));
+    expect(applyGameLook(root, 'creatures')).toBe(1);
+    const col = body.geometry.attributes.color;
+    expect(col.itemSize).toBe(3);
+    const primary = new THREE.Color(0x8a6b4f);
+    expect([col.getX(0), col.getY(0), col.getZ(0)].map((v) => +v.toFixed(4))).toEqual([primary.r, primary.g, primary.b].map((v) => +v.toFixed(4)));
+    expect(body.material.vertexColors).toBe(true);
+  });
+
+  it('gives flora kinds their palette and glow, and leaves other families and colliders alone', () => {
+    expect(gameLook('flora', 'deposit_0').glowAccent).toBeGreaterThan(0);
+    expect(gameLook('flora', 'rock_1_lod1').glowAccent).toBe(0);
+    expect(gameLook('ship', 'Ship')).toBeNull();
+    const root = new THREE.Group();
+    const hull = masked('Hull', [1, 0, 0]);
+    root.add(node('Ship', hull));
+    expect(applyGameLook(root, 'ship')).toBe(0);
+    expect(hull.geometry.attributes.color.itemSize).toBe(4);
+    const flora = new THREE.Group();
+    const col = masked('COL_rock', [1, 0, 0]);
+    flora.add(node('rock_0', masked('rock_0_mesh', [0, 1, 0]), col));
+    expect(applyGameLook(flora, 'flora')).toBe(1);
+    expect(col.geometry.attributes.color.itemSize).toBe(4);
   });
 });
