@@ -1,6 +1,7 @@
 // Helpers for integration tests (*.int.test.ts): a real server on a free port against the dockerised Postgres and Redis,
 // unique names per run (the database is disposable and never cleaned), a JSON HTTP client and a scripted socket.
-import { randomInt } from 'node:crypto';
+import { randomBytes, randomInt } from 'node:crypto';
+import { connect, type Socket } from 'node:net';
 import { AuthResponse, CharacterSummary, decodeServerMessage, type CharacterCreate, type ClientMessage, type ServerMessage } from '@astra/shared/protocol';
 import { WebSocket } from 'ws';
 import { parseConfig, type Config } from '../src/config.ts';
@@ -139,6 +140,65 @@ export class TestSocket {
   close(): void {
     this.ws.close();
   }
+}
+
+// ---------- raw sockets, for frames a WebSocket library will not send the way an attacker would ----------
+
+/** A masked client → server WebSocket frame (payload under 64 KiB). */
+export function clientFrame(opcode: number, payload: Buffer | string): Buffer {
+  const p = Buffer.isBuffer(payload) ? payload : Buffer.from(payload);
+  const head = p.length < 126 ? Buffer.from([0x80 | opcode, 0x80 | p.length]) : Buffer.from([0x80 | opcode, 0x80 | 126, p.length >> 8, p.length & 0xff]);
+  const mask = randomBytes(4);
+  const body = Buffer.alloc(p.length);
+  for (let i = 0; i < p.length; i++) body[i] = p[i]! ^ mask[i & 3]!;
+  return Buffer.concat([head, mask, body]);
+}
+
+export const OPCODE = { text: 0x1, binary: 0x2, ping: 0x9, pong: 0xa } as const;
+
+/** Opens a TCP connection and completes a WebSocket upgrade on it; resolves once the server answers 101. */
+export function rawUpgrade(wsUrl: string): Promise<Socket> {
+  const u = new URL(wsUrl);
+  return new Promise((resolve, reject) => {
+    const sock = connect(Number(u.port), u.hostname);
+    sock.on('error', () => {}); // writes after the server cuts the connection fail; the test watches 'close'
+    sock.once('connect', () =>
+      sock.write(
+        `GET ${u.pathname} HTTP/1.1\r\nHost: ${u.host}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n` +
+          `Sec-WebSocket-Key: ${randomBytes(16).toString('base64')}\r\nSec-WebSocket-Version: 13\r\n\r\n`,
+      ),
+    );
+    let head = '';
+    const onData = (d: Buffer) => {
+      head += d.toString('latin1');
+      if (!head.includes('\r\n\r\n')) return;
+      sock.off('data', onData);
+      if (head.startsWith('HTTP/1.1 101')) resolve(sock);
+      else reject(new Error(head.split('\r\n')[0]));
+    };
+    sock.on('data', onData);
+  });
+}
+
+/** Writes `chunk` over and over for up to `ms`, waiting on the client's own drain so only the server buffers. Stops
+ * when the socket closes. Resolves with the bytes written. */
+export async function pump(sock: Socket, chunk: Buffer, ms: number): Promise<number> {
+  const end = Date.now() + ms;
+  let bytes = 0;
+  while (Date.now() < end && !sock.destroyed && !sock.writableEnded) {
+    const ok = sock.write(chunk);
+    bytes += chunk.length;
+    if (!ok) {
+      await new Promise<void>((resolve) => {
+        const t = setTimeout(resolve, 50);
+        sock.once('drain', () => {
+          clearTimeout(t);
+          resolve();
+        });
+      });
+    }
+  }
+  return bytes;
 }
 
 /** Polls `cond` until it holds, or throws after `timeoutMs`. */

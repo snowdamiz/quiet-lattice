@@ -3,9 +3,10 @@
 // `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS, and is answered with
 // `welcome`. Malformed or out-of-place messages are dropped and counted, never thrown.
 //
-// Every connection's cost is bounded: sockets per IP and per account are capped, each socket has a message budget
-// (token bucket) and an invalid-message allowance, and a client that stops reading is dropped once its outbound queue
-// passes MAX_BUFFERED_BYTES (Session.send).
+// Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
+// bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
+// client that stops reading is dropped once its outbound queue passes MAX_BUFFERED_BYTES (Session.send, Session.pong).
+// ws's automatic pong is off: an answer to a ping is sent only when the ping fits the budget.
 import type { IncomingMessage, Server } from 'node:http';
 import { performance } from 'node:perf_hooks';
 import type { Duplex } from 'node:stream';
@@ -78,7 +79,8 @@ interface Conn {
 
 export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway {
   const { log, limits } = deps;
-  const wss = new WebSocketServer({ noServer: true, maxPayload: MAX_MESSAGE_BYTES });
+  // autoPong off: ws would otherwise answer every client ping frame itself, outside the budget and the buffer cap.
+  const wss = new WebSocketServer({ noServer: true, maxPayload: MAX_MESSAGE_BYTES, autoPong: false });
   const registry = new SessionRegistry();
   const conns = new Set<Conn>();
   const openPerIp = new Map<string, number>();
@@ -139,18 +141,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     setDeadline(c, limits.helloTimeoutMs, () => s.refuse('auth', `No hello within ${seconds(limits.helloTimeoutMs)} s.`));
 
     ws.on('message', (data: RawData, isBinary: boolean) => {
-      if (s.state === 'closed') return;
       // The budget is checked before anything is queued, so a flood cannot grow the handler chain.
-      const t = performance.now();
-      if (!c.budget.take(t)) {
-        s.rateLimited++;
-        rateLimitedTotal++;
-        if (!c.strikes.take(t)) {
-          log.warn({ session: s.id, remote: s.remote, account: s.accountId }, 'message flood; closing');
-          s.refuse('invalid', 'Too many messages.');
-        }
-        return;
-      }
+      if (!admit(c)) return;
       c.chain = c.chain
         .then(() => handle(c, data, isBinary))
         .catch((err: unknown) => {
@@ -159,8 +151,13 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
           s.refuse('full', 'Server error. Try again in a moment.');
         });
     });
+    // Control frames spend the same budget. Browsers never send pings (the app has its own `ping` message), but other
+    // clients may, and RFC 6455 asks for an answer, so a ping within budget gets its pong.
+    ws.on('ping', (data: Buffer) => {
+      if (admit(c)) s.pong(data);
+    });
     ws.on('pong', () => {
-      s.alive = true;
+      if (admit(c)) s.alive = true;
     });
     ws.on('error', (err) => log.debug({ session: s.id, err: err.message }, 'socket error'));
     ws.on('close', (code) => {
@@ -171,6 +168,24 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
     });
   });
+
+  /**
+   * Spends one token of the socket's budget on an incoming frame. Over budget the frame is dropped and costs a strike;
+   * a socket out of strikes is refused. False means: ignore the frame.
+   */
+  function admit(c: Conn): boolean {
+    const { s } = c;
+    if (s.state === 'closed') return false;
+    const t = performance.now();
+    if (c.budget.take(t)) return true;
+    s.rateLimited++;
+    rateLimitedTotal++;
+    if (!c.strikes.take(t)) {
+      log.warn({ session: s.id, remote: s.remote, account: s.accountId }, 'frame flood; closing');
+      s.refuse('invalid', 'Too many messages.');
+    }
+    return false;
+  }
 
   function setDeadline(c: Conn, ms: number, onExpire: () => void): void {
     clearTimeout(c.deadline);
@@ -230,9 +245,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.refuse('auth', 'Your session is invalid or has expired. Sign in again.');
       return;
     }
-    if (registry.countForAccount(accountId) >= limits.maxPerAccount) {
-      s.refuse('full', `This account already has ${limits.maxPerAccount} connections open.`);
-      return;
+    // At the cap, the newest connection wins and the account's oldest is closed: a choice, so a player reconnecting while
+    // dead sockets linger is never locked out (logged in DECISIONS by the orchestrator).
+    const open = registry.openForAccount(accountId);
+    for (const old of open.slice(0, Math.max(0, open.length - limits.maxPerAccount + 1))) {
+      old.refuse('kicked', `This account opened more than ${limits.maxPerAccount} connections; the oldest was closed.`);
     }
     registry.bindAccount(s, accountId);
     s.state = 'authed';

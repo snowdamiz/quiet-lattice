@@ -9,8 +9,12 @@ class FakeSocket implements SessionSocket {
   sent: string[] = [];
   closed: { code?: number; reason?: string } | null = null;
   terminated = false;
+  pongs = 0;
   send(data: unknown) {
     this.sent.push(String(data));
+  }
+  pong() {
+    this.pongs++;
   }
   close(code?: number, reason?: string | Buffer) {
     this.closed = { code, reason: String(reason) };
@@ -56,6 +60,19 @@ describe('Session', () => {
     expect(s.endReason).toBe('outbound buffer full');
   });
 
+  it('answers pings only while the outbound queue is under 1 MiB', () => {
+    const sock = new FakeSocket();
+    const s = new Session(1, sock, '127.0.0.1');
+    s.pong(Buffer.from('x'));
+    expect(sock.pongs).toBe(1);
+    sock.bufferedAmount = MAX_BUFFERED_BYTES + 1;
+    s.pong(Buffer.from('x'));
+    expect(sock.pongs).toBe(1);
+    expect(sock.terminated).toBe(true);
+    s.pong(Buffer.from('x'));
+    expect(sock.pongs).toBe(1);
+  });
+
   it('refuses with a message and a close, then cuts the socket off after the grace period', () => {
     vi.useFakeTimers();
     const sock = new FakeSocket();
@@ -99,6 +116,19 @@ describe('SessionRegistry', () => {
     r.remove(b);
     expect(r.countForAccount('acct')).toBe(0);
     expect(r.size).toBe(0);
+  });
+
+  it('lists an account’s open sessions oldest first, leaving out closed ones before their socket goes', () => {
+    const r = new SessionRegistry();
+    const [a, b, c] = [1, 2, 3].map((id) => new Session(id, new FakeSocket(), 'ip'));
+    for (const s of [a!, b!, c!]) {
+      r.add(s);
+      r.bindAccount(s, 'acct');
+    }
+    expect(r.openForAccount('acct')).toEqual([a, b, c]);
+    a!.refuse('kicked', 'oldest');
+    expect(r.openForAccount('acct')).toEqual([b, c]);
+    expect(r.countForAccount('acct')).toBe(2);
   });
 
   it('hands back the older session holding a character', () => {

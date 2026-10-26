@@ -43,7 +43,13 @@ function redact(url: string): string {
 export async function startServer(opts: StartOptions = {}): Promise<RunningServer> {
   const config: Config = parseConfig(opts.env ?? process.env, { ...opts.config, PORT: opts.port ?? opts.config?.PORT, HOST: opts.host ?? opts.config?.HOST });
 
-  const app = Fastify({ logger: { level: config.LOG_LEVEL }, bodyLimit: 16 * 1024 });
+  const app = Fastify({
+    logger: { level: config.LOG_LEVEL },
+    bodyLimit: 16 * 1024,
+    // Node's default gives a client 60 s to finish its headers and checks only every 30 s; a stalled request (or
+    // half-sent upgrade, which the per-IP socket cap cannot count yet) is dropped after HEADERS_TIMEOUT_MS instead.
+    http: { headersTimeout: config.HEADERS_TIMEOUT_MS, connectionsCheckingInterval: Math.max(100, Math.min(1000, Math.floor(config.HEADERS_TIMEOUT_MS / 4))) },
+  });
   const log = app.log;
 
   const database = createDatabase(config.DATABASE_URL);

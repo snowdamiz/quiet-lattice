@@ -15,7 +15,7 @@ export const MAX_BUFFERED_BYTES = 1024 * 1024;
 export const REFUSE_GRACE_MS = 1000;
 
 /** The parts of a `ws` socket a session uses (a narrow type, so tests can stand in for it). */
-export type SessionSocket = Pick<WebSocket, 'readyState' | 'bufferedAmount' | 'send' | 'close' | 'terminate'>;
+export type SessionSocket = Pick<WebSocket, 'readyState' | 'bufferedAmount' | 'send' | 'pong' | 'close' | 'terminate'>;
 
 export class Session {
   state: SessionState = 'hello';
@@ -50,6 +50,16 @@ export class Session {
       return;
     }
     this.socket.send(encodeServerMessage(m));
+  }
+
+  /** Answers a client's ping frame, under the same outbound cap as send(). */
+  pong(data: Buffer): void {
+    if (this.socket.readyState !== WebSocket.OPEN) return;
+    if (this.socket.bufferedAmount > MAX_BUFFERED_BYTES) {
+      this.drop('outbound buffer full');
+      return;
+    }
+    this.socket.pong(data);
   }
 
   /**
@@ -95,9 +105,13 @@ export class SessionRegistry {
     if (s.characterId && this.byCharacter.get(s.characterId) === s) this.byCharacter.delete(s.characterId);
   }
 
-  /** Open sessions signed in to the account. */
+  /** Sessions signed in to the account and not yet closed, oldest first. */
+  openForAccount(accountId: string): Session[] {
+    return [...(this.byAccount.get(accountId) ?? [])].filter((s) => s.state !== 'closed');
+  }
+
   countForAccount(accountId: string): number {
-    return this.byAccount.get(accountId)?.size ?? 0;
+    return this.openForAccount(accountId).length;
   }
 
   bindAccount(s: Session, accountId: string): void {

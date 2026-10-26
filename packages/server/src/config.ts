@@ -27,6 +27,8 @@ export const ConfigSchema = z
     JWT_SECRET: z.string().min(16).default(DEV_JWT_SECRET),
     TICK_HZ: positiveInt.max(120).default(20),
     LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+    /** How long a client has to finish sending request headers (including a WebSocket upgrade) before Node drops it. */
+    HEADERS_TIMEOUT_MS: positiveInt.default(10_000),
     /** How long a new socket has to send a valid `hello` before it is refused. */
     HELLO_TIMEOUT_MS: positiveInt.default(5000),
     /** How long a signed-in socket has to `join` a character before it is refused. */
