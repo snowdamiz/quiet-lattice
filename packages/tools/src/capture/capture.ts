@@ -8,6 +8,9 @@
 //        holding several assets or variants is reviewed one at a time (they share the origin), each in its own folder
 //        <asset>/ or <asset>/<variant>/; --asset and --variant pick. (The sibling grid for the consistency criterion is
 //        the turntable's: `pnpm turntable -- <file.glb> [out_dir] --family`.)
+//   pnpm capture -- --review node/<resource>
+//        the same for a procedural resource node (frostglass, acidsalt, …: the flora builds it, P1.E13.T02)
+//        → assets/renders/review/node/<resource>/
 //   pnpm capture -- --ui <screen>
 //        a UI screen at 16:9 (1920×1080) and 21:9 (2520×1080), and its motion as 60 fps frames with a contact sheet
 //        → assets/renders/ui/<screen>/ (frames under _frames/, kept in LFS so a grader outside this checkout has them)

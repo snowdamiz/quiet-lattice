@@ -363,3 +363,41 @@ Format: task id, question → choice → why.
   marker overlay and sibling grids, which four graders asked for. Art tasks are graded after T11 lands. P1.E06.T04 (UI)
   was graded before calibration; calibration covers the models rubric, and its verdicts are recorded in
   `docs/VISUAL-REVIEW.md`.
+- **Orchestrator (visual gate of P1.E13.T02)** The six formation models P1.E13.T02 adds are procedural stand-ins by plan: P1.E14.T06 authors them and P1.E14.T07 deletes the generator, so grading them against "no placeholder tell" would fail by construction. E13.T02's blocking visual grade is the UI rubric on the nineteen inventory icons; the formation models are graded as authored art under P1.E14.T06, like the demo flora they sit beside (P1.E14.T04/T05).
+- **P1.E13.T02** Nineteen resources → a shared, deterministic node spec (`world/resourceNodes.ts`): 12 node types
+  (sodium and oxygen plants, the four deposits, six formations: frostglass on frozen worlds, acidsalt on shores
+  0.4–6 m above toxic and corrosive seas, cinderglass along lava fissures in valleys, stormquartz from 0.12 of mountain
+  height, gamma crystal up to 0.15, murkpearl on the seabed −18 to −1.5 m); a type is common from its resource's tier
+  and 0.2× rarer per tier short; each world carries 2 of the 4 deposits weighted by tier (re-picked if its tier
+  changes); sodium and oxygen grow on living worlds only; deposits stay ≥1.5 m above any sea; yields and hp per type;
+  ~64 m cells, ids `face_i_j_type_k`, `NODE_TYPES` append-only. Both ends scatter over `drawnGround(params, tier)`
+  (`world/ground.ts`): cities and sites planned at the system's tier, dens only once `DENS_DRAWN` is set by P1.E14.T10,
+  no node within a site's footprint + 6 m; the server must pass its own copy of params (`drawnGround` sets
+  `params.pads`). The tier passes Game → SolarSystem → Planet; the client uses `tierOf` at the default Edge until it
+  reads the server's tier map (P1.E04.T02) — if the Edge moves before then, client and server node layers differ.
+  Flora keeps main's random sequence (old plant and deposit slots skipped), so only nodes are new. Iridium, Count
+  residue, husk alloy and glyphstone get inventory entries and icons only; their sources come with P1.E13.T01
+  (asteroids), P2.E25.T01/T05, P2.E21.T03, P2.E30.T02, P3.E33.T02/T03. Icons extend the art bible §4 pip exception
+  (family outline, a cut mark per resource, the pip hue); "Ferrite Dust" is "Ferrite"; the trade panel lists the demo
+  nine plus any others carried. Nodes under a landed ship are not hidden until P1.E13.T06. → One spec the server
+  (P1.E13.T01) computes exactly as the client draws.
+- **P1.E15.T01** Chat and parties (`server/src/social`) → channels: `shard` (everyone online), `system` (the sender's
+  zone, through a per-zone index checked each second), `party` (online members anywhere); the sender hears its own line;
+  text trimmed, control and bidi characters refused by the schema (`ChatText`, `CharacterName` on ChatEvent too); one
+  serialisation per line. Limits per account: 5 at once then 1/s, a flood allowance of 10 (one per 3 s) then a 60 s
+  mute; shard-wide 20 at once then 10/s; mutes in memory, manual mute API for P1.E03.T07; every line logged. A
+  non-fatal `denied {of, code}` reply (separate from `refused`, which closes the socket). Parties: at most 6
+  (`PARTY_MAX`; DESIGN is silent); invites by name (case-insensitive), only to online characters in no party, any
+  member invites, 60 s lapse, 5 at once then one per 10 s per account, at most 8 held; offline and unknown names both
+  get `not_found`; accept joins the inviter's party as it is then, or forms one the inviter leads; only the leader
+  kicks and promotes, promoting an offline member is refused (`offline`); lead passes to the longest-standing online
+  member; a party disbands at one. Disconnect grace 15 s (the phases'), checked at each party's refresh (≤1.1 s late);
+  party state (names, online, system index, health in tenths; no ids or positions) refreshed once a second spread over
+  100 ms ticks and sent only when changed. Zone party tags follow the party service (the first production caller of
+  `setParty`). A kept phase place is reclaimed only under the party it was kept for, for every phase kind (orchestrator
+  decision): a member kicked during its grace is placed afresh. Callers that re-place on join (the quest engine, bays,
+  events) must do it after `social.joined` or pass `partyId: social.partyIdOf(character)`. Nothing social is persisted;
+  a restart dissolves parties. Protocol 3 adds party, denied and the party event; `PROTOCOL_VERSION` carries a history
+  comment and a pinned test, so concurrent bumps conflict visibly. → DESIGN 16.6's Social row at both five and five
+  thousand players. Open: P1.E04.T04 should call `social.moved(session)` on handoff; a disbanded party mid-phase leaves
+  two parties of one in one story phase until re-placed (quest engine).
