@@ -1,8 +1,6 @@
-// Levels and XP (DESIGN 12.1, 14.9). A mob's health and damage scale with its level; a character's level comes from XP.
-import { COMBAT, scaleByLevel } from '../data/index.ts';
-
-/** DESIGN 14.9: XP to reach level n = 100 × n^1.6 (per level, not cumulative); a kill is worth the mob's level × 10. */
-export const XP_CURVE = Object.freeze({ base: 100, exponent: 1.6, perKillLevel: 10 });
+// Levels and XP (DESIGN 12.1, 14.9). A mob's health and damage scale with its level; a character's level comes from XP
+// (the curve is `XP_CURVE` in `@astra/shared/data`).
+import { COMBAT, XP_CURVE, scaleByLevel } from '../data/index.ts';
 
 /** Checks a level: a whole number from 1 to 50 (DESIGN 12.1). Throws a RangeError otherwise, so a negative, fractional or
  * NaN level never reaches a health bar. */

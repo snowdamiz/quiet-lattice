@@ -33,6 +33,17 @@ export function scaleByLevel(base: number, level: number): number {
   return base * (1 + COMBAT.perLevel * level);
 }
 
+/** The aggro model's numbers (DESIGN 12.1 gives none; chosen). Threat is damage that halves over time, so it goes to
+ * whoever hurt a mob most recently. */
+export const AGGRO = deepFreeze({
+  /** Threat halves every this many seconds. */
+  halfLifeS: 3,
+  /** Threat below this is forgotten: it picks no target and is dropped when a table decays. */
+  forgetBelow: 0.5,
+  /** How long a Bond companion's taunt holds a mob. */
+  tauntS: 4,
+});
+
 export const BODY_PLAN_IDS = ['quad_heavy', 'quad_grazer', 'quad_small', 'biped', 'flyer'] as const;
 export const bodyPlanIdSchema = z.enum(BODY_PLAN_IDS);
 export type BodyPlanId = z.infer<typeof bodyPlanIdSchema>;

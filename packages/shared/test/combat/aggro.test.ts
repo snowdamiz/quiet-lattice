@@ -1,7 +1,7 @@
 // The aggro model (DESIGN 12.1): threat to whoever hurt a mob most recently, Veil (−), Harmonic (reset), taunt (+).
 import { describe, expect, it } from 'vitest';
-import { getSkillNode } from '../../src/data/index.ts';
-import { AGGRO, addThreat, currentTarget, decayThreat, dropThreat, emptyThreat, harmonicReset, taunt, threatOf } from '../../src/combat/index.ts';
+import { AGGRO, getSkillNode } from '../../src/data/index.ts';
+import { addThreat, currentTarget, decayThreat, dropThreat, emptyThreat, harmonicReset, taunt, threatOf } from '../../src/combat/index.ts';
 
 describe('threat', () => {
   it('starts empty and goes to the attacker with the most threat', () => {
@@ -23,6 +23,19 @@ describe('threat', () => {
     expect(threatOf(t, 'nobody', 10)).toBe(0);
   });
 
+  it('pins the chosen numbers: a 3 s half-life, forgetting below 0.5, a 4 s taunt', () => {
+    const t = addThreat(emptyThreat(), 'a', 40, 0);
+    expect(threatOf(t, 'a', 3)).toBeCloseTo(20, 12);
+    expect(threatOf(t, 'a', 6)).toBeCloseTo(10, 12);
+    expect(threatOf(t, 'a', 1.5)).toBeCloseTo(40 / Math.SQRT2, 12);
+    // 40 halves to 0.625 by 18 s (still chased) and 0.3125 by 21 s (forgotten)
+    expect(currentTarget(t, 18)).toBe('a');
+    expect(currentTarget(t, 21)).toBeNull();
+    const taunted = taunt(addThreat(t, 'b', 100, 0), 'a', 0);
+    expect(currentTarget(taunted, 3.99)).toBe('a');
+    expect(currentTarget(taunted, 4)).toBe('b');
+  });
+
   it('passes to whoever is hurting it now once older damage fades', () => {
     let t = addThreat(emptyThreat(), 'a', 30, 0);
     t = addThreat(t, 'b', 10, 2);
@@ -36,6 +49,28 @@ describe('threat', () => {
     t = addThreat(t, 'b', 4, AGGRO.halfLifeS);
     expect(threatOf(t, 'a', AGGRO.halfLifeS)).toBe(threatOf(t, 'b', AGGRO.halfLifeS));
     expect(currentTarget(t, AGGRO.halfLifeS)).toBe('b');
+  });
+
+  it('keeps that tie-break through decayThreat, which never changes the target', () => {
+    let t = addThreat(emptyThreat(), 'a', 8, 0);
+    t = addThreat(t, 'b', 4, 3);
+    expect(currentTarget(t, 3)).toBe('b');
+    const d = decayThreat(t, 3);
+    expect(d.entries.map((e) => [e.id, e.threat, e.at, e.lastHit])).toEqual([
+      ['a', 4, 3, 0],
+      ['b', 4, 3, 3],
+    ]);
+    expect(currentTarget(d, 3)).toBe('b');
+    expect(currentTarget(decayThreat(d, 6), 6)).toBe('b');
+    expect(currentTarget(decayThreat(t, 6), 6)).toBe(currentTarget(t, 6));
+  });
+
+  it('does not count noticing someone (zero threat) as a fresh hit', () => {
+    let t = addThreat(emptyThreat(), 'a', 8, 0);
+    t = addThreat(t, 'b', 4, 3);
+    t = addThreat(t, 'a', 0, 3);
+    expect(currentTarget(t, 3)).toBe('b');
+    expect(addThreat(emptyThreat(), 'c', 0, 7).entries[0].lastHit).toBe(7);
   });
 
   it('forgets faded threat, and decayThreat drops it from the table', () => {
