@@ -4,7 +4,8 @@
 // the zone of its home system (docked at the home Waystation) and `welcome` names the zone and the entity, followed at
 // once by `world` (the world service's state, sent again to every joined session whenever it changes) and the
 // character's `inventory`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot
-// every tick, and closing the socket takes the entity out. Inventory requests go to the inventory service, which answers
+// every tick (an input movement authority refuses is answered with `correction`, and a client corrected too often is
+// kicked), and closing the socket takes the entity out. Inventory requests go to the inventory service, which answers
 // each with the authoritative state (ARCHITECTURE §7). Malformed or out-of-place messages are dropped and counted, never
 // thrown.
 //
@@ -291,6 +292,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         const r = deps.zones.input(s, msg);
         // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
         if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
+        // refused by movement authority (which logged it): the correction, and the end of a client corrected too often
+        else if (typeof r === 'object') {
+          if (r.correction) s.send({ t: 'correction', ...r.correction });
+          if (r.kick) s.refuse('kicked', 'Your ship or suit kept moving in ways the server could not accept.');
+        }
         return;
       }
       case 'ack':

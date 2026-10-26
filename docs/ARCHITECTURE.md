@@ -136,8 +136,9 @@ systems belong to a deep-space zone keyed by the nearest system (P1.E04.T04).
 The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
 landed players sit in their ships), is a ship; a player on foot, an NPC or a prop is a walker; a mob is a mob; loot and
 loot pods are loot. An entity already in view stays in it until it is 5% beyond its radius, so one at the edge does not
-enter and leave every tick. Until movement authority (P1.E03.T04) validates `mode`, a client picks its own class through
-it. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5 minutes empty.
+enter and leave every tick. A player's mode is the one movement authority believes (§7): a client claiming `foot` while it
+flies is corrected and stays a ship. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5
+minutes empty.
 
 ## 7. Authority
 
@@ -145,6 +146,40 @@ Following IMPLEMENTATION_PLAN 0.3: the client sends inputs and its predicted pos
 and walker speed caps and the shared terrain sampler, corrects with `correction` when the error exceeds tolerance, and
 decides damage, loot, inventory, quests, economy, skills and the meter. Client-reported outcomes (damage dealt, items
 picked up, quest steps done) are never trusted; they are requests the server re-evaluates.
+
+**Movement** (`packages/server/src/sim/movement`, P1.E03.T04). Every zone the ZoneManager opens checks each player input
+before applying it, at the server clock's time of arrival (the client's `time` is never read):
+
+- *The pose* must be in a frame the shared rule (`selectFrame`) allows there; a ship may not be below the ground (the
+  shared terrain sampler, levelled under cities and sites exactly as the client levels it, sampled only below a ceiling no
+  terrain reaches), in a gas giant's depths or inside the Waystation's hangar shell (`STATION_LAYOUT` in
+  `@astra/shared/data`; the rest of the station's colliders arrive with P1.E11.T02); a walker may not be below the ground,
+  outside the hangar (Grav Boots aside), or more than 400 m over the ground for longer than 45 s.
+- *The mode* must be legal there: the pulse drive only out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM`
+  to engage, `dropOutM` while cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world,
+  2 km over its ground; `landed` only on a world's dry ground; `docked` only on a Waystation pad no other ship holds (a
+  joining player is put on the least held pad); `foot` only on a world's ground or in a hangar, set down within reach of
+  the ship it got out of, which it can board again only from beside it. In mode `ship` the `boost` button bit raises the
+  caps to the boost cap, and air thicker than `AIR.flightModelFrom` to the `atmo` cap: a client must send the bit while it
+  boosts.
+- *Anti-teleport*: no input may lie further from the last valid pose than its allowance covers in the time since, plus a
+  quarter second's worth and 25 m.
+- *Speed* follows the flight contract (`FLIGHT_TOLERANCE` in `@astra/shared/ships`): displacement in the pose's frame
+  over windows of at least 1 s, judged against the larger allowance at the window's two end poses, a window starting at
+  the latest pose that arrived at least 1 s before its end (so inputs bunched by a stall never make a window look
+  faster). Windows split where the frame changes and where the mode changes between the engines, the pulse drive, rest
+  and walking; changes among `space`, `boost` and `atmo` keep one window, each end pose taking its own allowance with the
+  contract's decay. A segment's first second is judged from its start. A walker's windows are judged across the ground
+  (`walkerCaps`: the sprint, Sprint Stride's 11.5 m/s, the jetpack's push), upward (its climb plus the ground's own rise)
+  and downward (`walkerFall`: no faster than a fall from where it last stood).
+- *Refused*, an input is not applied (its `seq` still counts for `ack`): the server sends `correction {seq, pose, mode}`,
+  `seq` being the refused input's and `pose` the last pose it can vouch for (for a window that was too fast, the
+  window's start), puts the entity there, and logs the account, character, rule and the measured and allowed values.
+  Inputs from the old trajectory are refused quietly for a second, or until one fits the corrected pose, so corrections
+  come at most once a second; 8 corrections within 30 s and the session is refused with `kicked`. An accepted input's
+  reported velocity is held to its allowance.
+- A pose the server did not watch arrive (a saved one, restored at login) is checked by `poseProblem` against the same
+  pose and mode rules.
 
 ## 8. Persistence
 

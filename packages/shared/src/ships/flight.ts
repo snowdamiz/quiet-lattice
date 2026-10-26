@@ -28,6 +28,12 @@ export const PULSE_DRIVE = {
   easeRate: 4,
   /** Dropping out of the drive leaves the ship at this speed at most, m/s. */
   exitSpeedMax: 400,
+  /** It engages only outside the air (AIR.pulseCeiling), at least this clear of anything ahead (`PulseClearance.ahead`), m… */
+  engageClearM: 600,
+  /** …and, over a world with ground, at least this high over it, m. */
+  engageAltitudeM: 2000,
+  /** It drops out when what is ahead comes nearer than this, m (or the air thickens past AIR.pulseCeiling). */
+  dropOutM: 400,
 } as const;
 
 /** The pulse drive's speed limit, m/s, at a clearance in metres: the distance to the nearest body's sky (or peaks, or hazard
@@ -59,7 +65,8 @@ export const CLIENT_SPEED_HEADROOM = 1.05;
  *     `PULSE_DRIVE.exitSpeedMax` at most, under every hull's space cap, and a ship lands or docks at rest.
  * - A window over its allowance is corrected to the last valid pose.
  * - Speed only. Whether the pulse drive may be engaged at all (outside the air, 600 m clear of anything ahead), its spool-up
- *   and its fuel are not checked here: Charge is P1.E07.T02's, mode legality P1.E03.T04's.
+ *   and its fuel are not checked here: Charge is P1.E07.T02's, mode legality the server's movement authority's
+ *   (packages/server/src/sim/movement, P1.E03.T04), which reads PULSE_DRIVE's engage and drop-out clearances.
  */
 export const FLIGHT_TOLERANCE = {
   windowS: 1,

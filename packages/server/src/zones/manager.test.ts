@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { systemSeed } from '../world/home.ts';
 import { WorldService } from '../world/service.ts';
 import { newShardRecord } from '../world/shard.ts';
+import { padPose } from '../sim/movement/index.ts';
 import { ZoneManager, type ZoneCharacter, type ZoneManagerOptions } from './manager.ts';
 import { INPUT_LIMITS, type ZoneViewer } from './zone.ts';
 
@@ -23,7 +24,7 @@ interface LogLine {
   msg: string;
 }
 
-function setup(opts: Pick<ZoneManagerOptions, 'overrunMs' | 'world'> = {}) {
+function setup(opts: Pick<ZoneManagerOptions, 'overrunMs' | 'world' | 'movement'> = {}) {
   let mono = 1000;
   let world = 5e6;
   const lines: LogLine[] = [];
@@ -70,9 +71,12 @@ describe('ZoneManager', () => {
     expect(zones.zoneOf(c)).toBe(jc.zone);
     expect(() => zones.join(a, character(1))).toThrow(/already/);
 
-    // docked at the home Waystation, as welcome says
+    // docked on a pad of the home Waystation, as welcome says: the first free one
     expect(jc.zone.system.seed).toBe(systemSeed(2));
-    expect(jc.pose).toEqual({ frame: `${systemSeed(2)}:station`, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] });
+    expect(jc.pose).toEqual(padPose(`${systemSeed(2)}:station`, 0));
+    expect(jc.pose).toEqual({ frame: `${systemSeed(2)}:station`, pos: [-30, 2.4, -22], quat: [0, 1, 0, 0], vel: [0, 0, 0] });
+    expect(ja.pose).toEqual(padPose(`${systemSeed(0)}:station`, 0));
+    expect(jb.pose).toEqual(padPose(`${systemSeed(0)}:station`, 1));
     expect(jc.mode).toBe('docked');
     expect(jc.zone.entity(jc.entityId)!.fields).toEqual({ kind: 'player', ...jc.pose, mode: 'docked', name: 'Tam', people: 'thalune', level: 4 });
     expect(ja.entityId).not.toBe(jb.entityId);
@@ -173,8 +177,8 @@ describe('ZoneManager', () => {
     }
   });
 
-  it('routes inputs and acks to the session’s zone, clamping poses and marking them unvalidated', () => {
-    const { zones, advance } = setup();
+  it('routes inputs and acks to the session’s zone; without movement authority, clamping poses and marking them unvalidated', () => {
+    const { zones, advance } = setup({ movement: false });
     const s = new Sink(1);
     const { zone, entityId, pose } = zones.join(s, character(0));
     const input = (seq: number, p: Partial<typeof pose> = {}) => ({
@@ -207,6 +211,40 @@ describe('ZoneManager', () => {
     expect(zones.ack(s, zone.tick + 5)).toBe(false);
     expect(zones.ack(new Sink(9), 1)).toBe(false);
     expect(zone.historyOf(s)!.acked).toBe(1);
+  });
+
+  it('holds inputs to movement authority at the clock’s time of arrival: a valid one is applied and validated, a teleport corrected', () => {
+    const { zones, advance, lines } = setup();
+    const s = new Sink(1);
+    const { zone, entityId, pose } = zones.join(s, character(0));
+    expect(zone.movement).not.toBeNull();
+    const at = (seq: number, pos: [number, number, number], mode: 'ship' | 'docked' = 'ship') => ({
+      t: 'input' as const,
+      seq,
+      time: 0,
+      mode,
+      pose: { ...pose, pos },
+      buttons: 0,
+    });
+    advance(50);
+    // lifting off the pad: 1 m in 50 ms
+    expect(zones.input(s, at(1, [pose.pos[0], pose.pos[1] + 1, pose.pos[2]]))).toBe('ok');
+    const e = zone.entity(entityId)!;
+    expect(e.unvalidated).toBe(false);
+    expect(e.fields.mode).toBe('ship');
+    advance(50);
+    // 3 km in the next 50 ms
+    const r = zones.input(s, at(2, [pose.pos[0], 3000, pose.pos[2]]));
+    expect(r).toMatchObject({ ok: false, kick: false, violation: { rule: 'teleport' }, correction: { seq: 2, mode: 'ship' } });
+    expect(typeof r === 'object' && r.correction!.pose.pos).toEqual([pose.pos[0], pose.pos[1] + 1, pose.pos[2]]);
+    expect(zone.entity(entityId)!.fields.pos).toEqual([pose.pos[0], pose.pos[1] + 1, pose.pos[2]]);
+    expect(lines.find((l) => l.msg === 'movement corrected')?.obj).toMatchObject({
+      zone: 'sys:0',
+      entity: entityId,
+      character: 'c-Ves',
+      rule: 'teleport',
+      seq: 2,
+    });
   });
 
   it('forgets a session whose entity its zone despawned, tells the gateway, and lets the zone empty', () => {

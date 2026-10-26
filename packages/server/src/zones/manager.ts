@@ -9,9 +9,13 @@
 //
 // Each zone's system tier comes from the world service, and the manager's one subscription keeps it current as the Edge
 // moves (DESIGN 16.3).
+//
+// Its zones hold players to movement authority (P1.E03.T04): each player enters with its ship (the default Lark until
+// P1.E12.T05) and its skills, and each input is checked at the server clock's time of arrival.
 import { performance } from 'node:perf_hooks';
 import type { ClientMessage, PeopleId, Pose, ServerMessage } from '@astra/shared/protocol';
 import { tierOfGalaxySystem, type SystemDescription, type Tier } from '@astra/shared/world';
+import { DEFAULT_LOADOUT } from '../inventory/service.ts';
 import type { ServerClock } from '../world/clock.ts';
 import { systemZoneId } from '../world/home.ts';
 import type { TierFlip, WorldSource } from '../world/service.ts';
@@ -23,6 +27,8 @@ type MoveMode = Extract<ServerMessage, { t: 'welcome' }>['mode'];
 /** What the manager needs of a character to put it in play. */
 export interface ZoneCharacter {
   id: string;
+  /** its account, for the movement log */
+  accountId?: string;
   name: string;
   people: PeopleId;
   level: number;
@@ -48,6 +54,8 @@ export interface ZoneManagerOptions {
   describe?: (systemIndex: number) => SystemDescription;
   /** the world service, which each zone's tier comes from; without one, tiers are those of the Edge at its default */
   world?: Pick<WorldSource, 'tierOf' | 'subscribe'>;
+  /** hold players' inputs to movement authority (true; tests that drive raw poses turn it off) */
+  movement?: boolean;
 }
 
 export interface Joined {
@@ -93,6 +101,7 @@ export class ZoneManager {
   private readonly mono: () => number;
   private readonly describe: (systemIndex: number) => SystemDescription;
   private readonly world?: ZoneManagerOptions['world'];
+  private readonly movement: boolean;
   private readonly maxCatchUp: number;
   private readonly sleepAfterMs: number;
   private readonly unloadAfterMs: number;
@@ -115,6 +124,7 @@ export class ZoneManager {
     this.overrunMs = opts.overrunMs ?? this.stepMs;
     this.nextAt = this.mono() + this.stepMs;
     this.world = opts.world;
+    this.movement = opts.movement ?? true;
     this.world?.subscribe((change) => this.tiersChanged(change.flipped));
   }
 
@@ -145,7 +155,14 @@ export class ZoneManager {
     const id = systemZoneId(systemIndex);
     let slot = this.slots.get(id);
     if (!slot) {
-      const zone = new Zone({ id, systemIndex, system: this.describe(systemIndex), log: this.log, onViewerRemoved: (viewer) => this.removed(viewer, zone) });
+      const zone = new Zone({
+        id,
+        systemIndex,
+        system: this.describe(systemIndex),
+        log: this.log,
+        onViewerRemoved: (viewer) => this.removed(viewer, zone),
+        movement: this.movement,
+      });
       const tier = this.world ? this.world.tierOf(systemIndex) : tierOfGalaxySystem(systemIndex);
       slot = { zone, tier, asleep: false, emptySince: null, overruns: 0, overrunsLogged: 0, lastOverrunLog: -Infinity };
       this.slots.set(id, slot);
@@ -158,22 +175,27 @@ export class ZoneManager {
   }
 
   /**
-   * Puts the character's player entity in the zone of its home system, docked at the home Waystation, and starts sending
-   * the session snapshots from the next tick.
+   * Puts the character's player entity in the zone of its home system, docked on a pad of the home Waystation, and starts
+   * sending the session snapshots from the next tick.
    */
   join(viewer: ZoneViewer, character: ZoneCharacter): Joined {
     if (this.byViewer.has(viewer)) throw new Error(`session ${viewer.id} is already in a zone`);
     const zone = this.open(character.homeSystem);
-    const pose: Pose = { frame: zone.stationFrame, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] };
+    const pose: Pose = zone.dockPose();
     const mode: MoveMode = 'docked';
-    const entityId = zone.join(viewer, {
-      kind: 'player',
-      ...pose,
-      mode,
-      name: character.name,
+    // (every character flies the inventory's default Lark until P1.E12.T05 gives it a ship of its own)
+    const profile = {
+      characterId: character.id,
+      accountId: character.accountId,
       people: character.people,
-      level: character.level,
-    });
+      ship: DEFAULT_LOADOUT.ship!,
+      skills: [...(DEFAULT_LOADOUT.skills ?? [])],
+    };
+    const entityId = zone.join(
+      viewer,
+      { kind: 'player', ...pose, mode, name: character.name, people: character.people, level: character.level },
+      { profile, now: this.clock.now() },
+    );
     this.byViewer.set(viewer, this.slots.get(zone.id)!);
     return { zone, entityId, pose, mode };
   }
@@ -189,7 +211,7 @@ export class ZoneManager {
   }
 
   input(viewer: ZoneViewer, msg: Extract<ClientMessage, { t: 'input' }>): InputResult {
-    return this.byViewer.get(viewer)?.zone.input(viewer, msg) ?? 'unknown';
+    return this.byViewer.get(viewer)?.zone.input(viewer, msg, this.clock.now()) ?? 'unknown';
   }
 
   ack(viewer: ZoneViewer, tick: number): boolean {
