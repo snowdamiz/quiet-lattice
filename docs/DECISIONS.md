@@ -95,3 +95,33 @@ Format: task id, question → choice → why.
   passive, **Quiet Mind** ("Dissonance, Null and Nullsong silence you for half as long"), to DESIGN 9.4 and the data. →
   Every other branch's Tier III is 2 actives, 3 passives, 1 ship form and 2 augments; Resonance was one passive short,
   and it answers 9.10's anti-caster tools. **A design addition: the owner may want to rename or replace it.**
+- **P1.E02.T07** Ids and terms → resource ids are the demo's (`dihydrogen` …) with DESIGN's names; world types use the
+  generator's ids (`alien` = exotic, `gas`); "living worlds" = lush, alien, desert, frozen, toxic, volcanic, storm; "hot
+  worlds" = desert, volcanic, inferno; a tier of "3+" reads as 3–5. → One vocabulary with the world generator.
+- **P1.E02.T07** Stat modifiers apply add, then mul, then set; "Shield 125"/"Hull 125" are ×1.25 of the hull's base; Tempered
+  Core +25 heat capacity; Gunnery scales every weapon cooldown by 0.08/0.12; Efficient Jetpack is jet-fuel duration ×2;
+  Living Ship restores the full hull; Quiet Mind's halving applies only to Dissonance, Null and Nullsong. → Each reads
+  DESIGN's text in the direction it is written.
+- **P1.E02.T07** Unlock routes → Tier I trainers need no rank, Tier II the faction's first rank, Tier III the second; Void
+  needs Free Reaches Deckhand; capstones unlock only by chapter; conjunctions are level 15 augments whose only prerequisite
+  is a Tier II node in both branches; only branch augments require their target node; the Symbiotic "every species
+  analysed" rule is a fragment override (that world's monolith grants Symbiotic instead). Hazard Weave is also unlocked by
+  the quest `the_apothecarys_sodium` (DESIGN 14.8), validated once quests exist.
+- **P1.E02.T07** Faction unlocks per rank (14.4 lists them per faction) → Compact: Hand double bounties, Factor Tier 2
+  hulls at Waystations + Hangar Rights, Lanewarden the Warden-breaker + Quiet Table branch; Reaches: Deckhand Scrapyard
+  market + Void + quartermaster, Cutter convoy raid contracts, Captain's Ear the Ghost; Chorus: Listener respec ×0.5,
+  Reader memory dives, Voice the Listener hull; cities: Guest livery, Neighbour market fees halved + anchor chain, Claimant
+  glyph. Hull rep: Ghost Captain's Ear, Listener Voice, Warden-breaker Lanewarden.
+- **P1.E02.T07** Recipes → a tier range takes the tier of the rarest input; the pressure-hull module and husk plating craft at
+  the Scrapyard (DESIGN names no fabricator above Tier 3); catalysts take 10 of their resource; suit glyphs 10 and hull
+  glyph seams 40 Count residue; field-craftable: pulse fuel, both cartridges, flak ammo, torpedo (Tier 2+); salvage is
+  floor(amount / 3) per input, modules only; every Waystation fabricator crafts Tier 0–2.
+- **P1.E02.T07** Numbers DESIGN does not give (all in `packages/shared/src/data`, tunable): weapons (Pulse Lasers 11 per
+  volley, 0.12 s, 1500 m; Beam Lance 120 dps; Flak 12 × 8 in 40 m; EMP 30 Charge, 150 m; Railgun 400 dmg, 2 s charge;
+  Torpedo 600 dmg, 4 per rack, 6 km); body-plan base health (quad_heavy 160, grazer 60, quad_small 30, biped 80, flyer
+  50); threat stars by temperament; resistances ×0.5 / ×2 / ×0; horrors, constructs, people and brood stats; Hollow swarm,
+  belt lurker and husk stats; convoy composition; boss base health/damage (Pack Alpha 600/35 … Hive Heart 40000/40).
+  DESIGN 12.2 attack damage is a base value scaled by level like health. → Balance passes later tune these.
+- **P1.E02.T07** Known DESIGN inconsistencies left as written: 9.7 says Pilot has three actives (two listed); 12.7's "Vent in
+  ship form" (Vent has no ship form); section 1's "5 hostile variants" lists six; no fabricator for Tier 4–5 recipes; no
+  unit price for the Lark (sold on credit).
