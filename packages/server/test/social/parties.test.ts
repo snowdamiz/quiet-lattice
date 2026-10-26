@@ -226,7 +226,7 @@ describe('parties', () => {
     // still the leader while its grace runs: no one may kick or promote meanwhile
     bex.party({ op: 'kick', name: 'Cor' });
     expect(denials(bex.take())).toEqual(['kick:not_leader:Cor']);
-    h.advance(14_000);
+    h.advance(15_000); // its grace, and the refresh that sees it end (once a second)
     for (const p of [bex, cor]) {
       const ms = p.take();
       expect(ms.flatMap((m) => (m.t === 'event' && m.event.kind === 'party' ? [`${m.event.what}:${m.event.name}`] : []))).toEqual(['left:Ana', 'leader:Bex']);
@@ -239,7 +239,7 @@ describe('parties', () => {
     expect(tagOf(ana)).toBeNull();
 
     h.drop(cor);
-    h.advance(15_000);
+    h.advance(16_000);
     expect(bex.news()).toEqual(['left:Cor', 'disbanded']);
     expect(tagOf(bex)).toBeNull();
     expect(h.social.parties.count).toBe(0);
@@ -319,5 +319,109 @@ describe('parties', () => {
     const s = zone.phases.phaseFor(cor.session, 'story', last);
     expect([ana, bex].map((x) => zone.phases.phaseFor(x.session, 'story', last))).toEqual([s, s]);
     expect(s.members.size).toBe(3);
+  });
+
+  it('gives a member kicked while its connection was down no way back into the party’s story phase', () => {
+    const h = harness();
+    const [ana, bex, cor] = ['Ana', 'Bex', 'Cor'].map((n) => h.player(n));
+    party(h, ana, bex, cor);
+    const site: PhaseLocation = { key: 'chapter-9', frame: ana.zone.stationFrame, center: [0, 0, 0], radius: 300 };
+    const s = ana.zone.phases.phaseFor(ana.session, 'story', site);
+    expect(ana.zone.phases.phaseFor(bex.session, 'story', site)).toBe(s);
+    expect(ana.zone.phases.phaseFor(cor.session, 'story', site)).toBe(s);
+    // Cor drops and comes back within the grace, still a member: its place is its own again
+    h.drop(cor);
+    h.advance(2000);
+    h.reconnect(cor);
+    expect(cor.zone.phases.phaseFor(cor.session, 'story', site)).toBe(s);
+    // Bex drops and is kicked meanwhile: back within the grace, in no party, it is placed afresh, by tag or by id
+    h.drop(bex);
+    ana.party({ op: 'kick', name: 'Bex' });
+    h.advance(2000);
+    h.reconnect(bex);
+    expect(bex.zone.entity(bex.entityId)?.party).toBeNull();
+    const fresh = bex.zone.phases.phaseFor(bex.session, 'story', site);
+    expect(fresh).not.toBe(s);
+    expect(bex.zone.phases.phaseFor(bex.session, 'story', site, h.social.partyIdOf('char-Bex'))).toBe(fresh);
+    expect([...s.members].sort()).toEqual([ana.entityId, cor.entityId].sort());
+    expect(s.held.size).toBe(0);
+  });
+
+  it('refuses to accept into a party that filled up after the invite, and to promote a member who is offline', () => {
+    const h = harness({ partyMax: 3 });
+    const [ana, bex, cor, dax] = ['Ana', 'Bex', 'Cor', 'Dax'].map((n) => h.player(n));
+    party(h, ana, bex);
+    ana.party({ op: 'invite', name: 'Cor' });
+    ana.party({ op: 'invite', name: 'Dax' });
+    cor.party({ op: 'accept', name: 'Ana' });
+    dax.party({ op: 'accept', name: 'Ana' });
+    expect(denials(dax.take())).toEqual(['accept:party_full:Ana']);
+    expect(h.social.parties.of('char-Ana')?.members).toEqual(['char-Ana', 'char-Bex', 'char-Cor']);
+    // the invite stands, should a place open up before it lapses
+    bex.party({ op: 'leave' });
+    dax.party({ op: 'accept', name: 'Ana' });
+    expect(h.social.parties.of('char-Dax')?.members).toEqual(['char-Ana', 'char-Cor', 'char-Dax']);
+
+    h.drop(cor);
+    ana.take();
+    ana.party({ op: 'promote', name: 'Cor' });
+    expect(ana.take()).toEqual([{ t: 'denied', of: 'promote', code: 'offline', name: 'Cor' }]);
+    expect(h.social.parties.of('char-Ana')?.leader).toBe('char-Ana');
+  });
+
+  it('shows a member whose hp is not a number as whole, logging it once, and keeps every party’s refresh going', () => {
+    const h = harness();
+    const [ana, bex, cor, dax] = ['Ana', 'Bex', 'Cor', 'Dax'].map((n) => h.player(n));
+    party(h, ana, bex);
+    party(h, cor, dax);
+    bex.zone.patch(bex.entityId, { hp: Number.NaN });
+    h.drop(dax);
+    h.advance(1000);
+    expect(partyStates(ana.take())).toEqual([]);
+    expect(h.lines.filter((l) => l.msg.startsWith('party member hp is not a number'))).toHaveLength(1);
+    // a request touching that party still works, and the other party's grace still runs out
+    ana.party({ op: 'invite', name: 'Eli' });
+    bex.party({ op: 'leave' });
+    expect(denials([...ana.take(), ...bex.take()])).toEqual(['invite:not_found:Eli']);
+    h.advance(16_000);
+    expect([h.social.partyIdOf('char-Cor'), h.social.partyIdOf('char-Dax')]).toEqual([null, null]);
+    expect(cor.news()).toEqual(['left:Dax', 'disbanded']);
+  });
+
+  it('logs and skips a party whose refresh fails, and refreshes the rest', () => {
+    const h = harness(
+      {},
+      {
+        encode: (m, encode) => {
+          if (m.t === 'party' && m.party?.members.some((x) => x.name === 'Bex' && x.health === 2)) throw new Error('boom');
+          return encode(m);
+        },
+      },
+    );
+    const [ana, bex, cor, dax] = ['Ana', 'Bex', 'Cor', 'Dax'].map((n) => h.player(n));
+    party(h, ana, bex);
+    party(h, cor, dax);
+    bex.zone.patch(bex.entityId, { hp: 0.2 });
+    dax.zone.patch(dax.entityId, { hp: 0.5 });
+    h.advance(1000);
+    expect(h.lines.filter((l) => l.msg === 'party refresh failed')).toHaveLength(1);
+    expect(partyStates(cor.take())).toEqual([{ leader: 'Cor', members: [member('Cor'), member('Dax', 0, 5)] }]);
+  });
+
+  it('spreads the parties’ refresh over the ticks of a second, each party once', () => {
+    const h = harness();
+    const players = Array.from({ length: 40 }, (_, i) => h.player(`P${'abcdefghijklmnopqrst'[i % 20]}${'xy'[Math.floor(i / 20)]}`));
+    const leaders = players.filter((_, i) => i % 2 === 0);
+    for (let i = 0; i < 40; i += 2) party(h, players[i]!, players[i + 1]!);
+    h.advance(1000);
+    for (const p of players) p.take();
+    for (let i = 1; i < 40; i += 2) players[i]!.zone.patch(players[i]!.entityId, { hp: 0.5 });
+    const refreshed = () => leaders.filter((p) => partyStates(p.take()).length > 0).length;
+    const perTick: number[] = [];
+    for (let t = 0; t < 10; t++) {
+      h.advance(100);
+      perTick.push(refreshed());
+    }
+    expect(perTick).toEqual(Array(10).fill(2));
   });
 });

@@ -27,8 +27,10 @@ export interface SocialLimits {
   partyMax: number;
   /** a member whose connection dropped keeps its place this long, then leaves the party */
   graceMs: number;
-  /** how often invites lapse, graces run out, party tags are checked and party states refreshed */
+  /** how often the social timer runs: invites lapse, and the parties due are refreshed */
   tickMs: number;
+  /** every party is refreshed (graces checked, tags checked, state sent if it changed) once this often, spread over the ticks */
+  refreshMs: number;
 }
 
 export const SOCIAL_LIMITS: Readonly<SocialLimits> = Object.freeze({
@@ -45,5 +47,6 @@ export const SOCIAL_LIMITS: Readonly<SocialLimits> = Object.freeze({
   maxInvitesHeld: 8,
   partyMax: PARTY_MAX,
   graceMs: PHASE_KINDS.story.graceS * 1000,
-  tickMs: 1000,
+  tickMs: 100,
+  refreshMs: 1000,
 });

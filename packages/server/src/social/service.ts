@@ -11,6 +11,7 @@ import type { SocialContext, SocialLog, SocialZones } from './context.ts';
 import { SOCIAL_LIMITS, type SocialLimits } from './limits.ts';
 import { Parties } from './parties.ts';
 import { Roster } from './roster.ts';
+import { ZoneIndex } from './zoneIndex.ts';
 
 export interface SocialOptions {
   zones: SocialZones;
@@ -30,9 +31,12 @@ export class SocialService {
   readonly roster = new Roster();
   readonly parties: Parties;
   readonly chats: Chat;
+  /** who is online in each zone, for system chat */
+  readonly zoneIndex: ZoneIndex;
   private readonly mono: () => number;
   private readonly log?: SocialLog;
   private timer: NodeJS.Timeout | undefined;
+  private nextSweep = -Infinity;
 
   constructor(opts: SocialOptions) {
     this.limits = { ...SOCIAL_LIMITS, ...opts.limits };
@@ -48,12 +52,15 @@ export class SocialService {
       encode: opts.encode ?? encodeServerMessage,
     };
     this.parties = new Parties(ctx);
-    this.chats = new Chat(ctx, (characterId) => this.parties.online(characterId));
+    this.zoneIndex = new ZoneIndex(this.roster, opts.zones);
+    this.chats = new Chat(ctx, (characterId) => this.parties.online(characterId), this.zoneIndex);
   }
 
   /** The session's character is in play (its entity in a zone) under `name`: it is online, and hears its party's state. */
   joined(s: Session, name: string): void {
-    this.parties.joined(this.roster.add(s, name));
+    const o = this.roster.add(s, name);
+    this.zoneIndex.place(o);
+    this.parties.joined(o);
   }
 
   /**
@@ -62,7 +69,9 @@ export class SocialService {
    */
   left(s: Session): void {
     const o = this.roster.remove(s);
-    if (o) this.parties.left(o);
+    if (!o) return;
+    this.zoneIndex.remove(o);
+    this.parties.left(o);
   }
 
   /** A chat message from a joined session. */
@@ -91,7 +100,9 @@ export class SocialService {
    */
   moved(s: Session): void {
     const o = this.roster.of(s);
-    if (o) this.parties.moved(o);
+    if (!o) return;
+    this.zoneIndex.place(o);
+    this.parties.moved(o);
   }
 
   /** Mutes an account's chat for `seconds` (moderation; logged). */
@@ -103,9 +114,15 @@ export class SocialService {
     return this.chats.unmute(accountId);
   }
 
-  /** Lapses invites, ends graces, checks party tags, refreshes party states and forgets idle allowances. */
+  /**
+   * Lapses invites and refreshes the parties due (graces, tags, states); once a refresh, rebuilds the zone index and
+   * forgets idle allowances and spent mutes.
+   */
   tick(now = this.mono()): void {
     this.parties.tick(now);
+    if (now < this.nextSweep) return;
+    this.nextSweep = now + this.limits.refreshMs;
+    this.zoneIndex.rebuild();
     this.chats.sweep(now);
   }
 

@@ -45,7 +45,8 @@ export interface Player {
   party(op: PartyOp): void;
 }
 
-export function harness(limits: Partial<SocialLimits> = {}) {
+/** `encode` wraps the service's encoder (which counts its calls), so a test can make it fail. */
+export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m: ServerMessage, encode: (m: ServerMessage) => string) => string } = {}) {
   let mono = 1000;
   const lines: LogLine[] = [];
   const at = (level: string) => (obj: object, msg: string) => lines.push({ level, obj: obj as Record<string, unknown>, msg });
@@ -61,7 +62,7 @@ export function harness(limits: Partial<SocialLimits> = {}) {
     limits,
     encode: (m) => {
       encodes.n++;
-      return encodeServerMessage(m);
+      return opts.encode ? opts.encode(m, encodeServerMessage) : encodeServerMessage(m);
     },
   });
   let nextSession = 1;
@@ -130,10 +131,12 @@ export function harness(limits: Partial<SocialLimits> = {}) {
     player,
     drop,
     reconnect,
-    /** moves the monotonic clock on by `ms` and runs the social tick */
+    /** moves the monotonic clock on by `ms`, running the social tick every `tickMs` on the way, as its timer does */
     advance(ms: number) {
-      mono += ms;
-      social.tick(mono);
+      for (let left = ms; left > 0; left -= social.limits.tickMs) {
+        mono += Math.min(left, social.limits.tickMs);
+        social.tick(mono);
+      }
     },
     now: () => mono,
   };

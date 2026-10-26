@@ -13,6 +13,7 @@ import type { ClientMessage } from '@astra/shared/protocol';
 import { TokenBucket } from '../gateway/rateLimit.ts';
 import { deny, fanOut, type SocialContext } from './context.ts';
 import type { Online } from './roster.ts';
+import type { ZoneIndex } from './zoneIndex.ts';
 
 type Channel = Extract<ClientMessage, { t: 'chat' }>['channel'];
 
@@ -37,6 +38,8 @@ export class Chat {
     private readonly ctx: SocialContext,
     /** the online members of a character's party, or null when it is in none */
     private readonly partyOf: (characterId: string) => Online[] | null,
+    /** who is online in each zone */
+    private readonly zoneIndex: ZoneIndex,
   ) {}
 
   /** Relays a line from `from` on `channel`, or tells it why not. */
@@ -60,7 +63,7 @@ export class Chat {
       to = ctx.roster.values();
     } else if (channel === 'system') {
       if (!zone) return deny(from, 'chat', 'no_zone');
-      to = inZone(ctx, zone);
+      to = this.zoneIndex.in(zone);
     } else {
       const members = this.partyOf(from.characterId);
       if (!members) return deny(from, 'chat', 'no_party');
@@ -124,9 +127,4 @@ export class Chat {
     }
     return a;
   }
-}
-
-/** Everyone online whose entity is in `zone`. */
-function* inZone(ctx: SocialContext, zone: object): Generator<Online> {
-  for (const o of ctx.roster.values()) if (ctx.zones.zoneOf(o.session) === zone) yield o;
 }

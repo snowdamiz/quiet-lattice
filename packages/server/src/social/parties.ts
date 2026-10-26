@@ -10,13 +10,15 @@
 //   membership is the character's, not its entity's.
 // - Every member's zone entity carries the party's id as its party tag (zone.setParty), so members see each other
 //   anywhere in a zone and the phase manager's placement (phaseFor) puts them in one story phase. Tags are set on every
-//   change and on joining, and checked each tick, so an entity that is new since (a handoff, a respawn) gets its tag.
+//   change and on joining, and checked once a refresh, so an entity that is new since (a handoff, a respawn) gets its tag.
 // - Members get the party's state (members in join order, the leader, each member's system and health in tenths) when
-//   it changes; each tick the state is rebuilt per party and sent only if it differs from the last one sent, encoded
-//   once for all its members. Party news (`event` kind `party`) goes to whom it concerns; refusals go to the asker only.
+//   it changes. Once every `refreshMs` each party is visited (its graces checked, its tags checked, its state rebuilt and
+//   sent only if it differs from the last one sent, encoded once for all its members); the visits are spread over the
+//   ticks in between, so a thousand parties never cost one tick much, and one party that fails is logged and skipped.
+//   Party news (`event` kind `party`) goes to whom it concerns; refusals go to the asker only.
 import type { PartyOp, PartyView, ServerMessage } from '@astra/shared/protocol';
 import { TokenBucket } from '../gateway/rateLimit.ts';
-import { deny, fanOut, sendEncoded, type SocialContext } from './context.ts';
+import { deny, fanOut, type SocialContext } from './context.ts';
 import { key, type Online } from './roster.ts';
 
 type PartyNews = Extract<Extract<ServerMessage, { t: 'event' }>['event'], { kind: 'party' }>['what'];
@@ -67,6 +69,12 @@ export class Parties {
   private readonly invites = new Map<string, Map<string, Invite>>();
   /** invite allowances by account */
   private readonly allowances = new Map<string, TokenBucket>();
+  /** characters whose entity's hp was not a finite number (logged once until it is again) */
+  private readonly badHealth = new Set<string>();
+  /** where the refresh round has got to, and how far behind it is (party·ms owed at refreshMs a party) */
+  private round: IterableIterator<Party> | null = null;
+  private owed = 0;
+  private lastTick: number | null = null;
   private nextId = 1;
 
   constructor(private readonly ctx: SocialContext) {}
@@ -145,23 +153,45 @@ export class Parties {
     const p = this.byCharacter.get(o.characterId);
     if (!p) return;
     p.members.get(o.characterId)!.offlineSince = this.ctx.mono();
+    this.badHealth.delete(o.characterId);
     this.flush(p);
   }
 
-  /** Lapses invites, takes out members whose grace ran out, checks tags and sends whatever state changed. */
+  /**
+   * Lapses invites, then refreshes the parties due: each party once every `refreshMs`, the round spread over the ticks
+   * in between (a tick `refreshMs` or more after the last visits every party).
+   */
   tick(now: number): void {
     for (const held of [...this.invites.values()]) for (const inv of [...held.values()]) if (inv.expires <= now) this.lapse(inv);
-    for (const p of [...this.parties.values()]) {
-      for (const m of [...p.members.values()]) {
-        if (m.offlineSince === null || now - m.offlineSince < this.ctx.limits.graceMs) continue;
-        this.remove(p, m.characterId, 'dropped');
-        if (!this.parties.has(p.id)) break;
+    const { refreshMs } = this.ctx.limits;
+    const elapsed = this.lastTick === null ? refreshMs : Math.min(refreshMs, Math.max(0, now - this.lastTick));
+    this.lastTick = now;
+    this.owed = Math.min(this.parties.size * refreshMs, this.owed + this.parties.size * elapsed);
+    // (the small allowance keeps float steps, ten of 0.1, from coming out a hair short of a whole party)
+    let due = Math.min(this.parties.size, Math.floor((this.owed + 1e-6) / refreshMs));
+    this.owed = Math.max(0, this.owed - due * refreshMs);
+    while (due-- > 0) {
+      let next = this.round?.next();
+      if (!next || next.done) next = (this.round = this.parties.values()).next();
+      if (next.done) break;
+      try {
+        this.refresh(next.value, now);
+      } catch (err) {
+        this.ctx.log?.error({ err, party: next.value.id }, 'party refresh failed');
       }
-      if (!this.parties.has(p.id)) continue;
-      for (const id of p.members.keys()) this.tag(id, p.id);
-      this.flush(p);
     }
     for (const [account, b] of this.allowances) if (b.level(now) >= b.burst) this.allowances.delete(account);
+  }
+
+  /** One party's refresh: members whose grace ran out leave, tags are checked, and its state goes out if it changed. */
+  private refresh(p: Party, now: number): void {
+    for (const m of [...p.members.values()]) {
+      if (m.offlineSince === null || now - m.offlineSince < this.ctx.limits.graceMs) continue;
+      this.remove(p, m.characterId, 'dropped');
+      if (!this.parties.has(p.id)) return;
+    }
+    for (const id of p.members.keys()) this.tag(id, p.id);
+    this.flush(p);
   }
 
   // ---------- requests ----------
@@ -226,6 +256,8 @@ export class Parties {
     if (!m) return deny(o, op, 'not_member', { name });
     if (m.characterId === o.characterId) return deny(o, op, 'self', { name: m.name });
     if (op === 'kick') return this.remove(p, m.characterId, 'kicked');
+    // (a leader whose connection is down could not lead; it may come back within the grace, or leave the party at its end)
+    if (!this.ctx.roster.get(m.characterId)) return deny(o, op, 'offline', { name: m.name });
     p.leader = m.characterId;
     this.ctx.log?.info({ party: p.id, leader: m.characterId, by: o.characterId }, 'party leader promoted');
     this.tell(p, 'leader', m.name);
@@ -312,9 +344,9 @@ export class Parties {
     if (k !== p.sentKey) {
       p.sentKey = k;
       p.sent = this.ctx.encode({ t: 'party', party: view });
-      for (const o of this.onlineIn(p)) sendEncoded(o.session, p.sent);
+      for (const o of this.onlineIn(p)) o.session.sendText(p.sent);
     } else if (also) {
-      sendEncoded(also.session, p.sent!);
+      also.session.sendText(p.sent!);
     }
   }
 
@@ -326,11 +358,24 @@ export class Parties {
       const zone = this.ctx.zones.zoneOf(o.session);
       const id = zone?.entityOf(o.session);
       const e = id === undefined ? undefined : zone!.entity(id);
-      // (no damage model sets hp on players yet: an entity without one is whole)
-      const health = e ? Math.round(Math.min(1, Math.max(0, e.fields.hp ?? 1)) * 10) : null;
-      return { name: m.name, online: true, system: zone?.systemIndex ?? null, health };
+      return { name: m.name, online: true, system: zone?.systemIndex ?? null, health: e ? this.health(m.characterId, e.fields.hp) : null };
     });
     return { leader: p.members.get(p.leader)!.name, members };
+  }
+
+  /**
+   * An entity's hp (0–1) in tenths. No damage model sets hp on players yet, so an entity without one is whole; one whose
+   * hp is not a finite number (a bug elsewhere) shows as whole too, and is logged once, rather than failing the state.
+   */
+  private health(characterId: string, hp: number | undefined): number {
+    if (hp === undefined) return 10;
+    if (!Number.isFinite(hp)) {
+      if (!this.badHealth.has(characterId)) this.ctx.log?.warn({ character: characterId, hp: String(hp) }, 'party member hp is not a number; shown as full');
+      this.badHealth.add(characterId);
+      return 10;
+    }
+    this.badHealth.delete(characterId);
+    return Math.round(Math.min(1, Math.max(0, hp)) * 10);
   }
 
   /** Puts the character's zone entity in `party` (its party tag), when it is online and in a zone. */

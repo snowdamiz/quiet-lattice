@@ -27,6 +27,8 @@ import {
   type Pose,
   type Snapshot,
 } from '../src/protocol/index.ts';
+// (its source, for the version history under PROTOCOL_VERSION: read through Vite's ?raw import, without Node types)
+import MESSAGES_SOURCE from '../src/protocol/messages.ts?raw';
 
 const pose: Pose = { frame: '424242:2', pos: [113000.25, -42.5, 7.125], quat: [0, 0.7071068, 0, 0.7071068], vel: [1, 2, 3] };
 /** A ship of this hull carrying every pod its bays take (Pack Mule adds a bay), and the skills. */
@@ -113,6 +115,17 @@ const http = {
   CharacterSummary: [CharacterSummary, character],
   CharacterList: [CharacterList, { characters: [character], max: 6 }],
 } as const;
+
+describe('protocol: version', () => {
+  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01). A branch
+  // that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 3, and the history under the constant names every version up to it', () => {
+    expect(PROTOCOL_VERSION).toBe(3);
+    const source = MESSAGES_SOURCE;
+    for (let v = 1; v <= PROTOCOL_VERSION; v++) expect(source, `history line for ${v}`).toMatch(new RegExp(`^// ${v}: .+\\(P\\d\\.E\\d{2}\\.T\\d{2}\\)$`, 'm'));
+    expect(source).not.toMatch(new RegExp(`^// ${PROTOCOL_VERSION + 1}: `, 'm'));
+  });
+});
 
 describe('protocol: control messages', () => {
   it('covers every client message, server message and event kind', () => {

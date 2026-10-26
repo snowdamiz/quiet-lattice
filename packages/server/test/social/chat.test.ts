@@ -151,4 +151,40 @@ describe('chat', () => {
     h.advance(60_000);
     expect(h.social.chats.tracked).toBe(0);
   });
+
+  it('reaches a star system through its own sessions, not a scan of the shard, and follows a session to another system', () => {
+    const h = harness();
+    const ana = h.player('Ana');
+    const bex = h.player('Bex');
+    const crowd = Array.from({ length: 40 }, (_, i) => h.player(`Q${'abcdefghijklmnopqrst'[i % 20]}${'xy'[Math.floor(i / 20)]}`, { system: 1 }));
+    const cor = crowd[0]!;
+    const looked = { n: 0 };
+    const zoneOf = h.zones.zoneOf.bind(h.zones);
+    h.zones.zoneOf = (v) => (looked.n++, zoneOf(v));
+    ana.chat('system', 'near');
+    expect(looked.n).toBeLessThanOrEqual(4);
+    expect(chatLines(bex.take())).toEqual(['system:Ana:near']);
+
+    // Bex is handed to system 1 without the service hearing of it: a line in system 0 finds it gone, and one in system 1 finds it
+    h.zones.leave(bex.session);
+    const moved = h.zones.join(bex.session, { id: 'char-Bex', name: 'Bex', people: 'thalune', level: 1, homeSystem: 1 });
+    bex.zone = moved.zone;
+    ana.chat('system', 'still here?');
+    expect(bex.take()).toEqual([]);
+    cor.chat('system', 'welcome');
+    expect(chatLines(bex.take())).toEqual([`system:${cor.name}:welcome`]);
+    // back again, and this time the handoff says so
+    h.zones.leave(bex.session);
+    h.zones.join(bex.session, { id: 'char-Bex', name: 'Bex', people: 'thalune', level: 1, homeSystem: 0 });
+    h.social.moved(bex.session);
+    ana.chat('system', 'hello again');
+    expect(chatLines(bex.take())).toEqual(['system:Ana:hello again']);
+    expect(h.social.zoneIndex.size).toBe(42);
+    // a silent move into a system whose lines nobody has sent is caught by the index's rebuild, once a second
+    h.zones.leave(bex.session);
+    h.zones.join(bex.session, { id: 'char-Bex', name: 'Bex', people: 'thalune', level: 1, homeSystem: 1 });
+    h.advance(1000);
+    cor.chat('system', 'found you');
+    expect(chatLines(bex.take())).toEqual([`system:${cor.name}:found you`]);
+  });
 });
