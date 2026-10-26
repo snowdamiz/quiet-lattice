@@ -5,14 +5,16 @@
 import {
   DEN_KINDS,
   DEN_ROLES,
+  GALAXY_SEED,
+  Galaxy,
   MAX_TIER,
   TerrainSampler,
-  createPlanetParams,
   denPads,
+  describeGalaxySystem,
   landArea,
   planSurface,
   type Den,
-  type PlanetType,
+  type PlanetParams,
 } from '../src/world/index.ts';
 import { asJson, digestString } from './digest.ts';
 
@@ -37,9 +39,19 @@ export function homes(world: WorldFixture): Home[] {
   });
 }
 
+const galaxy = new Galaxy(GALAXY_SEED);
+
+/** A home planet as the game describes it (a people's home world with its capital, and as the mild variant if it is). */
+function homeParams(home: Home): PlanetParams {
+  const d = describeGalaxySystem(galaxy.systems[home.system]);
+  const b = d.bodies[d.home];
+  if (b.seed !== home.seed || b.type !== home.type || b.radius !== home.radius) throw new Error(`${home.name} is not system ${home.system}'s home world`);
+  return b.params as PlanetParams;
+}
+
 /** A home planet planned as the client plans it (cities, sites, then dens) at a tier, and its land (km²). */
 export function homeDens(home: Home, tier: number): { dens: Den[]; land: number } {
-  const params = createPlanetParams(home.seed, home.type as PlanetType, home.radius);
+  const params = homeParams(home);
   const sampler = new TerrainSampler(params);
   const { dens } = planSurface(params, sampler, { tier });
   return { dens, land: landArea(params, sampler) };

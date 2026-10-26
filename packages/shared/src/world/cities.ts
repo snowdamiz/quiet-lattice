@@ -3,11 +3,22 @@
 // between them) when one is built. Positions are in a city's own tangent plane: metres east (u)
 // and north (v) of its central plaza.
 import { Quaternion, Vector3 } from 'three';
+import type { PeopleId } from './homes.ts';
 import type { PlanetParams, TerrainSampler } from './planetgen.ts';
 import { Random, makeName } from './rng.ts';
 
 // (pure: a bundle that never plans cities, such as the terrain worker's, drops it and three with it)
 const Y = /* @__PURE__ */ new Vector3(0, 1, 0);
+
+/** How a city's streets run (DESIGN 5.1): rings and spokes round the plaza, a spiral winding out from it, or a grid. */
+export type PlanKind = 'radial' | 'spiral' | 'grid';
+
+/** A people's capital (DESIGN 5.1–5.4): its name, its street plan and the people who built it. */
+export interface CapitalSpec {
+  name: string;
+  plan: PlanKind;
+  people: PeopleId;
+}
 
 export interface City {
   index: number;
@@ -23,6 +34,8 @@ export interface City {
   relief: number;
   seed: number;
   name: string;
+  /** on a people's home world, its first city is their capital */
+  capital?: CapitalSpec;
 }
 
 export function planCities(p: PlanetParams, sampler: Pick<TerrainSampler, 'height'>): City[] {
@@ -68,7 +81,14 @@ export function planCities(p: PlanetParams, sampler: Pick<TerrainSampler, 'heigh
     if (lo < 2 || hi - lo > 380) continue;
     const quat = new Quaternion().setFromUnitVectors(Y, dir).multiply(new Quaternion().setFromAxisAngle(Y, rng.float(0, Math.PI * 2)));
     const name = makeName(rng, 2, 3);
-    cities.push({ index: cities.length, dir, quat, radius, base: Math.max(8, sum / k), relief: hi - lo, seed: rng.int(1, 1e9), name });
+    const city: City = { index: cities.length, dir, quat, radius, base: Math.max(8, sum / k), relief: hi - lo, seed: rng.int(1, 1e9), name };
+    // a people's capital is the first plain found, named and planned as they built it (the name above is still drawn, so
+    // the cities after it come out as they would have)
+    if (p.capital && !cities.length) {
+      city.name = p.capital.name;
+      city.capital = { ...p.capital };
+    }
+    cities.push(city);
   }
   return cities;
 }
@@ -81,8 +101,10 @@ export function cityPads(cities: City[]): number[] {
 }
 
 // ---------- the street plan ----------
-/** A city's streets: rings and spokes round the plaza (radial) or a grid of blocks. Shared by the layout, the walkers and the ground shader. */
+/** A city's streets: rings and spokes round the plaza (radial), a spiral and spokes (radial, with `arms`), or a grid of
+ * blocks. Shared by the layout, the walkers and the ground shader. */
 export interface StreetPlan {
+  /** rings (or a spiral's turns) and spokes, not a grid */
   radial: boolean;
   /** plaza radius (m) */
   plaza: number;
@@ -92,12 +114,16 @@ export interface StreetPlan {
   spokes: number;
   block: number;
   angle: number;
+  /** a spiral plan only: how many arms wind out from the plaza, one ring gap apart, each turning `arms` ring gaps out a
+   * turn (absent on every other plan) */
+  arms?: number;
 }
 
-export function streetPlan(city: Pick<City, 'seed'>): StreetPlan {
+/** A city's street plan: drawn from its seed, or for a capital of the kind its people build. */
+export function streetPlan(city: Pick<City, 'seed'> & { capital?: Pick<CapitalSpec, 'plan'> }): StreetPlan {
   const rng = new Random(city.seed ^ 0x57ee7);
   const radial = rng.chance(0.6);
-  return {
+  const plan: StreetPlan = {
     radial,
     plaza: rng.float(95, 140),
     width: rng.float(16, 24),
@@ -106,6 +132,21 @@ export function streetPlan(city: Pick<City, 'seed'>): StreetPlan {
     block: rng.float(115, 170),
     angle: rng.float(0, Math.PI),
   };
+  const kind = city.capital?.plan;
+  if (kind) {
+    plan.radial = kind !== 'grid';
+    // a spiral street climbing out from the plaza in one or two arms, crossed by a few straight stairs
+    if (kind === 'spiral') {
+      plan.arms = rng.int(1, 2);
+      plan.spokes = rng.pick([3, 4, 5]);
+    }
+  }
+  return plan;
+}
+
+/** What kind of plan a street plan is. */
+export function planKind(plan: StreetPlan): PlanKind {
+  return plan.arms ? 'spiral' : plan.radial ? 'radial' : 'grid';
 }
 
 /** Distance (m) from a point to the nearest street's centre line (0 in the plaza). */
@@ -114,9 +155,14 @@ export function streetDistance(plan: StreetPlan, u: number, v: number): number {
   if (r < plan.plaza) return 0;
   if (plan.radial) {
     const rr = r - plan.plaza;
-    const dRing = Math.abs(rr - Math.round(rr / plan.ringGap) * plan.ringGap);
-    const seg = (Math.PI * 2) / plan.spokes;
     const a = Math.atan2(v, u);
+    let dRing: number;
+    if (plan.arms) {
+      // the spiral's turns: at angle a, its arms pass at plaza + ringGap · (n + arms · a / 2π) for whole n
+      const s = rr / plan.ringGap - (plan.arms * a) / (Math.PI * 2);
+      dRing = Math.abs(s - Math.round(s)) * plan.ringGap;
+    } else dRing = Math.abs(rr - Math.round(rr / plan.ringGap) * plan.ringGap);
+    const seg = (Math.PI * 2) / plan.spokes;
     const da = Math.abs(a - Math.round(a / seg) * seg);
     return Math.min(dRing, da * r);
   }

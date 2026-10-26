@@ -1,36 +1,23 @@
-// Home systems of the three peoples and the frames a new character spawns in (DESIGN 5.1, docs/ARCHITECTURE.md §4).
-//
-// PLACEHOLDER until shared world generation lands: P1.E02.T04 adds `homeSystems()` (system 0 plus its two nearest
-// neighbours) and P1.E02.T01 moves `hashInts` into @astra/shared. Until then the Thalune live in system 0 and the Ixari
-// and Ulgani in systems 1 and 2, and the system seed is computed with a copy of the client's `hashInts`
-// (packages/client/src/math/rng.js), exactly as `Galaxy` derives it. Swap both for the shared functions when they exist.
+// Home systems of the three peoples and the frames a new character spawns in (DESIGN 5.1, docs/ARCHITECTURE.md §4), from
+// the shared world: `homeSystems()` and the galaxy every client builds (`Galaxy(GALAXY_SEED)`).
 import type { FrameId, PeopleId } from '@astra/shared/protocol';
+import { GALAXY_SEED, Galaxy, frameId, homeSystems } from '@astra/shared/world';
 
-/** The galaxy seed the client builds its `Galaxy` from (packages/client/src/Game.js). */
-export const GALAXY_SEED = 424242;
+let galaxy: Galaxy | null = null;
 
-const HOME_SYSTEM_BY_PEOPLE: Record<PeopleId, number> = { thalune: 0, ixari: 1, ulgani: 2 };
-
+/** The galaxy system a people's characters start in. */
 export function homeSystemOf(people: PeopleId): number {
-  return HOME_SYSTEM_BY_PEOPLE[people];
-}
-
-/** Same as the client's `hashInts` (rng.js): FNV-style mixing of 32-bit integers to an unsigned 32-bit hash. */
-function hashInts(...values: number[]): number {
-  let h = 2166136261 >>> 0;
-  for (const v of values) {
-    h ^= v | 0;
-    h = Math.imul(h, 16777619);
-    h ^= h >>> 13;
-    h = Math.imul(h, 0x5bd1e995);
-    h ^= h >>> 15;
-  }
-  return h >>> 0;
+  const home = homeSystems(GALAXY_SEED).find((h) => h.people === people);
+  if (!home) throw new RangeError(`no home system for people ${people}`);
+  return home.systemIndex;
 }
 
 /** The seed of galaxy system `index`, as `Galaxy` assigns it. */
 export function systemSeed(index: number): number {
-  return hashInts(GALAXY_SEED, index, 77);
+  galaxy ??= new Galaxy(GALAXY_SEED);
+  const sys = galaxy.systems[index];
+  if (!sys) throw new RangeError(`no system ${index} in galaxy ${GALAXY_SEED}`);
+  return sys.seed;
 }
 
 /** Zone id of a star system. */
@@ -40,5 +27,5 @@ export function systemZoneId(index: number): string {
 
 /** Frame id of a system's Waystation. */
 export function stationFrame(index: number): NonNullable<FrameId> {
-  return `${systemSeed(index)}:station`;
+  return frameId(systemSeed(index), 'station');
 }

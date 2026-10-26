@@ -161,3 +161,26 @@ Format: task id, question → choice → why.
   velocity is its orbital velocity plus its world's (the demo copied only the world's; nothing read either). `bodyPose`
   takes the parent's pose and throws for a moon without one; `systemPoses` orders parents. "Server uses it for frames" is
   met by a Node-tested API on plain arrays, wired in by P1.E03.T02/T03. → One frame rule for client, server and pirates.
+- **P1.E06.T01** Combat math choices → Flare's "60° cone" is the full width (30° each side); resistances never stack (most
+  specific of node, weapon, branch decides; lowest at equal specificity); a mob is Hollow if it carries every Hollow
+  resistance; killable bosses are 5 stars, the Patient unrated; XP per level rounded to whole points (level 1 costs 0);
+  damage is level-scaled only for mob and boss attacks (player abilities are flat until P1.E07 sets their numbers); aggro
+  is damage that halves every 3 s (forgotten below 0.5), a taunt forces the target 4 s without adding threat, Veil drops
+  the caster's threat, any damage breaks Harmonic; sentinels and Wardens ignore the whole Gravitic branch (×0), Collapse
+  Star excepted. DESIGN 12.1's "whoever hurt it most recently" is reworded to match. → Each reads DESIGN's text plainly;
+  aggro by decaying threat stops one chip hit stealing a mob.
+- **P1.E06.T01 (balance flag)** Mob damage scales ×7 by level 50 while player health stays 100–180 (a level-50 Pack Alpha
+  hits for 245). → Left as DESIGN 12.1 writes it; the Phase 1 balance pass (P1.E16) must address it.
+- **P1.E06.T01 (follow-ups)** Stone-touched herds keep their body plan's (or apex boss row's) health and attacks, add the
+  stone-touched resistances, and rate the higher threat; a row with its own base damage rescales its body-plan attacks so
+  the heaviest equals it; Slam's sphere is 6 + 12 × reach m (reach 0–1, mapped from fall height by P1.E07.T04); Crush and
+  Singularity take Well's 12 m sphere; AGGRO and XP_CURVE moved into the data tables.
+- **P1.E02.T04** "Two nearest neighbours" → the pair of system 0's neighbours whose triangle with system 0 has the shortest
+  longest side (ties to lower ids), the Ixari taking the nearer: systems 0 (Thalune, lush, Sarelun radial), 59 (Ixari,
+  exotic, Quavel spiral) and 1 (Ulgani, toxic mild, Belost grid), 9.55 / 9.91 / 12.18 ly apart (system 60, at 9.49 ly,
+  is 18.7 ly from 59). DESIGN 5.1 now says ~12 ly. → New players of the three peoples meet within one warp.
+- **P1.E02.T04** The mild toxic world stays type `toxic` with `params.mist` (line 0.3 × mountain height + 400 m, a 150 m
+  band, rate 1.2) and no ship hazard; `mistHazard` is the one hazard function and the client's suit drain calls it. The
+  capital is the first plain the existing planner finds, renamed and given its plan (radial, spiral new, grid); every
+  random draw stays in order, so the rest of each home system is unchanged. The forcing lives only in shared
+  `describeGalaxySystem`; the server's home systems come from `homeSystems()`.
