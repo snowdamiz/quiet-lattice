@@ -184,3 +184,15 @@ Format: task id, question → choice → why.
   capital is the first plain the existing planner finds, renamed and given its plan (radial, spiral new, grid); every
   random draw stays in order, so the rest of each home system is unchanged. The forcing lives only in shared
   `describeGalaxySystem`; the server's home systems come from `homeSystems()`.
+- **P1.E12.T01** Ship model → a weapon fits a hardpoint of its own size or larger; only weapons go on hardpoints (DESIGN 10
+  gives platings and husk plating no utility slot — P2.E20.T02 needs one); cargo pods are a count, capacity = the hull's
+  bays + Pack Mule; hardpoint ids `s1/m1/l1…` map to `HP_<size>_*` markers sorted per size by name (digits numerically);
+  ability slots come from the hull roster (2–5), over DESIGN 9.1's flat 4 (9.1 reworded below); the Lark carries one Pulse
+  Lasers module (both barrels) on `s1`; shop upgrades map to their Pilot nodes; `ship.speed = v` divides by the modified
+  space speed (with Photon Thrusters, pulse exit holds 400 m/s instead of drifting to 500). Client bundle +45 kB gzip.
+- **P1.E12.T01** Server flight caps (for P1.E03.T04) → windows of ≥ 1 s split at every mode or frame change; a window
+  passes within ×1.1 + 50 m/s of the larger allowance at its two end poses (never a mid-window pose a cheat could fake);
+  pulse clearance computed by the server from the pose; after a mode change the previous allowance decays at 60 m/s² in
+  flight and fades e^(−4t) entering the pulse drive; in the air the cap is the boost cap until a per-hull air model
+  exists. → Honest flight peaks at 0.88–0.91× the allowance across every hull and manoeuvre simulated; a cheat gains at
+  most ~1.2× in flight and 1.1× in pulse, acceptable for Phase 1.

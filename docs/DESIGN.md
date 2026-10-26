@@ -186,7 +186,7 @@ The network remembers you from the moment of the Touch. When your health would h
 
 **Tiers.** Tier I nodes from level 1, Tier II from level 15, Tier III from level 30, capstones from level 45 and a story chapter. Within a branch each node needs one node of the tier below (any). Conjunctions need Tier II in both branches.
 
-**Slots.** 6 ground actives (keys 1–6) and 4 ship actives (keys 1–4 while flying). The multitool beam stays on LMB as the base tool (mining); ship lasers stay on LMB as the base gun. Passives are always on. Swap slots anywhere out of combat.
+**Slots.** 6 ground actives (keys 1–6) and as many ship actives as the hull has ability slots, 2–5 (keys 1–5 while flying; DESIGN 10.2). The multitool beam stays on LMB as the base tool (mining); ship lasers stay on LMB as the base gun. Passives are always on. Swap slots anywhere out of combat.
 
 **Unlocks.**
 - **Memory fragments.** Every monolith you touch grants one fragment keyed to its world's branch: Gravitic on barren, dead and frozen worlds; Thermal on volcanic, inferno and desert; Resonance on exotic, storm and toxic; Symbiotic on lush worlds (and any world where you have analyzed every species); Void on irradiated, corrosive and crushing worlds (usable only with Free Reaches standing). Tier I nodes unlock with 1 fragment of the branch, Tier II with 3, Tier III with 6.
