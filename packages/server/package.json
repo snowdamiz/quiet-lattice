@@ -9,6 +9,7 @@
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
     "db:migrate": "tsx src/db/migrate.ts",
+    "bench": "tsx test/zone.bench.ts",
     "db:generate": "sh -c 'drizzle-kit generate \"$@\" && prettier --log-level warn --write drizzle' --"
   },
   "dependencies": {

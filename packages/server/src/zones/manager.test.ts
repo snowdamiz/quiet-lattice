@@ -1,0 +1,246 @@
+// ZoneManager: zones open on the first join, many run side by side, empty ones sleep and unload; the fixed-step loop
+// catches up a little and skips the rest; overruns are logged; inputs and acks reach the right zone.
+import { describe, expect, it } from 'vitest';
+import { systemSeed } from '../world/home.ts';
+import { ZoneManager, type ZoneCharacter } from './manager.ts';
+import { INPUT_LIMITS, type ZoneViewer } from './zone.ts';
+
+class Sink implements ZoneViewer {
+  frames: Uint8Array[] = [];
+  constructor(readonly id: number) {}
+  sendBinary(data: Uint8Array): void {
+    this.frames.push(data);
+  }
+}
+
+interface LogLine {
+  level: string;
+  obj: Record<string, unknown>;
+  msg: string;
+}
+
+function setup(opts: { overrunMs?: number } = {}) {
+  let mono = 1000;
+  let world = 5e6;
+  const lines: LogLine[] = [];
+  const at = (level: string) => (obj: object, msg: string) => lines.push({ level, obj: obj as Record<string, unknown>, msg });
+  const zones = new ZoneManager({
+    clock: { now: () => world + (mono - 1000) / 1000 },
+    mono: () => mono,
+    log: { info: at('info'), warn: at('warn'), debug: at('debug'), error: at('error') },
+    sleepAfterMs: 1000,
+    unloadAfterMs: 5000,
+    ...opts,
+  });
+  return {
+    zones,
+    lines,
+    /** moves the monotonic clock on and runs whatever is due */
+    advance(ms: number) {
+      mono += ms;
+      return zones.advance(mono);
+    },
+    setWorld(t: number) {
+      world = t;
+    },
+  };
+}
+
+const character = (homeSystem: number, name = 'Ves'): ZoneCharacter => ({ id: `c-${name}`, name, people: 'thalune', level: 4, homeSystem });
+
+describe('ZoneManager', () => {
+  it('opens a zone per home system on first join and routes sessions to it', () => {
+    const { zones, lines } = setup();
+    expect(zones.zones).toEqual([]);
+    const a = new Sink(1);
+    const b = new Sink(2);
+    const c = new Sink(3);
+    const ja = zones.join(a, character(0, 'Ves'));
+    const jb = zones.join(b, character(0, 'Ora'));
+    const jc = zones.join(c, character(2, 'Tam'));
+    expect(ja.zone).toBe(jb.zone);
+    expect(ja.zone.id).toBe('sys:0');
+    expect(jc.zone.id).toBe('sys:2');
+    expect(zones.zones.map((z) => z.id).sort()).toEqual(['sys:0', 'sys:2']);
+    expect(lines.filter((l) => l.msg === 'zone loaded')).toHaveLength(2);
+    expect(zones.zoneOf(c)).toBe(jc.zone);
+    expect(() => zones.join(a, character(1))).toThrow(/already/);
+
+    // docked at the home Waystation, as welcome says
+    expect(jc.zone.system.seed).toBe(systemSeed(2));
+    expect(jc.pose).toEqual({ frame: `${systemSeed(2)}:station`, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] });
+    expect(jc.mode).toBe('docked');
+    expect(jc.zone.entity(jc.entityId)!.fields).toEqual({ kind: 'player', ...jc.pose, mode: 'docked', name: 'Tam', people: 'thalune', level: 4 });
+    expect(ja.entityId).not.toBe(jb.entityId);
+  });
+
+  it('ticks every awake zone at a fixed step, one step apart in world time even when catching up', () => {
+    const { zones, advance, lines } = setup();
+    const a = zones.join(new Sink(1), character(0)).zone;
+    const b = zones.join(new Sink(2), character(1)).zone;
+    expect(advance(49)).toBe(0);
+    expect(advance(1)).toBe(1);
+    expect([a.tick, b.tick]).toEqual([1, 1]);
+    const t1 = a.time;
+    // two steps late: both run now, each at the world time it was due
+    expect(advance(100)).toBe(2);
+    expect(a.tick).toBe(3);
+    expect(a.time - t1).toBeCloseTo(0.1, 6);
+    expect(b.time).toBe(a.time);
+    // ten steps late: three run, the rest are skipped and logged
+    expect(advance(500)).toBe(3);
+    expect(zones.skippedTicks).toBe(7);
+    expect(lines.find((l) => l.msg.includes('skipped'))?.obj).toMatchObject({ skipped: 7 });
+    expect(advance(50)).toBe(1);
+    expect(zones.ticks).toBe(7);
+  });
+
+  it('never runs world time backwards', () => {
+    const { zones, advance, setWorld } = setup();
+    const z = zones.join(new Sink(1), character(0)).zone;
+    advance(50);
+    const t = z.time;
+    setWorld(1); // the clock jumps back
+    advance(50);
+    expect(z.time).toBe(t);
+  });
+
+  it('puts an empty zone to sleep, wakes it on join, and unloads it after the grace period', () => {
+    const { zones, advance, lines } = setup();
+    const s1 = new Sink(1);
+    const zone = zones.join(s1, character(0)).zone;
+    advance(50);
+    expect(zones.leave(s1)).toBe(true);
+    expect(zones.leave(s1)).toBe(false);
+    expect(zone.entityCount).toBe(0);
+    advance(950); // empty for less than a second: still ticking
+    expect(zones.isAsleep('sys:0')).toBe(false);
+    advance(100);
+    expect(zones.isAsleep('sys:0')).toBe(true);
+    const asleepAt = zone.tick;
+    advance(1000);
+    expect(zone.tick).toBe(asleepAt);
+
+    // a join wakes it, with its state intact
+    const s2 = new Sink(2);
+    expect(zones.join(s2, character(0)).zone).toBe(zone);
+    expect(zones.isAsleep('sys:0')).toBe(false);
+    advance(50);
+    expect(zone.tick).toBe(asleepAt + 1);
+    expect(s2.frames).toHaveLength(1);
+
+    zones.leave(s2);
+    for (let i = 0; i < 120; i++) advance(50);
+    expect(zones.zone('sys:0')).toBeUndefined();
+    expect(lines.some((l) => l.msg === 'zone unloaded' && l.obj.zone === 'sys:0')).toBe(true);
+    // the next join loads a fresh one
+    const fresh = zones.join(new Sink(3), character(0)).zone;
+    expect(fresh).not.toBe(zone);
+    expect(fresh.tick).toBe(0);
+  });
+
+  it('logs overrunning ticks with their duration, at most once a second per zone', () => {
+    const { zones, advance, lines } = setup({ overrunMs: 0 });
+    zones.join(new Sink(1), character(0));
+    for (let i = 0; i < 30; i++) advance(50);
+    const overruns = lines.filter((l) => l.msg === 'zone tick overran');
+    expect(overruns.length).toBe(2); // at 0 s and 1 s
+    expect(overruns[0]!.obj).toMatchObject({ zone: 'sys:0', entities: 1, sessions: 1 });
+    expect(overruns[0]!.obj.ms).toBeGreaterThan(0);
+    expect(overruns[1]!.obj.overrunsSinceLastLog).toBe(20);
+    expect(zones.metrics()[0]!.overruns).toBe(30);
+  });
+
+  it('reports per-zone metrics', () => {
+    const { zones, advance } = setup();
+    zones.join(new Sink(1), character(0));
+    zones.join(new Sink(2), character(0, 'Ora'));
+    zones.join(new Sink(3), character(1, 'Tam'));
+    for (let i = 0; i < 10; i++) advance(50);
+    const m = zones.metrics().sort((a, b) => a.id.localeCompare(b.id));
+    expect(m.map((z) => [z.id, z.system, z.tick, z.entities, z.sessions, z.asleep])).toEqual([
+      ['sys:0', 0, 10, 2, 2, false],
+      ['sys:1', 1, 10, 1, 1, false],
+    ]);
+    for (const z of m) {
+      expect(z.p50).toBeGreaterThan(0);
+      expect(z.p95).toBeGreaterThanOrEqual(z.p50);
+      expect(z.max).toBeGreaterThanOrEqual(z.p95);
+    }
+  });
+
+  it('routes inputs and acks to the session’s zone, clamping poses and marking them unvalidated', () => {
+    const { zones, advance } = setup();
+    const s = new Sink(1);
+    const { zone, entityId, pose } = zones.join(s, character(0));
+    const input = (seq: number, p: Partial<typeof pose> = {}) => ({
+      t: 'input' as const,
+      seq,
+      time: 0,
+      mode: 'ship' as const,
+      pose: { ...pose, ...p },
+      buttons: 3,
+    });
+
+    expect(zones.input(s, input(1, { pos: [1e15, 0, 0], vel: [0, -1e12, 0], quat: [0, 0, 0, 1.005] }))).toBe('ok');
+    const e = zone.entity(entityId)!;
+    expect(e.fields.pos).toEqual([INPUT_LIMITS.maxDistance, 0, 0]);
+    expect(e.fields.vel).toEqual([0, -INPUT_LIMITS.maxSpeed, 0]);
+    expect(e.fields.quat).toEqual([0, 0, 0, 1]);
+    expect(e.fields.mode).toBe('ship');
+    expect(e.unvalidated).toBe(true);
+    expect(e.input).toMatchObject({ seq: 1, buttons: 3 });
+    expect(e.cls).toBe('ship');
+
+    expect(zones.input(s, input(1))).toBe('stale');
+    expect(zones.input(s, input(2, { frame: '12345:0' }))).toBe('frame');
+    expect(zones.input(s, input(3, { frame: null, pos: [5, 6, 7] }))).toBe('ok');
+    expect(zone.entity(entityId)!.fields.frame).toBeNull();
+    expect(zones.input(new Sink(9), input(1))).toBe('unknown');
+
+    advance(50);
+    expect(zones.ack(s, zone.tick)).toBe(true);
+    expect(zones.ack(s, zone.tick + 5)).toBe(false);
+    expect(zones.ack(new Sink(9), 1)).toBe(false);
+    expect(zone.historyOf(s)!.acked).toBe(1);
+  });
+
+  it('forgets a session whose entity its zone despawned, tells the gateway, and lets the zone empty', () => {
+    const { zones, advance } = setup();
+    const heard: [number, string][] = [];
+    zones.onViewerRemoved = (viewer, zone) => heard.push([viewer.id, zone.id]);
+    const s = new Sink(1);
+    const { zone, entityId, pose } = zones.join(s, character(0));
+    advance(50);
+    zone.despawn(entityId);
+    expect(heard).toEqual([[1, 'sys:0']]);
+    expect(zones.zoneOf(s)).toBeUndefined();
+    expect(zones.input(s, { t: 'input', seq: 1, time: 0, mode: 'ship', pose, buttons: 0 })).toBe('unknown');
+    expect(zones.leave(s)).toBe(false);
+    for (let i = 0; i < 25; i++) advance(50);
+    expect(zones.isAsleep('sys:0')).toBe(true);
+    // the session can be put back in play
+    expect(zones.join(s, character(0)).zone).toBe(zone);
+    expect(zones.isAsleep('sys:0')).toBe(false);
+    expect(heard).toHaveLength(1);
+  });
+
+  it('runs its own timer at the tick rate', async () => {
+    const zones = new ZoneManager({ clock: { now: () => performance.now() / 1000 }, tickHz: 50 });
+    const zone = zones.join(new Sink(1), character(0)).zone;
+    const started = performance.now();
+    zones.start();
+    zones.start(); // twice is once
+    expect(zones.running).toBe(true);
+    await new Promise((r) => setTimeout(r, 250));
+    zones.stop();
+    const elapsed = performance.now() - started;
+    expect(zones.running).toBe(false);
+    const ticks = zone.tick;
+    expect(ticks).toBeGreaterThanOrEqual(5);
+    // never more than one per 20 ms step, however late the timers fire
+    expect(ticks).toBeLessThanOrEqual(Math.floor(elapsed / 20));
+    await new Promise((r) => setTimeout(r, 60));
+    expect(zone.tick).toBe(ticks);
+  });
+});
