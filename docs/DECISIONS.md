@@ -146,3 +146,14 @@ Format: task id, question → choice → why.
   budget; home system by people is a placeholder index until P1.E02.T04; serverTime from a shard epoch of 2026-01-01Z
   advanced by a monotonic clock until P1.E03.T06; refusals map server errors to `full`, join timeout to `character`. →
   Each bounds memory or keeps a reconnecting player from waiting on a dead socket; numbers are config where tests need it.
+- **P1.E02.T02** Body order and indices → each planet followed by its moons, innermost first; `index` is the frame-id body
+  index, `slot` keeps the client's old `Planet.index` (orbit or moon number). Params are embedded in full (SolarSystem
+  deep-copies them). Quaternion parts are written as +0 (JSON turns −0 into 0). `describeGalaxySystem(info)` in shared is
+  the one way to describe galaxy system i (system 0's home world is lush there, not in the client). → Frame ids line up
+  with the client array, client and server describe the same system, and the description is pure JSON.
+- **P1.E02.T02** The station spec covers orbit, size, soi and seed; the station's layout (pads, bays, colliders) and the
+  belt's asteroids are still generated in the client from the seed. → Both must move to shared before docking (P1.E11.T02)
+  and mining (P1.E13.T01) become server-authoritative; recorded here so those tasks pick them up.
+- **P1.E02.T02** The world-424242 fixture was regenerated once to add orbits, rotations, tilts, gravity, soi, rings, star,
+  outer orbit, belt and station (no existing value changed; gas giants' params gained a digest). → Pins every number the
+  description produces.
