@@ -4,7 +4,9 @@
 //
 // The layout is the expensive case: everything is crowded round the home Waystation, so nearly every entity is in every
 // session's interest set and every session gets a 150–200-entity delta every tick. Sessions acknowledge each snapshot 1–4
-// ticks later (a 50–200 ms round trip), so deltas are diffed against several different baselines.
+// ticks later (a 50–200 ms round trip), so deltas are diffed against several different baselines. Every mover keeps
+// sending its pose in the frame it was placed in, so the zone re-expresses each one beyond that frame's sphere of
+// influence (most ships, and the far ones) in the frame it belongs in, every tick.
 //
 // The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
 // machine does not inflate. Wall time per tick is printed beside it for information, with the load average.
@@ -34,6 +36,7 @@ class Sink implements ZoneViewer {
 
 interface Mover {
   id: number;
+  frame: string;
   pos: Vec3;
   vel: Vec3;
   quat: Quat;
@@ -71,7 +74,7 @@ function trial(): TrialResult {
     const quat = randomQuat();
     const mode = i % 3 ? 'ship' : 'foot';
     const id = zone.join(sink, { kind: 'player', frame: station, pos, quat, vel: [0, 0, 0], mode, name: `Pilot ${i}`, people: 'thalune', level: 5 });
-    movers.push({ id, pos, quat, vel: around(10), viewer: sink, seq: 0 });
+    movers.push({ id, frame: station, pos, quat, vel: around(10), viewer: sink, seq: 0 });
   }
 
   // the rest: ships out to 30 km, NPCs, mobs and loot close in, a few pods; one in ten far away on the home world
@@ -88,11 +91,12 @@ function trial(): TrialResult {
       const far = i % 10 === 9;
       const pos = far ? ([rng.float(-1, 1) * 3e6, rng.float(-1, 1) * 3e6, rng.float(-1, 1) * 3e6] as Vec3) : around(r);
       const quat = randomQuat();
-      const init: EntityInit = { kind, frame: far ? home : station, pos, quat, vel: [0, 0, 0], mode: kind === 'mob' ? 'idle' : 'ship' };
+      const frame = far ? home : station;
+      const init: EntityInit = { kind, frame, pos, quat, vel: [0, 0, 0], mode: kind === 'mob' ? 'idle' : 'ship' };
       if (kind === 'mob') Object.assign(init, { species: i, level: 3, hp: 1 });
       if (kind === 'ship') Object.assign(init, { hull: 'kestrel', hp: 1, shield: 1, heat: 0 });
       if (kind === 'npc') Object.assign(init, { name: `Crew ${i}`, people: 'ixari' });
-      movers.push({ id: zone.spawn(init), pos, quat, vel: around(kind === 'ship' ? 200 : 4), seq: 0 });
+      movers.push({ id: zone.spawn(init), frame, pos, quat, vel: around(kind === 'ship' ? 200 : 4), seq: 0 });
     }
   }
   if (zone.entityCount !== ENTITIES) throw new Error(`expected ${ENTITIES} entities, have ${zone.entityCount}`);
@@ -107,11 +111,11 @@ function trial(): TrialResult {
       if (rng.next() < 0.05) m.vel = around(m.viewer ? 10 : 4);
       if (rng.next() < 0.3) m.quat = randomQuat();
       if (m.viewer) {
-        zone.input(m.viewer, { t: 'input', seq: ++m.seq, time, mode: 'ship', pose: { frame: station, pos: m.pos, quat: m.quat, vel: m.vel }, buttons: 0 });
+        zone.input(m.viewer, { t: 'input', seq: ++m.seq, time, mode: 'ship', pose: { frame: m.frame, pos: m.pos, quat: m.quat, vel: m.vel }, buttons: 0 });
       } else {
         // an occasional hp change, as combat will make
         const extra = rng.next() < 0.02 ? { hp: rng.next() } : {};
-        zone.patch(m.id, { pos: m.pos, quat: m.quat, vel: m.vel, ...extra });
+        zone.patch(m.id, { frame: m.frame, pos: m.pos, quat: m.quat, vel: m.vel, ...extra });
       }
     }
   }

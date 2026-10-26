@@ -1,7 +1,8 @@
 // Zones over the wire, against the dockerised Postgres and Redis: players who join enter their home system's zone and
 // receive binary snapshots every tick, which they apply onto their acknowledged baselines and acknowledge; they see each
-// other, see each other move after `input`, and see each other go.
-import { PROTOCOL_VERSION, type PeopleId } from '@astra/shared/protocol';
+// other, see each other move after `input` (in the frame the zone re-expresses them in), and see each other go.
+import { FrameId, PROTOCOL_VERSION, type PeopleId } from '@astra/shared/protocol';
+import { frameIdOf, localToWorld, systemPoses, type Quat, type Vec3 } from '@astra/shared/world';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RunningServer } from '../src/server.ts';
 import { homeSystemOf, systemSeed } from '../src/world/home.ts';
@@ -178,5 +179,31 @@ describe('zones over the wire', () => {
     const pre = [...server.ws.registry.sessions].find((x) => x.accountId === acct.accountId)!;
     expect(pre.invalidMessages).toBe(1);
     s.close();
+  });
+
+  it('shows a player who flies out of the Waystation’s sphere of influence in its world’s frame, where it flew to', async () => {
+    const a = await player('thalune');
+    const b = await player('thalune');
+    const d = server.zones.zone(a.welcome.zone.id)!.system;
+    const station = frameIdOf(d.seed, 'station');
+    const home = frameIdOf(d.seed, d.home);
+    await waitFor(() => b.client.latest.get(a.entityId)?.frame === station, 5000, 'b to see a at the Waystation');
+    // 6 km out: beyond the Waystation's 4.5 km sphere and its 5% margin
+    const sent = { frame: station, pos: [0, 800, 6000] as Vec3, quat: [0, 0, 0, 1] as Quat, vel: [0, 0, 120] as Vec3 };
+    a.sock.send({ t: 'input', seq: 1, time: a.welcome.serverTime, mode: 'ship', pose: sent, buttons: 0 });
+    await waitFor(() => b.client.latest.get(a.entityId)?.frame === home, 5000, 'b to see a in the home world’s frame');
+    expect(FrameId.safeParse(home).success).toBe(true);
+    // at the tick it changed frame it was where it flew to, to the centimetre
+    const snap = b.client.snapshots.find((s) => s.entities.some((e) => e.id === a.entityId && e.frame === home))!;
+    const seen = b.client.states.get(snap.tick)!.get(a.entityId)!;
+    const poses = systemPoses(d, snap.time);
+    const flown = localToWorld(poses.station, sent.pos);
+    const shown = localToWorld(poses.bodies[d.home]!, seen.pos!);
+    expect(Math.hypot(shown[0] - flown[0], shown[1] - flown[1], shown[2] - flown[2])).toBeLessThan(0.01);
+    expect(Math.hypot(...seen.vel!)).toBeCloseTo(120, 9);
+    expect(a.errors).toEqual([]);
+    expect(b.errors).toEqual([]);
+    a.sock.close();
+    b.sock.close();
   });
 });

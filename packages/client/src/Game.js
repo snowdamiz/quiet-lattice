@@ -19,7 +19,7 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard } from '@astra/shared/world';
+import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame } from '@astra/shared/world';
 import { Objectives } from './gameplay/Objectives.js';
 import { Asteroids } from './universe/Asteroids.js';
 import { Inventory } from './gameplay/Inventory.js';
@@ -305,16 +305,11 @@ export class Game {
   }
 
   // ---------- frame selection ----------
+  // The frame the entity belongs in, by the rule the server's zones use (shared selectFrame): the station inside its
+  // sphere of influence, else the innermost planet or moon, staying in the current frame until 5% beyond its sphere.
   chooseFrame(state) {
     const wp = state.worldPosition(_v1);
-    const cur = state.frame;
-    // hysteresis: stay in current frame until 5% beyond its SOI
-    if (cur && cur.distanceTo(wp) < cur.soi * 1.05) {
-      const inner = this.system.frameFor(wp, [this.station]);
-      if (inner && inner !== cur && inner.soi < cur.soi) return inner;
-      return cur;
-    }
-    return this.system.frameFor(wp, [this.station]);
+    return selectFrame({ bodies: this.system.planets, station: this.station }, state.frame ?? null, (f) => f.distanceTo(wp));
   }
 
   // ---------- main loop ----------
