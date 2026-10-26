@@ -20,7 +20,10 @@
     "db:migrate": "pnpm --filter @astra/server db:migrate",
     "test": "vitest run",
     "smoke": "pnpm --filter @astra/tools smoke",
-    "gate:removed": "tsx packages/tools/src/gates/removed.ts"
+    "gate:removed": "tsx packages/tools/src/gates/removed.ts",
+    "art:validate": "tsx packages/tools/src/art/cli.ts validate",
+    "art:export": "tsx packages/tools/src/art/cli.ts export",
+    "art:test": "tsx packages/tools/src/art/cli.ts test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
