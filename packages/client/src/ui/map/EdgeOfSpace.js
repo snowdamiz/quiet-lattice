@@ -4,21 +4,15 @@
 // into streaks, sparks fall towards it, and the space-time grid bends and reddens as it meets it.
 // Beyond it there is nothing at all. (The universe expands into it, but for now the front is still.)
 import * as THREE from 'three';
+// (where the membrane stands, EDGE_X, and how it bows back towards the galaxy, EDGE_CURVE_R, are the world's)
+import { EDGE_X, EDGE_CURVE_R as CURVE_R, edgeX } from '@astra/shared/world';
 import { mapNoiseGLSL } from './mapCommon.js';
 
-// light years: far past our galaxy and its neighbours, about 3 million ly out
-export const EDGE_X = 3.1e6;
 // the edge's own random stream (its streaks and sparks), shared by the map and the sky in flight
 export const EDGE_SEED = 0xed9e;
 // every other length here is laid out on a 1:K scale
 const K = 1e4;
-const CURVE_R = 2600 * K; // the membrane bows back gently towards the galaxy, a wall seen from inside a sphere
 const SPAN = 1300 * K;
-
-// x of the membrane at a height y and depth z
-export function edgeX(y, z) {
-  return EDGE_X - (y * y + z * z) / (2 * CURVE_R);
-}
 
 // The nearest way out from a galactic position: the direction to the membrane (into `out`), and the
 // distance in ly returned. (The cap is, near enough, part of a sphere CURVE_R across.)

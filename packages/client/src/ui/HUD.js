@@ -1,7 +1,7 @@
 // DOM heads-up display.
 import * as THREE from 'three';
 import { RESOURCES } from '../gameplay/Inventory.js';
-import { LY, fmtLy } from '../universe/Cosmos.js';
+import { LY, fmtLy } from '@astra/shared/world';
 import { EdgeCompass } from './EdgeCompass.js';
 
 const _v = new THREE.Vector3();

@@ -1,8 +1,8 @@
-// Seeded 3D simplex noise (Gustavson) plus fractal helpers.
-// Pure JS so it runs identically in workers and on the main thread; terrain
-// collision queries rely on that determinism.
-import { mulberry32 } from './rng.js';
+// Seeded 3D simplex noise (Gustavson) plus fractal helpers. Plain arithmetic, so it gives the same values in the
+// terrain workers, on the main thread and on the server; terrain collision queries rely on that.
+import { mulberry32 } from './rng.ts';
 
+// prettier-ignore
 const GRAD3 = new Float64Array([
   1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0,
   1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1,
@@ -13,6 +13,9 @@ const F3 = 1 / 3;
 const G3 = 1 / 6;
 
 export class Simplex3 {
+  perm: Uint8Array;
+  permMod12: Uint8Array;
+
   constructor(seed = 1) {
     const rng = mulberry32(seed);
     const p = new Uint8Array(256);
@@ -31,10 +34,10 @@ export class Simplex3 {
     }
   }
 
-  noise(xin, yin, zin) {
+  noise(xin: number, yin: number, zin: number): number {
     const perm = this.perm;
     const permMod12 = this.permMod12;
-    let n0, n1, n2, n3;
+    let n0: number, n1: number, n2: number, n3: number;
     const s = (xin + yin + zin) * F3;
     const i = Math.floor(xin + s);
     const j = Math.floor(yin + s);
@@ -43,7 +46,8 @@ export class Simplex3 {
     const x0 = xin - (i - t);
     const y0 = yin - (j - t);
     const z0 = zin - (k - t);
-    let i1, j1, k1, i2, j2, k2;
+    let i1: number, j1: number, k1: number, i2: number, j2: number, k2: number;
+    // prettier-ignore
     if (x0 >= y0) {
       if (y0 >= z0) { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0; }
       else if (x0 >= z0) { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 0; k2 = 1; }
@@ -96,8 +100,8 @@ export class Simplex3 {
     return 32 * (n0 + n1 + n2 + n3);
   }
 
-  // Fractal brownian motion, roughly in [-1, 1].
-  fbm(x, y, z, octaves = 5, lacunarity = 2.0, gain = 0.5) {
+  /** Fractal brownian motion, roughly in [-1, 1]. */
+  fbm(x: number, y: number, z: number, octaves = 5, lacunarity = 2.0, gain = 0.5): number {
     let sum = 0;
     let amp = 1;
     let norm = 0;
@@ -112,9 +116,8 @@ export class Simplex3 {
     return sum / norm;
   }
 
-  // Ridged multifractal in [0, 1]; each octave is weighted by the previous one
-  // so ridges stay sharp while valleys stay smooth.
-  ridged(x, y, z, octaves = 6, lacunarity = 2.0, gain = 0.5, sharpness = 2.0) {
+  /** Ridged multifractal in [0, 1]; each octave is weighted by the previous one so ridges stay sharp while valleys stay smooth. */
+  ridged(x: number, y: number, z: number, octaves = 6, lacunarity = 2.0, gain = 0.5, sharpness = 2.0): number {
     let sum = 0;
     let amp = 0.5;
     let weight = 1;
@@ -134,8 +137,8 @@ export class Simplex3 {
     return sum / norm;
   }
 
-  // Billowy noise (abs of fbm), good for dunes and puffy shapes.
-  billow(x, y, z, octaves = 4, lacunarity = 2.0, gain = 0.5) {
+  /** Billowy noise (abs of fbm), good for dunes and puffy shapes. */
+  billow(x: number, y: number, z: number, octaves = 4, lacunarity = 2.0, gain = 0.5): number {
     let sum = 0;
     let amp = 1;
     let norm = 0;
@@ -151,15 +154,15 @@ export class Simplex3 {
   }
 }
 
-export function smoothstep(e0, e1, x) {
+export function smoothstep(e0: number, e1: number, x: number): number {
   const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
   return t * t * (3 - 2 * t);
 }
 
-export function lerp(a, b, t) {
+export function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
-export function clamp(x, a, b) {
+export function clamp(x: number, a: number, b: number): number {
   return x < a ? a : x > b ? b : x;
 }

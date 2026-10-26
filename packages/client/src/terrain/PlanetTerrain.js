@@ -1,7 +1,7 @@
 // Cube-sphere quadtree LOD terrain. Chunks are generated in workers and
 // swapped in only when a full set of children is ready, so there are no holes.
 import * as THREE from 'three';
-import { cubeToSphere, sphereToCube } from './planetgen.js';
+import { cubeToSphere, sphereToCube } from '@astra/shared/world';
 
 export const SEGMENTS = 32;
 const N = SEGMENTS + 1;

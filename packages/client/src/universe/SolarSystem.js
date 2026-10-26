@@ -1,7 +1,6 @@
 // Procedural star system: star, planets, moons, a space station and an asteroid belt.
 import * as THREE from 'three';
-import { Random, makeName, romanNumeral } from '../math/rng.js';
-import { createPlanetParams } from '../terrain/planetgen.js';
+import { Random, makeName, romanNumeral, createPlanetParams } from '@astra/shared/world';
 import { Star } from './Star.js';
 import { Planet } from './Planet.js';
 

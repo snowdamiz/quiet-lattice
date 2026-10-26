@@ -5,7 +5,7 @@
 // the finished frame; the readouts under it are DOM.
 import * as THREE from 'three';
 import { edgeBearing } from './map/EdgeOfSpace.js';
-import { fmtLy } from '../universe/Cosmos.js';
+import { fmtLy } from '@astra/shared/world';
 
 // css pixels: the ball's box, and its top edge
 export const COMPASS_SIZE = 92;
