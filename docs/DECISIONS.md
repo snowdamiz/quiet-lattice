@@ -51,3 +51,47 @@ Format: task id, question → choice → why.
 - **P1.E02.T08 (review)** Snapshot encoding cost → `sanitizeEntity` is exported; zones sanitise each entity once per tick,
   keep that as the sent state, and encode per client with `sanitized: true`. → Validating per client per entity tripled the
   cost (8.4 ms for 25 players × 200 entities); once per tick it is about 0.2 ms.
+- **P1.E02.T01** Golden coverage: "home planet" read as each of systems 0–9's `SolarSystem.homePlanet` (10 planets), system 0
+  forced lush as the client does; fixture recorded from the original client JS before the port, tests use exact equality.
+  Until P1.E02.T02, planet types and radii are checked by a tools test through the client's SolarSystem. → Proves the port
+  changed nothing, bit for bit.
+- **P1.E02.T01** `EDGE_X`, `EDGE_CURVE_R` and `edgeX` moved from the client's `ui/map/EdgeOfSpace.js` to shared
+  `world/edge.ts` (the client imports them from shared); `edgeBearing` and `EDGE_SEED` stay in the client. → Cosmos needs
+  them and shared may not import client UI.
+- **P1.E02.T01** Shared file names are lowercase (`rng.ts`, `galaxy.ts`, `cosmos.ts` …). → The plan already names
+  `shared/world/sites.ts`.
+- **P1.E02.T01** The title-shot pixel diff is a script (`packages/tools/src/smoke/title-shot.ts`), not part of `pnpm smoke`,
+  with no committed baseline image. → Pixels depend on the GPU backend; the script makes the shot deterministic (seeded
+  Math.random, fixed steps, drained worker pool) and compares two captures on one machine.
+- **P1.E02.T01** Module-level three.js vectors in shared are marked `/* @__PURE__ */`. → The production chunk-worker
+  bundle drops from 97 kB to 13 kB.
+- **Orchestrator** Another Claude session edits client files in the main checkout while this plan runs. → Task commits stage
+  explicit paths only; merges that would touch that session's uncommitted files wait in an `integration/<task>` branch
+  (main plus the reviewed task, verified) until it is done; dependent workers branch from the integration branch.
+- **P1.E14.T01** Budgets DESIGN 19.2 does not give → classes in `packages/tools/blender/families.json` with reasons: npc
+  25–60k/2k, viewmodel 15–60k/2k, building 8–60k/2k (cities up to 400 m long), kit 0.5–15k/2k, weapon 4–20k/2k, tree
+  3–15k/1k, flora 150–6k/1k, effect ≤5k/1k, cosmetic ≤2k/2k; bosses and Wardens are hero, constructs creature. → Between
+  the classes DESIGN gives; families.json is the authority (art bible §8 points there).
+- **P1.E14.T01** LOD counts → 4 everywhere except viewmodels, effects and cosmetics (1) and the library (none). → A
+  first-person tool is always at arm's length; effects and decals have nothing to swap. The art bible says so.
+- **P1.E14.T01** Source and export layout → a top-level `REF` collection, one top-level collection per asset, nested
+  `<variant>_LOD<n>` collections, `_`-prefixed collections ignored, an `asset_class` property override; exports go to
+  `packages/client/public/models/<family>/<file>.glb` with nodes `<asset>/<variant>/<variant>_LOD<n>`. → DESIGN 19.1's
+  "named collections per variant and LOD"; per-family folders avoid name clashes and keep the demo's flat files until
+  each family is replaced.
+- **P1.E14.T01** Markers (DESIGN 19.4 "Add") → `HP_S_*`/`HP_M_*`/`HP_L_*`, `BAY_*`, `Mount`, `Muzzle*`, `Gear*` pivots,
+  `Canopy*`, `CockpitInterior`, `Door*` ≥ 2.4 × 1.4 m, armatures on characters, NPCs and bosses; prefixes match
+  case-insensitively. The first draft's `Hardpoint_*` and 2.0 × 0.9 m doors were changed to the art bible's.
+- **P1.E14.T01** Materials → exported name = `engine_name` property or the material's own name; linked library materials
+  are copied per variant before baking (a read-only material cannot be baked) and every bake is checked for written
+  texels; AO is baked from the variant's geometry with everything else hidden unless an AO map was painted; signal
+  materials (EngineGlow, Nav*, Lamp, GlyphLight, HollowSeam) and glass are exempt from the map set; a constant metallic is
+  accepted beside a textured roughness (glTF packs them together); meshes without UVs fail when their material needs maps.
+- **P1.E14.T01** Generated LODs → decimation ratios 1 / 0.3 / 0.1 / 0.035, only where no LODs were hand-made; LOD1–3 drop
+  shape keys. A failing source writes nothing and removes its stale `.glb`; an unreadable source (LFS pointer) keeps it.
+- **P1.E14.T01** `art:validate -- --changed [base]` diffs against the merge-base with the base (default origin/main, else
+  main) and re-validates every source when the validator itself changes.
+- **P1.E02.T07** DESIGN 9.4 listed 17 Resonance nodes (7 at Tier III), so 7 × 18 was impossible. → Added one Tier III
+  passive, **Quiet Mind** ("Dissonance, Null and Nullsong silence you for half as long"), to DESIGN 9.4 and the data. →
+  Every other branch's Tier III is 2 actives, 3 passives, 1 ship form and 2 augments; Resonance was one passive short,
+  and it answers 9.10's anti-caster tools. **A design addition: the owner may want to rename or replace it.**

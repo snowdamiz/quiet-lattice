@@ -1,6 +1,9 @@
 # Turntable and material close-up sheets for the visual grader (IMPLEMENTATION_PLAN 0.4 and 0.10.3, P1.E14.T03).
 #
-#   Blender -b --factory-startup -P packages/tools/blender/turntable.py -- <asset.blend|asset.glb> [out_dir] [--samples N]
+#   Blender -b --factory-startup -P packages/tools/blender/turntable.py -- <asset.blend|asset.glb> [out_dir] [--samples N] [--grid [N]]
+#
+# --grid lays a library's top-level pieces (flora kinds, creatures, kit pieces) out side by side, at most N of them
+# (default 24, evenly sampled), so the turntable shows the whole family at once.
 #
 # Writes <out_dir>/<stem>_turntable.png (eight views, 45 degrees apart, at 20 degrees elevation, LOD0 only, under a
 # neutral studio light) and <stem>_materials.png (every material the asset uses on a shader ball: a bevelled, grooved
@@ -22,6 +25,14 @@ if not argv:
 src = os.path.abspath(argv[0])
 rest = [a for a in argv[1:]]
 samples = 48
+grid = 0
+if '--grid' in rest:
+    i = rest.index('--grid')
+    grid = 24
+    if i + 1 < len(rest) and rest[i + 1].isdigit():
+        grid = int(rest[i + 1])
+        del rest[i + 1]
+    del rest[i]
 if '--samples' in rest:
     i = rest.index('--samples')
     samples = int(rest[i + 1])
@@ -49,8 +60,9 @@ def excluded(o):
 def lod_of(o):
     names = [o.name] + [c.name for c in o.users_collection]
     for n in names:
-        if '_LOD' in n:
-            tail = n.rsplit('_LOD', 1)[1][:1]
+        u = n.upper()
+        if '_LOD' in u:
+            tail = u.rsplit('_LOD', 1)[1][:1]
             if tail.isdigit():
                 return int(tail)
     return 0
@@ -61,6 +73,45 @@ shown = [o for o in meshes if lod_of(o) == 0]
 for o in scene.objects:
     if o.type in {'MESH', 'CURVE', 'FONT'}:
         o.hide_render = o not in shown
+if grid and shown:
+    # one piece per top-level root, sampled evenly, laid out on a square grid by their own sizes
+    roots = []
+    for o in shown:
+        r = o
+        while r.parent is not None:
+            r = r.parent
+        if r not in roots:
+            roots.append(r)
+    if len(roots) > grid:
+        step = len(roots) / grid
+        roots = [roots[int(i * step)] for i in range(grid)]
+    keep = set()
+    for r in roots:
+        keep.add(r)
+        keep.update(r.children_recursive)
+    shown = [o for o in shown if o in keep]
+    for o in scene.objects:
+        if o.type in {'MESH', 'CURVE', 'FONT'}:
+            o.hide_render = o not in shown
+
+    def extent(r):
+        objs = [r] + list(r.children_recursive)
+        pts = [o.matrix_world @ mathutils.Vector(v) for o in objs if o in shown for v in o.bound_box]
+        return max((max(p[i] for p in pts) - min(p[i] for p in pts)) for i in range(3)) if pts else 1.0
+
+    cell = max(extent(r) for r in roots) * 1.25
+    cols = math.ceil(math.sqrt(len(roots)))
+    for i, r in enumerate(roots):
+        objs = [o for o in [r] + list(r.children_recursive) if o in shown]
+        pts = [o.matrix_world @ mathutils.Vector(v) for o in objs for v in o.bound_box]
+        if not pts:
+            continue
+        c = sum(pts, mathutils.Vector()) / len(pts)
+        zmin = min(p.z for p in pts)
+        target = mathutils.Vector(((i % cols) * cell, -(i // cols) * cell, 0))
+        r.location += target - mathutils.Vector((c.x, c.y, zmin))
+    bpy.context.view_layer.update()
+
 materials = []
 for o in shown:
     for slot in o.material_slots:
