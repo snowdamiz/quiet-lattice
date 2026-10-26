@@ -318,3 +318,4 @@ Format: task id, question → choice → why.
   planet-landing session, committed unchanged); the speed-window contract (P1.E12.T01) and movement authority
   (P1.E03.T04) must not assume it. Unit tests run with a 60 s per-test timeout because parallel worktrees load the
   machine (load average 85+) and the golden and fuzz suites take seconds alone.
+- **Plan amendment (orchestrator)** P1.E15.T01 (chat and parties) is the server and protocol half; no task drew the chat panel or party frame, so P1.E15.T03 "Chat and party UI" is added (deps T01 and the client net layer P1.E04.T01, visual). → The two-client exit criterion needs players to talk and party up on screen.
