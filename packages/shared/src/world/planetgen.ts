@@ -1,5 +1,7 @@
 // Planet recipes + deterministic terrain sampler. Used by the chunk workers and the main thread (collision, flora
-// placement), and by the server, which never streams terrain: every machine regenerates it from the seeds.
+// placement), and by the server, which never streams terrain: every machine regenerates it from the seeds, with the
+// deterministic math of ../math/det.ts, so it comes out the same on every engine.
+import { acos, cos, pow, sin } from '../math/det.ts';
 import { Simplex3, smoothstep, lerp, clamp } from './noise.ts';
 import { Random } from './rng.ts';
 import type { CapitalSpec } from './cities.ts';
@@ -14,7 +16,7 @@ function hexToRgb(hex: number): Rgb {
   return [((hex >> 16) & 255) / 255, ((hex >> 8) & 255) / 255, (hex & 255) / 255];
 }
 function srgbToLinear(c: number): number {
-  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4);
 }
 function rgbToHsl([r, g, b]: Rgb): Rgb {
   const max = Math.max(r, g, b);
@@ -56,7 +58,7 @@ function shiftColor(hex: number, dh: number, ds = 0, dl = 0, maxL = 0.8, maxS = 
   return hslToRgb(hsl).map(srgbToLinear) as Rgb;
 }
 export function linearToHex([r, g, b]: Rgb): number {
-  const f = (c: number) => Math.round(clamp(c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055, 0, 1) * 255);
+  const f = (c: number) => Math.round(clamp(c <= 0.0031308 ? c * 12.92 : 1.055 * pow(c, 1 / 2.4) - 0.055, 0, 1) * 255);
   return (f(r) << 16) | (f(g) << 8) | f(b);
 }
 
@@ -597,7 +599,7 @@ export function createPlanetParams(
   const R = radius;
   // relief grows only slowly with the size of the world: a big planet is not a scaled-up small one
   // with kilometres-high hills, it has more room between its features (see TerrainSampler)
-  const Rh = HEIGHT_REF * Math.pow(Math.max(R, 1) / HEIGHT_REF, 0.35);
+  const Rh = HEIGHT_REF * pow(Math.max(R, 1) / HEIGHT_REF, 0.35);
   const hasOcean = a.ocean > 0 && rng.chance(type === 'desert' ? 0.5 : 0.9);
   const oceanFrac = hasOcean ? clamp(a.ocean + rng.float(-0.15, 0.15), 0.05, 0.8) : 0;
 
@@ -644,8 +646,8 @@ export function createPlanetParams(
       const t = crng.float(0, Math.PI * 2);
       const s = Math.sqrt(1 - u * u);
       // power-law size distribution: lots of small craters, a few big ones
-      const size = Math.pow(crng.next(), 3.2) * 0.22 + 0.006;
-      craters.push([s * Math.cos(t), u, s * Math.sin(t), size, crng.float(0.15, 0.45)]);
+      const size = pow(crng.next(), 3.2) * 0.22 + 0.006;
+      craters.push([s * cos(t), u, s * sin(t), size, crng.float(0.15, 0.45)]);
     }
     p.craters = craters;
   }
@@ -752,7 +754,7 @@ function addRelief(p: PlanetParams, type: PlanetType, rng: Random, Rh: number) {
       const t = rng.float(0, Math.PI * 2);
       const s = Math.sqrt(1 - u * u);
       const base = rng.float(3500, 11000);
-      list.push([s * Math.cos(t), u, s * Math.sin(t), base / p.radius, rng.float(0.32, 0.6) * base * (k * 0.6 + 0.4), rng.float(0.12, 0.2)]);
+      list.push([s * cos(t), u, s * sin(t), base / p.radius, rng.float(0.32, 0.6) * base * (k * 0.6 + 0.4), rng.float(0.12, 0.2)]);
     }
     p.volcanoes = list;
   }
@@ -788,6 +790,8 @@ export class TerrainSampler {
   n3: Simplex3;
   craters: Crater[] | null;
   volcanoes: Volcano[] | null;
+  /** per volcano: cos of its angular radius, cos of its caldera's, and its cone's height at the caldera's rim */
+  private volcanoCos: Float64Array | null;
   relief: Partial<Relief>;
   /** the sample() result, reused: copy what you need before the next call */
   out: TerrainSample;
@@ -800,18 +804,23 @@ export class TerrainSampler {
     const F = Math.max(1, this.R / HEIGHT_REF);
     this.fWarp = 2.3 * Math.sqrt(F);
     this.fCont = params.continentFreq * Math.sqrt(F);
-    this.fMask = 3.1 * Math.pow(F, 0.6);
-    this.fMount = params.mountainFreq * Math.pow(F, 0.75);
+    this.fMask = 3.1 * pow(F, 0.6);
+    this.fMount = params.mountainFreq * pow(F, 0.75);
     this.fHill = params.hillFreq * F;
     this.fTerrace = 4.0 * F;
-    this.fMoist = 3.0 * Math.pow(F, 0.6);
+    this.fMoist = 3.0 * pow(F, 0.6);
     this.fTemp = 5 * Math.sqrt(F);
-    this.hTemp = HEIGHT_REF * Math.pow(F, 0.35) * 0.03;
+    this.hTemp = HEIGHT_REF * pow(F, 0.35) * 0.03;
     this.n1 = new Simplex3(params.seed);
     this.n2 = new Simplex3(params.seed + 7919);
     this.n3 = new Simplex3(params.seed + 104729);
     this.craters = params.craters || null;
     this.volcanoes = params.volcanoes || null;
+    this.volcanoCos = null;
+    if (this.volcanoes) {
+      this.volcanoCos = new Float64Array(this.volcanoes.length * 3);
+      this.volcanoes.forEach((v, i) => this.volcanoCos!.set([cos(v[3]), cos(v[3] * v[5]), pow(1 - v[5], 1.7)], i * 3));
+    }
     this.relief = params.relief || {};
     this.out = { h: 0, moisture: 0, temp: 0, land: 0, rockiness: 0 };
     this.setPads(params.pads || null);
@@ -920,7 +929,7 @@ export class TerrainSampler {
     let mountains = 0;
     if (mMask > 0.001) {
       const r = n1.ridged(qx * mf + 3.3, qy * mf, qz * mf, 7, 2.07, 0.52, 2.0);
-      mountains = Math.pow(r, p.ridgePow || 1.7) * p.mountainHeight * mMask;
+      mountains = pow(r, p.ridgePow || 1.7) * p.mountainHeight * mMask;
     }
 
     // rolling hills
@@ -945,7 +954,7 @@ export class TerrainSampler {
       const s = p.terraceStep;
       const k = h / s;
       const f = k - Math.floor(k);
-      const stepped = (Math.floor(k) + Math.pow(smoothstep(0.0, 1.0, f), 6)) * s;
+      const stepped = (Math.floor(k) + pow(smoothstep(0.0, 1.0, f), 6)) * s;
       const ft = this.fTerrace;
       const tMask = smoothstep(0.1, 0.5, n3.noise(x * ft + 9.0, y * ft, z * ft) * 0.5 + 0.5);
       h = lerp(h, stepped, p.terraceStrength * tMask);
@@ -963,7 +972,7 @@ export class TerrainSampler {
     o.moisture = n2.fbm(x * fmo + 50, y * fmo, z * fmo, 4) * 0.5 + 0.5 + n3.noise(dx / 600, dy / 600, dz / 600) * 0.15;
     // temperature: equator hot, poles cold, decreasing with altitude
     const fte = this.fTemp;
-    o.temp = 1 - Math.pow(Math.abs(y), 1.6) - Math.max(0, h) / this.hTemp + n1.noise(x * fte, y * fte, z * fte) * 0.12;
+    o.temp = 1 - pow(Math.abs(y), 1.6) - Math.max(0, h) / this.hTemp + n1.noise(x * fte, y * fte, z * fte) * 0.12;
     o.mMask = mMask;
     return o;
   }
@@ -1038,16 +1047,19 @@ export class TerrainSampler {
   /** Giant cones with concave flanks and a caldera at the summit; returns metres. */
   volcanoHeight(x: number, y: number, z: number): number {
     let total = 0;
-    for (const v of this.volcanoes!) {
+    const vc = this.volcanoCos!;
+    const list = this.volcanoes!;
+    for (let i = 0; i < list.length; i++) {
+      const v = list[i];
       const d = x * v[0] + y * v[1] + z * v[2];
-      if (d < Math.cos(v[3])) continue;
-      const r = Math.acos(Math.min(1, d)) / v[3];
+      if (d < vc[i * 3]) continue;
+      const r = acos(Math.min(1, d)) / v[3];
       if (r >= 1) continue;
-      const cone = Math.pow(1 - r, 1.7);
+      const cone = pow(1 - r, 1.7);
       const cal = v[5];
       // the caldera: a steep-walled pit with a flat floor a quarter of the way down
       const pit = 1 - smoothstep(cal * 0.75, cal, r);
-      total += v[4] * (cone - pit * (cone - Math.pow(1 - cal, 1.7) * 0.72));
+      total += v[4] * (cone - pit * (cone - vc[i * 3 + 2] * 0.72));
     }
     return total;
   }
@@ -1055,10 +1067,13 @@ export class TerrainSampler {
   /** 1 on a caldera's floor, for its lava glow. */
   caldera(x: number, y: number, z: number): number {
     if (!this.volcanoes) return 0;
-    for (const v of this.volcanoes) {
+    const vc = this.volcanoCos!;
+    const list = this.volcanoes;
+    for (let i = 0; i < list.length; i++) {
+      const v = list[i];
       const d = x * v[0] + y * v[1] + z * v[2];
-      if (d < Math.cos(v[3] * v[5])) continue;
-      const r = Math.acos(Math.min(1, d)) / v[3];
+      if (d < vc[i * 3 + 1]) continue;
+      const r = acos(Math.min(1, d)) / v[3];
       return 1 - smoothstep(v[5] * 0.55, v[5] * 0.72, r);
     }
     return 0;
@@ -1075,7 +1090,7 @@ export class TerrainSampler {
       // cheap reject: angular distance > 1.5 radius
       const cosLimit = 1 - size * 1.6 * (size * 1.6) * 0.5;
       if (d < cosLimit) continue;
-      const ang = Math.acos(Math.min(1, d));
+      const ang = acos(Math.min(1, d));
       const r = ang / size;
       const depth = size * R * c[4] * 0.25;
       // Lague-style crater profile: cavity, rim, flat floor, blended with smooth min/max

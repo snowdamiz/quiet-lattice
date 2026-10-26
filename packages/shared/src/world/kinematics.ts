@@ -6,11 +6,13 @@
 // axes turn with it: an entity near it keeps its pose in those local coordinates, and changes frame by the rule here
 // (setFrame), on the client and on the server alike.
 //
-// The arithmetic is the demo's, operation for operation (Body.update and the Waystation's own update), so poses come out
-// bit for bit as they always have (packages/shared/test/fixtures/poses-424242.json pins them). Each function has two
+// The arithmetic is the demo's, operation for operation (Body.update and the Waystation's own update), with the
+// deterministic sin and cos of ../math/det.ts, so poses come out bit for bit the same on every machine
+// (packages/shared/test/fixtures/poses-424242.json pins them). Each function has two
 // forms: one on plain arrays that allocates its result (for the server and for JSON), and one that writes into three's
 // math objects (`…Into`, for the client's per-frame update, where each body is its own spec and pose).
 import { Matrix4, Quaternion, Vector3 } from 'three';
+import { cos, setFromAxisAngle, sin } from '../math/det.ts';
 import type { Quat } from './system.ts';
 
 /** A vector as [x, y, z]. */
@@ -130,11 +132,11 @@ function angle(phase: number, period: number, t: number): number {
 function orbitInto(o: Orbit<Quaternion>, t: number, parent: Pick<BodyPoseObjects, 'position' | 'velocity'>, out: BodyPoseObjects) {
   const th = angle(o.orbitPhase, o.orbitPeriod, t);
   if (o.orbitRadius === 0) out.position.set(0, 0, 0);
-  else out.position.set(Math.cos(th) * o.orbitRadius, 0, Math.sin(th) * o.orbitRadius).applyQuaternion(o.orbitTilt);
+  else out.position.set(cos(th) * o.orbitRadius, 0, sin(th) * o.orbitRadius).applyQuaternion(o.orbitTilt);
   out.position.add(parent.position);
   const w = TAU / o.orbitPeriod;
   out.velocity
-    .set(-Math.sin(th) * o.orbitRadius * w, 0, Math.cos(th) * o.orbitRadius * w)
+    .set(-sin(th) * o.orbitRadius * w, 0, cos(th) * o.orbitRadius * w)
     .applyQuaternion(o.orbitTilt)
     .add(parent.velocity);
 }
@@ -153,7 +155,7 @@ export function bodyPoseInto<T extends BodyPoseObjects>(
     out.velocity.set(0, 0, 0);
   }
   if (m.rotationPeriod) {
-    _spin.setFromAxisAngle(Y, angle(m.rotationPhase, m.rotationPeriod, t));
+    setFromAxisAngle(_spin, Y, angle(m.rotationPhase, m.rotationPeriod, t));
     out.quaternion.copy(m.axialTilt).multiply(_spin);
     // (it turns about its tilted axis, wherever along its orbit it is)
     out.angularVelocity
@@ -174,7 +176,7 @@ export function stationPoseInto<T extends BodyPoseObjects>(o: Orbit<Quaternion>,
   orbitInto(o, t, parent, out);
   const up = _up.copy(out.position).sub(parent.position).normalize();
   const th = angle(o.orbitPhase, o.orbitPeriod, t);
-  const along = _fwd.set(-Math.sin(th), 0, Math.cos(th)).applyQuaternion(o.orbitTilt);
+  const along = _fwd.set(-sin(th), 0, cos(th)).applyQuaternion(o.orbitTilt);
   const fwd = along.addScaledVector(up, -along.dot(up)).normalize();
   const right = _right.crossVectors(up, fwd).normalize();
   _basis.makeBasis(right, up, fwd);

@@ -4,6 +4,7 @@
 // Nebulae are not cover anywhere yet: the only nebulae the world has are the sky's billboards hundreds of light years beyond
 // the cluster (cosmos.ts), not volumes a system or a fight sits in.
 import { Quaternion, Vector3 } from 'three';
+import { hypot2, hypot3 } from '../math/det.ts';
 import type { Frame, FrameObjects, Vec3 } from './kinematics.ts';
 import type { BeltSpec, BodySpec, SystemDescription } from './system.ts';
 
@@ -21,15 +22,15 @@ export type Cover = 'belt' | 'ring';
 /**
  * Whether a point in the system's inertial frame (metres from the star, the system's plane being y = 0) lies in its asteroid
  * belt: within the belt's half-width of its mid radius and its half-thickness of the plane, where the client's asteroid field
- * is dense (Asteroids.densityAt). A belt whose bounding orbits came out as a planet and its own moon has a negative width in
- * the description (the demo's draw, which the golden fixtures pin); its field is |width| wide, so that is its volume too.
+ * is dense (Asteroids.densityAt). A described belt lies between two planets' orbits, so its width is positive (P1.E02.T09);
+ * a belt given with a negative one is taken as |width| wide.
  */
 export function inBelt(belt: BeltSpec, p: Vec3): boolean {
   return beltHas(belt, p[0], p[1], p[2]);
 }
 
 function beltHas(belt: BeltSpec, x: number, y: number, z: number): boolean {
-  return Math.abs(Math.hypot(x, z) - belt.radius) < Math.abs(belt.width) && Math.abs(y) < belt.thickness;
+  return Math.abs(hypot2(x, z) - belt.radius) < Math.abs(belt.width) && Math.abs(y) < belt.thickness;
 }
 
 /** Whether a point in a body's own frame (its local coordinates, which turn with it) lies in its rings: in the equatorial
@@ -41,7 +42,7 @@ export function inRings(body: Pick<BodySpec, 'radius' | 'rings'>, local: Vec3): 
 function ringsHave(body: Pick<BodySpec, 'radius' | 'rings'>, x: number, y: number, z: number): boolean {
   const r = body.rings;
   if (!r || Math.abs(y) > RING_HALF_THICKNESS) return false;
-  const d = Math.hypot(x, z);
+  const d = hypot2(x, z);
   return d >= r.inner * body.radius && d <= r.outer * body.radius;
 }
 
@@ -66,7 +67,7 @@ function coverOf<B>(d: CoverSystem, bodies: readonly B[], pose: (bodies: readonl
     let clear = true;
     for (const b of d.bodies) {
       pose(bodies, b.index);
-      if (Math.hypot(x - _p.x, y - _p.y, z - _p.z) < b.radius * BELT_BODY_CLEARANCE) {
+      if (hypot3(x - _p.x, y - _p.y, z - _p.z) < b.radius * BELT_BODY_CLEARANCE) {
         clear = false;
         break;
       }

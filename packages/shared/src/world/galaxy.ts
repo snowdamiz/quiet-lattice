@@ -1,4 +1,5 @@
 // Local cluster of procedurally named star systems reachable by hyperdrive (positions in light years).
+import { asin, cos, hypot3, pow, sin } from '../math/det.ts';
 import { Random, makeName, hashInts } from './rng.ts';
 
 /** The seed of the one galaxy everyone plays in. */
@@ -44,20 +45,20 @@ export class Galaxy {
     const lift = new Random((seed ^ 0x3d5c) >>> 0);
     this.systems = [];
     for (let i = 0; i < 70; i++) {
-      const r = i === 0 ? 0 : 6 + Math.pow(rng.next(), 0.7) * 60;
+      const r = i === 0 ? 0 : 6 + pow(rng.next(), 0.7) * 60;
       const a = rng.float(0, Math.PI * 2);
       const name = makeName(rng, 2, 3);
       rng.float(-6, 6); // (the old flat height, still drawn: the draws after it stay as they were)
-      const el = Math.asin(lift.float(-1, 1)) * 0.85;
+      const el = asin(lift.float(-1, 1)) * 0.85;
       const cls = rng.pick(CLASSES);
       this.systems.push({
         galaxy: seed,
         id: i,
         seed: hashInts(seed, i, 77),
         name,
-        x: Math.cos(a) * Math.cos(el) * r,
-        y: Math.sin(el) * r * 0.8,
-        z: Math.sin(a) * Math.cos(el) * r,
+        x: cos(a) * cos(el) * r,
+        y: sin(el) * r * 0.8,
+        z: sin(a) * cos(el) * r,
         cls,
         visited: false,
         color: CLASS_COLORS[cls],
@@ -70,7 +71,7 @@ export class Galaxy {
   }
 
   distance(a: Point3, b: Point3): number {
-    return Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+    return hypot3(a.x - b.x, a.y - b.y, a.z - b.z);
   }
 
   neighbors(n = 10): { s: GalaxySystem; d: number }[] {
