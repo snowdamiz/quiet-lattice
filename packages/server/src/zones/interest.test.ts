@@ -81,22 +81,24 @@ describe('interest sets', () => {
   it('measures distance between world positions, whatever frames the entities keep', () => {
     const { zone, station, viewer, step } = setup();
     const home = `${zone.system.seed}:${zone.system.home}`;
-    // a mob on the home world's frame, 1 km from the Waystation at the next tick's time
+    // a ship on the home world's frame, 10 km from the Waystation at the next tick's time (beyond the Waystation's
+    // sphere of influence, so it stays in its world's frame)
     const t = T0 + 0.05;
     const poses = systemPoses(zone.system, t);
     const stationWorld = localToWorld(poses.station, [0, 0, 0]);
-    const near = worldToLocal(poses.bodies[zone.system.home]!, [stationWorld[0] + 1000, stationWorld[1], stationWorld[2]]);
-    const mob = zone.spawn({ kind: 'mob', frame: home, pos: near, quat: [0, 0, 0, 1], vel: [0, 0, 0] });
+    const near = worldToLocal(poses.bodies[zone.system.home]!, [stationWorld[0] + 10_000, stationWorld[1], stationWorld[2]]);
+    const ship = zone.spawn({ kind: 'ship', frame: home, pos: near, quat: [0, 0, 0, 1], vel: [0, 0, 0] });
     // the same local position in the station's frame is far away
-    const other = zone.spawn({ kind: 'mob', frame: station, pos: near, quat: [0, 0, 0, 1], vel: [0, 0, 0] });
+    const other = zone.spawn({ kind: 'ship', frame: station, pos: near, quat: [0, 0, 0, 1], vel: [0, 0, 0] });
     const seen = step();
-    expect(seen.has(mob)).toBe(true);
+    expect(seen.has(ship)).toBe(true);
     expect(seen.has(other)).toBe(false);
-    const w = zone.entity(mob)!.world;
-    expect(Math.hypot(w[0] - stationWorld[0], w[1] - stationWorld[1], w[2] - stationWorld[2])).toBeCloseTo(1000, 3);
+    expect(zone.entity(ship)!.fields.frame).toBe(home);
+    const w = zone.entity(ship)!.world;
+    expect(Math.hypot(w[0] - stationWorld[0], w[1] - stationWorld[1], w[2] - stationWorld[2])).toBeCloseTo(10_000, 3);
     // ten minutes on, the world has turned under it and the station has moved along its orbit
     zone.step(T0 + 600);
-    expect(zone.interestOf(viewer).has(mob)).toBe(false);
+    expect(zone.interestOf(viewer).has(ship)).toBe(false);
   });
 
   it('keeps an entity at the edge until it is past the hysteresis margin', () => {
@@ -143,7 +145,8 @@ describe('interest sets', () => {
 
   it('sends an entity in full when it enters, then deltas, then its removal when it leaves or goes', () => {
     const { zone, at, viewer, step } = setup();
-    const mob = zone.spawn(at(5_000, { species: 4, level: 7, hp: 0.5, mode: 'idle' }));
+    // (out of view, but inside the Waystation's sphere of influence, so it keeps the Waystation's frame)
+    const mob = zone.spawn(at(4_000, { species: 4, level: 7, hp: 0.5, mode: 'idle' }));
     step();
     expect(viewer.client.latest.has(mob)).toBe(false);
 
@@ -171,7 +174,7 @@ describe('interest sets', () => {
     step();
     expect(viewer.client.snapshots.at(-1)!.entities.find((e) => e.id === mob)).toBeUndefined(); // nothing changed
 
-    zone.patch(mob, { pos: [5_000, 0, 0] });
+    zone.patch(mob, { pos: [4_000, 0, 0] });
     step();
     expect(viewer.client.snapshots.at(-1)!.removed).toEqual([mob]);
     expect(viewer.client.latest.has(mob)).toBe(false);

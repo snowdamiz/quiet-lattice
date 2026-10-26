@@ -4,10 +4,13 @@
 // sends it a snapshot: a delta against the state it last acknowledged, or a full one when there is none (delta.ts).
 //
 // Entities keep their pose as it travels on the wire (§4): a frame id, a position, quaternion and velocity in that
-// frame. Their world position comes from the frame's pose at the tick's time. An entity's wire state is rebuilt once per
-// tick when it changed, sanitising only the fields that changed (sanitizeEntity checks each field on its own, so the
-// rest stay as they were sanitised before), then encoded per session with `sanitized: true`. A wire state is never
-// mutated afterwards: snapshot histories share it.
+// frame. Their world position comes from the frame's pose at the tick's time. Each tick, an entity is re-expressed in
+// the frame it then belongs in (shared selectFrame, the rule the client's Game.chooseFrame follows, and setFrame), so a
+// ship leaving a planet's sphere of influence goes over to the inertial frame and one entering the Waystation's to the
+// Waystation's, and snapshots carry its current frame id. An entity's wire state is rebuilt once per tick when it
+// changed, sanitising only the fields that changed (sanitizeEntity checks each field on its own, so the rest stay as
+// they were sanitised before), then encoded per session with `sanitized: true`. A wire state is never mutated
+// afterwards: snapshot histories share it.
 import { performance } from 'node:perf_hooks';
 import {
   encodeSnapshot,
@@ -19,7 +22,17 @@ import {
   type FrameId,
   type Snapshot,
 } from '@astra/shared/protocol';
-import { frameId, localToWorld, systemPoses, type Frame, type SystemDescription } from '@astra/shared/world';
+import {
+  frameDistance,
+  frameId,
+  localToWorld,
+  selectFrame,
+  setFrame,
+  systemPoses,
+  type Frame,
+  type FrameSet,
+  type SystemDescription,
+} from '@astra/shared/world';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
 import { TickTimes } from './metrics.ts';
@@ -47,6 +60,14 @@ export interface EntityInit extends EntityFields {
 const REQUIRED: ReadonlySet<EntityField> = new Set<EntityField>(['kind', 'frame', 'pos', 'quat', 'vel']);
 /** Fields an input sets. */
 const INPUT_FIELDS: readonly EntityField[] = ['frame', 'pos', 'quat', 'vel', 'mode'];
+/** Fields a change of frame sets. */
+const POSE_FIELDS: readonly EntityField[] = ['frame', 'pos', 'quat', 'vel'];
+
+/** One of the system's frames of reference: its frame id and sphere of influence, and its pose at the last tick's time. */
+interface ZoneFrame extends Frame {
+  readonly id: NonNullable<FrameId>;
+  readonly soi: number;
+}
 
 /**
  * Until movement authority (P1.E03.T04) a client's pose is taken as sent, clamped only to magnitudes no honest client
@@ -159,10 +180,10 @@ export class Zone {
   private readonly parties = new Map<string, Set<number>>();
   /** one hash per interest class, its cells as large as the class's radius with the hysteresis margin */
   private readonly hashes = {} as Record<InterestClass, SpatialHash>;
-  /** frame id → body index or 'station' */
-  private readonly frames = new Map<string, number | 'station'>();
-  /** frame id → its pose at the last tick's time */
-  private readonly framePoses = new Map<string, Frame>();
+  /** the planets and moons (in the description's order) and the Waystation, as frame selection sees them */
+  private readonly frameSet: FrameSet<ZoneFrame>;
+  /** frame id → frame */
+  private readonly frames = new Map<string, ZoneFrame>();
   private nextEntityId = 1;
   private lastDropLog = -Infinity;
   /** scratch space for gathering interest sets */
@@ -175,8 +196,14 @@ export class Zone {
     this.log = opts.log;
     this.onViewerRemoved = opts.onViewerRemoved;
     for (const c of INTEREST_CLASSES) this.hashes[c] = new SpatialHash(INTEREST_RADIUS[c] * INTEREST_HYSTERESIS);
-    opts.system.bodies.forEach((_, i) => this.frames.set(frameId(opts.system.seed, i), i));
-    this.frames.set(frameId(opts.system.seed, 'station'), 'station');
+    const seed = opts.system.seed;
+    const frame = (id: NonNullable<FrameId>, soi: number): ZoneFrame => ({ id, soi, position: [0, 0, 0], quaternion: [0, 0, 0, 1] });
+    this.frameSet = {
+      bodies: opts.system.bodies.map((b, i) => frame(frameId(seed, i), b.soi)),
+      station: frame(frameId(seed, 'station'), opts.system.station.soi),
+    };
+    for (const f of [...this.frameSet.bodies, this.frameSet.station]) this.frames.set(f.id, f);
+    this.placeFrames(0);
   }
 
   get entityCount(): number {
@@ -343,16 +370,14 @@ export class Zone {
     this.tick++;
     this.time = time;
 
-    const poses = systemPoses(this.system, time);
-    for (const [id, body] of this.frames) this.framePoses.set(id, body === 'station' ? poses.station : poses.bodies[body]!);
+    this.placeFrames(time);
 
     const dropped: string[] = [];
     for (const e of this.entities.values()) {
+      const w = this.settle(e);
       if (!e.wire || e.changed.size) e.wire = wireState(e, dropped);
-      const frame = e.fields.frame === null ? null : (this.framePoses.get(e.fields.frame) ?? null);
-      const w = (e.world = localToWorld(frame, e.fields.pos));
       // (spawn, patch and input keep poses finite; should one ever not be, the entity drops out of sight, not the zone)
-      if (Number.isFinite(w[0]) && Number.isFinite(w[1]) && Number.isFinite(w[2])) this.hashes[e.cls].insert(e.id, w[0], w[1], w[2]);
+      if (w) this.hashes[e.cls].insert(e.id, w[0], w[1], w[2]);
       else this.hashes[e.cls].remove(e.id);
     }
     if (dropped.length) this.reportDropped(dropped);
@@ -473,6 +498,39 @@ export class Zone {
     e.diffFrom.push(prev);
     e.diffs.push(d);
     return d;
+  }
+
+  /** Puts every frame where it is at world time `time` (systemPoses, so it is where every client has it). */
+  private placeFrames(time: number): void {
+    const poses = systemPoses(this.system, time);
+    this.frameSet.bodies.forEach((f, i) => {
+      f.position = poses.bodies[i]!.position;
+      f.quaternion = poses.bodies[i]!.quaternion;
+    });
+    this.frameSet.station.position = poses.station.position;
+    this.frameSet.station.quaternion = poses.station.quaternion;
+  }
+
+  /**
+   * Re-expresses the entity in the frame it belongs in at this tick's time, by the client's rule (selectFrame, then
+   * setFrame: the same world position and orientation, the velocity turned and never boosted), and records its world
+   * position. Returns that position, or null when it is not finite.
+   */
+  private settle(e: Entity): Vec3 | null {
+    const f = e.fields;
+    // (spawn, patch and input admit only this system's frames)
+    const from = f.frame === null ? null : this.frames.get(f.frame)!;
+    const w = (e.world = localToWorld(from, f.pos));
+    if (!(Number.isFinite(w[0]) && Number.isFinite(w[1]) && Number.isFinite(w[2]))) return null;
+    const to = selectFrame(this.frameSet, from, (frame) => frameDistance(frame, w));
+    if (to === from) return w;
+    const local = setFrame(f, from, to);
+    f.frame = to ? to.id : null;
+    f.pos = local.pos;
+    f.quat = local.quat;
+    f.vel = local.vel;
+    for (const k of POSE_FIELDS) e.changed.add(k);
+    return w;
   }
 
   /**
