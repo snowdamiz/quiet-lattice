@@ -14,6 +14,7 @@ import {
   describeGalaxySystem,
   describeSystem,
   galaxySystemOptions,
+  homeNeighbours,
   homeSystemAt,
   homeSystems,
   layoutCity,
@@ -22,6 +23,7 @@ import {
   planKind,
   streetDistance,
   streetPlan,
+  type GalaxySystem,
   type Mist,
   type PlanetParams,
   type SystemDescription,
@@ -37,24 +39,27 @@ const homes = homeSystems();
 const natural = (i: number) => describeSystem(galaxy.systems[i].seed, { name: galaxy.systems[i].name, cls: galaxy.systems[i].cls });
 
 describe('home systems, seed 424242 (golden)', () => {
-  it('are system 0 and its two nearest neighbours: Thalune lush, Ixari exotic, Ulgani mild toxic', () => {
+  it('are system 0 and the two neighbours closest together with it: Thalune lush, Ixari exotic, Ulgani mild toxic', () => {
     const table = homes.map((h) => {
       const d = describeGalaxySystem(galaxy.systems[h.systemIndex]);
       const ly = galaxy.distance(galaxy.systems[h.systemIndex], galaxy.systems[0]);
       return `${h.people.padEnd(7)} system ${String(h.systemIndex).padStart(2)} ${d.name.padEnd(10)} seed ${h.systemSeed} body ${h.homePlanetIndex} ${d.bodies[h.homePlanetIndex].name.padEnd(14)} ${h.type}${h.mild ? ' (mild)' : ''} · ${h.capital.name} (${h.capital.plan}) · ${ly.toFixed(2)} ly`;
     });
-    console.log(`home systems of galaxy ${GALAXY_SEED}:\n  ${table.join('\n  ')}`);
+    const [a, b, c] = homes.map((h) => galaxy.systems[h.systemIndex]);
+    const sides = `${a.id}–${b.id} ${galaxy.distance(a, b).toFixed(2)} ly, ${a.id}–${c.id} ${galaxy.distance(a, c).toFixed(2)} ly, ${b.id}–${c.id} ${galaxy.distance(b, c).toFixed(2)} ly`;
+    console.log(`home systems of galaxy ${GALAXY_SEED}:\n  ${table.join('\n  ')}\n  apart: ${sides}`);
     expect(table).toEqual([
       'thalune system  0 Orxa       seed 2981198913 body 1 Orxa II        lush · Sarelun (radial) · 0.00 ly',
-      'ixari   system 60 Corzenzen  seed 3002367290 body 2 Corzenzen III  alien · Quavel (spiral) · 9.49 ly',
-      'ulgani  system 59 Kaial      seed 2853974035 body 3 Kaial III      toxic (mild) · Belost (grid) · 9.55 ly',
+      'ixari   system 59 Kaial      seed 2853974035 body 3 Kaial III      alien · Quavel (spiral) · 9.55 ly',
+      'ulgani  system  1 Ostrhekai  seed 4277949890 body 1 Ostrhekai II   toxic (mild) · Belost (grid) · 9.91 ly',
     ]);
+    expect(sides).toBe('0–59 9.55 ly, 0–1 9.91 ly, 59–1 12.18 ly');
     expect(
       homes.map(({ people, systemIndex, systemSeed, homePlanetIndex, type, mild }) => ({ people, systemIndex, systemSeed, homePlanetIndex, type, mild })),
     ).toEqual([
       { people: 'thalune', systemIndex: 0, systemSeed: 2981198913, homePlanetIndex: 1, type: 'lush', mild: false },
-      { people: 'ixari', systemIndex: 60, systemSeed: 3002367290, homePlanetIndex: 2, type: 'alien', mild: false },
-      { people: 'ulgani', systemIndex: 59, systemSeed: 2853974035, homePlanetIndex: 3, type: 'toxic', mild: true },
+      { people: 'ixari', systemIndex: 59, systemSeed: 2853974035, homePlanetIndex: 3, type: 'alien', mild: false },
+      { people: 'ulgani', systemIndex: 1, systemSeed: 4277949890, homePlanetIndex: 1, type: 'toxic', mild: true },
     ]);
     expect(homes.map((h) => [h.capital.name, h.capital.plan, h.capital.people])).toEqual([
       ['Sarelun', 'radial', 'thalune'],
@@ -63,13 +68,17 @@ describe('home systems, seed 424242 (golden)', () => {
     ]);
   });
 
-  it('are the two systems nearest system 0, nearest first, each within about 10 ly of it', () => {
-    const [first, ...rest] = homes.map((h) => galaxy.systems[h.systemIndex]);
-    const others = galaxy.systems.filter((s) => s !== first && !rest.includes(s));
-    const far = Math.max(...rest.map((s) => galaxy.distance(s, first)));
-    expect(Math.min(...others.map((s) => galaxy.distance(s, first)))).toBeGreaterThan(far);
-    expect(galaxy.distance(rest[0], first)).toBeLessThanOrEqual(galaxy.distance(rest[1], first));
-    expect(far).toBeLessThan(10);
+  it('make the smallest triangle with system 0 (its longest side the shortest of any pair), the nearer one the Ixari’s', () => {
+    const [first, near, far] = homes.map((h) => galaxy.systems[h.systemIndex]);
+    const longest = (p: GalaxySystem, q: GalaxySystem) => Math.max(galaxy.distance(first, p), galaxy.distance(first, q), galaxy.distance(p, q));
+    const side = longest(near, far);
+    const rest = galaxy.systems.slice(1);
+    for (const p of rest)
+      for (const q of rest) if (p.id < q.id && !(p === near && q === far) && !(p === far && q === near)) expect(longest(p, q)).toBeGreaterThan(side);
+    expect(galaxy.distance(first, near)).toBeLessThanOrEqual(galaxy.distance(first, far));
+    expect(homeNeighbours(galaxy)).toEqual([near, far]);
+    // about one warp apart, all three (DESIGN 5.1: "within ~10 ly of each other")
+    expect(side).toBeLessThan(12.5);
   });
 
   it('are worked out once, frozen, and the same for the same seed', () => {
@@ -178,10 +187,10 @@ describe('the forced home worlds', () => {
   });
 
   it('hands out copies: changing the options changes no home', () => {
-    const opts = galaxySystemOptions(galaxy.systems[59]);
+    const opts = galaxySystemOptions(galaxy.systems[homes[2].systemIndex]);
     opts.capital!.name = 'Elsewhere';
     expect(homeSystems()[2].capital.name).toBe('Belost');
-    expect(galaxySystemOptions(galaxy.systems[59]).capital!.name).toBe('Belost');
+    expect(galaxySystemOptions(galaxy.systems[homes[2].systemIndex]).capital!.name).toBe('Belost');
   });
 });
 

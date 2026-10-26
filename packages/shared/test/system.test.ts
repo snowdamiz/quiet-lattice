@@ -1,7 +1,17 @@
 // describeSystem: a star system as plain data (the golden fixtures in world.golden.test.ts pin its values).
 import { describe, expect, it } from 'vitest';
 import { FrameId } from '../src/protocol/index.ts';
-import { Galaxy, PLANET_TYPES, STATION, describeGalaxySystem, describeSystem, frameId, hashInts, type SystemDescription } from '../src/world/index.ts';
+import {
+  Galaxy,
+  PLANET_TYPES,
+  STATION,
+  describeGalaxySystem,
+  describeSystem,
+  frameId,
+  hashInts,
+  homeSystemAt,
+  type SystemDescription,
+} from '../src/world/index.ts';
 
 const galaxy = new Galaxy(424242);
 /** Systems 0–9 of the fixture's galaxy, then systems from bare seeds. */
@@ -120,11 +130,13 @@ describe('describeSystem', () => {
 });
 
 describe('describeGalaxySystem', () => {
-  it('names and classes a system as the galaxy shows it, and starts players round a lush world', () => {
+  it('names and classes a system as the galaxy shows it, starts players round a lush world, and forces only the home worlds', () => {
     for (const s of galaxy.systems.slice(0, 10)) {
       const d = describeGalaxySystem(s);
       expect({ seed: d.seed, name: d.name, cls: d.star.cls }).toEqual({ seed: s.seed, name: s.name, cls: s.cls });
+      const home = homeSystemAt(s);
       if (s.id === 0) expect(d.bodies[d.home].type).toBe('lush');
+      if (home) expect(d.bodies[d.home].type).toBe(home.type);
       else expect(d).toStrictEqual(describeSystem(s.seed, { name: s.name, cls: s.cls }));
     }
     // (system 0's own draw would have made its home world alien)

@@ -1,6 +1,6 @@
 import { writeFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { TerrainSampler, createPlanetParams, denPads, planSurface, type Den, type PlanetType } from '@astra/shared/world';
+import { GALAXY_SEED, Galaxy, TerrainSampler, denPads, describeGalaxySystem, planSurface, type Den, type PlanetParams } from '@astra/shared/world';
 
 // A den's levelled pad in the engine (P1.E02.T05). Until the tier function lands (P1.E02.T06) the client plans every
 // world at Tier 0, which has no dens; so the home planet is planned again here at Tier 1, as the server will plan it,
@@ -67,12 +67,22 @@ test('a Tier 1 den pad is levelled in the engine, and nothing is drawn for the d
     const g = window.game;
     const P = g.system.homePlanet;
     const sun = P.dirToLocal(g.system.star.position.clone().sub(P.position).normalize(), g.system.star.position.clone());
-    return { seed: P.params.seed, type: P.params.type, radius: P.radius, isMoon: P.params.isMoon, pads: P.params.pads as number[], sun: [sun.x, sun.y, sun.z] };
+    return {
+      system: g.system.info.id,
+      seed: P.params.seed,
+      type: P.params.type,
+      radius: P.radius,
+      pads: P.params.pads as number[],
+      sun: [sun.x, sun.y, sun.z],
+    };
   });
 
   // the same world at Tier 1: the same cities and sites, so the client's pads are the first of the new ones. (Only to a
   // few ulps: Chromium's and Node's Math.sin and Math.cos differ in the last bit now and then.)
-  const params = createPlanetParams(home.seed, home.type as PlanetType, home.radius, { isMoon: home.isMoon });
+  // (described as the server describes it: system 0's home world is the Thalune's, with their capital on it)
+  const described = describeGalaxySystem(new Galaxy(GALAXY_SEED).systems[home.system]);
+  const params = described.bodies[described.home].params as PlanetParams;
+  expect({ seed: params.seed, type: params.type, radius: params.radius }).toEqual({ seed: home.seed, type: home.type, radius: home.radius });
   const plan = planSurface(params, new TerrainSampler(params), { tier: 1 });
   const ours = plan.pads.slice(0, home.pads.length);
   expect(ours.length).toBe(home.pads.length);

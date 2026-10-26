@@ -1,7 +1,9 @@
 // HTTP gateway against the dockerised Postgres and Redis: accounts, characters, health and the /auth rate limit.
 import { AuthResponse, CharacterList, CharacterSummary } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { homeSystems } from '@astra/shared/world';
 import type { RunningServer } from '../src/server.ts';
+import { homeSystemOf } from '../src/world/home.ts';
 import { api, DEFAULT_LOOK, newAccount, newCharacter, startTestServer, uniqueCharacterName, uniqueUsername } from './helpers.ts';
 
 let server: RunningServer;
@@ -40,7 +42,7 @@ describe('accounts', () => {
     const created = await api(server, 'POST', '/characters', { token: session.token, body: { name, people: 'ixari', look: DEFAULT_LOOK } });
     expect(created.status).toBe(201);
     const character = CharacterSummary.parse(created.body);
-    expect(character).toMatchObject({ name, people: 'ixari', look: DEFAULT_LOOK, level: 1, homeSystem: 1 });
+    expect(character).toMatchObject({ name, people: 'ixari', look: DEFAULT_LOOK, level: 1, homeSystem: homeSystemOf('ixari') });
 
     const list = await api(server, 'GET', '/characters', { token: session.token });
     expect(list.status).toBe(200);
@@ -95,7 +97,9 @@ describe('characters', () => {
     const acct = await newAccount(server);
     const homes = [];
     for (const people of ['thalune', 'ixari', 'ulgani'] as const) homes.push((await newCharacter(server, acct.token, { people })).homeSystem);
-    expect(homes).toEqual([0, 1, 2]);
+    // (the shared world's home systems: system 0 and the two neighbours closest together with it)
+    expect(homes).toEqual(homeSystems().map((h) => h.systemIndex));
+    expect(homes).toEqual([0, 59, 1]);
   });
 
   it('refuses a taken name with 409, across accounts and in any case', async () => {

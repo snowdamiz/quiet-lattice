@@ -1,7 +1,7 @@
-// The three peoples' home systems (DESIGN 5.1): the starting system 0 and its two nearest neighbours in the galaxy, all
-// three Tier 0, each round the kind of world its people grew up on (lush, exotic, and a mild toxic world) with their
-// capital planned on it. Only those three home worlds are forced: every other world in the galaxy, and every other body
-// in the three systems, comes out exactly as its seed makes it.
+// The three peoples' home systems (DESIGN 5.1): the starting system 0 and the two neighbours that keep all three closest
+// together (within about a warp of each other), all three Tier 0, each round the kind of world its people grew up on
+// (lush, exotic, and a mild toxic world) with their capital planned on it. Only those three home worlds are forced:
+// every other world in the galaxy, and every other body in the three systems, comes out exactly as its seed makes it.
 import type { CapitalSpec } from './cities.ts';
 import { GALAXY_SEED, Galaxy, type GalaxySystem } from './galaxy.ts';
 import type { PlanetType } from './planetgen.ts';
@@ -40,20 +40,38 @@ export interface HomeSystem extends HomeWorld {
 
 const cache = new Map<number, readonly HomeSystem[]>();
 
-/** The three home systems of the galaxy generated from `galaxySeed`: system 0 for the Thalune, then its nearest
- * neighbour for the Ixari and the next nearest for the Ulgani (ties go to the lower id). Worked out once per galaxy. */
+/** The two systems that, with system 0, make the smallest triangle: the pair whose triangle with system 0 has the
+ * shortest longest side (ties go to the lower ids), nearer system 0 first (ties to the lower id). */
+export function homeNeighbours(galaxy: Galaxy): [GalaxySystem, GalaxySystem] {
+  const [first, ...rest] = galaxy.systems;
+  let best: [GalaxySystem, GalaxySystem] | null = null;
+  let bestSide = Infinity;
+  // (in id order, so the first pair found at the shortest side has the lowest ids)
+  for (let i = 0; i < rest.length; i++) {
+    const a = rest[i];
+    const da = galaxy.distance(first, a);
+    if (da >= bestSide) continue;
+    for (let j = i + 1; j < rest.length; j++) {
+      const b = rest[j];
+      const side = Math.max(da, galaxy.distance(first, b), galaxy.distance(a, b));
+      if (side < bestSide) {
+        bestSide = side;
+        best = [a, b];
+      }
+    }
+  }
+  const [a, b] = best!;
+  return galaxy.distance(first, b) < galaxy.distance(first, a) ? [b, a] : [a, b];
+}
+
+/** The three home systems of the galaxy generated from `galaxySeed`: system 0 for the Thalune, then the two systems that
+ * keep all three closest together (homeNeighbours): the nearer to system 0 for the Ixari, the other for the Ulgani.
+ * Worked out once per galaxy. */
 export function homeSystems(galaxySeed: number = GALAXY_SEED): readonly HomeSystem[] {
   const known = cache.get(galaxySeed);
   if (known) return known;
   const galaxy = new Galaxy(galaxySeed);
-  const first = galaxy.systems[0];
-  const nearest = galaxy.systems
-    .slice(1)
-    .map((s) => ({ s, d: galaxy.distance(s, first) }))
-    .sort((a, b) => a.d - b.d || a.s.id - b.s.id)
-    .slice(0, PEOPLE_IDS.length - 1)
-    .map(({ s }) => s);
-  const homes = [first, ...nearest].map((s, i): HomeSystem => {
+  const homes = [galaxy.systems[0], ...homeNeighbours(galaxy)].map((s, i): HomeSystem => {
     const people = PEOPLE_IDS[i];
     const world = HOME_WORLDS[people];
     // (forcing the home world never moves it: its place in the system is drawn before its type matters)
