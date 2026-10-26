@@ -1286,6 +1286,8 @@ export class Game {
       engine: inShip ? (ship.mode === 'landed' ? 0.05 : ship.enginePower || 0) : 0,
       thrust: inShip ? ship.thrust : 0,
       hover: inShip ? ship.hoverOut || 0 : 0,
+      rcs: inShip ? ship.rcsLevel || 0 : 0,
+      rcsKick: inShip ? ship.rcsKick || 0 : 0,
       boost: ship.boosting,
       speed: Math.abs(ship.speed),
       atmo: ship.atmoDensity,
@@ -1299,6 +1301,7 @@ export class Game {
       beamHeat: this.multitool.heat,
       underwater: this.mode === 'foot' && this.player.headUnderwater,
     });
+    ship.rcsKick = 0;
   }
 
   updateDebugText() {

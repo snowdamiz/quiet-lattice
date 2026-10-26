@@ -1,11 +1,12 @@
 // Renderer + post-processing chain:
-// scene (HDR, log depth, MSAA) -> atmosphere/ocean/clouds -> viewmodel -> bloom -> grade/tonemap
+// scene (HDR, log depth, MSAA) -> atmosphere/ocean/clouds -> ship FX -> viewmodel -> bloom -> grade/tonemap
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { Pass, FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 import { AtmospherePass } from '../render/AtmospherePass.js';
+import { FX_LAYER, fxUniforms } from '../render/ShipFx.js';
 
 class ViewModelPass extends Pass {
   constructor(scene, camera) {
@@ -23,6 +24,35 @@ class ViewModelPass extends Pass {
     renderer.clearDepth();
     renderer.render(this.scene, this.camera);
     renderer.autoClear = ac;
+  }
+}
+
+// The ship's glowing effects (jets, re-entry plasma), after the atmosphere so its haze does not
+// wash them out: their own layer, drawn over the hazed image with the scene's depth bound for them
+// to test against (see render/ShipFx.js).
+class FxPass extends Pass {
+  constructor(scene, camera) {
+    super();
+    this.scene = scene;
+    this.camera = camera;
+    this.fxCamera = new THREE.PerspectiveCamera();
+    this.needsSwap = false;
+  }
+  render(renderer, writeBuffer, readBuffer) {
+    // (the atmosphere pass has swapped: the scene and its depth are in writeBuffer now)
+    fxUniforms.tSceneDepth.value = writeBuffer.depthTexture;
+    fxUniforms.uFxFar.value = this.camera.far;
+    const cam = this.fxCamera;
+    cam.copy(this.camera);
+    cam.layers.set(FX_LAYER);
+    const bg = this.scene.background;
+    this.scene.background = null;
+    const ac = renderer.autoClear;
+    renderer.autoClear = false;
+    renderer.setRenderTarget(readBuffer);
+    renderer.render(this.scene, cam);
+    renderer.autoClear = ac;
+    this.scene.background = bg;
   }
 }
 
@@ -187,11 +217,13 @@ export class Engine {
     this.composer = new EffectComposer(renderer, rt);
     this.renderPass = new RenderPass(this.scene, this.camera);
     this.atmoPass = new AtmospherePass();
+    this.fxPass = new FxPass(this.scene, this.camera);
     this.viewPass = new ViewModelPass(this.viewScene, this.viewCamera);
     this.bloomPass = new UnrealBloomPass(new THREE.Vector2(size.x, size.y), 0.32, 0.55, 1.2);
     this.gradePass = new GradePass();
     this.composer.addPass(this.renderPass);
     this.composer.addPass(this.atmoPass);
+    this.composer.addPass(this.fxPass);
     this.composer.addPass(this.viewPass);
     this.composer.addPass(this.bloomPass);
     this.composer.addPass(this.gradePass);
