@@ -31,3 +31,14 @@ Format: task id, question → choice → why.
   Snapshots are the hot path; integer ids keep them small.
 - **P1.E02.T08** Snapshot number precision → msgpack float64 for every number. → In a system's inertial frame positions reach
   1e9 m, where float32 loses tens of metres; bandwidth can be tuned later per field.
+- **P1.E02.T08 (review)** Message shapes differ from the first ARCHITECTURE draft: `input` nests its pose and uses `time`
+  (the tag is `t`), snapshots use `time` and carry `base`, `correction` nests the pose and adds `mode`, `refused` has a
+  `code`, `welcome` adds `entityId`, `pose` and `mode`, and there is a `zone` handoff message and a `notice` event. → The
+  implementation is the spec; ARCHITECTURE §5 rewritten to match. → Nesting the pose lets one schema validate every pose;
+  the rest are needs the draft missed.
+- **P1.E02.T08 (review)** Deltas: how is a removed field sent, and what is a delta relative to? → An entity delta lists
+  removed fields in `clear`; a delta snapshot names its baseline tick in `base`. → Without them an owner lock could never
+  expire on the client and a delta applied to the wrong stored tick would corrupt state.
+- **P1.E02.T08 (review)** Bad numbers → the snapshot encoder clamps hp/shield/heat to [0, 1] and drops non-finite fields;
+  the decoder drops a bad entity, not the frame; control-message encoding throws on invalid input. → One NaN must never
+  blank every client's view, and NaN must never become `null` silently.

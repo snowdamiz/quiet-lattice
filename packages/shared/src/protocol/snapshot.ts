@@ -1,63 +1,94 @@
 // Zone snapshots (docs/ARCHITECTURE.md §5): a binary WebSocket frame whose first byte is the kind and whose rest is
 // msgpack. Positions stay float64: in a system's inertial frame they reach 1e9 m, where float32 would lose tens of metres.
-import { decode, encode } from '@msgpack/msgpack';
+//
+// A delta snapshot names its baseline: the tick of the snapshot the client last acknowledged, which the server diffed
+// against. The client keeps the states it was sent per tick, applies the delta onto `base`, and stores the result as
+// `tick`. Each entity delta carries the changed fields and, in `clear`, the fields that no longer exist.
+import { Encoder, decode } from '@msgpack/msgpack';
 import { z } from 'zod';
-import { EntityId, FrameId, Quat, Vec3 } from './messages.ts';
+import { EntityId, FrameId, PeopleId, Quat, Vec3, Velocity } from './messages.ts';
 
 export const BinaryKind = { snapshot: 1 } as const;
 
 export const EntityKind = z.enum(['player', 'ship', 'npc', 'mob', 'loot', 'pod', 'prop']);
 
+const unit = z.number().min(0).max(1);
+
+const fields = {
+  kind: EntityKind,
+  frame: FrameId,
+  pos: Vec3,
+  quat: Quat,
+  vel: Velocity,
+  /** movement state for players and ships ('ship', 'foot' …), behaviour state for mobs ('idle', 'flee', 'attack' …) */
+  mode: z.string().max(16),
+  /** display data, sent when first seen or when it changes */
+  name: z.string().max(32),
+  hull: z.string().max(24),
+  people: PeopleId,
+  species: z.number().int().nonnegative(),
+  level: z.number().int().min(1).max(50),
+  hp: unit,
+  shield: unit,
+  heat: unit,
+  anim: z.number().int().nonnegative(),
+  owner: EntityId,
+};
+export type EntityField = keyof typeof fields;
+export const ENTITY_FIELDS = Object.keys(fields) as EntityField[];
+
 /**
- * One entity's state. In a full snapshot every field is present; in a delta only `id` and the fields that changed since the
- * acknowledged snapshot.
+ * One entity's state. In a full snapshot every field the entity has is present; in a delta only `id`, the fields that
+ * changed since the baseline, and `clear` listing fields that were removed.
  */
 export const EntityState = z.object({
   id: EntityId,
-  kind: EntityKind.optional(),
-  frame: FrameId.optional(),
-  pos: Vec3.optional(),
-  quat: Quat.optional(),
-  vel: Vec3.optional(),
-  /** movement or behaviour state: 'ship', 'foot', 'idle', 'flee', 'attack' … */
-  mode: z.string().max(16).optional(),
-  /** display data, sent when first seen or when it changes */
-  name: z.string().max(32).optional(),
-  hull: z.string().max(24).optional(),
-  people: z.string().max(12).optional(),
-  species: z.number().int().optional(),
-  level: z.number().int().min(1).max(50).optional(),
-  hp: z.number().min(0).max(1).optional(),
-  shield: z.number().min(0).max(1).optional(),
-  heat: z.number().min(0).max(1).optional(),
-  anim: z.number().int().nonnegative().optional(),
-  owner: EntityId.optional(),
-});
+  ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, v.optional()])),
+  clear: z.array(z.enum(ENTITY_FIELDS as [EntityField, ...EntityField[]])).optional(),
+}) as unknown as z.ZodType<EntityState>;
+export type EntityState = { id: number; clear?: EntityField[] } & { [K in EntityField]?: z.infer<(typeof fields)[K]> };
 
-export const Snapshot = z.object({
+const Envelope = z.object({
   tick: z.number().int().nonnegative(),
   time: z.number(),
   /** the last input seq the server applied for this client, for reconciliation */
   ack: z.number().int().nonnegative(),
-  /** true when this snapshot is not a delta (first one, or the client fell too far behind) */
+  /** true when this snapshot is not a delta (the first one, or the client fell too far behind) */
   full: z.boolean(),
-  entities: z.array(EntityState),
-  removed: z.array(EntityId),
+  /** for a delta: the tick of the acknowledged snapshot it was diffed against */
+  base: z.number().int().nonnegative().optional(),
+  entities: z.array(z.unknown()).max(20000),
+  removed: z.array(EntityId).max(20000),
 });
-export type EntityKind = z.infer<typeof EntityKind>;
-export type EntityState = z.infer<typeof EntityState>;
-export type Snapshot = z.infer<typeof Snapshot>;
+export interface Snapshot {
+  tick: number;
+  time: number;
+  ack: number;
+  full: boolean;
+  base?: number;
+  entities: EntityState[];
+  removed: number[];
+}
 
-export function encodeSnapshot(s: Snapshot): Uint8Array {
-  const body = encode(s, { ignoreUndefined: true });
+const encoder = new Encoder({ ignoreUndefined: true });
+
+/**
+ * Encodes a snapshot. Entities are sanitised first: unit fields are clamped to [0, 1] and any non-finite number drops its
+ * field (with the field listed in `dropped` for the caller to log), so one bad value never poisons a whole frame.
+ */
+export function encodeSnapshot(s: Snapshot, dropped: string[] = []): Uint8Array {
+  if (!s.full && s.base === undefined) throw new Error('a delta snapshot needs its baseline tick');
+  const clean = { ...s, entities: s.entities.map((e) => sanitizeEntity(e, dropped)) };
+  const body = encoder.encode(clean);
   const out = new Uint8Array(body.length + 1);
   out[0] = BinaryKind.snapshot;
   out.set(body, 1);
   return out;
 }
 
-/** Decodes and validates a binary frame; returns null for anything that is not a well-formed snapshot. */
-export function decodeSnapshot(buf: Uint8Array): Snapshot | null {
+/** Decodes a binary frame. Returns null when the frame or its envelope is malformed; an entity that fails validation is
+ * dropped on its own (its id goes to `rejected` when it has one) and the rest of the snapshot survives. */
+export function decodeSnapshot(buf: Uint8Array, rejected: number[] = []): Snapshot | null {
   if (buf.length < 2 || buf[0] !== BinaryKind.snapshot) return null;
   let raw: unknown;
   try {
@@ -65,36 +96,83 @@ export function decodeSnapshot(buf: Uint8Array): Snapshot | null {
   } catch {
     return null;
   }
-  const r = Snapshot.safeParse(raw);
-  return r.success ? r.data : null;
+  const env = Envelope.safeParse(raw);
+  if (!env.success) return null;
+  if (!env.data.full && env.data.base === undefined) return null;
+  const entities: EntityState[] = [];
+  for (const e of env.data.entities) {
+    const r = EntityState.safeParse(e);
+    if (r.success) entities.push(r.data);
+    else if (e && typeof e === 'object' && typeof (e as { id?: unknown }).id === 'number') rejected.push((e as { id: number }).id);
+  }
+  return { ...env.data, entities };
+}
+
+function sanitizeEntity(e: EntityState, dropped: string[]): EntityState {
+  const out: Record<string, unknown> = { id: e.id };
+  for (const [k, v] of Object.entries(e)) {
+    if (k === 'id' || v === undefined) continue;
+    if (!finiteDeep(v)) {
+      dropped.push(`${e.id}.${k}`);
+      continue;
+    }
+    out[k] = k === 'hp' || k === 'shield' || k === 'heat' ? Math.min(1, Math.max(0, v as number)) : v;
+  }
+  return out as EntityState;
+}
+
+function finiteDeep(v: unknown): boolean {
+  if (typeof v === 'number') return Number.isFinite(v);
+  if (Array.isArray(v)) return v.every(finiteDeep);
+  return true;
 }
 
 /**
- * The fields of `next` that differ from `prev` (always with the id); null when nothing changed. Vectors compare
- * element-wise with an epsilon so float noise does not resend a resting entity.
+ * The delta from `prev` to `next`: changed fields plus `clear` for fields `next` no longer has; null when nothing changed.
+ * Numbers and number arrays compare with an epsilon so float noise does not resend a resting entity. The server must
+ * diff against the state it last sent (not the true state), or slow motion under the epsilon would never be sent.
  */
 export function diffEntity(prev: EntityState | undefined, next: EntityState, eps = 1e-4): EntityState | null {
-  if (!prev) return next;
+  if (!prev) return clone(next);
   const out: EntityState = { id: next.id };
   let changed = false;
-  for (const key of Object.keys(next) as (keyof EntityState)[]) {
-    if (key === 'id') continue;
+  for (const key of ENTITY_FIELDS) {
     const a = prev[key];
     const b = next[key];
-    if (!same(a, b, eps)) {
-      (out as Record<string, unknown>)[key] = b;
+    if (b === undefined) {
+      if (a !== undefined) {
+        (out.clear ??= []).push(key);
+        changed = true;
+      }
+    } else if (!same(a, b, eps)) {
+      (out as Record<string, unknown>)[key] = clone(b);
       changed = true;
     }
   }
   return changed ? out : null;
 }
 
-/** Applies a delta onto a stored full state (in place) and returns it. */
+/** Returns `base` with `delta` applied, as a new object (stored states for other ticks are never mutated). */
 export function applyEntityDelta(base: EntityState, delta: EntityState): EntityState {
-  return Object.assign(base, delta);
+  const out = clone(base) as Record<string, unknown>;
+  for (const [k, v] of Object.entries(delta)) if (k !== 'clear' && v !== undefined) out[k] = clone(v);
+  for (const k of delta.clear ?? []) delete out[k];
+  return out as EntityState;
+}
+
+function clone<T>(v: T): T {
+  if (Array.isArray(v)) return v.map(clone) as T;
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, clone(x)])) as T;
+  return v;
 }
 
 function same(a: unknown, b: unknown, eps: number): boolean {
-  if (Array.isArray(a) && Array.isArray(b)) return a.length === b.length && a.every((x, i) => Math.abs((x as number) - (b[i] as number)) <= eps);
+  if (typeof a === 'number' && typeof b === 'number') return Math.abs(a - b) <= eps || a === b;
+  if (Array.isArray(a) && Array.isArray(b)) return a.length === b.length && a.every((x, i) => same(x, b[i], eps));
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    const ka = Object.keys(a);
+    const kb = Object.keys(b);
+    return ka.length === kb.length && ka.every((k) => same((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k], eps));
+  }
   return a === b;
 }

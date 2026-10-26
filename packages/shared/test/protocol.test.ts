@@ -1,6 +1,14 @@
+import { encode } from '@msgpack/msgpack';
 import { describe, expect, it } from 'vitest';
 import {
+  AuthResponse,
+  CharacterCreate,
+  CharacterList,
+  CharacterSummary,
   ClientMessage,
+  Credentials,
+  GameEvent,
+  InvalidMessageError,
   PROTOCOL_VERSION,
   ServerMessage,
   applyEntityDelta,
@@ -9,13 +17,15 @@ import {
   decodeSnapshot,
   diffEntity,
   encodeMessage,
+  encodeServerMessage,
   encodeSnapshot,
+  peekVersion,
   type EntityState,
   type Pose,
   type Snapshot,
 } from '../src/protocol/index.ts';
 
-const pose: Pose = { frame: '424242:2', pos: [113000.25, -42.5, 7.125], quat: [0, 0.7071, 0, 0.7071], vel: [1, 2, 3] };
+const pose: Pose = { frame: '424242:2', pos: [113000.25, -42.5, 7.125], quat: [0, 0.7071068, 0, 0.7071068], vel: [1, 2, 3] };
 const character = { id: 'c1', name: "Ana Vel'ka", people: 'thalune', look: { palette: 3, pattern: 1, head: 2, suit: 0 }, level: 1, homeSystem: 0 } as const;
 
 const clientSamples: ClientMessage[] = [
@@ -29,6 +39,14 @@ const clientSamples: ClientMessage[] = [
   { t: 'ping', id: 1, clientTime: 1000.5 },
 ];
 
+const events: GameEvent[] = [
+  { kind: 'combat', source: 5, target: 9, amount: 18, damageType: 'thermal', ability: 'lance', killed: false },
+  { kind: 'quest', questId: 'prologue.first-jobs', step: 2, status: 'step', counters: { carbon: 25 } },
+  { kind: 'chat', channel: 'shard', from: 'Ana', text: 'hi', at: 3600 },
+  { kind: 'loot', item: 'ferrite', count: 12, from: 9 },
+  { kind: 'notice', text: 'Docking permission granted', tone: 'good' },
+];
+
 const serverSamples: ServerMessage[] = [
   { t: 'welcome', accountId: 'a1', character, entityId: 5, serverTime: 3600.25, zone: { id: 'sys:0', systemSeed: 424242 }, pose, mode: 'docked' },
   { t: 'refused', code: 'version', reason: 'reload the page' },
@@ -36,17 +54,22 @@ const serverSamples: ServerMessage[] = [
   { t: 'zone', zone: { id: 'sys:1', systemSeed: 77 }, pose: { ...pose, frame: null } },
   { t: 'pong', id: 1, clientTime: 1000.5, serverTime: 3600.3 },
   { t: 'world', season: 1, count: 500, edgeX: 2.5e6, tiers: [0, 0, 0, 1, 2], serverTime: 3600 },
-  { t: 'event', event: { kind: 'combat', source: 5, target: 9, amount: 18, damageType: 'thermal', ability: 'lance', killed: false } },
-  { t: 'event', event: { kind: 'quest', questId: 'prologue.first-jobs', step: 2, status: 'step', counters: { carbon: 25 } } },
-  { t: 'event', event: { kind: 'chat', channel: 'shard', from: 'Ana', text: 'hi', at: 3600 } },
-  { t: 'event', event: { kind: 'loot', item: 'ferrite', count: 12, from: 9 } },
-  { t: 'event', event: { kind: 'notice', text: 'Docking permission granted', tone: 'good' } },
+  ...events.map((event) => ({ t: 'event' as const, event })),
 ];
 
+const http = {
+  Credentials: [Credentials, { username: 'ana_v', password: 'correct horse' }],
+  AuthResponse: [AuthResponse, { token: 'a.b.c', accountId: 'a1' }],
+  CharacterCreate: [CharacterCreate, { name: 'Ana Velka', people: 'ixari', look: { palette: 0, pattern: 15, head: 5, suit: 3 } }],
+  CharacterSummary: [CharacterSummary, character],
+  CharacterList: [CharacterList, { characters: [character] }],
+} as const;
+
 describe('protocol: control messages', () => {
-  it('covers every client and server message type', () => {
+  it('covers every client message, server message and event kind', () => {
     expect(new Set(clientSamples.map((m) => m.t))).toEqual(new Set(ClientMessage.options.map((o) => o.shape.t.value)));
     expect(new Set(serverSamples.map((m) => m.t))).toEqual(new Set(ServerMessage.options.map((o) => o.shape.t.value)));
+    expect(new Set(events.map((e) => e.kind))).toEqual(new Set(GameEvent.options.map((o) => o.shape.kind.value)));
   });
 
   it.each(clientSamples.map((m) => [m.t, m]))('client %s round-trips', (_, m) => {
@@ -57,14 +80,40 @@ describe('protocol: control messages', () => {
     expect(decodeServerMessage(encodeMessage(m))).toEqual(m);
   });
 
+  it.each(Object.entries(http))('HTTP %s round-trips', (_, [schema, value]) => {
+    expect(schema.parse(JSON.parse(JSON.stringify(value)))).toEqual(value);
+  });
+
   it('drops malformed and unknown messages without throwing', () => {
-    expect(decodeClientMessage('not json')).toBeNull();
-    expect(decodeClientMessage('{"t":"teleport","to":"anywhere"}')).toBeNull();
-    expect(decodeClientMessage('{"t":"cast","seq":1,"slot":9,"aim":[0,0,1]}')).toBeNull();
-    expect(
-      decodeClientMessage('{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"../etc","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}'),
-    ).toBeNull();
+    const bad = [
+      'not json',
+      '{"t":"teleport","to":"anywhere"}',
+      '{"t":"cast","seq":1,"slot":9,"aim":[0,0,1]}',
+      '{"t":"cast","seq":1,"slot":1,"aim":[0,0,0]}',
+      '{"t":"interact","target":""}',
+      '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"../etc","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}',
+      '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":null,"pos":[0,0,0],"quat":[0,0,0,0],"vel":[0,0,0]},"buttons":0}',
+      '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":null,"pos":[1e300,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}',
+      '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"12345678901:1","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}',
+      '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":null,"pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":256}',
+      `{"t":"join","characterId":"${'x'.repeat(65)}"}`,
+      `{"t":"hello","version":1,"token":"${'x'.repeat(5000)}"}`,
+      '{"t":"chat","channel":"shard","text":"spoof\\u202eevil"}',
+    ];
+    for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
     expect(decodeServerMessage('{"t":"world","season":1,"count":5000,"edgeX":0,"tiers":[],"serverTime":0}')).toBeNull();
+  });
+
+  it('refuses to encode invalid messages instead of sending nulls', () => {
+    const nan = { t: 'event', event: { kind: 'combat', source: 1, target: 2, amount: NaN, damageType: 'x', killed: false } } as ServerMessage;
+    expect(() => encodeServerMessage(nan)).toThrow(InvalidMessageError);
+    expect(() => encodeMessage({ t: 'event', event: { kind: 'loot', item: 'ferrite', count: 0, from: null } })).toThrow(InvalidMessageError);
+  });
+
+  it('reads the version of a hello it cannot otherwise parse', () => {
+    expect(peekVersion('{"t":"hello","version":7,"token":{"new":"shape"}}')).toBe(7);
+    expect(peekVersion('{"t":"join","characterId":"c"}')).toBeNull();
+    expect(peekVersion('garbage')).toBeNull();
   });
 });
 
@@ -88,6 +137,7 @@ describe('protocol: snapshots', () => {
         shield: 0.5,
       },
       { id: 9, kind: 'mob', frame: '424242:2', pos: [100, 200, 300], quat: [0, 0, 0, 1], vel: [0, 0, 0], species: 3, level: 4, mode: 'idle' },
+      { id: 11, kind: 'pod', frame: '424242:2', pos: [5, 5, 5], owner: 5, people: 'ulgani' },
     ],
     removed: [],
   };
@@ -100,9 +150,26 @@ describe('protocol: snapshots', () => {
     expect(back.entities[0].pos![0]).toBe(1.234567891e9);
   });
 
-  it('round-trips a delta snapshot', () => {
-    const delta: Snapshot = { tick: 121, time: 3600.1, ack: 8, full: false, entities: [{ id: 9, pos: [101, 200, 300], mode: 'flee' }], removed: [5] };
+  it('round-trips a delta with its baseline, cleared fields and removals', () => {
+    const delta: Snapshot = {
+      tick: 121,
+      time: 3600.1,
+      ack: 8,
+      full: false,
+      base: 120,
+      entities: [
+        { id: 9, pos: [101, 200, 300], mode: 'flee' },
+        { id: 11, clear: ['owner'] },
+      ],
+      removed: [5],
+    };
     expect(decodeSnapshot(encodeSnapshot(delta))).toEqual(delta);
+  });
+
+  it('requires a baseline on deltas', () => {
+    expect(() => encodeSnapshot({ tick: 1, time: 0, ack: 0, full: false, entities: [], removed: [] })).toThrow();
+    const raw = new Uint8Array([1, ...encode({ tick: 1, time: 0, ack: 0, full: false, entities: [], removed: [] })]);
+    expect(decodeSnapshot(raw)).toBeNull();
   });
 
   it('rejects frames that are not snapshots', () => {
@@ -111,14 +178,36 @@ describe('protocol: snapshots', () => {
     expect(decodeSnapshot(new Uint8Array([1]))).toBeNull();
   });
 
-  it('diffs and applies entity deltas', () => {
-    const a: EntityState = { id: 9, kind: 'mob', pos: [100, 200, 300], quat: [0, 0, 0, 1], mode: 'idle', hp: 1 };
-    const b: EntityState = { id: 9, kind: 'mob', pos: [100.00001, 200, 300], quat: [0, 0, 0, 1], mode: 'flee', hp: 0.5 };
-    expect(diffEntity(a, b)).toEqual({ id: 9, mode: 'flee', hp: 0.5 });
+  it('sanitises on encode: clamps unit fields, drops non-finite fields, keeps the rest of the frame', () => {
+    const dropped: string[] = [];
+    const s: Snapshot = { ...full, entities: [{ id: 5, hp: 1.0000001, shield: -0.01, pos: [NaN, 0, 0], name: 'Ana' }, full.entities[1]] };
+    const back = decodeSnapshot(encodeSnapshot(s, dropped))!;
+    expect(dropped).toEqual(['5.pos']);
+    expect(back.entities[0]).toEqual({ id: 5, hp: 1, shield: 0, name: 'Ana' });
+    expect(back.entities[1]).toEqual(full.entities[1]);
+  });
+
+  it('drops one malformed entity on decode, not the whole frame', () => {
+    const raw = new Uint8Array([1, ...encode({ ...full, entities: [{ id: 5, hp: 7 }, full.entities[1]] })]);
+    const rejected: number[] = [];
+    const back = decodeSnapshot(raw, rejected)!;
+    expect(rejected).toEqual([5]);
+    expect(back.entities).toEqual([full.entities[1]]);
+  });
+
+  it('diffs and applies entity deltas, including cleared fields', () => {
+    const a: EntityState = { id: 11, kind: 'pod', pos: [100, 200, 300], quat: [0, 0, 0, 1], mode: 'idle', hp: 1, owner: 7 };
+    const b: EntityState = { id: 11, kind: 'pod', pos: [100.00001, 200, 300], quat: [0, 0, 0, 1], mode: 'flee', hp: 0.5 };
+    const d = diffEntity(a, b)!;
+    expect(d).toEqual({ id: 11, mode: 'flee', hp: 0.5, clear: ['owner'] });
     expect(diffEntity(a, { ...a })).toBeNull();
-    expect(diffEntity(undefined, a)).toBe(a);
-    const stored = { ...a };
-    applyEntityDelta(stored, { id: 9, mode: 'flee', hp: 0.5 });
-    expect(stored).toEqual({ ...a, mode: 'flee', hp: 0.5 });
+    const first = diffEntity(undefined, a)!;
+    expect(first).toEqual(a);
+    expect(first).not.toBe(a);
+    const applied = applyEntityDelta(a, d);
+    expect(applied).toEqual({ id: 11, kind: 'pod', pos: [100, 200, 300], quat: [0, 0, 0, 1], mode: 'flee', hp: 0.5 });
+    expect(a.owner).toBe(7);
+    applied.pos![0] = 0;
+    expect(a.pos![0]).toBe(100);
   });
 });

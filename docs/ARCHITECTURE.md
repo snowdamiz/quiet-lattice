@@ -55,16 +55,30 @@ position (P1.E03.T03 tests this to 1 cm).
 ## 5. Protocol (`@astra/shared/protocol`)
 
 - **Control messages are JSON**, one object per WebSocket text frame, shaped `{ "t": "<type>", ... }` and validated with a
-  zod discriminated union on both ends. Unknown or invalid messages are dropped and counted, never thrown.
-- **Snapshots are binary**: a WebSocket binary frame whose first byte is the message kind and whose rest is msgpack. Kind
-  `1` is a zone snapshot: `{ tick, t, ack, full, entities: [...], removed: [...] }`, delta-compressed against the last
-  snapshot the client acknowledged (`ack` echoes the client's last input `seq` for reconciliation).
-- **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`; a mismatch is refused with a message that
-  tells the player to reload.
-- **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, t, frame, pos, quat, vel, mode, buttons}`
-  at 20 Hz, `cast`, `interact`, `chat`, `ack {tick}`, `ping`.
-- **Server → client:** `welcome {accountId, character, serverTime, zone}`, `refused {reason}`, `correction {seq, frame, pos,
-  quat, vel}`, `event {...}` (combat, quest, chat, loot), `world {season, count, edgeX, tiers}`, `pong`, and snapshots.
+  zod discriminated union on both ends. Decoding never throws: unknown or invalid messages are dropped and counted.
+  Encoding validates and throws `InvalidMessageError`, so a NaN or out-of-range field fails at the sender instead of
+  arriving as `null`.
+- **Client → server schemas are the trust boundary:** every string has a length cap (ids 64, tokens 4096, chat 280 without
+  control or bidi-override characters), positions and velocities are finite and bounded, quaternions must be unit length,
+  directions non-zero, frame ids `\d{1,10}:(\d{1,3}|station)`, the button mask 8 bits.
+- **Snapshots are binary**: a WebSocket binary frame whose first byte is the message kind and whose rest is msgpack
+  (float64 numbers). Kind `1` is a zone snapshot `{ tick, time, ack, full, base?, entities, removed }`. A delta names its
+  baseline `base`, the tick of the snapshot the client last acknowledged; the client keeps the states it was sent per tick,
+  applies the delta onto `base` and stores the result as `tick`. An entity delta carries its changed fields and `clear`, the
+  fields it no longer has. `ack` echoes the client's last applied input `seq` for reconciliation. The server diffs against
+  the state it last *sent*, not its true state, so slow motion under the epsilon still goes out. The encoder clamps unit
+  fields and drops non-finite fields; the decoder drops a malformed entity on its own and keeps the rest of the frame.
+- **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
+  the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
+- **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
+  vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
+  trusts `time` for speed checks; `mode` is a prediction validated like the pose), `cast {seq, slot, aim, target?}`,
+  `interact {target}`, `chat {channel, text}`, `ack {tick}`, `ping {id, clientTime}`.
+- **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
+  `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
+  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}`, `pong`, and snapshots.
+- **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
+  `CharacterList`.
 
 ## 6. Zones
 
@@ -96,7 +110,7 @@ re-express the buffered poses). Gameplay code reads remote state from the store,
 
 ## 10. Tests
 
-Unit tests next to the code (`*.test.ts`); integration tests (`*.int.test.ts`) start a real server on a random port against
+Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; integration tests (`*.int.test.ts`) start a real server on a random port against
 the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
 database is disposable.
