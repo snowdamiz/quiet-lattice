@@ -69,6 +69,11 @@ interface Slot {
 
 export class ZoneManager {
   readonly stepMs: number;
+  /**
+   * Hears of a session taken out of its zone by the zone itself (its own entity was despawned), so the gateway can stop
+   * treating it as in one. Not called for leave().
+   */
+  onViewerRemoved?: (viewer: ZoneViewer, zone: Zone) => void;
   /** loop ticks run, and ticks skipped because the loop fell too far behind */
   ticks = 0;
   skippedTicks = 0;
@@ -122,7 +127,7 @@ export class ZoneManager {
     const id = systemZoneId(systemIndex);
     let slot = this.slots.get(id);
     if (!slot) {
-      const zone = new Zone({ id, systemIndex, system: this.describe(systemIndex), log: this.log });
+      const zone = new Zone({ id, systemIndex, system: this.describe(systemIndex), log: this.log, onViewerRemoved: (viewer) => this.removed(viewer, zone) });
       slot = { zone, asleep: false, emptySince: null, overruns: 0, overrunsLogged: 0, lastOverrunLog: -Infinity };
       this.slots.set(id, slot);
       this.log?.info({ zone: id, system: systemIndex, seed: zone.system.seed }, 'zone loaded');
@@ -249,6 +254,16 @@ export class ZoneManager {
   /** Per-zone tick metrics: entities, sessions, p50/p95/max tick ms, overruns. */
   metrics(): ZoneStatus[] {
     return [...this.slots.values()].map((s) => ({ ...s.zone.metrics(), asleep: s.asleep, overruns: s.overruns }));
+  }
+
+  /** A zone dropped a session whose entity was despawned: forget its route and pass the news on. */
+  private removed(viewer: ZoneViewer, zone: Zone): void {
+    const slot = this.byViewer.get(viewer);
+    if (slot?.zone !== zone) return;
+    this.byViewer.delete(viewer);
+    if (zone.sessionCount === 0) slot.emptySince ??= this.mono();
+    this.log?.debug({ zone: zone.id, session: viewer.id }, 'session entity despawned; session out of the zone');
+    this.onViewerRemoved?.(viewer, zone);
   }
 
   private overran(slot: Slot, ms: number, now: number): void {

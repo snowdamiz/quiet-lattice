@@ -68,7 +68,8 @@ export interface ZoneLog {
   debug(obj: object, msg: string): void;
 }
 
-/** What an input did: applied, refused as older than the last one, or refused for a frame outside this system. */
+/** What an input did: applied; refused as not newer than the last one (or numbered 0); refused for a frame outside this
+ * system; or nowhere to go (the session is in no zone). */
 export type InputResult = 'ok' | 'stale' | 'frame' | 'unknown';
 
 /** A read-only look at an entity. */
@@ -112,7 +113,7 @@ interface View {
   readonly history: SnapshotHistory;
   /** entity ids in its interest set as of the last tick, ascending */
   interest: number[];
-  /** last input seq applied, -1 before the first */
+  /** last input seq applied; 0 before the first (clients number inputs from 1) */
   lastInputSeq: number;
   bytesSent: number;
 }
@@ -135,6 +136,8 @@ export interface ZoneOptions {
   systemIndex: number;
   system: SystemDescription;
   log?: ZoneLog;
+  /** Called when a session leaves because its own entity was despawned (not when it leaves through leave()). */
+  onViewerRemoved?: (viewer: ZoneViewer) => void;
 }
 
 export class Zone {
@@ -150,6 +153,7 @@ export class Zone {
   droppedFields = 0;
 
   private readonly log?: ZoneLog;
+  private readonly onViewerRemoved?: (viewer: ZoneViewer) => void;
   private readonly entities = new Map<number, Entity>();
   private readonly views = new Map<ZoneViewer, View>();
   private readonly parties = new Map<string, Set<number>>();
@@ -169,6 +173,7 @@ export class Zone {
     this.systemIndex = opts.systemIndex;
     this.system = opts.system;
     this.log = opts.log;
+    this.onViewerRemoved = opts.onViewerRemoved;
     for (const c of INTEREST_CLASSES) this.hashes[c] = new SpatialHash(INTEREST_RADIUS[c] * INTEREST_HYSTERESIS);
     opts.system.bodies.forEach((_, i) => this.frames.set(frameId(opts.system.seed, i), i));
     this.frames.set(frameId(opts.system.seed, 'station'), 'station');
@@ -197,6 +202,7 @@ export class Zone {
   /** Adds an entity and returns its id (unique in this zone, never reused). */
   spawn(init: EntityInit): number {
     if (!this.hasFrame(init.frame)) throw new RangeError(`frame ${init.frame} is not in system ${this.systemIndex}`);
+    checkPose(init);
     const id = this.nextEntityId++;
     const { party = null, ...fields } = init;
     const e = new Entity(id, copyFields(fields) as EntityInit, interestClass(init.kind, init.mode), party);
@@ -205,14 +211,18 @@ export class Zone {
     return id;
   }
 
-  /** Removes an entity; a session whose own entity it was leaves the zone. */
+  /** Removes an entity. A session whose own entity it was leaves the zone, and onViewerRemoved hears of it. */
   despawn(id: number): boolean {
     const e = this.entities.get(id);
     if (!e) return false;
-    for (const v of this.views.values()) if (v.entityId === id) this.views.delete(v.viewer);
     this.hashes[e.cls].remove(id);
     if (e.party !== null) this.leaveParty(id, e.party);
     this.entities.delete(id);
+    for (const v of [...this.views.values()]) {
+      if (v.entityId !== id) continue;
+      this.views.delete(v.viewer);
+      this.onViewerRemoved?.(v.viewer);
+    }
     return true;
   }
 
@@ -228,6 +238,7 @@ export class Zone {
   patch(id: number, set: Partial<EntityFields>, clear: readonly EntityField[] = []): void {
     const e = this.mustGet(id);
     if (set.frame !== undefined && !this.hasFrame(set.frame)) throw new RangeError(`frame ${set.frame} is not in system ${this.systemIndex}`);
+    checkPose(set);
     for (const k of clear) if (REQUIRED.has(k)) throw new Error(`cannot clear ${k}`);
     const fields = e.fields as unknown as Record<string, unknown>;
     for (const k in set) {
@@ -258,7 +269,7 @@ export class Zone {
   join(viewer: ZoneViewer, init: EntityInit): number {
     if (this.views.has(viewer)) throw new Error(`session ${viewer.id} is already in zone ${this.id}`);
     const entityId = this.spawn(init);
-    this.views.set(viewer, { viewer, entityId, history: new SnapshotHistory(), interest: [], lastInputSeq: -1, bytesSent: 0 });
+    this.views.set(viewer, { viewer, entityId, history: new SnapshotHistory(), interest: [], lastInputSeq: 0, bytesSent: 0 });
     return entityId;
   }
 
@@ -296,7 +307,8 @@ export class Zone {
 
   /**
    * Applies a client's input to its entity: its predicted pose and mode, taken as sent but clamped (INPUT_LIMITS) and
-   * marked unvalidated; movement authority is P1.E03.T04. Inputs must come in seq order and in this system's frames.
+   * marked unvalidated; movement authority is P1.E03.T04. Inputs must come in seq order, numbered from 1 (so a
+   * snapshot's `ack` of 0 means no input yet), and in this system's frames.
    */
   input(viewer: ZoneViewer, msg: InputMessage): InputResult {
     const v = this.views.get(viewer);
@@ -339,7 +351,9 @@ export class Zone {
       if (!e.wire || e.changed.size) e.wire = wireState(e, dropped);
       const frame = e.fields.frame === null ? null : (this.framePoses.get(e.fields.frame) ?? null);
       const w = (e.world = localToWorld(frame, e.fields.pos));
-      this.hashes[e.cls].insert(e.id, w[0], w[1], w[2]);
+      // (spawn, patch and input keep poses finite; should one ever not be, the entity drops out of sight, not the zone)
+      if (Number.isFinite(w[0]) && Number.isFinite(w[1]) && Number.isFinite(w[2])) this.hashes[e.cls].insert(e.id, w[0], w[1], w[2]);
+      else this.hashes[e.cls].remove(e.id);
     }
     if (dropped.length) this.reportDropped(dropped);
 
@@ -441,7 +455,7 @@ export class Zone {
     }
     while (j < baseIds.length) removed.push(baseIds[j++]!);
     v.history.record(this.tick, { ids, states });
-    const ack = Math.max(0, v.lastInputSeq);
+    const ack = v.lastInputSeq;
     return base
       ? { tick: this.tick, time: this.time, ack, full: false, base: base.tick, entities, removed }
       : { tick: this.tick, time: this.time, ack, full: true, entities, removed };
@@ -461,7 +475,11 @@ export class Zone {
     return d;
   }
 
-  /** After a change: its interest class may have changed with its kind or mode. */
+  /**
+   * After a change: its interest class may have changed with its kind or mode. Until movement authority (P1.E03.T04)
+   * validates a player's mode, a client picks its own class through the mode it sends: 'foot' while flying hides its
+   * ship from sessions beyond 2 km instead of 50 km.
+   */
   private touch(e: Entity): void {
     const cls = interestClass(e.fields.kind, e.fields.mode);
     if (cls !== e.cls) {
@@ -547,6 +565,19 @@ function wireState(e: Entity, dropped: string[]): EntityState {
     if (v !== undefined) out[k] = v;
   }
   return out as EntityState;
+}
+
+/** Throws unless the pose fields that are given are finite (and the quaternion not zero): a zone cannot place NaN. */
+function checkPose(f: { pos?: readonly number[]; quat?: readonly number[]; vel?: readonly number[] }): void {
+  for (const [k, v, n] of [
+    ['pos', f.pos, 3],
+    ['quat', f.quat, 4],
+    ['vel', f.vel, 3],
+  ] as const) {
+    if (v === undefined) continue;
+    if (!Array.isArray(v) || v.length !== n || !v.every(Number.isFinite)) throw new RangeError(`${k} must be ${n} finite numbers, not ${JSON.stringify(v)}`);
+    if (k === 'quat' && Math.hypot(...v) < 1e-6) throw new RangeError('quat must not be zero');
+  }
 }
 
 function clampLength<T extends number[]>(v: T, max: number): T {

@@ -29,15 +29,41 @@ const HEARTBEAT_MS = 30_000;
 
 /** Per-socket message limits. */
 export const MESSAGE_LIMITS = {
-  /** Budget: 20 Hz input plus acks, pings and chat fit with room to spare; 60 absorbs a burst after a network stall. */
-  burst: 60,
-  perSecond: 40,
+  /**
+   * Budget: an honest client sends 40 messages a second on its own (input at 20 Hz and an ack per snapshot, one per
+   * tick), plus its pings, casts, interactions and chat; 60/s leaves 20/s for those, and a burst of 120 absorbs the
+   * backlog after a network stall (about 3 s of input and acks).
+   */
+  burst: 120,
+  perSecond: 60,
   /** Messages over budget are dropped; this many overflows (refilled at 1/s) are forgiven before the socket is closed. */
   strikes: 20,
   strikesPerSecond: 1,
   /** Invalid or out-of-place messages tolerated before the socket is closed. */
   maxInvalid: 50,
 } as const;
+
+/** What a socket's message budget makes of one incoming frame: take it, drop it, or drop it and close the socket. */
+export type Admission = 'take' | 'drop' | 'close';
+
+/**
+ * One socket's message budget (MESSAGE_LIMITS): a token bucket every incoming frame spends from, and a bucket of strikes
+ * that each frame over budget spends; a socket out of strikes is closed. Times are milliseconds.
+ */
+export class MessageBudget {
+  private readonly budget: TokenBucket;
+  private readonly strikes: TokenBucket;
+
+  constructor(now: number, limits: Pick<typeof MESSAGE_LIMITS, 'burst' | 'perSecond' | 'strikes' | 'strikesPerSecond'> = MESSAGE_LIMITS) {
+    this.budget = new TokenBucket(limits.burst, limits.perSecond, now);
+    this.strikes = new TokenBucket(limits.strikes, limits.strikesPerSecond, now);
+  }
+
+  admit(now: number): Admission {
+    if (this.budget.take(now)) return 'take';
+    return this.strikes.take(now) ? 'drop' : 'close';
+  }
+}
 
 export interface WsLimits {
   helloTimeoutMs: number;
@@ -72,8 +98,7 @@ export interface WsGateway {
 interface Conn {
   s: Session;
   ws: WebSocket;
-  budget: TokenBucket;
-  strikes: TokenBucket;
+  budget: MessageBudget;
   /** The hello or join deadline. */
   deadline?: NodeJS.Timeout;
   /** Messages are handled one at a time, in order, even though hello and join await the database. */
@@ -85,6 +110,12 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   // autoPong off: ws would otherwise answer every client ping frame itself, outside the budget and the buffer cap.
   const wss = new WebSocketServer({ noServer: true, maxPayload: MAX_MESSAGE_BYTES, autoPong: false });
   const registry = new SessionRegistry();
+  deps.zones.onViewerRemoved = (viewer) => {
+    if (!(viewer instanceof Session)) return;
+    log.debug({ session: viewer.id, zone: viewer.zoneId, entity: viewer.entityId }, 'session out of its zone');
+    viewer.entityId = null;
+    viewer.zoneId = null;
+  };
   const conns = new Set<Conn>();
   const openPerIp = new Map<string, number>();
   let nextSessionId = 1;
@@ -133,8 +164,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     const c: Conn = {
       s: new Session(nextSessionId++, ws, clientKey(req.socket.remoteAddress ?? 'unknown')),
       ws,
-      budget: new TokenBucket(MESSAGE_LIMITS.burst, MESSAGE_LIMITS.perSecond, now),
-      strikes: new TokenBucket(MESSAGE_LIMITS.strikes, MESSAGE_LIMITS.strikesPerSecond, now),
+      budget: new MessageBudget(now),
       chain: Promise.resolve(),
     };
     const { s } = c;
@@ -180,11 +210,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   function admit(c: Conn): boolean {
     const { s } = c;
     if (s.state === 'closed') return false;
-    const t = performance.now();
-    if (c.budget.take(t)) return true;
+    const verdict = c.budget.admit(performance.now());
+    if (verdict === 'take') return true;
     s.rateLimited++;
     rateLimitedTotal++;
-    if (!c.strikes.take(t)) {
+    if (verdict === 'close') {
       log.warn({ session: s.id, remote: s.remote, account: s.accountId }, 'frame flood; closing');
       s.refuse('invalid', 'Too many messages.');
     }
@@ -237,7 +267,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       case 'input': {
         if (s.state !== 'joined') return invalid(s, 'input before join');
         const r = deps.zones.input(s, msg);
-        if (r !== 'ok') invalid(s, `input ${r}`);
+        // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
+        if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
         return;
       }
       case 'ack':

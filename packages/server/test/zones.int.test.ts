@@ -140,6 +140,26 @@ describe('zones over the wire', () => {
     again.sock.close();
   });
 
+  it('keeps a session whose entity was despawned connected, out of its zone, and not blamed for its inputs', async () => {
+    const a = await player('thalune');
+    const session = [...server.ws.registry.sessions].find((s) => s.characterId === a.characterId)!;
+    const zone = server.zones.zone(a.welcome.zone.id)!;
+    await waitFor(() => a.client.latest.has(a.entityId), 5000, 'the first snapshot');
+    zone.despawn(a.entityId);
+    expect(session.zoneId).toBeNull();
+    expect(session.entityId).toBeNull();
+    const before = session.invalidMessages;
+    for (let seq = 1; seq <= 5; seq++) {
+      a.sock.send({ t: 'input', seq, time: 0, mode: 'ship', pose: { ...a.welcome.pose, pos: [seq, 0, 0] }, buttons: 0 });
+    }
+    a.sock.send({ t: 'ping', id: 9, clientTime: 0 });
+    await a.sock.next('pong');
+    expect(session.invalidMessages).toBe(before);
+    expect(session.state).toBe('joined');
+    expect(server.zones.zoneOf(session)).toBeUndefined();
+    a.sock.close();
+  });
+
   it('drops and counts input in a frame outside the zone, and ack before join', async () => {
     const a = await player('thalune');
     const session = [...server.ws.registry.sessions].find((s) => s.characterId === a.characterId)!;

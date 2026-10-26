@@ -205,6 +205,26 @@ describe('ZoneManager', () => {
     expect(zone.historyOf(s)!.acked).toBe(1);
   });
 
+  it('forgets a session whose entity its zone despawned, tells the gateway, and lets the zone empty', () => {
+    const { zones, advance } = setup();
+    const heard: [number, string][] = [];
+    zones.onViewerRemoved = (viewer, zone) => heard.push([viewer.id, zone.id]);
+    const s = new Sink(1);
+    const { zone, entityId, pose } = zones.join(s, character(0));
+    advance(50);
+    zone.despawn(entityId);
+    expect(heard).toEqual([[1, 'sys:0']]);
+    expect(zones.zoneOf(s)).toBeUndefined();
+    expect(zones.input(s, { t: 'input', seq: 1, time: 0, mode: 'ship', pose, buttons: 0 })).toBe('unknown');
+    expect(zones.leave(s)).toBe(false);
+    for (let i = 0; i < 25; i++) advance(50);
+    expect(zones.isAsleep('sys:0')).toBe(true);
+    // the session can be put back in play
+    expect(zones.join(s, character(0)).zone).toBe(zone);
+    expect(zones.isAsleep('sys:0')).toBe(false);
+    expect(heard).toHaveLength(1);
+  });
+
   it('runs its own timer at the tick rate', async () => {
     const zones = new ZoneManager({ clock: { now: () => performance.now() / 1000 }, tickHz: 50 });
     const zone = zones.join(new Sink(1), character(0)).zone;

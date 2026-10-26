@@ -1,14 +1,13 @@
 // `pnpm --filter @astra/server bench`: one zone with 200 entities (25 players, ships, mobs, NPCs, loot and pods, every
-// one moving every tick) and 25 sessions, ticked 2000 times. Reports p50/p95 tick ms against the budget of 10 ms p95
-// (IMPLEMENTATION_PLAN 0.3).
+// one moving every tick) and 25 sessions, ticked 2000 times, once. Fails when the tick's p95 is over the budget of
+// 10 ms (IMPLEMENTATION_PLAN 0.3).
 //
 // The layout is the expensive case: everything is crowded round the home Waystation, so nearly every entity is in every
 // session's interest set and every session gets a 150–200-entity delta every tick. Sessions acknowledge each snapshot 1–4
 // ticks later (a 50–200 ms round trip), so deltas are diffed against several different baselines.
 //
-// The budget is wall time. On a shared machine other processes can preempt a tick and only ever add to it, so the bench
-// runs up to TRIALS identical trials and passes on the first whose p95 is within budget; every trial is printed, with the
-// main thread's CPU time per tick (the tick's own cost, whatever the load) and the load average beside it.
+// The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
+// machine does not inflate. Wall time per tick is printed beside it for information, with the load average.
 import { cpus, loadavg } from 'node:os';
 import { Random } from '@astra/shared/world';
 import { percentile } from '../src/zones/metrics.ts';
@@ -19,7 +18,6 @@ const ENTITIES = 200;
 const SESSIONS = 25;
 const WARMUP_TICKS = 300;
 const TICKS = 2000;
-const TRIALS = 3;
 const BUDGET_P95_MS = 10;
 const DT = 0.05;
 
@@ -149,33 +147,33 @@ function trial(): TrialResult {
 }
 
 const round = (x: number) => Math.round(x * 1000) / 1000;
-let passed: number | null = null;
-for (let n = 1; n <= TRIALS && passed === null; n++) {
-  const r = trial();
-  const p95 = percentile(r.wall, 95);
-  console.log(
-    JSON.stringify({
-      trial: n,
+const r = trial();
+const cpuP95 = percentile(r.cpu, 95);
+console.log(
+  JSON.stringify(
+    {
       entities: ENTITIES,
       sessions: SESSIONS,
       ticks: TICKS,
-      p50Ms: round(percentile(r.wall, 50)),
-      p95Ms: round(p95),
-      p99Ms: round(percentile(r.wall, 99)),
-      maxMs: round(percentile(r.wall, 100)),
       cpuP50Ms: round(percentile(r.cpu, 50)),
-      cpuP95Ms: round(percentile(r.cpu, 95)),
+      cpuP95Ms: round(cpuP95),
+      cpuP99Ms: round(percentile(r.cpu, 99)),
+      wallP50Ms: round(percentile(r.wall, 50)),
+      wallP95Ms: round(percentile(r.wall, 95)),
+      wallP99Ms: round(percentile(r.wall, 99)),
+      wallMaxMs: round(percentile(r.wall, 100)),
       avgInterest: r.avgInterest,
       avgSnapshotBytes: r.avgSnapshotBytes,
       load1m: round(loadavg()[0]!),
       cpus: cpus().length,
       node: process.version,
-    }),
-  );
-  if (p95 < BUDGET_P95_MS) passed = p95;
-}
-if (passed === null) {
-  console.error(`FAIL: tick p95 over the ${BUDGET_P95_MS} ms budget in all ${TRIALS} trials`);
+    },
+    null,
+    2,
+  ),
+);
+if (cpuP95 >= BUDGET_P95_MS) {
+  console.error(`FAIL: tick CPU p95 ${round(cpuP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
   process.exit(1);
 }
-console.log(`PASS: tick p95 ${round(passed)} ms < ${BUDGET_P95_MS} ms at ${ENTITIES} entities and ${SESSIONS} sessions`);
+console.log(`PASS: tick CPU p95 ${round(cpuP95)} ms < ${BUDGET_P95_MS} ms at ${ENTITIES} entities and ${SESSIONS} sessions`);
