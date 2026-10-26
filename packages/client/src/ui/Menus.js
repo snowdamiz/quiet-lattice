@@ -573,14 +573,23 @@ export class Menus {
     const podsEl = this.inv.querySelector('.inv-pods');
     const moreEl = this.inv.querySelector('.inv-more');
     podsEl.scrollTop = this.podScroll || 0;
+    // (while the list scrolls the line stays, pointing down, or up once at the end, so the list never changes height)
     const more = () => {
       this.podScroll = podsEl.scrollTop;
-      const fold = podsEl.getBoundingClientRect().bottom + 1;
+      const box = podsEl.getBoundingClientRect();
+      const scrolls = podsEl.scrollHeight > podsEl.clientHeight + 1;
+      const pods = (c) => (c.dataset.from ? Number(c.dataset.to) - Number(c.dataset.from) + 1 : 1);
       let below = 0;
-      if (podsEl.scrollHeight > podsEl.clientHeight + 1)
-        for (const c of podsEl.children) if (c.getBoundingClientRect().bottom > fold) below += c.dataset.from ? Number(c.dataset.to) - Number(c.dataset.from) + 1 : 1;
-      moreEl.textContent = below ? `↓ ${below} more pod${below === 1 ? '' : 's'} below` : '';
-      moreEl.classList.toggle('on', below > 0);
+      let above = 0;
+      if (scrolls)
+        for (const c of podsEl.children) {
+          const r = c.getBoundingClientRect();
+          if (r.bottom > box.bottom + 1) below += pods(c);
+          else if (r.top < box.top - 1) above += pods(c);
+        }
+      const s = (n) => (n === 1 ? '' : 's');
+      moreEl.textContent = below ? `↓ ${below} more pod${s(below)} below` : above ? `↑ ${above} pod${s(above)} above` : '';
+      moreEl.classList.toggle('on', scrolls);
     };
     podsEl.addEventListener('scroll', more, { passive: true });
     more();

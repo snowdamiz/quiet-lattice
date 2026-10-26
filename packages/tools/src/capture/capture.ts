@@ -175,7 +175,8 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
   mkdirSync(join(outDir, '_frames'), { recursive: true });
   const vite = await startVite();
   const { args } = glArgs();
-  const browser = await chromium.launch({ args });
+  // headless Chromium hides scrollbars unless asked not to
+  const browser = await chromium.launch({ args, ignoreDefaultArgs: def.showScrollbars ? ['--hide-scrollbars'] : [] });
   const written: string[] = [];
   try {
     for (const [tag, width] of [
@@ -191,6 +192,12 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
       const still = join(outDir, `${tag}.png`);
       await page.screenshot({ path: still });
       written.push(still);
+      for (const [name, pose] of tag === '16x9' ? Object.entries(def.stills16x9 ?? {}) : []) {
+        await pose(page);
+        const extra = join(outDir, `${tag}-${name}.png`);
+        await page.screenshot({ path: extra });
+        written.push(extra);
+      }
       if (tag === '16x9') {
         // one second at 60 fps. The page's own loop is stopped and each game frame stepped by hand, and CSS
         // transitions and animations (which run on real time) are slowed tenfold through the DevTools Animation

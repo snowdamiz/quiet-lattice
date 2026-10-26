@@ -1590,10 +1590,19 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 /* Amber here means only what has the focus (the slot under the pointer, a stack being dragged or flying, the slot it
    will land on) and the cargo at risk. Everything else is warm white on a near-opaque plate, so the ship never shows
    through the slots or the footer. The units wear the HUD's coin glyph and colour. */
+/* a column that never scrolls itself: at 88vh the cargo pod list gives up height and scrolls instead, so the head and
+   the footer always show */
 .inv-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding-bottom: 0;
   background: rgba(11, 12, 15, 0.96);
   animation: invIn 0.36s cubic-bezier(0.25, 0.8, 0.3, 1);
+}
+.inv-panel > .panel-head,
+.inv-panel > .inv-foot {
+  flex: none;
 }
 /* the panel rises 8 px as it fades in */
 @keyframes invIn {
@@ -1628,8 +1637,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   animation: none;
 }
 .inv-cols {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: 40px;
 }
 .inv-side-head {
@@ -1679,6 +1691,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
 }
 .inv-note {
   display: flex;
@@ -1704,12 +1717,18 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   gap: 6px;
 }
 /* a hauler's pods scroll inside their column; the suit never does */
+/* the scrollbar sits in the panel's margin, 9 px off the slots, in a gutter always kept, so the pods' slots line up
+   with the suit's whether the list scrolls or not */
 .inv-pods {
+  flex: 0 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-height: calc(88vh - 300px);
+  margin-right: -14px;
+  padding-right: 9px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 /* a scrollbar that stays drawn (overlay scrollbars hide until scrolled), so a long pod list reads as one */
 .inv-pods::-webkit-scrollbar {
