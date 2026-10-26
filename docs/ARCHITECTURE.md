@@ -28,6 +28,7 @@ gateway/ws.ts       WebSocket upgrade (token in the first message), one Session 
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 world/              WorldService: server clock, season, Count, Edge position, tier map
+count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
@@ -150,7 +151,9 @@ picked up, quest steps done) are never trusted; they are requests the server re-
 
 Postgres tables (Drizzle): `accounts`, `characters` (people, name, look, level, xp, home system, pose, frame, ship), and
 JSON-typed columns or child tables for inventory, skills, quests and flags as the tasks that own them arrive. Characters
-persist every 30 s and on logout (P1.E03.T05). Migrations are generated with drizzle-kit and applied with `pnpm db:migrate`.
+persist every 30 s and on logout (P1.E03.T05). The shard's row (§3) also holds the Count; the meter's votes and daily
+rolls are in `count_votes` and `count_days` (§11). Migrations are generated with drizzle-kit and applied with
+`pnpm db:migrate`.
 
 ## 9. Client networking (`packages/client/src/net`)
 
@@ -165,3 +168,22 @@ Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; in
 the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
 database is disposable.
+
+## 11. The Count meter (`packages/server/src/count`)
+
+DESIGN 16.2, lean not volume. Gameplay reports each counted action to the world service with
+`world.countAction(accountId, action, tag)`: `action` is one of `COUNTED_ACTIONS` in `count/meter.ts` (convoy escorted or
+raided, the wall choice, an anchor held, a Hive Heart shattered, a Warden killed, a monolith touched), `tag` is `feed`,
+`hold` or `break`. The open day's ledger keeps one vote per account per action type (the first cast; the call returns
+false for a repeat) and saves each vote to `count_votes`. A meter day is 86,400 s of shard-clock world time from the epoch
+(§3), never wall time. When the clock crosses into a new day (checked every second, and before every counted action) the
+ended day rolls: the lean is Feed's share of the day's vote weight (Hold gives a third of a Feed; a monolith touch weighs a
+tenth of a vote), the target is `round(150 + 700 × lean)`, the Count drifts toward it by at most 25 and burns 5, and stays
+in whole measures in 0–1,000; a day with no votes only burns. The roll is written to `count_days` and the shard's row
+(`count`, `count_day`) in one transaction, published as an ordinary world change (`world` to clients, the Redis mirror),
+and logged. On boot the service reloads the votes of every day after `count_day`, rolls the days that ended while it was
+down, and takes the open day's ledger back, so a restart keeps the day's votes and its one-vote rule; the clock never starts
+below a stored vote's time. The underdog side (`underdogSide(count)`: Break above 700, Feed below 300) and its rep
+multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on either side) are pure functions for the rep model
+to apply. All the arithmetic is pure and integer-exact (votes are summed in thirtieths), so the same lean gives the same
+drift bit for bit at three accounts and at three thousand.
