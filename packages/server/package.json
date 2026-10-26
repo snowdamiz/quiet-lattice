@@ -8,9 +8,22 @@
     "start": "tsx src/index.ts",
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
-    "db:migrate": "tsx src/db/migrate.ts"
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:generate": "sh -c 'drizzle-kit generate \"$@\" && prettier --log-level warn --write drizzle' --"
   },
   "dependencies": {
-    "@astra/shared": "workspace:*"
+    "@astra/shared": "workspace:*",
+    "@node-rs/argon2": "^2.2.2",
+    "drizzle-orm": "^0.45.4",
+    "fastify": "^5.12.7",
+    "ioredis": "^6.0.0",
+    "jose": "^6.2.13",
+    "postgres": "^3.4.9",
+    "ws": "^8.22.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.2",
+    "drizzle-kit": "^0.31.11"
   }
 }
