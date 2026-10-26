@@ -51,3 +51,20 @@ Format: task id, question → choice → why.
 - **P1.E02.T08 (review)** Snapshot encoding cost → `sanitizeEntity` is exported; zones sanitise each entity once per tick,
   keep that as the sent state, and encode per client with `sanitized: true`. → Validating per client per entity tripled the
   cost (8.4 ms for 25 players × 200 entities); once per tick it is about 0.2 ms.
+- **P1.E02.T01** Golden coverage: "home planet" read as each of systems 0–9's `SolarSystem.homePlanet` (10 planets), system 0
+  forced lush as the client does; fixture recorded from the original client JS before the port, tests use exact equality.
+  Until P1.E02.T02, planet types and radii are checked by a tools test through the client's SolarSystem. → Proves the port
+  changed nothing, bit for bit.
+- **P1.E02.T01** `EDGE_X`, `EDGE_CURVE_R` and `edgeX` moved from the client's `ui/map/EdgeOfSpace.js` to shared
+  `world/edge.ts` (the client imports them from shared); `edgeBearing` and `EDGE_SEED` stay in the client. → Cosmos needs
+  them and shared may not import client UI.
+- **P1.E02.T01** Shared file names are lowercase (`rng.ts`, `galaxy.ts`, `cosmos.ts` …). → The plan already names
+  `shared/world/sites.ts`.
+- **P1.E02.T01** The title-shot pixel diff is a script (`packages/tools/src/smoke/title-shot.ts`), not part of `pnpm smoke`,
+  with no committed baseline image. → Pixels depend on the GPU backend; the script makes the shot deterministic (seeded
+  Math.random, fixed steps, drained worker pool) and compares two captures on one machine.
+- **P1.E02.T01** Module-level three.js vectors in shared are marked `/* @__PURE__ */`. → The production chunk-worker
+  bundle drops from 97 kB to 13 kB.
+- **Orchestrator** Another Claude session edits client files in the main checkout while this plan runs. → Task commits stage
+  explicit paths only; merges that would touch that session's uncommitted files wait in an `integration/<task>` branch
+  (main plus the reviewed task, verified) until it is done; dependent workers branch from the integration branch.
