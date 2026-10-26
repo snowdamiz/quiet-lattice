@@ -76,6 +76,9 @@ export interface ShipStats {
   };
   /** Multipliers on hazard damage (Thermal Plating's ÷3 is 1/3; the Wayfarer's base resist ×2 is 0.5). */
   hazardDamage: Readonly<Record<Hazard, number>>;
+  /** Multiplier on the ship's scan ranges (`ship.scan_range`: the Wayfarer's ×2). DESIGN gives the ship no scan distance of
+   * its own, so this scales whatever range its scanner and sensors use. */
+  scanRange: number;
 }
 
 /** Why a loadout cannot fly. */
@@ -192,5 +195,6 @@ export function shipStats(loadout: ShipLoadout, inputs: ShipInputs = {}): ShipSt
       nearLimit: mod('ship.pulse_limit_near_bodies', 1),
     },
     hazardDamage,
+    scanRange: mod('ship.scan_range', 1),
   });
 }

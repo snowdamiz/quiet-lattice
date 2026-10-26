@@ -8,18 +8,19 @@ import {
   FLIGHT_TOLERANCE,
   LoadoutError,
   PULSE_DRIVE,
-  allowanceAfterDrop,
+  allowanceAfterChange,
   applyMods,
   detectionDistance,
   effectiveSignature,
   flightCaps,
+  hardpointMarkers,
   hardpointsOf,
   pulseSpeedLimit,
   shipLoadoutSchema,
   shipStats,
   validateLoadout,
 } from '../src/ships/index.ts';
-import type { ShipLoadout } from '../src/ships/index.ts';
+import type { ShipLoadout, ShipStats } from '../src/ships/index.ts';
 // Read as text through Vite's ?raw import, so the shared package's tests need no Node types.
 import DESIGN from '../../../docs/DESIGN.md?raw';
 
@@ -80,9 +81,32 @@ describe('shipStats on every hull', () => {
     for (const id of HULL_IDS) expect(new Set(hardpointsOf(id).map((h) => h.id)).size).toBe(getHull(id).hardpoints.length);
   });
 
-  it("the Wayfarer's base hazard resist ×2 is half damage from every hazard; everyone else takes it whole", () => {
+  it("matches a model's HP_ markers to hardpoints: per size, sorted by name", () => {
+    const kestrel = hardpointMarkers('kestrel', ['Hull', 'HP_S_wing_r', 'GearFront', 'hp_s_Wing_L', 'HP_M_nose', 'BAY_1']);
+    expect([...kestrel]).toEqual([
+      ['s1', 'hp_s_Wing_L'],
+      ['s2', 'HP_S_wing_r'],
+      ['m1', 'HP_M_nose'],
+    ]);
+    // digit runs compare as numbers; exact ties fall back to code points
+    expect([...hardpointMarkers('dart', ['HP_S_10', 'HP_S_2', 'HP_S_1'])]).toEqual([
+      ['s1', 'HP_S_1'],
+      ['s2', 'HP_S_2'],
+      ['s3', 'HP_S_10'],
+    ]);
+    expect([...hardpointMarkers('lark', ['hp_s_a', 'HP_S_A'])].map(([, n]) => n)).toEqual(['HP_S_A', 'hp_s_a']);
+    // the model must mark exactly the hull's hardpoints
+    expect(() => hardpointMarkers('lark', ['HP_S_1'])).toThrow(/2 S hardpoints but its model marks 1/);
+    expect(() => hardpointMarkers('lark', ['HP_S_1', 'HP_S_2', 'HP_M_1'])).toThrow(/0 M hardpoints/);
+  });
+
+  it("the Wayfarer's base hazard resist ×2 is half damage from every hazard, and its scan range ×2; others are plain", () => {
     expect(Object.values(shipStats(bare('wayfarer')).hazardDamage)).toEqual([0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
-    expect(Object.values(shipStats(bare('lark')).hazardDamage)).toEqual([1, 1, 1, 1, 1, 1]);
+    expect(shipStats(bare('wayfarer')).scanRange).toBe(2);
+    for (const id of HULL_IDS.filter((h) => h !== 'wayfarer')) {
+      expect(Object.values(shipStats(bare(id)).hazardDamage), id).toEqual([1, 1, 1, 1, 1, 1]);
+      expect(shipStats(bare(id)).scanRange, id).toBe(1);
+    }
   });
 
   it('stats are frozen', () => {
@@ -268,7 +292,7 @@ describe('flight caps', () => {
     expect(flightCaps(lark, 'space')).toEqual({ mode: 'space', max: 600, allowed: 600 * T.factor + T.slackMps });
     expect(flightCaps(lark, 'boost')).toEqual({ mode: 'boost', max: 1560, allowed: 1560 * T.factor + T.slackMps });
     expect(flightCaps(lark, 'atmo').max).toBe(1560);
-    expect(flightCaps(lark, 'pulse', 1000)).toEqual({ mode: 'pulse', max: 550, allowed: 550 * T.pulseFactor + T.slackMps });
+    expect(flightCaps(lark, 'pulse', 1000)).toEqual({ mode: 'pulse', max: 550, allowed: 550 * T.factor + T.slackMps });
     expect(flightCaps(lark, 'pulse', 1e9).max).toBe(2.5e7);
     expect(flightCaps(lark, 'pulse').max).toBe(Infinity);
     expect(flightCaps(lark, 'landed')).toEqual({ mode: 'landed', max: 0, allowed: T.restSlackMps });
@@ -281,7 +305,7 @@ describe('flight caps', () => {
     expect(flightCaps(shipStats(DEMO, { skills: ['photon_thrusters'] }), 'boost').max).toBe(1950);
   });
 
-  it('every mode leaves room over what the client reaches', () => {
+  it('every mode leaves room over what the client reaches, and between the stars no more than the factor', () => {
     for (const id of HULL_IDS) {
       const s = shipStats(bare(id));
       for (const mode of FLIGHT_MODES) {
@@ -289,19 +313,120 @@ describe('flight caps', () => {
         if (mode === 'boost' || mode === 'atmo' || mode === 'space') expect(c.allowed).toBeGreaterThan(c.max * CLIENT_SPEED_HEADROOM);
         else expect(c.allowed).toBeGreaterThan(c.max);
       }
-      // the pulse drive drops a ship to 400 m/s at most, under every space cap
-      expect(s.speed.space).toBeGreaterThanOrEqual(400);
+      // the pulse drive drops a ship out under every space cap
+      expect(s.speed.space).toBeGreaterThanOrEqual(PULSE_DRIVE.exitSpeedMax);
+    }
+    const open = flightCaps(lark, 'pulse', 1e15);
+    expect(open.allowed / open.max).toBeLessThan(1.11);
+  });
+
+  it('after a change of mode: decays in flight, fades into the pulse drive, immediate otherwise', () => {
+    const boost = flightCaps(lark, 'boost');
+    const space = flightCaps(lark, 'space');
+    const pulse = flightCaps(lark, 'pulse', 1000);
+    expect(allowanceAfterChange(boost, space, 0)).toBe(boost.allowed);
+    expect(allowanceAfterChange(boost, space, 2)).toBe(boost.allowed - 2 * T.decelMps2);
+    expect(allowanceAfterChange(boost, space, 60)).toBe(space.allowed);
+    expect(allowanceAfterChange(boost, pulse, 0)).toBe(pulse.allowed + boost.allowed);
+    expect(allowanceAfterChange(boost, pulse, 1)).toBeCloseTo(pulse.allowed + boost.allowed * Math.exp(-PULSE_DRIVE.easeRate), 9);
+    expect(allowanceAfterChange(flightCaps(lark, 'pulse', 1e9), space, 0)).toBe(space.allowed);
+    expect(allowanceAfterChange(space, flightCaps(lark, 'landed'), 0)).toBe(T.restSlackMps);
+    expect(allowanceAfterChange(flightCaps(lark, 'docked'), space, 0)).toBe(space.allowed);
+  });
+});
+
+// Honest pilots against the policy: the client's own controllers, integrated at 60 Hz and measured as the server would, in
+// windows of FLIGHT_TOLERANCE.windowS judged against the largest allowance in force within each.
+describe('honest flight stays within the allowance', () => {
+  const lark = (...skills: string[]) => shipStats(DEMO, { skills });
+  const DT = 1 / 60;
+  const PER_WINDOW = Math.round(FLIGHT_TOLERANCE.windowS / DT);
+  interface Sample {
+    p: readonly [number, number];
+    allowed: number;
+  }
+  /** The worst window: its speed over the largest allowance within it. */
+  function worst(samples: Sample[], judge: (window: Sample[]) => number = (w) => Math.max(...w.map((x) => x.allowed))): number {
+    let out = 0;
+    for (let i = PER_WINDOW; i < samples.length; i++) {
+      const w = samples.slice(i - PER_WINDOW, i + 1);
+      const a = w[0].p;
+      const b = w[w.length - 1].p;
+      out = Math.max(out, Math.hypot(b[0] - a[0], b[1] - a[1]) / FLIGHT_TOLERANCE.windowS / judge(w));
+    }
+    return out;
+  }
+
+  /** Ship.updateFlight's space branch (no air): boost released at the boost cap with the nose swung `deg` off the path,
+   * instantly or at `yawRate` rad/s, the throttle held at `throttle`. Main engine to +160 / −220 m/s² toward the throttle's
+   * speed, thrusters trimming drift at 1.8/s up to 140 m/s², the hard clamp at the boost cap × CLIENT_SPEED_HEADROOM. */
+  function releaseBoost(s: ShipStats, deg: number, yawRate: number, throttle: number): number {
+    const boost = flightCaps(s, 'boost');
+    const space = flightCaps(s, 'space');
+    const vmax = boost.max * CLIENT_SPEED_HEADROOM;
+    const turn = (deg * Math.PI) / 180;
+    let v = [boost.max, 0];
+    let p: [number, number] = [0, 0];
+    let ang = 0;
+    const samples: Sample[] = [{ p, allowed: allowanceAfterChange(boost, space, 0) }];
+    for (let t = DT; t < 30; t += DT) {
+      ang = Math.min(turn, ang + yawRate * DT);
+      const f = [Math.cos(ang), Math.sin(ang)];
+      const vF = v[0] * f[0] + v[1] * f[1];
+      const aF = Math.min(160, Math.max(-220, (throttle * s.speed.space - vF) * 2));
+      let as = [(v[0] - vF * f[0]) * -1.8, (v[1] - vF * f[1]) * -1.8];
+      const al = Math.hypot(as[0], as[1]);
+      if (al > 140) as = as.map((x) => (x * 140) / al);
+      v = [v[0] + (aF * f[0] + as[0]) * DT, v[1] + (aF * f[1] + as[1]) * DT];
+      const speed = Math.hypot(v[0], v[1]);
+      if (speed > vmax) v = v.map((x) => (x * vmax) / speed);
+      p = [p[0] + v[0] * DT, p[1] + v[1] * DT];
+      samples.push({ p, allowed: allowanceAfterChange(boost, space, t) });
+    }
+    return worst(samples);
+  }
+
+  it('releasing boost and turning 90° (or any angle) on every hull', () => {
+    for (const id of HULL_IDS) {
+      const s = shipStats(bare(id));
+      for (const deg of [0, 45, 90, 135, 180])
+        for (const yawRate of [Infinity, 1.6])
+          for (const throttle of [1, 0])
+            expect(releaseBoost(s, deg, yawRate, throttle), `${id} ${deg}° ${yawRate} rad/s throttle ${throttle}`).toBeLessThanOrEqual(1);
     }
   });
 
-  it('a dropped cap decays in flight and is immediate otherwise', () => {
-    const boost = flightCaps(lark, 'boost');
-    const space = flightCaps(lark, 'space');
-    expect(allowanceAfterDrop(boost, space, 0)).toBe(boost.allowed);
-    expect(allowanceAfterDrop(boost, space, 2)).toBe(boost.allowed - 2 * T.decelMps2);
-    expect(allowanceAfterDrop(boost, space, 60)).toBe(space.allowed);
-    expect(allowanceAfterDrop(flightCaps(lark, 'pulse', 1e9), space, 0)).toBe(space.allowed);
-    expect(allowanceAfterDrop(space, flightCaps(lark, 'landed'), 0)).toBe(T.restSlackMps);
+  /** The drive drops out this close to what it is heading for (Ship.updatePulse). */
+  const DROP_OUT_M = 400;
+
+  /** Ship.updatePulse's speed, flying head-on at a body from `d0` m: it spools up over 1.25 s, climbs exponentially to its
+   * limit and eases down to a falling one. `from` is the mode it was engaged from, at that mode's top speed. */
+  function pulseApproach(s: ShipStats, d0: number, from: 'space' | 'boost', judge?: (w: Sample[]) => number): number {
+    const entry = flightCaps(s, from);
+    let d = d0;
+    let v = Math.max(entry.max, 200);
+    let spool = 0;
+    const samples: Sample[] = [{ p: [0, 0], allowed: allowanceAfterChange(entry, flightCaps(s, 'pulse', d), 0) }];
+    for (let t = DT; d > DROP_OUT_M && t < 600; t += DT) {
+      spool = Math.min(1, spool + DT * 0.8);
+      const target = pulseSpeedLimit(s, d) * spool;
+      if (v < target) v = Math.min(target, v * Math.exp(DT * 1.5) + 200 * DT);
+      else v = target + (v - target) * Math.exp(-PULSE_DRIVE.easeRate * DT);
+      d -= v * DT;
+      samples.push({ p: [d0 - d, 0], allowed: allowanceAfterChange(entry, flightCaps(s, 'pulse', d), t) });
+    }
+    return worst(samples, judge);
+  }
+
+  it("the pulse drive's approach to a body, judged at the largest clearance in the window, with and without Supercruise", () => {
+    for (const s of [lark(), lark('supercruise'), shipStats(bare('dart'))])
+      for (const d0 of [700, 5000, 2e6, 5e7, 1e9])
+        for (const from of ['space', 'boost'] as const)
+          expect(pulseApproach(s, d0, from), `${s.hullId} ${s.pulse.nearLimit} ${d0} m from ${from}`).toBeLessThanOrEqual(1);
+    // judged at the clearance a window ends at instead, an honest approach would be corrected
+    const atEnd = (w: Sample[]) => w[w.length - 1].allowed;
+    expect(pulseApproach(lark(), 2e6, 'space', atEnd)).toBeGreaterThan(1);
+    expect(pulseApproach(lark('supercruise'), 2e6, 'space', atEnd)).toBeGreaterThan(1);
   });
 });
 

@@ -1127,7 +1127,7 @@ export class Ship {
     const target = maxPulse * this.pulse.spool;
     // exponential acceleration, quick deceleration
     if (this.pulse.speed < target) this.pulse.speed = Math.min(target, this.pulse.speed * Math.exp(dt * 1.5) + 200 * dt);
-    else this.pulse.speed = THREE.MathUtils.damp(this.pulse.speed, target, 4, dt);
+    else this.pulse.speed = THREE.MathUtils.damp(this.pulse.speed, target, PULSE_DRIVE.easeRate, dt);
     const fwd = _v.set(0, 0, -1).applyQuaternion(s.quat);
     s.vel.copy(fwd).multiplyScalar(this.pulse.speed);
     this.speed = this.pulse.speed;
@@ -1144,7 +1144,7 @@ export class Ship {
 
   exitPulse() {
     this.mode = 'flying';
-    this.speed = Math.min(this.pulse.speed, 400);
+    this.speed = Math.min(this.pulse.speed, PULSE_DRIVE.exitSpeedMax);
     const fwd = _v.set(0, 0, -1).applyQuaternion(this.state.quat);
     this.state.vel.copy(fwd).multiplyScalar(this.speed);
     this.game.audio?.play('pulseExit');
