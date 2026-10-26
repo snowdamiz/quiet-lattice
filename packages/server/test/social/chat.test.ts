@@ -180,7 +180,7 @@ describe('chat', () => {
     ana.chat('system', 'hello again');
     expect(chatLines(bex.take())).toEqual(['system:Ana:hello again']);
     expect(h.social.zoneIndex.size).toBe(42);
-    // a silent move into a system whose lines nobody has sent is caught by the index's rebuild, once a second
+    // a silent move into a system whose lines nobody has sent is caught by the index's check, once a second
     h.zones.leave(bex.session);
     h.zones.join(bex.session, { id: 'char-Bex', name: 'Bex', people: 'thalune', level: 1, homeSystem: 1 });
     h.advance(1000);

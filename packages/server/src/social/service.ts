@@ -115,14 +115,14 @@ export class SocialService {
   }
 
   /**
-   * Lapses invites and refreshes the parties due (graces, tags, states); once a refresh, rebuilds the zone index and
+   * Lapses invites and refreshes the parties due (graces, tags, states); once a refresh, checks the zone index and
    * forgets idle allowances and spent mutes.
    */
   tick(now = this.mono()): void {
     this.parties.tick(now);
     if (now < this.nextSweep) return;
     this.nextSweep = now + this.limits.refreshMs;
-    this.zoneIndex.rebuild();
+    this.zoneIndex.check();
     this.chats.sweep(now);
   }
 

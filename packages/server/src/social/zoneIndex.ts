@@ -1,7 +1,7 @@
 // Who is online in each zone, for system chat: a line reaches its star system without a scan of the whole shard. Kept as
 // characters join, move (a handoff) and leave; checked against the zones as it is read (an entry whose session is in
-// another zone now, or in none, or no longer holds its character, is moved or dropped there and then); and rebuilt from
-// the roster once a refresh, which catches a session that changed zone without the service hearing of it.
+// another zone now, or in none, or no longer holds its character, is moved or dropped there and then); and checked
+// against the roster once a refresh, which catches a session that changed zone without the service hearing of it.
 import type { Zone } from '../zones/zone.ts';
 import type { SocialZones } from './context.ts';
 import type { Online, Roster } from './roster.ts';
@@ -44,11 +44,13 @@ export class ZoneIndex {
     }
   }
 
-  /** Indexes everyone online afresh. */
-  rebuild(): void {
-    this.byZone.clear();
-    this.where.clear();
-    for (const o of this.roster.values()) this.place(o);
+  /** Puts right every entry that is wrong: one no longer online, one missing, one under a zone its session has left. */
+  check(): void {
+    for (const [characterId, w] of this.where) if (this.roster.get(characterId) !== w.o) this.unplace(characterId);
+    for (const o of this.roster.values()) {
+      const w = this.where.get(o.characterId);
+      if (w?.o !== o || w.zone !== this.zones.zoneOf(o.session)) this.place(o);
+    }
   }
 
   /** Characters indexed. */

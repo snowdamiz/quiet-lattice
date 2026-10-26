@@ -292,52 +292,52 @@ summed in thirtieths), so the same lean gives the same Count bit for bit at thre
 
 ## 12. Social: chat and parties
 
-DESIGN 16.6's "Social" row and DESIGN 17: shard-wide chat and parties, for three players or three thousand.
-`social/` holds it (`SocialService`, made by the gateway): the gateway tells it which character joined (with its name)
-and which connection closed, and hands it `chat` and `party` requests from joined sessions. A timer of its own runs
-every 100 ms: it lapses invites and refreshes the parties due, each party once a second (`refreshMs`) with the round
-spread over the ticks between, so a thousand parties cost a tenth of their round per tick; one party whose refresh
-fails is logged and skipped. Nothing social is persisted in Phase 1: parties, invites and
-mutes live in memory and end with the process; every chat line, mute and party change goes to the server log for
-moderation.
+DESIGN 16.6's "Social" row and DESIGN 17: shard-wide chat and parties, for three players or three thousand. `social/`
+holds it (`SocialService`, made by the gateway): the gateway tells it which character joined (with its name) and which
+connection closed, and hands it `chat` and `party` requests from joined sessions. A timer of its own runs every 100 ms:
+it lapses invites and refreshes the parties due, each party once a second (`refreshMs`) with the round spread over the
+ticks between, so a thousand parties cost a tenth of their round per tick; one party whose refresh fails is logged and
+skipped. Nothing social is persisted in Phase 1: parties, invites and mutes live in memory and end with the process;
+every chat line, mute and party change goes to the server log for moderation.
 
 - **Who is online** is the joined session holding each character, by id and by name ignoring case (names are unique
   ignoring case). A character entering again from a new connection replaces its old session, so the old one's close
   changes nothing.
-- **Chat** (`chat {channel, text}`, protocol 3): `shard` reaches everyone online, `system` everyone whose entity is in the
-  sender's star system's zone, `party` the sender's party wherever its members are; the sender hears its own line back.
-  The schema refuses blank, over-long (280 UTF-16 units) and control-laden text (§5); the server trims it and relays
-  `event {kind: 'chat', channel, from, text, at}` with its own name for the sender and world time, encoded once and
-  written to every recipient (`Session.sendText`; never serialised per recipient). A system line goes through an index
-  of who is online in each zone (kept on join, `moved` and close, checked as it is read, rebuilt once a second), never a
-  scan of the shard. Limits (`social/limits.ts`), all per account so its
-  sockets share them: 5 messages at once, then 1 a second; past that, 10 refused messages (refilled at one per 3 s) and
-  the account is muted for 60 s. The shard channel has one limit for the whole shard (20 at once, then 10 a second), so a
-  crowded shard stays readable and its fan-out bounded. `SocialService.mute(account, seconds, reason)` mutes by hand.
-  Refusals go to the sender only as `denied {of: 'chat', code}`: `rate`, `busy` (shard limit) and `muted` with
-  `retryS`, `no_party`, `no_zone`.
+- **Chat** (`chat {channel, text}`, protocol 3): `shard` reaches everyone online, `system` everyone whose entity is in
+  the sender's star system's zone, `party` the sender's party wherever its members are; the sender hears its own line
+  back. The schema refuses blank, over-long (280 UTF-16 units) and control-laden text (§5); the server trims it and
+  relays `event {kind: 'chat', channel, from, text, at}` with its own name for the sender and world time, encoded once
+  and written to every recipient (`Session.sendText`; never serialised per recipient). A system line goes through an
+  index of who is online in each zone (kept on join, `moved` and close, checked as it is read and against the roster
+  once a second), never a scan of the shard. Limits (`social/limits.ts`), all per account so its sockets share them: 5
+  messages at once, then 1 a second; past that, 10 refused messages (refilled at one per 3 s) and the account is muted
+  for 60 s. The shard channel has one limit for the whole shard (20 at once, then 10 a second), so a crowded shard stays
+  readable and its fan-out bounded. `SocialService.mute(account, seconds, reason)` mutes by hand. Refusals go to the
+  sender only as `denied {of: 'chat', code}`: `rate`, `busy` (shard limit) and `muted` with `retryS`, `no_party`,
+  `no_zone`.
 - **Parties** (`party {op}`, protocol 3; `op` is `invite {name}`, `accept {name}`, `decline {name}`, `leave`, `kick
   {name}`, `promote {name}`, naming characters as typed): up to `PARTY_MAX` (6) characters with a leader. Any member
-  invites an online character in no party; the invite lapses after 60 s (both hear `expired`), and an account sends 5
-  at once, then one per 10 s; a character holds at most 8. Accepting joins the inviter's party as it is then (refused
-  while it is full; the invite stands until it lapses), or a new party the inviter leads; joining spends the other
-  invites a character held. Only the leader kicks and promotes, and it promotes only a member who is online. When
-  the leader leaves, the longest-standing member online leads (the longest-standing of all when none is); a party left
-  with one member disbands. A member whose connection drops is shown offline and keeps its place for the grace (15 s,
-  the phases' grace, checked at its party's next refresh, so within a second after); its character entering again in
-  time takes it back, and past the grace it leaves the party (the lead handed on if it led). A zone handoff changes
-  nothing: membership is the character's. A member kicked or gone from the party while its connection was down comes
-  back in none, so its kept place in the party's story phase is given up (§6.1).
+  invites an online character in no party; the invite lapses after 60 s (both hear `expired`), and an account sends 5 at
+  once, then one per 10 s; a character holds at most 8. Accepting joins the inviter's party as it is then (refused while
+  it is full; the invite stands until it lapses), or a new party the inviter leads; joining spends the other invites a
+  character held. Only the leader kicks and promotes, and it promotes only a member who is online. When the leader
+  leaves, the longest-standing member online leads (the longest-standing of all when none is); a party left with one
+  member disbands. A member whose connection drops is shown offline and keeps its place for the grace (15 s, the phases'
+  grace, checked at its party's next refresh, so within a second after); its character entering again in time takes it
+  back, and past the grace it leaves the party (the lead handed on if it led). A zone handoff changes nothing:
+  membership is the character's. A member kicked or gone from the party while its connection was down comes back in
+  none, so its kept place in the party's story phase is given up (§6.1).
 - **Party tags**: every member's zone entity carries its party's id (`zone.setParty`), set on every change and on
-  joining and checked at each refresh, so a new entity (a handoff, a respawn) gets it within a second, or at once when the
-  handoff calls `SocialService.moved(session)`. That is what puts members in each other's interest sets anywhere in a
-  zone (§6) and in one story phase through `phaseFor` (§6.1); `SocialService.partyIdOf(character)` gives the id to pass
-  as `partyId`.
+  joining and checked at each refresh, so a new entity (a handoff, a respawn) gets it within a second, or at once when
+  the handoff calls `SocialService.moved(session)`. That is what puts members in each other's interest sets anywhere in
+  a zone (§6) and in one story phase through `phaseFor` (§6.1); `SocialService.partyIdOf(character)` gives the id to
+  pass as `partyId`.
 - **Party state** `party {party: {leader, members: [{name, online, system, health}]} | null}`: members in join order,
   each one's galaxy system and health in tenths (null while offline); sent after `welcome`, to every online member
-  whenever it changes, and null to one who leaves. At each refresh it is rebuilt, compared as plain JSON and encoded once
-  only when it changed. An hp that is not a finite number shows as whole and is logged once. Party news, `event {kind: 'party', what, name?}`, goes to whom it concerns: `invite`,
-  `invited`, `declined`, `expired`, `joined`, `left`, `kicked`, `leader`, `disbanded`. Refusals, `denied {of: <op>,
-  code, name?}`: `no_party`, `not_leader`, `not_found`, `self`, `in_party`, `party_full`, `pending`, `no_invite`,
-  `not_member`, `offline` (promote names a member whose connection is down), `gone` (the inviter is offline in no
-  party), `busy` (the invitee holds 8 invites), `rate` with `retryS`.
+  whenever it changes, and null to one who leaves. At each refresh it is rebuilt, compared as plain JSON and encoded
+  once only when it changed. An hp that is not a finite number shows as whole and is logged once. Party news, `event
+  {kind: 'party', what, name?}`, goes to whom it concerns: `invite`, `invited`, `declined`, `expired`, `joined`, `left`,
+  `kicked`, `leader`, `disbanded`. Refusals, `denied {of: <op>, code, name?}`: `no_party`, `not_leader`, `not_found`,
+  `self`, `in_party`, `party_full`, `pending`, `no_invite`, `not_member`, `offline` (promote names a member whose
+  connection is down), `gone` (the inviter is offline in no party), `busy` (the invitee holds 8 invites), `rate` with
+  `retryS`.
