@@ -707,10 +707,10 @@ One server-wide number, the **Count**: the network's remaining charge, 0–1,000
 
 ### 16.2 What moves it: lean, not volume
 The meter must work the same with ten players as with ten thousand, so it never adds player actions up. It reads their **lean**.
-- Every counted action is tagged Feed or Break (Hold counts as a third of a Feed). Feed actions: a Passage convoy escorted to its destination, a Feed or Hold choice at the wall, an anchor held by Feed or Hold at the week's end. Break actions: a Passage convoy raided and its pilots freed, a Break choice at the wall, an anchor held by Break, a Hive Heart shattered, a Warden killed. Every monolith touched by anyone is a tiny Feed, because everyone is copied.
+- Every counted action is tagged Feed or Break; a Hold counts as a full vote of which a third is Feed, so a day of only Hold choices leans a third Feed and targets 383, inside Held. Feed actions: a Passage convoy escorted to its destination, a Feed or Hold choice at the wall, an anchor held by Feed or Hold at the week's end. Break actions: a Passage convoy raided and its pilots freed, a Break choice at the wall, an anchor held by Break, a Hive Heart shattered, a Warden killed. Every monolith touched by anyone is a tiny Feed, because everyone is copied.
 - Each day the server computes the **lean**: Feed actions as a share of all counted actions that day, one vote per account per action type so nobody grinds it. A day with no actions has no lean.
 - The meter drifts toward a **target** set by the lean: 850 at all-Feed, 150 at all-Break, 500 at an even split, at a fixed speed of up to 25 measures a day. Ten players who all raid convoys lean the world exactly as hard as ten thousand.
-- Under that, the Count **burns 5 measures a day on its own**. A world nobody tends slides slowly toward Broken and the Edge advances. That is the story's pressure, and it means the season has a shape even on a quiet server: the Edge creeps, and whoever is playing decides whether to fight it or welcome it.
+- Under that, the Count **burns 5 measures a day on its own**, one measure every 4.8 hours. A world nobody tends slides slowly toward Broken and the Edge advances. That is the story's pressure, and it means the season has a shape even on a quiet server: the Edge creeps, and whoever is playing decides whether to fight it or welcome it.
 - The underdog side (the one the lean is against) earns bonus rep while the meter sits more than 200 from the middle, so a thin population does not lock into one ending.
 
 ### 16.3 What the meter does to the world
