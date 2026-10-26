@@ -1,6 +1,7 @@
 // Where a planet's points of interest stand. Planned once per planet before its terrain is
 // built, because the ground under each site is levelled (see TerrainSampler.setPads).
 import { Quaternion, Vector3 } from 'three';
+import { angleTo, cos, hypot3, setFromAxisAngle, sin } from '../math/det.ts';
 import { cityPads, planCities, type City } from './cities.ts';
 import { surfaceAttribs, type PlanetParams, type TerrainSampler } from './planetgen.ts';
 import { Random, hashInts } from './rng.ts';
@@ -48,8 +49,8 @@ export function planSites(params: PlanetParams, sampler: Pick<TerrainSampler, 'h
     const y = rng.float(-1, 1);
     const r = Math.sqrt(1 - y * y);
     const th = rng.float(0, Math.PI * 2);
-    const dir = new Vector3(Math.cos(th) * r, y, Math.sin(th) * r).normalize();
-    if (avoid.some((c) => c.dir.angleTo(dir) * R < c.radius + 700)) continue;
+    const dir = new Vector3(cos(th) * r, y, sin(th) * r).normalize();
+    if (avoid.some((c) => angleTo(c.dir, dir) * R < c.radius + 700)) continue;
     const h = sampler.height(dir.x, dir.y, dir.z);
     if (p.hasOcean && h < 4) continue;
     if (h > p.mountainHeight * 0.5) continue;
@@ -65,8 +66,8 @@ export function planSites(params: PlanetParams, sampler: Pick<TerrainSampler, 'h
       const rr = ((k < 12 ? 1 : 0.5) * FOOTPRINT[type]) / R;
       const a = (k < 12 ? k / 12 : (k - 12) / 8 + 0.06) * Math.PI * 2;
       q.copy(dir)
-        .addScaledVector(t, Math.cos(a) * rr)
-        .addScaledVector(b, Math.sin(a) * rr)
+        .addScaledVector(t, cos(a) * rr)
+        .addScaledVector(b, sin(a) * rr)
         .normalize();
       const hk = sampler.height(q.x, q.y, q.z);
       lo = Math.min(lo, hk);
@@ -76,7 +77,7 @@ export function planSites(params: PlanetParams, sampler: Pick<TerrainSampler, 'h
     }
     if (hi - lo > MAX_RELIEF) continue;
     if (p.hasOcean && lo < 3) continue;
-    const quat = new Quaternion().setFromUnitVectors(Y, dir).multiply(new Quaternion().setFromAxisAngle(Y, rng.float(0, Math.PI * 2)));
+    const quat = new Quaternion().setFromUnitVectors(Y, dir).multiply(setFromAxisAngle(new Quaternion(), Y, rng.float(0, Math.PI * 2)));
     sites.push({ type, dir, quat, base: sum / n, relief: hi - lo, seed: rng.int(0, 1e9) });
   }
   return sites;
@@ -226,7 +227,7 @@ export function landArea(params: Pick<PlanetParams, 'radius' | 'hasOcean'>, samp
     for (let i = 0; i < LAND_SAMPLES; i++) {
       const y = 1 - ((i + 0.5) * 2) / LAND_SAMPLES;
       const r = Math.sqrt(1 - y * y);
-      if (sampler.height(Math.cos(i * golden) * r, y, Math.sin(i * golden) * r) > 0) land++;
+      if (sampler.height(cos(i * golden) * r, y, sin(i * golden) * r) > 0) land++;
     }
   }
   return ((land / LAND_SAMPLES) * 4 * Math.PI * params.radius * params.radius) / 1e6;
@@ -339,7 +340,7 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
       let need = c.reach + reach + 1;
       if (c.kind === 'site' && role !== 'ambusher') need += SITE_CLEARANCE;
       if (c.kind === 'den') need = Math.max(need, DEN_SPACING);
-      return Math.hypot(d.x - c.x, d.y - c.y, d.z - c.z) * R >= need;
+      return hypot3(d.x - c.x, d.y - c.y, d.z - c.z) * R >= need;
     };
     return wide.every(clearOf) && grid.every(d.x, d.y, d.z, clearOf);
   };
@@ -362,8 +363,8 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
       const rr = ((k < 12 ? 1 : 0.5) * footprint) / R;
       const a = (k < 12 ? k / 12 : (k - 12) / 8 + 0.06) * Math.PI * 2;
       q.copy(d)
-        .addScaledVector(t, Math.cos(a) * rr)
-        .addScaledVector(b, Math.sin(a) * rr)
+        .addScaledVector(t, cos(a) * rr)
+        .addScaledVector(b, sin(a) * rr)
         .normalize();
       const hk = sampler.height(q.x, q.y, q.z);
       lo = Math.min(lo, hk);
@@ -396,7 +397,7 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
     const y = rng.float(-1, 1);
     const r = Math.sqrt(1 - y * y);
     const th = rng.float(0, Math.PI * 2);
-    return out.set(Math.cos(th) * r, y, Math.sin(th) * r).normalize();
+    return out.set(cos(th) * r, y, sin(th) * r).normalize();
   };
 
   const dir = new Vector3();
@@ -437,8 +438,8 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
           const D = (siteReach[si] + reach + 2 + rng.float(0, 20)) / R;
           dir
             .copy(s.dir)
-            .addScaledVector(st, Math.cos(a) * D)
-            .addScaledVector(sb, Math.sin(a) * D)
+            .addScaledVector(st, cos(a) * D)
+            .addScaledVector(sb, sin(a) * D)
             .normalize();
           if (!fits(dir, reach, 'ambusher')) continue;
           const g = ground(dir, fp, 'burrow');

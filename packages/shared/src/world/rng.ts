@@ -1,4 +1,5 @@
 // Deterministic random helpers shared by the main thread, the terrain workers and the server.
+import { cos, log } from '../math/det.ts';
 
 /** A stream of floats in [0, 1). */
 export type Rng = () => number;
@@ -60,7 +61,7 @@ export class Random {
   gaussian(): number {
     const u = 1 - this.next();
     const v = this.next();
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    return Math.sqrt(-2 * log(u)) * cos(2 * Math.PI * v);
   }
 }
 

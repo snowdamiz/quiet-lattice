@@ -255,3 +255,44 @@ Format: task id, question → choice → why.
   time refreshed through ping/pong; one ZoneManager subscription keeps a tier per zone; the server refuses to boot without
   its shard row (run `pnpm db:migrate`). Two processes must not share a shard row (P3.E37 gives each shard one clock
   owner). → A stub that already behaves like the real service on restarts.
+- **P1.E02.T09** World math is deterministic: `@astra/shared/math/det` ports fdlibm 5.3 (sin, cos, atan, atan2, asin, acos,
+  log, pow; pow's |y| > 2^31 branch uses a 21-bit split of 1/ln 2) and V8's `Math.hypot` algorithm (`hypot2`, `hypot3`);
+  sqrt, floor, round, abs, min, max, imul and fround stay on `Math` because IEEE 754 makes them exact. Under 1 ulp from
+  the true value, atan2 under 2 (1.27 measured); 0 differences from Node in Chromium and WebKit over 861k world values
+  and 313k adversarial calls (Firefox cannot launch on this macOS, so "every engine" is V8 and JSC for now). three.js's
+  `Color` in system.ts is replaced by an exact copy of its sRGB/HSL arithmetic, so a three.js upgrade cannot change
+  world generation. An ESLint rule bans Math transcendentals, `**`, `Math.random` and trig-calling three.js methods in
+  `shared/src/{world,math}`. The belt now sits between the first two planets past the home world (26 of 70 belts had
+  negative widths; 9 of systems 0–9 moved, system 0's from 7.89e6 to 20.19e6 m). Fixtures regenerated once. → The
+  server and every client must build the same world bit for bit. Rule going forward: any shared code whose result both
+  ends compute and compare (generation, loot rolls, thresholds) uses det; still on `Math` and to move when they reach
+  shared: the client's Asteroids counts and sizes (loot), Station layout (P1.E11.T02), Fauna (P1.E08.T01); the XP curve
+  in `combat/level.ts` (`**` before `Math.round`) should use det.pow when the client shows thresholds (P1.E07). Combat
+  hit tests and the pulse-drive ease are decided by the server alone, so they may stay on `Math`.
+- **Plan amendment (orchestrator)** P1.E08.T01 and P1.E13.T01 each had a client half that renders from replicated state,
+  which needs the client net layer (P1.E04.T02) their deps did not list. Split: E08.T01 and E13.T01 are now the server
+  and shared halves; the client halves are P1.E08.T09 (fauna from snapshots, deps T01 and E04.T02) and P1.E13.T06
+  (nodes from zone state, deps T01 and E04.T02). E08.T02's attack animation moves to after T09. E13.T01 now follows
+  E13.T02 because both edit the deposit scatter. E10.T01 (city renderer) now waits for the Thalune kit (E10.T05): built
+  from kit pieces with none yet made, its graded result would grade placeholders; the Ixari and Ulgani kits slot in as
+  they land. → Each task can finish and be verified on its own deps.
+- **P1.E14.T03** Grader artifacts → `#review:<family>/<file>[:<asset>[/<variant>]]` (a file with several assets or variants
+  writes one folder each under `assets/renders/review/<family>/<file>/<asset>[/<variant>]/`); lighting cases: noon-lush =
+  sun 8° from zenith on the home system's lush world, night-exotic = the `alien` planet type at 160°, open-space = four
+  planet radii off the home world, sunlit from the side; the asset sits on the flattest dry ground within 240 m with its
+  lowest point on the ground, plants in its footprint and the eye-to-asset cone hidden, fauna, ship and multitool hidden;
+  one fixed camera (35°, 16°, 1.7 asset radii), LOD0's bounds frame every level; a missing LOD shows the nearest lower
+  one; the wireframe pass is clay with edges under noon-lush. Captures are 1920×1080 at pixel ratio 1, adaptive
+  resolution off, game clock pinned at t = 120 s, `Math.random` seeded, a fixed 180-frame settle with the worker pool
+  drained each frame; reproducibility is under 2% of pixels at a 16/255 cut on one machine. Perf: GPU time from
+  `EXT_disjoint_timer_query_webgl2`, each frame started on an idle GPU, the asset's own cost = scene shown minus hidden;
+  "holds 60 fps" in the rubric means the asset's own cost, because the planet scenes alone cost 22–30 ms GPU at 1080p
+  (terrain and atmosphere GPU cost is a perf item for P1.E16). UI clips: per-screen length (`clipSeconds`; the title is
+  3.6 s), optional HUD clock, `sheetFrames` per screen; clip frames are committed under LFS. Turntable sheets are
+  `assets/renders/<stem>[_<asset>[_<variant>]]_turntable.png` / `_materials.png` (8 views 45° apart offset 22.5°, 20°
+  elevation, LOD0, Cycles 48 samples, AgX), not the `assets/renders/<asset>.png` named in 0.4. → The grader always gets
+  the same views of the same scene. Found in review: `LIB_EngineGlow` carried its colour at emission strength 0, so
+  every hull's nozzles would have exported black; fixed in the library (strength 1), and the validator now fails a
+  signal-profile material that emits nothing. Open: CSS-animation clip frames are timed in real time at 0.1× and can
+  jitter when a screenshot overruns; seeking each animation's `currentTime` would make them exact (do it if a grader
+  flags jitter).

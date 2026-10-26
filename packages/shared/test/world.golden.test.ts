@@ -1,7 +1,8 @@
 // Golden fixtures for seed 424242, first written from the demo's JavaScript before the world code moved here
 // (P1.E02.T01; see packages/tools/src/fixtures/world-golden.ts; the systems' orbits, spins, stars, belts and Waystations
 // were added in P1.E02.T02). Every value must come out exactly as it did then: the same random draws in the same order
-// and the same float arithmetic.
+// and the same float arithmetic, except as regenerated once in P1.E02.T09 for the deterministic math (last bits wherever
+// Math's transcendental functions had been used) and the belt set between two planets.
 import { describe, expect, it } from 'vitest';
 import {
   Galaxy,

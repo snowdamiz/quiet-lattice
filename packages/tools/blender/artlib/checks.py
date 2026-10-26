@@ -343,6 +343,9 @@ def _check_material(rules, family, model, c, info, cls, meshes=()):
         c.fail(name, info.problem)
         return
     ch = info.channels
+    if profile.get("mustEmit") and not info.emitting:
+        c.fail(name, f"{profile_name} material emits nothing: the engine scales its glow but takes the colour from the model")
+        return
     needed = list(profile["maps"]) + (["emissive"] if profile["emissiveMap"] and info.emitting else [])
     if not needed:
         c.ok(name, f"{profile_name} material ({profile['why']})")
