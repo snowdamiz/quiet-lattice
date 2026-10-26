@@ -21,8 +21,22 @@ describe('shapes from the skill data (DESIGN 9)', () => {
     expect(shapeOfNode('nullsong')).toEqual({ kind: 'sphere', radius: 40 });
   });
 
+  it("sizes Slam's sphere by how far through its 6–18 m span the cast reaches", () => {
+    expect(shapeOfNode('slam')).toEqual({ kind: 'sphere', radius: 6 });
+    expect(shapeOfNode('slam', 0.5)).toEqual({ kind: 'sphere', radius: 12 });
+    expect(shapeOfNode('slam', 1)).toEqual({ kind: 'sphere', radius: 18 });
+    for (const bad of [-0.1, 1.1, NaN]) expect(() => shapeOfNode('slam', bad)).toThrow(RangeError);
+  });
+
+  it('gives Crush and Singularity the shape of the Well they work through', () => {
+    expect(shapeOfNode('crush')).toEqual(shapeOfNode('well'));
+    expect(shapeOfNode('singularity')).toEqual({ kind: 'sphere', radius: 12 });
+    expect(shapeOfNode('symbiosis')).toBeNull(); // works through Bond, which has no shape
+  });
+
   it('gives no shape where DESIGN gives none, or for passives, augments and ship forms', () => {
-    for (const id of ['sear', 'shatter', 'drain', 'slam', 'tempered_core', 'chain', 'tractor_beam', 'afterburner']) expect(shapeOfNode(id)).toBeNull();
+    for (const id of ['sear', 'shatter', 'drain', 'unmake', 'bond', 'vent', 'corona', 'tempered_core', 'chain', 'tractor_beam', 'afterburner'])
+      expect(shapeOfNode(id)).toBeNull();
     expect(() => shapeOfNode('fireball')).toThrow(/skill node/);
   });
 });
@@ -112,6 +126,9 @@ describe('cones', () => {
 
   it('never reaches behind the caster unless the target holds the origin', () => {
     expect(coneHits(O, X, 30, 12, [at('behind', 3, 180, 1)])).toEqual([]);
+    // 3 m behind with a 2 m body: within 1.5 m of the side lines extended backwards, but nowhere near the cone itself
+    expect(coneHits(O, X, 30, 12, [at('big-behind', 3, 180, 2)])).toEqual([]);
+    expect(coneHits(O, X, 60, 12, [at('big-behind', 3, 180, 2.9)])).toEqual([]);
     expect(coneHits(O, X, 30, 12, [at('side-on', 3, 120, 1)])).toEqual([]);
     const hits = coneHits(O, X, 30, 12, [at('inside', 0.5, 180, 1)]);
     expect(hits.map((h) => [h.target.id, h.distance])).toEqual([['inside', 0]]);

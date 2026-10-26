@@ -1,18 +1,9 @@
 // The aggro model (DESIGN 12.1): threat goes to whoever hurt a mob most recently, modified by Veil (−), Harmonic (reset) and
 // Bond companions (+taunt). Threat is damage that halves every few seconds, so whoever is hurting a mob now takes it over
 // from whoever hurt it before, without a single chip hit stealing it. A table is plain immutable data: every function
-// returns a new one, and threat decays by the clock (seconds), not by ticks, so it is the same at any tick rate.
-import { getSkillNode } from '../data/index.ts';
-
-/** The model's own numbers (DESIGN gives none; chosen, tunable). */
-export const AGGRO = Object.freeze({
-  /** Threat halves every this many seconds. */
-  halfLifeS: 3,
-  /** Threat below this is forgotten: it picks no target and `decayThreat` drops it. */
-  forgetBelow: 0.5,
-  /** How long a Bond companion's taunt holds a mob. */
-  tauntS: 4,
-});
+// returns a new one, and threat decays by the clock (seconds), not by ticks, so it is the same at any tick rate. The
+// model's numbers are `AGGRO` in `@astra/shared/data`.
+import { AGGRO, getSkillNode } from '../data/index.ts';
 
 export type ThreatId = string | number;
 
@@ -20,8 +11,10 @@ export interface ThreatEntry<Id extends ThreatId = ThreatId> {
   readonly id: Id;
   /** Threat as of `at`. */
   readonly threat: number;
-  /** When it was last changed, in seconds. */
+  /** The time `threat` was measured at, in seconds; `decayThreat` moves it forward. */
   readonly at: number;
+  /** When this attacker last added threat (or was first noticed), in seconds; breaks ties toward the most recent. */
+  readonly lastHit: number;
 }
 
 export interface ThreatTable<Id extends ThreatId = ThreatId> {
@@ -60,17 +53,18 @@ export function threatOf<Id extends ThreatId>(table: ThreatTable<Id>, id: Id, no
 export function addThreat<Id extends ThreatId>(table: ThreatTable<Id>, id: Id, amount: number, now: number): ThreatTable<Id> {
   checkTime(now);
   if (!Number.isFinite(amount) || amount < 0) throw new RangeError(`threat must be a finite number ≥ 0, got ${amount}`);
-  const found = table.entries.some((e) => e.id === id);
-  const entry = { id, threat: threatOf(table, id, now) + amount, at: now };
-  const entries = found ? table.entries.map((e) => (e.id === id ? entry : e)) : [...table.entries, entry];
+  const old = table.entries.find((e) => e.id === id);
+  const entry = { id, threat: threatOf(table, id, now) + amount, at: now, lastHit: old && amount === 0 ? old.lastHit : now };
+  const entries = old ? table.entries.map((e) => (e === old ? entry : e)) : [...table.entries, entry];
   return { ...table, entries, calmUntil: amount > 0 ? null : table.calmUntil };
 }
 
-/** Rebases every entry at `now`, forgets what has decayed below `AGGRO.forgetBelow`, and clears an expired taunt or calm.
- * Optional: threat decays on read anyway; this keeps tables small. */
+/** Rebases every entry's threat at `now` (keeping when each last hit, so the target does not change), forgets what has
+ * decayed below `AGGRO.forgetBelow`, and clears an expired taunt or calm. Optional: threat decays on read anyway; this
+ * keeps tables small. */
 export function decayThreat<Id extends ThreatId>(table: ThreatTable<Id>, now: number): ThreatTable<Id> {
   checkTime(now);
-  const entries = table.entries.map((e) => ({ id: e.id, threat: decayed(e, now), at: now })).filter((e) => e.threat >= AGGRO.forgetBelow);
+  const entries = table.entries.map((e) => ({ ...e, threat: decayed(e, now), at: now })).filter((e) => e.threat >= AGGRO.forgetBelow);
   return {
     entries,
     taunt: table.taunt && now < table.taunt.until ? table.taunt : null,
@@ -120,7 +114,7 @@ export function currentTarget<Id extends ThreatId>(table: ThreatTable<Id>, now: 
     if (hidden(e.id)) continue;
     const t = decayed(e, now);
     if (t < AGGRO.forgetBelow) continue;
-    if (best === null || t > bestThreat || (t === bestThreat && e.at > best.at)) {
+    if (best === null || t > bestThreat || (t === bestThreat && e.lastHit > best.lastHit)) {
       best = e;
       bestThreat = t;
     }

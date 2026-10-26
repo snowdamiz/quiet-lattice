@@ -145,16 +145,32 @@ export function hitTest<T extends HitTarget>(shape: HitShape, aim: Aim, targets:
   }
 }
 
-/** A ground active's hit shape, read from its data (DESIGN 9): a cone where it gives an angle (Flare's "60° cone" is 60°
- * across, 30° each side of the aim, 12 m), a sphere where it gives a radius (Well 12 m, Pulse 15 m, Spore 8 m), a ray where
- * it gives only a range (Lance 30 m, Pull 25 m, Fold 30 m). Null for nodes DESIGN gives no shape (Sear, Shatter, Drain,
- * Slam's fall-height radius …) and for anything that is not a ground active. Throws on an unknown node. */
-export function shapeOfNode(nodeId: string): HitShape | null {
+/** A ground active's hit shape, read from its data (DESIGN 9):
+ * - a cone where it gives an angle: Flare's "60° cone" is 60° across, 30° each side of the aim, 12 m;
+ * - a sphere where it gives a radius: Well 12 m, Pulse 15 m, Spore 8 m;
+ * - a sphere between a min and max radius: Slam's knockdown grows with fall height from 6 to 18 m. `reach` (0–1, default 0)
+ *   is how far through that span this cast is; DESIGN does not map fall heights to it, so the caller does (E07.T04);
+ * - a ray where it gives only a range: Lance 30 m, Pull 25 m, Fold 30 m;
+ * - otherwise the shape of the node it works through: Crush and Singularity are Well's 12 m sphere.
+ * Null for nodes DESIGN gives no shape (Sear, Shatter, Drain, Unmake, Bond, Vent, Corona …) and for anything that is not
+ * a ground active. Throws on an unknown node or a reach outside 0–1. */
+export function shapeOfNode(nodeId: string, reach = 0): HitShape | null {
+  if (!(reach >= 0 && reach <= 1)) throw new RangeError(`reach must be 0–1, got ${reach}`);
+  return nodeShape(nodeId, reach, new Set());
+}
+
+function nodeShape(nodeId: string, reach: number, seen: Set<string>): HitShape | null {
+  seen.add(nodeId);
   const node = getSkillNode(nodeId);
   if (node.type !== 'active' || node.slot !== 'ground') return null;
   const p = node.params;
   if (p.coneDeg !== undefined && p.rangeM !== undefined) return { kind: 'cone', halfAngleDeg: p.coneDeg / 2, range: p.rangeM };
   if (p.radiusM !== undefined) return { kind: 'sphere', radius: p.radiusM };
+  if (p.minRadiusM !== undefined && p.maxRadiusM !== undefined) return { kind: 'sphere', radius: p.minRadiusM + (p.maxRadiusM - p.minRadiusM) * reach };
   if (p.rangeM !== undefined) return { kind: 'ray', range: p.rangeM };
+  for (const ref of node.refs) {
+    const shape = seen.has(ref) ? null : nodeShape(ref, reach, seen);
+    if (shape) return shape;
+  }
   return null;
 }
