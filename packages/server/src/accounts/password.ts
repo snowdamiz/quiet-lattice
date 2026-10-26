@@ -1,5 +1,6 @@
 // Password hashing with argon2id (@node-rs/argon2: prebuilt binaries, no native build). Parameters follow the OWASP
 // minimum for argon2id: 19 MiB, 2 passes, 1 lane.
+import { randomBytes } from 'node:crypto';
 import { hash, verify, type Algorithm } from '@node-rs/argon2';
 
 // `Algorithm` is an ambient const enum, which isolatedModules cannot read; 2 is Argon2id.
@@ -19,10 +20,10 @@ export async function verifyPassword(storedHash: string, password: string): Prom
   }
 }
 
-let dummyHash: Promise<string> | undefined;
-
-/** Spends the same time as a real verification, so a login for an unknown user is not faster than a wrong password. */
-export async function burnVerification(password: string): Promise<void> {
-  dummyHash ??= hashPassword('astra-timing-equaliser');
-  await verifyPassword(await dummyHash, password);
+/**
+ * A hash of a random password with the same parameters, made once at boot. Verifying against it when a username does
+ * not exist spends the same time as a wrong password, so login timing does not reveal which usernames exist.
+ */
+export function createTimingHash(): Promise<string> {
+  return hashPassword(randomBytes(24).toString('base64url'));
 }

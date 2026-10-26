@@ -1,6 +1,6 @@
-// Character name rules beyond the shared wire schema (CharacterName: 2–20 characters, letters with inner spaces,
-// apostrophes and hyphens). Names are unique across the shard ignoring case; Postgres enforces that with an index on
-// lower(name).
+// Character name rules beyond the shared wire schema (CharacterName: 2–20 characters, words of letters joined by single
+// spaces, apostrophes or hyphens). Names are unique across the shard ignoring case; Postgres enforces that with an index
+// on lower(name).
 import { CharacterName } from '@astra/shared/protocol';
 
 export const MAX_NAME_WORDS = 3;
@@ -14,7 +14,6 @@ export function checkCharacterName(name: string): NameCheck {
   if (!CharacterName.safeParse(name).success) {
     return { ok: false, reason: 'Names are 2–20 letters and may use single spaces, apostrophes or hyphens between letters' };
   }
-  if (/[' -]{2,}/.test(name)) return { ok: false, reason: 'Names may not have two spaces, apostrophes or hyphens in a row' };
   const words = name.split(' ');
   if (words.length > MAX_NAME_WORDS) return { ok: false, reason: `Names may have at most ${MAX_NAME_WORDS} words` };
   for (const w of name.toLowerCase().split(/[' -]/)) {

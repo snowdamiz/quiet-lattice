@@ -19,7 +19,7 @@ describe('checkCharacterName', () => {
     expect(checkCharacterName(name).ok).toBe(false);
   });
 
-  it('rejects runs of separators', () => {
+  it('rejects runs of separators (via the shared schema)', () => {
     expect(checkCharacterName('Kara  Vel').ok).toBe(false);
     expect(checkCharacterName("Kara'-Vel").ok).toBe(false);
     expect(checkCharacterName('Kara --Vel').ok).toBe(false);

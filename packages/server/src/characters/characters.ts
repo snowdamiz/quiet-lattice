@@ -5,6 +5,7 @@ import { PG_UNIQUE_VIOLATION, pgErrorCode, type Db } from '../db/client.ts';
 import { accounts, characters, type CharacterRow } from '../db/schema.ts';
 import { homeSystemOf } from '../world/home.ts';
 
+/** A choice, not from DESIGN: six slots covers one character per people twice over (logged in DECISIONS by the orchestrator). */
 export const MAX_CHARACTERS_PER_ACCOUNT = 6;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

@@ -37,6 +37,18 @@ describe('parseConfig', () => {
     expect(() => parseConfig({ JWT_SECRET: 'short' })).toThrow(/JWT_SECRET/);
   });
 
+  it('allows the dev secret only on a loopback host', () => {
+    for (const HOST of ['127.0.0.1', '::1', 'localhost']) expect(parseConfig({ HOST }).HOST).toBe(HOST);
+    expect(() => parseConfig({ HOST: '0.0.0.0' })).toThrow(/JWT_SECRET[\s\S]*loopback/);
+    expect(parseConfig({ HOST: '0.0.0.0', JWT_SECRET: 'a-real-secret-for-the-lan' }).HOST).toBe('0.0.0.0');
+  });
+
+  it('validates typed overrides together with the environment', () => {
+    expect(parseConfig({ PORT: '9000' }, { PORT: 0, LOG_LEVEL: 'silent' })).toMatchObject({ PORT: 0, LOG_LEVEL: 'silent' });
+    expect(() => parseConfig({}, { HOST: '0.0.0.0' })).toThrow(/JWT_SECRET/);
+    expect(() => parseConfig({}, { WS_MAX_PER_IP: 0 })).toThrow(/WS_MAX_PER_IP/);
+  });
+
   it('refuses the dev secret in production', () => {
     expect(() => parseConfig({ NODE_ENV: 'production' })).toThrow(/JWT_SECRET/);
     expect(parseConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(32) }).NODE_ENV).toBe('production');

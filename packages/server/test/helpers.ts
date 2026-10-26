@@ -69,6 +69,8 @@ export async function newCharacter(server: RunningServer, token: string, input: 
 export class TestSocket {
   readonly received: ServerMessage[] = [];
   readonly undecodable: string[] = [];
+  /** Socket errors after open (e.g. writes to a connection the server cut), kept so they never go unhandled. */
+  readonly errors: Error[] = [];
   readonly closed: Promise<{ code: number; reason: string }>;
   private waiters: Array<() => void> = [];
 
@@ -81,6 +83,7 @@ export class TestSocket {
       else this.undecodable.push(text);
       for (const w of this.waiters.splice(0)) w();
     });
+    ws.on('error', (err) => this.errors.push(err));
     this.closed = new Promise((resolve) => ws.on('close', (code, reason) => resolve({ code, reason: reason.toString('utf8') })));
     void this.closed.then(() => {
       for (const w of this.waiters.splice(0)) w();
@@ -124,7 +127,25 @@ export class TestSocket {
     }
   }
 
+  /** Stops reading from the socket (the server's sends pile up), as a client that has hung or is hostile would. */
+  pause(): void {
+    this.ws.pause();
+  }
+
+  resume(): void {
+    this.ws.resume();
+  }
+
   close(): void {
     this.ws.close();
+  }
+}
+
+/** Polls `cond` until it holds, or throws after `timeoutMs`. */
+export async function waitFor(cond: () => boolean, timeoutMs = 5000, what = 'condition'): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (!cond()) {
+    if (Date.now() > deadline) throw new Error(`timed out waiting for ${what}`);
+    await new Promise((r) => setTimeout(r, 10));
   }
 }

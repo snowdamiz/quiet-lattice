@@ -2,6 +2,7 @@
 // for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and close() it.
 import type { AddressInfo } from 'node:net';
 import Fastify, { type FastifyInstance } from 'fastify';
+import { createTimingHash } from './accounts/password.ts';
 import { createTokenService } from './accounts/tokens.ts';
 import { parseConfig, type Config, type Env } from './config.ts';
 import { createDatabase } from './db/client.ts';
@@ -40,9 +41,7 @@ function redact(url: string): string {
 }
 
 export async function startServer(opts: StartOptions = {}): Promise<RunningServer> {
-  const config: Config = { ...parseConfig(opts.env ?? process.env), ...opts.config };
-  if (opts.port !== undefined) config.PORT = opts.port;
-  if (opts.host !== undefined) config.HOST = opts.host;
+  const config: Config = parseConfig(opts.env ?? process.env, { ...opts.config, PORT: opts.port ?? opts.config?.PORT, HOST: opts.host ?? opts.config?.HOST });
 
   const app = Fastify({ logger: { level: config.LOG_LEVEL }, bodyLimit: 16 * 1024 });
   const log = app.log;
@@ -65,15 +64,28 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const clock = createServerClock();
   const tokens = createTokenService(config.JWT_SECRET);
   const authLimiter = new RateLimiter({ burst: config.AUTH_RATE_BURST, refillPerSecond: config.AUTH_RATE_PER_MINUTE / 60 });
-  const ws = attachWsGateway(app.server, { db: database.db, tokens, clock, log, helloTimeoutMs: config.HELLO_TIMEOUT_MS });
+  // Computed now, not on the first unknown-user login, so that login is not the one that pays for it.
+  const timingHash = await createTimingHash();
+  const ws = attachWsGateway(app.server, {
+    db: database.db,
+    tokens,
+    clock,
+    log,
+    limits: {
+      helloTimeoutMs: config.HELLO_TIMEOUT_MS,
+      joinTimeoutMs: config.JOIN_TIMEOUT_MS,
+      maxPerIp: config.WS_MAX_PER_IP,
+      maxPerAccount: config.WS_MAX_PER_ACCOUNT,
+    },
+  });
 
   registerHttpRoutes(app, {
     db: database.db,
     tokens,
     authLimiter,
+    timingHash,
     pingDb: () => database.ping(),
     pingRedis: () => redis.ping(),
-    sessions: () => ws.stats().sessions,
   });
 
   let closed: Promise<void> | undefined;

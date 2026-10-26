@@ -1,20 +1,19 @@
 // HTTP gateway (docs/ARCHITECTURE.md §2): accounts, characters and health. Bodies are validated with the shared protocol
 // schemas; errors reply `{ error, message }` where `error` is a stable code the client can switch on.
-import { CharacterCreate, Credentials, PROTOCOL_VERSION, type AuthResponse, type CharacterSummary } from '@astra/shared/protocol';
+import { CharacterCreate, CharacterList, CharacterSummary, Credentials, PROTOCOL_VERSION, type AuthResponse } from '@astra/shared/protocol';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { authenticate, registerAccount } from '../accounts/accounts.ts';
 import type { TokenService } from '../accounts/tokens.ts';
 import { createCharacter, isUuid, listCharacters, MAX_CHARACTERS_PER_ACCOUNT } from '../characters/characters.ts';
 import { checkCharacterName } from '../characters/names.ts';
 import type { Db } from '../db/client.ts';
-import type { RateLimiter } from './rateLimit.ts';
+import { clientKey, type RateLimiter } from './rateLimit.ts';
 
 export interface HealthReport {
   ok: boolean;
   db: 'ok' | 'down';
   redis: 'ok' | 'down';
   protocol: number;
-  sessions: number;
   uptimeSeconds: number;
 }
 
@@ -22,9 +21,10 @@ export interface HttpGatewayDeps {
   db: Db;
   tokens: TokenService;
   authLimiter: RateLimiter;
+  /** See createTimingHash: verified against when a username does not exist. */
+  timingHash: string;
   pingDb(): Promise<boolean>;
   pingRedis(): Promise<boolean>;
-  sessions(): number;
 }
 
 const LOGIN_FAILED = 'Wrong username or password.';
@@ -53,7 +53,6 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
       db: db ? 'ok' : 'down',
       redis: redis ? 'ok' : 'down',
       protocol: PROTOCOL_VERSION,
-      sessions: deps.sessions(),
       uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     };
     return reply.code(report.ok ? 200 : 503).send(report);
@@ -63,7 +62,7 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
   app.register(
     async (auth) => {
       auth.addHook('onRequest', async (req, reply) => {
-        const r = deps.authLimiter.take(req.ip);
+        const r = deps.authLimiter.take(clientKey(req.ip));
         if (!r.ok) {
           reply.header('retry-after', String(r.retryAfterSeconds));
           return fail(reply, 429, 'rate_limited', 'Too many attempts. Try again in a moment.');
@@ -85,7 +84,7 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
         if (typeof raw?.username !== 'string' || typeof raw.password !== 'string') return fail(reply, 400, 'invalid', 'Username and password are required.');
         // Anything the register schema would reject cannot be an account: same answer as a wrong password.
         const body = Credentials.safeParse(raw);
-        const accountId = body.success ? await authenticate(deps.db, body.data) : null;
+        const accountId = body.success ? await authenticate(deps.db, body.data, deps.timingHash) : null;
         if (!accountId) return fail(reply, 401, 'login_failed', LOGIN_FAILED);
         const res: AuthResponse = { token: await deps.tokens.sign(accountId), accountId };
         return reply.send(res);
@@ -108,8 +107,8 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
   app.get('/characters', async (req, reply) => {
     const accountId = await requireAccount(req, reply);
     if (!accountId) return reply;
-    const characters: CharacterSummary[] = await listCharacters(deps.db, accountId);
-    return reply.send({ characters, max: MAX_CHARACTERS_PER_ACCOUNT });
+    const list: CharacterList = { characters: await listCharacters(deps.db, accountId), max: MAX_CHARACTERS_PER_ACCOUNT };
+    return reply.send(CharacterList.parse(list));
   });
 
   app.post('/characters', async (req, reply) => {
@@ -122,7 +121,7 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
     const r = await createCharacter(deps.db, accountId, body.data);
     if (r.ok) {
       req.log.info({ account: accountId, character: r.character.id, people: r.character.people }, 'character created');
-      return reply.code(201).send(r.character);
+      return reply.code(201).send(CharacterSummary.parse(r.character));
     }
     switch (r.reason) {
       case 'name_taken':

@@ -3,7 +3,7 @@ import type { Credentials } from '@astra/shared/protocol';
 import { sql } from 'drizzle-orm';
 import { PG_UNIQUE_VIOLATION, pgErrorCode, type Db } from '../db/client.ts';
 import { accounts } from '../db/schema.ts';
-import { burnVerification, hashPassword, verifyPassword } from './password.ts';
+import { hashPassword, verifyPassword } from './password.ts';
 
 export type RegisterResult = { ok: true; accountId: string } | { ok: false; reason: 'taken' };
 
@@ -18,15 +18,18 @@ export async function registerAccount(db: Db, creds: Credentials): Promise<Regis
   }
 }
 
-/** The account id when the username exists (any case) and the password matches; otherwise null, in the same time. */
-export async function authenticate(db: Db, creds: Credentials): Promise<string | null> {
+/**
+ * The account id when the username exists (any case) and the password matches; otherwise null. An unknown username is
+ * verified against `timingHash` (see createTimingHash) so it takes as long as a wrong password.
+ */
+export async function authenticate(db: Db, creds: Credentials, timingHash: string): Promise<string | null> {
   const [row] = await db
     .select({ id: accounts.id, passwordHash: accounts.passwordHash })
     .from(accounts)
     .where(sql`lower(${accounts.username}) = lower(${creds.username})`)
     .limit(1);
   if (!row) {
-    await burnVerification(creds.password);
+    await verifyPassword(timingHash, creds.password);
     return null;
   }
   return (await verifyPassword(row.passwordHash, creds.password)) ? row.id : null;

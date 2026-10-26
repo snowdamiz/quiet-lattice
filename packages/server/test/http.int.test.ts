@@ -1,5 +1,5 @@
 // HTTP gateway against the dockerised Postgres and Redis: accounts, characters, health and the /auth rate limit.
-import { AuthResponse, CharacterSummary } from '@astra/shared/protocol';
+import { AuthResponse, CharacterList, CharacterSummary } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RunningServer } from '../src/server.ts';
 import { api, DEFAULT_LOOK, newAccount, newCharacter, startTestServer, uniqueCharacterName, uniqueUsername } from './helpers.ts';
@@ -19,6 +19,7 @@ describe('health', () => {
     const res = await api(server, 'GET', '/health');
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({ ok: true, db: 'ok', redis: 'ok', protocol: 1 });
+    expect(res.body).not.toHaveProperty('sessions');
   });
 });
 
@@ -41,10 +42,9 @@ describe('accounts', () => {
     const character = CharacterSummary.parse(created.body);
     expect(character).toMatchObject({ name, people: 'ixari', look: DEFAULT_LOOK, level: 1, homeSystem: 1 });
 
-    const list = await api<{ characters: unknown[]; max: number }>(server, 'GET', '/characters', { token: session.token });
+    const list = await api(server, 'GET', '/characters', { token: session.token });
     expect(list.status).toBe(200);
-    expect(list.body.max).toBe(6);
-    expect(list.body.characters.map((c) => CharacterSummary.parse(c))).toEqual([character]);
+    expect(CharacterList.parse(list.body)).toEqual({ characters: [character], max: 6 });
   });
 
   it('rejects a bad password with 401, and an unknown user with the same answer', async () => {
@@ -116,8 +116,8 @@ describe('characters', () => {
     });
     expect(seventh.status).toBe(409);
     expect(seventh.body).toMatchObject({ error: 'character_limit' });
-    const list = await api<{ characters: unknown[] }>(server, 'GET', '/characters', { token: acct.token });
-    expect(list.body.characters).toHaveLength(6);
+    const list = await api(server, 'GET', '/characters', { token: acct.token });
+    expect(CharacterList.parse(list.body).characters).toHaveLength(6);
   });
 
   it('keeps the cap under concurrent creates', async () => {
@@ -135,8 +135,8 @@ describe('characters', () => {
     const a = await newAccount(server);
     const b = await newAccount(server);
     await newCharacter(server, a.token);
-    const list = await api<{ characters: unknown[] }>(server, 'GET', '/characters', { token: b.token });
-    expect(list.body.characters).toEqual([]);
+    const list = await api(server, 'GET', '/characters', { token: b.token });
+    expect(CharacterList.parse(list.body).characters).toEqual([]);
   });
 
   it('validates the body and the name rules', async () => {

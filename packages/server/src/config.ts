@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
 export const DEV_JWT_SECRET = 'dev-only-change-me';
+/** Hosts that only this machine can reach: the only ones the dev JWT secret may be served on. */
+const LOOPBACK_HOSTS = new Set(['127.0.0.1', '::1', 'localhost']);
 
 const port = z.coerce.number().int().min(0).max(65535);
 const positiveInt = z.coerce.number().int().positive();
@@ -27,6 +29,11 @@ export const ConfigSchema = z
     LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
     /** How long a new socket has to send a valid `hello` before it is refused. */
     HELLO_TIMEOUT_MS: positiveInt.default(5000),
+    /** How long a signed-in socket has to `join` a character before it is refused. */
+    JOIN_TIMEOUT_MS: positiveInt.default(30_000),
+    /** Open sockets allowed per client IP (IPv6: per /64) and per account. */
+    WS_MAX_PER_IP: positiveInt.default(16),
+    WS_MAX_PER_ACCOUNT: positiveInt.default(4),
     /** Token bucket per client IP on /auth/*: burst size and steady refill. */
     AUTH_RATE_BURST: positiveInt.default(10),
     AUTH_RATE_PER_MINUTE: positiveInt.default(20),
@@ -34,16 +41,22 @@ export const ConfigSchema = z
   .superRefine((c, ctx) => {
     if (c.NODE_ENV === 'production' && (c.JWT_SECRET === DEV_JWT_SECRET || c.JWT_SECRET.length < 32)) {
       ctx.addIssue({ code: 'custom', path: ['JWT_SECRET'], message: 'production needs a JWT_SECRET of at least 32 characters, not the dev default' });
+    } else if (c.JWT_SECRET === DEV_JWT_SECRET && !LOOPBACK_HOSTS.has(c.HOST)) {
+      ctx.addIssue({ code: 'custom', path: ['JWT_SECRET'], message: `the dev default JWT_SECRET is only allowed on a loopback HOST, not ${c.HOST}` });
     }
   });
 
 export type Config = z.infer<typeof ConfigSchema>;
 export type Env = Record<string, string | undefined>;
 
-/** Parses the environment; throws one readable error listing every bad variable. Empty strings count as unset. */
-export function parseConfig(env: Env): Config {
-  const cleaned: Env = {};
+/**
+ * Parses the environment, then `overrides` (typed values, e.g. from tests), and validates the result as a whole; throws one
+ * readable error listing every bad variable. Empty strings in the environment count as unset.
+ */
+export function parseConfig(env: Env, overrides: Partial<Config> = {}): Config {
+  const cleaned: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(env)) if (v !== undefined && v !== '') cleaned[k] = v;
+  for (const [k, v] of Object.entries(overrides)) if (v !== undefined) cleaned[k] = v;
   const r = ConfigSchema.safeParse(cleaned);
   if (!r.success) {
     const lines = r.error.issues.map((i) => `  ${i.path.join('.') || '(root)'}: ${i.message}`);
