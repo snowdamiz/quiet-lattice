@@ -1,6 +1,7 @@
 """Self-test for turntable.py: builds a small .glb in the export layout (art bible 8), renders its sheets headless and
 checks that each asset and variant gets its own sheet, that only LOD0 renders (by the manifest and by colour: LOD0 is
-red, LOD1 green, LOD2 blue, colliders magenta, each placed where it would show if drawn), and that --asset/--variant pick.
+red, LOD1 green, LOD2 blue, colliders magenta, each placed where it would show if drawn), that --asset/--variant pick,
+and that --family lays every asset and variant out in a row of its own (LOD0 only, four views, a header, a list).
 
 Run: pnpm turntable:test
  or: Blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/turntable_selftest.py -- [--keep]
@@ -142,6 +143,31 @@ def main():
     expect(code == 0, "turntable.py exits 0")
     made = sorted(p.name for p in out.glob("*.png"))
     expect(made == ["kit_Rock_Rock_b_materials.png", "kit_Rock_Rock_b_turntable.png"], f"only Rock/Rock_b's sheets ({made})")
+
+    print("\n--family")
+    out = TMP / "family"
+    code, man = turntable(glb, out, "--family")
+    expect(code == 0, "turntable.py --family exits 0")
+    rows = ((man or {}).get("family") or {}).get("rows", [])
+    expect([r["target"] for r in rows] == [["Crate", "Crate"], ["Rock", "Rock_a"], ["Rock", "Rock_b"]], f"one row per asset and variant ({[r['target'] for r in rows]})")
+    expect([r["objects"] for r in rows] == [["Crate_LOD0"], ["Rock_a_LOD0"], ["Rock_b_LOD0"]], f"each row shows its LOD0 only ({[r['objects'] for r in rows]})")
+    sheet = out / "kit_family.png"
+    made = sorted(p.name for p in out.glob("*.png"))
+    expect(made == ["kit_family.png"] and (out / "kit_family.txt").exists(), f"one family sheet and its list, nothing else ({made})")
+    if sheet.exists():
+        im = bpy.data.images.load(str(sheet))
+        w, h = im.size
+        bpy.data.images.remove(im)
+        # (at --scale 0.3: four 144 x 108 cells under a 576 x 16 header per row (48 x 0.3, at least 16))
+        expect((w, h) == (576, 3 * (108 + 16)), f"three rows of four views under a header each ({w} x {h})")
+        c = colours(sheet)
+        expect(c["red"] > 500, f"{sheet.name}: LOD0 (red) is drawn ({c['red']} px)")
+        expect(c["green"] < 30 and c["blue"] < 30 and c["magenta"] < 30, f"{sheet.name}: no LOD1, LOD2 or collider ({c['green']}, {c['blue']}, {c['magenta']} px)")
+    lines = (out / "kit_family.txt").read_text().splitlines() if (out / "kit_family.txt").exists() else []
+    expect(len(lines) == 3 and "Rock / Rock_b" in lines[2], f"the list names each row ({lines})")
+    code, man = turntable(glb, TMP / "family2", "--family", "2")
+    rows = ((man or {}).get("family") or {}).get("rows", [])
+    expect(code == 0 and len(rows) == 2, f"--family 2 samples two of the three ({[r['target'] for r in rows]})")
 
     print("\n--asset Nope")
     code, _ = turntable(glb, TMP / "none", "--asset", "Nope")

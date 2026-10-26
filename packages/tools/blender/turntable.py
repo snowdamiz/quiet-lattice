@@ -1,7 +1,7 @@
 # Turntable and material close-up sheets for the visual grader (IMPLEMENTATION_PLAN 0.4 and 0.10.3, P1.E14.T03).
 #
 #   Blender -b --factory-startup -P packages/tools/blender/turntable.py -- <asset.blend|asset.glb> [out_dir]
-#           [--asset A] [--variant V] [--grid [N]] [--samples N] [--scale F] [--manifest out.json]
+#           [--asset A] [--variant V] [--grid [N]] [--family [N]] [--samples N] [--scale F] [--manifest out.json]
 #
 # One sheet pair per asset and variant (art bible 8: a file may hold several assets, and an asset several variants, all
 # at the origin, so they are never overlaid): <stem>_turntable.png (eight views, 45 degrees apart, at 20 degrees
@@ -16,8 +16,11 @@
 # collection in a source file; the demo's flat `<name>` beside `<name>_lod1` is LOD0 of <name>.
 #
 # --grid lays the file's assets and variants (LOD0) out side by side on one sheet, at most N of them (default 24,
-# evenly sampled): a whole family at once. --scale multiplies the render sizes (tests). --manifest writes what each sheet
-# shows as JSON.
+# evenly sampled): a whole family at once. --family renders the sibling sheet for the consistency criterion instead:
+# <stem>_family.png, one row per asset and variant (at most N, default 24, evenly sampled; six rows to a sheet, then
+# <stem>_family_2.png, ...), each row a header with its name and size and LOD0 from four sides, framed to fill its cells,
+# listed in <stem>_family.txt. --scale multiplies the render sizes (tests). --manifest writes what each sheet shows as
+# JSON.
 import json
 import math
 import os
@@ -31,7 +34,7 @@ import numpy as np
 
 argv = sys.argv[sys.argv.index('--') + 1 :] if '--' in sys.argv else []
 if not argv:
-    print('usage: turntable.py -- <asset.blend|asset.glb> [out_dir] [--asset A] [--variant V] [--grid [N]] [--samples N] [--scale F] [--manifest out.json]')
+    print('usage: turntable.py -- <asset.blend|asset.glb> [out_dir] [--asset A] [--variant V] [--grid [N]] [--family [N]] [--samples N] [--scale F] [--manifest out.json]')
     sys.exit(2)
 src = os.path.abspath(argv[0])
 rest = list(argv[1:])
@@ -56,14 +59,26 @@ pick_variant = take('--variant')
 manifest_path = take('--manifest')
 # the game's look for mask-coloured families (@astra/shared/art gameLooksFor; the pnpm runner passes it)
 looks = json.loads(take('--looks', '[]'))
-grid = 0
-if '--grid' in rest:
-    i = rest.index('--grid')
-    grid = 24
+
+
+def take_count(flag, default=24):
+    """A flag with an optional count after it: 0 when absent, else the count or `default`."""
+    if flag not in rest:
+        return 0
+    i = rest.index(flag)
+    n = default
     if i + 1 < len(rest) and rest[i + 1].isdigit():
-        grid = int(rest[i + 1])
+        n = int(rest[i + 1])
         del rest[i + 1]
     del rest[i]
+    return n
+
+
+grid = take_count('--grid')
+family = take_count('--family')
+if grid and family:
+    print('turntable: give --grid or --family, not both')
+    sys.exit(2)
 repo = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 out_dir = os.path.abspath(rest[0]) if rest else os.path.join(repo, 'assets', 'renders')
 os.makedirs(out_dir, exist_ok=True)
@@ -419,6 +434,34 @@ def label(cam, w, h):
     return o
 
 
+def header(body, w, h):
+    """A row header for a sheet: `body` in white on black, rendered alone (nothing else drawn) at w × h."""
+    show_only([])
+    for o in [o for o in scene.objects if o.type == 'LIGHT']:
+        o.hide_render = True
+    world = bpy.data.worlds.get('tt_header_world') or bpy.data.worlds.new('tt_header_world')
+    world.use_nodes = True
+    next(n for n in world.node_tree.nodes if n.type == 'BACKGROUND').inputs['Color'].default_value = (0, 0, 0, 1)
+    scene.world = world
+    cam = camera(35)
+    cam.location = (0, 0, 1e4)
+    cam.rotation_euler = (0, 0, 0)
+    half_w = math.tan(cam.data.angle / 2)
+    half_h = half_w * h / w
+    cu = bpy.data.curves.new('tt_header', 'FONT')
+    cu.body = body
+    cu.size = 1
+    cu.materials.append(emissive('tt_header', (1, 1, 1), 2.5))
+    o = bpy.data.objects.new('tt_header', cu)
+    o.parent = cam
+    # (the default font's capitals are about 0.7 of its size: the text fills about half the strip's height)
+    o.scale = (half_h * 0.75,) * 3
+    o.location = (-half_w * 0.985, -half_h * 0.28, -1.0)
+    scene.collection.objects.link(o)
+    o.hide_render = False
+    return o
+
+
 def render_to(path, w, h):
     scene.render.resolution_x = max(16, int(w * scale))
     scene.render.resolution_y = max(16, int(h * scale))
@@ -449,6 +492,40 @@ def compose(paths, cols, out):
     bpy.data.images.remove(img)
     for p in paths:
         os.remove(p)
+    print(f'turntable: wrote {out}')
+
+
+def compose_rows(rows, out):
+    """Stacks rows of renders into one sheet: each row a header strip over its equally sized cells, side by side."""
+    loaded = []
+    blocks = []
+    for head, cells in rows:
+        imgs = [bpy.data.images.load(p) for p in [head, *cells]]
+        loaded += imgs
+        px = []
+        for im in imgs:
+            w, h = im.size
+            a = np.empty(w * h * 4, dtype=np.float32)
+            im.pixels.foreach_get(a)
+            px.append(a.reshape(h, w, 4))
+        row = np.concatenate(px[1:], axis=1)
+        top = np.zeros((px[0].shape[0], row.shape[1], 4), dtype=np.float32)
+        top[..., 3] = 1
+        top[:, : px[0].shape[1]] = px[0][:, : row.shape[1]]
+        # (Blender images are bottom-up: the header goes above its cells, so after them)
+        blocks.append(np.concatenate([row, top], axis=0))
+    sheet = np.concatenate(blocks[::-1], axis=0)
+    img = bpy.data.images.new('sheet', sheet.shape[1], sheet.shape[0], alpha=True)
+    img.pixels.foreach_set(sheet.ravel())
+    img.filepath_raw = out
+    img.file_format = 'PNG'
+    img.save()
+    for im in loaded:
+        bpy.data.images.remove(im)
+    bpy.data.images.remove(img)
+    for head, cells in rows:
+        for p in [head, *cells]:
+            os.remove(p)
     print(f'turntable: wrote {out}')
 
 
@@ -492,6 +569,62 @@ def turntable(shown, out):
         paths.append(p)
     compose(paths, 4, out)
     clear_rig()
+
+
+FAMILY_VIEWS = (22.5, 112.5, 202.5, 292.5)
+FAMILY_ROWS = 6
+
+
+def target_label(t):
+    a, v = t
+    return a if v == a else f'{a} / {v}'
+
+
+def family_sheets(picked):
+    """--family: the siblings side by side for the consistency criterion. One row per target: a header with its name and
+    size, then LOD0 from four sides (the turntable's 22.5 degrees and every 90 from there, at 20 degrees elevation) under
+    the turntable's studio light, each target framed to fill its own cells; six rows to a sheet."""
+    sheets = []
+    rows_info = []
+    for start in range(0, len(picked), FAMILY_ROWS):
+        page = picked[start : start + FAMILY_ROWS]
+        rows = []
+        for t in page:
+            shown = lod0_of(t)
+            lo, hi = bounds(shown)
+            dims = hi - lo
+            text = f'{target_label(t)}    {dims.x:.1f} x {dims.y:.1f} x {dims.z:.1f} m    LOD0, from 22, 112, 202 and 292 degrees'
+            head = os.path.join(tmp, f'family_{len(rows_info):03d}_head.png')
+            header(text, 1920, 48)
+            render_to(head, 1920, 48)
+            clear_rig()
+            show_only(shown)
+            center = (lo + hi) / 2
+            radius = max(dims.length / 2, 0.25)
+            studio(center, radius)
+            floor(lo.z - 0.001, radius)
+            cam = camera(35)
+            dist = radius / math.sin(math.radians(35) / 2) * 1.08
+            cells = []
+            for k, deg in enumerate(FAMILY_VIEWS):
+                az, el = math.radians(deg), math.radians(20)
+                cam.location = center + mathutils.Vector((math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el))) * dist
+                cam.rotation_euler = (center - cam.location).to_track_quat('-Z', 'Y').to_euler()
+                p = os.path.join(tmp, f'family_{len(rows_info):03d}_{k}.png')
+                render_to(p, 480, 360)
+                cells.append(p)
+            clear_rig()
+            rows.append((head, cells))
+            rows_info.append({'target': list(t), 'objects': sorted(o.name for o in shown), 'size': [round(x, 2) for x in dims], 'text': text})
+        n = len(sheets) + 1
+        out = os.path.join(out_dir, f'{stem}_family.png' if n == 1 else f'{stem}_family_{n}.png')
+        compose_rows(rows, out)
+        sheets.append(out)
+    txt = os.path.join(out_dir, f'{stem}_family.txt')
+    with open(txt, 'w') as f:
+        for i, r in enumerate(rows_info):
+            f.write(f'{os.path.basename(sheets[i // FAMILY_ROWS])} row {i % FAMILY_ROWS + 1}: {r["text"]}\n')
+    return sheets, txt, rows_info
 
 
 def material_sheet(materials, out_png, out_txt):
@@ -569,12 +702,20 @@ def lay_out(targets_shown):
         bpy.context.view_layer.update()
 
 
+def sample(items, n):
+    """At most n of items, evenly spread."""
+    if len(items) <= n:
+        return items
+    step = len(items) / n
+    return [items[int(i * step)] for i in range(n)]
+
+
 manifest = {'source': src, 'targets': [list(t) for t in all_targets], 'sheets': []}
-if objs and grid:
-    picked = targets
-    if len(picked) > grid:
-        step = len(picked) / grid
-        picked = [picked[int(i * step)] for i in range(grid)]
+if objs and family:
+    sheets, txt, rows = family_sheets(sample(targets, family))
+    manifest['family'] = {'sheets': sheets, 'list': txt, 'rows': rows}
+elif objs and grid:
+    picked = sample(targets, grid)
     targets_shown = [(t, lod0_of(t)) for t in picked]
     lay_out(targets_shown)
     shown = [o for _, s in targets_shown for o in s]
