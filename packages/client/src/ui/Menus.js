@@ -1,5 +1,7 @@
-// Title screen, pause screen, settings and controls sheets, trade terminal, the 3D navigation map
+// Title screen, pause screen, settings and controls sheets, trade terminal, the inventory, the 3D navigation map
 // and the warp sequence.
+import { getHull, getItem, getResource } from '@astra/shared/data';
+import { itemInfo, slotAt, stackCap, usedSlots } from '@astra/shared/inventory';
 import { RESOURCES } from '../gameplay/Inventory.js';
 import { hasSave, applyUpgrade } from '../gameplay/Save.js';
 import { MapView } from './map/MapView.js';
@@ -15,7 +17,7 @@ function el(tag, cls, parent, html) {
 const KEYS = [
   ['Starship', [['Steer', ['Mouse']], ['Throttle up · down', ['W', 'S']], ['Roll · strafe when hovering', ['A', 'D']], ['Thrusters up · down', ['Space', 'C']], ['Boost', ['Shift']], ['Pulse drive', ['J']], ['Land · take off', ['E']], ['Exit ship', ['F']], ['Lasers', ['LMB']], ['Camera view', ['V']], ['Look back', ['B']]]],
   ['On foot', [['Move', ['W', 'A', 'S', 'D']], ['Sprint', ['Shift']], ['Jump · jetpack', ['Space']], ['Mining beam', ['LMB']], ['Scanner pulse', ['C']], ['Interact · analyze', ['E']], ['Board ship', ['F']]]],
-  ['General', [['Navigation map', ['M']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
+  ['General', [['Inventory', ['I']], ['Navigation map', ['M']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
 ];
 
 function controlsHTML() {
@@ -43,6 +45,36 @@ const SHOP = [
 ];
 
 
+// the tag a non-resource item wears in its slot
+const KIND_TAG = { consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD', cosmetic: 'COS', component: 'CMP' };
+
+function slotRefOf(slot) {
+  const i = Number(slot.dataset.i);
+  return slot.dataset.c === 'suit' ? { c: 'suit', i } : { c: 'pod', p: Number(slot.dataset.p), i };
+}
+
+function refKey(ref) {
+  return ref.c === 'suit' ? `s${ref.i}` : `p${ref.p}.${ref.i}`;
+}
+
+function cap1(t) {
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+// what a refused move tells the player
+function refusal(error) {
+  switch (error.code) {
+    case 'stack_full':
+      return 'That stack is full';
+    case 'item_mismatch':
+      return 'Part of a stack goes onto an empty slot or the same item';
+    case 'no_room':
+      return cap1(error.message);
+    default:
+      return 'That move is not possible';
+  }
+}
+
 export class Menus {
   constructor(game) {
     this.game = game;
@@ -60,6 +92,7 @@ export class Menus {
     this.help.addEventListener('click', (e) => {
       if (e.target === this.help || e.target.closest('[data-close]')) this.toggleHelp();
     });
+    this.buildInventory();
     this.buildMap();
     this.warpCanvas = el('canvas', 'overlay warp-canvas', this.root);
     window.addEventListener(
@@ -75,6 +108,10 @@ export class Menus {
         if (e.code === 'KeyH' && this.game.overlay === 'help') {
           e.stopPropagation();
           this.toggleHelp();
+        }
+        if (e.code === 'KeyI' && this.game.overlay === 'inventory') {
+          e.stopPropagation();
+          this.closeAll();
         }
       },
       true,
@@ -166,6 +203,7 @@ export class Menus {
     }
     if (g.overlay === 'map') this.updateMap(dt);
     if (g.overlay === 'trade') this.refreshTradeUnits();
+    if (g.overlay === 'inventory' && g.inventory.key() !== this.invKey) this.renderInventory();
   }
 
   updatePauseHint() {
@@ -330,7 +368,8 @@ export class Menus {
       if (g.overlay === o.name) o.onClose();
       o.el.classList.remove('show');
     }
-    for (const e of [this.trade, this.help, this.map]) e.classList.remove('show');
+    if (g.overlay === 'inventory') this.endDrag();
+    for (const e of [this.trade, this.help, this.inv, this.map]) e.classList.remove('show');
     const was = g.overlay;
     g.overlay = null;
     if (was && (g.mode === 'ship' || g.mode === 'foot')) g.input.lock();
@@ -364,7 +403,7 @@ export class Menus {
     for (const it of SHOP) {
       const owned = it.once && this.bought.has(it.id);
       shop += `<div class="shop-item ${owned ? 'owned' : ''}" title="${it.desc}"><div class="ico">${it.icon}</div><h4>${it.name}</h4>
-        <div class="buy"><span>${owned ? 'Owned' : `⌬ ${it.price.toLocaleString()}`}</span><button class="btn small" data-buy="${it.id}" ${owned || inv.units < it.price ? 'disabled' : ''}>${owned ? '✓' : 'Buy'}</button></div></div>`;
+        <div class="buy"><span>${owned ? 'Owned' : `⌬ ${it.price.toLocaleString()}`}</span><button class="btn small" data-buy="${it.id}" ${owned || inv.units < it.price || (it.id === 'warpcell' && !inv.room('warp_cell')) ? 'disabled' : ''}>${owned ? '✓' : 'Buy'}</button></div></div>`;
     }
     this.trade.innerHTML = `<div class="panel frame">
       <div class="panel-head">
@@ -394,6 +433,10 @@ export class Menus {
     const g = this.game;
     const it = SHOP.find((s) => s.id === id);
     if (g.inventory.units < it.price) return g.audio.play('error');
+    if (id === 'warpcell' && !g.inventory.room('warp_cell')) {
+      g.hud.toast('No room for a warp cell in the suit or the cargo pods', 'warn');
+      return g.audio.play('error');
+    }
     g.inventory.units -= it.price;
     if (id === 'warpcell') g.inventory.warpCells++;
     if (id === 'pulse') g.ship.pulseFuel = 100;
@@ -412,6 +455,232 @@ export class Menus {
   refreshTradeUnits() {
     const u = this.trade.querySelector('.u');
     if (u) u.textContent = this.game.inventory.units.toLocaleString();
+  }
+
+  // ---------- inventory ----------
+  // Suit stacks beside the ship's cargo pods (DESIGN 10.1). Click a stack to send it across, drag it onto a slot to place,
+  // merge or swap it, shift-click to split it in half (shift-drag moves half). Every move is a request: the inventory
+  // predicts it with the shared rules and the server has the last word (ARCHITECTURE §7).
+  buildInventory() {
+    this.inv = el('div', 'overlay panel-screen inv-screen', this.root);
+    this.invKey = '';
+    this.invChanged = new Set();
+    this.inv.addEventListener('click', (e) => {
+      if (e.target === this.inv || e.target.closest('[data-close]')) return this.closeAll();
+      const c = e.target.closest('[data-compact]');
+      if (c && !c.disabled) this.invRequest({ op: 'compact', c: c.dataset.compact });
+    });
+    this.inv.addEventListener('pointerover', (e) => {
+      const slot = e.target.closest('.inv-slot');
+      if (slot && !this.drag?.ghost) this.showDetail(slot);
+    });
+    this.inv.addEventListener('pointerout', (e) => {
+      if (e.target.closest('.inv-slot') && !e.relatedTarget?.closest?.('.inv-slot') && !this.drag?.ghost) this.showDetail(null);
+    });
+    this.inv.addEventListener('pointerdown', (e) => {
+      const slot = e.target.closest('.inv-slot:not(.empty)');
+      if (!slot || e.button !== 0) return;
+      e.preventDefault();
+      this.drag = { from: slotRefOf(slot), el: slot, x: e.clientX, y: e.clientY, shift: e.shiftKey, ghost: null, over: null };
+    });
+    window.addEventListener('pointermove', (e) => this.dragMove(e));
+    window.addEventListener('pointerup', (e) => this.dragEnd(e));
+  }
+
+  openInventory() {
+    const g = this.game;
+    if (g.overlay || (g.mode !== 'ship' && g.mode !== 'foot')) return;
+    this.invMsg = null;
+    this.invChanged.clear();
+    this.podScroll = 0;
+    // shown first, so the pod list can measure itself
+    this.open('inventory', this.inv);
+    this.renderInventory();
+    g.audio.play('ui');
+  }
+
+  toggleInventory() {
+    if (this.game.overlay === 'inventory') this.closeAll();
+    else this.openInventory();
+  }
+
+  renderInventory() {
+    const inv = this.game.inventory;
+    const st = inv.state;
+    this.invKey = inv.key();
+    const hull = inv.hull ? getHull(inv.hull).name : null;
+    const grid = (refs) => `<div class="inv-grid">${refs.map((r) => this.slotHTML(st, r)).join('')}</div>`;
+    const cargoCap = st.pods.reduce((n, pod) => n + pod.length, 0);
+    const pods = st.pods.length
+      ? st.pods
+          .map(
+            (pod, p) =>
+              `<div class="inv-pod"><div class="inv-pod-head mono"><span>Pod ${p + 1}</span><span>${pod.filter(Boolean).length} / ${pod.length}</span></div>${grid(pod.map((_, i) => ({ c: 'pod', p, i })))}</div>`,
+          )
+          .join('')
+      : `<div class="inv-none"><b>No ship</b><span>Cargo pods come with a hull. Any Waystation sells one.</span></div>`;
+    const stackBtn = (c, on) => `<button class="inv-act" data-compact="${c}" ${on ? '' : 'disabled'} title="Merge partial stacks and close the gaps">Stack</button>`;
+    this.inv.innerHTML = `<div class="panel frame inv-panel">
+      <div class="panel-head">
+        <div><div class="label">Exo-suit${hull ? ` · ${hull}` : ''}</div><h2>Inventory</h2></div>
+        <div class="balance"><b class="u">${st.units.toLocaleString()}</b><button class="close-x" data-close>✕</button></div>
+      </div>
+      <div class="inv-cols">
+        <section class="inv-side">
+          <header class="inv-side-head"><h4 class="mono col-title">Suit</h4><span class="mono">${usedSlots(st, 'suit')} / ${st.suit.length} stacks</span>${stackBtn('suit', true)}</header>
+          ${grid(st.suit.map((_, i) => ({ c: 'suit', i })))}
+          <p class="inv-note"><i></i>Kept through the Recall</p>
+        </section>
+        <section class="inv-side">
+          <header class="inv-side-head"><h4 class="mono col-title">Ship cargo</h4><span class="mono">${cargoCap ? `${st.pods.length} pod${st.pods.length === 1 ? '' : 's'} · ${usedSlots(st, 'cargo')} / ${cargoCap} stacks` : 'No pods'}</span>${stackBtn('cargo', cargoCap > 0)}</header>
+          <div class="inv-pods">${pods}</div>
+          <p class="inv-note drop"><i></i>Drops where the ship dies, for anyone to loot</p>
+        </section>
+      </div>
+      <footer class="inv-foot">
+        <div class="inv-detail"></div>
+        <div class="inv-keys"><span><kbd>Click</kbd>Move across</span><span><kbd>Drag</kbd>Place · merge · swap</span><span><kbd>Shift</kbd><kbd>Click</kbd>Split</span></div>
+      </footer>
+    </div>`;
+    // a hauler's pods scroll: keep the place across redraws, and fade the edge while more lies below
+    const podsEl = this.inv.querySelector('.inv-pods');
+    podsEl.scrollTop = this.podScroll || 0;
+    const more = () => {
+      this.podScroll = podsEl.scrollTop;
+      podsEl.classList.toggle('more', podsEl.scrollTop + podsEl.clientHeight < podsEl.scrollHeight - 2);
+    };
+    podsEl.addEventListener('scroll', more, { passive: true });
+    more();
+    this.invDetail = this.inv.querySelector('.inv-detail');
+    this.invChanged.clear();
+    if (this.invMsg) this.paintMessage();
+    else this.showDetail(this.drag ? null : this.inv.querySelector('.inv-slot:hover'));
+  }
+
+  slotHTML(st, ref) {
+    const s = slotAt(st, ref);
+    const data = ref.c === 'suit' ? `data-c="suit" data-i="${ref.i}"` : `data-c="pod" data-p="${ref.p}" data-i="${ref.i}"`;
+    const bump = this.invChanged.has(refKey(ref)) ? ' bump' : '';
+    if (!s) return `<div class="inv-slot empty${bump}" ${data}></div>`;
+    const info = itemInfo(s.item);
+    const cap = stackCap(s.item, st.stackMax);
+    const mark = info?.kind === 'resource' ? `<i class="inv-sw" style="--c:${RESOURCES[s.item]?.color || 'var(--dim)'}"></i>` : `<i class="inv-tag">${KIND_TAG[info?.kind] || 'ITM'}</i>`;
+    const count = cap === 1 ? '' : `<b class="inv-ct">${s.count.toLocaleString()}</b>`;
+    // (a module, cosmetic or component is one thing per slot: no count, no fill)
+    const fill = cap === 1 ? '' : `<span class="inv-fill" style="--f:${(s.count / cap).toFixed(4)}"></span>`;
+    return `<div class="inv-slot${s.count >= cap && cap > 1 ? ' full' : ''}${bump}" ${data}>${mark}${count}<span class="inv-nm">${info?.name || s.item}</span>${fill}</div>`;
+  }
+
+  // the line under the grids: what the hovered stack is, else how much a stack holds
+  showDetail(slot) {
+    if (!this.invDetail || this.invMsg) return;
+    const st = this.game.inventory.state;
+    const s = slot && slotAt(st, slotRefOf(slot));
+    if (!s) {
+      this.invDetail.className = 'inv-detail idle';
+      this.invDetail.textContent = `A stack holds up to ${st.stackMax.toLocaleString()}. Modules, cosmetics and components take a slot each.`;
+      return;
+    }
+    const info = itemInfo(s.item);
+    const cap = stackCap(s.item, st.stackMax);
+    let about = '';
+    if (info?.kind === 'resource') {
+      const r = getResource(s.item);
+      about = `${cap1(r.sources.map((x) => x.detail).join(', '))} · for ${r.uses.join(', ')}`;
+    } else if (info) about = getItem(s.item).text;
+    this.invDetail.className = 'inv-detail';
+    const amount = cap === 1 ? '' : `<span class="num">${s.count.toLocaleString()} / ${cap.toLocaleString()}</span>`;
+    this.invDetail.innerHTML = `<div class="l1"><b>${info?.name || s.item}</b><span class="kind">${info?.kind || ''}</span>${amount}</div><div class="about">${about}</div>`;
+  }
+
+  // a refusal in the detail line, for a moment
+  showMessage(text) {
+    clearTimeout(this.invMsgT);
+    this.invMsg = text;
+    this.paintMessage();
+    this.invMsgT = setTimeout(() => {
+      this.invMsg = null;
+      this.showDetail(null);
+    }, 2600);
+  }
+
+  paintMessage() {
+    if (!this.invDetail) return;
+    this.invDetail.className = 'inv-detail msg';
+    this.invDetail.textContent = this.invMsg;
+  }
+
+  invRequest(op) {
+    const g = this.game;
+    const before = g.inventory.state;
+    const r = g.inventory.request(op);
+    if (!r.ok) {
+      g.audio.play('error');
+      this.showMessage(refusal(r.error));
+      return;
+    }
+    g.audio.play('ui');
+    clearTimeout(this.invMsgT);
+    this.invMsg = null;
+    // the slots the move touched pulse once
+    const after = g.inventory.state;
+    const refs = [...before.suit.map((_, i) => ({ c: 'suit', i })), ...before.pods.flatMap((pod, p) => pod.map((_, i) => ({ c: 'pod', p, i })))];
+    for (const ref of refs) if (slotAt(before, ref) !== slotAt(after, ref)) this.invChanged.add(refKey(ref));
+    this.renderInventory();
+  }
+
+  dragMove(e) {
+    const d = this.drag;
+    if (!d) return;
+    if (!d.ghost) {
+      if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 5) return;
+      d.ghost = d.el.cloneNode(true);
+      d.ghost.classList.add('inv-ghost');
+      d.ghost.classList.remove('bump');
+      d.ghost.style.width = `${d.el.offsetWidth}px`;
+      d.ghost.style.height = `${d.el.offsetHeight}px`;
+      this.root.appendChild(d.ghost);
+      d.el.classList.add('lifted');
+      this.inv.classList.add('dragging');
+      this.showDetail(d.el);
+    }
+    d.ghost.style.transform = `translate(${e.clientX - d.ghost.offsetWidth / 2}px, ${e.clientY - d.ghost.offsetHeight / 2}px)`;
+    const over = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.inv-slot');
+    const target = over && over !== d.el && this.inv.contains(over) ? over : null;
+    if (target !== d.over) {
+      d.over?.classList.remove('drop');
+      d.over = target;
+      d.over?.classList.add('drop');
+    }
+  }
+
+  dragEnd(e) {
+    const d = this.drag;
+    if (!d) return;
+    this.endDrag();
+    if (this.game.overlay !== 'inventory') return;
+    const s = slotAt(this.game.inventory.state, d.from);
+    if (!s) return;
+    if (d.ghost) {
+      if (d.over) this.invRequest({ op: 'move', from: d.from, to: slotRefOf(d.over), ...(d.shift && s.count > 1 ? { count: Math.ceil(s.count / 2) } : {}) });
+      return;
+    }
+    if (!e.target.closest?.('.inv-slot')) return;
+    // a click: shift splits the stack in half, otherwise it goes across to the other side
+    if (d.shift) {
+      if (s.count < 2) return this.showMessage('A single item does not split');
+      this.invRequest({ op: 'split', from: d.from, count: Math.floor(s.count / 2) });
+    } else this.invRequest({ op: 'transfer', from: d.from });
+  }
+
+  endDrag() {
+    const d = this.drag;
+    if (!d) return;
+    this.drag = null;
+    d.ghost?.remove();
+    d.el.classList.remove('lifted');
+    d.over?.classList.remove('drop');
+    this.inv.classList.remove('dragging');
   }
 
   // ---------- map ----------

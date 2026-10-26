@@ -76,10 +76,23 @@ position (P1.E03.T03 tests this to 1 cm).
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose), `cast {seq, slot, aim, target?}`,
-  `interact {target}`, `chat {channel, text}`, `ack {tick}`, `ping {id, clientTime}`.
+  `interact {target}`, `chat {channel, text}`, `ack {tick}`, `ping {id, clientTime}`, `inventory {seq, op}`.
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}`, `pong`, and snapshots.
+  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}`, `pong`, `inventory {seq, inventory,
+  error?}`, and snapshots.
+- **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
+  each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
+  points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
+  `split {from, count, to?}`, `merge {from, to}`, `transfer {from, count?}` (across to the other side) or `compact {c}`,
+  with slots `{c: 'suit', i}` or `{c: 'pod', p, i}` bounded to 64 suit slots, 32 pods and 64 slots a pod. `seq` counts the
+  session's requests from 1 and must increase. The client applies the same shared op at once to predict; the server
+  applies it through the inventory service and answers every request with `inventory` state, where `seq` is the last
+  request it handled this session and `error` the code it refused that one with (`stale_seq` for a replayed number).
+  The server also sends the state after `welcome` (`seq` 0) and pushes it whenever server-side systems change it (loot,
+  mining, trade, the Recall's cargo drop); the client keeps its unanswered requests and replays those above `seq` on
+  top. Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
+  picks the union whose schema accepts the message.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 

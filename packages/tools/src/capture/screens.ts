@@ -15,6 +15,59 @@ const settle = async (page: Page, frames = 60) => {
   await page.waitForTimeout(1200);
 };
 
+interface InventoryApi {
+  add(id: string, n: number, to?: 'auto' | 'suit' | 'cargo'): number;
+  setLoadout(l: { hull: string | null; nodes?: string[] }): boolean;
+}
+
+/** Boots a game, loads the suit and the cargo with a mining trip's haul, opens the inventory and hovers a full stack. */
+async function openInventory(page: Page, hull: 'lark' | 'mule'): Promise<void> {
+  await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+  await page.evaluate((hull) => {
+    const g = (window as unknown as { game: { inventory: InventoryApi; menus: { openInventory(): void } } }).game;
+    const inv = g.inventory;
+    inv.setLoadout({ hull });
+    const suit: [string, number][] = [
+      ['ferrite', 12480],
+      ['carbon', 386],
+      ['oxygen', 92],
+      ['sodium', 45],
+      ['dihydrogen', 210],
+      ['copper', 64],
+      ['tritium', 2200],
+      ['cobalt', 18],
+      ['gold', 31],
+    ];
+    for (const [id, n] of suit) inv.add(id, n, 'suit');
+    const cargo: [string, number][] =
+      hull === 'lark'
+        ? [
+            ['tritium', 9999],
+            ['gold', 140],
+            ['cobalt', 75],
+            ['mining_laser', 1],
+          ]
+        : [
+            ['tritium', 9999 * 3 + 4120],
+            ['gold', 640],
+            ['cobalt', 375],
+            ['copper', 1210],
+            ['ferrite', 9999 + 2760],
+            ['carbon', 4400],
+            ['mining_laser', 1],
+            ['flak_ammo', 300],
+          ];
+    for (const [id, n] of cargo) inv.add(id, n, 'cargo');
+    g.menus.openInventory();
+  }, hull);
+  await settle(page, 60);
+  // hover the full ferrite stack: the detail line names it, its count against the cap, and where it comes from
+  const slot = page.locator('.inv-slot[data-c="suit"][data-i="1"]');
+  const box = await slot.boundingBox();
+  if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.waitForTimeout(500);
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     async open(page) {
@@ -49,6 +102,18 @@ export const SCREENS: Record<string, ScreenDef> = {
       await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
       await page.evaluate(() => (window as unknown as { game: { menus: { openMap(): void } } }).game.menus.openMap());
       await settle(page, 60);
+    },
+  },
+  // the inventory (P1.E06.T04): suit stacks beside the ship's cargo pods, after a mining trip, one stack hovered so the
+  // detail line shows what it is. `inventory` is the Lark every pilot starts in (one pod); `inventory-hauler` a Mule's four.
+  inventory: {
+    async open(page) {
+      await openInventory(page, 'lark');
+    },
+  },
+  'inventory-hauler': {
+    async open(page) {
+      await openInventory(page, 'mule');
     },
   },
   // the demo's box station, from outside and from a hangar pad (grader calibration, P1.E14.T09; later the kit-built

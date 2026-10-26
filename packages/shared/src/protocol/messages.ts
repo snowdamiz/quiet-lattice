@@ -2,9 +2,10 @@
 // zone snapshots are binary (see snapshot.ts). Every message is a zod schema so both ends validate what they receive.
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
+import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -149,8 +150,11 @@ export const ChatChannel = z.enum(['shard', 'system', 'party']);
 export const ChatSend = z.object({ t: z.literal('chat'), channel: ChatChannel, text: PlainText(280) });
 export const Ack = z.object({ t: z.literal('ack'), tick: z.number().int().nonnegative() });
 export const Ping = z.object({ t: z.literal('ping'), id: z.number().int().nonnegative(), clientTime: z.number().min(0).max(1e15) });
+/** Inventory request (ARCHITECTURE §7): move, split, merge, transfer or compact stacks. The client applies the same shared op
+ * to predict and the server answers with `inventory` state. `seq` numbers the session's requests from 1, increasing. */
+export const InventoryRequest = z.object({ t: z.literal('inventory'), seq: z.number().int().min(1).max(0xffffffff), op: inventoryOpSchema });
 
-export const ClientMessage = z.discriminatedUnion('t', [Hello, Join, Input, Cast, Interact, ChatSend, Ack, Ping]);
+export const ClientMessage = z.discriminatedUnion('t', [Hello, Join, Input, Cast, Interact, ChatSend, Ack, Ping, InventoryRequest]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
 // ---------- server → client ----------
@@ -217,6 +221,16 @@ export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string(
 export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, NoticeEvent]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
-export const ServerMessage = z.discriminatedUnion('t', [Welcome, Refused, Correction, ZoneChange, Pong, WorldState, EventMessage]);
+/** The character's authoritative inventory: after join, in answer to every inventory request, and whenever the server
+ * changes it (loot, mining, trade, the Recall). `seq` is the last request the server has handled this session (0: none);
+ * the client drops its predictions up to it and replays the rest. `error` says why that request was refused. */
+export const InventoryState = z.object({
+  t: z.literal('inventory'),
+  seq: z.number().int().min(0).max(0xffffffff),
+  inventory: inventorySchema,
+  error: inventoryErrorCodeSchema.optional(),
+});
+
+export const ServerMessage = z.discriminatedUnion('t', [Welcome, Refused, Correction, ZoneChange, Pong, WorldState, EventMessage, InventoryState]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;

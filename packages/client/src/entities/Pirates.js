@@ -248,9 +248,9 @@ export class Pirates {
     g.inventory.units += units;
     const res = ['gold', 'cobalt', 'copper', 'tritium'][Math.floor(Math.random() * 4)];
     const n = 15 + Math.floor(Math.random() * 30);
-    g.inventory.add(res, n);
+    const got = g.inventory.add(res, n);
     g.hud.toast(`Pirate destroyed: +${units} units`, 'good');
-    setTimeout(() => g.hud.pickup(res, n), 400);
+    setTimeout(() => g.hud.collected(res, n, got), 400);
     if (!this.list.length) {
       setTimeout(() => g.hud.showBanner('THREAT ELIMINATED', 'Pirate raid repelled', []), 800);
     }

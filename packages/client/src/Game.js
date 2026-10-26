@@ -483,6 +483,7 @@ export class Game {
       if (inp.hit('KeyC')) this.scan();
     }
     if (inp.hit('KeyM')) this.menus.openMap();
+    if (inp.hit('KeyI')) this.menus.openInventory();
     if (inp.hit('KeyH')) this.menus.toggleHelp();
     if (inp.hit('KeyV') && this.mode === 'ship') {
       // chase -> far chase -> cockpit -> chase. Into or out of the seat it is a straight cut (a

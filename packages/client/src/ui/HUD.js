@@ -118,6 +118,12 @@ export class HUD {
     while (this.toasts.children.length > 4) this.toasts.firstChild.remove();
   }
 
+  // what was picked up, and a warning when the suit and the cargo pods could not take all of it
+  collected(resource, wanted, got) {
+    if (got > 0) this.pickup(resource, got);
+    if (got < wanted) this.toast('Suit and cargo pods full', 'warn');
+  }
+
   pickup(resource, amount) {
     const r = RESOURCES[resource];
     const t = el('div', 'toast pickup', this.toasts, `<i style="background:${r.color}"></i>+${amount} ${r.name}`);

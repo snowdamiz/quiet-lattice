@@ -1,5 +1,6 @@
 import { encode } from '@msgpack/msgpack';
 import { describe, expect, it } from 'vitest';
+import { addItem, emptyInventory, layoutFor, type Inventory } from '../src/inventory/index.ts';
 import {
   AuthResponse,
   CharacterCreate,
@@ -26,6 +27,15 @@ import {
 } from '../src/protocol/index.ts';
 
 const pose: Pose = { frame: '424242:2', pos: [113000.25, -42.5, 7.125], quat: [0, 0.7071068, 0, 0.7071068], vel: [1, 2, 3] };
+let inventory: Inventory = emptyInventory(layoutFor({ hull: 'mule' }), 2500);
+for (const [item, n] of [
+  ['ferrite', 12000],
+  ['warp_cell', 1],
+  ['pulse_lasers', 1],
+] as const) {
+  const r = addItem(inventory, item, n);
+  if (r.ok) inventory = r.inv;
+}
 const character = { id: 'c1', name: "Ana Vel'ka", people: 'thalune', look: { palette: 3, pattern: 1, head: 2, suit: 0 }, level: 1, homeSystem: 0 } as const;
 
 const clientSamples: ClientMessage[] = [
@@ -37,7 +47,16 @@ const clientSamples: ClientMessage[] = [
   { t: 'chat', channel: 'system', text: 'hello' },
   { t: 'ack', tick: 99 },
   { t: 'ping', id: 1, clientTime: 1000.5 },
+  { t: 'inventory', seq: 3, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 2, i: 7 }, count: 40 } },
 ];
+
+/** Every inventory op a client may send (they share the `inventory` request type). */
+const inventoryOps = [
+  { op: 'split', from: { c: 'pod', p: 0, i: 1 }, count: 5, to: { c: 'suit', i: 15 } },
+  { op: 'merge', from: { c: 'suit', i: 2 }, to: { c: 'suit', i: 0 } },
+  { op: 'transfer', from: { c: 'suit', i: 1 } },
+  { op: 'compact', c: 'cargo' },
+] as const;
 
 const events: GameEvent[] = [
   { kind: 'combat', source: 5, target: 9, amount: 18, damageType: 'thermal', ability: 'lance', killed: false },
@@ -55,6 +74,7 @@ const serverSamples: ServerMessage[] = [
   { t: 'pong', id: 1, clientTime: 1000.5, serverTime: 3600.3 },
   { t: 'world', season: 1, count: 500, edgeX: 2.5e6, tiers: [0, 0, 0, 1, 2], serverTime: 3600 },
   ...events.map((event) => ({ t: 'event' as const, event })),
+  { t: 'inventory', seq: 3, inventory },
 ];
 
 const http = {
@@ -78,6 +98,23 @@ describe('protocol: control messages', () => {
 
   it.each(serverSamples.map((m) => [m.t === 'event' ? `event:${m.event.kind}` : m.t, m]))('server %s round-trips', (_, m) => {
     expect(decodeServerMessage(encodeMessage(m))).toEqual(m);
+  });
+
+  it.each(inventoryOps.map((op) => [op.op, op]))('client inventory %s round-trips', (_, op) => {
+    const m = { t: 'inventory' as const, seq: 9, op };
+    expect(decodeClientMessage(encodeMessage(m))).toEqual(m);
+  });
+
+  it('round-trips inventory state with and without a refusal, and tells the two inventory messages apart', () => {
+    for (const m of [
+      { t: 'inventory' as const, seq: 0, inventory: emptyInventory(layoutFor({ hull: null })) },
+      { t: 'inventory' as const, seq: 12, inventory, error: 'stack_full' as const },
+    ]) {
+      const text = encodeMessage(m);
+      expect(decodeServerMessage(text)).toEqual(m);
+      expect(decodeClientMessage(text)).toBeNull();
+    }
+    expect(decodeServerMessage(encodeMessage(clientSamples.at(-1)!))).toBeNull();
   });
 
   it.each(Object.entries(http))('HTTP %s round-trips', (_, [schema, value]) => {
@@ -104,15 +141,36 @@ describe('protocol: control messages', () => {
       `{"t":"chat","channel":"shard","text":"${'\\ud83d\\ude00'.repeat(141)}"}`,
       '{"t":"interact","target":"term\\u0007inal"}',
       '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"9999999999:1","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}',
+      // inventory requests: only the ops a client may ask for, inside the slot and count bounds
+      '{"t":"inventory","seq":1,"op":{"op":"add","item":"gold","count":100}}',
+      '{"t":"inventory","seq":1,"op":{"op":"move","from":{"c":"suit","i":0},"to":{"c":"suit","i":64}}}',
+      '{"t":"inventory","seq":1,"op":{"op":"move","from":{"c":"suit","i":-1},"to":{"c":"suit","i":1}}}',
+      '{"t":"inventory","seq":1,"op":{"op":"move","from":{"c":"pod","p":32,"i":0},"to":{"c":"suit","i":1}}}',
+      '{"t":"inventory","seq":1,"op":{"op":"move","from":{"c":"suit","i":0},"to":{"c":"suit","i":1},"count":0}}',
+      '{"t":"inventory","seq":1,"op":{"op":"split","from":{"c":"suit","i":0},"count":2000000}}',
+      '{"t":"inventory","seq":1,"op":{"op":"transfer","from":{"c":"suit","i":0},"units":5}}',
+      '{"t":"inventory","seq":0,"op":{"op":"compact","c":"suit"}}',
+      '{"t":"inventory","seq":1}',
+      '{"t":"inventory","seq":1,"inventory":{"stackMax":9999,"units":0,"suit":[],"pods":[]}}',
     ];
     for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
     expect(decodeServerMessage('{"t":"world","season":1,"count":5000,"edgeX":0,"tiers":[],"serverTime":0}')).toBeNull();
+    // inventory state carries only tradeable things: no fragments, no unknown items, no stack over its cap
+    for (const bad of [
+      { ...inventory, fragments: 4 },
+      { ...inventory, suit: [{ item: 'fragment', count: 1 }] },
+      { ...inventory, suit: [{ item: 'ferrite', count: 10000 }] },
+      { ...inventory, units: -1 },
+    ])
+      expect(decodeServerMessage(JSON.stringify({ t: 'inventory', seq: 1, inventory: bad }))).toBeNull();
   });
 
   it('refuses to encode invalid messages instead of sending nulls', () => {
     const nan = { t: 'event', event: { kind: 'combat', source: 1, target: 2, amount: NaN, damageType: 'x', killed: false } } as ServerMessage;
     expect(() => encodeServerMessage(nan)).toThrow(InvalidMessageError);
     expect(() => encodeMessage({ t: 'event', event: { kind: 'loot', item: 'ferrite', count: 0, from: null } })).toThrow(InvalidMessageError);
+    const overCap = { ...inventory, suit: [{ item: 'ferrite', count: 10000 }, ...inventory.suit.slice(1)] };
+    expect(() => encodeMessage({ t: 'inventory', seq: 1, inventory: overCap })).toThrow(InvalidMessageError);
   });
 
   it('accepts the edges of what it allows', () => {
