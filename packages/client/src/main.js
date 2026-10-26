@@ -24,10 +24,11 @@ if (scenario) {
     await wait(300);
     const home = game.system.homePlanet;
     const [name, arg] = scenario.split(':');
-    // #review:<asset> — the asset review scene (src/dev/review.js)
+    // #review:<family>/<file>[:<asset>[/<variant>]] — the asset review scene (src/dev/review.js); `review.ready` resolves
+    // once it has settled
     if (name === 'review' && import.meta.env.DEV) {
       const { startReview } = await import('./dev/review.js');
-      await startReview(game, arg);
+      startReview(game, decodeURIComponent(scenario.slice('review:'.length)));
       return;
     }
     const planet = arg !== undefined ? game.system.planets[+arg] : home;
