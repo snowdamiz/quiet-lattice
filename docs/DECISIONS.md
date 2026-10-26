@@ -320,3 +320,20 @@ Format: task id, question → choice → why.
   machine (load average 85+) and the golden and fuzz suites take seconds alone.
 - **Plan amendment (orchestrator)** P1.E15.T01 (chat and parties) is the server and protocol half; no task drew the chat panel or party frame, so P1.E15.T03 "Chat and party UI" is added (deps T01 and the client net layer P1.E04.T01, visual). → The two-client exit criterion needs players to talk and party up on screen.
 - **DESIGN amendment (orchestrator, from the P2.E22.T01 review)** 16.2's "Hold counts as a third of a Feed" now reads: a Hold is a full vote of which a third is Feed, so an all-Hold day targets 383, inside Held. The literal alternative (a Hold weighs a third of a vote, all of it Feed) would send a world of Hold players to Fed, and Held (16.4) is a philosophy that must be able to win a season. The burn is one measure every 4.8 hours (16.1's "a measure every few hours", 16.2's 5 a day), not a lump at the day roll.
+- **P1.E03.T05** Character persistence → a per-character component registry (`server/src/persistence`): each subsystem
+  registers {key, version `v`, zod schema, migrations, default, load, save, unload}; Phase 1 registers progress (level,
+  xp, home in their columns), the ship loadout (default Lark), the inventory (layout re-derived from the saved loadout)
+  and the pose (system, frame, pose, mode); skills and quests register theirs later. Storage: one `characters.state`
+  jsonb of {v, data} per component plus `revision` and `saved_at` (migration 0002); a new component needs no SQL
+  migration; no child tables until state needs cross-character queries. Unreadable state: a bad pose falls back to
+  docked at home (logged); any other unreadable component, a newer `v` included, refuses the join (`full`) rather than
+  reset progress. Saves: every 30 s in 30 one-second slots (least-loaded), on logout/disconnect, kick, handoff and
+  graceful shutdown (5 s wait); only changed components; at most one waiting save per character and one writer,
+  batches of 64 in one UPDATE that skips any save whose revision is not above the row's; backoff 0.5 s → 30 s and
+  one-row retries; a stale save logs at error level. A character that left stays held until its save lands, a rejoin
+  loads the held copy, and the join pins the character during its row read; character ids are taken in lower case and
+  any other spelling is refused. One process holds a character at a time: the revision orders one process's saves and
+  does not fence two (a fence comes with P3.E37). In-memory services refuse characters they do not hold; changing a
+  character out of play is P1.E03.T07's load–modify–save. A crash loses at most one interval while writes succeed.
+  Socket close saves first, then leaves the zone as 'disconnected'. → Restart-safe characters without a schema change
+  per feature. Open: until P1.E03.T04 merges, a saved pose is client-asserted; its `poseProblem` must validate restores.
