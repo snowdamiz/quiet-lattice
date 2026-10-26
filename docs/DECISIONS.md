@@ -276,3 +276,23 @@ Format: task id, question → choice → why.
   E13.T02 because both edit the deposit scatter. E10.T01 (city renderer) now waits for the Thalune kit (E10.T05): built
   from kit pieces with none yet made, its graded result would grade placeholders; the Ixari and Ulgani kits slot in as
   they land. → Each task can finish and be verified on its own deps.
+- **P1.E14.T03** Grader artifacts → `#review:<family>/<file>[:<asset>[/<variant>]]` (a file with several assets or variants
+  writes one folder each under `assets/renders/review/<family>/<file>/<asset>[/<variant>]/`); lighting cases: noon-lush =
+  sun 8° from zenith on the home system's lush world, night-exotic = the `alien` planet type at 160°, open-space = four
+  planet radii off the home world, sunlit from the side; the asset sits on the flattest dry ground within 240 m with its
+  lowest point on the ground, plants in its footprint and the eye-to-asset cone hidden, fauna, ship and multitool hidden;
+  one fixed camera (35°, 16°, 1.7 asset radii), LOD0's bounds frame every level; a missing LOD shows the nearest lower
+  one; the wireframe pass is clay with edges under noon-lush. Captures are 1920×1080 at pixel ratio 1, adaptive
+  resolution off, game clock pinned at t = 120 s, `Math.random` seeded, a fixed 180-frame settle with the worker pool
+  drained each frame; reproducibility is under 2% of pixels at a 16/255 cut on one machine. Perf: GPU time from
+  `EXT_disjoint_timer_query_webgl2`, each frame started on an idle GPU, the asset's own cost = scene shown minus hidden;
+  "holds 60 fps" in the rubric means the asset's own cost, because the planet scenes alone cost 22–30 ms GPU at 1080p
+  (terrain and atmosphere GPU cost is a perf item for P1.E16). UI clips: per-screen length (`clipSeconds`; the title is
+  3.6 s), optional HUD clock, `sheetFrames` per screen; clip frames are committed under LFS. Turntable sheets are
+  `assets/renders/<stem>[_<asset>[_<variant>]]_turntable.png` / `_materials.png` (8 views 45° apart offset 22.5°, 20°
+  elevation, LOD0, Cycles 48 samples, AgX), not the `assets/renders/<asset>.png` named in 0.4. → The grader always gets
+  the same views of the same scene. Found in review: `LIB_EngineGlow` carried its colour at emission strength 0, so
+  every hull's nozzles would have exported black; fixed in the library (strength 1), and the validator now fails a
+  signal-profile material that emits nothing. Open: CSS-animation clip frames are timed in real time at 0.1× and can
+  jitter when a screenshot overruns; seeking each animation's `currentTime` would make them exact (do it if a grader
+  flags jitter).
