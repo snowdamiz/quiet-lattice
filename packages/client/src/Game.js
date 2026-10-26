@@ -177,7 +177,6 @@ export class Game {
       seed: spec.seed,
       staged: true,
     }));
-    station.update = stationUpdate.bind(station);
     yield;
     while (!station.step()) yield;
     return { system, station };
@@ -1459,20 +1458,6 @@ export class Game {
     this.ship.mode = alt < 1 ? 'landed' : 'flying';
     this.cam.frame = undefined;
   }
-}
-
-// Stations keep their floor facing the planet and their hangar mouth along the orbit.
-function stationUpdate(t) {
-  this.orbitPosition(t, this.position).add(this.parent.position);
-  const up = _v1.copy(this.position).sub(this.parent.position).normalize();
-  const th = this.orbitPhase + (2 * Math.PI * t) / this.orbitPeriod;
-  const vel = _v2.set(-Math.sin(th), 0, Math.cos(th)).applyQuaternion(this.orbitTilt);
-  const fwd = vel.addScaledVector(up, -vel.dot(up)).normalize();
-  const right = _v3.crossVectors(up, fwd).normalize();
-  _m4.makeBasis(right, up, fwd);
-  this.quaternion.setFromRotationMatrix(_m4);
-  this.quaternionInv.copy(this.quaternion).invert();
-  this.velocity.copy(this.parent.velocity);
 }
 
 export { GEAR_HEIGHT, HANGAR };
