@@ -1,4 +1,4 @@
-// The social service (DESIGN 16.6 "Social", 17; docs/ARCHITECTURE.md §11): chat and parties for every character in
+// The social service (DESIGN 16.6 "Social", 17; docs/ARCHITECTURE.md §12): chat and parties for every character in
 // play on the shard. The gateway tells it who joined (with the character's name) and whose connection closed, and hands
 // it `chat` and `party` requests from joined sessions; everything else happens here, on a timer of its own (invites
 // lapsing, graces running out, party states refreshed). It holds nothing that must survive a restart.

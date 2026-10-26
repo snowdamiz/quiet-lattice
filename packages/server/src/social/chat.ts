@@ -1,4 +1,4 @@
-// Chat (DESIGN 16.6 "Social", 17; docs/ARCHITECTURE.md §11): three channels. `shard` reaches everyone online on the
+// Chat (DESIGN 16.6 "Social", 17; docs/ARCHITECTURE.md §12): three channels. `shard` reaches everyone online on the
 // shard, `system` everyone whose entity is in the sender's star system's zone, `party` the sender's party wherever its
 // members are; the sender always hears its own line back, as the server relays it.
 //

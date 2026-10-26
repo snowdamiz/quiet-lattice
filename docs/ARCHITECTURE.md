@@ -28,8 +28,9 @@ gateway/ws.ts       WebSocket upgrade (token in the first message), one Session 
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
-social/             SocialService: chat channels, parties and invites, and their limits (§11)
+social/             SocialService: chat channels, parties and invites, and their limits (§12)
 world/              WorldService: server clock, season, Count, Edge position, tier map
+count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
@@ -51,8 +52,9 @@ server pushes no periodic time of its own: a pong is the better sample because t
 The shard's row (`shards`, created on the shard's first boot) holds its epoch (2026-01-01Z for a new shard), its season
 (number, start in world time, length; DESIGN 16.4) and `last_time`, the latest world time its server saved (every minute and
 on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
-below `last_time`, and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards,
-even when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
+below `last_time` nor below the time of any stored Count-meter vote not yet rolled (§11; a vote can land after the last
+time save), and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards, even
+when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
 with a clock sync point `{time, at}`: world time `time` at wall time `at` ms) for the processes P3.E37 splits off.
 
 ## 4. Frames of reference on the wire
@@ -101,17 +103,17 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
-  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§11), `ack {tick}` (one
+  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§12), `ack {tick}` (one
   per applied snapshot, at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`. Each socket's message
   budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat,
   party and inventory requests, and the burst absorbs the backlog of a stall. Chat and invites have far smaller limits of
-  their own, per account (§11).
+  their own, per account (§12).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
-  by index), `pong`, `inventory {seq, inventory, error?}`, `party {party}` (the character's party, or null, §11),
-  `denied {of, code, retryS?, name?}` (a chat message or party request not carried out, to its sender only, §11), and
+  by index), `pong`, `inventory {seq, inventory, error?}`, `party {party}` (the character's party, or null, §12),
+  `denied {of, code, retryS?, name?}` (a chat message or party request not carried out, to its sender only, §12), and
   snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
@@ -159,7 +161,7 @@ players, `event` and `raid` 12.
 - **Placement** reuses the phase the player is already in at that place (or kept for its character, below), else a
   party member's that has room, else the fullest that has room (the oldest of equals), else opens one. A player is in one
   phase at a time; placing it elsewhere takes it out of the old one. A member's party is the `partyId` it was placed
-  under, which it keeps; without one, its entity's party tag as it stands (which the party service keeps, §11). A story
+  under, which it keeps; without one, its entity's party tag as it stands (which the party service keeps, §12). A story
   phase never holds two parties: re-asked, or coming back, under a party its others are not in, a
   player goes to another phase.
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
@@ -187,7 +189,9 @@ picked up, quest steps done) are never trusted; they are requests the server re-
 ## 8. Persistence
 
 Postgres tables (Drizzle): `accounts`, `shards` (§3) and `characters` (people, name, look, level, xp, home system, and
-`state`, `revision`, `saved_at`). Migrations are generated with drizzle-kit and applied with `pnpm db:migrate`.
+`state`, `revision`, `saved_at`). The shard's row also holds the Count and how far its meter has run; the meter's votes
+and daily rolls are in `count_votes` and `count_days` (§11). Migrations are generated with drizzle-kit and applied with
+`pnpm db:migrate`.
 
 **Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
 component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx), check?(value,
@@ -252,7 +256,36 @@ the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it w
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
 database is disposable.
 
-## 11. Social: chat and parties
+## 11. The Count meter (`packages/server/src/count`)
+
+DESIGN 16.1–16.2, lean not volume. Gameplay reports each counted action to the world service with
+`world.countAction(accountId, action, tag)`: `action` is one of `COUNTED_ACTIONS` in `count/meter.ts` (convoy escorted or
+raided, the wall choice, an anchor held, a Hive Heart shattered, a Warden killed, a monolith touched), `tag` is `feed`,
+`hold` or `break`. The account id is lower-cased (as Postgres returns uuids), and the open day's ledger keeps one vote per
+account per action type (the first cast; the call returns false for a repeat).
+
+Two clocks move the Count, both on shard world time from the epoch (§3), never wall time. The burn takes one measure
+every 17,280 s (tick k at k × 17,280 s, so 5 a day). A meter day is 86,400 s; at its end the day's lean is Feed's share of
+its vote weight (a Hold is a full vote of which a third is Feed; a monolith touch weighs a tenth of a vote), the target
+is `round(150 + 700 × lean)` and the Count drifts toward it by at most 25, never past it; a day with no votes does not
+drift. The midnight burn tick belongs to the ending day and falls first, so the drift reads the Count after it; on a
+steady lean the Count is back on the target at each day's end, having burned 5 below it. The Count stays in whole measures
+in 0–1,000. `runMeter` plays both clocks forward in time order; the service runs it every second and before every
+counted action, publishes the new Count as one ordinary world change (`world` to clients, the Redis mirror) and logs
+one line.
+
+Persistence: the shard's row holds `count`, `count_day` (the last day rolled) and `burn_step` (the last burn tick
+applied); votes go to `count_votes`, rolls to `count_days`. The service gathers new votes, rolls and the meter's position
+and writes them in one transaction per save: a burst of votes is one batched INSERT and a boot catch-up is one write.
+A save that fails is kept and written again by the next (the next vote, burn or roll, the minute's time save, or
+shutdown). On boot the service reloads the votes of every day after `count_day` and plays every burn and day end that
+passed while it was down, in time order, then takes the open day's ledger back, so a restart keeps the day's votes and
+its one-vote rule; the clock never starts below a stored vote's time (§3). The underdog side (`underdogSide(count)`:
+Break above 700, Feed below 300) and its rep multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on
+either side) are pure functions for the rep model to apply. All the arithmetic is pure and integer-exact (votes are
+summed in thirtieths), so the same lean gives the same Count bit for bit at three accounts and at three thousand.
+
+## 12. Social: chat and parties
 
 DESIGN 16.6's "Social" row and DESIGN 17: shard-wide chat and parties, for three players or three thousand.
 `social/` holds it (`SocialService`, made by the gateway): the gateway tells it which character joined (with its name)

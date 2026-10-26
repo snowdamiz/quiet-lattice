@@ -1,4 +1,4 @@
-// Chat and party limits (P1.E15.T01; docs/ARCHITECTURE.md §11). Chat sits inside the gateway's per-socket message
+// Chat and party limits (P1.E15.T01; docs/ARCHITECTURE.md §12). Chat sits inside the gateway's per-socket message
 // budget (60/s, burst 120: gateway/ws.ts) with a far smaller limit of its own, per account so that an account's four
 // sockets share it. The party size is ours: DESIGN does not give one. The disconnect grace is the phases' (15 s), so a
 // dropped connection keeps its party exactly as long as it keeps its place in a phase.

@@ -1,4 +1,4 @@
-// Parties (DESIGN 14.1, 16.6, 17; docs/ARCHITECTURE.md §6.1, §11): server-owned groups of up to PARTY_MAX characters
+// Parties (DESIGN 14.1, 16.6, 17; docs/ARCHITECTURE.md §6.1, §12): server-owned groups of up to PARTY_MAX characters
 // with a leader.
 //
 // - An online character invites another online character by name; the invite lapses after a minute. Accepting puts the
