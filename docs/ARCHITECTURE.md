@@ -27,6 +27,7 @@ gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GE
 gateway/ws.ts       WebSocket upgrade (token in the first message), one Session per socket
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
+phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
 world/              WorldService: server clock, season, Count, Edge position, tier map
 sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
@@ -138,6 +139,29 @@ landed players sit in their ships), is a ship; a player on foot, an NPC or a pro
 loot pods are loot. An entity already in view stays in it until it is 5% beyond its radius, so one at the edge does not
 enter and leave every tick. Until movement authority (P1.E03.T04) validates `mode`, a client picks its own class through
 it. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5 minutes empty.
+
+### 6.1 Phases
+
+DESIGN 17's phases (story chapters and instanced quest steps, hangar bays, event and raid instances) are private layers
+inside a zone, kept by its `PhaseManager` (`zone.phases`, `phases/manager.ts`). A phase is opened at a **location**: a key
+naming the place (a quest step's site, a Waystation's hangar) and a sphere in one of the system's frames, which moves with
+the frame. Every entity is in one phase or none (the shared world): **members** are sessions' players, placed by
+`phaseFor(session, kind, location, partyId?)`; a phase's **own entities** (its actors) are spawned through `spawn(phase,
+init)`. Kinds and caps (`phases/kinds.ts`): `story` holds one party (a player in no party is a party of one), `bay` 24
+players, `event` and `raid` 12.
+
+- **Placement** reuses the phase the player is already in at that place, else a party member's that has room, else the
+  fullest that has room (the oldest of equals), else opens one. A player is in one phase at a time; placing it elsewhere
+  takes it out of the old one. The party is the zone's party tag until the party system (P1.E15.T01).
+- **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
+  rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
+  players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
+  players (`bay`, `event`, `raid`). A sealed member sees no player outside its phase, the shared world's included, and
+  none sees it; the shared world's other entities stay in its sight. A `story` phase hides only its actors (DESIGN 14.1:
+  everyone else sees the ordinary world there). With nothing in a phase the filter is skipped.
+- **Presence**: a member outside the volume goes back to the shared world after the kind's grace (15 s), keeping its
+  phase if it returns in time; one whose entity leaves the zone goes at once. A phase with no members closes, and its own
+  entities are despawned; `close(phase)` does the same on demand. Opening and closing are logged (info).
 
 ## 7. Authority
 
