@@ -6,7 +6,9 @@ Source layout (.blend), DESIGN 19.1 "named collections per variant and LOD":
     <asset>                     one top-level collection per asset (collections starting with '_' are ignored)
       <asset>[_<variant>]_LOD0  one collection per LOD of each variant (LOD0..LOD3), always inside <asset>; an object named
       ...                       <variant>_LOD<n> works too (its children belong to that LOD)
-      COL_*, Interact, ...      colliders and point markers sit beside the LODs (they are not per LOD)
+      [<asset>_<variant>]       optional variant collection: markers in it belong to that variant only
+      COL_*, Interact, ...      colliders and markers directly in <asset> are shared by every variant
+      _*                        collections starting with '_' (work in progress) are ignored, here and at the top
   An asset with no LOD collections is one variant whose geometry is all LOD0 (the export generates LOD1-3).
 
 Export layout (.glb), written by the export:
@@ -170,18 +172,36 @@ def collect_source(rules):
     return model
 
 
-def _walk_collections(coll):
+def _walk_collections(coll, ignored="_"):
+    """The collection and its descendants, skipping '_' (work-in-progress) collections and everything under them."""
     yield coll
     for c in coll.children:
-        yield from _walk_collections(c)
+        if not c.name.startswith(ignored):
+            yield from _walk_collections(c, ignored)
+
+
+def _objects(coll, ignored="_"):
+    """Objects of a collection and its descendants, without those that only sit in '_' collections."""
+    seen, out = set(), []
+    for c in _walk_collections(coll, ignored):
+        for o in c.objects:
+            if o.name not in seen:
+                seen.add(o.name)
+                out.append(o)
+    return out
 
 
 def _source_asset(rules, coll):
     asset = Asset(coll.name, coll)
     asset.class_override = coll.get("asset_class")
+    ignored = rules["names"]["ignoredCollectionPrefix"]
+    for c in coll.children_recursive:
+        if c.name.startswith(ignored):
+            asset.notes.append(("info", f"collection {c.name} starts with '{ignored}': ignored and never exported"))
+    members = _objects(coll, ignored)
     in_lod = {}  # object name -> (base, n)
     # LOD collections
-    for c in _walk_collections(coll):
+    for c in _walk_collections(coll, ignored):
         parts = R.lod_parts(c.name)
         if c is coll or not parts:
             continue
@@ -189,12 +209,12 @@ def _source_asset(rules, coll):
         v = asset.variant(base)
         if n in v.lods:
             asset.notes.append(("fail", f"two LOD{n} entries for variant {base}"))
-        v.lods[n] = list(c.all_objects)
+        v.lods[n] = _objects(c, ignored)
         v.decl[n] = {"kind": "collection", "name": c.name, "legacy": legacy}
-        for o in c.all_objects:
+        for o in v.lods[n]:
             in_lod[o.name] = (base, n)
     # LOD objects (<variant>_LOD<n> names)
-    for o in coll.all_objects:
+    for o in members:
         parts = R.lod_parts(o.name)
         if not parts or o.name in in_lod:
             continue
@@ -207,7 +227,7 @@ def _source_asset(rules, coll):
         v.decl[n] = {"kind": "object", "name": o.name, "legacy": legacy}
         for x in objs:
             in_lod[x.name] = (base, n)
-    rest = [o for o in coll.all_objects if o.name not in in_lod]
+    rest = [o for o in members if o.name not in in_lod]
     if not asset.variants:
         v = asset.variant(coll.name)
         v.implicit = True
@@ -216,11 +236,14 @@ def _source_asset(rules, coll):
         v.lods[0] = [o for o in rest if not is_point_marker(rules, o)]
         v.decl[0] = {"kind": "implicit", "name": coll.name, "legacy": False}
         return asset
-    variant_colls = {c.name: c for c in _walk_collections(coll) if c.name in asset.variants}
+    # A variant's own collection (never the asset collection itself, even when the base variant shares its name) holds
+    # what belongs to that variant only; everything else outside the LODs is the asset's and shared by every variant,
+    # as the .glb reader treats nodes under the asset root.
+    variant_colls = {c.name: c for c in _walk_collections(coll, ignored) if c is not coll and c.name in asset.variants}
     for vid, c in variant_colls.items():
         asset.variants[vid].collection = c
     for o in rest:
-        home = next((vid for vid, c in variant_colls.items() if o.name in c.all_objects), None)
+        home = next((vid for vid, c in variant_colls.items() if o.name in {x.name for x in _objects(c, ignored)}), None)
         if home:
             asset.variants[home].extras.append(o)
         elif len(asset.variants) == 1:

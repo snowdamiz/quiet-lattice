@@ -20,6 +20,7 @@ import numpy as np  # noqa: E402
 from artlib import bake, core  # noqa: E402
 from artlib import export as E  # noqa: E402
 from artlib import glb  # noqa: E402
+from artlib import materials as M  # noqa: E402
 from artlib import rules as R  # noqa: E402
 
 ARGV = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
@@ -135,12 +136,12 @@ def tex(nt, img):
     return t
 
 
-def pbr_material(name, base_res=1024, res=256, uniform_roughness=False):
+def pbr_material(name, base_res=1024, res=256, uniform_roughness=False, ao=True, rough=None):
     m = bpy.data.materials.new(name)
     nt = m.node_tree
     bsdf = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
     nt.links.new(tex(nt, image(f"{name}_base", base_res, "sRGB", (0.5, 0.4, 0.3), 0.4, 1)).outputs["Color"], bsdf.inputs["Base Color"])
-    rough = image(f"{name}_rough", res, "Non-Color", (0.5, 0.5, 0.5), 0.0 if uniform_roughness else 0.5, 2)
+    rough = rough or image(f"{name}_rough", res, "Non-Color", (0.5, 0.5, 0.5), 0.0 if uniform_roughness else 0.5, 2)
     sep = nt.nodes.new("ShaderNodeSeparateColor")
     nt.links.new(tex(nt, rough).outputs["Color"], sep.inputs["Color"])
     nt.links.new(sep.outputs["Green"], bsdf.inputs["Roughness"])
@@ -150,6 +151,8 @@ def pbr_material(name, base_res=1024, res=256, uniform_roughness=False):
     nm = nt.nodes.new("ShaderNodeNormalMap")
     nt.links.new(tex(nt, image(f"{name}_normal", res, "Non-Color", (0.5, 0.5, 1.0), 0.2, 4)).outputs["Color"], nm.inputs["Color"])
     nt.links.new(nm.outputs["Normal"], bsdf.inputs["Normal"])
+    if not ao:
+        return m
     g = nt.nodes.new("ShaderNodeGroup")
     g.node_tree = gltf_group()
     ao = nt.nodes.new("ShaderNodeSeparateColor")
@@ -209,6 +212,7 @@ def build_crate():
     put(collider("COL_crate", (0.9, 0.9, 0.9), (0, 0, 0.45)), a)
     e = put(bpy.data.objects.new("Interact", None), a)
     e.location = (0, -0.6, 0.5)
+    put(with_material(sphere("wip blob", 200, 200, 30.0), flat_material("Wip Paint")), coll("_wip", a))  # ignored
     return save(SRC / "props" / "crate.blend")
 
 
@@ -334,7 +338,82 @@ def build_faulty():
     for n, (sg, rg) in enumerate([(64, 32), (40, 20), (40, 20), (20, 12)]):
         put(with_material(sphere(f"steps_body_{n}", sg, rg, 0.45), mat), coll(f"steps_LOD{n}", a))
     put(with_material(box("Door_hatch", (1.0, 0.1, 2.0), (0, -0.6, 1.0)), mat), bpy.data.collections["steps_LOD0"])
+    put(with_material(box("door_side", (0.8, 0.1, 2.0), (0.6, 0, 1.0)), mat), bpy.data.collections["steps_LOD0"])
     return save(SRC / "props" / "faulty.blend")
+
+
+def plane(name, size, cuts):
+    """A size x size m grid on z = 0 with planar UVs over [0, 1]."""
+    n = cuts + 1
+    verts = [(x * size / cuts - size / 2, y * size / cuts - size / 2, 0) for y in range(n) for x in range(n)]
+    faces = [(j * n + i, j * n + i + 1, (j + 1) * n + i + 1, (j + 1) * n + i) for j in range(cuts) for i in range(cuts)]
+    o = mesh_from(name, verts, faces)
+    me = o.data
+    vi = np.empty(len(me.loops), np.int64)
+    me.loops.foreach_get("vertex_index", vi)
+    co = np.asarray(verts, np.float64)[vi, :2]
+    me.uv_layers.active.data.foreach_set("uv", ((co + size / 2) / size).ravel())
+    return o
+
+
+def build_contact():
+    """A block resting on a ground plate, separate meshes with separate materials and no AO maps: the export bakes AO
+    and the block must shadow the plate around the contact."""
+    reset()
+    references()
+    a = coll("contact")
+    put(with_material(plane("contact_ground", 4.0, 48), pbr_material("Ground", ao=False)), a)
+    put(with_material(box("contact_block", (1.0, 1.0, 1.0), (0, 0, 0.5)), pbr_material("Block", ao=False)), a)
+    return save(SRC / "props" / "contact.blend")
+
+
+def build_twin():
+    """A hull with a husked variant; its gear, hardpoint, canopy and cockpit markers sit at asset level (shared), one
+    hardpoint sits in the husk's own variant collection (the husk's only)."""
+    reset()
+    references()
+    a = coll("twin")
+    for vid in ("twin", "twin_husk"):
+        put(with_material(sphere(f"{vid}_body", 32, 16, 4.0), flat_material(f"{vid}_paint")), coll(f"{vid}_LOD0", a))
+    for name in ("GearFront", "hp_s_nose", "Canopy", "CockpitInterior"):
+        put(bpy.data.objects.new(name, None), a)
+    put(bpy.data.objects.new("HP_M_husk_only", None), coll("twin_husk", a))
+    return save(SRC / "hulls" / "twin.blend")
+
+
+def masked_image(name, size, box):
+    """Flat 0.5 grey with noise only inside `box` (u0, v0, u1, v1)."""
+    rng = np.random.default_rng(7)
+    px = np.full((size, size, 4), 0.5, np.float32)
+    px[..., 3] = 1.0
+    u0, v0, u1, v1 = (int(x * size) for x in box)
+    px[v0:v1, u0:u1, :3] += (rng.random((v1 - v0, u1 - u0, 3), np.float32) - 0.5) * 0.1
+    im = bpy.data.images.new(name, size, size, alpha=False)
+    im.colorspace_settings.name = "Non-Color"
+    im.pixels.foreach_set(px.ravel())
+    path = TMP / "img" / f"{name}.png"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    im.filepath_raw = str(path)
+    im.file_format = "PNG"
+    im.save()
+    im.pack()
+    return im
+
+
+def build_specks():
+    """Two props whose UVs cover a 10% corner of a 1k roughness map that varies only in [0, 0.1]^2: speck_a sits on
+    the varied texels (detail), speck_b on the flat ones (uniform). Over the whole map both read as flat."""
+    reset()
+    references()
+    for name, (u, v) in (("speck_a", (0.0, 0.0)), ("speck_b", (0.5, 0.5))):
+        rough = masked_image(f"{name}_rough", 1024, (0.0, 0.0, 0.1, 0.1))
+        o = sphere(f"{name}_body", 64, 32, 0.45)
+        uv = np.empty(len(o.data.loops) * 2, np.float64)
+        o.data.uv_layers.active.data.foreach_get("uv", uv)
+        uv = uv.reshape(-1, 2) * 0.1 + (u, v)
+        o.data.uv_layers.active.data.foreach_set("uv", uv.ravel())
+        put(with_material(o, pbr_material(f"{name}_mat", rough=rough)), coll(name))
+    return save(SRC / "props" / "specks.blend")
 
 
 def build_flat():
@@ -368,7 +447,7 @@ def test_validator(crate, broken, creatures, hull, library):
     expect(has(rep, "triangles", "over the prop budget"), "triangles: LOD0 over the prop budget")
     expect(has(rep, "lods", "missing LOD2, LOD3"), "lods: a partial hand-made set")
     expect(has(rep, "materials", "untextured"), "materials: an untextured material")
-    expect(has(rep, "materials", "uniform (no variation)"), "materials: a uniform roughness map")
+    expect(has(rep, "materials", "roughness map Uniform_rough is uniform under the surface"), "materials: a uniform roughness map")
     expect(has(rep, "scale", "no 'REF' collection"), "scale: no reference collection")
     expect(has(rep, "scale", "longest side"), "scale: a 20 m prop")
 
@@ -393,6 +472,7 @@ def test_validator(crate, broken, creatures, hull, library):
     fails = messages(rep, "naming")
     expect(any("HP_S_* / HP_M_* / HP_L_*" in m for m in fails), "hulls: no HP_S_/HP_M_/HP_L_ empty fails")
     expect(any("material 'Hull' missing" in m for m in fails), "hulls: no Hull material fails")
+    expect(any("material 'Dark' missing" in m for m in fails), "hulls: no Dark material fails")
     expect(not any("Gear*" in m for m in fails), "hulls: the GearFront empty satisfies Gear*")
 
 
@@ -407,11 +487,47 @@ def test_review_cases(shared_library, faulty):
     expect(has(rep, "scale", "grid spacing is 0.952 m"), "scale: a 20 m grid of 21 cells (0.952 m) fails, measured on the mesh under its Wireframe modifier")
     expect(has(rep, "scale", "biped is 1.700 m tall"), "scale: a 1.70 m biped fails")
     expect(has(rep, "scale", "Door_hatch: 1.00 x 2.00 m"), "scale: a 1.0 x 2.0 m door fails the 1.4 x 2.4 m minimum")
+    expect(has(rep, "scale", "door_side: 0.80 x 2.00 m"), "scale: door names match without regard to case")
     expect(has(rep, "naming", "stray_LOD0: LOD collection at the top level"), "naming: a top-level <asset>_LOD<n> collection fails")
     expect(not any(a["asset"] == "stray_LOD0" for a in rep.assets), "a top-level LOD collection is not read as an asset")
     expect(has(rep, "lods", "LOD2 (1,520) is not lighter than LOD1 (1,520)"), "lods: a LOD no lighter than the one before fails")
-    expect(has(rep, "lods", "LOD3 is 11.1% of LOD0"), "lods: LOD3 at 11% of LOD0 fails the 5% rule")
+    expect(has(rep, "lods", "LOD3 is 11.0% of LOD0"), "lods: LOD3 at 11% of LOD0 fails the 5% rule")
     expect(has(rep, "materials", "is 2048x2048; class prop textures are at most 1024 px"), "materials: a 2k map on a prop fails")
+
+
+def test_round2(crate, twin, specks):
+    print("\nvariants, ignored collections, map variation")
+    rep = core.validate_path(RULES, crate, family="props")
+    expect(rep.status == "PASS" and any("_wip" in f["message"] for f in rep["naming"].findings), "a '_' collection inside an asset is ignored (its 50k blob and bad names count for nothing)")
+
+    rep = core.validate_path(RULES, twin, family="hulls")
+    fails = messages(rep, "naming")
+    marker_fails = [m for m in fails if any(p in m for p in ("Gear*", "HP_S_*", "Canopy*", "CockpitInterior*"))]
+    expect(not marker_fails, f"source: markers at asset level count for the base and the husk variant ({marker_fails})")
+    vs = rep.model.assets[0].variants
+    own = {vid: {o.name for o in v.all_objects()} for vid, v in vs.items()}
+    expect("HP_M_husk_only" in own["twin_husk"] and "HP_M_husk_only" not in own["twin"], "source: a marker in the husk's variant collection belongs to the husk only")
+    # the same layout through the export's node builder and the .glb reader
+    path = TMP / "twin.glb"
+    E._write(E._build_nodes(RULES, rep.model), path)
+    glb.finalize(path, {})
+    rep2 = core.validate_path(RULES, path, family="hulls", source=twin)
+    fails2 = [m for m in messages(rep2, "naming") if any(p in m for p in ("Gear*", "HP_S_*", "Canopy*", "CockpitInterior*"))]
+    vs2 = rep2.model.assets[0].variants if rep2.model.assets else {}
+    own2 = {vid: {R.strip(o.name) for o in v.all_objects()} for vid, v in vs2.items()}
+    expect(not fails2 and sorted(own2) == ["twin", "twin_husk"], f"export: the .glb reader credits the shared markers to both variants ({fails2})")
+    expect("HP_M_husk_only" in own2.get("twin_husk", set()) and "HP_M_husk_only" not in own2.get("twin", set()), "export: the husk-only marker stays the husk's")
+
+    rep = core.validate_path(RULES, specks, family="props")
+    fails = messages(rep, "materials")
+    expect(not any("speck_a_mat" in m and "uniform" in m for m in fails), f"a map that varies only under its 10% UV island is not uniform ({fails})")
+    expect(any("speck_b_mat" in m and "roughness map" in m and "uniform" in m for m in fails), "a map that is flat under the UV island is uniform, whatever the rest of the image holds")
+
+    im = bpy.data.images.new("unsaved", 512, 512, alpha=False)
+    px = np.random.default_rng(3).random(512 * 512 * 4, np.float32)
+    im.pixels.foreach_set(px)
+    std = M.channel_std(im, None)
+    expect(std is not None and std > 0.2, f"an unsaved in-memory 512 px image reads its real variation ({std})")
 
 
 def test_bake_guards(shared_library):
@@ -489,6 +605,27 @@ def test_export():
         expect("EngineGlow" in names and not any(n.startswith("LIB_") for n in names), "pod.glb: library names are replaced by engine names")
         expect([sorted(v["id"] for v in a["variants"]) for a in rep.assets] == [["pod", "pod_husk"]], "pod.glb: both variants exported")
 
+    code = E.main("props", base + ["--only", "contact", "--bake-res", "128"])
+    out = OUT / "props" / "contact.glb"
+    expect(code == 0 and out.exists(), "export_props bakes AO for contact.blend")
+    if out.exists():
+        core.load(out)
+        ground = next(m for m in bpy.data.materials if m.name.startswith("Ground"))
+        occ = M.MaterialInfo(ground).channels["occlusion"]
+        if occ.image is not None:
+            w, h = occ.image.size
+            px = np.empty(w * h * 4, np.float32)
+            occ.image.pixels.foreach_get(px)
+            ao = px.reshape(h, w, 4)[..., occ.index or 0]
+
+            def at(u, v):
+                return float(ao[int(v * (h - 1)), int(u * (w - 1))])
+
+            under, ring, corner = at(0.5, 0.5), at(0.66, 0.5), at(0.04, 0.04)
+            expect(under < 0.3 and ring < corner - 0.1 and corner > 0.8, f"AO on the plate darkens under and around the block (under {under:.2f}, beside {ring:.2f}, corner {corner:.2f})")
+        else:
+            expect(False, "contact.glb: the plate has an AO map")
+
     stale = OUT / "props" / "flat.glb"
     stale.write_bytes(b"stale")
     code = E.main("props", base + ["--only", "flat", "--bake-res", "64"])
@@ -514,6 +651,9 @@ def main():
         del rock
         test_validator(crate, broken, creatures, hull, library)
         test_review_cases(shared, faulty)
+        build_contact()
+        twin, specks = build_twin(), build_specks()
+        test_round2(crate, twin, specks)
         test_bake_guards(shared)
         test_export()
     finally:

@@ -150,7 +150,7 @@ def _bake(rules, family, model, bake_res):
                 if not ready:
                     bake.ensure_cycles(bpy.context.scene)
                     ready = True
-                bake.bake_material(copy, users, res, ao=ao, label=label)
+                bake.bake_material(copy, users, res, ao=ao, label=label, occluders=meshes[n])
 
 
 def _material_names(rules, model):

@@ -186,38 +186,103 @@ class MaterialInfo:
 
 
 _std = {}
+_last = [None, None]  # (image pointer, pixels): the packed AO/roughness/metallic map is read once for its channels
+
+# barycentric sample points inside a triangle (the centroid first), so small or low-poly islands still get samples
+BARY = np.array(
+    [
+        [1 / 3, 1 / 3, 1 / 3],
+        [0.6, 0.2, 0.2],
+        [0.2, 0.6, 0.2],
+        [0.2, 0.2, 0.6],
+        [0.45, 0.45, 0.1],
+        [0.45, 0.1, 0.45],
+        [0.1, 0.45, 0.45],
+        [0.8, 0.1, 0.1],
+        [0.1, 0.8, 0.1],
+        [0.1, 0.1, 0.8],
+        [0.7, 0.25, 0.05],
+        [0.05, 0.7, 0.25],
+        [0.25, 0.05, 0.7],
+        [0.25, 0.7, 0.05],
+        [0.05, 0.25, 0.7],
+        [0.7, 0.05, 0.25],
+    ]
+)
 
 
 def clear_cache():
     _std.clear()
+    _last[0] = _last[1] = None
 
 
-def channel_std(image, index):
-    """Largest per-channel standard deviation of an image (index: one channel, None: RGB), on a 256 px copy."""
-    key = (image.name, index)
+def surface_uvs(mat, objects, budget=200_000):
+    """UV points inside the triangles of `objects` that use `mat` (at most `budget`), or None. Sampling a map there
+    measures the texels the surface actually shows, never the fill around the UV islands."""
+    tris = []
+    for o in objects:
+        me = o.data
+        if o.type != "MESH" or not me.uv_layers:
+            continue
+        slots = [i for i, s in enumerate(o.material_slots) if s.material == mat]
+        if not slots:
+            continue
+        me.calc_loop_triangles()
+        n = len(me.loop_triangles)
+        if n == 0:
+            continue
+        loops = np.empty(n * 3, np.int64)
+        me.loop_triangles.foreach_get("loops", loops)
+        mi = np.empty(n, np.int64)
+        me.loop_triangles.foreach_get("material_index", mi)
+        uv = np.empty(len(me.loops) * 2, np.float64)
+        me.uv_layers.active.data.foreach_get("uv", uv)
+        tris.append(uv.reshape(-1, 2)[loops.reshape(-1, 3)[np.isin(mi, slots)]])
+    if not tris:
+        return None
+    t = np.concatenate(tris)
+    if not len(t):
+        return None
+    k = int(np.clip(budget // len(t), 1, len(BARY)))
+    pts = np.einsum("sb,tbd->tsd", BARY[:k], t).reshape(-1, 2)
+    if len(pts) > budget:
+        pts = pts[np.linspace(0, len(pts) - 1, budget).astype(np.int64)]
+    return pts
+
+
+def _pixels(image):
+    key = image.as_pointer()
+    if _last[0] != key:
+        w, h = image.size
+        ch = max(int(image.channels), 1)
+        px = np.empty(w * h * ch, np.float32)
+        image.pixels.foreach_get(px)
+        _last[0], _last[1] = key, px.reshape(h, w, ch)
+    return _last[1]
+
+
+def channel_std(image, index, uvs=None, tag=None):
+    """Largest per-channel standard deviation (index: one channel, None: RGB) of the full-resolution texels under `uvs`
+    (see surface_uvs), or of the whole image, strided but never averaged, when no UVs are given."""
+    key = (image.as_pointer(), index, tag)
     if key in _std:
         return _std[key]
     w, h = image.size
     if w == 0 or h == 0:
         _std[key] = None
         return None
-    src, tmp = image, None
-    if max(w, h) > 256:
-        tmp = image.copy()
-        tmp.scale(min(w, 256), min(h, 256))
-        src = tmp
-    try:
-        ch = max(int(src.channels), 1)
-        px = np.empty(len(src.pixels), np.float32)
-        src.pixels.foreach_get(px)
-    finally:
-        if tmp is not None:
-            bpy.data.images.remove(tmp)
-    px = px.reshape(-1, ch)
-    if index is not None and index < px.shape[1]:
-        v = float(px[:, index].std())
+    px = _pixels(image)
+    if uvs is not None and len(uvs):
+        x = np.clip((np.mod(uvs[:, 0], 1.0) * w).astype(np.int64), 0, w - 1)
+        y = np.clip((np.mod(uvs[:, 1], 1.0) * h).astype(np.int64), 0, h - 1)
+        vals = px[y, x]
     else:
-        v = float(px[:, : min(3, px.shape[1])].std(0).max())
+        step = max(1, int(np.sqrt(w * h / 1_000_000)))
+        vals = px[::step, ::step].reshape(-1, px.shape[2])
+    if index is not None and index < vals.shape[1]:
+        v = float(vals[:, index].std())
+    else:
+        v = float(vals[:, : min(3, vals.shape[1])].std(0).max())
     _std[key] = v
     return v
 

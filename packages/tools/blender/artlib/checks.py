@@ -59,8 +59,12 @@ def naming(rules, family, model, report):
             c.fail(base, f"{kind} name is not an identifier ({rules['names']['identifier']})")
 
     if mode == "source":
+        skip = rules["names"]["ignoredCollectionPrefix"]
+        hidden = {c.name for c in bpy.data.collections if c.name.startswith(skip)}
+        hidden |= {d.name for c in bpy.data.collections if c.name in hidden for d in c.children_recursive}
         for coll in bpy.data.collections:
-            check_name("collection", coll.name)
+            if coll.name not in hidden and coll.library is None:
+                check_name("collection", coll.name)
     for a in model.assets:
         for lvl, msg in a.notes:
             getattr(c, lvl)(a.name, msg)
@@ -296,7 +300,8 @@ def material_set(rules, family, model, report):
         cls = max((v.cls for v in vs), key=lambda k: rules["classes"][k]["texture"]) if vs else lib_cls
         info = M.MaterialInfo(m)
         infos[key] = info
-        _check_material(rules, family, model, c, info, cls)
+        meshes = [o for v in vs for n in sorted(v.lods) for o in S.render_meshes(rules, v.lods[n])]
+        _check_material(rules, family, model, c, info, cls, meshes)
     # UV maps: textured materials need them, and so does every material whose AO the export bakes
     for a in model.assets:
         for v in a.variants.values():
@@ -325,7 +330,7 @@ def ao_to_bake(rules, family, cls, info):
     return "occlusion" in profile["maps"] and info.channels["occlusion"].kind == "constant"
 
 
-def _check_material(rules, family, model, c, info, cls):
+def _check_material(rules, family, model, c, info, cls, meshes=()):
     m = info.mat
     name = R.material_name(m)
     if name != R.strip(m.name):
@@ -389,13 +394,15 @@ def _check_material(rules, family, model, c, info, cls):
             c.warn(name, f"{label} map {img.name} is {w}x{h}; class {cls} targets {res} px")
         if w & (w - 1) or h & (h - 1):
             c.warn(name, f"{label} map {img.name} is {w}x{h}, not a power of two")
+    uvs = M.surface_uvs(m, meshes) if meshes else None  # only the texels the surface shows
     for k in ("baseColor", "roughness", "normal", "occlusion", "emissive"):
         x = ch[k]
         if x.kind != "image" or k not in needed:
             continue
-        std = M.channel_std(x.image, x.index)
+        std = M.channel_std(x.image, x.index, uvs, tag=m.as_pointer())
         if std is not None and std < M.UNIFORM_STD:
-            msg = f"{M.LABELS[k]} map {x.image.name} is uniform (no variation): paint or bake real detail"
+            where = "under the surface's UVs" if uvs is not None else "over the image"
+            msg = f"{M.LABELS[k]} map {x.image.name} is uniform {where} (std {std:.4f} < {M.UNIFORM_STD:.4f}): paint or bake real detail"
             (c.fail if k in ("baseColor", "roughness", "normal") else c.warn)(name, msg)
     if not missing:
         c.ok(name, f"{profile_name}: " + (", ".join(M.LABELS[k] for k in textured) or "constants"))
@@ -429,7 +436,7 @@ def scale(rules, family, model, report, source=None):
             _size(rules, family, model, c, v)
             for o in [o for n in sorted(v.lods) for o in S.render_meshes(rules, v.lods[n])]:
                 for fit in ref.get("fits", []):
-                    if R.match(S.name_of(o, model.mode), fit["pattern"]):
+                    if R.match(S.name_of(o, model.mode), fit["pattern"], ci=True):
                         b = S.bounds([o])
                         if b is None:
                             continue

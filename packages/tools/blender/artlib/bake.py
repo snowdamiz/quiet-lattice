@@ -2,7 +2,8 @@
 
 glTF carries only images, so any channel driven by a node tree other than image -> [separate colour | normal map] ->
 BSDF is baked with Cycles into an image at the class's texture size, and the material is rewired to it. Ambient
-occlusion is baked from the variant's own geometry for every material whose profile needs AO and has no AO map.
+occlusion is baked for every material whose profile needs AO and has no AO map, with all of the variant's meshes at that
+LOD as occluders (a canopy shadows the hull it sits on) and nothing else (no REF, colliders, markers, other variants).
 The export bakes a local copy of each material per variant (library materials are linked and read-only, and each
 variant has its own UV layout), so objects of one variant that share a material must not overlap in UV space.
 Every bake is checked: a target the bake did not write is an error, never a silent empty map.
@@ -58,8 +59,10 @@ def channels_to_bake(info, ao):
     return todo
 
 
-def bake_material(mat, objects, res, ao=False, label=None, log=print):
+def bake_material(mat, objects, res, ao=False, label=None, occluders=None, log=print):
     """Bakes `mat`'s procedural channels (and AO when `ao`) over `objects`, the LOD0 meshes of one variant that use it.
+    With `occluders` (the export passes all of the variant's meshes at that LOD) only `objects` and `occluders` stay
+    visible to the bake's rays; without them nothing is hidden.
     `mat` must be local; images are named <label>_<channel>. Returns the baked channels; raises BakeError when a bake
     did not happen."""
     if mat.library is not None:
@@ -81,7 +84,7 @@ def bake_material(mat, objects, res, ao=False, label=None, log=print):
         raise BakeError(f"{mat.name} shares meshes with linked materials {', '.join(linked)}; the export makes them local first")
     scratch = bpy.data.images.new("_bake_scratch", 8, 8)
     guards = []
-    hidden = _isolate(objects)
+    hidden = _isolate(list(objects) + list(occluders)) if occluders is not None else []
     for m in others:
         g = m.node_tree.nodes.new("ShaderNodeTexImage")
         g.image = scratch
@@ -104,7 +107,8 @@ def bake_material(mat, objects, res, ao=False, label=None, log=print):
 
 
 def _isolate(objects):
-    """Hides every other object from the bake, so AO comes from the variant's own geometry (not REF, not neighbours)."""
+    """Hides every object but `objects` from the bake, so AO and shader AO nodes see the variant's own geometry at this
+    LOD and nothing else (not REF, colliders, markers, other variants or LODs)."""
     keep = {o.as_pointer() for o in objects}
     changed = []
     for o in bpy.context.scene.objects:
