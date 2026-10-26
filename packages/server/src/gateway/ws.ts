@@ -215,7 +215,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     ws.on('close', (code) => {
       clearTimeout(c.deadline);
       s.state = 'closed';
-      deps.zones.leave(s);
+      // (there is no logout message yet, so every close is a dropped connection: its phase keeps its place for a while)
+      deps.zones.leave(s, 'disconnected');
       conns.delete(c);
       registry.remove(s);
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
@@ -343,8 +344,9 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     clearTimeout(c.deadline);
     const previous = registry.bindCharacter(s, row.id);
     if (previous) {
-      // Its entity goes now, not when its socket finishes closing, so the character is never in the world twice.
-      deps.zones.leave(previous);
+      // Its entity goes now, not when its socket finishes closing, so the character is never in the world twice. This is
+      // the character reconnecting, so its phase keeps its place for this connection to find.
+      deps.zones.leave(previous, 'disconnected');
       previous.refuse('kicked', 'This character entered the world from another connection.');
     }
     // Every character enters docked at its home Waystation until persistence (P1.E03.T05) remembers where it was.
