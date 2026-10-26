@@ -1,0 +1,277 @@
+{
+  "$comment": "Asset rules read by validate.py and the export scripts (DESIGN 19.2-19.4). Names use shell globs (fnmatch; case-sensitive except marker patterns). A material is named by its engine_name custom property when it has one (LIB_PaintedPlate -> Hull), else by its own name. Triangle ranges are LOD0 [min, max]; texture is the largest side in px; size is the bounding box in metres along 'axis' (max = longest side, z = height).",
+  "version": 1,
+  "reference": {
+    "$comment": "DESIGN 19.2: a 1 m grid and a 1.85 m biped are the scale references in every file. They live in a top-level collection the export never writes.",
+    "collection": "REF",
+    "grid": { "pattern": "REF_Grid*", "spacing": 1.0, "tolerance": 0.01 },
+    "biped": { "pattern": "REF_Biped*", "height": 1.85, "tolerance": 0.02 },
+    "fits": [{ "pattern": "Door*", "minHeight": 2.4, "minWidth": 1.4, "why": "art bible 1: doorways are at least 2.4 m tall x 1.4 m wide" }]
+  },
+  "lod": {
+    "$comment": "DESIGN 19.2: four LODs per asset, LOD3 under 5% of LOD0. LODs are collections (sources) or nodes (exports) named <variant>_LOD<n>. generateRatios are the decimation targets the export uses when no LODs were hand-made.",
+    "count": 4,
+    "lastMaxRatio": 0.05,
+    "generateRatios": [1.0, 0.3, 0.1, 0.035]
+  },
+  "names": {
+    "$comment": "Object, collection and material names. Blender's .001 uniqueness suffixes are stripped from exported node and mesh names; materials export under their engine_name or their own name.",
+    "identifier": "^[A-Za-z][A-Za-z0-9_-]*$",
+    "ignoredCollectionPrefix": "_"
+  },
+  "output": "{family}/{stem}.glb",
+  "markers": [
+    { "patterns": ["COL_*"], "type": "MESH", "role": "collider", "maxTris": 512, "why": "colliders are simple boxes or hulls the game hides" },
+    { "patterns": ["Interact", "Interact_*"], "type": "EMPTY", "role": "point", "why": "where the player presses E" },
+    { "patterns": ["Light_*"], "type": "EMPTY", "role": "point", "props": ["color", "intensity", "distance"], "why": "point lights; the game reads the extras" },
+    { "patterns": ["Blink", "Blink_*"], "type": "EMPTY", "role": "pivot", "childMesh": true, "why": "blinking lamp; its child mesh is the lens" },
+    { "patterns": ["Spin", "Spin_*"], "type": "EMPTY", "role": "pivot", "childMesh": true, "why": "rotating part; its child mesh spins" },
+    { "patterns": ["HP_S_*", "HP_M_*", "HP_L_*"], "type": "EMPTY", "role": "point", "why": "weapon hardpoint, size in the name (DESIGN 19.4, art bible 8)" },
+    { "patterns": ["BAY_*"], "type": "EMPTY", "role": "point", "why": "docking or hangar bay (DESIGN 19.4, art bible 8)" },
+    { "patterns": ["Mount"], "type": "EMPTY", "role": "point", "why": "where a weapon module attaches to a hardpoint" },
+    { "patterns": ["Muzzle", "Muzzle_*"], "type": "EMPTY", "role": "point", "why": "beam or projectile origin" }
+  ],
+  "materialProfiles": {
+    "pbr": {
+      "maps": ["baseColor", "roughness", "metallic", "normal", "occlusion"],
+      "emissiveMap": true,
+      "why": "DESIGN 19.2: base colour, roughness, metallic, normal, ambient occlusion, emissive"
+    },
+    "glass": { "maps": [], "emissiveMap": false, "why": "glass (LIB_Glass): constant colour and roughness allowed; reflection does the work" },
+    "signal": { "maps": [], "emissiveMap": false, "why": "engine-driven glow (engine exhaust, nav lights, lamps): the game replaces the material" },
+    "effect": { "maps": ["baseColor"], "emissiveMap": true, "why": "ability effect meshes are emissive and translucent" },
+    "decal": { "maps": ["baseColor"], "emissiveMap": false, "why": "glyph patterns, liveries and icons are texture sets" },
+    "library": {
+      "maps": ["baseColor", "roughness", "normal"],
+      "emissiveMap": false,
+      "why": "library materials drive base colour, roughness and normal from nodes (procedural is fine: each asset bakes its own copy, AO included)"
+    }
+  },
+  "materialRules": [
+    { "match": ["LIB_EngineGlow*", "LIB_Nav*", "LIB_GlyphLight*", "LIB_HollowSeam*", "EngineGlow*", "Nav*"], "profile": "signal" },
+    { "match": ["LIB_Glass*", "Glass*", "*Glass"], "profile": "glass" }
+  ],
+  "classes": {
+    "hero": {
+      "tris": [60000, 150000],
+      "texture": 4096,
+      "lods": 4,
+      "size": { "axis": "max", "range": [0.5, 400] },
+      "profile": "pbr",
+      "why": "DESIGN 19.2: player bodies, hulls, Wardens, the Patient, each capital's landmarks"
+    },
+    "npc": {
+      "tris": [25000, 60000],
+      "texture": 2048,
+      "lods": 4,
+      "size": { "axis": "z", "range": [1.2, 2.8] },
+      "profile": "pbr",
+      "why": "not in 19.2: crews and city NPCs share the player skeleton but are seen in groups, so between creature and hero"
+    },
+    "viewmodel": {
+      "tris": [15000, 60000],
+      "texture": 2048,
+      "lods": 1,
+      "size": { "axis": "max", "range": [0.05, 1.5] },
+      "profile": "pbr",
+      "why": "not in 19.2: first-person arms and tools are always at arm's length, so one LOD and creature-level texel density"
+    },
+    "creature": {
+      "tris": [15000, 40000],
+      "texture": 2048,
+      "lods": 4,
+      "size": { "axis": "max", "range": [0.2, 80] },
+      "profile": "pbr",
+      "why": "DESIGN 19.2: creatures 15-40k, 2k textures"
+    },
+    "building": {
+      "tris": [8000, 60000],
+      "texture": 2048,
+      "lods": 4,
+      "size": { "axis": "max", "range": [1, 250] },
+      "profile": "pbr",
+      "why": "not in 19.2 (textures are: 2k): whole buildings, station modules and sites sit between props and heroes"
+    },
+    "kit": {
+      "tris": [500, 15000],
+      "texture": 2048,
+      "lods": 4,
+      "size": { "axis": "max", "range": [0.2, 60] },
+      "profile": "pbr",
+      "why": "not in 19.2: modular kit pieces (walls, bridges, gates, lamps) share a 2k atlas per kit"
+    },
+    "weapon": {
+      "tris": [4000, 20000],
+      "texture": 2048,
+      "lods": 4,
+      "size": { "axis": "max", "range": [0.3, 12] },
+      "profile": "pbr",
+      "why": "not in 19.2: hardpoint modules are seen beside the hull in chase view, so above props"
+    },
+    "prop": {
+      "tris": [2000, 10000],
+      "texture": 1024,
+      "lods": 4,
+      "size": { "axis": "max", "range": [0.05, 6] },
+      "profile": "pbr",
+      "why": "DESIGN 19.2: props 2-10k, 1k textures"
+    },
+    "flora_tree": {
+      "tris": [3000, 15000],
+      "texture": 1024,
+      "lods": 4,
+      "size": { "axis": "max", "range": [1, 60] },
+      "profile": "pbr",
+      "why": "not in 19.2: trees are instanced by the hundred and hand over to impostors beyond 400 m"
+    },
+    "flora": {
+      "tris": [150, 6000],
+      "texture": 1024,
+      "lods": 4,
+      "size": { "axis": "max", "range": [0.05, 15] },
+      "profile": "pbr",
+      "why": "not in 19.2: bushes, plants, grass, rocks, crystals and deposits are instanced by the thousand"
+    },
+    "effect": {
+      "tris": [12, 5000],
+      "texture": 1024,
+      "lods": 1,
+      "size": { "axis": "max", "range": [0.01, 200] },
+      "profile": "effect",
+      "why": "not in 19.2: ability effect meshes are short-lived and mostly emissive"
+    },
+    "cosmetic": {
+      "tris": [0, 2000],
+      "texture": 2048,
+      "lods": 1,
+      "size": null,
+      "profile": "decal",
+      "why": "not in 19.2: glyph patterns, liveries and title icons are texture sets on carrier planes"
+    },
+    "library": {
+      "tris": null,
+      "texture": 4096,
+      "lods": 0,
+      "size": null,
+      "profile": "library",
+      "why": "the shared material library (assets/blend/_library.blend): materials and references only"
+    }
+  },
+  "families": {
+    "characters": {
+      "what": "player bodies (3 peoples), head and crest variants, suit sets, first-person arms and tools",
+      "class": "hero",
+      "classRules": [{ "match": ["fp_*", "viewmodel_*"], "class": "viewmodel" }],
+      "size": { "hero": { "axis": "z", "range": [1.5, 2.4] } },
+      "armature": ["hero"]
+    },
+    "npcs": {
+      "what": "crews, Quiet Table agents, the Quartermaster, city NPCs",
+      "class": "npc",
+      "armature": ["npc"]
+    },
+    "hulls": {
+      "what": "the 13 hulls with liveries, gear, canopy, cockpit interior, damage and husked variants",
+      "class": "hero",
+      "size": { "hero": { "axis": "max", "range": [6, 80] } },
+      "materials": {
+        "required": ["Hull", "Accent", "Trim", "Dark", "EngineGlow", "Glass", "Nav*"],
+        "why": "DESIGN 10.4 and 19.4: liveries, recolours, husked variants, traffic and wrecks read these names (after engine_name)"
+      },
+      "requiredMarkers": [
+        { "pattern": "Gear*", "type": "EMPTY", "min": 1, "why": "articulated landing gear pivots (DESIGN 10.4)" },
+        { "pattern": ["HP_S_*", "HP_M_*", "HP_L_*"], "type": "EMPTY", "min": 1, "why": "hardpoint mounts (DESIGN 10.4, 19.4)" },
+        { "pattern": "Canopy*", "min": 1, "why": "the canopy (DESIGN 10.4)" },
+        { "pattern": "CockpitInterior*", "min": 1, "why": "the cockpit interior (DESIGN 10.4)" }
+      ]
+    },
+    "weapons": {
+      "what": "the 8 hardpoint weapon modules as mountable meshes",
+      "class": "weapon",
+      "requiredMarkers": [
+        { "pattern": "Mount", "type": "EMPTY", "min": 1, "why": "aligns the module to a hull's HP_ empty" },
+        { "pattern": "Muzzle*", "type": "EMPTY", "min": 1, "why": "where beams and projectiles start" }
+      ]
+    },
+    "cities": {
+      "what": "the three building kits, civic buildings, gates, walls, bridges, lamps and the anchor stone landmarks",
+      "class": "building",
+      "size": { "building": { "axis": "max", "range": [1, 400] } },
+      "classRules": [
+        { "match": ["*landmark*", "anchor_*"], "class": "hero" },
+        { "match": ["kit_*", "wall*", "bridge*", "gate*", "lamp*"], "class": "kit" },
+        { "match": ["prop_*"], "class": "prop" }
+      ],
+      "requiredMarkers": [{ "pattern": "COL_*", "type": "MESH", "min": 1, "why": "the walker collides with every city piece" }]
+    },
+    "stations": {
+      "what": "the modular Waystation kit, the Scrapyard kit and the Hive",
+      "class": "building",
+      "size": { "building": { "axis": "max", "range": [1, 1500] } },
+      "requiredMarkers": [{ "pattern": "COL_*", "type": "MESH", "min": 1, "why": "ships and walkers collide with station modules" }]
+    },
+    "sites": {
+      "what": "outposts, monoliths, beacons, crash sites, dens, Cartographer vaults, glyph stones",
+      "class": "building",
+      "materials": { "profiles": [{ "match": ["Lamp*"], "profile": "signal" }] },
+      "requiredMarkers": [
+        { "pattern": "COL_*", "type": "MESH", "min": 1, "why": "Structures.js turns COL_ meshes into colliders" },
+        { "pattern": "Interact*", "type": "EMPTY", "min": 1, "why": "every site is something the player interacts with" }
+      ]
+    },
+    "creatures": {
+      "what": "the five body plans, predators, stone-touched overlays, horrors, grazers, lurkers, leviathans",
+      "class": "creature",
+      "attributes": [
+        { "name": "_limb", "type": "FLOAT", "domain": "POINT" },
+        { "name": "_pivot", "type": "FLOAT_VECTOR", "domain": "POINT" },
+        { "name": "_glow", "type": "FLOAT", "domain": "POINT" }
+      ],
+      "colorMask": true,
+      "why": "Fauna.js animates crowds from _limb/_pivot/_glow in the vertex shader and recolours species from the colour-region mask"
+    },
+    "constructs": {
+      "what": "outpost drone, Overseer, monolith sentinel, the Wardens, the sentinel ship",
+      "class": "creature",
+      "classRules": [{ "match": ["*warden*", "*Warden*", "sentinel_ship*"], "class": "hero" }]
+    },
+    "bosses": {
+      "what": "Pack Alpha, Herd Mother, Sentinel Primes, the Dreadnought, the Patient, the Hive Heart, Husk Admiral, Brood Mother",
+      "class": "hero",
+      "armature": ["hero"],
+      "why": "DESIGN 19.2: hero creatures and bosses are fully skinned"
+    },
+    "flora": {
+      "what": "the flora library, resource plants and formations",
+      "class": "flora",
+      "classRules": [{ "match": ["tree_*"], "class": "flora_tree" }],
+      "colorMask": true,
+      "why": "floraModels.js recolours each kind from the colour-region mask (R primary, G secondary, B accent, A occlusion)"
+    },
+    "props": {
+      "what": "cargo and loot pods, ammo, catalysts, market stalls, terminals, the Recall glyph set",
+      "class": "prop"
+    },
+    "effects": {
+      "what": "ability effect meshes",
+      "class": "effect"
+    },
+    "cosmetics": {
+      "what": "glyph patterns for suits and hulls, liveries, title icons",
+      "class": "cosmetic"
+    },
+    "library": {
+      "what": "the shared material library",
+      "class": "library",
+      "export": false
+    }
+  },
+  "legacy": {
+    "$comment": "The demo's script-built exports (packages/client/public/models/*.glb). They predate these rules and are expected to fail until their families are rebuilt (P1.E14.T07 deletes the generators).",
+    "ship.glb": { "family": "hulls" },
+    "multitool.glb": { "family": "characters", "class": "viewmodel" },
+    "flora.glb": { "family": "flora" },
+    "creatures.glb": { "family": "creatures" },
+    "structures.glb": { "family": "sites" }
+  }
+}

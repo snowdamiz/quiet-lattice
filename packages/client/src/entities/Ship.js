@@ -6,6 +6,7 @@ import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
+import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -19,8 +20,10 @@ const _m = new THREE.Matrix4();
 const X = new THREE.Vector3(1, 0, 0);
 const Y = new THREE.Vector3(0, 1, 0);
 const Z = new THREE.Vector3(0, 0, 1);
-// seconds the pulse drive takes to cover the open space ahead of it, at full speed
-const CRUISE_T = 40;
+// today's ship: the Lark with its pair of Pulse Lasers and its one cargo pod (DESIGN 10.1)
+const LOADOUT = shipLoadoutSchema.parse({ hull: 'lark', modules: { s1: 'pulse_lasers' }, cargoPods: 1, livery: 0 });
+// main-engine thrust in air per m/s of the hull's air speed (the Lark's 240 m/s: 75 m/s²)
+const AIR_THRUST = 75 / 240;
 
 export const GEAR_HEIGHT = 1.95;
 // where the landed hull comes down within reach of a walker, in ship space (x0, x1, z0, z1): the
@@ -45,14 +48,17 @@ export class Ship {
     this.gear = 1;
     this.boosting = false;
     this.thrust = 0;
-    this.shield = 100;
+    // what the ship is, and the Pilot nodes it flies with (the demo shop's upgrades, until the skill web lands)
+    this.loadout = LOADOUT;
+    this.skills = new Set();
+    this.refreshStats();
+    this.shield = this.stats.shieldMax;
     // the hull takes what the shield cannot (hostile skies); at zero the ship is lost
-    this.hull = 100;
-    // how many times longer the hull holds out against each kind of hostile sky (upgrades)
-    this.resist = { heat: 1, cryo: 1, pressure: 1, acid: 1, radiation: 1, storm: 1 };
+    this.hull = this.stats.hullMax;
     this.hazardLevel = 0;
     this.wind = new THREE.Vector3();
-    this.pulseFuel = 100;
+    // Charge: today's pulse fuel (DESIGN 9.1)
+    this.pulseFuel = this.stats.charge;
     this.launchFuel = 100;
     this.pulse = { spool: 0, speed: 0, active: false };
     this.altitude = Infinity;
@@ -532,6 +538,15 @@ export class Ship {
     this.rcsKick = Math.max(this.rcsKick || 0, kick);
   }
 
+  // the ship's performance, from its hull, its fitted modules and the pilot's nodes (@astra/shared/ships): again whenever
+  // one of them changes
+  refreshStats() {
+    this.stats = shipStats(this.loadout, { skills: this.skills });
+    // the flight model's hard limit, a little over the boost cap the server holds the ship to
+    this.vmax = flightCaps(this.stats, 'boost').max * CLIENT_SPEED_HEADROOM;
+    this.gun = this.stats.hardpoints.find((h) => h.weapon === 'pulse_lasers');
+  }
+
   // speed along the nose; setting it (a scripted arrival, a teleport) sets the throttle to hold it
   get speed() {
     return this._speed;
@@ -539,7 +554,7 @@ export class Ship {
 
   set speed(v) {
     this._speed = v;
-    this.throttle = THREE.MathUtils.clamp(v / 600, -0.1, 1);
+    this.throttle = THREE.MathUtils.clamp(v / this.stats.speed.space, -0.1, 1);
   }
 
   // Local "up" in the current frame (planet radial or station +Y), or null in deep space
@@ -795,12 +810,13 @@ export class Ship {
     const vPerp = _v5.copy(s.vel).addScaledVector(fwd, -s.vel.dot(fwd));
     let mainA = 0;
 
+    const st = this.stats;
     // --- space ---
     if (air < 1) {
       const k = 1 - air;
-      const cap = 600 * (this.speedMul || 1) * (boost ? 2.6 : 1);
+      const cap = st.speed.space * (boost ? st.boost : 1);
       const set = (boost ? 1 : this.throttle) * cap;
-      const engA = 160 * (boost ? 2.6 : 1);
+      const engA = 160 * (boost ? st.boost : 1);
       const vNow = s.vel.dot(fwd);
       const aF = THREE.MathUtils.clamp((set - vNow) * 2, -220, engA);
       mainA += Math.max(0, aF) * k;
@@ -824,7 +840,7 @@ export class Ship {
       const thick = Math.max(rho, 0.05);
       const shipUpDot = Math.max(0, _v2.set(0, 1, 0).applyQuaternion(s.quat).dot(up));
       // main engine: thrust from the throttle; drag sets the speed it reaches
-      let aMain = (boost ? 1 : Math.max(0, this.throttle)) * 75 * (this.speedMul || 1) * (boost ? 2.4 : 1);
+      let aMain = (boost ? 1 : Math.max(0, this.throttle)) * (st.speed.atmo * AIR_THRUST) * (boost ? 2.4 : 1);
       if (retro) {
         aMain = -40;
         thr.addScaledVector(fwd, -40 * air);
@@ -868,8 +884,7 @@ export class Ship {
     }
 
     s.vel.addScaledVector(acc, dt);
-    const vmax = 600 * 2.6 * (this.speedMul || 1) * 1.05;
-    if (s.vel.length() > vmax) s.vel.setLength(vmax);
+    if (s.vel.length() > this.vmax) s.vel.setLength(this.vmax);
     this._speed = s.vel.dot(fwd);
     this.thrust = THREE.MathUtils.clamp(mainA / 75, 0, 1);
 
@@ -892,7 +907,7 @@ export class Ship {
 
   canLand() {
     const f = this.state.frame;
-    return f && f.sampler && this.altitude < 350 && Math.abs(this.speed) < 160;
+    return f && f.sampler && this.altitude < 350 && Math.abs(this.speed) < this.stats.landingSpeedMax;
   }
 
   overWater() {
@@ -1081,9 +1096,9 @@ export class Ship {
       if (to.dot(this.state.worldDir(_v4.set(0, 0, -1).applyQuaternion(this.state.quat), _v5)) > 0) ahead = Math.min(ahead, d);
     }
     // close in, a short time constant keeps arrival controllable; in open space the limit grows
-    // with the distance to anything (CRUISE_T seconds to cover it), so between the stars it climbs
-    // to thousands of times light speed and a few light years take some twenty minutes
-    return { limit: Math.max(300, Math.min(minD * 0.55, Math.max(280000, minD / CRUISE_T))), dist: ahead };
+    // with the distance to anything (PULSE_DRIVE.cruiseS seconds to cover it), so between the stars
+    // it climbs to thousands of times light speed and a few light years take some twenty minutes
+    return { limit: pulseSpeedLimit(this.stats, minD), dist: ahead };
   }
 
   updatePulse(dt, input, piloting) {
@@ -1112,14 +1127,14 @@ export class Ship {
     const target = maxPulse * this.pulse.spool;
     // exponential acceleration, quick deceleration
     if (this.pulse.speed < target) this.pulse.speed = Math.min(target, this.pulse.speed * Math.exp(dt * 1.5) + 200 * dt);
-    else this.pulse.speed = THREE.MathUtils.damp(this.pulse.speed, target, 4, dt);
+    else this.pulse.speed = THREE.MathUtils.damp(this.pulse.speed, target, PULSE_DRIVE.easeRate, dt);
     const fwd = _v.set(0, 0, -1).applyQuaternion(s.quat);
     s.vel.copy(fwd).multiplyScalar(this.pulse.speed);
     this.speed = this.pulse.speed;
     this.thrust = 1;
     // fuel burns close to the planets; out in the open gaps (and between the stars) the drive
     // cruises on the interstellar medium, or no trip beyond the home system would ever end
-    if (dist < 280000 * CRUISE_T) this.pulseFuel = Math.max(0, this.pulseFuel - dt * 0.35);
+    if (dist < PULSE_DRIVE.openSpeed * PULSE_DRIVE.cruiseS) this.pulseFuel = Math.max(0, this.pulseFuel - dt * this.stats.pulse.fuelBurn);
     this.shake = Math.max(this.shake, 0.08);
 
     const exit = (inp && (inp.hit('KeyJ') || inp.hit('Space') || inp.hit('KeyS'))) || this.pulseFuel <= 0 ||
@@ -1129,7 +1144,7 @@ export class Ship {
 
   exitPulse() {
     this.mode = 'flying';
-    this.speed = Math.min(this.pulse.speed, 400);
+    this.speed = Math.min(this.pulse.speed, PULSE_DRIVE.exitSpeedMax);
     const fwd = _v.set(0, 0, -1).applyQuaternion(this.state.quat);
     this.state.vel.copy(fwd).multiplyScalar(this.speed);
     this.game.audio?.play('pulseExit');
@@ -1239,7 +1254,7 @@ export class Ship {
     this.hazardHeat = 0;
     this.wind.multiplyScalar(Math.exp(-dt * 0.5));
     // the station's crews patch the hull while you are docked
-    if (this.mode === 'landed' && f?.kind === 'station') this.hull = Math.min(100, this.hull + dt * 20);
+    if (this.mode === 'landed' && f?.kind === 'station') this.hull = Math.min(this.stats.hullMax, this.hull + dt * 20);
     if (!hz || g.mode !== 'ship' || this.mode === 'landed' && f.kind === 'station') return;
     const alt = f.isGas ? this.seaAltitude : this.altitude;
     if (!isFinite(alt)) return;
@@ -1249,8 +1264,9 @@ export class Ship {
     const depth = THREE.MathUtils.clamp(1 - alt / hz.ceiling, 0, 1);
     this.hazardLevel = depth;
     if (depth <= 0) return;
-    const resist = this.resist[hz.kind] || 1;
-    let dmg = hz.dps * Math.pow(depth, hz.curve || 1.3) * dt / resist;
+    // how much of each kind of hostile sky the hull takes (Thermal Plating and the like divide it)
+    const taken = this.stats.hazardDamage[hz.kind] ?? 1;
+    let dmg = hz.dps * Math.pow(depth, hz.curve || 1.3) * dt * taken;
     const t = g.time;
     if (hz.kind === 'heat') {
       this.hazardHeat = depth * (0.75 + 0.15 * Math.sin(t * 17));
@@ -1273,7 +1289,7 @@ export class Ship {
       this.nextStrike = (this.nextStrike ?? 3) - dt * (0.4 + depth);
       if (this.nextStrike <= 0) {
         this.nextStrike = 2 + Math.random() * 6;
-        dmg += (5 + Math.random() * 9) / resist;
+        dmg += (5 + Math.random() * 9) * taken;
         g.lightning?.(1, true);
         g.audio?.play('thunder', { dist: 300 });
         this.shake = 1;
@@ -1300,7 +1316,7 @@ export class Ship {
   // ---------- weapons ----------
   fireLasers() {
     if (this.laserCooldown > 0) return;
-    this.laserCooldown = 0.12;
+    this.laserCooldown = this.gun.cooldownS;
     this.game.audio?.play('shipLaser');
     for (const side of [-1, 1]) {
       this.lasers.push({ life: 0.35, side, offset: new THREE.Vector3(5.75 * side, -0.62, -2.5) });

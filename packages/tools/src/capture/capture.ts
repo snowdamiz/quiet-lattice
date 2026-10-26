@@ -192,19 +192,31 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
       await page.screenshot({ path: still });
       written.push(still);
       if (tag === '16x9') {
-        // one second at 60 fps: the page's own loop is stopped and each frame stepped by hand
+        // one second at 60 fps. The page's own loop is stopped and each game frame stepped by hand, and CSS
+        // transitions and animations (which run on real time) are slowed tenfold through the DevTools Animation
+        // domain, so each frame is taken 1/60 s of animation time after the last one.
         await page.evaluate(() => {
           const w = window as unknown as { game: { frame(dt: number): void; __frame?: (dt: number) => void } };
           w.game.__frame = w.game.frame.bind(w.game);
           w.game.frame = () => {};
         });
+        const RATE = 0.1;
+        const cdp = await page.context().newCDPSession(page);
+        await cdp.send('Animation.enable');
+        await cdp.send('Animation.setPlaybackRate', { playbackRate: RATE });
+        if (def.motion) await def.motion(page);
+        const t0 = Date.now();
         const frames: { label: string; src: string }[] = [];
         for (let i = 0; i < 60; i++) {
           await page.evaluate(() => (window as unknown as { game: { __frame(dt: number): void } }).game.__frame(1 / 60));
           const p = join(outDir, '_frames', `${String(i).padStart(3, '0')}.jpg`);
           const buf = await page.screenshot({ path: p, type: 'jpeg', quality: 85 });
           if (i % 6 === 0) frames.push({ label: `frame ${i}`, src: `data:image/jpeg;base64,${buf.toString('base64')}` });
+          const due = t0 + ((i + 1) * 1000) / 60 / RATE;
+          const wait = due - Date.now();
+          if (wait > 0) await new Promise((r) => setTimeout(r, wait));
         }
+        await cdp.send('Animation.setPlaybackRate', { playbackRate: 1 });
         const sp = join(outDir, 'clip-sheet.png');
         writeFileSync(sp, await contactSheet(page, frames, 5, 480));
         written.push(sp, join(outDir, '_frames'));
