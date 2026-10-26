@@ -10,3 +10,4 @@ export * from './galaxy.ts';
 export * from './edge.ts';
 export * from './cosmos.ts';
 export * from './system.ts';
+export * from './kinematics.ts';
