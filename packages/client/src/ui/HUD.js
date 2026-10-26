@@ -108,11 +108,13 @@ export class HUD {
     if (!v) this.edgeCompass.update(false);
   }
 
+  // (as plain text: a toast can carry the server's words, a notice event, which must never be read as markup)
   toast(text, kind = 'info') {
     if (text === this.lastToast && this.now() - this.lastToastT < 2500) return;
     this.lastToast = text;
     this.lastToastT = this.now();
-    const t = el('div', `toast ${kind}`, this.toasts, text);
+    const t = el('div', `toast ${kind}`, this.toasts);
+    t.textContent = text;
     this.later(() => t.classList.add('out'), 3200);
     this.later(() => t.remove(), 4000);
     while (this.toasts.children.length > 4) this.toasts.firstChild.remove();

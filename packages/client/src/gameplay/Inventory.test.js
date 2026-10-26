@@ -58,9 +58,8 @@ describe('client Inventory: the demo API', () => {
     inv.warpCells--;
     expect(inv.warpCells).toBe(0);
     expect(inv.key()).not.toBe(k0);
-    inv.items = { carbon: 120, gold: 7, nonsense: 5 };
-    expect(inv.items).toEqual({ carbon: 120, gold: 7 });
-    inv.add('gold', 3);
+    inv.add('gold', 10);
+    expect(inv.items).toEqual({ gold: 10 });
     expect(inv.sellAll('gold')).toBe(10 * 202);
     expect(inv.units).toBe(2320 + 2020);
     expect(inv.sellAll('gold')).toBe(0);

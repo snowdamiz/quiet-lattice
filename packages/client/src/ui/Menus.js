@@ -219,6 +219,17 @@ export class Menus {
     this.title.querySelectorAll('.sheet.open, .t-item.open').forEach((e) => e.classList.remove('open'));
   }
 
+  // a line at the top of the screen for as long as the connection to the server is down (null takes it away)
+  setConnection(text) {
+    if (!this.connection) {
+      this.connection = el('div', 'mono connection', this.root);
+      this.connection.style.cssText =
+        'position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:30;padding:7px 16px;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--warm);background:var(--plate);border:1px solid var(--line-2);pointer-events:none';
+    }
+    this.connection.textContent = text ?? '';
+    this.connection.style.display = text ? '' : 'none';
+  }
+
   // menu items that open a sheet beside the menu (Play's sign-in, settings, controls); a second click closes it
   bindSheets(root) {
     root.querySelectorAll('.t-item').forEach((b) => b.addEventListener('mouseenter', () => !b.disabled && this.game.audio?.play('hover')));

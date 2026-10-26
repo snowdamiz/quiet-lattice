@@ -4,21 +4,28 @@
 // ping/pong, and the player's input at 20 Hz. Gameplay reads remote state from `store`, never from the socket.
 //
 // States: idle → connecting → joining (hello and join sent) → joined (welcome received) → closed; from joined a dropped
-// connection goes to reconnecting and back to connecting after a backoff. A refusal another try would only repeat, a
-// failure before the first welcome, and close() end in closed, with 'closed' saying why.
+// connection goes to reconnecting and back to connecting after a backoff. A refusal another try would only repeat (and a
+// second `invalid` within a minute), a failure before the first welcome, and close() end in closed, with 'closed' saying
+// why.
 import { PROTOCOL_VERSION, decodeServerMessage, decodeSnapshot, encodeClientMessage } from '@astra/shared/protocol';
 import { ClockSync } from './clock.js';
 import { SnapshotStore } from './snapshots.js';
 
 /** Input goes out at 20 Hz (the zone's tick) of real time, however fast frames run. */
 export const INPUT_INTERVAL_MS = 50;
+/** Acknowledgements go out at most once a tick, for the newest applied tick: a backlog of snapshots (after a stall of the
+ * page) is acknowledged once, never snapshot by snapshot, which would spend the socket's message budget in one burst. */
+export const ACK_INTERVAL_MS = 50;
 /** A ping every 2 s keeps the clock estimate fresh (the server pushes no time of its own, ARCHITECTURE §3). */
 export const PING_INTERVAL_MS = 2000;
 /** Reconnect delays: 0.5 s doubling to 30 s, each scaled by a random 50–100% so a server restart is not hit by every client at once. */
 export const RECONNECT = { firstMs: 500, maxMs: 30_000 };
 /** Refusals another try would only repeat: the player has to act (reload, sign in again, pick a character). `full` (the
  * server could not take the character just now) is worth retrying. */
-export const FINAL_REFUSALS = new Set(['version', 'auth', 'character', 'kicked', 'invalid']);
+export const FINAL_REFUSALS = new Set(['version', 'auth', 'character', 'kicked']);
+/** `invalid` is also how the gateway closes a socket that flooded it (a stalled page catching up), which an honest client
+ * can do once: it is retried, unless the last `invalid` was less than this long ago (then the client is at fault). */
+export const INVALID_RETRY_MS = 60_000;
 
 const OPEN = 1;
 
@@ -52,12 +59,18 @@ export class Net {
     this.inputSeq = 0;
     this.lastInput = null;
     this.lastInputAt = -Infinity;
+    /** the newest applied tick not yet acknowledged (null: none), when the last ack went, and the timer for a deferred one */
+    this.ackDue = null;
+    this.lastAckAt = -Infinity;
+    this.ackTimer = null;
     this.pingId = 0;
     this.lastPingAt = -Infinity;
     this.attempt = 0;
     this.retryTimer = null;
     this.everJoined = false;
     this.closing = false;
+    /** when the server last closed the socket as `invalid` (client time, ms) */
+    this.lastInvalidAt = null;
     this.inventoryAfterWelcome = false;
     /** dropped: messages that did not decode; unsendable: messages that failed the schema here; rejected/unapplied:
      * snapshots neither stored nor acknowledged */
@@ -121,6 +134,7 @@ export class Net {
       this.timers.clearTimeout(this.retryTimer);
       this.retryTimer = null;
     }
+    this.cancelAck();
     const ws = this.ws;
     if (ws && ws.readyState <= OPEN) ws.close(1000, 'leaving');
     else if (this.state !== 'closed') this.lost(1000, 'leaving');
@@ -136,8 +150,9 @@ export class Net {
 
   lost(code, reason) {
     this.ws = null;
+    this.cancelAck();
     const why = { code, reason, refusal: this.refusal };
-    if (this.closing || !this.everJoined || (this.refusal && FINAL_REFUSALS.has(this.refusal.code))) {
+    if (this.closing || !this.everJoined || this.refusedForGood()) {
       this.setState('closed');
       this.emit('closed', why);
       return;
@@ -150,6 +165,18 @@ export class Net {
       this.retryTimer = null;
       this.connect();
     }, delay);
+  }
+
+  /** Whether the refusal the socket closed with ends the session: a final one, or an `invalid` soon after another. */
+  refusedForGood() {
+    const code = this.refusal?.code;
+    if (!code) return false;
+    if (FINAL_REFUSALS.has(code)) return true;
+    if (code !== 'invalid') return false;
+    const t = this.now();
+    const again = this.lastInvalidAt !== null && t - this.lastInvalidAt < INVALID_RETRY_MS;
+    this.lastInvalidAt = t;
+    return again;
   }
 
   // ---------- receiving ----------
@@ -197,6 +224,8 @@ export class Net {
     this.inputSeq = 0;
     this.lastInput = null;
     this.lastInputAt = -Infinity;
+    this.cancelAck();
+    this.lastAckAt = -Infinity;
     this.inventoryAfterWelcome = true;
     this.setState('joined');
     this.ping();
@@ -220,8 +249,32 @@ export class Net {
       this.stats.unappliedTicks++;
       return;
     }
-    this.raw({ t: 'ack', tick: snap.tick });
+    this.ackDue = snap.tick;
+    this.flushAck();
     this.emit('snapshot', snap);
+  }
+
+  /** Acknowledges the newest applied tick, at most once every ACK_INTERVAL_MS: one sooner waits for a timer, and ticks
+   * applied meanwhile only move what it will acknowledge. */
+  flushAck() {
+    if (this.ackDue === null || this.state !== 'joined') return;
+    const t = this.now();
+    const wait = this.lastAckAt + ACK_INTERVAL_MS - t;
+    if (wait > 0) {
+      this.ackTimer ??= this.timers.setTimeout(() => {
+        this.ackTimer = null;
+        this.flushAck();
+      }, wait);
+      return;
+    }
+    if (this.raw({ t: 'ack', tick: this.ackDue })) this.lastAckAt = t;
+    this.ackDue = null;
+  }
+
+  cancelAck() {
+    if (this.ackTimer !== null) this.timers.clearTimeout(this.ackTimer);
+    this.ackTimer = null;
+    this.ackDue = null;
   }
 
   // ---------- sending ----------
@@ -260,12 +313,15 @@ export class Net {
     this.raw({ t: 'ping', id: ++this.pingId, clientTime: t });
   }
 
-  /** Sends the player's input now: its predicted pose and mode, numbered from 1 and stamped with the server time. */
+  /** Sends the player's input now: its predicted pose and mode, numbered from 1, and stamped with the time the game sampled
+   * it at (its world clock, which follows the server's; the server clock's estimate when the sample has none), never
+   * going back: movement authority judges the pose at that time, not at its arrival (ARCHITECTURE §7). */
   sendInput(t = this.now()) {
     if (this.state !== 'joined' || !this.input) return false;
     const sample = this.input();
     if (!sample) return false;
-    const msg = { t: 'input', seq: this.inputSeq + 1, time: Math.max(0, this.serverTime() ?? 0), ...sample };
+    const time = Math.max(this.lastInput?.time ?? 0, sample.time ?? this.clock.now(t) ?? 0);
+    const msg = { t: 'input', seq: this.inputSeq + 1, ...sample, time };
     if (!this.raw(msg)) return false;
     this.inputSeq = msg.seq;
     this.lastInput = msg;

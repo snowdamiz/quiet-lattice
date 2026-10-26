@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { Game } from './Game.js';
+import { dropLegacySave } from './net/session.js';
 
+dropLegacySave();
 const game = new Game(document.getElementById('app'), document.getElementById('hud'));
 window.game = game;
 game.start();

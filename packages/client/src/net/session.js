@@ -4,6 +4,20 @@
 const SESSION = 'astra-session';
 const NOTICE = 'astra-notice';
 
+/** The demo's localStorage save, under its two names (DESIGN 20.3 removes it). */
+const LEGACY_SAVES = ['next-horizon-save-v2', 'astra-nullius-save-v2'];
+
+/** The server holds characters now: a browser that still has the demo's save drops it, so none lingers. */
+export function dropLegacySave() {
+  for (const key of LEGACY_SAVES) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      /* storage unavailable */
+    }
+  }
+}
+
 function storage() {
   try {
     return window.sessionStorage;

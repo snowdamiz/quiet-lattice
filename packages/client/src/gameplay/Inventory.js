@@ -222,25 +222,11 @@ export class Inventory {
 
   // ---------- the demo's flat API (local until mining, loot and trade move to the server) ----------
 
-  /** Resources held, suit and cargo together: { id: count }. Assigning one (an old save) packs it suit first. */
+  /** Resources held, suit and cargo together: { id: count }. */
   get items() {
     const out = {};
     for (const [id, n] of Object.entries(totals(this.state))) if (RESOURCE_IDS.has(id)) out[id] = n;
     return out;
-  }
-
-  set items(flat) {
-    let s = this.state;
-    for (const id of RESOURCE_IDS) {
-      const n = countOf(s, id);
-      if (n) s = takeItem(s, id, n).inv;
-    }
-    for (const [id, n] of Object.entries(flat || {})) {
-      if (!RESOURCE_IDS.has(id) || !(n > 0)) continue;
-      const r = addItem(s, id, Math.floor(n));
-      if (r.ok) s = r.inv;
-    }
-    this.set(s);
   }
 
   get units() {

@@ -50,6 +50,9 @@ const _m4 = new THREE.Matrix4();
 const SEAT_ABOVE = new THREE.Vector3(0, 5.6, -0.6);
 const HULL_ABOVE = new THREE.Vector3(0, 9, 7);
 const _v2b = new THREE.Vector2();
+// The world clock once in the world (advanceClock): it eases toward the server's clock with this gain (per second), runs at
+// most twice as fast to catch up and stands still rather than go back, and is never more than maxAheadS ahead of it.
+const CLOCK = { gain: 0.5, maxAheadS: 0.25 };
 
 export class Game {
   constructor(container, hudEl) {
@@ -68,7 +71,7 @@ export class Game {
     this.galaxy = new Galaxy(GALAXY_SEED);
     this.sky.setSystems(this.galaxy.systems);
     this.universe = new Universe(this);
-    // world time (s): the server's once in the world (followServerClock), every body's pose comes from it
+    // world time (s): the server's once in the world (advanceClock), every body's pose comes from it
     this.time = 0;
     // world time minus the render clock (renderTime), which shaders animate on
     this.timeBase = 0;
@@ -279,12 +282,15 @@ export class Game {
     this.cam.frame = undefined;
   }
 
-  // Play begins, the ship (or the walker) already placed: by the server's welcome, or in the dev sandbox.
-  startGame() {
+  // Play begins, the ship (or the walker) already placed: by the server's welcome, or in the dev sandbox. The mouse is
+  // captured only from a user gesture: entering the world (the welcome arrives from the network, not a click) leaves the
+  // pause screen up, whose Resume captures it; the dev sandbox (`lock`) captures it at once, as the demo always did.
+  startGame(lock = false) {
     this.audio.start();
     this.menus.hideTitle();
     this.hud.setVisible(true);
-    this.input.lock();
+    if (lock) this.input.lock();
+    else this.menus.updatePauseHint();
     setTimeout(() => {
       this.hud.showBanner(this.system.name.toUpperCase(), 'Star System');
       this.audio.play('discovery');
@@ -298,7 +304,7 @@ export class Game {
     if (!import.meta.env.DEV || this.mode !== 'title') return;
     this.placeShipNearStation();
     this.mode = 'ship';
-    this.startGame();
+    this.startGame(true);
   }
 
   // ---------- online: the server holds the character (DESIGN 17, docs/ARCHITECTURE.md §5, §9) ----------
@@ -307,7 +313,10 @@ export class Game {
   // the character is, and from then the client sends its input and keeps the server's inventory. Menus calls this once a
   // character is picked; `onFail(reason, code)` hears why it could not get in.
   enterWorld(session, character, onFail) {
-    this.net?.close();
+    // (a connection this one replaces is let go first, so its closing is not taken for this one's)
+    const old = this.net;
+    this.net = null;
+    old?.close();
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
     this.inventory.send = (m) => net.send(m);
@@ -319,35 +328,57 @@ export class Game {
     net.on('correction', (m) => this.onCorrection(m));
     net.on('event', ({ event }) => event.kind === 'notice' && this.hud.toast(event.text, event.tone));
     net.on('lost', () => this.hud.toast('Connection lost · reconnecting', 'warn'));
-    net.on('closed', ({ refusal }) => {
-      if (this.net !== net) return;
-      const reason = refusal?.reason || 'The connection to the server closed.';
-      if (refusal?.code === 'auth') clearSession();
-      if (net.everJoined) this.leaveWorld(reason);
-      else {
-        this.net = null;
-        this.inventory.send = null;
-        onFail?.(reason, refusal?.code ?? null);
-      }
-    });
+    // (while it is down after a welcome, a line says so until it is back)
+    net.on('state', (state) => this.menus.setConnection(net.everJoined && state !== 'joined' && state !== 'closed' ? 'Connection lost · reconnecting…' : null));
+    net.on('closed', (why) => this.onNetClosed(net, why, onFail));
     net.connect();
   }
 
+  // The connection ended for good (Net gave up, or close()). Before the welcome the sign-in hears why and the player picks
+  // again; after it, back to the title with the reason. A refused session token is forgotten either way.
+  onNetClosed(net, { refusal }, onFail) {
+    if (this.net !== net) return;
+    const reason = refusal?.reason || 'The connection to the server closed.';
+    if (refusal?.code === 'auth') clearSession();
+    if (net.everJoined) return this.leaveWorld(reason);
+    this.net = null;
+    this.inventory.send = null;
+    onFail?.(reason, refusal?.code ?? null);
+  }
+
   onWelcome(m, first) {
-    this.setWorldTime(this.net.serverTime());
-    if (!first) {
-      // a reconnect: the client kept flying meanwhile, and its next input tells the server where it is now
+    // the world clock starts at the server's on the first join, before any input; after it, it is only ever slewed
+    if (first) this.setWorldTime(this.net.serverTime());
+    const sys = this.galaxy.systems.find((s) => s.seed === m.zone.systemSeed);
+    // A reconnect keeps the client's own pose (it kept flying, and its next input tells the server where it is now) while
+    // it is still in the zone's system, in one of its frames; otherwise (it warped away meanwhile, the server put the
+    // character elsewhere) the character goes where the server holds it, as on a first join.
+    if (!first && sys === this.system.info && !this.universe.deep && frameOfId(this.system, this.station, m.pose.frame) !== undefined) {
       this.hud.toast('Reconnected', 'good');
       return;
     }
-    const sys = this.galaxy.systems.find((s) => s.seed === m.zone.systemSeed);
-    if (sys && sys !== this.system.info) {
-      this.galaxy.setCurrent(sys);
-      this.discovered.clear();
-      this.loadSystem(sys);
-    }
+    // (on the first join nothing was visited yet: the galaxy marks system 0, wherever the character's home is)
+    if (first) for (const s of this.galaxy.systems) s.visited = false;
+    this.enterZoneSystem(sys);
     this.placeFromServer(m.pose, m.mode);
-    this.startGame();
+    if (first) this.startGame();
+    else this.hud.toast('Reconnected', 'good');
+  }
+
+  // The zone's star system becomes the current one: built when it is another, brought back from between the stars when the
+  // ship is out there.
+  enterZoneSystem(sys) {
+    if (!sys) return;
+    this.galaxy.setCurrent(sys);
+    if (sys !== this.system.info) {
+      this.discovered.clear();
+      this.navTarget = null;
+      this.loadSystem(sys);
+    } else if (this.universe.deep) {
+      this.universe.reset(sys);
+      this.system.star.position.set(0, 0, 0);
+      this.sky.reset();
+    }
   }
 
   // Puts the character where the server holds it (welcome's pose and mode). Docked is this Waystation's pad nearest the
@@ -446,11 +477,14 @@ export class Game {
     const frame = frameIdOfFrame(this.system, this.station, st.frame);
     if (frame === undefined) return null;
     const pose = framedPose(frame, st);
+    // (stamped with the clock the bodies were placed with, which is the one the frame was picked by)
+    const time = this.time;
     // (a walker's own quaternion is not kept: it faces its heading)
     if (foot) pose.quat = walkerQuat(this.player.up(_v1), this.player.heading, _q1).toArray();
     const inp = this.input;
     const ship = this.ship;
     return {
+      time,
       mode: moveModeOf(this.mode, ship.mode, ship.state.frame),
       pose,
       buttons: buttonsOf({
@@ -494,24 +528,32 @@ export class Game {
     location.reload();
   }
 
-  // World time is the server's (ARCHITECTURE §3). It eases toward the server clock, and jumps when a second or more off
-  // (a stall, a hidden tab, frames stepped faster than real time). Shaders animate on renderTime instead, which neither
-  // jumps nor grows to the server's 10^7 s, where a float32 uniform moves in 2 s steps.
+  // World time is the server's (ARCHITECTURE §3, §9), and movement authority judges every input at the time it is
+  // stamped with, which is this clock: so once in the world it is slewed, never stepped. Each frame it advances by the
+  // frame's time, eased toward the server's clock (at most twice as fast to catch up after a stall, standing still rather
+  // than going back), and never more than CLOCK.maxAheadS ahead of it. Shaders animate on renderTime instead, which
+  // advances by exactly the frames' time and stays small: at the server's 10^7 s a float32 uniform moves in 2 s steps.
   get renderTime() {
     return this.time - this.timeBase;
   }
 
+  // Sets world time outright, the render clock carrying on: the first welcome's start of the clock.
   setWorldTime(t) {
     if (t === null || !Number.isFinite(t)) return;
     this.timeBase += t - this.time;
     this.time = t;
   }
 
-  followServerClock(dt) {
-    const t = this.net.serverTime();
-    if (t === null) return;
-    const err = t - this.time;
-    this.setWorldTime(Math.abs(err) >= 1 ? t : this.time + err * Math.min(1, dt * 2));
+  advanceClock(dt) {
+    const prev = this.time;
+    let next = prev + dt;
+    const server = this.net?.joined ? this.net.serverTime() : null;
+    if (server !== null) {
+      next += Math.max(-dt, Math.min(dt, (server - next) * Math.min(1, dt * CLOCK.gain)));
+      next = Math.max(prev, Math.min(next, server + CLOCK.maxAheadS));
+    }
+    this.timeBase += next - prev - dt;
+    this.time = next;
   }
 
   start() {
@@ -546,8 +588,7 @@ export class Game {
     const inp = this.input;
     const playing = (this.mode === 'ship' || this.mode === 'foot') && !this.overlay;
     inp.enabled = playing && inp.locked;
-    this.time += dt;
-    if (this.net?.joined) this.followServerClock(dt);
+    this.advanceClock(dt);
     this.universe.update();
     this.system.update(this.time);
     this.station.update(this.time);
