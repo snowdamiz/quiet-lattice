@@ -7,6 +7,11 @@ export interface ScreenDef {
   hash?: string;
   /** drive the page to the screen and let it settle */
   open(page: Page): Promise<void>;
+  /**
+   * Start the motion the clip should show (a panel opening, a hover, a toast), right before the 60 frames are taken.
+   * Without it the clip shows one second of the settled screen.
+   */
+  motion?(page: Page): Promise<void>;
 }
 
 /** Steps the game by hand, then waits out the HUD's CSS transitions (they run on real time, not game time). */
@@ -26,6 +31,16 @@ export const SCREENS: Record<string, ScreenDef> = {
       await settle(page, 30);
       // the menu fades in on CSS transitions, which run on real time
       await page.waitForTimeout(2500);
+    },
+    async motion(page) {
+      // replay the title's fade-in: restart every CSS animation in the title screen
+      await page.evaluate(() => {
+        const el = document.querySelector<HTMLElement>('.title-screen');
+        for (const a of el?.getAnimations({ subtree: true }) ?? []) {
+          a.cancel();
+          a.play();
+        }
+      });
     },
   },
   'hud-ship': {
