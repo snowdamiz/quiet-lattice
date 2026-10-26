@@ -381,3 +381,23 @@ Format: task id, question → choice → why.
   (family outline, a cut mark per resource, the pip hue); "Ferrite Dust" is "Ferrite"; the trade panel lists the demo
   nine plus any others carried. Nodes under a landed ship are not hidden until P1.E13.T06. → One spec the server
   (P1.E13.T01) computes exactly as the client draws.
+- **P1.E15.T01** Chat and parties (`server/src/social`) → channels: `shard` (everyone online), `system` (the sender's
+  zone, through a per-zone index checked each second), `party` (online members anywhere); the sender hears its own line;
+  text trimmed, control and bidi characters refused by the schema (`ChatText`, `CharacterName` on ChatEvent too); one
+  serialisation per line. Limits per account: 5 at once then 1/s, a flood allowance of 10 (one per 3 s) then a 60 s
+  mute; shard-wide 20 at once then 10/s; mutes in memory, manual mute API for P1.E03.T07; every line logged. A
+  non-fatal `denied {of, code}` reply (separate from `refused`, which closes the socket). Parties: at most 6
+  (`PARTY_MAX`; DESIGN is silent); invites by name (case-insensitive), only to online characters in no party, any
+  member invites, 60 s lapse, 5 at once then one per 10 s per account, at most 8 held; offline and unknown names both
+  get `not_found`; accept joins the inviter's party as it is then, or forms one the inviter leads; only the leader
+  kicks and promotes, promoting an offline member is refused (`offline`); lead passes to the longest-standing online
+  member; a party disbands at one. Disconnect grace 15 s (the phases'), checked at each party's refresh (≤1.1 s late);
+  party state (names, online, system index, health in tenths; no ids or positions) refreshed once a second spread over
+  100 ms ticks and sent only when changed. Zone party tags follow the party service (the first production caller of
+  `setParty`). A kept phase place is reclaimed only under the party it was kept for, for every phase kind (orchestrator
+  decision): a member kicked during its grace is placed afresh. Callers that re-place on join (the quest engine, bays,
+  events) must do it after `social.joined` or pass `partyId: social.partyIdOf(character)`. Nothing social is persisted;
+  a restart dissolves parties. Protocol 3 adds party, denied and the party event; `PROTOCOL_VERSION` carries a history
+  comment and a pinned test, so concurrent bumps conflict visibly. → DESIGN 16.6's Social row at both five and five
+  thousand players. Open: P1.E04.T04 should call `social.moved(session)` on handoff; a disbanded party mid-phase leaves
+  two parties of one in one story phase until re-placed (quest engine).
