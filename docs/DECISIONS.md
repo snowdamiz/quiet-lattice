@@ -24,3 +24,10 @@ Format: task id, question → choice → why.
   nodes: 3 Tier I, 6 Tier II, 8 Tier III and a capstone. → The tables win: 132 nodes. 20 is each branch's point cost
   (17 nodes at 1 point + a 3-point capstone), so owning the web costs 7 × 20 + 6 × 2 = 152 points, matching "~160". The
   plan's count is corrected; the E02.T07 worker corrects DESIGN 9.1.
+- **P1.E02.T08** Started before P1.E02.T07 merged. → Allowed: the protocol needs zod, not the tables' content; ids such as
+  resources and peoples travel as strings (people as an enum) and are validated against the tables by the server. → Kept the
+  critical path to the server moving while the tables were in flight.
+- **P1.E02.T08** Entity ids on the wire → unsigned integers assigned per zone; character and account ids stay strings. →
+  Snapshots are the hot path; integer ids keep them small.
+- **P1.E02.T08** Snapshot number precision → msgpack float64 for every number. → In a system's inertial frame positions reach
+  1e9 m, where float32 loses tens of metres; bandwidth can be tuned later per field.
