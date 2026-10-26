@@ -31,7 +31,8 @@ def load(path):
         _reveal()
     else:
         bpy.ops.wm.read_factory_settings(use_empty=True)
-        bpy.ops.import_scene.gltf(filepath=str(path))
+        # no bone-shape helper objects: the importer would add a parentless "Icosphere" next to every armature
+        bpy.ops.import_scene.gltf(filepath=str(path), disable_bone_shape=True)
     S.clear_cache()
 
 

@@ -12,6 +12,8 @@ Source layout (.blend), DESIGN 19.1 "named collections per variant and LOD":
   An asset with no LOD collections is one variant whose geometry is all LOD0 (the export generates LOD1-3).
 
 Export layout (.glb), written by the export:
+  (the glTF importer moves every skinned mesh under its armature; the export stamps each one with art_variant and
+  art_lod extras, and the reader puts it back in that variant's LOD)
   <asset>                       root node (asset_class extra optional)
     [<variant>]                 a node per extra variant
       <variant>_LOD<n>          a node per LOD holding that LOD's meshes, pivots and animated parts
@@ -21,6 +23,11 @@ import bpy
 import numpy as np
 
 from . import rules as R
+
+
+STAMP_VARIANT = "art_variant"  # on skinned meshes in a .glb: the variant and LOD they were exported in
+STAMP_LOD = "art_lod"
+IMPORT_HELPERS = "glTF_not_exported"  # the importer's collection for helper objects (bone shapes)
 
 
 class Variant:
@@ -256,7 +263,9 @@ def _source_asset(rules, coll):
 # ---------------------------------------------------------------------------------------------- export (.glb)
 def collect_export(rules):
     model = Model("export")
-    roots = [o for o in bpy.data.objects if o.parent is None]
+    helpers = bpy.data.collections.get(IMPORT_HELPERS)
+    skip = {o.name for o in helpers.all_objects} if helpers else set()
+    roots = [o for o in bpy.data.objects if o.parent is None and o.name not in skip]
     model.ref_leaks = [o for o in bpy.data.objects if R.strip(o.name).startswith("REF_")]
     roots = [o for o in roots if not R.strip(o.name).startswith("REF_")]
     lod_roots = {}
@@ -295,8 +304,12 @@ def collect_export(rules):
 
 def _export_tree(rules, asset, root):
     in_lod = set()
+    stamped = []
 
     def visit(o):
+        if STAMP_LOD in o.keys() and STAMP_VARIANT in o.keys():
+            stamped.append(o)  # a skinned mesh the importer moved under its armature: its stamp says where it belongs
+            return
         parts = R.lod_parts(o.name)
         if parts and o is not root:
             base, n, legacy = parts
@@ -312,6 +325,14 @@ def _export_tree(rules, asset, root):
             visit(c)
 
     visit(root)
+    for o in stamped:
+        if o.name in in_lod:
+            continue
+        vid, n = str(o[STAMP_VARIANT]), int(o[STAMP_LOD])
+        v = asset.variant(vid)
+        v.lods.setdefault(n, []).extend(subtree(o))
+        v.decl.setdefault(n, {"kind": "object", "name": f"{vid}_LOD{n}", "legacy": False})
+        in_lod.update(x.name for x in subtree(o))
     rest = [o for o in subtree(root) if o.name not in in_lod]
     if not asset.variants:
         v = asset.variant(asset.name)

@@ -416,6 +416,56 @@ def build_specks():
     return save(SRC / "props" / "specks.blend")
 
 
+def build_skinned():
+    """A skinned character: the armature sits in the asset collection, two variants x four hand-made LODs share mesh
+    data (like the art worker's proto), meshes are named <part>_LOD<n>, and the LOD0 head carries a facial shape key."""
+    reset()
+    references()
+    a = coll("body")
+    arm = bpy.data.armatures.new("RIG_body")
+    rig = put(bpy.data.objects.new("RIG_body", arm), a)
+    bpy.context.view_layer.objects.active = rig
+    bpy.ops.object.mode_set(mode="EDIT")
+    bones = {}
+    for name, head, tail, parent in (("Root", (0, 0, 0), (0, 0.2, 0), None), ("Spine", (0, 0, 0.9), (0, 0, 1.4), "Root"), ("Head", (0, 0, 1.4), (0, 0, 1.8), "Spine")):
+        b = arm.edit_bones.new(name)
+        b.head, b.tail = head, tail
+        if parent:
+            b.parent = bones[parent]
+        bones[name] = b
+    bpy.ops.object.mode_set(mode="OBJECT")
+    mat = pbr_material("Skin")
+    meshes = {}
+    for n, (sg, rg) in enumerate([(200, 160), (100, 80), (50, 40), (20, 16)]):
+        tmp = sphere(f"tmp_{n}", sg, rg, 1.0)
+        me = tmp.data
+        bpy.data.objects.remove(tmp)
+        co = np.empty(len(me.vertices) * 3, np.float64)
+        me.vertices.foreach_get("co", co)
+        me.vertices.foreach_set("co", (co.reshape(-1, 3) * (0.3, 0.2, 0.9)).ravel())
+        me.name = f"body_mesh_LOD{n}"
+        me.materials.append(mat)
+        meshes[n] = me
+    for vid in ("body_a", "body_b"):
+        for n in range(4):
+            o = put(bpy.data.objects.new(f"{vid}_skin_LOD{n}", meshes[n]), coll(f"{vid}_LOD{n}", a))
+            o.parent = rig
+            o.modifiers.new("Armature", "ARMATURE").object = rig
+            z = np.array([v.co.z for v in meshes[n].vertices])
+            spine, head = o.vertex_groups.new(name="Spine"), o.vertex_groups.new(name="Head")
+            w = np.clip((z - 1.3) / 0.2, 0.0, 1.0)
+            for i, wi in enumerate(w):
+                head.add([i], float(wi), "REPLACE")
+                spine.add([i], float(1.0 - wi), "REPLACE")
+            if vid == "body_a" and n == 0:
+                o.shape_key_add(name="Basis")
+                k = o.shape_key_add(name="jawOpen")
+                for p in k.data:
+                    if p.co.z > 1.5:
+                        p.co.z -= 0.02
+    return save(SRC / "characters" / "body.blend")
+
+
 def build_flat():
     """Passes as a source (procedural channels are baked at export) but its bump is too faint to bake into a normal
     map, so the export fails re-validation."""
@@ -626,6 +676,27 @@ def test_export():
         else:
             expect(False, "contact.glb: the plate has an AO map")
 
+    skinned = SRC / "characters" / "body.blend"
+    rep = core.validate_path(RULES, skinned, family="characters")
+    if rep.status != "PASS":
+        core.write_and_print(rep, verbose=True)
+    expect(rep.status == "PASS", "a skinned 2-variant x 4-LOD character with a shape key passes as a source")
+    src_tris = {v["id"]: v["lodTris"] for a in rep.assets for v in a["variants"]}
+    code = E.main("characters", base + ["--only", "body"])
+    out = OUT / "characters" / "body.glb"
+    expect(code == 0 and out.exists(), "export_characters writes body.glb (its own re-validation passes)")
+    if out.exists():
+        rep = core.validate_path(RULES, out, family="characters", source=skinned)
+        if rep.status != "PASS":
+            core.write_and_print(rep, verbose=True)
+        expect(rep.status == "PASS", "body.glb passes validation")
+        expect([a["asset"] for a in rep.assets] == ["body"], f"body.glb: one asset, no importer bone-shape helper ({[a['asset'] for a in rep.assets]})")
+        got = {v["id"]: v["lodTris"] for a in rep.assets for v in a["variants"]}
+        expect(got == src_tris, f"body.glb: the skinned meshes the importer moved under the armature are back in their variants and LODs ({got})")
+        head = next((o for o in bpy.data.objects if R.strip(o.name) == "body_a_skin_LOD0"), None)
+        keys = [k.name for k in head.data.shape_keys.key_blocks] if head is not None and head.data.shape_keys else []
+        expect("jawOpen" in keys, f"body.glb: the facial shape key survives ({keys})")
+
     stale = OUT / "props" / "flat.glb"
     stale.write_bytes(b"stale")
     code = E.main("props", base + ["--only", "flat", "--bake-res", "64"])
@@ -653,6 +724,7 @@ def main():
         test_review_cases(shared, faulty)
         build_contact()
         twin, specks = build_twin(), build_specks()
+        build_skinned()
         test_round2(crate, twin, specks)
         test_bake_guards(shared)
         test_export()

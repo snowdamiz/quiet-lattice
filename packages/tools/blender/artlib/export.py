@@ -92,6 +92,7 @@ def export_one(rules, family, src, out, args):
     model = report.model
     _bake(rules, family, model, args.bake_res)
     _make_lods(rules, model)
+    _stamp_skins(rules, model)
     names = _material_names(rules, model)
     roots = _build_nodes(rules, model)
     tmpdir = Path(tempfile.mkdtemp(prefix="art-export-"))
@@ -151,6 +152,18 @@ def _bake(rules, family, model, bake_res):
                     bake.ensure_cycles(bpy.context.scene)
                     ready = True
                 bake.bake_material(copy, users, res, ao=ao, label=label, occluders=meshes[n])
+
+
+def _stamp_skins(rules, model):
+    """The glTF importer moves every skinned mesh under its armature, out of its <variant>_LOD<n> node. Each skinned mesh
+    carries its variant and LOD as extras, so re-validation (and the engine) can put it back."""
+    for a in model.assets:
+        for v in a.variants.values():
+            for n, objs in v.lods.items():
+                for o in S.render_meshes(rules, objs):
+                    if o.parent_type == "ARMATURE" or any(md.type == "ARMATURE" and md.object is not None for md in o.modifiers):
+                        o[S.STAMP_VARIANT] = v.id
+                        o[S.STAMP_LOD] = n
 
 
 def _material_names(rules, model):
