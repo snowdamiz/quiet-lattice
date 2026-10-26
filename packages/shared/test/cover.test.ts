@@ -61,26 +61,26 @@ describe('the asteroid belt', () => {
   });
 
   it('where a body crosses the belt, the space within its clearance is open, as the field keeps clear of it', () => {
-    // system 6's moon Phasolmir I-b sits in the belt at t = 0
-    const d = SYSTEMS[6];
-    const poses = systemPoses(d, 0);
-    const moon = d.bodies.find((b) => inBelt(d.belt, poses.bodies[b.index].position))!;
-    expect(moon.name).toBe('Phasolmir I-b');
-    const [mx, my, mz] = poses.bodies[moon.index].position;
+    // one of system 0's moons, set down on the belt's mid radius (whether a body crosses the belt at a given moment depends
+    // on the orbits, so the case is made by hand)
+    const d = sys0;
+    const moon = d.bodies.find((b) => b.kind === 'moon')!;
+    const bodies = systemPoses(d, 0).bodies.map((p, i) => (i === moon.index ? { ...p, position: around(d.belt.radius, 2.2) } : p));
+    const [mx, my, mz] = bodies[moon.index].position;
     const near: Vec3 = [mx + moon.radius * (BELT_BODY_CLEARANCE - 0.1), my, mz];
     const clear: Vec3 = [mx + moon.radius * (BELT_BODY_CLEARANCE + 0.5), my, mz];
     expect(inBelt(d.belt, near) && inBelt(d.belt, clear)).toBe(true);
-    expect(coverAt(d, poses.bodies, near)).toBeNull();
-    expect(coverAt(d, poses.bodies, clear)).toBe('belt');
+    expect(coverAt(d, bodies, near)).toBeNull();
+    expect(coverAt(d, bodies, clear)).toBe('belt');
   });
 
-  it('a belt with a negative width (a planet and its moon bounding it) is |width| wide, as the client draws it', () => {
-    const d = SYSTEMS.find((s) => s.belt.width < 0);
-    expect(d).toBeDefined();
-    const { radius, width } = d!.belt;
-    expect(inBelt(d!.belt, around(radius, 0.5))).toBe(true);
-    expect(inBelt(d!.belt, around(radius - width * 0.9, 0.5))).toBe(true);
-    expect(inBelt(d!.belt, around(radius - width * 1.1, 0.5))).toBe(false);
+  it('every described belt has a positive width; one given with a negative width is |width| wide', () => {
+    for (const d of SYSTEMS) expect(d.belt.width, d.name).toBeGreaterThan(0);
+    const belt = { ...sys0.belt, width: -sys0.belt.width };
+    const { radius, width } = belt;
+    expect(inBelt(belt, around(radius, 0.5))).toBe(true);
+    expect(inBelt(belt, around(radius - width * 0.9, 0.5))).toBe(true);
+    expect(inBelt(belt, around(radius - width * 1.1, 0.5))).toBe(false);
   });
 
   it('coverAt finds it, at any time, whatever the bodies are doing', () => {

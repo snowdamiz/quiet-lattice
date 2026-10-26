@@ -255,3 +255,24 @@ Format: task id, question → choice → why.
   time refreshed through ping/pong; one ZoneManager subscription keeps a tier per zone; the server refuses to boot without
   its shard row (run `pnpm db:migrate`). Two processes must not share a shard row (P3.E37 gives each shard one clock
   owner). → A stub that already behaves like the real service on restarts.
+- **P1.E02.T09** World math is deterministic: `@astra/shared/math/det` ports fdlibm 5.3 (sin, cos, atan, atan2, asin, acos,
+  log, pow; pow's |y| > 2^31 branch uses a 21-bit split of 1/ln 2) and V8's `Math.hypot` algorithm (`hypot2`, `hypot3`);
+  sqrt, floor, round, abs, min, max, imul and fround stay on `Math` because IEEE 754 makes them exact. Under 1 ulp from
+  the true value, atan2 under 2 (1.27 measured); 0 differences from Node in Chromium and WebKit over 861k world values
+  and 313k adversarial calls (Firefox cannot launch on this macOS, so "every engine" is V8 and JSC for now). three.js's
+  `Color` in system.ts is replaced by an exact copy of its sRGB/HSL arithmetic, so a three.js upgrade cannot change
+  world generation. An ESLint rule bans Math transcendentals, `**`, `Math.random` and trig-calling three.js methods in
+  `shared/src/{world,math}`. The belt now sits between the first two planets past the home world (26 of 70 belts had
+  negative widths; 9 of systems 0–9 moved, system 0's from 7.89e6 to 20.19e6 m). Fixtures regenerated once. → The
+  server and every client must build the same world bit for bit. Rule going forward: any shared code whose result both
+  ends compute and compare (generation, loot rolls, thresholds) uses det; still on `Math` and to move when they reach
+  shared: the client's Asteroids counts and sizes (loot), Station layout (P1.E11.T02), Fauna (P1.E08.T01); the XP curve
+  in `combat/level.ts` (`**` before `Math.round`) should use det.pow when the client shows thresholds (P1.E07). Combat
+  hit tests and the pulse-drive ease are decided by the server alone, so they may stay on `Math`.
+- **Plan amendment (orchestrator)** P1.E08.T01 and P1.E13.T01 each had a client half that renders from replicated state,
+  which needs the client net layer (P1.E04.T02) their deps did not list. Split: E08.T01 and E13.T01 are now the server
+  and shared halves; the client halves are P1.E08.T09 (fauna from snapshots, deps T01 and E04.T02) and P1.E13.T06
+  (nodes from zone state, deps T01 and E04.T02). E08.T02's attack animation moves to after T09. E13.T01 now follows
+  E13.T02 because both edit the deposit scatter. E10.T01 (city renderer) now waits for the Thalune kit (E10.T05): built
+  from kit pieces with none yet made, its graded result would grade placeholders; the Ixari and Ulgani kits slot in as
+  they land. → Each task can finish and be verified on its own deps.
