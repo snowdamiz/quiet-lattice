@@ -1,4 +1,4 @@
-// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world clock → zone manager → gateway.
+// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → gateway.
 // index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and close() it.
 import type { AddressInfo } from 'node:net';
 import Fastify, { type FastifyInstance } from 'fastify';
@@ -10,7 +10,8 @@ import { connectRedis } from './db/redis.ts';
 import { registerHttpRoutes } from './gateway/http.ts';
 import { RateLimiter } from './gateway/rateLimit.ts';
 import { attachWsGateway, WS_PATH, type WsGateway } from './gateway/ws.ts';
-import { createServerClock } from './world/clock.ts';
+import { WorldService } from './world/service.ts';
+import { DEFAULT_SHARD_ID, pgShardStore } from './world/shard.ts';
 import { ZoneManager } from './zones/manager.ts';
 
 export interface StartOptions {
@@ -21,6 +22,9 @@ export interface StartOptions {
   config?: Partial<Config>;
   /** Environment to parse; defaults to process.env. */
   env?: Env;
+  /** The shard to run: its row in `shards` and its Redis keys. Defaults to DEFAULT_SHARD_ID; tests that change the world
+   * or its clock run a shard of their own. */
+  shard?: string;
 }
 
 export interface RunningServer {
@@ -33,6 +37,8 @@ export interface RunningServer {
   wsUrl: string;
   app: FastifyInstance;
   ws: WsGateway;
+  /** Season, Count, Edge, tiers and the server clock. */
+  world: WorldService;
   /** Every zone in the process and the tick loop. */
   zones: ZoneManager;
   /** Closes sockets, the HTTP server, Postgres and Redis. Safe to call twice. */
@@ -70,16 +76,25 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     throw new Error(`Redis is not reachable at ${redact(config.REDIS_URL)} (is \`pnpm db:up\` running?)`, { cause: err });
   }
 
-  const clock = createServerClock();
+  let world: WorldService;
+  try {
+    world = await WorldService.open({ store: pgShardStore(database.db, opts.shard ?? DEFAULT_SHARD_ID), mirror: redis.redis, log });
+  } catch (err) {
+    await Promise.allSettled([database.close(), redis.close()]);
+    await app.close();
+    throw new Error('the world service could not load its shard (has `pnpm db:migrate` run?)', { cause: err });
+  }
+  const clock = world.clock;
   const tokens = createTokenService(config.JWT_SECRET);
   const authLimiter = new RateLimiter({ burst: config.AUTH_RATE_BURST, refillPerSecond: config.AUTH_RATE_PER_MINUTE / 60 });
   // Computed now, not on the first unknown-user login, so that login is not the one that pays for it.
   const timingHash = await createTimingHash();
-  const zones = new ZoneManager({ clock, log, tickHz: config.TICK_HZ });
+  const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ });
   const ws = attachWsGateway(app.server, {
     db: database.db,
     tokens,
     clock,
+    world,
     zones,
     log,
     limits: {
@@ -105,6 +120,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
       zones.stop();
       await ws.close();
       await app.close();
+      await world.close();
       await Promise.allSettled([database.close(), redis.close()]);
     })());
 
@@ -117,6 +133,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const { port, address } = app.server.address() as AddressInfo;
   const urlHost = address.includes(':') ? `[${address}]` : address;
   zones.start();
+  world.start();
   log.info({ port, db: redact(config.DATABASE_URL), redis: redact(config.REDIS_URL), tickHz: config.TICK_HZ }, 'astra server ready');
 
   return {
@@ -127,6 +144,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     wsUrl: `ws://${urlHost}:${port}${WS_PATH}`,
     app,
     ws,
+    world,
     zones,
     close,
   };

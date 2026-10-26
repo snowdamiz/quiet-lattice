@@ -8,9 +8,10 @@ import { parseConfig, type Config } from '../src/config.ts';
 import { runMigrations } from '../src/db/migrate.ts';
 import { startServer, type RunningServer } from '../src/server.ts';
 
-export async function startTestServer(config: Partial<Config> = {}): Promise<RunningServer> {
+/** A server on a free port. `shard` runs a shard of its own (uniqueShard()) for tests that change the world or its clock. */
+export async function startTestServer(config: Partial<Config> = {}, opts: { shard?: string } = {}): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
-  return startServer({ port: 0, host: '127.0.0.1', config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config } });
+  return startServer({ port: 0, host: '127.0.0.1', config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config }, shard: opts.shard });
 }
 
 function letters(n: number): string {
@@ -22,6 +23,11 @@ function letters(n: number): string {
 /** A username no earlier run has taken: 3–24 of [A-Za-z0-9_-]. */
 export function uniqueUsername(prefix = 't'): string {
   return `${prefix}_${Date.now().toString(36)}${letters(6)}`.slice(0, 24);
+}
+
+/** A shard id no earlier run has taken. */
+export function uniqueShard(): string {
+  return `test_${Date.now().toString(36)}${letters(8)}`;
 }
 
 /** A character name no earlier run has taken: letters only, two words. */

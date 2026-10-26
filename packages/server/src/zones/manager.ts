@@ -6,11 +6,15 @@
 // tick was due, so ticks run late or back to back during a catch-up still sit one step apart in world time. A loop that
 // falls more than `maxCatchUpTicks` behind skips the rest rather than spiralling; a zone tick that takes longer than
 // `overrunMs` is logged with its duration (at most once a second per zone).
+//
+// Each zone's system tier comes from the world service, and the manager's one subscription keeps it current as the Edge
+// moves (DESIGN 16.3).
 import { performance } from 'node:perf_hooks';
 import type { ClientMessage, PeopleId, Pose, ServerMessage } from '@astra/shared/protocol';
-import type { SystemDescription } from '@astra/shared/world';
+import { tierOfGalaxySystem, type SystemDescription, type Tier } from '@astra/shared/world';
 import type { ServerClock } from '../world/clock.ts';
 import { systemZoneId } from '../world/home.ts';
+import type { TierFlip, WorldSource } from '../world/service.ts';
 import { describeZoneSystem } from './system.ts';
 import { Zone, type InputResult, type ZoneLog, type ZoneMetrics, type ZoneViewer } from './zone.ts';
 
@@ -42,6 +46,8 @@ export interface ZoneManagerOptions {
   mono?: () => number;
   /** the system a zone hosts, by galaxy index (describeZoneSystem) */
   describe?: (systemIndex: number) => SystemDescription;
+  /** the world service, which each zone's tier comes from; without one, tiers are those of the Edge at its default */
+  world?: Pick<WorldSource, 'tierOf' | 'subscribe'>;
 }
 
 export interface Joined {
@@ -53,12 +59,16 @@ export interface Joined {
 
 export interface ZoneStatus extends ZoneMetrics {
   asleep: boolean;
+  /** its system's tier */
+  tier: Tier;
   /** ticks that took longer than overrunMs */
   overruns: number;
 }
 
 interface Slot {
   zone: Zone;
+  /** its system's tier, kept current from the world service */
+  tier: Tier;
   asleep: boolean;
   /** monotonic ms since when it has had no sessions */
   emptySince: number | null;
@@ -82,6 +92,7 @@ export class ZoneManager {
   private readonly log?: ZoneManagerOptions['log'];
   private readonly mono: () => number;
   private readonly describe: (systemIndex: number) => SystemDescription;
+  private readonly world?: ZoneManagerOptions['world'];
   private readonly maxCatchUp: number;
   private readonly sleepAfterMs: number;
   private readonly unloadAfterMs: number;
@@ -103,6 +114,8 @@ export class ZoneManager {
     this.unloadAfterMs = opts.unloadAfterMs ?? 300_000;
     this.overrunMs = opts.overrunMs ?? this.stepMs;
     this.nextAt = this.mono() + this.stepMs;
+    this.world = opts.world;
+    this.world?.subscribe((change) => this.tiersChanged(change.flipped));
   }
 
   /** Loaded zones, asleep or awake. */
@@ -118,6 +131,11 @@ export class ZoneManager {
     return this.slots.get(id)?.asleep ?? false;
   }
 
+  /** The tier of a loaded zone's system. */
+  tier(id: string): Tier | undefined {
+    return this.slots.get(id)?.tier;
+  }
+
   zoneOf(viewer: ZoneViewer): Zone | undefined {
     return this.byViewer.get(viewer)?.zone;
   }
@@ -128,9 +146,10 @@ export class ZoneManager {
     let slot = this.slots.get(id);
     if (!slot) {
       const zone = new Zone({ id, systemIndex, system: this.describe(systemIndex), log: this.log, onViewerRemoved: (viewer) => this.removed(viewer, zone) });
-      slot = { zone, asleep: false, emptySince: null, overruns: 0, overrunsLogged: 0, lastOverrunLog: -Infinity };
+      const tier = this.world ? this.world.tierOf(systemIndex) : tierOfGalaxySystem(systemIndex);
+      slot = { zone, tier, asleep: false, emptySince: null, overruns: 0, overrunsLogged: 0, lastOverrunLog: -Infinity };
       this.slots.set(id, slot);
-      this.log?.info({ zone: id, system: systemIndex, seed: zone.system.seed }, 'zone loaded');
+      this.log?.info({ zone: id, system: systemIndex, seed: zone.system.seed, tier }, 'zone loaded');
     }
     if (slot.asleep) this.log?.debug({ zone: id }, 'zone woken');
     slot.asleep = false;
@@ -251,9 +270,19 @@ export class ZoneManager {
     }
   }
 
-  /** Per-zone tick metrics: entities, sessions, p50/p95/max tick ms, overruns. */
+  /** Per-zone tick metrics: entities, sessions, p50/p95/max tick ms, overruns, and the zone's tier. */
   metrics(): ZoneStatus[] {
-    return [...this.slots.values()].map((s) => ({ ...s.zone.metrics(), asleep: s.asleep, overruns: s.overruns }));
+    return [...this.slots.values()].map((s) => ({ ...s.zone.metrics(), asleep: s.asleep, tier: s.tier, overruns: s.overruns }));
+  }
+
+  /** The world service moved the Edge: loaded zones whose system changed tier take the new one. */
+  private tiersChanged(flipped: readonly TierFlip[]): void {
+    for (const { system, from, to } of flipped) {
+      const slot = this.slots.get(systemZoneId(system));
+      if (!slot) continue;
+      slot.tier = to;
+      this.log?.info({ zone: slot.zone.id, from, to }, 'zone tier changed');
+    }
   }
 
   /** A zone dropped a session whose entity was despawned: forget its route and pass the news on. */

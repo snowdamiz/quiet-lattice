@@ -1,8 +1,12 @@
 // ZoneManager: zones open on the first join, many run side by side, empty ones sleep and unload; the fixed-step loop
-// catches up a little and skips the rest; overruns are logged; inputs and acks reach the right zone.
+// catches up a little and skips the rest; overruns are logged; inputs and acks reach the right zone; each zone's tier
+// follows the world service.
+import { EDGE_X, galaxyTiers, tierOfGalaxySystem } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { systemSeed } from '../world/home.ts';
-import { ZoneManager, type ZoneCharacter } from './manager.ts';
+import { WorldService } from '../world/service.ts';
+import { newShardRecord } from '../world/shard.ts';
+import { ZoneManager, type ZoneCharacter, type ZoneManagerOptions } from './manager.ts';
 import { INPUT_LIMITS, type ZoneViewer } from './zone.ts';
 
 class Sink implements ZoneViewer {
@@ -19,7 +23,7 @@ interface LogLine {
   msg: string;
 }
 
-function setup(opts: { overrunMs?: number } = {}) {
+function setup(opts: Pick<ZoneManagerOptions, 'overrunMs' | 'world'> = {}) {
   let mono = 1000;
   let world = 5e6;
   const lines: LogLine[] = [];
@@ -223,6 +227,39 @@ describe('ZoneManager', () => {
     expect(zones.join(s, character(0)).zone).toBe(zone);
     expect(zones.isAsleep('sys:0')).toBe(false);
     expect(heard).toHaveLength(1);
+  });
+
+  it("takes each zone's tier from the world service and follows it as the Edge moves", async () => {
+    const world = await WorldService.open({ store: { id: 't', load: async () => newShardRecord('t', 0, 0), saveTime: async () => {} } });
+    const { zones, lines } = setup({ world });
+    // a system the Edge-ward fringe takes in when the Edge comes 25 ly nearer, and one it leaves alone
+    const nearer = galaxyTiers(EDGE_X - 25);
+    const flips = galaxyTiers(EDGE_X).findIndex((t, i) => t.tier !== nearer[i]!.tier);
+    const stays = 0;
+    expect(flips).toBeGreaterThan(0);
+    zones.join(new Sink(1), character(flips, 'Ves'));
+    zones.join(new Sink(2), character(stays, 'Ora'));
+    expect(zones.tier(`sys:${flips}`)).toBe(tierOfGalaxySystem(flips));
+    expect(zones.tier(`sys:${stays}`)).toBe(0);
+    expect(zones.tier('sys:999')).toBeUndefined();
+
+    world.update({ edgeX: EDGE_X - 25 });
+    expect(zones.tier(`sys:${flips}`)).toBe(5);
+    expect(zones.tier(`sys:${stays}`)).toBe(0);
+    expect(lines.filter((l) => l.msg === 'zone tier changed').map((l) => l.obj)).toEqual([{ zone: `sys:${flips}`, from: tierOfGalaxySystem(flips), to: 5 }]);
+    expect(zones.metrics().find((m) => m.id === `sys:${flips}`)!.tier).toBe(5);
+
+    // a zone loaded after the change opens at its new tier
+    const other = nearer.findIndex((t, i) => i !== flips && t.tier !== tierOfGalaxySystem(i));
+    expect(other).toBeGreaterThan(flips);
+    zones.join(new Sink(3), character(other, 'Tam'));
+    expect(zones.tier(`sys:${other}`)).toBe(5);
+  });
+
+  it('gives zones the tiers of the Edge at its default without a world service', () => {
+    const { zones } = setup();
+    zones.join(new Sink(1), character(20));
+    expect(zones.tier('sys:20')).toBe(tierOfGalaxySystem(20));
   });
 
   it('runs its own timer at the tick rate', async () => {

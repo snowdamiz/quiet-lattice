@@ -12,6 +12,12 @@ export interface ScreenDef {
    * Without it the clip shows one second of the settled screen.
    */
   motion?(page: Page): Promise<void>;
+  /** Which of the 60 clip frames go on the clip sheet (all are written to _frames/). Default: every sixth. */
+  sheetFrames?: readonly number[];
+  /** Extra 16:9 stills, taken after the main one and before the clip: `16x9-<name>.png` after `pose` drives the page. */
+  stills16x9?: Record<string, (page: Page) => Promise<void>>;
+  /** Draw scrollbars (headless Chromium hides them by default), for screens whose scroll affordance is being judged. */
+  showScrollbars?: boolean;
 }
 
 /** Steps the game by hand, then waits out the HUD's CSS transitions (they run on real time, not game time). */
@@ -19,6 +25,256 @@ const settle = async (page: Page, frames = 60) => {
   await page.evaluate((n) => (window as unknown as { step(n: number): Promise<void> }).step(n), frames);
   await page.waitForTimeout(1200);
 };
+
+interface InventoryApi {
+  state: { suit: unknown[]; pods: unknown[][] };
+  restore(saved: unknown): boolean;
+  add(id: string, n: number, to?: 'auto' | 'suit' | 'cargo'): number;
+  setLoadout(l: { ship: { hull: string; modules: Record<string, string>; cargoPods: number; livery: number } | null; skills?: string[] }): boolean;
+}
+
+/** One inventory capture: the ship (its pods aboard), the skills, and what the cargo holds. */
+interface InventoryScene {
+  hull: string;
+  pods: number;
+  skills?: string[];
+  /** The modules fitted, by hardpoint (default: Pulse Lasers on s1). */
+  modules?: Record<string, string>;
+  /** Added to the cargo pods in order, filling them pod by pod. */
+  cargo: [string, number][];
+  /** Or each pod's stacks laid out exactly, pod by pod. */
+  podStacks?: [string, number][][];
+}
+
+/** A mining trip's haul in the suit, the same in every scene. */
+const SUIT_HAUL: [string, number][] = [
+  ['ferrite', 12480],
+  ['carbon', 386],
+  ['oxygen', 92],
+  ['sodium', 45],
+  ['dihydrogen', 210],
+  ['copper', 64],
+  ['tritium', 2200],
+  ['cobalt', 18],
+  ['gold', 31],
+];
+
+const INVENTORY_SCENES: Record<string, InventoryScene> = {
+  // the Lark every pilot starts in: one pod
+  lark: {
+    hull: 'lark',
+    pods: 1,
+    cargo: [
+      ['tritium', 9999],
+      ['gold', 140],
+      ['cobalt', 75],
+      ['mining_laser', 1],
+    ],
+  },
+  // the Lark with Pack Mule learned: a second pod in the bay it adds, and stacks of 15,000
+  packMule: {
+    hull: 'lark',
+    pods: 2,
+    skills: ['pack_mule'],
+    cargo: [
+      ['tritium', 15000 + 6400],
+      ['gold', 140],
+      ['cobalt', 75],
+      ['mining_laser', 1],
+      ['copper', 820],
+      ['carbon', 2600],
+      ['ferrite', 15000],
+      ['dihydrogen', 900],
+      ['flak_ammo', 300],
+    ],
+  },
+  // a Mule hauler: four pods, two of them empty
+  mule: {
+    hull: 'mule',
+    pods: 4,
+    cargo: [
+      ['tritium', 9999 * 3 + 4120],
+      ['gold', 640],
+      ['cobalt', 375],
+      ['copper', 1210],
+      ['ferrite', 9999 + 2760],
+      ['carbon', 4400],
+      ['mining_laser', 1],
+      ['flak_ammo', 300],
+    ],
+  },
+  // a Longhaul freighter with every pod in use: the pod list scrolls
+  longhaulFull: {
+    hull: 'longhaul',
+    modules: { m1: 'flak_cannon' },
+    pods: 16,
+    cargo: [],
+    podStacks: [
+      [
+        ['tritium', 9999],
+        ['tritium', 9999],
+        ['tritium', 9999],
+        ['tritium', 4120],
+      ],
+      [
+        ['ferrite', 9999],
+        ['ferrite', 9999],
+        ['ferrite', 3100],
+      ],
+      [
+        ['carbon', 9999],
+        ['carbon', 2600],
+      ],
+      [
+        ['copper', 1210],
+        ['cobalt', 375],
+        ['gold', 640],
+      ],
+      [
+        ['oxygen', 1800],
+        ['sodium', 950],
+      ],
+      [
+        ['dihydrogen', 9999],
+        ['dihydrogen', 4200],
+      ],
+      [
+        ['tritium', 9999],
+        ['tritium', 9999],
+        ['tritium', 6100],
+      ],
+      [
+        ['ferrite', 9999],
+        ['copper', 820],
+      ],
+      [
+        ['gold', 210],
+        ['cobalt', 160],
+        ['copper', 400],
+      ],
+      [
+        ['carbon', 9999],
+        ['carbon', 9999],
+        ['carbon', 1400],
+      ],
+      [
+        ['frostglass', 120],
+        ['cinderglass', 85],
+      ],
+      [
+        ['tritium', 9999],
+        ['tritium', 2500],
+      ],
+      [
+        ['dihydrogen', 900],
+        ['oxygen', 640],
+        ['sodium', 300],
+      ],
+      [
+        ['ferrite', 9999],
+        ['ferrite', 9999],
+        ['ferrite', 9999],
+        ['ferrite', 750],
+      ],
+      [
+        ['cobalt', 90],
+        ['gold', 75],
+      ],
+      [
+        ['mining_laser', 1],
+        ['tritium', 3300],
+        ['flak_ammo', 300],
+      ],
+    ],
+  },
+  // a Longhaul freighter: sixteen pods, two in use, the empty fourteen as one line
+  longhaul: {
+    hull: 'longhaul',
+    modules: { m1: 'flak_cannon' },
+    pods: 16,
+    cargo: [
+      ['tritium', 9999 * 6 + 5200],
+      ['ferrite', 9999 * 2 + 3100],
+      ['gold', 640],
+      ['carbon', 4400],
+      ['cobalt', 375],
+      ['flak_ammo', 300],
+    ],
+  },
+};
+
+/** Boots a game, fits the scene's ship, loads the suit and the cargo, opens the inventory and hovers the ferrite stack:
+ * the detail line names it, its count against the stack cap, and where it comes from. */
+async function openInventory(page: Page, scene: InventoryScene): Promise<void> {
+  await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+  await page.evaluate(
+    ({ scene, suit }) => {
+      const g = (window as unknown as { game: { inventory: InventoryApi; menus: { openInventory(): void } } }).game;
+      const inv = g.inventory;
+      inv.setLoadout({
+        ship: { hull: scene.hull, modules: scene.modules ?? { s1: 'pulse_lasers' }, cargoPods: scene.pods, livery: 0 },
+        skills: scene.skills ?? [],
+      });
+      for (const [id, n] of suit) inv.add(id, n, 'suit');
+      for (const [id, n] of scene.cargo) inv.add(id, n, 'cargo');
+      if (scene.podStacks) {
+        const pods = inv.state.pods.map((pod, p) =>
+          pod.map((_, i) => (scene.podStacks![p]?.[i] ? { item: scene.podStacks![p]![i]![0], count: scene.podStacks![p]![i]![1] } : null)),
+        );
+        inv.restore({ ...inv.state, pods });
+      }
+      g.menus.openInventory();
+    },
+    { scene, suit: SUIT_HAUL },
+  );
+  await settle(page, 60);
+  const slot = page.locator('.inv-slot[data-c="suit"][data-i="1"]');
+  const box = await slot.boundingBox();
+  if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.waitForTimeout(500);
+}
+
+/**
+ * The inventory's motion for the clip: the panel opens again (it rises 8 px as it fades in, 0.36 s), then, 0.3 s of
+ * animation time later, a click sends the carbon stack across to the cargo through the screen's own pointer handlers: a
+ * tile flies from the suit slot to the cargo slot (0.18 s, ease-out), the slot it lands on settles back, and on a merge
+ * (the Mule's and the Longhaul's carbon) the count ticks up to the new total. Page timers run on real time while the clip
+ * slows CSS and Web Animations tenfold, hence 3000 ms: the flight spans about frames 18 to 29.
+ */
+async function inventoryMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const menus = (window as unknown as { game: { menus: { closeAll(): void; openInventory(): void } } }).game.menus;
+    menus.closeAll();
+    menus.openInventory();
+    setTimeout(() => {
+      const slot = document.querySelector('.inv-slot[data-c="suit"][data-i="3"]');
+      if (!slot) return;
+      const at = slot.getBoundingClientRect();
+      const init = { bubbles: true, button: 0, clientX: at.x + at.width / 2, clientY: at.y + at.height / 2, pointerId: 1, isPrimary: true };
+      slot.dispatchEvent(new PointerEvent('pointerdown', init));
+      slot.dispatchEvent(new PointerEvent('pointerup', init));
+    }, 3000);
+  });
+}
+
+/** The open (every third frame), every frame of the flight, then the landing settling. */
+const INVENTORY_SHEET = [0, 3, 6, 9, 12, 15, ...Array.from({ length: 13 }, (_, k) => 18 + k), 33, 36, 40, 45, 50, 59];
+
+const inventoryScreen = (scene: InventoryScene, extra: Partial<ScreenDef> = {}): ScreenDef => ({
+  open: (page) => openInventory(page, scene),
+  motion: inventoryMotion,
+  sheetFrames: INVENTORY_SHEET,
+  ...extra,
+});
+
+/** The cargo list scrolled to its end: the last pod and the footer both in view. */
+async function scrollPodsToEnd(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const pods = document.querySelector('.inv-pods');
+    if (pods) pods.scrollTop = pods.scrollHeight;
+  });
+  await page.waitForTimeout(300);
+}
 
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
@@ -66,6 +322,16 @@ export const SCREENS: Record<string, ScreenDef> = {
       await settle(page, 60);
     },
   },
+  // the inventory (P1.E06.T04): suit stacks beside the ship's cargo pods after a mining trip, the ferrite stack hovered.
+  // `inventory` is the Lark every pilot starts in (one pod); `inventory-pack-mule` the Lark with Pack Mule (two pods,
+  // stacks of 15,000); `inventory-hauler` a Mule's four pods; `inventory-longhaul` a Longhaul's sixteen.
+  inventory: inventoryScreen(INVENTORY_SCENES.lark!),
+  'inventory-pack-mule': inventoryScreen(INVENTORY_SCENES.packMule!),
+  'inventory-hauler': inventoryScreen(INVENTORY_SCENES.mule!),
+  'inventory-longhaul': inventoryScreen(INVENTORY_SCENES.longhaul!),
+  // every one of a Longhaul's sixteen pods in use: the pod list scrolls, with its scrollbar drawn, and a still of it
+  // scrolled to the end (16x9-scrolled.png)
+  'inventory-longhaul-full': inventoryScreen(INVENTORY_SCENES.longhaulFull!, { showScrollbars: true, stills16x9: { scrolled: scrollPodsToEnd } }),
   // the demo's box station, from outside and from a hangar pad (grader calibration, P1.E14.T09; later the kit-built
   // Waystation of P1.E11.T02)
   'station-exterior': {

@@ -228,12 +228,11 @@ export class Asteroids {
     this.spawnDebris(a.pos, null, 40, a.size * 0.08);
     g.audio.play('explode');
     const amount = Math.round(20 + a.size * 1.2);
-    g.inventory.add('tritium', amount);
-    g.hud.pickup('tritium', amount);
+    g.hud.collected('tritium', amount, g.inventory.add('tritium', amount));
     if (a.rich) {
       const extra = Math.round(10 + a.size * 0.4);
-      g.inventory.add(a.rich, extra);
-      setTimeout(() => g.hud.pickup(a.rich, extra), 300);
+      const got = g.inventory.add(a.rich, extra);
+      setTimeout(() => g.hud.collected(a.rich, extra, got), 300);
     }
     g.audio.play('pickup');
   }

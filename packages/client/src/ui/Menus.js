@@ -1,6 +1,8 @@
-// Title screen, pause screen, settings and controls sheets, trade terminal, the 3D navigation map
+// Title screen, pause screen, settings and controls sheets, trade terminal, the inventory, the 3D navigation map
 // and the warp sequence.
-import { RESOURCES } from '../gameplay/Inventory.js';
+import { getHull, getItem, getResource } from '@astra/shared/data';
+import { itemInfo, slotAt, stackCap, usedSlots } from '@astra/shared/inventory';
+import { PIPS, RESOURCES } from '../gameplay/Inventory.js';
 import { hasSave, applyUpgrade } from '../gameplay/Save.js';
 import { MapView } from './map/MapView.js';
 
@@ -15,7 +17,7 @@ function el(tag, cls, parent, html) {
 const KEYS = [
   ['Starship', [['Steer', ['Mouse']], ['Throttle up · down', ['W', 'S']], ['Roll · strafe when hovering', ['A', 'D']], ['Thrusters up · down', ['Space', 'C']], ['Boost', ['Shift']], ['Pulse drive', ['J']], ['Land · take off', ['E']], ['Exit ship', ['F']], ['Lasers', ['LMB']], ['Camera view', ['V']], ['Look back', ['B']]]],
   ['On foot', [['Move', ['W', 'A', 'S', 'D']], ['Sprint', ['Shift']], ['Jump · jetpack', ['Space']], ['Mining beam', ['LMB']], ['Scanner pulse', ['C']], ['Interact · analyze', ['E']], ['Board ship', ['F']]]],
-  ['General', [['Navigation map', ['M']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
+  ['General', [['Inventory', ['I']], ['Navigation map', ['M']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
 ];
 
 function controlsHTML() {
@@ -43,6 +45,63 @@ const SHOP = [
 ];
 
 
+// the tag a non-resource item wears in its slot
+const KIND_TAG = { consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD', cosmetic: 'COS', component: 'CMP' };
+
+function slotRefOf(slot) {
+  const i = Number(slot.dataset.i);
+  return slot.dataset.c === 'suit' ? { c: 'suit', i } : { c: 'pod', p: Number(slot.dataset.p), i };
+}
+
+function refKey(ref) {
+  return ref.c === 'suit' ? `s${ref.i}` : `p${ref.p}.${ref.i}`;
+}
+
+function cap1(t) {
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+// what a refused move tells the player
+function refusal(error) {
+  switch (error.code) {
+    case 'stack_full':
+      return 'That stack is full';
+    case 'item_mismatch':
+      return 'Part of a stack goes onto an empty slot or the same item';
+    case 'no_room':
+      return cap1(error.message);
+    default:
+      return 'That move is not possible';
+  }
+}
+
+// The stacks a move carried, slot to slot: a move or a merge (a swap carries both ways), a split, or a transfer (to the
+// first slot it changed on the other side). Compacting carries nothing anywhere in particular.
+function carried(before, after, op, r) {
+  switch (op.op) {
+    case 'move':
+    case 'merge': {
+      const a = slotAt(before, op.from);
+      const b = slotAt(before, op.to);
+      return a && b && a.item !== b.item
+        ? [
+            { from: op.from, to: op.to },
+            { from: op.to, to: op.from },
+          ]
+        : [{ from: op.from, to: op.to }];
+    }
+    case 'split':
+      return r.to ? [{ from: op.from, to: r.to }] : [];
+    case 'transfer': {
+      const there = op.from.c === 'suit' ? after.pods.flatMap((pod, p) => pod.map((_, i) => ({ c: 'pod', p, i }))) : after.suit.map((_, i) => ({ c: 'suit', i }));
+      const to = there.find((ref) => slotAt(before, ref) !== slotAt(after, ref));
+      return to ? [{ from: op.from, to }] : [];
+    }
+    default:
+      return [];
+  }
+}
+
 export class Menus {
   constructor(game) {
     this.game = game;
@@ -60,6 +119,7 @@ export class Menus {
     this.help.addEventListener('click', (e) => {
       if (e.target === this.help || e.target.closest('[data-close]')) this.toggleHelp();
     });
+    this.buildInventory();
     this.buildMap();
     this.warpCanvas = el('canvas', 'overlay warp-canvas', this.root);
     window.addEventListener(
@@ -75,6 +135,10 @@ export class Menus {
         if (e.code === 'KeyH' && this.game.overlay === 'help') {
           e.stopPropagation();
           this.toggleHelp();
+        }
+        if (e.code === 'KeyI' && this.game.overlay === 'inventory') {
+          e.stopPropagation();
+          this.closeAll();
         }
       },
       true,
@@ -166,6 +230,7 @@ export class Menus {
     }
     if (g.overlay === 'map') this.updateMap(dt);
     if (g.overlay === 'trade') this.refreshTradeUnits();
+    if (g.overlay === 'inventory' && g.inventory.key() !== this.invKey) this.renderInventory();
   }
 
   updatePauseHint() {
@@ -330,7 +395,8 @@ export class Menus {
       if (g.overlay === o.name) o.onClose();
       o.el.classList.remove('show');
     }
-    for (const e of [this.trade, this.help, this.map]) e.classList.remove('show');
+    if (g.overlay === 'inventory') this.endDrag();
+    for (const e of [this.trade, this.help, this.inv, this.map]) e.classList.remove('show');
     const was = g.overlay;
     g.overlay = null;
     if (was && (g.mode === 'ship' || g.mode === 'foot')) g.input.lock();
@@ -364,7 +430,7 @@ export class Menus {
     for (const it of SHOP) {
       const owned = it.once && this.bought.has(it.id);
       shop += `<div class="shop-item ${owned ? 'owned' : ''}" title="${it.desc}"><div class="ico">${it.icon}</div><h4>${it.name}</h4>
-        <div class="buy"><span>${owned ? 'Owned' : `⌬ ${it.price.toLocaleString()}`}</span><button class="btn small" data-buy="${it.id}" ${owned || inv.units < it.price ? 'disabled' : ''}>${owned ? '✓' : 'Buy'}</button></div></div>`;
+        <div class="buy"><span>${owned ? 'Owned' : `⌬ ${it.price.toLocaleString()}`}</span><button class="btn small" data-buy="${it.id}" ${owned || inv.units < it.price || (it.id === 'warpcell' && !inv.room('warp_cell')) ? 'disabled' : ''}>${owned ? '✓' : 'Buy'}</button></div></div>`;
     }
     this.trade.innerHTML = `<div class="panel frame">
       <div class="panel-head">
@@ -394,6 +460,10 @@ export class Menus {
     const g = this.game;
     const it = SHOP.find((s) => s.id === id);
     if (g.inventory.units < it.price) return g.audio.play('error');
+    if (id === 'warpcell' && !g.inventory.room('warp_cell')) {
+      g.hud.toast('No room for a warp cell in the suit or the cargo pods', 'warn');
+      return g.audio.play('error');
+    }
     g.inventory.units -= it.price;
     if (id === 'warpcell') g.inventory.warpCells++;
     if (id === 'pulse') g.ship.pulseFuel = 100;
@@ -411,6 +481,364 @@ export class Menus {
   refreshTradeUnits() {
     const u = this.trade.querySelector('.u');
     if (u) u.textContent = this.game.inventory.units.toLocaleString();
+  }
+
+  // ---------- inventory ----------
+  // Suit stacks beside the ship's cargo pods (DESIGN 10.1). Click a stack to send it across, drag it onto a slot to place,
+  // merge or swap it, shift-click to split it in half (shift-drag moves half). Every move is a request: the inventory
+  // predicts it with the shared rules and the server has the last word (ARCHITECTURE §7).
+  buildInventory() {
+    this.inv = el('div', 'overlay panel-screen inv-screen', this.root);
+    this.invKey = '';
+    this.invChanged = new Set();
+    this.inv.addEventListener('click', (e) => {
+      if (e.target === this.inv || e.target.closest('[data-close]')) return this.closeAll();
+      const c = e.target.closest('[data-compact]');
+      if (c && !c.disabled) this.invRequest({ op: 'compact', c: c.dataset.compact });
+      const shut = e.target.closest('.inv-pod.shut');
+      if (shut) this.openPod(shut);
+    });
+    this.inv.addEventListener('pointerover', (e) => {
+      const slot = e.target.closest('.inv-slot');
+      if (slot && !this.drag?.ghost) this.showDetail(slot);
+    });
+    this.inv.addEventListener('pointerout', (e) => {
+      if (e.target.closest('.inv-slot') && !e.relatedTarget?.closest?.('.inv-slot') && !this.drag?.ghost) this.showDetail(null);
+    });
+    this.inv.addEventListener('pointerdown', (e) => {
+      const slot = e.target.closest('.inv-slot:not(.empty)');
+      if (!slot || e.button !== 0) return;
+      e.preventDefault();
+      this.drag = { from: slotRefOf(slot), el: slot, x: e.clientX, y: e.clientY, shift: e.shiftKey, ghost: null, over: null };
+    });
+    window.addEventListener('pointermove', (e) => this.dragMove(e));
+    window.addEventListener('pointerup', (e) => this.dragEnd(e));
+  }
+
+  openInventory() {
+    const g = this.game;
+    if (g.overlay || (g.mode !== 'ship' && g.mode !== 'foot')) return;
+    this.invMsg = null;
+    this.invChanged.clear();
+    this.podScroll = 0;
+    this.invEnter = true;
+    this.podsOpen = new Set();
+    this.podsListed = new Set();
+    // shown first, so the pod list can measure itself
+    this.open('inventory', this.inv);
+    this.renderInventory();
+    g.audio.play('ui');
+  }
+
+  toggleInventory() {
+    if (this.game.overlay === 'inventory') this.closeAll();
+    else this.openInventory();
+  }
+
+  renderInventory() {
+    const inv = this.game.inventory;
+    const st = inv.state;
+    this.invKey = inv.key();
+    // the panel rises in when it opens, not again on every redraw after a move
+    const enter = this.invEnter;
+    this.invEnter = false;
+    const hull = inv.hull ? getHull(inv.hull).name : null;
+    const grid = (refs) => `<div class="inv-grid">${refs.map((r) => this.slotHTML(st, r)).join('')}</div>`;
+    const cargoCap = st.pods.reduce((n, pod) => n + pod.length, 0);
+    const stackBtn = (c, on) => `<button class="inv-act" data-compact="${c}" ${on ? '' : 'disabled'} title="Merge partial stacks and close the gaps">Stack</button>`;
+    this.inv.innerHTML = `<div class="panel frame inv-panel${enter ? '' : ' still'}">
+      <div class="panel-head">
+        <div><div class="label">Exo-suit${hull ? ` · ${hull}` : ''}</div><h2>Inventory</h2></div>
+        <div class="balance"><b class="u">${st.units.toLocaleString()}</b><button class="close-x" data-close>✕</button></div>
+      </div>
+      <div class="inv-cols">
+        <section class="inv-side">
+          <header class="inv-side-head"><h4 class="mono col-title">Suit</h4><span class="mono">${usedSlots(st, 'suit')} / ${st.suit.length} stacks</span>${stackBtn('suit', true)}</header>
+          ${grid(st.suit.map((_, i) => ({ c: 'suit', i })))}
+          <p class="inv-note"><i></i>Kept through the Recall</p>
+        </section>
+        <section class="inv-side">
+          <header class="inv-side-head"><h4 class="mono col-title">Ship cargo</h4><span class="mono">${cargoCap ? `${st.pods.length} pod${st.pods.length === 1 ? '' : 's'} · ${usedSlots(st, 'cargo')} / ${cargoCap} stacks` : 'No pods'}</span>${stackBtn('cargo', cargoCap > 0)}</header>
+          <div class="inv-pods">${this.podsHTML(st)}</div>
+          <div class="inv-more mono"></div>
+          <p class="inv-note drop"><i></i>Drops where the ship dies, for anyone to loot</p>
+        </section>
+      </div>
+      <footer class="inv-foot">
+        <div class="inv-detail"></div>
+        <div class="inv-keys"><span><kbd>Click</kbd>Move across</span><span><kbd>Drag</kbd>Place · merge · swap</span><span><kbd>Shift</kbd><kbd>Click</kbd>Split</span></div>
+      </footer>
+    </div>`;
+    // a long pod list scrolls: keep the place across redraws, and say how many pods lie below the fold
+    const podsEl = this.inv.querySelector('.inv-pods');
+    const moreEl = this.inv.querySelector('.inv-more');
+    podsEl.scrollTop = this.podScroll || 0;
+    // (while the list scrolls the line stays, pointing down, or up once at the end, so the list never changes height)
+    const more = () => {
+      this.podScroll = podsEl.scrollTop;
+      const box = podsEl.getBoundingClientRect();
+      const scrolls = podsEl.scrollHeight > podsEl.clientHeight + 1;
+      const pods = (c) => (c.dataset.from ? Number(c.dataset.to) - Number(c.dataset.from) + 1 : 1);
+      let below = 0;
+      let above = 0;
+      if (scrolls)
+        for (const c of podsEl.children) {
+          const r = c.getBoundingClientRect();
+          if (r.bottom > box.bottom + 1) below += pods(c);
+          else if (r.top < box.top - 1) above += pods(c);
+        }
+      const s = (n) => (n === 1 ? '' : 's');
+      moreEl.textContent = below ? `↓ ${below} more pod${s(below)} below` : above ? `↑ ${above} pod${s(above)} above` : '';
+      moreEl.classList.toggle('on', scrolls);
+    };
+    podsEl.addEventListener('scroll', more, { passive: true });
+    more();
+    this.podsMore = more;
+    this.invDetail = this.inv.querySelector('.inv-detail');
+    this.invChanged.clear();
+    if (this.invMsg) this.paintMessage();
+    else this.showDetail(this.drag ? null : this.inv.querySelector('.inv-slot:hover'));
+  }
+
+  // A pod holding something shows its slots. An empty one is one header line until it is clicked or a stack is dragged
+  // over it, and a run of three or more empty pods (a big hauler's) is a single line that lists them the same way, so
+  // sixteen pods fit the column. A pod opened stays open while the panel is, so emptying it never pulls the slots away.
+  podsHTML(st) {
+    if (!st.pods.length) return `<div class="inv-none"><b>No ship</b><span>Cargo pods come with a hull. Any Waystation sells one.</span></div>`;
+    const open = (this.podsOpen ||= new Set());
+    const listed = (this.podsListed ||= new Set());
+    const empty = (p) => !st.pods[p].some(Boolean) && !open.has(p);
+    let html = '';
+    for (let p = 0; p < st.pods.length; ) {
+      if (!empty(p)) {
+        open.add(p);
+        html += this.podHTML(st, p++);
+        continue;
+      }
+      let q = p;
+      while (q < st.pods.length && empty(q)) q++;
+      if (q - p >= 3 && !listed.has(p)) {
+        html += `<div class="inv-pod shut group" data-from="${p}" data-to="${q - 1}" title="List the empty pods"><div class="inv-pod-head mono"><span>Pods ${p + 1}–${q}</span><span>Empty · ${q - p} × ${st.pods[p].length} stacks</span></div></div>`;
+        p = q;
+      } else for (; p < q; p++) html += this.shutPodHTML(p, st.pods[p].length);
+    }
+    return html;
+  }
+
+  podHTML(st, p) {
+    const pod = st.pods[p];
+    const slots = pod.map((_, i) => this.slotHTML(st, { c: 'pod', p, i })).join('');
+    return `<div class="inv-pod" data-pod="${p}"><div class="inv-pod-head mono"><span>Pod ${p + 1}</span><span>${pod.filter(Boolean).length} / ${pod.length}</span></div><div class="inv-grid">${slots}</div></div>`;
+  }
+
+  shutPodHTML(p, stacks) {
+    return `<div class="inv-pod shut" data-pod="${p}" title="Open the pod"><div class="inv-pod-head mono"><span>Pod ${p + 1}</span><span>Empty · 0 / ${stacks}</span></div></div>`;
+  }
+
+  // an empty pod opens in place, and a run of them lists its pods (a click, or a stack dragged over), without redrawing
+  openPod(el) {
+    const st = this.game.inventory.state;
+    if (el.dataset.from) {
+      const from = Number(el.dataset.from);
+      const to = Number(el.dataset.to);
+      let html = '';
+      for (let p = from; p <= to; p++) {
+        this.podsListed.add(p);
+        html += this.shutPodHTML(p, st.pods[p].length);
+      }
+      el.outerHTML = html;
+    } else {
+      const p = Number(el.dataset.pod);
+      this.podsOpen.add(p);
+      el.outerHTML = this.podHTML(st, p);
+    }
+    this.podsMore?.();
+  }
+
+  slotHTML(st, ref) {
+    const s = slotAt(st, ref);
+    const data = ref.c === 'suit' ? `data-c="suit" data-i="${ref.i}"` : `data-c="pod" data-p="${ref.p}" data-i="${ref.i}"`;
+    const bump = this.invChanged.has(refKey(ref)) ? ' bump' : '';
+    if (!s) return `<div class="inv-slot empty${bump}" ${data}></div>`;
+    const info = itemInfo(s.item);
+    const cap = stackCap(s.item, st.stackMax);
+    const [shape, color] = PIPS[s.item] || ['diamond', 'var(--dim)'];
+    const mark = info?.kind === 'resource' ? `<i class="inv-sw ${shape}" style="--c:${color}"></i>` : `<i class="inv-tag">${KIND_TAG[info?.kind] || 'ITM'}</i>`;
+    const count = cap === 1 ? '' : `<b class="inv-ct">${s.count.toLocaleString()}</b>`;
+    // (a module, cosmetic or component is one thing per slot: no count, no fill)
+    const fill = cap === 1 ? '' : `<span class="inv-fill" style="--f:${(s.count / cap).toFixed(4)}"></span>`;
+    return `<div class="inv-slot${s.count >= cap && cap > 1 ? ' full' : ''}${bump}" ${data}>${mark}${count}<span class="inv-nm">${info?.name || s.item}</span>${fill}</div>`;
+  }
+
+  slotEl(ref) {
+    return this.inv.querySelector(ref.c === 'suit' ? `.inv-slot[data-c="suit"][data-i="${ref.i}"]` : `.inv-slot[data-c="pod"][data-p="${ref.p}"][data-i="${ref.i}"]`);
+  }
+
+  // the line under the grids: what the hovered stack is, else how much a stack holds
+  showDetail(slot) {
+    if (!this.invDetail || this.invMsg) return;
+    const st = this.game.inventory.state;
+    const s = slot && slotAt(st, slotRefOf(slot));
+    if (!s) {
+      this.invDetail.className = 'inv-detail idle';
+      this.invDetail.textContent = `A stack holds up to ${st.stackMax.toLocaleString()}. Modules, cosmetics and components take a slot each.`;
+      return;
+    }
+    const info = itemInfo(s.item);
+    const cap = stackCap(s.item, st.stackMax);
+    let about = '';
+    if (info?.kind === 'resource') {
+      const r = getResource(s.item);
+      about = `${cap1(r.sources.map((x) => x.detail).join(', '))} · for ${r.uses.join(', ')}`;
+    } else if (info) about = getItem(s.item).text;
+    this.invDetail.className = 'inv-detail';
+    const amount = cap === 1 ? '' : `<span class="num">${s.count.toLocaleString()} / ${cap.toLocaleString()}</span>`;
+    this.invDetail.innerHTML = `<div class="l1"><b>${info?.name || s.item}</b><span class="kind">${info?.kind || ''}</span>${amount}</div><div class="about">${about}</div>`;
+  }
+
+  // a refusal in the detail line, for a moment
+  showMessage(text) {
+    clearTimeout(this.invMsgT);
+    this.invMsg = text;
+    this.paintMessage();
+    this.invMsgT = setTimeout(() => {
+      this.invMsg = null;
+      this.showDetail(null);
+    }, 2600);
+  }
+
+  paintMessage() {
+    if (!this.invDetail) return;
+    this.invDetail.className = 'inv-detail msg';
+    this.invDetail.textContent = this.invMsg;
+  }
+
+  // `from`: where a dropped stack was let go, so it settles from there rather than from its old slot
+  invRequest(op, from = null) {
+    const g = this.game;
+    const before = g.inventory.state;
+    const r = g.inventory.request(op);
+    if (!r.ok) {
+      g.audio.play('error');
+      this.showMessage(refusal(r.error));
+      return;
+    }
+    g.audio.play('ui');
+    clearTimeout(this.invMsgT);
+    this.invMsg = null;
+    const after = g.inventory.state;
+    // what each carried stack looked like, taken before the redraw
+    const flights = matchMedia('(prefers-reduced-motion: reduce)').matches ? [] : carried(before, after, op, r);
+    flights.forEach((f, k) => {
+      const src = this.slotEl(f.from);
+      f.rect = (k === 0 && from) || src?.getBoundingClientRect();
+      f.tile = src?.cloneNode(true);
+    });
+    // the slots the move touched settle back once; a destination does so when its stack lands
+    const refs = [...before.suit.map((_, i) => ({ c: 'suit', i })), ...before.pods.flatMap((pod, p) => pod.map((_, i) => ({ c: 'pod', p, i })))];
+    for (const ref of refs) if (slotAt(before, ref) !== slotAt(after, ref)) this.invChanged.add(refKey(ref));
+    for (const f of flights) this.invChanged.delete(refKey(f.to));
+    this.renderInventory();
+    for (const f of flights) this.fly(f, before, after);
+  }
+
+  // A carried stack as a tile flying from its old slot to its new one (an ease-out), the destination keeping what it held
+  // until the tile lands; on a merge the count then ticks up to the new total. Both run on the document's animation clock.
+  fly(f, before, after) {
+    const dest = this.slotEl(f.to);
+    if (!f.tile || !f.rect || !dest) return;
+    const to = dest.getBoundingClientRect();
+    const s = slotAt(after, f.to);
+    const was = slotAt(before, f.to);
+    const merging = was && s && was.item === s.item;
+    const tile = f.tile;
+    tile.className = 'inv-slot inv-fly';
+    const ct = tile.querySelector('.inv-ct');
+    if (ct && s) ct.textContent = (merging ? s.count - was.count : s.count).toLocaleString();
+    Object.assign(tile.style, { left: `${f.rect.left}px`, top: `${f.rect.top}px`, width: `${to.width}px`, height: `${to.height}px` });
+    this.root.appendChild(tile);
+    dest.classList.add(merging ? 'waiting' : 'landing');
+    const destCt = dest.querySelector('.inv-ct');
+    if (merging && destCt) destCt.textContent = was.count.toLocaleString();
+    const flight = tile.animate([{ transform: 'none' }, { transform: `translate(${to.left - f.rect.left}px, ${to.top - f.rect.top}px)` }], {
+      duration: 180,
+      easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
+      fill: 'forwards',
+    });
+    flight.onfinish = () => {
+      tile.remove();
+      dest.classList.remove('landing', 'waiting', 'bump');
+      void dest.offsetWidth; // restart the settle
+      dest.classList.add('bump');
+      if (!merging || !destCt) return;
+      const tick = dest.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 260 });
+      const step = () => {
+        const p = tick.effect.getComputedTiming().progress;
+        if (p === null || !dest.isConnected) return void (destCt.textContent = s.count.toLocaleString());
+        destCt.textContent = Math.round(was.count + (s.count - was.count) * (1 - (1 - p) ** 3)).toLocaleString();
+        requestAnimationFrame(step);
+      };
+      tick.onfinish = () => (destCt.textContent = s.count.toLocaleString());
+      requestAnimationFrame(step);
+    };
+  }
+
+  dragMove(e) {
+    const d = this.drag;
+    if (!d) return;
+    if (!d.ghost) {
+      if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 5) return;
+      d.ghost = d.el.cloneNode(true);
+      d.ghost.classList.add('inv-ghost');
+      d.ghost.classList.remove('bump');
+      d.ghost.style.width = `${d.el.offsetWidth}px`;
+      d.ghost.style.height = `${d.el.offsetHeight}px`;
+      this.root.appendChild(d.ghost);
+      d.el.classList.add('lifted');
+      this.inv.classList.add('dragging');
+      this.showDetail(d.el);
+    }
+    d.ghost.style.transform = `translate(${e.clientX - d.ghost.offsetWidth / 2}px, ${e.clientY - d.ghost.offsetHeight / 2}px)`;
+    // dragged over an empty pod's line (or a run of them): it opens to take the stack
+    const shut = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.inv-pod.shut');
+    if (shut && this.inv.contains(shut)) this.openPod(shut);
+    const over = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.inv-slot');
+    const target = over && over !== d.el && this.inv.contains(over) ? over : null;
+    if (target !== d.over) {
+      d.over?.classList.remove('drop');
+      d.over = target;
+      d.over?.classList.add('drop');
+    }
+  }
+
+  dragEnd(e) {
+    const d = this.drag;
+    if (!d) return;
+    const dropped = d.ghost?.getBoundingClientRect() ?? null;
+    this.endDrag();
+    if (this.game.overlay !== 'inventory') return;
+    const s = slotAt(this.game.inventory.state, d.from);
+    if (!s) return;
+    if (d.ghost) {
+      if (d.over) this.invRequest({ op: 'move', from: d.from, to: slotRefOf(d.over), ...(d.shift && s.count > 1 ? { count: Math.ceil(s.count / 2) } : {}) }, dropped);
+      return;
+    }
+    if (!e.target.closest?.('.inv-slot')) return;
+    // a click: shift splits the stack in half, otherwise it goes across to the other side
+    if (d.shift) {
+      if (s.count < 2) return this.showMessage('A single item does not split');
+      this.invRequest({ op: 'split', from: d.from, count: Math.floor(s.count / 2) });
+    } else this.invRequest({ op: 'transfer', from: d.from });
+  }
+
+  endDrag() {
+    const d = this.drag;
+    if (!d) return;
+    this.drag = null;
+    d.ghost?.remove();
+    d.el.classList.remove('lifted');
+    d.over?.classList.remove('drop');
+    this.inv.classList.remove('dragging');
   }
 
   // ---------- map ----------

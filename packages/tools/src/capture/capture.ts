@@ -175,7 +175,8 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
   mkdirSync(join(outDir, '_frames'), { recursive: true });
   const vite = await startVite();
   const { args } = glArgs();
-  const browser = await chromium.launch({ args });
+  // headless Chromium hides scrollbars unless asked not to
+  const browser = await chromium.launch({ args, ignoreDefaultArgs: def.showScrollbars ? ['--hide-scrollbars'] : [] });
   const written: string[] = [];
   try {
     for (const [tag, width] of [
@@ -191,6 +192,12 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
       const still = join(outDir, `${tag}.png`);
       await page.screenshot({ path: still });
       written.push(still);
+      for (const [name, pose] of tag === '16x9' ? Object.entries(def.stills16x9 ?? {}) : []) {
+        await pose(page);
+        const extra = join(outDir, `${tag}-${name}.png`);
+        await page.screenshot({ path: extra });
+        written.push(extra);
+      }
       if (tag === '16x9') {
         // one second at 60 fps. The page's own loop is stopped and each game frame stepped by hand, and CSS
         // transitions and animations (which run on real time) are slowed tenfold through the DevTools Animation
@@ -207,11 +214,12 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
         if (def.motion) await def.motion(page);
         const t0 = Date.now();
         const frames: { label: string; src: string }[] = [];
+        const onSheet = new Set(def.sheetFrames ?? Array.from({ length: 10 }, (_, k) => k * 6));
         for (let i = 0; i < 60; i++) {
           await page.evaluate(() => (window as unknown as { game: { __frame(dt: number): void } }).game.__frame(1 / 60));
           const p = join(outDir, '_frames', `${String(i).padStart(3, '0')}.jpg`);
           const buf = await page.screenshot({ path: p, type: 'jpeg', quality: 85 });
-          if (i % 6 === 0) frames.push({ label: `frame ${i}`, src: `data:image/jpeg;base64,${buf.toString('base64')}` });
+          if (onSheet.has(i)) frames.push({ label: `frame ${i}`, src: `data:image/jpeg;base64,${buf.toString('base64')}` });
           const due = t0 + ((i + 1) * 1000) / 60 / RATE;
           const wait = due - Date.now();
           if (wait > 0) await new Promise((r) => setTimeout(r, wait));
