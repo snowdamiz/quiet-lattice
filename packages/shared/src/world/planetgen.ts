@@ -1,16 +1,21 @@
-// Planet recipes + deterministic terrain sampler.
-// Imported by both the chunk workers and the main thread (collision, flora placement).
-import { Simplex3, smoothstep, lerp, clamp } from '../math/noise.js';
-import { Random, mulberry32 } from '../math/rng.js';
+// Planet recipes + deterministic terrain sampler. Used by the chunk workers and the main thread (collision, flora
+// placement), and by the server, which never streams terrain: every machine regenerates it from the seeds.
+import { Simplex3, smoothstep, lerp, clamp } from './noise.ts';
+import { Random } from './rng.ts';
 
-// ---------- color helpers (no three.js so workers stay light) ----------
-function hexToRgb(hex) {
+/** A linear RGB colour (sRGB hex colours are converted on the way in). */
+export type Rgb = [number, number, number];
+/** Anything a function can write three or four numbers into: a plain array or a typed array. */
+export type NumArray = number[] | Float32Array | Float64Array;
+
+// ---------- color helpers (no three.js, so the workers stay light) ----------
+function hexToRgb(hex: number): Rgb {
   return [((hex >> 16) & 255) / 255, ((hex >> 8) & 255) / 255, (hex & 255) / 255];
 }
-function srgbToLinear(c) {
+function srgbToLinear(c: number): number {
   return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
 }
-function rgbToHsl([r, g, b]) {
+function rgbToHsl([r, g, b]: Rgb): Rgb {
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   let h = 0;
@@ -26,9 +31,9 @@ function rgbToHsl([r, g, b]) {
   }
   return [h, s, l];
 }
-function hslToRgb([h, s, l]) {
+function hslToRgb([h, s, l]: Rgb): Rgb {
   if (s === 0) return [l, l, l];
-  const hue2rgb = (p, q, t) => {
+  const hue2rgb = (p: number, q: number, t: number) => {
     if (t < 0) t += 1;
     if (t > 1) t -= 1;
     if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -40,26 +45,66 @@ function hslToRgb([h, s, l]) {
   const p = 2 * l - q;
   return [hue2rgb(p, q, h + 1 / 3), hue2rgb(p, q, h), hue2rgb(p, q, h - 1 / 3)];
 }
-function shiftColor(hex, dh, ds = 0, dl = 0, maxL = 0.8, maxS = 1) {
+function shiftColor(hex: number, dh: number, ds = 0, dl = 0, maxL = 0.8, maxS = 1): Rgb {
   const hsl = rgbToHsl(hexToRgb(hex));
   hsl[0] = (hsl[0] + dh + 1) % 1;
   // saturation cap keeps ground palettes earthy instead of neon
   hsl[1] = clamp(hsl[1] + ds, 0, maxS);
   // cap lightness so snow / sand do not blow out under strong sunlight
   hsl[2] = clamp(hsl[2] + dl, 0, maxL);
-  return hslToRgb(hsl).map(srgbToLinear);
+  return hslToRgb(hsl).map(srgbToLinear) as Rgb;
 }
-export function linearToHex([r, g, b]) {
-  const f = (c) => Math.round(clamp(c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055, 0, 1) * 255);
+export function linearToHex([r, g, b]: Rgb): number {
+  const f = (c: number) => Math.round(clamp(c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055, 0, 1) * 255);
   return (f(r) << 16) | (f(g) << 8) | f(b);
 }
 
 // ---------- planet archetypes ----------
-// Colors are sRGB hex; they get hue-jittered per seed and converted to linear.
+export type ColorKey = 'deep' | 'floor' | 'beach' | 'low1' | 'low2' | 'dry' | 'high' | 'rock1' | 'rock2' | 'snow';
+export type HazardKind = 'radiation' | 'heat' | 'storm' | 'acid' | 'pressure' | 'cryo';
+/** A ship hazard: damage per second below `ceiling` metres, rising toward the ground (by `curve`, if set). */
+export interface Hazard {
+  kind: HazardKind;
+  label: string;
+  ceiling: number;
+  dps: number;
+  curve?: number;
+}
+export type TreeKind = 'round' | 'conifer' | 'palm' | 'mushroom' | 'spiral' | 'coral' | 'blob' | 'cactus' | 'crystal';
+
+/** What every world of one kind has in common. Colours are sRGB hex; they get hue-jittered per seed and converted to linear. */
+export interface Archetype {
+  label: string;
+  /** typical fraction of the surface under the sea (0: never a sea) */
+  ocean: number;
+  colors: Record<ColorKey, number>;
+  water: { shallow: number; deep: number; emissive: number };
+  /** rayleigh coefficients (relative); null: no air */
+  sky: Rgb | null;
+  atmo: number;
+  clouds: number;
+  hueJitter: number;
+  flora: number;
+  floraColors: number[];
+  trunk: number;
+  treeKinds: TreeKind[];
+  snowLine: number;
+  weather: string[];
+  sunTint?: Rgb;
+  skyTint?: Rgb;
+  overcast?: boolean;
+  lava?: boolean;
+  craters?: boolean;
+  dryBasins?: boolean;
+  lifeless?: boolean;
+  hazard?: Hazard;
+}
+
 const ARCHETYPES = {
   lush: {
     label: 'Lush',
     ocean: 0.55,
+    // prettier-ignore
     colors: {
       deep: 0x0b2b4a, floor: 0x3b6f6a, beach: 0xd8c48f, low1: 0x5e843f, low2: 0x3a6433, dry: 0x8f8a50,
       high: 0x6b7f3c, rock1: 0x6e665c, rock2: 0x4d4741, snow: 0xf2f6fa,
@@ -80,6 +125,7 @@ const ARCHETYPES = {
   alien: {
     label: 'Exotic',
     ocean: 0.45,
+    // prettier-ignore
     colors: {
       deep: 0x1c1440, floor: 0x4a3a6a, beach: 0xb8a0a8, low1: 0x8a4a8a, low2: 0x5a3a7a, dry: 0xa0687a,
       high: 0x6a5a7a, rock1: 0x5a5060, rock2: 0x3a3442, snow: 0xe4e0ec,
@@ -99,6 +145,7 @@ const ARCHETYPES = {
   desert: {
     label: 'Desert',
     ocean: 0.12,
+    // prettier-ignore
     colors: {
       deep: 0x123448, floor: 0x8a6a40, beach: 0xe8c890, low1: 0xd8a060, low2: 0xc07a40, dry: 0xe0b878,
       high: 0xa05a32, rock1: 0x8a4a2a, rock2: 0x5a3020, snow: 0xf0e0c8,
@@ -119,6 +166,7 @@ const ARCHETYPES = {
   frozen: {
     label: 'Frozen',
     ocean: 0.35,
+    // prettier-ignore
     colors: {
       deep: 0x1a3a5a, floor: 0x6a8aa8, beach: 0xd8e4f0, low1: 0xe8f0f8, low2: 0xc8d8e8, dry: 0xb0c4d8,
       high: 0xf4f8ff, rock1: 0x5a6878, rock2: 0x3a4450, snow: 0xffffff,
@@ -138,6 +186,7 @@ const ARCHETYPES = {
   toxic: {
     label: 'Toxic',
     ocean: 0.4,
+    // prettier-ignore
     colors: {
       deep: 0x1a3010, floor: 0x5a7a20, beach: 0xb8c060, low1: 0x8ab030, low2: 0x5a8a20, dry: 0xc0c040,
       high: 0x6a7a30, rock1: 0x4a4a30, rock2: 0x30301a, snow: 0xe0f0a0,
@@ -157,6 +206,7 @@ const ARCHETYPES = {
   volcanic: {
     label: 'Volcanic',
     ocean: 0.3,
+    // prettier-ignore
     colors: {
       deep: 0x200800, floor: 0x3a1a10, beach: 0x2a2220, low1: 0x3a3230, low2: 0x2a2020, dry: 0x4a3a30,
       high: 0x5a4a40, rock1: 0x2a2424, rock2: 0x161212, snow: 0x8a7a70,
@@ -177,6 +227,7 @@ const ARCHETYPES = {
   barren: {
     label: 'Barren',
     ocean: 0,
+    // prettier-ignore
     colors: {
       deep: 0x303030, floor: 0x404040, beach: 0x8a8580, low1: 0x8a8580, low2: 0x6a6560, dry: 0x9a9088,
       high: 0xa8a098, rock1: 0x5a5550, rock2: 0x3a3836, snow: 0xc8c4c0,
@@ -198,6 +249,7 @@ const ARCHETYPES = {
   dead: {
     label: 'Dead',
     ocean: 0,
+    // prettier-ignore
     colors: {
       deep: 0x3a3632, floor: 0x5a544c, beach: 0xb4ab9a, low1: 0x6e665a, low2: 0x524c44, dry: 0x8c8274,
       high: 0x7a7266, rock1: 0x4a4440, rock2: 0x2e2a28, snow: 0xd6d2c8,
@@ -220,6 +272,7 @@ const ARCHETYPES = {
   irradiated: {
     label: 'Irradiated',
     ocean: 0,
+    // prettier-ignore
     colors: {
       deep: 0x2a2a14, floor: 0x3a3a1a, beach: 0x8a8a4a, low1: 0x6a6a3a, low2: 0x4c4a2a, dry: 0x8a8448,
       high: 0x7a7448, rock1: 0x4a4630, rock2: 0x2a281a, snow: 0xc8d070,
@@ -244,6 +297,7 @@ const ARCHETYPES = {
   inferno: {
     label: 'Inferno',
     ocean: 0.2,
+    // prettier-ignore
     colors: {
       deep: 0x2a0c04, floor: 0x4a1c0c, beach: 0x3a2418, low1: 0x6a3a22, low2: 0x4a2a1a, dry: 0x8a5a32,
       high: 0x5a3a28, rock1: 0x3a2218, rock2: 0x221410, snow: 0x9a6a40,
@@ -269,6 +323,7 @@ const ARCHETYPES = {
   storm: {
     label: 'Storm',
     ocean: 0.5,
+    // prettier-ignore
     colors: {
       deep: 0x0a1a2a, floor: 0x2a3a40, beach: 0x8a8a7a, low1: 0x3a5a4a, low2: 0x2a4a3e, dry: 0x6a6a52,
       high: 0x4a5a4a, rock1: 0x4a4a4a, rock2: 0x2e3030, snow: 0xdde4ea,
@@ -294,6 +349,7 @@ const ARCHETYPES = {
   corrosive: {
     label: 'Corrosive',
     ocean: 0.45,
+    // prettier-ignore
     colors: {
       deep: 0x203008, floor: 0x4a5a10, beach: 0xb0b040, low1: 0x7a8a20, low2: 0x5a6a18, dry: 0xa0a030,
       high: 0x6a6a28, rock1: 0x4a4a28, rock2: 0x2a2a18, snow: 0xd0e060,
@@ -316,6 +372,7 @@ const ARCHETYPES = {
   crushing: {
     label: 'Crushing',
     ocean: 0.3,
+    // prettier-ignore
     colors: {
       deep: 0x0a0618, floor: 0x1a1428, beach: 0x4a4058, low1: 0x3a3048, low2: 0x2a2238, dry: 0x4a3a52,
       high: 0x5a4a62, rock1: 0x2a2232, rock2: 0x16121c, snow: 0x8a80a0,
@@ -336,12 +393,18 @@ const ARCHETYPES = {
     lifeless: true,
     hazard: { kind: 'pressure', label: 'Crushing pressure', ceiling: 11000, dps: 14, curve: 2 },
   },
-};
+} satisfies Record<string, Archetype>;
+
+/** A rocky world's kind (gas giants are described by the solar system, not here). */
+export type PlanetType = keyof typeof ARCHETYPES;
+
+export type ReliefStyle = 'rolling' | 'alpine' | 'highlands' | 'mesa' | 'spires' | 'canyon' | 'badlands' | 'rift' | 'volcanoes';
 
 // Landform styles, weighted per archetype: on top of continents, ranges and hills, each world
 // gets one character: sheer-walled plateaus, canyonlands, deep rifts, forests of stone pinnacles,
 // long escarpments, giant volcanoes, or towering alpine ranges.
-const RELIEF_STYLES = {
+// prettier-ignore
+const RELIEF_STYLES: Record<PlanetType, [ReliefStyle, number][]> = {
   lush: [['rolling', 2], ['alpine', 2], ['highlands', 2], ['mesa', 1], ['spires', 0.7], ['canyon', 1]],
   alien: [['spires', 3], ['mesa', 1.5], ['alpine', 1], ['canyon', 1]],
   desert: [['mesa', 3], ['canyon', 2.5], ['badlands', 2], ['rolling', 1]],
@@ -358,7 +421,7 @@ const RELIEF_STYLES = {
 };
 
 // Ship hazards some worlds of the ordinary kinds carry too (the hostile archetypes have their own)
-const EXTRA_HAZARDS = {
+const EXTRA_HAZARDS: Partial<Record<PlanetType, [number, Hazard]>> = {
   volcanic: [0.3, { kind: 'heat', label: 'Superheated air', ceiling: 3500, dps: 3 }],
   frozen: [0.25, { kind: 'cryo', label: 'Cryogenic cold', ceiling: 2500, dps: 2.5 }],
   desert: [0.2, { kind: 'storm', label: 'Sandstorms', ceiling: 3000, dps: 1.8 }],
@@ -366,21 +429,124 @@ const EXTRA_HAZARDS = {
 };
 
 // chance a world of each kind is home to a civilisation (a few planets only, never moons)
-const CITY_CHANCE = { lush: 0.5, alien: 0.55, desert: 0.4, frozen: 0.25, toxic: 0.2, storm: 0.15 };
+const CITY_CHANCE: Partial<Record<PlanetType, number>> = { lush: 0.5, alien: 0.55, desert: 0.4, frozen: 0.25, toxic: 0.2, storm: 0.15 };
 
-export const PLANET_TYPES = Object.keys(ARCHETYPES);
+export const PLANET_TYPES = Object.keys(ARCHETYPES) as PlanetType[];
 
-export function archetype(type) {
+export function archetype(type: PlanetType): Archetype {
   return ARCHETYPES[type];
 }
 
-// ---------- parameter generation ----------
-export function createPlanetParams(seed, type, radius, { isMoon = false } = {}) {
+// ---------- parameters ----------
+// Feature sizes were tuned on worlds of about HEIGHT_REF radius. The noise below runs on unit
+// directions, so on a bigger world the frequencies go up (by different powers: continents grow
+// with the planet, hills keep their size in metres) and the relief stays walkable.
+const HEIGHT_REF = 32000;
+
+/** A crater: unit direction, angular radius, depth factor. */
+export type Crater = [x: number, y: number, z: number, size: number, depth: number];
+/** A volcano: unit direction, angular radius of its base, height (m), caldera radius (fraction of the base). */
+export type Volcano = [x: number, y: number, z: number, base: number, height: number, caldera: number];
+
+export interface MesaRelief {
+  size: number;
+  t: number;
+  edge: number;
+  height: number;
+  tiers: number;
+  cover: number;
+}
+export interface CanyonRelief {
+  size: number;
+  floor: number;
+  rim: number;
+  depth: number;
+  cover: number;
+}
+export type RiftRelief = CanyonRelief;
+export interface SpiresRelief {
+  size: number;
+  t: number;
+  height: number;
+  cover: number;
+}
+export interface EscarpRelief {
+  size: number;
+  edge: number;
+  height: number;
+}
+/** A world's landforms on top of its continents, ranges and hills (sizes and heights in metres). */
+export interface Relief {
+  style: ReliefStyle;
+  mesa?: MesaRelief;
+  canyon?: CanyonRelief;
+  rift?: RiftRelief;
+  spires?: SpiresRelief;
+  escarp?: EscarpRelief;
+}
+
+export interface Atmosphere {
+  scatter: number[];
+  density: number;
+  height: number;
+}
+
+/** Everything that defines a rocky world, generated from its seed, type and radius (see createPlanetParams). */
+export interface PlanetParams {
+  seed: number;
+  type: PlanetType;
+  radius: number;
+  isMoon: boolean;
+  hasOcean: boolean;
+  continentBias: number;
+  continentFreq: number;
+  seaDepth: number;
+  landHeight: number;
+  mountainHeight: number;
+  mountainFreq: number;
+  hillHeight: number;
+  hillFreq: number;
+  detailHeight: number;
+  warp: number;
+  terraceStep: number;
+  terraceStrength: number;
+  duneHeight: number;
+  craterCount: number;
+  beachHeight: number;
+  snowLine: number;
+  colors: Record<ColorKey, Rgb>;
+  lava: boolean;
+  flora: number;
+  craters?: Crater[];
+  water: { shallow: Rgb; deep: Rgb; emissive: number };
+  atmosphere: Atmosphere | null;
+  clouds: number;
+  label: string;
+  weather: string;
+  sunTint: Rgb;
+  skyTint: Rgb | null;
+  lifeless: boolean;
+  dryBasins: boolean;
+  ridgePow?: number;
+  mountainCover?: number;
+  volcanoes?: Volcano[];
+  relief: Relief;
+  hazard: Hazard | null;
+  cityCount: number;
+  citySeed: number;
+  /** levelled ground under cities and sites, flat [x, y, z, height, inner, outer] per pad (see TerrainSampler.setPads) */
+  pads?: number[] | null;
+}
+
+export function createPlanetParams(seed: number, type: PlanetType, radius: number, { isMoon = false } = {}): PlanetParams {
   const rng = new Random(seed);
-  const a = ARCHETYPES[type];
+  const a: Archetype = ARCHETYPES[type];
   const dh = rng.float(-a.hueJitter, a.hueJitter);
-  const colors = {};
-  for (const k in a.colors) colors[k] = shiftColor(a.colors[k], dh, rng.float(-0.05, 0.05), rng.float(-0.03, 0.03), 0.8, 0.45);
+  const colors = {} as Record<ColorKey, Rgb>;
+  for (const k in a.colors) {
+    const key = k as ColorKey;
+    colors[key] = shiftColor(a.colors[key], dh, rng.float(-0.05, 0.05), rng.float(-0.03, 0.03), 0.8, 0.45);
+  }
 
   const R = radius;
   // relief grows only slowly with the size of the world: a big planet is not a scaled-up small one
@@ -389,6 +555,7 @@ export function createPlanetParams(seed, type, radius, { isMoon = false } = {}) 
   const hasOcean = a.ocean > 0 && rng.chance(type === 'desert' ? 0.5 : 0.9);
   const oceanFrac = hasOcean ? clamp(a.ocean + rng.float(-0.15, 0.15), 0.05, 0.8) : 0;
 
+  // (filled in below in the order the demo always built it, which the golden fixtures pin)
   const p = {
     seed,
     type,
@@ -415,7 +582,7 @@ export function createPlanetParams(seed, type, radius, { isMoon = false } = {}) 
     colors,
     lava: !!a.lava,
     flora: a.flora * rng.float(0.7, 1.2),
-  };
+  } as PlanetParams;
   if (a.craters) {
     p.mountainHeight *= 0.5;
     p.landHeight *= 0.5;
@@ -424,7 +591,7 @@ export function createPlanetParams(seed, type, radius, { isMoon = false } = {}) 
 
   // Crater list (unit vectors + angular radii) baked into params so workers agree.
   if (p.craterCount) {
-    const craters = [];
+    const craters: Crater[] = [];
     const crng = new Random(seed ^ 0x9e3779b9);
     for (let i = 0; i < p.craterCount; i++) {
       const u = crng.float(-1, 1);
@@ -471,19 +638,32 @@ export function createPlanetParams(seed, type, radius, { isMoon = false } = {}) 
   return p;
 }
 
-function pickWeighted(rng, list) {
+function pickWeighted<K>(rng: Random, list: [K, number][]): K {
   let t = list.reduce((a, [, w]) => a + w, 0) * rng.next();
   for (const [k, w] of list) if ((t -= w) <= 0) return k;
   return list[0][0];
 }
 
-function addRelief(p, type, rng, Rh) {
+function addRelief(p: PlanetParams, type: PlanetType, rng: Random, Rh: number) {
   const style = pickWeighted(rng, RELIEF_STYLES[type] || [['rolling', 1]]);
-  const rl = { style };
+  const rl: Relief = { style };
   // sizes in metres; heights grow slowly with the world, like the rest of its relief
   const k = Rh / HEIGHT_REF;
-  const mesa = (height, cover) => ({ size: rng.float(1300, 3200), t: rng.float(0.15, 0.35) - cover, edge: rng.float(0.012, 0.03), height: height * k, tiers: rng.chance(0.55) ? 2 : 1, cover });
-  const canyon = (depth, size) => ({ size, floor: rng.float(0.012, 0.03), rim: rng.float(0.05, 0.09), depth: depth * k, cover: rng.float(-0.1, 0.25) });
+  const mesa = (height: number, cover: number): MesaRelief => ({
+    size: rng.float(1300, 3200),
+    t: rng.float(0.15, 0.35) - cover,
+    edge: rng.float(0.012, 0.03),
+    height: height * k,
+    tiers: rng.chance(0.55) ? 2 : 1,
+    cover,
+  });
+  const canyon = (depth: number, size: number): CanyonRelief => ({
+    size,
+    floor: rng.float(0.012, 0.03),
+    rim: rng.float(0.05, 0.09),
+    depth: depth * k,
+    cover: rng.float(-0.1, 0.25),
+  });
   if (style === 'alpine') {
     // towering, sharper ranges over more of the land
     p.mountainHeight *= rng.float(1.9, 2.8);
@@ -496,12 +676,19 @@ function addRelief(p, type, rng, Rh) {
     rl.canyon = canyon(rng.float(120, 300), rng.float(2600, 5200));
     p.terraceStep = p.terraceStep || rng.float(18, 40);
     p.terraceStrength = Math.max(p.terraceStrength, 0.7);
-  } else if (style === 'rift') rl.rift = { size: rng.float(14000, 30000), floor: rng.float(0.006, 0.012), rim: rng.float(0.018, 0.03), depth: rng.float(600, 1400) * k, cover: rng.float(-0.25, 0.05) };
+  } else if (style === 'rift')
+    rl.rift = {
+      size: rng.float(14000, 30000),
+      floor: rng.float(0.006, 0.012),
+      rim: rng.float(0.018, 0.03),
+      depth: rng.float(600, 1400) * k,
+      cover: rng.float(-0.25, 0.05),
+    };
   else if (style === 'spires') rl.spires = { size: rng.float(110, 260), t: rng.float(0.38, 0.5), height: rng.float(70, 230) * k, cover: rng.float(-0.05, 0.3) };
   else if (style === 'highlands') rl.escarp = { size: rng.float(9000, 22000), edge: rng.float(0.015, 0.035), height: rng.float(220, 650) * k };
   else if (style === 'volcanoes') {
     // a few giant cones, each with a caldera (of lava, where the world has it)
-    const list = [];
+    const list: Volcano[] = [];
     const n = rng.int(5, 12);
     for (let i = 0; i < n; i++) {
       const u = rng.float(-0.85, 0.85);
@@ -516,12 +703,41 @@ function addRelief(p, type, rng, Rh) {
 }
 
 // ---------- terrain sampler ----------
-// Feature sizes were tuned on worlds of about HEIGHT_REF radius. The noise below runs on unit
-// directions, so on a bigger world the frequencies go up (by different powers: continents grow
-// with the planet, hills keep their size in metres) and the relief stays walkable.
-const HEIGHT_REF = 32000;
+/** One terrain sample (heights in metres above sea level; the fields in 0..1 unless noted). */
+export interface TerrainSample {
+  h: number;
+  moisture: number;
+  /** equator hot, poles and peaks cold: about -1..1 */
+  temp: number;
+  land: number;
+  rockiness: number;
+  mMask?: number;
+}
+
 export class TerrainSampler {
-  constructor(params) {
+  p: PlanetParams;
+  R: number;
+  fWarp: number;
+  fCont: number;
+  fMask: number;
+  fMount: number;
+  fHill: number;
+  fTerrace: number;
+  fMoist: number;
+  fTemp: number;
+  hTemp: number;
+  n1: Simplex3;
+  n2: Simplex3;
+  n3: Simplex3;
+  craters: Crater[] | null;
+  volcanoes: Volcano[] | null;
+  relief: Partial<Relief>;
+  /** the sample() result, reused: copy what you need before the next call */
+  out: TerrainSample;
+  pads: number[] | null = null;
+  padGrid: Map<number, number[]> | null = null;
+
+  constructor(params: PlanetParams) {
     this.p = params;
     this.R = params.radius;
     const F = Math.max(1, this.R / HEIGHT_REF);
@@ -544,13 +760,15 @@ export class TerrainSampler {
     this.setPads(params.pads || null);
   }
 
-  // Level ground under points of interest. pads: flat [x, y, z, height, inner, outer] per site
-  // (unit direction, metres), bucketed on a coarse grid so each sample checks only nearby pads.
-  setPads(pads) {
+  /**
+   * Level ground under points of interest. pads: flat [x, y, z, height, inner, outer] per site
+   * (unit direction, metres), bucketed on a coarse grid so each sample checks only nearby pads.
+   */
+  setPads(pads: number[] | null) {
     this.pads = pads;
     this.padGrid = null;
     if (!pads || !pads.length) return;
-    const grid = new Map();
+    const grid = new Map<number, number[]>();
     for (let i = 0; i < pads.length; i += 6) {
       const e = pads[i + 5] / this.R;
       const lo = [0, 1, 2].map((a) => padCell(pads[i + a] - e));
@@ -560,7 +778,7 @@ export class TerrainSampler {
           for (let z = lo[2]; z <= hi[2]; z++) {
             const key = (x * 64 + y) * 64 + z;
             if (!grid.has(key)) grid.set(key, []);
-            grid.get(key).push(i);
+            grid.get(key)!.push(i);
           }
         }
       }
@@ -568,28 +786,28 @@ export class TerrainSampler {
     this.padGrid = grid;
   }
 
-  // how much a point lies on a site's worn ground (1 on the pad, fading out past it)
-  padWear(x, y, z) {
+  /** How much a point lies on a site's worn ground (1 on the pad, fading out past it). */
+  padWear(x: number, y: number, z: number): number {
     if (!this.padGrid) return 0;
     const list = this.padGrid.get((padCell(x) * 64 + padCell(y)) * 64 + padCell(z));
     if (!list) return 0;
-    const P = this.pads;
+    const P = this.pads!;
     let w = 0;
     for (const i of list) {
       const dx = x - P[i];
       const dy = y - P[i + 1];
       const dz = z - P[i + 2];
       // a ragged worn patch, not a stamped circle
-      const d = Math.sqrt(dx * dx + dy * dy + dz * dz) * this.R * (1 + 0.35 * this.n3.noise(x * this.R / 11, y * this.R / 11, z * this.R / 11));
+      const d = Math.sqrt(dx * dx + dy * dy + dz * dz) * this.R * (1 + 0.35 * this.n3.noise((x * this.R) / 11, (y * this.R) / 11, (z * this.R) / 11));
       w = Math.max(w, 1 - smoothstep(P[i + 4] - 6, P[i + 4] + 9, d));
     }
     return w;
   }
 
-  flatten(x, y, z, h) {
-    const list = this.padGrid.get((padCell(x) * 64 + padCell(y)) * 64 + padCell(z));
+  flatten(x: number, y: number, z: number, h: number): number {
+    const list = this.padGrid!.get((padCell(x) * 64 + padCell(y)) * 64 + padCell(z));
     if (!list) return h;
-    const P = this.pads;
+    const P = this.pads!;
     for (const i of list) {
       const dx = x - P[i];
       const dy = y - P[i + 1];
@@ -600,12 +818,12 @@ export class TerrainSampler {
     return h;
   }
 
-  // Height above sea level (meters) for a unit direction.
-  height(x, y, z) {
+  /** Height above sea level (metres) for a unit direction. */
+  height(x: number, y: number, z: number): number {
     return this.sample(x, y, z).h;
   }
 
-  sample(x, y, z) {
+  sample(x: number, y: number, z: number): TerrainSample {
     const p = this.p;
     const n1 = this.n1;
     const n2 = this.n2;
@@ -623,8 +841,8 @@ export class TerrainSampler {
     const cf = this.fCont;
     const c = n1.fbm(qx * cf, qy * cf, qz * cf, 6, 2.0, 0.5) + p.continentBias;
 
-    let h;
-    let land;
+    let h: number;
+    let land: number;
     if (p.hasOcean) {
       land = smoothstep(-0.02, 0.1, c);
       const floor = -p.seaDepth * smoothstep(0.0, -0.35, c) - p.beachHeight * 3;
@@ -693,9 +911,11 @@ export class TerrainSampler {
     return o;
   }
 
-  // The world's landforms (see addRelief), in metres at a point given in metres. Edges are a few
-  // tens of metres wide in a feature hundreds of metres high: sheer cliffs.
-  landforms(dx, dy, dz, land, mMask) {
+  /**
+   * The world's landforms (see addRelief), in metres at a point given in metres. Edges are a few
+   * tens of metres wide in a feature hundreds of metres high: sheer cliffs.
+   */
+  landforms(dx: number, dy: number, dz: number, land: number, mMask: number): number {
     const rl = this.relief;
     const n1 = this.n1;
     const n2 = this.n2;
@@ -758,10 +978,10 @@ export class TerrainSampler {
     return dh;
   }
 
-  // giant cones with concave flanks and a caldera at the summit; returns metres
-  volcanoHeight(x, y, z) {
+  /** Giant cones with concave flanks and a caldera at the summit; returns metres. */
+  volcanoHeight(x: number, y: number, z: number): number {
     let total = 0;
-    for (const v of this.volcanoes) {
+    for (const v of this.volcanoes!) {
       const d = x * v[0] + y * v[1] + z * v[2];
       if (d < Math.cos(v[3])) continue;
       const r = Math.acos(Math.min(1, d)) / v[3];
@@ -775,8 +995,8 @@ export class TerrainSampler {
     return total;
   }
 
-  // 1 on a caldera's floor, for its lava glow
-  caldera(x, y, z) {
+  /** 1 on a caldera's floor, for its lava glow. */
+  caldera(x: number, y: number, z: number): number {
     if (!this.volcanoes) return 0;
     for (const v of this.volcanoes) {
       const d = x * v[0] + y * v[1] + z * v[2];
@@ -787,8 +1007,8 @@ export class TerrainSampler {
     return 0;
   }
 
-  craterHeight(x, y, z) {
-    const cr = this.craters;
+  craterHeight(x: number, y: number, z: number): number {
+    const cr = this.craters!;
     let total = 0;
     const R = this.R;
     for (let i = 0; i < cr.length; i++) {
@@ -796,7 +1016,7 @@ export class TerrainSampler {
       const d = x * c[0] + y * c[1] + z * c[2];
       const size = c[3];
       // cheap reject: angular distance > 1.5 radius
-      const cosLimit = 1 - (size * 1.6) * (size * 1.6) * 0.5;
+      const cosLimit = 1 - size * 1.6 * (size * 1.6) * 0.5;
       if (d < cosLimit) continue;
       const ang = Math.acos(Math.min(1, d));
       const r = ang / size;
@@ -813,13 +1033,13 @@ export class TerrainSampler {
   }
 }
 
-const padCell = (v) => Math.floor((v + 1) * 16);
+const padCell = (v: number) => Math.floor((v + 1) * 16);
 
-function smoothMin(a, b, k) {
+function smoothMin(a: number, b: number, k: number): number {
   const h = clamp((b - a + k) / (2 * k), 0, 1);
   return a * h + b * (1 - h) - k * h * (1 - h);
 }
-function smoothMax(a, b, k) {
+function smoothMax(a: number, b: number, k: number): number {
   return -smoothMin(-a, -b, k);
 }
 
@@ -827,7 +1047,7 @@ function smoothMax(a, b, k) {
 // octave that frays the edges into spurs and stragglers, so woods don't read from the air as
 // one even camouflage pattern of same-sized blobs. Shared with the tree scatter.
 export const FOREST_REGION = 2600;
-export function forestRegion(sampler, x, y, z) {
+export function forestRegion(sampler: TerrainSampler, x: number, y: number, z: number): number {
   const k = sampler.R / FOREST_REGION;
   const f = sampler.R / 90;
   return 0.55 * sampler.n3.noise(x * k + 5.3, y * k - 7.1, z * k + 2.9) + 0.3 * sampler.n1.noise(x * f - 3.7, y * f + 8.2, z * f + 1.4);
@@ -837,7 +1057,14 @@ export function forestRegion(sampler, x, y, z) {
 // The terrain fragment shader works out colour per pixel from height, slope and
 // noise; per vertex it only needs the slowly varying fields: [moisture, temperature,
 // lava glow, forest cover], all in 0..1.
-export function surfaceAttribs(sampler, s, x, y, z, out) {
+export function surfaceAttribs<T extends NumArray>(
+  sampler: TerrainSampler,
+  s: Pick<TerrainSample, 'h' | 'moisture' | 'temp'>,
+  x: number,
+  y: number,
+  z: number,
+  out: T,
+): T {
   const p = sampler.p;
   const R = sampler.R;
   // trampled, dry ground around points of interest
@@ -866,7 +1093,9 @@ export function surfaceAttribs(sampler, s, x, y, z, out) {
 }
 
 // ---------- cube sphere helpers ----------
-export const FACES = [
+type V3 = [number, number, number];
+/** The six cube faces: normal, and the u and v axes across it. */
+export const FACES: { n: V3; a: V3; b: V3 }[] = [
   { n: [1, 0, 0], a: [0, 0, -1], b: [0, 1, 0] },
   { n: [-1, 0, 0], a: [0, 0, 1], b: [0, 1, 0] },
   { n: [0, 1, 0], a: [1, 0, 0], b: [0, 0, -1] },
@@ -875,8 +1104,8 @@ export const FACES = [
   { n: [0, 0, -1], a: [-1, 0, 0], b: [0, 1, 0] },
 ];
 
-// Cube point -> unit sphere (area-preserving-ish mapping). Writes into out.
-export function cubeToSphere(face, u, v, out) {
+/** Cube point -> unit sphere (area-preserving-ish mapping). Writes into out. */
+export function cubeToSphere<T extends NumArray>(face: number, u: number, v: number, out: T): T {
   const F = FACES[face];
   const x = F.n[0] + F.a[0] * u + F.b[0] * v;
   const y = F.n[1] + F.a[1] * u + F.b[1] * v;
@@ -890,12 +1119,18 @@ export function cubeToSphere(face, u, v, out) {
   return out;
 }
 
-// Inverse of cubeToSphere (approximate via Newton refinement) -> {face,u,v}
-export function sphereToCube(x, y, z, out) {
+export interface CubeCoord {
+  face: number;
+  u: number;
+  v: number;
+}
+
+/** Inverse of cubeToSphere (approximate via Newton refinement): writes face, u, v into out. */
+export function sphereToCube(x: number, y: number, z: number, out: Partial<CubeCoord>): CubeCoord {
   const ax = Math.abs(x);
   const ay = Math.abs(y);
   const az = Math.abs(z);
-  let face;
+  let face: number;
   if (ax >= ay && ax >= az) face = x > 0 ? 0 : 1;
   else if (ay >= az) face = y > 0 ? 2 : 3;
   else face = z > 0 ? 4 : 5;
@@ -935,7 +1170,5 @@ export function sphereToCube(x, y, z, out) {
   out.face = face;
   out.u = clamp(u, -1, 1);
   out.v = clamp(v, -1, 1);
-  return out;
+  return out as CubeCoord;
 }
-
-export { mulberry32 };

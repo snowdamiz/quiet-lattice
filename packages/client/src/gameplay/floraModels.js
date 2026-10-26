@@ -1,8 +1,7 @@
 // Procedural low-poly plant / rock / crystal geometries with vertex colors and a glow attribute.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { mulberry32 } from '../math/rng.js';
-import { Simplex3 } from '../math/noise.js';
+import { mulberry32, Simplex3 } from '@astra/shared/world';
 import { libraryMesh, libraryVariants, recolor } from './modelLibrary.js';
 
 function prep(geo, color, glow = 0, shade = 0) {

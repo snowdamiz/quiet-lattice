@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { libraryRoot, libraryRootVariants } from './modelLibrary.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { Random } from '../math/rng.js';
+import { Random } from '@astra/shared/world';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { collectResources, disposeTree } from '../core/dispose.js';
 

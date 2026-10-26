@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Body } from './Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
-import { mulberry32 } from '../math/rng.js';
+import { mulberry32 } from '@astra/shared/world';
 
 const _v = new THREE.Vector3();
 

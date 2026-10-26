@@ -19,7 +19,7 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint } from './terrain/cities.js';
+import { streetPlan, cityFrame, cityPoint, Galaxy, LY } from '@astra/shared/world';
 import { Objectives } from './gameplay/Objectives.js';
 import { Asteroids } from './universe/Asteroids.js';
 import { Inventory } from './gameplay/Inventory.js';
@@ -27,9 +27,7 @@ import { HUD } from './ui/HUD.js';
 import { Menus } from './ui/Menus.js';
 import { Audio } from './audio/Audio.js';
 import { loadLibrary } from './gameplay/modelLibrary.js';
-import { Galaxy } from './universe/Galaxy.js';
 import { Universe } from './universe/Universe.js';
-import { LY } from './universe/Cosmos.js';
 import { saveGame, loadSave, applySave, clearSave } from './gameplay/Save.js';
 import { collectResources, disposeTree } from './core/dispose.js';
 

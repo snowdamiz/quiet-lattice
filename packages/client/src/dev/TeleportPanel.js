@@ -2,7 +2,7 @@
 // above it in the ship or standing on the ground beside it. Pick a system, then a body, which is
 // shown live in 3D (drag to turn it, scroll to zoom).
 import { PlanetPreview } from './PlanetPreview.js';
-import { fmtLy } from '../universe/Cosmos.js';
+import { fmtLy } from '@astra/shared/world';
 
 function el(tag, cls, parent, html) {
   const e = document.createElement(tag);
