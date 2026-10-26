@@ -19,7 +19,7 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint, Galaxy, LY, describeGalaxySystem } from '@astra/shared/world';
+import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard } from '@astra/shared/world';
 import { Objectives } from './gameplay/Objectives.js';
 import { Asteroids } from './universe/Asteroids.js';
 import { Inventory } from './gameplay/Inventory.js';
@@ -61,7 +61,7 @@ export class Game {
     this.engine.scene.add(this.speedLines.mesh);
     this.audio = new Audio();
     this.inventory = new Inventory();
-    this.galaxy = new Galaxy(424242);
+    this.galaxy = new Galaxy(GALAXY_SEED);
     this.sky.setSystems(this.galaxy.systems);
     this.universe = new Universe(this);
     this.time = 0;
@@ -158,7 +158,7 @@ export class Game {
   // station per step), so the next one can be readied over frames while the ship approaches it.
   // `out` holds whatever is built so far, so an abandoned one can be freed.
   *buildSystem(sysInfo, out = {}) {
-    // (described as the server describes it: the starting system always orbits a lush world)
+    // (described as the server describes it: the three peoples' home systems round their home worlds and capitals)
     const system = (out.system = new SolarSystem(describeGalaxySystem(sysInfo), this.pool, { staged: true }));
     system.info = sysInfo;
     yield;
@@ -177,7 +177,6 @@ export class Game {
       seed: spec.seed,
       staged: true,
     }));
-    station.update = stationUpdate.bind(station);
     yield;
     while (!station.step()) yield;
     return { system, station };
@@ -736,7 +735,11 @@ export class Game {
     // (worlds hostile to ships are far worse on foot: protection lasts seconds, not minutes)
     const FOOT = { heat: 9, pressure: 6, acid: 3, radiation: 3.5, storm: 1.5, cryo: 2.5 };
     const hz = f.params.hazard;
-    const harsh = Math.max({ frozen: 1, desert: 1, toxic: 1.2, volcanic: 1.5, barren: 0.6, dead: 0.8 }[type] || 0, hz ? FOOT[hz.kind] * (hz.dps / 5) : 0);
+    const mist = f.params.mist;
+    // (a mild world's lowlands are breathable: only above its mist line does the air eat at the suit)
+    const harsh = mist
+      ? mistHazard(mist, p.state.pos.length() - f.radius).foot
+      : Math.max({ frozen: 1, desert: 1, toxic: 1.2, volcanic: 1.5, barren: 0.6, dead: 0.8 }[type] || 0, hz ? FOOT[hz.kind] * (hz.dps / 5) : 0);
     const night = this.isDark ? 1.4 : 1;
     if (harsh) p.hazard = Math.max(0, p.hazard - dt * harsh * night * 0.6);
     else p.hazard = Math.min(100, p.hazard + dt * 2);
@@ -788,6 +791,7 @@ export class Game {
       const p = f.params;
       const lines = [`Weather: ${p.weather}`, `Gravity: ${(f.gravity / 9.8).toFixed(2)} g`];
       if (p.hazard) lines.push(`Warning: ${p.hazard.label.toLowerCase()} below ${Math.round(p.hazard.ceiling / 1000)} km`);
+      else if (p.mist) lines.push(`Breathable below ${Math.round(p.mist.line / 10) * 10} m · caustic air above`);
       else if (f.isGas) lines.push('Warning: not landable');
       this.hud.showBanner(f.name.toUpperCase(), `${p.label}${f.kind === 'moon' ? ' Moon' : ' Planet'}`, lines);
       this.audio.play('discovery');
@@ -1455,20 +1459,6 @@ export class Game {
     this.ship.mode = alt < 1 ? 'landed' : 'flying';
     this.cam.frame = undefined;
   }
-}
-
-// Stations keep their floor facing the planet and their hangar mouth along the orbit.
-function stationUpdate(t) {
-  this.orbitPosition(t, this.position).add(this.parent.position);
-  const up = _v1.copy(this.position).sub(this.parent.position).normalize();
-  const th = this.orbitPhase + (2 * Math.PI * t) / this.orbitPeriod;
-  const vel = _v2.set(-Math.sin(th), 0, Math.cos(th)).applyQuaternion(this.orbitTilt);
-  const fwd = vel.addScaledVector(up, -vel.dot(up)).normalize();
-  const right = _v3.crossVectors(up, fwd).normalize();
-  _m4.makeBasis(right, up, fwd);
-  this.quaternion.setFromRotationMatrix(_m4);
-  this.quaternionInv.copy(this.quaternion).invert();
-  this.velocity.copy(this.parent.velocity);
 }
 
 export { GEAR_HEIGHT, HANGAR };

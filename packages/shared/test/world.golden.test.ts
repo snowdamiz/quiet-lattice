@@ -7,14 +7,12 @@ import {
   Galaxy,
   TerrainSampler,
   cosmos,
-  createPlanetParams,
   describeGalaxySystem,
   layoutCity,
   streetPlan,
   surfaceAttribs,
   type GalaxySystem,
   type PlanetParams,
-  type PlanetType,
 } from '../src/world/index.ts';
 import { asJson, digestArrays, digestString } from './digest.ts';
 import { planSurface } from './surface.ts';
@@ -64,8 +62,9 @@ describe('world golden fixtures, seed 424242', () => {
   });
 
   describe.each(fixture.homes)('home planet $name', (home) => {
-    const body = fixture.systems[home.system].bodies[fixture.systems[home.system].home];
-    const { bare, params, sampler, cities, sites } = planSurface(createPlanetParams(body.seed, home.type as PlanetType, home.radius));
+    // (described as the game describes it: in a people's home system, system 0 here, with their capital)
+    const d = describeGalaxySystem(fixture.galaxy[home.system] as GalaxySystem);
+    const { bare, params, sampler, cities, sites } = planSurface(d.bodies[d.home].params as PlanetParams);
     const dirs = fixture.sampleDirections;
 
     it('params', () => {

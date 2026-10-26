@@ -6,8 +6,9 @@
 // The random draws are made in exactly the order the demo's SolarSystem made them, and every float is computed the same
 // way, so each system comes out as it always has (the golden fixtures in packages/shared/test pin it).
 import { Color, Quaternion, Vector3 } from 'three';
-import type { GalaxySystem, StarClass } from './galaxy.ts';
-import { createPlanetParams, type Atmosphere, type Hazard, type PlanetParams, type PlanetType } from './planetgen.ts';
+import type { CapitalSpec } from './cities.ts';
+import type { StarClass } from './galaxy.ts';
+import { createPlanetParams, type Atmosphere, type Hazard, type PlanetOptions, type PlanetParams, type PlanetType } from './planetgen.ts';
 import { Random, makeName, romanNumeral } from './rng.ts';
 
 /** A rotation as [x, y, z, w]. */
@@ -218,6 +219,10 @@ export interface SystemOptions {
   cls?: StarClass;
   /** what the habitable world must be */
   homeType?: PlanetType;
+  /** the habitable world is the mild variant of its type (see PlanetOptions) */
+  mild?: boolean;
+  /** the capital planned on the habitable world, when it is a people's home */
+  capital?: CapitalSpec;
 }
 
 /** The frame id of a body on the wire (ARCHITECTURE §4): "<systemSeed>:<bodyIndex>" for a planet or moon in
@@ -228,15 +233,8 @@ export function frameId(systemSeed: number, body: number | 'station'): string {
   return `${systemSeed}:${body}`;
 }
 
-/** A system of the galaxy as every client and the server build it: named and classed as the galaxy shows it, and the
- * first system, where players start, round a lush world. */
-export function describeGalaxySystem(info: Pick<GalaxySystem, 'id' | 'seed' | 'name' | 'cls'>): SystemDescription {
-  const homeType = info.id === 0 ? 'lush' : undefined;
-  return describeSystem(info.seed, { name: info.name, cls: info.cls, homeType });
-}
-
-/** The star system generated from `seed` (a galaxy's systems are described by describeGalaxySystem). */
-export function describeSystem(seed: number, { name, cls, homeType }: SystemOptions = {}): SystemDescription {
+/** The star system generated from `seed` (a galaxy's systems are described by describeGalaxySystem, in homes.ts). */
+export function describeSystem(seed: number, { name, cls, homeType, mild, capital }: SystemOptions = {}): SystemDescription {
   const rng = new Random(seed);
   const sysName = name || makeName(rng, 2, 3);
 
@@ -272,7 +270,9 @@ export function describeSystem(seed: number, { name, cls, homeType }: SystemOpti
     // (never the world the station orbits)
     if (i !== habitableIdx) type = variant(type, seedI);
     if (i === habitableIdx) home = bodies.length;
-    addPlanet(bodies, rng, sysName, i, seedI, type, orbit);
+    // (a people's home world is made the way they knew it: its own draws are the same, so the rest of the system is too)
+    const opts: PlanetOptions = i === habitableIdx ? { mild, capital } : {};
+    addPlanet(bodies, rng, sysName, i, seedI, type, orbit, opts);
     orbit *= rng.float(1.45, 1.75);
   }
 
@@ -298,7 +298,7 @@ export function describeSystem(seed: number, { name, cls, homeType }: SystemOpti
 }
 
 /** A planet `slot` places out, then its moons. */
-function addPlanet(bodies: BodySpec[], rng: Random, sysName: string, slot: number, seed: number, type: BodyType, orbitRadius: number) {
+function addPlanet(bodies: BodySpec[], rng: Random, sysName: string, slot: number, seed: number, type: BodyType, orbitRadius: number, opts: PlanetOptions) {
   const name = `${sysName} ${romanNumeral(slot + 1)}`;
   let radius: number;
   let params: PlanetParams | GasParams;
@@ -323,7 +323,7 @@ function addPlanet(bodies: BodySpec[], rng: Random, sysName: string, slot: numbe
     if (rng.chance(0.65)) rings = { inner: rng.float(1.4, 1.7), outer: rng.float(2.1, 2.8), color: pal[2], seed: rng.float(0, 100) };
   } else {
     radius = rng.float(22000, 36000) * WORLD_SCALE;
-    params = createPlanetParams(seed, type, radius);
+    params = createPlanetParams(seed, type, radius, opts);
   }
   const tiltAxis = new Vector3(rng.float(-1, 1), 0, rng.float(-1, 1)).normalize();
   const index = bodies.length;
