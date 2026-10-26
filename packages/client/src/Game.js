@@ -164,16 +164,18 @@ export class Game {
     system.info = sysInfo;
     yield;
     while (!system.step()) yield;
-    const home = system.homePlanet;
+    // the Waystation, in low orbit round the home world, as the system's description places it
+    const spec = system.description.station;
     const station = (out.station = new Station({
-      name: `${system.name} Waystation`,
-      parent: home,
-      radius: 300,
-      // in low orbit, a short hop above the top of the air
-      orbitRadius: home.radius + 55000,
-      orbitPeriod: 2400,
-      orbitPhase: 1.0,
-      seed: sysInfo.seed,
+      name: spec.name,
+      parent: system.planets[spec.parent],
+      radius: spec.radius,
+      orbitRadius: spec.orbitRadius,
+      orbitPeriod: spec.orbitPeriod,
+      orbitPhase: spec.orbitPhase,
+      orbitTilt: new THREE.Quaternion().fromArray(spec.orbitTilt),
+      soi: spec.soi,
+      seed: spec.seed,
       staged: true,
     }));
     station.update = stationUpdate.bind(station);
