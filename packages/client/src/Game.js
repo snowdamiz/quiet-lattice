@@ -19,7 +19,7 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame } from '@astra/shared/world';
+import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { Objectives } from './gameplay/Objectives.js';
 import { Asteroids } from './universe/Asteroids.js';
@@ -29,8 +29,11 @@ import { Menus } from './ui/Menus.js';
 import { Audio } from './audio/Audio.js';
 import { loadLibrary } from './gameplay/modelLibrary.js';
 import { Universe } from './universe/Universe.js';
-import { saveGame, loadSave, applySave, clearSave } from './gameplay/Save.js';
 import { collectResources, disposeTree } from './core/dispose.js';
+import { Net } from './net/Net.js';
+import { gameSocketUrl } from './net/api.js';
+import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
+import { clearSession, setNotice } from './net/session.js';
 
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -65,7 +68,12 @@ export class Game {
     this.galaxy = new Galaxy(GALAXY_SEED);
     this.sky.setSystems(this.galaxy.systems);
     this.universe = new Universe(this);
+    // world time (s): the server's once in the world (followServerClock), every body's pose comes from it
     this.time = 0;
+    // world time minus the render clock (renderTime), which shaders animate on
+    this.timeBase = 0;
+    // the connection to the server, once a character is picked (enterWorld); none on the title or in the dev sandbox
+    this.net = null;
     this.camWorld = new THREE.Vector3();
     this.camWorldQuat = new THREE.Quaternion();
     this.camWorldQuatInv = new THREE.Quaternion();
@@ -74,7 +82,6 @@ export class Game {
     this.overlay = null;
     this.discovered = new Set();
     this.discoveredNames = new Set();
-    this.saveTimer = 0;
     this.navTarget = null;
     this.scanMarkers = [];
     this.scanCooldown = 0;
@@ -270,22 +277,239 @@ export class Game {
     this.cam.frame = undefined;
   }
 
-  startGame(continueSave = false) {
+  // Play begins, the ship (or the walker) already placed: by the server's welcome, or in the dev sandbox.
+  startGame() {
     this.audio.start();
-    if (continueSave) {
-      const data = loadSave();
-      if (data) applySave(this, data);
-    } else clearSave();
-    this.placeShipNearStation();
-    if (continueSave && this.pendingDeep) this.universe.restore(this.pendingDeep);
-    this.pendingDeep = null;
-    this.mode = 'ship';
+    this.menus.hideTitle();
     this.hud.setVisible(true);
     this.input.lock();
     setTimeout(() => {
       this.hud.showBanner(this.system.name.toUpperCase(), 'Star System');
       this.audio.play('discovery');
     }, 600);
+  }
+
+  // Dev builds only: the offline sandbox the dev scenarios, asset reviews, smoke specs and captures run in (main.js opens
+  // it for a scenario hash or dev.boot()). A new pilot by the home Waystation, no server, and nothing kept anywhere: the
+  // game itself always goes through the server.
+  startSandbox() {
+    if (!import.meta.env.DEV || this.mode !== 'title') return;
+    this.placeShipNearStation();
+    this.mode = 'ship';
+    this.startGame();
+  }
+
+  // ---------- online: the server holds the character (DESIGN 17, docs/ARCHITECTURE.md §5, §9) ----------
+
+  // Enters the world as one of the account's characters: Net signs in on the socket and joins, the welcome says where
+  // the character is, and from then the client sends its input and keeps the server's inventory. Menus calls this once a
+  // character is picked; `onFail(reason, code)` hears why it could not get in.
+  enterWorld(session, character, onFail) {
+    this.net?.close();
+    const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
+    net.input = () => this.inputSample();
+    this.inventory.send = (m) => net.send(m);
+    net.on('welcome', (m, first) => this.onWelcome(m, first));
+    net.on('inventory', (m, first) => {
+      if (first) this.inventory.reset(m.inventory);
+      else if (this.inventory.receive(m) && this.overlay === 'inventory') this.menus.showMessage('The server refused that move');
+    });
+    net.on('correction', (m) => this.onCorrection(m));
+    net.on('event', ({ event }) => event.kind === 'notice' && this.hud.toast(event.text, event.tone));
+    net.on('lost', () => this.hud.toast('Connection lost · reconnecting', 'warn'));
+    net.on('closed', ({ refusal }) => {
+      if (this.net !== net) return;
+      const reason = refusal?.reason || 'The connection to the server closed.';
+      if (refusal?.code === 'auth') clearSession();
+      if (net.everJoined) this.leaveWorld(reason);
+      else {
+        this.net = null;
+        this.inventory.send = null;
+        onFail?.(reason, refusal?.code ?? null);
+      }
+    });
+    net.connect();
+  }
+
+  onWelcome(m, first) {
+    this.setWorldTime(this.net.serverTime());
+    if (!first) {
+      // a reconnect: the client kept flying meanwhile, and its next input tells the server where it is now
+      this.hud.toast('Reconnected', 'good');
+      return;
+    }
+    const sys = this.galaxy.systems.find((s) => s.seed === m.zone.systemSeed);
+    if (sys && sys !== this.system.info) {
+      this.galaxy.setCurrent(sys);
+      this.discovered.clear();
+      this.loadSystem(sys);
+    }
+    this.placeFromServer(m.pose, m.mode);
+    this.startGame();
+  }
+
+  // Puts the character where the server holds it (welcome's pose and mode). Docked is this Waystation's pad nearest the
+  // pose; on foot the walker stands at the pose and the ship waits on the nearest pad, or landed beside it on a world. A
+  // pose in none of this system's frames (client and server disagree about the world) starts by the Waystation instead.
+  placeFromServer(pose, mode) {
+    const ship = this.ship;
+    const s = ship.state;
+    const frame = frameOfId(this.system, this.station, pose.frame);
+    this.poseBlend = null;
+    this.camBlend = null;
+    this.cam.frame = undefined;
+    this.station.releasePad(ship);
+    this.mode = 'ship';
+    if (frame === undefined) {
+      console.warn(`welcome: frame ${pose.frame} is not one of ${this.system.name}'s; starting by its Waystation`);
+      this.placeShipNearStation();
+      return;
+    }
+    const at = new THREE.Vector3().fromArray(pose.pos);
+    const quat = new THREE.Quaternion().fromArray(pose.quat);
+    if (mode === 'foot' && (frame === this.station || frame?.sampler)) {
+      const up = frame === this.station ? new THREE.Vector3(0, 1, 0) : at.clone().normalize();
+      const heading = headingOf(quat, up);
+      if (frame === this.station) this.dockOnPad(at);
+      else this.landBeside(frame, at, heading);
+      this.player.spawn(frame, at, heading);
+      this.mode = 'foot';
+      return;
+    }
+    if (mode === 'docked' && frame === this.station) {
+      this.dockOnPad(at, quat);
+      return;
+    }
+    s.frame = frame;
+    localPoseInto(pose, s);
+    if (mode === 'landed' && frame?.sampler) {
+      ship.mode = 'landed';
+      s.vel.set(0, 0, 0);
+      ship.speed = 0;
+    } else {
+      // flying (the pulse drive is not resumed: it spools up again at the pilot's key)
+      ship.mode = 'flying';
+      ship.speed = Math.max(0, _v2.set(0, 0, -1).applyQuaternion(s.quat).dot(s.vel));
+    }
+  }
+
+  // The ship set down on this Waystation's pad nearest `near` (an NPC parked there leaves), upright, and facing as `quat`
+  // does when that is upright.
+  dockOnPad(near, quat = null) {
+    const ship = this.ship;
+    const s = ship.state;
+    let pad = null;
+    let best = Infinity;
+    for (const p of this.station.pads) {
+      const d = Math.hypot(near.x - p.x, near.z - p.z);
+      if (d < best) [pad, best] = [p, d];
+    }
+    const npc = this.traffic.ships.find((t) => t.pad === pad);
+    if (npc) this.traffic.startDeparture(npc, true);
+    pad.occupied = ship;
+    s.frame = this.station;
+    s.pos.set(pad.x, pad.y + GEAR_HEIGHT, pad.z);
+    if (quat && _v3.set(0, 1, 0).applyQuaternion(quat).y > 0.999) s.quat.copy(quat);
+    else s.quat.identity();
+    s.vel.set(0, 0, 0);
+    ship.speed = 0;
+    ship.mode = 'landed';
+    this.objectives.flags.docked = true;
+  }
+
+  // The ship landed on a world beside a walker standing at `feet`, a wingspan off to the walker's right, facing its way.
+  landBeside(frame, feet, heading) {
+    const ship = this.ship;
+    const s = ship.state;
+    const right = new THREE.Vector3().crossVectors(heading, feet.clone().normalize()).normalize();
+    const up = feet.clone().addScaledVector(right, 11).normalize();
+    const fwd = heading.clone().addScaledVector(up, -heading.dot(up)).normalize();
+    s.frame = frame;
+    s.pos.copy(up).multiplyScalar(frame.groundRadius(up) + GEAR_HEIGHT);
+    _m4.makeBasis(new THREE.Vector3().crossVectors(fwd, up), up, fwd.clone().negate());
+    s.quat.setFromRotationMatrix(_m4);
+    s.vel.set(0, 0, 0);
+    ship.speed = 0;
+    ship.mode = 'landed';
+    this.flora.clearAround(s.pos, 11, 3.5);
+  }
+
+  // The input Net sends at 20 Hz: the pose the client predicts (the walker's on foot, else the ship's) in the frame it is
+  // in, its mode and the buttons held. None while out of the zone's system (warped or flown to another star, until zone
+  // handoff, P1.E04.T04) or out between the stars.
+  inputSample() {
+    if ((this.mode !== 'ship' && this.mode !== 'foot') || this.universe.deep || this.system.seed !== this.net?.zone?.systemSeed) return null;
+    const foot = this.mode === 'foot';
+    const st = foot ? this.player.state : this.ship.state;
+    const frame = frameIdOfFrame(this.system, this.station, st.frame);
+    if (frame === undefined) return null;
+    const pose = framedPose(frame, st);
+    // (a walker's own quaternion is not kept: it faces its heading)
+    if (foot) pose.quat = walkerQuat(this.player.up(_v1), this.player.heading, _q1).toArray();
+    const inp = this.input;
+    const ship = this.ship;
+    return {
+      mode: moveModeOf(this.mode, ship.mode, ship.state.frame),
+      pose,
+      buttons: buttonsOf({
+        fire: !foot && inp.mouse(0),
+        boost: !foot && ship.boosting,
+        jet: foot && this.player.jetting,
+        sprint: foot && this.player.sprinting,
+        beam: foot && this.multitool.firing,
+        interact: inp.down('KeyE'),
+        up: !foot && inp.down('Space'),
+        down: !foot && inp.down('KeyC'),
+      }),
+    };
+  }
+
+  // The server refused a predicted pose (movement authority) and says where the character is. Until prediction and
+  // reconciliation (P1.E04.T03) blend and replay, the client takes that pose, re-expressed in the frame it is in
+  // (DECISIONS P1.E03.T03: never adopt the server's frame).
+  onCorrection(m) {
+    if (this.mode !== 'ship' && this.mode !== 'foot') return;
+    const frame = frameOfId(this.system, this.station, m.pose.frame);
+    if (frame === undefined) return;
+    const foot = this.mode === 'foot';
+    const st = foot ? this.player.state : this.ship.state;
+    const keep = st.frame;
+    st.frame = frame;
+    localPoseInto(m.pose, st);
+    st.setFrame(keep);
+    if (foot) headingOf(st.quat, this.player.up(_v1), this.player.heading);
+    else this.ship.speed = Math.max(0, _v2.set(0, 0, -1).applyQuaternion(st.quat).dot(st.vel));
+  }
+
+  // Back to the title: the connection closes (the server saves the character as it goes) and the page starts afresh, so
+  // nothing of this character's session carries into the next one. `notice` is shown on the title.
+  leaveWorld(notice = null) {
+    const net = this.net;
+    this.net = null;
+    this.inventory.send = null;
+    net?.close();
+    if (notice) setNotice(notice);
+    location.reload();
+  }
+
+  // World time is the server's (ARCHITECTURE §3). It eases toward the server clock, and jumps when a second or more off
+  // (a stall, a hidden tab, frames stepped faster than real time). Shaders animate on renderTime instead, which neither
+  // jumps nor grows to the server's 10^7 s, where a float32 uniform moves in 2 s steps.
+  get renderTime() {
+    return this.time - this.timeBase;
+  }
+
+  setWorldTime(t) {
+    if (t === null || !Number.isFinite(t)) return;
+    this.timeBase += t - this.time;
+    this.time = t;
+  }
+
+  followServerClock(dt) {
+    const t = this.net.serverTime();
+    if (t === null) return;
+    const err = t - this.time;
+    this.setWorldTime(Math.abs(err) >= 1 ? t : this.time + err * Math.min(1, dt * 2));
   }
 
   start() {
@@ -321,6 +545,7 @@ export class Game {
     const playing = (this.mode === 'ship' || this.mode === 'foot') && !this.overlay;
     inp.enabled = playing && inp.locked;
     this.time += dt;
+    if (this.net?.joined) this.followServerClock(dt);
     this.universe.update();
     this.system.update(this.time);
     this.station.update(this.time);
@@ -357,9 +582,10 @@ export class Game {
     this.updateAudio();
     this.updateDebugText();
     this.objectives.update(dt);
-    if (this.mode !== 'title') {
-      this.saveTimer += dt;
-      if (this.saveTimer > 45) this.save();
+    // this frame's pose goes out (Net paces it to 20 Hz), and inventory predictions left unanswered expire
+    if (this.net) {
+      this.net.update();
+      this.inventory.expire();
     }
     inp.endFrame();
   }
@@ -684,14 +910,16 @@ export class Game {
     this.player.hazard = 100;
   }
 
-  save(announce = false) {
-    this.saveTimer = 0;
-    if (saveGame(this) && announce) this.hud.toast('Progress saved', 'good');
+  // Saving is the server's: it saves every character in play every 30 s and as it leaves (ARCHITECTURE §8). At a moment
+  // worth holding (docked, arrived in a system, a site visited) the client sends its pose at once instead of at the
+  // next input.
+  save() {
+    this.net?.sendInput();
   }
 
   onDocked() {
     this.objectives.flags.docked = true;
-    this.save(true);
+    this.save();
     this.audio.play('dock');
     this.hud.showBanner(this.station.name.toUpperCase(), 'Docked');
     if (this.ship.shield < 100) {
@@ -911,7 +1139,7 @@ export class Game {
 
     const sun = this.system.star;
     sun.syncRoot(this.camWorld);
-    sun.updateVisual(this.time);
+    sun.updateVisual(this.renderTime);
     const focus = this.mode === 'title' ? null : this.focusFrame;
     const current = focus && focus.sampler ? focus : null;
     if (!this.universe.dormant) {
@@ -922,7 +1150,7 @@ export class Game {
       sys.planets.forEach((p, i) => {
         const awake = waking === undefined || i < waking;
         if (waking !== undefined) p.root.visible = awake;
-        if (awake) p.updateRender(this.camWorld, cam, sun, p === current, this.time);
+        if (awake) p.updateRender(this.camWorld, cam, sun, p === current, this.renderTime);
       });
       if (sys.waking !== undefined && (sys.waking += 1) > sys.planets.length) sys.waking = undefined;
     }
@@ -934,7 +1162,7 @@ export class Game {
     // after the camera was out left it dark against the stars for a second)
     const depth = this.indoor ? HANGAR.z1 - camLocalStation.z : 0;
     this.indoorK = THREE.MathUtils.damp(this.indoorK ?? 0, THREE.MathUtils.smoothstep(depth, 2, 45), 6, dt);
-    this.station.updateVisual(this.time, this.indoor || camLocalStation.length() < 400);
+    this.station.updateVisual(this.renderTime, this.indoor || camLocalStation.length() < 400);
     this.traffic.update(dt);
     this.pirates.syncVisual();
     this.ship.syncVisual(this.camWorld);
@@ -950,7 +1178,7 @@ export class Game {
     this.pool.update();
     this.updateLighting(current);
     this.updateAtmosphereUniforms();
-    this.engine.gradePass.uniforms.uTime.value = this.time;
+    this.engine.gradePass.uniforms.uTime.value = this.renderTime;
     this.engine.gradePass.uniforms.uWarp.value = this.speedEffect;
     this.updateFlare(cam, sun);
     this.updateHazardFx(dt);
@@ -972,7 +1200,7 @@ export class Game {
     const eye = this.universe.toLy(this.camWorld, _v4);
     const sun = this.system.star;
     const done = this.sky.update(eye, {
-      time: this.time,
+      time: this.renderTime,
       pixelRatio: this.engine.renderer.getPixelRatio(),
       vis: this.engine.atmoPass.uniforms.uStarVis.value,
       visited: this.system.info,
@@ -1231,7 +1459,7 @@ export class Game {
     u.uSunPos.value.copy(sun.position).sub(this.camWorld);
     const sc = sun.lightColor;
     u.uSunLight.value.set(sc.r, sc.g, sc.b).multiplyScalar(3.2);
-    u.uTime.value = this.time;
+    u.uTime.value = this.renderTime;
     u.uCount.value = list.length;
     // stars fade out under a daylit sky (they would otherwise show through thin cloud)
     let starVis = 1;

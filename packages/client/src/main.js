@@ -13,20 +13,22 @@ window.step = async (frames = 60, dt = 1 / 60) => {
   }
 };
 
-// Dev scenarios: open with #foot, #fly, #land, #station, #space to jump straight into a situation.
+// Dev scenarios (dev builds only): #sandbox, #foot, #fly, #land, #station, #dock, #space and #review:… open the offline
+// sandbox (Game.startSandbox: no server, nothing kept) and jump straight into a situation. Without one of these hashes
+// the game goes through the server: Play, sign in, pick a character.
 const scenario = location.hash.slice(1);
-if (scenario) {
+const SCENARIOS = new Set(['sandbox', 'foot', 'fly', 'land', 'station', 'dock', 'space', 'review']);
+if (import.meta.env.DEV && SCENARIOS.has(scenario.split(':')[0])) {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   (async () => {
-    const btn = document.querySelector('.title-screen [data-act="start"]');
-    while (btn.disabled) await wait(200);
-    btn.click();
+    while (!game.menus.ready) await wait(200);
+    game.startSandbox();
     await wait(300);
     const home = game.system.homePlanet;
     const [name, arg] = scenario.split(':');
     // #review:<family>/<file>[:<asset>[/<variant>]] — the asset review scene (src/dev/review.js); `review.ready` resolves
     // once it has settled
-    if (name === 'review' && import.meta.env.DEV) {
+    if (name === 'review') {
       const { startReview } = await import('./dev/review.js');
       startReview(game, decodeURIComponent(scenario.slice('review:'.length)));
       return;
@@ -72,16 +74,15 @@ if (import.meta.env.DEV) {
   // F2: teleport to any planet in any system
   import('./dev/TeleportPanel.js').then(({ TeleportPanel }) => (window.teleporter = new TeleportPanel(game)));
   window.dev = {
+    // a fresh, silent game in the offline sandbox (Game.startSandbox), as the smoke specs and captures start one
     async boot() {
-      Object.keys(localStorage).filter((k) => k.startsWith('next-horizon') || k.startsWith('astra-nullius')).forEach((k) => localStorage.removeItem(k));
       game.audio.start = () => {};
-      const btn = document.querySelector('.title-screen [data-act="start"]');
       // step frames ourselves: in a hidden tab the rAF loop that readies the title is throttled
-      while (btn.disabled) {
+      while (!game.menus.ready) {
         await window.step(2);
         await new Promise((r) => setTimeout(r, 50));
       }
-      btn.click();
+      game.startSandbox();
       await window.step(10);
     },
     async settle(n = 20) {

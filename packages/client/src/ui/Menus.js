@@ -1,9 +1,11 @@
-// Title screen, pause screen, settings and controls sheets, trade terminal, the inventory, the 3D navigation map
-// and the warp sequence.
-import { getHull, getItem, getResource } from '@astra/shared/data';
+// Title screen with its sign-in and character pick, pause screen, settings and controls sheets, trade terminal, the
+// inventory, the 3D navigation map and the warp sequence.
+import { PEOPLES, getHull, getItem, getPeople, getResource } from '@astra/shared/data';
 import { itemInfo, slotAt, stackCap, usedSlots } from '@astra/shared/inventory';
+import { CharacterName } from '@astra/shared/protocol';
 import { PIPS, RESOURCES } from '../gameplay/Inventory.js';
-import { hasSave, applyUpgrade } from '../gameplay/Save.js';
+import { createCharacter, listCharacters, login, register } from '../net/api.js';
+import { clearSession, loadSession, saveSession, takeNotice } from '../net/session.js';
 import { MapView } from './map/MapView.js';
 
 function el(tag, cls, parent, html) {
@@ -43,6 +45,26 @@ const SHOP = [
   { id: 'pressure', icon: 'PRS', name: 'Pressure Hull', desc: 'Three times longer under crushing atmospheres and in the depths of gas giants.', price: 8000, once: true },
   { id: 'coating', icon: 'HAZ', name: 'Hazard Coating', desc: 'Shrugs off acid, radiation and storm damage three times longer.', price: 5500, once: true },
 ];
+
+// the shop's starship upgrades are the Pilot nodes they became (DESIGN 9.7)
+const PILOT_NODES = { thrust: 'photon_thrusters', thermal: 'thermal_plating', pressure: 'pressure_hull', coating: 'hazard_coating' };
+
+// what a starship upgrade does: the ship flies with its node
+function applyUpgrade(game, id) {
+  const node = PILOT_NODES[id];
+  if (!node) return;
+  game.ship.skills.add(node);
+  game.ship.refreshStats();
+}
+
+// the look a character is made with until character creation offers one (P1.E05.T05)
+const DEFAULT_LOOK = { palette: 0, pattern: 0, head: 0, suit: 0 };
+// a text field in a sheet row (the sign-in is functional only: its screens are P1.E04.T05's)
+const FIELD = 'width:210px;height:34px;padding:0 10px;background:transparent;border:1px solid var(--line-2);color:var(--text);font:inherit;font-size:14px;user-select:text';
+
+function esc(t) {
+  return String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
 
 
 // the tag a non-resource item wears in its slot
@@ -146,12 +168,11 @@ export class Menus {
   }
 
   // ---------- title ----------
+  // Play opens the sign-in beside the menu; the world is entered from there (enterWorld), never from a local save.
   buildTitle() {
     this.title = el('div', 'overlay title-screen show', this.root);
-    this.hasSave = hasSave();
     const items = [
-      ['start', this.hasSave ? 'Continue' : 'New game', 'primary', true],
-      ...(this.hasSave ? [['new', 'New game', '', true]] : []),
+      ['start', 'Play', 'primary', true],
       ['settings', 'Settings'],
       ['controls', 'Controls'],
       ['credits', 'Credits'],
@@ -170,40 +191,47 @@ export class Menus {
         <div class="t-load"><div class="bar"><b></b></div><span class="mono">Preparing the home system</span></div>
         <span class="mono">Build 0.9</span>
       </footer>
-      ${this.sheetsHTML()}`;
+      ${this.sheetsHTML()}
+      <aside class="sheet frame" data-sheet="account"><header class="sheet-head"><h3>Play</h3><button class="close" data-close>✕</button></header><div class="account"></div></aside>`;
     this.startBtn = this.title.querySelector('[data-act="start"]');
-    this.newBtn = this.title.querySelector('[data-act="new"]') || document.createElement('button');
     this.bindSheets(this.title);
     this.bindSettings(this.title);
+    this.bindAccount(this.title.querySelector('.account'));
+    // a refusal or a sign-out that sent the player back here, said when the sign-in next opens
+    this.notice = takeNotice();
     // sound needs a gesture first: the first click or key on the title starts it (and its music)
     const wake = () => this.game.audio.start();
     this.title.addEventListener('pointerdown', wake, { once: true });
     window.addEventListener('keydown', wake, { once: true });
-    this.startBtn.addEventListener('click', () => {
-      this.title.classList.remove('show');
-      this.game.startGame(this.hasSave);
-    });
-    this.newBtn.addEventListener('click', () => {
-      this.title.classList.remove('show');
-      this.game.startGame(false);
-    });
     this.game.hud.setVisible(false);
   }
 
-  // menu items that open a sheet beside the menu (settings, controls); a second click closes it
+  // whether the home system is built and the models loaded: the world can be entered (Play is enabled)
+  get ready() {
+    return !this.startBtn.disabled;
+  }
+
+  hideTitle() {
+    this.title.classList.remove('show');
+    this.title.querySelectorAll('.sheet.open, .t-item.open').forEach((e) => e.classList.remove('open'));
+  }
+
+  // menu items that open a sheet beside the menu (Play's sign-in, settings, controls); a second click closes it
   bindSheets(root) {
     root.querySelectorAll('.t-item').forEach((b) => b.addEventListener('mouseenter', () => !b.disabled && this.game.audio?.play('hover')));
     const sheets = root.querySelectorAll('[data-sheet]');
-    const items = root.querySelectorAll('[data-act="settings"],[data-act="controls"],[data-act="credits"]');
+    const items = root.querySelectorAll('[data-act="start"],[data-act="settings"],[data-act="controls"],[data-act="credits"]');
+    const sheetOf = (b) => (b.dataset.act === 'start' ? 'account' : b.dataset.act);
     // (the row whose sheet is open stays lit)
-    const mark = () => items.forEach((b) => b.classList.toggle('open', !!root.querySelector(`.sheet.open[data-sheet="${b.dataset.act}"]`)));
+    const mark = () => items.forEach((b) => b.classList.toggle('open', !!root.querySelector(`.sheet.open[data-sheet="${sheetOf(b)}"]`)));
     const show = (name) => {
       if (name === 'credits') this.fillCredits(root);
+      if (name === 'account') this.openAccount();
       sheets.forEach((s) => s.classList.toggle('open', s.dataset.sheet === name && !s.classList.contains('open')));
       mark();
       this.game.audio?.play('ui');
     };
-    items.forEach((b) => b.addEventListener('click', () => show(b.dataset.act)));
+    items.forEach((b) => b.addEventListener('click', () => show(sheetOf(b))));
     root.querySelectorAll('.sheet [data-close]').forEach((b) =>
       b.addEventListener('click', () => {
         sheets.forEach((s) => s.classList.remove('open'));
@@ -224,7 +252,6 @@ export class Menus {
       const ready = this.loaded && (home.terrain.isReady() || this.waitT > 600);
       if (ready && this.startBtn.disabled) {
         this.startBtn.disabled = false;
-        this.newBtn.disabled = false;
         this.title.querySelector('.t-load').classList.add('done');
       }
     }
@@ -324,6 +351,137 @@ export class Menus {
     );
   }
 
+  // ---------- account: sign in, then pick or make a character, and enter (DESIGN 20.2: accounts, server-held state) ----------
+  // Functional only, in the sheet beside the title's menu; the login and character screens proper are P1.E04.T05's.
+
+  openAccount() {
+    if (this.entering) return;
+    const message = this.notice;
+    this.notice = null;
+    this.session = loadSession();
+    if (this.session) this.showCharacters(message);
+    else this.renderAccount('signin', { message });
+  }
+
+  renderAccount(view, data = {}) {
+    const box = this.title.querySelector('.account');
+    const msg = data.message ? `<p class="mono" data-msg style="margin:14px 0 4px;color:var(--warm);font-size:12px;line-height:1.5">${esc(data.message)}</p>` : '';
+    const row = (label, ctl) => `<div class="set-row"><div>${label}</div><div class="ctl">${ctl}</div></div>`;
+    if (view === 'signin') {
+      box.innerHTML = `<form class="settings" data-form="signin">
+          <label class="set-row"><div>Username</div><div class="ctl"><input name="username" value="${esc(data.username ?? '')}" autocomplete="username" maxlength="24" required style="${FIELD}"></div></label>
+          <label class="set-row"><div>Password</div><div class="ctl"><input name="password" type="password" autocomplete="current-password" maxlength="128" required style="${FIELD}"></div></label>
+          ${row('', '<button type="button" class="btn ghost small" data-do="register">Create account</button><button type="submit" class="btn small">Sign in</button>')}
+        </form>${msg}`;
+    } else if (view === 'characters') {
+      this.characters = data.characters;
+      const list = data.characters.map((c) => row(`${esc(c.name)}<span class="mono" style="margin-left:10px;color:var(--dim);font-size:11px">${esc(getPeople(c.people).name)} · level ${c.level}</span>`, `<button type="button" class="btn small" data-enter="${esc(c.id)}">Enter</button>`));
+      const people = PEOPLES.map((p, i) => `<button type="button" data-v="${p.id}" class="${i === 0 ? 'on' : ''}">${esc(p.name)}</button>`).join('');
+      const create = data.characters.length < data.max
+        ? `<form class="settings" data-form="create">
+            <label class="set-row"><div>New character</div><div class="ctl"><input name="name" placeholder="Name" maxlength="20" required style="${FIELD}"></div></label>
+            ${row('People', `<div class="segmented" data-people>${people}</div><button type="submit" class="btn small">Create</button>`)}
+          </form>`
+        : '';
+      box.innerHTML = `<div class="settings">${list.join('') || row('<span style="color:var(--dim)">No characters yet</span>', '')}</div>${create}${msg}
+        <div class="settings">${row(`<span class="mono" style="color:var(--dim);font-size:11px">Signed in as ${esc(this.session.username)}</span>`, '<button type="button" class="btn ghost small" data-do="signout">Sign out</button>')}</div>`;
+    } else if (view === 'retry') {
+      box.innerHTML = `${msg}<div class="settings">${row('', '<button type="button" class="btn ghost small" data-do="signout">Sign out</button><button type="button" class="btn small" data-do="retry">Try again</button>')}</div>`;
+    } else {
+      box.innerHTML = `<div class="settings">${row(esc(data.message), '')}</div>`;
+    }
+  }
+
+  bindAccount(box) {
+    // typing goes to the form, not to the game's keys (whose listener would also swallow the space)
+    box.addEventListener('keydown', (e) => e.stopPropagation());
+    box.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (this.accountBusy) return;
+      if (e.target.dataset.form === 'signin') this.signIn(e.target, false);
+      else if (e.target.dataset.form === 'create') this.create(e.target);
+    });
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b || this.accountBusy || b.type === 'submit') return;
+      if (b.dataset.do === 'register') this.signIn(b.form, true);
+      else if (b.dataset.do === 'signout') {
+        clearSession();
+        this.session = null;
+        this.renderAccount('signin');
+      } else if (b.dataset.do === 'retry') this.showCharacters();
+      else if (b.dataset.enter) this.enter(b.dataset.enter);
+      else if (b.closest('[data-people]')) b.parentElement.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+    });
+  }
+
+  // runs one request at a time, the sheet's buttons ignored meanwhile
+  async accountCall(fn) {
+    this.accountBusy = true;
+    try {
+      return await fn();
+    } finally {
+      this.accountBusy = false;
+    }
+  }
+
+  async signIn(form, create) {
+    if (!form.reportValidity()) return;
+    const username = form.querySelector('[name="username"]').value.trim();
+    const password = form.querySelector('[name="password"]').value;
+    try {
+      const auth = await this.accountCall(() => (create ? register : login)({ username, password }));
+      this.session = { ...auth, username };
+      saveSession(this.session);
+      await this.showCharacters();
+    } catch (e) {
+      this.renderAccount('signin', { message: e.message, username });
+    }
+  }
+
+  async showCharacters(message = null) {
+    try {
+      const list = await this.accountCall(() => listCharacters(this.session.token));
+      this.renderAccount('characters', { ...list, message });
+    } catch (e) {
+      if (e.status === 401) {
+        clearSession();
+        this.session = null;
+        this.renderAccount('signin', { message: 'Your session has ended. Sign in again.' });
+      } else this.renderAccount('retry', { message: e.message });
+    }
+  }
+
+  async create(form) {
+    if (!form.reportValidity()) return;
+    const name = form.querySelector('[name="name"]').value.trim().replace(/\s+/g, ' ');
+    if (!CharacterName.safeParse(name).success) {
+      this.showCharacters('Names are 2–20 letters, with single spaces, apostrophes or hyphens between words.');
+      return;
+    }
+    const people = form.querySelector('[data-people] .on')?.dataset.v ?? PEOPLES[0].id;
+    try {
+      await this.accountCall(() => createCharacter(this.session.token, { name, people, look: DEFAULT_LOOK }));
+      await this.showCharacters();
+    } catch (e) {
+      await this.showCharacters(e.message);
+    }
+  }
+
+  enter(id) {
+    const c = this.characters?.find((x) => x.id === id);
+    if (!c) return;
+    this.entering = true;
+    this.renderAccount('wait', { message: `Entering the world as ${c.name}…` });
+    this.game.enterWorld(this.session, c, (reason, code) => {
+      this.entering = false;
+      if (code === 'auth') {
+        this.session = null;
+        this.renderAccount('signin', { message: reason });
+      } else this.showCharacters(reason);
+    });
+  }
+
   // ---------- pause ----------
   buildPause() {
     this.pauseHint.innerHTML = `
@@ -331,14 +489,14 @@ export class Menus {
         <div class="label">Next Horizon</div>
         <h2>Paused</h2>
         <div class="where mono"></div>
-        <nav class="t-menu">${menuHTML([['resume', 'Resume', 'primary'], ['save', 'Save game'], ['settings', 'Settings'], ['controls', 'Controls']])}</nav>
+        <nav class="t-menu">${menuHTML([['resume', 'Resume', 'primary'], ['leave', 'Leave the world'], ['settings', 'Settings'], ['controls', 'Controls']])}</nav>
       </main>
       ${this.sheetsHTML()}`;
     this.pauseHint.querySelector('[data-act="resume"]').addEventListener('click', () => this.game.input.lock());
     this.pauseHint.addEventListener('click', (e) => {
       if (e.target === this.pauseHint) this.game.input.lock();
     });
-    this.pauseHint.querySelector('[data-act="save"]').addEventListener('click', () => this.game.save(true));
+    this.pauseHint.querySelector('[data-act="leave"]').addEventListener('click', () => this.game.leaveWorld());
     this.bindSheets(this.pauseHint);
     this.bindSettings(this.pauseHint);
   }
