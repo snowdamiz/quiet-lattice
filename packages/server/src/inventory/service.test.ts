@@ -1,7 +1,7 @@
 import { getHull, type HullId } from '@astra/shared/data';
 import { countOf, emptyInventory, layoutFor, slotAt, startingInventory, type Inventory, type InventoryLoadout } from '@astra/shared/inventory';
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_LOADOUT, InventoryService, type InventoryReply } from './service.ts';
+import { DEFAULT_LOADOUT, InventoryNotHeldError, InventoryService, type InventoryReply } from './service.ts';
 
 /** A ship of this hull carrying every pod its bays take (Pack Mule adds a bay), and the skills. */
 const at = (hull: HullId | null, skills: string[] = []): InventoryLoadout => ({
@@ -175,5 +175,26 @@ describe('InventoryService', () => {
     expect(svc.close(ID)).not.toBeNull();
     expect(svc.get(ID)).toBeNull();
     expect(svc.close(ID)).toBeNull();
+  });
+
+  it('refuses requests and changes for a character it does not hold, creating nothing', () => {
+    const { svc, pushed } = service();
+    const move = { op: 'compact', c: 'suit' };
+    for (const call of [
+      () => svc.request(ID, 1, move),
+      () => svc.state(ID),
+      () => svc.grant(ID, 'gold', 5),
+      () => svc.consume(ID, 'gold', 5),
+      () => svc.earn(ID, 5),
+      () => svc.spend(ID, 5),
+      () => svc.setLoadout(ID, DEFAULT_LOADOUT),
+      () => svc.dropCargo(ID),
+    ]) {
+      expect(call).toThrow(InventoryNotHeldError);
+    }
+    expect(svc.size).toBe(0);
+    expect(pushed).toEqual([]);
+    svc.open(ID);
+    expect(svc.state(ID)).toEqual({ seq: 0, inventory: svc.get(ID) });
   });
 });
