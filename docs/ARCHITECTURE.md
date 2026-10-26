@@ -20,7 +20,7 @@ processes will read (presence, zone membership, the server clock) is mirrored to
 ## 2. Server layout (`packages/server/src`)
 
 ```
-index.ts            boot: config → db → redis → world service → zone manager → gateway
+index.ts            boot: config → db → redis → world service → zone manager → character persistence → gateway
 config.ts           env (DATABASE_URL, REDIS_URL, JWT_SECRET, PORT=8787, TICK_HZ=20), validated with zod
 db/                 Drizzle schema (schema.ts), client, migrate.ts; SQL migrations in packages/server/drizzle/
 gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters
@@ -28,6 +28,7 @@ gateway/ws.ts       WebSocket upgrade (token in the first message), one Session 
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 world/              WorldService: server clock, season, Count, Edge position, tier map
+persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
@@ -148,9 +149,49 @@ picked up, quest steps done) are never trusted; they are requests the server re-
 
 ## 8. Persistence
 
-Postgres tables (Drizzle): `accounts`, `characters` (people, name, look, level, xp, home system, pose, frame, ship), and
-JSON-typed columns or child tables for inventory, skills, quests and flags as the tasks that own them arrive. Characters
-persist every 30 s and on logout (P1.E03.T05). Migrations are generated with drizzle-kit and applied with `pnpm db:migrate`.
+Postgres tables (Drizzle): `accounts`, `shards` (§3) and `characters` (people, name, look, level, xp, home system, and
+`state`, `revision`, `saved_at`). Migrations are generated with drizzle-kit and applied with `pnpm db:migrate`.
+
+**Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
+component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx), check?(value,
+ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry `{"v": <schema version>, "data":
+<value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own columns. Components load in
+registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers (`components.ts`,
+`coreRegistry`): `progress` (level, xp, home system: the columns), `ship` (`ShipLoadout | null`, the Lark by default),
+`inventory` (its layout re-derived from the ship on load, `applyLayout(saved, layoutFor(loadout))`; kept as saved, and
+logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`, read from the character's zone entity).
+
+- **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
+  landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
+  an older `v` is migrated one version at a time and written back at the next save. A value that cannot be read (a newer
+  `v`, no migration, the schema or `check` fails) follows `onInvalid`: the pose falls back to docked at the home
+  Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement); every other
+  component refuses the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries
+  the loaded pose.
+- **Save** every 30 s per character in play, staggered (the interval split into 30 slots, each character in the
+  least-loaded, one slot captured per second); on leave (logout, disconnect, the older connection of a duplicate join),
+  captured before the entity leaves its zone; on zone handoff (P1.E04.T04 calls `persistence.saveNow(id, 'handoff')`);
+  and on graceful shutdown (`server.close()`, which SIGINT and SIGTERM run: sessions close and save, everyone still in play
+  is captured, and the queue is written within 5 s). A crash loses at most the last interval.
+- A capture is synchronous and small: each component's live value, checked against its schema (a value that fails is
+  logged and its stored one kept), and only the components whose value changed since the last capture, at a revision one
+  above it. Writes never block a tick: the queue holds at most one save per character (a newer capture merges into the
+  waiting one), one writer drains it in batches of up to 64, one `UPDATE … FROM (VALUES …)` statement each, which merges
+  the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
+  raises `revision`, only where the row's revision is lower: a stale save never overwrites a newer one. A failed write is
+  logged and retried with backoff (0.5 s doubling to 30 s), merged under anything captured since; a failed batch retries
+  one character per statement, so one bad row holds back no other.
+- A character that has left stays held until its save is written, then every component forgets it (the inventory service
+  included). A change to a character out of play goes through persistence, not the in-memory services: an entry a service
+  makes for a character not in play is never saved, and the stored state replaces it on the next join.
+
+**Adding a component** (skills P1.E07.T01, quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
+`CharacterComponent` with its key, `v: 1`, the zod schema of the stored value, `default`, `load`, `save` and `unload`
+(`onInvalid: 'refuse'` for anything a player earned), and register it in `coreRegistry` after the components it reads and
+before those that read it: skills go before the inventory, which then passes the owned nodes to `layoutFor` (Pack Mule's
+stack cap). No SQL migration: it is a new key in `state`. To change a stored shape later, raise `v` and add
+`migrations[oldV]`. State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
+store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
 

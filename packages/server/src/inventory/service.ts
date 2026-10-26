@@ -4,8 +4,10 @@
 // changes an inventory (loot, mining, trade, crafting, the Recall's cargo drop, a new hull) is a server-side call here, and
 // listeners (the gateway) push the new state to the character's session.
 //
-// State lives in memory for the process's lifetime: a character that reconnects resumes its inventory. Persistence arrives
-// with P1.E03.T05, which loads a saved value through `open({ saved })` and stores `get()` every 30 s and on logout.
+// The service holds the inventories of the characters in play. Persistence (P1.E03.T05, src/persistence) puts one in play
+// on join through `open({ saved })`, its layout re-derived from the ship loadout, stores `get()` every 30 s and on leave,
+// and evicts it with `close()` once the character has left. A server-side change for a character out of play must go
+// through persistence, not here: an entry this service creates for it would not be saved.
 import {
   addItem,
   addUnits,
