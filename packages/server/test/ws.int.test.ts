@@ -6,7 +6,7 @@ import { createTokenService } from '../src/accounts/tokens.ts';
 import { MESSAGE_LIMITS } from '../src/gateway/ws.ts';
 import type { RunningServer } from '../src/server.ts';
 import { CloseCode, type Session } from '../src/session/session.ts';
-import { systemSeed } from '../src/world/home.ts';
+import { homeSystemOf, systemSeed } from '../src/world/home.ts';
 import { clientFrame, newAccount, newCharacter, OPCODE, pump, rawUpgrade, startTestServer, TestSocket, waitFor } from './helpers.ts';
 
 let server: RunningServer;
@@ -32,11 +32,12 @@ describe('WebSocket gateway', () => {
     const s = await signedIn(acct.token);
     s.send({ t: 'join', characterId: character.id }); // sent without waiting: the server handles messages in order
     const welcome = Welcome.parse(await s.next('welcome'));
+    const home = homeSystemOf('ulgani');
     expect(welcome).toMatchObject({
       accountId: acct.accountId,
       character,
-      zone: { id: 'sys:2', systemSeed: systemSeed(2) },
-      pose: { frame: `${systemSeed(2)}:station`, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+      zone: { id: `sys:${home}`, systemSeed: systemSeed(home) },
+      pose: { frame: `${systemSeed(home)}:station`, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
       mode: 'docked',
     });
     expect(welcome.serverTime).toBeGreaterThan(0);
