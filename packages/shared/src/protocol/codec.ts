@@ -27,9 +27,12 @@ export function encodeServerMessage(m: ServerMessage): string {
   return checked(ServerMessage, m);
 }
 
-/** Encodes a client or server message, validating it against whichever union its type belongs to. */
+/** Encodes a client or server message, validating it against whichever union its type belongs to. A type both directions
+ * use (`inventory`: a request one way, state the other) goes by whichever union accepts it. */
 export function encodeMessage(m: ClientMessage | ServerMessage): string {
   const isClient = ClientMessage.options.some((o) => o.shape.t.value === m.t);
+  const isServer = ServerMessage.options.some((o) => o.shape.t.value === m.t);
+  if (isClient && isServer) return ClientMessage.safeParse(m).success ? checked(ClientMessage, m) : checked(ServerMessage, m);
   return isClient ? checked(ClientMessage, m) : checked(ServerMessage, m);
 }
 

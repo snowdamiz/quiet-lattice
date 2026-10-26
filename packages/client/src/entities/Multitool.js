@@ -140,8 +140,7 @@ export class Multitool {
         if (this.target) {
           const res = g.flora.hit(this.target, this.power * dt);
           if (res && res.res) {
-            g.inventory.add(res.res, res.amount);
-            g.hud.pickup(res.res, res.amount);
+            g.hud.collected(res.res, res.amount, g.inventory.add(res.res, res.amount));
             g.audio.play('break');
             g.audio.play('pickup');
           }
