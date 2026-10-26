@@ -220,3 +220,8 @@ Format: task id, question → choice → why.
 - **P1.E03.T02 (open)** A stall of about 3 s or more can still close an honest client's socket (the burst absorbs ~2.5 s);
   a session whose entity is despawned stays joined with no zone. → P1.E04.T03 (client acks) and P1.E06.T03 (death and
   respawn) must handle these.
+- **P1.E14.T01 (skinned follow-up)** Skinned meshes are stamped with `art_variant` / `art_lod` extras at export so the
+  re-validation (and the engine) can place them back under their variant and LOD after the glTF importer moves them under
+  the armature; the importer runs with `disable_bone_shape`. The glTF exporter writes each skinned object's mesh separately
+  (no mesh sharing), so character files grow with their variant count — accepted for now; the engine must not assume a
+  skinned mesh is a child of its skeleton root.
