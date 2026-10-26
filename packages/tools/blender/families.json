@@ -38,7 +38,12 @@
       "why": "DESIGN 19.2: base colour, roughness, metallic, normal, ambient occlusion, emissive"
     },
     "glass": { "maps": [], "emissiveMap": false, "why": "glass (LIB_Glass): constant colour and roughness allowed; reflection does the work" },
-    "signal": { "maps": [], "emissiveMap": false, "why": "engine-driven glow (engine exhaust, nav lights, lamps): the game replaces the material" },
+    "signal": {
+      "maps": [],
+      "emissiveMap": false,
+      "mustEmit": true,
+      "why": "engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model"
+    },
     "effect": { "maps": ["baseColor"], "emissiveMap": true, "why": "ability effect meshes are emissive and translucent" },
     "decal": { "maps": ["baseColor"], "emissiveMap": false, "why": "glyph patterns, liveries and icons are texture sets" },
     "library": {

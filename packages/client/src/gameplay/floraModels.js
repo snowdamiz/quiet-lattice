@@ -403,7 +403,7 @@ function procDeposit(rng, color, q = 1) {
 // When public/models/flora.glb is loaded, each kind uses a modelled variant recoloured for the
 // planet, scaled to the size of the procedural model it replaces (so scatter scales and
 // collision radii stay valid). Without the library the procedural builders above are used.
-const GLOW = { crystal: 0.8, deposit: 1.2, plant_bulb: 1.6, plant_flower: 1.4, tree_mushroom: 0.5, tree_coral: 0.5, tree_spiral: 0.4 };
+export const GLOW = { crystal: 0.8, deposit: 1.2, plant_bulb: 1.6, plant_flower: 1.4, tree_mushroom: 0.5, tree_coral: 0.5, tree_spiral: 0.4 };
 const hex = (c) => new THREE.Color(c);
 
 // pick: an explicit variant index (wrapped), so sibling species can be made to differ

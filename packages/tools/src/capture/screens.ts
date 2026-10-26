@@ -8,16 +8,21 @@ export interface ScreenDef {
   /** drive the page to the screen and let it settle */
   open(page: Page): Promise<void>;
   /**
-   * Start the motion the clip should show (a panel opening, a hover, a toast), right before the 60 frames are taken.
-   * Without it the clip shows one second of the settled screen.
+   * Start the motion the clip should show (a panel opening, a hover, a toast), right before its frames are taken.
+   * Without it the clip shows the settled screen.
    */
   motion?(page: Page): Promise<void>;
-  /** Which of the 60 clip frames go on the clip sheet (all are written to _frames/). Default: every sixth. */
+  /** Which clip frames go on the clip sheet (all are written to _frames/). Default: twenty spread evenly. */
   sheetFrames?: readonly number[];
   /** Extra 16:9 stills, taken after the main one and before the clip: `16x9-<name>.png` after `pose` drives the page. */
   stills16x9?: Record<string, (page: Page) => Promise<void>>;
   /** Draw scrollbars (headless Chromium hides them by default), for screens whose scroll affordance is being judged. */
   showScrollbars?: boolean;
+  /** How long the clip runs (s; 60 frames a second): long enough for the whole motion. Default 1. */
+  clipSeconds?: number;
+  /** Run the HUD's clock and timers (game.hud.now / later / cancel) on the clip's clock, so toasts and fades last as long
+   * in the clip as in play. */
+  hudClock?: boolean;
 }
 
 /** Steps the game by hand, then waits out the HUD's CSS transitions (they run on real time, not game time). */
@@ -278,6 +283,8 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
 
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
+    // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
+    clipSeconds: 3.6,
     async open(page) {
       await page.waitForFunction(async () => {
         await (window as unknown as { step(n: number): Promise<void> }).step(2);
@@ -300,6 +307,7 @@ export const SCREENS: Record<string, ScreenDef> = {
     },
   },
   'hud-ship': {
+    hudClock: true,
     async open(page) {
       await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
       await settle(page, 120);
@@ -307,6 +315,7 @@ export const SCREENS: Record<string, ScreenDef> = {
   },
   'hud-foot': {
     hash: '#foot',
+    hudClock: true,
     async open(page) {
       await page.waitForFunction(async () => {
         await (window as unknown as { step(n: number): Promise<void> }).step(4);
