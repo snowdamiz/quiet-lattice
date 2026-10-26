@@ -39,3 +39,25 @@ touched, gate verdicts. Only the orchestrator writes here.
 | 2026-10-26 | P1.E13.T02 | Nineteen resources: a shared deterministic node spec (12 types, six new formations) scattered over a shared drawn-ground definition at the system's tier, procedural formation models (stand-ins for P1.E14.T06), inventory entries and icons for all nineteen. | `packages/shared/src/world/{resourceNodes,ground}.ts`, client Flora/floraModels/chunkWorker/Planet/Inventory/Menus, cross-engine smoke, ARCHITECTURE §12 | 946,519 values identical in Node/Chromium/WebKit; review REVISE (fixture never touched pads; pads undecided; client hid nodes) → PASS; icons visual PASS 4.57 |
 | 2026-10-26 | P1.E15.T01 | Chat and parties (server and protocol): shard, system and party channels with per-account and shard-wide limits and auto-mute; parties of up to 6 with invites, kick, promote, leader handoff and a 15 s reconnect grace; zone party tags so members share story phases; party state updates; protocol 3. | `packages/server/src/social/*`, gateway hooks, `Session.sendText`, phase reclaim rule, ARCHITECTURE §13 | 832 unit + 68 integration tests; review REVISE (kicked member back in the old phase; NaN stalled the tick) → PASS |
 | 2026-10-26 | P1.E08.T01 | Server-side fauna: shared deterministic species per world and tier, cell-based herds around players with per-player wake allowances and zone caps, all seven behaviours (idle/wander, flee, territorial, predator with packs and divers, ambusher, apex), ground planned in a worker thread, creatures replicated as zone entities (protocol 4). | `packages/server/src/fauna/*`, `packages/shared/src/world/fauna.ts`, zone hooks, ARCHITECTURE §6.2 | 968 unit + 70 integration tests; bench 4 trials ≤ 8.4 ms p95; review REVISE (unbounded spawns, tick stall, weak AI tests, tier, phases) → PASS + planner robustness |
+
+## Paused (2026-10-26, at the user's request)
+
+Main is green at the pause: 33 tasks `[x]`, 968 unit and 70 integration tests, bench (four trials) under 10 ms, smoke
+passing. Every in-flight task is checkpointed on its own branch (worktrees under `.claude/worktrees/`); nothing is
+half-merged. Orchestrator helpers, saved grader verdicts and the hull authoring scripts (session scratch) are copied to
+`.claude/pause/` (gitignored).
+
+| Task | Branch @ commit | State | Next on resume |
+|---|---|---|---|
+| P1.E14.T11 review far view, overlays, paired perf | `task/P1-E14-T11` @ 74fb606 | review PASS | merge; log its 8 interpretations (reviewer's list); then art grading can start |
+| P1.E07.T01 skill state | `task/P1-E07-T01` @ c01164d | done, not reviewed | code review; at merge take protocol 5 (fauna holds 4); pass `skills.owned` to movement's join once T04 lands |
+| P1.E03.T04 movement authority | `task/P1-E03-T04` @ 8162d97 (WIP) | review round 3 | clock bounds (credit ≤ arrival gap + 0.05 s, 0.5 s bucket), time-less clients at arrival time, mutant tests, ground via fauna's worker planner, restore the movement bench trial; re-review |
+| P1.E04.T01 client net layer | `task/P1-E04-T01` @ b691af2 (WIP) | review fixes mostly in | tests (reconnect store reset, corrections, clock, refusal routing, ack coalescing), merge fauna's main, ARCHITECTURE §9; re-review |
+| P1.E09.T04 cutscene tooling | `task/P1-E09-T04` @ d2be478 (WIP, typecheck red) | visual PASS 4.57; code review fixes half done | two test typecheck errors, networked link, client fixes, missing tests, extra captures, merge main and take the next protocol number; re-review |
+| P1.E09.T01 quests | `task/P1-E09-T01` @ ab8e12c (WIP) | shared module only | tests, protocol, server runtime and persistence, client objective line, delete Objectives.js; approve its edit to server.ts |
+| P1.E12.T02 (art) four hulls | `task/P1-E12-T02` @ 8e5922b (WIP) | Lark, Swift, Kestrel validate; Mule build pending | rebuild with the latest scripts, export, turntables, reviews; decide model storage (see below); visual grade after T11 |
+| P1.E05.T01 (art) skeleton and bodies | `task/P1-E05-T01` @ c56b83e (WIP) | three sources validate | 4k bake, look pass, heights, export and grader artifacts; 15 material sheets after T11's UV fix; visual grade |
+
+Open decisions for the owner: P1.E01.T05 (CI) needs a GitHub remote. Hull exports are large (a 1024 px Lark with three
+variants is 81 MB; 4k would be ~650 MB a hull) and `packages/client/public/models` is not in Git LFS: either track
+models under LFS or add texture compression (KTX2) before the art lands on main.
