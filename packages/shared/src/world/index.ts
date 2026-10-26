@@ -11,4 +11,5 @@ export * from './edge.ts';
 export * from './cosmos.ts';
 export * from './system.ts';
 export * from './homes.ts';
+export * from './tiers.ts';
 export * from './kinematics.ts';

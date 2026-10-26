@@ -7,11 +7,13 @@ class FakeSocket implements SessionSocket {
   readyState: SessionSocket['readyState'] = WebSocket.OPEN;
   bufferedAmount = 0;
   sent: string[] = [];
+  binary: Uint8Array[] = [];
   closed: { code?: number; reason?: string } | null = null;
   terminated = false;
   pongs = 0;
-  send(data: unknown) {
-    this.sent.push(String(data));
+  send(data: unknown, opts?: unknown) {
+    if ((opts as { binary?: boolean } | undefined)?.binary) this.binary.push(data as Uint8Array);
+    else this.sent.push(String(data));
   }
   pong() {
     this.pongs++;
@@ -58,6 +60,22 @@ describe('Session', () => {
     expect(sock.terminated).toBe(true);
     expect(s.state).toBe('closed');
     expect(s.endReason).toBe('outbound buffer full');
+  });
+
+  it('sends binary snapshot frames only while the outbound queue is under 1 MiB', () => {
+    const sock = new FakeSocket();
+    const s = new Session(1, sock, '127.0.0.1');
+    const frame = new Uint8Array([1, 0x80]);
+    s.sendBinary(frame);
+    expect(sock.binary).toEqual([frame]);
+    expect(sock.sent).toEqual([]);
+    sock.bufferedAmount = MAX_BUFFERED_BYTES + 1;
+    s.sendBinary(frame);
+    expect(sock.binary).toHaveLength(1);
+    expect(sock.terminated).toBe(true);
+    expect(s.endReason).toBe('outbound buffer full');
+    s.sendBinary(frame);
+    expect(sock.binary).toHaveLength(1);
   });
 
   it('answers pings only while the outbound queue is under 1 MiB', () => {

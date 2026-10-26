@@ -65,18 +65,23 @@ position (P1.E03.T03 tests this to 1 cm).
   (float64 numbers). Kind `1` is a zone snapshot `{ tick, time, ack, full, base?, entities, removed }`. A delta names its
   baseline `base`, the tick of the snapshot the client last acknowledged; the client keeps the states it was sent per tick,
   applies the delta onto `base` and stores the result as `tick`. An entity delta carries its changed fields and `clear`, the
-  fields it no longer has. `ack` echoes the client's last applied input `seq` for reconciliation. The server diffs against
-  the state it last *sent*, not its true state, so slow motion under the epsilon still goes out. The encoder sends only the
-  listed fields, validates each against its schema, clamps unit fields, and drops and reports any field that fails, so a
-  client never rejects what the server sent. The decoder still drops a malformed entity on its own; a client that sees
+  fields it no longer has. `ack` echoes the client's last applied input `seq` for reconciliation; clients number inputs
+  from 1, so `ack` 0 means no input applied yet. The client acknowledges each snapshot it applies with `ack {tick}`, at
+  most once per tick; the server diffs against the latest acknowledged tick it still holds (64 ticks, about 3 s) and
+  sends a full snapshot when it holds none. The server diffs against the state it last *sent*, not its true state, so
+  slow motion under the epsilon still goes out. The encoder sends only the listed fields, validates each against its
+  schema, clamps unit fields, and drops and reports any field that fails, so a client never rejects what the server sent. The decoder still drops a malformed entity on its own; a client that sees
   one must not store or acknowledge that tick. Control-message encoders send the validated copy, so keys a schema does
   not define (server-only state on a wider object) never leave the server.
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
-  trusts `time` for speed checks; `mode` is a prediction validated like the pose), `cast {seq, slot, aim, target?}`,
-  `interact {target}`, `chat {channel, text}`, `ack {tick}`, `ping {id, clientTime}`, `inventory {seq, op}`.
+  trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
+  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `ack {tick}` (one per applied snapshot,
+  at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`. Each socket's message budget is 60 a second
+  with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat and inventory requests,
+  and the burst absorbs the backlog of a stall.
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}`, `pong`, `inventory {seq, inventory,
@@ -103,9 +108,15 @@ position (P1.E03.T03 tests this to 1 cm).
 
 A zone hosts one star system: every entity in it, a 20 Hz tick, a spatial hash over world positions at the tick's time,
 interest sets per session (entities within the class radius of the session's own entity: ships 50 km, walkers 2 km, mobs
-1.5 km, loot 500 m, always the session's party), and per-session delta snapshots. Ticks are fixed-step; a tick that overruns
-is logged with its duration (the budget is 10 ms p95 at 200 entities). Entities in deep space between systems belong to a
-deep-space zone keyed by the nearest system (P1.E04.T04).
+1.5 km, loot 500 m, always the session's own entity and party), and per-session delta snapshots. Ticks are fixed-step; a
+tick that overruns is logged with its duration (the budget is 10 ms p95 at 200 entities). Entities in deep space between
+systems belong to a deep-space zone keyed by the nearest system (P1.E04.T04).
+
+The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
+landed players sit in their ships), is a ship; a player on foot, an NPC or a prop is a walker; a mob is a mob; loot and
+loot pods are loot. An entity already in view stays in it until it is 5% beyond its radius, so one at the edge does not
+enter and leave every tick. Until movement authority (P1.E03.T04) validates `mode`, a client picks its own class through
+it. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5 minutes empty.
 
 ## 7. Authority
 

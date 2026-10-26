@@ -196,3 +196,27 @@ Format: task id, question → choice → why.
   flight and fades e^(−4t) entering the pulse drive; in the air the cap is the boost cap until a per-hull air model
   exists. → Honest flight peaks at 0.88–0.91× the allowance across every hull and manoeuvre simulated; a cheat gains at
   most ~1.2× in flight and 1.1× in pulse, acceptable for Phase 1.
+- **P1.E14.T01 (reviews)** AO bakes use every mesh of the variant at that LOD as occluders; markers directly in an asset
+  collection are shared by all its variants, markers in a variant collection belong to it; map variation is measured on
+  full-resolution texels under the material's UV triangles. → Contact shadows, husk variants and small UV islands now
+  validate correctly.
+- **P1.E14.T02** The material library carries metre-scale, geometry-independent variation (base colour ±6%, ±18% on dark
+  materials; roughness ±0.06–0.09) and stronger normals, so a smooth panel bakes real texture; asset artists still add
+  hand-made wear on top. → A library material must never bake flat.
+- **P1.E02.T06** Tiers → the home systems are always Tier 0; any other system is Tier 5 on the Edge-ward fringe (within
+  EDGE_X − 45 ly of the wall, i.e. 45+ ly out along +X at the default Edge; the line moves with the Edge); otherwise
+  DESIGN 11's bands by distance to the nearest home, lower edges inclusive. Tier 1's upper edge moved from 15 to 18 ly
+  (DESIGN 11 amended): 3/9/11/22/19/6 systems in tiers 0–5. → Two Tier 1 systems could not carry Act I's opening levels
+  for three peoples; the fringe puts DESIGN's Edge-ward Tier 5 at baseline. P2.E22.T02 must move the Edge by tens of ly
+  (the fringe moves ly for ly) or keep the fringe line separate from the visible wall.
+- **P1.E03.T02** Zones → the interest radius belongs to the entity seen (players are ships unless on foot; npcs and props are
+  walkers; pods are loot), with 5% hysteresis; party is a tag until a party system exists; a 64-tick snapshot history
+  with a full snapshot when no usable ack exists; entity ids per zone, never reused, restarting when a zone reloads;
+  zones sleep after 30 s empty and unload after 5 min; catch-up capped at 3 ticks; client input clamped and marked
+  unvalidated until P1.E03.T04 (a client picks its own interest class through `mode` until then); input seq counts from
+  1 so `ack` 0 means no input yet; message budget 60/s with a burst of 120 (20 Hz input + 20 Hz ack + pings + casts);
+  the bench gates on main-thread CPU p95, wall time is informational. → Each keeps honest clients unpunished and the
+  tick inside budget (CPU p95 ≈ 2–4 ms at 200 entities and 25 sessions).
+- **P1.E03.T02 (open)** A stall of about 3 s or more can still close an honest client's socket (the burst absorbs ~2.5 s);
+  a session whose entity is despawned stays joined with no zone. → P1.E04.T03 (client acks) and P1.E06.T03 (death and
+  respawn) must handle these.
