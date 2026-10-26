@@ -453,4 +453,74 @@ describe('a dropped connection', () => {
     expect(event.open).toBe(false);
     expect(phases.leave(bBack.viewer)).toBe(false);
   });
+
+  it('never extends the grace: six drop, reconnect and re-place cycles outside a bay still end it 15 s after leaving', () => {
+    const { zone, phases, player, place, step } = setup();
+    const grace = PHASE_KINDS.bay.graceS;
+    const hangar = place('hangar');
+    // 3 km out of a 200 m hangar, and staying there
+    let a = player([3000, 0, 0], null, 'char-a');
+    const bay = phases.phaseFor(a.viewer, 'bay', hangar);
+    step();
+    const leftAt = zone.time;
+    let closedAt: number | null = null;
+    for (let s = 1; s <= 90; s++) {
+      step(1);
+      if (closedAt === null && !bay.open) closedAt = zone.time;
+      // a cycle every 15 s, inside the grace: the connection drops, the character comes back, and is placed again
+      if (s % 15 === 14) {
+        zone.leave(a.viewer, 'disconnected');
+        a = player([3000, 0, 0], null, 'char-a');
+        phases.phaseFor(a.viewer, 'bay', hangar);
+      }
+    }
+    expect(closedAt).not.toBeNull();
+    expect(closedAt! - leftAt).toBeLessThanOrEqual(grace + 1);
+  });
+
+  it('keeps the place of a member outside the volume only for what is left of its grace', () => {
+    const { zone, phases, player, place, step } = setup();
+    const grace = PHASE_KINDS.story.graceS;
+    const a = player([0, 0, 0], null, 'char-a');
+    const p = phases.phaseFor(a.viewer, 'story', place('site'));
+    step();
+    zone.patch(a.entity, { pos: [0, 900, 0] });
+    // first seen outside at this tick; 10 s later its connection drops: 5 s of its grace are left, not 15
+    step(1);
+    step(10);
+    zone.leave(a.viewer, 'disconnected');
+    step(grace - 10.5);
+    expect(p.held.has('char-a')).toBe(true);
+    step(0.6);
+    expect(p.open).toBe(false);
+  });
+
+  it('never lets a story phase hold two parties, whether re-asked under a new party or coming back under one', () => {
+    const { zone, phases, player, place } = setup();
+    const a = player([0, 0, 0], 'P', 'char-a');
+    const b = player([0, 0, 0], 'P', 'char-b');
+    const p = phases.phaseFor(a.viewer, 'story', place('site'));
+    expect(phases.phaseFor(b.viewer, 'story', place('site'))).toBe(p);
+    // re-asked under another party, b goes to a phase of its own
+    const q = phases.phaseFor(b.viewer, 'story', place('site'), 'Q');
+    expect(q).not.toBe(p);
+    expect([...p.members]).toEqual([a.entity]);
+    // alone in its phase, it may change party there
+    expect(phases.phaseFor(b.viewer, 'story', place('site'), 'R')).toBe(q);
+    expect(phases.phaseFor(player([0, 0, 0], 'R').viewer, 'story', place('site'))).toBe(q);
+
+    // c, of P, drops from p; it comes back tagged Q: not into p, whose others are P, and its kept place there goes
+    const c = player([0, 0, 0], 'P', 'char-c');
+    expect(phases.phaseFor(c.viewer, 'story', place('site'))).toBe(p);
+    zone.leave(c.viewer, 'disconnected');
+    expect(p.held.has('char-c')).toBe(true);
+    const back = player([0, 0, 0], 'Q', 'char-c');
+    expect(phases.phaseFor(back.viewer, 'story', place('site'))).not.toBe(p);
+    expect(p.held.size).toBe(0);
+    expect([...p.members]).toEqual([a.entity]);
+    // under its old party, it would have gone back
+    zone.leave(a.viewer, 'disconnected');
+    const aBack = player([0, 0, 0], null, 'char-a');
+    expect(phases.phaseFor(aBack.viewer, 'story', place('site'), 'P')).toBe(p);
+  });
 });

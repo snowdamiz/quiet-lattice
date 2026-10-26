@@ -109,13 +109,18 @@ interface Placement {
   outsideSince: number | null;
 }
 
-/** A disconnected member's kept place. */
+/**
+ * A disconnected member's kept place. It lasts the kind's grace from when the member left the volume if it was outside
+ * then, else from the disconnect, and a reclaim carries that time back, so dropping and coming back never extends it.
+ */
 interface Hold {
   readonly phase: PhaseState;
   /** the party it was in when its connection dropped */
   readonly party: string | null;
   /** world time its connection dropped */
   readonly since: number;
+  /** world time it left the volume, if it was outside when its connection dropped */
+  readonly outsideSince: number | null;
 }
 
 export class PhaseManager {
@@ -157,7 +162,8 @@ export class PhaseManager {
    * whose place was kept for its character since its connection dropped; else a party member's that has room; else the
    * fullest that has room (the oldest of equals); else a new one. It leaves any other phase it was in, or had a place
    * kept in. `partyId` is the party it is placed under and keeps; without one its entity's party tag counts, as it
-   * stands each time. A player in no party fills a story phase alone.
+   * stands each time. A player in no party fills a story phase alone, and a story phase never holds two parties: a
+   * player there (or coming back to a kept place) under a party the others are not in goes to another phase.
    */
   phaseFor(viewer: ZoneViewer, kind: PhaseKind, location: PhaseLocation, partyId?: string | null): Phase {
     if (!Object.hasOwn(PHASE_KINDS, kind)) throw new RangeError(`unknown phase kind ${String(kind)}`);
@@ -170,20 +176,32 @@ export class PhaseManager {
 
     const current = this.placed.get(id);
     if (current?.member && current.phase.place === place) {
-      if (partyId !== undefined) current.party = partyId;
-      return current.phase;
+      // (placed under a party a story phase's others are not in, it goes to another phase, below)
+      if (partyId === undefined || this.fits(current.phase, partyId, id)) {
+        if (partyId !== undefined) current.party = partyId;
+        return current.phase;
+      }
     }
 
     let chosen: PhaseState | undefined;
     let kept = partyId;
+    let outsideSince: number | null = null;
     const character = viewer.characterId ?? null;
     const hold = character === null ? undefined : this.held.get(character);
     if (hold && hold.phase.place === place) {
-      // back after a dropped connection; its new entity has no party tag until the party system gives it one again
+      // back after a dropped connection; its new entity has no party tag until the party system gives it one again, so
+      // it comes back under the party it had
+      const back = partyId !== undefined ? partyId : tag !== null ? tag : hold.party;
       this.held.delete(character!);
       hold.phase.held.delete(character!);
-      chosen = hold.phase;
-      if (partyId === undefined && tag === null) kept = hold.party;
+      if (this.fits(hold.phase, back, id)) {
+        chosen = hold.phase;
+        outsideSince = hold.outsideSince;
+        if (partyId === undefined && tag === null) kept = hold.party;
+      } else {
+        this.log?.debug({ zone: this.zone.id, phase: hold.phase.id, character, reason: 'party' }, 'phase place given up');
+        if (hold.phase.size === 0) this.shut(hold.phase, 'empty');
+      }
     } else if (hold) {
       this.dropHold(character!, 'moved');
     }
@@ -202,7 +220,7 @@ export class PhaseManager {
 
     if (current) this.detach(id, current, 'moved');
     chosen.members.add(id);
-    this.placed.set(id, { phase: chosen, member: true, party: kept, character, inside: true, outsideSince: null });
+    this.placed.set(id, { phase: chosen, member: true, party: kept, character, inside: outsideSince === null, outsideSince });
     this.log?.debug({ zone: this.zone.id, phase: chosen.id, kind, location: location.key, entity: id, members: chosen.members.size }, 'phase member joined');
     return chosen;
   }
@@ -235,7 +253,7 @@ export class PhaseManager {
     this.placed.delete(id!);
     phase.members.delete(id!);
     if (this.held.has(character)) this.dropHold(character, 'moved');
-    this.held.set(character, { phase, party, since: this.zone.time });
+    this.held.set(character, { phase, party, since: this.zone.time, outsideSince: p.outsideSince });
     phase.held.add(character);
     this.log?.debug(
       { zone: this.zone.id, phase: phase.id, kind: phase.kind, entity: id, character, members: phase.members.size },
@@ -295,7 +313,10 @@ export class PhaseManager {
         if (time - p.outsideSince >= grace) (expired ??= []).push(id);
       }
       let lapsed: string[] | undefined;
-      for (const character of phase.held) if (time - this.held.get(character)!.since >= grace) (lapsed ??= []).push(character);
+      for (const character of phase.held) {
+        const h = this.held.get(character)!;
+        if (time - (h.outsideSince ?? h.since) >= grace) (lapsed ??= []).push(character);
+      }
       // (the phase closes once the last of them goes)
       for (const id of expired ?? []) this.detach(id, this.placed.get(id)!, 'outside');
       for (const character of lapsed ?? []) this.dropHold(character, 'expired');
@@ -332,9 +353,19 @@ export class PhaseManager {
   }
 
   /** The party of each member and kept place. */
-  private *partiesIn(p: PhaseState): Generator<string | null> {
-    for (const m of p.members) yield this.partyOf(m, this.placed.get(m)!);
+  private *partiesIn(p: PhaseState, except?: number): Generator<string | null> {
+    for (const m of p.members) if (m !== except) yield this.partyOf(m, this.placed.get(m)!);
     for (const character of p.held) yield this.held.get(character)!.party;
+  }
+
+  /**
+   * Whether entity `id` may be in phase `p` under `party`: always in a phase with a player cap; in a story phase only
+   * when everyone else in it (members and kept places) is of that party, or nobody else is.
+   */
+  private fits(p: PhaseState, party: string | null, id: number): boolean {
+    if ('players' in PHASE_KINDS[p.kind].cap) return true;
+    for (const q of this.partiesIn(p, id)) if (party === null || q !== party) return false;
+    return true;
   }
 
   /** Whether a phase has room for a player of `party`: below its player cap, or (one party) holding only that party. */

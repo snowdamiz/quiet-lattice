@@ -155,7 +155,8 @@ players, `event` and `raid` 12.
   party member's that has room, else the fullest that has room (the oldest of equals), else opens one. A player is in one
   phase at a time; placing it elsewhere takes it out of the old one. A member's party is the `partyId` it was placed
   under, which it keeps; without one, its entity's party tag as it stands (the tag stands in for the party system,
-  P1.E15.T01).
+  P1.E15.T01). A story phase never holds two parties: re-asked, or coming back, under a party its others are not in, a
+  player goes to another phase.
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
   players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
@@ -166,7 +167,8 @@ players, `event` and `raid` 12.
   phase if it returns in time. A member whose connection drops (`ZoneManager.leave(session, 'disconnected')`: every
   socket close, and the old connection kicked when its character enters again) keeps its place for the same grace, by
   character id, with its party, counting towards the cap; its character's next `phaseFor` at that place returns it to
-  the phase. One that leaves the zone any other way (a handoff, a logout) goes at once. A phase with no members and no
+  the phase. A member already outside the volume keeps only what is left of its grace, and comes back still outside, so
+  dropping and reconnecting never extends it. One that leaves the zone any other way (a handoff, a logout) goes at once. A phase with no members and no
   kept places closes, and its own entities are despawned; `close(phase)` does the same on demand. Opening and closing
   are logged (info).
 
