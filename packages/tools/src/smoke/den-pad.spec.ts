@@ -87,7 +87,7 @@ test('a Tier 1 den pad is levelled in the engine, and nothing is drawn for the d
   const sunUp = (d: Den) => d.dir[0] * home.sun[0] + d.dir[1] * home.sun[1] + d.dir[2] * home.sun[2];
   const lit = dens.filter((d) => sunUp(d) > 0.5);
   const den = (lit.length ? lit : dens).sort((a, b) => (lit.length ? b.relief - a.relief : sunUp(b) - sunUp(a)))[0];
-  testInfo.annotations.push({ type: 'den', description: `${den.type} (${den.role}) relief ${den.relief.toFixed(2)} m, base ${den.base.toFixed(2)} m` });
+  testInfo.annotations.push({ type: 'den', description: `${den.kind} (${den.role}) relief ${den.relief.toFixed(2)} m, base ${den.base.toFixed(2)} m` });
 
   // a fixed camera 24 m off the den, 14 m above its ground, lit from the side; the ship set down 150 m away, out of shot
   await page.evaluate((den) => {
@@ -194,7 +194,7 @@ test('a Tier 1 den pad is levelled in the engine, and nothing is drawn for the d
   expect(structures.types.sort()).toEqual(['beacon', 'crash', 'monolith', 'outpost']);
 
   console.log(
-    `den ${den.type} (${den.role}): natural spread ${spread(raw).toFixed(3)} m over ${raw.length} vertices, levelled spread ${spread(levelled).toExponential(2)} m over ${levelled.length}`,
+    `den ${den.kind} (${den.role}): natural spread ${spread(raw).toFixed(3)} m over ${raw.length} vertices, levelled spread ${spread(levelled).toExponential(2)} m over ${levelled.length}`,
   );
   console.log(`den pad captures: ${before} ${after}`);
   await testInfo.attach('den pad before', { path: before, contentType: 'image/png' });

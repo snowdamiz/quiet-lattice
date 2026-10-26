@@ -1,8 +1,19 @@
 // What the dens golden fixture (fixtures/dens-424242.json) records: for the home planet of each of systems 0–9 at seed
-// 424242, as the world fixture lists them, the dens planned at every tier 0–5 (counts by role and kind, digests of the
-// dens and of the ground levelled under them) and the apex's lair written out. Written by
+// 424242, as the world fixture lists them, its land area and the dens planned at every tier 0–5 (counts by role and
+// kind, digests of the dens and of the ground levelled under them), and the apex's lair written out. Written by
 // packages/tools/src/fixtures/dens-golden.ts; dens.golden.test.ts checks the planner against it.
-import { DEN_ROLES, DEN_TYPES, MAX_TIER, TerrainSampler, createPlanetParams, denPads, planSurface, type Den, type PlanetType } from '../src/world/index.ts';
+import {
+  DEN_KINDS,
+  DEN_ROLES,
+  MAX_TIER,
+  TerrainSampler,
+  createPlanetParams,
+  denPads,
+  landArea,
+  planSurface,
+  type Den,
+  type PlanetType,
+} from '../src/world/index.ts';
 import { asJson, digestString } from './digest.ts';
 
 /** The parts of the world fixture (fixtures/world-424242.json) the dens fixture reads. */
@@ -26,31 +37,36 @@ export function homes(world: WorldFixture): Home[] {
   });
 }
 
-/** The dens of a home planet at a tier, planned as the client plans the planet (cities, sites, then dens). */
-export function homeDens(home: Home, tier: number): Den[] {
+/** A home planet planned as the client plans it (cities, sites, then dens) at a tier, and its land (km²). */
+export function homeDens(home: Home, tier: number): { dens: Den[]; land: number } {
   const params = createPlanetParams(home.seed, home.type as PlanetType, home.radius);
-  return planSurface(params, new TerrainSampler(params), { tier }).dens;
+  const sampler = new TerrainSampler(params);
+  const { dens } = planSurface(params, sampler, { tier });
+  return { dens, land: landArea(params, sampler) };
 }
 
 const count = <K extends string>(keys: readonly K[], of: (k: K) => number) => Object.fromEntries(keys.map((k) => [k, of(k)])) as Record<K, number>;
 
-/** One home planet's entry: its dens at every tier, and its apex's lair (the same from Tier 2 on). */
+/** One home planet's entry: its land, its dens at every tier, and its apex's lair (the same from Tier 2 on). */
 export function denEntry(home: Home) {
   const tiers = [];
+  let land = 0;
   let apex: Den | undefined;
   for (let tier = 0; tier <= MAX_TIER; tier++) {
-    const dens = homeDens(home, tier);
+    const plan = homeDens(home, tier);
+    const dens = plan.dens;
+    land = plan.land;
     apex ??= dens.find((d) => d.role === 'apex');
     tiers.push({
       tier,
       count: dens.length,
       byRole: count(DEN_ROLES, (r) => dens.filter((d) => d.role === r).length),
-      byType: count(DEN_TYPES, (t) => dens.filter((d) => d.type === t).length),
+      byKind: count(DEN_KINDS, (k) => dens.filter((d) => d.kind === k).length),
       dens: digestString(JSON.stringify(dens)),
       pads: digestString(JSON.stringify(denPads(dens))),
     });
   }
-  return asJson({ ...home, tiers, apex: apex ?? null });
+  return asJson({ ...home, land, tiers, apex: apex ?? null });
 }
 
 export function buildDenFixture(world: WorldFixture) {

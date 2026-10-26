@@ -96,24 +96,29 @@ export function sitePads(sites: Site[]): number[] {
 }
 
 // ---------- dens ----------
-// DESIGN 12.2 "Spawning": dens are a small site type where predators respawn and ambushers wait, planned with the planet
-// like the other sites. Each pass below draws from a stream of its own and keeps clear of everything planned before it,
-// so dens never move a city or a site or touch the ground under one, and raising a world's tier adds dens without moving
-// any. A den has no model yet (DESIGN 19.3 lists the den models with the sites' art): nothing is drawn for one, but the
+// DESIGN 12.2 "Spawning": dens are a small site type, planned with the planet like the other sites: discoverable lairs
+// that anchor packs, their respawns, the apex and the ambushers (predators also come with the herd spawner around the
+// camera). Each pass below draws from a stream of its own and keeps clear of everything planned before it, so dens
+// never move a city or a site or touch the ground under one, and raising a world's tier adds dens without moving any.
+// A den has no model yet (DESIGN 19.3 lists the den models with the sites' art): nothing is drawn for one, but the
 // ground under it is levelled, as under a site, for the model to sit on.
 
-/** burrow: small quadrupeds (pack predators, ambushers); nest: bipeds (stalkers) and the apex's lair; roost: flyers (divers). */
-export type DenType = 'burrow' | 'nest' | 'roost';
-export const DEN_TYPES: readonly DenType[] = ['burrow', 'nest', 'roost'];
+/** The kind of den, which is also the family of model that will stand on it (DESIGN 19.3). */
+export type DenKind = 'burrow' | 'nest' | 'roost';
+export const DEN_KINDS: readonly DenKind[] = ['burrow', 'nest', 'roost'];
 /** The temperament a den houses (DESIGN 12.2). */
 export type DenRole = 'predator' | 'ambusher' | 'apex';
 export const DEN_ROLES: readonly DenRole[] = ['predator', 'ambusher', 'apex'];
+/** A creature body plan, by the mob table's ids (DESIGN 12.2). */
+export type DenBodyPlan = 'quad_heavy' | 'quad_small' | 'biped' | 'flyer';
 /** Ground footprint radius (m) of each kind of den: smaller than any site. */
-export const DEN_FOOTPRINT: Readonly<Record<DenType, number>> = { burrow: 4, nest: 6, roost: 5 };
+export const DEN_FOOTPRINT: Readonly<Record<DenKind, number>> = { burrow: 4, nest: 6, roost: 5 };
 /** The apex's lair: a nest big enough for a heavy quadruped and the pack that follows it. */
 export const APEX_FOOTPRINT = 10;
 /** Tiers run from 0 (the home systems) to 5 (Edge-ward), DESIGN 11. */
 export const MAX_TIER = 5;
+/** Land (km²) per predator den, for each hostile species: a lair a few kilometres from most of the world's land. */
+export const LAND_PER_PREDATOR_DEN = 80;
 const MAX_DEN_RELIEF = 4;
 /** Dens keep this far apart (m). */
 const DEN_SPACING = 300;
@@ -123,25 +128,55 @@ const CITY_CLEARANCE = 2000;
 const SITE_CLEARANCE = 40;
 /** How many places the apex's lair is chosen from: the most wooded is the world's landmark grove. */
 const GROVE_CANDIDATES = 48;
+/** Points (evenly spread over the sphere) a world's land area is measured at. */
+const LAND_SAMPLES = 4096;
 
-// The passes, in planning order, with the tier each starts at and how many dens it plans on a world (a fixed number per
-// world, like the sites). Tier 0 has docile and skittish herds only, which need no dens (DESIGN 12.8). Predator dens come
-// in all three kinds, so whatever body plan a world's predators roll (P1.E08.T01) finds dens of its own; the second
-// predator pass is the second hostile species of Tier 3 and up (DESIGN 12.2).
-const DEN_PASSES: readonly { role: DenRole; from: number; count: number }[] = [
-  { role: 'predator', from: 1, count: 60 },
+/**
+ * Who lives in a den (DESIGN 12.2's temperaments by body plan): predators by body plan, pack quad_small in burrows,
+ * biped stalkers in nests and flyer divers on roosts; ambushers (quad_small or biped) in burrows; the apex (quad_heavy)
+ * in its nest. The species are rolled later (P1.E08.T01), so predator dens come in all three kinds: a world's predators
+ * use the dens whose `plans` hold their body plan.
+ */
+export function denPlans(role: DenRole, kind: DenKind): DenBodyPlan[] {
+  if (role === 'apex') return ['quad_heavy'];
+  if (role === 'ambusher') return ['quad_small', 'biped'];
+  return kind === 'burrow' ? ['quad_small'] : kind === 'nest' ? ['biped'] : ['flyer'];
+}
+
+/** A planning pass: the dens of one role from a tier up, a fixed number per world or one per so much land. */
+export interface DenPass {
+  role: DenRole;
+  /** the tier it starts at */
+  from: number;
+  count?: number;
+  /** km² of land per den */
+  landPerDen?: number;
+}
+
+// The passes, in planning order, which is by the tier each starts at: a pass for a lower tier never lands after one for
+// a higher, so raising the tier only appends. Tier 0 has docile and skittish herds only, which need no dens (DESIGN
+// 12.8). A predator pass is one hostile species: the first from Tier 1, the second from Tier 3 (DESIGN 12.2). Ambushers
+// lie beside sites, at most one burrow each; the apex has one lair per world.
+export const DEN_PASSES: readonly DenPass[] = [
+  { role: 'predator', from: 1, landPerDen: LAND_PER_PREDATOR_DEN },
   { role: 'ambusher', from: 2, count: 40 },
   { role: 'apex', from: 2, count: 1 },
-  { role: 'predator', from: 3, count: 60 },
+  { role: 'predator', from: 3, landPerDen: LAND_PER_PREDATOR_DEN },
 ];
+
+function passCount(pass: DenPass, landKm2: number): number {
+  return pass.count ?? Math.round(landKm2 / pass.landPerDen!);
+}
 
 /**
  * A den, as plain data: it round-trips through JSON with the rest of a planet's description, for the server's fauna
  * spawning (P1.E08.T03).
  */
 export interface Den {
-  type: DenType;
+  kind: DenKind;
   role: DenRole;
+  /** the body plans that live here (denPlans) */
+  plans: DenBodyPlan[];
   /** planet-local unit direction */
   dir: [number, number, number];
   /** stands as a site does (+Y turned onto `dir`), then turned this far (rad) about its up axis */
@@ -170,20 +205,40 @@ function checkTier(tier: number) {
   if (!Number.isInteger(tier) || tier < 0 || tier > MAX_TIER) throw new RangeError(`tier must be an integer from 0 to ${MAX_TIER}, not ${tier}`);
 }
 
-/** How many dens of each role a world with fauna is planned at a tier (fewer only where its ground has no room). */
-export function denCounts(tier: number): Record<DenRole, number> {
+/**
+ * How many dens of each role a world with fauna and `landKm2` of land is planned at a tier (fewer only where its ground
+ * has no room: ambushers need a site each).
+ */
+export function denCounts(tier: number, landKm2: number): Record<DenRole, number> {
   checkTier(tier);
   const out: Record<DenRole, number> = { predator: 0, ambusher: 0, apex: 0 };
-  for (const pass of DEN_PASSES) if (tier >= pass.from) out[pass.role] += pass.count;
+  for (const pass of DEN_PASSES) if (tier >= pass.from) out[pass.role] += passCount(pass, landKm2);
   return out;
 }
 
+/** A world's dry land (km²): its surface above the sea, measured on its natural ground at points spread evenly over the sphere. */
+export function landArea(params: Pick<PlanetParams, 'radius' | 'hasOcean'>, sampler: Pick<TerrainSampler, 'height'>): number {
+  let land = LAND_SAMPLES;
+  if (params.hasOcean) {
+    land = 0;
+    // (a Fibonacci lattice)
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < LAND_SAMPLES; i++) {
+      const y = 1 - ((i + 0.5) * 2) / LAND_SAMPLES;
+      const r = Math.sqrt(1 - y * y);
+      if (sampler.height(Math.cos(i * golden) * r, y, Math.sin(i * golden) * r) > 0) land++;
+    }
+  }
+  return ((land / LAND_SAMPLES) * 4 * Math.PI * params.radius * params.radius) / 1e6;
+}
+
 /**
- * Whether a world has fauna, and so dens: not gas giants, barren or lifeless worlds, nor worlds all but bare of plants
- * (the client's herd rule). Lifeless worlds get their horrors in Phase 2 (DESIGN 12.4).
+ * Whether a world has fauna, and so dens: not barren or lifeless worlds, nor worlds all but bare of plants (the
+ * client's herd rule; a gas giant's params have no flora at all). Lifeless worlds get their horrors in Phase 2 (DESIGN
+ * 12.4).
  */
 export function hasFauna(p: Pick<PlanetParams, 'type' | 'lifeless' | 'flora'>): boolean {
-  return (p.type as string) !== 'gas' && p.type !== 'barren' && !p.lifeless && p.flora >= 0.08;
+  return p.type !== 'barren' && !p.lifeless && p.flora >= 0.08;
 }
 
 /** A den's pad: levelled inside `inner` metres of its centre, back to natural ground by `outer`. */
@@ -210,6 +265,42 @@ interface Clear {
   kind: 'city' | 'site' | 'den';
 }
 
+/**
+ * The sites' and dens' ground, bucketed on a grid of cells `cell` metres across: a candidate only has to look at the 27
+ * cells round its own, as long as no clearance it needs from a site or a den is wider than a cell.
+ */
+class ClearGrid {
+  cells = new Map<number, Clear[]>();
+  constructor(
+    readonly R: number,
+    readonly cell: number,
+  ) {}
+  private index(v: number): number {
+    return Math.floor((v * this.R) / this.cell) + 2048;
+  }
+  add(c: Clear) {
+    const key = (this.index(c.x) * 4096 + this.index(c.y)) * 4096 + this.index(c.z);
+    const list = this.cells.get(key);
+    if (list) list.push(c);
+    else this.cells.set(key, [c]);
+  }
+  /** Calls `fn` for everything in the cells round a point; stops, and returns false, when `fn` does. */
+  every(x: number, y: number, z: number, fn: (c: Clear) => boolean): boolean {
+    const ix = this.index(x);
+    const iy = this.index(y);
+    const iz = this.index(z);
+    for (let i = ix - 1; i <= ix + 1; i++) {
+      for (let j = iy - 1; j <= iy + 1; j++) {
+        for (let k = iz - 1; k <= iz + 1; k++) {
+          const list = this.cells.get((i * 4096 + j) * 4096 + k);
+          if (list) for (const c of list) if (!fn(c)) return false;
+        }
+      }
+    }
+    return true;
+  }
+}
+
 const X = /* @__PURE__ */ new Vector3(1, 0, 0);
 
 function tangents(dir: Vector3, t: Vector3, b: Vector3) {
@@ -224,41 +315,43 @@ function tangents(dir: Vector3, t: Vector3, b: Vector3) {
 export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier = 0, cities = [], sites = [] }: DenOptions = {}): Den[] {
   checkTier(tier);
   const dens: Den[] = [];
-  if (!hasFauna(params)) return dens;
+  if (!hasFauna(params) || tier < DEN_PASSES[0].from) return dens;
   const p = params;
   const R = p.radius;
-  const clear: Clear[] = [];
-  const cp = cityPads(cities);
-  for (let i = 0; i < cp.length; i += 6)
-    clear.push({ x: cp[i], y: cp[i + 1], z: cp[i + 2], reach: padReach(cp[i + 4], cp[i + 5]) + CITY_CLEARANCE, kind: 'city' });
-  const sp = sitePads(sites);
-  const siteReach: number[] = [];
-  for (let i = 0; i < sp.length; i += 6) {
-    const reach = padReach(sp[i + 4], sp[i + 5]);
-    siteReach.push(reach);
-    clear.push({ x: sp[i], y: sp[i + 1], z: sp[i + 2], reach, kind: 'site' });
-  }
+  const land = landArea(p, sampler);
 
   // (before the ground under it is known, a den is taken to reach as far as the most broken ground it may level)
   const maxReach = (footprint: number) => padReach(...denPad(footprint, MAX_DEN_RELIEF));
+  // cities, few and wide, are always checked; the sites and dens go on a grid
+  const wide: Clear[] = [];
+  const cp = cityPads(cities);
+  for (let i = 0; i < cp.length; i += 6)
+    wide.push({ x: cp[i], y: cp[i + 1], z: cp[i + 2], reach: padReach(cp[i + 4], cp[i + 5]) + CITY_CLEARANCE, kind: 'city' });
+  const sp = sitePads(sites);
+  const siteReach: number[] = [];
+  for (let i = 0; i < sp.length; i += 6) siteReach.push(padReach(sp[i + 4], sp[i + 5]));
+  const widest = Math.max(DEN_SPACING, Math.max(0, ...siteReach) + maxReach(APEX_FOOTPRINT) + SITE_CLEARANCE + 1);
+  const grid = new ClearGrid(R, Math.max(widest, R / 1500));
+  for (let i = 0; i < sp.length; i += 6) grid.add({ x: sp[i], y: sp[i + 1], z: sp[i + 2], reach: siteReach[i / 6], kind: 'site' });
+
   const fits = (d: Vector3, reach: number, role: DenRole) => {
-    for (const c of clear) {
+    const clearOf = (c: Clear) => {
       let need = c.reach + reach + 1;
       if (c.kind === 'site' && role !== 'ambusher') need += SITE_CLEARANCE;
       if (c.kind === 'den') need = Math.max(need, DEN_SPACING);
-      if (Math.hypot(d.x - c.x, d.y - c.y, d.z - c.z) * R < need) return false;
-    }
-    return true;
+      return Math.hypot(d.x - c.x, d.y - c.y, d.z - c.z) * R >= need;
+    };
+    return wide.every(clearOf) && grid.every(d.x, d.y, d.z, clearOf);
   };
   const t = new Vector3();
   const b = new Vector3();
   const q = new Vector3();
   // the natural ground under a footprint, or null where a den cannot go: the sea, a caldera, high or broken ground
   // (roosts take to the crags as well)
-  const ground = (d: Vector3, footprint: number, type: DenType) => {
+  const ground = (d: Vector3, footprint: number, kind: DenKind) => {
     const h = sampler.height(d.x, d.y, d.z);
     if (p.hasOcean && h < 4) return null;
-    if (h > p.mountainHeight * (type === 'roost' ? 0.8 : 0.5)) return null;
+    if (h > p.mountainHeight * (kind === 'roost' ? 0.8 : 0.5)) return null;
     if (p.lava && sampler.caldera(d.x, d.y, d.z) > 0) return null;
     tangents(d, t, b);
     let lo = h;
@@ -282,9 +375,21 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
     if (p.hasOcean && lo < 3) return null;
     return { base: sum / n, relief: hi - lo };
   };
-  const add = (rng: Random, type: DenType, role: DenRole, d: Vector3, footprint: number, g: { base: number; relief: number }, site: number) => {
-    dens.push({ type, role, dir: [d.x, d.y, d.z], yaw: rng.float(0, Math.PI * 2), footprint, base: g.base, relief: g.relief, site, seed: rng.int(0, 1e9) });
-    clear.push({ x: d.x, y: d.y, z: d.z, reach: padReach(...denPad(footprint, g.relief)), kind: 'den' });
+  const add = (rng: Random, kind: DenKind, role: DenRole, d: Vector3, footprint: number, g: { base: number; relief: number }, site: number) => {
+    const plans = denPlans(role, kind);
+    dens.push({
+      kind,
+      role,
+      plans,
+      dir: [d.x, d.y, d.z],
+      yaw: rng.float(0, Math.PI * 2),
+      footprint,
+      base: g.base,
+      relief: g.relief,
+      site,
+      seed: rng.int(0, 1e9),
+    });
+    grid.add({ x: d.x, y: d.y, z: d.z, reach: padReach(...denPad(footprint, g.relief)), kind: 'den' });
   };
   // uniform over the sphere, as the sites are
   const randomDir = (rng: Random, out: Vector3) => {
@@ -300,15 +405,17 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
   DEN_PASSES.forEach((pass, k) => {
     if (tier < pass.from) return;
     const rng = new Random(hashInts(p.seed, 0xde75, k));
+    const count = passCount(pass, land);
     if (pass.role === 'predator') {
-      for (let i = 0, n = 0; i < 8000 && n < pass.count; i++) {
-        const type = DEN_TYPES[n % DEN_TYPES.length];
-        const fp = DEN_FOOTPRINT[type];
+      // (all three kinds in turn: see denPlans)
+      for (let i = 0, n = 0; i < count * 40 + 2000 && n < count; i++) {
+        const kind = DEN_KINDS[n % DEN_KINDS.length];
+        const fp = DEN_FOOTPRINT[kind];
         randomDir(rng, dir);
         if (!fits(dir, maxReach(fp), 'predator')) continue;
-        const g = ground(dir, fp, type);
+        const g = ground(dir, fp, kind);
         if (!g) continue;
-        add(rng, type, 'predator', dir, fp, g, -1);
+        add(rng, kind, 'predator', dir, fp, g, -1);
         n++;
       }
     } else if (pass.role === 'ambusher') {
@@ -322,7 +429,7 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
       const reach = maxReach(fp);
       let n = 0;
       for (const si of order) {
-        if (n >= pass.count) break;
+        if (n >= count) break;
         const s = sites[si];
         tangents(s.dir, st, sb);
         for (let tries = 0; tries < 4; tries++) {
@@ -341,9 +448,9 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
           break;
         }
       }
-    } else {
-      // the apex's lair, in the world's landmark grove: the most wooded of a few dozen places a den could go, by the
-      // tree cover the terrain and the tree scatter share (surfaceAttribs)
+    } else if (count > 0) {
+      // the apex's lair (one), in the world's landmark grove: the most wooded of a few dozen places a den could go, by
+      // the tree cover the terrain and the tree scatter share (surfaceAttribs)
       const reach = maxReach(APEX_FOOTPRINT);
       const attrs = [0, 0, 0, 0];
       let best: { dir: Vector3; g: { base: number; relief: number }; forest: number } | null = null;
