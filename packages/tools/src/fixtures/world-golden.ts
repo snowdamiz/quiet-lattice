@@ -4,34 +4,32 @@
 // fixed directions and a digest of its pads; and the cosmos (digests of the star fields, the other galaxies and nebulae).
 //
 // The fixture was first written from the demo's original JavaScript, before the world code moved to @astra/shared
-// (P1.E02.T01). packages/shared/test/world.golden.test.ts checks the shared code against it, and world-golden.test.ts
-// here checks that the client still builds the same systems. Regenerate it only for a deliberate change to the
-// generated world, and say so in the commit:
+// (P1.E02.T01). Since P1.E02.T02 it is written from describeSystem and the shared planners, as the client's SolarSystem
+// and Planet use them. packages/shared/test/world.golden.test.ts checks the shared code against it, and
+// world-golden.test.ts here checks that this script still writes it and that the client builds the systems described.
+// Regenerate it only for a deliberate change to the generated world, and say so in the commit:
 //   pnpm exec tsx packages/tools/src/fixtures/world-golden.ts [out.json]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as prettier from 'prettier';
-import { Galaxy, TerrainSampler, cosmos, layoutCity, streetPlan, surfaceAttribs, type City, type PlanetParams, type Site } from '@astra/shared/world';
+import {
+  Galaxy,
+  TerrainSampler,
+  cosmos,
+  describeSystem,
+  layoutCity,
+  streetPlan,
+  surfaceAttribs,
+  type GalaxySystem,
+  type PlanetParams,
+} from '@astra/shared/world';
 import { asJson, digestArrays, digestString } from '../../../shared/test/digest.ts';
+import { planSurface } from '../../../shared/test/surface.ts';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
+export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const FIXTURE = join(ROOT, 'packages/shared/test/fixtures/world-424242.json');
-const SEED = 424242;
-
-/** What the fixture reads off the client's bodies (the client is JavaScript). */
-interface Body {
-  name: string;
-  kind: string;
-  radius: number;
-  params: PlanetParams;
-  sampler?: TerrainSampler;
-  sites?: Site[];
-  cities?: City[];
-}
-interface SolarSystemCtor {
-  new (seed: number, pool: unknown, opts: { name: string; homeType?: string; cls: string }): { name: string; planets: Body[]; homePlanet: Body };
-}
+export const SEED = 424242;
 
 /** 20 directions spread over the sphere (a Fibonacci lattice); the fixture keeps them, and the tests read them back. */
 function sampleDirections(n = 20): [number, number, number][] {
@@ -45,56 +43,53 @@ function sampleDirections(n = 20): [number, number, number][] {
   return out;
 }
 
-const withoutPads = (p: PlanetParams): PlanetParams => {
-  const rest = { ...p };
-  delete rest.pads;
-  return rest;
-};
+/** A galaxy system described as the client's Game asks for it: with its name and class, the first round a lush world. */
+export function describeGalaxySystem(info: GalaxySystem) {
+  return describeSystem(info.seed, { name: info.name, cls: info.cls, homeType: info.id === 0 ? 'lush' : undefined });
+}
 
-export async function buildFixture() {
-  const solar = pathToFileURL(join(ROOT, 'packages/client/src/universe/SolarSystem.js')).href;
-  const { SolarSystem } = (await import(solar)) as { SolarSystem: SolarSystemCtor };
-  // the chunk workers are not needed to plan a world: only registerPlanet is called while one is built
-  const pool = { registerPlanet() {}, forgetPlanet() {}, request: () => ({}), cancel() {} };
-
+export function buildFixture() {
   const galaxy = new Galaxy(SEED);
   const dirs = sampleDirections();
   const systems = [];
   const homes = [];
   for (const info of galaxy.systems.slice(0, 10)) {
-    const homeType = info.id === 0 ? 'lush' : undefined;
-    const sys = new SolarSystem(info.seed, pool, { name: info.name, homeType, cls: info.cls });
-    const bodies = sys.planets.map((b) => ({
-      name: b.name,
-      kind: b.kind,
-      type: b.params.type,
-      radius: b.radius,
-      seed: b.params.seed,
-      paramsDigest: b.sampler ? digestString(JSON.stringify(withoutPads(b.params))) : null,
-      padsDigest: b.sampler ? digestString(JSON.stringify(b.params.pads)) : null,
-      sites: b.sites ? b.sites.length : null,
-      cities: b.cities ? b.cities.length : null,
-    }));
-    systems.push({ id: info.id, name: sys.name, cls: info.cls, home: sys.planets.indexOf(sys.homePlanet), bodies });
+    const sys = describeGalaxySystem(info);
+    // each rocky world's surface, planned as the client's Planet plans it
+    const surfaces = sys.bodies.map((b) => (b.type === 'gas' ? null : planSurface(b.params as PlanetParams)));
+    const bodies = sys.bodies.map((b, i) => {
+      const s = surfaces[i];
+      return {
+        name: b.name,
+        kind: b.kind,
+        type: b.type,
+        radius: b.radius,
+        seed: b.seed,
+        paramsDigest: s ? digestString(JSON.stringify(s.bare)) : null,
+        padsDigest: s ? digestString(JSON.stringify(s.params.pads)) : null,
+        sites: s ? s.sites.length : null,
+        cities: s ? s.cities.length : null,
+      };
+    });
+    systems.push({ id: info.id, name: sys.name, cls: info.cls, home: sys.home, bodies });
 
-    const h = sys.homePlanet;
-    const p = h.params;
-    const sampler = h.sampler!;
-    const raw = new TerrainSampler(withoutPads(p));
+    const h = sys.bodies[sys.home];
+    const { params: p, bare, sampler, sites, cities } = surfaces[sys.home]!;
+    const raw = new TerrainSampler(bare);
     const sample = (d: number[]) => {
       const t = sampler.sample(d[0], d[1], d[2]);
       const fields = { h: t.h, land: t.land, moisture: t.moisture, temp: t.temp, mMask: t.mMask };
       return { ...fields, surface: surfaceAttribs(sampler, t, d[0], d[1], d[2], [0, 0, 0, 0]) };
     };
     const byType: Record<string, number> = {};
-    for (const s of h.sites!) byType[s.type] = (byType[s.type] ?? 0) + 1;
+    for (const s of sites) byType[s.type] = (byType[s.type] ?? 0) + 1;
     homes.push({
       system: info.id,
       name: h.name,
       type: p.type,
       radius: h.radius,
-      params: withoutPads(p),
-      cities: h.cities!.map((c) => {
+      params: bare,
+      cities: cities.map((c) => {
         const plan = streetPlan(c);
         const layout = layoutCity(c, plan);
         return {
@@ -111,16 +106,16 @@ export async function buildFixture() {
         };
       }),
       sites: {
-        count: h.sites!.length,
+        count: sites.length,
         byType,
-        first: h.sites!.slice(0, 8).map((s) => ({ type: s.type, dir: [s.dir.x, s.dir.y, s.dir.z], base: s.base, relief: s.relief, seed: s.seed })),
+        first: sites.slice(0, 8).map((s) => ({ type: s.type, dir: [s.dir.x, s.dir.y, s.dir.z], base: s.base, relief: s.relief, seed: s.seed })),
       },
       pads: { count: p.pads!.length / 6, digest: digestString(JSON.stringify(p.pads)) },
       heights: dirs.map((d) => sampler.height(d[0], d[1], d[2])),
       rawHeights: dirs.map((d) => raw.height(d[0], d[1], d[2])),
       samples: dirs.map(sample),
       // on the levelled ground of the first sites
-      siteHeights: h.sites!.slice(0, 8).map((s) => sampler.height(s.dir.x, s.dir.y, s.dir.z)),
+      siteHeights: sites.slice(0, 8).map((s) => sampler.height(s.dir.x, s.dir.y, s.dir.z)),
     });
   }
 
@@ -146,6 +141,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   mkdirSync(dirname(out), { recursive: true });
   // (formatted as the repository formats the fixture, wherever this copy is written)
   const options = (await prettier.resolveConfig(FIXTURE)) ?? {};
-  writeFileSync(out, await prettier.format(JSON.stringify(await buildFixture()), { ...options, filepath: FIXTURE }));
+  writeFileSync(out, await prettier.format(JSON.stringify(buildFixture()), { ...options, filepath: FIXTURE }));
   console.log(`wrote ${out}`);
 }

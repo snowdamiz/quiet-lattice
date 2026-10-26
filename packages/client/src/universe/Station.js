@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Body } from './Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
-import { mulberry32 } from '@astra/shared/world';
+import { mulberry32, STATION } from '@astra/shared/world';
 
 const _v = new THREE.Vector3();
 
@@ -144,7 +144,7 @@ function bayTexture(n) {
 
 export class Station extends Body {
   constructor(opts) {
-    super({ ...opts, kind: 'station', soi: 4500 });
+    super({ ...opts, kind: 'station', soi: STATION.soi });
     this.seed = opts.seed || 1;
     this.colliders = [];
     this.pads = [];
