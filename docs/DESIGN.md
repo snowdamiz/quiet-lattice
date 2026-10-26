@@ -182,7 +182,7 @@ The network remembers you from the moment of the Touch. When your health would h
 
 **No classes.** Every character has the same body of possible skills: one web of seven branches. A node must be **unlocked** (by the world) and then **bought** (with a skill point). Unlocks come from where you went and who you talked to, so two players at the same level know different things.
 
-**Points.** 1 per level (50) + 1 per main-story chapter (26) + a handful from faction chains ≈ 80 points. Nodes cost 1 point, capstones 3, conjunctions 2. The web holds 7 × 20 + 6 conjunctions = 146 nodes, ~160 points to own everything, so a finished build is about half the web.
+**Points.** 1 per level (50) + 1 per main-story chapter (26) + a handful from faction chains ≈ 80 points. Nodes cost 1 point, capstones 3, conjunctions 2. The web holds 7 × 18 + 6 conjunctions = 132 nodes; owning everything costs 7 × 20 + 6 × 2 = 152 points (a branch is 17 one-point nodes and a 3-point capstone), so a finished build is about half the web.
 
 **Tiers.** Tier I nodes from level 1, Tier II from level 15, Tier III from level 30, capstones from level 45 and a story chapter. Within a branch each node needs one node of the tier below (any). Conjunctions need Tier II in both branches.
 
@@ -266,6 +266,7 @@ Fantasy: the scanner pulse grown into a voice that stones, beasts and shields an
 | Chorus Call | III | augment | Harmonic makes creatures fight for you 15 s | |
 | Silent Running | III | augment | Veil has a ship form: no raids spawn, no markers show you, 20 s | |
 | Listener | III | passive | Monoliths grant 2 fragments instead of 1 | |
+| Quiet Mind | III | passive | Dissonance, Null and Nullsong silence you for half as long | |
 | Nullsong | cap | active | 5 s where nothing within 40 m can use abilities and the Hollow flee | 50 heat / 120 s |
 
 ### 9.5 Symbiotic (healer, summoner)
