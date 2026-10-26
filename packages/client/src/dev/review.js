@@ -15,6 +15,14 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { maskColors } from '../gameplay/modelLibrary.js';
 import { GLOW as FLORA_GLOW } from '../gameplay/floraModels.js';
 import { gameLook } from '@astra/shared/art';
+import { nodeReviewModel } from '../gameplay/Flora.js';
+
+/** `node/<resource>`: a procedural resource node (P1.E13.T02), built by the flora in place of a .glb, its near and far
+ * models as LOD0 and LOD1. Anything else: null, and the asset loads from public/models. */
+export function nodeAsset(spec, game) {
+  const m = /^node\/([a-z_]+)$/.exec(String(spec).split(':')[0]);
+  return m ? { scene: new THREE.Group().add(nodeReviewModel(m[1], game)) } : null;
+}
 
 export const LIGHT_CASES = {
   // sun 8° from the zenith over open ground on the home system's lush world
@@ -309,7 +317,7 @@ export class Review {
 
   async load(spec) {
     const { url, file, asset, variant } = parseSpec(spec);
-    const gltf = await new GLTFLoader().loadAsync(url);
+    const gltf = nodeAsset(spec, this.game) ?? (await new GLTFLoader().loadAsync(url));
     if (this.content) this.root.remove(this.content);
     this.file = file;
     this.content = gltf.scene;
