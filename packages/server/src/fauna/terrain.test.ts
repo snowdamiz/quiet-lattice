@@ -146,7 +146,8 @@ describe('the ground planner, when things go wrong', () => {
   });
 
   it('restarts a worker stuck on a plan past the timeout, and sends the plan again', async () => {
-    const { p, warnings, starts, world } = planner('hang-first', { timeoutMs: 1500 });
+    // (the timeout covers the new worker's start too, which takes seconds when the whole suite runs at once)
+    const { p, warnings, starts, world } = planner('hang-first', { timeoutMs: 6000 });
     try {
       expect(p.ground(world)).toBeNull();
       expect(await until(() => p.ground(world) !== null)).toBe(true);
