@@ -151,3 +151,16 @@ Graded before this file existed; the scores are recorded here, the full notes ar
 Round 1's notes: the resource pips' saturated hues collided with danger red and the amber accent (fixed by the art
 bible §4 "Resource pips" exception: shape by family, muted hues); a hauler's fourth pod was cut off by a fade mask with
 no scroll affordance (fixed with collapsing pod lists and a scrollbar). Artifacts: `assets/renders/ui/inventory*/`.
+
+## P1.E13.T02 Nineteen resources (icons)
+
+Graded with the UI rubric on the inventory's nineteen resource icons; the six formation models are procedural stand-ins
+graded as authored art under P1.E14.T06 (DECISIONS).
+
+```
+VERDICT: PASS
+TASK: P1.E13.T02 (icons)
+SCORES: hierarchy 4, fit 5, motion 4, theme 5, correctness 4, spec 5, performance 5 (mean 4.57)
+```
+
+Artifacts: `assets/renders/ui/inventory/{16x9-resources,16x9,21x9,clip-sheet}.png`, `assets/renders/ui/inventory/_frames/`.

@@ -364,3 +364,20 @@ Format: task id, question → choice → why.
   was graded before calibration; calibration covers the models rubric, and its verdicts are recorded in
   `docs/VISUAL-REVIEW.md`.
 - **Orchestrator (visual gate of P1.E13.T02)** The six formation models P1.E13.T02 adds are procedural stand-ins by plan: P1.E14.T06 authors them and P1.E14.T07 deletes the generator, so grading them against "no placeholder tell" would fail by construction. E13.T02's blocking visual grade is the UI rubric on the nineteen inventory icons; the formation models are graded as authored art under P1.E14.T06, like the demo flora they sit beside (P1.E14.T04/T05).
+- **P1.E13.T02** Nineteen resources → a shared, deterministic node spec (`world/resourceNodes.ts`): 12 node types
+  (sodium and oxygen plants, the four deposits, six formations: frostglass on frozen worlds, acidsalt on shores
+  0.4–6 m above toxic and corrosive seas, cinderglass along lava fissures in valleys, stormquartz from 0.12 of mountain
+  height, gamma crystal up to 0.15, murkpearl on the seabed −18 to −1.5 m); a type is common from its resource's tier
+  and 0.2× rarer per tier short; each world carries 2 of the 4 deposits weighted by tier (re-picked if its tier
+  changes); sodium and oxygen grow on living worlds only; deposits stay ≥1.5 m above any sea; yields and hp per type;
+  ~64 m cells, ids `face_i_j_type_k`, `NODE_TYPES` append-only. Both ends scatter over `drawnGround(params, tier)`
+  (`world/ground.ts`): cities and sites planned at the system's tier, dens only once `DENS_DRAWN` is set by P1.E14.T10,
+  no node within a site's footprint + 6 m; the server must pass its own copy of params (`drawnGround` sets
+  `params.pads`). The tier passes Game → SolarSystem → Planet; the client uses `tierOf` at the default Edge until it
+  reads the server's tier map (P1.E04.T02) — if the Edge moves before then, client and server node layers differ.
+  Flora keeps main's random sequence (old plant and deposit slots skipped), so only nodes are new. Iridium, Count
+  residue, husk alloy and glyphstone get inventory entries and icons only; their sources come with P1.E13.T01
+  (asteroids), P2.E25.T01/T05, P2.E21.T03, P2.E30.T02, P3.E33.T02/T03. Icons extend the art bible §4 pip exception
+  (family outline, a cut mark per resource, the pip hue); "Ferrite Dust" is "Ferrite"; the trade panel lists the demo
+  nine plus any others carried. Nodes under a landed ship are not hidden until P1.E13.T06. → One spec the server
+  (P1.E13.T01) computes exactly as the client draws.
