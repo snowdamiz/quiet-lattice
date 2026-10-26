@@ -5,11 +5,12 @@ import { z } from 'zod';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 3;
+export const PROTOCOL_VERSION = 4;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
 // 3: social: chat and party requests, party state, denied, party news, chat lines held to the client's rules (P1.E15.T01)
+// 4: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -180,7 +181,30 @@ export const Ping = z.object({ t: z.literal('ping'), id: z.number().int().nonneg
  * to predict and the server answers with `inventory` state. `seq` numbers the session's requests from 1, increasing. */
 export const InventoryRequest = z.object({ t: z.literal('inventory'), seq: z.number().int().min(1).max(0xffffffff), op: inventoryOpSchema });
 
-export const ClientMessage = z.discriminatedUnion('t', [Hello, Join, Input, Cast, Interact, ChatSend, PartyRequest, Ack, Ping, InventoryRequest]);
+/** A cutscene's id: the file it was exported to (public/cutscenes/<id>.json) and the server's catalog key. */
+export const CutsceneId = z.string().regex(/^[a-z0-9][a-z0-9_-]{0,47}$/);
+/** Cutscenes (protocol 4, ARCHITECTURE "Cutscenes"): `request` asks to play one where the player is, which the server
+ * answers by placing the player in a story phase there; `done` says it ended, or was skipped. */
+export const CutsceneRequest = z.object({
+  t: z.literal('cutscene'),
+  op: z.enum(['request', 'done']),
+  id: CutsceneId,
+  skipped: z.boolean().optional(),
+});
+
+export const ClientMessage = z.discriminatedUnion('t', [
+  Hello,
+  Join,
+  Input,
+  Cast,
+  Interact,
+  ChatSend,
+  PartyRequest,
+  Ack,
+  Ping,
+  InventoryRequest,
+  CutsceneRequest,
+]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
 // ---------- server → client ----------
@@ -339,6 +363,17 @@ export const InventoryState = z.object({
   error: inventoryErrorCodeSchema.optional(),
 });
 
+/** A cutscene's answer: `play` it now, in story phase `phase` (the client is in that phase until `ended`); `ended` when
+ * the server has taken the player out of the phase; `refused` with why (an unknown cutscene, one already playing, no
+ * zone). The ops differ from the request's, so one `cutscene` type serves both directions (encodeMessage). */
+export const CutsceneState = z.object({
+  t: z.literal('cutscene'),
+  op: z.enum(['play', 'ended', 'refused']),
+  id: CutsceneId,
+  phase: z.number().int().positive().nullable(),
+  reason: z.enum(['unknown', 'busy', 'zone']).optional(),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -350,6 +385,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   InventoryState,
   PartyState,
   Denied,
+  CutsceneState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;

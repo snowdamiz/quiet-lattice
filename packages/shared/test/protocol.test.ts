@@ -58,6 +58,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'ack', tick: 99 },
   { t: 'ping', id: 1, clientTime: 1000.5 },
   { t: 'inventory', seq: 3, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 2, i: 7 }, count: 40 } },
+  { t: 'cutscene', op: 'request', id: 'test' },
 ];
 
 /** Every inventory op a client may send (they share the `inventory` request type). */
@@ -106,6 +107,7 @@ const serverSamples: ServerMessage[] = [
   { t: 'inventory', seq: 3, inventory },
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
+  { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
 ];
 
 const http = {
@@ -117,10 +119,11 @@ const http = {
 } as const;
 
 describe('protocol: version', () => {
-  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01). A branch
-  // that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 3, and the history under the constant names every version up to it', () => {
-    expect(PROTOCOL_VERSION).toBe(3);
+  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01);
+  // 4: cutscenes (P1.E09.T04). A branch that changes a message bumps the version, adds its line to the history under
+  // PROTOCOL_VERSION and updates this.
+  it('is version 4, and the history under the constant names every version up to it', () => {
+    expect(PROTOCOL_VERSION).toBe(4);
     const source = MESSAGES_SOURCE;
     for (let v = 1; v <= PROTOCOL_VERSION; v++) expect(source, `history line for ${v}`).toMatch(new RegExp(`^// ${v}: .+\\(P\\d\\.E\\d{2}\\.T\\d{2}\\)$`, 'm'));
     expect(source).not.toMatch(new RegExp(`^// ${PROTOCOL_VERSION + 1}: `, 'm'));

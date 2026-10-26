@@ -577,6 +577,114 @@ body {
   }
 }
 
+/* raised in a cutscene, a title card centred in the letterbox's top bar, on black (drawn over the bar) */
+.banner.in-bar {
+  top: calc(var(--cine-lb, 0px) / 2);
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+.banner.in-bar .b-title {
+  margin-top: 10px;
+}
+.banner.in-bar .b-title::after {
+  display: none;
+}
+
+/* ---------- cutscenes: letterbox and dialogue bar (ui/Cinematic.js draws every frame on game time) ---------- */
+.cine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --lb: 0px;
+}
+.cine-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--lb);
+  background: #000;
+  will-change: transform;
+}
+.cine-bar.top {
+  top: 0;
+}
+.cine-bar.bottom {
+  bottom: 0;
+}
+/* the line, centred in the lower bar and sliding with it (on an ultrawide screen, where the bar is thinner, it reaches
+   just into the picture) */
+.cine-say {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--lb) / 2);
+  width: min(980px, calc(100vw - 480px));
+  transform: translate(-50%, calc(50% + var(--rise, 0px)));
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+.cine-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 9px;
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  /* (the letter spacing trails the last letter: balanced so the name sits centred) */
+  padding-left: 0.38em;
+}
+/* a hairline either side of the speaker's name, in its colour */
+.cine-who::before,
+.cine-who::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+.cine-line {
+  font-family: var(--font-ui);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.42;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+.cine-line i {
+  font-style: normal;
+}
+.cine-line i.unseen {
+  opacity: 0;
+}
+.cine-keys {
+  position: absolute;
+  right: 36px;
+  bottom: calc(var(--lb) / 2);
+  transform: translateY(50%);
+  display: flex;
+  gap: 18px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-shadow: none;
+}
+.cine-keys span {
+  display: inline-flex;
+  align-items: center;
+}
+.cine-keys kbd {
+  margin-right: 8px;
+  height: 20px;
+  min-width: 20px;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
 /* ---------- markers ---------- */
 .markers {
   position: absolute;

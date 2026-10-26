@@ -31,6 +31,8 @@ import { loadLibrary } from './gameplay/modelLibrary.js';
 import { Universe } from './universe/Universe.js';
 import { saveGame, loadSave, applySave, clearSave } from './gameplay/Save.js';
 import { collectResources, disposeTree } from './core/dispose.js';
+import { CameraDirector } from './cutscene/CameraDirector.js';
+import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -38,14 +40,8 @@ const _v3 = new THREE.Vector3();
 const _v4 = new THREE.Vector3();
 const _v5 = new THREE.Vector3();
 const _v6 = new THREE.Vector3();
-const _q1 = new THREE.Quaternion();
-const _q2 = new THREE.Quaternion();
 const _c1 = new THREE.Color();
 const _m4 = new THREE.Matrix4();
-// in ship space: moves into or out of the seat drop vertically through the canopy glass above
-// the pilot (between the frame bars), and from the chase view they first rise over the hull
-const SEAT_ABOVE = new THREE.Vector3(0, 5.6, -0.6);
-const HULL_ABOVE = new THREE.Vector3(0, 9, 7);
 const _v2b = new THREE.Vector2();
 
 export class Game {
@@ -105,6 +101,9 @@ export class Game {
     this.objectives = new Objectives(this);
     this.hud = new HUD(this, hudEl);
     this.menus = new Menus(this);
+    // the camera's moves of its own (glides between views, dips, cutscene cameras), and the cutscenes that drive it
+    this.director = new CameraDirector(this);
+    this.cutscenes = new CutscenePlayer(this);
 
     this.debugEl = document.createElement('div');
     this.debugEl.id = 'debug';
@@ -116,6 +115,27 @@ export class Game {
       if ((this.mode === 'ship' || this.mode === 'foot') && !this.overlay) this.input.lock();
     });
     document.addEventListener('pointerlockchange', () => this.menus.updatePauseHint());
+  }
+
+  // the director's transitions under the names the views read them by (the HUD's reticle and the multitool hide during
+  // a glide; the review scene cancels them)
+  get poseBlend() {
+    return this.director.pose;
+  }
+  set poseBlend(v) {
+    this.director.pose = v;
+  }
+  get camBlend() {
+    return this.director.blend;
+  }
+  set camBlend(v) {
+    this.director.blend = v;
+  }
+  get dip() {
+    return this.director.dip;
+  }
+  set dip(v) {
+    this.director.dip = v;
   }
 
   setupLights() {
@@ -338,14 +358,14 @@ export class Game {
         this.player.state.setFrame(this.chooseFrame(this.player.state));
         this.updateSurvival(dt);
       }
-      // during a glide the views compute their own pose, and the glide places the real camera
-      const camOut = this.poseBlend ? this.poseBlend.target : this.cam;
+      // during a glide or a cutscene the views compute their own pose, and the director places the real camera
+      const camOut = this.director.viewTarget();
       if (this.mode === 'ship') this.ship.updateCamera(dt, inp, camOut);
       else this.player.cameraState(camOut, this.time);
       this.handleInteractions(dt);
       this.checkDiscoveries();
-      this.applyCamBlend(dt);
-      this.applyPoseBlend(dt);
+      this.cutscenes.update(dt);
+      this.director.update(dt);
     }
 
     this.cam.worldPosition(this.camWorld);
@@ -490,10 +510,9 @@ export class Game {
       // as a glitch); between the two chase distances it eases.
       const next = ((this.camView || 0) + 1) % 3;
       if (next === 2 || this.camView === 2) {
-        this.camBlend = null;
-        this.poseBlend = null;
+        this.director.stop();
         this.cam.frame = undefined;
-      } else this.startCamBlend(0.7);
+      } else this.director.startCamBlend(0.7);
       this.camView = next;
       ship.setCockpit(this.camView === 2);
       ship.camDistance = this.camView === 1 ? 1.8 : 1;
@@ -501,154 +520,10 @@ export class Game {
     this.currentPrompt = prompt;
   }
 
-  // Ease the camera from where it was to the new viewpoint (between the near and far chase
-  // views) instead of cutting. The start pose is kept relative to the ship, so a switch at speed
-  // does not leave it behind.
-  startCamBlend(dur = 0.9) {
-    const s = this.ship.state;
-    if (!this.cam.frame || this.cam.frame !== s.frame) return;
-    const inv = s.quat.clone().invert();
-    this.camBlend = {
-      pos: this.cam.pos.clone().sub(s.pos).applyQuaternion(inv),
-      quat: inv.multiply(this.cam.quat),
-      frame: s.frame, t: 0, dur,
-    };
-  }
-
-  // Glide the camera from where it is now to a new viewpoint in the same frame (the seat, the
-  // chase view, the pilot's eyes on foot), arcing up and over things instead of cutting. The
-  // destination keeps being computed as usual, into poseBlend.target. With `seat` the path drops
-  // through the canopy glass, and the cockpit interior shows only while the camera is inside.
-  startPoseBlend(dur, seat = false) {
-    // (between frames, in open space, it falls back to the fade)
-    if (!this.cam.frame || this.cam.frame !== this.ship.state.frame) {
-      this.startDip(0.45);
-      return;
-    }
-    this.camBlend = null;
-    this.dip = null;
-    this.engine.gradePass.uniforms.uFlash.value.set(0, 0, 0, 0);
-    const target = this.poseBlend?.target || new FrameState();
-    target.frame = this.cam.frame;
-    target.pos.copy(this.cam.pos);
-    target.quat.copy(this.cam.quat);
-    // the start is held in ship space, so a glide into the seat at speed keeps up with the ship
-    const s = this.ship.state;
-    const inv = s.quat.clone().invert();
-    const pos = this.cam.pos.clone().sub(s.pos).applyQuaternion(inv);
-    const quat = inv.multiply(this.cam.quat);
-    this.poseBlend = { frame: this.cam.frame, pos, quat, t: 0, dur, seat, target, fromFoot: this.mode === 'foot' };
-  }
-
-  applyPoseBlend(dt) {
-    const b = this.poseBlend;
-    if (!b) return;
-    const ship = this.ship;
-    const tg = b.target;
-    b.t += dt / b.dur;
-    if (b.t >= 1 || tg.frame !== b.frame || ship.state.frame !== b.frame) {
-      this.poseBlend = null;
-      this.cam.frame = tg.frame;
-      this.cam.pos.copy(tg.pos);
-      this.cam.quat.copy(tg.quat);
-      ship.setCockpitVisual(ship.inCockpit && this.mode === 'ship');
-      for (const m of ship.canopyParts || []) m.visible = true;
-      return;
-    }
-    const k = b.t * b.t * (3 - 2 * b.t);
-    const s = ship.state;
-    const from = _v4.copy(b.pos).applyQuaternion(s.quat).add(s.pos);
-    const to = tg.pos;
-    const up = b.frame.sampler ? _v2.copy(to).normalize() : _v2.set(0, 1, 0);
-    let c1;
-    let c2;
-    if (b.seat) {
-      const into = this.mode === 'ship' && ship.inCockpit;
-      const seat = _v3.copy(SEAT_ABOVE).applyQuaternion(s.quat).add(s.pos);
-      const far = b.fromFoot || this.mode === 'foot'
-        ? _v5.copy(into ? from : to).addScaledVector(up, 3)
-        : _v5.copy(HULL_ABOVE).applyQuaternion(s.quat).add(s.pos);
-      c1 = into ? far : seat;
-      c2 = into ? seat : far;
-    } else {
-      // round the ship's side, bowing out (away from the side the walker stands on) at about the
-      // height of the ends: craning up and over the hull read as a whip, and a straight line, or a
-      // bow towards the tail, skimmed the wing
-      const away = _v6.copy(b.fromFoot ? from : to).sub(s.pos);
-      away.addScaledVector(up, -away.dot(up));
-      if (away.lengthSq() < 1) away.set(1, 0, 0).applyQuaternion(s.quat);
-      away.normalize();
-      const bow = Math.max(3, from.distanceTo(to) * 0.3);
-      c1 = _v5.copy(from).addScaledVector(away, bow).addScaledVector(up, 1);
-      c2 = _v3.copy(to).addScaledVector(away, bow).addScaledVector(up, 1);
-    }
-    const u = 1 - k;
-    const p = _v1.copy(from).multiplyScalar(u * u * u).addScaledVector(c1, 3 * u * u * k).addScaledVector(c2, 3 * u * k * k).addScaledVector(to, k * k * k);
-    if (b.seat) {
-      const l = _v4.copy(p).sub(s.pos).applyQuaternion(_q1.copy(s.quat).invert());
-      // passing through the canopy: the glass and its frame go (seen from a hand's width away they
-      // were an opaque slab filling the view) and the cockpit shows below
-      const over = Math.abs(l.x) < 1.6 && l.z < 2.2 && l.z > -4.0;
-      const inside = over && l.y < 1.95;
-      const near = over && !inside && l.y < 5.8;
-      ship.setCockpitVisual(inside || near);
-      for (const m of ship.canopyParts || []) m.visible = !near;
-      // and the plasma sheath round the hull dims while the camera is inside it
-      const close = 1 - THREE.MathUtils.smoothstep(l.length(), 5, 16);
-      if (ship.reentryMat) ship.reentryMat.uniforms.uPower.value *= 1 - 0.85 * close;
-    }
-    this.cam.frame = b.frame;
-    this.cam.pos.copy(p);
-    this.cam.quat.slerpQuaternions(_q1.copy(s.quat).multiply(b.quat), tg.quat, k);
-    if (!b.seat) {
-      // keep the ship in frame on the way: turn towards it through the middle of the move
-      const at = _v4.copy(s.pos).addScaledVector(up, 1.5);
-      _m4.lookAt(p, at, up);
-      _q2.setFromRotationMatrix(_m4);
-      this.cam.quat.slerp(_q2, Math.sin(Math.PI * k) * 0.5);
-    }
-    // look down at the canopy while passing over it
-    if (b.seat) this.cam.quat.multiply(_q1.setFromAxisAngle(_v1.set(1, 0, 0), -Math.sin(Math.PI * k) * 0.18));
-  }
-
-  // Cut to the new viewpoint behind a short fade from black.
-  startDip(dur = 0.35) {
-    this.camBlend = null;
-    this.poseBlend = null;
-    this.dip = { t: 0, dur };
-    this.engine.gradePass.uniforms.uFlash.value.set(0, 0, 0, 1);
-  }
-
-  updateDip(dt) {
-    const d = this.dip;
-    if (!d) return;
-    d.t += dt / d.dur;
-    const a = Math.max(0, 1 - d.t);
-    this.engine.gradePass.uniforms.uFlash.value.set(0, 0, 0, a * a);
-    if (d.t >= 1) this.dip = null;
-  }
-
-  applyCamBlend(dt) {
-    this.updateDip(dt);
-    const b = this.camBlend;
-    if (!b) return;
-    const s = this.ship.state;
-    b.t += dt / b.dur;
-    if (b.t >= 1 || this.cam.frame !== b.frame || s.frame !== b.frame) {
-      this.camBlend = null;
-      return;
-    }
-    const k = b.t * b.t * (3 - 2 * b.t);
-    const from = _v1.copy(b.pos).applyQuaternion(s.quat).add(s.pos);
-    const fromQ = s.quat.clone().multiply(b.quat);
-    this.cam.pos.lerpVectors(from, this.cam.pos, k);
-    this.cam.quat.slerpQuaternions(fromQ, this.cam.quat, k);
-  }
-
   exitShip() {
     const ship = this.ship;
     // from the ship view down to the pilot's eyes beside it
-    this.startPoseBlend(4.0, ship.inCockpit);
+    this.director.startPoseBlend(4.0, ship.inCockpit);
     const f = ship.state.frame;
     const left = _v1.set(-1, 0, 0).applyQuaternion(ship.state.quat).clone();
     const fwd = _v2.set(0, 0, -1).applyQuaternion(ship.state.quat).clone();
@@ -672,11 +547,11 @@ export class Game {
   }
 
   boardShip() {
-    this.startPoseBlend(4.2, this.camView === 2);
-    const glide = !!this.poseBlend;
+    this.director.startPoseBlend(4.2, this.camView === 2);
+    const glide = !!this.director.pose;
     this.mode = 'ship';
     this.ship.setCockpit(this.camView === 2);
-    const out = glide ? this.poseBlend.target : this.cam;
+    const out = this.director.viewTarget();
     out.frame = undefined;
     // snap now: the rest of this frame (streaming, culling) already reads the ship camera
     this.ship.updateCamera(0, { enabled: false }, out);
@@ -892,8 +767,10 @@ export class Game {
       if (this.ship.mode !== 'pulse') targetFov = Math.min(targetFov, this.ship.inCockpit ? 76 : 72);
     }
     this.fov = THREE.MathUtils.damp(this.fov, targetFov, 3, dt);
-    if (Math.abs(cam.fov - this.fov) > 0.01) {
-      cam.fov = this.fov;
+    // (a cutscene's camera has its own, authored in Blender)
+    const fov = this.director.fov(this.fov);
+    if (Math.abs(cam.fov - fov) > 0.01) {
+      cam.fov = fov;
       cam.updateProjectionMatrix();
     }
     cam.updateMatrixWorld();
@@ -1016,7 +893,7 @@ export class Game {
     const level = this.mode === 'ship' ? ship.hazardLevel : 0;
     const kind = ship.hazard?.kind;
     u.uDamage.value = THREE.MathUtils.damp(u.uDamage.value, kind === 'radiation' ? level * 0.8 : 0, 4, dt);
-    if (this.dip) return;
+    if (this.director.dip) return;
     if (this.bolt) {
       const b = this.bolt;
       b.t += dt;
@@ -1372,8 +1249,8 @@ export class Game {
   // Dev: straight to a planet in any system, hovering just above it in the ship, or standing on
   // the ground beside the ship landed there. `built` is the system, if the caller already built it.
   teleport(sys, index, where = 'above', built = null) {
-    this.poseBlend = null;
-    this.camBlend = null;
+    this.cutscenes.stop();
+    this.director.stop();
     this.menus.selectedSystem = null;
     if (this.mode === 'foot') {
       this.mode = 'ship';
@@ -1401,9 +1278,7 @@ export class Game {
     if (ground) {
       // (out at once: no glide down from the seat, no fade)
       this.exitShip();
-      this.poseBlend = null;
-      this.dip = null;
-      this.engine.gradePass.uniforms.uFlash.value.set(0, 0, 0, 0);
+      this.director.clear();
     }
     this.sky.reset();
     this.cam.frame = undefined;
@@ -1428,9 +1303,7 @@ export class Game {
     this.ship.mode = 'landed';
     this.cam.frame = undefined;
     this.exitShip();
-    this.poseBlend = null;
-    this.dip = null;
-    this.engine.gradePass.uniforms.uFlash.value.set(0, 0, 0, 0);
+    this.director.clear();
     this.sky.reset();
     this.save();
   }

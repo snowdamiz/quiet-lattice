@@ -91,7 +91,8 @@ export class HUD {
     this.inventory = el('div', 'inventory', this.layer);
     this.prompt = el('div', 'prompt', this.layer);
     this.toasts = el('div', 'toasts', this.layer);
-    this.banner = el('div', 'banner', this.layer);
+    // (beside the layer, not in it: banners show through a cutscene, which fades the rest of the HUD out)
+    this.banner = el('div', 'banner', root);
     this.flashEl = el('div', 'flash', root);
     this.underwater = el('div', 'underwater', root);
     this.speedLines = el('canvas', 'speedlines', root);
@@ -105,6 +106,7 @@ export class HUD {
   setVisible(v) {
     this.visible = v;
     this.layer.style.display = v ? '' : 'none';
+    this.banner.style.display = v ? '' : 'none';
     if (!v) this.edgeCompass.update(false);
   }
 
@@ -151,11 +153,21 @@ export class HUD {
     // two lines only — what it is and its name; the details (and rewards, which the units counter
     // shows) were reading as filler
     this.banner.innerHTML = `<div class="b-sub">${b.sub}</div><div class="b-title">${b.title}</div>`;
+    // raised in a cutscene, it is a title card in the letterbox's top bar, and stays there for its life
+    this.banner.classList.toggle('in-bar', !!this.game.cutscenes?.active);
     this.banner.classList.remove('show');
     void this.banner.offsetWidth;
     this.banner.classList.add('show');
     this.bannerUntil = now + 6200;
     if (this.bannerQueue.length) this.pumpBanners();
+  }
+
+  /** Drops the banner showing and those waiting. */
+  clearBanners() {
+    this.bannerQueue = [];
+    this.bannerUntil = 0;
+    this.cancel(this.bannerTimer);
+    this.banner.classList.remove('show');
   }
 
   flash(kind) {
@@ -191,8 +203,14 @@ export class HUD {
     const ship = g.ship;
     const player = g.player;
     this.root.dataset.mode = mode;
-    // out of the way under the map and the other menus
-    this.layer.style.visibility = g.overlay ? 'hidden' : '';
+    // out of the way under the map and the other menus; a cutscene fades it out as its letterbox closes in, but for the
+    // banners it raises
+    const cine = g.cutscenes?.letterbox ?? 0;
+    const hidden = g.overlay && g.overlay !== 'cutscene';
+    this.layer.style.visibility = hidden ? 'hidden' : '';
+    this.banner.style.visibility = hidden ? 'hidden' : '';
+    const fade = cine > 0 ? (1 - cine).toFixed(3) : '';
+    if (this.layer.style.opacity !== fade) this.layer.style.opacity = fade;
 
     // crosshair / reticle
     this.crosshair.style.display = mode === 'foot' ? '' : 'none';
@@ -299,7 +317,8 @@ export class HUD {
       this._prompt = pr;
     }
 
-    this.edgeCompass.update(!g.overlay && (mode === 'ship' || mode === 'foot'));
+    // (drawn into the picture, where the top bar of a cutscene's letterbox goes)
+    this.edgeCompass.update(!g.overlay && !cine && (mode === 'ship' || mode === 'foot'));
     this.updateMarkers();
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;

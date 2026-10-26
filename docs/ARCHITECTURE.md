@@ -29,6 +29,7 @@ session/            Session: the account, the character in play, the zone it is 
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
 social/             SocialService: chat channels, parties and invites, and their limits (§13)
+cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§14)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
@@ -131,8 +132,11 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   top, drops any left unanswered for 5 s (the gateway drops an over-budget message without a reply), never sends an op
   that fails the schema, and starts over (no pending requests, `seq` from 1) on the state sent after `welcome`. The pods
   are the ship's: one per pod its `ShipLoadout` carries, checked against the bays `shipStats` gives (P1.E12.T01).
-  Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
-  picks the union whose schema accepts the message.
+  Adding, taking and units are never requests. `inventory`, `party` and `cutscene` are the types both directions use;
+  `encodeMessage` picks the union whose schema accepts the message.
+- **Cutscenes** (protocol 4, §14): the client sends `cutscene {op: 'request', id}` to play one where its player is and
+  `cutscene {op: 'done', id, skipped?}` when it ends; the server answers `cutscene {op: 'play' | 'ended' | 'refused',
+  id, phase, reason?}`, `phase` being the story phase the player is in while it plays (snapshots do not say).
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 
@@ -360,3 +364,44 @@ every chat line, mute and party change goes to the server log for moderation.
   `self`, `in_party`, `party_full`, `pending`, `no_invite`, `not_member`, `offline` (promote names a member whose
   connection is down), `gone` (the inviter is offline in no party), `busy` (the invitee holds 8 invites), `rate` with
   `retryS`.
+
+## 14. Cutscenes
+
+DESIGN 8's cutscenes play in-engine, always in a phase (DESIGN 14.1, 17), on the camera-glide system (19.2).
+
+- **Authoring** (`assets/blend/cutscenes/<name>.blend`, one cutscene a file): scene custom properties `cutscene` (its
+  id), `frame` (`station`, `home`, `body:<n>`, `inertial` or `player`) and `anchor` (`origin`: the frame's coordinates;
+  `player`: relative to the player's pose when it starts, the ship at the origin nose along +Y); cameras
+  `CAM_<cutscene>_<shot>`, each moved however the artist likes (a Follow Path on its curve `CAM_<cutscene>_<shot>_path`,
+  a Track To, keyed lenses), cut between by timeline markers bound to them; markers `line:<key>`, `end:<key>` and
+  `event:<name>`, their words in a Text block `CUT_<cutscene>` (JSON: lines' speaker, voice and text; banners' title
+  and sub); an optional empty `STAGE_player` where the player's ship is put. The render resolution is the framing
+  (2.39:1 for the letterbox); the frame range at the scene's rate is its length.
+- **Export** (`packages/tools/blender/export_cutscene.py`, headless; `-- --selftest` checks it): JSON at
+  `packages/client/public/cutscenes/<id>.json`, format `astra.cutscene` version 1. Each shot is the evaluated camera
+  sampled at every frame (constraints, keys and lens included, as Blender plays it), in the engine's axes, with the
+  vertical field of view of the render framing; lines with times and lengths (a line without an end marker runs its
+  reading time, cut short by the next); events with optional banners; the space; the stage.
+- **Playback** (`packages/client/src/cutscene/`): `CutscenePlayer` loads and checks a definition (`timeline.js`), asks
+  its link for a phase, then runs a `Timeline` on game time (so `window.step` and captures are exact): the clock, the
+  lines' reveal and fades, events in order. `CameraDirector` (the camera-glide system, with the demo's chase-view
+  eases, seat glides and dips) takes the camera: it glides from the player's view into the first shot (a dip when far,
+  from the seat, or asked for), plays the shots on a spline through the samples (`curve.js`) expressed in the
+  cutscene's frame so they follow it as it orbits (`space.js`), and glides back to the player's view at the end. The
+  canvas's field of view is widened so the band between the letterbox bars shows exactly what Blender framed.
+  `ui/Cinematic.js` draws the letterbox and the dialogue bar each frame; events' banners go to `HUD.showBanner`
+  (`{station}`, `{system}`, `{home}`, `{planet}` filled in), and listeners (`cutscenes.on('event' | 'line' | 'start' |
+  'end')`) hear every event.
+- **Controls:** while one plays `game.overlay` is `'cutscene'`, so the player's controls are locked as under a menu.
+  Space, Enter or a click reveals the rest of a line, then jumps to the next behind a dip; Esc (which closes overlays)
+  skips. A jump or a skip fires every event it passes (a skip's marked `skipped`, without banners), so whatever listens
+  ends where watching would have left it. The controls come back as the camera starts home.
+- **Phases:** the client's link asks the server first (`cutscene request`); the server's `CutsceneService`
+  (`packages/server/src/cutscenes/`) places the player in a story phase keyed `cutscene:<id>` at its place (radius from
+  its catalog; a party member watching the same cutscene there shares the phase), spawns the catalog's actors into the
+  phase once, and answers with the phase's id; `done` takes the player out, and the last one out closes the phase and
+  its actors. Until the client is networked (P1.E04.T01) `OfflineCutsceneLink` answers for the server (a local layer,
+  phase null) and keeps the messages it would have sent; the gateway's `cutscene` case is one line
+  (`s.send(cutscenes.handle(s, msg))`) once the networked client sends them.
+- **Dev:** `#cutscene:<id>` stages the ship and plays it; `pnpm capture -- --ui cutscene-test` grabs the grader's stills
+  and clip; `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end.
