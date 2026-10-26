@@ -52,6 +52,17 @@ coordinates, exactly like the client's `FrameState`. The server changes an entit
 `FrameState.setFrame` (DESIGN 20.1 keeps frames of reference), so a pose re-expressed across a frame change keeps its world
 position (P1.E03.T03 tests this to 1 cm).
 
+Which frame an entity belongs in is one rule, `selectFrame` in `@astra/shared/world` (`frames.ts`), which the client's
+`Game.chooseFrame` and the server's zones both call: inside the Waystation's sphere of influence, the Waystation's frame;
+else the planet or moon with the smallest sphere that holds it; else the inertial frame. An entity stays in its frame until
+it is 5% beyond that frame's sphere (`FRAME_HYSTERESIS`), unless a smaller sphere inside it holds the entity (the
+Waystation's in its world's, a moon's in its planet's). Every tick a zone takes each entity's world position at the tick's
+time, picks its frame by this rule and, when it changed, re-expresses its pose with `setFrame` (velocity turned, never
+boosted), so its next snapshot carries the new frame id. A client sending its pose in the frame it picked by the same rule
+is never re-expressed but at the edge of a sphere, where its clock and the tick's differ. `frames.ts` also converts between
+wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `reframe`, `settleFrame`, `localPoseInto`/
+`framedPose` for the client's `FrameState`).
+
 ## 5. Protocol (`@astra/shared/protocol`)
 
 - **Control messages are JSON**, one object per WebSocket text frame, shaped `{ "t": "<type>", ... }` and validated with a

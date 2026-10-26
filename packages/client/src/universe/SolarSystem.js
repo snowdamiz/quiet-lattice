@@ -67,16 +67,6 @@ export class SolarSystem {
     for (const b of this.bodies) b.update(t);
   }
 
-  // Innermost frame containing world position (stations > moons > planets).
-  frameFor(world, extra = []) {
-    for (const e of extra) if (e.distanceTo(world) < e.soi) return e;
-    let best = null;
-    for (const p of this.planets) {
-      if (p.distanceTo(world) < p.soi && (!best || p.soi < best.soi)) best = p;
-    }
-    return best;
-  }
-
   nearestPlanet(world) {
     let best = null;
     let bd = Infinity;
