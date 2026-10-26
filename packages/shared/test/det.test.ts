@@ -350,7 +350,7 @@ describe('accuracy and three', () => {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 
-  it('every function is within 2 ulps of the engine’s own (each is within 1 ulp of the true value)', () => {
+  it('every function is within 2 ulps of the engine’s own (each is within 1 ulp of the true value, atan2 within 2)', () => {
     const worst: Record<string, number> = {};
     const track = (name: string, a: number, b: number) => (worst[name] = Math.max(worst[name] ?? 0, ulps(a, b)));
     for (let i = 0; i < 20000; i++) {

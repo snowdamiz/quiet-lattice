@@ -4,8 +4,9 @@
 // can flip a threshold in world generation and give the server a different world from the client's. These are written
 // in that exact arithmetic alone (plus reading and writing a double's two 32-bit halves), so they cannot differ.
 //
-// sin, cos, atan, atan2, asin, acos, log and pow are ports of fdlibm 5.3 (Sun's freely distributable libm, the code V8's
-// own ieee754.cc ports), operation for operation; each is within 1 ulp of the true value. hypot is V8's (a Kahan sum of
+// sin, cos, atan, atan2, asin, acos, log and pow are ports of fdlibm 5.3 (Sun's freely distributable libm, from which
+// V8's ieee754.cc descends through FreeBSD's msun), operation for operation; each is within 1 ulp of the true value
+// except atan2, which fdlibm only promises to 2 ulps (about 1.3 measured). hypot is V8's (a Kahan sum of
 // squares scaled by the largest), which is what Node's Math.hypot computes. The π tables are checked against π computed
 // to 2400 bits in packages/shared/test/det.test.ts.
 //
@@ -520,7 +521,7 @@ const PI_LO = 1.2246467991473531772e-16; // 0x3CA1A626, 0x33145C07
 const PI_O_2 = 1.570796326794896558; // 0x3FF921FB, 0x54442D18
 const PI_O_4 = 7.85398163397448279e-1; // 0x3FE921FB, 0x54442D18
 
-/** atan2(y, x), the angle of the point (x, y), within 1 ulp, the same on every engine. */
+/** atan2(y, x), the angle of the point (x, y), within 2 ulps, the same on every engine. */
 export function atan2(y: number, x: number): number {
   const hx = high(x);
   const ix = hx & 0x7fffffff;
