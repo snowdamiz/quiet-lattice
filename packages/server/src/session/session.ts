@@ -1,5 +1,5 @@
 // One Session per WebSocket (docs/ARCHITECTURE.md §2): the account it signed in as, the character in play and the zone
-// it is in. Zones (P1.E03.T02) hold sessions to send snapshots and events through.
+// it is in. Zones hold sessions (as ZoneViewers) to send snapshots through.
 import { encodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
 import { WebSocket } from 'ws';
 
@@ -44,22 +44,27 @@ export class Session {
    * outbound queue passes MAX_BUFFERED_BYTES, so one socket cannot make the server hold unbounded memory.
    */
   send(m: ServerMessage): void {
-    if (this.socket.readyState !== WebSocket.OPEN) return;
-    if (this.socket.bufferedAmount > MAX_BUFFERED_BYTES) {
-      this.drop('outbound buffer full');
-      return;
-    }
-    this.socket.send(encodeServerMessage(m));
+    if (this.writable()) this.socket.send(encodeServerMessage(m));
+  }
+
+  /** Sends a binary frame (a zone snapshot), under the same outbound cap as send(). */
+  sendBinary(data: Uint8Array): void {
+    if (this.writable()) this.socket.send(data, { binary: true });
   }
 
   /** Answers a client's ping frame, under the same outbound cap as send(). */
   pong(data: Buffer): void {
-    if (this.socket.readyState !== WebSocket.OPEN) return;
+    if (this.writable()) this.socket.pong(data);
+  }
+
+  /** Whether the socket is open and its outbound queue under the cap; a client over the cap is dropped. */
+  private writable(): boolean {
+    if (this.socket.readyState !== WebSocket.OPEN) return false;
     if (this.socket.bufferedAmount > MAX_BUFFERED_BYTES) {
       this.drop('outbound buffer full');
-      return;
+      return false;
     }
-    this.socket.pong(data);
+    return true;
   }
 
   /**
@@ -89,7 +94,6 @@ export class SessionRegistry {
   readonly sessions = new Set<Session>();
   private readonly byAccount = new Map<string, Set<Session>>();
   private readonly byCharacter = new Map<string, Session>();
-  private nextEntityId = 1;
 
   add(s: Session): void {
     this.sessions.add(s);
@@ -130,11 +134,6 @@ export class SessionRegistry {
     this.byCharacter.set(characterId, s);
     s.characterId = characterId;
     return previous && previous !== s ? previous : undefined;
-  }
-
-  /** Entity ids are per process until zones own them (P1.E03.T02). */
-  allocateEntityId(): number {
-    return this.nextEntityId++;
   }
 
   get size(): number {

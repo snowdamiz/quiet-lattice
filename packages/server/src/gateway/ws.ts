@@ -1,7 +1,9 @@
 // WebSocket gateway (docs/ARCHITECTURE.md §2, §5): `ws` in noServer mode on the HTTP server's upgrade event, path /ws.
 // The first message must be `hello` with the protocol version and a session token, within HELLO_TIMEOUT_MS; then
-// `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS, and is answered with
-// `welcome`. Malformed or out-of-place messages are dropped and counted, never thrown.
+// `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS: its player entity enters
+// the zone of its home system (docked at the home Waystation) and `welcome` names the zone and the entity. From then on
+// `input` and `ack` go to the zone, which sends the session a binary snapshot every tick, and closing the socket takes
+// the entity out. Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -18,7 +20,7 @@ import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.t
 import type { Db } from '../db/client.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import type { ServerClock } from '../world/clock.ts';
-import { stationFrame, systemSeed, systemZoneId } from '../world/home.ts';
+import type { ZoneManager } from '../zones/manager.ts';
 import { clientKey, TokenBucket } from './rateLimit.ts';
 
 export const WS_PATH = '/ws';
@@ -48,6 +50,7 @@ export interface WsGatewayDeps {
   db: Db;
   tokens: TokenService;
   clock: ServerClock;
+  zones: ZoneManager;
   log: FastifyBaseLogger;
   limits: WsLimits;
 }
@@ -163,6 +166,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     ws.on('close', (code) => {
       clearTimeout(c.deadline);
       s.state = 'closed';
+      deps.zones.leave(s);
       conns.delete(c);
       registry.remove(s);
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
@@ -230,8 +234,19 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         return;
       case 'hello':
         return invalid(s, 'second hello');
+      case 'input': {
+        if (s.state !== 'joined') return invalid(s, 'input before join');
+        const r = deps.zones.input(s, msg);
+        if (r !== 'ok') invalid(s, `input ${r}`);
+        return;
+      }
+      case 'ack':
+        // An ack of a tick the zone no longer holds (or never sent) changes nothing; it is not worth a strike.
+        if (s.state !== 'joined') return invalid(s, 'ack before join');
+        deps.zones.ack(s, msg.tick);
+        return;
       default:
-        // input, cast, interact, chat and ack belong to the zone (P1.E03.T02 onwards); before join they are out of place.
+        // cast, interact and chat belong to later tasks; before join they are out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
         return;
     }
@@ -268,20 +283,25 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     }
     clearTimeout(c.deadline);
     const previous = registry.bindCharacter(s, row.id);
-    previous?.refuse('kicked', 'This character entered the world from another connection.');
-    s.entityId = registry.allocateEntityId();
-    s.zoneId = systemZoneId(row.homeSystem);
+    if (previous) {
+      // Its entity goes now, not when its socket finishes closing, so the character is never in the world twice.
+      deps.zones.leave(previous);
+      previous.refuse('kicked', 'This character entered the world from another connection.');
+    }
+    // Every character enters docked at its home Waystation until persistence (P1.E03.T05) remembers where it was.
+    const joined = deps.zones.join(s, row);
+    s.entityId = joined.entityId;
+    s.zoneId = joined.zone.id;
     s.state = 'joined';
-    // Until zones exist (P1.E03.T02) every character starts docked at its home Waystation.
     s.send({
       t: 'welcome',
       accountId: s.accountId!,
       character: toSummary(row),
-      entityId: s.entityId,
+      entityId: joined.entityId,
       serverTime: deps.clock.now(),
-      zone: { id: s.zoneId, systemSeed: systemSeed(row.homeSystem) },
-      pose: { frame: stationFrame(row.homeSystem), pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
-      mode: 'docked',
+      zone: { id: joined.zone.id, systemSeed: joined.zone.system.seed },
+      pose: joined.pose,
+      mode: joined.mode,
     });
     log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
   }
