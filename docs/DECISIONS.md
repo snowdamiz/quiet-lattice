@@ -24,3 +24,47 @@ Format: task id, question → choice → why.
   nodes: 3 Tier I, 6 Tier II, 8 Tier III and a capstone. → The tables win: 132 nodes. 20 is each branch's point cost
   (17 nodes at 1 point + a 3-point capstone), so owning the web costs 7 × 20 + 6 × 2 = 152 points, matching "~160". The
   plan's count is corrected; the E02.T07 worker corrects DESIGN 9.1.
+- **P1.E02.T08** Started before P1.E02.T07 merged. → Allowed: the protocol needs zod, not the tables' content; ids such as
+  resources and peoples travel as strings (people as an enum) and are validated against the tables by the server. → Kept the
+  critical path to the server moving while the tables were in flight.
+- **P1.E02.T08** Entity ids on the wire → unsigned integers assigned per zone; character and account ids stay strings. →
+  Snapshots are the hot path; integer ids keep them small.
+- **P1.E02.T08** Snapshot number precision → msgpack float64 for every number. → In a system's inertial frame positions reach
+  1e9 m, where float32 loses tens of metres; bandwidth can be tuned later per field.
+- **P1.E02.T08 (review)** Message shapes differ from the first ARCHITECTURE draft: `input` nests its pose and uses `time`
+  (the tag is `t`), snapshots use `time` and carry `base`, `correction` nests the pose and adds `mode`, `refused` has a
+  `code`, `welcome` adds `entityId`, `pose` and `mode`, and there is a `zone` handoff message and a `notice` event. → The
+  implementation is the spec; ARCHITECTURE §5 rewritten to match. → Nesting the pose lets one schema validate every pose;
+  the rest are needs the draft missed.
+- **P1.E02.T08 (review)** Deltas: how is a removed field sent, and what is a delta relative to? → An entity delta lists
+  removed fields in `clear`; a delta snapshot names its baseline tick in `base`. → Without them an owner lock could never
+  expire on the client and a delta applied to the wrong stored tick would corrupt state.
+- **P1.E02.T08 (review)** Bad numbers → the snapshot encoder clamps hp/shield/heat to [0, 1] and drops non-finite fields;
+  the decoder drops a bad entity, not the frame; control-message encoding throws on invalid input. → One NaN must never
+  blank every client's view, and NaN must never become `null` silently.
+- **P1.E02.T08 (review)** Chat text → refuses blank text and C0/C1 controls, soft hyphen, zero-width space, directional
+  marks, separators, bidi embeddings/isolates, Hangul and Braille blanks, BOM; allows the zero-width joiner and
+  non-joiner (emoji sequences, Persian). Ids refuse every one of those. Lengths are counted in UTF-16 units. → Spoofing
+  and invisible names are the threat; emoji are not.
+- **P1.E02.T08 (review)** Frame ids are canonical (no leading zeros, seed ≤ 2^32−1); `homeSystem` ≤ 1023;
+  `CharacterList` carries `max` (≤ 16) and may not list more characters than it. → One spelling per frame; small bounds.
+- **P1.E02.T08 (review)** Snapshot encoding cost → `sanitizeEntity` is exported; zones sanitise each entity once per tick,
+  keep that as the sent state, and encode per client with `sanitized: true`. → Validating per client per entity tripled the
+  cost (8.4 ms for 25 players × 200 entities); once per tick it is about 0.2 ms.
+- **P1.E02.T01** Golden coverage: "home planet" read as each of systems 0–9's `SolarSystem.homePlanet` (10 planets), system 0
+  forced lush as the client does; fixture recorded from the original client JS before the port, tests use exact equality.
+  Until P1.E02.T02, planet types and radii are checked by a tools test through the client's SolarSystem. → Proves the port
+  changed nothing, bit for bit.
+- **P1.E02.T01** `EDGE_X`, `EDGE_CURVE_R` and `edgeX` moved from the client's `ui/map/EdgeOfSpace.js` to shared
+  `world/edge.ts` (the client imports them from shared); `edgeBearing` and `EDGE_SEED` stay in the client. → Cosmos needs
+  them and shared may not import client UI.
+- **P1.E02.T01** Shared file names are lowercase (`rng.ts`, `galaxy.ts`, `cosmos.ts` …). → The plan already names
+  `shared/world/sites.ts`.
+- **P1.E02.T01** The title-shot pixel diff is a script (`packages/tools/src/smoke/title-shot.ts`), not part of `pnpm smoke`,
+  with no committed baseline image. → Pixels depend on the GPU backend; the script makes the shot deterministic (seeded
+  Math.random, fixed steps, drained worker pool) and compares two captures on one machine.
+- **P1.E02.T01** Module-level three.js vectors in shared are marked `/* @__PURE__ */`. → The production chunk-worker
+  bundle drops from 97 kB to 13 kB.
+- **Orchestrator** Another Claude session edits client files in the main checkout while this plan runs. → Task commits stage
+  explicit paths only; merges that would touch that session's uncommitted files wait in an `integration/<task>` branch
+  (main plus the reviewed task, verified) until it is done; dependent workers branch from the integration branch.

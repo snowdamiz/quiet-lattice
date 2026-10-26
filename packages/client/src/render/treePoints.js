@@ -3,7 +3,7 @@
 // trees where those fade out (~400 m), so forests still read from the air. Open ground
 // gets a sparse scatter of shrubs the same way.
 import * as THREE from 'three';
-import { archetype } from '../terrain/planetgen.js';
+import { archetype } from '@astra/shared/world';
 
 const vert = /* glsl */ `
 #include <common>

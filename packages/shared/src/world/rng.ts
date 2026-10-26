@@ -1,6 +1,9 @@
-// Deterministic random helpers shared by the main thread and workers.
+// Deterministic random helpers shared by the main thread, the terrain workers and the server.
 
-export function mulberry32(seed) {
+/** A stream of floats in [0, 1). */
+export type Rng = () => number;
+
+export function mulberry32(seed: number): Rng {
   let a = seed >>> 0;
   return function () {
     a = (a + 0x6d2b79f5) >>> 0;
@@ -11,7 +14,7 @@ export function mulberry32(seed) {
   };
 }
 
-export function hashInts(...values) {
+export function hashInts(...values: number[]): number {
   let h = 2166136261 >>> 0;
   for (const v of values) {
     h ^= v | 0;
@@ -23,7 +26,7 @@ export function hashInts(...values) {
   return h >>> 0;
 }
 
-export function hashString(str) {
+export function hashString(str: string): number {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i);
@@ -33,50 +36,59 @@ export function hashString(str) {
 }
 
 export class Random {
-  constructor(seed) {
+  next: Rng;
+
+  constructor(seed: number) {
     this.next = mulberry32(seed);
   }
-  float(min = 0, max = 1) {
+  float(min = 0, max = 1): number {
     return min + (max - min) * this.next();
   }
-  int(min, max) {
+  /** An integer in [min, max], both inclusive. */
+  int(min: number, max: number): number {
     return Math.floor(this.float(min, max + 1));
   }
-  pick(arr) {
+  pick<T>(arr: readonly T[]): T {
     return arr[Math.floor(this.next() * arr.length)];
   }
-  chance(p) {
+  chance(p: number): boolean {
     return this.next() < p;
   }
-  sign() {
+  sign(): number {
     return this.next() < 0.5 ? -1 : 1;
   }
-  gaussian() {
+  gaussian(): number {
     const u = 1 - this.next();
     const v = this.next();
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
   }
 }
 
+// prettier-ignore
 const SYLLABLES = [
   'ka', 'ro', 'vex', 'al', 'tha', 'mir', 'zen', 'or', 'ul', 'nyx', 'eo', 'qua', 'sol', 'dra', 'ix',
   'vel', 'ari', 'cor', 'phe', 'lun', 'ter', 'ys', 'gan', 'oth', 'rhe', 'xa', 'mo', 'bel', 'kai', 'sar',
   'ven', 'tor', 'zu', 'ny', 'pha', 'lis', 'dun', 'era', 'ost', 'cal',
 ];
 
-export function makeName(rng, minSyl = 2, maxSyl = 3) {
+export function makeName(rng: Random, minSyl = 2, maxSyl = 3): string {
   const n = rng.int(minSyl, maxSyl);
   let s = '';
   for (let i = 0; i < n; i++) s += rng.pick(SYLLABLES);
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export function romanNumeral(n) {
-  const map = [
-    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
-  ];
+const NUMERALS: [number, string][] = [
+  [10, 'X'],
+  [9, 'IX'],
+  [5, 'V'],
+  [4, 'IV'],
+  [1, 'I'],
+];
+
+export function romanNumeral(n: number): string {
   let out = '';
-  for (const [v, s] of map) {
+  for (const [v, s] of NUMERALS) {
     while (n >= v) {
       out += s;
       n -= v;

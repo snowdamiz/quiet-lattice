@@ -5,9 +5,8 @@
 // is the edge of space.
 import * as THREE from 'three';
 import { mapNoiseGLSL, starPointVert, starPointFrag, starfieldPoints, worldPointVert, worldPointFrag, discVert, discFrag, nebFrag } from './mapCommon.js';
-import { buildEdge, EDGE_X, edgeX, EDGE_SEED } from './EdgeOfSpace.js';
-import { mulberry32 } from '../../math/rng.js';
-import { cosmos, GALAXY, fmtLy } from '../../universe/Cosmos.js';
+import { EDGE_X, edgeX, mulberry32, cosmos, GALAXY, fmtLy } from '@astra/shared/world';
+import { buildEdge, EDGE_SEED } from './EdgeOfSpace.js';
 
 const _v = new THREE.Vector3();
 

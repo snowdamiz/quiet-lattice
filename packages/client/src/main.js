@@ -24,6 +24,12 @@ if (scenario) {
     await wait(300);
     const home = game.system.homePlanet;
     const [name, arg] = scenario.split(':');
+    // #review:<asset> — the asset review scene (src/dev/review.js)
+    if (name === 'review' && import.meta.env.DEV) {
+      const { startReview } = await import('./dev/review.js');
+      await startReview(game, arg);
+      return;
+    }
     const planet = arg !== undefined ? game.system.planets[+arg] : home;
     if (name === 'fly') game.debugGoto(planet, { sunAngle: 50, alt: 400, azimuth: 40 });
     if (name === 'land' || name === 'foot') game.debugGoto(planet, { sunAngle: 40, alt: 0, azimuth: 20 });

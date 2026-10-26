@@ -2,8 +2,7 @@
 // the vertex shader from per-vertex limb ids + pivots and per-instance gait phase.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { Random, makeName } from '../math/rng.js';
-import { archetype } from '../terrain/planetgen.js';
+import { Random, makeName, archetype } from '@astra/shared/world';
 import { libraryMesh, libraryVariants, recolor } from './modelLibrary.js';
 
 const HIDES = [0xb08850, 0xa0502a, 0x8a8a92, 0xd8c8a0, 0x5a4030, 0xc07040, 0x6a6058, 0x4a6a8a, 0x6a4a7a, 0x3a7a6a, 0x8a3a4a];

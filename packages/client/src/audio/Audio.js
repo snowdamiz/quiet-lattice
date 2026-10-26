@@ -258,6 +258,26 @@ export class Audio {
     else if (state.context !== 'title') this.updateMusic(t, state);
   }
 
+  // RCS jets pulse, so they sound as a run of gas puffs: one at once on a fresh burst (however short),
+  // then more, quicker and louder the harder the jets are working
+  updateRcs(st) {
+    const b = this.bank;
+    if (!b.has('rcs_puff') || !st.inShip) return;
+    const t = this.ctx.currentTime;
+    const level = st.rcs || 0;
+    if ((st.rcsKick || 0) > 0.12 && t - (this.rcsLast || 0) > 0.05) {
+      b.play('rcs', { gain: Math.min(1.3, 0.55 + st.rcsKick * 1.2) });
+      this.rcsLast = t;
+      this.rcsNext = t + 0.09;
+      return;
+    }
+    if (level > 0.04 && t >= (this.rcsNext || 0)) {
+      b.play('rcs', { gain: Math.min(1.1, 0.3 + level * 0.9) });
+      this.rcsLast = t;
+      this.rcsNext = t + (0.16 - 0.1 * Math.min(1, level * 1.5)) * (0.8 + Math.random() * 0.4);
+    }
+  }
+
   // the recorded loops, from the game's state; returns which ones are playing (the synth stands
   // in for the rest)
   updateRecorded(st) {
@@ -273,8 +293,11 @@ export class Audio {
     // air tearing past, by speed and thickness
     const rush = ship ? Math.min(1, ((st.atmo || 0) * (st.speed || 0)) / 260) : 0;
     on.airflow = b.setLoop('airflow_loop', rush, 0.8 + rush * 0.45, 0.3);
-    // the VTOL jets
-    b.setLoop('hover_loop', ship ? Math.min(1, (st.hover || 0) * 1.6) : 0, 0.9 + (st.hover || 0) * 0.25, 0.15);
+    // the VTOL jets: a steady roar whenever they carry the ship, louder as they work harder
+    const hov = st.hover || 0;
+    b.setLoop('hover_loop', ship && hov > 0.015 ? Math.min(1, 0.4 + hov * 1.8) : 0, 0.88 + hov * 0.3, 0.1);
+    // the RCS jets: a sharp puff whenever one fires up, and a stream of them while they keep firing
+    this.updateRcs(st);
     on.pulse = b.setLoop('pulse_loop', st.pulse ? 0.3 + st.pulse * 0.7 : 0, 0.85 + (st.pulse || 0) * 0.25, 0.4);
     on.jet = b.setLoop('jetpack_loop', st.jet ? 1 : 0, 1, 0.06);
     on.beam = b.setLoop('beam_loop', st.beam ? 1 : 0, 0.95 + (st.beamHeat || 0) * 0.15, 0.04);

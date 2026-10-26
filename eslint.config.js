@@ -3,7 +3,18 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', 'packages/client/public/**', 'blender/**', 'coverage/**', 'test-results/**', 'playwright-report/**'] },
+  {
+    ignores: [
+      '.claude/**',
+      '**/dist/**',
+      '**/node_modules/**',
+      'packages/client/public/**',
+      'blender/**',
+      'coverage/**',
+      'test-results/**',
+      'playwright-report/**',
+    ],
+  },
   js.configs.recommended,
   {
     files: ['packages/client/**/*.js'],
@@ -18,6 +29,10 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.node } },
   },
   ...tseslint.configs.recommended.map((c) => ({ ...c, files: ['**/*.ts'] })),
+  {
+    files: ['**/*.ts'],
+    languageOptions: { parserOptions: { tsconfigRootDir: import.meta.dirname } },
+  },
   {
     files: ['packages/{server,tools}/**/*.ts'],
     languageOptions: { globals: { ...globals.node } },

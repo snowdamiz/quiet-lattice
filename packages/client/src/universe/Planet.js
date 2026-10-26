@@ -2,9 +2,7 @@
 // optional rings, plus the parameters the atmosphere pass needs.
 import * as THREE from 'three';
 import { Body } from './Body.js';
-import { TerrainSampler } from '../terrain/planetgen.js';
-import { planSites, sitePads } from '../terrain/sites.js';
-import { planCities, cityPads } from '../terrain/cities.js';
+import { TerrainSampler, planSites, sitePads, planCities, cityPads } from '@astra/shared/world';
 import { PlanetTerrain } from '../terrain/PlanetTerrain.js';
 import { createTerrainMaterial } from '../render/terrainMaterial.js';
 import { createTreePointsMaterial } from '../render/treePoints.js';

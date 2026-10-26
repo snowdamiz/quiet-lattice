@@ -2,7 +2,7 @@
 // put the ship somewhere with a heading and a speed, caption the shot, and record frames while the
 // terrain workers keep up. `install()` puts them on window.show for the browser console.
 import * as THREE from 'three';
-import { cityFrame, cityPoint } from '../terrain/cities.js';
+import { cityFrame, cityPoint } from '@astra/shared/world';
 
 export function install() {
   const game = window.game;
