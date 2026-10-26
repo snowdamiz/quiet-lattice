@@ -510,7 +510,7 @@ The hostile archetypes get their own fauna, always hostile, immune to their worl
 Each boss is built from systems the engine has or the plan adds. Phases are listed in order.
 | Boss | Where | Tier | Kind | Mechanics | Counters |
 |---|---|---|---|---|---|
-| Pack Alpha | any Tier 1–2 living world, at night near the landmark grove | 1–2 | world boss, solo or duo | charge (knockdown) → calls the pack → enrage at 30% (faster charges) | Pulse during the charge stuns it; Flare scatters the pack |
+| Pack Alpha | any Tier 2+ living world (the apex, 12.2), at night near the landmark grove | 2+ | world boss, solo or duo | charge (knockdown) → calls the pack → enrage at 30% (faster charges) | Pulse during the charge stuns it; Flare scatters the pack |
 | Outpost Overseer | certain outposts (a drone the size of the landing pad) | 2 | mini-boss | pad lasers → shield dome (drones feed it) → overheat (vents, exposed core) | kill the feeder drones; Shatter the dome |
 | The Scrapyard | a pirate base in a hollowed asteroid: Station code with a new build, docking pads, a deck to fight across (ch. 11) | 2 | dungeon | space: break the wing at the mouth → dock → deck fight through crews → the captain (a Singer: Dissonance and Veil) | EMP at the mouth; Perfect Pitch opens the holds |
 | Herd Mother | a stone-touched herd's lead animal, within 500 m of a fed stone | 3 | world boss, party | the herd shields her → she pulls you toward the stone (the Count's draw) → glyph burst | Nullsong breaks the draw; kill the herd first |

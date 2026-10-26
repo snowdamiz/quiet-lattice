@@ -125,3 +125,24 @@ Format: task id, question → choice → why.
 - **P1.E02.T07** Known DESIGN inconsistencies left as written: 9.7 says Pilot has three actives (two listed); 12.7's "Vent in
   ship form" (Vent has no ship form); section 1's "5 hostile variants" lists six; no fabricator for Tier 4–5 recipes; no
   unit price for the Lark (sold on credit).
+- **P1.E02.T05 (review)** Den density and spawning → dens are lairs scaled to land area (one predator den per ~80 km² of
+  land from Tier 1, a second layer from Tier 3, ambusher burrows at most one per site from Tier 2, one apex lair from
+  Tier 2), and predators also spawn around the camera from the herd spawner (DESIGN 12.2 "reuses today's herd spawner …
+  with dens"). P1.E08.T03 amended. → A fixed count per world left dens 16–26 km apart, too sparse to be the only spawn
+  source; lairs anchor packs, respawns, the apex, ambushers and board bounties.
+- **P1.E02.T05** No dens at Tier 0; den kind by body plan (burrow: quad_small packs and ambushers; nest: bipeds and the
+  apex; roost: flyers), predator dens split evenly across kinds until species roll (P1.E08.T01); the landmark grove is the
+  most wooded of 48 candidate spots; footprints 4/6/5/10 m, relief ≤ 4 m (roosts up to 0.8 × mountain height); 300 m
+  between dens, 2 km beyond every city's levelled ground, 40 m clear of sites; a separate JSON `Den[]` returned by
+  `planSurface`, planned on natural ground after cities and sites, each pass on its own RNG stream.
+- **P1.E02.T05 (review)** DESIGN 13 put the Pack Alpha on Tier 1–2 worlds while 12.2 and 12.8 put the apex at Tier 2+. → The
+  Pack Alpha is the apex: Tier 2+ (DESIGN 13 and the boss table changed). → Two sections against one; Tier 1 already has
+  territorial and predator fauna.
+- **P1.E02.T05 (review)** DESIGN 19.3 lists dens under Sites but the plan had no den art task. → Added P1.E14.T10; the client
+  plans without dens until it lands, so no bare clearings appear.
+- **P1.E03.T01** Per-account socket cap 4 (the oldest connection is closed at hello, newest wins); 6 characters per
+  account; a duplicate join of a character kicks the older connection; per-IP sockets 16; message budget burst 60 at
+  40/s with strikes; join timeout 30 s; headers timeout 10 s; outbound buffer cap 1 MiB; control pings share the message
+  budget; home system by people is a placeholder index until P1.E02.T04; serverTime from a shard epoch of 2026-01-01Z
+  advanced by a monotonic clock until P1.E03.T06; refusals map server errors to `full`, join timeout to `character`. →
+  Each bounds memory or keeps a reconnecting player from waiting on a dead socket; numbers are config where tests need it.
