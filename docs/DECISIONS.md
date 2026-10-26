@@ -161,3 +161,13 @@ Format: task id, question → choice → why.
   velocity is its orbital velocity plus its world's (the demo copied only the world's; nothing read either). `bodyPose`
   takes the parent's pose and throws for a moon without one; `systemPoses` orders parents. "Server uses it for frames" is
   met by a Node-tested API on plain arrays, wired in by P1.E03.T02/T03. → One frame rule for client, server and pirates.
+- **P1.E06.T01** Combat math choices → Flare's "60° cone" is the full width (30° each side); resistances never stack (most
+  specific of node, weapon, branch decides; lowest at equal specificity); a mob is Hollow if it carries every Hollow
+  resistance; killable bosses are 5 stars, the Patient unrated; XP per level rounded to whole points (level 1 costs 0);
+  damage is level-scaled only for mob and boss attacks (player abilities are flat until P1.E07 sets their numbers); aggro
+  is damage that halves every 3 s (forgotten below 0.5), a taunt forces the target 4 s without adding threat, Veil drops
+  the caster's threat, any damage breaks Harmonic; sentinels and Wardens ignore the whole Gravitic branch (×0), Collapse
+  Star excepted. DESIGN 12.1's "whoever hurt it most recently" is reworded to match. → Each reads DESIGN's text plainly;
+  aggro by decaying threat stops one chip hit stealing a mob.
+- **P1.E06.T01 (balance flag)** Mob damage scales ×7 by level 50 while player health stays 100–180 (a level-50 Pack Alpha
+  hits for 245). → Left as DESIGN 12.1 writes it; the Phase 1 balance pass (P1.E16) must address it.
