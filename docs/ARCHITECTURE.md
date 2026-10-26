@@ -28,7 +28,8 @@ gateway/ws.ts       WebSocket upgrade (token in the first message), one Session 
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 world/              WorldService: server clock, season, Count, Edge position, tier map
-sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
+fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6)
+sim/                server-side systems added by later tasks: movement validation, combat, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
 
@@ -122,6 +123,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   are the ship's: one per pod its `ShipLoadout` carries, checked against the bays `shipStats` gives (P1.E12.T01).
   Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
   picks the union whose schema accepts the message.
+- **Creatures** (protocol 3): a `mob` entity names its `species` by index in its world's `faunaSpecies` list (its frame
+  names the world), and carries `level`, `hp`, its behaviour state as `mode` and, only while it attacks, `attack`: its
+  progress through the attack, 0–1, clamped like the other unit fields and cleared when the attack ends (§6, Fauna).
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 
@@ -138,6 +142,19 @@ landed players sit in their ships), is a ship; a player on foot, an NPC or a pro
 loot pods are loot. An entity already in view stays in it until it is 5% beyond its radius, so one at the edge does not
 enter and leave every tick. Until movement authority (P1.E03.T04) validates `mode`, a client picks its own class through
 it. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5 minutes empty.
+
+**Fauna** (DESIGN 12.2, P1.E08.T01; `fauna/`). A world's species come from shared `faunaSpecies(params, tier)`: its own
+docile and skittish species, then the hostile ones each tier pass appends on a random stream of its own, so the list
+only grows with the tier and an index names the same species at every tier. The zone ticks a `FaunaSim` at the start of
+each step. Herds live in cells of about 250 m (an equal-angle cube map) round players within 1,500 m of a world's sea
+level: a cell wakes when a player comes within 400 m of its centre and spawns the herd planned for it from the world's
+seed and the cell alone, so everyone meets the same herd there; with no player within 500 m it sleeps (its creatures
+stand still, unsimulated), and after 30 s asleep its creatures are despawned. Ambushers and the apex come only from dens
+(`FaunaSim.spawnHerd`, P1.E08.T03). The ground is the shared terrain sampler levelled under cities and sites as the
+client levels it, its heights cached per cell on a 1 m lattice. Creatures are seen from 500 m when under a metre, 2 km
+for the apex and 1.5 km otherwise (`EntityInit.interest`). Their `mode` is one of idle, wander, flee, fly, alert,
+charge, return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow. Hostile creatures pick targets from a
+threat table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, `FaunaSim.hurt` adds damage.
 
 ## 7. Authority
 

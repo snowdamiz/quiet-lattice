@@ -33,6 +33,7 @@ import {
   type FrameSet,
   type SystemDescription,
 } from '@astra/shared/world';
+import { FaunaSim, type FaunaOptions } from '../fauna/sim.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
 import { TickTimes } from './metrics.ts';
@@ -54,6 +55,8 @@ export interface EntityInit extends EntityFields {
   quat: Quat;
   vel: Vec3;
   party?: string | null;
+  /** its interest class, when its kind does not decide it (creatures by their size) */
+  interest?: InterestClass;
 }
 
 /** Fields every zone entity has: they place it in the world and may not be cleared. */
@@ -109,6 +112,8 @@ export interface ZoneEntity {
 
 class Entity implements ZoneEntity {
   world: Vec3 = [0, 0, 0];
+  /** the class it keeps whatever its kind and mode (EntityInit.interest) */
+  fixedCls: InterestClass | null = null;
   unvalidated = false;
   input: ZoneEntity['input'] = null;
   /** sanitised wire state; null until first built */
@@ -159,6 +164,8 @@ export interface ZoneOptions {
   log?: ZoneLog;
   /** Called when a session leaves because its own entity was despawned (not when it leaves through leave()). */
   onViewerRemoved?: (viewer: ZoneViewer) => void;
+  /** the system's fauna (P1.E08.T01): its options, or false for a zone without (unit tests of the zone itself) */
+  fauna?: FaunaOptions | false;
 }
 
 export class Zone {
@@ -172,6 +179,8 @@ export class Zone {
   readonly times = new TickTimes();
   /** wire fields dropped by sanitizeEntity, ever (each is a server bug) */
   droppedFields = 0;
+  /** herds round the players on this system's worlds, ticked at the start of every step; null when turned off */
+  readonly fauna: FaunaSim | null;
 
   private readonly log?: ZoneLog;
   private readonly onViewerRemoved?: (viewer: ZoneViewer) => void;
@@ -204,6 +213,7 @@ export class Zone {
     };
     for (const f of [...this.frameSet.bodies, this.frameSet.station]) this.frames.set(f.id, f);
     this.placeFrames(0);
+    this.fauna = opts.fauna === false ? null : new FaunaSim(this, opts.fauna);
   }
 
   get entityCount(): number {
@@ -231,8 +241,9 @@ export class Zone {
     if (!this.hasFrame(init.frame)) throw new RangeError(`frame ${init.frame} is not in system ${this.systemIndex}`);
     checkPose(init);
     const id = this.nextEntityId++;
-    const { party = null, ...fields } = init;
-    const e = new Entity(id, copyFields(fields) as EntityInit, interestClass(init.kind, init.mode), party);
+    const { party = null, interest, ...fields } = init;
+    const e = new Entity(id, copyFields(fields) as EntityInit, interest ?? interestClass(init.kind, init.mode), party);
+    e.fixedCls = interest ?? null;
     this.entities.set(id, e);
     if (party !== null) this.joinParty(id, party);
     return id;
@@ -371,6 +382,8 @@ export class Zone {
     this.time = time;
 
     this.placeFrames(time);
+    // server-side systems first, so what they spawn and move goes out in this tick's snapshots
+    this.fauna?.step(time);
 
     const dropped: string[] = [];
     for (const e of this.entities.values()) {
@@ -539,7 +552,7 @@ export class Zone {
    * ship from sessions beyond 2 km instead of 50 km.
    */
   private touch(e: Entity): void {
-    const cls = interestClass(e.fields.kind, e.fields.mode);
+    const cls = e.fixedCls ?? interestClass(e.fields.kind, e.fields.mode);
     if (cls !== e.cls) {
       this.hashes[e.cls].remove(e.id);
       e.cls = cls;

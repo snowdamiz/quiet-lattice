@@ -288,6 +288,32 @@ describe('protocol: snapshots', () => {
     expect(back.entities[1]).toEqual(full.entities[1]);
   });
 
+  it('carries a creature’s attack phase (0–1, clamped) and clears it when the attack ends', () => {
+    const dropped: string[] = [];
+    const attacking: EntityState = { id: 9, mode: 'attack', attack: 0.25 };
+    expect(decodeSnapshot(encodeSnapshot({ ...full, entities: [attacking] }))!.entities).toEqual([attacking]);
+    const over = decodeSnapshot(
+      encodeSnapshot(
+        {
+          ...full,
+          entities: [
+            { id: 9, attack: 1.0000001 },
+            { id: 10, attack: -1e-9 },
+          ],
+        },
+        dropped,
+      ),
+    )!;
+    expect(over.entities).toEqual([
+      { id: 9, attack: 1 },
+      { id: 10, attack: 0 },
+    ]);
+    expect(dropped).toEqual([]);
+    const done: Snapshot = { tick: 121, time: 3600.1, ack: 8, full: false, base: 120, entities: [{ id: 9, mode: 'return', clear: ['attack'] }], removed: [] };
+    expect(decodeSnapshot(encodeSnapshot(done))).toEqual(done);
+    expect(applyEntityDelta({ id: 9, mode: 'attack', attack: 0.5 }, done.entities[0])).toEqual({ id: 9, mode: 'return' });
+  });
+
   it('validates every field on encode, so the client never rejects what the server sent', () => {
     const dropped: string[] = [];
     const bad: EntityState = { id: 9, pos: [50, 0, 0], quat: [0, 0, 0, 2], mode: 'return-to-spawn-x', level: 51, species: 1.5, name: 'n'.repeat(40) };
