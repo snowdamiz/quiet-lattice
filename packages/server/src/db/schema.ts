@@ -1,7 +1,9 @@
 // Postgres schema (docs/ARCHITECTURE.md §3, §8). Migrations are generated from this file with `pnpm --filter @astra/server
-// db:generate` and committed under packages/server/drizzle/. Later tasks add pose, frame, ship, inventory, skills, quests
-// and flags to `characters` (or child tables) with their own migrations.
+// db:generate` and committed under packages/server/drizzle/. A character's state beyond its columns (pose, frame, ship,
+// inventory, and skills, quests and flags as their tasks arrive) lives in its `state` jsonb, one versioned entry per
+// component of the persistence registry (src/persistence/registry.ts), so a new component needs no migration.
 import type { CharacterLook, PeopleId } from '@astra/shared/protocol';
+import type { StoredState } from '../persistence/registry.ts';
 import { sql } from 'drizzle-orm';
 import { bigint, check, doublePrecision, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
@@ -33,6 +35,12 @@ export const characters = pgTable(
     xp: bigint('xp', { mode: 'number' }).notNull().default(0),
     /** Galaxy system index of the character's home system (DESIGN 5.1). */
     homeSystem: integer('home_system').notNull(),
+    /** Each persistence component's `{v, data}` by key (pose, ship, inventory…); `{}` until the first save. */
+    state: jsonb('state').$type<StoredState>().notNull().default({}),
+    /** Raised by every save; a save carrying a revision not above it is stale and skipped (src/persistence/store.ts). */
+    revision: bigint('revision', { mode: 'number' }).notNull().default(0),
+    /** When the character was last saved; null before its first save. */
+    savedAt: timestamp('saved_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -40,6 +48,7 @@ export const characters = pgTable(
     index('characters_account_id_idx').on(t.accountId),
     check('characters_people_check', sql`${t.people} in ('thalune', 'ixari', 'ulgani')`),
     check('characters_level_check', sql`${t.level} between 1 and 50`),
+    check('characters_revision_check', sql`${t.revision} >= 0`),
   ],
 );
 
