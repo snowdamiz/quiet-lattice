@@ -32,6 +32,7 @@ social/             SocialService: chat channels, parties and invites, and their
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
+skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
@@ -101,23 +102,23 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social); a unit test pins the number and checks the history, so two branches bumping
-  to the same number conflict at merge rather than share it.
+  first protocol, 2 inventory, 3 social, 4 skills); a unit test pins the number and checks the history, so two branches
+  bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (one
-  per applied snapshot, at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`. Each socket's message
-  budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat,
-  party and inventory requests, and the burst absorbs the backlog of a stall. Chat and invites have far smaller limits of
-  their own, per account (§13).
+  per applied snapshot, at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`, `skills {seq, op}`. Each
+  socket's message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
+  interactions, chat, party, inventory and skill requests, and the burst absorbs the backlog of a stall. Chat and invites
+  have far smaller limits of their own, per account (§13).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
-  by index), `pong`, `inventory {seq, inventory, error?}`, `party {party}` (the character's party, or null, §13),
-  `denied {of, code, retryS?, name?}` (a chat message or party request not carried out, to its sender only, §13), and
-  snapshots.
+  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
+  character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
+  to its sender only, §13), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -133,6 +134,14 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   are the ship's: one per pod its `ShipLoadout` carries, checked against the bays `shipStats` gives (P1.E12.T01).
   Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
   picks the union whose schema accepts the message.
+- **Skills** (`@astra/shared/skills`, protocol 4): a client asks `skills {seq, op}` with `op` one of `unlock {node}`
+  (spend fragments), `buy {node}`, `slot {bar, index, node}`, `unslot {bar, index}` (`bar` is `ground` or `ship`, `index`
+  0–5) or `respec {nodes}`; node ids are id-shaped strings of at most 48 characters, and one the web lacks is answered
+  `unknown_node` rather than dropped. The server answers every request with `skills {seq, skills, error?}`, where
+  `skills` is the view `{state, level, shipSlots, met}` (§14) and `seq`, `error` and `stale_seq` work as the inventory's
+  do; it sends the view after `inventory` on join (`seq` 0) and pushes it whenever server-side calls change it. The client
+  predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
+  and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 
@@ -203,9 +212,11 @@ component in the registry (`registry.ts`): `{key, v, schema, migrations?, column
 ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry `{"v": <schema version>, "data":
 <value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own columns. Components load in
 registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers (`components.ts`,
-`coreRegistry`): `progress` (level, xp, home system: the columns), `ship` (`ShipLoadout | null`, the Lark by default),
-`inventory` (its layout re-derived from the ship on load, `applyLayout(saved, layoutFor(loadout))`; kept as saved, and
-logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`, read from the character's zone entity).
+`coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the ship and inventory
+read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
+second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
+layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`,
+read from the character's zone entity).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -239,12 +250,12 @@ logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`, read f
   dev CLI's grant, teleport, set quest step) adds it to persistence as load, modify and save, refused while the character
   is held and holding its joins until the save is written.
 
-**Adding a component** (skills P1.E07.T01, quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
+**Adding a component** (quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
 `CharacterComponent` with its key, `v: 1`, the zod schema of the stored value, `default`, `load`, `save` and `unload`
 (`onInvalid: 'refuse'` for anything a player earned), and register it in `coreRegistry` after the components it reads and
-before those that read it: skills go before the inventory, which then passes the owned nodes to `layoutFor` (Pack Mule's
-stack cap). No SQL migration: it is a new key in `state`. To change a stored shape later, raise `v` and add
-`migrations[oldV]`. State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
+before those that read it (skills, P1.E07.T01, go before the ship and the inventory, which pass the owned nodes to
+`shipStats` and `layoutFor`). No SQL migration: it is a new key in `state`. To change a stored shape later, raise `v`
+and add `migrations[oldV]`. State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
 store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
@@ -360,3 +371,46 @@ every chat line, mute and party change goes to the server log for moderation.
   `self`, `in_party`, `party_full`, `pending`, `no_invite`, `not_member`, `offline` (promote names a member whose
   connection is down), `gone` (the inviter is offline in no party), `busy` (the invitee holds 8 invites), `rate` with
   `retryS`.
+
+## 14. Skills (`packages/server/src/skills`, `@astra/shared/skills`)
+
+DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 152 points to own them all) is
+`@astra/shared/data`; the per-character value and its rules are `@astra/shared/skills`, pure functions both ends run.
+
+- **State** (`SkillState`, the `skills` component, `v` 1): `granted` (points beyond levels: story chapters, faction chains,
+  grants), `unlocked` and `bought` (node ids in the order it happened; bought ⊆ unlocked), `fragments` (per fragment branch,
+  Gravitic, Thermal, Resonance, Symbiotic and Void, `{earned, spent}`; never inventory items, DESIGN 15.2) and `slots`
+  (`ground`: 6, keys 1–6; `ship`: 5, the roomiest hull's ability slots). The level is never stored: progress owns it, and
+  points are `level × 1 + granted − Σ pointCost(bought)`. Nor is the hull: the ship bar works as many slots as the flown
+  hull's `abilitySlots` (Lark 2). The schema refuses unknown or repeated ids, a bought node not unlocked, a slotted node not
+  owned or on the wrong bar, and a ledger that spent more than it earned; `skillStateProblem` refuses an owned node whose
+  prerequisites are not owned. Unreadable skills refuse the join. A new character (or one saved before skills existed)
+  starts with its people's node unlocked (DESIGN 5.1), still bought with a point; a load adds it if missing.
+- **The view** sent to the client, `{state, level, shipSlots, met}`: `met` is the web's standing gates the character meets
+  (`WEB_REQUIREMENTS`: Void's Free Reaches rank), so `contextOf(view)` lets the client predict every rule.
+- **Rules** (`rules.ts`): `unlockWithFragments` spends the node's tier's fragments of its branch (I 1, II 3, III 6; Pilot,
+  Exo-suit, capstones and conjunctions have no fragment route); `unlockVia(source)` unlocks from the world only by a route
+  the node lists (a trainer that teaches it, a chapter at or past a capstone's, a discovery for a conjunction, its quest,
+  its people; `dev` for the CLI); `buyNode` needs the node unlocked and not owned, the tier's level (I 1, II 15, III 30,
+  capstone 45, conjunction 15), one owned node of the tier below in the branch (any; Tier II of both branches for a
+  conjunction; a Tier III for a capstone), an augment's target, the standing gate and the points; `slotNode` puts an owned
+  active on its own bar (`node.slot`: heat and resource costs on the ground bar, Charge on the ship bar; passives and
+  augments are always on) at a working slot, swapping a node already on the bar; `unslotNode` empties any slot;
+  `respecNodes` refunds owned nodes when every node kept keeps its prerequisites, clears them off the bars, and names its
+  price (500 units a point) and trainers (a Chorus listener; for Void nodes a Free Reaches quartermaster). Unlocks and
+  spent fragments stay spent.
+- **SkillService** (`service.ts`) holds the characters in play (persistence opens, saves and closes them as it does the
+  inventory) and answers `request(id, seq, op)` with the shared rule plus what only it knows, through `hooks` that later
+  tasks answer: `trainerAtHand` (NPC trainers, P1.E09.T05/P1.E07.T13; none until then), `inCombat` (P1.E06.T02; slots swap
+  only out of combat) and `meets` (Void's flag, P1.E07.T08; reputation in Phase 2). A buy or respec that changes the
+  inventory's layout (Pack Mule: `suit.stack_max` 15000 and one more cargo bay, which takes a pod aboard the ship or gives
+  it back) re-lays the inventory out through `InventoryService.setLoadout` and sets the ship's `cargoPods`, or is refused
+  `no_room` with nothing changed, as a hull change is; a respec checks the units before it changes anything, then spends
+  them. Server-side calls: `grantPoints`, `setPoints` (the CLI's "set skill points": never below what levels give less
+  what is spent), `grantFragments` (P1.E07.T11 decides the count: Listener, Uncounted), `unlock(id, node, source)`,
+  `buy`, `respec`, and `refresh` when the level or the hull changes. `owned(id)` is what `shipStats`, movement authority's
+  profile, abilities and meters read; `subscribe` hears every change (`request` or `server`), and the gateway pushes the
+  `server` ones.
+- **Wiring**: `coreRegistry` makes the service over the same inventory, ship and progress holders unless one is given, and
+  registers its component after `progress` and before `ship`; the gateway takes the one in persistence's registry
+  (`skillServiceIn`) unless given one, and exposes it as `ws.skills`.
