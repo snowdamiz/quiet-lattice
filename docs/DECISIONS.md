@@ -354,3 +354,12 @@ Format: task id, question → choice → why.
   lives in the server until a client shows the target (P2.E22.T04 moves it to shared). → DESIGN 16.2's lean-not-volume
   meter, exact at any population. Callers to come: P2.E21.T05 convoys, P2.E28.T04 anchors, P3.E33.T02 Wardens, P3.E33.T03
   Hive Heart, P3.E34.T02/T03 wall choices, the monolith interact.
+- **P1.E14.T09** Grader calibration → the five demo baselines (ship 2.0, box station 2.1, structures 2.2, creatures 2.3,
+  flora 2.4) are all REVISE with materials 1 and detail and placeholder at 2 or below, as 0.10.5 expects, so the rubric
+  stands as written. Graders see mask-coloured families in the game's colours (`@astra/shared/art` gameLook, in the
+  review scene and the turntable), not the raw mask. Graders judged samples: 7 of 40 flora, 4 of 10 creatures, 2 of 6
+  structures; a whole family is graded on the assets its task delivers. The perf readout's single-run asset cost is
+  noisy under load (27.8 ms re-measured at 0.34 ms); P1.E14.T11 adds paired sampling, a 100 m LOD2 view, a collider and
+  marker overlay and sibling grids, which four graders asked for. Art tasks are graded after T11 lands. P1.E06.T04 (UI)
+  was graded before calibration; calibration covers the models rubric, and its verdicts are recorded in
+  `docs/VISUAL-REVIEW.md`.
