@@ -154,8 +154,15 @@ export class ZoneManager {
     const id = systemZoneId(systemIndex);
     let slot = this.slots.get(id);
     if (!slot) {
-      const zone = new Zone({ id, systemIndex, system: this.describe(systemIndex), log: this.log, onViewerRemoved: (viewer) => this.removed(viewer, zone) });
       const tier = this.world ? this.world.tierOf(systemIndex) : tierOfGalaxySystem(systemIndex);
+      const zone = new Zone({
+        id,
+        systemIndex,
+        system: this.describe(systemIndex),
+        log: this.log,
+        onViewerRemoved: (viewer) => this.removed(viewer, zone),
+        fauna: { tier },
+      });
       slot = { zone, tier, asleep: false, emptySince: null, overruns: 0, overrunsLogged: 0, lastOverrunLog: -Infinity };
       this.slots.set(id, slot);
       this.log?.info({ zone: id, system: systemIndex, seed: zone.system.seed, tier }, 'zone loaded');
@@ -304,6 +311,7 @@ export class ZoneManager {
       const slot = this.slots.get(systemZoneId(system));
       if (!slot) continue;
       slot.tier = to;
+      slot.zone.fauna?.setTier(to);
       this.log?.info({ zone: slot.zone.id, from, to }, 'zone tier changed');
     }
   }

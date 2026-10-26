@@ -1,4 +1,4 @@
-// `pnpm --filter @astra/server bench`: two trials, each failing when the tick's p95 is over the budget of 10 ms
+// `pnpm --filter @astra/server bench`: four trials, each failing when the tick's p95 is over the budget of 10 ms
 // (IMPLEMENTATION_PLAN 0.3).
 //
 // The station trial: one zone with 200 entities (25 players, ships, mobs, NPCs, loot and pods, every one moving every
@@ -10,9 +10,14 @@
 // sending its pose in the frame it was placed in, so the zone re-expresses each one beyond that frame's sphere of
 // influence (most ships, and the far ones) in the frame it belongs in, every tick.
 //
-// The surface trial (P1.E08.T01): the same 25 sessions on foot on the home world, walking about a 1 km square of it at a
-// Tier 3 system's fauna, so herds spawn in the cells round them, wander, flee, charge and hunt them; the zone's
-// entities are the players and whatever creatures their cells hold.
+// The surface trials (P1.E08.T01): 25 sessions on foot on the home world, walking about a 1 km square of it at a Tier 3
+// system's fauna, so herds spawn in the cells round them, wander, flee, charge and hunt them; then 50 spread over a 2 km
+// square, who would wake far more herds than the zone may keep (MAX_CREATURES holds them). The zone's entities are the
+// players and whatever creatures their cells hold. The world's ground is planned before they start.
+//
+// The arrival trial: 25 sessions waiting at the Waystation land together on a world nobody has walked on, spread over a
+// 1 km square, and every tick from then on is measured: the world's ground is planned in the worker thread while they
+// arrive (the loop yields between ticks, as the server's does), then their cells load under the per-tick budget.
 //
 // The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
 // machine does not inflate. Wall time per tick is printed beside it for information, with the load average.
@@ -20,7 +25,8 @@ import { cpus, loadavg } from 'node:os';
 import { frameId, Random, type PlanetParams } from '@astra/shared/world';
 import type { Vec3 as Dir } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';
-import { groundOf } from '../src/fauna/terrain.ts';
+import { MAX_CREATURES } from '../src/fauna/sim.ts';
+import { Ground, groundOf, groundPlanner, planPads } from '../src/fauna/terrain.ts';
 import { percentile } from '../src/zones/metrics.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
 import { Zone, type EntityInit, type EntityKind, type ZoneViewer } from '../src/zones/zone.ts';
@@ -61,17 +67,31 @@ interface TrialResult {
   avgSnapshotBytes: number;
   /** entities in the zone, averaged over the measured ticks */
   avgEntities: number;
+  sessions: number;
+  ticks: number;
+  /** anything else the trial reports */
+  extra?: Record<string, number>;
 }
 
-/** Ticks a zone, feeding acks back 1–4 ticks late, and measures each tick. */
-function measure(zone: Zone, sinks: Sink[], rng: Random, beforeTick: (time: number) => void): TrialResult {
+/** Lets the event loop run (a worker's reply, timers), as the server's loop does between ticks. */
+const yieldLoop = () => new Promise<void>((resolve) => setImmediate(resolve));
+
+/** Ticks a zone, feeding acks back 1–4 ticks late, and measures each tick after the warm-up. */
+async function measure(
+  zone: Zone,
+  sinks: Sink[],
+  rng: Random,
+  beforeTick: (time: number, tick: number) => void,
+  { warmup = WARMUP_TICKS, ticks = TICKS, afterTick }: { warmup?: number; ticks?: number; afterTick?: (tick: number) => void } = {},
+): Promise<TrialResult> {
   /** acks in flight: delivered at tick `at` */
   const acks: { at: number; viewer: Sink; tick: number }[] = [];
   let time = 2.3e7;
+  let n = 0;
 
   /** One tick: wall ms (measured by the zone) and main-thread CPU ms. */
   function tick(): [number, number] {
-    beforeTick(time);
+    beforeTick(time, n++);
     time += DT;
     const cpu0 = process.threadCpuUsage();
     const wall = zone.step(time);
@@ -86,28 +106,35 @@ function measure(zone: Zone, sinks: Sink[], rng: Random, beforeTick: (time: numb
     return [wall, (cpu.user + cpu.system) / 1000];
   }
 
-  for (let i = 0; i < WARMUP_TICKS; i++) tick();
-  const bytesBefore = sinks.reduce((n, s) => n + s.bytes, 0);
+  for (let i = 0; i < warmup; i++) {
+    tick();
+    await yieldLoop();
+  }
+  const bytesBefore = sinks.reduce((s, x) => s + x.bytes, 0);
   let interest = 0;
   let entities = 0;
-  const wall = new Float64Array(TICKS);
-  const cpu = new Float64Array(TICKS);
-  for (let i = 0; i < TICKS; i++) {
+  const wall = new Float64Array(ticks);
+  const cpu = new Float64Array(ticks);
+  for (let i = 0; i < ticks; i++) {
     [wall[i], cpu[i]] = tick();
     entities += zone.entityCount;
     for (const s of sinks) interest += zone.interestOf(s).size;
+    afterTick?.(i);
+    await yieldLoop();
   }
-  const bytes = sinks.reduce((n, s) => n + s.bytes, 0) - bytesBefore;
+  const bytes = sinks.reduce((s, x) => s + x.bytes, 0) - bytesBefore;
   return {
     wall,
     cpu,
-    avgInterest: Math.round(interest / (TICKS * SESSIONS)),
-    avgSnapshotBytes: Math.round(bytes / (TICKS * SESSIONS)),
-    avgEntities: Math.round(entities / TICKS),
+    avgInterest: Math.round(interest / (ticks * sinks.length)),
+    avgSnapshotBytes: Math.round(bytes / (ticks * sinks.length)),
+    avgEntities: Math.round(entities / ticks),
+    sessions: sinks.length,
+    ticks,
   };
 }
 
-function stationTrial(): TrialResult {
+function stationTrial(): Promise<TrialResult> {
   const rng = new Random(20261026);
   const around = (r: number): Vec3 => [rng.float(-r, r), rng.float(-r * 0.3, r * 0.3), rng.float(-r, r)];
   const randomQuat = (): Quat => {
@@ -175,14 +202,20 @@ function stationTrial(): TrialResult {
   return measure(zone, sinks, rng, moveEverything);
 }
 
-/** 25 players on foot walking about a square kilometre of the home world among its herds, at Tier 3. */
-function surfaceTrial(): TrialResult {
-  const rng = new Random(20261027);
-  const system = describeZoneSystem(0);
-  const zone = new Zone({ id: 'bench-surface', systemIndex: 0, system, fauna: { tier: 3 } });
-  const body = system.bodies[system.home]!;
+/**
+ * `players` sessions on foot walking about a `side`-metre square of a world of system `systemIndex` (its home world for
+ * system 0, else its first lush planet), at Tier 3. `planned`: the world's ground is planned (and kept) before they
+ * start; otherwise the zone's planner is left to plan it when they arrive.
+ */
+function surfaceWalk(systemIndex: number, players: number, side: number, seed: number, planned: boolean) {
+  const rng = new Random(seed);
+  const system = describeZoneSystem(systemIndex);
+  const zone = new Zone({ id: `bench-${systemIndex}-${players}`, systemIndex, system, fauna: { tier: 3 } });
+  const body = systemIndex === 0 ? system.bodies[system.home]! : system.bodies.find((x) => x.type === 'lush' && x.kind === 'planet')!;
+  const params = body.params as PlanetParams;
   const frame = frameId(system.seed, body.index);
-  const ground = groundOf(body.params as PlanetParams);
+  // (to find open ground; a ground that is not kept, when the zone must plan its own)
+  const ground = planned ? groundOf(params) : new Ground(params, planPads(params));
   const center = openGround(ground);
   const [t, b] = tangents(center);
   const onGround = (d: Dir): Vec3 => {
@@ -196,56 +229,102 @@ function surfaceTrial(): TrialResult {
     const l = Math.hypot(x, y, z);
     return [x / l, y / l, z / l];
   };
+  const half = side / 2;
   const sinks: Sink[] = [];
   const walkers: { sink: Sink; east: number; north: number; heading: number; seq: number }[] = [];
-  for (let i = 0; i < SESSIONS; i++) {
+  for (let i = 0; i < players; i++) {
     const sink = new Sink(i + 1);
     sinks.push(sink);
-    const east = rng.float(-500, 500);
-    const north = rng.float(-500, 500);
-    zone.join(sink, {
-      kind: 'player',
-      frame,
-      pos: onGround(dirAt(east, north)),
-      quat: [0, 0, 0, 1],
-      vel: [0, 0, 0],
-      mode: 'foot',
-      name: `Walker ${i}`,
-      people: 'thalune',
-      level: 5,
-    });
-    walkers.push({ sink, east, north, heading: rng.float(0, Math.PI * 2), seq: 0 });
+    walkers.push({ sink, east: rng.float(-half, half), north: rng.float(-half, half), heading: rng.float(0, Math.PI * 2), seq: 0 });
   }
   const SPEED = 3;
-  return measure(zone, sinks, rng, (time) => {
-    for (const w of walkers) {
-      if (rng.next() < 0.01) w.heading += rng.float(-1.5, 1.5);
-      // turn back towards the middle at the edge of the square
-      if (Math.abs(w.east) > 500 || Math.abs(w.north) > 500) w.heading = Math.atan2(-w.north, -w.east);
-      w.east += Math.cos(w.heading) * SPEED * DT;
-      w.north += Math.sin(w.heading) * SPEED * DT;
-      const pos = onGround(dirAt(w.east, w.north));
-      zone.input(w.sink, { t: 'input', seq: ++w.seq, time, mode: 'foot', pose: { frame, pos, quat: [0, 0, 0, 1], vel: [0, 0, 0] }, buttons: 0 });
-    }
-  });
+  return {
+    zone,
+    sinks,
+    rng,
+    body,
+    /** joins every walker: where it stands on the world, or docked at the Waystation */
+    join(onWorld: boolean) {
+      walkers.forEach((w, i) => {
+        const pos: Vec3 = onWorld ? onGround(dirAt(w.east, w.north)) : [0, 0, 0];
+        const where = onWorld ? { frame, mode: 'foot' } : { frame: zone.stationFrame, mode: 'docked' };
+        zone.join(w.sink, { kind: 'player', pos, quat: [0, 0, 0, 1], vel: [0, 0, 0], name: `Walker ${i}`, people: 'thalune', level: 5, ...where });
+      });
+    },
+    /** every walker takes a step on the world */
+    step(time: number) {
+      for (const w of walkers) {
+        if (rng.next() < 0.01) w.heading += rng.float(-1.5, 1.5);
+        // turn back towards the middle at the edge of the square
+        if (Math.abs(w.east) > half || Math.abs(w.north) > half) w.heading = Math.atan2(-w.north, -w.east);
+        w.east += Math.cos(w.heading) * SPEED * DT;
+        w.north += Math.sin(w.heading) * SPEED * DT;
+        const pos = onGround(dirAt(w.east, w.north));
+        zone.input(w.sink, { t: 'input', seq: ++w.seq, time, mode: 'foot', pose: { frame, pos, quat: [0, 0, 0, 1], vel: [0, 0, 0] }, buttons: 0 });
+      }
+    },
+  };
 }
 
-const round = (x: number) => Math.round(x * 1000) / 1000;
+/** Sessions on foot walking about a square of the home world among its herds, at Tier 3. */
+function surfaceTrial(players: number, side: number): () => Promise<TrialResult> {
+  return async () => {
+    const walk = surfaceWalk(0, players, side, 20261027, true);
+    walk.join(true);
+    const r = await measure(walk.zone, walk.sinks, walk.rng, (time) => walk.step(time));
+    return { ...r, extra: { creatures: walk.zone.fauna!.creatureCount, creatureCap: MAX_CREATURES } };
+  };
+}
+
+/** 25 sessions land together on a world nobody has walked on: every tick from their arrival is measured. */
+async function arrivalTrial(): Promise<TrialResult> {
+  const walk = surfaceWalk(5, SESSIONS, 1000, 20261028, false);
+  const ARRIVE = 20;
+  walk.join(false);
+  let readyAt = -1;
+  let herdsAt = -1;
+  const r = await measure(walk.zone, walk.sinks, walk.rng, (time, tick) => tick >= ARRIVE && walk.step(time), {
+    warmup: 0,
+    ticks: 1200,
+    afterTick: (i) => {
+      if (readyAt < 0 && walk.zone.fauna!.groundReady(walk.body.index)) readyAt = i;
+      if (herdsAt < 0 && walk.zone.fauna!.creatureCount > 0) herdsAt = i;
+    },
+  });
+  return {
+    ...r,
+    extra: {
+      arrivalTick: ARRIVE,
+      groundReadyTick: readyAt,
+      firstHerdTick: herdsAt,
+      creatures: walk.zone.fauna!.creatureCount,
+      cpuMaxMs: round(percentile(r.cpu, 100)),
+    },
+  };
+}
+
+function round(x: number): number {
+  return Math.round(x * 1000) / 1000;
+}
+
 let failed = false;
 for (const [name, run] of [
   ['station', stationTrial],
-  ['surface', surfaceTrial],
+  ['surface: 25 players in 1 km²', surfaceTrial(25, 1000)],
+  ['surface: 50 players in 4 km²', surfaceTrial(50, 2000)],
+  ['arrival: 25 players on an unplanned world', arrivalTrial],
 ] as const) {
-  const r = run();
+  const r = await run();
   const cpuP95 = percentile(r.cpu, 95);
   report(name, r, cpuP95);
   if (cpuP95 >= BUDGET_P95_MS) {
     console.error(`FAIL (${name}): tick CPU p95 ${round(cpuP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
     failed = true;
   } else {
-    console.log(`PASS (${name}): tick CPU p95 ${round(cpuP95)} ms < ${BUDGET_P95_MS} ms at ${r.avgEntities} entities and ${SESSIONS} sessions`);
+    console.log(`PASS (${name}): tick CPU p95 ${round(cpuP95)} ms < ${BUDGET_P95_MS} ms at ${r.avgEntities} entities and ${r.sessions} sessions`);
   }
 }
+await groundPlanner.close();
 if (failed) process.exit(1);
 
 function report(name: string, r: TrialResult, cpuP95: number): void {
@@ -254,8 +333,8 @@ function report(name: string, r: TrialResult, cpuP95: number): void {
       {
         trial: name,
         entities: r.avgEntities,
-        sessions: SESSIONS,
-        ticks: TICKS,
+        sessions: r.sessions,
+        ticks: r.ticks,
         cpuP50Ms: round(percentile(r.cpu, 50)),
         cpuP95Ms: round(cpuP95),
         cpuP99Ms: round(percentile(r.cpu, 99)),
@@ -265,6 +344,7 @@ function report(name: string, r: TrialResult, cpuP95: number): void {
         wallMaxMs: round(percentile(r.wall, 100)),
         avgInterest: r.avgInterest,
         avgSnapshotBytes: r.avgSnapshotBytes,
+        ...r.extra,
         load1m: round(loadavg()[0]!),
         cpus: cpus().length,
         node: process.version,

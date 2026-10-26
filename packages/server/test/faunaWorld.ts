@@ -3,7 +3,8 @@
 import { faunaSpecies, frameId, type BodySpec, type FaunaSpecies, type PlanetParams, type Tier } from '@astra/shared/world';
 import type { Vec3 } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';
-import { groundOf, type Ground } from '../src/fauna/terrain.ts';
+import type { FaunaOptions, HerdRequest } from '../src/fauna/sim.ts';
+import { groundOf, planHere, type Ground } from '../src/fauna/terrain.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
 import { Zone, type ZoneViewer } from '../src/zones/zone.ts';
 
@@ -67,16 +68,32 @@ export interface FaunaWorld {
   time: number;
   /** a point on the ground `east` and `north` metres from the player's start */
   at(east: number, north: number): Vec3;
+  /** the point on the ground below (or above) a position */
+  onGround(pos: readonly number[]): Vec3;
+  /** a way out from the player's start (a unit vector along the ground) with dry land under it for `length` metres */
+  dryWay(length: number): Vec3;
   /** moves the player (on foot unless `mode` says otherwise) to a point on the ground */
   movePlayer(pos: Readonly<Vec3>, mode?: string): void;
   /** runs the zone for `seconds` at 20 Hz, calling `each` after every tick */
   run(seconds: number, each?: () => void): void;
+  /** spawnHerd, which must find room */
+  spawn(req: HerdRequest): { herd: number; creatures: number[] };
 }
 
-export function faunaWorld(opts: { tier: Tier; want: (species: readonly FaunaSpecies[]) => boolean; spawner?: boolean }): FaunaWorld {
+export function faunaWorld(opts: {
+  tier: Tier;
+  want: (species: readonly FaunaSpecies[]) => boolean;
+  spawner?: boolean;
+  fauna?: Omit<FaunaOptions, 'tier' | 'spawner'>;
+}): FaunaWorld {
   const system = describeZoneSystem(SYSTEM);
   const body = findWorld(opts.tier, opts.want);
-  const zone = new Zone({ id: 'fauna-test', systemIndex: SYSTEM, system, fauna: { tier: opts.tier, spawner: opts.spawner ?? false } });
+  const zone = new Zone({
+    id: 'fauna-test',
+    systemIndex: SYSTEM,
+    system,
+    fauna: { tier: opts.tier, spawner: opts.spawner ?? false, grounds: planHere, ...opts.fauna },
+  });
   const ground = groundOf(body.params as PlanetParams);
   const home = openGround(ground);
   const [t, b] = tangents(home);
@@ -98,7 +115,25 @@ export function faunaWorld(opts: { tier: Tier; want: (species: readonly FaunaSpe
     home,
     time: 1000,
     at: (east, north) => onGround(along(home, t, b, east, north, ground.radius)),
+    onGround: (pos: readonly number[]) => {
+      const l = Math.hypot(pos[0], pos[1], pos[2]);
+      return onGround([pos[0]! / l, pos[1]! / l, pos[2]! / l]);
+    },
+    dryWay(length) {
+      for (let k = 0; k < 32; k++) {
+        const a = (k / 32) * Math.PI * 2;
+        let dry = true;
+        for (let d = 0; d <= length && dry; d += 10) dry = ground.sample(along(home, t, b, Math.cos(a) * d, Math.sin(a) * d, ground.radius)) > 3;
+        if (dry) return [t[0] * Math.cos(a) + b[0] * Math.sin(a), t[1] * Math.cos(a) + b[1] * Math.sin(a), t[2] * Math.cos(a) + b[2] * Math.sin(a)];
+      }
+      throw new Error(`no dry way ${length} m long`);
+    },
     movePlayer: (pos, mode = 'foot') => zone.patch(player, { pos: [pos[0], pos[1], pos[2]], mode }),
+    spawn(req) {
+      const r = zone.fauna!.spawnHerd(req);
+      if (!r) throw new Error('no room for the herd');
+      return r;
+    },
     run(seconds, each) {
       for (let i = 0; i < Math.round(seconds * 20); i++) {
         w.time += 0.05;

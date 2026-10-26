@@ -1,8 +1,8 @@
-import { planSurface, Random, TerrainSampler, type PlanetParams } from '@astra/shared/world';
+import { hasFauna, planSurface, Random, TerrainSampler, type PlanetParams } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import type { Vec3 } from './cells.ts';
-import { Ground, groundOf, LATTICE_M } from './terrain.ts';
+import { Ground, groundOf, GroundPlanner, LATTICE_M, planPads } from './terrain.ts';
 
 const system = describeZoneSystem(0);
 const home = system.bodies[system.home]!;
@@ -10,7 +10,7 @@ const params = home.params as PlanetParams;
 
 describe('the ground herds walk on', () => {
   it('is the client’s ground: levelled under cities and sites as the client plans them', () => {
-    const g = new Ground(params);
+    const g = new Ground(params, planPads(params));
     const client = new TerrainSampler(params);
     client.setPads(planSurface(params, new TerrainSampler(params), { tier: 0 }).pads);
     const rng = new Random(3);
@@ -22,7 +22,7 @@ describe('the ground herds walk on', () => {
   });
 
   it('reads heights off a per-cell cache within centimetres of the true ground, sampling each lattice point once', () => {
-    const g = new Ground(params);
+    const g = new Ground(params, planPads(params));
     const rng = new Random(5);
     const key = g.cells.keyOf(0.2, 0.9, 0.3);
     const errors: number[] = [];
@@ -48,5 +48,34 @@ describe('the ground herds walk on', () => {
   it('is kept per world', () => {
     expect(groundOf(params)).toBe(groundOf(params));
     expect(groundOf(params).radius).toBe(home.radius);
+  });
+
+  it('is planned in a worker thread, to the same ground as on this one', async () => {
+    // a world no other test plans
+    const other = describeZoneSystem(7).bodies.find((b) => b.type !== 'gas' && hasFauna(b.params as PlanetParams))!;
+    const p = other.params as PlanetParams;
+    const planner = new GroundPlanner();
+    try {
+      expect(planner.ground(p)).toBeNull();
+      expect(planner.planning).toBe(1);
+      // asked again while it is planned: the same plan
+      expect(planner.ground(p)).toBeNull();
+      expect(planner.planning).toBe(1);
+      const deadline = Date.now() + 20_000;
+      while (!planner.ground(p) && Date.now() < deadline) await new Promise((r) => setTimeout(r, 20));
+      const g = planner.ground(p)!;
+      expect(g).not.toBeNull();
+      expect(planner.planning).toBe(0);
+      const here = new Ground(p, planPads(p));
+      const rng = new Random(8);
+      for (let i = 0; i < 50; i++) {
+        const d: Vec3 = [rng.float(-1, 1), rng.float(-1, 1), rng.float(-1, 1)];
+        expect(g.sample(d)).toBe(here.sample(d));
+      }
+      // kept: the next ask is answered at once, by any planner
+      expect(groundOf(p)).toBe(g);
+    } finally {
+      await planner.close();
+    }
   });
 });

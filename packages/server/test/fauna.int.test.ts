@@ -141,7 +141,7 @@ describe('fauna over the wire', () => {
       const sp = w.species.find((x) => x.temperament === 'predator' && x.kind !== 'flyer')!;
       c.stand(w.frame, w.at(0, 0));
       await waitFor(() => c.client.latest.get(c.entityId)?.frame === w.frame, 5000, 'the bot on the world');
-      const { creatures } = zone.fauna!.spawnHerd({ body: w.body.index, species: sp.index, at: w.at(RULES.stalkM + 15, 0), count: 1 });
+      const { creatures } = zone.fauna!.spawnHerd({ body: w.body.index, species: sp.index, at: w.at(RULES.stalkM + 15, 0), count: 1 })!;
       const id = creatures[0]!;
       const me = () => c.client.latest.get(c.entityId)!.pos!;
       const it = () => c.client.latest.get(id);

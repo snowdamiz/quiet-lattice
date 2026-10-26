@@ -94,13 +94,17 @@ export const AI = {
   forgetAfterS: 5,
 } as const;
 
-/** A player as the AI sees it: where it is in the world's frame, and whether it is on foot (only players on foot are
- * prey, or frighten herds; ships pass overhead). */
+/** A player as the AI sees it: where it is in the world's frame, whether it is on foot (ships pass overhead), and whether
+ * the shared world cannot see it (sealed in a phase that isolates players, §6.1). */
 export interface Actor {
   id: number;
   pos: Vec3;
   onFoot: boolean;
+  hidden: boolean;
 }
+
+/** Whether herds take notice of a player: as prey, intruder or threat, or someone to flee or keep clear of. */
+export const noticed = (p: Actor) => p.onFoot && !p.hidden;
 
 export interface Herd {
   readonly id: number;
@@ -242,7 +246,7 @@ export function newCreature(init: {
 /** Where the target is, if it is still someone the creature can go for: a player on foot here, or a living creature. */
 function targetPos(ctx: Ctx, id: number): Vec3 | null {
   const p = ctx.players.get(id);
-  if (p) return p.onFoot ? p.pos : null;
+  if (p) return noticed(p) ? p.pos : null;
   return ctx.creatures.get(id)?.pos ?? null;
 }
 
@@ -270,7 +274,7 @@ function giveUp(c: Creature) {
  * nearness. */
 function sense(c: Creature, ctx: Ctx, radius: number, prey: boolean) {
   for (const p of ctx.players.values()) {
-    if (!p.onFoot) continue;
+    if (!noticed(p)) continue;
     const d = distance(c.pos, p.pos);
     if (d < radius) c.threat = addThreat(c.threat, p.id, ctx.dt * AI.playerThreatPerS * (0.25 + 0.75 * (1 - d / radius)), ctx.now);
   }
@@ -316,7 +320,7 @@ function prey(c: Creature, ctx: Ctx) {
   if (c.species.temperament === 'skittish' && c.state !== 'flee') {
     const r = RULES.fleeBaseM + RULES.fleePerSizeM * c.species.size;
     for (const p of ctx.players.values()) {
-      if (p.onFoot && distance(c.pos, p.pos) < r) {
+      if (noticed(p) && distance(c.pos, p.pos) < r) {
         startFlee(c, ctx, p.pos);
         return;
       }
@@ -426,9 +430,12 @@ function hunter(c: Creature, ctx: Ctx) {
   if (c.state === 'rush' || c.state === 'attack' || d <= RULES.stalkM) {
     if (pack && c.state === 'stalk' && holding(c, ctx, at)) return;
     c.holdUntil = 0;
+    const wasAttacking = c.state === 'attack';
     closeIn(c, ctx, at, 'rush');
-    if (c.state === 'attack' && strike(c, ctx) && !ctx.players.has(t!)) {
-      // a meal attempt on prey (no damage until P1.E08.T02): break off and rest
+    const struck = c.state === 'attack' && strike(c, ctx);
+    // a meal attempt on prey (no damage until P1.E08.T02), struck home or broken off as the prey bolts: it lets that
+    // prey go and rests before hunting prey again
+    if (!ctx.players.has(t!) && (struck || (wasAttacking && c.state !== 'attack'))) {
       c.preyRestUntil = ctx.now + AI.preyRestS;
       giveUp(c);
     }
@@ -521,7 +528,7 @@ function diver(c: Creature, ctx: Ctx) {
 function ambusher(c: Creature, ctx: Ctx) {
   if (c.state === 'lurk') {
     for (const p of ctx.players.values()) {
-      if (p.onFoot && distance(c.pos, p.pos) < RULES.ambushM) c.threat = addThreat(c.threat, p.id, AI.triggerThreat, ctx.now);
+      if (noticed(p) && distance(c.pos, p.pos) < RULES.ambushM) c.threat = addThreat(c.threat, p.id, AI.triggerThreat, ctx.now);
     }
   }
   const t = pickTarget(c, ctx);
@@ -543,7 +550,7 @@ function apexLeader(c: Creature, ctx: Ctx) {
   if (c.state === 'return') return homeward(c, ctx);
   const territory = RULES.apexTerritoryM;
   for (const p of ctx.players.values()) {
-    if (p.onFoot && groundDistance(c.herd.home, p.pos) < territory) {
+    if (noticed(p) && groundDistance(c.herd.home, p.pos) < territory) {
       c.threat = addThreat(c.threat, p.id, ctx.dt * AI.playerThreatPerS, ctx.now);
     }
   }
@@ -587,7 +594,7 @@ function followPoint(c: Creature): Vec3 {
 export function herdTick(h: Herd, ctx: Ctx): void {
   if (h.species.temperament !== 'territorial') return;
   for (const p of ctx.players.values()) {
-    const near = p.onFoot && h.members.some((m) => distance(m.pos, p.pos) < RULES.territorialM);
+    const near = noticed(p) && h.members.some((m) => distance(m.pos, p.pos) < RULES.territorialM);
     if (!near) {
       h.intrusion.delete(p.id);
       continue;
@@ -751,7 +758,7 @@ export function move(c: Creature, ctx: Ctx): void {
   // and out of players: grazers keep a little further off (heads reach past bodies), hunters only their bodies' width
   const keep = HUNTING.has(c.state) ? bodyRadius(c) : c.species.size * c.scale * 1.1 + 1;
   for (const p of ctx.players.values()) {
-    if (!p.onFoot || groundDistance(p.pos, next) >= keep || groundDistance(p.pos, next) >= groundDistance(p.pos, c.pos)) continue;
+    if (!noticed(p) || groundDistance(p.pos, next) >= keep || groundDistance(p.pos, next) >= groundDistance(p.pos, c.pos)) continue;
     const away = norm(flat(sub(c.pos, p.pos), up));
     c.heading = norm(
       flat(

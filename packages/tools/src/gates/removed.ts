@@ -28,6 +28,8 @@ export const RULES: Rule[] = [
     pattern: /function build(Outpost|Monolith|Crash|Beacon)\b/,
   },
   { what: 'procedural creature builders', task: 'P1.E14.T07', file: `${CLIENT}/gameplay/Fauna.js`, pattern: /function build(Quadruped|Flyer)\b/ },
+  // the server owns herds from P1.E08.T01; the client renders them from snapshots once P1.E08.T09 lands
+  { what: "the client's own herd spawner and herd AI", task: 'P1.E08.T09', file: `${CLIENT}/gameplay/Fauna.js`, pattern: /^\s+(spawnHerd|think)\s*\(/m },
   { what: 'procedural flora model builders', task: 'P1.E14.T07', file: `${CLIENT}/gameplay/floraModels.js` },
   { what: 'Blender geometry generators (build_*.py)', task: 'P1.E14.T07', files: { dir: 'blender', name: /^build_.*\.py$/ } },
   { what: 'box-geometry station build', task: 'P1.E11.T02', file: `${CLIENT}/universe/Station.js`, pattern: /\*buildSteps\s*\(/ },

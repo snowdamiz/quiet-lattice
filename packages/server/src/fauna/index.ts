@@ -3,5 +3,5 @@
 export * from './sim.ts';
 export { AI, RULES, reach, type CreatureState } from './ai.ts';
 export { CELL_M, CellGrid } from './cells.ts';
-export { Ground, groundOf, LATTICE_M } from './terrain.ts';
+export { Ground, groundOf, GroundPlanner, groundPlanner, LATTICE_M, planHere, type GroundSource } from './terrain.ts';
 export { planCellHerd, TIER_LEVELS, type HerdPlan } from './herds.ts';

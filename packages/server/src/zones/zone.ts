@@ -36,7 +36,7 @@ import {
   type FrameSet,
   type SystemDescription,
 } from '@astra/shared/world';
-import { FaunaSim, type FaunaOptions } from '../fauna/sim.ts';
+import { FaunaSim, type FaunaOptions, type FaunaStats } from '../fauna/sim.ts';
 import { PhaseManager } from '../phases/manager.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
@@ -169,6 +169,8 @@ export interface ZoneMetrics {
   p50: number;
   p95: number;
   max: number;
+  /** its fauna's worlds, creatures and cells; null in a zone without */
+  fauna: FaunaStats | null;
 }
 
 export interface ZoneOptions {
@@ -448,6 +450,7 @@ export class Zone {
       p50: this.times.percentile(50),
       p95: this.times.percentile(95),
       max: this.times.max(),
+      fauna: this.fauna?.stats() ?? null,
     };
   }
 

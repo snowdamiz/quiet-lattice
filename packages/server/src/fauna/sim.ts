@@ -3,16 +3,27 @@
 // list), level, behaviour state (`mode`) and attack phase (`attack`).
 //
 // The server cannot simulate every world, so herds live only in cells (cells.ts) around players near a world's surface
-// (within 1,500 m of it, as the demo spawned herds round its camera). Each tick the sim looks for players by their
-// entities; every quarter second it wakes the cells within ACTIVE_M of one. A new cell (a few a tick, under a time
-// budget) spawns the herd planned for it from the world's seed (herds.ts), so the same herd appears in the same cell for
-// everyone. A cell with no player within SLEEP_M sleeps: its creatures stand still, unsimulated; it
-// wakes if one comes back, and after UNLOAD_S asleep its creatures are despawned and the cell forgotten. A world with no
-// cells and no players is dropped.
+// (within 1,500 m of its ground, as the demo spawned herds round its camera). Each tick the sim finds the players in
+// its worlds' frames. A world's ground is asked for (and planned off the tick, terrain.ts) as soon as a player is in its
+// frame; until it is ready the world keeps no cells. Every quarter second the cells within ACTIVE_M of a player wake; a
+// new cell (a few a tick, under a time budget) spawns the herd planned for it from the world's seed (herds.ts), so the
+// same herd appears in the same cell for everyone. A cell with no player within SLEEP_M sleeps: its creatures stand
+// still, unsimulated; it wakes if one comes back, and after UNLOAD_S asleep its creatures are despawned and the cell
+// forgotten. A world with no cells and no players is dropped.
+//
+// Bounds, whatever the players do (a pose is a client's claim until movement authority, P1.E03.T04, and fauna must hold
+// its own limits anyway): a player wakes at most WAKE_PER_S new cells a second (WAKE_BURST at once, on arrival); a world
+// keeps at most MAX_CELLS cells and a zone at most MAX_CREATURES creatures, the oldest asleep cells unloading first to make
+// room. Past that, waiting cells load as room is made, nearest first.
+//
+// Players a shared-world entity cannot see (sealed in a bay, event or raid phase, §6.1) still wake cells (they see the
+// herds) but are nobody's prey, intruder or threat.
 //
 // Seams for the tasks that follow: spawnHerd places a herd anywhere (den packs, ambushers and the apex, P1.E08.T03; the
-// dev CLI, P1.E03.T07); hurt adds threat (combat, P1.E06.T02); setTier follows the Edge (P2.E22.T02).
+// dev CLI, P1.E03.T07); hurt adds threat (combat, P1.E06.T02); setTier follows the Edge (the zone manager calls it).
 import { performance } from 'node:perf_hooks';
+import { addThreat } from '@astra/shared/combat';
+import { PACK_RULES } from '@astra/shared/data';
 import type { EntityField } from '@astra/shared/protocol';
 import {
   faunaSpecies,
@@ -27,17 +38,16 @@ import {
   type SystemDescription,
   type Tier,
 } from '@astra/shared/world';
-import { PACK_RULES } from '@astra/shared/data';
-import { addThreat } from '@astra/shared/combat';
 import type { InterestClass } from '../zones/interest.ts';
 import type { EntityFields, EntityInit, ZoneEntity } from '../zones/zone.ts';
 import { herdTick, move, newCreature, orientation, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
 import type { Vec3 } from './cells.ts';
 import { animal, HERD_SPREAD_M, levelFor, offsetDir, planCellHerd, tangents, type HerdPlan } from './herds.ts';
-import { groundOf, type Ground } from './terrain.ts';
+import { groundOf, groundPlanner, type Ground, type GroundSource } from './terrain.ts';
 
-/** Players within this height above a world's sea level keep herds about them, m (the demo's 1,500 m); a pose deeper
- * than SURFACE_DEPTH_M below it is inside the world, not on it, and keeps none. */
+/** Players within this height above a world's ground keep herds about them, m (the demo's 1,500 m, which it measured
+ * from sea level: a mountain top kept none); a pose more than SURFACE_DEPTH_M below sea level is inside the world, not
+ * on it, and counts for nothing. */
 export const SURFACE_ALT_M = 1500;
 export const SURFACE_DEPTH_M = 10_000;
 /** A cell wakes when a player comes within this of its centre, m. */
@@ -48,15 +58,31 @@ export const SLEEP_M = 500;
 export const UNLOAD_S = 30;
 /** How often cells are woken and put to sleep, s. */
 export const SCAN_S = 0.25;
+/** A player's nearby cells are worked out again once it has moved this far, m. */
+export const RESCAN_M = 25;
 /** Time a tick may spend loading new cells (planning their herds samples the ground), ms; at least one always loads. */
 export const LOAD_BUDGET_MS = 1.5;
+/** New cells a player may wake a second, and at once (arriving wakes 10–15). A walker wakes one every few seconds and a
+ * ship skimming the ground at 200 m/s about three a second. */
+export const WAKE_PER_S = 4;
+export const WAKE_BURST = 40;
+/** Cells a world keeps, any state (a player wakes about 13 within ACTIVE_M; 50 players in a 2 km square about 100). */
+export const MAX_CELLS = 256;
+/** Creatures a zone keeps, over all its worlds: with 50 players on foot among them the zone stays within its 200-entity
+ * budget, and the bench's surface trials (25 and 50 players spread out) within 10 ms p95. */
+export const MAX_CREATURES = 150;
+/** Height caches kept for cells not loaded (a herd strays a little past its cell) before they are cleared. */
+const STRAY_CACHES = 32;
 /** Longest step simulated at once, s (a zone waking after a sleep does not leap). */
 const MAX_DT = 0.25;
+/** No entity has id 0 (zones number them from 1), so as a viewer it stands for anyone in the shared world. */
+const SHARED_WORLD = 0;
 
 /** The zone, as the sim uses it. */
 export interface FaunaZone {
   readonly systemIndex: number;
   readonly system: SystemDescription;
+  readonly phases: { canSee(viewer: number, id: number): boolean };
   spawn(init: EntityInit): number;
   patch(id: number, set: Partial<EntityFields>, clear?: readonly EntityField[]): void;
   despawn(id: number): boolean;
@@ -65,10 +91,15 @@ export interface FaunaZone {
 }
 
 export interface FaunaOptions {
-  /** the system's tier; by default its tier with the Edge where it stands in Phase 1 */
+  /** the system's tier; by default its tier with the Edge where it stands in Phase 1 (the zone manager passes the world
+   * service's) */
   tier?: Tier;
   /** false: cells hold no planned herds, only those spawnHerd places (tests and dev scenes) */
   spawner?: boolean;
+  /** where worlds' grounds come from: the server's worker planner by default; tests plan on their own thread */
+  grounds?: GroundSource;
+  /** LOAD_BUDGET_MS, for tests */
+  loadBudgetMs?: number;
 }
 
 /** What spawnHerd places. */
@@ -96,14 +127,30 @@ export interface CreatureInfo {
   attack: number | null;
 }
 
+export type CellState = 'loading' | 'active' | 'asleep';
+
+/** A loaded cell as tests and tools see it. */
+export interface CellInfo {
+  key: number;
+  state: CellState;
+  /** distance from its centre to the nearest player at the last scan, m */
+  dist: number;
+  creatures: number;
+}
+
+/** The fauna's numbers, for the zone's metrics. */
+export interface FaunaStats {
+  worlds: number;
+  creatures: number;
+  cells: Record<CellState, number>;
+}
+
 /** How small a creature is seen from 500 m only (the loot radius), and how the apex is seen from 2 km (the walker
  * radius); every other creature is a mob (1.5 km). */
 export function interestFor(sp: FaunaSpecies): InterestClass {
   if (sp.temperament === 'apex') return 'walker';
   return sp.size < 1 ? 'loot' : 'mob';
 }
-
-type CellState = 'loading' | 'active' | 'asleep';
 
 interface Cell {
   readonly key: number;
@@ -113,6 +160,8 @@ interface Cell {
   /** distance to the nearest player at the last scan, m */
   dist: number;
   readonly herds: Herd[];
+  /** its planned herd, once worked out (null: none); a cell waiting for room keeps it */
+  plan?: HerdPlan | null;
 }
 
 /** What was last sent of a creature. */
@@ -124,18 +173,39 @@ interface Sent {
   attack: number | null;
 }
 
+/** A player's view of a world's cells: the cells near where it was last worked out, nearest first. */
+interface Watch {
+  dir: Vec3;
+  near: [key: number, dist: number][];
+}
+
+/** A player's allowance of new cells (a token bucket: WAKE_BURST deep, refilled at WAKE_PER_S). */
+interface Allowance {
+  tokens: number;
+  at: number;
+}
+
 const changed = (a: readonly number[], b: readonly number[], eps: number) => a.some((x, i) => Math.abs(x - b[i]!) > eps);
+const creaturesIn = (cell: Cell) => cell.herds.reduce((n, h) => n + h.members.length, 0);
 
 /** One world's fauna. */
 class WorldFauna {
   readonly frame: string;
-  readonly ground: Ground;
+  /** null until it is planned */
+  ground: Ground | null = null;
   species: FaunaSpecies[];
   readonly cells = new Map<number, Cell>();
+  /** cells waiting to load */
+  private readonly loading = new Set<Cell>();
   /** every creature on the world, by entity id */
   readonly creatures = new Map<number, Creature>();
   private readonly sent = new Map<number, Sent>();
+  private readonly watches = new Map<number, Watch>();
   private scanIn = 0;
+  /** when a load that found the zone full may be tried again */
+  private waitForRoomUntil = -Infinity;
+  /** the highest the ground rises above sea level, about (the client's bound on its terrain, and its volcanoes) */
+  private readonly peak: number;
 
   constructor(
     private readonly sim: FaunaSim,
@@ -143,15 +213,26 @@ class WorldFauna {
     readonly params: PlanetParams,
   ) {
     this.frame = frameId(sim.zone.system.seed, body.index);
-    this.ground = groundOf(params);
     this.species = faunaSpecies(params, sim.tier);
+    this.ground = sim.grounds.ground(params);
+    const volcano = Math.max(0, ...(params.volcanoes ?? []).map((v) => v[4]));
+    this.peak = params.mountainHeight + params.landHeight * 2.5 + params.hillHeight + volcano + 50;
   }
 
   get empty(): boolean {
     return this.cells.size === 0;
   }
 
-  step(dt: number, now: number, players: readonly Actor[]): void {
+  /** The ground now, planned on this thread if it is not ready (for spawnHerd). */
+  groundNow(): Ground {
+    return (this.ground ??= groundOf(this.params));
+  }
+
+  /** Steps the world with the players in its frame; those within SURFACE_ALT_M of its ground keep herds about them. */
+  step(dt: number, now: number, inFrame: readonly Actor[]): void {
+    this.ground ??= this.sim.grounds.ground(this.params);
+    if (!this.ground) return;
+    const players = inFrame.filter((p) => this.nearGround(p.pos));
     this.scanIn -= dt;
     if (this.scanIn <= 0) {
       this.scan(now, players);
@@ -186,39 +267,91 @@ class WorldFauna {
     }
   }
 
-  /** Wakes the cells near players, creating those not yet loaded; sleeps and unloads the rest. */
+  /** Whether a position is within SURFACE_ALT_M of the ground (far above the highest peak, without sampling it). */
+  private nearGround(pos: Readonly<Vec3>): boolean {
+    const g = this.ground!;
+    const r = Math.hypot(pos[0], pos[1], pos[2]);
+    if (r - g.radius > SURFACE_ALT_M + this.peak) return false;
+    return r - g.surfaceRadius(pos) <= SURFACE_ALT_M;
+  }
+
+  /** The cells within SLEEP_M of a surface direction, nearest first. */
+  private nearCells(dir: Readonly<Vec3>): [number, number][] {
+    const grid = this.ground!.cells;
+    const out: [number, number][] = [];
+    grid.cellsNear(dir, SLEEP_M, (key) => {
+      const c = grid.center(key);
+      const d = Math.hypot(c[0] - dir[0], c[1] - dir[1], c[2] - dir[2]) * grid.radius;
+      if (d <= SLEEP_M) out.push([key, d]);
+    });
+    return out.sort((a, b) => a[1] - b[1]);
+  }
+
+  /** Wakes the cells near players, creating those not yet loaded (within each player's allowance and the world's cap);
+   * sleeps and unloads the rest. */
   private scan(now: number, players: readonly Actor[]): void {
     const near = new Map<number, number>();
-    const grid = this.ground.cells;
+    const radius = this.ground!.radius;
     for (const p of players) {
       const l = Math.hypot(p.pos[0], p.pos[1], p.pos[2]);
       const dir: Vec3 = [p.pos[0] / l, p.pos[1] / l, p.pos[2] / l];
-      grid.cellsNear(dir, SLEEP_M, (key) => {
-        const c = grid.center(key);
-        const d = Math.hypot(c[0] - dir[0], c[1] - dir[1], c[2] - dir[2]) * grid.radius;
-        if (d <= SLEEP_M && d < (near.get(key) ?? Infinity)) near.set(key, d);
-      });
+      let w = this.watches.get(p.id);
+      if (!w) this.watches.set(p.id, (w = { dir, near: this.nearCells(dir) }));
+      else if (Math.hypot(dir[0] - w.dir[0], dir[1] - w.dir[1], dir[2] - w.dir[2]) * radius > RESCAN_M) {
+        w.dir = dir;
+        w.near = this.nearCells(dir);
+      }
+      const allowance = this.sim.allowance(p.id, now);
+      for (const [key, d] of w.near) {
+        if (d < (near.get(key) ?? Infinity)) near.set(key, d);
+        if (d > ACTIVE_M || this.cells.has(key) || allowance.tokens < 1 || !this.roomForCell()) continue;
+        const cell: Cell = { key, state: 'loading', since: now, dist: d, herds: [] };
+        this.cells.set(key, cell);
+        this.loading.add(cell);
+        allowance.tokens -= 1;
+      }
+    }
+    if (this.watches.size > players.length) {
+      const here = new Set(players.map((p) => p.id));
+      for (const id of this.watches.keys()) if (!here.has(id)) this.watches.delete(id);
     }
     for (const [key, d] of near) {
       const cell = this.cells.get(key);
-      if (cell) {
-        cell.dist = d;
-        if (cell.state === 'asleep' && d <= ACTIVE_M) this.setState(cell, 'active', now);
-      } else if (d <= ACTIVE_M) {
-        this.cells.set(key, { key, state: 'loading', since: now, dist: d, herds: [] });
-      }
+      if (!cell) continue;
+      cell.dist = d;
+      if (cell.state === 'asleep' && d <= ACTIVE_M) this.setState(cell, 'active', now);
     }
     for (const cell of this.cells.values()) {
       if (near.has(cell.key)) continue;
-      if (cell.state === 'loading') this.cells.delete(cell.key);
+      if (cell.state === 'loading') this.forgetCell(cell);
       else if (cell.state === 'active') this.setState(cell, 'asleep', now);
       else if (now - cell.since >= UNLOAD_S) this.unload(cell);
     }
+    // height caches outside loaded cells (creatures straying, players hovering) go once there are more than a few
+    if (this.ground!.cachedCells > this.cells.size + STRAY_CACHES) this.ground!.retain(this.cells);
+  }
+
+  /** Whether the world may take one more cell, unloading its oldest asleep cell if it must. */
+  private roomForCell(): boolean {
+    if (this.cells.size < MAX_CELLS) return true;
+    const oldest = this.oldestAsleep(false);
+    return oldest !== null && this.unload(oldest);
+  }
+
+  /** The cell asleep the longest (with creatures in it, if `withCreatures`), or null. */
+  oldestAsleep(withCreatures: boolean): Cell | null {
+    let oldest: Cell | null = null;
+    for (const c of this.cells.values()) {
+      if (c.state !== 'asleep' || (withCreatures && creaturesIn(c) === 0)) continue;
+      if (!oldest || c.since < oldest.since) oldest = c;
+    }
+    return oldest;
   }
 
   private setState(cell: Cell, state: CellState, now: number): void {
     cell.state = state;
     cell.since = now;
+    this.loading.delete(cell);
     if (state !== 'asleep') return;
     for (const h of cell.herds) {
       h.intrusion.clear();
@@ -229,50 +362,69 @@ class WorldFauna {
     }
   }
 
-  /** Loads waiting cells, nearest first, while the tick's budget lasts (always one). */
+  /** Loads waiting cells, nearest first, while the tick's budget lasts (always one) and the zone has room for their
+   * herds. */
   private load(now: number): void {
-    const waiting = [...this.cells.values()].filter((c) => c.state === 'loading');
-    if (!waiting.length) return;
-    waiting.sort((a, b) => a.dist - b.dist);
+    if (!this.loading.size || now < this.waitForRoomUntil) return;
+    const waiting = [...this.loading].sort((a, b) => a.dist - b.dist);
     const started = performance.now();
     for (const cell of waiting) {
-      this.open(cell, now);
-      if (performance.now() - started > LOAD_BUDGET_MS) break;
+      if (!this.open(cell, now)) {
+        // the zone is full: try again at the next scan, when cells may have fallen asleep
+        this.waitForRoomUntil = now + SCAN_S;
+        break;
+      }
+      if (performance.now() - started > this.sim.loadBudgetMs) break;
     }
   }
 
-  /** Spawns a cell's planned herd. */
-  private open(cell: Cell, now: number): void {
-    const plan = this.sim.spawner ? planCellHerd(this.params.seed, cell.key, this.species, this.sim.tier, this.ground) : null;
-    if (plan) cell.herds.push(this.spawnPlan(plan, this.sim.rng));
+  /** Spawns a cell's planned herd, if the zone has (or can make) room for it. False when it has to wait. */
+  private open(cell: Cell, now: number): boolean {
+    if (cell.plan === undefined) cell.plan = this.sim.spawner ? planCellHerd(this.params.seed, cell.key, this.species, this.sim.tier, this.ground!) : null;
+    if (cell.plan) {
+      if (!this.sim.makeRoom(cell.plan.animals.length)) return false;
+      cell.herds.push(this.spawnPlan(cell.plan, this.sim.rng));
+    }
     this.setState(cell, 'active', now);
+    return true;
   }
 
-  private unload(cell: Cell): void {
+  /** Despawns a cell's creatures and forgets it. False when it was not loaded. */
+  unload(cell: Cell): boolean {
+    if (this.cells.get(cell.key) !== cell) return false;
     for (const h of cell.herds) {
       for (const m of h.members) {
         this.sim.zone.despawn(m.id);
         this.forget(m);
       }
     }
-    this.ground.drop(cell.key);
+    this.ground?.drop(cell.key);
+    this.forgetCell(cell);
+    return true;
+  }
+
+  private forgetCell(cell: Cell): void {
     this.cells.delete(cell.key);
+    this.loading.delete(cell);
   }
 
   private forget(c: Creature): void {
-    this.creatures.delete(c.id);
+    if (this.creatures.delete(c.id)) this.sim.creatureCount--;
     this.sent.delete(c.id);
   }
 
-  /** The cell a direction falls in, loaded now if it was not. */
+  /** The cell a direction falls in, made active now if it was not loaded (its own herd too, room permitting). */
   cellAt(dir: Readonly<Vec3>, now: number): Cell {
-    const key = this.ground.cells.keyOf(dir[0], dir[1], dir[2]);
+    const key = this.groundNow().cells.keyOf(dir[0], dir[1], dir[2]);
     let cell = this.cells.get(key);
     if (!cell) {
       cell = { key, state: 'loading', since: now, dist: Infinity, herds: [] };
       this.cells.set(key, cell);
     }
-    if (cell.state === 'loading') this.open(cell, now);
+    if (cell.state === 'loading' && !this.open(cell, now)) {
+      cell.plan = null;
+      this.setState(cell, 'active', now);
+    }
     return cell;
   }
 
@@ -280,7 +432,7 @@ class WorldFauna {
    * brings a pack of the world's walking predators (PACK_RULES, DESIGN 12.2: "pack follows it"). */
   spawnPlan(plan: HerdPlan, rng: Random): Herd {
     const { species: sp, center } = plan;
-    const g = this.ground;
+    const g = this.groundNow();
     const [t, b] = tangents(center);
     const c = Math.cos(plan.heading);
     const s = Math.sin(plan.heading);
@@ -320,6 +472,7 @@ class WorldFauna {
       this.sent.set(m.id, { pos: [...m.pos], quat, vel: [0, 0, 0], mode: m.state, attack: null });
       herd.members.push(m);
       this.creatures.set(m.id, m);
+      this.sim.creatureCount++;
     });
     return herd;
   }
@@ -347,18 +500,27 @@ class WorldFauna {
   info(m: Creature): CreatureInfo {
     return { id: m.id, body: this.body.index, herd: m.herd.id, species: m.species, state: m.state, pos: [...m.pos], target: m.target, attack: m.attack };
   }
+
+  cellInfo(): CellInfo[] {
+    return [...this.cells.values()].map((c) => ({ key: c.key, state: c.state, dist: c.dist, creatures: creaturesIn(c) }));
+  }
 }
 
-/** A zone's fauna: one WorldFauna per world with players near it (or herds still loaded). */
+/** A zone's fauna: one WorldFauna per world with players in its frame (or herds still loaded). */
 export class FaunaSim {
   /** the system's tier, which sets its worlds' species and their levels */
   tier: Tier;
   /** whether cells spawn their planned herds */
   readonly spawner: boolean;
+  readonly grounds: GroundSource;
+  readonly loadBudgetMs: number;
   readonly rng: Random;
   nextHerdId = 1;
+  /** creatures kept, over every world */
+  creatureCount = 0;
   private readonly bodies = new Map<string, { body: BodySpec; params: PlanetParams }>();
   private readonly worlds = new Map<number, WorldFauna>();
+  private readonly allowances = new Map<number, Allowance>();
   private lastTime: number | null = null;
 
   constructor(
@@ -367,6 +529,8 @@ export class FaunaSim {
   ) {
     this.tier = opts.tier ?? tierOfGalaxySystem(zone.systemIndex);
     this.spawner = opts.spawner ?? true;
+    this.grounds = opts.grounds ?? groundPlanner;
+    this.loadBudgetMs = opts.loadBudgetMs ?? LOAD_BUDGET_MS;
     this.rng = new Random(hashInts(zone.system.seed, 0xfa11a));
     for (const body of zone.system.bodies) {
       if (body.type === 'gas') continue;
@@ -379,24 +543,41 @@ export class FaunaSim {
   step(time: number): void {
     const dt = this.lastTime === null ? 0 : Math.min(MAX_DT, Math.max(0, time - this.lastTime));
     this.lastTime = time;
+    // the players in each world's frame: its ground is wanted, and those near it keep herds about them
     const byBody = new Map<number, Actor[]>();
     for (const id of this.zone.entityIds()) {
       const f = this.zone.entity(id)!.fields;
       if (f.kind !== 'player' || f.frame === null) continue;
       const world = this.bodies.get(f.frame);
       if (!world) continue;
-      const r = Math.hypot(f.pos[0], f.pos[1], f.pos[2]);
-      const alt = r - world.body.radius;
-      if (!(alt <= SURFACE_ALT_M && alt >= -SURFACE_DEPTH_M)) continue;
+      const alt = Math.hypot(f.pos[0], f.pos[1], f.pos[2]) - world.body.radius;
+      if (!(alt >= -SURFACE_DEPTH_M)) continue;
       let list = byBody.get(world.body.index);
       if (!list) byBody.set(world.body.index, (list = []));
-      list.push({ id, pos: [f.pos[0], f.pos[1], f.pos[2]], onFoot: f.mode === 'foot' });
+      list.push({ id, pos: [f.pos[0], f.pos[1], f.pos[2]], onFoot: f.mode === 'foot', hidden: !this.zone.phases.canSee(SHARED_WORLD, id) });
     }
     for (const index of byBody.keys()) if (!this.worlds.has(index)) this.world(index);
     for (const [index, w] of this.worlds) {
       w.step(dt, time, byBody.get(index) ?? []);
-      if (w.empty && !byBody.has(index)) this.worlds.delete(index);
+      if (w.empty && !byBody.has(index)) {
+        w.ground?.retain(new Set());
+        this.worlds.delete(index);
+      }
     }
+    // a full allowance is the same as none: forget those of players gone
+    for (const [id, a] of this.allowances) {
+      if (a.tokens + (time - a.at) * WAKE_PER_S >= WAKE_BURST && this.zone.entity(id)?.fields.kind !== 'player') this.allowances.delete(id);
+    }
+  }
+
+  /** A player's allowance of new cells, refilled to now. One per player across every world, so hopping between worlds
+   * (or off and back onto one) earns nothing. */
+  allowance(id: number, now: number): Allowance {
+    let a = this.allowances.get(id);
+    if (!a) this.allowances.set(id, (a = { tokens: WAKE_BURST, at: now }));
+    a.tokens = Math.min(WAKE_BURST, a.tokens + Math.max(0, now - a.at) * WAKE_PER_S);
+    a.at = now;
+    return a;
   }
 
   /** The species of a world at the zone's tier (empty for a world without fauna). */
@@ -414,9 +595,13 @@ export class FaunaSim {
     for (const w of this.worlds.values()) w.species = faunaSpecies(w.params, tier);
   }
 
-  /** Places a herd of a species on a world, on the ground below `at` (seam for dens, P1.E08.T03, and dev tools). Its
-   * cell is loaded if it was not, and the herd lives and unloads with it. Returns the herd id and creature ids. */
-  spawnHerd(req: HerdRequest): { herd: number; creatures: number[] } {
+  /**
+   * Places a herd of a species on a world, on the ground below `at` (seam for dens, P1.E08.T03, and dev tools). Its cell
+   * is loaded if it was not (planning the world's ground on this thread if it is not ready), and the herd lives and
+   * unloads with it. Returns the herd id and creature ids, or null when the zone is full (MAX_CREATURES, after unloading
+   * every asleep cell it could).
+   */
+  spawnHerd(req: HerdRequest): { herd: number; creatures: number[] } | null {
     const w = this.world(req.body);
     const sp = w.species[req.species];
     if (!sp) throw new RangeError(`world ${req.body} has no species ${req.species} at tier ${this.tier}`);
@@ -427,6 +612,7 @@ export class FaunaSim {
     const cell = w.cellAt(center, now);
     const rng = this.rng;
     const count = req.count ?? rng.int(sp.herd.min, sp.herd.max);
+    if (!this.makeRoom(count)) return null;
     const plan: HerdPlan = {
       species: sp,
       center,
@@ -437,6 +623,19 @@ export class FaunaSim {
     const herd = w.spawnPlan(plan, rng);
     cell.herds.push(herd);
     return { herd: herd.id, creatures: herd.members.map((m) => m.id) };
+  }
+
+  /** Makes room for `n` more creatures, unloading the cells asleep the longest; false when it cannot. */
+  makeRoom(n: number): boolean {
+    while (this.creatureCount + n > MAX_CREATURES) {
+      let oldest: { w: WorldFauna; cell: NonNullable<ReturnType<WorldFauna['oldestAsleep']>> } | null = null;
+      for (const w of this.worlds.values()) {
+        const cell = w.oldestAsleep(true);
+        if (cell && (!oldest || cell.since < oldest.cell.since)) oldest = { w, cell };
+      }
+      if (!oldest || !oldest.w.unload(oldest.cell)) return false;
+    }
+    return true;
   }
 
   /** Damage (or anything worth threat) done to a creature by an attacker (seam for combat, P1.E06.T02): hostile creatures
@@ -470,7 +669,17 @@ export class FaunaSim {
     return out;
   }
 
-  /** Loaded cells per world, by state (for metrics and tests). */
+  /** A world's loaded cells (none when it keeps none). */
+  cells(body: number): CellInfo[] {
+    return this.worlds.get(body)?.cellInfo() ?? [];
+  }
+
+  /** Whether a world's ground is ready (cells load only then). */
+  groundReady(body: number): boolean {
+    return !!this.worlds.get(body)?.ground;
+  }
+
+  /** Loaded cells per world, by state. */
   cellCounts(): Record<number, Record<CellState, number>> {
     const out: Record<number, Record<CellState, number>> = {};
     for (const [index, w] of this.worlds) {
@@ -479,6 +688,13 @@ export class FaunaSim {
       out[index] = n;
     }
     return out;
+  }
+
+  /** Worlds, creatures and cells by state, over every world: for the zone's metrics. */
+  stats(): FaunaStats {
+    const cells = { loading: 0, active: 0, asleep: 0 };
+    for (const n of Object.values(this.cellCounts())) for (const k of Object.keys(cells) as CellState[]) cells[k] += n[k];
+    return { worlds: this.worlds.size, creatures: this.creatureCount, cells };
   }
 
   /** A world's fauna, made if it is not kept yet. */
