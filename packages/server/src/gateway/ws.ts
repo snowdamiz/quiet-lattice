@@ -1,12 +1,13 @@
 // WebSocket gateway (docs/ARCHITECTURE.md §2, §5): `ws` in noServer mode on the HTTP server's upgrade event, path /ws.
 // The first message must be `hello` with the protocol version and a session token, within HELLO_TIMEOUT_MS; then
-// `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS: its player entity enters
-// the zone of its home system (docked at the home Waystation) and `welcome` names the zone and the entity, followed at
-// once by `world` (the world service's state, sent again to every joined session whenever it changes) and the
-// character's `inventory`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot
-// every tick, and closing the socket takes the entity out. Inventory requests go to the inventory service, which answers
-// each with the authoritative state (ARCHITECTURE §7). Malformed or out-of-place messages are dropped and counted, never
-// thrown.
+// `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS: persistence loads its saved
+// state (§8) and its player entity enters the world where it was saved (or docked at its home Waystation when that pose
+// is unusable, or for a new character), and `welcome` names the zone, the entity and that pose, followed at once by
+// `world` (the world service's state, sent again to every joined session whenever it changes) and the character's
+// `inventory`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot every tick, and
+// closing the socket saves the character and takes the entity out. Inventory requests go to the inventory service,
+// which answers each with the authoritative state (ARCHITECTURE §7). Malformed or out-of-place messages are dropped and
+// counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -21,7 +22,11 @@ import { WebSocketServer, type RawData, type WebSocket } from 'ws';
 import type { TokenService } from '../accounts/tokens.ts';
 import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.ts';
 import type { Db } from '../db/client.ts';
-import { InventoryService } from '../inventory/service.ts';
+import type { CharacterRow } from '../db/schema.ts';
+import type { InventoryService } from '../inventory/service.ts';
+import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
+import { CharacterLoadError } from '../persistence/registry.ts';
+import type { CharacterPersistence } from '../persistence/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import type { ServerClock } from '../world/clock.ts';
 import type { WorldSource } from '../world/service.ts';
@@ -85,8 +90,12 @@ export interface WsGatewayDeps {
   zones: ZoneManager;
   log: FastifyBaseLogger;
   limits: WsLimits;
-  /** Every character's inventory; the gateway makes its own when none is given. */
-  inventory?: InventoryService;
+  /** Every character's inventory in play (the one persistence loads into and saves from). */
+  inventory: InventoryService;
+  /** Loads a character on join and saves it on leave. */
+  persistence: CharacterPersistence;
+  /** Reads a character's row when it belongs to the account (getOwnedCharacter on `db`; tests stand in for it). */
+  ownedCharacter?: (accountId: string, characterId: string) => Promise<CharacterRow | null>;
 }
 
 export interface WsStats {
@@ -135,7 +144,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   let invalidTotal = 0;
   let rateLimitedTotal = 0;
   let closing = false;
-  const inventory = deps.inventory ?? new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
+  const { inventory, persistence } = deps;
+  const ownedCharacter = deps.ownedCharacter ?? ((accountId: string, characterId: string) => getOwnedCharacter(deps.db, accountId, characterId));
   // server-side changes (loot, mining, trade, the Recall) reach the session holding the character
   const unsubscribeInventory = inventory.subscribe((characterId, reply) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'inventory', ...reply });
@@ -214,7 +224,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     ws.on('close', (code) => {
       clearTimeout(c.deadline);
       s.state = 'closed';
-      deps.zones.leave(s);
+      // Saved before its entity leaves the zone: the pose is read from the entity. (There is no logout message yet, so
+      // every close is a dropped connection: its phase keeps its place for a while.)
+      persistence.leave(s, closing ? 'shutdown' : 'logout');
+      deps.zones.leave(s, 'disconnected');
       conns.delete(c);
       registry.remove(s);
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
@@ -328,37 +341,63 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
 
   async function onJoin(c: Conn, msg: Extract<ClientMessage, { t: 'join' }>): Promise<void> {
     const { s } = c;
-    const row = await getOwnedCharacter(deps.db, s.accountId!, msg.characterId);
-    if (s.state !== 'authed') return;
-    if (!row) {
-      s.refuse('character', 'That character does not exist on this account.');
-      return;
+    // Character ids are uuids, which Postgres compares without regard to case and returns in lower case; persistence
+    // keys characters by the row's id. The pin and the lookup use that one spelling.
+    const characterId = msg.characterId.toLowerCase();
+    // While the row is read, a save of this character still being written (it left a moment ago) is held, not evicted:
+    // the row may not have it yet, and persistence loads from what it holds.
+    const unpin = persistence.pin(characterId);
+    try {
+      const row = await ownedCharacter(s.accountId!, characterId);
+      if (s.state !== 'authed') return;
+      // (a row under another spelling of the id would have been read without the pin holding it)
+      if (!row || row.id !== characterId) {
+        s.refuse('character', 'That character does not exist on this account.');
+        return;
+      }
+      clearTimeout(c.deadline);
+      const previous = registry.bindCharacter(s, row.id);
+      if (previous) {
+        // Saved, and its entity gone, now rather than when its socket finishes closing, so the character is never in
+        // the world twice and the new session loads what the old one left. This is the character reconnecting, so its
+        // phase keeps its place for this connection to find.
+        persistence.leave(previous, 'kicked');
+        deps.zones.leave(previous, 'disconnected');
+        previous.refuse('kicked', 'This character entered the world from another connection.');
+      }
+      let loaded;
+      try {
+        loaded = persistence.join(s, row);
+      } catch (err) {
+        if (!(err instanceof CharacterLoadError)) throw err;
+        log.error({ session: s.id, account: s.accountId, character: row.id, component: err.component, reason: err.reason }, 'character could not be loaded');
+        s.refuse('full', 'Your character could not be loaded. Try again later.');
+        return;
+      }
+      const at = loaded.get<PoseState>(POSE);
+      const progress = loaded.get<Progress>(PROGRESS);
+      const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem }, at);
+      if (joined.fellBack) log.warn({ character: row.id, saved: at, reason: joined.fellBack }, 'saved pose unusable; docked at the home Waystation');
+      s.entityId = joined.entityId;
+      s.zoneId = joined.zone.id;
+      s.state = 'joined';
+      s.send({
+        t: 'welcome',
+        accountId: s.accountId!,
+        character: toSummary({ ...row, level: progress.level, homeSystem: progress.homeSystem }),
+        entityId: joined.entityId,
+        serverTime: deps.clock.now(),
+        zone: { id: joined.zone.id, systemSeed: joined.zone.system.seed },
+        pose: joined.pose,
+        mode: joined.mode,
+      });
+      s.send(deps.world.message());
+      // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
+      s.send({ t: 'inventory', ...inventory.state(row.id) });
+      log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
+    } finally {
+      unpin();
     }
-    clearTimeout(c.deadline);
-    const previous = registry.bindCharacter(s, row.id);
-    if (previous) {
-      // Its entity goes now, not when its socket finishes closing, so the character is never in the world twice.
-      deps.zones.leave(previous);
-      previous.refuse('kicked', 'This character entered the world from another connection.');
-    }
-    // Every character enters docked at its home Waystation until persistence (P1.E03.T05) remembers where it was.
-    const joined = deps.zones.join(s, row);
-    s.entityId = joined.entityId;
-    s.zoneId = joined.zone.id;
-    s.state = 'joined';
-    s.send({
-      t: 'welcome',
-      accountId: s.accountId!,
-      character: toSummary(row),
-      entityId: joined.entityId,
-      serverTime: deps.clock.now(),
-      zone: { id: joined.zone.id, systemSeed: joined.zone.system.seed },
-      pose: joined.pose,
-      mode: joined.mode,
-    });
-    s.send(deps.world.message());
-    s.send({ t: 'inventory', ...inventory.open(row.id) });
-    log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
   }
 
   return {

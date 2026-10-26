@@ -296,3 +296,27 @@ Format: task id, question → choice → why.
   signal-profile material that emits nothing. Open: CSS-animation clip frames are timed in real time at 0.1× and can
   jitter when a screenshot overruns; seeking each animation's `currentTime` would make them exact (do it if a grader
   flags jitter).
+- **P1.E09.T02** Phases → a PhaseManager per zone (`zone.phases`); caps in `server/src/phases/kinds.ts`: story one party (a
+  player in no party is a party of one), bay 24, event 12 (DESIGN 17), raid 12 (DESIGN 16.6's "scale 1–12"; DESIGN 17
+  gives no raid cap). Placement (`phaseFor`): the player's current or kept phase at that place, then a party member's
+  phase with room, then the fullest with room (oldest on a tie), else a new one; one phase per entity. A member keeps
+  the party it was placed under (its live tag only when none was given); a story phase never holds two parties. Story
+  hides only its own actors (DESIGN 14.1, "everyone else sees the ordinary world there"); bay, event and raid seal a
+  member inside the volume (enter at the radius, leave at 105%) so it and players of every other layer cannot see each
+  other; shared-world NPCs stay visible; the phase rule overrides "party always visible". A member outside the volume
+  returns to the shared world after a 15 s grace. A disconnect (every socket close until a logout message exists, and
+  the kicked connection of a re-join) keeps the member's place for the same grace, keyed by character id: it counts
+  toward the cap and the party rule, keeps the phase open, and is reclaimed by the next `phaseFor` at that place;
+  reconnecting never extends the grace (it runs from when the member left the volume). Empty phases close at once and
+  despawn their entities; phase ids are never reused; a phase's sphere moves with its frame. → DESIGN 17's private
+  layers with the least surprise for parties and a network blip. Open: nothing calls `phaseFor` yet; the quest engine
+  (P1.E09.T01/T04), the bays (P1.E11.T03) and events (P2.E21.T01) must re-place a character on join; combat, targeting,
+  interaction and loot must check `phases.canSee`, and anything spawned for an instance must go through `phases.spawn`;
+  snapshots do not yet say which phase a client is in (P1.E09.T04 may need it); kept places rely on a zone ticking 30 s
+  after it empties, longer than the 15 s grace.
+- **Orchestrator** The space flight model no longer applies the nearby world's gravity (the user's thruster pass from the
+  planet-landing session, committed unchanged); the speed-window contract (P1.E12.T01) and movement authority
+  (P1.E03.T04) must not assume it. Unit tests run with a 60 s per-test timeout because parallel worktrees load the
+  machine (load average 85+) and the golden and fuzz suites take seconds alone.
+- **Plan amendment (orchestrator)** P1.E15.T01 (chat and parties) is the server and protocol half; no task drew the chat panel or party frame, so P1.E15.T03 "Chat and party UI" is added (deps T01 and the client net layer P1.E04.T01, visual). → The two-client exit criterion needs players to talk and party up on screen.
+- **DESIGN amendment (orchestrator, from the P2.E22.T01 review)** 16.2's "Hold counts as a third of a Feed" now reads: a Hold is a full vote of which a third is Feed, so an all-Hold day targets 383, inside Held. The literal alternative (a Hold weighs a third of a vote, all of it Feed) would send a world of Hold players to Fed, and Held (16.4) is a philosophy that must be able to win a season. The burn is one measure every 4.8 hours (16.1's "a measure every few hours", 16.2's 5 a day), not a lump at the day roll.

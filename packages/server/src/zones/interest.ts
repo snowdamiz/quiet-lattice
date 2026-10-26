@@ -1,5 +1,6 @@
 // Interest management (docs/ARCHITECTURE.md §6): a session sees the entities within its class's radius of the session's
-// own entity (ships 50 km, walkers 2 km, mobs 1.5 km, loot 500 m), plus its own entity and its party wherever they are.
+// own entity (ships 50 km, walkers 2 km, mobs 1.5 km, loot 500 m), plus its own entity and its party wherever they are;
+// then its phase may hide some of them (docs/ARCHITECTURE.md §6.1, phases/manager.ts).
 // The radius belongs to the entity seen, not the viewer: a ship shows from 50 km whoever is looking.
 import type { EntityState } from '@astra/shared/protocol';
 

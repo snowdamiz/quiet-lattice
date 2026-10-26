@@ -20,15 +20,17 @@ processes will read (presence, zone membership, the server clock) is mirrored to
 ## 2. Server layout (`packages/server/src`)
 
 ```
-index.ts            boot: config → db → redis → world service → zone manager → gateway
+index.ts            boot: config → db → redis → world service → zone manager → character persistence → gateway
 config.ts           env (DATABASE_URL, REDIS_URL, JWT_SECRET, PORT=8787, TICK_HZ=20), validated with zod
 db/                 Drizzle schema (schema.ts), client, migrate.ts; SQL migrations in packages/server/drizzle/
 gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters
 gateway/ws.ts       WebSocket upgrade (token in the first message), one Session per socket
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
+phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
 world/              WorldService: server clock, season, Count, Edge position, tier map
-fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6)
+fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
+persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 sim/                server-side systems added by later tasks: movement validation, combat, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
@@ -125,7 +127,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   picks the union whose schema accepts the message.
 - **Creatures** (protocol 3): a `mob` entity names its `species` by index in its world's `faunaSpecies` list (its frame
   names the world), and carries `level`, `hp`, its behaviour state as `mode` and, only while it attacks, `attack`: its
-  progress through the attack, 0–1, clamped like the other unit fields and cleared when the attack ends (§6, Fauna).
+  progress through the attack, 0–1, clamped like the other unit fields and cleared when the attack ends (§6.2).
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 
@@ -133,9 +135,10 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 
 A zone hosts one star system: every entity in it, a 20 Hz tick, a spatial hash over world positions at the tick's time,
 interest sets per session (entities within the class radius of the session's own entity: ships 50 km, walkers 2 km, mobs
-1.5 km, loot 500 m, always the session's own entity and party), and per-session delta snapshots. Ticks are fixed-step; a
-tick that overruns is logged with its duration (the budget is 10 ms p95 at 200 entities). Entities in deep space between
-systems belong to a deep-space zone keyed by the nearest system (P1.E04.T04).
+1.5 km, loot 500 m; always the session's own entity, and its party wherever they are; then its phase may hide some of
+them, §6.1), and per-session delta snapshots. Ticks are fixed-step; a tick that overruns is logged with its duration (the
+budget is 10 ms p95 at 200 entities). Entities in deep space between systems belong to a deep-space zone keyed by the
+nearest system (P1.E04.T04).
 
 The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
 landed players sit in their ships), is a ship; a player on foot, an NPC or a prop is a walker; a mob is a mob; loot and
@@ -143,7 +146,40 @@ loot pods are loot. An entity already in view stays in it until it is 5% beyond 
 enter and leave every tick. Until movement authority (P1.E03.T04) validates `mode`, a client picks its own class through
 it. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5 minutes empty.
 
-**Fauna** (DESIGN 12.2, P1.E08.T01; `fauna/`). A world's species come from shared `faunaSpecies(params, tier)`: its own
+### 6.1 Phases
+
+DESIGN 17's phases (story chapters and instanced quest steps, hangar bays, event and raid instances) are private layers
+inside a zone, kept by its `PhaseManager` (`zone.phases`, `phases/manager.ts`). A phase is opened at a **location**: a key
+naming the place (a quest step's site, a Waystation's hangar) and a sphere in one of the system's frames, which moves with
+the frame. Every entity is in one phase or none (the shared world): **members** are sessions' players, placed by
+`phaseFor(session, kind, location, partyId?)`; a phase's **own entities** (its actors) are spawned through `spawn(phase,
+init)`. Kinds and caps (`phases/kinds.ts`): `story` holds one party (a player in no party is a party of one), `bay` 24
+players, `event` and `raid` 12.
+
+- **Placement** reuses the phase the player is already in at that place (or kept for its character, below), else a
+  party member's that has room, else the fullest that has room (the oldest of equals), else opens one. A player is in one
+  phase at a time; placing it elsewhere takes it out of the old one. A member's party is the `partyId` it was placed
+  under, which it keeps; without one, its entity's party tag as it stands (the tag stands in for the party system,
+  P1.E15.T01). A story phase never holds two parties: re-asked, or coming back, under a party its others are not in, a
+  player goes to another phase.
+- **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
+  rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
+  players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
+  players (`bay`, `event`, `raid`). A sealed member sees no player outside its phase, the shared world's included, and
+  none sees it; the shared world's other entities stay in its sight. A `story` phase hides only its actors (DESIGN 14.1:
+  everyone else sees the ordinary world there). With nothing in a phase the filter is skipped.
+- **Presence**: a member outside the volume goes back to the shared world after the kind's grace (15 s), keeping its
+  phase if it returns in time. A member whose connection drops (`ZoneManager.leave(session, 'disconnected')`: every
+  socket close, and the old connection kicked when its character enters again) keeps its place for the same grace, by
+  character id, with its party, counting towards the cap; its character's next `phaseFor` at that place returns it to
+  the phase. A member already outside the volume keeps only what is left of its grace, and comes back still outside, so
+  dropping and reconnecting never extends it. One that leaves the zone any other way (a handoff, a logout) goes at once. A phase with no members and no
+  kept places closes, and its own entities are despawned; `close(phase)` does the same on demand. Opening and closing
+  are logged (info).
+
+### 6.2 Fauna
+
+DESIGN 12.2, P1.E08.T01; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
 docile and skittish species, then the hostile ones each tier pass appends on a random stream of its own, so the list
 only grows with the tier and an index names the same species at every tier. The zone ticks a `FaunaSim` at the start of
 each step. Herds live in cells of about 250 m (an equal-angle cube map) round players within 1,500 m of a world's sea
@@ -165,9 +201,57 @@ picked up, quest steps done) are never trusted; they are requests the server re-
 
 ## 8. Persistence
 
-Postgres tables (Drizzle): `accounts`, `characters` (people, name, look, level, xp, home system, pose, frame, ship), and
-JSON-typed columns or child tables for inventory, skills, quests and flags as the tasks that own them arrive. Characters
-persist every 30 s and on logout (P1.E03.T05). Migrations are generated with drizzle-kit and applied with `pnpm db:migrate`.
+Postgres tables (Drizzle): `accounts`, `shards` (§3) and `characters` (people, name, look, level, xp, home system, and
+`state`, `revision`, `saved_at`). Migrations are generated with drizzle-kit and applied with `pnpm db:migrate`.
+
+**Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
+component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx), check?(value,
+ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry `{"v": <schema version>, "data":
+<value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own columns. Components load in
+registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers (`components.ts`,
+`coreRegistry`): `progress` (level, xp, home system: the columns), `ship` (`ShipLoadout | null`, the Lark by default),
+`inventory` (its layout re-derived from the ship on load, `applyLayout(saved, layoutFor(loadout))`; kept as saved, and
+logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`, read from the character's zone entity).
+
+- **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
+  landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
+  an older `v` is migrated one version at a time and written back at the next save. A value that cannot be read (a newer
+  `v`, no migration, the schema or `check` fails) follows `onInvalid`: the pose falls back to docked at the home
+  Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement); every other
+  component refuses the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries
+  the loaded pose.
+- **Save** every 30 s per character in play, staggered (the interval split into 30 slots, each character in the
+  least-loaded, one slot captured per second); on leave (logout, disconnect, the older connection of a duplicate join),
+  captured before the entity leaves its zone; on zone handoff (P1.E04.T04 calls `persistence.saveNow(id, 'handoff')`);
+  and on graceful shutdown (`server.close()`, which SIGINT and SIGTERM run: sessions close and save, everyone still in play
+  is captured, and the queue is written within 5 s). While writes succeed, a crash loses at most the last interval; while
+  they fail (the database down, retries backing off, a backlog) it loses everything not yet written.
+- A capture is synchronous and small: each component's live value, checked against its schema (a value that fails is
+  logged and its stored one kept), and only the components whose value changed since the last capture, at a revision one
+  above it. Writes never block a tick: the queue holds at most one save per character (a newer capture merges into the
+  waiting one), one writer drains it in batches of up to 64, one `UPDATE … FROM (VALUES …)` statement each, which merges
+  the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
+  raises `revision`, only where the row's revision is lower, so a save older than what the row holds is skipped (and
+  logged as an error). A failed write is logged and retried with backoff (0.5 s doubling to 30 s), merged under anything
+  captured since; a failed batch retries one character per statement, so one bad row holds back no other.
+- **One process holds a character at a time.** Revisions are counted by the process holding the character, from its
+  row's revision on join, so the guard orders that process's saves but does not fence two processes holding one
+  character: each would count from the same row and could overwrite the other. A real fence (a per-join epoch or a
+  presence lock) comes with P3.E37's split into several processes. The gateway reads a joining character's row under its
+  canonical id (lower case, the spelling Postgres returns and persistence keys by) while persistence pins it.
+- A character that has left stays held until its save is written, then every component forgets it (the inventory service
+  included). The in-memory services refuse a character they do not hold (`InventoryNotHeldError`), so nothing changes a
+  character out of play behind persistence's back. There is no API yet for changing one out of play: P1.E03.T07 (the
+  dev CLI's grant, teleport, set quest step) adds it to persistence as load, modify and save, refused while the character
+  is held and holding its joins until the save is written.
+
+**Adding a component** (skills P1.E07.T01, quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
+`CharacterComponent` with its key, `v: 1`, the zod schema of the stored value, `default`, `load`, `save` and `unload`
+(`onInvalid: 'refuse'` for anything a player earned), and register it in `coreRegistry` after the components it reads and
+before those that read it: skills go before the inventory, which then passes the owned nodes to `layoutFor` (Pack Mule's
+stack cap). No SQL migration: it is a new key in `state`. To change a stored shape later, raise `v` and add
+`migrations[oldV]`. State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
+store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
 
