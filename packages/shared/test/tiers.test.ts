@@ -32,15 +32,16 @@ const outZ = (d: number) => ({ id: 1000, x: 0, y: 0, z: d });
 const below = (ly: number) => ly - 1e-9;
 
 describe('distance bands (DESIGN 11)', () => {
-  it('begin Tier 2, 3, 4 and 5 at 15, 30, 45 and 60 ly', () => {
-    expect(TIER_BANDS_LY).toEqual([15, 30, 45, 60]);
+  it('begin Tier 2, 3, 4 and 5 at 18, 30, 45 and 60 ly', () => {
+    expect(TIER_BANDS_LY).toEqual([18, 30, 45, 60]);
   });
 
-  it('take in their lower edge, exactly at 6, 15, 30, 45 and 60 ly', () => {
+  it('take in their lower edge, exactly at 6, 18, 30, 45 and 60 ly', () => {
     const at = (ly: number) => bandTier(ly);
-    expect([at(6), at(15), at(30), at(45), at(60)]).toEqual([1, 2, 3, 4, 5]);
-    expect([at(below(15)), at(below(30)), at(below(45)), at(below(60))]).toEqual([1, 2, 3, 4]);
-    expect([at(6.5), at(29), at(44.99), at(59.99), at(66), at(1e6), at(Infinity)]).toEqual([1, 2, 3, 4, 5, 5, 5]);
+    expect([at(6), at(18), at(30), at(45), at(60)]).toEqual([1, 2, 3, 4, 5]);
+    expect([at(below(18)), at(below(30)), at(below(45)), at(below(60))]).toEqual([1, 2, 3, 4]);
+    // (Tier 1 ended at 15 ly before; it is Tier 1 there now)
+    expect([at(15), at(17.9), at(29), at(44.99), at(59.99), at(66), at(1e6), at(Infinity)]).toEqual([1, 1, 2, 3, 4, 5, 5, 5]);
   });
 
   it('put a system that is not a home system in Tier 1 even nearer a home than 6 ly', () => {
@@ -52,13 +53,13 @@ describe('distance bands (DESIGN 11)', () => {
   });
 
   it('apply to a system by its distance to the nearest home system', () => {
-    for (const d of [6, 15, 30, 45, 60]) {
+    for (const d of [6, 18, 30, 45, 60]) {
       expect(homeLy(outZ(d))).toBe(d);
       expect(tierOf(outZ(d)), `${d} ly`).toBe(bandTier(d));
       expect(tierOf(outZ(below(d))), `just under ${d} ly`).toBe(bandTier(below(d)));
     }
-    expect([6, 15, 30, 45, 60].map((d) => tierOf(outZ(d)))).toEqual([1, 2, 3, 4, 5]);
-    expect([15, 30, 45, 60].map((d) => tierOf(outZ(below(d))))).toEqual([1, 2, 3, 4]);
+    expect([6, 18, 30, 45, 60].map((d) => tierOf(outZ(d)))).toEqual([1, 2, 3, 4, 5]);
+    expect([18, 30, 45, 60].map((d) => tierOf(outZ(below(d))))).toEqual([1, 2, 3, 4]);
   });
 
   it('make the three home systems, and only they, Tier 0', () => {
@@ -90,8 +91,8 @@ describe('the Edge-ward fringe', () => {
     // at the default Edge the fringe is where Tier 4 begins, so it lifts Tier 4 to 5
     expect([at(45), at(44.999999)]).toEqual([5, 3]);
     expect(tierOf({ id: 1000, x: 45, y: 0, z: 0 })).toBe(tierOf({ id: 1000, x: 45, y: 0, z: 0 }, EDGE_X));
-    // the Edge advanced 30 ly: the fringe comes in to 15 ly, a Tier 2 point there is Tier 5, one short of it Tier 1
-    expect([at(15, EDGE_X - 30), at(14.5, EDGE_X - 30)]).toEqual([5, 1]);
+    // the Edge advanced 27 ly: the fringe comes in to 18 ly, a Tier 2 point there is Tier 5, one short of it Tier 1
+    expect([at(18), at(18, EDGE_X - 27), at(17.5, EDGE_X - 27)]).toEqual([2, 5, 1]);
     // the Edge receded: the fringe goes out with it, past a point 50 ly out once the Edge is more than 5 ly back
     expect([at(50), at(50, EDGE_X + 5), at(50, EDGE_X + 5.5), at(50, EDGE_X + 20)]).toEqual([5, 5, 4, 4]);
   });
@@ -167,7 +168,10 @@ describe('tier table, seed 424242 (golden)', () => {
   it('populates every tier 0–5', () => {
     const counts = count(fixture.systems.map((s) => s.tier as Tier));
     expect(fixture.counts).toEqual(counts);
-    expect(counts).toEqual([3, 2, 18, 22, 19, 6]);
+    expect(counts).toEqual([3, 9, 11, 22, 19, 6]);
+    // Act I opens in Tier 1: the systems within 18 ly of a home
+    const one = fixture.systems.filter((s) => s.tier === 1).sort((a, b) => a.homeLy - b.homeLy);
+    expect(one.map((s) => s.name)).toEqual(['Corzenzen', 'Phasolmir', 'Nyxsol', 'Xasar', 'Ulqua', 'Calzu', 'Zuix', 'Eoerarhe', 'Ariphabel']);
     for (const t of TIERS) expect(counts[t], `tier ${t}`).toBeGreaterThan(0);
   });
 
