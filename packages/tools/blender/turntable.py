@@ -6,8 +6,9 @@
 # One sheet pair per asset and variant (art bible 8: a file may hold several assets, and an asset several variants, all
 # at the origin, so they are never overlaid): <stem>_turntable.png (eight views, 45 degrees apart, at 20 degrees
 # elevation, LOD0 only, under a neutral studio light) and <stem>_materials.png (every material that asset and variant
-# uses on a shader ball: a bevelled, grooved block and a sphere, so edge wear, cavities and roughness read; each cell
-# labelled in the image, and listed in <stem>_materials.txt). A file holding several assets or variants names its sheets
+# uses on a shader ball: a bevelled, grooved block and a sphere, so edge wear, cavities and roughness read, their UVs
+# over the part of each image texture the asset's faces use; each cell labelled in the image, and listed in
+# <stem>_materials.txt with that part of the image). A file holding several assets or variants names its sheets
 # <stem>_<asset>[_<variant>]_*; --asset and --variant pick one. A library file with no geometry gets only the material
 # sheet. Defaults to assets/renders/. Scale references (REF), colliders (COL_*) and markers never appear.
 #
@@ -627,22 +628,115 @@ def family_sheets(picked):
     return sheets, txt, rows_info
 
 
-def material_sheet(materials, out_png, out_txt):
+def image_of(m):
+    """A material's first image texture with an image, and the UV map it reads (None: the active one)."""
+    if not m.node_tree:
+        return None, None
+    for n in m.node_tree.nodes:
+        if n.type == 'TEX_IMAGE' and n.image:
+            src = n.inputs['Vector'].links[0].from_node if n.inputs['Vector'].is_linked else None
+            return n.image, (src.uv_map or None) if src is not None and src.type == 'UVMAP' else None
+    return None, None
+
+
+def uv_regions(shown, materials):
+    """Per image-textured material, the part of its texture the asset uses: the 2nd to 98th percentile bounds of the UVs of
+    the faces that use it (in the UV map its texture reads), then the square (in pixels, so the texture is not stretched on
+    the ball) of the shorter side at their centre, so nothing outside them shows, at most one repeat across. Bounds under
+    a pixel across one way (a strip or a single texel, as palette textures map) are kept as they are. (u0, v0, du, dv) by
+    material name."""
+    out = {}
+    for m in materials:
+        img, uv_name = image_of(m)
+        if img is None:
+            continue
+        pts = []
+        for o in shown:
+            if o.type != 'MESH':
+                continue
+            me = o.data
+            slots = [i for i, sl in enumerate(o.material_slots) if sl.material == m]
+            layer = me.uv_layers.get(uv_name) if uv_name else next((x for x in me.uv_layers if x.active_render), me.uv_layers.active)
+            if not slots or layer is None or not len(me.polygons):
+                continue
+            uv = np.empty(len(me.loops) * 2, dtype=np.float32)
+            layer.data.foreach_get('uv', uv)
+            n = len(me.polygons)
+            mi, ls, lt = (np.empty(n, dtype=np.int32) for _ in range(3))
+            me.polygons.foreach_get('material_index', mi)
+            me.polygons.foreach_get('loop_start', ls)
+            me.polygons.foreach_get('loop_total', lt)
+            order = np.argsort(ls)
+            poly_of_loop = np.repeat(order, lt[order])
+            pts.append(uv.reshape(-1, 2)[np.isin(mi[poly_of_loop], slots)])
+        pts = np.concatenate(pts) if pts else np.empty((0, 2))
+        if not len(pts):
+            continue
+        lo, hi = np.percentile(pts, 2, axis=0), np.percentile(pts, 98, axis=0)
+        w, h = img.size if img.size[0] and img.size[1] else (1, 1)
+        ext = ((hi[0] - lo[0]) * w, (hi[1] - lo[1]) * h)
+        if min(ext) >= 1:
+            side = min(ext)
+            du, dv = min(1.0, side / w), min(1.0, side / h)
+        else:
+            du, dv = min(1.0, hi[0] - lo[0]), min(1.0, hi[1] - lo[1])
+        c = (lo + hi) / 2
+        out[m.name] = (float(c[0] - du / 2), float(c[1] - dv / 2), float(du), float(dv))
+    return out
+
+
+def box_uvs(bm, uv):
+    """Box projection of a 1 m cube at the origin: each face takes the two coordinates across its dominant normal axis,
+    so every face shows the whole UV square once."""
+    for f in bm.faces:
+        ax = max(range(3), key=lambda i: abs(f.normal[i]))
+        a, b = ((1, 2), (0, 2), (0, 1))[ax]
+        for loop in f.loops:
+            loop[uv].uv = (loop.vert.co[a] + 0.5, loop.vert.co[b] + 0.5)
+
+
+def material_sheet(materials, out_png, out_txt, shown=()):
+    """Every material on a shader ball: a bevelled, grooved block (box-projected UVs) and a sphere (UV sphere). An image
+    texture maps over the part of its image the asset uses (uv_regions: an atlas's skin region shows skin, not an
+    empty corner); anything else over the whole UV square."""
     ball = bpy.data.meshes.new('tt_ball_block')
     bm = bmesh.new()
+    uv = bm.loops.layers.uv.new('UVMap')
     bmesh.ops.create_cube(bm, size=1.0)
     top = [f for f in bm.faces if f.normal.z > 0.9]
     bmesh.ops.inset_region(bm, faces=top, thickness=0.12, depth=0)
     bmesh.ops.inset_region(bm, faces=top, thickness=0.02, depth=-0.03)
+    bm.normal_update()
+    box_uvs(bm, uv)
     bm.to_mesh(ball)
     bm.free()
     sph = bpy.data.meshes.new('tt_ball_sphere')
     bm = bmesh.new()
-    bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=24, radius=0.42)
+    bm.loops.layers.uv.new('UVMap')
+    bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=24, radius=0.42, calc_uvs=True)
     bm.to_mesh(sph)
     bm.free()
     for p in sph.polygons:
         p.use_smooth = True
+    base = {}
+    for me in (ball, sph):
+        a = np.empty(len(me.loops) * 2, dtype=np.float32)
+        me.uv_layers[0].data.foreach_get('uv', a)
+        base[me.name] = a.reshape(-1, 2)
+    regions = uv_regions(shown, materials)
+
+    def map_uvs(m):
+        """The balls' UVs over the material's region, in every UV map it reads."""
+        u0, v0, du, dv = regions.get(m.name, (0.0, 0.0, 1.0, 1.0))
+        names = {n.uv_map for n in (m.node_tree.nodes if m.node_tree else []) if n.type == 'UVMAP' and n.uv_map}
+        for me in (ball, sph):
+            for name in names - {x.name for x in me.uv_layers}:
+                me.uv_layers.new(name=name)
+            a = base[me.name] * np.array([du, dv], dtype=np.float32) + np.array([u0, v0], dtype=np.float32)
+            for layer in me.uv_layers:
+                layer.data.foreach_set('uv', a.ravel())
+            me.update()
+
     block = bpy.data.objects.new('tt_block', ball)
     block.location = (-0.45, 0, 0.5)
     block.rotation_euler = (0, 0, math.radians(30))
@@ -662,19 +756,29 @@ def material_sheet(materials, out_png, out_txt):
     cam.rotation_euler = (center + mathutils.Vector((0, 0, -0.12)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
     text = label(cam, 480, 360)
     paths = []
+    notes = []
     for i, m in enumerate(materials):
         for o in (block, sphere):
             o.data.materials.clear()
             o.data.materials.append(m)
+        map_uvs(m)
         engine = m.get('engine_name')
         text.data.body = m.name + (f'  ({engine})' if engine else '')
+        img = image_of(m)[0]
+        r = regions.get(m.name)
+        if img is None:
+            notes.append('')
+        elif r:
+            notes.append(f'  ({img.size[0]}x{img.size[1]} image, the asset\'s part: UV {r[0]:.2f}..{r[0] + r[2]:.2f} x {r[1]:.2f}..{r[1] + r[3]:.2f})')
+        else:
+            notes.append(f'  ({img.size[0]}x{img.size[1]} image, whole UV square)')
         p = os.path.join(tmp, f'mat_{i:02d}.png')
         render_to(p, 480, 360)
         paths.append(p)
     cols = min(6, len(paths))
     compose(paths, cols, out_png)
     with open(out_txt, 'w') as f:
-        f.write('\n'.join(f'row {i // cols + 1}, column {i % cols + 1}: {m.name}' for i, m in enumerate(materials)) + '\n')
+        f.write('\n'.join(f'row {i // cols + 1}, column {i % cols + 1}: {m.name}{notes[i]}' for i, m in enumerate(materials)) + '\n')
     clear_rig()
 
 
@@ -721,7 +825,7 @@ elif objs and grid:
     shown = [o for _, s in targets_shown for o in s]
     turntable(shown, os.path.join(out_dir, f'{stem}_turntable.png'))
     mats = materials_of(shown)
-    material_sheet(mats, os.path.join(out_dir, f'{stem}_materials.png'), os.path.join(out_dir, f'{stem}_materials.txt'))
+    material_sheet(mats, os.path.join(out_dir, f'{stem}_materials.png'), os.path.join(out_dir, f'{stem}_materials.txt'), shown)
     manifest['sheets'].append({'target': None, 'objects': sorted(o.name for o in shown), 'materials': [m.name for m in mats]})
 elif objs:
     for t in targets:
@@ -732,7 +836,7 @@ elif objs:
         sheet = {'target': list(t), 'turntable': tt, 'objects': sorted(o.name for o in shown), 'materials': [m.name for m in mats]}
         if mats:
             mp = os.path.join(out_dir, sheet_name(t, 'materials') + '.png')
-            material_sheet(mats, mp, os.path.join(out_dir, sheet_name(t, 'materials') + '.txt'))
+            material_sheet(mats, mp, os.path.join(out_dir, sheet_name(t, 'materials') + '.txt'), shown)
             sheet['materials_sheet'] = mp
         manifest['sheets'].append(sheet)
 else:
