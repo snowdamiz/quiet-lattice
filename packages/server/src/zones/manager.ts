@@ -16,7 +16,7 @@ import type { ServerClock } from '../world/clock.ts';
 import { systemZoneId } from '../world/home.ts';
 import type { TierFlip, WorldSource } from '../world/service.ts';
 import { describeZoneSystem } from './system.ts';
-import { Zone, type InputResult, type ZoneLog, type ZoneMetrics, type ZoneViewer } from './zone.ts';
+import { Zone, type InputResult, type ZoneLeave, type ZoneLog, type ZoneMetrics, type ZoneViewer } from './zone.ts';
 
 type MoveMode = Extract<ServerMessage, { t: 'welcome' }>['mode'];
 
@@ -201,12 +201,12 @@ export class ZoneManager {
     return { zone, entityId, pose, mode };
   }
 
-  /** Takes the session and its entity out of its zone. False when it was in none. */
-  leave(viewer: ZoneViewer): boolean {
+  /** Takes the session and its entity out of its zone (`how`: see ZoneLeave). False when it was in none. */
+  leave(viewer: ZoneViewer, how: ZoneLeave = 'left'): boolean {
     const slot = this.byViewer.get(viewer);
     if (!slot) return false;
     this.byViewer.delete(viewer);
-    const left = slot.zone.leave(viewer);
+    const left = slot.zone.leave(viewer, how);
     if (slot.zone.sessionCount === 0) slot.emptySince ??= this.mono();
     return left;
   }

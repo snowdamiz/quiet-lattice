@@ -12,6 +12,8 @@
 // hidden while it is reviewed. Colliders and markers (art bible 8) are hidden and left out of the stats and framing.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { maskColors } from '../gameplay/modelLibrary.js';
+import { GLOW as FLORA_GLOW } from '../gameplay/floraModels.js';
 
 export const LIGHT_CASES = {
   // sun 8° from the zenith over open ground on the home system's lush world
@@ -51,6 +53,66 @@ export function isHelper(o) {
 function lodParts(o) {
   const m = LOD_NAME.exec(nodeName(o));
   return m ? { base: m[1], level: +m[2] } : null;
+}
+
+// ---------------------------------------------------------------------------------------------- the game's look
+
+// Creatures and flora carry a colour-region mask in their vertex colours (R primary, G secondary, B accent, A
+// occlusion) that the game fills with a species' or a planet's palette (modelLibrary.recolor). The raw mask is not what
+// a player sees, so the review fills it the way the game does, with one representative palette per family and kind,
+// and the game's own material settings (Fauna.creatureMaterial, Flora's scatter material and night glow).
+const CREATURE_LOOK = { pal: [0x8a6b4f, 0xd8c6a0, 0x2f2622], albedoCap: 0.75, aoFloor: 0.05, roughness: 0.65, metalness: 0.05 };
+const FLORA_PALETTES = [
+  [/^(tree_|cactus|bush|fern|grass)/, [0x4f8a3a, 0x5a4030, 0x9fd65a]],
+  [/^(rock|boulder)/, [0x7a746c, 0x55514c, 0x8f8880]],
+  [/^deposit/, [0x6a6560, 0x45423f, 0xff8a2a]],
+  [/^plant_/, [0x4a7a3a, 0x35552a, 0x4fc8ff]],
+  [/^crystal/, [0x7fc8e8, 0x3f6a88, 0xbfefff]],
+];
+
+/** The look the game gives a mesh of `family` under asset `name`, or null when the game draws the file's own materials. */
+export function gameLook(family, name) {
+  if (family === 'creatures') return { ...CREATURE_LOOK, glowAccent: 0 };
+  if (family !== 'flora') return null;
+  const kind = name.replace(/_(?:lod|LOD)\d+$/, '').replace(/_\d+$/, '');
+  const pal = FLORA_PALETTES.find(([re]) => re.test(kind))?.[1] ?? FLORA_PALETTES[0][1];
+  return { pal, albedoCap: 0.6, aoFloor: 0.35, roughness: 0.82, metalness: 0, glowAccent: FLORA_GLOW[kind] ?? 0 };
+}
+
+/**
+ * Fills every mask-coloured mesh under `root` as the game does for `family`; `glow` is the uniform that scales accent
+ * glow (the game's flora glow, which rises at night). Returns the number of meshes changed.
+ */
+export function applyGameLook(root, family, glow = { value: 1 }) {
+  let changed = 0;
+  for (const top of root.children) {
+    const look = gameLook(family, nodeName(top));
+    if (!look) continue;
+    const [primary, secondary, accent] = look.pal.map((c) => new THREE.Color(c));
+    top.traverse((o) => {
+      if (!o.isMesh || isHelper(o) || !o.geometry.attributes.color) return;
+      const { col, glow: g } = maskColors(o.geometry, { primary, secondary, accent }, look);
+      o.geometry = o.geometry.clone();
+      o.geometry.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      o.geometry.setAttribute('aGlow', new THREE.BufferAttribute(g, 1));
+      const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: look.roughness, metalness: look.metalness, side: THREE.DoubleSide });
+      mat.name = `${family} (game look)`;
+      if (look.glowAccent) {
+        mat.onBeforeCompile = (shader) => {
+          shader.uniforms.uGlow = glow;
+          shader.vertexShader = shader.vertexShader
+            .replace('#include <common>', '#include <common>\nattribute float aGlow;\nvarying float vGlow;')
+            .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGlow = aGlow;');
+          shader.fragmentShader = shader.fragmentShader
+            .replace('#include <common>', '#include <common>\nvarying float vGlow;\nuniform float uGlow;')
+            .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += diffuseColor.rgb * vGlow * uGlow;');
+        };
+      }
+      o.material = mat;
+      changed++;
+    });
+  }
+  return changed;
 }
 
 /**
@@ -263,6 +325,7 @@ export class Review {
     if (this.content) this.root.remove(this.content);
     this.file = file;
     this.content = gltf.scene;
+    this.recoloured = applyGameLook(this.content, file.split('/')[0], this.game.flora?.uniforms?.uGlow);
     this.root.add(this.content);
     this.model = collectLods(this.content);
     if (!this.model.assets.length) throw new Error(`${url} holds no asset`);

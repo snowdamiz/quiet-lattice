@@ -224,9 +224,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     ws.on('close', (code) => {
       clearTimeout(c.deadline);
       s.state = 'closed';
-      // saved before its entity leaves the zone: the pose is read from the entity
+      // Saved before its entity leaves the zone: the pose is read from the entity. (There is no logout message yet, so
+      // every close is a dropped connection: its phase keeps its place for a while.)
       persistence.leave(s, closing ? 'shutdown' : 'logout');
-      deps.zones.leave(s);
+      deps.zones.leave(s, 'disconnected');
       conns.delete(c);
       registry.remove(s);
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
@@ -358,9 +359,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       const previous = registry.bindCharacter(s, row.id);
       if (previous) {
         // Saved, and its entity gone, now rather than when its socket finishes closing, so the character is never in
-        // the world twice and the new session loads what the old one left.
+        // the world twice and the new session loads what the old one left. This is the character reconnecting, so its
+        // phase keeps its place for this connection to find.
         persistence.leave(previous, 'kicked');
-        deps.zones.leave(previous);
+        deps.zones.leave(previous, 'disconnected');
         previous.refuse('kicked', 'This character entered the world from another connection.');
       }
       let loaded;
