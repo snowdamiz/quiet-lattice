@@ -336,7 +336,7 @@ describe('flight caps', () => {
 });
 
 // Honest pilots against the policy: the client's own controllers, integrated at 60 Hz and measured as the server would, in
-// windows of FLIGHT_TOLERANCE.windowS judged against the largest allowance in force within each.
+// windows of FLIGHT_TOLERANCE.windowS judged against the larger of the allowances at each window's two end poses.
 describe('honest flight stays within the allowance', () => {
   const lark = (...skills: string[]) => shipStats(DEMO, { skills });
   const DT = 1 / 60;
@@ -345,8 +345,9 @@ describe('honest flight stays within the allowance', () => {
     p: readonly [number, number];
     allowed: number;
   }
-  /** The worst window: its speed over the largest allowance within it. */
-  function worst(samples: Sample[], judge: (window: Sample[]) => number = (w) => Math.max(...w.map((x) => x.allowed))): number {
+  /** The worst window: its speed over the larger allowance at its two end poses (never a pose in between, which a cheat
+   * could fake). */
+  function worst(samples: Sample[], judge: (window: Sample[]) => number = (w) => Math.max(w[0].allowed, w[w.length - 1].allowed)): number {
     let out = 0;
     for (let i = PER_WINDOW; i < samples.length; i++) {
       const w = samples.slice(i - PER_WINDOW, i + 1);
@@ -399,34 +400,38 @@ describe('honest flight stays within the allowance', () => {
   /** The drive drops out this close to what it is heading for (Ship.updatePulse). */
   const DROP_OUT_M = 400;
 
-  /** Ship.updatePulse's speed, flying head-on at a body from `d0` m: it spools up over 1.25 s, climbs exponentially to its
-   * limit and eases down to a falling one. `from` is the mode it was engaged from, at that mode's top speed. */
-  function pulseApproach(s: ShipStats, d0: number, from: 'space' | 'boost', judge?: (w: Sample[]) => number): number {
+  /** Ship.updatePulse's speed, flying head-on at a body from `d0` m (`away`: straight out from it, to 1e10 m): it spools up
+   * over 1.25 s, climbs exponentially to its limit and eases down to a falling one. `from` is the mode it was engaged from, at
+   * that mode's top speed. */
+  function pulseRun(s: ShipStats, d0: number, from: 'space' | 'boost', away = false, judge?: (w: Sample[]) => number): number {
     const entry = flightCaps(s, from);
+    const dir = away ? 1 : -1;
     let d = d0;
     let v = Math.max(entry.max, 200);
     let spool = 0;
     const samples: Sample[] = [{ p: [0, 0], allowed: allowanceAfterChange(entry, flightCaps(s, 'pulse', d), 0) }];
-    for (let t = DT; d > DROP_OUT_M && t < 600; t += DT) {
+    for (let t = DT; (away ? d < 1e10 : d > DROP_OUT_M) && t < 900; t += DT) {
       spool = Math.min(1, spool + DT * 0.8);
       const target = pulseSpeedLimit(s, d) * spool;
       if (v < target) v = Math.min(target, v * Math.exp(DT * 1.5) + 200 * DT);
       else v = target + (v - target) * Math.exp(-PULSE_DRIVE.easeRate * DT);
-      d -= v * DT;
-      samples.push({ p: [d0 - d, 0], allowed: allowanceAfterChange(entry, flightCaps(s, 'pulse', d), t) });
+      d += dir * v * DT;
+      samples.push({ p: [dir * (d - d0), 0], allowed: allowanceAfterChange(entry, flightCaps(s, 'pulse', d), t) });
     }
     return worst(samples, judge);
   }
 
-  it("the pulse drive's approach to a body, judged at the largest clearance in the window, with and without Supercruise", () => {
+  it("the pulse drive's approach to a body and escape from one, with and without Supercruise", () => {
     for (const s of [lark(), lark('supercruise'), shipStats(bare('dart'))])
-      for (const d0 of [700, 5000, 2e6, 5e7, 1e9])
-        for (const from of ['space', 'boost'] as const)
-          expect(pulseApproach(s, d0, from), `${s.hullId} ${s.pulse.nearLimit} ${d0} m from ${from}`).toBeLessThanOrEqual(1);
-    // judged at the clearance a window ends at instead, an honest approach would be corrected
+      for (const from of ['space', 'boost'] as const) {
+        for (const d0 of [700, 5000, 2e6, 5e7, 1e9])
+          expect(pulseRun(s, d0, from), `${s.hullId} ${s.pulse.nearLimit} ${d0} m from ${from}`).toBeLessThanOrEqual(1);
+        expect(pulseRun(s, 600, from, true), `${s.hullId} ${s.pulse.nearLimit} away from ${from}`).toBeLessThanOrEqual(1);
+      }
+    // judged at the clearance a window ends at alone, an honest approach would be corrected
     const atEnd = (w: Sample[]) => w[w.length - 1].allowed;
-    expect(pulseApproach(lark(), 2e6, 'space', atEnd)).toBeGreaterThan(1);
-    expect(pulseApproach(lark('supercruise'), 2e6, 'space', atEnd)).toBeGreaterThan(1);
+    expect(pulseRun(lark(), 2e6, 'space', false, atEnd)).toBeGreaterThan(1);
+    expect(pulseRun(lark('supercruise'), 2e6, 'space', false, atEnd)).toBeGreaterThan(1);
   });
 });
 

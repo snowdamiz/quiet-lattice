@@ -43,17 +43,23 @@ export const CLIENT_SPEED_HEADROOM = 1.05;
 /**
  * How P1.E03.T04's movement validation reads the caps. The server never trusts the client's `vel` or `time`:
  * - It measures speed itself: displacement in the pose's frame over server-measured elapsed time, across at least `windowS`
- *   of inputs (one packet's spacing jitters with the network). A window is split where the mode or the frame changes.
- * - A window passes when its speed is within the LARGEST allowance in force at any time within it:
+ *   of inputs (one packet's spacing jitters with the network). A window is split where the mode or the frame changes; a
+ *   stretch shorter than `windowS` between two changes (a one-tick pulse) is judged on its own, against its own mode's
+ *   allowance, and never merged into a window of another mode.
+ * - A window passes when its speed is within the larger of the allowances at its two end poses (its first and last), never
+ *   at a pose in between, which a cheat could fake:
  *   - in flight `max × factor + slackMps`, landed or docked `restSlackMps` (`FlightCaps.allowed`);
- *   - on the pulse drive, the caps at the largest clearance the window saw: the drive eases down to a falling limit on
- *     approach to a body, so judged at the clearance it ends at, an honest pilot would be corrected;
- *   - after a change of mode, `allowanceAfterChange` at the window's start: when the cap drops in flight (boost released, the
- *     ship climbs out of the air) the previous allowance falls at `decelMps2`, slower than the client sheds speed with its
- *     nose turned across its path; on entering the pulse drive the previous allowance fades as the drive eases down from
- *     the entry speed. Other changes are immediate: the drive drops out at `PULSE_DRIVE.exitSpeedMax` at most, under every
- *     hull's space cap, and a ship lands or docks at rest.
+ *   - on the pulse drive, the caps at each end pose's clearance, which the server computes from that pose and the bodies'
+ *     poses at its own time (the protocol carries no clearance). The drive eases down to a falling limit on approach to a
+ *     body, so judged at the clearance it ends at alone, an honest pilot would be corrected; the start's covers it;
+ *   - after a change of mode, `allowanceAfterChange` at each end's server time since the change: when the cap drops in
+ *     flight (boost released, the ship climbs out of the air) the previous allowance falls at `decelMps2`, slower than the
+ *     client sheds speed with its nose turned across its path; on entering the pulse drive the previous allowance fades as
+ *     the drive eases down from the entry speed. Other changes are immediate: the drive drops out at
+ *     `PULSE_DRIVE.exitSpeedMax` at most, under every hull's space cap, and a ship lands or docks at rest.
  * - A window over its allowance is corrected to the last valid pose.
+ * - Speed only. Whether the pulse drive may be engaged at all (outside the air, 600 m clear of anything ahead), its spool-up
+ *   and its fuel are not checked here: Charge is P1.E07.T02's, mode legality P1.E03.T04's.
  */
 export const FLIGHT_TOLERANCE = {
   windowS: 1,
@@ -78,8 +84,8 @@ export interface FlightCaps {
 }
 
 /**
- * The speed caps for a ship in a mode. `clearanceM` is for the pulse drive (see `pulseSpeedLimit`): the largest clearance in
- * the window being judged. Without it the pulse cap is unbounded, as it is between the stars.
+ * The speed caps for a ship in a mode. `clearanceM` is for the pulse drive (see `pulseSpeedLimit`): the clearance at one of
+ * the judged window's end poses, as the server computes it. Without it the pulse cap is unbounded, as between the stars.
  *
  * The air has no cap of its own: the demo's air model has no fixed top speed (drag sets it, and it rises as the air thins;
  * DESIGN's 240 is where it settles at sea level), boost thrust outruns the drag cap at any density, and a ship arriving
