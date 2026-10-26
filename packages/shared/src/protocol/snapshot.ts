@@ -41,11 +41,20 @@ export const ENTITY_FIELDS = Object.keys(fields) as EntityField[];
  * One entity's state. In a full snapshot every field the entity has is present; in a delta only `id`, the fields that
  * changed since the baseline, and `clear` listing fields that were removed.
  */
-export const EntityState = z.object({
-  id: EntityId,
-  ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, v.optional()])),
-  clear: z.array(z.enum(ENTITY_FIELDS as [EntityField, ...EntityField[]])).optional(),
-}) as unknown as z.ZodType<EntityState>;
+export const EntityState = z
+  .object({
+    id: EntityId,
+    ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, v.optional()])),
+    clear: z
+      .array(z.enum(ENTITY_FIELDS as [EntityField, ...EntityField[]]))
+      .max(ENTITY_FIELDS.length)
+      .optional(),
+  })
+  // a field is either set or cleared in one delta, never both
+  .refine(
+    (e) => !e.clear || e.clear.every((k) => (e as Record<string, unknown>)[k] === undefined),
+    'a delta may not set and clear the same field',
+  ) as unknown as z.ZodType<EntityState>;
 export type EntityState = { id: number; clear?: EntityField[] } & { [K in EntityField]?: z.infer<(typeof fields)[K]> };
 
 const Envelope = z.object({
@@ -87,7 +96,9 @@ export function encodeSnapshot(s: Snapshot, dropped: string[] = []): Uint8Array 
 }
 
 /** Decodes a binary frame. Returns null when the frame or its envelope is malformed; an entity that fails validation is
- * dropped on its own (its id goes to `rejected` when it has one) and the rest of the snapshot survives. */
+ * dropped on its own (its id goes to `rejected` when it has one) and the rest of the snapshot survives. The server's
+ * encoder never produces such an entity; if a client still sees one it must not store or acknowledge that tick, and
+ * keeps acknowledging its last good one so the next delta (or a full snapshot) repairs it. */
 export function decodeSnapshot(buf: Uint8Array, rejected: number[] = []): Snapshot | null {
   if (buf.length < 2 || buf[0] !== BinaryKind.snapshot) return null;
   let raw: unknown;
@@ -103,28 +114,25 @@ export function decodeSnapshot(buf: Uint8Array, rejected: number[] = []): Snapsh
   for (const e of env.data.entities) {
     const r = EntityState.safeParse(e);
     if (r.success) entities.push(r.data);
-    else if (e && typeof e === 'object' && typeof (e as { id?: unknown }).id === 'number') rejected.push((e as { id: number }).id);
+    else if (e && typeof e === 'object' && Number.isInteger((e as { id?: unknown }).id)) rejected.push((e as { id: number }).id);
   }
   return { ...env.data, entities };
 }
 
 function sanitizeEntity(e: EntityState, dropped: string[]): EntityState {
+  // Only the listed fields go out (a wider server object never leaks), and each one is checked against its own schema:
+  // a field the client would reject is dropped here and reported, rather than making the client drop the entity and
+  // then acknowledge a tick it never fully applied.
   const out: Record<string, unknown> = { id: e.id };
-  for (const [k, v] of Object.entries(e)) {
-    if (k === 'id' || v === undefined) continue;
-    if (!finiteDeep(v)) {
-      dropped.push(`${e.id}.${k}`);
-      continue;
-    }
-    out[k] = k === 'hp' || k === 'shield' || k === 'heat' ? Math.min(1, Math.max(0, v as number)) : v;
+  for (const k of ENTITY_FIELDS) {
+    let v = e[k] as unknown;
+    if (v === undefined) continue;
+    if (k === 'hp' || k === 'shield' || k === 'heat') v = typeof v === 'number' && Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : v;
+    if (fields[k].safeParse(v).success) out[k] = v;
+    else dropped.push(`${e.id}.${k}`);
   }
+  if (e.clear?.length) out.clear = [...new Set(e.clear)].filter((k) => out[k] === undefined);
   return out as EntityState;
-}
-
-function finiteDeep(v: unknown): boolean {
-  if (typeof v === 'number') return Number.isFinite(v);
-  if (Array.isArray(v)) return v.every(finiteDeep);
-  return true;
 }
 
 /**
@@ -154,6 +162,7 @@ export function diffEntity(prev: EntityState | undefined, next: EntityState, eps
 
 /** Returns `base` with `delta` applied, as a new object (stored states for other ticks are never mutated). */
 export function applyEntityDelta(base: EntityState, delta: EntityState): EntityState {
+  if (base.id !== delta.id) throw new Error(`delta for entity ${delta.id} applied to entity ${base.id}`);
   const out = clone(base) as Record<string, unknown>;
   for (const [k, v] of Object.entries(delta)) if (k !== 'clear' && v !== undefined) out[k] = clone(v);
   for (const k of delta.clear ?? []) delete out[k];

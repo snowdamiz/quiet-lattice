@@ -12,10 +12,11 @@ export class InvalidMessageError extends Error {
   }
 }
 
-function checked<T extends { t: string }>(schema: { safeParse(v: unknown): { success: boolean; error?: { message: string } } }, m: T): string {
+function checked<T extends { t: string }>(schema: { safeParse(v: unknown): { success: boolean; data?: unknown; error?: { message: string } } }, m: T): string {
   const r = schema.safeParse(m);
   if (!r.success) throw new InvalidMessageError(m.t, r.error?.message ?? 'invalid');
-  return JSON.stringify(m);
+  // the parsed copy, not the input: keys the schema does not know (server-only state on a wider object) are not sent
+  return JSON.stringify(r.data);
 }
 
 export function encodeClientMessage(m: ClientMessage): string {

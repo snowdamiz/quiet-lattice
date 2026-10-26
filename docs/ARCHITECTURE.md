@@ -66,8 +66,11 @@ position (P1.E03.T03 tests this to 1 cm).
   baseline `base`, the tick of the snapshot the client last acknowledged; the client keeps the states it was sent per tick,
   applies the delta onto `base` and stores the result as `tick`. An entity delta carries its changed fields and `clear`, the
   fields it no longer has. `ack` echoes the client's last applied input `seq` for reconciliation. The server diffs against
-  the state it last *sent*, not its true state, so slow motion under the epsilon still goes out. The encoder clamps unit
-  fields and drops non-finite fields; the decoder drops a malformed entity on its own and keeps the rest of the frame.
+  the state it last *sent*, not its true state, so slow motion under the epsilon still goes out. The encoder sends only the
+  listed fields, validates each against its schema, clamps unit fields, and drops and reports any field that fails, so a
+  client never rejects what the server sent. The decoder still drops a malformed entity on its own; a client that sees
+  one must not store or acknowledge that tick. Control-message encoders send the validated copy, so keys a schema does
+  not define (server-only state on a wider object) never leave the server.
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,

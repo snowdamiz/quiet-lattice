@@ -27,6 +27,7 @@ export const Direction = z
 export const FrameId = z
   .string()
   .regex(/^\d{1,10}:(\d{1,3}|station)$/)
+  .refine((f) => Number(f.split(':')[0]) <= 0xffffffff, 'system seeds are 32-bit')
   .nullable();
 export const Pose = z.object({ frame: FrameId, pos: Vec3, quat: Quat, vel: Velocity });
 export type Vec3 = z.infer<typeof Vec3>;
@@ -36,16 +37,21 @@ export type Pose = z.infer<typeof Pose>;
 
 export const EntityId = z.number().int().nonnegative().max(0xffffffff);
 export const SystemSeed = z.number().int().nonnegative().max(0xffffffff);
-const Id = z.string().min(1).max(64);
-/** C0 controls, DEL, and the bidirectional embeddings, overrides and isolates (U+202A–202E, U+2066–2069). */
+/** C0 and C1 controls, DEL, zero-width and directional marks, line and paragraph separators, the bidirectional
+ * embeddings, overrides and isolates, and the byte-order mark. */
 // eslint-disable-next-line no-control-regex -- matching control characters is the point
-const CONTROL = new RegExp('[\\u0000-\\u001f\\u007f\\u202a-\\u202e\\u2066-\\u2069]');
-/** Free text a player typed: no control or bidirectional-override characters. */
+const CONTROL = new RegExp('[\\u0000-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff]');
+/** A string capped in UTF-16 code units (zod counts code points, so emoji would otherwise double the cap). */
+const capped = (max: number) => z.string().refine((s) => s.length <= max, `at most ${max} characters`);
+const Id = z
+  .string()
+  .min(1)
+  .max(64)
+  .refine((s) => !CONTROL.test(s), 'control characters are not allowed');
+/** Free text a player typed: not blank, no control, invisible or direction-changing characters, capped in UTF-16 units. */
 const PlainText = (max: number) =>
-  z
-    .string()
-    .min(1)
-    .max(max)
+  capped(max)
+    .refine((s) => s.trim().length > 0, 'text may not be blank')
     .refine((s) => !CONTROL.test(s), 'control characters are not allowed');
 
 // ---------- HTTP: accounts and characters ----------
@@ -80,9 +86,10 @@ export const CharacterSummary = z.object({
   people: PeopleId,
   look: CharacterLook,
   level: z.number().int().min(1).max(50),
-  homeSystem: z.number().int().nonnegative(),
+  homeSystem: z.number().int().nonnegative().max(1023),
 });
-export const CharacterList = z.object({ characters: z.array(CharacterSummary).max(16) });
+/** GET /characters: the account's characters and how many it may have. */
+export const CharacterList = z.object({ characters: z.array(CharacterSummary).max(16), max: z.number().int().positive() });
 export type Credentials = z.infer<typeof Credentials>;
 export type AuthResponse = z.infer<typeof AuthResponse>;
 export type PeopleId = z.infer<typeof PeopleId>;

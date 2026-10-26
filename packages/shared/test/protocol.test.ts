@@ -62,7 +62,7 @@ const http = {
   AuthResponse: [AuthResponse, { token: 'a.b.c', accountId: 'a1' }],
   CharacterCreate: [CharacterCreate, { name: 'Ana Velka', people: 'ixari', look: { palette: 0, pattern: 15, head: 5, suit: 3 } }],
   CharacterSummary: [CharacterSummary, character],
-  CharacterList: [CharacterList, { characters: [character] }],
+  CharacterList: [CharacterList, { characters: [character], max: 6 }],
 } as const;
 
 describe('protocol: control messages', () => {
@@ -99,6 +99,11 @@ describe('protocol: control messages', () => {
       `{"t":"join","characterId":"${'x'.repeat(65)}"}`,
       `{"t":"hello","version":1,"token":"${'x'.repeat(5000)}"}`,
       '{"t":"chat","channel":"shard","text":"spoof\\u202eevil"}',
+      '{"t":"chat","channel":"shard","text":"zero\\u200bwidth"}',
+      '{"t":"chat","channel":"shard","text":"   "}',
+      `{"t":"chat","channel":"shard","text":"${'\\ud83d\\ude00'.repeat(141)}"}`,
+      '{"t":"interact","target":"term\\u0007inal"}',
+      '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"9999999999:1","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}',
     ];
     for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
     expect(decodeServerMessage('{"t":"world","season":1,"count":5000,"edgeX":0,"tiers":[],"serverTime":0}')).toBeNull();
@@ -108,6 +113,22 @@ describe('protocol: control messages', () => {
     const nan = { t: 'event', event: { kind: 'combat', source: 1, target: 2, amount: NaN, damageType: 'x', killed: false } } as ServerMessage;
     expect(() => encodeServerMessage(nan)).toThrow(InvalidMessageError);
     expect(() => encodeMessage({ t: 'event', event: { kind: 'loot', item: 'ferrite', count: 0, from: null } })).toThrow(InvalidMessageError);
+  });
+
+  it('sends only the fields a message defines, never extra keys of a wider object', () => {
+    const leaky = {
+      t: 'welcome',
+      accountId: 'a1',
+      character: { ...character, passwordHash: 'SECRET' },
+      entityId: 5,
+      serverTime: 1,
+      zone: { id: 'sys:0', systemSeed: 1 },
+      pose,
+      mode: 'docked',
+    };
+    const text = encodeServerMessage(leaky as ServerMessage);
+    expect(text).not.toContain('SECRET');
+    expect(decodeServerMessage(text)).toEqual({ ...leaky, character });
   });
 
   it('reads the version of a hello it cannot otherwise parse', () => {
@@ -185,6 +206,30 @@ describe('protocol: snapshots', () => {
     expect(dropped).toEqual(['5.pos']);
     expect(back.entities[0]).toEqual({ id: 5, hp: 1, shield: 0, name: 'Ana' });
     expect(back.entities[1]).toEqual(full.entities[1]);
+  });
+
+  it('validates every field on encode, so the client never rejects what the server sent', () => {
+    const dropped: string[] = [];
+    const bad: EntityState = { id: 9, pos: [50, 0, 0], quat: [0, 0, 0, 2], mode: 'return-to-spawn-x', level: 51, species: 1.5, name: 'n'.repeat(40) };
+    const leak = { ...bad, secret: 'loot-table' } as EntityState;
+    const bytes = encodeSnapshot({ tick: 2, time: 0, ack: 0, full: false, base: 1, entities: [leak], removed: [] }, dropped);
+    expect(dropped.sort()).toEqual(['9.level', '9.mode', '9.name', '9.quat', '9.species']);
+    const rejected: number[] = [];
+    const back = decodeSnapshot(bytes, rejected)!;
+    expect(rejected).toEqual([]);
+    expect(back.entities).toEqual([{ id: 9, pos: [50, 0, 0] }]);
+    expect(String.fromCharCode(...bytes)).not.toContain('loot-table');
+  });
+
+  it('refuses a delta that sets and clears the same field, and deltas for another entity', () => {
+    const raw = new Uint8Array([
+      1,
+      ...encode({ tick: 2, time: 0, ack: 0, full: false, base: 1, entities: [{ id: 3, owner: 4, clear: ['owner'] }], removed: [] }),
+    ]);
+    const rejected: number[] = [];
+    expect(decodeSnapshot(raw, rejected)!.entities).toEqual([]);
+    expect(rejected).toEqual([3]);
+    expect(() => applyEntityDelta({ id: 1 }, { id: 2, hp: 1 })).toThrow();
   });
 
   it('drops one malformed entity on decode, not the whole frame', () => {
