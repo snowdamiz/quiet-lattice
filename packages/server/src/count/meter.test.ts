@@ -1,26 +1,33 @@
-// The Count meter's arithmetic and the day ledger (DESIGN 16.2): lean, not volume. Synthetic action logs at 3 and 3,000
-// accounts lean the world exactly as hard; one vote per account per action type per day; the target, the 25-a-day
-// drift, the 5-a-day burn and the underdog bonus.
+// The Count meter's arithmetic and the day ledger (DESIGN 16.1–16.2): lean, not volume. Synthetic action logs at 3 and
+// 3,000 accounts lean the world exactly as hard, day by day and over a season with the burn falling between; one vote per
+// account per action type per day; the target, the 25-a-day drift, the burn of a measure every 17,280 s and the
+// underdog bonus.
 import { describe, expect, it } from 'vitest';
 import { DayLedger } from './ledger.ts';
 import {
   addVote,
   BURN_PER_DAY,
+  BURN_STEP_S,
+  burnOnce,
+  burnStepOf,
   checkVote,
   COUNT_MAX,
   COUNTED_ACTIONS,
+  DAY_S,
   dayOf,
   DRIFT_PER_DAY,
   earnsUnderdogBonus,
   EMPTY_TALLY,
   leanOf,
   rollDay,
+  runMeter,
   targetOf,
   underdogRepMultiplier,
   underdogSide,
   type CountedAction,
   type CountTag,
   type CountVote,
+  type MeterPosition,
   type Tally,
 } from './meter.ts';
 
@@ -127,21 +134,40 @@ describe('lean, not volume', () => {
         const ra = rollDay(count, a);
         const rb = rollDay(count, b);
         expect({ ...rb, votes: 0 }, `${name} from ${count}`).toEqual({ ...ra, votes: 0 });
+        // and a whole day of it, its five burns falling before the drift
+        const start: MeterPosition = { count, burnStep: 0, day: 0 };
+        const da = runMeter(start, DAY_S, () => a);
+        const db = runMeter(start, DAY_S, () => b);
+        expect(db.position, `${name}, a day from ${count}`).toEqual(da.position);
+        expect(db.rolls.map((r) => ({ ...r, votes: 0 }))).toEqual(da.rolls.map((r) => ({ ...r, votes: 0 })));
       }
     }
   });
 
-  it('keeps the same drift over a season of days, whatever the population', () => {
-    // 56 days of shifting leans, played out by 3 accounts and by 3,000: the Count walks the same path.
+  it('walks the Count down the same path over a season, burns and all, whatever the population', () => {
+    // 56 days of shifting leans, played by 3 accounts and by 3,000, the meter checked every 4.8 hours and at odd times
+    // between: the Count is the same at every check.
     const next = rng(7);
-    let few = 500;
-    let many = 500;
-    for (let day = 0; day < 56; day++) {
-      const { mix } = MIXES[Math.floor(next() * MIXES.length)]!;
-      few = rollDay(few, tallyOf(syntheticLog(mix, 1, day, 3))).count;
-      many = rollDay(many, tallyOf(syntheticLog(mix, 1000, 1000 + day, 3))).count;
-      expect(many, `day ${day}`).toBe(few);
+    const days = Array.from({ length: 56 }, () => MIXES[Math.floor(next() * MIXES.length)]!.mix);
+    const few = days.map((mix, day) => tallyOf(syntheticLog(mix, 1, day, 3)));
+    const many = days.map((mix, day) => tallyOf(syntheticLog(mix, 1000, 1000 + day, 3)));
+    let a: MeterPosition = { count: 500, burnStep: 0, day: 0 };
+    let b = a;
+    const checks: number[] = [];
+    for (let t = 0; t <= 56 * DAY_S; t += BURN_STEP_S) checks.push(t, t + Math.floor(next() * BURN_STEP_S));
+    let rolled = 0;
+    for (const t of checks.sort((x, y) => x - y)) {
+      const ra = runMeter(a, t, (day) => few[day]!);
+      const rb = runMeter(b, t, (day) => many[day]!);
+      expect(rb.position, `at ${t}`).toEqual(ra.position);
+      expect(rb.burns).toBe(ra.burns);
+      expect(rb.rolls.map((r) => r.count)).toEqual(ra.rolls.map((r) => r.count));
+      rolled += ra.rolls.length;
+      a = ra.position;
+      b = rb.position;
     }
+    expect(rolled).toBe(56);
+    expect(a.burnStep).toBe(56 * BURN_PER_DAY);
   });
 
   it('counts one vote per account per action type per day, the first one cast', () => {
@@ -185,7 +211,7 @@ describe('lean, not volume', () => {
 describe('lean and target', () => {
   it('has no lean on a day with no votes', () => {
     expect(leanOf(EMPTY_TALLY)).toBeNull();
-    expect(rollDay(500, EMPTY_TALLY)).toMatchObject({ votes: 0, lean: null, target: null, drift: 0, burn: 5, count: 495 });
+    expect(rollDay(500, EMPTY_TALLY)).toEqual({ votes: 0, lean: null, target: null, from: 500, drift: 0, count: 500 });
   });
 
   it('targets 850 at all-Feed, 150 at all-Break and 500 at an even split, in whole measures', () => {
@@ -225,52 +251,92 @@ describe('drift and burn', () => {
   const allBreak = addVote(EMPTY_TALLY, 'wall-choice', 'break');
   const even = addVote(allFeed, 'wall-choice', 'break');
 
-  it('drifts at most 25 a day toward the target and burns 5 under it', () => {
+  /** The meter played over `days` days of the same lean from `count` at the start of day 0. */
+  function days(count: number, tally: Tally, n: number) {
+    return runMeter({ count, burnStep: 0, day: 0 }, n * DAY_S, () => tally);
+  }
+
+  it('drifts at most 25 a day toward the target', () => {
     expect(DRIFT_PER_DAY).toBe(25);
-    expect(BURN_PER_DAY).toBe(5);
-    expect(rollDay(500, allFeed)).toEqual({ votes: 1, lean: 1, target: 850, from: 500, drift: 25, burn: 5, count: 520 });
-    expect(rollDay(500, allBreak)).toEqual({ votes: 1, lean: 0, target: 150, from: 500, drift: -25, burn: 5, count: 470 });
-    expect(rollDay(300, even)).toMatchObject({ target: 500, drift: 25, count: 320 });
-    expect(rollDay(700, even)).toMatchObject({ target: 500, drift: -25, count: 670 });
+    expect(rollDay(500, allFeed)).toEqual({ votes: 1, lean: 1, target: 850, from: 500, drift: 25, count: 525 });
+    expect(rollDay(500, allBreak)).toEqual({ votes: 1, lean: 0, target: 150, from: 500, drift: -25, count: 475 });
+    expect(rollDay(300, even)).toMatchObject({ target: 500, drift: 25, count: 325 });
+    expect(rollDay(700, even)).toMatchObject({ target: 500, drift: -25, count: 675 });
   });
 
   it('never drifts past the target', () => {
-    expect(rollDay(840, allFeed)).toMatchObject({ drift: 10, burn: 5, count: 845 });
-    expect(rollDay(510, even)).toMatchObject({ drift: -10, burn: 5, count: 495 });
-    expect(rollDay(500, even)).toMatchObject({ drift: 0, burn: 5, count: 495 });
-    expect(rollDay(495, even)).toMatchObject({ drift: 5, burn: 5, count: 495 });
-    expect(rollDay(160, allBreak)).toMatchObject({ drift: -10, burn: 5, count: 145 });
+    expect(rollDay(840, allFeed)).toMatchObject({ drift: 10, count: 850 });
+    expect(rollDay(510, even)).toMatchObject({ drift: -10, count: 500 });
+    expect(rollDay(500, even)).toMatchObject({ drift: 0, count: 500 });
+    expect(rollDay(160, allBreak)).toMatchObject({ drift: -10, count: 150 });
   });
 
-  it('settles 5 below a steady lean’s target, and a quiet world slides to 0 at 5 a day', () => {
-    for (const [tally, settle] of [
-      [allFeed, 845],
-      [even, 495],
-      [allBreak, 145],
+  it('burns a measure every 17,280 s of world time, 5 a day, never below 0', () => {
+    expect(BURN_PER_DAY).toBe(5);
+    expect(BURN_STEP_S).toBe(17_280);
+    expect(burnStepOf(0)).toBe(0);
+    expect(burnStepOf(17_279.999)).toBe(0);
+    expect(burnStepOf(17_280)).toBe(1);
+    expect(burnStepOf(DAY_S)).toBe(5);
+    expect([burnOnce(500), burnOnce(1), burnOnce(0)]).toEqual([499, 0, 0]);
+    expect(() => burnOnce(0.5)).toThrow(RangeError);
+
+    // a quiet day: a measure falls at 04:48, 09:36, 14:24, 19:12 and midnight; nothing else moves
+    const start: MeterPosition = { count: 500, burnStep: 0, day: 0 };
+    const quiet = () => EMPTY_TALLY;
+    expect(runMeter(start, BURN_STEP_S - 1, quiet)).toEqual({ position: start, rolls: [], burns: 0 });
+    expect(runMeter(start, BURN_STEP_S, quiet).position).toEqual({ count: 499, burnStep: 1, day: 0 });
+    expect(runMeter(start, 4 * BURN_STEP_S + 1, quiet).position).toEqual({ count: 496, burnStep: 4, day: 0 });
+    const day = runMeter(start, DAY_S, quiet);
+    expect(day.position).toEqual({ count: 495, burnStep: 5, day: 1 });
+    expect(day.rolls).toEqual([{ day: 0, votes: 0, lean: null, target: null, from: 495, drift: 0, count: 495 }]);
+    // played in one go or one check at a time, the same
+    let p = start;
+    for (let t = 0; t <= 10 * DAY_S; t += 3_600) p = runMeter(p, t, quiet).position;
+    expect(p).toEqual(days(500, EMPTY_TALLY, 10).position);
+    expect(p).toEqual({ count: 450, burnStep: 50, day: 10 });
+    // a quiet world slides to 0 in 100 days, then stays there
+    expect(days(500, EMPTY_TALLY, 100).position.count).toBe(0);
+    expect(days(500, EMPTY_TALLY, 120)).toMatchObject({ position: { count: 0, burnStep: 600, day: 120 }, burns: 600 });
+  });
+
+  it('burns the day’s last measure before the drift reads the Count', () => {
+    // 840, all Feed: four burns to 836, the midnight burn to 835, then the drift of 15 to the target
+    const r = days(840, allFeed, 1);
+    expect(r.rolls).toEqual([{ day: 0, votes: 1, lean: 1, target: 850, from: 835, drift: 15, count: 850 }]);
+    expect(r.position).toEqual({ count: 850, burnStep: 5, day: 1 });
+    // far from the target, a day nets the drift less the burn
+    expect(days(500, allFeed, 1).position.count).toBe(520);
+    expect(days(500, allBreak, 1).position.count).toBe(470);
+  });
+
+  it('settles on a steady lean’s target at each day’s end, 5 below it before', () => {
+    for (const [tally, target] of [
+      [allFeed, 850],
+      [even, 500],
+      [allBreak, 150],
     ] as const) {
       for (const start of [0, 500, 1000]) {
-        let count = start;
-        for (let day = 0; day < 60; day++) count = rollDay(count, tally).count;
-        expect(count).toBe(settle);
+        const r = days(start, tally, 60);
+        expect(r.position.count, `from ${start}`).toBe(target);
+        expect(r.rolls.at(-1)).toMatchObject({ from: target - 5, drift: 5, count: target });
+        // and just before midnight, after the day's first four burns
+        expect(runMeter(r.position, 60 * DAY_S + 4 * BURN_STEP_S, () => tally).position.count).toBe(target - 4);
       }
     }
-    let count = 500;
-    for (let day = 1; day <= 100; day++) {
-      count = rollDay(count, EMPTY_TALLY).count;
-      expect(count).toBe(500 - 5 * day);
-    }
-    expect(rollDay(0, EMPTY_TALLY)).toMatchObject({ drift: 0, burn: 0, count: 0 });
-    expect(rollDay(3, EMPTY_TALLY)).toMatchObject({ burn: 3, count: 0 });
   });
 
   it('keeps the Count within 0–1,000 and in whole measures', () => {
-    expect(rollDay(COUNT_MAX, allFeed)).toMatchObject({ target: 850, drift: -25, count: 970 });
-    expect(rollDay(0, allBreak)).toMatchObject({ target: 150, drift: 25, count: 20 });
+    expect(rollDay(COUNT_MAX, allFeed)).toMatchObject({ target: 850, drift: -25, count: 975 });
+    expect(rollDay(0, allBreak)).toMatchObject({ target: 150, drift: 25, count: 25 });
+    expect(days(COUNT_MAX, allFeed, 1).position.count).toBe(970); // five burns, then −25
+    expect(days(3, allBreak, 1).position.count).toBe(25); // burns to 0, then +25
     const third = addVote(addVote(EMPTY_TALLY, 'wall-choice', 'feed'), 'wall-choice', 'hold'); // lean 2/3 → 617
-    expect(rollDay(600, third)).toMatchObject({ target: 617, drift: 17, count: 612 });
+    expect(rollDay(600, third)).toMatchObject({ target: 617, drift: 17, count: 617 });
     expect(() => rollDay(500.5, allFeed)).toThrow(RangeError);
     expect(() => rollDay(-1, allFeed)).toThrow(RangeError);
     expect(() => rollDay(1001, allFeed)).toThrow(RangeError);
+    expect(() => runMeter({ count: 1001, burnStep: 0, day: 0 }, DAY_S, () => allFeed)).toThrow(RangeError);
   });
 
   it('counts meter days from world time 0 in 86,400 s', () => {

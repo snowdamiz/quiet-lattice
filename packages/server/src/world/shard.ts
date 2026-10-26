@@ -29,6 +29,8 @@ export interface ShardRecord {
   count: number;
   /** The last meter day rolled into the Count; null until the meter first runs. */
   countDay: number | null;
+  /** The last burn tick burned into the Count; null until the meter first runs. */
+  burnStep: number | null;
 }
 
 /** Where a shard's record lives: Postgres on the server, memory in unit tests. */
@@ -38,7 +40,7 @@ export interface ShardStore {
   load(): Promise<ShardRecord>;
   /** Raises the saved world time to `time`; never lowers it. */
   saveTime(time: number): Promise<void>;
-  /** Where the Count meter's votes and rolls persist. Without one the meter lives in memory only (unit tests). */
+  /** Where the Count meter's votes, rolls and position persist. Without one the meter lives in memory only (unit tests). */
   readonly count?: CountStore;
 }
 
@@ -50,7 +52,7 @@ function worldTimeAt(wallMs: number, epochMs: number): number {
 /** A first boot's record for shard `id`. */
 export function newShardRecord(id: string, epochMs: number, wallMs: number): ShardRecord {
   const now = worldTimeAt(wallMs, epochMs);
-  return { id, epochMs, lastTime: now, season: 1, seasonStart: now, seasonLength: SEASON_LENGTH_S, count: COUNT_START, countDay: null };
+  return { id, epochMs, lastTime: now, season: 1, seasonStart: now, seasonLength: SEASON_LENGTH_S, count: COUNT_START, countDay: null, burnStep: null };
 }
 
 /** Shard `id`'s row in Postgres. `epochMs` and `wallNow` only shape the row a first boot creates. */
@@ -82,6 +84,7 @@ export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallN
         seasonLength: row.seasonLength,
         count: row.count,
         countDay: row.countDay,
+        burnStep: row.burnStep,
       };
     },
     async saveTime(time) {

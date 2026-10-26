@@ -50,8 +50,9 @@ server pushes no periodic time of its own: a pong is the better sample because t
 The shard's row (`shards`, created on the shard's first boot) holds its epoch (2026-01-01Z for a new shard), its season
 (number, start in world time, length; DESIGN 16.4) and `last_time`, the latest world time its server saved (every minute and
 on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
-below `last_time`, and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards,
-even when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
+below `last_time` nor below the time of any stored Count-meter vote not yet rolled (§11; a vote can land after the last
+time save), and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards, even
+when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
 with a clock sync point `{time, at}`: world time `time` at wall time `at` ms) for the processes P3.E37 splits off.
 
 ## 4. Frames of reference on the wire
@@ -204,19 +205,29 @@ database is disposable.
 
 ## 11. The Count meter (`packages/server/src/count`)
 
-DESIGN 16.2, lean not volume. Gameplay reports each counted action to the world service with
+DESIGN 16.1–16.2, lean not volume. Gameplay reports each counted action to the world service with
 `world.countAction(accountId, action, tag)`: `action` is one of `COUNTED_ACTIONS` in `count/meter.ts` (convoy escorted or
 raided, the wall choice, an anchor held, a Hive Heart shattered, a Warden killed, a monolith touched), `tag` is `feed`,
-`hold` or `break`. The open day's ledger keeps one vote per account per action type (the first cast; the call returns
-false for a repeat) and saves each vote to `count_votes`. A meter day is 86,400 s of shard-clock world time from the epoch
-(§3), never wall time. When the clock crosses into a new day (checked every second, and before every counted action) the
-ended day rolls: the lean is Feed's share of the day's vote weight (Hold gives a third of a Feed; a monolith touch weighs a
-tenth of a vote), the target is `round(150 + 700 × lean)`, the Count drifts toward it by at most 25 and burns 5, and stays
-in whole measures in 0–1,000; a day with no votes only burns. The roll is written to `count_days` and the shard's row
-(`count`, `count_day`) in one transaction, published as an ordinary world change (`world` to clients, the Redis mirror),
-and logged. On boot the service reloads the votes of every day after `count_day`, rolls the days that ended while it was
-down, and takes the open day's ledger back, so a restart keeps the day's votes and its one-vote rule; the clock never starts
-below a stored vote's time. The underdog side (`underdogSide(count)`: Break above 700, Feed below 300) and its rep
-multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on either side) are pure functions for the rep model
-to apply. All the arithmetic is pure and integer-exact (votes are summed in thirtieths), so the same lean gives the same
-drift bit for bit at three accounts and at three thousand.
+`hold` or `break`. The account id is lower-cased (as Postgres returns uuids), and the open day's ledger keeps one vote per
+account per action type (the first cast; the call returns false for a repeat).
+
+Two clocks move the Count, both on shard world time from the epoch (§3), never wall time. The burn takes one measure
+every 17,280 s (tick k at k × 17,280 s, so 5 a day). A meter day is 86,400 s; at its end the day's lean is Feed's share of
+its vote weight (a Hold is a full vote of which a third is Feed; a monolith touch weighs a tenth of a vote), the target
+is `round(150 + 700 × lean)` and the Count drifts toward it by at most 25, never past it; a day with no votes does not
+drift. The midnight burn tick belongs to the ending day and falls first, so the drift reads the Count after it; on a
+steady lean the Count sits on the target at each day's end and 5 below it just before. The Count stays in whole measures
+in 0–1,000. `runMeter` plays both clocks forward in time order; the service runs it every second and before every
+counted action, publishes the new Count as one ordinary world change (`world` to clients, the Redis mirror) and logs
+one line.
+
+Persistence: the shard's row holds `count`, `count_day` (the last day rolled) and `burn_step` (the last burn tick
+applied); votes go to `count_votes`, rolls to `count_days`. The service gathers new votes, rolls and the meter's position
+and writes them in one transaction per save: a burst of votes is one batched INSERT and a boot catch-up is one write.
+A save that fails is kept and written again by the next (the next vote, burn or roll, the minute's time save, or
+shutdown). On boot the service reloads the votes of every day after `count_day` and plays every burn and day end that
+passed while it was down, in time order, then takes the open day's ledger back, so a restart keeps the day's votes and
+its one-vote rule; the clock never starts below a stored vote's time (§3). The underdog side (`underdogSide(count)`:
+Break above 700, Feed below 300) and its rep multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on
+either side) are pure functions for the rep model to apply. All the arithmetic is pure and integer-exact (votes are
+summed in thirtieths), so the same lean gives the same Count bit for bit at three accounts and at three thousand.

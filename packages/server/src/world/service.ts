@@ -1,13 +1,14 @@
 // The world service (docs/ARCHITECTURE.md §1–§3, §11, DESIGN 16, 17): the shard-wide state every zone and client is
 // told, namely the season, the Count, where The Edge stands, each star system's tier, and the server clock.
 //
-// The Count moves with lean and burn (DESIGN 16.2): gameplay calls countAction() for every counted action, the day's
-// ledger keeps one vote per account per action type, and when the shard clock crosses into a new meter day (advance(),
-// checked every ROLL_CHECK_MS) the ended day's lean drifts the Count toward its target and the burn takes its 5. The
-// Count and the ledger persist through the shard store, so both survive a restart, and days that ended while the server
-// was down roll when it comes back. The Edge stands at EDGE_X and the tiers are galaxyTiers(edgeX); update() is the lever
-// the Edge following the Count (P2.E22.T02) and dev tooling pull. Seasons rolling over, the Reckoning and dark stations
-// come with P2.E22.T02–T03.
+// The Count moves with lean and burn (DESIGN 16.1–16.2): gameplay calls countAction() for every counted action and the
+// day's ledger keeps one vote per account per action type. advance(), checked every ROLL_CHECK_MS and before every
+// counted action, plays the meter forward on the shard clock: a measure burns every 17,280 s, and at each day's end the
+// day's lean drifts the Count toward its target. The votes, the rolls and how far the meter has run are saved in one
+// batch per write (retried until it lands), so the Count and the open day's ledger survive a restart, and the burns and
+// days that passed while the server was down are played on boot. The Edge stands at EDGE_X and the tiers are
+// galaxyTiers(edgeX); update() is the lever the Edge following the Count (P2.E22.T02) and dev tooling pull. Seasons
+// rolling over, the Reckoning and dark stations come with P2.E22.T02–T03.
 //
 // Zones and the gateway subscribe() and hear every change. The state is mirrored to Redis under worldKey(shard), with a
 // clock sync point, for the processes P3.E37 will split off (ARCHITECTURE §1). The clock's epoch and floor come from the
@@ -16,12 +17,13 @@ import type { ServerMessage } from '@astra/shared/protocol';
 import { EDGE_X, galaxyTiers, type Tier } from '@astra/shared/world';
 import { DayLedger } from '../count/ledger.ts';
 import {
+  burnStepOf,
   checkVote,
   COUNT_MAX,
   COUNT_MIN,
   dayOf,
   leanOf,
-  rollDay,
+  runMeter,
   targetOf,
   underdogSide,
   type CountedAction,
@@ -36,7 +38,7 @@ import type { ShardStore } from './shard.ts';
 export { COUNT_MAX, COUNT_START } from '../count/meter.ts';
 /** How often the latest world time is saved to the shard's row and the Redis mirror refreshed. */
 export const SAVE_EVERY_MS = 60_000;
-/** How often the service checks whether the shard clock has crossed into a new meter day. */
+/** How often the service checks whether the shard clock has reached a burn tick or a day's end. */
 export const ROLL_CHECK_MS = 1000;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -88,6 +90,14 @@ export interface MeterState {
   readonly target: number | null;
   /** The side earning the underdog's bonus rep at the Count now, or null. */
   readonly underdog: CountSide | null;
+}
+
+/** What one advance() did. */
+export interface MeterAdvance {
+  /** Days that rolled. */
+  readonly days: number;
+  /** Burn ticks that fell. */
+  readonly burns: number;
 }
 
 /** What zones and the gateway read of the world. */
@@ -175,12 +185,19 @@ export class WorldService implements WorldSource {
   private closed: Promise<void> | undefined;
   /** The open meter day's votes. */
   private ledger: DayLedger;
+  /** The last burn tick in the Count. */
+  private burnStep: number;
   /** Stored votes of the days after the last one rolled, by day: only on boot, until advance() reaches them. */
   private readonly unrolled = new Map<number, StoredVote[]>();
+  /** What the meter has not saved yet: written in one batch by the next meter save, and kept for the one after if it fails. */
+  private unsavedVotes: StoredVote[] = [];
+  private unsavedRolls: StoredRoll[] = [];
+  private positionMoved = false;
+  private meterSaveQueued = false;
 
   /**
-   * Loads (or on first boot creates) the shard's row, starts the clock from it, reloads the meter's votes, rolls every
-   * meter day that ended while the shard was down and mirrors the state.
+   * Loads (or on first boot creates) the shard's row, starts the clock from it, reloads the meter's votes, plays the
+   * burns and days that passed while the shard was down and mirrors the state.
    */
   static async open(opts: WorldServiceOptions): Promise<WorldService> {
     const record = await opts.store.load();
@@ -189,7 +206,10 @@ export class WorldService implements WorldSource {
     // The clock never starts below a vote it recorded, as it never starts below the time it saved.
     const floor = votes.reduce((t, v) => Math.max(t, v.at), record.lastTime);
     const clock = createServerClock({ epochMs: record.epochMs, floor, wallNow: opts.wallNow, monoNow: opts.monoNow });
+    // On the meter's first run, it starts now: no day has ended and no burn has fallen yet.
+    const firstRun = record.countDay === null || record.burnStep === null;
     const rolledThrough = record.countDay ?? dayOf(clock.now()) - 1;
+    const burnStep = record.burnStep ?? burnStepOf(clock.now());
     const initial = {
       revision: 1,
       season: record.season,
@@ -199,14 +219,17 @@ export class WorldService implements WorldSource {
       edgeX: EDGE_X,
       tiers: tierMap(EDGE_X),
     };
-    const world = new WorldService(opts, clock, record.epochMs, initial, rolledThrough, votes);
-    if (record.countDay === null && count) world.enqueue('start the Count meter', () => count.saveCount(record.count, rolledThrough));
-    const daysRolled = world.advance();
+    const world = new WorldService(opts, clock, record.epochMs, initial, rolledThrough, burnStep, votes);
+    if (firstRun) {
+      world.positionMoved = true;
+      world.saveMeterSoon();
+    }
+    const caughtUp = world.advance();
     world.mirrorNow();
     await world.flush();
     const s = world.current;
     opts.log?.info(
-      { shard: world.shardId, season: s.season, count: s.count, day: world.ledger.day, daysRolled, edgeX: s.edgeX, worldTime: clock.now() },
+      { shard: world.shardId, season: s.season, count: s.count, day: world.ledger.day, ...caughtUp, edgeX: s.edgeX, worldTime: clock.now() },
       'world service ready',
     );
     return world;
@@ -218,6 +241,7 @@ export class WorldService implements WorldSource {
     epochMs: number,
     initial: Omit<WorldState, 'tiers'> & { tiers: Tier[] },
     rolledThrough: number,
+    burnStep: number,
     votes: readonly StoredVote[],
   ) {
     this.shardId = opts.store.id;
@@ -237,6 +261,7 @@ export class WorldService implements WorldSource {
       else this.unrolled.set(v.day, [v]);
     }
     this.ledger = this.openDay(rolledThrough + 1);
+    this.burnStep = burnStep;
   }
 
   state(): WorldState {
@@ -273,27 +298,29 @@ export class WorldService implements WorldSource {
     }
     if (!Number.isFinite(edgeX)) throw new RangeError(`the Edge must stand at a finite x (ly), not ${edgeX}`);
     const change = this.commit(count, edgeX);
-    const store = this.store.count;
-    if (change && store && change.state.count !== change.previous.count) this.enqueue('save the Count', () => store.saveCount(count));
+    if (change && change.state.count !== change.previous.count) {
+      this.positionMoved = true;
+      this.saveMeterSoon();
+    }
     return change;
   }
 
   /**
    * Counts a Feed, Hold or Break action by `accountId` toward today's lean (DESIGN 16.2). Only an account's first vote on
    * an action type each meter day counts: returns true when this one did, false when the account had already voted on
-   * that action today. The vote is saved to the shard. Throws RangeError for an account id that is not a uuid, an action
-   * that is not counted, or a tag the action cannot carry.
+   * that action today. The vote is saved to the shard with the next meter save. Throws RangeError for an account id that
+   * is not a uuid, an action that is not counted, or a tag the action cannot carry.
    */
   countAction(accountId: string, action: CountedAction, tag: CountTag): boolean {
     if (!UUID.test(accountId)) throw new RangeError(`an account id is a uuid, not "${accountId}"`);
     checkVote(action, tag);
     this.advance();
-    const vote: CountVote = { accountId, action, tag };
+    // Postgres hands uuids back lower-case: the ledger's key must match a vote reloaded after a restart.
+    const vote: CountVote = { accountId: accountId.toLowerCase(), action, tag };
     if (!this.ledger.vote(vote)) return false;
-    const store = this.store.count;
-    if (store) {
-      const stored: StoredVote = { ...vote, day: this.ledger.day, at: this.clock.now() };
-      this.enqueue('save a counted action', () => store.addVote(stored));
+    if (this.store.count) {
+      this.unsavedVotes.push({ ...vote, day: this.ledger.day, at: this.clock.now() });
+      this.saveMeterSoon();
     }
     return true;
   }
@@ -306,24 +333,29 @@ export class WorldService implements WorldSource {
   }
 
   /**
-   * Rolls every meter day that has ended by the shard clock into the Count, oldest first (DESIGN 16.2): each day's lean
-   * drifts the Count toward its target and the burn takes its 5. Each roll is saved with the new Count and subscribers
-   * hear each change. Returns how many days rolled. Runs every rollCheckMs once started, and before every counted action.
+   * Plays the meter forward to the shard clock's now (DESIGN 16.1–16.2): every burn tick (a measure every 17,280 s) and
+   * every day's end (the day's lean drifts the Count toward its target) that has passed, in time order. Subscribers hear
+   * the new Count as one change, it is saved with the rolls in the next meter save, and one line is logged. Runs every
+   * rollCheckMs once started, and before every counted action.
    */
-  advance(): number {
-    const today = dayOf(this.clock.now());
-    let rolled = 0;
-    while (this.ledger.day < today) {
-      const day = this.ledger.day;
-      const roll: StoredRoll = { day, season: this.current.season, ...rollDay(this.current.count, this.ledger.tally()) };
-      this.ledger = this.openDay(day + 1);
-      const store = this.store.count;
-      if (store) this.enqueue('save the day roll', () => store.saveRoll(roll));
-      this.log?.info({ shard: this.shardId, ...roll }, 'count day rolled');
-      this.commit(roll.count, this.current.edgeX);
-      rolled++;
-    }
-    return rolled;
+  advance(): MeterAdvance {
+    const from = { count: this.current.count, burnStep: this.burnStep, day: this.ledger.day };
+    const run = runMeter(from, this.clock.now(), (day) => (day === this.ledger.day ? this.ledger : this.openDay(day)).tally());
+    if (run.burns === 0 && run.rolls.length === 0) return { days: 0, burns: 0 };
+    const { position } = run;
+    this.burnStep = position.burnStep;
+    if (position.day !== this.ledger.day) this.ledger = this.openDay(position.day);
+    const season = this.current.season;
+    for (const roll of run.rolls) this.unsavedRolls.push({ ...roll, season });
+    this.positionMoved = true;
+    this.saveMeterSoon();
+    const last = run.rolls.at(-1);
+    this.log?.info(
+      { shard: this.shardId, from: from.count, count: position.count, burns: run.burns, days: run.rolls.length, ...(last ? { lastRoll: last } : {}) },
+      'count meter ran',
+    );
+    this.commit(position.count, this.current.edgeX);
+    return { days: run.rolls.length, burns: run.burns };
   }
 
   /** What the mirror holds now. */
@@ -331,7 +363,7 @@ export class WorldService implements WorldSource {
     return { ...this.current, shard: this.shardId, epochMs: this.epochMs, time: this.clock.now(), at: this.wallNow() };
   }
 
-  /** Starts saving the world time and refreshing the mirror every saveEveryMs, and rolling meter days as they end. */
+  /** Starts saving the world time and refreshing the mirror every saveEveryMs, and running the meter as time passes. */
   start(): void {
     if (this.timer || this.closed) return;
     this.timer = setInterval(() => this.save(), this.saveEveryMs);
@@ -340,15 +372,19 @@ export class WorldService implements WorldSource {
       try {
         this.advance();
       } catch (err) {
-        this.log?.error({ shard: this.shardId, err }, 'count day roll failed');
+        this.log?.error({ shard: this.shardId, err }, 'count meter failed to run');
       }
     }, this.rollCheckMs);
     this.rollTimer.unref();
   }
 
-  /** Saves the latest world time to the shard's row and refreshes the mirror (queued; failures are logged). */
+  /**
+   * Saves the latest world time to the shard's row, retries any meter save that failed, and refreshes the mirror (queued;
+   * failures are logged).
+   */
   save(): void {
     this.enqueue('save world time', () => this.store.saveTime(this.clock.now()));
+    this.saveMeterSoon();
     this.mirrorNow();
   }
 
@@ -357,7 +393,7 @@ export class WorldService implements WorldSource {
     return this.queue;
   }
 
-  /** Stops the timers and saves the world time one last time. Safe to call twice. */
+  /** Stops the timers and saves the world time and the meter one last time. Safe to call twice. */
   close(): Promise<void> {
     return (this.closed ??= (async () => {
       clearInterval(this.timer);
@@ -381,6 +417,36 @@ export class WorldService implements WorldSource {
     }
     this.unrolled.delete(day);
     return ledger;
+  }
+
+  /**
+   * Queues one meter save, unless one is already waiting: it takes every vote and roll gathered by the time it runs, so a
+   * burst of votes is one batch and the mirror and time saves queued behind it wait for one transaction.
+   */
+  private saveMeterSoon(): void {
+    const store = this.store.count;
+    if (!store || this.meterSaveQueued) return;
+    if (this.unsavedVotes.length === 0 && this.unsavedRolls.length === 0 && !this.positionMoved) return;
+    this.meterSaveQueued = true;
+    this.enqueue('save the Count meter', async () => {
+      this.meterSaveQueued = false;
+      const votes = this.unsavedVotes;
+      const rolls = this.unsavedRolls;
+      const moved = this.positionMoved;
+      this.unsavedVotes = [];
+      this.unsavedRolls = [];
+      this.positionMoved = false;
+      const position = moved ? { count: this.current.count, burnStep: this.burnStep, day: this.ledger.day } : undefined;
+      try {
+        await store.save({ votes, rolls, position });
+      } catch (err) {
+        // Kept for the next save (the next vote, burn or roll, the periodic save, or close), which writes them again.
+        this.unsavedVotes = votes.concat(this.unsavedVotes);
+        this.unsavedRolls = rolls.concat(this.unsavedRolls);
+        this.positionMoved ||= moved;
+        throw err;
+      }
+    });
   }
 
   /** Applies a new Count and Edge: the tiers follow the Edge, subscribers hear the change and the mirror is rewritten. */

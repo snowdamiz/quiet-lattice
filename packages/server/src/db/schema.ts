@@ -66,6 +66,8 @@ export const shards = pgTable(
     count: integer('count').notNull().default(500),
     /** The last meter day (world time ÷ 86,400 s, floored) rolled into the Count; null until the meter first runs. */
     countDay: integer('count_day'),
+    /** The last burn tick (world time ÷ 17,280 s, floored) burned into the Count; null until the meter first runs. */
+    burnStep: integer('burn_step'),
   },
   (t) => [
     check('shards_season_check', sql`${t.season} >= 1`),
@@ -94,7 +96,10 @@ export const countVotes = pgTable(
   (t) => [primaryKey({ columns: [t.shardId, t.day, t.accountId, t.action] }), check('count_votes_tag_check', sql`${t.tag} in ('feed', 'hold', 'break')`)],
 );
 
-/** Each meter day the Count rolled (DESIGN 16.2): its lean, target, drift and burn, written with the new Count. */
+/**
+ * Each meter day the Count rolled (DESIGN 16.2): its votes, lean and target, the Count at the day's end, the drift and the
+ * Count after it. The burn is not here: it falls on its own clock, one measure every 17,280 s.
+ */
 export const countDays = pgTable(
   'count_days',
   {
@@ -109,7 +114,6 @@ export const countDays = pgTable(
     target: integer('target'),
     countFrom: integer('count_from').notNull(),
     drift: integer('drift').notNull(),
-    burn: integer('burn').notNull(),
     count: integer('count').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
