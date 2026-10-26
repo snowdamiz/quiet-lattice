@@ -1,5 +1,6 @@
-// Phase placement: caps per kind, reuse of a player's own and a party member's phase, overflow into a new phase, and
-// closing (when the last member leaves, goes elsewhere, leaves the zone or stays outside past the grace, or on demand).
+// Phase placement: caps per kind, reuse of a player's own and a party member's phase (the party it was placed under, or
+// its tag), overflow into a new phase, a disconnected member's kept place, and closing (when the last member leaves, goes
+// elsewhere, leaves the zone, stays outside or away past the grace, or on demand).
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import { Zone, type EntityInit, type ZoneLog, type ZoneViewer } from '../zones/zone.ts';
@@ -7,7 +8,10 @@ import { PHASE_KINDS, PHASE_VOLUME_HYSTERESIS } from './kinds.ts';
 import type { PhaseLocation } from './manager.ts';
 
 class Viewer implements ZoneViewer {
-  constructor(readonly id: number) {}
+  constructor(
+    readonly id: number,
+    readonly characterId: string | null = null,
+  ) {}
   sendBinary(): void {}
 }
 
@@ -30,9 +34,9 @@ function setup() {
     ...extra,
   });
   let nextViewer = 1;
-  /** a session joined at `pos` in the Waystation's frame, in `party` */
-  const player = (pos: [number, number, number] = [0, 0, 0], party: string | null = null) => {
-    const viewer = new Viewer(nextViewer++);
+  /** a session joined at `pos` in the Waystation's frame, in `party`, playing `character` */
+  const player = (pos: [number, number, number] = [0, 0, 0], party: string | null = null, character: string | null = null) => {
+    const viewer = new Viewer(nextViewer++, character);
     const entity = zone.join(viewer, init(pos, { party }));
     return { viewer, entity };
   };
@@ -102,6 +106,28 @@ describe('phase placement', () => {
     // another place is another phase, party or not
     expect(phases.phaseFor(b.viewer, 'story', place('elsewhere'))).not.toBe(pa);
     expect([...pa.members]).toEqual([a.entity, c.entity]);
+    // and the party's own members still get in alongside the player placed under its party
+    const f = player([0, 0, 0], 'p1');
+    expect(phases.phaseFor(f.viewer, 'story', place('site'))).toBe(pa);
+  });
+
+  it('keeps the party a player was placed under: players placed under one party share its story phase with its members', () => {
+    const { phases, player, place } = setup();
+    // two players with no party tag, placed under one party (a quest's), then a member tagged with it
+    const u1 = player();
+    const u2 = player();
+    const p = phases.phaseFor(u1.viewer, 'story', place('step'), 'questParty');
+    expect(phases.phaseFor(u2.viewer, 'story', place('step'), 'questParty')).toBe(p);
+    const tagged = player([0, 0, 0], 'questParty');
+    expect(phases.phaseFor(tagged.viewer, 'story', place('step'))).toBe(p);
+    expect(p.members.size).toBe(3);
+    // asking again with no party keeps the party it was placed under; a player of no party still gets a phase of its own
+    expect(phases.phaseFor(u1.viewer, 'story', place('step'))).toBe(p);
+    expect(phases.phaseFor(player().viewer, 'story', place('step'))).not.toBe(p);
+    expect(phases.phaseFor(player([0, 0, 0], 'questParty').viewer, 'story', place('step'))).toBe(p);
+    // a tagged player placed under another party goes by that party
+    const elsewhere = phases.phaseFor(player([0, 0, 0], 'questParty').viewer, 'story', place('step'), 'otherParty');
+    expect(elsewhere).not.toBe(p);
   });
 
   it('fills a bay up to 24, opens another for the 25th, and fills the fullest bay with room first', () => {
@@ -121,6 +147,31 @@ describe('phase placement', () => {
     expect(phases.phaseFor(player().viewer, 'bay', hangar)).toBe(first);
     expect(first.members.size).toBe(24);
     expect(phases.count).toBe(2);
+    // the newer bay fuller than the older: arrivals go to the newer
+    for (let i = 0; i < 5; i++) phases.phaseFor(player().viewer, 'bay', hangar);
+    for (const p of crowd.slice(4)) phases.leave(p.viewer);
+    expect([first.members.size, second.members.size]).toEqual([4, 7]);
+    expect(phases.phaseFor(player().viewer, 'bay', hangar)).toBe(second);
+    expect(second.members.size).toBe(8);
+  });
+
+  it('never places anyone in a closed phase', () => {
+    const { phases, player, place } = setup();
+    const x = player();
+    const bay = phases.phaseFor(x.viewer, 'bay', place('hangar'));
+    phases.close(bay.id);
+    const nextBay = phases.phaseFor(player().viewer, 'bay', place('hangar'));
+    expect(nextBay).not.toBe(bay);
+    expect(nextBay.open).toBe(true);
+    expect(bay.members.size).toBe(0);
+    // a story phase emptied by its party's last member: the party's next member gets a new one
+    const m1 = player([0, 0, 0], 'P');
+    const story = phases.phaseFor(m1.viewer, 'story', place('site'));
+    phases.leave(m1.viewer);
+    expect(story.open).toBe(false);
+    const again = phases.phaseFor(player([0, 0, 0], 'P').viewer, 'story', place('site'));
+    expect(again).not.toBe(story);
+    expect(again.open).toBe(true);
   });
 
   it('puts a player in a party member’s bay while it has room, ahead of a fuller one, and elsewhere once it is full', () => {
@@ -279,5 +330,127 @@ describe('phase placement', () => {
     loc.radius = 1;
     expect(p.location).toMatchObject({ center: [0, 0, 0], radius: 200 });
     expect(Object.isFrozen(p.location)).toBe(true);
+  });
+});
+
+describe('a dropped connection', () => {
+  it('keeps the member’s place for the grace, and its character finds it again through phaseFor', () => {
+    const { zone, phases, player, place, init, step } = setup();
+    const a = player([0, 0, 0], null, 'char-a');
+    const p = phases.phaseFor(a.viewer, 'story', place('site'));
+    const actor = phases.spawn(p.id, init([10, 0, 0], { kind: 'npc', mode: undefined, name: 'Echo' }));
+    step();
+    expect(zone.leave(a.viewer, 'disconnected')).toBe(true);
+    expect(zone.entity(a.entity)).toBeUndefined();
+    expect(p.open).toBe(true);
+    expect([...p.members]).toEqual([]);
+    expect([...p.held]).toEqual(['char-a']);
+    expect(zone.entity(actor)).toBeDefined();
+    step(PHASE_KINDS.story.graceS - 1);
+    expect(p.open).toBe(true);
+
+    // the character reconnects as a new session with a new entity
+    const back = player([0, 0, 0], null, 'char-a');
+    expect(phases.phaseFor(back.viewer, 'story', place('site'))).toBe(p);
+    expect([...p.members]).toEqual([back.entity]);
+    expect(p.held.size).toBe(0);
+    step(PHASE_KINDS.story.graceS);
+    expect(p.open && phases.phaseOf(back.entity) === p.id && zone.entity(actor) !== undefined).toBe(true);
+  });
+
+  it('gives the place up once the grace runs out, closing the phase if nothing else keeps it open', () => {
+    const { zone, phases, player, place, init, step } = setup();
+    const grace = PHASE_KINDS.raid.graceS;
+    const a = player([0, 0, 0], null, 'char-a');
+    const b = player([0, 0, 0], null, 'char-b');
+    const p = phases.phaseFor(a.viewer, 'raid', place('vault'));
+    phases.phaseFor(b.viewer, 'raid', place('vault'));
+    const boss = phases.spawn(p.id, init([10, 0, 0], { kind: 'mob', mode: 'idle' }));
+    step();
+    zone.leave(a.viewer, 'disconnected');
+    step(1);
+    step(grace - 1.5);
+    expect(p.held.has('char-a')).toBe(true);
+    step(0.6);
+    expect(p.held.size).toBe(0);
+    expect(p.open).toBe(true);
+    // the last member drops too; nobody comes back
+    zone.leave(b.viewer, 'disconnected');
+    step(1);
+    expect(p.open).toBe(true);
+    step(grace);
+    expect(p.open).toBe(false);
+    expect(zone.entity(boss)).toBeUndefined();
+    // a character coming back after that gets a new phase
+    const late = player([0, 0, 0], null, 'char-b');
+    expect(phases.phaseFor(late.viewer, 'raid', place('vault'))).not.toBe(p);
+  });
+
+  it('counts a kept place towards the cap and the party', () => {
+    const { zone, phases, player, place } = setup();
+    const hangar = place('hangar');
+    const crowd = Array.from({ length: 24 }, (_, i) => player([0, 0, 0], null, `c${i}`));
+    for (const p of crowd) phases.phaseFor(p.viewer, 'bay', hangar);
+    const first = phases.phase(phases.phaseOf(crowd[0]!.entity)!)!;
+    zone.leave(crowd[0]!.viewer, 'disconnected');
+    expect([first.members.size, first.held.size]).toEqual([23, 1]);
+    expect(phases.phaseFor(player().viewer, 'bay', hangar)).not.toBe(first);
+
+    // a story phase whose only member dropped is still its party's
+    const m = player([0, 0, 0], 'P', 'char-m');
+    const story = phases.phaseFor(m.viewer, 'story', place('site'));
+    zone.leave(m.viewer, 'disconnected');
+    expect(phases.phaseFor(player([0, 0, 0], 'Q').viewer, 'story', place('site'))).not.toBe(story);
+    const mate = player([0, 0, 0], 'P');
+    expect(phases.phaseFor(mate.viewer, 'story', place('site'))).toBe(story);
+    // back with no party tag (the party system has not re-tagged it yet), it keeps the party it had
+    const back = player([0, 0, 0], null, 'char-m');
+    expect(phases.phaseFor(back.viewer, 'story', place('site'))).toBe(story);
+    expect(phases.phaseFor(player([0, 0, 0], 'P').viewer, 'story', place('site'))).toBe(story);
+    expect(story.members.size).toBe(3);
+  });
+
+  it('is the only way out that keeps a place: leaving otherwise, or with no character, goes at once', () => {
+    const { zone, phases, player, place, init } = setup();
+    // a handoff or a logout
+    const a = player([0, 0, 0], null, 'char-a');
+    const pa = phases.phaseFor(a.viewer, 'story', place('site'));
+    const actor = phases.spawn(pa.id, init([5, 0, 0], { kind: 'npc', mode: undefined }));
+    zone.leave(a.viewer);
+    expect(pa.open).toBe(false);
+    expect(zone.entity(actor)).toBeUndefined();
+    // its entity despawned
+    const b = player([0, 0, 0], null, 'char-b');
+    const pb = phases.phaseFor(b.viewer, 'story', place('site'));
+    zone.despawn(b.entity);
+    expect(pb.open).toBe(false);
+    // a session with no character
+    const c = player();
+    const pc = phases.phaseFor(c.viewer, 'story', place('site'));
+    zone.leave(c.viewer, 'disconnected');
+    expect(pc.open).toBe(false);
+    // a session in no phase
+    const d = player([0, 0, 0], null, 'char-d');
+    zone.leave(d.viewer, 'disconnected');
+    expect(phases.count).toBe(0);
+  });
+
+  it('gives a kept place up when its character is placed elsewhere or leaves', () => {
+    const { zone, phases, player, place } = setup();
+    const a = player([0, 0, 0], null, 'char-a');
+    const story = phases.phaseFor(a.viewer, 'story', place('site'));
+    zone.leave(a.viewer, 'disconnected');
+    const back = player([0, 0, 0], null, 'char-a');
+    const bay = phases.phaseFor(back.viewer, 'bay', place('hangar'));
+    expect(story.open).toBe(false);
+    expect(phases.phaseOf(back.entity)).toBe(bay.id);
+
+    const b = player([0, 0, 0], null, 'char-b');
+    const event = phases.phaseFor(b.viewer, 'event', place('site'));
+    zone.leave(b.viewer, 'disconnected');
+    const bBack = player([0, 0, 0], null, 'char-b');
+    expect(phases.leave(bBack.viewer)).toBe(true);
+    expect(event.open).toBe(false);
+    expect(phases.leave(bBack.viewer)).toBe(false);
   });
 });

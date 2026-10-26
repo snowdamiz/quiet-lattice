@@ -50,7 +50,10 @@ type InputMessage = Extract<ClientMessage, { t: 'input' }>;
 /** An entity's wire fields: everything an EntityState carries but its id and `clear`. */
 export type EntityFields = Omit<EntityState, 'id' | 'clear'>;
 
-/** A new entity: its kind and pose, any other wire fields, and its party (members always see each other). */
+/**
+ * A new entity: its kind and pose, any other wire fields, and its party (members see each other wherever they are,
+ * unless a phase hides one from the other: phases/manager.ts).
+ */
 export interface EntityInit extends EntityFields {
   kind: EntityKind;
   frame: FrameId;
@@ -83,8 +86,16 @@ export const INPUT_LIMITS = { maxDistance: 1e11, maxSpeed: 1e9 } as const;
 /** Where a zone sends a session's snapshots: the gateway's Session, or a stand-in in tests and the bench. */
 export interface ZoneViewer {
   readonly id: number;
+  /** the character in play, whose place in a phase is kept for a while when its connection drops */
+  readonly characterId?: string | null;
   sendBinary(data: Uint8Array): void;
 }
+
+/**
+ * How a session leaves a zone: 'disconnected' when its connection dropped (a phase keeps its place for the grace, so a
+ * reconnect finds it again); 'left' any other way (a handoff, a logout), which takes it out of its phase at once.
+ */
+export type ZoneLeave = 'left' | 'disconnected';
 
 /** A pino-shaped logger (Fastify's). */
 export interface ZoneLog {
@@ -295,7 +306,7 @@ export class Zone {
     this.touch(e);
   }
 
-  /** Puts the entity in its party (members always see each other), or in none. */
+  /** Puts the entity in its party (members see each other wherever they are, phases permitting), or in none. */
   setParty(id: number, party: string | null): void {
     const e = this.mustGet(id);
     if (e.party === party) return;
@@ -315,9 +326,10 @@ export class Zone {
   }
 
   /** Removes the session and its entity. False when it was not here. */
-  leave(viewer: ZoneViewer): boolean {
+  leave(viewer: ZoneViewer, how: ZoneLeave = 'left'): boolean {
     const v = this.views.get(viewer);
     if (!v) return false;
+    if (how === 'disconnected') this.phases.disconnected(viewer);
     this.views.delete(viewer);
     this.despawn(v.entityId);
     return true;

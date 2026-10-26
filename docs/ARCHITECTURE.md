@@ -130,9 +130,10 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 
 A zone hosts one star system: every entity in it, a 20 Hz tick, a spatial hash over world positions at the tick's time,
 interest sets per session (entities within the class radius of the session's own entity: ships 50 km, walkers 2 km, mobs
-1.5 km, loot 500 m, always the session's own entity and party), and per-session delta snapshots. Ticks are fixed-step; a
-tick that overruns is logged with its duration (the budget is 10 ms p95 at 200 entities). Entities in deep space between
-systems belong to a deep-space zone keyed by the nearest system (P1.E04.T04).
+1.5 km, loot 500 m; always the session's own entity, and its party wherever they are; then its phase may hide some of
+them, §6.1), and per-session delta snapshots. Ticks are fixed-step; a tick that overruns is logged with its duration (the
+budget is 10 ms p95 at 200 entities). Entities in deep space between systems belong to a deep-space zone keyed by the
+nearest system (P1.E04.T04).
 
 The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
 landed players sit in their ships), is a ship; a player on foot, an NPC or a prop is a walker; a mob is a mob; loot and
@@ -150,9 +151,11 @@ the frame. Every entity is in one phase or none (the shared world): **members** 
 init)`. Kinds and caps (`phases/kinds.ts`): `story` holds one party (a player in no party is a party of one), `bay` 24
 players, `event` and `raid` 12.
 
-- **Placement** reuses the phase the player is already in at that place, else a party member's that has room, else the
-  fullest that has room (the oldest of equals), else opens one. A player is in one phase at a time; placing it elsewhere
-  takes it out of the old one. The party is the zone's party tag until the party system (P1.E15.T01).
+- **Placement** reuses the phase the player is already in at that place (or kept for its character, below), else a
+  party member's that has room, else the fullest that has room (the oldest of equals), else opens one. A player is in one
+  phase at a time; placing it elsewhere takes it out of the old one. A member's party is the `partyId` it was placed
+  under, which it keeps; without one, its entity's party tag as it stands (the tag stands in for the party system,
+  P1.E15.T01).
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
   players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
@@ -160,8 +163,12 @@ players, `event` and `raid` 12.
   none sees it; the shared world's other entities stay in its sight. A `story` phase hides only its actors (DESIGN 14.1:
   everyone else sees the ordinary world there). With nothing in a phase the filter is skipped.
 - **Presence**: a member outside the volume goes back to the shared world after the kind's grace (15 s), keeping its
-  phase if it returns in time; one whose entity leaves the zone goes at once. A phase with no members closes, and its own
-  entities are despawned; `close(phase)` does the same on demand. Opening and closing are logged (info).
+  phase if it returns in time. A member whose connection drops (`ZoneManager.leave(session, 'disconnected')`: every
+  socket close, and the old connection kicked when its character enters again) keeps its place for the same grace, by
+  character id, with its party, counting towards the cap; its character's next `phaseFor` at that place returns it to
+  the phase. One that leaves the zone any other way (a handoff, a logout) goes at once. A phase with no members and no
+  kept places closes, and its own entities are despawned; `close(phase)` does the same on demand. Opening and closing
+  are logged (info).
 
 ## 7. Authority
 

@@ -1,7 +1,8 @@
 // Phases over the wire, against the dockerised Postgres and Redis: players at one spot in their home Waystation, put in
 // phases by the zone's phase manager (as the quest engine and the hangar will), see their own phase's actors and the
 // shared world, never another phase's actors, and (in an event instance) not another instance's players; a party shares
-// one phase; a phase whose last member disconnects closes and takes its actors with it.
+// one phase. A dropped connection keeps its place for the grace, and the character reconnecting finds it again; leaving
+// the zone any other way (as a handoff or a logout will) takes a player out at once, and the last one out closes it.
 import { PROTOCOL_VERSION, type PeopleId } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { PhaseLocation } from '../src/phases/manager.ts';
@@ -21,9 +22,9 @@ afterAll(async () => {
 });
 
 /** A player in the world: signed in, joined, applying and acknowledging every snapshot; its session and zone. */
-async function player(people: PeopleId = 'thalune') {
-  const { token } = await newAccount(server);
-  const characterId = (await newCharacter(server, token, { people })).id;
+async function player(people: PeopleId = 'thalune', existing?: { token: string; characterId: string }) {
+  const token = existing?.token ?? (await newAccount(server)).token;
+  const characterId = existing?.characterId ?? (await newCharacter(server, token, { people })).id;
   const sock = await TestSocket.open(server.wsUrl);
   const client = new SnapshotClient();
   const errors: unknown[] = [];
@@ -39,13 +40,13 @@ async function player(people: PeopleId = 'thalune') {
   sock.send({ t: 'hello', version: PROTOCOL_VERSION, token });
   sock.send({ t: 'join', characterId });
   const welcome = await sock.next('welcome');
-  const session = [...server.ws.registry.sessions].find((s) => s.characterId === characterId)!;
+  const session = [...server.ws.registry.sessions].find((s) => s.characterId === characterId && s.entityId === welcome.entityId)!;
   const zone = server.zones.zone(welcome.zone.id)!;
   /** whether it holds entity `id` now */
   const sees = (id: number) => client.latest.has(id);
   /** whether any state it applied after tick `after` held entity `id` */
   const heldAfter = (after: number, id: number) => [...client.states].some(([tick, state]) => tick > after && state.has(id));
-  return { sock, client, errors, welcome, session, zone, entityId: welcome.entityId, sees, heldAfter };
+  return { token, characterId, sock, client, errors, welcome, session, zone, entityId: welcome.entityId, sees, heldAfter };
 }
 
 type Player = Awaited<ReturnType<typeof player>>;
@@ -73,7 +74,8 @@ async function ticks(players: Player[], n: number): Promise<void> {
   await waitFor(() => players.every((p) => (p.client.latestTick ?? 0) >= target), 5000, `${n} ticks`);
 }
 
-async function leaveAll(players: Player[]): Promise<void> {
+/** Closes the players' sockets and waits for their entities to leave the zone. */
+async function disconnect(players: Player[]): Promise<void> {
   for (const p of players) p.sock.close();
   await Promise.all(players.map((p) => p.sock.closed));
   await waitFor(() => players.every((p) => p.zone.entity(p.entityId) === undefined), 5000, 'the players to leave the zone');
@@ -106,8 +108,15 @@ describe('phases over the wire', () => {
     expect(a.errors).toEqual([]);
     expect(b.errors).toEqual([]);
     zone.despawn(dockhand);
-    await leaveAll([a, b]);
-    expect(pa.open || pb.open).toBe(false);
+    // their connections drop: each phase keeps its player's place, and its actor, for the grace
+    await disconnect([a, b]);
+    expect([pa, pb].map((p) => [p.open, p.members.size, [...p.held]])).toEqual([
+      [true, 0, [a.characterId]],
+      [true, 0, [b.characterId]],
+    ]);
+    expect(zone.entity(actorA) && zone.entity(actorB)).toBeDefined();
+    zone.phases.close(pa.id);
+    zone.phases.close(pb.id);
     expect(zone.entity(actorA) ?? zone.entity(actorB)).toBeUndefined();
   });
 
@@ -141,19 +150,26 @@ describe('phases over the wire', () => {
     expect(players.slice(0, 12).some((p) => late.heldAfter(placedAt, p.entityId))).toBe(false);
     expect(players.every((p) => p.errors.length === 0)).toBe(true);
 
-    // the 13th disconnects: its instance closes and its wave goes with it; the first instance is untouched
-    late.sock.close();
-    await late.sock.closed;
-    await waitFor(() => !two.open, 5000, 'the second instance to close');
-    expect(zone.entity(otherWave)).toBeUndefined();
+    // the 13th's connection drops: its instance keeps its place and its wave; the first instance is untouched
+    await disconnect([late]);
+    expect(two.open && two.members.size === 0 && two.held.has(late.characterId) && zone.entity(otherWave) !== undefined).toBe(true);
     expect(one.open && one.members.size === 12 && zone.entity(wave) !== undefined).toBe(true);
 
-    zone.despawn(dockhand);
-    await leaveAll(players.slice(0, 12));
+    // the first twelve leave the zone another way (as a handoff or a logout will): they go at once, and their instance
+    // closes with the last of them
+    for (const p of players.slice(0, 11)) server.zones.leave(p.session);
+    expect(one.open && one.members.size === 1 && one.held.size === 0).toBe(true);
+    server.zones.leave(players[11]!.session);
     expect(one.open).toBe(false);
+    expect(zone.entity(wave)).toBeUndefined();
+
+    zone.phases.close(two.id);
+    zone.despawn(dockhand);
+    for (const p of players.slice(0, 12)) p.sock.close();
+    await Promise.all(players.map((p) => p.sock.closed));
   });
 
-  it('puts two party members in one phase, sharing its actors, and a third player in a phase of its own', async () => {
+  it('puts two party members in one phase, sharing its actors, and a third player in a phase of its own; a member who reconnects finds it again', async () => {
     const a = await player();
     const b = await player();
     const c = await player();
@@ -174,14 +190,53 @@ describe('phases over the wire', () => {
     expect(c.sees(boss) || c.heldAfter(0, boss)).toBe(false);
     expect(b.client.latest.get(boss)).toMatchObject({ kind: 'mob', name: 'Overseer' });
 
-    // one member leaving keeps the phase for the other
-    a.sock.close();
-    await a.sock.closed;
-    await waitFor(() => p.members.size === 1, 5000, 'a to leave the phase');
-    expect(p.open && b.sees(boss)).toBe(true);
-    await leaveAll([b, c]);
-    expect(p.open || q.open).toBe(false);
+    // a's connection drops: the phase keeps its place for it, and stays the party's
+    await disconnect([a]);
+    expect([...p.members]).toEqual([b.entityId]);
+    expect([...p.held]).toEqual([a.characterId]);
+    expect(b.sees(boss)).toBe(true);
+    // a reconnects (a new session, a new entity, no party tag yet) and is placed at the spot again: the same phase
+    const back = await player('thalune', { token: a.token, characterId: a.characterId });
+    expect(back.entityId).not.toBe(a.entityId);
+    expect(zone.phases.phaseFor(back.session, 'story', site)).toBe(p);
+    expect([...p.members].sort()).toEqual([b.entityId, back.entityId].sort());
+    expect(p.held.size).toBe(0);
+    await waitFor(() => back.sees(boss), 5000, 'a, back, to see the boss');
+    // c is still on its own
+    expect(zone.phases.phaseFor(c.session, 'story', site)).toBe(q);
+    expect(c.sees(boss)).toBe(false);
+
+    expect([a, b, c, back].every((x) => x.errors.length === 0)).toBe(true);
+    await disconnect([b, c, back]);
+    zone.phases.close(p.id);
+    zone.phases.close(q.id);
     expect(zone.entity(boss)).toBeUndefined();
-    expect([a, b, c].every((x) => x.errors.length === 0)).toBe(true);
+  });
+
+  it('keeps a solo raid open through a reconnect from a new connection, and closes it at once on leaving another way', async () => {
+    const a = await player();
+    const { zone } = a;
+    const site = spot(zone, 'vault');
+    const raid = zone.phases.phaseFor(a.session, 'raid', site);
+    const boss = zone.phases.spawn(raid.id, { ...npc(zone, [0, 0, 40], 'Warden'), kind: 'mob', mode: 'idle' });
+    await waitFor(() => a.sees(boss), 5000, 'the boss');
+
+    // the character enters again from a new connection while the old one hangs on (a network blip): the old one is
+    // kicked, and its place in the raid is kept for the new one
+    const again = await player('thalune', { token: a.token, characterId: a.characterId });
+    expect(await a.sock.next('refused')).toMatchObject({ code: 'kicked' });
+    expect(zone.entity(a.entityId)).toBeUndefined();
+    expect(raid.open && raid.held.has(a.characterId) && zone.entity(boss) !== undefined).toBe(true);
+    expect(zone.phases.phaseFor(again.session, 'raid', site)).toBe(raid);
+    await waitFor(() => again.sees(boss), 5000, 'the new connection to see the boss');
+
+    // leaving the zone another way takes it out at once, and the raid, empty, closes
+    server.zones.leave(again.session);
+    expect(raid.open).toBe(false);
+    expect(raid.held.size).toBe(0);
+    expect(zone.entity(boss)).toBeUndefined();
+    expect([a, again].every((x) => x.errors.length === 0)).toBe(true);
+    again.sock.close();
+    await again.sock.closed;
   });
 });

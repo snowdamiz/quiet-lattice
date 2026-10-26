@@ -1,6 +1,7 @@
 // Phase kinds (DESIGN 17 "Phases are first class", 14.1, 16.6): story chapters, hangar bays, event instances and raid
-// instances are all phases, a private layer at a shared place with a cap. DESIGN gives the caps (one party, 24 in a bay,
-// 12 in an event or raid); whether a kind hides its players from other layers and the grace period are this table's.
+// instances are all phases, a private layer at a shared place with a cap. DESIGN 17 gives one party, 24 in a bay and 12
+// in an event; a raid's 12 is DESIGN 16.6's "scale 1–12". Whether a kind hides its players from other layers, and the
+// grace period, are this table's.
 //
 // A story phase (an instanced quest step, a chapter, a cutscene) is a private set of actors: its members still see, and
 // are seen by, everyone else at that place, as 14.1 has it ("everyone else sees the ordinary world there"). Bays, events
