@@ -216,8 +216,11 @@ export function starPose(): BodyPose {
   return { position: [0, 0, 0], quaternion: [0, 0, 0, 1], velocity: [0, 0, 0], angularVelocity: [0, 0, 0] };
 }
 
-/** The pose at time t of a body moving as `m` (a BodySpec) about the body whose pose is `parent` (by default the star). */
-export function bodyPose(m: Motion, t: number, parent: BodyPose = starPose()): BodyPose {
+/** The pose at time t of a body moving as `m` (a BodySpec) about the body whose pose is `parent`. Without one it orbits the
+ * star, so a body whose spec names a parent body (a moon) must be given that body's pose. */
+export function bodyPose(m: Motion & { parent?: number | null }, t: number, parent?: BodyPose): BodyPose {
+  if (!parent && m.parent != null) throw new RangeError(`a body orbiting body ${m.parent} needs that body's pose`);
+  parent ??= starPose();
   orbitObjects(m, _motion);
   _motion.rotationPeriod = m.rotationPeriod;
   _motion.rotationPhase = m.rotationPhase;

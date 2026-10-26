@@ -136,6 +136,14 @@ describe('systemPoses', () => {
     expect(() => systemPoses({ ...d, station: { ...d.station, parent: d.bodies.length } }, 0)).toThrow(RangeError);
   });
 
+  it('bodyPose refuses a moon without its planet’s pose, and orbits a planet round the star by default', () => {
+    const d = SYSTEMS.find((s) => s.bodies.some((b) => b.parent !== null))!;
+    const moon = d.bodies.find((b) => b.parent !== null)!;
+    expect(() => bodyPose(moon, 100)).toThrow(RangeError);
+    expect(bodyPose(moon, 100, systemPoses(d, 100).bodies[moon.parent!])).toEqual(systemPoses(d, 100).bodies[moon.index]);
+    expect(bodyPose(d.bodies[0], 100)).toEqual(systemPoses(d, 100).bodies[0]);
+  });
+
   it('moves every body and the Waystation at its velocity, turning at its angular velocity', () => {
     for (const d of SYSTEMS) {
       for (const t of someTimes.slice(0, 10)) {
