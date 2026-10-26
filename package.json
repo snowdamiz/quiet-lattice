@@ -23,6 +23,8 @@
     "gate:removed": "tsx packages/tools/src/gates/removed.ts",
     "test:int": "vitest run --config vitest.int.config.ts",
     "capture": "tsx packages/tools/src/capture/capture.ts",
+    "turntable": "tsx packages/tools/src/capture/turntable.ts",
+    "turntable:test": "tsx packages/tools/src/capture/turntable.ts --selftest",
     "art:validate": "tsx packages/tools/src/art/cli.ts validate",
     "art:export": "tsx packages/tools/src/art/cli.ts export",
     "art:test": "tsx packages/tools/src/art/cli.ts test"
