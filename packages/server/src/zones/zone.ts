@@ -11,6 +11,9 @@
 // changed, sanitising only the fields that changed (sanitizeEntity checks each field on its own, so the rest stay as
 // they were sanitised before), then encoded per session with `sanitized: true`. A wire state is never mutated
 // afterwards: snapshot histories share it.
+//
+// Its phases (phases/manager.ts) are private layers at shared places: each tick, once world positions are current, they
+// update who is inside their volumes, and every interest set passes through their visibility rule.
 import { performance } from 'node:perf_hooks';
 import {
   encodeSnapshot,
@@ -33,6 +36,7 @@ import {
   type FrameSet,
   type SystemDescription,
 } from '@astra/shared/world';
+import { PhaseManager } from '../phases/manager.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
 import { TickTimes } from './metrics.ts';
@@ -46,7 +50,10 @@ type InputMessage = Extract<ClientMessage, { t: 'input' }>;
 /** An entity's wire fields: everything an EntityState carries but its id and `clear`. */
 export type EntityFields = Omit<EntityState, 'id' | 'clear'>;
 
-/** A new entity: its kind and pose, any other wire fields, and its party (members always see each other). */
+/**
+ * A new entity: its kind and pose, any other wire fields, and its party (members see each other wherever they are,
+ * unless a phase hides one from the other: phases/manager.ts).
+ */
 export interface EntityInit extends EntityFields {
   kind: EntityKind;
   frame: FrameId;
@@ -79,8 +86,16 @@ export const INPUT_LIMITS = { maxDistance: 1e11, maxSpeed: 1e9 } as const;
 /** Where a zone sends a session's snapshots: the gateway's Session, or a stand-in in tests and the bench. */
 export interface ZoneViewer {
   readonly id: number;
+  /** the character in play, whose place in a phase is kept for a while when its connection drops */
+  readonly characterId?: string | null;
   sendBinary(data: Uint8Array): void;
 }
+
+/**
+ * How a session leaves a zone: 'disconnected' when its connection dropped (a phase keeps its place for the grace, so a
+ * reconnect finds it again); 'left' any other way (a handoff, a logout), which takes it out of its phase at once.
+ */
+export type ZoneLeave = 'left' | 'disconnected';
 
 /** A pino-shaped logger (Fastify's). */
 export interface ZoneLog {
@@ -172,6 +187,8 @@ export class Zone {
   readonly times = new TickTimes();
   /** wire fields dropped by sanitizeEntity, ever (each is a server bug) */
   droppedFields = 0;
+  /** the private layers at places in this system, and who sees what across them */
+  readonly phases: PhaseManager;
 
   private readonly log?: ZoneLog;
   private readonly onViewerRemoved?: (viewer: ZoneViewer) => void;
@@ -204,6 +221,7 @@ export class Zone {
     };
     for (const f of [...this.frameSet.bodies, this.frameSet.station]) this.frames.set(f.id, f);
     this.placeFrames(0);
+    this.phases = new PhaseManager(this, opts.log);
   }
 
   get entityCount(): number {
@@ -222,6 +240,12 @@ export class Zone {
   /** Whether `frame` is this system's inertial frame (null) or one of its bodies or its Waystation. */
   hasFrame(frame: FrameId): boolean {
     return frame === null || this.frames.has(frame);
+  }
+
+  /** A position in one of this system's frames, in world coordinates at the last tick's time. */
+  toWorld(frame: FrameId, pos: Readonly<Vec3>): Vec3 {
+    if (!this.hasFrame(frame)) throw new RangeError(`frame ${frame} is not in system ${this.systemIndex}`);
+    return localToWorld(frame === null ? null : this.frames.get(frame)!, [pos[0], pos[1], pos[2]]);
   }
 
   // ---------- entities ----------
@@ -245,6 +269,7 @@ export class Zone {
     this.hashes[e.cls].remove(id);
     if (e.party !== null) this.leaveParty(id, e.party);
     this.entities.delete(id);
+    this.phases.removed(id);
     for (const v of [...this.views.values()]) {
       if (v.entityId !== id) continue;
       this.views.delete(v.viewer);
@@ -281,7 +306,7 @@ export class Zone {
     this.touch(e);
   }
 
-  /** Puts the entity in its party (members always see each other), or in none. */
+  /** Puts the entity in its party (members see each other wherever they are, phases permitting), or in none. */
   setParty(id: number, party: string | null): void {
     const e = this.mustGet(id);
     if (e.party === party) return;
@@ -301,9 +326,10 @@ export class Zone {
   }
 
   /** Removes the session and its entity. False when it was not here. */
-  leave(viewer: ZoneViewer): boolean {
+  leave(viewer: ZoneViewer, how: ZoneLeave = 'left'): boolean {
     const v = this.views.get(viewer);
     if (!v) return false;
+    if (how === 'disconnected') this.phases.disconnected(viewer);
     this.views.delete(viewer);
     this.despawn(v.entityId);
     return true;
@@ -381,6 +407,7 @@ export class Zone {
       else this.hashes[e.cls].remove(e.id);
     }
     if (dropped.length) this.reportDropped(dropped);
+    this.phases.update(time);
 
     for (const v of this.views.values()) {
       const snap = this.snapshotFor(v);
@@ -413,15 +440,17 @@ export class Zone {
 
   /**
    * The session's interest set this tick, as ascending entity ids: its own entity, its party, and every entity within
-   * its class's radius (or, if already in view, within the hysteresis margin).
+   * its class's radius (or, if already in view, within the hysteresis margin); of those, only what its phase lets it see.
    */
   private updateInterest(v: View): number[] {
     const self = this.mustGet(v.entityId);
     const [x, y, z] = self.world;
     const prev = v.interest;
+    const visible = this.phases.visibleTo(self.id);
     // gathered and sorted in a reusable typed array (a native numeric sort), then copied out without duplicates
     let n = 0;
     const add = (id: number) => {
+      if (visible !== null && !visible(id)) return;
       if (n === this.scratch.length) {
         const grown = new Uint32Array(this.scratch.length * 2);
         grown.set(this.scratch);
