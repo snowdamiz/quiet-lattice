@@ -20,7 +20,7 @@ processes will read (presence, zone membership, the server clock) is mirrored to
 ## 2. Server layout (`packages/server/src`)
 
 ```
-index.ts            boot: config → db → redis → world service → zone manager → gateway
+index.ts            boot: config → db → redis → world service → zone manager → character persistence → gateway
 config.ts           env (DATABASE_URL, REDIS_URL, JWT_SECRET, PORT=8787, TICK_HZ=20), validated with zod
 db/                 Drizzle schema (schema.ts), client, migrate.ts; SQL migrations in packages/server/drizzle/
 gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters
@@ -29,6 +29,8 @@ session/            Session: the account, the character in play, the zone it is 
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
 world/              WorldService: server clock, season, Count, Edge position, tier map
+count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
+persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
@@ -49,8 +51,9 @@ server pushes no periodic time of its own: a pong is the better sample because t
 The shard's row (`shards`, created on the shard's first boot) holds its epoch (2026-01-01Z for a new shard), its season
 (number, start in world time, length; DESIGN 16.4) and `last_time`, the latest world time its server saved (every minute and
 on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
-below `last_time`, and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards,
-even when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
+below `last_time` nor below the time of any stored Count-meter vote not yet rolled (§11; a vote can land after the last
+time save), and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards, even
+when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
 with a clock sync point `{time, at}`: world time `time` at wall time `at` ms) for the processes P3.E37 splits off.
 
 ## 4. Frames of reference on the wire
@@ -181,9 +184,59 @@ picked up, quest steps done) are never trusted; they are requests the server re-
 
 ## 8. Persistence
 
-Postgres tables (Drizzle): `accounts`, `characters` (people, name, look, level, xp, home system, pose, frame, ship), and
-JSON-typed columns or child tables for inventory, skills, quests and flags as the tasks that own them arrive. Characters
-persist every 30 s and on logout (P1.E03.T05). Migrations are generated with drizzle-kit and applied with `pnpm db:migrate`.
+Postgres tables (Drizzle): `accounts`, `shards` (§3) and `characters` (people, name, look, level, xp, home system, and
+`state`, `revision`, `saved_at`). The shard's row also holds the Count and how far its meter has run; the meter's votes
+and daily rolls are in `count_votes` and `count_days` (§11). Migrations are generated with drizzle-kit and applied with
+`pnpm db:migrate`.
+
+**Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
+component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx), check?(value,
+ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry `{"v": <schema version>, "data":
+<value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own columns. Components load in
+registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers (`components.ts`,
+`coreRegistry`): `progress` (level, xp, home system: the columns), `ship` (`ShipLoadout | null`, the Lark by default),
+`inventory` (its layout re-derived from the ship on load, `applyLayout(saved, layoutFor(loadout))`; kept as saved, and
+logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`, read from the character's zone entity).
+
+- **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
+  landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
+  an older `v` is migrated one version at a time and written back at the next save. A value that cannot be read (a newer
+  `v`, no migration, the schema or `check` fails) follows `onInvalid`: the pose falls back to docked at the home
+  Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement); every other
+  component refuses the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries
+  the loaded pose.
+- **Save** every 30 s per character in play, staggered (the interval split into 30 slots, each character in the
+  least-loaded, one slot captured per second); on leave (logout, disconnect, the older connection of a duplicate join),
+  captured before the entity leaves its zone; on zone handoff (P1.E04.T04 calls `persistence.saveNow(id, 'handoff')`);
+  and on graceful shutdown (`server.close()`, which SIGINT and SIGTERM run: sessions close and save, everyone still in play
+  is captured, and the queue is written within 5 s). While writes succeed, a crash loses at most the last interval; while
+  they fail (the database down, retries backing off, a backlog) it loses everything not yet written.
+- A capture is synchronous and small: each component's live value, checked against its schema (a value that fails is
+  logged and its stored one kept), and only the components whose value changed since the last capture, at a revision one
+  above it. Writes never block a tick: the queue holds at most one save per character (a newer capture merges into the
+  waiting one), one writer drains it in batches of up to 64, one `UPDATE … FROM (VALUES …)` statement each, which merges
+  the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
+  raises `revision`, only where the row's revision is lower, so a save older than what the row holds is skipped (and
+  logged as an error). A failed write is logged and retried with backoff (0.5 s doubling to 30 s), merged under anything
+  captured since; a failed batch retries one character per statement, so one bad row holds back no other.
+- **One process holds a character at a time.** Revisions are counted by the process holding the character, from its
+  row's revision on join, so the guard orders that process's saves but does not fence two processes holding one
+  character: each would count from the same row and could overwrite the other. A real fence (a per-join epoch or a
+  presence lock) comes with P3.E37's split into several processes. The gateway reads a joining character's row under its
+  canonical id (lower case, the spelling Postgres returns and persistence keys by) while persistence pins it.
+- A character that has left stays held until its save is written, then every component forgets it (the inventory service
+  included). The in-memory services refuse a character they do not hold (`InventoryNotHeldError`), so nothing changes a
+  character out of play behind persistence's back. There is no API yet for changing one out of play: P1.E03.T07 (the
+  dev CLI's grant, teleport, set quest step) adds it to persistence as load, modify and save, refused while the character
+  is held and holding its joins until the save is written.
+
+**Adding a component** (skills P1.E07.T01, quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
+`CharacterComponent` with its key, `v: 1`, the zod schema of the stored value, `default`, `load`, `save` and `unload`
+(`onInvalid: 'refuse'` for anything a player earned), and register it in `coreRegistry` after the components it reads and
+before those that read it: skills go before the inventory, which then passes the owned nodes to `layoutFor` (Pack Mule's
+stack cap). No SQL migration: it is a new key in `state`. To change a stored shape later, raise `v` and add
+`migrations[oldV]`. State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
+store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
 
@@ -198,3 +251,32 @@ Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; in
 the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
 database is disposable.
+
+## 11. The Count meter (`packages/server/src/count`)
+
+DESIGN 16.1–16.2, lean not volume. Gameplay reports each counted action to the world service with
+`world.countAction(accountId, action, tag)`: `action` is one of `COUNTED_ACTIONS` in `count/meter.ts` (convoy escorted or
+raided, the wall choice, an anchor held, a Hive Heart shattered, a Warden killed, a monolith touched), `tag` is `feed`,
+`hold` or `break`. The account id is lower-cased (as Postgres returns uuids), and the open day's ledger keeps one vote per
+account per action type (the first cast; the call returns false for a repeat).
+
+Two clocks move the Count, both on shard world time from the epoch (§3), never wall time. The burn takes one measure
+every 17,280 s (tick k at k × 17,280 s, so 5 a day). A meter day is 86,400 s; at its end the day's lean is Feed's share of
+its vote weight (a Hold is a full vote of which a third is Feed; a monolith touch weighs a tenth of a vote), the target
+is `round(150 + 700 × lean)` and the Count drifts toward it by at most 25, never past it; a day with no votes does not
+drift. The midnight burn tick belongs to the ending day and falls first, so the drift reads the Count after it; on a
+steady lean the Count is back on the target at each day's end, having burned 5 below it. The Count stays in whole measures
+in 0–1,000. `runMeter` plays both clocks forward in time order; the service runs it every second and before every
+counted action, publishes the new Count as one ordinary world change (`world` to clients, the Redis mirror) and logs
+one line.
+
+Persistence: the shard's row holds `count`, `count_day` (the last day rolled) and `burn_step` (the last burn tick
+applied); votes go to `count_votes`, rolls to `count_days`. The service gathers new votes, rolls and the meter's position
+and writes them in one transaction per save: a burst of votes is one batched INSERT and a boot catch-up is one write.
+A save that fails is kept and written again by the next (the next vote, burn or roll, the minute's time save, or
+shutdown). On boot the service reloads the votes of every day after `count_day` and plays every burn and day end that
+passed while it was down, in time order, then takes the open day's ledger back, so a restart keeps the day's votes and
+its one-vote rule; the clock never starts below a stored vote's time (§3). The underdog side (`underdogSide(count)`:
+Break above 700, Feed below 300) and its rep multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on
+either side) are pure functions for the rep model to apply. All the arithmetic is pure and integer-exact (votes are
+summed in thirtieths), so the same lean gives the same Count bit for bit at three accounts and at three thousand.

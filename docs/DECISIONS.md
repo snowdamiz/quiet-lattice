@@ -319,3 +319,47 @@ Format: task id, question → choice → why.
   (P1.E03.T04) must not assume it. Unit tests run with a 60 s per-test timeout because parallel worktrees load the
   machine (load average 85+) and the golden and fuzz suites take seconds alone.
 - **Plan amendment (orchestrator)** P1.E15.T01 (chat and parties) is the server and protocol half; no task drew the chat panel or party frame, so P1.E15.T03 "Chat and party UI" is added (deps T01 and the client net layer P1.E04.T01, visual). → The two-client exit criterion needs players to talk and party up on screen.
+- **DESIGN amendment (orchestrator, from the P2.E22.T01 review)** 16.2's "Hold counts as a third of a Feed" now reads: a Hold is a full vote of which a third is Feed, so an all-Hold day targets 383, inside Held. The literal alternative (a Hold weighs a third of a vote, all of it Feed) would send a world of Hold players to Fed, and Held (16.4) is a philosophy that must be able to win a season. The burn is one measure every 4.8 hours (16.1's "a measure every few hours", 16.2's 5 a day), not a lump at the day roll.
+- **P1.E03.T05** Character persistence → a per-character component registry (`server/src/persistence`): each subsystem
+  registers {key, version `v`, zod schema, migrations, default, load, save, unload}; Phase 1 registers progress (level,
+  xp, home in their columns), the ship loadout (default Lark), the inventory (layout re-derived from the saved loadout)
+  and the pose (system, frame, pose, mode); skills and quests register theirs later. Storage: one `characters.state`
+  jsonb of {v, data} per component plus `revision` and `saved_at` (migration 0002); a new component needs no SQL
+  migration; no child tables until state needs cross-character queries. Unreadable state: a bad pose falls back to
+  docked at home (logged); any other unreadable component, a newer `v` included, refuses the join (`full`) rather than
+  reset progress. Saves: every 30 s in 30 one-second slots (least-loaded), on logout/disconnect, kick, handoff and
+  graceful shutdown (5 s wait); only changed components; at most one waiting save per character and one writer,
+  batches of 64 in one UPDATE that skips any save whose revision is not above the row's; backoff 0.5 s → 30 s and
+  one-row retries; a stale save logs at error level. A character that left stays held until its save lands, a rejoin
+  loads the held copy, and the join pins the character during its row read; character ids are taken in lower case and
+  any other spelling is refused. One process holds a character at a time: the revision orders one process's saves and
+  does not fence two (a fence comes with P3.E37). In-memory services refuse characters they do not hold; changing a
+  character out of play is P1.E03.T07's load–modify–save. A crash loses at most one interval while writes succeed.
+  Socket close saves first, then leaves the zone as 'disconnected'. → Restart-safe characters without a schema change
+  per feature. Open: until P1.E03.T04 merges, a saved pose is client-asserted; its `poseProblem` must validate restores.
+- **P2.E22.T01** The Count meter (`server/src/count`) → weights in thirtieths: a counted action is 30, a monolith touch
+  3 (a tenth of a vote); Feed gives the Feed side 30, Hold 10 (DESIGN 16.2 as amended), Break 0; tags per action: wall
+  choice and anchor held carry feed/hold/break, convoy raided, Hive Heart and Warden are Break only, convoy escorted and
+  monolith touch Feed only. Lean = feed ÷ weight (a day with no votes has none and does not drift); target =
+  round(150 + 700 × lean), halves up; the drift is clamped to ±25 and never passes the target. The burn ticks at
+  k × 17,280 s of world time from the shard epoch (5 a day); a tick tied with midnight burns before the drift; a meter's
+  first run counts burns from boot. The meter day is floor(world time ÷ 86,400) (00:00 UTC with the default epoch).
+  Downtime burns and rolls on boot with no cap (one change, one log line, one transaction; a dev shard idle 100+ days
+  boots at 0). One vote per (account, action type, day), first wins; account ids are UUIDs, lower-cased. The underdog
+  is set by the Count's position (Break above 700, Feed below 300, Hold either way; DESIGN 16.2 amended to say so),
+  multiplier 1.5 per action tag, applied by the rep model (P2.E18.T01). "Anchor held" is a per-account vote; P2.E28.T04
+  decides whose accounts vote. Storage: `count_votes` (kept for the chronicle), `count_days`, and `shards.count`,
+  `count_day`, `burn_step` (migration 0003); writes batched (votes in 1,000-row inserts) in one transaction per save,
+  failed saves retried until written. The clock floor is max(`last_time`, latest stored vote time). The arithmetic
+  lives in the server until a client shows the target (P2.E22.T04 moves it to shared). → DESIGN 16.2's lean-not-volume
+  meter, exact at any population. Callers to come: P2.E21.T05 convoys, P2.E28.T04 anchors, P3.E33.T02 Wardens, P3.E33.T03
+  Hive Heart, P3.E34.T02/T03 wall choices, the monolith interact.
+- **P1.E14.T09** Grader calibration → the five demo baselines (ship 2.0, box station 2.1, structures 2.2, creatures 2.3,
+  flora 2.4) are all REVISE with materials 1 and detail and placeholder at 2 or below, as 0.10.5 expects, so the rubric
+  stands as written. Graders see mask-coloured families in the game's colours (`@astra/shared/art` gameLook, in the
+  review scene and the turntable), not the raw mask. Graders judged samples: 7 of 40 flora, 4 of 10 creatures, 2 of 6
+  structures; a whole family is graded on the assets its task delivers. The perf readout's single-run asset cost is
+  noisy under load (27.8 ms re-measured at 0.34 ms); P1.E14.T11 adds paired sampling, a 100 m LOD2 view, a collider and
+  marker overlay and sibling grids, which four graders asked for. Art tasks are graded after T11 lands. P1.E06.T04 (UI)
+  was graded before calibration; calibration covers the models rubric, and its verdicts are recorded in
+  `docs/VISUAL-REVIEW.md`.

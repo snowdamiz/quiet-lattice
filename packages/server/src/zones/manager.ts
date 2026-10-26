@@ -50,11 +50,20 @@ export interface ZoneManagerOptions {
   world?: Pick<WorldSource, 'tierOf' | 'subscribe'>;
 }
 
+/** Where a character enters the world: the galaxy system, its pose there and its movement mode (a saved placement). */
+export interface Placement {
+  system: number;
+  pose: Pose;
+  mode: MoveMode;
+}
+
 export interface Joined {
   zone: Zone;
   entityId: number;
   pose: Pose;
   mode: MoveMode;
+  /** Why the placement asked for could not be used (the character was docked at its home Waystation instead). */
+  fellBack?: string;
 }
 
 export interface ZoneStatus extends ZoneMetrics {
@@ -158,14 +167,28 @@ export class ZoneManager {
   }
 
   /**
-   * Puts the character's player entity in the zone of its home system, docked at the home Waystation, and starts sending
-   * the session snapshots from the next tick.
+   * Puts the character's player entity in the world, at `at` (its saved placement) when that system has the pose's
+   * frame, else docked at its home Waystation (`fellBack` says why), and starts sending the session snapshots from the
+   * next tick.
    */
-  join(viewer: ZoneViewer, character: ZoneCharacter): Joined {
+  join(viewer: ZoneViewer, character: ZoneCharacter, at?: Placement): Joined {
     if (this.byViewer.has(viewer)) throw new Error(`session ${viewer.id} is already in a zone`);
+    let fellBack: string | undefined;
+    if (at) {
+      try {
+        const zone = this.open(at.system);
+        if (zone.hasFrame(at.pose.frame)) return this.enter(viewer, character, zone, at.pose, at.mode);
+        fellBack = `frame ${at.pose.frame} is not in system ${at.system}`;
+      } catch (err) {
+        fellBack = err instanceof Error ? err.message : String(err);
+      }
+    }
     const zone = this.open(character.homeSystem);
-    const pose: Pose = { frame: zone.stationFrame, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] };
-    const mode: MoveMode = 'docked';
+    const joined = this.enter(viewer, character, zone, { frame: zone.stationFrame, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, 'docked');
+    return fellBack === undefined ? joined : { ...joined, fellBack };
+  }
+
+  private enter(viewer: ZoneViewer, character: ZoneCharacter, zone: Zone, pose: Pose, mode: MoveMode): Joined {
     const entityId = zone.join(viewer, {
       kind: 'player',
       ...pose,
