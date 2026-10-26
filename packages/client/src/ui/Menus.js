@@ -3,7 +3,7 @@
 import { PEOPLES, getHull, getItem, getPeople, getResource } from '@astra/shared/data';
 import { itemInfo, slotAt, stackCap, usedSlots } from '@astra/shared/inventory';
 import { CharacterName } from '@astra/shared/protocol';
-import { PIPS, RESOURCES } from '../gameplay/Inventory.js';
+import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { createCharacter, listCharacters, login, register } from '../net/api.js';
 import { clearSession, loadSession, saveSession, takeNotice } from '../net/session.js';
 import { MapView } from './map/MapView.js';
@@ -66,6 +66,9 @@ function esc(t) {
   return String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
+
+// the trade panel always lists the demo's nine; the rest once some are carried
+const DEMO_RESOURCES = new Set(Object.keys(RESOURCES).filter((id) => getResource(id).demo));
 
 // the tag a non-resource item wears in its slot
 const KIND_TAG = { consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD', cosmetic: 'COS', component: 'CMP' };
@@ -581,7 +584,9 @@ export class Menus {
     let rows = '';
     for (const [id, r] of Object.entries(RESOURCES)) {
       const n = inv.items[id] || 0;
-      rows += `<div class="res-row ${n ? '' : 'empty'}"><i style="background:${r.color};color:${r.color}"></i><span>${r.name}</span><span class="num">${n}</span><span class="price">${r.price}u</span>
+      // the demo's nine always; the hostile worlds' and the Count's resources once there are some to sell
+      if (!n && !DEMO_RESOURCES.has(id)) continue;
+      rows += `<div class="res-row ${n ? '' : 'empty'}">${resourceIcon(id)}<span>${r.name}</span><span class="num">${n}</span><span class="price">${r.price}u</span>
         <button class="btn ghost small" data-sell="${id}" ${n ? '' : 'disabled'}>Sell</button></div>`;
     }
     let shop = '';
@@ -820,8 +825,7 @@ export class Menus {
     if (!s) return `<div class="inv-slot empty${bump}" ${data}></div>`;
     const info = itemInfo(s.item);
     const cap = stackCap(s.item, st.stackMax);
-    const [shape, color] = PIPS[s.item] || ['diamond', 'var(--dim)'];
-    const mark = info?.kind === 'resource' ? `<i class="inv-sw ${shape}" style="--c:${color}"></i>` : `<i class="inv-tag">${KIND_TAG[info?.kind] || 'ITM'}</i>`;
+    const mark = info?.kind === 'resource' ? resourceIcon(s.item) : `<i class="inv-tag">${KIND_TAG[info?.kind] || 'ITM'}</i>`;
     const count = cap === 1 ? '' : `<b class="inv-ct">${s.count.toLocaleString()}</b>`;
     // (a module, cosmetic or component is one thing per slot: no count, no fill)
     const fill = cap === 1 ? '' : `<span class="inv-fill" style="--f:${(s.count / cap).toFixed(4)}"></span>`;

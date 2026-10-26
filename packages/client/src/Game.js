@@ -19,7 +19,7 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, framedPose, localPoseInto } from '@astra/shared/world';
+import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { Objectives } from './gameplay/Objectives.js';
 import { Asteroids } from './universe/Asteroids.js';
@@ -169,7 +169,9 @@ export class Game {
   // `out` holds whatever is built so far, so an abandoned one can be freed.
   *buildSystem(sysInfo, out = {}) {
     // (described as the server describes it: the three peoples' home systems round their home worlds and capitals)
-    const system = (out.system = new SolarSystem(describeGalaxySystem(sysInfo), this.pool, { staged: true }));
+    // (at its tier with The Edge where it stands by default, until the client reads the world service's tier map,
+    // P1.E04.T02)
+    const system = (out.system = new SolarSystem(describeGalaxySystem(sysInfo), this.pool, { staged: true, tier: tierOf(sysInfo) }));
     system.info = sysInfo;
     yield;
     while (!system.step()) yield;
