@@ -234,3 +234,24 @@ Format: task id, question → choice → why.
   the world models them; a raid only rolls if a scout at the spawn distance would detect the ship, and pirates lose a
   ship they cannot detect after a 20 s search. → DESIGN 10.1's rule applied literally, with detection judged from what
   the server can measure.
+- **P1.E03.T03** Frame selection is the client's old rule, now shared (`selectFrame`): the Waystation's sphere first, else
+  the smallest body sphere holding the entity, else inertial, with 5% hysteresis unless a smaller sphere inside holds it.
+  Each tick the zone re-selects every entity's frame at the tick's time and re-expresses it with `setFrame`; a client's
+  input frame is taken as sent and wins until the next tick. → One rule on both ends. Open for P1.E04.T03: when the client
+  reconciles against snapshots it must re-express the server's pose into its own current frame, not adopt the server's
+  frame (near a sphere's edge the two can differ by a tick).
+- **P1.E06.T04** Inventory → 16 suit stacks and 8 stacks per cargo pod (schema bounds 64/32/64); stack cap 9999, 15000
+  with Pack Mule (suit and cargo); modules, cosmetics and components one per slot; units live in the inventory value;
+  fragments, skill points and reputation are refused as non-tradeable; starting kit 2500 units and 1 warp cell on a Lark;
+  grants fill suit then cargo and report what did not fit; a hull change repacks or refuses `no_room`; clients may only
+  request move/split/merge/transfer/compact with an increasing `seq` (protocol 2); every reply carries the full state; the
+  client predicts, replays unanswered requests and drops any unanswered for 5 s; pods come from the ship loadout checked
+  against `shipStats` bays; key I. The resource pips (shape by family, muted hues) are a documented functional exception
+  in the art bible §4. → DESIGN gives no counts; these keep a trip on foot workable and hauling the ship's job.
+- **P1.E03.T06** World service → a `shards` row (epoch 2026-01-01Z, `last_time`, season 1 of 8 weeks from first boot; DESIGN
+  16.4's four-week small-population season comes with P2's season roll); the clock starts at max(wall, last_time) and runs
+  monotonically, saved every 60 s and on close; the Count (500) and the Edge (EDGE_X) live in memory until P2.E22; the tier
+  map is `galaxyTiers(edgeX)`; a JSON Redis mirror with a `{time, at}` sync point; `world` after `welcome` and on change,
+  time refreshed through ping/pong; one ZoneManager subscription keeps a tier per zone; the server refuses to boot without
+  its shard row (run `pnpm db:migrate`). Two processes must not share a shard row (P3.E37 gives each shard one clock
+  owner). → A stub that already behaves like the real service on restarts.
