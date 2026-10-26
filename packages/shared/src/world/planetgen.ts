@@ -2,6 +2,7 @@
 // placement), and by the server, which never streams terrain: every machine regenerates it from the seeds.
 import { Simplex3, smoothstep, lerp, clamp } from './noise.ts';
 import { Random } from './rng.ts';
+import type { CapitalSpec } from './cities.ts';
 
 /** A linear RGB colour (sRGB hex colours are converted on the way in). */
 export type Rgb = [number, number, number];
@@ -69,6 +70,23 @@ export interface Hazard {
   ceiling: number;
   dps: number;
   curve?: number;
+}
+
+/** The air of a mild world (the Ulgani's toxic home, DESIGN 5.1): breathable below the mist line, caustic above it, and
+ * never a hazard to a ship. */
+export interface Mist {
+  /** the mist line, metres above sea level */
+  line: number;
+  /** how far above the line the air turns fully caustic (m) */
+  band: number;
+  /** the on-foot hazard rate in fully caustic air, on the scale of a world's harshness (a toxic world's: 1.2) */
+  rate: number;
+}
+
+/** What a mild world's air does at `altitude` metres above sea level: no hazard at or below the mist line, rising
+ * smoothly to `mist.rate` across its band; never a ship hazard. Pure, for the client and the server alike. */
+export function mistHazard(mist: Mist, altitude: number): { foot: number; ship: null } {
+  return { foot: mist.rate * smoothstep(mist.line, mist.line + mist.band, altitude), ship: null };
 }
 export type TreeKind = 'round' | 'conifer' | 'palm' | 'mushroom' | 'spiral' | 'coral' | 'blob' | 'cactus' | 'crystal';
 
@@ -532,13 +550,41 @@ export interface PlanetParams {
   volcanoes?: Volcano[];
   relief: Relief;
   hazard: Hazard | null;
+  /** a mild world's air (only on one: absent everywhere else) */
+  mist?: Mist;
   cityCount: number;
   citySeed: number;
+  /** the capital of the people whose home this is, planned as the world's first city (absent on every other world) */
+  capital?: CapitalSpec;
   /** levelled ground under cities and sites, flat [x, y, z, height, inner, outer] per pad (see TerrainSampler.setPads) */
   pads?: number[] | null;
 }
 
-export function createPlanetParams(seed: number, type: PlanetType, radius: number, { isMoon = false } = {}): PlanetParams {
+/** How a world is made beyond its seed, type and radius. */
+export interface PlanetOptions {
+  isMoon?: boolean;
+  /** the mild variant (the Ulgani's toxic home, DESIGN 5.1): no ship hazard, and on foot the air is caustic only above
+   * the mist line */
+  mild?: boolean;
+  /** a people's capital, planned as its first city */
+  capital?: CapitalSpec;
+}
+
+// The mild variant's air: breathable over the lowlands, turning caustic across a band above the mist line, as harsh there
+// as any toxic world's. The line lies above every plain a city can be planned on (no higher than 0.3 of the mountain
+// height, cut from ground no more than 380 m higher), so the capital always breathes; the hills and ranges do not.
+const MIST_BAND = 150;
+const MIST_RATE = 1.2;
+function mistLine(p: PlanetParams): number {
+  return p.mountainHeight * 0.3 + 400;
+}
+
+export function createPlanetParams(
+  seed: number,
+  type: PlanetType,
+  radius: number,
+  { isMoon = false, mild = false, capital }: PlanetOptions = {},
+): PlanetParams {
   const rng = new Random(seed);
   const a: Archetype = ARCHETYPES[type];
   const dh = rng.float(-a.hueJitter, a.hueJitter);
@@ -632,9 +678,20 @@ export function createPlanetParams(seed: number, type: PlanetType, radius: numbe
   const extra = EXTRA_HAZARDS[type];
   p.hazard = a.hazard ? { ...a.hazard } : extra && hz.chance(extra[0]) ? { ...extra[1] } : null;
   if (p.hazard) p.hazard.dps *= hz.float(0.8, 1.25);
+  // (the draws above are still made, so a mild world is otherwise the world it would have been)
+  if (mild) {
+    p.hazard = null;
+    p.mist = { line: mistLine(p), band: MIST_BAND, rate: MIST_RATE };
+  }
   const cz = new Random((seed ^ 0xc171e5) >>> 0);
   p.cityCount = !isMoon && cz.chance(CITY_CHANCE[type] || 0) ? cz.int(1, 3) : 0;
   p.citySeed = cz.int(1, 1e9);
+  // a people's home world has at least its capital (the draws above are made all the same, so its other cities and
+  // everything planned from its city seed come out as they would have)
+  if (capital && !isMoon) {
+    p.cityCount = Math.max(1, p.cityCount);
+    p.capital = { ...capital };
+  }
   return p;
 }
 

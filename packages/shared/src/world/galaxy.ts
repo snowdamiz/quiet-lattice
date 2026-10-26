@@ -1,6 +1,9 @@
 // Local cluster of procedurally named star systems reachable by hyperdrive (positions in light years).
 import { Random, makeName, hashInts } from './rng.ts';
 
+/** The seed of the one galaxy everyone plays in. */
+export const GALAXY_SEED = 424242;
+
 export type StarClass = 'G' | 'K' | 'M' | 'F' | 'B' | 'E';
 const CLASSES: StarClass[] = ['G', 'K', 'M', 'F', 'B', 'E'];
 const CLASS_COLORS: Record<StarClass, string> = { G: '#fff0d2', K: '#ffc98f', M: '#ff9568', F: '#f3f5ff', B: '#b8ceff', E: '#b8ffd8' };
@@ -14,6 +17,8 @@ export interface Point3 {
 }
 
 export interface GalaxySystem extends Point3 {
+  /** the seed of the galaxy it is in */
+  galaxy: number;
   id: number;
   /** the seed its star system is generated from */
   seed: number;
@@ -46,6 +51,7 @@ export class Galaxy {
       const el = Math.asin(lift.float(-1, 1)) * 0.85;
       const cls = rng.pick(CLASSES);
       this.systems.push({
+        galaxy: seed,
         id: i,
         seed: hashInts(seed, i, 77),
         name,

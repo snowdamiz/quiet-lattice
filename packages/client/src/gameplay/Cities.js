@@ -204,7 +204,8 @@ function buildingMaterial(cul) {
 function groundMaterial(cul, plan, radius, groundCol) {
   const mat = new THREE.MeshStandardMaterial({ roughness: 0.85, metalness: 0.05 });
   const uniforms = {
-    uPlan: { value: new THREE.Vector4(plan.radial ? 1 : 0, plan.plaza, plan.width, plan.ringGap) },
+    // (x: 0 a grid, 1 rings and spokes, 1 + arms a spiral and spokes)
+    uPlan: { value: new THREE.Vector4(plan.radial ? 1 + (plan.arms || 0) : 0, plan.plaza, plan.width, plan.ringGap) },
     uPlan2: { value: new THREE.Vector4(plan.spokes, plan.block, plan.angle, radius) },
     uPave: { value: cul.pave.clone() },
     uRoad: { value: cul.road.clone() },
@@ -235,9 +236,11 @@ function groundMaterial(cul, plan, radius, groundCol) {
           float r = length(p);
           if (uPlan.x > 0.5) {
             float rr = r - uPlan.y;
-            float dRing = abs(rr - floor(rr / uPlan.w + 0.5) * uPlan.w);
-            float seg = 6.2831853 / uPlan2.x;
             float a = atan(p.y, p.x);
+            // a spiral's turns pass at plaza + ringGap * (n + arms * a / 2pi), as streetDistance has them
+            float sp = rr / uPlan.w - (uPlan.x - 1.0) * a / 6.2831853;
+            float dRing = abs(sp - floor(sp + 0.5)) * uPlan.w;
+            float seg = 6.2831853 / uPlan2.x;
             float dSpoke = abs(a - floor(a / seg + 0.5) * seg) * r;
             return dRing < dSpoke ? vec2(dRing, a * r) : vec2(dSpoke, r);
           }
