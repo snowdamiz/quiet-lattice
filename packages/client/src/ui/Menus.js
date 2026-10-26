@@ -443,7 +443,6 @@ export class Menus {
     if (id === 'shield') g.ship.shield = 100;
     if (id === 'beam') g.multitool.upgrade();
     if (id === 'jet') g.player.jetEfficiency = 2;
-    if (id === 'thrust') g.ship.speedMul = 1.25;
     applyUpgrade(g, id);
     if (it.once) this.bought.add(id);
     g.audio.play('sell');

@@ -13,12 +13,15 @@ try {
   /* storage unavailable */
 }
 
-// what each hazard upgrade does to the starship (on purchase, and again when a save is loaded)
+// the shop's starship upgrades are the Pilot nodes they became (DESIGN 9.7)
+const PILOT_NODES = { thrust: 'photon_thrusters', thermal: 'thermal_plating', pressure: 'pressure_hull', coating: 'hazard_coating' };
+
+// what each starship upgrade does (on purchase, and again when a save is loaded): the ship flies with its node
 export function applyUpgrade(game, id) {
-  const r = game.ship.resist;
-  if (id === 'thermal') r.heat = r.cryo = 3;
-  if (id === 'pressure') r.pressure = 3;
-  if (id === 'coating') r.acid = r.radiation = r.storm = 3;
+  const node = PILOT_NODES[id];
+  if (!node) return;
+  game.ship.skills.add(node);
+  game.ship.refreshStats();
 }
 
 export function hasSave() {
@@ -100,7 +103,6 @@ export function applySave(game, data) {
     game.menus.bought.add(id);
     if (id === 'beam') game.multitool.upgrade();
     if (id === 'jet') game.player.jetEfficiency = 2;
-    if (id === 'thrust') game.ship.speedMul = 1.25;
     applyUpgrade(game, id);
   }
   for (const n of data.discovered || []) game.discoveredNames.add(n);
