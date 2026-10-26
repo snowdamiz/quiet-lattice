@@ -41,7 +41,7 @@ import {
   type FrameSet,
   type SystemDescription,
 } from '@astra/shared/world';
-import { MovementAuthority, padPose, type MoverProfile, type MovementRefusal } from '../sim/movement/index.ts';
+import { hangarWaitPose, MovementAuthority, padPose, type MoverProfile, type MovementRefusal } from '../sim/movement/index.ts';
 import { PhaseManager } from '../phases/manager.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
@@ -249,9 +249,11 @@ export class Zone {
     return frameId(this.system.seed, 'station');
   }
 
-  /** Where a ship joining docked sits: on a Waystation pad no ship holds (the least held when all are). */
-  dockPose(): Pose {
-    return padPose(this.stationFrame, this.movement?.freePad() ?? 0);
+  /** Where a ship joining docked goes: docked on a Waystation pad no ship holds or, every pad held, waiting in the hangar
+   * to dock (in mode `ship`). */
+  dockPose(): { pose: Pose; mode: 'docked' | 'ship' } {
+    const pad = this.movement ? this.movement.freePad() : 0;
+    return pad === null ? { pose: hangarWaitPose(this.stationFrame), mode: 'ship' } : { pose: padPose(this.stationFrame, pad), mode: 'docked' };
   }
 
   /** Whether `frame` is this system's inertial frame (null) or one of its bodies or its Waystation. */

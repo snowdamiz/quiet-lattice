@@ -14,6 +14,7 @@
 // P1.E12.T05) and its skills, and each input is checked at the server clock's time of arrival.
 import { performance } from 'node:perf_hooks';
 import type { ClientMessage, PeopleId, Pose, ServerMessage } from '@astra/shared/protocol';
+import type { ShipLoadout } from '@astra/shared/ships';
 import { tierOfGalaxySystem, type SystemDescription, type Tier } from '@astra/shared/world';
 import { DEFAULT_LOADOUT } from '../inventory/service.ts';
 import type { ServerClock } from '../world/clock.ts';
@@ -33,6 +34,9 @@ export interface ZoneCharacter {
   people: PeopleId;
   level: number;
   homeSystem: number;
+  /** its ship (movement authority's caps) and skill nodes; the default Lark and none when not given */
+  ship?: ShipLoadout | null;
+  skills?: readonly string[];
 }
 
 export interface ZoneManagerOptions {
@@ -58,11 +62,22 @@ export interface ZoneManagerOptions {
   movement?: boolean;
 }
 
+/** Where a character enters the world: the galaxy system, its pose there and its movement mode (a saved placement). */
+export interface Placement {
+  system: number;
+  pose: Pose;
+  mode: MoveMode;
+  /** on foot: where its ship rests (landed or docked), the one ship it may board */
+  parked?: Pose;
+}
+
 export interface Joined {
   zone: Zone;
   entityId: number;
   pose: Pose;
   mode: MoveMode;
+  /** Why the placement asked for could not be used (the character was docked at its home Waystation instead). */
+  fellBack?: string;
 }
 
 export interface ZoneStatus extends ZoneMetrics {
@@ -175,26 +190,44 @@ export class ZoneManager {
   }
 
   /**
-   * Puts the character's player entity in the zone of its home system, docked on a pad of the home Waystation, and starts
-   * sending the session snapshots from the next tick.
+   * Puts the character's player entity in the world, at `at` (its saved placement) when that system has the pose's
+   * frame, else at its home Waystation (`fellBack` says why), and starts sending the session snapshots from the next
+   * tick. A ship joining docked docks on a pad no ship holds, or waits in the hangar's mouth when every pad is held
+   * (Zone.dockPose); one joining on foot can board only the ship `at.parked` says it left.
    */
-  join(viewer: ZoneViewer, character: ZoneCharacter): Joined {
+  join(viewer: ZoneViewer, character: ZoneCharacter, at?: Placement): Joined {
     if (this.byViewer.has(viewer)) throw new Error(`session ${viewer.id} is already in a zone`);
+    let fellBack: string | undefined;
+    if (at) {
+      try {
+        const zone = this.open(at.system);
+        if (zone.hasFrame(at.pose.frame)) return this.enter(viewer, character, zone, at.pose, at.mode, at.parked);
+        fellBack = `frame ${at.pose.frame} is not in system ${at.system}`;
+      } catch (err) {
+        fellBack = err instanceof Error ? err.message : String(err);
+      }
+    }
     const zone = this.open(character.homeSystem);
-    const pose: Pose = zone.dockPose();
-    const mode: MoveMode = 'docked';
-    // (every character flies the inventory's default Lark until P1.E12.T05 gives it a ship of its own)
+    const dock = zone.dockPose();
+    const joined = this.enter(viewer, character, zone, dock.pose, dock.mode);
+    return fellBack === undefined ? joined : { ...joined, fellBack };
+  }
+
+  private enter(viewer: ZoneViewer, character: ZoneCharacter, zone: Zone, pose: Pose, mode: MoveMode, parked?: Pose): Joined {
+    // a ship saved docked docks again on whichever pad is free now
+    if (mode === 'docked') ({ pose, mode } = zone.dockPose());
+    // (a character with no ship of its own flies the inventory's default Lark until P1.E12.T05)
     const profile = {
       characterId: character.id,
       accountId: character.accountId,
       people: character.people,
-      ship: DEFAULT_LOADOUT.ship!,
-      skills: [...(DEFAULT_LOADOUT.skills ?? [])],
+      ship: character.ship ?? DEFAULT_LOADOUT.ship!,
+      skills: [...(character.skills ?? DEFAULT_LOADOUT.skills ?? [])],
     };
     const entityId = zone.join(
       viewer,
       { kind: 'player', ...pose, mode, name: character.name, people: character.people, level: character.level },
-      { profile, now: this.clock.now() },
+      { profile, now: this.clock.now(), parked },
     );
     this.byViewer.set(viewer, this.slots.get(zone.id)!);
     return { zone, entityId, pose, mode };

@@ -54,6 +54,8 @@ scale = take('--scale', 1.0, float)
 pick_asset = take('--asset')
 pick_variant = take('--variant')
 manifest_path = take('--manifest')
+# the game's look for mask-coloured families (@astra/shared/art gameLooksFor; the pnpm runner passes it)
+looks = json.loads(take('--looks', '[]'))
 grid = 0
 if '--grid' in rest:
     i = rest.index('--grid')
@@ -193,6 +195,88 @@ if pick_variant:
 if objs and not targets:
     print(f'turntable: nothing to render for {pick_asset or "*"}/{pick_variant or "*"}; the file holds {", ".join(f"{a}/{v}" for a, v in all_targets)}')
     sys.exit(1)
+
+
+# ---------- the game's look ----------
+def srgb_linear(c):
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def look_for(asset):
+    kind = re.sub(r'_\d+$', '', re.sub(r'_(?:lod|LOD)\d+$', '', asset))
+    return next((x['look'] for x in looks if re.search(x['match'], kind)), None)
+
+
+def look_material(look):
+    """A colour-region mask (R primary, G secondary, B accent, A occlusion) filled with the look's palette, as the game's
+    recolor does: weights normalised by their sum, occlusion kept above the floor, each colour capped in brightness. A
+    surface without the mask (the material sheet's shader ball) shows the primary colour."""
+    m = bpy.data.materials.new('game look')
+    nt = m.node_tree
+    bsdf = next(n for n in nt.nodes if n.type == 'BSDF_PRINCIPLED')
+    bsdf.inputs['Roughness'].default_value = look['roughness']
+    bsdf.inputs['Metallic'].default_value = look['metalness']
+    attr = nt.nodes.new('ShaderNodeVertexColor')
+    sep = nt.nodes.new('ShaderNodeSeparateColor')
+    nt.links.new(attr.outputs['Color'], sep.inputs['Color'])
+
+    def math(op, a, b=None):
+        n = nt.nodes.new('ShaderNodeMath')
+        n.operation = op
+        for i, v in enumerate((a, b)):
+            if v is None:
+                continue
+            if isinstance(v, (int, float)):
+                n.inputs[i].default_value = v
+            else:
+                nt.links.new(v, n.inputs[i])
+        return n.outputs[0]
+
+    r, g, b = sep.outputs[0], sep.outputs[1], sep.outputs[2]
+    total = math('ADD', math('ADD', r, g), b)
+    bare = math('LESS_THAN', total, 1e-4)  # 1 where there is no mask
+    r = math('ADD', r, bare)
+    total = math('MAXIMUM', math('ADD', total, bare), 1e-4)
+    ao = math('ADD', math('MULTIPLY', attr.outputs['Alpha'], math('SUBTRACT', 1.0, bare)), bare)
+    k = math('ADD', look['aoFloor'], math('MULTIPLY', 1 - look['aoFloor'], ao))
+    acc = None
+    for w, hexc in zip((r, g, b), look['palette']):
+        lin = [srgb_linear(((hexc >> s) & 255) / 255) for s in (16, 8, 0)]
+        mx = max(lin)
+        if mx > look['albedoCap']:
+            lin = [c * look['albedoCap'] / mx for c in lin]
+        scaled = nt.nodes.new('ShaderNodeVectorMath')
+        scaled.operation = 'SCALE'
+        scaled.inputs[0].default_value = lin
+        nt.links.new(math('DIVIDE', w, total), scaled.inputs['Scale'])
+        if acc is None:
+            acc = scaled.outputs[0]
+        else:
+            add = nt.nodes.new('ShaderNodeVectorMath')
+            add.operation = 'ADD'
+            nt.links.new(acc, add.inputs[0])
+            nt.links.new(scaled.outputs[0], add.inputs[1])
+            acc = add.outputs[0]
+    out = nt.nodes.new('ShaderNodeVectorMath')
+    out.operation = 'SCALE'
+    nt.links.new(acc, out.inputs[0])
+    nt.links.new(k, out.inputs['Scale'])
+    nt.links.new(out.outputs[0], bsdf.inputs['Base Color'])
+    return m
+
+
+game_looks = {}
+for o in objs:
+    look = look_for(info[o]['asset']) if looks else None
+    if look is None or o.type != 'MESH' or not o.data.color_attributes:
+        continue
+    key = json.dumps(look, sort_keys=True)
+    if key not in game_looks:
+        game_looks[key] = look_material(look)
+    o.data.materials.clear()
+    o.data.materials.append(game_looks[key])
+if game_looks:
+    print(f'turntable: {sum(1 for o in objs if o.type == "MESH" and o.data.materials and o.data.materials[0] in game_looks.values())} mesh(es) in the game\'s colours')
 
 
 def lod0_of(target):

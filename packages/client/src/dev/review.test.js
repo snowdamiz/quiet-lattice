@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { applyGameLook, collectLods, gameLook, parseSpec, pickLod, showLod } from './review.js';
+import { gameLook } from '@astra/shared/art';
+import { applyGameLook, collectLods, parseSpec, pickLod, showLod } from './review.js';
 
 // A node tree in the export layout (art bible 8), as GLTFLoader builds it: three.js names sanitised, Blender's names
 // kept in userData.name.
@@ -133,8 +134,8 @@ describe('review: the game look', () => {
   });
 
   it('gives flora kinds their palette and glow, and leaves other families and colliders alone', () => {
-    expect(gameLook('flora', 'deposit_0').glowAccent).toBeGreaterThan(0);
-    expect(gameLook('flora', 'rock_1_lod1').glowAccent).toBe(0);
+    expect(gameLook('flora', 'deposit_0')?.palette[2]).toBe(0xff8a2a);
+    expect(gameLook('flora', 'rock_1_lod1')?.palette[0]).toBe(0x7a746c);
     expect(gameLook('ship', 'Ship')).toBeNull();
     const root = new THREE.Group();
     const hull = masked('Hull', [1, 0, 0]);

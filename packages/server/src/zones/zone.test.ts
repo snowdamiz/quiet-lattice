@@ -117,11 +117,11 @@ describe('Zone', () => {
     let time = 2.3e7;
     zone.step(time);
     const v = new Viewer(1);
-    const dock = zone.dockPose();
+    const dock = zone.dockPose().pose;
     expect(() => zone.join(new Viewer(2), { kind: 'player', ...dock, mode: 'docked' })).toThrow(/profile/);
     const id = zone.join(v, { kind: 'player', ...dock, mode: 'docked' }, { profile: { ship: LARK }, now: time });
     // the next joiner gets the next pad
-    expect(zone.dockPose().pos).not.toEqual(dock.pos);
+    expect(zone.dockPose().pose.pos).not.toEqual(dock.pos);
     const input = (seq: number, pos: [number, number, number], mode: 'ship' | 'foot', vel: [number, number, number] = [0, 0, 0]) => ({
       t: 'input' as const,
       seq,

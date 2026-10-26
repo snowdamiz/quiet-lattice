@@ -187,6 +187,11 @@ export function padPose(stationFrame: string, i: number): Pose {
   return { frame: stationFrame, pos: [pad.x, STATION_LAYOUT.padTop + SHIP_GEAR_HEIGHT, pad.z], quat: [0, 1, 0, 0], vel: [0, 0, 0] };
 }
 
+/** Where a ship joining docked waits when every pad is held: in the hangar, short of its mouth, nose in. */
+export function hangarWaitPose(stationFrame: string): Pose {
+  return { frame: stationFrame, pos: [0, 14, STATION_LAYOUT.hangar.z1 - 20], quat: [0, 0, 0, 1], vel: [0, 0, 0] };
+}
+
 export interface MovementAuthorityOptions {
   /** the zone's id, for the log */
   zone: string;
@@ -235,11 +240,10 @@ export class MovementAuthority {
     return this.movers.has(id);
   }
 
-  /** The pad a joining ship docks on: the first no ship holds, else the least held. */
-  freePad(): number {
-    let best = 0;
-    for (let i = 1; i < this.pads.length; i++) if (this.pads[i]!.size < this.pads[best]!.size) best = i;
-    return best;
+  /** The first pad no ship holds, or null when every pad is held. */
+  freePad(): number | null {
+    const i = this.pads.findIndex((holders) => holders.size === 0);
+    return i < 0 ? null : i;
   }
 
   /**

@@ -1,5 +1,7 @@
-// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → gateway.
-// index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and close() it.
+// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → character
+// persistence → gateway. index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and
+// close() it. Closing is graceful: sessions are closed (each character saved as it leaves), every character still in
+// play is saved and the save queue written before the database goes (§8).
 import type { AddressInfo } from 'node:net';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { createTimingHash } from './accounts/password.ts';
@@ -10,6 +12,10 @@ import { connectRedis } from './db/redis.ts';
 import { registerHttpRoutes } from './gateway/http.ts';
 import { RateLimiter } from './gateway/rateLimit.ts';
 import { attachWsGateway, WS_PATH, type WsGateway } from './gateway/ws.ts';
+import { InventoryService } from './inventory/service.ts';
+import { CharacterProgress, coreRegistry, ShipLoadouts } from './persistence/components.ts';
+import { CharacterPersistence, type PersistenceOptions } from './persistence/service.ts';
+import { pgCharacterStore } from './persistence/store.ts';
 import { WorldService } from './world/service.ts';
 import { DEFAULT_SHARD_ID, pgShardStore } from './world/shard.ts';
 import { ZoneManager } from './zones/manager.ts';
@@ -25,6 +31,8 @@ export interface StartOptions {
   /** The shard to run: its row in `shards` and its Redis keys. Defaults to DEFAULT_SHARD_ID; tests that change the world
    * or its clock run a shard of their own. */
   shard?: string;
+  /** Character persistence tuning (tests shorten the 30 s save interval). */
+  persistence?: Omit<PersistenceOptions, 'store' | 'registry' | 'log'>;
 }
 
 export interface RunningServer {
@@ -41,7 +49,10 @@ export interface RunningServer {
   world: WorldService;
   /** Every zone in the process and the tick loop. */
   zones: ZoneManager;
-  /** Closes sockets, the HTTP server, Postgres and Redis. Safe to call twice. */
+  /** Loads characters on join and saves them every 30 s, on leave and on close. */
+  persistence: CharacterPersistence;
+  /** Closes sockets (saving each character), writes every pending save, then closes the HTTP server, Postgres and Redis.
+   * Safe to call twice. */
   close(): Promise<void>;
 }
 
@@ -90,6 +101,13 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   // Computed now, not on the first unknown-user login, so that login is not the one that pays for it.
   const timingHash = await createTimingHash();
   const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ });
+  const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
+  const persistence = new CharacterPersistence({
+    ...opts.persistence,
+    store: pgCharacterStore(database.db),
+    registry: coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress(), log }),
+    log,
+  });
   const ws = attachWsGateway(app.server, {
     db: database.db,
     tokens,
@@ -97,6 +115,8 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     world,
     zones,
     log,
+    inventory,
+    persistence,
     limits: {
       helloTimeoutMs: config.HELLO_TIMEOUT_MS,
       joinTimeoutMs: config.JOIN_TIMEOUT_MS,
@@ -119,6 +139,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     (closed ??= (async () => {
       zones.stop();
       await ws.close();
+      await persistence.close();
       await app.close();
       await world.close();
       await Promise.allSettled([database.close(), redis.close()]);
@@ -134,6 +155,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const urlHost = address.includes(':') ? `[${address}]` : address;
   zones.start();
   world.start();
+  persistence.start();
   log.info({ port, db: redact(config.DATABASE_URL), redis: redact(config.REDIS_URL), tickHz: config.TICK_HZ }, 'astra server ready');
 
   return {
@@ -146,6 +168,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     ws,
     world,
     zones,
+    persistence,
     close,
   };
 }
