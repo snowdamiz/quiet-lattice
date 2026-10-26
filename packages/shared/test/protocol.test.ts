@@ -8,6 +8,7 @@ import {
   CharacterList,
   CharacterSummary,
   ClientMessage,
+  PARTY_MAX,
   Credentials,
   GameEvent,
   InvalidMessageError,
@@ -26,6 +27,8 @@ import {
   type Pose,
   type Snapshot,
 } from '../src/protocol/index.ts';
+// (its source, for the version history under PROTOCOL_VERSION: read through Vite's ?raw import, without Node types)
+import MESSAGES_SOURCE from '../src/protocol/messages.ts?raw';
 
 const pose: Pose = { frame: '424242:2', pos: [113000.25, -42.5, 7.125], quat: [0, 0.7071068, 0, 0.7071068], vel: [1, 2, 3] };
 /** A ship of this hull carrying every pod its bays take (Pack Mule adds a bay), and the skills. */
@@ -51,6 +54,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'cast', seq: 8, slot: 2, aim: [0, 0, -1], target: 12 },
   { t: 'interact', target: 'terminal:3' },
   { t: 'chat', channel: 'system', text: 'hello' },
+  { t: 'party', op: { op: 'invite', name: "Ana Vel'ka" } },
   { t: 'ack', tick: 99 },
   { t: 'ping', id: 1, clientTime: 1000.5 },
   { t: 'inventory', seq: 3, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 2, i: 7 }, count: 40 } },
@@ -64,12 +68,31 @@ const inventoryOps = [
   { op: 'compact', c: 'cargo' },
 ] as const;
 
+/** Every party request a client may send (they share the `party` request type). */
+const partyOps = [
+  { op: 'accept', name: 'ana' },
+  { op: 'decline', name: 'Ana' },
+  { op: 'leave' },
+  { op: 'kick', name: 'Bo Tran' },
+  { op: 'promote', name: 'Bo-Tran' },
+] as const;
+
+const partyView = {
+  leader: 'Bo Tran',
+  members: [
+    { name: "Ana Vel'ka", online: true, system: 0, health: 10 },
+    { name: 'Bo Tran', online: true, system: 59, health: 3 },
+    { name: 'Cy', online: false, system: null, health: null },
+  ],
+};
+
 const events: GameEvent[] = [
   { kind: 'combat', source: 5, target: 9, amount: 18, damageType: 'thermal', ability: 'lance', killed: false },
   { kind: 'quest', questId: 'prologue.first-jobs', step: 2, status: 'step', counters: { carbon: 25 } },
   { kind: 'chat', channel: 'shard', from: 'Ana', text: 'hi', at: 3600 },
   { kind: 'loot', item: 'ferrite', count: 12, from: 9 },
   { kind: 'notice', text: 'Docking permission granted', tone: 'good' },
+  { kind: 'party', what: 'invite', name: 'Ana' },
 ];
 
 const serverSamples: ServerMessage[] = [
@@ -81,6 +104,8 @@ const serverSamples: ServerMessage[] = [
   { t: 'world', season: 1, count: 500, edgeX: 2.5e6, tiers: [0, 0, 0, 1, 2], serverTime: 3600 },
   ...events.map((event) => ({ t: 'event' as const, event })),
   { t: 'inventory', seq: 3, inventory },
+  { t: 'party', party: partyView },
+  { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
 ];
 
 const http = {
@@ -90,6 +115,17 @@ const http = {
   CharacterSummary: [CharacterSummary, character],
   CharacterList: [CharacterList, { characters: [character], max: 6 }],
 } as const;
+
+describe('protocol: version', () => {
+  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01). A branch
+  // that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 4, and the history under the constant names every version up to it', () => {
+    expect(PROTOCOL_VERSION).toBe(4);
+    const source = MESSAGES_SOURCE;
+    for (let v = 1; v <= PROTOCOL_VERSION; v++) expect(source, `history line for ${v}`).toMatch(new RegExp(`^// ${v}: .+\\(P\\d\\.E\\d{2}\\.T\\d{2}\\)$`, 'm'));
+    expect(source).not.toMatch(new RegExp(`^// ${PROTOCOL_VERSION + 1}: `, 'm'));
+  });
+});
 
 describe('protocol: control messages', () => {
   it('covers every client message, server message and event kind', () => {
@@ -121,6 +157,39 @@ describe('protocol: control messages', () => {
       expect(decodeClientMessage(text)).toBeNull();
     }
     expect(decodeServerMessage(encodeMessage(clientSamples.at(-1)!))).toBeNull();
+  });
+
+  it.each(partyOps.map((op) => [op.op, op]))('client party %s round-trips', (_, op) => {
+    const m = { t: 'party' as const, op };
+    expect(decodeClientMessage(encodeMessage(m))).toEqual(m);
+  });
+
+  it('round-trips party state, party news and refusals in their every form, and tells the two party messages apart', () => {
+    const states = [
+      { t: 'party' as const, party: null },
+      {
+        t: 'party' as const,
+        party: { leader: 'Ana', members: Array.from({ length: PARTY_MAX }, (_, i) => ({ name: `An${'abcdef'[i]}`, online: true, system: i, health: i })) },
+      },
+    ];
+    for (const m of states) {
+      const text = encodeMessage(m);
+      expect(decodeServerMessage(text)).toEqual(m);
+      expect(decodeClientMessage(text)).toBeNull();
+    }
+    expect(decodeServerMessage(encodeMessage(clientSamples.find((m) => m.t === 'party')!))).toBeNull();
+    for (const what of ['invite', 'invited', 'declined', 'expired', 'joined', 'left', 'kicked', 'leader'] as const) {
+      const m = { t: 'event' as const, event: { kind: 'party' as const, what, name: 'Bo Tran' } };
+      expect(decodeServerMessage(encodeMessage(m))).toEqual(m);
+    }
+    const disbanded = { t: 'event' as const, event: { kind: 'party' as const, what: 'disbanded' as const } };
+    expect(decodeServerMessage(encodeMessage(disbanded))).toEqual(disbanded);
+    for (const m of [
+      { t: 'denied' as const, of: 'invite' as const, code: 'not_found' as const, name: 'Nobody' },
+      { t: 'denied' as const, of: 'chat' as const, code: 'muted' as const, retryS: 60 },
+      { t: 'denied' as const, of: 'leave' as const, code: 'no_party' as const },
+    ])
+      expect(decodeServerMessage(encodeMessage(m))).toEqual(m);
   });
 
   it.each(Object.entries(http))('HTTP %s round-trips', (_, [schema, value]) => {
@@ -158,9 +227,32 @@ describe('protocol: control messages', () => {
       '{"t":"inventory","seq":0,"op":{"op":"compact","c":"suit"}}',
       '{"t":"inventory","seq":1}',
       '{"t":"inventory","seq":1,"inventory":{"stackMax":9999,"units":0,"suit":[],"pods":[]}}',
+      // party requests: a known op, naming a character as names are spelled
+      '{"t":"party","op":{"op":"disband"}}',
+      '{"t":"party","op":{"op":"invite"}}',
+      '{"t":"party","op":{"op":"invite","name":"A"}}',
+      '{"t":"party","op":{"op":"invite","name":"Ana  Vel"}}',
+      '{"t":"party","op":{"op":"kick","name":"Ana\\u202e"}}',
+      `{"t":"party","op":{"op":"promote","name":"${'a'.repeat(21)}"}}`,
+      '{"t":"party","party":null}',
+      '{"t":"chat","channel":"guild","text":"hi"}',
     ];
     for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
     expect(decodeServerMessage('{"t":"world","season":1,"count":5000,"edgeX":0,"tiers":[],"serverTime":0}')).toBeNull();
+    // party state: two to PARTY_MAX members, a leader among them, coarse health, a system index
+    const member = { name: 'Ana', online: true, system: 0, health: 10 };
+    for (const party of [
+      { leader: 'Ana', members: [member] },
+      { leader: 'Cy', members: [member, { ...member, name: 'Bo' }] },
+      { leader: 'Ana', members: Array.from({ length: PARTY_MAX + 1 }, (_, i) => ({ ...member, name: `An${'abcdefg'[i]}` })) },
+      { leader: 'Ana', members: [member, { ...member, name: 'Bo', health: 11 }] },
+      { leader: 'Ana', members: [member, { ...member, name: 'Bo', health: 0.5 }] },
+      { leader: 'Ana', members: [member, { ...member, name: 'Bo', system: 1024 }] },
+    ])
+      expect(decodeServerMessage(JSON.stringify({ t: 'party', party })), JSON.stringify(party).slice(0, 80)).toBeNull();
+    expect(decodeServerMessage('{"t":"denied","of":"chat","code":"banned"}')).toBeNull();
+    expect(decodeServerMessage('{"t":"denied","of":"chat","code":"rate","retryS":0}')).toBeNull();
+    expect(decodeServerMessage('{"t":"event","event":{"kind":"party","what":"invite","name":"x"}}')).toBeNull();
     // inventory state carries only tradeable things: no fragments, no unknown items, no stack over its cap
     for (const bad of [
       { ...inventory, fragments: 4 },
@@ -175,6 +267,11 @@ describe('protocol: control messages', () => {
     const nan = { t: 'event', event: { kind: 'combat', source: 1, target: 2, amount: NaN, damageType: 'x', killed: false } } as ServerMessage;
     expect(() => encodeServerMessage(nan)).toThrow(InvalidMessageError);
     expect(() => encodeMessage({ t: 'event', event: { kind: 'loot', item: 'ferrite', count: 0, from: null } })).toThrow(InvalidMessageError);
+    // a relayed chat line is held to the client's rules: no control characters, a real character name
+    expect(() => encodeMessage({ t: 'event', event: { kind: 'chat', channel: 'shard', from: 'Ana', text: 'spoof\u202eevil', at: 1 } })).toThrow(
+      InvalidMessageError,
+    );
+    expect(() => encodeMessage({ t: 'event', event: { kind: 'chat', channel: 'shard', from: 'SYSTEM:', text: 'hi', at: 1 } })).toThrow(InvalidMessageError);
     const overCap = { ...inventory, suit: [{ item: 'ferrite', count: 10000 }, ...inventory.suit.slice(1)] };
     expect(() => encodeMessage({ t: 'inventory', seq: 1, inventory: overCap })).toThrow(InvalidMessageError);
   });
@@ -286,6 +383,32 @@ describe('protocol: snapshots', () => {
     expect(dropped).toEqual(['5.pos']);
     expect(back.entities[0]).toEqual({ id: 5, hp: 1, shield: 0, name: 'Ana' });
     expect(back.entities[1]).toEqual(full.entities[1]);
+  });
+
+  it('carries a creature’s attack phase (0–1, clamped) and clears it when the attack ends', () => {
+    const dropped: string[] = [];
+    const attacking: EntityState = { id: 9, mode: 'attack', attack: 0.25 };
+    expect(decodeSnapshot(encodeSnapshot({ ...full, entities: [attacking] }))!.entities).toEqual([attacking]);
+    const over = decodeSnapshot(
+      encodeSnapshot(
+        {
+          ...full,
+          entities: [
+            { id: 9, attack: 1.0000001 },
+            { id: 10, attack: -1e-9 },
+          ],
+        },
+        dropped,
+      ),
+    )!;
+    expect(over.entities).toEqual([
+      { id: 9, attack: 1 },
+      { id: 10, attack: 0 },
+    ]);
+    expect(dropped).toEqual([]);
+    const done: Snapshot = { tick: 121, time: 3600.1, ack: 8, full: false, base: 120, entities: [{ id: 9, mode: 'return', clear: ['attack'] }], removed: [] };
+    expect(decodeSnapshot(encodeSnapshot(done))).toEqual(done);
+    expect(applyEntityDelta({ id: 9, mode: 'attack', attack: 0.5 }, done.entities[0])).toEqual({ id: 9, mode: 'return' });
   });
 
   it('validates every field on encode, so the client never rejects what the server sent', () => {

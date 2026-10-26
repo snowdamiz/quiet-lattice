@@ -711,7 +711,7 @@ The meter must work the same with ten players as with ten thousand, so it never 
 - Each day the server computes the **lean**: Feed actions as a share of all counted actions that day, one vote per account per action type so nobody grinds it. A day with no actions has no lean.
 - The meter drifts toward a **target** set by the lean: 850 at all-Feed, 150 at all-Break, 500 at an even split, at a fixed speed of up to 25 measures a day. Ten players who all raid convoys lean the world exactly as hard as ten thousand.
 - Under that, the Count **burns 5 measures a day on its own**, one measure every 4.8 hours. A world nobody tends slides slowly toward Broken and the Edge advances. That is the story's pressure, and it means the season has a shape even on a quiet server: the Edge creeps, and whoever is playing decides whether to fight it or welcome it.
-- The underdog side (the one the lean is against) earns bonus rep while the meter sits more than 200 from the middle, so a thin population does not lock into one ending.
+- The underdog side (the one pulling the meter back toward the middle: Break while it sits above 700, Feed below 300; Hold either way) earns bonus rep while the meter sits more than 200 from the middle, so a thin population does not lock into one ending.
 
 ### 16.3 What the meter does to the world
 | Count | The Edge | Tiers | Hollow | Passage | Stones | Economy |

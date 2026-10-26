@@ -10,6 +10,29 @@ type WorldModule = typeof World;
 export const SYSTEMS = 10;
 export const TIERS = [1, 3];
 export const TIMES = [0, 1234.5, 98765.4321, 3.3e7, 9.87654321e8];
+/** The tier every rocky world's resource nodes are scattered at (each node type at full density), how many of its sites
+ * the cells round which are taken (and how far round, m), and how many cells besides, spread over the world. */
+export const NODE_TIER = 5;
+export const NODE_SITES = 6;
+export const NODE_SITE_REACH = 40;
+export const NODE_CELLS = 16;
+
+/** A rocky world's resource nodes (P1.E13.T02) on the ground it is drawn on at NODE_TIER: the cells round its first sites
+ * (their pads and clearance) and a spread of others, each with the nodes the shared spec places there. */
+function worldNodes(W: WorldModule, params: World.PlanetParams) {
+  const p = { ...params };
+  const ground = W.drawnGround(p, NODE_TIER);
+  const layers = W.planetNodeLayers(p, NODE_TIER);
+  const level = W.nodeCellLevel(p.radius);
+  const n = 1 << level;
+  const cells: World.NodeCell[] = [];
+  for (const s of ground.sites.slice(0, NODE_SITES)) cells.push(...W.nodeCellsNear(s.dir.x, s.dir.y, s.dir.z, NODE_SITE_REACH, p.radius, level));
+  for (let c = 0; c < NODE_CELLS; c++) {
+    const h = W.hashInts(p.seed, 0xb175, c);
+    cells.push({ face: h % 6, i: W.hashInts(h, 1) % n, j: W.hashInts(h, 2) % n, level });
+  }
+  return { layers, cells: cells.map((cell) => ({ cell, nodes: W.scatterNodes(ground, layers, cell) })) };
+}
 
 const f64 = new Float64Array(1);
 const u32 = new Uint32Array(f64.buffer);
@@ -55,7 +78,8 @@ export function sampleDirections(n = 20): string[][] {
 /**
  * Systems 0–9 of the game's galaxy as `W` generates them: the galaxy, its home systems and every system's tier; each
  * system's description
- * (star, bodies and their params, belt, Waystation); every rocky world's cities and sites; on each home planet its dens
+ * (star, bodies and their params, belt, Waystation); every rocky world's cities and sites, and its resource nodes round
+ * its first sites and over a spread of cells (worldNodes); on each home planet its dens
  * and pads at Tiers 1 and 3, and its terrain (raw and levelled, with every sampled field and the surface attributes) at
  * `dirs`; and every body's pose at five times.
  */
@@ -64,12 +88,12 @@ export function worldBits(W: WorldModule, dirs: string[][]) {
   const galaxy = new W.Galaxy(W.GALAXY_SEED);
   const systems = galaxy.systems.slice(0, SYSTEMS).map((info) => {
     const d = W.describeGalaxySystem(info);
-    // every rocky world's cities and sites (no dens at Tier 0)
+    // every rocky world's cities and sites (no dens at Tier 0), and its resource nodes
     const surfaces = d.bodies.map((b) => {
       if (b.type === 'gas') return null;
       const p = { ...(b.params as World.PlanetParams) };
       const { cities, sites, pads } = W.planSurface(p, new W.TerrainSampler(p));
-      return { cities, sites, pads };
+      return { cities, sites, pads, nodes: worldNodes(W, b.params as World.PlanetParams) };
     });
     // the home planet at Tiers 1 and 3, and its ground
     const home = d.bodies[d.home].params as World.PlanetParams;

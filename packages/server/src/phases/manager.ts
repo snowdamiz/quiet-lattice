@@ -15,9 +15,10 @@
 // through phaseFor when it reconnects; a phase does not close while such a place is kept. One whose entity leaves the
 // zone any other way (a handoff, a logout) goes at once.
 //
-// Party membership is the zone's party tag until the party system (P1.E15.T01), or the party phaseFor is given, which
-// the member keeps: a story phase holds one party, and placement puts a player in a party member's phase at that place
-// whenever it has room.
+// Party membership is the zone's party tag, which the party service (social/parties.ts) keeps on every member's entity,
+// or the party phaseFor is given, which the member keeps: a story phase holds one party, and placement puts a player in a
+// party member's phase at that place whenever it has room. A place kept across a dropped connection is reclaimed only
+// under the party it was kept for.
 import type { FrameId } from '@astra/shared/protocol';
 import type { EntityInit, ZoneEntity, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import { PHASE_KINDS, PHASE_VOLUME_HYSTERESIS, type PhaseKind } from './kinds.ts';
@@ -159,7 +160,8 @@ export class PhaseManager {
 
   /**
    * Puts the session's player in a phase of `kind` at `location` and returns it: the one it is already in there, or
-   * whose place was kept for its character since its connection dropped; else a party member's that has room; else the
+   * whose place was kept for its character since its connection dropped, when it comes back under the party the place was
+   * kept for (else the place is given up); else a party member's that has room; else the
    * fullest that has room (the oldest of equals); else a new one. It leaves any other phase it was in, or had a place
    * kept in. `partyId` is the party it is placed under and keeps; without one its entity's party tag counts, as it
    * stands each time. A player in no party fills a story phase alone, and a story phase never holds two parties: a
@@ -184,20 +186,19 @@ export class PhaseManager {
     }
 
     let chosen: PhaseState | undefined;
-    let kept = partyId;
     let outsideSince: number | null = null;
     const character = viewer.characterId ?? null;
     const hold = character === null ? undefined : this.held.get(character);
     if (hold && hold.phase.place === place) {
-      // back after a dropped connection; its new entity has no party tag until the party system gives it one again, so
-      // it comes back under the party it had
-      const back = partyId !== undefined ? partyId : tag !== null ? tag : hold.party;
+      // back after a dropped connection, under the party it is in now (the partyId given, else its new entity's tag, which
+      // the party service sets as it joins): the place is its own only under the party it was kept for; one that left or
+      // was kicked from that party meanwhile gives the place up and is placed afresh
+      const back = partyId !== undefined ? partyId : tag;
       this.held.delete(character!);
       hold.phase.held.delete(character!);
-      if (this.fits(hold.phase, back, id)) {
+      if (back === hold.party && this.fits(hold.phase, back, id)) {
         chosen = hold.phase;
         outsideSince = hold.outsideSince;
-        if (partyId === undefined && tag === null) kept = hold.party;
       } else {
         this.log?.debug({ zone: this.zone.id, phase: hold.phase.id, character, reason: 'party' }, 'phase place given up');
         if (hold.phase.size === 0) this.shut(hold.phase, 'empty');
@@ -220,7 +221,7 @@ export class PhaseManager {
 
     if (current) this.detach(id, current, 'moved');
     chosen.members.add(id);
-    this.placed.set(id, { phase: chosen, member: true, party: kept, character, inside: outsideSince === null, outsideSince });
+    this.placed.set(id, { phase: chosen, member: true, party: partyId, character, inside: outsideSince === null, outsideSince });
     this.log?.debug({ zone: this.zone.id, phase: chosen.id, kind, location: location.key, entity: id, members: chosen.members.size }, 'phase member joined');
     return chosen;
   }
@@ -282,6 +283,12 @@ export class PhaseManager {
   /** Whether the session whose entity is `viewer` may see entity `id`, phases considered (not distance). */
   canSee(viewer: number, id: number): boolean {
     return id === viewer || this.sees(this.placed.get(viewer), id);
+  }
+
+  /** Whether entity `id` is out of the shared world's sight: a member sealed in its phase (a bay, event or raid), or one
+   * of a phase's own entities. The shared world's systems (fauna) leave such an entity alone. */
+  hiddenFromShared(id: number): boolean {
+    return !this.sees(undefined, id);
   }
 
   // ---------- the zone's hooks ----------

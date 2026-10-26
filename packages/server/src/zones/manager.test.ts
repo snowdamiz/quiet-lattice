@@ -294,6 +294,22 @@ describe('ZoneManager', () => {
     expect(zones.tier(`sys:${other}`)).toBe(5);
   });
 
+  it("gives each zone's fauna its tier, and the new tier when the Edge moves", async () => {
+    const world = await WorldService.open({ store: { id: 't', load: async () => newShardRecord('t', 0, 0), saveTime: async () => {} } });
+    // the world service's Edge already stands 25 ly nearer than the default when the zone opens
+    world.update({ edgeX: EDGE_X - 25 });
+    const nearer = galaxyTiers(EDGE_X - 25);
+    const moved = nearer.findIndex((t, i) => t.tier !== tierOfGalaxySystem(i));
+    const { zones } = setup({ world });
+    const zone = zones.join(new Sink(1), character(moved)).zone;
+    expect(zone.fauna!.tier).toBe(nearer[moved]!.tier);
+    expect(zone.fauna!.tier).not.toBe(tierOfGalaxySystem(moved));
+    // the Edge goes back: the fauna follows
+    world.update({ edgeX: EDGE_X });
+    expect(zones.tier(zone.id)).toBe(tierOfGalaxySystem(moved));
+    expect(zone.fauna!.tier).toBe(tierOfGalaxySystem(moved));
+  });
+
   it('gives zones the tiers of the Edge at its default without a world service', () => {
     const { zones } = setup();
     zones.join(new Sink(1), character(20));

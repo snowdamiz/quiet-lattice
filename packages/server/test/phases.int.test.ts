@@ -195,9 +195,11 @@ describe('phases over the wire', () => {
     expect([...p.members]).toEqual([b.entityId]);
     expect([...p.held]).toEqual([a.characterId]);
     expect(b.sees(boss)).toBe(true);
-    // a reconnects (a new session, a new entity, no party tag yet) and is placed at the spot again: the same phase
+    // a reconnects (a new session, a new entity) still in the party, and is placed at the spot again: the same phase.
+    // (The party service tags a member's new entity as it joins; this test's party is a bare tag, so it tags it here.)
     const back = await player('thalune', { token: a.token, characterId: a.characterId });
     expect(back.entityId).not.toBe(a.entityId);
+    zone.setParty(back.entityId, party);
     expect(zone.phases.phaseFor(back.session, 'story', site)).toBe(p);
     expect([...p.members].sort()).toEqual([b.entityId, back.entityId].sort());
     expect(p.held.size).toBe(0);

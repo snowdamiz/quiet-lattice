@@ -403,11 +403,34 @@ describe('a dropped connection', () => {
     expect(phases.phaseFor(player([0, 0, 0], 'Q').viewer, 'story', place('site'))).not.toBe(story);
     const mate = player([0, 0, 0], 'P');
     expect(phases.phaseFor(mate.viewer, 'story', place('site'))).toBe(story);
-    // back with no party tag (the party system has not re-tagged it yet), it keeps the party it had
-    const back = player([0, 0, 0], null, 'char-m');
+    // back under its party (the party service tags its new entity as it joins), it takes its place again
+    const back = player([0, 0, 0], 'P', 'char-m');
     expect(phases.phaseFor(back.viewer, 'story', place('site'))).toBe(story);
     expect(phases.phaseFor(player([0, 0, 0], 'P').viewer, 'story', place('site'))).toBe(story);
     expect(story.members.size).toBe(3);
+  });
+
+  it('gives a kept place up when its character comes back in no party, or in another', () => {
+    const { zone, phases, player, place } = setup();
+    const site = place('site');
+    const m = player([0, 0, 0], 'P', 'char-m');
+    const mate = player([0, 0, 0], 'P');
+    const story = phases.phaseFor(m.viewer, 'story', site);
+    expect(phases.phaseFor(mate.viewer, 'story', site)).toBe(story);
+    // it dropped, and left (or was kicked from) the party meanwhile: back with no tag, it is placed afresh
+    zone.leave(m.viewer, 'disconnected');
+    expect(story.held.has('char-m')).toBe(true);
+    const alone = player([0, 0, 0], null, 'char-m');
+    const fresh = phases.phaseFor(alone.viewer, 'story', site);
+    expect(fresh).not.toBe(story);
+    expect([story.held.size, [...story.members]]).toEqual([0, [mate.entity]]);
+    // in another party, likewise; and under an explicit partyId that is not the kept one
+    zone.leave(alone.viewer, 'disconnected');
+    expect(phases.phaseFor(player([0, 0, 0], 'Q', 'char-m').viewer, 'story', site)).not.toBe(fresh);
+    const r = player([0, 0, 0], 'P', 'char-r');
+    const kept = phases.phaseFor(r.viewer, 'raid', place('vault'));
+    zone.leave(r.viewer, 'disconnected');
+    expect(phases.phaseFor(player([0, 0, 0], 'P', 'char-r').viewer, 'raid', place('vault'), 'Q')).not.toBe(kept);
   });
 
   it('is the only way out that keeps a place: leaving otherwise, or with no character, goes at once', () => {
