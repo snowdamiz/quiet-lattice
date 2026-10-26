@@ -5,8 +5,9 @@ import * as World from '@astra/shared/world';
 import { compareBits, engineMath, sampleDirections, worldBits } from './world-bits.ts';
 
 // World generation gives the same bits in Node (the server) and in every browser engine (the clients), DESIGN 17
-// (P1.E02.T09): the galaxy's tier table and systems 0–9 (their descriptions, every rocky world's cities and sites, the home
-// planets' dens and pads at Tiers 1 and 3 and their terrain at 20 directions, every body's pose at five times) are
+// (P1.E02.T09): the galaxy's tier table and systems 0–9 (their descriptions, every rocky world's cities and sites and its
+// resource nodes round its sites and over a spread of cells (P1.E13.T02), the home planets' dens and pads at Tiers 1 and 3
+// and their terrain at 20 directions, every body's pose at five times) are
 // generated in each engine from the shared world module as the client's Vite dev server serves it, and compared with
 // Node's bit for bit. Chromium always runs; Firefox and WebKit run where Playwright has them (`pnpm --filter @astra/tools
 // exec playwright install firefox webkit`) and can start them, and are skipped otherwise.

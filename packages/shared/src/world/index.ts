@@ -16,3 +16,4 @@ export * from './kinematics.ts';
 export * from './cover.ts';
 export * from './frames.ts';
 export * from './resourceNodes.ts';
+export * from './ground.ts';

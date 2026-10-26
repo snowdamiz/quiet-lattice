@@ -1,32 +1,45 @@
 // The resource-node spec (P1.E13.T02): its table against the resource data (DESIGN 15.3), which node types a world
-// carries, the cell grid, and that every scattered node keeps to its type's ground.
+// carries, the cell grid, the ground both ends scatter over (drawnGround), and that every scattered node keeps to its
+// type's ground and off the pads and the sites' clearance.
 import { describe, expect, it } from 'vitest';
 import { LIVING_WORLDS, RESOURCES, WORLD_TYPES } from '../src/data/index.ts';
 import {
+  DENS_DRAWN,
   DEPOSITS_PER_WORLD,
   DRY_LINE,
+  FOOTPRINT,
   NODE_ROCKY_WORLDS,
   NODE_TYPES,
   NODE_TYPE_IDS,
+  SITE_NODE_CLEARANCE,
   TIER_RARITY,
+  TerrainSampler,
+  cityPads,
+  cubeToSphere,
+  drawnGround,
   fissureAt,
   nodeAltBand,
   nodeCellAt,
   nodeCellBounds,
   nodeCellLevel,
   nodeCellMeters,
+  nodeCellsNear,
   nodeKey,
   nodeType,
   pickDeposits,
+  planSurface,
   planetNodeLayers,
   scatterNodes,
-  cubeToSphere,
+  siteNodeClearance,
+  sitePads,
   tierWeight,
+  type DrawnGround,
   type NodeCell,
   type NodeType,
   type PlanetType,
 } from '../src/world/index.ts';
-import { nodeWorlds, plannedWorld, sampleCells } from './resource-nodes-fixture.ts';
+import { asJson } from './digest.ts';
+import { drawnWorld, groundCells, nodeWorlds, sampleCells } from './resource-nodes-fixture.ts';
 
 const TYPES = NODE_TYPES as readonly NodeType[];
 const ROCKY = WORLD_TYPES.filter((t) => t !== 'gas');
@@ -147,30 +160,122 @@ describe('the cell grid', () => {
   });
 });
 
+describe('the cells round a point', () => {
+  it('nodeCellsNear: the point’s own cell first, every cell once, none far off, and enough to cover the disc', () => {
+    const R = 31000;
+    const level = nodeCellLevel(R);
+    const cellM = nodeCellMeters(R, level);
+    const dir = [0, 0, 0];
+    for (const cell of sampleCells({ seed: 5, radius: R }, 40)) {
+      const { u0, v0, size } = nodeCellBounds(cell);
+      cubeToSphere(cell.face, u0 + size * 0.5, v0 + size * 0.5, dir);
+      const near = nodeCellsNear(dir[0], dir[1], dir[2], 100, R, level);
+      expect(near).toContainEqual(cell);
+      expect(new Set(near.map((c) => `${c.face}_${c.i}_${c.j}`)).size).toBe(near.length);
+      // a 100 m disc on ~64 m cells: its 3 × 3 block at least, and nothing past it by more than a cell
+      expect(near.length).toBeGreaterThanOrEqual(9);
+      const at = [0, 0, 0];
+      for (const c of near) {
+        const b = nodeCellBounds(c);
+        cubeToSphere(c.face, b.u0 + b.size / 2, b.v0 + b.size / 2, at);
+        expect(Math.hypot(at[0] - dir[0], at[1] - dir[1], at[2] - dir[2]) * R).toBeLessThan(100 + cellM * 1.5);
+      }
+    }
+  });
+});
+
+describe('the drawn ground', () => {
+  const worlds = nodeWorlds();
+  it('is planSurface’s cities and sites on the natural ground, levelled, with no dens while dens are not drawn', () => {
+    expect(DENS_DRAWN).toBe(false);
+    for (const type of ['lush', 'desert', 'storm', 'frozen']) {
+      const w = worlds.find((x) => x.type === type)!;
+      for (const tier of [0, 3]) {
+        const { params, ground } = drawnWorld(w, tier);
+        const natural = { ...params, pads: null };
+        const plan = planSurface(natural, new TerrainSampler(natural), { tier });
+        expect(asJson(ground.cities), type).toEqual(asJson(plan.cities));
+        expect(asJson(ground.sites), type).toEqual(asJson(plan.sites));
+        expect(ground.dens).toEqual([]);
+        expect(ground.pads).toEqual([...cityPads(plan.cities), ...sitePads(plan.sites)]);
+        expect(params.pads).toBe(ground.pads);
+        expect(ground.sampler.pads).toBe(ground.pads);
+        expect(ground.tier).toBe(tier);
+        expect(ground.nodeClear).toEqual(siteNodeClearance(ground.sites));
+        expect(ground.nodeClear).toHaveLength(ground.sites.length * 4);
+      }
+    }
+  });
+
+  it('refuses a world already levelled, and a tier that is not one', () => {
+    const w = worlds[0];
+    const { params } = drawnWorld(w, 0);
+    expect(() => drawnGround(params, 0)).toThrow(/natural ground/);
+    const fresh = drawnWorld(w, 0).params;
+    delete fresh.pads;
+    expect(() => drawnGround(fresh, 6)).toThrow(RangeError);
+    expect(() => drawnGround(fresh, 1.5)).toThrow(RangeError);
+  });
+
+  it('a site’s clearance is its footprint and SITE_NODE_CLEARANCE round it', () => {
+    const { ground } = drawnWorld(worlds[0], 0);
+    const s = ground.sites[0];
+    expect(siteNodeClearance([s])).toEqual([s.dir.x, s.dir.y, s.dir.z, FOOTPRINT[s.type] + SITE_NODE_CLEARANCE]);
+  });
+});
+
 describe('scattered nodes', () => {
   const worlds = nodeWorlds();
-  const scatterAll = (type: string, tier = 5) => {
+  const scatterAll = (type: string, tier = 5, cellsOf: 'sample' | 'ground' = 'sample') => {
     const w = worlds.find((x) => x.type === type)!;
-    const { params, sampler } = plannedWorld(w);
+    const { params, ground } = drawnWorld(w, tier);
     const layers = planetNodeLayers(params, tier);
-    const cells = sampleCells(params, 300);
-    return { params, sampler, layers, cells, nodes: cells.flatMap((cell) => scatterNodes(sampler, layers, cell).map((n) => ({ n, cell }))) };
+    const cells = cellsOf === 'ground' ? groundCells(ground) : sampleCells(params, 300);
+    return { params, ground, layers, cells, nodes: cells.flatMap((cell) => scatterNodes(ground, layers, cell).map((n) => ({ n, cell }))) };
   };
+  const unit = (n: { x: number; y: number; z: number }) => {
+    const r = Math.hypot(n.x, n.y, n.z);
+    return [n.x / r, n.y / r, n.z / r] as const;
+  };
+  const inClearance = (ground: DrawnGround, [x, y, z]: readonly number[]) =>
+    ground.sites.some((s) => Math.hypot(x - s.dir.x, y - s.dir.y, z - s.dir.z) * ground.sampler.R < FOOTPRINT[s.type] + SITE_NODE_CLEARANCE);
 
   it('the same nodes every time, inside their cell, each layer on its own stream', () => {
-    const { sampler, layers, cells } = scatterAll('volcanic');
+    const { ground, layers, cells } = scatterAll('volcanic');
     for (const cell of cells.slice(0, 120)) {
-      const a = scatterNodes(sampler, layers, cell);
-      expect(scatterNodes(sampler, layers, cell)).toEqual(a);
+      const a = scatterNodes(ground, layers, cell);
+      expect(scatterNodes(ground, layers, cell)).toEqual(a);
       // a layer alone gives exactly its own nodes: dropping another (a tier change) moves none of them
-      for (const l of layers) expect(scatterNodes(sampler, [l], cell)).toEqual(a.filter((n) => n.type === l.type));
+      for (const l of layers) expect(scatterNodes(ground, [l], cell)).toEqual(a.filter((n) => n.type === l.type));
       for (const n of a) {
-        const len = Math.hypot(n.x, n.y, n.z);
-        const at: NodeCell = nodeCellAt(n.x / len, n.y / len, n.z / len, cell.level);
+        const [x, y, z] = unit(n);
+        const at: NodeCell = nodeCellAt(x, y, z, cell.level);
         expect([at.face, at.i, at.j]).toEqual([cell.face, cell.i, cell.j]);
         expect(Math.hypot(n.nx, n.ny, n.nz)).toBeCloseTo(1, 12);
       }
     }
+  });
+
+  it.each(['lush', 'desert', 'storm', 'frozen'])('on the %s world nothing grows on the pads or round a site, which the cells reach', (world) => {
+    const { ground, layers, cells, nodes } = scatterAll(world, 5, 'ground');
+    expect(nodes.length).toBeGreaterThan(50);
+    for (const { n } of nodes) {
+      const d = unit(n);
+      expect(ground.sampler.padWear(d[0], d[1], d[2])).toBeLessThanOrEqual(0.3);
+      expect(inClearance(ground, d)).toBe(false);
+    }
+    // the cells do reach worn and paved ground: their centres often lie on it
+    const centre = [0, 0, 0];
+    const worn = cells.filter((c) => {
+      const b = nodeCellBounds(c);
+      cubeToSphere(c.face, b.u0 + b.size / 2, b.v0 + b.size / 2, centre);
+      return ground.sampler.padWear(centre[0], centre[1], centre[2]) > 0.3;
+    });
+    expect(worn.length).toBeGreaterThan(20);
+    // and without the sites' clearance nodes would stand round them
+    const open = { sampler: ground.sampler, nodeClear: [] };
+    const cleared = cells.flatMap((c) => scatterNodes(open, layers, c)).filter((n) => inClearance(ground, unit(n)));
+    expect(cleared.length).toBeGreaterThan(5);
   });
 
   it.each([
@@ -184,19 +289,17 @@ describe('scattered nodes', () => {
     ['inferno', 'cinderglass'],
     ['lush', 'sodium'],
   ])('on the %s world every %s node keeps to its ground', (world, id) => {
-    const { params, sampler, nodes } = scatterAll(world);
+    const { params, ground, nodes } = scatterAll(world);
     const t = nodeType(id);
     const [lo, hi] = nodeAltBand(params, t.place);
     const mine = nodes.filter(({ n }) => n.type === id);
     expect(mine.length).toBeGreaterThan(5);
     for (const { n } of mine) {
-      const r = Math.hypot(n.x, n.y, n.z);
-      const [x, y, z] = [n.x / r, n.y / r, n.z / r];
-      const h = r + t.place.sink - params.radius;
+      const [x, y, z] = unit(n);
+      const h = Math.hypot(n.x, n.y, n.z) + t.place.sink - params.radius;
       expect(h).toBeGreaterThanOrEqual(lo - 1e-6);
       expect(h).toBeLessThanOrEqual(hi + 1e-6);
-      expect(sampler.padWear(x, y, z)).toBeLessThanOrEqual(0.3 + 1e-9);
-      if (t.place.fissure !== undefined) expect(fissureAt(sampler, x, y, z)).toBeGreaterThanOrEqual(t.place.fissure - 1e-9);
+      if (t.place.fissure !== undefined) expect(fissureAt(ground.sampler, x, y, z)).toBeGreaterThanOrEqual(t.place.fissure - 1e-9);
       expect(n.scale).toBeGreaterThanOrEqual(t.place.scale[0]);
       expect(n.scale).toBeLessThanOrEqual(t.place.scale[1]);
     }

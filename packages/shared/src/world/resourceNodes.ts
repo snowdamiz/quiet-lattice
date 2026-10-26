@@ -360,6 +360,50 @@ export function nodeCellAt(x: number, y: number, z: number, level: number, scrat
   };
 }
 
+/**
+ * The cells within about `radius` metres of the planet-local unit direction (x, y, z) on a world of radius `R`, each
+ * once, nearest first by rows: what the server holds round a player, or a test samples round a site. Gathered from a grid
+ * of points half a cell apart over the tangent plane, as the client's Flora gathers its cells.
+ */
+export function nodeCellsNear(x: number, y: number, z: number, radius: number, R: number, level: number): NodeCell[] {
+  const ul = Math.sqrt(x * x + y * y + z * z);
+  const ux = x / ul;
+  const uy = y / ul;
+  const uz = z / ul;
+  // a and b span the tangent plane: up × (a reference axis away from up), and up × a
+  const [rx, ry, rz] = Math.abs(uy) > 0.9 ? [1, 0, 0] : [0, 1, 0];
+  let ax = uy * rz - uz * ry;
+  let ay = uz * rx - ux * rz;
+  let az = ux * ry - uy * rx;
+  const al = Math.sqrt(ax * ax + ay * ay + az * az);
+  ax /= al;
+  ay /= al;
+  az /= al;
+  const bx = uy * az - uz * ay;
+  const by = uz * ax - ux * az;
+  const bz = ux * ay - uy * ax;
+  const step = nodeCellMeters(R, level) * 0.5;
+  const n = Math.ceil(radius / step);
+  const seen = new Set<string>();
+  const out: NodeCell[] = [];
+  const scratch: Partial<CubeCoord> = {};
+  for (let j = -n; j <= n; j++) {
+    for (let i = -n; i <= n; i++) {
+      if (i * i + j * j > n * n + 1) continue;
+      const px = ux * R + (ax * i + bx * j) * step;
+      const py = uy * R + (ay * i + by * j) * step;
+      const pz = uz * R + (az * i + bz * j) * step;
+      const pl = Math.sqrt(px * px + py * py + pz * pz);
+      const c = nodeCellAt(px / pl, py / pl, pz / pl, level, scratch);
+      const key = `${c.face}_${c.i}_${c.j}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(c);
+    }
+  }
+  return out;
+}
+
 /** A node's id on its world: its cell, its type and its candidate's number there. Stable for as long as the spec is. */
 export function nodeKey(cell: NodeCell, type: NodeTypeId, k: number): string {
   return `${cell.face}_${cell.i}_${cell.j}_${type}_${k}`;
@@ -390,6 +434,18 @@ export function fissureAt(sampler: TerrainSampler, x: number, y: number, z: numb
 }
 
 const SEED_SALT = 0x5eed0de;
+
+// whether the unit direction d lies within a site's clearance: flat [x, y, z, r] per site, r in planet radii (a chord,
+// which is the arc to well under a millimetre at these sizes)
+function nearSite(clear: readonly number[], d: readonly number[]): boolean {
+  for (let i = 0; i < clear.length; i += 4) {
+    const dx = d[0] - clear[i];
+    const dy = d[1] - clear[i + 1];
+    const dz = d[2] - clear[i + 2];
+    if (dx * dx + dy * dy + dz * dz < clear[i + 3] * clear[i + 3]) return true;
+  }
+  return false;
+}
 const d = [0, 0, 0];
 const d1 = [0, 0, 0];
 
@@ -408,19 +464,41 @@ export function nodeAltBand(params: Pick<PlanetParams, 'hasOcean' | 'mountainHei
   return [lo, hi];
 }
 
+/** The ground nodes are scattered over: the sampler of a world's drawn ground (levelled pads set) and its sites'
+ * clearance, flat [x, y, z, r] per site. A DrawnGround (./ground.ts) is one. */
+export interface NodeGround {
+  sampler: TerrainSampler;
+  nodeClear: readonly number[];
+}
+
 /**
- * The resource nodes of one surface cell, for the world `sampler` samples (built from the planet's params with its
- * levelled pads set, as the client's Planet sets them) and the layers it carries (planetNodeLayers). Each layer draws
- * from its own stream, seeded by the planet, the cell and the type, so a layer's nodes never move when another layer
- * comes or goes with the tier. Nodes come in layer order, then by candidate.
+ * The resource nodes of one surface cell, for the layers a world carries (planetNodeLayers) on the ground it is drawn
+ * on. That ground is `drawnGround(params, tier)` (./ground.ts) at its system's tier: its cities and sites as planSurface
+ * plans them, with the ground levelled under them (and its dens only once dens are drawn, DENS_DRAWN). The client's
+ * Planet and Flora and the server all scatter over exactly that ground (ARCHITECTURE §12). No node grows on a site's
+ * worn ground or a city's paving (the pads), nor within a site's clearance (`ground.nodeClear`). Each layer draws from
+ * its own stream, seeded by the planet, the cell and the type, so a layer's nodes never move when another layer comes
+ * or goes with the tier. Nodes come in layer order, then by candidate.
  */
-export function scatterNodes(sampler: TerrainSampler, layers: readonly NodeLayer[], cell: NodeCell): ResourceNode[] {
+export function scatterNodes(ground: NodeGround, layers: readonly NodeLayer[], cell: NodeCell): ResourceNode[] {
+  const sampler = ground.sampler;
   const p = sampler.p;
   const R = sampler.R;
   const { u0, v0, size } = nodeCellBounds(cell);
   const cellMeters = nodeCellMeters(R, cell.level);
   const area = cellMeters * cellMeters;
   const out: ResourceNode[] = [];
+  // the sites whose clearance can reach into this cell (by its centre: a cell is never wider than 1.5 cell sizes)
+  cubeToSphere(cell.face, u0 + size / 2, v0 + size / 2, d);
+  const clear: number[] = [];
+  const all = ground.nodeClear;
+  for (let i = 0; i < all.length; i += 4) {
+    const reach = (all[i + 3] + cellMeters * 1.5) / R;
+    const dx = d[0] - all[i];
+    const dy = d[1] - all[i + 1];
+    const dz = d[2] - all[i + 2];
+    if (dx * dx + dy * dy + dz * dz < reach * reach) clear.push(all[i], all[i + 1], all[i + 2], all[i + 3] / R);
+  }
   let centreH = NaN;
   for (const layer of layers) {
     const index = INDEX.get(layer.type);
@@ -447,8 +525,9 @@ export function scatterNodes(sampler: TerrainSampler, layers: readonly NodeLayer
       const s = sampler.sample(d[0], d[1], d[2]);
       const h = s.h;
       if (h < minH || h > maxH) continue;
-      // nothing on a site's worn ground or a city's paving
+      // nothing on a site's worn ground or a city's paving, nor round a site
       if (sampler.padWear(d[0], d[1], d[2]) > 0.3) continue;
+      if (clear.length && nearSite(clear, d)) continue;
       if (sp.fissure !== undefined && fissureAt(sampler, d[0], d[1], d[2]) < sp.fissure) continue;
       let pref = 1 - Math.abs(s.moisture - (sp.moist ?? 0.5)) * (sp.moistK ?? 0);
       if (sp.clump) {

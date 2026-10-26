@@ -280,3 +280,22 @@ its one-vote rule; the clock never starts below a stored vote's time (§3). The 
 Break above 700, Feed below 300) and its rep multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on
 either side) are pure functions for the rep model to apply. All the arithmetic is pure and integer-exact (votes are
 summed in thirtieths), so the same lean gives the same Count bit for bit at three accounts and at three thousand.
+
+## 12. The ground both ends draw (`@astra/shared/world`)
+
+Every machine regenerates a world from its seeds (DESIGN 17), and what the server decides on a world's surface, such as
+which resource node a player mines, must stand where every client draws it. So both ends plan a rocky world's surface
+with one function, `drawnGround(params, tier)` (`world/ground.ts`): its cities and the sites clear of them, planned as
+`planSurface` plans them on the natural ground, at the system's tier; the ground levelled under them (`params.pads`, set
+on the terrain sampler the workers and the server sample); and each site's clearance. Dens join it, with their levelled
+pads, only once dens are drawn (`DENS_DRAWN`, which P1.E14.T10 turns on with the den art); until then no machine plans
+them into the drawn ground. The client's `Planet` plans with it at the tier its `SolarSystem` was built for, its `Flora`
+scatters on that planet's ground, and the server's resource nodes (P1.E13.T01) call the same function.
+
+Resource nodes (P1.E13.T02, `world/resourceNodes.ts`) are the spec's to place: `planetNodeLayers(params, tier)` says which
+node types a world carries, and `scatterNodes(ground, layers, cell)` places the nodes of one ~64 m cell (`nodeCellLevel`,
+`nodeCellsNear`) on the drawn ground, off the pads and outside every site's clearance, in deterministic math only, so the
+server and every browser engine place the same nodes bit for bit (the cross-engine smoke compares them). A node's id is
+`face_i_j_type_k` (`nodeKey`). The client clears its own flora round sites and landed ships, but never a node: the
+nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any under a landed ship, from zone
+state).

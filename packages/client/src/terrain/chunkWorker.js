@@ -186,7 +186,9 @@ function toByte(c) {
 }
 
 // Deterministic flora / rock placement for one surface cell. Resource nodes (a species with `node`, a layer of the
-// shared spec) are placed by the shared scatter, so they land exactly where the server has them.
+// shared spec) are placed by the shared scatter over the world's drawn ground and its sites' clearance (`m.clear`), so
+// they land exactly where the server has them. A flora species draws from the stream of its slot (`si`, which Flora keeps
+// as it always was, so the flora stays where it stood before the nodes moved to the spec).
 function buildScatter(sampler, m) {
   const { face, u0, v0, size, species, seed } = m;
   const R = sampler.R;
@@ -198,10 +200,10 @@ function buildScatter(sampler, m) {
   for (let si = 0; si < species.length; si++) {
     const sp = species[si];
     if (sp.node) {
-      out.push(packNodes(scatterNodes(sampler, [sp.node], { face, i: m.i, j: m.j, level: m.level })));
+      out.push(packNodes(scatterNodes({ sampler, nodeClear: m.clear ?? [] }, [sp.node], { face, i: m.i, j: m.j, level: m.level })));
       continue;
     }
-    const rng = mulberry32((seed + si * 7919) >>> 0);
+    const rng = mulberry32((seed + (sp.si ?? si) * 7919) >>> 0);
     const count = Math.floor(sp.density * area + rng());
     const data = new Float32Array(count * 8);
     const ids = new Int32Array(count);

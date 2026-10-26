@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import {
   sphereToCube, cubeToSphere, Random, hashInts, mulberry32, archetype, FOOTPRINT, NODE_TYPE_IDS, nodeType, planetNodeLayers,
-  nodeCellLevel, nodeCellMeters, tierOf,
+  nodeCellLevel, nodeCellMeters,
 } from '@astra/shared/world';
 import {
   TREE_BUILDERS, makeBush, makeFern, makeGrass, makeRock, makeResourcePlant, makeDeposit, makeFormation,
@@ -44,13 +44,6 @@ const NODE_LOOKS = {
 
 // glowing plants light up at dusk; in full sun a strong glow read as fireflies hanging in the meadow
 const glowAt = (daylight) => THREE.MathUtils.lerp(1.5, 0.15, THREE.MathUtils.smoothstep(daylight ?? 1, 0.2, 0.55));
-
-// The system's tier (DESIGN 11), which sets the resource nodes its worlds carry: with The Edge where it stands by
-// default until the client reads the world service's tier map (P1.E04.T02).
-function systemTier(game) {
-  const info = game.system?.info;
-  return info ? tierOf(info) : 0;
-}
 
 // rough: the geometry carries a roughness per vertex (aRough), so glassy crystal and matte rock share one model
 function makeMaterial(uniforms, { glow = 1.0, wind = 1.0, side = THREE.DoubleSide, aoHeight = 1.0, hideR = 0, rough = false } = {}) {
@@ -171,7 +164,8 @@ export class Flora {
     this.meshRoot = null;
     this.planet = planet;
     if (!planet || !planet.sampler) return;
-    this.tier = systemTier(this.game);
+    // (the tier the planet's drawn ground was planned at: the system's, the same the server plans with)
+    this.tier = planet.ground?.tier ?? 0;
     this.buildSpecies(planet);
     this.meshRoot = new THREE.Group();
     this.meshRoot.name = 'floraRoot';
@@ -217,9 +211,18 @@ export class Flora {
       mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(16 * 3), 3);
       return mesh;
     };
+    // Each flora species draws its model from `mr` and its scatter from the stream of its slot in the far list. The
+    // resource plants and deposits used to be species here too; they are the shared spec's nodes now, seeded on their
+    // own, and `skip` stands in for them, so every other species keeps the model and the places it always had.
+    let slot = 0;
+    const skip = (n) => {
+      for (let i = 0; i < n; i++) mr();
+      slot += n;
+    };
     const add = (def) => {
       const radius = def.radius;
       const sk = def.seed ?? Math.floor(mr() * 1e9);
+      if (!def.node && !def.near) def.spec.si = slot++;
       const model = def.build(mulberry32(sk), 1);
       const low = def.lod === false ? model : def.build(mulberry32(sk), 0);
       const nearDist = def.lod === false ? radius : def.nearDist ?? 90;
@@ -302,7 +305,9 @@ export class Flora {
         spec: spec({ density: 0.02 * floraDensity, moist: 0.6, clump: 60, clumpT: -0.2, sMin: 0.7, sMax: 1.5 }),
       });
     }
-    if (floraDensity <= 0.05) {
+    // (where the sodium plants and oxygen flowers were)
+    if (floraDensity > 0.05) skip(2);
+    else {
       // barren worlds still get crystal formations
       add({
         name: 'crystal', label: 'Crystal Growth', res: 'ferrite', yield: [10, 20], hp: 2,
@@ -325,6 +330,8 @@ export class Flora {
       spec: spec({ density: 0.012, moistK: 0, slope: 0.5, clump: 70, clumpT: 0.1, sMin: 0.25, sMax: 0.8, align: 0.9, sink: 0.1, minH: -1e9 }),
       rock: true,
     });
+    // (where the two mineral deposits were)
+    skip(2);
     // the resource nodes this world carries at its system's tier, where the shared spec puts them (the worker scatters
     // them with the spec's own function); each type's model is seeded by the world and the type alone
     for (const layer of planetNodeLayers(p, this.tier ?? 0)) {
@@ -397,7 +404,7 @@ export class Flora {
     const species = speciesList.map((s) => s.spec);
     const d = center.distanceTo(this.camLocal);
     cell.job = this.game.pool.request(
-      { type: 'scatter', planetId: this.planet.id, face: info.face, i: info.i, j: info.j, level: this.level, u0, v0, size, species, seed },
+      { type: 'scatter', planetId: this.planet.id, face: info.face, i: info.i, j: info.j, level: this.level, u0, v0, size, species, seed, clear: this.planet.ground?.nodeClear ?? [] },
       2000 + d,
       (res) => {
         cell.job = null;
@@ -420,7 +427,9 @@ export class Flora {
     this.dirty = true;
   }
 
-  // keep points of interest (and landing spots) free of plants and boulders
+  // keep points of interest (and landing spots) free of plants and boulders. Resource nodes are left alone: the shared
+  // spec keeps them clear of sites itself, where the server has them, and hiding one under a landed ship is the server
+  // state's to do (P1.E13.T06)
   clearAroundSites(cell) {
     const st = this.game.structures;
     const spots = this.clearSpots.filter((x) => x.pos.distanceTo(cell.center) < this.cellMeters + x.r);
@@ -433,6 +442,7 @@ export class Flora {
   clearCell(cell, near) {
     for (let si = 0; si < cell.data.length; si++) {
       const d = cell.data[si];
+      if (d.species?.node) continue;
       // grass thins out over the last few metres instead of stopping along a hard circle
       const feather = d.species?.grass ? 7 : 0;
       for (let k = 0; k < d.ids.length; k++) {
@@ -719,7 +729,8 @@ export function nodeReviewModel(id, game) {
     mesh.name = `${t.id}_LOD${lod}`;
     mesh.setMatrixAt(0, new THREE.Matrix4());
     mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array([1, 1, 1]), 3);
-    mesh.castShadow = true;
+    // (as in the game: the near model casts shadows when its type does, the far one never)
+    mesh.castShadow = !lod && !!look.shadow;
     mesh.receiveShadow = true;
     mesh.frustumCulled = false;
     mesh.onBeforeRender = () => {

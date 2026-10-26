@@ -1,7 +1,9 @@
 // Golden resource-node counts per world type at seed 424242 (P1.E13.T02): for the first world of every rocky archetype
-// in the 70-system galaxy, the node layers it carries at every tier and the nodes over a fixed sample of its cells
-// (fixture written as resource-nodes-fixture.ts says). Every value must come out exactly as written: the same draws in
-// the same order and the same float arithmetic, so the server places exactly the nodes the client draws.
+// in the 70-system galaxy, on the ground it is drawn on at every tier, the node layers it carries and the nodes over a
+// fixed sample of its cells and over every cell round its sites and cities, where the levelled pads and the sites'
+// clearance decide what grows (fixture written as resource-nodes-fixture.ts says). Every value must come out exactly as
+// written: the same draws in the same order and the same float arithmetic, so the server places exactly the nodes the
+// client draws.
 import { describe, expect, it } from 'vitest';
 import { NODE_ROCKY_WORLDS, nodeType, tierWeight } from '../src/world/index.ts';
 import fixture from './fixtures/resource-nodes-424242.json';
@@ -18,6 +20,15 @@ describe('resource nodes golden fixture, seed 424242', () => {
       worlds,
     );
     for (const w of fixture.worlds) expect(w.tiers.map((t) => t.tier)).toEqual([0, 1, 2, 3, 4, 5]);
+  });
+
+  it("takes in every world's sites and cities, and nodes grow round them", () => {
+    for (const w of fixture.worlds) {
+      expect(w.sites, w.type).toBeGreaterThan(50);
+      expect(w.groundCells, w.type).toBeGreaterThan(w.sites);
+      expect(w.tiers[5].ground.total, w.type).toBeGreaterThan(20);
+    }
+    expect(fixture.worlds.filter((w) => w.cities > 0).map((w) => w.type)).toEqual(['lush', 'desert', 'storm']);
   });
 
   it("places each hostile world's formation there, common from its resource's tier and rare short of it", () => {

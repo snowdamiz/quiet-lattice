@@ -49,7 +49,7 @@ const SHOP = [
 const DEMO_RESOURCES = new Set(Object.keys(RESOURCES).filter((id) => getResource(id).demo));
 
 // the tag a non-resource item wears in its slot
-const KIND_TAG ={ consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD', cosmetic: 'COS', component: 'CMP' };
+const KIND_TAG = { consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD', cosmetic: 'COS', component: 'CMP' };
 
 function slotRefOf(slot) {
   const i = Number(slot.dataset.i);
