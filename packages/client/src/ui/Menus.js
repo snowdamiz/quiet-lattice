@@ -75,6 +75,33 @@ function refusal(error) {
   }
 }
 
+// The stacks a move carried, slot to slot: a move or a merge (a swap carries both ways), a split, or a transfer (to the
+// first slot it changed on the other side). Compacting carries nothing anywhere in particular.
+function carried(before, after, op, r) {
+  switch (op.op) {
+    case 'move':
+    case 'merge': {
+      const a = slotAt(before, op.from);
+      const b = slotAt(before, op.to);
+      return a && b && a.item !== b.item
+        ? [
+            { from: op.from, to: op.to },
+            { from: op.to, to: op.from },
+          ]
+        : [{ from: op.from, to: op.to }];
+    }
+    case 'split':
+      return r.to ? [{ from: op.from, to: r.to }] : [];
+    case 'transfer': {
+      const there = op.from.c === 'suit' ? after.pods.flatMap((pod, p) => pod.map((_, i) => ({ c: 'pod', p, i }))) : after.suit.map((_, i) => ({ c: 'suit', i }));
+      const to = there.find((ref) => slotAt(before, ref) !== slotAt(after, ref));
+      return to ? [{ from: op.from, to }] : [];
+    }
+    default:
+      return [];
+  }
+}
+
 export class Menus {
   constructor(game) {
     this.game = game;
@@ -496,6 +523,7 @@ export class Menus {
     this.podScroll = 0;
     this.invEnter = true;
     this.podsOpen = new Set();
+    this.podsListed = new Set();
     // shown first, so the pod list can measure itself
     this.open('inventory', this.inv);
     this.renderInventory();
@@ -511,24 +539,12 @@ export class Menus {
     const inv = this.game.inventory;
     const st = inv.state;
     this.invKey = inv.key();
-    // the panel eases in when it opens, not again on every redraw after a move
+    // the panel rises in when it opens, not again on every redraw after a move
     const enter = this.invEnter;
     this.invEnter = false;
     const hull = inv.hull ? getHull(inv.hull).name : null;
     const grid = (refs) => `<div class="inv-grid">${refs.map((r) => this.slotHTML(st, r)).join('')}</div>`;
     const cargoCap = st.pods.reduce((n, pod) => n + pod.length, 0);
-    // an empty pod is one header line until it is clicked or a stack is dragged over it; one open stays open while the
-    // panel is, so emptying it never pulls the slots out from under the pointer
-    const open = (this.podsOpen ||= new Set());
-    const pods = st.pods.length
-      ? st.pods
-          .map((pod, p) => {
-            const used = pod.filter(Boolean).length;
-            if (used) open.add(p);
-            return open.has(p) ? this.podHTML(st, p) : this.shutPodHTML(p, pod.length);
-          })
-          .join('')
-      : `<div class="inv-none"><b>No ship</b><span>Cargo pods come with a hull. Any Waystation sells one.</span></div>`;
     const stackBtn = (c, on) => `<button class="inv-act" data-compact="${c}" ${on ? '' : 'disabled'} title="Merge partial stacks and close the gaps">Stack</button>`;
     this.inv.innerHTML = `<div class="panel frame inv-panel${enter ? '' : ' still'}">
       <div class="panel-head">
@@ -543,7 +559,7 @@ export class Menus {
         </section>
         <section class="inv-side">
           <header class="inv-side-head"><h4 class="mono col-title">Ship cargo</h4><span class="mono">${cargoCap ? `${st.pods.length} pod${st.pods.length === 1 ? '' : 's'} · ${usedSlots(st, 'cargo')} / ${cargoCap} stacks` : 'No pods'}</span>${stackBtn('cargo', cargoCap > 0)}</header>
-          <div class="inv-pods">${pods}</div>
+          <div class="inv-pods">${this.podsHTML(st)}</div>
           <div class="inv-more mono"></div>
           <p class="inv-note drop"><i></i>Drops where the ship dies, for anyone to loot</p>
         </section>
@@ -553,14 +569,16 @@ export class Menus {
         <div class="inv-keys"><span><kbd>Click</kbd>Move across</span><span><kbd>Drag</kbd>Place · merge · swap</span><span><kbd>Shift</kbd><kbd>Click</kbd>Split</span></div>
       </footer>
     </div>`;
-    // a big hauler's pods scroll: keep the place across redraws, and say how many pods lie below the fold
+    // a long pod list scrolls: keep the place across redraws, and say how many pods lie below the fold
     const podsEl = this.inv.querySelector('.inv-pods');
     const moreEl = this.inv.querySelector('.inv-more');
     podsEl.scrollTop = this.podScroll || 0;
     const more = () => {
       this.podScroll = podsEl.scrollTop;
       const fold = podsEl.getBoundingClientRect().bottom + 1;
-      const below = podsEl.scrollHeight > podsEl.clientHeight + 1 ? [...podsEl.children].filter((c) => c.getBoundingClientRect().bottom > fold).length : 0;
+      let below = 0;
+      if (podsEl.scrollHeight > podsEl.clientHeight + 1)
+        for (const c of podsEl.children) if (c.getBoundingClientRect().bottom > fold) below += c.dataset.from ? Number(c.dataset.to) - Number(c.dataset.from) + 1 : 1;
       moreEl.textContent = below ? `↓ ${below} more pod${below === 1 ? '' : 's'} below` : '';
       moreEl.classList.toggle('on', below > 0);
     };
@@ -573,6 +591,31 @@ export class Menus {
     else this.showDetail(this.drag ? null : this.inv.querySelector('.inv-slot:hover'));
   }
 
+  // A pod holding something shows its slots. An empty one is one header line until it is clicked or a stack is dragged
+  // over it, and a run of three or more empty pods (a big hauler's) is a single line that lists them the same way, so
+  // sixteen pods fit the column. A pod opened stays open while the panel is, so emptying it never pulls the slots away.
+  podsHTML(st) {
+    if (!st.pods.length) return `<div class="inv-none"><b>No ship</b><span>Cargo pods come with a hull. Any Waystation sells one.</span></div>`;
+    const open = (this.podsOpen ||= new Set());
+    const listed = (this.podsListed ||= new Set());
+    const empty = (p) => !st.pods[p].some(Boolean) && !open.has(p);
+    let html = '';
+    for (let p = 0; p < st.pods.length; ) {
+      if (!empty(p)) {
+        open.add(p);
+        html += this.podHTML(st, p++);
+        continue;
+      }
+      let q = p;
+      while (q < st.pods.length && empty(q)) q++;
+      if (q - p >= 3 && !listed.has(p)) {
+        html += `<div class="inv-pod shut group" data-from="${p}" data-to="${q - 1}" title="List the empty pods"><div class="inv-pod-head mono"><span>Pods ${p + 1}–${q}</span><span>Empty · ${q - p} × ${st.pods[p].length} stacks</span></div></div>`;
+        p = q;
+      } else for (; p < q; p++) html += this.shutPodHTML(p, st.pods[p].length);
+    }
+    return html;
+  }
+
   podHTML(st, p) {
     const pod = st.pods[p];
     const slots = pod.map((_, i) => this.slotHTML(st, { c: 'pod', p, i })).join('');
@@ -583,11 +626,23 @@ export class Menus {
     return `<div class="inv-pod shut" data-pod="${p}" title="Open the pod"><div class="inv-pod-head mono"><span>Pod ${p + 1}</span><span>Empty · 0 / ${stacks}</span></div></div>`;
   }
 
-  // an empty pod opens in place (a click on its line, or a stack dragged over it), without redrawing the rest
+  // an empty pod opens in place, and a run of them lists its pods (a click, or a stack dragged over), without redrawing
   openPod(el) {
-    const p = Number(el.dataset.pod);
-    this.podsOpen.add(p);
-    el.outerHTML = this.podHTML(this.game.inventory.state, p);
+    const st = this.game.inventory.state;
+    if (el.dataset.from) {
+      const from = Number(el.dataset.from);
+      const to = Number(el.dataset.to);
+      let html = '';
+      for (let p = from; p <= to; p++) {
+        this.podsListed.add(p);
+        html += this.shutPodHTML(p, st.pods[p].length);
+      }
+      el.outerHTML = html;
+    } else {
+      const p = Number(el.dataset.pod);
+      this.podsOpen.add(p);
+      el.outerHTML = this.podHTML(st, p);
+    }
     this.podsMore?.();
   }
 
@@ -604,6 +659,10 @@ export class Menus {
     // (a module, cosmetic or component is one thing per slot: no count, no fill)
     const fill = cap === 1 ? '' : `<span class="inv-fill" style="--f:${(s.count / cap).toFixed(4)}"></span>`;
     return `<div class="inv-slot${s.count >= cap && cap > 1 ? ' full' : ''}${bump}" ${data}>${mark}${count}<span class="inv-nm">${info?.name || s.item}</span>${fill}</div>`;
+  }
+
+  slotEl(ref) {
+    return this.inv.querySelector(ref.c === 'suit' ? `.inv-slot[data-c="suit"][data-i="${ref.i}"]` : `.inv-slot[data-c="pod"][data-p="${ref.p}"][data-i="${ref.i}"]`);
   }
 
   // the line under the grids: what the hovered stack is, else how much a stack holds
@@ -645,7 +704,8 @@ export class Menus {
     this.invDetail.textContent = this.invMsg;
   }
 
-  invRequest(op) {
+  // `from`: where a dropped stack was let go, so it settles from there rather than from its old slot
+  invRequest(op, from = null) {
     const g = this.game;
     const before = g.inventory.state;
     const r = g.inventory.request(op);
@@ -657,11 +717,61 @@ export class Menus {
     g.audio.play('ui');
     clearTimeout(this.invMsgT);
     this.invMsg = null;
-    // the slots the move touched pulse once
     const after = g.inventory.state;
+    // what each carried stack looked like, taken before the redraw
+    const flights = matchMedia('(prefers-reduced-motion: reduce)').matches ? [] : carried(before, after, op, r);
+    flights.forEach((f, k) => {
+      const src = this.slotEl(f.from);
+      f.rect = (k === 0 && from) || src?.getBoundingClientRect();
+      f.tile = src?.cloneNode(true);
+    });
+    // the slots the move touched settle back once; a destination does so when its stack lands
     const refs = [...before.suit.map((_, i) => ({ c: 'suit', i })), ...before.pods.flatMap((pod, p) => pod.map((_, i) => ({ c: 'pod', p, i })))];
     for (const ref of refs) if (slotAt(before, ref) !== slotAt(after, ref)) this.invChanged.add(refKey(ref));
+    for (const f of flights) this.invChanged.delete(refKey(f.to));
     this.renderInventory();
+    for (const f of flights) this.fly(f, before, after);
+  }
+
+  // A carried stack as a tile flying from its old slot to its new one (an ease-out), the destination keeping what it held
+  // until the tile lands; on a merge the count then ticks up to the new total. Both run on the document's animation clock.
+  fly(f, before, after) {
+    const dest = this.slotEl(f.to);
+    if (!f.tile || !f.rect || !dest) return;
+    const to = dest.getBoundingClientRect();
+    const s = slotAt(after, f.to);
+    const was = slotAt(before, f.to);
+    const merging = was && s && was.item === s.item;
+    const tile = f.tile;
+    tile.className = 'inv-slot inv-fly';
+    const ct = tile.querySelector('.inv-ct');
+    if (ct && s) ct.textContent = (merging ? s.count - was.count : s.count).toLocaleString();
+    Object.assign(tile.style, { left: `${f.rect.left}px`, top: `${f.rect.top}px`, width: `${to.width}px`, height: `${to.height}px` });
+    this.root.appendChild(tile);
+    dest.classList.add(merging ? 'waiting' : 'landing');
+    const destCt = dest.querySelector('.inv-ct');
+    if (merging && destCt) destCt.textContent = was.count.toLocaleString();
+    const flight = tile.animate([{ transform: 'none' }, { transform: `translate(${to.left - f.rect.left}px, ${to.top - f.rect.top}px)` }], {
+      duration: 180,
+      easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
+      fill: 'forwards',
+    });
+    flight.onfinish = () => {
+      tile.remove();
+      dest.classList.remove('landing', 'waiting', 'bump');
+      void dest.offsetWidth; // restart the settle
+      dest.classList.add('bump');
+      if (!merging || !destCt) return;
+      const tick = dest.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 260 });
+      const step = () => {
+        const p = tick.effect.getComputedTiming().progress;
+        if (p === null || !dest.isConnected) return void (destCt.textContent = s.count.toLocaleString());
+        destCt.textContent = Math.round(was.count + (s.count - was.count) * (1 - (1 - p) ** 3)).toLocaleString();
+        requestAnimationFrame(step);
+      };
+      tick.onfinish = () => (destCt.textContent = s.count.toLocaleString());
+      requestAnimationFrame(step);
+    };
   }
 
   dragMove(e) {
@@ -680,7 +790,7 @@ export class Menus {
       this.showDetail(d.el);
     }
     d.ghost.style.transform = `translate(${e.clientX - d.ghost.offsetWidth / 2}px, ${e.clientY - d.ghost.offsetHeight / 2}px)`;
-    // dragged over an empty pod's header line: it opens to take the stack
+    // dragged over an empty pod's line (or a run of them): it opens to take the stack
     const shut = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.inv-pod.shut');
     if (shut && this.inv.contains(shut)) this.openPod(shut);
     const over = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.inv-slot');
@@ -695,12 +805,13 @@ export class Menus {
   dragEnd(e) {
     const d = this.drag;
     if (!d) return;
+    const dropped = d.ghost?.getBoundingClientRect() ?? null;
     this.endDrag();
     if (this.game.overlay !== 'inventory') return;
     const s = slotAt(this.game.inventory.state, d.from);
     if (!s) return;
     if (d.ghost) {
-      if (d.over) this.invRequest({ op: 'move', from: d.from, to: slotRefOf(d.over), ...(d.shift && s.count > 1 ? { count: Math.ceil(s.count / 2) } : {}) });
+      if (d.over) this.invRequest({ op: 'move', from: d.from, to: slotRefOf(d.over), ...(d.shift && s.count > 1 ? { count: Math.ceil(s.count / 2) } : {}) }, dropped);
       return;
     }
     if (!e.target.closest?.('.inv-slot')) return;

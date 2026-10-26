@@ -12,6 +12,8 @@ export interface ScreenDef {
    * Without it the clip shows one second of the settled screen.
    */
   motion?(page: Page): Promise<void>;
+  /** Which of the 60 clip frames go on the clip sheet (all are written to _frames/). Default: every sixth. */
+  sheetFrames?: readonly number[];
 }
 
 /** Steps the game by hand, then waits out the HUD's CSS transitions (they run on real time, not game time). */
@@ -25,49 +27,108 @@ interface InventoryApi {
   setLoadout(l: { ship: { hull: string; modules: Record<string, string>; cargoPods: number; livery: number } | null; skills?: string[] }): boolean;
 }
 
-/** Boots a game, loads the suit and the cargo with a mining trip's haul, opens the inventory and hovers a full stack. */
-async function openInventory(page: Page, hull: 'lark' | 'mule'): Promise<void> {
+/** One inventory capture: the ship (its pods aboard), the skills, and what the cargo holds. */
+interface InventoryScene {
+  hull: string;
+  pods: number;
+  skills?: string[];
+  /** The modules fitted, by hardpoint (default: Pulse Lasers on s1). */
+  modules?: Record<string, string>;
+  cargo: [string, number][];
+}
+
+/** A mining trip's haul in the suit, the same in every scene. */
+const SUIT_HAUL: [string, number][] = [
+  ['ferrite', 12480],
+  ['carbon', 386],
+  ['oxygen', 92],
+  ['sodium', 45],
+  ['dihydrogen', 210],
+  ['copper', 64],
+  ['tritium', 2200],
+  ['cobalt', 18],
+  ['gold', 31],
+];
+
+const INVENTORY_SCENES: Record<string, InventoryScene> = {
+  // the Lark every pilot starts in: one pod
+  lark: {
+    hull: 'lark',
+    pods: 1,
+    cargo: [
+      ['tritium', 9999],
+      ['gold', 140],
+      ['cobalt', 75],
+      ['mining_laser', 1],
+    ],
+  },
+  // the Lark with Pack Mule learned: a second pod in the bay it adds, and stacks of 15,000
+  packMule: {
+    hull: 'lark',
+    pods: 2,
+    skills: ['pack_mule'],
+    cargo: [
+      ['tritium', 15000 + 6400],
+      ['gold', 140],
+      ['cobalt', 75],
+      ['mining_laser', 1],
+      ['copper', 820],
+      ['carbon', 2600],
+      ['ferrite', 15000],
+      ['dihydrogen', 900],
+      ['flak_ammo', 300],
+    ],
+  },
+  // a Mule hauler: four pods, two of them empty
+  mule: {
+    hull: 'mule',
+    pods: 4,
+    cargo: [
+      ['tritium', 9999 * 3 + 4120],
+      ['gold', 640],
+      ['cobalt', 375],
+      ['copper', 1210],
+      ['ferrite', 9999 + 2760],
+      ['carbon', 4400],
+      ['mining_laser', 1],
+      ['flak_ammo', 300],
+    ],
+  },
+  // a Longhaul freighter: sixteen pods, two in use, the empty fourteen as one line
+  longhaul: {
+    hull: 'longhaul',
+    modules: { m1: 'flak_cannon' },
+    pods: 16,
+    cargo: [
+      ['tritium', 9999 * 6 + 5200],
+      ['ferrite', 9999 * 2 + 3100],
+      ['gold', 640],
+      ['carbon', 4400],
+      ['cobalt', 375],
+      ['flak_ammo', 300],
+    ],
+  },
+};
+
+/** Boots a game, fits the scene's ship, loads the suit and the cargo, opens the inventory and hovers the ferrite stack:
+ * the detail line names it, its count against the stack cap, and where it comes from. */
+async function openInventory(page: Page, scene: InventoryScene): Promise<void> {
   await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
-  await page.evaluate((hull) => {
-    const g = (window as unknown as { game: { inventory: InventoryApi; menus: { openInventory(): void } } }).game;
-    const inv = g.inventory;
-    // the Lark with its one pod, or a Mule with all four of its bays fitted
-    inv.setLoadout({ ship: { hull, modules: { s1: 'pulse_lasers' }, cargoPods: hull === 'mule' ? 4 : 1, livery: 0 } });
-    const suit: [string, number][] = [
-      ['ferrite', 12480],
-      ['carbon', 386],
-      ['oxygen', 92],
-      ['sodium', 45],
-      ['dihydrogen', 210],
-      ['copper', 64],
-      ['tritium', 2200],
-      ['cobalt', 18],
-      ['gold', 31],
-    ];
-    for (const [id, n] of suit) inv.add(id, n, 'suit');
-    const cargo: [string, number][] =
-      hull === 'lark'
-        ? [
-            ['tritium', 9999],
-            ['gold', 140],
-            ['cobalt', 75],
-            ['mining_laser', 1],
-          ]
-        : [
-            ['tritium', 9999 * 3 + 4120],
-            ['gold', 640],
-            ['cobalt', 375],
-            ['copper', 1210],
-            ['ferrite', 9999 + 2760],
-            ['carbon', 4400],
-            ['mining_laser', 1],
-            ['flak_ammo', 300],
-          ];
-    for (const [id, n] of cargo) inv.add(id, n, 'cargo');
-    g.menus.openInventory();
-  }, hull);
+  await page.evaluate(
+    ({ scene, suit }) => {
+      const g = (window as unknown as { game: { inventory: InventoryApi; menus: { openInventory(): void } } }).game;
+      const inv = g.inventory;
+      inv.setLoadout({
+        ship: { hull: scene.hull, modules: scene.modules ?? { s1: 'pulse_lasers' }, cargoPods: scene.pods, livery: 0 },
+        skills: scene.skills ?? [],
+      });
+      for (const [id, n] of suit) inv.add(id, n, 'suit');
+      for (const [id, n] of scene.cargo) inv.add(id, n, 'cargo');
+      g.menus.openInventory();
+    },
+    { scene, suit: SUIT_HAUL },
+  );
   await settle(page, 60);
-  // hover the full ferrite stack: the detail line names it, its count against the cap, and where it comes from
   const slot = page.locator('.inv-slot[data-c="suit"][data-i="1"]');
   const box = await slot.boundingBox();
   if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -75,9 +136,11 @@ async function openInventory(page: Page, hull: 'lark' | 'mule'): Promise<void> {
 }
 
 /**
- * The inventory's motion for the clip: the panel opens again (its 0.3 s ease-in), then, 0.36 s of animation time later,
- * a click sends the carbon stack across to the cargo through the screen's own pointer handlers, and both slots it touched
- * settle back from amber (0.7 s). Page timers run on real time while the clip slows CSS tenfold, hence 3600 ms.
+ * The inventory's motion for the clip: the panel opens again (it rises 8 px as it fades in, 0.36 s), then, 0.3 s of
+ * animation time later, a click sends the carbon stack across to the cargo through the screen's own pointer handlers: a
+ * tile flies from the suit slot to the cargo slot (0.18 s, ease-out), the slot it lands on settles back, and on a merge
+ * (the Mule's and the Longhaul's carbon) the count ticks up to the new total. Page timers run on real time while the clip
+ * slows CSS and Web Animations tenfold, hence 3000 ms: the flight spans about frames 18 to 29.
  */
 async function inventoryMotion(page: Page): Promise<void> {
   await page.evaluate(() => {
@@ -91,9 +154,18 @@ async function inventoryMotion(page: Page): Promise<void> {
       const init = { bubbles: true, button: 0, clientX: at.x + at.width / 2, clientY: at.y + at.height / 2, pointerId: 1, isPrimary: true };
       slot.dispatchEvent(new PointerEvent('pointerdown', init));
       slot.dispatchEvent(new PointerEvent('pointerup', init));
-    }, 3600);
+    }, 3000);
   });
 }
+
+/** The open (every third frame), every frame of the flight, then the landing settling. */
+const INVENTORY_SHEET = [0, 3, 6, 9, 12, 15, ...Array.from({ length: 13 }, (_, k) => 18 + k), 33, 36, 40, 45, 50, 59];
+
+const inventoryScreen = (scene: InventoryScene): ScreenDef => ({
+  open: (page) => openInventory(page, scene),
+  motion: inventoryMotion,
+  sheetFrames: INVENTORY_SHEET,
+});
 
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
@@ -141,20 +213,13 @@ export const SCREENS: Record<string, ScreenDef> = {
       await settle(page, 60);
     },
   },
-  // the inventory (P1.E06.T04): suit stacks beside the ship's cargo pods, after a mining trip, one stack hovered so the
-  // detail line shows what it is. `inventory` is the Lark every pilot starts in (one pod); `inventory-hauler` a Mule's four.
-  inventory: {
-    async open(page) {
-      await openInventory(page, 'lark');
-    },
-    motion: inventoryMotion,
-  },
-  'inventory-hauler': {
-    async open(page) {
-      await openInventory(page, 'mule');
-    },
-    motion: inventoryMotion,
-  },
+  // the inventory (P1.E06.T04): suit stacks beside the ship's cargo pods after a mining trip, the ferrite stack hovered.
+  // `inventory` is the Lark every pilot starts in (one pod); `inventory-pack-mule` the Lark with Pack Mule (two pods,
+  // stacks of 15,000); `inventory-hauler` a Mule's four pods; `inventory-longhaul` a Longhaul's sixteen.
+  inventory: inventoryScreen(INVENTORY_SCENES.lark!),
+  'inventory-pack-mule': inventoryScreen(INVENTORY_SCENES.packMule!),
+  'inventory-hauler': inventoryScreen(INVENTORY_SCENES.mule!),
+  'inventory-longhaul': inventoryScreen(INVENTORY_SCENES.longhaul!),
   // the demo's box station, from outside and from a hangar pad (grader calibration, P1.E14.T09; later the kit-built
   // Waystation of P1.E11.T02)
   'station-exterior': {

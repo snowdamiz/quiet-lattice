@@ -1587,17 +1587,42 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 
 /* ---------- inventory: suit stacks beside the ship's cargo pods ---------- */
-/* Amber here means only three things: what is selected or dragged, a full stack, and the cargo you can lose. Everything
-   else is warm white on a near-opaque plate, so the ship never shows through the slots or the footer. */
+/* Amber here means only what has the focus (the slot under the pointer, a stack being dragged or flying, the slot it
+   will land on) and the cargo at risk. Everything else is warm white on a near-opaque plate, so the ship never shows
+   through the slots or the footer. The units wear the HUD's coin glyph and colour. */
 .inv-panel {
   padding-bottom: 0;
   background: rgba(11, 12, 15, 0.96);
+  animation: invIn 0.36s cubic-bezier(0.25, 0.8, 0.3, 1);
+}
+/* the panel rises 8 px as it fades in */
+@keyframes invIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
 .inv-panel .panel-head h2::before {
   background: var(--text);
 }
 .inv-panel .balance b {
   color: var(--text);
+}
+.inv-panel .balance b::before {
+  color: var(--warm);
+  opacity: 1;
+}
+/* the Esc key label at the grey of the Stack buttons: AA on the plate */
+.inv-panel .close-x,
+.inv-panel .close-x::before {
+  color: var(--dim);
 }
 .inv-panel.still {
   animation: none;
@@ -1744,9 +1769,25 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   border-color: rgba(233, 231, 226, 0.07);
   cursor: default;
 }
+/* the slot with the focus: an amber edge bar, as the title menu marks its active row */
+.inv-slot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
 .inv-slot:not(.empty):hover {
   border-color: var(--line-2);
-  background: rgba(233, 231, 226, 0.07);
+  background: linear-gradient(90deg, rgba(240, 162, 74, 0.1), rgba(233, 231, 226, 0.05) 70%);
+}
+.inv-slot:not(.empty):hover::before,
+.inv-slot.drop::before {
+  transform: scaleY(1);
 }
 .inv-sw {
   position: absolute;
@@ -1819,7 +1860,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   background: rgba(233, 231, 226, 0.3);
 }
 .inv-slot.full .inv-fill {
-  background: var(--accent);
+  background: var(--text);
 }
 .inv-slot.drop {
   border-color: var(--accent);
@@ -1832,7 +1873,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .inv-screen.dragging .inv-slot {
   cursor: grabbing;
 }
-.inv-ghost {
+.inv-ghost,
+.inv-fly {
   position: fixed;
   left: 0;
   top: 0;
@@ -1841,6 +1883,14 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   background: var(--plate-2);
   border-color: var(--accent);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+/* a stack in flight from one slot to another: its destination looks as it did until the tile lands */
+.inv-slot.landing {
+  background: rgba(233, 231, 226, 0.012);
+  border-color: rgba(233, 231, 226, 0.07);
+}
+.inv-slot.landing > * {
+  visibility: hidden;
 }
 /* a slot a move just touched settles back from warm white */
 .inv-slot.bump {
