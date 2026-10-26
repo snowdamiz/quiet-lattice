@@ -14,18 +14,21 @@ export type NodeTier = z.infer<typeof nodeTierSchema>;
 export const nodeTypeSchema = z.enum(['active', 'passive', 'ship', 'augment']);
 export type NodeType = z.infer<typeof nodeTypeSchema>;
 
-/** What casting costs. Heat and Charge are per cast unless per second; Meltdown sets heat instead of adding it. */
-export const nodeCostSchema = z.strictObject({
-  heat: z.number().nonnegative().optional(),
-  heatPerS: z.number().positive().optional(),
-  setsHeat: z.number().positive().optional(),
-  charge: z.number().positive().optional(),
-  health: z.number().positive().optional(),
-  resources: z
-    .array(z.strictObject({ resource: resourceIdSchema, amount: countSchema }))
-    .min(1)
-    .optional(),
-});
+/** What casting costs. Heat and Charge are per cast unless per second; Meltdown sets heat instead of adding it. A node with
+ * no cost has `cost: null`, never an empty object. */
+export const nodeCostSchema = z
+  .strictObject({
+    heat: z.number().nonnegative().optional(),
+    heatPerS: z.number().positive().optional(),
+    setsHeat: z.number().positive().optional(),
+    charge: z.number().positive().optional(),
+    health: z.number().positive().optional(),
+    resources: z
+      .array(z.strictObject({ resource: resourceIdSchema, amount: countSchema }))
+      .min(1)
+      .optional(),
+  })
+  .refine((c) => Object.keys(c).length > 0, 'a cost names at least one thing spent; use null for none');
 export type NodeCost = z.infer<typeof nodeCostSchema>;
 
 export const nodeCooldownSchema = z.discriminatedUnion('kind', [
@@ -72,6 +75,8 @@ export const nodeParamsSchema = z.strictObject({
   hullPerS: z.number().positive().optional(),
   hullRepair: z.number().positive().optional(),
   hullFraction: z.number().gt(0).lt(1).optional(),
+  /** Fraction of max hull restored (Living Ship's "returns to 100": full on every hull, as 100 is today's max). */
+  hullRestoreFraction: z.number().gt(0).max(1).optional(),
   coolPerS: z.number().positive().optional(),
   radarRangeM: z.number().positive().optional(),
   healthBelow: z.number().gt(0).lt(1).optional(),
@@ -171,6 +176,8 @@ export const skillRulesSchema = z.strictObject({
   slots: z.strictObject({ ground: countSchema, ship: countSchema }),
   respec: z.strictObject({ unitsPerPoint: countSchema, trainer: idSchema, voidTrainer: idSchema }),
   voidRequires: requirementSchema,
+  /** A monolith on a world meeting the condition grants this branch's fragment instead of its world's (one fragment a touch). */
+  fragmentOverrides: z.array(z.strictObject({ branch: branchSchema, condition: z.literal('analyzed_every_species'), text: z.string().min(1) })),
 });
 export type SkillRules = z.infer<typeof skillRulesSchema>;
 
@@ -183,6 +190,7 @@ export const SKILL_RULES: SkillRules = deepFreeze({
   slots: { ground: 6, ship: 4 },
   respec: { unitsPerPoint: 500, trainer: 'chorus_listener', voidTrainer: 'reaches_quartermaster' },
   voidRequires: { kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' },
+  fragmentOverrides: [{ branch: 'symbiotic', condition: 'analyzed_every_species', text: 'any world where you have analyzed every species' }],
 });
 
 /** A node as a branch file writes it: DESIGN's columns, with the rule-derived fields left to `branchNodes`. */

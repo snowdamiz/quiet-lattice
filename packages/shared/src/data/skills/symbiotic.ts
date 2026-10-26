@@ -134,7 +134,7 @@ export const SYMBIOTIC = branchNodes('symbiotic', [
     tier: 3,
     type: 'ship',
     text: 'Hull returns to 100 within 30 s after combat ends',
-    params: { durationS: 30 },
+    params: { durationS: 30, hullRestoreFraction: 1 },
     flags: ['hull_restores_after_combat'],
   },
   { id: 'rot', name: 'Rot', tier: 3, type: 'augment', augments: 'spore', text: 'Spore does triple damage to the Hollow', params: { vsHollowDamageMult: 3 } },

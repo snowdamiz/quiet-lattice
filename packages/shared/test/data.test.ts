@@ -38,9 +38,11 @@ import {
   getHull,
   getResource,
   getSkillNode,
+  getWeapon,
   hullSchema,
   itemSchema,
   metersSchema,
+  nodeCostSchema,
   mobSchema,
   peopleSchema,
   rankAt,
@@ -55,7 +57,7 @@ import {
   webPointCost,
   weaponSchema,
 } from '../src/data/index.ts';
-import type { SkillNode, StatMod } from '../src/data/index.ts';
+import type { HullVenue, NodeCooldown, NodeCost, ResourceId, SkillNode, Stat, StatMod, Weapon } from '../src/data/index.ts';
 // Read as text through Vite's ?raw import, so the shared package's tests need no Node types.
 import DESIGN from '../../../docs/DESIGN.md?raw';
 
@@ -101,6 +103,97 @@ function checkMods(mods: readonly StatMod[], where: string) {
     if (m.when) expect(CONDITION_IDS.has(m.when), `${where}: condition ${m.when}`).toBe(true);
     for (const n of m.nodes ?? []) expect(NODE_IDS.has(n), `${where}: node ${n}`).toBe(true);
   }
+}
+
+/**
+ * A node's cost and cooldown as DESIGN writes them: the Cost / CD column of 9.2–9.6 ("15 heat / 10 s", "32 heat/s",
+ * "sets heat 100 / 40 s", "20 heat / shares Well", "30 heat / once per world"), or inline in the effect text for the
+ * tables without that column (Pilot's "40 charge, 30 s", Field Repair's "for 20 ferrite") and for Unmake's "costs 15
+ * health" and Unremembered's "Once a day".
+ */
+function designCost(cell: string, text: string): { cost: NodeCost | null; cooldown: NodeCooldown | null } {
+  const cost: NodeCost = {};
+  let cooldown: NodeCooldown | null = null;
+  const [spend, cd] = cell ? cell.split(' / ') : [];
+  if (spend) {
+    const m = spend.match(/^(?:(\d+) (heat\/s|heat|charge)|sets heat (\d+))$/);
+    if (!m) throw new Error(`unparsed cost "${cell}"`);
+    if (m[3]) cost.setsHeat = Number(m[3]);
+    else cost[m[2] === 'heat/s' ? 'heatPerS' : (m[2] as 'heat' | 'charge')] = Number(m[1]);
+  }
+  if (cd) {
+    const m = cd.match(/^(?:(\d+) s|shares (\w+)|once per (\w+))$/);
+    if (!m) throw new Error(`unparsed cooldown "${cell}"`);
+    if (m[1]) cooldown = { kind: 'seconds', seconds: Number(m[1]) };
+    else if (m[2]) cooldown = { kind: 'shared', node: SKILL_NODES.find((n) => n.name === m[2])?.id ?? m[2] };
+    else cooldown = { kind: 'once_per', per: m[3] as 'world' | 'day' };
+  }
+  const inline = text.match(/(\d+) charge, (\d+(?:\.\d+)?) s$/);
+  if (inline) {
+    cost.charge = Number(inline[1]);
+    cooldown = { kind: 'seconds', seconds: Number(inline[2]) };
+  }
+  const health = text.match(/costs (\d+) health/);
+  if (health) cost.health = Number(health[1]);
+  const material = text.match(/for (\d+) (\w+)$/);
+  if (material && RESOURCE_IDS.has(material[2])) cost.resources = [{ resource: material[2] as ResourceId, amount: Number(material[1]) }];
+  if (/^Once a day/.test(text)) cooldown = { kind: 'once_per', per: 'day' };
+  return { cost: Object.keys(cost).length ? cost : null, cooldown };
+}
+
+/** Today's values the effect texts are written against ("Heat capacity 125" is +25 on 100; "×2 (deposits 360 m)" is 360 on 180). */
+const BASELINES: Partial<Record<Stat, number>> = {
+  'player.health_max': 100,
+  'heat.capacity': 100,
+  'suit.cartridge_restore': 40,
+  'ship.weapon_cooldown': 0.12,
+  'ship.shield_max': 100,
+  'ship.hull_max': 100,
+  'scan.deposit_range': 180,
+  'fragments.per_monolith': 1,
+};
+/** Params stored as fractions that DESIGN writes as percentages ("60% slower" is 0.4). */
+const FRACTION_PARAMS = new Set(['slowMult', 'damageTakenMult', 'targetDamageTakenMult', 'missChance', 'hullFraction', 'healthBelow', 'hullRestoreFraction']);
+const round = (v: number) => Math.round(v * 1e6) / 1e6;
+
+/** Every number a node carries, in each form its effect text could state it. */
+function carriedNumbers(n: SkillNode): Set<number> {
+  const out: number[] = [];
+  const walk = (x: unknown): void => {
+    if (typeof x === 'number') out.push(x);
+    else if (x && typeof x === 'object') Object.values(x).forEach(walk);
+  };
+  walk(n.params);
+  walk(n.cost);
+  if (n.cooldown?.kind === 'seconds') out.push(n.cooldown.seconds);
+  for (const [k, v] of Object.entries(n.params)) if (FRACTION_PARAMS.has(k) && typeof v === 'number') out.push(v * 100, Math.abs(1 - v) * 100);
+  for (const m of n.mods) {
+    const base = BASELINES[m.stat];
+    out.push(m.value);
+    if (m.op === 'mul') {
+      out.push(Math.abs(1 - m.value) * 100, m.value * 100);
+      if (m.value > 0) out.push(1 / m.value);
+      if (base !== undefined) out.push(base * m.value);
+    }
+    if (m.op === 'add' && base !== undefined) out.push(base + m.value);
+    if (m.op === 'set' && base !== undefined) out.push(m.value / base);
+  }
+  return new Set(out.map(round));
+}
+
+/**
+ * The numbers an effect text states, each with the values it may stand for. Today's values are not the node's: "(today …)"
+ * asides, the "from" side of "a → b", and "instead of n".
+ */
+function statedNumbers(text: string): { token: string; values: number[] }[] {
+  const clean = text
+    .replace(/\(today[^)]*\)/gi, '')
+    .replace(/\d+(?:\.\d+)? → /g, '')
+    .replace(/ instead of \d+(?:\.\d+)?/g, '');
+  return [...clean.matchAll(/(\d+(?:\.\d+)?)\s*(km|min)?/g)].map(([token, n, unit]) => {
+    const v = Number(n);
+    return { token, values: unit === 'km' ? [v * 1000] : unit === 'min' ? [v, v * 60] : [v] };
+  });
 }
 
 describe('every table parses with its schema', () => {
@@ -153,6 +246,11 @@ describe('every table parses with its schema', () => {
     expect(new Set(variants).size).toBe(variants.length);
   });
 
+  it('a node cost names at least one thing spent', () => {
+    expect(nodeCostSchema.safeParse({}).success).toBe(false);
+    expect(nodeCostSchema.safeParse({ heat: 0 }).success).toBe(true);
+  });
+
   it('tables are frozen and lookups throw on unknown ids', () => {
     expect(Object.isFrozen(SKILL_NODES)).toBe(true);
     expect(Object.isFrozen(SKILL_NODES[0].unlock.anyOf)).toBe(true);
@@ -194,10 +292,49 @@ describe('resources', () => {
 });
 
 describe('weapons and items', () => {
-  it('8 weapons, matching DESIGN 10.3', () => {
+  it('8 weapons, matching every column of DESIGN 10.3', () => {
     expect(WEAPONS).toHaveLength(8);
     const rows = designTable('10.3 Weapons');
-    expect(rows.map(([name, size]) => [name, size])).toEqual(WEAPONS.map((w) => [w.name, w.size]));
+    expect(rows).toHaveLength(8);
+    const ammoKind: Record<string, string> = { none: 'none', Charge: 'charge', ammo: 'item' };
+    rows.forEach(([name, size, behaviour, best, ammo], i) => {
+      const w = WEAPONS[i];
+      expect([w.name, w.size, w.behaviour, w.bestAgainst.join(', ')]).toEqual([name, size, behaviour, best]);
+      expect(w.ammo.kind, name).toBe(ammoKind[ammo]);
+    });
+  });
+
+  it("each behaviour DESIGN 10.3 states is in the weapon's params", () => {
+    // [pattern in the behaviour text, check on the weapon given the match]
+    const rules: [RegExp, (w: Weapon, m: RegExpMatchArray) => unknown, unknown][] = [
+      [/(\d+(?:\.\d+)?) km/, (w) => w.params.rangeM, null],
+      [/silences ship abilities (\d+) s/, (w) => w.params.silenceS, null],
+      [/(\d+) per rack/, (w) => w.params.magazine, null],
+      [/yield ×(\d+)/, (w) => w.params.asteroidYieldMult, null],
+      [/hitscan/, (w) => w.params.hitscan, true],
+      [/pair/, (w) => w.params.barrels, 2],
+      [/continuous/, (w) => w.params.continuous, true],
+      [/homing/, (w) => w.params.homing, true],
+      [/drops shields/, (w) => w.params.dropsShields, true],
+      [/pull loot/, (w) => w.params.pullsLoot, true],
+      [/burst of fragments/, (w) => (w.params.fragments ?? 0) > 1, true],
+      [/area damage/, (w) => (w.params.radiusM ?? 0) > 0, true],
+      [/weak against hulls/, (w) => (w.params.hullDamageMult ?? 1) < 1, true],
+      [/charged shot/, (w) => (w.params.chargeTimeS ?? 0) > 0, true],
+      [/drains Charge while held/, (w) => w.ammo.kind === 'charge' && (w.ammo.perSecond ?? 0) > 0, true],
+      [/fast cooldown/, (w) => (w.params.cooldownS ?? Infinity) <= 0.12, true],
+      [/slow/, (w) => (w.params.cooldownS ?? 0) >= 2, true],
+    ];
+    for (const w of WEAPONS) {
+      for (const [pattern, read, want] of rules) {
+        const m = w.behaviour.match(pattern);
+        if (!m) continue;
+        const expected = want ?? (pattern.source.includes('km') ? Number(m[1]) * 1000 : Number(m[1]));
+        expect(read(w, m), `${w.id}: "${m[0]}"`).toBe(expected);
+      }
+    }
+    // DESIGN 10.1 and 9.7: today's pair of pulse lasers reach 1500 m with a 0.12 s cooldown
+    expect(getWeapon('pulse_lasers').params).toMatchObject({ rangeM: 1500, cooldownS: 0.12 });
   });
 
   it('every weapon has its module item, every module points at a weapon, every ammo item exists', () => {
@@ -219,12 +356,47 @@ describe('weapons and items', () => {
 });
 
 describe('hulls', () => {
-  it('13 hulls, matching DESIGN 10.2', () => {
+  it('13 hulls, matching every column of DESIGN 10.2', () => {
     expect(HULLS).toHaveLength(13);
     const rows = designTable('10.2 Hull roster');
     expect(rows).toHaveLength(13);
-    rows.forEach(([name, tier, role, speed, boost, hull, shield, charge, pods, , hardpoints, slots], i) => {
+    const venues: Record<string, HullVenue> = {
+      'any Waystation': { kind: 'waystation' },
+      Waystations: { kind: 'waystation' },
+      'A Ship of Your Own': { kind: 'quest', quest: 'a_ship_of_your_own' },
+      Quavel: { kind: 'capital', capital: 'quavel' },
+      Belost: { kind: 'capital', capital: 'belost' },
+      Sarelun: { kind: 'capital', capital: 'sarelun' },
+      Compact: { kind: 'faction', faction: 'compact', vendor: 'Compact' },
+      'Free Reaches quartermaster': { kind: 'faction', faction: 'reaches', vendor: 'Free Reaches quartermaster' },
+      'Chorus sanctuary': { kind: 'faction', faction: 'chorus', vendor: 'Chorus sanctuary' },
+      'Edge expedition drops': { kind: 'drop', source: 'Edge expedition drops' },
+    };
+    rows.forEach(([name, tier, role, speed, boost, hull, shield, charge, pods, signature, hardpoints, slots, where, price], i) => {
       const h = HULLS[i];
+      // signature, including the Husk's split value
+      const split = signature.match(/^([\d.]+) to the Hollow, ([\d.]+) to everyone else$/);
+      expect(h.signature, name).toEqual(split ? { base: Number(split[2]), vsHollow: Number(split[1]) } : { base: Number(signature) });
+      // where: every venue DESIGN names, in order (the Husk's craft venue comes from 15.7 and is checked against the recipe)
+      expect(
+        h.sold.filter((v) => v.kind !== 'craft'),
+        name,
+      ).toEqual(where.split(', ').map((part) => venues[part] ?? `unmapped venue "${part}"`));
+      // price: units ("8k"), credit, raid, "+ rep", and what the parenthesis says is built in
+      const k = price.match(/^(\d+)k/);
+      expect(h.price.units, name).toBe(k ? Number(k[1]) * 1000 : null);
+      expect(h.price.credit, name).toBe(price === 'credit');
+      expect(h.price.raid, name).toBe(price === 'raid');
+      expect(h.price.rep !== null, name).toBe(price.includes('+ rep'));
+      const builtIn = [...price.matchAll(/([A-Z][\w -]*?) built in/g)].map(([, node]) => SKILL_NODES.find((n) => n.name === node)?.id ?? node);
+      expect(h.builtIn.nodes, name).toEqual(builtIn);
+      expect(h.builtIn.flags.includes('charge_regen_anywhere'), name).toBe(price.includes('Charge regen anywhere'));
+      const hazardMods = h.builtIn.mods.filter((m) => m.stat.startsWith('ship.hazard_damage_'));
+      expect(hazardMods.length, name).toBe(price.includes('base hazard resist ×2') ? 6 : 0);
+      for (const m of hazardMods) expect(m).toMatchObject({ op: 'mul', value: 0.5 });
+      const scan = h.builtIn.mods.filter((m) => m.stat === 'ship.scan_range');
+      expect(scan, name).toEqual(price.includes('scan range ×2') ? [{ stat: 'ship.scan_range', op: 'mul', value: 2 }] : []);
+      // the numeric columns
       expect(h.name).toBe(name);
       expect(String(h.tier)).toBe(tier);
       expect(h.role).toBe(role);
@@ -316,6 +488,29 @@ describe('the skill web', () => {
     expect(conj.map(([name, branches, text]) => [name, branches, text])).toEqual(
       SKILL_NODES.filter((n) => n.branch === 'conjunction').map((n) => [n.name, n.branches!.map((b) => b[0].toUpperCase() + b.slice(1)).join(' + '), n.text]),
     );
+  });
+
+  it("every node's cost and cooldown match DESIGN (the Cost / CD column, or inline in the effect)", () => {
+    const sections = ['9.2 Gravitic', '9.3 Thermal', '9.4 Resonance', '9.5 Symbiotic', '9.6 Void', '9.7 Pilot', '9.8 Exo-suit'];
+    const rows = sections.flatMap((s) => designTable(s));
+    expect(rows).toHaveLength(126);
+    for (const [name, , , text, cell = ''] of rows) {
+      const n = SKILL_NODES.find((x) => x.name === name);
+      expect({ cost: n?.cost, cooldown: n?.cooldown }, name).toEqual(designCost(cell, text));
+    }
+    for (const n of SKILL_NODES.filter((x) => x.branch === 'conjunction')) expect([n.cost, n.cooldown], n.id).toEqual([null, null]);
+  });
+
+  it("every number in a node's effect text is in its params, mods or cost", () => {
+    for (const n of SKILL_NODES) {
+      const carried = carriedNumbers(n);
+      for (const { token, values } of statedNumbers(n.text)) {
+        expect(
+          values.some((v) => carried.has(round(v))),
+          `${n.id}: "${token}" in "${n.text}" (carries ${[...carried].join(', ')})`,
+        ).toBe(true);
+      }
+    }
   });
 
   it('tier rules: point cost, level and prerequisites', () => {
@@ -435,9 +630,37 @@ describe('the skill web', () => {
     }
   });
 
-  it('every world type maps to at most one fragment branch, and every fragment branch has worlds', () => {
+  it('fragment worlds match DESIGN 9.1, including the Symbiotic survey rule', () => {
     expect(Object.keys(FRAGMENT_WORLDS).sort()).toEqual([...WORLD_TYPES].sort());
     expect(FRAGMENT_WORLDS.gas).toBeNull();
+    const line = DESIGN.split('\n').find((l) => l.includes('**Memory fragments.**')) ?? '';
+    for (const branch of ['gravitic', 'thermal', 'resonance', 'symbiotic', 'void']) {
+      const clause = line
+        .split(`${branch[0].toUpperCase()}${branch.slice(1)} on `)[1]
+        .split(';')[0]
+        .split('(')[0];
+      const worlds = clause
+        .replace(/ worlds?/g, '')
+        .split(/, | and /)
+        .map((w) => (w.trim() === 'exotic' ? 'alien' : w.trim()));
+      const mapped = Object.entries(FRAGMENT_WORLDS)
+        .filter(([, b]) => b === branch)
+        .map(([w]) => w);
+      expect(worlds.sort(), branch).toEqual(mapped.sort());
+    }
+    for (const o of SKILL_RULES.fragmentOverrides) expect(line).toContain(`${o.branch[0].toUpperCase()}${o.branch.slice(1)} on lush worlds (and ${o.text})`);
+    expect(line).toContain('Tier I nodes unlock with 1 fragment of the branch, Tier II with 3, Tier III with 6');
+    expect(SKILL_RULES.fragments).toEqual({ 1: 1, 2: 3, 3: 6 });
+  });
+
+  it('respec trainers exist and offer the respec DESIGN 9.1 gives them', () => {
+    const respec = DESIGN.split('\n').find((l) => l.startsWith('**Respec.**')) ?? '';
+    expect(respec).toContain(`Any Chorus listener, ${SKILL_RULES.respec.unitsPerPoint} units per point refunded, Void nodes only at a Reaches quartermaster`);
+    expect(TRAINER_IDS.has(SKILL_RULES.respec.trainer)).toBe(true);
+    expect(TRAINER_IDS.has(SKILL_RULES.respec.voidTrainer)).toBe(true);
+    expect(TRAINERS.find((t) => t.id === SKILL_RULES.respec.trainer)?.respec).toBe('all_but_void');
+    expect(TRAINERS.find((t) => t.id === SKILL_RULES.respec.voidTrainer)?.respec).toBe('void');
+    expect(TRAINERS.filter((t) => t.respec !== null).map((t) => t.id)).toEqual([SKILL_RULES.respec.trainer, SKILL_RULES.respec.voidTrainer]);
   });
 });
 

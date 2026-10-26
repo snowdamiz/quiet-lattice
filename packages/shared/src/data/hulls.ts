@@ -307,7 +307,7 @@ export const HULLS = table<Hull>([
     hardpoints: ['M', 'M', 'L'],
     abilitySlots: 5,
     sold: [
-      { kind: 'drop', source: 'Edge expedition raids (Act IV)' },
+      { kind: 'drop', source: 'Edge expedition drops' },
       { kind: 'craft', recipe: 'husk_hull' },
     ],
     price: { units: null, credit: false, rep: null, raid: true },

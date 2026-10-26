@@ -11,7 +11,8 @@ export const weaponAmmoSchema = z.discriminatedUnion('kind', [
 export type WeaponAmmo = z.infer<typeof weaponAmmoSchema>;
 
 export const weaponParamsSchema = z.strictObject({
-  /** Damage per shot or per fragment, before Pilot and Thermal modifiers. */
+  /** Damage per shot, before Pilot and Thermal modifiers. A multi-barrel weapon's shot is one volley of all barrels (the
+   * demo's Pulse Lasers fire both barrels per trigger for one 9–13 hit); a fragment weapon's is per fragment. */
   damage: z.number().nonnegative().optional(),
   /** Damage per second while a continuous beam is held. */
   dps: z.number().positive().optional(),

@@ -147,7 +147,8 @@ export const RESONANCE = branchNodes('resonance', [
     tier: 3,
     type: 'passive',
     text: 'Dissonance, Null and Nullsong silence you for half as long',
-    mods: [{ stat: 'player.silence_duration', op: 'mul', value: 0.5 }],
+    mods: [{ stat: 'player.silence_duration', op: 'mul', value: 0.5, nodes: ['dissonance', 'null', 'nullsong'] }],
+    refs: ['dissonance', 'null', 'nullsong'],
   },
   {
     id: 'nullsong',

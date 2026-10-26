@@ -117,7 +117,10 @@ export const statModSchema = z.strictObject({
   op: z.enum(['add', 'mul', 'set']),
   value: z.number().nonnegative(),
   when: idSchema.optional(),
+  /** Only for this branch's abilities (Grey Blood: Void heat costs). */
   branch: branchSchema.optional(),
+  /** Only for effects of these nodes: their power (Acidsalt catalyst: Spore and Rot), or the silences they cause (Quiet Mind:
+   * Dissonance, Null and Nullsong, not the EMP Pod's ship silence). */
   nodes: z.array(idSchema).min(1).optional(),
 });
 export type StatMod = z.infer<typeof statModSchema>;
