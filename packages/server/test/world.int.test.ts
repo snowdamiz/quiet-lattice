@@ -120,8 +120,9 @@ describe('world service', () => {
       const s = await TestSocket.open(server.wsUrl);
       s.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
       s.send({ t: 'join', characterId: character.id });
-      await waitFor(() => s.received.some((m) => m.t === 'world'), 5000, 'world');
-      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world']);
+      await waitFor(() => s.received.some((m) => m.t === 'inventory'), 5000, 'inventory');
+      // `world` comes right after `welcome`; the character's `inventory` follows (P1.E06.T04)
+      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world', 'inventory']);
       const [welcome, world] = s.received.splice(0) as [
         Extract<(typeof s.received)[number], { t: 'welcome' }>,
         Extract<(typeof s.received)[number], { t: 'world' }>,
