@@ -1,0 +1,16 @@
+{
+  "name": "next-horizon",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.15.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @astra/client dev",
+    "dev:server": "pnpm --filter @astra/server dev",
+    "build": "pnpm -r build",
+    "preview": "pnpm --filter @astra/client preview"
+  }
+}

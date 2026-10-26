@@ -1,0 +1,480 @@
+{
+  "engine_loop": {
+    "files": [
+      "sfx/engine_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.55,
+    "notes": "steady ship engine drone (idle/cruise bed); modulate playbackRate 0.9-1.15 and gain with throttle"
+  },
+  "thrust_loop": {
+    "files": [
+      "sfx/thrust_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.6,
+    "notes": "main thrust / boost roar; crossfade with engine_loop by throttle"
+  },
+  "airflow_loop": {
+    "files": [
+      "sfx/airflow_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.5,
+    "notes": "air rushing past the hull in atmospheric flight; scale gain/playbackRate with airspeed"
+  },
+  "hover_loop": {
+    "files": [
+      "sfx/hover_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.55,
+    "notes": "VTOL hover thruster rumble/whine in atmosphere"
+  },
+  "rcs_puff": {
+    "files": [
+      "sfx/rcs_puff_1.ogg",
+      "sfx/rcs_puff_2.ogg",
+      "sfx/rcs_puff_3.ogg",
+      "sfx/rcs_puff_4.ogg",
+      "sfx/rcs_puff_5.ogg"
+    ],
+    "loop": false,
+    "gain": 0.45,
+    "notes": "short reaction-control gas bursts (5 variations); randomise playbackRate 0.9-1.1"
+  },
+  "takeoff": {
+    "files": [
+      "sfx/takeoff.ogg"
+    ],
+    "loop": false,
+    "gain": 0.7,
+    "notes": "engine spool-up / lift-off"
+  },
+  "touchdown": {
+    "files": [
+      "sfx/touchdown.ogg"
+    ],
+    "loop": false,
+    "gain": 0.85,
+    "notes": "heavy landing thump with hydraulic settle"
+  },
+  "gear": {
+    "files": [
+      "sfx/gear.ogg"
+    ],
+    "loop": false,
+    "gain": 0.65,
+    "notes": "landing gear extend/retract (servo + clunk)"
+  },
+  "pulse_engage": {
+    "files": [
+      "sfx/pulse_engage.ogg"
+    ],
+    "loop": false,
+    "gain": 0.65,
+    "notes": "pulse drive charging + kick-in (rising whoosh)"
+  },
+  "pulse_loop": {
+    "files": [
+      "sfx/pulse_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.55,
+    "notes": "pulse-drive cruise hum/whine; raise playbackRate slightly with speed"
+  },
+  "pulse_exit": {
+    "files": [
+      "sfx/pulse_exit.ogg"
+    ],
+    "loop": false,
+    "gain": 0.6,
+    "notes": "dropping out of pulse drive (descending whoosh)"
+  },
+  "warp": {
+    "files": [
+      "sfx/warp.ogg"
+    ],
+    "loop": false,
+    "gain": 0.85,
+    "notes": "hyperspace jump: build then whoosh"
+  },
+  "warp_arrive": {
+    "files": [
+      "sfx/warp_arrive.ogg"
+    ],
+    "loop": false,
+    "gain": 0.85,
+    "notes": "dropping out of hyperspace: boom + whoosh"
+  },
+  "dock": {
+    "files": [
+      "sfx/dock.ogg"
+    ],
+    "loop": false,
+    "gain": 0.6,
+    "notes": "docking clamps engage + confirmation tone"
+  },
+  "laser": {
+    "files": [
+      "sfx/laser_1.ogg",
+      "sfx/laser_2.ogg",
+      "sfx/laser_3.ogg"
+    ],
+    "loop": false,
+    "gain": 0.6,
+    "notes": "ship weapon energy shot (3 variations)"
+  },
+  "impact": {
+    "files": [
+      "sfx/impact_1.ogg",
+      "sfx/impact_2.ogg",
+      "sfx/impact_3.ogg"
+    ],
+    "loop": false,
+    "gain": 0.75,
+    "notes": "hull hit (3 variations)"
+  },
+  "explode": {
+    "files": [
+      "sfx/explode.ogg"
+    ],
+    "loop": false,
+    "gain": 0.9,
+    "notes": "big explosion"
+  },
+  "alarm": {
+    "files": [
+      "sfx/alarm.ogg"
+    ],
+    "loop": false,
+    "gain": 0.5,
+    "notes": "ship warning beeps; designed to be retriggered back-to-back (can also set loop=true)"
+  },
+  "creak": {
+    "files": [
+      "sfx/creak_1.ogg",
+      "sfx/creak_2.ogg",
+      "sfx/creak_3.ogg"
+    ],
+    "loop": false,
+    "gain": 0.55,
+    "notes": "metal hull stress groans (3 variations)"
+  },
+  "hiss": {
+    "files": [
+      "sfx/hiss_1.ogg",
+      "sfx/hiss_2.ogg"
+    ],
+    "loop": false,
+    "gain": 0.5,
+    "notes": "acid/corrosion sizzle (2 variations)"
+  },
+  "step_dirt": {
+    "files": [
+      "sfx/step_dirt_1.ogg",
+      "sfx/step_dirt_2.ogg",
+      "sfx/step_dirt_3.ogg",
+      "sfx/step_dirt_4.ogg",
+      "sfx/step_dirt_5.ogg",
+      "sfx/step_dirt_6.ogg"
+    ],
+    "loop": false,
+    "gain": 0.733,
+    "notes": "boots on dirt/earth (6 variations) (manifest gain compensates the +-4.2 dB lift so all step surfaces match)"
+  },
+  "step_grass": {
+    "files": [
+      "sfx/step_grass_1.ogg",
+      "sfx/step_grass_2.ogg",
+      "sfx/step_grass_3.ogg",
+      "sfx/step_grass_4.ogg"
+    ],
+    "loop": false,
+    "gain": 0.256,
+    "notes": "boots on grass (4 variations) (manifest gain compensates the +4.9 dB lift so all step surfaces match)"
+  },
+  "step_rock": {
+    "files": [
+      "sfx/step_rock_1.ogg",
+      "sfx/step_rock_2.ogg",
+      "sfx/step_rock_3.ogg",
+      "sfx/step_rock_4.ogg",
+      "sfx/step_rock_5.ogg",
+      "sfx/step_rock_6.ogg"
+    ],
+    "loop": false,
+    "gain": 0.266,
+    "notes": "boots on rock/stone (6 variations) (manifest gain compensates the +4.6 dB lift so all step surfaces match)"
+  },
+  "step_metal": {
+    "files": [
+      "sfx/step_metal_1.ogg",
+      "sfx/step_metal_2.ogg",
+      "sfx/step_metal_3.ogg",
+      "sfx/step_metal_4.ogg",
+      "sfx/step_metal_5.ogg",
+      "sfx/step_metal_6.ogg"
+    ],
+    "loop": false,
+    "gain": 0.459,
+    "notes": "boots on metal deck/grating (6 variations) (manifest gain compensates the +-0.2 dB lift so all step surfaces match)"
+  },
+  "step_snow": {
+    "files": [
+      "sfx/step_snow_1.ogg",
+      "sfx/step_snow_2.ogg",
+      "sfx/step_snow_3.ogg",
+      "sfx/step_snow_4.ogg",
+      "sfx/step_snow_5.ogg",
+      "sfx/step_snow_6.ogg"
+    ],
+    "loop": false,
+    "gain": 0.588,
+    "notes": "boots crunching on snow (6 variations) (manifest gain compensates the +-2.3 dB lift so all step surfaces match)"
+  },
+  "step_sand": {
+    "files": [
+      "sfx/step_sand_1.ogg",
+      "sfx/step_sand_2.ogg",
+      "sfx/step_sand_3.ogg",
+      "sfx/step_sand_4.ogg",
+      "sfx/step_sand_5.ogg",
+      "sfx/step_sand_6.ogg"
+    ],
+    "loop": false,
+    "gain": 0.361,
+    "notes": "boots on sand / soft ground (6 variations) (manifest gain compensates the +1.9 dB lift so all step surfaces match)"
+  },
+  "jump": {
+    "files": [
+      "sfx/jump.ogg"
+    ],
+    "loop": false,
+    "gain": 0.45,
+    "notes": "light exertion: suit rustle + air swish"
+  },
+  "land": {
+    "files": [
+      "sfx/land_1.ogg",
+      "sfx/land_2.ogg"
+    ],
+    "loop": false,
+    "gain": 0.6,
+    "notes": "boots landing after a jump/fall (2 variations)"
+  },
+  "hurt": {
+    "files": [
+      "sfx/hurt.ogg"
+    ],
+    "loop": false,
+    "gain": 0.7,
+    "notes": "suit damage: hit + electric crackle + alert tone"
+  },
+  "jetpack_loop": {
+    "files": [
+      "sfx/jetpack_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.5,
+    "notes": "jetpack thrust hiss/roar"
+  },
+  "beam_loop": {
+    "files": [
+      "sfx/beam_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.5,
+    "notes": "mining laser beam hum/buzz"
+  },
+  "break": {
+    "files": [
+      "sfx/break_1.ogg",
+      "sfx/break_2.ogg",
+      "sfx/break_3.ogg"
+    ],
+    "loop": false,
+    "gain": 0.7,
+    "notes": "rock/crystal deposit breaking apart (3 variations; 3rd is crystalline)"
+  },
+  "pickup": {
+    "files": [
+      "sfx/pickup.ogg"
+    ],
+    "loop": false,
+    "gain": 0.55,
+    "notes": "resource collected: short bright sci-fi chime"
+  },
+  "scan": {
+    "files": [
+      "sfx/scan.ogg"
+    ],
+    "loop": false,
+    "gain": 0.65,
+    "notes": "scanner pulse sweep"
+  },
+  "wind_loop": {
+    "files": [
+      "sfx/wind_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.6,
+    "notes": "wind over open ground with gentle gusts, stereo"
+  },
+  "gale_loop": {
+    "files": [
+      "sfx/gale_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.65,
+    "notes": "strong howling storm wind, stereo; layer over or replace wind_loop in storms"
+  },
+  "rain_loop": {
+    "files": [
+      "sfx/rain_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.6,
+    "notes": "steady rain, stereo"
+  },
+  "thunder": {
+    "files": [
+      "sfx/thunder_far_1.ogg",
+      "sfx/thunder_far_2.ogg",
+      "sfx/thunder_far_3.ogg",
+      "sfx/thunder_far_4.ogg",
+      "sfx/thunder_close_1.ogg",
+      "sfx/thunder_close_2.ogg"
+    ],
+    "loop": false,
+    "gain": 0.8,
+    "notes": "thunder_close_* = near cracks (louder), thunder_far_* = distant rumbles. Pick randomly per strike."
+  },
+  "thunder_close": {
+    "files": [
+      "sfx/thunder_close_1.ogg",
+      "sfx/thunder_close_2.ogg"
+    ],
+    "loop": false,
+    "gain": 0.85,
+    "notes": "near lightning cracks"
+  },
+  "thunder_far": {
+    "files": [
+      "sfx/thunder_far_1.ogg",
+      "sfx/thunder_far_2.ogg",
+      "sfx/thunder_far_3.ogg",
+      "sfx/thunder_far_4.ogg"
+    ],
+    "loop": false,
+    "gain": 0.7,
+    "notes": "distant thunder rumbles"
+  },
+  "station_loop": {
+    "files": [
+      "sfx/station_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.5,
+    "notes": "space-station interior / hangar hum + distant machinery, stereo"
+  },
+  "space_loop": {
+    "files": [
+      "sfx/space_loop.ogg"
+    ],
+    "loop": true,
+    "gain": 0.35,
+    "notes": "very subtle deep-space drone bed (optional)"
+  },
+  "ui_click": {
+    "files": [
+      "sfx/ui_click.ogg"
+    ],
+    "loop": false,
+    "gain": 0.5,
+    "notes": "UI select tick"
+  },
+  "ui_hover": {
+    "files": [
+      "sfx/ui_hover.ogg"
+    ],
+    "loop": false,
+    "gain": 0.3,
+    "notes": "very subtle hover tick"
+  },
+  "ui_back": {
+    "files": [
+      "sfx/ui_back.ogg"
+    ],
+    "loop": false,
+    "gain": 0.5,
+    "notes": "soft descending cancel/error blip"
+  },
+  "ui_confirm": {
+    "files": [
+      "sfx/ui_confirm.ogg"
+    ],
+    "loop": false,
+    "gain": 0.45,
+    "notes": "rising positive confirm (buy/sell)"
+  },
+  "discovery": {
+    "files": [
+      "sfx/discovery.ogg"
+    ],
+    "loop": false,
+    "gain": 0.6,
+    "notes": "short musical sting for a new discovery"
+  },
+  "greet": {
+    "files": [
+      "sfx/greet_1.ogg",
+      "sfx/greet_2.ogg",
+      "sfx/greet_3.ogg",
+      "sfx/greet_4.ogg"
+    ],
+    "loop": false,
+    "gain": 0.5,
+    "notes": "alien voice greeting in an unknown language (4 variations)"
+  },
+  "music_title": {
+    "files": [
+      "music/music_title.ogg"
+    ],
+    "loop": false,
+    "gain": 0.55,
+    "notes": "majestic, calm title theme (soft floating synths + strings), ~6:56. Normalised to -18 LUFS. Play in rotation/crossfade; not a seamless loop (natural intro/ending)."
+  },
+  "music_space_1": {
+    "files": [
+      "music/music_space_1.ogg"
+    ],
+    "loop": false,
+    "gain": 0.55,
+    "notes": "drifting space ambience: slow strings/synth bed with solo cello, ~4:16. Normalised to -18 LUFS. Play in rotation/crossfade; not a seamless loop (natural intro/ending)."
+  },
+  "music_space_2": {
+    "files": [
+      "music/music_space_2.ogg"
+    ],
+    "loop": false,
+    "gain": 0.55,
+    "notes": "drifting space ambience: electronic ambient in the style of 80s sci-fi scores, ~4:51. Normalised to -18 LUFS. Play in rotation/crossfade; not a seamless loop (natural intro/ending)."
+  },
+  "music_planet_1": {
+    "files": [
+      "music/music_planet_1.ogg"
+    ],
+    "loop": false,
+    "gain": 0.55,
+    "notes": "planet exploration: warm strings/synth with wordless vocals, calm with a sense of mystery, ~5:23. Normalised to -18 LUFS. Play in rotation/crossfade; not a seamless loop (natural intro/ending)."
+  },
+  "music_planet_2": {
+    "files": [
+      "music/music_planet_2.ogg"
+    ],
+    "loop": false,
+    "gain": 0.55,
+    "notes": "planet exploration: calm meandering strings and synth with piano and glass marimba, ~5:54. Normalised to -18 LUFS. Play in rotation/crossfade; not a seamless loop (natural intro/ending)."
+  }
+}

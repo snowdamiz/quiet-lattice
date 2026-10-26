@@ -1,0 +1,13 @@
+{
+  "name": "@astra/server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "build": "node --check src/index.js"
+  },
+  "dependencies": {
+    "@astra/shared": "workspace:*"
+  }
+}

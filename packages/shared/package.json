@@ -1,0 +1,12 @@
+{
+  "name": "@astra/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "build": "node -e \"import('./src/index.js').then(() => console.log('shared ok'))\""
+  }
+}
