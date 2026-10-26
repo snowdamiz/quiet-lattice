@@ -65,8 +65,9 @@ export type Stealth = z.infer<typeof stealthSchema>;
 export const STEALTH = table<Stealth>([
   // "you read as mindless to the Hollow and fauna; players see a shimmer"
   { id: 'veil', hidesFrom: ['hollow'] },
-  // "No radar, no markers, no raids": hidden from every ship's sensors, the Compact's included
-  { id: 'cloak', hidesFrom: ['player', 'pirate', 'compact'] },
+  // "No radar, no markers, no raids": hidden from every ship's sensors, the Compact's included, and from the Hollow (DESIGN 13
+  // names Cloak as a counter to the Husk Admiral, a Hollow boss)
+  { id: 'cloak', hidesFrom: ['player', 'pirate', 'compact', 'hollow'] },
   // "Veil has a ship form: no raids spawn, no markers show you": Veil's own hiding from the Hollow, and every ship's sensors
   { id: 'silent_running', hidesFrom: ['player', 'pirate', 'compact', 'hollow'] },
 ]);

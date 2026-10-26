@@ -225,3 +225,12 @@ Format: task id, question → choice → why.
   the armature; the importer runs with `disable_bone_shape`. The glTF exporter writes each skinned object's mesh separately
   (no mesh sharing), so character files grow with their variant count — accepted for now; the engine must not assume a
   skinned mesh is a child of its skeleton root.
+- **P1.E12.T06** Detection → sensor ranges (DESIGN gives none): player ship 4000 m × the hull's scan range, pirate scouts
+  3500, wing 3000, raiders 3000, the Hollow 1000 (DESIGN 12.7's drifter "within 1 km" for a 1.0 signature), Compact 5000;
+  detector kinds player, pirate, hollow, compact; stealth hides the ship (signature 0) from the kinds each effect names —
+  Veil from the Hollow, Cloak and Silent Running from all four (Cloak counters the Husk Admiral, DESIGN 13); boosting is
+  judged from measured speed above 1.1 × the space cruise cap (never the button); pulsing = on the pulse drive; boost and
+  pulse double once; cover = the belt volume as the client draws it and a ±2 km ring sheet; nebulae are not cover until
+  the world models them; a raid only rolls if a scout at the spawn distance would detect the ship, and pirates lose a
+  ship they cannot detect after a 20 s search. → DESIGN 10.1's rule applied literally, with detection judged from what
+  the server can measure.

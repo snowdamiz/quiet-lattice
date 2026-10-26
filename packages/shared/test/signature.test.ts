@@ -65,9 +65,9 @@ describe('effectiveSignature', () => {
 describe('stealth hooks', () => {
   const hiddenTo = (effects: StealthId[]) => DETECTOR_KINDS.filter((d) => effectiveSignature(lark, { detector: d, stealth: effects }) === 0);
 
-  it('Veil hides from the Hollow only; Cloak from every ship; Silent Running from both', () => {
+  it('Veil hides from the Hollow only; Cloak and Silent Running from every ship and the Hollow', () => {
     expect(hiddenTo(['veil'])).toEqual(['hollow']);
-    expect(hiddenTo(['cloak'])).toEqual(['player', 'pirate', 'compact']);
+    expect(hiddenTo(['cloak'])).toEqual(['player', 'pirate', 'hollow', 'compact']);
     expect(hiddenTo(['silent_running'])).toEqual(['player', 'pirate', 'hollow', 'compact']);
     expect(hiddenTo([])).toEqual([]);
   });
@@ -83,7 +83,8 @@ describe('stealth hooks', () => {
 
   it('a detector the effect does not name reads the ship as usual, modifiers and all', () => {
     expect(effectiveSignature(lark, { detector: 'pirate', stealth: ['veil'], inCover: true })).toBe(0.5);
-    expect(effectiveSignature(stats('husk'), { detector: 'hollow', stealth: ['cloak'] })).toBe(0.1);
+    expect(effectiveSignature(stats('husk'), { detector: 'hollow', stealth: ['veil'] })).toBe(0);
+    expect(effectiveSignature(stats('husk'), { detector: 'pirate', stealth: ['veil'] })).toBe(1.2);
   });
 
   it('with no detector named, stealth hides nothing (only `hidden` does)', () => {
