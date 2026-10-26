@@ -171,3 +171,7 @@ Format: task id, question → choice → why.
   aggro by decaying threat stops one chip hit stealing a mob.
 - **P1.E06.T01 (balance flag)** Mob damage scales ×7 by level 50 while player health stays 100–180 (a level-50 Pack Alpha
   hits for 245). → Left as DESIGN 12.1 writes it; the Phase 1 balance pass (P1.E16) must address it.
+- **P1.E06.T01 (follow-ups)** Stone-touched herds keep their body plan's (or apex boss row's) health and attacks, add the
+  stone-touched resistances, and rate the higher threat; a row with its own base damage rescales its body-plan attacks so
+  the heaviest equals it; Slam's sphere is 6 + 12 × reach m (reach 0–1, mapped from fall height by P1.E07.T04); Crush and
+  Singularity take Well's 12 m sphere; AGGRO and XP_CURVE moved into the data tables.
