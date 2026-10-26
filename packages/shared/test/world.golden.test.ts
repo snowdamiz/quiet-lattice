@@ -1,42 +1,24 @@
 // Golden fixtures for seed 424242, first written from the demo's JavaScript before the world code moved here
-// (P1.E02.T01; see packages/tools/src/fixtures/world-golden.ts). Every value must come out exactly as it did then:
-// the same random draws in the same order and the same float arithmetic.
+// (P1.E02.T01; see packages/tools/src/fixtures/world-golden.ts; the systems' orbits, spins, stars, belts and Waystations
+// were added in P1.E02.T02). Every value must come out exactly as it did then: the same random draws in the same order
+// and the same float arithmetic.
 import { describe, expect, it } from 'vitest';
 import {
   Galaxy,
   TerrainSampler,
-  cityPads,
   cosmos,
   createPlanetParams,
+  describeGalaxySystem,
   layoutCity,
-  planCities,
-  planSites,
-  sitePads,
   streetPlan,
   surfaceAttribs,
+  type GalaxySystem,
   type PlanetParams,
   type PlanetType,
 } from '../src/world/index.ts';
 import { asJson, digestArrays, digestString } from './digest.ts';
+import { planSurface } from './surface.ts';
 import fixture from './fixtures/world-424242.json';
-
-const withoutPads = (p: PlanetParams): PlanetParams => {
-  const rest = { ...p };
-  delete rest.pads;
-  return rest;
-};
-
-/** A rocky body planned as the client's Planet plans it: cities first, then sites clear of them, then the levelled pads. */
-function plan(seed: number, type: string, radius: number, isMoon: boolean) {
-  const params = createPlanetParams(seed, type as PlanetType, radius, { isMoon });
-  const bare = withoutPads(params);
-  const sampler = new TerrainSampler(params);
-  const cities = planCities(params, sampler);
-  const sites = planSites(params, sampler, cities);
-  params.pads = [...cityPads(cities), ...sitePads(sites)];
-  sampler.setPads(params.pads);
-  return { params, bare, sampler, cities, sites };
-}
 
 describe('world golden fixtures, seed 424242', () => {
   it('galaxy: names, star classes and positions of all 70 systems', () => {
@@ -47,20 +29,43 @@ describe('world golden fixtures, seed 424242', () => {
   });
 
   describe.each(fixture.systems)('system $id $name', (sys) => {
-    it('every rocky body: params, cities, sites and pads', () => {
-      for (const b of sys.bodies) {
-        if (b.type === 'gas') continue;
-        const { bare, params, cities, sites } = plan(b.seed, b.type, b.radius, b.kind === 'moon');
-        expect({ name: b.name, params: digestString(JSON.stringify(bare)) }).toEqual({ name: b.name, params: b.paramsDigest });
-        expect({ name: b.name, cities: cities.length, sites: sites.length }).toEqual({ name: b.name, cities: b.cities, sites: b.sites });
-        expect({ name: b.name, pads: digestString(JSON.stringify(params.pads)) }).toEqual({ name: b.name, pads: b.padsDigest });
-      }
+    const d = describeGalaxySystem(fixture.galaxy[sys.id] as GalaxySystem);
+
+    it('describeGalaxySystem: its name, star, home world, outer orbit, belt and Waystation', () => {
+      const got = { name: d.name, cls: d.star.cls, home: d.home, star: d.star, outerOrbit: d.outerOrbit, belt: d.belt, station: d.station };
+      expect(got).toEqual({ name: sys.name, cls: sys.cls, home: sys.home, star: sys.star, outerOrbit: sys.outerOrbit, belt: sys.belt, station: sys.station });
+    });
+
+    it('describeGalaxySystem: every body, its type, radius, seed, orbit, spin, gravity, reach, rings and params', () => {
+      // (its index is its place in the list; its params are kept as a digest)
+      const got = d.bodies.map(({ index, params, ...spec }) => ({ ...spec, paramsDigest: digestString(JSON.stringify(params)) }));
+      expect(got).toEqual(sys.bodies.map(({ padsDigest, sites, cities, ...spec }) => spec));
+    });
+
+    it('every rocky body described: cities, sites and pads', () => {
+      expect(d.bodies.length).toBe(sys.bodies.length);
+      d.bodies.forEach((b, i) => {
+        const want = sys.bodies[i];
+        if (b.type === 'gas') {
+          expect({ name: b.name, pads: want.padsDigest, sites: want.sites, cities: want.cities }).toEqual({
+            name: want.name,
+            pads: null,
+            sites: null,
+            cities: null,
+          });
+          return;
+        }
+        const { bare, params, cities, sites } = planSurface(b.params as PlanetParams);
+        expect({ name: b.name, params: digestString(JSON.stringify(bare)) }).toEqual({ name: want.name, params: want.paramsDigest });
+        expect({ name: b.name, cities: cities.length, sites: sites.length }).toEqual({ name: want.name, cities: want.cities, sites: want.sites });
+        expect({ name: b.name, pads: digestString(JSON.stringify(params.pads)) }).toEqual({ name: want.name, pads: want.padsDigest });
+      });
     });
   });
 
   describe.each(fixture.homes)('home planet $name', (home) => {
     const body = fixture.systems[home.system].bodies[fixture.systems[home.system].home];
-    const { bare, params, sampler, cities, sites } = plan(body.seed, home.type, home.radius, false);
+    const { bare, params, sampler, cities, sites } = planSurface(createPlanetParams(body.seed, home.type as PlanetType, home.radius));
     const dirs = fixture.sampleDirections;
 
     it('params', () => {

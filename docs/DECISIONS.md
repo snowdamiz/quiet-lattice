@@ -68,3 +68,92 @@ Format: task id, question → choice → why.
 - **Orchestrator** Another Claude session edits client files in the main checkout while this plan runs. → Task commits stage
   explicit paths only; merges that would touch that session's uncommitted files wait in an `integration/<task>` branch
   (main plus the reviewed task, verified) until it is done; dependent workers branch from the integration branch.
+- **P1.E14.T01** Budgets DESIGN 19.2 does not give → classes in `packages/tools/blender/families.json` with reasons: npc
+  25–60k/2k, viewmodel 15–60k/2k, building 8–60k/2k (cities up to 400 m long), kit 0.5–15k/2k, weapon 4–20k/2k, tree
+  3–15k/1k, flora 150–6k/1k, effect ≤5k/1k, cosmetic ≤2k/2k; bosses and Wardens are hero, constructs creature. → Between
+  the classes DESIGN gives; families.json is the authority (art bible §8 points there).
+- **P1.E14.T01** LOD counts → 4 everywhere except viewmodels, effects and cosmetics (1) and the library (none). → A
+  first-person tool is always at arm's length; effects and decals have nothing to swap. The art bible says so.
+- **P1.E14.T01** Source and export layout → a top-level `REF` collection, one top-level collection per asset, nested
+  `<variant>_LOD<n>` collections, `_`-prefixed collections ignored, an `asset_class` property override; exports go to
+  `packages/client/public/models/<family>/<file>.glb` with nodes `<asset>/<variant>/<variant>_LOD<n>`. → DESIGN 19.1's
+  "named collections per variant and LOD"; per-family folders avoid name clashes and keep the demo's flat files until
+  each family is replaced.
+- **P1.E14.T01** Markers (DESIGN 19.4 "Add") → `HP_S_*`/`HP_M_*`/`HP_L_*`, `BAY_*`, `Mount`, `Muzzle*`, `Gear*` pivots,
+  `Canopy*`, `CockpitInterior`, `Door*` ≥ 2.4 × 1.4 m, armatures on characters, NPCs and bosses; prefixes match
+  case-insensitively. The first draft's `Hardpoint_*` and 2.0 × 0.9 m doors were changed to the art bible's.
+- **P1.E14.T01** Materials → exported name = `engine_name` property or the material's own name; linked library materials
+  are copied per variant before baking (a read-only material cannot be baked) and every bake is checked for written
+  texels; AO is baked from the variant's geometry with everything else hidden unless an AO map was painted; signal
+  materials (EngineGlow, Nav*, Lamp, GlyphLight, HollowSeam) and glass are exempt from the map set; a constant metallic is
+  accepted beside a textured roughness (glTF packs them together); meshes without UVs fail when their material needs maps.
+- **P1.E14.T01** Generated LODs → decimation ratios 1 / 0.3 / 0.1 / 0.035, only where no LODs were hand-made; LOD1–3 drop
+  shape keys. A failing source writes nothing and removes its stale `.glb`; an unreadable source (LFS pointer) keeps it.
+- **P1.E14.T01** `art:validate -- --changed [base]` diffs against the merge-base with the base (default origin/main, else
+  main) and re-validates every source when the validator itself changes.
+- **P1.E02.T07** DESIGN 9.4 listed 17 Resonance nodes (7 at Tier III), so 7 × 18 was impossible. → Added one Tier III
+  passive, **Quiet Mind** ("Dissonance, Null and Nullsong silence you for half as long"), to DESIGN 9.4 and the data. →
+  Every other branch's Tier III is 2 actives, 3 passives, 1 ship form and 2 augments; Resonance was one passive short,
+  and it answers 9.10's anti-caster tools. **A design addition: the owner may want to rename or replace it.**
+- **P1.E02.T07** Ids and terms → resource ids are the demo's (`dihydrogen` …) with DESIGN's names; world types use the
+  generator's ids (`alien` = exotic, `gas`); "living worlds" = lush, alien, desert, frozen, toxic, volcanic, storm; "hot
+  worlds" = desert, volcanic, inferno; a tier of "3+" reads as 3–5. → One vocabulary with the world generator.
+- **P1.E02.T07** Stat modifiers apply add, then mul, then set; "Shield 125"/"Hull 125" are ×1.25 of the hull's base; Tempered
+  Core +25 heat capacity; Gunnery scales every weapon cooldown by 0.08/0.12; Efficient Jetpack is jet-fuel duration ×2;
+  Living Ship restores the full hull; Quiet Mind's halving applies only to Dissonance, Null and Nullsong. → Each reads
+  DESIGN's text in the direction it is written.
+- **P1.E02.T07** Unlock routes → Tier I trainers need no rank, Tier II the faction's first rank, Tier III the second; Void
+  needs Free Reaches Deckhand; capstones unlock only by chapter; conjunctions are level 15 augments whose only prerequisite
+  is a Tier II node in both branches; only branch augments require their target node; the Symbiotic "every species
+  analysed" rule is a fragment override (that world's monolith grants Symbiotic instead). Hazard Weave is also unlocked by
+  the quest `the_apothecarys_sodium` (DESIGN 14.8), validated once quests exist.
+- **P1.E02.T07** Faction unlocks per rank (14.4 lists them per faction) → Compact: Hand double bounties, Factor Tier 2
+  hulls at Waystations + Hangar Rights, Lanewarden the Warden-breaker + Quiet Table branch; Reaches: Deckhand Scrapyard
+  market + Void + quartermaster, Cutter convoy raid contracts, Captain's Ear the Ghost; Chorus: Listener respec ×0.5,
+  Reader memory dives, Voice the Listener hull; cities: Guest livery, Neighbour market fees halved + anchor chain, Claimant
+  glyph. Hull rep: Ghost Captain's Ear, Listener Voice, Warden-breaker Lanewarden.
+- **P1.E02.T07** Recipes → a tier range takes the tier of the rarest input; the pressure-hull module and husk plating craft at
+  the Scrapyard (DESIGN names no fabricator above Tier 3); catalysts take 10 of their resource; suit glyphs 10 and hull
+  glyph seams 40 Count residue; field-craftable: pulse fuel, both cartridges, flak ammo, torpedo (Tier 2+); salvage is
+  floor(amount / 3) per input, modules only; every Waystation fabricator crafts Tier 0–2.
+- **P1.E02.T07** Numbers DESIGN does not give (all in `packages/shared/src/data`, tunable): weapons (Pulse Lasers 11 per
+  volley, 0.12 s, 1500 m; Beam Lance 120 dps; Flak 12 × 8 in 40 m; EMP 30 Charge, 150 m; Railgun 400 dmg, 2 s charge;
+  Torpedo 600 dmg, 4 per rack, 6 km); body-plan base health (quad_heavy 160, grazer 60, quad_small 30, biped 80, flyer
+  50); threat stars by temperament; resistances ×0.5 / ×2 / ×0; horrors, constructs, people and brood stats; Hollow swarm,
+  belt lurker and husk stats; convoy composition; boss base health/damage (Pack Alpha 600/35 … Hive Heart 40000/40).
+  DESIGN 12.2 attack damage is a base value scaled by level like health. → Balance passes later tune these.
+- **P1.E02.T07** Known DESIGN inconsistencies left as written: 9.7 says Pilot has three actives (two listed); 12.7's "Vent in
+  ship form" (Vent has no ship form); section 1's "5 hostile variants" lists six; no fabricator for Tier 4–5 recipes; no
+  unit price for the Lark (sold on credit).
+- **P1.E02.T05 (review)** Den density and spawning → dens are lairs scaled to land area (one predator den per ~80 km² of
+  land from Tier 1, a second layer from Tier 3, ambusher burrows at most one per site from Tier 2, one apex lair from
+  Tier 2), and predators also spawn around the camera from the herd spawner (DESIGN 12.2 "reuses today's herd spawner …
+  with dens"). P1.E08.T03 amended. → A fixed count per world left dens 16–26 km apart, too sparse to be the only spawn
+  source; lairs anchor packs, respawns, the apex, ambushers and board bounties.
+- **P1.E02.T05** No dens at Tier 0; den kind by body plan (burrow: quad_small packs and ambushers; nest: bipeds and the
+  apex; roost: flyers), predator dens split evenly across kinds until species roll (P1.E08.T01); the landmark grove is the
+  most wooded of 48 candidate spots; footprints 4/6/5/10 m, relief ≤ 4 m (roosts up to 0.8 × mountain height); 300 m
+  between dens, 2 km beyond every city's levelled ground, 40 m clear of sites; a separate JSON `Den[]` returned by
+  `planSurface`, planned on natural ground after cities and sites, each pass on its own RNG stream.
+- **P1.E02.T05 (review)** DESIGN 13 put the Pack Alpha on Tier 1–2 worlds while 12.2 and 12.8 put the apex at Tier 2+. → The
+  Pack Alpha is the apex: Tier 2+ (DESIGN 13 and the boss table changed). → Two sections against one; Tier 1 already has
+  territorial and predator fauna.
+- **P1.E02.T05 (review)** DESIGN 19.3 lists dens under Sites but the plan had no den art task. → Added P1.E14.T10; the client
+  plans without dens until it lands, so no bare clearings appear.
+- **P1.E03.T01** Per-account socket cap 4 (the oldest connection is closed at hello, newest wins); 6 characters per
+  account; a duplicate join of a character kicks the older connection; per-IP sockets 16; message budget burst 60 at
+  40/s with strikes; join timeout 30 s; headers timeout 10 s; outbound buffer cap 1 MiB; control pings share the message
+  budget; home system by people is a placeholder index until P1.E02.T04; serverTime from a shard epoch of 2026-01-01Z
+  advanced by a monotonic clock until P1.E03.T06; refusals map server errors to `full`, join timeout to `character`. →
+  Each bounds memory or keeps a reconnecting player from waiting on a dead socket; numbers are config where tests need it.
+- **P1.E02.T02** Body order and indices → each planet followed by its moons, innermost first; `index` is the frame-id body
+  index, `slot` keeps the client's old `Planet.index` (orbit or moon number). Params are embedded in full (SolarSystem
+  deep-copies them). Quaternion parts are written as +0 (JSON turns −0 into 0). `describeGalaxySystem(info)` in shared is
+  the one way to describe galaxy system i (system 0's home world is lush there, not in the client). → Frame ids line up
+  with the client array, client and server describe the same system, and the description is pure JSON.
+- **P1.E02.T02** The station spec covers orbit, size, soi and seed; the station's layout (pads, bays, colliders) and the
+  belt's asteroids are still generated in the client from the seed. → Both must move to shared before docking (P1.E11.T02)
+  and mining (P1.E13.T01) become server-authoritative; recorded here so those tasks pick them up.
+- **P1.E02.T02** The world-424242 fixture was regenerated once to add orbits, rotations, tilts, gravity, soi, rings, star,
+  outer orbit, belt and station (no existing value changed; gas giants' params gained a digest). → Pins every number the
+  description produces.

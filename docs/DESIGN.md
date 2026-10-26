@@ -182,7 +182,7 @@ The network remembers you from the moment of the Touch. When your health would h
 
 **No classes.** Every character has the same body of possible skills: one web of seven branches. A node must be **unlocked** (by the world) and then **bought** (with a skill point). Unlocks come from where you went and who you talked to, so two players at the same level know different things.
 
-**Points.** 1 per level (50) + 1 per main-story chapter (26) + a handful from faction chains ≈ 80 points. Nodes cost 1 point, capstones 3, conjunctions 2. The web holds 7 × 20 + 6 conjunctions = 146 nodes, ~160 points to own everything, so a finished build is about half the web.
+**Points.** 1 per level (50) + 1 per main-story chapter (26) + a handful from faction chains ≈ 80 points. Nodes cost 1 point, capstones 3, conjunctions 2. The web holds 7 × 18 + 6 conjunctions = 132 nodes; owning everything costs 7 × 20 + 6 × 2 = 152 points (a branch is 17 one-point nodes and a 3-point capstone), so a finished build is about half the web.
 
 **Tiers.** Tier I nodes from level 1, Tier II from level 15, Tier III from level 30, capstones from level 45 and a story chapter. Within a branch each node needs one node of the tier below (any). Conjunctions need Tier II in both branches.
 
@@ -266,6 +266,7 @@ Fantasy: the scanner pulse grown into a voice that stones, beasts and shields an
 | Chorus Call | III | augment | Harmonic makes creatures fight for you 15 s | |
 | Silent Running | III | augment | Veil has a ship form: no raids spawn, no markers show you, 20 s | |
 | Listener | III | passive | Monoliths grant 2 fragments instead of 1 | |
+| Quiet Mind | III | passive | Dissonance, Null and Nullsong silence you for half as long | |
 | Nullsong | cap | active | 5 s where nothing within 40 m can use abilities and the Hollow flee | 50 heat / 120 s |
 
 ### 9.5 Symbiotic (healer, summoner)
@@ -509,7 +510,7 @@ The hostile archetypes get their own fauna, always hostile, immune to their worl
 Each boss is built from systems the engine has or the plan adds. Phases are listed in order.
 | Boss | Where | Tier | Kind | Mechanics | Counters |
 |---|---|---|---|---|---|
-| Pack Alpha | any Tier 1–2 living world, at night near the landmark grove | 1–2 | world boss, solo or duo | charge (knockdown) → calls the pack → enrage at 30% (faster charges) | Pulse during the charge stuns it; Flare scatters the pack |
+| Pack Alpha | any Tier 2+ living world (the apex, 12.2), at night near the landmark grove | 2+ | world boss, solo or duo | charge (knockdown) → calls the pack → enrage at 30% (faster charges) | Pulse during the charge stuns it; Flare scatters the pack |
 | Outpost Overseer | certain outposts (a drone the size of the landing pad) | 2 | mini-boss | pad lasers → shield dome (drones feed it) → overheat (vents, exposed core) | kill the feeder drones; Shatter the dome |
 | The Scrapyard | a pirate base in a hollowed asteroid: Station code with a new build, docking pads, a deck to fight across (ch. 11) | 2 | dungeon | space: break the wing at the mouth → dock → deck fight through crews → the captain (a Singer: Dissonance and Veil) | EMP at the mouth; Perfect Pitch opens the holds |
 | Herd Mother | a stone-touched herd's lead animal, within 500 m of a fed stone | 3 | world boss, party | the herd shields her → she pulls you toward the stone (the Count's draw) → glyph burst | Nullsong breaks the draw; kill the herd first |

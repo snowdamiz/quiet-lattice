@@ -31,6 +31,7 @@ Fixed dimensions that the engine and other assets depend on:
 | Steps | 0.18 m rise, 0.30 m going |
 | Landing pads | 24 m across for Tier 0–1 hulls, 36 m for Tier 2–3 haulers and gunships |
 | Hangar bay (Waystation) | 130 × 150 m footprint, 42 m clear height (today's `HANGAR` box); one pad per player, 24 per bay phase |
+| City towers | up to 340 m tall at a capital's core (the validator allows 400 m for the cities family) |
 | Hull length bands | Lark 12–14 m (today's ship: 12.3 m long, 13.4 m span, 4.7 m tall, gear height 1.95 m); Swift 10–12; Kestrel 13–15; Mule 18–22; Dart 9–11; Wayfarer 16–18; Bulwark 24–28; Caravel 26–32; Ghost 14–16; Listener 20–24; Warden-breaker 32–38; Longhaul 45–55; Husk 22–26 |
 | Creatures | quad_small 0.4–1.2 m at the shoulder, quad_grazer 1.2–2.4 m, quad_heavy 2.5–5 m, biped stalker 1.6–2.6 m tall, flyer 1–6 m span |
 | Monoliths | 18–26 m tall; anchor stones 40–60 m |
@@ -155,17 +156,23 @@ lines, Count readouts) adds the glyph light and the speaker's people palette.
 
 ## 5. The shared material library
 
-`assets/blend/_library.blend` holds every shared material; assets link (not append) them so a library fix reaches every
-asset. Names start with `LIB_`. Every material is full PBR (DESIGN 19.2): base colour, roughness, metallic, normal, ambient
-occlusion, and emissive where it glows. Textures are authored, not procedural, at export: procedural nodes are allowed while
-authoring and are baked by the export scripts.
+`assets/blend/_library.blend` holds every shared material. Assets either link a library material (so a library fix
+reaches them) or append it and rename it when an asset needs its own variant. Names start with `LIB_`. A material's name
+in the exported model is its `engine_name` custom property when it has one, else its own name: the hull materials carry
+the names the engine reads (`LIB_PaintedPlate` → `Hull`, `LIB_PaintedAccent` → `Accent`, `LIB_TrimMetal` → `Trim`,
+`LIB_DarkMetal` → `Dark`, `LIB_Glass` → `Glass`, `LIB_EngineGlow` → `EngineGlow`, `LIB_Nav*` → `Nav*`). Every
+material is full PBR (DESIGN 19.2): base colour, roughness, metallic, normal, ambient occlusion, and emissive where it
+glows. Library materials drive their channels from procedural nodes; the export scripts bake them per asset, and bake
+ambient occlusion from the asset's own geometry wherever no AO map was painted. Objects that share one material bake into
+one image, so their UVs must not overlap. Emissive-only materials (`LIB_EngineGlow`, `LIB_Nav*`, `LIB_GlyphLight`,
+`LIB_HollowSeam`) and `LIB_Glass` are exempt from the full map set.
 
 | Material | Used for | Base | Metallic | Roughness | Notes |
 |---|---|---|---|---|---|
 | `LIB_PaintedPlate` | hull and station plates (engine name `Hull`) | livery primary | 0 (1 where chipped) | 0.35–0.5, higher in wear | edge wear and chips hand-painted along leading edges and hand-holds |
 | `LIB_PaintedAccent` | livery secondary (engine name `Accent`) | livery secondary | 0 | 0.4 | |
 | `LIB_TrimMetal` | trims, frames (engine name `Trim`) | `#8A8F96` | 1 | 0.3–0.45 | brushed direction follows the part |
-| `LIB_DarkMetal` | intakes, undersides, gear (engine names `Dark`, `Gear*`) | `#2C2F34` | 0.8 | 0.38 | grime in cavities |
+| `LIB_DarkMetal` | intakes, undersides, landing gear (engine name `Dark`) | `#2C2F34` | 0.8 | 0.38 | grime in cavities |
 | `LIB_Glass` | canopies, windows (`Glass`) | `#0B1016` | 0 | 0.05 | transmission off in engine; reflection does the work |
 | `LIB_EngineGlow` | nozzles' throats (`EngineGlow`) | black | 0 | 0.6 | emissive per livery, driven by the engine |
 | `LIB_Nav` | nav lights (`NavRed`, `NavGreen`, `NavWhite`) | | | | emissive only |
@@ -224,22 +231,38 @@ City liveries (DESIGN 14.4, Phase 2) are variants of the people rows.
 
 ## 8. Budgets, LODs and naming
 
-These are the rules `packages/tools/blender/validate.py` enforces (P1.E14.T01); the numbers come from DESIGN 19.2.
+These are the rules `packages/tools/blender/validate.py` enforces (P1.E14.T01). The budgets for heroes, creatures and props
+come from DESIGN 19.2; the other classes and every size range are in `packages/tools/blender/families.json`, which is the
+authority for the numbers.
 
-| Class | LOD0 triangles | Textures |
-|---|---|---|
-| Hero (player bodies, hulls, Wardens, the Patient, capital landmarks) | 60k–150k | 4k |
-| Creature | 15k–40k | 2k |
-| Building / kit piece | per the validator's family table | 2k atlas per kit |
-| Prop | 2k–10k | 1k |
+| Class | LOD0 triangles | Textures | LODs |
+|---|---|---|---|
+| Hero (player bodies, hulls, Wardens, the Patient, bosses, capital landmarks) | 60k–150k | 4k | 4 |
+| Creature (and constructs) | 15k–40k | 2k | 4 |
+| NPC | 25k–60k | 2k | 4 |
+| Building | 8k–60k | 2k | 4 |
+| Kit piece | 0.5k–15k | 2k atlas per kit | 4 |
+| Weapon module | 4k–20k | 2k | 4 |
+| Tree | 3k–15k | 1k | 4 (impostor beyond 400 m) |
+| Flora (plants, grass, rocks, deposits) | 150–6k | 1k | 4 |
+| Prop | 2k–10k | 1k | 4 |
+| First-person viewmodel (arms and tools) | 15k–60k | 2k | 1 (always at arm's length) |
+| Effect mesh | up to 5k | 1k | 1 |
+| Cosmetic decal | up to 2k | 2k | 1 |
 
-- **Four LODs** per asset, collections `<asset>_LOD0` … `<asset>_LOD3`; LOD3 under 5% of LOD0. LOD swaps must not pop at
-  their distances (graded in the review scene's wireframe pass). Flora keeps the impostor hand-over beyond 400 m.
-- **Engine conventions** (DESIGN 19.4): hull material names `Hull`, `Accent`, `Trim`, `EngineGlow`, `Nav*`, `Glass`, `Gear*`;
-  `COL_` collider meshes, `Interact`, `Light_`, `Blink` and `Spin` markers on structures; `_limb`, `_pivot` and `_glow`
-  attributes on creatures; colour-region masks on flora; hardpoint and bay empties (`HP_S_*`, `HP_M_*`, `HP_L_*`, `BAY_*`);
-  skeleton and blendshape names from the shared rig; cutscene camera curves `CAM_<cutscene>_<shot>`.
-- **Sources:** one `.blend` per asset family under `assets/blend/<family>/`, named collections per variant and LOD, the `REF`
-  collection from section 1, materials linked from `_library.blend`.
+- **LODs:** LOD3 under 5% of LOD0, each LOD lighter than the one before. LOD swaps must not pop at their distances (graded
+  in the review scene's wireframe pass). The export scripts decimate LOD1–3 only where none were hand-made.
+- **Source layout:** one `.blend` per asset family under `assets/blend/<family>/`; one top-level collection per asset; inside
+  it, one collection per variant and LOD named `<variant>_LOD0` … `<variant>_LOD3` (a lone variant uses the asset's name);
+  colliders and markers beside the LODs. The `REF` collection from section 1. Collections starting with `_` are ignored.
+- **Exported layout:** `packages/client/public/models/<family>/<file>.glb`, nodes `<asset>/<variant>/<variant>_LOD<n>`.
+- **Engine conventions** (DESIGN 19.4): hull material names `Hull`, `Accent`, `Trim`, `Dark`, `Glass`, `EngineGlow`, `Nav*`
+  (via `engine_name`, section 5); `Gear*` pivot empties for articulated landing gear, `Canopy*`, `CockpitInterior`; hardpoint
+  empties `HP_S_*`, `HP_M_*`, `HP_L_*` (size in the name) and bay empties `BAY_*`; weapon modules carry `Mount` (where they
+  meet a hardpoint) and `Muzzle*`; `COL_` collider meshes, `Interact`, `Light_`, `Blink` and `Spin` markers on structures;
+  `Door*` meshes at least 2.4 × 1.4 m; `_limb`, `_pivot` and `_glow` attributes on creatures; colour-region masks on flora
+  and creatures; an armature on characters, NPCs and bosses, with the shared rig's bone and blendshape names; cutscene
+  camera curves `CAM_<cutscene>_<shot>`. Marker prefixes match case-insensitively.
 - **Review:** every asset is captured in-engine under noon on a lush world, night on an exotic world and open space, at LOD0
-  and LOD2, with a wireframe pass and a turntable sheet (IMPLEMENTATION_PLAN 0.4, 0.10.3).
+  and LOD2, with a wireframe pass and a turntable sheet (IMPLEMENTATION_PLAN 0.4, 0.10.3): `pnpm capture -- --review
+  <family>/<file>` and `packages/tools/blender/turntable.py`.
