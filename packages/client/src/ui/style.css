@@ -1590,6 +1590,9 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .inv-panel {
   padding-bottom: 0;
 }
+.inv-panel.still {
+  animation: none;
+}
 .inv-cols {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

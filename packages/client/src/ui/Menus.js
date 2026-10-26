@@ -493,6 +493,7 @@ export class Menus {
     this.invMsg = null;
     this.invChanged.clear();
     this.podScroll = 0;
+    this.invEnter = true;
     // shown first, so the pod list can measure itself
     this.open('inventory', this.inv);
     this.renderInventory();
@@ -508,6 +509,9 @@ export class Menus {
     const inv = this.game.inventory;
     const st = inv.state;
     this.invKey = inv.key();
+    // the panel eases in when it opens, not again on every redraw after a move
+    const enter = this.invEnter;
+    this.invEnter = false;
     const hull = inv.hull ? getHull(inv.hull).name : null;
     const grid = (refs) => `<div class="inv-grid">${refs.map((r) => this.slotHTML(st, r)).join('')}</div>`;
     const cargoCap = st.pods.reduce((n, pod) => n + pod.length, 0);
@@ -520,7 +524,7 @@ export class Menus {
           .join('')
       : `<div class="inv-none"><b>No ship</b><span>Cargo pods come with a hull. Any Waystation sells one.</span></div>`;
     const stackBtn = (c, on) => `<button class="inv-act" data-compact="${c}" ${on ? '' : 'disabled'} title="Merge partial stacks and close the gaps">Stack</button>`;
-    this.inv.innerHTML = `<div class="panel frame inv-panel">
+    this.inv.innerHTML = `<div class="panel frame inv-panel${enter ? '' : ' still'}">
       <div class="panel-head">
         <div><div class="label">Exo-suit${hull ? ` · ${hull}` : ''}</div><h2>Inventory</h2></div>
         <div class="balance"><b class="u">${st.units.toLocaleString()}</b><button class="close-x" data-close>✕</button></div>

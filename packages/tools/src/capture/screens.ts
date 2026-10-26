@@ -73,6 +73,27 @@ async function openInventory(page: Page, hull: 'lark' | 'mule'): Promise<void> {
   await page.waitForTimeout(500);
 }
 
+/**
+ * The inventory's motion for the clip: the panel opens again (its 0.3 s ease-in), then, 0.36 s of animation time later,
+ * a click sends the carbon stack across to the cargo through the screen's own pointer handlers, and both slots it touched
+ * settle back from amber (0.7 s). Page timers run on real time while the clip slows CSS tenfold, hence 3600 ms.
+ */
+async function inventoryMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const menus = (window as unknown as { game: { menus: { closeAll(): void; openInventory(): void } } }).game.menus;
+    menus.closeAll();
+    menus.openInventory();
+    setTimeout(() => {
+      const slot = document.querySelector('.inv-slot[data-c="suit"][data-i="3"]');
+      if (!slot) return;
+      const at = slot.getBoundingClientRect();
+      const init = { bubbles: true, button: 0, clientX: at.x + at.width / 2, clientY: at.y + at.height / 2, pointerId: 1, isPrimary: true };
+      slot.dispatchEvent(new PointerEvent('pointerdown', init));
+      slot.dispatchEvent(new PointerEvent('pointerup', init));
+    }, 3600);
+  });
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     async open(page) {
@@ -125,11 +146,13 @@ export const SCREENS: Record<string, ScreenDef> = {
     async open(page) {
       await openInventory(page, 'lark');
     },
+    motion: inventoryMotion,
   },
   'inventory-hauler': {
     async open(page) {
       await openInventory(page, 'mule');
     },
+    motion: inventoryMotion,
   },
   // the demo's box station, from outside and from a hangar pad (grader calibration, P1.E14.T09; later the kit-built
   // Waystation of P1.E11.T02)
