@@ -1,0 +1,208 @@
+// The resource-node spec (P1.E13.T02): its table against the resource data (DESIGN 15.3), which node types a world
+// carries, the cell grid, and that every scattered node keeps to its type's ground.
+import { describe, expect, it } from 'vitest';
+import { LIVING_WORLDS, RESOURCES, WORLD_TYPES } from '../src/data/index.ts';
+import {
+  DEPOSITS_PER_WORLD,
+  DRY_LINE,
+  NODE_ROCKY_WORLDS,
+  NODE_TYPES,
+  NODE_TYPE_IDS,
+  TIER_RARITY,
+  fissureAt,
+  nodeAltBand,
+  nodeCellAt,
+  nodeCellBounds,
+  nodeCellLevel,
+  nodeCellMeters,
+  nodeKey,
+  nodeType,
+  pickDeposits,
+  planetNodeLayers,
+  scatterNodes,
+  cubeToSphere,
+  tierWeight,
+  type NodeCell,
+  type NodeType,
+  type PlanetType,
+} from '../src/world/index.ts';
+import { nodeWorlds, plannedWorld, sampleCells } from './resource-nodes-fixture.ts';
+
+const TYPES = NODE_TYPES as readonly NodeType[];
+const ROCKY = WORLD_TYPES.filter((t) => t !== 'gas');
+
+describe('resource node types', () => {
+  it('one per world-placed resource (plants, deposits, formations, seas, fissures), each true to its resource', () => {
+    // (carbon's trees, shrubs and ferns and ferrite's rocks are the client's flora scatter, not nodes)
+    const placed = RESOURCES.filter((r) => r.id !== 'carbon' && r.sources.some((s) => ['flora', 'deposit', 'formation', 'sea', 'fissure'].includes(s.kind)));
+    expect(NODE_TYPE_IDS).toEqual(placed.map((r) => r.id));
+    expect(new Set(NODE_TYPE_IDS).size).toBe(NODE_TYPE_IDS.length);
+    for (const t of TYPES) {
+      const r = RESOURCES.find((x) => x.id === t.resource)!;
+      expect(t.id, t.id).toBe(t.resource);
+      expect(t.tierMin, t.id).toBe(r.tier.min);
+      // every world it grows on is one its resource's sources name ('living': the living worlds; 'any': every rocky one)
+      const allowed = new Set<string>(
+        r.sources.flatMap((s) => (s.worlds === 'any' ? ROCKY : s.worlds === 'living' ? LIVING_WORLDS : s.worlds)).filter((w) => w !== 'gas'),
+      );
+      for (const w of t.worlds) expect(allowed.has(w), `${t.id} on ${w}`).toBe(true);
+      expect(t.yield[0], t.id).toBeGreaterThan(0);
+      expect(t.yield[1], t.id).toBeGreaterThanOrEqual(t.yield[0]);
+      expect(t.hp, t.id).toBeGreaterThan(0);
+      expect(t.place.scale[1], t.id).toBeGreaterThanOrEqual(t.place.scale[0]);
+    }
+    // Count residue, husk alloy and glyphstone come from mobs, wrecks and vaults; iridium from deep-belt asteroids
+    for (const id of ['iridium', 'count_residue', 'husk_alloy', 'glyphstone']) expect(NODE_TYPE_IDS).not.toContain(id);
+  });
+
+  it('the plants on the living worlds, the deposits on every rocky world, a formation on each hostile archetype', () => {
+    expect([...nodeType('sodium').worlds]).toEqual(LIVING_WORLDS);
+    expect([...nodeType('copper').worlds].sort()).toEqual([...ROCKY].sort());
+    expect([...NODE_ROCKY_WORLDS].sort()).toEqual([...ROCKY].sort());
+    expect(TYPES.filter((t) => t.pick).map((t) => t.id)).toEqual(['dihydrogen', 'copper', 'cobalt', 'gold']);
+    expect(() => nodeType('iridium')).toThrow(/no resource node type/);
+  });
+
+  it('tier weight: 1 from the type’s tier on, TIER_RARITY per tier short of it', () => {
+    expect(tierWeight(2, 2)).toBe(1);
+    expect(tierWeight(2, 5)).toBe(1);
+    expect(tierWeight(2, 1)).toBe(TIER_RARITY);
+    expect(tierWeight(4, 1)).toBeCloseTo(TIER_RARITY ** 3, 15);
+    expect(tierWeight(0, 0)).toBe(1);
+  });
+});
+
+describe('the layers a world carries', () => {
+  const base = { seed: 12345, hasOcean: true, lava: false };
+  it('none on a gas giant; two deposits and nothing else on barren and dead rock', () => {
+    expect(planetNodeLayers({ ...base, type: 'gas' as PlanetType }, 3)).toEqual([]);
+    for (const type of ['barren', 'dead'] as const) {
+      const layers = planetNodeLayers({ ...base, hasOcean: false, type }, 3);
+      expect(layers).toHaveLength(DEPOSITS_PER_WORLD);
+      for (const l of layers) expect(nodeType(l.type).kind).toBe('deposit');
+    }
+  });
+
+  it('deposits: two different ones per world, the same every time, gold rare at the home tier', () => {
+    let gold0 = 0;
+    let gold3 = 0;
+    for (let seed = 1; seed <= 2000; seed++) {
+      const a = pickDeposits({ seed, type: 'lush' }, 0);
+      expect(new Set(a).size).toBe(2);
+      expect(pickDeposits({ seed, type: 'lush' }, 0)).toEqual(a);
+      if (a.includes('gold')) gold0++;
+      if (pickDeposits({ seed, type: 'lush' }, 3).includes('gold')) gold3++;
+    }
+    expect(gold0 / 2000).toBeLessThan(0.1);
+    // from Tier 2 on the four are equally likely: each on half the worlds
+    expect(gold3 / 2000).toBeGreaterThan(0.4);
+    expect(gold3 / 2000).toBeLessThan(0.6);
+  });
+
+  it('a formation needs its world’s sea or lava, and thins by its tier weight', () => {
+    expect(planetNodeLayers({ ...base, type: 'toxic' }, 2).map((l) => l.type)).toContain('acidsalt');
+    expect(planetNodeLayers({ ...base, type: 'toxic', hasOcean: false }, 2).map((l) => l.type)).not.toContain('acidsalt');
+    expect(planetNodeLayers({ ...base, type: 'volcanic', lava: false }, 2).map((l) => l.type)).not.toContain('cinderglass');
+    const frost = (tier: number) => planetNodeLayers({ ...base, type: 'frozen' }, tier).find((l) => l.type === 'frostglass')!.density;
+    expect(frost(2)).toBe(nodeType('frostglass').place.density);
+    expect(frost(5)).toBe(frost(2));
+    expect(frost(1)).toBe(frost(2) * TIER_RARITY);
+    // and layers follow the table's order
+    const order = planetNodeLayers({ ...base, type: 'storm' }, 4).map((l) => NODE_TYPE_IDS.indexOf(l.type));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+  });
+});
+
+describe('the cell grid', () => {
+  it('nodeCellLevel is round(log2(2 × radius × 0.785 / 64)), cells about 64 m across', () => {
+    for (const w of nodeWorlds()) {
+      const level = nodeCellLevel(w.radius);
+      expect(level, w.name).toBe(Math.round(Math.log2((2 * w.radius * 0.785) / 64)));
+      const m = nodeCellMeters(w.radius, level);
+      expect(m).toBeGreaterThan(64 / Math.SQRT2);
+      expect(m).toBeLessThan(64 * Math.SQRT2);
+    }
+    for (const r of [20000, 31095.5, 80000, 120000, 400000]) expect(nodeCellLevel(r)).toBe(Math.round(Math.log2((2 * r * 0.785) / 64)));
+  });
+
+  it('nodeCellAt finds the cell a direction lies in', () => {
+    const level = 10;
+    const dir = [0, 0, 0];
+    for (const cell of sampleCells({ seed: 77, radius: 31000 }, 200)) {
+      const c = { ...cell, level };
+      const n = 1 << level;
+      c.i %= n;
+      c.j %= n;
+      const { u0, v0, size } = nodeCellBounds(c);
+      for (const [fu, fv] of [
+        [0.37, 0.61],
+        [0.02, 0.98],
+        [0.5, 0.5],
+      ]) {
+        cubeToSphere(c.face, u0 + size * fu, v0 + size * fv, dir);
+        expect(nodeCellAt(dir[0], dir[1], dir[2], level)).toEqual(c);
+      }
+    }
+    expect(nodeKey({ face: 2, i: 10, j: 11, level: 9 }, 'copper', 3)).toBe('2_10_11_copper_3');
+  });
+});
+
+describe('scattered nodes', () => {
+  const worlds = nodeWorlds();
+  const scatterAll = (type: string, tier = 5) => {
+    const w = worlds.find((x) => x.type === type)!;
+    const { params, sampler } = plannedWorld(w);
+    const layers = planetNodeLayers(params, tier);
+    const cells = sampleCells(params, 300);
+    return { params, sampler, layers, cells, nodes: cells.flatMap((cell) => scatterNodes(sampler, layers, cell).map((n) => ({ n, cell }))) };
+  };
+
+  it('the same nodes every time, inside their cell, each layer on its own stream', () => {
+    const { sampler, layers, cells } = scatterAll('volcanic');
+    for (const cell of cells.slice(0, 120)) {
+      const a = scatterNodes(sampler, layers, cell);
+      expect(scatterNodes(sampler, layers, cell)).toEqual(a);
+      // a layer alone gives exactly its own nodes: dropping another (a tier change) moves none of them
+      for (const l of layers) expect(scatterNodes(sampler, [l], cell)).toEqual(a.filter((n) => n.type === l.type));
+      for (const n of a) {
+        const len = Math.hypot(n.x, n.y, n.z);
+        const at: NodeCell = nodeCellAt(n.x / len, n.y / len, n.z / len, cell.level);
+        expect([at.face, at.i, at.j]).toEqual([cell.face, cell.i, cell.j]);
+        expect(Math.hypot(n.nx, n.ny, n.nz)).toBeCloseTo(1, 12);
+      }
+    }
+  });
+
+  it.each([
+    ['toxic', 'acidsalt'],
+    ['corrosive', 'acidsalt'],
+    ['crushing', 'murkpearl'],
+    ['storm', 'stormquartz'],
+    ['irradiated', 'gamma_crystal'],
+    ['frozen', 'frostglass'],
+    ['volcanic', 'cinderglass'],
+    ['inferno', 'cinderglass'],
+    ['lush', 'sodium'],
+  ])('on the %s world every %s node keeps to its ground', (world, id) => {
+    const { params, sampler, nodes } = scatterAll(world);
+    const t = nodeType(id);
+    const [lo, hi] = nodeAltBand(params, t.place);
+    const mine = nodes.filter(({ n }) => n.type === id);
+    expect(mine.length).toBeGreaterThan(5);
+    for (const { n } of mine) {
+      const r = Math.hypot(n.x, n.y, n.z);
+      const [x, y, z] = [n.x / r, n.y / r, n.z / r];
+      const h = r + t.place.sink - params.radius;
+      expect(h).toBeGreaterThanOrEqual(lo - 1e-6);
+      expect(h).toBeLessThanOrEqual(hi + 1e-6);
+      expect(sampler.padWear(x, y, z)).toBeLessThanOrEqual(0.3 + 1e-9);
+      if (t.place.fissure !== undefined) expect(fissureAt(sampler, x, y, z)).toBeGreaterThanOrEqual(t.place.fissure - 1e-9);
+      expect(n.scale).toBeGreaterThanOrEqual(t.place.scale[0]);
+      expect(n.scale).toBeLessThanOrEqual(t.place.scale[1]);
+    }
+    if (id === 'acidsalt') for (const { n } of mine) expect(Math.hypot(n.x, n.y, n.z) + t.place.sink - params.radius).toBeLessThanOrEqual(6 + 1e-6);
+    if (id === 'murkpearl') for (const { n } of mine) expect(Math.hypot(n.x, n.y, n.z) + t.place.sink - params.radius).toBeLessThan(0);
+    // (off a sea's shore and seabed, every node keeps above the dry line)
+    if (!t.place.alt && params.hasOcean) expect(lo).toBeGreaterThanOrEqual(DRY_LINE);
+  });
+});

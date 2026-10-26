@@ -1,6 +1,6 @@
 // DOM heads-up display.
 import * as THREE from 'three';
-import { RESOURCES } from '../gameplay/Inventory.js';
+import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { EdgeCompass } from './EdgeCompass.js';
 
@@ -126,7 +126,7 @@ export class HUD {
 
   pickup(resource, amount) {
     const r = RESOURCES[resource];
-    const t = el('div', 'toast pickup', this.toasts, `<i style="background:${r.color}"></i>+${amount} ${r.name}`);
+    const t = el('div', 'toast pickup', this.toasts, `${resourceIcon(resource)}+${amount} ${r.name}`);
     this.later(() => t.classList.add('out'), 2200);
     this.later(() => t.remove(), 3000);
     while (this.toasts.children.length > 5) this.toasts.firstChild.remove();

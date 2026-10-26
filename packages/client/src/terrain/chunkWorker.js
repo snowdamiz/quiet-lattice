@@ -1,5 +1,5 @@
 // Builds terrain chunk geometry for the planet quadtree off the main thread.
-import { TerrainSampler, surfaceAttribs, cubeToSphere, forestRegion, mulberry32, smoothstep } from '@astra/shared/world';
+import { TerrainSampler, surfaceAttribs, cubeToSphere, forestRegion, mulberry32, smoothstep, scatterNodes } from '@astra/shared/world';
 
 const samplers = new Map();
 
@@ -185,7 +185,8 @@ function toByte(c) {
   return Math.round(Math.max(0, Math.min(1, c)) * 255);
 }
 
-// Deterministic flora / rock placement for one surface cell.
+// Deterministic flora / rock placement for one surface cell. Resource nodes (a species with `node`, a layer of the
+// shared spec) are placed by the shared scatter, so they land exactly where the server has them.
 function buildScatter(sampler, m) {
   const { face, u0, v0, size, species, seed } = m;
   const R = sampler.R;
@@ -196,6 +197,10 @@ function buildScatter(sampler, m) {
   const out = [];
   for (let si = 0; si < species.length; si++) {
     const sp = species[si];
+    if (sp.node) {
+      out.push(packNodes(scatterNodes(sampler, [sp.node], { face, i: m.i, j: m.j, level: m.level })));
+      continue;
+    }
     const rng = mulberry32((seed + si * 7919) >>> 0);
     const count = Math.floor(sp.density * area + rng());
     const data = new Float32Array(count * 8);
@@ -337,4 +342,15 @@ function buildScatter(sampler, m) {
     out.push({ data: data.slice(0, n * 8), ids: ids.slice(0, n) });
   }
   return { jobId: m.jobId, species: out };
+}
+
+// Nodes in the flora's instance layout: position, up, scale, turn; the id is the node's candidate number in its cell.
+function packNodes(nodes) {
+  const data = new Float32Array(nodes.length * 8);
+  const ids = new Int32Array(nodes.length);
+  nodes.forEach((n, k) => {
+    data.set([n.x, n.y, n.z, n.nx, n.ny, n.nz, n.scale, n.rot], k * 8);
+    ids[k] = n.k;
+  });
+  return { data, ids };
 }

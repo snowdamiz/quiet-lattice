@@ -1,9 +1,14 @@
-// Surface scatter around the camera: trees, plants, grass, rocks and resource
-// deposits. Cells live on a fixed cube-sphere grid and are generated in workers.
+// Surface scatter around the camera: trees, plants, grass, rocks and the resource nodes (resource plants, deposits and
+// formations). Cells live on a fixed cube-sphere grid and are generated in workers. The resource nodes are the shared
+// spec's (@astra/shared/world resourceNodes): which a world carries and where they grow are decided there, the same on
+// the server; this file only gives each node type its look.
 import * as THREE from 'three';
-import { sphereToCube, cubeToSphere, Random, hashInts, mulberry32, archetype, FOOTPRINT } from '@astra/shared/world';
 import {
-  TREE_BUILDERS, makeBush, makeFern, makeGrass, makeRock, makeResourcePlant, makeDeposit,
+  sphereToCube, cubeToSphere, Random, hashInts, mulberry32, archetype, FOOTPRINT, NODE_TYPE_IDS, nodeType, planetNodeLayers,
+  nodeCellLevel, nodeCellMeters, tierOf,
+} from '@astra/shared/world';
+import {
+  TREE_BUILDERS, makeBush, makeFern, makeGrass, makeRock, makeResourcePlant, makeDeposit, makeFormation,
 } from './floraModels.js';
 
 const _v = new THREE.Vector3();
@@ -17,14 +22,38 @@ const tmp = [0, 0, 0];
 const cubeTmp = { face: 0, u: 0, v: 0 };
 const _v3 = new THREE.Vector3();
 
-const DEPOSITS = [
-  { res: 'copper', color: 0xff8a2a, label: 'Copper Deposit' },
-  { res: 'cobalt', color: 0x3a6dff, label: 'Cobalt Deposit' },
-  { res: 'gold', color: 0xffd23a, label: 'Gold Deposit' },
-  { res: 'dihydrogen', color: 0x4fc8ff, label: 'Di-hydrogen Crystal' },
-];
+// How each resource node type looks (the shared spec says where it grows and what it gives): its model, how far out it
+// is drawn, how brightly its glowing parts glow, and whether it sways, casts shadows and blocks the way.
+const deposit = (color) => ({ build: (r, q) => makeDeposit(r, color, q), radius: 380, glow: 2.2, nearDist: 70, shadow: true, collide: true });
+const formation = (kind, o) => ({ build: (r, q) => makeFormation(kind, r, q), radius: 400, glow: 1, nearDist: 80, shadow: true, collide: true, rough: true, ...o });
+const NODE_LOOKS = {
+  sodium: { build: (r, q) => makeResourcePlant(r, 0xffcc30, 'bulb', q), radius: 220, glow: 1.6, nearDist: 50, wind: 1 },
+  oxygen: { build: (r, q) => makeResourcePlant(r, 0xff4a40, 'flower', q), radius: 220, glow: 1.4, nearDist: 50, wind: 1 },
+  dihydrogen: deposit(0x4fc8ff),
+  copper: deposit(0xff8a2a),
+  cobalt: deposit(0x3a6dff),
+  gold: deposit(0xffd23a),
+  frostglass: formation('frostglass', { radius: 420 }),
+  // (a crust underfoot: walked over, not round)
+  acidsalt: formation('acidsalt', { radius: 360, collide: false }),
+  cinderglass: formation('cinderglass', { glow: 1.2 }),
+  stormquartz: formation('stormquartz', { radius: 420, glow: 1.1 }),
+  gamma_crystal: formation('gamma_crystal'),
+  murkpearl: formation('murkpearl', { radius: 320, glow: 1.4 }),
+};
 
-function makeMaterial(uniforms, { glow = 1.0, wind = 1.0, side = THREE.DoubleSide, aoHeight = 1.0, hideR = 0 } = {}) {
+// glowing plants light up at dusk; in full sun a strong glow read as fireflies hanging in the meadow
+const glowAt = (daylight) => THREE.MathUtils.lerp(1.5, 0.15, THREE.MathUtils.smoothstep(daylight ?? 1, 0.2, 0.55));
+
+// The system's tier (DESIGN 11), which sets the resource nodes its worlds carry: with The Edge where it stands by
+// default until the client reads the world service's tier map (P1.E04.T02).
+function systemTier(game) {
+  const info = game.system?.info;
+  return info ? tierOf(info) : 0;
+}
+
+// rough: the geometry carries a roughness per vertex (aRough), so glassy crystal and matte rock share one model
+function makeMaterial(uniforms, { glow = 1.0, wind = 1.0, side = THREE.DoubleSide, aoHeight = 1.0, hideR = 0, rough = false } = {}) {
   const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0.0, side, envMapIntensity: 0.25 });
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = uniforms.uTime;
@@ -49,12 +78,12 @@ function makeMaterial(uniforms, { glow = 1.0, wind = 1.0, side = THREE.DoubleSid
         uniform float uAOHeight;
         uniform float uHideR;
         varying float vAO;
-        varying float vHide;`,
+        varying float vHide;${rough ? '\n        attribute float aRough;\n        varying float vRough;' : ''}`,
       )
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
-        vGlow = aGlow;
+        vGlow = aGlow;${rough ? '\n        vRough = aRough;' : ''}
         // baked occlusion: darker toward the ground so props sit in the terrain instead of floating
         vAO = mix(0.45, 1.0, smoothstep(-0.05 * uAOHeight, uAOHeight, position.y));
         vec3 ip = vec3(instanceMatrix[3]);
@@ -73,7 +102,7 @@ function makeMaterial(uniforms, { glow = 1.0, wind = 1.0, side = THREE.DoubleSid
         vHide = uHideR > 0.0 ? smoothstep(uHideR * 0.85, uHideR, across) : 1.0;`,
       );
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', '#include <common>\nvarying float vGlow;\nvarying float vAO;\nvarying float vHide;\nuniform float uGlow;\nuniform float uGlowMul;\nuniform float uNearFade;')
+      .replace('#include <common>', `#include <common>\nvarying float vGlow;\nvarying float vAO;\nvarying float vHide;\nuniform float uGlow;\nuniform float uGlowMul;\nuniform float uNearFade;${rough ? '\nvarying float vRough;' : ''}`)
       .replace(
         '#include <clipping_planes_fragment>',
         `#include <clipping_planes_fragment>
@@ -82,13 +111,14 @@ function makeMaterial(uniforms, { glow = 1.0, wind = 1.0, side = THREE.DoubleSid
         if (nearK < 1.0 && nearK < fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))))) discard;`,
       )
       .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb *= vAO;')
+      .replace('#include <roughnessmap_fragment>', rough ? '#include <roughnessmap_fragment>\nroughnessFactor = vRough;' : '#include <roughnessmap_fragment>')
       .replace(
         '#include <emissivemap_fragment>',
         // the glow dims right at the lens: a bulb brushing the camera bloomed across a quarter of the screen
         '#include <emissivemap_fragment>\ntotalEmissiveRadiance += diffuseColor.rgb * vGlow * uGlow * uGlowMul * smoothstep(0.8, 4.0, length(vViewPosition));',
       );
   };
-  mat.customProgramCacheKey = () => 'flora-v3';
+  mat.customProgramCacheKey = () => (rough ? 'flora-v3-rough' : 'flora-v3');
   return mat;
 }
 
@@ -141,15 +171,17 @@ export class Flora {
     this.meshRoot = null;
     this.planet = planet;
     if (!planet || !planet.sampler) return;
+    this.tier = systemTier(this.game);
     this.buildSpecies(planet);
     this.meshRoot = new THREE.Group();
     this.meshRoot.name = 'floraRoot';
     for (const sp of this.species) for (const l of sp.lods) this.meshRoot.add(l.mesh);
     planet.root.add(this.meshRoot);
+    // (the shared spec's cell grid: the server holds resource nodes by these cells)
     const R = planet.radius;
-    this.level = Math.round(Math.log2((2 * R * 0.785) / 64));
-    this.cellSize = 2 / Math.pow(2, this.level);
-    this.cellMeters = this.cellSize * R * 0.785;
+    this.level = nodeCellLevel(R);
+    this.cellSize = 2 / (1 << this.level);
+    this.cellMeters = nodeCellMeters(R, this.level);
     if (!this.minedByPlanet.has(planet.id)) this.minedByPlanet.set(planet.id, new Set());
     this.mined = this.minedByPlanet.get(planet.id);
     this.lastScanPos.set(1e9, 0, 0);
@@ -187,7 +219,7 @@ export class Flora {
     };
     const add = (def) => {
       const radius = def.radius;
-      const sk = Math.floor(mr() * 1e9);
+      const sk = def.seed ?? Math.floor(mr() * 1e9);
       const model = def.build(mulberry32(sk), 1);
       const low = def.lod === false ? model : def.build(mulberry32(sk), 0);
       const nearDist = def.lod === false ? radius : def.nearDist ?? 90;
@@ -201,7 +233,7 @@ export class Flora {
         uFadeEnd: { value: radius },
       };
       const nearU = { ...farU, uFadeStart: { value: def.lod === false ? radius * 0.8 : 1e6 }, uFadeEnd: { value: def.lod === false ? radius : 1e6 + 1 } };
-      const opts = { wind: def.wind ?? 1, glow: def.glow ?? 1, side: def.side ?? THREE.DoubleSide, aoHeight: Math.max(0.3, model.height * (def.rock ? 0.5 : 0.3)), hideR: def.hideR ?? 0 };
+      const opts = { wind: def.wind ?? 1, glow: def.glow ?? 1, side: def.side ?? THREE.DoubleSide, aoHeight: Math.max(0.3, model.height * (def.rock ? 0.5 : 0.3)), hideR: def.hideR ?? 0, rough: !!def.rough };
       const near = { geo: model.geo, mesh: makeMesh(model.geo, makeMaterial(nearU, opts), !!def.shadow), capacity: 16 };
       const far = low === model ? null : { geo: low.geo, mesh: makeMesh(low.geo, makeMaterial(farU, opts), false), capacity: 16 };
       this.species.push({
@@ -270,19 +302,7 @@ export class Flora {
         spec: spec({ density: 0.02 * floraDensity, moist: 0.6, clump: 60, clumpT: -0.2, sMin: 0.7, sMax: 1.5 }),
       });
     }
-    // resource plants, in patches rather than an even sprinkle of glowing dots
-    if (floraDensity > 0.05) {
-      add({
-        name: 'sodium', label: 'Sodium Plant', res: 'sodium', yield: [8, 15], hp: 1,
-        build: (r, q) => makeResourcePlant(r, 0xffcc30, 'bulb', q), radius: 220, glow: 1.6, nearDist: 50,
-        spec: spec({ density: 0.0009, moistK: 0.2, clump: 170, clumpT: 0.2, sMin: 0.9, sMax: 1.3 }),
-      });
-      add({
-        name: 'oxygen', label: 'Oxygen Flower', res: 'oxygen', yield: [8, 15], hp: 1,
-        build: (r, q) => makeResourcePlant(r, 0xff4a40, 'flower', q), radius: 220, glow: 1.4, nearDist: 50,
-        spec: spec({ density: 0.0009, moist: 0.7, moistK: 0.4, clump: 190, clumpT: 0.2, sMin: 0.9, sMax: 1.4 }),
-      });
-    } else {
+    if (floraDensity <= 0.05) {
       // barren worlds still get crystal formations
       add({
         name: 'crystal', label: 'Crystal Growth', res: 'ferrite', yield: [10, 20], hp: 2,
@@ -305,16 +325,15 @@ export class Flora {
       spec: spec({ density: 0.012, moistK: 0, slope: 0.5, clump: 70, clumpT: 0.1, sMin: 0.25, sMax: 0.8, align: 0.9, sink: 0.1, minH: -1e9 }),
       rock: true,
     });
-    // mineral deposits
-    const dep = DEPOSITS[rng.int(0, DEPOSITS.length - 1)];
-    const dep2 = DEPOSITS[(DEPOSITS.indexOf(dep) + rng.int(1, 3)) % DEPOSITS.length];
-    for (const d of [dep, dep2]) {
+    // the resource nodes this world carries at its system's tier, where the shared spec puts them (the worker scatters
+    // them with the spec's own function); each type's model is seeded by the world and the type alone
+    for (const layer of planetNodeLayers(p, this.tier ?? 0)) {
+      const t = nodeType(layer.type);
+      const look = NODE_LOOKS[t.id];
       add({
-        name: d.res, label: d.label, res: d.res, yield: [15, 30], hp: 4, deposit: true,
-        build: (r, q) => makeDeposit(r, d.color, q), radius: 380, glow: 2.2, wind: 0, shadow: true, nearDist: 70,
-        // a find, not confetti on every hillside: few, and in small groups
-        spec: spec({ density: 0.00018, moistK: 0, slope: 0.6, sMin: 0.9, sMax: 1.6, align: 0.6, sink: 0.4, minH: -1e9, clump: 140, clumpT: 0.25 }),
-        collide: true,
+        name: t.id, label: t.label, res: t.resource, yield: t.yield, hp: t.hp, node: t.id, deposit: t.kind !== 'plant',
+        build: look.build, radius: look.radius, glow: look.glow, wind: look.wind ?? 0, shadow: !!look.shadow, nearDist: look.nearDist, rough: look.rough,
+        seed: hashInts(p.seed, 0x40de, NODE_TYPE_IDS.indexOf(t.id)), spec: { node: layer }, collide: !!look.collide,
       });
     }
     // grass
@@ -378,7 +397,7 @@ export class Flora {
     const species = speciesList.map((s) => s.spec);
     const d = center.distanceTo(this.camLocal);
     cell.job = this.game.pool.request(
-      { type: 'scatter', planetId: this.planet.id, face: info.face, u0, v0, size, species, seed },
+      { type: 'scatter', planetId: this.planet.id, face: info.face, i: info.i, j: info.j, level: this.level, u0, v0, size, species, seed },
       2000 + d,
       (res) => {
         cell.job = null;
@@ -446,8 +465,7 @@ export class Flora {
       return;
     }
     this.uniforms.uTime.value += dt;
-    // glowing plants light up at dusk; in full sun a strong glow read as fireflies hanging in the meadow
-    this.uniforms.uGlow.value = THREE.MathUtils.lerp(1.5, 0.15, THREE.MathUtils.smoothstep(g.daylight ?? 1, 0.2, 0.55));
+    this.uniforms.uGlow.value = glowAt(g.daylight);
     // the chase camera sits well back from the ship: clear a larger pocket around it
     this.uniforms.uNearFade.value = g.mode === 'ship' && !g.ship.inCockpit ? 9 : 1.2;
 
@@ -675,12 +693,41 @@ export class Flora {
   scan(playerState, range) {
     if (!this.planet || playerState.frame !== this.planet) return [];
     const out = [];
-    for (const inst of this.instancesNear(playerState.pos, range, (sp) => sp.deposit || sp.name === 'sodium' || sp.name === 'oxygen')) {
+    for (const inst of this.instancesNear(playerState.pos, range, (sp) => sp.node)) {
       out.push({ label: inst.sp.label, pos: inst.pos.clone().addScaledVector(inst.up, 2.5), frame: this.planet });
       if (out.length > 30) break;
     }
     return out;
   }
+}
+
+/**
+ * One resource node as the review scene shows it (`#review:node/<resource>`, src/dev/review.js): its near and far models
+ * as `<resource>_LOD0` and `_LOD1`, in the flora's material, glowing as the flora does at the scene's time of day.
+ */
+export function nodeReviewModel(id, game) {
+  const t = nodeType(id);
+  const look = NODE_LOOKS[t.id];
+  const uniforms = { uTime: { value: 0 }, uGlow: { value: 1 }, uFadeStart: { value: 1e6 }, uFadeEnd: { value: 1e6 + 1 }, uNearFade: { value: 0.01 } };
+  const group = new THREE.Group();
+  group.name = t.id;
+  const seed = hashInts(0x5eed, NODE_TYPE_IDS.indexOf(t.id));
+  [1, 0].forEach((q, lod) => {
+    const model = look.build(mulberry32(seed), q);
+    const mat = makeMaterial(uniforms, { wind: 0, glow: look.glow, aoHeight: Math.max(0.3, model.height * 0.3), rough: !!look.rough });
+    const mesh = new THREE.InstancedMesh(model.geo, mat, 1);
+    mesh.name = `${t.id}_LOD${lod}`;
+    mesh.setMatrixAt(0, new THREE.Matrix4());
+    mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array([1, 1, 1]), 3);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.frustumCulled = false;
+    mesh.onBeforeRender = () => {
+      uniforms.uGlow.value = glowAt(game.daylight);
+    };
+    group.add(mesh);
+  });
+  return group;
 }
 
 // Debris burst particles used for mining feedback.
