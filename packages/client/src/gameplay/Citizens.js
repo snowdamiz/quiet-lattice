@@ -5,8 +5,7 @@
 // turn to look). Walk up to one and press E to greet them.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { Random, makeName } from '../math/rng.js';
-import { streetDistance, cityPoint } from '../terrain/cities.js';
+import { Random, makeName, streetDistance, cityPoint } from '@astra/shared/world';
 
 const _v = new THREE.Vector3();
 const _q = new THREE.Quaternion();

@@ -1,8 +1,7 @@
 // Procedural asteroid fields in heliocentric space: dense in the belt, sparse
 // elsewhere. Ship lasers break them apart for Tritium and rare metals.
 import * as THREE from 'three';
-import { hashInts, mulberry32 } from '../math/rng.js';
-import { Simplex3 } from '../math/noise.js';
+import { hashInts, mulberry32, Simplex3 } from '@astra/shared/world';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 
 const CELL = 3000;

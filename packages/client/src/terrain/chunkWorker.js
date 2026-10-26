@@ -1,7 +1,5 @@
 // Builds terrain chunk geometry for the planet quadtree off the main thread.
-import { TerrainSampler, surfaceAttribs, cubeToSphere, forestRegion } from './planetgen.js';
-import { mulberry32 } from '../math/rng.js';
-import { smoothstep } from '../math/noise.js';
+import { TerrainSampler, surfaceAttribs, cubeToSphere, forestRegion, mulberry32, smoothstep } from '@astra/shared/world';
 
 const samplers = new Map();
 

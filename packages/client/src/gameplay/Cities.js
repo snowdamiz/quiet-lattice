@@ -5,8 +5,7 @@
 // plaza, a trade post, and air traffic circling overhead. From afar at night only its lights show.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { Random } from '../math/rng.js';
-import { streetPlan, layoutCity, cityFrame, cityPoint } from '../terrain/cities.js';
+import { Random, streetPlan, layoutCity, cityFrame, cityPoint } from '@astra/shared/world';
 import { Citizens, speciesFor } from './Citizens.js';
 
 const Y = new THREE.Vector3(0, 1, 0);

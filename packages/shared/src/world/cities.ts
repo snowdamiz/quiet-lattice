@@ -2,25 +2,43 @@
 // the ground under each is levelled into a broad plain; laid out (streets, then the buildings
 // between them) when one is built. Positions are in a city's own tangent plane: metres east (u)
 // and north (v) of its central plaza.
-import * as THREE from 'three';
-import { Random, makeName } from '../math/rng.js';
+import { Quaternion, Vector3 } from 'three';
+import type { PlanetParams, TerrainSampler } from './planetgen.ts';
+import { Random, makeName } from './rng.ts';
 
-const Y = new THREE.Vector3(0, 1, 0);
+// (pure: a bundle that never plans cities, such as the terrain worker's, drops it and three with it)
+const Y = /* @__PURE__ */ new Vector3(0, 1, 0);
 
-export function planCities(p, sampler) {
+export interface City {
+  index: number;
+  /** planet-local unit direction of the central plaza */
+  dir: Vector3;
+  /** the city's tangent frame: x east, y up, z north */
+  quat: Quaternion;
+  /** radius of the levelled plain (m) */
+  radius: number;
+  /** height of the plain (m above sea level) */
+  base: number;
+  /** spread of the natural ground it was levelled from (m) */
+  relief: number;
+  seed: number;
+  name: string;
+}
+
+export function planCities(p: PlanetParams, sampler: Pick<TerrainSampler, 'height'>): City[] {
   const n = p.cityCount || 0;
   if (!n) return [];
   const R = p.radius;
   const rng = new Random(p.citySeed);
-  const cities = [];
-  const t = new THREE.Vector3();
-  const b = new THREE.Vector3();
-  const q = new THREE.Vector3();
+  const cities: City[] = [];
+  const t = new Vector3();
+  const b = new Vector3();
+  const q = new Vector3();
   for (let i = 0; i < 6000 && cities.length < n; i++) {
     const y = rng.float(-0.8, 0.8);
     const r = Math.sqrt(1 - y * y);
     const th = rng.float(0, Math.PI * 2);
-    const dir = new THREE.Vector3(Math.cos(th) * r, y, Math.sin(th) * r).normalize();
+    const dir = new Vector3(Math.cos(th) * r, y, Math.sin(th) * r).normalize();
     const radius = rng.float(1100, 2100);
     if (cities.some((c) => c.dir.angleTo(dir) * R < c.radius + radius + 6000)) continue;
     const h = sampler.height(dir.x, dir.y, dir.z);
@@ -35,7 +53,10 @@ export function planCities(p, sampler) {
     for (const f of [0.35, 0.7, 1.0, 1.25]) {
       for (let a = 0; a < 10; a++) {
         const an = (a / 10) * Math.PI * 2 + f;
-        q.copy(dir).addScaledVector(t, (Math.cos(an) * radius * f) / R).addScaledVector(b, (Math.sin(an) * radius * f) / R).normalize();
+        q.copy(dir)
+          .addScaledVector(t, (Math.cos(an) * radius * f) / R)
+          .addScaledVector(b, (Math.sin(an) * radius * f) / R)
+          .normalize();
         const hk = sampler.height(q.x, q.y, q.z);
         lo = Math.min(lo, hk);
         hi = Math.max(hi, hk);
@@ -45,23 +66,35 @@ export function planCities(p, sampler) {
     }
     // (the plain is cut into hills and built up over hollows: only real mountains and the sea rule a spot out)
     if (lo < 2 || hi - lo > 380) continue;
-    const quat = new THREE.Quaternion().setFromUnitVectors(Y, dir).multiply(new THREE.Quaternion().setFromAxisAngle(Y, rng.float(0, Math.PI * 2)));
+    const quat = new Quaternion().setFromUnitVectors(Y, dir).multiply(new Quaternion().setFromAxisAngle(Y, rng.float(0, Math.PI * 2)));
     const name = makeName(rng, 2, 3);
     cities.push({ index: cities.length, dir, quat, radius, base: Math.max(8, sum / k), relief: hi - lo, seed: rng.int(1, 1e9), name });
   }
   return cities;
 }
 
-// Levelled plains under the cities, in the sampler's pad format [x, y, z, height, inner, outer]
-export function cityPads(cities) {
-  const pads = [];
+/** Levelled plains under the cities, in the sampler's pad format [x, y, z, height, inner, outer]. */
+export function cityPads(cities: City[]): number[] {
+  const pads: number[] = [];
   for (const c of cities) pads.push(c.dir.x, c.dir.y, c.dir.z, c.base, c.radius + 80, c.radius + 500 + c.relief * 2.5);
   return pads;
 }
 
 // ---------- the street plan ----------
-// Shared by the layout, the walkers and (as uniforms) the ground shader.
-export function streetPlan(city) {
+/** A city's streets: rings and spokes round the plaza (radial) or a grid of blocks. Shared by the layout, the walkers and the ground shader. */
+export interface StreetPlan {
+  radial: boolean;
+  /** plaza radius (m) */
+  plaza: number;
+  /** street width (m) */
+  width: number;
+  ringGap: number;
+  spokes: number;
+  block: number;
+  angle: number;
+}
+
+export function streetPlan(city: Pick<City, 'seed'>): StreetPlan {
   const rng = new Random(city.seed ^ 0x57ee7);
   const radial = rng.chance(0.6);
   return {
@@ -75,8 +108,8 @@ export function streetPlan(city) {
   };
 }
 
-// distance (m) from a point to the nearest street's centre line (0 in the plaza)
-export function streetDistance(plan, u, v) {
+/** Distance (m) from a point to the nearest street's centre line (0 in the plaza). */
+export function streetDistance(plan: StreetPlan, u: number, v: number): number {
   const r = Math.hypot(u, v);
   if (r < plan.plaza) return 0;
   if (plan.radial) {
@@ -95,13 +128,15 @@ export function streetDistance(plan, u, v) {
   return Math.min(Math.abs(x - Math.round(x / B) * B), Math.abs(y - Math.round(y / B) * B), Math.abs(r - plan.plaza));
 }
 
-// Where the buildings stand: dense and tall at the core, lower and sparser toward the edge.
-// Each: [u, v, footprint radius, height, model class 0 low / 1 mid / 2 tall, yaw, variant]
-export function layoutCity(city, plan) {
+/** A building: position (m east, m north of the plaza), footprint radius, height, model class 0 low / 1 mid / 2 tall, yaw, variant. */
+export type Building = [u: number, v: number, foot: number, height: number, cls: number, yaw: number, variant: number];
+
+/** Where the buildings stand: dense and tall at the core, lower and sparser toward the edge. */
+export function layoutCity(city: Pick<City, 'seed' | 'radius'>, plan: StreetPlan): { buildings: Building[]; hMax: number } {
   const rng = new Random(city.seed ^ 0xb17d);
   const Rc = city.radius;
   const hMax = rng.float(170, 340);
-  const out = [];
+  const out: Building[] = [];
   let r = plan.plaza + plan.width;
   while (r < Rc) {
     const k = r / Rc;
@@ -126,16 +161,22 @@ export function layoutCity(city, plan) {
   return { buildings: out, hMax };
 }
 
-// tangent frame of a city (planet-local): up, east, north
-export function cityFrame(city) {
+export interface CityFrame {
+  up: Vector3;
+  east: Vector3;
+  north: Vector3;
+}
+
+/** Tangent frame of a city (planet-local): up, east, north. */
+export function cityFrame(city: Pick<City, 'dir' | 'quat'>): CityFrame {
   const up = city.dir.clone();
-  const east = new THREE.Vector3(1, 0, 0).applyQuaternion(city.quat);
-  const north = new THREE.Vector3(0, 0, 1).applyQuaternion(city.quat);
+  const east = new Vector3(1, 0, 0).applyQuaternion(city.quat);
+  const north = new Vector3(0, 0, 1).applyQuaternion(city.quat);
   return { up, east, north };
 }
 
-// planet-local position of a point u, v metres from the plaza, h metres above the city's ground
-export function cityPoint(city, frame, R, u, v, h, out = new THREE.Vector3()) {
+/** Planet-local position of a point u, v metres from the plaza, h metres above the city's ground. */
+export function cityPoint(city: Pick<City, 'base'>, frame: CityFrame, R: number, u: number, v: number, h: number, out = new Vector3()): Vector3 {
   out.copy(frame.up).multiplyScalar(R).addScaledVector(frame.east, u).addScaledVector(frame.north, v).normalize();
   return out.multiplyScalar(R + city.base + h);
 }

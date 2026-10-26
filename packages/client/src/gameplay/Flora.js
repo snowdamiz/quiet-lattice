@@ -1,13 +1,10 @@
 // Surface scatter around the camera: trees, plants, grass, rocks and resource
 // deposits. Cells live on a fixed cube-sphere grid and are generated in workers.
 import * as THREE from 'three';
-import { sphereToCube, cubeToSphere } from '../terrain/planetgen.js';
-import { Random, hashInts, mulberry32 } from '../math/rng.js';
+import { sphereToCube, cubeToSphere, Random, hashInts, mulberry32, archetype, FOOTPRINT } from '@astra/shared/world';
 import {
   TREE_BUILDERS, makeBush, makeFern, makeGrass, makeRock, makeResourcePlant, makeDeposit,
 } from './floraModels.js';
-import { archetype } from '../terrain/planetgen.js';
-import { FOOTPRINT } from '../terrain/sites.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();

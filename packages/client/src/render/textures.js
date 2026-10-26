@@ -1,6 +1,6 @@
 // Procedurally generated tiling textures used across materials.
 import * as THREE from 'three';
-import { mulberry32 } from '../math/rng.js';
+import { mulberry32 } from '@astra/shared/world';
 
 function periodicValueNoise(size, period, rng) {
   const lattice = new Float32Array(period * period);

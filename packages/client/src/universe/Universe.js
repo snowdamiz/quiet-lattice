@@ -6,7 +6,7 @@
 // edge leaves it dormant (hidden and not updated, ready if the ship turns back); flying into
 // another builds that one in its place as the ship crosses into it.
 import * as THREE from 'three';
-import { LY, cosmosClearance } from './Cosmos.js';
+import { LY, cosmosClearance } from '@astra/shared/world';
 
 // metres from a star: past LEAVE its system goes dormant; inside ENTER a system is built or woken
 // (both beyond the camera's far plane, so neither is ever seen to happen)

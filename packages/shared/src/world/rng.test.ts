@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Random, hashInts, hashString, makeName, mulberry32, romanNumeral } from './rng.js';
+import { Random, hashInts, hashString, makeName, mulberry32, romanNumeral } from './rng.ts';
 
 describe('rng', () => {
   it('mulberry32 is deterministic and in [0, 1)', () => {
@@ -21,7 +21,7 @@ describe('rng', () => {
 
   it('Random.int covers its inclusive range', () => {
     const r = new Random(7);
-    const seen = new Set();
+    const seen = new Set<number>();
     for (let i = 0; i < 500; i++) seen.add(r.int(1, 4));
     expect([...seen].sort()).toEqual([1, 2, 3, 4]);
   });

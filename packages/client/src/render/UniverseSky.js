@@ -8,10 +8,9 @@
 //   placed and lit by their true distance, so they wheel past and brighten as you fly among them.
 import * as THREE from 'three';
 import { SIMPLEX3 } from './glsl.js';
-import { LY, GALAXY, cosmos } from '../universe/Cosmos.js';
-import { buildEdge, edgeX, EDGE_SEED } from '../ui/map/EdgeOfSpace.js';
+import { LY, GALAXY, cosmos, edgeX, mulberry32 } from '@astra/shared/world';
+import { buildEdge, EDGE_SEED } from '../ui/map/EdgeOfSpace.js';
 import { worldPointVert, worldPointFrag, discVert, discFrag, nebFrag } from '../ui/map/mapCommon.js';
-import { mulberry32 } from '../math/rng.js';
 
 const FACE = 1024;
 // near stars are drawn this far out (m): beyond any planet, inside the camera's far plane
