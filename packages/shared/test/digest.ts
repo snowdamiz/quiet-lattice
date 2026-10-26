@@ -8,7 +8,7 @@ export function digestString(s: string): string {
 }
 
 /** FNV-1a over the bytes of typed arrays. */
-export function digestArrays(...arrays: Float32Array[]): string {
+export function digestArrays(...arrays: (Float32Array | Float64Array)[]): string {
   let h = 0x811c9dc5;
   for (const a of arrays) {
     const b = new Uint8Array(a.buffer, a.byteOffset, a.byteLength);

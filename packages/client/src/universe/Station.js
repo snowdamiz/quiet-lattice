@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Body } from './Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
-import { mulberry32 } from '@astra/shared/world';
+import { mulberry32, STATION, stationPoseInto } from '@astra/shared/world';
 
 const _v = new THREE.Vector3();
 
@@ -144,7 +144,7 @@ function bayTexture(n) {
 
 export class Station extends Body {
   constructor(opts) {
-    super({ ...opts, kind: 'station', soi: 4500 });
+    super({ ...opts, kind: 'station', soi: opts.soi ?? STATION.soi });
     this.seed = opts.seed || 1;
     this.colliders = [];
     this.pads = [];
@@ -158,6 +158,12 @@ export class Station extends Body {
   step() {
     if (this.steps && this.steps.next().done) this.steps = null;
     return !this.steps;
+  }
+
+  // Keeps its floor facing its world and its hangar mouth along its orbit (stationPose in @astra/shared/world).
+  update(t) {
+    stationPoseInto(this, t, this.parent, this);
+    this.quaternionInv.copy(this.quaternion).invert();
   }
 
   *buildSteps() {

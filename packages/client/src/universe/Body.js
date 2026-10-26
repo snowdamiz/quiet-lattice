@@ -1,10 +1,11 @@
 // Celestial body with orbit + spin. Every body is also a reference frame:
 // entities near it store their state in its local (rotating) coordinates.
+// Its pose at time t and the frame rules are @astra/shared/world's (kinematics.ts),
+// which the server uses too: each body is its own motion spec and its own pose.
 import * as THREE from 'three';
+import { bodyPoseInto, dirToLocalInto, dirToWorldInto, localToWorldInto, setFrameInto, worldToLocalInto } from '@astra/shared/world';
 
 const _v = new THREE.Vector3();
-const _q = new THREE.Quaternion();
-const Y = new THREE.Vector3(0, 1, 0);
 
 export class Body {
   constructor(opts = {}) {
@@ -24,56 +25,34 @@ export class Body {
     this.velocity = new THREE.Vector3();
     this.quaternion = new THREE.Quaternion();
     this.quaternionInv = new THREE.Quaternion();
-    this.angularVelocity = 0;
+    // world axis it turns about, scaled by its rate (rad/s)
+    this.angularVelocity = new THREE.Vector3();
     this.root = new THREE.Group();
     this.root.name = this.name;
     this.children = [];
     if (this.parent) this.parent.children.push(this);
   }
 
-  orbitPosition(t, out) {
-    if (!this.parent || this.orbitRadius === 0) return out.set(0, 0, 0);
-    const th = this.orbitPhase + (2 * Math.PI * t) / this.orbitPeriod;
-    out.set(Math.cos(th) * this.orbitRadius, 0, Math.sin(th) * this.orbitRadius);
-    out.applyQuaternion(this.orbitTilt);
-    return out;
-  }
-
+  // pose at world time t (its parent's must already be updated)
   update(t) {
-    if (this.parent) {
-      this.orbitPosition(t, this.position).add(this.parent.position);
-      const th = this.orbitPhase + (2 * Math.PI * t) / this.orbitPeriod;
-      const w = (2 * Math.PI) / this.orbitPeriod;
-      this.velocity
-        .set(-Math.sin(th) * this.orbitRadius * w, 0, Math.cos(th) * this.orbitRadius * w)
-        .applyQuaternion(this.orbitTilt)
-        .add(this.parent.velocity);
-    }
-    if (this.rotationPeriod) {
-      const a = this.rotationPhase + (2 * Math.PI * t) / this.rotationPeriod;
-      _q.setFromAxisAngle(Y, a);
-      this.quaternion.copy(this.axialTilt).multiply(_q);
-      this.angularVelocity = (2 * Math.PI) / this.rotationPeriod;
-    } else {
-      this.quaternion.copy(this.axialTilt);
-    }
+    bodyPoseInto(this, t, this.parent, this);
     this.quaternionInv.copy(this.quaternion).invert();
   }
 
   localToWorld(local, out) {
-    return out.copy(local).applyQuaternion(this.quaternion).add(this.position);
+    return localToWorldInto(this, local, out);
   }
 
   worldToLocal(world, out) {
-    return out.copy(world).sub(this.position).applyQuaternion(this.quaternionInv);
+    return worldToLocalInto(this, world, out);
   }
 
   dirToWorld(local, out) {
-    return out.copy(local).applyQuaternion(this.quaternion);
+    return dirToWorldInto(this, local, out);
   }
 
   dirToLocal(world, out) {
-    return out.copy(world).applyQuaternion(this.quaternionInv);
+    return dirToLocalInto(this, world, out);
   }
 
   // Place root relative to camera (floating origin)
@@ -112,19 +91,8 @@ export class FrameState {
   // (arcade flight model) and is only rotated, never boosted by frame velocity.
   setFrame(frame) {
     if (frame === this.frame) return;
-    const wp = this.worldPosition(new THREE.Vector3());
-    const wq = this.worldQuaternion(new THREE.Quaternion());
-    const wv = this.worldDir(this.vel, new THREE.Vector3());
+    setFrameInto(this, this.frame, frame);
     this.frame = frame;
-    if (frame) {
-      frame.worldToLocal(wp, this.pos);
-      this.quat.copy(frame.quaternionInv).multiply(wq);
-      frame.dirToLocal(wv, this.vel);
-    } else {
-      this.pos.copy(wp);
-      this.quat.copy(wq);
-      this.vel.copy(wv);
-    }
   }
 
   copy(o) {

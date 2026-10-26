@@ -125,3 +125,53 @@ Format: task id, question → choice → why.
 - **P1.E02.T07** Known DESIGN inconsistencies left as written: 9.7 says Pilot has three actives (two listed); 12.7's "Vent in
   ship form" (Vent has no ship form); section 1's "5 hostile variants" lists six; no fabricator for Tier 4–5 recipes; no
   unit price for the Lark (sold on credit).
+- **P1.E02.T05 (review)** Den density and spawning → dens are lairs scaled to land area (one predator den per ~80 km² of
+  land from Tier 1, a second layer from Tier 3, ambusher burrows at most one per site from Tier 2, one apex lair from
+  Tier 2), and predators also spawn around the camera from the herd spawner (DESIGN 12.2 "reuses today's herd spawner …
+  with dens"). P1.E08.T03 amended. → A fixed count per world left dens 16–26 km apart, too sparse to be the only spawn
+  source; lairs anchor packs, respawns, the apex, ambushers and board bounties.
+- **P1.E02.T05** No dens at Tier 0; den kind by body plan (burrow: quad_small packs and ambushers; nest: bipeds and the
+  apex; roost: flyers), predator dens split evenly across kinds until species roll (P1.E08.T01); the landmark grove is the
+  most wooded of 48 candidate spots; footprints 4/6/5/10 m, relief ≤ 4 m (roosts up to 0.8 × mountain height); 300 m
+  between dens, 2 km beyond every city's levelled ground, 40 m clear of sites; a separate JSON `Den[]` returned by
+  `planSurface`, planned on natural ground after cities and sites, each pass on its own RNG stream.
+- **P1.E02.T05 (review)** DESIGN 13 put the Pack Alpha on Tier 1–2 worlds while 12.2 and 12.8 put the apex at Tier 2+. → The
+  Pack Alpha is the apex: Tier 2+ (DESIGN 13 and the boss table changed). → Two sections against one; Tier 1 already has
+  territorial and predator fauna.
+- **P1.E02.T05 (review)** DESIGN 19.3 lists dens under Sites but the plan had no den art task. → Added P1.E14.T10; the client
+  plans without dens until it lands, so no bare clearings appear.
+- **P1.E03.T01** Per-account socket cap 4 (the oldest connection is closed at hello, newest wins); 6 characters per
+  account; a duplicate join of a character kicks the older connection; per-IP sockets 16; message budget burst 60 at
+  40/s with strikes; join timeout 30 s; headers timeout 10 s; outbound buffer cap 1 MiB; control pings share the message
+  budget; home system by people is a placeholder index until P1.E02.T04; serverTime from a shard epoch of 2026-01-01Z
+  advanced by a monotonic clock until P1.E03.T06; refusals map server errors to `full`, join timeout to `character`. →
+  Each bounds memory or keeps a reconnecting player from waiting on a dead socket; numbers are config where tests need it.
+- **P1.E02.T02** Body order and indices → each planet followed by its moons, innermost first; `index` is the frame-id body
+  index, `slot` keeps the client's old `Planet.index` (orbit or moon number). Params are embedded in full (SolarSystem
+  deep-copies them). Quaternion parts are written as +0 (JSON turns −0 into 0). `describeGalaxySystem(info)` in shared is
+  the one way to describe galaxy system i (system 0's home world is lush there, not in the client). → Frame ids line up
+  with the client array, client and server describe the same system, and the description is pure JSON.
+- **P1.E02.T02** The station spec covers orbit, size, soi and seed; the station's layout (pads, bays, colliders) and the
+  belt's asteroids are still generated in the client from the seed. → Both must move to shared before docking (P1.E11.T02)
+  and mining (P1.E13.T01) become server-authoritative; recorded here so those tasks pick them up.
+- **P1.E02.T02** The world-424242 fixture was regenerated once to add orbits, rotations, tilts, gravity, soi, rings, star,
+  outer orbit, belt and station (no existing value changed; gas giants' params gained a digest). → Pins every number the
+  description produces.
+- **P1.E02.T03** A body's `angularVelocity` is a world-frame vector (axis × rate) instead of a scalar; the Waystation's
+  velocity is its orbital velocity plus its world's (the demo copied only the world's; nothing read either). `bodyPose`
+  takes the parent's pose and throws for a moon without one; `systemPoses` orders parents. "Server uses it for frames" is
+  met by a Node-tested API on plain arrays, wired in by P1.E03.T02/T03. → One frame rule for client, server and pirates.
+- **P1.E06.T01** Combat math choices → Flare's "60° cone" is the full width (30° each side); resistances never stack (most
+  specific of node, weapon, branch decides; lowest at equal specificity); a mob is Hollow if it carries every Hollow
+  resistance; killable bosses are 5 stars, the Patient unrated; XP per level rounded to whole points (level 1 costs 0);
+  damage is level-scaled only for mob and boss attacks (player abilities are flat until P1.E07 sets their numbers); aggro
+  is damage that halves every 3 s (forgotten below 0.5), a taunt forces the target 4 s without adding threat, Veil drops
+  the caster's threat, any damage breaks Harmonic; sentinels and Wardens ignore the whole Gravitic branch (×0), Collapse
+  Star excepted. DESIGN 12.1's "whoever hurt it most recently" is reworded to match. → Each reads DESIGN's text plainly;
+  aggro by decaying threat stops one chip hit stealing a mob.
+- **P1.E06.T01 (balance flag)** Mob damage scales ×7 by level 50 while player health stays 100–180 (a level-50 Pack Alpha
+  hits for 245). → Left as DESIGN 12.1 writes it; the Phase 1 balance pass (P1.E16) must address it.
+- **P1.E06.T01 (follow-ups)** Stone-touched herds keep their body plan's (or apex boss row's) health and attacks, add the
+  stone-touched resistances, and rate the higher threat; a row with its own base damage rescales its body-plan attacks so
+  the heaviest equals it; Slam's sphere is 6 + 12 × reach m (reach 0–1, mapped from fall height by P1.E07.T04); Crush and
+  Singularity take Well's 12 m sphere; AGGRO and XP_CURVE moved into the data tables.

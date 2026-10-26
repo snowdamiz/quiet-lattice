@@ -55,9 +55,9 @@ export const BOSSES = table<Boss>([
   {
     id: 'pack_alpha',
     name: 'Pack Alpha',
-    where: 'any Tier 1–2 living world, at night near the landmark grove',
+    where: 'any Tier 2+ living world (the apex, 12.2), at night near the landmark grove',
     worlds: [...LIVING_WORLDS],
-    tier: { min: 1, max: 2 },
+    tier: { min: 2, max: 5 },
     kind: 'world_boss',
     party: 'solo or duo',
     killable: true,
