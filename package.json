@@ -17,7 +17,9 @@
     "format": "prettier --write .",
     "db:up": "docker compose --project-directory . -f infra/docker-compose.yml up -d --wait && docker compose --project-directory . -f infra/docker-compose.yml ps --format \"{{.Service}}: {{.Health}}\"",
     "db:down": "docker compose --project-directory . -f infra/docker-compose.yml down",
-    "db:migrate": "pnpm --filter @astra/server db:migrate"
+    "db:migrate": "pnpm --filter @astra/server db:migrate",
+    "test": "vitest run",
+    "smoke": "pnpm --filter @astra/tools smoke"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -27,6 +29,7 @@
     "prettier": "^3.9.10",
     "tsx": "^4.23.15",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.72.0"
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
   }
 }
