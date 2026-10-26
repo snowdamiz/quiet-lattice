@@ -1,20 +1,25 @@
 """Shared core of export_<family>.py (DESIGN 19.1: validate, bake, build missing LODs, write .glb).
 
-For every assets/blend/<family>/*.blend: validate the source (stop on failure), bake procedural material channels,
-decimate LOD1-3 for variants without hand-made LODs, turn collections into the node layout the engine reads
-(<asset> / [<variant>] / <variant>_LOD<n>, colliders and markers beside the LODs), export a .glb, validate that .glb,
-and only then move it to packages/client/public/models/<family>/<name>.glb. The .blend is never saved.
+For every assets/blend/<family>/*.blend: validate the source (stop on failure); give each variant local copies of its
+linked library materials and of every material it must bake; bake procedural channels and AO; decimate LOD1-3 for
+variants without hand-made LODs; turn collections into the node layout the engine reads (<asset> / [<variant>] /
+<variant>_LOD<n>, colliders and markers beside the LODs); export a .glb with materials named by their engine_name;
+validate that .glb, and only then move it to packages/client/public/models/<family>/<name>.glb. A source that fails (or
+crashes the export) leaves no model behind: a stale .glb is removed. The .blend is never saved.
 """
 import argparse
 import shutil
 import sys
 import tempfile
+import traceback
 from pathlib import Path
 
 import bpy
 from mathutils import Matrix, Vector
 
 from . import bake, core, glb, lods
+from . import checks as C
+from . import materials as M
 from . import rules as R
 from . import scene as S
 
@@ -51,28 +56,49 @@ def main(family, argv=None):
         print(f"export {family}: nothing to export (no .blend sources in {R.rel(src_dir)})")
         return 0
     out_root = Path(args.out_dir) if args.out_dir else R.MODELS
-    done = [src for src in sources if export_one(rules, family, src, out_root, args)]
+    done = []
+    for src in sources:
+        out = out_root / rules["output"].format(family=family, stem=src.stem)
+        try:
+            ok = export_one(rules, family, src, out, args)
+        except Exception:  # one broken source must not stop the rest of the family
+            traceback.print_exc()
+            print(f"  exporting {src.name} crashed")
+            ok = False
+            _drop_stale(out)
+        if ok:
+            done.append(src)
     print(f"\nexport {family}: {len(done)} of {len(sources)} source(s) exported")
     return 0 if len(done) == len(sources) else 1
 
 
-def export_one(rules, family, src, out_root, args):
-    out = out_root / rules["output"].format(family=family, stem=src.stem)
+def _drop_stale(out):
+    """A model whose source no longer exports is removed, so the game reports it missing instead of loading art that
+    no longer matches its source (DESIGN 19.1: no fallbacks)."""
+    if out.exists():
+        out.unlink()
+        print(f"  removed the stale {R.rel(out)}")
+
+
+def export_one(rules, family, src, out, args):
     print(f"\nexport {R.rel(src)} -> {R.rel(out)}")
     report = core.validate_path(rules, src, family=family)
     core.write_and_print(report, core.report_path(family, src, args.report_dir), verbose=args.verbose, quiet=args.quiet)
     if report.status != "PASS":
         print(f"  {src.name} failed validation: nothing written")
+        if not report.error:  # an unreadable source (LFS pointer, missing file) says nothing about the model
+            _drop_stale(out)
         return False
     model = report.model
-    _bake(rules, model, args.bake_res)
+    _bake(rules, family, model, args.bake_res)
     _make_lods(rules, model)
+    names = _material_names(rules, model)
     roots = _build_nodes(rules, model)
     tmpdir = Path(tempfile.mkdtemp(prefix="art-export-"))
     try:
         tmp = tmpdir / out.name
         _write(roots, tmp)
-        glb.strip_suffixes(tmp)
+        glb.finalize(tmp, names)
         core.load(tmp)
         check = core.run_checks(rules, out, family, "export", source=src)
         core.write_and_print(check, core.report_path(family, out, args.report_dir), verbose=args.verbose, quiet=args.quiet)
@@ -81,6 +107,7 @@ def export_one(rules, family, src, out_root, args):
             rejected.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(tmp, rejected)
             print(f"  the export of {src.name} failed validation: nothing written to the models (inspect {R.rel(rejected)})")
+            _drop_stale(out)
             return False
         out.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(tmp), str(out))
@@ -90,28 +117,55 @@ def export_one(rules, family, src, out_root, args):
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
-def _bake(rules, model, bake_res):
-    users = {}
+def _bake(rules, family, model, bake_res):
+    """Gives each variant local copies of its linked or to-be-baked materials, then bakes their procedural channels and
+    AO over the variant's LOD0 meshes."""
+    ready = False
     for a in model.assets:
         for v in a.variants.values():
-            for o in S.render_meshes(rules, v.lods.get(0, [])):
-                for s in o.material_slots:
-                    if s.material:
-                        objs, classes = users.setdefault(s.material.name, ([], set()))
-                        if o not in objs:
-                            objs.append(o)
-                        classes.add(v.cls)
-    ready = False
-    for name, (objs, classes) in sorted(users.items()):
-        mat = bpy.data.materials[name]
-        res = bake_res or max(rules["classes"][c]["texture"] for c in classes)
-        info_needed = bake.M.MaterialInfo(mat)
-        if not info_needed.procedural() and not (info_needed.bake_ao and info_needed.channels["occlusion"].kind == "constant"):
-            continue
-        if not ready:
-            bake.ensure_cycles(bpy.context.scene)
-            ready = True
-        bake.bake_material(mat, objs, res)
+            meshes = {n: S.render_meshes(rules, objs) for n, objs in v.lods.items()}
+            res = bake_res or rules["classes"][v.cls]["texture"]
+            copies = {}
+            for m in C._materials_of(rules, v):
+                info = M.MaterialInfo(m)
+                ao = C.ao_to_bake(rules, family, v.cls, info)
+                todo = bake.channels_to_bake(info, ao) if info.bsdf is not None else []
+                if m.library is not None or todo:
+                    copies[m.as_pointer()] = (m.copy(), ao, bool(todo), f"{v.id}_{R.material_name(m)}")
+            for objs in meshes.values():
+                for o in objs:
+                    for slot in o.material_slots:
+                        if slot.material is not None and slot.material.as_pointer() in copies:
+                            copy = copies[slot.material.as_pointer()][0]
+                            slot.link = "OBJECT"  # the mesh may be shared with another variant
+                            slot.material = copy
+            for copy, ao, needed, label in copies.values():
+                if not needed:
+                    continue
+                users = []
+                for n in sorted(meshes):
+                    users = [o for o in meshes[n] if any(s.material == copy for s in o.material_slots)]
+                    if users:
+                        break
+                if not ready:
+                    bake.ensure_cycles(bpy.context.scene)
+                    ready = True
+                bake.bake_material(copy, users, res, ao=ao, label=label)
+
+
+def _material_names(rules, model):
+    """Blender material name -> the name the .glb carries (engine_name, else the name without its .001 suffix)."""
+    names = {}
+    for a in model.assets:
+        for v in a.variants.values():
+            seen = {}
+            for m in C._materials_of(rules, v):
+                final = R.material_name(m)
+                if final in seen and seen[final] != m.name:
+                    raise RuntimeError(f"{v.id}: materials {seen[final]} and {m.name} would both export as '{final}'")
+                seen[final] = m.name
+                names[m.name] = final
+    return names
 
 
 def _make_lods(rules, model):

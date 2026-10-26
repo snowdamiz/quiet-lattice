@@ -164,8 +164,17 @@ export function blenderArgs(script: string, args: string[]): string[] {
   return ['-b', '--factory-startup', '--python-exit-code', '1', '-P', script, '--', ...args];
 }
 
-/** Blender's own chatter (file reads, glTF importer INFO lines, operator reports, the version banner). */
-const NOISE = [/^\d\d:\d\d:\d\d \| INFO: /, /^\d\d:\d\d\.\d+\s+\S+\s+\| /, /^Info: /, /^INFO /, /^Blender \d+\.\d+.*\(hash /, /^Blender quit$/];
+/** Blender's own chatter: file reads, glTF importer INFO lines, the version banner, and the two operator reports that
+ * carry no news (a bake landing in its image, a file saved). Every other `Info:` report is shown: it may be the only
+ * sign that an operator did nothing. */
+const NOISE = [
+  /^\d\d:\d\d:\d\d \| INFO: /,
+  /^\d\d:\d\d\.\d+\s+blend\s+\| Read blend/,
+  /^Info: (Baking map saved to internal image|Saved as)/,
+  /^INFO (Draco|MeshOptimizer) is available/,
+  /^Blender \d+\.\d+.*\(hash /,
+  /^Blender quit$/,
+];
 
 export function isNoise(line: string): boolean {
   return NOISE.some((r) => r.test(line));

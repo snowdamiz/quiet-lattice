@@ -36,6 +36,13 @@ def naming(rules, family, model, report):
             c.fail(o.name, "sits in the Scene Collection; put it in an asset collection or REF")
         for name in model.ignored:
             c.info(name, "collection starts with '_': ignored and never exported")
+        for name in model.misplaced_lods:
+            base = R.lod_parts(name)[0]
+            c.fail(
+                name,
+                f"LOD collection at the top level: LODs nest inside their asset collection (Scene Collection > {base} > {name}; "
+                f"a variant is {base}_<variant>_LOD<n> inside {base})",
+            )
         if not model.assets and family != "library":
             c.fail(Path(report.path).name, "no asset collections (one top-level collection per asset)")
 
@@ -61,8 +68,12 @@ def naming(rules, family, model, report):
             for o in v.all_objects():
                 check_name("object", o.name)
             for m in _materials_of(rules, v):
-                check_name("material", m.name)
+                check_name("material", R.material_name(m))
             _naming_variant(rules, spec, model, a, v, c)
+    if family == "library":
+        for m in bpy.data.materials:
+            if m.users and not m.is_grease_pencil:
+                check_name("material", R.material_name(m))
     if mode == "export":
         for o in model.ref_leaks:
             c.fail(R.strip(o.name), "reference object reached the export (REF_ objects stay in the .blend)")
@@ -97,7 +108,7 @@ def _naming_variant(rules, spec, model, a, v, c):
             continue
         nm = S.name_of(o, mode)
         if o.type != m["type"]:
-            c.fail(nm, f"{m['patterns'][0]} must be an {m['type']} ({m['why']}), found {o.type}")
+            c.fail(nm, f"{' / '.join(m['patterns'])} must be an {m['type']} ({m['why']}), found {o.type}")
         missing = [p for p in m.get("props", []) if p not in o.keys()]
         if missing:
             c.fail(nm, f"missing custom properties {', '.join(missing)} ({m['why']})")
@@ -106,16 +117,23 @@ def _naming_variant(rules, spec, model, a, v, c):
         if m["role"] == "collider" and o.type == "MESH" and S.tri_count(o) > m["maxTris"]:
             c.warn(nm, f"collider has {_fmt(S.tri_count(o))} triangles (keep under {m['maxTris']}: {m['why']})")
     for req in spec.get("requiredMarkers", []):
-        found = [o for o in objs if R.match(S.name_of(o, mode), req["pattern"]) and o.type == req.get("type", o.type)]
+        pats = req["pattern"] if isinstance(req["pattern"], list) else [req["pattern"]]
+        found = [o for o in objs if R.match(S.name_of(o, mode), pats, ci=True) and o.type == req.get("type", o.type)]
         if len(found) < req.get("min", 1):
             kind = f" {req['type'].lower()}" if req.get("type") else ""
-            c.fail(name, f"no {req['pattern']}{kind} ({req['why']})")
+            c.fail(name, f"no {' / '.join(pats)}{kind} ({req['why']})")
+    # materials export under their engine_name (or their own name): two different materials must not collide
+    by_name = {}
+    for m in _materials_of(rules, v):
+        by_name.setdefault(R.material_name(m), []).append(m)
+    for final, ms in sorted(by_name.items()):
+        if len(ms) > 1:
+            c.fail(name, f"materials {', '.join(m.name for m in ms)} would all export as '{final}'; give them distinct engine_name values")
     mats = spec.get("materials", {})
     if mats.get("required"):
-        names = {R.strip(m.name) for m in _materials_of(rules, v)}
         for pat in mats["required"]:
-            if not any(R.match(n, pat) for n in names):
-                c.fail(name, f"material '{pat}' missing ({mats.get('why', 'the engine reads it by name')})")
+            if not any(R.match(n, pat) for n in by_name):
+                c.fail(name, f"material '{pat}' missing, by name or engine_name ({mats.get('why', 'the engine reads it by name')})")
     meshes = [o for n in sorted(v.lods) for o in S.render_meshes(rules, v.lods[n])]
     for att in spec.get("attributes", []):
         for o in meshes:
@@ -158,13 +176,14 @@ def _color_mask_problem(o):
     return None
 
 
-def _materials_of(rules, v):
+def _materials_of(rules, v, lods=None):
+    """Distinct materials on the variant's meshes (a linked library material and a local one may share a name)."""
     seen, out = set(), []
-    for n in sorted(v.lods):
-        for o in S.render_meshes(rules, v.lods[n]):
+    for n in sorted(v.lods) if lods is None else lods:
+        for o in S.render_meshes(rules, v.lods.get(n, [])):
             for slot in o.material_slots:
-                if slot.material and slot.material.name not in seen:
-                    seen.add(slot.material.name)
+                if slot.material and slot.material.as_pointer() not in seen:
+                    seen.add(slot.material.as_pointer())
                     out.append(slot.material)
     return out
 
@@ -255,89 +274,108 @@ def lods(rules, family, model, report):
 # ---------------------------------------------------------------------------------------------- materials
 def material_set(rules, family, model, report):
     c = report["materials"]
-    users = {}  # material name -> (material, [variants])
+    users = {}  # material pointer -> (material, [variants])
     for a in model.assets:
         for v in a.variants.values():
             for m in _materials_of(rules, v):
-                users.setdefault(m.name, (m, []))[1].append(v)
+                users.setdefault(m.as_pointer(), (m, []))[1].append(v)
             for n in sorted(v.lods):
                 for o in S.render_meshes(rules, v.lods[n]):
                     if not o.material_slots or any(s.material is None for s in o.material_slots):
                         c.fail(S.name_of(o, model.mode), "mesh has an empty material slot")
+    lib_cls = rules["families"]["library"]["class"]
     if family == "library":
-        lib_cls = rules["families"]["library"]["class"]
         for m in bpy.data.materials:
-            if m.users and m.name not in users and not m.is_grease_pencil:
-                users[m.name] = (m, [])
+            if m.users and m.as_pointer() not in users and not m.is_grease_pencil:
+                users[m.as_pointer()] = (m, [])
     if not users:
         c.skip("no materials")
         return
     infos = {}
-    for name, (m, vs) in sorted(users.items()):
+    for key, (m, vs) in sorted(users.items(), key=lambda kv: kv[1][0].name):
         cls = max((v.cls for v in vs), key=lambda k: rules["classes"][k]["texture"]) if vs else lib_cls
         info = M.MaterialInfo(m)
-        infos[name] = info
+        infos[key] = info
         _check_material(rules, family, model, c, info, cls)
-    # UV maps: textured materials need them
+    # UV maps: textured materials need them, and so does every material whose AO the export bakes
     for a in model.assets:
         for v in a.variants.values():
             for n in sorted(v.lods):
                 for o in S.render_meshes(rules, v.lods[n]):
-                    textured = any(
-                        s.material and s.material.name in infos and any(ch.textured() for ch in infos[s.material.name].channels.values())
-                        for s in o.material_slots
-                    )
+                    textured = any(s.material and _needs_uvs(rules, family, v.cls, infos.get(s.material.as_pointer())) for s in o.material_slots)
                     if textured and not o.data.uv_layers:
-                        c.fail(S.name_of(o, model.mode), "textured mesh has no UV map")
+                        c.fail(S.name_of(o, model.mode), "mesh has no UV map, which its material's texture maps (and the baked AO) need")
+
+
+def _needs_uvs(rules, family, cls, info):
+    if info is None:
+        return False
+    if any(ch.textured() for ch in info.channels.values()):
+        return True
+    return "occlusion" in rules["materialProfiles"][profile_of(rules, family, cls, info.mat)]["maps"]
+
+
+def profile_of(rules, family, cls, mat):
+    return R.profile_for(rules, family, cls, R.material_name(mat), R.strip(mat.name))
+
+
+def ao_to_bake(rules, family, cls, info):
+    """True when the export must bake AO for this material: its profile needs AO and no AO map is painted or wired."""
+    profile = rules["materialProfiles"][profile_of(rules, family, cls, info.mat)]
+    return "occlusion" in profile["maps"] and info.channels["occlusion"].kind == "constant"
 
 
 def _check_material(rules, family, model, c, info, cls):
     m = info.mat
-    name = R.strip(m.name) if model.mode == "export" else m.name
-    profile_name = R.profile_for(rules, family, cls, R.strip(m.name))
+    name = R.material_name(m)
+    if name != R.strip(m.name):
+        name = f"{name} ({m.name})"
+    profile_name = profile_of(rules, family, cls, m)
     profile = rules["materialProfiles"][profile_name]
     res = rules["classes"][cls]["texture"]
+    source = model.mode == "source"
     if info.problem:
         c.fail(name, info.problem)
         return
     ch = info.channels
-    if profile_name == "signal":
-        c.ok(name, f"signal material ({profile['why']})")
+    needed = list(profile["maps"]) + (["emissive"] if profile["emissiveMap"] and info.emitting else [])
+    if not needed:
+        c.ok(name, f"{profile_name} material ({profile['why']})")
         return
     images = info.images()
     textured = [k for k, x in ch.items() if x.textured()]
     if not textured:
         base = ch["baseColor"]
         what = "vertex colours only" if base.kind == "attribute" else f"uniform colour {_rgb(base.value)}"
-        maps = [M.LABELS[k] for k in profile["maps"]] + (["emissive"] if profile["emissiveMap"] and info.emitting else [])
+        maps = [M.LABELS[k] for k in needed if not (source and k == "occlusion")]
         c.fail(name, f"untextured ({what}); missing maps: {', '.join(maps) or 'none'}")
         return
     missing, notes = [], []
-    for k in profile["maps"]:
+    for k in needed:
         x = ch[k]
         if x.kind == "image":
             continue
         if x.kind == "procedural":
-            if model.mode == "source":
+            if source:
                 notes.append(M.LABELS[k])
             else:
                 missing.append(f"{M.LABELS[k]} (procedural)")
             continue
-        if k == "metallic" and x.kind == "constant" and x.value in (0.0, 1.0) and ch["roughness"].textured():
-            continue  # a pure dielectric or pure metal: the packed metallic-roughness map carries a constant channel
-        if k == "occlusion" and model.mode == "source" and info.bake_ao:
-            notes.append("AO (bake_ao)")
+        if k == "metallic" and x.kind == "constant" and ch["roughness"].textured():
+            continue  # glTF packs metallic with roughness: a constant metallic becomes the map's factor
+        if k == "occlusion" and source:
+            notes.append("AO (baked from the geometry)")
             continue
-        if x.kind == "attribute":
+        if k == "emissive":
+            missing.append(f"emissive (emits a uniform {_rgb(x.value)})")
+        elif x.kind == "attribute":
             missing.append(f"{M.LABELS[k]} (vertex attribute, not a map)")
         else:
             missing.append(M.LABELS[k] + (f" (constant {_rgb(x.value)})" if x.value is not None else ""))
-    if profile["emissiveMap"] and info.emitting and not ch["emissive"].textured():
-        missing.append(f"emissive (emits a uniform {_rgb(ch['emissive'].value)})")
     if missing:
         c.fail(name, "missing maps: " + ", ".join(missing))
     if notes:
-        c.info(name, "procedural, baked at export: " + ", ".join(notes))
+        c.info(name, "baked at export: " + ", ".join(notes))
     # the images themselves
     for img, used in images:
         label = "/".join(M.LABELS[k] for k in used)
@@ -353,14 +391,14 @@ def _check_material(rules, family, model, c, info, cls):
             c.warn(name, f"{label} map {img.name} is {w}x{h}, not a power of two")
     for k in ("baseColor", "roughness", "normal", "occlusion", "emissive"):
         x = ch[k]
-        if x.kind != "image" or k not in profile["maps"] + (["emissive"] if info.emitting else []):
+        if x.kind != "image" or k not in needed:
             continue
         std = M.channel_std(x.image, x.index)
         if std is not None and std < M.UNIFORM_STD:
             msg = f"{M.LABELS[k]} map {x.image.name} is uniform (no variation): paint or bake real detail"
             (c.fail if k in ("baseColor", "roughness", "normal") else c.warn)(name, msg)
     if not missing:
-        c.ok(name, f"{profile_name}: " + ", ".join(M.LABELS[k] for k in textured))
+        c.ok(name, f"{profile_name}: " + (", ".join(M.LABELS[k] for k in textured) or "constants"))
 
 
 def _rgb(v):
@@ -439,24 +477,26 @@ def _source_refs(rules, model, c):
         sp = _grid_spacing(g)
         want, tol = ref["grid"]["spacing"], ref["grid"]["tolerance"]
         if sp is None:
-            c.fail(g.name, "the grid reference must be a mesh grid")
+            c.fail(g.name, "the grid reference must be a mesh with edges")
         elif abs(sp - want) > tol * want:
             c.fail(g.name, f"grid spacing is {sp:.3f} m, must be {want} m")
         else:
             c.ok(g.name, f"grid spacing {sp:.3f} m")
     if not bipeds:
         c.fail(coll_name, f"no {ref['biped']['height']} m biped ({ref['biped']['pattern']}) in {coll_name}")
+    ground = float(grids[0].matrix_world.translation.z) if grids else 0.0
     for b in bipeds:
         box = S.bounds([o for o in S.subtree(b) if o.type == "MESH"])
         want, tol = ref["biped"]["height"], ref["biped"]["tolerance"]
         if box is None:
             c.fail(b.name, "the biped reference must be (or parent) a mesh")
             continue
-        hgt = float(box[1][2] - box[0][2])
-        if abs(hgt - want) > tol:
-            c.fail(b.name, f"biped is {hgt:.3f} m tall, must be {want} m")
+        feet, top = float(box[0][2]), float(box[1][2])
+        hgt = top - feet
+        if abs(hgt - want) > tol or abs(feet - ground) > tol:
+            c.fail(b.name, f"biped is {hgt:.3f} m tall (feet at z {feet:.3f}, top at z {top:.3f}); it must be {want} m standing on the grid plane (z {ground:.3f})")
         else:
-            c.ok(b.name, f"biped {hgt:.3f} m tall")
+            c.ok(b.name, f"biped {hgt:.3f} m tall, feet on the grid plane")
     asset_objs = {o.name for a in model.assets if a.holder is not None for o in a.holder.all_objects}
     for o in objs:
         if o.name in asset_objs:
@@ -464,17 +504,19 @@ def _source_refs(rules, model, c):
 
 
 def _grid_spacing(o):
+    """Median edge length of the grid's own mesh in world space (modifiers such as Wireframe, which only give the lines
+    thickness for the viewport, are ignored)."""
     if o.type != "MESH" or not o.data.edges:
         return None
-    co = S.world_coords(o)
-    n = len(o.data.edges)
-    ev = np.empty(n * 2, np.int64)
-    o.data.edges.foreach_get("vertices", ev)
+    me = o.data
+    co = np.empty(len(me.vertices) * 3, np.float64)
+    me.vertices.foreach_get("co", co)
+    mw = np.array(o.matrix_world)
+    co = co.reshape(-1, 3) @ mw[:3, :3].T + mw[:3, 3]
+    ev = np.empty(len(me.edges) * 2, np.int64)
+    me.edges.foreach_get("vertices", ev)
     ev = ev.reshape(-1, 2)
-    if len(co) != len(o.data.vertices):
-        return None
-    lengths = np.linalg.norm(co[ev[:, 0]] - co[ev[:, 1]], axis=1)
-    return float(np.median(lengths))
+    return float(np.median(np.linalg.norm(co[ev[:, 0]] - co[ev[:, 1]], axis=1)))
 
 
 # ---------------------------------------------------------------------------------------------- summary

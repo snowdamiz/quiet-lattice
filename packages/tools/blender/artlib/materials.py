@@ -134,7 +134,6 @@ class MaterialInfo:
         self.problem = None
         self.channels = {}
         self.emitting = False
-        self.bake_ao = bool(mat.get("bake_ao"))
         self._read()
 
     def _read(self):

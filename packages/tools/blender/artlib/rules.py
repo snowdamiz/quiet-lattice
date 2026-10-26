@@ -38,10 +38,20 @@ def strip(name):
     return SUFFIX.sub("", name)
 
 
-def match(name, patterns):
+def match(name, patterns, ci=False):
+    """Glob match; ci=True ignores case (marker names: HP_S_nose and hp_s_nose are both hardpoints)."""
     if isinstance(patterns, str):
         patterns = [patterns]
+    if ci:
+        return any(fnmatchcase(name.lower(), p.lower()) for p in patterns)
     return any(fnmatchcase(name, p) for p in patterns)
+
+
+def material_name(mat):
+    """The name a material exports under: its engine_name custom property (the library's LIB_PaintedPlate carries
+    engine_name 'Hull'), else its own name without Blender's .001 suffix."""
+    engine = mat.get("engine_name")
+    return str(engine) if engine else strip(mat.name)
 
 
 def lod_parts(name):
@@ -106,11 +116,12 @@ def size_rule(rules, family, cls):
     return fam.get(cls) or rules["classes"][cls].get("size")
 
 
-def profile_for(rules, family, cls, material):
-    """Material profile: the family's rules first, then the global materialRules, then the class default."""
+def profile_for(rules, family, cls, *names):
+    """Material profile: the family's rules first, then the global materialRules, then the class default. `names` are
+    the material's engine name and its own name (a rule on either applies: EngineGlow or LIB_EngineGlow)."""
     spec = rules["families"][family].get("materials", {})
     for rule in spec.get("profiles", []) + rules.get("materialRules", []):
-        if match(material, rule["match"]):
+        if any(match(n, rule["match"]) for n in names):
             return rule["profile"]
     return rules["classes"][cls]["profile"]
 

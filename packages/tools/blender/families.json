@@ -1,12 +1,12 @@
 {
-  "$comment": "Asset rules read by validate.py and the export scripts (DESIGN 19.2-19.4). Names use shell globs (fnmatch, case-sensitive). Triangle ranges are LOD0 [min, max]; texture is the largest side in px; size is the bounding box in metres along 'axis' (max = longest side, z = height).",
+  "$comment": "Asset rules read by validate.py and the export scripts (DESIGN 19.2-19.4). Names use shell globs (fnmatch; case-sensitive except marker patterns). A material is named by its engine_name custom property when it has one (LIB_PaintedPlate -> Hull), else by its own name. Triangle ranges are LOD0 [min, max]; texture is the largest side in px; size is the bounding box in metres along 'axis' (max = longest side, z = height).",
   "version": 1,
   "reference": {
     "$comment": "DESIGN 19.2: a 1 m grid and a 1.85 m biped are the scale references in every file. They live in a top-level collection the export never writes.",
     "collection": "REF",
     "grid": { "pattern": "REF_Grid*", "spacing": 1.0, "tolerance": 0.01 },
     "biped": { "pattern": "REF_Biped*", "height": 1.85, "tolerance": 0.02 },
-    "fits": [{ "pattern": "Door*", "minHeight": 2.0, "minWidth": 0.9, "why": "a door fits the 1.85 m biped with headroom" }]
+    "fits": [{ "pattern": "Door*", "minHeight": 2.4, "minWidth": 1.4, "why": "art bible 1: doorways are at least 2.4 m tall x 1.4 m wide" }]
   },
   "lod": {
     "$comment": "DESIGN 19.2: four LODs per asset, LOD3 under 5% of LOD0. LODs are collections (sources) or nodes (exports) named <variant>_LOD<n>. generateRatios are the decimation targets the export uses when no LODs were hand-made.",
@@ -15,7 +15,7 @@
     "generateRatios": [1.0, 0.3, 0.1, 0.035]
   },
   "names": {
-    "$comment": "Object, collection and material names. Blender's .001 uniqueness suffixes are stripped from exports.",
+    "$comment": "Object, collection and material names. Blender's .001 uniqueness suffixes are stripped from exported node and mesh names; materials export under their engine_name or their own name.",
     "identifier": "^[A-Za-z][A-Za-z0-9_-]*$",
     "ignoredCollectionPrefix": "_"
   },
@@ -26,8 +26,8 @@
     { "patterns": ["Light_*"], "type": "EMPTY", "role": "point", "props": ["color", "intensity", "distance"], "why": "point lights; the game reads the extras" },
     { "patterns": ["Blink", "Blink_*"], "type": "EMPTY", "role": "pivot", "childMesh": true, "why": "blinking lamp; its child mesh is the lens" },
     { "patterns": ["Spin", "Spin_*"], "type": "EMPTY", "role": "pivot", "childMesh": true, "why": "rotating part; its child mesh spins" },
-    { "patterns": ["Hardpoint_*"], "type": "EMPTY", "role": "point", "why": "weapon module mount (DESIGN 19.4)" },
-    { "patterns": ["Bay_*"], "type": "EMPTY", "role": "point", "why": "docking or hangar bay (DESIGN 19.4)" },
+    { "patterns": ["HP_S_*", "HP_M_*", "HP_L_*"], "type": "EMPTY", "role": "point", "why": "weapon hardpoint, size in the name (DESIGN 19.4, art bible 8)" },
+    { "patterns": ["BAY_*"], "type": "EMPTY", "role": "point", "why": "docking or hangar bay (DESIGN 19.4, art bible 8)" },
     { "patterns": ["Mount"], "type": "EMPTY", "role": "point", "why": "where a weapon module attaches to a hardpoint" },
     { "patterns": ["Muzzle", "Muzzle_*"], "type": "EMPTY", "role": "point", "why": "beam or projectile origin" }
   ],
@@ -37,12 +37,20 @@
       "emissiveMap": true,
       "why": "DESIGN 19.2: base colour, roughness, metallic, normal, ambient occlusion, emissive"
     },
-    "glass": { "maps": ["baseColor", "roughness", "normal"], "emissiveMap": false, "why": "transparent surfaces carry no AO or metallic map" },
+    "glass": { "maps": [], "emissiveMap": false, "why": "glass (LIB_Glass): constant colour and roughness allowed; reflection does the work" },
     "signal": { "maps": [], "emissiveMap": false, "why": "engine-driven glow (engine exhaust, nav lights, lamps): the game replaces the material" },
     "effect": { "maps": ["baseColor"], "emissiveMap": true, "why": "ability effect meshes are emissive and translucent" },
-    "decal": { "maps": ["baseColor"], "emissiveMap": false, "why": "glyph patterns, liveries and icons are texture sets" }
+    "decal": { "maps": ["baseColor"], "emissiveMap": false, "why": "glyph patterns, liveries and icons are texture sets" },
+    "library": {
+      "maps": ["baseColor", "roughness", "normal"],
+      "emissiveMap": false,
+      "why": "library materials drive base colour, roughness and normal from nodes (procedural is fine: each asset bakes its own copy, AO included)"
+    }
   },
-  "materialRules": [{ "match": ["Glass*", "*Glass"], "profile": "glass" }],
+  "materialRules": [
+    { "match": ["LIB_EngineGlow*", "LIB_Nav*", "LIB_GlyphLight*", "LIB_HollowSeam*", "EngineGlow*", "Nav*"], "profile": "signal" },
+    { "match": ["LIB_Glass*", "Glass*", "*Glass"], "profile": "glass" }
+  ],
   "classes": {
     "hero": {
       "tris": [60000, 150000],
@@ -145,7 +153,7 @@
       "texture": 4096,
       "lods": 0,
       "size": null,
-      "profile": "pbr",
+      "profile": "library",
       "why": "the shared material library (assets/blend/_library.blend): materials and references only"
     }
   },
@@ -168,15 +176,11 @@
       "size": { "hero": { "axis": "max", "range": [6, 80] } },
       "materials": {
         "required": ["Hull", "Accent", "Trim", "EngineGlow", "Glass", "Nav*"],
-        "profiles": [
-          { "match": ["EngineGlow*", "Nav*"], "profile": "signal" },
-          { "match": ["Glass*"], "profile": "glass" }
-        ],
-        "why": "DESIGN 10.4 and 19.4: liveries, recolours, husked variants, traffic and wrecks read these names"
+        "why": "DESIGN 10.4 and 19.4: liveries, recolours, husked variants, traffic and wrecks read these names (after engine_name)"
       },
       "requiredMarkers": [
         { "pattern": "Gear*", "type": "EMPTY", "min": 1, "why": "articulated landing gear pivots (DESIGN 10.4)" },
-        { "pattern": "Hardpoint_*", "type": "EMPTY", "min": 1, "why": "hardpoint mounts (DESIGN 10.4, 19.4)" },
+        { "pattern": ["HP_S_*", "HP_M_*", "HP_L_*"], "type": "EMPTY", "min": 1, "why": "hardpoint mounts (DESIGN 10.4, 19.4)" },
         { "pattern": "Canopy*", "min": 1, "why": "the canopy (DESIGN 10.4)" },
         { "pattern": "CockpitInterior*", "min": 1, "why": "the cockpit interior (DESIGN 10.4)" }
       ]
@@ -185,13 +189,14 @@
       "what": "the 8 hardpoint weapon modules as mountable meshes",
       "class": "weapon",
       "requiredMarkers": [
-        { "pattern": "Mount", "type": "EMPTY", "min": 1, "why": "aligns the module to a hull's Hardpoint_ empty" },
+        { "pattern": "Mount", "type": "EMPTY", "min": 1, "why": "aligns the module to a hull's HP_ empty" },
         { "pattern": "Muzzle*", "type": "EMPTY", "min": 1, "why": "where beams and projectiles start" }
       ]
     },
     "cities": {
       "what": "the three building kits, civic buildings, gates, walls, bridges, lamps and the anchor stone landmarks",
       "class": "building",
+      "size": { "building": { "axis": "max", "range": [1, 400] } },
       "classRules": [
         { "match": ["*landmark*", "anchor_*"], "class": "hero" },
         { "match": ["kit_*", "wall*", "bridge*", "gate*", "lamp*"], "class": "kit" },

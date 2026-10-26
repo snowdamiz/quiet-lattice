@@ -135,6 +135,8 @@ describe('Blender', () => {
     expect(isNoise('Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)')).toBe(true);
     expect(isNoise('  FAIL  naming  (1 failed, 0 warnings)')).toBe(false);
     expect(isNoise('10:12:53 | WARNING: something')).toBe(false);
+    expect(isNoise('Info: Baking map saved to internal image, save it externally or pack it')).toBe(true);
+    expect(isNoise('Info: No active image found in material "LIB_PaintedPlate"')).toBe(false);
   });
 });
 

@@ -17,8 +17,9 @@ import bmesh  # noqa: E402
 import bpy  # noqa: E402
 import numpy as np  # noqa: E402
 
-from artlib import core  # noqa: E402
+from artlib import bake, core  # noqa: E402
 from artlib import export as E  # noqa: E402
+from artlib import glb  # noqa: E402
 from artlib import rules as R  # noqa: E402
 
 ARGV = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
@@ -62,6 +63,8 @@ def put(obj, c):
 def mesh_from(name, verts, faces=(), edges=()):
     me = bpy.data.meshes.new(name)
     me.from_pydata([tuple(v) for v in verts], list(edges), [tuple(f) for f in faces])
+    if faces:
+        me.uv_layers.new(name="UVMap")
     me.update()
     return bpy.data.objects.new(name, me)
 
@@ -86,13 +89,17 @@ def sphere(name, segments, rings, radius, z=None):
     return bpy.data.objects.new(name, me)
 
 
-def references():
+def references(cells=20, size=20.0, biped=1.85):
+    """REF like the library's: a size x size m grid of cells x cells faces drawn with a Wireframe modifier (so the
+    evaluated mesh has other vertices than the grid), and a box biped standing on the grid plane."""
     ref = coll("REF")
-    verts = [(x, y, 0) for y in range(11) for x in range(11)]
-    edges = [(j * 11 + i, j * 11 + i + 1) for j in range(11) for i in range(10)]
-    edges += [(j * 11 + i, (j + 1) * 11 + i) for j in range(10) for i in range(11)]
-    put(mesh_from("REF_Grid", [(x - 5, y - 5, z) for x, y, z in verts], edges=edges), ref)
-    put(box("REF_Biped", (0.5, 0.3, 1.85), (2.0, 0, 0.925)), ref)
+    n = cells + 1
+    step = size / cells
+    verts = [(x * step - size / 2, y * step - size / 2, 0) for y in range(n) for x in range(n)]
+    faces = [(j * n + i, j * n + i + 1, (j + 1) * n + i + 1, (j + 1) * n + i) for j in range(cells) for i in range(cells)]
+    grid = put(mesh_from("REF_Grid", verts, faces), ref)
+    grid.modifiers.new("lines", "WIREFRAME").thickness = 0.02
+    put(box("REF_Biped", (0.5, 0.3, biped), (2.0, 0, biped / 2)), ref)
     return ref
 
 
@@ -158,7 +165,7 @@ def flat_material(name, colour=(0.8, 0.2, 0.1)):
     return m
 
 
-def procedural_material(name):
+def procedural_material(name, bump_distance=0.05):
     m = bpy.data.materials.new(name)
     nt = m.node_tree
     bsdf = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
@@ -167,11 +174,10 @@ def procedural_material(name):
     nt.links.new(noise.outputs["Color"], bsdf.inputs["Base Color"])
     nt.links.new(noise.outputs["Fac"], bsdf.inputs["Roughness"])
     bump = nt.nodes.new("ShaderNodeBump")
-    bump.inputs["Distance"].default_value = 0.05
+    bump.inputs["Distance"].default_value = bump_distance
     nt.links.new(noise.outputs["Fac"], bump.inputs["Height"])
     nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
     bsdf.inputs["Metallic"].default_value = 0.0
-    m["bake_ao"] = True
     return m
 
 
@@ -261,9 +267,12 @@ def build_creatures():
 
 
 def build_library():
+    """A library with one material that drives nothing from nodes (fails) beside textured, signal and glass ones."""
     reset()
     references()
     put(with_material(sphere("swatch_hull", 32, 16, 0.5), pbr_material("LibHullPaint", base_res=2048, res=256)), coll("previews"))
+    for m in (flat_material("LIB_Flat"), flat_material("LIB_Glass", (0.04, 0.06, 0.08)), flat_material("LIB_NavRed", (1, 0, 0))):
+        m.use_fake_user = True
     return save(SRC / "_library.blend")
 
 
@@ -275,6 +284,67 @@ def build_hull():
     g = put(bpy.data.objects.new("GearFront", None), a)
     g.location = (0, 2, 0)
     return save(SRC / "hulls" / "dart.blend")
+
+
+def build_shared_library():
+    """A separate library .blend like assets/blend/_library.blend: procedural and signal materials with engine names."""
+    reset()
+    references()
+    plate = procedural_material("LIB_TestPlate")
+    plate["engine_name"] = "Hull"
+    glow = flat_material("LIB_EngineGlow", (0.0, 0.0, 0.0))
+    bsdf = next(n for n in glow.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
+    bsdf.inputs["Emission Color"].default_value = (0.3, 0.7, 1.0, 1.0)
+    bsdf.inputs["Emission Strength"].default_value = 10.0
+    glow["engine_name"] = "EngineGlow"
+    glass = flat_material("LIB_Glass", (0.04, 0.06, 0.08))
+    glass["engine_name"] = "Glass"
+    for m in (plate, glow, glass):
+        m.use_fake_user = True
+    return save(TMP / "lib" / "library.blend")
+
+
+def build_pod(library):
+    """A prop whose two variants use a material linked (read-only) from the library; no hand-made LODs."""
+    reset()
+    references()
+    with bpy.data.libraries.load(str(library), link=True) as (src, dst):
+        dst.materials = ["LIB_TestPlate", "LIB_EngineGlow"]
+    plate = bpy.data.materials["LIB_TestPlate"]
+    glow = bpy.data.materials["LIB_EngineGlow"]
+    a = coll("pod")
+    for vid in ("pod", "pod_husk"):
+        lod0 = coll(f"{vid}_LOD0", a)
+        body = put(with_material(sphere(f"{vid}_body", 64, 32, 0.5), plate), lod0)
+        body.data.materials.append(glow)
+        body.data.polygons[0].material_index = 1
+    put(collider("COL_pod", (1, 1, 1), (0, 0, 0.5)), a)
+    return save(SRC / "props" / "pod.blend")
+
+
+def build_faulty():
+    """A prop with one of each remaining failure: references off scale, a top-level LOD collection, a LOD that is not
+    lighter, LOD3 above 5%, a texture over the class size, a door too small for the biped."""
+    reset()
+    references(cells=21, size=20.0, biped=1.70)
+    stray = coll("stray_LOD0")
+    put(with_material(sphere("stray_body", 16, 8, 0.2), flat_material("StrayPaint")), stray)
+    a = coll("steps")
+    mat = pbr_material("Oversize", base_res=2048, res=256)
+    for n, (sg, rg) in enumerate([(64, 32), (40, 20), (40, 20), (20, 12)]):
+        put(with_material(sphere(f"steps_body_{n}", sg, rg, 0.45), mat), coll(f"steps_LOD{n}", a))
+    put(with_material(box("Door_hatch", (1.0, 0.1, 2.0), (0, -0.6, 1.0)), mat), bpy.data.collections["steps_LOD0"])
+    return save(SRC / "props" / "faulty.blend")
+
+
+def build_flat():
+    """Passes as a source (procedural channels are baked at export) but its bump is too faint to bake into a normal
+    map, so the export fails re-validation."""
+    reset()
+    references()
+    a = coll("flat")
+    put(with_material(sphere("flat_body", 64, 32, 0.5), procedural_material("FaintBump", bump_distance=0.0001)), a)
+    return save(SRC / "props" / "flat.blend")
 
 
 # ---------------------------------------------------------------------------------------------- tests
@@ -313,15 +383,65 @@ def test_validator(crate, broken, creatures, hull, library):
     expect(has(rep, "triangles", "drake: LOD0 has 18,240 triangles, under the hero budget"), "the overridden class sets the budget")
 
     rep = core.validate_path(RULES, library)
-    if rep.status != "PASS":
-        core.write_and_print(rep, verbose=True)
-    expect(rep.family == "library" and rep.status == "PASS", "_library.blend is read as the material library and passes")
+    fails = messages(rep, "materials")
+    expect(rep.family == "library", "_library.blend is read as the material library")
+    expect(any(m.startswith("LIB_Flat: untextured") and "base colour, roughness, normal" in m for m in fails), "library: a material with constant colour, roughness and normal fails")
+    expect(len(fails) == 1, f"library: textured, glass (constant) and nav (signal) materials pass, and no AO is asked for ({fails})")
+    expect(all(rep[c].status == "PASS" for c in ("naming", "triangles", "lods", "scale")), "library: the other checks pass (grid drawn with a Wireframe modifier)")
 
     rep = core.validate_path(RULES, hull, family="hulls")
     fails = messages(rep, "naming")
-    expect(any("Hardpoint_*" in m for m in fails), "hulls: no Hardpoint_ empty fails")
+    expect(any("HP_S_* / HP_M_* / HP_L_*" in m for m in fails), "hulls: no HP_S_/HP_M_/HP_L_ empty fails")
     expect(any("material 'Hull' missing" in m for m in fails), "hulls: no Hull material fails")
     expect(not any("Gear*" in m for m in fails), "hulls: the GearFront empty satisfies Gear*")
+
+
+def test_review_cases(shared_library, faulty):
+    print("\nreview cases")
+    rep = core.validate_path(RULES, shared_library, family="library")
+    if rep.status != "PASS":
+        core.write_and_print(rep, verbose=True)
+    expect(rep.status == "PASS", "a library of procedural, signal and glass materials passes as the library family")
+
+    rep = core.validate_path(RULES, faulty, family="props")
+    expect(has(rep, "scale", "grid spacing is 0.952 m"), "scale: a 20 m grid of 21 cells (0.952 m) fails, measured on the mesh under its Wireframe modifier")
+    expect(has(rep, "scale", "biped is 1.700 m tall"), "scale: a 1.70 m biped fails")
+    expect(has(rep, "scale", "Door_hatch: 1.00 x 2.00 m"), "scale: a 1.0 x 2.0 m door fails the 1.4 x 2.4 m minimum")
+    expect(has(rep, "naming", "stray_LOD0: LOD collection at the top level"), "naming: a top-level <asset>_LOD<n> collection fails")
+    expect(not any(a["asset"] == "stray_LOD0" for a in rep.assets), "a top-level LOD collection is not read as an asset")
+    expect(has(rep, "lods", "LOD2 (1,520) is not lighter than LOD1 (1,520)"), "lods: a LOD no lighter than the one before fails")
+    expect(has(rep, "lods", "LOD3 is 11.1% of LOD0"), "lods: LOD3 at 11% of LOD0 fails the 5% rule")
+    expect(has(rep, "materials", "is 2048x2048; class prop textures are at most 1024 px"), "materials: a 2k map on a prop fails")
+
+
+def test_bake_guards(shared_library):
+    print("\nbake guards")
+    reset()
+    with bpy.data.libraries.load(str(shared_library), link=True) as (src, dst):
+        dst.materials = ["LIB_TestPlate"]
+    linked = bpy.data.materials["LIB_TestPlate"]
+    o = sphere("probe", 16, 8, 0.5)
+    bpy.context.scene.collection.objects.link(o)
+    o.data.materials.append(linked)
+    bake.ensure_cycles(bpy.context.scene)
+
+    def attempt(mat):
+        try:
+            bake.bake_material(mat, [o], 32, ao=True, log=lambda *_: None)
+        except bake.BakeError as e:
+            return str(e)
+        return None
+
+    err = attempt(linked)
+    expect(err is not None and "is linked" in err, f"baking a linked (read-only) material is refused, not skipped ({err})")
+    local = linked.copy()
+    slot = o.material_slots[0]
+    slot.link = "OBJECT"
+    slot.material = local
+    for d in o.data.uv_layers.active.data:
+        d.uv = (d.uv[0] + 5.0, d.uv[1] + 5.0)
+    err = attempt(local)
+    expect(err is not None and "wrote nothing" in err, f"a bake that writes no texel fails loudly ({err})")
 
 
 def test_export():
@@ -356,6 +476,28 @@ def test_export():
     code = E.main("props", base + ["--only", "broken"])
     expect(code == 1 and not (OUT / "props" / "broken.glb").exists(), "export_props refuses broken.blend and writes nothing")
 
+    code = E.main("props", base + ["--only", "pod", "--bake-res", "64"])
+    out = OUT / "props" / "pod.glb"
+    expect(code == 0 and out.exists(), "export_props bakes a material linked from a library .blend")
+    if out.exists():
+        rep = core.validate_path(RULES, out, family="props", source=SRC / "props" / "pod.blend")
+        if rep.status != "PASS":
+            core.write_and_print(rep, verbose=True)
+        expect(rep.status == "PASS", "pod.glb passes validation (baked maps, AO from the geometry, generated LODs)")
+        names = glb.material_names(out)
+        expect(names.count("Hull") == 2, f"pod.glb: each variant carries its own baked copy, exported under engine_name 'Hull' ({names})")
+        expect("EngineGlow" in names and not any(n.startswith("LIB_") for n in names), "pod.glb: library names are replaced by engine names")
+        expect([sorted(v["id"] for v in a["variants"]) for a in rep.assets] == [["pod", "pod_husk"]], "pod.glb: both variants exported")
+
+    stale = OUT / "props" / "flat.glb"
+    stale.write_bytes(b"stale")
+    code = E.main("props", base + ["--only", "flat", "--bake-res", "64"])
+    rejected = REPORTS / "props__flat.glb.rejected.glb"
+    rep = core.validate_path(RULES, rejected, family="props", source=SRC / "props" / "flat.blend") if rejected.exists() else None
+    expect(code == 1 and rejected.exists(), "flat.blend passes as a source but its export fails re-validation: exit 1, the rejected file kept for inspection")
+    expect(rep is not None and has(rep, "materials", "FaintBump: normal map flat_FaintBump_normal is uniform"), "flat.glb: the re-validation names the uniform baked normal map")
+    expect(not stale.exists(), "the stale flat.glb is removed from the models when its re-export fails")
+
     empty = TMP / "empty"
     empty.mkdir()
     code = E.main("hulls", ["--src-root", str(empty), "--out-dir", str(OUT)])
@@ -366,8 +508,13 @@ def main():
     print(f"art self-test in {TMP}")
     try:
         crate, broken, rock, creatures, hull, library = build_crate(), build_broken(), build_rock(), build_creatures(), build_hull(), build_library()
+        shared = build_shared_library()
+        build_pod(shared)
+        faulty, _ = build_faulty(), build_flat()
         del rock
         test_validator(crate, broken, creatures, hull, library)
+        test_review_cases(shared, faulty)
+        test_bake_guards(shared)
         test_export()
     finally:
         if "--keep" not in ARGV:

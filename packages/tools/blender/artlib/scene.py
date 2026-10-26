@@ -4,7 +4,7 @@ Source layout (.blend), DESIGN 19.1 "named collections per variant and LOD":
   Scene Collection
     REF                         scale references, never exported (REF_Grid*, REF_Biped*)
     <asset>                     one top-level collection per asset (collections starting with '_' are ignored)
-      <asset>[_<variant>]_LOD0  one collection per LOD of each variant (LOD0..LOD3); an object named
+      <asset>[_<variant>]_LOD0  one collection per LOD of each variant (LOD0..LOD3), always inside <asset>; an object named
       ...                       <variant>_LOD<n> works too (its children belong to that LOD)
       COL_*, Interact, ...      colliders and point markers sit beside the LODs (they are not per LOD)
   An asset with no LOD collections is one variant whose geometry is all LOD0 (the export generates LOD1-3).
@@ -69,6 +69,7 @@ class Model:
         self.ref = None  # source: the REF collection
         self.loose = []  # source: objects directly in the scene collection
         self.ignored = []  # source: collections starting with '_'
+        self.misplaced_lods = []  # source: <asset>_LOD<n> collections at the top level instead of inside <asset>
         self.ref_leaks = []  # export: REF_ objects that reached the .glb
 
 
@@ -78,7 +79,7 @@ def name_of(o, mode):
 
 def marker_spec(rules, name):
     for m in rules["markers"]:
-        if R.match(R.strip(name), m["patterns"]):
+        if R.match(R.strip(name), m["patterns"], ci=True):
             return m
     return None
 
@@ -162,6 +163,8 @@ def collect_source(rules):
             model.ref = coll
         elif coll.name.startswith(ignored):
             model.ignored.append(coll.name)
+        elif R.lod_parts(coll.name):
+            model.misplaced_lods.append(coll.name)
         else:
             model.assets.append(_source_asset(rules, coll))
     return model
