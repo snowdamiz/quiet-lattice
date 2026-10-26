@@ -22,7 +22,7 @@ const settle = async (page: Page, frames = 60) => {
 
 interface InventoryApi {
   add(id: string, n: number, to?: 'auto' | 'suit' | 'cargo'): number;
-  setLoadout(l: { hull: string | null; nodes?: string[] }): boolean;
+  setLoadout(l: { ship: { hull: string; modules: Record<string, string>; cargoPods: number; livery: number } | null; skills?: string[] }): boolean;
 }
 
 /** Boots a game, loads the suit and the cargo with a mining trip's haul, opens the inventory and hovers a full stack. */
@@ -31,7 +31,8 @@ async function openInventory(page: Page, hull: 'lark' | 'mule'): Promise<void> {
   await page.evaluate((hull) => {
     const g = (window as unknown as { game: { inventory: InventoryApi; menus: { openInventory(): void } } }).game;
     const inv = g.inventory;
-    inv.setLoadout({ hull });
+    // the Lark with its one pod, or a Mule with all four of its bays fitted
+    inv.setLoadout({ ship: { hull, modules: { s1: 'pulse_lasers' }, cargoPods: hull === 'mule' ? 4 : 1, livery: 0 } });
     const suit: [string, number][] = [
       ['ferrite', 12480],
       ['carbon', 386],

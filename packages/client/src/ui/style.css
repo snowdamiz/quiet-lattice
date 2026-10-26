@@ -1587,8 +1587,17 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 
 /* ---------- inventory: suit stacks beside the ship's cargo pods ---------- */
+/* Amber here means only three things: what is selected or dragged, a full stack, and the cargo you can lose. Everything
+   else is warm white on a near-opaque plate, so the ship never shows through the slots or the footer. */
 .inv-panel {
   padding-bottom: 0;
+  background: rgba(11, 12, 15, 0.96);
+}
+.inv-panel .panel-head h2::before {
+  background: var(--text);
+}
+.inv-panel .balance b {
+  color: var(--text);
 }
 .inv-panel.still {
   animation: none;
@@ -1607,6 +1616,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .inv-side-head .col-title {
   margin: 0;
+  color: var(--text);
 }
 /* counts and labels carry information here, so they sit at --dim (AA on the plate) rather than --faint */
 .inv-panel .panel-head .label,
@@ -1631,8 +1641,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   transition: color 0.15s, border-color 0.15s;
 }
 .inv-act:hover:not(:disabled) {
-  color: var(--accent-hi);
-  border-color: var(--accent);
+  color: var(--text);
+  border-color: var(--bracket);
 }
 .inv-act:disabled {
   opacity: 0.35;
@@ -1675,12 +1685,45 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   gap: 16px;
   max-height: calc(88vh - 300px);
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-2) transparent;
 }
-.inv-pods.more {
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+/* a scrollbar that stays drawn (overlay scrollbars hide until scrolled), so a long pod list reads as one */
+.inv-pods::-webkit-scrollbar {
+  width: 5px;
+}
+.inv-pods::-webkit-scrollbar-track {
+  background: rgba(233, 231, 226, 0.06);
+}
+.inv-pods::-webkit-scrollbar-thumb {
+  background: rgba(233, 231, 226, 0.42);
+}
+@supports not selector(::-webkit-scrollbar) {
+  .inv-pods {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(233, 231, 226, 0.42) rgba(233, 231, 226, 0.06);
+  }
+}
+.inv-more {
+  display: none;
+  margin-top: 10px;
+  color: var(--dim);
+}
+.inv-more.on {
+  display: block;
+}
+/* an empty pod: one line, opened by a click or by a stack dragged over it */
+.inv-pod.shut .inv-pod-head {
+  align-items: center;
+  height: 34px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid rgba(233, 231, 226, 0.09);
+  background: rgba(233, 231, 226, 0.012);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.inv-pod.shut:hover .inv-pod-head {
+  border-color: var(--line-2);
+  background: rgba(233, 231, 226, 0.05);
 }
 .inv-pod-head {
   display: flex;
@@ -1709,10 +1752,22 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   position: absolute;
   left: 12px;
   top: 14px;
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   background: var(--c);
-  transform: rotate(45deg);
+}
+.inv-sw.dot {
+  border-radius: 50%;
+}
+.inv-sw.diamond {
+  transform: rotate(45deg) scale(0.9);
+}
+.inv-sw.hex {
+  width: 10px;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+.inv-sw.square {
+  transform: scale(0.85);
 }
 .inv-tag {
   position: absolute;
@@ -1726,8 +1781,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9px;
   font-style: normal;
   letter-spacing: 0.12em;
-  color: var(--accent);
-  border: 1px solid rgba(240, 162, 74, 0.45);
+  color: var(--dim);
+  border: 1px solid var(--line-2);
 }
 .inv-ct {
   position: absolute;
@@ -1787,14 +1842,14 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   border-color: var(--accent);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
 }
-/* a slot a move just touched settles back from amber */
+/* a slot a move just touched settles back from warm white */
 .inv-slot.bump {
   animation: invBump 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 @keyframes invBump {
   from {
-    border-color: var(--accent);
-    background: rgba(240, 162, 74, 0.14);
+    border-color: var(--bracket);
+    background: rgba(233, 231, 226, 0.16);
   }
 }
 .inv-none {
@@ -1857,7 +1912,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .inv-detail .num {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--warm);
+  color: var(--text);
   font-variant-numeric: tabular-nums;
 }
 .inv-detail .about {
@@ -1875,7 +1930,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .inv-detail.msg {
   display: block;
   text-overflow: ellipsis;
-  color: var(--accent-hi);
+  font-weight: 500;
+  color: var(--text);
 }
 .inv-keys {
   flex: none;

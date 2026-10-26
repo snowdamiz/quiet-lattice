@@ -4,40 +4,90 @@
 // (P1.E04.T01), and replaced by the server's state when it answers (receive()). The demo's callers keep their flat API:
 // items, units, warpCells, add, has, take, sellAll and key.
 import { RESOURCE_IDS as RESOURCE_ID_LIST } from '@astra/shared/data';
-import { addItem, applyLayout, applyOp, countOf, layoutFor, parseInventory, roomFor, startingInventory, takeItem, totals } from '@astra/shared/inventory';
+import {
+  addItem,
+  applyLayout,
+  applyOp,
+  countOf,
+  layoutFor,
+  parseInventory,
+  parseOp,
+  roomFor,
+  startingInventory,
+  takeItem,
+  totals,
+} from '@astra/shared/inventory';
 
-// Demo sell prices and the HUD's swatch colours; the price table goes with station prices (P1.E13.T03).
+// Each resource's pip in the UI: a shape by where it comes from (dot: plants; diamond: rock, deposits and asteroids;
+// hexagon: the crystals and salts of hostile worlds; square: what the Count, the Hollow and the Cartographers leave) and a
+// muted hue kept clear of the danger red and the amber accent, which mean something else on the HUD (art bible §4).
+export const PIPS = {
+  carbon: ['dot', '#93b07e'],
+  sodium: ['dot', '#cfd18a'],
+  oxygen: ['dot', '#9dc4e6'],
+  ferrite: ['diamond', '#b7b2a9'],
+  dihydrogen: ['diamond', '#b39cdb'],
+  tritium: ['diamond', '#c8e4ec'],
+  copper: ['diamond', '#86b39a'],
+  cobalt: ['diamond', '#7e9fd4'],
+  gold: ['diamond', '#ded0a0'],
+  iridium: ['diamond', '#c5cad3'],
+  frostglass: ['hex', '#b6e0e8'],
+  acidsalt: ['hex', '#b5c77a'],
+  cinderglass: ['hex', '#b497a8'],
+  stormquartz: ['hex', '#9e9bd0'],
+  gamma_crystal: ['hex', '#a9d49a'],
+  murkpearl: ['hex', '#8fa9a6'],
+  count_residue: ['square', '#d8f6ff'],
+  husk_alloy: ['square', '#cfc6b3'],
+  glyphstone: ['square', '#7fd8ff'],
+};
+
+// Demo sell prices and the HUD's pip colours; the price table goes with station prices (P1.E13.T03).
 export const RESOURCES = {
-  carbon: { name: 'Carbon', color: '#e2463f', price: 12 },
-  ferrite: { name: 'Ferrite Dust', color: '#b9b4ad', price: 14 },
-  sodium: { name: 'Sodium', color: '#ffcc3a', price: 41 },
-  oxygen: { name: 'Oxygen', color: '#ff6a55', price: 34 },
-  dihydrogen: { name: 'Di-hydrogen', color: '#4fb2ff', price: 34 },
-  copper: { name: 'Copper', color: '#ff9a3a', price: 110 },
-  cobalt: { name: 'Cobalt', color: '#4f7dff', price: 198 },
-  tritium: { name: 'Tritium', color: '#9be8ff', price: 6 },
-  gold: { name: 'Gold', color: '#ffd84a', price: 202 },
+  carbon: { name: 'Carbon', color: PIPS.carbon[1], price: 12 },
+  ferrite: { name: 'Ferrite Dust', color: PIPS.ferrite[1], price: 14 },
+  sodium: { name: 'Sodium', color: PIPS.sodium[1], price: 41 },
+  oxygen: { name: 'Oxygen', color: PIPS.oxygen[1], price: 34 },
+  dihydrogen: { name: 'Di-hydrogen', color: PIPS.dihydrogen[1], price: 34 },
+  copper: { name: 'Copper', color: PIPS.copper[1], price: 110 },
+  cobalt: { name: 'Cobalt', color: PIPS.cobalt[1], price: 198 },
+  tritium: { name: 'Tritium', color: PIPS.tritium[1], price: 6 },
+  gold: { name: 'Gold', color: PIPS.gold[1], price: 202 },
 };
 
 const RESOURCE_IDS = new Set(RESOURCE_ID_LIST);
 
+/** Today's ship, as the client's Ship starts (DESIGN 10.2): the Lark with its Pulse Lasers and its one cargo pod. */
+const LARK = { hull: 'lark', modules: { s1: 'pulse_lasers' }, cargoPods: 1, livery: 0 };
+
+/** How long a request may go unanswered before its prediction is dropped: the gateway drops a message over the socket's
+ * budget without a word, and the server's state must not stay overlaid with it. */
+export const PENDING_MS = 5000;
+
 export class Inventory {
   constructor() {
-    // every pilot starts in the Lark (DESIGN 10.2), without skills; the ship and skill tasks call setLoadout
-    this.hull = 'lark';
-    this.nodes = [];
-    this.layout = layoutFor({ hull: this.hull });
+    // the ship and skills the layout follows: Game passes the ship's own loadout, the ship and skill tasks call setLoadout
+    this.ship = LARK;
+    this.skills = [];
+    this.layout = layoutFor({ ship: this.ship });
     /** The current state: the server's last word with this client's unanswered requests replayed on top. */
     this.state = startingInventory(this.layout);
     /** The server's last word (when online). */
     this.confirmed = this.state;
-    /** Requests not yet answered: { seq, op }. */
+    /** Requests not yet answered: { seq, op, at }. */
     this.pending = [];
     this.seq = 0;
     /** Set by the net layer: sends a client message. Offline (today) the client's own state stands. */
     this.send = null;
+    /** The clock pending requests age by (ms). */
+    this.now = () => performance.now();
     /** Bumped on every change, so screens and the HUD can tell when to redraw. */
     this.rev = 0;
+  }
+
+  get hull() {
+    return this.ship?.hull ?? null;
   }
 
   set(state) {
@@ -49,15 +99,19 @@ export class Inventory {
   // ---------- requests (stack moves: the server decides, the client predicts) ----------
 
   /** Asks for a stack move ({op: 'move' | 'split' | 'merge' | 'transfer' | 'compact', ...}). Returns the predicted result:
-   * { ok: true } or { ok: false, error: { code, message } }. */
+   * { ok: true } or { ok: false, error: { code, message } }. An op the server would not even parse is refused here and
+   * never sent. */
   request(op) {
-    const r = applyOp(this.state, op);
+    const parsed = parseOp(op);
+    if (!parsed.ok) return parsed;
+    this.expire();
+    const r = applyOp(this.state, parsed.op);
     if (!r.ok) return r;
     this.set(r.inv);
     if (this.send) {
       const seq = ++this.seq;
-      this.pending.push({ seq, op });
-      this.send({ t: 'inventory', seq, op });
+      this.pending.push({ seq, op: parsed.op, at: this.now() });
+      this.send({ t: 'inventory', seq, op: parsed.op });
     } else this.confirmed = this.state;
     return r;
   }
@@ -65,26 +119,50 @@ export class Inventory {
   /** The server's `inventory` message: its state is the truth; requests it has not handled yet are replayed on top. */
   receive(msg) {
     this.confirmed = msg.inventory;
-    this.pending = this.pending.filter((p) => p.seq > msg.seq);
-    let s = msg.inventory;
+    const now = this.now();
+    this.pending = this.pending.filter((p) => p.seq > msg.seq && now - p.at < PENDING_MS);
+    this.replay();
+    return msg.error ?? null;
+  }
+
+  /** The state sent right after `welcome`: a new session, so requests sent on the old socket are gone and numbering starts
+   * over. The net layer calls this instead of receive() for it. */
+  reset(inventory) {
+    this.confirmed = inventory;
+    this.pending = [];
+    this.seq = 0;
+    this.set(inventory);
+  }
+
+  /** Drops predictions the server has not answered within PENDING_MS. The net layer may call it each tick; request() calls
+   * it too. */
+  expire(now = this.now()) {
+    const live = this.pending.filter((p) => now - p.at < PENDING_MS);
+    if (live.length === this.pending.length) return;
+    this.pending = live;
+    this.replay();
+  }
+
+  replay() {
+    let s = this.confirmed;
     for (const p of this.pending) {
       const r = applyOp(s, p.op);
       if (r.ok) s = r.inv;
     }
     this.set(s);
-    return msg.error ?? null;
   }
 
-  /** A new hull (null: no ship) or skill set: cargo pods per hull, Pack Mule. False, and nothing changes, when the new
-   * layout cannot hold everything. */
-  setLoadout({ hull, nodes = [] }) {
-    const layout = layoutFor({ hull, nodes });
+  /** The ship flown (null: none) and the skills owned: one cargo pod per pod aboard the ship, Pack Mule's stack cap. False,
+   * and nothing changes, when the new layout cannot hold everything. */
+  setLoadout({ ship, skills = [] }) {
+    const layout = layoutFor({ ship, skills });
     const r = applyLayout(this.state, layout);
     if (!r.ok) return false;
-    this.hull = hull;
-    this.nodes = [...nodes];
+    this.ship = ship;
+    this.skills = [...skills];
     this.layout = layout;
     this.set(r.inv);
+    if (!this.send) this.confirmed = this.state;
     return true;
   }
 

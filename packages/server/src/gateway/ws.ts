@@ -93,7 +93,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   let invalidTotal = 0;
   let rateLimitedTotal = 0;
   let closing = false;
-  const inventory = deps.inventory ?? new InventoryService();
+  const inventory = deps.inventory ?? new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
   // server-side changes (loot, mining, trade, the Recall) reach the session holding the character
   const unsubscribeInventory = inventory.subscribe((characterId, reply) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'inventory', ...reply });

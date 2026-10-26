@@ -21,18 +21,14 @@ import {
   type CargoDrop,
   type Inventory,
   type InventoryErrorCode,
+  type InventoryLoadout,
   type Result,
   type Where,
 } from '@astra/shared/inventory';
 
-/** The ship and skills an inventory's layout follows (cargo pods per hull, Pack Mule). */
-export interface Loadout {
-  hull: string | null;
-  nodes: readonly string[];
-}
-
-/** Every character flies the Lark until the ship tasks give it another (DESIGN 10.2: the stake ship). */
-export const DEFAULT_LOADOUT: Loadout = { hull: 'lark', nodes: [] };
+/** Every character flies the Lark until the ship tasks give it another (DESIGN 10.2: the stake ship), as the client's ship
+ * does: its Pulse Lasers and its one cargo pod. */
+export const DEFAULT_LOADOUT: InventoryLoadout = { ship: { hull: 'lark', modules: { s1: 'pulse_lasers' }, cargoPods: 1, livery: 0 }, skills: [] };
 
 /** What the client is sent: the state, the last request handled this session (0: none) and why it was refused, if it was. */
 export interface InventoryReply {
@@ -53,12 +49,15 @@ export class InventoryService {
   private readonly entries = new Map<string, Entry>();
   private readonly listeners = new Set<InventoryListener>();
 
+  /** `onListenerError` hears a listener that threw (the gateway logs it). */
+  constructor(private readonly onListenerError: (err: unknown) => void = () => {}) {}
+
   /**
    * Puts a character's inventory in play for a new session: the one already held in memory, else `saved` (a stored value,
    * validated; an invalid one is an error, never silently replaced), else the starting kit for `loadout`. Request numbering
    * starts over. Returns the state to send after `welcome`.
    */
-  open(characterId: string, opts: { saved?: unknown; loadout?: Loadout } = {}): InventoryReply {
+  open(characterId: string, opts: { saved?: unknown; loadout?: InventoryLoadout } = {}): InventoryReply {
     let e = this.entries.get(characterId);
     if (!e) {
       let inv: Inventory;
@@ -131,8 +130,9 @@ export class InventoryService {
     return this.change(characterId, (inv) => spendUnits(inv, units));
   }
 
-  /** Reshapes to a new hull or skill set (`no_room` when the new layout cannot hold everything; nothing changes then). */
-  setLoadout(characterId: string, loadout: Loadout): Result {
+  /** Reshapes to the ship's pods and the skills' stack cap (`no_room` when the new layout cannot hold everything; nothing
+   * changes then). Throws a LoadoutError for a ship that cannot fly, as `shipStats` does. */
+  setLoadout(characterId: string, loadout: InventoryLoadout): Result {
     return this.change(characterId, (inv) => applyLayout(inv, layoutFor(loadout)));
   }
 
@@ -163,7 +163,14 @@ export class InventoryService {
     if (r.ok && r.inv !== e.inv) {
       e.inv = r.inv;
       const reply = { seq: e.seq, inventory: e.inv };
-      for (const l of this.listeners) l(characterId, reply);
+      // one failing listener must neither undo the change nor keep it from the others
+      for (const l of this.listeners) {
+        try {
+          l(characterId, reply);
+        } catch (err) {
+          this.onListenerError(err);
+        }
+      }
     }
     return r;
   }

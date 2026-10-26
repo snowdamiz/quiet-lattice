@@ -91,7 +91,10 @@ position (P1.E03.T03 tests this to 1 cm).
   request it handled this session and `error` the code it refused that one with (`stale_seq` for a replayed number).
   The server also sends the state after `welcome` (`seq` 0) and pushes it whenever server-side systems change it (loot,
   mining, trade, the Recall's cargo drop); the client keeps its unanswered requests and replays those above `seq` on
-  top. Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
+  top, drops any left unanswered for 5 s (the gateway drops an over-budget message without a reply), never sends an op
+  that fails the schema, and starts over (no pending requests, `seq` from 1) on the state sent after `welcome`. The pods
+  are the ship's: one per pod its `ShipLoadout` carries, checked against the bays `shipStats` gives (P1.E12.T01).
+  Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
   picks the union whose schema accepts the message.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.

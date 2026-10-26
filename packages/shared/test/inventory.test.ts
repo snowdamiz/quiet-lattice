@@ -1,7 +1,8 @@
 // The inventory model (P1.E06.T04, DESIGN 10.1): every operation and its edge cases, the layout from hulls and Pack Mule, and
 // a seeded fuzz that checks every client op conserves what is held and leaves a value the schema accepts.
 import { describe, expect, it } from 'vitest';
-import { deepFreeze, HULLS, ITEMS, RESOURCES } from '../src/data/index.ts';
+import { deepFreeze, getHull, HULLS, ITEMS, RESOURCES, type HullId } from '../src/data/index.ts';
+import { LoadoutError } from '../src/ships/index.ts';
 import {
   addItem,
   addUnits,
@@ -30,17 +31,23 @@ import {
   spendUnits,
   splitStack,
   stackCap,
-  statValue,
   SUIT_STACKS,
   takeItem,
   totals,
   transferStack,
   usedSlots,
   type Inventory,
+  type InventoryLoadout,
   type InventoryOp,
   type Result,
   type SlotRef,
 } from '../src/inventory/index.ts';
+
+/** A ship of this hull carrying every pod its bays take (Pack Mule adds a bay), and the skills. */
+const at = (hull: HullId | null, skills: string[] = []): InventoryLoadout => ({
+  ship: hull && { hull, modules: {}, cargoPods: getHull(hull).cargoPods + (skills.includes('pack_mule') ? 1 : 0), livery: 0 },
+  skills,
+});
 
 const suit = (i: number): SlotRef => ({ c: 'suit', i });
 const pod = (p: number, i: number): SlotRef => ({ c: 'pod', p, i });
@@ -54,8 +61,8 @@ function code(r: Result<object>): string {
   return r.ok ? 'ok' : r.error.code;
 }
 
-const lark = () => emptyInventory(layoutFor({ hull: 'lark' }), 2500);
-const mule = () => emptyInventory(layoutFor({ hull: 'mule' }));
+const lark = () => emptyInventory(layoutFor(at('lark')), 2500);
+const mule = () => emptyInventory(layoutFor(at('mule')));
 /** A frozen inventory built by adds, so any mutation by an op throws. */
 function filled(base: Inventory, adds: [string, number][]): Inventory {
   let inv = base;
@@ -106,32 +113,31 @@ describe('inventory: items and the value', () => {
 describe('inventory: layout from the hull and Pack Mule', () => {
   it('gives every hull its cargo pods from the table (DESIGN 10.2)', () => {
     for (const h of HULLS) {
-      const l = layoutFor({ hull: h.id });
+      const l = layoutFor(at(h.id));
       expect(l, h.id).toEqual({ suitStacks: SUIT_STACKS, pods: h.cargoPods, podStacks: POD_STACKS, stackMax: 9999 });
     }
-    expect(layoutFor({ hull: 'lark' }).pods).toBe(1);
-    expect(layoutFor({ hull: 'mule' }).pods).toBe(4);
-    expect(layoutFor({ hull: 'longhaul' }).pods).toBe(16);
-    expect(layoutFor({ hull: null }).pods).toBe(0);
+    expect(layoutFor(at('lark')).pods).toBe(1);
+    expect(layoutFor(at('mule')).pods).toBe(4);
+    expect(layoutFor(at('longhaul')).pods).toBe(16);
+    expect(layoutFor(at(null)).pods).toBe(0);
   });
 
   it('reads Pack Mule from the skill node: stacks 9999 → 15000 and +1 pod on the ship (DESIGN 9.8)', () => {
-    expect(layoutFor({ hull: 'lark', nodes: ['pack_mule'] })).toMatchObject({ pods: 2, stackMax: 15000 });
-    expect(layoutFor({ hull: 'dart', nodes: ['pack_mule'] }).pods).toBe(1);
-    expect(layoutFor({ hull: null, nodes: ['pack_mule'] })).toMatchObject({ pods: 0, stackMax: 15000 });
-    expect(layoutFor({ hull: 'mule', nodes: ['long_jump'] })).toMatchObject({ pods: 4, stackMax: 9999 });
-    expect(() => layoutFor({ hull: 'zeppelin' })).toThrow();
+    expect(layoutFor(at('lark', ['pack_mule']))).toMatchObject({ pods: 2, stackMax: 15000 });
+    expect(layoutFor(at('dart', ['pack_mule'])).pods).toBe(1);
+    expect(layoutFor(at(null, ['pack_mule']))).toMatchObject({ pods: 0, stackMax: 15000 });
+    expect(layoutFor(at('mule', ['long_jump']))).toMatchObject({ pods: 4, stackMax: 9999 });
+    expect(() => layoutFor(at('zeppelin' as HullId))).toThrow();
   });
 
-  it('applies modifiers add, then mul, then set', () => {
-    const mods = [
-      { stat: 'ship.cargo_pods', op: 'mul', value: 2 },
-      { stat: 'ship.cargo_pods', op: 'add', value: 1 },
-      { stat: 'suit.stack_max', op: 'set', value: 5 },
-    ] as const;
-    expect(statValue(3, [...mods], 'ship.cargo_pods')).toBe(8);
-    expect(statValue(9999, [...mods], 'suit.stack_max')).toBe(5);
-    expect(statValue(7, [], 'suit.stack_max')).toBe(7);
+  it('takes the pods aboard from the ship loadout, held to the bays shipStats gives', () => {
+    const ship = (hull: HullId, cargoPods: number) => ({ hull, modules: {}, cargoPods, livery: 0 });
+    expect(layoutFor({ ship: ship('mule', 2) }).pods).toBe(2); // two of four bays fitted
+    expect(layoutFor({ ship: ship('lark', 0) }).pods).toBe(0);
+    expect(() => layoutFor({ ship: ship('lark', 2) })).toThrow(LoadoutError); // a second pod needs Pack Mule's bay
+    expect(layoutFor({ ship: ship('lark', 2), skills: ['pack_mule'] }).pods).toBe(2);
+    expect(() => layoutFor({ ship: { ...ship('lark', 1), modules: { s1: 'railgun' } } })).toThrow(LoadoutError);
+    expect(() => layoutFor({ ship: null, skills: ['no_such_node'] })).toThrow();
   });
 
   it('builds the empty layout and reads it back', () => {
@@ -139,7 +145,7 @@ describe('inventory: layout from the hull and Pack Mule', () => {
     expect(inv.suit).toHaveLength(SUIT_STACKS);
     expect(inv.pods).toHaveLength(4);
     expect(inv.pods.every((p) => p.length === POD_STACKS && p.every((s) => s === null))).toBe(true);
-    expect(layoutOf(inv)).toEqual(layoutFor({ hull: 'mule' }));
+    expect(layoutOf(inv)).toEqual(layoutFor(at('mule')));
     expect(capacity(inv)).toEqual({ suit: 16, cargo: 32 });
   });
 });
@@ -177,7 +183,7 @@ describe('inventory: add', () => {
     expect(slotAt(r.inv, pod(0, 0))).toEqual({ item: 'gold', count: 20 });
     const s = ok(addItem(filled(lark(), [['carbon', 9999 * SUIT_STACKS]]), 'carbon', 4, { to: 'suit' }));
     expect(s.remainder).toBe(4);
-    expect(code(addItem(emptyInventory(layoutFor({ hull: null })), 'gold', 1, { to: 'cargo', partial: false }))).toBe('no_room');
+    expect(code(addItem(emptyInventory(layoutFor(at(null))), 'gold', 1, { to: 'cargo', partial: false }))).toBe('no_room');
   });
 
   it('puts one module per slot', () => {
@@ -193,7 +199,7 @@ describe('inventory: add', () => {
   });
 
   it('honours Pack Mule stacks', () => {
-    const inv = emptyInventory(layoutFor({ hull: 'lark', nodes: ['pack_mule'] }));
+    const inv = emptyInventory(layoutFor(at('lark', ['pack_mule'])));
     expect(slotAt(ok(addItem(inv, 'ferrite', 15000)).inv, suit(0))).toEqual({ item: 'ferrite', count: 15000 });
   });
 });
@@ -329,7 +335,7 @@ describe('inventory: moving stacks', () => {
     expect(tri.moved).toBe(9000);
     expect(slotAt(tri.inv, suit(0))).toEqual({ item: 'tritium', count: 999 });
     expect(countOf(tri.inv, 'tritium', 'cargo')).toBe(9999 * POD_STACKS);
-    const shipless = filled(emptyInventory(layoutFor({ hull: null })), [['carbon', 3]]);
+    const shipless = filled(emptyInventory(layoutFor(at(null))), [['carbon', 3]]);
     const nope = transferStack(shipless, suit(0));
     expect(code(nope)).toBe('no_room');
     expect(!nope.ok && nope.error.message).toMatch(/no ship/);
@@ -417,19 +423,19 @@ describe('inventory: the death drop and new hulls', () => {
 
   it('reshapes to a smaller hull, repacking stacks from removed pods', () => {
     const spread = ok(moveStack(inv, pod(0, 1), pod(3, 4))).inv;
-    const r = ok(applyLayout(spread, layoutFor({ hull: 'lark' })));
+    const r = ok(applyLayout(spread, layoutFor(at('lark'))));
     expect(r.inv.pods).toHaveLength(1);
     expect(countOf(r.inv, 'gold')).toBe(9999 + 20);
     expect(slotAt(r.inv, pod(0, 0))).toEqual({ item: 'gold', count: 9999 });
     expect(slotAt(r.inv, pod(0, 1))).toEqual({ item: 'gold', count: 20 });
-    expect(ok(applyLayout(r.inv, layoutFor({ hull: 'mule' }))).inv.pods).toHaveLength(4);
+    expect(ok(applyLayout(r.inv, layoutFor(at('mule')))).inv.pods).toHaveLength(4);
   });
 
   it('refuses a layout that cannot hold everything, and splits stacks over a lowered cap', () => {
-    const packed = filled(emptyInventory(layoutFor({ hull: 'lark', nodes: ['pack_mule'] })), [['ferrite', 15000 * 26]]);
-    expect(code(applyLayout(packed, layoutFor({ hull: 'lark' })))).toBe('no_room');
-    const light = filled(emptyInventory(layoutFor({ hull: 'lark', nodes: ['pack_mule'] })), [['ferrite', 15000]]);
-    const r = ok(applyLayout(light, layoutFor({ hull: 'lark' })));
+    const packed = filled(emptyInventory(layoutFor(at('lark', ['pack_mule']))), [['ferrite', 15000 * 26]]);
+    expect(code(applyLayout(packed, layoutFor(at('lark'))))).toBe('no_room');
+    const light = filled(emptyInventory(layoutFor(at('lark', ['pack_mule']))), [['ferrite', 15000]]);
+    const r = ok(applyLayout(light, layoutFor(at('lark'))));
     expect(r.inv.stackMax).toBe(9999);
     expect(r.inv.suit.slice(0, 2)).toEqual([
       { item: 'ferrite', count: 9999 },
@@ -440,7 +446,7 @@ describe('inventory: the death drop and new hulls', () => {
 
   it('loses the pods with the ship: no hull, no cargo', () => {
     const dropped = dropCargo(inv).inv;
-    const r = ok(applyLayout(dropped, layoutFor({ hull: null })));
+    const r = ok(applyLayout(dropped, layoutFor(at(null))));
     expect(r.inv.pods).toEqual([]);
     expect(r.inv.suit).toEqual(inv.suit);
   });
@@ -487,7 +493,7 @@ describe('inventory: client ops', () => {
         s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
         return s % n;
       };
-      let inv: Inventory = emptyInventory(layoutFor({ hull: 'mule' }));
+      let inv: Inventory = emptyInventory(layoutFor(at('mule')));
       for (const [item, n] of [
         ['ferrite', 23000],
         ['carbon', 700],

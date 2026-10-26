@@ -1,6 +1,13 @@
-import { countOf, emptyInventory, layoutFor, slotAt, startingInventory, type Inventory } from '@astra/shared/inventory';
+import { getHull, type HullId } from '@astra/shared/data';
+import { countOf, emptyInventory, layoutFor, slotAt, startingInventory, type Inventory, type InventoryLoadout } from '@astra/shared/inventory';
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_LOADOUT, InventoryService, type InventoryReply } from './service.ts';
+
+/** A ship of this hull carrying every pod its bays take (Pack Mule adds a bay), and the skills. */
+const at = (hull: HullId | null, skills: string[] = []): InventoryLoadout => ({
+  ship: hull && { hull, modules: {}, cargoPods: getHull(hull).cargoPods + (skills.includes('pack_mule') ? 1 : 0), livery: 0 },
+  skills,
+});
 
 const ID = 'c0ffee00-0000-4000-8000-000000000001';
 
@@ -20,13 +27,13 @@ describe('InventoryService', () => {
     expect(first.inventory.units).toBe(2500);
     expect(countOf(first.inventory, 'warp_cell', 'suit')).toBe(1);
     svc.grant(ID, 'ferrite', 40);
-    expect(svc.open(ID, { loadout: { hull: 'mule', nodes: [] } }).inventory).toBe(svc.get(ID));
+    expect(svc.open(ID, { loadout: at('mule', []) }).inventory).toBe(svc.get(ID));
     expect(svc.size).toBe(1);
   });
 
   it('loads a saved inventory, and refuses an invalid one rather than replacing it', () => {
     const { svc } = service();
-    const saved = { ...emptyInventory(layoutFor({ hull: 'mule' }), 7), suit: [{ item: 'gold', count: 3 }] };
+    const saved = { ...emptyInventory(layoutFor(at('mule')), 7), suit: [{ item: 'gold', count: 3 }] };
     expect(svc.open(ID, { saved: JSON.parse(JSON.stringify(saved)) }).inventory).toEqual(saved);
     const other = 'c0ffee00-0000-4000-8000-000000000002';
     expect(() => svc.open(other, { saved: { ...saved, fragments: 2 } })).toThrow(/invalid/);
@@ -120,7 +127,7 @@ describe('InventoryService', () => {
     const suit = svc.get(ID)!.suit;
     expect(svc.dropCargo(ID)).toEqual({ stacks: [{ item: 'gold', count: 50 }] });
     expect(svc.dropCargo(ID)).toEqual({ stacks: [] });
-    expect(svc.setLoadout(ID, { hull: null, nodes: [] }).ok).toBe(true);
+    expect(svc.setLoadout(ID, at(null, [])).ok).toBe(true);
     const after: Inventory = svc.get(ID)!;
     expect(after.pods).toEqual([]);
     expect(after.suit).toEqual(suit);
@@ -128,15 +135,38 @@ describe('InventoryService', () => {
 
   it('reshapes to a new hull and Pack Mule, refusing a hull that cannot hold the cargo', () => {
     const { svc } = service();
-    svc.open(ID, { loadout: { hull: 'mule', nodes: [] } });
+    svc.open(ID, { loadout: at('mule', []) });
     expect(svc.get(ID)!.pods).toHaveLength(4);
     svc.grant(ID, 'ferrite', 9999 * (16 + 32));
     const before = svc.get(ID);
     expect(svc.setLoadout(ID, DEFAULT_LOADOUT)).toMatchObject({ ok: false, error: { code: 'no_room' } });
     expect(svc.get(ID)).toBe(before);
-    expect(svc.setLoadout(ID, { hull: 'mule', nodes: ['pack_mule'] }).ok).toBe(true);
+    expect(svc.setLoadout(ID, at('mule', ['pack_mule'])).ok).toBe(true);
     expect(svc.get(ID)).toMatchObject({ stackMax: 15000 });
     expect(svc.get(ID)!.pods).toHaveLength(5);
+  });
+
+  it('keeps a change and tells the other listeners when one listener throws', () => {
+    const errors: unknown[] = [];
+    const svc = new InventoryService((err) => errors.push(err));
+    const heard: string[] = [];
+    svc.subscribe(() => {
+      throw new Error('socket gone');
+    });
+    svc.subscribe((id) => heard.push(id));
+    svc.open(ID);
+    expect(svc.grant(ID, 'carbon', 5).ok).toBe(true);
+    expect(countOf(svc.get(ID)!, 'carbon')).toBe(5);
+    expect(heard).toEqual([ID]);
+    expect(errors).toHaveLength(1);
+  });
+
+  it('throws for a ship that cannot carry its pods, changing nothing', () => {
+    const { svc } = service();
+    svc.open(ID);
+    const before = svc.get(ID);
+    expect(() => svc.setLoadout(ID, { ship: { hull: 'lark', modules: {}, cargoPods: 3, livery: 0 } })).toThrow(/too_many_cargo_pods/);
+    expect(svc.get(ID)).toBe(before);
   });
 
   it('forgets a closed character', () => {

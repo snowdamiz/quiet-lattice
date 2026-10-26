@@ -1,6 +1,7 @@
 import { encode } from '@msgpack/msgpack';
 import { describe, expect, it } from 'vitest';
-import { addItem, emptyInventory, layoutFor, type Inventory } from '../src/inventory/index.ts';
+import { getHull, type HullId } from '../src/data/index.ts';
+import { addItem, emptyInventory, layoutFor, type Inventory, type InventoryLoadout } from '../src/inventory/index.ts';
 import {
   AuthResponse,
   CharacterCreate,
@@ -27,7 +28,12 @@ import {
 } from '../src/protocol/index.ts';
 
 const pose: Pose = { frame: '424242:2', pos: [113000.25, -42.5, 7.125], quat: [0, 0.7071068, 0, 0.7071068], vel: [1, 2, 3] };
-let inventory: Inventory = emptyInventory(layoutFor({ hull: 'mule' }), 2500);
+/** A ship of this hull carrying every pod its bays take (Pack Mule adds a bay), and the skills. */
+const at = (hull: HullId | null, skills: string[] = []): InventoryLoadout => ({
+  ship: hull && { hull, modules: {}, cargoPods: getHull(hull).cargoPods + (skills.includes('pack_mule') ? 1 : 0), livery: 0 },
+  skills,
+});
+let inventory: Inventory = emptyInventory(layoutFor(at('mule')), 2500);
 for (const [item, n] of [
   ['ferrite', 12000],
   ['warp_cell', 1],
@@ -107,7 +113,7 @@ describe('protocol: control messages', () => {
 
   it('round-trips inventory state with and without a refusal, and tells the two inventory messages apart', () => {
     for (const m of [
-      { t: 'inventory' as const, seq: 0, inventory: emptyInventory(layoutFor({ hull: null })) },
+      { t: 'inventory' as const, seq: 0, inventory: emptyInventory(layoutFor(at(null))) },
       { t: 'inventory' as const, seq: 12, inventory, error: 'stack_full' as const },
     ]) {
       const text = encodeMessage(m);

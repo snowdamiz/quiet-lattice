@@ -2,7 +2,7 @@
 // and the warp sequence.
 import { getHull, getItem, getResource } from '@astra/shared/data';
 import { itemInfo, slotAt, stackCap, usedSlots } from '@astra/shared/inventory';
-import { RESOURCES } from '../gameplay/Inventory.js';
+import { PIPS, RESOURCES } from '../gameplay/Inventory.js';
 import { hasSave, applyUpgrade } from '../gameplay/Save.js';
 import { MapView } from './map/MapView.js';
 
@@ -468,6 +468,8 @@ export class Menus {
       if (e.target === this.inv || e.target.closest('[data-close]')) return this.closeAll();
       const c = e.target.closest('[data-compact]');
       if (c && !c.disabled) this.invRequest({ op: 'compact', c: c.dataset.compact });
+      const shut = e.target.closest('.inv-pod.shut');
+      if (shut) this.openPod(shut);
     });
     this.inv.addEventListener('pointerover', (e) => {
       const slot = e.target.closest('.inv-slot');
@@ -493,6 +495,7 @@ export class Menus {
     this.invChanged.clear();
     this.podScroll = 0;
     this.invEnter = true;
+    this.podsOpen = new Set();
     // shown first, so the pod list can measure itself
     this.open('inventory', this.inv);
     this.renderInventory();
@@ -514,12 +517,16 @@ export class Menus {
     const hull = inv.hull ? getHull(inv.hull).name : null;
     const grid = (refs) => `<div class="inv-grid">${refs.map((r) => this.slotHTML(st, r)).join('')}</div>`;
     const cargoCap = st.pods.reduce((n, pod) => n + pod.length, 0);
+    // an empty pod is one header line until it is clicked or a stack is dragged over it; one open stays open while the
+    // panel is, so emptying it never pulls the slots out from under the pointer
+    const open = (this.podsOpen ||= new Set());
     const pods = st.pods.length
       ? st.pods
-          .map(
-            (pod, p) =>
-              `<div class="inv-pod"><div class="inv-pod-head mono"><span>Pod ${p + 1}</span><span>${pod.filter(Boolean).length} / ${pod.length}</span></div>${grid(pod.map((_, i) => ({ c: 'pod', p, i })))}</div>`,
-          )
+          .map((pod, p) => {
+            const used = pod.filter(Boolean).length;
+            if (used) open.add(p);
+            return open.has(p) ? this.podHTML(st, p) : this.shutPodHTML(p, pod.length);
+          })
           .join('')
       : `<div class="inv-none"><b>No ship</b><span>Cargo pods come with a hull. Any Waystation sells one.</span></div>`;
     const stackBtn = (c, on) => `<button class="inv-act" data-compact="${c}" ${on ? '' : 'disabled'} title="Merge partial stacks and close the gaps">Stack</button>`;
@@ -537,6 +544,7 @@ export class Menus {
         <section class="inv-side">
           <header class="inv-side-head"><h4 class="mono col-title">Ship cargo</h4><span class="mono">${cargoCap ? `${st.pods.length} pod${st.pods.length === 1 ? '' : 's'} · ${usedSlots(st, 'cargo')} / ${cargoCap} stacks` : 'No pods'}</span>${stackBtn('cargo', cargoCap > 0)}</header>
           <div class="inv-pods">${pods}</div>
+          <div class="inv-more mono"></div>
           <p class="inv-note drop"><i></i>Drops where the ship dies, for anyone to loot</p>
         </section>
       </div>
@@ -545,19 +553,42 @@ export class Menus {
         <div class="inv-keys"><span><kbd>Click</kbd>Move across</span><span><kbd>Drag</kbd>Place · merge · swap</span><span><kbd>Shift</kbd><kbd>Click</kbd>Split</span></div>
       </footer>
     </div>`;
-    // a hauler's pods scroll: keep the place across redraws, and fade the edge while more lies below
+    // a big hauler's pods scroll: keep the place across redraws, and say how many pods lie below the fold
     const podsEl = this.inv.querySelector('.inv-pods');
+    const moreEl = this.inv.querySelector('.inv-more');
     podsEl.scrollTop = this.podScroll || 0;
     const more = () => {
       this.podScroll = podsEl.scrollTop;
-      podsEl.classList.toggle('more', podsEl.scrollTop + podsEl.clientHeight < podsEl.scrollHeight - 2);
+      const fold = podsEl.getBoundingClientRect().bottom + 1;
+      const below = podsEl.scrollHeight > podsEl.clientHeight + 1 ? [...podsEl.children].filter((c) => c.getBoundingClientRect().bottom > fold).length : 0;
+      moreEl.textContent = below ? `↓ ${below} more pod${below === 1 ? '' : 's'} below` : '';
+      moreEl.classList.toggle('on', below > 0);
     };
     podsEl.addEventListener('scroll', more, { passive: true });
     more();
+    this.podsMore = more;
     this.invDetail = this.inv.querySelector('.inv-detail');
     this.invChanged.clear();
     if (this.invMsg) this.paintMessage();
     else this.showDetail(this.drag ? null : this.inv.querySelector('.inv-slot:hover'));
+  }
+
+  podHTML(st, p) {
+    const pod = st.pods[p];
+    const slots = pod.map((_, i) => this.slotHTML(st, { c: 'pod', p, i })).join('');
+    return `<div class="inv-pod" data-pod="${p}"><div class="inv-pod-head mono"><span>Pod ${p + 1}</span><span>${pod.filter(Boolean).length} / ${pod.length}</span></div><div class="inv-grid">${slots}</div></div>`;
+  }
+
+  shutPodHTML(p, stacks) {
+    return `<div class="inv-pod shut" data-pod="${p}" title="Open the pod"><div class="inv-pod-head mono"><span>Pod ${p + 1}</span><span>Empty · 0 / ${stacks}</span></div></div>`;
+  }
+
+  // an empty pod opens in place (a click on its line, or a stack dragged over it), without redrawing the rest
+  openPod(el) {
+    const p = Number(el.dataset.pod);
+    this.podsOpen.add(p);
+    el.outerHTML = this.podHTML(this.game.inventory.state, p);
+    this.podsMore?.();
   }
 
   slotHTML(st, ref) {
@@ -567,7 +598,8 @@ export class Menus {
     if (!s) return `<div class="inv-slot empty${bump}" ${data}></div>`;
     const info = itemInfo(s.item);
     const cap = stackCap(s.item, st.stackMax);
-    const mark = info?.kind === 'resource' ? `<i class="inv-sw" style="--c:${RESOURCES[s.item]?.color || 'var(--dim)'}"></i>` : `<i class="inv-tag">${KIND_TAG[info?.kind] || 'ITM'}</i>`;
+    const [shape, color] = PIPS[s.item] || ['diamond', 'var(--dim)'];
+    const mark = info?.kind === 'resource' ? `<i class="inv-sw ${shape}" style="--c:${color}"></i>` : `<i class="inv-tag">${KIND_TAG[info?.kind] || 'ITM'}</i>`;
     const count = cap === 1 ? '' : `<b class="inv-ct">${s.count.toLocaleString()}</b>`;
     // (a module, cosmetic or component is one thing per slot: no count, no fill)
     const fill = cap === 1 ? '' : `<span class="inv-fill" style="--f:${(s.count / cap).toFixed(4)}"></span>`;
@@ -648,6 +680,9 @@ export class Menus {
       this.showDetail(d.el);
     }
     d.ghost.style.transform = `translate(${e.clientX - d.ghost.offsetWidth / 2}px, ${e.clientY - d.ghost.offsetHeight / 2}px)`;
+    // dragged over an empty pod's header line: it opens to take the stack
+    const shut = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.inv-pod.shut');
+    if (shut && this.inv.contains(shut)) this.openPod(shut);
     const over = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.inv-slot');
     const target = over && over !== d.el && this.inv.contains(over) ? over : null;
     if (target !== d.over) {

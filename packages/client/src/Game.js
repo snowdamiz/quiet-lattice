@@ -85,6 +85,8 @@ export class Game {
     this.envScene = this.buildEnvScene();
 
     this.ship = new Ship(this);
+    // the cargo pods are the ship's own
+    this.inventory.setLoadout({ ship: this.ship.loadout, skills: this.ship.skills });
     this.engine.scene.add(this.ship.group);
     this.player = new Player(this);
     this.multitool = new Multitool(this);
