@@ -170,4 +170,26 @@ describe('phase visibility', () => {
     step();
     expect(a.viewer.sees.has(b.entity) && b.viewer.sees.has(a.entity)).toBe(true);
   });
+
+  it('says what the shared world cannot see: sealed members and phases’ own entities, not story members or the unplaced', () => {
+    const { zone, phases, player, npc, place, step } = setup();
+    const free = player([0, 0, 900]);
+    const sealed = player([0, 0, 0]);
+    const storied = player([10, 0, 0]);
+    const bay = phases.phaseFor(sealed.viewer, 'bay', place('hangar', 200));
+    const story = phases.phaseFor(storied.viewer, 'story', place('chapter', 200));
+    const actor = phases.spawn(story.id, npc([12, 0, 0]));
+    const dockhand = zone.spawn(npc([0, 0, 20]));
+    step();
+    expect(phases.hiddenFromShared(free.entity)).toBe(false);
+    expect(phases.hiddenFromShared(dockhand)).toBe(false);
+    expect(phases.hiddenFromShared(storied.entity)).toBe(false);
+    expect(phases.hiddenFromShared(sealed.entity)).toBe(true);
+    expect(phases.hiddenFromShared(actor)).toBe(true);
+    // out of its bay's volume, a member is in the shared world's sight again
+    zone.patch(sealed.entity, { pos: [0, 0, 1100] });
+    step();
+    expect(phases.phaseOf(sealed.entity)).toBe(bay.id);
+    expect(phases.hiddenFromShared(sealed.entity)).toBe(false);
+  });
 });

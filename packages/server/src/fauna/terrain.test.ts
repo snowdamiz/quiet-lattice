@@ -1,6 +1,7 @@
-import { hasFauna, planSurface, Random, TerrainSampler, type PlanetParams } from '@astra/shared/world';
+import { drawnGround, hasFauna, Random, type PlanetParams } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
+import type { PlannerWorkerMode } from '../../test/plannerWorkers.ts';
 import type { Vec3 } from './cells.ts';
 import { Ground, groundOf, GroundPlanner, LATTICE_M, planPads } from './terrain.ts';
 
@@ -9,16 +10,17 @@ const home = system.bodies[system.home]!;
 const params = home.params as PlanetParams;
 
 describe('the ground herds walk on', () => {
-  it('is the client’s ground: levelled under cities and sites as the client plans them', () => {
+  it('is the client’s ground: drawnGround, levelled under cities and sites as the client levels them', () => {
     const g = new Ground(params, planPads(params));
-    const client = new TerrainSampler(params);
-    client.setPads(planSurface(params, new TerrainSampler(params), { tier: 0 }).pads);
+    // (the client's Planet plans its own copy of the params)
+    const client = drawnGround({ ...params, pads: null }, 0).sampler;
     const rng = new Random(3);
     for (let i = 0; i < 200; i++) {
       const d: Vec3 = [rng.float(-1, 1), rng.float(-1, 1), rng.float(-1, 1)];
       const l = Math.hypot(...d);
       expect(g.sample(d)).toBeCloseTo(client.height(d[0] / l, d[1] / l, d[2] / l), 6);
     }
+    expect(params.pads ?? null).toBeNull();
   });
 
   it('reads heights off a per-cell cache within centimetres of the true ground, sampling each lattice point once', () => {
@@ -54,7 +56,8 @@ describe('the ground herds walk on', () => {
     // a world no other test plans
     const other = describeZoneSystem(7).bodies.find((b) => b.type !== 'gas' && hasFauna(b.params as PlanetParams))!;
     const p = other.params as PlanetParams;
-    const planner = new GroundPlanner();
+    const warnings: string[] = [];
+    const planner = new GroundPlanner({ log: { warn: (_, msg) => warnings.push(msg) } });
     try {
       expect(planner.ground(p)).toBeNull();
       expect(planner.planning).toBe(1);
@@ -66,6 +69,9 @@ describe('the ground herds walk on', () => {
       const g = planner.ground(p)!;
       expect(g).not.toBeNull();
       expect(planner.planning).toBe(0);
+      // planned by the worker itself, not by falling back to this thread
+      expect(planner.mainThread).toBe(false);
+      expect(warnings).toEqual([]);
       const here = new Ground(p, planPads(p));
       const rng = new Random(8);
       for (let i = 0; i < 50; i++) {
@@ -76,6 +82,118 @@ describe('the ground herds walk on', () => {
       expect(groundOf(p)).toBe(g);
     } finally {
       await planner.close();
+    }
+  });
+});
+
+describe('the ground planner, when things go wrong', () => {
+  /** Worlds no other test plans, one per test (a planned world is kept, and would be answered at once). */
+  const fresh = [12, 13, 14, 15, 16, 17].flatMap((s) =>
+    describeZoneSystem(s)
+      .bodies.filter((b) => b.type !== 'gas' && hasFauna(b.params as PlanetParams))
+      .map((b) => b.params as PlanetParams),
+  );
+  let next = 0;
+  /** A planner whose workers misbehave as `mode` says (test/plannerWorkers.ts), and what it warned. */
+  const planner = (mode: PlannerWorkerMode, opts: { timeoutMs?: number; retryMs?: number } = {}) => {
+    const warnings: { msg: string; obj: Record<string, unknown> }[] = [];
+    const starts = new Int32Array(new SharedArrayBuffer(4));
+    const p = new GroundPlanner({
+      log: { warn: (obj, msg) => warnings.push({ msg, obj: obj as Record<string, unknown> }) },
+      script: new URL('../../test/plannerWorkers.ts', import.meta.url),
+      workerData: { mode, starts },
+      ...opts,
+    });
+    return { p, warnings, starts, world: fresh[next++]! };
+  };
+  const until = async (cond: () => boolean, ms = 20_000) => {
+    const deadline = Date.now() + ms;
+    while (!cond() && Date.now() < deadline) await new Promise((r) => setTimeout(r, 20));
+    return cond();
+  };
+
+  it('restarts a worker that exits without an error, and sends it the plan again', async () => {
+    const { p, warnings, starts, world } = planner('exit-first');
+    try {
+      expect(p.ground(world)).toBeNull();
+      expect(await until(() => p.ground(world) !== null)).toBe(true);
+      expect(Atomics.load(starts, 0)).toBe(2);
+      expect(p.mainThread).toBe(false);
+      expect(warnings.map((w) => w.msg)).toEqual(['ground planner worker died; restarting it']);
+    } finally {
+      await p.close();
+    }
+  });
+
+  it('plans on the main thread once its worker has died twice, saying so once', async () => {
+    const { p, warnings, starts, world } = planner('exit');
+    try {
+      expect(p.ground(world)).toBeNull();
+      expect(await until(() => p.mainThread)).toBe(true);
+      expect(Atomics.load(starts, 0)).toBe(2);
+      expect(p.planning).toBe(0);
+      // the world asks again (each tick it waits) and is planned there and then
+      const g = p.ground(world);
+      expect(g).not.toBeNull();
+      expect(p.ground(fresh[next++]!)).not.toBeNull();
+      expect(warnings.map((w) => w.msg)).toEqual([
+        'ground planner worker died; restarting it',
+        'ground planner worker died again; planning on the main thread from now on',
+      ]);
+    } finally {
+      await p.close();
+    }
+  });
+
+  it('restarts a worker stuck on a plan past the timeout, and sends the plan again', async () => {
+    const { p, warnings, starts, world } = planner('hang-first', { timeoutMs: 1500 });
+    try {
+      expect(p.ground(world)).toBeNull();
+      expect(await until(() => p.ground(world) !== null)).toBe(true);
+      expect(Atomics.load(starts, 0)).toBe(2);
+      expect(p.mainThread).toBe(false);
+      expect(warnings.map((w) => w.msg)).toEqual(['ground plan timed out; restarting the planner worker']);
+    } finally {
+      await p.close();
+    }
+  });
+
+  it('gives up a plan that hangs twice, waits out a backoff, and never moves to the main thread for it', async () => {
+    const { p, warnings, world } = planner('hang', { timeoutMs: 1500, retryMs: 60_000 });
+    try {
+      expect(p.ground(world)).toBeNull();
+      expect(await until(() => p.planning === 0)).toBe(true);
+      expect(p.mainThread).toBe(false);
+      expect(warnings.map((w) => w.msg)).toEqual([
+        'ground plan timed out; restarting the planner worker',
+        'ground plan timed out; restarting the planner worker',
+        'ground planning failed; the world keeps no herds until it is tried again',
+      ]);
+      // asked again within the backoff: nothing is sent
+      for (let i = 0; i < 10; i++) expect(p.ground(world)).toBeNull();
+      expect(p.planning).toBe(0);
+    } finally {
+      await p.close();
+    }
+  });
+
+  it('backs off a world whose plan throws, doubling the wait, and warns once each time', async () => {
+    const { p, warnings, world } = planner('throw', { retryMs: 300 });
+    try {
+      // asked every 20 ms for 2.5 s, as a waiting world asks every tick
+      const end = Date.now() + 2500;
+      while (Date.now() < end) {
+        expect(p.ground(world)).toBeNull();
+        await new Promise((r) => setTimeout(r, 20));
+      }
+      // tried at about 0, 0.3, 0.9 and 2.1 s: four plans, four warnings, not one a tick
+      const waits = warnings.map((w) => w.obj.retryInS);
+      expect(waits.length).toBeGreaterThanOrEqual(3);
+      expect(waits.length).toBeLessThanOrEqual(4);
+      expect(waits.slice(0, 3)).toEqual([0.3, 0.6, 1.2]);
+      expect(warnings.every((w) => w.msg === 'ground planning failed; the world keeps no herds until it is tried again')).toBe(true);
+    } finally {
+      await p.close();
     }
   });
 });

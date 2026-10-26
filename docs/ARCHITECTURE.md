@@ -206,11 +206,14 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   world keeps at most 256 cells and a zone at most 150 creatures, so 50 players on foot stay within the 200-entity
   budget. The oldest asleep cells unload first to make room; past that, waiting cells load nearest first as room is
   made. New cells load under a 1.5 ms budget per tick.
-- **Ground.** The shared terrain sampler, levelled under cities and sites as the client levels it, its heights cached per
-  cell on a 1 m lattice. Planning a world's surface takes 5–100 ms, so it runs in a worker thread
-  (`fauna/planner.worker.ts`) from the moment a player enters the world's frame; its cells load once it is ready. The
-  16 worlds most recently asked for keep their ground.
-- **Phases.** A player the shared world cannot see (sealed in a bay, event or raid phase, §6.1) still keeps the herds
+- **Ground.** The drawn ground (§12, `drawnGround`'s pads), its heights cached per cell on a 1 m lattice. Planning a
+  world's surface takes 5–100 ms, so it runs in a worker thread (`fauna/planner.worker.ts`) from the moment a player
+  enters the world's frame; its cells load once it is ready. The 16 worlds most recently asked for keep their ground.
+  The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
+  with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
+  restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
+  doubling each time, with one warning each time.
+- **Phases.** A player the shared world cannot see (`phases.hiddenFromShared`: sealed in a bay, event or raid phase, §6.1) still keeps the herds
   round it awake, since it sees them, but is no creature's prey, intruder or threat.
 - **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
   (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,

@@ -4,9 +4,9 @@ import { parentPort } from 'node:worker_threads';
 import type { PlanetParams } from '@astra/shared/world';
 import { planPads } from './terrain.ts';
 
-parentPort!.on('message', ({ id, params }: { id: string; params: PlanetParams }) => {
+parentPort!.on('message', ({ id, params, tier }: { id: string; params: PlanetParams; tier: number }) => {
   try {
-    parentPort!.postMessage({ id, pads: planPads(params) });
+    parentPort!.postMessage({ id, pads: planPads(params, tier) });
   } catch (err) {
     parentPort!.postMessage({ id, error: String(err) });
   }

@@ -72,17 +72,15 @@ export const MAX_CELLS = 256;
  * budget, and the bench's surface trials (25 and 50 players spread out) within 10 ms p95. */
 export const MAX_CREATURES = 150;
 /** Height caches kept for cells not loaded (a herd strays a little past its cell) before they are cleared. */
-const STRAY_CACHES = 32;
+export const STRAY_CACHES = 32;
 /** Longest step simulated at once, s (a zone waking after a sleep does not leap). */
 const MAX_DT = 0.25;
-/** No entity has id 0 (zones number them from 1), so as a viewer it stands for anyone in the shared world. */
-const SHARED_WORLD = 0;
 
 /** The zone, as the sim uses it. */
 export interface FaunaZone {
   readonly systemIndex: number;
   readonly system: SystemDescription;
-  readonly phases: { canSee(viewer: number, id: number): boolean };
+  readonly phases: { hiddenFromShared(id: number): boolean };
   spawn(init: EntityInit): number;
   patch(id: number, set: Partial<EntityFields>, clear?: readonly EntityField[]): void;
   despawn(id: number): boolean;
@@ -214,7 +212,7 @@ class WorldFauna {
   ) {
     this.frame = frameId(sim.zone.system.seed, body.index);
     this.species = faunaSpecies(params, sim.tier);
-    this.ground = sim.grounds.ground(params);
+    this.ground = sim.grounds.ground(params, sim.tier);
     const volcano = Math.max(0, ...(params.volcanoes ?? []).map((v) => v[4]));
     this.peak = params.mountainHeight + params.landHeight * 2.5 + params.hillHeight + volcano + 50;
   }
@@ -225,12 +223,12 @@ class WorldFauna {
 
   /** The ground now, planned on this thread if it is not ready (for spawnHerd). */
   groundNow(): Ground {
-    return (this.ground ??= groundOf(this.params));
+    return (this.ground ??= groundOf(this.params, this.sim.tier));
   }
 
   /** Steps the world with the players in its frame; those within SURFACE_ALT_M of its ground keep herds about them. */
   step(dt: number, now: number, inFrame: readonly Actor[]): void {
-    this.ground ??= this.sim.grounds.ground(this.params);
+    this.ground ??= this.sim.grounds.ground(this.params, this.sim.tier);
     if (!this.ground) return;
     const players = inFrame.filter((p) => this.nearGround(p.pos));
     this.scanIn -= dt;
@@ -554,7 +552,7 @@ export class FaunaSim {
       if (!(alt >= -SURFACE_DEPTH_M)) continue;
       let list = byBody.get(world.body.index);
       if (!list) byBody.set(world.body.index, (list = []));
-      list.push({ id, pos: [f.pos[0], f.pos[1], f.pos[2]], onFoot: f.mode === 'foot', hidden: !this.zone.phases.canSee(SHARED_WORLD, id) });
+      list.push({ id, pos: [f.pos[0], f.pos[1], f.pos[2]], onFoot: f.mode === 'foot', hidden: this.zone.phases.hiddenFromShared(id) });
     }
     for (const index of byBody.keys()) if (!this.worlds.has(index)) this.world(index);
     for (const [index, w] of this.worlds) {

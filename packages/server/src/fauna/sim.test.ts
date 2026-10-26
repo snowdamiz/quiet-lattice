@@ -9,7 +9,7 @@ import { Zone, type ZoneViewer } from '../zones/zone.ts';
 import { RULES } from './ai.ts';
 import type { Vec3 } from './cells.ts';
 import { TIER_LEVELS } from './herds.ts';
-import { ACTIVE_M, interestFor, MAX_CELLS, MAX_CREATURES, SLEEP_M, SURFACE_ALT_M, UNLOAD_S, WAKE_BURST, WAKE_PER_S } from './sim.ts';
+import { ACTIVE_M, interestFor, MAX_CELLS, MAX_CREATURES, SCAN_S, SLEEP_M, STRAY_CACHES, SURFACE_ALT_M, UNLOAD_S, WAKE_BURST, WAKE_PER_S } from './sim.ts';
 import { groundOf } from './terrain.ts';
 
 const living = (w: FaunaWorld) => w.zone.fauna!.creatures();
@@ -272,6 +272,19 @@ describe('bounds', () => {
     w.run(UNLOAD_S + 2);
     expect(w.zone.entityCount).toBe(1);
     expect(w.ground.cachedCells).toBe(0);
+  });
+
+  it('clear height caches left outside loaded cells once there are more than a few', () => {
+    const w = lush();
+    w.run(1);
+    const loaded = w.zone.fauna!.cells(w.body.index).length;
+    // heights read far from every loaded cell, as straying creatures and players hovering over unloaded ground leave
+    const rng = new Random(2);
+    for (let i = 0; i < STRAY_CACHES + 20; i++) w.ground.height([rng.float(-1, 1), rng.float(-1, 1), rng.float(-1, 1)]);
+    expect(w.ground.cachedCells).toBeGreaterThan(loaded + STRAY_CACHES);
+    // the next scan keeps only the loaded cells' caches
+    w.run(SCAN_S * 2);
+    expect(w.ground.cachedCells).toBeLessThanOrEqual(w.zone.fauna!.cells(w.body.index).length);
   });
 
   it('cap a world’s cells, unloading the oldest asleep first', () => {
