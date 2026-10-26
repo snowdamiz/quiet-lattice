@@ -42,3 +42,12 @@ Format: task id, question → choice → why.
 - **P1.E02.T08 (review)** Bad numbers → the snapshot encoder clamps hp/shield/heat to [0, 1] and drops non-finite fields;
   the decoder drops a bad entity, not the frame; control-message encoding throws on invalid input. → One NaN must never
   blank every client's view, and NaN must never become `null` silently.
+- **P1.E02.T08 (review)** Chat text → refuses blank text and C0/C1 controls, soft hyphen, zero-width space, directional
+  marks, separators, bidi embeddings/isolates, Hangul and Braille blanks, BOM; allows the zero-width joiner and
+  non-joiner (emoji sequences, Persian). Ids refuse every one of those. Lengths are counted in UTF-16 units. → Spoofing
+  and invisible names are the threat; emoji are not.
+- **P1.E02.T08 (review)** Frame ids are canonical (no leading zeros, seed ≤ 2^32−1); `homeSystem` ≤ 1023;
+  `CharacterList` carries `max` (≤ 16) and may not list more characters than it. → One spelling per frame; small bounds.
+- **P1.E02.T08 (review)** Snapshot encoding cost → `sanitizeEntity` is exported; zones sanitise each entity once per tick,
+  keep that as the sent state, and encode per client with `sanitized: true`. → Validating per client per entity tripled the
+  cost (8.4 ms for 25 players × 200 entities); once per tick it is about 0.2 ms.

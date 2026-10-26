@@ -26,7 +26,7 @@ export const Direction = z
 /** A body's frame: "<systemSeed>:<bodyIndex>", "<systemSeed>:station", or null for the system's inertial frame. */
 export const FrameId = z
   .string()
-  .regex(/^\d{1,10}:(\d{1,3}|station)$/)
+  .regex(/^(0|[1-9]\d{0,9}):(0|[1-9]\d{0,2}|station)$/)
   .refine((f) => Number(f.split(':')[0]) <= 0xffffffff, 'system seeds are 32-bit')
   .nullable();
 export const Pose = z.object({ frame: FrameId, pos: Vec3, quat: Quat, vel: Velocity });
@@ -39,8 +39,13 @@ export const EntityId = z.number().int().nonnegative().max(0xffffffff);
 export const SystemSeed = z.number().int().nonnegative().max(0xffffffff);
 /** C0 and C1 controls, DEL, zero-width and directional marks, line and paragraph separators, the bidirectional
  * embeddings, overrides and isolates, and the byte-order mark. */
-// eslint-disable-next-line no-control-regex -- matching control characters is the point
-const CONTROL = new RegExp('[\\u0000-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff]');
+/* eslint-disable no-control-regex -- matching control characters is the point */
+const CONTROL = new RegExp('[\\u0000-\\u001f\\u007f-\\u009f\\u00ad\\u061c\\u180e\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\u2800\\u3164\\ufeff]');
+/** As CONTROL, but letting the zero-width joiner and non-joiner through: emoji sequences and Persian text need them. */
+const TEXT_CONTROL = new RegExp(
+  '[\\u0000-\\u001f\\u007f-\\u009f\\u00ad\\u061c\\u180e\\u200b\\u200e\\u200f\\u2028-\\u202e\\u2060-\\u2069\\u2800\\u3164\\ufeff]',
+);
+/* eslint-enable no-control-regex */
 /** A string capped in UTF-16 code units (zod counts code points, so emoji would otherwise double the cap). */
 const capped = (max: number) => z.string().refine((s) => s.length <= max, `at most ${max} characters`);
 const Id = z
@@ -51,8 +56,8 @@ const Id = z
 /** Free text a player typed: not blank, no control, invisible or direction-changing characters, capped in UTF-16 units. */
 const PlainText = (max: number) =>
   capped(max)
-    .refine((s) => s.trim().length > 0, 'text may not be blank')
-    .refine((s) => !CONTROL.test(s), 'control characters are not allowed');
+    .refine((s) => s.replace(/[\u200c\u200d]/g, '').trim().length > 0, 'text may not be blank')
+    .refine((s) => !TEXT_CONTROL.test(s), 'control characters are not allowed');
 
 // ---------- HTTP: accounts and characters ----------
 
@@ -89,7 +94,9 @@ export const CharacterSummary = z.object({
   homeSystem: z.number().int().nonnegative().max(1023),
 });
 /** GET /characters: the account's characters and how many it may have. */
-export const CharacterList = z.object({ characters: z.array(CharacterSummary).max(16), max: z.number().int().positive() });
+export const CharacterList = z
+  .object({ characters: z.array(CharacterSummary).max(16), max: z.number().int().positive().max(16) })
+  .refine((l) => l.characters.length <= l.max, 'more characters than the account may have');
 export type Credentials = z.infer<typeof Credentials>;
 export type AuthResponse = z.infer<typeof AuthResponse>;
 export type PeopleId = z.infer<typeof PeopleId>;

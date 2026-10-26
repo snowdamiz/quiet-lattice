@@ -82,12 +82,14 @@ export interface Snapshot {
 const encoder = new Encoder({ ignoreUndefined: true });
 
 /**
- * Encodes a snapshot. Entities are sanitised first: unit fields are clamped to [0, 1] and any non-finite number drops its
- * field (with the field listed in `dropped` for the caller to log), so one bad value never poisons a whole frame.
+ * Encodes a snapshot after checking its envelope. Entities go through `sanitizeEntity` unless the caller says they
+ * already did (`sanitized`), which is how a zone avoids re-validating the same entity for every client.
  */
-export function encodeSnapshot(s: Snapshot, dropped: string[] = []): Uint8Array {
+export function encodeSnapshot(s: Snapshot, dropped: string[] = [], { sanitized = false } = {}): Uint8Array {
   if (!s.full && s.base === undefined) throw new Error('a delta snapshot needs its baseline tick');
-  const clean = { ...s, entities: s.entities.map((e) => sanitizeEntity(e, dropped)) };
+  const env = Envelope.safeParse({ ...s, entities: [] });
+  if (!env.success) throw new Error(`invalid snapshot envelope: ${env.error.message}`);
+  const clean = { ...s, entities: sanitized ? s.entities : s.entities.map((e) => sanitizeEntity(e, dropped)) };
   const body = encoder.encode(clean);
   const out = new Uint8Array(body.length + 1);
   out[0] = BinaryKind.snapshot;
@@ -119,7 +121,13 @@ export function decodeSnapshot(buf: Uint8Array, rejected: number[] = []): Snapsh
   return { ...env.data, entities };
 }
 
-function sanitizeEntity(e: EntityState, dropped: string[]): EntityState {
+/**
+ * The entity as it will go on the wire: only the listed fields, each valid (unit fields clamped first), invalid ones
+ * dropped and reported in `dropped`. Throws on an invalid id. Zones call this once per entity per tick and keep the
+ * result as the state they diff against and remember as sent, so the per-client snapshots skip re-validation.
+ */
+export function sanitizeEntity(e: EntityState, dropped: string[] = []): EntityState {
+  if (!EntityId.safeParse(e.id).success) throw new Error(`invalid entity id ${String(e.id)}`);
   // Only the listed fields go out (a wider server object never leaks), and each one is checked against its own schema:
   // a field the client would reject is dropped here and reported, rather than making the client drop the entity and
   // then acknowledge a tick it never fully applied.
@@ -131,7 +139,7 @@ function sanitizeEntity(e: EntityState, dropped: string[]): EntityState {
     if (fields[k].safeParse(v).success) out[k] = v;
     else dropped.push(`${e.id}.${k}`);
   }
-  if (e.clear?.length) out.clear = [...new Set(e.clear)].filter((k) => out[k] === undefined);
+  if (e.clear?.length) out.clear = [...new Set(e.clear)].filter((k) => k in fields && out[k] === undefined);
   return out as EntityState;
 }
 

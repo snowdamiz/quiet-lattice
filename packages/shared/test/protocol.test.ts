@@ -115,6 +115,22 @@ describe('protocol: control messages', () => {
     expect(() => encodeMessage({ t: 'event', event: { kind: 'loot', item: 'ferrite', count: 0, from: null } })).toThrow(InvalidMessageError);
   });
 
+  it('accepts the edges of what it allows', () => {
+    const ok = [
+      `{"t":"chat","channel":"shard","text":"${'\\ud83d\\ude00'.repeat(140)}"}`,
+      '{"t":"chat","channel":"shard","text":"\\ud83d\\udc69\\u200d\\ud83d\\udcbb coding"}',
+      '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"4294967295:0","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":255}',
+    ];
+    for (const m of ok) expect(decodeClientMessage(m), m.slice(0, 60)).not.toBeNull();
+    for (const f of ['01:2', '1:007', '4294967296:1'])
+      expect(
+        decodeClientMessage(`{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"${f}","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}`),
+        f,
+      ).toBeNull();
+    expect(CharacterList.safeParse({ characters: [character] }).success).toBe(false);
+    expect(CharacterList.safeParse({ characters: [character, character], max: 1 }).success).toBe(false);
+  });
+
   it('sends only the fields a message defines, never extra keys of a wider object', () => {
     const leaky = {
       t: 'welcome',
@@ -219,6 +235,11 @@ describe('protocol: snapshots', () => {
     expect(rejected).toEqual([]);
     expect(back.entities).toEqual([{ id: 9, pos: [50, 0, 0] }]);
     expect(String.fromCharCode(...bytes)).not.toContain('loot-table');
+  });
+
+  it('refuses to encode an entity with an invalid id or a bad envelope', () => {
+    expect(() => encodeSnapshot({ tick: 1, time: 0, ack: 0, full: true, entities: [{ id: 1.5 }], removed: [] })).toThrow();
+    expect(() => encodeSnapshot({ tick: 1, time: NaN, ack: 0, full: true, entities: [], removed: [] })).toThrow();
   });
 
   it('refuses a delta that sets and clears the same field, and deltas for another entity', () => {
