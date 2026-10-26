@@ -51,4 +51,31 @@ export const SCREENS: Record<string, ScreenDef> = {
       await settle(page, 60);
     },
   },
+  // the demo's box station, from outside and from a hangar pad (grader calibration, P1.E14.T09; later the kit-built
+  // Waystation of P1.E11.T02)
+  'station-exterior': {
+    hash: '#station',
+    async open(page) {
+      await page.waitForFunction(async () => {
+        await (window as unknown as { step(n: number): Promise<void> }).step(4);
+        return (window as unknown as { game: { mode: string } }).game.mode === 'ship';
+      });
+      // the scenario parks the ship 200 m off the hangar mouth; hold it there
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: { ship: { speed: number; throttle?: number } } }).game;
+        g.ship.speed = 0;
+      });
+      await settle(page, 90);
+    },
+  },
+  'station-hangar': {
+    hash: '#dock',
+    async open(page) {
+      await page.waitForFunction(async () => {
+        await (window as unknown as { step(n: number): Promise<void> }).step(4);
+        return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
+      });
+      await settle(page, 90);
+    },
+  },
 };
