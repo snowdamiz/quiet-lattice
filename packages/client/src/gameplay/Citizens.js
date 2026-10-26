@@ -8,7 +8,6 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Random, makeName } from '../math/rng.js';
 import { streetDistance, cityPoint } from '../terrain/cities.js';
 
-const Y = new THREE.Vector3(0, 1, 0);
 const _v = new THREE.Vector3();
 const _q = new THREE.Quaternion();
 const _m = new THREE.Matrix4();

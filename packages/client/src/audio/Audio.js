@@ -290,7 +290,6 @@ export class Audio {
   }
 
   updateMusic(t, state) {
-    const ctx = this.ctx;
     if (t >= this.nextChord) {
       const deg = [0, 3, 4, 2, 1][Math.floor(Math.random() * 5)];
       const notes = [0, 2, 4].map((k) => {

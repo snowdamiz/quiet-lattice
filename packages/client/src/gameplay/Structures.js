@@ -8,7 +8,6 @@ import { applyPanelDetail } from '../render/panelMaterial.js';
 import { collectResources, disposeTree } from '../core/dispose.js';
 
 const _v = new THREE.Vector3();
-const _q = new THREE.Quaternion();
 const Y = new THREE.Vector3(0, 1, 0);
 
 const LABELS = { outpost: 'Abandoned Outpost', monolith: 'Ancient Monolith', crash: 'Crashed Starship', beacon: 'Signal Beacon' };

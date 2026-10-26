@@ -497,7 +497,6 @@ export class Flora {
     this.anchor.copy(this.camLocal);
     this.meshRoot.position.copy(this.anchor);
     const lists = [this.cellsFar, this.cellsNear];
-    const pending = [];
     for (const sp of this.species) for (const l of sp.lods) l.list = [];
     for (const map of lists) {
       for (const c of map.values()) {

@@ -28,7 +28,6 @@ float ringDensity(float u, float seed, float fw) {
 `;
 
 let nextPlanetId = 1;
-const _m = new THREE.Matrix4();
 const _v = new THREE.Vector3();
 
 export class Planet extends Body {

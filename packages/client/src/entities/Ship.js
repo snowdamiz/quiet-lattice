@@ -585,7 +585,6 @@ export class Ship {
   // ---------- per-frame ----------
   update(dt, input, piloting) {
     const s = this.state;
-    const f = s.frame;
     this.computeEnvironment();
     this.updateHazard(dt);
 

@@ -3,7 +3,6 @@
 import { RESOURCES } from '../gameplay/Inventory.js';
 import { hasSave, applyUpgrade } from '../gameplay/Save.js';
 import { MapView } from './map/MapView.js';
-import { fmtDist } from './HUD.js';
 
 function el(tag, cls, parent, html) {
   const e = document.createElement(tag);
@@ -301,7 +300,7 @@ export class Menus {
     const box = root.querySelector('.credits');
     if (!box || box.dataset.done) return;
     box.dataset.done = '1';
-    let text = '';
+    let text;
     try {
       text = await (await fetch('/audio/CREDITS.md')).text();
     } catch {

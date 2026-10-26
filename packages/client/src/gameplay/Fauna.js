@@ -62,7 +62,6 @@ function ellipsoid(rx, ry, rz, pos, seg = 14) {
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
 
 function buildQuadruped(rng, cols, biped) {
-  const s = 1;
   const parts = [];
   const legLen = rng.float(0.45, 1.1) * (biped ? 1.5 : 1);
   const bodyL = rng.float(0.9, 1.6);

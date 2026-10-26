@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "node -e \"import('./src/index.js').then(() => console.log('shared ok'))\""
+    "build": "tsc -p .",
+    "typecheck": "tsc -p ."
   }
 }

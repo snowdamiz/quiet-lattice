@@ -25,9 +25,7 @@ export function install() {
   const pp = () => game.player.state.pos;
   const onGround = (dir) => dir.clone().normalize().multiplyScalar(game.system.homePlanet.surfaceRadius(dir.clone().normalize()));
   const tallNear = (p, r) => {
-    let n = 0;
-    for (const inst of game.flora.instancesNear(p, r, (sp) => !sp.grass && (sp.height > 1.2 || sp.rock || sp.deposit || sp.collide))) n++;
-    return n;
+    return [...game.flora.instancesNear(p, r, (sp) => !sp.grass && (sp.height > 1.2 || sp.rock || sp.deposit || sp.collide))].length;
   };
   // what stands in the way of a straight walk from a to b, nearest first
   const pathBlockers = (a, b, pad = 0.9) => {

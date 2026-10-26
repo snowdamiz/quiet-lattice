@@ -86,19 +86,15 @@ function buildModel(arch, cls, rng, cul) {
       r *= rng.float(0.62, 0.8);
     }
     parts.push(cone(r * 0.95, H * 0.18 + 0.2, y, seg, A));
-    H = y + H * 0.18 + 0.2;
   } else if (arch === 'dome') {
     if (cls === 0) {
       parts.push(cyl(1, 1, 0.4, 0, 18, W, 1), ball(1, 0.4, 0.75, W2, 0.25, 18));
-      H = 1.2;
     } else if (cls === 1) {
       const h = rng.float(1.6, 2.6);
       parts.push(cyl(0.8, 0.88, h, 0, 16, W, 1), ball(0.82, h, 0.8, W2, 0.3, 16), cone(0.12, 0.7, h + 0.6, 8, A));
-      H = h + 1.3;
     } else {
       const stem = rng.float(4, 6.5);
       parts.push(cyl(0.45, 0.65, stem, 0, 12, W, 1), ball(1, stem + 0.6, 1.25, W2, 1, 18), cyl(0.18, 0.25, 1.8, stem + 1.6, 8, W, 0.5), ball(0.42, stem + 3.6, 1.2, A, 0.4, 12), cone(0.06, 1.2, stem + 4.0, 6, A));
-      H = stem + 5.2;
     }
   } else if (arch === 'ziggurat') {
     const steps = cls === 2 ? rng.int(5, 8) : cls === 1 ? rng.int(3, 4) : 2;
@@ -113,7 +109,6 @@ function buildModel(arch, cls, rng, cul) {
     }
     if (cls > 0) {
       parts.push(cyl(0.03, 0.05, H * 0.25, H, 6, A, 0));
-      H *= 1.25;
     }
   } else if (arch === 'organic') {
     H = cls === 2 ? rng.float(6, 9) : cls === 1 ? rng.float(2.4, 3.6) : rng.float(1, 1.6);

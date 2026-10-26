@@ -306,7 +306,6 @@ export class Pirates {
   }
 
   markers() {
-    const g = this.game;
     return this.list.map((p) => ({
       world: this.frame ? this.frame.localToWorld(p.pos, new THREE.Vector3()) : p.pos.clone(),
       label: `Pirate ${p.shield > 0 ? '◆' : '◇'} ${Math.max(0, Math.round(p.hp))}%`,

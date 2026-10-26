@@ -711,7 +711,7 @@ export class Game {
     const found = this.flora.scan(this.player.state, 180);
     this.scanMarkers = found.map((f) => ({ ...f, expires: this.time + 25 }));
     this.hud.toast(found.length ? `${found.length} deposits nearby` : 'Nothing nearby');
-    const { count, nearest } = this.structures.scanReveal(this.player.state.pos, 3000);
+    const { nearest } = this.structures.scanReveal(this.player.state.pos, 3000);
     if (nearest) {
       const km = nearest.d < 1000 ? `${nearest.d.toFixed(0)} m` : `${(nearest.d / 1000).toFixed(1)} km`;
       setTimeout(() => this.hud.toast(`${nearest.s.label} · ${km}`, 'good'), 900);
@@ -1094,7 +1094,7 @@ export class Game {
     const col = new THREE.Color().copy(sun.lightColor);
     let intensity = 3.6 * Math.max(0.1, keyK);
     // in open space there is little fill: sunlit sides and dark shadow sides, not evenly lit rocks
-    let hemiI = 0.1;
+    let hemiI;
     const skyCol = new THREE.Color(0.3, 0.35, 0.45);
     const groundCol = new THREE.Color(0.12, 0.1, 0.09);
     let day = 1;

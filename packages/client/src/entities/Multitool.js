@@ -5,7 +5,6 @@ import { applyPanelDetail } from '../render/panelMaterial.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
-const _q = new THREE.Quaternion();
 
 export class Multitool {
   constructor(game) {
