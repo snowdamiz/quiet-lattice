@@ -4,7 +4,7 @@
 import { PROTOCOL_VERSION, type PeopleId } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RunningServer } from '../src/server.ts';
-import { systemSeed } from '../src/world/home.ts';
+import { homeSystemOf, systemSeed } from '../src/world/home.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
 import { SnapshotClient } from './snapshotClient.ts';
 
@@ -45,8 +45,9 @@ describe('zones over the wire', () => {
   it('shows two players in one home zone to each other, moving after input, and gone after disconnect', async () => {
     const a = await player('thalune');
     const b = await player('thalune');
-    const station = `${systemSeed(0)}:station`;
-    expect(a.welcome.zone).toEqual({ id: 'sys:0', systemSeed: systemSeed(0) });
+    const home = homeSystemOf('thalune');
+    const station = `${systemSeed(home)}:station`;
+    expect(a.welcome.zone).toEqual({ id: `sys:${home}`, systemSeed: systemSeed(home) });
     expect(b.welcome.zone).toEqual(a.welcome.zone);
     expect(a.welcome.pose).toEqual({ frame: station, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] });
     expect(a.entityId).not.toBe(b.entityId);
@@ -100,7 +101,7 @@ describe('zones over the wire', () => {
     await a.sock.closed;
     await waitFor(() => !b.client.latest.has(a.entityId), 5000, 'b to see a go');
     expect(b.client.snapshots.some((s) => s.removed.includes(a.entityId))).toBe(true);
-    expect(server.zones.zone('sys:0')!.entity(a.entityId)).toBeUndefined();
+    expect(server.zones.zone(`sys:${home}`)!.entity(a.entityId)).toBeUndefined();
 
     expect(a.errors).toEqual([]);
     expect(b.errors).toEqual([]);
@@ -110,16 +111,19 @@ describe('zones over the wire', () => {
   it('puts a player of another people in its own home system’s zone', async () => {
     const a = await player('thalune');
     const c = await player('ixari');
-    expect(c.welcome.zone).toEqual({ id: 'sys:1', systemSeed: systemSeed(1) });
+    const home = homeSystemOf('ixari');
+    expect(home).not.toBe(homeSystemOf('thalune'));
+    expect(c.welcome.zone).toEqual({ id: `sys:${home}`, systemSeed: systemSeed(home) });
+    expect(a.welcome.zone.id).not.toBe(c.welcome.zone.id);
     await waitFor(() => c.client.latest.has(c.entityId) && a.client.latest.has(a.entityId), 5000, 'snapshots');
-    const sys1 = server.zones.zone('sys:1')!;
-    expect(sys1.entity(c.entityId)?.fields.name).toBe(c.welcome.character.name);
+    const ixari = server.zones.zone(`sys:${home}`)!;
+    expect(ixari.entity(c.entityId)?.fields.name).toBe(c.welcome.character.name);
     expect([...a.client.latest.values()].some((e) => e.name === c.welcome.character.name)).toBe(false);
-    expect(server.zones.metrics().find((m) => m.id === 'sys:1')).toMatchObject({ sessions: 1, entities: 1, asleep: false });
+    expect(server.zones.metrics().find((m) => m.id === `sys:${home}`)).toMatchObject({ sessions: 1, entities: 1, asleep: false });
     a.sock.close();
     c.sock.close();
     await Promise.all([a.sock.closed, c.sock.closed]);
-    await waitFor(() => sys1.sessionCount === 0, 5000, 'sys:1 to empty');
+    await waitFor(() => ixari.sessionCount === 0, 5000, 'the Ixari zone to empty');
   });
 
   it('takes a kicked connection’s entity out at once when its character enters again', async () => {
@@ -129,7 +133,7 @@ describe('zones over the wire', () => {
     const again = await player('thalune', { token: first.token, characterId: first.characterId });
     expect(await first.sock.next('refused')).toMatchObject({ code: 'kicked' });
     await waitFor(() => watcher.client.latest.has(again.entityId) && !watcher.client.latest.has(first.entityId), 5000, 'the swap');
-    const zone = server.zones.zone('sys:0')!;
+    const zone = server.zones.zone(`sys:${homeSystemOf('thalune')}`)!;
     const named = [...zone.entityIds()].filter((id) => zone.entity(id)!.fields.name === again.welcome.character.name);
     expect(named).toEqual([again.entityId]);
     watcher.sock.close();
@@ -142,7 +146,7 @@ describe('zones over the wire', () => {
     const before = session.invalidMessages;
     a.sock.send({ t: 'input', seq: 1, time: 0, mode: 'ship', pose: { frame: '12345:0', pos: [1, 2, 3], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, buttons: 0 });
     await waitFor(() => session.invalidMessages === before + 1, 5000, 'the input to be counted');
-    expect(server.zones.zone('sys:0')!.entity(a.entityId)!.fields.pos).toEqual([0, 0, 0]);
+    expect(server.zones.zone(`sys:${homeSystemOf('thalune')}`)!.entity(a.entityId)!.fields.pos).toEqual([0, 0, 0]);
     a.sock.close();
 
     const acct = await newAccount(server);

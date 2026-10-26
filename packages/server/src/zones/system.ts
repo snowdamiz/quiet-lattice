@@ -1,14 +1,14 @@
 // The star system a zone hosts: galaxy system `index` described exactly as every client describes it
-// (describeGalaxySystem on the client's Galaxy), so frame ids and body poses agree on both ends.
-import { describeGalaxySystem, describeSystem, Galaxy, type SystemDescription } from '@astra/shared/world';
-import { GALAXY_SEED, systemSeed } from '../world/home.ts';
+// (describeGalaxySystem on the game's Galaxy, home worlds and capitals included), so frame ids and body poses agree on
+// both ends.
+import { describeGalaxySystem, Galaxy, GALAXY_SEED, type SystemDescription } from '@astra/shared/world';
 
 let galaxy: Galaxy | undefined;
 
-/** Galaxy system `index`; one beyond the galaxy's listed systems is described from its seed alone. */
+/** Galaxy system `index` of the game's galaxy. */
 export function describeZoneSystem(index: number): SystemDescription {
-  if (!Number.isInteger(index) || index < 0) throw new RangeError(`bad system index ${index}`);
   galaxy ??= new Galaxy(GALAXY_SEED);
   const info = galaxy.systems[index];
-  return info ? describeGalaxySystem(info) : describeSystem(systemSeed(index));
+  if (!info) throw new RangeError(`no system ${index} in galaxy ${GALAXY_SEED}`);
+  return describeGalaxySystem(info);
 }
