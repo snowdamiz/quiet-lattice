@@ -270,12 +270,27 @@ def build_creatures():
     return save(SRC / "creatures" / "beasts.blend")
 
 
+def emissive_material(name, colour, strength):
+    m = flat_material(name, (0.02, 0.02, 0.02))
+    bsdf = next(n for n in m.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
+    bsdf.inputs["Emission Color"].default_value = (*colour, 1.0)
+    bsdf.inputs["Emission Strength"].default_value = strength
+    return m
+
+
 def build_library():
-    """A library with one material that drives nothing from nodes (fails) beside textured, signal and glass ones."""
+    """A library with one material that drives nothing from nodes and one signal material that emits nothing (both
+    fail) beside textured, signal and glass ones."""
     reset()
     references()
     put(with_material(sphere("swatch_hull", 32, 16, 0.5), pbr_material("LibHullPaint", base_res=2048, res=256)), coll("previews"))
-    for m in (flat_material("LIB_Flat"), flat_material("LIB_Glass", (0.04, 0.06, 0.08)), flat_material("LIB_NavRed", (1, 0, 0))):
+    mats = (
+        flat_material("LIB_Flat"),
+        flat_material("LIB_Glass", (0.04, 0.06, 0.08)),
+        emissive_material("LIB_NavRed", (1, 0, 0), 6.0),
+        emissive_material("LIB_NavDark", (1, 0, 0), 0.0),
+    )
+    for m in mats:
         m.use_fake_user = True
     return save(SRC / "_library.blend")
 
@@ -515,7 +530,8 @@ def test_validator(crate, broken, creatures, hull, library):
     fails = messages(rep, "materials")
     expect(rep.family == "library", "_library.blend is read as the material library")
     expect(any(m.startswith("LIB_Flat: untextured") and "base colour, roughness, normal" in m for m in fails), "library: a material with constant colour, roughness and normal fails")
-    expect(len(fails) == 1, f"library: textured, glass (constant) and nav (signal) materials pass, and no AO is asked for ({fails})")
+    expect(any(m.startswith("LIB_NavDark: signal material emits nothing") for m in fails), "library: a signal material at emission strength 0 fails")
+    expect(len(fails) == 2, f"library: textured, glass (constant) and nav (signal) materials pass, and no AO is asked for ({fails})")
     expect(all(rep[c].status == "PASS" for c in ("naming", "triangles", "lods", "scale")), "library: the other checks pass (grid drawn with a Wireframe modifier)")
 
     rep = core.validate_path(RULES, hull, family="hulls")
