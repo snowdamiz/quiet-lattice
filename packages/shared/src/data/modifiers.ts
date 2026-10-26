@@ -11,7 +11,7 @@ export const STATS = [
   'player.jump_speed', // 5.5 m/s
   'player.sprint_speed', // 9.5 m/s
   'player.swim_speed',
-  'player.jet_fuel_use',
+  'player.jet_fuel_duration',
   'player.silence_duration',
   // the heat meter (ground) and the charge meter (ship)
   'heat.capacity', // 100

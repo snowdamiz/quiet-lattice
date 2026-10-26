@@ -38,7 +38,7 @@ export const SYMBIOTIC = branchNodes('symbiotic', [
     text: 'Heal self or ally 40 over 6 s',
     cost: { heat: 20 },
     cooldown: { kind: 'seconds', seconds: 10 },
-    params: { heal: 40, durationS: 6, targets: 1 },
+    params: { heal: 40, durationS: 6 },
   },
   {
     id: 'spore',

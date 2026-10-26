@@ -36,6 +36,8 @@ import {
   fabricatorSchema,
   factionSchema,
   getHull,
+  getItem,
+  getRecipe,
   getResource,
   getSkillNode,
   getWeapon,
@@ -61,27 +63,53 @@ import type { HullVenue, NodeCooldown, NodeCost, ResourceId, SkillNode, Stat, St
 // Read as text through Vite's ?raw import, so the shared package's tests need no Node types.
 import DESIGN from '../../../docs/DESIGN.md?raw';
 
-/** The rows of the first markdown table under a heading, as trimmed cells, without the header and separator. */
-function designTable(heading: string): string[][] {
+/** The rows of each markdown table under a heading (up to the next heading), as trimmed cells, without header and separator. */
+function designTables(heading: string): string[][][] {
   const lines = DESIGN.split('\n');
   const start = lines.findIndex((l) => l.startsWith('#') && l.includes(heading));
   if (start < 0) throw new Error(`DESIGN.md has no heading ${heading}`);
-  const rows: string[][] = [];
-  let inTable = false;
+  const tables: string[][][] = [];
+  let rows: string[][] | null = null;
   for (const line of lines.slice(start + 1)) {
     if (line.startsWith('#')) break;
     if (line.startsWith('|')) {
-      inTable = true;
+      if (!rows) tables.push((rows = []));
       rows.push(
         line
           .split('|')
           .slice(1, -1)
           .map((c) => c.trim()),
       );
-    } else if (inTable) break;
+    } else rows = null;
   }
-  return rows.slice(2);
+  return tables.map((t) => t.slice(2));
 }
+
+/** The rows of the first table under a heading. */
+const designTable = (heading: string) => designTables(heading)[0];
+
+/** The paragraph under a heading that starts with this text. */
+function designParagraph(heading: string, startsWith: string): string {
+  const lines = DESIGN.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('#') && l.includes(heading));
+  const line = lines.slice(start + 1).find((l) => l.startsWith(startsWith));
+  if (!line) throw new Error(`DESIGN.md ${heading} has no paragraph starting "${startsWith}"`);
+  return line;
+}
+
+/** "50 di-hydrogen + 20 tritium + 5 cobalt" as resource ids and amounts. */
+function designInputs(text: string): Record<string, number> {
+  return Object.fromEntries(
+    text.split(' + ').map((part) => {
+      const m = part.trim().match(/^(\d+) (.+)$/);
+      const resource = RESOURCES.find((r) => r.name.toLowerCase() === m?.[2].toLowerCase());
+      if (!m || !resource) throw new Error(`unparsed recipe input "${part}"`);
+      return [resource.id, Number(m[1])];
+    }),
+  );
+}
+
+const inputsOf = (id: string) => Object.fromEntries(getRecipe(id).inputs.map((i) => [i.resource, i.amount]));
 
 const ids = <T extends { id: string }>(rows: readonly T[]) => new Set(rows.map((r) => r.id));
 const RESOURCE_IDS = ids(RESOURCES);
@@ -152,49 +180,75 @@ const BASELINES: Partial<Record<Stat, number>> = {
   'scan.deposit_range': 180,
   'fragments.per_monolith': 1,
 };
-/** Params stored as fractions that DESIGN writes as percentages ("60% slower" is 0.4). */
-const FRACTION_PARAMS = new Set(['slowMult', 'damageTakenMult', 'targetDamageTakenMult', 'missChance', 'hullFraction', 'healthBelow', 'hullRestoreFraction']);
+/** Number words an effect text uses for values a node carries ("one target", "half damage", "count double", "No hazard drain"). */
+const NUMBER_WORDS: Record<string, number> = { no: 0, half: 0.5, a: 1, an: 1, one: 1, single: 1, two: 2, second: 2, double: 2, twice: 2, three: 3, triple: 3 };
+/** Values a node carries that its text states without a number or word: Resonant Hull's "under fire" is a regen delay of 0. */
+const STATED_WITHOUT_NUMBER = new Set(['resonant_hull ship.shield_regen_delay']);
 const round = (v: number) => Math.round(v * 1e6) / 1e6;
 
-/** Every number a node carries, in each form its effect text could state it. */
-function carriedNumbers(n: SkillNode): Set<number> {
-  const out: number[] = [];
-  const walk = (x: unknown): void => {
-    if (typeof x === 'number') out.push(x);
-    else if (x && typeof x === 'object') Object.values(x).forEach(walk);
-  };
-  walk(n.params);
-  walk(n.cost);
-  if (n.cooldown?.kind === 'seconds') out.push(n.cooldown.seconds);
-  for (const [k, v] of Object.entries(n.params)) if (FRACTION_PARAMS.has(k) && typeof v === 'number') out.push(v * 100, Math.abs(1 - v) * 100);
-  for (const m of n.mods) {
-    const base = BASELINES[m.stat];
-    out.push(m.value);
-    if (m.op === 'mul') {
-      out.push(Math.abs(1 - m.value) * 100, m.value * 100);
-      if (m.value > 0) out.push(1 / m.value);
-      if (base !== undefined) out.push(base * m.value);
-    }
-    if (m.op === 'add' && base !== undefined) out.push(base + m.value);
-    if (m.op === 'set' && base !== undefined) out.push(m.value / base);
-  }
-  return new Set(out.map(round));
+/** One number a node carries and the values its text may state it as. Costs and cooldowns are checked against DESIGN's column, so the text need not repeat them. */
+interface Carried {
+  what: string;
+  forms: number[];
+  mustBeStated: boolean;
 }
 
-/**
- * The numbers an effect text states, each with the values it may stand for. Today's values are not the node's: "(today …)"
- * asides, the "from" side of "a → b", and "instead of n".
- */
-function statedNumbers(text: string): { token: string; values: number[] }[] {
-  const clean = text
+function carried(n: SkillNode): Carried[] {
+  const out: Carried[] = [];
+  for (const [k, v] of Object.entries(n.params)) {
+    // Living Ship's "returns to 100" states a full-hull fraction as today's 100
+    if (typeof v === 'number') out.push({ what: `params.${k} = ${v}`, forms: k === 'hullRestoreFraction' ? [v, v * 100] : [v], mustBeStated: true });
+  }
+  for (const m of n.mods) {
+    const base = BASELINES[m.stat];
+    const forms = [m.value];
+    if (base !== undefined) forms.push(m.op === 'add' ? base + m.value : m.op === 'mul' ? base * m.value : m.value / base);
+    out.push({ what: `${m.stat} ${m.op} ${m.value}`, forms, mustBeStated: !STATED_WITHOUT_NUMBER.has(`${n.id} ${m.stat}`) });
+  }
+  const walk = (x: unknown, path: string): void => {
+    if (typeof x === 'number') out.push({ what: path, forms: [x], mustBeStated: false });
+    else if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) walk(v, `${path}.${k}`);
+  };
+  walk(n.cost, 'cost');
+  if (n.cooldown?.kind === 'seconds') out.push({ what: 'cooldown', forms: [n.cooldown.seconds], mustBeStated: false });
+  return out;
+}
+
+/** Today's values in an effect text are not the node's: "(today …)" asides, the "from" side of "a → b", and "instead of n". */
+const withoutToday = (text: string) =>
+  text
     .replace(/\(today[^)]*\)/gi, '')
     .replace(/\d+(?:\.\d+)? → /g, '')
     .replace(/ instead of \d+(?:\.\d+)?/g, '');
-  return [...clean.matchAll(/(\d+(?:\.\d+)?)\s*(km|min)?/g)].map(([token, n, unit]) => {
-    const v = Number(n);
-    return { token, values: unit === 'km' ? [v * 1000] : unit === 'min' ? [v, v * 60] : [v] };
+
+/**
+ * The numbers an effect text states, read in the direction the text gives them: "+N%" is 1 + N/100; "−N%", "N% less" and
+ * "N% slower" are 1 − N/100; a bare "N%" is N/100; "÷N" is 1/N; "×N" and "N×" are N; "N km" is metres; "N min" is minutes
+ * or seconds.
+ */
+function statedNumbers(text: string): { token: string; value: number[] }[] {
+  const re = /([+−-])?([÷×])?(\d+(?:\.\d+)?)(×)?\s*(%|km|min)?( (?:less|slower)\b)?/g;
+  return [...withoutToday(text).matchAll(re)].map(([token, sign, op, digits, , unit, less]) => {
+    const v = Number(digits);
+    let value: number[];
+    if (unit === '%') value = [sign === '+' ? 1 + v / 100 : sign || less ? 1 - v / 100 : v / 100];
+    else if (op === '÷') value = [1 / v];
+    else if (unit === 'km') value = [v * 1000];
+    else if (unit === 'min') value = [v, v * 60];
+    else value = [v];
+    return { token: token.trim(), value: value.map(round) };
   });
 }
+
+/** The values number words in a text stand for. */
+const statedWords = (text: string) =>
+  [
+    ...withoutToday(text)
+      .toLowerCase()
+      .matchAll(/\b([a-z]+)\b/g),
+  ]
+    .map(([, w]) => NUMBER_WORDS[w])
+    .filter((v): v is number => v !== undefined);
 
 describe('every table parses with its schema', () => {
   const cases: [string, z.ZodType, unknown][] = [
@@ -501,13 +555,22 @@ describe('the skill web', () => {
     for (const n of SKILL_NODES.filter((x) => x.branch === 'conjunction')) expect([n.cost, n.cooldown], n.id).toEqual([null, null]);
   });
 
-  it("every number in a node's effect text is in its params, mods or cost", () => {
+  it("every number in a node's effect text is carried in the direction the text gives, and every value it carries is stated", () => {
     for (const n of SKILL_NODES) {
-      const carried = carriedNumbers(n);
-      for (const { token, values } of statedNumbers(n.text)) {
+      const values = carried(n);
+      const carriedForms = new Set(values.flatMap((c) => c.forms.map(round)));
+      const stated = statedNumbers(n.text);
+      for (const { token, value } of stated) {
         expect(
-          values.some((v) => carried.has(round(v))),
-          `${n.id}: "${token}" in "${n.text}" (carries ${[...carried].join(', ')})`,
+          value.some((v) => carriedForms.has(v)),
+          `${n.id}: "${token}" in "${n.text}" reads as ${value.join(' or ')}; carries ${values.map((c) => c.what).join(', ')}`,
+        ).toBe(true);
+      }
+      const statedForms = new Set([...stated.flatMap((x) => x.value), ...statedWords(n.text)]);
+      for (const c of values.filter((x) => x.mustBeStated)) {
+        expect(
+          c.forms.some((v) => statedForms.has(round(v))),
+          `${n.id}: ${c.what} is not stated in "${n.text}"`,
         ).toBe(true);
       }
     }
@@ -743,34 +806,109 @@ describe('recipes', () => {
     }
   });
 
-  it('matches DESIGN 15.7 amounts', () => {
-    const want: Record<string, Record<string, number>> = {
-      warp_cell: { dihydrogen: 50, tritium: 20, cobalt: 5 },
-      pulse_fuel_cell: { tritium: 30, dihydrogen: 10 },
-      oxygen_cartridge: { oxygen: 20, ferrite: 5 },
-      sodium_cartridge: { sodium: 20, ferrite: 5 },
-      flak_ammo: { ferrite: 20, carbon: 10 },
-      torpedo: { cobalt: 5, tritium: 5, cinderglass: 2 },
-      pulse_lasers: { copper: 30, ferrite: 20 },
-      mining_laser: { copper: 20, ferrite: 20, dihydrogen: 10 },
-      flak_cannon: { ferrite: 40, copper: 20, carbon: 10 },
-      beam_lance: { gold: 20, copper: 20, cinderglass: 10 },
-      emp_pod: { cobalt: 20, stormquartz: 10 },
-      railgun: { iridium: 20, gold: 10, stormquartz: 10 },
-      torpedo_rack: { cobalt: 20, cinderglass: 10, iridium: 10 },
-      thermal_plating_module: { cinderglass: 30, ferrite: 20 },
-      pressure_hull_module: { murkpearl: 20, ferrite: 20 },
-      hazard_coating_module: { acidsalt: 30, ferrite: 20 },
-      cargo_pod: { ferrite: 40, copper: 10 },
-      husk_plating: { husk_alloy: 20, count_residue: 10 },
-      husk_hull: { husk_alloy: 60, glyphstone: 20 },
+  it('consumables match DESIGN 15.7: inputs, output counts, field crafting and what a cartridge restores', () => {
+    const [consumables] = designTables('15.7 Crafting');
+    const recipesFor: Record<string, string[]> = {
+      'Warp cell': ['warp_cell'],
+      'Pulse fuel cell': ['pulse_fuel_cell'],
+      'Oxygen / sodium cartridge': ['oxygen_cartridge', 'sodium_cartridge'],
+      'Flak ammo (50)': ['flak_ammo'],
+      'Torpedo (1)': ['torpedo'],
+      'Catalysts (30 min buffs)': ['frostglass_catalyst', 'stormquartz_catalyst', 'gamma_catalyst', 'acidsalt_catalyst'],
     };
-    for (const [id, inputs] of Object.entries(want)) {
-      const r = RECIPES.find((x) => x.id === id);
-      expect(Object.fromEntries(r?.inputs.map((i) => [i.resource, i.amount]) ?? []), id).toEqual(inputs);
+    expect(consumables.map((r) => r[0])).toEqual(Object.keys(recipesFor));
+    for (const [name, recipe, notes] of consumables.filter((r) => !r[0].startsWith('Catalysts'))) {
+      const count = Number(name.match(/\((\d+)\)$/)?.[1] ?? 1);
+      for (const id of recipesFor[name]) {
+        const r = getRecipe(id);
+        expect(inputsOf(id), id).toEqual(designInputs(recipe.replace('oxygen or sodium', id.split('_')[0])));
+        expect(r.output, id).toEqual({ kind: 'item', item: id, count });
+        const field = notes.match(/field-craftable(?: at Tier (\d)\+)?/);
+        if (field) expect(r.field, id).toEqual({ minTier: Number(field[1] ?? 0) });
+        const restores = notes.match(/refills restore (\d+)/);
+        if (restores) expect(getItem(id).restores?.amount, id).toBe(Number(restores[1]));
+      }
     }
-    expect(RECIPES.find((r) => r.id === 'flak_ammo')?.output).toEqual({ kind: 'item', item: 'flak_ammo', count: 50 });
-    expect(RECIPES.find((r) => r.id === 'husk_hull')?.components).toEqual([{ item: 'hive_heart_core', count: 1 }]);
+    expect(getItem('oxygen_cartridge').restores?.meter).toBe('life_support');
+    expect(getItem('sodium_cartridge').restores?.meter).toBe('hazard_protection');
+  });
+
+  it('catalysts match DESIGN 15.7: one resource each, the effect, 30-minute buffs, sanctuary recipes', () => {
+    const [name, cell, notes] = designTables('15.7 Crafting')[0].find((r) => r[0].startsWith('Catalysts'))!;
+    const minutes = Number(name.match(/\((\d+) min buffs\)/)?.[1]);
+    expect(notes).toBe('sanctuary recipes');
+    const statOf: Record<string, Pick<StatMod, 'stat' | 'branch' | 'nodes'>> = {
+      'heat capacity': { stat: 'heat.capacity' },
+      'Charge regen': { stat: 'charge.regen' },
+      'Void heat costs': { stat: 'heat.cost', branch: 'void' },
+      'Spore and Rot': { stat: 'ability.power', nodes: ['spore', 'rot'] },
+    };
+    const parts = cell.split('; ');
+    expect(parts).toHaveLength(RECIPES.filter((r) => r.line === 'catalyst').length);
+    for (const part of parts) {
+      const m = part.match(/^(.+?) → (.+) ([+−])(\d+)(%|\/s)?$/);
+      if (!m) throw new Error(`unparsed catalyst "${part}"`);
+      const resource = RESOURCES.find((r) => r.name.toLowerCase() === m[1])!.id;
+      const recipe = RECIPES.find((r) => r.line === 'catalyst' && r.inputs.length === 1 && r.inputs[0].resource === resource);
+      expect(recipe, part).toBeDefined();
+      expect(recipe!.output.kind === 'item' ? recipe!.output.count : 0, part).toBe(1);
+      expect(recipe!.fabricators, part).toEqual(['sanctuary']);
+      const item = getItem(recipe!.output.kind === 'item' ? recipe!.output.item : '');
+      const n = Number(m[4]);
+      const change = m[5] === '%' ? { op: 'mul', value: m[3] === '+' ? 1 + n / 100 : 1 - n / 100 } : { op: 'add', value: n };
+      expect(item.mods, part).toEqual([{ ...statOf[m[2]], ...change }]);
+      expect(item.durationS, part).toBe(minutes * 60);
+    }
+  });
+
+  it('modules match DESIGN 15.7: inputs, one module per craft, and the Tier column', () => {
+    const modules = designTables('15.7 Crafting')[1];
+    let checked = 0;
+    for (const [name, recipe, tier] of modules) {
+      const names = name.replace(/ \(.*\)$/, '').split(' / ');
+      const each = recipe.match(/^(.*) \+ (.+) each$/);
+      const parts = each ? each[1].split(' / ').map((x) => `${x} + ${each[2]}`) : [recipe];
+      expect(parts.length, name).toBe(names.length);
+      const [lo, hi = lo] = tier.split('–').map(Number);
+      names.forEach((moduleName, i) => {
+        const r = RECIPES.find((x) => x.line === 'module' && x.name === moduleName);
+        expect(r, moduleName).toBeDefined();
+        expect(inputsOf(r!.id), moduleName).toEqual(designInputs(parts[i]));
+        expect(r!.output, moduleName).toEqual({ kind: 'item', item: r!.id, count: 1 });
+        if (lo === hi) expect(r!.tier, `${moduleName} tier`).toBe(lo);
+        else {
+          expect(r!.tier, `${moduleName} tier`).toBeGreaterThanOrEqual(lo);
+          expect(r!.tier, `${moduleName} tier`).toBeLessThanOrEqual(hi);
+        }
+        checked++;
+      });
+    }
+    expect(checked).toBe(RECIPES.filter((r) => r.line === 'module').length);
+  });
+
+  it('cosmetics and the Husk hull match DESIGN 15.7, and every recipe is one DESIGN lists', () => {
+    const para = designParagraph('15.7 Crafting', 'Suit glyphs');
+    const [lo, hi] = (para.match(/Count residue \((\d+)–(\d+) each, patterns from boss drops\)/) ?? []).slice(1).map(Number);
+    for (const id of ['suit_glyph', 'hull_glyph_seams']) {
+      const r = getRecipe(id);
+      expect(
+        r.inputs.map((i) => i.resource),
+        id,
+      ).toEqual(['count_residue']);
+      expect(r.inputs[0].amount >= lo && r.inputs[0].amount <= hi, id).toBe(true);
+      expect(r.output, id).toEqual({ kind: 'item', item: id, count: 1 });
+      expect(r.learnedFrom, id).toBe('boss');
+    }
+    const husk = para.match(/the \*\*Husk hull\*\* assembled at the Scrapyard from the Hive Heart's core \+ (.+)\.$/);
+    expect(inputsOf('husk_hull')).toEqual(designInputs(husk?.[1] ?? ''));
+    expect(getRecipe('husk_hull')).toMatchObject({
+      output: { kind: 'hull', hull: 'husk' },
+      components: [{ item: 'hive_heart_core', count: 1 }],
+      fabricators: ['scrapyard'],
+    });
+    // 6 consumables, 4 catalysts, 12 modules, 2 cosmetics and the Husk hull: every recipe is compared above
+    const lines = Object.fromEntries(['consumable', 'catalyst', 'module', 'cosmetic', 'endgame'].map((l) => [l, RECIPES.filter((r) => r.line === l).length]));
+    expect(lines).toEqual({ consumable: 6, catalyst: 4, module: 12, cosmetic: 2, endgame: 1 });
   });
 
   it('no recipe is below the tier where its rarest input is common, and fabricators can make it', () => {
@@ -822,9 +960,28 @@ describe('mobs and bosses', () => {
     expect(COMBAT.threat).toEqual({ min: 1, max: 5 });
   });
 
-  it('temperaments match DESIGN 12.2 and use real body plans', () => {
+  it('temperaments match every column of DESIGN 12.2, and the numbers in their behaviour', () => {
     const rows = designTable('12.2 Planet fauna');
     expect(rows.map((r) => r[0])).toEqual(TEMPERAMENTS.map((t) => t.name));
+    rows.forEach(([name, behaviour, plans, appears], i) => {
+      const t = TEMPERAMENTS[i];
+      expect(t.behaviour, name).toBe(behaviour);
+      const wantPlans =
+        plans === 'all'
+          ? 'all'
+          : plans.split(', ').map((x) => {
+              const m = x.match(/^(\w+)(?: \((\w+)\))?$/);
+              return m?.[2] ? { plan: m[1], role: m[2] } : { plan: m?.[1] };
+            });
+      expect(t.bodyPlans, name).toEqual(wantPlans);
+      expect(t.minTier, `${name} appears`).toBe(appears === 'everywhere' ? 0 : Number(appears.match(/^Tier (\d)\+/)?.[1]));
+      expect(t.boss !== undefined, name).toBe(appears.includes('world boss'));
+      const params = Object.values(t.params).filter((v): v is number => typeof v === 'number');
+      const stated = [...behaviour.matchAll(/\d+(?:\.\d+)?/g)].map(([d]) => Number(d));
+      for (const n of stated) expect(params, `${name}: ${n} in "${behaviour}"`).toContain(n);
+      const statedAll = [...stated, ...statedWords(behaviour)];
+      for (const v of params) expect(statedAll, `${name}: param ${v} not in "${behaviour}"`).toContain(v);
+    });
     for (const t of TEMPERAMENTS) {
       if (t.bodyPlans !== 'all') for (const b of t.bodyPlans) expect(ids(BODY_PLANS).has(b.plan)).toBe(true);
       if (t.boss) expect(BOSS_IDS.has(t.boss)).toBe(true);
@@ -851,9 +1008,43 @@ describe('mobs and bosses', () => {
     }
   });
 
-  it('space mobs match DESIGN 12.7', () => {
+  it('space mobs match every column of DESIGN 12.7: tier, behaviour, the ships it names, its numbers and counter', () => {
     const rows = designTable('12.7 Space');
-    expect(rows.map((r) => r[0])).toEqual(MOBS.filter((m) => m.group === 'space').map((m) => m.name));
+    const space = MOBS.filter((m) => m.group === 'space');
+    expect(rows.map((r) => r[0])).toEqual(space.map((m) => m.name));
+    const hullByName = Object.fromEntries(HULLS.map((h) => [h.name, h.id]));
+    rows.forEach(([name, tier, behaviour, counter], i) => {
+      const m = space[i];
+      expect(m.text, name).toBe(behaviour);
+      expect(m.counter?.text ?? '', name).toBe(counter);
+      if (tier === 'event') expect(m.event, name).toBe(true);
+      else if (tier.startsWith('Act ')) {
+        expect(m.act, name).toBe({ I: 1, II: 2, III: 3, IV: 4 }[tier.slice(4)]);
+        expect(m.tier, name).toBeNull();
+      } else {
+        const [lo, hi] = tier.split('–').map(Number);
+        expect(m.tier?.min, `${name} tier`).toBe(lo);
+        if (hi !== undefined) expect(m.tier?.max, `${name} tier`).toBe(hi);
+      }
+      // the hulls it names, with their counts ("2 Darts", "3 Kestrels + 1 Bulwark", "Mules and Caravels with Kestrel escorts")
+      const named = [...behaviour.matchAll(/(?:(\d+) )?(Dart|Kestrel|Bulwark|Ghost|Mule|Caravel)s?\b/g)];
+      const ships = m.hulls.filter((h) => h.hull !== null);
+      expect(new Set(ships.map((h) => h.hull)), name).toEqual(new Set(named.map(([, , hull]) => hullByName[hull])));
+      for (const [, count, hull] of named)
+        if (count) expect(ships.find((h) => h.hull === hullByName[hull])?.count, `${name}: ${count} ${hull}`).toBe(Number(count));
+      const husked = /^(one husked ship|a full ship with no pilot)/.test(behaviour);
+      expect(
+        m.hulls.filter((h) => h.hull === null),
+        name,
+      ).toEqual(husked ? [{ hull: null, count: 1, husked: true }] : []);
+      // the numbers its behaviour states
+      const breakOff = behaviour.match(/break off at (\d+)% hull/);
+      expect(m.params.breakOffAtHull, name).toBe(breakOff ? Number(breakOff[1]) / 100 : undefined);
+      const within = behaviour.match(/within (\d+) km/);
+      expect(m.params.aggroRadiusM, name).toBe(within ? Number(within[1]) * 1000 : undefined);
+      const over = behaviour.match(/over (\d+) min/);
+      expect(m.params.durationS, name).toBe(over ? Number(over[1]) * 60 : undefined);
+    });
   });
 
   it('density covers tiers 0–5 and names real mobs, at tiers where they appear', () => {

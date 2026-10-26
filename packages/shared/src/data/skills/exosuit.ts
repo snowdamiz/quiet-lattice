@@ -17,7 +17,7 @@ export const EXOSUIT = branchNodes('exosuit', [
     tier: 1,
     type: 'passive',
     text: "Jet fuel lasts 2× (today's)",
-    mods: [{ stat: 'player.jet_fuel_use', op: 'mul', value: 0.5 }],
+    mods: [{ stat: 'player.jet_fuel_duration', op: 'mul', value: 2 }],
   },
   {
     id: 'hazard_weave',
