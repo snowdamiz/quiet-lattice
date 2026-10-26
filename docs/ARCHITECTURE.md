@@ -41,7 +41,16 @@ Libraries: `fastify` for HTTP, `ws` for sockets (attached to Fastify's server in
 The server owns the clock. World time `t` is seconds since the shard's epoch (stored in Postgres, so it survives restarts).
 Every body pose comes from `t` (`bodyPose(spec, t)` in shared, P1.E02.T03), so client and server agree on where every planet
 and station is without streaming them. The client keeps `game.time = serverTime + offset`, estimating the offset from the
-`welcome` message and periodic `time` pings (half the round trip), and slews it rather than jumping.
+`welcome` message and periodic `ping`/`pong` round trips (half the round trip), and slews it rather than jumping. The
+server pushes no periodic time of its own: a pong is the better sample because the client can halve its round trip, and
+`world` carries a `serverTime` too.
+
+The shard's row (`shards`, created on the shard's first boot) holds its epoch (2026-01-01Z for a new shard), its season
+(number, start in world time, length; DESIGN 16.4) and `last_time`, the latest world time its server saved (every minute and
+on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
+below `last_time`, and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards,
+even when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
+with a clock sync point `{time, at}`: world time `time` at wall time `at` ms) for the processes P3.E37 splits off.
 
 ## 4. Frames of reference on the wire
 
@@ -83,7 +92,9 @@ position (P1.E03.T03 tests this to 1 cm).
   and acks take 40, leaving room for pings, casts, interactions and chat, and the burst absorbs the backlog of a stall.
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}`, `pong`, and snapshots.
+  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}` (sent right after `welcome` and to every
+  joined session whenever the world service's state changes; `tiers` is each galaxy system's tier by index), `pong`, and
+  snapshots.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 

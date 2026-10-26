@@ -1,9 +1,10 @@
 // WebSocket gateway (docs/ARCHITECTURE.md §2, §5): `ws` in noServer mode on the HTTP server's upgrade event, path /ws.
 // The first message must be `hello` with the protocol version and a session token, within HELLO_TIMEOUT_MS; then
 // `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS: its player entity enters
-// the zone of its home system (docked at the home Waystation) and `welcome` names the zone and the entity. From then on
-// `input` and `ack` go to the zone, which sends the session a binary snapshot every tick, and closing the socket takes
-// the entity out. Malformed or out-of-place messages are dropped and counted, never thrown.
+// the zone of its home system (docked at the home Waystation) and `welcome` names the zone and the entity, followed at
+// once by `world` (the world service's state), which every joined session is sent again whenever that state changes.
+// From then on `input` and `ack` go to the zone, which sends the session a binary snapshot every tick, and closing the
+// socket takes the entity out. Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -20,6 +21,7 @@ import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.t
 import type { Db } from '../db/client.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import type { ServerClock } from '../world/clock.ts';
+import type { WorldSource } from '../world/service.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import { clientKey, TokenBucket } from './rateLimit.ts';
 
@@ -76,6 +78,7 @@ export interface WsGatewayDeps {
   db: Db;
   tokens: TokenService;
   clock: ServerClock;
+  world: Pick<WorldSource, 'message' | 'subscribe'>;
   zones: ZoneManager;
   log: FastifyBaseLogger;
   limits: WsLimits;
@@ -117,6 +120,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     viewer.zoneId = null;
   };
   const conns = new Set<Conn>();
+  const unsubscribeWorld = deps.world.subscribe(() => {
+    const world = deps.world.message();
+    for (const c of conns) if (c.s.state === 'joined') c.s.send(world);
+  });
   const openPerIp = new Map<string, number>();
   let nextSessionId = 1;
   let invalidTotal = 0;
@@ -334,6 +341,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       pose: joined.pose,
       mode: joined.mode,
     });
+    s.send(deps.world.message());
     log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
   }
 
@@ -343,6 +351,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     async close() {
       closing = true;
       clearInterval(heartbeat);
+      unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
       const gone = Promise.all(
