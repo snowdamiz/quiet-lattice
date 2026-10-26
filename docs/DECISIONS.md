@@ -157,3 +157,7 @@ Format: task id, question → choice → why.
 - **P1.E02.T02** The world-424242 fixture was regenerated once to add orbits, rotations, tilts, gravity, soi, rings, star,
   outer orbit, belt and station (no existing value changed; gas giants' params gained a digest). → Pins every number the
   description produces.
+- **P1.E02.T03** A body's `angularVelocity` is a world-frame vector (axis × rate) instead of a scalar; the Waystation's
+  velocity is its orbital velocity plus its world's (the demo copied only the world's; nothing read either). `bodyPose`
+  takes the parent's pose and throws for a moon without one; `systemPoses` orders parents. "Server uses it for frames" is
+  met by a Node-tested API on plain arrays, wired in by P1.E03.T02/T03. → One frame rule for client, server and pirates.
