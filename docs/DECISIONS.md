@@ -337,3 +337,20 @@ Format: task id, question → choice → why.
   character out of play is P1.E03.T07's load–modify–save. A crash loses at most one interval while writes succeed.
   Socket close saves first, then leaves the zone as 'disconnected'. → Restart-safe characters without a schema change
   per feature. Open: until P1.E03.T04 merges, a saved pose is client-asserted; its `poseProblem` must validate restores.
+- **P2.E22.T01** The Count meter (`server/src/count`) → weights in thirtieths: a counted action is 30, a monolith touch
+  3 (a tenth of a vote); Feed gives the Feed side 30, Hold 10 (DESIGN 16.2 as amended), Break 0; tags per action: wall
+  choice and anchor held carry feed/hold/break, convoy raided, Hive Heart and Warden are Break only, convoy escorted and
+  monolith touch Feed only. Lean = feed ÷ weight (a day with no votes has none and does not drift); target =
+  round(150 + 700 × lean), halves up; the drift is clamped to ±25 and never passes the target. The burn ticks at
+  k × 17,280 s of world time from the shard epoch (5 a day); a tick tied with midnight burns before the drift; a meter's
+  first run counts burns from boot. The meter day is floor(world time ÷ 86,400) (00:00 UTC with the default epoch).
+  Downtime burns and rolls on boot with no cap (one change, one log line, one transaction; a dev shard idle 100+ days
+  boots at 0). One vote per (account, action type, day), first wins; account ids are UUIDs, lower-cased. The underdog
+  is set by the Count's position (Break above 700, Feed below 300, Hold either way; DESIGN 16.2 amended to say so),
+  multiplier 1.5 per action tag, applied by the rep model (P2.E18.T01). "Anchor held" is a per-account vote; P2.E28.T04
+  decides whose accounts vote. Storage: `count_votes` (kept for the chronicle), `count_days`, and `shards.count`,
+  `count_day`, `burn_step` (migration 0003); writes batched (votes in 1,000-row inserts) in one transaction per save,
+  failed saves retried until written. The clock floor is max(`last_time`, latest stored vote time). The arithmetic
+  lives in the server until a client shows the target (P2.E22.T04 moves it to shared). → DESIGN 16.2's lean-not-volume
+  meter, exact at any population. Callers to come: P2.E21.T05 convoys, P2.E28.T04 anchors, P3.E33.T02 Wardens, P3.E33.T03
+  Hive Heart, P3.E34.T02/T03 wall choices, the monolith interact.
