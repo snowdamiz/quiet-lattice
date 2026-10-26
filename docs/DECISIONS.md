@@ -363,3 +363,4 @@ Format: task id, question → choice → why.
   marker overlay and sibling grids, which four graders asked for. Art tasks are graded after T11 lands. P1.E06.T04 (UI)
   was graded before calibration; calibration covers the models rubric, and its verdicts are recorded in
   `docs/VISUAL-REVIEW.md`.
+- **Orchestrator (visual gate of P1.E13.T02)** The six formation models P1.E13.T02 adds are procedural stand-ins by plan: P1.E14.T06 authors them and P1.E14.T07 deletes the generator, so grading them against "no placeholder tell" would fail by construction. E13.T02's blocking visual grade is the UI rubric on the nineteen inventory icons; the formation models are graded as authored art under P1.E14.T06, like the demo flora they sit beside (P1.E14.T04/T05).
