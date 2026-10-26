@@ -1,7 +1,7 @@
 // Procedural asteroid fields in heliocentric space: dense in the belt, sparse
 // elsewhere. Ship lasers break them apart for Tritium and rare metals.
 import * as THREE from 'three';
-import { hashInts, mulberry32, Simplex3 } from '@astra/shared/world';
+import { BELT_BODY_CLEARANCE, hashInts, mulberry32, Simplex3 } from '@astra/shared/world';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 
 const CELL = 3000;
@@ -72,10 +72,10 @@ export class Asteroids {
     let d = 0.04;
     const t = Math.abs(r - b.radius) / b.width;
     if (t < 1 && Math.abs(world.y - star.y) < b.thickness) d += (1 - t * t) * 1.6 * b.density;
-    // keep clear of planets' inner space
+    // keep clear of planets' inner space (the clearance shared with the belt's cover, shared/world/cover.ts)
     for (const p of sys.planets) {
       const dd = p.distanceTo(world);
-      if (dd < p.radius * 2.2) return 0;
+      if (dd < p.radius * BELT_BODY_CLEARANCE) return 0;
       if (dd < p.soi) d += 0.05;
     }
     return d;

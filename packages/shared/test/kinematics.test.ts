@@ -1,6 +1,7 @@
 // Body kinematics and frames of reference (ARCHITECTURE §3–§4): every pose as the demo computed it, bit for bit (the
-// golden fixture was first written from the demo's Body.update and station update), velocities and angular velocities
-// that are the derivatives of those poses, and frame changes that keep an entity where it is.
+// golden fixture was first written from the demo's Body.update and station update, and regenerated once in P1.E02.T09
+// for the deterministic sin and cos), velocities and angular velocities that are the derivatives of those poses, and
+// frame changes that keep an entity where it is.
 import { Quaternion, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 import {

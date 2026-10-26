@@ -3,6 +3,7 @@
 // edge). Generated once from fixed seeds and shared by the galaxy map and the sky seen in flight,
 // so the two always agree. Galactic axes are the game's world axes.
 import { Euler, Vector3 } from 'three';
+import { cos, log, pow, sin } from '../math/det.ts';
 import { EDGE_X, edgeX } from './edge.ts';
 import { mulberry32, type Rng } from './rng.ts';
 import type { Rgb } from './planetgen.ts';
@@ -103,15 +104,15 @@ function localField(rng: Rng): LocalField {
   const size = new Float32Array(N);
   const v = new Vector3();
   for (let i = 0; i < N; i++) {
-    const r = 25 + Math.pow(rng(), 0.55) * 1100;
+    const r = 25 + pow(rng(), 0.55) * 1100;
     v.set(rng() * 2 - 1, (rng() * 2 - 1) * 0.75, rng() * 2 - 1)
       .normalize()
       .multiplyScalar(r);
     pos.set([v.x, v.y, v.z], i * 3);
-    const t = temps[Math.floor(Math.pow(rng(), 0.8) * temps.length)];
+    const t = temps[Math.floor(pow(rng(), 0.8) * temps.length)];
     tint.set(t, i * 3);
-    lum[i] = 0.35 + Math.pow(rng(), 5) * 2.2;
-    size[i] = 0.5 + Math.pow(rng(), 6) * 1.6;
+    lum[i] = 0.35 + pow(rng(), 5) * 2.2;
+    size[i] = 0.5 + pow(rng(), 6) * 1.6;
   }
   return { count: N, pos, tint, lum, size };
 }
@@ -141,14 +142,14 @@ function galaxyStars(rng: Rng): GalaxyStars {
       c = [1.0, 0.82, 0.6];
       s = 90 + rng() * 160;
     } else {
-      const r = -Math.log(1 - rng() * 0.985) * 13000 + 2500;
+      const r = -log(1 - rng() * 0.985) * 13000 + 2500;
       if (r > R) continue;
       const a = rng() * Math.PI * 2;
       // four logarithmic arms
-      const arm = Math.pow(0.5 + 0.5 * Math.cos(4 * (a - Math.log(r) * 1.9)), 4);
+      const arm = pow(0.5 + 0.5 * cos(4 * (a - log(r) * 1.9)), 4);
       if (rng() > 0.15 + arm * 0.85) continue;
-      x = Math.cos(a) * r;
-      z = Math.sin(a) * r;
+      x = cos(a) * r;
+      z = sin(a) * r;
       y = (rng() + rng() + rng() - 1.5) * (240 + 380 * (1 - arm));
       const knot = arm > 0.7 && rng() < 0.05;
       c = knot ? [1.0, 0.42, 0.68] : arm > 0.5 ? [0.66, 0.78, 1.0] : [1.0, 0.93, 0.82];
@@ -172,7 +173,7 @@ function galaxyStars(rng: Rng): GalaxyStars {
 function otherGalaxies(rng: Rng): OtherGalaxy[] {
   const out: OtherGalaxy[] = [];
   for (let i = 0; i < 46; i++) {
-    const d = 6e5 + Math.pow(rng(), 0.7) * 2.2e6;
+    const d = 6e5 + pow(rng(), 0.7) * 2.2e6;
     const p = new Vector3(rng() * 2 - 1, (rng() * 2 - 1) * 0.6, rng() * 2 - 1).normalize().multiplyScalar(d);
     if (p.x > EDGE_X * 0.8) p.x = EDGE_X * 0.8 - rng() * 4e5;
     const ellip = rng() < 0.35 ? 0.6 + rng() * 0.4 : 0;
@@ -239,9 +240,9 @@ function farShell(rng: Rng): FarShell {
     const z = rng() * 2 - 1;
     const t = rng() * Math.PI * 2;
     const r = Math.sqrt(1 - z * z);
-    v.set(r * Math.cos(t), z, r * Math.sin(t));
-    if (rng() > 0.3 + 0.7 * Math.pow(1 - Math.abs(v.y), 5)) continue;
-    const b = Math.min(1.2, 0.03 * Math.pow(Math.max(rng(), 1e-4), -0.6));
+    v.set(r * cos(t), z, r * sin(t));
+    if (rng() > 0.3 + 0.7 * pow(1 - Math.abs(v.y), 5)) continue;
+    const b = Math.min(1.2, 0.03 * pow(Math.max(rng(), 1e-4), -0.6));
     const warm = rng();
     dir.set([v.x, v.y, v.z], n * 3);
     col.set([b * (0.8 + warm * 0.25), b * 0.86, b * (1.05 - warm * 0.25)], n * 3);

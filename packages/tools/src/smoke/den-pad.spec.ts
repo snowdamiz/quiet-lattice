@@ -77,17 +77,14 @@ test('a Tier 1 den pad is levelled in the engine, and nothing is drawn for the d
     };
   });
 
-  // the same world at Tier 1: the same cities and sites, so the client's pads are the first of the new ones. (Only to a
-  // few ulps: Chromium's and Node's Math.sin and Math.cos differ in the last bit now and then.)
+  // the same world at Tier 1: the same cities and sites, so the client's pads are the first of the new ones, bit for bit
+  // (world generation's math is deterministic: P1.E02.T09)
   // (described as the server describes it: system 0's home world is the Thalune's, with their capital on it)
   const described = describeGalaxySystem(new Galaxy(GALAXY_SEED).systems[home.system]);
   const params = described.bodies[described.home].params as PlanetParams;
   expect({ seed: params.seed, type: params.type, radius: params.radius }).toEqual({ seed: home.seed, type: home.type, radius: home.radius });
   const plan = planSurface(params, new TerrainSampler(params), { tier: 1 });
-  const ours = plan.pads.slice(0, home.pads.length);
-  expect(ours.length).toBe(home.pads.length);
-  const worst = Math.max(...ours.map((v, i) => Math.abs(v - home.pads[i]) / Math.max(1, Math.abs(v))));
-  expect(worst).toBeLessThan(1e-9);
+  expect(plan.pads.slice(0, home.pads.length)).toEqual(home.pads);
   expect(plan.dens.length).toBeGreaterThan(0);
   // (handed over as JSON, as the server would send it)
   const dens = JSON.parse(JSON.stringify(plan.dens)) as Den[];

@@ -4,6 +4,7 @@
 // P2.E22.T02); by default it stands where the demo has it, EDGE_X out along +X.
 //
 // The client does not plan dens by tier yet: it plans every world without dens until the den art lands (P1.E14.T10).
+import { hypot3 } from '../math/det.ts';
 import { EDGE_X, edgeX } from './edge.ts';
 import { GALAXY_SEED, Galaxy, type GalaxySystem, type Point3 } from './galaxy.ts';
 import { homeSystems } from './homes.ts';
@@ -84,7 +85,7 @@ export function bandTier(homeLy: number): Tier {
 /** Distance (ly) from `p` to the nearest home system of the galaxy generated from `galaxySeed`. */
 export function homeLy(p: Point3, galaxySeed: number = GALAXY_SEED): number {
   let best = Infinity;
-  for (const h of galaxyOf(galaxySeed).homes) best = Math.min(best, Math.hypot(p.x - h.x, p.y - h.y, p.z - h.z));
+  for (const h of galaxyOf(galaxySeed).homes) best = Math.min(best, hypot3(p.x - h.x, p.y - h.y, p.z - h.z));
   return best;
 }
 

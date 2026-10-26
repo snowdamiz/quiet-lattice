@@ -102,6 +102,18 @@ describe('describeSystem', () => {
     }
   });
 
+  it('sets the asteroid belt between the first two planets out past the home world (P1.E02.T09)', () => {
+    // (the demo picked them by place in the list with the moons in it, so a moon could end the belt: 26 of the galaxy's 70
+    // belts had a negative width)
+    for (const d of [...galaxy.systems.map(describeGalaxySystem), ...SYSTEMS.slice(10)]) {
+      const planets = d.bodies.filter((b) => b.kind === 'planet');
+      const k = planets.indexOf(d.bodies[d.home]) + 1;
+      const [a, b] = [planets[k].orbitRadius, planets[k + 1].orbitRadius];
+      expect({ name: d.name, radius: d.belt.radius, width: d.belt.width }).toEqual({ name: d.name, radius: (a + b) / 2, width: (b - a) * 0.18 });
+      expect(d.belt.width).toBeGreaterThan(0);
+    }
+  });
+
   it('takes the galaxy’s name and star class, and makes the rest of the system the same with or without the class', () => {
     const seed = hashInts(7, 1);
     const own = describeSystem(seed);

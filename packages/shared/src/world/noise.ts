@@ -1,5 +1,6 @@
-// Seeded 3D simplex noise (Gustavson) plus fractal helpers. Plain arithmetic, so it gives the same values in the
-// terrain workers, on the main thread and on the server; terrain collision queries rely on that.
+// Seeded 3D simplex noise (Gustavson) plus fractal helpers. Plain arithmetic (and the deterministic pow), so it gives
+// the same values in the terrain workers, on the main thread and on the server; terrain collision queries rely on that.
+import { pow } from '../math/det.ts';
 import { mulberry32 } from './rng.ts';
 
 // prettier-ignore
@@ -124,7 +125,7 @@ export class Simplex3 {
     let norm = 0;
     for (let o = 0; o < octaves; o++) {
       let n = 1 - Math.abs(this.noise(x, y, z));
-      n = Math.pow(n, sharpness);
+      n = pow(n, sharpness);
       n *= weight;
       weight = Math.min(1, Math.max(0, n * 2));
       sum += n * amp;

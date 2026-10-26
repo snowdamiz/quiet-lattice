@@ -3,6 +3,7 @@
 // between them) when one is built. Positions are in a city's own tangent plane: metres east (u)
 // and north (v) of its central plaza.
 import { Quaternion, Vector3 } from 'three';
+import { angleTo, atan2, cos, hypot2, pow, setFromAxisAngle, sin } from '../math/det.ts';
 import type { PeopleId } from './homes.ts';
 import type { PlanetParams, TerrainSampler } from './planetgen.ts';
 import { Random, makeName } from './rng.ts';
@@ -51,9 +52,9 @@ export function planCities(p: PlanetParams, sampler: Pick<TerrainSampler, 'heigh
     const y = rng.float(-0.8, 0.8);
     const r = Math.sqrt(1 - y * y);
     const th = rng.float(0, Math.PI * 2);
-    const dir = new Vector3(Math.cos(th) * r, y, Math.sin(th) * r).normalize();
+    const dir = new Vector3(cos(th) * r, y, sin(th) * r).normalize();
     const radius = rng.float(1100, 2100);
-    if (cities.some((c) => c.dir.angleTo(dir) * R < c.radius + radius + 6000)) continue;
+    if (cities.some((c) => angleTo(c.dir, dir) * R < c.radius + radius + 6000)) continue;
     const h = sampler.height(dir.x, dir.y, dir.z);
     if (h < 8 || h > p.mountainHeight * 0.3) continue;
     // dry, and not too broken, all the way out: the plain is levelled, but not out of a mountain
@@ -67,8 +68,8 @@ export function planCities(p: PlanetParams, sampler: Pick<TerrainSampler, 'heigh
       for (let a = 0; a < 10; a++) {
         const an = (a / 10) * Math.PI * 2 + f;
         q.copy(dir)
-          .addScaledVector(t, (Math.cos(an) * radius * f) / R)
-          .addScaledVector(b, (Math.sin(an) * radius * f) / R)
+          .addScaledVector(t, (cos(an) * radius * f) / R)
+          .addScaledVector(b, (sin(an) * radius * f) / R)
           .normalize();
         const hk = sampler.height(q.x, q.y, q.z);
         lo = Math.min(lo, hk);
@@ -79,7 +80,7 @@ export function planCities(p: PlanetParams, sampler: Pick<TerrainSampler, 'heigh
     }
     // (the plain is cut into hills and built up over hollows: only real mountains and the sea rule a spot out)
     if (lo < 2 || hi - lo > 380) continue;
-    const quat = new Quaternion().setFromUnitVectors(Y, dir).multiply(new Quaternion().setFromAxisAngle(Y, rng.float(0, Math.PI * 2)));
+    const quat = new Quaternion().setFromUnitVectors(Y, dir).multiply(setFromAxisAngle(new Quaternion(), Y, rng.float(0, Math.PI * 2)));
     const name = makeName(rng, 2, 3);
     const city: City = { index: cities.length, dir, quat, radius, base: Math.max(8, sum / k), relief: hi - lo, seed: rng.int(1, 1e9), name };
     // a people's capital is the first plain found, named and planned as they built it (the name above is still drawn, so
@@ -151,11 +152,11 @@ export function planKind(plan: StreetPlan): PlanKind {
 
 /** Distance (m) from a point to the nearest street's centre line (0 in the plaza). */
 export function streetDistance(plan: StreetPlan, u: number, v: number): number {
-  const r = Math.hypot(u, v);
+  const r = hypot2(u, v);
   if (r < plan.plaza) return 0;
   if (plan.radial) {
     const rr = r - plan.plaza;
-    const a = Math.atan2(v, u);
+    const a = atan2(v, u);
     let dRing: number;
     if (plan.arms) {
       // the spiral's turns: at angle a, its arms pass at plaza + ringGap · (n + arms · a / 2π) for whole n
@@ -166,8 +167,8 @@ export function streetDistance(plan: StreetPlan, u: number, v: number): number {
     const da = Math.abs(a - Math.round(a / seg) * seg);
     return Math.min(dRing, da * r);
   }
-  const c = Math.cos(plan.angle);
-  const s = Math.sin(plan.angle);
+  const c = cos(plan.angle);
+  const s = sin(plan.angle);
   const x = u * c + v * s;
   const y = -u * s + v * c;
   const B = plan.block;
@@ -194,11 +195,11 @@ export function layoutCity(city: Pick<City, 'seed' | 'radius'>, plan: StreetPlan
       if (rng.next() < k * k * k * 0.45) continue;
       const a = a0 + (i / n) * Math.PI * 2 + rng.float(-0.25, 0.25) / n;
       const rr = r + rng.float(-0.25, 0.25) * spacing;
-      const u = Math.cos(a) * rr;
-      const v = Math.sin(a) * rr;
+      const u = cos(a) * rr;
+      const v = sin(a) * rr;
       const foot = spacing * rng.float(0.26, 0.38);
       if (streetDistance(plan, u, v) < plan.width / 2 + foot + 3) continue;
-      const tall = hMax * Math.pow(1 - k, 1.6) * rng.float(0.5, 1.2) + rng.float(9, 22);
+      const tall = hMax * pow(1 - k, 1.6) * rng.float(0.5, 1.2) + rng.float(9, 22);
       const cls = tall > 95 ? 2 : tall > 34 ? 1 : 0;
       out.push([u, v, foot, tall, cls, rng.float(0, Math.PI * 2), rng.int(0, 3)]);
     }

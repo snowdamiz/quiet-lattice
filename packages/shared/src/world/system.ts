@@ -4,8 +4,10 @@
 // Every value is a number, string, boolean, null, array or plain object, so a description survives JSON unchanged.
 //
 // The random draws are made in exactly the order the demo's SolarSystem made them, and every float is computed the same
-// way, so each system comes out as it always has (the golden fixtures in packages/shared/test pin it).
-import { Color, Quaternion, Vector3 } from 'three';
+// way, with the deterministic math of ../math/det.ts, so each system comes out the same on every machine (the golden
+// fixtures in packages/shared/test pin it).
+import { Quaternion, Vector3 } from 'three';
+import { cos, pow, setFromAxisAngle, sin } from '../math/det.ts';
 import type { CapitalSpec } from './cities.ts';
 import type { StarClass } from './galaxy.ts';
 import { createPlanetParams, type Atmosphere, type Hazard, type PlanetOptions, type PlanetParams, type PlanetType } from './planetgen.ts';
@@ -106,8 +108,66 @@ const IDENTITY: Quat = [0, 0, 0, 1];
 function inclinedOrbit(seed: number, draw: number, range: number, minI: number, maxI: number): Quat {
   const node = new Random((seed ^ 0x51a7e) >>> 0).float(0, Math.PI * 2);
   const incl = minI + (Math.abs(draw) / range) * (maxI - minI);
-  const axis = new Vector3(Math.cos(node), 0, Math.sin(node));
-  return quat(new Quaternion().setFromAxisAngle(axis, draw < 0 ? -incl : incl));
+  const axis = new Vector3(cos(node), 0, sin(node));
+  return quat(setFromAxisAngle(new Quaternion(), axis, draw < 0 ? -incl : incl));
+}
+
+// Colours as three's Color works them out with its colour management on (sRGB hex in, linear working space), with the
+// deterministic pow in place of Math.pow.
+function srgbToLinear(c: number): number {
+  return c < 0.04045 ? c * 0.0773993808 : pow(c * 0.9478672986 + 0.0521327014, 2.4);
+}
+function linearToSrgb(c: number): number {
+  return c < 0.0031308 ? c * 12.92 : 1.055 * pow(c, 0.41666) - 0.055;
+}
+const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
+
+/** An sRGB hex colour in linear RGB (`new Color(hex).toArray()`). */
+function hexToLinear(hex: number): [number, number, number] {
+  hex = Math.floor(hex);
+  return [srgbToLinear(((hex >> 16) & 255) / 255), srgbToLinear(((hex >> 8) & 255) / 255), srgbToLinear((hex & 255) / 255)];
+}
+
+function hue2rgb(p: number, q: number, t: number): number {
+  if (t < 0) t += 1;
+  if (t > 1) t -= 1;
+  if (t < 1 / 6) return p + (q - p) * 6 * t;
+  if (t < 1 / 2) return q;
+  if (t < 2 / 3) return p + (q - p) * 6 * (2 / 3 - t);
+  return p;
+}
+
+/** An sRGB hex colour with its hue turned by `dh` (`new Color(hex).offsetHSL(dh, 0, 0).getHex()`: the hue, saturation and
+ * lightness of its linear values). */
+function offsetHue(hex: number, dh: number): number {
+  const [r, g, b] = hexToLinear(hex);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  let l = (min + max) / 2;
+  if (min !== max) {
+    const delta = max - min;
+    s = l <= 0.5 ? delta / (max + min) : delta / (2 - max - min);
+    if (max === r) h = (g - b) / delta + (g < b ? 6 : 0);
+    else if (max === g) h = (b - r) / delta + 2;
+    else h = (r - g) / delta + 4;
+    h /= 6;
+  }
+  // setHSL
+  h = (((h + dh) % 1) + 1) % 1;
+  s = clamp01(s);
+  l = clamp01(l);
+  let rgb: [number, number, number];
+  if (s === 0) rgb = [l, l, l];
+  else {
+    const p = l <= 0.5 ? l * (1 + s) : l + s - l * s;
+    const q = 2 * l - p;
+    rgb = [hue2rgb(q, p, h + 1 / 3), hue2rgb(q, p, h), hue2rgb(q, p, h - 1 / 3)];
+  }
+  // getHex
+  const [R, G, B] = rgb.map((c) => Math.round(Math.max(0, Math.min(255, linearToSrgb(c) * 255))));
+  return R * 65536 + G * 256 + B;
 }
 
 /** A gas giant's parameters (rocky worlds have PlanetParams from createPlanetParams). */
@@ -251,7 +311,7 @@ export function describeSystem(seed: number, { name, cls, homeType, mild, capita
   // the class the galaxy shows from afar wins (the draw above is still made, so the rest of the system comes out as
   // before)
   if (cls) sc = STAR_CLASSES.find((c) => c.cls === cls) ?? sc;
-  const nebula = sc.nebula.map((c) => new Color(c).offsetHSL(rng.float(-0.06, 0.06), 0, 0).getHex());
+  const nebula = sc.nebula.map((c) => offsetHue(c, rng.float(-0.06, 0.06)));
   const star: StarSpec = { name: sysName, cls: sc.cls, color: sc.color, radius: rng.float(45000, 80000) * ORBIT_SCALE, nebula };
 
   const bodies: BodySpec[] = [];
@@ -276,10 +336,13 @@ export function describeSystem(seed: number, { name, cls, homeType, mild, capita
     orbit *= rng.float(1.45, 1.75);
   }
 
-  // the asteroid belt between two middle orbits (picked by place in `bodies`, moons included, as it always was)
-  const bi = Math.min(bodies.length - 2, habitableIdx + 1);
-  const a = bodies[bi].orbitRadius;
-  const b = bodies[bi + 1].orbitRadius;
+  // the asteroid belt between the first two planets out past the habitable world, as Mars and Jupiter lie past Earth (the
+  // demo picked them by place in a list with the moons in it, so a moon's orbit about its planet could end the belt and
+  // give it a negative width)
+  const planets = bodies.filter((b) => b.kind === 'planet');
+  const bi = Math.min(planets.length - 2, habitableIdx + 1);
+  const a = planets[bi].orbitRadius;
+  const b = planets[bi + 1].orbitRadius;
   const belt: BeltSpec = { radius: (a + b) / 2, width: (b - a) * 0.18, thickness: 30000 * ORBIT_SCALE, density: rng.float(0.6, 1.2) };
 
   const station: StationSpec = {
@@ -313,7 +376,7 @@ function addPlanet(bodies: BodySpec[], rng: Random, sysName: string, slot: numbe
       hasOcean: false,
       gasColors: [...pal],
       // haze tinted by the planet's own palette rather than an Earth-blue rim
-      atmosphere: { scatter: new Color(pal[2]).toArray().map((c) => 3 + c * 12), density: 0.7, height: radius * 0.05 },
+      atmosphere: { scatter: hexToLinear(pal[2]).map((c) => 3 + c * 12), density: 0.7, height: radius * 0.05 },
       clouds: 0,
       label: 'Gas Giant',
       weather: 'Crushing Storms',
@@ -337,12 +400,12 @@ function addPlanet(bodies: BodySpec[], rng: Random, sysName: string, slot: numbe
     seed,
     parent: null,
     orbitRadius,
-    orbitPeriod: 6 * 3600 * Math.pow(orbitRadius / (3000e3 * ORBIT_SCALE), 1.5),
+    orbitPeriod: 6 * 3600 * pow(orbitRadius / (3000e3 * ORBIT_SCALE), 1.5),
     orbitPhase: rng.float(0, Math.PI * 2),
     orbitTilt: inclinedOrbit(seed, rng.float(-0.04, 0.04), 0.04, 0.035, 0.24),
     rotationPeriod: type === 'gas' ? 900 : rng.float(40, 60) * 60,
     rotationPhase: rng.float(0, Math.PI * 2),
-    axialTilt: quat(new Quaternion().setFromAxisAngle(tiltAxis, rng.float(0, 0.45))),
+    axialTilt: quat(setFromAxisAngle(new Quaternion(), tiltAxis, rng.float(0, 0.45))),
     gravity: type === 'gas' ? 20 : 7.5 + ((radius / WORLD_SCALE - 22000) / 14000) * 4,
     soi: 0,
     params,
