@@ -526,8 +526,7 @@ export class Structures {
     } else if (s.type === 'crash') {
       const res = rng.pick(['gold', 'cobalt', 'copper']);
       const n = rng.int(30, 70);
-      g.inventory.add(res, n);
-      g.hud.pickup(res, n);
+      g.hud.collected(res, n, g.inventory.add(res, n));
       g.inventory.add('dihydrogen', 25);
       g.hud.showBanner('CARGO SALVAGED', 'Crashed Starship', ['The pilot is nowhere to be found']);
     } else if (s.type === 'beacon') {

@@ -154,6 +154,22 @@ green or spore green.
 plates, one amber accent `#F0A24A`, teal secondary `#8FD3C8`, danger `#FF5A4F`. Lore UI (dialogue busts, the journal's lore
 lines, Count readouts) adds the glyph light and the speaker's people palette.
 
+**Resource pips** are the one documented exception to that palette (P1.E06.T04). Each resource wears a small pip in
+inventory slots, pickup toasts and trade rows: a shape by where it comes from and a muted hue of its own. The rule: a pip
+says which resource this is and nothing else. It never marks a state (full, selected, at risk, low, refused); states keep
+the flight-deck colours, amber for focus and cargo at risk, danger red for danger. Pip hues stay muted and clear of danger
+red and the amber accent. The values live in `PIPS` in `packages/client/src/gameplay/Inventory.js`.
+
+| Shape | Family | Resources (hue) |
+|---|---|---|
+| dot | plants | carbon `#93B07E`, sodium `#CFD18A`, oxygen `#9DC4E6` |
+| diamond | rock, deposits, asteroids | ferrite `#B7B2A9`, di-hydrogen `#B39CDB`, tritium `#C8E4EC`, copper `#86B39A`, cobalt `#7E9FD4`, gold `#DED0A0`, iridium `#C5CAD3` |
+| hexagon | crystals and salts of hostile worlds | frostglass `#B6E0E8`, acidsalt `#B5C77A`, cinderglass `#B497A8`, stormquartz `#9E9BD0`, gamma crystal `#A9D49A`, murkpearl `#8FA9A6` |
+| square | what the Count, the Hollow and the Cartographers leave | Count residue `#D8F6FF`, husk alloy `#CFC6B3`, glyphstone `#7FD8FF` |
+
+Items that are not resources wear a three-letter kind tag (CON, AMO, CAT, MOD, COS, CMP) in warm white on a hairline
+border, not a pip. P1.E13.T02's resource icons replace the pips' shapes, keeping the hues and the rule.
+
 ## 5. The shared material library
 
 `assets/blend/_library.blend` holds every shared material. Assets either link a library material (so a library fix

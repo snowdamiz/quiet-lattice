@@ -1,9 +1,12 @@
 // WebSocket gateway (docs/ARCHITECTURE.md §2, §5): `ws` in noServer mode on the HTTP server's upgrade event, path /ws.
 // The first message must be `hello` with the protocol version and a session token, within HELLO_TIMEOUT_MS; then
 // `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS: its player entity enters
-// the zone of its home system (docked at the home Waystation) and `welcome` names the zone and the entity. From then on
-// `input` and `ack` go to the zone, which sends the session a binary snapshot every tick, and closing the socket takes
-// the entity out. Malformed or out-of-place messages are dropped and counted, never thrown.
+// the zone of its home system (docked at the home Waystation) and `welcome` names the zone and the entity, followed at
+// once by `world` (the world service's state, sent again to every joined session whenever it changes) and the
+// character's `inventory`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot
+// every tick, and closing the socket takes the entity out. Inventory requests go to the inventory service, which answers
+// each with the authoritative state (ARCHITECTURE §7). Malformed or out-of-place messages are dropped and counted, never
+// thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -18,8 +21,10 @@ import { WebSocketServer, type RawData, type WebSocket } from 'ws';
 import type { TokenService } from '../accounts/tokens.ts';
 import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.ts';
 import type { Db } from '../db/client.ts';
+import { InventoryService } from '../inventory/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import type { ServerClock } from '../world/clock.ts';
+import type { WorldSource } from '../world/service.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import { clientKey, TokenBucket } from './rateLimit.ts';
 
@@ -76,9 +81,12 @@ export interface WsGatewayDeps {
   db: Db;
   tokens: TokenService;
   clock: ServerClock;
+  world: Pick<WorldSource, 'message' | 'subscribe'>;
   zones: ZoneManager;
   log: FastifyBaseLogger;
   limits: WsLimits;
+  /** Every character's inventory; the gateway makes its own when none is given. */
+  inventory?: InventoryService;
 }
 
 export interface WsStats {
@@ -89,6 +97,7 @@ export interface WsStats {
 
 export interface WsGateway {
   readonly registry: SessionRegistry;
+  readonly inventory: InventoryService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -117,11 +126,20 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     viewer.zoneId = null;
   };
   const conns = new Set<Conn>();
+  const unsubscribeWorld = deps.world.subscribe(() => {
+    const world = deps.world.message();
+    for (const c of conns) if (c.s.state === 'joined') c.s.send(world);
+  });
   const openPerIp = new Map<string, number>();
   let nextSessionId = 1;
   let invalidTotal = 0;
   let rateLimitedTotal = 0;
   let closing = false;
+  const inventory = deps.inventory ?? new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
+  // server-side changes (loot, mining, trade, the Recall) reach the session holding the character
+  const unsubscribeInventory = inventory.subscribe((characterId, reply) => {
+    for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'inventory', ...reply });
+  });
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -264,6 +282,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         return;
       case 'hello':
         return invalid(s, 'second hello');
+      case 'inventory':
+        if (s.state !== 'joined') return invalid(s, 'inventory before join');
+        s.send({ t: 'inventory', ...inventory.request(s.characterId!, msg.seq, msg.op) });
+        return;
       case 'input': {
         if (s.state !== 'joined') return invalid(s, 'input before join');
         const r = deps.zones.input(s, msg);
@@ -334,15 +356,20 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       pose: joined.pose,
       mode: joined.mode,
     });
+    s.send(deps.world.message());
+    s.send({ t: 'inventory', ...inventory.open(row.id) });
     log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
   }
 
   return {
     registry,
+    inventory,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
       clearInterval(heartbeat);
+      unsubscribeInventory();
+      unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
       const gone = Promise.all(

@@ -1586,6 +1586,440 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   color: var(--good);
 }
 
+/* ---------- inventory: suit stacks beside the ship's cargo pods ---------- */
+/* Amber here means only what has the focus (the slot under the pointer, a stack being dragged or flying, the slot it
+   will land on) and the cargo at risk. Everything else is warm white on a near-opaque plate, so the ship never shows
+   through the slots or the footer. The units wear the HUD's coin glyph and colour. */
+/* a column that never scrolls itself: at 88vh the cargo pod list gives up height and scrolls instead, so the head and
+   the footer always show */
+.inv-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 0;
+  background: rgba(11, 12, 15, 0.96);
+  animation: invIn 0.36s cubic-bezier(0.25, 0.8, 0.3, 1);
+}
+.inv-panel > .panel-head,
+.inv-panel > .inv-foot {
+  flex: none;
+}
+/* the panel rises 8 px as it fades in */
+@keyframes invIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.inv-panel .panel-head h2::before {
+  background: var(--text);
+}
+.inv-panel .balance b {
+  color: var(--text);
+}
+.inv-panel .balance b::before {
+  color: var(--warm);
+  opacity: 1;
+}
+/* the Esc key label at the grey of the Stack buttons: AA on the plate */
+.inv-panel .close-x,
+.inv-panel .close-x::before {
+  color: var(--dim);
+}
+.inv-panel.still {
+  animation: none;
+}
+.inv-cols {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 40px;
+}
+.inv-side-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 28px;
+  margin-bottom: 12px;
+}
+.inv-side-head .col-title {
+  margin: 0;
+  color: var(--text);
+}
+/* counts and labels carry information here, so they sit at --dim (AA on the plate) rather than --faint */
+.inv-panel .panel-head .label,
+.inv-side-head .mono:not(.col-title),
+.inv-pod-head {
+  color: var(--dim);
+}
+/* a quiet square action, like the Esc key beside it */
+.inv-act {
+  height: 24px;
+  margin-left: auto;
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid var(--line-2);
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.inv-act:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--bracket);
+}
+.inv-act:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+/* the rule of each side (DESIGN 10.1): teal for what you keep, amber for what you can lose */
+/* both sides end on their rule, level with each other */
+.inv-side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.inv-note {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: auto 0 0;
+  padding-top: 14px;
+  font-size: 12.5px;
+  color: var(--dim);
+}
+.inv-note i {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: var(--accent2);
+}
+.inv-note.drop i {
+  background: var(--accent);
+}
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+/* a hauler's pods scroll inside their column; the suit never does */
+/* the scrollbar sits in the panel's margin, 9 px off the slots, in a gutter always kept, so the pods' slots line up
+   with the suit's whether the list scrolls or not */
+.inv-pods {
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-right: -14px;
+  padding-right: 9px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+/* a scrollbar that stays drawn (overlay scrollbars hide until scrolled), so a long pod list reads as one */
+.inv-pods::-webkit-scrollbar {
+  width: 5px;
+}
+.inv-pods::-webkit-scrollbar-track {
+  background: rgba(233, 231, 226, 0.06);
+}
+.inv-pods::-webkit-scrollbar-thumb {
+  background: rgba(233, 231, 226, 0.42);
+}
+@supports not selector(::-webkit-scrollbar) {
+  .inv-pods {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(233, 231, 226, 0.42) rgba(233, 231, 226, 0.06);
+  }
+}
+.inv-more {
+  display: none;
+  margin-top: 10px;
+  color: var(--dim);
+}
+.inv-more.on {
+  display: block;
+}
+/* an empty pod: one line, opened by a click or by a stack dragged over it */
+.inv-pod.shut .inv-pod-head {
+  align-items: center;
+  height: 34px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid rgba(233, 231, 226, 0.09);
+  background: rgba(233, 231, 226, 0.012);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.inv-pod.shut:hover .inv-pod-head {
+  border-color: var(--line-2);
+  background: rgba(233, 231, 226, 0.05);
+}
+.inv-pod-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.inv-slot {
+  position: relative;
+  height: 74px;
+  background: rgba(233, 231, 226, 0.035);
+  border: 1px solid var(--line);
+  cursor: grab;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s, opacity 0.2s;
+}
+.inv-slot.empty {
+  background: rgba(233, 231, 226, 0.012);
+  border-color: rgba(233, 231, 226, 0.07);
+  cursor: default;
+}
+/* the slot with the focus: an amber edge bar, as the title menu marks its active row */
+.inv-slot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.inv-slot:not(.empty):hover {
+  border-color: var(--line-2);
+  background: linear-gradient(90deg, rgba(240, 162, 74, 0.1), rgba(233, 231, 226, 0.05) 70%);
+}
+.inv-slot:not(.empty):hover::before,
+.inv-slot.drop::before {
+  transform: scaleY(1);
+}
+.inv-sw {
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  width: 9px;
+  height: 9px;
+  background: var(--c);
+}
+.inv-sw.dot {
+  border-radius: 50%;
+}
+.inv-sw.diamond {
+  transform: rotate(45deg) scale(0.9);
+}
+.inv-sw.hex {
+  width: 10px;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+.inv-sw.square {
+  transform: scale(0.85);
+}
+.inv-tag {
+  position: absolute;
+  left: 9px;
+  top: 9px;
+  height: 17px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  border: 1px solid var(--line-2);
+}
+.inv-ct {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.inv-nm {
+  position: absolute;
+  left: 11px;
+  right: 10px;
+  bottom: 12px;
+  font-family: var(--font-cond);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* how full the stack is, along the bottom edge; amber once it is full */
+.inv-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: calc(var(--f) * 100%);
+  background: rgba(233, 231, 226, 0.3);
+}
+.inv-slot.full .inv-fill {
+  background: var(--text);
+}
+.inv-slot.drop {
+  border-color: var(--accent);
+  background: rgba(240, 162, 74, 0.09);
+}
+.inv-slot.lifted {
+  opacity: 0.28;
+}
+.inv-screen.dragging,
+.inv-screen.dragging .inv-slot {
+  cursor: grabbing;
+}
+.inv-ghost,
+.inv-fly {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: var(--plate-2);
+  border-color: var(--accent);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+/* a stack in flight from one slot to another: its destination looks as it did until the tile lands */
+.inv-slot.landing {
+  background: rgba(233, 231, 226, 0.012);
+  border-color: rgba(233, 231, 226, 0.07);
+}
+.inv-slot.landing > * {
+  visibility: hidden;
+}
+/* a slot a move just touched settles back from warm white */
+.inv-slot.bump {
+  animation: invBump 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes invBump {
+  from {
+    border-color: var(--bracket);
+    background: rgba(233, 231, 226, 0.16);
+  }
+}
+.inv-none {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 20px;
+  border: 1px solid rgba(233, 231, 226, 0.07);
+  font-size: 13px;
+  color: var(--dim);
+}
+.inv-none b {
+  font-family: var(--font-cond);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.inv-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 70px;
+  margin: 22px -32px 0;
+  padding: 0 32px;
+  border-top: 1px solid var(--line);
+}
+/* what the hovered stack is (name, kind, count against the cap) over where it comes from and what it is for */
+.inv-detail {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.inv-detail .l1 {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.inv-detail b {
+  font-family: var(--font-cond);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.inv-detail .kind {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.inv-detail .num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.inv-detail .about {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12.5px;
+  color: var(--dim);
+}
+.inv-detail.idle {
+  display: block;
+  text-overflow: ellipsis;
+  color: var(--dim);
+}
+.inv-detail.msg {
+  display: block;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  color: var(--text);
+}
+.inv-keys {
+  flex: none;
+  display: flex;
+  gap: 18px;
+  font-size: 12px;
+  color: var(--dim);
+}
+.inv-keys span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.inv-keys kbd {
+  height: 20px;
+  min-width: 20px;
+  font-size: 9.5px;
+}
+
 /* ---------- map ---------- */
 /* (transparent: the map is drawn into the game's own canvas underneath) */
 .map-screen {

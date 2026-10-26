@@ -58,6 +58,8 @@ export function saveGame(game) {
     items: game.inventory.items,
     units: game.inventory.units,
     warpCells: game.inventory.warpCells,
+    // the suit and cargo pods as laid out (items, units and warpCells stay for older builds)
+    inventory: game.inventory.snapshot(),
     bought: [...game.menus.bought],
     discovered: [...game.discoveredNames],
     species: [...game.fauna.scannedNames],
@@ -92,9 +94,11 @@ export function applySave(game, data) {
   game.galaxy.setCurrent(sys);
   game.time = data.time || 0;
   if (sys !== game.system?.info) game.loadSystem(sys);
-  game.inventory.items = { ...(data.items || {}) };
-  game.inventory.units = data.units ?? game.inventory.units;
-  game.inventory.warpCells = data.warpCells ?? game.inventory.warpCells;
+  if (!(data.inventory && game.inventory.restore(data.inventory))) {
+    game.inventory.items = { ...(data.items || {}) };
+    game.inventory.units = data.units ?? game.inventory.units;
+    game.inventory.warpCells = data.warpCells ?? game.inventory.warpCells;
+  }
   for (const id of data.bought || []) {
     game.menus.bought.add(id);
     if (id === 'beam') game.multitool.upgrade();

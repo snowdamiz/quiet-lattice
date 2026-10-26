@@ -1,5 +1,5 @@
 // HTTP gateway against the dockerised Postgres and Redis: accounts, characters, health and the /auth rate limit.
-import { AuthResponse, CharacterList, CharacterSummary } from '@astra/shared/protocol';
+import { AuthResponse, CharacterList, CharacterSummary, PROTOCOL_VERSION } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { homeSystems } from '@astra/shared/world';
 import type { RunningServer } from '../src/server.ts';
@@ -20,7 +20,7 @@ describe('health', () => {
   it('reports Postgres and Redis up', async () => {
     const res = await api(server, 'GET', '/health');
     expect(res.status).toBe(200);
-    expect(res.body).toMatchObject({ ok: true, db: 'ok', redis: 'ok', protocol: 1 });
+    expect(res.body).toMatchObject({ ok: true, db: 'ok', redis: 'ok', protocol: PROTOCOL_VERSION });
     expect(res.body).not.toHaveProperty('sessions');
   });
 });

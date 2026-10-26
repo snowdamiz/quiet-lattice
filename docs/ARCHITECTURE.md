@@ -41,7 +41,16 @@ Libraries: `fastify` for HTTP, `ws` for sockets (attached to Fastify's server in
 The server owns the clock. World time `t` is seconds since the shard's epoch (stored in Postgres, so it survives restarts).
 Every body pose comes from `t` (`bodyPose(spec, t)` in shared, P1.E02.T03), so client and server agree on where every planet
 and station is without streaming them. The client keeps `game.time = serverTime + offset`, estimating the offset from the
-`welcome` message and periodic `time` pings (half the round trip), and slews it rather than jumping.
+`welcome` message and periodic `ping`/`pong` round trips (half the round trip), and slews it rather than jumping. The
+server pushes no periodic time of its own: a pong is the better sample because the client can halve its round trip, and
+`world` carries a `serverTime` too.
+
+The shard's row (`shards`, created on the shard's first boot) holds its epoch (2026-01-01Z for a new shard), its season
+(number, start in world time, length; DESIGN 16.4) and `last_time`, the latest world time its server saved (every minute and
+on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
+below `last_time`, and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards,
+even when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
+with a clock sync point `{time, at}`: world time `time` at wall time `at` ms) for the processes P3.E37 splits off.
 
 ## 4. Frames of reference on the wire
 
@@ -90,11 +99,29 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `ack {tick}` (one per applied snapshot,
-  at most once per tick), `ping {id, clientTime}`. Each socket's message budget is 60 a second with a burst of 120: input
-  and acks take 40, leaving room for pings, casts, interactions and chat, and the burst absorbs the backlog of a stall.
+  at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`. Each socket's message budget is 60 a second
+  with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat and inventory requests,
+  and the burst absorbs the backlog of a stall.
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}`, `pong`, and snapshots.
+  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}` (sent right after `welcome` and to every
+  joined session whenever the world service's state changes; `tiers` is each galaxy system's tier by index), `pong`,
+  `inventory {seq, inventory, error?}`, and snapshots.
+- **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
+  each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
+  points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
+  `split {from, count, to?}`, `merge {from, to}`, `transfer {from, count?}` (across to the other side) or `compact {c}`,
+  with slots `{c: 'suit', i}` or `{c: 'pod', p, i}` bounded to 64 suit slots, 32 pods and 64 slots a pod. `seq` counts the
+  session's requests from 1 and must increase. The client applies the same shared op at once to predict; the server
+  applies it through the inventory service and answers every request with `inventory` state, where `seq` is the last
+  request it handled this session and `error` the code it refused that one with (`stale_seq` for a replayed number).
+  The server also sends the state after `welcome` (`seq` 0) and pushes it whenever server-side systems change it (loot,
+  mining, trade, the Recall's cargo drop); the client keeps its unanswered requests and replays those above `seq` on
+  top, drops any left unanswered for 5 s (the gateway drops an over-budget message without a reply), never sends an op
+  that fails the schema, and starts over (no pending requests, `seq` from 1) on the state sent after `welcome`. The pods
+  are the ship's: one per pod its `ShipLoadout` carries, checked against the bays `shipStats` gives (P1.E12.T01).
+  Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
+  picks the union whose schema accepts the message.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 

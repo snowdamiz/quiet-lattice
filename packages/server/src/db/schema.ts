@@ -1,9 +1,9 @@
-// Postgres schema (docs/ARCHITECTURE.md §8). Migrations are generated from this file with `pnpm --filter @astra/server
+// Postgres schema (docs/ARCHITECTURE.md §3, §8). Migrations are generated from this file with `pnpm --filter @astra/server
 // db:generate` and committed under packages/server/drizzle/. Later tasks add pose, frame, ship, inventory, skills, quests
 // and flags to `characters` (or child tables) with their own migrations.
 import type { CharacterLook, PeopleId } from '@astra/shared/protocol';
 import { sql } from 'drizzle-orm';
-import { bigint, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { bigint, check, doublePrecision, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 export const accounts = pgTable(
   'accounts',
@@ -43,5 +43,29 @@ export const characters = pgTable(
   ],
 );
 
+/**
+ * One row per world shard, created on its server's first boot (docs/ARCHITECTURE.md §3, DESIGN 16.4): the epoch its
+ * world time counts from, the latest world time its server saved (so the clock never starts below it after a restart)
+ * and its season. World times are seconds since the epoch.
+ */
+export const shards = pgTable(
+  'shards',
+  {
+    id: text('id').primaryKey(),
+    /** World time 0. */
+    epoch: timestamp('epoch', { withTimezone: true, mode: 'date' }).notNull(),
+    /** The latest world time (s) the shard's server saved; only ever raised. */
+    lastTime: doublePrecision('last_time').notNull().default(0),
+    season: integer('season').notNull().default(1),
+    /** World time (s) the season began. */
+    seasonStart: doublePrecision('season_start').notNull(),
+    /** The season's length (s). */
+    seasonLength: integer('season_length').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check('shards_season_check', sql`${t.season} >= 1`), check('shards_season_length_check', sql`${t.seasonLength} > 0`)],
+);
+
 export type AccountRow = typeof accounts.$inferSelect;
 export type CharacterRow = typeof characters.$inferSelect;
+export type ShardRow = typeof shards.$inferSelect;
