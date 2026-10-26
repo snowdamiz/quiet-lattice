@@ -1,5 +1,6 @@
 // Pirate raids in deep space: pursuit / strafing AI, lasers, loot.
 import * as THREE from 'three';
+import { setFrameInto } from '@astra/shared/world';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -117,19 +118,9 @@ export class Pirates {
         this.spawnRaid();
       }
     }
-    // keep pirates in the ship's frame
+    // keep pirates in the ship's frame (the shared frame rule, as FrameState follows it)
     if (this.active && this.frame !== s.frame) {
-      for (const p of this.list) {
-        const wp = this.frame ? this.frame.localToWorld(p.pos, new THREE.Vector3()) : p.pos.clone();
-        const wq = this.frame ? this.frame.quaternion.clone().multiply(p.quat) : p.quat.clone();
-        if (s.frame) {
-          s.frame.worldToLocal(wp, p.pos);
-          p.quat.copy(s.frame.quaternionInv).multiply(wq);
-        } else {
-          p.pos.copy(wp);
-          p.quat.copy(wq);
-        }
-      }
+      for (const p of this.list) setFrameInto(p, this.frame, s.frame);
       this.frame = s.frame;
     }
     // disengage if the player docks or lands
