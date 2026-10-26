@@ -105,7 +105,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const persistence = new CharacterPersistence({
     ...opts.persistence,
     store: pgCharacterStore(database.db),
-    registry: coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress(), log }),
+    registry: coreRegistry({ zones, clock, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress(), log }),
     log,
   });
   const ws = attachWsGateway(app.server, {

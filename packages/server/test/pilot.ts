@@ -1,6 +1,7 @@
 // A scripted pilot for integration tests: a player in the world over a real socket, sending `input` at 20 Hz along a
 // path at chosen speeds, paced by the wall clock (its position is where the speed has taken it by the time each input
-// leaves, as a real client's is), applying and acknowledging every snapshot, and keeping every message the server sends.
+// leaves, as a real client's is, and each input carries that time: its estimate of server time, from `welcome`),
+// applying and acknowledging every snapshot, and keeping every message the server sends.
 import { performance } from 'node:perf_hooks';
 import { PROTOCOL_VERSION, type Pose, type PeopleId, type ServerMessage } from '@astra/shared/protocol';
 import type { RunningServer } from '../src/server.ts';
@@ -27,6 +28,8 @@ export class Pilot {
   seq = 0;
   /** the last pose sent */
   last: Pose;
+  /** when welcome arrived, on the wall clock (ms) */
+  private readonly welcomedAt = performance.now();
 
   private constructor(
     readonly sock: TestSocket,
@@ -71,9 +74,14 @@ export class Pilot {
     return this.sock.received.filter((m): m is Extract<ServerMessage, { t: 'correction' }> => m.t === 'correction');
   }
 
+  /** Its estimate of server time now: welcome's, and the time since on its own clock. */
+  get time(): number {
+    return this.welcome.serverTime + (performance.now() - this.welcomedAt) / 1000;
+  }
+
   send(pose: Pose, mode: Mode, buttons = 0): number {
     this.last = pose;
-    this.sock.send({ t: 'input', seq: ++this.seq, time: 0, mode, pose, buttons });
+    this.sock.send({ t: 'input', seq: ++this.seq, time: this.time, mode, pose, buttons });
     return this.seq;
   }
 

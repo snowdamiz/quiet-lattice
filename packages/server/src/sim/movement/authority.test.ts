@@ -20,7 +20,7 @@ import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../../zones/system.ts';
 import { padPose, poseProblem, type MovementRefusal } from './authority.ts';
 import { MOVEMENT } from './rules.ts';
-import { BOOST, flyPath, Harness, LARK, noseTo, pose } from './testing.ts';
+import { BOOST, exitFeet, flyPath, Harness, LARK, noseTo, pose, standing } from './testing.ts';
 import { groundOf, heightAt, type Vec3 } from './world.ts';
 
 const D = describeZoneSystem(0);
@@ -67,8 +67,9 @@ describe('honest flight is never corrected', () => {
   });
 
   it('crosses out of the Waystation’s sphere into its world’s frame, by the shared rule on its own clock', () => {
-    for (const skew of [0, 0.3, -0.3]) {
+    for (const skew of [0, 0.25, -0.25]) {
       const h = docked();
+      h.skew = skew;
       const p = PAD0.pos as Vec3;
       flyPath(h, STATION, [p, [p[0], 14, p[2]], [p[0], 14, 50], [0, 20, 90], [0, 200, 600]], [12, 40, 60, 500]);
       // straight on at 550 m/s; the client picks its frame on its own clock (`skew` from the server's)
@@ -77,7 +78,7 @@ describe('honest flight is never corrected', () => {
       let dir: Vec3 = [0, 0.3, 0.954];
       for (let i = 0; i < 200; i++) {
         local = [local[0] + dir[0] * 27.5, local[1] + dir[1] * 27.5, local[2] + dir[2] * 27.5];
-        const poses = systemPoses(D, h.now + 0.05 + skew);
+        const poses = systemPoses(D, h.now + 0.05 + h.skew);
         const framePose = (k: typeof key) => (k === 'station' ? poses.station : poses.bodies[k]!);
         const world = localToWorld(framePose(key), local);
         const next = chooseFrame(D, poses, world, key);
@@ -293,17 +294,14 @@ describe('honest flight is never corrected', () => {
   it('lands, gets out, sprints over the hills, jumps and jetpacks, walks back, boards and takes off', () => {
     const { up, ground } = dryLand();
     const ship: Vec3 = scale(up, ground + SHIP_GEAR_HEIGHT);
-    const h = new Harness(D, { pose: pose(HOME, ship), mode: 'landed' });
-    for (let i = 0; i < 5; i++) h.send(pose(HOME, ship), 'landed');
-    // out beside it, on the ground 11 m to its left and 3 m ahead
-    const side: Vec3 = [1, 0, 0];
-    const exitDir: Vec3 = (() => {
-      const n: Vec3 = [up[0] + (side[0] * 11) / ground, up[1], up[2]];
-      const l = Math.hypot(...n);
-      return [n[0] / l, n[1] / l, n[2] / l];
-    })();
+    const landed = pose(HOME, ship, [0, 0, 0], standing(up, [0, 1, 0]));
+    const h = new Harness(D, { pose: landed, mode: 'landed' });
+    for (let i = 0; i < 5; i++) h.send(landed, 'landed');
+    // out beside it, where the client sets the walker down
+    const feet = exitFeet(D, landed);
+    h.send(pose(HOME, feet), 'foot');
+    const exitDir = scale(feet, 1 / Math.hypot(...feet));
     const g = groundOf(D, D.home)!;
-    h.send(pose(HOME, scale(exitDir, HOME_R + heightAt(g, exitDir) + 0.3)), 'foot');
     const away = walk(h, exitDir, [0, 1, 0], WALKER.sprintSpeed, 12, true);
     expect(Math.hypot(...away) - HOME_R).toBeGreaterThan(-1);
     // back toward the ship
@@ -322,7 +320,7 @@ describe('honest flight is never corrected', () => {
       ship[2] + (last[2] - ship[2]) * (6 / toShip),
     ];
     flyPath(h, HOME, [last, near], [5], 'foot');
-    h.send(pose(HOME, ship), 'landed');
+    h.send(landed, 'landed');
     flyPath(h, HOME, [ship, scale(up, ground + 60)], [15]);
     expect(back).toBeDefined();
     expect(h.refusals).toEqual([]);
@@ -520,7 +518,9 @@ describe('cheats are refused', () => {
     const ship = scale(up, ground + SHIP_GEAR_HEIGHT);
     const out = (): Harness => {
       const h = new Harness(D, { pose: pose(HOME, ship), mode: 'landed' });
-      expect(h.send(pose(HOME, scale(up, ground)), 'foot').ok).toBe(true);
+      // (beside it, where the client sets the walker down; then under the ship)
+      expect(h.send(pose(HOME, exitFeet(D, pose(HOME, ship))), 'foot').ok).toBe(true);
+      expect(h.send(pose(HOME, scale(up, ground)), 'foot', { dt: 3 }).ok).toBe(true);
       return h;
     };
     expect(refusal(out().send(pose(HOME, scale(up, ground - 8)), 'foot')).violation).toMatchObject({ rule: 'terrain' });
@@ -615,14 +615,15 @@ describe('corrections', () => {
 });
 
 describe('a saved pose, restored at login', () => {
-  const at = (p: ReturnType<typeof pose>, mode: Parameters<typeof poseProblem>[2]) => poseProblem(D, p, mode, 1e6, { ship: LARK });
+  const at = (p: ReturnType<typeof pose>, mode: Parameters<typeof poseProblem>[2], parked?: ReturnType<typeof pose>) =>
+    poseProblem(D, p, mode, 1e6, { ship: LARK }, parked);
   it('is accepted where its mode may be', () => {
     const { up, ground } = dryLand();
     expect(at(PAD0, 'docked')).toBeNull();
-    expect(at(pose(STATION, [0, 0, 0]), 'foot')).toBeNull();
+    expect(at(pose(STATION, [0, 0, 0]), 'foot', PAD0)).toBeNull();
     expect(at(pose(STATION, [0, 20, 200]), 'ship')).toBeNull();
     expect(at(pose(HOME, scale(up, ground + SHIP_GEAR_HEIGHT)), 'landed')).toBeNull();
-    expect(at(pose(HOME, scale(up, ground)), 'foot')).toBeNull();
+    expect(at(pose(HOME, scale(up, ground)), 'foot', pose(HOME, scale(up, ground + SHIP_GEAR_HEIGHT)))).toBeNull();
     expect(at(pose(null, OPEN), 'pulse')).toBeNull();
   });
 
@@ -630,10 +631,14 @@ describe('a saved pose, restored at login', () => {
     const { up, ground } = dryLand();
     expect(at(pose(STATION, [0, 2.4, 0]), 'docked')).toMatchObject({ rule: 'docked' });
     expect(at(pose(HOME, scale(up, ground + 50)), 'docked')).toMatchObject({ rule: 'docked' });
-    expect(at(pose(null, OPEN), 'foot')).toMatchObject({ rule: 'foot_frame' });
+    expect(at(pose(null, OPEN), 'foot', PAD0)).toMatchObject({ rule: 'foot_frame' });
+    // on foot with no ship of its own to board, or one left somewhere a ship cannot rest
+    expect(at(pose(STATION, [0, 0, 0]), 'foot')).toMatchObject({ rule: 'board_range' });
+    expect(at(pose(HOME, scale(up, ground)), 'foot', PAD0)).toMatchObject({ rule: 'board_range' });
+    expect(at(pose(HOME, scale(up, ground)), 'foot', pose(HOME, scale(up, ground + 400)))).toMatchObject({ rule: 'landed' });
     expect(at(pose(HOME, scale(up, ground + 300)), 'landed')).toMatchObject({ rule: 'landed' });
     expect(at(pose(HOME, scale(up, ground - 40)), 'ship')).toMatchObject({ rule: 'terrain' });
-    expect(at(pose(HOME, scale(up, ground - 40)), 'foot')).toMatchObject({ rule: 'terrain' });
+    expect(at(pose(HOME, scale(up, ground - 40)), 'foot', pose(HOME, scale(up, ground + SHIP_GEAR_HEIGHT)))).toMatchObject({ rule: 'terrain' });
     expect(at(pose(STATION, [STATION_LAYOUT.hangar.x0 - 2, 10, 0]), 'ship')).toMatchObject({ rule: 'station_hull' });
     expect(at(pose(HOME, scale(up, ground + 3000)), 'pulse')).toMatchObject({ rule: 'pulse_air' });
     expect(at(pose(STATION, [0, 0, 9000]), 'ship')).toMatchObject({ rule: 'frame' });

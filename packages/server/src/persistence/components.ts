@@ -1,7 +1,8 @@
 // The character state components Phase 1 has so far (docs/ARCHITECTURE.md §8), in load order: progress (level, xp and
 // home system, in the row's columns), the ship loadout, the inventory (its layout re-derived from the ship on load) and
-// where the character is (system, pose, frame and movement mode, read from its zone entity). Skills (P1.E07.T01) and
-// quests (P1.E09.T01) register theirs the same way; see ARCHITECTURE §8.
+// where the character is (system, pose, frame and movement mode read from its zone entity, and on foot, where it left its
+// ship; a saved pose movement authority would not accept is not restored). Skills (P1.E07.T01) and quests (P1.E09.T01)
+// register theirs the same way; see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
@@ -10,8 +11,11 @@ import { MoveMode, Pose } from '@astra/shared/protocol';
 import { shipLoadoutSchema, shipStats, type ShipLoadout } from '@astra/shared/ships';
 import { z } from 'zod';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
+import { padPose, poseProblem as movementProblem } from '../sim/movement/index.ts';
+import type { ServerClock } from '../world/clock.ts';
 import { stationFrame, systemSeed } from '../world/home.ts';
 import type { ZoneManager } from '../zones/manager.ts';
+import { describeZoneSystem } from '../zones/system.ts';
 import { INPUT_LIMITS } from '../zones/zone.ts';
 import { ComponentRegistry, type CharacterComponent, type PersistenceLog } from './registry.ts';
 
@@ -140,20 +144,25 @@ export const poseStateSchema = z.strictObject({
   system: z.int().min(0).max(1023),
   pose: Pose,
   mode: MoveMode,
+  /** On foot: where its ship rests (landed or docked), the one ship it may board. */
+  parked: Pose.optional(),
 });
 export type PoseState = z.infer<typeof poseStateSchema>;
 
-/** Docked at the home Waystation: where a new character starts, and where one whose saved pose is unusable goes. */
+/** Docked at the home Waystation: where a new character starts, and where one whose saved pose is unusable goes (the zone
+ * docks it on whichever pad is free, ZoneManager.join). */
 export function dockedAtHome(homeSystem: number): PoseState {
-  return { system: homeSystem, pose: { frame: stationFrame(homeSystem), pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: 'docked' };
+  return { system: homeSystem, pose: padPose(stationFrame(homeSystem), 0), mode: 'docked' };
 }
 
 /**
- * Why a saved pose cannot be used, or null: the system must exist, the frame must be one of its own (its bodies are
- * checked when the zone opens, ZoneManager.join), and the pose within the magnitudes a zone accepts (INPUT_LIMITS).
- * Terrain and station collision belong to movement authority (P1.E03.T04), which can extend this check.
+ * Why a saved pose cannot be used, or null: the system must exist, the frame must be one of its own, the pose within the
+ * magnitudes a zone accepts (INPUT_LIMITS), and the pose somewhere movement authority would accept it in its mode at
+ * server world time `now` (P1.E03.T04: its frame by the shared rule, not in the ground or the hangar's shell, landed on
+ * dry ground, docked on a pad, on the pulse drive out of the air, on foot on the ground and with a ship of its own at
+ * `parked` to board). `ship` is the ship it flies (the default Lark when it has none).
  */
-export function poseProblem(at: PoseState): string | null {
+export function poseProblem(at: PoseState, now: number, ship: ShipLoadout | null = null): string | null {
   let seed: number;
   try {
     seed = systemSeed(at.system);
@@ -164,28 +173,35 @@ export function poseProblem(at: PoseState): string | null {
   if (frame !== null && Number(frame.split(':')[0]) !== seed) return `frame ${frame} is not in system ${at.system}`;
   if (Math.hypot(...at.pose.pos) > INPUT_LIMITS.maxDistance) return 'position out of range';
   if (Math.hypot(...at.pose.vel) > INPUT_LIMITS.maxSpeed) return 'velocity out of range';
-  return null;
+  const v = movementProblem(describeZoneSystem(at.system), at.pose, at.mode, now, { ship: ship ?? DEFAULT_SHIP }, at.parked);
+  return v ? `${v.rule}${v.detail ? `: ${v.detail}` : ''}` : null;
 }
 
-/** Where the character is: read from its entity in its zone while in play; on load, the gateway places it there. */
-export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>): CharacterComponent<PoseState> {
+/** Where the character is: read from its entity in its zone while in play; on load, the gateway places it there, unless
+ * movement authority would not accept it there (`clock` is the server's, for where the bodies are). */
+export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>, clock: Pick<ServerClock, 'now'>): CharacterComponent<PoseState> {
   return {
     key: POSE,
-    v: 1,
+    v: 2,
+    // version 2 adds where a character on foot left its ship
+    migrations: { 1: (data) => data },
     schema: poseStateSchema,
     onInvalid: 'default',
     default: (ctx) => dockedAtHome(ctx.character.homeSystem),
-    check: poseProblem,
+    check: (at, ctx) => poseProblem(at, clock.now(), ctx.get<ShipLoadout | null>(SHIP)),
     save: ({ viewer }) => {
       const zone = viewer ? zones.zoneOf(viewer) : undefined;
       const id = viewer && zone?.entityOf(viewer);
       const e = id === undefined || id === null ? undefined : zone?.entity(id);
       if (!zone || !e) return undefined;
       const f = e.fields;
+      const mode = (f.mode ?? 'docked') as PoseState['mode'];
+      const parked = mode === 'foot' ? zone.movement?.parkedOf(e.id) : null;
       return {
         system: zone.systemIndex,
         pose: { frame: f.frame, pos: [...f.pos], quat: [...f.quat], vel: [...f.vel] },
-        mode: (f.mode ?? 'docked') as PoseState['mode'],
+        mode,
+        ...(parked ? { parked } : {}),
       };
     },
   };
@@ -195,6 +211,8 @@ export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>): CharacterComp
 
 export interface CoreComponentDeps {
   zones: Pick<ZoneManager, 'zoneOf'>;
+  /** the server's clock (where the bodies are, for a saved pose's check) */
+  clock: Pick<ServerClock, 'now'>;
   inventory: InventoryService;
   ships: ShipLoadouts;
   progress: CharacterProgress;
@@ -207,5 +225,5 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(progressComponent(deps.progress))
     .register(shipComponent(deps.ships))
     .register(inventoryComponent(deps.inventory, { log: deps.log }))
-    .register(poseComponent(deps.zones));
+    .register(poseComponent(deps.zones, deps.clock));
 }

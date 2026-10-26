@@ -98,8 +98,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
-  vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
-  trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
+  vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
+  sampled the pose: movement authority judges the pose at that time, bounded by the server's own clock, §7; `mode` is a
+  prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `ack {tick}` (one per applied snapshot,
   at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`. Each socket's message budget is 60 a second
   with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat and inventory requests,
@@ -182,30 +183,45 @@ decides damage, loot, inventory, quests, economy, skills and the meter. Client-r
 picked up, quest steps done) are never trusted; they are requests the server re-evaluates.
 
 **Movement** (`packages/server/src/sim/movement`, P1.E03.T04). Every zone the ZoneManager opens checks each player input
-before applying it, at the server clock's time of arrival (the client's `time` is never read):
+before applying it.
 
-- *The pose* must be in a frame the shared rule (`selectFrame`) allows there; a ship may not be below the ground (the
-  shared terrain sampler, levelled under cities and sites exactly as the client levels it, sampled only below a ceiling no
-  terrain reaches), in a gas giant's depths or inside the Waystation's hangar shell (`STATION_LAYOUT` in
-  `@astra/shared/data`; the rest of the station's colliders arrive with P1.E11.T02); a walker may not be below the ground,
-  outside the hangar (Grav Boots aside), or more than 400 m over the ground for longer than 45 s.
+- *Time.* A pose is judged at the time its client stamped it (`input.time`), so latency, jitter and stalls change nothing:
+  an honest client's poses and times are its own trajectory. The server bounds that clock by its own (`MOVEMENT.time`): it
+  never runs backwards, never lags arrival by more than 30 s (a client sending no time is judged on arrival times), is
+  never more than 0.3 s ahead of arrival, and never gains more than 0.4 s plus 1% on the arrival time less the smallest
+  latency seen in the last 10 s. A client running its clock fast gains at most a few tenths of a second, once. The
+  bodies are placed at that time too (to within 10 ms), so the pose's frame, clearance and air are the client's.
+
+- *The pose* must be in a frame the shared rule (`selectFrame`) allows there, and change frame only where the rule does
+  (out of a sphere 5% beyond it, into one inside it); a ship may not be below the ground (the shared terrain sampler,
+  levelled under cities and sites exactly as the client levels it, sampled only below a ceiling no terrain reaches, and
+  planned off the input path when a ship first comes near), in a gas giant's depths, or with its centre inside the
+  Waystation's hangar shell grown by its 6 m collision sphere (`STATION_LAYOUT` in `@astra/shared/data`; the rest of the
+  station's colliders arrive with P1.E11.T02); a walker may not be below the ground, outside the hangar (Grav Boots
+  aside), or more than 400 m over the ground for longer than 45 s.
 - *The mode* must be legal there: the pulse drive only out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM`
   to engage, `dropOutM` while cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world,
   2 km over its ground; `landed` only on a world's dry ground; `docked` only on a Waystation pad no other ship holds (a
-  joining player is put on the least held pad); `foot` only on a world's ground or in a hangar, set down within reach of
-  the ship it got out of, which it can board again only from beside it. In mode `ship` the `boost` button bit raises the
-  caps to the boost cap, and air thicker than `AIR.flightModelFrom` to the `atmo` cap: a client must send the bit while it
-  boosts.
-- *Anti-teleport*: no input may lie further from the last valid pose than its allowance covers in the time since, plus a
-  quarter second's worth and 25 m.
-- *Speed* follows the flight contract (`FLIGHT_TOLERANCE` in `@astra/shared/ships`): displacement in the pose's frame
-  over windows of at least 1 s, judged against the larger allowance at the window's two end poses, a window starting at
-  the latest pose that arrived at least 1 s before its end (so inputs bunched by a stall never make a window look
-  faster). Windows split where the frame changes and where the mode changes between the engines, the pulse drive, rest
-  and walking; changes among `space`, `boost` and `atmo` keep one window, each end pose taking its own allowance with the
-  contract's decay. A segment's first second is judged from its start. A walker's windows are judged across the ground
-  (`walkerCaps`: the sprint, Sprint Stride's 11.5 m/s, the jetpack's push), upward (its climb plus the ground's own rise)
-  and downward (`walkerFall`: no faster than a fall from where it last stood).
+  joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
+  a world's ground or in a hangar, and only out of a landed or docked ship, which it can board again only from beside it.
+  In mode `ship` the `boost` button bit raises the caps to the boost cap, and air thicker than `AIR.flightModelFrom` to
+  the `atmo` cap: a client must send the bit while it boosts.
+- *The move* from the last valid pose: no further than its allowance covers in the time since, plus a tenth of a
+  second's worth and 25 m (anti-teleport); and not through the ground, nor a flying ship's centre through the hangar's
+  shell, further than the client's own once-a-frame collisions could miss (one 66 ms frame at its speed, the speed no
+  more than its allowance; steps are sampled against the terrain only when that long).
+- *Speed* follows the flight contract (`FLIGHT_TOLERANCE` in `@astra/shared/ships`): displacement over windows of at
+  least 1 s, judged against the larger allowance at the window's two end poses; a window not yet 1 s long is judged from
+  its start. A window carries on across a change of frame (its earlier poses re-expressed in the new frame as of the
+  change, since the client turns its velocity into the new frame without the frames' relative motion, which is allowed
+  for over the crossing step) and across changes among `space`, `boost` and `atmo` (each end pose its own allowance, with
+  the contract's decay). Between the engines, the pulse drive and rest a new stretch starts from the old one's last pose,
+  taken in the new mode's terms. Getting out and boarding carry the accounting too: the walker's first pose is judged as
+  a walker's move from where the client sets it down (`Game.exitShip`: 11 m left and 3 m ahead on the ground, or 8 m left
+  in a hangar), and a boarded ship's first pose as a ship's move from where it was left. A walker's windows are judged
+  across the ground (`walkerCaps`: the sprint, Sprint Stride's 11.5 m/s, the jetpack's push), upward (its climb plus the
+  highest ground along its path, which lifts it) and downward (`walkerFall`: no faster than a fall from where it last
+  touched the ground).
 - *Refused*, an input is not applied (its `seq` still counts for `ack`): the server sends `correction {seq, pose, mode}`,
   `seq` being the refused input's and `pose` the last pose it can vouch for (for a window that was too fast, the
   window's start), puts the entity there, and logs the account, character, rule and the measured and allowed values.
@@ -213,7 +229,8 @@ before applying it, at the server clock's time of arrival (the client's `time` i
   come at most once a second; 8 corrections within 30 s and the session is refused with `kicked`. An accepted input's
   reported velocity is held to its allowance.
 - A pose the server did not watch arrive (a saved one, restored at login) is checked by `poseProblem` against the same
-  pose and mode rules.
+  pose and mode rules; a character saved on foot also needs the ship it left (`parked`, saved with it) where a ship can
+  rest. Persistence restores any other docked at home (§8).
 
 ## 8. Persistence
 
@@ -227,7 +244,10 @@ ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an e
 registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers (`components.ts`,
 `coreRegistry`): `progress` (level, xp, home system: the columns), `ship` (`ShipLoadout | null`, the Lark by default),
 `inventory` (its layout re-derived from the ship on load, `applyLayout(saved, layoutFor(loadout))`; kept as saved, and
-logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`, read from the character's zone entity).
+logged, when the ship cannot hold it) and `pose` (`{system, pose, mode, parked?}`, read from the character's zone
+entity, `parked` being where a character on foot left its ship; version 2; its `check` is movement authority's
+`poseProblem` (§7), so a saved pose inside the ground, in the hangar's shell, docked off a pad or on foot with no ship to
+board is not restored).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;

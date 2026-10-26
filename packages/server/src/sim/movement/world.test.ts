@@ -1,7 +1,7 @@
 // What movement authority reads of a system: the ground (levelled under cities and sites as the client levels it, sampled
 // only below a ceiling no terrain reaches), the hangar shell, frames by the shared rule, and plain vector maths.
 import { STATION_LAYOUT } from '@astra/shared/data';
-import { cityPads, frameIdOf, planCities, planSites, sitePads, systemPoses, TerrainSampler, type PlanetParams } from '@astra/shared/world';
+import { cityPads, frameIdOf, planCities, planSites, sitePads, systemPoses, TerrainSampler, type FrameKey, type PlanetParams } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../../zones/system.ts';
 import { groundOf, heightAt, insideHangar, insideHangarShell, MovementWorld, rotate, rotateInverse, terrainCeiling, type Vec3 } from './world.ts';
@@ -81,31 +81,44 @@ describe('the hangar shell', () => {
 describe('frames', () => {
   const d = describeZoneSystem(0);
   const w = new MovementWorld(d);
-  w.setPoses(systemPoses(d, 1e6), 1e6);
+  const T = 1e6;
+  const poses = w.posesAt(T);
+  const at = (key: FrameKey) => w.framePose(key, poses);
   it('allows the frame the shared rule picks, with the sphere’s hysteresis, and nothing a smaller sphere clearly holds', () => {
-    const home = w.framePose(d.home)!.position;
-    const station = w.framePose('station')!.position;
-    expect(w.frameProblem('station', [0, 0, 100], w.toWorld('station', [0, 0, 100]), 600)).toBeNull();
+    const home = at(d.home)!.position;
+    const station = at('station')!.position;
+    const sw = (p: Vec3) => w.toWorld(at('station'), p);
+    expect(w.frameProblem('station', [0, 0, 100], sw([0, 0, 100]), 600, poses)).toBeNull();
     // past the Waystation's sphere and its 5 %
-    expect(w.frameProblem('station', [0, 0, 4800], w.toWorld('station', [0, 0, 4800]), 600)).toMatchObject({ expected: d.home });
+    expect(w.frameProblem('station', [0, 0, 4800], sw([0, 0, 4800]), 600, poses)).toMatchObject({ expected: d.home });
     // the world's frame right at the Waystation: the Waystation's sphere holds it
     const near: Vec3 = [station[0] + 100, station[1], station[2]];
-    expect(w.frameProblem(d.home, w.toLocal(d.home, near), near, 600)).toMatchObject({ expected: 'station' });
+    expect(w.frameProblem(d.home, w.toLocal(at(d.home), near), near, 600, poses)).toMatchObject({ expected: 'station' });
     // the inertial frame deep inside the world's sphere
     const inside: Vec3 = [home[0], home[1] + 2e5, home[2]];
-    expect(w.frameProblem(null, inside, inside, 600)).toMatchObject({ expected: d.home });
+    expect(w.frameProblem(null, inside, inside, 600, poses)).toMatchObject({ expected: d.home });
     // and in empty space it is right
-    expect(w.frameProblem(null, [0, 2e9, 0], [0, 2e9, 0], 600)).toBeNull();
-    expect(w.innermost([0, 2e9, 0])).toBeNull();
-    expect(frameIdOf(d.seed, w.innermost(near))).toBe(frameIdOf(d.seed, 'station'));
+    expect(w.frameProblem(null, [0, 2e9, 0], [0, 2e9, 0], 600, poses)).toBeNull();
+    expect(w.innermost([0, 2e9, 0], poses)).toBeNull();
+    expect(frameIdOf(d.seed, w.innermost(near, poses))).toBe(frameIdOf(d.seed, 'station'));
   });
 
-  it('turns local positions to world ones and back', () => {
+  it('turns local positions to world ones and back, and re-expresses them across frames at their own time', () => {
     const p: Vec3 = [123, -456, 789];
     for (const key of [null, 'station', 0, d.home] as const) {
-      const back = w.toLocal(key, w.toWorld(key, p));
+      const back = w.toLocal(at(key), w.toWorld(at(key), p));
       for (let i = 0; i < 3; i++) expect(back[i]).toBeCloseTo(p[i]!, 4);
+      // the exact poses are systemPoses' own
+      expect(w.framePoseExact(key, T)?.position ?? null).toEqual(at(key)?.position ?? null);
     }
+    // a point in the Waystation's frame, in its world's frame at the same time: the same world position
+    const t = T + 12.345;
+    const inHome = w.reframe(p, 'station', d.home, t);
+    const sp = systemPoses(d, t);
+    const a = w.toWorld(sp.station, p);
+    const b = w.toWorld(sp.bodies[d.home]!, inHome);
+    for (let i = 0; i < 3; i++) expect(b[i]).toBeCloseTo(a[i]!, 4);
+    expect(w.reframe(p, d.home, d.home, t)).toEqual(p);
     const q: [number, number, number, number] = [0.1, 0.7, -0.2, 0.678];
     const n = Math.hypot(...q);
     const unit = q.map((x) => x / n) as typeof q;
@@ -114,13 +127,12 @@ describe('frames', () => {
     expect(rotate([0, 1, 0, 0], [0, 0, -1])).toEqual([0, 0, 1]);
   });
 
-  it('reads its poses at the time asked when the zone has not ticked near it', () => {
+  it('reads poses at a pose’s own time, kept per 10 ms, seeded by the zone’s tick', () => {
     const fresh = new MovementWorld(d);
-    fresh.at(5e6);
-    expect(fresh.posesTime).toBe(5e6);
-    expect(fresh.poses.station.position).toEqual(systemPoses(d, 5e6).station.position);
-    fresh.setPoses(systemPoses(d, 5e6 + 0.1), 5e6 + 0.1);
-    fresh.at(5e6 + 0.2);
-    expect(fresh.posesTime).toBe(5e6 + 0.1);
+    const tick = systemPoses(d, 5e6);
+    fresh.setPoses(tick, 5e6);
+    expect(fresh.posesAt(5e6 + 0.004)).toBe(tick);
+    expect(fresh.posesAt(5e6 + 0.3).station.position).toEqual(systemPoses(d, 5e6 + 0.3).station.position);
+    expect(fresh.posesAt(5e6 + 0.3)).toBe(fresh.posesAt(5e6 + 0.301));
   });
 });

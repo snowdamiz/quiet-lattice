@@ -47,11 +47,12 @@ export function pulseSpeedLimit(stats: ShipStats, clearanceM: number): number {
 export const CLIENT_SPEED_HEADROOM = 1.05;
 
 /**
- * How P1.E03.T04's movement validation reads the caps. The server never trusts the client's `vel` or `time`:
- * - It measures speed itself: displacement in the pose's frame over server-measured elapsed time, across at least `windowS`
- *   of inputs (one packet's spacing jitters with the network). A window is split where the mode or the frame changes; a
- *   stretch shorter than `windowS` between two changes (a one-tick pulse) is judged on its own, against its own mode's
- *   allowance, and never merged into a window of another mode.
+ * How P1.E03.T04's movement validation reads the caps. The server never trusts the client's `vel`, and reads its `time`
+ * only within its own clock's bounds (ARCHITECTURE §7):
+ * - It measures speed itself: displacement over at least `windowS` of the client's time. A window is split where the mode
+ *   changes between the engines, the pulse drive and rest (a change of frame or among the engine modes carries it on); a
+ *   stretch shorter than `windowS` between two changes (a one-tick pulse) is judged on its own, from its start, against
+ *   its own mode's allowance, and never merged into a window of another mode.
  * - A window passes when its speed is within the larger of the allowances at its two end poses (its first and last), never
  *   at a pose in between, which a cheat could fake:
  *   - in flight `max × factor + slackMps`, landed or docked `restSlackMps` (`FlightCaps.allowed`);
