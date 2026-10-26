@@ -172,18 +172,26 @@ logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`, read f
   least-loaded, one slot captured per second); on leave (logout, disconnect, the older connection of a duplicate join),
   captured before the entity leaves its zone; on zone handoff (P1.E04.T04 calls `persistence.saveNow(id, 'handoff')`);
   and on graceful shutdown (`server.close()`, which SIGINT and SIGTERM run: sessions close and save, everyone still in play
-  is captured, and the queue is written within 5 s). A crash loses at most the last interval.
+  is captured, and the queue is written within 5 s). While writes succeed, a crash loses at most the last interval; while
+  they fail (the database down, retries backing off, a backlog) it loses everything not yet written.
 - A capture is synchronous and small: each component's live value, checked against its schema (a value that fails is
   logged and its stored one kept), and only the components whose value changed since the last capture, at a revision one
   above it. Writes never block a tick: the queue holds at most one save per character (a newer capture merges into the
   waiting one), one writer drains it in batches of up to 64, one `UPDATE … FROM (VALUES …)` statement each, which merges
   the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
-  raises `revision`, only where the row's revision is lower: a stale save never overwrites a newer one. A failed write is
-  logged and retried with backoff (0.5 s doubling to 30 s), merged under anything captured since; a failed batch retries
-  one character per statement, so one bad row holds back no other.
+  raises `revision`, only where the row's revision is lower, so a save older than what the row holds is skipped (and
+  logged as an error). A failed write is logged and retried with backoff (0.5 s doubling to 30 s), merged under anything
+  captured since; a failed batch retries one character per statement, so one bad row holds back no other.
+- **One process holds a character at a time.** Revisions are counted by the process holding the character, from its
+  row's revision on join, so the guard orders that process's saves but does not fence two processes holding one
+  character: each would count from the same row and could overwrite the other. A real fence (a per-join epoch or a
+  presence lock) comes with P3.E37's split into several processes. The gateway reads a joining character's row under its
+  canonical id (lower case, the spelling Postgres returns and persistence keys by) while persistence pins it.
 - A character that has left stays held until its save is written, then every component forgets it (the inventory service
-  included). A change to a character out of play goes through persistence, not the in-memory services: an entry a service
-  makes for a character not in play is never saved, and the stored state replaces it on the next join.
+  included). The in-memory services refuse a character they do not hold (`InventoryNotHeldError`), so nothing changes a
+  character out of play behind persistence's back. There is no API yet for changing one out of play: P1.E03.T07 (the
+  dev CLI's grant, teleport, set quest step) adds it to persistence as load, modify and save, refused while the character
+  is held and holding its joins until the save is written.
 
 **Adding a component** (skills P1.E07.T01, quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
 `CharacterComponent` with its key, `v: 1`, the zod schema of the stored value, `default`, `load`, `save` and `unload`

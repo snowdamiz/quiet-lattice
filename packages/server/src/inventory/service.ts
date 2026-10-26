@@ -6,8 +6,8 @@
 //
 // The service holds the inventories of the characters in play. Persistence (P1.E03.T05, src/persistence) puts one in play
 // on join through `open({ saved })`, its layout re-derived from the ship loadout, stores `get()` every 30 s and on leave,
-// and evicts it with `close()` once the character has left. A server-side change for a character out of play must go
-// through persistence, not here: an entry this service creates for it would not be saved.
+// and evicts it with `close()` once the character has left. Every other call is for a character it holds and throws an
+// InventoryNotHeldError for one it does not: a change made here to a character out of play would never be saved.
 import {
   addItem,
   addUnits,
@@ -40,6 +40,14 @@ export interface InventoryReply {
 }
 
 export type InventoryListener = (characterId: string, reply: InventoryReply) => void;
+
+/** A request or change for a character whose inventory the service does not hold (it is not in play). */
+export class InventoryNotHeldError extends Error {
+  constructor(readonly characterId: string) {
+    super(`the inventory of ${characterId} is not held: the character is not in play`);
+    this.name = 'InventoryNotHeldError';
+  }
+}
 
 interface Entry {
   inv: Inventory;
@@ -78,6 +86,12 @@ export class InventoryService {
   /** The character's inventory, or null when it is not held. */
   get(characterId: string): Inventory | null {
     return this.entries.get(characterId)?.inv ?? null;
+  }
+
+  /** What to send a session about a held character: its state and the last request handled. Throws InventoryNotHeldError. */
+  state(characterId: string): InventoryReply {
+    const e = this.entry(characterId);
+    return { seq: e.seq, inventory: e.inv };
   }
 
   /** Forgets a character's inventory and returns it (for persistence to store first). */
@@ -151,11 +165,8 @@ export class InventoryService {
   }
 
   private entry(characterId: string): Entry {
-    let e = this.entries.get(characterId);
-    if (!e) {
-      this.open(characterId);
-      e = this.entries.get(characterId)!;
-    }
+    const e = this.entries.get(characterId);
+    if (!e) throw new InventoryNotHeldError(characterId);
     return e;
   }
 

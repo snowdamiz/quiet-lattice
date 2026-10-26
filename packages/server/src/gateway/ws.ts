@@ -22,6 +22,7 @@ import { WebSocketServer, type RawData, type WebSocket } from 'ws';
 import type { TokenService } from '../accounts/tokens.ts';
 import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.ts';
 import type { Db } from '../db/client.ts';
+import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
 import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
@@ -93,6 +94,8 @@ export interface WsGatewayDeps {
   inventory: InventoryService;
   /** Loads a character on join and saves it on leave. */
   persistence: CharacterPersistence;
+  /** Reads a character's row when it belongs to the account (getOwnedCharacter on `db`; tests stand in for it). */
+  ownedCharacter?: (accountId: string, characterId: string) => Promise<CharacterRow | null>;
 }
 
 export interface WsStats {
@@ -142,6 +145,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   let rateLimitedTotal = 0;
   let closing = false;
   const { inventory, persistence } = deps;
+  const ownedCharacter = deps.ownedCharacter ?? ((accountId: string, characterId: string) => getOwnedCharacter(deps.db, accountId, characterId));
   // server-side changes (loot, mining, trade, the Recall) reach the session holding the character
   const unsubscribeInventory = inventory.subscribe((characterId, reply) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'inventory', ...reply });
@@ -221,7 +225,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       clearTimeout(c.deadline);
       s.state = 'closed';
       // saved before its entity leaves the zone: the pose is read from the entity
-      persistence.leave(s, 'logout');
+      persistence.leave(s, closing ? 'shutdown' : 'logout');
       deps.zones.leave(s);
       conns.delete(c);
       registry.remove(s);
@@ -336,13 +340,17 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
 
   async function onJoin(c: Conn, msg: Extract<ClientMessage, { t: 'join' }>): Promise<void> {
     const { s } = c;
+    // Character ids are uuids, which Postgres compares without regard to case and returns in lower case; persistence
+    // keys characters by the row's id. The pin and the lookup use that one spelling.
+    const characterId = msg.characterId.toLowerCase();
     // While the row is read, a save of this character still being written (it left a moment ago) is held, not evicted:
     // the row may not have it yet, and persistence loads from what it holds.
-    const unpin = persistence.pin(msg.characterId);
+    const unpin = persistence.pin(characterId);
     try {
-      const row = await getOwnedCharacter(deps.db, s.accountId!, msg.characterId);
+      const row = await ownedCharacter(s.accountId!, characterId);
       if (s.state !== 'authed') return;
-      if (!row) {
+      // (a row under another spelling of the id would have been read without the pin holding it)
+      if (!row || row.id !== characterId) {
         s.refuse('character', 'That character does not exist on this account.');
         return;
       }
@@ -382,7 +390,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         mode: joined.mode,
       });
       s.send(deps.world.message());
-      s.send({ t: 'inventory', ...inventory.open(row.id) });
+      // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
+      s.send({ t: 'inventory', ...inventory.state(row.id) });
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
       unpin();

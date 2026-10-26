@@ -298,7 +298,7 @@ describe('character persistence', () => {
     expect(await p.flush()).toBe(true);
     expect(store.rows.get('c1')).toMatchObject({ revision: 10, state: { a: { data: 99 } } });
     expect(p.stats()).toMatchObject({ stale: 1, saved: 0, pending: 0 });
-    expect(lines.some((l) => l.level === 'warn' && /newer revision/.test(l.msg))).toBe(true);
+    expect(lines.some((l) => l.level === 'error' && /newer revision/.test(l.msg))).toBe(true);
   });
 
   it('holds at most one save per character however often it is captured while the store is down', async () => {

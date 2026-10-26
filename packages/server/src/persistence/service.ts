@@ -8,7 +8,8 @@
 // drains it in batches, one statement per batch (store.ts). A failed write is logged and retried with backoff, merged
 // under anything captured since; a failed batch is retried one character per statement so one bad row cannot hold the
 // rest back. Saves carry a revision raised by every capture, and the store skips a save not above the row's, so the
-// last-saved state never regresses.
+// last-saved state never regresses. One process holds a character at a time (store.ts: the revision orders one
+// process's saves, it does not fence two).
 //
 // Periodic saves are staggered: the 30 s interval is split into slots, each character in play joins the least-loaded slot
 // and a timer captures one slot per step, so a full server saves a thirtieth of its characters each second instead of
@@ -487,8 +488,9 @@ export class CharacterPersistence {
         this.writing.delete(p.id);
         if (written.has(p.id)) this.counts.saved++;
         else {
+          // with one process holding a character, its row should never be ahead of it: this is drift, or the row is gone
           this.counts.stale++;
-          this.log?.warn({ character: p.id, revision: p.revision, reasons: [...p.reasons] }, 'save skipped: the row holds a newer revision or is gone');
+          this.log?.error({ character: p.id, revision: p.revision, reasons: [...p.reasons] }, 'save skipped: the row holds a newer revision or is gone');
         }
         const rec = this.records.get(p.id);
         if (rec) {

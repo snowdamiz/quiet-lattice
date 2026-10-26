@@ -3,7 +3,7 @@
 // falling back to docked at the home Waystation.
 import { emptyInventory, slotAt, type Inventory } from '@astra/shared/inventory';
 import { describe, expect, it } from 'vitest';
-import { InventoryService } from '../inventory/service.ts';
+import { InventoryNotHeldError, InventoryService } from '../inventory/service.ts';
 import { homeSystemOf, stationFrame, systemSeed } from '../world/home.ts';
 import { ZoneManager } from '../zones/manager.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
@@ -133,7 +133,10 @@ describe('character components', () => {
   it('replaces a stray inventory the service still held for a character out of play with the stored one', () => {
     const { registry, inventory, log, lines } = world();
     const p = new CharacterPersistence({ store: { write: async () => new Set() }, registry, log });
-    inventory.grant('c1', 'gold', 99); // created a starting kit in memory for a character not in play
+    // the service refuses a character it does not hold; one opened by hand outside persistence is still a leftover
+    expect(() => inventory.grant('c1', 'gold', 99)).toThrow(InventoryNotHeldError);
+    inventory.open('c1');
+    inventory.grant('c1', 'gold', 99);
     p.join(new Sink(1), { ...CHARACTER, level: 1, xp: 0, revision: 0, state: {} });
     expect(slotAt(inventory.get('c1')!, { c: 'suit', i: 1 })).toBeNull();
     expect(lines.some((l) => l.msg.startsWith('inventory held for a character out of play'))).toBe(true);
