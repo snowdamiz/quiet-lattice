@@ -1,11 +1,19 @@
-// Pirate raids in deep space: pursuit / strafing AI, lasers, loot.
+// Pirate raids in deep space: pursuit / strafing AI, lasers, loot. Who sees whom is the signature model's (DESIGN 10.1,
+// pirateContact.js): a raid rolls only on a ship a pirate could detect from the spawn distance, and holds it only while the
+// nearest pirate still detects it; a raid that loses it searches where it last saw it, then breaks off.
 import * as THREE from 'three';
-import { setFrameInto } from '@astra/shared/world';
+import { effectiveSignature, movementSignals, shipStats } from '@astra/shared/ships';
+import { coverAtObjects, setFrameInto } from '@astra/shared/world';
+import { CONTACT_START, RAID_RETRY_S, contactLost, raidCanStart, raidSpawnDistance, trackContact } from './pirateContact.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
+const _w = new THREE.Vector3();
 const _q = new THREE.Quaternion();
 const _m = new THREE.Matrix4();
+
+// today's pirates fly clones of the demo ship's model, the Lark (P1.E12.T03 puts them on the roster's hulls)
+const PIRATE_STATS = shipStats({ hull: 'lark', modules: {}, cargoPods: 0, livery: 0 });
 
 let glowTex = null;
 function glow() {
@@ -38,6 +46,9 @@ export class Pirates {
     geo.rotateX(Math.PI / 2);
     this.beamGeo = geo;
     this.frame = null;
+    // the raid's hold on the ship, and where (in the raid's frame) it last saw it
+    this.contact = CONTACT_START;
+    this.lastSeen = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: new THREE.Vector3() };
   }
 
   clear() {
@@ -48,6 +59,27 @@ export class Pirates {
     this.beams = [];
     this.fx = [];
     this.frame = null;
+  }
+
+  // cover at a world position in the visited system (none between the stars)
+  inCover(world) {
+    const g = this.game;
+    return !g.universe.deep && !g.universe.dormant && !!coverAtObjects(g.system.description, g.system.planets, world);
+  }
+
+  // the ship's signature as pirates read it now: its hull's, halved in a belt or ring, doubled while it moves faster than it
+  // cruises or rides the pulse drive (judged from its speed, not the boost key)
+  shipSignature() {
+    const ship = this.game.ship;
+    const s = ship.state;
+    const mode = ship.mode === 'pulse' ? 'pulse' : ship.mode === 'landed' ? 'landed' : 'space';
+    const loud = movementSignals(ship.stats, mode, s.vel.length());
+    return effectiveSignature(ship.stats, { detector: 'pirate', inCover: this.inCover(s.worldPosition(_w)), ...loud });
+  }
+
+  // a pirate's signature as a player's sensors read it
+  pirateSignature(p, world) {
+    return effectiveSignature(PIRATE_STATS, { detector: 'player', inCover: this.inCover(world), ...movementSignals(PIRATE_STATS, 'space', p.speed) });
   }
 
   get active() {
@@ -83,7 +115,8 @@ export class Pirates {
     return obj;
   }
 
-  spawnRaid() {
+  // a raid `distance` metres behind the ship
+  spawnRaid(distance) {
     const g = this.game;
     const ship = g.ship;
     const s = ship.state;
@@ -92,11 +125,14 @@ export class Pirates {
       g.hud.toast('Pulse drive interrupted!', 'warn');
     }
     this.frame = s.frame;
+    this.contact = CONTACT_START;
+    this.lastSeen.pos.copy(s.pos);
+    this.lastSeen.vel.copy(s.vel);
     const n = 2 + Math.floor(Math.random() * 2);
     const back = _v.set(0, 0, 1).applyQuaternion(s.quat);
     const right = _v2.set(1, 0, 0).applyQuaternion(s.quat);
     for (let i = 0; i < n; i++) {
-      const pos = s.pos.clone().addScaledVector(back, 1800 + Math.random() * 800).addScaledVector(right, (i - n / 2) * 250);
+      const pos = s.pos.clone().addScaledVector(back, distance).addScaledVector(right, (i - n / 2) * 250);
       const obj = this.makePirate();
       const quat = s.quat.clone();
       this.list.push({ obj, pos, vel: new THREE.Vector3(), quat, hp: 100, shield: 60, speed: 380, cooldown: 2 + Math.random() * 2, breakOff: 0, wobble: Math.random() * 10 });
@@ -114,13 +150,18 @@ export class Pirates {
     if (!this.active) {
       if (inSpace) this.nextRaid -= dt;
       if (this.nextRaid <= 0 && inSpace && g.ship.model) {
-        this.nextRaid = 240 + Math.random() * 240;
-        this.spawnRaid();
+        // the raid rolls only on a ship a pirate could pick up from where it would spawn; otherwise they look again soon
+        const distance = raidSpawnDistance(Math.random());
+        if (raidCanStart(this.shipSignature(), distance)) {
+          this.nextRaid = 240 + Math.random() * 240;
+          this.spawnRaid(distance);
+        } else this.nextRaid = RAID_RETRY_S;
       }
     }
     // keep pirates in the ship's frame (the shared frame rule, as FrameState follows it)
     if (this.active && this.frame !== s.frame) {
       for (const p of this.list) setFrameInto(p, this.frame, s.frame);
+      setFrameInto(this.lastSeen, this.frame, s.frame);
       this.frame = s.frame;
     }
     // disengage if the player docks or lands
@@ -128,6 +169,20 @@ export class Pirates {
       for (const p of this.list) this.group.remove(p.obj);
       this.list = [];
       g.hud.toast('Pirates broke off pursuit', 'good');
+    }
+    // hold the ship while the nearest pirate detects it; lose it after the search
+    if (this.active) {
+      let nearest = Infinity;
+      for (const p of this.list) nearest = Math.min(nearest, p.pos.distanceTo(s.pos));
+      this.contact = trackContact(this.contact, this.shipSignature(), nearest, dt);
+      if (this.contact.seen) {
+        this.lastSeen.pos.copy(s.pos);
+        this.lastSeen.vel.copy(s.vel);
+      } else if (contactLost(this.contact)) {
+        for (const p of this.list) this.group.remove(p.obj);
+        this.list = [];
+        g.hud.toast('Pirates lost your trail', 'good');
+      }
     }
     // iterate a snapshot: a pirate's shot can end the raid (playerDefeated clears the list)
     for (const p of [...this.list]) {
@@ -152,7 +207,9 @@ export class Pirates {
 
   think(p, dt) {
     const g = this.game;
-    const s = g.ship.state;
+    // the ship while the raid sees it; otherwise where it was last seen, searched without firing
+    const seen = this.contact.seen;
+    const s = seen ? g.ship.state : this.lastSeen;
     const to = _v.copy(s.pos).sub(p.pos);
     const d = to.length();
     to.divideScalar(d || 1);
@@ -182,7 +239,7 @@ export class Pirates {
     // fire
     p.cooldown -= dt;
     const aim = fwd.dot(to);
-    if (p.cooldown <= 0 && aim > 0.985 && d < 1400 && p.breakOff <= 0) {
+    if (seen && p.cooldown <= 0 && aim > 0.985 && d < 1400 && p.breakOff <= 0) {
       p.cooldown = 0.45 + Math.random() * 0.4;
       const hit = Math.random() < (aim - 0.985) * 30 + 0.15;
       const target = s.pos.clone().add(hit ? new THREE.Vector3() : new THREE.Vector3((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30));
@@ -296,10 +353,12 @@ export class Pirates {
     }
   }
 
+  // each pirate's world position and label, and its signature as a player's sensors read it (Game.getMarkers shows only
+  // the ones the ship detects)
   markers() {
-    return this.list.map((p) => ({
-      world: this.frame ? this.frame.localToWorld(p.pos, new THREE.Vector3()) : p.pos.clone(),
-      label: `Pirate ${p.shield > 0 ? '◆' : '◇'} ${Math.max(0, Math.round(p.hp))}%`,
-    }));
+    return this.list.map((p) => {
+      const world = this.frame ? this.frame.localToWorld(p.pos, new THREE.Vector3()) : p.pos.clone();
+      return { world, label: `Pirate ${p.shield > 0 ? '◆' : '◇'} ${Math.max(0, Math.round(p.hp))}%`, signature: this.pirateSignature(p, world) };
+    });
   }
 }

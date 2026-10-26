@@ -20,6 +20,7 @@ import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
 import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard } from '@astra/shared/world';
+import { detects, sensorRange } from '@astra/shared/ships';
 import { Objectives } from './gameplay/Objectives.js';
 import { Asteroids } from './universe/Asteroids.js';
 import { Inventory } from './gameplay/Inventory.js';
@@ -831,7 +832,10 @@ export class Game {
       }
     }
     if (this.mode === 'ship') {
-      for (const pm of this.pirates.markers()) add('enemy', pm.label, pm.world);
+      // other ships show only within the ship's detection distance for each (DESIGN 10.1): its sensors' range × their signature
+      const here = this.ship.state.worldPosition(new THREE.Vector3());
+      const range = sensorRange('ship', this.ship.stats.scanRange);
+      for (const pm of this.pirates.markers()) if (detects(range, pm.signature, pm.world.distanceTo(here))) add('enemy', pm.label, pm.world);
     } else if (this.mode === 'foot') {
       add('ship', 'Starship', this.ship.state.worldPosition(new THREE.Vector3()));
       // the nearest few scanned deposits only: all of them sprayed labels across the view

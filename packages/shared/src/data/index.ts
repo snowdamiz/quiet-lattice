@@ -7,6 +7,7 @@ export * from './resources.ts';
 export * from './items.ts';
 export * from './weapons.ts';
 export * from './hulls.ts';
+export * from './sensors.ts';
 export * from './meters.ts';
 export * from './trainers.ts';
 export * from './factions.ts';

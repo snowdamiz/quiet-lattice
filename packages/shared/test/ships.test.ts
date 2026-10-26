@@ -452,7 +452,7 @@ describe('signature', () => {
   it('the Husk reads 0.1 to the Hollow and 1.2 to everyone else; other hulls read the same to both', () => {
     const husk = shipStats(bare('husk'));
     expect(effectiveSignature(husk, { detector: 'hollow' })).toBe(0.1);
-    expect(effectiveSignature(husk, { detector: 'other' })).toBe(1.2);
+    for (const detector of ['player', 'pirate', 'compact'] as const) expect(effectiveSignature(husk, { detector })).toBe(1.2);
     expect(effectiveSignature(husk)).toBe(1.2);
     expect(effectiveSignature(shipStats(bare('mule')), { detector: 'hollow' })).toBe(1.4);
   });

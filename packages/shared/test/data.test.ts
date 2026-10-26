@@ -21,8 +21,12 @@ import {
   PEOPLES,
   RECIPES,
   RESOURCES,
+  SENSORS,
+  SENSOR_IDS,
   SKILL_NODES,
   SKILL_RULES,
+  STEALTH,
+  STEALTH_IDS,
   TEMPERAMENTS,
   TRAINERS,
   WEAPON_SIZES,
@@ -39,7 +43,9 @@ import {
   getItem,
   getRecipe,
   getResource,
+  getSensor,
   getSkillNode,
+  getStealth,
   getWeapon,
   hullSchema,
   itemSchema,
@@ -52,8 +58,10 @@ import {
   resourceSchema,
   salvageYield,
   scaleByLevel,
+  sensorSchema,
   skillNodeSchema,
   skillRulesSchema,
+  stealthSchema,
   temperamentSchema,
   trainerSchema,
   webPointCost,
@@ -256,6 +264,8 @@ describe('every table parses with its schema', () => {
     ['items', z.array(itemSchema), ITEMS],
     ['weapons', z.array(weaponSchema), WEAPONS],
     ['hulls', z.array(hullSchema), HULLS],
+    ['sensors', z.array(sensorSchema), SENSORS],
+    ['stealth', z.array(stealthSchema), STEALTH],
     ['meters', metersSchema, METERS],
     ['conditions', z.array(conditionSchema), CONDITIONS],
     ['trainers', z.array(trainerSchema), TRAINERS],
@@ -282,6 +292,8 @@ describe('every table parses with its schema', () => {
       ITEMS,
       WEAPONS,
       HULLS,
+      SENSORS,
+      STEALTH,
       CONDITIONS,
       TRAINERS,
       FACTIONS,
@@ -938,6 +950,58 @@ describe('recipes', () => {
     ]);
     expect(salvageYield(RECIPES.find((r) => r.id === 'warp_cell')!)).toEqual([]);
     for (const r of RECIPES.filter((x) => x.line === 'module')) expect(salvageYield(r).length, r.id).toBeGreaterThan(0);
+  });
+});
+
+describe('sensors and stealth', () => {
+  it('a row per sensor and per stealth effect, and lookups throw on unknown ids', () => {
+    expect(SENSORS.map((s) => s.id)).toEqual([...SENSOR_IDS]);
+    expect(STEALTH.map((s) => s.id)).toEqual([...STEALTH_IDS]);
+    expect(getSensor('hollow').rangeM).toBe(1000);
+    expect(getStealth('cloak').hidesFrom).toContain('pirate');
+    expect(Object.isFrozen(SENSORS[0])).toBe(true);
+    expect(() => getSensor('no_such_sensor' as never)).toThrow(/sensor/);
+    expect(() => getStealth('no_such_effect' as never)).toThrow(/stealth/);
+  });
+
+  it('every ship-hunting space mob flies one set of sensors, of its own kind', () => {
+    const hunters = ['pirate_scouts', 'pirate_wing', 'raiders', 'hollow_drifter', 'hollow_swarm', 'hollow_husk', 'compact_convoy'];
+    const named = SENSORS.flatMap((s) => s.mobs);
+    expect(new Set(named).size).toBe(named.length);
+    expect(new Set(named)).toEqual(new Set(hunters));
+    for (const s of SENSORS)
+      for (const id of s.mobs) {
+        const mob = MOBS.find((m) => m.id === id);
+        expect(mob?.group, `${s.id}: ${id}`).toBe('space');
+        const kind = id.startsWith('hollow_') ? 'hollow' : id === 'compact_convoy' ? 'compact' : 'pirate';
+        expect(s.kind, `${s.id}: ${id}`).toBe(kind);
+      }
+    expect(getSensor('ship')).toMatchObject({ kind: 'player', mobs: [] });
+  });
+
+  it('ranges agree with the distances DESIGN gives', () => {
+    // the drifter turns within 1 km (12.7): the Hollow's detection distance for a Lark (signature 1.0)
+    const drifter = MOBS.find((m) => m.id === 'hollow_drifter')!;
+    expect(getSensor('hollow').rangeM * getHull('lark').signature.base).toBe(drifter.params.aggroRadiusM);
+    // Deep Sweep's radar reaches past a ship's unaided sensors, and both past the Pulse Lasers
+    const sweep = getSkillNode('deep_sweep').params?.radarRangeM;
+    expect(sweep).toBeGreaterThan(getSensor('ship').rangeM);
+    expect(getSensor('ship').rangeM).toBeGreaterThan(getWeapon('pulse_lasers').params.rangeM!);
+  });
+
+  it('stealth effects are skill nodes, hiding the ship from what their text says', () => {
+    for (const s of STEALTH) expect(getSkillNode(s.id).id).toBe(s.id);
+    expect(getSkillNode('veil').text).toMatch(/to the Hollow/);
+    expect(getStealth('veil').hidesFrom).toEqual(['hollow']);
+    // "no markers" hides you from players, "no raids" from pirates
+    for (const id of ['cloak', 'silent_running'] as const) {
+      expect(getSkillNode(id).text).toMatch(/no markers/i);
+      expect(getSkillNode(id).text).toMatch(/no raids/i);
+      expect(getStealth(id).hidesFrom).toEqual(expect.arrayContaining(['player', 'pirate']));
+    }
+    // Silent Running is Veil's ship form, so it hides from the Hollow as Veil does
+    expect(getSkillNode('silent_running').augments).toBe('veil');
+    expect(getStealth('silent_running').hidesFrom).toContain('hollow');
   });
 });
 
