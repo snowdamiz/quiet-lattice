@@ -37,13 +37,15 @@ export type Pose = z.infer<typeof Pose>;
 export const EntityId = z.number().int().nonnegative().max(0xffffffff);
 export const SystemSeed = z.number().int().nonnegative().max(0xffffffff);
 const Id = z.string().min(1).max(64);
+/** C0 controls, DEL, and the bidirectional embeddings, overrides and isolates (U+202A–202E, U+2066–2069). */
+const CONTROL = new RegExp('[\\u0000-\\u001f\\u007f\\u202a-\\u202e\\u2066-\\u2069]');
 /** Free text a player typed: no control or bidirectional-override characters. */
 const PlainText = (max: number) =>
   z
     .string()
     .min(1)
     .max(max)
-    .refine((s) => !/[\u0000-\u001f\u007f‪-‮⁦-⁩]/.test(s), 'control characters are not allowed');
+    .refine((s) => !CONTROL.test(s), 'control characters are not allowed');
 
 // ---------- HTTP: accounts and characters ----------
 
