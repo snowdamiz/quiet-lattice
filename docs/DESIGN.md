@@ -423,8 +423,8 @@ Tier by distance from the three home systems and by Edge proximity (+X side).
 | Tier | Band | Level | Planet mobs | Space mobs | Set piece |
 |---|---|---|---|---|---|
 | 0 | three home systems | 1–5 | docile fauna | none | tutorial, capitals |
-| 1 | 6–15 ly | 5–10 | skittish predators, outpost drones | pirate scouts | first raid |
-| 2 | 15–30 ly | 10–20 | pack hunters, pirate crews on foot | pirate wings, Hollow drifters | crash-site mystery |
+| 1 | 6–18 ly | 5–10 | skittish predators, outpost drones | pirate scouts | first raid |
+| 2 | 18–30 ly | 10–20 | pack hunters, pirate crews on foot | pirate wings, Hollow drifters | crash-site mystery |
 | 3 | 30–45 ly | 20–30 | corrupted fauna, monolith sentinels | Hollow swarms, convoys | hostile-world dungeons |
 | 4 | 45–60 ly | 30–40 | crystal/irradiated horrors | Hollow husks, dreadnought | the Wardens |
 | 5 | 60+ ly / Edge-ward | 40–50 | the Patient's brood | Hollow hives | The Edge |

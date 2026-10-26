@@ -196,3 +196,16 @@ Format: task id, question → choice → why.
   flight and fades e^(−4t) entering the pulse drive; in the air the cap is the boost cap until a per-hull air model
   exists. → Honest flight peaks at 0.88–0.91× the allowance across every hull and manoeuvre simulated; a cheat gains at
   most ~1.2× in flight and 1.1× in pulse, acceptable for Phase 1.
+- **P1.E14.T01 (reviews)** AO bakes use every mesh of the variant at that LOD as occluders; markers directly in an asset
+  collection are shared by all its variants, markers in a variant collection belong to it; map variation is measured on
+  full-resolution texels under the material's UV triangles. → Contact shadows, husk variants and small UV islands now
+  validate correctly.
+- **P1.E14.T02** The material library carries metre-scale, geometry-independent variation (base colour ±6%, ±18% on dark
+  materials; roughness ±0.06–0.09) and stronger normals, so a smooth panel bakes real texture; asset artists still add
+  hand-made wear on top. → A library material must never bake flat.
+- **P1.E02.T06** Tiers → the home systems are always Tier 0; any other system is Tier 5 on the Edge-ward fringe (within
+  EDGE_X − 45 ly of the wall, i.e. 45+ ly out along +X at the default Edge; the line moves with the Edge); otherwise
+  DESIGN 11's bands by distance to the nearest home, lower edges inclusive. Tier 1's upper edge moved from 15 to 18 ly
+  (DESIGN 11 amended): 3/9/11/22/19/6 systems in tiers 0–5. → Two Tier 1 systems could not carry Act I's opening levels
+  for three peoples; the fringe puts DESIGN's Edge-ward Tier 5 at baseline. P2.E22.T02 must move the Edge by tens of ly
+  (the fringe moves ly for ly) or keep the fringe line separate from the visible wall.
