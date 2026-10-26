@@ -1,5 +1,5 @@
 // The cutscene messages (protocol 4): a client asks for one and says when it is done; the server answers play, ended
-// or refused. One `cutscene` type serves both directions, told apart by its ops.
+// or refused, with the story phase it plays in. One `cutscene` type serves both directions, told apart by its ops.
 import { describe, expect, it } from 'vitest';
 import { decodeClientMessage, decodeServerMessage, encodeClientMessage, encodeMessage, encodeServerMessage, PROTOCOL_VERSION } from './index.ts';
 
@@ -8,17 +8,21 @@ describe('cutscene messages', () => {
     expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(4);
   });
 
-  it('round-trips a request and a done, and refuses bad ids and ops', () => {
+  it('round-trips a request and a done, and refuses bad ids, ops and a skipped request', () => {
     for (const m of [
       { t: 'cutscene', op: 'request', id: 'test' },
-      { t: 'cutscene', op: 'done', id: 'cold-open', skipped: true },
+      { t: 'cutscene', op: 'done', id: 'cold_open', skipped: true },
+      { t: 'cutscene', op: 'done', id: 'cold_open' },
     ] as const) {
       expect(decodeClientMessage(encodeClientMessage(m))).toEqual(m);
     }
     for (const bad of [
       { t: 'cutscene', op: 'request', id: '../etc' },
+      { t: 'cutscene', op: 'request', id: 'cold-open' },
+      { t: 'cutscene', op: 'request', id: 'Test' },
       { t: 'cutscene', op: 'request', id: '' },
       { t: 'cutscene', op: 'request', id: 'x'.repeat(49) },
+      { t: 'cutscene', op: 'request', id: 'test', skipped: true },
       { t: 'cutscene', op: 'play', id: 'test' },
       { t: 'cutscene', op: 'done', id: 'test', skipped: 'yes' },
     ]) {
@@ -26,12 +30,12 @@ describe('cutscene messages', () => {
     }
   });
 
-  it('round-trips the server’s answers, which name the phase', () => {
+  it('round-trips the server’s answers, which name the phase and why it was refused', () => {
     for (const m of [
       { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
       { t: 'cutscene', op: 'ended', id: 'test', phase: null },
-      { t: 'cutscene', op: 'refused', id: 'nope', phase: null, reason: 'unknown' },
-    ] as const) {
+      ...(['unknown', 'denied', 'cooldown', 'busy', 'place', 'phase', 'zone'] as const).map((reason) => ({ t: 'cutscene' as const, op: 'refused' as const, id: 'test', phase: null, reason })),
+    ]) {
       expect(decodeServerMessage(encodeServerMessage(m))).toEqual(m);
     }
     expect(() => encodeServerMessage({ t: 'cutscene', op: 'play', id: 'test', phase: 0 })).toThrow();

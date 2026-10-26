@@ -182,15 +182,17 @@ export const Ping = z.object({ t: z.literal('ping'), id: z.number().int().nonneg
 export const InventoryRequest = z.object({ t: z.literal('inventory'), seq: z.number().int().min(1).max(0xffffffff), op: inventoryOpSchema });
 
 /** A cutscene's id: the file it was exported to (public/cutscenes/<id>.json) and the server's catalog key. */
-export const CutsceneId = z.string().regex(/^[a-z0-9][a-z0-9_-]{0,47}$/);
+export const CutsceneId = z.string().regex(/^[a-z0-9][a-z0-9_]{0,47}$/);
 /** Cutscenes (protocol 4, ARCHITECTURE "Cutscenes"): `request` asks to play one where the player is, which the server
  * answers by placing the player in a story phase there; `done` says it ended, or was skipped. */
-export const CutsceneRequest = z.object({
-  t: z.literal('cutscene'),
-  op: z.enum(['request', 'done']),
-  id: CutsceneId,
-  skipped: z.boolean().optional(),
-});
+export const CutsceneRequest = z
+  .object({
+    t: z.literal('cutscene'),
+    op: z.enum(['request', 'done']),
+    id: CutsceneId,
+    skipped: z.boolean().optional(),
+  })
+  .refine((m) => m.op === 'done' || m.skipped === undefined, 'only a done says whether it was skipped');
 
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
@@ -364,14 +366,16 @@ export const InventoryState = z.object({
 });
 
 /** A cutscene's answer: `play` it now, in story phase `phase` (the client is in that phase until `ended`); `ended` when
- * the server has taken the player out of the phase; `refused` with why (an unknown cutscene, one already playing, no
- * zone). The ops differ from the request's, so one `cutscene` type serves both directions (encodeMessage). */
+ * the server has taken the player out of the phase; `refused` with why: `unknown` cutscene, `denied` (no quest step
+ * plays it now), `cooldown` (asked again too soon), `busy` (another is playing), `place` (the player is not where it
+ * plays), `phase` (the player is in another phase), `zone` (in no zone). The ops differ from the request's, so one
+ * `cutscene` type serves both directions (encodeMessage). */
 export const CutsceneState = z.object({
   t: z.literal('cutscene'),
   op: z.enum(['play', 'ended', 'refused']),
   id: CutsceneId,
   phase: z.number().int().positive().nullable(),
-  reason: z.enum(['unknown', 'busy', 'zone']).optional(),
+  reason: z.enum(['unknown', 'denied', 'cooldown', 'busy', 'place', 'phase', 'zone']).optional(),
 });
 
 export const ServerMessage = z.discriminatedUnion('t', [
