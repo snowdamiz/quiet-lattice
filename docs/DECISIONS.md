@@ -269,3 +269,10 @@ Format: task id, question → choice → why.
   shared: the client's Asteroids counts and sizes (loot), Station layout (P1.E11.T02), Fauna (P1.E08.T01); the XP curve
   in `combat/level.ts` (`**` before `Math.round`) should use det.pow when the client shows thresholds (P1.E07). Combat
   hit tests and the pulse-drive ease are decided by the server alone, so they may stay on `Math`.
+- **Plan amendment (orchestrator)** P1.E08.T01 and P1.E13.T01 each had a client half that renders from replicated state,
+  which needs the client net layer (P1.E04.T02) their deps did not list. Split: E08.T01 and E13.T01 are now the server
+  and shared halves; the client halves are P1.E08.T09 (fauna from snapshots, deps T01 and E04.T02) and P1.E13.T06
+  (nodes from zone state, deps T01 and E04.T02). E08.T02's attack animation moves to after T09. E13.T01 now follows
+  E13.T02 because both edit the deposit scatter. E10.T01 (city renderer) now waits for the Thalune kit (E10.T05): built
+  from kit pieces with none yet made, its graded result would grade placeholders; the Ixari and Ulgani kits slot in as
+  they land. → Each task can finish and be verified on its own deps.
