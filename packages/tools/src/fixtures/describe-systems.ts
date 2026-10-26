@@ -1,4 +1,4 @@
-// Describes star systems as the server will: describeSystem from @astra/shared/world, run by Node under tsx with no
+// Describes star systems as the server will: describeGalaxySystem from @astra/shared/world, run by Node under tsx with no
 // client code and no DOM. Prints the descriptions of a galaxy's first systems as JSON, and the modules that were loaded.
 //   pnpm exec tsx packages/tools/src/fixtures/describe-systems.ts [galaxySeed=424242] [count=10]
 import { registerHooks } from 'node:module';
@@ -15,7 +15,7 @@ registerHooks({
   },
 });
 
-const { Galaxy, describeSystem } = await import('@astra/shared/world');
+const { Galaxy, describeGalaxySystem } = await import('@astra/shared/world');
 const [seed = 424242, count = 10] = process.argv.slice(2).map(Number);
-const systems = new Galaxy(seed).systems.slice(0, count).map((s) => describeSystem(s.seed, { name: s.name, cls: s.cls }));
+const systems = new Galaxy(seed).systems.slice(0, count).map(describeGalaxySystem);
 process.stdout.write(JSON.stringify({ systems, modules: [...new Set(loaded)] }));

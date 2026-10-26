@@ -6,7 +6,7 @@
 // The random draws are made in exactly the order the demo's SolarSystem made them, and every float is computed the same
 // way, so each system comes out as it always has (the golden fixtures in packages/shared/test pin it).
 import { Color, Quaternion, Vector3 } from 'three';
-import type { StarClass } from './galaxy.ts';
+import type { GalaxySystem, StarClass } from './galaxy.ts';
 import { createPlanetParams, type Atmosphere, type Hazard, type PlanetParams, type PlanetType } from './planetgen.ts';
 import { Random, makeName, romanNumeral } from './rng.ts';
 
@@ -228,7 +228,14 @@ export function frameId(systemSeed: number, body: number | 'station'): string {
   return `${systemSeed}:${body}`;
 }
 
-/** The star system generated from `seed`. */
+/** A system of the galaxy as every client and the server build it: named and classed as the galaxy shows it, and the
+ * first system, where players start, round a lush world. */
+export function describeGalaxySystem(info: Pick<GalaxySystem, 'id' | 'seed' | 'name' | 'cls'>): SystemDescription {
+  const homeType = info.id === 0 ? 'lush' : undefined;
+  return describeSystem(info.seed, { name: info.name, cls: info.cls, homeType });
+}
+
+/** The star system generated from `seed` (a galaxy's systems are described by describeGalaxySystem). */
 export function describeSystem(seed: number, { name, cls, homeType }: SystemOptions = {}): SystemDescription {
   const rng = new Random(seed);
   const sysName = name || makeName(rng, 2, 3);

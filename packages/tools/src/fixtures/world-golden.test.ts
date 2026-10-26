@@ -1,14 +1,15 @@
-// The world golden fixture is still written exactly by its generator, and the client's star systems are built from
-// describeSystem: every body the description lists, with its orbit, spin and params, planning the surfaces the fixture
-// recorded. (describeSystem itself is checked against the fixture in packages/shared/test/world.golden.test.ts.)
+// The world golden fixture is still written exactly by its generator, and the client's star systems, built from
+// describeGalaxySystem, come out as the fixture records them: every body with its orbit, spin, gravity, reach, rings and
+// params, planning the same surfaces. (describeGalaxySystem itself is checked against the fixture in
+// packages/shared/test/world.golden.test.ts.)
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { Galaxy, type BodySpec, type City, type PlanetParams, type Site, type SystemDescription } from '@astra/shared/world';
+import { Galaxy, describeGalaxySystem, type City, type PlanetParams, type Site, type SystemDescription } from '@astra/shared/world';
 import { digestString } from '../../../shared/test/digest.ts';
 import { withoutPads } from '../../../shared/test/surface.ts';
-import { FIXTURE, ROOT, SEED, buildFixture, describeGalaxySystem } from './world-golden.ts';
+import { FIXTURE, ROOT, SEED, buildFixture } from './world-golden.ts';
 
 /** What the test reads off the client's bodies (the client is JavaScript). */
 interface Quaternion {
@@ -45,7 +46,7 @@ interface ClientSystem {
   belt: unknown;
 }
 interface SolarSystemCtor {
-  new (seed: number, pool: unknown, opts: { name: string; homeType?: string; cls: string }): ClientSystem;
+  new (description: SystemDescription, pool: unknown): ClientSystem;
 }
 
 const fixture = JSON.parse(readFileSync(FIXTURE, 'utf8'));
@@ -60,34 +61,39 @@ describe('world golden fixture', () => {
   }, 60_000);
 });
 
-describe('the client builds its star systems from describeSystem', () => {
+describe('the client builds its star systems as the fixture records them', () => {
   // the chunk workers are not needed to plan a world: only registerPlanet is called while one is built
   const pool = { registerPlanet() {}, forgetPlanet() {}, request: () => ({}), cancel() {} };
   const galaxy = new Galaxy(SEED);
 
   it.each(galaxy.systems.slice(0, 10))('system $id $name', (info) => {
-    const d = describeGalaxySystem(info);
-    const homeType = info.id === 0 ? 'lush' : undefined;
-    const sys = new SolarSystem(info.seed, pool, { name: info.name, homeType, cls: info.cls });
-    // its description is the one shared makes, and building the planets left it as it was
-    expect(sys.description).toStrictEqual(d);
+    const want = fixture.systems[info.id];
+    const sys = new SolarSystem(describeGalaxySystem(info), pool);
+    // building the planets left the description as it was
+    expect(sys.description).toStrictEqual(describeGalaxySystem(info));
 
+    const { star } = sys;
     expect({ name: sys.name, cls: sys.starClass.cls, home: sys.planets.indexOf(sys.homePlanet), outerOrbit: sys.outerOrbit, belt: sys.belt }).toEqual({
-      name: d.name,
-      cls: d.star.cls,
-      home: d.home,
-      outerOrbit: d.outerOrbit,
-      belt: d.belt,
+      name: want.name,
+      cls: want.cls,
+      home: want.home,
+      outerOrbit: want.outerOrbit,
+      belt: want.belt,
     });
-    expect({ radius: sys.star.radius, color: sys.star.color.getHex() }).toEqual({ radius: d.star.radius, color: d.star.color });
+    expect({ name: star.name, radius: star.radius, color: star.color.getHex() }).toEqual({
+      name: want.star.name,
+      radius: want.star.radius,
+      color: want.star.color,
+    });
 
-    const built = sys.planets.map((p) => ({
+    const bodies = sys.planets.map((p) => ({
+      slot: p.index,
       name: p.name,
       kind: p.kind,
       type: p.params.type,
       radius: p.radius,
-      slot: p.index,
-      parent: p.parent === sys.star ? null : sys.planets.indexOf(p.parent!),
+      seed: p.params.seed,
+      parent: p.parent === star ? null : sys.planets.indexOf(p.parent!),
       orbitRadius: p.orbitRadius,
       orbitPeriod: p.orbitPeriod,
       orbitPhase: p.orbitPhase,
@@ -98,32 +104,12 @@ describe('the client builds its star systems from describeSystem', () => {
       gravity: p.gravity,
       soi: p.soi,
       rings: p.ringSpec,
-      params: withoutPads(p.params),
-    }));
-    // (all but its index, which is its place in the list, and its seed, which is in its params)
-    const spec = (b: BodySpec) => {
-      const { index, seed, ...rest } = b;
-      return rest;
-    };
-    expect(built).toEqual(d.bodies.map(spec));
-
-    // and its rocky worlds plan the surfaces the fixture recorded
-    const surfaces = sys.planets.map((p) => ({
-      name: p.name,
-      paramsDigest: p.cities ? digestString(JSON.stringify(withoutPads(p.params))) : null,
+      paramsDigest: digestString(JSON.stringify(withoutPads(p.params))),
+      // and its rocky worlds plan the surfaces the fixture recorded
       padsDigest: p.cities ? digestString(JSON.stringify(p.params.pads)) : null,
       sites: p.sites ? p.sites.length : null,
       cities: p.cities ? p.cities.length : null,
     }));
-    const want = fixture.systems[info.id].bodies.map(
-      (b: { name: string; paramsDigest: string | null; padsDigest: string | null; sites: number | null; cities: number | null }) => ({
-        name: b.name,
-        paramsDigest: b.paramsDigest,
-        padsDigest: b.padsDigest,
-        sites: b.sites,
-        cities: b.cities,
-      }),
-    );
-    expect(surfaces).toEqual(want);
+    expect(bodies).toEqual(want.bodies);
   });
 });

@@ -1,16 +1,16 @@
-// A star system's star, planets and moons, built from its description (describeSystem in @astra/shared/world, which
-// the server derives the same bodies and frames from). `planets` holds the planets and moons in the description's
-// order, so planets[i] is the body with frame id frameId(seed, i).
+// A star system's star, planets and moons, built from its description (describeGalaxySystem or describeSystem in
+// @astra/shared/world, which the server derives the same bodies and frames from). `planets` holds the planets and moons
+// in the description's order, so planets[i] is the body with frame id frameId(seed, i).
 import * as THREE from 'three';
-import { describeSystem, STAR_CLASSES } from '@astra/shared/world';
+import { STAR_CLASSES } from '@astra/shared/world';
 import { Star } from './Star.js';
 import { Planet } from './Planet.js';
 
 export class SolarSystem {
-  constructor(seed, pool, { name, homeType, cls, staged } = {}) {
-    const d = describeSystem(seed, { name, homeType, cls });
+  constructor(description, pool, { staged } = {}) {
+    const d = description;
     this.description = d;
-    this.seed = seed;
+    this.seed = d.seed;
     this.pool = pool;
     this.name = d.name;
     this.starClass = STAR_CLASSES.find((c) => c.cls === d.star.cls);
@@ -39,9 +39,9 @@ export class SolarSystem {
           kind: b.kind,
           parent: b.parent === null ? this.star : this.planets[b.parent],
           radius: b.radius,
-          // (a copy: the planet adds its levelled pads to its params, and the description stays as generated)
-          params: { ...b.params },
-          rings: b.rings,
+          // (copies: the planet adds its levelled pads to its params, and the description stays as generated)
+          params: structuredClone(b.params),
+          rings: structuredClone(b.rings),
           orbitRadius: b.orbitRadius,
           orbitPeriod: b.orbitPeriod,
           orbitPhase: b.orbitPhase,
