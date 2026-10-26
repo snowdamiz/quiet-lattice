@@ -6,8 +6,9 @@
 // `world` (the world service's state, sent again to every joined session whenever it changes) and the character's
 // `inventory`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot every tick, and
 // closing the socket saves the character and takes the entity out. Inventory requests go to the inventory service,
-// which answers each with the authoritative state (ARCHITECTURE §7). Malformed or out-of-place messages are dropped and
-// counted, never thrown.
+// which answers each with the authoritative state (ARCHITECTURE §7). Chat and party requests go to the social service
+// (social/), which hears of every character that joins and every connection that closes. Malformed or out-of-place
+// messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -28,6 +29,7 @@ import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/co
 import { CharacterLoadError } from '../persistence/registry.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
+import { SocialService } from '../social/service.ts';
 import type { ServerClock } from '../world/clock.ts';
 import type { WorldSource } from '../world/service.ts';
 import type { ZoneManager } from '../zones/manager.ts';
@@ -96,6 +98,8 @@ export interface WsGatewayDeps {
   persistence: CharacterPersistence;
   /** Reads a character's row when it belongs to the account (getOwnedCharacter on `db`; tests stand in for it). */
   ownedCharacter?: (accountId: string, characterId: string) => Promise<CharacterRow | null>;
+  /** Chat and parties; the gateway makes (and starts and stops) its own when none is given. */
+  social?: SocialService;
 }
 
 export interface WsStats {
@@ -107,6 +111,7 @@ export interface WsStats {
 export interface WsGateway {
   readonly registry: SessionRegistry;
   readonly inventory: InventoryService;
+  readonly social: SocialService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -150,6 +155,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeInventory = inventory.subscribe((characterId, reply) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'inventory', ...reply });
   });
+  const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
+  if (!deps.social) social.start();
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -228,6 +235,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       // every close is a dropped connection: its phase keeps its place for a while.)
       persistence.leave(s, closing ? 'shutdown' : 'logout');
       deps.zones.leave(s, 'disconnected');
+      social.left(s);
       conns.delete(c);
       registry.remove(s);
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
@@ -311,8 +319,16 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') return invalid(s, 'ack before join');
         deps.zones.ack(s, msg.tick);
         return;
+      case 'chat':
+        if (s.state !== 'joined') return invalid(s, 'chat before join');
+        social.chat(s, msg);
+        return;
+      case 'party':
+        if (s.state !== 'joined') return invalid(s, 'party before join');
+        social.party(s, msg.op);
+        return;
       default:
-        // cast, interact and chat belong to later tasks; before join they are out of place.
+        // cast and interact belong to later tasks; before join they are out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
         return;
     }
@@ -394,6 +410,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.send(deps.world.message());
       // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
       s.send({ t: 'inventory', ...inventory.state(row.id) });
+      social.joined(s, row.name);
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
       unpin();
@@ -403,10 +420,12 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   return {
     registry,
     inventory,
+    social,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
       clearInterval(heartbeat);
+      if (!deps.social) social.stop();
       unsubscribeInventory();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);

@@ -28,6 +28,7 @@ gateway/ws.ts       WebSocket upgrade (token in the first message), one Session 
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
+social/             SocialService: chat channels, parties and invites, and their limits (§13)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
@@ -99,18 +100,24 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   not define (server-only state on a wider object) never leave the server.
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
+  A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
+  first protocol, 2 inventory, 3 social); a unit test pins the number and checks the history, so two branches bumping
+  to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
-  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `ack {tick}` (one per applied snapshot,
-  at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`. Each socket's message budget is 60 a second
-  with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat and inventory requests,
-  and the burst absorbs the backlog of a stall.
+  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (one
+  per applied snapshot, at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`. Each socket's message
+  budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat,
+  party and inventory requests, and the burst absorbs the backlog of a stall. Chat and invites have far smaller limits of
+  their own, per account (§13).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot` and `notice` (toasts), `world {season, count, edgeX, tiers, serverTime}` (sent right after `welcome` and to every
-  joined session whenever the world service's state changes; `tiers` is each galaxy system's tier by index), `pong`,
-  `inventory {seq, inventory, error?}`, and snapshots.
+  `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
+  `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
+  by index), `pong`, `inventory {seq, inventory, error?}`, `party {party}` (the character's party, or null, §13),
+  `denied {of, code, retryS?, name?}` (a chat message or party request not carried out, to its sender only, §13), and
+  snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -157,8 +164,8 @@ players, `event` and `raid` 12.
 - **Placement** reuses the phase the player is already in at that place (or kept for its character, below), else a
   party member's that has room, else the fullest that has room (the oldest of equals), else opens one. A player is in one
   phase at a time; placing it elsewhere takes it out of the old one. A member's party is the `partyId` it was placed
-  under, which it keeps; without one, its entity's party tag as it stands (the tag stands in for the party system,
-  P1.E15.T01). A story phase never holds two parties: re-asked, or coming back, under a party its others are not in, a
+  under, which it keeps; without one, its entity's party tag as it stands (which the party service keeps, §13). A story
+  phase never holds two parties: re-asked, or coming back, under a party its others are not in, a
   player goes to another phase.
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
@@ -170,7 +177,9 @@ players, `event` and `raid` 12.
   phase if it returns in time. A member whose connection drops (`ZoneManager.leave(session, 'disconnected')`: every
   socket close, and the old connection kicked when its character enters again) keeps its place for the same grace, by
   character id, with its party, counting towards the cap; its character's next `phaseFor` at that place returns it to
-  the phase. A member already outside the volume keeps only what is left of its grace, and comes back still outside, so
+  the phase if it comes back under that party (the `partyId` given, else its new entity's tag, which the party service
+  sets as it joins): one that left or was kicked from the party meanwhile, or comes back in none, gives the place up and
+  is placed afresh. A member already outside the volume keeps only what is left of its grace, and comes back still outside, so
   dropping and reconnecting never extends it. One that leaves the zone any other way (a handoff, a logout) goes at once. A phase with no members and no
   kept places closes, and its own entities are despawned; `close(phase)` does the same on demand. Opening and closing
   are logged (info).
@@ -299,3 +308,55 @@ server and every browser engine place the same nodes bit for bit (the cross-engi
 `face_i_j_type_k` (`nodeKey`). The client clears its own flora round sites and landed ships, but never a node: the
 nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any under a landed ship, from zone
 state).
+
+## 13. Social: chat and parties
+
+DESIGN 16.6's "Social" row and DESIGN 17: shard-wide chat and parties, for three players or three thousand. `social/`
+holds it (`SocialService`, made by the gateway): the gateway tells it which character joined (with its name) and which
+connection closed, and hands it `chat` and `party` requests from joined sessions. A timer of its own runs every 100 ms:
+it lapses invites and refreshes the parties due, each party once a second (`refreshMs`) with the round spread over the
+ticks between, so a thousand parties cost a tenth of their round per tick; one party whose refresh fails is logged and
+skipped. Nothing social is persisted in Phase 1: parties, invites and mutes live in memory and end with the process;
+every chat line, mute and party change goes to the server log for moderation.
+
+- **Who is online** is the joined session holding each character, by id and by name ignoring case (names are unique
+  ignoring case). A character entering again from a new connection replaces its old session, so the old one's close
+  changes nothing.
+- **Chat** (`chat {channel, text}`, protocol 3): `shard` reaches everyone online, `system` everyone whose entity is in
+  the sender's star system's zone, `party` the sender's party wherever its members are; the sender hears its own line
+  back. The schema refuses blank, over-long (280 UTF-16 units) and control-laden text (§5); the server trims it and
+  relays `event {kind: 'chat', channel, from, text, at}` with its own name for the sender and world time, encoded once
+  and written to every recipient (`Session.sendText`; never serialised per recipient). A system line goes through an
+  index of who is online in each zone (kept on join, `moved` and close, checked as it is read and against the roster
+  once a second), never a scan of the shard. Limits (`social/limits.ts`), all per account so its sockets share them: 5
+  messages at once, then 1 a second; past that, 10 refused messages (refilled at one per 3 s) and the account is muted
+  for 60 s. The shard channel has one limit for the whole shard (20 at once, then 10 a second), so a crowded shard stays
+  readable and its fan-out bounded. `SocialService.mute(account, seconds, reason)` mutes by hand. Refusals go to the
+  sender only as `denied {of: 'chat', code}`: `rate`, `busy` (shard limit) and `muted` with `retryS`, `no_party`,
+  `no_zone`.
+- **Parties** (`party {op}`, protocol 3; `op` is `invite {name}`, `accept {name}`, `decline {name}`, `leave`, `kick
+  {name}`, `promote {name}`, naming characters as typed): up to `PARTY_MAX` (6) characters with a leader. Any member
+  invites an online character in no party; the invite lapses after 60 s (both hear `expired`), and an account sends 5 at
+  once, then one per 10 s; a character holds at most 8. Accepting joins the inviter's party as it is then (refused while
+  it is full; the invite stands until it lapses), or a new party the inviter leads; joining spends the other invites a
+  character held. Only the leader kicks and promotes, and it promotes only a member who is online. When the leader
+  leaves, the longest-standing member online leads (the longest-standing of all when none is); a party left with one
+  member disbands. A member whose connection drops is shown offline and keeps its place for the grace (15 s, the phases'
+  grace, checked at its party's next refresh, so within a second after); its character entering again in time takes it
+  back, and past the grace it leaves the party (the lead handed on if it led). A zone handoff changes nothing:
+  membership is the character's. A member kicked or gone from the party while its connection was down comes back in
+  none, so its kept place in the party's story phase is given up (§6.1).
+- **Party tags**: every member's zone entity carries its party's id (`zone.setParty`), set on every change and on
+  joining and checked at each refresh, so a new entity (a handoff, a respawn) gets it within a second, or at once when
+  the handoff calls `SocialService.moved(session)`. That is what puts members in each other's interest sets anywhere in
+  a zone (§6) and in one story phase through `phaseFor` (§6.1); `SocialService.partyIdOf(character)` gives the id to
+  pass as `partyId`.
+- **Party state** `party {party: {leader, members: [{name, online, system, health}]} | null}`: members in join order,
+  each one's galaxy system and health in tenths (null while offline); sent after `welcome`, to every online member
+  whenever it changes, and null to one who leaves. At each refresh it is rebuilt, compared as plain JSON and encoded
+  once only when it changed. An hp that is not a finite number shows as whole and is logged once. Party news, `event
+  {kind: 'party', what, name?}`, goes to whom it concerns: `invite`, `invited`, `declined`, `expired`, `joined`, `left`,
+  `kicked`, `leader`, `disbanded`. Refusals, `denied {of: <op>, code, name?}`: `no_party`, `not_leader`, `not_found`,
+  `self`, `in_party`, `party_full`, `pending`, `no_invite`, `not_member`, `offline` (promote names a member whose
+  connection is down), `gone` (the inviter is offline in no party), `busy` (the invitee holds 8 invites), `rate` with
+  `retryS`.
