@@ -1,5 +1,7 @@
-// pnpm turntable -- <asset.blend|asset.glb> [out_dir] [--asset A] [--variant V] [--grid [N]] [--samples N]
-//   the turntable and material close-up sheets for the visual grader (packages/tools/blender/turntable.py)
+// pnpm turntable -- <asset.blend|asset.glb> [out_dir] [--asset A] [--variant V] [--grid [N]] [--family [N]] [--samples N]
+//   the turntable and material close-up sheets for the visual grader (packages/tools/blender/turntable.py); --family
+//   renders the sibling sheet instead (every asset and variant of the file in a row of its own, for the consistency
+//   criterion)
 // pnpm turntable:test
 //   its self-test (packages/tools/blender/turntable_selftest.py): a small export-layout .glb rendered headless
 // Finds Blender as pnpm art:* does (env BLENDER, else the macOS app, else `blender` on PATH). Set ART_RAW=1 to see
@@ -55,7 +57,7 @@ const argv = process.argv.slice(2).filter((a) => a !== '--');
 if (argv[0] === '--selftest') {
   process.exitCode = await run('turntable_selftest.py', argv.slice(1));
 } else if (!argv.length) {
-  console.error('usage: pnpm turntable -- <asset.blend|asset.glb> [out_dir] [--asset A] [--variant V] [--grid [N]] [--samples N]');
+  console.error('usage: pnpm turntable -- <asset.blend|asset.glb> [out_dir] [--asset A] [--variant V] [--grid [N]] [--family [N]] [--samples N]');
   process.exitCode = 2;
 } else {
   // paths are relative to where pnpm was run, as the shell would read them

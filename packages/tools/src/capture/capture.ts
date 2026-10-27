@@ -2,9 +2,12 @@
 //
 //   pnpm capture -- --review <family>/<file> [--asset A] [--variant V]
 //        in-engine review of public/models/<family>/<file>.glb (or a demo model: `--review ship`) at 1920×1080: the
-//        three lighting cases at LOD0 and LOD2, a wireframe pass at both, a perf readout per case, and a labelled contact
-//        sheet → assets/renders/review/<family>/<file>/. A file holding several assets or variants is reviewed one at a
-//        time (they share the origin), each in its own folder <asset>/ or <asset>/<variant>/; --asset and --variant pick.
+//        three lighting cases at LOD0 and LOD2, a wireframe pass at both, a collider and marker overlay (overlay.png),
+//        the far view at LOD2 under noon-lush from 100 m (far_lod2.png; a hero also from 200 m, far200_lod2.png), a
+//        paired perf readout per case, and a labelled contact sheet → assets/renders/review/<family>/<file>/. A file
+//        holding several assets or variants is reviewed one at a time (they share the origin), each in its own folder
+//        <asset>/ or <asset>/<variant>/; --asset and --variant pick. (The sibling grid for the consistency criterion is
+//        the turntable's: `pnpm turntable -- <file.glb> [out_dir] --family`.)
 //   pnpm capture -- --review node/<resource>
 //        the same for a procedural resource node (frostglass, acidsalt, …: the flora builds it, P1.E13.T02)
 //        → assets/renders/review/node/<resource>/
@@ -19,6 +22,7 @@ import { createServer } from 'node:net';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from '@playwright/test';
+import { farRanges, loadClassRules, reviewClass } from './classes.ts';
 import { SCREENS } from './screens.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -121,8 +125,13 @@ interface ReviewApi {
   light(name: string): Promise<string>;
   lod(n: number): unknown;
   wireframe(on: boolean): void;
+  overlay(on: boolean): void;
   capture(): string;
-  perf(opts?: { frames?: number }): Promise<unknown>;
+  captureOverlay(): Promise<string>;
+  lastOverlay: unknown;
+  far(meters: number, opts?: { lod?: number }): Promise<unknown>;
+  near(): Promise<void>;
+  perf(opts?: { pairs?: number }): Promise<unknown>;
   stats(): unknown;
   spot: Record<string, unknown> | null;
   settled: unknown;
@@ -179,6 +188,7 @@ export async function captureReview(file: string, opts: ReviewOptions = {}): Pro
       throw new Error(
         `nothing to review in ${file} for ${opts.asset ?? '*'}/${opts.variant ?? '*'}; it holds ${all.map((t) => `${t.asset}/${t.variant}`).join(', ')}`,
       );
+    const rules = loadClassRules(ROOT);
     for (const t of targets) {
       // one asset and variant per folder and sheet; a file holding just one writes straight into its own folder
       const outDir = all.length === 1 ? base : t.variant === t.asset ? join(base, t.asset) : join(base, t.asset, t.variant);
@@ -186,8 +196,13 @@ export async function captureReview(file: string, opts: ReviewOptions = {}): Pro
       const label = t.variant === t.asset ? t.asset : `${t.asset} / ${t.variant}`;
       console.log(`review ${file}: ${label}`);
       await page.evaluate((t) => window.review.select(t.asset, t.variant), t);
+      const cls = reviewClass(rules, file, t.variant);
       const sheet: { label: string; src: string }[] = [];
+      // (the overlay and far views after the three cases, two to a row)
+      const extra: { label: string; src: string }[] = [];
       const perf: unknown[] = [];
+      const far: unknown[] = [];
+      let overlay: unknown = null;
       const spots: Record<string, unknown> = {};
       const save = (name: string, data: string) => {
         const p = join(outDir, name);
@@ -216,24 +231,65 @@ export async function captureReview(file: string, opts: ReviewOptions = {}): Pro
           save(name, shot);
           sheet.push({ label: cap, src: shot });
         }
+        if (light === 'noon-lush') {
+          // colliders and markers over the shaded asset at LOD0, labelled (rubric "fitness for play")
+          const ov = await page.evaluate(async () => {
+            window.review.wireframe(false);
+            window.review.lod(0);
+            window.review.overlay(true);
+            const shot = await window.review.captureOverlay();
+            window.review.overlay(false);
+            return { shot, info: window.review.lastOverlay };
+          });
+          save('overlay.png', ov.shot);
+          extra.push({ label: 'overlay LOD0: COL_* volumes, markers and pivots', src: ov.shot });
+          overlay = ov.info;
+        }
         perf.push(
           await page.evaluate(async () => {
             window.review.wireframe(false);
             window.review.lod(0);
-            return window.review.perf({ frames: 120 });
+            return window.review.perf({ pairs: 120 });
           }),
         );
+        if (light === 'noon-lush') {
+          // the rubric's silhouette distance: LOD2 from 100 m (and 200 m for a hero), uncropped at 1920×1080
+          for (const m of farRanges(cls)) {
+            const f = await page.evaluate(async (m) => {
+              const rec = await window.review.far(m, { lod: 2 });
+              return { rec, shot: window.review.capture() };
+            }, m);
+            const name = m === 100 ? 'far_lod2.png' : `far${m}_lod2.png`;
+            save(name, f.shot);
+            extra.push({ label: `noon-lush LOD2 from ${m} m`, src: f.shot });
+            far.push(f.rec);
+          }
+          await page.evaluate(() => window.review.near());
+        }
       }
       const stats = await page.evaluate(() => {
         window.review.lod(0);
         return window.review.stats();
       });
-      const report = { file, asset: t.asset, variant: t.variant, gl, viewport: [1920, 1080], stats, spots, perf, errors: [...errors] };
+      const report = {
+        file,
+        asset: t.asset,
+        variant: t.variant,
+        class: cls,
+        gl,
+        viewport: [1920, 1080],
+        stats,
+        spots,
+        perf,
+        far,
+        overlay,
+        errors: [...errors],
+      };
       const pj = join(outDir, 'perf.json');
       writeFileSync(pj, JSON.stringify(report, null, 2) + '\n');
       written.push(pj);
       const sp = join(outDir, 'sheet.png');
-      writeFileSync(sp, await contactSheet(page, sheet, 2, 960, `${file}  ${label}`));
+      writeFileSync(sp, await contactSheet(page, [...sheet, ...extra], 2, 960, `${file}  ${label}`));
       written.push(sp);
     }
     if (errors.length) throw new Error(`review page logged errors:\n${errors.join('\n')}`);
