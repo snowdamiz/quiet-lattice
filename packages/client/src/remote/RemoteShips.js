@@ -1,14 +1,18 @@
 // How remote ships are drawn (docs/ARCHITECTURE.md §9, "Remote entities"). Every remote ship of one hull shares one kit
 // of instanced meshes, made from that hull's own model (its own copy, loaded apart from the player's ship, whatever the
-// player flies or paints) as the game dresses a ship: its hull surfaces merged into one geometry per material (the
-// cockpit interior, which shows only from the seat, left out), each landing-gear leg apart so it folds per ship, and the
-// engine exhausts as one instanced billboard mesh. Each surface has three levels of detail (the model, and two
-// meshoptimizer simplifications with their borders locked, so no gaps open between the surfaces, and their specks too
-// small to keep pruned), picked per ship by how many pixels it covers, so a ship tens of pixels long draws as few
-// triangles as it can show and its outline holds instead of crawling; the coarsest wears softened panel detail and dimmer
-// small lights (dressHull's `far`). A frame's draw calls are the kit's (26 surfaces for the Lark, at each level in use, and their
-// shadows), however many ships are in view, and nothing is allocated per frame. Each ship folds its gear, lights its
-// engines (by its speed and thrust) and strobes its beacon on its own, from the motion its snapshots describe.
+// player flies or paints): its surfaces merged into one geometry for the hull and one per landing-gear leg (each leg
+// folds per ship), every surface's material carried on its vertices (colour, roughness, metalness, glow, and whether it
+// is plated), so one material draws them all; the cockpit interior, which shows only from the seat, is left out.
+//
+// Three levels of detail, picked per ship by its length on screen: the model; its meshoptimizer simplification (borders
+// locked, so no gap opens between surfaces, specks pruned); and the whole hull clustered to under 5% of the model's
+// triangles (DESIGN 19.2), which casts no shadow and draws no folded gear (a ship that small shows neither). A hull whose
+// model carries its own LOD chain (`<variant>_LOD<n>` nodes, art bible 8) draws its LOD1 and its last instead of the
+// generated ones. Plating detail fades with the level (full, softer, none), so a ship tens of pixels long reads as a
+// clean silhouette rather than speckle. A frame's draw calls are a few per level in use (the hull, the legs, and the
+// shadows of the two finer levels) and the exhausts', however many ships are in view, and nothing is allocated per frame.
+// Each ship folds its gear, lights its engines (by its speed and thrust) and strobes its beacon on its own, from the
+// motion its snapshots describe.
 //
 // Hulls draw with their own model; until P1.E12.T02/T03 bring the others only the Lark has one, and a hull is drawn with
 // another's model only when both are of one tier (IMPLEMENTATION_PLAN 0.3), so a hull with neither is not drawn at all.
@@ -30,24 +34,33 @@ export const HULL_SOURCES = {
   },
 };
 
-/** The simplified levels: the share of the model's triangles each aims for, and the error it may make (of the hull's
- * size). */
-export const LODS = [
-  { ratio: 0.35, error: 0.01 },
-  { ratio: 0.12, error: 0.03 },
-];
-/** A ship longer on screen than this many pixels draws the model; than this many, the first simplification; shorter, the
- * second. A ship moves to a finer level only when 15% past its threshold, so it does not flicker between two. */
+/** The levels of detail: the model, its simplification, the coarsest. */
+export const LEVELS = 3;
+/** The simplification: the share of the model's triangles it aims for, and the error it may make (of the hull's size). */
+export const LOD1 = { ratio: 0.35, error: 0.01 };
+/** The coarsest level's share of the model's triangles (DESIGN 19.2: the last level under 5%). */
+export const COARSE_RATIO = 0.04;
+/** A ship longer on screen than this many pixels draws the model; than this many, the simplification; shorter, the
+ * coarsest. A ship moves to a finer level only when 15% past its threshold, so it does not flicker between two. */
 export const LOD_PX = [240, 100];
 const LOD_HYSTERESIS = 1.15;
+/** The plating's strength at each level: the model's as the game dresses a ship, softer, none. */
+export const PANEL_STRENGTH = [0.55, 0.3, 0];
 
 /** Ships this close (m) are drawn even outside the view: their shadows can fall into it. */
 const SHADOW_NEAR = 100;
 /** Exhaust billboards per engine (the local ship trails eight; at a remote ship's distance six read the same). */
 const TRAIL = 6;
 const PANELLED = new Set(['Hull', 'Accent', 'Trim', 'Dark', 'Interior']);
-/** The emissive intensity of the glows each instance scales (the engines' throats, the beacon). */
-const GLOW_BASE = 0.2;
+/** What lights a surface (its vertices' glow): nothing but its own emissive, the engines' power, the beacon. */
+const ENGINE = 1;
+const STROBE = 2;
+/** On the coarsest level, an emissive brighter than this is dimmed to DIM of it, under the bloom's threshold: the small
+ * strong lights (the nav lights at 3), a few pixels across far off, would only bloom into a blot bigger than the ship. */
+const DIM_ABOVE = 1;
+const DIM = 0.25;
+/** A model's own levels of detail (art bible 8): `<variant>_LOD<n>`. */
+const LOD_NAME = /_(?:LOD|lod|Lod)(\d+)$/;
 const ONE = new THREE.Vector3(1, 1, 1);
 
 const _t = new THREE.Matrix4();
@@ -58,7 +71,6 @@ const _p = new THREE.Vector3();
 const _s = new THREE.Vector3();
 const _q = new THREE.Quaternion();
 const _e = new THREE.Euler();
-const _c = new THREE.Color();
 const _fwd = new THREE.Vector3();
 const _size = new THREE.Vector2();
 const _frustum = new THREE.Frustum();
@@ -77,27 +89,28 @@ export function modelledHull(hull, sources = HULL_SOURCES) {
   return null;
 }
 
-/** The look the game gives a ship's hull materials (Ship.load), on a remote ship's copy: the plating detail; for the
- * coarsest level (`far`), a ship tens of pixels long, at a third of its strength, as a texture's smaller mip would show
- * it (at full strength its seams only flicker). */
-export function dressHull(material, { far = false } = {}) {
-  if (PANELLED.has(material.name)) applyPanelDetail(material, { scale: 0.55, strength: far ? 0.18 : 0.55 });
+/** The look the game gives a ship's hull (Ship.load), on the material remote ships of a hull wear at `level`: the plating
+ * detail at that level's strength (PANEL_STRENGTH), on the plated surfaces only (their vertices say which). */
+export function dressHull(material, { level = 0 } = {}) {
+  const strength = PANEL_STRENGTH[level] ?? 0;
+  if (strength > 0) applyPanelDetail(material, { scale: 0.55, strength });
 }
 
 export class RemoteShips {
   /**
-   * `sources` (hull id → a loaded Ship, or a promise of one) and `dress(material)` stand in for HULL_SOURCES and
-   * dressHull in tests (which have no model files and no canvas).
+   * `sources` (hull id → a loaded Ship, or a promise of one) and `dress(material, {level})` stand in for HULL_SOURCES and
+   * dressHull in tests (which have no model files and no canvas); `log` hears how each kit's levels were made.
    */
-  constructor(game, { dress = dressHull, sources = HULL_SOURCES } = {}) {
+  constructor(game, { dress = dressHull, sources = HULL_SOURCES, log = (line) => console.info(line) } = {}) {
     this.game = game;
     this.dress = dress;
     this.sources = sources;
+    this.log = log;
     this.group = new THREE.Group();
     this.group.name = 'remote ships';
     /** modelled hull id → HullKit, once built */
     this.kits = new Map();
-    /** modelled hull id → the promise of its kit (with its simplified levels) */
+    /** modelled hull id → the promise of its kit (with its levels of detail) */
     this.loading = new Map();
     /** hull id → the modelled hull that draws it (or null), as modelledHull says, asked once */
     this.models = new Map();
@@ -115,7 +128,7 @@ export class RemoteShips {
     return this.modelOf(hull) !== null;
   }
 
-  /** Starts making the kit for `hull` (its model loaded and dressed, then simplified); resolves with it once whole
+  /** Starts making the kit for `hull` (its model loaded and merged, then its levels made); resolves with it once whole
    * (null for a hull not drawn). */
   prepare(hull) {
     const id = this.modelOf(hull);
@@ -127,7 +140,10 @@ export class RemoteShips {
           const kit = new HullKit(id, ship, this.dress);
           this.kits.set(id, kit);
           this.group.add(kit.group);
-          return kit.simplify().then(() => kit);
+          return kit.simplify().then(() => {
+            this.log(kit.describe());
+            return kit;
+          });
         })
         .catch((err) => {
           console.warn(`remote ships: no ${id} model (${err?.message ?? err})`);
@@ -147,6 +163,12 @@ export class RemoteShips {
     return kit ?? null;
   }
 
+  /** The box (in the ship's own space, m) a ship of `hull` fills: its marker sits on its bounds on screen. Null until its
+   * kit is made, or for a hull not drawn. */
+  boxOf(hull) {
+    return this.kit(hull)?.box ?? null;
+  }
+
   /** Draws `list` (RemoteEntities' records) this frame: each one shown, in view or near, through its hull's kit. */
   update(list, dt) {
     this.clock += dt;
@@ -164,12 +186,17 @@ export class RemoteShips {
       if (!r.shown) continue;
       const kit = this.kit(r.hull);
       if (!kit) continue;
-      const vis = (r.vis ??= { gear: 1, power: 0, thrust: 0, fwdSpeed: null, strobe: (r.id * 0.618) % 1, lod: 0 });
+      const vis = (r.vis ??= { gear: 1, power: 0, thrust: 0, fwdSpeed: null, strobe: (r.id * 0.618) % 1, lod: 0, inView: false });
       animate(r, vis, kit, dt);
       const rel = _v.copy(r.world).sub(camWorld);
       const dist = rel.length();
-      if (cam && dist > SHADOW_NEAR && !_frustum.intersectsSphere(_sphere.set(rel, kit.radius))) continue;
-      vis.lod = lodFor((kit.length / Math.max(dist, 1e-3)) * pxPerRad, vis.lod, kit.levels);
+      if (cam && dist > SHADOW_NEAR && !_frustum.intersectsSphere(_sphere.set(rel, kit.radius))) {
+        vis.inView = false;
+        continue;
+      }
+      // (a ship back in view picks its level afresh: the one it last drew at says nothing of its size now)
+      vis.lod = lodFor((kit.length / Math.max(dist, 1e-3)) * pxPerRad, vis.inView ? vis.lod : 0, kit.levels);
+      vis.inView = true;
       kit.add(rel, r.worldQuat, vis, this.clock);
       r.drawn = true;
     }
@@ -177,12 +204,17 @@ export class RemoteShips {
   }
 }
 
-/** The level of detail for a ship `px` pixels long that drew at `was`, of `levels` (0 the model). */
+/** The level of detail for a ship `px` pixels long that drew at `was`, of `levels` (0 the model): the level its length
+ * calls for, but a finer one than `was` only once its length is well past that level's threshold (15%), whichever
+ * levels lie between. */
 export function lodFor(px, was, levels = LOD_PX.length + 1) {
   let lod = 0;
   while (lod < LOD_PX.length && px < LOD_PX[lod]) lod++;
-  // (to a finer level only well past its threshold)
-  if (lod < was && px < LOD_PX[lod] * LOD_HYSTERESIS) lod = was;
+  if (lod < was) {
+    let up = 0;
+    while (up < LOD_PX.length && px < LOD_PX[up] * LOD_HYSTERESIS) up++;
+    lod = Math.min(was, up);
+  }
   return Math.min(lod, levels - 1);
 }
 
@@ -220,45 +252,27 @@ function altitude(r) {
   return Infinity;
 }
 
-// One level of a merged hull surface, every ship's instance at that level.
+// One level of a piece, every ship's instance at that level; `glow` each instance's engine power and beacon flash.
 class Level {
   constructor(geometry) {
     this.geometry = geometry;
     this.mesh = null;
+    this.glow = null;
     this.count = 0;
   }
 }
 
-// A merged hull surface: one material (and its copy for the coarsest level), its levels of detail.
-class Part {
-  constructor(geometry, material, far, gear, glow) {
-    /** the gear leg it folds with (-1: none) */
+// The hull (gear -1) or one gear leg, merged from its surfaces; its levels; a model's own LOD1 and last, if it has them.
+class Piece {
+  constructor(geometry, gear, own) {
     this.gear = gear;
-    /** 'engine' (lit by the engines' power), 'strobe' (the beacon) or null */
-    this.glow = glow;
-    this.material = material;
-    this.far = far;
     this.levels = [new Level(geometry)];
+    /** the model's own levels: [LOD1 or null, its last beyond LOD1 or null] */
+    this.own = own;
   }
 
-  alloc(level, capacity) {
-    const old = level.mesh;
-    const coarsest = this.levels.length > 1 && level === this.levels[this.levels.length - 1];
-    const mesh = new THREE.InstancedMesh(level.geometry, coarsest ? this.far : this.material, capacity);
-    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    if (this.glow) mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(capacity * 3), 3).setUsage(THREE.DynamicDrawUsage);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    // (each ship is culled on its own)
-    mesh.frustumCulled = false;
-    mesh.count = 0;
-    mesh.visible = false;
-    if (old) {
-      old.removeFromParent();
-      old.dispose();
-    }
-    level.mesh = mesh;
-    return mesh;
+  triangles(level) {
+    return this.levels[level].geometry.index.count / 3;
   }
 }
 
@@ -283,58 +297,63 @@ class HullKit {
       fromPivot: new THREE.Matrix4().copy(g.matrixWorld).invert(),
       m: new THREE.Matrix4(),
     }));
+    // the surfaces by gear leg (-1: the hull) and by the model's own level (0 for all but its `_LOD<n>` nodes)
     const buckets = new Map();
-    const materials = new Map();
-    // a copy of a material as remote ships wear it; the `far` one for the coarsest level
-    const copyOf = (src, far = false) => {
-      const key = `${far}|${materialKey(src)}`;
-      let m = materials.get(key);
-      if (!m) {
-        m = src.clone();
-        delete m.userData.panel;
-        dress(m, { far });
-        if (m.name === 'EngineGlow' || m.name === 'NavWhite') glowPerInstance(m);
-        // (the thrusters' throats glow only as they fire, which a remote ship's snapshots do not tell)
-        else if (!m.name) m.emissiveIntensity = 0;
-        // (the small strong lights, a few pixels across far off, would only sparkle at full strength)
-        else if (far && m.emissiveIntensity > 1) m.emissiveIntensity *= 0.4;
-        materials.set(key, m);
-      }
-      return m;
-    };
-    const walk = (o, gear) => {
+    const walk = (o, gear, lod) => {
       if (skip.has(o)) return;
       const g = gearNodes.indexOf(o);
       if (g >= 0) gear = g;
+      const named = LOD_NAME.exec(o.name ?? '');
+      if (named) lod = Number(named[1]);
       const src = o.userData?.outerMat ?? o.material;
       if (o.isMesh && !o.isInstancedMesh && src?.isMeshStandardMaterial) {
-        const key = `${gear}|${materialKey(src)}`;
+        const key = `${gear}|${lod}`;
         let b = buckets.get(key);
-        if (!b) buckets.set(key, (b = { gear, material: copyOf(src), far: copyOf(src, true), geometries: [] }));
+        if (!b) buckets.set(key, (b = { gear, lod, geometries: [] }));
         // into the ship's space, or its gear pivot's
         _m.multiplyMatrices(gear < 0 ? toShip : this.gears[gear].fromPivot, o.matrixWorld);
-        b.geometries.push(surface(o.geometry).applyMatrix4(_m));
+        b.geometries.push(painted(surface(o.geometry).applyMatrix4(_m), src));
       }
-      for (const c of o.children) walk(c, gear);
+      for (const c of o.children) walk(c, gear, lod);
     };
-    walk(group, -1);
-    this.parts = [];
-    for (const b of buckets.values()) {
+    walk(group, -1, 0);
+    const merged = (b) => {
       const geometry = b.geometries.length === 1 ? b.geometries[0] : mergeGeometries(b.geometries);
-      if (!geometry) throw new Error(`remote ${id}: the ${b.material.name || 'unnamed'} surfaces could not be merged`);
-      const name = b.material.name;
-      this.parts.push(new Part(geometry, b.material, b.far, b.gear, name === 'EngineGlow' ? 'engine' : name === 'NavWhite' ? 'strobe' : null));
+      if (!geometry) throw new Error(`remote ${id}: the surfaces could not be merged`);
+      // where each surface's triangles lie in the merged index (the coarsest level clusters each on its own)
+      let start = 0;
+      geometry.userData.surfaces = b.geometries.map((g) => {
+        const range = [start, g.index.count];
+        start += g.index.count;
+        return range;
+      });
+      return geometry;
+    };
+    this.pieces = [];
+    const gears = [...new Set([...buckets.values()].map((b) => b.gear))].sort((a, b) => a - b);
+    for (const gear of gears) {
+      const lods = [...buckets.values()].filter((b) => b.gear === gear).sort((a, b) => a.lod - b.lod);
+      const lod1 = lods.find((b) => b.lod === 1);
+      const last = lods.at(-1).lod >= 2 ? lods.at(-1) : null;
+      this.pieces.push(new Piece(merged(lods[0]), gear, lod1 || last ? [lod1 ? merged(lod1) : null, last ? merged(last) : null] : null));
     }
+    /** whether the model carries levels of its own */
+    this.ownLevels = this.pieces.some((p) => p.own);
     const box = new THREE.Box3();
-    for (const p of this.parts) {
+    for (const p of this.pieces) {
       p.levels[0].geometry.computeBoundingBox();
       box.union(p.levels[0].geometry.boundingBox);
     }
-    this.radius = box.isEmpty() ? 10 : box.getBoundingSphere(new THREE.Sphere()).radius + box.getCenter(_v).length();
+    if (box.isEmpty()) box.set(new THREE.Vector3(-5, -2, -7), new THREE.Vector3(5, 2, 7));
+    /** the box the hull fills, in its own space */
+    this.box = box;
+    this.radius = box.getBoundingSphere(new THREE.Sphere()).radius + box.getCenter(_v).length();
     /** the hull's longest side (m): how long it is on screen picks its level of detail */
-    this.length = box.isEmpty() ? 10 : Math.max(...box.getSize(_v).toArray());
-    /** how many levels of detail every surface has (1 until simplify() is done) */
+    this.length = Math.max(...box.getSize(_v).toArray());
+    /** how many levels of detail the kit has (1 until simplify() is done) */
     this.levels = 1;
+    /** the material each level wears (one for every surface: theirs are on their vertices) */
+    this.materials = Array.from({ length: LEVELS }, (_, level) => hullMaterial(id, level, dress));
     /** the exhausts: where each engine's trail starts and its nozzle's radius (Ship.load's flames) */
     this.engines = (ship.flames ?? []).map((f) => ({ base: f.base.clone(), r: f.r }));
     this.flameGeometry = new THREE.PlaneGeometry(1, 1);
@@ -342,34 +361,64 @@ class HullKit {
     this.alloc(this.capacity);
   }
 
-  /** Makes the simplified levels of every surface (meshoptimizer, once its WebAssembly is ready). They share the model's
-   * vertices: only their triangles differ. */
+  /** Makes the finer levels of every piece (meshoptimizer, once its WebAssembly is ready), or takes the model's own: the
+   * simplification on the model's own vertices, and the coarsest clustered from the model to COARSE_RATIO of it. */
   async simplify() {
     await MeshoptSimplifier.ready;
-    for (const p of this.parts) {
+    for (const p of this.pieces) {
       const g0 = p.levels[0].geometry;
       const pos = g0.attributes.position.array;
       const index = new Uint32Array(g0.index.array);
-      for (const { ratio, error } of LODS) {
-        const target = Math.max(3, Math.floor((index.length * ratio) / 3) * 3);
-        // (borders locked, so no gap opens between two surfaces; parts smaller than the error pruned whole: the rails,
-        // rivets and antennas that only flicker at a few pixels)
-        const [tris] = MeshoptSimplifier.simplify(index, pos, 3, target, error, ['LockBorder', 'Prune']);
-        const g = new THREE.BufferGeometry();
-        g.setAttribute('position', g0.attributes.position);
-        g.setAttribute('normal', g0.attributes.normal);
-        g.setIndex(new THREE.BufferAttribute(tris, 1));
-        g.boundingBox = g0.boundingBox;
-        p.levels.push(new Level(g));
+      const target = (share, least) => Math.max(least, Math.floor((index.length * share) / 3)) * 3;
+      // (borders locked, so no gap opens between surfaces; specks smaller than the error pruned whole: the rails, rivets
+      // and antennas that only flicker at a few pixels)
+      const fine = p.own?.[0] ?? sharing(g0, MeshoptSimplifier.simplify(index, pos, 3, target(LOD1.ratio, 1), LOD1.error, ['LockBorder', 'Prune'])[0]);
+      // (each surface clustered on its own, borders and all, so no triangle spans two materials and smears one's colour
+      // or glow over the other; at under 100 px only the silhouette and the broad patches of colour show, and a surface
+      // too small to keep a triangle, a light or a rail, goes; a small piece, a gear leg, can cluster away to nothing at
+      // that share: then a larger one)
+      let coarse = p.own?.[1];
+      for (const share of [COARSE_RATIO, COARSE_RATIO * 3, COARSE_RATIO * 8]) {
+        if (coarse) break;
+        const tris = clustered(index, pos, g0.userData.surfaces ?? [[0, index.length]], share);
+        if (tris.length) coarse = sharing(g0, tris);
       }
+      p.levels.push(new Level(fine), new Level(coarse ?? fine));
     }
-    this.levels = LODS.length + 1;
+    this.levels = LEVELS;
     this.alloc(this.capacity);
+  }
+
+  /** How the kit's levels were made, and their triangles. */
+  describe() {
+    const tris = Array.from({ length: this.levels }, (_, k) => this.pieces.reduce((n, p) => n + p.triangles(k), 0));
+    const share = ((100 * tris.at(-1)) / tris[0]).toFixed(1);
+    return `remote ships: ${this.id} levels ${this.ownLevels ? "from the model's own LOD nodes" : 'generated (meshoptimizer: simplified, then clustered)'}: ${tris.join(' / ')} triangles, the coarsest ${share}% of the model`;
   }
 
   alloc(capacity) {
     this.capacity = capacity;
-    for (const p of this.parts) for (const l of p.levels) this.group.add(p.alloc(l, capacity));
+    for (const p of this.pieces)
+      p.levels.forEach((l, k) => {
+        const old = l.mesh;
+        l.glow = new THREE.InstancedBufferAttribute(new Float32Array(capacity * 2), 2).setUsage(THREE.DynamicDrawUsage);
+        l.geometry.setAttribute('aGlow', l.glow);
+        const mesh = new THREE.InstancedMesh(l.geometry, this.materials[k], capacity);
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        // (the coarsest casts none: a ship under 100 px long throws no shadow worth its draw calls)
+        mesh.castShadow = k < LEVELS - 1;
+        mesh.receiveShadow = true;
+        // (each ship is culled on its own)
+        mesh.frustumCulled = false;
+        mesh.count = 0;
+        mesh.visible = false;
+        if (old) {
+          old.removeFromParent();
+          old.dispose();
+        }
+        l.mesh = mesh;
+        this.group.add(mesh);
+      });
     const old = this.flames;
     const n = capacity * this.engines.length * TRAIL;
     const geo = this.flameGeometry.clone();
@@ -394,7 +443,7 @@ class HullKit {
   begin() {
     this.count = 0;
     this.flameCount = 0;
-    for (const p of this.parts) for (const l of p.levels) l.count = 0;
+    for (const p of this.pieces) for (const l of p.levels) l.count = 0;
   }
 
   /** One ship: at `rel` from the camera, turned `quat`, its gear, engines and level of detail as `vis` has them. */
@@ -409,15 +458,18 @@ class HullKit {
       g.m.multiplyMatrices(_t, g.pre).multiply(_g);
     }
     // the engines' throats as bright as the local ship's at that power; the beacon flashing as its strobe does (6, else
-    // 0.4), each ship on its own beat; both over the glow materials' base of GLOW_BASE
-    const engine = (0.07 + vis.power * 0.63) / GLOW_BASE;
-    const strobe = ((clock / 1.6 + vis.strobe) % 1 < 0.05 ? 6 : 0.4) / GLOW_BASE;
+    // 0.4), each ship on its own beat
+    const engine = 0.07 + vis.power * 0.63;
+    const strobe = (clock / 1.6 + vis.strobe) % 1 < 0.05 ? 6 : 0.4;
     const lod = Math.min(vis.lod, this.levels - 1);
-    for (const p of this.parts) {
+    const coarse = lod === LEVELS - 1;
+    for (const p of this.pieces) {
+      // (a ship that small shows its legs only down)
+      if (p.gear >= 0 && coarse && vis.gear < 0.5) continue;
       const l = p.levels[lod];
       const i = l.count++;
       l.mesh.setMatrixAt(i, p.gear < 0 ? _t : this.gears[p.gear].m);
-      if (p.glow) l.mesh.setColorAt(i, _c.setScalar(p.glow === 'engine' ? engine : strobe));
+      l.glow.setXY(i, engine, strobe);
     }
     this.addExhaust(vis.power, vis.pulse);
   }
@@ -447,18 +499,18 @@ class HullKit {
 
   // Twice the room, keeping what this frame has written so far.
   grow() {
-    const kept = this.parts.map((p) => p.levels.map((l) => [l.count, l.mesh.instanceMatrix.array.slice(0, l.count * 16), l.mesh.instanceColor?.array.slice(0, l.count * 3)]));
+    const kept = this.pieces.map((p) => p.levels.map((l) => [l.count, l.mesh.instanceMatrix.array.slice(0, l.count * 16), l.glow.array.slice(0, l.count * 2)]));
     const flameMats = this.flames.instanceMatrix.array.slice(0, this.flameCount * 16);
     const flameCols = this.flames.geometry.attributes.aGlow.array.slice(0, this.flameCount * 3);
     const flameCount = this.flameCount;
     const count = this.count;
     this.alloc(this.capacity * 2);
-    this.parts.forEach((p, k) =>
+    this.pieces.forEach((p, k) =>
       p.levels.forEach((l, j) => {
-        const [n, mats, cols] = kept[k][j];
+        const [n, mats, glows] = kept[k][j];
         l.count = n;
         l.mesh.instanceMatrix.array.set(mats);
-        if (cols) l.mesh.instanceColor.array.set(cols);
+        l.glow.array.set(glows);
       }),
     );
     this.flames.instanceMatrix.array.set(flameMats);
@@ -468,26 +520,29 @@ class HullKit {
   }
 
   end() {
-    for (const p of this.parts)
+    for (const p of this.pieces)
       for (const l of p.levels) {
         l.mesh.count = l.count;
         // (none drawn at a level, none of its draw calls or shadow passes are made)
         l.mesh.visible = l.count > 0;
         if (!l.count) continue;
-        l.mesh.instanceMatrix.needsUpdate = true;
-        if (l.mesh.instanceColor) l.mesh.instanceColor.needsUpdate = true;
+        upload(l.mesh.instanceMatrix, l.count * 16);
+        upload(l.glow, l.count * 2);
       }
     this.flames.count = this.flameCount;
     this.flames.visible = this.flameCount > 0;
-    this.flames.instanceMatrix.needsUpdate = true;
-    this.flames.geometry.attributes.aGlow.needsUpdate = true;
+    if (this.flameCount) {
+      upload(this.flames.instanceMatrix, this.flameCount * 16);
+      upload(this.flames.geometry.attributes.aGlow, this.flameCount * 3);
+    }
   }
 }
 
-// Materials that look the same are one: the thrusters' throats are a material each on a ship (their glow, which the ship
-// animates, is set on the copy).
-function materialKey(m) {
-  return [m.type, m.name, m.color.getHexString(), m.emissive.getHexString(), m.roughness, m.metalness, m.side].join('|');
+// Sends the first `n` values of an instanced attribute this frame (only the ships drawn, not its whole room).
+function upload(attr, n) {
+  attr.clearUpdateRanges();
+  attr.addUpdateRange(0, n);
+  attr.needsUpdate = true;
 }
 
 // A copy of a mesh's surface with positions, normals and an index only (the hull's materials use no textures, and the
@@ -512,16 +567,111 @@ function surface(source) {
   return g;
 }
 
-// Lets each instance scale the material's glow by its instance colour (an engine's power, a beacon's flash), which then
-// leaves its surface colour alone.
-function glowPerInstance(material) {
-  material.onBeforeCompile = (shader) => {
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <color_fragment>', '')
-      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n#ifdef USE_COLOR\n\ttotalEmissiveRadiance *= vColor.rgb;\n#endif');
+/** Writes the surface's material onto its vertices, as the one hull material reads them (hullMaterial): `color`, `aMat`
+ * (roughness, metalness, plated or not, its glow) and `aEmissive` (its own glow; for the engines' throats and the beacon,
+ * their colour, which each ship's power and flash then scale). The thrusters' throats glow only as they fire, which a
+ * remote ship's snapshots do not tell: dark. A two-sided surface gets its back faces as triangles of their own. */
+export function painted(g, m) {
+  const n = g.attributes.position.count;
+  const glow = m.name === 'EngineGlow' ? ENGINE : m.name === 'NavWhite' ? STROBE : 0;
+  const intensity = glow ? 1 : m.name ? m.emissiveIntensity : 0;
+  const color = new Float32Array(n * 3);
+  const mat = new Float32Array(n * 4);
+  const emissive = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    color.set([m.color.r, m.color.g, m.color.b], i * 3);
+    mat.set([m.roughness, m.metalness, PANELLED.has(m.name) ? 1 : 0, glow], i * 4);
+    emissive.set([m.emissive.r * intensity, m.emissive.g * intensity, m.emissive.b * intensity], i * 3);
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(color, 3));
+  g.setAttribute('aMat', new THREE.BufferAttribute(mat, 4));
+  g.setAttribute('aEmissive', new THREE.BufferAttribute(emissive, 3));
+  return m.side === THREE.DoubleSide ? twoSided(g) : g;
+}
+
+// The surface and its back: every vertex again with its normal turned round, every triangle again wound the other way.
+function twoSided(g) {
+  const out = new THREE.BufferGeometry();
+  const n = g.attributes.position.count;
+  for (const [name, attr] of Object.entries(g.attributes)) {
+    const a = new Float32Array(attr.array.length * 2);
+    a.set(attr.array);
+    a.set(attr.array, attr.array.length);
+    if (name === 'normal') for (let i = attr.array.length; i < a.length; i++) a[i] = -a[i];
+    out.setAttribute(name, new THREE.BufferAttribute(a, attr.itemSize));
+  }
+  const index = g.index.array;
+  const both = new Uint32Array(index.length * 2);
+  both.set(index);
+  for (let i = 0; i < index.length; i += 3) both.set([index[i] + n, index[i + 2] + n, index[i + 1] + n], index.length + i);
+  out.setIndex(new THREE.BufferAttribute(both, 1));
+  return out;
+}
+
+// Each surface's triangles (`surfaces`: start and count in `index`) clustered to `share` of them, together.
+function clustered(index, pos, surfaces, share) {
+  const parts = [];
+  let n = 0;
+  for (const [start, count] of surfaces) {
+    const target = Math.floor((count / 3) * share) * 3;
+    if (target < 3) continue;
+    const [tris] = MeshoptSimplifier.simplifySloppy(index.subarray(start, start + count), pos, 3, null, target, 1);
+    parts.push(tris);
+    n += tris.length;
+  }
+  const out = new Uint32Array(n);
+  let at = 0;
+  for (const t of parts) {
+    out.set(t, at);
+    at += t.length;
+  }
+  return out;
+}
+
+// A level's geometry: the model's vertices, these triangles.
+function sharing(g0, tris) {
+  const g = new THREE.BufferGeometry();
+  for (const [name, attr] of Object.entries(g0.attributes)) if (name !== 'aGlow') g.setAttribute(name, attr);
+  g.setIndex(new THREE.BufferAttribute(tris, 1));
+  g.boundingBox = g0.boundingBox;
+  return g;
+}
+
+/** The material every surface of a hull wears at `level`: white, its colour, roughness, metalness and glow taken from
+ * each vertex (painted), the plating dressed on at the level's strength (on the plated vertices only), and on the
+ * coarsest level the strong small lights dimmed. */
+export function hullMaterial(id, level, dress) {
+  const m = new THREE.MeshStandardMaterial({ name: `remote ${id} ${level}`, color: 0xffffff, vertexColors: true, roughness: 1, metalness: 1 });
+  dress(m, { level });
+  const dressed = m.onBeforeCompile;
+  const dim = level === LEVELS - 1 ? DIM : 1;
+  // (the plating's lines first: they read the roughness these set)
+  m.onBeforeCompile = (shader, renderer) => {
+    dressed?.call(m, shader, renderer);
+    perVertex(shader, dim);
   };
-  material.customProgramCacheKey = () => 'remote-glow';
-  material.emissiveIntensity = GLOW_BASE;
+  const key = m.customProgramCacheKey?.() ?? '';
+  m.customProgramCacheKey = () => `${key}|remote-hull`;
+  return m;
+}
+
+/** Rewrites a standard material's shaders to read its surface from its vertices and each instance's glow (`aGlow`: the
+ * engines' power, the beacon's flash): see painted(). */
+export function perVertex(shader, dim) {
+  shader.uniforms.uDim = { value: dim };
+  shader.vertexShader = shader.vertexShader
+    .replace('#include <common>', '#include <common>\nattribute vec4 aMat;\nattribute vec3 aEmissive;\nattribute vec2 aGlow;\nvarying vec4 vMat;\nvarying vec3 vEmissive;\nvarying vec2 vGlow;')
+    .replace('#include <begin_vertex>', '#include <begin_vertex>\nvMat = aMat;\nvEmissive = aEmissive;\nvGlow = aGlow;');
+  shader.fragmentShader = shader.fragmentShader
+    .replace('#include <common>', '#include <common>\nuniform float uDim;\nvarying vec4 vMat;\nvarying vec3 vEmissive;\nvarying vec2 vGlow;')
+    .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = vMat.x;')
+    .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\nmetalnessFactor = vMat.y;')
+    .replace(
+      '#include <emissivemap_fragment>',
+      `#include <emissivemap_fragment>\ntotalEmissiveRadiance = vEmissive * (vMat.w > 1.5 ? vGlow.y : vMat.w > 0.5 ? vGlow.x : max(vEmissive.r, max(vEmissive.g, vEmissive.b)) > ${DIM_ABOVE.toFixed(1)} ? uDim : 1.0);`,
+    )
+    // (the plating only where the surface is plated)
+    .replace(/uPanelStrength(?=\s*[,)])/g, 'uPanelStrength * vMat.z');
 }
 
 // The exhaust's glows: camera-facing quads, additive, each instance's colour its brightness, fading out from a hot core as

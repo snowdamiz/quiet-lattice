@@ -340,4 +340,50 @@ describe('PoseBuffer: a sample in another frame', () => {
     expect(b.at(4).smooth).toBe(false);
     expect(b.newest.cut).toBe(false);
   });
+  // A ship crossing from the Waystation's frame into its world's at `miss` metres from where its motion puts it.
+  function crossing(miss) {
+    const { planet, station } = frames();
+    const b = new PoseBuffer();
+    const scratch = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion(), velocity: new THREE.Vector3(), angularVelocity: new THREE.Vector3() };
+    const world = [];
+    for (let k = 0; k < 5; k++) {
+      const t = 300 + k * 0.05;
+      const pos = [0, 0, 4600 + 6 * k];
+      b.push(t, station, pos, Q, [0, 0, 120]);
+      const s = framePoseAt(station, t, scratch);
+      world.push(new THREE.Vector3(...pos).applyQuaternion(s.quaternion).add(s.position));
+    }
+    const t = 300.25;
+    const s = framePoseAt(station, t, scratch);
+    const there = new THREE.Vector3(0, 0, 4630 + miss).applyQuaternion(s.quaternion).add(s.position);
+    const p = framePoseAt(planet, t, scratch);
+    const inPlanet = there.clone().sub(p.position).applyQuaternion(p.quaternion.clone().invert());
+    const result = b.push(t, planet, inPlanet.toArray(), Q, [0, 0, 120]);
+    const moved = [0, 1, 2, 3, 4].map((k) => {
+      const pp = framePoseAt(planet, b.at(k).t, scratch);
+      return b.at(k).pos.clone().applyQuaternion(pp.quaternion).add(pp.position).distanceTo(world[k]);
+    });
+    return { b, result, moved };
+  }
+
+  it('moves the samples held to meet a new one its client placed in the new frame on its own clock', () => {
+    // (300 m: a clock a quarter of a second off, the frames 1,200 m/s apart)
+    const { b, result, moved } = crossing(300);
+    expect(result).toBe('reframed');
+    for (const d of moved) expect(d).toBeCloseTo(300, 0);
+    expect(b.newest.cut).toBe(false);
+  });
+
+  it(`cuts at a teleport into another frame (further than ${TELEPORT_M} m or the frames' drift off), moving nothing`, () => {
+    const { b, result, moved } = crossing(30_000);
+    expect(result).toBe('cut');
+    expect(b.newest.cut).toBe(true);
+    // the samples held stay where they were in the world, and the pose holds the last of them until the cut is due
+    for (const d of moved) expect(d).toBeLessThan(0.01);
+    const out = pose();
+    b.sample(300.24, out);
+    expect(out.pos.distanceTo(b.at(4).pos)).toBeLessThan(5);
+    expect(b.sample(300.26, out)).toBe('extrapolate');
+    expect(out.since).toBeCloseTo(300.25, 6);
+  });
 });

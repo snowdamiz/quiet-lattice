@@ -37,6 +37,9 @@ export const SNAP_S = 1.2;
 
 /** The largest drawn jump blended rather than shown, for an entity at `speed` (m/s) or frames `apart` (m/s). */
 export const snapLimit = (speed, apart = 0) => Math.max(SNAP_M, SNAP_S * Math.max(speed, apart));
+/** The box a ship fills (its own space, m) for its marker while its hull's model is not yet loaded: about a Lark's. */
+const DEFAULT_BOX = new THREE.Box3(new THREE.Vector3(-6, -2, -7), new THREE.Vector3(6, 2, 7));
+const nearer = (a, b) => a.markerDist - b.markerDist;
 /** The hull of a player or ship whose snapshot names none: the Lark every pilot starts in (DESIGN 10.1). */
 export const DEFAULT_HULL = 'lark';
 
@@ -111,8 +114,9 @@ export class RemoteEntities {
     this.detach = null;
     /** hull id → its stats (signature) as markers read them */
     this.stats = new Map();
-    /** the pilots markers() picks up this frame (kept, to allocate nothing) */
+    /** the pilots markers() picks up this frame, and what it tells their signature (kept, to allocate nothing) */
     this.seen = [];
+    this.signals = { detector: 'player', inCover: false, boosting: false, pulsing: false };
   }
 
   /** Follows `net`'s snapshots (and forgets everything at each welcome and zone change, where entity ids start over). */
@@ -150,25 +154,30 @@ export class RemoteEntities {
   /**
    * The other pilots' ships a ship's sensors at world position `here`, of range `range`, pick up (DESIGN 10.1, as for
    * any ship: within the range × the ship's signature as a player reads it, halved in cover, doubled boosting or on the
-   * pulse drive): `add(name, world)` for each, nearest first (the HUD gives the nearer the room for its name), the point
-   * 7 m over it (its label clear of the hull a few hundred metres off). Pilots on foot have no marker.
+   * pulse drive): `add(name, world, box, quat)` for each, nearest first (the HUD gives the nearer the room for its name):
+   * where the ship is, the box it fills in its own space and how it is turned, from which the HUD sets the marker on its
+   * bounds on screen. Pilots on foot have no marker.
    */
   markers(here, range, add) {
     const seen = this.seen;
+    const sig = this.signals;
     seen.length = 0;
     for (const r of this.list) {
       if (r.kind !== 'player' || !r.shown) continue;
       const stats = this.statsOf(r.hull);
       if (!stats) continue;
       const mode = r.pose.mode === 'pulse' ? 'pulse' : r.pose.mode === 'landed' || r.pose.mode === 'docked' ? r.pose.mode : 'space';
-      const signature = effectiveSignature(stats, { detector: 'player', inCover: this.inCover(r.world), ...movementSignals(stats, mode, r.pose.vel.length()) });
+      const moving = movementSignals(stats, mode, r.pose.vel.length());
+      sig.inCover = this.inCover(r.world);
+      sig.boosting = moving.boosting;
+      sig.pulsing = moving.pulsing;
       const d = r.world.distanceTo(here);
-      if (!detects(range, signature, d)) continue;
+      if (!detects(range, effectiveSignature(stats, sig), d)) continue;
       r.markerDist = d;
       seen.push(r);
     }
-    seen.sort((a, b) => a.markerDist - b.markerDist);
-    for (const r of seen) add(r.name ?? 'Pilot', _l.set(0, 7, 0).applyQuaternion(r.worldQuat).add(r.world));
+    seen.sort(nearer);
+    for (const r of seen) add(r.name ?? 'Pilot', r.world, this.view.boxOf?.(r.hull) ?? DEFAULT_BOX, r.worldQuat);
   }
 
   // A hull's stats as it leaves the yard (its signature is the hull's own), once per hull; null for no hull known.

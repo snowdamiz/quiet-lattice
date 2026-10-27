@@ -400,7 +400,7 @@ interface RemotePage {
  */
 async function openRemotes(
   page: Page,
-  scene: 'flypast' | 'crowd' | 'pads' | 'surface',
+  scene: 'flypast' | 'crowd' | 'pads' | 'surface' | 'bay',
   seconds: number,
   stage: 'space' | 'pads' | 'surface' = 'space',
 ): Promise<void> {
@@ -631,6 +631,14 @@ export const SCREENS: Record<string, ScreenDef> = {
     hudClock: true,
     clipSeconds: 2.5,
     open: (page) => openRemotes(page, 'surface', 2.2, 'surface'),
+  },
+  // a Waystation bay phase full, from the player's ship docked on its pad: 24 other pilots' Larks docked round it, gear
+  // down (the hangar has 4 pads until the modular Waystation; the others stand on the floor's berths); the worst case of
+  // remote ships a bay phase allows, for its look and its perf readout (perf.json)
+  'remote-ships-bay': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: (page) => openRemotes(page, 'bay', 1.0, 'pads'),
   },
   'station-hangar': {
     hash: '#dock',

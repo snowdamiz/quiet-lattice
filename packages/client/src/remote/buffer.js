@@ -8,7 +8,7 @@
 // riding with the old frame would have made). A sample that changes what the entity is (a pilot stepping out on foot, a walker
 // boarding) or that no velocity explains (a teleport, a respawn) is a cut: nothing is interpolated across it.
 import * as THREE from 'three';
-import { reframeAt } from './frames.js';
+import { framesApartAt, reframeAt } from './frames.js';
 
 /** Samples kept: 1.6 s at the zone's 20 Hz, well past the interpolation delay and the extrapolation window. */
 export const BUFFER_SIZE = 32;
@@ -23,6 +23,9 @@ export const TELEPORT_S = 0.3;
 /** How far off its motion an entity moving at `speed` (m/s) may be before it is a jump: TELEPORT_M, or TELEPORT_S of its
  * speed. */
 export const jumpLimit = (speed) => Math.max(TELEPORT_M, speed * TELEPORT_S);
+/** A sample in another frame may also miss by this many seconds of how fast the two frames move apart there: its client
+ * changed frames on its own clock, which may run up to a second behind the server's before it steps. */
+export const REFRAME_S = 1.2;
 /** How far (s) past its tick's time a pose's own time may be taken to be: its client's reports reach the ticks a tick or
  * so apart. */
 export const SKEW_S = 0.15;
@@ -48,6 +51,7 @@ const _d = new THREE.Vector3();
 const _p = new THREE.Vector3();
 const _v = new THREE.Vector3();
 const _s = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: new THREE.Vector3() };
+const _w = new THREE.Vector3();
 
 class Sample {
   constructor() {
@@ -135,6 +139,7 @@ export class PoseBuffer {
     }
     const t = prev ? Math.max(label + skew, prev.t + 1e-3) : label;
     let result = 'ok';
+    let teleported = false;
     if (prev && frame !== this.frame) {
       // where the newest sample would be at this one's time, riding with its frame, as this frame sees it then
       _p.copy(prev.pos).addScaledVector(prev.vel, t - prev.t);
@@ -142,14 +147,18 @@ export class PoseBuffer {
       _s.quat.copy(prev.quat);
       _s.vel.copy(prev.vel);
       reframeAt(_s, this.frame, frame, t);
+      const from = this.frame;
       this.reframe(frame);
       // The samples held are moved to meet the new one: a client places itself in its new frame with its own clock,
-      // which a hitch can leave tenths of a second off the server's that labels its poses, and the two frames move
-      // apart by up to a kilometre a second. Held as they were, the step from the last of them to the new one would be a
+      // which a hitch can leave up to a second off the server's that labels its poses, and the two frames move apart by
+      // up to several kilometres a second. Held as they were, the step from the last of them to the new one would be a
       // slide of that much in a tick; moved, they carry on into it, and the drawn pose's change is blended out
-      // (RemoteEntities) like any other.
+      // (RemoteEntities) like any other. A miss no clock explains is a teleport into the frame: a cut, nothing moved.
       _d.subVectors(_p.fromArray(pos), _s.pos);
-      for (let i = 0; i < this.length; i++) this.at(i).pos.add(_d);
+      const world = frame ? _w.copy(_s.pos).applyQuaternion(frame.quaternion).add(frame.position) : _w.copy(_s.pos);
+      const limit = Math.max(jumpLimit(Math.max(prev.vel.length(), _v.fromArray(vel).length())), REFRAME_S * framesApartAt(from, frame, world));
+      if (_d.length() > limit) teleported = true;
+      else for (let i = 0; i < this.length; i++) this.at(i).pos.add(_d);
       result = 'reframed';
     }
     this.frame = frame;
@@ -170,7 +179,7 @@ export class PoseBuffer {
     s.smooth = false;
     s.conv = false;
     if (prev) {
-      if (onFoot(prev.mode) !== onFoot(mode)) s.cut = true;
+      if (teleported || onFoot(prev.mode) !== onFoot(mode)) s.cut = true;
       else {
         // where the sample before and the two velocities put it, against where it is
         const miss = _d

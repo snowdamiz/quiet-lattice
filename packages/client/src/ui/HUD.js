@@ -6,6 +6,19 @@ import { EdgeCompass } from './EdgeCompass.js';
 
 const _v = new THREE.Vector3();
 
+// Other pilots' markers (src/remote/): the mark sits PILOT_ICON_GAP px over the top of the ship's bounds on screen (the
+// box it fills, projected), the name and range PILOT_GAP px right of them (or left, if the right is taken); a ship whose
+// bounds reach past PILOT_NEAR of the screen's width (or height) is plain to see and has none, and so has one partly
+// behind the camera.
+const PILOT_GAP = 8;
+const PILOT_ICON_GAP = 6;
+const PILOT_NEAR = 0.3;
+const _c = new THREE.Vector3();
+const _bounds = { x0: 0, y0: 0, x1: 0, y1: 0 };
+/** A label's box, as estimated from its text (the condensed face's widest letters; two lines). */
+const LABEL_H = 26;
+const labelWidth = (name, range) => Math.max(name.length * 6.9, range.length * 6.2) + 4;
+
 function el(tag, cls, parent, html) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
@@ -31,6 +44,30 @@ function fmtSpeed(v) {
   if (c < 1000) return `${c.toFixed(c < 10 ? 2 : 0)}<small>C</small>`;
   if (c < 1e6) return `${(c / 1000).toFixed(c < 1e4 ? 1 : 0)}K<small>C</small>`;
   return `${(c / 1e6).toFixed(1)}M<small>C</small>`;
+}
+
+/** The screen box (px) of a marker's ship: its box's corners (`m.box`, turned `m.quat`, at `m.rel` from the camera)
+ * projected; null if any corner is behind the camera. */
+function screenBounds(m, camQuatInv, projection, W, H) {
+  const b = _bounds;
+  b.x0 = b.y0 = Infinity;
+  b.x1 = b.y1 = -Infinity;
+  const { min, max } = m.box;
+  for (let k = 0; k < 8; k++) {
+    _c.set(k & 1 ? max.x : min.x, k & 2 ? max.y : min.y, k & 4 ? max.z : min.z)
+      .applyQuaternion(m.quat)
+      .add(m.rel)
+      .applyQuaternion(camQuatInv);
+    if (_c.z > -0.1) return null;
+    _c.applyMatrix4(projection);
+    const x = (_c.x * 0.5 + 0.5) * W;
+    const y = (-_c.y * 0.5 + 0.5) * H;
+    b.x0 = Math.min(b.x0, x);
+    b.x1 = Math.max(b.x1, x);
+    b.y0 = Math.min(b.y0, y);
+    b.y1 = Math.max(b.y1, y);
+  }
+  return b;
 }
 
 // (labels go in as markup with their range; a pilot's name is the player's own, so every label is escaped)
@@ -102,8 +139,26 @@ export class HUD {
     this.speedLines = el('canvas', 'speedlines', root);
     this.scanRing = el('div', 'scan-ring', root);
     this.markerPool = [];
-    /** screen x, y of each pilot's name placed this frame (a farther pilot's that would overlap one is left off) */
-    this.pilotLabels = [];
+    /** the fixed HUD markers keep clear of (left, top, right, bottom per box, a few px round each), read now and then */
+    this.avoidEls = [
+      this.reticle.querySelector('b'),
+      this.reticle.querySelector('svg'),
+      this.rSpeed,
+      this.rAlt,
+      this.rMode,
+      this.crosshair.querySelector('b'),
+      this.edgeCompass.el,
+      this.location,
+      this.vitals,
+      this.hzWarn,
+      this.inventory,
+      this.prompt,
+      this.toasts,
+    ].filter(Boolean);
+    this.avoid = [];
+    this.avoidAt = -Infinity;
+    /** this frame's marks and labels (boxes as `avoid`), which a pilot's label keeps clear of too */
+    this.taken = [];
     this.lastToast = '';
     this.inventoryKey = '';
     this.visible = true;
@@ -212,6 +267,7 @@ export class HUD {
   update(dt) {
     const g = this.game;
     if (!this.visible) return;
+    this.readAvoid();
     const mode = g.mode;
     const ship = g.ship;
     const player = g.player;
@@ -337,6 +393,19 @@ export class HUD {
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
   }
 
+  // Where the fixed HUD stands, every quarter second, read before this frame writes anything (so no layout is forced).
+  readAvoid() {
+    const now = this.now();
+    if (now - this.avoidAt < 250) return;
+    this.avoidAt = now;
+    const out = this.avoid;
+    out.length = 0;
+    for (const e of this.avoidEls) {
+      const r = e.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0 && getComputedStyle(e).opacity !== '0') out.push(r.left - 4, r.top - 4, r.right + 4, r.bottom + 4);
+    }
+  }
+
   updateMarkers() {
     const g = this.game;
     const cam = g.engine.camera;
@@ -344,13 +413,14 @@ export class HUD {
     const H = window.innerHeight;
     // none while the camera swings round to look back past the ship: it is a view, not a heading
     const markers = g.mode === 'ship' && (g.ship.lookBack || 0) > 0.03 ? [] : g.getMarkers();
-    const placed = this.pilotLabels;
-    placed.length = 0;
+    const taken = this.taken;
+    taken.length = 0;
     let i = 0;
     for (const m of markers) {
       let e = this.markerPool[i];
       if (!e) {
         e = el('div', 'marker', this.markersEl, '<div class="icon"></div><div class="lbl"></div>');
+        e._lblEl = e.querySelector('.lbl');
         this.markerPool.push(e);
       }
       i++;
@@ -365,9 +435,13 @@ export class HUD {
       }
       const margin = 40;
       const off = behind || sx < margin || sx > W - margin || sy < margin || sy > H - margin;
+      const pilot = m.kind === 'player';
+      // its bounds on screen (other pilots' ships); one plain to see has no marker
+      const b = pilot && !off && m.box ? screenBounds(m, g.camWorldQuatInv, cam.projectionMatrix, W, H) : null;
+      const plain = pilot && (!b || b.x1 - b.x0 > W * PILOT_NEAR || b.y1 - b.y0 > H * PILOT_NEAR);
       // (scanned resources off screen are dropped too: pinned to the edge they stacked into a column; so are other pilots,
       // a crowd of whom would line the edges)
-      if (off && !m.target && (m.kind === 'planet' || m.kind === 'poi' || m.kind === 'resource' || m.kind === 'system' || m.kind === 'city' || m.kind === 'player')) {
+      if ((off && !m.target && (m.kind === 'planet' || m.kind === 'poi' || m.kind === 'resource' || m.kind === 'system' || m.kind === 'city' || pilot)) || plain) {
         i--;
         e.style.display = 'none';
         continue;
@@ -382,34 +456,91 @@ export class HUD {
         sx = cx + dx * s;
         sy = cy + dy * s;
       }
-      e.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)`;
+      // a pilot's mark over the middle of the top of its ship's bounds, its label beside them
+      if (pilot) sx = (b.x0 + b.x1) / 2;
+      const iy = pilot ? b.y0 - PILOT_ICON_GAP : sy;
+      e._m = m;
+      e._sx = sx;
+      e._iy = iy;
+      // (how far the bounds reach right and left of the mark)
+      e._r = pilot ? (b.x1 - b.x0) / 2 : 0;
+      e._off = off;
+      e.style.transform = `translate(${sx.toFixed(1)}px, ${iy.toFixed(1)}px)`;
       e.className = `marker ${m.kind} ${off ? 'off' : ''} ${m.target ? 'targeted' : ''}`;
-      let eta = '';
-      // (none for stars: the drive's speed keeps pace with the distance, so a straight division lies)
-      if (m.target && m.kind !== 'system' && g.mode === 'ship' && Math.abs(g.ship.speed) > 50) {
-        const secs = m.dist / Math.abs(g.ship.speed);
-        eta = secs < 3600 ? ` · ETA ${secs < 90 ? secs.toFixed(0) + 's' : (secs / 60).toFixed(0) + 'm'}` : '';
-      }
-      // names only for the marker you are looking at (or have targeted); others just show range; other pilots always say
-      // who they are, unless a nearer pilot's name (they come nearest first) already takes that spot: then just the mark
-      const near = !off && Math.hypot(sx - W / 2, sy - H / 2) < Math.min(W, H) * 0.12;
-      let crowded = false;
-      if (m.kind === 'player' && !m.target) {
-        for (let k = 0; k < placed.length && !crowded; k += 2) crowded = Math.abs(sx - placed[k]) < 130 && Math.abs(sy - placed[k + 1]) < 15;
-        if (!crowded) placed.push(sx, sy);
-      }
-      const lbl = crowded
-        ? ''
-        : m.target || near || m.kind === 'player'
-          ? `${esc(m.label)}<small>${fmtDist(m.dist)}${eta}</small>`
-          : `<small>${fmtDist(m.dist)}</small>`;
-      if (e._lbl !== lbl) {
-        e.querySelector('.lbl').innerHTML = lbl;
-        e._lbl = lbl;
-      }
+      // its mark, and a pilot's ship's bounds (another pilot's label keeps off the ship too)
+      e._taken = taken.length;
+      taken.push(sx - 6, iy - 6, sx + 6, iy + 6);
+      if (pilot) taken.push(b.x0, b.y0, b.x1, b.y1);
+      e._takenEnd = taken.length;
       e.style.display = '';
     }
-    for (; i < this.markerPool.length; i++) this.markerPool[i].style.display = 'none';
+    for (let k = i; k < this.markerPool.length; k++) this.markerPool[k].style.display = 'none';
+    // labels: the others' where they always sit, then the pilots' (nearest first), each clear of the fixed HUD, every
+    // mark and every label placed before it, to the right of its ship's bounds, else to the left, else none (the mark
+    // alone)
+    for (const pass of [false, true])
+      for (let k = 0; k < i; k++) {
+        const e = this.markerPool[k];
+        const m = e._m;
+        if ((m.kind === 'player') !== pass) continue;
+        const range = fmtDist(m.dist);
+        if (!pass) {
+          this.setLabel(e, this.otherLabel(e, m, range, W, H), null);
+          const w = e._lblText ? labelWidth(m.label ?? '', range) : 0;
+          if (w) taken.push(e._sx + 8, e._iy - 9, e._sx + 10 + w, e._iy + LABEL_H - 9);
+          continue;
+        }
+        const w = labelWidth(m.label ?? '', range);
+        const top = e._iy - 9;
+        const right = e._sx + e._r + PILOT_GAP;
+        const left = e._sx - e._r - PILOT_GAP - w;
+        const side = this.clear(right, top, right + w, top + LABEL_H, e) ? 'right' : this.clear(left, top, left + w, top + LABEL_H, e) ? 'left' : null;
+        if (side) taken.push(side === 'right' ? right : left, top, (side === 'right' ? right : left) + w, top + LABEL_H);
+        this.setLabel(e, side ? `${esc(m.label)}<small>${range}</small>` : '', side && { side, gap: e._r + PILOT_GAP });
+      }
+  }
+
+  // The label of a marker other than a pilot's: its name only when you look at it (or have targeted it), else its range.
+  otherLabel(e, m, range, W, H) {
+    const g = this.game;
+    let eta = '';
+    // (none for stars: the drive's speed keeps pace with the distance, so a straight division lies)
+    if (m.target && m.kind !== 'system' && g.mode === 'ship' && Math.abs(g.ship.speed) > 50) {
+      const secs = m.dist / Math.abs(g.ship.speed);
+      eta = secs < 3600 ? ` · ETA ${secs < 90 ? secs.toFixed(0) + 's' : (secs / 60).toFixed(0) + 'm'}` : '';
+    }
+    const near = !e._off && Math.hypot(e._sx - W / 2, e._iy - H / 2) < Math.min(W, H) * 0.12;
+    return m.target || near ? `${esc(m.label)}<small>${range}${eta}</small>` : `<small>${range}</small>`;
+  }
+
+  // Whether a box is clear of the fixed HUD and of every mark, pilot's ship and label taken this frame but marker `e`'s.
+  clear(x0, y0, x1, y1, e) {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    if (x0 < 4 || y0 < 4 || x1 > W - 4 || y1 > H - 4) return false;
+    for (const boxes of [this.avoid, this.taken])
+      for (let k = 0; k < boxes.length; k += 4) {
+        // (its own mark and ship sit beside it)
+        if (boxes === this.taken && k >= e._taken && k < e._takenEnd) continue;
+        if (x0 < boxes[k + 2] && x1 > boxes[k] && y0 < boxes[k + 3] && y1 > boxes[k + 1]) return false;
+      }
+    return true;
+  }
+
+  // A marker's label text, and for a pilot's which side of its ship's bounds it sits, and how far from its mark.
+  setLabel(e, html, at) {
+    e._lblText = html;
+    if (e._lbl !== html) {
+      e._lblEl.innerHTML = html;
+      e._lbl = html;
+    }
+    const place = at ? `${at.side}:${at.gap.toFixed(0)}` : '';
+    if (e._place === place) return;
+    e._place = place;
+    const s = e._lblEl.style;
+    s.left = at?.side === 'right' ? `${at.gap.toFixed(0)}px` : at?.side === 'left' ? 'auto' : '';
+    s.right = at?.side === 'left' ? `${at.gap.toFixed(0)}px` : '';
+    s.textAlign = at?.side === 'left' ? 'right' : '';
   }
 
   updateSpeedLines(dt) {

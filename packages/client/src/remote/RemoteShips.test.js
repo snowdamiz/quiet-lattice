@@ -1,14 +1,16 @@
 // How remote ships are drawn (P1.E04.T02): which hulls have a model, one kit of instanced meshes per hull made from that
-// hull's own model, never from the player's ship (its hull surfaces merged by material, the cockpit interior and the
-// ship's effects left out, each gear leg apart, two simplified levels beside the model), each ship placed, culled, drawn
-// at the level its size on screen calls for, its gear folded and its engines lit on its own, and room made as more come.
+// hull's own model, never from the player's ship (its surfaces merged into the hull and each gear leg, their materials on
+// their vertices, the cockpit interior and the ship's effects left out), three levels of detail (the model, its
+// simplification, the hull clustered under 5% of it, or the model's own LOD chain), each ship placed, culled, drawn at the
+// level its size on screen calls for, its gear folded and its engines lit on its own, and room made as more come.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { LOD_PX, RemoteShips, lodFor, modelledHull } from './RemoteShips.js';
+import { COARSE_RATIO, LOD_PX, PANEL_STRENGTH, RemoteShips, hullMaterial, lodFor, modelledHull, painted } from './RemoteShips.js';
 
 /** A loaded ship as Ship.load leaves one: the model (a rounded hull, a wing, an engine glow, the cockpit interior, a gear
- * leg on its pivot) in the ship's group beside its own effects and cockpit screens; `paint` its hull colour. */
-function loadedShip(paint = 0xffffff) {
+ * leg on its pivot) in the ship's group beside its own effects and cockpit screens; `paint` its hull colour. `lods` adds
+ * the model's own coarser levels as `lark_LOD<n>` nodes (a smaller sphere each). */
+function loadedShip(paint = 0xffffff, { lods = [] } = {}) {
   const group = new THREE.Group();
   group.position.set(500, 20, -3);
   group.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.6);
@@ -30,6 +32,12 @@ function loadedShip(paint = 0xffffff) {
   leg.position.set(0, -0.75, 0);
   pivot.add(leg);
   model.add(body, wing, glow, interior, pivot);
+  for (const n of lods) {
+    const level = new THREE.Group();
+    level.name = `lark_LOD${n}`;
+    level.add(new THREE.Mesh(new THREE.SphereGeometry(1, 24 >> n, 12 >> n).scale(2, 1, 6), hull));
+    model.add(level);
+  }
   const cockpit = { group: new THREE.Group() };
   cockpit.group.add(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Screen' })));
   group.add(new THREE.Sprite(), new THREE.Mesh(new THREE.PlaneGeometry(), new THREE.ShaderMaterial()), cockpit.group);
@@ -37,15 +45,15 @@ function loadedShip(paint = 0xffffff) {
 }
 
 /** A game whose player flies a red ship; the Lark's own model is white. The camera (64°, 1080 px tall) looks down -z. */
-function scene() {
+function scene(lark = loadedShip()) {
   const camera = new THREE.PerspectiveCamera(64, 16 / 9, 0.5, 1e7);
   camera.updateMatrixWorld();
-  return { ship: loadedShip(0xff0000), lark: loadedShip(), camWorld: new THREE.Vector3(1000, 0, 0), engine: { camera } };
+  return { ship: loadedShip(0xff0000), lark, camWorld: new THREE.Vector3(1000, 0, 0), engine: { camera } };
 }
 
-/** Remote ships drawn from the game's Lark, the kit made and simplified. */
-async function ready(game) {
-  const ships = new RemoteShips(game, { dress: () => {}, sources: { lark: () => game.lark } });
+/** Remote ships drawn from the game's Lark, the kit made with its levels; `lines` hears what it logs. */
+async function ready(game, lines = []) {
+  const ships = new RemoteShips(game, { dress: () => {}, sources: { lark: () => game.lark }, log: (l) => lines.push(l) });
   await ships.prepare('lark');
   return ships;
 }
@@ -66,10 +74,11 @@ function remote(game, id, ahead, { hull = 'lark', mode = 'ship', speed = 100 } =
   };
 }
 
-const partOf = (ships, name, gear = -1) => ships.kits.get('lark').parts.find((p) => p.material.name === name && p.gear === gear);
+/** The hull (gear -1) or a gear leg of the Lark's kit. */
+const pieceOf = (ships, gear = -1) => ships.kits.get('lark').pieces.find((p) => p.gear === gear);
 /** The instance of the ship drawn `nth` at its level of detail. */
-const matrixOf = (part, r, nth, m = new THREE.Matrix4()) => (part.levels[r.vis.lod].mesh.getMatrixAt(nth, m), m);
-const drawnIn = (part) => part.levels.reduce((n, l) => n + l.mesh.count, 0);
+const matrixOf = (piece, r, nth, m = new THREE.Matrix4()) => (piece.levels[r.vis.lod].mesh.getMatrixAt(nth, m), m);
+const drawnIn = (piece) => piece.levels.reduce((n, l) => n + l.mesh.count, 0);
 
 describe('remote hulls', () => {
   it('draw with their own model, or one of their tier, or not at all', () => {
@@ -80,7 +89,7 @@ describe('remote hulls', () => {
     expect(modelledHull('tug')).toBeNull();
   });
 
-  it(`draw the model above ${LOD_PX[0]} px long, simpler below ${LOD_PX[0]} and simpler still below ${LOD_PX[1]}, without flickering between`, () => {
+  it(`draw the model above ${LOD_PX[0]} px long, simpler below ${LOD_PX[0]} and coarsest below ${LOD_PX[1]}, without flickering between`, () => {
     expect(lodFor(600, 0)).toBe(0);
     expect(lodFor(200, 0)).toBe(1);
     expect(lodFor(60, 0)).toBe(2);
@@ -93,40 +102,114 @@ describe('remote hulls', () => {
     // with only the model made, the model
     expect(lodFor(10, 0, 1)).toBe(0);
   });
+
+  it('move up past every threshold they are well beyond, across two levels at once', () => {
+    // 250 and 270 px are past the simplification's threshold by more than 15%, though not the model's
+    expect(lodFor(250, 2)).toBe(1);
+    expect(lodFor(270, 2)).toBe(1);
+    expect(lodFor(LOD_PX[0] * 1.2, 2)).toBe(0);
+    expect(lodFor(LOD_PX[0] * 1.2, 1)).toBe(0);
+  });
+
+  it('carry each surface’s material on its vertices: colour, roughness, metalness, plating, glow; the throats dark', () => {
+    const vertex = (g, attr, i = 0) => Array.from(g.attributes[attr].array.slice(i * g.attributes[attr].itemSize, (i + 1) * g.attributes[attr].itemSize));
+    const hull = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Hull', color: 0x808080, roughness: 0.4, metalness: 0.3 }));
+    expect(vertex(hull, 'aMat')).toEqual([0.4, 0.3, 1, 0].map((x) => Math.fround(x)));
+    expect(vertex(hull, 'color')[0]).toBeCloseTo(new THREE.Color(0x808080).r, 6);
+    const engine = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'EngineGlow', emissive: 0x66bbff, emissiveIntensity: 0.2 }));
+    // (its colour at full: each ship's power scales it)
+    expect(vertex(engine, 'aMat')[3]).toBe(1);
+    expect(vertex(engine, 'aEmissive')[2]).toBeCloseTo(1, 6);
+    const beacon = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'NavWhite', emissive: 0xffffff }));
+    expect(vertex(beacon, 'aMat')[3]).toBe(2);
+    const throat = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ emissive: 0x5aa0ff, emissiveIntensity: 2 }));
+    expect(vertex(throat, 'aEmissive')).toEqual([0, 0, 0]);
+    // a two-sided surface gets its back faces
+    const sheet = painted(new THREE.PlaneGeometry(), new THREE.MeshStandardMaterial({ name: 'Dark', side: THREE.DoubleSide }));
+    expect(sheet.index.count).toBe(2 * 6);
+    expect(vertex(sheet, 'normal', 4)[2]).toBe(-1);
+  });
+
+  it('wear one material per level that reads them, the plating only on plated vertices, read after it sets roughness', () => {
+    // (a stand-in for the plating's own lines, as panelMaterial.js writes them)
+    const dress = (m, { level }) => {
+      m.onBeforeCompile = (shader) => {
+        shader.fragmentShader = shader.fragmentShader
+          .replace('#include <common>', '#include <common>\nuniform float uPanelStrength;')
+          .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb *= mix(1.0, panel * 1.35, uPanelStrength);')
+          .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor + (0.75 - panel) * 0.35 * uPanelStrength, 0.05, 1.0);');
+        shader.level = level;
+      };
+    };
+    const m = hullMaterial('lark', 0, dress);
+    const shader = { uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader };
+    m.onBeforeCompile(shader);
+    const f = shader.fragmentShader;
+    expect(m.vertexColors).toBe(true);
+    expect(f).toContain('uniform float uPanelStrength;');
+    expect(f.match(/uPanelStrength \* vMat\.z/g)).toHaveLength(2);
+    expect(f.indexOf('roughnessFactor = vMat.x;')).toBeLessThan(f.indexOf('roughnessFactor = clamp(roughnessFactor'));
+    expect(f).toContain('metalnessFactor = vMat.y;');
+    expect(f).toContain('totalEmissiveRadiance = vEmissive');
+    expect(shader.vertexShader).toContain('vGlow = aGlow;');
+    // the strong small lights dimmed on the coarsest only
+    expect(shader.uniforms.uDim.value).toBe(1);
+    const coarse = { uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader };
+    hullMaterial('lark', 2, () => {}).onBeforeCompile(coarse);
+    expect(coarse.uniforms.uDim.value).toBeLessThan(1);
+    expect(PANEL_STRENGTH[2]).toBe(0);
+  });
 });
 
 describe('RemoteShips', () => {
-  it("makes one kit per hull from that hull's own model, not the player's ship: its hull surfaces merged by material", async () => {
+  it("makes one kit per hull from that hull's own model, not the player's ship: the hull's surfaces merged, each leg apart", async () => {
     const game = scene();
     const ships = await ready(game);
     ships.update([remote(game, 1, 200)], 1 / 60);
     const kit = ships.kits.get('lark');
-    const names = kit.parts.map((p) => `${p.material.name}${p.gear >= 0 ? `@${p.gear}` : ''}`).sort();
-    // the hull and wing are one geometry; the leg folds with its pivot; no interior, screens, sprites or shader effects
-    expect(names).toEqual(['Dark@0', 'EngineGlow', 'Hull']);
-    const hull = partOf(ships, 'Hull');
-    expect(hull.levels[0].geometry.attributes.position.count).toBe(49 * 25 + 24);
+    // the hull, wing and engine glow are one geometry; the leg folds with its pivot; no interior, screens, sprites or
+    // shader effects
+    expect(kit.pieces.map((p) => p.gear)).toEqual([-1, 0]);
+    const hull = pieceOf(ships);
+    const [body, wing, glow] = game.lark.model.children;
+    const count = (m) => m.geometry.attributes.position.count;
+    expect(hull.levels[0].geometry.attributes.position.count).toBe(count(body) + count(wing) + count(glow));
     // (in the ship's own space, wherever the ship stood)
     expect(hull.levels[0].geometry.boundingBox.max.x).toBeCloseTo(6, 6);
-    // painted as the Lark is, whatever the player's ship wears, in copies the player's ship cannot change
-    expect(hull.material.color.getHex()).toBe(0xffffff);
-    game.lark.model.children[0].material.color.set(0x00ff00);
-    expect(hull.material.color.getHex()).toBe(0xffffff);
+    // painted as the Lark is, whatever the player's ship wears, and kept so whatever the Lark's model does later
+    expect(hull.levels[0].geometry.attributes.color.array[0]).toBe(1);
+    body.material.color.set(0x00ff00);
+    expect(hull.levels[0].geometry.attributes.color.array[0]).toBe(1);
     expect(ships.group.children).toContain(kit.group);
   });
 
-  it('simplifies every surface twice, on the model’s own vertices', async () => {
+  it(`makes the simplification on the model’s own vertices, and the coarsest under ${COARSE_RATIO * 100 + 1}% of the model, and says so`, async () => {
     const game = scene();
-    const ships = await ready(game);
-    const hull = partOf(ships, 'Hull');
+    const lines = [];
+    const ships = await ready(game, lines);
+    const hull = pieceOf(ships);
     expect(hull.levels).toHaveLength(3);
     const tris = hull.levels.map((l) => l.geometry.index.count / 3);
     expect(tris[1]).toBeLessThan(tris[0] * 0.5);
-    expect(tris[2]).toBeLessThan(tris[1]);
-    expect(hull.levels[2].geometry.attributes.position).toBe(hull.levels[0].geometry.attributes.position);
+    expect(tris[2]).toBeGreaterThan(0);
+    expect(tris[2]).toBeLessThanOrEqual(Math.ceil(tris[0] * (COARSE_RATIO + 0.01)));
+    expect(hull.levels[1].geometry.attributes.position).toBe(hull.levels[0].geometry.attributes.position);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatch(/lark levels generated .*the coarsest \d+\.\d% of the model/);
   });
 
-  it('draws each ship at the level its size on screen calls for', async () => {
+  it("draws a model's own LOD chain where it has one: its LOD1, and its last for the coarsest", async () => {
+    const game = scene(loadedShip(0xffffff, { lods: [1, 3] }));
+    const lines = [];
+    const ships = await ready(game, lines);
+    const hull = pieceOf(ships);
+    const own = (n) => game.lark.model.getObjectByName(`lark_LOD${n}`).children[0].geometry.index.count / 3;
+    expect(hull.levels[1].geometry.index.count / 3).toBe(own(1));
+    expect(hull.levels[2].geometry.index.count / 3).toBe(own(3));
+    expect(lines[0]).toMatch(/from the model's own LOD nodes/);
+  });
+
+  it('draws each ship at the level its size on screen calls for, picked afresh when it comes back into view', async () => {
     const game = scene();
     const ships = await ready(game);
     // 12 m long, 864 px a radian: 30 m off it is ~350 px long, 70 m ~150 px, 300 m ~35 px
@@ -135,8 +218,21 @@ describe('RemoteShips', () => {
     const far = remote(game, 3, 300);
     ships.update([near, mid, far], 1 / 60);
     expect([near.vis.lod, mid.vis.lod, far.vis.lod]).toEqual([0, 1, 2]);
-    expect(partOf(ships, 'Hull').levels.map((l) => l.mesh.count)).toEqual([1, 1, 1]);
-    expect(new THREE.Vector3().setFromMatrixPosition(matrixOf(partOf(ships, 'Hull'), far, 0)).z).toBeCloseTo(-300, 6);
+    expect(pieceOf(ships).levels.map((l) => l.mesh.count)).toEqual([1, 1, 1]);
+    expect(new THREE.Vector3().setFromMatrixPosition(matrixOf(pieceOf(ships), far, 0)).z).toBeCloseTo(-300, 6);
+    // the far one goes behind the camera (out of view), then comes back 40 m off (~260 px): the model, not the coarsest
+    far.world.copy(game.camWorld).add(new THREE.Vector3(9, 0, 600));
+    ships.update([far], 1 / 60);
+    expect(far.drawn).toBe(false);
+    far.world.copy(game.camWorld).add(new THREE.Vector3(9, 0, -40));
+    ships.update([far], 1 / 60);
+    expect(far.vis.lod).toBe(0);
+  });
+
+  it('casts shadows from the two finer levels only', async () => {
+    const game = scene();
+    const ships = await ready(game);
+    expect(pieceOf(ships).levels.map((l) => l.mesh.castShadow)).toEqual([true, true, false]);
   });
 
   it('places each ship in view where it is, culls the ones out of view, and draws no hull without a model', async () => {
@@ -149,7 +245,7 @@ describe('RemoteShips', () => {
     const mule = remote(game, 4, 300, { hull: 'mule' });
     ships.update([a, b, c, mule], 1 / 60);
     expect([a.drawn, b.drawn, c.drawn, mule.drawn]).toEqual([true, true, false, false]);
-    const hull = partOf(ships, 'Hull');
+    const hull = pieceOf(ships);
     expect(drawnIn(hull)).toBe(2);
     expect(new THREE.Vector3().setFromMatrixPosition(matrixOf(hull, b, 1)).toArray()).toEqual([6, 0, -900]);
     // (near, even behind the camera, a ship is drawn: its shadow can fall in view)
@@ -157,7 +253,7 @@ describe('RemoteShips', () => {
     expect(drawnIn(hull)).toBe(1);
   });
 
-  it('folds each ship’s gear on its own: down when set down, up in flight', async () => {
+  it('folds each ship’s gear on its own: down when set down, up in flight; far off, only legs that are down', async () => {
     const game = scene();
     const ships = await ready(game);
     const docked = remote(game, 1, 100, { mode: 'docked', speed: 0 });
@@ -165,10 +261,17 @@ describe('RemoteShips', () => {
     for (let i = 0; i < 120; i++) ships.update([docked, flying], 1 / 60);
     expect(docked.vis.gear).toBeGreaterThan(0.99);
     expect(flying.vis.gear).toBeLessThan(0.01);
-    const leg = partOf(ships, 'Dark', 0);
+    const leg = pieceOf(ships, 0);
     const scale = (r, nth) => new THREE.Vector3().setFromMatrixScale(matrixOf(leg, r, nth)).x;
     expect(scale(docked, 0)).toBeCloseTo(1, 2);
     expect(scale(flying, 1)).toBeCloseTo(0.35, 2);
+    // 500 m off, both at the coarsest: the docked one's leg drawn, the flying one's not
+    docked.world.copy(game.camWorld).add(new THREE.Vector3(3, 0, -500));
+    flying.world.copy(game.camWorld).add(new THREE.Vector3(6, 0, -500));
+    ships.update([docked, flying], 1 / 60);
+    expect([docked.vis.lod, flying.vis.lod]).toEqual([2, 2]);
+    expect(leg.levels[2].mesh.count).toBe(1);
+    expect(pieceOf(ships).levels[2].mesh.count).toBe(2);
   });
 
   it('lights each ship’s engines from its own motion: by its speed in flight, out when set down, full on the pulse drive', async () => {
@@ -187,19 +290,16 @@ describe('RemoteShips', () => {
     const kit = ships.kits.get('lark');
     // a trail of six glows behind each engine of the three with power
     expect(kit.flames.count).toBe(3 * 6);
-    const glow = partOf(ships, 'EngineGlow');
-    const c = new THREE.Color();
-    const level = glow.levels[slow.vis.lod].mesh;
-    level.getColorAt(0, c);
-    const idle = c.r;
-    level.getColorAt(1, c);
-    expect(c.r).toBeGreaterThan(idle * 2.5);
+    // each ship's engine glow (its instance's first glow value) as bright as its power
+    const glow = pieceOf(ships).levels[slow.vis.lod].glow;
+    expect(glow.getX(0)).toBeCloseTo(0.07, 2);
+    expect(glow.getX(1)).toBeGreaterThan(glow.getX(0) * 2.5);
   });
 
   it('makes room as more ships come, and draws none before the model has loaded', async () => {
     const game = scene();
     let arrive;
-    const ships = new RemoteShips(game, { dress: () => {}, sources: { lark: () => new Promise((r) => (arrive = r)) } });
+    const ships = new RemoteShips(game, { dress: () => {}, sources: { lark: () => new Promise((r) => (arrive = r)) }, log: () => {} });
     const many = Array.from({ length: 40 }, (_, i) => remote(game, i, 100 + 10 * i));
     ships.update(many, 1 / 60);
     expect(ships.kits.size).toBe(0);
@@ -207,10 +307,10 @@ describe('RemoteShips', () => {
     arrive(game.lark);
     await ships.prepare('lark');
     ships.update(many, 1 / 60);
-    expect(drawnIn(partOf(ships, 'Hull'))).toBe(40);
+    expect(drawnIn(pieceOf(ships))).toBe(40);
     expect(ships.kits.get('lark').capacity).toBe(64);
     // (the last ship, 490 m off, is the last drawn at its level)
-    const hull = partOf(ships, 'Hull');
+    const hull = pieceOf(ships);
     const last = hull.levels[many[39].vis.lod].mesh.count - 1;
     expect(new THREE.Vector3().setFromMatrixPosition(matrixOf(hull, many[39], last)).z).toBeCloseTo(-490, 6);
   });

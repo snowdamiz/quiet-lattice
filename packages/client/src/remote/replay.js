@@ -271,7 +271,35 @@ export function playTicks(game, ticks, opts = {}) {
 }
 
 /** The scenes the dev captures play, by name. */
-export const SCENES = { flypast: flypastTicks, crowd: crowdTicks, pads: padsTicks, surface: surfaceTicks };
+/**
+ * A Waystation bay phase full, for the dev captures (art bible: 24 pads to a bay phase): 24 other pilots' Larks docked,
+ * gear down, on a 5 x 5 grid of berths over the hangar floor (29 m by 22 m apart; the berths at the hangar's three other
+ * pads on them), the local ship's own pad the 25th; each nose to the mouth, turned a little either way. The worst case
+ * a bay phase allows, all within the 100 m in which a ship is drawn for its shadow even out of view.
+ */
+export function bayTicks(game, { t0 = game.time, seconds = 30 } = {}) {
+  const frame = frameIdOfFrame(game.system, game.station, game.station);
+  const up = new THREE.Vector3(0, 1, 0);
+  const pads = [
+    [-30, -22],
+    [-30, 22],
+    [30, 22],
+    [30, -22],
+  ];
+  const docked = [];
+  for (const z of [44, 22, 0, -22, -44])
+    for (const x of [-58, -29, 0, 29, 58]) {
+      // (the local ship's own pad)
+      if (x === 29 && z === -22) continue;
+      const onPad = pads.some(([px, pz]) => Math.hypot(px - x, pz - z) < 2);
+      const turn = (hash(docked.length * 11 + 5) - 0.5) * 0.6;
+      // (a pad's top is 0.45 m up; the gear holds the hull 1.95 m over what it stands on)
+      docked.push(parked(new THREE.Vector3(onPad ? Math.sign(x) * 30 : x, onPad ? 2.4 : 1.95, z), up, new THREE.Vector3(Math.sin(turn), 0, Math.cos(turn)), 'docked'));
+    }
+  return ticksOf(t0, seconds, () => docked.map((d, i) => ({ id: 501 + i, kind: 'player', frame, ...pilot(i), ...d })));
+}
+
+export const SCENES = { flypast: flypastTicks, crowd: crowdTicks, pads: padsTicks, surface: surfaceTicks, bay: bayTicks };
 
 /** Starts scene `name` (SCENES). */
 export const play = (game, name, opts = {}) => playTicks(game, SCENES[name](game, opts), opts);

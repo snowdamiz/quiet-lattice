@@ -44,6 +44,7 @@ const _v3 = new THREE.Vector3();
 const _v4 = new THREE.Vector3();
 const _v5 = new THREE.Vector3();
 const _v6 = new THREE.Vector3();
+const _viewer = new THREE.Vector3();
 const _q1 = new THREE.Quaternion();
 const _c1 = new THREE.Color();
 const _m4 = new THREE.Matrix4();
@@ -1111,9 +1112,9 @@ export class Game {
         for (const t of f.terminals) add('station', t.label, f.localToWorld(_v3.copy(t.pos).add(new THREE.Vector3(0, 2, 0)), new THREE.Vector3()));
       }
     }
-    // other pilots' ships, picked up by the same rule as any ship (src/remote/)
-    const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(new THREE.Vector3());
-    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world) => add('player', name, world));
+    // other pilots' ships, picked up by the same rule as any ship (src/remote/), each marked on its bounds on screen
+    const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(_viewer);
+    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat) => add('player', name, world, { box, quat }));
     return out;
   }
 
