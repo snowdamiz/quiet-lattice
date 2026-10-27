@@ -184,6 +184,7 @@ line-jump and skip clips were added after the verdict in `assets/renders/ui/cuts
 | 1 | REVISE | hierarchy 3, fit 5, motion 4, theme 4, correctness 3, spec 4, performance 5 | 4.00 |
 | 2 | REVISE | hierarchy 4, fit 5, motion 4, theme 4, correctness 3, spec 5, performance 5 | 4.29 |
 | 3 | REVISE | hierarchy 3, fit 4, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 4 | REVISE | hierarchy 3, fit 5, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.29 |
 
 Round 1: OVERHEAT and the Charge rate under 4.5:1 over bright ground; the heat arc drew full at any level (the fill now
 follows heat ÷ capacity). Round 2: the Charge arc swept up from empty, red, on the ship HUD's first frames (now set at
@@ -191,3 +192,9 @@ its value with transitions off, `.low` from the server's value). Round 3: the he
 glare (1.15:1); the altitude numerals touched the CHARGE plate; gauges popped on. Fixed with an opaque track inside a
 near-black halo, 4.5 px strokes, an unplated Charge readout in the altitude's style, 150 ms fades, and Charge kept lilac
 as an art bible §4 exception (teal is the shield's and the jetpack's). Artifacts: `assets/renders/ui/hud-{foot,foot-exit,ship,ship-board}/`.
+
+Round 4: the beam-held heat arc now reads (fill 6.5:1 against its track, halo about 15:1 against the glare), OVERHEAT
+8.2:1, the Charge figure 8.8:1, CHARGE EMPTY 5.4:1. Still failing: the Charge rate "+2.0/s" over the planet's bright
+limb (2.3:1 against its halo, 1.2:1 against the limb) and the grey CHARGE label (about 3:1 where the limb turns blue);
+the lockout's red fill against the empty track at about 2.9:1 (under 3:1 for non-text UI). Requested: an idle cool-down
+clip from about 30 heat to 0. **Escalated to the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
