@@ -40,8 +40,9 @@ export interface AdminLive {
 }
 
 /**
- * The quest runtime's admin seam (P1.E09.T01 answers it once it lands): set a character's quest to a step, in play
- * through the runtime, out of play on the stored quest log. Without one, set-quest-step is `unavailable`.
+ * The quest runtime's admin seam (quests/admin.ts, P1.E09.T01): set a character's quest to a step, in play through the
+ * runtime, out of play on the stored quest log. Without one (a service built without quests), set-quest-step is
+ * `unavailable`.
  */
 export interface QuestAdmin {
   /** Sets the quest of a character in play to `step`: null, or why not. */
@@ -343,7 +344,7 @@ export class AdminService {
 
   private async setQuestStep(cmd: Extract<AdminCommand, { cmd: 'set-quest-step' }>): Promise<AdminResult> {
     const quests = this.quests;
-    if (!quests) throw new AdminError('unavailable', 'quests unavailable: the quest runtime (P1.E09.T01) is not on this server yet');
+    if (!quests) throw new AdminError('unavailable', 'quests unavailable: this service has no quest runtime');
     const c = await this.character(cmd.character);
     const r = await this.change(
       c,

@@ -4,7 +4,8 @@
 // and a server holding it would overwrite the change at its next save, so direct mode is refused while a server answers
 // at HOST:PORT, for a character saved in the last RECENT_SAVE_MS (a server elsewhere on the same database may hold it)
 // unless forced, and in production unless ASTRA_ADMIN_IN_PRODUCTION=1. Commands about the live world (who, zones,
-// metrics, spawn, despawn, mute) need the server.
+// metrics, spawn, despawn, mute) need the server. A quest runtime decodes the stored quest log as a join would and moves
+// a quest's step at the shard's world time (quests/admin.ts, §17).
 import { AdminError, type AdminCommand } from '../admin/commands.ts';
 import { AdminService, pgDirectory, type AdminLog, type AdminResult } from '../admin/service.ts';
 import { parseConfig, type Env } from '../config.ts';
@@ -13,6 +14,10 @@ import { InventoryService } from '../inventory/service.ts';
 import { CharacterProgress, coreRegistry, ShipLoadouts } from '../persistence/components.ts';
 import { CharacterPersistence } from '../persistence/service.ts';
 import { pgCharacterStore } from '../persistence/store.ts';
+import { questAdmin } from '../quests/admin.ts';
+import { QuestRuntime } from '../quests/runtime.ts';
+import { createServerClock } from '../world/clock.ts';
+import { DEFAULT_SHARD_ID, pgShardStore } from '../world/shard.ts';
 import type { CliIo } from './run.ts';
 
 /** How long the check for a running server waits, ms. */
@@ -37,20 +42,29 @@ export async function runDirect(command: AdminCommand, env: Env, operator: strin
     throw new AdminError('failed', 'Postgres is not reachable (is `pnpm db:up` running?)');
   }
   const log = stderrLog(io);
-  // the registry only decodes and validates here: nothing is put in play
-  const registry = coreRegistry({
-    zones: { zoneOf: () => undefined },
-    inventory: new InventoryService(),
-    ships: new ShipLoadouts(),
-    progress: new CharacterProgress(),
-    log,
-  });
-  const persistence = new CharacterPersistence({ store: pgCharacterStore(database.db), registry, log });
+  let quests: QuestRuntime | undefined;
   try {
+    // world time is the shard's, as the server's clock starts from it (a quest step's start is stamped with it)
+    const shard = await pgShardStore(database.db, DEFAULT_SHARD_ID).load();
+    const clock = createServerClock({ epochMs: shard.epochMs, floor: shard.lastTime });
+    // the registry only decodes and validates here: nothing is put in play
+    const zones = { zoneOf: () => undefined, tier: () => undefined };
+    const inventory = new InventoryService();
+    const progress = new CharacterProgress();
+    quests = new QuestRuntime({ zones, inventory, progress, clock, log, dev: config.NODE_ENV !== 'production' });
+    const registry = coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress, quests, log });
+    const persistence = new CharacterPersistence({ store: pgCharacterStore(database.db), registry, log });
     // (an edit writes before run() returns, and nothing is ever put in play here: there is no save queue to flush)
-    const admin = new AdminService({ directory: pgDirectory(database.db), persistence, log, recentSaveMs: opts.force ? 0 : RECENT_SAVE_MS });
+    const admin = new AdminService({
+      directory: pgDirectory(database.db),
+      persistence,
+      quests: questAdmin(quests),
+      log,
+      recentSaveMs: opts.force ? 0 : RECENT_SAVE_MS,
+    });
     return await admin.run(command, { name: operator, via: 'direct' });
   } finally {
+    quests?.dispose();
     await database.close();
   }
 }

@@ -76,7 +76,16 @@ const clientSamples: ClientMessage[] = [
   { t: 'inventory', seq: 3, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 2, i: 7 }, count: 40 } },
   { t: 'skills', seq: 4, op: { op: 'buy', node: 'well' } },
   { t: 'cutscene', op: 'request', id: 'test' },
+  { t: 'quest', seq: 1, op: { op: 'accept', quest: 'the_apothecarys_sodium' } },
 ];
+
+/** A character's quest state as the server sends it. */
+const questView = {
+  active: { first_jobs: { step: 'gather', counters: { gather: 12 }, seen: {}, started: 3600, since: 3700 } },
+  done: { the_apothecarys_sodium: 1 },
+  flags: ['heard_the_lake_stone'],
+  offered: ['wing_over_rolis_iii'],
+};
 
 /** Every inventory op a client may send (they share the `inventory` request type). */
 const inventoryOps = [
@@ -136,6 +145,7 @@ const serverSamples: ServerMessage[] = [
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
   { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
+  { t: 'quests', seq: 0, quests: questView },
 ];
 
 const http = {
@@ -148,10 +158,11 @@ const http = {
 
 describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
-  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: meters (P1.E07.T02). A branch
-  // that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 7, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(7);
+  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: meters
+  // (P1.E07.T02). A branch that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION
+  // and updates this.
+  it('is version 8, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(8);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);
@@ -245,6 +256,29 @@ describe('protocol: control messages', () => {
 
   it.each(Object.entries(http))('HTTP %s round-trips', (_, [schema, value]) => {
     expect(schema.parse(JSON.parse(JSON.stringify(value)))).toEqual(value);
+  });
+
+  it('round-trips every quest request and quest state with and without a refusal', () => {
+    for (const op of [
+      { op: 'abandon', quest: 'wing_over_rolis_iii' },
+      { op: 'choose', quest: 'the_apothecarys_sodium', step: 'lake', choice: 'heard' },
+    ] as const) {
+      const m = { t: 'quest' as const, seq: 4, op };
+      expect(decodeClientMessage(encodeMessage(m))).toEqual(m);
+    }
+    const refused = { t: 'quests' as const, seq: 4, quests: { active: {}, done: {}, flags: [], offered: [] }, error: 'not_offered' as const };
+    expect(decodeServerMessage(encodeMessage(refused))).toEqual(refused);
+    for (const bad of [
+      { t: 'quest', seq: 0, op: { op: 'accept', quest: 'first_jobs' } },
+      { t: 'quest', seq: 1, op: { op: 'accept', quest: 'First Jobs' } },
+      { t: 'quest', seq: 1, op: { op: 'start', quest: 'first_jobs' } },
+      { t: 'quest', seq: 1, op: { op: 'choose', quest: 'first_jobs', step: 'land' } },
+      { t: 'quest', seq: 1, op: { op: 'abandon', quest: 'x'.repeat(49) } },
+    ]) {
+      expect(decodeClientMessage(JSON.stringify(bad)), JSON.stringify(bad)).toBeNull();
+    }
+    expect(decodeServerMessage(JSON.stringify({ ...refused, error: 'nope' }))).toBeNull();
+    expect(decodeServerMessage(JSON.stringify({ ...refused, quests: { ...refused.quests, owed: [] } }))).toBeNull();
   });
 
   it('drops malformed and unknown messages without throwing', () => {

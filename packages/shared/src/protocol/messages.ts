@@ -4,10 +4,11 @@
 import { z } from 'zod';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { meterViewSchema } from '../meters/schema.ts';
+import { questErrorCodeSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 7;
+export const PROTOCOL_VERSION = 8;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -15,7 +16,8 @@ export const PROTOCOL_VERSION = 7;
 // 4: creatures' attack field (P1.E08.T01)
 // 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
-// 7: meters: heat and Charge state (P1.E07.T02)
+// 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
+// 8: meters: heat and Charge state (P1.E07.T02)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -197,16 +199,27 @@ export const SkillsRequest = z.object({ t: z.literal('skills'), seq: z.number().
 
 /** A cutscene's id: the file it was exported to (public/cutscenes/<id>.json) and the server's catalog key. */
 export const CutsceneId = z.string().regex(/^[a-z0-9][a-z0-9_]{0,47}$/);
+/** How a cutscene the server placed the player for ended (protocol 7): played to its end, skipped by the player, or given
+ * back unplayed (`returned`: another cutscene was on screen, or the play came too late for a request the client gave up
+ * on). A quest step ends on the first two, never on a give-back (ARCHITECTURE §17). */
+export const CutsceneEnd = z.enum(['finished', 'skipped', 'returned']);
+export type CutsceneEnd = z.infer<typeof CutsceneEnd>;
 /** Cutscenes (protocol 6, ARCHITECTURE §15): `request` asks to play one where the player is, which the server
- * answers by placing the player in a story phase there; `done` says it ended, or was skipped. */
+ * answers by placing the player in a story phase there; `done` says it ended, or was skipped, and (protocol 7) how:
+ * `reason` (absent: `skipped` says finished or skipped). */
 export const CutsceneRequest = z
   .object({
     t: z.literal('cutscene'),
     op: z.enum(['request', 'done']),
     id: CutsceneId,
     skipped: z.boolean().optional(),
+    reason: CutsceneEnd.optional(),
   })
-  .refine((m) => m.op === 'done' || m.skipped === undefined, 'only a done says whether it was skipped');
+  .refine((m) => m.op === 'done' || (m.skipped === undefined && m.reason === undefined), 'only a done says how it ended')
+  .refine((m) => m.reason === undefined || m.skipped === undefined || m.skipped === (m.reason !== 'finished'), 'skipped and reason agree');
+/** Quest request (ARCHITECTURE §17): accept a quest on offer, abandon one, or answer the current dialogue or choice step.
+ * `seq` numbers the session's requests from 1, increasing; the server answers each with `quests` state. */
+export const QuestRequest = z.object({ t: z.literal('quest'), seq: z.number().int().min(1).max(0xffffffff), op: questOpSchema });
 
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
@@ -221,6 +234,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   InventoryRequest,
   SkillsRequest,
   CutsceneRequest,
+  QuestRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -403,7 +417,16 @@ export const SkillsState = z.object({
   error: skillErrorCodeSchema.optional(),
 });
 
-/** The character's heat and Charge (DESIGN 9.1, ARCHITECTURE §17) as the server holds them at world time `meters.at`: after
+/** The character's quest state: after join (`seq` 0), in answer to every quest request (`seq` the last one handled this
+ * session, `error` why it was refused), and whenever the server moves a quest (`seq` unchanged). Always the whole state. */
+export const QuestsState = z.object({
+  t: z.literal('quests'),
+  seq: z.number().int().min(0).max(0xffffffff),
+  quests: questViewSchema,
+  error: questErrorCodeSchema.optional(),
+});
+
+/** The character's heat and Charge (DESIGN 9.1, ARCHITECTURE §18) as the server holds them at world time `meters.at`: after
  * join, whenever the lockout starts or ends or Charge runs out, and every half second while either meter moves. The client
  * predicts both with the same shared rules and takes these as the truth. */
 export const MetersState = z.object({ t: z.literal('meters'), meters: meterViewSchema });
@@ -422,6 +445,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   PartyState,
   Denied,
   CutsceneState,
+  QuestsState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;

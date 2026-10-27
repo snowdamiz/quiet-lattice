@@ -86,7 +86,7 @@ export class Multitool {
   }
 
   /**
-   * The server's meters (`meters` state, ARCHITECTURE §17): heat as it held it at world time `view.at`, run on to
+   * The server's meters (`meters` state, ARCHITECTURE §18): heat as it held it at world time `view.at`, run on to
    * `serverNow` (the client's estimate of server time) with what the tool is doing now.
    */
   reconcile(view, serverNow = view.at) {

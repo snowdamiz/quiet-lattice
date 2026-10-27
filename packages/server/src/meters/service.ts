@@ -1,4 +1,4 @@
-// The meter service (P1.E07.T02, DESIGN 9.1, ARCHITECTURE §17): the server's copy of every character in play's heat and
+// The meter service (P1.E07.T02, DESIGN 9.1, ARCHITECTURE §18): the server's copy of every character in play's heat and
 // Charge, which is the truth. The client predicts both with the same shared rules (`@astra/shared/meters`); this service
 // decides them from what it can judge itself.
 //
