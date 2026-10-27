@@ -312,6 +312,7 @@ the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 5, performance 5 | 4.29 |
 | 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
 | 3 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
+| 4 | PASS | hierarchy 4, fit 5, motion 4, theme 5, correctness 4, spec 5, performance 5 | 4.57 |
 
 Round 1: all small text at or above 4.5:1; the craft sweep is eased but the button, stepper and LEARN snap state in one
 frame around it, and the selected row flashes twice; after a ×3 craft the quantity stays at 3 while the row says CAN
@@ -325,6 +326,8 @@ crosses the rising row; the row's tag and slot, and the footer status line, swap
 Round 3: the sequential out/in fade reads well where used; still failing: a craft's results (CAN MAKE counts, MAKES,
 needs, the stepper and CRAFT ×n) swap at full opacity in one frame; moving the selection to an uncraftable recipe snaps
 the CRAFT fill; the learn header still shows at 25% then 10% under the rising row. Requested: the stepper at 6 of 6.
+
+Round 4: PASS. Artifacts: `assets/renders/ui/{fabricator,fabricator-ship,fabricator-learn,fabricator-limits,fabricator-limits-max}/`.
 
 ## P1.E12.T02 Lark, Swift, Kestrel, Mule (art)
 
