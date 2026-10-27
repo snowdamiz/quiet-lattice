@@ -7,7 +7,8 @@ import { startOnline, type Online } from './online.ts';
 // the shard and reaches the other client as text (markup and all, never as HTML); `/invite` reaches the other as a card
 // it accepts with the mouse; both frames show the party, its leader marked, and the leader hands the lead on from the
 // frame; party chat reaches the party; the server's refusals and the panel's own pace show in the log; `/leave` breaks
-// the party up for both. Credentials are made up per run and exist only in the scratch database.
+// the party up for both; and again from the frame, inviting by name there, accepting with `/accept` and leaving with the
+// frame's button. Credentials are made up per run and exist only in the scratch database.
 
 let online: Online;
 
@@ -173,6 +174,20 @@ test('two pilots chat on the shard, party up from an invite card, hand the lead 
     await until(a, "document.querySelectorAll('.sp-member').length === 0", 20_000);
     await until(b, "document.querySelectorAll('.sp-member').length === 0", 20_000);
     await sees(a, 'The party disbanded');
+
+    // and again from the frame: an invite by name there, accepted by command, and leaving with the frame's button
+    await openChat(a);
+    await a.fill('.sp-foot input', B.name);
+    await a.click('.sp-foot .btn:not(.ghost)');
+    await until(b, `[...document.querySelectorAll('.sp-invite')].some((c) => c.textContent.includes(${JSON.stringify(A.name)}))`, 20_000);
+    await say(b, '/accept');
+    await until(a, "document.querySelectorAll('.sp-member').length === 2", 20_000);
+    await until(b, "document.querySelectorAll('.sp-member').length === 2", 20_000);
+    await openChat(b);
+    await b.click('.sp-foot .btn.ghost');
+    await until(a, "document.querySelectorAll('.sp-member').length === 0", 20_000);
+    await until(b, "document.querySelectorAll('.sp-member').length === 0", 20_000);
+    await sees(b, 'You left the party');
 
     expect(A.errors, `${A.errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
     expect(B.errors, `${B.errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);

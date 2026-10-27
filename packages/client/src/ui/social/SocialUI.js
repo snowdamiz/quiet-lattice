@@ -322,6 +322,7 @@ export class SocialUI {
         continue;
       }
       const card = el('div', 'sp-invite', this.invitesEl);
+      this.game.audio?.play('ui');
       card.dataset.key = k;
       card.until = inv.until;
       const head = el('div', 'sp-inv-head', card);
