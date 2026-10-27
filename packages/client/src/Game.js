@@ -1137,9 +1137,12 @@ export class Game {
         for (const t of f.terminals) add('station', t.label, f.localToWorld(_v3.copy(t.pos).add(new THREE.Vector3(0, 2, 0)), new THREE.Vector3()));
       }
     }
-    // other pilots' ships, picked up by the same rule as any ship (src/remote/), each marked on its bounds on screen
+    // other pilots' ships, picked up by the same rule as any ship (src/remote/), each marked on its bounds on screen, its
+    // range the sensors' (from the ship, or the pilot on foot), not the camera's
     const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(_viewer);
-    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat, id) => add('player', name, world, { box, quat, id }));
+    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat, id) =>
+      add('player', name, world, { box, quat, id, dist: world.distanceTo(viewer) }),
+    );
     return out;
   }
 

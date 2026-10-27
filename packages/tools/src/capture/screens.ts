@@ -447,6 +447,83 @@ async function openRemotes(
   await page.waitForTimeout(1200);
 }
 
+/**
+ * A dev overlay over the remote-ships screens, drawn after every frame: for each other pilot, how the local ship's sensors
+ * read it (its distance against its reach, the sensor range × its signature, and what raised or lowered the signature:
+ * boosting, the pulse drive, cover) and whether they pick it up; and what the HUD made of it (its mark where it should be,
+ * or nudged off the HUD, or none and why; its name, on which side, or dropped for want of room and what took it). A tag
+ * under each pilot in view, and a table of them all (those out of view too) down the right. Tells a pilot undetected by
+ * design (past its reach) from one the HUD left unmarked.
+ */
+async function sensorsOverlay(page: Page): Promise<void> {
+  // (tsx names the functions below with a helper the page does not have)
+  await page.evaluate('window.__name ??= (f) => f');
+  await page.evaluate(() => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const g = (window as any).game;
+    const layer = document.createElement('div');
+    layer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:50;font:500 10px/12px ui-monospace,Menlo,monospace;color:#e9e7e2';
+    document.body.append(layer);
+    const tags = document.createElement('div');
+    const table = document.createElement('div');
+    table.style.cssText = 'position:absolute;right:12px;top:64px;padding:6px 8px;background:rgba(8,9,12,0.78);border:1px solid #3a3d44;white-space:pre';
+    layer.append(tags, table);
+    const V = g.camWorld.constructor;
+    const v = new V();
+    const km = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m)} m`);
+    const ways = ['', 'nudged out', 'nudged up', 'nudged down', 'nudged left', 'nudged right'];
+    const draw = () => {
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const rows: string[] = [];
+      let html = '';
+      const pilots = g.remotes.list.filter((r: any) => r.kind === 'player').sort((a: any, b: any) => (a.sense?.distance ?? 0) - (b.sense?.distance ?? 0));
+      for (const r of pilots) {
+        const s = r.sense;
+        const p = g.hud.pilots.get(r.id);
+        const marked = p && !p.goneAt;
+        v.copy(r.world).sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
+        const behind = v.z > 0;
+        v.applyMatrix4(g.engine.camera.projectionMatrix);
+        const x = (v.x * 0.5 + 0.5) * W;
+        const y = (-v.y * 0.5 + 0.5) * H;
+        const inView = !behind && x >= 0 && x <= W && y >= 0 && y <= H;
+        const why = !r.shown ? 'not drawn' : !s ? 'not read' : !s.signature ? 'hidden (signature 0)' : `past its reach`;
+        const sensed = s?.detected ? 'DETECTED' : `NOT DETECTED, ${why}`;
+        const flags = s ? [s.boosting && 'boost x2', s.pulsing && 'pulse x2', s.inCover && 'cover /2'].filter(Boolean).join(' ') : '';
+        const mark = !s?.detected
+          ? 'no mark'
+          : marked
+            ? p.nudged
+              ? `mark ${ways[p.nudged]}`
+              : 'mark'
+            : behind
+              ? 'no mark, behind'
+              : inView
+                ? 'no mark, at the edge'
+                : 'no mark, out of view';
+        const name = !marked ? '' : p.shown ? `name ${p.side}` : `name dropped${p.why ? ` (${p.why})` : ''}`;
+        rows.push(
+          `${(r.name ?? 'Pilot').padEnd(14)} ${km(s?.distance ?? 0).padStart(7)} / ${km(s?.reach ?? 0).padStart(6)}  sig ${(s?.signature ?? 0).toFixed(2)} ${flags.padEnd(9)} ${(s?.detected ? 'DETECTED' : 'not detected').padEnd(12)} ${mark}${name ? `, ${name}` : ''}`,
+        );
+        if (!inView) continue;
+        const colour = !s?.detected ? '#ff6b5e' : !marked || (p && !p.shown) ? '#f2b84b' : '#7fe0a0';
+        html += `<div style="position:absolute;left:${x.toFixed(0)}px;top:${(y + 10).toFixed(0)}px;transform:translateX(-50%);padding:1px 4px;background:rgba(8,9,12,0.72);border-left:2px solid ${colour};white-space:nowrap">${r.name ?? 'Pilot'} ${km(s?.distance ?? 0)} / ${km(s?.reach ?? 0)}${flags ? ` ${flags}` : ''}<br><span style="color:${colour}">${sensed}</span>${s?.detected ? ` · ${mark}${name ? ` · ${name}` : ''}` : ''}</div>`;
+      }
+      tags.innerHTML = html;
+      const read = pilots.find((r: any) => r.sense?.signature > 0)?.sense;
+      table.textContent = `SENSORS: reach = range ${km(read ? read.reach / read.signature : 0)} x signature; held to 1.05 x reach and 0.5 s past it\n${'pilot'.padEnd(14)} ${'dist'.padStart(7)} / ${'reach'.padStart(6)}  signature            HUD\n${rows.join('\n')}`;
+    };
+    const frame = g.frame.bind(g);
+    g.frame = (dt: number) => {
+      frame(dt);
+      draw();
+    };
+    draw();
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+  });
+}
+
 /** Plays the cutscene from its start (ending one under way, and any banner) and steps `t` seconds into it. */
 async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> {
   await page.evaluate(
@@ -616,6 +693,16 @@ export const SCREENS: Record<string, ScreenDef> = {
     hudClock: true,
     clipSeconds: 2,
     open: (page) => openRemotes(page, 'crowd', 1.2),
+  },
+  // the crowd with the sensors' and the HUD's reading of each pilot over it (sensorsOverlay, a dev overlay): which pilots
+  // the local ship's sensors pick up, and what became of each one's mark and name
+  'remote-ships-crowd-sensors': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: async (page) => {
+      await openRemotes(page, 'crowd', 1.2);
+      await sensorsOverlay(page);
+    },
   },
   // the Waystation's hangar from the player's docked ship: two other pilots' Larks docked on the pads beside it, gear
   // down, and two more flying past outside the mouth one after the other, throttles opening (their exhausts lengthen)
