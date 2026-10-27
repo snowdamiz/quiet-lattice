@@ -186,21 +186,70 @@ export function outlineBands(xy, n, bands, pad, out, order = new Int32Array(n), 
   return out;
 }
 
-/** Where a pilot's mark goes for a ship whose screen bounds are `b`: over the middle of their top. */
-export function markOf(b, out) {
+/** A ship whose bounds on screen are taller than this share of the screen has its mark drawn in towards its middle,
+ * there at twice this share: one passing close by, its bounds sweeping off the screen, keeps a mark on it. */
+export const MARK_INWARD = 0.25;
+
+/**
+ * Where a pilot's mark goes for a ship whose screen bounds are `b`: over the middle of their top; drawn in towards the
+ * ship's middle on screen (`cx`, `cy`) as its bounds pass MARK_INWARD of the screen's height `H` (there by twice that);
+ * on the screen (`W` wide) whatever.
+ */
+export function markOf(b, out, cx = 0, cy = 0, W = Infinity, H = Infinity) {
   out.x = (b.x0 + b.x1) / 2;
   out.y = b.y0 - MARK_GAP;
+  const k = Math.min(1, Math.max(0, ((b.y1 - b.y0) / H - MARK_INWARD) / MARK_INWARD));
+  if (k > 0) {
+    out.x += (cx - out.x) * k;
+    out.y += (cy - out.y) * k;
+  }
+  const r = MARK_R + 2;
+  out.x = Math.min(Math.max(out.x, r), W - r);
+  out.y = Math.min(Math.max(out.y, r), H - r);
   return out;
 }
+
+/** A mark's slide round the keep-out (nudge): where it was last frame (`x`, `y`, if `was`), and how far (px) it may move
+ * round the edge of what it falls on this frame (`max`, which the HUD sets). */
+export const makeSlide = () => ({ was: false, x: 0, y: 0, max: Infinity });
 
 /**
  * Moves the mark at (out.x, out.y) off the keep-out when it falls on it: straight out from the middle of what it falls on
  * (the box it falls on and any near enough to touch it, as one) to its edge, so a mark crossing a readout slides round it
- * rather than jumping from one side to the other. Where that leaves the screen or lands on another box: the least way out
- * (up, down, left or right), the way it went last frame (`prefer`) first. Returns the way it moved: 0 none, 1 out from the
- * middle, 2 up, 3 down, 4 left, 5 right.
+ * rather than jumping from one side to the other; with a `slide` (makeSlide), round that edge from the nearest point of
+ * it to where the mark was last frame, by `slide.max` px at most (straight out from the middle runs fast round the edge
+ * for a ship passing near the middle, and the edge moves when the keep-out does). Where that leaves the screen or lands on
+ * another box: the least way out (up, down, left or right), the way it went last frame (`prefer`) first. With a `slide`,
+ * a mark whose place moves further than `slide.max` px from where it was (leaving the keep-out from a way round it, or
+ * pushed out another way) glides there that many px a frame, over whatever is clear. Returns the way it moved: 0 none,
+ * 1 out from the middle, 2 up, 3 down, 4 left, 5 right.
  */
-export function nudge(out, keepOut, W, H, prefer = 0) {
+export function nudge(out, keepOut, W, H, prefer = 0, slide = null) {
+  const way = nudgeOff(out, keepOut, W, H, prefer, slide);
+  if (slide) {
+    const d = Math.hypot(out.x - slide.x, out.y - slide.y);
+    if (slide.was && d > slide.max) {
+      const x = slide.x + ((out.x - slide.x) * slide.max) / d;
+      const y = slide.y + ((out.y - slide.y) * slide.max) / d;
+      if (free(x, y, keepOut, W, H)) {
+        out.x = x;
+        out.y = y;
+      }
+    }
+    slide.was = true;
+    slide.x = out.x;
+    slide.y = out.y;
+  }
+  return way;
+}
+
+// Whether a mark at (x, y) is on the screen and off the keep-out.
+function free(x, y, keepOut, W, H) {
+  const r = MARK_R + 2;
+  return x >= r && x <= W - r && y >= r && y <= H - r && !hits(x - r, y - r, x + r, y + r, keepOut);
+}
+
+function nudgeOff(out, keepOut, W, H, prefer, slide) {
   const r = MARK_R + 2;
   const k = hit(out.x - r, out.y - r, out.x + r, out.y + r, keepOut);
   if (k < 0) return 0;
@@ -236,9 +285,10 @@ export function nudge(out, keepOut, W, H, prefer = 0) {
   const t = Math.min(dx ? ((c.x1 - c.x0) / 2 + r + 1) / Math.abs(dx) : Infinity, dy ? ((c.y1 - c.y0) / 2 + r + 1) / Math.abs(dy) : Infinity);
   const x = mx + dx * t;
   const y = my + dy * t;
-  if (x >= r && x <= W - r && y >= r && y <= H - r && !hits(x - r, y - r, x + r, y + r, keepOut)) {
+  if (free(x, y, keepOut, W, H)) {
     out.x = x;
     out.y = y;
+    if (slide?.was) slideAlong(c, r + 1, slide, out, keepOut, W, H);
     return 1;
   }
   let way = 0;
@@ -246,7 +296,7 @@ export function nudge(out, keepOut, W, H, prefer = 0) {
   for (let m = 2; m <= 5; m++) {
     const nx = m === 4 ? c.x0 - r - 1 : m === 5 ? c.x1 + r + 1 : out.x;
     const ny = m === 2 ? c.y0 - r - 1 : m === 3 ? c.y1 + r + 1 : out.y;
-    if (nx < r || nx > W - r || ny < r || ny > H - r || hits(nx - r, ny - r, nx + r, ny + r, keepOut)) continue;
+    if (!free(nx, ny, keepOut, W, H)) continue;
     const d = m === prefer ? -1 : Math.abs(nx - out.x) + Math.abs(ny - out.y);
     if (d < best) {
       best = d;
@@ -264,6 +314,44 @@ export function nudge(out, keepOut, W, H, prefer = 0) {
   else if (way === 2) out.y = c.y0 - r - 1;
   else out.y = c.y1 + r + 1;
   return way;
+}
+
+// How far round the edge of the box x0..x1, y0..y1 (w x h) the point of that edge nearest (x, y) lies, clockwise from
+// its top-left corner: along the top, down the right, back along the bottom, up the left.
+function roundEdge(x0, y0, x1, y1, x, y) {
+  const w = x1 - x0;
+  const h = y1 - y0;
+  const cx = Math.min(Math.max(x, x0), x1);
+  const cy = Math.min(Math.max(y, y0), y1);
+  const top = cy - y0;
+  const right = x1 - cx;
+  const bottom = y1 - cy;
+  const left = cx - x0;
+  const least = Math.min(top, right, bottom, left);
+  return least === top ? cx - x0 : least === right ? w + cy - y0 : least === bottom ? w + h + x1 - cx : 2 * w + h + y1 - cy;
+}
+
+// Moves the mark at `at`, on the edge of box `c` grown by `g`, back round that edge towards the point of it nearest where
+// the mark was last frame (`slide`), so it has come at most `slide.max` px round it since. Where that is not free, the
+// mark stays at `at`.
+function slideAlong(c, g, slide, at, keepOut, W, H) {
+  const x0 = c.x0 - g;
+  const y0 = c.y0 - g;
+  const x1 = c.x1 + g;
+  const y1 = c.y1 + g;
+  const w = x1 - x0;
+  const h = y1 - y0;
+  const round = 2 * (w + h);
+  const from = roundEdge(x0, y0, x1, y1, slide.x, slide.y);
+  let d = roundEdge(x0, y0, x1, y1, at.x, at.y) - from;
+  d -= round * Math.round(d / round);
+  if (Math.abs(d) <= slide.max) return;
+  const s = (((from + Math.sign(d) * slide.max) % round) + round) % round;
+  const px = s < w ? x0 + s : s < w + h ? x1 : s < 2 * w + h ? x1 - (s - w - h) : x0;
+  const py = s < w ? y0 : s < w + h ? y0 + (s - w) : s < 2 * w + h ? y1 : y1 - (s - 2 * w - h);
+  if (!free(px, py, keepOut, W, H)) return;
+  at.x = px;
+  at.y = py;
 }
 
 /**
@@ -306,15 +394,17 @@ function clear(x0, y0, x1, y1, room, margin, ships) {
 
 /**
  * Whether a label w x h px fits on `side` of the mark at (x, y) in `room`: within the screen and clear of the keep-out and
- * of the marks and labels so far (but its own); with a `margin`, that many px clear round it (the screen's edges too)
- * here and where its mark is headed; with `ships`, clear of other pilots' ships too. Its box into `out`.
+ * of the marks and labels so far (but its own), here and (unless not `ahead`) all the way to where its mark is headed; with a `margin`,
+ * that many px clear round it (the screen's edges too); with `ships`, clear of other pilots' ships too. Its box into
+ * `out`.
  */
-export function fits(side, x, y, w, h, room, out, margin = 0, ships = false) {
+export function fits(side, x, y, w, h, room, out, margin = 0, ships = false, ahead = true) {
   const b = labelBox(side, x, y, w, h, out);
   if (!clear(b.x0, b.y0, b.x1, b.y1, room, margin, ships)) return false;
-  const dx = margin ? room.aheadX : 0;
-  const dy = margin ? room.aheadY : 0;
-  return (!dx && !dy) || clear(b.x0 + dx, b.y0 + dy, b.x1 + dx, b.y1 + dy, room, margin, ships);
+  const dx = ahead ? room.aheadX : 0;
+  const dy = ahead ? room.aheadY : 0;
+  // (all the way there, not only there: a label headed across a readout to the far side of it does not fit)
+  return (!dx && !dy) || clear(Math.min(b.x0, b.x0 + dx), Math.min(b.y0, b.y0 + dy), Math.max(b.x1, b.x1 + dx), Math.max(b.y1, b.y1 + dy), room, margin, ships);
 }
 
 /** What a label w x h px on `side` of the mark at (x, y) runs into in `room`: 'the screen's edge', 'the HUD', 'another

@@ -650,28 +650,34 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     it, or easing off its boost, is not marked and unmarked frame by frame; a hidden one, signature 0, goes at once),
     nearest first, with the box the ship fills, how it is turned and its id; its range is the sensors' (from the ship,
     not the camera); none on foot. Each pilot's `sense` records the reading (distance, reach, signature and what moved
-    it, detected). The HUD (`updatePilots`) places them by `remote/markers.js`: every pilot picked up and in view (its
+    it, detected). The HUD (`updatePilots`) places them by `remote/markers.js`. Every pilot picked up and in view (its
     centre 40 px in from the screen's edges to be marked, 24 once it is) has a mark, 6 px over the top of the ship's
-    bounds on screen (the box's corners projected; over its middle when the box reaches behind the camera), never dropped
-    for the HUD: a mark on the keep-out moves straight out from the middle of what it falls on (that box and those
-    touching it, as one) to its edge, so one crossing a readout slides round it, or, where that leaves the screen, the
-    least way out, the way it went last first. The name and range, 13 and 11 px #E9E7E2 type in a sharp 2 px #0B0C0E
-    ring (15.8:1 whatever lies behind), sit 8 px from the mark (right of it, else left, else above, each over the top of
-    the ship's bounds), clear of the keep-out, of every mark and of the labels placed before, and off other pilots' ships
-    when a side allows: a name keeps its side while that has any room; one gone stays gone 150 ms at least and comes back
-    on its side once that has had room for 150 ms (6 px to spare, here and where its mark is headed in 150 ms), or takes
-    another side once its own has had none that long, and only while its mark crosses the screen under 1200 px/s; the
-    names shown last frame are placed first, so one coming back never knocks one off. With no room the name goes and the
-    mark stays. Marks and names fade in and out over 150 ms (each pilot's marker its own element, by its id). The
-    keep-out: the reticle and its speed, altitude and mode readouts, the compass and its heading and EDGE readouts, the
-    location line, the vitals, prompts, toasts (their boxes read every quarter second before the frame writes), the
-    social panels where the HUD has them (`hud.social.covers()`, P1.E15.T03), and the local ship's outline, projected
-    each frame (its convex hull's corners, worked out once, in 8 horizontal slices: close round its wings and engines,
-    not its box). `packages/tools/src/smoke/remote-markers.spec.ts` steps every frame of each remote-ships capture's
-    clip on the HUD's clock and fails on a pilot picked up and in view without a mark, any mark or label on the fixed
-    HUD or on the local ship (any of its vertices on screen, worked out apart from the HUD), a label on another mark or
-    label or more than a few px from its mark, or a mark or name back or gone, or a name moved to another side, within
-    150 ms of its last change.
+    bounds on screen (the box's corners projected), drawn in to the ship's middle as its bounds pass a quarter of the
+    screen's height (there by half: one passing close by keeps a mark on it), never dropped for the HUD: a mark on the
+    keep-out moves straight out from the middle of what it falls on (that box and those touching it, as one) to its edge,
+    sliding round that edge no faster than 600 px/s or twice its ship (straight out runs fast round it for a ship passing
+    near the middle), and where that leaves the screen the least way out, the way it went last first; a mark whose place
+    moves further than that in a frame (leaving the keep-out, say) glides there. The name and range, 13 and 11 px
+    #E9E7E2 type in a sharp 2 px #0B0C0E ring (15.8:1 whatever lies behind), sit 8 px from the mark (right of it, else
+    left, else above, each over the top of the ship's bounds), clear of the keep-out, of every mark and of the labels
+    placed before, and off other pilots' ships when a side allows. A name shown stays on its side while that has room
+    all the way to where its mark is headed in 150 ms (so it has faded by the time it would run into anything); one gone
+    stays gone 150 ms at least, and comes back on its side once that has had room for 150 ms (6 px to spare, all the way
+    to where its mark is headed in 300 ms), or takes another side once its own has had none that long, and only while
+    its mark crosses the screen under 1200 px/s; the names shown last frame are placed first, so one coming back never
+    knocks one off. With no room the name goes and the mark stays. Marks and names fade in and out over 150 ms (each
+    pilot's marker its own element, by its id); a name fading out fades where it last stood, its mark going on without
+    it, and keeps its room while it does. The keep-out: the reticle and its speed, altitude and mode readouts, the
+    compass and its heading and EDGE readouts, the location line, the vitals, prompts, toasts (their boxes read every
+    quarter second before the frame writes), the social panels where the HUD has them (`hud.social.covers()`,
+    P1.E15.T03), and the local ship's outline, projected each frame (its convex hull's corners, worked out once, in 8
+    horizontal slices: close round its wings and engines, not its box). `packages/tools/src/smoke/remote-markers.spec.ts`
+    steps every frame of each remote-ships capture's clip on the HUD's clock and fails on a pilot picked up and in view
+    without a mark; any mark or label on the fixed HUD or on the local ship (any of its vertices on screen, worked out
+    apart from the HUD); a label on another mark or label, or more than a few px from its mark; a name in its first 50 ms
+    of fading out on the HUD, the local ship or another name; a mark or name back or gone, or a name moved to another
+    side, within 150 ms of its last change; or a mark jumping across the screen (more than 3× its ship and 48 px in a
+    frame).
   - **Dev.** `remote/replay.js` plays recorded snapshot streams (the zone's encoding, a 60 ms trip with 40 ms of jitter)
     through the same path offline: `pnpm capture -- --ui remote-ships` (a flypast), `remote-ships-crowd` (24 in view,
     each on its own heading and speed, one flying out of sensor range), `remote-ships-crowd-sensors` (the crowd with a

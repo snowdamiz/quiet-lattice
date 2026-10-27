@@ -6,9 +6,10 @@ import { SCREENS } from '../capture/screens.ts';
 // every pilot the sensors pick up and in view has its mark; no pilot's mark or label on the fixed HUD (the compass, its
 // heading and EDGE readouts, the speed, altitude and mode readouts, the reticle, the location line, the vitals, a prompt)
 // or on the local ship (any vertex of it on screen); no pilot's label on another mark or label, or more than a few px
-// from its mark; and no mark or name flickering in and out, or a name from side to side, faster than its fade. Marks and
-// labels fading out are gone. The local ship is worked out here on its own (its meshes' vertices, projected), not taken
-// from the HUD.
+// from its mark; no mark or name flickering in and out, or a name from side to side, faster than its fade; no name fading
+// out over the HUD, the local ship or another name (its first 50 ms, after which it is gone); and no mark jumping across
+// the screen faster than its ship moves (3x and 48 px a frame). The local ship is worked out here on its own (its meshes'
+// vertices, projected), not taken from the HUD.
 
 const SCENES = ['remote-ships', 'remote-ships-crowd', 'remote-ships-pads', 'remote-ships-surface', 'remote-ships-bay'];
 const metal = (process.env.SMOKE_GL ?? (process.platform === 'darwin' && !process.env.CI ? 'metal' : 'swiftshader')) === 'metal';
@@ -105,7 +106,18 @@ for (const scene of SCENES)
       const cam = g.engine.camera;
       const W = window.innerWidth;
       const H = window.innerHeight;
-      const history = new Map<number, { mark: boolean; markAt: number; shown: boolean; shownAt: number; ever: boolean; side: string | null; sideAt: number }>();
+      type Seen = { mark: boolean; markAt: number; shown: boolean; shownAt: number; ever: boolean; side: string | null; sideAt: number };
+      const history = new Map<number, Seen & { vis: boolean; outAt: number; at: { x: number; y: number; cx: number; cy: number } | null }>();
+      // where a pilot's ship's middle is on screen (null behind the camera)
+      const centre = (id: number) => {
+        const r = g.remotes.get(id);
+        if (!r) return null;
+        const v = r.world.clone().sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
+        if (v.z > 0) return null;
+        v.applyMatrix4(cam.projectionMatrix);
+        return { x: (v.x * 0.5 + 0.5) * W, y: (-v.y * 0.5 + 0.5) * H };
+      };
+      let jumps = 0;
       let switches = 0;
       let toggles = 0;
       let markToggles = 0;
@@ -129,7 +141,8 @@ for (const scene of SCENES)
           }
         }
         // marks and names: none back and forth faster than their fade (a name's first showing, and a name going with its
-        // mark, aside)
+        // mark, aside); no mark jumping across the screen faster than its ship moves
+        const fading: { lbl: Element; name: string }[] = [];
         for (const m of document.querySelectorAll('.marker.player')) {
           const id = Number((m as HTMLElement).dataset.id);
           const lbl = m.querySelector('.lbl')!;
@@ -139,11 +152,28 @@ for (const scene of SCENES)
           const st = (lbl as HTMLElement).style;
           const side = shown ? (st.right ? 'left' : st.transform ? 'above' : 'right') : null;
           const h = history.get(id);
+          const icon = m.querySelector('.icon')!.getBoundingClientRect();
+          const c = mark ? centre(id) : null;
+          const at = c ? { x: (icon.left + icon.right) / 2, y: (icon.top + icon.bottom) / 2, cx: c.x, cy: c.y } : null;
           if (!h) {
             // (since when, before the clip: not known)
-            history.set(id, { mark, markAt: -Infinity, shown, shownAt: -Infinity, ever: shown, side, sideAt: -Infinity });
+            history.set(id, { mark, markAt: -Infinity, shown, shownAt: -Infinity, ever: shown, side, sideAt: -Infinity, vis: shown, outAt: -Infinity, at });
             continue;
           }
+          if (at && h.at) {
+            const moved = Math.hypot(at.x - h.at.x, at.y - h.at.y);
+            const ship = Math.hypot(at.cx - h.at.cx, at.cy - h.at.cy);
+            if (moved > 3 * ship + 48) {
+              jumps++;
+              issues.push({ frame: f, what: `the mark of ${name} jumped ${moved.toFixed(0)} px (its ship ${ship.toFixed(0)} px)` });
+            }
+          }
+          h.at = at;
+          // (a name going out, by itself or with its mark, fades where it was: for its first 50 ms, nearly whole, it is
+          // checked as one shown)
+          if (h.vis && !shown) h.outAt = clock;
+          h.vis = shown;
+          if (!shown && clock - h.outAt <= 50 && name) fading.push({ lbl, name });
           if (mark !== h.mark) {
             markToggles++;
             if (clock - h.markAt < 149)
@@ -200,6 +230,13 @@ for (const scene of SCENES)
           (icon as Box & { pilot?: boolean }).pilot = true;
           if (lbl) (lbl as Box & { pilot?: boolean; icon?: Box }).icon = icon;
         }
+        for (const { lbl, name } of fading) {
+          const r = lbl.getBoundingClientRect();
+          const b = { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom, what: `"${name}" fading out` };
+          for (const k of keepOut) if (overlap(b, k)) issues.push({ frame: f, what: `${b.what} on ${k.what}` });
+          if (onShip(b, ship)) issues.push({ frame: f, what: `${b.what} on the local ship` });
+          for (const o of texts) if (overlap(b, o)) issues.push({ frame: f, what: `${b.what} under ${o.what}` });
+        }
         for (const t of texts) {
           const own = (t as Box & { icon?: Box }).icon;
           if (!own) continue;
@@ -212,13 +249,13 @@ for (const scene of SCENES)
         }
         if (f % 10 === 9) await new Promise((r) => setTimeout(r, 0));
       }
-      return { issues, pilots, labels, switches, toggles, markToggles, unmarked, gap: gaps.length ? [Math.min(...gaps), Math.max(...gaps)] : [] };
+      return { issues, pilots, labels, switches, toggles, markToggles, unmarked, jumps, gap: gaps.length ? [Math.min(...gaps), Math.max(...gaps)] : [] };
     }, frames);
     // (the scene has pilots marked, and most named)
     expect(result.pilots).toBeGreaterThan(frames);
     expect(result.labels).toBeGreaterThan(0);
     console.log(
-      `${scene}: ${result.pilots} pilot marks and ${result.labels} labels in ${frames} frames, ${result.gap.map((g) => g.toFixed(1)).join('..')} px from their marks; ${result.switches} side moves, ${result.toggles} names and ${result.markToggles} marks in or out; ${result.unmarked} picked up and unmarked`,
+      `${scene}: ${result.pilots} pilot marks and ${result.labels} labels in ${frames} frames, ${result.gap.map((g) => g.toFixed(1)).join('..')} px from their marks; ${result.switches} side moves, ${result.toggles} names and ${result.markToggles} marks in or out; ${result.unmarked} picked up and unmarked; ${result.jumps} marks jumping`,
     );
     expect(result.issues.slice(0, 40), `${result.issues.length} overlaps`).toEqual([]);
     expect(errors).toEqual([]);

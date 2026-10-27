@@ -3,7 +3,7 @@
 // above (off other ships if it can be), else none; room to spare, here and where the mark is headed, to take a side.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, hullCorners, labelBox, makeRoom, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
+import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, hullCorners, labelBox, makeRoom, makeSlide, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
 
 const W = 1920;
 const H = 1080;
@@ -26,8 +26,13 @@ describe('pilot markers', () => {
     expect(screenBounds(box, identity, new THREE.Vector3(0, 0, 400), identity, camera.projectionMatrix, W, H, out())).toBeNull();
   });
 
-  it(`sit ${MARK_GAP} px over the middle of the top of the ship's bounds`, () => {
-    expect(markOf({ x0: 100, y0: 300, x1: 200, y1: 340 }, { x: 0, y: 0 })).toEqual({ x: 150, y: 300 - MARK_GAP });
+  it(`sit ${MARK_GAP} px over the middle of the top of the ship's bounds, drawn in to its middle as it fills the screen`, () => {
+    expect(markOf({ x0: 100, y0: 300, x1: 200, y1: 340 }, { x: 0, y: 0 }, 150, 320, W, H)).toEqual({ x: 150, y: 300 - MARK_GAP });
+    // bounds half the screen tall and more (a ship passing close by): on its middle, and on the screen
+    expect(markOf({ x0: 100, y0: -900, x1: 1500, y1: 700 }, { x: 0, y: 0 }, 700, 300, W, H)).toEqual({ x: 700, y: 300 });
+    const half = markOf({ x0: 800, y0: 300, x1: 1000, y1: 300 + H * 0.375 }, { x: 0, y: 0 }, 900, 500, W, H);
+    expect(half.y).toBeCloseTo((300 - MARK_GAP + 500) / 2, 6);
+    expect(markOf({ x0: -400, y0: -50, x1: -200, y1: 10 }, { x: 0, y: 0 }, -300, -20, W, H)).toEqual({ x: MARK_R + 2, y: MARK_R + 2 });
   });
 
   it('are nudged off the keep-out, never dropped: straight out from its middle, so they slide round it', () => {
@@ -56,6 +61,43 @@ describe('pilot markers', () => {
     const clear = { x: 100, y: 100 };
     expect(nudge(clear, box, W, H)).toBe(0);
     expect(clear).toEqual({ x: 100, y: 100 });
+  });
+
+  it('slide round the keep-out no faster than they are let, however fast straight out from its middle runs', () => {
+    // a ship passing behind a readout near its middle height: straight out runs round the edge several px a step
+    const box = [900, 500, 1000, 560];
+    const clearOf = (m) => !hits(m.x - MARK_R, m.y - MARK_R, m.x + MARK_R, m.y + MARK_R, box);
+    let fastest = 0;
+    let last = null;
+    for (let x = 890; x <= 1010; x += 4) {
+      const m = { x, y: 527 };
+      nudge(m, box, W, H);
+      if (last) fastest = Math.max(fastest, Math.hypot(m.x - last.x, m.y - last.y));
+      last = m;
+    }
+    expect(fastest).toBeGreaterThan(40);
+    // with a slide of 12 px a step: never more round the edge, never on the box, and where it is once past it
+    const slide = makeSlide();
+    last = null;
+    let m;
+    for (let x = 890; x <= 1040; x += 4) {
+      slide.max = 12;
+      m = { x, y: 527 };
+      nudge(m, box, W, H, 0, slide);
+      expect(clearOf(m)).toBe(true);
+      // (round a corner the step cuts across it)
+      if (last) expect(Math.hypot(m.x - last.x, m.y - last.y)).toBeLessThanOrEqual(12 + 4 + 1e-6);
+      last = m;
+    }
+    expect(m).toEqual({ x: 1038, y: 527 });
+    // the box moving under a mark on its edge: the mark keeps to the edge near where it was, not where straight out goes
+    const held = makeSlide();
+    const on = { x: 950, y: 500 - MARK_R - 3 };
+    nudge(on, box, W, H, 0, held);
+    held.max = 12;
+    const moved = { x: 950, y: 505 };
+    nudge(moved, [930, 470, 1030, 560], W, H, 0, held);
+    expect(Math.hypot(moved.x - on.x, moved.y - on.y)).toBeLessThan(40);
   });
 
   it('are nudged the least way out where straight out leaves the screen, the way they went last first', () => {
@@ -131,8 +173,14 @@ describe('pilot markers', () => {
     const ahead = [right.x1 + 40, right.y0, right.x1 + 90, right.y1];
     expect(fits('right', 960, 500, 80, LABEL_H, room(ahead), at, ROOM_MARGIN)).toBe(true);
     expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at, ROOM_MARGIN)).toBe(false);
-    // (only to take a side: one shown stays while it has room)
-    expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at)).toBe(true);
+    // one shown goes as soon as where its mark is headed has no room (so it has faded before it gets there), and needs
+    // none to spare
+    expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at)).toBe(false);
+    expect(fits('right', 960, 500, 80, LABEL_H, room(near), at)).toBe(true);
+    expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at, 0, false, false)).toBe(true);
+    // all the way there: headed across a narrow readout to its far side, it does not fit
+    const narrow = [right.x1 + 20, right.y0, right.x1 + 30, right.y1];
+    expect(fits('right', 960, 500, 80, LABEL_H, room(narrow, [], { aheadX: 200 }), at)).toBe(false);
   });
 
   it("keep off the social panels' boxes where the HUD has them: the mark nudged off, the name on another side", () => {
