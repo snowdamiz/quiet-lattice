@@ -3,7 +3,7 @@ checks that each asset and variant gets its own sheet, that only LOD0 renders (b
 red, LOD1 green, LOD2 blue, colliders magenta, each placed where it would show if drawn), that --asset/--variant pick,
 that --family lays every asset and variant out in a row of its own (LOD0 only, four views, a header, a list), that
 an image-textured material shows its texture on the shader balls, from the part of the atlas the asset's faces use, and
-that the same asset with KTX2 textures (as the export writes them) renders the same.
+that the same asset with KTX2 textures and meshopt geometry (as the export writes them) renders the same.
 
 Run: pnpm turntable:test
  or: Blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/turntable_selftest.py -- [--keep]
@@ -22,7 +22,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(HERE))
-from artlib import ktx  # noqa: E402
+from artlib import ktx, meshopt  # noqa: E402
 from artlib import rules as R  # noqa: E402
 
 ARGV = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
@@ -238,15 +238,19 @@ def main():
     txt = (out / "tex_materials.txt").read_text() if (out / "tex_materials.txt").exists() else ""
     expect("64x64 image" in txt and "UV 0.50..1.00" in txt, f"the material list names the image and the part of it shown ({txt.strip()})")
 
-    print("\nthe same asset with KTX2 textures, as the export writes them (P1.E14.T12)")
+    print("\nthe same asset with KTX2 textures and meshopt geometry, as the export writes them (P1.E14.T12)")
+    rules = R.load()
+    (TMP / "ktx2").mkdir()
+    (TMP / "packed").mkdir()
+    ktx.compress(tex, TMP / "ktx2" / "tex.glb", ktx.settings(rules, "props"), log=lambda *_: None)
     packed = TMP / "packed" / "tex.glb"
-    packed.parent.mkdir()
-    ktx.compress(tex, packed, ktx.settings(R.load(), "props"), log=lambda *_: None)
+    meshopt.compress(TMP / "ktx2" / "tex.glb", packed, meshopt.settings(rules, "props"), log=lambda *_: None)
     images, _ = ktx.inspect(packed)
     expect(images and all(im["mime"] == ktx.KTX2 for im in images), f"the textured asset's atlas is KTX2 ({[im['mime'] for im in images]})")
+    expect(meshopt.inspect(packed)["required"], "and its geometry is meshopt-compressed (required)")
     out = TMP / "packed_out"
     code, man = turntable(packed, out)
-    expect(code == 0, "turntable.py exits 0 on a .glb with KTX2 textures")
+    expect(code == 0, "turntable.py exits 0 on a .glb with KTX2 textures and meshopt geometry")
     sheet = out / "tex_materials.png"
     if sheet.exists():
         c = colours(sheet)

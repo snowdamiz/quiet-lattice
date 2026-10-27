@@ -63,6 +63,11 @@
     "etc1s": { "quality": 128, "effort": 2 },
     "uastc": { "quality": 2, "rdoLambda": 4.0, "zstd": 18 }
   },
+  "geometry": {
+    "$comment": "P1.E14.T12: exported meshes are reordered, quantized (KHR_mesh_quantization) and meshopt-compressed (EXT_meshopt_compression), both required, after the KTX2 rewrite (artlib/meshopt.py, packages/tools/src/art/meshopt.ts: glTF-Transform and meshoptimizer). level high adds the octahedral and exponential filters (normals at 8 bits); medium only quantizes. Measured on the 4k Lark: 27.9 MB of vertices and indices become 6.5 MB of meshopt streams. A family may set its own \"geometry\" (e.g. {\"compress\": false}).",
+    "compress": true,
+    "level": "high"
+  },
   "classes": {
     "hero": {
       "tris": [60000, 150000],

@@ -135,8 +135,27 @@ def image_slots(js):
 
 def _view_bytes(js, bin_data, view):
     bv = js["bufferViews"][view]
+    if bv.get("buffer", 0) != 0:
+        raise KtxError(f"buffer view {view} is not in the .glb's binary chunk")
     off = bv.get("byteOffset", 0)
     return bytes(bin_data[off : off + bv["byteLength"]])
+
+
+def _append(js, bin_data, replace):
+    """The binary chunk with each image view in `replace` ({view: bytes}) pointed at its new bytes, appended at the end:
+    no other offset moves, so any layout survives (meshopt streams, fallback buffers). For throwaway copies only (the
+    old bytes stay behind, unused)."""
+    if not replace:
+        return bin_data
+    out = bytearray(bin_data)
+    for view, data in replace.items():
+        bv = js["bufferViews"][view]
+        out += b"\0" * ((-len(out)) % 8)
+        bv["byteOffset"] = len(out)
+        bv["byteLength"] = len(data)
+        out += data
+    js["buffers"][0]["byteLength"] = len(out)
+    return bytes(out)
 
 
 def _image_bytes(js, bin_data, i):
@@ -396,7 +415,8 @@ def is_compressed(path):
 
 def decoded_copy(src, dst):
     """Writes `dst`: `src` with each KTX2 image transcoded to an RGBA PNG (level 0) and KHR_texture_basisu removed, so
-    Blender's importer (which cannot read KTX2) loads exactly the texels the client will show."""
+    Blender's importer (which cannot read KTX2) loads exactly the texels the client will show. The geometry is left as it
+    is (meshopt-compressed or not: Blender's importer decodes EXT_meshopt_compression itself)."""
     js, bin_data = glb.read(src)
     images = js.get("images", [])
     todo = [i for i, im in enumerate(images) if im.get("mimeType") == KTX2]
@@ -424,5 +444,5 @@ def decoded_copy(src, dst):
         if "extensions" in t and not t["extensions"]:
             del t["extensions"]
     _set_extension(js, False)
-    glb.write(dst, js, _repack(js, bin_data, replace))
+    glb.write(dst, js, _append(js, bin_data, replace))
     return len(todo)

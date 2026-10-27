@@ -3,7 +3,8 @@
 // pnpm art:test
 // Finds Blender (env BLENDER, else the macOS app, else `blender` on PATH) and runs packages/tools/blender/*.py headless.
 // Export, the self-test and validating a .glb also need the KTX2 encoder (KTX-Software's ktx, fetched on first use into
-// node_modules/.cache; env KTX overrides it: ./ktx.ts). Set ART_RAW=1 to see Blender's own log lines.
+// node_modules/.cache; env KTX overrides it: ./ktx.ts), and the export this Node for its meshopt step (./meshopt.ts).
+// Set ART_RAW=1 to see Blender's own log lines.
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -26,9 +27,10 @@ import {
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CWD = process.env.INIT_CWD ?? process.cwd();
 
-/** The environment Blender's scripts need to write and read KTX2 textures: KTX, the encoder (fetched when missing). */
+/** The environment Blender's scripts need to write and read compressed models: KTX, the KTX2 encoder (fetched when
+ * missing), and ART_NODE, the Node that runs the meshopt step (packages/tools/src/art/meshopt.ts). */
 async function ktxEnv(): Promise<NodeJS.ProcessEnv> {
-  return { KTX: await ensureKtx(ROOT) };
+  return { KTX: await ensureKtx(ROOT), ART_NODE: process.execPath };
 }
 
 function runBlender(script: string, args: string[], env: NodeJS.ProcessEnv = {}): Promise<number> {

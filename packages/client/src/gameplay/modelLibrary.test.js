@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { textureBytes, textureMemory } from './modelLibrary.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { BASIS_TRANSCODER_PATH, gltfLoader, initTextureLoaders } from '../core/Engine.js';
 
 /** A KTX2 map as KTX2Loader hands it over: a compressed texture with its own mip levels. */
@@ -37,8 +38,9 @@ describe('texture memory', () => {
 });
 
 describe('model loaders', () => {
-  it('give every GLTFLoader the one KTX2 loader, set up for the renderer and the transcoder in public/basis', () => {
+  it('give every GLTFLoader the meshopt decoder and the one KTX2 loader, set up for the renderer and public/basis', () => {
     expect(gltfLoader().ktx2Loader).toBeNull();
+    expect(gltfLoader().meshoptDecoder).toBe(MeshoptDecoder);
     // (a WebGL renderer as detectSupport reads it: here, one with BC7 and S3TC)
     const has = new Set(['EXT_texture_compression_bptc', 'WEBGL_compressed_texture_s3tc']);
     const ktx2 = initTextureLoaders({ extensions: { has: (n) => has.has(n), get: () => null } });

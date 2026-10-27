@@ -22,7 +22,7 @@ import numpy as np  # noqa: E402
 from artlib import bake, core  # noqa: E402
 from artlib import export as E  # noqa: E402
 from artlib import glb  # noqa: E402
-from artlib import ktx  # noqa: E402
+from artlib import ktx, meshopt  # noqa: E402
 from artlib import materials as M  # noqa: E402
 from artlib import rules as R  # noqa: E402
 
@@ -767,20 +767,35 @@ def test_textures():
     gpu = [v.get("gpuTextureMB") for a in rep.assets for v in a["variants"]]
     expect(rep.status == "PASS" and gpu and 0 < gpu[0] < 3, f"the report gives the variant's GPU texture memory once transcoded ({gpu} MB: a 1k and three 256 px maps)")
     expect(any("KTX2 map(s)" in p["message"] for p in rep["materials"].passes), "the materials check reports the KTX2 maps it passed")
+    geo = meshopt.inspect(crate)
+    expect(geo["compressed"] and geo["required"] and geo["streams"] > 0, f"crate.glb: its geometry is meshopt-compressed, {meshopt.EXT} and {meshopt.QUANTIZATION} required ({geo})")
+    expect(any("meshopt-compressed" in p["message"] for p in rep["triangles"].passes), "the triangle check reports the compressed geometry it passed")
 
     # the same rock with PNG maps: what the KTX2 maps must look like
     pngs = TMP / "png"
     base = ["--src-root", str(SRC), "--out-dir", str(pngs), "--report-dir", str(REPORTS), "--quiet"]
     code = E.main("props", base + ["--only", "rock", "--bake-res", "128", "--no-compress"])
     png = pngs / "props" / "rock.glb"
-    expect(code == 0 and png.exists() and not ktx.is_compressed(png), "--no-compress exports PNG maps (and its own re-validation accepts them)")
+    expect(
+        code == 0 and png.exists() and not ktx.is_compressed(png) and not meshopt.inspect(png)["compressed"],
+        "--no-compress exports PNG maps and plain geometry (and its own re-validation accepts them)",
+    )
     if not png.exists():
         return
     rep_png = core.validate_path(RULES, png, family="props", source=SRC / "props" / "rock.blend")
     expect(has(rep_png, "materials", "map is image/png, not KTX2"), "validating a props export with PNG maps fails: the family ships KTX2")
+    expect(has(rep_png, "triangles", "geometry is not meshopt-compressed"), "and with plain geometry: the family ships meshopt")
     rep_ktx = core.validate_path(RULES, rock, family="props", source=SRC / "props" / "rock.blend")
     tris = lambda r: [v["lodTris"] for a in r.assets for v in a["variants"]]  # noqa: E731
+    dims = lambda r: [v["dims"] for a in r.assets for v in a["variants"]]  # noqa: E731
     expect(tris(rep_ktx) == tris(rep_png) and tris(rep_png), f"the rewritten .glb keeps every mesh: the same LOD triangles as the PNG export ({tris(rep_ktx)})")
+    close = all(abs(x - y) < 0.002 for d, e in zip(dims(rep_ktx), dims(rep_png)) for x, y in zip(d, e))
+    expect(close and dims(rep_png), f"and the same size, to the quantization's precision ({dims(rep_ktx)} vs {dims(rep_png)})")
+    pj, _ = glb.read(png)
+    image_views = {im["bufferView"] for im in pj.get("images", []) if "bufferView" in im}
+    plain = sum(bv["byteLength"] for i, bv in enumerate(pj["bufferViews"]) if i not in image_views)
+    streams = meshopt.inspect(rock)["streams"]
+    expect(0 < streams < 0.5 * plain, f"meshopt stores the rock's geometry in under half its plain size ({streams:,} of {plain:,} bytes)")
     codec = {im["name"]: (im["ktx"] or {}).get("codec") for im in ktx.inspect(rock)[0]}
     a, b = image_pixels(rock), image_pixels(png)
     errs = {n: float(np.abs(a[n][..., :3] - b[n][..., :3]).mean() * 255) for n in b if n in a and a[n].shape == b[n].shape}
@@ -794,7 +809,13 @@ def test_textures():
     legacy.parent.mkdir()
     shutil.copyfile(png, legacy)
     rep = core.validate_path(RULES, legacy)
-    expect(rep.family == "flora" and not has(rep, "materials", "not KTX2") and any("exempt" in f["message"] for f in rep["materials"].findings), "a demo export (families.json legacy) is exempt from compression")
+    expect(
+        rep.family == "flora"
+        and not has(rep, "materials", "not KTX2")
+        and not has(rep, "triangles", "not meshopt")
+        and any("exempt" in f["message"] for f in rep["materials"].findings),
+        "a demo export (families.json legacy) is exempt from compression",
+    )
 
     s = ktx.settings(RULES, "props")
     etc1s_normals = TMP / "etc1s_normals.glb"
@@ -807,6 +828,7 @@ def test_textures():
     glb.write(optional, js, bin_data)
     rep = core.validate_path(RULES, optional, family="props", source=SRC / "props" / "rock.blend")
     expect(has(rep, "materials", "not in extensionsRequired"), f"{ktx.EXT} left out of extensionsRequired fails")
+    expect(has(rep, "triangles", "must be in extensionsRequired"), f"{meshopt.EXT} left out of extensionsRequired fails")
     ktx2 = bytearray(bytes(bin_data[js["bufferViews"][js["images"][0]["bufferView"]].get("byteOffset", 0) :][:80]))
     struct.pack_into("<I", ktx2, 40, 1)  # levelCount
     hdr = ktx.header(bytes(ktx2))

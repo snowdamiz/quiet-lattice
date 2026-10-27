@@ -57,7 +57,8 @@ export function familyOf(path: string): string {
 
 const argv = process.argv.slice(2).filter((a) => a !== '--');
 if (argv[0] === '--selftest') {
-  process.exitCode = await run('turntable_selftest.py', argv.slice(1), { KTX: await ensureKtx(ROOT) });
+  // (the self-test compresses its asset as the export does: KTX2, then meshopt with this Node)
+  process.exitCode = await run('turntable_selftest.py', argv.slice(1), { KTX: await ensureKtx(ROOT), ART_NODE: process.execPath });
 } else if (!argv.length) {
   console.error('usage: pnpm turntable -- <asset.blend|asset.glb> [out_dir] [--asset A] [--variant V] [--grid [N]] [--family [N]] [--samples N]');
   process.exitCode = 2;

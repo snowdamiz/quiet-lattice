@@ -5,7 +5,7 @@ from pathlib import Path
 import bpy
 import numpy as np
 
-from . import ktx
+from . import ktx, meshopt
 from . import materials as M
 from . import rules as R
 from . import scene as S
@@ -492,6 +492,30 @@ def textures(rules, family, model, report, path, compressed, legacy=False):
             else:
                 c.ok(_vname(v), f"{msg}, within the {v.cls} budget of {budget} MB")
     return gpu
+
+
+def geometry(rules, family, model, report, path, compressed, legacy=False):
+    """An export's geometry compression (P1.E14.T12), reported under the triangle check: when `compressed`, its meshes
+    must be meshopt-compressed, with EXT_meshopt_compression and KHR_mesh_quantization both required (there is no
+    uncompressed fallback)."""
+    c = report["triangles"]
+    try:
+        info = meshopt.inspect(path)
+    except Exception as e:  # a .glb the importer read but whose JSON cannot be parsed
+        c.fail(Path(path).name, f"cannot read its buffers: {e}")
+        return
+    if not info["meshes"]:
+        return
+    if legacy:
+        c.info("geometry", "a demo export: exempt from geometry compression until its family is rebuilt")
+    elif not compressed:
+        c.info("geometry", "uncompressed geometry: this family (families.json geometry.compress) or this export keeps it")
+    elif not info["compressed"]:
+        c.fail(Path(path).name, f"geometry is not meshopt-compressed ({meshopt.EXT}); re-export with `pnpm art:export -- {family}`")
+    elif not info["required"]:
+        c.fail(Path(path).name, f"{meshopt.EXT} and {meshopt.QUANTIZATION} must be in extensionsRequired (the geometry has no uncompressed fallback)")
+    else:
+        c.ok("geometry", f"meshopt-compressed: {info['streams'] / 1e6:.1f} MB of streams")
 
 
 def _rgb(v):

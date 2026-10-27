@@ -6,7 +6,7 @@ from pathlib import Path
 import bpy
 
 from . import checks as C
-from . import ktx
+from . import ktx, meshopt
 from . import materials as M
 from . import rules as R
 from . import scene as S
@@ -27,7 +27,8 @@ def mode_of(path):
 
 def load(path):
     """Opens a .blend, or imports a .glb into an empty scene. A .glb with KTX2 textures is imported from a copy whose
-    images are transcoded back to PNG (the importer cannot read KTX2): the texels the client shows."""
+    images are transcoded back to PNG (the importer cannot read KTX2): the texels the client shows. Meshopt-compressed
+    geometry the importer decodes itself."""
     S.clear_cache()
     M.clear_cache()
     if mode_of(path) == "source":
@@ -70,10 +71,11 @@ def _reveal():
         o.hide_set(False)
 
 
-def run_checks(rules, path, family, mode, cls=None, source=None, legacy_class=None, glb=None, compressed=None, legacy=False):
+def run_checks(rules, path, family, mode, cls=None, source=None, legacy_class=None, glb=None, compressed=None, geometry=None, legacy=False):
     """Checks whatever is loaded now. `source` is the .blend an export came from (export mode); `glb` is the .glb file
-    loaded (default `path`), whose own images the texture check reads; `compressed` says whether its textures must be
-    KTX2 (default: the family's texture setting; the demo's `legacy` exports are exempt)."""
+    loaded (default `path`), whose own images and buffers the compression checks read; `compressed` says whether its
+    textures must be KTX2 and `geometry` whether its meshes must be meshopt-compressed (default: the family's settings;
+    the demo's `legacy` exports are exempt)."""
     report = Report(str(path), family, mode)
     model = S.collect_source(rules) if mode == "source" else S.collect_export(rules)
     S.assign_classes(rules, family, model, cli_class=cls, legacy_class=legacy_class)
@@ -85,7 +87,10 @@ def run_checks(rules, path, family, mode, cls=None, source=None, legacy_class=No
     if mode == "export":
         if compressed is None:
             compressed = bool(ktx.settings(rules, family).get("compress")) and not legacy
+        if geometry is None:
+            geometry = bool(meshopt.settings(rules, family).get("compress")) and not legacy
         textures = C.textures(rules, family, model, report, glb or path, compressed, legacy)
+        C.geometry(rules, family, model, report, glb or path, geometry, legacy)
     C.scale(rules, family, model, report, source=source)
     report.assets = C.asset_summary(rules, model, textures)
     report.model = model
