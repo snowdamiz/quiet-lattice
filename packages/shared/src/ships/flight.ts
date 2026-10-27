@@ -28,6 +28,12 @@ export const PULSE_DRIVE = {
   easeRate: 4,
   /** Dropping out of the drive leaves the ship at this speed at most, m/s. */
   exitSpeedMax: 400,
+  /** It engages only outside the air (AIR.pulseCeiling), at least this clear of anything ahead (`PulseClearance.ahead`), m… */
+  engageClearM: 600,
+  /** …and, over a world with ground, at least this high over it, m. */
+  engageAltitudeM: 2000,
+  /** It drops out when what is ahead comes nearer than this, m (or the air thickens past AIR.pulseCeiling). */
+  dropOutM: 400,
 } as const;
 
 /** The pulse drive's speed limit, m/s, at a clearance in metres: the distance to the nearest body's sky (or peaks, or hazard
@@ -41,11 +47,13 @@ export function pulseSpeedLimit(stats: ShipStats, clearanceM: number): number {
 export const CLIENT_SPEED_HEADROOM = 1.05;
 
 /**
- * How P1.E03.T04's movement validation reads the caps. The server never trusts the client's `vel` or `time`:
- * - It measures speed itself: displacement in the pose's frame over server-measured elapsed time, across at least `windowS`
- *   of inputs (one packet's spacing jitters with the network). A window is split where the mode or the frame changes; a
- *   stretch shorter than `windowS` between two changes (a one-tick pulse) is judged on its own, against its own mode's
- *   allowance, and never merged into a window of another mode.
+ * How P1.E03.T04's movement validation reads the caps. The server never trusts the client's `vel`, and reads its `time`
+ * only within its own clock's bounds (ARCHITECTURE §7: no more time credited than really passed). As first written
+ * (P1.E12.T01) the server measured elapsed time itself; it is the client's time, so the network's jitter changes nothing:
+ * - It measures speed itself: displacement over at least `windowS` of the client's time. A window is split where the mode
+ *   changes between the engines, the pulse drive and rest (a change of frame or among the engine modes carries it on); a
+ *   stretch shorter than `windowS` between two changes (a one-tick pulse) is judged on its own, from its start, against
+ *   its own mode's allowance, and never merged into a window of another mode.
  * - A window passes when its speed is within the larger of the allowances at its two end poses (its first and last), never
  *   at a pose in between, which a cheat could fake:
  *   - in flight `max × factor + slackMps`, landed or docked `restSlackMps` (`FlightCaps.allowed`);
@@ -59,7 +67,8 @@ export const CLIENT_SPEED_HEADROOM = 1.05;
  *     `PULSE_DRIVE.exitSpeedMax` at most, under every hull's space cap, and a ship lands or docks at rest.
  * - A window over its allowance is corrected to the last valid pose.
  * - Speed only. Whether the pulse drive may be engaged at all (outside the air, 600 m clear of anything ahead), its spool-up
- *   and its fuel are not checked here: Charge is P1.E07.T02's, mode legality P1.E03.T04's.
+ *   and its fuel are not checked here: Charge is P1.E07.T02's, mode legality the server's movement authority's
+ *   (packages/server/src/sim/movement, P1.E03.T04), which reads PULSE_DRIVE's engage and drop-out clearances.
  */
 export const FLIGHT_TOLERANCE = {
   windowS: 1,

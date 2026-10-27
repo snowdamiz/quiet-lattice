@@ -1,6 +1,7 @@
 // A world to test fauna on: a zone of galaxy system 0 at a chosen tier, a body whose species fit the test, a player on
 // foot on dry, open ground, and helpers to place things on the ground around it and run the zone's clock.
 import { faunaSpecies, frameId, type BodySpec, type FaunaSpecies, type PlanetParams, type Tier } from '@astra/shared/world';
+import type { CombatHooks } from '../src/combat/zone.ts';
 import type { Vec3 } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';
 import type { FaunaOptions, HerdRequest } from '../src/fauna/sim.ts';
@@ -18,11 +19,14 @@ export function findWorld(tier: Tier, want: (species: readonly FaunaSpecies[]) =
   return body;
 }
 
-/** A spot on dry land, well above the sea, with ground about as high all round it (no cliff) for 80 m. */
-export function openGround(ground: Ground): Vec3 {
+/** A spot on dry land, well above the sea, with ground about as high all round it (no cliff) for 80 m; within `band` of
+ * the world's equator (|y| of the unit direction, its spin axis being +Y) if given, where day and night take turns
+ * whatever the season. */
+export function openGround(ground: Ground, band = 1): Vec3 {
   for (let i = 0; i < 20000; i++) {
     const a = i * 0.618034 * Math.PI * 2;
     const y = 1 - (2 * (i + 0.5)) / 20000;
+    if (Math.abs(y) > band) continue;
     const r = Math.sqrt(1 - y * y);
     const dir: Vec3 = [Math.cos(a) * r, y, Math.sin(a) * r];
     const h = ground.sample(dir);
@@ -46,7 +50,8 @@ export function openGround(ground: Ground): Vec3 {
   throw new Error('no open ground found');
 }
 
-function along(dir: Readonly<Vec3>, t: Readonly<Vec3>, b: Readonly<Vec3>, east: number, north: number, radius: number): Vec3 {
+/** The unit direction `east` and `north` metres from a unit direction along its tangents `t` and `b`. */
+export function along(dir: Readonly<Vec3>, t: Readonly<Vec3>, b: Readonly<Vec3>, east: number, north: number, radius: number): Vec3 {
   const x = dir[0] * radius + t[0] * east + b[0] * north;
   const y = dir[1] * radius + t[1] * east + b[1] * north;
   const z = dir[2] * radius + t[2] * east + b[2] * north;
@@ -85,6 +90,8 @@ export function faunaWorld(opts: {
   want: (species: readonly FaunaSpecies[]) => boolean;
   spawner?: boolean;
   fauna?: Omit<FaunaOptions, 'tier' | 'spawner'>;
+  /** who the zone's combat tells of kills and players down (P1.E06.T02) */
+  combat?: () => CombatHooks | null;
 }): FaunaWorld {
   const system = describeZoneSystem(SYSTEM);
   const body = findWorld(opts.tier, opts.want);
@@ -93,6 +100,7 @@ export function faunaWorld(opts: {
     systemIndex: SYSTEM,
     system,
     fauna: { tier: opts.tier, spawner: opts.spawner ?? false, grounds: planHere, ...opts.fauna },
+    combat: opts.combat,
   });
   const ground = groundOf(body.params as PlanetParams);
   const home = openGround(ground);

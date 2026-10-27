@@ -236,6 +236,24 @@ describe('cutscene service', () => {
     expect(zone.phases.phaseOf(a.entity)).toBe(step.id);
   });
 
+  it('says which phases it plays cutscenes in, whatever their key, while they are open', () => {
+    const { zone, service, player } = setup({ dev: false });
+    const a = player();
+    const b = player();
+    const at = { key: 'quest:prologue:cold_open', frame: zone.stationFrame, center: [30, 45, 480] as V3, radius: 800 };
+    const scene = zone.phases.phaseFor(a.viewer, 'story', at);
+    const other = zone.phases.phaseFor(b.viewer, 'story', { ...at, key: 'quest:prologue:dock' });
+    expect(service.plays(zone, scene.id)).toBe(false);
+    service.start(a.viewer, 'test', at);
+    expect([service.plays(zone, scene.id), service.plays(zone, other.id)]).toEqual([true, false]);
+    // another zone's phase of the same number is not it
+    const elsewhere = new Zone({ id: 'sys:0', systemIndex: 0, system: describeZoneSystem(0) });
+    expect(service.plays(elsewhere, scene.id)).toBe(false);
+    service.end(a.viewer, 'test', 'finished');
+    expect(scene.open).toBe(false);
+    expect(service.plays(zone, scene.id)).toBe(false);
+  });
+
   it('refuses an unknown cutscene, a second one while one plays, and a session in no zone', () => {
     const { service, player } = setup({ catalog: { ...CUTSCENES, other: { placement: { ...loadPlacement('test'), id: 'other' }, dev: true } } });
     const a = player();

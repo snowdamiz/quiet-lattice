@@ -7,6 +7,7 @@ import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
 import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
+import { fireIntent } from '../net/combat.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -1329,6 +1330,8 @@ export class Ship {
       this.lasers.push({ life: 0.35, side, offset: new THREE.Vector3(5.75 * side, -0.62, -2.5) });
     }
     this.game.onShipFire?.(this);
+    // online, the shot is the server's to resolve (the tracers above are cosmetic): its hits come back as events
+    this.game.net?.fire(fireIntent(this.game, this.state));
   }
 
   updateLasers(dt) {

@@ -48,6 +48,8 @@ export interface StartOptions {
   shard?: string;
   /** Character persistence tuning (tests shorten the 30 s save interval). */
   persistence?: Omit<PersistenceOptions, 'store' | 'registry' | 'log'>;
+  /** Hold players to movement authority (true; integration tests that put players anywhere with raw poses turn it off). */
+  movement?: boolean;
   /** Developer tooling overrides, applied after the environment's ASTRA_* variables (admin/config.ts). */
   tooling?: Partial<ToolingInput>;
 }
@@ -129,7 +131,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const authLimiter = new RateLimiter({ burst: config.AUTH_RATE_BURST, refillPerSecond: config.AUTH_RATE_PER_MINUTE / 60 });
   // Computed now, not on the first unknown-user login, so that login is not the one that pays for it.
   const timingHash = await createTimingHash();
-  const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ, metricsEveryMs: tooling.metricsMs });
+  const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ, movement: opts.movement, metricsEveryMs: tooling.metricsMs });
   const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
   const progress = new CharacterProgress();
   // (parties are the gateway's social service and skills the registry's skill service, both made below: read only once
@@ -148,7 +150,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const persistence: CharacterPersistence = new CharacterPersistence({
     ...opts.persistence,
     store: pgCharacterStore(database.db),
-    registry: coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress, quests, log }),
+    registry: coreRegistry({ zones, clock, movement: opts.movement, inventory, ships: new ShipLoadouts(), progress, quests, log }),
     log,
   });
   // (a development server lets a client ask for a dev cutscene by itself; production only what the quest engine allows)
@@ -166,6 +168,8 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     inventory,
     persistence,
     quests,
+    // (kills add XP to the same progress the quests and persistence hold)
+    progress,
     // a joining character's row is read only once an edit of it out of play (the admin CLI's) has written (§8)
     ownedCharacter: (accountId, characterId) => persistence.afterEdit(characterId, () => getOwnedCharacter(database.db, accountId, characterId)),
     limits: {

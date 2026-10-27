@@ -2,12 +2,13 @@
 // zone snapshots are binary (see snapshot.ts). Every message is a zod schema so both ends validate what they receive.
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
+import { codexSpeciesSchema } from '../codex/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
-import { questErrorCodeSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
+import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 7;
+export const PROTOCOL_VERSION = 12;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -16,6 +17,11 @@ export const PROTOCOL_VERSION = 7;
 // 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 // 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
+// 8: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
+// 9: meters: heat and Charge state; reserved, on its branch until it merges (P1.E07.T02)
+// 10: combat: fire requests and their answers, combat events with the target's health, XP events (P1.E06.T02)
+// 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
+// 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -143,8 +149,10 @@ export const Buttons = {
  * (see `peekVersion`). */
 export const Hello = z.object({ t: z.literal('hello'), version: z.number().int(), token: z.string().min(1).max(4096) });
 export const Join = z.object({ t: z.literal('join'), characterId: Id });
-/** `time` is the client's estimate of server time when the pose was sampled; the server never uses it for speed checks
- * (it measures elapsed time itself). The tag `t` is the message type, hence `time`. */
+/** `time` is the client's estimate of server time when the pose was sampled: movement authority judges the pose and its
+ * speed on it, crediting no more of it than really passed (ARCHITECTURE §7). A client steps it forward, never back, when
+ * it falls more than a second behind; 0 (none) is judged on the input's arrival. The tag `t` is the message type, hence
+ * `time`. */
 export const Input = z.object({
   t: z.literal('input'),
   seq: z.number().int().nonnegative(),
@@ -219,6 +227,110 @@ export const CutsceneRequest = z
  * `seq` numbers the session's requests from 1, increasing; the server answers each with `quests` state. */
 export const QuestRequest = z.object({ t: z.literal('quest'), seq: z.number().int().min(1).max(0xffffffff), op: questOpSchema });
 
+// ---------- resource nodes (P1.E13.T01, ARCHITECTURE §18) ----------
+
+/** A world's frame: a planet or moon of the system (never the Waystation's, nor the inertial frame). */
+export const WorldFrameId = z
+  .string()
+  .regex(/^(0|[1-9]\d{0,9}):(0|[1-9]\d{0,2})$/)
+  .refine((f) => Number(f.split(':')[0]) <= 0xffffffff, 'system seeds are 32-bit');
+/** A node's cell on its world: `<face>_<i>_<j>` (the shared spec's cell grid). */
+export const NodeCellId = z.string().regex(/^[0-5]_(0|[1-9]\d{0,5})_(0|[1-9]\d{0,5})$/);
+/** A node within its cell: `<type>_<k>`, its type and its candidate's number there. */
+export const NodeInCell = z
+  .string()
+  .max(32)
+  .regex(/^[a-z]+(?:_[a-z]+)*_(0|[1-9]\d{0,3})$/);
+/** A resource node's id on its world (the shared spec's nodeKey): `<face>_<i>_<j>_<type>_<k>`. */
+export const NodeId = z
+  .string()
+  .max(48)
+  .regex(/^[0-5]_(0|[1-9]\d{0,5})_(0|[1-9]\d{0,5})_[a-z]+(?:_[a-z]+)*_(0|[1-9]\d{0,3})$/);
+/** What mines: the multitool's beam, on foot. (Asteroids and the ship's Mining Laser are not nodes.) */
+export const MiningTool = z.enum(['multitool']);
+/** The common flora a beam harvests for carbon and ferrite (the client's flora scatter, not shared nodes): trees (a
+ * crystal tree gives ferrite), the giant growths, shrubs, ferns, the crystal growths of bare worlds, boulders and rocks. */
+export const FloraKind = z.enum(['tree', 'crystal_tree', 'giant', 'bush', 'fern', 'crystal', 'boulder', 'rock']);
+/** The client's own key for one plant or rock of its flora. */
+export const FloraRef = z.string().regex(/^[A-Za-z0-9_:.-]{1,48}$/);
+/** A plant or rock of the client's flora: its kind, the client's key for it, and where it stands (planet-local m). */
+export const FloraTarget = z.object({ kind: FloraKind, ref: FloraRef, at: Vec3 });
+/**
+ * A mining hit (ARCHITECTURE §18): the client's beam is on `node`, a resource node of the world `frame`, or on `flora`,
+ * a plant or rock of its own flora there; sent every quarter second or so while the beam stays on it. The server
+ * measures the beam's time itself (a hit is worth the time since the last one it took, at most half a second), checks
+ * the player and the target and answers with `mine` state. `time` is the world time of the hit, which the server never
+ * trusts for speed; a hit stamped seconds away from its clock (a stall's backlog) is refused. `seq` numbers the
+ * session's hits from 1, increasing.
+ */
+export const MineRequest = z
+  .object({
+    t: z.literal('mine'),
+    seq: z.number().int().min(1).max(0xffffffff),
+    frame: WorldFrameId,
+    node: NodeId.optional(),
+    flora: FloraTarget.optional(),
+    tool: MiningTool,
+    time: z.number().min(0).max(1e12),
+  })
+  .refine((m) => (m.node === undefined) !== (m.flora === undefined), 'a hit is on a node or on flora');
+
+// ---------- combat (P1.E06.T02, ARCHITECTURE §20) ----------
+
+/**
+ * A shot of the ship's base gun (ARCHITECTURE §20): the client fires its tracers at once and asks the server, which
+ * resolves the shot from the pose it believes and answers with `fire` state. `aim` is the direction the guns point, in
+ * `frame` (the frame of the pose the client sent last); `time` the world time it fired at, which the server never trusts
+ * for anything but how far its believed pose has moved on since its last input (a tenth of a second at most); `seq`
+ * numbers the session's shots from 1, increasing. Strict: a shot carrying anything else (a damage amount, a target, its
+ * health) is refused whole, because no client says what a shot did.
+ */
+export const FireRequest = z.strictObject({
+  t: z.literal('fire'),
+  seq: z.number().int().min(1).max(0xffffffff),
+  time: z.number().min(0).max(1e12),
+  frame: FrameId,
+  aim: Direction,
+});
+
+// ---------- the call-for-aid beacon (P1.E15.T02, ARCHITECTURE §21) ----------
+
+/** The most beacons the shard lists at once (DESIGN 16.6 "Social"); raising one past it is refused `busy`. */
+export const BEACON_MAX = 256;
+/** A beacon: unique on the shard, never reused while its server runs. */
+export const BeaconId = z.number().int().min(1).max(0xffffffff);
+/**
+ * A beacon request (DESIGN 16.6 "Social"): `raise` a beacon for the instance you are in, which lists its open slots to the
+ * whole shard; `lower` yours; `watch` the shard's beacons (the whole list at once, then its changes at most once a tick;
+ * asking again while watching does nothing) or `unwatch` them; `answer` one, which puts you in its instance when the
+ * server finds you may join it there and then.
+ */
+export const BeaconOp = z.discriminatedUnion('op', [
+  z.object({ op: z.literal('raise') }),
+  z.object({ op: z.literal('lower') }),
+  z.object({ op: z.literal('watch') }),
+  z.object({ op: z.literal('unwatch') }),
+  z.object({ op: z.literal('answer'), id: BeaconId }),
+]);
+export const BeaconRequest = z.object({ t: z.literal('beacon'), op: BeaconOp });
+export type BeaconOp = z.infer<typeof BeaconOp>;
+
+// ---------- analysis and the codex (P1.E08.T04, ARCHITECTURE §22) ----------
+
+/**
+ * Analyze a creature (DESIGN 14.5): `target` is its zone entity (a `mob`) on the world the player stands on. The server
+ * checks the player and the creature (on foot, in range and in sight over the ground, alive) and answers with `analyze`:
+ * the species' codex entry, new with its XP the first time, known after. `time` is the world time it was asked at,
+ * which the server never trusts beyond refusing one stamped seconds away from its clock. `seq` numbers the session's
+ * requests from 1, increasing.
+ */
+export const AnalyzeRequest = z.object({
+  t: z.literal('analyze'),
+  seq: z.number().int().min(1).max(0xffffffff),
+  time: z.number().min(0).max(1e12),
+  target: EntityId,
+});
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -233,6 +345,10 @@ export const ClientMessage = z.discriminatedUnion('t', [
   SkillsRequest,
   CutsceneRequest,
   QuestRequest,
+  MineRequest,
+  FireRequest,
+  BeaconRequest,
+  AnalyzeRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -266,6 +382,14 @@ export const WorldState = z.object({
   serverTime: z.number(),
 });
 
+/**
+ * A hit the server resolved (ARCHITECTURE §20), sent each tick to the sessions whose interest holds its target or its
+ * source: `source` the attacker's entity (null: no one), `target` the one hit, `amount` the hit's damage (after
+ * resistances, all of it though less health was left; several hits of one source on one target in a tick are summed),
+ * `damageType` what dealt it (`weapon`, `ability`, `attack`, `hazard`), `ability` its id (the weapon, skill node or
+ * creature attack), `killed` whether it died (a creature) or went down (a player), and (protocol 10) `hp`, the fraction
+ * of its health left.
+ */
 export const CombatEvent = z.object({
   kind: z.literal('combat'),
   source: EntityId.nullable(),
@@ -274,6 +398,7 @@ export const CombatEvent = z.object({
   damageType: z.string().max(24),
   ability: z.string().max(48).optional(),
   killed: z.boolean(),
+  hp: z.number().min(0).max(1).optional(),
 });
 export const QuestEvent = z.object({
   kind: z.literal('quest'),
@@ -292,11 +417,20 @@ export const ChatEvent = z.object({
   text: ChatText,
   at: z.number(),
 });
+/** What a character was given from `from` (a creature it helped kill …): an item or resource, or `units`; the inventory
+ * itself arrives as `inventory` state. `count` is what reached the inventory. */
 export const LootEvent = z.object({
   kind: z.literal('loot'),
   item: z.string().max(48),
   count: z.number().int().positive(),
   from: EntityId.nullable(),
+});
+/** XP a character earned from `from` (its share of a kill, protocol 10), and the level it now stands at. */
+export const XpEvent = z.object({
+  kind: z.literal('xp'),
+  amount: z.number().int().positive().max(1e9),
+  from: EntityId.nullable(),
+  level: z.number().int().min(1).max(50),
 });
 /** A toast for the player (docking granted, pulse drive interrupted …). */
 export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string().max(280), tone: z.enum(['info', 'good', 'warn']) });
@@ -309,7 +443,7 @@ export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string(
  */
 export const PartyNews = z.enum(['invite', 'invited', 'declined', 'expired', 'joined', 'left', 'kicked', 'leader', 'disbanded']);
 export const PartyEvent = z.object({ kind: z.literal('party'), what: PartyNews, name: CharacterName.optional() });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, NoticeEvent, PartyEvent]);
+export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
 /** One member as its party sees it: cheap on purpose (a party frame needs no more). */
@@ -332,11 +466,11 @@ export const PartyView = z
 export const PartyState = z.object({ t: z.literal('party'), party: PartyView.nullable() });
 export type PartyView = z.infer<typeof PartyView>;
 
-/** Why a chat message or party request was not carried out. */
+/** Why a chat message, party request or beacon request was not carried out. */
 export const DeniedCode = z.enum([
-  /** this account sends chat or invites too fast; `retryS` */
+  /** this account sends chat, invites or beacons, or asks for the beacon list, too fast; `retryS` */
   'rate',
-  /** the shard channel (or the invitee's pending invites) is full right now; `retryS` when it is the channel */
+  /** the shard channel (or the invitee's pending invites, or the shard's beacons) is full right now; `retryS` when it is the channel */
   'busy',
   /** this account may not chat until `retryS` from now */
   'muted',
@@ -362,13 +496,30 @@ export const DeniedCode = z.enum([
   'not_member',
   /** promote names a member whose connection is down */
   'offline',
-  /** the inviter has gone (offline, in no party) */
+  /** the inviter has gone (offline, in no party); or a story beacon's caller is not in its instance just now */
   'gone',
+  /** raising a beacon while in no instance */
+  'no_phase',
+  /** raising a beacon in an instance no beacon calls aid to (a hangar bay, a phase a cutscene plays in) */
+  'kind',
+  /** raising a beacon while yours (or one for your instance) is up already */
+  'raised',
+  /** no such beacon is up (it ended, or never was); lowering with none up */
+  'unknown',
+  /** answering a beacon from another star system */
+  'elsewhere',
+  /** answering a beacon from outside its instance's place: go there first */
+  'far',
+  /** answering a beacon while in an instance already */
+  'in_phase',
+  /** the instance has no open slot (raising, or answering) */
+  'full',
 ]);
-/** A chat message or party request the server did not carry out, sent to its sender only. `of` is what was asked. */
+/** A chat message, party request or beacon request the server did not carry out, sent to its sender only. `of` is what
+ * was asked (`raise`, `lower`, `answer` and `watch` are beacon requests; a `watch` is refused only for `rate`). */
 export const Denied = z.object({
   t: z.literal('denied'),
-  of: z.enum(['chat', 'invite', 'accept', 'decline', 'leave', 'kick', 'promote']),
+  of: z.enum(['chat', 'invite', 'accept', 'decline', 'leave', 'kick', 'promote', 'raise', 'lower', 'answer', 'watch']),
   code: DeniedCode,
   /** seconds before asking again may succeed (rate, busy, muted) */
   retryS: z
@@ -424,6 +575,173 @@ export const QuestsState = z.object({
   error: questErrorCodeSchema.optional(),
 });
 
+/** Why a mining hit did nothing: `stale_seq` (its number is not above the last), `rate` (hits too fast), `stale` (stamped
+ * too far from the server's clock), `zone` (the player is in no zone), `mode` (not on foot), `world` (the frame is not the
+ * world the player is on, or it has no nodes), `unknown` (no such node there, or no such flora on this world), `busy`
+ * (the world's ground is still being planned: try again), `harvested` (it is waiting to grow back, or that plant was
+ * harvested already), `range` (too far), `los` (the ground is in the way), `heat` (the multitool is overheated). */
+export const MineRefusal = z.enum(['stale_seq', 'rate', 'stale', 'zone', 'mode', 'world', 'unknown', 'busy', 'harvested', 'range', 'los', 'heat']);
+/**
+ * A mining hit's answer, and a share of a node's yield: `hit` with `hp`, the fraction of the node (or plant) left (0–1);
+ * `depleted` when it broke, with `item` and `count`, this character's share of its yield (by the damage it did; all of a
+ * plant's) and `added`, what of it the inventory held (less when it was full); `refused` with `reason`, and nothing
+ * changed. It names the node hit, or the client's key for the flora hit. `seq` is the hit answered, or 0 for a share of a
+ * node another player broke. The fields differ from the request's, so one `mine` type serves both directions
+ * (encodeMessage).
+ */
+export const MineState = z
+  .object({
+    t: z.literal('mine'),
+    seq: z.number().int().min(0).max(0xffffffff),
+    frame: WorldFrameId,
+    node: NodeId.optional(),
+    flora: FloraRef.optional(),
+    result: z.enum(['hit', 'depleted', 'refused']),
+    hp: z.number().min(0).max(1).optional(),
+    reason: MineRefusal.optional(),
+    item: z.string().max(48).optional(),
+    count: z.number().int().min(0).max(1_000_000).optional(),
+    added: z.number().int().min(0).max(1_000_000).optional(),
+  })
+  .refine((m) => (m.node === undefined) !== (m.flora === undefined), 'an answer names the node or the flora hit')
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
+  .refine((m) => (m.result === 'hit') === (m.hp !== undefined), 'a hit, and only a hit, says what is left')
+  .refine(
+    (m) => (m.result === 'depleted') === (m.item !== undefined && m.count !== undefined && m.added !== undefined) && (m.added ?? 0) <= (m.count ?? 0),
+    'a depletion, and only a depletion, names the share and what of it was added',
+  );
+/** The state of one cell's touched nodes: those harvested and waiting to grow back (`gone`), and those damaged with the
+ * fraction of each left (`hurt`). A cell with neither is as the scatter places it: the client forgets what it held. */
+export const NodeCellState = z.object({
+  cell: NodeCellId,
+  gone: z.array(NodeInCell).max(128),
+  hurt: z.array(z.tuple([NodeInCell, z.number().min(0).max(1)])).max(128),
+});
+/**
+ * Resource nodes as the server holds them (ARCHITECTURE §18), for the cells round the player on world `frame`: pushed
+ * whenever a cell in view changes, as one comes into view and (empty) as one is forgotten. `reset` starts the world over:
+ * every cell the client held for it goes, and these are all it now holds (sent as the player arrives on a world).
+ */
+export const NodesState = z.object({
+  t: z.literal('nodes'),
+  frame: WorldFrameId,
+  reset: z.boolean().optional(),
+  cells: z.array(NodeCellState).max(128),
+});
+
+/** Why a shot did nothing: `stale_seq` (its number is not above the last), `zone` (the player is in no zone), `weapon`
+ * (its ship has no gun fitted), `rate` (faster than the gun's cooldown allows), `stale` (stamped too far from the server's
+ * clock), `mode` (not flying a ship, as the server believes), `down` (the player is down), `frame` (aimed in another frame
+ * than the one its pose is in), `aim` (the guns cannot point that far off the ship's nose), `busy` (the world's ground is
+ * still being planned: try again). */
+export const FireRefusal = z.enum(['stale_seq', 'zone', 'weapon', 'rate', 'stale', 'mode', 'down', 'frame', 'aim', 'busy']);
+/**
+ * A shot's answer (ARCHITECTURE §20): `hit` and the entity hit (its damage, death and loot follow as events), `miss`
+ * (nothing in the gun's range along the aim), `blocked` (the first thing along it was behind the ground), or `refused`
+ * with `reason`. The fields differ from the request's, so one `fire` type serves both directions (encodeMessage).
+ */
+export const FireState = z
+  .object({
+    t: z.literal('fire'),
+    seq: z.number().int().min(1).max(0xffffffff),
+    result: z.enum(['hit', 'miss', 'blocked', 'refused']),
+    target: EntityId.optional(),
+    reason: FireRefusal.optional(),
+  })
+  .refine((m) => (m.result === 'hit') === (m.target !== undefined), 'a hit, and only a hit, names what it hit')
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why');
+
+/** The instances a beacon calls aid to: a quest step's story phase (answering joins the caller's party), an event, a raid. */
+export const BeaconKind = z.enum(['story', 'event', 'raid']);
+/** What a beacon's place is called, as the server names it: plain text, at most 64 UTF-16 units. */
+export const BeaconPlace = PlainText(64);
+/**
+ * A beacon as the shard sees it (ARCHITECTURE §21): its instance's kind, star system (galaxy index) and place (a sphere in
+ * one of the system's frames, which answering needs you inside), what the place is called (a quest's title, an event's
+ * site), who raised it, its open slots of `cap`, and the world times it was raised and lapses.
+ */
+export const BeaconView = z
+  .object({
+    id: BeaconId,
+    kind: BeaconKind,
+    system: z.number().int().nonnegative().max(1023),
+    frame: FrameId,
+    center: Vec3,
+    radius: z.number().positive().max(MAX_POS),
+    place: BeaconPlace,
+    /** a story instance's quest */
+    quest: questIdSchema.optional(),
+    from: CharacterName,
+    open: z.number().int().min(1).max(64),
+    cap: z.number().int().min(2).max(64),
+    at: z.number().min(0),
+    until: z.number().min(0),
+  })
+  .refine((b) => b.open < b.cap, 'the caller holds a slot of its own')
+  .refine((b) => b.until > b.at, 'a beacon lapses after it is raised');
+export type BeaconView = z.infer<typeof BeaconView>;
+/**
+ * The shard's beacons, to a session that watches them: `reset` (sent as it starts watching) replaces whatever it held
+ * with `beacons`; otherwise `beacons` are new or changed ones (their open slots) and `gone` the ids of those that ended.
+ */
+export const BeaconsState = z.object({
+  t: z.literal('beacons'),
+  reset: z.boolean().optional(),
+  beacons: z.array(BeaconView).max(BEACON_MAX),
+  gone: z.array(BeaconId).max(BEACON_MAX),
+});
+/** Why a beacon ended: its caller lowered it, its instance filled, closed or was left by the caller, or it lapsed. */
+export const BeaconEnd = z.enum(['lowered', 'full', 'closed', 'left', 'expired']);
+/**
+ * Beacon news, to whom it concerns (refusals are `denied`): `raised` (your beacon is up, as `beacon`: when you raise it,
+ * and again when your character enters the world while it is), `answered` (`name`
+ * joined your instance through it), `joined` (your answer put you in its instance, phase `phase`), `ended` (your beacon
+ * ended, and `why`). The fields differ from the request's, so one `beacon` type serves both directions (encodeMessage).
+ */
+export const BeaconNews = z
+  .object({
+    t: z.literal('beacon'),
+    op: z.enum(['raised', 'answered', 'joined', 'ended']),
+    id: BeaconId,
+    beacon: BeaconView.optional(),
+    name: CharacterName.optional(),
+    phase: z.number().int().positive().optional(),
+    why: BeaconEnd.optional(),
+  })
+  .refine(
+    (m) => (m.op === 'raised') === (m.beacon !== undefined) && (m.beacon === undefined || m.beacon.id === m.id),
+    'a raise, and only a raise, carries the beacon',
+  )
+  .refine((m) => (m.op === 'answered') === (m.name !== undefined), 'an answer, and only an answer, names who')
+  .refine((m) => (m.op === 'joined') === (m.phase !== undefined), 'a join, and only a join, names the phase')
+  .refine((m) => (m.op === 'ended') === (m.why !== undefined), 'an end, and only an end, says why');
+
+/** Why an analysis did nothing: `stale_seq` (its number is not above the last), `rate` (asked too fast), `stale` (stamped
+ * too far from the server's clock), `zone` (the player is in no zone), `mode` (not on foot), `unknown` (no such creature
+ * in the player's zone), `dead` (it is dead), `world` (it is not on the world the player is on), `range` (too far), `busy`
+ * (the world's ground is still being planned: try again), `los` (the ground is in the way), `full` (the codex is at its
+ * bounds, CODEX_LIMITS). */
+export const AnalyzeRefusal = z.enum(['stale_seq', 'rate', 'stale', 'zone', 'mode', 'unknown', 'dead', 'world', 'range', 'busy', 'los', 'full']);
+/**
+ * An analysis' answer: `new` the first time the character analyzed the creature's species, with the codex entry made and
+ * `xp`, what it earned; `known` when its codex held the species already (nothing earned); `refused` with `reason`, and
+ * nothing changed. It names the creature asked about. The fields differ from the request's, so one `analyze` type serves
+ * both directions (encodeMessage).
+ */
+export const AnalyzeState = z
+  .object({
+    t: z.literal('analyze'),
+    seq: z.number().int().min(0).max(0xffffffff),
+    target: EntityId,
+    result: z.enum(['new', 'known', 'refused']),
+    reason: AnalyzeRefusal.optional(),
+    species: codexSpeciesSchema.optional(),
+    xp: z.number().int().min(0).max(1_000_000).optional(),
+  })
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
+  .refine((m) => (m.result === 'refused') === (m.species === undefined), 'an analysis made names the species')
+  .refine((m) => (m.result === 'new') === (m.xp !== undefined), 'a first analysis, and only one, says what it earned');
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -438,6 +756,12 @@ export const ServerMessage = z.discriminatedUnion('t', [
   Denied,
   CutsceneState,
   QuestsState,
+  MineState,
+  NodesState,
+  FireState,
+  BeaconsState,
+  BeaconNews,
+  AnalyzeState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;

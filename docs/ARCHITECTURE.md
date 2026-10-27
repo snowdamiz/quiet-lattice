@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -29,14 +29,17 @@ gateway/ws.ts       WebSocket upgrade (token in the first message), one Session 
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
-social/             SocialService: chat channels, parties and invites, and their limits (§13)
+social/             SocialService: chat channels, parties and invites, and their limits (§13); call-for-aid beacons (§21)
 cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§15)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
+resources/          ResourceService: mining hits, resource nodes' shared state per cell, what each player is sent (§18)
+combat/             each zone's health, damage path, deaths and combat events; CombatService: shots, kills' rewards (§20)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
+codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 sim/                server-side systems added by later tasks: movement validation, combat…
 admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
 cli/                the developer CLI (`pnpm --filter @astra/server cli -- <command>`): over the admin channel, or --direct
@@ -107,24 +110,33 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests); a unit test pins the number and
-  checks the history, so two branches bumping to the same number conflict at merge rather than share it.
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
+  11 beacons, 12 analysis); a unit test pins the number and checks the history, so two branches bumping to the same
+  number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
-  vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
-  trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
+  vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
+  sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
+  passed, §7, so the client must stamp it and step it forward, never back, when it falls more than a second behind; an
+  input without one, 0, is judged on its arrival; `mode` is a prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
-  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17). Each socket's
-  message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
-  interactions, chat, party, inventory, skill, cutscene and quest requests, and the burst absorbs the backlog of a
-  stall. Chat and invites have far smaller limits of their own, per account (§13).
+  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
+  frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21), `analyze {seq,
+  time, target}` (§22). Each socket's message budget is 60 a second with a burst of 120: input and acks take 40, leaving
+  room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and beacon requests, mining hits
+  (an honest client sends 4 a second, and 8 is the most a character may), shots (the base gun's 8 a second at most,
+  never while mining) and analyses, and the burst absorbs the backlog of a stall. Chat, invites, raising beacons, mining
+  hits, shots and analyses have smaller limits of their own (§13, §18, §20, §21, §22).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
+  `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
-  character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
-  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests, error?}` (§17), and
+  character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message, party request or beacon request
+  not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
+  error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
+  reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
+  id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), and
   snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
@@ -159,6 +171,34 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   | 'ended' | 'refused', id, phase, reason?}`, `phase` being the story phase the player is in while it plays (snapshots
   do not say), `reason` one of `unknown`, `denied`, `cooldown`, `busy`, `place`, `phase`, `zone`. Ids are a-z, 0-9 and
   `_`.
+- **Mining** (protocol 8, §18): a client sends `mine {seq, frame, node, tool: 'multitool', time}` (a resource node of the
+  world `frame`, the spec's `face_i_j_type_k`) or `mine {…, flora: {kind, ref, at}}` (a plant or rock of its own flora:
+  its kind, its own key for it, where it stands) about every quarter second while its beam stays on; `seq` counts from
+  1 and increases, `time` is never trusted for speed. The server answers each with `mine {seq, frame, node | flora,
+  result}`: `hit` with `hp` (the fraction left), `depleted` with `item`, `count` (this character's share) and `added`
+  (what of it fitted), or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `world`, `unknown`,
+  `busy`, `harvested`, `range`, `los`, `heat`). `seq` 0 is a share of a node another player broke. `nodes {frame, reset?,
+  cells: [{cell, gone, hurt}]}` keeps a player on a world up to date with the touched nodes round it (`cell` is
+  `face_i_j`, nodes in it `type_k`; `hurt` pairs a node with the fraction left); a cell with neither list is as the
+  scatter places it, and `reset` replaces everything the client held for that world.
+- **Combat** (protocol 10, §20): a client sends `fire {seq, time, frame, aim}` for each shot of its ship's base gun, a
+  strict shape (a shot carrying any other field, an amount above all, is refused whole); the server answers each with
+  `fire {seq, result}`: `hit` with `target`, `miss`, `blocked` (behind the ground) or `refused` with `reason`
+  (`stale_seq`, `zone`, `weapon`, `rate`, `stale`, `mode`, `down`, `frame`, `aim`, `busy`). What hits did arrives as
+  `combat` events (now with `hp`, the fraction the target has left; `damageType` is what dealt it, `weapon`, `ability`,
+  `attack` or `hazard`, and `ability` its id), a kill's rewards as `xp {amount, from, level}` and `loot {item, count, from}`
+  events (`item` `units` for money). No client message carries an amount of damage; no event is ever taken from a client.
+- **Beacons** (protocol 11, §21): a client sends `beacon {op}`, `op` one of `raise`, `lower`, `watch`, `unwatch` and
+  `answer {id}`; the server sends a watcher the shard's list (`beacons`: `reset` and the whole list as it starts
+  watching, then new or changed beacons and the ids `gone`), the beacon's caller and answerer their news (`beacon {op:
+  'raised' | 'answered' | 'joined' | 'ended', id, …}`, one field per op), and refusals as `denied {of: 'raise' | 'lower'
+  | 'answer' | 'watch', code}` with the codes `no_phase`, `kind`, `raised`, `unknown`, `elsewhere`, `far`, `in_phase`,
+  `full` beside the social ones (`rate`, `busy`, `self`, `in_party`, `gone`). One `beacon` type serves both directions.
+- **Analysis** (protocol 12, §22): a client sends `analyze {seq, time, target}`, `target` a creature's entity id; the
+  server answers each with `analyze {seq, target, result}`: `new` with `species` (the codex entry, `CodexSpecies`: key,
+  world, index, name, temperament, threat, body plan, Bond eligibility, when first analyzed) and `xp`, `known` with
+  `species`, or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `unknown`, `dead`, `world`,
+  `range`, `busy`, `los`, `full`). `seq` counts from 1 and increases; `time` is checked only for staleness.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -178,8 +218,9 @@ nearest system (P1.E04.T04).
 The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
 landed players sit in their ships), is a ship; a player on foot, an NPC or a prop is a walker; a mob is a mob; loot and
 loot pods are loot. An entity already in view stays in it until it is 5% beyond its radius, so one at the edge does not
-enter and leave every tick. Until movement authority (P1.E03.T04) validates `mode`, a client picks its own class through
-it. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5 minutes empty.
+enter and leave every tick. A player's mode is the one movement authority believes (§7): a client claiming `foot` while it
+flies is corrected and stays a ship. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5
+minutes empty.
 
 ### 6.1 Phases
 
@@ -196,7 +237,12 @@ players, `event` and `raid` 12.
   phase at a time; placing it elsewhere takes it out of the old one. A member's party is the `partyId` it was placed
   under, which it keeps; without one, its entity's party tag as it stands (which the party service keeps, §13). A story
   phase never holds two parties: re-asked, or coming back, under a party its others are not in, a
-  player goes to another phase.
+  player goes to another phase. `enter(viewer, phaseId, partyId?)` puts a player in one phase by name instead (a
+  call-for-aid beacon's answer, §21): under the same cap and party rule (`full`, changing nothing), a place kept for its
+  character there taken back as `phaseFor` takes it back, any other phase left; a member asked under a new party takes
+  it when the phase's others are all of it. It never moves the entity, so movement authority's judging goes on as before.
+  `release(characterId)` gives up a place kept for a character whose connection is down, as its grace running out would
+  (a beacon's helper no longer of the party, §21).
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
   players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
@@ -216,7 +262,7 @@ players, `event` and `raid` 12.
 
 ### 6.2 Fauna
 
-DESIGN 12.2, P1.E08.T01; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
+DESIGN 12.2, P1.E08.T01 and T03; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
 docile and skittish species, then the hostile ones each tier pass appends on a random stream of its own, so the list
 only grows with the tier and an index names the same species at every tier. The zone ticks a `FaunaSim` at the start of
 each step, at the zone's tier: the zone manager passes the world service's tier when it opens the zone and calls
@@ -226,7 +272,7 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   ground: a cell wakes when a player comes within 400 m of its centre and spawns the herd planned for it from the world's
   seed and the cell alone, so everyone meets the same herd there; with no player within 500 m it sleeps (its creatures
   stand still, unsimulated), and after 30 s asleep its creatures are despawned. Ambushers and the apex come only from
-  dens (`FaunaSim.spawnHerd`, P1.E08.T03).
+  dens (below).
 - **Bounds** (a pose is a client's claim until movement authority, and fauna holds its own limits anyway): a player
   wakes at most 4 new cells a second (40 at once, on arrival; one allowance per player across the zone's worlds), a
   world keeps at most 256 cells and a zone at most 150 creatures, so 50 players on foot stay within the 200-entity
@@ -235,17 +281,55 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
 - **Ground.** The drawn ground (§12, `drawnGround`'s pads), its heights cached per cell on a 1 m lattice. Planning a
   world's surface takes 5–100 ms, so it runs in a worker thread (`fauna/planner.worker.ts`) from the moment a player
   enters the world's frame; its cells load once it is ready. The 16 worlds most recently asked for keep their ground.
+  The plan also carries the sites' clearance, so the same ground serves the resource nodes (§18): one plan per world.
   The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
   with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
-  doubling each time, with one warning each time.
+  doubling each time, with one warning each time. A world's dens at the zone's tier come from the same worker and the
+  same plan: shared `worldSurface` plans the whole surface once (`planWorld`: the drawn ground's pads and sites'
+  clearance, to the bit, and every den of the tier, each naming which of the world's species lives in it, §12). The
+  dens cost 50–600 ms more on a large world at Tier 3, so they are asked for with the ground but as a request of their
+  own, kept per world and tier: the ground (`planGround`) comes back first, without them, and the dens' reply carries
+  the ground of its plan too, kept with its clearance (`Ground.nodes`) when no ground is kept yet. Tests hold the pads,
+  the nodes' clearance and the dens to one plan.
+- **Night** (`fauna/sky.ts`) is the meters' rule from the shared kinematics: night at a point when its star is on or
+  below the horizon of the point's own up. At night a cell may also send out its night herd, always one of the herd
+  spawner's predators, planned from the world's seed and the cell on a stream of its own with
+  (`FAUNA_SPAWNING.nightPredatorSpawnMult` − 1) times the chance its day herd is a predator's, so night doubles the
+  predators the herd spawner places (DESIGN 12.2, 12.8). It comes out once a night, when night falls on an active cell
+  or the cell wakes at night, and stays until the cell unloads.
+- **Dens** (DESIGN 12.2, `fauna/dens.ts`) live in the cells they stand in: while its cell is active a den keeps its
+  occupants out, as herds of the cell homed on the den. A predator den keeps its pack out, and at night a second, once a
+  night; an ambusher's burrow beside a site keeps its one or two ambushers lurking on it until a player comes within 8 m;
+  the apex's lair, in the landmark grove (the most wooded of the places a lair could go, `planDens`), sends out the apex
+  and its pack at night only, and at dawn the apex heads home once it has no one to fight and goes into its lair. A
+  den's herd that loses its occupant (a pack wiped out; the apex killed, its pack then hunting on as an ordinary herd of
+  the cell) is replaced after 300 s (the apex after 1,800 s, at night), a timer the zone's fauna keeps while the zone
+  runs, beyond the cell's life; a pack that only unloads with its cell comes back when the cell next loads. A
+  once-a-night spawn (a cell's night herd, a den's night pack) is due again from the first day after it, its cell awake
+  or asleep.
+  Night herds and dens' occupants spawn at each scan under the cells' load budget, never within 70 m of a player (the
+  herd spawner's nearest), and only when the zone has room (they try again at the next scan). Dens spawn whether or not
+  they are drawn: a den is a spawn anchor, not geometry. `FaunaOptions.dens` (as `spawner` by default) turns them off.
 - **Phases.** A player the shared world cannot see (`phases.hiddenFromShared`: sealed in a bay, event or raid phase, §6.1) still keeps the herds
   round it awake, since it sees them, but is no creature's prey, intruder or threat.
 - **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
   (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,
+  return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow, and `dead` for a corpse (§20). Hostile creatures
+  pick targets from a threat table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, and every
+  hit combat deals adds its damage (`FaunaSim.hurt`), so a creature turns on whoever hurts it most (and a grazer bolts);
+  only a player on foot is one it can go for. The zone's metrics carry its fauna's worlds, creatures, cells by state and
+  herds out at dens.
+- **Death** (P1.E06.T02, §20): combat reads a creature's species, herd level and size (`FaunaSim.creature`,
+  `creaturesIn`), and one it kills leaves its herd at once (`FaunaSim.kill`): the AI forgets it, and its herd and den see
+  the loss as they see a despawn (a pack wiped out starts its den's 300 s timer then, an apex its 1,800 s one, its pack
+  hunting on), while its entity stays a corpse for the death beat before combat despawns it.
   return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow. Hostile creatures pick targets from a threat
   table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, `FaunaSim.hurt` adds damage. The
-  zone's metrics carry its fauna's worlds, creatures and cells by state.
+  zone's metrics carry its fauna's worlds, creatures, cells by state and herds out at dens.
+- **Analysis** (§22) reads a creature as its entity has it (kind `mob`, `species`, `frame`, `pos`, `hp`: a corpse, hp 0,
+  is refused `dead`) and its species from the world's whole list (`faunaSpecies` at `FAUNA_MAX_TIER`, so an index is the same species at every
+  tier); line of sight is over the ground this zone's fauna walks on (`FaunaSim.grounds` at its tier).
 
 ## 7. Authority
 
@@ -253,6 +337,92 @@ Following IMPLEMENTATION_PLAN 0.3: the client sends inputs and its predicted pos
 and walker speed caps and the shared terrain sampler, corrects with `correction` when the error exceeds tolerance, and
 decides damage, loot, inventory, quests, economy, skills and the meter. Client-reported outcomes (damage dealt, items
 picked up, quest steps done) are never trusted; they are requests the server re-evaluates.
+
+**Movement** (`packages/server/src/sim/movement`, P1.E03.T04). Every zone the ZoneManager opens checks each player input
+before applying it.
+
+- *Time.* Speed is judged on the client's own clock: a pose is judged at the time its client stamped it (`input.time`),
+  an honest client's poses and times being its own trajectory. (This reverses the flight contract as P1.E12.T01 first
+  wrote it, where the server measured elapsed time itself.) The network's delays cancel within these bounds
+  (`MOVEMENT.time`), which keep the time credited between two inputs from running ahead of the real time that passed by
+  more than a small fixed slack:
+  - an input is credited with the time its client says passed since the one before, never less than none (a clock
+    stepped back costs that one input's time);
+  - and no more than its arrival gap, plus 0.05 s out of a 0.5 s bank that only real time no input claimed refills, plus
+    0.05 s of what is owed: the real time its running clock left unclaimed in the last 10 s, as its inputs fell behind
+    (a latency rise, a stall). So jitter of up to half a second cancels outright, a backlog drains however it arrives,
+    bunched or over seconds, and a latency spike falls back; a clock standing still while time passes is owed nothing
+    and banks half a second at most; one run fast is held to real time once the bank is spent;
+  - and never more than 0.3 s ahead of arrival.
+  - The envelope, as measured: the total time credited is at most the real time elapsed, plus the 0.5 s bank, plus
+    0.3 s ahead of arrival, and what is owed expires 10 s after it accrued. Within that, a client sending at 60 Hz
+    (inside its message budget) can be credited up to 3.9 times real time for 3.4 s; and one that stood still for 6 to
+    10 s with a trickling clock can claim about 6 s of allowance in one tick (some 10 km at the boost cap). That is the
+    envelope of an honest stall's backlog arriving at once after a silence, which is accepted: nothing beyond it is open.
+  - A clock stepped forward past what it can be credited (the client steps a clock that has fallen more than a second
+    behind, as after a hidden tab's pause) is not cashed in: the credited time re-syncs to it with no movement credit for
+    the step, and judging starts a fresh window there (at most once in 10 s).
+  - The bodies are placed at the credited time (to within 10 ms), so the pose's frame, clearance and air are the
+    client's; but never trailing the input's arrival by more than a second plus what is still owed. A stamp lagging its
+    arrival by more than a second is a backlog only while that lag drains (by half a second within every 3 s); one that
+    does not is stale, and placed at its arrival (the client never keeps such a lag: it steps its clock forward).
+  - A client that sends no time (0) is judged and placed on its arrival times: no jitter is cancelled for it. The game's
+    client stamps `time`.
+
+- *The pose* must be in a frame the shared rule (`selectFrame`) allows there, and change frame only where the rule does
+  (out of a sphere 5% beyond it, into one inside it; the last pose in the old frame is taken as carried by that frame to
+  the new pose's time, so a page that stalled for seconds and changes frame on its way back is judged on its own
+  movement, the frames' drift allowed over a tenth of a second at most); a ship may not be below the ground (the shared
+  terrain sampler, levelled under cities and sites exactly as the client levels it, sampled only below a ceiling no terrain reaches: the
+  ground fauna walks on, `drawnGround` at the system's tier, planned in the server's worker thread once a player is in
+  the world's frame; a pose that needs it before it is ready is let through provisionally and judged again, with every
+  input after it, as soon as it is, and refused back to where that began if it is not ready within 5 s), in a gas
+  giant's depths, or with its centre inside the
+  Waystation's hangar shell grown by its 6 m collision sphere (`STATION_LAYOUT` in `@astra/shared/data`; the rest of the
+  station's colliders arrive with P1.E11.T02); a walker may not be below the ground, outside the hangar (Grav Boots
+  aside), or more than 400 m over the ground for longer than 45 s.
+- *The mode* must be legal there: the pulse drive only out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM`
+  to engage, `dropOutM` while cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world,
+  2 km over its ground; `landed` only on a world's dry ground; `docked` only on a Waystation pad no other ship holds (a
+  joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
+  a world's ground or in a hangar, and only out of a landed or docked ship, which it can board again only from beside it.
+  In mode `ship` the `boost` button bit raises the caps to the boost cap, and air thicker than `AIR.flightModelFrom` to
+  the `atmo` cap: a client must send the bit while it boosts.
+- *The move* from the last valid pose: no further than its allowance covers in the time since (at most a second of it,
+  whatever silence came before: the client moves its ship a clamped 66 ms frame at a time), plus a tenth of a second's
+  worth and 25 m (anti-teleport); and not through the ground, nor a flying ship's centre through the hangar's
+  shell, further than the client's own once-a-frame collisions could miss (one 66 ms frame at its speed, the speed no
+  more than its allowance; steps are sampled against the terrain only when that long).
+- *Speed* follows the flight contract (`FLIGHT_TOLERANCE` in `@astra/shared/ships`): displacement over windows of at
+  least 1 s, judged against the larger allowance at the window's two end poses; a window not yet 1 s long is judged from
+  its start. A window carries on across a change of frame (its earlier poses re-expressed in the new frame as of the
+  change, since the client turns its velocity into the new frame without the frames' relative motion, which is allowed
+  for over the crossing step) and across changes among `space`, `boost` and `atmo` (each end pose its own allowance, with
+  the contract's decay). Between the engines, the pulse drive and rest a new stretch starts from the old one's last pose,
+  taken in the new mode's terms. Getting out and boarding carry the accounting too: the walker's first pose is judged as
+  a walker's move from where the client sets it down (`Game.exitShip`: 11 m left and 3 m ahead on the ground, or 8 m left
+  in a hangar), and a boarded ship's first pose as a ship's move from where it was left. A walker's windows are judged
+  across the ground (`walkerCaps`: the sprint, Sprint Stride's 11.5 m/s, the jetpack's push), upward (its climb plus the
+  highest ground along its path, which lifts it) and downward (`walkerFall`: no faster than a fall from where it last
+  touched the ground).
+- *Refused*, an input is not applied (its `seq` still counts for `ack`): the server sends `correction {seq, pose, mode}`,
+  `seq` being the refused input's and `pose` the last pose it can vouch for (for a window that was too fast, the
+  window's start), puts the entity there, and logs the account, character, rule and the measured and allowed values.
+  Inputs from the old trajectory are refused quietly for a second, or until one fits the corrected pose, so corrections
+  come at most once a second; 8 corrections within 30 s and the session is refused with `kicked`. An accepted input's
+  reported velocity is held to its allowance.
+- A pose the server did not watch arrive (a saved one, restored at login) is checked by `poseProblem` against the same
+  pose and mode rules; a character saved on foot also needs the ship it left (`parked`, saved with it) where a ship can
+  rest. The gateway has the planner plan the saved pose's world's ground before the check (`groundForRestore`), so it
+  never plans on the main thread; one it still cannot judge is not vouched for. Persistence restores any other docked at
+  home (§8).
+- *Combat* (§20) reads only what movement authority believes: a shot is fired from the zone entity's accepted pose
+  (carried on along its accepted velocity to the shot's time, a tenth of a second at most) and only in mode `ship`, its
+  aim held to the believed nose, and a hit's damage lands on the pool the believed mode says (the suit on foot, the
+  ship's shield and hull aboard).
+- A pose the server gives a character in play (an admin teleport within its zone, P1.E03.T07) re-seats its mover as a
+  join does (`MovementAuthority.remove`, then `add` at that pose; a docked one on whichever pad is free, `freePad`), so
+  its client's next input is judged from there.
 
 ## 8. Persistence
 
@@ -262,20 +432,28 @@ and daily rolls are in `count_votes` and `count_days` (§11). Migrations are gen
 `pnpm db:migrate`.
 
 **Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
-component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx), check?(value,
-ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry `{"v": <schema version>, "data":
-<value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own columns. Components load in
-registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers (`components.ts`,
-`coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the ship and inventory
-read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
-second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
-layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `pose` (`{system, pose, mode}`,
-read from the character's zone entity) and, when the server has a quest runtime, `quests` (§17: held by the runtime;
-refused, never replaced, when unreadable).
+component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx),
+reconcile?(value, ctx), check?(value, ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry
+`{"v": <schema version>, "data": <value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own
+columns. Components load in registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers
+(`components.ts`, `coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the
+ship and inventory read; reconciled with the skill web on load), `ship` (`ShipLoadout | null`, the Lark by default,
+checked with `shipStats` under the owned nodes, so Pack Mule's second pod loads; pods beyond its bays, which only a data
+change makes, are given back on load, logged), `inventory` (its layout re-derived from the ship and the owned nodes on
+load, `applyLayout(saved, layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `pose`
+(`{system, pose, mode, parked?}`, read from the character's zone entity, `parked` being where a character on foot left its
+ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a saved pose inside the ground, in the
+hangar's shell, docked off a pad or on foot with no ship to board is not restored), `codex` (§22: the species analyzed,
+per world, `v` 1, held by the codex service; reconciled with the species data on load; refused, never replaced, when
+unreadable) and, when the server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when
+unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
-  an older `v` is migrated one version at a time and written back at the next save. A value that cannot be read (a newer
+  an older `v` is migrated one version at a time and written back at the next save. A value the game's data has moved on
+  from (the skill web changed) is brought in line by the component's `reconcile`, after the schema and before `check`, so
+  every later component reads the result; it logs what it changed and the result is written back at the next save (a live
+  capture and an edit's values are never reconciled: they are this build's). A value that cannot be read (a newer
   `v`, no migration, the schema or `check` fails) follows `onInvalid`: the pose falls back to docked at the home
   Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement); every other
   component refuses the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries
@@ -322,7 +500,9 @@ refused, never replaced, when unreadable).
 (`onInvalid: 'refuse'` for anything a player earned), and register it in `coreRegistry` after the components it reads and
 before those that read it (skills, P1.E07.T01, go before the ship and the inventory, which pass the owned nodes to
 `shipStats` and `layoutFor`). No SQL migration: it is a new key in `state`. To change a stored shape later, raise `v`
-and add `migrations[oldV]`. State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
+and add `migrations[oldV]`; when the game data a stored value reads changes instead (ids renamed or removed), give the
+component a `reconcile` that brings the value in line on load (skills, §14; quests reconcile in their runtime's `open`,
+§17). State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
 store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
@@ -345,8 +525,9 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
   `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
   after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
-  nobody listens for (`party`, `denied` …) are dropped quietly, and so are snapshot fields and entity kinds nothing reads
-  yet (a `mob`'s `attack` is kept in the store for P1.E04.T02). While the connection is down after a welcome, a line at
+  nobody listens for (`party`, a chat or party `denied` …) are dropped quietly, and so are snapshot fields and entity
+  kinds nothing reads yet (a `mob`'s `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21)
+  keeps the call-for-aid beacons it is sent. While the connection is down after a welcome, a line at
   the top of the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
   onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
@@ -442,13 +623,22 @@ pads, only once dens are drawn (`DENS_DRAWN`, which P1.E14.T10 turns on with the
 them into the drawn ground. The client's `Planet` plans with it at the tier its `SolarSystem` was built for, its `Flora`
 scatters on that planet's ground, and the server's resource nodes (P1.E13.T01) call the same function.
 
+A den's place depends on who lives in it (P1.E08.T03): `planDens` houses each den with one of the world's own species,
+its whole list (`faunaSpecies(params, FAUNA_MAX_TIER)`, worked out inside the shared planner, so no caller passes it or
+can leave it out; the list at any tier is a prefix of it, so a den's occupant never changes with the tier and a den
+whose species the world does not carry yet stands empty), and a predator den is the kind its predator lives in (burrow,
+nest or roost), whose footprint sets where it fits and the pad it levels. `worldSurface(params, tier)` is that whole
+plan at once: the drawn ground (exactly `drawnGround`'s: the same code makes both) and every den of the tier, drawn or
+not. The dens the server's fauna spawns at, the pads its ground and the client level and the sites' clearance the
+resource nodes keep off all come from it (`planWorld`, §6.2): one plan, tested to agree.
+
 Resource nodes (P1.E13.T02, `world/resourceNodes.ts`) are the spec's to place: `planetNodeLayers(params, tier)` says which
 node types a world carries, and `scatterNodes(ground, layers, cell)` places the nodes of one ~64 m cell (`nodeCellLevel`,
 `nodeCellsNear`) on the drawn ground, off the pads and outside every site's clearance, in deterministic math only, so the
 server and every browser engine place the same nodes bit for bit (the cross-engine smoke compares them). A node's id is
-`face_i_j_type_k` (`nodeKey`). The client clears its own flora round sites and landed ships, but never a node: the
-nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any under a landed ship, from zone
-state).
+`face_i_j_type_k` (`nodeKey`; `parseNodeKey` reads it back). The client clears its own flora round sites and landed
+ships, but never a node: the nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any
+under a landed ship, from the server's `nodes` state, §18).
 
 ## 13. Social: chat and parties
 
@@ -492,6 +682,8 @@ every chat line, mute and party change goes to the server log for moderation.
   the handoff calls `SocialService.moved(session)`. That is what puts members in each other's interest sets anywhere in
   a zone (§6) and in one story phase through `phaseFor` (§6.1); `SocialService.partyIdOf(character)` gives the id to
   pass as `partyId`.
+- **Call-for-aid beacons** are the social service's too (`social/beacons.ts`, §21): an instance's open slots listed to
+  the shard, and answering one joins it (a story instance's answer joins the caller's party, `Parties.joinWith`).
 - **Party state** `party {party: {leader, members: [{name, online, system, health}]} | null}`: members in join order,
   each one's galaxy system and health in tenths (null while offline); sent after `welcome`, to every online member
   whenever it changes, and null to one who leaves. At each refresh it is rebuilt, compared as plain JSON and encoded
@@ -507,15 +699,37 @@ every chat line, mute and party change goes to the server log for moderation.
 DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 152 points to own them all) is
 `@astra/shared/data`; the per-character value and its rules are `@astra/shared/skills`, pure functions both ends run.
 
-- **State** (`SkillState`, the `skills` component, `v` 1): `granted` (points beyond levels: story chapters, faction chains,
+- **State** (`SkillState`): `granted` (points beyond levels: story chapters, faction chains,
   grants), `unlocked` and `bought` (node ids in the order it happened; bought ⊆ unlocked), `fragments` (per fragment branch,
   Gravitic, Thermal, Resonance, Symbiotic and Void, `{earned, spent}`; never inventory items, DESIGN 15.2) and `slots`
   (`ground`: 6, keys 1–6; `ship`: 5, the roomiest hull's ability slots). The level is never stored: progress owns it, and
   points are `level × 1 + granted − Σ pointCost(bought)`. Nor is the hull: the ship bar works as many slots as the flown
   hull's `abilitySlots` (Lark 2). The schema refuses unknown or repeated ids, a bought node not unlocked, a slotted node not
-  owned or on the wrong bar, and a ledger that spent more than it earned; `skillStateProblem` refuses an owned node whose
-  prerequisites are not owned. Unreadable skills refuse the join. A new character (or one saved before skills existed)
-  starts with its people's node unlocked (DESIGN 5.1), still bought with a point; a load adds it if missing.
+  owned or on the wrong bar, and a ledger that spent more than it earned; `skillStateProblem(state, web)` refuses, for a
+  web (this build's unless given), an unknown node, a bar not the web's size or holding another bar's node, and an owned
+  node whose prerequisites are not owned. A new character (or one saved before skills existed) starts with its people's
+  node unlocked (DESIGN 5.1), still bought with a point; a load adds it if missing.
+- **Stored** (`StoredSkills`, the `skills` component, `v` 2, `stored.ts`; P1.E07.T15): the state plus `web`, the skill
+  web's data version it was stored under (`SKILL_WEB_VERSION`, raised with any change to a node's id, branch, tier, bar or
+  prerequisites or to a bar's size; a test pins the web each version names), and `paid`, what each unlock bought with
+  fragments paid (`{node: {branch, count}}`; other routes pay nothing). Neither is sent to the client. The service keeps
+  `paid` beside the state (the `unlock` request records it) and `stored(id)` is what the component saves. v1 values (the
+  state alone) migrate to web 0 with `paid` read from the ledger: each fragment-routed unlock, in order, credited its
+  tier's fragments while its branch's `spent` lasts, a people's free node (Second Lung, Pulse) only after every other
+  node. The schema checks structure only (`structureProblems`, and `paid` ⊆ unlocked with no more paid per branch than
+  spent). An admin edit reads and writes this stored form (`skillStateOf`, `storedSkills`), reconciled as a join reads it.
+- **Reconcile** (`reconcileSkills(stored, web)`, the component's `reconcile`, at decode, so the ship, the inventory and an
+  edit read the result): a value stored under this web or an older one is brought in line with this build's web; one
+  already in line comes back unchanged. A node the web does not have (renamed to a new id, or removed) is dropped from
+  the unlocks, the owned nodes and the bars, and the fragments its unlock paid go back to its branch (`spent` less
+  them); an owned node left without a prerequisite (re-tiered, moved branch, its support gone) is refunded, repeatedly
+  until every kept node has its own, listed deepest first (capstones, Tier III and conjunctions, II, I; the later bought
+  first among equals); the unlock and what it paid stay. Each bar is resized to the web's (padded or cut) and loses a
+  node no longer owned, on the other bar now, or past its end. Points need nothing: they count owned nodes. One warning
+  per character lists the changes (`{from, to, changes}`), and the result is written back at the next save. Only a value
+  whose structure no web explains, or one stored under a newer web (a server rolled back must not strip nodes it does
+  not know), refuses the join. A refunded Pack Mule leaves the ship a pod without a bay: the ship component gives it
+  back (§8), and the inventory re-lays out, or keeps its saved layout and every item, logged.
 - **The view** sent to the client, `{state, level, shipSlots, met, maxTier}`: `met` is the web's standing gates the
   character meets (`WEB_REQUIREMENTS`: Void's Free Reaches rank) and `maxTier` the server's phase ceiling, so
   `contextOf(view)` lets the client predict every rule.
@@ -595,7 +809,8 @@ decides when one plays; the client presents it.
   step's cutscene plays in the step's phase. The actors spawn once into the phase, in the cutscene's frame at their
   exported poses (turned with the anchor when it is the player), seen only by the phase's members; `done` takes the
   player out, and the last one out closes the phase with its actors. A session that leaves (its socket closes, it is
-  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten.
+  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten. `plays(zone, phase)` says whether cutscenes play in an
+  open phase (one the service has played in, whatever its key), which no call-for-aid beacon may be raised in (§21).
 - **Out of play:** while a player watches, `cutscenes.watching(zone, entity)` is true and the client pauses the
   player's local hazards (pirate raids, the suit's survival damage). The server bounds it: only while the player is in
   the cutscene's phase, and no longer than the cutscene's length, the client's 1.5 s exit and a 5 s margin. Past either,
@@ -806,3 +1021,252 @@ counter (`counter`, default the step's id), so two steps can share one (Forty Na
   `game.questRequest(op)` sends `quest` requests (the journal and the dialogue bar, P1.E09.T03, call it); in the dev
   sandbox the shared engine fills the book from the game's own state and events twice a second. Boards' generated jobs
   (P1.E09.T06) will need their definitions on the wire, since the client knows only the catalog's.
+
+## 18. Resources (`packages/server/src/resources`)
+
+DESIGN 15.3, 16.6 "Resources", P1.E13.T01. Resource nodes are the shared spec's (§12): every machine places them from
+the seeds, the server holds only what players did to them, the same for everyone, and the client draws the scatter less
+what the server says is gone (P1.E13.T06). The gateway makes the `ResourceService` (`ws.resources`), hands it `mine`
+requests and starts its timer.
+
+- **Nodes are not entities.** A cell's nodes are scattered (`scatterNodes` over `drawnGround` at the zone's tier) only
+  when a hit names one of them, and kept (4,096 cells, most recently used). The ground is fauna's (§6.2): its planner
+  plans each world once in its worker thread, and the plan carries the sites' clearance beside the pads (`planGround`),
+  so a fauna `Ground` also serves the nodes (`Ground.nodes`, `resources/ground.ts`); the 16 worlds most recently asked for
+  keep it, and a world's is asked for as a player arrives on it. A touched node (`nodes.ts`) holds its hp, the damage each
+  character did (every character that hit it: those in reach bound how many), and when it heals (`HEAL_S`, 60 s after its
+  last hit) or grows back (`RESPAWN_S`: a plant 3 min, a deposit 5, a formation 8; `respawnSeconds` overrides it). At
+  most 100,000 touched nodes over every world: past that the one due soonest comes back early. Node state is in memory
+  only; a restart brings every node back.
+- **A hit**, cheapest checks first, so a client spamming far nodes costs little: `stale_seq`; `rate` (8 hits at once per
+  character, 8 a second); `stale` (stamped more than 3 s from the server's clock); `zone`; `mode` (on foot, as the zone
+  entity has it: movement authority's believed mode once P1.E03.T04 lands); `world` (the frame is the player's, a rocky
+  world); `unknown` (`parseNodeKey`: a cell on the world's grid, a type the world carries at its tier); `range` before
+  any terrain is sampled (the cell's centre further than reach and a cell); `busy` (the ground is still being planned);
+  `unknown` (no such candidate in the scatter); `harvested`; `range` (35 m from the player's position to the node: the
+  client's 30 m beam and 5 m for the eye, the node's size and a pose a tick old); `los` (the ground sampled every 2 m
+  along the beam from the eye, 1.6 m up, to the node, its ends skipped, blocked where the beam runs 0.75 m under it; rocks,
+  trees and buildings do not block); `heat` (`beam(character, seconds)`: given Heat's meter service as `meters`
+  (P1.E07.T02), a hit counts only while `meters.beamActive(character, now)` says the beam is firing, its button held
+  and out of the overheat lockout, so hits sent with the button off never mine; without it, as until Heat is wired into
+  the gateway's `ResourceService`, the beam never overheats on the server).
+- **Beam time.** A hit is worth the time since the character's last hit that counted, at most 0.5 s (an honest client
+  sends one every 0.25 s), at the multitool's 1.6 hp a second (× 1.5 on minerals with a node flagged
+  `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
+  continuously; nodes and flora share that one beam.
+- **Breaking.** The node's yield is rolled once and split by the damage each character did (whole units, largest
+  remainders first, ties to the first to hit it; `splitByDamage`), so a token hit earns a token share (nothing, a few
+  thousandths of a node) and the one who did the work takes the rest; each share × the character's `mining.yield`
+  (Optical Drill, Hot Hands) and granted into its
+  inventory: what does not fit is reported (`added` below `count`), not kept, and a character out of play loses its
+  share. The breaker's answer carries its share; every other contributor in the zone is sent `mine {seq: 0, result:
+  'depleted', …}`; the inventory is pushed as for any server-side grant. `subscribe(fn)` hears every share
+  (`MinedEvent`: character, zone, frame, node or null, type or flora kind, resource, count, added, `broke`); the gateway
+  passes each to the quest runtime (§17) as `questMineEvent(e)`: `mine {node: <type>, id: <frame>/<node>}` for a node
+  share worth something, so a `mine` step counts distinct nodes (one grown back is the same node), and nothing for
+  flora, whose carbon and ferrite count through `collect` steps.
+- **Common flora** (trees, giant growths, shrubs, ferns, crystal growths, boulders, rocks: carbon and ferrite) is each
+  client's own scatter, not shared nodes. A hit names `flora {kind, ref, at}`: the world must grow that kind
+  (`floraGrows`), `at` must be within 8 m of the ground and in range and sight, the same beam time breaks it
+  (`FLORA_HARVEST`'s hp, the client's numbers) and its yield is granted; the last 256 keys a character broke are refused
+  `harvested`, and so is flora past a budget per patch of ground, counted in hp so a giant growth costs six rocks (24 hp
+  an hour to a character in any 10 m patch; the client's flora holds about 6 hp to a patch, up to about 18 in a clump).
+  Its place cannot be checked against a scatter the server does not have, but its rate is bounded as a node's is (per
+  beam-second, as much as an honest player breaking rocks, far below a deposit's worth), and a modified client standing
+  still and naming plants that are not there gets about 7,500 units an hour from the ~40 patches in its reach, the same
+  whether it names rocks, boulders or giant growths: below what an honest beam held on rocks earns (about 19,000 ferrite
+  an hour at Heat's duty cycle). So carbon and ferrite grants are never the client's.
+- **What players are sent.** Every 250 ms (`sweep`, on the service's timer) each session whose player is in a world's
+  frame and within 500 m of its ground is sent, as `nodes`, the touched cells within 500 m of it that it does not hold or
+  that changed (`gone`: broken and growing back; `hurt`: damaged, with the fraction left rounded up to tenths, so a
+  beam's every hit is not news), an empty cell for one that went back to the scatter or that it has left 600 m behind,
+  and `reset` as it arrives on a world (again whenever it comes back to one). A client holds exactly what it was sent and
+  draws the rest as the scatter has it. Nothing is sent while no node near a player is touched, and a player is looked
+  at again only when its world's touched nodes changed (each world has a version) or it has moved. The cells round a
+  player are found through buckets of touched cells about 512 m across, worked out again once it has moved 32 m; each
+  cell's state is checked against the schema and encoded once per change, and a session's message put together from
+  those (`Session.sendText`).
+- **Bounds and cost.** A far hit never scatters or samples the ground; at most 16 grounds, 4,096 scattered cells and
+  100,000 touched nodes are kept, and a miner idle for an hour (the flora budget's) is forgotten. The bench's mining trial (25 players on foot
+  among 480 nodes, herds about, every node broken many times over) keeps the whole tick, hits and sweeps included,
+  well under the 10 ms p95.
+- **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
+  P1.E12.T04 resolves ship weapons on the server); the client's half is P1.E13.T06.
+
+## 19. Meters
+
+Reserved for Heat and Charge (P1.E07.T02), which holds protocol 9 and this section on its branch until it merges.
+
+## 20. Combat (`packages/server/src/combat`)
+
+DESIGN 12.1, 9.1, 10.3, 14.9; P1.E06.T02. The server decides every hit: its health, its damage, deaths and what a kill
+is worth. Clients fire their tracers at once for feel and are told what happened. (§19 is Heat and Charge's, P1.E07.T02.)
+
+- **Health** is each zone's (`zone.combat`, `ZoneCombat`). A creature's is its mob stats' (`mobStats` of its body plan
+  and temperament at its herd's level; the apex takes the Pack Alpha's row), taken when it is first hurt. A player has
+  its suit's (`playerMaxHealth` of the nodes it entered with: 100, Second Skin 150) and its ship's shield and hull
+  (`shipStats` of the ship it entered with); a hit takes the suit when the server believes it on foot, else the shield
+  and then the hull. On the wire, an entity's `hp` is the fraction left of the pool in use (and aboard, `shield`), patched
+  as it changes and as a player's mode changes which pool is shown. Nothing heals yet and health is not saved: the
+  Recall (P1.E06.T03) and creature attacks (P1.E08.T02) decide recovery.
+- **One damage path**, `zone.combat.applyDamage(source, target, packet)`: `source` the attacker's entity (or null),
+  `packet` the server's description of the hit (`base`, `kind` (`weapon`, `ability`, `attack`, `hazard`), `what` dealt
+  it, its `DamageSource` for resistances, the attacker's modifiers, effects on the target). It runs the shared pipeline
+  (`computeDamage`: resistances by node, weapon or branch, the attacker's power, augments, what the target takes),
+  level-scaled only when the source is a creature (its entity's level; DECISIONS P1.E06.T01), then takes the health,
+  feeds the creature's threat table (`FaunaSim.hurt`), records the damage each character did (counted up to the health
+  left), tells the hooks who fought (`engaged`) and queues the event. A dead creature or a downed player takes no more.
+  Weapons (below), abilities (P1.E07.T03) and creature attacks (P1.E08.T02) all come through it; nothing a client sends
+  carries an amount.
+- **Death.** A creature at 0 dies: fauna takes it out of its herd at once (§6.2: its den's timers start), its entity
+  stays a corpse (`hp` 0, mode `dead`, no `attack`) for DEATH_BEAT_S (3 s) and is then despawned, and the hooks hear
+  `killed` with the damage by character and the killing blow's. A player at 0 is down (`down: 'suit' | 'ship'`): it takes
+  no more damage, fires no more, its event says `killed`, and the hooks hear `downed` (the Recall, P1.E06.T03, acts on
+  it; until then it stays down for its session).
+- **Events.** Each hit queues a `combat` event; hits of one source on one target by the same thing in a tick are summed
+  into one. After each tick's snapshots (the interest sets just worked out) each session is sent those whose target or
+  source its interest holds (`Zone.sees`), its own entity's first, at most 32 a tick; a tick queues at most 512. Each is
+  encoded once and written to every session as text.
+- **The base gun** (DESIGN 9.1: the ship lasers stay on LMB). Its numbers are the first fitted hitscan weapon's with a
+  per-shot damage, cooldown and range, through `shipStats` of the ship the player entered with and the nodes it owns now
+  (`baseGun`: the Lark's Pulse Lasers, 11 a volley every 0.12 s to 1,500 m; Gunnery and the laser nodes apply); P1.E12.T04
+  turns it into the Pulse Lasers module. The `CombatService` (`ws.combat`, made by the gateway) checks each `fire`
+  cheapest first: its `seq`; the player in a zone; a gun fitted; the gun's rate (a bucket of 3 shots refilled at one per
+  cooldown: a client firing as fast as its own cooldown lets it is never refused for jitter, and none fires faster for
+  long; a refused shot spends it too); its clock (within 3 s of the server's); the believed mode (`ship`); not down; the
+  aim's frame (its pose's); the aim within 30° of the believed nose (the lasers fire along it). Then the ray: from the
+  believed position carried on along the believed velocity to the shot's time (from its last input's stamp, 0.1 s at
+  most), along the aim, as far as the gun reaches, the shared `rayHits` against the living creatures of its frame's world
+  (hit spheres round their bodies, 0.6 × size + 1 m), and the first it meets must be in sight from the believed position
+  itself: the drawn ground (fauna's plan, §12) sampled along the stretch the origin was carried (the client's stamp
+  chooses the carry, so it never jumps ground the ship has not been seen to cross) and on to the hit, at most 96 times a
+  stretch (every 2 m on a short one), the gun's end and the target's skipped. A hit deals the gun's damage through the
+  damage path. Players are neither targets nor in the way: PvP is P2.E17.T01.
+- **A kill's worth** (`killLoot`, `@astra/shared/combat`): XP of the mob's level × 10 (DESIGN 14.9), units of 2 a level a
+  threat star (spread ×0.75–1.25 by a roll), and a row's drops (the stone-touched's Count residue, a boss's loot
+  resources; plain fauna drop none), rolled once and split by the damage each character did (`splitByDamage`, as a
+  node's yield). XP goes to the character's progress (levelling its entity and pushing the skill view, as a quest's
+  does), units and items into its inventory (what does not fit is lost), each told to its session as `xp` and `loot`
+  events (the session found where it is by then, the kill's zone first), and every one who hurt it is sent a quest `kill {tags: [fauna, temperament, body plan], entity}`.
+- **In combat** is having dealt or taken damage within 6 s: the skill service's `inCombat` (slots swap only out of it).
+- **The client** (`net/combat.js`): `Ship.fireLasers` fires its tracers and sends `fire` (`fireIntent`: the nose's
+  direction in the frame of the ship's pose, at the game's world time); `Net.combat` keeps the events that concern the
+  player, and the HUD shows a number off the reticle for each of its hits (gold for a kill), a flash for a blow taken and
+  a kill's XP and units as toasts. Until the client renders the server's herds (P1.E08.T09) its own local creatures are
+  not the ones the server's shots hit; their health bars, hit flashes and deaths come with that task.
+- **Bench.** The combat trial (25 ships flying low over a Tier 3 world's herds, each firing every cooldown at the
+  creature nearest it, herds put down as they thin) keeps the whole tick, its shots included, under the 10 ms p95.
+- **Not here.** Pirates' fights move to the server in P1.E08.T05 (the client's local pirate combat and asteroid hits are
+  its own until then, P1.E13.T07 for asteroids); creatures' attacks are P1.E08.T02; abilities P1.E07.T03.
+
+## 21. Call-for-aid beacons (`packages/server/src/social/beacons.ts`)
+
+DESIGN 16.6's "Social" row and DESIGN 17, P1.E15.T02: a beacon broadcasts an instance's open slots to the shard, so a
+player alone in an instance finds help on a quiet shard, and players on a busy one fill the instances that have room. The
+social service holds the beacons (`SocialService.beacons`, its timer checking them every tick, 100 ms), in memory like
+the parties: Phase 1 runs the shard in one process (§1), so nothing elsewhere reads them, and a restart drops them. When
+P3.E37 splits the shard across processes they move to Redis beside the world service's mirror (§3).
+
+- **Instances.** A beacon is raised for the phase its caller is in (§6.1): an `event` or a `raid`, whose slots are its
+  12 players (members and places kept, as the cap counts them), or a quest step's `story` phase (keyed
+  `quest:<quest>:<scene or step>` by the quest runtime, §17), which holds one party, so its slots are its caller's
+  party's (`PARTY_MAX`, 6; a caller in no party holds one). A hangar `bay` and a phase cutscenes play in are not
+  instances anyone calls aid to (`kind`): the cutscene service marks those it plays in (`CutsceneService.plays`, given
+  to the social service by the gateway), whatever their key, since a quest's cutscene step plays in a `quest:` phase.
+- **Raising** (`beacon {op: 'raise'}`) is refused while the character has a beacon up, or its instance has one
+  (`raised`: one per character and one per instance); in no phase (`no_phase`), in a bay or a cutscene's phase
+  (`kind`); with no slot open (`full`); with `BEACON_MAX` (256) up on the shard (`busy`); and, checked last so that no
+  other refusal spends it, past the account's allowance (`rate` with `retryS`: 3 at once, then one every 30 s, shared
+  by the account's sockets). The caller is sent `beacon {op: 'raised', id, beacon}`, and again whenever its character
+  enters the world while the beacon is up.
+- **The listing** (`BeaconView`): its id; the instance's kind and star system (galaxy index); its place, as a frame, a
+  centre in it and a radius (where to go to answer); what the place is called (the quest's title, else the location's
+  key; the kind's name if neither is plain text); the quest, for a story instance; the caller's name; its open slots of
+  `cap`; and the world times it was raised (`at`: its age is the client's server time less this) and lapses (`until`,
+  10 minutes later). A session that sends `watch` is sent the whole list (`beacons {reset: true, beacons, gone: []}`,
+  some 70 KB at 256 beacons) and from then the changes (`beacons {beacons, gone}`: new beacons and those whose open
+  slots changed, and the ids of those that ended), until it sends `unwatch` or its connection closes; a new connection
+  starts unwatched. The changes are gathered and sent only at the tick's sweep, one message encoded once for every
+  watcher (`Session.sendText`), so the shard's broadcasts come at most ten times a second however many requests arrive.
+  A `watch` from a session already watching is ignored, and an account is sent the whole list 5 times at once, then
+  once every 10 s (`denied {of: 'watch', code: 'rate', retryS}`, the session then not watching), so no flood of watch
+  and unwatch turns its message budget into megabytes.
+- **The end.** At every tick each beacon is checked, and it ends when its instance closed (`closed`), it lapsed
+  (`expired`), its caller is no longer in the instance (`left`; a caller whose connection dropped keeps it up while the
+  phase keeps its place, §6.1), or no slot is open (`full`, at once when an answer took the last); and when its caller
+  lowers it (`lower`, `lowered`). Its caller is sent `beacon {op: 'ended', id, why}` and the watchers its id in `gone`;
+  a change in its open slots goes to the watchers as the beacon again.
+- **Answering** (`beacon {op: 'answer', id}`) is checked again there and then, cheapest first: the beacon is up
+  (`unknown`, and one whose instance closed, lapsed or was left by its caller ends now) and not the answerer's own
+  (`self`); the answerer is in the instance's star system (`elsewhere`), in no phase (`in_phase`), and inside the
+  instance's place, its volume with the phase manager's 5% hysteresis, from its pose as it stands (`far`). The server
+  never moves a player to answer: its entity stays where movement authority has it, its inputs are judged as before and
+  nothing re-seats its mover. Travelling to a beacon (a server-side relocation, which would re-seat the mover as an
+  admin teleport does, §7) is a later feature; until then the listing says where to go. The answerer is then placed by
+  `PhaseManager.enter` (§6.1), under the phase's cap and party rule, so an event or a raid that filled since it was
+  listed refuses it (`full`). A story instance's answer joins the caller's party as accepting an invite from the caller
+  would (`Parties.joinWith`, or a new party the caller leads), refused `in_party` (the answerer is in another party),
+  `full` (the party is full) and `gone` (the caller is not connected in its instance), all checked before anything
+  changes; the caller is re-placed under the party first, since a caller placed before it had a party was placed as a
+  party of one. A helper needs no quest of its own: it fights beside the party in the caller's chapter, the quest runtime
+  leaving alone a player in a phase it did not put it in, and quests move only for those who hold them. The answerer is
+  sent `beacon {op: 'joined', id, phase}`, the caller `beacon {op: 'answered', id, name}`, and the watchers the beacon's
+  new slots (or its end, when that was the last).
+- **Helpers.** Since the quest runtime never re-places a player it did not place, the beacons do it for the helpers a
+  story answer placed, as the runtime does for a party (§17: a party that breaks up is split again): a helper that is no
+  longer in the party it joined (it left, was kicked, or the party disbanded: at once, as the party service tells of it,
+  `Parties.onLeft`, so the runtime never re-places a caller around it first) or whose caller is no longer in the chapter
+  (its step ended, it went elsewhere, its kept place lapsed: at the next tick) goes back to the shared world
+  (`PhaseManager.leave`; a helper whose connection is down has its kept place given up, `PhaseManager.release`), logged
+  as `beacon helper sent back`. So a party's private phase is only ever the party's: a kicked helper cannot stay with
+  its actors, nor hold the phase open for the party's return. One that leaves the chapter by itself is forgotten.
+- **Refusals** go to the asker only, as `denied {of: 'raise' | 'lower' | 'answer' | 'watch', code, retryS?}`. Every
+  raise, answer, end and helper sent back is logged at info, with the character, zone, phase and kind.
+- **The client.** `net.beacons` (`packages/client/src/net/beacons.js`) holds the list while watching (and watches again
+  after a reconnect, or once a watch refused for its rate may succeed), the character's own beacon, the phase its last
+  answer put it in and the last refusal, and sends the requests. The panel that shows them belongs to the chat and party UI (P1.E15.T03); until it lands they are
+  reachable from the dev console as `game.net.beacons` (`watch()`, `list()`, `answer(id)`, `raise()`, `lower()`).
+
+## 22. Analysis and the codex (`packages/server/src/codex`, `@astra/shared/codex`)
+
+DESIGN 14.5, 12.1, 9.1, 9.5, 14.9; P1.E08.T04. Analyzing a creature puts its species in the character's codex; the server
+checks every analysis and records it, and nothing a client sends grants a codex entry or XP. The demo's analysis, which
+paid units on the client, is gone (DESIGN 20.2–20.3).
+
+- **A request** (`analyze {seq, time, target}`, §5) goes from the gateway to the `AnalysisService` (`codex/analysis.ts`),
+  which checks it as resources check a mining hit (§18), cheapest first: `stale_seq`; `zone` (the character in play, its
+  codex held); `rate` (2 at once per character, then 1 a second: the analysis is instant, as the demo's was, so there is
+  no scan to hold a target through); `stale` (stamped more than 3 s from the server's clock); `zone`; `mode` (on foot, as
+  the zone entity has it: movement authority's believed mode; ring grazers and depth leviathans will be analyzed from the
+  cockpit with Deep Sweep, P2.E29.T02, which lets `ship` through for those species); `unknown` (no `mob` entity of that id
+  in the player's zone that its phase lets it see, `phases.canSee`, so a phase's own creature is none to anyone else and
+  nothing more of it is told; or a species its world does not carry); `dead` (no hp left); `world` (it is not on the world the
+  player's frame names); `range` (from the eye, 1.6 m up, to the creature's middle, more than the demo's reach of 70 m
+  plus its hit radius, 1.15 × its size × 0.9, a flyer's 0.6, as the client's aim pick takes it, plus 5 m for a pose a tick
+  old); `busy` (the ground not planned yet); `los` (the drawn ground in the way, sampled as the beam's is, §18). Every
+  analysis that passes is heard by listeners (`subscribe`), first or not: the gateway passes each to the quest runtime as
+  `analyze {species: <key>}` (§17), so a quest's `analyze` step counts species the server saw analyzed.
+- **The codex** (`CodexService`, `codex/service.ts`, made by `coreRegistry` over the progress holder and the skill service
+  unless one is given; the gateway finds it with `codexServiceIn`). A species is keyed by its world's frame id (unique per
+  world, unlike a planet's seed) and its index in the world's `faunaSpecies` list (`speciesKey`: `<frame>/<index>`). The
+  stored value (`@astra/shared/codex`, the `codex` component, v1) is `{worlds: {<frame>: {system, species: {<index>:
+  {temperament, threat, bodyPlan, bond, at}}}}}`: threat stars by temperament (`threatRating`), `bond` `eligible` or
+  `big_game` (heavy quadrupeds and flyers need Big Game, DESIGN 9.5; `canBond(entry, owned)` is P1.E07.T07's rule, and
+  `CodexService.canBond` reads the owned nodes), `at` the world time of the first analysis. Bounded to 4,096 species over
+  1,024 worlds and 64 a world (the galaxy has 2,959 species on 432 worlds, at most 9 a world): past that an analysis is
+  refused `full`, logged as an error, and nothing is earned.
+- **XP.** The first analysis of a species earns `SPECIES_XP` (300, DESIGN 14.9) into the character's progress, levelling it
+  as quest XP does (the player's entity takes the level, the skill view is refreshed); the answer's `xp` is what was
+  granted. A repeat records nothing and earns nothing.
+- **Reconcile.** On load the stored codex is brought in line with the species data as it is now (`reconcileCodex`, the
+  component's `reconcile`): a world that no longer has fauna, or whose frame is not in its system any more, is dropped; a
+  species past its world's list is dropped; an entry whose species changed takes its new temperament, threat, body plan
+  and Bond reach, keeping `at`; one warning per character. Only a value that cannot be read refuses the join.
+- **Survey bookkeeping** for P2.E29 and the Symbiotic fragment (DESIGN 9.1, 14.5): `analyzedOn(codex, world)` counts a
+  world's species analyzed and `analyzedEvery(codex, world, count)` says whether every one of a list `count` long is (a
+  world's list at a tier is a prefix of its whole list). Survey rewards, first-finder naming and codex plates are
+  P2.E29.T01–T02's; the codex UI, and a `codex` state message to feed it, P2.E29.T03's.
+- **The client** (`Game.analyze(target)`, `Game.onAnalyze`) sends the request and shows the answer: a first analysis's
+  banner (the codex line, Bond, the XP), a known one's toast, a refusal's reason. Until the client draws the server's
+  creatures (P1.E08.T09) it has no server creature to aim at: online, its own demo herds show their names but cannot be
+  analyzed; the dev sandbox still analyzes its own herds for its quest book, and pays nothing for it.

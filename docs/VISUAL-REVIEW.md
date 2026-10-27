@@ -176,3 +176,81 @@ WOULD REQUEST: a 60 fps clip of one Space line-jump (with its dip) and one Esc s
 
 Artifacts: `assets/renders/ui/cutscene-test/` (16x9, 21x9, approach, return, clip sheet, 804 frames); the requested
 line-jump and skip clips were added after the verdict in `assets/renders/ui/cutscene-test-jump/` and `-skip/`.
+
+## P1.E07.T02 Heat and Charge (HUD meters)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 3, fit 5, motion 4, theme 4, correctness 3, spec 4, performance 5 | 4.00 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 4, theme 4, correctness 3, spec 5, performance 5 | 4.29 |
+| 3 | REVISE | hierarchy 3, fit 4, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 4 | REVISE | hierarchy 3, fit 5, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.29 |
+
+Round 1: OVERHEAT and the Charge rate under 4.5:1 over bright ground; the heat arc drew full at any level (the fill now
+follows heat ÷ capacity). Round 2: the Charge arc swept up from empty, red, on the ship HUD's first frames (now set at
+its value with transitions off, `.low` from the server's value). Round 3: the heat arc washed out against the beam's
+glare (1.15:1); the altitude numerals touched the CHARGE plate; gauges popped on. Fixed with an opaque track inside a
+near-black halo, 4.5 px strokes, an unplated Charge readout in the altitude's style, 150 ms fades, and Charge kept lilac
+as an art bible §4 exception (teal is the shield's and the jetpack's). Artifacts: `assets/renders/ui/hud-{foot,foot-exit,ship,ship-board}/`.
+
+Round 4: the beam-held heat arc now reads (fill 6.5:1 against its track, halo about 15:1 against the glare), OVERHEAT
+8.2:1, the Charge figure 8.8:1, CHARGE EMPTY 5.4:1. Still failing: the Charge rate "+2.0/s" over the planet's bright
+limb (2.3:1 against its halo, 1.2:1 against the limb) and the grey CHARGE label (about 3:1 where the limb turns blue);
+the lockout's red fill against the empty track at about 2.9:1 (under 3:1 for non-text UI). Requested: an idle cool-down
+clip from about 30 heat to 0. **Escalated to the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
+
+## P1.E04.T02 Remote entities (in-engine scene)
+
+Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's own art is P1.E12.T02's.
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 2, performance 4 | 3.43 |
+| 2 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 3 | 3.57 |
+| 3 | REVISE | legibility 3, hud-fit 4, motion 3, palette 4, correctness 3, spec 4, performance 5 | 3.71 |
+
+Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
+of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
+on sensor detection, a varied 24-pilot crowd, three LODs by screen length, speed-scaled glow and exhaust, and `-pads`
+and `-surface` captures; the server sends no NPC ships until P1.E08.T05. Artifacts: `assets/renders/ui/remote-ships*/`.
+
+Round 2: marker range text overlaps its own ship and falls to 1.3–2.4:1 over lit ground; markers hang at a fixed world
+offset, so they drift hundreds of pixels off near ships, and collide with the fixed HUD and each other; far Larks
+shimmer; pads (+3.97 ms for 3 ships) and surface (+3.0 ms, over 16.7 ms) cost out of proportion, the coarsest LOD is 25%
+of LOD0 (§19.2 wants under 5%) and casts shadows. Requested: a full bay phase, 24 Larks docked, with the perf readout.
+
+Round 3: performance now passes (crowd +0.25 ms, bay +1–1.5 ms, coarsest LOD 2.8%, +17 draw calls). Still failing: name
+labels sit past the ship's screen bounds, 100–220 px from their own diamond; remote nav and strobe lights flash full on
+for one frame and their bloom grows with distance (250–350 px at 1–2 km, brighter than the local ship's); markers still
+meet the EDGE line, the speed readout and the local ship in motion; the coarsest LOD starts at 130–200 m and smears;
+the landed remote ship shows no gear or ground contact.
+
+## P1.E05.T01 Skeleton and three base bodies (art)
+
+Graded per people with the "Models and environments" table, each file as a family of ten variants.
+
+| Round | People | Verdict | Scores | Mean |
+|---|---|---|---|---|
+| 1 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 2, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.2 |
+| 1 | Ixari | REVISE | design 3, silhouette 3, proportion 3, materials 2, detail 2, topology 4, consistency 4, fitness 3, placeholder 2, performance 4 | 3.0 |
+| 1 | Ulgani | REVISE | design 2, silhouette 3, proportion 4, materials 2, detail 2, topology 3, consistency 4, fitness 3, placeholder 2, performance 4 | 2.9 |
+
+Round 1, common to all three: mascot faces (a fixed smile, goggle or button-ring eyes, no nose, lips or brow); smooth
+mannequin bodies without anatomical landmarks; suits from primitives (torus bands, rounded boxes, straight rods) that
+break each people's design language (Ixari facets, Thalune shingled shell, Ulgani grown chitin lattice); heads that differ
+only by small cards, unreadable past 10 m; uniform-noise skin; in-engine material errors (back-lit fins black, nacre as
+chrome, crystal as white plastic, Ulgani toe bleed); uniform remeshed LOD0 with no loops at the face or joints; blinks
+that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above the ground. Artifacts:
+`assets/renders/characters/`, `assets/renders/review/characters/`.
+
+## P1.E04.T05 Login and character screens (UI)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 4, performance 5 | 4.14 |
+
+Round 1: screen changes cross-dissolve in place, so outgoing and incoming headers overlap for about 7 frames; entering
+hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen's height mid-fade and clips the
+outgoing screen (Create and Back cut to a sliver while the request is pending). Contrast is 4.9–16.3:1 on the panel;
+the title tagline, ordinals and BUILD line sit at 2.7–3.2:1 over the planet limb. Requested: registering a fresh
+account with a refusal, landing on an empty list. Artifacts: `assets/renders/ui/{title,login-error,characters,create,entering,account-flow}/`.
