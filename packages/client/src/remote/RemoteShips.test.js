@@ -5,7 +5,7 @@
 // level its size on screen calls for, its gear folded and its engines lit on its own, and room made as more come.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { COARSE_RATIO, LOD_PX, PANEL_STRENGTH, RemoteShips, hullMaterial, lodFor, modelledHull, painted } from './RemoteShips.js';
+import { COARSE_RATIO, LIGHTS_FAR, LIGHTS_NEAR, LOD_PX, PANEL_STRENGTH, PLATED_ENV, RemoteShips, hullMaterial, lightsAt, lodFor, modelledHull, painted, plating, strobeAt } from './RemoteShips.js';
 
 /** A loaded ship as Ship.load leaves one: the model (a rounded hull, a wing, an engine glow, the cockpit interior, a gear
  * leg on its pivot) in the ship's group beside its own effects and cockpit screens; `paint` its hull colour. `lods` adds
@@ -20,7 +20,7 @@ function loadedShip(paint = 0xffffff, { lods = [] } = {}) {
   const body = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 24).scale(2, 1, 6), hull);
   const wing = new THREE.Mesh(new THREE.BoxGeometry(12, 0.3, 3), hull);
   wing.position.set(0, 0, 2);
-  const glow = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.2), new THREE.MeshStandardMaterial({ name: 'EngineGlow', emissive: 0x66bbff }));
+  const glow = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.2, 6), new THREE.MeshStandardMaterial({ name: 'EngineGlow', emissive: 0x66bbff }));
   glow.position.set(0, 0, 6);
   const interior = new THREE.Group();
   interior.name = 'CockpitInterior';
@@ -92,7 +92,7 @@ describe('remote hulls', () => {
   it(`draw the model above ${LOD_PX[0]} px long, simpler below ${LOD_PX[0]} and coarsest below ${LOD_PX[1]}, without flickering between`, () => {
     expect(lodFor(600, 0)).toBe(0);
     expect(lodFor(200, 0)).toBe(1);
-    expect(lodFor(60, 0)).toBe(2);
+    expect(lodFor(40, 0)).toBe(2);
     // a ship growing on screen moves to a finer level only 15% past its threshold
     expect(lodFor(LOD_PX[1] * 1.05, 2)).toBe(2);
     expect(lodFor(LOD_PX[1] * 1.2, 2)).toBe(1);
@@ -116,14 +116,22 @@ describe('remote hulls', () => {
     const hull = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Hull', color: 0x808080, roughness: 0.4, metalness: 0.3 }));
     expect(vertex(hull, 'aMat')).toEqual([0.4, 0.3, 1, 0].map((x) => Math.fround(x)));
     expect(vertex(hull, 'color')[0]).toBeCloseTo(new THREE.Color(0x808080).r, 6);
+    expect(hull.userData.lit).toBe(false);
+    const glass = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Glass', color: 0x21303c }));
+    // only the plated surfaces are: the glass, the glows and the unnamed are not
+    expect(vertex(glass, 'aMat')[2]).toBe(0);
     const engine = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'EngineGlow', emissive: 0x66bbff, emissiveIntensity: 0.2 }));
+    expect(vertex(engine, 'aMat')[2]).toBe(0);
     // (its colour at full: each ship's power scales it)
     expect(vertex(engine, 'aMat')[3]).toBe(1);
+    expect(engine.userData.lit).toBe(true);
     expect(vertex(engine, 'aEmissive')[2]).toBeCloseTo(1, 6);
     const beacon = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'NavWhite', emissive: 0xffffff }));
     expect(vertex(beacon, 'aMat')[3]).toBe(2);
     const throat = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ emissive: 0x5aa0ff, emissiveIntensity: 2 }));
     expect(vertex(throat, 'aEmissive')).toEqual([0, 0, 0]);
+    expect(vertex(throat, 'aMat')[2]).toBe(0);
+    expect(throat.userData.lit).toBe(false);
     // a two-sided surface gets its back faces
     const sheet = painted(new THREE.PlaneGeometry(), new THREE.MeshStandardMaterial({ name: 'Dark', side: THREE.DoubleSide }));
     expect(sheet.index.count).toBe(2 * 6);
@@ -147,17 +155,43 @@ describe('remote hulls', () => {
     const f = shader.fragmentShader;
     expect(m.vertexColors).toBe(true);
     expect(f).toContain('uniform float uPanelStrength;');
-    expect(f.match(/uPanelStrength \* vMat\.z/g)).toHaveLength(2);
+    expect(f.match(/uPanelStrength \* vMat\.z \* vShip\.w/g)).toHaveLength(2);
     expect(f.indexOf('roughnessFactor = vMat.x;')).toBeLessThan(f.indexOf('roughnessFactor = clamp(roughnessFactor'));
     expect(f).toContain('metalnessFactor = vMat.y;');
     expect(f).toContain('totalEmissiveRadiance = vEmissive');
-    expect(shader.vertexShader).toContain('vGlow = aGlow;');
-    // the strong small lights dimmed on the coarsest only
-    expect(shader.uniforms.uDim.value).toBe(1);
-    const coarse = { uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader };
-    hullMaterial('lark', 2, () => {}).onBeforeCompile(coarse);
-    expect(coarse.uniforms.uDim.value).toBeLessThan(1);
+    expect(shader.vertexShader).toContain('vShip = aShip;');
+    // the plated surfaces reflect the environment as the local ship's do, the others in full
+    expect(f).not.toContain('#include <envmap_physical_pars_fragment>');
+    expect(f.match(new RegExp(`envMapIntensity \\* mix\\(1\\.0, ${PLATED_ENV.toFixed(2)}, vMat\\.z\\)`, 'g')).length).toBeGreaterThan(1);
     expect(PANEL_STRENGTH[2]).toBe(0);
+  });
+});
+
+describe('remote ships’ lights and plating', () => {
+  it('flash each strobe up and back down over a few frames, as the local ship’s does, each ship on its own beat', () => {
+    const frames = Array.from({ length: 12 }, (_, k) => strobeAt(k / 60, 0, 1));
+    // 0.4, then three frames up to 6 and three back down
+    expect(frames[0]).toBeCloseTo(0.4, 6);
+    expect(frames[1]).toBeGreaterThan(0.4);
+    expect(frames[1]).toBeLessThan(6);
+    expect(Math.max(...frames)).toBeCloseTo(6, 0);
+    expect(frames.filter((v) => v > 0.5)).toHaveLength(5);
+    expect(frames[11]).toBeCloseTo(0.4, 6);
+    // another ship at the same moment: its own phase
+    expect(strobeAt(0.05, 0.5, 1)).toBeCloseTo(0.4, 6);
+  });
+
+  it(`dim with distance, past ${LIGHTS_FAR} m under the bloom’s threshold (1.2) even at the strobe’s flash`, () => {
+    expect(lightsAt(LIGHTS_NEAR)).toBe(1);
+    expect(lightsAt(150)).toBeLessThan(1);
+    expect(lightsAt(150)).toBeGreaterThan(lightsAt(250));
+    for (const d of [LIGHTS_FAR, 1000, 3600]) expect(strobeAt(0.05, 0, lightsAt(d))).toBeLessThan(1.2);
+  });
+
+  it(`fade the plating from ${LOD_PX[0]} px down to none by ${LOD_PX[1]} px`, () => {
+    expect(plating(LOD_PX[0] + 50)).toBe(1);
+    expect(plating((LOD_PX[0] + LOD_PX[1]) / 2)).toBeCloseTo(0.5, 6);
+    expect(plating(LOD_PX[1])).toBe(0);
   });
 });
 
@@ -290,10 +324,14 @@ describe('RemoteShips', () => {
     const kit = ships.kits.get('lark');
     // a trail of six glows behind each engine of the three with power
     expect(kit.flames.count).toBe(3 * 6);
-    // each ship's engine glow (its instance's first glow value) as bright as its power
+    // each ship's engine glow (its instance's first value) as bright as its power; its strobe on its own beat; its lights
+    // as near as it is (100 m)
     const glow = pieceOf(ships).levels[slow.vis.lod].glow;
     expect(glow.getX(0)).toBeCloseTo(0.07, 2);
     expect(glow.getX(1)).toBeGreaterThan(glow.getX(0) * 2.5);
+    const clock = ships.clock;
+    [docked, slow, cruising, pulse].forEach((r, k) => expect(glow.getY(k)).toBeCloseTo(strobeAt(clock, r.vis.strobe, lightsAt(r.world.distanceTo(game.camWorld))), 5));
+    expect(glow.getZ(0)).toBeCloseTo(lightsAt(100), 2);
   });
 
   it('makes room as more ships come, and draws none before the model has loaded', async () => {
