@@ -60,14 +60,26 @@ async function pilot(browser: Browser, errors: string[]): Promise<Page> {
 
 /**
  * Takes the ship off its pad (its inputs say so), then has the server teleport it to `pos` in the Waystation's frame, in
- * flight, and waits for the client to take the correction.
+ * flight, and waits for the correction that carries it there (the ship then held still where it put it, so nothing it
+ * was doing as it hung in the hangar carries it off before it flies).
  */
 async function place(page: Page, pos: number[]): Promise<void> {
-  await page.evaluate(() => {
-    const g = window.game;
+  await page.evaluate((pos) => {
+    const w = window as unknown as Window & { __placed: boolean };
+    const g = w.game;
+    w.__placed = false;
+    g.net.on('correction', (m: { pose: { pos: number[] } }) => {
+      if (w.__placed || Math.hypot(m.pose.pos[0]! - pos[0]!, m.pose.pos[1]! - pos[1]!, m.pose.pos[2]! - pos[2]!) > 1) return;
+      // (Game.onCorrection, which listened first, has put the ship there)
+      g.ship.mode = 'flying';
+      g.ship.dockPad = null;
+      g.ship.state.vel.set(0, 0, 0);
+      g.ship.speed = 0;
+      w.__placed = true;
+    });
     g.station.releasePad(g.ship);
     g.ship.mode = 'flying';
-  });
+  }, pos);
   await until(page, "window.game.net.store.entities.get(window.game.net.entityId)?.mode === 'ship'", 30_000);
   const [characterId, system] = await page.evaluate(() => [
     window.game.net.characterId as string,
@@ -75,11 +87,7 @@ async function place(page: Page, pos: number[]): Promise<void> {
   ]);
   const done = await online.admin({ cmd: 'teleport', character: characterId, system, frame: 'station', pose: pos.join(','), mode: 'ship' });
   expect(done, JSON.stringify(done)).toMatchObject({ ok: true });
-  await until(
-    page,
-    `window.game.ship.state.frame === window.game.station && window.game.ship.state.pos.distanceTo({ x: ${pos[0]}, y: ${pos[1]}, z: ${pos[2]} }) < 1`,
-    30_000,
-  );
+  await until(page, 'window.__placed', 30_000);
 }
 
 /**
@@ -89,10 +97,19 @@ async function place(page: Page, pos: number[]): Promise<void> {
  */
 async function fly(page: Page, yaw: number, speed: number, other: number): Promise<void> {
   await page.evaluate(
-    ({ yaw, speed, other }) => {
-      const w = window as unknown as Window & { __tick(): void; __log: unknown[]; __last: number; __corrections: number };
+    async ({ yaw, speed, other }) => {
+      const w = window as unknown as Window & { __tick(): void; __log: unknown[]; __sent: unknown[]; __last: number; __corrections: number };
       const g = w.game;
       const s = g.ship.state;
+      const poseUrl = '/src/net/pose.js';
+      const { frameOfId } = await import(/* @vite-ignore */ poseUrl);
+      const key = (f: unknown) => (f === g.station ? 'station' : f === null ? 'inertial' : String(g.system.planets.indexOf(f)));
+      // what the server sent of the other's ship and of this one, tick by tick: the tick's time, and the pose
+      w.__sent = [];
+      g.net.on('snapshot', () => {
+        const pose = (e: { frame: string | null; pos: number[] } | undefined) => e && { frame: key(frameOfId(g.system, g.station, e.frame)), pos: [...e.pos] };
+        w.__sent.push({ t: g.net.store.time, other: pose(g.net.store.entities.get(other)), own: pose(g.net.store.entities.get(g.net.entityId)) });
+      });
       g.ship.mode = 'flying';
       g.ship.dockPad = null;
       // (movement authority, which the teleport re-seated there, takes every input from now on)
@@ -109,12 +126,11 @@ async function fly(page: Page, yaw: number, speed: number, other: number): Promi
       w.__last = performance.now();
       w.__tick = function () {
         const now = performance.now();
-        // (up to a quarter of a second: on a busy machine the pages' frames run long, and clamped as the game's own loop
-        // clamps them the ships would fall behind their clocks, moving less than their velocities say; the remote
-        // layer's handling of such a client is the unit tests')
-        frame(Math.min(0.25, (now - w.__last) / 1000));
+        // (up to half a second: on a busy machine the pages' frames run long, and clamped as the game's own loop clamps
+        // them the ships would fall behind their clocks, moving less than their velocities say; the remote layer's
+        // handling of such a client is the unit tests')
+        frame(Math.min(0.5, (now - w.__last) / 1000));
         w.__last = now;
-        const key = (f: unknown) => (f === g.station ? 'station' : f === null ? 'inertial' : String(g.system.planets.indexOf(f)));
         const r = g.remotes.get(other);
         w.__log.push({
           t: g.time,
@@ -146,6 +162,17 @@ interface Rec {
   r: { tr: number; status: string; shown: boolean; drawn: boolean; hull: string; frame: string; pose: number[]; inStation: number[] } | null;
 }
 
+interface Sent {
+  t: number;
+  other?: { frame: string; pos: number[] };
+  own?: { frame: string; pos: number[] };
+}
+
+/** How far before the tick that carried it the remote layer may take a pose to have been (buffer.js SKEW_LEAD_S), and
+ * after it (SKEW_S). */
+const SKEW_LEAD_S = 0.1;
+const SKEW_S = 0.15;
+
 const sub = (a: number[], b: number[]) => a.map((x, i) => x - b[i]!);
 const dot = (a: number[], b: number[]) => a.reduce((s, x, i) => s + x * b[i]!, 0);
 const len = (a: number[]) => Math.sqrt(dot(a, a));
@@ -169,17 +196,44 @@ function onTrack(track: { t: number; pos: number[] }[], p: number[]): { d: numbe
   return best;
 }
 
-/** The other's ship as `viewer` drew it in `frame`, against `owner`'s own track there: how far off its path, and how far
- * behind its own clock. */
-function judge(viewer: Rec[], owner: Rec[], frame: string) {
-  const track = owner.filter((x) => x.own.frame === frame).map((x) => ({ t: x.ts, pos: x.own.pos }));
-  // (from half a second after the owner took off: the pad it left is a cut, held until it is due)
+/** The ship the server sent tick by tick in `frame`, each pose with its tick's time (a pose sent again, its client's next
+ * report not yet in, left out as the remote layer leaves it). */
+function sentTrack(sent: Sent[], which: 'other' | 'own', frame: string) {
+  const track: { t: number; pos: number[] }[] = [];
+  for (const s of sent) {
+    const e = s[which];
+    if (!e || e.frame !== frame) continue;
+    const last = track.at(-1);
+    if (last && len(sub(e.pos, last.pos)) === 0) continue;
+    track.push({ t: s.t, pos: e.pos });
+  }
+  return track;
+}
+
+/** The other's ship as `viewer` drew it in `frame`, against what the server sent of it there (`sent`, the viewer's own
+ * snapshots): how far off that path, and how far behind the ticks that carried it (by the render time). */
+function judge(viewer: Rec[], sent: Sent[], frame: string) {
+  const track = sentTrack(sent, 'other', frame);
+  // (from half a second after the first pose in the frame: the pad it left before is a cut, held until it is due, and
+  // the poses re-expressed from the frame before are not on this path)
   const seen = viewer.filter((x) => x.r?.frame === frame && x.r.status === 'interpolate' && x.r.tr > track[0]!.t + 0.5 && x.r.tr < track.at(-1)!.t);
   const fits = seen.map((x) => {
     const at = onTrack(track, x.r!.pose);
     return { off: at.d, behind: x.r!.tr - at.t };
   });
   return { count: fits.length, off: Math.max(...fits.map((f) => f.off)), behind: fits.map((f) => f.behind).sort((a, b) => a - b) };
+}
+
+/** How far ahead of the server's clock `owner`'s own estimate of it ran, at most (s): each pose it sent was taken before
+ * the tick that carried it, so by its own clock it was there at most the tick's time. */
+function clockAhead(owner: Rec[], sent: Sent[], frame: string): number {
+  const track = owner.filter((x) => x.own.frame === frame).map((x) => ({ t: x.ts, pos: x.own.pos }));
+  let ahead = -Infinity;
+  for (const s of sentTrack(sent, 'own', frame)) {
+    const at = onTrack(track, s.pos);
+    if (at.d < 0.5) ahead = Math.max(ahead, at.t - s.t);
+  }
+  return ahead;
 }
 
 test("two clients each see the other's ship move, across a frame change", async ({ browser }) => {
@@ -203,12 +257,20 @@ test("two clients each see the other's ship move, across a frame change", async 
   await fly(b, 0, 60, ids[0]!);
   const end = Date.now() + 7000;
   while (Date.now() < end) await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as { __tick(): void }).__tick())));
-  const [logA, logB] = (await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as { __log: Rec[] }).__log)))) as [Rec[], Rec[]];
+  // (all read before the sockets close: a closed connection leaves the world, which reloads the page)
+  const [[logA, sentA, corrA], [logB, sentB, corrB]] = (await Promise.all(
+    [a, b].map((p) =>
+      p.evaluate(() => {
+        const w = window as unknown as { __log: Rec[]; __sent: Sent[]; __corrections: number };
+        return [w.__log, w.__sent, w.__corrections];
+      }),
+    ),
+  )) as [[Rec[], Sent[], number], [Rec[], Sent[], number]];
   const planet = await a.evaluate(() => String(window.game.system.planets.indexOf(window.game.station.parent)));
   await Promise.all([a, b].map((p) => p.evaluate(() => window.game.net.close())));
 
   // both ran: frames of real time, the ships flying, as movement authority judged them
-  expect(await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as { __corrections: number }).__corrections)))).toEqual([0, 0]);
+  expect([corrA, corrB]).toEqual([0, 0]);
   expect(logA.length).toBeGreaterThan(60);
   expect(logB.length).toBeGreaterThan(60);
   // A left the Waystation's sphere for its world's frame; B stayed in it
@@ -230,20 +292,27 @@ test("two clients each see the other's ship move, across a frame change", async 
   expect(moved(logB)).toBeGreaterThan(500);
   expect(moved(logA)).toBeGreaterThan(250);
 
-  // drawn where the other's own client had it: on its path within a metre, and at the time it was there to within the
-  // tick and the trip (a snapshot labels the last pose the other's client reported with its tick's time); A in the
-  // Waystation's frame and, after the change, in the planet's
-  for (const [viewer, owner, frame] of [
-    [logB, logA, 'station'],
-    [logB, logA, planet],
-    [logA, logB, 'station'],
+  // drawn where the server sent it: on its path within a metre, and at its pose of the tick the render time names, up to
+  // the remote layer's estimate of when each pose was taken (a snapshot labels the last pose the other's client reported
+  // with its tick's time; the layer takes it to have been up to SKEW_LEAD_S earlier or SKEW_S later, by its motion); A in
+  // the Waystation's frame and, after the change, in the planet's. (Judged against the ticks, not the other client's
+  // own clock: that is its estimate of the server's, which a busy page's late pings leave tens of milliseconds off.)
+  const report: string[] = [];
+  for (const [viewer, sent, owner, ownerSent, frame] of [
+    [logB, sentB, logA, sentA, 'station'],
+    [logB, sentB, logA, sentA, planet],
+    [logA, sentA, logB, sentB, 'station'],
   ] as const) {
-    const j = judge(viewer, owner, frame);
+    const j = judge(viewer, sent, frame);
+    report.push(
+      `${frame}: ${j.count} drawn, ${j.behind[0]!.toFixed(3)}..${j.behind.at(-1)!.toFixed(3)} s behind the ticks; its own clock up to ${clockAhead(owner, ownerSent, frame).toFixed(3)} s ahead of the server's`,
+    );
     expect(j.count, `${frame}`).toBeGreaterThan(10);
     expect(j.off, `${frame}: off the path`).toBeLessThan(1);
-    expect(j.behind[0]!, `${frame}: ahead of the ship`).toBeGreaterThan(-0.05);
-    expect(j.behind[Math.floor(j.behind.length * 0.95)]!, `${frame}: behind the ship`).toBeLessThan(0.3);
+    expect(j.behind[0]!, `${frame}: ahead of the ticks`).toBeGreaterThan(-SKEW_LEAD_S - 0.02);
+    expect(j.behind[Math.floor(j.behind.length * 0.95)]!, `${frame}: behind the ticks`).toBeLessThan(SKEW_S + 0.05);
   }
+  console.log(`remote-online: ${report.join('; ')}`);
 
   // B drew A crossing into the planet's frame without a jump: in the Waystation's frame, A goes from riding with it at
   // 120 m/s to being left behind by it (the Waystation's orbit against the planet's turning frame: some 1,100 m/s), but
