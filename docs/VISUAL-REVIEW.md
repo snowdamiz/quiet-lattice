@@ -198,3 +198,16 @@ Round 4: the beam-held heat arc now reads (fill 6.5:1 against its track, halo ab
 limb (2.3:1 against its halo, 1.2:1 against the limb) and the grey CHARGE label (about 3:1 where the limb turns blue);
 the lockout's red fill against the empty track at about 2.9:1 (under 3:1 for non-text UI). Requested: an idle cool-down
 clip from about 30 heat to 0. **Escalated to the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
+
+## P1.E04.T02 Remote entities (in-engine scene)
+
+Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's own art is P1.E12.T02's.
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 2, performance 4 | 3.43 |
+
+Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
+of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
+on sensor detection, a varied 24-pilot crowd, three LODs by screen length, speed-scaled glow and exhaust, and `-pads`
+and `-surface` captures; the server sends no NPC ships until P1.E08.T05. Artifacts: `assets/renders/ui/remote-ships*/`.
