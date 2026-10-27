@@ -64,6 +64,9 @@ const fmtRate = (v) => `${v > 0 ? '+' : '\u2212'}${Math.abs(v).toFixed(Math.abs(
 
 // a gauge level: a finite 0–1 (anything else draws as empty, never as a full arc)
 const unit = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
+/** A change of more than this much of an arc in one frame is a jump (a server sync, a refill, a chunk of heat): the gauge
+ * lands on it at once rather than tweening up from where it was. */
+const ARC_JUMP = 0.08;
 
 /** The heat arc as the HUD draws it from the multitool: filled to heat ÷ capacity, shown while the beam fires, the meter is
  * warm or locked out; amber from 75%, danger red through the lockout, with a tick where the lockout ends. */
@@ -223,14 +226,19 @@ export class HUD {
     return `<div class="bar ${cls} ${v < 0.25 ? 'low' : ''}"><label>${label}</label><div class="track"><div class="fill" style="width:${(v * 100).toFixed(1)}%"></div></div></div>`;
   }
 
-  // fill one of the gauge arcs (0..1); `show` fades it in, otherwise it rests nearly invisible. `states` toggles classes
-  // on the gauge (by default `low` under a quarter: a gauge running out)
+  // Fill one of the gauge arcs (0..1); `show` fades it in, otherwise it rests nearly invisible. `states` toggles classes
+  // on the gauge (by default `low` under a quarter: a gauge running out), always from the value itself. The first time a
+  // gauge is drawn, as it turns on, and on a jump, it is drawn `snap`: at its value and in its colours at once, with no
+  // transition from wherever it stood (the class lasts the one frame).
   arc(root, name, value, show, states = null) {
     const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
+    const g = a.parentNode;
     const v = unit(value);
+    const snap = a._v === undefined || (show && !g.classList.contains('on')) || Math.abs(v - a._v) > ARC_JUMP;
+    a._v = v;
+    g.classList.toggle('snap', snap);
     const off = (ARC_LEN * (1 - v)).toFixed(3);
     if (a._off !== off) a.style.strokeDashoffset = a._off = off;
-    const g = a.parentNode;
     g.classList.toggle('on', show);
     for (const [cls, on] of Object.entries(states ?? { low: v < 0.25 })) g.classList.toggle(cls, !!on);
   }
@@ -239,8 +247,10 @@ export class HUD {
   // regenerating). Driven from the HUD's clock, so recordings and captures show it as play does.
   sheen(root, name, on, v) {
     const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
-    const sh = a.parentNode.querySelector('.sheen');
-    if (!on) {
+    const g = a.parentNode;
+    const sh = g.querySelector('.sheen');
+    // (only over a fill already drawn: not while the gauge lands on its value, nor while it is off)
+    if (!on || !g.classList.contains('on') || g.classList.contains('snap')) {
       if (sh._on) sh.style.opacity = 0;
       sh._on = false;
       return;

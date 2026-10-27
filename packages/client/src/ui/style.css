@@ -205,6 +205,10 @@ body {
 .gauge.on {
   opacity: 1;
 }
+/* drawn at its value at once: the first time, as it turns on, and on a jump (HUD.arc) */
+.gauge.snap path {
+  transition: none;
+}
 .gauge .g-jet,
 .gauge .g-shield {
   stroke: var(--accent2);
