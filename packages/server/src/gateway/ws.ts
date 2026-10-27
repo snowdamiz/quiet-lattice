@@ -58,6 +58,7 @@ import type { RecipeBook } from '../crafting/book.ts';
 import { recipeBookIn } from '../crafting/component.ts';
 import { CraftingService } from '../crafting/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
+import type { SeasonAward } from '@astra/shared/seasons';
 import type { SeasonAwards } from '../seasons/awards.ts';
 import { seasonAwardsIn } from '../seasons/component.ts';
 import type { SeasonGateway } from '../seasons/service.ts';
@@ -272,10 +273,13 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeAwards = awards?.subscribe((characterId, _added, all) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'awards', awards: [...all] });
   });
-  // a season's end, once written: each joined character of an account among its winners is given its award
+  // a season's end, once written: each joined character of an account among its winners is given its award. The last
+  // season's winners are kept, for a character whose join read its account's awards just before they were written.
+  let lastSeason: { award: SeasonAward; winners: Set<string> } | null = null;
   const unsubscribeSeasons = deps.seasons?.onSeasonEnded(({ awarded }) => {
-    if (!awards || awarded.accounts.length === 0) return;
+    if (!awards) return;
     const winners = new Set(awarded.accounts.map((a) => a.toLowerCase()));
+    lastSeason = { award: awarded.award, winners };
     for (const c of conns) {
       if (c.s.state === 'joined' && winners.has(c.s.accountId!.toLowerCase())) awards.grant(c.s.characterId!, [awarded.award]);
     }
@@ -568,7 +572,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         return;
       }
       // (before the session is joined, so the award listener sends nothing: the awards go out after the recipes)
-      const given = awards?.grant(row.id, earned);
+      const last = lastSeason as { award: SeasonAward; winners: Set<string> } | null;
+      const given = awards?.grant(row.id, last?.winners.has(s.accountId!.toLowerCase()) ? [...earned, last.award] : earned);
       if (given?.length) log.info({ character: row.id, seasons: given.map((a) => a.season) }, 'season awards given on join');
       const at = loaded.get<PoseState>(POSE);
       const progress = loaded.get<Progress>(PROGRESS);

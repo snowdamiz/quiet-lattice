@@ -384,12 +384,15 @@ export class WorldService implements WorldSource {
   countAction(accountId: string, action: CountedAction, tag: CountTag): boolean {
     if (!UUID.test(accountId)) throw new RangeError(`an account id is a uuid, not "${accountId}"`);
     checkVote(action, tag);
-    this.advance();
+    // (one reading of the clock: the vote is stamped with the time the meter was played to, so it lands in that day and
+    // that season even when the clock crosses a midnight in between)
+    const at = this.clock.now();
+    this.runTo(at);
     // Postgres hands uuids back lower-case: the ledger's key must match a vote reloaded after a restart.
     const vote: CountVote = { accountId: accountId.toLowerCase(), action, tag };
     if (!this.ledger.vote(vote)) return false;
     if (this.store.count) {
-      this.unsavedVotes.push({ ...vote, day: this.ledger.day, at: this.clock.now() });
+      this.unsavedVotes.push({ ...vote, day: this.ledger.day, at });
       this.saveMeterSoon();
     }
     return true;
@@ -433,7 +436,11 @@ export class WorldService implements WorldSource {
    * rollCheckMs once started, and before every counted action.
    */
   advance(): MeterAdvance {
-    const now = this.clock.now();
+    return this.runTo(this.clock.now());
+  }
+
+  /** advance(), to world time `now`. */
+  private runTo(now: number): MeterAdvance {
     const from = this.current.count;
     let count = from;
     let days = 0;
