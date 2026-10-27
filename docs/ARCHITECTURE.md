@@ -116,8 +116,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `mine {seq, frame, node | flora, tool,
   time}` (§17). Each socket's message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for
-  pings, casts, interactions, chat, party, inventory, skill and cutscene requests and mining hits (4 a second), and the
-  burst absorbs the backlog of a stall. Chat, invites and mining hits have smaller limits of their own (§13, §17).
+  pings, casts, interactions, chat, party, inventory, skill and cutscene requests and mining hits (an honest client sends
+  4 a second, and 8 is the most a character may), and the burst absorbs the backlog of a stall. Chat, invites and mining
+  hits have smaller limits of their own (§13, §17).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
@@ -243,6 +244,7 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
 - **Ground.** The drawn ground (§12, `drawnGround`'s pads), its heights cached per cell on a 1 m lattice. Planning a
   world's surface takes 5–100 ms, so it runs in a worker thread (`fauna/planner.worker.ts`) from the moment a player
   enters the world's frame; its cells load once it is ready. The 16 worlds most recently asked for keep their ground.
+  The plan also carries the sites' clearance, so the same ground serves the resource nodes (§17): one plan per world.
   The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
   with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
@@ -718,14 +720,14 @@ what the server says is gone (P1.E13.T06). The gateway makes the `ResourceServic
 requests and starts its timer.
 
 - **Nodes are not entities.** A cell's nodes are scattered (`scatterNodes` over `drawnGround` at the zone's tier) only
-  when a hit names one of them, and kept (4,096 cells, most recently used). The ground is planned once per world in a
-  worker thread of the service's own (`ground.ts`, fauna's robustness rules: a dead worker restarted once, then the main
-  thread; a hung plan sent again once; a failing world backed off), because fauna's planner returns only the pads and
-  not the sites' clearance; 16 worlds keep their ground, and a world's is asked for as a player arrives on it. A touched
-  node (`nodes.ts`) holds its hp, the damage each character did (8 counted at most), and when it heals (`HEAL_S`, 60 s
-  after its last hit) or grows back (`RESPAWN_S`: a plant 3 min, a deposit 5, a formation 8; `respawnSeconds` overrides
-  it). At most 100,000 touched nodes over every world: past that the one due soonest comes back early. Node state is in
-  memory only; a restart brings every node back.
+  when a hit names one of them, and kept (4,096 cells, most recently used). The ground is fauna's (§6.2): its planner
+  plans each world once in its worker thread, and the plan carries the sites' clearance beside the pads (`planGround`),
+  so a fauna `Ground` also serves the nodes (`Ground.nodes`, `resources/ground.ts`); the 16 worlds most recently asked for
+  keep it, and a world's is asked for as a player arrives on it. A touched node (`nodes.ts`) holds its hp, the damage each
+  character did (every character that hit it: those in reach bound how many), and when it heals (`HEAL_S`, 60 s after its
+  last hit) or grows back (`RESPAWN_S`: a plant 3 min, a deposit 5, a formation 8; `respawnSeconds` overrides it). At
+  most 100,000 touched nodes over every world: past that the one due soonest comes back early. Node state is in memory
+  only; a restart brings every node back.
 - **A hit**, cheapest checks first, so a client spamming far nodes costs little: `stale_seq`; `rate` (8 hits at once per
   character, 8 a second); `stale` (stamped more than 3 s from the server's clock); `zone`; `mode` (on foot, as the zone
   entity has it: movement authority's believed mode once P1.E03.T04 lands); `world` (the frame is the player's, a rocky
@@ -741,29 +743,37 @@ requests and starts its timer.
   `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
   continuously; nodes and flora share that one beam.
 - **Breaking.** The node's yield is rolled once and split by the damage each character did (whole units, largest
-  remainders first), each share × the character's `mining.yield` (Optical Drill, Hot Hands) and granted into its
+  remainders first, ties to the first to hit it; `splitByDamage`), so a token hit earns a token share (nothing, a few
+  thousandths of a node) and the one who did the work takes the rest; each share × the character's `mining.yield`
+  (Optical Drill, Hot Hands) and granted into its
   inventory: what does not fit is reported (`added` below `count`), not kept, and a character out of play loses its
   share. The breaker's answer carries its share; every other contributor in the zone is sent `mine {seq: 0, result:
   'depleted', …}`; the inventory is pushed as for any server-side grant. `subscribe(fn)` hears every share
-  (`MinedEvent`: character, zone, frame, node or null, type or flora kind, resource, count, added, `broke`): the quest
-  engine's `mine` steps (P1.E09.T01) listen there.
+  (`MinedEvent`: character, zone, frame, node or null, type or flora kind, resource, count, added, `broke`); the quest
+  engine's `mine` steps (P1.E09.T01) hear `questMineEvent(e)`: `{type: 'mine', node: <type>, id: <frame>/<node>}` for a
+  node share worth something, so a quest counts distinct nodes (one grown back is the same node), and nothing for flora,
+  whose carbon and ferrite count through `collect` steps.
 - **Common flora** (trees, giant growths, shrubs, ferns, crystal growths, boulders, rocks: carbon and ferrite) is each
   client's own scatter, not shared nodes. A hit names `flora {kind, ref, at}`: the world must grow that kind
   (`floraGrows`), `at` must be within 8 m of the ground and in range and sight, the same beam time breaks it
   (`FLORA_HARVEST`'s hp, the client's numbers) and its yield is granted; the last 256 keys a character broke are refused
-  `harvested`. Its place cannot be checked against a scatter the server does not have, but its rate is bounded as a
-  node's is, so carbon and ferrite grants are never the client's.
+  `harvested`, and so is flora past a budget per patch of ground (24 an hour to a character in any 10 m patch; the
+  client's densest flora has about 5 to a patch, 15 in a clump). Its place cannot be checked against a scatter the server
+  does not have, but its rate is bounded as a node's is (per beam-second, as much as an honest player breaking rocks, far
+  below a deposit's worth) and standing still naming plants that are not there soon runs dry, so carbon and ferrite
+  grants are never the client's.
 - **What players are sent.** Every 250 ms (`sweep`, on the service's timer) each session whose player is in a world's
   frame and within 500 m of its ground is sent, as `nodes`, the touched cells within 500 m of it that it does not hold or
   that changed (`gone`: broken and growing back; `hurt`: damaged, with the fraction left rounded up to tenths, so a
   beam's every hit is not news), an empty cell for one that went back to the scatter or that it has left 600 m behind,
   and `reset` as it arrives on a world (again whenever it comes back to one). A client holds exactly what it was sent and
-  draws the rest as the scatter has it. Nothing is sent while no node near a player is touched. The cells round a
+  draws the rest as the scatter has it. Nothing is sent while no node near a player is touched, and a player is looked
+  at again only when its world's touched nodes changed (each world has a version) or it has moved. The cells round a
   player are found through buckets of touched cells about 512 m across, worked out again once it has moved 32 m; each
   cell's state is checked against the schema and encoded once per change, and a session's message put together from
   those (`Session.sendText`).
 - **Bounds and cost.** A far hit never scatters or samples the ground; at most 16 grounds, 4,096 scattered cells and
-  100,000 touched nodes are kept, and miners idle for 2 minutes are forgotten. The bench's mining trial (25 players on foot
+  100,000 touched nodes are kept, and a miner idle for an hour (the flora budget's) is forgotten. The bench's mining trial (25 players on foot
   among 480 nodes, herds about, every node broken many times over) keeps the whole tick, hits and sweeps included,
   well under the 10 ms p95.
 - **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
