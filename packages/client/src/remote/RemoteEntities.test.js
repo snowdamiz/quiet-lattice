@@ -141,6 +141,49 @@ describe('RemoteEntities: what it follows and shows', () => {
   });
 });
 
+/**
+ * A ship crossing out of the Waystation's sphere into its world's frame, played into a fresh layer: its own client flies
+ * it straight out at 120 m/s and re-expresses it in the planet's frame 5% past the sphere (setFrame: its velocity turned,
+ * never boosted), with its clock `skew` seconds behind the server's that labels its poses. Returns where it was drawn,
+ * and where it would have been drawn with nothing blended, in the planet's frame as it was then, frame by frame.
+ */
+function crossing(skew = 0) {
+  const { game, planet, station } = world();
+  const remotes = new RemoteEntities(game, { view: view() });
+  const s = { frame: station, pos: new THREE.Vector3(0, 0, 4400), quat: new THREE.Quaternion(), vel: new THREE.Vector3(0, 0, 120) };
+  const pose = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion(), velocity: new THREE.Vector3(), angularVelocity: new THREE.Vector3() };
+  const pose2 = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion(), velocity: new THREE.Vector3(), angularVelocity: new THREE.Vector3() };
+  let crossed = null;
+  const at = (t) => {
+    if (t > 300) s.pos.addScaledVector(s.vel, 0.05);
+    if (s.frame === station && s.pos.length() > 4500 * 1.05) {
+      setFrameInto(s, framePoseAt(station, t - skew, pose), framePoseAt(planet, t - skew, pose2));
+      s.frame = planet;
+      crossed = t;
+    }
+    return [{ id: 1, kind: 'player', mode: 'ship', frame: frameId(s.frame === station ? 'station' : 0), pos: s.pos.toArray(), quat: s.quat.toArray(), vel: s.vel.toArray() }];
+  };
+  const drawn = [];
+  const raw = [];
+  const frames = [];
+  play(remotes, game, at, {
+    from: 300,
+    to: 306,
+    watch: (now) => {
+      const r = remotes.get(1);
+      if (!r?.shown) return;
+      drawn.push(planet.worldToLocal(r.world, new THREE.Vector3()));
+      const w = r.frame.localToWorld(r.pose.pos, new THREE.Vector3());
+      raw.push(planet.worldToLocal(w, new THREE.Vector3()));
+      frames.push([now, r.frame]);
+    },
+  });
+  return { drawn, raw, frames, crossed, planet, station };
+}
+
+const steps = (list) => list.slice(1).map((p, k) => p.distanceTo(list[k]));
+const bends = (list) => list.slice(2).map((p, k) => p.clone().sub(list[k + 1]).sub(list[k + 1]).add(list[k]).length());
+
 describe('RemoteEntities: frames of reference', () => {
   it('keeps an entity on its moon as the moon is drawn now, though its snapshots are a tenth of a second old', () => {
     const { game, moon } = world();
@@ -168,44 +211,10 @@ describe('RemoteEntities: frames of reference', () => {
   });
 
   it('blends a ship crossing out of the Waystation’s sphere into its world’s frame instead of jumping', () => {
-    const { game, planet, station } = world();
-    const remotes = new RemoteEntities(game, { view: view() });
-    // the ship's own client flies it straight out at 120 m/s; the zone re-expresses it in the planet's frame 5% past the
-    // Waystation's sphere (setFrame at the tick's time: its velocity turned, never boosted)
-    const s = { frame: station, pos: new THREE.Vector3(0, 0, 4400), quat: new THREE.Quaternion(), vel: new THREE.Vector3(0, 0, 120) };
-    const pose = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion(), velocity: new THREE.Vector3(), angularVelocity: new THREE.Vector3() };
-    const pose2 = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion(), velocity: new THREE.Vector3(), angularVelocity: new THREE.Vector3() };
-    let crossed = null;
-    const at = (t) => {
-      if (t > 300) s.pos.addScaledVector(s.vel, 0.05);
-      if (s.frame === station && s.pos.length() > 4500 * 1.05) {
-        setFrameInto(s, framePoseAt(station, t, pose), framePoseAt(planet, t, pose2));
-        s.frame = planet;
-        crossed = t;
-      }
-      return [{ id: 1, kind: 'player', mode: 'ship', frame: frameId(s.frame === station ? 'station' : 0), pos: s.pos.toArray(), quat: s.quat.toArray(), vel: s.vel.toArray() }];
-    };
-    // drawn, and as it would be drawn with nothing blended, in the planet's frame as it is now
-    const drawn = [];
-    const raw = [];
-    const frames = [];
-    play(remotes, game, at, {
-      from: 300,
-      to: 306,
-      watch: (now) => {
-        const r = remotes.get(1);
-        if (!r?.shown) return;
-        drawn.push(planet.worldToLocal(r.world, new THREE.Vector3()));
-        const w = r.frame.localToWorld(r.pose.pos, new THREE.Vector3());
-        raw.push(planet.worldToLocal(w, new THREE.Vector3()));
-        frames.push([now, r.frame]);
-      },
-    });
+    const { drawn, raw, frames, crossed, planet, station } = crossing();
     expect(crossed).not.toBeNull();
     expect(frames.at(-1)[1]).toBe(planet);
     expect(frames.some(([, f]) => f === station)).toBe(true);
-    const steps = (list) => list.slice(1).map((p, k) => p.distanceTo(list[k]));
-    const bends = (list) => list.slice(2).map((p, k) => p.clone().sub(list[k + 1]).sub(list[k + 1]).add(list[k]).length());
     // Carried round with the Waystation (which the planet's turning frame sees go by at ~720 m/s), the ship moves 14 m a
     // frame in the planet's frame. At the change the two frames have moved apart over the render delay: drawn as the
     // snapshots have it, the ship would jump 90 m back. Blended, it never moves faster than it was moving (the jump
@@ -224,6 +233,22 @@ describe('RemoteEntities: frames of reference', () => {
     // and once blended out (a few BLEND_S) it is where the snapshots put it
     expect(BLEND_S).toBeLessThan(0.5);
     expect(drawn.at(-1).distanceTo(raw.at(-1))).toBeLessThan(0.01);
+  });
+
+  it('meets a crossing client whose clock a hitch left behind the server’s with a slide, not a jump', () => {
+    // its clock 0.35 s behind: it places itself in the planet's frame as the frames stood 0.35 s before the tick that
+    // carries the pose, which puts the pose ~400 m from where the Waystation's frame had it
+    const { drawn, raw, frames, planet } = crossing(0.35);
+    expect(frames.at(-1)[1]).toBe(planet);
+    const moving = steps(raw).sort((a, b) => b - a)[1];
+    // drawn as the snapshots have it, the ship would leap some 400 m; blended it slides, a few metres a frame faster than
+    // it moves at most, its path bending no more than its motion's own does (the leap's two bends aside: where it stops
+    // riding with the Waystation) and a metre or two
+    expect(Math.max(...steps(raw))).toBeGreaterThan(300);
+    expect(Math.max(...steps(drawn))).toBeLessThan(moving + 15);
+    const kink = bends(raw).sort((a, b) => b - a)[2];
+    expect(Math.max(...bends(drawn))).toBeLessThan(kink + 2);
+    expect(drawn.at(-1).distanceTo(raw.at(-1))).toBeLessThan(0.05);
   });
 });
 
@@ -292,9 +317,10 @@ describe('RemoteEntities: following Net', () => {
     handlers.get('snapshot')({ tick: 1 });
     expect(remotes.get(3)).toBeDefined();
     expect(remotes.get(9)).toBeUndefined();
-    // the render time follows Net's estimate of the server's clock
+    // the trip is timed on Net's estimate of the server's clock (50 ms), the render time runs on world time, which the
+    // bodies stand at, less the trip and the delay
     remotes.update(DT);
-    expect(remotes.renderTime).toBeCloseTo(500.05 - 0.05 - 0.1, 9);
+    expect(remotes.renderTime).toBeCloseTo(500 - 0.05 - 0.1, 9);
     handlers.get('welcome')({});
     expect(remotes.list).toEqual([]);
     remotes.detach();

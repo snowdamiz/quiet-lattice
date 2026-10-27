@@ -2,7 +2,7 @@
 //
 // Each snapshot Net applies adds a sample per entity to that entity's PoseBuffer, in the entity's own frame of reference
 // (a sample in another frame re-expresses the ones held, at their own times). Each frame the layer reads every buffer at
-// the render time (PlaybackClock: 100 ms behind the newest server time the snapshots bring), and places the pose through
+// the render time (PlaybackClock: world time less the snapshots' trip and a 100 ms delay), and places the pose through
 // its frame as the frame stands now (game.time): an entity riding a moon stays on the moon as drawn, wherever the camera
 // is. What would make a drawn entity jump (a frame change: the two frames have moved apart over the delay; a late sample
 // that ends an extrapolation) is caught as the sample arrives and taken up by an offset that dies away, critically damped
@@ -79,9 +79,10 @@ export class RemoteEntities {
     this.byId = new Map();
     this.list = [];
     this.clock = new PlaybackClock();
-    /** the world time entities are drawn at this frame */
+    /** the time (on the snapshots' server clock) entities are drawn at this frame */
     this.renderTime = -Infinity;
-    /** the server's clock as this client reads it (Net's estimate when attached, else world time) */
+    /** the server's clock as this client reads it, which snapshot arrivals are timed by (Net's estimate when attached,
+     * else world time) */
     this.serverNow = () => game.time;
     /** the system the buffered frames belong to */
     this.system = null;
@@ -188,10 +189,10 @@ export class RemoteEntities {
   /** Each frame: the render time moves on, every entity is placed and the view draws them. */
   update(dt) {
     this.checkSystem();
-    const now = this.serverNow();
-    // (the bodies already stand at this frame's time, so the render time moves on before a recorded stream delivers: a
-    // sample's blend is worked out with the frames and the render time of one frame, as a live snapshot's is between
-    // frames)
+    // (on world time, which the bodies stand at; the bodies already stand at this frame's time, so the render time moves
+    // on before a recorded stream delivers: a sample's blend is worked out with the frames and the render time of one
+    // frame, as a live snapshot's is between frames)
+    const now = this.game.time;
     const tr = (this.renderTime = this.clock.advance(now));
     this.replay?.update(now, this);
     const step = Math.max(0, dt);

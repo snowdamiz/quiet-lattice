@@ -4,7 +4,8 @@
 // agree, else a straight line; orientations slerped); past the newest it is extrapolated along the newest velocity for at
 // most EXTRAPOLATE_S, then held. When a sample arrives in another frame (the entity crossed a sphere of influence) the
 // samples already held are re-expressed in it, each with both frames as they stood at its own time, so the buffer is
-// always in its newest sample's frame. A sample that changes what the entity is (a pilot stepping out on foot, a walker
+// always in its newest sample's frame (and moved, all together, to meet the new sample, so the step into it is the motion
+// riding with the old frame would have made). A sample that changes what the entity is (a pilot stepping out on foot, a walker
 // boarding) or that no velocity explains (a teleport, a respawn) is a cut: nothing is interpolated across it.
 import * as THREE from 'three';
 import { reframeAt } from './frames.js';
@@ -17,6 +18,8 @@ export const EXTRAPOLATE_S = 0.25;
 export const TELEPORT_M = 1000;
 
 const _d = new THREE.Vector3();
+const _p = new THREE.Vector3();
+const _s = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: new THREE.Vector3() };
 
 class Sample {
   constructor() {
@@ -76,7 +79,20 @@ export class PoseBuffer {
     if (prev && frame === this.frame && same(prev.pos, pos) && sameQuat(prev.quat, quat) && !still(vel)) return 'repeat';
     let result = 'ok';
     if (prev && frame !== this.frame) {
+      // where the newest sample would be at this one's time, riding with its frame, as this frame sees it then
+      _p.copy(prev.pos).addScaledVector(prev.vel, t - prev.t);
+      _s.pos.copy(_p);
+      _s.quat.copy(prev.quat);
+      _s.vel.copy(prev.vel);
+      reframeAt(_s, this.frame, frame, t);
       this.reframe(frame);
+      // The samples held are moved to meet the new one: a client places itself in its new frame with its own clock,
+      // which a hitch can leave tenths of a second off the server's that labels its poses, and the two frames move
+      // apart by up to a kilometre a second. Held as they were, the step from the last of them to the new one would be a
+      // slide of that much in a tick; moved, they carry on into it, and the drawn pose's change is blended out
+      // (RemoteEntities) like any other.
+      _d.subVectors(_p.fromArray(pos), _s.pos);
+      for (let i = 0; i < this.length; i++) this.at(i).pos.add(_d);
       result = 'reframed';
     }
     this.frame = frame;
