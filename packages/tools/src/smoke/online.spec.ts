@@ -6,7 +6,8 @@ import { startOnline, type Online } from './online.ts';
 // The game through the server (P1.E04.T01): sign up, make a character, enter, and spawn docked at the people's home
 // Waystation; a reload resumes the character where the server holds it (on foot in the hangar, its warp cell moved to the
 // cargo pod), with no localStorage save anywhere (the demo's old save, planted before each page loads, is dropped); a
-// server restart is reconnected through, the snapshot store starting over; a page stalled for 9 s keeps its session. The
+// server restart is reconnected through, the snapshot store starting over; a page stalled for 9 s keeps its session; a
+// frame loop stopped for a while (a hidden tab) comes back on the server's clock at once. The
 // server runs against a scratch database (online.ts). Credentials are made up per run here and exist only in that database.
 
 let online: Online;
@@ -278,5 +279,32 @@ test('a page stalled for 9 s keeps its session: the snapshots it missed are ackn
   expect(got.acks).toBeLessThanOrEqual(22);
   expect(got.messages).toBeLessThan(60);
   expect(online.serverOutput()).not.toContain('frame flood');
+  expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
+});
+
+test("a frame loop stopped for a while (a hidden tab) comes back on the server's clock at once, and so do its inputs", async ({ page }) => {
+  test.setTimeout(240_000);
+  const errors = watchErrors(page);
+  await openTitle(page);
+  await signUp(page, newPilot(), 'thalune');
+  await enter(page);
+  await page.evaluate(() => {
+    const g = window.game as Window['game'] & { paused?: unknown };
+    g.paused = g.frame;
+    g.frame = () => {};
+  });
+  await page.waitForTimeout(5000);
+  const got = await page.evaluate(() => {
+    const g = window.game as Window['game'] & { paused?: unknown };
+    g.frame = g.paused;
+    const behind = g.net.serverTime() - g.time;
+    g.frame(1 / 60);
+    return { behind, lag: g.net.serverTime() - g.time, input: g.net.lastInput.time - g.time, state: g.net.state };
+  });
+  // it was seconds behind, and one frame later it is on the server's clock, its input stamped with that time
+  expect(got.behind).toBeGreaterThan(4);
+  expect(Math.abs(got.lag)).toBeLessThan(0.1);
+  expect(got.input).toBe(0);
+  expect(got.state).toBe('joined');
   expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
 });

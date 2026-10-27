@@ -268,15 +268,54 @@ describe('Game: the world clock', () => {
     expect(g.renderTime).toBeCloseTo(12.5 + 600 / 60, 6);
   });
 
-  it('catches up after a stall at no more than twice the pace, never in a step', () => {
+  it('catches up up to a second behind at no more than twice the pace, never in a step', () => {
     const { g, clock } = joined(1000);
-    clock.t += 9; // a 9 s stall: frames are clamped, the server's clock is not
+    clock.t += 0.9; // a short stall: frames are clamped, the server's clock is not
     const before = g.time;
     const times = run(g, clock, 1200);
     const steps = times.map((t, i) => t - (i ? times[i - 1] : before));
     expect(Math.max(...steps)).toBeLessThanOrEqual((2 / 60) * (1 + 1e-9));
     expect(Math.min(...steps)).toBeGreaterThan(0);
     expect(Math.abs(clock.t - g.time)).toBeLessThan(0.05);
+  });
+
+  it('steps forward to the server clock after the frame loop stopped for a minute, and inputs carry the stepped time', () => {
+    const { g, clock } = joined(1000);
+    run(g, clock, 60);
+    // the frame loop stops for 60 s (a hidden tab), the server's clock does not
+    clock.t += 60;
+    const renderBefore = g.renderTime;
+    run(g, clock, 1);
+    expect(g.time).toBe(clock.t);
+    expect(g.renderTime).toBeCloseTo(renderBefore + 1 / 60, 9);
+    // the next input is stamped with it
+    const state = new FrameState();
+    const station = { kind: 'station' };
+    state.frame = station;
+    Object.assign(g, {
+      mode: 'ship',
+      universe: { deep: false },
+      system: { seed: 1, planets: [] },
+      station,
+      ship: { state, mode: 'flying', boosting: false },
+      player: { jetting: false, sprinting: false },
+      multitool: { firing: false },
+      input: { mouse: () => false, down: () => false },
+    });
+    g.net.zone = { systemSeed: 1 };
+    expect(g.inputSample()).toMatchObject({ time: clock.t, mode: 'ship', pose: { frame: '1:station' } });
+    // and from there it eases and caps as before, never going back
+    const after = run(g, clock, 120);
+    expect(after.every((t, i) => t >= (i ? after[i - 1] : clock.t - 2))).toBe(true);
+    expect(Math.abs(clock.t - g.time)).toBeLessThan(0.05);
+  });
+
+  it('never steps back: an estimate a second or more behind the world clock only holds it still', () => {
+    const { g, clock } = joined(1000);
+    clock.t -= 3;
+    const before = g.time;
+    run(g, clock, 60);
+    expect(g.time).toBe(before);
   });
 
   it('never goes back and never runs more than 0.25 s ahead, however fast frames are stepped', () => {

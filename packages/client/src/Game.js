@@ -50,9 +50,10 @@ const _m4 = new THREE.Matrix4();
 const SEAT_ABOVE = new THREE.Vector3(0, 5.6, -0.6);
 const HULL_ABOVE = new THREE.Vector3(0, 9, 7);
 const _v2b = new THREE.Vector2();
-// The world clock once in the world (advanceClock): it eases toward the server's clock with this gain (per second), runs at
-// most twice as fast to catch up and stands still rather than go back, and is never more than maxAheadS ahead of it.
-const CLOCK = { gain: 0.5, maxAheadS: 0.25 };
+// The world clock once in the world (advanceClock): more than stepBehindS behind the server's clock it steps forward to it;
+// otherwise it eases toward it with this gain (per second), at most twice as fast, standing still rather than going back,
+// and never more than maxAheadS ahead of it.
+const CLOCK = { gain: 0.5, maxAheadS: 0.25, stepBehindS: 1 };
 
 export class Game {
   constructor(container, hudEl) {
@@ -529,10 +530,12 @@ export class Game {
   }
 
   // World time is the server's (ARCHITECTURE §3, §9), and movement authority judges every input at the time it is
-  // stamped with, which is this clock: so once in the world it is slewed, never stepped. Each frame it advances by the
-  // frame's time, eased toward the server's clock (at most twice as fast to catch up after a stall, standing still rather
-  // than going back), and never more than CLOCK.maxAheadS ahead of it. Shaders animate on renderTime instead, which
-  // advances by exactly the frames' time and stays small: at the server's 10^7 s a float32 uniform moves in 2 s steps.
+  // stamped with, which is this clock: so once in the world it never goes back. Each frame it advances by the frame's
+  // time, eased toward the server's clock (at most twice as fast, standing still rather than going back) and never more
+  // than CLOCK.maxAheadS ahead of it; more than CLOCK.stepBehindS behind (the frame loop stopped, as in a hidden tab) it
+  // steps forward to it at once, and the frame places the bodies at the new time (movement authority starts a new
+  // window at such a jump). Shaders animate on renderTime instead, which advances by exactly the frames' time and stays
+  // small: at the server's 10^7 s a float32 uniform moves in 2 s steps.
   get renderTime() {
     return this.time - this.timeBase;
   }
@@ -549,7 +552,8 @@ export class Game {
     let next = prev + dt;
     const server = this.net?.joined ? this.net.serverTime() : null;
     if (server !== null) {
-      next += Math.max(-dt, Math.min(dt, (server - next) * Math.min(1, dt * CLOCK.gain)));
+      if (server - next > CLOCK.stepBehindS) next = server;
+      else next += Math.max(-dt, Math.min(dt, (server - next) * Math.min(1, dt * CLOCK.gain)));
       next = Math.max(prev, Math.min(next, server + CLOCK.maxAheadS));
     }
     this.timeBase += next - prev - dt;
