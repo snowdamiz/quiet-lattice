@@ -609,5 +609,6 @@ decides when one plays; the client presents it.
   lock that Esc released brings up the pause screen then, as after any Esc, until a click.
 - **Dev:** `#cutscene:<id>` stages the ship (`CutscenePlayer.stage`, dev builds only) and plays it; `pnpm capture --
   --ui cutscene-test` (and `cutscene-test-jump`, `cutscene-test-skip`) grab the grader's stills and clips;
-  `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end, skips it, and plays it online through
-  a stand-in Net.
+  `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end, skips it, and plays it through a
+  stand-in Net (asked for, refused, and started by the server); `cutscene-online.spec.ts` plays it through the real Net
+  against a local server (online.ts), its tug seen in the snapshots while the player watches and gone after `done`.
