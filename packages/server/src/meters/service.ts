@@ -101,6 +101,9 @@ interface Entry {
   pulseRefused: boolean;
   /** The glow last put on the entity. */
   glow: number;
+  /** Not yet in the world since it was opened: the time it was away runs heat (it cools) but never Charge, which regenerates
+   * only in play (the Listener's anywhere included). Its first input ends it. */
+  away: boolean;
 }
 
 const IDLE: MeterActivity = { beam: false, pulse: false };
@@ -149,6 +152,7 @@ export class MeterService {
       pushedAt: -Infinity,
       pulseRefused: false,
       glow: -1,
+      away: true,
     });
   }
 
@@ -236,6 +240,7 @@ export class MeterService {
     e.mode = mode;
     e.activity = { beam: mode === 'foot' && (msg.buttons & Buttons.beam) !== 0, pulse: mode === 'pulse' };
     e.activeUntil = now + ACTIVITY_HOLD_S;
+    e.away = false;
     e.env = zone && entity ? this.environment(zone, entity.fields.frame, entity.fields.pos, mode === 'foot') : NOWHERE;
     e.conditions = meterConditions(e.env);
     if (zone && id !== undefined) {
@@ -299,8 +304,9 @@ export class MeterService {
 
   private run(e: Entry, act: MeterActivity, dt: number): void {
     const step = stepMeters(e.state, e.profile, e.env, act, dt, e.conditions);
-    e.state = step.state;
-    e.events.push(...step.events);
+    // (away, Charge stands as the ship was left)
+    e.state = e.away ? { ...step.state, charge: e.state.charge } : step.state;
+    e.events.push(...(e.away ? step.events.filter((ev) => ev !== 'charge_empty') : step.events));
     // the drive dropped out: it stays out until an input claims it again
     if (act.pulse && !step.pulse) e.activity = { ...e.activity, pulse: false };
   }

@@ -148,8 +148,11 @@ describe('the beam, as the server judges it', () => {
     t.send('foot', at.frame, at.pos, Buttons.beam);
     expect(t.meters.view(ID, t.now).heat).toBeLessThan(h0);
     until(() => !t.meters.view(ID, t.now).overheated);
-    expect(t.meters.view(ID, t.now).heat).toBeLessThan(26);
-    expect(t.pushes.at(-1)!.view.overheated).toBe(false);
+    // the lockout ends at 25 (not at 0), and the beam, still held, heats again for what is left of the input's 50 ms
+    const lifted = t.meters.view(ID, t.now).heat;
+    expect(lifted).toBeGreaterThanOrEqual(25);
+    expect(lifted).toBeLessThan(25 + 24 * 0.05 + 1e-9);
+    expect(t.pushes.at(-1)!.view).toMatchObject({ overheated: false, heat: lifted });
   });
 
   it('cools twice as fast under the sea, and puts its heat on the entity for others to see', () => {
@@ -264,6 +267,21 @@ describe('builds, server-side changes and saves', () => {
     expect(t.meters.get(ID)).toEqual({ heat: 0, overheated: false, charge: 33, at: t.now });
     expect(t.meters.close(ID)).toEqual({ heat: 0, overheated: false, charge: 33, at: t.now });
     expect(() => t.meters.view(ID, t.now)).toThrow(MetersNotHeldError);
+  });
+
+  it('never regenerates Charge for the time a character was away, not even on a hull that regenerates anywhere', () => {
+    const listener: ShipLoadout = { hull: 'listener', modules: {}, cargoPods: 2, livery: 0 };
+    const t = setup({ ship: listener, saved: { heat: 50, charge: 100, at: 2.3e7 - 600 } });
+    // ten minutes away: cooled, Charge as it was
+    expect(t.meters.view(ID, t.now)).toMatchObject({ heat: 0, charge: 100, chargeMax: 240 });
+    t.wait(5);
+    expect(t.meters.view(ID, t.now).charge).toBe(100);
+    // in the world (even deep space, for this hull) it regenerates
+    const deep: Vec3 = [t.zone.system.outerOrbit * 1.5, 0, 0];
+    t.send('ship', null, deep);
+    t.wait(1);
+    t.send('ship', null, deep);
+    expect(t.meters.view(ID, t.now).charge).toBeCloseTo(102, 6);
   });
 
   it('pushes while the meters move, at most every METER_PUSH_S, and not when they rest', () => {

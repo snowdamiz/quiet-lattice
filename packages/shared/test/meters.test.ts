@@ -245,6 +245,15 @@ describe('skill nodes, hull perks and buffs', () => {
     for (const e of [env(), env({ deepSpace: true })]) expect(chargeRegenPerS(p, e, meterConditions(e))).toBe(2);
   });
 
+  it('nothing in deep space, a catalyst’s +2/s included; the Listener’s anywhere-flag regenerates there all the same', () => {
+    const catalyst = meterProfile({ ship: LARK, buffs: [{ stat: 'charge.regen', op: 'add', value: 2 }] });
+    const deep = env({ deepSpace: true, sunlight: true });
+    expect(chargeRegenPerS(catalyst, deep, meterConditions(deep))).toBe(0);
+    expect(stepMeters(state({ charge: 10 }), catalyst, deep, idle, 60).state.charge).toBe(10);
+    const listener = meterProfile({ ship: { hull: 'listener', modules: {}, cargoPods: 2, livery: 0 }, buffs: [{ stat: 'charge.regen', op: 'add', value: 2 }] });
+    expect(chargeRegenPerS(listener, deep, meterConditions(deep))).toBe(4);
+  });
+
   it('catalysts: Frostglass +25 heat capacity, Stormquartz +2/s Charge', () => {
     const p = meterProfile({
       ship: LARK,

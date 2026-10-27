@@ -271,9 +271,9 @@ the world time they stood at) and `pose` (`{system, pose, mode}`, read from the 
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
   an older `v` is migrated one version at a time and written back at the next save. A value that cannot be read (a newer
   `v`, no migration, the schema or `check` fails) follows `onInvalid`: the pose falls back to docked at the home
-  Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement); every other
-  component refuses the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries
-  the loaded pose.
+  Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement), and the meters
+  fall back to their default (cool, the ship's Charge full: nothing earned, §16), logged; every other component refuses
+  the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries the loaded pose.
 - **Save** every 30 s per character in play, staggered (the interval split into 30 slots, each character in the
   least-loaded, one slot captured per second); on leave (logout, disconnect, the older connection of a duplicate join),
   captured before the entity leaves its zone; on zone handoff (P1.E04.T04 calls `persistence.saveNow(id, 'handoff')`);
@@ -655,13 +655,19 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   made again whenever the ship or the owned nodes change.
 - **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, at}`. A character
   back from away has its heat cooled for the time it was gone (idle, nowhere in particular) and its Charge as it left it:
-  Charge regenerates only in play. Nothing here is earned, so an unreadable value gives the default (cool, Charge full),
-  logged.
-- **The client** predicts with the same rules: the multitool steps heat each frame (`Multitool.stepHeat`), the ship its
-  Charge (`Ship.updateCharge`), both reading the character's place from the client's own bodies (`characterMeterEnvironment`:
-  the walker on foot, else the ship) and the build from `Ship.meterProfile`. Both listen for `meters` on the game's `Net`
-  (whichever connection it holds) and take the server's values, run on to the present at the client's estimate of server
-  time (`multitool.reconcile`, `ship.reconcileCharge`). The state sent after join reaches a client still on its way into
-  the world, so the server counts it as unsent and pushes the meters again on the session's first input. The HUD shows heat on the crosshair's left arc (warm, amber from 75%, danger red through the
-  lockout with a tick where it ends and OVERHEAT under the dot) and Charge on the reticle's right arc with a readout under the
-  altitude (how much and which way it is going; a sheen climbs the arc while it regenerates).
+  Charge regenerates only in play, from the first input after it joins (the Listener's anywhere-flag included). Nothing
+  here is earned, so an unreadable value gives the default (cool, Charge full), logged.
+- **The client** predicts with the same rules: the multitool steps heat each frame (`Multitool.tickMeter`), the ship its
+  Charge (`Ship.updateCharge`), both reading the character's place from the client's own bodies
+  (`characterMeterEnvironment`: the walker on foot, else the ship) and the build from `Ship.meterProfile`. The input's
+  `beam` bit is the button held (`multitool.held`), never the prediction of whether it fires: the server decides the
+  lockout, so a prediction a little ahead of it cannot stop it short of overheating. Both listen for `meters` on the
+  game's `Net` (whichever connection it holds) and take the server's values, run on to the present at the client's
+  estimate of server time (`multitool.reconcile`, `ship.reconcileCharge`); a lockout the client predicted is kept against
+  a view the server made before it can have seen the inputs sent then (within the Net clock's round trip and 0.1 s of the
+  predicted overheat). The state sent after join reaches a client still on its way into the world, so the server counts
+  it as unsent and pushes the meters again on the session's first input. The HUD shows heat on the crosshair's left arc
+  (warm, amber from 75%, danger red through the lockout with a tick where it ends and OVERHEAT under the dot) and Charge
+  on the reticle's right arc with a readout under the altitude (how much and which way it is going; a sheen climbs the
+  arc while it regenerates). The arcs' strokes are sized in the SVG's own units per reticle, never as non-scaling
+  strokes, whose dashes would be measured in screen pixels and overrun the arc.
