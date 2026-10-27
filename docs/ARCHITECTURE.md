@@ -853,8 +853,8 @@ requests and starts its timer.
   along the beam from the eye, 1.6 m up, to the node, its ends skipped, blocked where the beam runs 0.75 m under it; rocks,
   trees and buildings do not block); `heat` (`beam(character, seconds)`: given Heat's meter service as `meters`
   (P1.E07.T02), a hit counts only while `meters.beamActive(character, now)` says the beam is firing, its button held
-  and out of the overheat lockout, so hits sent with the button off never mine; without it, as until Heat is wired into
-  the gateway's `ResourceService`, the beam never overheats on the server).
+  and out of the overheat lockout, so hits sent with the button off never mine; the gateway's `ResourceService` is given
+  it, §19; without it (tests of the resource service alone) the beam is always taken as firing).
 - **Beam time.** A hit is worth the time since the character's last hit that counted, at most 0.5 s (an honest client
   sends one every 0.25 s), at the multitool's 1.6 hp a second (× 1.5 on minerals with a node flagged
   `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
@@ -930,7 +930,8 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   believed mode `foot` and out of the lockout, at its rate per second of server time however fast inputs come; an input's
   activity lapses 1 s after it, so a client that stops sending is idle. The entity's `heat` wire field carries the meter in
   steps of 0.02 (the multitool's glow others see, DESIGN 9.10). `allowsMode(id, mode, now)` is movement authority's mode
-  check (P1.E03.T04: pulse needs Charge), `beamActive(id, now)` what server-side mining (P1.E13) judges yield by; `addHeat`,
+  check (P1.E03.T04: pulse needs Charge), `beamActive(id, now)` what the gateway's resource service judges every mining
+  hit by (§18: refused `heat` with the button up or in the lockout); `addHeat`,
   `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is
   made again whenever the ship or the owned nodes change.
 - **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, at}`. A character

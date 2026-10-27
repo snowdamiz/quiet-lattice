@@ -141,7 +141,10 @@ describe('heat and Charge over the socket', () => {
     expect(cooling.heat).toBeLessThan(over.heat - 10);
     await bot.hold(6000, 'foot', at.frame, at.pos, BEAM, () => metersSeen(s).some((m) => !m.meters.overheated));
     const recovered = await metersWhere(s, (m) => !m.overheated);
-    expect(recovered.heat).toBeLessThanOrEqual(26);
+    // the lockout ends at 25, and the beam, still held, heats again for what is left of that input's interval (inputs go
+    // every 50 ms; the socket can bunch them)
+    expect(recovered.heat).toBeGreaterThanOrEqual(25);
+    expect(recovered.heat).toBeLessThan(25 + 24 * 0.15);
     // the beam, still held, heats again
     await bot.hold(500, 'foot', at.frame, at.pos, BEAM);
     await handled(s);
