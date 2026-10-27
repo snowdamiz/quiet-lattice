@@ -261,7 +261,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 
 ### E11 Stations and the Scrapyard
 - [ ] **P1.E11.T01 (art) Waystation and Scrapyard kits** · deps: E14.T02 · spec: DESIGN 19.3 · done: hangar bay module, trade deck, fabricator, spine, ring, habitat, bay door, props; the Scrapyard's hollowed-asteroid kit. · verify: validate; review. → `[R]`
-- [ ] **P1.E11.T02 Station builder from kits** · deps: T01, E02.T02 · files: `src/universe/Station.js` · done: stations assembled from kit modules per seed with colliders from `COL_` meshes; the box-geometry builder deleted. · verify: smoke; collision tests; `pnpm gate:removed`.
+- [ ] **P1.E11.T02 Station builder from kits** · deps: T01, E02.T02 · files: `src/universe/Station.js` · done: stations assembled from kit modules per seed with colliders from `COL_` meshes; the box-geometry builder deleted. The fabricator terminal stays at shared `STATION_FABRICATOR`, which the server checks (amended by the orchestrator from P1.E13.T05). · verify: smoke; collision tests; `pnpm gate:removed`.
 - [ ] **P1.E11.T03 Bays as phases** · deps: T02, E09.T02 · spec: DESIGN 16.6 "Hubs" · files: `src/entities/Ship.js` (docking), `src/entities/Traffic.js` · done: the hangar interior is a phase of 24 with a pad each; docking autopilot targets your bay; exterior shared; traffic NPCs per bay. · verify: integration: 30 bots dock into two bays.
 - [ ] **P1.E11.T04 Trade deck services** · deps: T03, E09.T05, E12.T05, E13.T05 · files: `src/ui/Menus.js` (trade panel) · done: Quartermaster, outfitter (ship ladder), fabricator terminal, board; the sell-only trade panel deleted. · verify: integration buys a hull and crafts a cell; `pnpm gate:removed`.
 - [ ] **P1.E11.T05 The Scrapyard instance** · deps: T02, E09.T02, E08.T05 · spec: DESIGN 13 · done: the chapter 11 dungeon: wing at the mouth, docking, deck fight through crews, the Singer captain; scaled 1–12. · verify: `pnpm e2e -- scrapyard`.
@@ -346,7 +346,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E19.T05 Income tuning** · deps: T01, E21.T01 · spec: DESIGN 15.6 · done: bot-measured income per tier within the table's bands; ladder prices adjusted. · verify: `pnpm bots -- --economy` report.
 
 ### E20 Crafting
-- [ ] **P2.E20.T01 Fabricator tiers and recipe items** · deps: P1.E13.T05 · spec: DESIGN 15.7 · done: station tiers gate recipes; recipes as items from vendors, chains, drops, vaults; learned forever. · verify: integration.
+- [ ] **P2.E20.T01 Fabricator tiers and recipe items** · deps: P1.E13.T05 · spec: DESIGN 15.7 · done: station tiers gate recipes; recipes as items from vendors, chains, drops, vaults; learned forever. Also capital, sanctuary and Scrapyard fabricators, and a version guard so a rolled-back recipe table cannot drop learned recipes (amended by the orchestrator from P1.E13.T05). · verify: integration.
 - [ ] **P2.E20.T02 Module recipes and salvage** · deps: T01, E24.T03 · done: all module recipes; hazard platings as modules; salvage to a third of materials. · verify: integration.
 - [ ] **P2.E20.T03 Catalysts and cosmetics** · deps: T01 · done: sanctuary catalyst recipes with timed buffs; glyph cosmetics from Count residue with boss-drop patterns; liveries from city chains. · verify: integration; smoke.
 
