@@ -97,9 +97,10 @@ export const MOVEMENT = {
     clearanceM: 25,
     /** Below PULSE_DRIVE.engageAltitudeM by this much. */
     altitudeM: 50,
-    /** Cruising on as Charge runs out (Heat and Charge, P1.E07.T02): the client drops out of the drive when its own meter
-     * empties, and its last inputs on the drive are still on the wire when the server's does; they are taken this long
-     * after. Engaging takes none: the drive needs Charge to engage. */
+    /** Cruising on as Charge runs out (Heat and Charge, P1.E07.T02): the client drops out of the drive when its own
+     * predicted meter empties, which may trail the server's a little; inputs on the drive are taken until this much of the
+     * client's credited time past the moment the server's burn (on that same credited time) emptied it. Engaging takes
+     * none: the drive needs Charge to engage. */
     chargeGraceS: 1,
   },
   landed: {

@@ -148,7 +148,8 @@ export class ZoneManager {
   private lastTime = -Infinity;
   /** what the zones are given: the meters as they are set now */
   private readonly moverMeters: MoverMeters = {
-    allowsMode: (characterId, mode, now, graceS) => this.meters?.allowsMode(characterId, mode, now, graceS) ?? true,
+    allowsMode: (characterId, mode, now, graceS, at) => this.meters?.allowsMode(characterId, mode, now, graceS, at) ?? true,
+    flown: (characterId, mode, seconds, now, at) => this.meters?.flown(characterId, mode, seconds, now, at),
   };
 
   constructor(opts: ZoneManagerOptions) {

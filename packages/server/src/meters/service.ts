@@ -7,9 +7,12 @@
 // night, under the sea, in sunlight, in the habitable band), then takes up what this input says. A client's buttons are
 // requests: the beam heats only while the server believes the character is on foot (the zone's mode for its entity) and
 // the meter is out of the lockout, at the beam's own rate per second of server time however fast inputs arrive; it holds
-// at most ACTIVITY_HOLD_S past the last input, so a client that stops sending goes idle. The pulse drive burns Charge only
-// in the believed mode `pulse`; movement authority (P1.E03.T04) asks `allowsMode` and refuses the drive with a correction
-// while Charge is empty, and `claim` tells the session why.
+// at most ACTIVITY_HOLD_S past the last input, so a client that stops sending goes idle. The pulse drive burns Charge for the
+// flight movement authority (P1.E03.T04) accepted on it: each accepted input's stretch of its client's time as the authority
+// credited it (`flown`), so a client pays for the flight the server took from it however it times or bunches its inputs
+// (in a zone without movement authority, which drives raw poses, for the time since its last input as it arrived, at most
+// ACTIVITY_HOLD_S). Movement authority asks `allowsMode` and refuses the drive with a correction while Charge is empty;
+// `claim` tells the session why.
 //
 // Mining (P1.E13) is paid in the beam time this service judged: `takeBeam` hands over the seconds the beam fired since it
 // last did, so a client earns what it fired, however it times its hits.
@@ -106,8 +109,13 @@ interface Entry {
   glow: number;
   /** Seconds the beam fired (`stepMeters`' `beamS`: held, on foot, out of the lockout) since mining last took them. */
   beamS: number;
-  /** When Charge last ran out in play (world time, the end of the stretch it ran out in), for the drive's drop-out grace. */
+  /** When Charge last ran out in play, for the drive's drop-out grace: the moment the drive's burn emptied it, on the clock
+   * the burn ran on (movement authority's credited time), or when a ship active spent the last of it. */
   emptiedAt: number;
+  /** Movement authority paid for the input the zone is applying (`flown`): no burn on its arrival as well. */
+  flown: boolean;
+  /** World time the last input was applied (the burn's fallback without movement authority), NaN before the first. */
+  lastInput: number;
   /** Not yet in the world since it was opened: the time it was away runs heat (it cools) but never Charge, which regenerates
    * only in play (the Listener's anywhere included). Its first input ends it. */
   away: boolean;
@@ -161,6 +169,8 @@ export class MeterService {
       glow: -1,
       beamS: 0,
       emptiedAt: -Infinity,
+      flown: false,
+      lastInput: NaN,
       away: true,
     });
   }
@@ -206,15 +216,28 @@ export class MeterService {
   // ---------- inputs ----------
 
   /**
-   * Movement authority's question (P1.E03.T04): may the character be in `mode` now? Everything but the pulse drive, which
-   * needs Charge; one that ran out of it no more than `graceS` ago may still be cruising on it (its client drops out on its
-   * own meter, a moment behind on the wire).
+   * Movement authority's question (P1.E03.T04): may the character be in `mode` at server world time `now`? Everything but
+   * the pulse drive, which needs Charge; one that ran out of it no more than `graceS` before `at` (the claim's time on the
+   * clock the burn runs on: movement authority's credited time) may still be cruising on it, its client dropping out on its
+   * own meter.
    */
-  allowsMode(characterId: string, mode: MoveMode, now: number, graceS = 0): boolean {
+  allowsMode(characterId: string, mode: MoveMode, now: number, graceS = 0, at = now): boolean {
     if (mode !== 'pulse') return true;
     const e = this.entry(characterId);
     this.advance(characterId, e, now);
-    return canEngagePulse(e.state, e.profile) || now - e.emptiedAt <= graceS;
+    return canEngagePulse(e.state, e.profile) || (graceS > 0 && at - e.emptiedAt <= graceS);
+  }
+
+  /**
+   * Movement authority's account of an input it accepted, before the zone applies it: the character flew `seconds` of its
+   * client's time in `mode`, as the authority credited them, up to credited time `at` (server world time `now`). On the
+   * pulse drive that flight burns Charge, near bodies, as the shared rules do.
+   */
+  flown(characterId: string, mode: MoveMode, seconds: number, now: number, at: number): void {
+    const e = this.entry(characterId);
+    this.advance(characterId, e, now);
+    e.flown = true;
+    if (mode === 'pulse') this.burn(e, seconds, at);
   }
 
   /**
@@ -246,8 +269,13 @@ export class MeterService {
     const id = zone?.entityOf(viewer);
     const entity = id === undefined ? undefined : zone!.entity(id);
     const mode = (entity?.fields.mode ?? msg.mode) as MoveMode;
+    // the drive's stretch since the last input, where movement authority has not paid for it (a zone driving raw poses)
+    if (!e.flown && mode === 'pulse' && Number.isFinite(e.lastInput)) this.burn(e, Math.min(ACTIVITY_HOLD_S, now - e.lastInput), now);
+    e.flown = false;
+    e.lastInput = now;
     e.mode = mode;
-    e.activity = { beam: mode === 'foot' && (msg.buttons & Buttons.beam) !== 0, pulse: mode === 'pulse' };
+    // (the drive burns per input, above and in `flown`, never on the clock: a stretch it did not fly is not paid for)
+    e.activity = { beam: mode === 'foot' && (msg.buttons & Buttons.beam) !== 0, pulse: false };
     e.activeUntil = now + ACTIVITY_HOLD_S;
     e.away = false;
     e.env = zone && entity ? this.environment(zone, entity.fields.frame, entity.fields.pos, mode === 'foot') : NOWHERE;
@@ -289,7 +317,10 @@ export class MeterService {
 
   /** A ship active's Charge: refused unless the meter holds it. */
   spendCharge(characterId: string, amount: number, now: number): MeterResult {
-    return this.change(characterId, now, (s) => spendCharge(s, amount));
+    const r = this.change(characterId, now, (s) => spendCharge(s, amount));
+    // the last of it spent: the drive, if it is cruising, drops out with the same grace as when the burn empties it
+    if (r.ok && r.state.charge <= 0 && amount > 0) this.entry(characterId).emptiedAt = now;
+    return r;
   }
 
   /** Charge to the brim (the paid refill at a Waystation; its price is the caller's to take). */
@@ -316,21 +347,33 @@ export class MeterService {
     this.reprofile(e, characterId);
     if (!(now > e.at)) return;
     const busyTo = Math.min(now, Math.max(e.at, e.activeUntil));
-    if (busyTo > e.at) this.run(e, e.activity, busyTo - e.at, busyTo);
-    if (now > busyTo) this.run(e, IDLE, now - busyTo, now);
+    if (busyTo > e.at) this.run(e, e.activity, busyTo - e.at);
+    if (now > busyTo) this.run(e, IDLE, now - busyTo);
     e.at = now;
   }
 
-  /** Runs the meters `dt` seconds doing `act`, the stretch ending at world time `end`. */
-  private run(e: Entry, act: MeterActivity, dt: number, end: number): void {
+  /** Runs the meters `dt` seconds doing `act` (never the drive: that burns per input). */
+  private run(e: Entry, act: MeterActivity, dt: number): void {
     const step = stepMeters(e.state, e.profile, e.env, act, dt, e.conditions);
     e.beamS += step.beamS;
     // (away, Charge stands as the ship was left)
     e.state = e.away ? { ...step.state, charge: e.state.charge } : step.state;
-    e.events.push(...(e.away ? step.events.filter((ev) => ev !== 'charge_empty') : step.events));
-    if (!e.away && step.events.includes('charge_empty')) e.emptiedAt = end;
-    // the drive dropped out: it stays out until an input claims it again
-    if (act.pulse && !step.pulse) e.activity = { ...e.activity, pulse: false };
+    e.events.push(...step.events);
+  }
+
+  /** The pulse drive's burn for `seconds` of flight ending at `at` (near bodies only); when it empties the meter, the moment
+   * it ran out is kept for the drop-out grace. */
+  private burn(e: Entry, seconds: number, at: number): void {
+    const rate = e.env.nearBodies ? e.profile.pulseBurn : 0;
+    if (!(seconds > 0) || !(rate > 0) || e.state.charge <= 0) return;
+    const cost = rate * seconds;
+    if (cost < e.state.charge) {
+      e.state = { ...e.state, charge: e.state.charge - cost };
+      return;
+    }
+    e.emptiedAt = at - (cost - e.state.charge) / rate;
+    e.state = { ...e.state, charge: 0 };
+    e.events.push('charge_empty');
   }
 
   /** Makes the profile again when the ship or the owned nodes changed (a hull swap, a node bought or refunded). */

@@ -347,10 +347,12 @@ before applying it.
   aside), or more than 400 m over the ground for longer than 45 s.
 - *The mode* must be legal there: the pulse drive only with Charge in the character's meters (§19: the zones ask the
   gateway's `MeterService.allowsMode`; to engage it needs some, and cruising on is taken for `MOVEMENT.pulse.chargeGraceS`,
-  1 s, after it runs out, as the client's own drop-out is still on the wire; refused as `pulse_charge`), out of the air,
-  clear of what is ahead (`PULSE_DRIVE.engageClearM` to engage, `dropOutM` while cruising, `pulseClearance` computed by
-  the server from the pose) and, engaging over a world, 2 km over its ground; `landed` only on a world's dry ground; `docked` only on a Waystation pad no other ship holds (a
-  joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
+  1 s of the client's credited time after it ran out, as the client drops out on its own predicted meter; refused as
+  `pulse_charge`), out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM` to engage, `dropOutM` while
+  cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world, 2 km over its ground. Each
+  accepted input is reported to the meters (`flown`) with the client time credited to it since the last valid pose (none
+  for a clock stepped forward), which the pulse drive burns Charge for. `landed` only on a world's dry ground; `docked`
+  only on a Waystation pad no other ship holds (a joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
   a world's ground or in a hangar, and only out of a landed or docked ship, which it can board again only from beside it.
   In mode `ship` the `boost` button bit raises the caps to the boost cap, and air thicker than `AIR.flightModelFrom` to
   the `atmo` cap: a client must send the bit while it boosts.
@@ -1068,8 +1070,9 @@ rules are `@astra/shared/meters`, pure functions both ends run.
 - **Charge** (the ship's; today's pulse fuel), 0 to the flown hull's Charge (none without a ship): regenerates 2/s in
   sunlight inside the habitable band, nothing elsewhere, never in deep space, plus the build's `charge.regen` (Solar Kin near
   stars and on hot worlds, catalysts); the Listener's built-in flag gives the band's rate anywhere. The pulse drive burns
-  `ShipStats.pulse.fuelBurn` (0.35/s, Reserve Tank 25% less) near bodies and drops out at 0; ship actives spend it
-  (`spendCharge`, refused unless the meter holds it all); a Waystation refills it (`refillCharge`; the price is the caller's).
+  `ShipStats.pulse.fuelBurn` (0.35/s, Reserve Tank 25% less) near bodies and drops out at 0: on the server per accepted
+  input, for the flight movement authority credited it (below); ship actives spend it (`spendCharge`, refused unless the
+  meter holds it all); a Waystation refills it (`refillCharge`; the price is the caller's).
 - **Where a character is** (`meterEnvironment`): its frame's world type and hazard, day or night there (`isNight`: the
   star on or below the point's own horizon, the one rule fauna's night uses too, §6), underwater (on foot, the feet 1.6 m
   under a water sea, never a glowing one), sunlight (no body between it and the star; the body underfoot by its
@@ -1083,15 +1086,21 @@ rules are `@astra/shared/meters`, pure functions both ends run.
 - **MeterService** runs lazily from timestamps, with no clock of its own (every call takes the world time). The gateway
   passes each input through `claim` (the meters advance to now; a claim to engage `pulse` with Charge empty, which
   movement authority refuses, has the session hear `Charge empty: the pulse drive will not engage` once until it stops
-  asking), then the zone (movement authority, §7, asks `allowsMode`), then `input`: from then on the character does what
-  that input says, in its entity's
-  mode, where its entity stands (its zone's body poses at the last tick, made once per tick). The beam heats only in the
-  believed mode `foot` and out of the lockout, at its rate per second of server time however fast inputs come; an input's
-  activity lapses 1 s after it, so a client that stops sending is idle. The entity's `heat` wire field carries the meter in
-  steps of 0.02 (the multitool's glow others see, DESIGN 9.10). `allowsMode(id, mode, now, graceS?)` is movement
-  authority's mode check (§7: the pulse drive needs Charge, or to have run out of it within `graceS`; the gateway sets the
-  service as the zone manager's `meters`, which every zone's authority asks; a zone without movement authority, in
-  tests driving raw poses, asks nothing); `beamActive(id, now)` is what the gateway's resource service judges every mining
+  asking), then the zone (movement authority, §7, asks `allowsMode` and reports the input `flown`), then `input`: from
+  then on the character does what that input says, in its entity's mode, where its entity stands (its zone's body poses
+  at the last tick, made once per tick). The beam heats only in the believed mode `foot` and out of the lockout, at its
+  rate per second of server time however fast inputs come; the beam's activity lapses 1 s after an input, so a client
+  that stops sending is idle. The pulse drive never burns on the clock: each input movement authority accepts on it pays
+  for the client time the authority credited it (`flown(id, mode, seconds, now, at)`), so a client that holds its inputs
+  back and sends them in bunches pays for every second of flight accepted, as a steady one does, and runs out at the
+  same point (the authority's credit is held to real time, so it pays no more either); in a zone without movement
+  authority (tests driving raw poses), for the time since its last input as it arrived, at most 1 s. The entity's `heat`
+  wire field carries the meter in steps of 0.02 (the multitool's glow others see, DESIGN 9.10).
+  `allowsMode(id, mode, now, graceS?, at?)` is movement authority's mode check (§7: the pulse drive needs Charge, or,
+  given a grace, to have run out of it no more than `graceS` before the claim's credited time `at`: the moment the burn
+  emptied it, on that clock, or when a ship active spent the last of it; the gateway sets the service as the zone
+  manager's `meters`, which every zone's authority asks; a zone without movement authority, in tests driving raw poses,
+  asks nothing); `beamActive(id, now)` is what the gateway's resource service judges every mining
   hit by (§18: refused `heat` with the button up or in the lockout), and `takeBeam(id, now, max)` is what it pays the hit
   in: the seconds the beam fired since the last were taken, at most `max`; `addHeat`,
   `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is

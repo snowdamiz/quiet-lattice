@@ -64,6 +64,13 @@ async function bot() {
     });
   /** shares of nodes another bot broke, put aside while waiting for an answer */
   const shares: Mine[] = [];
+  let pings = 0;
+  /** resolves once the server has handled everything sent before it (a ping's round trip) */
+  async function handled(): Promise<void> {
+    const id = ++pings;
+    sock.send({ t: 'ping', id, clientTime: 0 });
+    for (;;) if ((await sock.next('pong')).id === id) return;
+  }
   /**
    * Sends a hit on a node and returns the server's answer to it. As a client does, the beam's button is held while the
    * beam fires: a hit interval before the hit (the beam time it is worth), let go once it is answered. `beam: 'up'` sends
@@ -72,7 +79,12 @@ async function bot() {
   async function hit(node: string, { beam = 'held' }: { beam?: 'held' | 'pulsed' | 'up' } = {}): Promise<Mine> {
     const seq = ++mineSeq;
     if (beam !== 'up') press(Buttons.beam);
-    if (beam === 'held') await sleep(HIT_INTERVAL_S * 1000);
+    if (beam === 'held') {
+      // the press handled before the beam's interval is timed: a stall on the server's thread would otherwise let it land
+      // with the hit, and the hit be worth next to none of the interval
+      await handled();
+      await sleep(HIT_INTERVAL_S * 1000);
+    }
     sock.send({ t: 'mine', seq, frame: world.frame, node, tool: 'multitool', time: time() });
     if (beam === 'pulsed') press(0);
     try {

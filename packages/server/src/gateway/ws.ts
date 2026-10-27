@@ -8,8 +8,8 @@
 // binary snapshot every tick (an input movement authority refuses is answered with `correction`, and a client corrected
 // too often is kicked), and closing the socket saves the character and takes the entity out; each input passes the meter
 // service first (heat and Charge run on inputs; movement authority refuses the pulse drive with Charge empty, and the
-// session is told why) and is told it after the zone has applied it. Inventory requests go to the inventory service and skill requests to the skill service, which answer each
-// with the authoritative state (ARCHITECTURE §7, §14, §19).
+// session is told why) and is told it after the zone has applied it. Inventory requests go to the inventory service and
+// skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14, §19).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
 // connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
 // leaves; a cutscene done ends the quest step that played it. Quest requests go to the quest runtime (quests/), which

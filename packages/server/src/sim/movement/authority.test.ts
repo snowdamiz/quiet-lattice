@@ -440,10 +440,14 @@ describe('cheats are refused', () => {
     // a stand-in for the meter service: Charge, and when it ran out
     const meter = { charge: 0, emptiedAt: -Infinity };
     const asked: [string, string, number][] = [];
+    const flown: [string, number][] = [];
     const meters = {
-      allowsMode(id: string, mode: string, now: number, graceS = 0) {
+      allowsMode(id: string, mode: string, now: number, graceS = 0, at = now) {
         asked.push([id, mode, graceS]);
-        return mode !== 'pulse' || meter.charge > 0 || now - meter.emptiedAt <= graceS;
+        return mode !== 'pulse' || meter.charge > 0 || at - meter.emptiedAt <= graceS;
+      },
+      flown(_id: string, mode: string, seconds: number) {
+        flown.push([mode, seconds]);
       },
     };
     const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' }, {}, { meters });
@@ -453,13 +457,18 @@ describe('cheats are refused', () => {
     expect(r.correction).toMatchObject({ mode: 'ship' });
     expect(asked).toEqual([['char-1', 'pulse', 0]]);
     expect(h.lines.find((l) => l.msg === 'movement corrected')?.obj).toMatchObject({ rule: 'pulse_charge', character: 'char-1' });
+    // (a refused input is not flown)
+    expect(flown).toEqual([]);
     // the ship's own modes are never asked about
     h.now += MOVEMENT.correction.graceS;
     expect(h.send(pose(null, OPEN), 'ship').ok).toBe(true);
     expect(asked).toHaveLength(1);
-    // with Charge it engages, and cruises on as it runs out for the grace, asked with it
+    // with Charge it engages, and cruises on as it runs out for the grace, asked with it; each accepted input is reported
+    // flown for the client time credited to it
     meter.charge = 40;
     expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);
+    expect(flown.at(-1)![0]).toBe('pulse');
+    expect(flown.at(-1)![1]).toBeCloseTo(0.05, 6);
     meter.charge = 0;
     meter.emptiedAt = h.now;
     expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);

@@ -287,6 +287,18 @@ describe('Charge, as the server judges it', () => {
     t.wait(1.1);
     expect(t.meters.allowsMode(ID, 'pulse', t.now, 1)).toBe(false);
   });
+
+  it('starts the drive’s drop-out grace when a ship active spends the last of Charge, as when the burn empties it', () => {
+    const t = setup();
+    // beyond the system's reach: nothing regenerates
+    const deep: Vec3 = [t.zone.system.outerOrbit * 1.5, 0, 0];
+    t.send('ship', null, deep);
+    expect(t.meters.spendCharge(ID, 100, t.now)).toMatchObject({ ok: true, state: { charge: 0 } });
+    expect(t.meters.allowsMode(ID, 'pulse', t.now)).toBe(false);
+    expect(t.meters.allowsMode(ID, 'pulse', t.now, 1)).toBe(true);
+    t.wait(1.1);
+    expect(t.meters.allowsMode(ID, 'pulse', t.now, 1)).toBe(false);
+  });
 });
 
 describe('builds, server-side changes and saves', () => {

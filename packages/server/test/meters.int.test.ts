@@ -1,9 +1,9 @@
 // Heat and Charge over the socket against the dockerised Postgres and Redis (P1.E07.T02): join sends the meters; a bot on
 // foot mines with the beam held until it overheats, is locked out while it holds the beam, and cools out of the lockout;
-// a ship regenerates Charge in sunlight inside the habitable band and not in deep space; movement authority refuses the pulse
-// drive at 0 Charge with a correction (its rule logged) and a notice, and lets it engage after a refill; and the meters
-// survive leaving and a restart. Bots that stand anywhere with raw poses run without movement authority; the pulse drive's
-// pilot flies out of the Waystation as a client does.
+// a ship regenerates Charge in sunlight inside the habitable band and not in deep space; movement authority refuses the
+// pulse drive at 0 Charge with a correction (its rule logged) and a notice, lets it engage after a refill, and corrects
+// cruising on past the drop-out's grace; and the meters survive leaving and a restart. Bots that stand anywhere with raw
+// poses run without movement authority; the pulse drive's pilot flies out of the Waystation as a client does.
 import { STATION_LAYOUT } from '@astra/shared/data';
 import { PROTOCOL_VERSION, type ClientMessage, type ServerMessage } from '@astra/shared/protocol';
 import { meterEnvironment } from '@astra/shared/meters';
@@ -240,6 +240,20 @@ describe('heat and Charge over the socket', () => {
     expect(p.corrections).toHaveLength(1);
     expect(notices()).toHaveLength(1);
     expect(server.ws.meters.allowsMode(id, 'pulse', clock())).toBe(true);
+
+    // on the drive with Charge run out long ago as far as the meters know (as a character comes back on it with an empty
+    // meter): cruising on is past the drop-out's grace, and corrected too
+    await handled(p.sock);
+    server.ws.meters.open(id, { heat: 0, overheated: false, charge: 0, at: clock() });
+    const cruising = p.last;
+    p.send({ ...cruising, pos: [cruising.pos[0], cruising.pos[1], cruising.pos[2] + 40] }, 'pulse');
+    await waitFor(() => p.corrections.length === 2, 5000, 'the second correction');
+    expect(p.corrections[1]).toMatchObject({ mode: 'pulse' });
+    expect(zone.movement!.recent.filter((r) => r.characterId === id).at(-1)).toMatchObject({
+      rule: 'pulse_charge',
+      detail: 'cruising on past the drop-out',
+      mode: 'pulse',
+    });
     p.close();
   }, 60_000);
 

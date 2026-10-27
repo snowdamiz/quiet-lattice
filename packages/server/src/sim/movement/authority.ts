@@ -93,10 +93,14 @@ export interface MovementLog {
   debug(obj: object, msg: string): void;
 }
 
-/** The characters' meters (Heat and Charge, P1.E07.T02's MeterService): whether one may be in a mode at server world time
- * `now`. The pulse drive needs Charge; one that ran out of it within `graceS` may cruise on. */
+/** The characters' meters (Heat and Charge, P1.E07.T02's MeterService). */
 export interface MoverMeters {
-  allowsMode(characterId: string, mode: MoveMode, now: number, graceS?: number): boolean;
+  /** Whether one may be in `mode` at server world time `now`: the pulse drive needs Charge, or to have run out of it no
+   * more than `graceS` before `at` (the claim's credited time). */
+  allowsMode(characterId: string, mode: MoveMode, now: number, graceS?: number, at?: number): boolean;
+  /** An accepted input's flight: `seconds` of its client's time in `mode`, as credited here, up to credited time `at`
+   * (what the pulse drive burns Charge for). */
+  flown(characterId: string, mode: MoveMode, seconds: number, now: number, at: number): void;
 }
 
 /** What movement authority needs of a player: who it is (for the log), its ship and its skills. */
@@ -590,6 +594,10 @@ export class MovementAuthority {
     this.holdIfSkipped(m, { seq: msg.seq, msg, credit, r: now });
     m.graceUntil = -Infinity;
     this.accept(m, L, s);
+    // the meters' account of it: the time credited since the last valid pose (none for a clock stepped forward), flown in its
+    // mode, which the pulse drive pays Charge for; so a client pays for the flight accepted however it bunches its inputs
+    const character = m.profile.characterId;
+    if (this.meters && character !== undefined) this.meters.flown(character, s.mode, s.resync ? 0 : Math.max(0, s.t - L.t), now, s.t);
     return { ok: true, mode: s.mode, vel: s.vel };
   }
 
@@ -1019,7 +1027,7 @@ export class MovementAuthority {
         const engaging = L.cls !== 'pulse';
         // Charge, as the character's meters have it now (the gateway ran them to this input's arrival before the zone)
         const id = m.profile.characterId;
-        if (this.meters && id !== undefined && !this.meters.allowsMode(id, 'pulse', s.r, engaging ? 0 : MOVEMENT.pulse.chargeGraceS)) {
+        if (this.meters && id !== undefined && !this.meters.allowsMode(id, 'pulse', s.r, engaging ? 0 : MOVEMENT.pulse.chargeGraceS, s.t)) {
           return fail('pulse_charge', 0, 0, 'charge', engaging ? 'engaging with Charge empty' : 'cruising on past the drop-out');
         }
         const air = this.world.airAt(key, pos, world, poses);
