@@ -350,6 +350,8 @@ export class Game {
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
     this.inventory.send = (m) => net.send(m);
+    // chat, the party and the call-for-aid beacons (P1.E15.T03)
+    this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
       // (each session numbers its quest requests from 1)
       this.questSeq = 0;
@@ -383,6 +385,7 @@ export class Game {
     if (net.everJoined) return this.leaveWorld(reason);
     this.net = null;
     this.inventory.send = null;
+    this.hud.social.attach(null);
     onFail?.(reason, refusal?.code ?? null);
   }
 

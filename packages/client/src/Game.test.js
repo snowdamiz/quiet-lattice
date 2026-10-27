@@ -93,7 +93,7 @@ describe('Game: where a closed connection sends the player', () => {
     const onFail = vi.fn();
     const g = fake({
       inventory: new Inventory(),
-      hud: { toast: vi.fn() },
+      hud: { toast: vi.fn(), social: { attach: vi.fn() } },
       menus: { setConnection: vi.fn(), showMessage: vi.fn() },
       overlay: null,
       onWelcome: vi.fn(),
@@ -106,13 +106,16 @@ describe('Game: where a closed connection sends the player', () => {
   }
 
   it('before the welcome: the sign-in hears why, and the game lets the connection go', () => {
-    const { g, onFail, socket } = entering();
+    const { g, onFail, socket, net } = entering();
     expect(socket.url).toBe('ws://play.test/ws');
     expect(g.inventory.send).toBeTypeOf('function');
+    // (chat and the party listen to the connection from the start)
+    expect(g.hud.social.attach).toHaveBeenLastCalledWith(net);
     socket.refuse('character', 'That character does not exist on this account.');
     expect(onFail).toHaveBeenCalledWith('That character does not exist on this account.', 'character');
     expect(g.net).toBeNull();
     expect(g.inventory.send).toBeNull();
+    expect(g.hud.social.attach).toHaveBeenLastCalledWith(null);
     expect(location.reload).not.toHaveBeenCalled();
     // the sign-in itself still stands
     expect(session.getItem('astra-session')).not.toBeNull();

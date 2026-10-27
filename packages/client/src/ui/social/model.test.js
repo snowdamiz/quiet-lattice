@@ -98,7 +98,7 @@ describe('the social model', () => {
   it('sends what is typed to the channel in use, and switches channel with a channel word', () => {
     const { model, sent } = online();
     expect(model.submit('hello')).toEqual({ ok: true, keep: false });
-    expect(model.submit('/p')).toEqual({ ok: true, keep: false, channel: 'party' });
+    expect(model.submit('/p')).toEqual({ ok: true, keep: false, stay: true, channel: 'party' });
     expect(model.submit('regroup at the pad')).toEqual({ ok: true, keep: false });
     expect(model.submit('/sys anyone near?')).toEqual({ ok: true, keep: false, channel: 'system' });
     expect(model.channel).toBe('system');

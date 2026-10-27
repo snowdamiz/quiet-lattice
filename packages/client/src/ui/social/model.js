@@ -147,8 +147,9 @@ export class SocialModel {
   // ---------- what the player asks ----------
 
   /**
-   * A line the player typed: chat, a command, or a channel word. Returns `{ok, keep, channel}`: whether it went (or was
-   * done here), whether the input should keep the text to try again, and the channel now in use when it changed.
+   * A line the player typed: chat, a command, or a channel word. Returns `{ok, keep, stay, channel}`: whether it went (or
+   * was done here), whether the input should keep the text to try again, whether the panel should stay open for more (a
+   * channel word, /help), and the channel now in use when it changed.
    */
   submit(raw) {
     const cmd = parseLine(raw, this.channel);
@@ -157,10 +158,10 @@ export class SocialModel {
       case 'channel':
         this.channel = cmd.channel;
         this.changed();
-        return { ok: true, keep: false, channel: cmd.channel };
+        return { ok: true, keep: false, stay: true, channel: cmd.channel };
       case 'help':
         for (const line of HELP) this.note(line);
-        return { ok: true, keep: false };
+        return { ok: true, keep: false, stay: true };
       case 'error':
         this.refuse(cmd.text);
         return { ok: false, keep: true };
