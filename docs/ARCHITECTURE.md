@@ -1101,15 +1101,17 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   aim's frame (its pose's); the aim within 30° of the believed nose (the lasers fire along it). Then the ray: from the
   believed position carried on along the believed velocity to the shot's time (from its last input's stamp, 0.1 s at
   most), along the aim, as far as the gun reaches, the shared `rayHits` against the living creatures of its frame's world
-  (hit spheres round their bodies, 0.6 × size + 1 m), and the first it meets must be in sight: the drawn ground (fauna's
-  plan, §12) sampled along the line at most 96 times (every 2 m on a short line), its ends skipped. A hit deals the gun's
-  damage through the damage path. Players are neither targets nor in the way: PvP is P2.E17.T01.
+  (hit spheres round their bodies, 0.6 × size + 1 m), and the first it meets must be in sight from the believed position
+  itself: the drawn ground (fauna's plan, §12) sampled along the stretch the origin was carried (the client's stamp
+  chooses the carry, so it never jumps ground the ship has not been seen to cross) and on to the hit, at most 96 times a
+  stretch (every 2 m on a short one), the gun's end and the target's skipped. A hit deals the gun's damage through the
+  damage path. Players are neither targets nor in the way: PvP is P2.E17.T01.
 - **A kill's worth** (`killLoot`, `@astra/shared/combat`): XP of the mob's level × 10 (DESIGN 14.9), units of 2 a level a
   threat star (spread ×0.75–1.25 by a roll), and a row's drops (the stone-touched's Count residue, a boss's loot
   resources; plain fauna drop none), rolled once and split by the damage each character did (`splitByDamage`, as a
   node's yield). XP goes to the character's progress (levelling its entity and pushing the skill view, as a quest's
   does), units and items into its inventory (what does not fit is lost), each told to its session as `xp` and `loot`
-  events, and every one who hurt it is sent a quest `kill {tags: [fauna, temperament, body plan], entity}`.
+  events (the session found where it is by then, the kill's zone first), and every one who hurt it is sent a quest `kill {tags: [fauna, temperament, body plan], entity}`.
 - **In combat** is having dealt or taken damage within 6 s: the skill service's `inCombat` (slots swap only out of it).
 - **The client** (`net/combat.js`): `Ship.fireLasers` fires its tracers and sends `fire` (`fireIntent`: the nose's
   direction in the frame of the ship's pose, at the game's world time); `Net.combat` keeps the events that concern the

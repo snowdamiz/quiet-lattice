@@ -1,6 +1,6 @@
 // What a kill is worth (DESIGN 12.1 "Death and drops", 14.9, 15.2; P1.E06.T02). DESIGN names what kills give (units,
 // resources, Count residue from the stone-touched and the Hollow, ship parts in space, codex entries; XP = mob level × 10;
-// fragments never) but no amounts: the numbers here are this table's, recorded in docs/DECISIONS.md. The server rolls a
+// fragments never) but no amounts: the numbers here are this table's (DECISIONS P1.E06.T02). The server rolls a
 // kill's loot once and shares it, and the kill's XP, among everyone who hurt it by the damage each did.
 import { COMBAT, deepFreeze, getBoss, getMob } from '../data/index.ts';
 import type { ResourceId } from '../data/index.ts';

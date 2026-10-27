@@ -56,7 +56,7 @@ function setup(opts: Partial<CombatServiceOptions> = {}) {
   const kills: [string, QuestWorldEvent][] = [];
   const refreshed: string[] = [];
   const service = (made.service = new CombatService({
-    zones: { zone: (id) => (id === w.zone.id ? w.zone : undefined), zoneOf: (v) => (w.zone.has(v) ? w.zone : undefined), tier: () => 3 },
+    zones: { zones: [w.zone], zone: (id) => (id === w.zone.id ? w.zone : undefined), zoneOf: (v) => (w.zone.has(v) ? w.zone : undefined), tier: () => 3 },
     inventory,
     now: () => w.time,
     progress,
@@ -221,29 +221,67 @@ describe('a shot', () => {
   it(`is fired from the believed pose carried on along its velocity to the shot's time, ${LEAD_MAX_S} s at most`, () => {
     const s = setup();
     const c = s.creature(docile(s.w.species), 30);
-    const east = s.along(c.at());
+    // a second creature about 190 m on: only a carry of a whole second would bring the guns over it
+    const d = s.creature(docile(s.w.species), 220);
     const up = unit(c.at());
-    // 100 m over a point 10 m short of the creature, flying east at 200 m/s, guns pointing straight down
+    const across = sub(d.at(), c.at());
+    const flat = add(across, up, -(across[0] * up[0] + across[1] * up[1] + across[2] * up[2]));
+    const east = unit(flat);
+    const gap = Math.hypot(...flat);
+    expect(gap).toBeGreaterThan(150);
+    // 100 m over a point 10 m short of the first, flying toward the second so that a second's flight is over it, guns
+    // pointing straight down
+    const speed = 10 + gap;
     const start = add(s.over(c.at(), 100), east, -10);
     const a = s.pilot('a', start, add(start, up, -1));
     const t0 = s.w.time;
+    const down: Vec3 = [-up[0], -up[1], -up[2]];
     s.w.zone.input(
       a.viewer,
-      {
-        t: 'input',
-        seq: 1,
-        time: t0,
-        mode: 'ship',
-        pose: { frame: s.w.frame, pos: start, quat: noseTo([-up[0], -up[1], -up[2]]), vel: add([0, 0, 0], east, 200) },
-        buttons: 0,
-      },
+      { t: 'input', seq: 1, time: t0, mode: 'ship', pose: { frame: s.w.frame, pos: start, quat: noseTo(down), vel: add([0, 0, 0], east, speed) }, buttons: 0 },
       t0,
     );
-    const shot = (time: number) => s.service.fire(a.viewer, { t: 'fire', seq: Math.round(time * 1000), time, frame: s.w.frame, aim: [-up[0], -up[1], -up[2]] });
+    const shot = (time: number) => s.service.fire(a.viewer, { t: 'fire', seq: Math.round((time - t0) * 1000) + 1, time, frame: s.w.frame, aim: down });
     expect(shot(t0).result).toBe('miss');
-    expect(shot(t0 + 0.05).result).toBe('hit');
-    // a shot stamped a second on is carried 20 m, not 200
+    expect(shot(t0 + 10 / speed)).toMatchObject({ result: 'hit', target: c.id });
+    // a shot stamped a second on is carried a tenth of a second's flight (past the first), never a second's (over the second)
     expect(shot(t0 + 1).result).toBe('miss');
+    expect(s.w.zone.combat.creatureHealth(d.id)!.hp).toBe(s.w.zone.combat.creatureHealth(d.id)!.max);
+  });
+
+  it('is in sight from the believed pose: a carried origin never jumps ground the ship has not crossed', () => {
+    // flying at 1,700 m/s straight at a creature 400 m off, down a 30° slope, with an 80 m wall of ground 80 m ahead
+    let wallAt: Vec3 = [0, 0, 1];
+    const wall: NodeGroundSource = {
+      ground: () =>
+        ({
+          sampler: {
+            R: 1,
+            height: (x: number, y: number, z: number) => (Math.hypot(x - wallAt[0], y - wallAt[1], z - wallAt[2]) * s.radius < 20 ? 1e9 : -1e12),
+          },
+          nodeClear: [],
+        }) as unknown as NodeGround,
+    };
+    const s = setup({ grounds: wall });
+    const c = s.creature(docile(s.w.species), 30);
+    const along = unit(add(s.along(c.at()), unit(c.at()), -Math.tan(Math.PI / 6)));
+    const from = add(c.at(), along, -400);
+    wallAt = unit(add(from, along, 80));
+    const a = s.pilot('a', from, c.at());
+    const t0 = s.w.time;
+    s.w.zone.input(
+      a.viewer,
+      { t: 'input', seq: 1, time: t0, mode: 'ship', pose: { frame: s.w.frame, pos: from, quat: noseTo(along), vel: add([0, 0, 0], along, 1700) }, buttons: 0 },
+      t0,
+    );
+    const shot = (seq: number, time: number) => s.service.fire(a.viewer, { t: 'fire', seq, time, frame: s.w.frame, aim: along });
+    // from where the ship is believed to be, the wall is in the way; carried 170 m past it, it still is
+    expect(shot(1, t0).result).toBe('blocked');
+    expect(shot(2, t0 + LEAD_MAX_S).result).toBe('blocked');
+    expect(s.w.zone.combat.creatureHealth(c.id)!.hp).toBe(s.w.zone.combat.creatureHealth(c.id)!.max);
+    // and with no wall, the same carried shot hits
+    wallAt = [0, 0, 0];
+    expect(shot(3, t0 + LEAD_MAX_S)).toMatchObject({ result: 'hit', target: c.id });
   });
 
   it('is never at a player (PvP is P2.E17.T01), nor blocked by one', () => {

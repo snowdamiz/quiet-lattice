@@ -10,8 +10,10 @@
 //   down; the frame (its pose's); the aim (within AIM_CONE_DEG of its believed nose). Then the ray: from its believed
 //   position carried on along its velocity to the shot's time (LEAD_MAX_S at most), along the aim, as far as the gun
 //   reaches, against the living creatures of its frame's world (`rayHits`, the shared ray test, on their hit spheres);
-//   the first it meets must be in sight over the drawn ground (sight.ts), and it takes the gun's damage through the
-//   zone's one damage path. Players are not targets: PvP is P2.E17.T01.
+//   the first it meets must be in sight over the drawn ground (sight.ts) from the believed position itself: along the
+//   stretch the origin was carried, which the ship has not been seen to cross, and on from there to the hit, so no carry
+//   puts a shot past ground in the way. It takes the gun's damage through the zone's one damage path. Players are not
+//   targets: PvP is P2.E17.T01.
 // - A kill: its XP (`killXp`: level × 10) and loot (`killLoot`: units, a row's drops) are rolled once and shared by the
 //   damage each character did (`splitByDamage`, as a node's yield is), XP to its progress (levelling its entity, and the
 //   skill view that reads the level), units and items into its inventory (what does not fit is lost, reported), and each
@@ -53,6 +55,8 @@ export type CombatServiceZone = Pick<Zone, 'id' | 'systemIndex' | 'system' | 'en
 
 /** Where the service finds zones and their tiers (the ZoneManager). */
 export interface CombatZones {
+  /** every zone loaded (a kill's rewards reach its killers' sessions wherever they are by then) */
+  readonly zones: readonly CombatServiceZone[];
   zone(id: string): CombatServiceZone | undefined;
   zoneOf(viewer: ZoneViewer): CombatServiceZone | undefined;
   tier(zoneId: string): Tier | undefined;
@@ -90,6 +94,13 @@ export interface CombatServiceStats {
   refused: Partial<Record<FireRefusal, number>>;
   kills: number;
   sightSamples: number;
+}
+
+/** Where a character is in play: its zone, its session and its entity. */
+interface Session {
+  zone: CombatServiceZone;
+  viewer: ZoneViewer;
+  entity: number;
 }
 
 interface Shooter {
@@ -209,11 +220,9 @@ export class CombatService {
       this.counts.misses++;
       return { t: 'fire', seq: msg.seq, result: 'miss' };
     }
-    const sight = this.inSight(zone, f.frame, origin, [
-      origin[0] + dir[0] * hit.distance,
-      origin[1] + dir[1] * hit.distance,
-      origin[2] + dir[2] * hit.distance,
-    ]);
+    // in sight from the believed pose: the carry (which the client's stamp chooses) never jumps ground in the way
+    const at: Vec3 = [origin[0] + dir[0] * hit.distance, origin[1] + dir[1] * hit.distance, origin[2] + dir[2] * hit.distance];
+    const sight = this.inSight(zone, f.frame, lead > 0 ? [[f.pos[0], f.pos[1], f.pos[2]], origin, at] : [origin, at]);
     if (sight === 'busy') return refuse('busy');
     if (!sight) {
       this.counts.blocked++;
@@ -234,16 +243,21 @@ export class CombatService {
     return { t: 'fire', seq: msg.seq, result: 'hit', target: hit.target.id };
   }
 
-  /** Whether `to` is in sight from `from` over the ground of the world `frame` names (always, off a world's surface);
-   * 'busy' while that ground is still being planned. */
-  private inSight(zone: CombatServiceZone, frame: string | null, from: Vec3, to: Vec3): boolean | 'busy' {
+  /** Whether a shot's path (from the believed position, through the carried origin when it was carried, to the hit) stays
+   * over the ground of the world `frame` names (always, off a world's surface); 'busy' while that ground is still being
+   * planned. Only the last leg's end, at the target, is left unchecked. */
+  private inSight(zone: CombatServiceZone, frame: string | null, path: readonly Vec3[]): boolean | 'busy' {
     if (frame === null) return true;
     const [seed, index] = frame.split(':');
     const body = Number(seed) === zone.system.seed && index !== 'station' ? zone.system.bodies[Number(index)] : undefined;
     if (!body || body.type === 'gas') return true;
     const ground = this.grounds.ground(body.params as PlanetParams, this.zones.tier(zone.id) ?? tierOfGalaxySystem(zone.systemIndex));
     if (!ground) return 'busy';
-    return clearSight(ground.sampler, from, to, this.sight);
+    for (let i = 0; i + 1 < path.length; i++) {
+      const last = i + 2 === path.length;
+      if (!clearSight(ground.sampler, path[i]!, path[i + 1]!, this.sight, last ? undefined : 0)) return false;
+    }
+    return true;
   }
 
   /** The character's shooter state: its gun, from the ship it entered with and the nodes it owns now (worked out again when
@@ -311,11 +325,13 @@ export class CombatService {
       const xp = splitByDamage(loot.xp, parts);
       const units = splitByDamage(loot.units, parts);
       const items = loot.items.map(({ item, count }) => ({ item, shares: splitByDamage(count, parts) }));
-      const zone = this.zones.zone(r.zone);
+      const near = this.zones.zone(r.zone);
       const tags = killTags(r);
       for (const [characterId] of parts) {
         const events: GameEvent[] = [];
-        const level = this.grantXp(characterId, xp.get(characterId) ?? 0, zone);
+        // (its session where it is now, as the quest runtime's rewards reach it: most likely still in the kill's zone)
+        const at = this.sessionOf(characterId, near);
+        const level = this.grantXp(characterId, xp.get(characterId) ?? 0, at);
         if (level !== null) events.push({ kind: 'xp', amount: xp.get(characterId)!, from: r.entity, level });
         const u = this.earn(characterId, units.get(characterId) ?? 0);
         if (u > 0) events.push({ kind: 'loot', item: 'units', count: u, from: r.entity });
@@ -323,7 +339,7 @@ export class CombatService {
           const n = this.grant(characterId, item, shares.get(characterId) ?? 0);
           if (n > 0) events.push({ kind: 'loot', item, count: n, from: r.entity });
         }
-        if (zone && events.length) this.tell(zone, characterId, events);
+        if (at && events.length) this.tell(at.viewer, events);
         try {
           this.quests?.event(characterId, { type: 'kill', tags, entity: r.entity });
         } catch (err) {
@@ -336,14 +352,14 @@ export class CombatService {
 
   /** Adds XP to a character's progress, levelling it (its entity and the skill view that reads the level). Returns its
    * level, or null when nothing was granted (no XP, no progress held for it). */
-  private grantXp(characterId: string, xp: number, zone: CombatServiceZone | undefined): number | null {
+  private grantXp(characterId: string, xp: number, at: Session | null): number | null {
     const p = this.progress?.get(characterId);
     if (!p || xp <= 0) return null;
     const total = Math.min(Number.MAX_SAFE_INTEGER, p.xp + xp);
     const level = Math.max(p.level, levelForXp(total));
     this.progress!.set(characterId, { ...p, xp: total, level });
     if (level !== p.level) {
-      for (const [viewer, entity] of zone?.viewers() ?? []) if (viewer.characterId === characterId) zone!.patch(entity, { level });
+      if (at) at.zone.patch(at.entity, { level });
       try {
         this.skills?.refresh?.(characterId);
       } catch (err) {
@@ -379,17 +395,23 @@ export class CombatService {
   }
 
   /** Sends events to the session of a character in the zone, if it has one there. */
-  private tell(zone: CombatServiceZone, characterId: string, events: GameEvent[]): void {
-    for (const [viewer] of zone.viewers()) {
-      if (viewer.characterId !== characterId) continue;
-      for (const event of events) {
-        try {
-          this.notify(viewer, { t: 'event', event });
-        } catch (err) {
-          this.log?.warn({ session: viewer.id, err: String(err) }, 'combat event not sent');
-        }
+  private tell(viewer: ZoneViewer, events: GameEvent[]): void {
+    for (const event of events) {
+      try {
+        this.notify(viewer, { t: 'event', event });
+      } catch (err) {
+        this.log?.warn({ session: viewer.id, err: String(err) }, 'combat event not sent');
       }
     }
+  }
+
+  /** The session holding a character in play and its entity, looked for in `near` first, then in every zone; null when it
+   * is in none. */
+  private sessionOf(characterId: string, near: CombatServiceZone | undefined): Session | null {
+    for (const zone of near ? [near, ...this.zones.zones] : this.zones.zones) {
+      for (const [viewer, entity] of zone.viewers()) if (viewer.characterId === characterId) return { zone, viewer, entity };
+    }
+    return null;
   }
 
   private emit(news: CombatNews): void {

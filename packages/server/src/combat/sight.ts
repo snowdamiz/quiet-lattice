@@ -2,7 +2,8 @@
 // for long rays. A gun reaches 1.5 km, so the ground is sampled at most SIGHT_SAMPLES times along the line (every 2 m on a
 // short one, every ~16 m at full range): coarse, as resources' is (rocks, trees and buildings never block), and a ridge
 // thinner than the step can be missed at long range. The ends are skipped: the gun's (a ship flying low) and the
-// target's, where a creature's hit sphere meets the ground it stands on.
+// target's, where a creature's hit sphere meets the ground it stands on (a line that ends in the air, as the stretch a shot's
+// origin is carried along does, skips nothing there).
 import type { TerrainSampler } from '@astra/shared/world';
 
 /** Most ground samples along one line of sight. */
@@ -17,14 +18,20 @@ export const SIGHT_SKIP_TO_M = 3;
 
 type Vec3 = readonly [number, number, number];
 
-/** Whether the straight line from `from` to `to` (planet-local metres) stays above `sampler`'s ground. `stats.samples`
- * counts the samples taken, when given. */
-export function clearSight(sampler: Pick<TerrainSampler, 'height' | 'R'>, from: Vec3, to: Vec3, stats?: { samples: number }): boolean {
+/** Whether the straight line from `from` to `to` (planet-local metres) stays above `sampler`'s ground, the last `skipTo`
+ * metres unchecked. `stats.samples` counts the samples taken, when given. */
+export function clearSight(
+  sampler: Pick<TerrainSampler, 'height' | 'R'>,
+  from: Vec3,
+  to: Vec3,
+  stats?: { samples: number },
+  skipTo = SIGHT_SKIP_TO_M,
+): boolean {
   const dx = to[0] - from[0];
   const dy = to[1] - from[1];
   const dz = to[2] - from[2];
   const len = Math.sqrt(dx * dx + dy * dy + dz * dz);
-  const end = len - SIGHT_SKIP_TO_M;
+  const end = len - skipTo;
   const step = Math.max(SIGHT_STEP_MIN_M, len / SIGHT_SAMPLES);
   for (let s = SIGHT_SKIP_FROM_M; s < end; s += step) {
     const f = s / len;

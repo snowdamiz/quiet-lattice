@@ -58,9 +58,10 @@ function combatWorld(want: Want = both, fauna: { dens?: boolean } = {}) {
     /** a player of character `id` at `pos` in `mode`, with its viewer */
     join(id: string | null, pos: Readonly<Vec3>, mode = 'ship', skills: string[] = []) {
       const viewer = new TextViewer(nextId++, id);
+      // (at level 30: a player's own level never scales what it deals)
       const entity = w.zone.join(
         viewer,
-        { kind: 'player', frame: w.frame, pos: [...pos], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode },
+        { kind: 'player', frame: w.frame, pos: [...pos], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode, level: 30 },
         {
           profile: { characterId: id ?? undefined, ship: { hull: 'lark', modules: { s1: 'pulse_lasers' }, cargoPods: 1, livery: 0 }, skills },
           now: w.time,
@@ -121,6 +122,7 @@ describe('the damage path', () => {
     expect(bite.amount).toBeCloseTo(atLevel(10, 12), 9);
     expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ shield: 100 - atLevel(10, 12), hull: 100 });
     expect(w.zone.entity(a.entity)!.fields).toMatchObject({ hp: 1, shield: (100 - atLevel(10, 12)) / 100 });
+    expect(w.zone.entity(a.entity)!.fields.level).toBe(30);
     expect(w.zone.combat.applyDamage(a.entity, grazer!, weapon(10))!.amount).toBe(10);
   });
 

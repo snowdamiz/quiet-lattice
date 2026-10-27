@@ -348,9 +348,11 @@ export class HUD {
     const e = el('div', 'hit-number', this.hitsEl);
     e.textContent = String(amount > 0 ? Math.max(1, Math.round(amount)) : 0);
     const dx = ((this.hitsEl.children.length % 5) - 2) * 18;
+    // (the reticle readouts' type and the HUD's palette: style.css's tokens)
     Object.assign(e.style, {
       position: 'absolute', left: `calc(50% + ${dx}px)`, top: '44%', transform: 'translate(-50%, 0)', pointerEvents: 'none',
-      color: killed ? '#ffd27a' : '#f4f7ff', font: `600 ${killed ? 18 : 14}px/1 system-ui, sans-serif`, textShadow: '0 1px 3px rgba(0,0,0,0.85)',
+      color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '500', fontSize: killed ? '20px' : '16px',
+      lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: 'var(--shadow)',
       transition: 'transform 0.9s ease-out, opacity 0.9s ease-in',
     });
     void e.offsetWidth;

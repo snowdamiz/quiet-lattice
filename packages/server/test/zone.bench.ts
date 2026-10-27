@@ -687,7 +687,7 @@ async function combatTrial(): Promise<TrialResult> {
   const inventory = new InventoryService();
   const progress = new CharacterProgress();
   const service = (made.service = new CombatService({
-    zones: { zone: (id) => (id === zone.id ? zone : undefined), zoneOf: (v) => (zone.has(v) ? zone : undefined), tier: () => 3 },
+    zones: { zones: [zone], zone: (id) => (id === zone.id ? zone : undefined), zoneOf: (v) => (zone.has(v) ? zone : undefined), tier: () => 3 },
     inventory,
     progress,
     now: () => now,
