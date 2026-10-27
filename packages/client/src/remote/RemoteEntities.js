@@ -111,6 +111,8 @@ export class RemoteEntities {
     this.detach = null;
     /** hull id → its stats (signature) as markers read them */
     this.stats = new Map();
+    /** the pilots markers() picks up this frame (kept, to allocate nothing) */
+    this.seen = [];
   }
 
   /** Follows `net`'s snapshots (and forgets everything at each welcome and zone change, where entity ids start over). */
@@ -148,18 +150,25 @@ export class RemoteEntities {
   /**
    * The other pilots' ships a ship's sensors at world position `here`, of range `range`, pick up (DESIGN 10.1, as for
    * any ship: within the range × the ship's signature as a player reads it, halved in cover, doubled boosting or on the
-   * pulse drive): `add(name, world)` for each, the point a little over its canopy. Pilots on foot have no marker.
+   * pulse drive): `add(name, world)` for each, nearest first (the HUD gives the nearer the room for its name), the point
+   * 7 m over it (its label clear of the hull a few hundred metres off). Pilots on foot have no marker.
    */
   markers(here, range, add) {
+    const seen = this.seen;
+    seen.length = 0;
     for (const r of this.list) {
       if (r.kind !== 'player' || !r.shown) continue;
       const stats = this.statsOf(r.hull);
       if (!stats) continue;
       const mode = r.pose.mode === 'pulse' ? 'pulse' : r.pose.mode === 'landed' || r.pose.mode === 'docked' ? r.pose.mode : 'space';
       const signature = effectiveSignature(stats, { detector: 'player', inCover: this.inCover(r.world), ...movementSignals(stats, mode, r.pose.vel.length()) });
-      if (!detects(range, signature, r.world.distanceTo(here))) continue;
-      add(r.name ?? 'Pilot', _l.set(0, 3.5, 0).applyQuaternion(r.worldQuat).add(r.world));
+      const d = r.world.distanceTo(here);
+      if (!detects(range, signature, d)) continue;
+      r.markerDist = d;
+      seen.push(r);
     }
+    seen.sort((a, b) => a.markerDist - b.markerDist);
+    for (const r of seen) add(r.name ?? 'Pilot', _l.set(0, 7, 0).applyQuaternion(r.worldQuat).add(r.world));
   }
 
   // A hull's stats as it leaves the yard (its signature is the hull's own), once per hull; null for no hull known.
@@ -284,8 +293,18 @@ export class RemoteEntities {
       if (r.frame) r.worldQuat.copy(r.frame.quaternion).multiply(r.pose.quat);
       else r.worldQuat.copy(r.pose.quat);
       r.shown = (r.kind !== 'player' || r.pose.mode !== 'foot') && this.view.draws(r.hull);
+      if (r.shown && r.pose.mode === 'landed') this.setDown(r);
     }
     this.view.update(this.list, dt);
+  }
+
+  // A ship set down on a world flattens the plants under it, as the player's does (Ship.touchDown), once where it sits.
+  setDown(r) {
+    const flora = this.game.flora;
+    if (!r.frame?.sampler || flora?.planet !== r.frame) return;
+    if (r.landedAt && r.landedAt.frame === r.frame && r.landedAt.pos.distanceTo(r.pos) < 5) return;
+    r.landedAt = { frame: r.frame, pos: r.pos.clone() };
+    flora.clearAround(r.pos, 11, 3.5);
   }
 
   remove(i) {

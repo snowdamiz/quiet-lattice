@@ -185,8 +185,8 @@ describe('RemoteShips', () => {
     expect(cruising.vis.power).toBeCloseTo(0.67, 2);
     expect(pulse.vis.power).toBeCloseTo(1.6, 2);
     const kit = ships.kits.get('lark');
-    // a trail of four glows behind each engine of the three with power
-    expect(kit.flames.count).toBe(3 * 4);
+    // a trail of six glows behind each engine of the three with power
+    expect(kit.flames.count).toBe(3 * 6);
     const glow = partOf(ships, 'EngineGlow');
     const c = new THREE.Color();
     const level = glow.levels[slow.vis.lod].mesh;

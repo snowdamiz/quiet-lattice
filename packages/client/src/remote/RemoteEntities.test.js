@@ -99,7 +99,7 @@ describe('RemoteEntities: what it follows and shows', () => {
     expect(remotes.get(1).world.distanceTo(game.station.localToWorld(new THREE.Vector3(10, 0, 0), new THREE.Vector3()))).toBeLessThan(1e-6);
   });
 
-  it('marks the other pilots’ ships a ship’s sensors pick up: within their range × the ship’s signature, by name', () => {
+  it('marks the other pilots’ ships a ship’s sensors pick up: within their range × the ship’s signature, by name, nearest first', () => {
     const { game } = world();
     game.place(100);
     const remotes = new RemoteEntities(game, { view: view() });
@@ -107,9 +107,9 @@ describe('RemoteEntities: what it follows and shows', () => {
     // a Lark's signature is 1: a 4 km sensor picks one up at 4 km, twice that on the pulse drive; not one on foot, nor an
     // NPC ship (its own task marks it)
     const entities = [
-      pilot(1, 3000),
-      pilot(2, 5000),
       pilot(3, 7000, { mode: 'pulse', vel: [20000, 0, 0] }),
+      pilot(2, 5000),
+      pilot(1, 3000),
       pilot(4, 100, { mode: 'foot' }),
       { id: 5, kind: 'ship', name: 'Tug', frame: frameId('station'), pos: [50, 0, 0], quat: Q, vel: [0, 0, 0] },
     ];
@@ -118,7 +118,7 @@ describe('RemoteEntities: what it follows and shows', () => {
     const here = game.station.localToWorld(new THREE.Vector3(), new THREE.Vector3());
     const marked = [];
     remotes.markers(here, 4000, (name, w) => marked.push([name, Math.round(w.distanceTo(here) / 100) * 100]));
-    expect(marked.sort()).toEqual([
+    expect(marked).toEqual([
       ['Pilot 1', 3000],
       ['Pilot 3', 7000],
     ]);

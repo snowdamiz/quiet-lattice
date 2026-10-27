@@ -42,8 +42,8 @@ const LOD_HYSTERESIS = 1.15;
 
 /** Ships this close (m) are drawn even outside the view: their shadows can fall into it. */
 const SHADOW_NEAR = 100;
-/** Exhaust billboards per engine (the local ship trails eight; at a remote ship's distance four read the same). */
-const TRAIL = 4;
+/** Exhaust billboards per engine (the local ship trails eight; at a remote ship's distance six read the same). */
+const TRAIL = 6;
 const PANELLED = new Set(['Hull', 'Accent', 'Trim', 'Dark', 'Interior']);
 /** The emissive intensity of the glows each instance scales (the engines' throats, the beacon). */
 const GLOW_BASE = 0.2;

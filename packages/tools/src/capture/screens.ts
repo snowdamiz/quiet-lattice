@@ -392,7 +392,8 @@ interface RemotePage {
 /**
  * Boots a game with its frame loop parked (as stageCutscene does) and the demo's station traffic out of the shot, puts the
  * ship where the scene wants it (`space`: off the Waystation, as the sandbox starts; `pads`: docked on its hangar pad at
- * (30, -22), facing the mouth; `surface`: hovering 40 m over dry ground on the home world, in the morning sun), then plays
+ * (30, -22), facing the mouth; `surface`: hovering 40 m over lowland on the home world, in the morning sun) and lets the
+ * world settle (its ground streams in from the workers), then plays
  * one of the remote layer's recorded scenes (packages/client/src/remote/replay.js SCENES: `flypast`, `crowd`, `pads`,
  * `surface`) as a snapshot stream through the wire's encoding with a 60 ms trip and 40 ms of jitter, offline, so the
  * capture is hermetic. `seconds` of it are stepped before the still.
@@ -420,10 +421,14 @@ async function openRemotes(page: Page, scene: 'flypast' | 'crowd' | 'pads' | 'su
       if (stage === 'pads') {
         const V = pos.constructor;
         g.dockOnPad(new V(30, 2.4, -22), new g.ship.state.quat.constructor().setFromAxisAngle(new V(0, 1, 0), Math.PI));
-      } else if (stage === 'surface') g.debugGoto(g.system.homePlanet, { sunAngle: 38, alt: 40, azimuth: 30 });
+      } else if (stage === 'surface') g.debugGoto(g.system.homePlanet, { sunAngle: 38, alt: 40, azimuth: 0 });
       g.cam.frame = undefined;
       await g.remotes.view.prepare('lark');
-      await w.step(90);
+      // (the ground streams in from the workers, a few frames at a time, finest last)
+      for (let i = 0; i < (stage === 'surface' ? 60 : 15); i++) {
+        await w.step(6);
+        await new Promise((r) => setTimeout(r, 150));
+      }
       const url = '/src/remote/replay.js';
       const replay = await import(/* @vite-ignore */ url);
       replay.play(g, scene);

@@ -102,6 +102,8 @@ export class HUD {
     this.speedLines = el('canvas', 'speedlines', root);
     this.scanRing = el('div', 'scan-ring', root);
     this.markerPool = [];
+    /** screen x, y of each pilot's name placed this frame (a farther pilot's that would overlap one is left off) */
+    this.pilotLabels = [];
     this.lastToast = '';
     this.inventoryKey = '';
     this.visible = true;
@@ -342,6 +344,8 @@ export class HUD {
     const H = window.innerHeight;
     // none while the camera swings round to look back past the ship: it is a view, not a heading
     const markers = g.mode === 'ship' && (g.ship.lookBack || 0) > 0.03 ? [] : g.getMarkers();
+    const placed = this.pilotLabels;
+    placed.length = 0;
     let i = 0;
     for (const m of markers) {
       let e = this.markerPool[i];
@@ -387,9 +391,18 @@ export class HUD {
         eta = secs < 3600 ? ` · ETA ${secs < 90 ? secs.toFixed(0) + 's' : (secs / 60).toFixed(0) + 'm'}` : '';
       }
       // names only for the marker you are looking at (or have targeted); others just show range; other pilots always say
-      // who they are
+      // who they are, unless a nearer pilot's name (they come nearest first) already takes that spot: then just the mark
       const near = !off && Math.hypot(sx - W / 2, sy - H / 2) < Math.min(W, H) * 0.12;
-      const lbl = m.target || near || m.kind === 'player' ? `${esc(m.label)}<small>${fmtDist(m.dist)}${eta}</small>` : `<small>${fmtDist(m.dist)}</small>`;
+      let crowded = false;
+      if (m.kind === 'player' && !m.target) {
+        for (let k = 0; k < placed.length && !crowded; k += 2) crowded = Math.abs(sx - placed[k]) < 130 && Math.abs(sy - placed[k + 1]) < 15;
+        if (!crowded) placed.push(sx, sy);
+      }
+      const lbl = crowded
+        ? ''
+        : m.target || near || m.kind === 'player'
+          ? `${esc(m.label)}<small>${fmtDist(m.dist)}${eta}</small>`
+          : `<small>${fmtDist(m.dist)}</small>`;
       if (e._lbl !== lbl) {
         e.querySelector('.lbl').innerHTML = lbl;
         e._lbl = lbl;
