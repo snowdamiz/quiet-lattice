@@ -559,6 +559,22 @@ const stage = {
     const elsewhere = game.galaxy.systems.find((s) => s.id !== this.here).id;
     this.setParty(leader, [this.member('Kestrel Vane'), this.member(ME), this.member('Bo Tran', 2), this.member('Ilse Marr', 7, elsewhere)]);
   },
+  /** Eight calls for aid, more than the panel shows: the three, and five more here and elsewhere. */
+  manyBeaconsScene() {
+    this.beaconsScene();
+    const seed = game.system.seed;
+    const others = game.galaxy.systems.filter((s) => s.id !== this.here).slice(0, 3).map((s) => s.id);
+    const b = (id, kind, place, from, open, cap, ago, system, frame) =>
+      ({ id, kind, system, frame, center: [0, 0, 0], radius: 600, place, from, open, cap, at: T0 - ago, until: T0 - ago + 600 });
+    this.beacons = this.beacons.concat([
+      b(15, 'event', 'Pirate Convoy Ambush', 'Juno Reyes', 9, 12, 75, this.here, seed + ':station'),
+      b(16, 'story', 'Signal in the Static', 'Kestrel Vane', 5, 6, 210, others[0], seed + ':0'),
+      b(17, 'raid', 'The Hive Heart', 'Ilse Marr', 6, 12, 300, others[1], seed + ':0'),
+      b(18, 'event', 'Stone-touched Herd', 'Bo Tran', 10, 12, 450, others[2], seed + ':0'),
+      b(19, 'story', 'Adrift', 'Juno Reyes', 3, 6, 520, this.here, seed + ':station'),
+    ]);
+    this.push({ t: 'beacons', reset: true, beacons: this.beacons, gone: [] });
+  },
   /** Three calls for aid: a raid at the Waystation and a story chapter in this system, an event in another. */
   beaconsScene() {
     const seed = game.system.seed;
@@ -595,7 +611,7 @@ interface SocialStage {
   partyScene(leader?: string): void;
   beaconsScene(): void;
   answerCode: string;
-  social: { model: { answer(id: number): void; submit(text: string): unknown; mutedUntil: number } };
+  social: { model: { answer(id: number): void; submit(text: string): unknown; mutedUntil: number }; update(): void };
 }
 interface Vec {
   clone(): Vec;
@@ -823,21 +839,25 @@ export const SCREENS: Record<string, ScreenDef> = {
         ),
     },
     async motion(page) {
-      // (the panel the stills left open closes first, and its fade runs out before the clip's first frame)
-      await page.evaluate(() => (window as unknown as SocialWindow).__social.close());
-      await page.waitForTimeout(3000);
+      // the panel the stills left open closes, the stills' mute is lifted and the four of the party are back, and the
+      // feed holds three lines from six seconds ago; all of it drawn now, so its fades run out before the first frame
       await page.evaluate(() => {
-        const w = window as unknown as SocialWindow;
-        const s = w.__social;
-        const hud = w.game.hud;
-        // (the stills' mute lifted, and the four of the party back)
+        const s = (window as unknown as SocialWindow).__social;
         s.social.model.mutedUntil = 0;
+        s.close();
         s.partyScene();
         s.clear();
         s.chat('shard', 'Kestrel Vane', 'Convoy leaving in ten minutes, two escorts wanted');
         s.chat('system', 'Ilse Marr', 'Pirate wing over the north pole, keep clear of it');
         s.chat('party', 'Bo Tran', 'Hull at thirty percent, give me a minute');
         s.age(6000);
+        s.social.update();
+      });
+      await page.waitForTimeout(3000);
+      await page.evaluate(() => {
+        const w = window as unknown as SocialWindow;
+        const s = w.__social;
+        const hud = w.game.hud;
         hud.later(() => s.chat('shard', 'Juno Reyes', 'Saw a Hollow drifter past the third moon'), 300);
         hud.later(() => s.chat('party', 'Kestrel Vane', 'Regroup at pad three'), 900);
         hud.later(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true })), 1500);
@@ -884,7 +904,12 @@ export const SCREENS: Record<string, ScreenDef> = {
       open: (page) => onStage(page, "s.open('shard')"),
     },
     async motion(page) {
-      await page.evaluate(() => (window as unknown as SocialWindow).__social.close());
+      // (closed, and drawn closed, before the first frame)
+      await page.evaluate(() => {
+        const s = (window as unknown as SocialWindow).__social;
+        s.close();
+        s.social.update();
+      });
       await page.waitForTimeout(3000);
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
@@ -922,6 +947,31 @@ export const SCREENS: Record<string, ScreenDef> = {
         // (the event is in another star system)
         s.answerCode = 'elsewhere';
         w.game.hud.later(() => s.social.model.answer(14), 300);
+      });
+    },
+  },
+  // a list longer than the panel: eight calls for aid, one answer refused (too far) in view; the list fades at its foot
+  // over its scrollbar. The clip scrolls it to its end and back, eased (the list's own scroll, as a wheel would)
+  'beacons-many': {
+    hudClock: true,
+    clipSeconds: 3,
+    showScrollbars: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(page, "s.chatScene(); s.manyBeaconsScene(); s.open('beacons'); s.social.model.answer(15)", 60);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        const w = window as unknown as SocialWindow;
+        const list = document.querySelector('.sc-beacons') as HTMLElement;
+        const end = list.scrollHeight - list.clientHeight;
+        // down over a second from 0.3 s, a pause, and back up over a second (ease in and out, a step a frame)
+        for (let k = 0; k <= 60; k++) {
+          const t = k / 60;
+          const y = end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+          w.game.hud.later(() => (list.scrollTop = y), 300 + k * (1000 / 60));
+          w.game.hud.later(() => (list.scrollTop = end - y), 1700 + k * (1000 / 60));
+        }
       });
     },
   },

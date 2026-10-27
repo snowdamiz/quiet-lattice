@@ -36,6 +36,8 @@ const TICK_MS = 250;
 const EASE = 'cubic-bezier(0.2, 0.7, 0.2, 1)';
 const MOVE_MS = 240;
 const FADE_MS = 200;
+/** A list giving way to another fades out this fast before the other fades in. */
+const OUT_MS = 80;
 /** How far round the fixed panels a world marker is hidden (px). */
 const MARKER_MARGIN = 12;
 const TABS = ['shard', 'system', 'party', 'beacons'];
@@ -76,13 +78,37 @@ const clock = (seconds) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
 
-/** The box properties that open and close with an element, at nothing. */
-const SHUT = { height: '0px', opacity: 0, marginTop: '0px', marginBottom: '0px', paddingTop: '0px', paddingBottom: '0px' };
+/** The box properties that open and close with an element, at nothing (its borders too, so nothing is left to snap). */
+const SHUT = { height: '0px', opacity: 0, marginTop: '0px', marginBottom: '0px', paddingTop: '0px', paddingBottom: '0px', borderTopWidth: '0px', borderBottomWidth: '0px' };
+/** And across: a button opening beside others in a row with a 4 px gap. */
+const SHUT_ACROSS = { width: '0px', opacity: 0, marginLeft: '-4px', paddingLeft: '0px', paddingRight: '0px', borderLeftWidth: '0px', borderRightWidth: '0px' };
 
-/** Its box properties as they stand (mid-animation, as animated). */
+/** Its box properties as they stand (mid-animation, as animated), its height to the fraction of a pixel it lays out at. */
 function openBox(e) {
   const cs = getComputedStyle(e);
-  return { height: `${e.offsetHeight}px`, opacity: Number(cs.opacity), marginTop: cs.marginTop, marginBottom: cs.marginBottom, paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom };
+  return {
+    height: `${e.getBoundingClientRect().height}px`,
+    opacity: Number(cs.opacity),
+    marginTop: cs.marginTop,
+    marginBottom: cs.marginBottom,
+    paddingTop: cs.paddingTop,
+    paddingBottom: cs.paddingBottom,
+    borderTopWidth: cs.borderTopWidth,
+    borderBottomWidth: cs.borderBottomWidth,
+  };
+}
+
+function openAcross(e) {
+  const cs = getComputedStyle(e);
+  return {
+    width: `${e.getBoundingClientRect().width}px`,
+    opacity: Number(cs.opacity),
+    marginLeft: cs.marginLeft,
+    paddingLeft: cs.paddingLeft,
+    paddingRight: cs.paddingRight,
+    borderLeftWidth: cs.borderLeftWidth,
+    borderRightWidth: cs.borderRightWidth,
+  };
 }
 
 /** Clips an element's content while its height animates. */
@@ -94,17 +120,17 @@ function clipping(e, a) {
   return a;
 }
 
-/** Opens an element from nothing to its own height, fading it in. */
-function reveal(e) {
+/** Opens an element from nothing to its own height (or `across`, its width), fading it in. */
+function reveal(e, across = false) {
   for (const a of e.getAnimations()) a.cancel();
-  return clipping(e, e.animate([SHUT, openBox(e)], { duration: MOVE_MS, easing: EASE }));
+  return clipping(e, e.animate(across ? [SHUT_ACROSS, openAcross(e)] : [SHUT, openBox(e)], { duration: MOVE_MS, easing: EASE }));
 }
 
-/** Closes an element from where it stands to nothing, fading it out; `done()` once it is shut. */
-function conceal(e, done) {
-  const from = openBox(e);
+/** Closes an element from where it stands to nothing (or `across`), fading it out; `done()` once it is shut. */
+function conceal(e, done, across = false) {
+  const from = across ? openAcross(e) : openBox(e);
   for (const a of e.getAnimations()) a.cancel();
-  const a = clipping(e, e.animate([from, SHUT], { duration: MOVE_MS, easing: EASE, fill: 'forwards' }));
+  const a = clipping(e, e.animate([from, across ? SHUT_ACROSS : SHUT], { duration: MOVE_MS, easing: EASE, fill: 'forwards' }));
   a.addEventListener('finish', () => {
     done();
     a.cancel();
@@ -112,11 +138,44 @@ function conceal(e, done) {
   return a;
 }
 
-/** Eases an element's height from `from` (px) to what it is now. */
+/** Eases an element's height from `from` (px) to the height it lays out at now. */
 function resize(e, from) {
-  const to = e.offsetHeight;
-  if (Math.abs(to - from) < 0.5) return;
+  const to = e.getBoundingClientRect().height;
+  if (Math.abs(to - from) < 0.01) return;
   clipping(e, e.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: MOVE_MS, easing: EASE }));
+}
+
+/** Shows an element or not, opening or closing it (across: its width) when `animate`, else at once. One that is closing
+ * stays laid out until it is shut, then is `hidden`. */
+function showing(e, show, animate, across = false) {
+  const on = e.shownTo ?? !e.hidden;
+  if (show === on) return;
+  e.shownTo = show;
+  if (!animate) {
+    for (const a of e.getAnimations()) a.cancel();
+    e.hidden = !show;
+  } else if (show) {
+    e.hidden = false;
+    reveal(e, across);
+  } else conceal(e, () => !e.shownTo && (e.hidden = true), across);
+}
+
+/** A text that comes and goes fades as it does. */
+function fadeText(e, text) {
+  if ((e.textTo ?? e.textContent) === text) return;
+  e.textTo = text;
+  const was = e.textContent;
+  for (const a of e.getAnimations()) a.cancel();
+  if (text) {
+    e.textContent = text;
+    if (!was) e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS, easing: 'ease-out' });
+    return;
+  }
+  const a = e.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_MS, easing: 'ease-out', fill: 'forwards' });
+  a.addEventListener('finish', () => {
+    if (!e.textTo) e.textContent = '';
+    a.cancel();
+  });
 }
 
 /** The vertical offset an element's running transform animation has it at (px). */
@@ -171,8 +230,10 @@ export class SocialUI {
     return this.game.overlay === 'chat';
   }
 
-  /** Whether a world marker at (x, y) on screen sits under (or left of) one of the fixed panels: the HUD hides it there. */
-  covers(x, y) {
+  /** Whether a world marker of `kind` at (x, y) on screen sits under (or left of) one of the fixed panels: the HUD hides
+   * it there, but for a hostile ship and the player's own (what a pilot must always see). */
+  covers(x, y, kind) {
+    if (kind === 'enemy' || kind === 'ship') return false;
     for (const r of this.keepOut) if (x <= r.right + MARKER_MARGIN && y >= r.top - MARKER_MARGIN && y <= r.bottom + MARKER_MARGIN) return true;
     return false;
   }
@@ -183,7 +244,14 @@ export class SocialUI {
     // the party frame and the invites waiting, under the location line
     this.side = el('div', 'social-side', layer);
     this.partyEl = el('div', 'sp-party', this.side);
+    const head = el('div', 'sp-head', this.partyEl);
+    el('span', '', head, 'Party');
+    this.countEl = el('b', '', head);
+    this.noneEl = el('div', 'sp-none', this.partyEl, 'Not in a party');
+    this.noneEl.hidden = true;
     this.rowsEl = el('div', 'sp-rows', this.partyEl);
+    /** member name → its row and health bar, for health set in place */
+    this.memberRows = new Map();
     // (kept as it is while the rows are redrawn, so a name half typed into it stays)
     this.footEl = el('div', 'sp-foot', this.partyEl);
     this.footEl.style.display = 'none';
@@ -202,6 +270,7 @@ export class SocialUI {
     });
     button('btn small', this.footEl, 'Invite', invite);
     this.leaveBtn = button('btn small ghost', this.footEl, 'Leave', () => this.model.partyOp({ op: 'leave' }));
+    this.leaveBtn.hidden = true;
     this.invitesEl = el('div', 'sp-invites', this.side);
 
     // the chat panel, bottom left
@@ -234,7 +303,7 @@ export class SocialUI {
     this.input.spellcheck = false;
     this.input.autocomplete = 'off';
     this.input.setAttribute('aria-label', 'Chat');
-    this.countEl = el('span', 'sc-count', row);
+    this.charsEl = el('span', 'sc-count', row);
     this.hintEl = el('div', 'sc-hint', this.panel, KEYS_HINT);
     this.input.addEventListener('keydown', (e) => this.onInputKey(e));
     this.input.addEventListener('input', () => this.updateCount());
@@ -247,7 +316,8 @@ export class SocialUI {
     if (open !== this.wasOpen) {
       this.wasOpen = open;
       if (!open) this.closedAt = now;
-      this.chat.classList.toggle('show', open);
+      // (its own class, not the menus' `show`, which they take away a frame before the lines change)
+      this.chat.classList.toggle('open', open);
       this.side.classList.toggle('live', open);
       this.dirty = this.rebuild = true;
     }
@@ -329,13 +399,14 @@ export class SocialUI {
       added.push(node);
     }
     const log = this.logEl;
-    if (open && (fresh || added.length)) log.classList.toggle('long', log.scrollHeight > log.clientHeight + 1);
     if (fresh) {
       if (open) log.scrollTop = log.scrollHeight;
+      this.clipTop();
       return;
     }
-    if (!added.length || (open && !pre.atBottom)) return;
+    if (!added.length || (open && !pre.atBottom)) return this.clipTop();
     if (open) log.scrollTop = log.scrollHeight;
+    this.clipTop();
     // the lines already there ease up by the room the new ones took (each line and the gap over it), from wherever a
     // slide still had them; lines gone from the top of a bottom-anchored stack move nothing
     const gap = parseFloat(getComputedStyle(box).rowGap) || 0;
@@ -344,7 +415,8 @@ export class SocialUI {
     this.slide = box.animate([{ transform: `translateY(${rise}px)` }, { transform: 'translateY(0)' }], { duration: MOVE_MS, easing: EASE });
   }
 
-  /** A new log for the lines (the feed's, or the open tab's), fading in over the old one as it fades out where it stands. */
+  /** A new log for the lines (the feed's, or the open tab's): the old one fades out where it stands, then the new one
+   * fades in, so the two lists never show over each other. */
   crossfade(open) {
     const old = this.logEl;
     const log = el('div', `sc-log ${open ? 'full' : 'feed'}`);
@@ -353,10 +425,22 @@ export class SocialUI {
     this.logEl = log;
     this.nodes.clear();
     this.slide = null;
+    log.addEventListener('scroll', () => this.clipTop(), { passive: true });
     if (!old) return;
     old.classList.add('ghost');
-    old.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_MS, easing: 'ease-out', fill: 'forwards' }).addEventListener('finish', () => old.remove());
-    log.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS, easing: 'ease-out' });
+    old.animate([{ opacity: 1 }, { opacity: 0 }], { duration: OUT_MS, easing: 'ease-out', fill: 'forwards' }).addEventListener('finish', () => old.remove());
+    log.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS - OUT_MS / 2, delay: OUT_MS, easing: 'ease-out', fill: 'backwards' });
+  }
+
+  /** Hides a line the log's top edge would cut: an entry shows whole or not at all (no wrapped tail without its speaker). */
+  clipTop() {
+    const log = this.logEl;
+    if (!log) return;
+    const top = log.scrollTop - 0.5;
+    for (const node of this.nodes.values()) {
+      const cut = node.offsetTop < top;
+      if (cut !== node.classList.contains('cut')) node.classList.toggle('cut', cut);
+    }
   }
 
   lineNode(l) {
@@ -377,9 +461,9 @@ export class SocialUI {
     const m = this.model;
     const live = this.isOpen;
     const members = m.members();
-    // (health in steps of 2%: an entity's hp in view moves finer than the bar shows)
-    const key = JSON.stringify([live, m.leads, members.map((x) => [x.name, x.online, x.system, x.health === null ? null : Math.round(x.health * 50), x.leader])]);
-    if (key === this.partyKey) return;
+    // (the rows are drawn again only when who is there changes; health is set in place)
+    const key = JSON.stringify([live, m.leads, members.map((x) => [x.name, x.online, x.system, x.health === null, x.leader])]);
+    if (key === this.partyKey) return this.health(members);
     this.partyKey = key;
     const shown = live || members.length > 0;
     if (!shown) {
@@ -390,21 +474,24 @@ export class SocialUI {
           if (this.partyShown) return;
           this.partyEl.classList.remove('shown');
           this.rowsEl.replaceChildren();
+          this.memberRows.clear();
           this.footShown = false;
           this.footEl.style.display = 'none';
         });
       }
       return;
     }
+    const was = this.partyShown;
+    // the count and "Not in a party" fade and close as the rows grow or go, and Leave opens across beside Invite
+    fadeText(this.countEl, members.length ? `${members.length}/${PARTY_MAX}` : '');
+    showing(this.noneEl, !members.length, was);
+    showing(this.leaveBtn, members.length > 0, was && this.footShown, true);
     const box = this.rowsEl;
-    const from = this.partyShown ? box.offsetHeight : null;
+    const from = was ? box.getBoundingClientRect().height : null;
     for (const a of box.getAnimations()) a.cancel();
-    const old = new Set([...box.querySelectorAll('.sp-member')].map((r) => r.dataset.name));
+    const old = new Set(this.memberRows.keys());
     box.replaceChildren();
-    const head = el('div', 'sp-head', box);
-    el('span', '', head, 'Party');
-    if (members.length) el('b', '', head, `${members.length}/${PARTY_MAX}`);
-    if (!members.length) el('div', 'sp-none', box, 'Not in a party');
+    this.memberRows.clear();
     const here = this.game.galaxy?.current?.id;
     for (const x of members) {
       const row = el('div', `sp-member${x.leader ? ' leader' : ''}${x.me ? ' me' : ''}${x.online ? '' : ' offline'}`, box);
@@ -423,15 +510,10 @@ export class SocialUI {
         if (x.online) button('sp-act', acts, 'Lead', () => m.partyOp({ op: 'promote', name: x.name }));
         button('sp-act', acts, 'Kick', () => m.partyOp({ op: 'kick', name: x.name }));
       }
-      if (x.health !== null) {
-        const hp = el('div', 'sp-hp', row);
-        const fill = el('b', '', hp);
-        fill.style.width = `${Math.round(Math.max(0, Math.min(1, x.health)) * 50) * 2}%`;
-        row.classList.toggle('hurt', x.health < 0.6);
-        row.classList.toggle('low', x.health < 0.3);
-      }
+      const fill = x.health === null ? null : el('b', '', el('div', 'sp-hp', row));
+      this.memberRows.set(x.name, { row, fill });
     }
-    this.leaveBtn.style.display = members.length ? '' : 'none';
+    this.health(members);
     if (live !== this.footShown) {
       this.footShown = live;
       if (live) {
@@ -447,6 +529,19 @@ export class SocialUI {
       this.partyEl.classList.add('shown');
       reveal(this.partyEl);
     } else resize(box, from);
+  }
+
+  /** Each member's health bar, set in place (in steps of 2%: an entity's hp in view moves finer than the bar shows). */
+  health(members) {
+    for (const x of members) {
+      const r = this.memberRows.get(x.name);
+      if (!r?.fill || x.health === null) continue;
+      const v = Math.max(0, Math.min(1, x.health));
+      const width = `${Math.round(v * 50) * 2}%`;
+      if (r.fill.style.width !== width) r.fill.style.width = width;
+      if (r.row.classList.contains('hurt') !== v < 0.6) r.row.classList.toggle('hurt', v < 0.6);
+      if (r.row.classList.contains('low') !== v < 0.3) r.row.classList.toggle('low', v < 0.3);
+    }
   }
 
   /** The invites waiting: who, the time left (a hairline running down the minute), accept and decline. A new card opens
@@ -606,6 +701,7 @@ export class SocialUI {
     this.renderParty();
     if (this.dirty) return;
     if (open && this.tab === 'beacons') this.renderBeacons();
+    else if (open) this.clipTop();
   }
 
   // ---------- opening, closing, tabs ----------
@@ -693,7 +789,7 @@ export class SocialUI {
       this.submit();
     } else if (e.code === 'Tab') {
       e.preventDefault();
-      this.cycleTab(e.shiftKey ? -1 : 1);
+      if (!e.repeat) this.cycleTab(e.shiftKey ? -1 : 1);
     } else if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {
       e.preventDefault();
       this.recall(e.code === 'ArrowUp' ? -1 : 1);
@@ -727,6 +823,6 @@ export class SocialUI {
   /** The characters used, once the line nears its limit. */
   updateCount() {
     const n = this.input.value.length;
-    setText(this.countEl, n > CHAT_MAX - 60 ? `${n}/${CHAT_MAX}` : '');
+    setText(this.charsEl, n > CHAT_MAX - 60 ? `${n}/${CHAT_MAX}` : '');
   }
 }

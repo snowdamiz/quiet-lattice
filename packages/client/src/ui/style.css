@@ -2616,6 +2616,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .social-side .sizing {
   overflow: hidden;
 }
+/* (closed things stay closed whatever display their class gives them) */
+.social-chat [hidden],
+.social-side [hidden] {
+  display: none !important;
+}
 
 /* ---------- chat panel: bottom left, over the vitals' three bars ---------- */
 .social-chat {
@@ -2628,7 +2633,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   width: min(440px, calc(100vw - 52px));
   pointer-events: none;
 }
-.social-chat.show {
+.social-chat.open {
   pointer-events: auto;
 }
 .social-chat .ch-shard {
@@ -2651,12 +2656,12 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 /* closed: no plate and no chrome, only the lines (each on a plate of its own); the chrome keeps its room, so nothing
    moves as the panel opens */
-.social-chat:not(.show) .sc-panel {
+.social-chat:not(.open) .sc-panel {
   background-color: transparent;
   border-color: transparent;
   box-shadow: none;
 }
-.social-chat:not(.show) .sc-panel::before {
+.social-chat:not(.open) .sc-panel::before {
   opacity: 0;
 }
 .sc-tabs,
@@ -2664,16 +2669,16 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sc-hint {
   transition: opacity 0.2s ease-out, transform 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.social-chat:not(.show) .sc-tabs,
-.social-chat:not(.show) .sc-input,
-.social-chat:not(.show) .sc-hint {
+.social-chat:not(.open) .sc-tabs,
+.social-chat:not(.open) .sc-input,
+.social-chat:not(.open) .sc-hint {
   opacity: 0;
 }
-.social-chat:not(.show) .sc-tabs {
+.social-chat:not(.open) .sc-tabs {
   transform: translateY(4px);
 }
-.social-chat:not(.show) .sc-input,
-.social-chat:not(.show) .sc-hint {
+.social-chat:not(.open) .sc-input,
+.social-chat:not(.open) .sc-hint {
   transform: translateY(-4px);
 }
 
@@ -2770,20 +2775,18 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sc-log.full {
   overflow-y: auto;
 }
-/* (a log longer than the panel softens at its top edge, where it scrolls on, rather than cutting a line) */
-.sc-log.full.long {
-  -webkit-mask-image: linear-gradient(transparent, black 22px);
-  mask-image: linear-gradient(transparent, black 22px);
-}
+/* the feed stands on the panel's foot, whatever its length (one longer than the box gives way at the top) */
 .sc-log.feed {
-  -webkit-mask-image: linear-gradient(transparent, black 26px);
-  mask-image: linear-gradient(transparent, black 26px);
+  justify-content: flex-end;
+}
+.sc-log.feed .sc-lines {
+  margin-top: 0;
 }
 .sc-log.ghost {
   pointer-events: none;
   overflow: hidden;
 }
-.social-chat.show.tab-beacons .sc-log:not(.ghost) {
+.social-chat.open.tab-beacons .sc-log:not(.ghost) {
   display: none;
 }
 /* the newest line at the bottom, and the open log still scrolls back to its oldest */
@@ -2815,6 +2818,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .sc-line.gone {
   opacity: 0;
+}
+/* a line the log's top edge would cut shows not at all (no wrapped tail without its speaker) */
+.sc-line.cut {
+  opacity: 0;
+  transition-duration: 0.2s;
 }
 .sc-who {
   margin-right: 8px;
@@ -2920,7 +2928,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   scrollbar-width: thin;
   scrollbar-color: var(--dim) transparent;
 }
-.social-chat.show.tab-beacons .sc-beacons {
+.social-chat.open.tab-beacons .sc-beacons {
   display: flex;
 }
 /* longer than the panel: it fades at its foot, over a scrollbar */
@@ -2983,9 +2991,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-column: 2;
   grid-row: 1 / span 2;
 }
+/* (no row gap: a refusal opening under a row brings its own margin, which eases with it) */
 .sb-row {
   grid-template-columns: 52px minmax(0, 1fr) auto;
-  gap: 2px 12px;
+  gap: 0 12px;
   padding: 7px 0 8px;
 }
 .sb-kind {
@@ -3033,6 +3042,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .sb-refusal {
   grid-column: 2 / -1;
+  margin-top: 3px;
   font-size: 12.5px;
   color: var(--sc-refused);
 }

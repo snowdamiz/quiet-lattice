@@ -409,8 +409,8 @@ export class HUD {
         sx = cx + dx * s;
         sy = cy + dy * s;
       }
-      // (none under the party frame or the open chat panel, but the one you steer by)
-      if (!m.target && this.social.covers(sx, sy)) {
+      // (none under the party frame or the open chat panel, but the one you steer by, hostiles and your own ship)
+      if (!m.target && this.social.covers(sx, sy, m.kind)) {
         i--;
         e.style.display = 'none';
         continue;
