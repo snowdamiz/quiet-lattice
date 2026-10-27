@@ -592,7 +592,7 @@ Server-timed, announced by banner to the system (the banner system exists), open
 ### 14.8 Three quests written out
 **Bounty: "Wing over Vexmir III"** (Waystation board, Tier 2). Steps: travel to Vexmir III's orbit → kill the pirate wing (3 Kestrels, 1 Bulwark) → optional: follow the fleeing Bulwark to the Scrapyard → return to the Quartermaster. Rewards: 2,400 units, 60 Compact rep, a fifth of a level.
 
-**City board: "The Apothecary's Sodium"** (Belost, Tier 0). Steps: collect 40 sodium from sodium plants on the home world → deliver to the apothecary under the north cap → dialogue: she asks about the stone on the lake. Rewards: 600 units, 30 Belost rep, teaches the Exo-suit node Hazard Weave's unlock.
+**City board: "The Apothecary's Sodium"** (Belost, Tier 0). Steps: collect 40 sodium from sodium plants on the home world → deliver to the apothecary at her stall in Belost's market, under the giant caps → dialogue: she asks about the stone on the lake. Rewards: 600 units, 30 Belost rep, teaches the Exo-suit node Hazard Weave's unlock.
 
 **Mystery: "Forty Names"** (ch. 8 onward, Tiers 1–4). Steps: dialogue with the harbourmaster → collect 40 crash logs matched to the registry (each a travel + interact at a crash site in the listed system) → at 20, cutscene at the sanctuary → at 40, dialogue: the Quartermaster reads the last name → cutscene: your own wiped log plays. Rewards: 1 skill point, the "Unlisted" title, a Cold Open you now understand.
 

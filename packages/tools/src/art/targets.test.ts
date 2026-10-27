@@ -103,6 +103,21 @@ describe('art:validate targets', () => {
     expect(changedSources(['packages/tools/blender/families.json'], sources).files).toEqual(sources);
     expect(changedSources(['packages/tools/blender/reports/x.json', 'packages/tools/blender/selftest.py'], sources).files).toEqual([]);
   });
+
+  it('re-validates nothing for an export script, and a family’s sources for its own checks', () => {
+    const sources = ['assets/blend/cutscenes/test_cutscene.blend', 'assets/blend/hulls/lark.blend', 'assets/blend/props/crate.blend'];
+    expect(changedSources(['packages/tools/blender/export_hulls.py', 'packages/tools/blender/export_props.py'], sources).files).toEqual([]);
+    expect(changedSources(['packages/tools/blender/export_cutscene.py'], sources)).toEqual({
+      files: ['assets/blend/cutscenes/test_cutscene.blend'],
+      reason: 'changed sources and the cutscenes checks',
+    });
+    expect(changedSources(['packages/tools/blender/export_cutscene.py', 'assets/blend/hulls/lark.blend'], sources).files).toEqual([
+      'assets/blend/cutscenes/test_cutscene.blend',
+      'assets/blend/hulls/lark.blend',
+    ]);
+    // (the checks themselves, and the rules, still re-validate every source)
+    expect(changedSources(['packages/tools/blender/artlib/core.py'], sources).files).toEqual(sources);
+  });
 });
 
 describe('art:export arguments', () => {

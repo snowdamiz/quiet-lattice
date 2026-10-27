@@ -1,21 +1,25 @@
 // The character state components Phase 1 has so far (docs/ARCHITECTURE.md §8), in load order: progress (level, xp and
-// home system, in the row's columns), the ship loadout, the inventory (its layout re-derived from the ship on load) and
-// where the character is (system, pose, frame and movement mode, read from its zone entity). Skills (P1.E07.T01) and
-// quests (P1.E09.T01) register theirs the same way; see ARCHITECTURE §8.
+// home system, in the row's columns), the skill web (P1.E07.T01, src/skills), the ship loadout, the inventory (its layout
+// re-derived from the ship and the owned nodes on load) and where the character is (system, pose, frame and movement
+// mode, read from its zone entity). Quests (P1.E09.T01) register theirs the same way; see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
 import { applyLayout, inventorySchema, layoutFor, startingInventory, type Inventory } from '@astra/shared/inventory';
 import { MoveMode, Pose } from '@astra/shared/protocol';
 import { shipLoadoutSchema, shipStats, type ShipLoadout } from '@astra/shared/ships';
+import type { SkillState } from '@astra/shared/skills';
 import { z } from 'zod';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
+import { SKILLS, skillsComponent } from '../skills/component.ts';
+import { SkillService } from '../skills/service.ts';
 import { stationFrame, systemSeed } from '../world/home.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import { INPUT_LIMITS } from '../zones/zone.ts';
-import { ComponentRegistry, type CharacterComponent, type PersistenceLog } from './registry.ts';
+import { ComponentRegistry, type CharacterComponent, type LoadContext, type PersistenceLog } from './registry.ts';
 
 export const PROGRESS = 'progress';
+export { SKILLS };
 export const SHIP = 'ship';
 export const INVENTORY = 'inventory';
 export const POSE = 'pose';
@@ -84,6 +88,11 @@ export class ShipLoadouts {
 /** A new character's ship: the Lark (DESIGN 10.2), as the inventory's starting layout assumes. */
 export const DEFAULT_SHIP: ShipLoadout = DEFAULT_LOADOUT.ship!;
 
+/** The nodes a character owns, from its decoded skills (the skills component loads before the ship and the inventory). */
+function ownedNodes(ctx: LoadContext): readonly string[] {
+  return ctx.get<SkillState>(SKILLS).bought;
+}
+
 export function shipComponent(ships: ShipLoadouts): CharacterComponent<ShipLoadout | null> {
   return {
     key: SHIP,
@@ -91,10 +100,11 @@ export function shipComponent(ships: ShipLoadouts): CharacterComponent<ShipLoado
     schema: shipLoadoutSchema.nullable(),
     onInvalid: 'refuse',
     default: () => structuredClone(DEFAULT_SHIP),
-    check: (ship) => {
+    check: (ship, ctx) => {
       if (!ship) return null;
       try {
-        shipStats(ship);
+        // the pilot's nodes count: Pack Mule's cargo bay holds a pod
+        shipStats(ship, { skills: ownedNodes(ctx) });
         return null;
       } catch (err) {
         return err instanceof Error ? err.message : String(err);
@@ -110,8 +120,8 @@ export function shipComponent(ships: ShipLoadouts): CharacterComponent<ShipLoado
 
 /**
  * The inventory, held by the inventory service while the character is in play. On load its layout is re-derived from the
- * ship loadout (the pods aboard, the stack cap), as DECISIONS P1.E06.T04 asks; a saved inventory the new layout cannot
- * hold keeps its saved layout and is logged. Skills count for the stack cap once P1.E07.T01 registers them.
+ * ship loadout and the owned nodes (the pods aboard, Pack Mule's stack cap), as DECISIONS P1.E06.T04 asks; a saved
+ * inventory the new layout cannot hold keeps its saved layout and is logged.
  */
 export function inventoryComponent(inventory: InventoryService, opts: { log?: PersistenceLog } = {}): CharacterComponent<Inventory> {
   return {
@@ -119,10 +129,10 @@ export function inventoryComponent(inventory: InventoryService, opts: { log?: Pe
     v: 1,
     schema: inventorySchema,
     onInvalid: 'refuse',
-    default: (ctx) => startingInventory(layoutFor({ ship: ctx.get<ShipLoadout | null>(SHIP) })),
+    default: (ctx) => startingInventory(layoutFor({ ship: ctx.get<ShipLoadout | null>(SHIP), skills: ownedNodes(ctx) })),
     load: (saved, ctx) => {
       const id = ctx.character.id;
-      const r = applyLayout(saved, layoutFor({ ship: ctx.get<ShipLoadout | null>(SHIP) }));
+      const r = applyLayout(saved, layoutFor({ ship: ctx.get<ShipLoadout | null>(SHIP), skills: ownedNodes(ctx) }));
       if (!r.ok) ctx.warn({ error: r.error.code }, 'saved inventory does not fit its ship; keeping its saved layout');
       // What is stored is the truth: anything the service still holds for a character not in play is a leftover.
       if (inventory.close(id)) opts.log?.warn({ character: id }, 'inventory held for a character out of play; replaced by the stored one');
@@ -198,13 +208,19 @@ export interface CoreComponentDeps {
   inventory: InventoryService;
   ships: ShipLoadouts;
   progress: CharacterProgress;
+  /** The skill web's service; when none is given, one is made over this inventory, ships and progress (the gateway finds
+   * it in the registry: `skillServiceIn`). */
+  skills?: SkillService;
   log?: PersistenceLog;
 }
 
-/** A registry holding Phase 1's components in load order (the inventory reads the ship; skills and quests come after). */
+/** A registry holding Phase 1's components in load order: the skills read the level; the ship and the inventory read the
+ * owned nodes; the inventory reads the ship. Quests come after. */
 export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
+  const skills = deps.skills ?? new SkillService({ inventory: deps.inventory, ships: deps.ships, progress: deps.progress });
   return new ComponentRegistry()
     .register(progressComponent(deps.progress))
+    .register(skillsComponent(skills, { log: deps.log }))
     .register(shipComponent(deps.ships))
     .register(inventoryComponent(deps.inventory, { log: deps.log }))
     .register(poseComponent(deps.zones));

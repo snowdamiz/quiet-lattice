@@ -18,20 +18,32 @@
 // A character that leaves stays held (its latest capture, as stored) until that capture is written, then it is evicted.
 // One that joins again before then is loaded from what is held, not from its row, which may not have the save yet; a join
 // pins the character while it reads the row so the held capture cannot be evicted in between.
+//
+// A character out of play is changed by load, modify and save (`edit`, P1.E03.T07: the developer CLI's grant, teleport,
+// skill points): its row is read and decoded as a join would, a modifier changes component values, each changed one is
+// validated as a capture is, and the changed entries are written at the row's revision + 1, so the store's revision
+// guard refuses the write when anything else wrote the row in between. An edit is refused while the character is held
+// (in play, or left with its save not yet written) or pinned (a join is reading its row). While an edit runs, a join of
+// that character waits before reading its row (`afterEdit`, which the gateway's row read goes through) until the edit's
+// write has landed or failed, so it loads the edited state. An edit may take a character out of play first (`leaving`:
+// its session's leave is captured and written, then the edit is made, its joins held throughout).
 import type { CharacterRow } from '../db/schema.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
 import {
+  CharacterLoadError,
   type CharacterColumns,
   type CharacterComponent,
   type CharacterInfo,
   type ComponentRegistry,
+  type Decoded,
+  type LoadContext,
   type PersistenceLog,
   type StoredCharacter,
   type StoredState,
 } from './registry.ts';
 import type { CharacterStore, SaveRow } from './store.ts';
 
-export type SaveReason = 'periodic' | 'logout' | 'kicked' | 'handoff' | 'shutdown' | 'manual';
+export type SaveReason = 'periodic' | 'logout' | 'kicked' | 'handoff' | 'shutdown' | 'manual' | 'admin';
 
 /** What persistence reads of a character's row. */
 export type StoredCharacterRow = Pick<CharacterRow, 'id' | 'name' | 'people' | 'homeSystem' | 'level' | 'xp' | 'state' | 'revision'>;
@@ -82,7 +94,34 @@ export interface PersistenceStats {
   saved: number;
   stale: number;
   failures: number;
+  /** Edits of characters out of play running now, and written so far. */
+  editing: number;
+  edited: number;
 }
+
+/** A character out of play loaded for an edit: each component's value (its default when none is stored), to change. */
+export interface CharacterEdit {
+  readonly character: CharacterInfo;
+  /** The row's revision the edit read; it writes the next one. */
+  readonly revision: number;
+  /** A copy of the component's value as stored, or as set() left it. Throws for a key no component registers. */
+  get<T>(key: string): T;
+  /** Changes a component's value; it is validated (schema and check) before anything is written. */
+  set<T>(key: string, value: T): void;
+}
+
+/** What a modifier returns: nothing to go on, or why the edit is refused (nothing is written then). */
+export type EditVerdict = string | void;
+
+/**
+ * Why an edit wrote nothing: persistence is shut down; the character is held (in play, or left and its save not yet
+ * written, or a join is reading its row); another edit of it is running; it does not exist; its stored state cannot be
+ * read; a value set fails its component; the modifier refused; the row changed after it was read (the revision guard);
+ * the store failed; or the store cannot read characters.
+ */
+export type EditRefusal = 'closed' | 'held' | 'busy' | 'not_found' | 'unreadable' | 'invalid' | 'refused' | 'conflict' | 'failed' | 'unsupported';
+
+export type EditResult = { ok: true; revision: number; changed: string[] } | { ok: false; code: EditRefusal; reason: string };
 
 interface Tracked {
   readonly id: string;
@@ -142,7 +181,9 @@ export class CharacterPersistence {
   private overHighWater = false;
   private phase: Phase = 'open';
   private closed: Promise<void> | undefined;
-  private readonly counts = { writes: 0, saved: 0, stale: 0, failures: 0 };
+  private readonly counts = { writes: 0, saved: 0, stale: 0, failures: 0, edited: 0 };
+  /** Edits of characters out of play running now: each settles once its write has landed or failed. */
+  private readonly edits = new Map<string, Promise<void>>();
 
   constructor(opts: PersistenceOptions) {
     this.store = opts.store;
@@ -169,6 +210,8 @@ export class CharacterPersistence {
   join(viewer: ZoneViewer, row: StoredCharacterRow): Loaded {
     if (this.phase !== 'open') throw new Error('character persistence is shut down');
     if (this.byViewer.has(viewer)) throw new Error(`session ${viewer.id} already holds a character`);
+    // (a join reads its row through afterEdit, so this means a caller that did not)
+    if (this.edits.has(row.id)) throw new Error(`character ${row.id} is being edited out of play`);
     const held = this.records.get(row.id);
     if (held?.viewer) throw new Error(`character ${row.id} is already in play`);
     const info: CharacterInfo = { id: row.id, name: row.name, people: row.people, homeSystem: row.homeSystem };
@@ -253,6 +296,163 @@ export class CharacterPersistence {
     };
   }
 
+  /** What persistence knows of a held character (its name, people, home), or null when it holds none. */
+  info(characterId: string): CharacterInfo | null {
+    return this.records.get(characterId)?.info ?? null;
+  }
+
+  // ---------- out of play: load, modify, save ----------
+
+  /**
+   * Changes a character out of play: reads its row, decodes every component as a join would, lets `modify` change
+   * values (or refuse, returning why), validates each changed value against its component (schema and check, the
+   * components registered before it reading the edited values) and writes the changed entries at the row's revision + 1,
+   * which the store refuses if the row changed in between (`conflict`). Refused, writing nothing, while the character is
+   * held or pinned, or another edit of it runs. Joins of the character wait (afterEdit) until the write lands or fails.
+   *
+   * `leaving`: the session holding the character in play, which the edit takes out of play first (the admin CLI's
+   * teleport to another system, until zone handoff). Its leave is captured at once (before this returns its promise, so
+   * before the caller takes the entity out of its zone), and the edit waits up to flushTimeoutMs for that save to be
+   * written, holding the character's joins all the while, so a reconnect loads the edited state and never the capture.
+   */
+  async edit(
+    characterId: string,
+    modify: (e: CharacterEdit) => EditVerdict | Promise<EditVerdict>,
+    reason = 'edit',
+    opts: { leaving?: ZoneViewer } = {},
+  ): Promise<EditResult> {
+    const refuse = (code: EditRefusal, why: string): EditResult => ({ ok: false, code, reason: why });
+    if (this.phase !== 'open') return refuse('closed', 'character persistence is shut down');
+    if (!this.store.read) return refuse('unsupported', 'this store cannot read characters');
+    const leaving = opts.leaving ? this.byViewer.get(opts.leaving) : undefined;
+    if (opts.leaving && leaving?.id !== characterId) return refuse('held', `that session does not hold character ${characterId} in play`);
+    if (!leaving && this.records.has(characterId)) return refuse('held', `character ${characterId} is in play, or its last save is still being written`);
+    if (this.pins.has(characterId)) return refuse('held', `character ${characterId} is joining`);
+    if (this.edits.has(characterId)) return refuse('busy', `character ${characterId} is being edited already`);
+    let settle!: () => void;
+    this.edits.set(characterId, new Promise<void>((resolve) => (settle = resolve)));
+    try {
+      if (opts.leaving) {
+        this.leave(opts.leaving, 'admin');
+        if (!(await this.whenWritten(characterId, this.flushTimeoutMs))) {
+          return refuse('failed', `the save of character ${characterId} leaving play was not written in time; nothing was edited`);
+        }
+        // the row holds all it had: a join reading the row next must not load this older copy instead
+        const held = this.records.get(characterId);
+        if (held && !held.viewer) this.records.delete(characterId);
+      }
+      let row: StoredCharacterRow | null;
+      try {
+        row = await this.store.read(characterId);
+      } catch (err) {
+        this.log?.warn({ character: characterId, err }, 'edit could not read the character');
+        return refuse('failed', `the character could not be read: ${errorText(err)}`);
+      }
+      if (!row || row.id !== characterId) return refuse('not_found', `no character ${characterId}`);
+      const info: CharacterInfo = { id: row.id, name: row.name, people: row.people, homeSystem: row.homeSystem };
+      let decoded: Decoded;
+      try {
+        decoded = this.registry.decode(storedFromRow(row), info, this.log);
+      } catch (err) {
+        if (err instanceof CharacterLoadError) return refuse('unreadable', err.message);
+        throw err;
+      }
+      const set = new Map<string, unknown>();
+      const known = (key: string) => {
+        if (!this.registry.get(key)) throw new Error(`no component ${key}`);
+      };
+      const value = (key: string) => (set.has(key) ? set.get(key) : decoded.values.get(key));
+      const edit: CharacterEdit = {
+        character: info,
+        revision: row.revision,
+        get: <T>(key: string) => {
+          known(key);
+          return structuredClone(value(key)) as T;
+        },
+        set: (key, v) => {
+          known(key);
+          set.set(key, structuredClone(v));
+        },
+      };
+      let verdict: EditVerdict;
+      try {
+        verdict = await modify(edit);
+      } catch (err) {
+        return refuse('failed', errorText(err));
+      }
+      if (typeof verdict === 'string') return refuse('refused', verdict);
+      // (shutting down lets a running edit write; stopped, the store may be gone)
+      const phase = this.phase as Phase;
+      if (phase === 'abandoned' || phase === 'closed') return refuse('closed', 'character persistence is shut down');
+
+      const state: StoredState = {};
+      const columns: Partial<CharacterColumns> = {};
+      const changed: string[] = [];
+      for (const c of this.registry.components) {
+        if (!set.has(c.key)) continue;
+        const parsed = c.schema.safeParse(set.get(c.key));
+        if (!parsed.success) {
+          const issue = parsed.error.issues[0];
+          return refuse('invalid', `${c.key}: ${issue ? `${issue.path.join('.') || '(value)'}: ${issue.message}` : 'invalid'}`);
+        }
+        const ctx: LoadContext = {
+          character: info,
+          get: <T>(key: string) => value(key) as T,
+          warn: (obj, msg) => this.log?.warn({ character: info.id, component: c.key, ...obj }, msg),
+        };
+        const problem = c.check?.(parsed.data, ctx) ?? null;
+        if (problem !== null) return refuse('invalid', `${c.key}: ${problem}`);
+        set.set(c.key, parsed.data);
+        if (decoded.asStored.has(c.key) && encodeJson(c, parsed.data) === encodeJson(c, decoded.values.get(c.key))) continue;
+        if (c.columns) Object.assign(columns, c.columns.write(parsed.data));
+        else state[c.key] = { v: c.v, data: parsed.data };
+        changed.push(c.key);
+      }
+      if (changed.length === 0) return { ok: true, revision: row.revision, changed };
+
+      const revision = row.revision + 1;
+      let written: Set<string>;
+      try {
+        written = await this.store.write([{ id: characterId, revision, state, columns }]);
+      } catch (err) {
+        this.log?.warn({ character: characterId, err }, 'edit could not write the character');
+        return refuse('failed', `the character could not be written: ${errorText(err)}`);
+      }
+      if (!written.has(characterId)) return refuse('conflict', `character ${characterId} changed after it was read (or is gone); nothing was written`);
+      this.counts.edited++;
+      this.log?.info({ character: characterId, revision, changed, reason }, 'character edited out of play');
+      return { ok: true, revision, changed };
+    } finally {
+      this.edits.delete(characterId);
+      settle();
+    }
+  }
+
+  /** Whether everything captured for the character is written (or nothing is held for it), polled until `timeoutMs`. */
+  private async whenWritten(characterId: string, timeoutMs: number): Promise<boolean> {
+    const end = Date.now() + timeoutMs;
+    for (;;) {
+      const rec = this.records.get(characterId);
+      if (!rec || (rec.written >= rec.revision && !this.pending.has(characterId) && !this.writing.has(characterId))) return true;
+      if (Date.now() >= end || this.phase === 'abandoned') return false;
+      await sleep(10);
+    }
+  }
+
+  /** Resolves once no edit of the character is running (at once when none is). */
+  editing(characterId: string): Promise<void> {
+    return this.edits.get(characterId) ?? Promise.resolve();
+  }
+
+  /**
+   * Reads a joining character's row with `read` once no edit of it is running, so the join loads what the edit wrote.
+   * The gateway's row read goes through this, under the join's pin (which refuses new edits meanwhile).
+   */
+  async afterEdit<T>(characterId: string, read: () => Promise<T>): Promise<T> {
+    await this.editing(characterId);
+    return read();
+  }
+
   // ---------- periodic saves ----------
 
   /** Starts the stagger timer: one slot every intervalMs / slots. */
@@ -289,7 +489,10 @@ export class CharacterPersistence {
       let captured = 0;
       for (const rec of this.records.values()) if (rec.viewer && this.capture(rec, 'shutdown')) captured++;
       this.phase = 'closing';
-      const ok = await this.flush(this.flushTimeoutMs);
+      const end = Date.now() + this.flushTimeoutMs;
+      // edits already running finish (their writes land or fail) before the store goes; new ones are refused
+      if (this.edits.size > 0) await beforeDeadline(Promise.all(this.edits.values()), end);
+      const ok = await this.flush(Math.max(0, end - Date.now()));
       this.phase = 'closed';
       clearTimeout(this.retryTimer);
       if (ok) this.log?.info({ captured, saved: this.counts.saved }, 'characters saved for shutdown');
@@ -338,7 +541,7 @@ export class CharacterPersistence {
   }
 
   stats(): PersistenceStats {
-    return { held: this.records.size, inPlay: this.byViewer.size, pending: this.pending.size + this.writing.size, ...this.counts };
+    return { held: this.records.size, inPlay: this.byViewer.size, pending: this.pending.size + this.writing.size, editing: this.edits.size, ...this.counts };
   }
 
   // ---------- capture and queue ----------
@@ -566,4 +769,8 @@ async function beforeDeadline<T>(p: Promise<T>, end: number): Promise<T | undefi
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function errorText(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
 }
