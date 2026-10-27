@@ -493,7 +493,8 @@ export class Game {
         boost: !foot && ship.boosting,
         jet: foot && this.player.jetting,
         sprint: foot && this.player.sprinting,
-        beam: foot && this.multitool.firing,
+        // (the button, not whether the beam fires: the server decides the lockout)
+        beam: foot && this.multitool.held,
         interact: inp.down('KeyE'),
         up: !foot && inp.down('Space'),
         down: !foot && inp.down('KeyC'),

@@ -3,7 +3,8 @@
 // Heat (DESIGN 9.1) runs on the shared rules (`@astra/shared/meters`) the server decides it by: the beam heats at 32/s
 // against 8/s of cooling, idle the meter sheds 20/s, the world where the walker stands scales the cooling, and at the top
 // the meter overheats and locks the beam out until it has cooled to 25. The client predicts; the server's `meters` state
-// is the truth (`reconcile`).
+// is the truth (`reconcile`). What goes to the server is the button (`held`), never the prediction: the server decides when
+// the beam stops, so a prediction that runs a little ahead of it can never talk it out of overheating.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { canFireBeam, meterRates, stepMeters } from '@astra/shared/meters';
@@ -12,6 +13,9 @@ import { characterMeterEnvironment } from './Ship.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
+/** Inputs go at 20 Hz and the server answers as they land: a view this long past a round trip from our overheat has seen
+ * the inputs we sent then. */
+const STALE_SLACK_S = 0.1;
 
 export class Multitool {
   constructor(game) {
@@ -20,7 +24,11 @@ export class Multitool {
     this.meter = { heat: 0, overheated: false, charge: 0 };
     // heat per second now (+ heating, − cooling), for the HUD
     this.heatRate = 0;
+    // the beam's button held (what the input says), and whether the beam fires (held, out of the lockout)
+    this.held = false;
     this.firing = false;
+    // the server's time when this client last predicted an overheat (null: none, or no server)
+    this.overheatedAt = null;
     this.target = null;
     this.power = 1.6;
     this.kick = 0;
@@ -52,6 +60,15 @@ export class Multitool {
     return this.game.ship.meterProfile.recoverBelow / this.heatMax;
   }
 
+  /** A frame of the meter with the beam's button `held` or not: the input will say so, and the beam fires this frame
+   * (returned) only out of the lockout. */
+  tickMeter(dt, held) {
+    this.held = held;
+    const fire = held && canFireBeam(this.meter);
+    this.stepHeat(dt, held);
+    return fire;
+  }
+
   /** The meter over `dt` seconds: the beam heats while `held` (and stops the moment it overheats), cooling by the world
    * where the character is. */
   stepHeat(dt, held) {
@@ -62,7 +79,10 @@ export class Multitool {
     const step = stepMeters(this.meter, profile, env, act, dt);
     this.meter = { ...step.state, charge: 0 };
     this.heatRate = meterRates(this.meter, profile, env, act).heat;
-    if (step.events.includes('overheated')) g.hud?.toast('Multitool overheated', 'warn');
+    if (step.events.includes('overheated')) {
+      this.overheatedAt = g.net?.serverTime?.() ?? null;
+      g.hud?.toast('Multitool overheated', 'warn');
+    }
   }
 
   /**
@@ -70,9 +90,13 @@ export class Multitool {
    * `serverNow` (the client's estimate of server time) with what the tool is doing now.
    */
   reconcile(view, serverNow = view.at) {
-    this.meter = { heat: view.heat, overheated: view.overheated, charge: 0 };
+    // A view the server made before the inputs we sent as we overheated can have reached it knows nothing of our lockout:
+    // it keeps (the server, judging the button, overheats too, a moment later).
+    const rtt = (this.game.net?.clock?.rtt ?? 0) / 1000;
+    const stale = this.meter.overheated && !view.overheated && this.overheatedAt !== null && view.at < this.overheatedAt + rtt + STALE_SLACK_S;
+    this.meter = { heat: view.heat, overheated: view.overheated || stale, charge: 0 };
     const dt = Math.max(0, Math.min(1, serverNow - view.at));
-    if (dt > 0) this.stepHeat(dt, this.firing);
+    if (dt > 0) this.stepHeat(dt, this.held);
   }
 
   buildViewModel() {
@@ -165,9 +189,7 @@ export class Multitool {
     // and raised into view once it has arrived
     this.raise = this.view.visible ? Math.min(1, (this.raise ?? 1) + dt * 2.6) : 0;
     this.beamMat.uniforms.uTime.value += dt;
-    const held = active && input.mouse(0) && g.mode === 'foot';
-    const wantFire = held && canFireBeam(this.meter);
-    this.stepHeat(dt, held);
+    const wantFire = this.tickMeter(dt, active && input.mouse(0) && g.mode === 'foot');
     this.target = null;
     let hitPoint = null;
     if (g.mode === 'foot') {
