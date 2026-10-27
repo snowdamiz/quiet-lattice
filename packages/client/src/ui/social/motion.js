@@ -9,6 +9,9 @@ export const MOVE_MS = 240;
 export const OUT_MS = 100;
 /** The flex gap a box opening across (a button beside others) also brings. */
 const GAP = 4;
+/** A frame at 60 fps (ms): a move's first step is at least this far along, so it never stands still on the frame after
+ * the one it started in, whenever in that frame it started. */
+const FRAME_MS = 1000 / 60;
 
 /** The HUD's ease-out, cubic-bezier(0.2, 0.7, 0.2, 1), as a function of time 0–1. */
 export function ease(t) {
@@ -159,6 +162,35 @@ export class Motion {
     this.begin(e, { kind: 'height', m: { h: to }, f0: Math.round(from), f1: to, o0: null, o1: null, delay });
   }
 
+  /**
+   * Replaces `e`'s content: what is there fades out where it stands (`OUT_MS`), then `build()` puts the new content in
+   * and `e` eases from the height it had to the new one, the new content fading in as it grows. One height moves, so
+   * whatever is below moves one way, a pixel or more every frame.
+   */
+  replace(e, build) {
+    const cur = this.runs.get(e);
+    const from = cur?.kind === 'height' ? cur.last : e.getBoundingClientRect().height;
+    const o0 = cur?.o ?? 1;
+    this.stop(e);
+    this.begin(e, {
+      kind: 'height',
+      m: null,
+      f0: Math.round(from),
+      f1: Math.round(from),
+      o0,
+      o1: 0,
+      delay: OUT_MS,
+      start: (r) => {
+        build();
+        e.style.height = '';
+        r.f1 = e.getBoundingClientRect().height;
+        e.style.height = `${r.f0}px`;
+        r.o0 = 0;
+        r.o1 = 1;
+      },
+    });
+  }
+
   /** Eases `e` up from `rise` px below where it lays out (and from wherever a slide still had it). */
   slide(e, rise) {
     const cur = this.runs.get(e);
@@ -195,8 +227,9 @@ export class Motion {
   }
 
   begin(e, r) {
-    r.s = this.now();
-    r.t0 = r.s + r.delay;
+    r.at = this.now();
+    r.elapsed = 0;
+    r.stepped = false;
     r.last = r.f0;
     r.o = r.o0;
     this.runs.set(e, r);
@@ -209,14 +242,23 @@ export class Motion {
   step() {
     const now = this.now();
     for (const [e, r] of this.runs) {
-      const p = Math.max(0, Math.min(1, (now - r.t0) / MOVE_MS));
+      // (time since it began, its first step a frame at least)
+      r.elapsed += r.stepped ? now - r.at : Math.max(now - r.at, FRAME_MS);
+      r.stepped = true;
+      r.at = now;
+      const p = Math.max(0, Math.min(1, (r.elapsed - r.delay) / MOVE_MS));
+      if (p > 0 && r.start) {
+        r.start(r);
+        r.start = null;
+      }
       const f = stepValue(r.f0, r.f1, p, r.last);
       if (f !== r.last) place(e, r.kind, r.m, f);
       r.last = f;
       if (r.o1 !== null) {
         // (a closing box fades out from the start, before it moves; an opening one fades in over the later part of its
         // growth)
-        r.o = r.o1 < r.o0 ? r.o0 + (r.o1 - r.o0) * smooth((now - r.s) / OUT_MS) : r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
+        r.o = r.o1 < r.o0 ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / OUT_MS) : r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
+        if (r.o1 > r.o0 && p <= 0) r.o = r.o0;
         e.style.opacity = String(r.o);
       }
       if (p < 1) continue;

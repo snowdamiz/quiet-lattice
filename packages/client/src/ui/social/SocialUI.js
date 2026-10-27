@@ -159,9 +159,10 @@ export class SocialUI {
     const head = el('div', 'sp-head', this.partyEl);
     el('span', '', head, 'Party');
     this.countEl = el('b', '', head);
-    this.noneEl = el('div', 'sp-none', this.partyEl, 'Not in a party');
-    this.noneEl.hidden = true;
+    /** the frame's body: a row per member, or "Not in a party" */
     this.rowsEl = el('div', 'sp-rows', this.partyEl);
+    /** what the body shows: 'rows', 'none', or null while the frame is closed */
+    this.partyBody = null;
     /** member name → its row and health bar, for health set in place */
     this.memberRows = new Map();
     // (kept as it is while the rows are redrawn, so a name half typed into it stays)
@@ -222,8 +223,9 @@ export class SocialUI {
     this.input.addEventListener('input', () => this.updateCount());
   }
 
-  /** The panel and its parts as they should be now: called every frame (cheap unless something changed). */
-  update() {
+  /** The panel and its parts as they should be now: called every frame (cheap unless something changed), and at once
+   * (without a frame of motion: that is the next frame's) when the panel opens or a tab is picked. */
+  update(frame = true) {
     const open = this.isOpen;
     const now = this.hud.now();
     if (open !== this.wasOpen) {
@@ -242,7 +244,7 @@ export class SocialUI {
       this.lastTick = now;
       this.tick(now);
     }
-    this.motion.step();
+    if (frame) this.motion.step();
   }
 
   render(now) {
@@ -399,6 +401,7 @@ export class SocialUI {
           this.partyEl.classList.remove('shown');
           this.rowsEl.replaceChildren();
           this.memberRows.clear();
+          this.partyBody = null;
           this.footShown = false;
           this.footEl.style.display = 'none';
         });
@@ -406,25 +409,51 @@ export class SocialUI {
       return;
     }
     const was = this.partyShown;
-    // "Not in a party" fades out before anything moves over it; then the rows grow in its place (fading in as they
-    // come), Leave opens across beside Invite, and the count fades in
-    const noneLeaving = was && members.length > 0 && (this.noneEl.shownTo ?? !this.noneEl.hidden);
-    const delay = noneLeaving ? OUT_MS : 0;
+    const body = members.length ? 'rows' : 'none';
+    // joining or leaving a party while it shows, "Not in a party" and the rows give way to each other: the old fades
+    // out where it stands, then the frame eases to the new (one height moving, so nothing below stalls or turns back);
+    // Leave opens across beside Invite once the old has gone, and the count fades
+    const swap = was && this.partyBody !== null && body !== this.partyBody;
+    this.partyBody = body;
     fadeText(this.countEl, members.length ? `${members.length}/${PARTY_MAX}` : '');
-    this.motion.toggle(this.noneEl, !members.length, was);
-    this.motion.toggle(this.leaveBtn, members.length > 0, was && this.footShown, { across: true, delay });
+    this.motion.toggle(this.leaveBtn, members.length > 0, was && this.footShown, { across: true, delay: swap ? OUT_MS : 0 });
     const box = this.rowsEl;
-    const from = was ? box.getBoundingClientRect().height : null;
-    const old = new Set(this.memberRows.keys());
+    if (swap) this.motion.replace(box, () => this.buildRows(members, live, null));
+    else {
+      const from = was ? box.getBoundingClientRect().height : null;
+      this.buildRows(members, live, new Set(this.memberRows.keys()));
+      if (was) this.motion.resize(box, from);
+    }
+    if (live !== this.footShown) {
+      this.footShown = live;
+      if (live) {
+        this.footEl.style.display = '';
+        if (this.partyShown) this.motion.reveal(this.footEl);
+      } else {
+        this.inviteName.blur();
+        this.motion.conceal(this.footEl, () => !this.footShown && (this.footEl.style.display = 'none'));
+      }
+    }
+    if (!this.partyShown) {
+      this.partyShown = true;
+      this.partyEl.classList.add('shown');
+      this.motion.reveal(this.partyEl);
+    }
+  }
+
+  /** The frame's body: "Not in a party", or a row per member (those in `kept` already shown, so they do not rise in
+   * again), with the leader's requests on each while the panel is open. */
+  buildRows(members, live, kept) {
+    const m = this.model;
+    const box = this.rowsEl;
     box.replaceChildren();
     this.memberRows.clear();
+    if (!members.length) el('div', 'sp-none', box, 'Not in a party');
     const here = this.game.galaxy?.current?.id;
     for (const x of members) {
       const row = el('div', `sp-member${x.leader ? ' leader' : ''}${x.me ? ' me' : ''}${x.online ? '' : ' offline'}`, box);
       row.dataset.name = x.name;
-      // (a member already shown does not rise in again; a new one rises in once what it replaces has faded)
-      if (old.has(x.name)) row.classList.add('still');
-      else if (delay) row.style.animationDelay = `${delay}ms`;
+      if (!kept || kept.has(x.name)) row.classList.add('still');
       const mark = el('i', 'sp-mark', row);
       if (x.leader) mark.title = 'Leader';
       el('span', 'sp-name', row, x.name);
@@ -441,21 +470,6 @@ export class SocialUI {
       this.memberRows.set(x.name, { row, fill });
     }
     this.health(members);
-    if (live !== this.footShown) {
-      this.footShown = live;
-      if (live) {
-        this.footEl.style.display = '';
-        if (this.partyShown) this.motion.reveal(this.footEl);
-      } else {
-        this.inviteName.blur();
-        this.motion.conceal(this.footEl, () => !this.footShown && (this.footEl.style.display = 'none'));
-      }
-    }
-    if (!this.partyShown) {
-      this.partyShown = true;
-      this.partyEl.classList.add('shown');
-      this.motion.reveal(this.partyEl);
-    } else this.motion.resize(box, from, { delay });
   }
 
   /** Each member's health bar, set in place (in steps of 2%: an entity's hp in view moves finer than the bar shows). */
@@ -570,14 +584,9 @@ export class SocialUI {
       setText(r.meta, `${b.from} · ${b.open} of ${b.cap} open${ago ? ` · ${ago} ago` : ''}`);
       setText(r.where, dist ? `${system} · ${dist}` : system);
     }
-    // a refusal giving way to another (under another beacon) fades out first; then the old closes as the new opens, at
-    // once, so the rows between them move only one way
-    const said = (b) => (m.answerRefusal?.id === b.id ? m.answerRefusal.text : '');
-    const leaving = list.some((b) => {
-      const r = this.rows.get(b.id);
-      return !!r.refusal && r.refusal.textContent !== said(b);
-    });
-    for (const b of list) this.refusalUnder(this.rows.get(b.id), said(b), leaving ? OUT_MS : 0);
+    // (each beacon keeps the server's last refusal of an answer to it; one opening under its row moves the rows below
+    // it one way)
+    for (const b of list) this.refusalUnder(this.rows.get(b.id), m.answerRefusals.get(b.id) ?? '');
     // (rows already in place are left there: a row moved under the pointer would lose its click)
     list.forEach((b, i) => {
       const row = this.rows.get(b.id).row;
@@ -598,15 +607,18 @@ export class SocialUI {
     if (below !== e.classList.contains('more-below')) e.classList.toggle('more-below', below);
   }
 
-  /** The server's refusal under a beacon's row: a new one opens in, the old one closes out, and the rows below ease. */
-  refusalUnder(r, text, delay) {
-    if ((r.refusal?.textContent ?? '') === text) return;
+  /** The server's refusal under a beacon's row: one opens in, and the rows below ease; a new reason for the same beacon
+   * takes the old one's place (fading over, easing to its height); answered, it closes. */
+  refusalUnder(r, text) {
     const old = r.refusal;
-    r.refusal = null;
-    if (old) this.motion.conceal(old, () => old.remove());
-    if (!text) return;
-    r.refusal = el('div', 'sb-refusal', r.row, text);
-    this.motion.reveal(r.refusal, { delay });
+    if ((old?.textContent ?? '') === text) return;
+    if (!text) {
+      r.refusal = null;
+      this.motion.conceal(old, () => old.remove());
+    } else if (!old) {
+      r.refusal = el('div', 'sb-refusal', r.row, text);
+      this.motion.reveal(r.refusal);
+    } else this.motion.replace(old, () => (old.textContent = text));
   }
 
   /** How far the player is from a beacon's place ("here" inside it), when it is in this star system. */
@@ -671,7 +683,7 @@ export class SocialUI {
     this.updateCount();
     this.historyAt = this.history.length;
     this.input.focus();
-    this.update();
+    this.update(false);
     return true;
   }
 
@@ -693,7 +705,7 @@ export class SocialUI {
     if (t === this.tab) return;
     this.tab = t;
     this.dirty = this.rebuild = true;
-    this.update();
+    this.update(false);
     if (this.isOpen) this.input.focus();
   }
 

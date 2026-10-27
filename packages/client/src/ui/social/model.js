@@ -69,9 +69,10 @@ export class SocialModel {
     /** the clock time a server mute ends (0: not muted) */
     this.mutedUntil = 0;
     this.pace = new Pace(CHAT_PACE, now());
-    /** the beacon last answered and, if the server refused it, why: `{id, text}` */
+    /** the beacon last answered */
     this.answering = null;
-    this.answerRefusal = null;
+    /** beacon id → why the server refused its last answer (kept under that beacon while it is up) */
+    this.answerRefusals = new Map();
     /** the last raise or lower the server refused, and why */
     this.beaconRefusal = null;
     /** the beacons this client has heard of while watching (null before the first whole list) */
@@ -226,10 +227,9 @@ export class SocialModel {
     return this.net?.beacons.lower() ?? false;
   }
 
-  /** Asks to join beacon `id`'s instance; a refusal is kept against it. */
+  /** Asks to join beacon `id`'s instance; a refusal is kept against it (until the next answer to it says otherwise). */
   answer(id) {
     this.answering = id;
-    this.answerRefusal = null;
     this.changed();
     return this.net?.beacons.answer(id) ?? false;
   }
@@ -240,7 +240,7 @@ export class SocialModel {
     // the invites a character held lapse when its connection drops; its party comes after the welcome
     this.invites = [];
     this.answering = null;
-    this.answerRefusal = null;
+    this.answerRefusals.clear();
     this.beaconRefusal = null;
     this.seen = null;
     this.changed();
@@ -275,7 +275,7 @@ export class SocialModel {
     } else if (PARTY_OPS.has(m.of)) {
       this.refuse(deniedText(m));
     } else if (m.of === 'answer') {
-      this.answerRefusal = { id: this.answering, text: deniedText(m) };
+      if (this.answering !== null) this.answerRefusals.set(this.answering, deniedText(m));
       this.changed();
     } else if (BEACON_OPS.has(m.of)) {
       this.beaconRefusal = { of: m.of, text: deniedText(m) };
@@ -292,7 +292,7 @@ export class SocialModel {
     }
     if (m.op === 'joined') {
       this.answering = null;
-      this.answerRefusal = null;
+      this.answerRefusals.clear();
     }
     const caller = m.op === 'joined' ? (this.net?.beacons.byId.get(m.id)?.from ?? null) : null;
     const text = beaconNewsText(m, caller);
@@ -307,7 +307,7 @@ export class SocialModel {
     }
     for (const id of m.gone) {
       this.seen.delete(id);
-      if (this.answerRefusal?.id === id) this.answerRefusal = null;
+      this.answerRefusals.delete(id);
     }
     const here = this.system();
     for (const b of m.beacons) {

@@ -172,7 +172,7 @@ describe('the social model', () => {
     socket.push({ t: 'party', party: PARTY });
     socket.push({ t: 'event', event: { kind: 'party', what: 'invite', name: 'Ilse Marr' } });
     expect(model.invites).toHaveLength(1);
-    expect(model.answerRefusal).not.toBeNull();
+    expect(model.answerRefusals.size).toBe(1);
     // the connection drops, and the client joins again
     socket.readyState = 3;
     socket.onclose({ code: 1006, reason: '' });
@@ -183,7 +183,7 @@ describe('the social model', () => {
     socket.push(WELCOME);
     expect(model.invites).toEqual([]);
     expect(model.answering).toBeNull();
-    expect(model.answerRefusal).toBeNull();
+    expect(model.answerRefusals.size).toBe(0);
     expect(model.beaconRefusal).toBeNull();
     // (the party as it was until the server says, which it does after every welcome)
     expect(model.party).toEqual(PARTY);
@@ -254,20 +254,32 @@ describe('the social model', () => {
     expect(model.members()).toEqual([]);
   });
 
-  it('keeps a refused answer against the beacon answered, and a refused raise apart', () => {
+  it('keeps each refused answer against its beacon, and a refused raise apart', () => {
     const { model, socket, sent } = online();
-    socket.push({ t: 'beacons', reset: true, beacons: [beacon(3)], gone: [] });
+    socket.push({ t: 'beacons', reset: true, beacons: [beacon(3), beacon(4, { system: 9 })], gone: [] });
     model.answer(3);
     expect(sent('beacon').at(-1)).toEqual({ t: 'beacon', op: { op: 'answer', id: 3 } });
     socket.push({ t: 'denied', of: 'answer', code: 'far' });
-    expect(model.answerRefusal).toEqual({ id: 3, text: 'Too far: go to its place first' });
+    expect([...model.answerRefusals]).toEqual([[3, 'Too far: go to its place first']]);
+    model.answer(4);
+    socket.push({ t: 'denied', of: 'answer', code: 'elsewhere' });
+    expect([...model.answerRefusals]).toEqual([
+      [3, 'Too far: go to its place first'],
+      [4, 'It is in another star system: go there first'],
+    ]);
+    // answered again, a beacon's refusal is the newest
+    model.answer(3);
+    socket.push({ t: 'denied', of: 'answer', code: 'full' });
+    expect(model.answerRefusals.get(3)).toBe('No slot is left open');
     model.raise();
     socket.push({ t: 'denied', of: 'raise', code: 'no_phase' });
     expect(model.beaconRefusal).toEqual({ of: 'raise', text: 'Raise a beacon from inside a story step, an event or a raid' });
-    expect(model.answerRefusal).toEqual({ id: 3, text: 'Too far: go to its place first' });
-    // the beacon ending takes its refusal with it
+    expect(model.answerRefusals.size).toBe(2);
+    // a beacon ending takes its refusal with it, and joining an instance clears them all
     socket.push({ t: 'beacons', beacons: [], gone: [3] });
-    expect(model.answerRefusal).toBeNull();
+    expect([...model.answerRefusals.keys()]).toEqual([4]);
+    socket.push({ t: 'beacon', op: 'joined', id: 4, phase: 2 });
+    expect(model.answerRefusals.size).toBe(0);
   });
 
   it("tells of a beacon newly called in the player's system, and of its own beacon once", () => {
