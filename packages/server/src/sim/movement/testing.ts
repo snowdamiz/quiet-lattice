@@ -4,7 +4,8 @@
 import { Buttons, type Pose } from '@astra/shared/protocol';
 import { WALKER } from '@astra/shared/data';
 import type { ShipLoadout } from '@astra/shared/ships';
-import { frameIdOf, frameKeyOf, systemPoses, type FrameKey, type SystemDescription } from '@astra/shared/world';
+import { frameIdOf, frameKeyOf, systemPoses, type FrameKey, type PlanetParams, type SystemDescription } from '@astra/shared/world';
+import { planHere, type Ground as Terrain, type GroundSource } from '../../fauna/terrain.ts';
 import { MovementAuthority, type MoveMode, type MoverProfile, type MovementVerdict } from './authority.ts';
 import { dist, groundOf, heightAt, len, rotate, type Quat, type Vec3 } from './world.ts';
 
@@ -32,18 +33,19 @@ export class Harness {
   /** how far the client's clock is ahead of the server's (its estimate of server time errs) */
   skew = 0;
 
+  /** `opts.grounds`: where grounds come from (planned on the test's thread by default) */
   constructor(
     readonly d: SystemDescription,
     start: { pose: Pose; mode: MoveMode },
     profile: Partial<MoverProfile> = {},
-    opts: { now?: number; id?: number } = {},
+    opts: { now?: number; id?: number; grounds?: GroundSource } = {},
     readonly id = opts.id ?? 1,
   ) {
     this.now = opts.now ?? 1e6;
     this.a = new MovementAuthority({
       zone: 'test',
       system: d,
-      syncGround: true,
+      grounds: opts.grounds ?? planHere,
       log: {
         warn: (obj, msg) => this.lines.push({ level: 'warn', obj: obj as Record<string, unknown>, msg }),
         debug: (obj, msg) => this.lines.push({ level: 'debug', obj: obj as Record<string, unknown>, msg }),
@@ -126,6 +128,14 @@ export function flyPath(h: Harness, frame: string | null, points: Vec3[], speeds
 }
 
 export const BOOST = Buttons.boost;
+
+/** Grounds that are not ready until `open` (a planner still at work, or failing), then planned on the test's thread. */
+export class GatedGrounds implements GroundSource {
+  open = false;
+  ground(params: PlanetParams, tier?: number): Terrain | null {
+    return this.open ? planHere.ground(params, tier) : null;
+  }
+}
 
 /** Where the client sets a walker down getting out of a ship at `ship` (Game.exitShip): 11 m to its left and 3 m ahead on a
  * world, on the ground there 0.3 m up; 8 m to its left in a Waystation, feet 2 m over the floor. */

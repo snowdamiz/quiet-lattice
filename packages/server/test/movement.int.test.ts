@@ -4,6 +4,7 @@
 // repeated cheating refused with `kicked`.
 import { STATION_LAYOUT } from '@astra/shared/data';
 import { flightCaps, shipStats, SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
+import { frameIdOf } from '@astra/shared/world';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { DEFAULT_LOADOUT } from '../src/inventory/service.ts';
 import type { RunningServer } from '../src/server.ts';
@@ -69,6 +70,24 @@ describe('movement authority over the wire', () => {
     expect(zone.movement!.recent.filter((r) => r.entity === p.entityId)).toEqual([]);
     expect(p.errors).toEqual([]);
     p.close();
+  });
+
+  it('never corrects a client flying out of the Waystation’s sphere into its world’s frame, stamping its time or not', { timeout: 60_000 }, async () => {
+    for (const stamps of [true, false]) {
+      const p = await Pilot.join(server, 'thalune', { stamps });
+      await takeOff(p);
+      const zone = zoneOf(p);
+      const d = zone.system;
+      // boosting outward, through the edge of the Waystation's sphere and 5% beyond it
+      const frame = await p.flyOn(d, [0, 0.1, 0.995], 1400, 5000, 2 /* boost */);
+      expect(frame).toBe(frameIdOf(d.seed, d.station.parent));
+      await waitFor(() => zone.entity(p.entityId)?.fields.frame === frame, 5000, 'the last input applied');
+      expect(p.corrections, `${stamps ? 'stamped' : 'no time'}`).toEqual([]);
+      expect(zone.movement!.recent.filter((r) => r.entity === p.entityId)).toEqual([]);
+      // (and a client that sends no time is logged as such, once)
+      expect(warnings.filter((w) => w.msg.includes('sends no time') && w.obj.entity === p.entityId).length).toBe(stamps ? 0 : 1);
+      p.close();
+    }
   });
 
   it('snaps back a client that teleports and speeds, logs it, and kicks it when it keeps on', async () => {

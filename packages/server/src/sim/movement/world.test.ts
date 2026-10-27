@@ -1,32 +1,59 @@
 // What movement authority reads of a system: the ground (levelled under cities and sites as the client levels it, sampled
 // only below a ceiling no terrain reaches), the hangar shell, frames by the shared rule, and plain vector maths.
 import { STATION_LAYOUT } from '@astra/shared/data';
-import { cityPads, frameIdOf, planCities, planSites, sitePads, systemPoses, TerrainSampler, type FrameKey, type PlanetParams } from '@astra/shared/world';
+import {
+  cityPads,
+  drawnGround,
+  frameIdOf,
+  planCities,
+  planSites,
+  sitePads,
+  systemPoses,
+  TerrainSampler,
+  type FrameKey,
+  type PlanetParams,
+} from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
+import { groundOf as faunaGround, planHere } from '../../fauna/terrain.ts';
 import { describeZoneSystem } from '../../zones/system.ts';
+import { GatedGrounds } from './testing.ts';
 import { groundOf, heightAt, insideHangar, insideHangarShell, MovementWorld, rotate, rotateInverse, terrainCeiling, type Vec3 } from './world.ts';
 
 describe('the ground', () => {
-  it('is the client’s sampler with the client’s pads: cities’ plains first, then the sites', () => {
+  it('is the client’s: its sampler with the pads the client levels (drawnGround: cities’ plains, then sites), fauna’s own', () => {
     const d = describeZoneSystem(0);
     const g = groundOf(d, d.home)!;
-    // the client's Planet, step for step
+    // the client's Planet: drawnGround on a copy of the world's params
     const params = structuredClone(d.bodies[d.home]!.params) as PlanetParams;
+    const drawn = drawnGround({ ...params, pads: null }, 0);
+    // (step for step: the cities' plains first, then the sites)
     const sampler = new TerrainSampler(params);
     const cities = planCities(params, sampler);
-    sampler.setPads([...cityPads(cities), ...sitePads(planSites(params, sampler, cities))]);
-    expect(g.sampler.pads).toEqual(sampler.pads);
-    expect(g.sampler.pads!.length).toBeGreaterThan(0);
+    expect(drawn.pads).toEqual([...cityPads(cities), ...sitePads(planSites(params, sampler, cities))]);
+    expect(drawn.pads.length).toBeGreaterThan(0);
     for (const dir of [
       [0, 0, -1],
       [0.6, 0.8, 0],
       [-0.48, 0.6, 0.64],
     ] as Vec3[])
-      expect(heightAt(g, dir)).toBe(sampler.height(dir[0], dir[1], dir[2]));
-    // the description is left as it was, and the ground is kept
-    expect((d.bodies[d.home]!.params as PlanetParams).pads).toBeUndefined();
+      expect(heightAt(g, dir)).toBeCloseTo(drawn.sampler.height(dir[0], dir[1], dir[2]), 6);
+    // the description is left as it was, and the ground is fauna's, kept
+    expect((d.bodies[d.home]!.params as PlanetParams).pads ?? null).toBeNull();
+    expect(g.terrain).toBe(faunaGround(d.bodies[d.home]!.params as PlanetParams));
     expect(groundOf(d, d.home)).toBe(g);
     expect(groundOf(d, 999)).toBeNull();
+  });
+
+  it('is asked of the server’s planner, and is not there until it has been planned', () => {
+    const d = describeZoneSystem(0);
+    const gated = new GatedGrounds();
+    const w = new MovementWorld(d, gated);
+    expect(w.ground(d.home)).toBeNull();
+    expect(w.ground('station')).toBeNull();
+    gated.open = true;
+    expect(w.ground(d.home)).toBe(groundOf(d, d.home));
+    const gas = d.bodies.findIndex((b) => b.type === 'gas');
+    if (gas >= 0) expect(w.ground(gas)).toBeNull();
   });
 
   it('never reaches its ceiling, volcanoes and landforms included (above it the sampler is not asked)', () => {
@@ -80,7 +107,7 @@ describe('the hangar shell', () => {
 
 describe('frames', () => {
   const d = describeZoneSystem(0);
-  const w = new MovementWorld(d);
+  const w = new MovementWorld(d, planHere);
   const T = 1e6;
   const poses = w.posesAt(T);
   const at = (key: FrameKey) => w.framePose(key, poses);
@@ -128,7 +155,7 @@ describe('frames', () => {
   });
 
   it('reads poses at a pose’s own time, kept per 10 ms, seeded by the zone’s tick', () => {
-    const fresh = new MovementWorld(d);
+    const fresh = new MovementWorld(d, planHere);
     const tick = systemPoses(d, 5e6);
     fresh.setPoses(tick, 5e6);
     expect(fresh.posesAt(5e6 + 0.004)).toBe(tick);

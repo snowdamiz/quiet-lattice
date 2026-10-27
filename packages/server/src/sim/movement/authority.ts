@@ -3,8 +3,11 @@
 // class) or refuses it with a `correction` to the last pose it can vouch for. One per zone.
 //
 // For each input, in order:
-// 1. Time. The pose is judged at the time its client says it sampled it, bounded by the server's clock (MOVEMENT.time): an
-//    honest client's poses and times are its own trajectory, whatever the network does to them on the way.
+// 1. Time. The pose is judged at the time its client says it sampled it (MOVEMENT.time): an honest client's poses and
+//    times are its own trajectory, whatever the network does to them on the way. The time credited between two inputs is
+//    the client's, held to the real time that passed (the arrival gap, a small bank, a stall's own length), so a clock
+//    run fast, frozen or lagging gains nothing; one stepped forward past that re-syncs with no credit for the step and a
+//    fresh window; an input with no time is judged on its arrival.
 // 2. The pose, with the bodies where they were then. Its frame must be one the shared frame rule allows there; a ship may
 //    not be below the ground (the shared terrain sampler, levelled under cities and sites as the client levels it), in a
 //    gas giant's depths or inside the Waystation's hangar shell; a walker may not be below the ground, outside the hangar,
@@ -12,9 +15,10 @@
 //    pulse drive only outside the air, clear of what is ahead and high enough over a world to engage; landed only on dry
 //    ground on a world; docked only on a Waystation pad no other ship holds; on foot only on a world's ground or in a
 //    hangar, and only after getting out of a landed or docked ship; boarding only the ship it is beside.
-// 3. The move from the last valid pose. A jump beyond the allowance in the time since is refused outright
-//    (anti-teleport); so is a step through the ground, or a flying ship's centre through the hangar's shell, further than
-//    the client's own once-a-frame collisions could miss.
+// 3. The move from the last valid pose. A jump beyond the allowance in the time since (at most a second of it: no input
+//    carries more, whatever silence came before) is refused outright (anti-teleport); so is a step through the ground,
+//    or a flying ship's centre through the hangar's shell, further than the client's own once-a-frame collisions could
+//    miss.
 // 4. Speed windows, the flight contract (FLIGHT_TOLERANCE in @astra/shared/ships): displacement over at least `windowS` of
 //    the client's time, judged against the larger of the allowances at the window's two end poses; a window not yet that
 //    long is judged from its start. A window carries on across a change of frame (its poses re-expressed in the new frame,
@@ -26,6 +30,11 @@
 //    (Game.exitShip), and the boarded ship's first pose as a ship's move from where it was left. A walker's window is
 //    judged across the ground, upward (plus the rise of the ground along its path) and downward (no faster than a fall:
 //    `walkerFall`).
+//
+// The ground is planned in the server's worker thread (fauna's GroundPlanner) once a player comes near a world. A pose
+// judged before its world's ground is ready is accepted provisionally: it and every input after it are judged again as
+// soon as the ground is, and refused (back to the last pose judged without that need) if it is not ready within
+// MOVEMENT.ground.holdS.
 //
 // A refused input is not applied. The correction rewinds to the last valid pose, or for a window that is too fast, to the
 // window's start (every pose after it is part of what was too fast). Inputs already on their way from the old trajectory
@@ -53,6 +62,7 @@ import {
   type WalkerStats,
 } from '@astra/shared/ships';
 import { frameIdOf, frameKeyOf, type FrameKey, type SystemDescription, type SystemPoses } from '@astra/shared/world';
+import { groundPlanner, type GroundSource } from '../../fauna/terrain.ts';
 import { MOVEMENT, type MovementRule, type Violation } from './rules.ts';
 import {
   dist,
@@ -67,6 +77,7 @@ import {
   rotate,
   shipGroundAt,
   surfaceAt,
+  type Ground,
   type Quat,
   type Vec3,
 } from './world.ts';
@@ -126,8 +137,11 @@ export interface ViolationRecord extends Violation {
 /** A validated pose. */
 interface Sample {
   seq: number;
-  /** the client's time for it, as the server credits it (MOVEMENT.time), s */
+  /** the client's time for it, as the server credits it (MOVEMENT.time), s: the time between two samples is what speed is
+   * judged on */
   t: number;
+  /** the world time its bodies are placed at: its credited time, or its arrival (MOVEMENT.time) */
+  p: number;
   /** server world time it arrived at */
   r: number;
   key: FrameKey;
@@ -152,6 +166,8 @@ interface Sample {
   highSince: number | null;
   /** docked: its pad */
   pad: number | null;
+  /** its client's clock stepped forward here: no movement credit for the time since the last pose, and a fresh window */
+  resync?: boolean;
 }
 
 interface Change {
@@ -160,57 +176,129 @@ interface Change {
   at: number;
 }
 
-/**
- * The client's clock, as the server keeps track of it (MOVEMENT.time). Each input's latency is its arrival less its credited
- * time; the baseline is the smallest latency among inputs at least `settleS` old within the last `horizonS`, eased by
- * `rate` for every second since (a slewing clock). A new input's time may not make its latency more than `slackS` below
- * the baseline: a clock run fast lowers its latency input by input, and soon meets inputs a second older than it.
- */
-class ClientClock {
-  /** the last credited time */
-  last = -Infinity;
-  /** inputs not yet `settleS` old, oldest first: [arrival, latency] */
-  private readonly young: [number, number][] = [];
-  private youngHead = 0;
-  /** settled inputs within the horizon: [arrival, latency + rate × arrival], the second rising front to back (its front is
-   * the baseline) */
-  private readonly q: [number, number][] = [];
-  private head = 0;
+/** The times an input is judged at (MOVEMENT.time). */
+export interface Credit {
+  /** its client's time, as credited: the time between two inputs, which speed is judged on, is the difference of theirs */
+  t: number;
+  /** the world time the bodies are placed at for it */
+  p: number;
+  /** it had no usable time, and is judged on its arrival */
+  timeless: boolean;
+  /** its clock stepped forward: the credited time re-synced to it with no movement credit, and judging starts afresh */
+  resync: boolean;
+  /** the time since the input before it (or the join) arrived */
+  gap: number;
+}
 
-  /** The time credited to an input stamped `raw` that arrived at server time `now`. */
-  credit(raw: number, now: number): number {
-    const T = MOVEMENT.time;
-    // inputs now old enough join the baseline's window; inputs too old leave it
-    while (this.youngHead < this.young.length && this.young[this.youngHead]![0] <= now - T.settleS) {
-      const [r, o] = this.young[this.youngHead++]!;
-      const v = o + T.rate * r;
-      while (this.q.length > this.head && this.q[this.q.length - 1]![1] >= v) this.q.pop();
-      this.q.push([r, v]);
-    }
-    while (this.head < this.q.length && this.q[this.head]![0] < now - T.horizonS) this.head++;
-    if (this.head > 512) {
-      this.q.splice(0, this.head);
-      this.head = 0;
-    }
-    if (this.youngHead > 512) {
-      this.young.splice(0, this.youngHead);
-      this.youngHead = 0;
-    }
-    let upper = now + T.aheadS;
-    if (this.head < this.q.length) upper = Math.min(upper, now - (this.q[this.head]![1] - T.rate * now) + T.slackS);
-    const t = Math.max(Math.min(raw, upper), now - T.maxLagS, this.last);
-    this.last = t;
-    this.young.push([now, now - t]);
-    if (this.young.length - this.youngHead > MOVEMENT.clockMax) this.youngHead++;
-    return t;
+/**
+ * The client's clock, as the server credits it (MOVEMENT.time). Each input is credited with the time its client says
+ * passed since the one before, held to the real time that passed: its arrival gap, plus a little of a small bank that only
+ * real time no input claimed refills, plus a stall's length for the burst that ends it; and never ahead of its arrival. A
+ * clock stepped forward re-syncs it, with no credit for the step.
+ */
+export class ClientClock {
+  /** the time credited to the last input, its stamp (null when it had none), and its arrival */
+  private t = NaN;
+  private raw: number | null = null;
+  private a: number;
+  /** real time no input has claimed, up to `bankS` */
+  private bank: number = MOVEMENT.time.bankS;
+  /** a stall's real time, which the burst ending it may claim until `stallUntil` (server time) */
+  private stall = 0;
+  private stallUntil = -Infinity;
+  /** when it last re-synced (server time) */
+  private resyncedAt = -Infinity;
+
+  /** A clock for a mover that joined at server world time `joined`. */
+  constructor(joined: number) {
+    this.a = joined;
   }
+
+  /** The times credited to an input stamped `raw` that arrived at server world time `now`. */
+  credit(raw: number, now: number): Credit {
+    const T = MOVEMENT.time;
+    const gap = Math.max(0, now - this.a);
+    this.a = now;
+    const usable = Number.isFinite(raw) && raw > 0;
+    let resync = false;
+    if (Number.isNaN(this.t)) {
+      // the first input: its own time (no later than `aheadS` past its arrival), or its arrival
+      this.t = usable ? Math.min(raw, now + T.aheadS) : now;
+    } else if (!usable) {
+      this.t += gap;
+    } else {
+      if (now > this.stallUntil) this.stall = 0;
+      // what its client says passed (or, to catch up a stamp held back before, since the time credited then)...
+      const said = this.raw === null ? raw - this.t : Math.max(raw - this.raw, raw - this.t);
+      // ...held to the real time that passed (its arrival gap, a little of the bank, an input's worth of a stall it ends),
+      // and never ahead of its arrival
+      let c = Math.min(Math.max(0, said), gap + Math.min(T.perInputS, this.bank) + Math.min(T.stallInputS, this.stall));
+      c = Math.max(0, Math.min(c, now + T.aheadS - this.t));
+      if (said - c > T.resyncS && raw >= now - T.behindS && now - this.resyncedAt >= T.resyncEveryS) {
+        // a clock stepped forward past what it can be credited (or one that lagged, caught up): the credited time follows
+        // it, with no credit for the step
+        resync = true;
+        this.resyncedAt = now;
+        this.t = Math.max(this.t, Math.min(raw, now + T.aheadS));
+        this.stall = 0;
+        this.raw = raw;
+        return { t: this.t, p: this.t, timeless: false, resync, gap };
+      }
+      const over = c - gap;
+      if (over > 0) {
+        const fromStall = Math.min(this.stall, over);
+        this.stall -= fromStall;
+        this.bank -= over - fromStall;
+      } else if (over < 0) {
+        // real time it did not claim: a stall's is the burst's to claim; any of it is banked, up to `bankS`
+        if (-over > T.bankS) {
+          this.stall += -over;
+          this.stallUntil = now + T.burstS;
+        }
+        this.bank = Math.min(T.bankS, this.bank - over);
+      }
+      this.t += c;
+    }
+    this.raw = usable ? raw : null;
+    const p = !usable || now - this.t > T.placeLagS ? now : this.t;
+    return { t: this.t, p, timeless: !usable, resync, gap };
+  }
+}
+
+/** Where a mover stood before the inputs a hold let through (see MOVEMENT.ground). */
+interface MoverState {
+  last: Sample;
+  seg: Sample[];
+  boundary: number | null;
+  change: Change | null;
+  parked: Sample | null;
+  settledAt: number;
+  switches: { t: number; slackM: number }[];
+}
+
+/** An input as it was judged, kept to judge again. */
+interface HeldInput {
+  seq: number;
+  msg: Pick<InputMessage, 'pose' | 'mode' | 'buttons'>;
+  credit: Credit;
+  /** server time it arrived */
+  r: number;
+}
+
+/** Inputs let through while world `key`'s ground was being planned, judged again when it is ready. */
+interface Hold {
+  key: number;
+  /** server time it began */
+  since: number;
+  base: MoverState;
+  inputs: HeldInput[];
 }
 
 class Mover {
   readonly ship: ShipStats;
   readonly walker: WalkerStats;
   readonly walkerCaps: WalkerCaps;
-  readonly clock = new ClientClock();
+  readonly clock: ClientClock;
   last!: Sample;
   /** the current window segment, oldest first; seg[0] is the previous segment's last pose when `boundary` is set */
   seg: Sample[] = [];
@@ -231,14 +319,21 @@ class Mover {
   readonly corrections: number[] = [];
   /** no input from its client yet: the pose it joined at is on the server's clock until the first one */
   fresh = true;
+  /** its client has sent an input with no time (logged once) */
+  timeless = false;
+  /** inputs let through while a world's ground is planned */
+  hold: Hold | null = null;
 
+  /** A mover joining at server world time `joined`. */
   constructor(
     readonly id: number,
     readonly profile: MoverProfile,
+    joined: number,
   ) {
     this.ship = shipStats(profile.ship, { skills: profile.skills });
     this.walker = walkerStats({ skills: profile.skills, people: profile.people });
     this.walkerCaps = walkerCaps(this.walker);
+    this.clock = new ClientClock(joined);
   }
 }
 
@@ -264,18 +359,51 @@ export interface MovementAuthorityOptions {
   zone: string;
   system: SystemDescription;
   log?: MovementLog;
-  /** Plan a world's ground the moment it is first needed rather than soon after, off the input path (tests, and checks made
-   * off the input path). Until it is planned, checks that need it pass. */
-  syncGround?: boolean;
+  /** Where worlds' grounds come from: the server's worker planner (fauna's GroundPlanner) by default; tests plan on their
+   * own thread. */
+  grounds?: GroundSource;
+  /** The system's tier now, which its worlds' ground is drawn for (0 by default). */
+  tier?: () => number;
 }
 
 /**
  * `MovementAuthority.poseProblem` for a system with no zone open: whether a saved pose and mode may be restored at server
  * world time `now` (character persistence calls this before putting a character back where it was saved). `parked` is
- * where a character saved on foot left its ship. Null when it may.
+ * where a character saved on foot left its ship. Null when it may; a pose whose world's ground is not planned yet cannot be
+ * vouched for (planGround first).
  */
-export function poseProblem(system: SystemDescription, pose: Pose, mode: MoveMode, now: number, profile: MoverProfile, parked?: Pose): Violation | null {
-  return new MovementAuthority({ zone: 'restore', system, syncGround: true }).poseProblem(pose, mode, profile, now, parked);
+export function poseProblem(
+  system: SystemDescription,
+  pose: Pose,
+  mode: MoveMode,
+  now: number,
+  profile: MoverProfile,
+  parked?: Pose,
+  opts: Pick<MovementAuthorityOptions, 'grounds' | 'tier'> = {},
+): Violation | null {
+  return new MovementAuthority({ zone: 'restore', system, ...opts }).poseProblem(pose, mode, profile, now, parked);
+}
+
+/**
+ * Plans the ground of the world `frame` is on (if it is one) in the server's planner and resolves when it is ready, or
+ * false after `timeoutMs`: so a saved pose there can be checked (poseProblem) without planning on the main thread.
+ */
+export async function planGround(
+  system: SystemDescription,
+  frame: string | null,
+  tier = 0,
+  timeoutMs = 5000,
+  grounds: GroundSource = groundPlanner,
+): Promise<boolean> {
+  const key = frameKeyOf(system, frame);
+  if (typeof key !== 'number' || system.bodies[key]!.type === 'gas') return true;
+  const world = new MovementWorld(system, grounds, () => tier);
+  const end = performance.now() + timeoutMs;
+  while (!world.ground(key)) {
+    if (performance.now() >= end) return false;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  return true;
 }
 
 export class MovementAuthority {
@@ -290,11 +418,13 @@ export class MovementAuthority {
   /** the movers holding each pad: its ship docked there, or left there while its pilot walks */
   private readonly pads: Set<number>[] = STATION_LAYOUT.pads.map(() => new Set<number>());
   private readonly recentLog: ViolationRecord[] = [];
+  /** the world whose ground the input being judged needed but did not have (it is held, MOVEMENT.ground) */
+  private skipped: number | null = null;
 
   constructor(opts: MovementAuthorityOptions) {
     this.zone = opts.zone;
     this.log = opts.log;
-    this.world = new MovementWorld(opts.system, opts.syncGround ?? false);
+    this.world = new MovementWorld(opts.system, opts.grounds ?? groundPlanner, opts.tier);
   }
 
   /** The zone's body poses at its tick's world time. */
@@ -330,8 +460,8 @@ export class MovementAuthority {
    */
   add(id: number, pose: Pose, mode: MoveMode, profile: MoverProfile, now: number, parked?: Pose): void {
     if (this.keyOf(pose.frame) === undefined) throw new RangeError(`frame ${pose.frame} is not in system ${this.world.system.seed}`);
-    const m = new Mover(id, profile);
-    const first = this.sample(m, null, 0, { pose, mode, buttons: 0 }, now, now);
+    const m = new Mover(id, profile, now);
+    const first = this.sample(m, null, 0, { pose, mode, buttons: 0 }, now, now, now);
     m.last = first;
     m.seg = [first];
     if (first.cls === 'rest') m.parked = first;
@@ -351,43 +481,122 @@ export class MovementAuthority {
    * at server world time `now`: the rules every input's pose meets (its frame, the ground, the hangar shell, a gas
    * giant's depths, and the mode's own: the pulse drive out of the air and clear of what is ahead, landed on dry ground,
    * docked on a pad no other ship holds, on foot on ground or in the hangar beside the ship it left at `parked`), with
-   * nothing before it to compare it with. Null when it may be there.
+   * nothing before it to compare it with. Null when it may be there; a pose on a world whose ground is not planned yet
+   * cannot be vouched for.
    */
   poseProblem(pose: Pose, mode: MoveMode, profile: MoverProfile, now: number, parked?: Pose): Violation | null {
     const key = this.keyOf(pose.frame);
     if (key === undefined)
       return { rule: 'frame', measured: 0, allowed: 0, unit: 'm', detail: `frame ${pose.frame} is not in system ${this.world.system.seed}` };
-    const m = new Mover(-1, profile);
-    const s = this.sample(m, null, 0, { pose, mode, buttons: 0 }, now, now);
+    this.skipped = null;
+    const m = new Mover(-1, profile, now);
+    const s = this.sample(m, null, 0, { pose, mode, buttons: 0 }, now, now, now);
     // as if it had been there a moment: on foot already, cruising if on the pulse drive, coming to rest if landed or docked
     const before: Sample = { ...s, cls: s.cls === 'rest' ? 'engine' : s.cls, flight: s.cls === 'rest' ? 'space' : s.flight, pad: null };
-    const problem = this.legality(m, before, s);
-    if (problem || mode !== 'foot') return problem;
-    // on foot: with a ship of its own resting on this world or in this Waystation to board again
-    if (!parked || this.keyOf(parked.frame) !== key)
-      return { rule: 'board_range', measured: Infinity, allowed: 0, unit: 'm', detail: 'on foot with no ship of its own here' };
-    const ship = this.restSample(m, parked, now);
-    return this.legality(m, { ...ship, cls: 'engine', flight: 'space', pad: null }, ship);
+    let problem = this.legality(m, before, s);
+    if (!problem && mode === 'foot') {
+      // on foot: with a ship of its own resting on this world or in this Waystation to board again
+      if (!parked || this.keyOf(parked.frame) !== key)
+        return { rule: 'board_range', measured: Infinity, allowed: 0, unit: 'm', detail: 'on foot with no ship of its own here' };
+      const ship = this.restSample(m, parked, now);
+      problem = this.legality(m, { ...ship, cls: 'engine', flight: 'space', pad: null }, ship);
+    }
+    if (!problem && this.skipped !== null)
+      return { rule: 'terrain', measured: 0, allowed: 0, unit: 'm', detail: `${frameName(this.skipped)}'s ground is not planned yet` };
+    return problem;
   }
 
   /** Checks an input from entity `id`'s client, arriving at server world time `now`. */
   check(id: number, msg: InputMessage, now: number): MovementVerdict {
     const m = this.movers.get(id);
     if (!m) throw new Error(`entity ${id} is not a mover in zone ${this.zone}`);
-    const t = m.clock.credit(msg.time, now);
+    const credit = m.clock.credit(msg.time, now);
     if (m.fresh) {
       // the pose it joined at, on the client's clock: as long before its first input as the server measured
       m.fresh = false;
-      const joined = t - Math.max(0, now - m.last.r);
-      for (const x of m.seg) x.t = joined;
+      for (const x of m.seg) x.t = credit.t - credit.gap;
+    }
+    if (credit.timeless && !m.timeless) {
+      m.timeless = true;
+      this.log?.warn(
+        { zone: this.zone, entity: m.id, account: m.profile.accountId, character: m.profile.characterId, seq: msg.seq },
+        'movement: client sends no time; its inputs are judged on their arrival, with coarser jitter tolerance',
+      );
+    }
+    if (m.hold) {
+      const refused = this.resolveHold(m, msg.seq, credit, now);
+      if (refused) return refused;
     }
     const L = m.last;
-    const s = this.sample(m, L, msg.seq, msg, t, now);
+    this.skipped = null;
+    const s = this.sample(m, L, msg.seq, msg, credit.t, credit.p, now);
+    s.resync = credit.resync;
     const judged = this.judge(m, L, s);
-    if (judged) return this.refuse(m, msg.seq, judged.violation, judged.rewind, s, now);
+    if (judged) return this.refuse(m, msg.seq, judged.violation, judged.rewind, credit, now);
+    this.holdIfSkipped(m, { seq: msg.seq, msg, credit, r: now });
     m.graceUntil = -Infinity;
     this.accept(m, L, s);
     return { ok: true, mode: s.mode, vel: s.vel };
+  }
+
+  // ---------- holding for the ground ----------
+
+  /** An input judged without a world's ground it needed: hold it, with everything after it, until that ground is ready. */
+  private holdIfSkipped(m: Mover, input: HeldInput): void {
+    if (this.skipped !== null && !m.hold) m.hold = { key: this.skipped, since: input.r, base: this.snapshot(m), inputs: [] };
+    m.hold?.inputs.push(input);
+  }
+
+  /**
+   * A mover holding for world `hold.key`'s ground: once it is ready, its held inputs are judged again with it, and the first
+   * that fails is refused (the input now is refused with its correction); while it is not, the hold goes on, for at most
+   * MOVEMENT.ground.holdS, then the input now is refused back to where the hold began. Null when nothing is refused.
+   */
+  private resolveHold(m: Mover, seq: number, credit: Credit, now: number): MovementRefusal | null {
+    const h = m.hold!;
+    if (!this.world.ground(h.key)) {
+      if (now - h.since <= MOVEMENT.ground.holdS && h.inputs.length < MOVEMENT.heldMax) return null;
+      const waited = { rule: 'terrain', measured: now - h.since, allowed: MOVEMENT.ground.holdS, unit: 's' } as const;
+      return this.refuse(m, seq, { ...waited, detail: `${frameName(h.key)}'s ground was not ready to judge` }, m.last, credit, now, true);
+    }
+    m.hold = null;
+    this.restore(m, h.base);
+    for (const x of h.inputs) {
+      const L = m.last;
+      this.skipped = null;
+      const s = this.sample(m, L, x.seq, x.msg, x.credit.t, x.credit.p, x.r);
+      s.resync = x.credit.resync;
+      const judged = this.judge(m, L, s);
+      if (judged) return this.refuse(m, seq, judged.violation, judged.rewind, credit, now, true);
+      this.holdIfSkipped(m, x);
+      this.accept(m, L, s);
+    }
+    return null;
+  }
+
+  private snapshot(m: Mover): MoverState {
+    return { last: m.last, seg: [...m.seg], boundary: m.boundary, change: m.change, parked: m.parked, settledAt: m.settledAt, switches: [...m.switches] };
+  }
+
+  private restore(m: Mover, st: MoverState): void {
+    m.last = st.last;
+    m.seg = [...st.seg];
+    m.boundary = st.boundary;
+    m.change = st.change;
+    m.parked = st.parked;
+    m.settledAt = st.settledAt;
+    m.switches = [...st.switches];
+    const pad = m.last.cls === 'foot' ? (m.parked?.pad ?? null) : m.last.pad;
+    if (pad !== null) this.holdPad(m.id, pad);
+    else this.releasePad(m.id);
+  }
+
+  /** The ground under frame `key` for a check that needs it: null for none, or while it is planned (the input being judged
+   * is then held: MOVEMENT.ground). */
+  private groundFor(key: FrameKey): Ground | null {
+    const g = this.world.ground(key);
+    if (!g && this.world.rocky(key)) this.skipped = key;
+    return g;
   }
 
   // ---------- samples ----------
@@ -396,11 +605,13 @@ export class MovementAuthority {
     return frameKeyOf(this.world.system, frame);
   }
 
-  /** A pose as a sample at client time `t`, after `prev` (null at a join): its class and mode, a ship's caps and allowance,
-   * a walker's height and ground. */
-  private sample(m: Mover, prev: Sample | null, seq: number, msg: Pick<InputMessage, 'pose' | 'mode' | 'buttons'>, t: number, now: number): Sample {
+  /** A pose as a sample at client time `t`, with the bodies placed at world time `p`, after `prev` (null at a join): its
+   * class and mode, a ship's caps and allowance, a walker's height and ground. */
+  private sample(m: Mover, prev: Sample | null, seq: number, msg: Pick<InputMessage, 'pose' | 'mode' | 'buttons'>, t: number, p: number, now: number): Sample {
     const key = this.keyOf(msg.pose.frame);
     if (key === undefined) throw new RangeError(`frame ${msg.pose.frame} is not in system ${this.world.system.seed}`);
+    // (in a world's frame: its ground is planned from now on, long before it is landed on)
+    if (this.world.rocky(key)) this.world.ground(key);
     const pos: Vec3 = [...msg.pose.pos];
     const q = msg.pose.quat;
     const n = Math.hypot(q[0], q[1], q[2], q[3]);
@@ -410,6 +621,7 @@ export class MovementAuthority {
     const s: Sample = {
       seq,
       t,
+      p,
       r: now,
       key,
       pos,
@@ -434,7 +646,7 @@ export class MovementAuthority {
       clampLength(s.vel, m.walkerCaps.across + m.walkerCaps.climb + fall);
       return s;
     }
-    const poses = this.world.posesAt(t);
+    const poses = this.world.posesAt(p);
     const frame = this.world.framePose(key, poses);
     const world = this.world.toWorld(frame, pos);
     const clear = this.world.clearance(frame, world, rotate(quat, NOSE), poses);
@@ -456,10 +668,10 @@ export class MovementAuthority {
     return s;
   }
 
-  /** A ship at rest at `pose` (landed on a world, docked in a Waystation) as of client time `t`. */
+  /** A ship at rest at `pose` (landed on a world, docked in a Waystation) as of server time `t`. */
   private restSample(m: Mover, pose: Pose, t: number): Sample {
     const mode: MoveMode = this.keyOf(pose.frame) === 'station' ? 'docked' : 'landed';
-    return this.sample(m, null, 0, { pose, mode, buttons: 0 }, t, t);
+    return this.sample(m, null, 0, { pose, mode, buttons: 0 }, t, t, t);
   }
 
   /** The change of ship mode in force at `s`: a new one at `s` when its mode differs from `L`'s, else the mover's last. */
@@ -479,7 +691,7 @@ export class MovementAuthority {
    * client sets it exactly on it): a walker in water, or skimming the ground mid-fall, keeps falling from its peak. */
   private walkerFields(prev: Sample | null, s: Sample): void {
     const { key, pos } = s;
-    const g = this.world.ground(key);
+    const g = this.groundFor(key);
     if (key === 'station') {
       s.h = pos[1];
       s.ground = STATION_LAYOUT.hangar.y0;
@@ -494,19 +706,21 @@ export class MovementAuthority {
   }
 
   /**
-   * `x` in frame `key`, its position re-expressed there at client time `t`: the time of the last pose before a change of
-   * frame. The client turns its velocity into the new frame at the change and never adds the frames' relative motion, so
-   * a stretch carried across it measures its earlier poses as if the old frame had stood still from then.
+   * `x` in frame `key`, its position re-expressed there with the bodies at world time `p`: where they were for the last
+   * pose before a change of frame. The client turns its velocity into the new frame at the change and never adds the
+   * frames' relative motion, so a stretch carried across it measures its earlier poses as if the old frame had stood still
+   * from then.
    */
-  private inFrame(x: Sample, key: FrameKey, t: number): Sample {
-    return x.key === key ? x : { ...x, key, pos: this.world.reframe(x.pos, x.key, key, t) };
+  private inFrame(x: Sample, key: FrameKey, p: number): Sample {
+    return x.key === key ? x : { ...x, key, pos: this.world.reframe(x.pos, x.key, key, p) };
   }
 
-  /** How far the frames of `L` and `s` drift apart over the step between them (none in one frame), with a fifth to spare. */
+  /** How far the frames of `L` and `s` drift apart over the step between them (none in one frame), with a fifth to spare.
+   * (A step is at most MOVEMENT.teleport.maxS long, and none across a clock stepped forward.) */
   private switchSlack(L: Sample, s: Sample): number {
-    if (L.key === s.key) return 0;
-    const world = this.world.toWorld(this.world.framePoseExact(L.key, L.t), L.pos);
-    return this.world.frameDrift(world, L.key, s.key, L.t) * (s.t - L.t) * 1.2;
+    if (L.key === s.key || s.resync) return 0;
+    const world = this.world.toWorld(this.world.framePoseExact(L.key, L.p), L.pos);
+    return this.world.frameDrift(world, L.key, s.key, L.p) * Math.min(Math.max(0, s.t - L.t), MOVEMENT.teleport.maxS) * 1.2;
   }
 
   // ---------- judging ----------
@@ -527,12 +741,12 @@ export class MovementAuthority {
     let startAllowed: number | null = null;
     let fromSeg = false;
     if (s.cls === 'foot' && L.cls !== 'foot') {
-      const anchor = this.exitAnchor(m, this.parkedAt(m, L)!, L.t);
-      if (!anchor) return null; // (its world's ground is still being planned)
+      const anchor = this.exitAnchor(m, this.parkedAt(m, L)!, L);
+      if (!anchor) return null; // (its world's ground is still being planned: held)
       prev = anchor;
       win = [anchor];
     } else if (s.cls !== 'foot' && L.cls === 'foot') {
-      prev = { ...m.parked!, t: L.t, r: L.r };
+      prev = { ...m.parked!, t: L.t, p: L.p, r: L.r };
       win = [prev];
       if (s.cls !== prev.cls) startAllowed = this.boundaryAllowance(m, prev, s);
     } else if (s.cls === L.cls && (s.key === L.key || s.cls !== 'foot')) {
@@ -549,11 +763,12 @@ export class MovementAuthority {
       return null;
     }
 
-    // anti-teleport and collisions on the way: the step from prev, in s's frame
-    const from = this.inFrame(prev, s.key, prev.t);
+    // anti-teleport and collisions on the way: the step from prev, in s's frame, over the time since (none for a clock
+    // stepped forward, and at most a second: no input carries more)
+    const from = this.inFrame(prev, s.key, prev.p);
     const drift = this.switchSlack(prev, s);
-    const dt = s.t - prev.t;
     const T = MOVEMENT.teleport;
+    const dt = s.resync ? 0 : Math.min(s.t - prev.t, T.maxS);
     const step = Math.max(0, dist(from.pos, s.pos) - drift);
     // (getting out, the walker's move from where the client sets it down; boarding, the ship's from where it was left)
     const jump: MovementRule = prev === L ? 'teleport' : s.cls === 'foot' ? 'exit_range' : 'board_range';
@@ -572,7 +787,8 @@ export class MovementAuthority {
     const through = this.sweep(s, from.pos, step, dt, speedCap);
     if (through) return fail(through.rule, through.measured, through.allowed, 'm', through.detail);
 
-    // the window
+    // the window (none across a clock stepped forward: a fresh one starts at s)
+    if (s.resync) return null;
     const W = MOVEMENT.windowS;
     let ai = 0;
     let full = false;
@@ -583,7 +799,7 @@ export class MovementAuthority {
         break;
       }
     }
-    const A = this.inFrame(win[ai]!, s.key, prev.t);
+    const A = this.inFrame(win[ai]!, s.key, prev.p);
     // (no time may pass between two inputs, but then nothing may move: a client whose clock stands still is not let off)
     const E = Math.max(0, s.t - A.t);
     let settle = !full && s.cls === 'rest' && A.cls !== 'rest' && s.t - m.settledAt >= W ? MOVEMENT.settleM : 0;
@@ -643,10 +859,11 @@ export class MovementAuthority {
     return null;
   }
 
-  /** The highest ground radius (or hangar floor) under the path from A to s, sampled every few metres. */
+  /** The highest ground radius (or hangar floor) under the path from A to s, sampled every few metres (NaN while its ground
+   * is planned). */
   private groundTop(A: Sample, s: Sample): number {
     if (s.key === 'station') return Math.max(A.ground, s.ground);
-    const g = this.world.ground(s.key);
+    const g = this.groundFor(s.key);
     if (!g) return NaN;
     let top = Math.max(surfaceAt(g, A.pos), surfaceAt(g, s.pos));
     const n = Math.min(MOVEMENT.sweep.samples, Math.ceil(dist(A.pos, s.pos) / MOVEMENT.sweep.spacingM));
@@ -676,8 +893,9 @@ export class MovementAuthority {
       const allowed = speed * S.frameS + MOVEMENT.hullM;
       return run > allowed ? { rule: 'station_hull', measured: run, allowed, detail: 'through the hangar shell' } : null;
     }
-    const g = this.world.ground(s.key);
-    if (!g || Math.min(len(from), len(s.pos)) > g.radius + g.ceiling) return null;
+    if (!this.world.rocky(s.key) || !this.world.nearGround(s.key, Math.min(len(from), len(s.pos)))) return null;
+    const g = this.groundFor(s.key);
+    if (!g) return null;
     const run =
       s.cls === 'foot'
         ? groundRun(from, s.pos, (p) => surfaceAt(g, p), MOVEMENT.terrain.walkerBelowM)
@@ -695,13 +913,13 @@ export class MovementAuthority {
       ...(detail ? { detail } : {}),
     });
     const { key, pos } = s;
-    const poses = this.world.posesAt(s.t);
+    const poses = this.world.posesAt(s.p);
     const world = this.world.toWorld(this.world.framePose(key, poses), pos);
     const frame = this.world.frameProblem(key, pos, world, s.cls === 'foot' ? m.walkerCaps.across : s.allowed, poses);
     if (frame) return fail('frame', frame.measured, frame.allowed, 'm', `${frameName(key)} where the rule picks ${frameName(frame.expected)}`);
     if (L.key !== key) {
       // a change of frame only where the rule makes it (not back and forth inside a sphere's hysteresis)
-      const step = dist(this.world.reframe(L.pos, L.key, key, L.t), pos);
+      const step = dist(this.world.reframe(L.pos, L.key, key, L.p), pos);
       const change = this.world.frameChangeProblem(L.key, key, world, poses, step + MOVEMENT.frame.marginM);
       if (change)
         return fail('frame', change.measured, change.allowed, 'm', `from ${frameName(L.key)} to ${frameName(key)} short of where the rule changes it`);
@@ -711,11 +929,12 @@ export class MovementAuthority {
 
     // a ship: never inside the ground, a gas giant's depths or the hangar's shell
     const body = typeof key === 'number' ? this.world.system.bodies[key]! : null;
-    const ground = this.world.ground(key);
     const r = len(pos);
+    const near = this.world.rocky(key) && this.world.nearGround(key, r, PULSE_DRIVE.engageAltitudeM);
+    const ground = near ? this.groundFor(key) : null;
     let groundR: number | null = null;
     let landH = 0;
-    if (ground && r < ground.radius + ground.ceiling + PULSE_DRIVE.engageAltitudeM) {
+    if (ground) {
       landH = heightAt(ground, [pos[0] / r, pos[1] / r, pos[2] / r]);
       groundR = ground.radius + (ground.ocean ? Math.max(landH, 0) : landH);
       const floor = groundR + SHIP_GEAR_HEIGHT * 0.6 - MOVEMENT.terrain.shipBelowM;
@@ -733,7 +952,8 @@ export class MovementAuthority {
     if (L.cls === 'foot') {
       const p = m.parked;
       if (!p || p.key !== key) return fail('board_range', Infinity, 0, 'm', 'no ship of its own here');
-      const reach = WALKER.boardRangeM + MOVEMENT.foot.boardSlackM + m.walkerCaps.across * Math.max(0, s.t - L.t);
+      const walked = s.resync ? 0 : Math.min(Math.max(0, s.t - L.t), MOVEMENT.teleport.maxS);
+      const reach = WALKER.boardRangeM + MOVEMENT.foot.boardSlackM + m.walkerCaps.across * walked;
       const walker = dist(L.pos, p.pos);
       if (walker > reach) return fail('board_range', walker, reach, 'm', 'walker to ship');
     }
@@ -756,7 +976,7 @@ export class MovementAuthority {
       case 'rest':
         return s.mode === 'docked'
           ? this.dockedLegality(m, L, s, fail)
-          : this.landedLegality(s, body, groundR, landH, ground?.ocean ?? false, this.world.groundPending(key), fail);
+          : this.landedLegality(s, body, groundR, landH, ground?.ocean ?? false, near && !ground, fail);
       default:
         return null;
     }
@@ -771,7 +991,7 @@ export class MovementAuthority {
     pending: boolean,
     fail: FailFn,
   ): Violation | null {
-    if (pending) return null; // (its ground is still being planned)
+    if (pending) return null; // (its ground is still being planned: held)
     if (!body || body.type === 'gas' || groundR === null) return fail('landed', Infinity, 0, 'm', `not on a world's ground (${frameName(s.key)})`);
     const L = MOVEMENT.landed;
     const gear = len(s.pos) - groundR - SHIP_GEAR_HEIGHT;
@@ -832,19 +1052,21 @@ export class MovementAuthority {
       const rest: Sample = { ...L, cls: 'rest', mode: 'docked', flight: 'docked', pad: nearestPad(L.pos) };
       return this.dockedLegality(m, L, rest, noop) ? null : rest;
     }
-    const ground = this.world.ground(L.key);
-    if (!ground || typeof L.key !== 'number') return null;
     const r = len(L.pos);
+    if (!this.world.rocky(L.key) || !this.world.nearGround(L.key, r)) return null;
+    const rest: Sample = { ...L, cls: 'rest', mode: 'landed', flight: 'landed' };
+    const ground = this.groundFor(L.key);
+    // (while its ground is planned, taken as landed: held, and judged again with it)
+    if (!ground) return rest;
     const landH = heightAt(ground, [L.pos[0] / r, L.pos[1] / r, L.pos[2] / r]);
     const groundR = ground.radius + (ground.ocean ? Math.max(landH, 0) : landH);
-    const rest: Sample = { ...L, cls: 'rest', mode: 'landed', flight: 'landed' };
     return this.landedLegality(rest, this.world.system.bodies[L.key]!, groundR, landH, ground.ocean, false, noop) ? null : rest;
   }
 
   /** Where the client sets a walker down getting out of `ship` (Game.exitShip): 11 m to its left and 3 m ahead on a world,
    * on the ground there (the sea floor too) 0.3 m up; 8 m to its left in a Waystation, feet 2 m over the floor. As a walker
-   * standing there at client time `t`; null while the world's ground is still being planned. */
-  private exitAnchor(m: Mover, ship: Sample, t: number): Sample | null {
+   * standing there at the time of `at` (the last pose before it got out); null while the world's ground is planned. */
+  private exitAnchor(m: Mover, ship: Sample, at: Sample): Sample | null {
     const left = rotate(ship.quat, LEFT);
     const fwd = rotate(ship.quat, NOSE);
     const E = WALKER.exit;
@@ -852,7 +1074,7 @@ export class MovementAuthority {
     if (ship.key === 'station') {
       feet = [ship.pos[0] + left[0] * E.station.leftM, E.station.feetY, ship.pos[2] + left[2] * E.station.leftM];
     } else {
-      const g = this.world.ground(ship.key);
+      const g = this.groundFor(ship.key);
       if (!g) return null;
       const p: Vec3 = [
         ship.pos[0] + left[0] * E.planet.leftM + fwd[0] * E.planet.forwardM,
@@ -861,15 +1083,16 @@ export class MovementAuthority {
       ];
       const r = len(p);
       const dir: Vec3 = [p[0] / r, p[1] / r, p[2] / r];
-      const at = g.radius + heightAt(g, dir) + E.planet.aboveGroundM;
-      feet = [dir[0] * at, dir[1] * at, dir[2] * at];
+      const h = g.radius + heightAt(g, dir) + E.planet.aboveGroundM;
+      feet = [dir[0] * h, dir[1] * h, dir[2] * h];
     }
     return this.sample(
       m,
       null,
       ship.seq,
       { pose: { frame: frameIdOf(this.world.system.seed, ship.key), pos: feet, quat: ship.quat, vel: [0, 0, 0] }, mode: 'foot', buttons: 0 },
-      t,
+      at.t,
+      at.p,
       ship.r,
     );
   }
@@ -883,7 +1106,7 @@ export class MovementAuthority {
       // the stretch goes on; across a change of frame, its poses are re-expressed in the new one as of the change
       if (s.key !== L.key) {
         m.switches.push({ t: L.t, slackM: this.switchSlack(L, s) });
-        m.seg = m.seg.map((x) => this.inFrame(x, s.key, L.t));
+        m.seg = m.seg.map((x) => this.inFrame(x, s.key, L.p));
       }
       m.seg.push(s);
       // keep the latest pose at least a window old (the next window's start) and everything since, within reason
@@ -898,18 +1121,24 @@ export class MovementAuthority {
       const first = m.seg[0]!.t;
       m.switches = m.switches.filter((sw) => sw.t >= first);
     } else if (outOfFoot) {
-      const from = { ...m.parked!, t: L.t, r: L.r };
+      const from = { ...m.parked!, t: L.t, p: L.p, r: L.r };
       m.boundary = s.cls === from.cls ? null : this.boundaryAllowance(m, from, s);
       m.seg = [from, s];
       m.switches = [];
     } else if (isShip(s.cls) && isShip(L.cls)) {
-      const from = this.inFrame(L, s.key, L.t);
+      const from = this.inFrame(L, s.key, L.p);
       m.boundary = this.boundaryAllowance(m, from, s);
       m.seg = [from, s];
       m.switches = L.key === s.key ? [] : [{ t: L.t, slackM: this.switchSlack(L, s) }];
     } else {
       m.boundary = null;
       m.seg = [s];
+      m.switches = [];
+    }
+    // (a clock stepped forward: windows start afresh here)
+    if (s.resync) {
+      m.seg = [s];
+      m.boundary = null;
       m.switches = [];
     }
     if (s.cls === 'rest' && isShip(L.cls) && L.cls !== 'rest') m.settledAt = s.t;
@@ -923,14 +1152,24 @@ export class MovementAuthority {
     m.last = s;
   }
 
-  private refuse(m: Mover, seq: number, violation: Violation, rewind: Sample, s: Sample, now: number): MovementRefusal {
-    if (now < m.graceUntil) {
+  /**
+   * Refuses input `seq` (credited `at`), correcting to `rewind`; quietly, within the grace after a correction, unless
+   * `force` (the mover's state was rewound). Inputs a hold let through are not vouched for: a refusal during one corrects to
+   * where it began.
+   */
+  private refuse(m: Mover, seq: number, violation: Violation, rewind: Sample, at: Credit, now: number, force = false): MovementRefusal {
+    if (!force && now < m.graceUntil) {
       this.quiet++;
       this.log?.debug({ zone: this.zone, entity: m.id, seq, rule: violation.rule }, 'movement: input from before the correction refused');
       return { ok: false, correction: null, violation: null, kick: false };
     }
+    if (m.hold) {
+      this.restore(m, m.hold.base);
+      m.hold = null;
+      rewind = m.last;
+    }
     // the pose corrected to is the authoritative state as of the refused input's time
-    const to: Sample = { ...rewind, t: s.t, r: now };
+    const to: Sample = { ...rewind, t: at.t, p: at.p, r: now };
     const i = m.seg.indexOf(rewind);
     if (i >= 0) m.seg.length = i;
     if (m.seg.length === 0) m.boundary = null;

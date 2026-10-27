@@ -10,7 +10,10 @@ import { startServer, type RunningServer, type StartOptions } from '../src/serve
 
 /** A server on a free port. `shard` runs a shard of its own (uniqueShard()) for tests that change the world or its clock;
  * `persistence` tunes character saving (a short interval). */
-export async function startTestServer(config: Partial<Config> = {}, opts: Pick<StartOptions, 'shard' | 'persistence'> = {}): Promise<RunningServer> {
+export async function startTestServer(
+  config: Partial<Config> = {},
+  opts: Pick<StartOptions, 'shard' | 'persistence' | 'movement'> = {},
+): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
   return startServer({ port: 0, host: '127.0.0.1', config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config }, ...opts });
 }

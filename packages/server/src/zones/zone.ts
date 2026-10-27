@@ -37,6 +37,7 @@ import {
   selectFrame,
   setFrame,
   systemPoses,
+  tierOfGalaxySystem,
   type Frame,
   type FrameSet,
   type SystemDescription,
@@ -242,7 +243,9 @@ export class Zone {
       station: frame(frameId(seed, 'station'), opts.system.station.soi),
     };
     for (const f of [...this.frameSet.bodies, this.frameSet.station]) this.frames.set(f.id, f);
-    this.movement = opts.movement ? new MovementAuthority({ zone: opts.id, system: opts.system, log: opts.log }) : null;
+    // (its worlds' ground is the one fauna walks on: planned in the worker, for the system's tier)
+    const tier = () => this.fauna?.tier ?? tierOfGalaxySystem(opts.systemIndex);
+    this.movement = opts.movement ? new MovementAuthority({ zone: opts.id, system: opts.system, log: opts.log, tier }) : null;
     this.placeFrames(0);
     this.phases = new PhaseManager(this, opts.log);
     this.fauna = opts.fauna === false ? null : new FaunaSim(this, opts.fauna);

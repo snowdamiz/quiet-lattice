@@ -1,44 +1,44 @@
 // What movement authority reads of a zone's star system: its frames (the bodies' and the Waystation's poses at the time a
 // client says a pose is from), the ground under a pose (the shared terrain sampler, levelled under cities and sites exactly
-// as the client levels it), the air, the pulse drive's clearance, which frame the shared rule allows, and the Waystation's
-// hangar shell. Plain arrays and arithmetic: this runs for every input.
+// as the client levels it: fauna's grounds, planned in the server's worker thread), the air, the pulse drive's clearance,
+// which frame the shared rule allows, and the Waystation's hangar shell. Plain arrays and arithmetic: this runs for every
+// input.
 import { STATION_LAYOUT } from '@astra/shared/data';
 import { airDensity, pulseClearance, type PulseClearance } from '@astra/shared/ships';
 import {
   bodyPose,
-  cityPads,
   FRAME_HYSTERESIS,
-  planCities,
-  planSites,
-  sitePads,
   stationPose,
   systemPoses,
-  TerrainSampler,
   type BodyPose,
   type FrameKey,
   type PlanetParams,
   type SystemDescription,
   type SystemPoses,
 } from '@astra/shared/world';
+import { groundOf as plannedHere, type Ground as Terrain, type GroundSource } from '../../fauna/terrain.ts';
 import { MOVEMENT } from './rules.ts';
 
 export type Vec3 = [number, number, number];
 export type Quat = [number, number, number, number];
 
-/** The ground of a rocky world: the client's terrain sampler with the same levelled pads. */
+/** The ground of a rocky world: fauna's (the client's terrain sampler with the same levelled pads: shared drawnGround), with
+ * the height above which there is none. */
 export interface Ground {
-  readonly sampler: TerrainSampler;
+  readonly terrain: Terrain;
   readonly radius: number;
   readonly ocean: boolean;
   /** Over this height over the sea there is no terrain: above it the sampler is not consulted. */
   readonly ceiling: number;
 }
 
-const GROUND_CACHE_MAX = 64;
-/** Grounds by `<system seed>:<body index>`, oldest first; shared by every zone, and kept when a zone unloads. */
-const grounds = new Map<string, Ground>();
-/** Grounds being planned (off the input path), by the same key. */
-const planning = new Set<string>();
+const wrapped = new WeakMap<Terrain, Ground>();
+
+function wrap(terrain: Terrain, params: PlanetParams): Ground {
+  let g = wrapped.get(terrain);
+  if (!g) wrapped.set(terrain, (g = { terrain, radius: terrain.radius, ocean: terrain.ocean, ceiling: terrainCeiling(params) }));
+  return g;
+}
 
 /** A height no terrain of these parameters reaches: the client's own estimate (its Planet.maxTerrain) misses volcanoes and
  * landforms, so theirs are added, all doubled, plus a kilometre. Above it the ground cannot matter. */
@@ -50,47 +50,18 @@ export function terrainCeiling(p: PlanetParams): number {
   return 2 * (p.mountainHeight + p.landHeight * 2.5 + p.hillHeight + p.detailHeight + p.duneHeight + extra) + 1000;
 }
 
-/** The ground of body `index` of system `d` (null for a gas giant), planned now if it is not yet (the cities and sites that
- * level it take up to ~0.1 s to plan), and cached. Off the input path only: there, `MovementWorld.ground` reads the cache. */
-export function groundOf(d: SystemDescription, index: number): Ground | null {
+/** Whether body `index` of system `d` is a world with ground (a planet or moon, not a gas giant). */
+export function rocky(d: SystemDescription, index: number): boolean {
   const b = d.bodies[index];
-  if (!b || b.type === 'gas') return null;
-  const key = `${d.seed}:${index}`;
-  const hit = grounds.get(key);
-  if (hit) {
-    grounds.delete(key);
-    grounds.set(key, hit);
-    return hit;
-  }
-  // as the client's Planet: a copy of the params (the description is shared), the cities' plains first, then the sites,
-  // then the pads levelled into the sampler
-  const params = structuredClone(b.params) as PlanetParams;
-  const sampler = new TerrainSampler(params);
-  const cities = planCities(params, sampler);
-  const sites = planSites(params, sampler, cities);
-  params.pads = [...cityPads(cities), ...sitePads(sites)];
-  sampler.setPads(params.pads);
-  const g: Ground = { sampler, radius: b.radius, ocean: params.hasOcean, ceiling: terrainCeiling(params) };
-  grounds.set(key, g);
-  if (grounds.size > GROUND_CACHE_MAX) grounds.delete(grounds.keys().next().value!);
-  return g;
+  return !!b && b.type !== 'gas';
 }
 
-/** The ground of body `index` when it is planned already; otherwise null, and it is planned soon, off the input path. */
-export function groundReady(d: SystemDescription, index: number): Ground | null {
-  const b = d.bodies[index];
-  if (!b || b.type === 'gas') return null;
-  const key = `${d.seed}:${index}`;
-  const hit = grounds.get(key);
-  if (hit) return hit;
-  if (!planning.has(key)) {
-    planning.add(key);
-    setImmediate(() => {
-      planning.delete(key);
-      groundOf(d, index);
-    }).unref();
-  }
-  return null;
+/** The ground of body `index` of system `d` in a system of `tier` (null for a gas giant), planned on the calling thread if
+ * it is not kept (5–100 ms): for tests, tools and the bench. The server plans in its worker (MovementWorld.ground). */
+export function groundOf(d: SystemDescription, index: number, tier = 0): Ground | null {
+  if (!rocky(d, index)) return null;
+  const params = d.bodies[index]!.params as PlanetParams;
+  return wrap(plannedHere(params, tier), params);
 }
 
 // ---------- vectors ----------
@@ -156,13 +127,18 @@ export class MovementWorld {
   /** the system's poses by world time in POSE_STEPs, oldest first */
   private readonly cache = new Map<number, SystemPoses>();
 
-  /** `syncGround`: plan a world's ground the moment it is first needed (tests, and checks off the input path) instead of
-   * soon after, off the input path. */
+  /** each body's terrain ceiling (NaN for a gas giant) */
+  private readonly ceilings: number[];
+
+  /** `grounds`: where worlds' grounds come from (the server's worker planner; tests plan on their own thread); `tier`: the
+   * system's tier now, which its worlds' ground is drawn for. */
   constructor(
     readonly system: SystemDescription,
-    private readonly syncGround = false,
+    private readonly grounds: GroundSource,
+    private readonly tier: () => number = () => 0,
   ) {
     this.frames = [...system.bodies.map((b, i): FrameInfo => ({ key: i, soi: b.soi })), { key: 'station', soi: system.station.soi }];
+    this.ceilings = system.bodies.map((b) => (b.type === 'gas' ? NaN : terrainCeiling(b.params as PlanetParams)));
   }
 
   /** The zone's poses at its tick's time, so inputs from about then need none of their own. */
@@ -315,22 +291,30 @@ export class MovementWorld {
     return best ? best.key : null;
   }
 
-  /** The ground of the world a pose in frame `key` (a planet's or moon's) stands over: null for none, or (off tests) while
-   * it is still being planned, in which case it is planned soon. */
-  ground(key: FrameKey): Ground | null {
-    if (typeof key !== 'number') return null;
-    return this.syncGround ? groundOf(this.system, key) : groundReady(this.system, key);
+  /** Whether frame `key` is a world with ground. */
+  rocky(key: FrameKey): key is number {
+    return typeof key === 'number' && rocky(this.system, key);
   }
 
-  /** Whether frame `key` is a rocky world whose ground is still being planned. */
-  groundPending(key: FrameKey): boolean {
-    return typeof key === 'number' && this.system.bodies[key]!.type !== 'gas' && this.ground(key) === null;
+  /** The ground of the world a pose in frame `key` (a planet's or moon's) stands over: null for none, or while it is still
+   * being planned (asking starts its plan). */
+  ground(key: FrameKey): Ground | null {
+    if (!this.rocky(key)) return null;
+    const params = this.system.bodies[key]!.params as PlanetParams;
+    const terrain = this.grounds.ground(params, this.tier());
+    return terrain ? wrap(terrain, params) : null;
+  }
+
+  /** Whether a pose `r` from the centre of world `key` is under its terrain ceiling, or `extra` metres over it: where its
+   * ground could matter. */
+  nearGround(key: number, r: number, extra = 0): boolean {
+    return r < this.system.bodies[key]!.radius + this.ceilings[key]! + extra;
   }
 }
 
-/** The ground's height over its sea (m) under a direction from a world's centre (`up`, unit length). */
+/** The ground's height over its sea (m) under a direction from a world's centre (any length but zero). */
 export function heightAt(g: Ground, up: Readonly<Vec3>): number {
-  return g.sampler.height(up[0], up[1], up[2]);
+  return g.terrain.sample(up);
 }
 
 /** The ground's radius under a point (any length) in its world's frame: sea floor included (a walker's ground). */

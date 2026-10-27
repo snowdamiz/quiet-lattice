@@ -26,7 +26,7 @@ import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.t
 import type { Db } from '../db/client.ts';
 import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
-import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
+import { groundForRestore, POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
@@ -371,6 +371,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     const unpin = persistence.pin(characterId);
     try {
       const row = await ownedCharacter(s.accountId!, characterId);
+      // the ground a saved pose on a world stands on, planned in the worker first, so its check reads it there
+      if (row) await groundForRestore(row.state);
       if (s.state !== 'authed') return;
       // (a row under another spelling of the id would have been read without the pin holding it)
       if (!row || row.id !== characterId) {

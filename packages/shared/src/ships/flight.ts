@@ -48,7 +48,8 @@ export const CLIENT_SPEED_HEADROOM = 1.05;
 
 /**
  * How P1.E03.T04's movement validation reads the caps. The server never trusts the client's `vel`, and reads its `time`
- * only within its own clock's bounds (ARCHITECTURE §7):
+ * only within its own clock's bounds (ARCHITECTURE §7: no more time credited than really passed). As first written
+ * (P1.E12.T01) the server measured elapsed time itself; it is the client's time, so the network's jitter changes nothing:
  * - It measures speed itself: displacement over at least `windowS` of the client's time. A window is split where the mode
  *   changes between the engines, the pulse drive and rest (a change of frame or among the engine modes carries it on); a
  *   stretch shorter than `windowS` between two changes (a one-tick pulse) is judged on its own, from its start, against

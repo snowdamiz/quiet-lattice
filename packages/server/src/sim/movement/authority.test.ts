@@ -336,9 +336,10 @@ describe('honest flight is never corrected', () => {
         return pose(null, p, [v, 0, 0], noseTo([1, 0, 0]));
       };
       for (let i = 0; i < 40; i++) h.send(step(), 'ship');
-      // nothing arrives for `stall` seconds, then all of it at once
+      // nothing arrives for `stall` seconds, then all of it at once, each stamped when it was sent
+      const sent = h.now;
       const held = Array.from({ length: Math.round(stall / 0.05) }, step);
-      held.forEach((q, i) => h.send(q, 'ship', { dt: i === 0 ? stall : 0 }));
+      held.forEach((q, i) => h.send(q, 'ship', { dt: i === 0 ? stall : 0, at: sent + (i + 1) * 0.05 }));
       for (let i = 0; i < 60; i++) h.send(step(), 'ship');
       expect(h.refusals, `stall ${stall} s`).toEqual([]);
     }
@@ -505,7 +506,7 @@ describe('cheats are refused', () => {
     expect(w.send(pose(STATION, [-22, 0, -22]), 'foot').ok).toBe(true);
     expect(refusal(w.send(pose(STATION, [-22, 0, 75]), 'foot', { dt: 30 })).violation).toMatchObject({ rule: 'walker_hangar' });
     // walks off, then claims to board from 60 m away
-    expect(w.send(pose(STATION, [-22, 0, 10]), 'foot', { dt: 30 }).ok).toBe(true);
+    for (let z = -22; z < 10;) expect(w.send(pose(STATION, [-22, 0, (z = Math.min(10, z + 2))]), 'foot', { dt: 0.25 }).ok).toBe(true);
     expect(refusal(w.send(PAD0, 'docked')).violation).toMatchObject({ rule: 'board_range', detail: 'walker to ship' });
     // boards beside it but puts the ship somewhere else
     const b = docked();

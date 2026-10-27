@@ -33,6 +33,8 @@ export interface StartOptions {
   shard?: string;
   /** Character persistence tuning (tests shorten the 30 s save interval). */
   persistence?: Omit<PersistenceOptions, 'store' | 'registry' | 'log'>;
+  /** Hold players to movement authority (true; integration tests that put players anywhere with raw poses turn it off). */
+  movement?: boolean;
 }
 
 export interface RunningServer {
@@ -100,7 +102,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const authLimiter = new RateLimiter({ burst: config.AUTH_RATE_BURST, refillPerSecond: config.AUTH_RATE_PER_MINUTE / 60 });
   // Computed now, not on the first unknown-user login, so that login is not the one that pays for it.
   const timingHash = await createTimingHash();
-  const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ });
+  const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ, movement: opts.movement });
   const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
   const persistence = new CharacterPersistence({
     ...opts.persistence,
