@@ -268,7 +268,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 
 ### E12 Ships, Phase 1 hulls
 - [x] **P1.E12.T01 Hull and module model** · deps: E02.T07 · spec: DESIGN 10 · files: `src/entities/Ship.js` · done: a ship is a hull id plus fitted modules; stats, hardpoints, ability slots, signature from data; server-authoritative flight caps per hull. · verify: unit tests.
-- [~] **P1.E12.T02 (art) Lark, Swift, Kestrel, Mule** · deps: E14.T02 · done: four hulls with gear, canopy, cockpit interior, hardpoint mounts, damage state, husked variant, three liveries each; the Lark rebuilds today's ship at the new bar. · verify: validate; review. → `[R]`
+- [R] **P1.E12.T02 (art) Lark, Swift, Kestrel, Mule** · deps: E14.T02 · done: four hulls with gear, canopy, cockpit interior, hardpoint mounts, damage state, husked variant, three liveries each; the Lark rebuilds today's ship at the new bar. · verify: validate; review. → `[R]`
 - [ ] **P1.E12.T03 Client ship system on hull data** · deps: T01, T02 · files: `src/entities/Ship.js`, `src/entities/Cockpit.js`, `src/entities/Traffic.js`, `src/entities/Pirates.js` · done: model, cockpit, stats and camera per hull; traffic and pirates draw from the roster. · verify: smoke flies each hull; e2e sees mixed traffic.
 - [ ] **P1.E12.T04 Weapons: Pulse Lasers and Mining Laser** · deps: T03, E06.T02 · done: hardpoint modules, mounting, server hit resolution; the demo lasers become the Pulse Lasers module. · verify: integration.
 - [ ] **P1.E12.T05 Ship ladder and ownership** · deps: T03, E03.T05 · done: buy at stations, garage of owned hulls, active hull, loss on Recall, stake credit for the Lark. · verify: integration.
