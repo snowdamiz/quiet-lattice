@@ -687,3 +687,27 @@ Format: task id, question → choice → why.
   task; an event beacon's place name is its raw location key (P2.E21.T01); a party of two disbanding can race the quest
   runtime's re-placement by up to one 100 ms sweep (the chapter reopens fresh); the quest runtime does not re-place a
   solo player who forms a party mid-step, nor close a step's phase while a helper remains (P1.E09 follow-up).
+- **P1.E08.T04** Analysis and codex (`server/src/codex`, `@astra/shared/codex`, ARCHITECTURE §22) → the server decides
+  every analysis: `analyze {seq, time, target}` is checked like a mining hit (seq; in play; rate 2 then 1/s; clock
+  within ±3 s; on foot, the mode movement authority believes; the target visible to the player through the phase
+  manager, else `unknown`, before anything else is said about it; a living `mob` of known species on the player's
+  world; range 70 m from the eye to the creature's middle plus its hit radius plus 5 m, the client's aim pick; line of
+  sight over the drawn ground only; unplanned ground `busy`), instant with no scan time. A species is per world, keyed
+  `<worldFrameId>/<index at FAUNA_MAX_TIER>` (tier lists are prefixes, so the key is stable across tiers; same-named
+  species on two worlds are distinct). The `codex` component (v1) holds per world `{system, species}` and per species
+  temperament, threat (`threatRating`; "shown after analysis" is UI only, since shared data lets any client compute
+  it), body plan, Bond requirement (heavy quadrupeds and flyers need Big Game, the rest are eligible once analysed,
+  predators and the apex included; a character's eligibility is `canBond(entry, owned)`), and first time. The first
+  analysis of a species grants 300 XP (DESIGN 14.9) into progress, reporting what was actually granted; a repeat earns
+  nothing; XP is never reclaimed, so a reordered generator can pay again for what is in content terms the same species.
+  Bounds 4,096 species, 1,024 worlds, 64 per world: past them `full` with an error logged, never pruned (the galaxy
+  has 2,959 species on 432 worlds). Reconcile drops worlds with no fauna or not in their stored system and species past
+  the list, updates the stored fields, keeps `at`, and warns once per character. Quests hear every passing analysis,
+  first or repeat. Survey bookkeeping is derived (`analyzedOn`, `analyzedEvery`); survey rewards, first finder, the
+  codex UI and a codex state message are P2.E29's. The demo's unit payout is deleted (DESIGN 20.2; no gate rule). Ship
+  analysis (Deep Sweep) is P2.E29.T02. Online, nothing is analysable until P1.E08.T09 draws server creatures (First
+  Jobs' online analyze step waits on it, as before); the offline dev sandbox analyses its own herds for its local quest
+  book with no units. The task's files widened from `src/Game.js` to the server, shared, gateway and persistence.
+  Protocol 12. → The codex and its XP are the server's. Open: two creature hit-sphere models (analysis's aim pick and
+  combat's sphere) to unify with P1.E08.T09; XP granting is in three places (quests, combat, codex); bonding a world
+  boss is P1.E07.T07's call.
