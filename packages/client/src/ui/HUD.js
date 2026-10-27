@@ -62,6 +62,27 @@ function gaugeSvg(left, right, r) {
 // a rate as the readouts show it: "+2.0/s", "−0.35/s"
 const fmtRate = (v) => `${v > 0 ? '+' : '\u2212'}${Math.abs(v).toFixed(Math.abs(v) < 1 ? 2 : 1)}/s`;
 
+// a gauge level: a finite 0–1 (anything else draws as empty, never as a full arc)
+const unit = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
+
+/** The heat arc as the HUD draws it from the multitool: filled to heat ÷ capacity, shown while the beam fires, the meter is
+ * warm or locked out; amber from 75%, danger red through the lockout, with a tick where the lockout ends. */
+export function heatGauge(mt) {
+  const fill = unit(mt.heat);
+  const over = !!mt.overheated;
+  return { fill, show: !!mt.firing || over || fill > 0.02, hot: !over && fill >= 0.75, over, mark: unit(mt.recoverAt) };
+}
+
+/** The Charge arc and its readout as the HUD draws them from the ship: filled to Charge ÷ capacity, shown while not full or
+ * on the pulse drive, regenerating (the sheen), and the rate (+ regenerating, − burning). */
+export function chargeGauge(ship) {
+  const max = Number.isFinite(ship.chargeMax) ? ship.chargeMax : 0;
+  const fill = max > 0 ? unit(ship.charge / max) : 0;
+  const shown = max > 0 && (ship.mode === 'pulse' || fill < 0.995);
+  const rate = Number.isFinite(ship.chargeRate) ? ship.chargeRate : 0;
+  return { fill, shown, empty: max > 0 && fill <= 0, regen: ship.chargeRegen > 0.005 && fill < 0.999, rate, value: Math.floor(fill * max + 1e-6) };
+}
+
 export class HUD {
   constructor(game, root) {
     this.game = game;
@@ -206,7 +227,7 @@ export class HUD {
   // on the gauge (by default `low` under a quarter: a gauge running out)
   arc(root, name, value, show, states = null) {
     const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
-    const v = Math.max(0, Math.min(1, value));
+    const v = unit(value);
     const off = (ARC_LEN * (1 - v)).toFixed(3);
     if (a._off !== off) a.style.strokeDashoffset = a._off = off;
     const g = a.parentNode;
@@ -244,7 +265,7 @@ export class HUD {
       const r = +g.dataset.r;
       const t = arcAngle(side, f);
       const p = (rr) => `${(rr * Math.cos(t) + 50).toFixed(2)} ${(rr * Math.sin(t) + 50).toFixed(2)}`;
-      m.setAttribute('d', `M ${p(r - 4)} L ${p(r + 4)}`);
+      m.setAttribute('d', `M ${p(r - 6)} L ${p(r + 6)}`);
     }
     g.classList.toggle('marked', show);
   }
@@ -277,11 +298,10 @@ export class HUD {
       this.crosshair.classList.toggle('target', !!mt.target);
       // heat fills the left arc: warm, amber once it runs hot, danger red through the lockout, with a tick where the
       // lockout ends and the word under the dot
-      const h = mt.heat;
-      const over = mt.overheated;
-      this.arc(this.crosshair, 'heat', h, mt.firing || over || h > 0.02, { hot: !over && h >= 0.75, over });
-      this.mark(this.crosshair, 'heat', mt.recoverAt, over);
-      this.crosshair.classList.toggle('over', over);
+      const heat = heatGauge(mt);
+      this.arc(this.crosshair, 'heat', heat.fill, heat.show, { hot: heat.hot, over: heat.over });
+      this.mark(this.crosshair, 'heat', heat.mark, heat.over);
+      this.crosshair.classList.toggle('over', heat.over);
       this.arc(this.crosshair, 'jet', player.jetFuel, player.jetFuel < 0.999);
     }
     if (mode === 'ship') {
@@ -304,21 +324,17 @@ export class HUD {
       this.arc(this.reticle, 'shield', ship.shield / 100, ship.shield < 99.5);
       // Charge fills the right arc; a sheen climbs it while it regenerates, and the readout under the altitude says how
       // much there is and which way it is going (shown while it is not full, or on the pulse drive)
-      const max = ship.chargeMax;
-      const c = max > 0 ? ship.charge / max : 0;
-      const regen = ship.chargeRegen > 0.005 && c < 0.999;
-      const shown = max > 0 && (ship.mode === 'pulse' || c < 0.995);
-      this.arc(this.reticle, 'charge', c, shown, { low: c < 0.25, regen, empty: max > 0 && c <= 0 });
-      this.sheen(this.reticle, 'charge', regen && shown, c);
+      const charge = chargeGauge(ship);
+      this.arc(this.reticle, 'charge', charge.fill, charge.shown, { low: charge.fill < 0.25, regen: charge.regen, empty: charge.empty });
+      this.sheen(this.reticle, 'charge', charge.regen && charge.shown, charge.fill);
       let chg = '';
-      if (shown && c <= 0) chg = `<b>CHARGE EMPTY</b>`;
-      else if (shown) {
-        const rate = ship.chargeRate;
-        const dir = rate > 0.005 ? 'up' : rate < -0.005 ? 'down' : '';
-        chg = `<span>CHARGE</span><b>${Math.floor(ship.charge)}</b>${dir ? `<i class="${dir}">${fmtRate(rate)}</i>` : ''}`;
+      if (charge.shown && charge.empty) chg = `<b>CHARGE EMPTY</b>`;
+      else if (charge.shown) {
+        const dir = charge.rate > 0.005 ? 'up' : charge.rate < -0.005 ? 'down' : '';
+        chg = `<span>CHARGE</span><b>${charge.value}</b>${dir ? `<i class="${dir}">${fmtRate(charge.rate)}</i>` : ''}`;
       }
       setText(this.rChg, chg);
-      this.rChg.classList.toggle('empty', shown && c <= 0);
+      this.rChg.classList.toggle('empty', charge.shown && charge.empty);
     }
 
     // hostile skies

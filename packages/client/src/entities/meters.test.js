@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { Galaxy, GALAXY_SEED, describeGalaxySystem, systemPoses } from '@astra/shared/world';
 import { meterEnvironment, meterProfile, stepMeters } from '@astra/shared/meters';
 import { describe, expect, it } from 'vitest';
+import { chargeGauge, heatGauge } from '../ui/HUD.js';
 import { Body } from '../universe/Body.js';
 import { Multitool } from './Multitool.js';
 import { Ship, characterMeterEnvironment } from './Ship.js';
@@ -177,6 +178,67 @@ describe('the server’s meters on the client', () => {
     expect(first.count('meters')).toBe(0);
     second.emit('meters', { t: 'meters', meters: { ...view, charge: 12 } });
     expect(g.ship.charge).toBe(12);
+  });
+});
+
+describe('the HUD’s arcs follow the meters', () => {
+  function setup() {
+    const { g } = game();
+    const d = g.system.description;
+    const home = g.system.planets[d.home];
+    const sun = home.position.clone().negate().normalize();
+    g.mode = 'foot';
+    g.player.state.frame = home;
+    g.player.state.pos.copy(home.dirToLocal(sun, new THREE.Vector3()).multiplyScalar(home.radius + 2));
+    const mt = Object.create(Multitool.prototype);
+    Object.assign(mt, { game: g, meter: { heat: 0, overheated: false, charge: 0 }, heatRate: 0, firing: false });
+    const handlers = [];
+    const net = { on: (type, fn) => (handlers.push([type, fn]), () => {}), serverTime: () => T0 };
+    g.net = net;
+    mt.watchServer();
+    g.ship.watchServer();
+    const server = (meters) => {
+      for (const [type, fn] of handlers) if (type === 'meters') fn({ t: 'meters', meters });
+    };
+    return { g, mt, server };
+  }
+
+  it('fills the heat arc to heat ÷ capacity at boot, as the beam heats, and right after a meters message', () => {
+    const { g, mt, server } = setup();
+    expect(heatGauge(mt)).toEqual({ fill: 0, show: false, hot: false, over: false, mark: 0.25 });
+    // a second of beam: 24 of 100
+    mt.firing = true;
+    mt.stepHeat(1, true);
+    expect(heatGauge(mt).fill).toBeCloseTo(0.24, 9);
+    expect(heatGauge(mt)).toMatchObject({ show: true, hot: false, over: false });
+    // the server's 40 of 100: 40% of the arc, at once
+    server({ heat: 40, heatMax: 100, overheated: false, charge: 100, chargeMax: 100, at: T0 });
+    expect(heatGauge(mt).fill).toBe(0.4);
+    server({ heat: 80, heatMax: 100, overheated: false, charge: 100, chargeMax: 100, at: T0 });
+    expect(heatGauge(mt)).toMatchObject({ fill: 0.8, hot: true });
+    server({ heat: 90, heatMax: 100, overheated: true, charge: 100, chargeMax: 100, at: T0 });
+    expect(heatGauge(mt)).toMatchObject({ fill: 0.9, show: true, hot: false, over: true, mark: 0.25 });
+    // Tempered Core: 50 of 125 is 40%, and the lockout ends a fifth of the way up
+    g.ship.skills.add('tempered_core');
+    g.ship.refreshStats();
+    server({ heat: 50, heatMax: 125, overheated: false, charge: 100, chargeMax: 100, at: T0 });
+    expect(heatGauge(mt)).toMatchObject({ fill: 0.4, mark: 0.2 });
+    // never a full arc for a value that is not a number
+    mt.meter = { heat: NaN, overheated: false, charge: 0 };
+    expect(heatGauge(mt).fill).toBe(0);
+  });
+
+  it('fills the Charge arc to Charge ÷ capacity, says how much and which way, and says empty', () => {
+    const { g, server } = setup();
+    expect(chargeGauge(g.ship)).toMatchObject({ fill: 1, shown: false, empty: false, value: 100 });
+    server({ heat: 0, heatMax: 100, overheated: false, charge: 37, chargeMax: 100, at: T0 });
+    g.ship.updateCharge(0);
+    expect(chargeGauge(g.ship)).toMatchObject({ fill: 0.37, shown: true, empty: false, value: 37 });
+    server({ heat: 0, heatMax: 100, overheated: false, charge: 0, chargeMax: 100, at: T0 });
+    expect(chargeGauge(g.ship)).toMatchObject({ fill: 0, shown: true, empty: true, value: 0 });
+    g.ship.loadout = null;
+    g.ship.meterProfile = { ...g.ship.meterProfile, chargeCapacity: 0 };
+    expect(chargeGauge(g.ship)).toMatchObject({ fill: 0, shown: false, empty: false });
   });
 });
 

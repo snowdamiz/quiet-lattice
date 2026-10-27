@@ -150,15 +150,42 @@ body {
   height: 100%;
   overflow: visible;
 }
+/* Widths are in the SVG's own units (its viewBox is 100 across), so each reticle sets its own for the pixels it is drawn
+   at: a non-scaling stroke would measure the dashes in screen pixels too, and the fills (dashes sized by pathLength in
+   user units) would overrun the arc on the small crosshair. */
 .gauge path {
   fill: none;
   stroke-linecap: round;
-  stroke-width: 1.6;
-  vector-effect: non-scaling-stroke;
+}
+/* the crosshair: 64 px for 100 units, 0.64 px a unit; a 3.2 px fill on a 4.8 px halo */
+.crosshair .gauge .halo {
+  stroke-width: 7.5;
+}
+.crosshair .gauge .track {
+  stroke-width: 2.5;
+}
+.crosshair .gauge .fill {
+  stroke-width: 5;
+}
+.crosshair .gauge.over .fill {
+  stroke-width: 5.6;
+}
+.crosshair .gauge .mark {
+  stroke-width: 2;
+}
+/* the ship's reticle: 110 px for 100 units */
+.ship-reticle .gauge .halo {
+  stroke-width: 3.8;
+}
+.ship-reticle .gauge .track,
+.ship-reticle .gauge .fill {
+  stroke-width: 1.45;
+}
+.ship-reticle .gauge .sheen {
+  stroke-width: 2.2;
 }
 .gauge .halo {
-  stroke: rgba(4, 8, 14, 0.42);
-  stroke-width: 4.2;
+  stroke: rgba(4, 8, 14, 0.5);
 }
 .gauge .track {
   stroke: rgba(255, 255, 255, 0.16);
@@ -193,7 +220,6 @@ body {
 }
 .gauge.over .g-heat {
   stroke: var(--danger);
-  stroke-width: 2.2;
   animation: overBreath 0.9s ease-in-out infinite alternate;
 }
 @keyframes overBreath {
@@ -203,7 +229,6 @@ body {
 }
 .gauge .mark {
   stroke: var(--text);
-  stroke-width: 1.2;
   stroke-linecap: butt;
   opacity: 0;
   transition: opacity 0.3s ease-out;
@@ -220,7 +245,6 @@ body {
 }
 .gauge .sheen {
   stroke: #f1eaff;
-  stroke-width: 2.4;
   stroke-dasharray: 0.07 2;
   stroke-dashoffset: 0.07;
   opacity: 0;
