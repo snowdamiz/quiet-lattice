@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), first finds and the name filter (`/discovery`, §26), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -41,6 +41,7 @@ skills/             SkillService: each character's place on the skill web, its r
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 crafting/           CraftingService and RecipeBook: fabricator requests checked, each character's recipes and its component (§23)
+discovery/          DiscoveryService: first finds seen, claimed, paid and named, and the shard's store; codex plates' component (§26)
 sim/                server-side systems added by later tasks: movement validation, combat…
 admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
 cli/                the developer CLI (`pnpm --filter @astra/server cli -- <command>`): over the admin channel, or --direct
@@ -112,8 +113,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
   first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
-  11 beacons, 12 analysis, 13 crafting); a unit test pins the number and checks the history, so two branches bumping to
-  the same number conflict at merge rather than share it.
+  11 beacons, 12 analysis, 13 crafting, 14 reputation and 15 world events reserved on their branches, 16 first finders); a
+  unit test pins the number and checks the history, so two branches bumping to the same number conflict at merge rather
+  than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -123,12 +125,12 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
   frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21), `analyze {seq,
-  time, target}` (§22), `craft {seq, op}` (§23). Each socket's message budget is 60 a second with a burst of 120: input
+  time, target}` (§22), `craft {seq, op}` (§23), `name {kind, key, name}` (§26). Each socket's message budget is 60 a second with a burst of 120: input
   and acks take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and
   beacon requests, mining hits (an honest client sends 4 a second, and 8 is the most a character may), shots (the base
-  gun's 8 a second at most, never while mining), analyses and fabricator requests, and the burst absorbs the backlog of
-  a stall. Chat, invites, raising beacons, mining hits, shots, analyses and fabricator requests have smaller limits of
-  their own (§13, §18, §20, §21, §22, §23).
+  gun's 8 a second at most, never while mining), analyses, fabricator and name requests, and the burst absorbs the
+  backlog of a stall. Chat, invites, raising beacons, mining hits, shots, analyses, fabricator and name requests have
+  smaller limits of their own (§13, §18, §20, §21, §22, §23, §26).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
@@ -139,7 +141,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
   reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
   id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), `craft
-  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), and snapshots.
+  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `discoveries {system, reset?, entries}`
+  and `named {kind, key, result, name?, reason?}` (§26), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -210,6 +213,14 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   256) is sent after `skills` on join and whenever a recipe is learned, before the answer that learned it. Recipe ids
   are table-id shaped (48 characters); one the table lacks is answered `unknown`, not dropped. `seq` counts from 1 and
   increases.
+- **First finders** (protocol 16, §26): a client sends `name {kind, key, name}` to name a find of its own, a strict
+  shape whose `name` keeps chat's text rules (not blank, no control, invisible or direction-changing characters) and at
+  most 64 units, so a name the filter refuses is answered rather than dropped; `key` must be one of `kind`'s (a species
+  key, a body's frame id, a site key `<seed>:<body>#<index>`). The server answers each with `named {kind, key, result}`:
+  `named` with the name as recorded (tidied), or `refused` with `reason` (`length`, `characters`, `blocked`, `reserved`,
+  `unknown`, `not_finder`, `named`, `lapsed`, `closed`, `rate`, `busy`). `discoveries {system, reset?, entries}` carries
+  a star system's finds (`{kind, key, finder, at, name?, until?}`, at most 512 a message): `reset` and the whole system
+  after `welcome` and whenever the player's zone becomes another system's, then new finds and names as they happen.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -439,7 +450,7 @@ before applying it.
 
 Postgres tables (Drizzle): `accounts`, `shards` (§3) and `characters` (people, name, look, level, xp, home system, and
 `state`, `revision`, `saved_at`). The shard's row also holds the Count and how far its meter has run; the meter's votes
-and daily rolls are in `count_votes` and `count_days` (§11). Migrations are generated with drizzle-kit and applied with
+and daily rolls are in `count_votes` and `count_days` (§11); a shard's first finds in `discoveries` (§26). Migrations are generated with drizzle-kit and applied with
 `pnpm db:migrate`.
 
 **Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
@@ -457,8 +468,9 @@ ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a s
 hangar's shell, docked off a pad or on foot with no ship to board is not restored), `codex` (§22: the species analyzed,
 per world, `v` 1, held by the codex service; reconciled with the species data on load; refused, never replaced, when
 unreadable), `recipes` (§23: the recipes the character knows, `v` 1, held by the recipe book; the starting recipes by
-default; reconciled with the recipe table on load; refused, never replaced, when unreadable) and, when the server has a
-quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when unreadable).
+default; reconciled with the recipe table on load; refused, never replaced, when unreadable), `plates` (§26: the codex
+plates of the character's first finds, `v` 1, held by the plate book; refused, never replaced, when unreadable) and, when
+the server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -924,7 +936,9 @@ as Bearer tokens).
   (near=<character> | body=<i> at=<x,y,z>)` (FaunaSim.spawnHerd, §6.2) and `spawn <system> entity kind=npc|prop
   frame=<f> at=<x,y,z> [name]`, `despawn <system> <entity>` (not players or creatures), both only in a loaded zone;
   `set-quest-step <character> <quest> <step>`; `set-skill-points <character> <n>` (SkillService.setPoints, §14);
-  `mute <account> [seconds]` (3,600 by default, a week at most) and `unmute <account>` (SocialService, §13). Characters
+  `mute <account> [seconds]` (3,600 by default, a week at most) and `unmute <account>` (SocialService, §13); `rename
+  <species|body|site> <key> <name|--clear>` (a first find's name, §26: the filter's rules but the reserved names hold;
+  `--clear` gives it its procedural name for good; a name of several words may come unquoted). Characters
   and accounts are named by id or by name, ignoring case. Frames are `station`, `inertial`, a body index or a frame id;
   poses are `docked` (station frame), `orbit[:alt]` (above a body's sea level along +x, by default a quarter of its
   radius and at least 2 km; or out from the Waystation along +z), `surface[:lat,lon]` (on a rocky body's drawn ground,
@@ -948,8 +962,8 @@ as Bearer tokens).
   session's messages (its inputs in the old system's frames are no strikes) and closes the socket without a refusal
   (code 4001, `MOVED_CLOSE_CODE`). The client's Net reconnects as after any dropped connection, and its welcome places
   it where the server now holds it (`Game.onWelcome`, §9).
-- **Direct mode** (`--direct`): with no server running, teleport, grant, set-quest-step and set-skill-points run in the
-  CLI itself against `DATABASE_URL`, through the same admin service and `persistence.edit`, printing their audit lines
+- **Direct mode** (`--direct`): with no server running, teleport, grant, set-quest-step, set-skill-points and rename (on
+  the default shard's `discoveries`) run in the CLI itself against `DATABASE_URL`, through the same admin service and `persistence.edit`, printing their audit lines
   on stderr. One process holds a character at a time (§8), so direct mode is refused while anything answers at the
   server's `HOST:PORT/health`; for a character saved in the last 60 s (`saved_at`: a server elsewhere on the same
   database may hold it; an edit counts as a save too) unless `--force`; and in production unless
@@ -1299,8 +1313,9 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   and Bond reach, keeping `at`; one warning per character. Only a value that cannot be read refuses the join.
 - **Survey bookkeeping** for P2.E29 and the Symbiotic fragment (DESIGN 9.1, 14.5): `analyzedOn(codex, world)` counts a
   world's species analyzed and `analyzedEvery(codex, world, count)` says whether every one of a list `count` long is (a
-  world's list at a tier is a prefix of its whole list). Survey rewards, first-finder naming and codex plates are
-  P2.E29.T01–T02's; the codex UI, and a `codex` state message to feed it, P2.E29.T03's.
+  world's list at a tier is a prefix of its whole list). Survey rewards are P2.E29.T02's; first-finder naming and codex
+  plates are P2.E29.T01's (§26: every analysis made is the discovery service's too, and a first find earns through the
+  codex's XP grant, `CodexService.grantXp`); the codex UI, and a `codex` state message to feed it, P2.E29.T03's.
 - **The client** (`Game.analyze(target)`, `Game.onAnalyze`) sends the request and shows the answer: a first analysis's
   banner (the codex line, Bond, the XP), a known one's toast, a refusal's reason. Until the client draws the server's
   creatures (P1.E08.T09) it has no server creature to aim at: online, its own demo herds show their names but cannot be
@@ -1365,3 +1380,68 @@ gate is recipes and materials, not a skill tree.
   runs across the button (0.56 s) and the result or the refusal shows in the line under the columns once both it and the
   answer are in (the quantity then held to what the materials left make); a recipe learned moves from the recipes to
   learn into the list.
+
+## 26. First finders (`packages/server/src/discovery`, `@astra/shared/discovery`)
+
+DESIGN 14.5, 14.9; P2.E29.T01. The first player on a shard to analyze a species, land on a planet or moon, or reach a site
+is its finder: the find is the shard's, shown to everyone, worth `FIRST_FINDER_XP` (2,000) and a codex plate to its
+finder, who may name it once. Naming is prestige: what a find earns does not depend on it. Everything is seen by the
+server from what it believes; no client says it found anything.
+
+- **Keys.** A find is its kind and a key unique in that kind, starting with its system's seed: a species by
+  `speciesKey` (`<world frame>/<index>`, §22), a planet or moon by its frame id (§4), a site by its world's frame id and
+  its index among the world's planned sites, `<seed>:<body>#<index>` (`planSites` order: the drawn ground every client and
+  the server share, §12; a site's type is `SITE_TYPES[index % 4]`, as `planSites` deals them).
+- **Finds** (`DiscoveryService`, `discovery/service.ts`, made by the gateway over the shard's store, the plates
+  persistence's registry loads into and the codex's XP grant). A species: every analysis the analysis service makes
+  (`subscribe`, §22), first for the character or not. A planet or moon: a player in play its zone believes `landed` on it
+  or on `foot` there (movement authority lets a player out only from a landed ship, so a player on foot has landed; the
+  `foot` case catches one who got out between two looks). A site: a player its zone believes within `SITE_REACH_M` (30 m)
+  of the site's footprint, measured from the middle of its levelled ground (the sites' clearance on the zone's planned
+  ground, `places.ts`), in any mode. Landings and sites are looked for every `SCAN_MS` (0.5 s) over the characters in
+  play, never per input; site checks run only below half the world's mountains plus the reach, a chord test first.
+- **The store** (`discovery/store.ts`, the `discoveries` table: shard, kind, key, system seed, finder id and name, world
+  time found, name, name state, window's end, who named it and when; primary key shard + kind + key; indexed by system
+  and by finder). A claim inserts the row with `ON CONFLICT DO NOTHING`: of two players racing (in one process or
+  several), one inserts it and is the finder; the other reads the finder's row back. Each star system's finds are loaded
+  when a player is first in it (retried after 5 s when the load fails) and kept (up to 128 systems), so a find already
+  made is never claimed again; a claim in flight is not repeated by the same character; an analysis made before its
+  system's finds are loaded is claimed anyway and the store decides. A finder's character going leaves its find, with
+  its name (finder id `set null`).
+- **Paid once.** A claim won pays its finder through `CodexService.grantXp` (the codex's XP path, which levels the entity
+  and refreshes the skill view) and adds a codex plate (`plates` component, `{plates: [{kind, key, at}]}`, v1, at most
+  `PLATES_MAX` 4,096: past it a find is still its finder's but earns nothing, logged as an error). The plate is the
+  record of the payment: a find is paid only while its finder holds no plate for it, and plate and XP land in one save,
+  asked for at once (`saveNow`). A finder out of play when its claim lands, or whose save a crash lost, is paid at its
+  next join: the gateway's join reads the character's finds back (`byFinder`) and pays any without a plate. The finder
+  hears `event {kind: 'notice'}` ("First to find <procedural name>: name it within 10 min") and `event {kind: 'xp'}`.
+- **Naming.** Within `NAME_WINDOW_S` (600 s of world time) of the find its finder may name it once (`name`): checked
+  cheapest first (its rate, 3 at once then one per 5 s per character; the find; its finder; named, closed or lapsed; the
+  filter), then written by the store only on the finder's own find, still `open`, never named, at a world time no later
+  than its window's end, so a second name or one past the window writes nothing (the row decides, whatever the service
+  held; a refused write is answered by what the row now says). Names are immutable after that but for a moderator's
+  `rename` (state `renamed`) or clear (state `cleared`: the procedural name for good, and the finder can no longer name
+  it, `closed`). A find never named keeps its procedural name, which every client makes itself (species, body and site
+  names from the shared generators); the server's own (`proceduralName`) is for notices and the CLI.
+- **The moderation filter** (`checkDiscoveryName`, `@astra/shared/discovery`; lists in `data/names.ts`). A name is
+  tidied (composed, trimmed, spaces collapsed), 3–24 UTF-16 units, words of Latin letters and digits (Basic Latin,
+  Latin-1, Latin Extended-A and B, so a look-alike letter of another script cannot slip a word past it) with one space,
+  apostrophe or hyphen between two, and at least two letters. It is compared as a skeleton (lower case, accents stripped,
+  0 1 3 4 5 7 8 read as o i e a s t b, nothing but letters and digits): a blocked fragment anywhere in it (also with runs
+  of a letter run together) is `blocked`; a blocked word as one of its words, or as the whole name run together, is
+  `blocked` (words like these sit innocently inside others, so they are not fragments); a reserved word (admin,
+  moderator, dev, official, system…) as one of its words, or a reserved name (the game's title, powers and people, every
+  people, capital and faction of the data tables) as the whole of it, is `reserved`. Moderators' renames skip only the
+  reserved names. On the wire the name keeps chat's text rules (§5, §13).
+- **Shown to everyone.** The gateway calls `joined(session, name)` after a join (after `quests`): the character's system's
+  finds go out as `discoveries` with `reset` once they are loaded, and again whenever its zone becomes another system's
+  (the scan notices), and every new find and every name given or changed goes to everyone sent that system's finds (and
+  to its finder, wherever it is). The client keeps them in `net.discoveries` (`net/discoveries.js`): the current
+  system's finds (another system's news is ignored; a welcome starts over), `displayName(kind, key, procedural)` (the
+  finder's name, else the procedural one), `mine()` (what its character may still name), `name(kind, key, name)` and the
+  last `named` answer. One place shows names through it so far: the analysis banner and the known species' toast
+  (`Game.onAnalyze`); the HUD's location line, the codex UI and a field to name a find in are later tasks' (P2.E29.T03),
+  until when a finder names a find from the dev console (`game.net.discoveries.name(…)`).
+- **Tests.** Integration tests run with first finds off unless they ask (`startTestServer(…, {discovery: true})`), on a
+  shard of their own: a find on the shared shard pays its finder XP on a database's first run and not on the next, which
+  no other test's XP should depend on. The production server and the online smoke run with them on.
