@@ -1,7 +1,7 @@
 // Player starship: model, arcade flight model with flight assist, auto landing /
 // takeoff, pulse drive, docking autopilot and a smoothed chase camera.
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { gltfLoader } from '../core/Engine.js';
 import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
@@ -82,7 +82,7 @@ export class Ship {
   }
 
   async load() {
-    const gltf = await new GLTFLoader().loadAsync('/models/ship.glb');
+    const gltf = await gltfLoader().loadAsync('/models/ship.glb');
     const model = gltf.scene;
     model.traverse((o) => {
       if (o.isMesh) {
