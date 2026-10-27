@@ -1,8 +1,9 @@
 """Self-test for turntable.py: builds a small .glb in the export layout (art bible 8), renders its sheets headless and
 checks that each asset and variant gets its own sheet, that only LOD0 renders (by the manifest and by colour: LOD0 is
 red, LOD1 green, LOD2 blue, colliders magenta, each placed where it would show if drawn), that --asset/--variant pick,
-that --family lays every asset and variant out in a row of its own (LOD0 only, four views, a header, a list), and that
-an image-textured material shows its texture on the shader balls, from the part of the atlas the asset's faces use.
+that --family lays every asset and variant out in a row of its own (LOD0 only, four views, a header, a list), that
+an image-textured material shows its texture on the shader balls, from the part of the atlas the asset's faces use, and
+that the same asset with KTX2 textures and meshopt geometry (as the export writes them) renders the same.
 
 Run: pnpm turntable:test
  or: Blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/turntable_selftest.py -- [--keep]
@@ -19,6 +20,11 @@ import bpy
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(HERE))
+from artlib import ktx, meshopt  # noqa: E402
+from artlib import rules as R  # noqa: E402
+
 ARGV = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
 TMP = Path(tempfile.mkdtemp(prefix="turntable-selftest-"))
 RESULTS = []
@@ -231,6 +237,28 @@ def main():
         expect(False, f"{sheet.name} written")
     txt = (out / "tex_materials.txt").read_text() if (out / "tex_materials.txt").exists() else ""
     expect("64x64 image" in txt and "UV 0.50..1.00" in txt, f"the material list names the image and the part of it shown ({txt.strip()})")
+
+    print("\nthe same asset with KTX2 textures and meshopt geometry, as the export writes them (P1.E14.T12)")
+    rules = R.load()
+    (TMP / "ktx2").mkdir()
+    (TMP / "packed").mkdir()
+    ktx.compress(tex, TMP / "ktx2" / "tex.glb", ktx.settings(rules, "props"), log=lambda *_: None)
+    packed = TMP / "packed" / "tex.glb"
+    meshopt.compress(TMP / "ktx2" / "tex.glb", packed, meshopt.settings(rules, "props"), log=lambda *_: None)
+    images, _ = ktx.inspect(packed)
+    expect(images and all(im["mime"] == ktx.KTX2 for im in images), f"the textured asset's atlas is KTX2 ({[im['mime'] for im in images]})")
+    expect(meshopt.inspect(packed)["required"], "and its geometry is meshopt-compressed (required)")
+    out = TMP / "packed_out"
+    code, man = turntable(packed, out)
+    expect(code == 0, "turntable.py exits 0 on a .glb with KTX2 textures and meshopt geometry")
+    sheet = out / "tex_materials.png"
+    if sheet.exists():
+        c = colours(sheet)
+        expect(c["red"] > 150 and c["blue"] > 150 and c["green"] < 0.1 * (c["red"] + c["blue"]), f"{sheet.name}: the transcoded atlas shows the same checker on the balls ({c['red']}, {c['blue']}, {c['green']} px)")
+    else:
+        expect(False, f"{sheet.name} written from the KTX2 asset")
+    tt = out / "tex_turntable.png"
+    expect(tt.exists() and man and [s["materials"] for s in man["sheets"]] == [["Atlas"]], f"its turntable renders the asset with its material ({man and [s['materials'] for s in man['sheets']]})")
 
     print("\n--asset Nope")
     code, _ = turntable(glb, TMP / "none", "--asset", "Nope")
