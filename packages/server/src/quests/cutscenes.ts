@@ -40,6 +40,12 @@ export function questCutscenePermit(quests: Pick<QuestRuntime, 'mayPlay'>, other
   return (viewer, id, entry) => quests.mayPlay(viewer, id) || otherwise(viewer, id, entry);
 }
 
+/** Whether a client's `done` (answered `reply` by the service) ends the quest step that played its cutscene: one played
+ * to its end or skipped does; one given back unplayed (`returned`) does not, and the runtime plays it again once it can. */
+export function doneEndsQuestStep(msg: { op: string; reason?: string }, reply: CutsceneState): boolean {
+  return msg.op === 'done' && msg.reason !== 'returned' && reply.op === 'ended' && reply.phase !== null;
+}
+
 /** The service's `notify` for what it starts itself: sent to the client, and an `ended` ends the quest step too. */
 export function questCutsceneNotify(quests: () => Pick<QuestRuntime, 'cutsceneEnded'>, send: (viewer: ZoneViewer, msg: CutsceneState) => void = sendToSession) {
   return (viewer: ZoneViewer, msg: CutsceneState): void => {

@@ -12,7 +12,7 @@ import { homeSystemOf } from '../world/home.ts';
 import { ZoneManager } from '../zones/manager.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
 import { emptyQuestLog, getQuest, questDefSchema, type QuestDef, type QuestLog } from '@astra/shared/quests';
-import { questCutsceneNotify, questCutscenePermit, questCutscenes } from './cutscenes.ts';
+import { doneEndsQuestStep, questCutsceneNotify, questCutscenePermit, questCutscenes } from './cutscenes.ts';
 import { CUTSCENE_RETRY_S, QuestRuntime } from './runtime.ts';
 
 type CutsceneState = Extract<ServerMessage, { t: 'cutscene' }>;
@@ -164,5 +164,44 @@ describe('quest cutscenes through the cutscene service', () => {
     expect(b.viewer.sent.filter((m) => m.op === 'play')).toHaveLength(1);
     expect(w.service.playingOf(b.viewer)?.id).toBe('test');
     expect(w.runtime.stateOf(a.id)!.active.cutscene_test?.step).toBe('watch');
+  });
+
+  /** The gateway's path for a client's done: the service ends it, and a played or skipped one ends the quest step. */
+  const done = (w: ReturnType<typeof world>, viewer: Viewer, reason: 'finished' | 'skipped' | 'returned') => {
+    const msg = { t: 'cutscene' as const, op: 'done' as const, id: 'test', skipped: reason !== 'finished', reason };
+    const r = w.service.handle(viewer, msg);
+    if (doneEndsQuestStep(msg, r)) w.runtime.cutsceneEnded(viewer, 'test');
+    return r;
+  };
+
+  it('does not end a step whose cutscene the client gave back unplayed, and plays it again later', () => {
+    const w = world();
+    const a = w.join();
+    w.runtime.request(a.id, 1, { op: 'accept', quest: 'cutscene_test' });
+    expect(a.viewer.sent.filter((m) => m.op === 'play')).toHaveLength(1);
+    // another cutscene was on screen: the client gives it back; the service ends its phase, the step stays
+    expect(done(w, a.viewer, 'returned')).toMatchObject({ op: 'ended' });
+    expect(w.service.playingOf(a.viewer)).toBeNull();
+    expect(w.runtime.stateOf(a.id)!.active.cutscene_test?.step).toBe('watch');
+    expect(w.runtime.stateOf(a.id)!.done.cutscene_test).toBeUndefined();
+    // the retry plays it again
+    for (let t = 0; t <= CUTSCENE_RETRY_S; t++) {
+      w.advance(1);
+      w.runtime.tickAll();
+    }
+    expect(a.viewer.sent.filter((m) => m.op === 'play')).toHaveLength(2);
+    expect(w.service.playingOf(a.viewer)?.id).toBe('test');
+    // played through this time: the step ends
+    done(w, a.viewer, 'finished');
+    expect(w.runtime.stateOf(a.id)!.done.cutscene_test).toMatchObject({ n: 1 });
+  });
+
+  it('ends the step when the player skips its cutscene', () => {
+    const w = world();
+    const a = w.join();
+    w.runtime.request(a.id, 1, { op: 'accept', quest: 'cutscene_test' });
+    done(w, a.viewer, 'skipped');
+    expect(w.runtime.stateOf(a.id)!.done.cutscene_test).toMatchObject({ n: 1 });
+    expect(w.runtime.stateOf(a.id)!.active.cutscene_test).toBeUndefined();
   });
 });

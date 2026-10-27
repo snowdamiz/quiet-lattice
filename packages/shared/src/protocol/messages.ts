@@ -15,7 +15,7 @@ export const PROTOCOL_VERSION = 7;
 // 4: creatures' attack field (P1.E08.T01)
 // 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
-// 7: quests: quest requests (accept, abandon, choose) and quest state (P1.E09.T01)
+// 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -191,16 +191,24 @@ export const SkillsRequest = z.object({ t: z.literal('skills'), seq: z.number().
 
 /** A cutscene's id: the file it was exported to (public/cutscenes/<id>.json) and the server's catalog key. */
 export const CutsceneId = z.string().regex(/^[a-z0-9][a-z0-9_]{0,47}$/);
+/** How a cutscene the server placed the player for ended (protocol 7): played to its end, skipped by the player, or given
+ * back unplayed (`returned`: another cutscene was on screen, or the play came too late for a request the client gave up
+ * on). A quest step ends on the first two, never on a give-back (ARCHITECTURE §16). */
+export const CutsceneEnd = z.enum(['finished', 'skipped', 'returned']);
+export type CutsceneEnd = z.infer<typeof CutsceneEnd>;
 /** Cutscenes (protocol 6, ARCHITECTURE §15): `request` asks to play one where the player is, which the server
- * answers by placing the player in a story phase there; `done` says it ended, or was skipped. */
+ * answers by placing the player in a story phase there; `done` says it ended, or was skipped, and (protocol 7) how:
+ * `reason` (absent: `skipped` says finished or skipped). */
 export const CutsceneRequest = z
   .object({
     t: z.literal('cutscene'),
     op: z.enum(['request', 'done']),
     id: CutsceneId,
     skipped: z.boolean().optional(),
+    reason: CutsceneEnd.optional(),
   })
-  .refine((m) => m.op === 'done' || m.skipped === undefined, 'only a done says whether it was skipped');
+  .refine((m) => m.op === 'done' || (m.skipped === undefined && m.reason === undefined), 'only a done says how it ended')
+  .refine((m) => m.reason === undefined || m.skipped === undefined || m.skipped === (m.reason !== 'finished'), 'skipped and reason agree');
 /** Quest request (ARCHITECTURE §16): accept a quest on offer, abandon one, or answer the current dialogue or choice step.
  * `seq` numbers the session's requests from 1, increasing; the server answers each with `quests` state. */
 export const QuestRequest = z.object({ t: z.literal('quest'), seq: z.number().int().min(1).max(0xffffffff), op: questOpSchema });

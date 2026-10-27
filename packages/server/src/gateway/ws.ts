@@ -31,6 +31,7 @@ import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
 import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
+import { doneEndsQuestStep } from '../quests/cutscenes.ts';
 import type { QuestRuntime } from '../quests/runtime.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
@@ -376,8 +377,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         {
           const r = cutscenes.handle(s, msg);
           s.send(r);
-          // (a cutscene it was watching ended: the quest step that played it ends)
-          if (msg.op === 'done' && r.op === 'ended' && r.phase !== null) deps.quests?.cutsceneEnded(s, msg.id);
+          // (a cutscene it was watching ended, played or skipped: the quest step that played it ends; given back, it does not)
+          if (doneEndsQuestStep(msg, r)) deps.quests?.cutsceneEnded(s, msg.id);
         }
         return;
       default:

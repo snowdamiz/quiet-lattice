@@ -64,7 +64,7 @@ describe('NetCutsceneLink', () => {
     expect(await p).toEqual({ phase: 7 });
     expect(timers.pending).toBe(0);
     link.done('test', true);
-    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'skipped' });
   });
 
   it('plays nothing on a refusal, a silence, a dropped connection, or when not joined', async () => {
@@ -95,12 +95,12 @@ describe('NetCutsceneLink', () => {
     const { net, link, timers } = setup();
     const p = link.request('test');
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'other', phase: 2 });
-    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'other', skipped: true });
+    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'other', skipped: true, reason: 'returned' });
     timers.advance(ANSWER_TIMEOUT_MS);
     expect(await p).toEqual({ refused: 'timeout' });
     // the answer comes after the client gave up: nothing plays, and the server's placing is given back
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'test', phase: 3 });
-    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'returned' });
 
     const ended = [];
     link.onEnded = (id) => ended.push(id);
@@ -134,7 +134,7 @@ describe('NetCutsceneLink, a cutscene the server starts', () => {
     // a second one, played to its end by the client
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'touch', phase: 13 });
     link.done('touch', false);
-    expect(net.sent).toEqual([{ t: 'cutscene', op: 'done', id: 'touch', skipped: false }]);
+    expect(net.sent).toEqual([{ t: 'cutscene', op: 'done', id: 'touch', skipped: false, reason: 'finished' }]);
   });
 
   it('gives back a server play that comes while another plays, keeping the one playing (and its end)', () => {
@@ -146,7 +146,7 @@ describe('NetCutsceneLink, a cutscene the server starts', () => {
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'cold_open', phase: 12 });
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'touch', phase: 13 });
     expect(played).toEqual(['cold_open']);
-    expect(net.sent).toEqual([{ t: 'cutscene', op: 'done', id: 'touch', skipped: true }]);
+    expect(net.sent).toEqual([{ t: 'cutscene', op: 'done', id: 'touch', skipped: true, reason: 'returned' }]);
     expect(link.playing).toBe('cold_open');
     net.emit('cutscene', { t: 'cutscene', op: 'ended', id: 'cold_open', phase: 12 });
     expect(ended).toEqual(['cold_open']);
@@ -161,7 +161,7 @@ describe('NetCutsceneLink, a cutscene the server starts', () => {
     expect(await p).toEqual({ refused: 'timeout' });
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'test', phase: 3 });
     expect(played).toEqual([]);
-    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'returned' });
     // (only once: the next play of it is the server's own)
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'test', phase: 4 });
     expect(played).toEqual(['test']);
@@ -211,10 +211,40 @@ describe('NetCutsceneLink on the client’s real Net', () => {
     ws.push({ t: 'cutscene', op: 'play', id: 'test', phase: 5 });
     expect(await p).toEqual({ phase: 5 });
     link.done('test', true);
-    expect(ws.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+    expect(ws.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'skipped' });
     ws.push({ t: 'cutscene', op: 'play', id: 'test', phase: 6 });
     expect(played).toEqual([['test', 6]]);
     link.dispose();
+  });
+});
+
+describe('NetCutsceneLink, saying how a cutscene ended', () => {
+  it('says returned for every give-back (a late play, one nobody plays, one while another plays), skipped and finished for the rest', async () => {
+    const { net, link, timers } = setup();
+    const reasons = () => net.sent.filter((m) => m.op === 'done').map((m) => [m.id, m.reason, m.skipped]);
+    // nobody to play a server play: given back
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'a', phase: 1 });
+    // a play that comes after the client gave up on its request: given back
+    const p = link.request('b');
+    timers.advance(ANSWER_TIMEOUT_MS);
+    await p;
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'b', phase: 2 });
+    // one playing; another comes meanwhile: given back
+    link.onPlay = () => {};
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'c', phase: 3 });
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'd', phase: 4 });
+    // the player gives one back itself (another was on screen), skips one, plays one through
+    link.done('f', 'returned');
+    link.done('c', 'skipped');
+    link.done('e', 'finished');
+    expect(reasons()).toEqual([
+      ['a', 'returned', true],
+      ['b', 'returned', true],
+      ['d', 'returned', true],
+      ['f', 'returned', true],
+      ['c', 'skipped', true],
+      ['e', 'finished', false],
+    ]);
   });
 });
 
@@ -225,7 +255,7 @@ describe('OfflineCutsceneLink', () => {
     link.done('test', false);
     expect(link.sent.map((m) => JSON.parse(m))).toEqual([
       { t: 'cutscene', op: 'request', id: 'test' },
-      { t: 'cutscene', op: 'done', id: 'test', skipped: false },
+      { t: 'cutscene', op: 'done', id: 'test', skipped: false, reason: 'finished' },
     ]);
     expect(() => link.send({ t: 'cutscene', op: 'request', id: 'Bad Id' })).toThrow();
   });

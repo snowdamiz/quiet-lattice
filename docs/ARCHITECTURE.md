@@ -151,7 +151,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
 - **Cutscenes** (protocol 6, §15): the client sends `cutscene {op: 'request', id}` to play one where its player is and
-  `cutscene {op: 'done', id, skipped?}` when it ends (`skipped` only on done); the server answers `cutscene {op: 'play'
+  `cutscene {op: 'done', id, skipped?, reason?}` when it ends (`skipped` and `reason` only on done; protocol 7's
+  `reason` says how: `finished`, `skipped`, or `returned`, given back unplayed because another cutscene was on screen or
+  the play came too late; absent, `skipped` says finished or skipped); the server answers `cutscene {op: 'play'
   | 'ended' | 'refused', id, phase, reason?}`, `phase` being the story phase the player is in while it plays (snapshots
   do not say), `reason` one of `unknown`, `denied`, `cooldown`, `busy`, `place`, `phase`, `zone`. Ids are a-z, 0-9 and
   `_`.
@@ -588,7 +590,7 @@ decides when one plays; the client presents it.
 - **The client's link** (`packages/client/src/cutscene/link.js`): online (`game.net`, P1.E04.T01's Net) a cutscene asks
   through `NetCutsceneLink` (`net.send` and `net.on('cutscene')`) and plays only on `play`, in the phase it names; a
   refusal, no answer within 5 s or a dropped connection plays nothing, and a `play` that comes too late for a request it gave up on is given back
-  with `done`. The link is made as the game goes online (`enterWorld` calls `cutscenes.linkFor()`), so it hears a
+  with `done`. Every `done` says how it ended: `finished`, `skipped`, or `returned` for every give-back. The link is made as the game goes online (`enterWorld` calls `cutscenes.linkFor()`), so it hears a
   `play` before the client has asked for anything. An unrequested `play` is a cutscene the server started itself (a quest
   step's): it plays, and its `done` goes back as usual (one that cannot play now, another playing among them, is given
   back at once, and the one playing stays the one playing). The server ending the one playing (`ended`)
@@ -684,8 +686,9 @@ counter (`counter`, default the step's id), so two steps can share one (Forty Na
   calls its `start(session, id, at?)`, with the step's place when it has one, the service phases the player itself, and
   its `play` is pushed to the client unrequested. The service's `may` is the runtime's `mayPlay(session, id)` (a client
   asks for a quest's cutscene only while a live step plays it), or its own development rule. A cutscene that ends, by
-  the client's `done` (the gateway) or by the service's sweep (its `notify` of `ended`), calls
-  `quests.cutsceneEnded(session, id)`, which ends the step. A live cutscene step the player is not watching is started
+  the client's `done` played or skipped (the gateway, `doneEndsQuestStep`) or by the service's sweep (its `notify` of
+  `ended`), calls `quests.cutsceneEnded(session, id)`, which ends the step; one the client gave back unplayed (`done`
+  with `reason: 'returned'`) ends its phase and the watching but not the step, and the retry below plays it again. A live cutscene step the player is not watching is started
   again on join (and on its first tick, when its entity's world position is known) and on the tick at most every 5 s
   (`CUTSCENE_RETRY_S`): one the service refused (the player in another phase, another cutscene playing) or lost with a
   dropped connection plays once it can; the one it is watching is never started again; refusals are logged at debug
