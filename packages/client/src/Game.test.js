@@ -454,6 +454,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
       menus: { setConnection: vi.fn(), showMessage: vi.fn() },
       overlay: null,
       onWelcome: vi.fn(),
+      remotes: { attach: vi.fn() },
     });
     g.enterWorld({ token: 'tok' }, { id: 'c1' }, vi.fn());
     const socket = FakeSocket.all.at(-1);
