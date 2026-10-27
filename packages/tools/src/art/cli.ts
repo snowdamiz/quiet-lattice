@@ -108,7 +108,7 @@ async function validate(argv: string[]): Promise<number> {
 async function exportFamilies(argv: string[]): Promise<number> {
   const { families, passthrough } = parseExportArgs(argv, loadRules(ROOT));
   let worst = 0;
-  const env = await ktxEnv();
+  const env = passthrough.includes('--no-compress') ? {} : await ktxEnv();
   for (const family of families) {
     const script = `export_${family}.py`;
     if (!existsSync(join(ROOT, BLENDER_DIR, script))) {
