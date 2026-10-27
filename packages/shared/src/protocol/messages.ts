@@ -2,12 +2,13 @@
 // zone snapshots are binary (see snapshot.ts). Every message is a zod schema so both ends validate what they receive.
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
+import { codexSpeciesSchema } from '../codex/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { questErrorCodeSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 8;
+export const PROTOCOL_VERSION = 12;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -17,6 +18,7 @@ export const PROTOCOL_VERSION = 8;
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 // 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
 // 8: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
+// 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -270,6 +272,22 @@ export const MineRequest = z
   })
   .refine((m) => (m.node === undefined) !== (m.flora === undefined), 'a hit is on a node or on flora');
 
+// ---------- analysis and the codex (P1.E08.T04, ARCHITECTURE §22) ----------
+
+/**
+ * Analyze a creature (DESIGN 14.5): `target` is its zone entity (a `mob`) on the world the player stands on. The server
+ * checks the player and the creature (on foot, in range and in sight over the ground, alive) and answers with `analyze`:
+ * the species' codex entry, new with its XP the first time, known after. `time` is the world time it was asked at,
+ * which the server never trusts beyond refusing one stamped seconds away from its clock. `seq` numbers the session's
+ * requests from 1, increasing.
+ */
+export const AnalyzeRequest = z.object({
+  t: z.literal('analyze'),
+  seq: z.number().int().min(1).max(0xffffffff),
+  time: z.number().min(0).max(1e12),
+  target: EntityId,
+});
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -285,6 +303,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   CutsceneRequest,
   QuestRequest,
   MineRequest,
+  AnalyzeRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -530,6 +549,32 @@ export const NodesState = z.object({
   cells: z.array(NodeCellState).max(128),
 });
 
+/** Why an analysis did nothing: `stale_seq` (its number is not above the last), `rate` (asked too fast), `stale` (stamped
+ * too far from the server's clock), `zone` (the player is in no zone), `mode` (not on foot), `unknown` (no such creature
+ * in the player's zone), `dead` (it is dead), `world` (it is not on the world the player is on), `range` (too far), `busy`
+ * (the world's ground is still being planned: try again), `los` (the ground is in the way), `full` (the codex is at its
+ * bounds, CODEX_LIMITS). */
+export const AnalyzeRefusal = z.enum(['stale_seq', 'rate', 'stale', 'zone', 'mode', 'unknown', 'dead', 'world', 'range', 'busy', 'los', 'full']);
+/**
+ * An analysis' answer: `new` the first time the character analyzed the creature's species, with the codex entry made and
+ * `xp`, what it earned; `known` when its codex held the species already (nothing earned); `refused` with `reason`, and
+ * nothing changed. It names the creature asked about. The fields differ from the request's, so one `analyze` type serves
+ * both directions (encodeMessage).
+ */
+export const AnalyzeState = z
+  .object({
+    t: z.literal('analyze'),
+    seq: z.number().int().min(0).max(0xffffffff),
+    target: EntityId,
+    result: z.enum(['new', 'known', 'refused']),
+    reason: AnalyzeRefusal.optional(),
+    species: codexSpeciesSchema.optional(),
+    xp: z.number().int().min(0).max(1_000_000).optional(),
+  })
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
+  .refine((m) => (m.result === 'refused') === (m.species === undefined), 'an analysis made names the species')
+  .refine((m) => (m.result === 'new') === (m.xp !== undefined), 'a first analysis, and only one, says what it earned');
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -546,6 +591,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   QuestsState,
   MineState,
   NodesState,
+  AnalyzeState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
