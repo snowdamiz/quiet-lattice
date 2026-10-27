@@ -9,7 +9,10 @@
 // service and skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
 // connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
-// leaves. Malformed or out-of-place messages are dropped and counted, never thrown.
+// leaves; a cutscene done ends the quest step that played it. Quest requests go to the quest runtime (quests/), which
+// hears of every character once it has joined (after its party is known, so it can put it back in a quest step's
+// phase) and answers each request, and whose own changes reach the session as `quests` state and quest events (§17).
+// Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -28,6 +31,8 @@ import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
 import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
+import { doneEndsQuestStep } from '../quests/cutscenes.ts';
+import type { QuestRuntime } from '../quests/runtime.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
@@ -106,6 +111,9 @@ export interface WsGatewayDeps {
   social?: SocialService;
   /** Every character's skill web in play; when none is given, the one persistence's registry loads into. */
   skills?: SkillService;
+  /** Every character in play's quests (its component registered with persistence); without one, quest requests are
+   * dropped. */
+  quests?: QuestRuntime;
   /** Cutscenes in story phases; the gateway makes its own (a production one: no client starts any) when none is given. */
   cutscenes?: CutsceneService;
 }
@@ -167,6 +175,14 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   // server-side changes (loot, mining, trade, the Recall) reach the session holding the character
   const unsubscribeInventory = inventory.subscribe((characterId, reply) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'inventory', ...reply });
+  });
+  // quest changes the server made (a step reached, a reward) and quest notices reach the session holding the character
+  const unsubscribeQuests = deps.quests?.subscribe((characterId, push) => {
+    for (const c of conns) {
+      if (c.s.state !== 'joined' || c.s.characterId !== characterId) continue;
+      for (const event of push.events) c.s.send({ t: 'event', event });
+      if (push.state) c.s.send({ t: 'quests', ...push.state });
+    }
   });
   const skills = deps.skills ?? needSkills(persistence);
   // fragments, points, unlocks from the world, a level or a hull reach the session holding the character (requests are answered)
@@ -351,9 +367,19 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') return invalid(s, 'party before join');
         social.party(s, msg.op);
         return;
+      case 'quest':
+        if (s.state !== 'joined') return invalid(s, 'quest before join');
+        if (!deps.quests) return invalid(s, 'no quest runtime');
+        s.send({ t: 'quests', ...deps.quests.request(s.characterId!, msg.seq, msg.op) });
+        return;
       case 'cutscene':
         if (s.state !== 'joined') return invalid(s, 'cutscene before join');
-        s.send(cutscenes.handle(s, msg));
+        {
+          const r = cutscenes.handle(s, msg);
+          s.send(r);
+          // (a cutscene it was watching ended, played or skipped: the quest step that played it ends; given back, it does not)
+          if (doneEndsQuestStep(msg, r)) deps.quests?.cutsceneEnded(s, msg.id);
+        }
         return;
       default:
         // cast and interact belong to later tasks; before join they are out of place.
@@ -441,6 +467,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.send({ t: 'inventory', ...inventory.state(row.id) });
       s.send({ t: 'skills', ...skills.state(row.id) });
       social.joined(s, row.name);
+      // (after the party is known: a player back in a quest step's place goes back to its party's phase)
+      if (deps.quests) s.send({ t: 'quests', ...deps.quests.joined(s) });
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
       unpin();
@@ -461,6 +489,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (!deps.cutscenes) cutscenes.stopSweeping();
       unsubscribeInventory();
       unsubscribeSkills();
+      unsubscribeQuests?.();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);

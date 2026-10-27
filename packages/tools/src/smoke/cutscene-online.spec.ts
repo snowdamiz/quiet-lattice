@@ -6,7 +6,9 @@ import { startOnline, type Online } from './online.ts';
 // signs up and enters, docked at its home Waystation, and plays the test cutscene. The client's real Net asks the server
 // (`cutscene request`); the server, in development, places the player in a story phase and answers `play` with it; the
 // phase's tug reaches this client in its snapshots while it watches; Esc skips, the client says `done`, the server takes
-// it out of the phase and the tug goes. Credentials are made up per run and exist only in the scratch database.
+// it out of the phase and the tug goes. And a session's first cutscene started by the server itself, from a quest step
+// (P1.E09.T01): the client's link listens from the moment it is online, so the unrequested `play` plays, and its `done`
+// ends the step. Credentials are made up per run and exist only in the scratch database.
 
 let online: Online;
 
@@ -38,7 +40,8 @@ async function until(page: Page, pred: string, timeout = 60_000): Promise<void> 
   );
 }
 
-test('plays the test cutscene in the story phase the server places the player in', async ({ page }) => {
+/** A new pilot signs up and enters the world, docked at its home Waystation; returns the console errors it collects. */
+async function enterAsNewPilot(page: Page): Promise<string[]> {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   page.on('pageerror', (e) => errors.push(e.message));
@@ -57,6 +60,11 @@ test('plays the test cutscene in the story phase the server places the player in
   await page.click('.account [data-enter]');
   await until(page, "window.game.net?.joined && window.game.mode !== 'title'", 120_000);
   await until(page, 'window.game.net.store.ack > 0 && window.game.net.store.entities.has(window.game.net.entityId)', 30_000);
+  return errors;
+}
+
+test('plays the test cutscene in the story phase the server places the player in', async ({ page }) => {
+  const errors = await enterAsNewPilot(page);
 
   // asked through the real Net; the server's answer starts it
   await page.evaluate(() => {
@@ -85,6 +93,31 @@ test('plays the test cutscene in the story phase the server places the player in
   const again = await page.evaluate(() => window.game.cutscenes.play('test'));
   expect(again).toEqual({ id: 'test', refused: 'cooldown' });
   expect(await page.evaluate(() => window.game.cutscenes.active)).toBe(false);
+
+  expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
+});
+
+test('plays the first cutscene of a session when the server starts it from a quest step, and its done ends the step', async ({ page }) => {
+  const errors = await enterAsNewPilot(page);
+  expect(await page.evaluate(() => window.game.cutscenes.active)).toBe(false);
+
+  // the development server's test-cutscene quest: taking it enters its cutscene step, which the server plays itself
+  expect(await page.evaluate(() => window.game.questRequest({ op: 'accept', quest: 'cutscene_test' }))).toBe(true);
+  await until(page, 'window.game.cutscenes.active', 20_000);
+  const playing = await page.evaluate(() => ({
+    phase: window.game.cutscenes.state().storyPhase,
+    link: window.game.cutscenes.link === window.game.cutscenes.netLink,
+    step: window.game.objectives.book.log.active.cutscene_test?.step,
+  }));
+  expect(playing).toMatchObject({ link: true, step: 'watch' });
+  expect(playing.phase).toBeGreaterThan(0);
+  await until(page, "[...window.game.net.store.entities.values()].some((e) => e.name === 'Waystation tug')", 20_000);
+
+  // Esc skips: its done goes back, the server ends the step, and the quest is done
+  await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
+  await until(page, '!window.game.cutscenes.active', 20_000);
+  await until(page, 'window.game.objectives.book.log.done.cutscene_test?.n === 1', 20_000);
+  expect(await page.evaluate(() => window.game.objectives.book.log.active.cutscene_test)).toBeUndefined();
 
   expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
 });

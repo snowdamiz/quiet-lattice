@@ -493,3 +493,52 @@ Format: task id, question → choice → why.
   or no answer in 5 s plays nothing); the offline link is the dev sandbox's. Protocol 6. Open: the client creates its
   networked link lazily, so a server-started cutscene before any client request is dropped (fix with the quest engine,
   P1.E09.T01); fauna's exemption for watchers is in P1.E08.T02; P1.E09.T03 extends `ui/Cinematic.js`.
+- **P1.E03.T07** Developer tooling → dev login: `POST /auth/dev {name, people?}` signs into `dev-<name>` accounts only
+  (a random password; auto-creates a "Dev <Name>" character; shares the /auth rate limit; logged at warn); usernames
+  starting `dev-` in any case are reserved at registration (400 `reserved_username`). Gating: the server refuses to
+  start with `ASTRA_DEV_LOGIN` in production; with NODE_ENV unset, dev login needs a loopback HOST. Admin channel: a
+  separate HTTP listener on 127.0.0.1:8788 with a bearer secret (sha256 + timingSafeEqual, no whitespace, 16+
+  characters in dev, 32+ and `ASTRA_ADMIN_IN_PRODUCTION=1` in production), refusing Origin headers; if the port is
+  taken the server runs without it; `x-astra-operator` is an unauthenticated audit label. The CLI
+  (`pnpm --filter @astra/server cli`) sends its secret only to loopback http after `/admin/health` answers
+  `{service:'astra-admin', version:1}` (a guard against accidents, not hostile local code); `--direct` edits the
+  database when no server answers, refusing a character saved in the last 60 s unless `--force`. Commands: who,
+  zones, metrics, teleport (docked; orbit ≥2 km or radius/4; surface 2 m up; x,y,z; a mode override), grant (negative
+  takes away, all or nothing), spawn/despawn in loaded zones (never players or creatures), set-quest-step,
+  set-skill-points (never below what levels give), mute (3600 s default, a week at most, in memory)/unmute. Online
+  characters change through the live services with `saveNow('admin')`; offline through `persistence.edit`: decode like
+  a join, validate changed components, write once at revision + 1 as a compare-and-set (`held`, `busy`, `conflict`),
+  joins wait (`afterEdit`), `close()` waits; a just-left character is waited for up to 3 s. Until P1.E04.T04, an online
+  teleport to another system is `edit(…, {leaving})` (captures the leave, writes it, drops the held copy, writes the
+  new pose) and a socket close with code 4001 and no refusal; the client reconnects into the new system. Metrics:
+  `ASTRA_METRICS_S` (10 s) logs a `tick loop` line and one `zone metrics` line per awake zone (p50/p95/max over 400
+  ticks). → Operators and tests can drive the live world without a backdoor in production. Open: P1.E03.T04 re-seats
+  its mover at the seam in `AdminService.moveInZone` (and `freePad()` for docked); P1.E09.T01 provides `QuestAdmin`;
+  P1.E04.T03's `onCorrection` ignores `mode`.
+- **P1.E09.T01** Quests (`@astra/shared/quests`, `server/src/quests`) → definitions are data (DESIGN 14.1's fields; each
+  step open-world or instanced; steps only lead forward); a pure engine runs on both ends (the client predicts the
+  objective line). The server keeps one quest log per character in play, fed by the zone entity (travel, defend,
+  survive: re-checked twice a second in round-robin slices), inventory changes (collect counts what is held, any
+  resource when none is named) and reported events; deliveries take the goods through InventoryService, all or
+  nothing, on an interaction with the step's NPC (the reporting system checks range). Rewards: XP at the middle level
+  of the quest tier's band (3, 8, 15, 25, 35, 45; the system's tier when none), units, items and flags directly; skill
+  points and node unlocks through the skill service (calling `skills.refresh` after a level-up; the quest id passed for
+  the `quest` unlock route); reputation and titles held as "owed" (capped 256) until P2.E18.T01. A per-quest record of
+  paid step rewards and answer reputation survives abandons and clears on completion, so nothing is paid twice.
+  Accepting needs an offer the server made (offers in memory per session, at most 16) or an auto quest; prerequisites
+  and repeat rules are checked; main-story quests cannot be abandoned; daily repeats reset on world-time days and
+  cooldowns run from the last completion. Limits: 25 active, 4,096 done (repeatables pruned first; a forgotten
+  once-only completion logs an error and becomes takeable again), 512 flags, 32 steps, 16 actors. Instanced steps place
+  a player for one step at a time in a story phase keyed by quest and scene (or step), under its party, never pulling
+  it out of a phase the runtime didn't place; a party that breaks up is split again. The `quests` component (v2) keys
+  steps by id; on load an unknown quest is dropped and a removed step restarts its quest (logged, never refusing a
+  join); only states no engine path can write are refused. Cutscene steps start through the cutscene service (`start`
+  at the step's place); a `done` reason `finished` or `skipped` completes the step, `returned` (given back unplayed)
+  does not, and the runtime retries any live cutscene step the player isn't watching on join, its first tick and every
+  5 s. Unauthored cutscenes are marked `planned`. First Jobs is the demo's chain as data (auto-started, chapter 2, a
+  level's worth and 500 units, no skill point; DESIGN 8 gives the first point at chapter 4); The Apothecary's Sodium
+  sits in Belost's market (DESIGN 14.8 amended); "Vexmir III" is Rolis III; the pirate wing is four Kestrels (plan
+  0.8). `{placeholders}` are filled client-side; the "THE STARS ARE YOURS" banner became a "<title> complete" toast.
+  The admin CLI's set-quest-step works online and offline (`QuestAdmin`). Protocol 7. → DESIGN 14's engine, server-run.
+  Open: events not yet emitted — interact and offers (P1.E09.T05/T06), mine (P1.E13.T01 wires `resources.subscribe`),
+  kill (combat), analyze, site entry and scan, escort and waves; board jobs must send their definitions to the client.
