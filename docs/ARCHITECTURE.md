@@ -661,7 +661,8 @@ as Bearer tokens).
 - **The CLI** (`pnpm --filter @astra/server cli -- [--json] [--direct [--force]] [--url u] [--operator who] <command>`;
   `--help` lists them). It sends the secret only to a loopback `http:` URL (`--url`, `ASTRA_ADMIN_URL`, else
   127.0.0.1:`ASTRA_ADMIN_PORT`; anything else is refused as usage) that first answers `GET /admin/health` as above, so
-  no other program on the port ever sees it. Commands: `who`, `zones`, `metrics`; `teleport <character> <system> <frame> <pose> [mode=…]`; `grant <character>
+  an unrelated program that happens to hold the port never sees it (a hostile local process could copy the public
+  health answer; the secret is a guard against accidents and remote callers, not against code already on the machine). Commands: `who`, `zones`, `metrics`; `teleport <character> <system> <frame> <pose> [mode=…]`; `grant <character>
   <item|resource|units> <n>` (negative takes away, all or nothing); `spawn <system> herd species=<i> [count] [level]
   (near=<character> | body=<i> at=<x,y,z>)` (FaunaSim.spawnHerd, §6.2) and `spawn <system> entity kind=npc|prop
   frame=<f> at=<x,y,z> [name]`, `despawn <system> <entity>` (not players or creatures), both only in a loaded zone;
