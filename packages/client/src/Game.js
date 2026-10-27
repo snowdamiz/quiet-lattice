@@ -117,27 +117,6 @@ export class Game {
     document.addEventListener('pointerlockchange', () => this.menus.updatePauseHint());
   }
 
-  // the director's transitions under the names the views read them by (the HUD's reticle and the multitool hide during
-  // a glide; the review scene cancels them)
-  get poseBlend() {
-    return this.director.pose;
-  }
-  set poseBlend(v) {
-    this.director.pose = v;
-  }
-  get camBlend() {
-    return this.director.blend;
-  }
-  set camBlend(v) {
-    this.director.blend = v;
-  }
-  get dip() {
-    return this.director.dip;
-  }
-  set dip(v) {
-    this.director.dip = v;
-  }
-
   setupLights() {
     this.sunLight = new THREE.DirectionalLight(0xffffff, 3.2);
     this.sunLight.castShadow = true;
@@ -352,11 +331,13 @@ export class Game {
     } else {
       this.ship.update(dt, inp, this.mode === 'ship' && inp.enabled);
       this.ship.state.setFrame(this.chooseFrame(this.ship.state));
-      this.pirates.update(dt);
+      // watching a cutscene the player is out of play: no raid closes in, and the suit's hazards wait
+      const watching = this.cutscenes.active;
+      if (!watching) this.pirates.update(dt);
       if (this.mode === 'foot') {
         this.player.update(dt, inp);
         this.player.state.setFrame(this.chooseFrame(this.player.state));
-        this.updateSurvival(dt);
+        if (!watching) this.updateSurvival(dt);
       }
       // during a glide or a cutscene the views compute their own pose, and the director places the real camera
       const camOut = this.director.viewTarget();

@@ -152,7 +152,12 @@ export class HUD {
     if (!b) return;
     // two lines only — what it is and its name; the details (and rewards, which the units counter
     // shows) were reading as filler
-    this.banner.innerHTML = `<div class="b-sub">${b.sub}</div><div class="b-title">${b.title}</div>`;
+    // (as text, never markup: banners carry names players and the server chose)
+    const sub = el('div', 'b-sub');
+    sub.textContent = b.sub;
+    const title = el('div', 'b-title');
+    title.textContent = b.title;
+    this.banner.replaceChildren(sub, title);
     // raised in a cutscene, it is a title card in the letterbox's top bar, and stays there for its life
     this.banner.classList.toggle('in-bar', !!this.game.cutscenes?.active);
     this.banner.classList.remove('show');
@@ -216,7 +221,7 @@ export class HUD {
     this.crosshair.style.display = mode === 'foot' ? '' : 'none';
     // (not in the cockpit, whose own screens show speed and altitude, nor while looking back, sat
     // on the ground or gliding between views: "0 m/s" printed across the hull while boarding)
-    const flying = ship.mode !== 'landed' && !g.poseBlend;
+    const flying = ship.mode !== 'landed' && !g.director.pose;
     this.reticle.style.display = mode === 'ship' && flying && !ship.inCockpit && (ship.lookBack || 0) < 0.03 ? '' : 'none';
     if (mode === 'foot' && g.multitool) {
       const mt = g.multitool;

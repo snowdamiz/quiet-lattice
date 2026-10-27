@@ -490,6 +490,37 @@ export const SCREENS: Record<string, ScreenDef> = {
       });
     },
   },
+  // the test cutscene's keys (P1.E09.T04): Space on a line already read jumps to the next behind a short dip (the still
+  // 2.2 s in, the first line read; the clip from the key press: the dip, the next shot, the next line revealing)
+  'cutscene-test-jump': {
+    hudClock: true,
+    clipSeconds: 1.5,
+    sheetFrames: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 21, 24, 30, 36, 42, 48, 56, 64, 72, 80, 89],
+    async open(page) {
+      await stageCutscene(page, 'test');
+      await playCutsceneTo(page, 'test', 2.2);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true }));
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true }));
+      });
+    },
+  },
+  // and Esc mid-line skips it (the still 2.6 s in, the first line showing; the clip from the key press: the letterbox
+  // opening and the camera gliding back to the ship over 1.5 s)
+  'cutscene-test-skip': {
+    hudClock: true,
+    clipSeconds: 1.8,
+    sheetFrames: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100, 107],
+    async open(page) {
+      await stageCutscene(page, 'test');
+      await playCutsceneTo(page, 'test', 2.6);
+    },
+    async motion(page) {
+      await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
+    },
+  },
   'station-hangar': {
     hash: '#dock',
     async open(page) {

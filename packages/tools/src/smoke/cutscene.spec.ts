@@ -7,6 +7,8 @@ import { expect, test } from '@playwright/test';
 // its remaining events fire marked skipped (no banner) and the camera comes back the same way. It asks for its phase
 // first (offline: the local layer). Nothing logs an error.
 //
+// Online (game.net, here a stand-in for the client's Net) it asks the server first and plays only on its `play`.
+//
 // The page's own frame loop is held (its requestAnimationFrame callbacks parked) once the game is up, so frames advance
 // only through window.step and every number below is the same on every run.
 
@@ -218,6 +220,54 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
   expect(skipped.camOnShip).toBe(true);
   expect(skipped.camToShip).toBeLessThan(40);
   expect(skipped.sent).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+
+  // ---- online (a stand-in for game.net): it asks the server, and plays only on its `play`, in the phase it names ----
+  const online = await page.evaluate(async () => {
+    const g = window.game;
+    const handlers = new Map<string, ((m: unknown) => void)[]>();
+    const sent: unknown[] = [];
+    g.net = {
+      joined: true,
+      send: (m: unknown) => (sent.push(m), true),
+      on: (type: string, fn: (m: unknown) => void) => {
+        handlers.set(type, [...(handlers.get(type) ?? []), fn]);
+        return () =>
+          handlers.set(
+            type,
+            (handlers.get(type) ?? []).filter((f) => f !== fn),
+          );
+      },
+    };
+    const answer = (m: unknown) => (handlers.get('cutscene') ?? []).forEach((fn) => fn(m));
+    // refused: nothing plays
+    const refusedP = g.cutscenes.play('test');
+    await new Promise((r) => setTimeout(r, 0));
+    answer({ t: 'cutscene', op: 'refused', id: 'test', phase: null, reason: 'denied' });
+    const refused = await refusedP;
+    await window.step(5);
+    const activeAfterRefusal = g.cutscenes.active;
+    // play: it plays in the server's phase, and says done at the end
+    const playP = g.cutscenes.play('test');
+    await new Promise((r) => setTimeout(r, 0));
+    answer({ t: 'cutscene', op: 'play', id: 'test', phase: 9 });
+    await new Promise((r) => setTimeout(r, 0));
+    await window.step(2);
+    const state = g.cutscenes.state();
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true }));
+    while (g.cutscenes.active) await window.step(5);
+    const result = await playP;
+    g.net = null;
+    return { refused, activeAfterRefusal, storyPhase: state?.storyPhase, result, sent };
+  });
+  expect(online.refused).toEqual({ id: 'test', refused: 'denied' });
+  expect(online.activeAfterRefusal).toBe(false);
+  expect(online.storyPhase).toBe(9);
+  expect(online.result).toMatchObject({ id: 'test', skipped: true, phase: 9 });
+  expect(online.sent).toEqual([
+    { t: 'cutscene', op: 'request', id: 'test' },
+    { t: 'cutscene', op: 'request', id: 'test' },
+    { t: 'cutscene', op: 'done', id: 'test', skipped: true },
+  ]);
 
   expect(errors, errors.join('\n')).toEqual([]);
 });

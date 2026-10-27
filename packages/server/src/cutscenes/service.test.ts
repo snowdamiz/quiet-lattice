@@ -88,7 +88,14 @@ describe('cutscene service', () => {
     // the actor exported from the .blend, in the Waystation's frame where the .blend put it (not relative to the player)
     const [tug] = actors(r.phase!);
     const fields = zone.entity(tug!)!.fields;
-    expect(fields).toMatchObject({ kind: 'ship', name: 'Waystation tug', hull: 'mule', frame: station, pos: placement.actors[0]!.pos, quat: placement.actors[0]!.quat });
+    expect(fields).toMatchObject({
+      kind: 'ship',
+      name: 'Waystation tug',
+      hull: 'mule',
+      frame: station,
+      pos: placement.actors[0]!.pos,
+      quat: placement.actors[0]!.quat,
+    });
     step();
     expect(zone.interestOf(a.viewer).has(tug!)).toBe(true);
     expect(zone.interestOf(b.viewer).has(tug!)).toBe(false);
@@ -98,7 +105,12 @@ describe('cutscene service', () => {
     // asked again, the same phase; ended, the player is back in the shared world and the phase closes with its actor
     expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' })).toEqual(r);
     expect(actors(r.phase!)).toEqual([tug]);
-    expect(service.handle(a.viewer, { t: 'cutscene', op: 'done', id: 'test', skipped: true })).toEqual({ t: 'cutscene', op: 'ended', id: 'test', phase: r.phase });
+    expect(service.handle(a.viewer, { t: 'cutscene', op: 'done', id: 'test', skipped: true })).toEqual({
+      t: 'cutscene',
+      op: 'ended',
+      id: 'test',
+      phase: r.phase,
+    });
     expect(zone.phases.phaseOf(a.entity)).toBeNull();
     expect(phase.open).toBe(false);
     expect(zone.entity(tug!)).toBeUndefined();
@@ -111,7 +123,13 @@ describe('cutscene service', () => {
   it('lets no client start one on a production server, until the quest engine’s rule allows it', () => {
     const { service, player, zone } = setup({ dev: false });
     const a = player();
-    expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' })).toEqual({ t: 'cutscene', op: 'refused', id: 'test', phase: null, reason: 'denied' });
+    expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' })).toEqual({
+      t: 'cutscene',
+      op: 'refused',
+      id: 'test',
+      phase: null,
+      reason: 'denied',
+    });
     expect(zone.phases.count).toBe(0);
     // the quest engine fills the hook: this character is on that cutscene step
     service.may = (viewer, id) => viewer === a.viewer && id === 'test';
@@ -212,7 +230,13 @@ describe('cutscene service', () => {
   it('refuses an unknown cutscene, a second one while one plays, and a session in no zone', () => {
     const { service, player } = setup({ catalog: { ...CUTSCENES, other: { placement: { ...loadPlacement('test'), id: 'other' }, dev: true } } });
     const a = player();
-    expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'nope' })).toEqual({ t: 'cutscene', op: 'refused', id: 'nope', phase: null, reason: 'unknown' });
+    expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'nope' })).toEqual({
+      t: 'cutscene',
+      op: 'refused',
+      id: 'nope',
+      phase: null,
+      reason: 'unknown',
+    });
     // (an id that is a property of every object is still unknown)
     expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'constructor' })).toMatchObject({ op: 'refused', reason: 'unknown' });
     expect(service.start(new Viewer(99), 'test')).toMatchObject({ op: 'refused', reason: 'zone' });

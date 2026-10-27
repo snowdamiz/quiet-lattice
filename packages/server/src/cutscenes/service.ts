@@ -275,7 +275,12 @@ export function rotate(q: Readonly<Quat>, v: Readonly<Vec3>): Vec3 {
 export function multiply(a: Readonly<Quat>, b: Readonly<Quat>): Quat {
   const [ax, ay, az, aw] = a;
   const [bx, by, bz, bw] = b;
-  return [aw * bx + ax * bw + ay * bz - az * by, aw * by - ax * bz + ay * bw + az * bx, aw * bz + ax * by - ay * bx + az * bw, aw * bw - ax * bx - ay * by - az * bz];
+  return [
+    aw * bx + ax * bw + ay * bz - az * by,
+    aw * by - ax * bz + ay * bw + az * bx,
+    aw * bz + ax * by - ay * bx + az * bw,
+    aw * bw - ax * bx - ay * by - az * bz,
+  ];
 }
 
 function add(a: Readonly<Vec3>, b: Readonly<Vec3>): Vec3 {

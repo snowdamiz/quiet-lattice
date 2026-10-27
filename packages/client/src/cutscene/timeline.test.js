@@ -167,8 +167,17 @@ describe('Timeline', () => {
     expect(tl.letterbox).toBe(1);
     run(tl);
     expect(tl.letterbox).toBe(1);
-    tl.update(LETTERBOX_OUT / 2);
-    expect(tl.letterbox).toBeCloseTo(0.5, 6);
+    // eased out, not linear: a quarter of the way it has opened only 1/16 (linear would be a quarter), halfway half,
+    // three quarters 15/16; never closing again
+    const out = [];
+    for (let i = 0; i < 4; i++) {
+      tl.update(LETTERBOX_OUT / 4);
+      out.push(tl.letterbox);
+    }
+    expect(out[0]).toBeCloseTo(1 - 1 / 16, 6);
+    expect(out[1]).toBeCloseTo(0.5, 6);
+    expect(out[2]).toBeCloseTo(1 / 16, 6);
+    expect(out[3]).toBe(0);
     tl.update(LETTERBOX_OUT);
     expect(tl.letterbox).toBe(0);
 

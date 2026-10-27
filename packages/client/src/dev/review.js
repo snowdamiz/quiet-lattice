@@ -481,8 +481,7 @@ export class Review {
         g.mode = 'ship';
         g.debugGoto(planet, { sunAngle: lc.sunAngle, alt: 0, azimuth: lc.azimuth, land: true });
         g.exitShip();
-        g.poseBlend = null;
-        g.dip = null;
+        g.director.clear();
       } else g.debugGoto(planet, { sunAngle: lc.sunAngle, alt: 0, azimuth: lc.azimuth, land: true });
       const s = g.ship.state;
       const up0 = s.pos.clone().normalize();

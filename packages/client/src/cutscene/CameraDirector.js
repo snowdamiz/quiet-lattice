@@ -24,9 +24,9 @@ const _m4 = new THREE.Matrix4();
 const SEAT_ABOVE = new THREE.Vector3(0, 5.6, -0.6);
 const HULL_ABOVE = new THREE.Vector3(0, 9, 7);
 /** A cutscene's camera glides from or to the player's only within this distance (m); further, it cuts behind a dip. */
-const GLIDE_REACH = 600;
+export const GLIDE_REACH = 600;
 /** Seconds of the dip a cutscene cuts behind. */
-const CUT_DIP = 0.45;
+export const CUT_DIP = 0.45;
 
 export class CameraDirector {
   constructor(game) {

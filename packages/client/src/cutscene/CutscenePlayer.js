@@ -1,15 +1,18 @@
-// Plays cutscenes in-engine (DESIGN 8 "Cutscenes in-engine", 14.1, 19.2; docs/ARCHITECTURE.md "Cutscenes"): a
+// Plays cutscenes in-engine (DESIGN 8 "Cutscenes in-engine", 14.1, 19.2; docs/ARCHITECTURE.md §14): a
 // definition exported from Blender (public/cutscenes/<id>.json) driving the camera through the camera-glide system
 // (CameraDirector), the letterbox and the dialogue bar (ui/Cinematic.js) and the banners (HUD.showBanner) on game time.
 //
-// A cutscene always plays in a phase: it asks the server for a story phase at the player's place first (link.js). While
-// it plays, game.overlay is 'cutscene': the player's controls are locked like under any menu, except the cutscene's
-// own keys (Space, Enter or a click for the next line; Esc, which closes overlays, skips it). A skip fires every event
-// still to come, so listeners end where watching would have left them, and the camera glides back to the player.
+// A cutscene always plays in a phase, and only when the server says so: online it asks the server through the game's
+// Net (link.js NetCutsceneLink) and plays on `play`, never on a refusal or a silence; the offline link is the dev
+// sandbox's only. While it plays, game.overlay is 'cutscene': the player's controls are locked like under any menu,
+// except the cutscene's own keys (Space, Enter or a click for the next line; Esc skips it, in one press: through
+// Menus.closeAll, or under pointer lock, where the browser takes Esc to release the lock, through that release). A skip
+// fires every event still to come, so listeners end where watching would have left them, and the camera glides back to
+// the player.
 import { CUTSCENE_ID, EXIT_SECONDS, Timeline, canvasFov, letterboxBar, parseCutscene } from './timeline.js';
 import { sampleShots, shotAt } from './curve.js';
 import { anchorSpace, placeInSpace, resolveFrame } from './space.js';
-import { OfflineCutsceneLink } from './link.js';
+import { NetCutsceneLink, OfflineCutsceneLink } from './link.js';
 import { Cinematic } from '../ui/Cinematic.js';
 
 /** Keys that show the rest of a line, then go on to the next. (Esc skips through Menus.closeAll.) */
@@ -22,9 +25,14 @@ const GLIDE_IN = 1.6;
 const KEYS_ALPHA = 0.85;
 
 export class CutscenePlayer {
-  constructor(game, { link = new OfflineCutsceneLink() } = {}) {
+  /** `link` overrides the link every cutscene asks through (tests); otherwise linkFor() picks it. */
+  constructor(game, { link = null } = {}) {
     this.game = game;
-    this.link = link;
+    this.fixedLink = link;
+    this.offline = new OfflineCutsceneLink();
+    this.netLink = null;
+    /** the link the last cutscene asked through */
+    this.link = null;
     this.ui = new Cinematic(game.hudEl);
     /** definitions by id, as they load */
     this.defs = new Map();
@@ -33,6 +41,37 @@ export class CutscenePlayer {
     this.listeners = { start: new Set(), line: new Set(), event: new Set(), end: new Set() };
     // Esc closes whatever overlay is up; the cutscene's closing is a skip
     game.menus.extraOverlays = [...(game.menus.extraOverlays || []), { name: 'cutscene', el: this.ui.el, onClose: () => this.skip() }];
+    // Under pointer lock the browser takes Esc to release the lock, and the page never sees the key: a lock released
+    // while a cutscene plays, with the window still focused (not an alt-tab), is that Esc, and skips at once.
+    this.pointerLocked = false;
+    document.addEventListener('pointerlockchange', () => {
+      const locked = !!document.pointerLockElement;
+      if (this.pointerLocked && !locked && document.hasFocus()) this.skip();
+      this.pointerLocked = locked;
+    });
+  }
+
+  /**
+   * The link a cutscene asks through: the server's (through game.net) whenever the game is online, the offline one in
+   * the dev sandbox (no game.net, a dev build), none otherwise.
+   */
+  linkFor() {
+    if (this.fixedLink) return this.fixedLink;
+    const net = this.game.net;
+    if (net) {
+      if (this.netLink?.net !== net) {
+        this.netLink?.dispose();
+        this.netLink = new NetCutsceneLink(net);
+        this.netLink.onEnded = (id) => this.serverEnded(id);
+      }
+      return this.netLink;
+    }
+    return import.meta.env.DEV ? this.offline : null;
+  }
+
+  /** The server ended the cutscene playing (it took the player out of the phase): it ends here too, as a skip would. */
+  serverEnded(id) {
+    if (this.current?.def.id === id) this.skip();
   }
 
   /** Playing, or giving the camera back. */
@@ -81,10 +120,18 @@ export class CutscenePlayer {
     const refuse = (why) => ({ id, refused: why });
     if (this.current) return refuse('busy');
     if (g.mode !== 'ship' && g.mode !== 'foot') return refuse('state');
+    const link = this.linkFor();
+    if (!link) return refuse('offline');
     const def = await this.load(id);
-    const answer = await this.link.request(id);
+    this.link = link;
+    // (refused, or no answer in time: nothing plays)
+    const answer = await link.request(id);
     if (answer.refused) return refuse(answer.refused);
-    if (this.current) return refuse('busy');
+    if (this.current) {
+      // (another began meanwhile: the server's placing is given back)
+      link.done(id, true);
+      return refuse('busy');
+    }
     if (g.overlay) g.menus.closeAll();
     g.overlay = 'cutscene';
     const player = g.mode === 'foot' ? g.player.state : g.ship.state;
@@ -94,6 +141,7 @@ export class CutscenePlayer {
       timeline: new Timeline(def),
       space: anchorSpace(frame, def.space.anchor, player),
       phase: answer.phase,
+      link,
       shot: 0,
       line: null,
       sample: { pos: [0, 0, 0], quat: [0, 0, 0, 1], fov: 50 },
@@ -143,12 +191,12 @@ export class CutscenePlayer {
     c.done({ id: c.def.id, stopped: true, phase: c.phase, events: c.timeline.fired.map((e) => e.name) });
   }
 
-  /** Puts the player's ship where the cutscene was staged in Blender (dev scenarios, and the quest steps that place the
-   * player before a cutscene). Only for cutscenes anchored on their frame's origin. */
+  /** Dev builds only: puts the player's ship where the cutscene was staged in Blender (the dev scenario and captures; in
+   * the game the server places the character). Only for cutscenes anchored on their frame's origin. */
   stage(def) {
     const p = def.stage?.player;
     const g = this.game;
-    if (!p || def.space.anchor !== 'origin') return false;
+    if (!import.meta.env.DEV || !p || def.space.anchor !== 'origin') return false;
     const s = g.ship.state;
     s.frame = resolveFrame(def.space.frame, { system: g.system, station: g.station, player: s });
     s.pos.fromArray(p.pos);
@@ -219,7 +267,7 @@ export class CutscenePlayer {
     if (g.overlay === 'cutscene') g.overlay = null;
     // (unlocked by Esc while it played, the pause screen comes up as it would have)
     g.menus.updatePauseHint();
-    this.link.done(c.def.id, c.timeline.skipped);
+    c.link.done(c.def.id, c.timeline.skipped);
   }
 
   finish() {

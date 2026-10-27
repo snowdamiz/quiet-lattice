@@ -3,7 +3,7 @@
 // is in. Its camera poses are expressed in that frame, so as the body orbits and turns the camera goes with it. Anchored
 // on the frame's origin, the authored coordinates are the frame's own (a place on the station); anchored on the player,
 // they are relative to where the player was when it began, and turned with it (the player's ship sits at the origin of
-// the Blender scene, nose along -Y).
+// the Blender scene, nose along +Y, the engine's -Z).
 import * as THREE from 'three';
 
 const _v = new THREE.Vector3();

@@ -42,7 +42,13 @@ describe('cutscene messages', () => {
     for (const m of [
       { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
       { t: 'cutscene', op: 'ended', id: 'test', phase: null },
-      ...(['unknown', 'denied', 'cooldown', 'busy', 'place', 'phase', 'zone'] as const).map((reason) => ({ t: 'cutscene' as const, op: 'refused' as const, id: 'test', phase: null, reason })),
+      ...(['unknown', 'denied', 'cooldown', 'busy', 'place', 'phase', 'zone'] as const).map((reason) => ({
+        t: 'cutscene' as const,
+        op: 'refused' as const,
+        id: 'test',
+        phase: null,
+        reason,
+      })),
     ] satisfies ServerMessage[]) {
       expect(decodeServerMessage(encodeServerMessage(m))).toEqual(m);
     }
