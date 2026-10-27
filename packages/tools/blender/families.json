@@ -56,10 +56,18 @@
     { "match": ["LIB_EngineGlow*", "LIB_Nav*", "LIB_GlyphLight*", "LIB_HollowSeam*", "EngineGlow*", "Nav*"], "profile": "signal" },
     { "match": ["LIB_Glass*", "Glass*", "*Glass"], "profile": "glass" }
   ],
+  "textures": {
+    "$comment": "P1.E14.T12: exported maps are KTX2 (Basis Universal) behind KHR_texture_basisu with full mip chains, so a 4k hero downloads in tens of MB and stays compressed on the GPU (artlib/ktx.py, encoder: KTX-Software's ktx). codec per glTF slot (metallicRoughness, other = extension slots): uastc (RDO, then Zstandard) keeps gradients and data exact enough for normals; etc1s (BasisLZ) is several times smaller for colour and AO. A family may set its own \"textures\" (e.g. {\"compress\": false}) to export PNGs, which the validator then accepts for it. Each class's gpuTextureMB is what one variant's maps may take on the GPU once transcoded (8 bits a texel, mips included).",
+    "compress": true,
+    "codec": { "baseColor": "etc1s", "emissive": "etc1s", "occlusion": "etc1s", "normal": "uastc", "metallicRoughness": "uastc", "other": "uastc" },
+    "etc1s": { "quality": 128, "effort": 2 },
+    "uastc": { "quality": 2, "rdoLambda": 1.0, "zstd": 18 }
+  },
   "classes": {
     "hero": {
       "tris": [60000, 150000],
       "texture": 4096,
+      "gpuTextureMB": 512,
       "lods": 4,
       "size": { "axis": "max", "range": [0.5, 400] },
       "profile": "pbr",
@@ -68,6 +76,7 @@
     "npc": {
       "tris": [25000, 60000],
       "texture": 2048,
+      "gpuTextureMB": 128,
       "lods": 4,
       "size": { "axis": "z", "range": [1.2, 2.8] },
       "profile": "pbr",
@@ -76,6 +85,7 @@
     "viewmodel": {
       "tris": [15000, 60000],
       "texture": 2048,
+      "gpuTextureMB": 128,
       "lods": 1,
       "size": { "axis": "max", "range": [0.05, 1.5] },
       "profile": "pbr",
@@ -84,6 +94,7 @@
     "creature": {
       "tris": [15000, 40000],
       "texture": 2048,
+      "gpuTextureMB": 128,
       "lods": 4,
       "size": { "axis": "max", "range": [0.2, 80] },
       "profile": "pbr",
@@ -92,6 +103,7 @@
     "building": {
       "tris": [8000, 60000],
       "texture": 2048,
+      "gpuTextureMB": 128,
       "lods": 4,
       "size": { "axis": "max", "range": [1, 250] },
       "profile": "pbr",
@@ -100,6 +112,7 @@
     "kit": {
       "tris": [500, 15000],
       "texture": 2048,
+      "gpuTextureMB": 128,
       "lods": 4,
       "size": { "axis": "max", "range": [0.2, 60] },
       "profile": "pbr",
@@ -108,6 +121,7 @@
     "weapon": {
       "tris": [4000, 20000],
       "texture": 2048,
+      "gpuTextureMB": 128,
       "lods": 4,
       "size": { "axis": "max", "range": [0.3, 12] },
       "profile": "pbr",
@@ -116,6 +130,7 @@
     "prop": {
       "tris": [2000, 10000],
       "texture": 1024,
+      "gpuTextureMB": 32,
       "lods": 4,
       "size": { "axis": "max", "range": [0.05, 6] },
       "profile": "pbr",
@@ -124,6 +139,7 @@
     "flora_tree": {
       "tris": [3000, 15000],
       "texture": 1024,
+      "gpuTextureMB": 32,
       "lods": 4,
       "size": { "axis": "max", "range": [1, 60] },
       "profile": "pbr",
@@ -132,6 +148,7 @@
     "flora": {
       "tris": [150, 6000],
       "texture": 1024,
+      "gpuTextureMB": 32,
       "lods": 4,
       "size": { "axis": "max", "range": [0.05, 15] },
       "profile": "pbr",
@@ -140,6 +157,7 @@
     "effect": {
       "tris": [12, 5000],
       "texture": 1024,
+      "gpuTextureMB": 32,
       "lods": 1,
       "size": { "axis": "max", "range": [0.01, 200] },
       "profile": "effect",
@@ -148,6 +166,7 @@
     "cosmetic": {
       "tris": [0, 2000],
       "texture": 2048,
+      "gpuTextureMB": 128,
       "lods": 1,
       "size": null,
       "profile": "decal",

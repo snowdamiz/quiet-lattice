@@ -2,12 +2,14 @@
 // pnpm art:export -- <family>... | all
 // pnpm art:test
 // Finds Blender (env BLENDER, else the macOS app, else `blender` on PATH) and runs packages/tools/blender/*.py headless.
-// Set ART_RAW=1 to see Blender's own log lines.
+// Export, the self-test and validating a .glb also need the KTX2 encoder (KTX-Software's ktx, fetched on first use into
+// node_modules/.cache; env KTX overrides it: ./ktx.ts). Set ART_RAW=1 to see Blender's own log lines.
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
+import { ensureKtx } from './ktx.ts';
 import {
   BLENDER_DIR,
   allSources,
@@ -24,13 +26,18 @@ import {
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CWD = process.env.INIT_CWD ?? process.cwd();
 
-function runBlender(script: string, args: string[]): Promise<number> {
+/** The environment Blender's scripts need to write and read KTX2 textures: KTX, the encoder (fetched when missing). */
+async function ktxEnv(): Promise<NodeJS.ProcessEnv> {
+  return { KTX: await ensureKtx(ROOT) };
+}
+
+function runBlender(script: string, args: string[], env: NodeJS.ProcessEnv = {}): Promise<number> {
   const blender = findBlender(process.env);
   const raw = !!process.env.ART_RAW;
   return new Promise((done) => {
     const child = spawn(blender, blenderArgs(join(ROOT, BLENDER_DIR, script), args), {
       cwd: ROOT,
-      env: { ...process.env, PYTHONUNBUFFERED: '1' },
+      env: { ...process.env, ...env, PYTHONUNBUFFERED: '1' },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     for (const [stream, out] of [
@@ -93,19 +100,22 @@ async function validate(argv: string[]): Promise<number> {
     console.log('art:validate: nothing to validate');
     return 0;
   }
-  return runBlender('validate.py', [...args.passthrough, ...files]);
+  // (an exported .glb may hold KTX2 textures, which the validator transcodes back to re-import them)
+  const env = files.some((f) => /\.gl(b|tf)$/i.test(f)) ? await ktxEnv() : {};
+  return runBlender('validate.py', [...args.passthrough, ...files], env);
 }
 
 async function exportFamilies(argv: string[]): Promise<number> {
   const { families, passthrough } = parseExportArgs(argv, loadRules(ROOT));
   let worst = 0;
+  const env = await ktxEnv();
   for (const family of families) {
     const script = `export_${family}.py`;
     if (!existsSync(join(ROOT, BLENDER_DIR, script))) {
       console.error(`art:export: ${BLENDER_DIR}/${script} is missing`);
       return 2;
     }
-    worst = Math.max(worst, await runBlender(script, passthrough));
+    worst = Math.max(worst, await runBlender(script, passthrough, env));
   }
   return worst;
 }
@@ -119,6 +129,7 @@ async function main(): Promise<number> {
       return await runBlender(
         'selftest.py',
         rest.filter((a) => a !== '--'),
+        await ktxEnv(),
       );
   } catch (e) {
     console.error(`art:${command}: ${(e as Error).message}`);
