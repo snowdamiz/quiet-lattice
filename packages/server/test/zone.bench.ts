@@ -19,11 +19,12 @@
 // 1 km square, and every tick from then on is measured: the world's ground is planned in the worker thread while they
 // arrive (the loop yields between ticks, as the server's does), then their cells load under the per-tick budget.
 //
-// The mining trial (P1.E13.T01): 25 sessions on foot among the resource nodes round a spot of the home world, at a Tier
-// 3 system's fauna, each beaming at a node (several at the same one at first) and sending a hit every quarter second,
-// moving on to another standing node when theirs breaks; nodes grow back after 30 s, so the trial sees breaking, sharing
-// and growing back throughout. Each tick's cost is the zone's step plus the hits that arrived for it and, every fifth tick, the resource
-// sweep that brings every session up to date with the touched cells round it.
+// The mining trial (P1.E13.T01): 25 sessions on foot among the ~480 resource nodes within 600 m of a spot of the home
+// world, at a Tier 3 system's fauna, each beaming at a node (several at the same one at first) and sending a hit every
+// quarter second, moving on to another standing node when theirs breaks; nodes grow back after 30 s, so the trial sees
+// breaking, sharing and growing back throughout. Each tick's cost is the zone's step plus the hits that arrived for it
+// and, every fifth tick, the resource sweep that brings every session up to date with the touched cells round it (its
+// own share is reported as resourceCpu*).
 //
 // The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
 // machine does not inflate. Wall time per tick is printed beside it for information, with the load average.
