@@ -3,46 +3,9 @@
 // and the Count across a restart, the burns and days missed while down, batched and retried saves, and the timer.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { burnStepOf, DAY_S } from '../count/meter.ts';
-import type { CountStore, MeterWrite, StoredRoll, StoredVote } from '../count/store.ts';
+import { MemoryShard } from '../../test/memoryShard.ts';
 import { DEFAULT_SHARD_EPOCH_MS } from './clock.ts';
 import { WorldService, type WorldChange, type WorldMirrorRecord } from './service.ts';
-import { newShardRecord, type ShardRecord, type ShardStore } from './shard.ts';
-
-/** A shard's row, votes and rolls in memory, with pgCountStore's rules: one vote per key, a day stored once. */
-class MemoryShard implements ShardStore {
-  record: ShardRecord | null = null;
-  votes: StoredVote[] = [];
-  rolls: StoredRoll[] = [];
-  /** Every meter save, as asked. */
-  saves: MeterWrite[] = [];
-  /** While true, a meter save fails. */
-  fail = false;
-  readonly count: CountStore;
-  constructor(
-    readonly id: string,
-    private readonly wallMs: number,
-  ) {
-    this.count = {
-      votesAfter: async (day) => this.votes.filter((v) => v.day > day).sort((a, b) => a.day - b.day || a.at - b.at),
-      save: async (write) => {
-        if (this.fail) throw new Error('postgres is down');
-        this.saves.push(write);
-        for (const v of write.votes) {
-          if (!this.votes.some((o) => o.day === v.day && o.accountId === v.accountId && o.action === v.action)) this.votes.push({ ...v });
-        }
-        for (const r of write.rolls) if (!this.rolls.some((o) => o.day === r.day)) this.rolls.push(r);
-        if (write.position) Object.assign(this.record!, { count: write.position.count, burnStep: write.position.burnStep, countDay: write.position.day - 1 });
-      },
-    };
-  }
-  async load(): Promise<ShardRecord> {
-    this.record ??= newShardRecord(this.id, DEFAULT_SHARD_EPOCH_MS, this.wallMs);
-    return { ...this.record };
-  }
-  async saveTime(time: number): Promise<void> {
-    if (this.record) this.record.lastTime = Math.max(this.record.lastTime, time);
-  }
-}
 
 class FakeRedis {
   readonly values = new Map<string, string>();
@@ -162,7 +125,7 @@ describe('the Count meter in the world service', () => {
       world.advance();
     }
     s.minutes(59);
-    expect(world.advance()).toEqual({ days: 0, burns: 0 });
+    expect(world.advance()).toEqual({ days: 0, burns: 0, seasons: 0 });
     expect(heard.map((c) => c.state.count)).toEqual([499, 498, 497]);
     await world.flush();
     expect(s.store.record).toMatchObject({ count: 497, burnStep: FIRST_STEP + 3, countDay: DAY - 1 });
@@ -170,8 +133,8 @@ describe('the Count meter in the world service', () => {
 
     // midnight: the day's last burn, then the drift: all Feed, 496 drifts 25 toward 850
     s.minutes(1);
-    expect(world.advance()).toEqual({ days: 1, burns: 1 });
-    expect(world.advance()).toEqual({ days: 0, burns: 0 });
+    expect(world.advance()).toEqual({ days: 1, burns: 1, seasons: 0 });
+    expect(world.advance()).toEqual({ days: 0, burns: 0, seasons: 0 });
     expect(world.state().count).toBe(521);
     expect(world.message().count).toBe(521);
     expect(heard.map((c) => c.state.count)).toEqual([499, 498, 497, 521]);
@@ -217,7 +180,7 @@ describe('the Count meter in the world service', () => {
     expect(second.countAction(C, 'convoy-raided', 'break')).toBe(true);
 
     s.hours(22); // 01:00 on day 302: five burns, then day 301's drift
-    expect(second.advance()).toEqual({ days: 1, burns: 5 });
+    expect(second.advance()).toEqual({ days: 1, burns: 5, seasons: 0 });
     await second.flush();
     // Break 30 + Hold 30 (10 to Feed) + Break 30: lean 1/9, target 228; 516 drifts −25
     expect(s.store.rolls.at(-1)).toEqual({ day: DAY + 1, season: 1, votes: 3, lean: 1 / 9, target: 228, from: 516, drift: -25, count: 491 });
