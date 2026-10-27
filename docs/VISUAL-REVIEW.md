@@ -254,3 +254,15 @@ hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen
 outgoing screen (Create and Back cut to a sliver while the request is pending). Contrast is 4.9–16.3:1 on the panel;
 the title tagline, ordinals and BUILD line sit at 2.7–3.2:1 over the planet limb. Requested: registering a fresh
 account with a refusal, landing on an empty list. Artifacts: `assets/renders/ui/{title,login-error,characters,create,entering,account-flow}/`.
+
+## P1.E15.T03 Chat and party UI (with the beacon list)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 3, spec 4, performance 5 | 3.86 |
+
+Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
+and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
+down); the beacon list overruns the panel with no scroll affordance; a world-marker label shows through the party frame
+at 21:9; the leader row's tag column is misaligned. Requested: the muted state and an offline member. Artifacts:
+`assets/renders/ui/{social,social-space,party,party-invite,beacons}/`.
