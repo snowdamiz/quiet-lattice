@@ -73,6 +73,30 @@ async function heatAt(page: Page, heat: number, overheated: boolean, held: boole
 }
 
 /**
+ * Parks the page's own frame loop (its requestAnimationFrame callbacks are dropped), so the game moves only as frames are
+ * stepped: the meter a still is taken at is the one it was stepped to, however long the CSS waits run.
+ */
+async function parkLoop(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const w = window as unknown as { __holdRaf?: boolean };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    // (the callback already queued runs once more, then parks)
+    await new Promise((r) => setTimeout(r, 100));
+  });
+}
+
+/** The heat meter runs `k` times as fast as the game for the clip, so a whole overheat cycle fits a few seconds of it. */
+async function hastenHeat(page: Page, k: number): Promise<void> {
+  await page.evaluate((k) => {
+    const mt = (window as unknown as { game: { multitool: { stepHeat(dt: number, held: boolean): void } } }).game.multitool;
+    const step = mt.stepHeat.bind(mt);
+    mt.stepHeat = (dt, held) => step(dt * k, held);
+  }, k);
+}
+
+/**
  * The ship in open flight off the home world, nose just past it, `side` 1 on its day side (in sunlight, inside the habitable band:
  * Charge regenerates) or −1 on its night side (in its shadow: nothing), with Charge at `charge`.
  */
@@ -520,31 +544,40 @@ export const SCREENS: Record<string, ScreenDef> = {
       await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
     },
   },
-  // On foot on the home world, mining: the heat arc (left of the dot) climbing with the beam held, warm (P1.E07.T02).
-  // `16x9-overheat.png`: the lockout, the arc danger red past the tick where it ends and OVERHEAT under the dot. The clip:
-  // the beam held from 84 to the top, the overheat (about 0.7 s in) and the first of the lockout's cooling.
+  // On foot on the home world, mining with the beam held: the heat arc (left of the dot) at 40 of 100, 40% of it lit, warm
+  // (P1.E07.T02). `16x9-overheat.png`: the lockout at the top, the arc danger red with a tick where the lockout ends and
+  // OVERHEAT under the dot. The clip: a whole cycle with the beam held throughout, the meter at three times the game's
+  // pace: from cool it climbs, turns amber at 75, overheats at 100 (about 1.4 s in), cools through the lockout to the tick
+  // at 25 (about 2.6 s) and the lockout lifts, the beam heating again.
   'hud-foot': {
     hash: '#foot',
     hudClock: true,
-    clipSeconds: 1.5,
+    clipSeconds: 3,
     async open(page) {
-      await page.waitForFunction(async () => {
-        await (window as unknown as { step(n: number): Promise<void> }).step(4);
-        return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
-      });
+      const onFoot = () =>
+        page.waitForFunction(async () => {
+          await (window as unknown as { step(n: number): Promise<void> }).step(4);
+          return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
+        });
+      await onFoot();
+      // (the #foot scenario lands the ship, then steps out after 1.5 s of real time: on foot for good only after that)
+      await page.waitForTimeout(2500);
+      await onFoot();
       await settle(page, 90);
-      // (the page's own loop runs through settle's wait: heat climbs about 30 there with the beam held)
+      await parkLoop(page);
+      // 38, and five frames of beam at 24/s: 40
       await heatAt(page, 38, false, true);
-      await settle(page, 6);
+      await settle(page, 5);
     },
     stills16x9: {
       async overheat(page) {
         await heatAt(page, 100, true, true);
-        await settle(page, 6);
+        await settle(page, 3);
       },
     },
     async motion(page) {
-      await heatAt(page, 84, false, true);
+      await heatAt(page, 0, false, true);
+      await hastenHeat(page, 3);
     },
   },
   map: {
