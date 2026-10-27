@@ -1,12 +1,15 @@
-// HTTP gateway (docs/ARCHITECTURE.md §2): accounts, characters and health. Bodies are validated with the shared protocol
-// schemas; errors reply `{ error, message }` where `error` is a stable code the client can switch on.
+// HTTP gateway (docs/ARCHITECTURE.md §2): accounts, characters, finished seasons' chronicles (§27) and health. Bodies are
+// validated with the shared protocol schemas; errors reply `{ error, message }` where `error` is a stable code the client
+// can switch on.
 import { CharacterCreate, CharacterList, CharacterSummary, Credentials, isDevUsername, PROTOCOL_VERSION, type AuthResponse } from '@astra/shared/protocol';
+import { seasonChronicleSchema } from '@astra/shared/seasons';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { authenticate, registerAccount } from '../accounts/accounts.ts';
 import type { TokenService } from '../accounts/tokens.ts';
 import { createCharacter, isUuid, listCharacters, MAX_CHARACTERS_PER_ACCOUNT } from '../characters/characters.ts';
 import { checkCharacterName } from '../characters/names.ts';
 import type { Db } from '../db/client.ts';
+import type { ChronicleSource } from '../seasons/service.ts';
 import { clientKey, type RateLimiter } from './rateLimit.ts';
 
 export interface HealthReport {
@@ -25,6 +28,8 @@ export interface HttpGatewayDeps {
   timingHash: string;
   pingDb(): Promise<boolean>;
   pingRedis(): Promise<boolean>;
+  /** Finished seasons' chronicles (`GET /seasons/:season/chronicle`); without it every season answers 404. */
+  chronicles?: ChronicleSource;
 }
 
 const LOGIN_FAILED = 'Wrong username or password.';
@@ -133,5 +138,17 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
       case 'no_account':
         return fail(reply, 401, 'unauthorized', 'This account no longer exists. Sign in again.');
     }
+  });
+
+  // ---------- /seasons: a finished season's chronicle (DESIGN 16.4, §27), to a signed-in player ----------
+  app.get('/seasons/:season/chronicle', async (req, reply) => {
+    const accountId = await requireAccount(req, reply);
+    if (!accountId) return reply;
+    const raw = (req.params as { season?: string }).season ?? '';
+    if (!/^[1-9]\d{0,6}$/.test(raw)) return fail(reply, 400, 'invalid', 'A season is a whole number from 1.');
+    const season = Number(raw);
+    const chronicle = deps.chronicles ? await deps.chronicles.chronicle(season) : null;
+    if (!chronicle) return fail(reply, 404, 'no_chronicle', `Season ${season} has not ended yet, so it has no chronicle.`);
+    return reply.send(seasonChronicleSchema.parse(chronicle));
   });
 }

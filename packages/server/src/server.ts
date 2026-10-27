@@ -29,6 +29,8 @@ import { questAdmin } from './quests/admin.ts';
 import { QuestRuntime } from './quests/runtime.ts';
 import { questCutsceneNotify, questCutscenePermit, questCutscenes } from './quests/cutscenes.ts';
 import { skillRewardHooks } from './quests/skills.ts';
+import { SeasonAwards } from './seasons/awards.ts';
+import { SeasonService } from './seasons/service.ts';
 import { skillServiceIn } from './skills/component.ts';
 import type { SkillService } from './skills/service.ts';
 import { WorldService } from './world/service.ts';
@@ -66,6 +68,8 @@ export interface RunningServer {
   ws: WsGateway;
   /** Season, Count, Edge, tiers and the server clock. */
   world: WorldService;
+  /** Daily actives, season awards and finished seasons' chronicles (§27). */
+  seasons: SeasonService;
   /** Every zone in the process and the tick loop. */
   zones: ZoneManager;
   /** Loads characters on join and saves them every 30 s, on leave and on close. */
@@ -134,6 +138,10 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ, movement: opts.movement, metricsEveryMs: tooling.metricsMs });
   const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
   const progress = new CharacterProgress();
+  // (each character in play's season titles and glyphs: the reputation model, P2.E18.T01, is to take the titles through
+  // its earnTitle by subscribing here)
+  const awards = new SeasonAwards((err) => log.error({ err }, 'season award listener failed'));
+  const seasons = new SeasonService({ world, db: database.db, log });
   // (parties are the gateway's social service and skills the registry's skill service, both made below: read only once
   // characters are in play)
   const quests: QuestRuntime = new QuestRuntime({
@@ -150,7 +158,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const persistence: CharacterPersistence = new CharacterPersistence({
     ...opts.persistence,
     store: pgCharacterStore(database.db),
-    registry: coreRegistry({ zones, clock, movement: opts.movement, inventory, ships: new ShipLoadouts(), progress, quests, log }),
+    registry: coreRegistry({ zones, clock, movement: opts.movement, inventory, ships: new ShipLoadouts(), progress, awards, quests, log }),
     log,
   });
   // (a development server lets a client ask for a dev cutscene by itself; production only what the quest engine allows)
@@ -170,6 +178,8 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     quests,
     // (kills add XP to the same progress the quests and persistence hold)
     progress,
+    seasons,
+    awards,
     // a joining character's row is read only once an edit of it out of play (the admin CLI's) has written (§8)
     ownedCharacter: (accountId, characterId) => persistence.afterEdit(characterId, () => getOwnedCharacter(database.db, accountId, characterId)),
     limits: {
@@ -187,6 +197,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     timingHash,
     pingDb: () => database.ping(),
     pingRedis: () => redis.ping(),
+    chronicles: seasons,
   });
   if (tooling.devLogin) registerDevLogin(app, { db: database.db, tokens, authLimiter, log });
   const admin = new AdminService({ directory: pgDirectory(database.db), persistence, live: { zones, gateway: ws, world }, quests: questAdmin(quests), log });
@@ -244,6 +255,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     app,
     ws,
     world,
+    seasons,
     zones,
     persistence,
     quests,

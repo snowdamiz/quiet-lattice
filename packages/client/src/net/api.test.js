@@ -1,6 +1,6 @@
 // The gateway's HTTP side as the client calls it (P1.E04.T01): bodies checked both ways, the server's error codes kept.
 import { describe, expect, it } from 'vitest';
-import { ApiError, createCharacter, devLogin, gameSocketUrl, listCharacters, login, register } from './api.js';
+import { ApiError, createCharacter, devLogin, gameSocketUrl, listCharacters, login, register, seasonChronicle } from './api.js';
 
 /** A fetch that answers with `status` and `body`, recording what it was asked. */
 function server(status, body) {
@@ -32,6 +32,34 @@ describe('api', () => {
     const c = server(201, CHARACTER);
     expect(await createCharacter('tok', { name: 'Tess Arlo', people: 'ixari', look: CHARACTER.look }, c)).toEqual(CHARACTER);
     expect(c.calls[0]).toMatchObject({ method: 'POST', path: '/characters', body: { name: 'Tess Arlo', people: 'ixari' } });
+  });
+
+  it("fetches a finished season's chronicle with the session token, and keeps a season not yet ended as the server's refusal", async () => {
+    const opening = { from: null, edgeShiftLy: 0, dark: [] };
+    const chronicle = {
+      season: 1,
+      start: 864_000,
+      end: 5_788_800,
+      length: 4_838_400,
+      actives: null,
+      opening,
+      path: [{ day: 10, count: 520, drift: 25, lean: 1, votes: 3 }],
+      count: 742,
+      bucket: 'fed',
+      philosophy: 'feed',
+      title: 'Seedbearer',
+      glyph: 'season_1_fed',
+      awarded: 3,
+      next: { from: 'fed', edgeShiftLy: 10, dark: [] },
+      finds: [],
+    };
+    const s = server(200, chronicle);
+    expect(await seasonChronicle('tok', 1, s)).toEqual(chronicle);
+    expect(s.calls[0]).toMatchObject({ method: 'GET', path: '/seasons/1/chronicle', headers: { authorization: 'Bearer tok' } });
+    const odd = await seasonChronicle('tok', 1, server(200, { ...chronicle, bucket: 'lost' })).catch((e) => e);
+    expect(odd.code).toBe('bad_response');
+    const open = await seasonChronicle('tok', 2, server(404, { error: 'no_chronicle', message: 'Season 2 has not ended yet.' })).catch((e) => e);
+    expect([open.status, open.code]).toEqual([404, 'no_chronicle']);
   });
 
   it("keeps the server's error code and message", async () => {

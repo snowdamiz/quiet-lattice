@@ -23,6 +23,10 @@
 // crafting service (crafting/), which checks each against the recipes the character knows (the book persistence's
 // registry loads into), where the player is and what it holds, and answers it; a joining character is sent the recipes it
 // knows after its skills, and again whenever it learns one, before the answer (§23).
+// Seasons (seasons/, §27): a character that joins counts its account active for the day, and is given the titles and
+// glyphs its account's seasons earned (read with its row, merged into its `seasonAwards` component) and sent them as
+// `awards` after its recipes; when a season's end is written, each joined character of its winners is given the season's
+// award, and sent `awards` again.
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
@@ -54,6 +58,9 @@ import type { RecipeBook } from '../crafting/book.ts';
 import { recipeBookIn } from '../crafting/component.ts';
 import { CraftingService } from '../crafting/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
+import type { SeasonAwards } from '../seasons/awards.ts';
+import { seasonAwardsIn } from '../seasons/component.ts';
+import type { SeasonGateway } from '../seasons/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import { skillServiceIn } from '../skills/component.ts';
 import type { SkillService } from '../skills/service.ts';
@@ -150,6 +157,12 @@ export interface WsGatewayDeps {
   recipes?: RecipeBook;
   /** Fabricators; the gateway makes its own over the recipe book when none is given. */
   crafting?: CraftingService;
+  /** Daily actives, an account's season awards and each season's end; without it (tests of the gateway alone) a join
+   * counts nobody active and reads no awards. */
+  seasons?: SeasonGateway;
+  /** Every character's season awards in play; when none is given, the holder persistence's registry loads into (none
+   * when its registry has no `seasonAwards` component: no `awards` are sent). */
+  awards?: SeasonAwards;
 }
 
 export interface WsStats {
@@ -254,6 +267,19 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeAnalysis = quests ? analysis.subscribe((e) => void quests.event(e.characterId, { type: 'analyze', species: e.key })) : undefined;
   const crafting =
     deps.crafting ?? new CraftingService({ zones: deps.zones, inventory, book: deps.recipes ?? needRecipes(persistence), now: () => deps.clock.now(), log });
+  // a season's title and glyph given to a character in play reach its session (as `awards`, everything it holds)
+  const awards = deps.awards ?? seasonAwardsIn(persistence.registry);
+  const unsubscribeAwards = awards?.subscribe((characterId, _added, all) => {
+    for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'awards', awards: [...all] });
+  });
+  // a season's end, once written: each joined character of an account among its winners is given its award
+  const unsubscribeSeasons = deps.seasons?.onSeasonEnded(({ awarded }) => {
+    if (!awards || awarded.accounts.length === 0) return;
+    const winners = new Set(awarded.accounts.map((a) => a.toLowerCase()));
+    for (const c of conns) {
+      if (c.s.state === 'joined' && winners.has(c.s.accountId!.toLowerCase())) awards.grant(c.s.characterId!, [awarded.award]);
+    }
+  });
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -511,7 +537,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     // the row may not have it yet, and persistence loads from what it holds.
     const unpin = persistence.pin(characterId);
     try {
-      const row = await ownedCharacter(s.accountId!, characterId);
+      // (the titles and glyphs the account's seasons earned are read with the row, and merged in once it is loaded)
+      const [row, earned] = await Promise.all([ownedCharacter(s.accountId!, characterId), awards && deps.seasons ? deps.seasons.awardsOf(s.accountId!) : []]);
       // the ground a saved pose on a world stands on, planned in the worker first, so its check reads it there
       if (row) await groundForRestore(row.state);
       if (s.state !== 'authed') return;
@@ -540,6 +567,9 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         s.refuse('full', 'Your character could not be loaded. Try again later.');
         return;
       }
+      // (before the session is joined, so the award listener sends nothing: the awards go out after the recipes)
+      const given = awards?.grant(row.id, earned);
+      if (given?.length) log.info({ character: row.id, seasons: given.map((a) => a.season) }, 'season awards given on join');
       const at = loaded.get<PoseState>(POSE);
       const progress = loaded.get<Progress>(PROGRESS);
       const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem }, at);
@@ -563,6 +593,9 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.send({ t: 'skills', ...skills.state(row.id) });
       const known = crafting.recipes(row.id);
       if (known) s.send(known);
+      const held = awards?.get(row.id);
+      if (held) s.send({ t: 'awards', awards: [...held] });
+      deps.seasons?.markActive(s.accountId!);
       social.joined(s, row.name);
       // (after the party is known: a player back in a quest step's place goes back to its party's phase)
       if (deps.quests) s.send({ t: 'quests', ...deps.quests.joined(s) });
@@ -597,6 +630,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (deps.zones.combat === combat.hooks) deps.zones.combat = null;
       skills.hooks = skillHooks;
       unsubscribeAnalysis?.();
+      unsubscribeAwards?.();
+      unsubscribeSeasons?.();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
