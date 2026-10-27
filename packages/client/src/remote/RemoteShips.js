@@ -3,9 +3,10 @@
 // player flies or paints) as the game dresses a ship: its hull surfaces merged into one geometry per material (the
 // cockpit interior, which shows only from the seat, left out), each landing-gear leg apart so it folds per ship, and the
 // engine exhausts as one instanced billboard mesh. Each surface has three levels of detail (the model, and two
-// meshoptimizer simplifications with their borders locked, so no gaps open between the surfaces), picked per ship by
-// how many pixels it covers, so a ship tens of pixels long draws as few triangles as it can show and its outline holds
-// instead of crawling. A frame's draw calls are the kit's (26 surfaces for the Lark, at each level in use, and their
+// meshoptimizer simplifications with their borders locked, so no gaps open between the surfaces, and their specks too
+// small to keep pruned), picked per ship by how many pixels it covers, so a ship tens of pixels long draws as few
+// triangles as it can show and its outline holds instead of crawling; the coarsest wears softened panel detail and dimmer
+// small lights (dressHull's `far`). A frame's draw calls are the kit's (26 surfaces for the Lark, at each level in use, and their
 // shadows), however many ships are in view, and nothing is allocated per frame. Each ship folds its gear, lights its
 // engines (by its speed and thrust) and strobes its beacon on its own, from the motion its snapshots describe.
 //

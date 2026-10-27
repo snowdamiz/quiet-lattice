@@ -393,38 +393,61 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   through the server.
 - **Remote entities** (`src/remote/`, P1.E04.T02). `RemoteEntities` follows Net's snapshots (`attach(net)`; it starts
   over at every welcome and zone change, where entity ids start over): players and `ship` entities, never the player's
-  own. Creatures are P1.E08.T09's; npcs (walkers) and props wait for the body rig (P1.E05.T04) and a prop catalog, loot
-  and pods for P1.E08.T04 and P1.E06.T03; none of them is followed. Each entity keeps a `PoseBuffer` (1.6 s): each tick's
-  pose stamped with the tick's time, in the entity's frame resolved to the client's own frame object (a frame of another
-  system is not shown).
+  own. The server sends no NPC ships yet (pirates come with P1.E08.T05, traffic and convoys with P2.E25.T06); `ship`
+  entities are followed and drawn already (a cutscene's ship actors are such). Creatures are P1.E08.T09's; npcs
+  (walkers) and props wait for the body rig (P1.E05.T04) and a prop catalog, loot and pods for P1.E08.T04 and
+  P1.E06.T03; none of them is followed. Each entity keeps a `PoseBuffer` (1.6 s): each tick's pose, in the entity's frame
+  resolved to the client's own frame object (a frame of another system is not shown, and holds no samples). An entity
+  the snapshots stop naming is let go when the render time reaches the first tick without it, in whatever frame or
+  system it was.
   - **Time.** The render time (`PlaybackClock`) is world time less the trip (the least lag of the last 40 snapshots,
     timed on Net's estimate of the server's clock) and 100 ms: on world time because the bodies stand there, so a pose is
     always placed through frames the trip and the delay ahead of it, however world time lies against the server's. It
     never goes back, eases at 0.9–1.1 times world time, and jumps only forward (the first snapshots, a stall).
+  - **Pose times.** A snapshot labels the last pose each client reported with the tick's time, so two reports landing in
+    one tick (or none) leave a moving entity's samples bunched: a tick's travel off, 14 km at the pulse drive's 280 km/s.
+    Each sample of an entity moving faster than 5 m/s is given its own time from its motion (how much further it went
+    than the labels' spacing at its mean velocity says), within 0.15 s of its tick's, each estimate carrying 95% of the
+    one before so errors never pile up; interpolation runs on these times.
   - **Between and past samples.** A cubic Hermite on positions and velocities where they agree, else straight lines;
     orientations slerped. Past the newest sample, along its velocity for up to 250 ms, then held. A moving entity's pose
-    sent again (its client's report missed the tick) is skipped. A sample no velocity explains (more than 1 km off) or a
-    change between on foot and not is a cut: never interpolated across, shown as the jump it is when it is due.
+    sent again (its client's report missed the tick) is skipped. A sample no velocity explains (further off than 1 km or
+    0.3 s of its speed, `jumpLimit`) or a change between on foot and not is a cut: never interpolated across, shown as
+    the jump it is when it is due.
   - **Frames.** A pose is placed through its frame as the frame stands at world time (`frame.localToWorld`), so an entity
     on a moon stays on the moon as drawn. A sample in another frame re-expresses the held ones into it, each with both
     frames as they stood at its own time (`remote/frames.js`: a body's pose at any time by the shared kinematics, then
     `setFrameInto`), and moves them to meet the new sample (its client placed itself in the new frame with its own
-    clock, which a hitch can leave tenths of a second off the server's; the frames move apart at up to ~1 km/s).
-    Whatever changes the drawn pose as a sample arrives (a frame change, the frames having moved apart over the delay; a
-    late sample after extrapolating) is taken up by an offset in the frame's axes that starts from where and as fast as
-    the entity was drawn and dies away critically damped (time constant 0.2 s); one over 2 km is shown as a jump.
+    clock, which a hitch can leave up to a second off the server's). Whatever changes the drawn pose as a sample arrives
+    (a frame change, the frames having moved apart over the delay; a late sample after extrapolating) is taken up by an
+    offset in the frame's axes that starts from where and as fast as the entity was drawn and dies away critically
+    damped (time constant 0.2 s). One larger than 2 km or 1.2 s of the entity's speed, or at a frame change of how fast
+    the two frames move apart there (`snapLimit`; at the home systems' sphere edges a planet's frame and the system's
+    part at up to ~5 km/s, a moon's and its planet's at up to ~6 km/s, orbit and spin together), is shown as a jump.
   - **Drawn** (`RemoteShips`): players flying, landed, docked or on the pulse drive as their ship, and `ship` entities,
     by hull (a snapshot that names none is the Lark); players on foot are hidden, with no stand-in, until P1.E05.T04. A
-    hull draws with its own model or one of its tier's (IMPLEMENTATION_PLAN 0.3): only the Lark has one (the local
-    ship's) until P1.E12.T02/T03, so the test cutscene's Mule tug is not drawn. One kit of instanced meshes per hull, made
-    from the local ship's dressed model (hull surfaces merged per material, the cockpit interior left out, each gear leg
-    apart): about 26 draw calls for every Lark in view, each ship culled against the view (but within 100 m, for its
-    shadow), its gear, engine glow, exhaust and beacon its own, from its motion; nothing allocated per frame (24 Larks in
-    view: ~0.1 ms of CPU). No name tags or HUD markers yet.
+    hull draws with its own model or one of its tier's (IMPLEMENTATION_PLAN 0.3): only the Lark has one until
+    P1.E12.T02/T03, so the test cutscene's Mule tug is not drawn. Each hull's kit is made from its own model and livery
+    data (`HULL_SOURCES`: a Ship of its own, loaded as the world is entered, never the player's ship), dressed as the
+    game dresses a ship: hull surfaces merged per material (the cockpit interior left out), each gear leg apart. Each
+    surface has three levels of detail (the model and two meshoptimizer simplifications, borders locked and specks
+    pruned), picked per ship by its length on screen (240 and 100 px, with 15% hysteresis); the coarsest wears softened
+    panel detail and dimmer small lights, so a ship 50–100 px long keeps its outline rather than crawling (remote ships
+    take the scene's 4× MSAA like the player's). About 26 draw calls per level in use for every Lark in view, each ship
+    culled against the view (but within 100 m, for its shadow); its gear, engine glow and exhaust (by its speed against
+    its hull's cruise and its acceleration, full on the pulse drive, dark set down), and beacon its own; nothing
+    allocated per frame (24 Larks in view: ~0.1 ms of CPU). A ship landed on the world whose flora is streamed clears
+    the plants under it, as the player's does.
+  - **Markers.** `markers(here, range, add)` gives the HUD a `player` marker (name and range) for each other pilot's ship
+    the local ship's sensors pick up (`detects`: the ship's sensor range × the hull's signature, DESIGN 10.1, raised on
+    the pulse drive or boosting, lowered in cover), nearest first; none on foot. The HUD drops them off screen and leaves
+    off a name a nearer pilot's already covers.
   - **Dev.** `remote/replay.js` plays recorded snapshot streams (the zone's encoding, a 60 ms trip with 40 ms of jitter)
-    through the same path offline: `pnpm capture -- --ui remote-ships` (a flypast) and `remote-ships-crowd` (24 in view).
-    `packages/tools/src/smoke/remote-online.spec.ts` flies two clients against a local server, one out of the
-    Waystation's sphere into its world's frame.
+    through the same path offline: `pnpm capture -- --ui remote-ships` (a flypast), `remote-ships-crowd` (24 in view,
+    each on its own heading and speed, one flying out of sensor range), `remote-ships-pads` (Larks docked on the
+    Waystation's pads, gear down, others passing the mouth) and `remote-ships-surface` (one landed, others flying past
+    low in the world's turning frame). `packages/tools/src/smoke/remote-online.spec.ts` flies two clients against a local
+    server, one out of the Waystation's sphere into its world's frame.
 
 ## 10. Tests
 
