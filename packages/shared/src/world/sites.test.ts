@@ -1,6 +1,7 @@
 import { Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 import { cityPads, planCities } from './cities.ts';
+import { FAUNA_MAX_TIER, faunaSpecies } from './fauna.ts';
 import { PLANET_TYPES, TerrainSampler, archetype, createPlanetParams, surfaceAttribs, type PlanetParams, type PlanetType } from './planetgen.ts';
 import { Random } from './rng.ts';
 import {
@@ -11,6 +12,7 @@ import {
   LAND_PER_PREDATOR_DEN,
   MAX_TIER,
   denCounts,
+  denKindFor,
   denPads,
   denPlans,
   hasFauna,
@@ -153,15 +155,15 @@ describe('den planning', () => {
   const top = byTier[MAX_TIER];
   const land = top.land;
 
-  it('meets the counts on a living world, predator dens in all three kinds, ambushers in burrows, the apex in a nest', () => {
+  it('meets the counts on a living world, predator dens the kind their predator lives in, ambushers in burrows, the apex in a nest', () => {
     expect(land).toBeGreaterThan(1000);
+    const species = faunaSpecies(params, FAUNA_MAX_TIER);
     for (const [tier, w] of byTier.entries()) {
       const roles: Record<DenRole, number> = { predator: 0, ambusher: 0, apex: 0 };
       for (const d of w.dens) roles[d.role]++;
       expect(roles, `tier ${tier}`).toEqual(denCounts(tier, land));
-      // (each predator pass deals the kinds in turn)
-      const kinds = DEN_KINDS.map((k) => w.dens.filter((d) => d.role === 'predator' && d.kind === k).length);
-      expect(Math.max(...kinds) - Math.min(...kinds)).toBeLessThanOrEqual(tier >= 3 ? 2 : 1);
+      // (each predator pass houses one predator species: its dens are all the one kind)
+      for (const d of w.dens.filter((x) => x.role === 'predator')) expect(d.kind).toBe(denKindFor(species[d.species]!.bodyPlan));
       for (const d of w.dens) {
         expect(d.footprint).toBe(d.role === 'apex' ? APEX_FOOTPRINT : DEN_FOOTPRINT[d.kind]);
         if (d.role === 'ambusher') expect(d.kind).toBe('burrow');
@@ -171,15 +173,18 @@ describe('den planning', () => {
     }
   });
 
-  it("says who lives in each den, so a world's predators find the dens of their body plan", () => {
+  it("says who lives in each den: one of the world's species of the den's role, whose body plan the den holds", () => {
     expect(DEN_KINDS.map((k) => denPlans('predator', k))).toEqual([['quad_small'], ['biped'], ['flyer']]);
     expect(denPlans('ambusher', 'burrow')).toEqual(['quad_small', 'biped']);
     expect(denPlans('apex', 'nest')).toEqual(['quad_heavy']);
-    for (const d of top.dens) expect(d.plans).toEqual(denPlans(d.role, d.kind));
-    for (const plan of ['quad_small', 'biped', 'flyer'] as const) {
-      const homes = top.dens.filter((d) => d.role === 'predator' && d.plans.includes(plan)).length;
-      expect(homes).toBeGreaterThanOrEqual(Math.floor(denCounts(MAX_TIER, land).predator / 3) - 1);
+    const species = faunaSpecies(params, FAUNA_MAX_TIER);
+    for (const d of top.dens) {
+      expect(d.plans).toEqual(denPlans(d.role, d.kind));
+      expect(species[d.species]!.temperament).toBe(d.role);
+      expect(d.plans).toContain(species[d.species]!.bodyPlan);
     }
+    // every predator the world rolls has its dens
+    for (const sp of species.filter((s) => s.temperament === 'predator')) expect(top.dens.some((d) => d.species === sp.index)).toBe(true);
   });
 
   it('is deterministic, and raising the tier adds dens without moving one', () => {

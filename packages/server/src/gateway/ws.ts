@@ -5,10 +5,11 @@
 // is unusable, or for a new character), and `welcome` names the zone, the entity and that pose, followed at once by
 // `world` (the world service's state, sent again to every joined session whenever it changes), the character's
 // `inventory`, its `skills` and its `meters`. From then on `input` and `ack` go to the zone, which sends the session a
-// binary snapshot every tick, and closing the socket saves the character and takes the entity out; each input passes the
-// meter service first (heat and Charge run on inputs, and a pulse with Charge empty is refused) and is told it after the
-// zone has applied it. Inventory requests go to the inventory service and skill requests to the skill service, which answer
-// each with the authoritative state (ARCHITECTURE §7, §14, §19).
+// binary snapshot every tick (an input movement authority refuses is answered with `correction`, and a client corrected
+// too often is kicked), and closing the socket saves the character and takes the entity out; each input passes the meter
+// service first (heat and Charge run on inputs, and a pulse with Charge empty is refused) and is told it after the zone has
+// applied it. Inventory requests go to the inventory service and skill requests to the skill service, which answer each
+// with the authoritative state (ARCHITECTURE §7, §14, §19).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
 // connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
 // leaves; a cutscene done ends the quest step that played it. Quest requests go to the quest runtime (quests/), which
@@ -35,7 +36,7 @@ import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
 import { meterServiceIn } from '../meters/component.ts';
 import type { MeterService } from '../meters/service.ts';
-import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
+import { groundForRestore, POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
 import { doneEndsQuestStep } from '../quests/cutscenes.ts';
 import type { QuestRuntime } from '../quests/runtime.ts';
@@ -389,6 +390,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (r === 'ok') meters.input(s.characterId!, s, claim, now);
         // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
         if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
+        // refused by movement authority (which logged it): the correction, and the end of a client corrected too often
+        else if (typeof r === 'object') {
+          if (r.correction) s.send({ t: 'correction', ...r.correction });
+          if (r.kick) s.refuse('kicked', 'Your ship or suit kept moving in ways the server could not accept.');
+        }
         return;
       }
       case 'ack':
@@ -460,6 +466,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     const unpin = persistence.pin(characterId);
     try {
       const row = await ownedCharacter(s.accountId!, characterId);
+      // the ground a saved pose on a world stands on, planned in the worker first, so its check reads it there
+      if (row) await groundForRestore(row.state);
       if (s.state !== 'authed') return;
       // (a row under another spelling of the id would have been read without the pin holding it)
       if (!row || row.id !== characterId) {

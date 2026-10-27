@@ -1,13 +1,6 @@
 // The ground planner's worker thread (terrain.ts, GroundPlanner): plans worlds' surfaces off the zones' tick loop and
-// sends back the pads that level their ground and the sites' clearance the resource nodes keep off.
+// sends back the pads that level their ground with the sites' clearance the resource nodes keep off, or a world's dens.
 import { parentPort } from 'node:worker_threads';
-import type { PlanetParams } from '@astra/shared/world';
-import { planGround } from './terrain.ts';
+import { answer, type PlanRequest } from './terrain.ts';
 
-parentPort!.on('message', ({ id, params, tier }: { id: string; params: PlanetParams; tier: number }) => {
-  try {
-    parentPort!.postMessage({ id, ...planGround(params, tier) });
-  } catch (err) {
-    parentPort!.postMessage({ id, error: String(err) });
-  }
-});
+parentPort!.on('message', (request: PlanRequest) => parentPort!.postMessage(answer(request)));

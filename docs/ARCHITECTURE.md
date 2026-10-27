@@ -113,8 +113,10 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   pins the number and checks the history, so two branches bumping to the same number conflict at merge rather than share
   it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
-  vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
-  trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
+  vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
+  sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
+  passed, §7, so the client must stamp it and step it forward, never back, when it falls more than a second behind; an
+  input without one, 0, is judged on its arrival; `mode` is a prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
@@ -197,8 +199,9 @@ nearest system (P1.E04.T04).
 The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
 landed players sit in their ships), is a ship; a player on foot, an NPC or a prop is a walker; a mob is a mob; loot and
 loot pods are loot. An entity already in view stays in it until it is 5% beyond its radius, so one at the edge does not
-enter and leave every tick. Until movement authority (P1.E03.T04) validates `mode`, a client picks its own class through
-it. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5 minutes empty.
+enter and leave every tick. A player's mode is the one movement authority believes (§7): a client claiming `foot` while it
+flies is corrected and stays a ship. A zone opens on its first join, stops ticking after 30 s empty and unloads after 5
+minutes empty.
 
 ### 6.1 Phases
 
@@ -235,7 +238,7 @@ players, `event` and `raid` 12.
 
 ### 6.2 Fauna
 
-DESIGN 12.2, P1.E08.T01; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
+DESIGN 12.2, P1.E08.T01 and T03; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
 docile and skittish species, then the hostile ones each tier pass appends on a random stream of its own, so the list
 only grows with the tier and an index names the same species at every tier. The zone ticks a `FaunaSim` at the start of
 each step, at the zone's tier: the zone manager passes the world service's tier when it opens the zone and calls
@@ -245,7 +248,7 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   ground: a cell wakes when a player comes within 400 m of its centre and spawns the herd planned for it from the world's
   seed and the cell alone, so everyone meets the same herd there; with no player within 500 m it sleeps (its creatures
   stand still, unsimulated), and after 30 s asleep its creatures are despawned. Ambushers and the apex come only from
-  dens (`FaunaSim.spawnHerd`, P1.E08.T03).
+  dens (below).
 - **Bounds** (a pose is a client's claim until movement authority, and fauna holds its own limits anyway): a player
   wakes at most 4 new cells a second (40 at once, on arrival; one allowance per player across the zone's worlds), a
   world keeps at most 256 cells and a zone at most 150 creatures, so 50 players on foot stay within the 200-entity
@@ -258,14 +261,39 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
   with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
-  doubling each time, with one warning each time.
+  doubling each time, with one warning each time. A world's dens at the zone's tier come from the same worker and the
+  same plan: shared `worldSurface` plans the whole surface once (`planWorld`: the drawn ground's pads and sites'
+  clearance, to the bit, and every den of the tier, each naming which of the world's species lives in it, §12). The
+  dens cost 50–600 ms more on a large world at Tier 3, so they are asked for with the ground but as a request of their
+  own, kept per world and tier: the ground (`planGround`) comes back first, without them, and the dens' reply carries
+  the ground of its plan too, kept with its clearance (`Ground.nodes`) when no ground is kept yet. Tests hold the pads,
+  the nodes' clearance and the dens to one plan.
+- **Night** (`fauna/sky.ts`) is the meters' rule from the shared kinematics: night at a point when its star is on or
+  below the horizon of the point's own up. At night a cell may also send out its night herd, always one of the herd
+  spawner's predators, planned from the world's seed and the cell on a stream of its own with
+  (`FAUNA_SPAWNING.nightPredatorSpawnMult` − 1) times the chance its day herd is a predator's, so night doubles the
+  predators the herd spawner places (DESIGN 12.2, 12.8). It comes out once a night, when night falls on an active cell
+  or the cell wakes at night, and stays until the cell unloads.
+- **Dens** (DESIGN 12.2, `fauna/dens.ts`) live in the cells they stand in: while its cell is active a den keeps its
+  occupants out, as herds of the cell homed on the den. A predator den keeps its pack out, and at night a second, once a
+  night; an ambusher's burrow beside a site keeps its one or two ambushers lurking on it until a player comes within 8 m;
+  the apex's lair, in the landmark grove (the most wooded of the places a lair could go, `planDens`), sends out the apex
+  and its pack at night only, and at dawn the apex heads home once it has no one to fight and goes into its lair. A
+  den's herd that loses its occupant (a pack wiped out; the apex killed, its pack then hunting on as an ordinary herd of
+  the cell) is replaced after 300 s (the apex after 1,800 s, at night), a timer the zone's fauna keeps while the zone
+  runs, beyond the cell's life; a pack that only unloads with its cell comes back when the cell next loads. A
+  once-a-night spawn (a cell's night herd, a den's night pack) is due again from the first day after it, its cell awake
+  or asleep.
+  Night herds and dens' occupants spawn at each scan under the cells' load budget, never within 70 m of a player (the
+  herd spawner's nearest), and only when the zone has room (they try again at the next scan). Dens spawn whether or not
+  they are drawn: a den is a spawn anchor, not geometry. `FaunaOptions.dens` (as `spawner` by default) turns them off.
 - **Phases.** A player the shared world cannot see (`phases.hiddenFromShared`: sealed in a bay, event or raid phase, §6.1) still keeps the herds
   round it awake, since it sees them, but is no creature's prey, intruder or threat.
 - **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
   (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,
   return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow. Hostile creatures pick targets from a threat
   table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, `FaunaSim.hurt` adds damage. The
-  zone's metrics carry its fauna's worlds, creatures and cells by state.
+  zone's metrics carry its fauna's worlds, creatures, cells by state and herds out at dens.
 
 ## 7. Authority
 
@@ -273,6 +301,88 @@ Following IMPLEMENTATION_PLAN 0.3: the client sends inputs and its predicted pos
 and walker speed caps and the shared terrain sampler, corrects with `correction` when the error exceeds tolerance, and
 decides damage, loot, inventory, quests, economy, skills and the meter. Client-reported outcomes (damage dealt, items
 picked up, quest steps done) are never trusted; they are requests the server re-evaluates.
+
+**Movement** (`packages/server/src/sim/movement`, P1.E03.T04). Every zone the ZoneManager opens checks each player input
+before applying it.
+
+- *Time.* Speed is judged on the client's own clock: a pose is judged at the time its client stamped it (`input.time`),
+  an honest client's poses and times being its own trajectory. (This reverses the flight contract as P1.E12.T01 first
+  wrote it, where the server measured elapsed time itself.) The network's delays cancel within these bounds
+  (`MOVEMENT.time`), which keep the time credited between two inputs from running ahead of the real time that passed by
+  more than a small fixed slack:
+  - an input is credited with the time its client says passed since the one before, never less than none (a clock
+    stepped back costs that one input's time);
+  - and no more than its arrival gap, plus 0.05 s out of a 0.5 s bank that only real time no input claimed refills, plus
+    0.05 s of what is owed: the real time its running clock left unclaimed in the last 10 s, as its inputs fell behind
+    (a latency rise, a stall). So jitter of up to half a second cancels outright, a backlog drains however it arrives,
+    bunched or over seconds, and a latency spike falls back; a clock standing still while time passes is owed nothing
+    and banks half a second at most; one run fast is held to real time once the bank is spent;
+  - and never more than 0.3 s ahead of arrival.
+  - The envelope, as measured: the total time credited is at most the real time elapsed, plus the 0.5 s bank, plus
+    0.3 s ahead of arrival, and what is owed expires 10 s after it accrued. Within that, a client sending at 60 Hz
+    (inside its message budget) can be credited up to 3.9 times real time for 3.4 s; and one that stood still for 6 to
+    10 s with a trickling clock can claim about 6 s of allowance in one tick (some 10 km at the boost cap). That is the
+    envelope of an honest stall's backlog arriving at once after a silence, which is accepted: nothing beyond it is open.
+  - A clock stepped forward past what it can be credited (the client steps a clock that has fallen more than a second
+    behind, as after a hidden tab's pause) is not cashed in: the credited time re-syncs to it with no movement credit for
+    the step, and judging starts a fresh window there (at most once in 10 s).
+  - The bodies are placed at the credited time (to within 10 ms), so the pose's frame, clearance and air are the
+    client's; but never trailing the input's arrival by more than a second plus what is still owed. A stamp lagging its
+    arrival by more than a second is a backlog only while that lag drains (by half a second within every 3 s); one that
+    does not is stale, and placed at its arrival (the client never keeps such a lag: it steps its clock forward).
+  - A client that sends no time (0) is judged and placed on its arrival times: no jitter is cancelled for it. The game's
+    client stamps `time`.
+
+- *The pose* must be in a frame the shared rule (`selectFrame`) allows there, and change frame only where the rule does
+  (out of a sphere 5% beyond it, into one inside it; the last pose in the old frame is taken as carried by that frame to
+  the new pose's time, so a page that stalled for seconds and changes frame on its way back is judged on its own
+  movement, the frames' drift allowed over a tenth of a second at most); a ship may not be below the ground (the shared
+  terrain sampler, levelled under cities and sites exactly as the client levels it, sampled only below a ceiling no terrain reaches: the
+  ground fauna walks on, `drawnGround` at the system's tier, planned in the server's worker thread once a player is in
+  the world's frame; a pose that needs it before it is ready is let through provisionally and judged again, with every
+  input after it, as soon as it is, and refused back to where that began if it is not ready within 5 s), in a gas
+  giant's depths, or with its centre inside the
+  Waystation's hangar shell grown by its 6 m collision sphere (`STATION_LAYOUT` in `@astra/shared/data`; the rest of the
+  station's colliders arrive with P1.E11.T02); a walker may not be below the ground, outside the hangar (Grav Boots
+  aside), or more than 400 m over the ground for longer than 45 s.
+- *The mode* must be legal there: the pulse drive only out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM`
+  to engage, `dropOutM` while cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world,
+  2 km over its ground; `landed` only on a world's dry ground; `docked` only on a Waystation pad no other ship holds (a
+  joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
+  a world's ground or in a hangar, and only out of a landed or docked ship, which it can board again only from beside it.
+  In mode `ship` the `boost` button bit raises the caps to the boost cap, and air thicker than `AIR.flightModelFrom` to
+  the `atmo` cap: a client must send the bit while it boosts.
+- *The move* from the last valid pose: no further than its allowance covers in the time since (at most a second of it,
+  whatever silence came before: the client moves its ship a clamped 66 ms frame at a time), plus a tenth of a second's
+  worth and 25 m (anti-teleport); and not through the ground, nor a flying ship's centre through the hangar's
+  shell, further than the client's own once-a-frame collisions could miss (one 66 ms frame at its speed, the speed no
+  more than its allowance; steps are sampled against the terrain only when that long).
+- *Speed* follows the flight contract (`FLIGHT_TOLERANCE` in `@astra/shared/ships`): displacement over windows of at
+  least 1 s, judged against the larger allowance at the window's two end poses; a window not yet 1 s long is judged from
+  its start. A window carries on across a change of frame (its earlier poses re-expressed in the new frame as of the
+  change, since the client turns its velocity into the new frame without the frames' relative motion, which is allowed
+  for over the crossing step) and across changes among `space`, `boost` and `atmo` (each end pose its own allowance, with
+  the contract's decay). Between the engines, the pulse drive and rest a new stretch starts from the old one's last pose,
+  taken in the new mode's terms. Getting out and boarding carry the accounting too: the walker's first pose is judged as
+  a walker's move from where the client sets it down (`Game.exitShip`: 11 m left and 3 m ahead on the ground, or 8 m left
+  in a hangar), and a boarded ship's first pose as a ship's move from where it was left. A walker's windows are judged
+  across the ground (`walkerCaps`: the sprint, Sprint Stride's 11.5 m/s, the jetpack's push), upward (its climb plus the
+  highest ground along its path, which lifts it) and downward (`walkerFall`: no faster than a fall from where it last
+  touched the ground).
+- *Refused*, an input is not applied (its `seq` still counts for `ack`): the server sends `correction {seq, pose, mode}`,
+  `seq` being the refused input's and `pose` the last pose it can vouch for (for a window that was too fast, the
+  window's start), puts the entity there, and logs the account, character, rule and the measured and allowed values.
+  Inputs from the old trajectory are refused quietly for a second, or until one fits the corrected pose, so corrections
+  come at most once a second; 8 corrections within 30 s and the session is refused with `kicked`. An accepted input's
+  reported velocity is held to its allowance.
+- A pose the server did not watch arrive (a saved one, restored at login) is checked by `poseProblem` against the same
+  pose and mode rules; a character saved on foot also needs the ship it left (`parked`, saved with it) where a ship can
+  rest. The gateway has the planner plan the saved pose's world's ground before the check (`groundForRestore`), so it
+  never plans on the main thread; one it still cannot judge is not vouched for. Persistence restores any other docked at
+  home (§8).
+- A pose the server gives a character in play (an admin teleport within its zone, P1.E03.T07) re-seats its mover as a
+  join does (`MovementAuthority.remove`, then `add` at that pose; a docked one on whichever pad is free, `freePad`), so
+  its client's next input is judged from there.
 
 ## 8. Persistence
 
@@ -290,8 +400,10 @@ registration order, so a later one reads an earlier one's value (`ctx.get`). Pha
 read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
 second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
 layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `meters` (§19: heat and Charge with
-the world time they stood at), `pose` (`{system, pose, mode}`, read from the character's zone entity) and, when the
-server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when unreadable).
+the world time they stood at), `pose` (`{system, pose, mode, parked?}`, read from the character's zone entity, `parked`
+being where a character on foot left its ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a
+saved pose inside the ground, in the hangar's shell, docked off a pad or on foot with no ship to board is not restored)
+and, when the server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -461,6 +573,15 @@ on the terrain sampler the workers and the server sample); and each site's clear
 pads, only once dens are drawn (`DENS_DRAWN`, which P1.E14.T10 turns on with the den art); until then no machine plans
 them into the drawn ground. The client's `Planet` plans with it at the tier its `SolarSystem` was built for, its `Flora`
 scatters on that planet's ground, and the server's resource nodes (P1.E13.T01) call the same function.
+
+A den's place depends on who lives in it (P1.E08.T03): `planDens` houses each den with one of the world's own species,
+its whole list (`faunaSpecies(params, FAUNA_MAX_TIER)`, worked out inside the shared planner, so no caller passes it or
+can leave it out; the list at any tier is a prefix of it, so a den's occupant never changes with the tier and a den
+whose species the world does not carry yet stands empty), and a predator den is the kind its predator lives in (burrow,
+nest or roost), whose footprint sets where it fits and the pad it levels. `worldSurface(params, tier)` is that whole
+plan at once: the drawn ground (exactly `drawnGround`'s: the same code makes both) and every den of the tier, drawn or
+not. The dens the server's fauna spawns at, the pads its ground and the client level and the sites' clearance the
+resource nodes keep off all come from it (`planWorld`, §6.2): one plan, tested to agree.
 
 Resource nodes (P1.E13.T02, `world/resourceNodes.ts`) are the spec's to place: `planetNodeLayers(params, tier)` says which
 node types a world carries, and `scatterNodes(ground, layers, cell)` places the nodes of one ~64 m cell (`nodeCellLevel`,

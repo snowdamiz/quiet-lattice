@@ -1,9 +1,9 @@
-import { drawnGround, hasFauna, Random, type PlanetParams } from '@astra/shared/world';
+import { denPads, DENS_DRAWN, drawnGround, hasFauna, planSurface, Random, siteNodeClearance, TerrainSampler, type PlanetParams } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import type { PlannerWorkerMode } from '../../test/plannerWorkers.ts';
 import type { Vec3 } from './cells.ts';
-import { Ground, groundOf, GroundPlanner, LATTICE_M, planPads } from './terrain.ts';
+import { densOf, Ground, groundOf, GroundPlanner, LATTICE_M, planDenList, planGround, planPads, planWorld } from './terrain.ts';
 
 const system = describeZoneSystem(0);
 const home = system.bodies[system.home]!;
@@ -78,8 +78,97 @@ describe('the ground herds walk on', () => {
         const d: Vec3 = [rng.float(-1, 1), rng.float(-1, 1), rng.float(-1, 1)];
         expect(g.sample(d)).toBe(here.sample(d));
       }
+      // it carries the sites' clearance, so the resource nodes can scatter over it (P1.E13.T01)
+      expect(g.nodes).not.toBeNull();
+      expect(g.nodes!.nodeClear).toEqual(planGround(p).nodeClear);
+      expect(g.nodes!.nodeClear.length).toBeGreaterThan(0);
       // kept: the next ask is answered at once, by any planner
       expect(groundOf(p)).toBe(g);
+    } finally {
+      await planner.close();
+    }
+  });
+});
+
+describe('one plan', () => {
+  it('the dens the server spawns at are the drawn ground’s, and its ground the drawn ground, on several worlds', () => {
+    // small worlds with fauna from a few systems, quick to plan
+    const worlds = [0, 1, 2, 5]
+      .flatMap((s) => describeZoneSystem(s).bodies.filter((b) => b.type !== 'gas' && hasFauna(b.params as PlanetParams) && b.radius < 35_000))
+      .slice(0, 5)
+      .map((b) => b.params as PlanetParams);
+    expect(worlds.length).toBe(5);
+    for (const p of worlds) {
+      for (const tier of [1, 3]) {
+        const dens = planDenList(p, tier);
+        const drawn = drawnGround({ ...p, pads: null }, tier);
+        // the whole plan, as drawnGround makes it once dens are drawn
+        const natural = { ...p, pads: null };
+        const full = planSurface(natural, new TerrainSampler(natural), { tier });
+        expect(dens).toEqual(full.dens);
+        expect(dens.length).toBeGreaterThan(0);
+        expect(planPads(p, tier)).toEqual(drawn.pads);
+        expect(drawn.cities).toEqual(full.cities);
+        expect(drawn.sites).toEqual(full.sites);
+        // pads, the nodes' clearance and the dens: one plan (the planner's den reply carries all three)
+        const world = planWorld(p, tier);
+        const ground = planGround(p, tier);
+        expect(world).toEqual({ pads: drawn.pads, nodeClear: drawn.nodeClear, dens });
+        expect(ground).toEqual({ pads: drawn.pads, nodeClear: drawn.nodeClear });
+        expect(drawn.nodeClear).toEqual(siteNodeClearance(full.sites));
+        expect(groundOf(p, tier).nodes!.nodeClear).toEqual(siteNodeClearance(full.sites));
+        if (DENS_DRAWN) {
+          expect(drawn.dens).toEqual(dens);
+          expect(drawn.pads).toEqual(full.pads);
+        } else {
+          expect(drawn.dens).toEqual([]);
+          expect([...drawn.pads, ...denPads(dens)]).toEqual(full.pads);
+        }
+      }
+    }
+  });
+});
+
+describe('a world’s dens', () => {
+  it('are planned in the worker at a tier, as on this thread, each naming who lives there, and kept per tier', async () => {
+    // a small world no other test plans
+    const small = describeZoneSystem(8)
+      .bodies.filter((b) => b.type !== 'gas' && hasFauna(b.params as PlanetParams))
+      .sort((a, b) => a.radius - b.radius)[0]!;
+    const p = small.params as PlanetParams;
+    const warnings: string[] = [];
+    const planner = new GroundPlanner({ log: { warn: (_, msg) => warnings.push(msg) } });
+    try {
+      // none below Tier 1, with nothing to plan
+      expect(planner.dens(p, 0)).toEqual([]);
+      expect(planner.planning).toBe(0);
+      expect(planner.dens(p, 3)).toBeNull();
+      expect(planner.dens(p, 3)).toBeNull();
+      expect(planner.planning).toBe(1);
+      const deadline = Date.now() + 30_000;
+      while (!planner.dens(p, 3) && Date.now() < deadline) await new Promise((r) => setTimeout(r, 20));
+      const dens = planner.dens(p, 3)!;
+      expect(planner.mainThread).toBe(false);
+      expect(warnings).toEqual([]);
+      expect(dens).toEqual(planDenList(p, 3));
+      expect(dens.length).toBeGreaterThan(0);
+      expect(dens.every((d) => d.species >= 0)).toBe(true);
+      // kept for any planner; another tier is a plan of its own
+      expect(densOf(p, 3)).toBe(dens);
+      // the reply carried the world's ground from the same plan, kept with the sites' clearance the nodes need
+      const g = planner.ground(p, 3)!;
+      expect(g).not.toBeNull();
+      expect(planner.planning).toBe(0);
+      expect(g.nodes!.nodeClear).toEqual(planGround(p, 3).nodeClear);
+      const here = new Ground(p, planPads(p, 3));
+      const rng = new Random(9);
+      for (let i = 0; i < 30; i++) {
+        const d: Vec3 = [rng.float(-1, 1), rng.float(-1, 1), rng.float(-1, 1)];
+        expect(g.sample(d)).toBe(here.sample(d));
+      }
+      expect(planner.dens(p, 2)).toBeNull();
+      // the world's params are left as they were
+      expect(p.pads ?? null).toBeNull();
     } finally {
       await planner.close();
     }

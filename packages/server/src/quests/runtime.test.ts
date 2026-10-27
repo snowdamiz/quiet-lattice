@@ -416,7 +416,9 @@ describe('quest runtime', () => {
     expect(a.book().active.fight?.anchor).toMatchObject({ frame: a.zone.stationFrame });
     w.runtime.tickAll();
     const [kestrel] = w.actors(a.zone, a.phase());
-    expect(a.zone.entity(kestrel!)?.fields).toMatchObject({ kind: 'ship', hull: 'kestrel', pos: [0, 0, -500] });
+    // (500 m out from where the player stood: docked on its pad, under movement authority)
+    const [ax, ay, az] = a.book().active.fight!.anchor!.pos;
+    expect(a.zone.entity(kestrel!)?.fields).toMatchObject({ kind: 'ship', hull: 'kestrel', pos: [ax, ay, az - 500] });
     expect(w.runtime.mayPlay(a.viewer, 'test')).toBe(false);
     w.runtime.event(a.id, { type: 'kill', tags: [], entity: kestrel });
     expect(played).toEqual([['test', 'quest:fight:after']]);
@@ -522,7 +524,7 @@ describe('quest runtime', () => {
     const inventory = new InventoryService();
     const progress = new CharacterProgress();
     const runtime = new QuestRuntime({ zones, inventory, progress, clock });
-    const registry = coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress, quests: runtime });
+    const registry = coreRegistry({ zones, clock, inventory, ships: new ShipLoadouts(), progress, quests: runtime });
     expect(registry.components.at(-1)?.key).toBe(QUESTS);
     const persistence = new CharacterPersistence({ store, registry });
     const home = homeSystemOf('thalune');

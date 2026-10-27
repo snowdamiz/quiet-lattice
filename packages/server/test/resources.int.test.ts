@@ -24,7 +24,9 @@ const home = homeSystemOf('thalune');
 const RESPAWN_S = 3;
 
 beforeAll(async () => {
-  server = await startTestServer();
+  // (its bots stand anywhere on the world with raw poses, straight from the Waystation: no movement authority here; a hit
+  // reads the mode movement authority believes, movement.int.test)
+  server = await startTestServer({}, { movement: false });
   // (a node grows back in minutes; here in seconds, so the timer can be watched)
   server.ws.resources.respawnSeconds = () => RESPAWN_S;
   world = miningWorld(home, 0);

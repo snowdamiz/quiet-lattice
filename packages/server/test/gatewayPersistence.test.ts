@@ -93,12 +93,14 @@ async function setup() {
     savedAt: null,
     createdAt: new Date(),
   });
-  const clock = { now: () => 1000 };
+  // (time passes: movement authority lets nothing move in no time)
+  const started = performance.now();
+  const clock = { now: () => 1000 + (performance.now() - started) / 1000 };
   const zones = new ZoneManager({ clock });
   const inventory = new InventoryService();
   persistence = new CharacterPersistence({
     store,
-    registry: coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress() }),
+    registry: coreRegistry({ zones, clock, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress() }),
     flushTimeoutMs: 2000,
   });
   server = createServer();
@@ -136,7 +138,8 @@ describe('gateway join with persistence', () => {
   it('loads what a character left when the save of its leave lands while its row is being read, however its id is spelled', async () => {
     const { store, inventory, persistence, join } = await setup();
     const a = await join(CHARACTER);
-    const moved: Pose = { frame: stationFrame(HOME), pos: [60, 4, -9], quat: [0, 0, 0, 1], vel: [2, 0, 0] };
+    // (lifting off its pad: movement authority holds inputs to what a ship can do)
+    const moved: Pose = { frame: stationFrame(HOME), pos: [-30, 3.4, -22], quat: [0, 0, 0, 1], vel: [0, 2, 0] };
     a.s.send({ t: 'input', seq: 1, time: 0, mode: 'ship', pose: moved, buttons: 0 });
     a.s.send({ t: 'inventory', seq: 1, op: { op: 'transfer', from: { c: 'suit', i: 0 } } });
     const left = (await a.s.next('inventory')).inventory;
@@ -160,13 +163,13 @@ describe('gateway join with persistence', () => {
     expect(b.inventory.inventory).toEqual(inventory.get(CHARACTER));
 
     // and its next save is not stale: memory and the row agree
-    const again: Pose = { ...moved, pos: [70, 4, -9] };
+    const again: Pose = { ...moved, pos: [-30, 4.4, -22] };
     b.s.send({ t: 'input', seq: 1, time: 0, mode: 'ship', pose: again, buttons: 0 });
     await handled(b.s);
     expect(persistence.saveNow(CHARACTER)).toBe(true);
     expect(await persistence.flush()).toBe(true);
     expect(persistence.stats().stale).toBe(0);
-    expect(store.rows.get(CHARACTER)!.state.pose?.data).toMatchObject({ pose: { pos: [70, 4, -9] } });
+    expect(store.rows.get(CHARACTER)!.state.pose?.data).toMatchObject({ pose: { pos: [-30, 4.4, -22] } });
     b.s.close();
   });
 });

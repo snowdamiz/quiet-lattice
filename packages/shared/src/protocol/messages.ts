@@ -146,8 +146,10 @@ export const Buttons = {
  * (see `peekVersion`). */
 export const Hello = z.object({ t: z.literal('hello'), version: z.number().int(), token: z.string().min(1).max(4096) });
 export const Join = z.object({ t: z.literal('join'), characterId: Id });
-/** `time` is the client's estimate of server time when the pose was sampled; the server never uses it for speed checks
- * (it measures elapsed time itself). The tag `t` is the message type, hence `time`. */
+/** `time` is the client's estimate of server time when the pose was sampled: movement authority judges the pose and its
+ * speed on it, crediting no more of it than really passed (ARCHITECTURE §7). A client steps it forward, never back, when
+ * it falls more than a second behind; 0 (none) is judged on the input's arrival. The tag `t` is the message type, hence
+ * `time`. */
 export const Input = z.object({
   t: z.literal('input'),
   seq: z.number().int().nonnegative(),

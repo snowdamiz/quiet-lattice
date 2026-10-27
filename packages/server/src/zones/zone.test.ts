@@ -1,7 +1,9 @@
-// Zone bookkeeping: poses it cannot place are refused, a despawned session entity takes its session out, and snapshots
-// acknowledge inputs from seq 1 with 0 meaning none yet.
+// Zone bookkeeping: poses it cannot place are refused, a despawned session entity takes its session out, snapshots
+// acknowledge inputs from seq 1 with 0 meaning none yet, and with movement authority a player's mode is the one the server
+// believes.
 import { describe, expect, it } from 'vitest';
 import { SnapshotClient } from '../../test/snapshotClient.ts';
+import { LARK } from '../sim/movement/testing.ts';
 import { describeZoneSystem } from './system.ts';
 import { Zone, type EntityInit, type ZoneViewer } from './zone.ts';
 
@@ -108,5 +110,43 @@ describe('Zone', () => {
     expect(zone.input(v, input(7))).toBe('ok');
     step();
     expect(v.client.snapshots.at(-1)!.ack).toBe(7);
+  });
+
+  it('with movement authority: applies the mode it believes, keeps a refused input out and puts the entity where the correction says', () => {
+    const zone = new Zone({ id: 'sys:0', systemIndex: 0, system: describeZoneSystem(0), movement: true });
+    let time = 2.3e7;
+    zone.step(time);
+    const v = new Viewer(1);
+    const dock = zone.dockPose().pose;
+    expect(() => zone.join(new Viewer(2), { kind: 'player', ...dock, mode: 'docked' })).toThrow(/profile/);
+    const id = zone.join(v, { kind: 'player', ...dock, mode: 'docked' }, { profile: { ship: LARK }, now: time });
+    // the next joiner gets the next pad
+    expect(zone.dockPose().pose.pos).not.toEqual(dock.pos);
+    const input = (seq: number, pos: [number, number, number], mode: 'ship' | 'foot', vel: [number, number, number] = [0, 0, 0]) => ({
+      t: 'input' as const,
+      seq,
+      time: 0,
+      mode,
+      pose: { ...dock, pos, vel },
+      buttons: 0,
+    });
+    const up: [number, number, number] = [dock.pos[0], dock.pos[1] + 1, dock.pos[2]];
+    expect(zone.input(v, input(1, up, 'ship', [0, 5e6, 0]), (time += 0.05))).toBe('ok');
+    const e = zone.entity(id)!;
+    expect(e.fields).toMatchObject({ mode: 'ship', pos: up });
+    expect(e.cls).toBe('ship');
+    expect(e.unvalidated).toBe(false);
+    // its velocity held to the space allowance
+    expect(Math.hypot(...e.fields.vel)).toBeCloseTo(710, 6);
+    // claiming to be on foot 40 m up, nowhere near where its ship could set it down: refused, still a ship (seen from
+    // 50 km, not 2), still where it was
+    const r = zone.input(v, input(2, [dock.pos[0], 40, dock.pos[2]], 'foot'), (time += 0.05));
+    expect(r).toMatchObject({ ok: false, correction: { seq: 2, mode: 'ship', pose: { pos: up } } });
+    expect(e.fields).toMatchObject({ mode: 'ship', pos: up });
+    expect(e.cls).toBe('ship');
+    // and the snapshot acknowledges it as handled
+    zone.step(time + 0.05);
+    expect(v.client.snapshots.at(-1)!.ack).toBe(2);
+    expect(zone.movement!.recent.at(-1)).toMatchObject({ rule: 'exit_range', entity: id });
   });
 });
