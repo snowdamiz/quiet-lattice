@@ -91,11 +91,11 @@ export class SocialUI {
 
   /** Listens to the connection (Net) the character is in play on; null when there is none. */
   attach(net) {
+    this.offWelcome?.();
+    this.offWelcome = null;
     this.model.attach(net);
-    if (net && !this.greeted) {
-      this.greeted = true;
-      this.model.note('Enter to chat · /help for commands');
-    }
+    // (said once, as the world first shows)
+    if (net) this.offWelcome = net.on('welcome', (m, first) => first && this.model.note('Enter to chat · /help for commands'));
   }
 
   get isOpen() {

@@ -807,7 +807,11 @@ export const SCREENS: Record<string, ScreenDef> = {
       system: (page) => onStage(page, "s.social.setTab('system')"),
       party: (page) => onStage(page, "s.social.setTab('party')"),
       refusal: (page) =>
-        onStage(page, "s.social.setTab('shard'); s.social.model.submit('/invite Nobody Here'); s.social.model.pace.level = 0; s.type('Anyone up for the raid?')", 60),
+        onStage(
+          page,
+          "s.social.setTab('shard'); s.social.model.submit('/invite Nobody Here'); s.social.model.pace.level = 0; s.type('Anyone up for the raid?')",
+          60,
+        ),
     },
     async motion(page) {
       await page.evaluate(() => {
@@ -849,7 +853,7 @@ export const SCREENS: Record<string, ScreenDef> = {
     },
     stills16x9: {
       leader: (page) => onStage(page, "s.partyScene('Tess Arlo')"),
-      closed: (page) => onStage(page, "s.partyScene(); s.close()", 60),
+      closed: (page) => onStage(page, 's.partyScene(); s.close()', 60),
     },
   },
   // an invite waiting, the panel closed (Enter to answer), its minute running down; a still with the panel open; the
