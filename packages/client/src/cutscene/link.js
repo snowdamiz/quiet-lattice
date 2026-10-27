@@ -10,6 +10,12 @@
 // kept); the player uses it only there.
 import { encodeClientMessage } from '@astra/shared/protocol';
 
+/** The `done` for cutscene `id` ending `how` ('finished', 'skipped', 'returned'; true and false: skipped, finished). */
+export function doneMessage(id, how) {
+  const reason = how === true ? 'skipped' : how === false || how === undefined ? 'finished' : how;
+  return { t: 'cutscene', op: 'done', id, skipped: reason !== 'finished', reason };
+}
+
 /** How long the server has to answer a request before the client gives up and plays nothing. */
 export const ANSWER_TIMEOUT_MS = 5000;
 
@@ -47,10 +53,14 @@ export class NetCutsceneLink {
     });
   }
 
-  /** The cutscene ended, or was skipped. */
-  done(id, skipped) {
+  /**
+   * The cutscene ended: `how` is 'finished', 'skipped', or 'returned' (given back unplayed: another cutscene was on
+   * screen, or it came too late), which ends its phase without ending a quest step on it (true and false are skipped and
+   * finished).
+   */
+  done(id, how) {
     if (this.playing === id) this.playing = null;
-    this.net.send({ t: 'cutscene', op: 'done', id, skipped: !!skipped });
+    this.net.send(doneMessage(id, how));
   }
 
   /** Stops listening. */
@@ -62,14 +72,16 @@ export class NetCutsceneLink {
   answered(m) {
     const p = this.pending;
     if (p && m.id === p.id && (m.op === 'play' || m.op === 'refused')) {
-      if (m.op === 'play') this.playing = m.id;
+      // (one already playing stays the one playing: the player gives this one back when it cannot take it now)
+      if (m.op === 'play' && this.playing === null) this.playing = m.id;
       this.settle(m.op === 'play' ? { phase: m.phase } : { refused: m.reason ?? 'refused' });
       return;
     }
     if (m.op === 'play' && m.id !== this.playing) {
-      // a play for a request the client gave up on comes too late: the server's placing is given back
-      if (this.abandoned.delete(m.id) || !this.onPlay) {
-        this.net.send({ t: 'cutscene', op: 'done', id: m.id, skipped: true });
+      // a play for a request the client gave up on comes too late, and one that comes while another plays cannot play
+      // now: the server's placing is given back, and the one playing stays the one playing
+      if (this.abandoned.delete(m.id) || !this.onPlay || this.playing !== null) {
+        this.net.send(doneMessage(m.id, 'returned'));
         return;
       }
       // one nobody asked for is the server's own (a quest step's cutscene): it plays, and its done goes back as usual
@@ -113,9 +125,9 @@ export class OfflineCutsceneLink {
     return { phase: null, offline: true };
   }
 
-  /** The cutscene ended, or was skipped. */
-  done(id, skipped) {
-    this.send({ t: 'cutscene', op: 'done', id, skipped: !!skipped });
+  /** The cutscene ended, as NetCutsceneLink.done says. */
+  done(id, how) {
+    this.send(doneMessage(id, how));
   }
 
   send(msg) {

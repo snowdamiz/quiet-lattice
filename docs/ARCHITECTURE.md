@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -20,10 +20,11 @@ processes will read (presence, zone membership, the server clock) is mirrored to
 ## 2. Server layout (`packages/server/src`)
 
 ```
-index.ts            boot: config → db → redis → world service → zone manager → character persistence → gateway
+index.ts            boot: config → db → redis → world service → zone manager → quest runtime → character persistence → gateway → tooling
 config.ts           env (DATABASE_URL, REDIS_URL, JWT_SECRET, PORT=8787, TICK_HZ=20), validated with zod
 db/                 Drizzle schema (schema.ts), client, migrate.ts; SQL migrations in packages/server/drizzle/
 gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters
+gateway/devLogin.ts POST /auth/dev, the dev-only login bypass (§16)
 gateway/ws.ts       WebSocket upgrade (token in the first message), one Session per socket
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
@@ -35,8 +36,10 @@ count/              the Count meter (§11): lean, target, drift, burn and underd
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
-sim/                server-side systems added by later tasks: movement validation, combat, quests…
-dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
+quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
+sim/                server-side systems added by later tasks: movement validation, combat…
+admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
+cli/                the developer CLI (`pnpm --filter @astra/server cli -- <command>`): over the admin channel, or --direct
 ```
 
 Libraries: `fastify` for HTTP, `ws` for sockets (attached to Fastify's server in `noServer` mode), `drizzle-orm` with
@@ -104,24 +107,25 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes); a unit test pins the number and checks the
-  history, so two branches bumping to the same number conflict at merge rather than share it.
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests); a unit test pins the number and
+  checks the history, so two branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
-  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15). Each socket's message budget is 60 a
-  second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat, party,
-  inventory, skill and cutscene requests, and the burst absorbs the backlog of a stall. Chat and invites have far smaller
-  limits of their own, per account (§13).
+  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17). Each socket's
+  message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
+  interactions, chat, party, inventory, skill, cutscene and quest requests, and the burst absorbs the backlog of a
+  stall. Chat and invites have far smaller limits of their own, per account (§13).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
-  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), and snapshots.
+  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests, error?}` (§17), and
+  snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -149,12 +153,15 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
 - **Cutscenes** (protocol 6, §15): the client sends `cutscene {op: 'request', id}` to play one where its player is and
-  `cutscene {op: 'done', id, skipped?}` when it ends (`skipped` only on done); the server answers `cutscene {op: 'play'
+  `cutscene {op: 'done', id, skipped?, reason?}` when it ends (`skipped` and `reason` only on done; protocol 7's
+  `reason` says how: `finished`, `skipped`, or `returned`, given back unplayed because another cutscene was on screen or
+  the play came too late; absent, `skipped` says finished or skipped); the server answers `cutscene {op: 'play'
   | 'ended' | 'refused', id, phase, reason?}`, `phase` being the story phase the player is in while it plays (snapshots
   do not say), `reason` one of `unknown`, `denied`, `cooldown`, `busy`, `place`, `phase`, `zone`. Ids are a-z, 0-9 and
   `_`.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
-  `CharacterList`.
+  `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
+  `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
 
 ## 6. Zones
 
@@ -162,7 +169,10 @@ A zone hosts one star system: every entity in it, a 20 Hz tick, a spatial hash o
 interest sets per session (entities within the class radius of the session's own entity: ships 50 km, walkers 2 km, mobs
 1.5 km, loot 500 m; always the session's own entity, and its party wherever they are; then its phase may hide some of
 them, §6.1), and per-session delta snapshots. Ticks are fixed-step; a tick that overruns is logged with its duration (the
-budget is 10 ms p95 at 200 entities). Entities in deep space between systems belong to a deep-space zone keyed by the
+budget is 10 ms p95 at 200 entities), and every ASTRA_METRICS_S (10 s) the manager logs the loop (`tick loop`: ticks run
+and skipped since the last report, zones loaded and awake, sessions) and each awake zone (`zone metrics`, with its zone
+id: tick p50/p95/max over the last 400 ticks, entities, sessions, overruns, its fauna's worlds, creatures and cells) at
+info, as the server's other logs are: pino JSON lines that carry a `zone` id wherever a zone is concerned. Entities in deep space between systems belong to a deep-space zone keyed by the
 nearest system (P1.E04.T04).
 
 The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
@@ -259,8 +269,9 @@ registration order, so a later one reads an earlier one's value (`ctx.get`). Pha
 `coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the ship and inventory
 read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
 second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
-layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`,
-read from the character's zone entity).
+layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `pose` (`{system, pose, mode}`,
+read from the character's zone entity) and, when the server has a quest runtime, `quests` (§17: held by the runtime;
+refused, never replaced, when unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -290,9 +301,21 @@ read from the character's zone entity).
   canonical id (lower case, the spelling Postgres returns and persistence keys by) while persistence pins it.
 - A character that has left stays held until its save is written, then every component forgets it (the inventory service
   included). The in-memory services refuse a character they do not hold (`InventoryNotHeldError`), so nothing changes a
-  character out of play behind persistence's back. There is no API yet for changing one out of play: P1.E03.T07 (the
-  dev CLI's grant, teleport, set quest step) adds it to persistence as load, modify and save, refused while the character
-  is held and holding its joins until the save is written.
+  character out of play behind persistence's back.
+- **Out of play: load, modify, save** (`persistence.edit(id, modify)`, P1.E03.T07; the CLI's grant, teleport, skill
+  points and quest step use it, §16). The character's row is read (`store.read`) and decoded as a join would decode it;
+  `modify` reads each component's value (a copy; the default when none is stored) and sets new ones, or returns why it
+  refuses; each value set is checked against its component (schema, then `check` with the components before it reading
+  the edited values) and the changed entries are written in one save at the row's revision + 1, which the store's guard
+  turns into a compare-and-set: a row written meanwhile is a `conflict`, and nothing is written. An edit is refused
+  (`held`) while the character is held (in play, or left and its save not yet written) or pinned (a join is reading its
+  row), and (`busy`) while another edit of it runs. A join of a character being edited waits before reading its row
+  (`persistence.afterEdit`, which the gateway's row read goes through, under the join's pin) until the edit's write
+  has landed or failed, so it loads the edited state; `close()` lets a running edit finish. An edit may take the
+  character out of play first (`{leaving: session}`, the CLI's teleport to another system, §16): the leave is captured
+  at once and written (within `flushTimeoutMs`, else nothing is edited), what was held for it is dropped (the row has
+  it), then the edit is made, the character's joins held throughout. Like a save, an edit assumes one process holds the
+  character (the CLI's direct mode is refused while a server answers).
 
 **Adding a component** (quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
 `CharacterComponent` with its key, `v: 1`, the zod schema of the stored value, `default`, `load`, `save` and `unload`
@@ -585,8 +608,10 @@ decides when one plays; the client presents it.
 - **The client's link** (`packages/client/src/cutscene/link.js`): online (`game.net`, P1.E04.T01's Net) a cutscene asks
   through `NetCutsceneLink` (`net.send` and `net.on('cutscene')`) and plays only on `play`, in the phase it names; a
   refusal, no answer within 5 s or a dropped connection plays nothing, and a `play` that comes too late for a request it gave up on is given back
-  with `done`. An unrequested `play` is a cutscene the server started itself (a quest step's): it plays, and its `done`
-  goes back as usual (one that cannot play now is given back at once). The server ending the one playing (`ended`)
+  with `done`. Every `done` says how it ended: `finished`, `skipped`, or `returned` for every give-back. The link is made as the game goes online (`enterWorld` calls `cutscenes.linkFor()`), so it hears a
+  `play` before the client has asked for anything. An unrequested `play` is a cutscene the server started itself (a quest
+  step's): it plays, and its `done` goes back as usual (one that cannot play now, another playing among them, is given
+  back at once, and the one playing stays the one playing). The server ending the one playing (`ended`)
   ends it here as a skip. `OfflineCutsceneLink` (a local
   layer, phase null, the messages it would have sent kept) is the dev sandbox's only: with no `game.net`, in a dev
   build.
@@ -612,3 +637,172 @@ decides when one plays; the client presents it.
   `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end, skips it, and plays it through a
   stand-in Net (asked for, refused, and started by the server); `cutscene-online.spec.ts` plays it through the real Net
   against a local server (online.ts), its tug seen in the snapshots while the player watches and gone after `done`.
+
+## 16. Developer tooling (`packages/server/src/admin`, `src/cli`, `gateway/devLogin.ts`)
+
+P1.E03.T07. Configured by ASTRA_* variables (`admin/config.ts`, read beside `config.ts` from the environment and the
+repository's `.env`): `ASTRA_DEV_LOGIN`, `ASTRA_ADMIN_SECRET`, `ASTRA_ADMIN_PORT` (8788), `ASTRA_ADMIN_IN_PRODUCTION`
+and `ASTRA_METRICS_S` (10; 0 turns the zone metrics log off, §6). Dev tools are unreachable in production
+(IMPLEMENTATION_PLAN 0.3): a server with `NODE_ENV=production` refuses to start with the dev login on, and with an admin
+secret unless `ASTRA_ADMIN_IN_PRODUCTION=1` and the secret has 32+ characters; with `NODE_ENV` unset it serves the dev
+login only on a loopback `HOST` (as `config.ts` allows the dev JWT secret). Secrets may not hold whitespace (they travel
+as Bearer tokens).
+
+- **Dev login** (`POST /auth/dev {name, people?}`, served only with `ASTRA_DEV_LOGIN=1` outside production; otherwise the
+  path does not exist, 404). Signs in to the account `dev-<name>` (`name`: 1–20 of `[A-Za-z0-9_-]`, any case) without a
+  password, making it on first use with a random password nobody knows, and with it a character "Dev <Name>" (three
+  letters added on a name clash; the reserved word marks it as a dev character, and only this route bypasses the name
+  rules) of `people` (thalune by default; another people's gets a character of its own). It answers `{token, accountId,
+  character, created}`, so a client dev scenario (`#foot`, `#fly`, …; P1.E04.T05) goes through the real server in one
+  request: dev login, then `hello` with the token and `join` the character. Rate-limited with `/auth/*`; every dev login is
+  logged at warn. Only `dev-` accounts are reachable this way, and registration refuses `dev-` usernames (§5), so no
+  player's account is.
+- **The admin channel** (`admin/channel.ts`): with `ASTRA_ADMIN_SECRET` (16+ characters) set, an HTTP listener of its own
+  on 127.0.0.1:`ASTRA_ADMIN_PORT`, never the game's port or host, taking `POST /admin/command {command}` with
+  `Authorization: Bearer <secret>`. Requests from anywhere but loopback, with an `Origin` (a browser), or without the
+  secret are refused and logged. `GET /admin/health` answers `{service: 'astra-admin', version: 1}` without the secret.
+  Commands are zod-validated (`admin/commands.ts`) and run by the admin service, which
+  logs each one (`admin command`) with the operator the CLI names (`x-astra-operator`, `$USER` by default), how it came,
+  what it asked and how it ended. Answers: `{ok: true, result}` or `{ok: false, error, message}` with `error` one of
+  `usage`, `not_found`, `needs_server`, `unavailable`, `held`, `busy`, `invalid`, `refused`, `conflict`, `failed`.
+- **The CLI** (`pnpm --filter @astra/server cli -- [--json] [--direct [--force]] [--url u] [--operator who] <command>`;
+  `--help` lists them). It sends the secret only to a loopback `http:` URL (`--url`, `ASTRA_ADMIN_URL`, else
+  127.0.0.1:`ASTRA_ADMIN_PORT`; anything else is refused as usage) that first answers `GET /admin/health` as above, so
+  an unrelated program that happens to hold the port never sees it (a hostile local process could copy the public
+  health answer; the secret is a guard against accidents and remote callers, not against code already on the machine). Commands: `who`, `zones`, `metrics`; `teleport <character> <system> <frame> <pose> [mode=…]`; `grant <character>
+  <item|resource|units> <n>` (negative takes away, all or nothing); `spawn <system> herd species=<i> [count] [level]
+  (near=<character> | body=<i> at=<x,y,z>)` (FaunaSim.spawnHerd, §6.2) and `spawn <system> entity kind=npc|prop
+  frame=<f> at=<x,y,z> [name]`, `despawn <system> <entity>` (not players or creatures), both only in a loaded zone;
+  `set-quest-step <character> <quest> <step>`; `set-skill-points <character> <n>` (SkillService.setPoints, §14);
+  `mute <account> [seconds]` (3,600 by default, a week at most) and `unmute <account>` (SocialService, §13). Characters
+  and accounts are named by id or by name, ignoring case. Frames are `station`, `inertial`, a body index or a frame id;
+  poses are `docked` (station frame), `orbit[:alt]` (above a body's sea level along +x, by default a quarter of its
+  radius and at least 2 km; or out from the Waystation along +z), `surface[:lat,lon]` (on a rocky body's drawn ground,
+  §12, 2 m up, on foot; y is the pole; default 20°, 0°) or `x,y,z` metres in the frame (in a ship); every pose is checked
+  as a saved one is (`poseProblem`) and against the system's frames. Exit codes: 0, 1 refused or failed, 2 usage, 3 no
+  server to talk to.
+- **In play or out.** A character a joined session holds is changed through the live services, so authority holds and
+  its client hears the usual messages: a teleport in its zone patches its entity and sends `correction` at its last
+  input's `seq` (once movement authority, P1.E03.T04, is on main, the teleport must also re-seat the mover there: the
+  seam is marked in `AdminService.moveInZone`); a grant goes through the inventory service (pushed `inventory`), skill
+  points through the skill service (pushed `skills`); each is then saved at once (`saveNow(id, 'admin')`). A character out of
+  play is changed by `persistence.edit` (§8) with the same shared rules (the inventory laid out for its ship and nodes,
+  `addItem`/`takeItem`/`addUnits`/`spendUnits`, `setAvailablePoints`, the pose), and its next join loads it. A
+  character held by the save of its leave is waited for (up to 3 s) rather than refused. `mute` and the world commands
+  need the running server. `set-quest-step` goes through the quest runtime's `QuestAdmin` (§17, `quests/admin.ts`): in
+  play `setStep` moves the quest (pushed `quests`), out of play `setStepStored` moves it in the stored log.
+- **Teleporting a character in play to another system** (until zone handoff, P1.E04.T04, replaces it with a real
+  handoff): the client cannot follow a `zone` message yet, so the server takes the character out of play and saves it at
+  the new placement through the same edit as one out of play (`persistence.edit(…, {leaving: session})`: its leave is
+  captured and written, then the pose, its joins held throughout), takes its entity out of its zone, stops handling the
+  session's messages (its inputs in the old system's frames are no strikes) and closes the socket without a refusal
+  (code 4001, `MOVED_CLOSE_CODE`). The client's Net reconnects as after any dropped connection, and its welcome places
+  it where the server now holds it (`Game.onWelcome`, §9).
+- **Direct mode** (`--direct`): with no server running, teleport, grant, set-quest-step and set-skill-points run in the
+  CLI itself against `DATABASE_URL`, through the same admin service and `persistence.edit`, printing their audit lines
+  on stderr. One process holds a character at a time (§8), so direct mode is refused while anything answers at the
+  server's `HOST:PORT/health`; for a character saved in the last 60 s (`saved_at`: a server elsewhere on the same
+  database may hold it; an edit counts as a save too) unless `--force`; and in production unless
+  `ASTRA_ADMIN_IN_PRODUCTION=1`.
+
+## 17. Quests
+
+DESIGN 14.1, P1.E09.T01. A quest is data (`@astra/shared/quests`, `QUESTS` in `catalog.ts`, validated by
+`questDefSchema`): id, title, category (DESIGN 14.2), chapter for the main story, tier, giver (`npc:…`, `terminal:…`,
+`monolith:…`, `board:…`), `auto` (started for every character that can take it: First Jobs, the demo's guided path),
+prerequisites (level, chapter, quests, flags, not-flags, people, faction rank), steps, rewards, flags set on completion
+and a repeat rule (`once`, `daily` by world-time day, `{cooldownS}`). Steps are the fifteen types of DESIGN 14.1, each with
+its parameters; things in the world are named as targets `kind:id[:id…]`, matched exactly or under a `:*` prefix.
+Steps go on to the next, or to a later `next` (a choice's options each name one); they only go forward, so entering a
+step already met (a collect step with the goods in the suit) finishes it at once and a quest always ends. While an
+optional step is current the step after it is live too (its events, its delivery, its answer, its phase), and finishing
+that one skips the optional step; an optional step cannot itself be instanced. Counting steps count in a quest-level
+counter (`counter`, default the step's id), so two steps can share one (Forty Names' 20 and 40 logs).
+
+- **The engine** (`QuestBook`, `engine.ts`) is pure: one character's quest state, changed in place by `start`, `offer`
+  and `accept`, `autoStart`, `apply(event)`, `choose` (a dialogue answer or a fork, on a live step; an answer it does not
+  offer is refused) and `abandon` (never the main story), each returning notes (started, progress, step, completed,
+  failed, abandoned, reward, pruned) for its caller to act on. It is told the world time, the character, the system it
+  is in (with its tier), where it is and what it holds (`QuestContext`). Events (`world.ts`): `tick {dt, at}` (where the
+  character is: system, frame, body, height above the radius, above the air or not, mode), `held {items}`, and from the
+  systems that see them `enter {place}`, `interact {target}`, `mine {node, id?}`, `analyze {species}`, `scan {sites}`,
+  `kill {tags, entity?}`, `wave {cleared}`, `defend_lost`, `escort {npc, status, progress?}`, `delivered {item, count,
+  to}`, `died`, `touch {monolith}`, `cutscene_end {cutscene}`. Places (`Place`: a body's frame, the Waystation's or the
+  inertial one, at its origin, a position, a point on the surface, or a spot in one of a world's cities: its plaza or its
+  market, where the client draws the trade post) resolve against the shared `SystemDescription` and the shared city plan
+  (`cityGround`: `planCities` and the ground levelled under them, cached per world), so both ends agree on where the
+  apothecary's stall in Belost's market is, and an actor's offset there (east, up, north) stands on that ground
+  (`actorPosition`).
+- **The state** (the `quests` component, v2): `active` (quest id → its step by id, counters, the distinct ids counted,
+  when it and its step began, the anchor of a step round the player, whether a dialogue's speaker was addressed; at most
+  25), `done` (quest id → times finished and when last; bounded at 4,096: repeatable quests past their wait are forgotten
+  first, then the oldest repeatable ones, and only then, logged as an error, the oldest once-only one, so saving never
+  fails), `flags`, `owed` (rewards for systems that cannot take them yet, reputation P2.E18.T01 and titles, and items
+  that did not fit, kept until claimed with `QuestRuntime.takeOwed` or a hook; owed items are retried on join) and `paid`
+  (per quest, the step rewards and answers' reputation already paid: kept across an abandon so taking a quest up again
+  pays none of it twice, and cleared when the quest is finished, so a repeat its rule allows pays anew). v1 stored step
+  indices and is migrated through the catalog (an index past the steps: the last). On load the runtime reconciles the
+  state with the catalog (`reconcile`): a quest it no longer has is dropped, one whose step it no longer has starts again
+  at its first step, each logged, never a refused join, and a step whose start is behind its quest's (a world clock
+  that came back behind its last save after a crash) is clamped. The component's `check` (`questLogProblem`) refuses
+  only what no engine path writes (a distinct id counted twice, a flag held twice): a counter a distinct-counting step
+  and a holdings step share, with fewer counts than ids remembered, is the engine's own and loads.
+- **The runtime** (`server/src/quests/runtime.ts`) holds a book per character in play, loaded and saved by persistence.
+  Each character is ticked every 500 ms, the characters spread over a 50 ms timer in round-robin slices: a tick reads its
+  entity when a live step needs it (travel, defend, survive, instanced) and applies `tick`. The inventory service's
+  changes apply `held`; `event(characterId, event)` takes the rest. An `interact` with a live deliver step's `to` takes
+  the goods first (`InventoryService.consume`, all or nothing; nothing for anyone else; a notice when short) and applies
+  `delivered`; a `kill` naming a quest actor's entity carries its tags. Rewards: XP (`xp`, plus `levels` levels' worth
+  counted at the quest's tier, else the tier of the system the character is in: DESIGN 11's level bands, `xpForLevels`)
+  to its progress, levelling its entity; units and items through the inventory service; flags into the state; skill
+  points and node unlocks through the skill service (`skillRewardHooks` over `skillServiceIn(registry)`: `grantPoints`,
+  `unlock(…, {kind: 'quest', quest})`, and `refresh` when a quest's XP raises the level); reputation and titles through
+  hooks, else owed. A completion starts any auto quest it opened. Quests start by `startQuest` (dev, tests), auto quests
+  on join, and `offer` then the client's `accept` (givers: the board, P1.E09.T06, and NPCs, P1.E09.T05, call `offer`).
+- **Instanced steps** (`phase`): a story phase (§6.1) keyed `quest:<quest>:<scene or step>` at the step's place, or round
+  where the player was when the step became live (`at: 'player'`, its anchor saved), placed under `partyIdOf`, so a party
+  on the step shares one layer; the step's actors are spawned into a phase that has none. A player is placed for one step
+  at a time (the one it was placed for while it holds, else the first live one whose place it is in), only when it is in
+  no phase or in the one this runtime put it in (a bay, an event or a cutscene's phase is never left for a quest's), and
+  re-placed only when that phase no longer holds just its party: so two quests at one place never churn phases, and a
+  party that disbanded is parted, each part getting its own actors. Leaving the step (to one not in its scene) or the
+  quest takes the player out.
+- **Cutscene steps** play through the cutscene service (§15; wired in server.ts by `quests/cutscenes.ts`): entering one
+  calls its `start(session, id, at?)`, with the step's place when it has one, the service phases the player itself, and
+  its `play` is pushed to the client unrequested. The service's `may` is the runtime's `mayPlay(session, id)` (a client
+  asks for a quest's cutscene only while a live step plays it), or its own development rule. A cutscene that ends, by
+  the client's `done` played or skipped (the gateway, `doneEndsQuestStep`) or by the service's sweep (its `notify` of
+  `ended`), calls `quests.cutsceneEnded(session, id)`, which ends the step; one the client gave back unplayed (`done`
+  with `reason: 'returned'`) ends its phase and the watching but not the step, and the retry below plays it again. A live cutscene step the player is not watching is started
+  again on join (and on its first tick, when its entity's world position is known) and on the tick at most every 5 s
+  (`CUTSCENE_RETRY_S`): one the service refused (the player in another phase, another cutscene playing) or lost with a
+  dropped connection plays once it can; the one it is watching is never started again; refusals are logged at debug
+  with their reason. Rules for quest authors: a step's cutscene is one the cutscene catalog has, or the step is marked
+  `planned` until its cutscene is authored (a unit test checks both ways); and a cutscene step that shares a `scene`
+  with an instanced step plays in that step's phase, which already has the step's actors, so the cutscene's own actors
+  are not spawned there: such a cutscene is authored to use the step's actors.
+- **A development server's quest** (`cutscene_test`, `dev`): its one step plays the test cutscene, started by the
+  server; on a development server a client takes it without an offer (`quest accept`), elsewhere it is an unknown quest.
+  The online smoke plays it as a session's first cutscene.
+- **Developer tooling** (§16): the admin service's `QuestAdmin` is `questAdmin(runtime)` (`quests/admin.ts`), so the
+  CLI's `set-quest-step <character> <quest> <step>` puts the quest at that step (its index), started if it is not on,
+  with no prerequisite, offer or wait asked and nothing paid for the steps passed over (`QuestBook.setStep`). The step is
+  entered as any step is (its phase, its cutscene, its anchor) but not checked by the engine: in play
+  (`runtime.setStep`) the runtime then checks it against what the character holds (a collect step met finishes at once)
+  and sends the client `quests`; out of play (`setStepStored` through `persistence.edit`, in the server and in the
+  CLI's direct mode at the shard's world time) the stored log changes and the next join and ticks check it. A step
+  round the player entered where the player's position was not known (set out of play, restarted by `reconcile`) is
+  anchored at its first tick. A development server's quests are unknown to the command elsewhere.
+- **On the wire** (protocol 7): `quest {seq, op}` with `op` `accept {quest}`, `abandon {quest}`, `choose {quest, step,
+  choice}`; `seq` counts the session's requests from 1 and must increase. The server answers each with `quests {seq,
+  quests, error?}`, the whole state (`QuestView`: active without anchors, steps by id, done counts, flags, what is on
+  offer), sends it after `welcome` (`seq` 0, after the party is known so a player back at a step's place returns to its
+  party's phase), and pushes it with the same `seq` whenever it moves a quest itself, with `event {kind: 'quest'}`
+  notices (`offered`, `accepted`, `progress` with counters, `step`, `completed`, `failed`; `step` is the step's index)
+  and `notice` toasts. Errors: `stale_seq`, `unknown_quest`, `not_offered`, `prerequisites`, `active`, `done`,
+  `cooldown`, `full`, `not_active`, `cannot_abandon`, `not_current`, `bad_choice`, `not_open`.
+- **The client** shows the objective line under the location panel from a `QuestBook` (`Game.objectives`): online, `Net`
+  passes each `quests` message to `book.receive`, a new objective is announced and a completed quest's event toasts, and
+  `game.questRequest(op)` sends `quest` requests (the journal and the dialogue bar, P1.E09.T03, call it); in the dev
+  sandbox the shared engine fills the book from the game's own state and events twice a second. Boards' generated jobs
+  (P1.E09.T06) will need their definitions on the wire, since the client knows only the catalog's.
