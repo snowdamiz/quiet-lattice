@@ -90,12 +90,30 @@ describe('character components', () => {
 
   it('refuses a ship that cannot fly and an inventory the schema refuses, rather than replacing them', () => {
     const { registry } = world();
-    const tooManyPods = { v: 1, data: { ...DEFAULT_SHIP, cargoPods: 9 } };
-    expect(() => registry.decode(stored({ ship: tooManyPods }), CHARACTER)).toThrow(CharacterLoadError);
-    expect(() => registry.decode(stored({ ship: { v: 1, data: { ...DEFAULT_SHIP, hull: 'zeppelin' } } }), CHARACTER)).toThrow(/ship/);
+    const zeppelin = () => registry.decode(stored({ ship: { v: 1, data: { ...DEFAULT_SHIP, hull: 'zeppelin' } } }), CHARACTER);
+    expect(zeppelin).toThrow(CharacterLoadError);
+    expect(zeppelin).toThrow(/ship/);
     expect(() => registry.decode(stored({ inventory: { v: 1, data: { stackMax: 9999, units: 0, suit: [], pods: [], fragments: 3 } } }), CHARACTER)).toThrow(
       /inventory/,
     );
+  });
+
+  it('gives back, logged, the pods a stored ship carries beyond its bays (the data changed under it: a bay-giving node refunded)', () => {
+    const { registry, log, lines } = world();
+    const d = registry.decode(stored({ ship: { v: 1, data: { ...DEFAULT_SHIP, cargoPods: 9 } } }), CHARACTER, log);
+    expect(d.values.get(SHIP)).toEqual(DEFAULT_SHIP);
+    expect(d.asStored.has(SHIP)).toBe(false);
+    expect(lines).toEqual([
+      {
+        level: 'warn',
+        obj: { character: 'c1', component: SHIP, pods: 9, bays: 1 },
+        msg: 'ship carries more cargo pods than it has bays; the pods without a bay are given back',
+      },
+    ]);
+    // within its bays, and with no ship at all, it is read as stored
+    expect(registry.decode(stored({ ship: { v: 1, data: DEFAULT_SHIP } }), CHARACTER, log).asStored.has(SHIP)).toBe(true);
+    expect(registry.decode(stored({ ship: { v: 1, data: null } }), CHARACTER, log).values.get(SHIP)).toBeNull();
+    expect(lines).toHaveLength(1);
   });
 
   it('re-derives a saved inventory’s layout from the saved ship when it loads, and saves and evicts it through the service', async () => {

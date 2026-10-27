@@ -11,7 +11,7 @@ import { applyLayout, inventorySchema, layoutFor, startingInventory, type Invent
 import { MoveMode, Pose } from '@astra/shared/protocol';
 import { emptyQuestLog, migrateQuestLogV1, questLogProblem, questLogSchema, type QuestLog, type QuestLogV1 } from '@astra/shared/quests';
 import { shipLoadoutSchema, shipStats, type ShipLoadout } from '@astra/shared/ships';
-import type { SkillState } from '@astra/shared/skills';
+import type { StoredSkills } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
 import { z } from 'zod';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
@@ -100,9 +100,10 @@ export class ShipLoadouts {
 /** A new character's ship: the Lark (DESIGN 10.2), as the inventory's starting layout assumes. */
 export const DEFAULT_SHIP: ShipLoadout = DEFAULT_LOADOUT.ship!;
 
-/** The nodes a character owns, from its decoded skills (the skills component loads before the ship and the inventory). */
+/** The nodes a character owns, from its decoded skills (the skills component loads, and reconciles, before the ship and the
+ * inventory). */
 function ownedNodes(ctx: LoadContext): readonly string[] {
-  return ctx.get<SkillState>(SKILLS).bought;
+  return ctx.get<StoredSkills>(SKILLS).bought;
 }
 
 export function shipComponent(ships: ShipLoadouts): CharacterComponent<ShipLoadout | null> {
@@ -112,6 +113,22 @@ export function shipComponent(ships: ShipLoadouts): CharacterComponent<ShipLoado
     schema: shipLoadoutSchema.nullable(),
     onInvalid: 'refuse',
     default: () => structuredClone(DEFAULT_SHIP),
+    // Every change in play keeps the pods within the bays, so more pods than bays means the data changed under a stored
+    // ship: a node that gave a bay (Pack Mule) refunded or removed by the skills' reconcile, or a hull's bays cut. The pods
+    // without a bay are given back, as a respec gives them; the inventory keeps what they hold in its saved layout when
+    // the new one cannot take it (logged there).
+    reconcile: (ship, ctx) => {
+      if (!ship) return ship;
+      let bays: number;
+      try {
+        bays = shipStats({ ...ship, cargoPods: 0 }, { skills: ownedNodes(ctx) }).cargoPods;
+      } catch {
+        return ship; // it cannot fly for another reason, which `check` names
+      }
+      if (ship.cargoPods <= bays) return ship;
+      ctx.warn({ pods: ship.cargoPods, bays }, 'ship carries more cargo pods than it has bays; the pods without a bay are given back');
+      return { ...ship, cargoPods: bays };
+    },
     check: (ship, ctx) => {
       if (!ship) return null;
       try {

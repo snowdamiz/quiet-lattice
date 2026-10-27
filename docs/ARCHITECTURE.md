@@ -394,22 +394,27 @@ and daily rolls are in `count_votes` and `count_days` (§11). Migrations are gen
 `pnpm db:migrate`.
 
 **Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
-component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx), check?(value,
-ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry `{"v": <schema version>, "data":
-<value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own columns. Components load in
-registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers (`components.ts`,
-`coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the ship and inventory
-read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
-second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
-layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `meters` (§19: heat and Charge with
-the world time they stood at), `pose` (`{system, pose, mode, parked?}`, read from the character's zone entity, `parked`
-being where a character on foot left its ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a
-saved pose inside the ground, in the hangar's shell, docked off a pad or on foot with no ship to board is not restored)
-and, when the server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when unreadable).
+component in the registry (`registry.ts`): `{key, v, schema, migrations?, columns?, onInvalid, default(ctx),
+reconcile?(value, ctx), check?(value, ctx), load?(value, ctx), save(ctx), unload?(id)}`. A component is stored as an entry
+`{"v": <schema version>, "data": <value>}` of the row's `state` jsonb under its key, or, with `columns`, in the row's own
+columns. Components load in registration order, so a later one reads an earlier one's value (`ctx.get`). Phase 1 registers
+(`components.ts`, `coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the
+ship and inventory read; reconciled with the skill web on load), `ship` (`ShipLoadout | null`, the Lark by default,
+checked with `shipStats` under the owned nodes, so Pack Mule's second pod loads; pods beyond its bays, which only a data
+change makes, are given back on load, logged), `inventory` (its layout re-derived from the ship and the owned nodes on
+load, `applyLayout(saved, layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `meters`
+(§19: heat and Charge with the world time they stood at), `pose` (`{system, pose, mode, parked?}`, read from the
+character's zone entity, `parked` being where a character on foot left its ship; version 2; its `check` is movement
+authority's `poseProblem` (§7), so a saved pose inside the ground, in the hangar's shell, docked off a pad or on foot with
+no ship to board is not restored) and, when the server has a quest runtime, `quests` (§17: held by the runtime; refused,
+never replaced, when unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
-  an older `v` is migrated one version at a time and written back at the next save. A value that cannot be read (a newer
+  an older `v` is migrated one version at a time and written back at the next save. A value the game's data has moved on
+  from (the skill web changed) is brought in line by the component's `reconcile`, after the schema and before `check`, so
+  every later component reads the result; it logs what it changed and the result is written back at the next save (a live
+  capture and an edit's values are never reconciled: they are this build's). A value that cannot be read (a newer
   `v`, no migration, the schema or `check` fails) follows `onInvalid`: the pose falls back to docked at the home
   Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement), and the meters
   fall back to their default (cool, the ship's Charge full: nothing earned, §19), logged; every other component refuses
@@ -456,7 +461,9 @@ and, when the server has a quest runtime, `quests` (§17: held by the runtime; r
 (`onInvalid: 'refuse'` for anything a player earned), and register it in `coreRegistry` after the components it reads and
 before those that read it (skills, P1.E07.T01, go before the ship and the inventory, which pass the owned nodes to
 `shipStats` and `layoutFor`). No SQL migration: it is a new key in `state`. To change a stored shape later, raise `v`
-and add `migrations[oldV]`. State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
+and add `migrations[oldV]`; when the game data a stored value reads changes instead (ids renamed or removed), give the
+component a `reconcile` that brings the value in line on load (skills, §14; quests reconcile in their runtime's `open`,
+§17). State that must be queried across characters, or outgrows one jsonb entry, gets a child table and a
 store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
@@ -650,15 +657,37 @@ every chat line, mute and party change goes to the server log for moderation.
 DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 152 points to own them all) is
 `@astra/shared/data`; the per-character value and its rules are `@astra/shared/skills`, pure functions both ends run.
 
-- **State** (`SkillState`, the `skills` component, `v` 1): `granted` (points beyond levels: story chapters, faction chains,
+- **State** (`SkillState`): `granted` (points beyond levels: story chapters, faction chains,
   grants), `unlocked` and `bought` (node ids in the order it happened; bought ⊆ unlocked), `fragments` (per fragment branch,
   Gravitic, Thermal, Resonance, Symbiotic and Void, `{earned, spent}`; never inventory items, DESIGN 15.2) and `slots`
   (`ground`: 6, keys 1–6; `ship`: 5, the roomiest hull's ability slots). The level is never stored: progress owns it, and
   points are `level × 1 + granted − Σ pointCost(bought)`. Nor is the hull: the ship bar works as many slots as the flown
   hull's `abilitySlots` (Lark 2). The schema refuses unknown or repeated ids, a bought node not unlocked, a slotted node not
-  owned or on the wrong bar, and a ledger that spent more than it earned; `skillStateProblem` refuses an owned node whose
-  prerequisites are not owned. Unreadable skills refuse the join. A new character (or one saved before skills existed)
-  starts with its people's node unlocked (DESIGN 5.1), still bought with a point; a load adds it if missing.
+  owned or on the wrong bar, and a ledger that spent more than it earned; `skillStateProblem(state, web)` refuses, for a
+  web (this build's unless given), an unknown node, a bar not the web's size or holding another bar's node, and an owned
+  node whose prerequisites are not owned. A new character (or one saved before skills existed) starts with its people's
+  node unlocked (DESIGN 5.1), still bought with a point; a load adds it if missing.
+- **Stored** (`StoredSkills`, the `skills` component, `v` 2, `stored.ts`; P1.E07.T15): the state plus `web`, the skill
+  web's data version it was stored under (`SKILL_WEB_VERSION`, raised with any change to a node's id, branch, tier, bar or
+  prerequisites or to a bar's size; a test pins the web each version names), and `paid`, what each unlock bought with
+  fragments paid (`{node: {branch, count}}`; other routes pay nothing). Neither is sent to the client. The service keeps
+  `paid` beside the state (the `unlock` request records it) and `stored(id)` is what the component saves. v1 values (the
+  state alone) migrate to web 0 with `paid` read from the ledger: each fragment-routed unlock, in order, credited its
+  tier's fragments while its branch's `spent` lasts, a people's free node (Second Lung, Pulse) only after every other
+  node. The schema checks structure only (`structureProblems`, and `paid` ⊆ unlocked with no more paid per branch than
+  spent). An admin edit reads and writes this stored form (`skillStateOf`, `storedSkills`), reconciled as a join reads it.
+- **Reconcile** (`reconcileSkills(stored, web)`, the component's `reconcile`, at decode, so the ship, the inventory and an
+  edit read the result): a value stored under this web or an older one is brought in line with this build's web; one
+  already in line comes back unchanged. A node the web does not have (renamed to a new id, or removed) is dropped from
+  the unlocks, the owned nodes and the bars, and the fragments its unlock paid go back to its branch (`spent` less
+  them); an owned node left without a prerequisite (re-tiered, moved branch, its support gone) is refunded, repeatedly
+  until every kept node has its own, listed deepest first (capstones, Tier III and conjunctions, II, I; the later bought
+  first among equals); the unlock and what it paid stay. Each bar is resized to the web's (padded or cut) and loses a
+  node no longer owned, on the other bar now, or past its end. Points need nothing: they count owned nodes. One warning
+  per character lists the changes (`{from, to, changes}`), and the result is written back at the next save. Only a value
+  whose structure no web explains, or one stored under a newer web (a server rolled back must not strip nodes it does
+  not know), refuses the join. A refunded Pack Mule leaves the ship a pod without a bay: the ship component gives it
+  back (§8), and the inventory re-lays out, or keeps its saved layout and every item, logged.
 - **The view** sent to the client, `{state, level, shipSlots, met, maxTier}`: `met` is the web's standing gates the
   character meets (`WEB_REQUIREMENTS`: Void's Free Reaches rank) and `maxTier` the server's phase ceiling, so
   `contextOf(view)` lets the client predict every rule.

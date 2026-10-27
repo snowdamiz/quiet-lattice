@@ -14,7 +14,7 @@
 // with who ran it and what it asked, and how it ended.
 import { addItem, addUnits, applyLayout, itemInfo, layoutFor, spendUnits, takeItem, type Inventory, type Result } from '@astra/shared/inventory';
 import type { ShipLoadout } from '@astra/shared/ships';
-import { setAvailablePoints, type SkillResult, type SkillState } from '@astra/shared/skills';
+import { setAvailablePoints, skillStateOf, storedSkills, type SkillResult, type StoredSkills } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
 import { eq, sql } from 'drizzle-orm';
 import { isUuid } from '../characters/characters.ts';
@@ -318,7 +318,7 @@ export class AdminService {
       (e) => {
         // as a join would see it: laid out for its ship and the nodes it owns
         let inv = e.get<Inventory>(INVENTORY);
-        const laid = applyLayout(inv, layoutFor({ ship: e.get<ShipLoadout | null>(SHIP), skills: e.get<SkillState>(SKILLS).bought }));
+        const laid = applyLayout(inv, layoutFor({ ship: e.get<ShipLoadout | null>(SHIP), skills: e.get<StoredSkills>(SKILLS).bought }));
         if (laid.ok) inv = laid.inv;
         const done = op(inv);
         if (!done.ok) return done.error.message;
@@ -340,9 +340,11 @@ export class AdminService {
         return done.available;
       },
       (e) => {
-        const done: SkillResult<{ available: number }> = setAvailablePoints(e.get<SkillState>(SKILLS), e.get<Progress>(PROGRESS).level, cmd.points);
+        // the stored form, reconciled with this build's web as a join reads it: what its unlocks paid goes back with it
+        const skills = e.get<StoredSkills>(SKILLS);
+        const done: SkillResult<{ available: number }> = setAvailablePoints(skillStateOf(skills), e.get<Progress>(PROGRESS).level, cmd.points);
         if (!done.ok) return done.error.message;
-        e.set(SKILLS, done.state);
+        e.set(SKILLS, storedSkills(done.state, skills.paid));
         return done.available;
       },
     );
