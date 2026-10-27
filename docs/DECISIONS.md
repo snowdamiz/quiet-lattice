@@ -474,3 +474,22 @@ Format: task id, question → choice → why.
   API still changes only the client copy until its owners move it to the server (mining P1.E13.T01/T06, trade
   P1.E11.T04/P1.E13.T03, rewards P1.E08.T04, death taxes P1.E06.T03, warp cells P1.E12.T05). `pnpm smoke` needs
   `pnpm db:up` (a scratch database and Redis db 7). → The game plays through the server.
+- **P1.E09.T04** Cutscene tooling → Blender cutscenes export as the evaluated camera sampled every frame (JSON) and
+  played back on a Catmull-Rom spline in time (DESIGN 19.2's "curves", read as what Blender shows); authoring rules (a
+  DESIGN 19.4 convention): `CAM_<cutscene>_<shot>` cameras, timeline markers `line:`/`end:`/`event:`, words in a
+  `CUT_<cutscene>` text block, `ACTOR_` empties and a `radius` scene property for the server's placements, the scene's
+  `frame`/`anchor`; ids a–z, 0–9 and `_`. The exporter refuses malformed input and lists every problem; a `cutscenes`
+  art family validates sources, and export scripts revalidate only their own family. Presentation: a 2.39:1 letterbox
+  (bars at least 7.5%) with the fov widened so the band shows Blender's framing; banners as a title card in the top bar;
+  dialogue at 1.2 s + 16 characters a second, a 0.25 s gap, reveal at 48 characters a second; Space/Enter/click reveal
+  then jump behind a dip, Esc (or a pointer-lock release) skips and fires the remaining events marked skipped without
+  banners; controls return when the camera is home; a glide becomes a dip beyond 600 m or from the cockpit; client
+  hazards (pirates, survival) pause while watching. Always phased: a story phase keyed `cutscene:<id>@<frame>` (or `#n`
+  for player-anchored, within the radius); the server decides — a client request needs `may(session, id)` (refused by
+  default; dev entries only off production), a 10 s cooldown per session, and a player in another phase is refused,
+  never pulled out; the quest engine starts its steps' cutscenes with `start(session, id, at)` and the client plays an
+  unrequested server `play`. `watching` holds only while the player is in its phase and at most the cutscene's length
+  + 6.5 s; a 1 s sweep ends overruns and pushes `ended`. Online the client plays only on the server's `play` (a refusal
+  or no answer in 5 s plays nothing); the offline link is the dev sandbox's. Protocol 6. Open: the client creates its
+  networked link lazily, so a server-started cutscene before any client request is dropped (fix with the quest engine,
+  P1.E09.T01); fauna's exemption for watchers is in P1.E08.T02; P1.E09.T03 extends `ui/Cinematic.js`.
