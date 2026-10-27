@@ -5,9 +5,9 @@
 // and reads the JSON summary it prints. Three's GLTFLoader decodes it with MeshoptDecoder, Blender's importer natively.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { Document, Logger, Node, NodeIO } from '@gltf-transform/core';
+import { Document, Logger, Node, NodeIO, PropertyType } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
-import { meshopt } from '@gltf-transform/functions';
+import { dedup, meshopt, prune } from '@gltf-transform/functions';
 import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer';
 
 export type MeshoptLevel = 'medium' | 'high';
@@ -70,7 +70,13 @@ export async function compressGeometry(input: Uint8Array, level: MeshoptLevel = 
   const doc = (await glbIO.readBinary(input)).setLogger(new Logger(Logger.Verbosity.WARN));
   const before = emptyTransforms(doc);
   const geometryBefore = geometryBytes(doc);
-  await doc.transform(meshopt({ encoder: MeshoptEncoder, level }));
+  // (quantize()'s own cleanup would also merge equal materials and skins: two variants' "Hull" copies would become one
+  // material, and a livery recolour of one variant would recolour the other. Only accessors are pruned and merged.)
+  await doc.transform(
+    meshopt({ encoder: MeshoptEncoder, level, cleanup: false }),
+    prune({ propertyTypes: [PropertyType.ACCESSOR], keepAttributes: true, keepIndices: true }),
+    dedup({ propertyTypes: [PropertyType.ACCESSOR] }),
+  );
   const splitMeshes = nameSplitMeshes(doc);
   // (quantize() moves the dequantizing transform onto mesh nodes only; the empties the engine reads must not move)
   // (a mesh node quantize() split leaves an empty of the same name behind: only the empties there before are compared)

@@ -28,7 +28,9 @@ async function hull(): Promise<Uint8Array> {
           .setAttribute('POSITION', doc.createAccessor().setType('VEC3').setArray(pos.slice()).setBuffer(buffer))
           .setAttribute('NORMAL', doc.createAccessor().setType('VEC3').setArray(nrm.slice()).setBuffer(buffer))
           .setAttribute('TEXCOORD_0', doc.createAccessor().setType('VEC2').setArray(uv.slice()).setBuffer(buffer))
-          .setIndices(doc.createAccessor().setType('SCALAR').setArray(idx.slice()).setBuffer(buffer)),
+          .setIndices(doc.createAccessor().setType('SCALAR').setArray(idx.slice()).setBuffer(buffer))
+          // (each its own copy of an equal "Hull", as two variants' baked copies are)
+          .setMaterial(doc.createMaterial('Hull').setRoughnessFactor(0.5)),
       );
   const wing = doc.createNode('lark_wing').setMesh(prim('wing')).addChild(doc.createNode('HP_S_wing').setTranslation([3, 0.5, -1]));
   const lod = doc.createNode('lark_LOD0').addChild(wing).addChild(doc.createNode('GearFront').setTranslation([0, -1.2, -4]));
@@ -62,6 +64,13 @@ describe('meshopt geometry compression', () => {
       .sort();
     expect(meshNodes).toEqual(['lark/COL_body', 'lark_wing/lark_wing']);
     expect(summary.splitMeshes).toBe(1);
+    // equal materials stay separate (a recolour of one must not reach the other), and no stale accessor is written
+    expect(after.getRoot().listMaterials().map((m) => m.getName())).toEqual(['Hull', 'Hull']);
+    const stale = after
+      .getRoot()
+      .listAccessors()
+      .filter((a) => !a.listParents().some((p) => p.propertyType !== 'Root'));
+    expect(stale).toEqual([]);
     // and the decoded vertices are the old ones in the world, to quantization's precision
     const world = (d: Document, name: string) => {
       const node = d
