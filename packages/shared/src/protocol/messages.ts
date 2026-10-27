@@ -78,6 +78,12 @@ export const Username = z
   .max(24)
   .regex(/^[A-Za-z0-9_-]+$/);
 export const Credentials = z.object({ username: Username, password: z.string().min(8).max(128) });
+/** Usernames starting with this, in any case, belong to the server's dev login (P1.E03.T07): registering one is refused. */
+export const DEV_USERNAME_PREFIX = 'dev-';
+/** Whether a username is a dev login's (`dev-…`, any case), which registration refuses and only the dev login reaches. */
+export function isDevUsername(username: string): boolean {
+  return username.toLowerCase().startsWith(DEV_USERNAME_PREFIX);
+}
 export const AuthResponse = z.object({ token: z.string().max(4096), accountId: Id });
 
 export const PeopleId = z.enum(['thalune', 'ixari', 'ulgani']);
@@ -397,7 +403,7 @@ export const SkillsState = z.object({
   error: skillErrorCodeSchema.optional(),
 });
 
-/** The character's heat and Charge (DESIGN 9.1, ARCHITECTURE §16) as the server holds them at world time `meters.at`: after
+/** The character's heat and Charge (DESIGN 9.1, ARCHITECTURE §17) as the server holds them at world time `meters.at`: after
  * join, whenever the lockout starts or ends or Charge runs out, and every half second while either meter moves. The client
  * predicts both with the same shared rules and takes these as the truth. */
 export const MetersState = z.object({ t: z.literal('meters'), meters: meterViewSchema });
