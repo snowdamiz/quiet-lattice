@@ -5,7 +5,13 @@ import { describe, expect, it } from 'vitest';
 import type { CountVote } from '../count/meter.ts';
 import { accountLeans, endSeason, seasonWinners, TITLE_MIN_WEIGHT, type SeasonPosition } from './rules.ts';
 
-const FIRST: SeasonPosition = { season: 1, start: 10 * SEASON_DAY_S + 3600, length: SEASON_LENGTH_S, actives: null, opening: { from: null, edgeShiftLy: 0, dark: [] } };
+const FIRST: SeasonPosition = {
+  season: 1,
+  start: 10 * SEASON_DAY_S + 3600,
+  length: SEASON_LENGTH_S,
+  actives: null,
+  opening: { from: null, edgeShiftLy: 0, dark: [] },
+};
 
 const A = '00000000-0000-4000-8000-00000000000a';
 const B = '00000000-0000-4000-8000-00000000000b';
@@ -18,7 +24,13 @@ describe('ending a season', () => {
   it('ends on the midnight after its length, in the bucket of the Count there, and hands on to the next season', () => {
     const e = endSeason(FIRST, 742, 3.5);
     expect(e).toMatchObject({ ...FIRST, end: 67 * SEASON_DAY_S, count: 742, bucket: 'fed' });
-    expect(e.next).toEqual({ season: 2, start: 67 * SEASON_DAY_S, length: SMALL_SEASON_LENGTH_S, actives: 3.5, opening: { from: 'fed', edgeShiftLy: SEASON_EDGE_SHIFT_LY, dark: [] } });
+    expect(e.next).toEqual({
+      season: 2,
+      start: 67 * SEASON_DAY_S,
+      length: SMALL_SEASON_LENGTH_S,
+      actives: 3.5,
+      opening: { from: 'fed', edgeShiftLy: SEASON_EDGE_SHIFT_LY, dark: [] },
+    });
   });
 
   it('pins the bucket edges: 700 is Fed, 699 and 300 Held, 299 Broken', () => {

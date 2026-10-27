@@ -147,7 +147,12 @@ describe('seasons', () => {
     // a restart: season 2 carries on from the shard's row, its map and its length as stored
     await world.close();
     world = await open();
-    expect(world.state()).toMatchObject({ season: 2, count: 500, seasonLength: SMALL_SEASON_LENGTH_S, opening: { from: 'fed', edgeShiftLy: SEASON_EDGE_SHIFT_LY } });
+    expect(world.state()).toMatchObject({
+      season: 2,
+      count: 500,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+      opening: { from: 'fed', edgeShiftLy: SEASON_EDGE_SHIFT_LY },
+    });
 
     // season 2: the server fills (110 accounts a day), and three of them kill Wardens daily (Break); the server goes down
     // at 01:00 on day 94, after the crowd has come in
@@ -164,7 +169,12 @@ describe('seasons', () => {
     // thirty burns and drifts down from 500, then on its all-Break target, 150
     expect(world.state()).toMatchObject({ season: 2, count: 150 });
     await world.close();
-    expect(await database.db.select().from(dailyActives).where(and(eq(dailyActives.shardId, shard), eq(dailyActives.day, D + 84)))).toHaveLength(110);
+    expect(
+      await database.db
+        .select()
+        .from(dailyActives)
+        .where(and(eq(dailyActives.shardId, shard), eq(dailyActives.day, D + 84))),
+    ).toHaveLength(110);
 
     // down until 01:00 on day 105: season 2 ended at midnight on day 95 while nobody ran the shard, at 145 (day 94's five
     // burns, no votes): Broken
@@ -247,7 +257,13 @@ describe('seasons', () => {
       const isSeason2 = (m: ServerMessage) => m.t === 'world' && m.season === 2;
       await waitFor(() => sockets.every((s) => s.received.some(isSeason2)), 30_000, 'season 2');
       for (const s of sockets) {
-        expect(s.received.find(isSeason2)).toMatchObject({ season: 2, count: 500, seasonStart: end, seasonEnd: end + SMALL_SEASON_LENGTH_S, opening: { from: 'held', edgeShiftLy: 0, dark: [] } });
+        expect(s.received.find(isSeason2)).toMatchObject({
+          season: 2,
+          count: 500,
+          seasonStart: end,
+          seasonEnd: end + SMALL_SEASON_LENGTH_S,
+          opening: { from: 'held', edgeShiftLy: 0, dark: [] },
+        });
       }
       const award = seasonAward(1, 'held');
       await waitFor(() => keeperSocket.received.some((m) => m.t === 'awards' && m.awards.length === 1), 10_000, "the keeper's award");
@@ -261,7 +277,16 @@ describe('seasons', () => {
       const res = await api<SeasonChronicle>(server, 'GET', '/seasons/1/chronicle', { token: breaker.token });
       expect(res.status).toBe(200);
       expect(seasonChronicleSchema.parse(res.body)).toEqual(res.body);
-      expect(res.body).toMatchObject({ season: 1, start: end - SMALL_SEASON_LENGTH_S, end, count: 474, bucket: 'held', philosophy: 'hold', awarded: 1, glyph: 'season_1_held' });
+      expect(res.body).toMatchObject({
+        season: 1,
+        start: end - SMALL_SEASON_LENGTH_S,
+        end,
+        count: 474,
+        bucket: 'held',
+        philosophy: 'hold',
+        awarded: 1,
+        glyph: 'season_1_held',
+      });
       expect(res.body.path).toEqual([{ day: dayOf(end) - 1, count: 474, drift: -25, lean: 1 / 6, votes: 2 }]);
       expect((await api(server, 'GET', '/seasons/2/chronicle', { token: breaker.token })).body).toMatchObject({ error: 'no_chronicle' });
       expect((await api(server, 'GET', '/seasons/2/chronicle', { token: breaker.token })).status).toBe(404);

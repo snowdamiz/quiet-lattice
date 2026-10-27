@@ -77,7 +77,9 @@ export async function writeSeasonEnd(tx: Tx, shardId: string, e: SeasonEnd, firs
   const award = seasonAward(e.season, e.bucket);
   const accounts = seasonWinners(votes, e.bucket);
   for (let i = 0; i < accounts.length; i += CHUNK) {
-    const chunk = accounts.slice(i, i + CHUNK).map((accountId) => ({ shardId, season: e.season, accountId, bucket: award.bucket, title: award.title, glyph: award.glyph }));
+    const chunk = accounts
+      .slice(i, i + CHUNK)
+      .map((accountId) => ({ shardId, season: e.season, accountId, bucket: award.bucket, title: award.title, glyph: award.glyph }));
     await tx.insert(seasonAwards).values(chunk).onConflictDoNothing();
   }
   const finds = firstFinds ? await firstFinds(tx, { shardId, season: e.season, start: e.start, end: e.end }) : [];
@@ -125,12 +127,7 @@ export async function readChronicle(db: Db, shardId: string, season: number): Pr
     .select({ day: countDays.day, count: countDays.count, drift: countDays.drift, lean: countDays.lean, votes: countDays.votes })
     .from(countDays)
     .where(
-      and(
-        eq(countDays.shardId, shardId),
-        eq(countDays.season, season),
-        gte(countDays.day, dayOf(row.seasonStart)),
-        lte(countDays.day, dayOf(row.seasonEnd)),
-      ),
+      and(eq(countDays.shardId, shardId), eq(countDays.season, season), gte(countDays.day, dayOf(row.seasonStart)), lte(countDays.day, dayOf(row.seasonEnd))),
     )
     .orderBy(asc(countDays.day));
   return seasonChronicleSchema.parse({

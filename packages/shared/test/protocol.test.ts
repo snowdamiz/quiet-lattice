@@ -400,7 +400,17 @@ describe('protocol: control messages', () => {
       '{"t":"skills","seq":1,"op":{"op":"unlock","node":"pull","via":"trainer"}}',
     ];
     for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
-    const world = { t: 'world', season: 1, seasonStart: 0, seasonEnd: 2_419_200, opening: { from: null, edgeShiftLy: 0, dark: [] }, count: 500, edgeX: 0, tiers: [], serverTime: 0 };
+    const world = {
+      t: 'world',
+      season: 1,
+      seasonStart: 0,
+      seasonEnd: 2_419_200,
+      opening: { from: null, edgeShiftLy: 0, dark: [] },
+      count: 500,
+      edgeX: 0,
+      tiers: [],
+      serverTime: 0,
+    };
     expect(decodeServerMessage(JSON.stringify(world))).toEqual(world);
     for (const bad of [
       { count: 5000 },

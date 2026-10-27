@@ -19,7 +19,10 @@ describe('season awards in play', () => {
     const unsubscribe = awards.subscribe((id, added, all) => heard.push([id, [...added], [...all]]));
     expect(awards.grant('c1', [seasonAward(1, 'fed')])).toBeNull();
     awards.open('c1', { awards: [seasonAward(2, 'held')] });
-    expect(awards.grant('c1', [seasonAward(3, 'broken'), seasonAward(1, 'fed'), seasonAward(2, 'fed')])).toEqual([seasonAward(3, 'broken'), seasonAward(1, 'fed')]);
+    expect(awards.grant('c1', [seasonAward(3, 'broken'), seasonAward(1, 'fed'), seasonAward(2, 'fed')])).toEqual([
+      seasonAward(3, 'broken'),
+      seasonAward(1, 'fed'),
+    ]);
     expect(awards.get('c1')).toEqual([seasonAward(1, 'fed'), seasonAward(2, 'held'), seasonAward(3, 'broken')]);
     expect(heard).toEqual([['c1', [seasonAward(3, 'broken'), seasonAward(1, 'fed')], awards.get('c1')]]);
     // nothing new: nothing told

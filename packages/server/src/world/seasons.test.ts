@@ -83,7 +83,13 @@ describe('seasons in the world service', () => {
     const roll = changes.find((c) => c.season)!;
     expect(roll.season).toMatchObject({ season: 1, start: DAY * DAY_S + 6 * 3600, end: FIRST_END, count: 733, bucket: 'fed', actives: null });
     expect(roll.previous).toMatchObject({ season: 1 });
-    expect(roll.state).toMatchObject({ season: 2, count: 500, seasonStart: FIRST_END, seasonLength: SMALL_SEASON_LENGTH_S, seasonEnd: FIRST_END + SMALL_SEASON_LENGTH_S });
+    expect(roll.state).toMatchObject({
+      season: 2,
+      count: 500,
+      seasonStart: FIRST_END,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+      seasonEnd: FIRST_END + SMALL_SEASON_LENGTH_S,
+    });
     // five accounts a day, far under SMALL_POPULATION_ACTIVES: a four-week season, whose map the Fed season left
     expect(roll.state.opening).toEqual({ from: 'fed', edgeShiftLy: SEASON_EDGE_SHIFT_LY, dark: [] });
     expect(world.state()).toMatchObject({ season: 2, count: 499 });
@@ -115,7 +121,13 @@ describe('seasons in the world service', () => {
 
   it('chooses eight weeks from a month of many daily actives, and darkens two or three systems after a Broken season', async () => {
     // season 3 began at midnight on day 300 and runs four weeks
-    const s = shard({ season: 3, seasonStart: DAY * DAY_S, seasonLength: SMALL_SEASON_LENGTH_S, seasonActives: 12, seasonOpening: { from: 'held', edgeShiftLy: 0, dark: [] } });
+    const s = shard({
+      season: 3,
+      seasonStart: DAY * DAY_S,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+      seasonActives: 12,
+      seasonOpening: { from: 'held', edgeShiftLy: 0, dark: [] },
+    });
     const world = await s.open();
     const crowd = Array.from({ length: SMALL_POPULATION_ACTIVES }, (_, i) => uuid(1000 + i));
     for (let day = DAY; day < DAY + 28; day++) {
@@ -126,7 +138,11 @@ describe('seasons in the world service', () => {
     }
     // the month before the season's end: 100 a day for its 28 days, none on the two before it, so 93.3 a day, under
     // SMALL_POPULATION_ACTIVES: season 4 runs four weeks, opening on the Broken map
-    expect(world.state()).toMatchObject({ season: 4, seasonLength: SMALL_SEASON_LENGTH_S, opening: { from: 'broken', edgeShiftLy: -SEASON_EDGE_SHIFT_LY, dark: darkSystems(4) } });
+    expect(world.state()).toMatchObject({
+      season: 4,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+      opening: { from: 'broken', edgeShiftLy: -SEASON_EDGE_SHIFT_LY, dark: darkSystems(4) },
+    });
     await world.flush();
     expect(s.store.chronicles[0]).toMatchObject({ season: 3, bucket: 'broken', actives: 12, next: { season: 4, actives: (28 * 100) / 30 } });
     expect(s.store.awards.map((a) => a.accountId)).toEqual(crowd.slice(0, 3).sort());

@@ -6,15 +6,7 @@ import { EDGE_X } from '../world/edge.ts';
 import { GALAXY_SEED } from '../world/galaxy.ts';
 import { hashInts, Random } from '../world/rng.ts';
 import { galaxyTiers } from '../world/tiers.ts';
-import {
-  DARK_SYSTEMS_MAX,
-  SEASON_DAY_S,
-  SEASON_LENGTH_S,
-  SMALL_SEASON_LENGTH_S,
-  type SeasonAward,
-  type SeasonBucket,
-  type SeasonOpening,
-} from './schema.ts';
+import { DARK_SYSTEMS_MAX, SEASON_DAY_S, SEASON_LENGTH_S, SMALL_SEASON_LENGTH_S, type SeasonAward, type SeasonBucket, type SeasonOpening } from './schema.ts';
 
 /** A season's length is chosen from the mean daily actives of this many meter days before it starts (DESIGN 16.4: "the
  * last month's daily actives"). */

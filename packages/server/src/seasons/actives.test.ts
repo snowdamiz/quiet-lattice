@@ -21,7 +21,15 @@ describe('the daily actives tally', () => {
   });
 
   it('takes earlier counts and the open day accounts back, so an account counted before a restart is not counted again', () => {
-    const t = new DailyActives(200, { counts: [[170, 300], [199, 60], [150, 9000], [200, 1]], today: ['a', 'b'] });
+    const t = new DailyActives(200, {
+      counts: [
+        [170, 300],
+        [199, 60],
+        [150, 9000],
+        [200, 1],
+      ],
+      today: ['a', 'b'],
+    });
     expect([t.on(170), t.on(199), t.on(150), t.on(200)]).toEqual([300, 60, 9000, 2]);
     expect(t.mark('a', 200)).toBe(false);
     expect(t.mark('c', 200)).toBe(true);
