@@ -2,6 +2,7 @@ import { encode } from '@msgpack/msgpack';
 import { describe, expect, it } from 'vitest';
 import { getHull, type HullId } from '../src/data/index.ts';
 import { addItem, emptyInventory, layoutFor, type Inventory, type InventoryLoadout } from '../src/inventory/index.ts';
+import { emptySkillState, newSkillState, type SkillOp, type SkillView } from '../src/skills/index.ts';
 import {
   AuthResponse,
   CharacterCreate,
@@ -46,6 +47,21 @@ for (const [item, n] of [
   if (r.ok) inventory = r.inv;
 }
 const character = { id: 'c1', name: "Ana Vel'ka", people: 'thalune', look: { palette: 3, pattern: 1, head: 2, suit: 0 }, level: 1, homeSystem: 0 } as const;
+/** A thalune at level 16 who owns Pull and Pull Many (slotted), Second Lung and Bond, with gravitic fragments to spare. */
+const skills: SkillView = {
+  state: {
+    ...newSkillState('thalune'),
+    granted: 3,
+    unlocked: ['second_lung', 'pull', 'pull_many', 'bond', 'well'],
+    bought: ['second_lung', 'pull', 'pull_many', 'bond'],
+    fragments: { ...emptySkillState().fragments, gravitic: { earned: 7, spent: 4 } },
+    slots: { ground: ['pull', null, 'bond', null, null, null], ship: [null, null, null, null, null] },
+  },
+  level: 16,
+  shipSlots: 2,
+  met: [{ kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' }],
+  maxTier: 2,
+};
 
 const clientSamples: ClientMessage[] = [
   { t: 'hello', version: PROTOCOL_VERSION, token: 'jwt' },
@@ -58,6 +74,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'ack', tick: 99 },
   { t: 'ping', id: 1, clientTime: 1000.5 },
   { t: 'inventory', seq: 3, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 2, i: 7 }, count: 40 } },
+  { t: 'skills', seq: 4, op: { op: 'buy', node: 'well' } },
 ];
 
 /** Every inventory op a client may send (they share the `inventory` request type). */
@@ -67,6 +84,15 @@ const inventoryOps = [
   { op: 'transfer', from: { c: 'suit', i: 1 } },
   { op: 'compact', c: 'cargo' },
 ] as const;
+
+/** Every skill request a client may send (they share the `skills` request type). */
+const skillOps: SkillOp[] = [
+  { op: 'unlock', node: 'slam' },
+  { op: 'slot', bar: 'ground', index: 5, node: 'pull' },
+  { op: 'slot', bar: 'ship', index: 4, node: 'tractor_beam' },
+  { op: 'unslot', bar: 'ship', index: 0 },
+  { op: 'respec', nodes: ['pull_many', 'pull'] },
+];
 
 /** Every party request a client may send (they share the `party` request type). */
 const partyOps = [
@@ -104,6 +130,7 @@ const serverSamples: ServerMessage[] = [
   { t: 'world', season: 1, count: 500, edgeX: 2.5e6, tiers: [0, 0, 0, 1, 2], serverTime: 3600 },
   ...events.map((event) => ({ t: 'event' as const, event })),
   { t: 'inventory', seq: 3, inventory },
+  { t: 'skills', seq: 4, skills },
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
 ];
@@ -117,13 +144,17 @@ const http = {
 } as const;
 
 describe('protocol: version', () => {
-  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01). A branch
-  // that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 4, and the history under the constant names every version up to it', () => {
-    expect(PROTOCOL_VERSION).toBe(4);
+  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
+  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01). A branch that changes a message bumps the version, adds its
+  // line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 5, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(5);
     const source = MESSAGES_SOURCE;
-    for (let v = 1; v <= PROTOCOL_VERSION; v++) expect(source, `history line for ${v}`).toMatch(new RegExp(`^// ${v}: .+\\(P\\d\\.E\\d{2}\\.T\\d{2}\\)$`, 'm'));
-    expect(source).not.toMatch(new RegExp(`^// ${PROTOCOL_VERSION + 1}: `, 'm'));
+    const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
+    for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);
+    // one line per number, 1 to the constant with none missing: two branches that both took a number conflict here
+    expect(history.map((h) => h.v)).toEqual(Array.from({ length: PROTOCOL_VERSION }, (_, i) => i + 1));
+    expect(Math.max(...history.map((h) => h.v))).toBe(PROTOCOL_VERSION);
   });
 });
 
@@ -157,6 +188,23 @@ describe('protocol: control messages', () => {
       expect(decodeClientMessage(text)).toBeNull();
     }
     expect(decodeServerMessage(encodeMessage(clientSamples.at(-1)!))).toBeNull();
+  });
+
+  it.each(skillOps.map((op) => [`${op.op} ${JSON.stringify(op).slice(0, 40)}`, op]))('client skills %s round-trips', (_, op) => {
+    const m = { t: 'skills' as const, seq: 9, op };
+    expect(decodeClientMessage(encodeMessage(m))).toEqual(m);
+  });
+
+  it('round-trips skill state with and without a refusal, and tells the two skills messages apart', () => {
+    for (const m of [
+      { t: 'skills' as const, seq: 0, skills: { state: emptySkillState(), level: 1, shipSlots: 0, met: [], maxTier: 4 as const } },
+      { t: 'skills' as const, seq: 12, skills, error: 'prerequisite' as const },
+    ]) {
+      const text = encodeMessage(m);
+      expect(decodeServerMessage(text)).toEqual(m);
+      expect(decodeClientMessage(text)).toBeNull();
+    }
+    expect(decodeServerMessage(encodeMessage(clientSamples.find((m) => m.t === 'skills')!))).toBeNull();
   });
 
   it.each(partyOps.map((op) => [op.op, op]))('client party %s round-trips', (_, op) => {
@@ -236,6 +284,17 @@ describe('protocol: control messages', () => {
       `{"t":"party","op":{"op":"promote","name":"${'a'.repeat(21)}"}}`,
       '{"t":"party","party":null}',
       '{"t":"chat","channel":"guild","text":"hi"}',
+      // skill requests: a known op, an id-shaped node, a slot inside the bars; points, fragments and unlocks are never asked for
+      '{"t":"skills","seq":1,"op":{"op":"grant","points":5}}',
+      '{"t":"skills","seq":1,"op":{"op":"buy","node":"Pull"}}',
+      `{"t":"skills","seq":1,"op":{"op":"buy","node":"${'a'.repeat(49)}"}}`,
+      '{"t":"skills","seq":1,"op":{"op":"buy","node":"pull","free":true}}',
+      '{"t":"skills","seq":1,"op":{"op":"slot","bar":"ground","index":6,"node":"pull"}}',
+      '{"t":"skills","seq":1,"op":{"op":"slot","bar":"cockpit","index":0,"node":"pull"}}',
+      '{"t":"skills","seq":1,"op":{"op":"unslot","bar":"ship","index":-1}}',
+      '{"t":"skills","seq":1,"op":{"op":"respec","nodes":[]}}',
+      '{"t":"skills","seq":0,"op":{"op":"buy","node":"pull"}}',
+      '{"t":"skills","seq":1,"op":{"op":"unlock","node":"pull","via":"trainer"}}',
     ];
     for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
     expect(decodeServerMessage('{"t":"world","season":1,"count":5000,"edgeX":0,"tiers":[],"serverTime":0}')).toBeNull();
@@ -261,6 +320,24 @@ describe('protocol: control messages', () => {
       { ...inventory, units: -1 },
     ])
       expect(decodeServerMessage(JSON.stringify({ t: 'inventory', seq: 1, inventory: bad }))).toBeNull();
+    // skill state: known nodes, owned before slotted and unlocked before owned, on their own bar, ledgers that add up
+    const st = skills.state;
+    for (const bad of [
+      { ...skills, state: { ...st, bought: [...st.bought, 'teleport'] } },
+      { ...skills, state: { ...st, bought: [...st.bought, 'slam'] } },
+      { ...skills, state: { ...st, slots: { ...st.slots, ground: ['slam', null, null, null, null, null] } } },
+      { ...skills, state: { ...st, slots: { ...st.slots, ship: ['pull', null, null, null, null] } } },
+      { ...skills, state: { ...st, slots: { ...st.slots, ground: ['pull', 'pull', null, null, null, null] } } },
+      { ...skills, state: { ...st, slots: { ...st.slots, ground: ['pull', null, null, null, null] } } },
+      { ...skills, state: { ...st, fragments: { ...st.fragments, gravitic: { earned: 1, spent: 4 } } } },
+      { ...skills, state: { ...st, fragments: { ...st.fragments, pilot: { earned: 1, spent: 0 } } } },
+      { ...skills, state: { ...st, units: 4 } },
+      { ...skills, shipSlots: 6 },
+      { ...skills, maxTier: 5 },
+      { ...skills, maxTier: undefined },
+      { ...skills, level: 51 },
+    ])
+      expect(decodeServerMessage(JSON.stringify({ t: 'skills', seq: 1, skills: bad }))).toBeNull();
   });
 
   it('refuses to encode invalid messages instead of sending nulls', () => {

@@ -3,14 +3,16 @@
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
+import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 4;
+export const PROTOCOL_VERSION = 5;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
 // 3: social: chat and party requests, party state, denied, party news, chat lines held to the client's rules (P1.E15.T01)
 // 4: creatures' attack field (P1.E08.T01)
+// 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -180,8 +182,23 @@ export const Ping = z.object({ t: z.literal('ping'), id: z.number().int().nonneg
 /** Inventory request (ARCHITECTURE §7): move, split, merge, transfer or compact stacks. The client applies the same shared op
  * to predict and the server answers with `inventory` state. `seq` numbers the session's requests from 1, increasing. */
 export const InventoryRequest = z.object({ t: z.literal('inventory'), seq: z.number().int().min(1).max(0xffffffff), op: inventoryOpSchema });
+/** Skill web request (ARCHITECTURE §7, §14): unlock with fragments, buy, slot, unslot or respec. The client applies the same
+ * shared rule to predict and the server answers with `skills` state. `seq` numbers the session's requests from 1, increasing. */
+export const SkillsRequest = z.object({ t: z.literal('skills'), seq: z.number().int().min(1).max(0xffffffff), op: skillOpSchema });
 
-export const ClientMessage = z.discriminatedUnion('t', [Hello, Join, Input, Cast, Interact, ChatSend, PartyRequest, Ack, Ping, InventoryRequest]);
+export const ClientMessage = z.discriminatedUnion('t', [
+  Hello,
+  Join,
+  Input,
+  Cast,
+  Interact,
+  ChatSend,
+  PartyRequest,
+  Ack,
+  Ping,
+  InventoryRequest,
+  SkillsRequest,
+]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
 // ---------- server → client ----------
@@ -340,6 +357,16 @@ export const InventoryState = z.object({
   error: inventoryErrorCodeSchema.optional(),
 });
 
+/** The character's place on the skill web, with the level, ship slots and standing gates the rules read: after join, in
+ * answer to every skills request, and whenever the server changes it (fragments, points, a trainer's unlock, a level).
+ * `seq` and `error` work as `inventory`'s do. */
+export const SkillsState = z.object({
+  t: z.literal('skills'),
+  seq: z.number().int().min(0).max(0xffffffff),
+  skills: skillViewSchema,
+  error: skillErrorCodeSchema.optional(),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -349,6 +376,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   WorldState,
   EventMessage,
   InventoryState,
+  SkillsState,
   PartyState,
   Denied,
 ]);
