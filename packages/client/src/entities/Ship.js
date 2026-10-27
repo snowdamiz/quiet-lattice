@@ -604,7 +604,7 @@ export class Ship {
   }
 
   /**
-   * The server's meters (`meters` state, ARCHITECTURE §18): Charge as it held it at world time `view.at`, run on to
+   * The server's meters (`meters` state, ARCHITECTURE §19): Charge as it held it at world time `view.at`, run on to
    * `serverNow` (the client's estimate of server time) with what the ship is doing now.
    */
   reconcileCharge(view, serverNow = view.at) {

@@ -1,4 +1,4 @@
-// The meters' persistence component (ARCHITECTURE §8, §18): heat and Charge as the meter service holds them, stored as the
+// The meters' persistence component (ARCHITECTURE §8, §19): heat and Charge as the meter service holds them, stored as the
 // `meters` entry of a character's `state` with the world time they stood at. It loads after the ship and the skills, whose
 // hull and owned nodes set the capacities. On join heat goes on cooling from the time it was saved (a character that left
 // overheated comes back cooled, as it would have been) and Charge is as the ship left it: it regenerates only in play.

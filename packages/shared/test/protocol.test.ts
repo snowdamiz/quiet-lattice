@@ -77,6 +77,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'skills', seq: 4, op: { op: 'buy', node: 'well' } },
   { t: 'cutscene', op: 'request', id: 'test' },
   { t: 'quest', seq: 1, op: { op: 'accept', quest: 'the_apothecarys_sodium' } },
+  { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', tool: 'multitool', time: 3600.5 },
 ];
 
 /** A character's quest state as the server sends it. */
@@ -146,6 +147,8 @@ const serverSamples: ServerMessage[] = [
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
   { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
   { t: 'quests', seq: 0, quests: questView },
+  { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', result: 'depleted', item: 'copper', count: 12, added: 12 },
+  { t: 'nodes', frame: '424242:3', cells: [{ cell: '2_310_77', gone: ['copper_4'], hurt: [['sodium_1', 0.3]] }] },
 ];
 
 const http = {
@@ -158,11 +161,11 @@ const http = {
 
 describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
-  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: meters
-  // (P1.E07.T02). A branch that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION
-  // and updates this.
-  it('is version 8, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(8);
+  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
+  // (P1.E13.T01); 9: meters (P1.E07.T02). A branch that changes a message bumps the version, adds its line to the history
+  // under PROTOCOL_VERSION and updates this.
+  it('is version 9, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(9);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

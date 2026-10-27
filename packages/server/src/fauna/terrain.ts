@@ -13,7 +13,8 @@
 // every zone ticks on one loop, so the server plans in a worker thread (GroundPlanner, planner.worker.ts): a world's
 // ground is asked for when a player enters its frame and is ready a few hundred milliseconds later, long before a ship
 // lands. A world's ground (its plan and its caches) is kept per world seed and radius, for the KEEP worlds most recently
-// asked for; groundOf and planHere plan on the calling thread, for tests and tools.
+// asked for; groundOf and planHere plan on the calling thread, for tests and tools. The same plan carries the sites'
+// clearance, so a ground also serves the resource nodes' scatter (`Ground.nodes`, P1.E13.T01): one plan per world.
 //
 // The planner must never stop fauna server-wide: a worker that dies (an error, or an exit with none) is restarted once
 // and given its plans again, and after a second death the planner plans on the main thread (warning once); a plan that
@@ -24,7 +25,7 @@ import { createRequire } from 'node:module';
 import { performance } from 'node:perf_hooks';
 import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
-import { DENS_DRAWN, drawnGround, TerrainSampler, type PlanetParams } from '@astra/shared/world';
+import { DENS_DRAWN, drawnGround, TerrainSampler, type NodeGround, type PlanetParams } from '@astra/shared/world';
 import { CellGrid, facePoint, type FacePoint, type Vec3 } from './cells.ts';
 
 /** Spacing of a cell's height cache, m (about). */
@@ -44,14 +45,24 @@ export class Ground {
   private readonly caches = new Map<number, Map<number, number>>();
   private readonly fp: FacePoint = { face: 0, a: 0, b: 0 };
 
-  /** A world's ground, levelled by `pads` (planPads). */
-  constructor(params: PlanetParams, pads: readonly number[]) {
+  /** A world's ground, levelled by `pads` (planPads), with its sites' clearance when the plan gave it (planGround). */
+  constructor(
+    params: PlanetParams,
+    pads: readonly number[],
+    private readonly nodeClear: readonly number[] | null = null,
+  ) {
     this.radius = params.radius;
     this.ocean = params.hasOcean;
     this.cells = new CellGrid(params.radius);
     this.lattice = Math.max(1, Math.round((this.cells.step * params.radius) / LATTICE_M));
     this.sampler = new TerrainSampler(params);
     this.sampler.setPads([...pads]);
+  }
+
+  /** The ground resource nodes are scattered over (the shared spec's NodeGround, ARCHITECTURE §12): this sampler and the
+   * sites' clearance; null for a ground planned without the clearance. */
+  get nodes(): NodeGround | null {
+    return this.nodeClear ? { sampler: this.sampler, nodeClear: this.nodeClear } : null;
   }
 
   /** The true height above sea level (m) at a direction (any length but zero): one terrain sample. */
@@ -117,7 +128,19 @@ export class Ground {
 /** The ground levelled under a world's cities and sites (and its dens, once they are drawn), as every client levels it:
  * shared drawnGround's pads at the system's tier, planned on a copy of the world's params. 5–100 ms. */
 export function planPads(params: PlanetParams, tier = 0): number[] {
-  return drawnGround({ ...params, pads: null }, tier).pads;
+  return planGround(params, tier).pads;
+}
+
+/** A world's drawn ground as a plan: the pads that level it (planPads) and its sites' clearance, which the resource
+ * nodes keep off. 5–100 ms. */
+export function planGround(params: PlanetParams, tier = 0): { pads: number[]; nodeClear: number[] } {
+  const g = drawnGround({ ...params, pads: null }, tier);
+  return { pads: g.pads, nodeClear: g.nodeClear };
+}
+
+/** A world's ground from a plan. */
+function groundFrom(params: PlanetParams, plan: { pads: readonly number[]; nodeClear?: readonly number[] }): Ground {
+  return new Ground(params, plan.pads, plan.nodeClear ?? null);
 }
 
 /** Where worlds' grounds come from. */
@@ -155,7 +178,7 @@ function keep(id: string, g: Ground): Ground {
 /** A world's ground, planned on the calling thread if it is not kept: for tests, tools and the dev CLI. */
 export function groundOf(params: PlanetParams, tier = 0): Ground {
   const id = idOf(params, tier);
-  return kept(id) ?? keep(id, new Ground(params, planPads(params, tier)));
+  return kept(id) ?? keep(id, groundFrom(params, planGround(params, tier)));
 }
 
 /** Plans on the calling thread: always ready. */
@@ -190,6 +213,8 @@ interface Pending {
 interface PlanReply {
   id: string;
   pads?: number[];
+  /** the sites' clearance, for the resource nodes (planGround) */
+  nodeClear?: number[];
   error?: string;
 }
 
@@ -237,7 +262,7 @@ export class GroundPlanner implements GroundSource {
     if (this.pending.has(id) || performance.now() < (this.failures.get(id)?.until ?? -Infinity)) return null;
     if (this.onMainThread) {
       try {
-        return keep(id, new Ground(params, planPads(params, tier)));
+        return keep(id, groundFrom(params, planGround(params, tier)));
       } catch (err) {
         this.failed(id, String(err));
         return null;
@@ -341,7 +366,7 @@ export class GroundPlanner implements GroundSource {
       this.pending.delete(reply.id);
       if (reply.pads) {
         this.failures.delete(reply.id);
-        keep(reply.id, new Ground(p.params, reply.pads));
+        keep(reply.id, groundFrom(p.params, { pads: reply.pads, nodeClear: reply.nodeClear }));
       } else this.failed(reply.id, reply.error ?? 'no pads');
     });
     w.on('error', (err) => this.died(w, String(err)));
