@@ -275,6 +275,7 @@ captured arrival lands on the pause menu with no scrim, ordinals 3.6–3.8:1).
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 3, spec 4, performance 5 | 3.86 |
 | 2 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 3 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 
 Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
 and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
@@ -285,6 +286,10 @@ at 21:9; the leader row's tag column is misaligned. Requested: the muted state a
 Round 2: layout changes now ease; still failing: the open/close cross-fade overlaps two different lists as double text
 for 4–5 frames; the action row on accept still changes in one frame; some eases end with a 2 px snap; the clip opens
 with 12 frames of plate-less text over the limb. Requested: an overfull beacon list with a scroll clip.
+
+Round 3: the list cross-fade, accept row, pixel snaps and opening frames are fixed; still failing: opening chat with an
+invite card showing pushes the card down in two jumps and a stall; every tween stalls for one frame early; on accept,
+the card's text and "Not in a party" show through the rows passing over them. Requested: a tab-switch clip.
 
 ## P1.E13.T05 Basic fabricator (UI)
 
