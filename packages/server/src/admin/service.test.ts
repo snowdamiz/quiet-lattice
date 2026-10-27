@@ -197,7 +197,13 @@ describe('the admin service out of play', () => {
         },
       },
     });
-    expect(await admin.run({ cmd: 'rename', kind: 'body', key: '1:2', name: 'Halcyon' }, who)).toEqual({ kind: 'body', key: '1:2', finder: 'Ves', at: 5, name: 'Halcyon' });
+    expect(await admin.run({ cmd: 'rename', kind: 'body', key: '1:2', name: 'Halcyon' }, who)).toEqual({
+      kind: 'body',
+      key: '1:2',
+      finder: 'Ves',
+      at: 5,
+      name: 'Halcyon',
+    });
     expect(await admin.run({ cmd: 'rename', kind: 'body', key: '1:2', name: null }, who)).toEqual({ kind: 'body', key: '1:2', finder: 'Ves', at: 5 });
     expect(await codeOf(admin.run({ cmd: 'rename', kind: 'body', key: '1:3', name: 'Halcyon' }, who))).toBe('not_found');
     expect(asked).toEqual([

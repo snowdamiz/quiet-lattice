@@ -20,7 +20,16 @@
 //   procedural name, which every client makes itself.
 // - **Shown to everyone.** A joining player is sent its system's finds (`discoveries`, `reset`), again whenever its zone
 //   becomes another system's, and every new find and every name given to everyone in that system.
-import { FIRST_FINDER_XP, NAME_WINDOW_S, SITE_REACH_M, checkDiscoveryName, discoveryId, discoveryKeyOk, systemSeedOfKey, type DiscoveryKind } from '@astra/shared/discovery';
+import {
+  FIRST_FINDER_XP,
+  NAME_WINDOW_S,
+  SITE_REACH_M,
+  checkDiscoveryName,
+  discoveryId,
+  discoveryKeyOk,
+  systemSeedOfKey,
+  type DiscoveryKind,
+} from '@astra/shared/discovery';
 import { DISCOVERIES_MAX, encodeServerMessage, type ClientMessage, type DiscoveryView, type ServerMessage } from '@astra/shared/protocol';
 import { tierOfGalaxySystem, type PlanetParams, type Tier } from '@astra/shared/world';
 import type { AnalyzedEvent } from '../codex/analysis.ts';
@@ -514,5 +523,12 @@ export async function renameFind(
 }
 
 function same(a: DiscoveryRecord, b: DiscoveryRecord): boolean {
-  return a.name === b.name && a.nameState === b.nameState && a.nameUntil === b.nameUntil && a.finderId === b.finderId && a.finderName === b.finderName && a.at === b.at;
+  return (
+    a.name === b.name &&
+    a.nameState === b.nameState &&
+    a.nameUntil === b.nameUntil &&
+    a.finderId === b.finderId &&
+    a.finderName === b.finderName &&
+    a.at === b.at
+  );
 }

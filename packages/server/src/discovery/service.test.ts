@@ -67,8 +67,8 @@ class Bot implements DiscoverySession {
     }
     return out;
   }
-  events(kind: string) {
-    return this.got.flatMap((m) => (m.t === 'event' && m.event.kind === kind ? [m.event] : []));
+  events(kind: string): Record<string, unknown>[] {
+    return this.got.flatMap((m) => (m.t === 'event' && m.event.kind === kind ? [m.event as Record<string, unknown>] : []));
   }
 }
 
@@ -81,7 +81,9 @@ function zoneOf(d: typeof system, index: number, bots: () => Bot[]): DiscoveryZo
     entityOf: (v: { id: number }) => bots().find((b) => b.id === v.id)?.id,
     entity: (id: number) => {
       const b = bots().find((x) => x.id === id);
-      return b ? ({ id, fields: { kind: 'player', quat: [0, 0, 0, 1], vel: [0, 0, 0], ...b.entity } } as unknown as ReturnType<DiscoveryZone['entity']>) : undefined;
+      return b
+        ? ({ id, fields: { kind: 'player', quat: [0, 0, 0, 1], vel: [0, 0, 0], ...b.entity } } as unknown as ReturnType<DiscoveryZone['entity']>)
+        : undefined;
     },
     patch: (id: number, set: { level?: number }) => {
       const b = bots().find((x) => x.id === id);
@@ -209,7 +211,7 @@ describe('first finds', () => {
     const key = siteKey(FRAME, 0);
     expect([...t.store.rows.values()].map((r) => [r.kind, r.key, r.finderId])).toEqual([['site', key, a.characterId]]);
     expect(t.xp(a)).toBe(FIRST_FINDER_XP);
-    expect(a.events('notice')[0]!.text).toContain(proceduralName('site', key, system));
+    expect(String(a.events('notice')[0]!.text)).toContain(proceduralName('site', key, system));
   });
 
   it('pays a find whose claim landed after its finder left on its next join, once', async () => {
@@ -311,7 +313,10 @@ describe('naming a find', () => {
     expect(await t.service.rename('species', `${FRAME}/7`, 'Halcyon', 'admin:ops')).toMatchObject({ ok: false, error: 'not_found' });
     expect(await t.service.rename('site', SPECIES, 'Halcyon', 'admin:ops')).toMatchObject({ ok: false, error: 'invalid' });
     const cleared = await t.service.rename('species', SPECIES, null, 'admin:ops');
-    expect(cleared).toEqual({ ok: true, find: { kind: 'species', key: SPECIES, finder: 'Ana Vel', at: 1000, procedural: proceduralName('species', SPECIES, system) } });
+    expect(cleared).toEqual({
+      ok: true,
+      find: { kind: 'species', key: SPECIES, finder: 'Ana Vel', at: 1000, procedural: proceduralName('species', SPECIES, system) },
+    });
     expect(t.b.finds().get(`species|${SPECIES}`)).toEqual({ kind: 'species', key: SPECIES, finder: 'Ana Vel', at: 1000 });
     expect(await t.ask(t.a, 'Halcyon')).toMatchObject({ result: 'refused', reason: 'closed' });
   });
@@ -323,7 +328,7 @@ describe('the plates component', () => {
     const c = platesComponent(book);
     expect(c.schema.safeParse(c.default({} as never)).success).toBe(true);
     const stored = { plates: [{ kind: 'body' as const, key: FRAME, at: 5 }] };
-    c.load(stored, { character: { id: 'c1' } } as never);
+    c.load!(stored, { character: { id: 'c1' } } as never);
     expect(book.has('c1', 'body', FRAME)).toBe(true);
     expect(c.save({ characterId: 'c1' } as never)).toEqual(stored);
     expect(c.onInvalid).toBe('refuse');

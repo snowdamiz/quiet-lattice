@@ -25,7 +25,22 @@ const reason = (raw: string, opts?: { reserved?: boolean }) => {
 
 describe('the moderation filter', () => {
   it('takes ordinary names, tidied', () => {
-    for (const name of ['Halcyon', "Vel'ka's Rest", 'New Hope 2', 'Kepler-22', 'Ébène', 'Ålborg Rise', 'Big Sky', 'Scunthorpe', 'Cockatoo', 'Assam', 'Grapevine', 'Saltwater', 'Essex', 'Count Ilya']) {
+    for (const name of [
+      'Halcyon',
+      "Vel'ka's Rest",
+      'New Hope 2',
+      'Kepler-22',
+      'Ébène',
+      'Ålborg Rise',
+      'Big Sky',
+      'Scunthorpe',
+      'Cockatoo',
+      'Assam',
+      'Grapevine',
+      'Saltwater',
+      'Essex',
+      'Count Ilya',
+    ]) {
       expect(checkDiscoveryName(name), name).toEqual({ ok: true, name });
     }
     expect(checkDiscoveryName('  Big    Sky ')).toEqual({ ok: true, name: 'Big Sky' });
@@ -40,13 +55,43 @@ describe('the moderation filter', () => {
   });
 
   it('refuses characters a name may not hold, and names of too few letters', () => {
-    for (const name of ['Hal_cyon', 'Hal!', 'Hal  -cyon', '-Halcyon', "Halcyon'", 'Hal--cyon', '12345', 'A 1 2', 'Ηalcyon', 'Hаlcyon', 'Hal😀cyon', 'Hal‮cyon', '<b>Hi</b>']) {
+    for (const name of [
+      'Hal_cyon',
+      'Hal!',
+      'Hal  -cyon',
+      '-Halcyon',
+      "Halcyon'",
+      'Hal--cyon',
+      '12345',
+      'A 1 2',
+      'Ηalcyon',
+      'Hаlcyon',
+      'Hal😀cyon',
+      'Hal‮cyon',
+      '<b>Hi</b>',
+    ]) {
       expect(reason(name), name).toBe('characters');
     }
   });
 
   it('refuses blocked words however they are dressed up, and not words that merely hold them', () => {
-    for (const name of ['Fuck', 'Fuckton', 'F u c k', 'Fuuuck Rock', 'Fück', 'Sh1t', 'Big Shit', 'Shiiit', 'Ass', 'A55 Rock', 'Dick Rock', 'Cum', 'Nazi Moon', 'N4zi', 'S E X']) {
+    for (const name of [
+      'Fuck',
+      'Fuckton',
+      'F u c k',
+      'Fuuuck Rock',
+      'Fück',
+      'Sh1t',
+      'Big Shit',
+      'Shiiit',
+      'Ass',
+      'A55 Rock',
+      'Dick Rock',
+      'Cum',
+      'Nazi Moon',
+      'N4zi',
+      'S E X',
+    ]) {
       expect(reason(name), name).toBe('blocked');
     }
     expect(reason('Dickens')).toBeNull();
@@ -54,7 +99,20 @@ describe('the moderation filter', () => {
   });
 
   it('refuses names that pass for the game’s own, unless a moderator gives them', () => {
-    for (const name of ['Admin', 'Admin Rock', 'Dev Moon', 'Official Spire', 'GM Base', 'Sarelun', 'Thalune', 'Waystation Compact', 'The Count', 'TheCount', 'Th3 C0unt', 'Free Reaches']) {
+    for (const name of [
+      'Admin',
+      'Admin Rock',
+      'Dev Moon',
+      'Official Spire',
+      'GM Base',
+      'Sarelun',
+      'Thalune',
+      'Waystation Compact',
+      'The Count',
+      'TheCount',
+      'Th3 C0unt',
+      'Free Reaches',
+    ]) {
       expect(reason(name), name).toBe('reserved');
     }
     expect(reason('Sarelun', { reserved: false })).toBeNull();

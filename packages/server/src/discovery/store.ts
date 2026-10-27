@@ -99,7 +99,9 @@ export function pgDiscoveryStore(db: Db, shardId: string): DiscoveryStore {
       const [row] = await db
         .update(discoveries)
         .set({ name, nameState: 'named', namedAt: now, namedBy: 'finder' })
-        .where(and(at(kind, key), eq(discoveries.finderId, finderId), eq(discoveries.nameState, 'open'), isNull(discoveries.name), gte(discoveries.nameUntil, now)))
+        .where(
+          and(at(kind, key), eq(discoveries.finderId, finderId), eq(discoveries.nameState, 'open'), isNull(discoveries.name), gte(discoveries.nameUntil, now)),
+        )
         .returning(COLUMNS);
       return row ?? null;
     },

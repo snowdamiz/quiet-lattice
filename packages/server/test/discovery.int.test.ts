@@ -36,7 +36,9 @@ const system = describeZoneSystem(HOME);
 /** A world of the home system with sites and a walker species (a docile one if it has one: it stays put). */
 const body = system.bodies.find(
   (b) =>
-    b.type !== 'gas' && faunaSpecies(b.params as PlanetParams, 0).some((s) => s.kind !== 'flyer') && groundOf(b.params as PlanetParams, 0).nodes?.nodeClear.length,
+    b.type !== 'gas' &&
+    faunaSpecies(b.params as PlanetParams, 0).some((s) => s.kind !== 'flyer') &&
+    groundOf(b.params as PlanetParams, 0).nodes?.nodeClear.length,
 )!;
 const params = body.params as PlanetParams;
 const FRAME = frameId(system.seed, body.index);
@@ -138,7 +140,7 @@ async function join(token: string, characterId: string, name: string) {
   const finds = new Map<string, View>();
   /** takes every `discoveries` message received so far into `finds` */
   const read = () => {
-    for (let i = 0; i < sock.received.length; ) {
+    for (let i = 0; i < sock.received.length;) {
       const m = sock.received[i]!;
       if (m.t !== 'discoveries') {
         i++;
@@ -161,10 +163,14 @@ async function join(token: string, characterId: string, name: string) {
     read,
     /** waits until it holds a find that `pred` takes */
     async holds(kind: string, key: string, pred: (v: View) => boolean = () => true, what = `${kind} ${key}`): Promise<View> {
-      await waitFor(() => {
-        const v = read().get(`${kind}|${key}`);
-        return !!v && pred(v);
-      }, 10_000, `${name} to hold ${what}`);
+      await waitFor(
+        () => {
+          const v = read().get(`${kind}|${key}`);
+          return !!v && pred(v);
+        },
+        10_000,
+        `${name} to hold ${what}`,
+      );
       return finds.get(`${kind}|${key}`)!;
     },
     /** puts itself at a point of the world in a mode, once the server has it there */

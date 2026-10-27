@@ -4,7 +4,16 @@
 // the resource nodes keep off, holds each site's direction and footprint, in `planSites` order: the site keys' index).
 import { parseSpeciesKey } from '@astra/shared/codex';
 import { parseSiteKey, worldOfKey, type DiscoveryKind } from '@astra/shared/discovery';
-import { frameKeyOf, Galaxy, GALAXY_SEED, SITE_NODE_CLEARANCE, SITE_TYPES, type PlanetParams, type SiteType, type SystemDescription } from '@astra/shared/world';
+import {
+  frameKeyOf,
+  Galaxy,
+  GALAXY_SEED,
+  SITE_NODE_CLEARANCE,
+  SITE_TYPES,
+  type PlanetParams,
+  type SiteType,
+  type SystemDescription,
+} from '@astra/shared/world';
 import { worldSpecies } from '../codex/species.ts';
 import type { Ground } from '../fauna/terrain.ts';
 import { describeZoneSystem } from '../zones/system.ts';
@@ -12,7 +21,12 @@ import { describeZoneSystem } from '../zones/system.ts';
 type Vec3 = [number, number, number];
 
 /** What players call each kind of site (the client's Structures labels). */
-export const SITE_LABELS: Readonly<Record<SiteType, string>> = { outpost: 'Abandoned Outpost', monolith: 'Ancient Monolith', crash: 'Crashed Starship', beacon: 'Signal Beacon' };
+export const SITE_LABELS: Readonly<Record<SiteType, string>> = {
+  outpost: 'Abandoned Outpost',
+  monolith: 'Ancient Monolith',
+  crash: 'Crashed Starship',
+  beacon: 'Signal Beacon',
+};
 
 /** A world's site `index` is of this type: planSites deals the types out in turn, by the index each site takes. */
 export function siteTypeAt(index: number): SiteType {

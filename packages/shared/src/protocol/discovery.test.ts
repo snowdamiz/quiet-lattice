@@ -2,7 +2,16 @@
 // their names. A request's name is held to chat's text rules on the wire; the moderation filter's own rules are the
 // server's to answer (`named` with a reason), so a name too long is answered rather than dropped.
 import { describe, expect, it } from 'vitest';
-import { decodeClientMessage, decodeServerMessage, encodeClientMessage, encodeMessage, encodeServerMessage, PROTOCOL_VERSION, type ClientMessage, type ServerMessage } from './index.ts';
+import {
+  decodeClientMessage,
+  decodeServerMessage,
+  encodeClientMessage,
+  encodeMessage,
+  encodeServerMessage,
+  PROTOCOL_VERSION,
+  type ClientMessage,
+  type ServerMessage,
+} from './index.ts';
 
 const ask = { t: 'name', kind: 'body', key: '424242:3', name: 'Halcyon' } as const satisfies ClientMessage;
 

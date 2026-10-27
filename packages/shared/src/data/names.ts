@@ -11,7 +11,18 @@ export const DISCOVERY_NAME_RULES = deepFreeze({ minLength: 3, maxLength: 24, mi
 
 /** Refused anywhere in a name, its separators dropped and its repeated letters run together ("F u u ck" is refused):
  * words no reading makes innocent. */
-export const NAME_BLOCKED_FRAGMENTS: readonly string[] = deepFreeze(['fuck', 'nigger', 'nigga', 'faggot', 'whore', 'hitler', 'porn', 'dildo', 'bitch', 'rapist']);
+export const NAME_BLOCKED_FRAGMENTS: readonly string[] = deepFreeze([
+  'fuck',
+  'nigger',
+  'nigga',
+  'faggot',
+  'whore',
+  'hitler',
+  'porn',
+  'dildo',
+  'bitch',
+  'rapist',
+]);
 
 /** Refused as one of a name's words, or as the whole name run together: words that also sit innocently inside others
  * ("Scunthorpe", "Cockatoo", "Grapevine", "Saltwater"), so they are not matched as fragments. */
