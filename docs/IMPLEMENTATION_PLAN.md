@@ -331,7 +331,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E17.T04 War zones** · deps: E28.T04 · done: war-zone volumes around the three anchors with no bounty and faction flagging. · verify: integration.
 
 ### E18 Factions and reputation
-- [ ] **P2.E18.T01 Rep model** · deps: P1.E03.T05 · spec: DESIGN 14.4 · done: per-faction rep 0–1000, ranks at 200/500/800, gains and losses from events, titles. · verify: unit and integration.
+- [~] **P2.E18.T01 Rep model** · deps: P1.E03.T05 · spec: DESIGN 14.4 · done: per-faction rep 0–1000, ranks at 200/500/800, gains and losses from events, titles. · verify: unit and integration.
 - [ ] **P2.E18.T02 Compact chain** · deps: T01, P1.E09.T01 · done: Hand, Factor, Lanewarden chains and unlocks (double bounties, Tier 2 hulls at Waystations, Hangar Rights, the Warden-breaker gate). · verify: e2e.
 - [ ] **P2.E18.T03 Free Reaches chain** · deps: T01, P1.E11.T05 · done: Deckhand, Cutter, Captain's Ear; the Scrapyard market and Void quartermaster; the Void branch gate flips from a story flag to Reaches standing. · verify: e2e.
 - [ ] **P2.E18.T04 Chorus chain** · deps: T01 · done: Listener, Reader, Voice; sanctuary at B/E stars built from the station kit variant; respec discount; Resonance Tier II–III. · verify: e2e.
@@ -351,7 +351,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E20.T03 Catalysts and cosmetics** · deps: T01 · done: sanctuary catalyst recipes with timed buffs; glyph cosmetics from Count residue with boss-drop patterns; liveries from city chains. · verify: integration; smoke.
 
 ### E21 World events
-- [ ] **P2.E21.T01 Event framework** · deps: P1.E09.T02 · spec: DESIGN 14.6, 16.6 · done: server-scheduled events with presence scaling 1–12, instancing above 12, contribution tracking, banner announcements, rewards. · verify: unit tests on scaling; integration with 1 and 15 bots.
+- [~] **P2.E21.T01 Event framework** · deps: P1.E09.T02 · spec: DESIGN 14.6, 16.6 · done: server-scheduled events with presence scaling 1–12, instancing above 12, contribution tracking, banner announcements, rewards. · verify: unit tests on scaling; integration with 1 and 15 bots.
 - [ ] **P2.E21.T02 Station raid event** · deps: T01, P1.E11.T05 · done: the repeatable shared version of chapter 11. · verify: e2e.
 - [ ] **P2.E21.T03 Hollow tide** · deps: T01, E25.T05 · done: twenty-minute waves from the Edge-ward side; stones turn herds stone-touched for the duration. · verify: e2e.
 - [ ] **P2.E21.T04 Superstorm rescue** · deps: T01 · files: `src/render/Weather.js`, `src/Game.js` (lightning) · done: a downed pilot under the ceiling with a lightning countdown. · verify: e2e.
