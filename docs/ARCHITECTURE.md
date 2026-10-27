@@ -283,11 +283,15 @@ before applying it.
     stepped back costs that one input's time);
   - and no more than its arrival gap, plus 0.05 s out of a 0.5 s bank that only real time no input claimed refills, plus
     0.05 s of what is owed: the real time its running clock left unclaimed in the last 10 s, as its inputs fell behind
-    (a latency rise, a stall). So jitter of up to half a second cancels outright; a backlog drains however it arrives,
-    bunched or over seconds, and a latency spike falls back, so long as the time was owed within the last 10 s and is
-    claimed back at no more than twice real time at 20 Hz; a clock standing still while time passes is owed nothing and
-    banks half a second at most; one run fast is held to real time once the bank is spent;
+    (a latency rise, a stall). So jitter of up to half a second cancels outright, a backlog drains however it arrives,
+    bunched or over seconds, and a latency spike falls back; a clock standing still while time passes is owed nothing
+    and banks half a second at most; one run fast is held to real time once the bank is spent;
   - and never more than 0.3 s ahead of arrival.
+  - The envelope, as measured: the total time credited is at most the real time elapsed, plus the 0.5 s bank, plus
+    0.3 s ahead of arrival, and what is owed expires 10 s after it accrued. Within that, a client sending at 60 Hz
+    (inside its message budget) can be credited up to 3.9 times real time for 3.4 s; and one that stood still for 6 to
+    10 s with a trickling clock can claim about 6 s of allowance in one tick (some 10 km at the boost cap). That is the
+    envelope of an honest stall's backlog arriving at once after a silence, which is accepted: nothing beyond it is open.
   - A clock stepped forward past what it can be credited (the client steps a clock that has fallen more than a second
     behind, as after a hidden tab's pause) is not cashed in: the credited time re-syncs to it with no movement credit for
     the step, and judging starts a fresh window there (at most once in 10 s).

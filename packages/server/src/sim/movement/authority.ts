@@ -500,6 +500,16 @@ export class MovementAuthority {
     if (pad !== null) this.holdPad(id, pad);
   }
 
+  /**
+   * Refuses mover `id`'s inputs that do not fit its pose quietly for MOVEMENT.correction.graceS from server time `now`, as
+   * after a correction: for a pose the server has just given it (an admin teleport), with inputs from its old trajectory
+   * still on the way. Its first input that fits is accepted, and ends the grace.
+   */
+  graceFrom(id: number, now: number): void {
+    const m = this.movers.get(id);
+    if (m) m.graceUntil = now + MOVEMENT.correction.graceS;
+  }
+
   /** Stops holding a mover (its pad, if it held one, is free again); returns its profile, to `add` it again elsewhere (an
    * admin teleport re-seats it so: its next input is judged from there, as at a join). */
   remove(id: number): MoverProfile | undefined {

@@ -215,6 +215,31 @@ describe('re-syncing and silent bursts gain nothing', () => {
   });
 });
 
+describe('a mover the server re-seats (an admin teleport)', () => {
+  it('is judged from its new pose, and refuses inputs from its old trajectory quietly, as after a correction', () => {
+    const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' });
+    let p: Vec3 = [...OPEN];
+    for (let i = 0; i < 20; i++) {
+      p = [p[0] + 500 * 0.05, p[1], p[2]];
+      h.send(pose(null, p, [500, 0, 0], noseTo(X)), 'ship');
+    }
+    // teleported 100 km on, given the correction grace
+    const at: Vec3 = [p[0] + 100_000, p[1], p[2]];
+    const profile = h.a.remove(h.id)!;
+    h.a.add(h.id, pose(null, at), 'ship', profile, h.now);
+    h.a.graceFrom(h.id, h.now);
+    // its inputs from before, still on their way: refused without a correction or a strike
+    for (let i = 0; i < 3; i++) {
+      p = [p[0] + 500 * 0.05, p[1], p[2]];
+      expect(h.send(pose(null, p, [500, 0, 0], noseTo(X)), 'ship')).toEqual({ ok: false, correction: null, violation: null, kick: false });
+    }
+    // then from the teleport, accepted
+    expect(h.send(pose(null, [at[0] + 25, at[1], at[2]], [500, 0, 0], noseTo(X)), 'ship').ok).toBe(true);
+    expect(h.a.corrections).toBe(0);
+    expect(h.a.recent).toEqual([]);
+  });
+});
+
 describe('rules a mutation once survived', () => {
   it('no input carries more than a second of movement, whatever silence came before it', () => {
     for (const stamped of [true, false]) {

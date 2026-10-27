@@ -163,7 +163,7 @@ describe('dev login', () => {
 describe('the CLI on characters in play', () => {
   it('teleports within the zone by a correction', async () => {
     const { acct, character } = await player();
-    const { s } = await join(acct.token, character.id);
+    const { s, welcome } = await join(acct.token, character.id);
     const near = await run('teleport', character.name, String(HOME), 'station', 'orbit:500');
     expect(near).toMatchObject({ online: true, moved: 'zone', system: HOME, mode: 'ship', pose: { pos: [0, 0, 500] } });
     const correction = await s.next('correction');
@@ -177,7 +177,9 @@ describe('the CLI on characters in play', () => {
     // movement authority judges the client's next input from the teleport, not from the pad it left: not refused
     const input = (seq: number, pos: [number, number, number], mode: 'ship' | 'docked', quat = [0, 0, 0, 1]) =>
       s.send({ t: 'input', seq, time: server.world.clock.now(), mode, pose: { frame: stationFrame(HOME), pos, quat, vel: [0, 0, 0] }, buttons: 0 });
-    input(1, [0, 0, 501], 'ship');
+    // (an input from its old trajectory, still on its way when the teleport came: refused quietly, no strike)
+    input(1, welcome.pose.pos as [number, number, number], 'docked', welcome.pose.quat);
+    input(2, [0, 0, 501], 'ship');
     await waitFor(() => zone.entity(session.entityId!)!.fields.pos[2] === 501, 5000, 'the input after the teleport');
     // and docked: on whichever pad is free, where its next input is judged from
     const docked = await run('teleport', character.name, String(HOME), 'station', 'docked');
@@ -186,8 +188,8 @@ describe('the CLI on characters in play', () => {
     expect(toPad.mode).toBe('docked');
     const pad = toPad.pose;
     expect(STATION_LAYOUT.pads.some((p) => p.x === pad.pos[0] && p.z === pad.pos[2])).toBe(true);
-    input(2, pad.pos as [number, number, number], 'docked', pad.quat);
-    await waitFor(() => zone.entity(session.entityId!)!.input?.seq === 2, 5000, 'the docked input after the teleport');
+    input(3, pad.pos as [number, number, number], 'docked', pad.quat);
+    await waitFor(() => zone.entity(session.entityId!)!.input?.seq === 3, 5000, 'the docked input after the teleport');
     expect(zone.entity(session.entityId!)!.fields.mode).toBe('docked');
     // (no correction but the teleports' own)
     expect(s.received.filter((m) => m.t === 'correction')).toEqual([]);

@@ -257,6 +257,8 @@ export class AdminService {
     if (profile) {
       if (mode === 'docked') ({ pose, mode } = zone.dockPose());
       zone.movement!.add(entityId, pose, mode, profile, zone.time);
+      // (its inputs from before, still on their way, are refused quietly, as after a correction: no strikes)
+      zone.movement!.graceFrom(entityId, zone.time);
     }
     zone.patch(entityId, { ...pose, mode });
     // the client rewinds to this pose at its last applied input (§5); the zone has taken it already

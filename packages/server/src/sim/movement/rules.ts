@@ -18,9 +18,12 @@ export const MOVEMENT = {
    * - and no more than its arrival gap, plus at most `perInputS` out of a bank of `bankS` that refills only with real time
    *   no input claimed, plus at most `drainInputS` of the real time its running clock left unclaimed (a latency rise, a
    *   stall: its inputs arrived later than they were sent) in the last `drainS`. So a backlog drains however it arrives
-   *   (bunched, or over seconds), and a latency spike falls back, while what is owed is claimed back at no more than twice
-   *   real time at the client's 20 Hz, and only within `drainS` of when it was owed; a clock standing still while time
-   *   passes is owed nothing (it banks no more than `bankS`), and one run fast is held to real time once the bank is spent;
+   *   (bunched, or over seconds), and a latency spike falls back, while what is owed is claimed back only within `drainS`
+   *   of when it was owed; a clock standing still while time passes is owed nothing (it banks no more than `bankS`), and
+   *   one run fast is held to real time once the bank is spent. The envelope, as measured: the total credited is at most
+   *   real time + `bankS` + `aheadS`; at 60 Hz within the message budget, up to 3.9 times real time for 3.4 s; after 6 to
+   *   10 s standing still with a trickling clock, about 6 s of allowance in one tick (some 10 km at the boost cap): the
+   *   envelope of an honest stall's backlog arriving at once, which is accepted;
    * - and never ahead of the input's arrival by more than `aheadS` (a client's estimate of server time errs by about half
    *   a round trip's asymmetry).
    * A stamp more than `resyncS` past what it can be credited, from a client no longer `behindS` behind (a clock stepped
