@@ -83,7 +83,10 @@ async function fly(page: Page, pos: number[], yaw: number, speed: number, other:
       w.__last = performance.now();
       w.__tick = function () {
         const now = performance.now();
-        frame(Math.min(0.066, (now - w.__last) / 1000));
+        // (up to a quarter of a second: on a busy machine the pages' frames run long, and clamped as the game's own loop
+        // clamps them the ships would fall behind their clocks, moving less than their velocities say; the remote
+        // layer's handling of such a client is the unit tests')
+        frame(Math.min(0.25, (now - w.__last) / 1000));
         w.__last = now;
         const key = (f: unknown) => (f === g.station ? 'station' : f === null ? 'inertial' : String(g.system.planets.indexOf(f)));
         const r = g.remotes.get(other);

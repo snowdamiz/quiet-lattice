@@ -421,8 +421,11 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   - **Pose times.** A snapshot labels the last pose each client reported with the tick's time, so two reports landing in
     one tick (or none) leave a moving entity's samples bunched: a tick's travel off, 14 km at the pulse drive's 280 km/s.
     Each sample of an entity moving faster than 5 m/s is given its own time from its motion (how much further it went
-    than the labels' spacing at its mean velocity says), within 0.15 s of its tick's, each estimate carrying 95% of the
-    one before so errors never pile up; interpolation runs on these times.
+    than the labels' spacing says, at its velocities and its pace: a client whose frames run long, their steps clamped,
+    covers less than its velocity says, measured over the last ten seconds or so), each estimate carrying 95% of the one
+    before so errors never pile up; interpolation runs on these times. An estimate is at most 0.15 s after its tick's
+    time and 0.1 s before it: a client that stalls moves less than its velocity says, and by its motion alone its next
+    pose would be put ever earlier, drawn ahead of where it was.
   - **Between and past samples.** A cubic Hermite on positions and velocities where they agree, else straight lines;
     orientations slerped. Past the newest sample, along its velocity for up to 250 ms, then held. A moving entity's pose
     sent again (its client's report missed the tick) is skipped. A sample no velocity explains (further off than 1 km or

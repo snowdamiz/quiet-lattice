@@ -23,13 +23,26 @@ export const TELEPORT_S = 0.3;
 /** How far off its motion an entity moving at `speed` (m/s) may be before it is a jump: TELEPORT_M, or TELEPORT_S of its
  * speed. */
 export const jumpLimit = (speed) => Math.max(TELEPORT_M, speed * TELEPORT_S);
-/** How far (s) a pose's own time is taken to be from its tick's: its client's reports reach the ticks a tick or so apart. */
+/** How far (s) past its tick's time a pose's own time may be taken to be: its client's reports reach the ticks a tick or
+ * so apart. */
 export const SKEW_S = 0.15;
+/** ...and how far before it: two ticks, the spread of a client's reports' lags behind their ticks (the estimates sit
+ * about their mean). Never more: a pose was taken before the tick that carried it, but not by much (its client reports
+ * at the ticks' rate), and a client that stalls (its page busy, its frames running long and their steps clamped) moves
+ * less than its velocity says, so by its motion its next pose would be taken further back still, and drawn ahead of
+ * where it was. */
+export const SKEW_LEAD_S = 0.1;
 /** Below this speed (m/s) a pose's time is not estimated from its motion: the motion says too little. */
 const SKEW_SPEED = 5;
 /** How much of the estimated skew each sample keeps (the rest falls back to the tick's time over a second or so, so
  * errors never pile up). */
 const SKEW_KEEP = 0.95;
+/** How much of its pace (PoseBuffer.moved, .labelled) an entity's buffer keeps each sample: it is taken over the last
+ * ten seconds or so... */
+const PACE_KEEP = 0.995;
+/** ...and over its first seconds counts only as a share of this many (s) of them, so the few at the start, which say
+ * little, move it little. */
+const PACE_RAMP_S = 3;
 
 const _d = new THREE.Vector3();
 const _p = new THREE.Vector3();
@@ -72,6 +85,12 @@ export class PoseBuffer {
     this.length = 0;
     /** the frame every sample is in (a client body, the Waystation, or null for the inertial frame) */
     this.frame = null;
+    // The entity's pace: the seconds its steps take at their velocities (`moved`) against the seconds of the labels
+    // between them (`labelled`), each summed over the last few seconds. A client whose frames run long (their steps
+    // clamped) moves less in a second than its velocity says; by its velocity alone its poses would be taken ever
+    // earlier (or, moving more, ever later), drawn ahead of where it was, or further behind.
+    this.moved = 0;
+    this.labelled = 0;
   }
 
   /** The i-th sample held, oldest first. */
@@ -103,8 +122,15 @@ export class PoseBuffer {
       const v = _v.fromArray(vel).add(prev.vel).multiplyScalar(0.5);
       const sp2 = v.lengthSq();
       if (sp2 > SKEW_SPEED * SKEW_SPEED) {
-        const r = _d.fromArray(pos).sub(prev.pos).addScaledVector(v, -(label - prev.label)).dot(v) / sp2;
-        if (Math.abs(r) <= 2 * SKEW_S) skew = Math.max(-SKEW_S, Math.min(SKEW_S, SKEW_KEEP * (prev.skew + r)));
+        // how long the step took at its velocities, at the entity's pace; how much longer than the labels say
+        const took = _d.fromArray(pos).sub(prev.pos).dot(v) / sp2;
+        const pace = Math.max(0.5, Math.min(2, 1 + (this.moved - this.labelled) / Math.max(this.labelled, PACE_RAMP_S)));
+        const r = took / pace - (label - prev.label);
+        if (Math.abs(r) <= 2 * SKEW_S) {
+          skew = Math.max(-SKEW_LEAD_S, Math.min(SKEW_S, SKEW_KEEP * (prev.skew + r)));
+          this.moved = PACE_KEEP * this.moved + took;
+          this.labelled = PACE_KEEP * this.labelled + (label - prev.label);
+        }
       }
     }
     const t = prev ? Math.max(label + skew, prev.t + 1e-3) : label;

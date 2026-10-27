@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { Body } from '../universe/Body.js';
-import { EXTRAPOLATE_S, PoseBuffer, SKEW_S, TELEPORT_M } from './buffer.js';
+import { EXTRAPOLATE_S, PoseBuffer, SKEW_LEAD_S, SKEW_S, TELEPORT_M } from './buffer.js';
 import { framePoseAt, reframeAt } from './frames.js';
 
 const Q = [0, 0, 0, 1];
@@ -133,11 +133,13 @@ describe('PoseBuffer: what it keeps', () => {
  * What a zone sends of a steady flight `path(t)` reported by its client at 20 Hz: each tick (every 50 ms from t0) labels
  * with its own time the last report that had reached it, the reports taken at `phase` past each tick and arriving
  * 5-45 ms later (deterministic jitter), so some ticks see none (and repeat the last) and some two (and send the later).
+ * No report is taken while `busy(t)` (the client's page stalled).
  */
-function zoneOf(path, { t0 = 100, seconds = 3, phase = 0.03, seed = 1 } = {}) {
+function zoneOf(path, { t0 = 100, seconds = 3, phase = 0.03, seed = 1, busy = () => false } = {}) {
   const reports = [];
   for (let i = 0; i * 0.05 < seconds + 0.2; i++) {
     const at = t0 - 0.1 + i * 0.05 + phase;
+    if (busy(at)) continue;
     const jitter = 0.005 + 0.04 * (((Math.sin((i + 1) * 12.9898 * seed) * 43758.5453) % 1) + 1) % 1;
     reports.push({ at, arrives: at + jitter, ...path(at) });
   }
@@ -181,6 +183,56 @@ describe('PoseBuffer: reports bunched into ticks', () => {
       for (let k = 0; k < xs[0].length; k++) expect(Math.abs(xs[0][k] - xs[1][k])).toBeLessThan(speed * 0.05);
     });
   }
+
+  // a client whose frames run long (its steps clamped) moves less in a second than its velocity says: by its motion its
+  // poses would be taken ever earlier, and it would be drawn ahead of where it was
+  for (const rate of [0.8, 1, 1.2]) {
+    it(`draws a flight that covers ${rate} times what its velocity says no earlier than it was there, at a steady pace`, () => {
+      const b = new PoseBuffer();
+      const path = (t) => ({ pos: [120 * rate * (t - 100), 0, 0], vel: [120, 0, 0] });
+      for (const s of zoneOf(path, { seconds: 8, phase: 0.02, seed: 3 })) b.push(s.T, null, s.pos, Q, s.vel, 'ship');
+      const out = pose();
+      const behind = [];
+      const xs = [];
+      for (let t = 106.5; t < 107.9; t += 1 / 60) {
+        b.sample(t, out);
+        xs.push(out.pos.x);
+        // when its client had it where it is drawn
+        behind.push(t - (100 + out.pos.x / (120 * rate)));
+      }
+      expect(Math.min(...behind)).toBeGreaterThan(-0.02);
+      expect(Math.max(...behind)).toBeLessThan(0.2);
+      const steps = xs.slice(1).map((v, k) => v - xs[k]);
+      expect(Math.min(...steps)).toBeGreaterThan((120 * rate) / 60 * 0.85);
+      expect(Math.max(...steps)).toBeLessThan((120 * rate) / 60 * 1.15);
+    });
+  }
+
+  it(`draws a client that stalls (its page busy, then its step clamped) no more than ${SKEW_LEAD_S * 1000} ms ahead of where it was`, () => {
+    // busy for 0.3 s of every second, in which it neither reports nor moves (it then takes up where it was)
+    const busy = (t) => (t - 100) % 1 > 0.6 && (t - 100) % 1 < 0.9;
+    const stalled = (t) => Math.floor(t - 100) * 0.3 + Math.max(0, Math.min(0.3, ((t - 100) % 1) - 0.6));
+    const at = (x) => {
+      // when it was at x (the first time)
+      let lo = 100;
+      let hi = 110;
+      for (let k = 0; k < 60; k++) {
+        const mid = (lo + hi) / 2;
+        if (120 * (mid - 100 - stalled(mid)) < x) lo = mid;
+        else hi = mid;
+      }
+      return lo;
+    };
+    const b = new PoseBuffer();
+    for (const s of zoneOf((t) => ({ pos: [120 * (t - 100 - stalled(t)), 0, 0], vel: [120, 0, 0] }), { seconds: 8, seed: 5, busy })) b.push(s.T, null, s.pos, Q, s.vel, 'ship');
+    const out = pose();
+    let ahead = 0;
+    for (let t = 106.5; t < 107.9; t += 1 / 120) {
+      if (b.sample(t, out) !== 'interpolate') continue;
+      ahead = Math.max(ahead, at(out.pos.x) - t);
+    }
+    expect(ahead).toBeLessThan(SKEW_LEAD_S);
+  });
 
   it('keeps the ticks’ times for a steady flight reported on the beat', () => {
     const b = new PoseBuffer();

@@ -398,7 +398,12 @@ interface RemotePage {
  * `surface`) as a snapshot stream through the wire's encoding with a 60 ms trip and 40 ms of jitter, offline, so the
  * capture is hermetic. `seconds` of it are stepped before the still.
  */
-async function openRemotes(page: Page, scene: 'flypast' | 'crowd' | 'pads' | 'surface', seconds: number, stage: 'space' | 'pads' | 'surface' = 'space'): Promise<void> {
+async function openRemotes(
+  page: Page,
+  scene: 'flypast' | 'crowd' | 'pads' | 'surface',
+  seconds: number,
+  stage: 'space' | 'pads' | 'surface' = 'space',
+): Promise<void> {
   await page.evaluate(() => (window as unknown as RemotePage).dev.boot());
   await page.evaluate(async () => {
     const w = window as unknown as RemotePage & { requestAnimationFrame(cb: FrameRequestCallback): number };
