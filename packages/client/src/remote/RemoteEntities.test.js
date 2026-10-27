@@ -124,6 +124,26 @@ describe('RemoteEntities: what it follows and shows', () => {
     ]);
   });
 
+  it('picks a boosting pilot up twice as far off, and one in cover (a belt, a ring, a nebula) half as far', () => {
+    const { game } = world();
+    game.place(100);
+    const remotes = new RemoteEntities(game, { view: view() });
+    const pilot = (id, x, vx) => ({ id, kind: 'player', mode: 'ship', name: `Pilot ${id}`, frame: frameId('station'), pos: [x, 0, 0], quat: Q, vel: [vx, 0, 0] });
+    // the Lark cruises at 600 m/s: over 660 it reads as boosting (whatever its button), under it not; cover is where
+    // coverAtObjects says (here the pilots past 2.5 km... and closer than 3 km)
+    const entities = [pilot(1, 6000, 1000), pilot(2, 6000, 500), pilot(3, 2600, 0), pilot(4, 1500, 0)];
+    remotes.ingest(new Map(entities.map((e) => [e.id, e])), 100, 100, null);
+    remotes.update(DT);
+    const here = game.station.localToWorld(new THREE.Vector3(), new THREE.Vector3());
+    remotes.inCover = (w) => {
+      const d = w.distanceTo(here);
+      return d > 1000 && d < 3000;
+    };
+    const marked = [];
+    remotes.markers(here, 4000, (name) => marked.push(name));
+    expect(marked).toEqual(['Pilot 4', 'Pilot 1']);
+  });
+
   it('shows nothing in a frame of another system (the player is not in the zone’s system)', () => {
     const { game } = world();
     game.place(100);
@@ -455,6 +475,56 @@ describe('RemoteEntities: late snapshots', () => {
   });
 });
 
+describe('RemoteEntities: jumps', () => {
+  it('shows a change too large to blend as the jump it is: a ship held after its snapshots stopped, which moved on', () => {
+    const { game } = world();
+    const remotes = new RemoteEntities(game, { view: view() });
+    // at 2 km/s along the Waystation's x, its snapshots lost for two seconds: held where it was a quarter of a second past
+    // the last, it is some 3.5 km behind when they come back, further than 1.2 s of its speed
+    const at = (t) => [{ id: 1, kind: 'player', mode: 'ship', frame: frameId('station'), pos: [2000 * (t - 100), 0, 0], quat: Q, vel: [2000, 0, 0] }];
+    let before = null;
+    const jumps = [];
+    play(remotes, game, at, {
+      from: 100,
+      to: 103.5,
+      trip: (t) => (t > 100.5 && t < 102.5 ? null : 0.03),
+      watch: (now) => {
+        const r = remotes.get(1);
+        if (!r?.shown) return;
+        if (before && now > 102.4 && now < 102.8) jumps.push({ step: r.pos.distanceTo(before), offset: r.offset.length() });
+        before = r.pos.clone();
+      },
+    });
+    const jump = jumps.find((j) => j.step > 2000);
+    expect(jump).toBeDefined();
+    expect(jump.offset).toBe(0);
+  });
+
+  it('drops a blend under way when a cut comes due: the entity stands where the cut put it', () => {
+    const { game } = world();
+    const remotes = new RemoteEntities(game, { view: view() });
+    // flying slowly; three tenths of a second of snapshots lost, then one 200 m off its line (a blend begins), then a
+    // teleport 20 km on (a cut)
+    const at = (t) => [{ id: 1, kind: 'player', mode: 'ship', frame: frameId('station'), pos: [100 * (t - 100) + (t >= 101.5 ? 20000 : 0), t >= 101.3 ? 200 : 0, 0], quat: Q, vel: [100, 0, 0] }];
+    const seen = [];
+    play(remotes, game, at, {
+      from: 100,
+      to: 102.2,
+      trip: (t) => (t > 101 && t < 101.3 ? null : 0.03),
+      watch: () => {
+        const r = remotes.get(1);
+        if (r?.shown) seen.push({ since: r.pose.since, offset: r.offset.length(), y: r.pos.y, x: r.pos.x });
+      },
+    });
+    const due = seen.findIndex((f) => f.since >= 101.5);
+    expect(due).toBeGreaterThan(0);
+    // a blend was running the frame before
+    expect(seen[due - 1].offset).toBeGreaterThan(10);
+    expect(seen[due].offset).toBe(0);
+    expect(seen[due].y).toBeCloseTo(200, 6);
+  });
+});
+
 describe('RemoteEntities: following Net', () => {
   it('ingests each snapshot Net applies (without the player itself), and starts over on a welcome', () => {
     const { game } = world();
@@ -482,6 +552,13 @@ describe('RemoteEntities: following Net', () => {
     expect(remotes.renderTime).toBeCloseTo(500 - 0.05 - 0.1, 9);
     handlers.get('welcome')({});
     expect(remotes.list).toEqual([]);
+    // and on a zone change (entity ids start over there too), its clock with it
+    handlers.get('snapshot')({ tick: 2 });
+    remotes.update(DT);
+    expect(remotes.list).toHaveLength(1);
+    handlers.get('zone')({});
+    expect(remotes.list).toEqual([]);
+    expect(remotes.renderTime).toBe(-Infinity);
     remotes.detach();
     expect(handlers.size).toBe(0);
   });

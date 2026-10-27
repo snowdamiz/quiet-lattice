@@ -234,6 +234,23 @@ describe('PoseBuffer: reports bunched into ticks', () => {
     expect(ahead).toBeLessThan(SKEW_LEAD_S);
   });
 
+  it('lets an estimate fall back to the tick’s time once the reports are on the beat again', () => {
+    const b = new PoseBuffer();
+    // on the beat, then one report taken 50 ms later than its tick says, then on the beat again (each a tick apart)
+    const late = (t) => (t >= 100.5 - 1e-9 ? 0.05 : 0);
+    const skew = [];
+    for (let k = 0; k <= 70; k++) {
+      const t = 100 + k * 0.05;
+      b.push(t, null, [200 * (t - 100 + late(t)), 0, 0], Q, [200, 0, 0]);
+      skew.push(b.newest.skew);
+    }
+    // the late one taken to be about as late as it was, then each after it less so (the reports after it are on the
+    // beat): a third of it within a second, under a tenth of it within three
+    expect(skew[10]).toBeGreaterThan(0.04);
+    expect(skew[30]).toBeLessThan(skew[10] / 3);
+    expect(Math.abs(skew[70])).toBeLessThan(skew[10] / 4);
+  });
+
   it('keeps the ticks’ times for a steady flight reported on the beat', () => {
     const b = new PoseBuffer();
     for (const s of zoneOf((t) => ({ pos: [80 * (t - 100), 0, 0], vel: [80, 0, 0] }), { phase: 0.0 })) b.push(s.T, null, s.pos, Q, s.vel);

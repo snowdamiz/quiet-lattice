@@ -553,7 +553,9 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     on a moon stays on the moon as drawn. A sample in another frame re-expresses the held ones into it, each with both
     frames as they stood at its own time (`remote/frames.js`: a body's pose at any time by the shared kinematics, then
     `setFrameInto`), and moves them to meet the new sample (its client placed itself in the new frame with its own
-    clock, which a hitch can leave up to a second off the server's). Whatever changes the drawn pose as a sample arrives
+    clock, which a hitch can leave up to a second off the server's); a sample further off than its speed and that clock
+    (1.2 s of how fast the frames move apart there) explain is a teleport into the frame: a cut, nothing moved. Whatever
+    changes the drawn pose as a sample arrives
     (a frame change, the frames having moved apart over the delay; a late sample after extrapolating) is taken up by an
     offset in the frame's axes that starts from where and as fast as the entity was drawn and dies away critically
     damped (time constant 0.2 s). One larger than 2 km or 1.2 s of the entity's speed, or at a frame change of how fast
@@ -563,27 +565,43 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     by hull (a snapshot that names none is the Lark); players on foot are hidden, with no stand-in, until P1.E05.T04. A
     hull draws with its own model or one of its tier's (IMPLEMENTATION_PLAN 0.3): only the Lark has one until
     P1.E12.T02/T03, so the test cutscene's Mule tug is not drawn. Each hull's kit is made from its own model and livery
-    data (`HULL_SOURCES`: a Ship of its own, loaded as the world is entered, never the player's ship), dressed as the
-    game dresses a ship: hull surfaces merged per material (the cockpit interior left out), each gear leg apart. Each
-    surface has three levels of detail (the model and two meshoptimizer simplifications, borders locked and specks
-    pruned), picked per ship by its length on screen (240 and 100 px, with 15% hysteresis); the coarsest wears softened
-    panel detail and dimmer small lights, so a ship 50–100 px long keeps its outline rather than crawling (remote ships
-    take the scene's 4× MSAA like the player's). About 26 draw calls per level in use for every Lark in view, each ship
-    culled against the view (but within 100 m, for its shadow); its gear, engine glow and exhaust (by its speed against
-    its hull's cruise and its acceleration, full on the pulse drive, dark set down), and beacon its own; nothing
-    allocated per frame (24 Larks in view: ~0.1 ms of CPU). A ship landed on the world whose flora is streamed clears
-    the plants under it, as the player's does.
-  - **Markers.** `markers(here, range, add)` gives the HUD a `player` marker (name and range) for each other pilot's ship
-    the local ship's sensors pick up (`detects`: the ship's sensor range × the hull's signature, DESIGN 10.1, raised on
-    the pulse drive or boosting, lowered in cover), nearest first; none on foot. The HUD drops them off screen and leaves
-    off a name a nearer pilot's already covers.
+    data (`HULL_SOURCES`: a Ship of its own, loaded as the world is entered, never the player's ship): its surfaces merged
+    into one geometry for the hull and one per gear leg (the cockpit interior left out), each surface's material written
+    on its vertices (colour, roughness, metalness, plated or not, its glow; two-sided surfaces get their back faces), so
+    one material per level draws every surface (`hullMaterial`, the standard material reading them). Three levels,
+    picked per ship by its length on screen (240 and 100 px, a finer level only 15% past its threshold, a ship back in
+    view picked afresh): the model; its meshoptimizer simplification (borders locked, specks pruned); and each surface
+    clustered on its own to 4% (`simplifySloppy`, no triangle spanning two materials), the Lark's 1.8k triangles against
+    the model's 61.6k (2.8%; DESIGN 19.2 wants the last level under 5%). A model with its own LOD chain
+    (`<variant>_LOD<n>` nodes, art bible 8; P1.E12.T02's hulls) draws its LOD1 and its last instead; the kit logs which.
+    The plating fades with the level (0.55, 0.3, none), so a ship under 100 px is a clean silhouette rather than
+    speckle; the coarsest dims its strong small lights under the bloom's threshold, casts no shadow and draws gear legs
+    only down. Draw calls: the hull and the legs per level in use, the shadows of the two finer levels, the exhausts
+    (the Lark's 24 in the crowd: 10 more than none, against 105 more with a draw per surface), each ship culled against
+    the view (but within 100 m, for its shadow); its gear, engine glow and exhaust (by its speed against its hull's
+    cruise and its acceleration, full on the pulse drive, dark set down), and beacon its own (`aGlow`, per instance);
+    only the instances drawn are uploaded, and nothing is allocated per frame. A ship landed on the world whose flora is
+    streamed clears the plants under it, as the player's does. Measured costs: `assets/renders/ui/remote-ships-crowd/perf.json`.
+  - **Markers.** `markers(here, range, add)` gives the HUD a `player` marker for each other pilot's ship the local ship's
+    sensors pick up (`detects`: the ship's sensor range × the hull's signature, DESIGN 10.1, doubled on the pulse drive
+    or boosting, halved in cover), nearest first, with the box the ship fills and how it is turned; none on foot. The
+    HUD projects the box's corners: the mark sits 6 px over the top of the ship's bounds on screen, the name and range
+    8 px right of them, else left, else not at all, kept clear of the fixed HUD (the reticle and its readouts, the
+    compass, the location line, the vitals, prompts, toasts; their boxes read every quarter second, before the frame
+    writes), every mark, every pilot's ship and every label placed before; a ship whose bounds pass 30% of the screen
+    is plain to see and has none, and so has one off screen. Warm white (#E9E7E2) inside a sharp 2 px #0B0C0E ring, over
+    15:1 against the ring whatever lies behind.
   - **Dev.** `remote/replay.js` plays recorded snapshot streams (the zone's encoding, a 60 ms trip with 40 ms of jitter)
     through the same path offline: `pnpm capture -- --ui remote-ships` (a flypast), `remote-ships-crowd` (24 in view,
     each on its own heading and speed, one flying out of sensor range), `remote-ships-pads` (Larks docked on the
-    Waystation's pads, gear down, others passing the mouth) and `remote-ships-surface` (one landed, others flying past
-    low in the world's turning frame). `packages/tools/src/smoke/remote-online.spec.ts` flies two clients against a local
-    server (placed out past the Waystation by the admin channel's teleport, which re-seats them for movement authority;
-    neither is corrected after), one out of the Waystation's sphere into its world's frame.
+    Waystation's pads, gear down, others passing the mouth), `remote-ships-surface` (one landed, others flying past low
+    in the world's turning frame) and `remote-ships-bay` (a bay phase full: 24 Larks docked round the player's pad, the
+    hangar's three other pads and 21 berths on its floor). `packages/tools/src/smoke/remote-online.spec.ts` flies two
+    clients against a local server (placed out past the Waystation by the admin channel's teleport, which re-seats them
+    for movement authority; neither is corrected after), one out of the Waystation's sphere into its world's frame, and
+    judges each drawn ship against what the server sent of it (the ticks' poses and times, which do not drift with a
+    busy page's estimate of the server's clock): on its path within a metre, from SKEW_LEAD_S ahead of the ticks to
+    SKEW_S behind them.
 
 ## 10. Tests
 
