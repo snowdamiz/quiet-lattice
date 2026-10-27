@@ -62,6 +62,10 @@ const DIM = 0.25;
 /** A model's own levels of detail (art bible 8): `<variant>_LOD<n>`. */
 const LOD_NAME = /_(?:LOD|lod|Lod)(\d+)$/;
 const ONE = new THREE.Vector3(1, 1, 1);
+/** Each level's (and the exhausts') instance buffers, this many in turn: a frame writes the one the GPU drew from the
+ * longest ago, never one it may still be reading (on ANGLE's Metal, writing a buffer the GPU is reading holds the frame
+ * until the GPU is done with it: measured, a frame's GPU time from 8 ms to 28 ms with three ships). */
+const RING = 3;
 
 const _t = new THREE.Matrix4();
 const _g = new THREE.Matrix4();
@@ -252,13 +256,23 @@ function altitude(r) {
   return Infinity;
 }
 
-// One level of a piece, every ship's instance at that level; `glow` each instance's engine power and beacon flash.
+// One level of a piece, every ship's instance at that level: RING instanced meshes, each with its own instance buffers
+// (its matrices, and `glow`, each instance's engine power and beacon flash), the kit's turn's the one drawn this frame.
 class Level {
   constructor(geometry) {
     this.geometry = geometry;
-    this.mesh = null;
-    this.glow = null;
+    /** [{mesh, glow}] */
+    this.sets = [];
+    this.turn = 0;
     this.count = 0;
+  }
+
+  get mesh() {
+    return this.sets[this.turn].mesh;
+  }
+
+  get glow() {
+    return this.sets[this.turn].glow;
   }
 }
 
@@ -358,6 +372,8 @@ class HullKit {
     this.engines = (ship.flames ?? []).map((f) => ({ base: f.base.clone(), r: f.r }));
     this.flameGeometry = new THREE.PlaneGeometry(1, 1);
     this.flameMaterial = exhaustMaterial();
+    /** which of the RING instance buffers this frame writes */
+    this.turn = 0;
     this.alloc(this.capacity);
   }
 
@@ -400,50 +416,65 @@ class HullKit {
     this.capacity = capacity;
     for (const p of this.pieces)
       p.levels.forEach((l, k) => {
-        const old = l.mesh;
-        l.glow = new THREE.InstancedBufferAttribute(new Float32Array(capacity * 2), 2).setUsage(THREE.DynamicDrawUsage);
-        l.geometry.setAttribute('aGlow', l.glow);
-        const mesh = new THREE.InstancedMesh(l.geometry, this.materials[k], capacity);
-        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        // (the coarsest casts none: a ship under 100 px long throws no shadow worth its draw calls)
-        mesh.castShadow = k < LEVELS - 1;
-        mesh.receiveShadow = true;
-        // (each ship is culled on its own)
-        mesh.frustumCulled = false;
-        mesh.count = 0;
-        mesh.visible = false;
-        if (old) {
-          old.removeFromParent();
-          old.dispose();
+        for (const old of l.sets) {
+          old.mesh.removeFromParent();
+          old.mesh.geometry.dispose();
+          old.mesh.dispose();
         }
-        l.mesh = mesh;
-        this.group.add(mesh);
+        l.sets = Array.from({ length: RING }, () => {
+          const glow = new THREE.InstancedBufferAttribute(new Float32Array(capacity * 2), 2).setUsage(THREE.DynamicDrawUsage);
+          const mesh = new THREE.InstancedMesh(withAttribute(l.geometry, 'aGlow', glow), this.materials[k], capacity);
+          mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+          // (the coarsest casts none: a ship under 100 px long throws no shadow worth its draw calls)
+          mesh.castShadow = k < LEVELS - 1;
+          mesh.receiveShadow = true;
+          // (each ship is culled on its own)
+          mesh.frustumCulled = false;
+          mesh.count = 0;
+          mesh.visible = false;
+          this.group.add(mesh);
+          return { mesh, glow };
+        });
+        l.turn = this.turn;
       });
-    const old = this.flames;
-    const n = capacity * this.engines.length * TRAIL;
-    const geo = this.flameGeometry.clone();
-    geo.setAttribute('aGlow', new THREE.InstancedBufferAttribute(new Float32Array(Math.max(1, n) * 3), 3).setUsage(THREE.DynamicDrawUsage));
-    const flames = new THREE.InstancedMesh(geo, this.flameMaterial, Math.max(1, n));
-    flames.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    flames.frustumCulled = false;
-    flames.count = 0;
-    // (drawn after the hulls, through them only where they are not)
-    flames.renderOrder = 1;
-    this.group.add(flames);
-    if (old) {
+    for (const old of this.flameSets ?? []) {
       old.removeFromParent();
       old.geometry.dispose();
       old.dispose();
     }
-    this.flames = flames;
+    const n = Math.max(1, capacity * this.engines.length * TRAIL);
+    this.flameSets = Array.from({ length: RING }, () => {
+      const geo = this.flameGeometry.clone();
+      geo.setAttribute('aGlow', new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3).setUsage(THREE.DynamicDrawUsage));
+      const flames = new THREE.InstancedMesh(geo, this.flameMaterial, n);
+      flames.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      flames.frustumCulled = false;
+      flames.count = 0;
+      flames.visible = false;
+      // (drawn after the hulls, through them only where they are not)
+      flames.renderOrder = 1;
+      this.group.add(flames);
+      return flames;
+    });
     this.flameCount = 0;
     this.count = 0;
+  }
+
+  /** The exhausts' mesh this frame. */
+  get flames() {
+    return this.flameSets[this.turn];
   }
 
   begin() {
     this.count = 0;
     this.flameCount = 0;
-    for (const p of this.pieces) for (const l of p.levels) l.count = 0;
+    // (the next buffers in turn)
+    this.turn = (this.turn + 1) % RING;
+    for (const p of this.pieces)
+      for (const l of p.levels) {
+        l.count = 0;
+        l.turn = this.turn;
+      }
   }
 
   /** One ship: at `rel` from the camera, turned `quat`, its gear, engines and level of detail as `vis` has them. */
@@ -522,13 +553,15 @@ class HullKit {
   end() {
     for (const p of this.pieces)
       for (const l of p.levels) {
+        // (only this frame's buffers drawn; none at a level, none of its draw calls or shadow passes made)
+        for (const set of l.sets) set.mesh.visible = false;
         l.mesh.count = l.count;
-        // (none drawn at a level, none of its draw calls or shadow passes are made)
         l.mesh.visible = l.count > 0;
         if (!l.count) continue;
         upload(l.mesh.instanceMatrix, l.count * 16);
         upload(l.glow, l.count * 2);
       }
+    for (const f of this.flameSets) f.visible = false;
     this.flames.count = this.flameCount;
     this.flames.visible = this.flameCount > 0;
     if (this.flameCount) {
@@ -625,6 +658,16 @@ function clustered(index, pos, surfaces, share) {
     out.set(t, at);
     at += t.length;
   }
+  return out;
+}
+
+// A geometry drawing `g`'s vertices and triangles, with one attribute of its own.
+function withAttribute(g, name, attr) {
+  const out = new THREE.BufferGeometry();
+  for (const [key, a] of Object.entries(g.attributes)) if (key !== name) out.setAttribute(key, a);
+  out.setIndex(g.index);
+  out.setAttribute(name, attr);
+  out.boundingBox = g.boundingBox;
   return out;
 }
 
