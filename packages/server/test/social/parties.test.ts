@@ -1,7 +1,7 @@
 // Parties: invites (by name, to online characters, lapsing after a minute), accept, decline, leave, kick and promote
 // (leader only), the lead handed on and the party disbanded, a dropped member's place kept for the grace, the zone's party
-// tags following every change (so placement puts members in one story phase), and the party's state sent only when it
-// changed.
+// tags following every change (so placement puts members in one story phase), the party's state sent only when it
+// changed, and joining a party without an invite (a story beacon's answer).
 import type { PartyView } from '@astra/shared/protocol';
 import { describe, expect, it } from 'vitest';
 import type { PhaseLocation } from '../../src/phases/manager.ts';
@@ -129,6 +129,39 @@ describe('parties', () => {
     bex.party({ op: 'accept', name: 'Dax' });
     expect(denials(bex.take())).toEqual(['accept:gone:Dax']);
     expect(h.social.parties.invitesFor('char-Bex')).toEqual([]);
+  });
+
+  it('puts a character in another’s party without an invite, as a story beacon’s answer does, refusing as accept would', () => {
+    const h = harness({ partyMax: 3 });
+    const [ana, bex, cor, dax, eli] = ['Ana', 'Bex', 'Cor', 'Dax', 'Eli'].map((n) => h.player(n));
+    const { parties } = h.social;
+    const online = (p: Player) => h.social.roster.get(p.characterId)!;
+    dax.party({ op: 'invite', name: 'Bex' });
+    bex.take();
+    // Ana in no party: a new party she leads, Bex's pending invite spent (Dax hears it expired)
+    expect(parties.joinRefusal(online(bex), 'char-Ana')).toBeNull();
+    expect(parties.joinWith(online(bex), 'char-Ana')).toBeNull();
+    expect(parties.of('char-Ana')).toMatchObject({ leader: 'char-Ana', members: ['char-Ana', 'char-Bex'] });
+    expect(bex.news()).toEqual(['joined:Bex']);
+    expect(dax.news()).toEqual(['invited:Bex', 'expired:Bex']);
+    expect(partyStates(ana.take())).toEqual([{ leader: 'Ana', members: [member('Ana'), member('Bex')] }]);
+    // asked again, or for a member of the same party: nothing changes
+    expect(parties.joinWith(online(bex), 'char-Ana')).toBeNull();
+    expect(parties.joinWith(online(ana), 'char-Bex')).toBeNull();
+    expect(parties.of('char-Ana')?.members).toEqual(['char-Ana', 'char-Bex']);
+    // into an existing party, until it is full
+    expect(parties.joinWith(online(cor), 'char-Bex')).toBeNull();
+    expect(parties.joinRefusal(online(dax), 'char-Ana')).toBe('party_full');
+    expect(parties.joinWith(online(dax), 'char-Ana')).toBe('party_full');
+    // in another party; with one offline in no party
+    dax.party({ op: 'invite', name: 'Eli' });
+    eli.party({ op: 'accept', name: 'Dax' });
+    const fay = h.player('Fay');
+    h.drop(fay);
+    expect(parties.joinWith(online(eli), 'char-Fay')).toBe('in_party');
+    const gil = h.player('Gil');
+    expect(parties.joinWith(online(gil), 'char-Fay')).toBe('gone');
+    expect([parties.partyIdOf('char-Gil'), parties.partyIdOf('char-Fay'), parties.of('char-Ana')?.members.length]).toEqual([null, null, 3]);
   });
 
   it('lets any member leave, and only the leader kick and promote', () => {

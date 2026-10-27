@@ -8,8 +8,8 @@
 // every tick (an input movement authority refuses is answered with `correction`, and a client corrected too often is
 // kicked), and closing the socket saves the character and takes the entity out. Inventory requests go to the inventory
 // service and skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14).
-// Chat and party requests go to the social service (social/), which hears of every character that joins and every
-// connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
+// Chat, party and call-for-aid beacon requests go to the social service (social/), which hears of every character that
+// joins and every connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
 // leaves; a cutscene done ends the quest step that played it. Quest requests go to the quest runtime (quests/), which
 // hears of every character once it has joined (after its party is known, so it can put it back in a quest step's
 // phase) and answers each request, and whose own changes reach the session as `quests` state and quest events (§17).
@@ -206,7 +206,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     if (change !== 'server') return;
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'skills', ...reply });
   });
-  const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
+  // (a cutscene's phase is no instance to call aid to: the cutscene service says which phases it plays in)
+  const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log, cutscenes });
   if (!deps.social) social.start();
   const resources = deps.resources ?? new ResourceService({ zones: deps.zones, inventory, skills, now: () => deps.clock.now(), log });
   if (!deps.resources) resources.start();
@@ -403,6 +404,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       case 'party':
         if (s.state !== 'joined') return invalid(s, 'party before join');
         social.party(s, msg.op);
+        return;
+      case 'beacon':
+        if (s.state !== 'joined') return invalid(s, 'beacon before join');
+        social.beacon(s, msg.op);
         return;
       case 'quest':
         if (s.state !== 'joined') return invalid(s, 'quest before join');
