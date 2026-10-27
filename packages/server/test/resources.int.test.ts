@@ -108,6 +108,10 @@ describe('mining over the wire', () => {
     const cell = deposit.id.split('_').slice(0, 3).join('_');
     const sub = deposit.id.slice(cell.length + 1);
     const before = { a: a.held(type.resource), b: b.held(type.resource) };
+    // what the quest runtime hears (its `mine` steps)
+    const questEvents: [string, unknown][] = [];
+    const event = server.quests.event.bind(server.quests);
+    server.quests.event = (id, e) => (questEvents.push([id, e]), event(id, e));
     await a.stand(deposit.stand);
     await b.stand(deposit.stand);
     // both are sent the world as they arrive on it
@@ -152,6 +156,15 @@ describe('mining over the wire', () => {
     expect(got.breaker + got.other).toBeLessThanOrEqual(type.yield[1]);
     expect(got.breaker).toBeGreaterThan(0);
     expect(got.other).toBeGreaterThan(0);
+    // both shares reached the quest runtime as `mine` events of the node's type, the node the distinct thing mined
+    const mined = { type: 'mine', node: type.id, id: `${world.frame}/${deposit.id}` };
+    expect(questEvents.filter(([, e]) => (e as { type: string }).type === 'mine').sort()).toEqual(
+      [
+        [a.characterId, mined],
+        [b.characterId, mined],
+      ].sort(),
+    );
+    delete (server.quests as { event?: unknown }).event;
     // granted into their inventories, which were pushed to them
     await waitFor(() => breaker.held(type.resource) - (breaker === a ? before.a : before.b) === got.breaker, 2000, 'the breaker’s grant');
     await waitFor(() => other.held(type.resource) - (other === a ? before.a : before.b) === got.other, 2000, 'the other’s grant');

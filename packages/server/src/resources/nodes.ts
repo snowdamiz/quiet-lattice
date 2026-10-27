@@ -1,4 +1,4 @@
-// What the server holds of resource nodes (DESIGN 16.6 "Resources", ARCHITECTURE §17): nothing for a node nobody has
+// What the server holds of resource nodes (DESIGN 16.6 "Resources", ARCHITECTURE §18): nothing for a node nobody has
 // touched (the shared scatter says where it is and what it is), and for a touched one its damage, who did it, and when it
 // heals or grows back. A node is the scatter's again when it heals (HEAL_S after its last hit, unbroken) or grows back
 // (RESPAWN_S after it broke). Nodes are kept by world and cell, so a cell's state is one small set that every player near

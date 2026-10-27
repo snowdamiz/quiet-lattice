@@ -1,4 +1,4 @@
-// The mining messages (protocol 7, P1.E13.T01): a hit on a node or on the client's flora; its answer (hit, depleted with
+// The mining messages (protocol 8, P1.E13.T01): a hit on a node or on the client's flora; its answer (hit, depleted with
 // the share and what of it fitted, refused with why), or a share of a node someone else broke; and the nodes' state per
 // cell. One `mine` type serves both directions, told apart by its fields.
 import { describe, expect, it } from 'vitest';
@@ -19,8 +19,8 @@ const tree: { kind: 'tree'; ref: string; at: [number, number, number] } = { kind
 const flora = { t: 'mine' as const, seq: 2, frame: '424242:3', flora: tree, tool: 'multitool' as const, time: 1 };
 
 describe('mining messages', () => {
-  it('arrived with protocol 7', () => {
-    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(7);
+  it('arrived with protocol 8', () => {
+    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(8);
   });
 
   it('round-trips a hit on a node and on flora, and refuses malformed ones', () => {

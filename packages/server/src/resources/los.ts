@@ -1,4 +1,4 @@
-// Line of sight over a world's drawn ground, coarse (ARCHITECTURE §17): whether the multitool's beam from the eye to a
+// Line of sight over a world's drawn ground, coarse (ARCHITECTURE §18): whether the multitool's beam from the eye to a
 // node passes above the terrain. The ground is sampled every LOS_STEP_M along the beam, skipping its ends (the eye
 // stands on the ground, the node sits in it); the beam is blocked where it runs more than LOS_TOLERANCE_M under the
 // ground. Rocks, trees and buildings are the client's and do not block.
