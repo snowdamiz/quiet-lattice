@@ -663,18 +663,38 @@ describe('a stored state the catalog has moved on from', () => {
     ]);
   });
 
-  it('finds what cannot be right whatever the catalog says', () => {
+  it('refuses only what no engine path writes, and takes (or clamps) whatever one does', () => {
     const log = emptyQuestLog();
     expect(questLogProblem(log)).toBeNull();
     log.active.q = { step: 'a', counters: { a: 1 }, seen: { a: ['x', 'x'] }, started: 0, since: 0 };
     expect(questLogProblem(log)).toMatch(/twice/);
-    log.active.q = { step: 'a', counters: { a: 1 }, seen: { a: ['x', 'y'] }, started: 0, since: 0 };
-    expect(questLogProblem(log)).toMatch(/more ids/);
-    log.active.q = { step: 'a', counters: {}, seen: {}, started: 10, since: 5 };
-    expect(questLogProblem(log)).toMatch(/before the quest/);
     log.active = {};
     log.flags = ['f', 'f'];
     expect(questLogProblem(log)).toMatch(/flag/);
+    log.flags = [];
+    // a counter shared by a distinct-counting step and one that sets it from holdings: fewer counts than ids remembered
+    log.active.q = { step: 'one', counters: { one: 1 }, seen: { one: ['x', 'y'] }, started: 0, since: 0 };
+    expect(questLogProblem(log)).toBeNull();
+    // a world clock behind its last save after a crash: the step's start is clamped to its quest's
+    log.active.q = { step: 'one', counters: {}, seen: {}, started: 10, since: 5 };
+    expect(questLogProblem(log)).toBeNull();
+    delete log.active.q;
+    log.active[def.id] = { step: 'one', counters: {}, seen: {}, started: 10, since: 5 };
+    new QuestBook(log, lookup).reconcile();
+    expect(log.active[def.id]!.since).toBe(10);
+  });
+
+  it('writes a shared counter the check takes: a set-style step after a distinct-counting one', () => {
+    const shared = quest([
+      { id: 'logs', type: 'interact', text: 'x', target: 'crashlog:*', count: 2, counter: 'k' },
+      { id: 'keep', type: 'collect', text: 'y', item: 'sodium', count: 5, counter: 'k' },
+    ]);
+    const b = bookOf(shared);
+    b.apply({ type: 'interact', target: 'crashlog:1' }, ctx());
+    b.apply({ type: 'interact', target: 'crashlog:2' }, ctx());
+    b.apply({ type: 'held', items: { sodium: 1 } }, ctx());
+    expect(b.log.active[shared.id]).toMatchObject({ step: 'keep', counters: { k: 1 }, seen: { k: ['crashlog:1', 'crashlog:2'] } });
+    expect(questLogProblem(b.log)).toBeNull();
   });
 });
 

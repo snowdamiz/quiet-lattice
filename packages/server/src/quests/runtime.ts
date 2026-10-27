@@ -94,10 +94,16 @@ export interface QuestRewardHooks {
 }
 
 /** The cutscene service, as the quest engine plays its cutscene steps through it (P1.E09.T04): `start` plays one for the
- * session at the step's place, when the step has one. */
+ * session at the step's place, when the step has one (answering `play`, or `refused` with a reason); `playingOf` is the
+ * one it is watching. */
 export interface QuestCutscenes {
-  start(viewer: ZoneViewer, id: string, at?: PhaseLocation): unknown;
+  start(viewer: ZoneViewer, id: string, at?: PhaseLocation): { op: string; reason?: string } | undefined;
+  playingOf?(viewer: ZoneViewer): { id: string } | null;
 }
+
+/** How often a live cutscene step the player is not watching is started again, at most (seconds of world time): one
+ * refused (the player in another phase, the cutscene busy) or lost with a dropped connection plays once it can. */
+export const CUTSCENE_RETRY_S = 5;
 
 export interface QuestRuntimeOptions {
   zones: Pick<ZoneManager, 'zoneOf' | 'tier'>;
@@ -146,6 +152,8 @@ interface Held {
   last: number;
   /** the phase this runtime put it in, for which quest's step */
   placed: Placed | null;
+  /** world time a live cutscene step was last started for it (-Infinity: never this session) */
+  cutsceneTried: number;
   /** inside a change: inventory changes wait for it to end */
   busy: boolean;
   heldDirty: boolean;
@@ -235,7 +243,18 @@ export class QuestRuntime {
         r.change === 'dropped' ? 'quest no longer exists; dropped' : 'quest step no longer exists; quest restarted',
       );
     }
-    this.held.set(info.id, { id: info.id, info, book, viewer: null, seq: 0, last: this.clock.now(), placed: null, busy: false, heldDirty: false });
+    this.held.set(info.id, {
+      id: info.id,
+      info,
+      book,
+      viewer: null,
+      seq: 0,
+      last: this.clock.now(),
+      placed: null,
+      cutsceneTried: -Infinity,
+      busy: false,
+      heldDirty: false,
+    });
   }
 
   /** The live quest state of a character in play, or undefined (persistence saves it). */
@@ -268,6 +287,7 @@ export class QuestRuntime {
     h.seq = 0;
     h.last = this.clock.now();
     h.placed = null;
+    h.cutsceneTried = -Infinity;
     this.change(
       h,
       (ctx) => {
@@ -279,6 +299,9 @@ export class QuestRuntime {
     );
     this.retryOwedItems(h);
     this.tickOne(h, this.clock.now(), false);
+    // (its entity has no world position until its zone's next tick, which the cutscene service places by: a cutscene step
+    // refused now is tried again on its first tick, not 5 s later)
+    h.cutsceneTried = -Infinity;
     return this.reply(h);
   }
 
@@ -459,6 +482,8 @@ export class QuestRuntime {
   private tickOne(h: Held, now: number, push: boolean): void {
     const dt = Math.min(MAX_TICK_S, Math.max(0, now - h.last));
     h.last = now;
+    // (a cutscene step refused before, or lost with a connection, plays once it can)
+    if (now - h.cutsceneTried >= CUTSCENE_RETRY_S) this.startCutscenes(h, now);
     if (!this.needsPosition(h)) return;
     const at = this.atOf(h);
     this.change(h, (ctx) => h.book.apply({ type: 'tick', dt, at }, ctx), { push, at });
@@ -531,15 +556,37 @@ export class QuestRuntime {
     const step = def.steps[to]!;
     const before = from === null ? undefined : def.steps[from];
     if (!(before?.phase?.scene !== undefined && before.phase.scene === step.phase?.scene)) this.unplace(h, quest);
-    if (step.type === 'cutscene' && h.viewer && this.cutscenes) {
-      const zone = this.zones.zoneOf(h.viewer);
-      const a = h.book.log.active[quest];
-      const at = zone && a && step.phase ? this.locationOf(h, quest, a, step, zone) : null;
-      try {
-        this.cutscenes.start(h.viewer, step.cutscene, at?.location);
-      } catch (err) {
-        this.log?.error({ err, character: h.id, quest, cutscene: step.cutscene }, 'quest cutscene failed to start');
+    if (step.type === 'cutscene') this.startCutscene(h, quest, step);
+  }
+
+  /** Starts every live cutscene step the player is not watching (on join, and on the tick at most every
+   * CUTSCENE_RETRY_S); the service answers the one it is watching with the same phase, so this never replays it. */
+  private startCutscenes(h: Held, now: number): void {
+    if (!this.cutscenes || !h.viewer) return;
+    for (const quest of Object.keys(h.book.log.active)) {
+      for (const { step } of h.book.live(quest)?.steps ?? []) {
+        if (step.type !== 'cutscene') continue;
+        h.cutsceneTried = now;
+        this.startCutscene(h, quest, step);
       }
+    }
+  }
+
+  /** Plays a cutscene step's cutscene through the service, at its step's place when it has one; a refusal is logged (debug)
+   * with its reason, and the step waits for the next try. */
+  private startCutscene(h: Held, quest: string, step: QuestStep): void {
+    if (step.type !== 'cutscene' || !h.viewer || !this.cutscenes) return;
+    h.cutsceneTried = this.clock.now();
+    if (this.cutscenes.playingOf?.(h.viewer)?.id === step.cutscene) return;
+    const zone = this.zones.zoneOf(h.viewer);
+    const a = h.book.log.active[quest];
+    const at = zone && a && step.phase ? this.locationOf(h, quest, a, step, zone) : null;
+    try {
+      const r = this.cutscenes.start(h.viewer, step.cutscene, at?.location);
+      if (r?.op === 'refused')
+        this.log?.debug({ character: h.id, quest, cutscene: step.cutscene, reason: r.reason }, 'quest cutscene not started; will try again');
+    } catch (err) {
+      this.log?.error({ err, character: h.id, quest, cutscene: step.cutscene }, 'quest cutscene failed to start');
     }
   }
 

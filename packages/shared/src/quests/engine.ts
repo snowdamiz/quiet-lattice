@@ -187,11 +187,13 @@ export class QuestBook {
 
   /**
    * Brings a loaded state in line with the catalog: a quest it no longer has is dropped; one whose step it no longer has
-   * starts again at its first step (its counters and anchor go). Returns what changed, for the log; never throws.
+   * starts again at its first step (its counters and anchor go). A step whose start is behind its quest's (the world
+   * clock came back behind the last save after a crash) is clamped to it. Returns what changed, for the log; never throws.
    */
   reconcile(): Reconciled[] {
     const changes: Reconciled[] = [];
     for (const [id, a] of Object.entries(this.log.active)) {
+      if (a.since < a.started) a.since = a.started;
       const def = this.quest(id);
       if (!def) {
         delete this.log.active[id];

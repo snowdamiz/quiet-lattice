@@ -656,8 +656,10 @@ counter (`counter`, default the step's id), so two steps can share one (Forty Na
   pays none of it twice, and cleared when the quest is finished, so a repeat its rule allows pays anew). v1 stored step
   indices and is migrated through the catalog (an index past the steps: the last). On load the runtime reconciles the
   state with the catalog (`reconcile`): a quest it no longer has is dropped, one whose step it no longer has starts again
-  at its first step, each logged, never a refused join; the component's `check` (`questLogProblem`) refuses only a state
-  that cannot be right whatever the catalog says.
+  at its first step, each logged, never a refused join, and a step whose start is behind its quest's (a world clock
+  that came back behind its last save after a crash) is clamped. The component's `check` (`questLogProblem`) refuses
+  only what no engine path writes (a distinct id counted twice, a flag held twice): a counter a distinct-counting step
+  and a holdings step share, with fewer counts than ids remembered, is the engine's own and loads.
 - **The runtime** (`server/src/quests/runtime.ts`) holds a book per character in play, loaded and saved by persistence.
   Each character is ticked every 500 ms, the characters spread over a 50 ms timer in round-robin slices: a tick reads its
   entity when a live step needs it (travel, defend, survive, instanced) and applies `tick`. The inventory service's
@@ -683,7 +685,14 @@ counter (`counter`, default the step's id), so two steps can share one (Forty Na
   its `play` is pushed to the client unrequested. The service's `may` is the runtime's `mayPlay(session, id)` (a client
   asks for a quest's cutscene only while a live step plays it), or its own development rule. A cutscene that ends, by
   the client's `done` (the gateway) or by the service's sweep (its `notify` of `ended`), calls
-  `quests.cutsceneEnded(session, id)`, which ends the step.
+  `quests.cutsceneEnded(session, id)`, which ends the step. A live cutscene step the player is not watching is started
+  again on join (and on its first tick, when its entity's world position is known) and on the tick at most every 5 s
+  (`CUTSCENE_RETRY_S`): one the service refused (the player in another phase, another cutscene playing) or lost with a
+  dropped connection plays once it can; the one it is watching is never started again; refusals are logged at debug
+  with their reason. Rules for quest authors: a step's cutscene is one the cutscene catalog has, or the step is marked
+  `planned` until its cutscene is authored (a unit test checks both ways); and a cutscene step that shares a `scene`
+  with an instanced step plays in that step's phase, which already has the step's actors, so the cutscene's own actors
+  are not spawned there: such a cutscene is authored to use the step's actors.
 - **A development server's quest** (`cutscene_test`, `dev`): its one step plays the test cutscene, started by the
   server; on a development server a client takes it without an offer (`quest accept`), elsewhere it is an unknown quest.
   The online smoke plays it as a session's first cutscene.

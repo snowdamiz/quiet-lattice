@@ -26,11 +26,10 @@ import { CharacterProgress, coreRegistry, QUESTS, ShipLoadouts } from '../persis
 import type { PersistenceLog } from '../persistence/registry.ts';
 import { CharacterPersistence } from '../persistence/service.ts';
 import type { CharacterStore, SaveRow } from '../persistence/store.ts';
-import type { PhaseLocation } from '../phases/manager.ts';
 import { homeSystemOf } from '../world/home.ts';
 import { ZoneManager } from '../zones/manager.ts';
 import type { Zone, ZoneViewer } from '../zones/zone.ts';
-import { QuestRuntime, type QuestPush, type QuestRewardHooks } from './runtime.ts';
+import { QuestRuntime, type QuestCutscenes, type QuestPush, type QuestRewardHooks } from './runtime.ts';
 
 class Viewer implements ZoneViewer {
   constructor(
@@ -64,7 +63,7 @@ function logger() {
 }
 
 interface WorldOptions {
-  cutscenes?: { start(viewer: ZoneViewer, id: string, at?: PhaseLocation): unknown };
+  cutscenes?: QuestCutscenes;
   rewards?: QuestRewardHooks;
 }
 
@@ -401,7 +400,15 @@ describe('quest runtime', () => {
       fight('wing', 'Pirate Kestrel'),
       { id: 'after', type: 'cutscene', text: 'Watch', cutscene: 'test', phase: { at: { body: 'station', pos: [0, 0, 100], radius: 300 }, actors: [] } },
     ]);
-    const w = world([fightThenWatch], { cutscenes: { start: (_viewer, id, at) => void played.push([id, at?.key]) } });
+    const w = world([fightThenWatch], {
+      cutscenes: {
+        start: (_viewer, id, at) => {
+          played.push([id, at?.key]);
+          return { op: 'play' };
+        },
+        playingOf: () => (played.length ? { id: played.at(-1)![0] } : null),
+      },
+    });
     const a = w.join();
     w.runtime.startQuest(a.id, 'fight');
     expect(a.book().active.fight?.anchor).toMatchObject({ frame: a.zone.stationFrame });

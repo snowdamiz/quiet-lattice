@@ -291,7 +291,13 @@ export const stepSchema = z.discriminatedUnion('type', [
       .max(4),
   }),
   /** play a cutscene (always instanced: the cutscene service puts the player in its story phase) */
-  z.strictObject({ ...stepBase, type: z.literal('cutscene'), cutscene: z.string().regex(/^[a-z0-9][a-z0-9_-]{0,47}$/) }),
+  z.strictObject({
+    ...stepBase,
+    type: z.literal('cutscene'),
+    cutscene: z.string().regex(/^[a-z0-9][a-z0-9_-]{0,47}$/),
+    /** its cutscene is not authored yet (its art task makes it): the catalog test allows it then, and not once it exists */
+    planned: z.literal(true).optional(),
+  }),
   /** a fork: each option leads to its own next step */
   z.strictObject({
     ...stepBase,
@@ -423,17 +429,15 @@ export function emptyQuestLog(): QuestLog {
 }
 
 /**
- * Why a quest state cannot be right whatever the catalog says, or null: a step that began before its quest, a distinct
- * id counted twice or more ids than its count, a flag twice. (Steps and quests the catalog no longer has are not
- * problems: the engine reconciles them, `QuestBook.reconcile`.)
+ * Why a quest state cannot be right, or null: only what no engine path writes, a distinct id counted twice or a flag
+ * held twice. What the engine can write is never a problem: a step whose start is behind its quest's (a world clock that
+ * came back behind its last save after a crash; `QuestBook.reconcile` clamps it), a counter with fewer counts than ids
+ * remembered (a distinct-counting step sharing it with one that sets it from holdings), and steps or quests the catalog
+ * no longer has (reconciled on load).
  */
 export function questLogProblem(log: QuestLog): string | null {
   for (const [id, a] of Object.entries(log.active)) {
-    if (a.since < a.started) return `${id}: its step began before the quest`;
-    for (const [k, seen] of Object.entries(a.seen)) {
-      if (new Set(seen).size !== seen.length) return `${id}: ${k} counted an id twice`;
-      if (seen.length > (a.counters[k] ?? 0)) return `${id}: ${k} remembers more ids than it counted`;
-    }
+    for (const [k, seen] of Object.entries(a.seen)) if (new Set(seen).size !== seen.length) return `${id}: ${k} counted an id twice`;
   }
   if (new Set(log.flags).size !== log.flags.length) return 'a flag is held twice';
   return null;

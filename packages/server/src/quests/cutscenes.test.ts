@@ -11,8 +11,9 @@ import { CharacterProgress } from '../persistence/components.ts';
 import { homeSystemOf } from '../world/home.ts';
 import { ZoneManager } from '../zones/manager.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
+import { emptyQuestLog, getQuest, questDefSchema, type QuestDef, type QuestLog } from '@astra/shared/quests';
 import { questCutsceneNotify, questCutscenePermit, questCutscenes } from './cutscenes.ts';
-import { QuestRuntime } from './runtime.ts';
+import { CUTSCENE_RETRY_S, QuestRuntime } from './runtime.ts';
 
 type CutsceneState = Extract<ServerMessage, { t: 'cutscene' }>;
 
@@ -28,31 +29,43 @@ class Viewer implements ZoneViewer {
   }
 }
 
-function world(dev = true) {
+function quest(id: string, steps: unknown[]): QuestDef {
+  return questDefSchema.parse({ id, title: id, category: 'board', giver: 'board:test', prerequisites: {}, steps, rewards: {}, flags: [], repeat: 'once' });
+}
+
+function world(dev = true, extra: QuestDef[] = []) {
   let time = 1000;
   const clock = { now: () => time };
   const zones = new ZoneManager({ clock });
   const inventory = new InventoryService();
   const progress = new CharacterProgress();
+  const defs = new Map(extra.map((d) => [d.id, d]));
+  const catalog = (id: string) => defs.get(id) ?? getQuest(id);
   // (each reads the other once both exist, as server.ts builds them)
-  const runtime: QuestRuntime = new QuestRuntime({ zones, inventory, progress, clock, cutscenes: questCutscenes(() => service), dev });
+  const runtime: QuestRuntime = new QuestRuntime({ zones, inventory, progress, clock, catalog, cutscenes: questCutscenes(() => service), dev });
   const service: CutsceneService = new CutsceneService({ zones, now: () => time, notify: questCutsceneNotify(() => runtime) });
   service.may = questCutscenePermit(runtime, service.may);
   let n = 0;
-  const join = () => {
-    const id = `c${++n}`;
-    const viewer = new Viewer(n, id);
+  /** A character entering the world docked at home (`id` and `log`: coming back), as the gateway puts it in play. */
+  const join = (again?: { id: string; log: QuestLog }) => {
+    const id = again?.id ?? `c${n + 1}`;
+    const viewer = new Viewer(++n, id);
     const homeSystem = homeSystemOf('thalune');
-    zones.join(viewer, { id, name: `Tes ${id}`, people: 'thalune', level: 1, homeSystem });
-    inventory.open(id);
+    const joined = zones.join(viewer, { id, name: `Tes ${id}`, people: 'thalune', level: 1, homeSystem });
+    if (!inventory.get(id)) inventory.open(id);
     progress.set(id, { level: 1, xp: 0, homeSystem });
-    runtime.open({ id, name: `Tes ${id}`, people: 'thalune', homeSystem }, { active: {}, done: {}, flags: [], owed: [], paid: {} });
+    runtime.open({ id, name: `Tes ${id}`, people: 'thalune', homeSystem }, again?.log ?? emptyQuestLog());
     runtime.joined(viewer);
-    // (one zone tick: the entity's world position, which the service measures the place against)
+    // (the zone's next tick: the entity's world position, which the service places cutscenes by; then the quest tick)
     zones.runTick(time);
-    return { id, viewer };
+    runtime.tickAll();
+    return { id, viewer, zone: joined.zone, entity: joined.entityId };
   };
-  return { runtime, service, join, advance: (s: number) => (time += s) };
+  const advance = (s: number) => {
+    time += s;
+    zones.runTick(time);
+  };
+  return { runtime, service, zones, join, advance };
 }
 
 describe('quest cutscenes through the cutscene service', () => {
@@ -90,5 +103,66 @@ describe('quest cutscenes through the cutscene service', () => {
     expect(w.runtime.request(a.id, 1, { op: 'accept', quest: 'cutscene_test' }).error).toBe('unknown_quest');
     expect(w.runtime.offer(a.id, 'cutscene_test')).toBe('unknown_quest');
     expect(a.viewer.sent).toEqual([]);
+  });
+
+  it('starts a cutscene step refused while the player was in another phase once it has left that phase', () => {
+    const w = world(true, [
+      quest('yard', [
+        {
+          id: 'wait',
+          type: 'interact',
+          text: 'Wait',
+          target: 'npc:never',
+          phase: { at: { body: 'station', pos: [0, 0, 0], radius: 500 }, actors: [{ kind: 'npc', name: 'Guard', offset: [0, 0, 5] }] },
+        },
+      ]),
+      quest('watcher', [
+        { id: 'go', type: 'interact', text: 'Go', target: 'npc:go' },
+        { id: 'watch', type: 'cutscene', text: 'Watch', cutscene: 'test' },
+      ]),
+    ]);
+    const a = w.join();
+    w.runtime.startQuest(a.id, 'yard');
+    w.runtime.startQuest(a.id, 'watcher');
+    w.advance(0.5);
+    w.runtime.tickAll();
+    const yard = a.zone.phases.phaseOf(a.entity);
+    expect(yard).not.toBeNull();
+    // the cutscene step begins while the player is in the yard's phase: the service refuses (never out of a phase)
+    w.runtime.event(a.id, { type: 'interact', target: 'npc:go' });
+    expect(a.viewer.sent.filter((m) => m.op === 'play')).toEqual([]);
+    expect(w.runtime.stateOf(a.id)!.active.watcher?.step).toBe('watch');
+    // out of the yard (still within the cutscene's place): past the phase's grace the step plays, tried every few seconds
+    a.zone.patch(a.entity, { pos: [0, 0, 1500] });
+    for (let t = 0; t < 30 && !a.viewer.sent.some((m) => m.op === 'play'); t++) {
+      w.advance(1);
+      w.runtime.tickAll();
+    }
+    expect(a.zone.phases.phaseOf(a.entity)).not.toBe(yard);
+    expect(a.viewer.sent.filter((m) => m.op === 'play')).toHaveLength(1);
+    expect(w.service.playingOf(a.viewer)?.id).toBe('test');
+    // watching it, the tick never starts it again
+    for (let t = 0; t < 3 * CUTSCENE_RETRY_S; t++) {
+      w.advance(1);
+      w.runtime.tickAll();
+    }
+    expect(a.viewer.sent.filter((m) => m.op === 'play')).toHaveLength(1);
+  });
+
+  it('starts a cutscene step again when its player comes back after its connection dropped mid-cutscene', () => {
+    const w = world();
+    const a = w.join();
+    w.runtime.request(a.id, 1, { op: 'accept', quest: 'cutscene_test' });
+    expect(a.viewer.sent.filter((m) => m.op === 'play')).toHaveLength(1);
+    // the connection drops (the gateway on close: the service forgets the session, the zone keeps its place, persistence
+    // saves and unloads)
+    const saved = structuredClone(w.runtime.stateOf(a.id)!);
+    w.service.forget(a.viewer);
+    w.zones.leave(a.viewer, 'disconnected');
+    w.runtime.close(a.id);
+    const b = w.join({ id: a.id, log: saved });
+    expect(b.viewer.sent.filter((m) => m.op === 'play')).toHaveLength(1);
+    expect(w.service.playingOf(b.viewer)?.id).toBe('test');
+    expect(w.runtime.stateOf(a.id)!.active.cutscene_test?.step).toBe('watch');
   });
 });

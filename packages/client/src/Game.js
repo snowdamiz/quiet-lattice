@@ -938,10 +938,12 @@ export class Game {
   // Online: the server's quest state (after each welcome, the answer to each request, and whenever the server moves a
   // quest). The objective line follows it, and a new objective is announced as the sandbox announces it.
   onQuests(m) {
-    const before = this.objectives.current;
+    // (a new step is news; a count moving on the same step is not)
+    const stepOf = (o) => (o ? `${o.quest}/${o.stepId}` : null);
+    const before = stepOf(this.objectives.book.objective());
     this.objectives.book.receive(m.quests);
-    const line = this.objectives.current;
-    if (before !== null && line !== before) this.questNext(line);
+    const after = stepOf(this.objectives.book.objective());
+    if (before !== null && after !== null && after !== before) this.questNext(this.objectives.current);
   }
 
   // Online: asks the server to accept a quest on offer, abandon one, or answer the current dialogue or choice

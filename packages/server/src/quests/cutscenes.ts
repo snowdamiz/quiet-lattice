@@ -16,17 +16,21 @@ export function sendToSession(viewer: ZoneViewer, msg: CutsceneState): void {
   (viewer as { send?: (m: CutsceneState) => void }).send?.(msg);
 }
 
-/** The runtime's cutscene hook over the service: plays a step's cutscene and pushes its `play` to the client. */
+/** The runtime's cutscene hook over the service: plays a step's cutscene and pushes its `play` to the client (not again
+ * for the one it is watching: the service answers that with the same phase), and says which one the session watches. */
 export function questCutscenes(
   service: () => CutsceneService | undefined,
   send: (viewer: ZoneViewer, msg: CutsceneState) => void = sendToSession,
 ): QuestCutscenes {
   return {
     start: (viewer: ZoneViewer, id: string, at?: PhaseLocation) => {
-      const r = service()?.start(viewer, id, at);
-      if (r?.op === 'play') send(viewer, r);
+      const s = service();
+      const watching = s?.playingOf(viewer)?.id === id;
+      const r = s?.start(viewer, id, at);
+      if (r?.op === 'play' && !watching) send(viewer, r);
       return r;
     },
+    playingOf: (viewer: ZoneViewer) => service()?.playingOf(viewer) ?? null,
   };
 }
 

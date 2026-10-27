@@ -146,7 +146,8 @@ export const QUESTS: readonly QuestDef[] = deepFreeze<QuestDef[]>([
         ],
       },
       { id: 'twenty', type: 'interact', text: "Recover the registry's crash logs", target: 'crashlog:*', count: 20, counter: 'logs' },
-      { id: 'chorus', type: 'cutscene', text: 'The Chorus is listening', cutscene: 'forty_names_twenty' },
+      // (the Forty Names cutscenes come with P2.E30.T01 and their cameras' art task)
+      { id: 'chorus', type: 'cutscene', text: 'The Chorus is listening', cutscene: 'forty_names_twenty', planned: true },
       { id: 'forty', type: 'interact', text: 'Recover the rest of the forty logs', target: 'crashlog:*', count: 40, counter: 'logs' },
       {
         id: 'last_name',
@@ -160,7 +161,7 @@ export const QUESTS: readonly QuestDef[] = deepFreeze<QuestDef[]>([
           { id: 'wait', text: 'Give me a moment.' },
         ],
       },
-      { id: 'wiped', type: 'cutscene', text: 'Your own log', cutscene: 'forty_names_wiped_log' },
+      { id: 'wiped', type: 'cutscene', text: 'Your own log', cutscene: 'forty_names_wiped_log', planned: true },
     ],
     rewards: { skillPoints: 1, title: 'Unlisted' },
     flags: ['forty_names_read'],
