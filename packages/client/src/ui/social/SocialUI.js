@@ -329,6 +329,7 @@ export class SocialUI {
       added.push(node);
     }
     const log = this.logEl;
+    if (open && (fresh || added.length)) log.classList.toggle('long', log.scrollHeight > log.clientHeight + 1);
     if (fresh) {
       if (open) log.scrollTop = log.scrollHeight;
       return;

@@ -2770,6 +2770,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sc-log.full {
   overflow-y: auto;
 }
+/* (a log longer than the panel softens at its top edge, where it scrolls on, rather than cutting a line) */
+.sc-log.full.long {
+  -webkit-mask-image: linear-gradient(transparent, black 22px);
+  mask-image: linear-gradient(transparent, black 22px);
+}
 .sc-log.feed {
   -webkit-mask-image: linear-gradient(transparent, black 26px);
   mask-image: linear-gradient(transparent, black 26px);
