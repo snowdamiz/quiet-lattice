@@ -1,14 +1,22 @@
 // Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → character
-// persistence → cutscenes → gateway. index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and
-// close() it. Closing is graceful: sessions are closed (each character saved as it leaves), every character still in
-// play is saved and the save queue written before the database goes (§8).
+// persistence → cutscenes → gateway → developer tooling. index.ts boots it for `pnpm dev:server`; integration tests call
+// startServer({ port: 0 }) and close() it. Closing is graceful: the admin channel closes, sessions are closed (each
+// character saved as it leaves), every character still in play is saved and the save queue written before the database
+// goes (§8). Developer tooling (§16, admin/config.ts): zone metrics are logged every ASTRA_METRICS_S, the dev login
+// bypass is served with ASTRA_DEV_LOGIN outside production, and the admin channel the CLI calls opens on 127.0.0.1 with
+// ASTRA_ADMIN_SECRET.
 import type { AddressInfo } from 'node:net';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { createTimingHash } from './accounts/password.ts';
 import { createTokenService } from './accounts/tokens.ts';
+import { openAdminChannel, type AdminChannel } from './admin/channel.ts';
+import { parseTooling, type ToolingConfig, type ToolingInput } from './admin/config.ts';
+import { AdminService } from './admin/service.ts';
+import { getOwnedCharacter } from './characters/characters.ts';
 import { parseConfig, type Config, type Env } from './config.ts';
 import { createDatabase } from './db/client.ts';
 import { connectRedis } from './db/redis.ts';
+import { registerDevLogin } from './gateway/devLogin.ts';
 import { registerHttpRoutes } from './gateway/http.ts';
 import { RateLimiter } from './gateway/rateLimit.ts';
 import { attachWsGateway, WS_PATH, type WsGateway } from './gateway/ws.ts';
@@ -34,6 +42,8 @@ export interface StartOptions {
   shard?: string;
   /** Character persistence tuning (tests shorten the 30 s save interval). */
   persistence?: Omit<PersistenceOptions, 'store' | 'registry' | 'log'>;
+  /** Developer tooling overrides, applied after the environment's ASTRA_* variables (admin/config.ts). */
+  tooling?: Partial<ToolingInput>;
 }
 
 export interface RunningServer {
@@ -54,6 +64,12 @@ export interface RunningServer {
   persistence: CharacterPersistence;
   /** Cutscenes in story phases (§15); the quest engine sets its `may`. */
   cutscenes: CutsceneService;
+  /** Developer tooling as configured: dev login, the admin channel, the metrics interval. */
+  tooling: ToolingConfig;
+  /** The admin commands (the CLI reaches them over the admin channel). */
+  admin: AdminService;
+  /** e.g. http://127.0.0.1:8788, or null when the admin channel is off. */
+  adminUrl: string | null;
   /** Closes sockets (saving each character), writes every pending save, then closes the HTTP server, Postgres and Redis.
    * Safe to call twice. */
   close(): Promise<void>;
@@ -65,6 +81,7 @@ function redact(url: string): string {
 
 export async function startServer(opts: StartOptions = {}): Promise<RunningServer> {
   const config: Config = parseConfig(opts.env ?? process.env, { ...opts.config, PORT: opts.port ?? opts.config?.PORT, HOST: opts.host ?? opts.config?.HOST });
+  const tooling = parseTooling(opts.env ?? process.env, config.NODE_ENV, opts.tooling);
 
   const app = Fastify({
     logger: { level: config.LOG_LEVEL },
@@ -103,7 +120,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const authLimiter = new RateLimiter({ burst: config.AUTH_RATE_BURST, refillPerSecond: config.AUTH_RATE_PER_MINUTE / 60 });
   // Computed now, not on the first unknown-user login, so that login is not the one that pays for it.
   const timingHash = await createTimingHash();
-  const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ });
+  const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ, metricsEveryMs: tooling.metricsMs });
   const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
   const persistence = new CharacterPersistence({
     ...opts.persistence,
@@ -123,6 +140,8 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     log,
     inventory,
     persistence,
+    // a joining character's row is read only once an edit of it out of play (the admin CLI's) has written (§8)
+    ownedCharacter: (accountId, characterId) => persistence.afterEdit(characterId, () => getOwnedCharacter(database.db, accountId, characterId)),
     limits: {
       helloTimeoutMs: config.HELLO_TIMEOUT_MS,
       joinTimeoutMs: config.JOIN_TIMEOUT_MS,
@@ -139,10 +158,14 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     pingDb: () => database.ping(),
     pingRedis: () => redis.ping(),
   });
+  if (tooling.devLogin) registerDevLogin(app, { db: database.db, tokens, authLimiter, log });
+  const admin = new AdminService({ db: database.db, persistence, live: { zones, gateway: ws, world }, log });
+  let adminChannel: AdminChannel | undefined;
 
   let closed: Promise<void> | undefined;
   const close = () =>
     (closed ??= (async () => {
+      await adminChannel?.close();
       zones.stop();
       cutscenes.stopSweeping();
       await ws.close();
@@ -154,6 +177,15 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
 
   try {
     await app.listen({ port: config.PORT, host: config.HOST });
+    if (tooling.admin) {
+      try {
+        adminChannel = await openAdminChannel({ admin, secret: tooling.admin.secret, port: tooling.admin.port, log });
+      } catch (err) {
+        // another server on this machine has the port (a second dev server, the online smoke's): the game matters more
+        if ((err as NodeJS.ErrnoException).code !== 'EADDRINUSE') throw err;
+        log.error({ port: tooling.admin.port }, 'admin channel not opened: its port is in use (ASTRA_ADMIN_PORT)');
+      }
+    }
   } catch (err) {
     await close();
     throw err;
@@ -165,6 +197,11 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   world.start();
   persistence.start();
   log.info({ port, db: redact(config.DATABASE_URL), redis: redact(config.REDIS_URL), tickHz: config.TICK_HZ }, 'astra server ready');
+  if (tooling.devLogin) log.warn({ path: '/auth/dev' }, 'dev login bypass is ON (ASTRA_DEV_LOGIN): dev accounts sign in without a password');
+  if (adminChannel) log.info({ url: adminChannel.url }, 'admin channel open: pnpm --filter @astra/server cli -- <command>');
+  else if (!tooling.admin && config.NODE_ENV === 'development')
+    log.info('admin channel off: set ASTRA_ADMIN_SECRET (16+ characters) to use pnpm --filter @astra/server cli');
+  if (tooling.metricsMs > 0) log.info({ everyS: tooling.metricsMs / 1000 }, 'zone tick metrics are logged periodically (ASTRA_METRICS_S)');
 
   return {
     config,
@@ -178,6 +215,9 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     zones,
     persistence,
     cutscenes,
+    tooling,
+    admin,
+    adminUrl: adminChannel?.url ?? null,
     close,
   };
 }
