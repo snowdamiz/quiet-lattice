@@ -2383,14 +2383,15 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   background: transparent;
   border: 0;
   cursor: pointer;
-  transition: color 0.15s, background 0.15s, opacity 0.15s ease-out;
+  transition: color 0.15s ease-out, background 0.15s ease-out;
 }
 .fab-qty button:hover:not(:disabled) {
   color: var(--text);
   background: rgba(233, 231, 226, 0.06);
 }
+/* dimmed by colour, not opacity: an opacity group beside a value fading in the stepper briefly drew at full strength */
 .fab-qty button:disabled {
-  opacity: 0.35;
+  color: rgba(233, 231, 226, 0.22);
   cursor: default;
 }
 .fab-qty .fab-max {
@@ -2412,16 +2413,19 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 /* while a fabrication or a lesson runs, the controls that cannot be used dim, and come back after, both eased */
 .fab-panel .fab-row .inv-act {
-  transition: color 0.15s, border-color 0.15s, opacity 0.15s ease-out;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out;
 }
 .fab-busy .fab-qty button,
 .fab-busy .fab-row .inv-act {
-  opacity: 0.35;
+  color: rgba(233, 231, 226, 0.22);
   pointer-events: none;
 }
+.fab-busy .fab-row .inv-act {
+  border-color: rgba(233, 231, 226, 0.08);
+}
 /* the Craft button eases between its fill and its outline (materials short), its clipped corner with it; its label does
-   not tween its colour across the fading fill (it would pass through the fill's own tone): it fades out dark and back
-   in warm white (fabRelabel) */
+   not tween its colour across the fading fill (it would pass through the fill's own tone): it fades out as it was and
+   back in as it is (Fabricator.swapValues) */
 .fab-go {
   flex: 1;
   overflow: hidden;
@@ -2430,27 +2434,6 @@ input[type='range'].range:hover::-webkit-slider-thumb {
     border-color 0.18s ease-out,
     clip-path 0.18s ease-out,
     opacity 0.15s ease-out;
-}
-.fab-go-l.fab-relabel {
-  animation: fabRelabel 0.24s ease-in-out;
-}
-@keyframes fabRelabel {
-  0% {
-    opacity: 1;
-    color: var(--ink);
-  }
-  45% {
-    opacity: 0;
-    color: var(--ink);
-  }
-  55% {
-    opacity: 0;
-    color: var(--text);
-  }
-  100% {
-    opacity: 1;
-    color: var(--text);
-  }
 }
 /* the fabrication running across the button, left to right (the sweep's transform), fading as the button lets go */
 .fab-sweep {

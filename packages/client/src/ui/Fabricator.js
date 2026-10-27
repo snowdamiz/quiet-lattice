@@ -33,7 +33,7 @@ const ARRIVE_MS = 380;
 // into its next message: the old out over the first half, the new in over the second
 const SWAP_MS = 120;
 const LINE_MS = 140;
-// the "Recipes to learn" heading, gone within the first frames of the row's rise
+// the "Recipes to learn" heading, gone before the learned row sets off from under it
 const HEAD_MS = 70;
 
 function nameOf(id) {
@@ -48,6 +48,14 @@ function markOf(id) {
 // "1 Warp cell", "150 Flak ammo"
 function amount(n, id) {
   return `${n.toLocaleString()} ${nameOf(id)}`;
+}
+
+// a computed colour with its alpha at nought: what a value fades to and from
+function clear(color) {
+  const m = /rgba?\(([^)]+)\)/.exec(color);
+  if (!m) return 'transparent';
+  const [r, g, b] = m[1].split(',').map((x) => x.trim());
+  return `rgba(${r}, ${g}, ${b}, 0)`;
 }
 
 export class FabricatorPanel {
@@ -146,8 +154,10 @@ export class FabricatorPanel {
    * Draws the screen. `woke`: a fabrication or a lesson just ended, so the controls it dimmed come back and the Craft
    * button lets go of its fill, eased (drawn as they were, then let go); `bump`: the rows a craft changed (a selector)
    * flash once; `warn`: the materials short of a refused craft flash red; `learned`: a recipe just learned ({recipe,
-   * from, label}), whose row moves from the recipes to learn into the list. A flash under way carries on across a redraw
-   * from where it was, never restarted.
+   * from, label}), whose row moves from the recipes to learn into the list; `swap`: values this change rewrote (true: all
+   * of them, or their keys) fade out as they were and back in as they are (`swapValues`); `ease`: the Craft button eases
+   * between its fill and its outline when the selection changes which it shows. A flash under way carries on across a
+   * redraw from where it was, never restarted.
    */
   render(opts = {}) {
     const g = this.game;
@@ -157,6 +167,15 @@ export class FabricatorPanel {
       const row = a.animationName === 'fabFade' ? a.effect?.target : null;
       if (row?.dataset?.key) carry.push({ key: row.dataset.key, cls: row.classList.contains('fab-warn') ? 'fab-warn' : 'bump', time: a.currentTime });
     }
+    // the values as they read, and the Craft button as it stood, before the redraw
+    const values = new Map();
+    if (opts.swap)
+      for (const v of this.el.querySelectorAll('[data-v]'))
+        values.set(v.dataset.v, { html: v.innerHTML, cls: v.className, color: getComputedStyle(v).color, x: v.offsetLeft, y: v.offsetTop, w: v.offsetWidth, h: v.offsetHeight });
+    const goWas = this.el.querySelector('.fab-go');
+    // and which of the stepper's buttons were dimmed (a change eases, rather than snapping in the redraw)
+    const steps = new Map([...this.el.querySelectorAll('[data-q]')].map((b) => [b.dataset.q, b.disabled]));
+    const wasShort = goWas && !goWas.classList.contains('working') ? goWas.classList.contains('short') : null;
     // what the line under the columns said, where it stood (to fade out under the next message)
     const old = this.el.querySelector('.fab-msg');
     const line = old && old.offsetParent ? { cls: old.className, html: old.innerHTML, text: old.textContent, rect: old.getBoundingClientRect() } : null;
@@ -172,7 +191,7 @@ export class FabricatorPanel {
       const status = off ? (ship ? 'Station only' : 'Not made here') : n > 0 ? `Can make ${n === CRAFT_MAX ? `${n}+` : n}` : 'Missing materials';
       const tone = off ? 'off' : n > 0 ? 'ok' : 'short';
       const out = outputOf(r);
-      return `<button class="fab-row${off ? ' off' : ''}${r.id === this.selected ? ' sel' : ''}" data-recipe="${r.id}" data-key="r-${r.id}">${markOf(out.item)}<span class="fab-nm">${r.name}</span><span class="fab-st ${tone}">${status}</span></button>`;
+      return `<button class="fab-row${off ? ' off' : ''}${r.id === this.selected ? ' sel' : ''}" data-recipe="${r.id}" data-key="r-${r.id}">${markOf(out.item)}<span class="fab-nm">${r.name}</span><span class="fab-st ${tone}" data-v="st-${r.id}">${status}</span></button>`;
     };
     const learn = (r) =>
       `<div class="fab-row learn" data-key="l-${r.id}">${markOf(`recipe_${r.id}`)}<span class="fab-nm">${r.name}</span><button class="inv-act" data-learn="${r.id}">Learn</button></div>`;
@@ -183,7 +202,7 @@ export class FabricatorPanel {
       </div>
       <div class="fab-cols">
         <section class="inv-side fab-side">
-          <header class="inv-side-head"><h4 class="mono col-title">Recipes</h4><span class="mono">${here.length} here · ${g.crafting.known.length} known</span></header>
+          <header class="inv-side-head"><h4 class="mono col-title">Recipes</h4><span class="mono" data-v="count">${here.length} here · ${g.crafting.known.length} known</span></header>
           <div class="fab-list">
             ${here.map((r) => row(r, false)).join('') || '<div class="inv-none"><b>Nothing to make here</b><span>This fabricator makes none of the recipes you know.</span></div>'}
             ${elsewhere.length ? `<div class="fab-group mono" data-group="elsewhere">${ship ? 'Made at a Waystation' : 'Made elsewhere'}</div>${elsewhere.map((r) => row(r, true)).join('')}` : ''}
@@ -207,21 +226,70 @@ export class FabricatorPanel {
     }
     if (opts.bump) for (const row of panel.querySelectorAll(opts.bump)) row.classList.add('bump');
     if (opts.warn) for (const row of panel.querySelectorAll('.fab-mat.short')) row.classList.add('fab-warn');
+    const go = panel.querySelector('.fab-go');
     if (opts.woke) {
-      // drawn as the fabrication left them (dimmed, the button filled), then let go: their transitions ease them back;
-      // a label that goes from dark on the fill to warm white on the outline fades out and back in rather than tweening
-      // its colour across the fading fill
-      const go = panel.querySelector('.fab-go');
+      // drawn as the fabrication left them (dimmed, the button filled), then let go: their transitions ease them back
       panel.classList.add('fab-busy');
       go?.classList.add('working');
       void panel.offsetWidth;
       panel.classList.remove('fab-busy');
       go?.classList.remove('working');
-      if (go?.classList.contains('short')) go.querySelector('.fab-go-l')?.classList.add('fab-relabel');
+    } else if (opts.ease && go && wasShort !== null && go.classList.contains('short') !== wasShort) {
+      // the button as it was (filled, or the outline), then let go: its fill eases into the other
+      go.classList.toggle('short');
+      void go.offsetWidth;
+      go.classList.toggle('short');
     }
+    // the stepper's buttons that dim or light up: drawn as they were, then let go, so their colour eases
+    const flips = [...panel.querySelectorAll('[data-q]')].filter((b) => steps.has(b.dataset.q) && steps.get(b.dataset.q) !== b.disabled);
+    if (flips.length && !opts.woke) {
+      for (const b of flips) b.disabled = !b.disabled;
+      void panel.offsetWidth;
+      for (const b of flips) b.disabled = !b.disabled;
+    }
+    // (after the button's state is let go, so a label reads the colour it ends in)
+    if (opts.swap) this.swapValues(panel, values, opts.swap);
     if (opts.learned) this.arrive(panel, opts.learned);
     this.paintMessage();
     if (line && !enter) this.crossLine(panel, line);
+  }
+
+  // Values a change rewrote (how many each recipe can make, what is needed and held, what one go makes, how many, the
+  // Craft label, the count of recipes): each shows what it said, in the colour it had, fading out over the first half of
+  // SWAP_MS, then what it says now fades in over the second, so the two never show through each other and a label never
+  // tweens its colour across the button's changing fill. `which`: true for every value, or the keys of those to swap.
+  swapValues(panel, values, which) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const half = SWAP_MS / 2;
+    for (const el of panel.querySelectorAll('[data-v]')) {
+      const key = el.dataset.v;
+      const was = values.get(key);
+      if (!was || (which !== true && !which.includes(key))) continue;
+      if (was.html === el.innerHTML && was.color === getComputedStyle(el).color) continue;
+      // what it said, laid over it where it stood (in its parent, so its own rules style it; the layout does not move
+      // between the two, so its old box is where its text was), in the colour it had
+      const ghost = el.cloneNode(false);
+      ghost.removeAttribute('data-v');
+      ghost.className = was.cls;
+      ghost.innerHTML = was.html;
+      Object.assign(ghost.style, {
+        position: 'absolute',
+        left: `${was.x}px`,
+        top: `${was.y}px`,
+        width: `${was.w}px`,
+        height: `${was.h}px`,
+        margin: '0',
+        whiteSpace: 'nowrap',
+        color: was.color,
+        pointerEvents: 'none',
+      });
+      el.before(ghost);
+      // (their colours fade, not their opacity: an opacity animation beside the stepper's dimmed buttons had the
+      // compositor draw those brighter for its length)
+      const color = getComputedStyle(el).color;
+      ghost.animate([{ color: was.color }, { color: clear(was.color) }], { duration: half, easing: 'ease-out', fill: 'forwards' }).onfinish = () => ghost.remove();
+      el.animate([{ color: clear(color) }, { color }], { duration: half, delay: half, easing: 'ease-out', fill: 'backwards' });
+    }
   }
 
   // The line under the columns, changed: the old message fades out where it stood, then the new one fades in.
@@ -249,8 +317,8 @@ export class FabricatorPanel {
 
   // A recipe just learned: its row eases from where it stood among the recipes to learn into its place in the list on an
   // opaque plate, flashing once, while what it stood for there (its RCP tag, its LEARN button) fades into what it is
-  // now (its item's tag, how many the materials make). The "Recipes to learn" heading, if that was the last, stays where
-  // it stood under the rising plate and is gone within the rise's first frames.
+  // now (its item's tag, how many the materials make). The "Recipes to learn" heading, if that was the last, fades where it
+  // stood before the row sets off (the rise waits HEAD_MS for it), under the plate.
   arrive(panel, { recipe, from, label, parts }) {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const list = panel.querySelector('.fab-list');
@@ -260,7 +328,9 @@ export class FabricatorPanel {
       row.classList.add('fab-moving', 'bump');
       row.animate([{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }], {
         duration: ARRIVE_MS,
+        delay: label ? HEAD_MS : 0,
         easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
+        fill: 'backwards',
       }).onfinish = () => row.classList.remove('fab-moving');
       // (what the row is now, taken before what it was is laid over it)
       const fresh = [...row.querySelectorAll(':scope > .inv-tag, :scope > .res-ico, :scope > .fab-st')];
@@ -306,21 +376,21 @@ export class FabricatorPanel {
     const mats = materialsOf(r, this.qty)
       .map((m) => {
         const have = countOf(st, m.item);
-        return `<div class="fab-mat${have < m.count ? ' short' : ''}" data-item="${m.item}" data-key="m-${m.item}">${markOf(m.item)}<span class="fab-mat-nm">${nameOf(m.item)}</span><b class="num">${m.count.toLocaleString()}</b><span class="have">${have.toLocaleString()} held</span></div>`;
+        return `<div class="fab-mat${have < m.count ? ' short' : ''}" data-item="${m.item}" data-key="m-${m.item}">${markOf(m.item)}<span class="fab-mat-nm">${nameOf(m.item)}</span><b class="num" data-v="need-${m.item}">${m.count.toLocaleString()}</b><span class="have" data-v="have-${m.item}">${have.toLocaleString()} held</span></div>`;
       })
       .join('');
     const short = materialsOf(r, this.qty).some((m) => countOf(st, m.item) < m.count);
     const make = here
       ? `<div class="fab-make">
-          <div class="fab-qty"><button data-q="-1" ${this.qty <= 1 ? 'disabled' : ''} title="One fewer">−</button><b>${this.qty}</b><button data-q="1" ${this.qty >= top ? 'disabled' : ''} title="One more">+</button><button class="fab-max" data-q="max" ${this.qty >= top ? 'disabled' : ''} title="As many as the materials make">Max</button></div>
-          <button class="btn fab-go${short ? ' short' : ''}" data-make ${this.busy ? 'disabled' : ''}><span class="fab-sweep"></span><span class="fab-go-l">Craft ×${this.qty}</span></button>
+          <div class="fab-qty"><button data-q="-1" ${this.qty <= 1 ? 'disabled' : ''} title="One fewer">−</button><b><span data-v="qty">${this.qty}</span></b><button data-q="1" ${this.qty >= top ? 'disabled' : ''} title="One more">+</button><button class="fab-max" data-q="max" ${this.qty >= top ? 'disabled' : ''} title="As many as the materials make">Max</button></div>
+          <button class="btn fab-go${short ? ' short' : ''}" data-make ${this.busy ? 'disabled' : ''}><span class="fab-sweep"></span><span class="fab-go-l" data-v="go">Craft ×${this.qty}</span></button>
         </div>`
       : `<div class="fab-make"><div class="fab-elsewhere mono">${this.at === 'ship' ? "The ship's fabricator makes ammo and cartridges only. Craft this at a Waystation." : 'This fabricator does not make this recipe.'}</div></div>`;
     return `<header class="inv-side-head"><h4 class="mono col-title">${r.name}</h4><span class="mono">${item.kind} · ${out.count} a craft</span></header>
       <p class="fab-about">${item.text}</p>
       <div class="fab-mats-head mono"><span>Materials</span><span>Need</span><span>Held</span></div>
       <div class="fab-mats">${mats}</div>
-      <div class="fab-out" data-item="${out.item}" data-key="o-${out.item}"><span>Makes</span>${markOf(out.item)}<b>${amount(out.count * this.qty, out.item)}</b><span class="have">${countOf(st, out.item).toLocaleString()} held · ${can ? `up to ${can === CRAFT_MAX ? `${can}+` : can} now` : 'none now'}</span></div>
+      <div class="fab-out" data-item="${out.item}" data-key="o-${out.item}"><span>Makes</span>${markOf(out.item)}<b data-v="make">${amount(out.count * this.qty, out.item)}</b><span class="have" data-v="made">${countOf(st, out.item).toLocaleString()} held · ${can ? `up to ${can === CRAFT_MAX ? `${can}+` : can} now` : 'none now'}</span></div>
       ${make}
       <p class="inv-note drop"><i></i>Materials come from the suit first, then the cargo pods</p>`;
   }
@@ -381,7 +451,8 @@ export class FabricatorPanel {
     this.qty = 1;
     this.msg = null;
     this.game.audio.play('hover');
-    this.render();
+    // (the Craft button eases between its fill and its outline, its label out and back in, if the new recipe changes them)
+    this.render({ ease: true, swap: ['go'] });
   }
 
   // Craft: the shared rules first (a refusal said at once); asked, the fabrication runs across the button and the answer
@@ -454,7 +525,7 @@ export class FabricatorPanel {
       // as many as the materials left make, never more than were asked for
       if (recipe) this.qty = Math.max(1, Math.min(this.qty, craftableCount(g.inventory.state, recipe)));
       // what changed flashes once: the output, each material used, and the recipe's row
-      return this.render({ woke: b.dimmed, bump: '.fab-mat, .fab-out, .fab-row.sel' });
+      return this.render({ woke: b.dimmed, bump: '.fab-mat, .fab-out, .fab-row.sel', swap: true });
     }
     if (m.result === 'learned') {
       this.msg = { text: `Learned the ${recipe?.name ?? m.recipe} recipe, for good`, tone: 'good' };
@@ -470,7 +541,7 @@ export class FabricatorPanel {
       const head = this.el.querySelector('[data-group="learn"]');
       const label = head && { node: head.cloneNode(true), rect: head.getBoundingClientRect() };
       // (the recipe selected stays so: the one learned joins the list beside it)
-      return this.render({ learned: { recipe: m.recipe, from, label, parts } });
+      return this.render({ learned: { recipe: m.recipe, from, label, parts }, swap: ['count'] });
     }
     this.refuse(m.reason, recipe, b.before, b.dimmed);
   }

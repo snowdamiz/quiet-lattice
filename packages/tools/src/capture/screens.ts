@@ -489,6 +489,25 @@ async function limitsMotion(page: Page): Promise<void> {
   });
 }
 
+/** The stepper at a maximum above one: the pulse fuel cell (the haul makes six) set to 6 of 6 with MAX, + and MAX dimmed
+ * and − lit. */
+async function stepperAtSix(page: Page): Promise<void> {
+  await stationFabricator(page);
+  await fabClick(page, '.fab-row[data-recipe="pulse_fuel_cell"]');
+  await fabClick(page, '[data-q="max"]');
+}
+
+/**
+ * Its clip, each step 0.2 s of animation time apart (page timers run on real time, the clip's animations tenfold slower):
+ * − to 5 (+ and MAX light up), + back to 6 (they dim), then + and MAX pressed at 6, which do nothing.
+ */
+async function stepperMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const press = ['[data-q="-1"]', '[data-q="1"]', '[data-q="1"]', '[data-q="max"]'];
+    press.forEach((sel, k) => setTimeout(() => document.querySelector<HTMLElement>(sel)?.click(), 2000 + k * 2000));
+  });
+}
+
 /** The press (every third frame), the fabrication's run across the button, the result and the rows settling. */
 const FABRICATOR_SHEET = [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 104, 112, 119];
 
@@ -696,6 +715,14 @@ export const SCREENS: Record<string, ScreenDef> = {
     sheetFrames: [0, 12, 21, 30, 39, 48, 57, 60, 62, 64, 66, 68, 70, 74, 80, 88, 96, 104, 112, 119],
     open: stationFabricator,
     motion: limitsMotion,
+  },
+  // the stepper at a maximum above one: the pulse fuel cell at 6 of 6 (+ and MAX dimmed, − lit), then −, + and + and
+  // MAX pressed at the maximum
+  'fabricator-limits-max': {
+    clipSeconds: 1.2,
+    sheetFrames: [0, 6, 11, 12, 13, 15, 20, 23, 24, 25, 27, 32, 35, 36, 37, 44, 47, 48, 49, 71],
+    open: stepperAtSix,
+    motion: stepperMotion,
   },
   // learning a recipe at the Waystation: LEARN on the torpedo recipe, and the row moving into the list
   'fabricator-learn': {
