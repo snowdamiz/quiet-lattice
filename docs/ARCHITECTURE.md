@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -39,6 +39,7 @@ combat/             each zone's health, damage path, deaths and combat events; C
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
+codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 sim/                server-side systems added by later tasks: movement validation, combat…
 admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
 cli/                the developer CLI (`pnpm --filter @astra/server cli -- <command>`): over the admin channel, or --direct
@@ -110,8 +111,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
   first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
-  11 beacons); a unit test pins the number and checks the history, so two branches bumping to the same number conflict
-  at merge rather than share it.
+  11 beacons, 12 analysis); a unit test pins the number and checks the history, so two branches bumping to the same
+  number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -120,12 +121,12 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
-  frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21). Each socket's
-  message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
-  interactions, chat, party, inventory, skill, cutscene, quest and beacon requests, mining hits (an honest client sends 4
-  a second, and 8 is the most a character may) and shots (the base gun's 8 a second at most, never while mining), and
-  the burst absorbs the backlog of a stall. Chat, invites, raising beacons, mining hits and shots have smaller limits of
-  their own (§13, §18, §20, §21).
+  frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21), `analyze {seq,
+  time, target}` (§22). Each socket's message budget is 60 a second with a burst of 120: input and acks take 40, leaving
+  room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and beacon requests, mining hits
+  (an honest client sends 4 a second, and 8 is the most a character may), shots (the base gun's 8 a second at most,
+  never while mining) and analyses, and the burst absorbs the backlog of a stall. Chat, invites, raising beacons, mining
+  hits, shots and analyses have smaller limits of their own (§13, §18, §20, §21, §22).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
@@ -135,7 +136,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
   reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
-  id, beacon? | name? | phase? | why?}` (§21), and snapshots.
+  id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), and
+  snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -192,6 +194,11 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   'raised' | 'answered' | 'joined' | 'ended', id, …}`, one field per op), and refusals as `denied {of: 'raise' | 'lower'
   | 'answer' | 'watch', code}` with the codes `no_phase`, `kind`, `raised`, `unknown`, `elsewhere`, `far`, `in_phase`,
   `full` beside the social ones (`rate`, `busy`, `self`, `in_party`, `gone`). One `beacon` type serves both directions.
+- **Analysis** (protocol 12, §22): a client sends `analyze {seq, time, target}`, `target` a creature's entity id; the
+  server answers each with `analyze {seq, target, result}`: `new` with `species` (the codex entry, `CodexSpecies`: key,
+  world, index, name, temperament, threat, body plan, Bond eligibility, when first analyzed) and `xp`, `known` with
+  `species`, or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `unknown`, `dead`, `world`,
+  `range`, `busy`, `los`, `full`). `seq` counts from 1 and increases; `time` is checked only for staleness.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -317,6 +324,12 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   `creaturesIn`), and one it kills leaves its herd at once (`FaunaSim.kill`): the AI forgets it, and its herd and den see
   the loss as they see a despawn (a pack wiped out starts its den's 300 s timer then, an apex its 1,800 s one, its pack
   hunting on), while its entity stays a corpse for the death beat before combat despawns it.
+  return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow. Hostile creatures pick targets from a threat
+  table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, `FaunaSim.hurt` adds damage. The
+  zone's metrics carry its fauna's worlds, creatures, cells by state and herds out at dens.
+- **Analysis** (§22) reads a creature as its entity has it (kind `mob`, `species`, `frame`, `pos`, `hp`: a corpse, hp 0,
+  is refused `dead`) and its species from the world's whole list (`faunaSpecies` at `FAUNA_MAX_TIER`, so an index is the same species at every
+  tier); line of sight is over the ground this zone's fauna walks on (`FaunaSim.grounds` at its tier).
 
 ## 7. Authority
 
@@ -430,8 +443,10 @@ change makes, are given back on load, logged), `inventory` (its layout re-derive
 load, `applyLayout(saved, layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `pose`
 (`{system, pose, mode, parked?}`, read from the character's zone entity, `parked` being where a character on foot left its
 ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a saved pose inside the ground, in the
-hangar's shell, docked off a pad or on foot with no ship to board is not restored) and, when the server has a quest
-runtime, `quests` (§17: held by the runtime; refused, never replaced, when unreadable).
+hangar's shell, docked off a pad or on foot with no ship to board is not restored), `codex` (§22: the species analyzed,
+per world, `v` 1, held by the codex service; reconciled with the species data on load; refused, never replaced, when
+unreadable) and, when the server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when
+unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -1211,3 +1226,47 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   after a reconnect, or once a watch refused for its rate may succeed), the character's own beacon, the phase its last
   answer put it in and the last refusal, and sends the requests. The panel that shows them belongs to the chat and party UI (P1.E15.T03); until it lands they are
   reachable from the dev console as `game.net.beacons` (`watch()`, `list()`, `answer(id)`, `raise()`, `lower()`).
+
+## 22. Analysis and the codex (`packages/server/src/codex`, `@astra/shared/codex`)
+
+DESIGN 14.5, 12.1, 9.1, 9.5, 14.9; P1.E08.T04. Analyzing a creature puts its species in the character's codex; the server
+checks every analysis and records it, and nothing a client sends grants a codex entry or XP. The demo's analysis, which
+paid units on the client, is gone (DESIGN 20.2–20.3).
+
+- **A request** (`analyze {seq, time, target}`, §5) goes from the gateway to the `AnalysisService` (`codex/analysis.ts`),
+  which checks it as resources check a mining hit (§18), cheapest first: `stale_seq`; `zone` (the character in play, its
+  codex held); `rate` (2 at once per character, then 1 a second: the analysis is instant, as the demo's was, so there is
+  no scan to hold a target through); `stale` (stamped more than 3 s from the server's clock); `zone`; `mode` (on foot, as
+  the zone entity has it: movement authority's believed mode; ring grazers and depth leviathans will be analyzed from the
+  cockpit with Deep Sweep, P2.E29.T02, which lets `ship` through for those species); `unknown` (no `mob` entity of that id
+  in the player's zone that its phase lets it see, `phases.canSee`, so a phase's own creature is none to anyone else and
+  nothing more of it is told; or a species its world does not carry); `dead` (no hp left); `world` (it is not on the world the
+  player's frame names); `range` (from the eye, 1.6 m up, to the creature's middle, more than the demo's reach of 70 m
+  plus its hit radius, 1.15 × its size × 0.9, a flyer's 0.6, as the client's aim pick takes it, plus 5 m for a pose a tick
+  old); `busy` (the ground not planned yet); `los` (the drawn ground in the way, sampled as the beam's is, §18). Every
+  analysis that passes is heard by listeners (`subscribe`), first or not: the gateway passes each to the quest runtime as
+  `analyze {species: <key>}` (§17), so a quest's `analyze` step counts species the server saw analyzed.
+- **The codex** (`CodexService`, `codex/service.ts`, made by `coreRegistry` over the progress holder and the skill service
+  unless one is given; the gateway finds it with `codexServiceIn`). A species is keyed by its world's frame id (unique per
+  world, unlike a planet's seed) and its index in the world's `faunaSpecies` list (`speciesKey`: `<frame>/<index>`). The
+  stored value (`@astra/shared/codex`, the `codex` component, v1) is `{worlds: {<frame>: {system, species: {<index>:
+  {temperament, threat, bodyPlan, bond, at}}}}}`: threat stars by temperament (`threatRating`), `bond` `eligible` or
+  `big_game` (heavy quadrupeds and flyers need Big Game, DESIGN 9.5; `canBond(entry, owned)` is P1.E07.T07's rule, and
+  `CodexService.canBond` reads the owned nodes), `at` the world time of the first analysis. Bounded to 4,096 species over
+  1,024 worlds and 64 a world (the galaxy has 2,959 species on 432 worlds, at most 9 a world): past that an analysis is
+  refused `full`, logged as an error, and nothing is earned.
+- **XP.** The first analysis of a species earns `SPECIES_XP` (300, DESIGN 14.9) into the character's progress, levelling it
+  as quest XP does (the player's entity takes the level, the skill view is refreshed); the answer's `xp` is what was
+  granted. A repeat records nothing and earns nothing.
+- **Reconcile.** On load the stored codex is brought in line with the species data as it is now (`reconcileCodex`, the
+  component's `reconcile`): a world that no longer has fauna, or whose frame is not in its system any more, is dropped; a
+  species past its world's list is dropped; an entry whose species changed takes its new temperament, threat, body plan
+  and Bond reach, keeping `at`; one warning per character. Only a value that cannot be read refuses the join.
+- **Survey bookkeeping** for P2.E29 and the Symbiotic fragment (DESIGN 9.1, 14.5): `analyzedOn(codex, world)` counts a
+  world's species analyzed and `analyzedEvery(codex, world, count)` says whether every one of a list `count` long is (a
+  world's list at a tier is a prefix of its whole list). Survey rewards, first-finder naming and codex plates are
+  P2.E29.T01–T02's; the codex UI, and a `codex` state message to feed it, P2.E29.T03's.
+- **The client** (`Game.analyze(target)`, `Game.onAnalyze`) sends the request and shows the answer: a first analysis's
+  banner (the codex line, Bond, the XP), a known one's toast, a refusal's reason. Until the client draws the server's
+  creatures (P1.E08.T09) it has no server creature to aim at: online, its own demo herds show their names but cannot be
+  analyzed; the dev sandbox still analyzes its own herds for its quest book, and pays nothing for it.
