@@ -327,6 +327,9 @@ before applying it.
   rest. The gateway has the planner plan the saved pose's world's ground before the check (`groundForRestore`), so it
   never plans on the main thread; one it still cannot judge is not vouched for. Persistence restores any other docked at
   home (§8).
+- A pose the server gives a character in play (an admin teleport within its zone, P1.E03.T07) re-seats its mover as a
+  join does (`MovementAuthority.remove`, then `add` at that pose; a docked one on whichever pad is free, `freePad`), so
+  its client's next input is judged from there.
 
 ## 8. Persistence
 

@@ -187,15 +187,22 @@ export function poseShapeProblem(at: PoseState): string | null {
  * accept it in its mode at
  * server world time `now` (P1.E03.T04: its frame by the shared rule, not in the ground or the hangar's shell, landed on
  * dry ground, docked on a pad, on the pulse drive out of the air, on foot on the ground and with a ship of its own at
- * `parked` to board). `ship` is the ship it flies (the default Lark when it has none). The ground is read from the
+ * `parked` to board). `ship` is the ship it flies (the default Lark when it has none), `skills` the nodes it owns (its
+ * ship's stats read them: Pack Mule's second pod). The ground is read from the
  * server's planner, never planned here: a pose on a world whose ground is not planned cannot be vouched for, so the gateway
  * waits for it first (groundForRestore).
  */
-export function poseProblem(at: PoseState, now: number, ship: ShipLoadout | null = null): string | null {
+export function poseProblem(at: PoseState, now: number, ship: ShipLoadout | null = null, skills: readonly string[] = []): string | null {
   const shape = poseShapeProblem(at);
   if (shape) return shape;
   const tier = tierOfGalaxySystem(at.system);
-  const v = movementProblem(describeZoneSystem(at.system), at.pose, at.mode, now, { ship: ship ?? DEFAULT_SHIP }, at.parked, { tier: () => tier });
+  let v;
+  try {
+    v = movementProblem(describeZoneSystem(at.system), at.pose, at.mode, now, { ship: ship ?? DEFAULT_SHIP, skills }, at.parked, { tier: () => tier });
+  } catch (err) {
+    // (a ship its owned nodes cannot fly: not vouched for, rather than the join refused)
+    return `cannot judge it: ${(err as Error).message}`;
+  }
   return v ? `${v.rule}${v.detail ? `: ${v.detail}` : ''}` : null;
 }
 
@@ -230,7 +237,7 @@ export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>, clock: Pick<Se
     schema: poseStateSchema,
     onInvalid: 'default',
     default: (ctx) => dockedAtHome(ctx.character.homeSystem),
-    check: (at, ctx) => poseProblem(at, clock.now(), ctx.get<ShipLoadout | null>(SHIP)),
+    check: (at, ctx) => poseProblem(at, clock.now(), ctx.get<ShipLoadout | null>(SHIP), ownedNodes(ctx)),
     save: ({ viewer }) => {
       const zone = viewer ? zones.zoneOf(viewer) : undefined;
       const id = viewer && zone?.entityOf(viewer);
