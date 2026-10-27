@@ -164,3 +164,15 @@ SCORES: hierarchy 4, fit 5, motion 4, theme 5, correctness 4, spec 5, performanc
 ```
 
 Artifacts: `assets/renders/ui/inventory/{16x9-resources,16x9,21x9,clip-sheet}.png`, `assets/renders/ui/inventory/_frames/`.
+
+## P1.E09.T04 Cutscene tooling
+
+```
+VERDICT: PASS
+TASK: P1.E09.T04
+SCORES: hierarchy 4, fit 5, motion 4, theme 5, correctness 4, spec 5, performance 5 (mean 4.57)
+WOULD REQUEST: a 60 fps clip of one Space line-jump (with its dip) and one Esc skip mid-line.
+```
+
+Artifacts: `assets/renders/ui/cutscene-test/` (16x9, 21x9, approach, return, clip sheet, 804 frames); the requested
+line-jump and skip clips were added after the verdict in `assets/renders/ui/cutscene-test-jump/` and `-skip/`.
