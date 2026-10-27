@@ -1,9 +1,29 @@
-// GPU memory of a model's textures (P1.E14.T12): what the review readout reports beside its perf numbers.
+// Compressed models in the model library (P1.E14.T12): the GPU memory of their textures (what the review readout reports
+// beside its perf numbers), the loaders, and meshopt-compressed fixtures (packages/tools/src/art/fixtures.ts) read the way
+// the creatures and flora read them: positions, colour masks and the vertex rig in the world, exactly.
+import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { textureBytes, textureMemory } from './modelLibrary.js';
+import { addLibrary, floatAttribute, libraryMesh, recolor, textureBytes, textureMemory } from './modelLibrary.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { BASIS_TRANSCODER_PATH, gltfLoader, initTextureLoaders } from '../core/Engine.js';
+
+/** A fixture as the game loads it (meshopt decoded; these carry no textures, which need a GPU). */
+async function fixture(name) {
+  const data = readFileSync(new URL(`./fixtures/${name}.glb`, import.meta.url));
+  const buffer = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+  return (await gltfLoader().parseAsync(buffer, '')).scene;
+}
+
+const PALETTE = { primary: new THREE.Color(1, 0, 0), secondary: new THREE.Color(0, 1, 0), accent: new THREE.Color(0, 0, 1) };
+
+/** The pivot of vertex `i` in the world, as Fauna.js reads `_pivot` (Blender axes) through the mesh's matrix. */
+function pivotWorld(mesh, i) {
+  const pa = mesh.geometry.attributes._pivot;
+  return new THREE.Vector3(pa.getX(i), pa.getZ(i), -pa.getY(i)).applyMatrix4(mesh.matrixWorld).toArray();
+}
+
+const close = (a, b, eps) => a.every((x, i) => Math.abs(x - b[i]) <= eps);
 
 /** A KTX2 map as KTX2Loader hands it over: a compressed texture with its own mip levels. */
 function compressed(size) {
@@ -49,5 +69,50 @@ describe('model loaders', () => {
     expect(gltfLoader().ktx2Loader).toBe(ktx2);
     expect(gltfLoader()).not.toBe(gltfLoader());
     expect(initTextureLoaders({ extensions: { has: () => false, get: () => null } })).toBe(ktx2);
+  });
+});
+
+describe('meshopt-compressed library models', () => {
+  // (the values packages/tools/src/art/fixtures.ts wrote: EXPECT there)
+  it('a creature keeps its rig exact: positions, _pivot in the world, _limb, _glow and the mask', async () => {
+    addLibrary('creatures', await fixture('creature'));
+    const mesh = libraryMesh('creatures', 'quad_grazer_0');
+    const src = mesh.geometry;
+    expect(src.attributes.position.array).toBeInstanceOf(Float32Array);
+    const geo = recolor(mesh, PALETTE);
+    expect(geo.boundingBox.min.toArray()).toEqual([3.4, 0, -0.3].map(Math.fround));
+    expect(close(geo.boundingBox.max.toArray(), [4.6, 1.2, 0.3], 1e-6)).toBe(true);
+    for (let i = 0; i < src.attributes.position.count; i++) {
+      expect(close(pivotWorld(mesh, i), [4.3, 1.2, -0.1], 1e-6)).toBe(true);
+      expect(src.attributes._limb.getX(i)).toBe(2);
+      expect(src.attributes._glow.getX(i)).toBe(0.25);
+    }
+    expect(close([0, 1, 2, 3].map((c) => src.attributes.color.getComponent(0, c)), [0.6, 0.3, 0.1, 0.8], 1e-6)).toBe(true);
+  });
+
+  it('a flora model keeps its place and its mask', async () => {
+    addLibrary('flora', await fixture('flora'));
+    const mesh = libraryMesh('flora', 'bush_0');
+    const geo = recolor(mesh, PALETTE);
+    expect(close(geo.boundingBox.min.toArray(), [-0.5, 0, 1.5], 1e-6)).toBe(true);
+    expect(close(geo.boundingBox.max.toArray(), [0.5, 1.5, 2.5], 1e-6)).toBe(true);
+    // R 0.2, G 0.7, B 0.1 of the palette, darkened by full occlusion's floor of nothing (A = 1)
+    expect(close(geo.attributes.color.array.slice(0, 3), [0.2 * 0.6, 0.7 * 0.6, 0.1 * 0.6], 1e-6)).toBe(true);
+  });
+
+  it('recolor reads quantized positions through their normalisation: a hull away from the origin does not wrap', async () => {
+    addLibrary('hulls', await fixture('hull'));
+    const mesh = libraryMesh('hulls', 'hull_0');
+    const pos = mesh.geometry.attributes.position;
+    // (16-bit integers with the scale moved into the node: what wrapped to -0.997..0.992 before)
+    expect(pos.array).toBeInstanceOf(Int16Array);
+    expect(pos.normalized).toBe(true);
+    const geo = recolor(mesh, PALETTE);
+    expect(geo.attributes.position.array).toBeInstanceOf(Float32Array);
+    expect(close(geo.boundingBox.min.toArray(), [2.4, 0.5, -1], 1e-3)).toBe(true);
+    expect(close(geo.boundingBox.max.toArray(), [3.6, 1.5, 1], 1e-3)).toBe(true);
+    const n = new THREE.Vector3().fromBufferAttribute(geo.attributes.normal, 0);
+    expect(n.length()).toBeCloseTo(1, 2);
+    expect(floatAttribute(pos).getX(0)).toBe(Math.fround(pos.getX(0)));
   });
 });

@@ -84,15 +84,22 @@ function unpack(release: KtxRelease, archive: string, work: string, dir: string)
   chmodSync(join(dir, 'bin', 'ktx'), 0o755);
 }
 
+/** What ensureKtx fetches with and what it fetches (tests replace both). */
+export interface KtxFetch {
+  fetch?: (url: string) => Promise<{ ok: boolean; status: number; arrayBuffer(): Promise<ArrayBuffer> }>;
+  release?: KtxRelease;
+}
+
 /** The `ktx` binary: KTX, else the fetched release, fetching it first (once) when it is missing. The download is checked
- * against its pinned SHA-256 and the unpacked tool must report the pinned version. */
-export async function ensureKtx(root: string, env: NodeJS.ProcessEnv = process.env, log: (s: string) => void = console.log): Promise<string> {
+ * against its pinned SHA-256 before anything is written, and the unpacked tool must report the pinned version before it
+ * replaces the cache; a failure leaves nothing behind. */
+export async function ensureKtx(root: string, env: NodeJS.ProcessEnv = process.env, log: (s: string) => void = console.log, deps: KtxFetch = {}): Promise<string> {
   const found = findKtx(env, root);
   if (found) return found;
-  const release = ktxRelease(process.platform, process.arch);
+  const release = deps.release ?? ktxRelease(process.platform, process.arch);
   const dir = ktxDir(root);
   log(`art: fetching KTX-Software ${KTX_VERSION} (${release.file}) into ${dir}`);
-  const res = await fetch(`${BASE}/${release.file}`);
+  const res = await (deps.fetch ?? fetch)(`${BASE}/${release.file}`);
   if (!res.ok) throw new Error(`downloading ${release.file} failed: HTTP ${res.status}`);
   const data = new Uint8Array(await res.arrayBuffer());
   const got = sha256(data);

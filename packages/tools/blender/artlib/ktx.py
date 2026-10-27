@@ -31,7 +31,8 @@ MODELS = {163: "ETC1S", 166: "UASTC"}  # KHR_DF_MODEL_ETC1S, KHR_DF_MODEL_UASTC
 CODECS = {"etc1s": "ETC1S", "uastc": "UASTC"}
 SCHEMES = {0: "none", 1: "BasisLZ", 2: "Zstandard", 3: "ZLIB"}
 TRANSFER_SRGB = 2
-COLOUR = {"baseColor", "emissive"}  # sRGB slots; every other slot is linear data
+# sRGB slots (the core's colour maps, and the extensions' colour textures); every other slot is linear data
+COLOUR = {"baseColor", "emissive", "sheenColor", "specularColor"}
 SLOTS = {
     "baseColorTexture": "baseColor",
     "metallicRoughnessTexture": "metallicRoughness",
@@ -39,7 +40,11 @@ SLOTS = {
     "occlusionTexture": "occlusion",
     "emissiveTexture": "emissive",
 }
+# textures inside material extensions that hold colour (KHR_materials_sheen, KHR_materials_specular); other extension
+# textures are slot "other" (data)
+EXTENSION_COLOUR = {"sheenColorTexture": "sheenColor", "specularColorTexture": "specularColor"}
 PNG_CHANNELS = {0: 1, 2: 3, 3: 4, 4: 2, 6: 4}  # PNG colour type -> channels (a palette may carry alpha)
+SOURCE_SUFFIX = {"png": ".png", "jpeg": ".jpg"}
 FORMATS = {1: "R8G8B8", 2: "R8G8B8A8", 3: "R8G8B8", 4: "R8G8B8A8"}  # never one- or two-channel: glTF reads .g and .b
 
 
@@ -98,7 +103,8 @@ def _image_of(tex):
 
 
 def _texture_refs(material):
-    """(slot, textureInfo) for every texture a material uses, extensions included (as slot 'other')."""
+    """(slot, textureInfo) for every texture a material uses, extensions included (their colour textures as sheenColor
+    and specularColor, the rest as slot 'other')."""
     pbr = material.get("pbrMetallicRoughness", {})
     out = [(SLOTS[k], pbr[k]) for k in ("baseColorTexture", "metallicRoughnessTexture") if k in pbr]
     out += [(SLOTS[k], material[k]) for k in ("normalTexture", "occlusionTexture", "emissiveTexture") if k in material]
@@ -107,7 +113,7 @@ def _texture_refs(material):
         if isinstance(x, dict):
             for k, v in x.items():
                 if isinstance(v, dict) and k.endswith("Texture") and "index" in v:
-                    out.append(("other", v))
+                    out.append((EXTENSION_COLOUR.get(k, "other"), v))
                 else:
                     walk(v)
         elif isinstance(x, list):
@@ -249,6 +255,39 @@ def png_channels(data):
     return PNG_CHANNELS.get(data[25])
 
 
+def jpeg_channels(data):
+    """Components of a JPEG (1 grey, 3 colour), read from its start-of-frame segment; None when `data` is not one
+    (or is CMYK, which no map should be)."""
+    if data[:2] != b"\xff\xd8":
+        return None
+    i = 2
+    while i + 4 <= len(data):
+        if data[i] != 0xFF:
+            return None
+        marker = data[i + 1]
+        if marker in (0xD8, 0x01) or 0xD0 <= marker <= 0xD7:  # markers without a length
+            i += 2
+            continue
+        length = struct.unpack_from(">H", data, i + 2)[0]
+        # SOF0-SOF15, except DHT (C4), JPG (C8) and DAC (CC)
+        if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+            n = data[i + 9] if i + 9 < len(data) else None
+            return n if n in (1, 3) else None
+        if marker == 0xDA:  # start of scan before any frame header
+            return None
+        i += 2 + length
+    return None
+
+
+def source_image(data):
+    """('png' | 'jpeg', channels) of an image Blender wrote, or None for anything else."""
+    n = png_channels(data)
+    if n is not None:
+        return "png", n
+    n = jpeg_channels(data)
+    return ("jpeg", n) if n is not None else None
+
+
 def header(data):
     """The facts the validator needs from a KTX2 file, or None when `data` is not one."""
     if len(data) < 80 or data[:12] != MAGIC:
@@ -334,14 +373,15 @@ def compress(src, dst, s, log=print):
     js, bin_data = glb.read(src)
     slots = image_slots(js)
     images = js.get("images", [])
-    # byte-identical images (a livery variant whose bakes of an unchanged material came out the same) are kept once
+    # byte-identical images (a livery variant whose bakes of an unchanged material came out the same) are kept once, if
+    # they are read the same way (the same bytes as a colour map and as a data map are two encodes)
     keeper, seen = {}, {}
     for i in sorted(slots):
-        digest = hashlib.sha256(_image_bytes(js, bin_data, i)).hexdigest()
-        if digest in seen:
-            keeper[i] = seen[digest]
+        key = (hashlib.sha256(_image_bytes(js, bin_data, i)).hexdigest(), bool(slots[i] & COLOUR))
+        if key in seen:
+            keeper[i] = seen[key]
         else:
-            seen[digest] = i
+            seen[key] = i
     for t in js.get("textures", []):
         if t.get("source") in keeper:
             t["source"] = keeper[t["source"]]
@@ -356,10 +396,10 @@ def compress(src, dst, s, log=print):
         if srgb and sl - COLOUR:
             raise KtxError(f"image {images[i].get('name', i)} is both colour ({', '.join(sorted(sl & COLOUR))}) and data ({', '.join(sorted(sl - COLOUR))})")
         data = _image_bytes(js, bin_data, i)
-        channels = png_channels(data)
-        if channels is None:
-            raise KtxError(f"image {images[i].get('name', i)} is {images[i].get('mimeType', 'not a PNG')}; the export encodes PNGs")
-        todo.append((i, data, codec_for(sl, s), srgb, "normal" in sl, channels))
+        source = source_image(data)
+        if source is None:
+            raise KtxError(f"image {images[i].get('name', i)} is {images[i].get('mimeType', 'unknown')}; the export encodes PNG and JPEG (grey or colour)")
+        todo.append((i, data, codec_for(sl, s), srgb, "normal" in sl, source))
     tool = binary() if todo else None
     n = jobs()
     threads = max(1, (os.cpu_count() or 2) // n)
@@ -368,10 +408,10 @@ def compress(src, dst, s, log=print):
     try:
 
         def one(job):
-            i, data, codec, srgb, normal, channels = job
-            png, out = tmp / f"{i}.png", tmp / f"{i}.ktx2"
-            png.write_bytes(data)
-            _run(encode_args(tool, png, out, codec, srgb, normal, channels, s, threads))
+            i, data, codec, srgb, normal, (kind, channels) = job
+            source, out = tmp / f"{i}{SOURCE_SUFFIX[kind]}", tmp / f"{i}.ktx2"
+            source.write_bytes(data)
+            _run(encode_args(tool, source, out, codec, srgb, normal, channels, s, threads))
             return i, out.read_bytes()
 
         with ThreadPoolExecutor(max_workers=n) as pool:

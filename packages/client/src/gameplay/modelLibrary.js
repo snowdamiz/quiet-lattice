@@ -9,20 +9,37 @@ const libs = new Map();
 const roots = new Map();
 
 export async function loadLibrary(name, url) {
-  const meshes = new Map();
-  const tops = new Map();
+  let scene = null;
   try {
-    const gltf = await gltfLoader().loadAsync(url);
-    gltf.scene.updateMatrixWorld(true);
-    gltf.scene.traverse((o) => {
-      if (o.isMesh) meshes.set(o.name, o);
-    });
-    for (const o of gltf.scene.children) tops.set(o.name, o);
+    scene = (await gltfLoader().loadAsync(url)).scene;
   } catch (e) {
     console.warn(`model library ${url} not available, using procedural models`, e);
   }
+  addLibrary(name, scene);
+}
+
+/** Indexes a loaded model's scene as library `name` (its meshes by name, its top-level nodes by name); null: empty. */
+export function addLibrary(name, scene) {
+  const meshes = new Map();
+  const tops = new Map();
+  if (scene) {
+    scene.updateMatrixWorld(true);
+    scene.traverse((o) => {
+      if (o.isMesh) meshes.set(o.name, o);
+    });
+    for (const o of scene.children) tops.set(o.name, o);
+  }
   libs.set(name, meshes);
   roots.set(name, tops);
+}
+
+/** A float copy of `attr` with its real values: a quantized attribute (KHR_mesh_quantization: 16-bit integer positions,
+ * 8-bit normals) read through its normalisation, so a world matrix can move it without wrapping. */
+export function floatAttribute(attr) {
+  const k = attr.itemSize;
+  const out = new Float32Array(attr.count * k);
+  for (let i = 0; i < attr.count; i++) for (let c = 0; c < k; c++) out[i * k + c] = attr.getComponent(i, c);
+  return new THREE.BufferAttribute(out, k);
 }
 
 /** GPU memory of one texture once uploaded (bytes): a texture that brings its own mip levels (a KTX2 map transcoded to
@@ -89,8 +106,8 @@ export function libraryVariants(lib, prefix) {
 export function recolor(mesh, pal, opts = {}) {
   const src = mesh.geometry;
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', src.attributes.position.clone());
-  if (src.attributes.normal) geo.setAttribute('normal', src.attributes.normal.clone());
+  geo.setAttribute('position', floatAttribute(src.attributes.position));
+  if (src.attributes.normal) geo.setAttribute('normal', floatAttribute(src.attributes.normal));
   if (src.index) geo.setIndex(src.index.clone());
   geo.applyMatrix4(mesh.matrixWorld);
   if (!geo.attributes.normal) geo.computeVertexNormals();

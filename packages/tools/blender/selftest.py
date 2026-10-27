@@ -845,6 +845,85 @@ def test_textures():
         expect(len(images) == len(js["images"]) and len(images) < 2 * 4, f"pod.glb: byte-identical bakes of its two variants are stored once ({len(images)} maps)")
 
 
+def test_jpeg_maps():
+    """Blender keeps a JPEG source as JPEG in the .glb (the characters' painted maps): the KTX2 rewrite takes them, grey or
+    colour. And the same bytes as a colour map and as a data map are two encodes, not a refused merge."""
+    print("\nJPEG maps and shared bytes")
+    reset()
+
+    def jpeg(name, size, colorspace, grey=False, seed=0):
+        rng = np.random.default_rng(seed)
+        px = np.empty((size * size, 4), np.float32)
+        px[:, :3] = (rng.random((size * size, 1 if grey else 3), np.float32) * 0.5 + 0.25) if grey else rng.random((size * size, 3), np.float32)
+        px[:, 3] = 1.0
+        im = bpy.data.images.new(name, size, size, alpha=False)
+        im.pixels.foreach_set(px.ravel())
+        path = TMP / "img" / f"{name}.jpg"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        im.filepath_raw = str(path)
+        im.file_format = "JPEG"
+        im.save()
+        im.source = "FILE"
+        im.reload()
+        im.colorspace_settings.name = colorspace
+        return im
+
+    m = bpy.data.materials.new("Painted")
+    nt = m.node_tree
+    bsdf = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    nt.links.new(tex(nt, jpeg("painted_base", 64, "sRGB", seed=1)).outputs["Color"], bsdf.inputs["Base Color"])
+    nm = nt.nodes.new("ShaderNodeNormalMap")
+    nt.links.new(tex(nt, jpeg("painted_normal", 64, "Non-Color", seed=2)).outputs["Color"], nm.inputs["Color"])
+    nt.links.new(nm.outputs["Normal"], bsdf.inputs["Normal"])
+    sep = nt.nodes.new("ShaderNodeSeparateColor")
+    nt.links.new(tex(nt, jpeg("painted_rough", 64, "Non-Color", grey=True, seed=3)).outputs["Color"], sep.inputs["Color"])
+    nt.links.new(sep.outputs["Green"], bsdf.inputs["Roughness"])
+    # the same PNG as one material's colour and another's normal map
+    shared = image("shared_noise", 64, "sRGB", (0.5, 0.5, 0.5), 0.3, 9)
+    m2 = bpy.data.materials.new("Shared")
+    nt2 = m2.node_tree
+    b2 = next(n for n in nt2.nodes if n.type == "BSDF_PRINCIPLED")
+    nt2.links.new(tex(nt2, shared).outputs["Color"], b2.inputs["Base Color"])
+    m3 = bpy.data.materials.new("SharedData")
+    nt3 = m3.node_tree
+    b3 = next(n for n in nt3.nodes if n.type == "BSDF_PRINCIPLED")
+    copy_img = shared.copy()
+    copy_img.colorspace_settings.name = "Non-Color"
+    nm3 = nt3.nodes.new("ShaderNodeNormalMap")
+    nt3.links.new(tex(nt3, copy_img).outputs["Color"], nm3.inputs["Color"])
+    nt3.links.new(nm3.outputs["Normal"], b3.inputs["Normal"])
+    for i, mat in enumerate((m, m2, m3)):
+        o = box(f"panel_{i}", (1, 1, 1), (i * 2, 0, 0))
+        bpy.context.scene.collection.objects.link(o)
+        o.data.materials.append(mat)
+    raw = TMP / "jpeg_maps.glb"
+    bpy.ops.export_scene.gltf(filepath=str(raw), export_format="GLB", export_image_format="AUTO")
+    js, bin_data = glb.read(raw)
+    mimes = sorted({im.get("mimeType") for im in js.get("images", [])})
+    expect("image/jpeg" in mimes, f"Blender writes the JPEG sources as JPEG ({mimes})")
+    views = {im["name"]: js["bufferViews"][im["bufferView"]] for im in js["images"]}
+    data = {n: bytes(bin_data[v.get("byteOffset", 0) : v.get("byteOffset", 0) + v["byteLength"]]) for n, v in views.items()}
+    twins = [n for n in data if n.startswith("shared_noise")]
+    expect(len(twins) == 2 and data[twins[0]] == data[twins[1]], f"(the shared map is written twice with the same bytes: {twins})")
+    out = TMP / "jpeg_maps_ktx2.glb"
+    try:
+        summary = ktx.compress(raw, out, ktx.settings(RULES, "characters"), log=lambda *_: None)
+    except ktx.KtxError as e:
+        expect(False, f"the KTX2 rewrite takes JPEG maps and shared bytes ({e})")
+        return
+    images, _ = ktx.inspect(out)
+    by = {im["name"]: im for im in images}
+    expect(all(im["mime"] == ktx.KTX2 and im["ktx"] for im in images), f"every map, JPEG ones included, is KTX2 ({[(im['name'], im['mime']) for im in images]})")
+    expect(
+        (by.get("painted_base", {}).get("ktx") or {}).get("srgb") and (by.get("painted_normal", {}).get("ktx") or {}).get("codec") == "UASTC",
+        "a JPEG colour map is sRGB, a JPEG normal map UASTC",
+    )
+    expect(summary["deduplicated"] == 0 and len(images) == len(js["images"]), f"the same bytes as colour and as data stay two maps, each read its own way ({summary})")
+    core.load(out)
+    loaded = {R.strip(i.name) for i in bpy.data.images if i.size[0]}
+    expect({"painted_base", "painted_normal", "painted_rough"} <= loaded, f"the transcoded copy imports every map ({sorted(loaded)})")
+
+
 def main():
     print(f"art self-test in {TMP}")
     try:
@@ -862,6 +941,7 @@ def main():
         test_bake_guards(shared)
         test_export()
         test_textures()
+        test_jpeg_maps()
     finally:
         if "--keep" not in ARGV:
             shutil.rmtree(TMP, ignore_errors=True)
