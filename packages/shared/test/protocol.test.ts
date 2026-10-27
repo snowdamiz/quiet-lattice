@@ -81,6 +81,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', tool: 'multitool', time: 3600.5 },
   { t: 'fire', seq: 4, time: 3600.75, frame: '424242:2', aim: [0, -0.6, -0.8] },
   { t: 'beacon', op: { op: 'answer', id: 3 } },
+  { t: 'analyze', seq: 1, time: 3600.5, target: 12 },
 ];
 
 /** A character's quest state as the server sends it. */
@@ -171,6 +172,24 @@ const serverSamples: ServerMessage[] = [
   { t: 'fire', seq: 4, result: 'hit', target: 9 },
   { t: 'beacons', beacons: [beacon], gone: [2] },
   { t: 'beacon', op: 'raised', id: 3, beacon },
+  {
+    t: 'analyze',
+    seq: 1,
+    target: 12,
+    result: 'new',
+    xp: 300,
+    species: {
+      key: '424242:3/1',
+      world: '424242:3',
+      index: 1,
+      name: 'Ambling Tovar Grazer',
+      temperament: 'skittish',
+      threat: 1,
+      bodyPlan: 'quad_grazer',
+      bond: 'eligible',
+      at: 3600.5,
+    },
+  },
 ];
 
 const http = {
@@ -184,10 +203,11 @@ const http = {
 describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
   // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
-  // (P1.E13.T01); 9: meters (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid beacons (P1.E15.T02). A branch that
-  // changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 11, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(11);
+  // (P1.E13.T01); 9: meters (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid beacons (P1.E15.T02); 12: analysis and
+  // the codex (P1.E08.T04). A branch that changes a message bumps the version, adds its line to the history under
+  // PROTOCOL_VERSION and updates this.
+  it('is version 12, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(12);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

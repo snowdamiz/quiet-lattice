@@ -16,8 +16,10 @@
 // Mining hits go to the resource service (resources/), which answers each, keeps every player on a world up to date
 // with the resource nodes round it, and tells the quest runtime of each share of a node broken (§18). Shots go to the
 // combat service (combat/), which resolves each from the pose the zone believes and answers it; it is the zones' combat
-// hooks (kills grant XP and loot, and tell the quest runtime) and the skill service's `inCombat` (§20). Malformed or
-// out-of-place messages are dropped and counted, never thrown.
+// hooks (kills grant XP and loot, and tell the quest runtime) and the skill service's `inCombat` (§20). Requests to
+// analyze a creature go to the analysis service (codex/), which checks each, answers it, records the species in the
+// character's codex (the one persistence's registry loads into) and tells the quest runtime of each analysis made (§22).
+// Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -40,6 +42,9 @@ import { CharacterLoadError } from '../persistence/registry.ts';
 import { doneEndsQuestStep } from '../quests/cutscenes.ts';
 import type { QuestRuntime } from '../quests/runtime.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
+import { AnalysisService } from '../codex/analysis.ts';
+import { codexServiceIn } from '../codex/component.ts';
+import type { CodexService } from '../codex/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
@@ -130,6 +135,10 @@ export interface WsGatewayDeps {
   /** Each character in play's level and XP (persistence's progress holder), which kills add to; without it (tests of the
    * gateway alone) a kill gives no XP. */
   progress?: CharacterProgress;
+  /** Every character's codex in play; when none is given, the one persistence's registry loads into. */
+  codex?: CodexService;
+  /** Analysis of creatures; the gateway makes its own over the codex when none is given. */
+  analysis?: AnalysisService;
 }
 
 export interface WsStats {
@@ -146,6 +155,8 @@ export interface WsGateway {
   readonly cutscenes: CutsceneService;
   readonly resources: ResourceService;
   readonly combat: CombatService;
+  readonly codex: CodexService;
+  readonly analysis: AnalysisService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -225,6 +236,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   deps.zones.combat = combat.hooks;
   const skillHooks = skills.hooks;
   skills.hooks = { ...skillHooks, inCombat: (characterId) => combat.inCombat(characterId) };
+  const codex = deps.codex ?? needCodex(persistence);
+  const analysis = deps.analysis ?? new AnalysisService({ zones: deps.zones, codex, now: () => deps.clock.now(), log });
+  // each analysis made, first or not, counts for the character's quests' `analyze` steps (one species once each)
+  const unsubscribeAnalysis = quests ? analysis.subscribe((e) => void quests.event(e.characterId, { type: 'analyze', species: e.key })) : undefined;
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -431,6 +446,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') return invalid(s, 'fire before join');
         s.send(combat.fire(s, msg));
         return;
+      case 'analyze':
+        if (s.state !== 'joined') return invalid(s, 'analyze before join');
+        s.send(analysis.analyze(s, msg));
+        return;
       default:
         // cast and interact belong to later tasks; before join they are out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
@@ -535,6 +554,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     cutscenes,
     resources,
     combat,
+    codex,
+    analysis,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
@@ -548,6 +569,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       unsubscribeMining?.();
       if (deps.zones.combat === combat.hooks) deps.zones.combat = null;
       skills.hooks = skillHooks;
+      unsubscribeAnalysis?.();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
@@ -568,6 +590,12 @@ function needSkills(persistence: CharacterPersistence): SkillService {
   const skills = skillServiceIn(persistence.registry);
   if (!skills) throw new Error('the gateway needs a skill service: give one, or a persistence registry with the skills component');
   return skills;
+}
+
+function needCodex(persistence: CharacterPersistence): CodexService {
+  const codex = codexServiceIn(persistence.registry);
+  if (!codex) throw new Error('the gateway needs a codex: give one, or a persistence registry with the codex component');
+  return codex;
 }
 
 function seconds(ms: number): number {
