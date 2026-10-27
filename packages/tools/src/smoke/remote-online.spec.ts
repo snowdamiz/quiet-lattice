@@ -3,9 +3,10 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { startOnline, type Online } from './online.ts';
 
 // Remote entities (P1.E04.T02) between two clients, as players run it (online.ts: a scratch database, the server, Vite):
-// two pilots sign up and enter, docked at the same home Waystation, then undock and fly, their frames running on real
-// time. A flies straight out of the Waystation's sphere of influence into its world's frame; B follows a little way
-// behind. Each sees the other's ship, drawn where the other's own client had it (on its path, a fraction of a second
+// two pilots sign up and enter, docked at the same home Waystation, then take off and are moved out past the
+// Waystation by the admin channel's teleport (movement authority re-seats them there, as an operator's teleport does),
+// and fly, their frames running on real time. A flies straight out of the Waystation's sphere of influence into its
+// world's frame; B follows a little way behind. Each sees the other's ship, drawn where the other's own client had it (on its path, a fraction of a second
 // behind), and B sees A cross into the planet's frame without a jump. Credentials are made up per run and exist only in
 // the scratch database.
 
@@ -58,20 +59,45 @@ async function pilot(browser: Browser, errors: string[]): Promise<Page> {
 }
 
 /**
- * Takes the ship off its pad and sets it flying in the Waystation's frame at `pos`, nose turned `yaw` about the station's
- * up, at `speed` (flight assist holds it); from then the page's frames run on real time, each stepped by `__tick`, which
- * logs the ship's own pose and how the remote layer draws entity `other`.
+ * Takes the ship off its pad (its inputs say so), then has the server teleport it to `pos` in the Waystation's frame, in
+ * flight, and waits for the client to take the correction.
  */
-async function fly(page: Page, pos: number[], yaw: number, speed: number, other: number): Promise<void> {
+async function place(page: Page, pos: number[]): Promise<void> {
+  await page.evaluate(() => {
+    const g = window.game;
+    g.station.releasePad(g.ship);
+    g.ship.mode = 'flying';
+  });
+  await until(page, "window.game.net.store.entities.get(window.game.net.entityId)?.mode === 'ship'", 30_000);
+  const [characterId, system] = await page.evaluate(() => [
+    window.game.net.characterId as string,
+    window.game.galaxy.systems.findIndex((s: { seed: number }) => s.seed === window.game.net.zone.systemSeed) as number,
+  ]);
+  const done = await online.admin({ cmd: 'teleport', character: characterId, system, frame: 'station', pose: pos.join(','), mode: 'ship' });
+  expect(done, JSON.stringify(done)).toMatchObject({ ok: true });
+  await until(
+    page,
+    `window.game.ship.state.frame === window.game.station && window.game.ship.state.pos.distanceTo({ x: ${pos[0]}, y: ${pos[1]}, z: ${pos[2]} }) < 1`,
+    30_000,
+  );
+}
+
+/**
+ * Sets the ship, where the teleport put it, flying nose turned `yaw` about the station's up at `speed` (flight assist
+ * holds it; the docking autopilot, which took it as it hung in the hangar, lets go); from then the page's frames run on real time, each stepped by `__tick`, which logs the ship's own pose and
+ * how the remote layer draws entity `other`.
+ */
+async function fly(page: Page, yaw: number, speed: number, other: number): Promise<void> {
   await page.evaluate(
-    ({ pos, yaw, speed, other }) => {
-      const w = window as unknown as Window & { __tick(): void; __log: unknown[]; __last: number };
+    ({ yaw, speed, other }) => {
+      const w = window as unknown as Window & { __tick(): void; __log: unknown[]; __last: number; __corrections: number };
       const g = w.game;
       const s = g.ship.state;
-      g.station.releasePad(g.ship);
       g.ship.mode = 'flying';
-      s.frame = g.station;
-      s.pos.fromArray(pos);
+      g.ship.dockPad = null;
+      // (movement authority, which the teleport re-seated there, takes every input from now on)
+      w.__corrections = 0;
+      g.net.on('correction', () => w.__corrections++);
       s.quat.set(0, Math.sin(yaw / 2), 0, Math.cos(yaw / 2));
       s.vel.set(0, 0, -speed).applyQuaternion(s.quat);
       g.ship.speed = speed;
@@ -109,7 +135,7 @@ async function fly(page: Page, pos: number[], yaw: number, speed: number, other:
         });
       };
     },
-    { pos, yaw, speed, other },
+    { yaw, speed, other },
   );
 }
 
@@ -171,15 +197,18 @@ test("two clients each see the other's ship move, across a frame change", async 
   // at 4.5 km, 4.725 with the hysteresis; out of it the ship no longer rides with the Waystation, which draws away at its
   // orbital speed: ahead of it, the Waystation would catch the ship up and take it back); B 800 m behind A and off to one
   // side, following at 60 m/s
-  await fly(a, [0, 60, -4400], 0, 120, ids[1]!);
-  await fly(b, [-200, 30, -3600], 0, 60, ids[0]!);
+  await place(a, [0, 60, -4400]);
+  await place(b, [-200, 30, -3600]);
+  await fly(a, 0, 120, ids[1]!);
+  await fly(b, 0, 60, ids[0]!);
   const end = Date.now() + 7000;
   while (Date.now() < end) await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as { __tick(): void }).__tick())));
   const [logA, logB] = (await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as { __log: Rec[] }).__log)))) as [Rec[], Rec[]];
   const planet = await a.evaluate(() => String(window.game.system.planets.indexOf(window.game.station.parent)));
   await Promise.all([a, b].map((p) => p.evaluate(() => window.game.net.close())));
 
-  // both ran: frames of real time, the ships flying
+  // both ran: frames of real time, the ships flying, as movement authority judged them
+  expect(await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as { __corrections: number }).__corrections)))).toEqual([0, 0]);
   expect(logA.length).toBeGreaterThan(60);
   expect(logB.length).toBeGreaterThan(60);
   // A left the Waystation's sphere for its world's frame; B stayed in it

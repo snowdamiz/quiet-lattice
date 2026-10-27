@@ -2,7 +2,8 @@
 // database is only connected to, to create and later drop the scratch one), the server on a free port against it and the
 // docker Redis (on a logical database of its own, so its world mirror never overwrites a dev server's), and a Vite dev
 // server for the client whose proxies point at that server (ASTRA_SERVER, read by packages/client/vite.config.js).
-// `pnpm db:up` must be running. stop() takes it all down and drops the scratch database.
+// The server's admin channel (ARCHITECTURE §16) is open on a free loopback port with a secret made per run, for
+// `admin(command)`. `pnpm db:up` must be running. stop() takes it all down and drops the scratch database.
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { createServer } from 'node:net';
@@ -27,6 +28,8 @@ export interface Online {
   /** Stops the server gracefully (it saves everyone in play), waits `downMs`, and starts it again on the same port and
    * database: a restart as players live through it. */
   restartServer(downMs?: number): Promise<void>;
+  /** Runs an admin command (`{cmd: 'teleport', …}`, the server's admin/commands.ts) over the server's admin channel. */
+  admin(command: Record<string, unknown>): Promise<{ ok: boolean; result?: unknown; error?: string; message?: string }>;
   stop(): Promise<void>;
 }
 
@@ -84,7 +87,18 @@ export async function startOnline(): Promise<Online> {
   let server: ChildProcess | null = null;
   let vite: { close(): Promise<void> } | null = null;
   let out = '';
-  const env = { ...process.env, DATABASE_URL: dbUrl, REDIS_URL, HOST: '127.0.0.1', LOG_LEVEL: 'warn', NODE_ENV: 'development' };
+  const adminPort = await freePort();
+  const adminSecret = randomBytes(16).toString('hex');
+  const env = {
+    ...process.env,
+    DATABASE_URL: dbUrl,
+    REDIS_URL,
+    HOST: '127.0.0.1',
+    LOG_LEVEL: 'warn',
+    NODE_ENV: 'development',
+    ASTRA_ADMIN_PORT: String(adminPort),
+    ASTRA_ADMIN_SECRET: adminSecret,
+  };
   let port = 0;
 
   const launchServer = async () => {
@@ -143,7 +157,15 @@ export async function startOnline(): Promise<Online> {
       await new Promise((r) => setTimeout(r, downMs));
       await launchServer();
     };
-    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, restartServer, stop };
+    const admin = async (command: Record<string, unknown>) => {
+      const res = await fetch(`http://127.0.0.1:${adminPort}/admin/command`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${adminSecret}`, 'x-astra-operator': 'smoke' },
+        body: JSON.stringify({ command }),
+      });
+      return (await res.json()) as { ok: boolean; result?: unknown; error?: string; message?: string };
+    };
+    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, restartServer, admin, stop };
   } catch (err) {
     await stop();
     throw err;

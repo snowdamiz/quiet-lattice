@@ -576,7 +576,8 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     each on its own heading and speed, one flying out of sensor range), `remote-ships-pads` (Larks docked on the
     Waystation's pads, gear down, others passing the mouth) and `remote-ships-surface` (one landed, others flying past
     low in the world's turning frame). `packages/tools/src/smoke/remote-online.spec.ts` flies two clients against a local
-    server, one out of the Waystation's sphere into its world's frame.
+    server (placed out past the Waystation by the admin channel's teleport, which re-seats them for movement authority;
+    neither is corrected after), one out of the Waystation's sphere into its world's frame.
 
 ## 10. Tests
 
@@ -584,7 +585,8 @@ Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; in
 the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
 database is disposable. The online smoke specs (`packages/tools/src/smoke/online.spec.ts`, part of `pnpm smoke`, needing
-`pnpm db:up`) run the server against a scratch database they create and drop, and a client through Vite's proxies.
+`pnpm db:up`) run the server against a scratch database they create and drop, and a client through Vite's proxies; the
+server's admin channel (§16) is open on a free port with a secret made per run, for `admin(command)`.
 
 ## 11. The Count meter (`packages/server/src/count`)
 
