@@ -129,7 +129,10 @@ body {
   letter-spacing: 0.32em;
   /* (the tracking trails the last letter: pull it back so the word centres under the dot) */
   margin-right: -0.32em;
-  color: var(--danger);
+  padding: 2px 14px;
+  color: #ff7a70;
+  /* a soft scrim, so the word reads over bright ground as the toasts and the objective do */
+  background: radial-gradient(closest-side, rgba(4, 8, 14, 0.5), rgba(4, 8, 14, 0));
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -153,12 +156,17 @@ body {
   stroke-width: 1.6;
   vector-effect: non-scaling-stroke;
 }
+.gauge .halo {
+  stroke: rgba(4, 8, 14, 0.42);
+  stroke-width: 4.2;
+}
 .gauge .track {
-  stroke: rgba(255, 255, 255, 0.14);
+  stroke: rgba(255, 255, 255, 0.16);
 }
 .gauge .fill {
   stroke: rgba(255, 255, 255, 0.85);
-  stroke-dasharray: 1 1;
+  /* one dash the arc's length, its gap longer than the arc: an empty gauge shows no stub of the next dash at its top */
+  stroke-dasharray: 1 2;
   transition: stroke-dashoffset 0.15s linear, stroke 0.3s ease-out, stroke-width 0.3s ease-out;
 }
 .gauge {
@@ -291,11 +299,14 @@ body {
 /* Charge, under the altitude as the throttle sits under the speed: how much, and which way it is going */
 .r-chg {
   position: absolute;
-  left: calc(100% + 8px);
-  top: calc(50% + 13px);
+  left: calc(100% + 4px);
+  top: calc(50% + 10px);
   display: flex;
   align-items: baseline;
   gap: 7px;
+  padding: 3px 18px 3px 4px;
+  /* a soft scrim, fading out right, up and down, so the readout holds over a bright world's limb */
+  background: radial-gradient(farthest-side at 0 50%, rgba(4, 8, 14, 0.5), rgba(4, 8, 14, 0.3) 60%, rgba(4, 8, 14, 0));
   font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: 500;

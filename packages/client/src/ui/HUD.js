@@ -40,8 +40,9 @@ function setText(e, html) {
   }
 }
 
-// two thin gauge arcs either side of a reticle, as one SVG: each a track, its fill, a mark (a tick across the arc at a
-// level that matters: where the heat lockout ends) and a sheen (a bright dash that climbs the fill while it refills)
+// two thin gauge arcs either side of a reticle, as one SVG: each a dark halo (so it reads over a bright sky or the beam's
+// glare), a track, its fill, a mark (a tick across the arc at a level that matters: where the heat lockout ends) and a
+// sheen (a bright dash that climbs the fill while it refills)
 const ARC_LEN = 1;
 // a 100-degree arc centred on the left (or right) of the circle; both start at the bottom, so gauges fill upward
 const arcAngle = (side, f) => ((side < 0 ? 130 + 100 * f : 50 - 100 * f) * Math.PI) / 180;
@@ -53,7 +54,7 @@ function gaugeSvg(left, right, r) {
     return `M ${p(a0)} A ${r} ${r} 0 0 ${side < 0 ? 1 : 0} ${p(a1)}`;
   };
   const gauge = (side, name) =>
-    `<g class="gauge ${side < 0 ? 'left' : 'right'}" data-side="${side}" data-r="${r}"><path class="track" d="${arc(side)}" pathLength="1"/>` +
+    `<g class="gauge ${side < 0 ? 'left' : 'right'}" data-side="${side}" data-r="${r}"><path class="halo" d="${arc(side)}"/><path class="track" d="${arc(side)}" pathLength="1"/>` +
     `<path class="fill g-${name}" d="${arc(side)}" pathLength="1"/><path class="sheen" d="${arc(side)}" pathLength="1"/><path class="mark"/></g>`;
   return `<svg class="gauges" viewBox="0 0 100 100">${gauge(-1, left)}${gauge(1, right)}</svg>`;
 }
@@ -75,7 +76,7 @@ export class HUD {
     this.markersEl = el('div', 'markers', this.layer);
     // on foot: a dot with two gauge arcs (heat left, jetpack right) that only show while in use, and the lockout's word
     // under them
-    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 17)}<div class="c-state">OVERHEAT</div>`);
+    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 21)}<div class="c-state">OVERHEAT</div>`);
     // in flight: reticle with shield / Charge arcs, speed to the left and altitude to the right, the throttle under the
     // speed and Charge under the altitude
     this.reticle = el(

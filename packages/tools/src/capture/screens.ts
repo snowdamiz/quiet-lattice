@@ -73,7 +73,7 @@ async function heatAt(page: Page, heat: number, overheated: boolean, held: boole
 }
 
 /**
- * The ship in open flight off the home world, nose on it, `side` 1 on its day side (in sunlight, inside the habitable band:
+ * The ship in open flight off the home world, nose just past it, `side` 1 on its day side (in sunlight, inside the habitable band:
  * Charge regenerates) or −1 on its night side (in its shadow: nothing), with Charge at `charge`.
  */
 async function shipOffHome(page: Page, side: 1 | -1, charge: number): Promise<void> {
@@ -96,10 +96,11 @@ async function shipOffHome(page: Page, side: 1 | -1, charge: number): Promise<vo
       const z = p.z + sz * r - sx * r * across;
       ship.state.frame = null;
       ship.state.pos.set(x, y, z);
-      // nose on the planet (−Z forward), as the #space scenario aims it
-      const fx = p.x - x;
+      // the nose (−Z forward) past the planet's limb, so the planet fills one side of the frame and the reticle and its
+      // readouts sit over open space, as they do in flight
+      const fx = p.x - sz * r * 0.75 - x;
       const fy = p.y - y;
-      const fz = p.z - z;
+      const fz = p.z + sx * r * 0.75 - z;
       const fl = Math.hypot(fx, fy, fz);
       const f = [fx / fl, fy / fl, fz / fl];
       // right = f × up(0,1,0), up' = right × f
@@ -465,6 +466,8 @@ export const SCREENS: Record<string, ScreenDef> = {
     },
     async motion(page) {
       await shipOffHome(page, 1, 58);
+      // (the empty still's refusal is not this scene's)
+      await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
     },
   },
   // On foot on the home world, mining: the heat arc (left of the dot) climbing with the beam held, warm (P1.E07.T02).
