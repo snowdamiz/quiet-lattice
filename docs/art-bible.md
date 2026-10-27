@@ -273,9 +273,11 @@ authority for the numbers.
   colliders and markers beside the LODs. The `REF` collection from section 1. Collections starting with `_` are ignored.
 - **Exported layout:** `packages/client/public/models/<family>/<file>.glb`, nodes `<asset>/<variant>/<variant>_LOD<n>`.
 - **Exported textures** (P1.E14.T12): every map a material uses ships as KTX2 (Basis Universal) behind
-  `KHR_texture_basisu`, with its full mip chain and no PNG fallback: normal and metallic-roughness maps in UASTC
-  (rate-distortion optimised, then Zstandard), base colour, emissive and AO in ETC1S; byte-identical maps (a variant whose
-  bake of an unchanged material came out the same) are stored once. The codecs and their settings are `families.json`
+  `KHR_texture_basisu`, with its full mip chain and no PNG fallback: normal maps in UASTC (rate-distortion optimised,
+  then Zstandard), base colour, emissive, AO and metallic-roughness in ETC1S; byte-identical maps (a variant whose bake
+  of an unchanged material came out the same) are stored once. The 4k Lark (three variants, 49 maps) goes from 572 MB
+  with PNGs to 128 MB, its review captures within 1.5% of pixels (at 16/255) of the PNG export's; its geometry alone is
+  28 MB. The codecs and their settings are `families.json`
   `textures`; a family may opt out with its own `"textures": {"compress": false}`, and `pnpm art:export -- <family>
   --no-compress` writes PNGs to compare against (validation of shipped models refuses them). The validator and the
   turntable re-import a compressed export from its maps transcoded back to PNG (the texels the client shows); the

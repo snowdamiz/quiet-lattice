@@ -754,13 +754,13 @@ def test_textures():
         f"crate.glb: every map is KTX2 behind {ktx.EXT}, which is required (no PNG fallback) ({[(im['name'], im['slots'], im['mime']) for im in images]})",
     )
     h = {s: im["ktx"] or {} for s, im in slot.items()}
+    s = ktx.settings(RULES, "props")
     expect(h.get("normal", {}).get("codec") == "UASTC" and h["normal"]["supercompression"] == "Zstandard" and not h["normal"]["srgb"], "normal map: UASTC, Zstandard, linear")
-    expect(h.get("metallicRoughness", {}).get("codec") == "UASTC" and not h["metallicRoughness"]["srgb"], "metallic-roughness map: UASTC, linear")
     expect(h.get("baseColor", {}).get("codec") == "ETC1S" and h["baseColor"]["supercompression"] == "BasisLZ" and h["baseColor"]["srgb"], "base colour map: ETC1S (BasisLZ), sRGB")
-    # (Blender packs the AO into the metallic-roughness map's red channel when it can: that map then stays UASTC)
-    ao = slot.get("occlusion", {})
-    want_ao = "UASTC" if "metallicRoughness" in ao.get("slots", []) else "ETC1S"
-    expect(h.get("occlusion", {}).get("codec") == want_ao and not h["occlusion"]["srgb"], f"AO map: {want_ao}, linear ({ao.get('slots')})")
+    # (Blender packs the AO into the metallic-roughness map's red channel when it can: one map, one codec for both)
+    for name in ("metallicRoughness", "occlusion"):
+        want = ktx.CODECS[ktx.codec_for(slot.get(name, {}).get("slots", [name]), s)]
+        expect(h.get(name, {}).get("codec") == want and not h[name]["srgb"], f"{name} map: {want} as families.json sets it, linear ({slot.get(name, {}).get('slots')})")
     expect(all(x.get("fullChain") for x in h.values()) and h["baseColor"]["levels"] == 11, f"every map carries its full mip chain (1024 px: 11 levels; {h['baseColor'].get('levels')})")
 
     rep = core.validate_path(RULES, crate, family="props", source=SRC / "props" / "crate.blend")

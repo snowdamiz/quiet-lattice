@@ -57,11 +57,11 @@
     { "match": ["LIB_Glass*", "Glass*", "*Glass"], "profile": "glass" }
   ],
   "textures": {
-    "$comment": "P1.E14.T12: exported maps are KTX2 (Basis Universal) behind KHR_texture_basisu with full mip chains, so a 4k hero downloads in tens of MB and stays compressed on the GPU (artlib/ktx.py, encoder: KTX-Software's ktx). codec per glTF slot (metallicRoughness, other = extension slots): uastc (RDO, then Zstandard) keeps gradients and data exact enough for normals; etc1s (BasisLZ) is several times smaller for colour and AO. A family may set its own \"textures\" (e.g. {\"compress\": false}) to export PNGs, which the validator then accepts for it. Each class's gpuTextureMB is what one variant's maps may take on the GPU once transcoded (8 bits a texel, mips included).",
+    "$comment": "P1.E14.T12: exported maps are KTX2 (Basis Universal) behind KHR_texture_basisu with full mip chains, so a 4k hero downloads several times smaller and stays compressed on the GPU (artlib/ktx.py, encoder: KTX-Software's ktx). codec per glTF slot (metallicRoughness also carries Blender's packed AO; other = extension slots): uastc (rate-distortion optimised at rdoLambda, then Zstandard) keeps normals' gradients; etc1s (BasisLZ) is 4-7x smaller for colour, AO and metallic-roughness. Measured on the 4k Lark (3 variants, 49 maps): 572 MB as PNG, 264 MB with metallic-roughness in UASTC at lambda 1, 128 MB as set here, review captures within 1.5% of pixels at 16/255 of the PNG export. A family may set its own \"textures\" (e.g. {\"compress\": false}) to export PNGs, which the validator then accepts for it. Each class's gpuTextureMB is what one variant's maps may take on the GPU once transcoded (8 bits a texel, mips included).",
     "compress": true,
-    "codec": { "baseColor": "etc1s", "emissive": "etc1s", "occlusion": "etc1s", "normal": "uastc", "metallicRoughness": "uastc", "other": "uastc" },
+    "codec": { "baseColor": "etc1s", "emissive": "etc1s", "occlusion": "etc1s", "normal": "uastc", "metallicRoughness": "etc1s", "other": "uastc" },
     "etc1s": { "quality": 128, "effort": 2 },
-    "uastc": { "quality": 2, "rdoLambda": 1.0, "zstd": 18 }
+    "uastc": { "quality": 2, "rdoLambda": 4.0, "zstd": 18 }
   },
   "classes": {
     "hero": {
