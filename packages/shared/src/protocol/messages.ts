@@ -76,6 +76,12 @@ export const Username = z
   .max(24)
   .regex(/^[A-Za-z0-9_-]+$/);
 export const Credentials = z.object({ username: Username, password: z.string().min(8).max(128) });
+/** Usernames starting with this, in any case, belong to the server's dev login (P1.E03.T07): registering one is refused. */
+export const DEV_USERNAME_PREFIX = 'dev-';
+/** Whether a username is a dev login's (`dev-…`, any case), which registration refuses and only the dev login reaches. */
+export function isDevUsername(username: string): boolean {
+  return username.toLowerCase().startsWith(DEV_USERNAME_PREFIX);
+}
 export const AuthResponse = z.object({ token: z.string().max(4096), accountId: Id });
 
 export const PeopleId = z.enum(['thalune', 'ixari', 'ulgani']);
