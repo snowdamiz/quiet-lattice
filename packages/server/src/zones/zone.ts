@@ -357,6 +357,11 @@ export class Zone {
     return this.views.get(viewer)?.entityId;
   }
 
+  /** Every session in the zone with its own entity id (resource nodes keep each up to date, P1.E13.T01). */
+  *viewers(): IterableIterator<[ZoneViewer, number]> {
+    for (const v of this.views.values()) yield [v.viewer, v.entityId];
+  }
+
   /** The entity ids in the session's interest set as of the last tick. */
   interestOf(viewer: ZoneViewer): ReadonlySet<number> {
     return new Set(this.views.get(viewer)?.interest);

@@ -176,3 +176,18 @@ WOULD REQUEST: a 60 fps clip of one Space line-jump (with its dip) and one Esc s
 
 Artifacts: `assets/renders/ui/cutscene-test/` (16x9, 21x9, approach, return, clip sheet, 804 frames); the requested
 line-jump and skip clips were added after the verdict in `assets/renders/ui/cutscene-test-jump/` and `-skip/`.
+
+## P1.E07.T02 Heat and Charge (HUD meters)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 3, fit 5, motion 4, theme 4, correctness 3, spec 4, performance 5 | 4.00 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 4, theme 4, correctness 3, spec 5, performance 5 | 4.29 |
+| 3 | REVISE | hierarchy 3, fit 4, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+
+Round 1: OVERHEAT and the Charge rate under 4.5:1 over bright ground; the heat arc drew full at any level (the fill now
+follows heat ÷ capacity). Round 2: the Charge arc swept up from empty, red, on the ship HUD's first frames (now set at
+its value with transitions off, `.low` from the server's value). Round 3: the heat arc washed out against the beam's
+glare (1.15:1); the altitude numerals touched the CHARGE plate; gauges popped on. Fixed with an opaque track inside a
+near-black halo, 4.5 px strokes, an unplated Charge readout in the altitude's style, 150 ms fades, and Charge kept lilac
+as an art bible §4 exception (teal is the shield's and the jetpack's). Artifacts: `assets/renders/ui/hud-{foot,foot-exit,ship,ship-board}/`.
