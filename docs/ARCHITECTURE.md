@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), glyphs (`/art`), seasons (`/seasons`, §27) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -23,7 +23,7 @@ processes will read (presence, zone membership, the server clock) is mirrored to
 index.ts            boot: config → db → redis → world service → zone manager → quest runtime → character persistence → gateway → tooling
 config.ts           env (DATABASE_URL, REDIS_URL, JWT_SECRET, PORT=8787, TICK_HZ=20), validated with zod
 db/                 Drizzle schema (schema.ts), client, migrate.ts; SQL migrations in packages/server/drizzle/
-gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters
+gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters, GET /seasons/:n/chronicle
 gateway/devLogin.ts POST /auth/dev, the dev-only login bypass (§16)
 gateway/ws.ts       WebSocket upgrade (token in the first message), one Session per socket
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
@@ -33,6 +33,8 @@ social/             SocialService: chat channels, parties and invites, and their
 cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§15)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
+seasons/            seasons (§27): a season's end and winners, the daily actives tally, season awards and their component,
+                    the chronicle and awards in SQL, SeasonService (the gateway's and HTTP's view)
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
 resources/          ResourceService: mining hits, resource nodes' shared state per cell, what each player is sent (§18)
 combat/             each zone's health, damage path, deaths and combat events; CombatService: shots, kills' rewards (§20)
@@ -60,8 +62,8 @@ server pushes no periodic time of its own: a pong is the better sample because t
 `world` carries a `serverTime` too.
 
 The shard's row (`shards`, created on the shard's first boot) holds its epoch (2026-01-01Z for a new shard), its season
-(number, start in world time, length; DESIGN 16.4) and `last_time`, the latest world time its server saved (every minute and
-on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
+(number, start in world time, length, the mean daily actives the length was chosen from and the map it opened with;
+DESIGN 16.4, §27) and `last_time`, the latest world time its server saved (every minute and on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
 below `last_time` nor below the time of any stored Count-meter vote not yet rolled (§11; a vote can land after the last
 time save), and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards, even
 when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
@@ -112,8 +114,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
   first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
-  11 beacons, 12 analysis, 13 crafting); a unit test pins the number and checks the history, so two branches bumping to
-  the same number conflict at merge rather than share it.
+  11 beacons, 12 analysis, 13 crafting, 14–16 reserved for reputation, world events and first-finder naming while their
+  branches run, 17 seasons); a unit test pins the number and checks the history, so two branches bumping to the same
+  number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -131,15 +134,17 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   their own (§13, §18, §20, §21, §22, §23).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
-  `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
-  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
+  `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, seasonStart, seasonEnd, opening, count,
+  edgeX, tiers, serverTime}` (sent right after `welcome` and to every joined session whenever the world service's state
+  changes; `tiers` is each galaxy system's tier by index; protocol 17's `seasonStart`, `seasonEnd` and `opening` are the
+  season's world times and the map it opened with, §27), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message, party request or beacon request
   not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
   reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
   id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), `craft
-  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), and snapshots.
+  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `awards {awards}` (§27), and
+  snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -210,8 +215,13 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   256) is sent after `skills` on join and whenever a recipe is learned, before the answer that learned it. Recipe ids
   are table-id shaped (48 characters); one the table lacks is answered `unknown`, not dropped. `seq` counts from 1 and
   increases.
+- **Seasons** (protocol 17, §27): `world` carries the season's `seasonStart` and `seasonEnd` (world times) and
+  `opening {from, edgeShiftLy, dark}`, the map it opened with (`from` how the season before ended, null for the first).
+  `awards {awards}` is the character's season titles and glyphs (`{season, bucket, title, glyph}`, one a season, oldest
+  first, at most 256), sent after `recipes` on join and again whenever a season's end gives the character one. No client
+  message touches either.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
-  `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
+  `CharacterList`; a season's chronicle is `SeasonChronicle` from `@astra/shared/seasons` (§27). Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
 
 ## 6. Zones
@@ -439,7 +449,8 @@ before applying it.
 
 Postgres tables (Drizzle): `accounts`, `shards` (§3) and `characters` (people, name, look, level, xp, home system, and
 `state`, `revision`, `saved_at`). The shard's row also holds the Count and how far its meter has run; the meter's votes
-and daily rolls are in `count_votes` and `count_days` (§11). Migrations are generated with drizzle-kit and applied with
+and daily rolls are in `count_votes` and `count_days` (§11); the daily actives, the seasons' chronicles and their awards
+in `daily_actives`, `season_chronicles` and `season_awards` (§27, migration 0004). Migrations are generated with drizzle-kit and applied with
 `pnpm db:migrate`.
 
 **Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
@@ -457,8 +468,10 @@ ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a s
 hangar's shell, docked off a pad or on foot with no ship to board is not restored), `codex` (§22: the species analyzed,
 per world, `v` 1, held by the codex service; reconciled with the species data on load; refused, never replaced, when
 unreadable), `recipes` (§23: the recipes the character knows, `v` 1, held by the recipe book; the starting recipes by
-default; reconciled with the recipe table on load; refused, never replaced, when unreadable) and, when the server has a
-quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when unreadable).
+default; reconciled with the recipe table on load; refused, never replaced, when unreadable), `seasonAwards` (§27: the
+season titles and glyphs it carries, `v` 1, held by `SeasonAwards`; none by default; refused, never replaced, when
+unreadable) and, when the server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when
+unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -554,8 +567,9 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   delay scaled by a random 50–100%), then joins again; a refusal another try would repeat (`version`, `auth`,
   `character`, `kicked`), a second `invalid` within a minute (the first may be an honest client's flood after a stall,
   so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
-  `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
-  after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
+  `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `awards` (§27; `net.awards` keeps the last),
+  `inventory` (with `first` for the state sent after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the
+  connection's `state`, `lost`, `closed`; types
   nobody listens for (`party`, a chat or party `denied` …) are dropped quietly, and so are snapshot fields and entity
   kinds nothing reads yet (a `mob`'s `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21)
   keeps the call-for-aid beacons it is sent. While the connection is down after a welcome, a line at
@@ -646,6 +660,11 @@ its one-vote rule; the clock never starts below a stored vote's time (§3). The 
 Break above 700, Feed below 300) and its rep multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on
 either side) are pure functions for the rep model to apply. All the arithmetic is pure and integer-exact (votes are
 summed in thirtieths), so the same lean gives the same Count bit for bit at three accounts and at three thousand.
+
+The meter runs in seasons (§27): `advance()` plays it to the season's end (a midnight), where the season ends in the
+Count's bucket and the next starts with the Count at `COUNT_START`; a day's roll is stored with the season it ended in, so
+a season's rolled days are its meter path. The meter's save also writes the daily actives, each season that ended (its
+winners' awards and chronicle) and the shard's move to the next season, in the same transaction.
 
 ## 12. The ground both ends draw (`@astra/shared/world`)
 
@@ -1365,3 +1384,69 @@ gate is recipes and materials, not a skill tree.
   runs across the button (0.56 s) and the result or the refusal shows in the line under the columns once both it and the
   answer are in (the quantity then held to what the materials left make); a recipe learned moves from the recipes to
   learn into the list.
+
+## 27. Seasons (`packages/server/src/seasons`, `@astra/shared/seasons`)
+
+DESIGN 16.4; P2.E22.T03. The meter (§11) runs in seasons, and how each one ends decides the next one's map, who earns
+its title and glyph, and what its chronicle says. The world service rolls them on the shard clock; the rules are shared.
+
+- **A season** is its number (from 1), start (world time), length (`SEASON_LENGTH_S`, eight weeks, or
+  `SMALL_SEASON_LENGTH_S`, four), the mean daily actives the length was chosen from (null for the first) and the map it
+  opened with, all on the shard's row (`shards.season`, `season_start`, `season_length`, `season_actives`,
+  `season_opening`). It ends at `seasonEndOf(start, length)`: the first meter midnight at or after start + length. The
+  first season starts when the shard first boots and takes the default length (it has no month before it), so it runs
+  to the midnight after its eighth week; every later season starts and ends on midnights, so each meter day, its votes and
+  its drift belong to one season. `world.state()` and the `world` message carry `seasonStart`, `seasonEnd` and `opening`.
+- **Its end** (`WorldService.advance`, every second and before each counted action, and on boot for a season that ended
+  while the server was down): the meter is played to the season's end, including that midnight's burn and the ending
+  day's drift; the Count there is the season's bucket (`bucketOf`: Fed at 700 and up, Held 300–699, Broken under 300);
+  the next season starts at that midnight with the Count back at `COUNT_START` (500), the length the daily actives choose
+  and the map the bucket leaves (`endSeason`, `seasons/rules.ts`). Subscribers hear it as one world change carrying the
+  ended season (`WorldChange.season`); the meter then carries on in the new season. A downtime spanning several season
+  ends plays each in turn.
+- **The length** (`seasonLengthFor`): four weeks while the mean daily actives of the 30 meter days before the season's
+  start are under `SMALL_POPULATION_ACTIVES` (100), eight from it. A daily active is an account that entered the world
+  (a character joined) that meter day, counted once: `world.markActive(accountId)`, called by the gateway on join, is
+  kept in memory by `DailyActives` (the open day's accounts, earlier days' counts back a month) and saved with the meter
+  to `daily_actives (shard, day, account)`; a restart reloads the counts from the month before the season's end and the
+  open day's accounts.
+- **The next map** (`seasonOpening(bucket, season)`): after Fed the Edge recedes `SEASON_EDGE_SHIFT_LY` (10 ly; at seed
+  424242 the Edge-ward fringe goes from 6 systems to 1); after Broken it advances as far (10 systems Edge-ward) and 2–3 of
+  the Edge-ward fringe systems at that Edge start dark (`darkSystems`: drawn by `hashInts(galaxy seed, season)`, the same
+  every run); after Held, and for the first season, the baseline. Each map comes from the one season before it, never
+  added up. It is data on the shard's row and in `world.opening`: the Edge following the meter (P2.E22.T02) is to apply
+  `edgeShiftLy` to `edgeX` and flag the `dark` systems' stations, reading `state().opening` and hearing the roll through
+  `subscribe` (a change with `season`).
+- **The winners** (`seasonWinners`): the accounts whose own counted actions in the season (its stored votes cast in
+  [start, end)), read as the meter reads a day's (their lean, and the target it pulls toward), land in the season's
+  bucket, with at least one full vote's weight (`TITLE_MIN_WEIGHT`; a monolith touch is a tenth). So the Fed season's
+  are those who fed, the Held season's those who held, or fed and broke alike, and the Broken season's those who broke.
+  Each earns the season's award (`seasonAward`): the bucket's title (`SEASON_HONOURS`: Fed "Seedbearer", Held "Keeper of
+  the Middle", Broken "Anchorbreaker") and its glyph (`season_<n>_<bucket>`, a cosmetic record, `seasonGlyph`: the
+  philosophy's word, seed, hold or free, in Cartographer signs, ringed by the season's number as a Count numeral, worn on
+  suit and hull; the art is the client's).
+- **Saving** (count/store.ts, seasons/store.ts): the season's end goes with the meter's next save, in its transaction
+  after that save's votes, rolls and daily actives: its winners are read from `count_votes` (by day, then by time),
+  their awards written to `season_awards (shard, season, account)`, its chronicle to `season_chronicles (shard,
+  season)`, and the shard's row moved to the next season with the Count's position; a failed save is kept and written by
+  the next, so the season's end lands with the Count's return to 500 or not at all, and a chronicle or award stored
+  already is left. Once it is written, `onSeasonEnded` listeners hear it with the accounts it awarded.
+- **Awards in play** (`seasons/awards.ts`, `component.ts`). `season_awards` is the account's record; each character
+  carries its own copy in the `seasonAwards` component (§8), held by `SeasonAwards` in play. As a character joins, the
+  gateway reads the account's awards with its row and merges any it lacks (one a season, in season order: a character
+  made after a season carries its account's award too), then sends `awards` after `recipes`; when a season's end is
+  written, each joined character of an account among its winners is given the award and sent `awards` again. A character
+  out of play then gets it on its next join. `SeasonAwards.subscribe` is the hook through which the reputation model
+  (P2.E18.T01) is to take each title with its `earnTitle`.
+- **The chronicle** (DESIGN 16.4: "what the server did"): `GET /seasons/:season/chronicle`, with the session's Bearer
+  token, answers a finished season's `SeasonChronicle`: when it ran and how long, the mean daily actives its length was
+  chosen from, the map it opened with, the meter's path (each of its rolled days from `count_days`: Count, drift, lean,
+  votes), the Count at its end and its bucket, the winning philosophy with its title and glyph and how many accounts
+  earned them, the map the next season opens with, and its notable first finds (`finds`; P2.E29.T01 names them through
+  `pgShardStore`'s `firstFinds` hook, read in the chronicle's transaction; none until then). A season not yet ended (or
+  whose end is not written yet) is `404 no_chronicle`, a bad number `400`, no token `401`. `SeasonService` caches each
+  chronicle it has read (a finished season never changes). HTTP rather than a socket request: a chronicle is a document,
+  which grows with P2.E22.T04's per-account measures, and fetching one spends nothing of a socket's message budget. The
+  client fetches it with `seasonChronicle(token, season)` (`net/api.js`; Vite proxies `/seasons`).
+- **Not here**: the Reckoning in a season's final week (P3.E34.T03), the Edge moving with the meter and dark stations
+  drawn (P2.E22.T02), where players see it (P2.E22.T04), drift content per season (P3.E35.T01).
