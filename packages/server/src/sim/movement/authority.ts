@@ -595,7 +595,8 @@ export class MovementAuthority {
     m.graceUntil = -Infinity;
     this.accept(m, L, s);
     // the meters' account of it: the time credited since the last valid pose (none for a clock stepped forward), flown in its
-    // mode, which the pulse drive pays Charge for; so a client pays for the flight accepted however it bunches its inputs
+    // mode, which the pulse drive pays Charge for; so a client pays for the flight accepted however it bunches its inputs,
+    // each second once (a correction's pose is re-timed to the refused input's credited time, and that never runs back)
     const character = m.profile.characterId;
     if (this.meters && character !== undefined) this.meters.flown(character, s.mode, s.resync ? 0 : Math.max(0, s.t - L.t), now, s.t);
     return { ok: true, mode: s.mode, vel: s.vel };

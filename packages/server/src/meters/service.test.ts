@@ -298,6 +298,13 @@ describe('Charge, as the server judges it', () => {
     expect(t.meters.allowsMode(ID, 'pulse', t.now, 1)).toBe(true);
     t.wait(1.1);
     expect(t.meters.allowsMode(ID, 'pulse', t.now, 1)).toBe(false);
+    // on movement authority's credited clock, as it stood against server time at the last input it accepted (here half a
+    // second behind): the grace is measured where the drive's claims are
+    t.meters.refillCharge(ID, t.now);
+    t.meters.flown(ID, 'ship', 0.05, t.now, t.now - 0.5);
+    t.meters.spendCharge(ID, 100, t.now);
+    expect(t.meters.allowsMode(ID, 'pulse', t.now, 1, t.now - 0.5 + 0.95)).toBe(true);
+    expect(t.meters.allowsMode(ID, 'pulse', t.now, 1, t.now - 0.5 + 1.05)).toBe(false);
   });
 });
 

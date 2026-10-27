@@ -1094,11 +1094,16 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   for the client time the authority credited it (`flown(id, mode, seconds, now, at)`), so a client that holds its inputs
   back and sends them in bunches pays for every second of flight accepted, as a steady one does, and runs out at the
   same point (the authority's credit is held to real time, so it pays no more either); in a zone without movement
-  authority (tests driving raw poses), for the time since its last input as it arrived, at most 1 s. The entity's `heat`
+  authority (tests driving raw poses), for the time since its last input as it arrived, at most 1 s. A stretch burns
+  where it began, as far as the meters know: the gateway puts them where the entity entered its zone (`locate`, right
+  after the join), so the first input's stretch, the time since the join, is paid where the ship was (rejoining on the
+  drive and staying silent buys nothing); one flown before the meters know the place at all is charged as near a body.
+  A correction's pose is re-timed to the refused input's credited time, so no second is paid twice. The entity's `heat`
   wire field carries the meter in steps of 0.02 (the multitool's glow others see, DESIGN 9.10).
   `allowsMode(id, mode, now, graceS?, at?)` is movement authority's mode check (§7: the pulse drive needs Charge, or,
   given a grace, to have run out of it no more than `graceS` before the claim's credited time `at`: the moment the burn
-  emptied it, on that clock, or when a ship active spent the last of it; the gateway sets the service as the zone
+  emptied it, on that clock, or when a ship active spent the last of it, put on that clock by its offset from server time
+  at the last accepted input; the gateway sets the service as the zone
   manager's `meters`, which every zone's authority asks; a zone without movement authority, in tests driving raw poses,
   asks nothing); `beamActive(id, now)` is what the gateway's resource service judges every mining
   hit by (§18: refused `heat` with the button up or in the lockout), and `takeBeam(id, now, max)` is what it pays the hit

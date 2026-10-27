@@ -95,6 +95,11 @@ interface Entry {
   mode: MoveMode | null;
   env: MeterEnvironment;
   conditions: ReadonlySet<string>;
+  /** `env` is where the character's entity is (set as it enters its zone, then by every input); until then the drive's
+   * burn takes it to be near a body, so no stretch is flown free */
+  placed: boolean;
+  /** movement authority's credited time less server time at the last `flown` (the credited clock, from server time) */
+  creditOffset: number;
   profile: MeterProfile;
   /** What the profile was made from (it is made again when either changes). */
   ship: ShipLoadout | null | undefined;
@@ -159,6 +164,8 @@ export class MeterService {
       mode: null,
       env: NOWHERE,
       conditions: meterConditions(NOWHERE),
+      placed: false,
+      creditOffset: 0,
       profile,
       ship,
       owned,
@@ -237,7 +244,20 @@ export class MeterService {
     const e = this.entry(characterId);
     this.advance(characterId, e, now);
     e.flown = true;
+    e.creditOffset = at - now;
     if (mode === 'pulse') this.burn(e, seconds, at);
+  }
+
+  /**
+   * Where the character's entity is as it enters its zone (the gateway, right after the zone's join): the meters' place and
+   * the mode the server believes, so the first stretch movement authority credits (from the join to the first input) burns
+   * where it was flown.
+   */
+  locate(characterId: string, viewer: ZoneViewer, now: number): void {
+    const e = this.entry(characterId);
+    this.advance(characterId, e, now);
+    const mode = this.place(e, viewer);
+    if (mode) e.mode = mode;
   }
 
   /**
@@ -278,8 +298,7 @@ export class MeterService {
     e.activity = { beam: mode === 'foot' && (msg.buttons & Buttons.beam) !== 0, pulse: false };
     e.activeUntil = now + ACTIVITY_HOLD_S;
     e.away = false;
-    e.env = zone && entity ? this.environment(zone, entity.fields.frame, entity.fields.pos, mode === 'foot') : NOWHERE;
-    e.conditions = meterConditions(e.env);
+    this.place(e, viewer, mode);
     if (zone && id !== undefined) {
       const glow = Math.round(e.state.heat / e.profile.heatCapacity / HEAT_GLOW_STEP) * HEAT_GLOW_STEP;
       if (glow !== e.glow) {
@@ -318,8 +337,12 @@ export class MeterService {
   /** A ship active's Charge: refused unless the meter holds it. */
   spendCharge(characterId: string, amount: number, now: number): MeterResult {
     const r = this.change(characterId, now, (s) => spendCharge(s, amount));
-    // the last of it spent: the drive, if it is cruising, drops out with the same grace as when the burn empties it
-    if (r.ok && r.state.charge <= 0 && amount > 0) this.entry(characterId).emptiedAt = now;
+    // the last of it spent: the drive, if it is cruising, drops out with the same grace as when the burn empties it, on the
+    // same clock (movement authority's credited time, as it stood against server time at the last flown input)
+    if (r.ok && r.state.charge <= 0 && amount > 0) {
+      const e = this.entry(characterId);
+      e.emptiedAt = now + e.creditOffset;
+    }
     return r;
   }
 
@@ -361,10 +384,11 @@ export class MeterService {
     e.events.push(...step.events);
   }
 
-  /** The pulse drive's burn for `seconds` of flight ending at `at` (near bodies only); when it empties the meter, the moment
-   * it ran out is kept for the drop-out grace. */
+  /** The pulse drive's burn for `seconds` of flight ending at `at` (near bodies only: where the meters last had the
+   * character, the stretch's start, or near one while they do not know yet); when it empties the meter, the moment it ran
+   * out is kept for the drop-out grace. */
   private burn(e: Entry, seconds: number, at: number): void {
-    const rate = e.env.nearBodies ? e.profile.pulseBurn : 0;
+    const rate = !e.placed || e.env.nearBodies ? e.profile.pulseBurn : 0;
     if (!(seconds > 0) || !(rate > 0) || e.state.charge <= 0) return;
     const cost = rate * seconds;
     if (cost < e.state.charge) {
@@ -385,6 +409,18 @@ export class MeterService {
     e.owned = owned;
     e.profile = meterProfile({ ship: ship ?? null, skills: owned });
     e.state = clampMeters(e.state, e.profile);
+  }
+
+  /** Puts the meters where the viewer's entity is (nowhere in particular without one), and returns its mode. */
+  private place(e: Entry, viewer: ZoneViewer, mode?: MoveMode): MoveMode | undefined {
+    const zone = this.zones?.zoneOf(viewer);
+    const id = zone?.entityOf(viewer);
+    const entity = id === undefined ? undefined : zone!.entity(id);
+    const m = mode ?? (entity?.fields.mode as MoveMode | undefined);
+    e.env = zone && entity ? this.environment(zone, entity.fields.frame, entity.fields.pos, m === 'foot') : NOWHERE;
+    e.conditions = meterConditions(e.env);
+    e.placed = true;
+    return m;
   }
 
   /** The meters' place for an entity: its frame and world position in its zone's system at the zone's last tick. */

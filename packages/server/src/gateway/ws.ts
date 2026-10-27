@@ -504,6 +504,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.entityId = joined.entityId;
       s.zoneId = joined.zone.id;
       s.state = 'joined';
+      // the meters learn where it entered: movement authority credits its first input with the time since, flown there
+      meters.locate(row.id, s, deps.clock.now());
       s.send({
         t: 'welcome',
         accountId: s.accountId!,

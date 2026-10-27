@@ -480,6 +480,44 @@ describe('cheats are refused', () => {
     expect(inSpace().send(pose(null, OPEN), 'pulse').ok).toBe(true);
   });
 
+  it('reports each accepted input’s credited flight to the meters once, a correction’s rewind not paid for twice', () => {
+    // (the pose a correction rewinds to is re-timed to the refused input's credited time, so the stretch after it starts
+    // where the last one paid ended)
+    let flown = 0;
+    const meters = {
+      allowsMode: () => true,
+      flown(_id: string, _mode: string, seconds: number) {
+        flown += seconds;
+      },
+    };
+    const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' }, {}, { meters });
+    const start = h.now;
+    const space = flightCaps(shipStats(LARK), 'space').allowed;
+    let p: Vec3 = [...OPEN];
+    // 2 s at 0.9 of the cap, then on at 1.4 of it until corrected: rewound to its window's start, a second back
+    for (let i = 0; i < 40; i++) {
+      p = [p[0] + space * 0.9 * 0.05, p[1], p[2]];
+      expect(h.send(pose(null, p), 'ship').ok).toBe(true);
+    }
+    let corrected: MovementRefusal | null = null;
+    while (!corrected) {
+      p = [p[0] + space * 1.4 * 0.05, p[1], p[2]];
+      const v = h.send(pose(null, p), 'ship');
+      if (!v.ok && refusal(v).correction) corrected = refusal(v);
+    }
+    // the client follows the correction and flies on from it
+    const back = corrected.correction!.pose.pos as Vec3;
+    expect(back[0]).toBeLessThan(p[0] - space * 1.4 * 0.05 * 5);
+    p = [...back];
+    for (let i = 0; i < 20; i++) {
+      p = [p[0] + space * 0.9 * 0.05, p[1], p[2]];
+      expect(h.send(pose(null, p), 'ship').ok).toBe(true);
+    }
+    // every second it was reported to have flown is one its client's clock ran, once
+    expect(flown).toBeLessThanOrEqual(h.now - start + 1e-6);
+    expect(flown).toBeGreaterThan(h.now - start - MOVEMENT.correction.graceS - 0.2);
+  });
+
   it('a ship below the ground, inside the hangar shell, or in a gas giant’s depths', () => {
     const { up, ground } = dryLand();
     const h = new Harness(D, { pose: pose(HOME, scale(up, ground + 20)), mode: 'ship' });
