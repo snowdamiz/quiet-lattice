@@ -39,7 +39,7 @@ export const LEVELS = 3;
 /** The simplification: the share of the model's triangles it aims for, and the error it may make (of the hull's size). */
 export const LOD1 = { ratio: 0.35, error: 0.01 };
 /** The coarsest level's share of the model's triangles (DESIGN 19.2: the last level under 5%). */
-export const COARSE_RATIO = 0.04;
+export const COARSE_RATIO = 0.035;
 /** ...and a gear leg's. */
 const LEG_RATIO = 0.25;
 /** A ship longer on screen than this many pixels draws the model; than this many, the simplification; shorter, the
