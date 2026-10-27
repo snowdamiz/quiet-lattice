@@ -91,6 +91,8 @@ export class HUD {
     this.inventory = el('div', 'inventory', this.layer);
     this.prompt = el('div', 'prompt', this.layer);
     this.toasts = el('div', 'toasts', this.layer);
+    // the server's word on the player's shots: damage numbers off the reticle
+    this.hitsEl = el('div', 'hits', this.layer);
     // (beside the layer, not in it: banners show through a cutscene, which fades the rest of the HUD out)
     this.banner = el('div', 'banner', root);
     this.flashEl = el('div', 'flash', root);
@@ -327,8 +329,37 @@ export class HUD {
     // (drawn into the picture, where the top bar of a cutscene's letterbox goes)
     this.edgeCompass.update(!g.overlay && !cine && (mode === 'ship' || mode === 'foot'));
     this.updateMarkers();
+    this.updateHits(g.net?.combat);
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
+  }
+
+  // What the server says the player's shots did and the blows it took (ARCHITECTURE §20): a number rising off the reticle
+  // for each hit (gold for a kill), a flash for a blow taken, and a kill's XP and loot as toasts.
+  updateHits(feed) {
+    if (!feed) return;
+    const { dealt, taken, gained } = feed.take();
+    for (const h of dealt) this.hitNumber(h.amount, h.killed);
+    if (taken.length) this.flash('damage');
+    for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good');
+  }
+
+  hitNumber(amount, killed) {
+    const e = el('div', 'hit-number', this.hitsEl);
+    e.textContent = String(amount > 0 ? Math.max(1, Math.round(amount)) : 0);
+    const dx = ((this.hitsEl.children.length % 5) - 2) * 18;
+    // (the reticle readouts' type and the HUD's palette: style.css's tokens)
+    Object.assign(e.style, {
+      position: 'absolute', left: `calc(50% + ${dx}px)`, top: '44%', transform: 'translate(-50%, 0)', pointerEvents: 'none',
+      color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '500', fontSize: killed ? '20px' : '16px',
+      lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: 'var(--shadow)',
+      transition: 'transform 0.9s ease-out, opacity 0.9s ease-in',
+    });
+    void e.offsetWidth;
+    e.style.transform = 'translate(-50%, -42px)';
+    e.style.opacity = '0';
+    this.later(() => e.remove(), 1000);
+    while (this.hitsEl.children.length > 12) this.hitsEl.firstChild.remove();
   }
 
   updateMarkers() {

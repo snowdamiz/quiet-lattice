@@ -168,6 +168,8 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     inventory,
     persistence,
     quests,
+    // (kills add XP to the same progress the quests and persistence hold)
+    progress,
     // a joining character's row is read only once an edit of it out of play (the admin CLI's) has written (§8)
     ownedCharacter: (accountId, characterId) => persistence.afterEdit(characterId, () => getOwnedCharacter(database.db, accountId, characterId)),
     limits: {

@@ -1,18 +1,21 @@
 // A social service over real zones and sessions on fake sockets, with a hand-driven monotonic clock, for the unit tests.
-import { decodeServerMessage, encodeServerMessage, type PartyOp, type ServerMessage } from '@astra/shared/protocol';
+import { decodeServerMessage, encodeServerMessage, type BeaconOp, type PartyOp, type ServerMessage } from '@astra/shared/protocol';
 import { WebSocket } from 'ws';
 import { Session, type SessionSocket } from '../../src/session/session.ts';
 import { ZoneManager } from '../../src/zones/manager.ts';
 import type { Zone } from '../../src/zones/zone.ts';
 import type { SocialLimits } from '../../src/social/limits.ts';
-import { SocialService } from '../../src/social/service.ts';
+import { SocialService, type SocialOptions } from '../../src/social/service.ts';
 
 class FakeSocket implements SessionSocket {
   readyState: SessionSocket['readyState'] = WebSocket.OPEN;
   bufferedAmount = 0;
   sent: string[] = [];
-  send(data: unknown) {
-    this.sent.push(String(data));
+  /** binary frames (zone snapshots, once a test ticks the zones), counted and otherwise ignored */
+  snapshots = 0;
+  send(data: unknown, opts?: unknown) {
+    if (typeof opts === 'object' && opts !== null && (opts as { binary?: boolean }).binary) this.snapshots++;
+    else this.sent.push(String(data));
   }
   pong() {}
   close() {
@@ -43,10 +46,14 @@ export interface Player {
   news(): string[];
   chat(channel: 'shard' | 'system' | 'party', text: string): void;
   party(op: PartyOp): void;
+  beacon(op: BeaconOp): void;
 }
 
 /** `encode` wraps the service's encoder (which counts its calls), so a test can make it fail. */
-export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m: ServerMessage, encode: (m: ServerMessage) => string) => string } = {}) {
+export function harness(
+  limits: Partial<SocialLimits> = {},
+  opts: { encode?: (m: ServerMessage, encode: (m: ServerMessage) => string) => string; cutscenes?: SocialOptions['cutscenes'] } = {},
+) {
   let mono = 1000;
   const lines: LogLine[] = [];
   const at = (level: string) => (obj: object, msg: string) => lines.push({ level, obj: obj as Record<string, unknown>, msg });
@@ -60,6 +67,7 @@ export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m:
     mono: () => mono,
     log,
     limits,
+    cutscenes: opts.cutscenes,
     encode: (m) => {
       encodes.n++;
       return opts.encode ? opts.encode(m, encodeServerMessage) : encodeServerMessage(m);
@@ -68,7 +76,10 @@ export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m:
   let nextSession = 1;
 
   /** A new connection for the character: its session joins its home zone and the social service. */
-  function connect(p: { name: string; characterId: string; accountId: string }, homeSystem: number): Omit<Player, 'take' | 'news' | 'chat' | 'party'> {
+  function connect(
+    p: { name: string; characterId: string; accountId: string },
+    homeSystem: number,
+  ): Omit<Player, 'take' | 'news' | 'chat' | 'party' | 'beacon'> {
     const sock = new FakeSocket();
     const session = new Session(nextSession++, sock, '127.0.0.1');
     session.accountId = p.accountId;
@@ -100,6 +111,9 @@ export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m:
       },
       party(op) {
         social.party(p.session, op);
+      },
+      beacon(op) {
+        social.beacon(p.session, op);
       },
     };
     p.take(); // its `party` state on joining
@@ -139,6 +153,11 @@ export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m:
       }
     },
     now: () => mono,
+    clock,
+    /** one zone tick at the clock's time: entities' world positions and phase volumes brought up to date */
+    tick() {
+      zones.runTick(clock.now(), mono);
+    },
   };
 }
 

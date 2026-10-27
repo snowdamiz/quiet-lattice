@@ -18,6 +18,10 @@
 //
 // Its phases (phases/manager.ts) are private layers at shared places: each tick, once world positions are current, they
 // update who is inside their volumes, and every interest set passes through their visibility rule.
+//
+// Its combat (combat/zone.ts, P1.E06.T02) holds every combatant's health and the one path damage takes: each tick, after
+// the fauna, it despawns the corpses whose death beat is over, and after the snapshots it sends the tick's `combat` events
+// to the sessions whose interest sets hold their targets or sources.
 import { performance } from 'node:perf_hooks';
 import {
   encodeSnapshot,
@@ -42,6 +46,7 @@ import {
   type FrameSet,
   type SystemDescription,
 } from '@astra/shared/world';
+import { ZoneCombat, type CombatHooks } from '../combat/zone.ts';
 import { FaunaSim, type FaunaOptions, type FaunaStats } from '../fauna/sim.ts';
 import { hangarWaitPose, MovementAuthority, padPose, type MoverProfile, type MovementRefusal } from '../sim/movement/index.ts';
 import { PhaseManager } from '../phases/manager.ts';
@@ -99,6 +104,8 @@ export interface ZoneViewer {
   /** the character in play, whose place in a phase is kept for a while when its connection drops */
   readonly characterId?: string | null;
   sendBinary(data: Uint8Array): void;
+  /** a control message already validated and encoded (combat events); a viewer without it is sent none */
+  sendText?(text: string): void;
 }
 
 /**
@@ -128,8 +135,8 @@ export interface ZoneEntity {
   readonly party: string | null;
   /** its pose is a client's claim that nothing has checked yet */
   readonly unvalidated: boolean;
-  /** the last input applied to it */
-  readonly input: { seq: number; buttons: number; aim?: Quat } | null;
+  /** the last input applied to it, and the time its client stamped it with (0: none) */
+  readonly input: { seq: number; time: number; buttons: number; aim?: Quat } | null;
 }
 
 class Entity implements ZoneEntity {
@@ -193,6 +200,9 @@ export interface ZoneOptions {
   movement?: boolean;
   /** the system's fauna (P1.E08.T01): its options, or false for a zone without (unit tests of the zone itself) */
   fauna?: FaunaOptions | false;
+  /** who hears of kills, players going down and characters fighting (the gateway's combat service, through the
+   * ZoneManager); none in tests of the zone alone */
+  combat?: () => CombatHooks | null;
 }
 
 export class Zone {
@@ -212,6 +222,8 @@ export class Zone {
   readonly phases: PhaseManager;
   /** herds round the players on this system's worlds, ticked at the start of every step; null when turned off */
   readonly fauna: FaunaSim | null;
+  /** every combatant's health, the one damage path, deaths and combat events (P1.E06.T02) */
+  readonly combat: ZoneCombat;
 
   private readonly log?: ZoneLog;
   private readonly onViewerRemoved?: (viewer: ZoneViewer) => void;
@@ -249,6 +261,7 @@ export class Zone {
     this.placeFrames(0);
     this.phases = new PhaseManager(this, opts.log);
     this.fauna = opts.fauna === false ? null : new FaunaSim(this, opts.fauna);
+    this.combat = new ZoneCombat(this, { hooks: opts.combat, log: opts.log });
   }
 
   get entityCount(): number {
@@ -306,6 +319,7 @@ export class Zone {
     this.entities.delete(id);
     this.movement?.remove(id);
     this.phases.removed(id);
+    this.combat.removed(id);
     for (const v of [...this.views.values()]) {
       if (v.entityId !== id) continue;
       this.views.delete(v.viewer);
@@ -362,6 +376,13 @@ export class Zone {
     if (this.views.has(viewer)) throw new Error(`session ${viewer.id} is already in zone ${this.id}`);
     if (this.movement && !mover) throw new Error(`zone ${this.id} holds players to movement authority: join needs their profile`);
     const entityId = this.spawn(init);
+    // (its suit's and ship's health come from what it entered with)
+    const profile = mover?.profile;
+    this.combat.joined(entityId, {
+      characterId: viewer.characterId ?? profile?.characterId ?? null,
+      ship: profile?.ship ?? null,
+      skills: profile?.skills ?? [],
+    });
     if (this.movement && mover) {
       const mode = (init.mode ?? 'ship') as Parameters<MovementAuthority['add']>[2];
       this.movement.add(entityId, { frame: init.frame, pos: init.pos, quat: init.quat, vel: init.vel }, mode, mover.profile, mover.now, mover.parked);
@@ -397,6 +418,12 @@ export class Zone {
   /** The entity ids in the session's interest set as of the last tick. */
   interestOf(viewer: ZoneViewer): ReadonlySet<number> {
     return new Set(this.views.get(viewer)?.interest);
+  }
+
+  /** Whether the session's interest set held the entity as of the last tick (combat events go where they are seen). */
+  sees(viewer: ZoneViewer, id: number): boolean {
+    const v = this.views.get(viewer);
+    return !!v && sortedHas(v.interest, id);
   }
 
   /** The session's snapshot history (what it holds per tick sent, and what it acknowledged). */
@@ -441,7 +468,7 @@ export class Zone {
     f.mode = verdict ? verdict.mode : msg.mode;
     for (const k of INPUT_FIELDS) e.changed.add(k);
     e.unvalidated = !verdict;
-    e.input = { seq: msg.seq, buttons: msg.buttons, aim: msg.aim && normalised(msg.aim) };
+    e.input = { seq: msg.seq, time: msg.time, buttons: msg.buttons, aim: msg.aim && normalised(msg.aim) };
     this.touch(e);
     return 'ok';
   }
@@ -462,6 +489,7 @@ export class Zone {
     this.placeFrames(time);
     // server-side systems first, so what they spawn and move goes out in this tick's snapshots
     this.fauna?.step(time);
+    this.combat.step(time);
 
     const dropped: string[] = [];
     for (const e of this.entities.values()) {
@@ -484,6 +512,8 @@ export class Zone {
         this.log?.warn({ zone: this.id, session: v.viewer.id, tick: this.tick, err: String(err) }, 'snapshot not sent');
       }
     }
+    // the tick's hits, deaths and downs, to those whose interest (just worked out) holds them
+    this.combat.flush();
 
     const ms = performance.now() - started;
     this.times.record(ms);

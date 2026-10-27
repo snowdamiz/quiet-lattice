@@ -89,8 +89,14 @@ stem = os.path.splitext(os.path.basename(src))[0]
 if src.endswith('.blend'):
     bpy.ops.wm.open_mainfile(filepath=src)
 else:
-    bpy.ops.wm.read_factory_settings(use_empty=True)
-    bpy.ops.import_scene.gltf(filepath=src)
+    # the validator's loader (artlib/core.py): an export's KTX2 textures, which Blender's importer cannot read, come in
+    # transcoded back to PNG (the KTX tool from KTX, or the one `pnpm art:*` fetched), and no bone-shape helper mesh
+    # joins an armature as an asset of its own
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from artlib import core  # noqa: E402
+
+    core.load(src)
 scene = bpy.context.scene
 
 # ---------- what is in the file: assets, variants, LODs ----------
