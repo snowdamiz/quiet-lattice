@@ -140,8 +140,15 @@ export class SocialModel {
     this.push({ kind: 'note', text });
   }
 
-  /** Something refused, here or by the server, in every tab. */
+  /** Something refused, here or by the server, in every tab: the same refusal again (a mute, said by the server and
+   * then here) is the line already there, said again (it shows again in the feed), not another line. */
   refuse(text) {
+    const last = this.lines.at(-1);
+    if (last?.kind === 'refusal' && last.text === text) {
+      last.at = this.now();
+      this.changed();
+      return;
+    }
     this.push({ kind: 'refusal', text });
   }
 

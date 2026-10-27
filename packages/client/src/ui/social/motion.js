@@ -7,7 +7,7 @@
 /** How long a move takes once it starts, and how long a closing box takes to fade out before it moves (ms). */
 export const MOVE_MS = 240;
 export const OUT_MS = 100;
-/** The flex gap a box opening across (a button beside others) also brings. */
+/** The flex gap a box opening across (a button beside others) also brings, unless the call says otherwise. */
 const GAP = 4;
 /** A frame at 60 fps (ms): a move's first step is at least this far along, so it never stands still on the frame after
  * the one it started in, whenever in that frame it started. */
@@ -62,17 +62,17 @@ function clear(e) {
 const px = (v) => parseFloat(v) || 0;
 
 /** A box's metrics down (its height and what is round it) or across (its width), as it lays out now. */
-function metrics(e, kind) {
+function metrics(e, kind, gap = GAP) {
   const r = e.getBoundingClientRect();
   if (kind === 'height') return { h: r.height };
   const cs = getComputedStyle(e);
-  if (kind === 'across') return { w: r.width, pl: px(cs.paddingLeft), pr: px(cs.paddingRight), bl: px(cs.borderLeftWidth), br: px(cs.borderRightWidth) };
+  if (kind === 'across') return { w: r.width, gap, pl: px(cs.paddingLeft), pr: px(cs.paddingRight), bl: px(cs.borderLeftWidth), br: px(cs.borderRightWidth) };
   return { h: r.height, mt: px(cs.marginTop), mb: px(cs.marginBottom), pt: px(cs.paddingTop), pb: px(cs.paddingBottom), bt: px(cs.borderTopWidth), bb: px(cs.borderBottomWidth) };
 }
 
 /** The room a box takes in the layout: down, its height and margins; across, its width and the gap it brings. */
 function footprint(m, kind) {
-  if (kind === 'across') return m.w + GAP;
+  if (kind === 'across') return m.w + m.gap;
   if (kind === 'height') return m.h;
   return m.h + m.mt + m.mb;
 }
@@ -89,9 +89,9 @@ function place(e, kind, m, f) {
     return;
   }
   if (kind === 'across') {
-    const w = Math.max(0, f - GAP);
+    const w = Math.max(0, f - m.gap);
     const r = m.w > 0 ? Math.min(1, w / m.w) : 0;
-    e.style.marginLeft = `${Math.min(0, f - GAP)}px`;
+    e.style.marginLeft = `${Math.min(0, f - m.gap)}px`;
     e.style.width = `${w}px`;
     e.style.paddingLeft = `${Math.floor(m.pl * r)}px`;
     e.style.paddingRight = `${Math.floor(m.pr * r)}px`;
@@ -122,21 +122,21 @@ export class Motion {
     this.runs = new Map();
   }
 
-  /** Opens `e` from nothing (or from where a close had it) to its own size, down or `across`, fading in as it grows;
-   * after `delay` ms (while something closing fades out). */
-  reveal(e, { across = false, delay = 0 } = {}) {
+  /** Opens `e` from nothing (or from where a close had it) to its own size, down or `across` (bringing a flex `gap`),
+   * fading in as it grows; over `ms`, after `delay` ms (while something closing fades out). */
+  reveal(e, { across = false, delay = 0, ms = MOVE_MS, gap = GAP } = {}) {
     const kind = across ? 'across' : 'down';
     const cur = this.runs.get(e);
     const f0 = cur?.kind === kind ? cur.last : 0;
     const o0 = cur?.o ?? 0;
     this.stop(e);
-    const m = metrics(e, kind);
-    this.begin(e, { kind, m, f0, f1: footprint(m, kind), o0, o1: 1, delay });
+    const m = metrics(e, kind, gap);
+    this.begin(e, { kind, m, f0, f1: footprint(m, kind), o0, o1: 1, delay, ms });
   }
 
-  /** Closes `e`: it fades out first (`OUT_MS`), then shrinks to nothing; `then()` once it is shut (and its styles are
-   * taken off after that, so hide or remove it there). */
-  conceal(e, then, { across = false } = {}) {
+  /** Closes `e`: it fades out first (`OUT_MS`, or as it shrinks when `delay` is 0), then shrinks to nothing over `ms`;
+   * `then()` once it is shut (and its styles are taken off after that, so hide or remove it there). */
+  conceal(e, then, { across = false, delay = OUT_MS, ms = MOVE_MS, gap = GAP } = {}) {
     const kind = across ? 'across' : 'down';
     const cur = this.runs.get(e);
     let m;
@@ -147,10 +147,23 @@ export class Motion {
       this.runs.delete(e);
     } else {
       this.stop(e);
-      m = metrics(e, kind);
+      m = metrics(e, kind, gap);
       f0 = footprint(m, kind);
     }
-    this.begin(e, { kind, m, f0, f1: 0, o0: cur?.o ?? 1, o1: 0, delay: OUT_MS, then });
+    this.begin(e, { kind, m, f0, f1: 0, o0: cur?.o ?? 1, o1: 0, delay, ms, then });
+  }
+
+  /**
+   * Eases a value (opacity-like, not stepped to pixels) of `key` from where it stands to `to` over `ms`, calling
+   * `apply(v)` each frame; `from` where it starts when nothing is easing it yet.
+   */
+  value(key, to, apply, { from = 0, ms = 120 } = {}) {
+    const cur = this.runs.get(key);
+    const f0 = cur?.kind === 'value' ? cur.last : from;
+    if (cur?.kind === 'value' && cur.f1 === to) return;
+    this.runs.delete(key);
+    if (f0 === to) return apply(to);
+    this.begin(key, { kind: 'value', m: null, f0, f1: to, o0: null, o1: null, delay: 0, ms, apply });
   }
 
   /** Eases `e`'s height from `from` (px, what it showed before its content changed) to the height it lays out at now;
@@ -201,7 +214,7 @@ export class Motion {
 
   /** Shows `e` or not: opening or closing it (across: its width) when `animate`, else at once. One closing stays laid
    * out until it is shut, then is `hidden`. */
-  toggle(e, show, animate, { across = false, delay = 0 } = {}) {
+  toggle(e, show, animate, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, quick = false } = {}) {
     const on = e.shownTo ?? !e.hidden;
     if (show === on) return;
     e.shownTo = show;
@@ -210,8 +223,8 @@ export class Motion {
       e.hidden = !show;
     } else if (show) {
       e.hidden = false;
-      this.reveal(e, { across, delay });
-    } else this.conceal(e, () => !e.shownTo && (e.hidden = true), { across });
+      this.reveal(e, { across, delay, ms, gap });
+    } else this.conceal(e, () => !e.shownTo && (e.hidden = true), { across, ms, gap, ...(quick ? { delay: 0 } : {}) });
   }
 
   /** Whether `e` is opening or closing just now. */
@@ -232,7 +245,9 @@ export class Motion {
     r.stepped = false;
     r.last = r.f0;
     r.o = r.o0;
+    r.ms ??= MOVE_MS;
     this.runs.set(e, r);
+    if (r.kind === 'value') return r.apply(r.f0);
     if (r.kind !== 'y') e.classList.add('sizing');
     place(e, r.kind, r.m, r.f0);
     if (r.o !== null) e.style.opacity = String(r.o);
@@ -246,7 +261,13 @@ export class Motion {
       r.elapsed += r.stepped ? now - r.at : Math.max(now - r.at, FRAME_MS);
       r.stepped = true;
       r.at = now;
-      const p = Math.max(0, Math.min(1, (r.elapsed - r.delay) / MOVE_MS));
+      const p = Math.max(0, Math.min(1, (r.elapsed - r.delay) / r.ms));
+      if (r.kind === 'value') {
+        r.last = r.f0 + (r.f1 - r.f0) * smooth(p);
+        r.apply(r.last);
+        if (p >= 1) this.runs.delete(e);
+        continue;
+      }
       if (p > 0 && r.start) {
         r.start(r);
         r.start = null;
@@ -257,7 +278,7 @@ export class Motion {
       if (r.o1 !== null) {
         // (a closing box fades out from the start, before it moves; an opening one fades in over the later part of its
         // growth)
-        r.o = r.o1 < r.o0 ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / OUT_MS) : r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
+        r.o = r.o1 < r.o0 ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / Math.min(OUT_MS, r.delay + r.ms)) : r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
         if (r.o1 > r.o0 && p <= 0) r.o = r.o0;
         e.style.opacity = String(r.o);
       }

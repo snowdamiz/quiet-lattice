@@ -200,6 +200,7 @@ export class SocialUI {
       const b = button(`sc-tab t-${t}`, this.tabsEl, undefined, () => this.setTab(t));
       el('span', '', b, TAB_LABEL[t]);
       b.badge = el('i', 'sc-badge', b);
+      b.badge.hidden = true;
       this.tabButtons[t] = b;
     }
     this.body = el('div', 'sc-body', this.panel);
@@ -213,6 +214,7 @@ export class SocialUI {
     this.moreEl = el('div', 'sb-more', this.beaconsEl);
     this.emptyEl = el('div', 'sb-empty', this.beaconsEl, 'No calls for aid on the shard');
     this.beaconsEl.addEventListener('scroll', () => this.scrollEdges(), { passive: true });
+    this.edgeKeys = { above: {}, below: {}, bar: {} };
 
     const row = el('div', 'sc-input', this.panel);
     this.chanEl = el('span', 'sc-chan', row);
@@ -276,9 +278,7 @@ export class SocialUI {
       }
     }
     for (const t of TABS) this.tabButtons[t].classList.toggle('on', t === this.tab);
-    setText(this.chanEl, TAB_LABEL[m.channel]);
-    this.chanEl.className = `sc-chan ch-${m.channel}`;
-    this.input.placeholder = PLACEHOLDER[m.channel];
+    this.prompt(m.channel);
     if (open && this.tab !== 'beacons') this.seen[this.tab] = m.lineId;
     this.renderBadges();
     this.renderLog(now, pre);
@@ -289,13 +289,45 @@ export class SocialUI {
 
   renderBadges() {
     const m = this.model;
+    // (out of a party, its old lines are not news: the badge agrees with "Not in a party")
+    if (!m.party) this.seen.party = m.lineId;
     for (const t of ['shard', 'system', 'party']) {
       const n = t === this.tab && this.isOpen ? 0 : m.lines.filter((l) => l.channel === t && l.id > this.seen[t] && !l.mine).length;
-      setText(this.tabButtons[t].badge, n ? String(Math.min(n, 99)) : '');
+      this.badge(t, n);
     }
     const own = m.net?.beacons.own?.id;
-    const calls = m.net ? [...m.net.beacons.byId.keys()].filter((id) => id !== own).length : 0;
-    setText(this.tabButtons.beacons.badge, calls ? String(calls) : '');
+    this.badge('beacons', m.net ? [...m.net.beacons.byId.keys()].filter((id) => id !== own).length : 0);
+  }
+
+  /** A tab's count: one that comes opens across and fades in, one that goes fades as it closes (on the tab underline's
+   * ease, 150 ms), so the tabs beside it slide rather than jump. */
+  badge(t, n) {
+    const b = this.tabButtons[t].badge;
+    if (n) setText(b, String(Math.min(n, 99)));
+    this.motion.toggle(b, n > 0, this.isOpen, { across: true, ms: 150, gap: 7, quick: true });
+  }
+
+  /** The input's channel and what it invites: on a change while the panel is open, they fade out and the new fade in, as
+   * the log does. */
+  prompt(channel) {
+    if (this.promptFor === channel) return;
+    const first = this.promptFor === undefined || !this.isOpen;
+    this.promptFor = channel;
+    const apply = () => {
+      setText(this.chanEl, TAB_LABEL[channel]);
+      this.chanEl.className = `sc-chan ch-${channel}`;
+      this.input.placeholder = PLACEHOLDER[channel];
+    };
+    const parts = [this.chanEl, this.input];
+    for (const e of parts) for (const a of e.getAnimations()) a.cancel();
+    if (first) return apply();
+    const outs = parts.map((e) => e.animate([{ opacity: 1 }, { opacity: 0 }], { duration: OUT_MS, easing: 'ease-out', fill: 'forwards' }));
+    outs[0].addEventListener('finish', () => {
+      if (this.promptFor !== channel) return;
+      apply();
+      for (const a of outs) a.cancel();
+      for (const e of parts) e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS - OUT_MS / 2, easing: 'ease-out' });
+    });
   }
 
   /**
@@ -608,8 +640,11 @@ export class SocialUI {
     const e = this.beaconsEl;
     const above = e.scrollTop > 1;
     const below = e.scrollTop + e.clientHeight < e.scrollHeight - 1;
-    if (above !== e.classList.contains('more-above')) e.classList.toggle('more-above', above);
-    if (below !== e.classList.contains('more-below')) e.classList.toggle('more-below', below);
+    // (the edge fades and the scrollbar come in over about seven frames, not at once)
+    const ease = (key, on, name) => this.motion.value(key, on ? 1 : 0, (v) => e.style.setProperty(name, v.toFixed(3)), { ms: 120 });
+    ease(this.edgeKeys.above, above, '--sb-above');
+    ease(this.edgeKeys.below, below, '--sb-below');
+    ease(this.edgeKeys.bar, above || below, '--sb-bar');
   }
 
   /** The server's refusal under a beacon's row: one opens in, and the rows below ease; a new reason for the same beacon

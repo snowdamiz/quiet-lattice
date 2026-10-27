@@ -2727,8 +2727,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   transform: scaleX(1);
 }
 .sc-badge {
-  min-width: 15px;
   padding: 0 4px;
+  white-space: nowrap;
   font-style: normal;
   font-size: 9.5px;
   line-height: 15px;
@@ -2737,9 +2737,6 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   color: var(--ink);
   background: var(--chan, var(--text));
   text-shadow: none;
-}
-.sc-badge:empty {
-  display: none;
 }
 .sc-tab.t-shard {
   --chan: var(--sc-shard);
@@ -2787,13 +2784,18 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sc-beacons::-webkit-scrollbar {
   width: 5px;
 }
-.sc-log.full::-webkit-scrollbar-track,
-.sc-beacons::-webkit-scrollbar-track {
+.sc-log.full::-webkit-scrollbar-track {
   background: color-mix(in srgb, var(--text) 6%, transparent);
 }
-.sc-log.full::-webkit-scrollbar-thumb,
-.sc-beacons::-webkit-scrollbar-thumb {
+.sc-log.full::-webkit-scrollbar-thumb {
   background: var(--dim);
+}
+/* (the beacon list's fades in with its overflow: --sb-bar eased 0–1 by SocialUI) */
+.sc-beacons::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--text) calc(var(--sb-bar, 0) * 6%), transparent);
+}
+.sc-beacons::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--dim) calc(var(--sb-bar, 0) * 100%), transparent);
 }
 /* the feed stands on the panel's foot, whatever its length (one longer than the box gives way at the top) */
 .sc-log.feed {
@@ -2951,18 +2953,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .social-chat .sc-beacons.leaving {
   display: flex;
 }
-/* longer than the panel: it fades at the edge it scrolls on (its foot while more is below, its head once scrolled) */
-.sc-beacons.more-below {
-  -webkit-mask-image: linear-gradient(black calc(100% - 30px), transparent);
-  mask-image: linear-gradient(black calc(100% - 30px), transparent);
-}
-.sc-beacons.more-above {
-  -webkit-mask-image: linear-gradient(transparent, black 24px);
-  mask-image: linear-gradient(transparent, black 24px);
-}
-.sc-beacons.more-above.more-below {
-  -webkit-mask-image: linear-gradient(transparent, black 24px, black calc(100% - 30px), transparent);
-  mask-image: linear-gradient(transparent, black 24px, black calc(100% - 30px), transparent);
+/* longer than the panel: it fades at the edge it scrolls on (its foot while more is below, its head once scrolled),
+   each fade eased in and out by SocialUI (--sb-above, --sb-below, 0–1) */
+.sc-beacons {
+  -webkit-mask-image: linear-gradient(rgb(0 0 0 / calc(1 - var(--sb-above, 0))), black 24px, black calc(100% - 30px), rgb(0 0 0 / calc(1 - var(--sb-below, 0))));
+  mask-image: linear-gradient(rgb(0 0 0 / calc(1 - var(--sb-above, 0))), black 24px, black calc(100% - 30px), rgb(0 0 0 / calc(1 - var(--sb-below, 0))));
 }
 .sb-own,
 .sb-row {
@@ -3006,6 +3001,12 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   white-space: normal;
   font-size: 12.5px;
   color: var(--sc-refused);
+}
+/* (a refusal that wraps hangs its second line under its first word, clear of the mark) */
+.sb-own .sb-own-text.refused,
+.sb-refusal {
+  padding-left: 14px;
+  text-indent: -14px;
 }
 .sb-own-text.refused::before,
 .sb-refusal::before {
@@ -3103,7 +3104,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   position: absolute;
   left: 26px;
   top: 112px;
-  width: 256px;
+  width: 280px;
   display: flex;
   flex-direction: column;
   pointer-events: none;
@@ -3144,9 +3145,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   line-height: 17px;
   color: var(--dim);
 }
+/* (a column of its own at the right for the tag and the leader's requests, so every row's health bar is as long, the
+   leader's view or not) */
 .sp-member {
   display: grid;
-  grid-template-columns: 11px minmax(0, 1fr) auto;
+  grid-template-columns: 11px minmax(0, 1fr) 92px;
   align-items: center;
   column-gap: 7px;
   padding: 7px 10px 8px 8px;
@@ -3215,20 +3218,20 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sp-acts {
   grid-column: 3;
   grid-row: 2;
+  justify-self: end;
   display: inline-flex;
   gap: 4px;
   margin-top: 5px;
 }
 /* health: a 3 px bar on a dark track (the fill at 3:1 or more against it at every level) */
 .sp-hp {
-  grid-column: 2 / -1;
+  grid-column: 2;
   grid-row: 2;
   height: 3px;
   margin-top: 5px;
   background: color-mix(in srgb, var(--text) 12%, transparent);
 }
 .sp-member.acts .sp-hp {
-  grid-column: 2;
   align-self: center;
 }
 .sp-hp b {

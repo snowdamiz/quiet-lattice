@@ -981,14 +981,21 @@ export const SCREENS: Record<string, ScreenDef> = {
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const list = document.querySelector('.sc-beacons') as HTMLElement;
-        const end = list.scrollHeight - list.clientHeight;
-        // down over a second from 0.3 s, a pause, and back up over a second (ease in and out, a step a frame)
-        for (let k = 0; k <= 60; k++) {
+        const end = Math.round(list.scrollHeight - list.clientHeight);
+        // down over a second from 0.3 s, a pause, and back up over a second: eased in and out, a whole pixel a frame and
+        // at least one until it lands (a fractional scroll offset is rounded, which held a frame here and there), each
+        // step due half a millisecond before its frame so none slips into the next
+        const ys: number[] = [0];
+        for (let k = 1; k <= 60; k++) {
           const t = k / 60;
-          const y = end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-          w.game.hud.later(() => (list.scrollTop = y), 300 + k * (1000 / 60));
-          w.game.hud.later(() => (list.scrollTop = end - y), 1700 + k * (1000 / 60));
+          const y = Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2));
+          const last = ys[k - 1]!;
+          ys.push(last >= end ? end : Math.min(end, Math.max(y, last + 1)));
         }
+        ys.forEach((y, k) => {
+          w.game.hud.later(() => (list.scrollTop = y), 300 + k * (1000 / 60) - 0.5);
+          w.game.hud.later(() => (list.scrollTop = end - y), 1700 + k * (1000 / 60) - 0.5);
+        });
       });
     },
   },

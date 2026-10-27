@@ -206,6 +206,18 @@ describe('the social model', () => {
     expect(model.lines.at(-1)).toMatchObject({ kind: 'refusal', channel: null });
   });
 
+  it('says a refusal repeated straight after itself once, the line said again', () => {
+    const { model, socket, clock } = online();
+    socket.push({ t: 'denied', of: 'chat', code: 'muted', retryS: 60 });
+    clock.advance(500);
+    expect(model.submit('let me talk')).toEqual({ ok: false, keep: true });
+    expect(model.lines.map((l) => l.text)).toEqual(['You are muted for 1 min']);
+    expect(model.lines[0].at).toBe(10_500);
+    socket.push({ t: 'denied', of: 'invite', code: 'not_found', name: 'Bo Tran' });
+    socket.push({ t: 'denied', of: 'chat', code: 'muted', retryS: 75 });
+    expect(model.lines.map((l) => l.text)).toEqual(['You are muted for 1 min', 'No one called Bo Tran is online', 'You are muted for 1 min']);
+  });
+
   it('refuses here what the protocol would refuse, without sending it', () => {
     const { model, sent, texts } = online();
     expect(model.submit('/invite 1234')).toEqual({ ok: false, keep: true });
