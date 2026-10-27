@@ -5,11 +5,12 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Body } from './Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { mulberry32, STATION, stationPoseInto } from '@astra/shared/world';
+import { STATION_HANGAR, STATION_LAYOUT } from '@astra/shared/data';
 
 const _v = new THREE.Vector3();
 
-// hangar interior bounds
-export const HANGAR = { x0: -65, x1: 65, y0: 0, y1: 42, z0: -90, z1: 60 };
+// hangar interior bounds and pads: shared with the server's movement authority (@astra/shared/data, station.ts)
+export const HANGAR = STATION_HANGAR;
 
 function hazardTexture() {
   const c = document.createElement('canvas');
@@ -250,13 +251,11 @@ export class Station extends Body {
 
     yield;
     // ----- landing pads -----
-    const padPositions = [
-      [-30, -22], [30, -22], [-30, 22], [30, 22],
-    ];
+    const padPositions = STATION_LAYOUT.pads.map((pad) => [pad.x, pad.z]);
     const padTex = padTexture('#6fe3ff');
     for (const [x, z] of padPositions) {
-      const top = 0.45;
-      const g = new THREE.CylinderGeometry(12, 12.6, top, 48);
+      const top = STATION_LAYOUT.padTop;
+      const g = new THREE.CylinderGeometry(STATION_LAYOUT.padRadius, STATION_LAYOUT.padRadius + 0.6, top, 48);
       g.translate(x, top / 2, z);
       add(g, dark);
       const disc = new THREE.Mesh(new THREE.CircleGeometry(11.6, 64), new THREE.MeshStandardMaterial({ map: padTex, metalness: 0.4, roughness: 0.5, emissive: 0xffffff, emissiveMap: padTex, emissiveIntensity: 0.12 }));

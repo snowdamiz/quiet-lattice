@@ -249,15 +249,22 @@ export class AdminService {
     const entityId = s.entityId;
     const e = zone && entityId !== null ? zone.entity(entityId) : undefined;
     if (!zone || entityId === null || !e) throw new AdminError('held', `${c.name} is between zones; try again`);
-    const { pose, mode } = at;
-    // SEAM (movement authority, P1.E03.T04, once it is on main): a zone holding players to movement authority keeps each
-    // mover's last accepted pose; re-seat it here (`zone.movement.remove(entityId)`, then `add` at this pose and mode, a
-    // docked teleport taking `movement.freePad()`), so the client's next input is judged from the teleport.
+    let { pose, mode } = at;
+    // movement authority (P1.E03.T04) judges each input from the mover's last accepted pose: re-seat it here, as at a join,
+    // so the client's next input is judged from the teleport (a docked one on whichever pad is free, or waiting in the
+    // hangar's mouth when every pad is held)
+    const profile = zone.movement?.remove(entityId);
+    if (profile) {
+      if (mode === 'docked') ({ pose, mode } = zone.dockPose());
+      zone.movement!.add(entityId, pose, mode, profile, zone.time);
+      // (its inputs from before, still on their way, are refused quietly, as after a correction: no strikes)
+      zone.movement!.graceFrom(entityId, zone.time);
+    }
     zone.patch(entityId, { ...pose, mode });
     // the client rewinds to this pose at its last applied input (§5); the zone has taken it already
     s.send({ t: 'correction', seq: e.input?.seq ?? 0, pose, mode });
     this.persistence.saveNow(c.id, 'admin');
-    return { moved: 'zone' };
+    return { moved: 'zone', pose, mode };
   }
 
   /**
