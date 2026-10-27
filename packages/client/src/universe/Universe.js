@@ -169,22 +169,6 @@ export class Universe {
     }
   }
 
-  // a saved game left between the stars
-  restore({ anchor, pos, quat }) {
-    const g = this.game;
-    const s = g.ship.state;
-    this.deep = true;
-    this.setDormant(true);
-    this.anchor.fromArray(anchor);
-    s.frame = null;
-    s.pos.fromArray(pos);
-    s.quat.fromArray(quat);
-    s.vel.set(0, 0, 0);
-    g.ship.speed = 0;
-    this.sysWorld(g.system.info, g.system.star.position);
-    g.sky.reset();
-  }
-
   // a system out of reach is hidden and left alone until the ship comes back
   setDormant(on) {
     const g = this.game;

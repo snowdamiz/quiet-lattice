@@ -94,9 +94,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   baseline `base`, the tick of the snapshot the client last acknowledged; the client keeps the states it was sent per tick,
   applies the delta onto `base` and stores the result as `tick`. An entity delta carries its changed fields and `clear`, the
   fields it no longer has. `ack` echoes the client's last applied input `seq` for reconciliation; clients number inputs
-  from 1, so `ack` 0 means no input applied yet. The client acknowledges each snapshot it applies with `ack {tick}`, at
-  most once per tick; the server diffs against the latest acknowledged tick it still holds (64 ticks, about 3 s) and
-  sends a full snapshot when it holds none. The server diffs against the state it last *sent*, not its true state, so
+  from 1, so `ack` 0 means no input applied yet. The client acknowledges the newest snapshot it has applied with
+  `ack {tick}`, at most every 50 ms (a backlog after a stall is acknowledged once); the server diffs against the latest
+  acknowledged tick it still holds (64 ticks, about 3 s) and sends a full snapshot when it holds none. The server diffs against the state it last *sent*, not its true state, so
   slow motion under the epsilon still goes out. The encoder sends only the listed fields, validates each against its
   schema, clamps unit fields, and drops and reports any field that fails, so a client never rejects what the server sent. The decoder still drops a malformed entity on its own; a client that sees
   one must not store or acknowledge that tick. Control-message encoders send the validated copy, so keys a schema does
@@ -109,11 +109,12 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
-  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (one
-  per applied snapshot, at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`, `skills {seq, op}`,
-  `cutscene {op, id, skipped?}` (§15). Each socket's message budget is 60 a second with a burst of 120: input and acks
-  take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill and cutscene requests, and the
-  burst absorbs the backlog of a stall. Chat and invites have far smaller limits of their own, per account (§13).
+  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
+  for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
+  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15). Each socket's message budget is 60 a
+  second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat, party,
+  inventory, skill and cutscene requests, and the burst absorbs the backlog of a stall. Chat and invites have far smaller
+  limits of their own, per account (§13).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
@@ -303,17 +304,80 @@ store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
 
-`Net` owns the socket: connect, `hello`, `join`, the clock offset, decoding snapshots into an entity store, sending input at
-20 Hz, and applying `correction`s through the prediction layer. Remote entities render from the store with 100 ms
-interpolation delay and up to 250 ms extrapolation, frame-aware (interpolate in the entity's frame; on a frame change,
-re-express the buffered poses). Gameplay code reads remote state from the store, never from the socket.
+The client is online only (DESIGN 16.6, 20.3): the title's Play signs in over HTTP, lists or makes characters, and enters
+the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04.T01).
+
+- **Origin.** The client calls the gateway on its own origin: `/auth/*`, `/characters`, `/health`, and the socket at `/ws`
+  (`api.js`, `gameSocketUrl`). In development Vite proxies those paths to `pnpm dev:server` (`vite.config.js`;
+  `ASTRA_SERVER` points them at another server), as whatever serves the client in production will.
+- **Sign-in.** `api.js` wraps register, login and the characters API, checking bodies with the shared schemas. The session
+  token is kept in `sessionStorage` (`session.js`: a reload goes straight to the character list, closing the tab signs
+  out), beside a one-shot notice for the title. `localStorage` holds only `next-horizon-settings` (look, sound, graphics);
+  the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a browser still has it.
+- **`Net`** (`Net.js`) owns the socket. `connect()` sends `hello {version: PROTOCOL_VERSION, token}` and `join` together
+  as the socket opens (the gateway handles a socket's messages in order). States: idle → connecting → joining → joined →
+  closed. A connection that drops after a welcome goes to reconnecting and tries again after 0.5 s doubling to 30 s (each
+  delay scaled by a random 50–100%), then joins again; a refusal another try would repeat (`version`, `auth`,
+  `character`, `kicked`), a second `invalid` within a minute (the first may be an honest client's flood after a stall,
+  so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
+  `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
+  after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
+  nobody listens for (`party`, `denied` …) are dropped quietly, and so are snapshot fields and entity kinds nothing reads
+  yet (a `mob`'s `attack` is kept in the store for P1.E04.T02). While the connection is down after a welcome, a line at
+  the top of the screen says so.
+- **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
+  onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
+  over on every welcome (a restarted server counts its ticks from 0 again). Acknowledgements go out at most once a tick
+  (50 ms), always for the newest applied tick, so the backlog a stalled page catches up on is acknowledged once rather
+  than snapshot by snapshot (which would spend the socket's budget in one burst). A tick that cannot be applied (its
+  baseline is not held, the decoder refused one of its entities, it names an entity never sent whole) is neither stored
+  nor acknowledged, so the server keeps diffing against the last good one. Snapshots before the welcome are ignored.
+  Gameplay reads remote state from the store, never from the socket.
+- **Input** goes out at 20 Hz of real time (`update()` each frame, never faster however fast frames are stepped: the
+  gateway's budget counts real seconds): `seq` from 1 on each connection, `time` the world time the pose was sampled at
+  (the clock the client placed the bodies and picked the frame with; never going back), and the game's sample
+  (`Game.inputSample`): the predicted pose of the ship or, on foot, of the walker (its quaternion built from its
+  heading), in the frame the client picked; the mode (`foot`; `pulse`; set down on a Waystation pad `docked`, elsewhere
+  `landed`; anything else a ship does `ship`: flying, taking off, landing, the docking autopilot); and the buttons (`boost`
+  while boosting, which movement authority reads). There is no input while the client is outside its zone's system or
+  between the stars, until zone handoff (P1.E04.T04).
+- **Time.** `ClockSync` (`clock.js`) estimates the server's clock from `welcome` and a `ping` every 2 s: the offset of the
+  shortest round trip of the last eight. World time (`game.time`, §3) starts at it on the first welcome, before any input;
+  from then it never goes back (`Game.advanceClock`), because movement authority judges each input at the time it
+  carries: each frame it advances by the frame's time eased toward the estimate (at most twice as fast), stands still
+  rather than going back, and is never more than 0.25 s ahead; more than 1 s behind (the frame loop stopped, as in a
+  hidden tab, or a long stall) it steps forward to the estimate at once and that frame places the bodies at the new time
+  (movement authority starts a new judging window at such a forward jump, at its arrival). Shaders animate on
+  `game.renderTime` instead, which advances by exactly the frames' time and stays small: at the server's 10^7 s a float32
+  uniform moves in 2 s steps.
+- **Welcome** places the character where the server holds it (`Game.placeFromServer`), loading the zone's system first
+  when it is not the current one: `docked` on the Waystation's pad nearest the pose; `landed`, `ship` and `pulse` at the
+  pose (the pulse drive is not resumed); `foot` with the walker at the pose and the ship on the nearest pad, or landed
+  beside it on a world. On the first join only the zone's system is marked visited. On a reconnect the client keeps its
+  own pose (it kept flying) and its next input reports it, while it is still in the zone's system and one of its frames;
+  otherwise (it warped away, the server put the character elsewhere, it is between the stars) it is placed from the
+  welcome as on a first join. The inventory sent after welcome replaces the client's (`Inventory.reset`); later states
+  reconcile its requests (§5). The mouse is captured only from a user gesture: entering the world leaves the pause
+  screen up, whose Resume captures it.
+- **Saving is the server's** (§8). `Game.save()` sends the input at once at moments worth holding (docked, a system
+  reached, a site visited). Leaving (the pause menu, or a refusal after joining) closes the socket and reloads the page,
+  so nothing of one character's client state carries into the next.
+- **Corrections** are taken as they come until prediction and reconciliation (P1.E04.T03): the pose, re-expressed into the
+  frame the client is in (DECISIONS P1.E03.T03).
+- **Dev sandbox.** In dev builds only, a scenario hash (`#sandbox`, `#foot`, `#fly`, `#land`, `#station`, `#dock`,
+  `#space`, `#review:…`) or `window.dev.boot()` starts `Game.startSandbox`: offline, a new pilot by the home Waystation,
+  no persistence of any kind, so the smoke specs, captures and asset reviews stay hermetic. The game itself always goes
+  through the server.
+- **Remote entities** (P1.E04.T02) render from the store with 100 ms interpolation delay and up to 250 ms extrapolation,
+  frame-aware (interpolate in the entity's frame; on a frame change, re-express the buffered poses).
 
 ## 10. Tests
 
 Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; integration tests (`*.int.test.ts`) start a real server on a random port against
 the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
-database is disposable.
+database is disposable. The online smoke specs (`packages/tools/src/smoke/online.spec.ts`, part of `pnpm smoke`, needing
+`pnpm db:up`) run the server against a scratch database they create and drop, and a client through Vite's proxies.
 
 ## 11. The Count meter (`packages/server/src/count`)
 
