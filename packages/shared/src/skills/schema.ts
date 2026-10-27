@@ -36,6 +36,21 @@ export const barSchema = z.enum(BARS);
 export type Bar = z.infer<typeof barSchema>;
 export const BAR_SLOTS: Readonly<Record<Bar, number>> = { ground: GROUND_SLOTS, ship: SHIP_SLOTS };
 
+/** How far up the web a node sits, for the phase ceiling: Tier I–III by number, conjunctions with Tier III (they join two
+ * Tier II branches and ship with Tier III's effects), capstones above them. */
+export type PhaseTier = 1 | 2 | 3 | 4;
+
+/** What this build of the game sells of the web (IMPLEMENTATION_PLAN 0.8: Tier I–II in Phase 1; Tier III, capstones and
+ * conjunctions in Phase 2). Nodes above `maxTier` stay in the data and are refused (`phase`) to unlock or buy. The server
+ * sends its ceiling in the view; this is its default. */
+export const SKILL_PHASE: { readonly maxTier: PhaseTier } = { maxTier: 2 };
+
+export function phaseTierOf(node: SkillNode): PhaseTier {
+  if (node.tier === 'capstone') return 4;
+  if (node.tier === 'conjunction') return 3;
+  return node.tier;
+}
+
 /** Bounds that keep a stored or sent value finite. A finished build is about 80 points (DESIGN 9.1), the web 152. */
 export const MAX_GRANTED_POINTS = 1000;
 export const MAX_FRAGMENTS = 1_000_000;
@@ -114,6 +129,8 @@ export const skillViewSchema = z.strictObject({
   shipSlots: z.int().min(0).max(SHIP_SLOTS),
   /** The web's standing gates the character meets (Void: Free Reaches standing). */
   met: z.array(requirementSchema).max(16),
+  /** The highest phase tier the server sells now (SKILL_PHASE). */
+  maxTier: z.literal([1, 2, 3, 4]),
 });
 export type SkillView = z.infer<typeof skillViewSchema>;
 
@@ -151,6 +168,8 @@ export const SKILL_ERROR_CODES = [
   'no_route',
   /** a standing gate the character does not meet (DESIGN 9.6: Void needs Free Reaches standing) */
   'requirement',
+  /** above the tier this phase of the game sells (SKILL_PHASE: Tier I–II in Phase 1) */
+  'phase',
   /** too few fragments of the branch */
   'fragments',
   /** Pilot and Exo-suit have no fragments */

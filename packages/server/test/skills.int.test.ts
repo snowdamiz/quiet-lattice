@@ -106,7 +106,7 @@ describe('the skill web over the socket', () => {
     const { s, skills: first } = await join(server, acct.token, id);
     expect(first.seq).toBe(0);
     expect(first.error).toBeUndefined();
-    expect(first.skills).toMatchObject({ level: 16, shipSlots: 2, met: [] });
+    expect(first.skills).toMatchObject({ level: 16, shipSlots: 2, met: [], maxTier: 2 });
     expect(first.skills.state.unlocked).toEqual(['second_lung']);
     expect(first.skills.state.bought).toEqual([]);
     expect(pointsOf(first.skills.state, first.skills.level).available).toBe(16);
@@ -125,9 +125,9 @@ describe('the skill web over the socket', () => {
     expect((await ask(s, 5, { op: 'buy', node: 'pull' })).error).toBeUndefined();
     expect((await ask(s, 6, { op: 'buy', node: 'slam' })).skills.state.bought).toEqual(['pull', 'slam']);
     expect(await ask(s, 7, { op: 'buy', node: 'pull_many' })).toMatchObject({ error: 'not_unlocked' });
-    // Tier III waits for level 30, whoever unlocked it
-    expect(server.ws.skills.unlock(id, 'anchor', { kind: 'dev' }).ok).toBe(true);
-    expect(await ask(s, 8, { op: 'buy', node: 'anchor' })).toMatchObject({ error: 'level' });
+    // Phase 1 sells Tier I and II: Tier III is refused by any route
+    expect(server.ws.skills.unlock(id, 'anchor', { kind: 'dev' })).toMatchObject({ ok: false, error: { code: 'phase' } });
+    expect(await ask(s, 8, { op: 'unlock', node: 'anchor' })).toMatchObject({ error: 'phase' });
 
     // the people's node is unlocked from the start
     expect((await ask(s, 9, { op: 'buy', node: 'second_lung' })).skills.state.bought).toEqual(['pull', 'slam', 'second_lung']);
@@ -197,6 +197,8 @@ describe('the skill web over the socket', () => {
     expect(a.inventory.inventory.pods).toHaveLength(1);
     expect(a.inventory.inventory.stackMax).toBe(9999);
 
+    // Pack Mule is Tier III, past Phase 1's ceiling: the server lifts it here as Phase 2 will
+    first.ws.skills.maxTier = 4;
     // a city skill master teaches Exo-suit: the server unlocks, the client buys
     for (const node of ['hazard_weave', 'pack_mule']) expect(first.ws.skills.unlock(id, node, { kind: 'trainer', trainer: 'city_master' }).ok).toBe(true);
     expect(await ask(a.s, 1, { op: 'buy', node: 'pack_mule' })).toMatchObject({ error: 'prerequisite' });
@@ -225,7 +227,8 @@ describe('the skill web over the socket', () => {
 
     const second = await start(shard);
     const b = await join(second, acct.token, id);
-    expect(b.skills).toEqual({ t: 'skills', seq: 0, skills: mule.skills });
+    // under the default ceiling again: what is owned stays owned
+    expect(b.skills).toEqual({ t: 'skills', seq: 0, skills: { ...mule.skills, maxTier: 2 } });
     expect(b.inventory.inventory).toEqual(stowed.inventory);
     expect(b.inventory.inventory.pods).toHaveLength(2);
     expect(b.inventory.inventory.stackMax).toBe(15000);

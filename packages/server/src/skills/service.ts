@@ -14,7 +14,7 @@
 // evicts it with `close()` once it has left; every other call is for a character the service holds and throws a
 // SkillsNotHeldError for one it does not.
 import { getHull, getTrainer, type Requirement } from '@astra/shared/data';
-import { layoutFor, type InventoryLayout } from '@astra/shared/inventory';
+import { applyLayout, layoutFor, spendUnits, type InventoryLayout } from '@astra/shared/inventory';
 import { LoadoutError, shipStats, type ShipLoadout } from '@astra/shared/ships';
 import {
   applySkillOp,
@@ -28,8 +28,10 @@ import {
   preUnlockedNode,
   respecNodes,
   setAvailablePoints,
+  SKILL_PHASE,
   unlockVia,
   WEB_REQUIREMENTS,
+  type PhaseTier,
   type SkillContext,
   type SkillErrorCode,
   type SkillFailure,
@@ -76,6 +78,8 @@ export interface SkillServiceDeps {
   /** Each character in play's level (persistence's progress holder). */
   progress: { get(characterId: string): { level: number } | undefined };
   hooks?: Partial<SkillHooks>;
+  /** The highest phase tier sold (SKILL_PHASE.maxTier: Tier I–II in Phase 1). */
+  maxTier?: PhaseTier;
   /** Hears a listener that threw (the gateway logs it). */
   onListenerError?: (err: unknown) => void;
 }
@@ -97,6 +101,8 @@ interface Entry {
 export class SkillService {
   /** Each later system replaces its own as it lands (NPC trainers, combat, standing). */
   hooks: SkillHooks;
+  /** The highest phase tier sold, sent in every view so the client agrees. Phase 2 (and tests of Tier III) raise it. */
+  maxTier: PhaseTier;
   private readonly entries = new Map<string, Entry>();
   private readonly listeners = new Set<SkillListener>();
   private readonly inventory: InventoryService;
@@ -109,6 +115,7 @@ export class SkillService {
     this.ships = deps.ships;
     this.progress = deps.progress;
     this.hooks = { ...NO_HOOKS, ...deps.hooks };
+    this.maxTier = deps.maxTier ?? SKILL_PHASE.maxTier;
     this.onListenerError = deps.onListenerError ?? (() => {});
   }
 
@@ -160,7 +167,7 @@ export class SkillService {
   view(characterId: string): SkillView {
     const e = this.entry(characterId);
     const ctx = this.context(characterId);
-    return { state: e.state, level: ctx.level, shipSlots: ctx.shipSlots, met: WEB_REQUIREMENTS.filter((r) => ctx.meets(r)) };
+    return { state: e.state, level: ctx.level, shipSlots: ctx.shipSlots, met: WEB_REQUIREMENTS.filter((r) => ctx.meets(r)), maxTier: ctx.maxTier };
   }
 
   /** What to send a session about a held character: its view and the last request handled. */
@@ -269,15 +276,12 @@ export class SkillService {
   }
 
   /**
-   * Carries a change of owned nodes into the systems it touches, or refuses it with nothing changed: the units a respec
-   * costs, and the inventory's layout (Pack Mule's stack cap, and its cargo bay, which takes a pod aboard the ship or
-   * gives one back). A layout that cannot hold what is carried is `no_room`, as a hull change is.
+   * Carries a change of owned nodes into the systems it touches, as one transaction: the units a respec costs, and the
+   * inventory's layout (Pack Mule's stack cap, and its cargo bay, which takes a pod aboard the ship or gives one back).
+   * Every change is first tried on the inventory as it stands with the shared functions the service applies, and only
+   * when all of them pass are they made, so a refusal (`no_room`, as a hull change is; `units`) changes nothing.
    */
   private carry(characterId: string, before: readonly string[], after: readonly string[], units: number): SkillFailure | null {
-    if (units > 0) {
-      const held = this.inventory.state(characterId).inventory.units;
-      if (held < units) return fail('units', `the respec costs ${units} units; you have ${held}`);
-    }
     const ship = this.ships.get(characterId) ?? null;
     let nextShip: ShipLoadout | null;
     let from: InventoryLayout;
@@ -290,12 +294,20 @@ export class SkillService {
       if (err instanceof LoadoutError) return fail('invalid_state', `the ship cannot fly: ${err.message}`);
       throw err;
     }
-    if (!sameLayout(from, to)) {
-      const r = this.inventory.setLoadout(characterId, { ship: nextShip, skills: after });
-      if (!r.ok) return fail('no_room', 'the inventory cannot hold what it carries in the layout this leaves; store or sell some first');
+    const relayout = !sameLayout(from, to);
+    if (relayout || units > 0) {
+      const held = this.inventory.state(characterId).inventory;
+      let trial = held;
+      if (relayout) {
+        const r = applyLayout(trial, to);
+        if (!r.ok) return fail('no_room', 'the inventory cannot hold what it carries in the layout this leaves; store or sell some first');
+        trial = r.inv;
+      }
+      if (units > 0 && !spendUnits(trial, units).ok) return fail('units', `the respec costs ${units} units; you have ${held.units}`);
+      // the trial passed on this very inventory, so neither can fail now
+      if (relayout) applied(this.inventory.setLoadout(characterId, { ship: nextShip, skills: after }), 'the new layout');
+      if (units > 0) applied(this.inventory.spend(characterId, units), 'the respec charge');
     }
-    // checked above, and a layout never changes units
-    if (units > 0 && !this.inventory.spend(characterId, units).ok) return fail('units', `the respec costs ${units} units`);
     if (nextShip !== ship) this.ships.set(characterId, nextShip);
     return null;
   }
@@ -340,6 +352,7 @@ export class SkillService {
       level: this.level(characterId),
       shipSlots: ship ? getHull(ship.hull).abilitySlots : 0,
       meets: (req) => this.hooks.meets(characterId, req),
+      maxTier: this.maxTier,
     };
   }
 
@@ -350,14 +363,19 @@ export class SkillService {
   }
 }
 
-/** The ship once owned nodes change: a cargo bay gained takes a pod aboard, one lost gives one back (DESIGN 9.8, Pack Mule:
- * "+1 cargo pod on the ship"). The same ship when its bays do not change. */
+/** The ship once owned nodes change: a cargo bay gained takes a pod aboard (DESIGN 9.8, Pack Mule: "+1 cargo pod on the
+ * ship"); a bay lost gives back only a pod the ship no longer has a bay for. The same ship when its pods do not change. */
 function podsAboard(ship: ShipLoadout, before: readonly string[], after: readonly string[]): ShipLoadout {
   const bays = (skills: readonly string[]) => shipStats({ ...ship, cargoPods: 0 }, { skills }).cargoPods;
   const now = bays(after);
   const delta = now - bays(before);
-  if (!delta) return ship;
-  return { ...ship, cargoPods: Math.max(0, Math.min(ship.cargoPods + delta, now)) };
+  const pods = delta > 0 ? Math.min(ship.cargoPods + delta, now) : Math.min(ship.cargoPods, now);
+  return pods === ship.cargoPods ? ship : { ...ship, cargoPods: pods };
+}
+
+/** A change whose trial passed must apply; one that does not is a bug, never a half-made change left quietly. */
+function applied(r: { ok: boolean }, what: string): void {
+  if (!r.ok) throw new Error(`${what} failed after its trial passed`);
 }
 
 function sameLayout(a: InventoryLayout, b: InventoryLayout): boolean {

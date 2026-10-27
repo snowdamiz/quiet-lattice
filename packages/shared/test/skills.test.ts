@@ -20,11 +20,13 @@ import {
   nodeStatus,
   parseSkillOp,
   parseSkillState,
+  phaseTierOf,
   pointsOf,
   respecCost,
   respecNodes,
   setAvailablePoints,
   SHIP_SLOTS,
+  SKILL_PHASE,
   skillStateProblem,
   skillStateSchema,
   slotNode,
@@ -33,16 +35,19 @@ import {
   unslotNode,
   usableSlots,
   WEB_REQUIREMENTS,
+  type PhaseTier,
   type SkillContext,
   type SkillResult,
   type SkillState,
 } from '../src/skills/index.ts';
 
 const REACHES: Requirement = { kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' };
-const ctx = (level = 50, opts: { shipSlots?: number; meets?: boolean } = {}): SkillContext => ({
+/** A context for the rules. The whole web is on sale (`maxTier` 4) unless a test asks for this phase's ceiling. */
+const ctx = (level = 50, opts: { shipSlots?: number; meets?: boolean; maxTier?: PhaseTier } = {}): SkillContext => ({
   level,
   shipSlots: opts.shipSlots ?? 2,
   meets: () => opts.meets ?? false,
+  maxTier: opts.maxTier ?? 4,
 });
 
 function ok<T extends object>(r: SkillResult<T>): Extract<SkillResult<T>, { ok: true }> {
@@ -336,6 +341,46 @@ describe('buying', () => {
   });
 });
 
+describe('the phase ceiling', () => {
+  const phase1 = (level = 50) => ctx(level, { maxTier: SKILL_PHASE.maxTier, meets: true });
+  const ABOVE = ['anchor', 'pack_mule', 'quiet_mind', 'singularity', 'second_skin', 'collapse_star', 'green_hull'];
+
+  it('sells Tier I and II in Phase 1, and nothing above: Tier III, capstones, conjunctions', () => {
+    expect(SKILL_PHASE.maxTier).toBe(2);
+    expect(SKILL_NODES.map(phaseTierOf).filter((t) => t <= SKILL_PHASE.maxTier)).toHaveLength(7 * 9);
+    expect(phaseTierOf(SKILL_NODES.find((n) => n.id === 'collapse_star')!)).toBe(3);
+    expect(phaseTierOf(SKILL_NODES.find((n) => n.id === 'singularity')!)).toBe(4);
+  });
+
+  it('refuses unlocking above it by any route, the developer’s included, and keeps the data', () => {
+    const rich = frozen(FRAGMENT_BRANCHES.reduce((s, b) => ok(grantFragments(s, b, 100)).state, emptySkillState()));
+    expect(code(unlockWithFragments(rich, phase1(), 'anchor'))).toBe('phase');
+    expect(code(unlockVia(rich, phase1(), 'pack_mule', { kind: 'trainer', trainer: 'city_master' }))).toBe('phase');
+    expect(code(unlockVia(rich, phase1(), 'singularity', { kind: 'chapter', chapter: 26 }))).toBe('phase');
+    expect(code(unlockVia(rich, phase1(), 'collapse_star', { kind: 'discovery' }))).toBe('phase');
+    for (const id of ABOVE) expect(code(unlockVia(rich, phase1(), id, { kind: 'dev' })), id).toBe('phase');
+    // Tier I and II as before
+    expect(ok(unlockWithFragments(rich, phase1(), 'slam')).spent).toBe(3);
+    expect(ok(unlockVia(rich, phase1(), 'hazard_weave', { kind: 'trainer', trainer: 'city_master' })).ok).toBe(true);
+    // lifting the ceiling (Phase 2) sells them with no change to the data
+    expect(ok(unlockVia(rich, ctx(50, { maxTier: 4 }), 'pack_mule', { kind: 'trainer', trainer: 'city_master' })).ok).toBe(true);
+  });
+
+  it('refuses buying above it even when unlocked, and the web screen shows it locked', () => {
+    // unlocked under a higher ceiling (a test, a later phase), then sold under Phase 1's
+    const s = frozen({ ...owning(['pull', 'slam']), unlocked: ['pull', 'slam', 'anchor', 'well'] });
+    expect(code(buyNode(s, phase1(), 'anchor'))).toBe('phase');
+    expect(buyError(s, phase1(), 'anchor')?.message).toMatch(/Anchor is not in the game yet/);
+    expect(ok(buyNode(s, phase1(), 'well')).ok).toBe(true);
+    expect(nodeStatus(s, phase1(), 'anchor')).toBe('unlocked');
+    expect(nodeStatus(frozen(ok(grantFragments(s, 'gravitic', 6)).state), phase1(), 'crush')).toBe('locked');
+    // what is owned stays owned, slots and respecs: the ceiling sells, it never takes away
+    const owned = owning(['pull', 'slam', 'anchor']);
+    expect(ok(slotNode(owned, phase1(), 'ground', 0, 'anchor')).ok).toBe(true);
+    expect(ok(respecNodes(owned, ['anchor'])).points).toBe(1);
+  });
+});
+
 describe('the bars', () => {
   const s = owning(['pull', 'heavy_footing', 'tractor_beam', 'slam', 'well', 'pull_many', 'inertial_brake', 'lance', 'chain']);
 
@@ -436,8 +481,9 @@ describe('requests', () => {
   });
 
   it('predict from the view the server sends', () => {
-    const view = { state: emptySkillState(), level: 16, shipSlots: 3, met: [REACHES] };
+    const view = { state: emptySkillState(), level: 16, shipSlots: 3, met: [REACHES], maxTier: 2 as const };
     const c = contextOf(view);
+    expect(c.maxTier).toBe(2);
     expect(c.level).toBe(16);
     expect(c.shipSlots).toBe(3);
     expect(c.meets(REACHES)).toBe(true);

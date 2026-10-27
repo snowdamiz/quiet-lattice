@@ -96,7 +96,8 @@ export type Discovery = z.infer<typeof discoverySchema>;
 
 /** One way a node becomes unlocked; a node is unlocked when any of its routes is met. */
 export const unlockRouteSchema = z.discriminatedUnion('kind', [
-  /** Hold this many memory fragments of the branch (Tier I 1, II 3, III 6). */
+  /** Spend this many memory fragments of the branch to unlock it (Tier I 1, II 3, III 6): the `unlock` request, whose rule
+   * is `unlockWithFragments` in `@astra/shared/skills`. */
   z.strictObject({ kind: z.literal('fragments'), branch: branchSchema, count: z.literal([1, 3, 6]) }),
   /** Learn it from a trainer; rank null needs no rank, only that you met them. */
   z.strictObject({ kind: z.literal('trainer'), trainer: idSchema, rank: idSchema.nullable() }),
@@ -173,7 +174,8 @@ export const skillRulesSchema = z.strictObject({
   level: z.strictObject({ 1: z.literal(1), 2: z.literal(15), 3: z.literal(30), capstone: z.literal(45), conjunction: z.literal(15) }),
   fragments: z.strictObject({ 1: z.literal(1), 2: z.literal(3), 3: z.literal(6) }),
   capstoneChapters: z.strictObject(Object.fromEntries(BRANCHES.map((b) => [b, chapterSchema])) as Record<Branch, typeof chapterSchema>),
-  slots: z.strictObject({ ground: countSchema, ship: countSchema }),
+  /** Ground actives (keys 1–6). Ship actives have no fixed count: the flown hull's ability slots (DESIGN 9.1, 10.2). */
+  slots: z.strictObject({ ground: countSchema }),
   respec: z.strictObject({ unitsPerPoint: countSchema, trainer: idSchema, voidTrainer: idSchema }),
   voidRequires: requirementSchema,
   /** A monolith on a world meeting the condition grants this branch's fragment instead of its world's (one fragment a touch). */
@@ -187,7 +189,7 @@ export const SKILL_RULES: SkillRules = deepFreeze({
   level: { 1: 1, 2: 15, 3: 30, capstone: 45, conjunction: 15 },
   fragments: { 1: 1, 2: 3, 3: 6 },
   capstoneChapters: { gravitic: 13, thermal: 13, resonance: 17, symbiotic: 20, void: 16, pilot: 23, exosuit: 23 },
-  slots: { ground: 6, ship: 4 },
+  slots: { ground: 6 },
   respec: { unitsPerPoint: 500, trainer: 'chorus_listener', voidTrainer: 'reaches_quartermaster' },
   voidRequires: { kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' },
   fragmentOverrides: [{ branch: 'symbiotic', condition: 'analyzed_every_species', text: 'any world where you have analyzed every species' }],

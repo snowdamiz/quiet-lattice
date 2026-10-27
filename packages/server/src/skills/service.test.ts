@@ -4,7 +4,7 @@
 // inventory, and a change that would lose items is refused with nothing changed.
 import type { HullId } from '@astra/shared/data';
 import { countOf } from '@astra/shared/inventory';
-import { emptySkillState, newSkillState, type SkillState } from '@astra/shared/skills';
+import { emptySkillState, newSkillState, SKILL_PHASE, type PhaseTier, type SkillState } from '@astra/shared/skills';
 import { describe, expect, it } from 'vitest';
 import { InventoryService } from '../inventory/service.ts';
 import { CharacterProgress, DEFAULT_SHIP, ShipLoadouts } from '../persistence/components.ts';
@@ -12,11 +12,12 @@ import { SkillsNotHeldError, SkillService, type SkillChange, type SkillReply } f
 
 const ID = 'c1';
 
-function world(opts: { level?: number; hull?: HullId | null; people?: string; saved?: SkillState } = {}) {
+/** A character in play. `maxTier` 4 sells the whole web (Pack Mule is Tier III, past Phase 1's ceiling). */
+function world(opts: { level?: number; hull?: HullId | null; people?: string; saved?: SkillState; maxTier?: PhaseTier } = {}) {
   const inventory = new InventoryService();
   const ships = new ShipLoadouts();
   const progress = new CharacterProgress();
-  const skills = new SkillService({ inventory, ships, progress });
+  const skills = new SkillService({ inventory, ships, progress, maxTier: opts.maxTier });
   const heard: { id: string; reply: SkillReply; change: SkillChange }[] = [];
   skills.subscribe((id, reply, change) => heard.push({ id, reply, change }));
   const ship = opts.hull === null ? null : { ...DEFAULT_SHIP, hull: opts.hull ?? 'lark', modules: {} };
@@ -39,7 +40,7 @@ function world(opts: { level?: number; hull?: HullId | null; people?: string; sa
 describe('skill service', () => {
   it('puts a character in play with its people’s node, and reads its level and ship live', () => {
     const { skills, progress, ships } = world({ people: 'ixari' });
-    expect(skills.view(ID)).toEqual({ state: newSkillState('ixari'), level: 50, shipSlots: 2, met: [] });
+    expect(skills.view(ID)).toEqual({ state: newSkillState('ixari'), level: 50, shipSlots: 2, met: [], maxTier: SKILL_PHASE.maxTier });
     progress.set(ID, { level: 20, xp: 0, homeSystem: 0 });
     ships.set(ID, { ...DEFAULT_SHIP, hull: 'swift', modules: {} });
     expect(skills.view(ID)).toMatchObject({ level: 20, shipSlots: 3 });
@@ -133,7 +134,7 @@ describe('skill service', () => {
   });
 
   it('carries Pack Mule to the ship and the inventory: a cargo pod aboard and the 15000 stack cap, and back on a respec', () => {
-    const { skills, inventory, ships, own } = world({ level: 30 });
+    const { skills, inventory, ships, own } = world({ level: 30, maxTier: 4 });
     own('cartridge_recycler', 'hazard_weave');
     expect(skills.unlock(ID, 'pack_mule', { kind: 'trainer', trainer: 'city_master' }).ok).toBe(true);
     expect(skills.request(ID, 1, { op: 'buy', node: 'pack_mule' }).error).toBeUndefined();
@@ -160,8 +161,50 @@ describe('skill service', () => {
     expect(inventory.get(ID)!.units).toBe(2000);
   });
 
+  it('refuses a Pack Mule respec it cannot pay for with nothing changed: layout, pods, units, nodes', () => {
+    const { skills, inventory, ships, own } = world({ level: 30, maxTier: 4 });
+    own('cartridge_recycler', 'hazard_weave', 'pack_mule');
+    skills.hooks.trainerAtHand = () => true;
+    expect(inventory.spend(ID, 2200).ok).toBe(true);
+    const before = { inventory: structuredClone(inventory.get(ID)), ship: structuredClone(ships.get(ID)), state: skills.get(ID) };
+    expect(before.inventory!.pods).toHaveLength(2);
+    // the refund would fit the inventory (it is empty), but 300 units do not pay for a point
+    expect(skills.request(ID, 1, { op: 'respec', nodes: ['pack_mule'] })).toMatchObject({ error: 'units' });
+    expect(inventory.get(ID)).toEqual(before.inventory);
+    expect(ships.get(ID)).toEqual(before.ship);
+    expect(skills.get(ID)).toBe(before.state);
+  });
+
+  it('gives back a pod on refunding Pack Mule only when the ship carries more than its bays', () => {
+    const { skills, inventory, ships, own } = world({ level: 30, maxTier: 4 });
+    own('cartridge_recycler', 'hazard_weave', 'pack_mule');
+    skills.hooks.trainerAtHand = () => true;
+    // the Lark has two bays now but carries one pod
+    const one = { ...ships.get(ID)!, cargoPods: 1 };
+    ships.set(ID, one);
+    expect(inventory.setLoadout(ID, { ship: one, skills: skills.owned(ID) }).ok).toBe(true);
+    expect(skills.respec(ID, ['pack_mule']).ok).toBe(true);
+    expect(ships.get(ID)!.cargoPods).toBe(1);
+    expect(inventory.get(ID)!.pods).toHaveLength(1);
+    expect(inventory.get(ID)!.stackMax).toBe(9999);
+  });
+
+  it('sells only Tier I and II in Phase 1, and says so in the view', () => {
+    const { skills, own } = world({ level: 50 });
+    expect(skills.view(ID).maxTier).toBe(2);
+    own('cartridge_recycler', 'hazard_weave');
+    expect(skills.unlock(ID, 'pack_mule', { kind: 'trainer', trainer: 'city_master' })).toMatchObject({ ok: false, error: { code: 'phase' } });
+    expect(skills.unlock(ID, 'pack_mule', { kind: 'dev' })).toMatchObject({ ok: false, error: { code: 'phase' } });
+    expect(skills.grantFragments(ID, 'gravitic', 20).ok).toBe(true);
+    expect(skills.request(ID, 1, { op: 'unlock', node: 'anchor' })).toMatchObject({ error: 'phase' });
+    expect(skills.request(ID, 2, { op: 'unlock', node: 'slam' }).error).toBeUndefined();
+    skills.maxTier = 4;
+    expect(skills.view(ID).maxTier).toBe(4);
+    expect(skills.request(ID, 3, { op: 'unlock', node: 'anchor' }).error).toBeUndefined();
+  });
+
   it('raises only the stack cap for a character with no ship', () => {
-    const { inventory, ships, own } = world({ level: 30, hull: null });
+    const { inventory, ships, own } = world({ level: 30, hull: null, maxTier: 4 });
     own('cartridge_recycler', 'hazard_weave', 'pack_mule');
     expect(ships.get(ID)).toBeNull();
     expect(inventory.get(ID)!.pods).toHaveLength(0);

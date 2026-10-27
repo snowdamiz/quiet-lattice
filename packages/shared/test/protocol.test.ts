@@ -60,6 +60,7 @@ const skills: SkillView = {
   level: 16,
   shipSlots: 2,
   met: [{ kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' }],
+  maxTier: 2,
 };
 
 const clientSamples: ClientMessage[] = [
@@ -196,7 +197,7 @@ describe('protocol: control messages', () => {
 
   it('round-trips skill state with and without a refusal, and tells the two skills messages apart', () => {
     for (const m of [
-      { t: 'skills' as const, seq: 0, skills: { state: emptySkillState(), level: 1, shipSlots: 0, met: [] } },
+      { t: 'skills' as const, seq: 0, skills: { state: emptySkillState(), level: 1, shipSlots: 0, met: [], maxTier: 4 as const } },
       { t: 'skills' as const, seq: 12, skills, error: 'prerequisite' as const },
     ]) {
       const text = encodeMessage(m);
@@ -332,6 +333,8 @@ describe('protocol: control messages', () => {
       { ...skills, state: { ...st, fragments: { ...st.fragments, pilot: { earned: 1, spent: 0 } } } },
       { ...skills, state: { ...st, units: 4 } },
       { ...skills, shipSlots: 6 },
+      { ...skills, maxTier: 5 },
+      { ...skills, maxTier: undefined },
       { ...skills, level: 51 },
     ])
       expect(decodeServerMessage(JSON.stringify({ t: 'skills', seq: 1, skills: bad }))).toBeNull();

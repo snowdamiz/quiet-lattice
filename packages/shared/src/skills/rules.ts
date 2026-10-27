@@ -5,7 +5,8 @@
 //
 // A node is unlocked by the world (fragments, a trainer, a story chapter, a discovery, a quest, the character's people)
 // and then bought with points. Buying needs the tier's level, one owned node of the tier below in the branch (Tier II in
-// both branches for a conjunction), an augment's target, the branch's standing gate (Void) and the points.
+// both branches for a conjunction), an augment's target, the branch's standing gate (Void) and the points. Nothing above
+// the phase ceiling (SKILL_PHASE) is unlocked or bought.
 import { PEOPLES } from '../data/peoples.ts';
 import { SKILL_NODES, SKILL_RULES, type Requirement, type SkillNode, type UnlockRoute } from '../data/skills/index.ts';
 import type { Branch } from '../data/common.ts';
@@ -16,6 +17,7 @@ import {
   isFragmentBranch,
   MAX_FRAGMENTS,
   MAX_GRANTED_POINTS,
+  phaseTierOf,
   SHIP_SLOTS,
   skillNode,
   skillOpSchema,
@@ -23,6 +25,7 @@ import {
   type Bar,
   type FragmentBranch,
   type Fragments,
+  type PhaseTier,
   type SkillError,
   type SkillErrorCode,
   type SkillOp,
@@ -38,6 +41,8 @@ export interface SkillContext {
   shipSlots: number;
   /** Whether the character meets a standing gate (a faction rank). */
   meets(req: Requirement): boolean;
+  /** The highest phase tier sold now (SKILL_PHASE.maxTier unless the server says otherwise). */
+  maxTier: PhaseTier;
 }
 
 export type SkillFailure = { ok: false; error: SkillError };
@@ -81,7 +86,7 @@ export const WEB_REQUIREMENTS: readonly Requirement[] = SKILL_NODES.flatMap((n) 
 
 /** The context a client predicts with, from the view the server sent. */
 export function contextOf(view: SkillView): SkillContext {
-  return { level: view.level, shipSlots: view.shipSlots, meets: (r) => view.met.some((m) => sameRequirement(m, r)) };
+  return { level: view.level, shipSlots: view.shipSlots, meets: (r) => view.met.some((m) => sameRequirement(m, r)), maxTier: view.maxTier };
 }
 
 export function owns(state: SkillState, id: string): boolean {
@@ -115,6 +120,12 @@ export function missingPrerequisites(node: SkillNode, owned: ReadonlySet<string>
   for (const t of node.prereq.tiers) if (!ownsTier(owned, t.branch, t.tier)) missing.push(`a Tier ${ROMAN[t.tier]} ${t.branch} node`);
   for (const id of node.prereq.nodes) if (!owned.has(id)) missing.push(skillNode(id)?.name ?? id);
   return missing;
+}
+
+/** Why a node is past the phase ceiling, or null when this phase sells it. */
+function pastPhase(node: SkillNode, ctx: SkillContext): SkillError | null {
+  if (phaseTierOf(node) <= ctx.maxTier) return null;
+  return { code: 'phase', message: `${node.name} is not in the game yet` };
 }
 
 function unmetGate(node: SkillNode, ctx: SkillContext): Requirement | null {
@@ -201,6 +212,8 @@ export function unlockWithFragments(state: SkillState, ctx: SkillContext, id: st
   const node = skillNode(id);
   if (!node) return fail('unknown_node', `no skill node ${id}`);
   if (isUnlocked(state, id)) return fail('already_unlocked', `${node.name} is unlocked already`);
+  const phase = pastPhase(node, ctx);
+  if (phase) return { ok: false, error: phase };
   const route = fragmentRoute(node);
   if (!route) return fail('no_route', `${node.name} is not unlocked with fragments`);
   const gate = unmetGate(node, ctx);
@@ -213,7 +226,7 @@ export function unlockWithFragments(state: SkillState, ctx: SkillContext, id: st
 }
 
 /** Who unlocks a node on the server. A trainer's faction rank is its caller's to check (it knows where they met); the
- * node's standing gate is checked here. `dev` is the developer CLI's, and bypasses both. */
+ * node's standing gate is checked here. `dev` is the developer CLI's, and bypasses both; the phase ceiling holds for all. */
 export type UnlockSource =
   | { kind: 'trainer'; trainer: string }
   | { kind: 'chapter'; chapter: number }
@@ -242,6 +255,8 @@ export function unlockVia(state: SkillState, ctx: SkillContext, id: string, sour
   const node = skillNode(id);
   if (!node) return fail('unknown_node', `no skill node ${id}`);
   if (isUnlocked(state, id)) return fail('already_unlocked', `${node.name} is unlocked already`);
+  const phase = pastPhase(node, ctx);
+  if (phase) return { ok: false, error: phase };
   if (source.kind !== 'dev') {
     if (!node.unlock.anyOf.some((r) => routeMatches(r, source))) return fail('no_route', `${node.name} is not unlocked by that ${source.kind}`);
     const gate = unmetGate(node, ctx);
@@ -257,6 +272,8 @@ export function buyError(state: SkillState, ctx: SkillContext, id: string): Skil
   const node = skillNode(id);
   if (!node) return { code: 'unknown_node', message: `no skill node ${id}` };
   if (owns(state, id)) return { code: 'already_owned', message: `${node.name} is owned already` };
+  const phase = pastPhase(node, ctx);
+  if (phase) return phase;
   if (!isUnlocked(state, id)) return { code: 'not_unlocked', message: `${node.name} is not unlocked` };
   if (ctx.level < node.level) return { code: 'level', message: `${node.name} needs level ${node.level}` };
   const missing = missingPrerequisites(node, new Set(state.bought));
