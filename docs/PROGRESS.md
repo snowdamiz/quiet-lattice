@@ -61,3 +61,4 @@ half-merged. Orchestrator helpers, saved grader verdicts and the hull authoring 
 Open decisions for the owner: P1.E01.T05 (CI) needs a GitHub remote. Hull exports are large (a 1024 px Lark with three
 variants is 81 MB; 4k would be ~650 MB a hull) and `packages/client/public/models` is not in Git LFS: either track
 models under LFS or add texture compression (KTX2) before the art lands on main.
+| 2026-10-26 | P1.E14.T11 | Review scene: a 100 m (and 200 m for heroes) LOD2 view, a collider and marker overlay, a paired ABBA perf readout with a reliability flag, a labelled sibling sheet, UV-mapped material-sheet balls. | `packages/client/src/dev/review.js`, `packages/tools/src/capture/*`, `packages/tools/blender/turntable.py` | turntable selftest 38/38; two ship perf runs within 0.25 ms; review PASS |
