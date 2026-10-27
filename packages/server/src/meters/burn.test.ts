@@ -167,7 +167,12 @@ describe('the pulse drive’s burn under movement authority', () => {
         // it leaves and comes back where it was, on the drive: its meters saved and opened again, a fresh mover; the
         // gateway puts the meters where its entity entered (`located`), or, before it does, they charge as near a body
         r.meters.open(ID, r.meters.close(ID)!);
-        r.h = new Harness(D, { pose: pose(null, [x, OPEN[1], OPEN[2]], [V, 0, 0], noseTo([1, 0, 0])), mode: 'pulse' }, { characterId: ID }, { now: left, meters: r.meters });
+        r.h = new Harness(
+          D,
+          { pose: pose(null, [x, OPEN[1], OPEN[2]], [V, 0, 0], noseTo([1, 0, 0])), mode: 'pulse' },
+          { characterId: ID },
+          { now: left, meters: r.meters },
+        );
         if (located) r.meters.locate(ID, r.viewer, left);
         r.believedX = x;
         r.accepted = 0;
