@@ -142,7 +142,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   (spend fragments), `buy {node}`, `slot {bar, index, node}`, `unslot {bar, index}` (`bar` is `ground` or `ship`, `index`
   0–5) or `respec {nodes}`; node ids are id-shaped strings of at most 48 characters, and one the web lacks is answered
   `unknown_node` rather than dropped. The server answers every request with `skills {seq, skills, error?}`, where
-  `skills` is the view `{state, level, shipSlots, met}` (§14) and `seq`, `error` and `stale_seq` work as the inventory's
+  `skills` is the view `{state, level, shipSlots, met, maxTier}` (§14) and `seq`, `error` and `stale_seq` work as the inventory's
   do; it sends the view after `inventory` on join (`seq` 0) and pushes it whenever server-side calls change it. The client
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
@@ -423,8 +423,13 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
   owned or on the wrong bar, and a ledger that spent more than it earned; `skillStateProblem` refuses an owned node whose
   prerequisites are not owned. Unreadable skills refuse the join. A new character (or one saved before skills existed)
   starts with its people's node unlocked (DESIGN 5.1), still bought with a point; a load adds it if missing.
-- **The view** sent to the client, `{state, level, shipSlots, met}`: `met` is the web's standing gates the character meets
-  (`WEB_REQUIREMENTS`: Void's Free Reaches rank), so `contextOf(view)` lets the client predict every rule.
+- **The view** sent to the client, `{state, level, shipSlots, met, maxTier}`: `met` is the web's standing gates the
+  character meets (`WEB_REQUIREMENTS`: Void's Free Reaches rank) and `maxTier` the server's phase ceiling, so
+  `contextOf(view)` lets the client predict every rule.
+- **Phase ceiling** (`SKILL_PHASE.maxTier`, 2 in Phase 1; IMPLEMENTATION_PLAN 0.8): `phaseTierOf` ranks Tier I–III by
+  number, conjunctions with Tier III and capstones at 4. Nothing above the ceiling is unlocked (by any route, the
+  developer's included) or bought: `phase`. The data stays whole; what is owned stays owned, slotted and refundable. The
+  service's `maxTier` raises it (Phase 2, tests of Tier III such as Pack Mule).
 - **Rules** (`rules.ts`): `unlockWithFragments` spends the node's tier's fragments of its branch (I 1, II 3, III 6; Pilot,
   Exo-suit, capstones and conjunctions have no fragment route); `unlockVia(source)` unlocks from the world only by a route
   the node lists (a trainer that teaches it, a chapter at or past a capstone's, a discovery for a conjunction, its quest,
@@ -441,9 +446,10 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
   tasks answer: `trainerAtHand` (NPC trainers, P1.E09.T05/P1.E07.T13; none until then), `inCombat` (P1.E06.T02; slots swap
   only out of combat) and `meets` (Void's flag, P1.E07.T08; reputation in Phase 2). A buy or respec that changes the
   inventory's layout (Pack Mule: `suit.stack_max` 15000 and one more cargo bay, which takes a pod aboard the ship or gives
-  it back) re-lays the inventory out through `InventoryService.setLoadout` and sets the ship's `cargoPods`, or is refused
-  `no_room` with nothing changed, as a hull change is; a respec checks the units before it changes anything, then spends
-  them. Server-side calls: `grantPoints`, `setPoints` (the CLI's "set skill points": never below what levels give less
+  back only a pod the ship no longer has a bay for) re-lays the inventory out through `InventoryService.setLoadout` and
+  sets the ship's `cargoPods`. The layout and a respec's charge are one transaction: both are tried on the inventory as it
+  stands with the shared `applyLayout` and `spendUnits`, and made only when both pass, so `no_room` (as a hull change
+  is) and `units` change nothing. Server-side calls: `grantPoints`, `setPoints` (the CLI's "set skill points": never below what levels give less
   what is spent), `grantFragments` (P1.E07.T11 decides the count: Listener, Uncounted), `unlock(id, node, source)`,
   `buy`, `respec`, and `refresh` when the level or the hull changes. `owned(id)` is what `shipStats`, movement authority's
   profile, abilities and meters read; `subscribe` hears every change (`request` or `server`), and the gateway pushes the
