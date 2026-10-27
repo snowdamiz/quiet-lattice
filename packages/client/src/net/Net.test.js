@@ -210,6 +210,59 @@ describe('Net: input', () => {
   });
 });
 
+describe('Net: combat', () => {
+  it('asks the server to resolve each shot, numbered from 1 on each connection, and never says what it did', () => {
+    const h = joined();
+    expect(h.net.fire(null)).toBe(false);
+    expect(h.net.fire({ time: 1000.5, frame: '1:2', aim: [0, -0.6, -0.8] })).toBe(true);
+    expect(h.net.fire({ time: 1000.6, frame: '1:2', aim: [0, -0.6, -0.8] })).toBe(true);
+    const shots = h.socket().sent.filter((m) => m.t === 'fire');
+    expect(shots).toEqual([
+      { t: 'fire', seq: 1, time: 1000.5, frame: '1:2', aim: [0, -0.6, -0.8] },
+      { t: 'fire', seq: 2, time: 1000.6, frame: '1:2', aim: [0, -0.6, -0.8] },
+    ]);
+    // a shot carrying an amount is not one the client can send
+    const warn = console.warn;
+    console.warn = () => {};
+    try {
+      expect(h.net.fire({ time: 1000.7, frame: '1:2', aim: [0, 0, -1], damage: 99 })).toBe(false);
+    } finally {
+      console.warn = warn;
+    }
+    h.socket().drop();
+    h.timers.shift().fn();
+    h.socket().open();
+    h.socket().push(welcome());
+    h.net.fire({ time: 1001, frame: '1:2', aim: [0, 0, -1] });
+    expect(h.socket().sent.find((m) => m.t === 'fire').seq).toBe(1);
+  });
+
+  it("keeps the server's word on its own hits, the blows it took and a kill's rewards for the HUD, until taken", () => {
+    const h = joined();
+    const hit = (source, target, extra = {}) => ({ t: 'event', event: { kind: 'combat', source, target, amount: 11, damageType: 'weapon', ability: 'pulse_lasers', killed: false, hp: 0.5, ...extra } });
+    h.socket().push(hit(7, 40));
+    h.socket().push(hit(7, 40, { killed: true, hp: 0 }));
+    h.socket().push(hit(40, 7, { damageType: 'attack', ability: 'leap' }));
+    // someone else's hit on someone else: not the player's to show
+    h.socket().push(hit(8, 41));
+    h.socket().push({ t: 'event', event: { kind: 'xp', amount: 30, from: 40, level: 2 } });
+    h.socket().push({ t: 'event', event: { kind: 'loot', item: 'units', count: 12, from: 40 } });
+    h.socket().push({ t: 'fire', seq: 1, result: 'refused', reason: 'rate' });
+    const got = h.net.combat.take();
+    expect(got.dealt.map((x) => [x.amount, x.killed, x.target])).toEqual([
+      [11, false, 40],
+      [11, true, 40],
+    ]);
+    expect(got.taken.map((x) => [x.amount, x.source])).toEqual([[11, 40]]);
+    expect(got.gained.map((x) => [x.what, x.count])).toEqual([
+      ['xp', 30],
+      ['units', 12],
+    ]);
+    expect(h.net.combat.refused).toEqual({ rate: 1 });
+    expect(h.net.combat.take()).toEqual({ dealt: [], taken: [], gained: [] });
+  });
+});
+
 describe('Net: snapshots', () => {
   it('applies a full snapshot and deltas on their baselines, acknowledging the newest applied tick once a tick', () => {
     const h = joined();
