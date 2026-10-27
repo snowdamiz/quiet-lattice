@@ -1,4 +1,4 @@
-// The ground resource nodes are scattered over (ARCHITECTURE §12, §16): a world's drawn ground, `drawnGround(params, tier)`
+// The ground resource nodes are scattered over (ARCHITECTURE §12, §17): a world's drawn ground, `drawnGround(params, tier)`
 // planned exactly as every client plans it, as the shared spec's NodeGround (the sampler with its pads levelled, and the
 // sites' clearance). The server scatters a cell's nodes over it only when a player mines there or stands near a touched
 // cell, so it never streams or stores the nodes themselves.

@@ -1,4 +1,4 @@
-// Resources on the server (DESIGN 15.3, 16.6 "Resources", 17; ARCHITECTURE §16): mining hits resolve here, and every
+// Resources on the server (DESIGN 15.3, 16.6 "Resources", 17; ARCHITECTURE §17): mining hits resolve here, and every
 // player near a world's touched nodes is kept up to date with them.
 //
 // - Nodes are the shared spec's (`scatterNodes` over `drawnGround`, ARCHITECTURE §12): the server computes a cell's nodes

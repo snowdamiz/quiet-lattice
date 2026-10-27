@@ -77,6 +77,12 @@ export const Username = z
   .max(24)
   .regex(/^[A-Za-z0-9_-]+$/);
 export const Credentials = z.object({ username: Username, password: z.string().min(8).max(128) });
+/** Usernames starting with this, in any case, belong to the server's dev login (P1.E03.T07): registering one is refused. */
+export const DEV_USERNAME_PREFIX = 'dev-';
+/** Whether a username is a dev login's (`dev-…`, any case), which registration refuses and only the dev login reaches. */
+export function isDevUsername(username: string): boolean {
+  return username.toLowerCase().startsWith(DEV_USERNAME_PREFIX);
+}
 export const AuthResponse = z.object({ token: z.string().max(4096), accountId: Id });
 
 export const PeopleId = z.enum(['thalune', 'ixari', 'ulgani']);
@@ -201,7 +207,7 @@ export const CutsceneRequest = z
   })
   .refine((m) => m.op === 'done' || m.skipped === undefined, 'only a done says whether it was skipped');
 
-// ---------- resource nodes (P1.E13.T01, ARCHITECTURE §16) ----------
+// ---------- resource nodes (P1.E13.T01, ARCHITECTURE §17) ----------
 
 /** A world's frame: a planet or moon of the system (never the Waystation's, nor the inertial frame). */
 export const WorldFrameId = z
@@ -230,7 +236,7 @@ export const FloraRef = z.string().regex(/^[A-Za-z0-9_:.-]{1,48}$/);
 /** A plant or rock of the client's flora: its kind, the client's key for it, and where it stands (planet-local m). */
 export const FloraTarget = z.object({ kind: FloraKind, ref: FloraRef, at: Vec3 });
 /**
- * A mining hit (ARCHITECTURE §16): the client's beam is on `node`, a resource node of the world `frame`, or on `flora`,
+ * A mining hit (ARCHITECTURE §17): the client's beam is on `node`, a resource node of the world `frame`, or on `flora`,
  * a plant or rock of its own flora there; sent every quarter second or so while the beam stays on it. The server
  * measures the beam's time itself (a hit is worth the time since the last one it took, at most half a second), checks
  * the player and the target and answers with `mine` state. `time` is the world time of the hit, which the server never
@@ -488,7 +494,7 @@ export const NodeCellState = z.object({
   hurt: z.array(z.tuple([NodeInCell, z.number().min(0).max(1)])).max(128),
 });
 /**
- * Resource nodes as the server holds them (ARCHITECTURE §16), for the cells round the player on world `frame`: pushed
+ * Resource nodes as the server holds them (ARCHITECTURE §17), for the cells round the player on world `frame`: pushed
  * whenever a cell in view changes, as one comes into view and (empty) as one is forgotten. `reset` starts the world over:
  * every cell the client held for it goes, and these are all it now holds (sent as the player arrives on a world).
  */

@@ -9,10 +9,21 @@ import { runMigrations } from '../src/db/migrate.ts';
 import { startServer, type RunningServer, type StartOptions } from '../src/server.ts';
 
 /** A server on a free port. `shard` runs a shard of its own (uniqueShard()) for tests that change the world or its clock;
- * `persistence` tunes character saving (a short interval). */
-export async function startTestServer(config: Partial<Config> = {}, opts: Pick<StartOptions, 'shard' | 'persistence'> = {}): Promise<RunningServer> {
+ * `persistence` tunes character saving (a short interval); `tooling` turns developer tools on (the dev login, off unless
+ * asked for here; the admin channel). */
+export async function startTestServer(
+  config: Partial<Config> = {},
+  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling'> = {},
+): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
-  return startServer({ port: 0, host: '127.0.0.1', config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config }, ...opts });
+  return startServer({
+    port: 0,
+    host: '127.0.0.1',
+    config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config },
+    ...opts,
+    // (an admin channel, if the environment opens one, goes on a free port)
+    tooling: { ASTRA_DEV_LOGIN: false, ASTRA_ADMIN_PORT: 0, ...opts.tooling },
+  });
 }
 
 function letters(n: number): string {

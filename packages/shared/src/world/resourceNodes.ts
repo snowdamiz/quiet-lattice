@@ -316,7 +316,7 @@ export function planetNodeLayers(params: Pick<PlanetParams, 'seed' | 'type' | 'h
 /** What one plant or rock of the common flora gives when a beam breaks it (DESIGN 15.3: carbon from trees, shrubs and
  * ferns; ferrite from rocks, boulders and crystal growths), and where it grows: on worlds with flora (`flora` above
  * FLORA_MIN), on bare ones (the crystal growths), or anywhere. The client's flora scatter places these, for each player
- * alone (they are not nodes); the server grants their yield (ARCHITECTURE §16). The client's own numbers. */
+ * alone (they are not nodes); the server grants their yield (ARCHITECTURE §17). The client's own numbers. */
 export const FLORA_HARVEST = {
   tree: { resource: 'carbon', yield: [12, 25], hp: 3, grows: 'flora' },
   crystal_tree: { resource: 'ferrite', yield: [12, 25], hp: 3, grows: 'flora' },
