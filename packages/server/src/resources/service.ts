@@ -98,8 +98,16 @@ export const MAX_SCATTER_CELLS = 4096;
 export const FLORA_GROUND_M = 8;
 /** Flora keys a character broke that are remembered, so the same plant is not broken twice. */
 export const FLORA_REMEMBERED = 256;
-/** A character that has not mined for this long is forgotten (its rate, beam clock and flora), s. */
-export const MINER_IDLE_S = 120;
+/** A budget on flora per patch of ground, since its places cannot be checked: a character breaks at most
+ * FLORA_PER_PATCH plants and rocks an hour (FLORA_PATCH_S) in any FLORA_PATCH_M-metre patch (a cube of the world's
+ * space; the client's densest flora holds about 5 to a 10 m patch, 15 in a clump), so standing still and naming plants
+ * that are not there soon runs dry. The patches of the last FLORA_PATCHES_KEPT are kept per character. */
+export const FLORA_PATCH_M = 10;
+export const FLORA_PER_PATCH = 24;
+export const FLORA_PATCH_S = 3600;
+export const FLORA_PATCHES_KEPT = 128;
+/** A character that has not mined for this long is forgotten (its rate, beam clock and flora), s: the flora budget's hour. */
+export const MINER_IDLE_S = FLORA_PATCH_S;
 /** Cells per `nodes` message (the schema's cap). */
 export const CELLS_PER_MESSAGE = 128;
 
@@ -130,6 +138,18 @@ export interface MinedEvent {
   broke: boolean;
 }
 export type MinedListener = (e: MinedEvent) => void;
+
+/**
+ * A share as the quest engine's `mine` steps hear it (P1.E09.T01's `{type: 'mine', node, id}`): the node's type, and the
+ * node itself on its world as the distinct thing mined, for a character whose damage earned it a share. Null for the
+ * client's flora (carbon and ferrite count through `collect` steps, which read the inventory) and for a share of
+ * nothing (a few thousandths of a node). Wired as `resources.subscribe((e) => { const q = questMineEvent(e); if (q)
+ * quests.event(e.characterId, q); })`.
+ */
+export function questMineEvent(e: MinedEvent): { type: 'mine'; node: string; id: string } | null {
+  if (e.node === null || e.count <= 0) return null;
+  return { type: 'mine', node: e.what, id: `${e.frame}/${e.node}` };
+}
 
 export interface ResourceServiceOptions {
   zones: ResourceZones;
@@ -175,6 +195,8 @@ interface Miner {
   flora: { ref: string; kind: FloraKind; hp: number } | null;
   /** the keys of the flora it broke lately, oldest first */
   readonly floraDone: Set<string>;
+  /** flora broken per patch of ground (FLORA_PATCH_M), and when each patch's hour began */
+  readonly floraPatches: Map<string, { n: number; since: number }>;
 }
 
 interface View {
@@ -409,6 +431,8 @@ export class ResourceService {
     if (!floraGrows(kind, world.params)) return 'unknown';
     if (miner.floraDone.has(target.ref)) return 'harvested';
     const at = target.at;
+    const patch = this.patchOf(miner, at, now);
+    if (patch.n >= FLORA_PER_PATCH) return 'harvested';
     // within reach of the player before the ground is sampled
     if (!(Math.hypot(at[0] - pos[0], at[1] - pos[1], at[2] - pos[2]) <= MINE_RANGE_M + RANGE_SLACK_M)) return 'range';
     const ground = this.grounds.ground(world.params, tier);
@@ -424,12 +448,28 @@ export class ResourceService {
     f.hp -= this.power(characterId, spec.resource === 'ferrite') * credit;
     if (f.hp > spec.hp * 1e-9) return { ...base, result: 'hit', hp: f.hp / spec.hp };
     miner.flora = null;
+    patch.n++;
     miner.floraDone.add(target.ref);
     if (miner.floraDone.size > FLORA_REMEMBERED) miner.floraDone.delete(miner.floraDone.values().next().value!);
     this.counts.broken++;
     const got = this.grant(characterId, spec.resource, Math.round(this.rng.int(spec.yield[0], spec.yield[1]) * this.yieldMult(characterId)));
     this.emit({ characterId, zone: zoneId, frame: world.frame, node: null, what: kind, resource: spec.resource, ...got, broke: true });
     return { ...base, result: 'depleted', item: spec.resource, ...got };
+  }
+
+  /** The character's flora count in the patch of ground holding `at`, its hour started over when it is past. */
+  private patchOf(miner: Miner, at: Readonly<Vec3>, now: number): { n: number; since: number } {
+    const key = `${Math.floor(at[0] / FLORA_PATCH_M)}:${Math.floor(at[1] / FLORA_PATCH_M)}:${Math.floor(at[2] / FLORA_PATCH_M)}`;
+    let p = miner.floraPatches.get(key);
+    if (p && now - p.since >= FLORA_PATCH_S) {
+      p.n = 0;
+      p.since = now;
+    }
+    if (!p) {
+      miner.floraPatches.set(key, (p = { n: 0, since: now }));
+      if (miner.floraPatches.size > FLORA_PATCHES_KEPT) miner.floraPatches.delete(miner.floraPatches.keys().next().value!);
+    }
+    return p;
   }
 
   /** Whether the beam reaches `target` from the player's eye: in range, then in sight over the ground. */
@@ -645,7 +685,14 @@ export class ResourceService {
   private miner(characterId: string, now: number): Miner {
     let m = this.miners.get(characterId);
     if (!m) {
-      m = { bucket: new TokenBucket(HIT_BURST, HIT_PER_S, now * 1000), lastBeam: now - HIT_INTERVAL_S, lastSeen: now, flora: null, floraDone: new Set() };
+      m = {
+        bucket: new TokenBucket(HIT_BURST, HIT_PER_S, now * 1000),
+        lastBeam: now - HIT_INTERVAL_S,
+        lastSeen: now,
+        flora: null,
+        floraDone: new Set(),
+        floraPatches: new Map(),
+      };
       this.miners.set(characterId, m);
     }
     m.lastSeen = now;

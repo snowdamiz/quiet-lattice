@@ -9,11 +9,14 @@ import { InventoryService } from '../inventory/service.ts';
 import { Zone, type ZoneViewer } from '../zones/zone.ts';
 import { HEAL_S, RESPAWN_S } from './nodes.ts';
 import {
+  FLORA_PATCH_S,
+  FLORA_PER_PATCH,
   HIT_BURST,
   HIT_CREDIT_MAX_S,
   MULTITOOL_POWER,
   NODE_FORGET_M,
   ResourceService,
+  questMineEvent,
   splitByDamage,
   type MinedEvent,
   type ResourceServiceOptions,
@@ -392,6 +395,30 @@ describe('common flora', () => {
     s.flora(a, 'rock', 'r:3', tree);
     expect(s.hit(a, deposit.id).hp).toBe(1);
   });
+
+  it('a patch of ground gives a character at most FLORA_PER_PATCH plants an hour, however it names them', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const up = norm(deposit.stand);
+    /** breaks a rock with a fresh key at `at`: its last answer */
+    let n = 0;
+    const rock = (at: Readonly<Vec3>) => {
+      const ref = `r${n++}`;
+      for (;;) {
+        s.clock.t += 0.5;
+        const r = s.flora(a, 'rock', ref, at);
+        if (r.result !== 'hit') return r;
+      }
+    };
+    const here = world.onGround(up, 3, 3);
+    const answers = Array.from({ length: FLORA_PER_PATCH + 3 }, () => rock(here));
+    expect(answers.filter((r) => r.result === 'depleted').length).toBe(FLORA_PER_PATCH);
+    expect(answers.slice(FLORA_PER_PATCH).map((r) => r.reason)).toEqual(['harvested', 'harvested', 'harvested']);
+    // a patch further off still gives, and an hour on this one gives again
+    expect(rock(world.onGround(up, -12, -14)).result).toBe('depleted');
+    s.clock.t += FLORA_PATCH_S;
+    expect(rock(here).result).toBe('depleted');
+  });
 });
 
 describe('what players are sent', () => {
@@ -497,6 +524,21 @@ describe('what players are sent', () => {
       { t: 'nodes', frame: world.frame, cells: [{ cell, gone: [deposit.id.slice(cell.length + 1)], hurt: [] }] },
     ]);
     expect(JSON.parse(a.texts[0]!)).toEqual(decodeServerMessage(a.texts[0]!));
+  });
+});
+
+describe('questMineEvent', () => {
+  it('a node share is a `mine` event of its type, the node on its world the distinct thing; flora and empty shares are none', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const events: MinedEvent[] = [];
+    s.service.subscribe((e) => events.push(e));
+    s.breakNode(deposit.id, () => [a]);
+    do s.clock.t += 0.5;
+    while (s.flora(a, 'rock', 'q:1', world.onGround(norm(deposit.stand), 3, 3)).result === 'hit');
+    expect(events.map((e) => e.node)).toEqual([deposit.id, null]);
+    expect(events.map(questMineEvent)).toEqual([{ type: 'mine', node: deposit.node.type, id: `${world.frame}/${deposit.id}` }, null]);
+    expect(questMineEvent({ ...events[0]!, count: 0, added: 0 })).toBeNull();
   });
 });
 
