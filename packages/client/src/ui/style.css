@@ -1267,6 +1267,710 @@ kbd,
   from { transform: translateX(-100%); }
   to { transform: translateX(300%); }
 }
+/* the menu by keyboard: a focused row lights as a hovered one */
+.t-item:focus-visible {
+  outline: none;
+  color: var(--text);
+  padding-left: 6px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%);
+}
+.t-item:focus-visible i {
+  color: var(--accent);
+}
+.t-item:focus-visible::before {
+  transform: scaleY(1);
+}
+.t-item:focus-visible em {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- account: sign in, characters, a new character, entering (ui/Account.js) ---------- */
+/* In the title's left column, where the menu was: the menu slides out, the flow's column slides in, and each step's rows
+   rise in one after another. Amber marks the focus and the picked row, as on the menu. Each people wears its palette
+   (art bible §4) on an emblem shaped by its design language (§2: the shell, the facet, the lattice), and on the new
+   character step its name is written in the Cartographer signs, in glyph light (§3.4), beside its saying. */
+.ppl-thalune {
+  --people: #2e8f84;
+  --people-2: #ede6d6;
+  --shape: polygon(50% 100%, 0 60%, 4% 32%, 20% 9%, 50% 0, 80% 9%, 96% 32%, 100% 60%);
+}
+.ppl-ixari {
+  --people: #7a4fd0;
+  --people-2: #b9a6ff;
+  --shape: polygon(50% 0, 88% 24%, 88% 76%, 50% 100%, 12% 76%, 12% 24%);
+}
+.ppl-ulgani {
+  --people: #d9962b;
+  --people-2: #f2ead3;
+  --shape: polygon(50% 4%, 98% 92%, 2% 92%);
+}
+/* (the menu and the column hand over one after the other, never both half there) */
+.title-screen .t-main {
+  transition: opacity 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, visibility 0s;
+}
+.title-screen.flow .t-main {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-24px, -50%);
+  transition: opacity 0.18s ease-in, transform 0.24s cubic-bezier(0.4, 0, 0.7, 0.2), visibility 0s 0.24s;
+}
+/* a deeper shade behind the column while it is open, so its small type holds over the bright limb */
+.acct-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 62%, transparent), color-mix(in srgb, var(--ink) 38%, transparent) 34%, transparent 62%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.title-screen.flow .acct-scrim {
+  opacity: 1;
+}
+.acct {
+  --glyph: #d8f6ff;
+  --glyph-halo: #7fd8ff;
+  --acct-top: clamp(28px, calc(50vh - 370px), 200px);
+  position: absolute;
+  left: calc(clamp(32px, 7vw, 120px) - 18px);
+  top: var(--acct-top);
+  width: min(498px, calc(100vw - 32px));
+  max-height: calc(100vh - var(--acct-top) - 24px);
+  padding: 4px 6px 6px 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  outline: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-16px);
+  transition: opacity 0.18s ease-in, transform 0.24s cubic-bezier(0.4, 0, 0.7, 0.2), visibility 0s 0.24s;
+}
+.acct::-webkit-scrollbar {
+  display: none;
+}
+.title-screen.flow .acct {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, visibility 0s;
+}
+.acct-mark {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.acct-mark b {
+  margin-right: 0.35em;
+  font-weight: 400;
+  color: var(--accent);
+}
+/* where the flow stands: sign in, character, enter */
+.acct-rail {
+  display: flex;
+  align-items: center;
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.acct-rail li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s;
+}
+.acct-rail li + li::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  margin: 0 14px 0 6px;
+  background: var(--line-2);
+}
+.acct-rail i {
+  font-style: normal;
+  transition: color 0.3s;
+}
+.acct-rail li.on {
+  color: var(--text);
+}
+.acct-rail li.on i,
+.acct-rail li.done i {
+  color: var(--accent);
+}
+.acct-body {
+  position: relative;
+  margin-top: 34px;
+}
+.acct-step > :not(form),
+.acct-form > * {
+  animation: acctIn 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 90ms);
+}
+/* the step going: up and out over the one coming in */
+.acct-step.leaving {
+  position: absolute;
+  inset: 0 0 auto 0;
+  pointer-events: none;
+  animation: acctOut 0.22s cubic-bezier(0.4, 0, 0.7, 0.2) forwards;
+}
+.acct-step.leaving > :not(form),
+.acct-step.leaving .acct-form > * {
+  animation: none;
+}
+@keyframes acctIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes acctOut {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.acct-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 1.6vw, 30px);
+  line-height: 1.15;
+  letter-spacing: 0.13em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.acct-titlerow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.acct .acct-count {
+  color: var(--dim);
+}
+.acct-lede {
+  margin: 12px 0 0;
+  max-width: 440px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+.acct-lede b {
+  font-weight: 500;
+  color: var(--text);
+}
+.acct-form {
+  margin-top: 26px;
+}
+/* a field: its label and rule above a bare line of type, underlined in amber from the left while it has the focus */
+.acct-field {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 12px;
+  margin-top: 18px;
+}
+.acct-form > .acct-field:first-child {
+  margin-top: 0;
+}
+.acct .acct-label {
+  color: var(--dim);
+  transition: color 0.2s;
+}
+.acct .acct-hint {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--dim);
+}
+.acct-field input {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 44px;
+  margin-top: 2px;
+  padding: 0 2px;
+  font-family: var(--font-ui);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  caret-color: var(--accent);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line-2);
+  border-radius: 0;
+  outline: none;
+  user-select: text;
+}
+.acct-field input[type='password'] {
+  letter-spacing: 0.16em;
+}
+.acct-field input::selection {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.acct-field input:-webkit-autofill {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--accent);
+  transition: background-color 600000s 0s;
+}
+.acct-line {
+  grid-column: 1 / -1;
+  height: 1px;
+  margin-top: -1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.2s;
+}
+.acct-field:focus-within .acct-line {
+  transform: scaleX(1);
+}
+.acct .acct-field:focus-within .acct-label {
+  color: var(--accent-hi);
+}
+.acct-field.bad .acct-line {
+  transform: scaleX(1);
+  background: var(--danger);
+}
+.acct .acct-field.bad .acct-label {
+  color: var(--danger);
+}
+/* a refusal opens a line under the form (the rows below ease down), its rule red; a notice's is warm */
+.acct-msgwrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-msgwrap.on {
+  grid-template-rows: 1fr;
+}
+.acct-msg {
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+.acct-msg span {
+  display: block;
+  margin-top: 22px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  border-left: 2px solid var(--danger);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--danger) 14%, transparent), transparent 85%);
+}
+.acct-msg.notice span {
+  border-left-color: var(--warm);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--warm) 10%, transparent), transparent 85%);
+}
+.acct-msgwrap.on .acct-msg span {
+  animation: acctMsg 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes acctMsg {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+.acct-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 26px;
+}
+.acct .btn {
+  height: 42px;
+  padding: 0 22px;
+}
+.acct .btn em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct .btn:hover:not(:disabled) em {
+  transform: translateX(3px);
+}
+.acct .btn:focus-visible {
+  outline: 1px solid var(--accent-hi);
+  outline-offset: 3px;
+}
+.acct .btn.ghost:focus-visible {
+  color: var(--accent-hi);
+  border-color: var(--accent);
+  outline: none;
+}
+/* waiting on the server: the button keeps its colour, a dark sweep runs along its foot */
+.acct .btn.busy:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+.acct .btn.busy::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  height: 2px;
+  background: var(--ink);
+  opacity: 0.6;
+  animation: loadSweep 1.1s ease-in-out infinite;
+}
+.acct-link {
+  height: 42px;
+  padding: 0 2px;
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 10px) / 0 1px no-repeat;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.15s, background-size 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-link:hover,
+.acct-link:focus-visible {
+  color: var(--accent-hi);
+  background-size: 100% 1px;
+}
+.acct-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 34px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.acct-keys span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.acct-keys kbd {
+  height: 20px;
+  min-width: 20px;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.acct-keys kbd:last-of-type {
+  margin-right: 6px;
+}
+/* the account's characters, and the people choices: rows like the menu's, the picked one lit and barred in amber */
+.acct-list {
+  display: grid;
+  margin-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.acct-list > * {
+  animation: acctIn 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--j, 0) * 55ms + 180ms);
+}
+.acct-list.fresh > * {
+  animation-delay: calc(var(--j, 0) * 45ms);
+}
+.acct-char,
+.acct-people {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  row-gap: 3px;
+  width: 100%;
+  min-height: 64px;
+  padding: 11px 12px 11px 0;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s, padding 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-char::before,
+.acct-people::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-char:hover:not(:disabled):not(.static),
+.acct-people:hover {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent 75%);
+}
+.acct-char[aria-selected='true'],
+.acct-char.static,
+.acct-people.on {
+  padding-left: 6px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 75%);
+}
+.acct-char[aria-selected='true']::before,
+.acct-char.static::before,
+.acct-people.on::before,
+.acct-new:focus-visible::before {
+  transform: scaleY(1);
+}
+.acct-char.static {
+  cursor: default;
+}
+.acct-char-name,
+.acct-people-name {
+  min-width: 0;
+  font-family: var(--font-cond);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.acct-char-sub,
+.acct-people-sub {
+  grid-column: 2 / -1;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.acct .acct-char-lv,
+.acct .acct-people-tag {
+  color: var(--dim);
+  transition: color 0.2s;
+}
+.acct .acct-char[aria-selected='true'] .acct-char-lv,
+.acct .acct-char.static .acct-char-lv {
+  color: var(--accent-hi);
+}
+.acct-new .acct-char-name {
+  color: var(--dim);
+  transition: color 0.15s;
+}
+.acct-new:hover:not(:disabled) .acct-char-name,
+.acct-new:focus-visible .acct-char-name {
+  color: var(--accent-hi);
+}
+.acct-new:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.acct-loading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  border-bottom: 1px solid var(--line);
+}
+.acct .acct-loading .mono {
+  color: var(--dim);
+}
+/* a people's emblem: its outline in its main colour round a core of its second, in the shape of its design language */
+.acct-emblem,
+.acct-plus {
+  position: relative;
+  display: block;
+  grid-row: 1 / span 2;
+  width: 22px;
+  height: 24px;
+  font-style: normal;
+  background: var(--people, var(--line-2));
+  clip-path: var(--shape, polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%));
+}
+.acct-emblem::before,
+.acct-emblem::after,
+.acct-plus::before {
+  content: '';
+  position: absolute;
+  clip-path: inherit;
+}
+.acct-emblem::before,
+.acct-plus::before {
+  inset: 2px;
+  background: var(--plate-2);
+}
+.acct-emblem::after {
+  inset: 7px 6.5px;
+  background: var(--people-2, var(--dim));
+}
+.acct-plus[data-mark]::after {
+  content: attr(data-mark);
+}
+.acct-plus::after {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--dim);
+}
+.acct-new:hover:not(:disabled) .acct-plus,
+.acct-new:focus-visible .acct-plus {
+  background: var(--accent);
+}
+/* the peoples: a radio each (the arrows walk them); the picked one opens on its body, its home and its saying */
+.acct-peoples {
+  min-width: 0;
+  margin: 24px 0 0;
+  padding: 0;
+  border: none;
+}
+.acct-peoples legend {
+  padding: 0;
+  margin-bottom: 8px;
+}
+.acct-peoples legend + .acct-people {
+  border-top: 1px solid var(--line);
+}
+.acct-peoples > .acct-people {
+  animation: acctIn 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--j, 0) * 55ms + var(--i, 0) * 45ms + 120ms);
+}
+.acct-people input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.acct-people:has(input:focus-visible) .acct-people-name {
+  color: var(--accent-hi);
+}
+.acct-people-more {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-people.on .acct-people-more {
+  grid-template-rows: 1fr;
+}
+.acct-people-inner {
+  min-height: 0;
+  display: grid;
+  gap: 8px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.acct-people.on .acct-people-inner {
+  opacity: 1;
+  transition: opacity 0.4s 0.12s;
+}
+.acct-people-body {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--dim);
+}
+.acct .acct-people-home {
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
+.acct-saying {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 2px;
+}
+.acct-saying q {
+  font-size: 14px;
+  color: var(--text);
+}
+.acct-glyphs {
+  flex: none;
+  color: var(--glyph);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--glyph-halo) 70%, transparent));
+}
+.acct-entering {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.acct-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+.acct-bar {
+  flex: none;
+  width: 140px;
+  height: 1px;
+  background: var(--line-2);
+  overflow: hidden;
+}
+.acct-bar b {
+  display: block;
+  width: 35%;
+  height: 100%;
+  background: var(--accent);
+  animation: loadSweep 1.4s ease-in-out infinite;
+}
+.acct .acct-progress .mono {
+  color: var(--dim);
+}
+/* the welcome's cut into the world: black at once, then the world fades up (eased in, held a moment first) */
+.acct-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  background: var(--ink);
+  opacity: 0;
+}
+.acct-veil.on {
+  animation: acctVeil 1.3s cubic-bezier(0.4, 0, 0.6, 1) both;
+}
+@keyframes acctVeil {
+  0%,
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acct,
+  .acct *,
+  .acct-veil,
+  .title-screen .t-main {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}
 
 /* ---------- sheets (settings, controls) beside a menu ---------- */
 .sheet {

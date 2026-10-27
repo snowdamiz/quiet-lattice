@@ -4,6 +4,7 @@
 // return). It is never corrected and never kicked. Needs `pnpm db:up`.
 import { randomBytes, randomInt } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
+import { enterPicked, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 
 let online: Online;
@@ -44,15 +45,7 @@ async function enterNew(page: Page) {
   await page.goto(`${online.url}/`);
   await page.waitForFunction(() => 'game' in window && 'step' in window, null, { timeout: 60_000 });
   await until(page, 'window.game.menus.ready', 120_000);
-  const p = pilot();
-  await page.click('.title-screen [data-act="start"]');
-  await page.fill('.account [name="username"]', p.username);
-  await page.fill('.account [name="password"]', p.password);
-  await page.click('.account [data-do="register"]');
-  await page.fill('.account [name="name"]', p.name);
-  await page.click('.account [data-people] [data-v="thalune"]');
-  await page.click('.account [data-form="create"] [type="submit"]');
-  await page.waitForSelector('.account [data-enter]');
+  await signUp(page, pilot(), 'thalune');
   await page.evaluate(() => {
     const w = window as unknown as Record<string, unknown> & {
       game: Record<string, (...a: unknown[]) => unknown> & { net: { on(e: string, f: (m: unknown) => void): void } };
@@ -67,7 +60,7 @@ async function enterNew(page: Page) {
       g.net.on('closed', (why) => (w.__closed = why));
     };
   });
-  await page.click('.account [data-enter]');
+  await enterPicked(page);
   await until(page, "window.game.net?.joined && window.game.mode !== 'title'", 120_000);
   await until(page, 'window.game.net.store.ack > 0 && window.game.net.store.entities.has(window.game.net.entityId)', 30_000);
   // capture the mouse as a click would (headless: the fallback lock)
