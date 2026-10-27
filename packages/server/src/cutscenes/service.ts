@@ -1,4 +1,4 @@
-// Cutscenes on the server (docs/ARCHITECTURE.md §14): every cutscene plays in a story phase (DESIGN 14.1: "Cutscenes
+// Cutscenes on the server (docs/ARCHITECTURE.md §15): every cutscene plays in a story phase (DESIGN 14.1: "Cutscenes
 // are always instanced"; 17: phases are first class), and the server decides when one opens.
 //
 // - Who: a client's `cutscene request` plays only when `may` allows it. The quest engine (P1.E09.T01) sets `may` to its

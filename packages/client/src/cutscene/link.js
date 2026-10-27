@@ -1,4 +1,4 @@
-// The seam between a cutscene and the server (docs/ARCHITECTURE.md §14). Cutscenes are always phased and the server
+// The seam between a cutscene and the server (docs/ARCHITECTURE.md §15). Cutscenes are always phased and the server
 // decides when one opens: before one plays, the client asks (`cutscene {op: 'request'}`), and the server places the
 // player in a story phase at the cutscene's place and answers `cutscene {op: 'play', phase}`, or refuses. The client
 // plays only on `play`, and says `done` when it ends or is skipped.

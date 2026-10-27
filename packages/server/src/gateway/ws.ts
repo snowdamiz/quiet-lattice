@@ -3,13 +3,13 @@
 // `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS: persistence loads its saved
 // state (§8) and its player entity enters the world where it was saved (or docked at its home Waystation when that pose
 // is unusable, or for a new character), and `welcome` names the zone, the entity and that pose, followed at once by
-// `world` (the world service's state, sent again to every joined session whenever it changes) and the character's
-// `inventory`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot every tick, and
-// closing the socket saves the character and takes the entity out. Inventory requests go to the inventory service,
-// which answers each with the authoritative state (ARCHITECTURE §7). Chat and party requests go to the social service
-// (social/), which hears of every character that joins and every connection that closes. Cutscene requests go to the
-// cutscene service (cutscenes/), which forgets a session as it leaves. Malformed or out-of-place messages are dropped and
-// counted, never thrown.
+// `world` (the world service's state, sent again to every joined session whenever it changes), the character's
+// `inventory` and its `skills`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot
+// every tick, and closing the socket saves the character and takes the entity out. Inventory requests go to the inventory
+// service and skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14).
+// Chat and party requests go to the social service (social/), which hears of every character that joins and every
+// connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
+// leaves. Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -31,6 +31,8 @@ import { CharacterLoadError } from '../persistence/registry.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
+import { skillServiceIn } from '../skills/component.ts';
+import type { SkillService } from '../skills/service.ts';
 import { SocialService } from '../social/service.ts';
 import type { ServerClock } from '../world/clock.ts';
 import type { WorldSource } from '../world/service.ts';
@@ -102,6 +104,8 @@ export interface WsGatewayDeps {
   ownedCharacter?: (accountId: string, characterId: string) => Promise<CharacterRow | null>;
   /** Chat and parties; the gateway makes (and starts and stops) its own when none is given. */
   social?: SocialService;
+  /** Every character's skill web in play; when none is given, the one persistence's registry loads into. */
+  skills?: SkillService;
   /** Cutscenes in story phases; the gateway makes its own (a production one: no client starts any) when none is given. */
   cutscenes?: CutsceneService;
 }
@@ -115,6 +119,7 @@ export interface WsStats {
 export interface WsGateway {
   readonly registry: SessionRegistry;
   readonly inventory: InventoryService;
+  readonly skills: SkillService;
   readonly social: SocialService;
   readonly cutscenes: CutsceneService;
   stats(): WsStats;
@@ -161,6 +166,12 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   // server-side changes (loot, mining, trade, the Recall) reach the session holding the character
   const unsubscribeInventory = inventory.subscribe((characterId, reply) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'inventory', ...reply });
+  });
+  const skills = deps.skills ?? needSkills(persistence);
+  // fragments, points, unlocks from the world, a level or a hull reach the session holding the character (requests are answered)
+  const unsubscribeSkills = skills.subscribe((characterId, reply, change) => {
+    if (change !== 'server') return;
+    for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'skills', ...reply });
   });
   const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
   if (!deps.social) social.start();
@@ -315,6 +326,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') return invalid(s, 'inventory before join');
         s.send({ t: 'inventory', ...inventory.request(s.characterId!, msg.seq, msg.op) });
         return;
+      case 'skills':
+        if (s.state !== 'joined') return invalid(s, 'skills before join');
+        s.send({ t: 'skills', ...skills.request(s.characterId!, msg.seq, msg.op) });
+        return;
       case 'input': {
         if (s.state !== 'joined') return invalid(s, 'input before join');
         const r = deps.zones.input(s, msg);
@@ -423,6 +438,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.send(deps.world.message());
       // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
       s.send({ t: 'inventory', ...inventory.state(row.id) });
+      s.send({ t: 'skills', ...skills.state(row.id) });
       social.joined(s, row.name);
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
@@ -433,6 +449,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   return {
     registry,
     inventory,
+    skills,
     social,
     cutscenes,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
@@ -441,6 +458,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       clearInterval(heartbeat);
       if (!deps.social) social.stop();
       unsubscribeInventory();
+      unsubscribeSkills();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
@@ -455,6 +473,12 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       await new Promise<void>((resolve) => wss.close(() => resolve()));
     },
   };
+}
+
+function needSkills(persistence: CharacterPersistence): SkillService {
+  const skills = skillServiceIn(persistence.registry);
+  if (!skills) throw new Error('the gateway needs a skill service: give one, or a persistence registry with the skills component');
+  return skills;
 }
 
 function seconds(ms: number): number {

@@ -1,5 +1,5 @@
 // The cutscenes the server plays (DESIGN 8 "Cutscenes in-engine", 14.1 "Cutscenes are always instanced"; docs/
-// ARCHITECTURE.md §14). Where each plays and what it spawns come from its .blend (assets/blend/cutscenes/), exported by
+// ARCHITECTURE.md §15). Where each plays and what it spawns come from its .blend (assets/blend/cutscenes/), exported by
 // packages/tools/blender/export_cutscene.py into placements/<id>.json beside this file: its space (the frame it is
 // authored in and its anchor), its phase's radius and its actors, so the server and the client's cameras share one
 // source. What a cutscene shows is the client's (public/cutscenes/<id>.json). Who may start one is the service's `may`

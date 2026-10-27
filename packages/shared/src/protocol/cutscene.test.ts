@@ -1,4 +1,4 @@
-// The cutscene messages (protocol 5): a client asks for one and says when it is done; the server answers play, ended
+// The cutscene messages (protocol 6): a client asks for one and says when it is done; the server answers play, ended
 // or refused, with the story phase it plays in. One `cutscene` type serves both directions, told apart by its ops.
 import { describe, expect, it } from 'vitest';
 import {
@@ -12,8 +12,8 @@ import {
 } from './index.ts';
 
 describe('cutscene messages', () => {
-  it('arrived with protocol 5', () => {
-    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(5);
+  it('arrived with protocol 6', () => {
+    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(6);
   });
 
   it('round-trips a request and a done, and refuses bad ids, ops and a skipped request', () => {

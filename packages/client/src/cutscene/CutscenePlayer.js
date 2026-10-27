@@ -1,4 +1,4 @@
-// Plays cutscenes in-engine (DESIGN 8 "Cutscenes in-engine", 14.1, 19.2; docs/ARCHITECTURE.md §14): a
+// Plays cutscenes in-engine (DESIGN 8 "Cutscenes in-engine", 14.1, 19.2; docs/ARCHITECTURE.md §15): a
 // definition exported from Blender (public/cutscenes/<id>.json) driving the camera through the camera-glide system
 // (CameraDirector), the letterbox and the dialogue bar (ui/Cinematic.js) and the banners (HUD.showBanner) on game time.
 //

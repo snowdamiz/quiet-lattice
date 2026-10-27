@@ -52,7 +52,7 @@ export interface RunningServer {
   zones: ZoneManager;
   /** Loads characters on join and saves them every 30 s, on leave and on close. */
   persistence: CharacterPersistence;
-  /** Cutscenes in story phases (§14); the quest engine sets its `may`. */
+  /** Cutscenes in story phases (§15); the quest engine sets its `may`. */
   cutscenes: CutsceneService;
   /** Closes sockets (saving each character), writes every pending save, then closes the HTTP server, Postgres and Redis.
    * Safe to call twice. */
