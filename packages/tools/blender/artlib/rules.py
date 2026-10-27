@@ -24,6 +24,9 @@ def load(path=RULES_PATH):
     with open(path, encoding="utf-8") as f:
         rules = json.load(f)
     for fam, spec in rules["families"].items():
+        # (a family of another kind, cutscenes, has its own checks and no asset classes)
+        if spec.get("kind"):
+            continue
         for cls in [spec["class"]] + [r["class"] for r in spec.get("classRules", [])]:
             if cls not in rules["classes"]:
                 raise RuleError(f"families.json: family {fam} names unknown class {cls}")

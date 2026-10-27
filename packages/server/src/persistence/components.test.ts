@@ -25,6 +25,7 @@ import {
   PROGRESS,
   SHIP,
   ShipLoadouts,
+  SKILLS,
   type PoseState,
 } from './components.ts';
 import { CharacterLoadError, type PersistenceLog, type StoredCharacter } from './registry.ts';
@@ -71,7 +72,7 @@ describe('character components', () => {
   it('gives a new character its level, the Lark, the starting kit with the Lark’s one pod, and a berth at home', () => {
     const { registry } = world();
     const d = registry.decode(stored({}, { level: 3, xp: 120 }), CHARACTER);
-    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SHIP, INVENTORY, POSE]);
+    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, POSE]);
     expect(d.values.get(PROGRESS)).toEqual({ level: 3, xp: 120, homeSystem: HOME });
     expect(d.values.get(SHIP)).toEqual(DEFAULT_SHIP);
     const inv = d.values.get(INVENTORY) as Inventory;

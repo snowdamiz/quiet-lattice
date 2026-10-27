@@ -2,14 +2,15 @@
 // `#review:<family>/<file>[:<asset>[/<variant>]]` (or `#review:ship` for a demo model at the top of public/models) to load
 // public/models/<family>/<file>.glb beside the camera under the art bible's three lighting cases: noon on a lush world,
 // night on an exotic world, and open space. `window.review` then picks the asset and variant, switches the light, the LOD,
-// a wireframe pass and the camera's orbit, reads a perf readout and captures frames; `review.ready` resolves once the
-// first case has settled. `pnpm capture -- --review <family>/<file>` drives it headless and writes the grader's captures;
-// a person can drive the same object from the console.
+// a wireframe pass, a collider and marker overlay and the camera's orbit (or a far view at a range in metres), reads a
+// perf readout and captures frames; `review.ready` resolves once the first case has settled. `pnpm capture -- --review
+// <family>/<file>` drives it headless and writes the grader's captures; a person can drive the same object from the console.
 //
 // Captures are reproducible: the page's own loop and adaptive resolution are stopped and the game clock is pinned
 // (every review frame starts from the same time, so planets, the sun, wind and weather stand still), the asset is set
 // down on the flattest open ground near the case's spot, and plants in its footprint or between it and the camera are
-// hidden while it is reviewed. Colliders and markers (art bible 8) are hidden and left out of the stats and framing.
+// hidden while it is reviewed. Colliders and markers (art bible 8) are hidden and left out of the stats and framing; the
+// overlay pass draws them over the asset.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { maskColors } from '../gameplay/modelLibrary.js';
@@ -62,6 +63,211 @@ export function isHelper(o) {
 function lodParts(o) {
   const m = LOD_NAME.exec(nodeName(o));
   return m ? { base: m[1], level: +m[2] } : null;
+}
+
+// ---------------------------------------------------------------------------------------------- colliders and markers
+
+// The kinds the overlay draws and the stats count (families.json "markers", art bible 8): colliders, point markers, and
+// the pivot empties that move a visible part (a Gear* pivot's own mesh, GearFront_Leg, is the part, not the pivot).
+const KINDS = [
+  ['COL', /^col_/i],
+  ['Interact', /^interact($|_)/i],
+  ['HP', /^hp_[sml]_/i],
+  ['BAY', /^bay_/i],
+  ['Light', /^light_/i],
+  ['Mount', /^mount$/i],
+  ['Muzzle', /^muzzle($|_)/i],
+  ['Gear', /^gear/i, 'pivot'],
+  ['Blink', /^blink($|_)/i, 'pivot'],
+  ['Spin', /^spin($|_)/i, 'pivot'],
+  ['Canopy', /^canopy/i, 'pivot'],
+];
+
+/** A node's overlay kind: `COL` for a collider, the marker's kind (Interact, HP, BAY, Light, Mount, Muzzle), the
+ * pivot's (Gear, Blink, Spin, Canopy) for an empty that moves a visible part; null for anything else, scale references
+ * included. */
+export function helperKind(o) {
+  const name = nodeName(o);
+  for (const [kind, re, role] of KINDS) {
+    if (!re.test(name)) continue;
+    // (an empty loads as a plain Object3D; a mesh node as a Mesh, or a Group of its primitives when it has several)
+    return role === 'pivot' && (o.isMesh || o.isGroup) ? null : kind;
+  }
+  return null;
+}
+
+/** `{ kind: count }` of `items` (`{ kind }`), in KINDS order. */
+export function countKinds(items) {
+  const out = {};
+  for (const [kind] of KINDS) {
+    const n = items.filter((it) => it.kind === kind).length;
+    if (n) out[kind] = n;
+  }
+  return out;
+}
+
+/** The overlay's colours: colliders magenta, each marker and pivot kind its own hue. */
+export const OVERLAY_COLORS = {
+  COL: 0xff3fd2,
+  Interact: 0x3dff8b,
+  HP: 0xff4a3d,
+  BAY: 0xffa23d,
+  Light: 0xfff1a0,
+  Mount: 0xff7a3d,
+  Muzzle: 0xff3d7a,
+  Gear: 0xffe53d,
+  Blink: 0x3de2ff,
+  Spin: 0x3de2ff,
+  Canopy: 0x9fb4ff,
+};
+
+/**
+ * Places a label box beside each point (`{ x, y, w, h }`, pixels) so no two boxes overlap and each stays inside the
+ * `width` × `height` frame: the first free spot of a ring of offsets around its point, moving outward; a label that
+ * finds none keeps its first spot. Returns `[{ x, y }]`, each box's top-left corner.
+ */
+export function placeLabels(points, width, height, gap = 14) {
+  const boxes = [];
+  const overlaps = (a) => boxes.some((b) => a.x < b.x + b.w + 4 && b.x < a.x + a.w + 4 && a.y < b.y + b.h + 2 && b.y < a.y + a.h + 2);
+  const inside = (a) => a.x >= 0 && a.y >= 0 && a.x + a.w <= width && a.y + a.h <= height;
+  return points.map((p) => {
+    let first = null;
+    let found = null;
+    for (let ring = 0; ring < 12 && !found; ring++) {
+      const d = gap + ring * (p.h + 4);
+      const spots = [
+        [p.x + gap, p.y - d - p.h / 2],
+        [p.x + gap, p.y + d - p.h / 2],
+        [p.x - gap - p.w, p.y - d - p.h / 2],
+        [p.x - gap - p.w, p.y + d - p.h / 2],
+      ];
+      for (const [x, y] of spots) {
+        const box = { x: Math.round(x), y: Math.round(y), w: p.w, h: p.h };
+        if (!inside(box)) continue;
+        first ??= box;
+        if (!overlaps(box)) {
+          found = box;
+          break;
+        }
+      }
+    }
+    const box = found ?? first ?? { x: Math.max(0, Math.min(width - p.w, Math.round(p.x + gap))), y: Math.max(0, Math.min(height - p.h, Math.round(p.y))), w: p.w, h: p.h };
+    boxes.push(box);
+    return { x: box.x, y: box.y };
+  });
+}
+
+// ---------------------------------------------------------------------------------------------- paired perf
+
+/** The asset's cost is reliable when the 95% interval of its paired GPU median is at most this wide either side (ms):
+ * two runs then agree within twice that. */
+export const PERF_CI_MS = 0.25;
+
+/** The shown/hidden order of `pairs` pairs of adjacent frames in ABBA blocks (shown, hidden, hidden, shown, …): a
+ * block's two pairs run in opposite orders, so a load that rises or falls across the block cancels. */
+export function abba(pairs) {
+  const out = [];
+  for (let i = 0; i < pairs; i++) out.push(...(i % 2 ? [false, true] : [true, false]));
+  return out;
+}
+
+/** Shown-minus-hidden differences of `key` over frame records `{ shown, [key] }` taken in abba() order (frames 2i and
+ * 2i+1 are pair i), one per pair, null where either frame lacks the value. */
+function pairDiffs(frames, key) {
+  const d = [];
+  for (let i = 0; i + 1 < frames.length; i += 2) {
+    const [a, b] = [frames[i], frames[i + 1]];
+    const [s, h] = a.shown ? [a, b] : [b, a];
+    d.push(a.shown === b.shown || s[key] == null || h[key] == null ? null : s[key] - h[key]);
+  }
+  return d;
+}
+
+/** The paired differences of `key` that both frames measured. */
+export function pairedDiffs(frames, key) {
+  return pairDiffs(frames, key).filter((x) => x !== null);
+}
+
+/** One difference per ABBA block (pairs 2j and 2j+1): the mean of its two pairs, in which a load rising or falling
+ * steadily across the block cancels exactly; a block that lost one pair keeps the other. */
+export function blockDiffs(frames, key) {
+  const p = pairDiffs(frames, key);
+  const d = [];
+  for (let j = 0; j < p.length; j += 2) {
+    const [a, b = null] = [p[j], p[j + 1]];
+    if (a !== null && b !== null) d.push((a + b) / 2);
+    else if (a !== null || b !== null) d.push(a ?? b);
+  }
+  return d;
+}
+
+/** Median, quartiles and a distribution-free 95% interval of the median (the order statistics at ranks n/2 ± 0.98√n)
+ * of `values`; null when there are none. */
+export function spread(values) {
+  const s = values.filter(Number.isFinite).sort((a, b) => a - b);
+  const n = s.length;
+  if (!n) return null;
+  const at = (p) => {
+    const i = p * (n - 1);
+    const lo = Math.floor(i);
+    return s[lo] + (s[Math.min(n - 1, lo + 1)] - s[lo]) * (i - lo);
+  };
+  const half = 0.98 * Math.sqrt(n);
+  return { n, median: at(0.5), q1: at(0.25), q3: at(0.75), ci95: [s[Math.max(0, Math.floor(n / 2 - half))], s[Math.min(n - 1, Math.ceil(n / 2 + half) - 1)]] };
+}
+
+/**
+ * The asset's own cost from interleaved frame records (`{ shown, cpu, gpu, calls, tris }`, abba() order): the median of
+ * the paired differences (each block's two pairs averaged, blockDiffs), so a load that changes from frame to frame
+ * cancels within each block and a spike in one block is outvoted by the rest, with the interquartile range and the
+ * median's 95% interval over the blocks; `reliable` is false when that interval is wider than `ciMs` either side.
+ */
+export function assetCost(frames, { ciMs = PERF_CI_MS } = {}) {
+  const r = (x) => (x == null ? null : +x.toFixed(3));
+  const [gpu, cpu, calls, tris] = ['gpu', 'cpu', 'calls', 'tris'].map((k) => spread(blockDiffs(frames, k)));
+  const half = gpu ? (gpu.ci95[1] - gpu.ci95[0]) / 2 : null;
+  return {
+    cpuMs: r(cpu?.median),
+    gpuMs: r(gpu?.median),
+    drawCalls: calls ? Math.round(calls.median) : null,
+    triangles: tris ? Math.round(tris.median) : null,
+    method: 'paired: shown-minus-hidden differences of adjacent frames, each ABBA block\'s two pairs averaged; median and spread over the blocks',
+    pairs: pairedDiffs(frames, 'gpu').length,
+    blocks: gpu?.n ?? 0,
+    gpuMsIqr: gpu ? [r(gpu.q1), r(gpu.q3)] : null,
+    gpuMsCi95: gpu ? gpu.ci95.map(r) : null,
+    cpuMsIqr: cpu ? [r(cpu.q1), r(cpu.q3)] : null,
+    spreadMs: gpu ? r(gpu.q3 - gpu.q1) : null,
+    // (a handful of blocks proves nothing however close they are)
+    reliable: half !== null && gpu.n >= 20 && half <= ciMs,
+  };
+}
+
+/** The old readout's per-run summary of frame records (one state): medians and 95th percentiles. */
+function summarize(frames, disjoint) {
+  const q = (key, p) => {
+    const s = frames.map((f) => f[key]).filter((x) => x != null).sort((a, b) => a - b);
+    return s.length ? +s[Math.min(s.length - 1, Math.floor(p * s.length))].toFixed(3) : null;
+  };
+  return {
+    cpuMsMedian: q('cpu', 0.5),
+    cpuMsP95: q('cpu', 0.95),
+    gpuMsMedian: q('gpu', 0.5),
+    gpuMsP95: q('gpu', 0.95),
+    gpuSamples: frames.filter((f) => f.gpu != null).length,
+    disjoint,
+    drawCalls: q('calls', 0.5),
+    triangles: q('tris', 0.5),
+  };
+}
+
+/** The camera's offset from the asset's centre for an orbit (`azimuth`, `elevation` in degrees, `distance` in asset
+ * radii of `size`), or, with `range` set, `range` metres away with `lift` degrees added to the elevation (the far view). */
+export function orbitOffset(orbit, size) {
+  const az = THREE.MathUtils.degToRad(orbit.azimuth);
+  const el = THREE.MathUtils.degToRad(orbit.elevation + (orbit.range ? (orbit.lift ?? 0) : 0));
+  const d = orbit.range ?? size * orbit.distance;
+  return new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(d);
 }
 
 // ---------------------------------------------------------------------------------------------- the game's look
@@ -281,7 +487,10 @@ export class Review {
     this.lodLevel = 0;
     this.shown = {};
     this.wire = null;
-    this.orbit = { azimuth: 35, elevation: 16, distance: 1.7 };
+    this.aids = null; // the overlay's collider volumes and marker gizmos
+    // (range: metres from the asset's centre for the far view, null at the orbit distance; lift: degrees added to the
+    // elevation there when the ground would hide the asset)
+    this.orbit = { azimuth: 35, elevation: 16, distance: 1.7, range: null, lift: 0 };
     this.box = new THREE.Box3(); // the shown LOD's bounds, root-local
     this.frameBox = new THREE.Box3(); // LOD0's bounds: framing and placement, the same at every level
     this.size = 1;
@@ -359,6 +568,10 @@ export class Review {
       this.wireframe(false);
       this.wireframe(true);
     }
+    if (this.aids) {
+      this.overlay(false);
+      this.overlay(true);
+    }
     return this.stats();
   }
 
@@ -379,7 +592,7 @@ export class Review {
     this.content.updateMatrixWorld(true);
     const inv = new THREE.Matrix4().copy(this.content.matrixWorld).invert();
     this.content.traverseVisible((o) => {
-      if (!o.isMesh) return;
+      if (!o.isMesh || this.isAid(o)) return;
       this.shaded.set(o, o.material);
       o.material = clay;
       const lines = new THREE.LineSegments(new THREE.WireframeGeometry(o.geometry), line);
@@ -390,6 +603,183 @@ export class Review {
     this.content.add(this.wire);
   }
 
+  /** A line the review itself draws into the asset (the wireframe's edges). */
+  isAid(o) {
+    return !!o.parent && o.parent === this.wire;
+  }
+
+  /** The colliders, markers and pivots of what is shown (`[{ node, kind, name }]`): every node of a kind whose parents
+   * are all visible, so the chosen asset, variant and LOD's own. */
+  marked() {
+    const out = [];
+    const parentsShown = (o) => {
+      for (let p = o.parent; p && p !== this.content; p = p.parent) if (!p.visible) return false;
+      return true;
+    };
+    this.content.traverse((o) => {
+      if (o === this.content || o === this.wire || this.isAid(o)) return;
+      const kind = helperKind(o);
+      if (kind && parentsShown(o)) out.push({ node: o, kind, name: nodeName(o) });
+    });
+    return out;
+  }
+
+  /**
+   * The collider and marker overlay (rubric "fitness for play"): each `COL_*` volume of what is shown drawn translucent
+   * over the shaded asset with its edges solid, each marker and pivot a small axis gizmo (x red, y green, z blue) round a
+   * dot in its kind's colour. Drawn through the asset (no depth test), so a collider inside the hull or a marker behind
+   * it still shows, and over the finished frame (drawAids), so the atmosphere, bloom and grade never tint it and it
+   * lights nothing; captureOverlay() adds the names. Follows lod() like the wireframe.
+   */
+  overlay(on) {
+    if (this.aids) {
+      this.aids.parent?.remove(this.aids);
+      for (const x of this.aids.userData.owned) x.dispose();
+      this.aids = null;
+    }
+    if (!on) return;
+    this.aidScene ??= new THREE.Scene();
+    const aids = (this.aids = new THREE.Group());
+    aids.name = 'review overlay';
+    aids.matrixAutoUpdate = false;
+    const owned = (aids.userData.owned = []);
+    const own = (x) => {
+      owned.push(x);
+      return x;
+    };
+    this.content.updateMatrixWorld(true);
+    const inv = new THREE.Matrix4().copy(this.content.matrixWorld).invert();
+    // (the canvas takes linear values as they are: a colour set as linear shows as its hex code)
+    const basic = (hex, opacity, Mat = THREE.MeshBasicMaterial) =>
+      own(new Mat({ color: new THREE.Color().setHex(hex, THREE.LinearSRGBColorSpace), transparent: true, opacity, depthTest: false, depthWrite: false, fog: false }));
+    const add = (o, local) => {
+      o.matrixAutoUpdate = false;
+      o.matrix.copy(local);
+      o.renderOrder = 10;
+      o.frustumCulled = false;
+      aids.add(o);
+    };
+    const arm = Math.max(0.15, this.size * 0.06);
+    const axes = own(new THREE.BufferGeometry());
+    axes.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1], 3));
+    axes.setAttribute('color', new THREE.Float32BufferAttribute([1, 0.2, 0.2, 1, 0.2, 0.2, 0.2, 1, 0.2, 0.2, 1, 0.2, 0.3, 0.5, 1, 0.3, 0.5, 1], 3));
+    const axesMat = own(new THREE.LineBasicMaterial({ vertexColors: true, depthTest: false, depthWrite: false, transparent: true, fog: false }));
+    const dot = own(new THREE.OctahedronGeometry(arm * 0.22));
+    const mats = {};
+    const pos = new THREE.Vector3();
+    const quat = new THREE.Quaternion();
+    const scl = new THREE.Vector3();
+    const local = new THREE.Matrix4();
+    for (const { node, kind } of this.marked()) {
+      const color = OVERLAY_COLORS[kind];
+      mats[kind] ??= { volume: basic(color, 0.24), edge: basic(color, 0.95, THREE.LineBasicMaterial), dot: basic(color, 0.95) };
+      if (kind === 'COL') {
+        node.traverse((m) => {
+          if (!m.isMesh) return;
+          local.multiplyMatrices(inv, m.matrixWorld);
+          add(new THREE.Mesh(m.geometry, mats[kind].volume), local);
+          add(new THREE.LineSegments(own(new THREE.EdgesGeometry(m.geometry, 25)), mats[kind].edge), local);
+        });
+        continue;
+      }
+      // (a gizmo of fixed size, along the marker's own axes whatever its scale)
+      local.multiplyMatrices(inv, node.matrixWorld).decompose(pos, quat, scl);
+      add(new THREE.LineSegments(axes, axesMat), new THREE.Matrix4().compose(pos, quat, new THREE.Vector3(arm, arm, arm)));
+      add(new THREE.Mesh(dot, mats[kind].dot), new THREE.Matrix4().compose(pos, quat, new THREE.Vector3(1, 1, 1)));
+    }
+    this.aidScene.add(aids);
+  }
+
+  /** Draws the overlay over the frame just finished, in the asset's place (the content's world matrix of that frame). */
+  drawAids() {
+    const E = this.game.engine;
+    const r = E.renderer;
+    this.aids.matrix.copy(this.content.matrixWorld);
+    this.aids.matrixWorldNeedsUpdate = true;
+    const ac = r.autoClear;
+    r.autoClear = false;
+    r.setRenderTarget(null);
+    r.render(this.aidScene, E.camera);
+    r.autoClear = ac;
+  }
+
+  /**
+   * One frame with the overlay (turned on for it if it is off) and each marker's and pivot's name drawn beside it, with a
+   * legend of the counts by kind; returns a PNG data URL. The labels are drawn on a 2D copy of the frame, so they are
+   * crisp at any distance and never hidden by the asset.
+   */
+  async captureOverlay() {
+    const font = (px, weight = 500) => `${weight} ${px}px "IBM Plex Mono", ui-monospace, monospace`;
+    await document.fonts?.load(font(20)).catch(() => {});
+    const was = !!this.aids;
+    if (!was) this.overlay(true);
+    const items = this.marked();
+    // (render and copy in one task: the drawing buffer is cleared once the task ends)
+    this.frameOnce(1 / 60);
+    const src = this.game.engine.renderer.domElement;
+    const cam = this.game.engine.camera;
+    const c = document.createElement('canvas');
+    c.width = src.width;
+    c.height = src.height;
+    const g = c.getContext('2d');
+    g.drawImage(src, 0, 0);
+    if (!was) this.overlay(false);
+    const px = Math.max(12, Math.round(c.height / 54));
+    const hex = (k) => `#${OVERLAY_COLORS[k].toString(16).padStart(6, '0')}`;
+    g.font = font(px);
+    g.textBaseline = 'middle';
+    const pads = { x: Math.round(px * 0.45), y: Math.round(px * 0.3) };
+    const marks = [];
+    const v = new THREE.Vector3();
+    for (const it of items) {
+      if (it.kind === 'COL') continue;
+      v.setFromMatrixPosition(it.node.matrixWorld).project(cam);
+      if (v.z > 1 || Math.abs(v.x) > 1.2 || Math.abs(v.y) > 1.2) continue;
+      marks.push({ ...it, x: ((v.x + 1) / 2) * c.width, y: ((1 - v.y) / 2) * c.height, w: Math.ceil(g.measureText(it.name).width) + pads.x * 2, h: px + pads.y * 2 });
+    }
+    const spots = placeLabels(marks, c.width, c.height);
+    marks.forEach((m, i) => {
+      const s = spots[i];
+      g.strokeStyle = hex(m.kind);
+      g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(m.x, m.y);
+      g.lineTo(s.x < m.x ? s.x + m.w : s.x, s.y + m.h / 2);
+      g.stroke();
+      g.fillStyle = 'rgba(8, 10, 14, 0.82)';
+      g.fillRect(s.x, s.y, m.w, m.h);
+      g.strokeRect(s.x + 0.5, s.y + 0.5, m.w - 1, m.h - 1);
+      g.fillStyle = hex(m.kind);
+      g.beginPath();
+      g.arc(m.x, m.y, 4, 0, Math.PI * 2);
+      g.fill();
+      g.fillText(m.name, s.x + pads.x, s.y + m.h / 2 + 1);
+    });
+    // the legend: what each colour is and how many of it the shown asset has
+    const counts = countKinds(items);
+    const names = { COL: 'COL_* colliders', HP: 'HP_* hardpoints', BAY: 'BAY_* bays', Light: 'Light_* lights', Gear: 'Gear* pivots', Blink: 'Blink pivots', Spin: 'Spin pivots', Canopy: 'Canopy* pivots' };
+    const lines = [[null, `colliders and markers  ${this.sel.asset}${this.sel.variant !== this.sel.asset ? ` / ${this.sel.variant}` : ''}  LOD${this.lodLevel}`]];
+    for (const [k, n] of Object.entries(counts)) lines.push([k, `${names[k] ?? k}  ${n}`]);
+    // (the kinds the rubric's fitness criterion asks about, said outright when there are none)
+    const absent = ['COL', 'Interact', 'HP', 'BAY', 'Gear'].filter((k) => !counts[k]).map((k) => (names[k] ?? k).split(' ')[0]);
+    if (absent.length) lines.push([null, `none: ${absent.join(', ')}`]);
+    const lh = Math.round(px * 1.5);
+    const lw = Math.max(...lines.map(([, t]) => g.measureText(t).width)) + px * 2.6;
+    g.fillStyle = 'rgba(8, 10, 14, 0.78)';
+    g.fillRect(16, 16, lw, lh * lines.length + px * 0.8);
+    lines.forEach(([k, t], i) => {
+      const y = 16 + px * 0.4 + lh * i + lh / 2;
+      if (k) {
+        g.fillStyle = hex(k);
+        g.fillRect(16 + px * 0.6, y - px * 0.35, px * 0.7, px * 0.7);
+      }
+      g.fillStyle = k ? '#e9e7e2' : '#ffffff';
+      g.fillText(t, 16 + (k ? px * 1.8 : px * 0.6), y + 1);
+    });
+    this.lastOverlay = { counts, labelled: marks.map((m) => m.name), offscreen: items.filter((it) => it.kind !== 'COL').length - marks.length };
+    return c.toDataURL('image/png');
+  }
+
   /** The visible meshes' bounds in the review root's own space (so the floating origin never moves them). Computed when
    * the asset, variant or LOD changes, never per frame. */
   bounds() {
@@ -397,7 +787,7 @@ export class Review {
     this.root.updateMatrixWorld(true);
     const inv = new THREE.Matrix4().copy(this.root.matrixWorld).invert();
     this.content.traverseVisible((o) => {
-      if (!o.isMesh || o.parent === this.wire) return;
+      if (!o.isMesh || this.isAid(o)) return;
       if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
       box.union(_box.copy(o.geometry.boundingBox).applyMatrix4(_m.multiplyMatrices(inv, o.matrixWorld)));
     });
@@ -409,7 +799,7 @@ export class Review {
     let meshes = 0;
     const materials = new Set();
     this.content?.traverseVisible((o) => {
-      if (!o.isMesh || o.parent === this.wire) return;
+      if (!o.isMesh || this.isAid(o)) return;
       meshes++;
       const g = o.geometry;
       tris += (g.index ? g.index.count : g.attributes.position.count) / 3;
@@ -436,6 +826,8 @@ export class Review {
       size: this.box.getSize(new THREE.Vector3()).toArray().map((x) => +x.toFixed(2)),
       colliders: helpers.filter((h) => /^col_/i.test(nodeName(h))).length,
       markers: helpers.filter((h) => !/^col_/i.test(nodeName(h))).length,
+      // colliders, markers and pivots of what is shown, by kind (what the overlay draws)
+      kinds: this.content ? countKinds(this.marked()) : {},
     };
   }
 
@@ -481,8 +873,7 @@ export class Review {
         g.mode = 'ship';
         g.debugGoto(planet, { sunAngle: lc.sunAngle, alt: 0, azimuth: lc.azimuth, land: true });
         g.exitShip();
-        g.poseBlend = null;
-        g.dip = null;
+        g.director.clear();
       } else g.debugGoto(planet, { sunAngle: lc.sunAngle, alt: 0, azimuth: lc.azimuth, land: true });
       const s = g.ship.state;
       const up0 = s.pos.clone().normalize();
@@ -526,14 +917,68 @@ export class Review {
     this.updateView();
   }
 
+  /**
+   * The far view (rubric "silhouette and read: identifiable at LOD2 from 100 m"): the camera `meters` from the asset's
+   * centre at the orbit's azimuth and elevation, LOD `lod` shown, nothing cropped or zoomed (the game's own camera at the
+   * capture size), then `frames` frames settled so the ground and plants round the new eye stream in. Where the ground
+   * would hide the asset's centre from there, the elevation is raised in 2° steps until it does not (`lift` in the
+   * result). `near()` puts the camera back at the orbit distance.
+   */
+  far(meters = 100, { lod = 2, frames = 120 } = {}) {
+    return this.serial(async () => {
+      Object.assign(this.orbit, { range: meters, lift: 0 });
+      this.lod(lod);
+      this.updateView();
+      while (this.groundBlocks() && this.orbit.elevation + this.orbit.lift < 60) {
+        this.orbit.lift += 2;
+        this.updateView();
+      }
+      await this.settle(frames);
+      const v = this.model.assets.find((a) => a.name === this.sel.asset)?.variants.find((x) => x.name === this.sel.variant);
+      return {
+        range: meters,
+        lod,
+        shown: v ? (this.shown[v.name] ?? null) : null,
+        azimuth: this.orbit.azimuth,
+        elevation: this.orbit.elevation + this.orbit.lift,
+        lift: this.orbit.lift,
+        clear: !this.groundBlocks(),
+        case: this.case,
+        plantsHidden: this.floraHidden ?? 0,
+        settled: this.settled,
+      };
+    });
+  }
+
+  /** Back from the far view to the orbit distance (the next light() or settle() streams the ground in again). */
+  near() {
+    return this.serial(() => {
+      Object.assign(this.orbit, { range: null, lift: 0 });
+      this.updateView();
+    });
+  }
+
+  /** True when the ground (sampled along the line of sight, short of the asset's own bounds) hides the asset's centre
+   * from the eye; never in open space. */
+  groundBlocks() {
+    const planet = this.frame;
+    if (!planet) return false;
+    const L = this.eyeLocal.distanceTo(this.targetLocal);
+    const stop = Math.max(0, 1 - this.size / L);
+    const p = new THREE.Vector3();
+    for (let i = 0; i <= 64; i++) {
+      p.lerpVectors(this.eyeLocal, this.targetLocal, (i / 64) * stop);
+      const r = p.length();
+      if (r < planet.groundRadius(p.divideScalar(r)) + 0.25) return true;
+    }
+    return false;
+  }
+
   /** The camera's eye and target in the frame the asset lives in (planet-local on a world); plants in the way are
    * re-hidden on the next flora rebuild. */
   updateView() {
     const center = this.frameBox.getCenter(new THREE.Vector3());
-    const az = THREE.MathUtils.degToRad(this.orbit.azimuth);
-    const el = THREE.MathUtils.degToRad(this.orbit.elevation);
-    const d = this.size * this.orbit.distance;
-    const offset = new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(d);
+    const offset = orbitOffset(this.orbit, this.size);
     // in open space the root is kept on the floating origin, so its true place is the system-frame spot
     const origin = this.frame ? this.root.position : (this.spaceSpot ?? this.root.position);
     const toFrame = new THREE.Matrix4().compose(origin, this.root.quaternion, new THREE.Vector3(1, 1, 1));
@@ -563,7 +1008,8 @@ export class Review {
       if (this.active && !this.frame && this.spaceSpot) this.root.position.copy(this.spaceSpot).sub(g.camWorld);
       renderFrame(dt);
     };
-    // the review camera is not the player's eye: no first-person tool, no parked ship, no creatures wandering in
+    // the review camera is not the player's eye: no first-person tool, no parked ship, no creatures wandering in; the
+    // overlay, when on, over the finished frame
     const render = g.engine.render.bind(g.engine);
     g.engine.render = (dt) => {
       if (this.active) {
@@ -572,6 +1018,7 @@ export class Review {
         if (g.fauna?.root) g.fauna.root.visible = false;
       }
       render(dt);
+      if (this.active && this.aids) this.drawAids();
     };
     // plants in the asset's footprint or between it and the camera are left out of the flora's instances (only while
     // reviewing: the keys are put back after each rebuild, so nothing is mined for real)
@@ -751,33 +1198,36 @@ export class Review {
     return { frames: i, underBudget: run >= steady, stable: run >= steady || stable, frameMs: med };
   }
 
-  /** `frames` frames: CPU ms (the frame's JavaScript and WebGL calls, started on an idle GPU so no back-pressure from
-   * earlier frames is counted), GPU ms (timer queries, or the frame waited out with a pixel read where the extension is
-   * missing), and the draw calls and triangles of a frame. */
-  async sample(frames) {
+  /**
+   * `pairs` pairs of adjacent frames in abba() order, the asset shown in one frame of each pair and hidden in the other,
+   * appended to `out` as `{ shown, cpu, gpu, calls, tris }`: CPU ms (the frame's JavaScript and WebGL calls, started on
+   * an idle GPU so no back-pressure from earlier frames is counted), GPU ms (timer queries, or the frame waited out
+   * with a pixel read where the extension is missing; null for a frame the timer lost), and the frame's draw calls and
+   * triangles. Returns the number of disjoint timer events (each loses the frames then in flight).
+   */
+  async sampleInterleaved(pairs, out) {
     const r = this.game.engine.renderer;
     const gl = r.getContext();
     const ext = this.gpuTimer();
-    const cpu = [];
-    const gpu = [];
-    const calls = [];
-    const tris = [];
     const pending = [];
     let disjoint = 0;
     const collect = () => {
       if (!ext) return;
       if (gl.getParameter(ext.GPU_DISJOINT_EXT)) {
         disjoint++;
-        for (const q of pending.splice(0)) gl.deleteQuery(q);
+        for (const p of pending.splice(0)) gl.deleteQuery(p.q);
         return;
       }
-      while (pending.length && gl.getQueryParameter(pending[0], gl.QUERY_RESULT_AVAILABLE)) {
-        const q = pending.shift();
-        gpu.push(gl.getQueryParameter(q, gl.QUERY_RESULT) / 1e6);
-        gl.deleteQuery(q);
+      while (pending.length && gl.getQueryParameter(pending[0].q, gl.QUERY_RESULT_AVAILABLE)) {
+        const p = pending.shift();
+        p.rec.gpu = gl.getQueryParameter(p.q, gl.QUERY_RESULT) / 1e6;
+        gl.deleteQuery(p.q);
       }
     };
-    for (let i = 0; i < frames; i++) {
+    const order = abba(pairs);
+    for (let i = 0; i < order.length; i++) {
+      const rec = { shown: order[i], cpu: null, gpu: null, calls: null, tris: null };
+      this.root.visible = rec.shown;
       this.sync();
       let q = null;
       if (ext) {
@@ -789,47 +1239,60 @@ export class Review {
       const t1 = performance.now();
       if (ext) {
         gl.endQuery(ext.TIME_ELAPSED_EXT);
-        pending.push(q);
+        // (waited out here, so the frame's commands are submitted on their own: otherwise the frame before each yield
+        // shares a submission with the page's present and reads about 1 ms slow, always on the same side of a pair)
+        this.sync();
+        pending.push({ q, rec });
       } else {
         this.sync();
-        gpu.push(performance.now() - t0);
+        rec.gpu = performance.now() - t0;
       }
-      cpu.push(t1 - t0);
-      calls.push(r.info.render.calls);
-      tris.push(r.info.render.triangles);
+      rec.cpu = t1 - t0;
+      rec.calls = r.info.render.calls;
+      rec.tris = r.info.render.triangles;
+      out.push(rec);
       // (query results only arrive between tasks)
       if (i % 4 === 3) {
         await yieldTask();
         collect();
       }
     }
+    this.root.visible = true;
     for (let k = 0; k < 200 && pending.length; k++) {
       await new Promise((res) => setTimeout(res, 5));
       collect();
     }
-    for (const q of pending) gl.deleteQuery(q);
-    const q = (arr, p) => {
-      if (!arr.length) return null;
-      const s = [...arr].sort((a, b) => a - b);
-      return +s[Math.min(s.length - 1, Math.floor(p * s.length))].toFixed(3);
-    };
-    return { cpuMsMedian: q(cpu, 0.5), cpuMsP95: q(cpu, 0.95), gpuMsMedian: q(gpu, 0.5), gpuMsP95: q(gpu, 0.95), gpuSamples: gpu.length, disjoint, drawCalls: q(calls, 0.5), triangles: q(tris, 0.5) };
+    for (const p of pending) gl.deleteQuery(p.q);
+    return disjoint;
   }
 
   /**
-   * The perf readout at the current case and LOD. Settles until `steady` frames in a row are under budget, then
-   * measures `frames` frames with the asset hidden and `frames` with it shown, at the same spot and view; the
-   * difference is the asset's own cost.
+   * The perf readout at the current case and LOD. Settles until `steady` frames in a row are under budget, then takes
+   * `pairs` pairs of adjacent frames, the asset shown in one and hidden in the other (ABBA blocks), at the same spot and
+   * view; the asset's own cost is the median of the paired differences (assetCost: each block's two pairs averaged), so
+   * a load that comes and goes between frames cancels. While the median's 95% interval is wider than `ciMs` either side,
+   * it takes `pairs` more, up to `maxPairs`;
+   * a cost still that uncertain is flagged `reliable: false`. `scene` and `withoutAsset` summarise the shown and the
+   * hidden frames as the unpaired readout did (`asset.unpaired` is their difference).
    */
-  perf({ frames = 120, budgetMs = 1000 / 60, steady = 30, maxWarmup = 600 } = {}) {
+  perf({ frames, pairs = frames ?? 120, maxPairs = 720, ciMs = PERF_CI_MS, budgetMs = 1000 / 60, steady = 30, maxWarmup = 600 } = {}) {
     return this.serial(async () => {
       const warm = await this.warmUp(budgetMs, steady, maxWarmup);
-      this.root.visible = false;
-      await this.step(10);
-      const hidden = await this.sample(frames);
-      this.root.visible = true;
-      await this.step(10);
-      const shown = await this.sample(frames);
+      const recs = [];
+      let disjoint = 0;
+      let cost;
+      do {
+        disjoint += await this.sampleInterleaved(Math.min(pairs, maxPairs - recs.length / 2), recs);
+        cost = assetCost(recs, { ciMs });
+      } while (!cost.reliable && recs.length / 2 < maxPairs);
+      const shown = summarize(
+        recs.filter((f) => f.shown),
+        disjoint,
+      );
+      const hidden = summarize(
+        recs.filter((f) => !f.shown),
+        disjoint,
+      );
       const d = (k) => (shown[k] === null || hidden[k] === null ? null : +(shown[k] - hidden[k]).toFixed(3));
       const timer = !!this.gpuTimer();
       const r = this.game.engine.renderer;
@@ -842,7 +1305,7 @@ export class Review {
         settle: { ...warm, steady },
         scene: shown,
         withoutAsset: hidden,
-        asset: { cpuMs: d('cpuMsMedian'), gpuMs: d('gpuMsMedian'), drawCalls: d('drawCalls'), triangles: d('triangles') },
+        asset: { ...cost, ciTargetMs: ciMs, unpaired: { cpuMs: d('cpuMsMedian'), gpuMs: d('gpuMsMedian') } },
         stats: this.stats(),
       };
       return this.lastPerf;
@@ -865,8 +1328,11 @@ export class Review {
         `review  ${s.file}  ${s.asset}${s.variant !== s.asset ? ` / ${s.variant}` : ''}${others > 0 ? `  (+${others} more)` : ''}\n` +
         `light   ${this.case ?? '…'}\nLOD     ${s.lod} → ${s.shown ?? '-'} of [${s.lods.join(', ') || 'none'}]\n` +
         `tris    ${s.triangles.toLocaleString()}\nmeshes  ${s.meshes}  materials ${s.materials.length}\n` +
-        `hidden  ${s.colliders} colliders, ${s.markers} markers, ${this.floraHidden ?? 0} plants\ncalls   ${info.calls}` +
-        (p ? `\nasset   ${p.asset.cpuMs} ms cpu  ${p.asset.gpuMs} ms gpu  ${p.asset.drawCalls} calls` : '');
+        `hidden  ${s.colliders} colliders, ${s.markers} markers, ${this.floraHidden ?? 0} plants${this.aids ? '  (overlay on)' : ''}\n` +
+        `camera  ${this.orbit.range ? `${this.orbit.range} m` : `${this.orbit.distance} radii`}\ncalls   ${info.calls}` +
+        (p
+          ? `\nasset   ${p.asset.cpuMs} ms cpu  ${p.asset.gpuMs} ms gpu  ${p.asset.drawCalls} calls\n        gpu IQR ${p.asset.gpuMsIqr?.join(' to ') ?? '-'} ms over ${p.asset.pairs} pairs${p.asset.reliable ? '' : '  (unreliable: spread too wide)'}`
+          : '');
     }, 250);
   }
 }

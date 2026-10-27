@@ -8,7 +8,12 @@ export const SOURCES = 'assets/blend';
 export const MAC_BLENDER = '/Applications/Blender.app/Contents/MacOS/Blender';
 /** Validation tooling: a change here re-validates every source in `--changed` mode. */
 const TOOLING = `${BLENDER_DIR}/`;
-const TOOLING_IGNORED = [`${BLENDER_DIR}/reports/`, `${BLENDER_DIR}/selftest.py`];
+/** Under the tooling folder but not the checks: reports, the self-tests, and the export scripts, which write from
+ * sources validate already checks. */
+const TOOLING_IGNORED = [`${BLENDER_DIR}/reports/`, `${BLENDER_DIR}/selftest.py`, `${BLENDER_DIR}/turntable_selftest.py`];
+const EXPORTER = /^packages\/tools\/blender\/export_[a-z_]+\.py$/;
+/** Export scripts that are also a family's checks (families.json `kind`): a change re-validates that family's sources. */
+const FAMILY_CHECKS: Readonly<Record<string, string>> = { [`${BLENDER_DIR}/export_cutscene.py`]: 'cutscenes' };
 
 export interface FamilyRules {
   families: Record<string, { export?: boolean }>;
@@ -92,14 +97,18 @@ export function familySources(root: string, family: string): string[] {
 /** Sources to validate given the files changed since the base. A change to the validator or its rules re-validates
  * every source; otherwise only the changed (added, copied, modified, renamed) .blend files under assets/blend. */
 export function changedSources(changed: string[], sources: string[]): { files: string[]; reason: string } {
-  const tooling = changed.filter((p) => p.startsWith(TOOLING) && !TOOLING_IGNORED.some((x) => p.startsWith(x)));
+  const tooling = changed.filter((p) => p.startsWith(TOOLING) && !TOOLING_IGNORED.some((x) => p.startsWith(x)) && !EXPORTER.test(p));
   if (tooling.length) {
     const which = tooling.length > 3 ? `${tooling.slice(0, 3).join(', ')} and ${tooling.length - 3} more` : tooling.join(', ');
     return { files: sources, reason: `validation tooling changed (${which}): every source` };
   }
   const set = new Set(sources);
   const files = changed.filter((p) => p.startsWith(`${SOURCES}/`) && p.endsWith('.blend') && set.has(p));
-  return { files: [...new Set(files)].sort(), reason: files.length ? 'changed sources' : 'no changed .blend sources' };
+  // (a family's own checks changed: its sources)
+  const families = new Set(changed.map((p) => FAMILY_CHECKS[p]).filter((f): f is string => !!f));
+  for (const s of sources) if (families.has(s.slice(SOURCES.length + 1).split('/')[0]!)) files.push(s);
+  const why = families.size ? `changed sources and the ${[...families].join(', ')} checks` : 'changed sources';
+  return { files: [...new Set(files)].sort(), reason: files.length ? why : 'no changed .blend sources' };
 }
 
 export interface Resolved {

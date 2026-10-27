@@ -421,3 +421,75 @@ Format: task id, question → choice → why.
   Protocol 4: a unit `attack` phase; `species` is an index into the world's list. The zone's fauna tier follows the
   world service's tier map. → DESIGN 12.2's living worlds, server-owned and bounded. Open: P1.E08.T03 takes den kinds
   from the rolled species; herds moving around a sealed player hint at its presence.
+- **P1.E14.T11** Review scene additions → "100 m" means the camera 100 m from the asset's centre (LOD0 bounds) at the
+  orbit's azimuth and elevation with the game's camera, raised in 2° steps up to 60° if the ground blocks the view, plants
+  in the eye-to-asset cone hidden; heroes (by the families.json class, the demo ship as "legacy") also get 200 m. The
+  perf readout's asset cost is the median of ABBA block means (each block's two shown-minus-hidden pairs averaged),
+  `reliable` when the 95% half-width is at most 0.25 ms over at least 20 blocks, sampling adaptively up to 720 pairs;
+  without a GPU timer extension "gpu ms" is the wall time of a frame waited out with a pixel read. `pnpm turntable --
+  <file> --family [N]` writes a labelled sibling sheet (`<stem>_family.png`, rows of four views). The overlay draws
+  COL_* volumes and the families.json markers plus Light, Mount, Muzzle, Blink, Spin and Canopy pivots. Material-sheet
+  shader balls are UV-mapped over the 2nd–98th percentile UV bounds of the asset's faces using each image, cut square.
+  → The calibration graders' requests (a 100 m read, collider and marker overlays, sibling sheets, a perf number that
+  survives a loaded machine) are now standard artifacts.
+- **Orchestrator (model storage and texture size)** Exported models (`packages/client/public/models/**/*.glb`) are
+  tracked in Git LFS like `.blend` sources and renders. Hero hulls export at 1024 px and bodies at 2048 px for now, with
+  4k sources kept: a 4k Lark with three variants exported at about 650 MB, too large to download. P1.E14.T12 adds KTX2
+  (Basis) compression to the export pipeline and the client's loader; heroes re-export at 4k once it lands.
+- **P1.E07.T01** Skill state (`@astra/shared/skills`, `server/src/skills`) → fragments are a currency: an `unlock`
+  request spends a tier's 1/3/6 fragments of the branch (a ledger per branch, earned and spent; never refunded);
+  unlocking needs no level or prerequisite, buying needs the tier level (1/15/30/45, conjunctions 15), one bought node of
+  the tier below, an augment's target, Tier II in both branches for a conjunction, Void standing, and points. Points =
+  level (read live from progress, capped 50) + granted (capped 1000) − cost of owned nodes; 152 points own the whole
+  web, 151 do not. Bars: 6 ground slots; the ship bar stores 5 and only the flown hull's `abilitySlots` take a node
+  (no ship, none); nodes go to the bar their cost type names; passives and cost-free forms are always on. Respec refunds
+  any chosen set, refused if a kept node loses a prerequisite; 500 units a point; at a Chorus listener (a Reaches
+  quartermaster for Void; both for a mixed set); applied atomically with the units. Pack Mule adds a pod (up to the bays)
+  and raises the stack cap; its refund removes a pod only beyond the bays, refused `no_room` if items would not fit.
+  Trainer, combat and standing hooks default to off until P1.E07.T13, P1.E06.T02 and P1.E07.T08 answer them (so no
+  respec or Void nodes yet). Phase 1 ceiling `SKILL_PHASE.maxTier = 2`: buying or unlocking Tier III, conjunctions or
+  capstones is refused `phase` (the Phase 1 exit criterion is Tier I and II live); what a character owns stays owned.
+  The people's pre-unlocked node is added on load. A stored state with an unknown id or a broken prerequisite refuses
+  the join until P1.E07.T15 reconciles data changes. Protocol 5; join order welcome, world, inventory, skills, party;
+  the protocol test requires each version number exactly once. `discovery` unlocks trust their caller. → DESIGN 9.1 as
+  data the client can predict. Callers to come: level-ups and hull swaps call `skills.refresh`.
+- **P1.E04.T01** Client net layer (`packages/client/src/net`) → the client calls the gateway on its own origin
+  (`/auth`, `/characters`, `/health`, `/ws`; a Vite dev/preview proxy with an `ASTRA_SERVER` override). The session token
+  lives in sessionStorage (`astra-session`, tab-scoped) with a one-shot notice (`astra-notice`); localStorage keeps only
+  `next-horizon-settings`, and the demo's save keys are removed at boot. Net: hello and join together; reconnect only
+  after a successful join, backoff 0.5 s doubling to 30 s with 50–100% jitter, unlimited; `version`, `auth`,
+  `character` and `kicked` are final, `full` is retried, `invalid` is retried once and final only if another comes
+  within 60 s. Acks only for the newest applied tick, at most every 50 ms (a stall's backlog is acked once); the
+  snapshot store keeps 64 ticks and resets on a new session. World time: set from the first welcome, then slewed (≤2×
+  catch-up, never back, ≤0.25 s ahead), and stepped forward at once when more than 1 s behind (a hidden tab); shaders
+  run on a separate `renderTime`; inputs stamp `time` from the same clock at 20 Hz of real time with the boost bit and
+  the ship-mode mapping (flying/landing/takeoff/docking → `ship`, landed in a station → `docked`); no input outside the
+  zone's system or between the stars until P1.E04.T04. Welcome places the character (docked on the nearest pad, on
+  foot with the ship beside, the pulse drive not resumed; an unknown frame falls back to the Waystation); a reconnect
+  keeps the client's pose only in the same system, in one of its frames and not between the stars. Corrections snap
+  and re-express into the client's frame (blending is P1.E04.T03). "Save game" became "Leave the world" (a reload). The
+  account and character screens are an interim sheet until P1.E04.T05; new characters get look `{0,0,0,0}` until
+  P1.E05.T05. A dev-only offline sandbox (`import.meta.env.DEV` plus a scenario hash or `dev.boot()`) keeps scenarios,
+  reviews and captures hermetic, with no persistence; it compiles to nothing in production. The demo's flat inventory
+  API still changes only the client copy until its owners move it to the server (mining P1.E13.T01/T06, trade
+  P1.E11.T04/P1.E13.T03, rewards P1.E08.T04, death taxes P1.E06.T03, warp cells P1.E12.T05). `pnpm smoke` needs
+  `pnpm db:up` (a scratch database and Redis db 7). → The game plays through the server.
+- **P1.E09.T04** Cutscene tooling → Blender cutscenes export as the evaluated camera sampled every frame (JSON) and
+  played back on a Catmull-Rom spline in time (DESIGN 19.2's "curves", read as what Blender shows); authoring rules (a
+  DESIGN 19.4 convention): `CAM_<cutscene>_<shot>` cameras, timeline markers `line:`/`end:`/`event:`, words in a
+  `CUT_<cutscene>` text block, `ACTOR_` empties and a `radius` scene property for the server's placements, the scene's
+  `frame`/`anchor`; ids a–z, 0–9 and `_`. The exporter refuses malformed input and lists every problem; a `cutscenes`
+  art family validates sources, and export scripts revalidate only their own family. Presentation: a 2.39:1 letterbox
+  (bars at least 7.5%) with the fov widened so the band shows Blender's framing; banners as a title card in the top bar;
+  dialogue at 1.2 s + 16 characters a second, a 0.25 s gap, reveal at 48 characters a second; Space/Enter/click reveal
+  then jump behind a dip, Esc (or a pointer-lock release) skips and fires the remaining events marked skipped without
+  banners; controls return when the camera is home; a glide becomes a dip beyond 600 m or from the cockpit; client
+  hazards (pirates, survival) pause while watching. Always phased: a story phase keyed `cutscene:<id>@<frame>` (or `#n`
+  for player-anchored, within the radius); the server decides — a client request needs `may(session, id)` (refused by
+  default; dev entries only off production), a 10 s cooldown per session, and a player in another phase is refused,
+  never pulled out; the quest engine starts its steps' cutscenes with `start(session, id, at)` and the client plays an
+  unrequested server `play`. `watching` holds only while the player is in its phase and at most the cutscene's length
+  + 6.5 s; a 1 s sweep ends overruns and pushes `ended`. Online the client plays only on the server's `play` (a refusal
+  or no answer in 5 s plays nothing); the offline link is the dev sandbox's. Protocol 6. Open: the client creates its
+  networked link lazily, so a server-started cutscene before any client request is dropped (fix with the quest engine,
+  P1.E09.T01); fauna's exemption for watchers is in P1.E08.T02; P1.E09.T03 extends `ui/Cinematic.js`.
