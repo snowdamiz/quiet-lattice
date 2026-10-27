@@ -278,7 +278,7 @@ describe('the ground planner, when things go wrong', () => {
         expect(p.ground(world)).toBeNull();
         await new Promise((r) => setTimeout(r, 20));
       }
-      const waits = warnings.map((w) => w.obj.retryInS);
+      const waits = warnings.map((w) => Number(w.obj.retryInS));
       expect(waits.slice(0, 3)).toEqual([0.3, 0.6, 1.2]);
       for (let i = 1; i < 3; i++) expect(warnings[i]!.at - warnings[i - 1]!.at).toBeGreaterThanOrEqual(waits[i - 1]! * 1000);
       expect(warnings.every((w) => w.msg === 'ground planning failed; the world keeps no herds until it is tried again')).toBe(true);
