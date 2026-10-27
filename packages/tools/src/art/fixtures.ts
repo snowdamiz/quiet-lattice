@@ -28,7 +28,13 @@ export const EXPECT = {
 };
 
 /** A box (24 vertices) from `min` to `max` with normals, UVs and extra attributes. */
-function box(doc: Document, name: string, min: number[], max: number[], extra: Record<string, { type: 'SCALAR' | 'VEC3' | 'VEC4'; value: number[] }> = {}): Mesh {
+function box(
+  doc: Document,
+  name: string,
+  min: number[],
+  max: number[],
+  extra: Record<string, { type: 'SCALAR' | 'VEC3' | 'VEC4'; value: number[] }> = {},
+): Mesh {
   const buffer = doc.getRoot().listBuffers()[0] ?? doc.createBuffer();
   const pos: number[] = [];
   const nrm: number[] = [];
@@ -72,7 +78,12 @@ function box(doc: Document, name: string, min: number[], max: number[], extra: R
 }
 
 function scene(doc: Document, name: string, mesh: Mesh, translation: number[]): void {
-  doc.createScene().addChild(doc.createNode(name).setMesh(mesh).setTranslation(translation as [number, number, number]));
+  doc.createScene().addChild(
+    doc
+      .createNode(name)
+      .setMesh(mesh)
+      .setTranslation(translation as [number, number, number]),
+  );
 }
 
 async function write(doc: Document, file: string, options: Partial<MeshoptOptions>): Promise<void> {
@@ -101,14 +112,15 @@ function png(size: number, px: (x: number, y: number) => [number, number, number
     return out;
   };
   const raw = Buffer.alloc(size * (size * 3 + 1));
-  for (let y = 0; y < size; y++)
-    for (let x = 0; x < size; x++) raw.set(px(x, y), y * (size * 3 + 1) + 1 + x * 3);
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) raw.set(px(x, y), y * (size * 3 + 1) + 1 + x * 3);
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(size, 0);
   ihdr.writeUInt32BE(size, 4);
   ihdr[8] = 8;
   ihdr[9] = 2;
-  return new Uint8Array(Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]));
+  return new Uint8Array(
+    Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]),
+  );
 }
 
 /** `png` as KTX2, encoded as the export does for a colour (ETC1S, sRGB) or a normal map (UASTC, Zstandard, linear). */

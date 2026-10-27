@@ -22,16 +22,18 @@ function mesh(doc: Document, name: string) {
   }
   const idx = new Uint16Array(Array.from({ length: (N - 2) * 3 }, (_, k) => [0, 1 + Math.floor(k / 3), 2 + Math.floor(k / 3)][k % 3]!));
   const acc = (type: 'VEC3' | 'VEC2' | 'SCALAR', a: Float32Array | Uint16Array) => doc.createAccessor().setType(type).setArray(a).setBuffer(buffer);
-  return doc.createMesh(name).addPrimitive(
-    doc
-      .createPrimitive()
-      .setAttribute('POSITION', acc('VEC3', pos))
-      .setAttribute('NORMAL', acc('VEC3', nrm))
-      .setAttribute('TEXCOORD_0', acc('VEC2', uv))
-      .setAttribute('_pivot', acc('VEC3', pivot))
-      .setIndices(acc('SCALAR', idx))
-      .setMaterial(doc.createMaterial('Hull').setRoughnessFactor(0.5)),
-  );
+  return doc
+    .createMesh(name)
+    .addPrimitive(
+      doc
+        .createPrimitive()
+        .setAttribute('POSITION', acc('VEC3', pos))
+        .setAttribute('NORMAL', acc('VEC3', nrm))
+        .setAttribute('TEXCOORD_0', acc('VEC2', uv))
+        .setAttribute('_pivot', acc('VEC3', pivot))
+        .setIndices(acc('SCALAR', idx))
+        .setMaterial(doc.createMaterial('Hull').setRoughnessFactor(0.5)),
+    );
 }
 
 /** A hull in the export layout: lark / lark_LOD0 holding a wing mesh that parents a hardpoint, a gear pivot beside it,

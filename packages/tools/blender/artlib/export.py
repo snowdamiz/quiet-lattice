@@ -63,6 +63,11 @@ def main(family, argv=None):
         print(f"export {family}: nothing to export (no .blend sources in {R.rel(src_dir)})")
         return 0
     out_root = Path(args.out_dir) if args.out_dir else R.MODELS
+    shipped = ktx.settings(rules, family).get("compress") or meshopt.settings(rules, family).get("compress")
+    if args.compress is False and shipped and out_root.resolve() == R.MODELS.resolve():
+        # (an uncompressed export is a comparison, never a model: the validator refuses it in the models folder)
+        print(f"export {family}: --no-compress writes what this family must not ship; give --out-dir a scratch folder")
+        return 2
     done = []
     for src in sources:
         out = out_root / rules["output"].format(family=family, stem=src.stem)

@@ -93,7 +93,12 @@ export interface KtxFetch {
 /** The `ktx` binary: KTX, else the fetched release, fetching it first (once) when it is missing. The download is checked
  * against its pinned SHA-256 before anything is written, and the unpacked tool must report the pinned version before it
  * replaces the cache; a failure leaves nothing behind. */
-export async function ensureKtx(root: string, env: NodeJS.ProcessEnv = process.env, log: (s: string) => void = console.log, deps: KtxFetch = {}): Promise<string> {
+export async function ensureKtx(
+  root: string,
+  env: NodeJS.ProcessEnv = process.env,
+  log: (s: string) => void = console.log,
+  deps: KtxFetch = {},
+): Promise<string> {
   const found = findKtx(env, root);
   if (found) return found;
   const release = deps.release ?? ktxRelease(process.platform, process.arch);

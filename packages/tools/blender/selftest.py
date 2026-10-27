@@ -782,6 +782,12 @@ def test_textures():
     )
     if not png.exists():
         return
+    shipped = R.MODELS / "props" / "rock.glb"
+    existed = shipped.exists()
+    code = E.main("props", ["--src-root", str(SRC), "--report-dir", str(REPORTS), "--quiet", "--only", "rock", "--bake-res", "128", "--no-compress"])
+    if shipped.exists() and not existed:
+        shipped.unlink()  # (only if the refusal failed)
+    expect(code == 2 and shipped.exists() == existed, "--no-compress refuses to write into the models folder of a family that ships compressed")
     rep_png = core.validate_path(RULES, png, family="props", source=SRC / "props" / "rock.blend")
     expect(has(rep_png, "materials", "map is image/png, not KTX2"), "validating a props export with PNG maps fails: the family ships KTX2")
     expect(has(rep_png, "triangles", "geometry is not meshopt-compressed"), "and with plain geometry: the family ships meshopt")
