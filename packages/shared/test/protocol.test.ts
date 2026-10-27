@@ -76,6 +76,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'inventory', seq: 3, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 2, i: 7 }, count: 40 } },
   { t: 'skills', seq: 4, op: { op: 'buy', node: 'well' } },
   { t: 'cutscene', op: 'request', id: 'test' },
+  { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', tool: 'multitool', time: 3600.5 },
 ];
 
 /** Every inventory op a client may send (they share the `inventory` request type). */
@@ -135,6 +136,8 @@ const serverSamples: ServerMessage[] = [
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
   { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
+  { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', result: 'depleted', item: 'copper', count: 12, added: 12 },
+  { t: 'nodes', frame: '424242:3', cells: [{ cell: '2_310_77', gone: ['copper_4'], hurt: [['sodium_1', 0.3]] }] },
 ];
 
 const http = {
