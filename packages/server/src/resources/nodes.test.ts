@@ -3,7 +3,7 @@
 // back early to make room.
 import { nodeType, type NodeCell, type PlanetParams } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
-import { cellKey, HEAL_S, MAX_CONTRIBUTORS, NodeStore, SHOWN_STEPS, type CellState } from './nodes.ts';
+import { cellKey, HEAL_S, NodeStore, SHOWN_STEPS, type CellState } from './nodes.ts';
 
 const params = { seed: 1, radius: 30_000 } as PlanetParams;
 const cell = (i: number, j = 0): NodeCell => ({ face: 2, i, j, level: 9 });
@@ -35,12 +35,34 @@ describe('NodeStore', () => {
     ]);
   });
 
-  it('counts at most MAX_CONTRIBUTORS characters’ damage; others still damage it', () => {
+  it('counts every character’s damage, however many hit it', () => {
     const s = new NodeStore();
-    const n = s.touch('7:1', params, cell(3), nodeType('gamma_crystal'), 0, 0, new Set());
-    for (let i = 0; i < MAX_CONTRIBUTORS + 3; i++) s.damage(n, `c${i}`, 0.1, 0, new Set());
-    expect(n.by.size).toBe(MAX_CONTRIBUTORS);
-    expect(n.hp).toBeCloseTo(nodeType('gamma_crystal').hp - 0.1 * (MAX_CONTRIBUTORS + 3), 9);
+    const n = s.touch('7:1', params, cell(3), nodeType('gamma_crystal'), 0, 0);
+    for (let i = 0; i < 20; i++) s.damage(n, `c${i}`, 0.1 + i / 100, 0);
+    expect(n.by.size).toBe(20);
+    expect([...n.by.values()].reduce((a, b) => a + b, 0)).toBeCloseTo(nodeType('gamma_crystal').hp - n.hp, 9);
+    expect(n.by.get('c19')).toBeCloseTo(0.29, 9);
+  });
+
+  it('gives each world a version that changes with any of its cells, and with nothing on another world', () => {
+    const s = new NodeStore();
+    const a = s.touch('7:1', params, cell(1), copper, 0, 0);
+    const w = s.world('7:1')!;
+    const v0 = w.version;
+    expect(v0).toBe(a.cell.version);
+    const b = s.touch('7:2', params, cell(1), copper, 0, 0);
+    expect(w.version).toBe(v0);
+    s.damage(b, 'x', 2, 0);
+    expect(w.version).toBe(v0);
+    s.damage(a, 'x', 2, 0);
+    expect(w.version).toBe(a.cell.version);
+    expect(w.version).toBeGreaterThan(v0);
+    // a world let go and touched again starts from a version none of its cells has had
+    const last = s.world('7:2')!.version;
+    s.advance(HEAL_S + 1);
+    expect(s.world('7:2')).toBeUndefined();
+    s.touch('7:2', params, cell(1), copper, 0, HEAL_S + 2);
+    expect(s.world('7:2')!.version).toBeGreaterThan(last);
   });
 
   it('heals HEAL_S after the last hit, and grows back at its respawn time, in time order', () => {

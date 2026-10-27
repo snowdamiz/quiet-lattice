@@ -95,7 +95,33 @@ function setup(opts: Partial<ResourceServiceOptions> = {}) {
     const inv = inventory.get(v.characterId)!;
     return [...inv.suit, ...inv.pods.flat()].reduce((n, s) => n + (s?.item === item ? s.count : 0), 0);
   };
-  return { zone, inventory, clock, service, grounds, player, move, hit, flora, held };
+  /**
+   * Hits `node` until it breaks, `who(i)` hitting at step i (the clock moves a quarter second a step). Returns the damage
+   * each character did (what each hit took off the node, read from it as the hits land), who broke it, its answer, and
+   * each character's share as listeners heard it.
+   */
+  const breakNode = (node: string, who: (i: number) => readonly Viewer[]) => {
+    const damage = new Map<string, number>();
+    const shares = new Map<string, number>();
+    const off = service.subscribe((e) => shares.set(e.characterId, e.count));
+    try {
+      for (let i = 0; i < 400; i++) {
+        for (const v of who(i)) {
+          const hp = service.nodeState(world.frame, node)?.hp ?? nodeType(node.split('_').slice(3, -1).join('_')).hp;
+          const r = hit(v, node);
+          const after = r.result === 'depleted' ? 0 : service.nodeState(world.frame, node)!.hp;
+          if (r.result !== 'hit' && r.result !== 'depleted') throw new Error(`hit refused: ${r.reason}`);
+          if (hp > after) damage.set(v.characterId, (damage.get(v.characterId) ?? 0) + hp - after);
+          if (r.result === 'depleted') return { damage, breaker: v, answer: r, shares };
+        }
+        clock.t += 0.25;
+      }
+    } finally {
+      off();
+    }
+    throw new Error('the node never broke');
+  };
+  return { zone, inventory, clock, service, grounds, player, move, hit, flora, held, breakNode };
 }
 
 describe('mining hits', () => {
@@ -169,24 +195,19 @@ describe('mining hits', () => {
     const b = s.player(deposit.stand);
     const type = nodeType(deposit.node.type);
     // a beams twice as long as b (b hits once a second, each hit worth at most half a second)
-    let last;
-    let breaker: Viewer | undefined;
-    for (let i = 0; i < 40 && !breaker; i++) {
-      for (const v of i % 4 ? [a] : [a, b]) {
-        last = s.hit(v, deposit.id);
-        if (last.result === 'depleted') breaker = v;
-        if (last.result !== 'hit') break;
-      }
-      s.clock.t += 0.25;
-    }
-    expect(last!.result).toBe('depleted');
+    const { damage, breaker, answer: last } = s.breakNode(deposit.id, (i) => (i % 4 ? [a] : [a, b]));
     const share = (v: Viewer) => s.held(v, type.resource);
     const total = share(a) + share(b);
     expect(total).toBeGreaterThanOrEqual(type.yield[0]);
     expect(total).toBeLessThanOrEqual(type.yield[1]);
+    // exactly the yield split by the damage each did
+    expect(damage.get(a.characterId)! + damage.get(b.characterId)!).toBeCloseTo(type.hp, 9);
+    expect(damage.get(a.characterId)!).toBeGreaterThan(1.5 * damage.get(b.characterId)!);
+    const want = splitByDamage(total, [...damage]);
+    expect(new Map([a, b].map((v) => [v.characterId, share(v)]))).toEqual(want);
     expect(share(a)).toBeGreaterThan(share(b));
     expect(share(b)).toBeGreaterThan(0);
-    expect(last).toMatchObject({ count: share(breaker!), added: share(breaker!) });
+    expect(last).toMatchObject({ count: share(breaker), added: share(breaker) });
     // the one whose hit did not break it hears its share as an unasked answer
     const other = breaker === a ? b : a;
     expect(other.got.filter((m) => m.t === 'mine')).toEqual([
@@ -194,6 +215,42 @@ describe('mining hits', () => {
     ]);
     expect(s.hit(a, deposit.id).reason).toBe('harvested');
     expect(s.hit(b, deposit.id).reason).toBe('harvested');
+  });
+
+  it('every miner’s damage counts: a ninth gets its share, and token taggers only theirs, however many', () => {
+    const type = nodeType(deposit.node.type);
+    {
+      const s = setup();
+      const nine = Array.from({ length: 9 }, () => s.player(deposit.stand));
+      const { damage, shares } = s.breakNode(deposit.id, () => nine);
+      expect(damage.size).toBe(9);
+      const total = [...shares.values()].reduce((x, y) => x + y, 0);
+      expect(shares).toEqual(splitByDamage(total, [...damage]));
+      const ninth = nine[8]!.characterId;
+      expect(shares.get(ninth)).toBeGreaterThan(0);
+      expect(s.held(nine[8]!, type.resource)).toBe(shares.get(ninth));
+    }
+    {
+      // eight characters each prime their beam on a rock, then tag the node a millisecond later; one does the work
+      const s = setup();
+      const taggers = Array.from({ length: 8 }, () => s.player(deposit.stand));
+      const worker = s.player(deposit.stand);
+      const rock = world.onGround(norm(deposit.stand), 3, 3);
+      taggers.forEach((t, i) => s.flora(t, 'rock', `prime${i}`, rock));
+      s.clock.t += 0.001;
+      for (const t of taggers) expect(s.hit(t, deposit.id).result).toBe('hit');
+      const tagged = [...s.service.nodeState(world.frame, deposit.id)!.by.values()].reduce((x, y) => x + y, 0);
+      expect(tagged).toBeLessThan(0.02);
+      s.clock.t += 0.25;
+      const { damage, shares } = s.breakNode(deposit.id, () => [worker]);
+      const all = new Map([...taggers.map((t) => [t.characterId, 0.001 * MULTITOOL_POWER] as const), [worker.characterId, damage.get(worker.characterId)!]]);
+      const total = [...shares.values()].reduce((x, y) => x + y, 0);
+      expect(total).toBeGreaterThanOrEqual(type.yield[0]);
+      expect(new Map([...taggers, worker].map((v) => [v.characterId, s.held(v, type.resource)]))).toEqual(splitByDamage(total, [...all]));
+      // their few thousandths of the node are worth nothing; the worker takes the yield
+      for (const t of taggers) expect(s.held(t, type.resource)).toBe(0);
+      expect(s.held(worker, type.resource)).toBe(total);
+    }
   });
 
   it('a share that does not fit is reported, not kept', () => {
@@ -388,6 +445,25 @@ describe('what players are sent', () => {
     expect(a.nodes()).toEqual([{ t: 'nodes', frame: world.frame, reset: true, cells: [] }]);
   });
 
+  it('a player crossing straight from one world’s frame to another’s starts over on the new one', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const b = s.player(deposit.stand);
+    while (s.hit(b, deposit.id).result === 'hit') s.clock.t += 0.25;
+    s.service.sweep();
+    const cell = deposit.id.split('_').slice(0, 3).join('_');
+    expect(a.nodes()).toEqual([{ t: 'nodes', frame: world.frame, reset: true, cells: [{ cell, gone: [deposit.id.slice(cell.length + 1)], hurt: [] }] }]);
+    // another rocky body of the system (a moon in its planet's sphere, say): no stop in between
+    const other = world.system.bodies.find((x) => x.type !== 'gas' && x.index !== world.body.index)!;
+    const there = `${world.system.seed}:${other.index}`;
+    s.move(a, [other.radius + 2, 0, 0], 'foot', there);
+    s.service.sweep();
+    expect(a.nodes()).toEqual([{ t: 'nodes', frame: there, reset: true, cells: [] }]);
+    s.move(a, deposit.stand);
+    s.service.sweep();
+    expect(a.nodes()).toEqual([{ t: 'nodes', frame: world.frame, reset: true, cells: [{ cell, gone: [deposit.id.slice(cell.length + 1)], hurt: [] }] }]);
+  });
+
   it('to a session, as text put together from cells encoded once: the same message, decodable as sent', () => {
     const s = setup();
     class TextViewer extends Viewer {
@@ -464,6 +540,26 @@ describe('splitByDamage', () => {
       ]),
     ]).toEqual([['a', 7]]);
     expect(splitByDamage(7, []).size).toBe(0);
+    // float noise in summed damage never decides a tie: 2.8 : 1.2 of 15 is 10.5 : 4.5, and the first named gets the unit
+    for (const parts of [
+      [
+        ['a', 2.8],
+        ['b', 1.2],
+      ],
+      [
+        ['a', 2.4 + 0.4000000000000005],
+        ['b', 1.2000000000000002],
+      ],
+      [
+        ['a', 0.1 * 28],
+        ['b', 0.1 * 12],
+      ],
+    ] as [string, number][][]) {
+      expect([...splitByDamage(15, parts)]).toEqual([
+        ['a', 11],
+        ['b', 4],
+      ]);
+    }
     for (let n = 0; n < 50; n++) {
       const parts: [string, number][] = Array.from({ length: 1 + (n % 7) }, (_, i) => [`c${i}`, ((n * 7 + i * 13) % 11) + 0.37]);
       const total = 3 + (n % 40);

@@ -17,8 +17,6 @@ export const RESPAWN_S: Readonly<Record<NodeKind, number>> = { plant: 180, depos
 export const HEAL_S = 60;
 /** Touched nodes kept over every world (a few hundred bytes each). */
 export const MAX_NODE_STATES = 100_000;
-/** Characters whose damage to one node is counted for its yield; later ones still damage it but take no share. */
-export const MAX_CONTRIBUTORS = 8;
 /** Steps the damage shown to other players is rounded up to (a tenth of a node), so a beam's every hit is not news. */
 export const SHOWN_STEPS = 10;
 
@@ -38,7 +36,7 @@ export interface NodeState {
   respawnAt: number | null;
   /** standing and damaged: the world time it heals unless hit again */
   healAt: number;
-  /** damage done to it by each character (at most MAX_CONTRIBUTORS) */
+  /** damage done to it by each character: every one that hit it is counted (those in reach of it bound how many) */
   readonly by: Map<string, number>;
   /** the fraction of it shown to other players (SHOWN_STEPS), 0 when broken */
   shown: number;
@@ -69,6 +67,9 @@ export const BUCKET_SHIFT = 3;
 /** One world's touched nodes. */
 export class WorldNodes {
   readonly cells = new Map<number, CellState>();
+  /** the newest version of any of its cells, or of a cell it let go: changes whenever anything its players are shown
+   * does (unique over the store, as cells' versions are) */
+  version = 0;
   /** touched cells by bucket (bucketKey) */
   readonly buckets = new Map<number, Set<CellState>>();
   /** the grid level of its buckets */
@@ -180,7 +181,7 @@ export class NodeStore {
    * The node, held from now on (made whole when it was not held): what a hit damages. A new one may make room by bringing
    * back the node due soonest (its cell goes into `changed`).
    */
-  touch(frame: string, params: PlanetParams, cell: NodeCell, type: NodeType, k: number, now: number, changed: Set<CellState>): NodeState {
+  touch(frame: string, params: PlanetParams, cell: NodeCell, type: NodeType, k: number, now: number, changed?: Set<CellState>): NodeState {
     const sub = `${type.id}_${k}`;
     const key = cellKey(cell);
     const held = this.worlds.get(frame)?.cells.get(key)?.nodes.get(sub);
@@ -191,7 +192,7 @@ export class NodeStore {
     let c = world.cells.get(key);
     if (!c) {
       const center = nodeCellCenter(cell, [0, 0, 0] as Vec3);
-      c = { world, key, id: `${cell.face}_${cell.i}_${cell.j}`, cell, center, version: this.nextVersion++, nodes: new Map() };
+      c = { world, key, id: `${cell.face}_${cell.i}_${cell.j}`, cell, center, version: (world.version = this.nextVersion++), nodes: new Map() };
       world.cells.set(key, c);
       const b = world.bucketOf(cell);
       let bucket = world.buckets.get(b);
@@ -217,12 +218,12 @@ export class NodeStore {
   }
 
   /** Damage by a character to a standing node at world time `now`; true when it broke (hp 0, not yet marked broken). */
-  damage(n: NodeState, character: string, amount: number, now: number, changed: Set<CellState>): boolean {
+  damage(n: NodeState, character: string, amount: number, now: number, changed?: Set<CellState>): boolean {
     if (n.respawnAt !== null || !(amount > 0)) return false;
     const done = Math.min(amount, n.hp);
     n.hp -= done;
     if (n.hp <= n.type.hp * 1e-9) n.hp = 0;
-    if (n.by.has(character) || n.by.size < MAX_CONTRIBUTORS) n.by.set(character, (n.by.get(character) ?? 0) + done);
+    n.by.set(character, (n.by.get(character) ?? 0) + done);
     n.healAt = now + HEAL_S;
     this.schedule(n);
     const shown = n.hp > 0 ? Math.ceil((n.hp / n.type.hp) * SHOWN_STEPS) / SHOWN_STEPS : 0;
@@ -234,7 +235,7 @@ export class NodeStore {
   }
 
   /** Marks a broken node to grow back at world time `at`. */
-  broke(n: NodeState, at: number, changed: Set<CellState>): void {
+  broke(n: NodeState, at: number, changed?: Set<CellState>): void {
     n.hp = 0;
     n.shown = 0;
     n.respawnAt = at;
@@ -244,7 +245,7 @@ export class NodeStore {
   }
 
   /** Heals and grows back every node due by world time `now`; their cells go into `changed`. */
-  advance(now: number, changed: Set<CellState>): void {
+  advance(now: number, changed?: Set<CellState>): void {
     for (let top = this.heap.peek(); top && top.at <= now; top = this.heap.peek()) {
       this.heap.pop();
       const n = top.node;
@@ -260,7 +261,7 @@ export class NodeStore {
   }
 
   /** Lets every node go (they are the scatter's again), as if each were due. */
-  clear(changed: Set<CellState>): void {
+  clear(changed?: Set<CellState>): void {
     while (this.evictOne(changed));
   }
 
@@ -286,7 +287,7 @@ export class NodeStore {
   }
 
   /** Brings back the node due soonest, early; false when none is held. */
-  private evictOne(changed: Set<CellState>): boolean {
+  private evictOne(changed?: Set<CellState>): boolean {
     for (let top = this.heap.pop(); top; top = this.heap.pop()) {
       if (!this.live(top.node) || top.node.queued !== top.at) continue;
       this.release(top.node, changed);
@@ -296,7 +297,7 @@ export class NodeStore {
   }
 
   /** The node is the scatter's again: forgotten, and its cell (and world) with it once empty. */
-  private release(n: NodeState, changed: Set<CellState>): void {
+  private release(n: NodeState, changed?: Set<CellState>): void {
     const c = n.cell;
     c.nodes.delete(n.sub);
     n.queued = NaN;
@@ -312,8 +313,8 @@ export class NodeStore {
     if (!w.cells.size) this.worlds.delete(w.frame);
   }
 
-  private bump(c: CellState, changed: Set<CellState>): void {
-    c.version = this.nextVersion++;
-    changed.add(c);
+  private bump(c: CellState, changed?: Set<CellState>): void {
+    c.version = c.world.version = this.nextVersion++;
+    changed?.add(c);
   }
 }

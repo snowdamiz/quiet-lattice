@@ -189,7 +189,7 @@ interface View {
   sent: Map<number, { id: string; version: number }>;
   /** a reset is due (it has just arrived on the world) */
   reset: boolean;
-  /** the store's version when it last looked */
+  /** its world's version when it last looked (0: the world had no touched nodes) */
   checked: number;
 }
 
@@ -234,7 +234,6 @@ export class ResourceService {
   private readonly miners = new Map<string, Miner>();
   private readonly worlds = new Map<string, World | null>();
   private readonly scattered = new Map<string, ResourceNode[]>();
-  private readonly changed = new Set<CellState>();
   /** each touched cell's state as sent, for the version it was worked out for */
   private readonly wires = new WeakMap<CellState, { version: number; wire: Wire }>();
   private readonly counts: Omit<ResourceStats, 'nodes' | 'scatterCells'> = { hits: 0, refused: {}, broken: 0, scattered: 0, losSamples: 0, pushed: 0 };
@@ -367,8 +366,8 @@ export class ResourceService {
     if (blocked) return blocked;
     const credit = this.credit(characterId, miner, now);
     if (credit === null) return 'heat';
-    const n = this.store.touch(world.frame, world.params, ref.cell, type, ref.k, now, this.changed);
-    if (!this.store.damage(n, characterId, this.power(characterId, type.kind !== 'plant') * credit, now, this.changed)) {
+    const n = this.store.touch(world.frame, world.params, ref.cell, type, ref.k, now);
+    if (!this.store.damage(n, characterId, this.power(characterId, type.kind !== 'plant') * credit, now)) {
       return { ...base, result: 'hit', hp: n.hp / type.hp };
     }
     return this.harvest(zone, world, n, characterId, now, base);
@@ -385,7 +384,7 @@ export class ResourceService {
   ): MineState {
     const type = n.type;
     const shares = splitByDamage(this.rng.int(type.yield[0], type.yield[1]), [...n.by]);
-    this.store.broke(n, now + this.respawnSeconds(type), this.changed);
+    this.store.broke(n, now + this.respawnSeconds(type));
     this.counts.broken++;
     let mine = { count: 0, added: 0 };
     for (const [cid, share] of shares) {
@@ -516,9 +515,7 @@ export class ResourceService {
    * The timer calls it every SWEEP_MS; tests and the bench call it by hand. */
   sweep(): void {
     const now = this.now();
-    this.store.advance(now, this.changed);
-    this.changed.clear();
-    const version = this.store.version;
+    this.store.advance(now);
     for (const zone of this.zones.zones) {
       let tier: Tier | undefined;
       for (const [viewer, entityId] of zone.viewers()) {
@@ -529,7 +526,7 @@ export class ResourceService {
           v.view = null;
           continue;
         }
-        this.look(viewer, v, world, (tier ??= this.tierOf(zone)), f.pos, version);
+        this.look(viewer, v, world, (tier ??= this.tierOf(zone)), f.pos);
       }
     }
     if (now - this.lastPrune >= 10) {
@@ -539,7 +536,7 @@ export class ResourceService {
   }
 
   /** Brings one player on a world up to date. */
-  private look(viewer: ZoneViewer, v: ViewerState, world: World, tier: Tier, pos: Readonly<Vec3>, version: number): void {
+  private look(viewer: ZoneViewer, v: ViewerState, world: World, tier: Tier, pos: Readonly<Vec3>): void {
     let view = v.view;
     if (!view || view.frame !== world.frame) {
       view = v.view = { frame: world.frame, at: null, high: false, buckets: [], sent: new Map(), reset: true, checked: -1 };
@@ -547,6 +544,8 @@ export class ResourceService {
       this.grounds.ground(world.params, tier);
     }
     const nodes = this.store.world(world.frame);
+    // (a player whose world's touched nodes have not changed since it last looked, and who has not moved far, is done)
+    const version = nodes?.version ?? 0;
     if (!nodes && !view.sent.size) {
       if (view.reset) this.sendNodes(viewer, world.frame, true, []);
       view.reset = false;
@@ -728,7 +727,11 @@ function wireOf(state: CellWire): Wire {
   return { state: r.data, text: JSON.stringify(r.data) };
 }
 
-/** `total` split by each one's damage, in whole units (largest remainders first, then the order given). */
+/** Remainders closer than this are a tie (the damage behind them sums hits in floating point). */
+const SPLIT_EPS = 1e-9;
+
+/** `total` split by each one's damage, in whole units: largest remainders first, then the order given (remainders within
+ * SPLIT_EPS of each other are equal, so float noise in the damage never decides who gets a unit). */
 export function splitByDamage(total: number, parts: readonly (readonly [string, number])[]): Map<string, number> {
   const out = new Map<string, number>();
   const live = parts.filter(([, d]) => d > 0);
@@ -738,12 +741,12 @@ export function splitByDamage(total: number, parts: readonly (readonly [string, 
   const rest: { id: string; frac: number; i: number }[] = [];
   live.forEach(([id, d], i) => {
     const exact = (total * d) / sum;
-    const whole = Math.floor(exact);
+    const whole = Math.min(total - given, Math.floor(exact + SPLIT_EPS));
     out.set(id, whole);
     given += whole;
-    rest.push({ id, frac: exact - whole, i });
+    rest.push({ id, frac: Math.max(0, exact - whole), i });
   });
-  rest.sort((a, b) => b.frac - a.frac || a.i - b.i);
+  rest.sort((a, b) => (Math.abs(b.frac - a.frac) > SPLIT_EPS ? b.frac - a.frac : a.i - b.i));
   for (let k = 0; given < total && k < rest.length; k++, given++) out.set(rest[k]!.id, out.get(rest[k]!.id)! + 1);
   return out;
 }
