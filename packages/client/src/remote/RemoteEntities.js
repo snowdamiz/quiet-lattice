@@ -5,8 +5,9 @@
 // the render time (PlaybackClock: 100 ms behind the newest server time the snapshots bring), and places the pose through
 // its frame as the frame stands now (game.time): an entity riding a moon stays on the moon as drawn, wherever the camera
 // is. What would make a drawn entity jump (a frame change: the two frames have moved apart over the delay; a late sample
-// that ends an extrapolation) is caught as the sample arrives and blended out over BLEND_S; a teleport or a change of what
-// the entity is (a cut) is shown as the jump it is.
+// that ends an extrapolation) is caught as the sample arrives and taken up by an offset that dies away, critically damped
+// with time constant BLEND_S, from where and as fast as the entity was being drawn; a teleport or a change of what the
+// entity is (a cut) is shown as the jump it is.
 //
 // Drawn: players flying, landed or docked as their ship, and `ship` entities (NPC ships, cutscene actors), by hull
 // (RemoteShips; a snapshot without one is the Lark every pilot starts in). Players on foot are hidden until the body rig
@@ -21,8 +22,8 @@ import { RemoteShips } from './RemoteShips.js';
 
 /** The entity kinds this layer follows. */
 export const FOLLOWED = new Set(['player', 'ship']);
-/** The time constant (s) a drawn jump is blended out over. */
-export const BLEND_S = 0.25;
+/** The time constant (s) a drawn jump is blended out with (critically damped: mostly gone in 4 of them). */
+export const BLEND_S = 0.2;
 /** A drawn jump larger than this (m) is no motion to blend: it is shown. */
 export const SNAP_M = 2000;
 /** The hull of a player or ship whose snapshot names none: the Lark every pilot starts in (DESIGN 10.1). */
@@ -30,6 +31,8 @@ export const DEFAULT_HULL = 'lark';
 
 const _w = new THREE.Vector3();
 const _l = new THREE.Vector3();
+const _rate = new THREE.Vector3();
+const _k = new THREE.Vector3();
 
 /** One remote entity as this client follows it. */
 class Remote {
@@ -44,8 +47,9 @@ class Remote {
     this.pose = { frame: null, pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: new THREE.Vector3(), mode: null, since: -Infinity };
     /** what the buffer last said ('empty', 'early', 'interpolate', 'extrapolate', 'hold') */
     this.status = 'empty';
-    /** added to the pose's position, in its frame's axes: a jump being blended out */
+    /** added to the pose's position, in its frame's axes: a jump being blended out, and its rate */
     this.offset = new THREE.Vector3();
+    this.offsetRate = new THREE.Vector3();
     this.cutSince = -Infinity;
     /** as drawn: the frame, the position in it, and the world position and orientation */
     this.frame = null;
@@ -158,30 +162,40 @@ export class RemoteEntities {
     // (a frame of no system this client has: it is not in the zone's system, warped away or between the stars)
     if (frame === undefined) {
       r.buf.clear();
-      r.offset.set(0, 0, 0);
+      settle(r);
       return;
     }
-    // where it is drawn now, so that a change the sample makes there is blended out rather than jumped
+    // where it is drawn now and how fast it moves in its frame, so that a change the sample makes there is blended out
+    // rather than jumped
     const drawn = r.buf.length > 0 && this.renderTime > -Infinity;
+    const was = r.buf.frame;
     if (drawn) {
-      r.buf.sample(this.renderTime, r.pose);
-      toWorld(r.buf.frame, _l.copy(r.pose.pos).add(r.offset), _w);
+      rateOf(r, r.buf.sample(this.renderTime, r.pose), _rate).add(r.offsetRate);
+      toWorld(was, _l.copy(r.pose.pos).add(r.offset), _w);
     }
     const result = r.buf.push(time, frame, e.pos, e.quat, e.vel, e.mode ?? null);
     if (!drawn || result === 'stale' || result === 'repeat') return;
-    r.buf.sample(this.renderTime, r.pose);
+    const status = r.buf.sample(this.renderTime, r.pose);
     const off = toLocal(r.buf.frame, _w, _l).sub(r.pose.pos);
-    if (off.length() > SNAP_M) r.offset.set(0, 0, 0);
-    else r.offset.copy(off);
+    if (off.length() > SNAP_M) return settle(r);
+    r.offset.copy(off);
+    // (rates in two frames are not comparable: across a frame change the blend starts at rest, which is what the drawn
+    // motion does there, both frames carrying the entity alike over the delay)
+    if (r.buf.frame === was) r.offsetRate.copy(_rate).sub(rateOf(r, status, _l));
+    else r.offsetRate.set(0, 0, 0);
   }
 
   /** Each frame: the render time moves on, every entity is placed and the view draws them. */
   update(dt) {
     this.checkSystem();
     const now = this.serverNow();
-    this.replay?.update(now, this);
+    // (the bodies already stand at this frame's time, so the render time moves on before a recorded stream delivers: a
+    // sample's blend is worked out with the frames and the render time of one frame, as a live snapshot's is between
+    // frames)
     const tr = (this.renderTime = this.clock.advance(now));
-    const fade = Math.exp(-Math.max(0, dt) / BLEND_S);
+    this.replay?.update(now, this);
+    const step = Math.max(0, dt);
+    const fade = Math.exp(-step / BLEND_S);
     for (let i = this.list.length - 1; i >= 0; i--) {
       const r = this.list[i];
       if (r.goneAt !== null && tr >= r.goneAt) {
@@ -196,9 +210,12 @@ export class RemoteEntities {
       // past a cut it is where the cut put it, with nothing left to blend
       if (r.pose.since > r.cutSince) {
         r.cutSince = r.pose.since;
-        r.offset.set(0, 0, 0);
+        settle(r);
       }
-      r.offset.multiplyScalar(fade);
+      // the offset dies away critically damped: x(t) = (x0 + (v0 + x0/T) t) e^(-t/T), its rate v(t) = (v0 - (v0 + x0/T) t/T) e^(-t/T)
+      _k.copy(r.offsetRate).addScaledVector(r.offset, 1 / BLEND_S);
+      r.offset.addScaledVector(_k, step).multiplyScalar(fade);
+      r.offsetRate.addScaledVector(_k, -step / BLEND_S).multiplyScalar(fade);
       r.frame = r.pose.frame;
       r.pos.copy(r.pose.pos).add(r.offset);
       toWorld(r.frame, r.pos, r.world);
@@ -222,8 +239,19 @@ export class RemoteEntities {
     this.system = this.game.system ?? null;
     for (const r of this.list) {
       r.buf.clear();
-      r.offset.set(0, 0, 0);
+      settle(r);
       r.shown = false;
     }
   }
+}
+
+// Nothing left to blend.
+function settle(r) {
+  r.offset.set(0, 0, 0);
+  r.offsetRate.set(0, 0, 0);
+}
+
+// How fast the pose the buffer gave (with `status`) moves in its frame: not at all where it is held.
+function rateOf(r, status, out) {
+  return status === 'interpolate' || status === 'extrapolate' ? out.copy(r.pose.vel) : out.set(0, 0, 0);
 }

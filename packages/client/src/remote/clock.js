@@ -56,7 +56,10 @@ export class PlaybackClock {
     this.prevNow = now;
     // (far behind it jumps; ahead, however far, it only slows: going back would play the entities backwards)
     if (target - this.t > JUMP_S) this.t = target;
-    else this.t += step + Math.max(-SLEW * step, Math.min(SLEW * step, target - this.t));
+    else {
+      const on = this.t + step;
+      this.t = on + Math.max(-SLEW * step, Math.min(SLEW * step, target - on));
+    }
     return this.t;
   }
 }
