@@ -32,8 +32,9 @@ if (scenario) {
       startReview(game, decodeURIComponent(scenario.slice('review:'.length)));
       return;
     }
-    // #cutscene:<id> — plays public/cutscenes/<id>.json (src/cutscene/), the ship first put where the cutscene staged it
-    if (name === 'cutscene') {
+    // #cutscene:<id> (dev builds) — plays public/cutscenes/<id>.json (src/cutscene/), the ship first put where the
+    // cutscene staged it
+    if (name === 'cutscene' && import.meta.env.DEV) {
       const def = await game.cutscenes.load(arg);
       game.cutscenes.stage(def);
       await wait(1500);

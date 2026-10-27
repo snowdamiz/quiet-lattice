@@ -407,41 +407,74 @@ every chat line, mute and party change goes to the server log for moderation.
 
 ## 14. Cutscenes
 
-DESIGN 8's cutscenes play in-engine, always in a phase (DESIGN 14.1, 17), on the camera-glide system (19.2).
+DESIGN 8's cutscenes play in-engine, always in a phase (DESIGN 14.1, 17), on the camera-glide system (19.2). The server
+decides when one plays; the client presents it.
 
 - **Authoring** (`assets/blend/cutscenes/<name>.blend`, one cutscene a file): scene custom properties `cutscene` (its
-  id), `frame` (`station`, `home`, `body:<n>`, `inertial` or `player`) and `anchor` (`origin`: the frame's coordinates;
-  `player`: relative to the player's pose when it starts, the ship at the origin nose along +Y); cameras
+  id, a-z, 0-9 and `_`), `frame` (`station`, `home`, `body:<n>`, `inertial` or `player`), `anchor` (`origin`: the
+  frame's coordinates; `player`: relative to the player's pose when it starts, the ship at the origin nose along +Y;
+  the inertial and player frames anchor on the player) and `radius` (the phase's volume, 3000 m by default); cameras
   `CAM_<cutscene>_<shot>`, each moved however the artist likes (a Follow Path on its curve `CAM_<cutscene>_<shot>_path`,
   a Track To, keyed lenses), cut between by timeline markers bound to them; markers `line:<key>`, `end:<key>` and
   `event:<name>`, their words in a Text block `CUT_<cutscene>` (JSON: lines' speaker, voice and text; banners' title
-  and sub); an optional empty `STAGE_player` where the player's ship is put. The render resolution is the framing
-  (2.39:1 for the letterbox); the frame range at the scene's rate is its length.
-- **Export** (`packages/tools/blender/export_cutscene.py`, headless; `-- --selftest` checks it): JSON at
-  `packages/client/public/cutscenes/<id>.json`, format `astra.cutscene` version 1. Each shot is the evaluated camera
-  sampled at every frame (constraints, keys and lens included, as Blender plays it), in the engine's axes, with the
-  vertical field of view of the render framing; lines with times and lengths (a line without an end marker runs its
-  reading time, cut short by the next); events with optional banners; the space; the stage.
+  and sub); actors as empties `ACTOR_<name>` (`kind` npc, ship or prop, `label`, optional `hull`); an optional empty
+  `STAGE_player` where the dev scenario puts the player's ship. The render resolution is the framing (2.39:1 for the
+  letterbox); the frame range at the scene's rate is its length.
+- **Checks and export** (`packages/tools/blender/export_cutscene.py`, headless; `-- --selftest`): every rule the
+  client's `parseCutscene` applies, and the marker grammar, are checked first, and every problem is listed (an unknown
+  or wrong-case marker kind, an `end:` with no line, a key or name used twice or empty, a banner with no title or no
+  event, a marker outside the frame range, an id or frame the client refuses, a bad actor). `pnpm art:validate` runs
+  the same checks on the family `cutscenes` (families.json kind `cutscene`; the mesh checks do not apply), and a change
+  to the exporter re-validates only that family. The export writes `packages/client/public/cutscenes/<id>.json` (format
+  `astra.cutscene` 1: each shot the evaluated camera at every frame, in the engine's axes, with the vertical field of
+  view of the render framing; lines with times and lengths, a line without an end marker running its reading time cut
+  short by the next; events with optional banners; the space; the stage) and, from the same source, the server's
+  `packages/server/src/cutscenes/placements/<id>.json` (`astra.cutscene.place` 1: the space, the radius and the
+  actors' poses). It never writes outside its output folders.
+- **Who and when (the server):** `CutsceneService` (`packages/server/src/cutscenes/`, built by server.ts, reached by the
+  gateway's `cutscene` case) answers a client's `cutscene request` only when `may(session, id)` allows it: the quest
+  engine (P1.E09.T01) sets `may` to its rule (the character is on that cutscene step) and starts its steps' cutscenes
+  itself with `start(session, id, at)` at the step's place; until it does nothing may, but a catalog entry marked `dev`
+  on a development server (`NODE_ENV` not production), so the test cutscene can never start in production. A session
+  asks at most once every 10 s (`COOLDOWN_S`); asking again for the one it is watching answers with the same phase.
+- **Where (the server):** a cutscene plays at its place. Anchored on its frame's origin, the place is that origin and
+  the player must be within the radius (`refused place` otherwise); anchored on the player, it is where the player is,
+  in the cutscene's frame, which must be the player's. The story phase is keyed by the cutscene and its place
+  (`cutscene:<id>@<frame>`, or `…#<n>` for each player-anchored place), so a party member shares a member's phase only
+  at the same place (within its radius): one far away gets its own. A player already in a phase (a bay, an event,
+  another step) is refused (`refused phase`), never pulled out; the quest engine's `at` is the step's own place, so a
+  step's cutscene plays in the step's phase. The actors spawn once into the phase, in the cutscene's frame at their
+  exported poses (turned with the anchor when it is the player), seen only by the phase's members; `done` takes the
+  player out, and the last one out closes the phase with its actors. A session that leaves (its socket closes, it is
+  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten.
+- **Out of play:** while a player watches, `cutscenes.watching(zone, entity)` is true and the client pauses the
+  player's local hazards (pirate raids, the suit's survival damage). The server's fauna (§6.2) leaves alone a player
+  `phases.hiddenFromShared` hides; it must treat a watching player the same way (neither prey, intruder nor threat).
+  That is a follow-up outside the cutscene code: `fauna/sim.ts`'s `Actor.hidden` should also be true while
+  `cutscenes.watching(zone.id, id)`, the zone being given a way to ask the service.
+- **The client's link** (`packages/client/src/cutscene/link.js`): online (`game.net`, P1.E04.T01's Net) a cutscene asks
+  through `NetCutsceneLink` (`net.send` and `net.on('cutscene')`) and plays only on `play`, in the phase it names; a
+  refusal, no answer within 5 s or a dropped connection plays nothing, and a `play` that comes too late is given back
+  with `done`. The server ending the one playing (`ended`) ends it here as a skip. `OfflineCutsceneLink` (a local
+  layer, phase null, the messages it would have sent kept) is the dev sandbox's only: with no `game.net`, in a dev
+  build.
 - **Playback** (`packages/client/src/cutscene/`): `CutscenePlayer` loads and checks a definition (`timeline.js`), asks
-  its link for a phase, then runs a `Timeline` on game time (so `window.step` and captures are exact): the clock, the
-  lines' reveal and fades, events in order. `CameraDirector` (the camera-glide system, with the demo's chase-view
-  eases, seat glides and dips) takes the camera: it glides from the player's view into the first shot (a dip when far,
-  from the seat, or asked for), plays the shots on a spline through the samples (`curve.js`) expressed in the
+  its link, then runs a `Timeline` on game time (so `window.step` and captures are exact): the clock, the lines' reveal
+  and fades, events in order. `CameraDirector` (the camera-glide system, with the demo's chase-view eases, seat glides
+  and dips) takes the camera: it glides from the player's view into the first shot (a dip when more than 600 m apart,
+  from the cockpit seat, or asked for), plays the shots on a spline through the samples (`curve.js`) expressed in the
   cutscene's frame so they follow it as it orbits (`space.js`), and glides back to the player's view at the end. The
   canvas's field of view is widened so the band between the letterbox bars shows exactly what Blender framed.
-  `ui/Cinematic.js` draws the letterbox and the dialogue bar each frame; events' banners go to `HUD.showBanner`
-  (`{station}`, `{system}`, `{home}`, `{planet}` filled in), and listeners (`cutscenes.on('event' | 'line' | 'start' |
-  'end')`) hear every event.
+  `ui/Cinematic.js` draws the letterbox and the dialogue bar each frame; events' banners go to `HUD.showBanner` as a
+  title card in the top bar (`{station}`, `{system}`, `{home}`, `{planet}` filled in, set as text, never markup), and
+  listeners (`cutscenes.on('event' | 'line' | 'start' | 'end')`) hear every event.
 - **Controls:** while one plays `game.overlay` is `'cutscene'`, so the player's controls are locked as under a menu.
-  Space, Enter or a click reveals the rest of a line, then jumps to the next behind a dip; Esc (which closes overlays)
-  skips. A jump or a skip fires every event it passes (a skip's marked `skipped`, without banners), so whatever listens
-  ends where watching would have left it. The controls come back as the camera starts home.
-- **Phases:** the client's link asks the server first (`cutscene request`); the server's `CutsceneService`
-  (`packages/server/src/cutscenes/`) places the player in a story phase keyed `cutscene:<id>` at its place (radius from
-  its catalog; a party member watching the same cutscene there shares the phase), spawns the catalog's actors into the
-  phase once, and answers with the phase's id; `done` takes the player out, and the last one out closes the phase and
-  its actors. Until the client is networked (P1.E04.T01) `OfflineCutsceneLink` answers for the server (a local layer,
-  phase null) and keeps the messages it would have sent; the gateway's `cutscene` case is one line
-  (`s.send(cutscenes.handle(s, msg))`) once the networked client sends them.
-- **Dev:** `#cutscene:<id>` stages the ship and plays it; `pnpm capture -- --ui cutscene-test` grabs the grader's stills
-  and clip; `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end.
+  Space, Enter or a click reveals the rest of a line, then jumps to the next behind a dip. Esc skips in one press: it
+  closes overlays (Menus.closeAll), and under pointer lock, where the browser takes Esc to release the lock and the page
+  never sees the key, the release itself (with the window focused) skips; the pause screen then comes up as after any
+  Esc, until a click. A jump or a skip fires every event it passes (a skip's marked `skipped`, without banners), so
+  whatever listens ends where watching would have left it. The controls come back as the camera starts home.
+- **Dev:** `#cutscene:<id>` stages the ship (`CutscenePlayer.stage`, dev builds only) and plays it; `pnpm capture --
+  --ui cutscene-test` (and `cutscene-test-jump`, `cutscene-test-skip`) grab the grader's stills and clips;
+  `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end, skips it, and plays it online through
+  a stand-in Net.
