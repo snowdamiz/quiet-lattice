@@ -845,8 +845,10 @@ requests and starts its timer.
   `unknown` (no such candidate in the scatter); `harvested`; `range` (35 m from the player's position to the node: the
   client's 30 m beam and 5 m for the eye, the node's size and a pose a tick old); `los` (the ground sampled every 2 m
   along the beam from the eye, 1.6 m up, to the node, its ends skipped, blocked where the beam runs 0.75 m under it; rocks,
-  trees and buildings do not block); `heat` (`beam(character, seconds)`, the hook Heat answers, P1.E07.T02; until then
-  the beam never overheats on the server).
+  trees and buildings do not block); `heat` (`beam(character, seconds)`: given Heat's meter service as `meters`
+  (P1.E07.T02), a hit counts only while `meters.beamActive(character, now)` says the beam is firing, its button held
+  and out of the overheat lockout, so hits sent with the button off never mine; without it, as until Heat is wired into
+  the gateway's `ResourceService`, the beam never overheats on the server).
 - **Beam time.** A hit is worth the time since the character's last hit that counted, at most 0.5 s (an honest client
   sends one every 0.25 s), at the multitool's 1.6 hp a second (× 1.5 on minerals with a node flagged
   `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
@@ -866,11 +868,13 @@ requests and starts its timer.
   client's own scatter, not shared nodes. A hit names `flora {kind, ref, at}`: the world must grow that kind
   (`floraGrows`), `at` must be within 8 m of the ground and in range and sight, the same beam time breaks it
   (`FLORA_HARVEST`'s hp, the client's numbers) and its yield is granted; the last 256 keys a character broke are refused
-  `harvested`, and so is flora past a budget per patch of ground (24 an hour to a character in any 10 m patch; the
-  client's densest flora has about 5 to a patch, 15 in a clump). Its place cannot be checked against a scatter the server
-  does not have, but its rate is bounded as a node's is (per beam-second, as much as an honest player breaking rocks, far
-  below a deposit's worth) and standing still naming plants that are not there soon runs dry, so carbon and ferrite
-  grants are never the client's.
+  `harvested`, and so is flora past a budget per patch of ground, counted in hp so a giant growth costs six rocks (24 hp
+  an hour to a character in any 10 m patch; the client's flora holds about 6 hp to a patch, up to about 18 in a clump).
+  Its place cannot be checked against a scatter the server does not have, but its rate is bounded as a node's is (per
+  beam-second, as much as an honest player breaking rocks, far below a deposit's worth), and a modified client standing
+  still and naming plants that are not there gets about 7,500 units an hour from the ~40 patches in its reach, the same
+  whether it names rocks, boulders or giant growths: below what an honest beam held on rocks earns (about 19,000 ferrite
+  an hour at Heat's duty cycle). So carbon and ferrite grants are never the client's.
 - **What players are sent.** Every 250 ms (`sweep`, on the service's timer) each session whose player is in a world's
   frame and within 500 m of its ground is sent, as `nodes`, the touched cells within 500 m of it that it does not hold or
   that changed (`gone`: broken and growing back; `hurt`: damaged, with the fraction left rounded up to tenths, so a

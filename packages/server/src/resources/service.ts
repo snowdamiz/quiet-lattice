@@ -99,11 +99,13 @@ export const FLORA_GROUND_M = 8;
 /** Flora keys a character broke that are remembered, so the same plant is not broken twice. */
 export const FLORA_REMEMBERED = 256;
 /** A budget on flora per patch of ground, since its places cannot be checked: a character breaks at most
- * FLORA_PER_PATCH plants and rocks an hour (FLORA_PATCH_S) in any FLORA_PATCH_M-metre patch (a cube of the world's
- * space; the client's densest flora holds about 5 to a 10 m patch, 15 in a clump), so standing still and naming plants
- * that are not there soon runs dry. The patches of the last FLORA_PATCHES_KEPT are kept per character. */
+ * FLORA_HP_PER_PATCH hp of plants and rocks an hour (FLORA_PATCH_S) in any FLORA_PATCH_M-metre patch (a cube of the
+ * world's space). Counted in hp, not plants, so naming giant growths or boulders buys nothing over rocks: every kind
+ * gives about the same per hp (FLORA_HARVEST). The client's flora holds about 6 hp to a 10 m patch, up to about 18 in
+ * a clump, so an honest player is never refused; one standing still and naming plants that are not there soon runs
+ * dry. The patches of the last FLORA_PATCHES_KEPT are kept per character. */
 export const FLORA_PATCH_M = 10;
-export const FLORA_PER_PATCH = 24;
+export const FLORA_HP_PER_PATCH = 24;
 export const FLORA_PATCH_S = 3600;
 export const FLORA_PATCHES_KEPT = 128;
 /** A character that has not mined for this long is forgotten (its rate, beam clock and flora), s: the flora budget's hour. */
@@ -164,6 +166,9 @@ export interface ResourceServiceOptions {
    * put together from cells each checked and encoded once) */
   notify?: (viewer: ZoneViewer, msg: ServerMessage) => void;
   log?: ZoneLog;
+  /** Heat (P1.E07.T02's meter service): when given, the multitool fires only while it says the character's beam is
+   * firing (the beam button held, on foot, out of the overheat lockout); `beam` asks it */
+  meters?: { beamActive(characterId: string, now: number): boolean };
   /** seeds the yield rolls (tests) */
   seed?: number;
   /** touched nodes kept at most (MAX_NODE_STATES) */
@@ -195,8 +200,8 @@ interface Miner {
   flora: { ref: string; kind: FloraKind; hp: number } | null;
   /** the keys of the flora it broke lately, oldest first */
   readonly floraDone: Set<string>;
-  /** flora broken per patch of ground (FLORA_PATCH_M), and when each patch's hour began */
-  readonly floraPatches: Map<string, { n: number; since: number }>;
+  /** the hp of flora broken per patch of ground (FLORA_PATCH_M), and when each patch's hour began */
+  readonly floraPatches: Map<string, { hp: number; since: number }>;
 }
 
 interface View {
@@ -236,9 +241,10 @@ interface World {
 export class ResourceService {
   /** How long a broken node takes to grow back, s (RESPAWN_S by kind; tests and the dev CLI shorten it). */
   respawnSeconds: (type: NodeType) => number = (t) => RESPAWN_S[t.kind];
-  /** Whether the multitool may fire `seconds` more for the character: Heat (P1.E07.T02) answers false when it is
-   * overheated and adds the beam's heat; until then the beam never overheats on the server. */
-  beam: (characterId: string, seconds: number) => boolean = () => true;
+  /** Whether the multitool may fire `seconds` more for the character: with Heat's meters (`opts.meters`, P1.E07.T02),
+   * only while they say its beam is firing (held, out of the lockout; Heat itself adds the beam's heat from the held
+   * button); without them, always. */
+  beam: (characterId: string, seconds: number) => boolean;
   readonly store: NodeStore;
   private readonly zones: ResourceZones;
   private readonly inventory: Pick<InventoryService, 'grant'>;
@@ -274,6 +280,17 @@ export class ResourceService {
     this.log = opts.log;
     this.rng = new Random(opts.seed ?? hashInts(Date.now() & 0x7fffffff, process.pid));
     this.store = new NodeStore(opts.maxNodes);
+    const meters = opts.meters;
+    this.beam = meters
+      ? (characterId) => {
+          try {
+            return meters.beamActive(characterId, this.now());
+          } catch {
+            // (a character the meters do not hold is not firing)
+            return false;
+          }
+        }
+      : () => true;
   }
 
   /** Listens to every share of every node or plant broken (the quest engine's `mine` steps). */
@@ -432,7 +449,7 @@ export class ResourceService {
     if (miner.floraDone.has(target.ref)) return 'harvested';
     const at = target.at;
     const patch = this.patchOf(miner, at, now);
-    if (patch.n >= FLORA_PER_PATCH) return 'harvested';
+    if (patch.hp + spec.hp > FLORA_HP_PER_PATCH) return 'harvested';
     // within reach of the player before the ground is sampled
     if (!(Math.hypot(at[0] - pos[0], at[1] - pos[1], at[2] - pos[2]) <= MINE_RANGE_M + RANGE_SLACK_M)) return 'range';
     const ground = this.grounds.ground(world.params, tier);
@@ -448,7 +465,7 @@ export class ResourceService {
     f.hp -= this.power(characterId, spec.resource === 'ferrite') * credit;
     if (f.hp > spec.hp * 1e-9) return { ...base, result: 'hit', hp: f.hp / spec.hp };
     miner.flora = null;
-    patch.n++;
+    patch.hp += spec.hp;
     miner.floraDone.add(target.ref);
     if (miner.floraDone.size > FLORA_REMEMBERED) miner.floraDone.delete(miner.floraDone.values().next().value!);
     this.counts.broken++;
@@ -457,16 +474,16 @@ export class ResourceService {
     return { ...base, result: 'depleted', item: spec.resource, ...got };
   }
 
-  /** The character's flora count in the patch of ground holding `at`, its hour started over when it is past. */
-  private patchOf(miner: Miner, at: Readonly<Vec3>, now: number): { n: number; since: number } {
+  /** The hp of flora the character broke in the patch of ground holding `at`, its hour started over when it is past. */
+  private patchOf(miner: Miner, at: Readonly<Vec3>, now: number): { hp: number; since: number } {
     const key = `${Math.floor(at[0] / FLORA_PATCH_M)}:${Math.floor(at[1] / FLORA_PATCH_M)}:${Math.floor(at[2] / FLORA_PATCH_M)}`;
     let p = miner.floraPatches.get(key);
     if (p && now - p.since >= FLORA_PATCH_S) {
-      p.n = 0;
+      p.hp = 0;
       p.since = now;
     }
     if (!p) {
-      miner.floraPatches.set(key, (p = { n: 0, since: now }));
+      miner.floraPatches.set(key, (p = { hp: 0, since: now }));
       if (miner.floraPatches.size > FLORA_PATCHES_KEPT) miner.floraPatches.delete(miner.floraPatches.keys().next().value!);
     }
     return p;

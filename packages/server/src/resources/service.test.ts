@@ -10,7 +10,8 @@ import { Zone, type ZoneViewer } from '../zones/zone.ts';
 import { HEAL_S, RESPAWN_S } from './nodes.ts';
 import {
   FLORA_PATCH_S,
-  FLORA_PER_PATCH,
+  FLORA_HP_PER_PATCH,
+  FLORA_PATCH_M,
   HIT_BURST,
   HIT_CREDIT_MAX_S,
   MULTITOOL_POWER,
@@ -337,6 +338,35 @@ describe('mining hits', () => {
     expect(at(a, {}).reason).toBe('busy');
   });
 
+  it('with Heat’s meters, mine only while they say the beam is firing (held, out of the lockout)', () => {
+    let firing = false;
+    const asked: [string, number][] = [];
+    const s = setup({ meters: { beamActive: (id, now) => (asked.push([id, now]), firing) } });
+    const a = s.player(deposit.stand);
+    // the beam button not held: nothing
+    expect(s.hit(a, deposit.id).reason).toBe('heat');
+    expect(asked).toEqual([[a.characterId, s.clock.t]]);
+    expect(s.service.nodeState(world.frame, deposit.id)).toBeUndefined();
+    firing = true;
+    s.clock.t += 0.25;
+    expect(s.hit(a, deposit.id).result).toBe('hit');
+    // overheated (the lockout): nothing again
+    firing = false;
+    s.clock.t += 0.25;
+    const hp = s.service.nodeState(world.frame, deposit.id)!.hp;
+    expect(s.hit(a, deposit.id).reason).toBe('heat');
+    expect(s.service.nodeState(world.frame, deposit.id)!.hp).toBe(hp);
+    // a character the meters do not hold is not firing
+    const t = setup({
+      meters: {
+        beamActive: () => {
+          throw new Error('not held');
+        },
+      },
+    });
+    expect(t.hit(t.player(deposit.stand), deposit.id).reason).toBe('heat');
+  });
+
   it('are refused `los` with the ground in the way, and `heat` when the multitool may not fire', () => {
     const blocked = world.findNode({ blocked: true });
     const s = setup();
@@ -396,28 +426,72 @@ describe('common flora', () => {
     expect(s.hit(a, deposit.id).hp).toBe(1);
   });
 
-  it('a patch of ground gives a character at most FLORA_PER_PATCH plants an hour, however it names them', () => {
+  it('a patch of ground gives a character at most FLORA_HP_PER_PATCH hp of flora an hour, however it names it', () => {
     const s = setup();
     const a = s.player(deposit.stand);
     const up = norm(deposit.stand);
-    /** breaks a rock with a fresh key at `at`: its last answer */
+    /** breaks one plant of `kind` with a fresh key at `at`: its last answer */
     let n = 0;
-    const rock = (at: Readonly<Vec3>) => {
-      const ref = `r${n++}`;
+    const one = (kind: keyof typeof FLORA_HARVEST, at: Readonly<Vec3>) => {
+      const ref = `p${n++}`;
       for (;;) {
         s.clock.t += 0.5;
-        const r = s.flora(a, 'rock', ref, at);
+        const r = s.flora(a, kind, ref, at);
         if (r.result !== 'hit') return r;
       }
     };
     const here = world.onGround(up, 3, 3);
-    const answers = Array.from({ length: FLORA_PER_PATCH + 3 }, () => rock(here));
-    expect(answers.filter((r) => r.result === 'depleted').length).toBe(FLORA_PER_PATCH);
-    expect(answers.slice(FLORA_PER_PATCH).map((r) => r.reason)).toEqual(['harvested', 'harvested', 'harvested']);
-    // a patch further off still gives, and an hour on this one gives again
-    expect(rock(world.onGround(up, -12, -14)).result).toBe('depleted');
+    // rocks are 1 hp: FLORA_HP_PER_PATCH of them; then nothing, not even a rock
+    const rocks = Array.from({ length: FLORA_HP_PER_PATCH + 2 }, () => one('rock', here));
+    expect(rocks.filter((r) => r.result === 'depleted').length).toBe(FLORA_HP_PER_PATCH);
+    expect(rocks.slice(FLORA_HP_PER_PATCH).map((r) => r.reason)).toEqual(['harvested', 'harvested']);
+    // giant growths are 6 hp: a fresh patch gives FLORA_HP_PER_PATCH / 6 of them
+    const there = world.onGround(up, -12, -14);
+    const giants = Array.from({ length: FLORA_HP_PER_PATCH / FLORA_HARVEST.giant.hp + 2 }, () => one('giant', there));
+    expect(giants.filter((r) => r.result === 'depleted').length).toBe(FLORA_HP_PER_PATCH / FLORA_HARVEST.giant.hp);
+    // an hour on, the first patch gives again
     s.clock.t += FLORA_PATCH_S;
-    expect(rock(here).result).toBe('depleted');
+    expect(one('rock', here).result).toBe('depleted');
+  });
+
+  it('standing still and naming flora that is not there is held to the patches in reach, the same for rocks, boulders and giants', () => {
+    const up = norm(deposit.stand);
+    // every point on the ground within reach of the stand, 5 m apart, that the beam can see
+    const spots: Vec3[] = [];
+    for (let e = -30; e <= 30; e += 5) {
+      for (let nn = -30; nn <= 30; nn += 5) {
+        const at = world.onGround(up, e, nn);
+        if (Math.hypot(at[0] - deposit.stand[0], at[1] - deposit.stand[1], at[2] - deposit.stand[2]) > 33) continue;
+        const u = norm(at);
+        if (world.clear(deposit.stand, [at[0] + u[0], at[1] + u[1], at[2] + u[2]])) spots.push(at);
+      }
+    }
+    const patches = new Set(spots.map((at) => at.map((x) => Math.floor(x / FLORA_PATCH_M)).join(':'))).size;
+    expect(patches).toBeGreaterThan(20);
+    const got: Record<string, number> = {};
+    for (const kind of ['rock', 'boulder', 'giant'] as const) {
+      const s = setup();
+      const a = s.player(deposit.stand);
+      const t0 = s.clock.t;
+      // an hour of the beam held on, a fresh key each break, round the spots in reach
+      for (let k = 0; s.clock.t - t0 < FLORA_PATCH_S; k++) {
+        const ref = `${kind}${k}`;
+        const at = spots[k % spots.length]!;
+        for (;;) {
+          s.clock.t += 0.5;
+          if (s.flora(a, kind, ref, at).result !== 'hit') break;
+        }
+      }
+      got[kind] = s.held(a, FLORA_HARVEST[kind].resource);
+    }
+    // every kind gives 5–10 units an hp, so the hour is worth at most the patches' hp at 10 units an hp, and about the
+    // same whatever is named (the break-count budget gave giants six times what rocks gave)
+    for (const kind of ['rock', 'boulder', 'giant']) expect(got[kind]).toBeLessThanOrEqual(patches * FLORA_HP_PER_PATCH * 10);
+    const most = Math.max(...Object.values(got));
+    const least = Math.min(...Object.values(got));
+    expect(most / least).toBeLessThan(1.4);
+    // and far below an honest beam on rocks for the hour (1.6 hp a second, 7.5 units an hp, before any overheating)
+    expect(most).toBeLessThan(MULTITOOL_POWER * FLORA_PATCH_S * 7.5 * 0.4);
   });
 });
 
