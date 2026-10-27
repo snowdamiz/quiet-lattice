@@ -207,6 +207,7 @@ Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's o
 |---|---|---|---|
 | 1 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 2, performance 4 | 3.43 |
 | 2 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 3 | 3.57 |
+| 3 | REVISE | legibility 3, hud-fit 4, motion 3, palette 4, correctness 3, spec 4, performance 5 | 3.71 |
 
 Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
 of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
@@ -217,6 +218,12 @@ Round 2: marker range text overlaps its own ship and falls to 1.3–2.4:1 over l
 offset, so they drift hundreds of pixels off near ships, and collide with the fixed HUD and each other; far Larks
 shimmer; pads (+3.97 ms for 3 ships) and surface (+3.0 ms, over 16.7 ms) cost out of proportion, the coarsest LOD is 25%
 of LOD0 (§19.2 wants under 5%) and casts shadows. Requested: a full bay phase, 24 Larks docked, with the perf readout.
+
+Round 3: performance now passes (crowd +0.25 ms, bay +1–1.5 ms, coarsest LOD 2.8%, +17 draw calls). Still failing: name
+labels sit past the ship's screen bounds, 100–220 px from their own diamond; remote nav and strobe lights flash full on
+for one frame and their bloom grows with distance (250–350 px at 1–2 km, brighter than the local ship's); markers still
+meet the EDGE line, the speed readout and the local ship in motion; the coarsest LOD starts at 130–200 m and smears;
+the landed remote ship shows no gear or ground contact.
 
 ## P1.E05.T01 Skeleton and three base bodies (art)
 
