@@ -24,6 +24,9 @@ export interface Online {
   serverUrl: string;
   /** What the server has printed (warnings and errors), for a failure's report. */
   serverOutput(): string;
+  /** Stops the server gracefully (it saves everyone in play), waits `downMs`, and starts it again on the same port and
+   * database: a restart as players live through it. */
+  restartServer(downMs?: number): Promise<void>;
   stop(): Promise<void>;
 }
 
@@ -81,47 +84,66 @@ export async function startOnline(): Promise<Online> {
   let server: ChildProcess | null = null;
   let vite: { close(): Promise<void> } | null = null;
   let out = '';
+  const env = { ...process.env, DATABASE_URL: dbUrl, REDIS_URL, HOST: '127.0.0.1', LOG_LEVEL: 'warn', NODE_ENV: 'development' };
+  let port = 0;
 
+  const launchServer = async () => {
+    const s = spawn(process.execPath, ['--import', 'tsx', 'src/index.ts'], {
+      cwd: SERVER_DIR,
+      env: { ...env, PORT: String(port) },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    server = s;
+    s.stdout!.on('data', (d) => (out += d));
+    s.stderr!.on('data', (d) => (out += d));
+    await healthy(`http://127.0.0.1:${port}`, s, () => out);
+  };
+  const stopServer = async () => {
+    const s = server;
+    if (!s || s.exitCode !== null) return;
+    const exited = new Promise((r) => s.once('exit', r));
+    s.kill('SIGTERM');
+    await Promise.race([exited, new Promise((r) => setTimeout(r, 10_000))]);
+    if (s.exitCode === null) s.kill('SIGKILL');
+  };
   const stop = async () => {
     await vite?.close();
-    if (server && server.exitCode === null) {
-      const exited = new Promise((r) => server!.once('exit', r));
-      server.kill('SIGTERM');
-      await Promise.race([exited, new Promise((r) => setTimeout(r, 10_000))]);
-      if (server.exitCode === null) server.kill('SIGKILL');
-    }
+    await stopServer();
     // (only ever the scratch database this run made)
     if (SCRATCH.test(name)) adminSql(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
   };
 
   try {
-    const env = { ...process.env, DATABASE_URL: dbUrl, REDIS_URL, HOST: '127.0.0.1', LOG_LEVEL: 'warn', NODE_ENV: 'development' };
     const migrated = spawnSync(process.execPath, ['--import', 'tsx', 'src/db/migrate.ts'], { cwd: SERVER_DIR, env, encoding: 'utf8' });
     if (migrated.status !== 0) throw new Error(`db:migrate failed: ${migrated.stderr || migrated.stdout}`);
 
-    const port = await freePort();
-    server = spawn(process.execPath, ['--import', 'tsx', 'src/index.ts'], {
-      cwd: SERVER_DIR,
-      env: { ...env, PORT: String(port) },
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    server.stdout!.on('data', (d) => (out += d));
-    server.stderr!.on('data', (d) => (out += d));
+    port = await freePort();
+    await launchServer();
     const serverUrl = `http://127.0.0.1:${port}`;
-    await healthy(serverUrl, server, () => out);
 
     process.env.ASTRA_SERVER = serverUrl;
-    const { createServer: createVite } = await import('vite');
+    const { createServer: createVite, createLogger } = await import('vite');
+    // the proxy's complaints while the server is down (the restart) or as a page goes are expected; any other error shows
+    const logger = createLogger('error');
+    const logError = logger.error.bind(logger);
+    logger.error = (msg, opts) => {
+      if (!/proxy (socket )?error/.test(msg)) logError(msg, opts);
+    };
     const vitePort = await freePort();
     const v = await createVite({
       root: CLIENT_DIR,
       configFile: join(CLIENT_DIR, 'vite.config.js'),
-      logLevel: 'error',
+      customLogger: logger,
       server: { port: vitePort, strictPort: true, host: '127.0.0.1', hmr: false, watch: null },
     });
     await v.listen();
     vite = v;
-    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, stop };
+    const restartServer = async (downMs = 1000) => {
+      await stopServer();
+      await new Promise((r) => setTimeout(r, downMs));
+      await launchServer();
+    };
+    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, restartServer, stop };
   } catch (err) {
     await stop();
     throw err;

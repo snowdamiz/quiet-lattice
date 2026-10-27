@@ -4,9 +4,10 @@ import { GALAXY_SEED, Galaxy, frameIdOf, homeSystems } from '@astra/shared/world
 import { startOnline, type Online } from './online.ts';
 
 // The game through the server (P1.E04.T01): sign up, make a character, enter, and spawn docked at the people's home
-// Waystation; then a reload resumes the character where the server holds it (on foot in the hangar, its warp cell moved
-// to the cargo pod), with no localStorage save anywhere. The server runs against a scratch database (online.ts).
-// Credentials are made up per run here and exist only in that database.
+// Waystation; a reload resumes the character where the server holds it (on foot in the hangar, its warp cell moved to the
+// cargo pod), with no localStorage save anywhere (the demo's old save, planted before each page loads, is dropped); a
+// server restart is reconnected through, the snapshot store starting over; a page stalled for 9 s keeps its session. The
+// server runs against a scratch database (online.ts). Credentials are made up per run here and exist only in that database.
 
 let online: Online;
 
@@ -16,6 +17,11 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await online?.stop();
+});
+
+// a browser that still holds the demo's localStorage save
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('next-horizon-save-v2', JSON.stringify({ v: 1, units: 99999 })));
 });
 
 // leave as a player does, so the dev server's proxy sees the socket close rather than torn down with the page
@@ -98,6 +104,10 @@ test('sign up, make a character and spawn docked at the home Waystation', async 
   await enter(page);
 
   const home = homeOf('thalune');
+  // five seconds of frames in far less real time (as window.step runs them)
+  await page.evaluate(() => {
+    for (let i = 0; i < 300; i++) window.game.frame(1 / 60);
+  });
   const got = await page.evaluate(() => {
     const g = window.game;
     const s = g.ship.state;
@@ -113,6 +123,9 @@ test('sign up, make a character and spawn docked at the home Waystation', async 
       title: document.querySelector('.title-screen')!.classList.contains('show'),
       own: { mode: own.mode, frame: own.frame, pos: own.pos, local: s.pos.toArray() },
       saved: Object.keys(localStorage),
+      // world time against the server clock's estimate, and the shaders' clock
+      lead: g.time - n.serverTime(),
+      render: g.renderTime,
     };
   });
   expect(got.welcome).toEqual({ mode: 'docked', frame: home.station, zone: `sys:${home.index}`, name: pilot.name });
@@ -122,6 +135,10 @@ test('sign up, make a character and spawn docked at the home Waystation', async 
   expect(got.own.frame).toBe(home.station);
   expect(Math.hypot(...got.own.pos.map((v: number, i: number) => v - got.own.local[i]))).toBeLessThan(1e-6);
   expect(got.saved.filter((k: string) => k !== 'next-horizon-settings')).toEqual([]);
+  // frames stepped faster than real time: world time follows the server's clock, never more than 0.25 s ahead of it
+  expect(got.lead).toBeLessThanOrEqual(0.26);
+  expect(got.lead).toBeGreaterThan(-1);
+  expect(got.render).toBeLessThan(1e4);
   expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
 });
 
@@ -183,5 +200,83 @@ test('a reload resumes the character where the server holds it', async ({ page }
   expect(after).toMatchObject({ mode: 'foot', system: home.index, inStation: true, shipDocked: true, warpCellInPod: true, warpCellInSuit: false });
   expect(Math.hypot(...after.pos.map((v: number, i: number) => v - before[i]!))).toBeLessThan(0.25);
   expect(after.saved.filter((k: string) => k !== 'next-horizon-settings')).toEqual([]);
+  expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
+});
+
+test('a server restart: the client reconnects, its snapshot store starts over, and it stays where it was', async ({ page }) => {
+  test.setTimeout(240_000);
+  const errors = watchErrors(page);
+  await openTitle(page);
+  await signUp(page, newPilot(), 'thalune');
+  await enter(page);
+  // long enough that the restarted zone's ticks, counted from 0 again, stay below these for a while
+  await page.waitForFunction(() => window.game.net.store.tick > 100, null, { timeout: 60_000 });
+  const before = await page.evaluate(() => {
+    const w = window as unknown as { game: Window['game']; welcomes: number };
+    w.welcomes = 0;
+    w.game.net.on('welcome', () => w.welcomes++);
+    return { tick: w.game.net.store.tick, pos: w.game.ship.state.pos.toArray() as number[] };
+  });
+  await online.restartServer(1000);
+  await page.waitForFunction(() => (window as unknown as { welcomes: number }).welcomes >= 1, null, { timeout: 90_000 });
+  await page.waitForFunction(() => window.game.net.store.tick > 0 && window.game.net.store.ack > 0, null, { timeout: 30_000 });
+  const after = await page.evaluate(() => {
+    const g = window.game;
+    const n = g.net;
+    return {
+      state: n.state,
+      tick: n.store.tick,
+      unapplied: n.stats.unappliedTicks,
+      own: n.store.entities.has(n.entityId),
+      mode: g.mode,
+      pos: g.ship.state.pos.toArray() as number[],
+      line: (document.querySelector('.menus .connection') as HTMLElement | null)?.style.display,
+    };
+  });
+  expect(after).toMatchObject({ state: 'joined', unapplied: 0, own: true, mode: 'ship', line: 'none' });
+  expect(after.tick).toBeLessThan(before.tick);
+  expect(Math.hypot(...after.pos.map((v, i) => v - before.pos[i]!))).toBeLessThan(1e-6);
+  // (the browser reports each refused reconnect while the server was down; nothing else)
+  const other = errors.filter((e) => !/WebSocket connection to .* failed/.test(e));
+  expect(other, `${other.join('\n')}\n${online.serverOutput()}`).toEqual([]);
+});
+
+test('a page stalled for 9 s keeps its session: the snapshots it missed are acknowledged once', async ({ page }) => {
+  test.setTimeout(240_000);
+  const errors = watchErrors(page);
+  await openTitle(page);
+  await signUp(page, newPilot(), 'ulgani');
+  await enter(page);
+  await page.waitForTimeout(1000);
+  let navigated = false;
+  page.on('framenavigated', () => (navigated = true));
+  const sent = await page.evaluate(() => {
+    const w = window as unknown as { sent: [number, string][] };
+    w.sent = [];
+    const send = WebSocket.prototype.send;
+    WebSocket.prototype.send = function (d: string) {
+      w.sent.push([performance.now(), JSON.parse(d).t]);
+      return send.call(this, d);
+    };
+    const end = performance.now() + 9000;
+    while (performance.now() < end) {
+      /* the main thread held, as a long GC or a stalled tab would */
+    }
+    return end;
+  });
+  await page.waitForTimeout(3000);
+  const got = await page.evaluate((end) => {
+    const n = window.game.net;
+    const after = (window as unknown as { sent: [number, string][] }).sent.filter(([t]) => t >= end);
+    const firstSecond = after.filter(([t]) => t < end + 1000);
+    return { state: n.state, refusal: n.refusal, acks: firstSecond.filter(([, k]) => k === 'ack').length, messages: firstSecond.length };
+  }, sent);
+  expect(navigated).toBe(false);
+  expect(got.state).toBe('joined');
+  expect(got.refusal).toBeNull();
+  // about 180 snapshots arrived during the stall: a tick's worth of acks follows it, not one per snapshot
+  expect(got.acks).toBeLessThanOrEqual(22);
+  expect(got.messages).toBeLessThan(60);
+  expect(online.serverOutput()).not.toContain('frame flood');
   expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
 });

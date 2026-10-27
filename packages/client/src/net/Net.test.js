@@ -3,7 +3,7 @@
 import { PROTOCOL_VERSION, encodeServerMessage, encodeSnapshot } from '@astra/shared/protocol';
 import { describe, expect, it } from 'vitest';
 import { ClockSync } from './clock.js';
-import { FINAL_REFUSALS, INPUT_INTERVAL_MS, Net, PING_INTERVAL_MS, RECONNECT } from './Net.js';
+import { ACK_INTERVAL_MS, FINAL_REFUSALS, INPUT_INTERVAL_MS, INVALID_RETRY_MS, Net, PING_INTERVAL_MS, RECONNECT } from './Net.js';
 import { SnapshotStore } from './snapshots.js';
 
 /** A WebSocket the test plays the server for. */
@@ -65,7 +65,7 @@ const welcome = (serverTime = 1000) => ({
 });
 const INVENTORY = { stackMax: 9999, units: 2500, suit: [{ item: 'warp_cell', count: 1 }, null], pods: [[null, null]] };
 
-function harness() {
+function harness({ random = () => 1 } = {}) {
   FakeSocket.all = [];
   let t = 10_000;
   const timers = [];
@@ -75,7 +75,7 @@ function harness() {
     characterId: 'c1',
     WebSocket: FakeSocket,
     now: () => t,
-    random: () => 1,
+    random,
     timers: {
       setTimeout: (fn, ms) => timers.push({ fn, ms }),
       clearTimeout: () => {},
@@ -93,8 +93,8 @@ function harness() {
 }
 
 /** Connected, welcomed and handed its inventory. */
-function joined() {
-  const h = harness();
+function joined(opts) {
+  const h = harness(opts);
   h.net.connect();
   h.socket().open();
   h.advance(40);
@@ -163,6 +163,17 @@ describe('Net: input', () => {
     expect(inputs[0].time).toBeCloseTo(h.net.serverTime() - INPUT_INTERVAL_MS / 1000, 6);
   });
 
+  it("stamps each input with the time the game sampled it at, never going back", () => {
+    const h = joined();
+    const times = [1000.5, 1000.4, 1000.6];
+    h.net.input = () => ({ time: times.shift(), mode: 'docked', pose: POSE, buttons: 0 });
+    for (let i = 0; i < 3; i++) {
+      h.net.update();
+      h.advance(INPUT_INTERVAL_MS);
+    }
+    expect(h.socket().sent.filter((m) => m.t === 'input').map((m) => m.time)).toEqual([1000.5, 1000.5, 1000.6]);
+  });
+
   it('pings every 2 s of real time', () => {
     const h = joined();
     h.advance(PING_INTERVAL_MS - 1);
@@ -200,20 +211,27 @@ describe('Net: input', () => {
 });
 
 describe('Net: snapshots', () => {
-  it('applies a full snapshot and deltas on their baselines, acknowledging each tick it applies', () => {
+  it('applies a full snapshot and deltas on their baselines, acknowledging the newest applied tick once a tick', () => {
     const h = joined();
+    const acks = () => h.socket().sent.filter((m) => m.t === 'ack').map((m) => m.tick);
     h.socket().pushBinary(encodeSnapshot({ tick: 5, time: 1000.25, ack: 0, full: true, entities: [entity(7, 30), entity(9, 0)], removed: [] }));
     h.socket().pushBinary(encodeSnapshot({ tick: 6, time: 1000.3, ack: 1, full: false, base: 5, entities: [{ id: 7, pos: [31, 0, 0] }], removed: [9] }));
-    expect(h.socket().sent.filter((m) => m.t === 'ack')).toEqual([
-      { t: 'ack', tick: 5 },
-      { t: 'ack', tick: 6 },
-    ]);
-    expect(h.net.store.tick).toBe(6);
+    // tick 6 came within the same tick's time as the ack of 5: its ack waits for the timer
+    expect(acks()).toEqual([5]);
+    expect(h.timers.map((t) => t.ms)).toEqual([ACK_INTERVAL_MS]);
+    h.advance(ACK_INTERVAL_MS);
+    h.timers.shift().fn();
+    expect(acks()).toEqual([5, 6]);
+    // a tick's time later, the next one goes at once
+    h.advance(ACK_INTERVAL_MS);
+    h.socket().pushBinary(encodeSnapshot({ tick: 7, time: 1000.35, ack: 1, full: false, base: 6, entities: [], removed: [] }));
+    expect(acks()).toEqual([5, 6, 7]);
+    expect(h.net.store.tick).toBe(7);
     expect(h.net.store.ack).toBe(1);
     expect([...h.net.store.entities.keys()]).toEqual([7]);
     expect(h.net.store.entities.get(7).pos).toEqual([31, 0, 0]);
     expect(h.net.store.entities.get(7).mode).toBe('docked');
-    expect(h.events.filter((e) => e[0] === 'snapshot')).toHaveLength(2);
+    expect(h.events.filter((e) => e[0] === 'snapshot')).toHaveLength(3);
   });
 
   it('neither stores nor acknowledges a delta whose baseline it does not hold, nor a tick with an entity it refused', () => {
@@ -229,6 +247,39 @@ describe('Net: snapshots', () => {
     // the next delta on the acknowledged tick goes through
     h.socket().pushBinary(encodeSnapshot({ tick: 9, time: 1, ack: 0, full: false, base: 5, entities: [{ id: 7, pos: [34, 0, 0] }], removed: [] }));
     expect(h.net.store.entities.get(7).pos).toEqual([34, 0, 0]);
+  });
+  it('acknowledges a backlog of snapshots (a stalled page catching up) once, for the newest tick', () => {
+    const h = joined();
+    h.socket().pushBinary(encodeSnapshot({ tick: 1, time: 1, ack: 0, full: true, entities: [entity(7, 0)], removed: [] }));
+    for (let tick = 2; tick <= 180; tick++) {
+      h.socket().pushBinary(encodeSnapshot({ tick, time: tick / 20, ack: 0, full: false, base: tick - 1, entities: [{ id: 7, pos: [tick, 0, 0] }], removed: [] }));
+    }
+    expect(h.net.store.tick).toBe(180);
+    expect(h.timers).toHaveLength(1);
+    h.advance(ACK_INTERVAL_MS);
+    h.timers.shift().fn();
+    expect(h.socket().sent.filter((m) => m.t === 'ack').map((m) => m.tick)).toEqual([1, 180]);
+  });
+
+  it('ignores snapshots that arrive before the welcome', () => {
+    const h = harness();
+    h.net.connect();
+    h.socket().open();
+    h.socket().pushBinary(encodeSnapshot({ tick: 1, time: 1, ack: 0, full: true, entities: [entity(7, 0)], removed: [] }));
+    expect(h.net.store.tick).toBe(-1);
+    expect(h.socket().types()).not.toContain('ack');
+  });
+
+  it("keeps a creature's fields as sent, the attack's progress included, until a delta clears it", () => {
+    const h = joined();
+    const mob = { id: 12, kind: 'mob', frame: '1:0', pos: [10, 6371000, 0], quat: [0, 0, 0, 1], vel: [1, 0, 0], mode: 'attack', species: 3, level: 4, hp: 0.8, attack: 0.4 };
+    h.socket().pushBinary(encodeSnapshot({ tick: 1, time: 1, ack: 0, full: true, entities: [entity(7, 0), mob], removed: [] }));
+    expect(h.net.store.entities.get(12)).toEqual(mob);
+    h.advance(ACK_INTERVAL_MS);
+    h.socket().pushBinary(encodeSnapshot({ tick: 2, time: 1.05, ack: 0, full: false, base: 1, entities: [{ id: 12, mode: 'idle', clear: ['attack'] }], removed: [] }));
+    expect(h.net.store.entities.get(12)).toEqual({ ...Object.fromEntries(Object.entries(mob).filter(([k]) => k !== 'attack')), mode: 'idle' });
+    expect(h.socket().sent.filter((m) => m.t === 'ack').map((m) => m.tick)).toEqual([1, 2]);
+    expect(h.net.stats).toMatchObject({ dropped: 0, rejectedTicks: 0, unappliedTicks: 0 });
   });
 });
 
@@ -253,6 +304,60 @@ describe('Net: losing the connection', () => {
     expect(h.socket().sent.find((m) => m.t === 'input').seq).toBe(1);
     h.socket().drop();
     expect(h.timers.map((t) => t.ms)).toEqual([RECONNECT.firstMs]);
+  });
+
+  it('spreads the reconnects: each delay is scaled by 50–100% at random', () => {
+    for (const [r, k] of [
+      [0, 0.5],
+      [0.5, 0.75],
+      [1, 1],
+    ]) {
+      const h = joined({ random: () => r });
+      h.socket().drop();
+      expect(h.timers.map((t) => t.ms)).toEqual([RECONNECT.firstMs * k]);
+    }
+  });
+
+  it('starts the snapshot store over on a new session: a restarted server counts its ticks from 0 again', () => {
+    const h = joined();
+    h.socket().pushBinary(encodeSnapshot({ tick: 900, time: 1, ack: 0, full: true, entities: [entity(7, 0)], removed: [] }));
+    h.socket().drop();
+    h.timers.shift().fn();
+    h.socket().open();
+    h.socket().push(welcome(1500));
+    h.socket().pushBinary(encodeSnapshot({ tick: 3, time: 2, ack: 0, full: true, entities: [entity(1, 5)], removed: [] }));
+    expect(h.net.store.tick).toBe(3);
+    expect([...h.net.store.entities.keys()]).toEqual([1]);
+    expect(h.net.stats.unappliedTicks).toBe(0);
+    expect(h.socket().sent.filter((m) => m.t === 'ack').map((m) => m.tick)).toEqual([3]);
+  });
+
+  it('retries a socket closed as invalid (a stalled page flooding the gateway) once, and gives up on a second within a minute', () => {
+    const h = joined();
+    const refuse = () => {
+      h.socket().push({ t: 'refused', code: 'invalid', reason: 'Too many messages.' });
+      h.socket().close(4000, 'invalid');
+    };
+    refuse();
+    expect(h.net.state).toBe('reconnecting');
+    h.timers.shift().fn();
+    h.socket().open();
+    h.socket().push(welcome());
+    h.advance(INVALID_RETRY_MS - 1);
+    refuse();
+    expect(h.net.state).toBe('closed');
+    expect(h.events.find((e) => e[0] === 'closed')[1].refusal.code).toBe('invalid');
+    // a minute after the last one, another is forgiven again
+    const g = joined();
+    g.socket().push({ t: 'refused', code: 'invalid', reason: 'Too many messages.' });
+    g.socket().close(4000, 'invalid');
+    g.timers.shift().fn();
+    g.socket().open();
+    g.socket().push(welcome());
+    g.advance(INVALID_RETRY_MS);
+    g.socket().push({ t: 'refused', code: 'invalid', reason: 'Too many messages.' });
+    g.socket().close(4000, 'invalid');
+    expect(g.net.state).toBe('reconnecting');
   });
 
   it('caps the backoff at 30 s', () => {

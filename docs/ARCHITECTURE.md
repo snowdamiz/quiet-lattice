@@ -294,34 +294,51 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   `ASTRA_SERVER` points them at another server), as whatever serves the client in production will.
 - **Sign-in.** `api.js` wraps register, login and the characters API, checking bodies with the shared schemas. The session
   token is kept in `sessionStorage` (`session.js`: a reload goes straight to the character list, closing the tab signs
-  out), beside a one-shot notice for the title. `localStorage` holds only `next-horizon-settings` (look, sound, graphics).
+  out), beside a one-shot notice for the title. `localStorage` holds only `next-horizon-settings` (look, sound, graphics);
+  the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a browser still has it.
 - **`Net`** (`Net.js`) owns the socket. `connect()` sends `hello {version: PROTOCOL_VERSION, token}` and `join` together
   as the socket opens (the gateway handles a socket's messages in order). States: idle → connecting → joining → joined →
   closed. A connection that drops after a welcome goes to reconnecting and tries again after 0.5 s doubling to 30 s (each
   delay scaled by a random 50–100%), then joins again; a refusal another try would repeat (`version`, `auth`,
-  `character`, `kicked`, `invalid`), a failure before the first welcome, and `close()` end in closed. Messages are routed
-  with `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state
-  sent after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`.
+  `character`, `kicked`), a second `invalid` within a minute (the first may be an honest client's flood after a stall,
+  so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
+  `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
+  after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
+  nobody listens for (`party`, `denied` …) are dropped quietly, and so are snapshot fields and entity kinds nothing reads
+  yet (a `mob`'s `attack` is kept in the store for P1.E04.T02). While the connection is down after a welcome, a line at
+  the top of the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
-  onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. Each applied tick
-  is acknowledged once. A tick that cannot be applied (its baseline is not held, the decoder refused one of its
-  entities, it names an entity never sent whole) is neither stored nor acknowledged, so the server keeps diffing against
-  the last good one. Gameplay reads remote state from the store, never from the socket.
+  onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
+  over on every welcome (a restarted server counts its ticks from 0 again). Acknowledgements go out at most once a tick
+  (50 ms), always for the newest applied tick, so the backlog a stalled page catches up on is acknowledged once rather
+  than snapshot by snapshot (which would spend the socket's budget in one burst). A tick that cannot be applied (its
+  baseline is not held, the decoder refused one of its entities, it names an entity never sent whole) is neither stored
+  nor acknowledged, so the server keeps diffing against the last good one. Snapshots before the welcome are ignored.
+  Gameplay reads remote state from the store, never from the socket.
 - **Input** goes out at 20 Hz of real time (`update()` each frame, never faster however fast frames are stepped: the
-  gateway's budget counts real seconds): `seq` from 1 on each connection, `time` the server-time estimate, and the game's
-  sample (`Game.inputSample`): the predicted pose of the ship or, on foot, of the walker (its quaternion built from its
+  gateway's budget counts real seconds): `seq` from 1 on each connection, `time` the world time the pose was sampled at
+  (the clock the client placed the bodies and picked the frame with; never going back), and the game's sample
+  (`Game.inputSample`): the predicted pose of the ship or, on foot, of the walker (its quaternion built from its
   heading), in the frame the client picked; the mode (`foot`; `pulse`; set down on a Waystation pad `docked`, elsewhere
-  `landed`; anything else a ship does `ship`); and the buttons. There is no input while the client is outside its
-  zone's system or between the stars, until zone handoff (P1.E04.T04).
+  `landed`; anything else a ship does `ship`: flying, taking off, landing, the docking autopilot); and the buttons (`boost`
+  while boosting, which movement authority reads). There is no input while the client is outside its zone's system or
+  between the stars, until zone handoff (P1.E04.T04).
 - **Time.** `ClockSync` (`clock.js`) estimates the server's clock from `welcome` and a `ping` every 2 s: the offset of the
-  shortest round trip of the last eight. World time (`game.time`, §3) is set to it on welcome, eased toward it every frame
-  and snapped when a second or more off. Shaders animate on `game.renderTime` instead (world time less a base that every
-  adjustment moves with it), which never jumps and stays small: at the server's 10^7 s a float32 uniform moves in 2 s steps.
+  shortest round trip of the last eight. World time (`game.time`, §3) starts at it on the first welcome, before any input;
+  from then it is slewed, never stepped (`Game.advanceClock`), because movement authority judges each input at the time
+  it carries: each frame it advances by the frame's time eased toward the estimate (at most twice as fast, to catch up
+  after a stall), stands still rather than going back, and is never more than 0.25 s ahead. Shaders animate on
+  `game.renderTime` instead, which advances by exactly the frames' time and stays small: at the server's 10^7 s a float32
+  uniform moves in 2 s steps.
 - **Welcome** places the character where the server holds it (`Game.placeFromServer`), loading the zone's system first
   when it is not the current one: `docked` on the Waystation's pad nearest the pose; `landed`, `ship` and `pulse` at the
   pose (the pulse drive is not resumed); `foot` with the walker at the pose and the ship on the nearest pad, or landed
-  beside it on a world. On a reconnect the client keeps its own pose (it kept flying) and its next input reports it. The
-  inventory sent after welcome replaces the client's (`Inventory.reset`); later states reconcile its requests (§5).
+  beside it on a world. On the first join only the zone's system is marked visited. On a reconnect the client keeps its
+  own pose (it kept flying) and its next input reports it, while it is still in the zone's system and one of its frames;
+  otherwise (it warped away, the server put the character elsewhere, it is between the stars) it is placed from the
+  welcome as on a first join. The inventory sent after welcome replaces the client's (`Inventory.reset`); later states
+  reconcile its requests (§5). The mouse is captured only from a user gesture: entering the world leaves the pause
+  screen up, whose Resume captures it.
 - **Saving is the server's** (§8). `Game.save()` sends the input at once at moments worth holding (docked, a system
   reached, a site visited). Leaving (the pause menu, or a refusal after joining) closes the socket and reloads the page,
   so nothing of one character's client state carries into the next.
