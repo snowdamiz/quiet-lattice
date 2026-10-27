@@ -3,16 +3,18 @@
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
+import { meterViewSchema } from '../meters/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 5;
+export const PROTOCOL_VERSION = 6;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
 // 3: social: chat and party requests, party state, denied, party news, chat lines held to the client's rules (P1.E15.T01)
 // 4: creatures' attack field (P1.E08.T01)
 // 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
+// 6: meters: heat and Charge state (P1.E07.T02)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -367,6 +369,11 @@ export const SkillsState = z.object({
   error: skillErrorCodeSchema.optional(),
 });
 
+/** The character's heat and Charge (DESIGN 9.1, ARCHITECTURE §15) as the server holds them at world time `meters.at`: after
+ * join, whenever the lockout starts or ends or Charge runs out, and every half second while either meter moves. The client
+ * predicts both with the same shared rules and takes these as the truth. */
+export const MetersState = z.object({ t: z.literal('meters'), meters: meterViewSchema });
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -377,6 +384,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   EventMessage,
   InventoryState,
   SkillsState,
+  MetersState,
   PartyState,
   Denied,
 ]);
