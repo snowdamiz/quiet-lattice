@@ -8,6 +8,7 @@
 // second `invalid` within a minute), a failure before the first welcome, and close() end in closed, with 'closed' saying
 // why.
 import { PROTOCOL_VERSION, decodeServerMessage, decodeSnapshot, encodeClientMessage } from '@astra/shared/protocol';
+import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
 import { SnapshotStore } from './snapshots.js';
 
@@ -75,6 +76,8 @@ export class Net {
     /** dropped: messages that did not decode; unsendable: messages that failed the schema here; rejected/unapplied:
      * snapshots neither stored nor acknowledged */
     this.stats = { dropped: 0, unsendable: 0, rejectedTicks: 0, unappliedTicks: 0 };
+    /** The call-for-aid beacons (beacons.js): the shard's list while watching, the character's own, and the requests. */
+    this.beacons = new Beacons(this);
   }
 
   get joined() {

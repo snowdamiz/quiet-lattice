@@ -1,11 +1,13 @@
-// The social service (DESIGN 16.6 "Social", 17; docs/ARCHITECTURE.md §13): chat and parties for every character in
-// play on the shard. The gateway tells it who joined (with the character's name) and whose connection closed, and hands
-// it `chat` and `party` requests from joined sessions; everything else happens here, on a timer of its own (invites
-// lapsing, graces running out, party states refreshed). It holds nothing that must survive a restart.
-import { encodeServerMessage, type ClientMessage, type PartyOp, type ServerMessage } from '@astra/shared/protocol';
+// The social service (DESIGN 16.6 "Social", 17; docs/ARCHITECTURE.md §13, §21): chat, parties and call-for-aid beacons
+// for every character in play on the shard. The gateway tells it who joined (with the character's name) and whose
+// connection closed, and hands it `chat`, `party` and `beacon` requests from joined sessions; everything else happens
+// here, on a timer of its own (invites lapsing, graces running out, party states refreshed, beacons checked). It holds
+// nothing that must survive a restart.
+import { encodeServerMessage, type BeaconOp, type ClientMessage, type PartyOp, type ServerMessage } from '@astra/shared/protocol';
 import { performance } from 'node:perf_hooks';
 import type { Session } from '../session/session.ts';
 import type { ServerClock } from '../world/clock.ts';
+import { Beacons } from './beacons.ts';
 import { Chat } from './chat.ts';
 import type { SocialContext, SocialLog, SocialZones } from './context.ts';
 import { SOCIAL_LIMITS, type SocialLimits } from './limits.ts';
@@ -33,6 +35,8 @@ export class SocialService {
   readonly chats: Chat;
   /** who is online in each zone, for system chat */
   readonly zoneIndex: ZoneIndex;
+  /** call-for-aid beacons: instances with open slots, listed to the shard */
+  readonly beacons: Beacons;
   private readonly mono: () => number;
   private readonly log?: SocialLog;
   private timer: NodeJS.Timeout | undefined;
@@ -54,24 +58,30 @@ export class SocialService {
     this.parties = new Parties(ctx);
     this.zoneIndex = new ZoneIndex(this.roster, opts.zones);
     this.chats = new Chat(ctx, (characterId) => this.parties.online(characterId), this.zoneIndex);
+    this.beacons = new Beacons(ctx, this.parties);
   }
 
-  /** The session's character is in play (its entity in a zone) under `name`: it is online, and hears its party's state. */
+  /**
+   * The session's character is in play (its entity in a zone) under `name`: it is online, and hears its party's state and
+   * of its beacon, if one it raised is still up.
+   */
   joined(s: Session, name: string): void {
     const o = this.roster.add(s, name);
     this.zoneIndex.place(o);
     this.parties.joined(o);
+    this.beacons.joined(o);
   }
 
   /**
    * The session's connection closed. Its character goes offline, unless a newer connection holds it already (it entered
-   * again); a party keeps its place for the grace.
+   * again); a party keeps its place for the grace, and a beacon it raised stays up while its instance keeps its place.
    */
   left(s: Session): void {
     const o = this.roster.remove(s);
     if (!o) return;
     this.zoneIndex.remove(o);
     this.parties.left(o);
+    this.beacons.left(o);
   }
 
   /** A chat message from a joined session. */
@@ -84,6 +94,12 @@ export class SocialService {
   party(s: Session, op: PartyOp): void {
     const o = this.roster.of(s);
     if (o) this.parties.request(o, op);
+  }
+
+  /** A beacon request from a joined session: raise, lower, watch, unwatch or answer (§21). */
+  beacon(s: Session, op: BeaconOp): void {
+    const o = this.roster.of(s);
+    if (o) this.beacons.request(o, op);
   }
 
   /**
@@ -115,15 +131,17 @@ export class SocialService {
   }
 
   /**
-   * Lapses invites and refreshes the parties due (graces, tags, states); once a refresh, checks the zone index and
-   * forgets idle allowances and spent mutes.
+   * Lapses invites, refreshes the parties due (graces, tags, states) and checks every beacon (its instance, its caller,
+   * its slots, its time); once a refresh, checks the zone index and forgets idle allowances and spent mutes.
    */
   tick(now = this.mono()): void {
     this.parties.tick(now);
+    this.beacons.sweep();
     if (now < this.nextSweep) return;
     this.nextSweep = now + this.limits.refreshMs;
     this.zoneIndex.check();
     this.chats.sweep(now);
+    this.beacons.forget(now);
   }
 
   /** Runs tick() every `limits.tickMs`. */

@@ -24,6 +24,7 @@ import {
   encodeServerMessage,
   encodeSnapshot,
   peekVersion,
+  type BeaconView,
   type EntityState,
   type Pose,
   type Snapshot,
@@ -78,6 +79,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'cutscene', op: 'request', id: 'test' },
   { t: 'quest', seq: 1, op: { op: 'accept', quest: 'the_apothecarys_sodium' } },
   { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', tool: 'multitool', time: 3600.5 },
+  { t: 'beacon', op: { op: 'answer', id: 3 } },
 ];
 
 /** A character's quest state as the server sends it. */
@@ -132,6 +134,22 @@ const events: GameEvent[] = [
   { kind: 'party', what: 'invite', name: 'Ana' },
 ];
 
+/** A beacon as the shard lists it. */
+const beacon = {
+  id: 3,
+  kind: 'event',
+  system: 59,
+  frame: '424242:station',
+  center: [0, 0, 0],
+  radius: 300,
+  place: 'Wreck of the Ilse',
+  from: "Ana Vel'ka",
+  open: 9,
+  cap: 12,
+  at: 3600,
+  until: 4200,
+} satisfies BeaconView;
+
 const serverSamples: ServerMessage[] = [
   { t: 'welcome', accountId: 'a1', character, entityId: 5, serverTime: 3600.25, zone: { id: 'sys:0', systemSeed: 424242 }, pose, mode: 'docked' },
   { t: 'refused', code: 'version', reason: 'reload the page' },
@@ -148,6 +166,8 @@ const serverSamples: ServerMessage[] = [
   { t: 'quests', seq: 0, quests: questView },
   { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', result: 'depleted', item: 'copper', count: 12, added: 12 },
   { t: 'nodes', frame: '424242:3', cells: [{ cell: '2_310_77', gone: ['copper_4'], hurt: [['sodium_1', 0.3]] }] },
+  { t: 'beacons', beacons: [beacon], gone: [2] },
+  { t: 'beacon', op: 'raised', id: 3, beacon },
 ];
 
 const http = {
@@ -161,10 +181,11 @@ const http = {
 describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
   // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8:
-  // mining and resource nodes (P1.E13.T01). A branch that changes a message bumps the version, adds its line to the
-  // history under PROTOCOL_VERSION and updates this.
-  it('is version 8, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(8);
+  // mining and resource nodes (P1.E13.T01); 9: heat and Charge (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid
+  // beacons (P1.E15.T02). A branch that changes a message bumps the version, adds its line to the history under
+  // PROTOCOL_VERSION and updates this.
+  it('is version 11, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(11);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

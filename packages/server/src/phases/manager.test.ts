@@ -1,6 +1,7 @@
 // Phase placement: caps per kind, reuse of a player's own and a party member's phase (the party it was placed under, or
-// its tag), overflow into a new phase, a disconnected member's kept place, and closing (when the last member leaves, goes
-// elsewhere, leaves the zone, stays outside or away past the grace, or on demand).
+// its tag), overflow into a new phase, a disconnected member's kept place, closing (when the last member leaves, goes
+// elsewhere, leaves the zone, stays outside or away past the grace, or on demand), and entering one phase by name under
+// the same caps and party rule (a call for aid's answer).
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import { Zone, type EntityInit, type ZoneLog, type ZoneViewer } from '../zones/zone.ts';
@@ -545,5 +546,99 @@ describe('a dropped connection', () => {
     zone.leave(a.viewer, 'disconnected');
     const aBack = player([0, 0, 0], null, 'char-a');
     expect(phases.phaseFor(aBack.viewer, 'story', place('site'), 'P')).toBe(p);
+  });
+});
+
+describe('entering a phase by name (a call for aid’s answer)', () => {
+  it('puts a player in that phase rather than the one phaseFor would pick, and refuses it at the cap or once closed', () => {
+    const { phases, player, place, step } = setup();
+    const wreck = place('wreck');
+    const crowd = Array.from({ length: 13 }, () => player());
+    const instances = crowd.map((p) => phases.phaseFor(p.viewer, 'event', wreck));
+    const first = instances[0]!;
+    const second = instances[12]!;
+    expect([first.members.size, second.members.size]).toEqual([12, 1]);
+    const a = player();
+    expect(phases.enter(a.viewer, first.id)).toBe('full');
+    expect(phases.phaseOf(a.entity)).toBeNull();
+    // two leave the first: phaseFor would put a newcomer there (the fullest with room); entering names the second
+    phases.leave(crowd[0]!.viewer);
+    phases.leave(crowd[1]!.viewer);
+    expect(phases.enter(a.viewer, second.id)).toBe(second);
+    expect([...second.members]).toEqual([crowd[12]!.entity, a.entity]);
+    // its entity has not moved: still inside the volume, and in the phase, after the next tick
+    step();
+    expect(phases.phaseOf(a.entity)).toBe(second.id);
+    phases.close(second.id);
+    expect(phases.enter(a.viewer, second.id)).toBe('closed');
+    expect(phases.enter(a.viewer, 999)).toBe('closed');
+    expect(phases.phaseOf(a.entity)).toBeNull();
+    expect(() => phases.enter(new Viewer(99), first.id)).toThrow(/not in zone/);
+  });
+
+  it('keeps a story phase to one party: another party, or none, is refused; its party enters under it', () => {
+    const { phases, player, place } = setup();
+    const a = player([0, 0, 0], 'P');
+    const story = phases.phaseFor(a.viewer, 'story', place('site'));
+    expect(phases.enter(player([0, 0, 0], 'Q').viewer, story.id)).toBe('full');
+    expect(phases.enter(player().viewer, story.id)).toBe('full');
+    const b = player([0, 0, 0], 'P');
+    expect(phases.enter(b.viewer, story.id)).toBe(story);
+    // placed under a party given, which it keeps
+    const u = player();
+    expect(phases.enter(u.viewer, story.id, 'P')).toBe(story);
+    expect([...story.members]).toEqual([a.entity, b.entity, u.entity]);
+    expect(phases.phaseFor(player([0, 0, 0], 'P').viewer, 'story', place('site'))).toBe(story);
+  });
+
+  it('re-places a member under a party when the phase’s others are all of it, and refuses (changing nothing) when not', () => {
+    const { phases, player, place } = setup();
+    const a = player();
+    // a party of one, as the quest runtime places a player in no party
+    const story = phases.phaseFor(a.viewer, 'story', place('site'), null);
+    expect(phases.enter(player([0, 0, 0], 'P').viewer, story.id)).toBe('full');
+    expect(phases.enter(a.viewer, story.id, 'P')).toBe(story);
+    const b = player([0, 0, 0], 'P');
+    expect(phases.enter(b.viewer, story.id)).toBe(story);
+    expect(phases.enter(b.viewer, story.id, 'Q')).toBe('full');
+    expect(phases.phaseOf(b.entity)).toBe(story.id);
+    expect(phases.enter(b.viewer, story.id)).toBe(story);
+    expect(phases.enter(player([0, 0, 0], 'P').viewer, story.id)).toBe(story);
+    expect(story.members.size).toBe(3);
+  });
+
+  it('takes a player out of its old phase, gives up a place kept elsewhere, and takes back one kept in that phase', () => {
+    const { zone, phases, player, place } = setup();
+    const event = phases.phaseFor(player().viewer, 'event', place('wreck'));
+    const a = player();
+    const old = phases.phaseFor(a.viewer, 'story', place('site'));
+    expect(phases.enter(a.viewer, event.id)).toBe(event);
+    expect(old.open).toBe(false);
+
+    const c = player([0, 0, 0], null, 'char-c');
+    const raid = phases.phaseFor(c.viewer, 'raid', place('vault'));
+    zone.leave(c.viewer, 'disconnected');
+    expect(raid.held.has('char-c')).toBe(true);
+    expect(phases.enter(player([0, 0, 0], null, 'char-c').viewer, event.id)).toBe(event);
+    expect(raid.open).toBe(false);
+
+    // the event full with a place kept for d: d, back, takes its place (it counts towards the cap already)
+    const d = player([0, 0, 0], null, 'char-d');
+    expect(phases.enter(d.viewer, event.id)).toBe(event);
+    while (event.members.size < 12) phases.phaseFor(player().viewer, 'event', place('wreck'));
+    zone.leave(d.viewer, 'disconnected');
+    expect([event.members.size, event.held.size]).toEqual([11, 1]);
+    expect(phases.enter(player().viewer, event.id)).toBe('full');
+    const dBack = player([0, 0, 0], null, 'char-d');
+    expect(phases.enter(dBack.viewer, event.id)).toBe(event);
+    expect([event.members.size, event.held.size]).toEqual([12, 0]);
+
+    // a story place kept under one party, come back to under another, is given up as phaseFor gives it up
+    const m = player([0, 0, 0], 'P', 'char-m');
+    const story = phases.phaseFor(m.viewer, 'story', place('chapter'));
+    phases.phaseFor(player([0, 0, 0], 'P').viewer, 'story', place('chapter'));
+    zone.leave(m.viewer, 'disconnected');
+    expect(phases.enter(player([0, 0, 0], 'Q', 'char-m').viewer, story.id)).toBe('full');
+    expect(story.held.size).toBe(0);
   });
 });

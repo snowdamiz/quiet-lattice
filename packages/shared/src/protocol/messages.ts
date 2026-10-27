@@ -3,11 +3,11 @@
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
-import { questErrorCodeSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
+import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 8;
+export const PROTOCOL_VERSION = 11;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -17,6 +17,9 @@ export const PROTOCOL_VERSION = 8;
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 // 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
 // 8: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
+// 9: meters: heat and Charge state (P1.E07.T02)
+// 10: combat: fire requests and their answers, combat events with the target's health, XP events (P1.E06.T02)
+// 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -270,6 +273,27 @@ export const MineRequest = z
   })
   .refine((m) => (m.node === undefined) !== (m.flora === undefined), 'a hit is on a node or on flora');
 
+// ---------- the call-for-aid beacon (P1.E15.T02, ARCHITECTURE §21) ----------
+
+/** The most beacons the shard lists at once (DESIGN 16.6 "Social"); raising one past it is refused `busy`. */
+export const BEACON_MAX = 256;
+/** A beacon: unique on the shard, never reused while its server runs. */
+export const BeaconId = z.number().int().min(1).max(0xffffffff);
+/**
+ * A beacon request (DESIGN 16.6 "Social"): `raise` a beacon for the instance you are in, which lists its open slots to the
+ * whole shard; `lower` yours; `watch` the shard's beacons (the whole list at once, then its changes) or `unwatch` them;
+ * `answer` one, which puts you in its instance when the server finds you may join it there and then.
+ */
+export const BeaconOp = z.discriminatedUnion('op', [
+  z.object({ op: z.literal('raise') }),
+  z.object({ op: z.literal('lower') }),
+  z.object({ op: z.literal('watch') }),
+  z.object({ op: z.literal('unwatch') }),
+  z.object({ op: z.literal('answer'), id: BeaconId }),
+]);
+export const BeaconRequest = z.object({ t: z.literal('beacon'), op: BeaconOp });
+export type BeaconOp = z.infer<typeof BeaconOp>;
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -285,6 +309,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   CutsceneRequest,
   QuestRequest,
   MineRequest,
+  BeaconRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -384,11 +409,11 @@ export const PartyView = z
 export const PartyState = z.object({ t: z.literal('party'), party: PartyView.nullable() });
 export type PartyView = z.infer<typeof PartyView>;
 
-/** Why a chat message or party request was not carried out. */
+/** Why a chat message, party request or beacon request was not carried out. */
 export const DeniedCode = z.enum([
-  /** this account sends chat or invites too fast; `retryS` */
+  /** this account sends chat, invites or beacons too fast; `retryS` */
   'rate',
-  /** the shard channel (or the invitee's pending invites) is full right now; `retryS` when it is the channel */
+  /** the shard channel (or the invitee's pending invites, or the shard's beacons) is full right now; `retryS` when it is the channel */
   'busy',
   /** this account may not chat until `retryS` from now */
   'muted',
@@ -414,13 +439,30 @@ export const DeniedCode = z.enum([
   'not_member',
   /** promote names a member whose connection is down */
   'offline',
-  /** the inviter has gone (offline, in no party) */
+  /** the inviter has gone (offline, in no party); or a story beacon's caller is not in its instance just now */
   'gone',
+  /** raising a beacon while in no instance */
+  'no_phase',
+  /** raising a beacon in an instance no beacon calls aid to (a hangar bay, a cutscene's phase) */
+  'kind',
+  /** raising a beacon while yours (or one for your instance) is up already */
+  'raised',
+  /** no such beacon is up (it ended, or never was); lowering with none up */
+  'unknown',
+  /** answering a beacon from another star system */
+  'elsewhere',
+  /** answering a beacon from outside its instance's place: go there first */
+  'far',
+  /** answering a beacon while in an instance already */
+  'in_phase',
+  /** the instance has no open slot (raising, or answering) */
+  'full',
 ]);
-/** A chat message or party request the server did not carry out, sent to its sender only. `of` is what was asked. */
+/** A chat message, party request or beacon request the server did not carry out, sent to its sender only. `of` is what
+ * was asked (`raise`, `lower` and `answer` are beacon requests). */
 export const Denied = z.object({
   t: z.literal('denied'),
-  of: z.enum(['chat', 'invite', 'accept', 'decline', 'leave', 'kick', 'promote']),
+  of: z.enum(['chat', 'invite', 'accept', 'decline', 'leave', 'kick', 'promote', 'raise', 'lower', 'answer']),
   code: DeniedCode,
   /** seconds before asking again may succeed (rate, busy, muted) */
   retryS: z
@@ -530,6 +572,71 @@ export const NodesState = z.object({
   cells: z.array(NodeCellState).max(128),
 });
 
+/** The instances a beacon calls aid to: a quest step's story phase (answering joins the caller's party), an event, a raid. */
+export const BeaconKind = z.enum(['story', 'event', 'raid']);
+/** What a beacon's place is called, as the server names it: plain text, at most 64 UTF-16 units. */
+export const BeaconPlace = PlainText(64);
+/**
+ * A beacon as the shard sees it (ARCHITECTURE §21): its instance's kind, star system (galaxy index) and place (a sphere in
+ * one of the system's frames, which answering needs you inside), what the place is called (a quest's title, an event's
+ * site), who raised it, its open slots of `cap`, and the world times it was raised and lapses.
+ */
+export const BeaconView = z
+  .object({
+    id: BeaconId,
+    kind: BeaconKind,
+    system: z.number().int().nonnegative().max(1023),
+    frame: FrameId,
+    center: Vec3,
+    radius: z.number().positive().max(MAX_POS),
+    place: BeaconPlace,
+    /** a story instance's quest */
+    quest: questIdSchema.optional(),
+    from: CharacterName,
+    open: z.number().int().min(1).max(64),
+    cap: z.number().int().min(2).max(64),
+    at: z.number().min(0),
+    until: z.number().min(0),
+  })
+  .refine((b) => b.open < b.cap, 'the caller holds a slot of its own')
+  .refine((b) => b.until > b.at, 'a beacon lapses after it is raised');
+export type BeaconView = z.infer<typeof BeaconView>;
+/**
+ * The shard's beacons, to a session that watches them: `reset` (sent as it starts watching) replaces whatever it held
+ * with `beacons`; otherwise `beacons` are new or changed ones (their open slots) and `gone` the ids of those that ended.
+ */
+export const BeaconsState = z.object({
+  t: z.literal('beacons'),
+  reset: z.boolean().optional(),
+  beacons: z.array(BeaconView).max(BEACON_MAX),
+  gone: z.array(BeaconId).max(BEACON_MAX),
+});
+/** Why a beacon ended: its caller lowered it, its instance filled, closed or was left by the caller, or it lapsed. */
+export const BeaconEnd = z.enum(['lowered', 'full', 'closed', 'left', 'expired']);
+/**
+ * Beacon news, to whom it concerns (refusals are `denied`): `raised` (your beacon is up, as `beacon`: when you raise it,
+ * and again when your character enters the world while it is), `answered` (`name`
+ * joined your instance through it), `joined` (your answer put you in its instance, phase `phase`), `ended` (your beacon
+ * ended, and `why`). The fields differ from the request's, so one `beacon` type serves both directions (encodeMessage).
+ */
+export const BeaconNews = z
+  .object({
+    t: z.literal('beacon'),
+    op: z.enum(['raised', 'answered', 'joined', 'ended']),
+    id: BeaconId,
+    beacon: BeaconView.optional(),
+    name: CharacterName.optional(),
+    phase: z.number().int().positive().optional(),
+    why: BeaconEnd.optional(),
+  })
+  .refine(
+    (m) => (m.op === 'raised') === (m.beacon !== undefined) && (m.beacon === undefined || m.beacon.id === m.id),
+    'a raise, and only a raise, carries the beacon',
+  )
+  .refine((m) => (m.op === 'answered') === (m.name !== undefined), 'an answer, and only an answer, names who')
+  .refine((m) => (m.op === 'joined') === (m.phase !== undefined), 'a join, and only a join, names the phase')
+  .refine((m) => (m.op === 'ended') === (m.why !== undefined), 'an end, and only an end, says why');
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -546,6 +653,8 @@ export const ServerMessage = z.discriminatedUnion('t', [
   QuestsState,
   MineState,
   NodesState,
+  BeaconsState,
+  BeaconNews,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
