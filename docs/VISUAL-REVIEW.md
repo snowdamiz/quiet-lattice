@@ -258,6 +258,7 @@ that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 4, performance 5 | 4.14 |
 | 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.29 |
 | 3 | REVISE | hierarchy 3, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.14 |
+| 4 | PASS | hierarchy 4, fit 5, motion 4, theme 5, correctness 5, spec 4, performance 5 | 4.57 |
 
 Round 1: screen changes cross-dissolve in place, so outgoing and incoming headers overlap for about 7 frames; entering
 hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen's height mid-fade and clips the
@@ -274,6 +275,8 @@ Round 3: the fade to black and up, the step sequencing and the error box are cle
 Still failing: on arrival the location line and the banner's eyebrow sit on a lit ceiling beam at 2–2.6:1; the slot
 counter is 4.3–4.5:1; "JOINING" and "IN THE WORLD" overlap for about 10 frames, as do the rail ordinal and its tick;
 the Esc hint vanishes in one frame; the selected-row tint jumps rows. Requested: the list at 6 of 6.
+
+Round 4: PASS. Artifacts: `assets/renders/ui/{title,login-error,register,characters,characters-full,create,entering,account-flow,arrival}/`.
 
 ## P1.E15.T03 Chat and party UI (with the beacon list)
 
