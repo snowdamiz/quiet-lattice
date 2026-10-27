@@ -32,8 +32,7 @@ const LIST_MAX = 50;
 const HISTORY = 20;
 /** The fades, countdowns, ages and the party's health are looked at this often (ms). */
 const TICK_MS = 250;
-/** The panel's own motion: the HUD's ease-out, and how long a move, a cross-fade and a fade out take (ms). */
-const EASE = 'cubic-bezier(0.2, 0.7, 0.2, 1)';
+/** How long the panel's own moves (on the HUD's ease-out, `ease` below), cross-fades and fades take (ms). */
 const MOVE_MS = 240;
 const FADE_MS = 200;
 /** A list giving way to another fades out this fast before the other fades in. */
@@ -78,41 +77,59 @@ const clock = (seconds) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
 
-/** The box properties that open and close with an element, at nothing (its borders too, so nothing is left to snap). */
-const SHUT = { height: '0px', opacity: 0, marginTop: '0px', marginBottom: '0px', paddingTop: '0px', paddingBottom: '0px', borderTopWidth: '0px', borderBottomWidth: '0px' };
-/** And across: a button opening beside others in a row with a 4 px gap. */
-const SHUT_ACROSS = { width: '0px', opacity: 0, marginLeft: '-4px', paddingLeft: '0px', paddingRight: '0px', borderLeftWidth: '0px', borderRightWidth: '0px' };
+/** The box properties that open and close with an element (its borders too, so nothing is left to snap), and across:
+ * a button opening beside others in a row with a 4 px gap. */
+const DOWN = ['height', 'marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'];
+const ACROSS = ['width', 'marginLeft', 'paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'];
 
-/** Its box properties as they stand (mid-animation, as animated), its height to the fraction of a pixel it lays out at. */
-function openBox(e) {
-  const cs = getComputedStyle(e);
-  return {
-    height: `${e.getBoundingClientRect().height}px`,
-    opacity: Number(cs.opacity),
-    marginTop: cs.marginTop,
-    marginBottom: cs.marginBottom,
-    paddingTop: cs.paddingTop,
-    paddingBottom: cs.paddingBottom,
-    borderTopWidth: cs.borderTopWidth,
-    borderBottomWidth: cs.borderBottomWidth,
-  };
+/** The HUD's ease-out, cubic-bezier(0.2, 0.7, 0.2, 1), as a function of time 0–1. */
+function ease(t) {
+  const curve = (u, a, b) => 3 * a * u * (1 - u) * (1 - u) + 3 * b * u * u * (1 - u) + u * u * u;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 20; i++) {
+    const mid = (lo + hi) / 2;
+    if (curve(mid, 0.2, 0.2) < t) lo = mid;
+    else hi = mid;
+  }
+  return curve((lo + hi) / 2, 0.7, 1);
 }
 
-function openAcross(e) {
+/** An element's box properties as they stand (mid-animation, as animated), in px, and its opacity. */
+function measure(e, props) {
   const cs = getComputedStyle(e);
-  return {
-    width: `${e.getBoundingClientRect().width}px`,
-    opacity: Number(cs.opacity),
-    marginLeft: cs.marginLeft,
-    paddingLeft: cs.paddingLeft,
-    paddingRight: cs.paddingRight,
-    borderLeftWidth: cs.borderLeftWidth,
-    borderRightWidth: cs.borderRightWidth,
-  };
+  const r = e.getBoundingClientRect();
+  const out = { opacity: Number(cs.opacity) };
+  for (const p of props) out[p] = p === 'height' ? r.height : p === 'width' ? r.width : parseFloat(cs[p]) || 0;
+  return out;
 }
 
-/** Clips an element's content while its height animates. */
-function clipping(e, a) {
+/** The same properties at nothing. */
+function shut(props) {
+  const out = { opacity: 0 };
+  for (const p of props) out[p] = 0;
+  if (props === ACROSS) out.marginLeft = -4;
+  return out;
+}
+
+/**
+ * Tweens an element's box from `from` to `to` (px, and opacity) on the HUD's ease, a whole pixel a frame: every frame
+ * between lays out on whole pixels, so text never sits half a pixel off and hops when the tween ends, which itself ends
+ * exactly on where the element lays out. Its content is clipped meanwhile.
+ */
+function tween(e, from, to, fill = 'none') {
+  const n = Math.max(2, Math.round((MOVE_MS / 1000) * 60));
+  const frames = [];
+  for (let k = 0; k <= n; k++) {
+    const t = ease(k / n);
+    const f = { offset: k / n, easing: 'steps(1, end)' };
+    for (const p of Object.keys(from)) {
+      const v = from[p] + (to[p] - from[p]) * t;
+      f[p] = p === 'opacity' ? v : `${k === 0 ? from[p] : k === n ? to[p] : Math.round(v)}px`;
+    }
+    frames.push(f);
+  }
+  const a = e.animate(frames, { duration: MOVE_MS, fill });
   e.classList.add('sizing');
   const done = () => e.classList.remove('sizing');
   a.addEventListener('finish', done);
@@ -122,15 +139,17 @@ function clipping(e, a) {
 
 /** Opens an element from nothing to its own height (or `across`, its width), fading it in. */
 function reveal(e, across = false) {
+  const props = across ? ACROSS : DOWN;
   for (const a of e.getAnimations()) a.cancel();
-  return clipping(e, e.animate(across ? [SHUT_ACROSS, openAcross(e)] : [SHUT, openBox(e)], { duration: MOVE_MS, easing: EASE }));
+  return tween(e, shut(props), measure(e, props));
 }
 
 /** Closes an element from where it stands to nothing (or `across`), fading it out; `done()` once it is shut. */
 function conceal(e, done, across = false) {
-  const from = across ? openAcross(e) : openBox(e);
+  const props = across ? ACROSS : DOWN;
+  const from = measure(e, props);
   for (const a of e.getAnimations()) a.cancel();
-  const a = clipping(e, e.animate([from, across ? SHUT_ACROSS : SHUT], { duration: MOVE_MS, easing: EASE, fill: 'forwards' }));
+  const a = tween(e, from, shut(props), 'forwards');
   a.addEventListener('finish', () => {
     done();
     a.cancel();
@@ -142,7 +161,7 @@ function conceal(e, done, across = false) {
 function resize(e, from) {
   const to = e.getBoundingClientRect().height;
   if (Math.abs(to - from) < 0.01) return;
-  clipping(e, e.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: MOVE_MS, easing: EASE }));
+  tween(e, { height: from }, { height: to });
 }
 
 /** Shows an element or not, opening or closing it (across: its width) when `animate`, else at once. One that is closing
@@ -413,7 +432,11 @@ export class SocialUI {
     const gap = parseFloat(getComputedStyle(box).rowGap) || 0;
     const rise = added.reduce((h, n) => h + n.getBoundingClientRect().height + gap, 0) + offsetY(box);
     this.slide?.cancel();
-    this.slide = box.animate([{ transform: `translateY(${rise}px)` }, { transform: 'translateY(0)' }], { duration: MOVE_MS, easing: EASE });
+    // (a whole pixel a frame, as the boxes ease: no line sits half a pixel off)
+    const n = Math.max(2, Math.round((MOVE_MS / 1000) * 60));
+    const frames = [];
+    for (let k = 0; k <= n; k++) frames.push({ offset: k / n, easing: 'steps(1, end)', transform: `translateY(${k === n ? 0 : Math.round(rise * (1 - ease(k / n)))}px)` });
+    this.slide = box.animate(frames, { duration: MOVE_MS });
   }
 
   /** A new log for the lines (the feed's, or the open tab's): the old one fades out where it stands, then the new one
