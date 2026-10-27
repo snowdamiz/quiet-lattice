@@ -711,3 +711,30 @@ Format: task id, question → choice → why.
   Protocol 12. → The codex and its XP are the server's. Open: two creature hit-sphere models (analysis's aim pick and
   combat's sphere) to unify with P1.E08.T09; XP granting is in three places (quests, combat, codex); bonding a world
   boss is P1.E07.T07's call.
+- **P1.E14.T12** Compressed textures and geometry in exported models (`tools/blender/artlib/{ktx,meshopt}.py`,
+  `tools/src/art/{ktx,meshopt}.ts`, client `gltfLoader()`) → after Blender writes a .glb, every material map becomes
+  KTX2 (Basis Universal) under `KHR_texture_basisu`, required, no PNG fallback, full mip chains: UASTC (quality 2, RDO
+  lambda 4, Zstd 18) for normal maps and extension slots, normals renormalised per mip; ETC1S (quality 128, effort 2)
+  for base colour, emissive, AO and metallic-roughness; sheen and specular colour maps sRGB; PNG and JPEG sources; a map
+  used as both colour and data is encoded twice; byte-identical maps of one colour space stored once. Geometry is then
+  meshopt-compressed at "high" (`EXT_meshopt_compression`, required) with `KHR_mesh_quantization` (positions 14 bits
+  per mesh by default, settable per family; texture coordinates the family's largest texture size + 2 bits, 12–16),
+  materials never merged across variants, replaced skins pruned; creatures and flora are compressed without
+  quantization so the vertex rig (`_limb`, `_pivot`, `_glow`) and colour masks stay exact floats; the step refuses to
+  write if any empty (marker, pivot, LOD node) moved, vanished or took a mesh. Families opt out in `families.json`;
+  `--no-compress` writes only to an `--out-dir`, never into `public/models`. The encoder is KTX-Software `ktx` 4.4.2,
+  fetched for darwin and linux (no Windows build) with pinned SHA-256s checked before anything is unpacked or run (`KTX`
+  and `ART_KTX_JOBS` override; CI's art job validates `.blend` files and never needs it); glTF-Transform 4.5.1 and
+  meshoptimizer 1.3.0 are pinned. The validator and turntable import a copy with maps decoded to PNG and check KTX2 by
+  the extension, UASTC normals, colour spaces, full mips, required extensions, compressed geometry, and each variant's
+  GPU texture memory against `families.json` `gpuTextureMB` (hero 512, 2k classes 128, 1k classes 32, at 8 bits a
+  texel with mips; DESIGN gives none); demo exports are exempt. The client sets up one KTX2Loader (transcoder in
+  `public/basis`, kept equal to three's by a test) and three's MeshoptDecoder; every model loads through `gltfLoader()`;
+  `recolor` converts positions to float first; the review readout reports texture GPU memory. Measured on the 4k Lark
+  (three variants, 49 maps): 572 MB as PNG → 106.8 MB shipped (99.7 MB textures, 6.5 MB geometry from 27.9), GPU
+  320/363/363 MB a variant, worst 1.44% of pixels over 16/255 in 36 review captures. The task's 60 MB target (the
+  orchestrator's estimate) was amended to 110 MB: no codec setting reaches 60 MB while normals stay UASTC (geometry alone
+  was 28 MB; all-ETC1S 73 MB). Levers left for the art owner: one 4k atlas per variant (a per-hero texel budget, not
+  adopted); remote-hull texture streaming by screen size moved to P1.E16.T03. → Hero assets ship at 4k within the GPU
+  budget. Open: nothing validates that creature and flora exports are unquantized beyond the families setting; the hull
+  (P1.E12.T02) and body (P1.E05.T01) branches re-export through this before they merge.
