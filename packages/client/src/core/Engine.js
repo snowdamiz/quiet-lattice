@@ -1,6 +1,8 @@
 // Renderer + post-processing chain:
 // scene (HDR, log depth, MSAA) -> atmosphere/ocean/clouds -> ship FX -> viewmodel -> bloom -> grade/tonemap
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -179,6 +181,27 @@ class GradePass extends Pass {
 
 const _size = new THREE.Vector2();
 
+// Exported models carry their textures as KTX2 (Basis Universal, KHR_texture_basisu: P1.E14.T12), transcoded in a
+// worker to whatever compressed format this GPU reads (ASTC, BC7, ETC2, BC1/3) and left compressed on the GPU. The Basis
+// transcoder is served from public/basis/ (a copy of three's examples/jsm/libs/basis, kept equal by a unit test).
+export const BASIS_TRANSCODER_PATH = '/basis/';
+let ktx2Loader = null;
+
+/** The one KTX2 loader, set up for `renderer`'s compressed formats (the Engine does this once, at startup). */
+export function initTextureLoaders(renderer) {
+  ktx2Loader ??= new KTX2Loader().setTranscoderPath(BASIS_TRANSCODER_PATH);
+  ktx2Loader.detectSupport(renderer);
+  return ktx2Loader;
+}
+
+/** A GLTFLoader that reads KTX2 textures. Every model load goes through one: before the Engine exists, a model with
+ * KTX2 textures fails to load (GLTFLoader asks for setKTX2Loader), one without loads as before. */
+export function gltfLoader() {
+  const loader = new GLTFLoader();
+  if (ktx2Loader) loader.setKTX2Loader(ktx2Loader);
+  return loader;
+}
+
 export class Engine {
   constructor(container) {
     this.container = container;
@@ -199,6 +222,7 @@ export class Engine {
     renderer.info.autoReset = false;
     container.appendChild(renderer.domElement);
     this.renderer = renderer;
+    initTextureLoaders(renderer);
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 1e9);

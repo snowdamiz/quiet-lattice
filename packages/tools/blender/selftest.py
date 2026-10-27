@@ -1,11 +1,13 @@
 """Self-test for validate.py and the export core: builds small synthetic sources in a temp directory, then asserts the
-validator's verdicts and runs the export end to end (bake, generated LODs, node layout, re-validation).
+validator's verdicts and runs the export end to end (bake, generated LODs, node layout, KTX2 textures, re-validation).
 
 Run: pnpm art:test
  or: Blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/selftest.py -- [--keep]
 """
+import copy
 import os
 import shutil
+import struct
 import sys
 import tempfile
 from pathlib import Path
@@ -20,6 +22,7 @@ import numpy as np  # noqa: E402
 from artlib import bake, core  # noqa: E402
 from artlib import export as E  # noqa: E402
 from artlib import glb  # noqa: E402
+from artlib import ktx  # noqa: E402
 from artlib import materials as M  # noqa: E402
 from artlib import rules as R  # noqa: E402
 
@@ -728,6 +731,97 @@ def test_export():
     expect(code == 0, "export_hulls on an empty family reports nothing to export and succeeds")
 
 
+def image_pixels(path):
+    """{image name: (h, w, 4) float pixels} of a .glb as the validator imports it (KTX2 maps transcoded back)."""
+    core.load(path)
+    out = {}
+    for img in bpy.data.images:
+        w, h = img.size
+        if w and h:
+            px = np.empty(w * h * 4, np.float32)
+            img.pixels.foreach_get(px)
+            out[R.strip(img.name)] = px.reshape(h, w, 4)
+    return out
+
+
+def test_textures():
+    print("\ntextures (KTX2, P1.E14.T12)")
+    crate, rock = OUT / "props" / "crate.glb", OUT / "props" / "rock.glb"
+    images, required = ktx.inspect(crate)
+    slot = {s: im for im in images for s in im["slots"]}
+    expect(
+        sorted(slot) == ["baseColor", "metallicRoughness", "normal", "occlusion"] and all(im["mime"] == ktx.KTX2 and im["basisu"] for im in images) and ktx.EXT in required,
+        f"crate.glb: every map is KTX2 behind {ktx.EXT}, which is required (no PNG fallback) ({[(im['name'], im['slots'], im['mime']) for im in images]})",
+    )
+    h = {s: im["ktx"] or {} for s, im in slot.items()}
+    expect(h.get("normal", {}).get("codec") == "UASTC" and h["normal"]["supercompression"] == "Zstandard" and not h["normal"]["srgb"], "normal map: UASTC, Zstandard, linear")
+    expect(h.get("metallicRoughness", {}).get("codec") == "UASTC" and not h["metallicRoughness"]["srgb"], "metallic-roughness map: UASTC, linear")
+    expect(h.get("baseColor", {}).get("codec") == "ETC1S" and h["baseColor"]["supercompression"] == "BasisLZ" and h["baseColor"]["srgb"], "base colour map: ETC1S (BasisLZ), sRGB")
+    # (Blender packs the AO into the metallic-roughness map's red channel when it can: that map then stays UASTC)
+    ao = slot.get("occlusion", {})
+    want_ao = "UASTC" if "metallicRoughness" in ao.get("slots", []) else "ETC1S"
+    expect(h.get("occlusion", {}).get("codec") == want_ao and not h["occlusion"]["srgb"], f"AO map: {want_ao}, linear ({ao.get('slots')})")
+    expect(all(x.get("fullChain") for x in h.values()) and h["baseColor"]["levels"] == 11, f"every map carries its full mip chain (1024 px: 11 levels; {h['baseColor'].get('levels')})")
+
+    rep = core.validate_path(RULES, crate, family="props", source=SRC / "props" / "crate.blend")
+    gpu = [v.get("gpuTextureMB") for a in rep.assets for v in a["variants"]]
+    expect(rep.status == "PASS" and gpu and 0 < gpu[0] < 3, f"the report gives the variant's GPU texture memory once transcoded ({gpu} MB: a 1k and three 256 px maps)")
+    expect(any("KTX2 map(s)" in p["message"] for p in rep["materials"].passes), "the materials check reports the KTX2 maps it passed")
+
+    # the same rock with PNG maps: what the KTX2 maps must look like
+    pngs = TMP / "png"
+    base = ["--src-root", str(SRC), "--out-dir", str(pngs), "--report-dir", str(REPORTS), "--quiet"]
+    code = E.main("props", base + ["--only", "rock", "--bake-res", "128", "--no-compress"])
+    png = pngs / "props" / "rock.glb"
+    expect(code == 0 and png.exists() and not ktx.is_compressed(png), "--no-compress exports PNG maps (and its own re-validation accepts them)")
+    if not png.exists():
+        return
+    rep_png = core.validate_path(RULES, png, family="props", source=SRC / "props" / "rock.blend")
+    expect(has(rep_png, "materials", "map is image/png, not KTX2"), "validating a props export with PNG maps fails: the family ships KTX2")
+    rep_ktx = core.validate_path(RULES, rock, family="props", source=SRC / "props" / "rock.blend")
+    tris = lambda r: [v["lodTris"] for a in r.assets for v in a["variants"]]  # noqa: E731
+    expect(tris(rep_ktx) == tris(rep_png) and tris(rep_png), f"the rewritten .glb keeps every mesh: the same LOD triangles as the PNG export ({tris(rep_ktx)})")
+    codec = {im["name"]: (im["ktx"] or {}).get("codec") for im in ktx.inspect(rock)[0]}
+    a, b = image_pixels(rock), image_pixels(png)
+    errs = {n: float(np.abs(a[n][..., :3] - b[n][..., :3]).mean() * 255) for n in b if n in a and a[n].shape == b[n].shape}
+    expect(len(errs) == len(b) >= 3 and set(errs) == set(codec), f"each PNG map has its KTX2 twin at the same size ({sorted(errs)}, {codec})")
+    limit = {"ETC1S": 2.5, "UASTC": 1.5}
+    shown = {n: f"{codec.get(n)} {e:.2f}" for n, e in errs.items()}
+    expect(errs and all(e < limit.get(codec.get(n), 0) for n, e in errs.items()), f"transcoded maps match the PNGs: mean error under 2.5/255 in ETC1S, 1.5/255 in UASTC ({shown})")
+
+    legacy = TMP / "demo" / "flora.glb"
+    legacy.parent.mkdir()
+    shutil.copyfile(png, legacy)
+    rep = core.validate_path(RULES, legacy)
+    expect(rep.family == "flora" and not has(rep, "materials", "not KTX2") and any("exempt" in f["message"] for f in rep["materials"].findings), "a demo export (families.json legacy) is exempt from compression")
+
+    s = ktx.settings(RULES, "props")
+    etc1s_normals = TMP / "etc1s_normals.glb"
+    ktx.compress(png, etc1s_normals, {**s, "codec": {**s["codec"], "normal": "etc1s"}})
+    rep = core.validate_path(RULES, etc1s_normals, family="props", source=SRC / "props" / "rock.blend")
+    expect(has(rep, "materials", "normal map in ETC1S"), "a normal map in ETC1S fails")
+    js, bin_data = glb.read(rock)
+    js.pop("extensionsRequired", None)
+    optional = TMP / "optional.glb"
+    glb.write(optional, js, bin_data)
+    rep = core.validate_path(RULES, optional, family="props", source=SRC / "props" / "rock.blend")
+    expect(has(rep, "materials", "not in extensionsRequired"), f"{ktx.EXT} left out of extensionsRequired fails")
+    ktx2 = bytearray(bytes(bin_data[js["bufferViews"][js["images"][0]["bufferView"]].get("byteOffset", 0) :][:80]))
+    struct.pack_into("<I", ktx2, 40, 1)  # levelCount
+    hdr = ktx.header(bytes(ktx2))
+    expect(hdr is not None and hdr["levels"] == 1 and not hdr["fullChain"], "a KTX2 map with one level reads as a short mip chain")
+    tight = copy.deepcopy(RULES)
+    tight["classes"]["prop"]["gpuTextureMB"] = 0.01
+    rep = core.validate_path(tight, rock, family="props", source=SRC / "props" / "rock.blend")
+    expect(has(rep, "materials", "over the prop budget of 0.01 MB"), "a variant whose maps exceed its class's GPU budget fails")
+
+    pod = OUT / "props" / "pod.glb"
+    if pod.exists():
+        images, _ = ktx.inspect(pod)
+        js, _ = glb.read(pod)
+        expect(len(images) == len(js["images"]) and len(images) < 2 * 4, f"pod.glb: byte-identical bakes of its two variants are stored once ({len(images)} maps)")
+
+
 def main():
     print(f"art self-test in {TMP}")
     try:
@@ -744,6 +838,7 @@ def main():
         test_round2(crate, twin, specks)
         test_bake_guards(shared)
         test_export()
+        test_textures()
     finally:
         if "--keep" not in ARGV:
             shutil.rmtree(TMP, ignore_errors=True)
