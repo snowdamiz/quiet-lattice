@@ -1,6 +1,6 @@
 // The CLI's direct mode (P1.E03.T07, docs/ARCHITECTURE.md §16): with no server running, a command that changes a
-// character out of play (teleport, grant, set-quest-step, set-skill-points) runs here, through the same admin service and
-// persistence's load–modify–save as the server's, against DATABASE_URL. One process holds a character at a time (§8),
+// character out of play (teleport, grant, set-quest-step, set-skill-points, set-rep) runs here, through the same admin
+// service and persistence's load–modify–save as the server's, against DATABASE_URL. One process holds a character at a time (§8),
 // and a server holding it would overwrite the change at its next save, so direct mode is refused while a server answers
 // at HOST:PORT, for a character saved in the last RECENT_SAVE_MS (a server elsewhere on the same database may hold it)
 // unless forced, and in production unless ASTRA_ADMIN_IN_PRODUCTION=1. Commands about the live world (who, zones,
