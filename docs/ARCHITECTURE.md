@@ -862,6 +862,9 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   predicted overheat). The state sent after join reaches a client still on its way into the world, so the server counts
   it as unsent and pushes the meters again on the session's first input. The HUD shows heat on the crosshair's left arc
   (warm, amber from 75%, danger red through the lockout with a tick where it ends and OVERHEAT under the dot) and Charge
-  on the reticle's right arc with a readout under the altitude (how much and which way it is going; a sheen climbs the
-  arc while it regenerates). The arcs' strokes are sized in the SVG's own units per reticle, never as non-scaling
-  strokes, whose dashes would be measured in screen pixels and overrun the arc.
+  on the reticle's right arc (lilac: art bible §4) with a readout under the altitude in its style (the figure, CHARGE,
+  and the rate; a sheen climbs the arc while it regenerates). Every arc sits on an opaque track in a near-black halo,
+  so the beam's glare cannot wash it out (the HUD is DOM over the canvas, outside the bloom); its strokes are sized in
+  the SVG's own units per reticle, never as non-scaling strokes, whose dashes would be measured in screen pixels and
+  overrun the arc. An arc lands on its value at once (no tween) on its first draw, as it turns on and on a jump; the
+  crosshair and the reticle fade in over 150 ms as they turn on.
