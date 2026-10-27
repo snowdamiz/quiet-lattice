@@ -710,10 +710,13 @@ every chat line, mute and party change goes to the server log for moderation.
   its `retryS`, the input's hint counting it down. The party frame sits under the location line: members in join order,
   the leader's amber mark, health (the entity's `hp` while it is in view, else the state's tenths), and where an absent
   member is (offline, another system); while the panel is open, invite by name and leave, and for the leader promote and
-  remove per member. Invites waiting are cards there with their minute running down. Rows, cards and refusals ease their
-  height as they come and go, and world markers are hidden under the party frame and the open panel (`SocialUI.covers`;
-  the remote-entity markers' keep-out of P1.E04.T02 should take the same boxes). Whatever a player or the server wrote
-  goes into the page as text, never as markup.
+  remove per member. Invites waiting are cards there with their minute running down. Each change moves one box
+  (`motion.js`, stepped every frame on the HUD clock: a whole pixel, at least one a frame, landing where it lays out);
+  what goes fades out before anything moves over where it was, and what comes fades in as it grows. World markers are
+  hidden under (or left of) the party frame, the invite cards and the open panel, but for hostiles and the player's own
+  ship (`hud.social.covers(x, y, kind)`); `covers()` with no arguments gives those panels' boxes, which remote entities'
+  pilot markers keep out of (P1.E04.T02). Whatever a player or the server wrote goes into the page as text, never as
+  markup.
 
 ## 14. Skills (`packages/server/src/skills`, `@astra/shared/skills`)
 

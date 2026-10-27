@@ -142,9 +142,14 @@ export class SocialUI {
     return this.game.overlay === 'chat';
   }
 
-  /** Whether a world marker of `kind` at (x, y) on screen sits under (or left of) one of the fixed panels: the HUD hides
-   * it there, but for a hostile ship and the player's own (what a pilot must always see). */
+  /**
+   * With no arguments, the boxes of the fixed panels on screen now (DOMRects): the party frame, each invite card and the
+   * open chat panel, as they stand, for whatever keeps its labels out of them (remote entities' pilot markers).
+   * With a point, whether a world marker of `kind` at (x, y) sits under (or left of) one of them: the HUD hides it there,
+   * but for a hostile ship and the player's own (what a pilot must always see).
+   */
   covers(x, y, kind) {
+    if (x === undefined) return [...this.keepOut];
     if (kind === 'enemy' || kind === 'ship') return false;
     for (const r of this.keepOut) if (x <= r.right + MARKER_MARGIN && y >= r.top - MARKER_MARGIN && y <= r.bottom + MARKER_MARGIN) return true;
     return false;
@@ -642,7 +647,7 @@ export class SocialUI {
     // (read before anything here writes)
     this.keepOut = [];
     if (this.partyShown) this.keepOut.push(this.partyEl.getBoundingClientRect());
-    if (this.invitesEl.firstChild) this.keepOut.push(this.invitesEl.getBoundingClientRect());
+    for (const card of this.invitesEl.children) if (!card.leaving) this.keepOut.push(card.getBoundingClientRect());
     if (open) this.keepOut.push(this.panel.getBoundingClientRect());
     m.expireInvites();
     if (!open) for (const l of m.lines.slice(-FEED_LINES)) this.nodes.get(l.id)?.classList.toggle('gone', !this.shown(l, now));
