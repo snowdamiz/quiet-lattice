@@ -436,3 +436,20 @@ Format: task id, question → choice → why.
   tracked in Git LFS like `.blend` sources and renders. Hero hulls export at 1024 px and bodies at 2048 px for now, with
   4k sources kept: a 4k Lark with three variants exported at about 650 MB, too large to download. P1.E14.T12 adds KTX2
   (Basis) compression to the export pipeline and the client's loader; heroes re-export at 4k once it lands.
+- **P1.E07.T01** Skill state (`@astra/shared/skills`, `server/src/skills`) → fragments are a currency: an `unlock`
+  request spends a tier's 1/3/6 fragments of the branch (a ledger per branch, earned and spent; never refunded);
+  unlocking needs no level or prerequisite, buying needs the tier level (1/15/30/45, conjunctions 15), one bought node of
+  the tier below, an augment's target, Tier II in both branches for a conjunction, Void standing, and points. Points =
+  level (read live from progress, capped 50) + granted (capped 1000) − cost of owned nodes; 152 points own the whole
+  web, 151 do not. Bars: 6 ground slots; the ship bar stores 5 and only the flown hull's `abilitySlots` take a node
+  (no ship, none); nodes go to the bar their cost type names; passives and cost-free forms are always on. Respec refunds
+  any chosen set, refused if a kept node loses a prerequisite; 500 units a point; at a Chorus listener (a Reaches
+  quartermaster for Void; both for a mixed set); applied atomically with the units. Pack Mule adds a pod (up to the bays)
+  and raises the stack cap; its refund removes a pod only beyond the bays, refused `no_room` if items would not fit.
+  Trainer, combat and standing hooks default to off until P1.E07.T13, P1.E06.T02 and P1.E07.T08 answer them (so no
+  respec or Void nodes yet). Phase 1 ceiling `SKILL_PHASE.maxTier = 2`: buying or unlocking Tier III, conjunctions or
+  capstones is refused `phase` (the Phase 1 exit criterion is Tier I and II live); what a character owns stays owned.
+  The people's pre-unlocked node is added on load. A stored state with an unknown id or a broken prerequisite refuses
+  the join until P1.E07.T15 reconciles data changes. Protocol 5; join order welcome, world, inventory, skills, party;
+  the protocol test requires each version number exactly once. `discovery` unlocks trust their caller. → DESIGN 9.1 as
+  data the client can predict. Callers to come: level-ups and hull swaps call `skills.refresh`.
