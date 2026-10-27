@@ -19,6 +19,11 @@
 // 1 km square, and every tick from then on is measured: the world's ground is planned in the worker thread while they
 // arrive (the loop yields between ticks, as the server's does), then their cells load under the per-tick budget.
 //
+// The nightfall trials (P1.E08.T03): 25 sessions on foot walking a 1 km square round a predator den near the home world's
+// equator, at Tier 2 and at Tier 3, from shortly before night falls there: as it falls, every cell round them sends out
+// its night herd of predators and the den its night pack, all of them hunting the walkers, and the zone stays within its
+// creature cap. The world's ground and dens are planned before they start.
+//
 // The mining trial (P1.E13.T01): 25 sessions on foot among the ~480 resource nodes within 600 m of a spot of the home
 // world, at a Tier 3 system's fauna, each beaming at a node (several at the same one at first) and sending a hit every
 // quarter second, moving on to another standing node when theirs breaks; nodes grow back after 30 s, so the trial sees
@@ -30,11 +35,12 @@
 // machine does not inflate. Wall time per tick is printed beside it for information, with the load average.
 import { cpus, loadavg } from 'node:os';
 import { encodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
-import { frameId, nodeCellsNear, nodeKey, scatterNodes, Random, type PlanetParams } from '@astra/shared/world';
+import { frameId, nodeCellsNear, nodeKey, scatterNodes, Random, type PlanetParams, type Tier } from '@astra/shared/world';
 import type { Vec3 as Dir } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';
 import { MAX_CREATURES } from '../src/fauna/sim.ts';
-import { Ground, groundOf, groundPlanner, planPads } from '../src/fauna/terrain.ts';
+import { nextTime } from '../src/fauna/sky.ts';
+import { densOf, Ground, groundOf, groundPlanner, planPads } from '../src/fauna/terrain.ts';
 import { InventoryService } from '../src/inventory/service.ts';
 import { HIT_INTERVAL_S, ResourceService, SWEEP_MS } from '../src/resources/service.ts';
 import { percentile } from '../src/zones/metrics.ts';
@@ -98,12 +104,19 @@ async function measure(
     warmup = WARMUP_TICKS,
     ticks = TICKS,
     afterTick,
+    start = 2.3e7,
     during,
-  }: { warmup?: number; ticks?: number; afterTick?: (tick: number) => void; during?: (time: number, tick: number) => void } = {},
+  }: {
+    warmup?: number;
+    ticks?: number;
+    afterTick?: (tick: number, time: number) => void;
+    start?: number;
+    during?: (time: number, tick: number) => void;
+  } = {},
 ): Promise<TrialResult> {
   /** acks in flight: delivered at tick `at` */
   const acks: { at: number; viewer: Sink; tick: number }[] = [];
-  let time = 2.3e7;
+  let time = start;
   let n = 0;
 
   /** One tick: wall ms (measured by the zone) and main-thread CPU ms. */
@@ -142,7 +155,7 @@ async function measure(
     [wall[i], cpu[i]] = tick();
     entities += zone.entityCount;
     for (const s of sinks) interest += zone.interestOf(s).size;
-    afterTick?.(i);
+    afterTick?.(i, time);
     await yieldLoop();
   }
   const bytes = sinks.reduce((s, x) => s + x.bytes, 0) - bytesBefore;
@@ -227,19 +240,27 @@ function stationTrial(): Promise<TrialResult> {
 
 /**
  * `players` sessions on foot walking about a `side`-metre square of a world of system `systemIndex` (its home world for
- * system 0, else its first lush planet), at Tier 3. `planned`: the world's ground is planned (and kept) before they
- * start; otherwise the zone's planner is left to plan it when they arrive.
+ * system 0, else its first lush planet), at Tier 3 (or `tier`). `planned`: the world's ground is planned (and kept)
+ * before they start; otherwise the zone's planner is left to plan it when they arrive. The square is round an open spot
+ * of the world's, or round `center` (a unit direction).
  */
-function surfaceWalk(systemIndex: number, players: number, side: number, seed: number, planned: boolean) {
+function surfaceWalk(
+  systemIndex: number,
+  players: number,
+  side: number,
+  seed: number,
+  planned: boolean,
+  { tier = 3, center: at }: { tier?: Tier; center?: Dir } = {},
+) {
   const rng = new Random(seed);
   const system = describeZoneSystem(systemIndex);
-  const zone = new Zone({ id: `bench-${systemIndex}-${players}`, systemIndex, system, fauna: { tier: 3 } });
+  const zone = new Zone({ id: `bench-${systemIndex}-${players}`, systemIndex, system, fauna: { tier } });
   const body = systemIndex === 0 ? system.bodies[system.home]! : system.bodies.find((x) => x.type === 'lush' && x.kind === 'planet')!;
   const params = body.params as PlanetParams;
   const frame = frameId(system.seed, body.index);
   // (to find open ground; a ground that is not kept, when the zone must plan its own)
   const ground = planned ? groundOf(params) : new Ground(params, planPads(params));
-  const center = openGround(ground);
+  const center = at ?? openGround(ground);
   const [t, b] = tangents(center);
   const onGround = (d: Dir): Vec3 => {
     const r = ground.radius + ground.sample(d);
@@ -323,6 +344,50 @@ async function arrivalTrial(): Promise<TrialResult> {
       creatures: walk.zone.fauna!.creatureCount,
       cpuMaxMs: round(percentile(r.cpu, 100)),
     },
+  };
+}
+
+/**
+ * 25 sessions on foot walking a 1 km square round a predator den near the home world's equator at `tier`, from shortly
+ * before night falls on the den (it falls about 20 s into the measured ticks): night herds and the den's night pack come
+ * out round them as it does. The world's ground and its dens at the tier are planned (and kept) before they start.
+ */
+function nightfallTrial(tier: Tier): () => Promise<TrialResult> {
+  return async () => {
+    const system = describeZoneSystem(0);
+    const body = system.bodies[system.home]!;
+    const params = body.params as PlanetParams;
+    const ground = groundOf(params);
+    const dens = densOf(params, tier);
+    const spot = openGround(ground, 0.3);
+    const away = (d: Readonly<Dir>) => Math.hypot(d[0] - spot[0], d[1] - spot[1], d[2] - spot[2]);
+    const den = dens.filter((d) => d.role === 'predator').sort((a, b) => away(a.dir) - away(b.dir))[0]!;
+    const dusk = nextTime(system, body.index, den.dir, ground.radius, true, 2.3e7, { margin: 900 })!;
+    const walk = surfaceWalk(0, SESSIONS, 1000, 20261029 + tier, true, { tier, center: den.dir });
+    walk.join(true);
+    let nightfallTick = -1;
+    let creaturesAtNightfall = 0;
+    let creaturesMax = 0;
+    let denHerdsMax = 0;
+    const r = await measure(walk.zone, walk.sinks, walk.rng, (time) => walk.step(time), {
+      start: dusk - WARMUP_TICKS * DT - 20,
+      afterTick: (i, time) => {
+        const f = walk.zone.fauna!.stats();
+        if (nightfallTick < 0 && time >= dusk) [nightfallTick, creaturesAtNightfall] = [i, f.creatures];
+        creaturesMax = Math.max(creaturesMax, f.creatures);
+        denHerdsMax = Math.max(denHerdsMax, f.denHerds);
+      },
+    });
+    const extra = {
+      tier,
+      nightfallTick,
+      creaturesAtNightfall,
+      creatures: walk.zone.fauna!.creatureCount,
+      creaturesMax,
+      creatureCap: MAX_CREATURES,
+      denHerdsMax,
+    };
+    return { ...r, extra };
   };
 }
 
@@ -464,6 +529,8 @@ for (const [name, run] of [
   ['surface: 25 players in 1 km²', surfaceTrial(25, 1000)],
   ['surface: 50 players in 4 km²', surfaceTrial(50, 2000)],
   ['arrival: 25 players on an unplanned world', arrivalTrial],
+  ['nightfall: 25 players round a den at Tier 2', nightfallTrial(2)],
+  ['nightfall: 25 players round a den at Tier 3', nightfallTrial(3)],
   ['mining: 25 players mining shared nodes', miningTrial],
 ] as const) {
   if (only.length && !only.some((w) => name.includes(w))) continue;

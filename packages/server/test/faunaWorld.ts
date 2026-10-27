@@ -18,11 +18,14 @@ export function findWorld(tier: Tier, want: (species: readonly FaunaSpecies[]) =
   return body;
 }
 
-/** A spot on dry land, well above the sea, with ground about as high all round it (no cliff) for 80 m. */
-export function openGround(ground: Ground): Vec3 {
+/** A spot on dry land, well above the sea, with ground about as high all round it (no cliff) for 80 m; within `band` of
+ * the world's equator (|y| of the unit direction, its spin axis being +Y) if given, where day and night take turns
+ * whatever the season. */
+export function openGround(ground: Ground, band = 1): Vec3 {
   for (let i = 0; i < 20000; i++) {
     const a = i * 0.618034 * Math.PI * 2;
     const y = 1 - (2 * (i + 0.5)) / 20000;
+    if (Math.abs(y) > band) continue;
     const r = Math.sqrt(1 - y * y);
     const dir: Vec3 = [Math.cos(a) * r, y, Math.sin(a) * r];
     const h = ground.sample(dir);
@@ -46,7 +49,8 @@ export function openGround(ground: Ground): Vec3 {
   throw new Error('no open ground found');
 }
 
-function along(dir: Readonly<Vec3>, t: Readonly<Vec3>, b: Readonly<Vec3>, east: number, north: number, radius: number): Vec3 {
+/** The unit direction `east` and `north` metres from a unit direction along its tangents `t` and `b`. */
+export function along(dir: Readonly<Vec3>, t: Readonly<Vec3>, b: Readonly<Vec3>, east: number, north: number, radius: number): Vec3 {
   const x = dir[0] * radius + t[0] * east + b[0] * north;
   const y = dir[1] * radius + t[1] * east + b[1] * north;
   const z = dir[2] * radius + t[2] * east + b[2] * north;
