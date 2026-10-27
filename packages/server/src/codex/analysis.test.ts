@@ -187,7 +187,14 @@ describe('analyzing a creature', () => {
     w.zone.patch(w.player, { mode: 'ship' });
     expect(ask(id)).toMatchObject({ result: 'refused', reason: 'mode' });
     w.zone.patch(w.player, { mode: 'foot' });
-    for (const target of [999_999, w.player, w.zone.spawn({ kind: 'prop', frame: w.frame, pos: open.feet, quat: [0, 0, 0, 1], vel: [0, 0, 0] })])
+    const pose = { frame: w.frame, pos: open.feet, quat: [0, 0, 0, 1] as [number, number, number, number], vel: [0, 0, 0] as Vec3 };
+    for (const target of [
+      999_999,
+      w.player,
+      w.zone.spawn({ kind: 'prop', ...pose }),
+      // (an entity that is not a creature, whatever species it carries)
+      w.zone.spawn({ kind: 'npc', ...pose, species: walker.index, hp: 1 }),
+    ])
       expect(ask(target), String(target)).toMatchObject({ result: 'refused', reason: 'unknown' });
     const ghost = creature(open.feet);
     w.zone.patch(ghost, { species: CODEX_LIMITS.perWorld - 1 });
@@ -199,6 +206,31 @@ describe('analyzing a creature', () => {
     expect(ask(id)).toMatchObject({ result: 'refused', reason: 'world' });
     w.zone.patch(w.player, { frame: w.frame, pos: open.stand });
     expect(ask(id).result).toBe('new');
+  });
+
+  it('refuses a creature its phase hides from the player (a phase’s own) as none, before telling anything else of it', () => {
+    const zone = w.zone;
+    const pose = { frame: w.frame, pos: open.feet, quat: [0, 0, 0, 1] as [number, number, number, number], vel: [0, 0, 0] as Vec3 };
+    const mob = { kind: 'mob' as const, ...pose, species: walker.index, level: 1, hp: 1, mode: 'idle' };
+    // another player's story phase here, and a creature of its own: none to this player, dead or alive
+    const other = { id: 2, characterId: 'c2', sendBinary: () => {} } as ZoneViewer;
+    zone.join(other, { kind: 'player', frame: w.frame, pos: open.stand, quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    const theirs = zone.phases.phaseFor(other, 'story', { key: 'test:theirs', frame: w.frame, center: open.feet, radius: 100 });
+    const hidden = zone.phases.spawn(theirs.id, mob);
+    w.movePlayer(open.stand);
+    expect(zone.phases.canSee(zone.entityOf(other)!, hidden)).toBe(true);
+    expect(ask(hidden)).toMatchObject({ result: 'refused', reason: 'unknown' });
+    zone.patch(hidden, { hp: 0 });
+    expect(ask(hidden)).toMatchObject({ result: 'refused', reason: 'unknown' });
+    // its own phase's creature, a player sees and analyzes
+    const mine = zone.phases.phaseFor(viewer, 'story', { key: 'test:mine', frame: w.frame, center: open.feet, radius: 100 });
+    expect(ask(zone.phases.spawn(mine.id, mob)).result).toBe('new');
+    expect(ask(hidden)).toMatchObject({ result: 'refused', reason: 'unknown' });
+    zone.phases.leave(viewer);
+    zone.phases.close(mine.id);
+    zone.phases.close(theirs.id);
+    zone.leave(other);
+    expect(zone.entity(hidden)).toBeUndefined();
   });
 
   it('refuses a stale number or stamp, a character out of play, and asks faster than its rate', () => {
@@ -229,6 +261,7 @@ describe('analyzing a creature', () => {
       entity: (e) => zone.entity(e),
       patch: (e, set, clear) => zone.patch(e, set, clear),
       fauna: { tier: 0, grounds: { ground: () => null } },
+      phases: zone.phases,
     };
     expect(ask(id, { svc: service(planning) })).toMatchObject({ result: 'refused', reason: 'busy' });
     const full: Codex = emptyCodex();

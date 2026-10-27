@@ -227,7 +227,8 @@ export function codexLine(entry: Pick<CodexEntry, 'bodyPlan' | 'temperament' | '
   return `${getBodyPlan(entry.bodyPlan).name} · ${getTemperament(entry.temperament).name} · ${'★'.repeat(entry.threat)}${'☆'.repeat(5 - entry.threat)}`;
 }
 
-/** What Bond can do with it, for a character owning `owned` nodes: "Bond: eligible", or Big Game needed. */
+/** What Bond can do with it, for a character owning `owned` nodes: "Bond: eligible", or "Bond: with Big Game" (owned not
+ * known, or Big Game not owned). */
 export function bondLine(entry: Pick<CodexEntry, 'bond'>, owned: readonly string[] = []): string {
-  return canBond(entry, owned) ? 'Bond: eligible' : 'Bond: needs Big Game';
+  return canBond(entry, owned) ? 'Bond: eligible' : 'Bond: with Big Game';
 }

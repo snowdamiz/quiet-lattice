@@ -88,7 +88,7 @@ describe('codex entries', () => {
     const e = codexEntryFor({ temperament: 'predator', bodyPlan: 'biped' }, 0);
     expect(codexLine(e)).toBe('Biped · Predator · ★★★☆☆');
     expect(bondLine(e)).toBe('Bond: eligible');
-    expect(bondLine({ bond: 'big_game' })).toBe('Bond: needs Big Game');
+    expect(bondLine({ bond: 'big_game' })).toBe('Bond: with Big Game');
     expect(bondLine({ bond: 'big_game' }, ['big_game'])).toBe('Bond: eligible');
     expect(SPECIES_XP).toBe(300);
   });
@@ -104,6 +104,8 @@ describe('codex keys', () => {
 
 describe('a codex', () => {
   const grazer = codexEntryFor({ temperament: 'docile', bodyPlan: 'quad_grazer' }, 100);
+  /** A world's every species index taken. */
+  const fullWorld = () => Object.fromEntries(Array.from({ length: CODEX_LIMITS.perWorld }, (_, i) => [i, grazer]));
 
   it('adds a species once; after that it is known, and nothing changes', () => {
     const c = emptyCodex();
@@ -165,9 +167,23 @@ describe('a codex', () => {
       { worlds: { [W]: { system: 3, species: {}, count: 1 } } },
       { worlds: {}, xp: 300 },
       { worlds: Object.fromEntries(Array.from({ length: CODEX_LIMITS.worlds + 1 }, (_, i) => [worldN(i), { system: 0, species: {} }])) },
+      // more species than the bound (every world, and every world's count, within theirs)
+      {
+        worlds: Object.fromEntries(
+          Array.from({ length: CODEX_LIMITS.species / CODEX_LIMITS.perWorld + 1 }, (_, i) => [worldN(i), { system: 0, species: fullWorld() }]),
+        ),
+      },
     ]) {
       expect(codexSchema.safeParse(bad).success, JSON.stringify(bad).slice(0, 100)).toBe(false);
     }
+    // at the bound exactly it is fine
+    const atBound = {
+      worlds: Object.fromEntries(
+        Array.from({ length: CODEX_LIMITS.species / CODEX_LIMITS.perWorld }, (_, i) => [worldN(i), { system: 0, species: fullWorld() }]),
+      ),
+    };
+    expect(codexSize(atBound)).toBe(CODEX_LIMITS.species);
+    expect(codexSchema.safeParse(atBound).success).toBe(true);
   });
 });
 

@@ -1066,7 +1066,8 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   no scan to hold a target through); `stale` (stamped more than 3 s from the server's clock); `zone`; `mode` (on foot, as
   the zone entity has it: movement authority's believed mode; ring grazers and depth leviathans will be analyzed from the
   cockpit with Deep Sweep, P2.E29.T02, which lets `ship` through for those species); `unknown` (no `mob` entity of that id
-  in the player's zone, or a species its world does not carry); `dead` (no hp left); `world` (it is not on the world the
+  in the player's zone that its phase lets it see, `phases.canSee`, so a phase's own creature is none to anyone else and
+  nothing more of it is told; or a species its world does not carry); `dead` (no hp left); `world` (it is not on the world the
   player's frame names); `range` (from the eye, 1.6 m up, to the creature's middle, more than the demo's reach of 70 m
   plus its hit radius, 1.15 × its size × 0.9, a flyer's 0.6, as the client's aim pick takes it, plus 5 m for a pose a tick
   old); `busy` (the ground not planned yet); `los` (the drawn ground in the way, sampled as the beam's is, §18). Every
@@ -1082,8 +1083,8 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   1,024 worlds and 64 a world (the galaxy has 2,959 species on 432 worlds, at most 9 a world): past that an analysis is
   refused `full`, logged as an error, and nothing is earned.
 - **XP.** The first analysis of a species earns `SPECIES_XP` (300, DESIGN 14.9) into the character's progress, levelling it
-  as quest XP does (the player's entity takes the level, the skill view is refreshed); a repeat records nothing and earns
-  nothing.
+  as quest XP does (the player's entity takes the level, the skill view is refreshed); the answer's `xp` is what was
+  granted. A repeat records nothing and earns nothing.
 - **Reconcile.** On load the stored codex is brought in line with the species data as it is now (`reconcileCodex`, the
   component's `reconcile`): a world that no longer has fauna, or whose frame is not in its system any more, is dropped; a
   species past its world's list is dropped; an entry whose species changed takes its new temperament, threat, body plan

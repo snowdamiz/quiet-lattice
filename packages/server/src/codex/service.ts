@@ -27,8 +27,9 @@ export interface AnalyzedSpecies {
   bodyPlan: BodyPlanId;
 }
 
-/** What recording an analysis did: a `new` entry with the XP it earned and the level it raised the character to (null when
- * it did not), a `known` entry (nothing earned), or nothing at all, the codex being `full`. */
+/** What recording an analysis did: a `new` entry with the XP actually granted (SPECIES_XP, or 0 when the character's
+ * progress is not held) and the level it raised the character to (null when it did not), a `known` entry (nothing earned),
+ * or nothing at all, the codex being `full`. */
 export type Recorded = { result: 'new'; entry: CodexEntry; xp: number; level: number | null } | { result: 'known'; entry: CodexEntry } | { result: 'full' };
 
 export interface CodexServiceOptions {
@@ -106,26 +107,26 @@ export class CodexService {
       return r;
     }
     if (r.result === 'known') return { result: 'known', entry: r.entry };
-    return { result: 'new', entry: r.entry, xp: SPECIES_XP, level: this.grantXp(characterId, SPECIES_XP) };
+    return { result: 'new', entry: r.entry, ...this.grantXp(characterId, SPECIES_XP) };
   }
 
-  /** Adds XP to a character's progress: the level it rose to, or null. */
-  private grantXp(characterId: string, xp: number): number | null {
+  /** Adds XP to a character's progress: what was granted, and the level it rose to (null when it did not). */
+  private grantXp(characterId: string, xp: number): { xp: number; level: number | null } {
     const p = this.progress.get(characterId);
     if (!p) {
       this.log?.warn({ character: characterId, xp }, 'analysis XP for a character whose progress is not held; not granted');
-      return null;
+      return { xp: 0, level: null };
     }
     const total = Math.min(Number.MAX_SAFE_INTEGER, p.xp + xp);
     const level = Math.max(p.level, levelForXp(total));
     this.progress.set(characterId, { ...p, xp: total, level });
-    if (level === p.level) return null;
+    if (level === p.level) return { xp: total - p.xp, level: null };
     try {
       this.skills?.refresh(characterId);
     } catch (err) {
       this.log?.error({ err, character: characterId }, 'skill view not refreshed after a level gained by analysis');
     }
-    return level;
+    return { xp: total - p.xp, level };
   }
 
   private owned(characterId: string): readonly string[] {

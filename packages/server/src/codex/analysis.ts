@@ -6,8 +6,8 @@
 // - the player on foot, as movement authority believes (its zone entity's mode). The multitool's scanner is the
 //   on-foot tool; ring grazers and depth leviathans are analyzed from the cockpit with Deep Sweep (DESIGN 14.5, P2.E29.T02),
 //   which will let `ship` through for those species;
-// - the target a creature of the player's zone, alive (no hp left: dead), on the world the player stands on, of a species
-//   its world carries;
+// - the target a creature of the player's zone that its phase lets it see (a phase's own creature is no other player's),
+//   alive (no hp left: dead), on the world the player stands on, of a species its world carries;
 // - in range: from the player's eye to the creature's middle no further than the demo's analysis reach (ANALYZE_RANGE_M,
 //   the client's aim pick, Fauna.pick(…, 70)) plus the creature's hit radius and ANALYZE_SLACK_M (a pose a tick old);
 // - in sight over the drawn ground (resources/los.ts, the beam's test), on the ground the creature walks on.
@@ -19,6 +19,7 @@ import { codexSpecies, speciesKey } from '@astra/shared/codex';
 import type { ClientMessage, ServerMessage } from '@astra/shared/protocol';
 import { frameKeyOf, tierOfGalaxySystem, type FaunaSpecies, type PlanetParams, type Tier } from '@astra/shared/world';
 import type { FaunaSim } from '../fauna/sim.ts';
+import type { PhaseManager } from '../phases/manager.ts';
 import { groundPlanner, type GroundSource } from '../fauna/terrain.ts';
 import { TokenBucket } from '../gateway/rateLimit.ts';
 import { lineOfSight } from '../resources/los.ts';
@@ -53,6 +54,7 @@ export function hitRadius(sp: Pick<FaunaSpecies, 'size' | 'kind'>): number {
 /** A zone, as analysis uses it. */
 export type AnalysisZone = Pick<Zone, 'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'patch'> & {
   readonly fauna: Pick<FaunaSim, 'tier' | 'grounds'> | null;
+  readonly phases: Pick<PhaseManager, 'canSee'>;
 };
 
 /** Where the service finds a session's zone and a zone's tier (the ZoneManager). */
@@ -146,7 +148,8 @@ export class AnalysisService {
     const player = zone && self !== undefined ? zone.entity(self) : undefined;
     if (!zone || self === undefined || !player) return refuse('zone');
     if (player.fields.mode !== 'foot') return refuse('mode');
-    const c = zone.entity(msg.target)?.fields;
+    // (a creature the player's phase hides, a phase's own, is none to it: refused before anything else of it is told)
+    const c = zone.phases.canSee(self, msg.target) ? zone.entity(msg.target)?.fields : undefined;
     if (!c || c.kind !== 'mob' || c.species === undefined || c.frame === null) return refuse('unknown');
     if (c.hp !== undefined && !(c.hp > 0)) return refuse('dead');
     if (c.frame !== player.fields.frame) return refuse('world');

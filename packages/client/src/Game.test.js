@@ -480,7 +480,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
     const { socket, banners, toasts } = online();
     socket.push(WELCOME);
     socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
-    expect(banners).toEqual([['HORNED VELAR BULL', 'New Species Analyzed', ['Heavy quadruped · Territorial · ★★☆☆☆', 'Bond: needs Big Game', '+300 XP']]]);
+    expect(banners).toEqual([['HORNED VELAR BULL', 'New Species Analyzed', ['Heavy quadruped · Territorial · ★★☆☆☆', 'Bond: with Big Game', '+300 XP']]]);
     socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
     socket.push({ t: 'analyze', seq: 3, target: 42, result: 'refused', reason: 'los' });
     socket.push({ t: 'analyze', seq: 4, target: 42, result: 'refused', reason: 'stale_seq' });

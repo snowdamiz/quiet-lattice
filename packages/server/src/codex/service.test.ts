@@ -98,7 +98,8 @@ describe('the codex service', () => {
   it('records the species without XP for a character whose progress is not held, and says so', () => {
     const { codex, lines } = setup();
     codex.open('c3');
-    expect(codex.record('c3', grazer, 1)).toMatchObject({ result: 'new', xp: SPECIES_XP, level: null });
+    expect(codex.record('c3', grazer, 1)).toMatchObject({ result: 'new', xp: 0, level: null });
+    expect(codex.entry('c3', W, 0)).toMatchObject({ temperament: 'skittish' });
     expect(lines).toContainEqual({ level: 'warn', msg: 'analysis XP for a character whose progress is not held; not granted' });
   });
 });
