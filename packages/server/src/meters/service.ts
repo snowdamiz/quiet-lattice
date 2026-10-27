@@ -11,6 +11,9 @@
 // in the believed mode `pulse`, and `gate` refuses that mode while Charge is empty (movement authority applies the mode the
 // server believes, P1.E03.T04).
 //
+// Mining (P1.E13) is paid in the beam time this service judged: `takeBeam` hands over the seconds the beam fired since it
+// last did, so a client earns what it fired, however it times its hits.
+//
 // Every call takes the server's world time `now`; the service keeps no clock. Persistence (the `meters` component) opens a
 // character's meters on join, stores `get()` (the meters as of the last time they were advanced, with that time) and closes
 // them once it has left. Listeners (the gateway) hear the meters to push: after an overheat, a recovery, Charge running
@@ -101,6 +104,8 @@ interface Entry {
   pulseRefused: boolean;
   /** The glow last put on the entity. */
   glow: number;
+  /** Seconds the beam fired (`stepMeters`' `beamS`: held, on foot, out of the lockout) since mining last took them. */
+  beamS: number;
   /** Not yet in the world since it was opened: the time it was away runs heat (it cools) but never Charge, which regenerates
    * only in play (the Listener's anywhere included). Its first input ends it. */
   away: boolean;
@@ -152,6 +157,7 @@ export class MeterService {
       pushedAt: -Infinity,
       pulseRefused: false,
       glow: -1,
+      beamS: 0,
       away: true,
     });
   }
@@ -253,12 +259,22 @@ export class MeterService {
     this.maybePush(characterId, e, now);
   }
 
-  /** Whether the server believes the character's beam is firing now: held, on foot, out of the lockout. What server-side
-   * mining (P1.E13) judges yield by. */
+  /** Whether the server believes the character's beam is firing now: held, on foot, out of the lockout. A mining hit (P1.E13)
+   * counts only while it is. */
   beamActive(characterId: string, now: number): boolean {
     const e = this.entry(characterId);
     this.advance(characterId, e, now);
     return e.activity.beam && !e.state.overheated && now < e.activeUntil;
+  }
+
+  /** Takes the seconds the beam fired (held, on foot, out of the lockout, as the meters ran) since they were last taken, and
+   * returns them, at most `max` (the rest is dropped): what a mining hit is worth (P1.E13). */
+  takeBeam(characterId: string, now: number, max: number): number {
+    const e = this.entry(characterId);
+    this.advance(characterId, e, now);
+    const s = Math.min(max, e.beamS);
+    e.beamS = 0;
+    return s;
   }
 
   // ---------- server-side changes (abilities, P1.E07.T03; the Waystation's refill) ----------
@@ -304,6 +320,7 @@ export class MeterService {
 
   private run(e: Entry, act: MeterActivity, dt: number): void {
     const step = stepMeters(e.state, e.profile, e.env, act, dt, e.conditions);
+    e.beamS += step.beamS;
     // (away, Charge stands as the ship was left)
     e.state = e.away ? { ...step.state, charge: e.state.charge } : step.state;
     e.events.push(...(e.away ? step.events.filter((ev) => ev !== 'charge_empty') : step.events));

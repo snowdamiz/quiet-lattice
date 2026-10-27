@@ -851,14 +851,19 @@ requests and starts its timer.
   `unknown` (no such candidate in the scatter); `harvested`; `range` (35 m from the player's position to the node: the
   client's 30 m beam and 5 m for the eye, the node's size and a pose a tick old); `los` (the ground sampled every 2 m
   along the beam from the eye, 1.6 m up, to the node, its ends skipped, blocked where the beam runs 0.75 m under it; rocks,
-  trees and buildings do not block); `heat` (`beam(character, seconds)`: given Heat's meter service as `meters`
-  (P1.E07.T02), a hit counts only while `meters.beamActive(character, now)` says the beam is firing, its button held
-  and out of the overheat lockout, so hits sent with the button off never mine; the gateway's `ResourceService` is given
-  it, §19; without it (tests of the resource service alone) the beam is always taken as firing).
-- **Beam time.** A hit is worth the time since the character's last hit that counted, at most 0.5 s (an honest client
-  sends one every 0.25 s), at the multitool's 1.6 hp a second (× 1.5 on minerals with a node flagged
-  `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
-  continuously; nodes and flora share that one beam.
+  trees and buildings do not block); `heat` (given Heat's meter service as `meters` (P1.E07.T02), a hit counts only
+  while `meters.beamActive(character, now)` says the beam is firing, its button held, on foot and out of the overheat
+  lockout, so hits sent with the button off never mine; the gateway's `ResourceService` is given it, §19; without it,
+  in tests of the resource service alone, the beam is always taken as firing).
+- **Beam time.** A hit is worth beam time, at most 0.5 s (an honest client sends one every 0.25 s), at the multitool's
+  1.6 hp a second (× 1.5 on minerals with a node flagged `deposits_break_faster`, Hot Hands). With Heat's meters it is
+  the beam time the server judged: `meters.takeBeam(character, now, 0.5)` hands over the seconds the meters ran the beam
+  firing (`stepMeters`' `beamS`: held, on foot, out of the lockout) since the last hit that counted, and the rest past
+  0.5 s is dropped. So a client is paid for the beam it fired, however it times its hits: one that presses the button
+  only for each hit earns next to nothing, and every beam-second it is paid for heated the meter, so Heat's duty cycle
+  bounds the mining rate. A client holding the beam earns a quarter second a hit, as before. Without the meters, a hit
+  is worth the time since the last that counted (the first, one hit interval). However fast a client sends, a character
+  mines no faster than one beam held on continuously; nodes and flora share that one beam.
 - **Breaking.** The node's yield is rolled once and split by the damage each character did (whole units, largest
   remainders first, ties to the first to hit it; `splitByDamage`), so a token hit earns a token share (nothing, a few
   thousandths of a node) and the one who did the work takes the rest; each share × the character's `mining.yield`
@@ -930,8 +935,9 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   believed mode `foot` and out of the lockout, at its rate per second of server time however fast inputs come; an input's
   activity lapses 1 s after it, so a client that stops sending is idle. The entity's `heat` wire field carries the meter in
   steps of 0.02 (the multitool's glow others see, DESIGN 9.10). `allowsMode(id, mode, now)` is movement authority's mode
-  check (P1.E03.T04: pulse needs Charge), `beamActive(id, now)` what the gateway's resource service judges every mining
-  hit by (§18: refused `heat` with the button up or in the lockout); `addHeat`,
+  check (P1.E03.T04: pulse needs Charge); `beamActive(id, now)` is what the gateway's resource service judges every mining
+  hit by (§18: refused `heat` with the button up or in the lockout), and `takeBeam(id, now, max)` is what it pays the hit
+  in: the seconds the beam fired since the last were taken, at most `max`; `addHeat`,
   `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is
   made again whenever the ship or the owned nodes change.
 - **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, at}`. A character

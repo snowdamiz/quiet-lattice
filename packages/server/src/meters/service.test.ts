@@ -155,6 +155,38 @@ describe('the beam, as the server judges it', () => {
     expect(t.pushes.at(-1)!.view).toMatchObject({ overheated: false, heat: lifted });
   });
 
+  it('hands mining the seconds the beam fired, once: not with the button up, in a ship or in the lockout', () => {
+    const t = setup();
+    const at = onHomeWorld(t.zone, 2);
+    // the button up, then a ship with it held: nothing fired
+    t.send('foot', at.frame, at.pos);
+    t.wait(0.5);
+    t.send('ship', null, [1e7, 0, 0], Buttons.beam);
+    t.wait(0.5);
+    t.send('foot', at.frame, at.pos, Buttons.beam);
+    expect(t.meters.takeBeam(ID, t.now, 10)).toBe(0);
+    // held on foot for 2 s: 2 s, taken once, and no more than asked for (to the clock's float precision at 2.3e7 s)
+    for (let i = 0; i < 40; i++) {
+      t.wait(0.05);
+      t.send('foot', at.frame, at.pos, Buttons.beam);
+    }
+    expect(t.meters.takeBeam(ID, t.now, 10)).toBeCloseTo(2, 6);
+    expect(t.meters.takeBeam(ID, t.now, 10)).toBe(0);
+    t.wait(0.4);
+    expect(t.meters.takeBeam(ID, t.now, 0.25)).toBeCloseTo(0.25, 6);
+    expect(t.meters.takeBeam(ID, t.now, 10)).toBe(0);
+    // held on through the overheat (48 heat at 2.4 s, 100 at 32 − 8 a second: 2.17 s more) and the lockout: it fired
+    // only until the meter overheated
+    t.send('foot', at.frame, at.pos, Buttons.beam);
+    const h0 = t.meters.view(ID, t.now).heat;
+    for (let i = 0; i < 60; i++) {
+      t.wait(0.05);
+      t.send('foot', at.frame, at.pos, Buttons.beam);
+    }
+    expect(t.meters.view(ID, t.now).overheated).toBe(true);
+    expect(t.meters.takeBeam(ID, t.now, 10)).toBeCloseTo((100 - h0) / 24, 6);
+  });
+
   it('cools twice as fast under the sea, and puts its heat on the entity for others to see', () => {
     const t = setup({ saved: { heat: 80 } });
     const sea = onHomeWorld(t.zone, -3);

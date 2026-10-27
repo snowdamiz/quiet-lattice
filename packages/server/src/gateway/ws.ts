@@ -214,7 +214,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   });
   const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
   if (!deps.social) social.start();
-  // (a mining hit counts only while the meters say the beam fires: the button held, on foot, out of the lockout)
+  // (a mining hit counts only while the meters say the beam fires, the button held on foot out of the lockout, and is worth
+  // the beam seconds they saw fire since the last)
   const resources = deps.resources ?? new ResourceService({ zones: deps.zones, inventory, skills, meters, now: () => deps.clock.now(), log });
   if (!deps.resources) resources.start();
   // each share of a node broken counts for the character's quests' `mine` steps (flora's carbon counts through `collect`)

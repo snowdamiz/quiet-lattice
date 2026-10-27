@@ -3,11 +3,13 @@
 // once, its yield split between them by the damage each did and granted into their inventories (pushed as inventory
 // state); both are sent the node's cell as harvested, are refused while it is, and see it grow back on its timer. Hits
 // from too far, too fast, through a hill or from a ship are refused, and so are hits without the beam's button held or in
-// Heat's overheat lockout (P1.E07.T02).
+// Heat's overheat lockout (P1.E07.T02); a hit is worth the beam time Heat saw fire, so pressing the button only for the
+// hit earns next to nothing.
 import { Buttons, PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import { nodeType } from '@astra/shared/world';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RunningServer } from '../src/server.ts';
+import { HIT_INTERVAL_S, MULTITOOL_POWER } from '../src/resources/service.ts';
 import { homeSystemOf } from '../src/world/home.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
 import { miningWorld, norm, type NodeSpot, type Vec3 } from './resourceWorld.ts';
@@ -60,6 +62,28 @@ async function bot() {
     });
   /** shares of nodes another bot broke, put aside while waiting for an answer */
   const shares: Mine[] = [];
+  /**
+   * Sends a hit on a node and returns the server's answer to it. As a client does, the beam's button is held while the
+   * beam fires: a hit interval before the hit (the beam time it is worth), let go once it is answered. `beam: 'up'` sends
+   * it with the button up; `'pulsed'` presses the button only for the hit's instant, after beam time it never fired.
+   */
+  async function hit(node: string, { beam = 'held' }: { beam?: 'held' | 'pulsed' | 'up' } = {}): Promise<Mine> {
+    const seq = ++mineSeq;
+    if (beam !== 'up') press(Buttons.beam);
+    if (beam === 'held') await sleep(HIT_INTERVAL_S * 1000);
+    sock.send({ t: 'mine', seq, frame: world.frame, node, tool: 'multitool', time: time() });
+    if (beam === 'pulsed') press(0);
+    try {
+      for (;;) {
+        const m = await sock.next('mine');
+        if (m.seq === seq) return m;
+        // (a share of a node another broke, kept for the test to read)
+        shares.push(m);
+      }
+    } finally {
+      if (beam === 'held') press(0);
+    }
+  }
   return {
     sock,
     shares,
@@ -73,20 +97,11 @@ async function bot() {
         return f?.mode === mode && f.frame === world.frame && Math.hypot(f.pos[0] - pos[0], f.pos[1] - pos[1], f.pos[2] - pos[2]) < 1e-6;
       });
     },
-    /** sends a hit on a node, the beam's button held for it (as a client holds it while the beam fires) unless `beam` is
-     * false; the server's answer to it */
-    async hit(node: string, { beam = true } = {}): Promise<Mine> {
-      const seq = ++mineSeq;
-      if (beam) press(Buttons.beam);
-      sock.send({ t: 'mine', seq, frame: world.frame, node, tool: 'multitool', time: time() });
-      // (let go again at once: the meter heats only between the two inputs)
-      if (beam) press(0);
-      for (;;) {
-        const m = await sock.next('mine');
-        if (m.seq === seq) return m;
-        // (a share of a node another broke, kept for the test to read)
-        shares.push(m);
-      }
+    hit,
+    /** waits for the world's ground, planned in a worker as a player arrives: until it is, a hit is refused `busy` (probed
+     * with the button up, so the beam does not heat meanwhile) */
+    async ready(node: string) {
+      for (let i = 0; i < 100 && (await hit(node, { beam: 'up' })).reason === 'busy'; i++) await sleep(100);
     },
     /** sends hits without waiting, the beam held through them */
     burst(node: string, n: number) {
@@ -131,11 +146,8 @@ describe('mining over the wire', () => {
     expect((await a.sock.next('nodes')).reset).toBe(true);
     expect((await b.sock.next('nodes')).reset).toBe(true);
     // the world's ground is planned in a worker as they arrive: a hit before it is ready is `busy`
-    let first = await a.hit(deposit.id);
-    for (let i = 0; first.reason === 'busy' && i < 100; i++) {
-      await sleep(100);
-      first = await a.hit(deposit.id);
-    }
+    await a.ready(deposit.id);
+    const first = await a.hit(deposit.id);
     expect(first).toMatchObject({ result: 'hit', node: deposit.id, frame: world.frame });
     // b's hit lands on the same node: less of it is left than a's hit left
     await sleep(250);
@@ -203,18 +215,14 @@ describe('mining over the wire', () => {
     expect(await a.hit(deposit.id)).toMatchObject({ result: 'hit' });
     a.sock.close();
     b.sock.close();
-  });
+  }, 60_000);
 
   it('refuses hits from too far, too fast, through a hill and from a ship', async () => {
     const a = await bot();
     const other = world.findNode({ want: (t) => nodeType(t).kind === 'deposit', skip: 40 });
     await a.stand(other.stand);
-    let r = await a.hit(other.id);
-    for (let i = 0; r.reason === 'busy' && i < 100; i++) {
-      await sleep(100);
-      r = await a.hit(other.id);
-    }
-    expect(r.result).toBe('hit');
+    await a.ready(other.id);
+    expect((await a.hit(other.id)).result).toBe('hit');
     // too far: refused before the server scatters a cell
     const scattered = server.ws.resources.stats().scattered;
     await a.stand(world.onGround(norm(other.stand), 300, 0));
@@ -239,22 +247,26 @@ describe('mining over the wire', () => {
     a.sock.close();
   });
 
-  it('mines only while Heat says the beam fires: the button held, out of the overheat lockout', async () => {
+  it('mines only while Heat says the beam fires (the button held, out of the overheat lockout), on the beam time it saw', async () => {
     const a = await bot();
     const spot = world.findNode({ want: (t) => nodeType(t).kind === 'deposit', skip: 80 });
+    const hp = nodeType(spot.node.type).hp;
     await a.stand(spot.stand);
-    let r = await a.hit(spot.id);
-    for (let i = 0; r.reason === 'busy' && i < 100; i++) {
-      await sleep(100);
-      r = await a.hit(spot.id);
-    }
-    expect(r.result).toBe('hit');
+    await a.ready(spot.id);
+    expect((await a.hit(spot.id)).result).toBe('hit');
     // the button up: no beam, no hit (a client cannot mine with it off and never heat)
     await sleep(1200);
-    expect(await a.hit(spot.id, { beam: false })).toMatchObject({ result: 'refused', reason: 'heat' });
-    // held again: it mines
+    expect(await a.hit(spot.id, { beam: 'up' })).toMatchObject({ result: 'refused', reason: 'heat' });
+    // held again: it mines, a hit interval of beam
     await sleep(300);
-    expect((await a.hit(spot.id)).result).toBe('hit');
+    const held = await a.hit(spot.id);
+    expect(held.result).toBe('hit');
+    // pressed only for the hit's instant: it counts, but is worth only the beam the server saw fire, next to nothing (the
+    // time since the last hit, 0.3 s and more, before Heat timed the beam)
+    await sleep(300);
+    const pulsed = await a.hit(spot.id, { beam: 'pulsed' });
+    expect(pulsed.result).toBe('hit');
+    expect(((held.hp! - pulsed.hp!) * hp) / MULTITOOL_POWER).toBeLessThan(0.1);
     // overheated (an ability's chunk takes it to the top): the beam is locked out, held or not
     const now = () => server.world.clock.now();
     expect(server.ws.meters.addHeat(a.characterId, 100, now())).toMatchObject({ ok: true, state: { overheated: true } });
