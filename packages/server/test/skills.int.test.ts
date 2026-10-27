@@ -1,16 +1,18 @@
 // The skill web over the socket against the dockerised Postgres and Redis (P1.E07.T01): join sends the character's
 // skills; a client unlocks and buys nodes in order and is refused out of order, under level or unaffordable; slots its
 // actives; respecs at a trainer for units; Pack Mule adds a cargo pod and raises the stack cap; and a restart on the same
-// database resumes the skills and that layout.
-import { countOf, slotAt } from '@astra/shared/inventory';
+// database resumes the skills and that layout. A character saved under an older skill web joins under this one,
+// reconciled and written back; one saved under a newer web is refused (P1.E07.T15).
+import { countOf, emptyInventory, slotAt } from '@astra/shared/inventory';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
-import { pointsOf } from '@astra/shared/skills';
+import { emptySkillState, pointsOf, SKILL_WEB_VERSION, type StoredSkills } from '@astra/shared/skills';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { parseConfig } from '../src/config.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
 import { runMigrations } from '../src/db/migrate.ts';
 import { characters } from '../src/db/schema.ts';
+import { DEFAULT_SHIP } from '../src/persistence/components.ts';
 import type { RunningServer } from '../src/server.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, uniqueShard } from './helpers.ts';
 
@@ -221,7 +223,7 @@ describe('the skill web over the socket', () => {
 
     await stop(first); // graceful: every character in play is saved
     const saved = await row(id);
-    expect(saved.state.skills).toEqual({ v: 1, data: mule.skills.state });
+    expect(saved.state.skills).toEqual({ v: 2, data: { web: SKILL_WEB_VERSION, ...mule.skills.state, paid: {} } });
     expect(saved.state.ship?.data).toMatchObject({ hull: 'lark', cargoPods: 2 });
     expect(saved.state.inventory).toEqual({ v: 1, data: stowed.inventory });
 
@@ -233,6 +235,93 @@ describe('the skill web over the socket', () => {
     expect(b.inventory.inventory.pods).toHaveLength(2);
     expect(b.inventory.inventory.stackMax).toBe(15000);
     expect(second.ws.skills.owned(id)).toContain('pack_mule');
+    b.s.close();
+    await stop(second);
+  });
+  it('joins a character saved under an older skill web, reconciled with this one and written back, and refuses a newer web’s', async () => {
+    const shard = uniqueShard();
+    const first = await start(shard);
+    const acct = await newAccount(first);
+    const character = await newCharacter(first, acct.token, { people: 'ulgani' });
+    const id = character.id;
+    await setLevel(id, 30);
+    const empty = emptySkillState();
+    // What a server one web back stored. Gravity Hook was Gravitic's Tier I, unlocked with a fragment; Old Harness was
+    // Exo-suit's, under Hazard Weave and Pack Mule, whose bay holds the ship's second pod; Pull was a ship form; the bars
+    // had 4 and 6 slots.
+    const old: StoredSkills = {
+      web: SKILL_WEB_VERSION - 1,
+      ...empty,
+      granted: 2,
+      unlocked: ['cartridge_recycler', 'gravity_hook', 'pull', 'slam', 'old_harness', 'hazard_weave', 'pack_mule'],
+      bought: ['gravity_hook', 'pull', 'slam', 'old_harness', 'hazard_weave', 'pack_mule'],
+      fragments: { ...empty.fragments, gravitic: { earned: 5, spent: 4 } },
+      slots: { ground: ['slam', null, null, null], ship: ['pull', null, null, null, null, null] },
+      paid: { gravity_hook: { branch: 'gravitic', count: 1 }, slam: { branch: 'gravitic', count: 3 } },
+    };
+    const inventory = emptyInventory({ suitStacks: 16, pods: 2, podStacks: 8, stackMax: 15000 }, 2500);
+    inventory.pods[1]![0] = { item: 'ferrite', count: 500 };
+    await database.db
+      .update(characters)
+      .set({ state: { skills: { v: 2, data: old }, ship: { v: 1, data: { ...DEFAULT_SHIP, cargoPods: 2 } }, inventory: { v: 1, data: inventory } } })
+      .where(eq(characters.id, id));
+
+    const a = await join(first, acct.token, id);
+    // Gravity Hook gone and its fragment back; Pull still owned, holding Slam up, but off the ship bar; Pack Mule then
+    // Hazard Weave refunded and still unlocked; the bars this web's size
+    const now = {
+      ...empty,
+      granted: 2,
+      unlocked: ['cartridge_recycler', 'pull', 'slam', 'hazard_weave', 'pack_mule'],
+      bought: ['pull', 'slam'],
+      fragments: { ...empty.fragments, gravitic: { earned: 5, spent: 3 } },
+      slots: { ground: ['slam', null, null, null, null, null], ship: [null, null, null, null, null] },
+    };
+    expect(a.skills).toMatchObject({ seq: 0, skills: { state: now, level: 30, maxTier: 2 } });
+    expect(pointsOf(a.skills.skills.state, 30).available).toBe(30);
+    // Pack Mule's bay is gone, so is its pod and its stack cap; the ferrite moved into the pod the ship keeps
+    expect(a.inventory.inventory.pods).toHaveLength(1);
+    expect(a.inventory.inventory.stackMax).toBe(9999);
+    expect(countOf(a.inventory.inventory, 'ferrite')).toBe(500);
+    // and it plays on: the fragment given back unlocks Heavy Footing
+    expect((await ask(a.s, 1, { op: 'unlock', node: 'heavy_footing' })).skills.state.fragments.gravitic).toEqual({ earned: 5, spent: 4 });
+
+    await stop(first);
+    const saved = await row(id);
+    expect(saved.state.skills).toEqual({
+      v: 2,
+      data: {
+        web: SKILL_WEB_VERSION,
+        ...now,
+        unlocked: [...now.unlocked, 'heavy_footing'],
+        fragments: { ...now.fragments, gravitic: { earned: 5, spent: 4 } },
+        paid: { slam: { branch: 'gravitic', count: 3 }, heavy_footing: { branch: 'gravitic', count: 1 } },
+      },
+    });
+    expect(saved.state.ship?.data).toMatchObject({ hull: 'lark', cargoPods: 1 });
+
+    // under this web again: read as stored
+    const second = await start(shard);
+    const b = await join(second, acct.token, id);
+    expect(b.skills.skills.state).toEqual({
+      ...now,
+      unlocked: [...now.unlocked, 'heavy_footing'],
+      fragments: { ...now.fragments, gravitic: { earned: 5, spent: 4 } },
+    });
+
+    // stored by a server with a newer web: this one does not know its nodes, so it refuses the join and writes nothing
+    const future = await newCharacter(second, acct.token);
+    const newer = { v: 2, data: { ...old, web: SKILL_WEB_VERSION + 1 } };
+    await database.db
+      .update(characters)
+      .set({ state: { skills: newer } })
+      .where(eq(characters.id, future.id));
+    const s = await TestSocket.open(second.wsUrl);
+    s.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
+    s.send({ t: 'join', characterId: future.id });
+    expect((await s.next('refused')).code).toBe('full');
+    expect((await row(future.id)).state.skills).toEqual(newer);
+    s.close();
     b.s.close();
     await stop(second);
   });

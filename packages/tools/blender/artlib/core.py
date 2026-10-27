@@ -1,9 +1,12 @@
 """Loads a .blend or .glb and runs every check on it."""
+import shutil
+import tempfile
 from pathlib import Path
 
 import bpy
 
 from . import checks as C
+from . import ktx, meshopt
 from . import materials as M
 from . import rules as R
 from . import scene as S
@@ -23,7 +26,9 @@ def mode_of(path):
 
 
 def load(path):
-    """Opens a .blend, or imports a .glb into an empty scene."""
+    """Opens a .blend, or imports a .glb into an empty scene. A .glb with KTX2 textures is imported from a copy whose
+    images are transcoded back to PNG (the importer cannot read KTX2): the texels the client shows. Meshopt-compressed
+    geometry the importer decodes itself."""
     S.clear_cache()
     M.clear_cache()
     if mode_of(path) == "source":
@@ -31,8 +36,17 @@ def load(path):
         _reveal()
     else:
         bpy.ops.wm.read_factory_settings(use_empty=True)
-        # no bone-shape helper objects: the importer would add a parentless "Icosphere" next to every armature
-        bpy.ops.import_scene.gltf(filepath=str(path), disable_bone_shape=True)
+        tmp = None
+        try:
+            if ktx.is_compressed(path):
+                tmp = Path(tempfile.mkdtemp(prefix="art-decoded-"))
+                ktx.decoded_copy(path, tmp / Path(path).name)
+                path = tmp / Path(path).name
+            # no bone-shape helper objects: the importer would add a parentless "Icosphere" next to every armature
+            bpy.ops.import_scene.gltf(filepath=str(path), disable_bone_shape=True)
+        finally:
+            if tmp is not None:
+                shutil.rmtree(tmp, ignore_errors=True)  # (the importer packs embedded images)
     S.clear_cache()
 
 
@@ -57,8 +71,11 @@ def _reveal():
         o.hide_set(False)
 
 
-def run_checks(rules, path, family, mode, cls=None, source=None, legacy_class=None):
-    """Checks whatever is loaded now. `source` is the .blend an export came from (export mode)."""
+def run_checks(rules, path, family, mode, cls=None, source=None, legacy_class=None, glb=None, compressed=None, geometry=None, legacy=False):
+    """Checks whatever is loaded now. `source` is the .blend an export came from (export mode); `glb` is the .glb file
+    loaded (default `path`), whose own images and buffers the compression checks read; `compressed` says whether its
+    textures must be KTX2 and `geometry` whether its meshes must be meshopt-compressed (default: the family's settings;
+    the demo's `legacy` exports are exempt)."""
     report = Report(str(path), family, mode)
     model = S.collect_source(rules) if mode == "source" else S.collect_export(rules)
     S.assign_classes(rules, family, model, cli_class=cls, legacy_class=legacy_class)
@@ -66,8 +83,16 @@ def run_checks(rules, path, family, mode, cls=None, source=None, legacy_class=No
     C.triangles(rules, family, model, report)
     C.lods(rules, family, model, report)
     C.material_set(rules, family, model, report)
+    textures = None
+    if mode == "export":
+        if compressed is None:
+            compressed = bool(ktx.settings(rules, family).get("compress")) and not legacy
+        if geometry is None:
+            geometry = bool(meshopt.settings(rules, family).get("compress")) and not legacy
+        textures = C.textures(rules, family, model, report, glb or path, compressed, legacy)
+        C.geometry(rules, family, model, report, glb or path, geometry, legacy)
     C.scale(rules, family, model, report, source=source)
-    report.assets = C.asset_summary(rules, model)
+    report.assets = C.asset_summary(rules, model, textures)
     report.model = model
     return report
 
@@ -105,7 +130,7 @@ def validate_path(rules, path, family=None, cls=None, source=None):
     except Exception as e:  # a corrupt file or a failed import is a validation failure, not a crash
         report.error = f"could not load: {e}"
         return report
-    return run_checks(rules, path, family, mode, cls=cls, source=source, legacy_class=(legacy or {}).get("class"))
+    return run_checks(rules, path, family, mode, cls=cls, source=source, legacy_class=(legacy or {}).get("class"), legacy=legacy is not None)
 
 
 def report_path(family, path, report_dir=None):

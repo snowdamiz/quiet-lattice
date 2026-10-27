@@ -100,6 +100,40 @@ describe('component registry', () => {
     expect(reg.decode(stored({ a: { v: 1, data: 50 } }), CHARACTER, log).values.get('a')).toBe(50);
   });
 
+  it('reconciles a stored value with the data before its check, so later components read it, and writes it back when it changed', () => {
+    const { log, lines } = logger();
+    const capped = num('a', {
+      reconcile: (n, ctx) => {
+        if (n <= 100) return n;
+        ctx.warn({ was: n }, 'capped');
+        return 100;
+      },
+      check: (n) => (n > 100 ? 'too far' : null),
+    });
+    const reg = new ComponentRegistry().register(capped).register(num('b', { default: (ctx) => ctx.get<number>('a') + 1 }));
+    const d = reg.decode(stored({ a: { v: 1, data: 500 } }), CHARACTER, log);
+    expect(d.values.get('a')).toBe(100);
+    expect(d.values.get('b')).toBe(101);
+    expect(d.asStored.has('a')).toBe(false); // written back at the next save
+    expect(lines).toEqual([{ level: 'warn', obj: { character: 'c1', component: 'a', was: 500 }, msg: 'capped' }]);
+    // a value already in line is read as it is stored; a default is never reconciled
+    expect(reg.decode(stored({ a: { v: 1, data: 50 } }), CHARACTER, log).asStored.has('a')).toBe(true);
+    const fresh = new ComponentRegistry().register(num('a', { default: () => 500, reconcile: () => 0 }));
+    expect(fresh.decode(stored(), CHARACTER).values.get('a')).toBe(500);
+    expect(lines).toHaveLength(1);
+    // a reconcile that throws is a value that cannot be read
+    const broken = new ComponentRegistry().register(
+      num('a', {
+        reconcile: () => {
+          throw new Error('boom');
+        },
+      }),
+    );
+    expect(() => broken.decode(stored({ a: { v: 1, data: 5 } }), CHARACTER)).toThrow(
+      expect.objectContaining({ component: 'a', reason: 'reconciling it failed: boom' }),
+    );
+  });
+
   it('reads a column component from the row’s columns', () => {
     const level = num('level', { columns: { read: (c) => c.level, write: (n) => ({ level: n }) } });
     const reg = new ComponentRegistry().register(level);

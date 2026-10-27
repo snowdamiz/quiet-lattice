@@ -7,9 +7,10 @@
 // … } }`; a component may instead store in the row's own columns (level, xp, home system), which SQL migrations version.
 // A state entry carries its schema version `v`. When a component's schema changes, it raises `v` and adds a migration
 // from the old version; stored values are upgraded on load, one version at a time, and written back at the next save.
-// A value stored by a newer server, one no migration reaches, or one that fails the schema or the component's own check
-// cannot be read: the component's `onInvalid` decides whether the character gets the default (logged) or the join is
-// refused (never silently replacing progress).
+// When the game's data a value reads changes instead (the skill web), the component's `reconcile` brings the value in
+// line on load, logged, and it is written back the same way. A value stored by a newer server, one no migration reaches,
+// or one that fails the schema or the component's own check cannot be read: the component's `onInvalid` decides whether
+// the character gets the default (logged) or the join is refused (never silently replacing progress).
 import type { z } from 'zod';
 import type { ZoneViewer } from '../zones/zone.ts';
 
@@ -89,6 +90,13 @@ export interface CharacterComponent<T = unknown> {
   readonly onInvalid: 'default' | 'refuse';
   /** The value of a character with none stored: a new character, or one saved before this component existed. */
   default(ctx: LoadContext): T;
+  /**
+   * Brings a stored, schema-valid value in line with the game's data as it is now (the skill web's nodes changed since it
+   * was stored), logging what it changed through `ctx.warn`; returns the value itself when nothing changed. Runs on load
+   * after the schema and before `check`, so `check` and every later component read the reconciled value, which is written
+   * back at the next save. Never on a live capture, nor on a value an edit sets (those are this build's already).
+   */
+  reconcile?(value: T, ctx: LoadContext): T;
   /** Checks a schema-valid value further (a ship that flies, a frame that exists…): a reason it is unusable, or null. */
   check?(value: T, ctx: LoadContext): string | null;
   /** Puts the value in play in the subsystem that owns it. */
@@ -189,9 +197,17 @@ export class ComponentRegistry {
       const issue = parsed.error.issues[0];
       return { invalid: issue ? `${issue.path.join('.') || '(value)'}: ${issue.message}` : 'invalid' };
     }
-    const reason = c.check?.(parsed.data, ctx) ?? null;
+    let value = parsed.data;
+    if (c.reconcile) {
+      try {
+        value = c.reconcile(parsed.data, ctx);
+      } catch (err) {
+        return { invalid: `reconciling it failed: ${err instanceof Error ? err.message : String(err)}` };
+      }
+    }
+    const reason = c.check?.(value, ctx) ?? null;
     if (reason !== null) return { invalid: reason };
-    return { value: parsed.data, asStored: !migrated };
+    return { value, asStored: !migrated && value === parsed.data };
   }
 }
 

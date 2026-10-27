@@ -1,13 +1,16 @@
 // The admin service out of play, with the store under the test's control: a command for a character whose last save is
 // still being written waits for it (rather than refuse), and edits what that save left; with no wait it is refused. In
-// direct mode a character saved moments ago is refused unless forced.
+// direct mode a character saved moments ago is refused unless forced. A character stored under an older skill web is
+// edited as a join reads it, reconciled with this build's web (P1.E07.T15).
 import { countOf, type Inventory } from '@astra/shared/inventory';
+import { emptySkillState, SKILL_WEB_VERSION, type StoredSkills } from '@astra/shared/skills';
 import { describe, expect, it } from 'vitest';
 import { InventoryService } from '../inventory/service.ts';
-import { CharacterProgress, coreRegistry, INVENTORY, ShipLoadouts } from '../persistence/components.ts';
-import type { StoredState } from '../persistence/registry.ts';
+import { CharacterProgress, coreRegistry, INVENTORY, ShipLoadouts, SKILLS } from '../persistence/components.ts';
+import type { PersistenceLog, StoredState } from '../persistence/registry.ts';
 import { CharacterPersistence, type StoredCharacterRow } from '../persistence/service.ts';
 import type { CharacterStore, SaveRow } from '../persistence/store.ts';
+import { skillServiceIn } from '../skills/component.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
 import { AdminError } from './commands.ts';
 import { AdminService, type AdminDirectory } from './service.ts';
@@ -46,13 +49,20 @@ class Rows implements CharacterStore {
 
 const CHARACTER = 'c0ffee00-abcd-4000-8000-0000000000aa';
 
-function setup(opts: { heldWaitMs?: number; recentSaveMs?: number; savedAt?: Date | null } = {}) {
+function setup(opts: { heldWaitMs?: number; recentSaveMs?: number; savedAt?: Date | null; log?: PersistenceLog } = {}) {
   const store = new Rows();
   const row: StoredCharacterRow = { id: CHARACTER, name: 'Ves', people: 'thalune', homeSystem: 0, level: 1, xp: 0, state: {} as StoredState, revision: 0 };
   store.rows.set(CHARACTER, row);
   const inventory = new InventoryService();
-  const registry = coreRegistry({ zones: { zoneOf: () => undefined }, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress() });
-  const persistence = new CharacterPersistence({ store, registry, flushTimeoutMs: 2000 });
+  const registry = coreRegistry({
+    zones: { zoneOf: () => undefined },
+    clock: { now: () => 1e6 },
+    inventory,
+    ships: new ShipLoadouts(),
+    progress: new CharacterProgress(),
+    log: opts.log,
+  });
+  const persistence = new CharacterPersistence({ store, registry, log: opts.log, flushTimeoutMs: 2000 });
   const directory: AdminDirectory = {
     character: async (ref) => (ref.toLowerCase() === 'ves' ? { id: CHARACTER, name: 'Ves', accountId: 'a1', savedAt: opts.savedAt ?? null } : null),
     account: async () => null,
@@ -110,6 +120,56 @@ describe('the admin service out of play', () => {
     expect(await earlier.admin.run({ cmd: 'set-skill-points', character: 'ves', points: 4 }, who)).toMatchObject({ online: false, available: 4 });
     const forced = setup({ recentSaveMs: 0, savedAt: new Date() });
     expect(await forced.admin.run({ cmd: 'set-skill-points', character: 'ves', points: 4 }, who)).toMatchObject({ available: 4 });
+  });
+
+  it('edits a character stored under an older skill web as a join reads it: reconciled once, written at this web', async () => {
+    const lines: { level: string; obj: Record<string, unknown>; msg: string }[] = [];
+    const at = (level: string) => (obj: object, msg: string) => lines.push({ level, obj: obj as Record<string, unknown>, msg });
+    const { store, persistence, admin, row } = setup({ log: { debug: at('debug'), info: at('info'), warn: at('warn'), error: at('error') } });
+    const empty = emptySkillState();
+    const gravitic = (count: number) => ({ branch: 'gravitic' as const, count });
+    // saved under web 0: Gravity Hook, no longer in the web, was Gravitic's Tier I, unlocked with a fragment, and Slam stood
+    // on it; Second Lung came with the people
+    const old: StoredSkills = {
+      web: 0,
+      ...empty,
+      unlocked: ['second_lung', 'gravity_hook', 'slam'],
+      bought: ['second_lung', 'gravity_hook', 'slam'],
+      fragments: { ...empty.fragments, gravitic: { earned: 4, spent: 4 } },
+      paid: { gravity_hook: gravitic(1), slam: gravitic(3) },
+    };
+    row.level = 5;
+    row.state = { skills: { v: 2, data: old } };
+
+    expect(await admin.run({ cmd: 'set-skill-points', character: 'ves', points: 7 }, who)).toMatchObject({
+      online: false,
+      available: 7,
+      revision: 1,
+      changed: ['skills'],
+    });
+    // reconciled once (Gravity Hook dropped with its fragment back, Slam refunded), then 7 points set: level 5 gives 5,
+    // Second Lung costs 1, so 3 granted
+    const now = {
+      ...empty,
+      granted: 3,
+      unlocked: ['second_lung', 'slam'],
+      bought: ['second_lung'],
+      fragments: { ...empty.fragments, gravitic: { earned: 4, spent: 3 } },
+    };
+    expect(store.rows.get(CHARACTER)!.state.skills).toEqual({ v: 2, data: { web: SKILL_WEB_VERSION, ...now, paid: { slam: gravitic(3) } } });
+    const warned = () => lines.filter((l) => l.obj.component === SKILLS);
+    expect(warned()).toHaveLength(1);
+    expect(warned()[0]!.obj.changes).toEqual([
+      { change: 'removed', node: 'gravity_hook', owned: true, fragments: gravitic(1) },
+      { change: 'refunded', node: 'slam', missing: ['a Tier I gravitic node'] },
+    ]);
+
+    // the next join reads it as written: nothing left to reconcile, nothing more refunded or given back
+    persistence.join(viewer, (await store.read(CHARACTER))!);
+    const skills = skillServiceIn(persistence.registry)!;
+    expect(skills.get(CHARACTER)).toEqual(now);
+    expect(skills.points(CHARACTER).available).toBe(7);
+    expect(warned()).toHaveLength(1);
   });
 
   it('needs the server for what only a live server holds', async () => {

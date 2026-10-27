@@ -126,6 +126,12 @@ describe('art:export arguments', () => {
     expect(parseExportArgs(['all', '--only', 'lark'], rules)).toEqual({ families: ['hulls', 'props', 'flora'], passthrough: ['--only', 'lark'] });
   });
 
+  it('passes the texture compression switch through', () => {
+    expect(parseExportArgs(['hulls', '--no-compress'], rules).passthrough).toEqual(['--no-compress']);
+    expect(parseExportArgs(['--compress', 'hulls'], rules).passthrough).toEqual(['--compress']);
+    expect(() => parseValidateArgs(['x.glb', '--no-compress'])).toThrow(/unknown option/);
+  });
+
   it('rejects unknown and non-exported families', () => {
     expect(() => parseExportArgs(['nope'], rules)).toThrow(/unknown family/);
     expect(() => parseExportArgs(['library'], rules)).toThrow(/unknown family/);

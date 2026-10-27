@@ -2,7 +2,12 @@
 // same herd (species, size, place, animals, level) appears in the same cell for every player, every time the cell
 // loads. Only species the herd spawner places (docile, skittish, territorial and predator: DESIGN 12.2 "reuses today's
 // herd spawner, which spawns predators as well as herds") are planned here; ambushers and the apex come from their dens
-// (P1.E08.T03), through FaunaSim.spawnHerd.
+// (P1.E08.T03, dens.ts).
+//
+// Night doubles predator spawns (DESIGN 12.2, 12.8; P1.E08.T03): at night a cell may hold a second herd, its night herd,
+// always of a predator species, planned the same way from a stream of its own with the chance its day herd has of being
+// a predator's, so a cell holds twice the predators at night that it holds by day, on average.
+import { FAUNA_SPAWNING } from '@astra/shared/data';
 import { hashInts, Random, type FaunaSpecies, type Tier } from '@astra/shared/world';
 import type { Vec3 } from './cells.ts';
 import type { Ground } from './terrain.ts';
@@ -47,9 +52,10 @@ export function tangents(up: Readonly<Vec3>): [Vec3, Vec3] {
   return [t, b];
 }
 
-/** An animal's place in its herd and its size: the first (the leader) at the centre, the rest within HERD_SPREAD_M. */
-export function animal(rng: Random, slot: number): HerdPlan['animals'][number] {
-  const offset: [number, number] = slot === 0 ? [0, 0] : [rng.float(-HERD_SPREAD_M, HERD_SPREAD_M), rng.float(-HERD_SPREAD_M, HERD_SPREAD_M)];
+/** An animal's place in its herd and its size: the first (the leader) at the centre, the rest within `spread` of it along
+ * each axis (HERD_SPREAD_M; an ambusher's burrow keeps its animals closer). */
+export function animal(rng: Random, slot: number, spread = HERD_SPREAD_M): HerdPlan['animals'][number] {
+  const offset: [number, number] = slot === 0 ? [0, 0] : [rng.float(-spread, spread), rng.float(-spread, spread)];
   return { offset, scale: rng.float(0.85, 1.15) };
 }
 
@@ -68,20 +74,53 @@ export function planCellHerd(worldSeed: number, key: number, species: readonly F
   const pool = species.filter((s) => s.spawn === 'herd');
   if (!pool.length) return null;
   const rng = new Random(hashInts(worldSeed, 0x4e2d, key));
-  if (!rng.chance(Math.min(HERD_CHANCE_MAX, HERD_CHANCE_PER_SPECIES * pool.length))) return null;
-  const weights = pool.map((s) => (s.tier > 0 ? HOSTILE_WEIGHT : 1));
-  let pick = rng.float(
+  if (!rng.chance(herdChance(pool))) return null;
+  return place(rng, pick(rng, pool), key, tier, ground);
+}
+
+/** The chance a cell holds a herd, with `pool` the species the herd spawner places. */
+const herdChance = (pool: readonly FaunaSpecies[]) => Math.min(HERD_CHANCE_MAX, HERD_CHANCE_PER_SPECIES * pool.length);
+const weightOf = (s: FaunaSpecies) => (s.tier > 0 ? HOSTILE_WEIGHT : 1);
+const isPredator = (s: FaunaSpecies) => s.temperament === 'predator';
+
+/** The chance a cell's day herd is a predator's (its share of the herd spawner's weights, of the chance it holds one). */
+export function predatorHerdChance(species: readonly FaunaSpecies[]): number {
+  const pool = species.filter((s) => s.spawn === 'herd');
+  const total = pool.reduce((a, s) => a + weightOf(s), 0);
+  const predators = pool.filter(isPredator).reduce((a, s) => a + weightOf(s), 0);
+  return total > 0 ? (herdChance(pool) * predators) / total : 0;
+}
+
+/**
+ * The herd a cell sends out at night as well as its own, or null: always one of the herd spawner's predators, with
+ * (FAUNA_SPAWNING.nightPredatorSpawnMult − 1) times the chance the cell's own herd has of being a predator's, so night
+ * doubles the predators the herd spawner places. Planned from the world's seed and the cell on a stream of its own, so it
+ * is the same herd every night, wherever its day herd stands.
+ */
+export function planNightHerd(worldSeed: number, key: number, species: readonly FaunaSpecies[], tier: Tier, ground: Ground): HerdPlan | null {
+  const predators = species.filter((s) => s.spawn === 'herd' && isPredator(s));
+  if (!predators.length) return null;
+  const rng = new Random(hashInts(worldSeed, 0x9147, key));
+  if (!rng.chance(Math.min(1, (FAUNA_SPAWNING.nightPredatorSpawnMult - 1) * predatorHerdChance(species)))) return null;
+  return place(rng, pick(rng, predators), key, tier, ground);
+}
+
+/** A species from `pool` drawn by the herd spawner's weights. */
+function pick(rng: Random, pool: readonly FaunaSpecies[]): FaunaSpecies {
+  const weights = pool.map(weightOf);
+  let left = rng.float(
     0,
     weights.reduce((a, b) => a + b, 0),
   );
-  let sp = pool[pool.length - 1]!;
   for (let k = 0; k < pool.length; k++) {
-    pick -= weights[k]!;
-    if (pick < 0) {
-      sp = pool[k]!;
-      break;
-    }
+    left -= weights[k]!;
+    if (left < 0) return pool[k]!;
   }
+  return pool[pool.length - 1]!;
+}
+
+/** Where in its cell a herd of `sp` stands, which way it faces, its level and its animals (see planCellHerd). */
+function place(rng: Random, sp: FaunaSpecies, key: number, tier: Tier, ground: Ground): HerdPlan | null {
   const center = ground.cells.dirIn(key, rng.float(0.15, 0.85), rng.float(0.15, 0.85));
   const heading = rng.float(0, Math.PI * 2);
   const count = rng.int(sp.herd.min, sp.herd.max);

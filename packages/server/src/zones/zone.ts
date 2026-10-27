@@ -12,8 +12,16 @@
 // they were sanitised before), then encoded per session with `sanitized: true`. A wire state is never mutated
 // afterwards: snapshot histories share it.
 //
+// A zone with movement authority (the ZoneManager's: sim/movement, P1.E03.T04) checks every player input before applying
+// it, and applies the mode the server believes; a refused input is not applied, its entity is put back where the
+// correction says, and the result tells the gateway what to send.
+//
 // Its phases (phases/manager.ts) are private layers at shared places: each tick, once world positions are current, they
 // update who is inside their volumes, and every interest set passes through their visibility rule.
+//
+// Its combat (combat/zone.ts, P1.E06.T02) holds every combatant's health and the one path damage takes: each tick, after
+// the fauna, it despawns the corpses whose death beat is over, and after the snapshots it sends the tick's `combat` events
+// to the sessions whose interest sets hold their targets or sources.
 import { performance } from 'node:perf_hooks';
 import {
   encodeSnapshot,
@@ -23,6 +31,7 @@ import {
   type EntityField,
   type EntityState,
   type FrameId,
+  type Pose,
   type Snapshot,
 } from '@astra/shared/protocol';
 import {
@@ -32,11 +41,14 @@ import {
   selectFrame,
   setFrame,
   systemPoses,
+  tierOfGalaxySystem,
   type Frame,
   type FrameSet,
   type SystemDescription,
 } from '@astra/shared/world';
+import { ZoneCombat, type CombatHooks } from '../combat/zone.ts';
 import { FaunaSim, type FaunaOptions, type FaunaStats } from '../fauna/sim.ts';
+import { hangarWaitPose, MovementAuthority, padPose, type MoverProfile, type MovementRefusal } from '../sim/movement/index.ts';
 import { PhaseManager } from '../phases/manager.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
@@ -80,9 +92,9 @@ interface ZoneFrame extends Frame {
 }
 
 /**
- * Until movement authority (P1.E03.T04) a client's pose is taken as sent, clamped only to magnitudes no honest client
- * reaches: 1e11 m from its frame's origin (a thousand times a system's reach; deep space is another zone, P1.E04.T04) and
- * 1e9 m/s. The entity is marked unvalidated.
+ * In a zone without movement authority (tests and tools that drive raw poses) a client's pose is taken as sent, clamped
+ * only to magnitudes no honest client reaches: 1e11 m from its frame's origin (a thousand times a system's reach; deep
+ * space is another zone, P1.E04.T04) and 1e9 m/s, and the entity is marked unvalidated.
  */
 export const INPUT_LIMITS = { maxDistance: 1e11, maxSpeed: 1e9 } as const;
 
@@ -92,6 +104,8 @@ export interface ZoneViewer {
   /** the character in play, whose place in a phase is kept for a while when its connection drops */
   readonly characterId?: string | null;
   sendBinary(data: Uint8Array): void;
+  /** a control message already validated and encoded (combat events); a viewer without it is sent none */
+  sendText?(text: string): void;
 }
 
 /**
@@ -108,8 +122,8 @@ export interface ZoneLog {
 }
 
 /** What an input did: applied; refused as not newer than the last one (or numbered 0); refused for a frame outside this
- * system; or nowhere to go (the session is in no zone). */
-export type InputResult = 'ok' | 'stale' | 'frame' | 'unknown';
+ * system; nowhere to go (the session is in no zone); or refused by movement authority, with the correction to send. */
+export type InputResult = 'ok' | 'stale' | 'frame' | 'unknown' | MovementRefusal;
 
 /** A read-only look at an entity. */
 export interface ZoneEntity {
@@ -121,8 +135,8 @@ export interface ZoneEntity {
   readonly party: string | null;
   /** its pose is a client's claim that nothing has checked yet */
   readonly unvalidated: boolean;
-  /** the last input applied to it */
-  readonly input: { seq: number; buttons: number; aim?: Quat } | null;
+  /** the last input applied to it, and the time its client stamped it with (0: none) */
+  readonly input: { seq: number; time: number; buttons: number; aim?: Quat } | null;
 }
 
 class Entity implements ZoneEntity {
@@ -181,8 +195,14 @@ export interface ZoneOptions {
   log?: ZoneLog;
   /** Called when a session leaves because its own entity was despawned (not when it leaves through leave()). */
   onViewerRemoved?: (viewer: ZoneViewer) => void;
+  /** Hold player inputs to movement authority (P1.E03.T04). The ZoneManager's zones do; tests and tools driving raw poses
+   * leave it off. */
+  movement?: boolean;
   /** the system's fauna (P1.E08.T01): its options, or false for a zone without (unit tests of the zone itself) */
   fauna?: FaunaOptions | false;
+  /** who hears of kills, players going down and characters fighting (the gateway's combat service, through the
+   * ZoneManager); none in tests of the zone alone */
+  combat?: () => CombatHooks | null;
 }
 
 export class Zone {
@@ -196,10 +216,14 @@ export class Zone {
   readonly times = new TickTimes();
   /** wire fields dropped by sanitizeEntity, ever (each is a server bug) */
   droppedFields = 0;
+  /** checks player inputs, when the zone has movement authority */
+  readonly movement: MovementAuthority | null;
   /** the private layers at places in this system, and who sees what across them */
   readonly phases: PhaseManager;
   /** herds round the players on this system's worlds, ticked at the start of every step; null when turned off */
   readonly fauna: FaunaSim | null;
+  /** every combatant's health, the one damage path, deaths and combat events (P1.E06.T02) */
+  readonly combat: ZoneCombat;
 
   private readonly log?: ZoneLog;
   private readonly onViewerRemoved?: (viewer: ZoneViewer) => void;
@@ -231,9 +255,13 @@ export class Zone {
       station: frame(frameId(seed, 'station'), opts.system.station.soi),
     };
     for (const f of [...this.frameSet.bodies, this.frameSet.station]) this.frames.set(f.id, f);
+    // (its worlds' ground is the one fauna walks on: planned in the worker, for the system's tier)
+    const tier = () => this.fauna?.tier ?? tierOfGalaxySystem(opts.systemIndex);
+    this.movement = opts.movement ? new MovementAuthority({ zone: opts.id, system: opts.system, log: opts.log, tier }) : null;
     this.placeFrames(0);
     this.phases = new PhaseManager(this, opts.log);
     this.fauna = opts.fauna === false ? null : new FaunaSim(this, opts.fauna);
+    this.combat = new ZoneCombat(this, { hooks: opts.combat, log: opts.log });
   }
 
   get entityCount(): number {
@@ -247,6 +275,13 @@ export class Zone {
   /** The Waystation's frame id. */
   get stationFrame(): NonNullable<FrameId> {
     return frameId(this.system.seed, 'station');
+  }
+
+  /** Where a ship joining docked goes: docked on a Waystation pad no ship holds or, every pad held, waiting in the hangar
+   * to dock (in mode `ship`). */
+  dockPose(): { pose: Pose; mode: 'docked' | 'ship' } {
+    const pad = this.movement ? this.movement.freePad() : 0;
+    return pad === null ? { pose: hangarWaitPose(this.stationFrame), mode: 'ship' } : { pose: padPose(this.stationFrame, pad), mode: 'docked' };
   }
 
   /** Whether `frame` is this system's inertial frame (null) or one of its bodies or its Waystation. */
@@ -282,7 +317,9 @@ export class Zone {
     this.hashes[e.cls].remove(id);
     if (e.party !== null) this.leaveParty(id, e.party);
     this.entities.delete(id);
+    this.movement?.remove(id);
     this.phases.removed(id);
+    this.combat.removed(id);
     for (const v of [...this.views.values()]) {
       if (v.entityId !== id) continue;
       this.views.delete(v.viewer);
@@ -330,10 +367,26 @@ export class Zone {
 
   // ---------- sessions ----------
 
-  /** Spawns the session's entity and starts sending it snapshots from the next tick. Returns the entity id. */
-  join(viewer: ZoneViewer, init: EntityInit): number {
+  /**
+   * Spawns the session's entity and starts sending it snapshots from the next tick. Returns the entity id. In a zone with
+   * movement authority, `mover` says whose moves they are (its ship and skills), when (server world time) it entered, and
+   * for a player entering on foot, where its ship rests.
+   */
+  join(viewer: ZoneViewer, init: EntityInit, mover?: { profile: MoverProfile; now: number; parked?: Pose }): number {
     if (this.views.has(viewer)) throw new Error(`session ${viewer.id} is already in zone ${this.id}`);
+    if (this.movement && !mover) throw new Error(`zone ${this.id} holds players to movement authority: join needs their profile`);
     const entityId = this.spawn(init);
+    // (its suit's and ship's health come from what it entered with)
+    const profile = mover?.profile;
+    this.combat.joined(entityId, {
+      characterId: viewer.characterId ?? profile?.characterId ?? null,
+      ship: profile?.ship ?? null,
+      skills: profile?.skills ?? [],
+    });
+    if (this.movement && mover) {
+      const mode = (init.mode ?? 'ship') as Parameters<MovementAuthority['add']>[2];
+      this.movement.add(entityId, { frame: init.frame, pos: init.pos, quat: init.quat, vel: init.vel }, mode, mover.profile, mover.now, mover.parked);
+    }
     this.views.set(viewer, { viewer, entityId, history: new SnapshotHistory(), interest: [], lastInputSeq: 0, bytesSent: 0 });
     return entityId;
   }
@@ -357,9 +410,20 @@ export class Zone {
     return this.views.get(viewer)?.entityId;
   }
 
+  /** Every session in the zone with its own entity id (resource nodes keep each up to date, P1.E13.T01). */
+  *viewers(): IterableIterator<[ZoneViewer, number]> {
+    for (const v of this.views.values()) yield [v.viewer, v.entityId];
+  }
+
   /** The entity ids in the session's interest set as of the last tick. */
   interestOf(viewer: ZoneViewer): ReadonlySet<number> {
     return new Set(this.views.get(viewer)?.interest);
+  }
+
+  /** Whether the session's interest set held the entity as of the last tick (combat events go where they are seen). */
+  sees(viewer: ZoneViewer, id: number): boolean {
+    const v = this.views.get(viewer);
+    return !!v && sortedHas(v.interest, id);
   }
 
   /** The session's snapshot history (what it holds per tick sent, and what it acknowledged). */
@@ -372,11 +436,14 @@ export class Zone {
   }
 
   /**
-   * Applies a client's input to its entity: its predicted pose and mode, taken as sent but clamped (INPUT_LIMITS) and
-   * marked unvalidated; movement authority is P1.E03.T04. Inputs must come in seq order, numbered from 1 (so a
-   * snapshot's `ack` of 0 means no input yet), and in this system's frames.
+   * Applies a client's input, arriving at server world time `now`, to its entity: its predicted pose and mode. Inputs must
+   * come in seq order, numbered from 1 (so a snapshot's `ack` of 0 means no input yet), and in this system's frames. With
+   * movement authority the input is checked first: accepted, it is applied with the mode the server believes (which sets
+   * the entity's interest class) and its velocity held to its allowance; refused, it is not applied, the entity is put
+   * where the correction says, and the refusal is returned (its seq still counts as handled). Without, the pose is taken
+   * as sent, clamped (INPUT_LIMITS) and marked unvalidated.
    */
-  input(viewer: ZoneViewer, msg: InputMessage): InputResult {
+  input(viewer: ZoneViewer, msg: InputMessage, now = this.time): InputResult {
     const v = this.views.get(viewer);
     if (!v) return 'unknown';
     if (msg.seq <= v.lastInputSeq) return 'stale';
@@ -384,14 +451,24 @@ export class Zone {
     v.lastInputSeq = msg.seq;
     const e = this.mustGet(v.entityId);
     const f = e.fields;
+    const verdict = this.movement?.check(e.id, msg, now);
+    if (verdict && !verdict.ok) {
+      if (verdict.correction) {
+        const { pose, mode } = verdict.correction;
+        Object.assign(f, { frame: pose.frame, pos: [...pose.pos], quat: [...pose.quat], vel: [...pose.vel], mode });
+        for (const k of INPUT_FIELDS) e.changed.add(k);
+        this.touch(e);
+      }
+      return verdict;
+    }
     f.frame = msg.pose.frame;
     f.pos = clampLength(msg.pose.pos, INPUT_LIMITS.maxDistance);
     f.quat = normalised(msg.pose.quat);
-    f.vel = clampLength(msg.pose.vel, INPUT_LIMITS.maxSpeed);
-    f.mode = msg.mode;
+    f.vel = verdict ? [...verdict.vel] : clampLength(msg.pose.vel, INPUT_LIMITS.maxSpeed);
+    f.mode = verdict ? verdict.mode : msg.mode;
     for (const k of INPUT_FIELDS) e.changed.add(k);
-    e.unvalidated = true;
-    e.input = { seq: msg.seq, buttons: msg.buttons, aim: msg.aim && normalised(msg.aim) };
+    e.unvalidated = !verdict;
+    e.input = { seq: msg.seq, time: msg.time, buttons: msg.buttons, aim: msg.aim && normalised(msg.aim) };
     this.touch(e);
     return 'ok';
   }
@@ -412,6 +489,7 @@ export class Zone {
     this.placeFrames(time);
     // server-side systems first, so what they spawn and move goes out in this tick's snapshots
     this.fauna?.step(time);
+    this.combat.step(time);
 
     const dropped: string[] = [];
     for (const e of this.entities.values()) {
@@ -434,6 +512,8 @@ export class Zone {
         this.log?.warn({ zone: this.id, session: v.viewer.id, tick: this.tick, err: String(err) }, 'snapshot not sent');
       }
     }
+    // the tick's hits, deaths and downs, to those whose interest (just worked out) holds them
+    this.combat.flush();
 
     const ms = performance.now() - started;
     this.times.record(ms);
@@ -545,9 +625,11 @@ export class Zone {
     return d;
   }
 
-  /** Puts every frame where it is at world time `time` (systemPoses, so it is where every client has it). */
+  /** Puts every frame where it is at world time `time` (systemPoses, so it is where every client has it). Movement
+   * authority reads the same poses. */
   private placeFrames(time: number): void {
     const poses = systemPoses(this.system, time);
+    this.movement?.setPoses(poses, time);
     this.frameSet.bodies.forEach((f, i) => {
       f.position = poses.bodies[i]!.position;
       f.quaternion = poses.bodies[i]!.quaternion;
@@ -579,9 +661,9 @@ export class Zone {
   }
 
   /**
-   * After a change: its interest class may have changed with its kind or mode. Until movement authority (P1.E03.T04)
-   * validates a player's mode, a client picks its own class through the mode it sends: 'foot' while flying hides its
-   * ship from sessions beyond 2 km instead of 50 km.
+   * After a change: its interest class may have changed with its kind or mode. With movement authority a player's mode is
+   * the one the server believes (a client claiming 'foot' while it flies is corrected, and keeps its ship's 50 km); in a
+   * zone without, it is the mode the client sent.
    */
   private touch(e: Entity): void {
     const cls = e.fixedCls ?? interestClass(e.fields.kind, e.fields.mode);

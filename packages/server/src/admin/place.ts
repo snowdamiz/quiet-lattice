@@ -6,12 +6,15 @@
 //   surface[:<lat>,<lon>] on a rocky body's drawn ground (§12), 2 m up, at latitude/longitude in degrees in the body's
 //                       frame (y is the pole; default 20, 0), mode foot
 //   <x>,<y>,<z>         metres in the frame, mode ship
-// A `mode` given with the command overrides the preset's. The result is checked as a saved pose is (poseProblem) and
-// against the system's frames, so a teleport never lands a character where a join would not place it.
+// A `mode` given with the command overrides the preset's. The result is checked against the system and its frames and the
+// magnitudes a zone accepts (poseShapeProblem); movement authority (P1.E03.T04) judges the rest where it lands: in play,
+// the zone re-seats its mover there (a docked one on a free pad); saved, the join restores it only where movement
+// authority would accept it (else docked at home), as any saved pose.
 import type { Pose } from '@astra/shared/protocol';
 import { frameId, tierOfGalaxySystem, type BodySpec, type PlanetParams, type SystemDescription, type Tier } from '@astra/shared/world';
 import { groundOf } from '../fauna/terrain.ts';
-import { poseProblem, type PoseState } from '../persistence/components.ts';
+import { poseShapeProblem, type PoseState } from '../persistence/components.ts';
+import { padPose } from '../sim/movement/index.ts';
 import { describeZoneSystem } from '../zones/system.ts';
 import { AdminError, vec3 } from './commands.ts';
 
@@ -55,14 +58,19 @@ export function resolvePlacement(req: PlaceRequest, opts: PlaceOptions = {}): Po
   const tier = (opts.tierOf ?? tierOfGalaxySystem)(req.system);
   const [preset, arg] = splitPreset(req.pose);
   let pos: [number, number, number];
+  let quat: [number, number, number, number] = [0, 0, 0, 1];
   let mode: MoveMode;
   switch (preset) {
-    case 'docked':
+    case 'docked': {
       if (!frame.station) throw new AdminError('invalid', 'docked is a pose in the station frame');
       if (arg !== undefined) throw new AdminError('invalid', 'docked takes no argument');
-      pos = [0, 0, 0];
+      // on a pad (the first; the zone docks it on whichever is free)
+      const pad = padPose(frame.id!, 0);
+      pos = [...pad.pos];
+      quat = [...pad.quat];
       mode = 'docked';
       break;
+    }
     case 'orbit': {
       const alt = arg === undefined ? undefined : Number(arg);
       if (alt !== undefined && !(Number.isFinite(alt) && alt > 0))
@@ -96,8 +104,8 @@ export function resolvePlacement(req: PlaceRequest, opts: PlaceOptions = {}): Po
       mode = 'ship';
     }
   }
-  const at: PoseState = { system: req.system, pose: { frame: frame.id, pos, quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: req.mode ?? mode };
-  const problem = poseProblem(at);
+  const at: PoseState = { system: req.system, pose: { frame: frame.id, pos, quat, vel: [0, 0, 0] }, mode: req.mode ?? mode };
+  const problem = poseShapeProblem(at);
   if (problem) throw new AdminError('invalid', problem);
   return at;
 }

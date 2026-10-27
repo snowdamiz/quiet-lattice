@@ -2,12 +2,14 @@
 // in production; the CLI over the admin channel changing characters in play through the live services (teleport within a
 // zone and across zones, grant, skill points, mute) and out of play through persistence's load–modify–save, which their
 // next join loads; a join during an offline edit waiting for its write, and an edit right after a disconnect waiting for
-// the held save; who, zones, metrics, spawn and despawn; the channel's guard; direct mode; and the script itself.
+// the held save; set-quest-step through the quest runtime in play (its client sent `quests`) and on the stored quest log
+// out of play; who, zones, metrics, spawn and despawn; the channel's guard; direct mode; and the script itself.
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { fileURLToPath } from 'node:url';
+import { STATION_LAYOUT } from '@astra/shared/data';
 import { addItem, countOf, type Inventory } from '@astra/shared/inventory';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import { pointsOf } from '@astra/shared/skills';
@@ -63,6 +65,7 @@ async function run(...args: string[]): Promise<Record<string, unknown>> {
 
 type InventoryState = Extract<ServerMessage, { t: 'inventory' }>;
 type SkillsState = Extract<ServerMessage, { t: 'skills' }>;
+type QuestsState = Extract<ServerMessage, { t: 'quests' }>;
 
 async function join(token: string, characterId: string) {
   const s = await TestSocket.open(server.wsUrl);
@@ -81,6 +84,8 @@ async function player() {
 }
 
 const available = (m: SkillsState) => pointsOf(m.skills.state, m.skills.level).available;
+/** The step (its id) quest `quest` is at in a `quests` message, if it is on. */
+const stepOf = (m: ServerMessage, quest: string) => (m.t === 'quests' ? (m as QuestsState).quests.active[quest]?.step : undefined);
 
 /** Waits until the character's last save is written and it is no longer held. */
 async function released(characterId: string): Promise<void> {
@@ -158,7 +163,7 @@ describe('dev login', () => {
 describe('the CLI on characters in play', () => {
   it('teleports within the zone by a correction', async () => {
     const { acct, character } = await player();
-    const { s } = await join(acct.token, character.id);
+    const { s, welcome } = await join(acct.token, character.id);
     const near = await run('teleport', character.name, String(HOME), 'station', 'orbit:500');
     expect(near).toMatchObject({ online: true, moved: 'zone', system: HOME, mode: 'ship', pose: { pos: [0, 0, 500] } });
     const correction = await s.next('correction');
@@ -168,6 +173,27 @@ describe('the CLI on characters in play', () => {
     expect(zone.entity(session.entityId!)!.fields).toMatchObject({ pos: [0, 0, 500], mode: 'ship' });
     const who = await run('who');
     expect(who.online).toContainEqual(expect.objectContaining({ character: character.id, name: character.name, zone: `sys:${HOME}`, mode: 'ship' }));
+
+    // movement authority judges the client's next input from the teleport, not from the pad it left: not refused
+    const input = (seq: number, pos: [number, number, number], mode: 'ship' | 'docked', quat = [0, 0, 0, 1]) =>
+      s.send({ t: 'input', seq, time: server.world.clock.now(), mode, pose: { frame: stationFrame(HOME), pos, quat, vel: [0, 0, 0] }, buttons: 0 });
+    // (an input from its old trajectory, still on its way when the teleport came: refused quietly, no strike)
+    input(1, welcome.pose.pos as [number, number, number], 'docked', welcome.pose.quat);
+    input(2, [0, 0, 501], 'ship');
+    await waitFor(() => zone.entity(session.entityId!)!.fields.pos[2] === 501, 5000, 'the input after the teleport');
+    // and docked: on whichever pad is free, where its next input is judged from
+    const docked = await run('teleport', character.name, String(HOME), 'station', 'docked');
+    expect(docked).toMatchObject({ online: true, moved: 'zone', mode: 'docked' });
+    const toPad = await s.next('correction');
+    expect(toPad.mode).toBe('docked');
+    const pad = toPad.pose;
+    expect(STATION_LAYOUT.pads.some((p) => p.x === pad.pos[0] && p.z === pad.pos[2])).toBe(true);
+    input(3, pad.pos as [number, number, number], 'docked', pad.quat);
+    await waitFor(() => zone.entity(session.entityId!)!.input?.seq === 3, 5000, 'the docked input after the teleport');
+    expect(zone.entity(session.entityId!)!.fields.mode).toBe('docked');
+    // (no correction but the teleports' own)
+    expect(s.received.filter((m) => m.t === 'correction')).toEqual([]);
+    expect(zone.movement!.recent.filter((r) => r.entity === session.entityId)).toEqual([]);
     s.close();
   });
 
@@ -225,6 +251,39 @@ describe('the CLI on characters in play', () => {
     expect(await run('set-skill-points', character.name, '9')).toMatchObject({ online: true, available: 9 });
     expect(available(await s.next('skills'))).toBe(9);
     s.close();
+  });
+
+  it('sets a quest’s step through the quest runtime, which sends the client its quests', async () => {
+    const { acct, character } = await player();
+    const { s } = await join(acct.token, character.id);
+    // (a new character is given First Jobs on join, at its first step)
+    expect(stepOf(await s.next('quests'), 'first_jobs')).toBe('land');
+    expect(await run('set-quest-step', character.name, 'first_jobs', '3')).toEqual({
+      character: character.id,
+      name: character.name,
+      quest: 'first_jobs',
+      step: 3,
+      online: true,
+    });
+    const pushed = await s.next('quests');
+    expect(stepOf(pushed, 'first_jobs')).toBe('analyze');
+    expect(server.quests.stateOf(character.id)?.active.first_jobs?.step).toBe('analyze');
+    // a quest it is not on starts there
+    expect(await run('set-quest-step', character.name, 'wing_over_rolis_iii', '1')).toMatchObject({ online: true, step: 1 });
+    expect(stepOf(await s.next('quests'), 'wing_over_rolis_iii')).toBe('wing');
+
+    const past = await cli(['set-quest-step', character.name, 'first_jobs', '99']);
+    expect(past.code).toBe(1);
+    expect(past.err).toMatch(/^error \(refused\): quest first_jobs has steps 0 to 6/);
+    expect((await cli(['set-quest-step', character.name, 'no_such_quest', '0'])).err).toMatch(/^error \(refused\): no quest no_such_quest/);
+    expect(server.quests.stateOf(character.id)?.active.first_jobs?.step).toBe('analyze');
+    s.close();
+
+    // saved at once, and the next join loads it
+    await released(character.id);
+    const again = await join(acct.token, character.id);
+    expect(stepOf(await again.s.next('quests'), 'first_jobs')).toBe('analyze');
+    again.s.close();
   });
 
   it('mutes and unmutes an account’s chat', async () => {
@@ -298,11 +357,29 @@ describe('the CLI on characters out of play', () => {
     again.s.close();
   });
 
-  it('says quests are unavailable until the quest runtime lands', async () => {
-    const { character } = await player();
-    const r = await cli(['set-quest-step', character.name, 'first_light', '1']);
-    expect(r.code).toBe(1);
-    expect(r.err).toMatch(/^error \(unavailable\): quests unavailable/);
+  it('sets a quest’s step in the stored quest log, which its next join loads', async () => {
+    const { acct, character } = await player();
+    expect(await run('set-quest-step', character.name, 'first_jobs', '2')).toEqual({
+      character: character.id,
+      name: character.name,
+      quest: 'first_jobs',
+      step: 2,
+      online: false,
+      revision: 1,
+      changed: ['quests'],
+    });
+    const human = await cli(['set-quest-step', character.name, 'wing_over_rolis_iii', '1']);
+    expect(human.out).toBe(`${character.name}: quest wing_over_rolis_iii at step 1 (offline: saved quests at revision 2)`);
+    const past = await cli(['set-quest-step', character.name, 'first_jobs', '7']);
+    expect(past.code).toBe(1);
+    expect(past.err).toMatch(/quest first_jobs has steps 0 to 6/);
+
+    const { s } = await join(acct.token, character.id);
+    const quests = await s.next('quests');
+    // (on already, First Jobs is not started again on join)
+    expect(stepOf(quests, 'first_jobs')).toBe('site');
+    expect(stepOf(quests, 'wing_over_rolis_iii')).toBe('wing');
+    s.close();
   });
 });
 
@@ -423,12 +500,20 @@ describe('direct mode', () => {
     const forced = await cli(['--direct', '--force', '--json', 'grant', character.name, 'ferrite', '2'], { ...db, HOST: '127.0.0.1', PORT: String(port) });
     expect(forced.code, forced.err).toBe(0);
     expect(JSON.parse(forced.out)).toMatchObject({ added: 2, revision: 2 });
+    const quest = await cli(['--direct', '--force', '--json', 'set-quest-step', character.name, 'first_jobs', '2'], {
+      ...db,
+      HOST: '127.0.0.1',
+      PORT: String(port),
+    });
+    expect(quest.code, quest.err).toBe(0);
+    expect(JSON.parse(quest.out)).toMatchObject({ online: false, quest: 'first_jobs', step: 2, revision: 3, changed: ['quests'] });
     const live = await cli(['--direct', 'who'], { ...db, HOST: '127.0.0.1', PORT: String(port) });
     expect(live.err).toMatch(/^error \(needs_server\): who needs the running server/m);
 
     // the server (which did not hold it) loads what direct mode wrote
     const { s, inventory } = await join(acct.token, character.id);
     expect(countOf(inventory.inventory, 'ferrite')).toBe(5);
+    expect(stepOf(await s.next('quests'), 'first_jobs')).toBe('site');
     s.close();
   });
 });
