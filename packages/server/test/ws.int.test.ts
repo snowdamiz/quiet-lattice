@@ -1,5 +1,6 @@
 // WebSocket gateway against the dockerised Postgres and Redis: hello, join, welcome and every way to be refused.
 import { connect, type Socket } from 'node:net';
+import { STATION_LAYOUT } from '@astra/shared/data';
 import { PROTOCOL_VERSION, Welcome } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTokenService } from '../src/accounts/tokens.ts';
@@ -37,9 +38,11 @@ describe('WebSocket gateway', () => {
       accountId: acct.accountId,
       character,
       zone: { id: `sys:${home}`, systemSeed: systemSeed(home) },
-      pose: { frame: `${systemSeed(home)}:station`, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+      pose: { frame: `${systemSeed(home)}:station`, vel: [0, 0, 0] },
       mode: 'docked',
     });
+    // on one of its pads
+    expect(STATION_LAYOUT.pads.some((pad) => pad.x === welcome.pose.pos[0] && pad.z === welcome.pose.pos[2])).toBe(true);
     expect(welcome.serverTime).toBeGreaterThan(0);
 
     s.send({ t: 'ping', id: 7, clientTime: 123.5 });

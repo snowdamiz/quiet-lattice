@@ -2,7 +2,9 @@
 // inventory is where it was, with what it had, after the server is stopped gracefully and restarted on the same database;
 // a crash loses at most the last save interval; leaving saves at once; a duplicate join carries the state across; a saved
 // pose the world cannot place falls back to docked at home; an unreadable component refuses the join; and the store's
-// revision guard keeps a stale save from overwriting a newer one.
+// revision guard keeps a stale save from overwriting a newer one. The characters move as clients do, at 20 Hz with their
+// clocks' times (movement authority, P1.E03.T04, corrects anything else).
+import { STATION_LAYOUT } from '@astra/shared/data';
 import { countOf, slotAt } from '@astra/shared/inventory';
 import { PROTOCOL_VERSION, type Pose, type ServerMessage } from '@astra/shared/protocol';
 import { eq } from 'drizzle-orm';
@@ -12,9 +14,12 @@ import { createDatabase, type Database } from '../src/db/client.ts';
 import { runMigrations } from '../src/db/migrate.ts';
 import { characters } from '../src/db/schema.ts';
 import { dockedAtHome } from '../src/persistence/components.ts';
+import { exitFeet } from '../src/sim/movement/testing.ts';
+import { groundOf, heightAt } from '../src/sim/movement/world.ts';
 import { pgCharacterStore } from '../src/persistence/store.ts';
 import type { RunningServer } from '../src/server.ts';
 import { homeSystemOf, stationFrame, systemSeed } from '../src/world/home.ts';
+import { describeZoneSystem } from '../src/zones/system.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, uniqueShard, waitFor } from './helpers.ts';
 
 const config = parseConfig(process.env);
@@ -69,9 +74,28 @@ async function reply(s: TestSocket, seq: number): Promise<InventoryState> {
   }
 }
 
-function input(s: TestSocket, seq: number, pose: Pose, mode: 'ship' | 'foot' | 'landed' = 'ship'): void {
-  s.send({ t: 'input', seq, time: 0, mode, pose, buttons: 0 });
+type Vec3 = [number, number, number];
+
+/** One input, stamped with the server's time now (a client with no latency). */
+function input(server: RunningServer, s: TestSocket, seq: number, pose: Pose, mode: 'ship' | 'foot' | 'landed' = 'ship'): void {
+  s.send({ t: 'input', seq, time: server.world.clock.now(), mode, pose, buttons: 0 });
 }
+
+/** Flies from `from` to `to` (in one frame) at `speed`, an input every 50 ms numbered on from `seq`; returns the next seq. */
+async function fly(server: RunningServer, s: TestSocket, seq: number, from: Pose, to: Vec3, speed: number): Promise<number> {
+  const a = from.pos;
+  const d = Math.hypot(to[0] - a[0], to[1] - a[1], to[2] - a[2]);
+  const t0 = performance.now();
+  for (;;) {
+    await new Promise((r) => setTimeout(r, 50));
+    const k = Math.min(1, (speed * (performance.now() - t0)) / 1000 / d);
+    input(server, s, seq++, { ...from, pos: [a[0] + (to[0] - a[0]) * k, a[1] + (to[1] - a[1]) * k, a[2] + (to[2] - a[2]) * k], vel: [0, 0, 0] });
+    if (k >= 1) return seq;
+  }
+}
+
+/** Whether a pose is docked on one of the Waystation's pads. */
+const onPad = (p: Pose) => p.frame === STATION && STATION_LAYOUT.pads.some((pad) => pad.x === p.pos[0] && pad.z === p.pos[2]);
 
 /** The pose the server holds for the character's entity. */
 function serverPose(server: RunningServer, characterId: string): { pose: Pose; mode: string | undefined } {
@@ -88,7 +112,6 @@ async function row(id: string) {
 
 const HOME = homeSystemOf('thalune');
 const STATION = stationFrame(HOME);
-const DOCKED: Pose = { frame: STATION, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] };
 
 describe('character persistence', () => {
   it('resumes pose, frame, mode and inventory after a graceful stop and a restart on the same database', async () => {
@@ -97,12 +120,12 @@ describe('character persistence', () => {
     const acct = await newAccount(first);
     const character = await newCharacter(first, acct.token);
     const a = await join(first, acct.token, character.id);
-    expect(a.welcome.pose).toEqual(DOCKED);
+    expect(onPad(a.welcome.pose)).toBe(true);
     expect(a.welcome.mode).toBe('docked');
 
     // it flies off the pad, picks something up, and stows its warp cell in the cargo pod
-    input(a.s, 1, { frame: STATION, pos: [120, 5, -40], quat: [0, 0, 0.6, 0.8], vel: [10, 0, 0] });
-    input(a.s, 2, { frame: STATION, pos: [130, 5, -40], quat: [0, 0, 0.6, 0.8], vel: [10, 0, 0] });
+    const up: Vec3 = [a.welcome.pose.pos[0], 14, a.welcome.pose.pos[2]];
+    await fly(first, a.s, 1, a.welcome.pose, up, 12);
     expect(first.ws.inventory.grant(character.id, 'ferrite', 120).ok).toBe(true);
     a.s.send({ t: 'inventory', seq: 1, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 0, i: 3 } } });
     const moved = await reply(a.s, 1);
@@ -110,14 +133,14 @@ describe('character persistence', () => {
     expect(slotAt(moved.inventory, { c: 'pod', p: 0, i: 3 })).toEqual({ item: 'warp_cell', count: 1 });
     await handled(a.s);
     const held = serverPose(first, character.id);
-    expect(held.pose.pos).toEqual([130, 5, -40]);
+    expect(held.pose.pos).toEqual(up);
     expect(held.mode).toBe('ship');
 
     await stop(first); // graceful: every character in play is saved
     const saved = await row(character.id);
     expect(saved.revision).toBeGreaterThan(0);
     expect(saved.savedAt).toBeInstanceOf(Date);
-    expect(saved.state.pose).toEqual({ v: 1, data: { system: HOME, pose: held.pose, mode: 'ship' } });
+    expect(saved.state.pose).toEqual({ v: 2, data: { system: HOME, pose: held.pose, mode: 'ship' } });
     expect(saved.state.inventory).toEqual({ v: 1, data: moved.inventory });
     expect(saved.state.ship?.data).toMatchObject({ hull: 'lark', cargoPods: 1 });
 
@@ -140,19 +163,21 @@ describe('character persistence', () => {
     const character = await newCharacter(crashing, acct.token);
     const a = await join(crashing, acct.token, character.id);
 
-    const kept: Pose = { frame: STATION, pos: [300, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] };
-    input(a.s, 1, kept);
+    const keptAt: Vec3 = [a.welcome.pose.pos[0], 12, a.welcome.pose.pos[2]];
+    const seq = await fly(crashing, a.s, 1, a.welcome.pose, keptAt, 12);
     await handled(a.s);
+    const kept = serverPose(crashing, character.id).pose;
+    expect(kept.pos).toEqual(keptAt);
     const before = crashing.persistence.status(character.id)!.revision;
     await waitFor(() => crashing.persistence.status(character.id)!.written > before, 5000, 'a periodic save after the move');
-    expect((await row(character.id)).state.pose?.data).toMatchObject({ pose: { pos: [300, 0, 0] }, mode: 'ship' });
+    expect((await row(character.id)).state.pose?.data).toMatchObject({ pose: { pos: keptAt }, mode: 'ship' });
 
     // moved again, and the process dies before the next periodic save
-    input(a.s, 2, { ...kept, pos: [900, 0, 0] });
+    await fly(crashing, a.s, seq, kept, [keptAt[0], 16, keptAt[2]], 12);
     await handled(a.s);
     crashing.persistence.abandon();
     await stop(crashing);
-    expect((await row(character.id)).state.pose?.data).toMatchObject({ pose: { pos: [300, 0, 0] } });
+    expect((await row(character.id)).state.pose?.data).toMatchObject({ pose: { pos: keptAt } });
 
     const restarted = await start({ shard });
     const b = await join(restarted, acct.token, character.id);
@@ -166,15 +191,16 @@ describe('character persistence', () => {
     const acct = await newAccount(server);
     const character = await newCharacter(server, acct.token);
     const a = await join(server, acct.token, character.id);
-    const pose: Pose = { frame: STATION, pos: [-50, 12, 7], quat: [0, 0, 0, 1], vel: [0, 0, 0] };
-    input(a.s, 1, pose, 'foot');
+    // out of its ship, beside it where the client sets a walker down
+    const pose: Pose = { frame: STATION, pos: exitFeet(describeZoneSystem(HOME), a.welcome.pose), quat: [0, 0, 0, 1], vel: [0, 0, 0] };
+    input(server, a.s, 1, pose, 'foot');
     a.s.send({ t: 'inventory', seq: 1, op: { op: 'transfer', from: { c: 'suit', i: 0 } } });
     const moved = await reply(a.s, 1);
     expect(moved.error).toBeUndefined();
     a.s.close();
     await waitFor(() => server.persistence.status(character.id) === null, 5000, 'the character to be saved and evicted');
     const saved = await row(character.id);
-    expect(saved.state.pose?.data).toEqual({ system: HOME, pose, mode: 'foot' });
+    expect(saved.state.pose?.data).toEqual({ system: HOME, pose, mode: 'foot', parked: a.welcome.pose });
     expect(saved.state.inventory?.data).toEqual(moved.inventory);
     expect(server.ws.inventory.get(character.id)).toBeNull();
 
@@ -191,10 +217,10 @@ describe('character persistence', () => {
     const acct = await newAccount(server);
     const character = await newCharacter(server, acct.token);
     const a = await join(server, acct.token, character.id);
-    const pose: Pose = { frame: STATION, pos: [40, 40, 40], quat: [0, 0, 0, 1], vel: [1, 2, 3] };
-    input(a.s, 1, pose);
+    await fly(server, a.s, 1, a.welcome.pose, [a.welcome.pose.pos[0], 10, a.welcome.pose.pos[2]], 12);
     server.ws.inventory.grant(character.id, 'gold', 7);
     await handled(a.s);
+    const pose = serverPose(server, character.id).pose;
     const b = await join(server, acct.token, character.id);
     expect((await a.s.next('refused')).code).toBe('kicked');
     expect(b.welcome.pose).toEqual(pose);
@@ -206,15 +232,36 @@ describe('character persistence', () => {
     const server = await start();
     const acct = await newAccount(server);
     const lost = await newCharacter(server, acct.token);
-    const elsewhere = { ...dockedAtHome(HOME), pose: { ...DOCKED, frame: `${systemSeed(HOME)}:999`, pos: [5, 5, 5] }, mode: 'ship' };
+    const home = dockedAtHome(HOME);
+    const elsewhere = { ...home, pose: { ...home.pose, frame: `${systemSeed(HOME)}:999`, pos: [5, 5, 5] }, mode: 'ship' };
     await database.db
       .update(characters)
       .set({ state: { pose: { v: 1, data: elsewhere } } })
       .where(eq(characters.id, lost.id));
     const a = await join(server, acct.token, lost.id);
-    expect(a.welcome.pose).toEqual(DOCKED);
+    expect(onPad(a.welcome.pose)).toBe(true);
     expect(a.welcome.mode).toBe('docked');
     a.s.close();
+
+    // as are one saved inside the ground, and one saved on foot with no ship of its own to board (movement authority)
+    const d = describeZoneSystem(HOME);
+    const g = groundOf(d, d.home)!;
+    const up: Vec3 = [0, 0, -1];
+    const under = d.bodies[d.home]!.radius + heightAt(g, up) - 50;
+    const world = `${systemSeed(HOME)}:${d.home}`;
+    const buried = { system: HOME, pose: { frame: world, pos: [0, 0, -under], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: 'ship' };
+    const stranded = { system: HOME, pose: { frame: world, pos: [0, 0, -(under + 50)], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: 'foot' };
+    for (const saved of [buried, stranded]) {
+      const c = await newCharacter(server, acct.token);
+      await database.db
+        .update(characters)
+        .set({ state: { pose: { v: 2, data: saved } } })
+        .where(eq(characters.id, c.id));
+      const j = await join(server, acct.token, c.id);
+      expect(onPad(j.welcome.pose), saved.mode).toBe(true);
+      expect(j.welcome.mode).toBe('docked');
+      j.s.close();
+    }
 
     const future = await newCharacter(server, acct.token);
     await database.db

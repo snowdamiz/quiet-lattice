@@ -559,3 +559,25 @@ Format: task id, question → choice → why.
   `ResourceService` takes `meters` and counts a hit only while `meters.beamActive` (wired when P1.E07.T02 lands).
   Protocol 8. → Mining is server-authoritative without making every node an entity. Open: the client half is
   P1.E13.T06; asteroids, the Mining Laser and iridium are P1.E13.T07 (added); node state does not survive a restart.
+- **P1.E08.T03** Dens, spawning and night (`server/src/fauna`, `@astra/shared/world` ground) → one den plan for both
+  ends: `planDens` always houses dens with the world's own `faunaSpecies(params, FAUNA_MAX_TIER)`, worked out inside
+  shared (`Den.species` required, −1 empty); a den whose species the world does not carry at a lower tier stands empty
+  there; each predator pass houses one predator in the den kind it lives in. This replaces P1.E02.T05's "predator dens
+  split evenly across kinds until species roll"; the dens golden fixture was regenerated once (counts by role
+  unchanged; kinds, positions, pads and on some worlds the apex lair moved). `worldSurface(params, tier)` plans a
+  world's surface once and returns the drawn ground and every den; `drawnGround` is that ground at tier
+  `DENS_DRAWN ? tier : 0`, so pads, node clearance and dens come from one plan (tested on five worlds). The server asks
+  its planner worker for the ground (fast) and the dens (50–600 ms on a large Tier 3 world) as two requests of the same
+  plan, so herds and nodes never wait for dens; every stored ground carries the node clearance. Dens spawn while
+  `DENS_DRAWN` is off (no den art until P1.E14.T10). Night is the star on or below the point's horizon (shared
+  kinematics; fauna's `sky.ts` copy goes once P1.E07.T02's shared rule lands). Night doubling is met on average: each
+  cell may add a predators-only night herd on its own stream at (multiplier − 1) × the day herd's predator chance, and a
+  predator den adds a second pack once a night; both stay out past dawn until the cell unloads, under the creature cap;
+  once-a-night spawns are due again from the first day after, even while a cell sleeps. The apex comes out at night only,
+  while its lair's cell is awake (a player within about 400 m), with a pack of the world's walking predator; at dawn it
+  walks home once it has no target and enters the lair within 10 m; killed, its 1,800 s timer starts and its pack hunts
+  on as an ordinary herd. Packs respawn after 300 s; timers live on `FaunaSim` and are lost with the zone; a pack that
+  only unloaded with its cell comes back with no timer. Spawns keep 70 m (`SPAWN_CLEAR_M`) from players near the ground.
+  Ambusher burrows keep a herd of 1–2 lurking in the burrow's footprint. → DESIGN 12.2's dens and night, with one plan
+  every machine computes. Open: packs breaking off at 30% health and returning at night (combat, P1.E06); ambushers
+  beside deposits (resource nodes are on main now; a later fauna task).

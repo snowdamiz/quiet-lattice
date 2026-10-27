@@ -51,7 +51,13 @@ function setup(opts: { heldWaitMs?: number; recentSaveMs?: number; savedAt?: Dat
   const row: StoredCharacterRow = { id: CHARACTER, name: 'Ves', people: 'thalune', homeSystem: 0, level: 1, xp: 0, state: {} as StoredState, revision: 0 };
   store.rows.set(CHARACTER, row);
   const inventory = new InventoryService();
-  const registry = coreRegistry({ zones: { zoneOf: () => undefined }, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress() });
+  const registry = coreRegistry({
+    zones: { zoneOf: () => undefined },
+    clock: { now: () => 1e6 },
+    inventory,
+    ships: new ShipLoadouts(),
+    progress: new CharacterProgress(),
+  });
   const persistence = new CharacterPersistence({ store, registry, flushTimeoutMs: 2000 });
   const directory: AdminDirectory = {
     character: async (ref) => (ref.toLowerCase() === 'ves' ? { id: CHARACTER, name: 'Ves', accountId: 'a1', savedAt: opts.savedAt ?? null } : null),

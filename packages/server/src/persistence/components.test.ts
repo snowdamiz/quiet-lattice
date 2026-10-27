@@ -1,9 +1,16 @@
 // Phase 1's character components: what a new character gets, the ship and inventory round trip with the inventory's
-// layout re-derived from the ship, the pose read from the zone entity, and a saved pose the world can no longer place
-// falling back to docked at the home Waystation.
+// layout re-derived from the ship, the pose read from the zone entity (and on foot, where it left its ship), and a saved
+// pose the world can no longer place, or movement authority would not accept, falling back to docked at the home
+// Waystation.
 import { emptyInventory, slotAt, type Inventory } from '@astra/shared/inventory';
+import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
+import { frameIdOf } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { InventoryNotHeldError, InventoryService } from '../inventory/service.ts';
+import { padPose } from '../sim/movement/index.ts';
+import { exitFeet } from '../sim/movement/testing.ts';
+import { groundOf, heightAt, type Vec3 } from '../sim/movement/world.ts';
+import { describeZoneSystem } from '../zones/system.ts';
 import { homeSystemOf, stationFrame, systemSeed } from '../world/home.ts';
 import { ZoneManager } from '../zones/manager.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
@@ -41,12 +48,19 @@ function logger() {
 }
 
 function world() {
-  const zones = new ZoneManager({ clock: { now: () => 1000 } });
+  // (time passes as inputs are sent: movement authority lets nothing move in no time)
+  const clock = {
+    t: 1000,
+    now() {
+      return (this.t += 0.05);
+    },
+  };
+  const zones = new ZoneManager({ clock });
   const inventory = new InventoryService();
   const ships = new ShipLoadouts();
   const progress = new CharacterProgress();
   const { log, lines } = logger();
-  const registry = coreRegistry({ zones, inventory, ships, progress, log });
+  const registry = coreRegistry({ zones, clock, inventory, ships, progress, log });
   return { zones, inventory, ships, progress, registry, log, lines };
 }
 
@@ -66,7 +80,7 @@ describe('character components', () => {
     expect(inv.units).toBe(2500);
     expect(d.values.get(POSE)).toEqual({
       system: HOME,
-      pose: { frame: `${systemSeed(HOME)}:station`, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+      pose: padPose(`${systemSeed(HOME)}:station`, 0),
       mode: 'docked',
     });
   });
@@ -166,14 +180,15 @@ describe('character components', () => {
     const pose = registry.get(POSE)!;
     const v = new Sink(1);
     expect(pose.save({ characterId: 'c1', viewer: v })).toBeUndefined();
-    const { zone } = zones.join(v, { id: 'c1', name: 'Ves', people: 'thalune', level: 1, homeSystem: HOME });
+    const { zone, pose: docked } = zones.join(v, { id: 'c1', name: 'Ves', people: 'thalune', level: 1, homeSystem: HOME });
+    // lifting off its pad
     const sent = {
       frame: stationFrame(HOME),
-      pos: [120, 5, -40] as [number, number, number],
+      pos: [docked.pos[0], docked.pos[1] + 1, docked.pos[2]] as [number, number, number],
       quat: [0, 0, 0.6, 0.8] as [number, number, number, number],
-      vel: [10, 0, 0] as [number, number, number],
+      vel: [0, 10, 0] as [number, number, number],
     };
-    zones.input(v, { t: 'input', seq: 1, time: 0, mode: 'ship', pose: sent, buttons: 0 });
+    expect(zones.input(v, { t: 'input', seq: 1, time: 1000, mode: 'ship', pose: sent, buttons: 0 })).toBe('ok');
     const at = pose.save({ characterId: 'c1', viewer: v }) as PoseState;
     expect(at).toMatchObject({ system: zone.systemIndex, mode: 'ship', pose: { frame: sent.frame, pos: sent.pos, vel: sent.vel } });
     expect(at.pose.quat.map((q) => Math.round(q * 1e9) / 1e9)).toEqual([0, 0, 0.6, 0.8]);
@@ -183,19 +198,81 @@ describe('character components', () => {
 
   it('names what makes a saved pose unusable', () => {
     const ok = dockedAtHome(HOME);
-    expect(poseProblem(ok)).toBeNull();
-    expect(poseProblem({ ...ok, system: 1000 })).toMatch(/no system/);
-    expect(poseProblem({ ...ok, pose: { ...ok.pose, frame: stationFrame(HOME === 0 ? 1 : 0) } })).toMatch(/not in system/);
-    expect(poseProblem({ ...ok, pose: { ...ok.pose, pos: [2e11, 0, 0] } })).toMatch(/position/);
-    expect(poseProblem({ ...ok, pose: { ...ok.pose, vel: [0, 2e9, 0] } })).toMatch(/velocity/);
-    expect(poseProblem({ ...ok, pose: { ...ok.pose, frame: null, pos: [1e9, 0, 0] } })).toBeNull();
+    expect(poseProblem(ok, 1000)).toBeNull();
+    expect(poseProblem({ ...ok, system: 1000 }, 1000)).toMatch(/no system/);
+    expect(poseProblem({ ...ok, pose: { ...ok.pose, frame: stationFrame(HOME === 0 ? 1 : 0) } }, 1000)).toMatch(/not in system/);
+    expect(poseProblem({ ...ok, pose: { ...ok.pose, pos: [2e11, 0, 0] } }, 1000)).toMatch(/position/);
+    expect(poseProblem({ ...ok, pose: { ...ok.pose, vel: [0, 2e9, 0] } }, 1000)).toMatch(/velocity/);
+    expect(poseProblem({ ...ok, mode: 'ship', pose: { ...ok.pose, frame: null, pos: [1e9, 0, 0] } }, 1000)).toBeNull();
+    // and where movement authority would not accept it (P1.E03.T04)
+    expect(poseProblem({ ...ok, pose: { ...ok.pose, pos: [0, 2.4, 0] } }, 1000)).toMatch(/^docked/);
+    expect(poseProblem({ ...ok, mode: 'foot', pose: { ...ok.pose, pos: [0, 0, 0] } }, 1000)).toMatch(/^board_range/);
+    expect(poseProblem({ ...ok, mode: 'foot', pose: { ...ok.pose, pos: [0, 0, 0] }, parked: padPose(stationFrame(HOME), 1) }, 1000)).toBeNull();
+  });
+
+  it('restores docked at home a saved pose inside the ground, and one on foot with no ship of its own to board', () => {
+    const { registry, log, lines } = world();
+    const d = describeZoneSystem(HOME);
+    const g = groundOf(d, d.home)!;
+    const up: Vec3 = [0, 0, -1];
+    const ground = d.bodies[d.home]!.radius + heightAt(g, up);
+    const at = (r: number): [number, number, number] => [up[0] * r, up[1] * r, up[2] * r];
+    const world0 = frameIdOf(d.seed, d.home);
+    const inGround: PoseState = { system: HOME, pose: { frame: world0, pos: at(ground - 50), quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: 'ship' };
+    expect(registry.decode(stored({ pose: { v: 2, data: inGround } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
+    const ship = { frame: world0, pos: at(ground + SHIP_GEAR_HEIGHT), quat: [0, 0, 0, 1] as [number, number, number, number], vel: [0, 0, 0] as Vec3 };
+    const onFoot: PoseState = { system: HOME, pose: { ...ship, pos: exitFeet(d, ship) }, mode: 'foot' };
+    expect(registry.decode(stored({ pose: { v: 2, data: onFoot } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
+    expect(lines.filter((l) => l.level === 'warn' && l.obj.component === POSE)).toHaveLength(2);
+    // with the ship it left, on foot it stays; and a version 1 save (before ships were remembered) still reads
+    const withShip = { ...onFoot, parked: ship };
+    expect(registry.decode(stored({ pose: { v: 2, data: withShip } }), CHARACTER, log).values.get(POSE)).toEqual(withShip);
+    const docked = dockedAtHome(HOME);
+    expect(registry.decode(stored({ pose: { v: 1, data: { ...docked, mode: 'ship' } } }), CHARACTER, log).values.get(POSE)).toEqual({
+      ...docked,
+      mode: 'ship',
+    });
+  });
+
+  it('checks only a saved pose’s shape on a server not holding its players to movement authority', () => {
+    const { inventory, ships, progress, log } = world();
+    const clock = { now: () => 1000 };
+    const registry = coreRegistry({ zones: new ZoneManager({ clock, movement: false }), clock, movement: false, inventory, ships, progress, log });
+    const d = describeZoneSystem(HOME);
+    const g = groundOf(d, d.home)!;
+    const r = d.bodies[d.home]!.radius + heightAt(g, [0, 0, -1]) + 2;
+    // on foot with no ship of its own: restored as it was
+    const onFoot: PoseState = { system: HOME, pose: { frame: frameIdOf(d.seed, d.home), pos: [0, 0, -r], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: 'foot' };
+    expect(registry.decode(stored({ pose: { v: 2, data: onFoot } }), CHARACTER, log).values.get(POSE)).toEqual(onFoot);
+    // but not in another system's frame
+    const elsewhere = { ...onFoot, pose: { ...onFoot.pose, frame: stationFrame(HOME === 0 ? 1 : 0) } };
+    expect(registry.decode(stored({ pose: { v: 2, data: elsewhere } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
+  });
+
+  it('saves where a character on foot left its ship, and puts it back there to board it', () => {
+    const { zones, registry } = world();
+    const pose = registry.get(POSE)!;
+    const v = new Sink(1);
+    const { zone, entityId, pose: docked } = zones.join(v, { id: 'c1', name: 'Ves', people: 'thalune', level: 1, homeSystem: HOME });
+    const feet = exitFeet(zone.system, docked);
+    expect(zones.input(v, { t: 'input', seq: 1, time: 1000, mode: 'foot', pose: { ...docked, pos: feet }, buttons: 0 })).toBe('ok');
+    const saved = pose.save({ characterId: 'c1', viewer: v }) as PoseState;
+    expect(saved).toMatchObject({ mode: 'foot', parked: { frame: docked.frame, pos: docked.pos } });
+    zones.leave(v);
+    // back in play: on foot beside it, and it boards
+    const back = new Sink(2);
+    const j = zones.join(back, { id: 'c1', name: 'Ves', people: 'thalune', level: 1, homeSystem: HOME }, saved);
+    expect(j.mode).toBe('foot');
+    expect(zone.movement!.parkedOf(j.entityId)).toMatchObject({ pos: docked.pos });
+    expect(zones.input(back, { t: 'input', seq: 1, time: 1000, mode: 'docked', pose: saved.parked!, buttons: 0 })).toBe('ok');
+    expect(entityId).not.toBe(j.entityId);
   });
 
   it('decodes an unusable saved pose as docked at home, and logs it', () => {
     const { registry, log, lines } = world();
     const elsewhere = { ...dockedAtHome(HOME), pose: { ...dockedAtHome(HOME).pose, frame: stationFrame(HOME === 0 ? 1 : 0) } };
-    expect(registry.decode(stored({ pose: { v: 1, data: elsewhere } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
-    expect(registry.decode(stored({ pose: { v: 1, data: { ...elsewhere, mode: 'flying' } } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
+    expect(registry.decode(stored({ pose: { v: 2, data: elsewhere } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
+    expect(registry.decode(stored({ pose: { v: 2, data: { ...elsewhere, mode: 'flying' } } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
     expect(lines.filter((l) => l.level === 'warn' && l.obj.component === POSE)).toHaveLength(2);
   });
 });
@@ -230,10 +307,11 @@ describe('ZoneManager.join at a saved placement', () => {
     const gone = zones.join(new Sink(1), character, { ...home, pose: { ...home.pose, frame: `${systemSeed(HOME)}:999` }, mode: 'ship' });
     expect(gone.fellBack).toMatch(/not in system/);
     expect(gone.zone.systemIndex).toBe(HOME);
-    expect(gone.pose).toEqual(home.pose);
+    // (on the first free pad)
+    expect(gone.pose).toEqual(padPose(stationFrame(HOME), 0));
     expect(gone.mode).toBe('docked');
     const nowhere = zones.join(new Sink(2), character, { ...home, system: 5000 });
     expect(nowhere.fellBack).toMatch(/no system 5000/);
-    expect(nowhere.pose).toEqual(home.pose);
+    expect(nowhere.pose).toEqual(padPose(stationFrame(HOME), 1));
   });
 });
