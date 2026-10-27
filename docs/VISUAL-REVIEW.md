@@ -217,3 +217,21 @@ Round 2: marker range text overlaps its own ship and falls to 1.3–2.4:1 over l
 offset, so they drift hundreds of pixels off near ships, and collide with the fixed HUD and each other; far Larks
 shimmer; pads (+3.97 ms for 3 ships) and surface (+3.0 ms, over 16.7 ms) cost out of proportion, the coarsest LOD is 25%
 of LOD0 (§19.2 wants under 5%) and casts shadows. Requested: a full bay phase, 24 Larks docked, with the perf readout.
+
+## P1.E05.T01 Skeleton and three base bodies (art)
+
+Graded per people with the "Models and environments" table, each file as a family of ten variants.
+
+| Round | People | Verdict | Scores | Mean |
+|---|---|---|---|---|
+| 1 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 2, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.2 |
+| 1 | Ixari | REVISE | design 3, silhouette 3, proportion 3, materials 2, detail 2, topology 4, consistency 4, fitness 3, placeholder 2, performance 4 | 3.0 |
+| 1 | Ulgani | REVISE | design 2, silhouette 3, proportion 4, materials 2, detail 2, topology 3, consistency 4, fitness 3, placeholder 2, performance 4 | 2.9 |
+
+Round 1, common to all three: mascot faces (a fixed smile, goggle or button-ring eyes, no nose, lips or brow); smooth
+mannequin bodies without anatomical landmarks; suits from primitives (torus bands, rounded boxes, straight rods) that
+break each people's design language (Ixari facets, Thalune shingled shell, Ulgani grown chitin lattice); heads that differ
+only by small cards, unreadable past 10 m; uniform-noise skin; in-engine material errors (back-lit fins black, nacre as
+chrome, crystal as white plastic, Ulgani toe bleed); uniform remeshed LOD0 with no loops at the face or joints; blinks
+that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above the ground. Artifacts:
+`assets/renders/characters/`, `assets/renders/review/characters/`.

@@ -63,6 +63,9 @@ export interface PartyInfo {
 }
 
 export class Parties {
+  /** Hears of each character that is out of its party (it left, was kicked, dropped, or the party disbanded), once the
+   * party is as it now stands: the call-for-aid beacons send a helper back at once (social/beacons.ts). */
+  onLeft: ((characterId: string) => void) | null = null;
   private readonly parties = new Map<string, Party>();
   private readonly byCharacter = new Map<string, Party>();
   /** pending invites by invitee, then by inviter */
@@ -104,6 +107,35 @@ export class Parties {
   /** Invites pending for the character, from whom (names). */
   invitesFor(characterId: string): string[] {
     return [...(this.invites.get(characterId)?.values() ?? [])].map((i) => i.fromName);
+  }
+
+  /**
+   * Why `o` could not join the party of character `characterId` (or a new one it leads) as accepting an invite from it
+   * would put it there: `in_party` (`o` is in another party), `party_full`, `gone` (`characterId` is offline in no party).
+   * Null when it may, or is in that party already. A story beacon's answer asks this before it changes anything.
+   */
+  joinRefusal(o: Online, characterId: string): 'in_party' | 'party_full' | 'gone' | null {
+    const p = this.byCharacter.get(characterId);
+    const mine = this.byCharacter.get(o.characterId);
+    if (mine) return mine === p ? null : 'in_party';
+    if (p) return p.members.size >= this.ctx.limits.partyMax ? 'party_full' : null;
+    return this.ctx.roster.get(characterId) ? null : 'gone';
+  }
+
+  /**
+   * Puts `o` in the party of character `characterId`, or in a new party that character leads, as accepting an invite from
+   * it would (its other invites spent, everyone told, the state sent): answering a story beacon is joining its caller's
+   * party (social/beacons.ts). Returns joinRefusal's refusal, changing nothing, when it may not; nothing changes either
+   * when it is in that party already.
+   */
+  joinWith(o: Online, characterId: string): 'in_party' | 'party_full' | 'gone' | null {
+    const refusal = this.joinRefusal(o, characterId);
+    if (refusal || this.byCharacter.has(o.characterId)) return refusal;
+    const p = this.byCharacter.get(characterId) ?? this.form(this.ctx.roster.get(characterId)!);
+    this.add(p, o);
+    this.tell(p, 'joined', o.name);
+    this.flush(p);
+    return null;
   }
 
   /** Carries out a party request, or tells the asker why not. */
@@ -304,13 +336,17 @@ export class Parties {
     }
     this.ctx.log?.info({ party: p.id, character: characterId, why, members: p.members.size }, 'party member left');
     this.tell(p, why === 'kicked' ? 'kicked' : 'left', m.name);
-    if (p.members.size < 2) return this.disband(p);
-    if (p.leader === characterId) {
-      p.leader = this.successor(p);
-      this.ctx.log?.info({ party: p.id, leader: p.leader }, 'party leader handed on');
-      this.tell(p, 'leader', p.members.get(p.leader)!.name);
+    if (p.members.size < 2) {
+      this.disband(p);
+    } else {
+      if (p.leader === characterId) {
+        p.leader = this.successor(p);
+        this.ctx.log?.info({ party: p.id, leader: p.leader }, 'party leader handed on');
+        this.tell(p, 'leader', p.members.get(p.leader)!.name);
+      }
+      this.flush(p);
     }
-    this.flush(p);
+    this.onLeft?.(characterId);
   }
 
   /** The longest-standing member online, else the longest-standing. */
@@ -329,9 +365,11 @@ export class Parties {
         news(o, 'disbanded');
       }
     }
+    const members = [...p.members.keys()];
     p.members.clear();
     this.parties.delete(p.id);
     this.ctx.log?.info({ party: p.id }, 'party disbanded');
+    for (const id of members) this.onLeft?.(id);
   }
 
   /**

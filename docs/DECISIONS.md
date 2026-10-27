@@ -626,3 +626,64 @@ Format: task id, question → choice → why.
   repacks or keeps its saved layout, all or nothing, so no item is lost); revisit when pods become crafted modules.
   This supersedes P1.E07.T01's "fragments are never refunded" for data changes and its "an unknown id or broken
   prerequisite refuses the join until P1.E07.T15". → Content can change the skill web without stranding characters.
+- **P1.E06.T02** Server combat resolution (`server/src/combat`, ARCHITECTURE §20) → each zone's `ZoneCombat` holds health:
+  a creature's from `mobStats` at its herd's level (the apex on the Pack Alpha's row), fixed when first hurt, never
+  regenerating; a player's suit health on foot from the nodes held at join (100, 150 with Second Skin), shield then hull
+  from `shipStats` in any other mode (the default Lark until P1.E12.T05 passes ships); player health is not saved and
+  does not regenerate (a rejoin restores it). One `applyDamage(source, target, packet)` runs the shared `computeDamage`,
+  level-scaled only for creature sources, feeds fauna's threat, and records each character's damage up to the health
+  left (every contributor counts, however small; only players' damage counts). A creature at 0 dies: it leaves its
+  herd at once (den and apex timers start then), and its corpse (hp 0, mode `dead`, still, attack cleared) stays 3 s.
+  A player at 0 is down: no damage taken, no firing; nothing else is gated until the Recall (P1.E06.T03). Kill rewards
+  are rolled once and split by damage share (`splitByDamage`): XP = level × 10; units = 2 × level × stars ×
+  0.75–1.25 (at least 1); resources only from rows that list drops (1 per star × 0.5–1.5), so plain fauna drop none
+  though DESIGN 12.1 lists resources among drops; no codex entries or ship parts from kills; loot that does not fit is
+  lost (quest rewards are owed instead). XP and loot reach the contributor's session wherever it is; every contributor
+  gets a quest `kill` tagged `[fauna, temperament, bodyPlan]`. In combat = dealt or took damage in the last 6 s.
+  Events: hits summed per source, target, kind and weapon each tick, sent to sessions whose interest holds target or
+  source (own first), at most 32 per session and 512 per tick, amounts the whole hit (capped 1e6). The base gun is the
+  first fitted hitscan weapon with stats from `shipStats` (11 damage per volley): a strict `fire {seq, time, frame,
+  aim}` is checked cheapest first (seq, zone, gun, a 3-shot bucket refilled at one per cooldown that refused shots also
+  spend, a stamp within 3 s, mode `ship` only, not down, frame, aim within 30° of the believed nose), cast with the
+  shared `rayHits` from the believed pose carried along its clamped velocity by at most 0.1 s, out to 1,500 m, against
+  creature spheres (0.6 × size × scale + 1 m); line of sight runs from the believed pose through the carried origin to
+  the hit over the drawn ground (at most 96 samples, steps ≥ 2 m, the target's last 3 m skipped, 0.75 m tolerance;
+  rocks and trees don't block); only the first creature on the line counts. Players are neither targets nor blockers
+  until P2.E17.T01 (DESIGN 11 has PvP everywhere). The aim is checked only against the nose the client claims (rotation
+  is not validated), so an aimbot gains accuracy, never damage, rate, range or sight: acceptable for PvE; P2.E17.T01
+  must add a turn-rate check before PvP. Protocol 10 (`damageType` now says how damage was delivered: weapon, ability,
+  attack, hazard; `hp` added; `xp` and `fire` messages); 9 stays reserved for P1.E07.T02. Client: LMB fires tracers at
+  once and sends the intent; new HUD damage numbers (style tokens) and XP/loot toasts come from events; they show for
+  server creatures the client does not draw yet, so their visual grade moves to P1.E08.T09 (mid-fight 16:9/21:9 with
+  stacked numbers and kill gold, the damage flash, the toasts, a 60 fps clip of the rise and fade, bright and dark
+  backgrounds, the reflow cost). The client's pirate and asteroid combat stays local until P1.E08.T05 and P1.E13.T07.
+  → One server damage path that abilities (P1.E07.T03), weapons (P1.E12.T04) and creature attacks (P1.E08.T02) plug
+  into. Balance flag for P1.E16: a Tier 0 level-3 grazer (82 hp) dies in about 1 s from 1.5 km with no risk (creatures
+  cannot target ships yet), each kill gives 6 units and 30 XP, so kills alone could pass DESIGN 15.6's 1–3k units an
+  hour at Tier 0, and level 1 to 5 takes about 100 kills. Open: packs breaking off at 30% health (P1.E08.T02); safe
+  zones block combat (P1.E10.T02 / P2.E17.T01); XP granting is now in three places (quests, codex, combat) and should
+  become one service.
+- **P1.E15.T02** Call-for-aid beacon (`server/src/social/beacons.ts`, ARCHITECTURE §21) → an instance is an event, a
+  raid, or a quest step's story phase; bays and phases a cutscene plays in (marked by the cutscene service, whatever
+  their key) are refused. A player inside one with open slots raises a shard-wide listing: kind, system, place (frame,
+  centre, radius), a name (the quest's title, else the location key, else the kind), quest id, caller, open slots of the
+  cap, raised and lapse times; the caller consents to that much being shown. A story instance's slots are party places
+  (`PARTY_MAX` minus the party, offline and absent members counted); any member may raise one (T01 lets any member
+  invite), so strangers join the leader's party without the leader agreeing, and a caller with no party forms one it
+  leads. A beacon ends when its instance closes, fills or is left by its caller, when lowered, or after 10 minutes.
+  Limits: per account 3 raises at once then one per 30 s (a refused raise spends nothing), one beacon per character and
+  per instance, 256 on the shard (`busy`, no retry time); whole-list `watch` 5 at once then one per 10 s per account
+  (`denied of 'watch'`, `rate`, `retryS`), a repeat watch from a watching session ignored, changes sent once per 100 ms
+  sweep; watching belongs to one connection. Held in memory (one process per shard in Phase 1; Redis when P3.E37 splits
+  shards). Answering re-checks everything before anything changes: the beacon up, not your own (an alt may answer),
+  same system (`elsewhere`), in no phase (`in_phase`), inside the instance's exit radius (1.05×, `far`); events and
+  raids place through `PhaseManager.enter` (cap and party rules), story answers join the caller's party (a helper need
+  not hold the quest; refused `gone` while the caller is away, while event and raid answers are accepted with the
+  caller's place kept). Placement never moves the entity, so no mover is re-seated; there is no travel to a beacon.
+  Story helpers are tracked and sent back to the shared world when they leave the party, are kicked, the party
+  disbands, or the caller leaves the chapter (a disconnected helper's kept place is released); helpers are not
+  re-placed on reconnect. Protocol 11. Client: `net.beacons`, driven from the dev console until P1.E15.T03's UI. → The
+  shard can call for help into its instances without bending the phase rules. Open: travel to a beacon's place has no
+  task; an event beacon's place name is its raw location key (P2.E21.T01); a party of two disbanding can race the quest
+  runtime's re-placement by up to one 100 ms sweep (the chapter reopens fresh); the quest runtime does not re-place a
+  solo player who forms a party mid-step, nor close a step's phase while a helper remains (P1.E09 follow-up).
