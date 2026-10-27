@@ -4,7 +4,7 @@
 // inventory, and a change that would lose items is refused with nothing changed.
 import type { HullId } from '@astra/shared/data';
 import { countOf } from '@astra/shared/inventory';
-import { emptySkillState, newSkillState, SKILL_PHASE, type PhaseTier, type SkillState } from '@astra/shared/skills';
+import { emptySkillState, newSkillState, SKILL_PHASE, SKILL_WEB_VERSION, type PhaseTier, type SkillState } from '@astra/shared/skills';
 import { describe, expect, it } from 'vitest';
 import { InventoryService } from '../inventory/service.ts';
 import { CharacterProgress, DEFAULT_SHIP, ShipLoadouts } from '../persistence/components.ts';
@@ -95,6 +95,23 @@ describe('skill service', () => {
     skills.refresh(ID);
     expect(heard.map((h) => h.change)).toEqual(['server', 'request', 'server', 'server', 'server', 'server']);
     expect(heard.at(-1)!.reply).toEqual(skills.state(ID));
+  });
+
+  it('keeps what each fragment unlock paid, never another route’s, and stores it with the web, never sending it', () => {
+    const { skills } = world({ level: 3 });
+    const paid = (branch: 'gravitic', count: number) => ({ branch, count });
+    expect(skills.grantFragments(ID, 'gravitic', 4).ok).toBe(true);
+    expect(skills.request(ID, 1, { op: 'unlock', node: 'pull' }).error).toBeUndefined();
+    expect(skills.request(ID, 2, { op: 'unlock', node: 'slam' }).error).toBeUndefined();
+    expect(skills.request(ID, 3, { op: 'unlock', node: 'well' })).toMatchObject({ error: 'fragments' });
+    expect(skills.unlock(ID, 'cartridge_recycler', { kind: 'trainer', trainer: 'city_master' }).ok).toBe(true);
+    expect(skills.stored(ID)).toEqual({ web: SKILL_WEB_VERSION, ...skills.get(ID)!, paid: { pull: paid('gravitic', 1), slam: paid('gravitic', 3) } });
+    expect(skills.view(ID).state).not.toHaveProperty('paid');
+    expect(skills.stored('nobody')).toBeNull();
+    // put back in play with it; a payment for a node not unlocked is no state the service plays
+    expect(skills.open('c2', skills.get(ID)!, 'thalune', { pull: paid('gravitic', 1) }).skills.state).toEqual(skills.get(ID));
+    expect(skills.stored('c2')!.paid).toEqual({ pull: paid('gravitic', 1) });
+    expect(() => skills.open('c3', emptySkillState(), 'thalune', { pull: paid('gravitic', 1) })).toThrow(/paid for but not unlocked/);
   });
 
   it('swaps slots only out of combat', () => {
