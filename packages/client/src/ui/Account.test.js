@@ -342,6 +342,22 @@ describe('the flow', () => {
     expect(flow.view).toMatchObject({ step: 'signin', message: { text: 'Your session has expired.' } });
   });
 
+  it('once the welcome is in and held, Esc no longer cancels: the socket stays and the world is entered', async () => {
+    const { flow, nets, entered } = setup();
+    flow.open();
+    await flow.submitCredentials({ username: 'tess_arlo', password: 'correct-horse' });
+    flow.enter();
+    flow.arriving();
+    expect(flow.view).toMatchObject({ step: 'entering', arriving: true, connection: 'joined' });
+    flow.back();
+    flow.close();
+    expect(nets[0].close).not.toHaveBeenCalled();
+    expect(flow.view.step).toBe('entering');
+    nets[0].emit('welcome', {}, true);
+    expect(flow.view).toMatchObject({ step: 'closed', arriving: false });
+    expect(entered).toHaveBeenCalledTimes(1);
+  });
+
   it('signs out', async () => {
     const { flow, store } = setup();
     flow.open();
@@ -423,6 +439,25 @@ describe('the welcome held until the screen is dark', () => {
     net.emit('welcome', {}, false);
     expect(seen.at(-1)).toBe('welcome:false');
     expect(arrive).toHaveBeenCalledTimes(1);
+  });
+
+  it('a listener that throws is reported, and the rest of what was held still goes', async () => {
+    const net = fakeNet();
+    const seen = [];
+    const boom = new Error('a listener failed');
+    net.on('welcome', () => {
+      throw boom;
+    });
+    net.on('welcome', () => seen.push('welcome'));
+    net.on('world', () => seen.push('world'));
+    const report = vi.fn();
+    holdFirstWelcome(net, async () => {}, report);
+    net.emit('welcome', {}, true);
+    net.emit('world', {});
+    await tick();
+    expect(report).toHaveBeenCalledWith(boom);
+    // (the welcome's own listeners stop at the throw, as fakeNet's emit does; the next message is delivered)
+    expect(seen).toEqual(['world']);
   });
 
   it('lets them through even if the screen never says it is dark', async () => {

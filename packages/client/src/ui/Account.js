@@ -332,7 +332,7 @@ export class AccountFlow {
   }
 
   startEntering(c) {
-    this.set({ step: 'entering', busy: false, message: null, selected: c.id, entering: c, connection: 'connecting' });
+    this.set({ step: 'entering', busy: false, message: null, selected: c.id, entering: c, connection: 'connecting', arriving: false });
     let net = null;
     // (the connection's end before a welcome: a refusal, a server that cannot be reached, or Esc)
     net = this.net = this.deps.enter(this.session, c, (reason, code) => this.enterFailed(net, reason, code));
@@ -349,9 +349,15 @@ export class AccountFlow {
     this.set({ step: 'characters', connection: null, message: { text: reason || 'The connection to the server closed.', field: null, tone: 'error' } });
   }
 
+  /** The welcome is in and held while the screen goes dark: the character is on its way into the world, past
+   * cancelling (Esc no longer lets the socket go, the game takes the held welcome as soon as it is dark). */
+  arriving() {
+    if (this.step === 'entering') this.set({ arriving: true, connection: 'joined' });
+  }
+
   /** Esc while entering: the connection is let go, back to the list. */
   cancelEnter() {
-    if (this.step !== 'entering') return;
+    if (this.step !== 'entering' || this.view.arriving) return;
     const net = this.net;
     this.net = null;
     this.settle(false);
@@ -361,7 +367,7 @@ export class AccountFlow {
 
   entered() {
     this.net = null;
-    this.set({ step: 'closed', connection: 'joined', message: null });
+    this.set({ step: 'closed', connection: 'joined', arriving: false, message: null });
     this.deps.entered?.();
     this.settle(true);
   }
@@ -420,14 +426,22 @@ function esc(t) {
  * character once the screen has gone dark, then takes what came meanwhile in the order it came, as if it had all come
  * that much later. A later welcome (a reconnect) passes straight through.
  */
-export function holdFirstWelcome(net, arrive) {
+export function holdFirstWelcome(net, arrive, report = rethrowLater) {
   const emit = net.emit;
   let held = null;
   const release = () => {
     const queue = held;
     held = null;
     net.emit = emit;
-    for (const [type, args] of queue) emit.call(net, type, ...args);
+    // (a listener that throws is reported, as it would have been had its message come straight from the socket, and
+    // the rest of the queue still goes)
+    for (const [type, args] of queue) {
+      try {
+        emit.call(net, type, ...args);
+      } catch (err) {
+        report(err);
+      }
+    }
   };
   net.emit = function (type, ...args) {
     if (held) return void held.push([type, args]);
@@ -437,6 +451,30 @@ export function holdFirstWelcome(net, arrive) {
       .then(arrive)
       .then(release, release);
   };
+}
+
+/** An error raised again on its own task, so it shows as uncaught without stopping what threw it. */
+function rethrowLater(err) {
+  setTimeout(() => {
+    throw err;
+  });
+}
+
+/** A line of text changed in place: the old words fade out where they stand as the new ones fade in over them. */
+function crossFade(box, text) {
+  const now = box.lastElementChild;
+  if (now?.textContent === text && !now.classList.contains('gone')) return;
+  for (const old of box.children) {
+    if (old.classList.contains('gone')) continue;
+    old.classList.add('gone');
+    old.addEventListener('animationend', () => old.remove(), { once: true });
+    setTimeout(() => old.remove(), 4000);
+  }
+  const line = document.createElement('span');
+  line.textContent = text;
+  // (the first words the line shows just appear with their step)
+  if (now) line.className = 'fresh';
+  box.appendChild(line);
 }
 
 function clearPasswords(root) {
@@ -485,7 +523,11 @@ export class Account {
         this.game.enterWorld(session, character, onFail);
         const net = this.game.net;
         // the welcome waits until the screen has gone dark, so the title's shot never cuts to the world
-        if (net) holdFirstWelcome(net, () => this.darken());
+        if (net)
+          holdFirstWelcome(net, () => {
+            this.flow.arriving();
+            return this.darken();
+          });
         return net;
       },
       entered: () => this.reveal(),
@@ -512,22 +554,24 @@ export class Account {
   /** The welcome is in: Enter is marked done, then the menu and the title's shot fade to black over the whole page (a
    * veil above every screen). Resolves once dark, when the game places the character (holdFirstWelcome). */
   darken() {
-    this.root.querySelectorAll('.acct-rail li').forEach((li) => li.classList.replace('on', 'done') || li.classList.add('done'));
-    const line = this.body.querySelector('.acct-step:not(.leaving) [data-connection]');
-    if (line) line.textContent = CONNECTION_TEXT.joined;
     const veil = this.veilEl();
     veil.className = 'acct-veil dark';
     return new Promise((resolve) => {
-      // (its animation runs on the page's clock; a hidden tab that never runs it goes on regardless)
-      const timer = setTimeout(resolve, 3000);
-      veil.addEventListener(
-        'animationend',
-        () => {
-          clearTimeout(timer);
-          resolve();
-        },
-        { once: true },
-      );
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        document.removeEventListener('visibilitychange', hidden);
+        resolve();
+      };
+      // (the fade runs on the page's animation clock, which a hidden tab stops: there, nobody is looking, it goes on
+      // at once; and in any case after a while)
+      const hidden = () => document.hidden && finish();
+      const timer = setTimeout(finish, 10_000);
+      document.addEventListener('visibilitychange', hidden);
+      hidden();
+      veil.addEventListener('animationend', (e) => e.target === veil && finish(), { once: true });
     });
   }
 
@@ -552,7 +596,8 @@ export class Account {
       if (changed && prev.step !== 'entering') this.menus.startBtn?.focus({ preventScroll: true });
       return;
     }
-    const n = RAIL[v.step];
+    // (all three ticked once the welcome is in)
+    const n = v.arriving ? 4 : RAIL[v.step];
     this.root.querySelectorAll('.acct-rail li').forEach((li) => {
       li.classList.toggle('on', Number(li.dataset.n) === n);
       li.classList.toggle('done', Number(li.dataset.n) < n);
@@ -632,7 +677,7 @@ export class Account {
       case 'entering':
         return `<h2 class="acct-title">Entering</h2>
           <div class="acct-entering"></div>
-          <div class="acct-progress"><div class="acct-bar"><b></b></div><span class="mono" data-connection></span></div>
+          <div class="acct-progress"><div class="acct-bar"><b></b><i></i></div><span class="acct-conn mono" data-connection></span></div>
           ${keys([['Esc'], 'Cancel'])}`;
     }
     return '';
@@ -718,7 +763,10 @@ export class Account {
         box.dataset.key = key;
         box.innerHTML = c ? this.rowHTML(c, true, true) : `<div class="acct-char static"><i class="acct-emblem dev"></i><span class="acct-char-name">${esc(v.username)}</span><span class="acct-char-sub">Dev login</span></div>`;
       }
-      step.querySelector('[data-connection]').textContent = `${CONNECTION_TEXT[v.connection] ?? CONNECTION_TEXT.connecting}…`;
+      const text = v.connection === 'joined' ? CONNECTION_TEXT.joined : `${CONNECTION_TEXT[v.connection] ?? CONNECTION_TEXT.connecting}…`;
+      crossFade(step.querySelector('[data-connection]'), text);
+      // once the welcome is in: the bar fills as the screen goes dark, and Esc no longer cancels
+      step.classList.toggle('arriving', !!v.arriving);
     }
     // busy: the primary action waits, a sweep along its foot and a line beside it saying what it waits for
     const primary = step.querySelector('.acct-actions .btn:not(.ghost)');
@@ -777,6 +825,7 @@ export class Account {
     const p = built ? null : prev.message;
     if (m !== p) {
       const box = wrap.querySelector('.acct-msg');
+      const from = built ? null : wrap.offsetHeight;
       if (m) {
         const line = box.firstElementChild;
         line.textContent = m.text;
@@ -787,6 +836,10 @@ export class Account {
         line.style.animation = '';
       }
       wrap.classList.toggle('on', !!m);
+      // the room it takes eases open or shut, and the box with it, on one curve (anchored to its foot, the box shrinks
+      // as the room does, gone just as what is below has settled; opening, it also fades in, its own animation)
+      const to = wrap.offsetHeight;
+      if (from !== null && from !== to) wrap.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: 340, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
       if (m?.tone === 'error' && !built) this.game.audio?.play('error');
     }
     step.querySelectorAll('.acct-field').forEach((f) => f.classList.toggle('bad', !!m && m.tone === 'error' && m.field === f.dataset.field));

@@ -516,6 +516,17 @@ async function resetFlow(page: Page, settleMs = 800): Promise<void> {
   await page.focus('.title-screen [data-act="start"]');
 }
 
+/** The mouse captured, as a player's click grants it (headless Chromium refuses the real pointer lock: the game's own
+ * fallback), so the world shows without the pause menu. */
+async function grantLock(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const input = (window as unknown as { game: { input: { fallbackLock: boolean; locked: boolean } } }).game.input;
+    input.fallbackLock = true;
+    input.locked = true;
+    document.dispatchEvent(new Event('pointerlockchange'));
+  });
+}
+
 /** Play → Create an account → `username` and a password → Enter. */
 async function signUpAs(page: Page, username: string): Promise<void> {
   await page.keyboard.press('Enter');
@@ -701,11 +712,11 @@ export const SCREENS: Record<string, ScreenDef> = {
   // `account-flow`: the whole of it by keyboard, the still the title it starts from; the clip: Play, a sign-in refused and
   // retried, the list, a new character named and its people picked, made, entered, and the welcome's cut into the world
   'account-flow': {
-    clipSeconds: 12.4,
+    clipSeconds: 13,
     expectedErrors: [REFUSED_SIGN_IN],
     sheetFrames: [
-      0, 30, 60, 84, 108, 126, 138, 150, 174, 204, 228, 252, 276, 300, 330, 354, 378, 402, 432, 462, 492, 522, 546, 570, 596, 604, 612, 620, 628, 640, 664, 688,
-      712, 743,
+      0, 30, 60, 84, 108, 126, 138, 150, 174, 204, 228, 252, 276, 300, 330, 354, 378, 402, 432, 462, 492, 522, 546, 570, 596, 604, 612, 620, 628, 636, 644, 660,
+      680, 700, 720, 750, 779,
     ],
     async open(page) {
       await serveAccount(page, { refuseLogins: 1, delayMs: 3000, welcomeAfterMs: 14_000 });
@@ -726,8 +737,37 @@ export const SCREENS: Record<string, ScreenDef> = {
         [6.2, () => typeIn(page, 'Ilya Sarn')],
         [6.8, key(page, 'ArrowDown')],
         [7.5, key(page, 'Enter')],
+        // (the mouse captured, as the player's click on Resume would: the clip arrives in the world itself)
+        [8.4, () => grantLock(page)],
         [8.6, key(page, 'Enter')],
       ]);
+    },
+  },
+  // `arrival`: a new Ixari character arrived, docked in its home Waystation's hangar. The stills: the pause menu that
+  // entering leaves up (the mouse is captured only from a click), on its shade over the lit hangar; and 16x9-resumed.png,
+  // the mouse captured, the world as the player then sees it. The clip: that world going on (the hangar's traffic).
+  arrival: {
+    clipSeconds: 2,
+    async open(page) {
+      await serveAccount(page, { welcomeAfterMs: 400 });
+      await titleReady(page);
+      await signIn(page, 'correct-horse');
+      await page.waitForSelector('.acct-step:not(.leaving) .acct-char[data-id]');
+      await page.waitForTimeout(800);
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      await page.waitForFunction(async () => {
+        await (window as unknown as { step(n: number): Promise<void> }).step(2);
+        return (window as unknown as { game: { mode: string } }).game.mode !== 'title';
+      });
+      await settle(page, 120);
+      await page.waitForTimeout(1500);
+    },
+    stills16x9: {
+      async resumed(page) {
+        await grantLock(page);
+        await settle(page, 60);
+      },
     },
   },
   'hud-ship': {

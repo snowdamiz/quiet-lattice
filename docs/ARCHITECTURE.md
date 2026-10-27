@@ -530,8 +530,10 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   limits), and a typed password leaves the page once sent, with its step, or on closing. Entering calls
   `Game.enterWorld` and shows Net's states; a failure before the welcome goes back to the list with why, and Esc lets the
   socket go. The first welcome, and everything the server says after it, is held (`holdFirstWelcome`) while Enter is
-  ticked and the screen fades to black (at most 3 s, for a tab whose animations do not run); the game then places the
-  character, takes what came meanwhile in order, and its place fades up. By keyboard: Play has the focus once the title
+  ticked and the title and its screens fade to black (at once in a hidden tab, whose animations do not run; at most
+  10 s); the game then places the character, takes what came meanwhile in order (a listener that throws is reported
+  and the rest still go), and its place fades up. Once the welcome is held Esc no longer cancels, and the title keeps
+  its own clock until the welcome is taken. By keyboard: Play has the focus once the title
   is ready, Enter submits, Esc goes back a step, the arrows walk the characters and the peoples, N makes a new
   character. The dev login's call is compiled out of production builds.
 - **`Net`** (`Net.js`) owns the socket. `connect()` sends `hello {version: PROTOCOL_VERSION, token}` and `join` together
