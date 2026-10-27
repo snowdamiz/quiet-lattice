@@ -2,7 +2,9 @@
 // refusal, a silence past the timeout, a dropped connection or not being joined plays nothing. A play that arrives too
 // late is given back with `done`; the server ending the one playing reaches the player. The offline link (the dev
 // sandbox's) answers for itself and keeps what it would have sent, checked against the protocol.
+import { encodeServerMessage } from '@astra/shared/protocol';
 import { describe, expect, it } from 'vitest';
+import { Net } from '../net/Net.js';
 import { ANSWER_TIMEOUT_MS, NetCutsceneLink, OfflineCutsceneLink } from './link.js';
 
 /** A stand-in for packages/client/src/net/Net.js: `joined`, `send` (false when it cannot go), `on` → unsubscribe. */
@@ -148,6 +150,56 @@ describe('NetCutsceneLink, a cutscene the server starts', () => {
     // (only once: the next play of it is the server's own)
     net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'test', phase: 4 });
     expect(played).toEqual(['test']);
+  });
+});
+
+describe('NetCutsceneLink on the client’s real Net', () => {
+  it('sends its request through the socket and plays on the server’s answer, and a server-started one, decoded and routed', async () => {
+    /** a WebSocket the test plays the server for */
+    class Socket {
+      constructor() {
+        this.readyState = 0;
+        this.sent = [];
+        Socket.last = this;
+      }
+      send(text) {
+        this.sent.push(JSON.parse(text));
+      }
+      close() {
+        this.readyState = 3;
+      }
+      push(m) {
+        this.onmessage?.({ data: encodeServerMessage(m) });
+      }
+    }
+    const net = new Net({ url: 'ws://test/ws', token: 'tok', characterId: 'c1', WebSocket: Socket, now: () => 0, timers: { setTimeout: () => 0, clearTimeout() {} } });
+    net.connect();
+    const ws = Socket.last;
+    ws.readyState = 1;
+    ws.onopen();
+    ws.push({
+      t: 'welcome',
+      accountId: 'a1',
+      character: { id: 'c1', name: 'Tess Arlo', people: 'thalune', look: { palette: 0, pattern: 0, head: 0, suit: 0 }, level: 1, homeSystem: 0 },
+      entityId: 7,
+      serverTime: 1000,
+      zone: { id: 'sys:0', systemSeed: 1 },
+      pose: { frame: '1:station', pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+      mode: 'docked',
+    });
+    expect(net.joined).toBe(true);
+    const link = new NetCutsceneLink(net);
+    const played = [];
+    link.onPlay = (id, phase) => played.push([id, phase]);
+    const p = link.request('test');
+    expect(ws.sent.at(-1)).toEqual({ t: 'cutscene', op: 'request', id: 'test' });
+    ws.push({ t: 'cutscene', op: 'play', id: 'test', phase: 5 });
+    expect(await p).toEqual({ phase: 5 });
+    link.done('test', true);
+    expect(ws.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+    ws.push({ t: 'cutscene', op: 'play', id: 'test', phase: 6 });
+    expect(played).toEqual([['test', 6]]);
+    link.dispose();
   });
 });
 
