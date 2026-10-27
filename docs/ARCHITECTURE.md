@@ -488,14 +488,17 @@ decides when one plays; the client presents it.
   `astra.cutscene` 1: each shot the evaluated camera at every frame, in the engine's axes, with the vertical field of
   view of the render framing; lines with times and lengths, a line without an end marker running its reading time cut
   short by the next; events with optional banners; the space; the stage) and, from the same source, the server's
-  `packages/server/src/cutscenes/placements/<id>.json` (`astra.cutscene.place` 1: the space, the radius and the
-  actors' poses). It never writes outside its output folders.
+  `packages/server/src/cutscenes/placements/<id>.json` (`astra.cutscene.place` 1: the space, the length, the radius and
+  the actors' poses). It never writes outside its output folders.
 - **Who and when (the server):** `CutsceneService` (`packages/server/src/cutscenes/`, built by server.ts, reached by the
   gateway's `cutscene` case) answers a client's `cutscene request` only when `may(session, id)` allows it: the quest
   engine (P1.E09.T01) sets `may` to its rule (the character is on that cutscene step) and starts its steps' cutscenes
   itself with `start(session, id, at)` at the step's place; until it does nothing may, but a catalog entry marked `dev`
   on a development server (`NODE_ENV` not production), so the test cutscene can never start in production. A session
-  asks at most once every 10 s (`COOLDOWN_S`); asking again for the one it is watching answers with the same phase.
+  asks at most once every 10 s (`COOLDOWN_S`). Asking again for the one it is watching answers with the same phase only
+  while that one is still going (its phase open, the player in it, within its bound); otherwise the request goes
+  through `may` and the cooldown again, so a step's cutscene cannot be replayed after its step. A cutscene the server
+  starts itself (`start`, the quest engine) is pushed to the client as an unrequested `play`.
 - **Where (the server):** a cutscene plays at its place. Anchored on its frame's origin, the place is that origin and
   the player must be within the radius (`refused place` otherwise); anchored on the player, it is where the player is,
   in the cutscene's frame, which must be the player's. The story phase is keyed by the cutscene and its place
@@ -507,14 +510,20 @@ decides when one plays; the client presents it.
   player out, and the last one out closes the phase with its actors. A session that leaves (its socket closes, it is
   kicked, its entity goes, a handoff, P1.E04.T04) is forgotten.
 - **Out of play:** while a player watches, `cutscenes.watching(zone, entity)` is true and the client pauses the
-  player's local hazards (pirate raids, the suit's survival damage). The server's fauna (§6.2) leaves alone a player
+  player's local hazards (pirate raids, the suit's survival damage). The server bounds it: only while the player is in
+  the cutscene's phase, and no longer than the cutscene's length, the client's 1.5 s exit and a 5 s margin. Past either,
+  the service's sweep (once a second, and before each request) ends the cutscene on the server, takes the player out of
+  its phase if it is still in it, and pushes `ended` to the client, which ends it there as a skip. The sweep also forgets
+  the anchor poses of phases that have closed, however they closed. The server's fauna (§6.2) leaves alone a player
   `phases.hiddenFromShared` hides; it must treat a watching player the same way (neither prey, intruder nor threat).
   That is a follow-up outside the cutscene code: `fauna/sim.ts`'s `Actor.hidden` should also be true while
   `cutscenes.watching(zone.id, id)`, the zone being given a way to ask the service.
 - **The client's link** (`packages/client/src/cutscene/link.js`): online (`game.net`, P1.E04.T01's Net) a cutscene asks
   through `NetCutsceneLink` (`net.send` and `net.on('cutscene')`) and plays only on `play`, in the phase it names; a
-  refusal, no answer within 5 s or a dropped connection plays nothing, and a `play` that comes too late is given back
-  with `done`. The server ending the one playing (`ended`) ends it here as a skip. `OfflineCutsceneLink` (a local
+  refusal, no answer within 5 s or a dropped connection plays nothing, and a `play` that comes too late for a request it gave up on is given back
+  with `done`. An unrequested `play` is a cutscene the server started itself (a quest step's): it plays, and its `done`
+  goes back as usual (one that cannot play now is given back at once). The server ending the one playing (`ended`)
+  ends it here as a skip. `OfflineCutsceneLink` (a local
   layer, phase null, the messages it would have sent kept) is the dev sandbox's only: with no `game.net`, in a dev
   build.
 - **Playback** (`packages/client/src/cutscene/`): `CutscenePlayer` loads and checks a definition (`timeline.js`), asks

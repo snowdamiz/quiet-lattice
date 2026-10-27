@@ -3,8 +3,8 @@
 // (CameraDirector), the letterbox and the dialogue bar (ui/Cinematic.js) and the banners (HUD.showBanner) on game time.
 //
 // A cutscene always plays in a phase, and only when the server says so: online it asks the server through the game's
-// Net (link.js NetCutsceneLink) and plays on `play`, never on a refusal or a silence; the offline link is the dev
-// sandbox's only. While it plays, game.overlay is 'cutscene': the player's controls are locked like under any menu,
+// Net (link.js NetCutsceneLink) and plays on `play`, never on a refusal or a silence; one the server starts itself
+// arrives unasked and plays the same way (serverStarted). The offline link is the dev sandbox's only. While it plays, game.overlay is 'cutscene': the player's controls are locked like under any menu,
 // except the cutscene's own keys (Space, Enter or a click for the next line; Esc skips it, in one press: through
 // Menus.closeAll, or under pointer lock, where the browser takes Esc to release the lock, through that release). A skip
 // fires every event still to come, so listeners end where watching would have left them, and the camera glides back to

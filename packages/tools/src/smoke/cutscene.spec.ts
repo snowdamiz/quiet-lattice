@@ -7,7 +7,8 @@ import { expect, test } from '@playwright/test';
 // its remaining events fire marked skipped (no banner) and the camera comes back the same way. It asks for its phase
 // first (offline: the local layer). Nothing logs an error.
 //
-// Online (game.net, here a stand-in for the client's Net) it asks the server first and plays only on its `play`.
+// Online (game.net, here a stand-in for the client's Net) it asks the server first and plays only on its `play`; one the
+// server starts itself plays unasked.
 //
 // The page's own frame loop is held (its requestAnimationFrame callbacks parked) once the game is up, so frames advance
 // only through window.step and every number below is the same on every run.
@@ -268,16 +269,27 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true }));
     while (g.cutscenes.active) await window.step(5);
     const result = await playP;
+    // the server starts one itself (a quest step's): unasked, it plays, and its done goes back
+    await window.step(30);
+    answer({ t: 'cutscene', op: 'play', id: 'test', phase: 11 });
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    await window.step(2);
+    const serverStarted = g.cutscenes.state();
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true }));
+    while (g.cutscenes.active) await window.step(5);
     g.net = null;
-    return { refused, activeAfterRefusal, storyPhase: state?.storyPhase, result, sent };
+    return { refused, activeAfterRefusal, storyPhase: state?.storyPhase, result, serverStarted: serverStarted?.storyPhase, sent };
   });
   expect(online.refused).toEqual({ id: 'test', refused: 'denied' });
   expect(online.activeAfterRefusal).toBe(false);
   expect(online.storyPhase).toBe(9);
   expect(online.result).toMatchObject({ id: 'test', skipped: true, phase: 9 });
+  expect(online.serverStarted).toBe(11);
   expect(online.sent).toEqual([
     { t: 'cutscene', op: 'request', id: 'test' },
     { t: 'cutscene', op: 'request', id: 'test' },
+    { t: 'cutscene', op: 'done', id: 'test', skipped: true },
     { t: 'cutscene', op: 'done', id: 'test', skipped: true },
   ]);
 
