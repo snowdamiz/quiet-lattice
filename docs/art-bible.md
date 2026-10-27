@@ -277,13 +277,15 @@ authority for the numbers.
   (rate-distortion optimised, then Zstandard), base colour, emissive and AO in ETC1S; byte-identical maps (a variant whose
   bake of an unchanged material came out the same) are stored once. The codecs and their settings are `families.json`
   `textures`; a family may opt out with its own `"textures": {"compress": false}`, and `pnpm art:export -- <family>
-  --no-compress` writes PNGs to compare against (validation of shipped models refuses them). The validator re-imports a
-  compressed export from its maps transcoded back to PNG (the texels the client shows) and fails a map that is not KTX2,
+  --no-compress` writes PNGs to compare against (validation of shipped models refuses them). The validator and the
+  turntable re-import a compressed export from its maps transcoded back to PNG (the texels the client shows); the
+  validator fails a map that is not KTX2,
   a normal map not in UASTC, a colour map not sRGB or a data map not linear, a short mip chain, and a variant whose maps
   take more GPU memory once transcoded (8 bits a texel, mips included) than its class's `gpuTextureMB`: 512 MB for a
   hero, 128 MB for the 2k classes, 32 MB for the 1k ones. The encoder is Khronos' KTX-Software `ktx` 4.4.2, which `pnpm
   art:export`, `art:test` and `art:validate` of a `.glb` fetch on first use into `node_modules/.cache/` (checked against
-  its SHA-256; `KTX=<path to ktx>` uses another build). The client loads the maps through three's `KTX2Loader`
+  its SHA-256; `KTX=<path to ktx>` uses another build), as does `pnpm turntable` of a `.glb`. The client loads every
+  model through three's `KTX2Loader`
   (`gltfLoader()` in `src/core/Engine.js`) with the Basis transcoder served from `packages/client/public/basis/`, a copy
   of three's that a unit test keeps equal to the installed version; the review readout reports the maps' GPU memory.
 - **Engine conventions** (DESIGN 19.4): hull material names `Hull`, `Accent`, `Trim`, `Dark`, `Glass`, `EngineGlow`, `Nav*`
