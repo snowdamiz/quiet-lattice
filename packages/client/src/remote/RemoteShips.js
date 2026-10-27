@@ -1,20 +1,44 @@
-// How remote ships are drawn (docs/ARCHITECTURE.md §9, "Remote entities"). Every remote ship of one hull shares one kit of
-// instanced meshes made from that hull's model as the local ship dresses it: its hull surfaces merged into one geometry
-// per material (the cockpit interior, which the local ship shows only from the seat, left out), each landing-gear leg
-// apart so it can fold per ship, and its engine exhausts as one instanced billboard mesh. A frame's draw calls are the
-// kit's (26 for the Lark, and their shadows), however many ships are in view, and nothing is allocated per frame. Each ship
-// folds its gear, lights its engines and strobes its beacon on its own, from the motion its snapshots describe.
+// How remote ships are drawn (docs/ARCHITECTURE.md §9, "Remote entities"). Every remote ship of one hull shares one kit
+// of instanced meshes, made from that hull's own model (its own copy, loaded apart from the player's ship, whatever the
+// player flies or paints) as the game dresses a ship: its hull surfaces merged into one geometry per material (the
+// cockpit interior, which shows only from the seat, left out), each landing-gear leg apart so it folds per ship, and the
+// engine exhausts as one instanced billboard mesh. Each surface has three levels of detail (the model, and two
+// meshoptimizer simplifications with their borders locked, so no gaps open between the surfaces), picked per ship by
+// how many pixels it covers, so a ship tens of pixels long draws as few triangles as it can show and its outline holds
+// instead of crawling. A frame's draw calls are the kit's (26 surfaces for the Lark, at each level in use, and their
+// shadows), however many ships are in view, and nothing is allocated per frame. Each ship folds its gear, lights its
+// engines (by its speed and thrust) and strobes its beacon on its own, from the motion its snapshots describe.
 //
-// Hulls draw with their own model; until P1.E12.T02/T03 bring the others, only the Lark has one (the local ship's), and a
-// hull is drawn with another's model only when both are of one tier (IMPLEMENTATION_PLAN 0.3), so a hull with neither
-// is not drawn at all.
+// Hulls draw with their own model; until P1.E12.T02/T03 bring the others only the Lark has one, and a hull is drawn with
+// another's model only when both are of one tier (IMPLEMENTATION_PLAN 0.3), so a hull with neither is not drawn at all.
+// The snapshots carry no livery: every hull draws in its authored one (livery 0; P1.E12.T02 paints the other two).
 import * as THREE from 'three';
+import { MeshoptSimplifier } from 'three/addons/libs/meshopt_simplifier.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { getHull } from '@astra/shared/data';
+import { Ship } from '../entities/Ship.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 
-/** The hulls with a model, and the loaded ship each comes from (null until it has loaded). */
-export const HULL_MODELS = { lark: (game) => (game.ship?.model ? game.ship : null) };
+/** The hulls with a model, each a loaded Ship of that hull and livery 0 of its own: today only the Lark (Ship's own
+ * hull; P1.E12.T03 gives Ship the others). */
+export const HULL_SOURCES = {
+  lark: async () => {
+    const ship = new Ship(null);
+    await ship.load();
+    return ship;
+  },
+};
+
+/** The simplified levels: the share of the model's triangles each aims for, and the error it may make (of the hull's
+ * size). */
+export const LODS = [
+  { ratio: 0.35, error: 0.01 },
+  { ratio: 0.12, error: 0.03 },
+];
+/** A ship longer on screen than this many pixels draws the model; than this many, the first simplification; shorter, the
+ * second. A ship moves to a finer level only when 15% past its threshold, so it does not flicker between two. */
+export const LOD_PX = [240, 100];
+const LOD_HYSTERESIS = 1.15;
 
 /** Ships this close (m) are drawn even outside the view: their shadows can fall into it. */
 const SHADOW_NEAR = 100;
@@ -35,36 +59,45 @@ const _q = new THREE.Quaternion();
 const _e = new THREE.Euler();
 const _c = new THREE.Color();
 const _fwd = new THREE.Vector3();
+const _size = new THREE.Vector2();
 const _frustum = new THREE.Frustum();
 const _sphere = new THREE.Sphere();
 
 /** The hull whose model draws `hull`: its own, else one of its tier's, else null (it is not drawn). */
-export function modelledHull(hull) {
-  if (HULL_MODELS[hull]) return hull;
+export function modelledHull(hull, sources = HULL_SOURCES) {
+  if (sources[hull]) return hull;
   let tier;
   try {
     tier = getHull(hull).tier;
   } catch {
     return null;
   }
-  for (const id of Object.keys(HULL_MODELS)) if (getHull(id).tier === tier) return id;
+  for (const id of Object.keys(sources)) if (getHull(id).tier === tier) return id;
   return null;
 }
 
-/** The look the local ship gives its hull's materials (Ship.load), on a remote ship's copy: the plating detail. */
-export function dressHull(material) {
-  if (PANELLED.has(material.name)) applyPanelDetail(material, { scale: 0.55 });
+/** The look the game gives a ship's hull materials (Ship.load), on a remote ship's copy: the plating detail; for the
+ * coarsest level (`far`), a ship tens of pixels long, at a third of its strength, as a texture's smaller mip would show
+ * it (at full strength its seams only flicker). */
+export function dressHull(material, { far = false } = {}) {
+  if (PANELLED.has(material.name)) applyPanelDetail(material, { scale: 0.55, strength: far ? 0.18 : 0.55 });
 }
 
 export class RemoteShips {
-  /** `dress(material)` gives each copied material the local ship's look (tests pass none: it needs a canvas). */
-  constructor(game, { dress = dressHull } = {}) {
+  /**
+   * `sources` (hull id → a loaded Ship, or a promise of one) and `dress(material)` stand in for HULL_SOURCES and
+   * dressHull in tests (which have no model files and no canvas).
+   */
+  constructor(game, { dress = dressHull, sources = HULL_SOURCES } = {}) {
     this.game = game;
     this.dress = dress;
+    this.sources = sources;
     this.group = new THREE.Group();
     this.group.name = 'remote ships';
-    /** modelled hull id → HullKit */
+    /** modelled hull id → HullKit, once built */
     this.kits = new Map();
+    /** modelled hull id → the promise of its kit (with its simplified levels) */
+    this.loading = new Map();
     /** hull id → the modelled hull that draws it (or null), as modelledHull says, asked once */
     this.models = new Map();
     this.clock = 0;
@@ -72,7 +105,7 @@ export class RemoteShips {
 
   modelOf(hull) {
     let id = this.models.get(hull);
-    if (id === undefined) this.models.set(hull, (id = modelledHull(hull)));
+    if (id === undefined) this.models.set(hull, (id = modelledHull(hull, this.sources)));
     return id;
   }
 
@@ -81,19 +114,36 @@ export class RemoteShips {
     return this.modelOf(hull) !== null;
   }
 
-  /** The kit for `hull`, built on first use once its model has loaded; null before that or for a hull not drawn. */
+  /** Starts making the kit for `hull` (its model loaded and dressed, then simplified); resolves with it once whole
+   * (null for a hull not drawn). */
+  prepare(hull) {
+    const id = this.modelOf(hull);
+    if (id === null) return Promise.resolve(null);
+    let p = this.loading.get(id);
+    if (!p) {
+      p = Promise.resolve(this.sources[id](this.game))
+        .then((ship) => {
+          const kit = new HullKit(id, ship, this.dress);
+          this.kits.set(id, kit);
+          this.group.add(kit.group);
+          return kit.simplify().then(() => kit);
+        })
+        .catch((err) => {
+          console.warn(`remote ships: no ${id} model (${err?.message ?? err})`);
+          return null;
+        });
+      this.loading.set(id, p);
+    }
+    return p;
+  }
+
+  /** The kit for `hull` if it is built (starting it if not); null until then, or for a hull not drawn. */
   kit(hull) {
     const id = this.modelOf(hull);
     if (id === null) return null;
-    let kit = this.kits.get(id);
-    if (!kit) {
-      const source = HULL_MODELS[id](this.game);
-      if (!source) return null;
-      kit = new HullKit(id, source, this.dress);
-      this.kits.set(id, kit);
-      this.group.add(kit.group);
-    }
-    return kit;
+    const kit = this.kits.get(id);
+    if (!kit) this.prepare(hull);
+    return kit ?? null;
   }
 
   /** Draws `list` (RemoteEntities' records) this frame: each one shown, in view or near, through its hull's kit. */
@@ -101,17 +151,24 @@ export class RemoteShips {
     this.clock += dt;
     for (const kit of this.kits.values()) kit.begin();
     const cam = this.game.engine?.camera;
-    if (cam) _frustum.setFromProjectionMatrix(_m.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse));
+    let pxPerRad = 1000;
+    if (cam) {
+      _frustum.setFromProjectionMatrix(_m.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse));
+      const h = this.game.engine.renderer?.getDrawingBufferSize(_size).y ?? 1080;
+      pxPerRad = h / (2 * Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2));
+    }
     const camWorld = this.game.camWorld;
     for (const r of list) {
       r.drawn = false;
       if (!r.shown) continue;
       const kit = this.kit(r.hull);
       if (!kit) continue;
-      const vis = (r.vis ??= { gear: 1, power: 0, thrust: 0, fwdSpeed: null, strobe: (r.id * 0.618) % 1 });
+      const vis = (r.vis ??= { gear: 1, power: 0, thrust: 0, fwdSpeed: null, strobe: (r.id * 0.618) % 1, lod: 0 });
       animate(r, vis, kit, dt);
       const rel = _v.copy(r.world).sub(camWorld);
-      if (cam && rel.length() > SHADOW_NEAR && !_frustum.intersectsSphere(_sphere.set(rel, kit.radius))) continue;
+      const dist = rel.length();
+      if (cam && dist > SHADOW_NEAR && !_frustum.intersectsSphere(_sphere.set(rel, kit.radius))) continue;
+      vis.lod = lodFor((kit.length / Math.max(dist, 1e-3)) * pxPerRad, vis.lod, kit.levels);
       kit.add(rel, r.worldQuat, vis, this.clock);
       r.drawn = true;
     }
@@ -119,9 +176,18 @@ export class RemoteShips {
   }
 }
 
+/** The level of detail for a ship `px` pixels long that drew at `was`, of `levels` (0 the model). */
+export function lodFor(px, was, levels = LOD_PX.length + 1) {
+  let lod = 0;
+  while (lod < LOD_PX.length && px < LOD_PX[lod]) lod++;
+  // (to a finer level only well past its threshold)
+  if (lod < was && px < LOD_PX[lod] * LOD_HYSTERESIS) lod = was;
+  return Math.min(lod, levels - 1);
+}
+
 // The gear and engines of one ship from its motion, as Ship.update does it for the local ship: the gear down when set
-// down, or slow and low; the engines idling, pushed by the acceleration along the nose, brighter past the cruise (a
-// boost) and full on the pulse drive.
+// down, or slow and low; the engines idling, brighter with speed (up to the cruise) and with acceleration along the
+// nose, brighter still past the cruise (a boost) and full on the pulse drive.
 function animate(r, vis, kit, dt) {
   const pose = r.pose;
   const mode = pose.mode;
@@ -135,7 +201,7 @@ function animate(r, vis, kit, dt) {
   vis.fwdSpeed = fwdSpeed;
   const boost = speed > kit.cruise * 1.05 ? 0.5 : 0;
   vis.pulse = mode === 'pulse';
-  const power = down ? 0 : vis.pulse ? 1.6 : 0.12 + vis.thrust * 0.7 + boost;
+  const power = down ? 0 : vis.pulse ? 1.6 : 0.12 + 0.55 * Math.min(1, speed / kit.cruise) + vis.thrust * 0.7 + boost;
   vis.power = THREE.MathUtils.damp(vis.power, power, 6, dt);
 }
 
@@ -153,21 +219,31 @@ function altitude(r) {
   return Infinity;
 }
 
-// A merged hull surface: one material, every ship's instance.
+// One level of a merged hull surface, every ship's instance at that level.
+class Level {
+  constructor(geometry) {
+    this.geometry = geometry;
+    this.mesh = null;
+    this.count = 0;
+  }
+}
+
+// A merged hull surface: one material (and its copy for the coarsest level), its levels of detail.
 class Part {
-  constructor(geometry, material, gear, glow) {
+  constructor(geometry, material, far, gear, glow) {
     /** the gear leg it folds with (-1: none) */
     this.gear = gear;
     /** 'engine' (lit by the engines' power), 'strobe' (the beacon) or null */
     this.glow = glow;
-    this.geometry = geometry;
     this.material = material;
-    this.mesh = null;
+    this.far = far;
+    this.levels = [new Level(geometry)];
   }
 
-  alloc(capacity) {
-    const old = this.mesh;
-    const mesh = new THREE.InstancedMesh(this.geometry, this.material, capacity);
+  alloc(level, capacity) {
+    const old = level.mesh;
+    const coarsest = this.levels.length > 1 && level === this.levels[this.levels.length - 1];
+    const mesh = new THREE.InstancedMesh(level.geometry, coarsest ? this.far : this.material, capacity);
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     if (this.glow) mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(capacity * 3), 3).setUsage(THREE.DynamicDrawUsage);
     mesh.castShadow = true;
@@ -175,11 +251,12 @@ class Part {
     // (each ship is culled on its own)
     mesh.frustumCulled = false;
     mesh.count = 0;
+    mesh.visible = false;
     if (old) {
       old.removeFromParent();
       old.dispose();
     }
-    this.mesh = mesh;
+    level.mesh = mesh;
     return mesh;
   }
 }
@@ -191,11 +268,10 @@ class HullKit {
     this.group = new THREE.Group();
     this.group.name = `remote ${id}`;
     this.capacity = 16;
-    this.count = 0;
     const group = ship.group;
     group.updateMatrixWorld(true);
     const toShip = new THREE.Matrix4().copy(group.matrixWorld).invert();
-    // what the local ship shows only from the seat, and its effects, are not the hull
+    // what shows only from the seat, and the ship's effects, are not the hull
     const skip = new Set([ship.cockpit?.group, ship.reentryFx?.group, ship.model.getObjectByName('CockpitInterior')].filter(Boolean));
     const gearNodes = ship.gearNodes ?? [];
     /** per gear leg: the matrix from the ship to its pivot's parent, and its pivot's rest pose */
@@ -208,16 +284,19 @@ class HullKit {
     }));
     const buckets = new Map();
     const materials = new Map();
-    const copyOf = (src) => {
-      const key = materialKey(src);
+    // a copy of a material as remote ships wear it; the `far` one for the coarsest level
+    const copyOf = (src, far = false) => {
+      const key = `${far}|${materialKey(src)}`;
       let m = materials.get(key);
       if (!m) {
         m = src.clone();
         delete m.userData.panel;
-        dress(m);
+        dress(m, { far });
         if (m.name === 'EngineGlow' || m.name === 'NavWhite') glowPerInstance(m);
         // (the thrusters' throats glow only as they fire, which a remote ship's snapshots do not tell)
         else if (!m.name) m.emissiveIntensity = 0;
+        // (the small strong lights, a few pixels across far off, would only sparkle at full strength)
+        else if (far && m.emissiveIntensity > 1) m.emissiveIntensity *= 0.4;
         materials.set(key, m);
       }
       return m;
@@ -230,7 +309,7 @@ class HullKit {
       if (o.isMesh && !o.isInstancedMesh && src?.isMeshStandardMaterial) {
         const key = `${gear}|${materialKey(src)}`;
         let b = buckets.get(key);
-        if (!b) buckets.set(key, (b = { gear, material: copyOf(src), geometries: [] }));
+        if (!b) buckets.set(key, (b = { gear, material: copyOf(src), far: copyOf(src, true), geometries: [] }));
         // into the ship's space, or its gear pivot's
         _m.multiplyMatrices(gear < 0 ? toShip : this.gears[gear].fromPivot, o.matrixWorld);
         b.geometries.push(surface(o.geometry).applyMatrix4(_m));
@@ -243,14 +322,18 @@ class HullKit {
       const geometry = b.geometries.length === 1 ? b.geometries[0] : mergeGeometries(b.geometries);
       if (!geometry) throw new Error(`remote ${id}: the ${b.material.name || 'unnamed'} surfaces could not be merged`);
       const name = b.material.name;
-      this.parts.push(new Part(geometry, b.material, b.gear, name === 'EngineGlow' ? 'engine' : name === 'NavWhite' ? 'strobe' : null));
+      this.parts.push(new Part(geometry, b.material, b.far, b.gear, name === 'EngineGlow' ? 'engine' : name === 'NavWhite' ? 'strobe' : null));
     }
     const box = new THREE.Box3();
     for (const p of this.parts) {
-      p.geometry.computeBoundingBox();
-      box.union(p.geometry.boundingBox);
+      p.levels[0].geometry.computeBoundingBox();
+      box.union(p.levels[0].geometry.boundingBox);
     }
     this.radius = box.isEmpty() ? 10 : box.getBoundingSphere(new THREE.Sphere()).radius + box.getCenter(_v).length();
+    /** the hull's longest side (m): how long it is on screen picks its level of detail */
+    this.length = box.isEmpty() ? 10 : Math.max(...box.getSize(_v).toArray());
+    /** how many levels of detail every surface has (1 until simplify() is done) */
+    this.levels = 1;
     /** the exhausts: where each engine's trail starts and its nozzle's radius (Ship.load's flames) */
     this.engines = (ship.flames ?? []).map((f) => ({ base: f.base.clone(), r: f.r }));
     this.flameGeometry = new THREE.PlaneGeometry(1, 1);
@@ -258,9 +341,34 @@ class HullKit {
     this.alloc(this.capacity);
   }
 
+  /** Makes the simplified levels of every surface (meshoptimizer, once its WebAssembly is ready). They share the model's
+   * vertices: only their triangles differ. */
+  async simplify() {
+    await MeshoptSimplifier.ready;
+    for (const p of this.parts) {
+      const g0 = p.levels[0].geometry;
+      const pos = g0.attributes.position.array;
+      const index = new Uint32Array(g0.index.array);
+      for (const { ratio, error } of LODS) {
+        const target = Math.max(3, Math.floor((index.length * ratio) / 3) * 3);
+        // (borders locked, so no gap opens between two surfaces; parts smaller than the error pruned whole: the rails,
+        // rivets and antennas that only flicker at a few pixels)
+        const [tris] = MeshoptSimplifier.simplify(index, pos, 3, target, error, ['LockBorder', 'Prune']);
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', g0.attributes.position);
+        g.setAttribute('normal', g0.attributes.normal);
+        g.setIndex(new THREE.BufferAttribute(tris, 1));
+        g.boundingBox = g0.boundingBox;
+        p.levels.push(new Level(g));
+      }
+    }
+    this.levels = LODS.length + 1;
+    this.alloc(this.capacity);
+  }
+
   alloc(capacity) {
     this.capacity = capacity;
-    for (const p of this.parts) this.group.add(p.alloc(capacity));
+    for (const p of this.parts) for (const l of p.levels) this.group.add(p.alloc(l, capacity));
     const old = this.flames;
     const n = capacity * this.engines.length * TRAIL;
     const geo = this.flameGeometry.clone();
@@ -279,17 +387,19 @@ class HullKit {
     }
     this.flames = flames;
     this.flameCount = 0;
+    this.count = 0;
   }
 
   begin() {
     this.count = 0;
     this.flameCount = 0;
+    for (const p of this.parts) for (const l of p.levels) l.count = 0;
   }
 
-  /** One ship: at `rel` from the camera, turned `quat`, its gear and engines as `vis` has them. */
+  /** One ship: at `rel` from the camera, turned `quat`, its gear, engines and level of detail as `vis` has them. */
   add(rel, quat, vis, clock) {
     if (this.count === this.capacity) this.grow();
-    const i = this.count++;
+    this.count++;
     _t.compose(rel, quat, ONE);
     // gear legs fold up and in as the local ship's do (Ship.update)
     for (const g of this.gears) {
@@ -301,9 +411,12 @@ class HullKit {
     // 0.4), each ship on its own beat; both over the glow materials' base of GLOW_BASE
     const engine = (0.07 + vis.power * 0.63) / GLOW_BASE;
     const strobe = ((clock / 1.6 + vis.strobe) % 1 < 0.05 ? 6 : 0.4) / GLOW_BASE;
+    const lod = Math.min(vis.lod, this.levels - 1);
     for (const p of this.parts) {
-      p.mesh.setMatrixAt(i, p.gear < 0 ? _t : this.gears[p.gear].m);
-      if (p.glow) p.mesh.setColorAt(i, _c.setScalar(p.glow === 'engine' ? engine : strobe));
+      const l = p.levels[lod];
+      const i = l.count++;
+      l.mesh.setMatrixAt(i, p.gear < 0 ? _t : this.gears[p.gear].m);
+      if (p.glow) l.mesh.setColorAt(i, _c.setScalar(p.glow === 'engine' ? engine : strobe));
     }
     this.addExhaust(vis.power, vis.pulse);
   }
@@ -331,30 +444,38 @@ class HullKit {
     }
   }
 
+  // Twice the room, keeping what this frame has written so far.
   grow() {
-    const mats = this.parts.map((p) => p.mesh.instanceMatrix.array.slice(0, this.count * 16));
-    const cols = this.parts.map((p) => p.mesh.instanceColor?.array.slice(0, this.count * 3));
+    const kept = this.parts.map((p) => p.levels.map((l) => [l.count, l.mesh.instanceMatrix.array.slice(0, l.count * 16), l.mesh.instanceColor?.array.slice(0, l.count * 3)]));
     const flameMats = this.flames.instanceMatrix.array.slice(0, this.flameCount * 16);
     const flameCols = this.flames.geometry.attributes.aGlow.array.slice(0, this.flameCount * 3);
     const flameCount = this.flameCount;
+    const count = this.count;
     this.alloc(this.capacity * 2);
-    this.parts.forEach((p, k) => {
-      p.mesh.instanceMatrix.array.set(mats[k]);
-      if (cols[k]) p.mesh.instanceColor.array.set(cols[k]);
-    });
+    this.parts.forEach((p, k) =>
+      p.levels.forEach((l, j) => {
+        const [n, mats, cols] = kept[k][j];
+        l.count = n;
+        l.mesh.instanceMatrix.array.set(mats);
+        if (cols) l.mesh.instanceColor.array.set(cols);
+      }),
+    );
     this.flames.instanceMatrix.array.set(flameMats);
     this.flames.geometry.attributes.aGlow.array.set(flameCols);
     this.flameCount = flameCount;
+    this.count = count;
   }
 
   end() {
-    for (const p of this.parts) {
-      p.mesh.count = this.count;
-      // (none drawn, none of the kit's draw calls or shadow passes are made)
-      p.mesh.visible = this.count > 0;
-      p.mesh.instanceMatrix.needsUpdate = true;
-      if (p.mesh.instanceColor) p.mesh.instanceColor.needsUpdate = true;
-    }
+    for (const p of this.parts)
+      for (const l of p.levels) {
+        l.mesh.count = l.count;
+        // (none drawn at a level, none of its draw calls or shadow passes are made)
+        l.mesh.visible = l.count > 0;
+        if (!l.count) continue;
+        l.mesh.instanceMatrix.needsUpdate = true;
+        if (l.mesh.instanceColor) l.mesh.instanceColor.needsUpdate = true;
+      }
     this.flames.count = this.flameCount;
     this.flames.visible = this.flameCount > 0;
     this.flames.instanceMatrix.needsUpdate = true;
@@ -362,8 +483,8 @@ class HullKit {
   }
 }
 
-// Materials that look the same are one: the thrusters' throats are a material each on the local ship (their glow, which
-// the local ship animates, is set on the copy).
+// Materials that look the same are one: the thrusters' throats are a material each on a ship (their glow, which the ship
+// animates, is set on the copy).
 function materialKey(m) {
   return [m.type, m.name, m.color.getHexString(), m.emissive.getHexString(), m.roughness, m.metalness, m.side].join('|');
 }

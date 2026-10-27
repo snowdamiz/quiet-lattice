@@ -769,6 +769,25 @@ body {
 .marker.poi .icon {
   border-color: #c7a6ff;
 }
+/* another pilot's ship: a small teal diamond over its canopy, its name in the condensed face and the range under it */
+.marker.player .icon {
+  width: 6px;
+  height: 6px;
+  margin: -3px;
+  border-width: 1px;
+  border-color: var(--accent2);
+}
+.marker.player .lbl {
+  left: 8px;
+  top: -7px;
+  font-family: var(--font-cond);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: rgba(222, 244, 240, 0.95);
+}
+.marker.player .lbl small {
+  font-size: 9px;
+}
 .marker.resource .icon {
   width: 6px;
   height: 6px;

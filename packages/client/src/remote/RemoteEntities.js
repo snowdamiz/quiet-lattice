@@ -14,6 +14,8 @@
 // (P1.E05.T04); creatures are P1.E08.T09's (fauna from snapshots); npcs (walkers) and props wait for the body rig and a
 // prop catalog, loot and pods for P1.E08.T04 and P1.E06.T03: none of them is followed here.
 import * as THREE from 'three';
+import { detects, effectiveSignature, movementSignals, shipStats } from '@astra/shared/ships';
+import { coverAtObjects } from '@astra/shared/world';
 import { SnapshotStore } from '../net/snapshots.js';
 import { frameOfId } from '../net/pose.js';
 import { PoseBuffer } from './buffer.js';
@@ -107,6 +109,8 @@ export class RemoteEntities {
     /** a recorded stream played into feed() as world time passes (replay.js), for the dev captures */
     this.replay = null;
     this.detach = null;
+    /** hull id → its stats (signature) as markers read them */
+    this.stats = new Map();
   }
 
   /** Follows `net`'s snapshots (and forgets everything at each welcome and zone change, where entity ids start over). */
@@ -119,6 +123,8 @@ export class RemoteEntities {
       net.on('zone', () => this.reset()),
     ];
     this.serverNow = () => net.serverTime() ?? this.game.time;
+    // (the hull every pilot starts in, made ready before the first other pilot comes into view)
+    this.view.prepare?.(DEFAULT_HULL);
     this.detach = () => {
       for (const off of offs) off();
       this.serverNow = () => this.game.time;
@@ -137,6 +143,42 @@ export class RemoteEntities {
   /** The entity with zone id `id`, as followed (undefined when it is not). */
   get(id) {
     return this.byId.get(id);
+  }
+
+  /**
+   * The other pilots' ships a ship's sensors at world position `here`, of range `range`, pick up (DESIGN 10.1, as for
+   * any ship: within the range × the ship's signature as a player reads it, halved in cover, doubled boosting or on the
+   * pulse drive): `add(name, world)` for each, the point a little over its canopy. Pilots on foot have no marker.
+   */
+  markers(here, range, add) {
+    for (const r of this.list) {
+      if (r.kind !== 'player' || !r.shown) continue;
+      const stats = this.statsOf(r.hull);
+      if (!stats) continue;
+      const mode = r.pose.mode === 'pulse' ? 'pulse' : r.pose.mode === 'landed' || r.pose.mode === 'docked' ? r.pose.mode : 'space';
+      const signature = effectiveSignature(stats, { detector: 'player', inCover: this.inCover(r.world), ...movementSignals(stats, mode, r.pose.vel.length()) });
+      if (!detects(range, signature, r.world.distanceTo(here))) continue;
+      add(r.name ?? 'Pilot', _l.set(0, 3.5, 0).applyQuaternion(r.worldQuat).add(r.world));
+    }
+  }
+
+  // A hull's stats as it leaves the yard (its signature is the hull's own), once per hull; null for no hull known.
+  statsOf(hull) {
+    if (!this.stats.has(hull)) {
+      let stats = null;
+      try {
+        stats = shipStats({ hull, modules: {}, cargoPods: 0, livery: 0 });
+      } catch {
+        // (a hull the data does not know)
+      }
+      this.stats.set(hull, stats);
+    }
+    return this.stats.get(hull);
+  }
+
+  inCover(world) {
+    const g = this.game;
+    return !g.universe?.deep && !g.universe?.dormant && !!this.system?.description && !!coverAtObjects(this.system.description, this.system.planets, world);
   }
 
   /** Applies a decoded snapshot without a server (a recorded stream, tests), as Net's store would, `arrival` being the

@@ -33,6 +33,10 @@ function fmtSpeed(v) {
   return `${(c / 1e6).toFixed(1)}M<small>C</small>`;
 }
 
+// (labels go in as markup with their range; a pilot's name is the player's own, so every label is escaped)
+const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ESC[c]);
+
 function setText(e, html) {
   if (e._html !== html) {
     e.innerHTML = html;
@@ -357,8 +361,9 @@ export class HUD {
       }
       const margin = 40;
       const off = behind || sx < margin || sx > W - margin || sy < margin || sy > H - margin;
-      // (scanned resources off screen are dropped too: pinned to the edge they stacked into a column)
-      if (off && !m.target && (m.kind === 'planet' || m.kind === 'poi' || m.kind === 'resource' || m.kind === 'system' || m.kind === 'city')) {
+      // (scanned resources off screen are dropped too: pinned to the edge they stacked into a column; so are other pilots,
+      // a crowd of whom would line the edges)
+      if (off && !m.target && (m.kind === 'planet' || m.kind === 'poi' || m.kind === 'resource' || m.kind === 'system' || m.kind === 'city' || m.kind === 'player')) {
         i--;
         e.style.display = 'none';
         continue;
@@ -381,9 +386,10 @@ export class HUD {
         const secs = m.dist / Math.abs(g.ship.speed);
         eta = secs < 3600 ? ` · ETA ${secs < 90 ? secs.toFixed(0) + 's' : (secs / 60).toFixed(0) + 'm'}` : '';
       }
-      // names only for the marker you are looking at (or have targeted); others just show range
+      // names only for the marker you are looking at (or have targeted); others just show range; other pilots always say
+      // who they are
       const near = !off && Math.hypot(sx - W / 2, sy - H / 2) < Math.min(W, H) * 0.12;
-      const lbl = m.target || near ? `${m.label}<small>${fmtDist(m.dist)}${eta}</small>` : `<small>${fmtDist(m.dist)}</small>`;
+      const lbl = m.target || near || m.kind === 'player' ? `${esc(m.label)}<small>${fmtDist(m.dist)}${eta}</small>` : `<small>${fmtDist(m.dist)}</small>`;
       if (e._lbl !== lbl) {
         e.querySelector('.lbl').innerHTML = lbl;
         e._lbl = lbl;

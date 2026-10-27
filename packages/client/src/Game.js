@@ -1111,6 +1111,9 @@ export class Game {
         for (const t of f.terminals) add('station', t.label, f.localToWorld(_v3.copy(t.pos).add(new THREE.Vector3(0, 2, 0)), new THREE.Vector3()));
       }
     }
+    // other pilots' ships, picked up by the same rule as any ship (src/remote/)
+    const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(new THREE.Vector3());
+    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world) => add('player', name, world));
     return out;
   }
 
