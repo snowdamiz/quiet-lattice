@@ -252,10 +252,13 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
   with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
-  doubling each time, with one warning each time. A world's dens at the zone's tier are a plan of their own on the same
-  worker (`planDenList`: `planSurface`'s dens on the natural ground, 50–600 ms on a large world at Tier 3), asked for with
-  its ground and kept per world and tier. They are the dens of the one shared plan (§12), each naming which of the
-  world's species lives in it.
+  doubling each time, with one warning each time. A world's dens at the zone's tier come from the same worker and the
+  same plan: shared `worldSurface` plans the whole surface once (`planWorld`: the drawn ground's pads and sites'
+  clearance, to the bit, and every den of the tier, each naming which of the world's species lives in it, §12). The
+  dens cost 50–600 ms more on a large world at Tier 3, so they are asked for with the ground but as a request of their
+  own, kept per world and tier: the ground (`planGround`) comes back first, without them, and the dens' reply carries
+  the ground of its plan too, kept with its clearance (`Ground.nodes`) when no ground is kept yet. Tests hold the pads,
+  the nodes' clearance and the dens to one plan.
 - **Night** (`fauna/sky.ts`) is the meters' rule from the shared kinematics: night at a point when its star is on or
   below the horizon of the point's own up. At night a cell may also send out its night herd, always one of the herd
   spawner's predators, planned from the world's seed and the cell on a stream of its own with
@@ -482,8 +485,10 @@ A den's place depends on who lives in it (P1.E08.T03): `planDens` houses each de
 its whole list (`faunaSpecies(params, FAUNA_MAX_TIER)`, worked out inside the shared planner, so no caller passes it or
 can leave it out; the list at any tier is a prefix of it, so a den's occupant never changes with the tier and a den
 whose species the world does not carry yet stands empty), and a predator den is the kind its predator lives in (burrow,
-nest or roost), whose footprint sets where it fits and the pad it levels. The dens the server's fauna spawns at
-(`planDenList`, §6.2) are `planSurface`'s, the dens `drawnGround` levels once they are drawn: one plan, tested to agree.
+nest or roost), whose footprint sets where it fits and the pad it levels. `worldSurface(params, tier)` is that whole
+plan at once: the drawn ground (exactly `drawnGround`'s: the same code makes both) and every den of the tier, drawn or
+not. The dens the server's fauna spawns at, the pads its ground and the client level and the sites' clearance the
+resource nodes keep off all come from it (`planWorld`, §6.2): one plan, tested to agree.
 
 Resource nodes (P1.E13.T02, `world/resourceNodes.ts`) are the spec's to place: `planetNodeLayers(params, tier)` says which
 node types a world carries, and `scatterNodes(ground, layers, cell)` places the nodes of one ~64 m cell (`nodeCellLevel`,

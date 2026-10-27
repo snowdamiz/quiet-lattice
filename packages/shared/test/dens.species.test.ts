@@ -20,6 +20,8 @@ import {
   faunaSpecies,
   landArea,
   planSurface,
+  siteNodeClearance,
+  worldSurface,
   type DenSpecies,
   type FaunaSpecies,
   type PlanetParams,
@@ -98,7 +100,7 @@ describe('who lives in each den', () => {
       }
     });
 
-    it('is the drawn ground’s plan: its pads are the cities’ and sites’, then (once dens are drawn) these dens’', () => {
+    it('is the drawn ground’s plan: its pads are the cities’ and sites’, then (once dens are drawn) these dens’; one plan with the nodes’ clearance', () => {
       for (const tier of [1, 3]) {
         const drawn = drawnGround({ ...params, pads: null }, tier);
         const planned = byTier[tier]!;
@@ -108,6 +110,13 @@ describe('who lives in each den', () => {
         expect(drawn.dens).toEqual(DENS_DRAWN ? planned.dens : []);
         expect(drawn.pads).toEqual(DENS_DRAWN ? planned.pads : head);
         expect([...head, ...denPads(planned.dens)]).toEqual(planned.pads);
+        // the whole surface from one plan: the drawn ground's pads and node clearance to the bit, and these dens
+        const whole = worldSurface({ ...params, pads: null }, tier);
+        expect(whole.dens).toEqual(planned.dens);
+        expect(whole.ground.pads).toEqual(drawn.pads);
+        expect(whole.ground.nodeClear).toEqual(drawn.nodeClear);
+        expect(whole.ground.nodeClear).toEqual(siteNodeClearance(planned.sites));
+        expect(whole.ground.sampler.height(0.3, 0.8, 0.52)).toBe(drawn.sampler.height(0.3, 0.8, 0.52));
       }
     });
   });

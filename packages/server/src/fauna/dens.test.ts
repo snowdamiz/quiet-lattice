@@ -8,7 +8,7 @@ import { groundDistance, RULES } from './ai.ts';
 import type { Vec3 } from './cells.ts';
 import { APEX_RESPAWN_S, DEN_RESPAWN_S, LAIR_M, SPAWN_CLEAR_M, type DenInfo } from './dens.ts';
 import { HERD_SPREAD_M, planNightHerd, tangents, type HerdPlan } from './herds.ts';
-import { MAX_CREATURES, UNLOAD_S, type CreatureInfo } from './sim.ts';
+import { ACTIVE_M, MAX_CREATURES, SLEEP_M, UNLOAD_S, type CreatureInfo } from './sim.ts';
 import { nextTime, starsAt } from './sky.ts';
 import { densOf, groundOf } from './terrain.ts';
 
@@ -416,6 +416,51 @@ describe('night', () => {
     expect(cell()!.night).toBe(0);
     w.movePlayer(from(SPAWN_CLEAR_M + 30), 'ship');
     w.run(1);
+    expect(cell()!.night).toBe(plan.animals.length);
+  });
+
+  it('sends a cell’s night herd out again the next night, though the cell slept through the day between', () => {
+    const { w, spot } = herdWorld();
+    w.time = deepest(w, spot, true);
+    const seed = (w.body.params as PlanetParams).seed;
+    let found: { key: number; plan: HerdPlan } | null = null;
+    w.ground.cells.cellsNear(spot, 3000, (key) => {
+      const plan = found ? null : planNightHerd(seed, key, w.species, 3, w.ground);
+      if (plan && w.ground.sample(plan.center) > 2) found = { key, plan };
+    });
+    const { key, plan } = found!;
+    const cell = () => w.zone.fauna!.cells(w.body.index).find((c) => c.key === key);
+    const centre = w.ground.cells.center(key);
+    const [t, b] = tangents(centre);
+    const fromCentre = (m: number) => w.onGround(along(centre, t, b, m, 0, w.ground.radius));
+    // out at night, and lost: not again that night
+    w.movePlayer(fromCentre(SPAWN_CLEAR_M + 150), 'ship');
+    w.run(2);
+    expect(cell()!.state).toBe('active');
+    expect(cell()!.night).toBe(plan.animals.length);
+    for (const c of w.zone.fauna!.creatures())
+      if (c.species.index === plan.species.index && groundDistance(c.pos, w.onGround(plan.center)) < 40) w.zone.despawn(c.id);
+    w.run(1);
+    expect(cell()!.night).toBe(0);
+    // the player goes off (the cell sleeps), and comes back to stand between where an asleep cell wakes and where it
+    // unloads: it sleeps on, and stays loaded
+    w.movePlayer(fromCentre(SLEEP_M + 200), 'ship');
+    w.run(1);
+    expect(cell()!.state).toBe('asleep');
+    w.movePlayer(fromCentre((ACTIVE_M + SLEEP_M) / 2), 'ship');
+    w.run(2);
+    expect(cell()!.state).toBe('asleep');
+    // a whole day goes by while it sleeps, then night again
+    w.time = deepest(w, centre, false);
+    w.run(2);
+    w.time = deepest(w, centre, true);
+    w.run(2);
+    expect(cell()!.state).toBe('asleep');
+    expect(cell()!.night).toBe(0);
+    // the player comes back: the cell wakes and, a new night, sends its night herd out again
+    w.movePlayer(fromCentre(SPAWN_CLEAR_M + 150), 'ship');
+    w.run(2);
+    expect(cell()!.state).toBe('active');
     expect(cell()!.night).toBe(plan.animals.length);
   });
 
