@@ -1,0 +1,229 @@
+// Remote players and NPC ships, drawn from zone snapshots (DESIGN 17; docs/ARCHITECTURE.md §4, §5, §9 "Remote entities").
+//
+// Each snapshot Net applies adds a sample per entity to that entity's PoseBuffer, in the entity's own frame of reference
+// (a sample in another frame re-expresses the ones held, at their own times). Each frame the layer reads every buffer at
+// the render time (PlaybackClock: 100 ms behind the newest server time the snapshots bring), and places the pose through
+// its frame as the frame stands now (game.time): an entity riding a moon stays on the moon as drawn, wherever the camera
+// is. What would make a drawn entity jump (a frame change: the two frames have moved apart over the delay; a late sample
+// that ends an extrapolation) is caught as the sample arrives and blended out over BLEND_S; a teleport or a change of what
+// the entity is (a cut) is shown as the jump it is.
+//
+// Drawn: players flying, landed or docked as their ship, and `ship` entities (NPC ships, cutscene actors), by hull
+// (RemoteShips; a snapshot without one is the Lark every pilot starts in). Players on foot are hidden until the body rig
+// (P1.E05.T04); creatures are P1.E08.T09's (fauna from snapshots); npcs (walkers) and props wait for the body rig and a
+// prop catalog, loot and pods for P1.E08.T04 and P1.E06.T03: none of them is followed here.
+import * as THREE from 'three';
+import { SnapshotStore } from '../net/snapshots.js';
+import { frameOfId } from '../net/pose.js';
+import { PoseBuffer } from './buffer.js';
+import { PlaybackClock } from './clock.js';
+import { RemoteShips } from './RemoteShips.js';
+
+/** The entity kinds this layer follows. */
+export const FOLLOWED = new Set(['player', 'ship']);
+/** The time constant (s) a drawn jump is blended out over. */
+export const BLEND_S = 0.25;
+/** A drawn jump larger than this (m) is no motion to blend: it is shown. */
+export const SNAP_M = 2000;
+/** The hull of a player or ship whose snapshot names none: the Lark every pilot starts in (DESIGN 10.1). */
+export const DEFAULT_HULL = 'lark';
+
+const _w = new THREE.Vector3();
+const _l = new THREE.Vector3();
+
+/** One remote entity as this client follows it. */
+class Remote {
+  constructor(id) {
+    this.id = id;
+    this.kind = null;
+    this.name = null;
+    this.people = null;
+    this.hull = DEFAULT_HULL;
+    this.buf = new PoseBuffer();
+    /** the buffer's pose at the render time (frame, pos, quat, vel, mode, since) */
+    this.pose = { frame: null, pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: new THREE.Vector3(), mode: null, since: -Infinity };
+    /** what the buffer last said ('empty', 'early', 'interpolate', 'extrapolate', 'hold') */
+    this.status = 'empty';
+    /** added to the pose's position, in its frame's axes: a jump being blended out */
+    this.offset = new THREE.Vector3();
+    this.cutSince = -Infinity;
+    /** as drawn: the frame, the position in it, and the world position and orientation */
+    this.frame = null;
+    this.pos = new THREE.Vector3();
+    this.world = new THREE.Vector3();
+    this.worldQuat = new THREE.Quaternion();
+    /** whether it is to be seen (its kind, mode, hull and frame allow it), and whether it was drawn (in view) */
+    this.shown = false;
+    this.drawn = false;
+    /** the snapshot it was last in, and the server time it left the snapshots at (null while in them) */
+    this.seen = 0;
+    this.goneAt = null;
+    /** the view's own state for it (gear, engines) */
+    this.vis = null;
+  }
+}
+
+const toWorld = (frame, local, out) => (frame ? frame.localToWorld(local, out) : out.copy(local));
+const toLocal = (frame, world, out) => (frame ? frame.worldToLocal(world, out) : out.copy(world));
+
+export class RemoteEntities {
+  /** `view` draws the entities (RemoteShips; tests give a stand-in). */
+  constructor(game, { view = new RemoteShips(game) } = {}) {
+    this.game = game;
+    this.view = view;
+    this.group = view.group;
+    this.byId = new Map();
+    this.list = [];
+    this.clock = new PlaybackClock();
+    /** the world time entities are drawn at this frame */
+    this.renderTime = -Infinity;
+    /** the server's clock as this client reads it (Net's estimate when attached, else world time) */
+    this.serverNow = () => game.time;
+    /** the system the buffered frames belong to */
+    this.system = null;
+    this.stamp = 0;
+    /** the store of snapshots fed without a server (feed) */
+    this.offline = null;
+    /** a recorded stream played into feed() as world time passes (replay.js), for the dev captures */
+    this.replay = null;
+    this.detach = null;
+  }
+
+  /** Follows `net`'s snapshots (and forgets everything at each welcome and zone change, where entity ids start over). */
+  attach(net) {
+    this.detach?.();
+    this.reset();
+    const offs = [
+      net.on('snapshot', () => this.ingest(net.store.entities, net.store.time, net.serverTime() ?? this.game.time, net.entityId)),
+      net.on('welcome', () => this.reset()),
+      net.on('zone', () => this.reset()),
+    ];
+    this.serverNow = () => net.serverTime() ?? this.game.time;
+    this.detach = () => {
+      for (const off of offs) off();
+      this.serverNow = () => this.game.time;
+      this.detach = null;
+    };
+  }
+
+  reset() {
+    this.byId.clear();
+    this.list.length = 0;
+    this.clock.reset();
+    this.renderTime = -Infinity;
+    this.offline = null;
+  }
+
+  /** The entity with zone id `id`, as followed (undefined when it is not). */
+  get(id) {
+    return this.byId.get(id);
+  }
+
+  /** Applies a decoded snapshot without a server (a recorded stream, tests), as Net's store would, `arrival` being the
+   * server time it arrived at. False when the store could not apply it. */
+  feed(snap, arrival = this.serverNow()) {
+    const store = (this.offline ??= new SnapshotStore());
+    if (!store.apply(snap)) return false;
+    this.ingest(store.entities, store.time, arrival, null);
+    return true;
+  }
+
+  /** The entities a snapshot taken at server time `time` left in the store (`entities`, id → EntityState), arrived at
+   * server time `arrival`; `ownId` is the player's own entity. */
+  ingest(entities, time, arrival, ownId) {
+    this.checkSystem();
+    this.clock.arrived(time, arrival);
+    const stamp = ++this.stamp;
+    for (const e of entities.values()) {
+      if (e.id === ownId || !FOLLOWED.has(e.kind)) continue;
+      let r = this.byId.get(e.id);
+      if (!r) {
+        r = new Remote(e.id);
+        this.byId.set(e.id, r);
+        this.list.push(r);
+      }
+      r.seen = stamp;
+      r.goneAt = null;
+      r.kind = e.kind;
+      r.name = e.name ?? null;
+      r.people = e.people ?? null;
+      r.hull = e.hull ?? DEFAULT_HULL;
+      this.addSample(r, e, time);
+    }
+    for (const r of this.list) if (r.seen !== stamp && r.goneAt === null) r.goneAt = time;
+  }
+
+  addSample(r, e, time) {
+    const frame = this.system ? frameOfId(this.system, this.game.station, e.frame) : undefined;
+    // (a frame of no system this client has: it is not in the zone's system, warped away or between the stars)
+    if (frame === undefined) {
+      r.buf.clear();
+      r.offset.set(0, 0, 0);
+      return;
+    }
+    // where it is drawn now, so that a change the sample makes there is blended out rather than jumped
+    const drawn = r.buf.length > 0 && this.renderTime > -Infinity;
+    if (drawn) {
+      r.buf.sample(this.renderTime, r.pose);
+      toWorld(r.buf.frame, _l.copy(r.pose.pos).add(r.offset), _w);
+    }
+    const result = r.buf.push(time, frame, e.pos, e.quat, e.vel, e.mode ?? null);
+    if (!drawn || result === 'stale' || result === 'repeat') return;
+    r.buf.sample(this.renderTime, r.pose);
+    const off = toLocal(r.buf.frame, _w, _l).sub(r.pose.pos);
+    if (off.length() > SNAP_M) r.offset.set(0, 0, 0);
+    else r.offset.copy(off);
+  }
+
+  /** Each frame: the render time moves on, every entity is placed and the view draws them. */
+  update(dt) {
+    this.checkSystem();
+    const now = this.serverNow();
+    this.replay?.update(now, this);
+    const tr = (this.renderTime = this.clock.advance(now));
+    const fade = Math.exp(-Math.max(0, dt) / BLEND_S);
+    for (let i = this.list.length - 1; i >= 0; i--) {
+      const r = this.list[i];
+      if (r.goneAt !== null && tr >= r.goneAt) {
+        this.remove(i);
+        continue;
+      }
+      const status = (r.status = r.buf.sample(tr, r.pose));
+      if (status === 'empty') {
+        r.shown = false;
+        continue;
+      }
+      // past a cut it is where the cut put it, with nothing left to blend
+      if (r.pose.since > r.cutSince) {
+        r.cutSince = r.pose.since;
+        r.offset.set(0, 0, 0);
+      }
+      r.offset.multiplyScalar(fade);
+      r.frame = r.pose.frame;
+      r.pos.copy(r.pose.pos).add(r.offset);
+      toWorld(r.frame, r.pos, r.world);
+      if (r.frame) r.worldQuat.copy(r.frame.quaternion).multiply(r.pose.quat);
+      else r.worldQuat.copy(r.pose.quat);
+      r.shown = (r.kind !== 'player' || r.pose.mode !== 'foot') && this.view.draws(r.hull);
+    }
+    this.view.update(this.list, dt);
+  }
+
+  remove(i) {
+    const r = this.list[i];
+    this.byId.delete(r.id);
+    this.list[i] = this.list[this.list.length - 1];
+    this.list.pop();
+  }
+
+  // The buffered frames are the system's bodies: another system (a warp, a jump) leaves none of them in place.
+  checkSystem() {
+    if (this.game.system === this.system) return;
+    this.system = this.game.system ?? null;
+    for (const r of this.list) {
+      r.buf.clear();
+      r.offset.set(0, 0, 0);
+      r.shown = false;
+    }
+  }
+}

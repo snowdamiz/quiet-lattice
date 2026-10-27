@@ -96,6 +96,7 @@ describe('Game: where a closed connection sends the player', () => {
       menus: { setConnection: vi.fn(), showMessage: vi.fn() },
       overlay: null,
       onWelcome: vi.fn(),
+      remotes: { attach: vi.fn() },
     });
     session.setItem('astra-session', JSON.stringify({ token: 'tok', accountId: 'a1', username: 'pilot' }));
     g.enterWorld({ token: 'tok' }, { id: 'c1' }, onFail);
@@ -126,6 +127,8 @@ describe('Game: where a closed connection sends the player', () => {
 
   it('after the welcome: back to the title, which shows why', () => {
     const { g, onFail, socket, net } = entering();
+    // (other players are drawn from this connection's snapshots)
+    expect(g.remotes.attach).toHaveBeenCalledWith(net);
     socket.push(WELCOME);
     expect(g.onWelcome).toHaveBeenCalledWith(WELCOME, true);
     socket.refuse('kicked', 'This character entered the world from another connection.');

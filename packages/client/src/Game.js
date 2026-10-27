@@ -36,6 +36,7 @@ import { Net } from './net/Net.js';
 import { gameSocketUrl } from './net/api.js';
 import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
+import { RemoteEntities } from './remote/RemoteEntities.js';
 
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -108,6 +109,9 @@ export class Game {
     this.cities = new Cities(this);
     this.asteroids = new Asteroids(this);
     this.engine.scene.add(this.asteroids.group);
+    // other players and the server's ships, from the zone's snapshots (src/remote/)
+    this.remotes = new RemoteEntities(this);
+    this.engine.scene.add(this.remotes.group);
 
     this.weather = new Weather(this);
     this.objectives = new Objectives(this);
@@ -320,6 +324,7 @@ export class Game {
     old?.close();
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
+    this.remotes.attach(net);
     this.inventory.send = (m) => net.send(m);
     net.on('welcome', (m, first) => this.onWelcome(m, first));
     net.on('inventory', (m, first) => {
@@ -1073,6 +1078,7 @@ export class Game {
     this.pirates.syncVisual();
     this.ship.syncVisual(this.camWorld);
     this.ship.group.visible = true;
+    this.remotes.update(dt);
     this.flora.update(dt, current);
     this.fauna.update(dt, current);
     this.structures.update(dt, current);
