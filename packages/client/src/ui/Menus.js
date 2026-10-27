@@ -35,9 +35,8 @@ function menuHTML(items) {
 
 const SHOP = [
   { id: 'warpcell', icon: 'WRP', name: 'Warp Cell', desc: 'Fuel for one hyperdrive jump to a neighbouring star system.', price: 1800 },
-  { id: 'pulse', icon: 'PLS', name: 'Pulse Fuel', desc: 'Refill the pulse drive for long hops between planets.', price: 300 },
   { id: 'shield', icon: 'SHD', name: 'Shield Recharge', desc: 'Restore the starship’s shields to full.', price: 200 },
-  { id: 'beam', icon: 'DRL', name: 'Optical Drill', desc: 'The mining beam extracts half as much again, and runs cooler.', price: 4500, once: true },
+  { id: 'beam', icon: 'DRL', name: 'Optical Drill', desc: 'The mining beam extracts half as much again.', price: 4500, once: true },
   { id: 'jet', icon: 'JET', name: 'Efficient Jetpack', desc: 'Jetpack fuel lasts twice as long.', price: 3500, once: true },
   { id: 'thrust', icon: 'THR', name: 'Photon Thrusters', desc: 'A quarter more top speed for the starship.', price: 6000, once: true },
   // for hostile skies
@@ -640,7 +639,6 @@ export class Menus {
     }
     g.inventory.units -= it.price;
     if (id === 'warpcell') g.inventory.warpCells++;
-    if (id === 'pulse') g.ship.pulseFuel = 100;
     if (id === 'shield') g.ship.shield = 100;
     if (id === 'beam') g.multitool.upgrade();
     if (id === 'jet') g.player.jetEfficiency = 2;

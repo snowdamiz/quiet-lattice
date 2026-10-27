@@ -1,7 +1,7 @@
 // The client's heat and Charge (P1.E07.T02): the multitool and the ship predict with the shared rules, reading where the
 // character is from the client's own bodies, and reach what the server reaches stepping at its input rate from the
 // kinematics' plain poses; the server's `meters` state replaces the prediction and is run on to the present; the pulse
-// drive will not engage on an empty meter; and the demo's `pulseFuel` reads and sets Charge.
+// drive will not engage on an empty meter.
 import * as THREE from 'three';
 import { Galaxy, GALAXY_SEED, describeGalaxySystem, systemPoses } from '@astra/shared/world';
 import { meterEnvironment, meterProfile, stepMeters } from '@astra/shared/meters';
@@ -128,14 +128,14 @@ describe('Charge on the client', () => {
     expect(g.ship.chargeRate).toBeCloseTo(-0.35, 9);
   });
 
-  it('takes the server’s Charge and runs it on to the present; pulseFuel reads and sets it', () => {
+  it('takes the server’s Charge and runs it on to the present, held to the hull’s capacity', () => {
     const { g } = game();
     g.ship.state.pos.copy(towardHome(g.system.description, T0, 0.9));
     g.ship.charge = 90;
     g.ship.reconcileCharge({ heat: 0, heatMax: 100, overheated: false, charge: 30, chargeMax: 100, at: T0 - 0.5 }, T0);
     expect(g.ship.charge).toBeCloseTo(31, 9);
-    expect(g.ship.pulseFuel).toBeCloseTo(31, 9);
-    g.ship.pulseFuel = 500;
+    // a view from a roomier hull than the one flown now: held to this one's
+    g.ship.reconcileCharge({ heat: 0, heatMax: 100, overheated: false, charge: 180, chargeMax: 240, at: T0 }, T0);
     expect(g.ship.charge).toBe(100);
   });
 });

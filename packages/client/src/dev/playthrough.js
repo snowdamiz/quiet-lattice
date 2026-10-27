@@ -290,7 +290,7 @@ export function playthrough() {
         if (i % 150 === 0) {
           const fwd = new V(0, 0, -1).applyQuaternion(game.ship.state.worldQuaternion(new THREE.Quaternion()));
           const off = THREE.MathUtils.radToDeg(fwd.angleTo(tgt.clone().sub(shipWorld())));
-          trace.push(`${(game.time - t0).toFixed(0)}s ${game.ship.mode} d ${(st.distanceTo(shipWorld()) / 1000).toFixed(0)} km, ${(game.ship.speed / 1000).toFixed(1)} km/s, off ${off.toFixed(0)}°, fuel ${game.ship.pulseFuel.toFixed(0)}, alt ${((shipWorld().distanceTo(P.position) - P.radius) / 1000).toFixed(0)} km`);
+          trace.push(`${(game.time - t0).toFixed(0)}s ${game.ship.mode} d ${(st.distanceTo(shipWorld()) / 1000).toFixed(0)} km, ${(game.ship.speed / 1000).toFixed(1)} km/s, off ${off.toFixed(0)}°, charge ${game.ship.charge.toFixed(0)}, alt ${((shipWorld().distanceTo(P.position) - P.radius) / 1000).toFixed(0)} km`);
         }
       }
       note(`pulse dropped out ${st.distanceTo(shipWorld()).toFixed(0)} m from the station`);

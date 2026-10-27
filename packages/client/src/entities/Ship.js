@@ -592,15 +592,6 @@ export class Ship {
     return this.meterProfile.chargeCapacity;
   }
 
-  // today's name for Charge, which the cockpit's screen, the demo's save and its shop read and set until they go
-  get pulseFuel() {
-    return this.charge;
-  }
-
-  set pulseFuel(v) {
-    this.charge = THREE.MathUtils.clamp(v, 0, this.chargeMax);
-  }
-
   // Charge over this frame: regenerating or not where the character is, burning on the pulse drive near bodies
   updateCharge(dt) {
     const env = characterMeterEnvironment(this.game);
