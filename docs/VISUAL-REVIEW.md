@@ -257,6 +257,7 @@ that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 4, performance 5 | 4.14 |
 | 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.29 |
+| 3 | REVISE | hierarchy 3, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.14 |
 
 Round 1: screen changes cross-dissolve in place, so outgoing and incoming headers overlap for about 7 frames; entering
 hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen's height mid-fade and clips the
@@ -268,6 +269,11 @@ Round 2: steps now sequence and nothing clips; still failing: the cut into the w
 then jumps to flat black in one frame, its amber fill cut at 10%; the sign-in error box collapses in two frames while
 the layout eases; JOINING swaps to IN THE WORLD in one frame. Requested: the arrival with pointer lock granted (the
 captured arrival lands on the pause menu with no scrim, ordinals 3.6–3.8:1).
+
+Round 3: the fade to black and up, the step sequencing and the error box are clean; the panels and pause menu pass AA.
+Still failing: on arrival the location line and the banner's eyebrow sit on a lit ceiling beam at 2–2.6:1; the slot
+counter is 4.3–4.5:1; "JOINING" and "IN THE WORLD" overlap for about 10 frames, as do the rail ordinal and its tick;
+the Esc hint vanishes in one frame; the selected-row tint jumps rows. Requested: the list at 6 of 6.
 
 ## P1.E15.T03 Chat and party UI (with the beacon list)
 
