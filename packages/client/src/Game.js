@@ -695,7 +695,7 @@ export class Game {
         else if (low && ship.canLand()) prompt = '<kbd>E</kbd>Land';
         else if (low) prompt = '<kbd>S</kbd>Slow down to land';
         // (offered only where it will engage: out of the air and clear of anything close)
-        else if ((!ship.frame?.sampler || ship.altitude > 2500) && ship.atmoDensity <= 0.001 && ship.pulseLimit().dist >= 600) prompt = '<kbd>J</kbd>Pulse drive';
+        else if ((!ship.frame?.sampler || ship.altitude > 2500) && ship.atmoDensity <= 0.001 && ship.pulseLimit().dist >= 600 && ship.charge > 0) prompt = '<kbd>J</kbd>Pulse drive';
       } else if (ship.mode === 'pulse') {
         prompt = '<kbd>J</kbd>Disengage pulse';
       }
