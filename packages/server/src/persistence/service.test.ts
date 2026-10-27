@@ -475,6 +475,59 @@ describe('editing a character out of play', () => {
     expect(await p.edit('c1', (e) => e.set('a', 1))).toMatchObject({ code: 'held' });
   });
 
+  it('takes a character out of play first when asked: writes its leave, then the edit, its joins held throughout', async () => {
+    const { p, store, a } = setup();
+    seed(store, 0, {});
+    const v = viewer();
+    p.join(v, row('c1'));
+    a.held.set('c1', 4); // changed in play: the leave captures it
+    const release = store.hold();
+    const editing = p.edit(
+      'c1',
+      (e) => {
+        expect(e.get('a')).toBe(4);
+        e.set('b', 7);
+      },
+      'admin',
+      { leaving: v },
+    );
+    // out of play at once, its components unloaded, before the caller takes its entity out of its zone
+    expect(p.status('c1')).toMatchObject({ inPlay: false, pending: true });
+    expect(a.held.has('c1')).toBe(false);
+    expect(p.leave(v)).toBe(false);
+
+    // a reconnect meanwhile: pinned, it waits for the edit rather than load the capture
+    const unpin = p.pin('c1');
+    let read: StoredCharacterRow | null = null;
+    const joining = p.afterEdit('c1', () => store.read('c1')).then((r) => (read = r));
+    await settle();
+    expect(read).toBeNull();
+    release();
+    expect(await editing).toEqual({ ok: true, revision: 2, changed: ['b'] });
+    await joining;
+    expect(read).toMatchObject({ revision: 2, state: { a: { data: 4 }, b: { data: 7 } } });
+    expect(p.join(viewer(), read!).get('b')).toBe(7);
+    unpin();
+    expect(p.status('c1')).toMatchObject({ inPlay: true, revision: 2, written: 2 });
+  });
+
+  it('takes out of play only the session holding the character, and edits nothing when its leave is not written in time', async () => {
+    const { p, store } = setup({ flushTimeoutMs: 100 });
+    seed(store, 0, {});
+    const v = viewer();
+    p.join(v, row('c1'));
+    expect(await p.edit('c2', () => {}, 'admin', { leaving: v })).toMatchObject({ ok: false, code: 'held' });
+    expect(await p.edit('c1', () => {}, 'admin', { leaving: viewer() })).toMatchObject({ ok: false, code: 'held' });
+
+    store.failNext = 1_000_000;
+    const r = await p.edit('c1', (e) => e.set('b', 1), 'admin', { leaving: v });
+    expect(r).toMatchObject({ ok: false, code: 'failed', reason: expect.stringMatching(/not written in time/) });
+    // out of play, still held (its save keeps retrying), its joins no longer held
+    expect(p.status('c1')).toMatchObject({ inPlay: false, pending: true });
+    await p.editing('c1');
+    expect(store.rows.get('c1')?.state.b).toBeUndefined();
+  });
+
   it('refuses the write when the row changed after it was read (the revision guard)', async () => {
     const { p, store } = setup();
     seed(store, 1);

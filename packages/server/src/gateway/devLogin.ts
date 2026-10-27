@@ -3,9 +3,10 @@
 // use, and answers `{token, accountId, character, created}`, so the client's dev scenarios (`#foot`, `#fly`, …) go
 // through the real server in one request (P1.E04.T05 calls it). server.ts registers it only when ASTRA_DEV_LOGIN is set
 // outside production (admin/config.ts refuses the flag in production); without it the path does not exist (404). Only
-// `dev-` accounts are reachable this way, and every dev login is logged at warn.
+// `dev-` accounts are reachable this way, and registration refuses `dev-` usernames (gateway/http.ts), so no player's
+// account is; every dev login is logged at warn.
 import { randomBytes, randomInt } from 'node:crypto';
-import { CharacterSummary, PeopleId, type CharacterLook } from '@astra/shared/protocol';
+import { CharacterSummary, DEV_USERNAME_PREFIX, isDevUsername, PeopleId, type CharacterLook } from '@astra/shared/protocol';
 import { sql } from 'drizzle-orm';
 import type { FastifyBaseLogger, FastifyInstance, FastifyReply } from 'fastify';
 import { z } from 'zod';
@@ -54,7 +55,7 @@ export function registerDevLogin(app: FastifyInstance, deps: DevLoginDeps): void
       auth.post('/dev', async (req, reply) => {
         const body = DevLoginRequest.safeParse(req.body ?? {});
         if (!body.success) return fail(reply, 400, 'invalid', 'A dev login names its account: 1–20 letters, digits, - or _.');
-        const username = `dev-${body.data.name.toLowerCase()}`;
+        const username = `${DEV_USERNAME_PREFIX}${body.data.name.toLowerCase()}`;
         const { accountId, created } = await devAccount(deps.db, username);
         const people = body.data.people;
         const owned = await listCharacters(deps.db, accountId);
@@ -75,6 +76,7 @@ export function registerDevLogin(app: FastifyInstance, deps: DevLoginDeps): void
 
 /** The dev account of that name, made with a password nobody knows when there is none. */
 async function devAccount(db: Db, username: string): Promise<{ accountId: string; created: boolean }> {
+  if (!isDevUsername(username)) throw new Error(`the dev login reaches dev accounts only, not ${username}`);
   const find = async () => {
     const [row] = await db
       .select({ id: accounts.id })

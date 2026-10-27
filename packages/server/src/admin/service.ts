@@ -1,14 +1,18 @@
 // The admin commands' effects (P1.E03.T07, docs/ARCHITECTURE.md §16). A command that changes a character changes it
 // through the live services while it is in play, so authority holds and its client hears the usual state messages
-// (`inventory`, `skills`, a `correction` or a `zone` handoff); out of play, through persistence's load–modify–save
+// (`inventory`, `skills`, a `correction`); out of play, through persistence's load–modify–save
 // (`CharacterPersistence.edit`), which is refused while the character is held or joining and holds its joins until the
 // write lands. A character that left a moment ago is held until its last save is written; a command waits a little for
 // that rather than refuse.
 //
+// A teleport of a character in play to another star system has no handoff to ride until zone handoff (P1.E04.T04): the
+// character is taken out of play and saved at the new place through the same edit, and its connection closed without a
+// refusal (MOVED_CLOSE_CODE), so the client reconnects and its welcome places it where the server now holds it.
+//
 // The same service runs in the server (live services given, reached over the admin channel) and in the CLI's direct mode
-// (no server: only out-of-play edits). Every command is logged with who ran it and what it asked, and how it ended.
+// (no server: only out-of-play edits, refused for a character saved moments ago unless forced). Every command is logged
+// with who ran it and what it asked, and how it ended.
 import { addItem, addUnits, applyLayout, itemInfo, layoutFor, spendUnits, takeItem, type Inventory, type Result } from '@astra/shared/inventory';
-import type { PeopleId } from '@astra/shared/protocol';
 import type { ShipLoadout } from '@astra/shared/ships';
 import { setAvailablePoints, type SkillResult, type SkillState } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
@@ -19,7 +23,7 @@ import { accounts, characters } from '../db/schema.ts';
 import type { WsGateway } from '../gateway/ws.ts';
 import { INVENTORY, POSE, PROGRESS, SHIP, SKILLS, type PoseState, type Progress } from '../persistence/components.ts';
 import type { CharacterEdit, CharacterPersistence, EditRefusal, EditVerdict } from '../persistence/service.ts';
-import type { Session } from '../session/session.ts';
+import { REFUSE_GRACE_MS, type Session } from '../session/session.ts';
 import { systemZoneId } from '../world/home.ts';
 import type { WorldSource } from '../world/service.ts';
 import type { ZoneManager } from '../zones/manager.ts';
@@ -48,6 +52,36 @@ export interface QuestAdmin {
   setStepStored(log: unknown, quest: string, step: number): { ok: true; log: unknown } | { ok: false; error: string };
 }
 
+/** How the server closes the connection of a character it moved to another star system: not a refusal, so the client
+ * reconnects (and its welcome places it in the new system). Replaced by a handoff with P1.E04.T04. */
+export const MOVED_CLOSE_CODE = 4001;
+
+/** How commands find the characters and accounts they name: by id (any case) or by name, ignoring case. */
+export interface AdminDirectory {
+  character(ref: string): Promise<{ id: string; name: string; accountId: string; savedAt: Date | null } | null>;
+  account(ref: string): Promise<{ id: string; username: string } | null>;
+}
+
+/** The directory over the database's `characters` and `accounts`. */
+export function pgDirectory(db: Db): AdminDirectory {
+  return {
+    async character(ref) {
+      const where = isUuid(ref) ? eq(characters.id, ref.toLowerCase()) : sql`lower(${characters.name}) = lower(${ref})`;
+      const [row] = await db
+        .select({ id: characters.id, name: characters.name, accountId: characters.accountId, savedAt: characters.savedAt })
+        .from(characters)
+        .where(where)
+        .limit(1);
+      return row ?? null;
+    },
+    async account(ref) {
+      const where = isUuid(ref) ? eq(accounts.id, ref.toLowerCase()) : sql`lower(${accounts.username}) = lower(${ref})`;
+      const [row] = await db.select({ id: accounts.id, username: accounts.username }).from(accounts).where(where).limit(1);
+      return row ?? null;
+    },
+  };
+}
+
 /** A pino-shaped logger. */
 export interface AdminLog {
   info(obj: object, msg: string): void;
@@ -57,7 +91,7 @@ export interface AdminLog {
 }
 
 export interface AdminDeps {
-  db: Db;
+  directory: AdminDirectory;
   persistence: CharacterPersistence;
   /** The running server's services; absent in the CLI's direct mode. */
   live?: AdminLive;
@@ -65,6 +99,11 @@ export interface AdminDeps {
   log?: AdminLog;
   /** How long a command waits for a character held by its last save (or a join) to be free, ms (3000). */
   heldWaitMs?: number;
+  /**
+   * Out of play, a character saved less than this long ago is refused (0, the server's: never). The CLI's direct mode
+   * sets 60 s (`--force`: 0): a recent save is a sign that a server elsewhere on the same database holds it.
+   */
+  recentSaveMs?: number;
 }
 
 /** Who ran a command: the name the CLI sent, and how it came. */
@@ -81,26 +120,29 @@ interface Named {
   id: string;
   name: string;
   accountId: string;
+  savedAt: Date | null;
 }
 
 /** What a command did to a character: in play (live services) or out of play (an edit at `revision`). */
 type Changed<T> = { online: true; value: T } | { online: false; value: T; revision: number; changed: string[] };
 
 export class AdminService {
-  private readonly db: Db;
+  private readonly directory: AdminDirectory;
   private readonly persistence: CharacterPersistence;
   private readonly live?: AdminLive;
   private readonly quests?: QuestAdmin;
   private readonly log?: AdminLog;
   private readonly heldWaitMs: number;
+  private readonly recentSaveMs: number;
 
   constructor(deps: AdminDeps) {
-    this.db = deps.db;
+    this.directory = deps.directory;
     this.persistence = deps.persistence;
     this.live = deps.live;
     this.quests = deps.quests;
     this.log = deps.log;
     this.heldWaitMs = deps.heldWaitMs ?? 3000;
+    this.recentSaveMs = deps.recentSaveMs ?? 0;
   }
 
   /** Runs a command; logs who asked what and how it ended. Throws an AdminError when it did nothing. */
@@ -189,54 +231,56 @@ export class AdminService {
     const c = await this.character(cmd.character);
     const tierOf = (system: number) => this.live?.world?.tierOf(system) ?? tierOfGalaxySystem(system);
     const at = resolvePlacement(cmd, { tierOf });
-    const r = await this.change(
+    const r = await this.change<AdminResult>(
       c,
-      (s) => this.moveInPlay(c, s, at),
+      (s) => (this.needLive('teleport').zones.zoneOf(s)?.systemIndex === at.system ? this.moveInZone(c, s, at) : this.moveAcross(c, s, at)),
       (e) => {
         e.set(POSE, at);
-        return false;
+        return { moved: 'saved' };
       },
     );
-    return { character: c.id, name: c.name, ...at, ...this.how(r), handoff: r.online ? r.value : undefined };
+    return { character: c.id, name: c.name, ...at, ...this.how(r), ...r.value };
   }
 
-  /** Moves a character in play: in its zone (a correction tells its client) or to another (a handoff). True for a handoff. */
-  private moveInPlay(c: Named, s: Session, at: PoseState): boolean {
-    const { zones, gateway } = this.needLive('teleport');
-    const zone = zones.zoneOf(s);
+  /** Moves a character in play within its zone: its entity takes the pose, and a correction tells its client. */
+  private moveInZone(c: Named, s: Session, at: PoseState): AdminResult {
+    const zone = this.needLive('teleport').zones.zoneOf(s);
     const entityId = s.entityId;
     const e = zone && entityId !== null ? zone.entity(entityId) : undefined;
     if (!zone || entityId === null || !e) throw new AdminError('held', `${c.name} is between zones; try again`);
     const { pose, mode } = at;
-    let handoff = false;
-    if (zone.systemIndex === at.system) {
-      zone.patch(entityId, { ...pose, mode });
-      // the client rewinds to this pose at its last applied input (§5); the zone has taken it already
-      s.send({ t: 'correction', seq: e.input?.seq ?? 0, pose, mode });
-    } else {
-      const info = this.persistence.info(c.id);
-      const f = e.fields;
-      zones.leave(s, 'left');
-      const joined = zones.join(
-        s,
-        {
-          id: c.id,
-          name: info?.name ?? c.name,
-          people: (info?.people ?? f.people ?? 'thalune') as PeopleId,
-          level: f.level ?? 1,
-          homeSystem: info?.homeSystem ?? at.system,
-        },
-        at,
-      );
-      s.entityId = joined.entityId;
-      s.zoneId = joined.zone.id;
-      s.send({ t: 'zone', zone: { id: joined.zone.id, systemSeed: joined.zone.system.seed }, pose: joined.pose });
-      // its party tag and the system chat index follow it at once
-      gateway.social.moved(s);
-      handoff = true;
-    }
+    // SEAM (movement authority, P1.E03.T04, once it is on main): a zone holding players to movement authority keeps each
+    // mover's last accepted pose; re-seat it here (`zone.movement.remove(entityId)`, then `add` at this pose and mode, a
+    // docked teleport taking `movement.freePad()`), so the client's next input is judged from the teleport.
+    zone.patch(entityId, { ...pose, mode });
+    // the client rewinds to this pose at its last applied input (§5); the zone has taken it already
+    s.send({ t: 'correction', seq: e.input?.seq ?? 0, pose, mode });
     this.persistence.saveNow(c.id, 'admin');
-    return handoff;
+    return { moved: 'zone' };
+  }
+
+  /**
+   * Moves a character in play to another star system (until zone handoff, P1.E04.T04): takes it out of play and saves it
+   * at the new place through one edit (its joins held until that is written), and closes its connection without a
+   * refusal, so its client reconnects and is welcomed where the server now holds it.
+   */
+  private async moveAcross(c: Named, s: Session, at: PoseState): Promise<AdminResult> {
+    const { zones } = this.needLive('teleport');
+    // (the edit captures its leave at once, reading the pose from its entity, before the entity leaves its zone)
+    const editing = this.persistence.edit(c.id, (e) => e.set(POSE, at), 'admin', { leaving: s });
+    if (this.persistence.status(c.id)?.inPlay) {
+      const refused = await editing;
+      throw new AdminError(refused.ok ? 'failed' : EDIT_CODES[refused.code], refused.ok ? `${c.name} stayed in play` : refused.reason);
+    }
+    zones.leave(s, 'left');
+    // no more of its messages are handled (its inputs in the old system's frames are no strikes), and no refusal is sent
+    s.state = 'closed';
+    s.endReason = 'moved to another system';
+    s.socket.close(MOVED_CLOSE_CODE, 'moved to another system');
+    setTimeout(() => s.socket.terminate(), REFUSE_GRACE_MS).unref();
+    const r = await editing;
+    if (!r.ok) throw new AdminError(EDIT_CODES[r.code], `${c.name} was disconnected but not moved: ${r.reason}`);
+    return { moved: 'reconnect', revision: r.revision, changed: r.changed };
   }
 
   private async grant(cmd: Extract<AdminCommand, { cmd: 'grant' }>): Promise<AdminResult> {
@@ -324,11 +368,15 @@ export class AdminService {
    * character held by its last save or by a join is waited for (heldWaitMs), then looked at again: it may be in play by
    * then. `edit` returns the value to report, or a string: why it refuses (nothing is written).
    */
-  private async change<T>(c: Named, live: (s: Session) => T, edit: (e: CharacterEdit) => T | string): Promise<Changed<T>> {
+  private async change<T>(c: Named, live: (s: Session) => T | Promise<T>, edit: (e: CharacterEdit) => T | string): Promise<Changed<T>> {
     const deadline = Date.now() + this.heldWaitMs;
     for (;;) {
       const s = this.sessionOf(c.id);
-      if (s) return { online: true, value: live(s) };
+      if (s) return { online: true, value: await live(s) };
+      if (this.recentSaveMs > 0 && c.savedAt && Date.now() - c.savedAt.getTime() < this.recentSaveMs) {
+        const ago = Math.max(0, Math.round((Date.now() - c.savedAt.getTime()) / 1000));
+        throw new AdminError('refused', `${c.name} was saved ${ago} s ago: a server elsewhere on this database may hold it (--force edits it anyway)`);
+      }
       let value: T | undefined;
       const r = await this.persistence.edit(
         c.id,
@@ -361,8 +409,7 @@ export class AdminService {
 
   /** The character a command names: its id (any case) or its name (ignoring case). */
   private async character(ref: string): Promise<Named> {
-    const where = isUuid(ref) ? eq(characters.id, ref.toLowerCase()) : sql`lower(${characters.name}) = lower(${ref})`;
-    const [row] = await this.db.select({ id: characters.id, name: characters.name, accountId: characters.accountId }).from(characters).where(where).limit(1);
+    const row = await this.directory.character(ref);
     if (!row) throw new AdminError('not_found', `no character ${ref}`);
     return row;
   }
@@ -438,8 +485,7 @@ export class AdminService {
 
   /** The account a command names: its id or its username, ignoring case. */
   private async account(ref: string): Promise<{ id: string; username: string }> {
-    const where = isUuid(ref) ? eq(accounts.id, ref.toLowerCase()) : sql`lower(${accounts.username}) = lower(${ref})`;
-    const [row] = await this.db.select({ id: accounts.id, username: accounts.username }).from(accounts).where(where).limit(1);
+    const row = await this.directory.account(ref);
     if (!row) throw new AdminError('not_found', `no account ${ref}`);
     return row;
   }

@@ -33,7 +33,13 @@ export function format(cmd: AdminCommand, r: AdminResult): string {
     case 'teleport': {
       const pose = r.pose as Row;
       const where = `system ${String(r.system)}, frame ${String(pose.frame ?? 'inertial')}, at ${vec(pose.pos)}, mode ${String(r.mode)}`;
-      return `${String(r.name)} teleported to ${where}${r.online ? (r.handoff ? ' (online: handed to the new zone)' : ' (online)') : offline(r)}`;
+      const how =
+        r.moved === 'reconnect'
+          ? ` (online: saved there at revision ${String(r.revision)} and disconnected; its client reconnects into the new system)`
+          : r.online
+            ? ' (online)'
+            : offline(r);
+      return `${String(r.name)} teleported to ${where}${how}`;
     }
     case 'grant': {
       const n = r.count as number;

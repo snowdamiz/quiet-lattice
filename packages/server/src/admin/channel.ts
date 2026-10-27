@@ -3,13 +3,20 @@
 // with `{command}` (commands.ts) and `Authorization: Bearer <ASTRA_ADMIN_SECRET>`, answering `{ok, result}` or `{ok:
 // false, error, message}`. Requests from anywhere but loopback, from a browser (an Origin header) or without the secret
 // are refused and logged; every command is logged with who ran it (the CLI's `x-astra-operator`) by the admin service.
+// `GET /admin/health` answers `{service: 'astra-admin', version}` without the secret, so the CLI can tell this channel
+// from anything else listening on the port before it sends the secret.
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
+import { z } from 'zod';
 import { ADMIN_ERROR_STATUS, AdminCommand, AdminError, describeIssues, type AdminReply } from './commands.ts';
 import type { AdminLog, AdminService } from './service.ts';
 
 export const ADMIN_PATH = '/admin/command';
+export const ADMIN_HEALTH_PATH = '/admin/health';
+/** What `GET /admin/health` answers: the CLI sends its secret only to a channel that answers this. */
+export const AdminHealth = z.object({ service: z.literal('astra-admin'), version: z.literal(1) });
+export type AdminHealth = z.infer<typeof AdminHealth>;
 const MAX_BODY_BYTES = 16 * 1024;
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
 
@@ -46,8 +53,9 @@ export async function openAdminChannel(opts: AdminChannelOptions): Promise<Admin
       log?.warn({ remote, origin: req.headers.origin }, 'admin request refused: not a local tool');
       return reply(res, 403, { ok: false, error: 'refused', message: 'The admin channel takes requests from local tools only.' });
     }
-    if (new URL(req.url ?? '/', 'http://localhost').pathname !== ADMIN_PATH)
-      return reply(res, 404, { ok: false, error: 'not_found', message: 'No such path.' });
+    const path = new URL(req.url ?? '/', 'http://localhost').pathname;
+    if (path === ADMIN_HEALTH_PATH && req.method === 'GET') return reply(res, 200, { service: 'astra-admin', version: 1 });
+    if (path !== ADMIN_PATH) return reply(res, 404, { ok: false, error: 'not_found', message: 'No such path.' });
     if (req.method !== 'POST') return reply(res, 405, { ok: false, error: 'usage', message: 'POST a command.' });
     const m = /^Bearer (\S+)$/.exec(req.headers.authorization ?? '');
     if (!m || !timingSafeEqual(digest(m[1]!), secret)) {
@@ -98,7 +106,7 @@ function digest(s: string): Buffer {
   return createHash('sha256').update(s, 'utf8').digest();
 }
 
-function reply(res: ServerResponse, status: number, body: AdminReply): void {
+function reply(res: ServerResponse, status: number, body: AdminReply | AdminHealth): void {
   const text = JSON.stringify(body);
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'content-length': Buffer.byteLength(text), 'cache-control': 'no-store' });
   res.end(text);

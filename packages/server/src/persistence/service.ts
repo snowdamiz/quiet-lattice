@@ -25,7 +25,8 @@
 // guard refuses the write when anything else wrote the row in between. An edit is refused while the character is held
 // (in play, or left with its save not yet written) or pinned (a join is reading its row). While an edit runs, a join of
 // that character waits before reading its row (`afterEdit`, which the gateway's row read goes through) until the edit's
-// write has landed or failed, so it loads the edited state.
+// write has landed or failed, so it loads the edited state. An edit may take a character out of play first (`leaving`:
+// its session's leave is captured and written, then the edit is made, its joins held throughout).
 import type { CharacterRow } from '../db/schema.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
 import {
@@ -308,17 +309,38 @@ export class CharacterPersistence {
    * components registered before it reading the edited values) and writes the changed entries at the row's revision + 1,
    * which the store refuses if the row changed in between (`conflict`). Refused, writing nothing, while the character is
    * held or pinned, or another edit of it runs. Joins of the character wait (afterEdit) until the write lands or fails.
+   *
+   * `leaving`: the session holding the character in play, which the edit takes out of play first (the admin CLI's
+   * teleport to another system, until zone handoff). Its leave is captured at once (before this returns its promise, so
+   * before the caller takes the entity out of its zone), and the edit waits up to flushTimeoutMs for that save to be
+   * written, holding the character's joins all the while, so a reconnect loads the edited state and never the capture.
    */
-  async edit(characterId: string, modify: (e: CharacterEdit) => EditVerdict | Promise<EditVerdict>, reason = 'edit'): Promise<EditResult> {
+  async edit(
+    characterId: string,
+    modify: (e: CharacterEdit) => EditVerdict | Promise<EditVerdict>,
+    reason = 'edit',
+    opts: { leaving?: ZoneViewer } = {},
+  ): Promise<EditResult> {
     const refuse = (code: EditRefusal, why: string): EditResult => ({ ok: false, code, reason: why });
     if (this.phase !== 'open') return refuse('closed', 'character persistence is shut down');
     if (!this.store.read) return refuse('unsupported', 'this store cannot read characters');
-    if (this.records.has(characterId)) return refuse('held', `character ${characterId} is in play, or its last save is still being written`);
+    const leaving = opts.leaving ? this.byViewer.get(opts.leaving) : undefined;
+    if (opts.leaving && leaving?.id !== characterId) return refuse('held', `that session does not hold character ${characterId} in play`);
+    if (!leaving && this.records.has(characterId)) return refuse('held', `character ${characterId} is in play, or its last save is still being written`);
     if (this.pins.has(characterId)) return refuse('held', `character ${characterId} is joining`);
     if (this.edits.has(characterId)) return refuse('busy', `character ${characterId} is being edited already`);
     let settle!: () => void;
     this.edits.set(characterId, new Promise<void>((resolve) => (settle = resolve)));
     try {
+      if (opts.leaving) {
+        this.leave(opts.leaving, 'admin');
+        if (!(await this.whenWritten(characterId, this.flushTimeoutMs))) {
+          return refuse('failed', `the save of character ${characterId} leaving play was not written in time; nothing was edited`);
+        }
+        // the row holds all it had: a join reading the row next must not load this older copy instead
+        const held = this.records.get(characterId);
+        if (held && !held.viewer) this.records.delete(characterId);
+      }
       let row: StoredCharacterRow | null;
       try {
         row = await this.store.read(characterId);
@@ -403,6 +425,17 @@ export class CharacterPersistence {
     } finally {
       this.edits.delete(characterId);
       settle();
+    }
+  }
+
+  /** Whether everything captured for the character is written (or nothing is held for it), polled until `timeoutMs`. */
+  private async whenWritten(characterId: string, timeoutMs: number): Promise<boolean> {
+    const end = Date.now() + timeoutMs;
+    for (;;) {
+      const rec = this.records.get(characterId);
+      if (!rec || (rec.written >= rec.revision && !this.pending.has(characterId) && !this.writing.has(characterId))) return true;
+      if (Date.now() >= end || this.phase === 'abandoned') return false;
+      await sleep(10);
     }
   }
 

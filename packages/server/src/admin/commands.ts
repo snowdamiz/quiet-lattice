@@ -125,8 +125,11 @@ Commands (a character or account is named by its id or its name, ignoring case):
 Options:
   --json            print the server's answer as JSON
   --direct          change a character in the database with no server running (teleport, grant, set-quest-step,
-                    set-skill-points); refused while a server answers at HOST:PORT
-  --url <url>       the admin channel (default ASTRA_ADMIN_URL, else http://127.0.0.1:ASTRA_ADMIN_PORT, 8788)
+                    set-skill-points); refused while a server answers at HOST:PORT, and for a character saved in the
+                    last minute (a server elsewhere may hold it) unless --force
+  --force           with --direct: edit a character saved in the last minute anyway
+  --url <url>       the admin channel, on this machine (default ASTRA_ADMIN_URL, else http://127.0.0.1:ASTRA_ADMIN_PORT,
+                    8788); the secret goes only to a loopback address that answers as the admin channel
   --operator <who>  who you are, for the server's log (default $USER)
   -h, --help
 

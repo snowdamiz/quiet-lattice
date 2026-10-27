@@ -1,6 +1,7 @@
 // Developer tooling's configuration (P1.E03.T07, docs/ARCHITECTURE.md §16), read from the environment beside the server's
 // own (config.ts) and validated with zod. Dev tools are unreachable in production (IMPLEMENTATION_PLAN 0.3): the dev login
-// bypass refuses to start there at all, and the admin channel only with an explicit opt-in and a long secret.
+// bypass refuses to start there at all (and, with NODE_ENV unset, anywhere but a loopback HOST, as the dev JWT secret
+// does), and the admin channel only with an explicit opt-in and a long secret.
 //
 //   ASTRA_DEV_LOGIN=1            POST /auth/dev issues a session for a dev account without a password (never in production)
 //   ASTRA_ADMIN_SECRET=<16+>     opens the admin channel on 127.0.0.1, which the CLI calls with this secret
@@ -11,6 +12,8 @@ import { z } from 'zod';
 import type { Config, Env } from '../config.ts';
 
 export const DEFAULT_ADMIN_PORT = 8788;
+/** Hosts only this machine reaches (config.ts keeps the dev JWT secret to them too). */
+const LOOPBACK_HOSTS = new Set(['127.0.0.1', '::1', 'localhost']);
 
 const flag = z.union([
   z.boolean(),
@@ -24,7 +27,12 @@ const flag = z.union([
 
 export const ToolingSchema = z.object({
   ASTRA_DEV_LOGIN: flag.default(false),
-  ASTRA_ADMIN_SECRET: z.string().min(16, 'must be at least 16 characters').max(256).optional(),
+  ASTRA_ADMIN_SECRET: z
+    .string()
+    .min(16, 'must be at least 16 characters')
+    .max(256)
+    .regex(/^\S+$/, 'must not contain whitespace (it travels as a Bearer token)')
+    .optional(),
   ASTRA_ADMIN_PORT: z.coerce.number().int().min(0).max(65535).default(DEFAULT_ADMIN_PORT),
   ASTRA_ADMIN_IN_PRODUCTION: flag.default(false),
   ASTRA_METRICS_S: z.coerce.number().min(0).max(3600).default(10),
@@ -40,11 +48,19 @@ export interface ToolingConfig {
   metricsMs: number;
 }
 
+/** What the tooling rules read of the server's own configuration. */
+export interface ToolingServer {
+  nodeEnv: Config['NODE_ENV'];
+  /** NODE_ENV was given (rather than defaulted to development). */
+  nodeEnvSet: boolean;
+  host: string;
+}
+
 /**
- * The tooling configuration for a server of `nodeEnv`: the environment's ASTRA_* variables, then `overrides` (typed
- * values, from tests). Throws one readable error when a dev tool is asked for where it is not allowed.
+ * The tooling configuration for a server: the environment's ASTRA_* variables, then `overrides` (typed values, from
+ * tests). Throws one readable error when a dev tool is asked for where it is not allowed.
  */
-export function parseTooling(env: Env, nodeEnv: Config['NODE_ENV'], overrides: Partial<ToolingInput> = {}): ToolingConfig {
+export function parseTooling(env: Env, server: ToolingServer, overrides: Partial<ToolingInput> = {}): ToolingConfig {
   const cleaned: Record<string, unknown> = {};
   for (const k of Object.keys(ToolingSchema.shape)) {
     const v = env[k];
@@ -55,7 +71,10 @@ export function parseTooling(env: Env, nodeEnv: Config['NODE_ENV'], overrides: P
   const problems = r.success ? [] : r.error.issues.map((i) => `  ${i.path.join('.')}: ${i.message}`);
   if (r.success) {
     const c = r.data;
-    if (nodeEnv === 'production') {
+    if (c.ASTRA_DEV_LOGIN && !server.nodeEnvSet && !LOOPBACK_HOSTS.has(server.host)) {
+      problems.push(`  ASTRA_DEV_LOGIN: with NODE_ENV unset the dev login bypass is only allowed on a loopback HOST, not ${server.host}`);
+    }
+    if (server.nodeEnv === 'production') {
       if (c.ASTRA_DEV_LOGIN) problems.push('  ASTRA_DEV_LOGIN: the dev login bypass is never allowed in production');
       if (c.ASTRA_ADMIN_SECRET !== undefined && !c.ASTRA_ADMIN_IN_PRODUCTION) {
         problems.push('  ASTRA_ADMIN_SECRET: the admin channel is refused in production unless ASTRA_ADMIN_IN_PRODUCTION=1');

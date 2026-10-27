@@ -2,9 +2,12 @@
 // command (admin/commands.ts) and sends it to a running server's admin channel with ASTRA_ADMIN_SECRET, or, with
 // `--direct` and no server running, applies it to the database itself (direct.ts). It prints what the server answered,
 // readably or as JSON. Exit codes: 0 done, 1 the command was refused or failed, 2 bad usage, 3 no server to talk to.
+//
+// The secret goes only to this machine (a loopback admin URL, plain http) and only to a listener that first answers
+// `GET /admin/health` as an astra admin channel does.
 import { userInfo } from 'node:os';
 import { DEFAULT_ADMIN_PORT } from '../admin/config.ts';
-import { ADMIN_PATH } from '../admin/channel.ts';
+import { ADMIN_HEALTH_PATH, ADMIN_PATH, AdminHealth } from '../admin/channel.ts';
 import { AdminError, AdminReply, parseCommand, USAGE, type AdminCommand } from '../admin/commands.ts';
 import type { AdminResult } from '../admin/service.ts';
 import type { Env } from '../config.ts';
@@ -24,6 +27,7 @@ const TIMEOUT_MS = 30_000;
 interface Options {
   json: boolean;
   direct: boolean;
+  force: boolean;
   url?: string;
   operator?: string;
   help: boolean;
@@ -49,7 +53,7 @@ export async function runCli(argv: readonly string[], env: Env, io: CliIo): Prom
   const operator = opts.operator ?? env.ASTRA_OPERATOR ?? env.USER ?? safeUser();
   let result: AdminResult;
   try {
-    result = opts.direct ? await runDirect(p.command, env, operator, io) : await send(p.command, env, opts, operator);
+    result = opts.direct ? await runDirect(p.command, env, operator, io, { force: opts.force }) : await send(p.command, env, opts, operator);
   } catch (err) {
     if (err instanceof Unreachable) {
       io.err(`error: ${err.message}`);
@@ -77,6 +81,16 @@ async function send(command: AdminCommand, env: Env, opts: Options, operator: st
     );
   }
   const base = (opts.url ?? env.ASTRA_ADMIN_URL ?? `http://127.0.0.1:${env.ASTRA_ADMIN_PORT || DEFAULT_ADMIN_PORT}`).replace(/\/+$/, '');
+  let url: URL | null = null;
+  try {
+    url = new URL(base);
+  } catch {
+    // (reported below)
+  }
+  if (!url || url.protocol !== 'http:' || !LOOPBACK_HOSTS.has(url.hostname) || url.username || url.password) {
+    throw new AdminError('usage', `the admin channel is reached on this machine only (http://127.0.0.1:<port>), not ${base}: the secret was not sent`);
+  }
+  await expectChannel(base);
   let res: Response;
   try {
     res = await fetch(base + ADMIN_PATH, {
@@ -102,15 +116,41 @@ async function send(command: AdminCommand, env: Env, opts: Options, operator: st
   return reply.result;
 }
 
+/** Hostnames of this machine, as URL parses them. */
+const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]']);
+
+/** Resolves when `base` answers as an astra admin channel; otherwise throws Unreachable (and the secret stays unsent). */
+async function expectChannel(base: string): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch(base + ADMIN_HEALTH_PATH, { signal: AbortSignal.timeout(5000) });
+  } catch (err) {
+    const why = err instanceof Error ? ((err.cause as Error | undefined)?.message ?? err.message) : String(err);
+    throw new Unreachable(
+      `no admin channel at ${base} (${why}). Is the server running with ASTRA_ADMIN_SECRET set? With no server running, --direct changes characters in the database.`,
+    );
+  }
+  let body: unknown = null;
+  try {
+    body = await res.json();
+  } catch {
+    // (not JSON: not ours)
+  }
+  if (!res.ok || !AdminHealth.safeParse(body).success) {
+    throw new Unreachable(`something other than an astra admin channel answers at ${base} (${res.status}); the secret was not sent`);
+  }
+}
+
 /** Options may come anywhere; `--` alone (pnpm passes it through) is skipped. A lone `-` number is an argument. */
 function splitOptions(argv: readonly string[]): { opts: Options; args: string[] } | string {
-  const opts: Options = { json: false, direct: false, help: false };
+  const opts: Options = { json: false, direct: false, force: false, help: false };
   const args: string[] = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (a === '--') continue;
     if (a === '--json') opts.json = true;
     else if (a === '--direct') opts.direct = true;
+    else if (a === '--force') opts.force = true;
     else if (a === '-h' || a === '--help') opts.help = true;
     else if (a === '--url' || a === '--operator') {
       const v = argv[++i];

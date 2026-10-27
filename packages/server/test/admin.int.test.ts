@@ -12,12 +12,13 @@ import { addItem, countOf, type Inventory } from '@astra/shared/inventory';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import { pointsOf } from '@astra/shared/skills';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { ADMIN_PATH } from '../src/admin/channel.ts';
+import { ADMIN_HEALTH_PATH, ADMIN_PATH } from '../src/admin/channel.ts';
+import { MOVED_CLOSE_CODE } from '../src/admin/service.ts';
 import { runCli } from '../src/cli/run.ts';
 import { parseConfig } from '../src/config.ts';
 import { INVENTORY } from '../src/persistence/components.ts';
-import type { RunningServer } from '../src/server.ts';
-import { homeSystemOf } from '../src/world/home.ts';
+import { startServer, type RunningServer } from '../src/server.ts';
+import { homeSystemOf, stationFrame } from '../src/world/home.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
 import { api, newAccount, newCharacter, startTestServer, TestSocket, uniqueUsername, waitFor } from './helpers.ts';
 
@@ -115,6 +116,25 @@ describe('dev login', () => {
     expect((await api(server, 'POST', '/auth/login', { body: { username: `dev-${name}`, password: 'password1' } })).status).toBe(401);
   });
 
+  it('reaches dev accounts only: registering a dev- username is refused, and a player’s account is never signed into', async () => {
+    for (const username of ['dev-mallory', 'DEV-Mallory', 'Dev-x1']) {
+      const r = await api<{ error: string; message: string }>(server, 'POST', '/auth/register', { body: { username, password: 'password123' } });
+      expect(r.status).toBe(400);
+      expect(r.body).toEqual({ error: 'reserved_username', message: 'Usernames starting with "dev-" are reserved for development.' });
+    }
+    // a player whose username is a dev login's name: the dev login makes dev-<name>, never touching the player
+    const username = `pl${Date.now().toString(36)}`;
+    const reg = await api<{ accountId: string; token: string }>(server, 'POST', '/auth/register', { body: { username, password: 'password123' } });
+    expect(reg.status).toBe(201);
+    const mine = await newCharacter(server, reg.body.token);
+    const dev = await api<{ accountId: string; token: string; character: { id: string } }>(server, 'POST', '/auth/dev', { body: { name: username } });
+    expect(dev.status).toBe(200);
+    expect(dev.body.accountId).not.toBe(reg.body.accountId);
+    const listed = await api<{ characters: { id: string }[] }>(server, 'GET', '/characters', { token: dev.body.token });
+    expect(listed.body.characters.map((c) => c.id)).not.toContain(mine.id);
+    expect(listed.body.characters.map((c) => c.id)).toEqual([dev.body.character.id]);
+  });
+
   it('is not served with the flag off, and refused at start in production', async () => {
     const off = await startTestServer();
     extra.add(off);
@@ -124,6 +144,10 @@ describe('dev login', () => {
     const production = { NODE_ENV: 'production' as const, JWT_SECRET: 'p'.repeat(40) };
     await expect(startTestServer(production, { tooling: { ASTRA_DEV_LOGIN: true } })).rejects.toThrow(/never allowed in production/);
     await expect(startTestServer(production, { tooling: { ASTRA_ADMIN_SECRET: SECRET } })).rejects.toThrow(/ASTRA_ADMIN_IN_PRODUCTION/);
+    // with NODE_ENV unset, only on a loopback host (as the dev JWT secret)
+    const config = parseConfig(process.env);
+    const unset = { DATABASE_URL: config.DATABASE_URL, REDIS_URL: config.REDIS_URL, JWT_SECRET: 'n'.repeat(40), LOG_LEVEL: 'silent' };
+    await expect(startServer({ env: unset, host: '0.0.0.0', port: 0, tooling: { ASTRA_DEV_LOGIN: true } })).rejects.toThrow(/NODE_ENV unset .* loopback HOST/);
     const prod = await startTestServer(production);
     extra.add(prod);
     expect(prod.adminUrl).toBeNull();
@@ -132,32 +156,51 @@ describe('dev login', () => {
 });
 
 describe('the CLI on characters in play', () => {
-  it('teleports within the zone by a correction and to another system by a handoff', async () => {
+  it('teleports within the zone by a correction', async () => {
     const { acct, character } = await player();
     const { s } = await join(acct.token, character.id);
-
     const near = await run('teleport', character.name, String(HOME), 'station', 'orbit:500');
-    expect(near).toMatchObject({ online: true, handoff: false, system: HOME, mode: 'ship', pose: { pos: [0, 0, 500] } });
+    expect(near).toMatchObject({ online: true, moved: 'zone', system: HOME, mode: 'ship', pose: { pos: [0, 0, 500] } });
     const correction = await s.next('correction');
     expect(correction).toMatchObject({ pose: { pos: [0, 0, 500] }, mode: 'ship' });
     const zone = server.zones.zone(`sys:${HOME}`)!;
     const session = [...server.ws.registry.sessions].find((x) => x.characterId === character.id)!;
     expect(zone.entity(session.entityId!)!.fields).toMatchObject({ pos: [0, 0, 500], mode: 'ship' });
-
-    const far = await run('teleport', character.id.toUpperCase(), String(OTHER), 'station', 'docked');
-    expect(far).toMatchObject({ online: true, handoff: true, system: OTHER, mode: 'docked' });
-    const handoff = await s.next('zone');
-    expect(handoff.zone.id).toBe(`sys:${OTHER}`);
-    expect(session.zoneId).toBe(`sys:${OTHER}`);
     const who = await run('who');
-    expect(who.online).toContainEqual(expect.objectContaining({ character: character.id, name: character.name, zone: `sys:${OTHER}`, mode: 'docked' }));
-
-    // it was saved where it went: the next join puts it there
+    expect(who.online).toContainEqual(expect.objectContaining({ character: character.id, name: character.name, zone: `sys:${HOME}`, mode: 'ship' }));
     s.close();
-    await released(character.id);
+  });
+
+  it('moves a character in play to another system by saving it there and closing its socket without a refusal', async () => {
+    const { acct, character } = await player();
+    const { s } = await join(acct.token, character.id);
+    // the client keeps flying in its old system's frames throughout, as a real one would
+    let seq = 0;
+    const pose = { frame: stationFrame(HOME), pos: [0, 0, 300], quat: [0, 0, 0, 1], vel: [0, 0, 0] };
+    const flying = setInterval(() => {
+      if (s.ws.readyState === s.ws.OPEN) s.send({ t: 'input', seq: ++seq, time: 0, mode: 'ship', pose, buttons: 0 });
+    }, 20);
+    try {
+      await waitFor(() => seq >= 10, 5000, 'inputs before the teleport');
+      const far = await run('teleport', character.id.toUpperCase(), String(OTHER), 'station', 'docked');
+      expect(far).toMatchObject({ online: true, moved: 'reconnect', system: OTHER, mode: 'docked', changed: ['pose'] });
+      const closed = await s.closed;
+      expect(closed.code).toBe(MOVED_CLOSE_CODE);
+    } finally {
+      clearInterval(flying);
+    }
+    // no refusal: a client reconnects after a close like this one
+    expect(s.received.filter((m) => m.t === 'refused')).toEqual([]);
+    // out of its old zone at once
+    const old = server.zones.zone(`sys:${HOME}`);
+    expect(old ? [...old.entityIds()].map((id) => old.entity(id)!.fields.name) : []).not.toContain(character.name);
+    await waitFor(() => ![...server.ws.registry.sessions].some((x) => x.characterId === character.id), 5000, 'the old session to go');
+
+    // the reconnect is welcomed in the new system, docked
     const back = await join(acct.token, character.id);
     expect(back.welcome.zone.id).toBe(`sys:${OTHER}`);
     expect(back.welcome.mode).toBe('docked');
+    expect((await run('who')).online).toContainEqual(expect.objectContaining({ character: character.id, zone: `sys:${OTHER}` }));
     back.s.close();
   });
 
@@ -320,6 +363,34 @@ describe('the admin channel', () => {
   });
 });
 
+describe('the CLI and the secret', () => {
+  it('sends the secret only to a loopback address that answers as an astra admin channel', async () => {
+    const elsewhere = await cli(['who'], { ASTRA_ADMIN_URL: 'http://example.com:8788', ASTRA_ADMIN_SECRET: SECRET });
+    expect(elsewhere.code).toBe(2);
+    expect(elsewhere.err).toMatch(/on this machine only .* not http:\/\/example.com:8788: the secret was not sent/);
+    expect((await cli(['who'], { ASTRA_ADMIN_URL: 'https://127.0.0.1:8788', ASTRA_ADMIN_SECRET: SECRET })).code).toBe(2);
+
+    // something else on a loopback port: it never sees the secret
+    const seen: (string | undefined)[] = [];
+    const impostor = createServer((req, res) => {
+      seen.push(req.headers.authorization);
+      res.writeHead(200, { 'content-type': 'application/json' }).end('{"ok":true}');
+    });
+    await new Promise<void>((r) => impostor.listen(0, '127.0.0.1', r));
+    try {
+      const url = `http://127.0.0.1:${(impostor.address() as AddressInfo).port}`;
+      const r = await cli(['who'], { ASTRA_ADMIN_URL: url, ASTRA_ADMIN_SECRET: SECRET });
+      expect(r.code).toBe(3);
+      expect(r.err).toMatch(/something other than an astra admin channel answers .* the secret was not sent/);
+      expect(seen).toEqual([undefined]);
+    } finally {
+      await new Promise<void>((r) => impostor.close(() => r()));
+    }
+    const health = await fetch(server.adminUrl + ADMIN_HEALTH_PATH);
+    expect(await health.json()).toEqual({ service: 'astra-admin', version: 1 });
+  });
+});
+
 describe('the admin channel port', () => {
   it('leaves the game up without its channel when another server has the port', async () => {
     const port = Number(new URL(server.adminUrl!).port);
@@ -345,12 +416,19 @@ describe('direct mode', () => {
     expect(direct.code, direct.err).toBe(0);
     expect(JSON.parse(direct.out)).toMatchObject({ online: false, added: 3, revision: 1 });
     expect(direct.err).toMatch(/"msg":"admin command"/); // its audit line
+    // saved a moment ago (by that edit): a second direct edit is refused, unless forced
+    const again = await cli(['--direct', 'grant', character.name, 'ferrite', '2'], { ...db, HOST: '127.0.0.1', PORT: String(port) });
+    expect(again.code).toBe(1);
+    expect(again.err).toMatch(/^error \(refused\): .* was saved \d+ s ago: a server elsewhere on this database may hold it \(--force/m);
+    const forced = await cli(['--direct', '--force', '--json', 'grant', character.name, 'ferrite', '2'], { ...db, HOST: '127.0.0.1', PORT: String(port) });
+    expect(forced.code, forced.err).toBe(0);
+    expect(JSON.parse(forced.out)).toMatchObject({ added: 2, revision: 2 });
     const live = await cli(['--direct', 'who'], { ...db, HOST: '127.0.0.1', PORT: String(port) });
     expect(live.err).toMatch(/^error \(needs_server\): who needs the running server/m);
 
     // the server (which did not hold it) loads what direct mode wrote
     const { s, inventory } = await join(acct.token, character.id);
-    expect(countOf(inventory.inventory, 'ferrite')).toBe(3);
+    expect(countOf(inventory.inventory, 'ferrite')).toBe(5);
     s.close();
   });
 });
@@ -371,7 +449,8 @@ describe('the cli script', () => {
     const code = await new Promise<number | null>((resolve) => child.on('close', resolve));
     expect(code, err).toBe(0);
     expect(JSON.parse(out)).toMatchObject({ loop: { tickHz: 20 } });
-  });
+    // (starting tsx takes seconds alone, and many more on a machine loaded by parallel worktrees)
+  }, 120_000);
 });
 
 /** A port nothing listens on. */

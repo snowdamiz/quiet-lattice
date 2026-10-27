@@ -11,7 +11,7 @@ import { createTimingHash } from './accounts/password.ts';
 import { createTokenService } from './accounts/tokens.ts';
 import { openAdminChannel, type AdminChannel } from './admin/channel.ts';
 import { parseTooling, type ToolingConfig, type ToolingInput } from './admin/config.ts';
-import { AdminService } from './admin/service.ts';
+import { AdminService, pgDirectory } from './admin/service.ts';
 import { getOwnedCharacter } from './characters/characters.ts';
 import { parseConfig, type Config, type Env } from './config.ts';
 import { createDatabase } from './db/client.ts';
@@ -81,7 +81,8 @@ function redact(url: string): string {
 
 export async function startServer(opts: StartOptions = {}): Promise<RunningServer> {
   const config: Config = parseConfig(opts.env ?? process.env, { ...opts.config, PORT: opts.port ?? opts.config?.PORT, HOST: opts.host ?? opts.config?.HOST });
-  const tooling = parseTooling(opts.env ?? process.env, config.NODE_ENV, opts.tooling);
+  const nodeEnvSet = (opts.config?.NODE_ENV ?? (opts.env ?? process.env).NODE_ENV) ? true : false;
+  const tooling = parseTooling(opts.env ?? process.env, { nodeEnv: config.NODE_ENV, nodeEnvSet, host: config.HOST }, opts.tooling);
 
   const app = Fastify({
     logger: { level: config.LOG_LEVEL },
@@ -159,7 +160,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     pingRedis: () => redis.ping(),
   });
   if (tooling.devLogin) registerDevLogin(app, { db: database.db, tokens, authLimiter, log });
-  const admin = new AdminService({ db: database.db, persistence, live: { zones, gateway: ws, world }, log });
+  const admin = new AdminService({ directory: pgDirectory(database.db), persistence, live: { zones, gateway: ws, world }, log });
   let adminChannel: AdminChannel | undefined;
 
   let closed: Promise<void> | undefined;
