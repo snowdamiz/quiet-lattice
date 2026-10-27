@@ -1419,9 +1419,10 @@ kbd,
 .acct-rail li.on i {
   color: var(--accent);
 }
-/* a step done: its number gives way to an amber tick */
+/* a step done: its number fades out (0.13 s, eased in), then an amber tick takes its place */
 .acct-rail li.done i {
   color: transparent;
+  transition: color 0.13s cubic-bezier(0.4, 0, 1, 1);
 }
 .acct-rail li.done i::after {
   content: '';
@@ -1434,7 +1435,7 @@ kbd,
   border-left: 1.5px solid var(--accent);
   border-bottom: 1.5px solid var(--accent);
   transform: rotate(-45deg);
-  animation: acctTick 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: acctTick 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
 }
 @keyframes acctTick {
   from {
@@ -1491,8 +1492,11 @@ kbd,
   justify-content: space-between;
   gap: 16px;
 }
+/* (thin mono figures: a step lighter than the key hints' grey, to read as bright as they do) */
 .acct .acct-count {
-  color: var(--dim);
+  font-size: 11px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
 }
 .acct-lede {
   margin: 12px 0 0;
@@ -1771,7 +1775,30 @@ kbd,
   font: inherit;
   cursor: pointer;
   outline: none;
-  transition: background 0.2s, padding 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  isolation: isolate;
+  transition: padding 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+/* the picked row's amber tint, behind its content: it fades between rows on the bar's curve (a gradient cannot be
+   tweened, its opacity can) */
+.acct-char::after,
+.acct-people::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 75%);
+  opacity: 0;
+  transition: opacity 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-char:hover:not(:disabled):not(.static)::after,
+.acct-people:hover::after {
+  opacity: 0.6;
+}
+.acct-char[aria-selected='true']::after,
+.acct-char.static::after,
+.acct-people.on::after {
+  opacity: 1;
 }
 .acct-char::before,
 .acct-people::before {
@@ -1785,15 +1812,10 @@ kbd,
   transform: scaleY(0);
   transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.acct-char:hover:not(:disabled):not(.static),
-.acct-people:hover {
-  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent 75%);
-}
 .acct-char[aria-selected='true'],
 .acct-char.static,
 .acct-people.on {
   padding-left: 6px;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 75%);
 }
 .acct-char[aria-selected='true']::before,
 .acct-char.static::before,
@@ -2021,14 +2043,16 @@ kbd,
     transform: none;
   }
 }
+/* (the keys and their rule fade out with the panel's ease, an animation of their own: their rise-in's fill would
+   otherwise hold them and drop them in one frame) */
 .acct-step.arriving .acct-keys {
-  opacity: 0;
-  transition: opacity 0.2s ease-in;
+  animation: acctTextOut 0.16s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 .acct .acct-progress .mono {
   color: var(--dim);
 }
-/* the connection's words change in place: the old fade out as the new fade in over them */
+/* the connection's words change in place, in sequence as the steps do: the old fade out (0.13 s, eased in), then the
+   new rise in where they stood */
 .acct-conn {
   display: inline-grid;
 }
@@ -2037,10 +2061,10 @@ kbd,
   white-space: nowrap;
 }
 .acct-conn > span.fresh {
-  animation: acctIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: acctIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
 }
 .acct-conn > span.gone {
-  animation: acctTextOut 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: acctTextOut 0.13s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 @keyframes acctTextOut {
   to {
@@ -3180,6 +3204,87 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 /* legible over a bright sky: a soft dark halo under the HUD's readouts */
 .r-alt, .r-speed, .r-mode, .location, .bar label {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.25);
+}
+/* the top line (where you are, the compass's reading, a banner) over the brightest of scenes, a hangar's strip lights:
+   a dark ring close round the letters, as the flight readouts have */
+.location .body,
+.ec-read,
+.banner .b-sub,
+.banner .b-title {
+  text-shadow:
+    0 0 1px var(--ink),
+    0 0 3px var(--ink),
+    0 0 6px color-mix(in srgb, var(--ink) 90%, transparent),
+    0 0 12px color-mix(in srgb, var(--ink) 70%, transparent);
+}
+/* and where you are and the compass's reading each on a soft dark backing of their own, faded at its edges, so they
+   hold AA however bright what lies behind them (the banner's band, below, does the rest while one shows) */
+.location .body,
+.ec-read {
+  position: relative;
+  isolation: isolate;
+}
+.ec-read {
+  width: max-content;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text);
+}
+.ec-read small {
+  color: var(--dim);
+}
+.location .body::before,
+.ec-read::before {
+  content: '';
+  position: absolute;
+  inset: -9px -36px -9px -18px;
+  z-index: -1;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  mask:
+    linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 36px), transparent),
+    linear-gradient(180deg, transparent, #000 9px, #000 calc(100% - 9px), transparent);
+  mask-composite: intersect;
+}
+.ec-read::before {
+  inset: -8px -28px;
+  mask:
+    linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent),
+    linear-gradient(180deg, transparent, #000 8px, #000 calc(100% - 8px), transparent);
+  mask-composite: intersect;
+}
+/* while a banner shows (a system reached, a world found), the top of the view darkens on a soft gradient under it and
+   the readouts beside it, in and out with the banner */
+.hud-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 330px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ink) 88%, transparent) 0,
+    color-mix(in srgb, var(--ink) 86%, transparent) 200px,
+    color-mix(in srgb, var(--ink) 45%, transparent) 265px,
+    transparent 330px
+  );
+}
+.hud-band.show {
+  animation: hudBand 7s ease-in-out forwards;
+}
+@keyframes hudBand {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ---------- dev teleporter (F2, dev builds only) ---------- */

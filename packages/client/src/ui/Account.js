@@ -799,7 +799,8 @@ export class Account {
       list.classList.toggle('fresh', !built);
       step.querySelector('.acct-count').textContent = v.max ? `${v.characters.length} / ${v.max}` : '';
       const empty = !v.loading && !v.listFailed && !v.characters.length;
-      step.querySelector('.acct-keys').innerHTML = keyHints(empty ? EMPTY_LIST_KEYS : LIST_KEYS);
+      // (a full account offers no new character: N is not listed)
+      step.querySelector('.acct-keys').innerHTML = keyHints(empty ? EMPTY_LIST_KEYS : this.flow.full ? LIST_KEYS.filter(([k]) => k[0] !== 'N') : LIST_KEYS);
       const to = list.offsetHeight;
       if (from !== null && from !== to) {
         list.animate([{ height: `${from}px`, overflowY: 'clip' }, { height: `${to}px`, overflowY: 'clip' }], { duration: 380, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' });

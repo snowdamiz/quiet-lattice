@@ -403,6 +403,13 @@ const CHARACTERS = [
   { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a63', name: 'Odo Marrow-Kell', people: 'ulgani', look: LOOK, level: 12, homeSystem: homeOf('ulgani') },
 ];
 const NEW_ID = '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a64';
+/** A full account: the three above and three more, six of six. */
+const SIX = [
+  ...CHARACTERS,
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a65', name: 'Mira Okonta', people: 'thalune', look: LOOK, level: 22, homeSystem: homeOf('thalune') },
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a66', name: 'Sefa Lune', people: 'ixari', look: LOOK, level: 15, homeSystem: homeOf('ixari') },
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a67', name: "Bram O'Hollow", people: 'ulgani', look: LOOK, level: 9, homeSystem: homeOf('ulgani') },
+];
 /** What the browser logs for the wrong password, and the taken username, these screens send on purpose. */
 const REFUSED_SIGN_IN = /Failed to load resource: the server responded with a status of 401/;
 const REFUSED_SIGN_UP = /Failed to load resource: the server responded with a status of 409/;
@@ -664,6 +671,25 @@ export const SCREENS: Record<string, ScreenDef> = {
       ]);
     },
   },
+  // `characters-full`: an account at six of six, New character disabled (the clip: the picked row moving down two and
+  // back one, its bar, indent and tint easing together)
+  'characters-full': {
+    clipSeconds: 1.6,
+    async open(page) {
+      await serveAccount(page, { characters: SIX });
+      await titleReady(page);
+      await signIn(page, 'correct-horse');
+      await page.waitForSelector('.acct-step:not(.leaving) .acct-char[data-id]');
+      await settleFlow(page);
+    },
+    async motion(page) {
+      timeline(page, [
+        [0.05, key(page, 'ArrowDown')],
+        [0.5, key(page, 'ArrowDown')],
+        [1.0, key(page, 'ArrowUp')],
+      ]);
+    },
+  },
   // `create`: a new character named, the Ixari picked and opened on its body, home and saying (the clip: down to the
   // Ulgani and back)
   create: {
@@ -745,7 +771,8 @@ export const SCREENS: Record<string, ScreenDef> = {
   },
   // `arrival`: a new Ixari character arrived, docked in its home Waystation's hangar. The stills: the pause menu that
   // entering leaves up (the mouse is captured only from a click), on its shade over the lit hangar; and 16x9-resumed.png,
-  // the mouse captured, the world as the player then sees it. The clip: that world going on (the hangar's traffic).
+  // the mouse captured, the world as the player then sees it, its arrival banner over the top band; 16x9-settled.png, the
+  // banner gone, the top line on its own. The clip: that world going on (the hangar's traffic).
   arrival: {
     clipSeconds: 2,
     async open(page) {
@@ -767,6 +794,11 @@ export const SCREENS: Record<string, ScreenDef> = {
       async resumed(page) {
         await grantLock(page);
         await settle(page, 60);
+      },
+      // the arrival banner gone (it and the band under it last 7 s): the top line on its own over the hangar's lights
+      async settled(page) {
+        await page.waitForTimeout(7500);
+        await settle(page, 30);
       },
     },
   },
