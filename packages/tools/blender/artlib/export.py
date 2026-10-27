@@ -4,8 +4,10 @@ For every assets/blend/<family>/*.blend: validate the source (stop on failure); 
 linked library materials and of every material it must bake; bake procedural channels and AO; decimate LOD1-3 for
 variants without hand-made LODs; turn collections into the node layout the engine reads (<asset> / [<variant>] /
 <variant>_LOD<n>, colliders and markers beside the LODs); export a .glb with materials named by their engine_name;
-validate that .glb, and only then move it to packages/client/public/models/<family>/<name>.glb. A source that fails (or
-crashes the export) leaves no model behind: a stale .glb is removed. The .blend is never saved.
+compress its textures to KTX2 (artlib/ktx.py; families.json "textures") and then its geometry with meshopt
+(artlib/meshopt.py; families.json "geometry"), --no-compress keeping both as Blender wrote them; validate that .glb, and
+only then move it to packages/client/public/models/<family>/<name>.glb. A source that fails (or crashes the export)
+leaves no model behind: a stale .glb is removed. The .blend is never saved.
 """
 import argparse
 import shutil
@@ -17,7 +19,7 @@ from pathlib import Path
 import bpy
 from mathutils import Matrix, Vector
 
-from . import bake, core, glb, lods
+from . import bake, core, glb, ktx, lods, meshopt
 from . import checks as C
 from . import materials as M
 from . import rules as R
@@ -31,6 +33,11 @@ def parse(argv):
     p.add_argument("--report-dir", help="directory for JSON reports (default packages/tools/blender/reports)")
     p.add_argument("--only", help="comma-separated .blend names (without extension) to export")
     p.add_argument("--bake-res", type=int, help="bake size in px instead of the class texture size (tests)")
+    p.add_argument(
+        "--compress",
+        action=argparse.BooleanOptionalAction,
+        help="KTX2 textures and meshopt geometry (default: families.json textures.compress, geometry.compress); --no-compress writes them as Blender does, which validation of the shipped models refuses",
+    )
     p.add_argument("--verbose", action="store_true")
     p.add_argument("--quiet", action="store_true")
     return p.parse_args(argv)
@@ -56,6 +63,11 @@ def main(family, argv=None):
         print(f"export {family}: nothing to export (no .blend sources in {R.rel(src_dir)})")
         return 0
     out_root = Path(args.out_dir) if args.out_dir else R.MODELS
+    shipped = ktx.settings(rules, family).get("compress") or meshopt.settings(rules, family).get("compress")
+    if args.compress is False and shipped and out_root.resolve() == R.MODELS.resolve():
+        # (an uncompressed export is a comparison, never a model: the validator refuses it in the models folder)
+        print(f"export {family}: --no-compress writes what this family must not ship; give --out-dir a scratch folder")
+        return 2
     done = []
     for src in sources:
         out = out_root / rules["output"].format(family=family, stem=src.stem)
@@ -100,8 +112,23 @@ def export_one(rules, family, src, out, args):
         tmp = tmpdir / out.name
         _write(roots, tmp)
         glb.finalize(tmp, names)
+        textures = ktx.settings(rules, family).get("compress", False) if args.compress is None else args.compress
+        geometry = meshopt.settings(rules, family).get("compress", False) if args.compress is None else args.compress
+        if textures:
+            png = tmp
+            tmp = tmpdir / "ktx2" / out.name
+            tmp.parent.mkdir()
+            print(f"  {png.stat().st_size / 1e6:.1f} MB with PNG textures; encoding KTX2 ({ktx.jobs()} at a time)")
+            ktx.compress(png, tmp, ktx.settings(rules, family))
+            png.unlink()
+        if geometry:
+            raw = tmp
+            tmp = tmpdir / "meshopt" / out.name
+            tmp.parent.mkdir()
+            meshopt.compress(raw, tmp, meshopt.settings(rules, family))
+            raw.unlink()
         core.load(tmp)
-        check = core.run_checks(rules, out, family, "export", source=src)
+        check = core.run_checks(rules, out, family, "export", source=src, glb=tmp, compressed=textures, geometry=geometry)
         core.write_and_print(check, core.report_path(family, out, args.report_dir), verbose=args.verbose, quiet=args.quiet)
         if check.status != "PASS":
             rejected = core.report_path(family, out, args.report_dir).with_suffix(".rejected.glb")
