@@ -117,6 +117,40 @@ describe('NetCutsceneLink', () => {
   });
 });
 
+describe('NetCutsceneLink, a cutscene the server starts', () => {
+  it('plays an unrequested play (the server’s own, a quest step’s) and passes its end on; its done goes back', () => {
+    const { net, link } = setup();
+    const played = [];
+    const ended = [];
+    link.onPlay = (id, phase) => played.push([id, phase]);
+    link.onEnded = (id) => ended.push(id);
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'cold_open', phase: 12 });
+    expect(played).toEqual([['cold_open', 12]]);
+    expect(net.sent).toEqual([]);
+    net.emit('cutscene', { t: 'cutscene', op: 'ended', id: 'cold_open', phase: 12 });
+    expect(ended).toEqual(['cold_open']);
+    // a second one, played to its end by the client
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'touch', phase: 13 });
+    link.done('touch', false);
+    expect(net.sent).toEqual([{ t: 'cutscene', op: 'done', id: 'touch', skipped: false }]);
+  });
+
+  it('still gives back a late play for a request it gave up on', async () => {
+    const { net, link, timers } = setup();
+    const played = [];
+    link.onPlay = (id) => played.push(id);
+    const p = link.request('test');
+    timers.advance(ANSWER_TIMEOUT_MS);
+    expect(await p).toEqual({ refused: 'timeout' });
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'test', phase: 3 });
+    expect(played).toEqual([]);
+    expect(net.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+    // (only once: the next play of it is the server's own)
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'test', phase: 4 });
+    expect(played).toEqual(['test']);
+  });
+});
+
 describe('OfflineCutsceneLink', () => {
   it('answers for itself with no phase, and keeps the encoded messages it would have sent', async () => {
     const link = new OfflineCutsceneLink();

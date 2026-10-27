@@ -63,6 +63,7 @@ export class CutscenePlayer {
         this.netLink?.dispose();
         this.netLink = new NetCutsceneLink(net);
         this.netLink.onEnded = (id) => this.serverEnded(id);
+        this.netLink.onPlay = (id, phase) => this.serverStarted(this.netLink, id, phase);
       }
       return this.netLink;
     }
@@ -127,11 +128,38 @@ export class CutscenePlayer {
     // (refused, or no answer in time: nothing plays)
     const answer = await link.request(id);
     if (answer.refused) return refuse(answer.refused);
-    if (this.current) {
-      // (another began meanwhile: the server's placing is given back)
+    if (this.current || (g.mode !== 'ship' && g.mode !== 'foot')) {
+      // (another began meanwhile, or play ended: the server's placing is given back)
       link.done(id, true);
       return refuse('busy');
     }
+    return this.begin(def, link, answer.phase);
+  }
+
+  /**
+   * The server started cutscene `id` itself (a quest step's, P1.E09.T01), in story phase `phase`: it plays as if asked
+   * for, and says done at the end. One that cannot play now (another is playing, the game is not in play, the
+   * definition does not load) is given back at once.
+   */
+  async serverStarted(link, id, phase) {
+    const g = this.game;
+    const giveBack = () => link.done(id, true);
+    if (this.current || (g.mode !== 'ship' && g.mode !== 'foot')) return giveBack();
+    let def;
+    try {
+      def = await this.load(id);
+    } catch {
+      return giveBack();
+    }
+    if (this.current || (g.mode !== 'ship' && g.mode !== 'foot')) return giveBack();
+    this.link = link;
+    return this.begin(def, link, phase);
+  }
+
+  /** Starts playing `def` in story phase `phase`, through `link`; resolves when it is over (see play). */
+  begin(def, link, phase) {
+    const g = this.game;
+    const id = def.id;
     if (g.overlay) g.menus.closeAll();
     g.overlay = 'cutscene';
     const player = g.mode === 'foot' ? g.player.state : g.ship.state;
@@ -140,7 +168,7 @@ export class CutscenePlayer {
       def,
       timeline: new Timeline(def),
       space: anchorSpace(frame, def.space.anchor, player),
-      phase: answer.phase,
+      phase,
       link,
       shot: 0,
       line: null,
@@ -267,7 +295,6 @@ export class CutscenePlayer {
 
   // ---------- inside ----------
 
-  /** The clock is done (or skipped): the camera starts back, the controls come back, and the server hears. */
   /** The clock is done (or skipped): the camera starts back, and the server hears. The controls stay with the cutscene
    * until the camera is home (finish). */
   leave() {

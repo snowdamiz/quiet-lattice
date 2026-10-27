@@ -1,7 +1,8 @@
 // The seam between a cutscene and the server (docs/ARCHITECTURE.md §15). Cutscenes are always phased and the server
 // decides when one opens: before one plays, the client asks (`cutscene {op: 'request'}`), and the server places the
 // player in a story phase at the cutscene's place and answers `cutscene {op: 'play', phase}`, or refuses. The client
-// plays only on `play`, and says `done` when it ends or is skipped.
+// plays only on `play`, and says `done` when it ends or is skipped. The server may also start one itself (a quest step's
+// cutscene, server authority): an unrequested `play` plays too, and is answered `done` the same way.
 //
 // NetCutsceneLink speaks to the server through the client's Net (packages/client/src/net/Net.js: `joined`, `send(m)`,
 // `on(type, fn)` → unsubscribe, the server's `cutscene` answers routed by their type). OfflineCutsceneLink is the dev
@@ -20,8 +21,13 @@ export class NetCutsceneLink {
     this.timers = timers;
     /** called with `id` when the server ends a cutscene the client did not (it took the player out of the phase) */
     this.onEnded = null;
+    /** called with `id` and `phase` when the server starts a cutscene itself (a quest step's): the client plays it and
+     * says done */
+    this.onPlay = null;
     this.pending = null;
     this.playing = null;
+    /** requests the client gave up on (no answer in time, the connection dropped): a play for one comes too late */
+    this.abandoned = new Set();
     this.off = net.on('cutscene', (m) => this.answered(m));
   }
 
@@ -60,9 +66,15 @@ export class NetCutsceneLink {
       this.settle(m.op === 'play' ? { phase: m.phase } : { refused: m.reason ?? 'refused' });
       return;
     }
-    // a play that came too late (the client gave up and played nothing): the server's placing is given back
     if (m.op === 'play' && m.id !== this.playing) {
-      this.net.send({ t: 'cutscene', op: 'done', id: m.id, skipped: true });
+      // a play for a request the client gave up on comes too late: the server's placing is given back
+      if (this.abandoned.delete(m.id) || !this.onPlay) {
+        this.net.send({ t: 'cutscene', op: 'done', id: m.id, skipped: true });
+        return;
+      }
+      // one nobody asked for is the server's own (a quest step's cutscene): it plays, and its done goes back as usual
+      this.playing = m.id;
+      this.onPlay(m.id, m.phase);
       return;
     }
     // the server ended the one playing (the player left its place, the phase closed)
@@ -76,6 +88,11 @@ export class NetCutsceneLink {
     const p = this.pending;
     if (!p) return;
     this.pending = null;
+    // (given up on, not answered: a play that still comes for it is too late)
+    if (result.refused === 'timeout' || result.refused === 'lost') {
+      this.abandoned.add(p.id);
+      if (this.abandoned.size > 8) this.abandoned.delete(this.abandoned.values().next().value);
+    }
     this.timers.clearTimeout(p.timer);
     p.offLost();
     p.offClosed();
