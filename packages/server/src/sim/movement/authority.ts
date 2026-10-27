@@ -549,7 +549,7 @@ export class MovementAuthority {
       m.timeless = true;
       this.log?.warn(
         { zone: this.zone, entity: m.id, account: m.profile.accountId, character: m.profile.characterId, seq: msg.seq },
-        'movement: client sends no time; its inputs are judged on their arrival, with coarser jitter tolerance',
+        'movement: client sends no time; its inputs are judged on their arrival times, with no jitter cancelled',
       );
     }
     if (m.hold) {

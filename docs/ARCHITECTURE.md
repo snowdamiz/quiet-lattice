@@ -251,23 +251,34 @@ picked up, quest steps done) are never trusted; they are requests the server re-
 before applying it.
 
 - *Time.* Speed is judged on the client's own clock: a pose is judged at the time its client stamped it (`input.time`),
-  so latency, jitter and stalls change nothing, an honest client's poses and times being its own trajectory. (This
-  reverses the flight contract as P1.E12.T01 first wrote it, where the server measured elapsed time itself.) The time
-  credited between two inputs never runs ahead of the real time that passed by more than a small fixed slack
-  (`MOVEMENT.time`): an input is credited with the time its client says passed since the one before, never less than
-  none, and no more than its arrival gap plus 0.05 s out of a 0.5 s bank that only real time no input claimed refills; a
-  stall's own length may be claimed by the burst that ends it, within a second of its end and a quarter second an input;
-  and never more than 0.3 s ahead of arrival. A clock frozen while time passes banks at most half a second; one run fast
-  is held to real time once that is spent; one lagged far behind arrival is held to real time until it catches up. A
-  clock stepped forward past what it can be credited (the client steps a clock that has fallen more than a second behind,
-  as after a hidden tab's pause) is not cashed in: the credited time re-syncs to it with no movement credit for the step,
-  and judging starts a fresh window there (at most once in 10 s). The bodies are placed at the credited time (to within
-  10 ms), so the pose's frame, clearance and air are the client's. A client that sends no time (0) is judged and placed
-  on its arrival times, with coarser jitter tolerance; the game's client stamps `time`.
+  an honest client's poses and times being its own trajectory. (This reverses the flight contract as P1.E12.T01 first
+  wrote it, where the server measured elapsed time itself.) The network's delays cancel within these bounds
+  (`MOVEMENT.time`), which keep the time credited between two inputs from running ahead of the real time that passed by
+  more than a small fixed slack:
+  - an input is credited with the time its client says passed since the one before, never less than none (a clock
+    stepped back costs that one input's time);
+  - and no more than its arrival gap, plus 0.05 s out of a 0.5 s bank that only real time no input claimed refills, plus
+    0.05 s of what is owed: the real time its running clock left unclaimed in the last 10 s, as its inputs fell behind
+    (a latency rise, a stall). So jitter of up to half a second cancels outright; a backlog drains however it arrives,
+    bunched or over seconds, and a latency spike falls back, so long as the time was owed within the last 10 s and is
+    claimed back at no more than twice real time at 20 Hz; a clock standing still while time passes is owed nothing and
+    banks half a second at most; one run fast is held to real time once the bank is spent;
+  - and never more than 0.3 s ahead of arrival.
+  - A clock stepped forward past what it can be credited (the client steps a clock that has fallen more than a second
+    behind, as after a hidden tab's pause) is not cashed in: the credited time re-syncs to it with no movement credit for
+    the step, and judging starts a fresh window there (at most once in 10 s).
+  - The bodies are placed at the credited time (to within 10 ms), so the pose's frame, clearance and air are the
+    client's; but never trailing the input's arrival by more than a second plus what is still owed. A stamp lagging its
+    arrival by more than a second is a backlog only while that lag drains (by half a second within every 3 s); one that
+    does not is stale, and placed at its arrival (the client never keeps such a lag: it steps its clock forward).
+  - A client that sends no time (0) is judged and placed on its arrival times: no jitter is cancelled for it. The game's
+    client stamps `time`.
 
 - *The pose* must be in a frame the shared rule (`selectFrame`) allows there, and change frame only where the rule does
-  (out of a sphere 5% beyond it, into one inside it); a ship may not be below the ground (the shared terrain sampler,
-  levelled under cities and sites exactly as the client levels it, sampled only below a ceiling no terrain reaches: the
+  (out of a sphere 5% beyond it, into one inside it; the last pose in the old frame is taken as carried by that frame to
+  the new pose's time, so a page that stalled for seconds and changes frame on its way back is judged on its own
+  movement, the frames' drift allowed over a tenth of a second at most); a ship may not be below the ground (the shared
+  terrain sampler, levelled under cities and sites exactly as the client levels it, sampled only below a ceiling no terrain reaches: the
   ground fauna walks on, `drawnGround` at the system's tier, planned in the server's worker thread once a player is in
   the world's frame; a pose that needs it before it is ready is let through provisionally and judged again, with every
   input after it, as soon as it is, and refused back to where that began if it is not ready within 5 s), in a gas
