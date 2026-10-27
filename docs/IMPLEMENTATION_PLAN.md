@@ -331,7 +331,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E17.T04 War zones** · deps: E28.T04 · done: war-zone volumes around the three anchors with no bounty and faction flagging. · verify: integration.
 
 ### E18 Factions and reputation
-- [~] **P2.E18.T01 Rep model** · deps: P1.E03.T05 · spec: DESIGN 14.4 · done: per-faction rep 0–1000, ranks at 200/500/800, gains and losses from events, titles. · verify: unit and integration.
+- [R] **P2.E18.T01 Rep model** · deps: P1.E03.T05 · spec: DESIGN 14.4 · done: per-faction rep 0–1000, ranks at 200/500/800, gains and losses from events, titles. · verify: unit and integration.
 - [ ] **P2.E18.T02 Compact chain** · deps: T01, P1.E09.T01 · done: Hand, Factor, Lanewarden chains and unlocks (double bounties, Tier 2 hulls at Waystations, Hangar Rights, the Warden-breaker gate). · verify: e2e.
 - [ ] **P2.E18.T03 Free Reaches chain** · deps: T01, P1.E11.T05 · done: Deckhand, Cutter, Captain's Ear; the Scrapyard market and Void quartermaster; the Void branch gate flips from a story flag to Reaches standing. · verify: e2e.
 - [ ] **P2.E18.T04 Chorus chain** · deps: T01 · done: Listener, Reader, Voice; sanctuary at B/E stars built from the station kit variant; respec discount; Resonance Tier II–III. · verify: e2e.
