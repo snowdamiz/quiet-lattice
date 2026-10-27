@@ -621,14 +621,21 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     surfaces reflect the environment at 0.45, as the local ship's do). Three levels, picked per ship by its length on
     screen (240 and 60 px: the model within ~50 m, the coarsest past ~190 m for a Lark at 1080p; a finer level only 15%
     past its threshold, a ship back in view picked afresh): the model; its meshoptimizer simplification (the unlit
-    surfaces together, borders locked, specks pruned; the lights kept whole); and each unlit surface clustered on its own
-    to 3.5% (`simplifySloppy`, no triangle spanning two surfaces), the lights simplified, the gear legs to a quarter: the
-    Lark's 61.6k / 30.4k / 2.8k triangles (4.5%; DESIGN 19.2 wants the last level under 5%). A model with its own LOD chain
-    (`<variant>_LOD<n>` nodes, art bible 8; P1.E12.T02's hulls) draws its LOD1 and its last instead; the kit logs which.
-    The plating fades per ship with its length on screen (full past 240 px, none by 60) and the smaller levels are satin
-    (least roughness 0.6, 0.9), so a small ship is a clean silhouette rather than speckle and catches no single-pixel
-    glints; the coarsest is never brighter than 1 before tone mapping (the bloom's threshold is 1.2), casts no shadow,
-    trails no exhaust and draws its gear legs only down (a landed ship still stands on them). Each ship's lights (its
+    surfaces together, borders locked, specks pruned; the lights kept whole); and, for a ship 30-60 px long, one shell
+    (`shell`): the unlit fronts welded where they meet (1 cm) and simplified as one to 3.5% (`simplifySloppy`), so the
+    small parts merge into the whole instead of each keeping a triangle or two that flicker from frame to frame; its
+    normals smooth (creased past 60°), each vertex the surfaces' colour, roughness and metalness averaged by area over a
+    metre round it (the livery's broad patches, a few pixels at that size, not its stripes), no plating, no glow, no
+    lights (under a pixel there they only twinkle), drawn two-sided (the simplification keeps no winding); the gear legs
+    the same, to a quarter: the Lark's 61.6k / 30.4k / 1.9k triangles (3.2%; DESIGN 19.2 wants the last level under 5%).
+    The hull has no textures, so there are no mips to bias. A model with its own LOD chain (`<variant>_LOD<n>` nodes, art
+    bible 8; P1.E12.T02's hulls) draws its LOD1 and its last instead; the kit logs which. The plating fades per ship with
+    its length on screen (full past 240 px, none by 60) and the smaller levels are satin (least roughness 0.6, 0.9), so a
+    small ship reads as one solid silhouette in its livery and catches no single-pixel glints
+    (`assets/renders/ui/remote-ships-crowd/coarse-4x-before-after.png`: 12 frames of two coarse Larks at 4x, round 3's
+    clustered level above, the shell below); the coarsest is never brighter than 1 before tone mapping (the bloom's
+    threshold is 1.2), casts no shadow, trails no exhaust and draws its gear legs only down (a landed ship still stands
+    on them). Each ship's lights (its
     strobe, nav and sensor lights, its exhaust's glow) shine in full within 40 m and dim with distance to 15% by 150 m,
     under the bloom's threshold even at the strobe's flash; the strobe flashes as the local ship's (0.4 to 6 every 1.6 s)
     on each ship's own beat, ramped up and down over three frames. Draw calls: the hull and the legs per level in use, the
@@ -638,21 +645,39 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     per frame. A ship landed on the world whose flora is streamed clears the plants under it, as the player's does.
     Measured costs: `assets/renders/ui/remote-ships-crowd/perf.json`.
   - **Markers.** `markers(here, range, add)` gives the HUD a `player` marker for each other pilot's ship the local ship's
-    sensors pick up (`detects`: the ship's sensor range × the hull's signature, DESIGN 10.1, doubled on the pulse drive
-    or boosting, halved in cover), nearest first, with the box the ship fills and how it is turned; none on foot. The
-    HUD places them by `remote/markers.js`: the box's corners projected, the mark 6 px over the top of the ship's bounds
-    on screen, the name and range 8 px from the mark (right of it, else left, else above, each over the top of the
-    ship's bounds), else none; clear of the keep-out (the reticle and its speed, altitude and mode readouts, the
-    compass and its heading and EDGE readouts, the location line, the vitals, prompts, toasts, their boxes read every
-    quarter second before the frame writes; and the local ship's bounds, projected each frame), of every mark, pilot's
-    ship and label placed before. A ship whose bounds pass 30% of the screen is plain to see and has no marker, nor one
-    whose mark would fall in the keep-out, nor one off screen. Warm white (#E9E7E2) inside a sharp 2 px #0B0C0E ring,
-    15.8:1 against the ring whatever lies behind. `packages/tools/src/smoke/remote-markers.spec.ts` steps every frame of
-    each remote-ships capture's clip and fails on any mark or label on the keep-out, any label on another mark or label,
-    or a label further than a few px from its mark.
+    sensors pick up (the ship's sensor range × the hull's signature, DESIGN 10.1, doubled on the pulse drive or
+    boosting, halved in cover; once picked up, kept to 1.05 × that reach and for 0.5 s past it, so a ship at the edge of
+    it, or easing off its boost, is not marked and unmarked frame by frame; a hidden one, signature 0, goes at once),
+    nearest first, with the box the ship fills, how it is turned and its id; its range is the sensors' (from the ship,
+    not the camera); none on foot. Each pilot's `sense` records the reading (distance, reach, signature and what moved
+    it, detected). The HUD (`updatePilots`) places them by `remote/markers.js`: every pilot picked up and in view (its
+    centre 40 px in from the screen's edges to be marked, 24 once it is) has a mark, 6 px over the top of the ship's
+    bounds on screen (the box's corners projected; over its middle when the box reaches behind the camera), never dropped
+    for the HUD: a mark on the keep-out moves straight out from the middle of what it falls on (that box and those
+    touching it, as one) to its edge, so one crossing a readout slides round it, or, where that leaves the screen, the
+    least way out, the way it went last first. The name and range, 13 and 11 px #E9E7E2 type in a sharp 2 px #0B0C0E
+    ring (15.8:1 whatever lies behind), sit 8 px from the mark (right of it, else left, else above, each over the top of
+    the ship's bounds), clear of the keep-out, of every mark and of the labels placed before, and off other pilots' ships
+    when a side allows: a name keeps its side while that has any room; one gone stays gone 150 ms at least and comes back
+    on its side once that has had room for 150 ms (6 px to spare, here and where its mark is headed in 150 ms), or takes
+    another side once its own has had none that long, and only while its mark crosses the screen under 1200 px/s; the
+    names shown last frame are placed first, so one coming back never knocks one off. With no room the name goes and the
+    mark stays. Marks and names fade in and out over 150 ms (each pilot's marker its own element, by its id). The
+    keep-out: the reticle and its speed, altitude and mode readouts, the compass and its heading and EDGE readouts, the
+    location line, the vitals, prompts, toasts (their boxes read every quarter second before the frame writes), the
+    social panels where the HUD has them (`hud.social.covers()`, P1.E15.T03), and the local ship's outline, projected
+    each frame (its convex hull's corners, worked out once, in 8 horizontal slices: close round its wings and engines,
+    not its box). `packages/tools/src/smoke/remote-markers.spec.ts` steps every frame of each remote-ships capture's
+    clip on the HUD's clock and fails on a pilot picked up and in view without a mark, any mark or label on the fixed
+    HUD or on the local ship (any of its vertices on screen, worked out apart from the HUD), a label on another mark or
+    label or more than a few px from its mark, or a mark or name back or gone, or a name moved to another side, within
+    150 ms of its last change.
   - **Dev.** `remote/replay.js` plays recorded snapshot streams (the zone's encoding, a 60 ms trip with 40 ms of jitter)
     through the same path offline: `pnpm capture -- --ui remote-ships` (a flypast), `remote-ships-crowd` (24 in view,
-    each on its own heading and speed, one flying out of sensor range), `remote-ships-pads` (Larks docked on the
+    each on its own heading and speed, one flying out of sensor range), `remote-ships-crowd-sensors` (the crowd with a
+    dev overlay: under each pilot in view, and in a table of them all, its distance against its reach, its signature
+    and what moved it, whether the sensors pick it up, and what the HUD made of its mark and name: nudged, or its name
+    dropped and what took its room), `remote-ships-pads` (Larks docked on the
     Waystation's pads, gear down, others passing the mouth), `remote-ships-surface` (one landed, others flying past low
     in the world's turning frame) and `remote-ships-bay` (a bay phase full: 24 Larks docked round the player's pad, the
     hangar's three other pads and 21 berths on its floor). `packages/tools/src/smoke/remote-online.spec.ts` flies two
