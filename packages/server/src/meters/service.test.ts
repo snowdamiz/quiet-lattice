@@ -247,9 +247,7 @@ describe('Charge, as the server judges it', () => {
     // (movement authority refuses the claim, so the zone never applies it: the meters only hear it)
     const notices = () => t.pushes.filter((p) => p.notice);
     t.meters.claim(ID, t.input('pulse', null, deep), t.now);
-    expect(notices()).toEqual([
-      { view: expect.objectContaining({ charge: 0 }), notice: { text: expect.stringMatching(/Charge empty/), tone: 'warn' } },
-    ]);
+    expect(notices()).toEqual([{ view: expect.objectContaining({ charge: 0 }), notice: { text: expect.stringMatching(/Charge empty/), tone: 'warn' } }]);
     t.wait(0.05);
     t.meters.claim(ID, t.input('pulse', null, deep), t.now);
     expect(notices()).toHaveLength(1);

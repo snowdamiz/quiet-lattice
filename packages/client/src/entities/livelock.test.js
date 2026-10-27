@@ -112,7 +112,8 @@ function run(latency, phase, heldAt, { request = 'held', guard = true } = {}) {
         () => {
           const now = sent + latency;
           const before = meters.get('c').overheated;
-          meters.input('c', {}, meters.gate('c', msg, now), now);
+          meters.claim('c', msg, now);
+          meters.input('c', {}, msg, now);
           if (!before && meters.get('c').overheated) serverOverheats++;
         },
       ]);
