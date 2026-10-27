@@ -368,26 +368,36 @@ async function stageCutscene(page: Page, id: string): Promise<void> {
   });
 }
 
-/** What the remote-ships screen reaches of the page. */
+/** What the remote-ships screens reach of the page (three's objects as the page has them). */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface RemotePage {
   game: {
     traffic: { station: unknown; ships: { obj: { visible: boolean } }[] };
-    ship: { speed: number };
+    ship: { speed: number; state: { pos: any; quat: any } };
+    station: unknown;
+    system: { homePlanet: unknown };
     hud: { clearBanners(): void };
+    remotes: { view: { prepare(hull: string): Promise<unknown> } };
+    hints?: Record<string, boolean>;
+    cam: { frame: unknown };
+    dockOnPad(near: unknown, quat: unknown): void;
+    debugGoto(planet: unknown, opts: Record<string, unknown>): void;
   };
   dev: { boot(): Promise<void> };
   step(n: number): Promise<void>;
   __holdRaf?: boolean;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
- * Boots a game by the Waystation with its frame loop parked (as stageCutscene does) and the demo's station traffic out of
- * the shot, then plays one of the remote layer's recorded scenes (packages/client/src/remote/replay.js: `playFlypast`,
- * other pilots' Larks sweeping round in front of the ship; `playCrowd`, 24 of them in ranks ahead) as a snapshot stream
- * through the wire's encoding with a 60 ms trip and 40 ms of jitter, offline, so the capture is hermetic. `seconds` of it
- * are stepped before the still.
+ * Boots a game with its frame loop parked (as stageCutscene does) and the demo's station traffic out of the shot, puts the
+ * ship where the scene wants it (`space`: off the Waystation, as the sandbox starts; `pads`: docked on its hangar pad at
+ * (30, -22), facing the mouth; `surface`: hovering 40 m over dry ground on the home world, in the morning sun), then plays
+ * one of the remote layer's recorded scenes (packages/client/src/remote/replay.js SCENES: `flypast`, `crowd`, `pads`,
+ * `surface`) as a snapshot stream through the wire's encoding with a 60 ms trip and 40 ms of jitter, offline, so the
+ * capture is hermetic. `seconds` of it are stepped before the still.
  */
-async function openRemotes(page: Page, scene: 'playFlypast' | 'playCrowd', seconds: number): Promise<void> {
+async function openRemotes(page: Page, scene: 'flypast' | 'crowd' | 'pads' | 'surface', seconds: number, stage: 'space' | 'pads' | 'surface' = 'space'): Promise<void> {
   await page.evaluate(() => (window as unknown as RemotePage).dev.boot());
   await page.evaluate(async () => {
     const w = window as unknown as RemotePage & { requestAnimationFrame(cb: FrameRequestCallback): number };
@@ -397,22 +407,31 @@ async function openRemotes(page: Page, scene: 'playFlypast' | 'playCrowd', secon
     await new Promise((r) => setTimeout(r, 100));
   });
   await page.evaluate(
-    async ({ scene, seconds }) => {
+    async ({ scene, seconds, stage }) => {
       const w = window as unknown as RemotePage;
       const g = w.game;
       // (these are the server's ships: the demo's client-side traffic round the Waystation stays out of the shot)
       g.traffic.station = null;
       for (const s of g.traffic.ships) s.obj.visible = false;
       g.ship.speed = 0;
+      // (the hover hint has been read)
+      g.hints = { ...g.hints, vtol: true };
+      const pos = g.ship.state.pos;
+      if (stage === 'pads') {
+        const V = pos.constructor;
+        g.dockOnPad(new V(30, 2.4, -22), new g.ship.state.quat.constructor().setFromAxisAngle(new V(0, 1, 0), Math.PI));
+      } else if (stage === 'surface') g.debugGoto(g.system.homePlanet, { sunAngle: 38, alt: 40, azimuth: 30 });
+      g.cam.frame = undefined;
+      await g.remotes.view.prepare('lark');
       await w.step(90);
       const url = '/src/remote/replay.js';
       const replay = await import(/* @vite-ignore */ url);
-      replay[scene](g);
+      replay.play(g, scene);
       await w.step(Math.round(seconds * 60));
       // (the system's name, shown on arrival, has had its moment)
       g.hud.clearBanners();
     },
-    { scene, seconds },
+    { scene, seconds, stage },
   );
   // (the HUD's transitions run on real time)
   await page.waitForTimeout(1200);
@@ -577,13 +596,30 @@ export const SCREENS: Record<string, ScreenDef> = {
   'remote-ships': {
     hudClock: true,
     clipSeconds: 2.5,
-    open: (page) => openRemotes(page, 'playFlypast', 1.2),
+    open: (page) => openRemotes(page, 'flypast', 1.2),
   },
-  // and the Phase 1 budget's 24 remote players in view at once, in ranks ahead of the ship, cruising (one kit of
-  // instanced meshes draws them all)
+  // the Phase 1 budget's 24 remote players in view at once, each about its own business (heading, speed, turn and climb),
+  // a hundred metres to a few kilometres out, each marked with its name and range; one draws away past the 4 km a ship's
+  // sensors pick a Lark up at, and its marker drops during the clip (one kit of instanced meshes draws them all, the far
+  // ones simplified)
   'remote-ships-crowd': {
     hudClock: true,
-    open: (page) => openRemotes(page, 'playCrowd', 1.2),
+    clipSeconds: 2,
+    open: (page) => openRemotes(page, 'crowd', 1.2),
+  },
+  // the Waystation's hangar from the player's docked ship: two other pilots' Larks docked on the pads beside it, gear
+  // down, and two more flying past outside the mouth one after the other, throttles opening (their exhausts lengthen)
+  'remote-ships-pads': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'pads', 1.6, 'pads'),
+  },
+  // low over the home world, in its turning frame: another pilot's Lark set down on the ground ahead, gear down, and two
+  // more flying past low over the ground, following it as it rises and falls, throttles opening
+  'remote-ships-surface': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'surface', 1.0, 'surface'),
   },
   'station-hangar': {
     hash: '#dock',

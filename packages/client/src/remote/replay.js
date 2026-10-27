@@ -120,61 +120,156 @@ export function flypastTicks(game, { count = 3, t0 = game.time, seconds = 30, ph
   return ticks;
 }
 
+const FIRST = ['Kestrel', 'Oru', 'Mira', 'Tamsin', 'Ilo', 'Vesk', 'Anwe', 'Corvin', 'Sela', 'Bram', 'Neve', 'Jory'];
+const LAST = ['Vane', 'Taldis', 'Senn', 'Arlo', 'Quill', 'Marrow', 'Hale', 'Okonde', 'Rusk', 'Ferro', 'Lisk', 'Dunmere'];
+const PEOPLES = ['thalune', 'ixari', 'ulgani'];
+
+/** A pilot's name, people and level for entity `i` of a scene. */
+const pilot = (i) => ({ name: `${FIRST[i % FIRST.length]} ${LAST[(i * 5 + 3) % LAST.length]}`, people: PEOPLES[i % 3], level: 3 + ((i * 7) % 30) });
+
 /**
- * A crowd for the dev captures: `count` other pilots' Larks in ranks ahead of the local ship (`columns` abreast, each rank
- * higher and further out), cruising slowly the way it faces, rising and falling a little: the Phase 1 budget's 24 remote
- * players in view at once (IMPLEMENTATION_PLAN 0.3).
+ * A pose on a flight path, as a pilot's client would report it: `path(t, out)` writes the position (in the frame's
+ * coordinates) at world time t; the velocity is its rate there; the nose along it, the ship standing on `upAt(pos, out)`
+ * and banked `bank` (rad) right-wing down for a positive bank.
  */
-export function crowdTicks(game, { count = 24, columns = 6, t0 = game.time, seconds = 30, speed = 12 } = {}) {
-  const s = game.ship.state;
-  const frame = frameIdOfFrame(game.system, game.station, s.frame);
-  const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(s.quat);
-  const p = new THREE.Vector3();
+function flown(path, t, upAt, bank = 0) {
+  const p = path(t, new THREE.Vector3());
+  const v = path(t + 0.001, new THREE.Vector3()).sub(path(t - 0.001, new THREE.Vector3())).divideScalar(0.002);
+  const nose = v.clone().normalize();
+  const up = upAt(p, new THREE.Vector3());
+  const side = new THREE.Vector3().crossVectors(nose, up).normalize();
+  const lift = new THREE.Vector3().crossVectors(side, nose).applyAxisAngle(nose, -bank);
+  side.crossVectors(nose, lift);
+  const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(side, lift, nose.clone().negate()));
+  return { pos: p.toArray(), vel: v.toArray(), quat: q.toArray() };
+}
+
+/** A ship set down at `pos` (frame coordinates), standing on `up`, its nose along `heading`. */
+function parked(pos, up, heading, mode) {
+  const nose = heading.clone().addScaledVector(up, -heading.dot(up)).normalize();
+  const side = new THREE.Vector3().crossVectors(nose, up).normalize();
+  const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(side, up.clone().normalize(), nose.clone().negate()));
+  return { pos: pos.toArray(), vel: [0, 0, 0], quat: q.toArray(), mode };
+}
+
+/** Ticks of `entities(t)` from `t0` for `seconds`. */
+function ticksOf(t0, seconds, entities) {
   const ticks = [];
-  for (let k = 0; k * TICK_S <= seconds; k++) {
-    const t = t0 + k * TICK_S;
-    const entities = [];
-    for (let i = 0; i < count; i++) {
-      const col = i % columns;
-      const row = Math.floor(i / columns);
-      const bob = 3 * Math.sin(0.8 * (t - t0) + 2.3 * i);
-      p.set((col - (columns - 1) / 2) * 45 + 8 * (row % 2), 10 + row * 30 + bob, -(160 + row * 60))
-        .applyQuaternion(s.quat)
-        .add(s.pos)
-        .addScaledVector(fwd, speed * (t - t0));
-      entities.push({
-        id: 201 + i,
-        kind: 'player',
-        frame,
-        pos: p.toArray(),
-        quat: s.quat.toArray(),
-        vel: fwd
-          .clone()
-          .multiplyScalar(speed)
-          .addScaledVector(new THREE.Vector3(0, 1, 0).applyQuaternion(s.quat), 2.4 * Math.cos(0.8 * (t - t0) + 2.3 * i))
-          .toArray(),
-        mode: 'ship',
-        level: 1 + (i % 50),
-      });
-    }
-    ticks.push({ time: t, entities });
-  }
+  for (let k = 0; k * TICK_S <= seconds; k++) ticks.push({ time: t0 + k * TICK_S, entities: entities(t0 + k * TICK_S) });
   return ticks;
 }
 
-/** Plays `ticks` (flypastTicks, crowdTicks) in `game.remotes` from now, through the wire's encoding and a 60 ms trip
- * with 40 ms of jitter. */
+/**
+ * A crowd for the dev captures: `count` other pilots about their business ahead of the local ship, each on a heading,
+ * speed (40-280 m/s), turn and climb of its own, from a hundred metres to a few kilometres out: the Phase 1 budget's 24
+ * remote players in view at once (IMPLEMENTATION_PLAN 0.3). One draws away past the 4 km a ship's sensors pick up a Lark
+ * at, so its marker drops.
+ */
+export function crowdTicks(game, { count = 24, t0 = game.time, seconds = 30 } = {}) {
+  const s = game.ship.state;
+  const frame = frameIdOfFrame(game.system, game.station, s.frame);
+  const basis = (x, y, z) => new THREE.Vector3(x, y, z).applyQuaternion(s.quat);
+  const upAt = (p, out) => out.copy(basis(0, 1, 0));
+  const flights = Array.from({ length: count }, (_, i) => {
+    const r = (k) => hash(i * 7 + k);
+    const depth = i === count - 1 ? 3600 : 140 + 1500 * r(1) ** 1.6;
+    const centre = s.pos.clone().add(basis((r(2) - 0.5) * 1.6 * depth, (r(3) - 0.35) * 0.5 * depth, -depth));
+    const speed = 40 + 240 * r(4);
+    const heading = r(5) * Math.PI * 2;
+    // (most turn gently, either way; a few fly straight)
+    const turn = r(6) < 0.25 ? 0 : (r(7) - 0.5) * 0.5;
+    const climb = (r(8) - 0.5) * 0.3 * speed;
+    const dir = basis(Math.cos(heading), 0, Math.sin(heading));
+    const across = basis(-Math.sin(heading), 0, Math.cos(heading));
+    // (the last one heads straight away, past the sensors' reach)
+    const away = i === count - 1;
+    return (t, out) => {
+      const u = t - t0;
+      if (away) return out.copy(centre).add(basis(0, 0, -speed * u));
+      if (!turn) return out.copy(centre).addScaledVector(dir, speed * u).add(basis(0, climb * u, 0));
+      const R = speed / Math.abs(turn);
+      const a = turn * u;
+      return out
+        .copy(centre)
+        .addScaledVector(dir, R * Math.sin(Math.abs(a)))
+        .addScaledVector(across, Math.sign(turn) * R * (1 - Math.cos(a)))
+        .add(basis(0, climb * u, 0));
+    };
+  });
+  return ticksOf(t0, seconds, (t) =>
+    flights.map((path, i) => ({ id: 201 + i, kind: 'player', frame, mode: 'ship', ...pilot(i), ...flown(path, t, upAt, (hash(i * 7 + 7) - 0.5) * 0.6) })),
+  );
+}
+
+/**
+ * The Waystation's hangar for the dev captures, the local ship docked on the pad at (30, -22) facing the mouth: two
+ * other pilots' Larks docked on the pads beside and ahead of it, gear down, and two flying past outside the mouth one
+ * after the other, from left to right, opening their throttles (60 to 240 m/s).
+ */
+export function padsTicks(game, { t0 = game.time, seconds = 30 } = {}) {
+  const frame = frameIdOfFrame(game.system, game.station, game.station);
+  const up = new THREE.Vector3(0, 1, 0);
+  // (a pad's top is 0.45 m up; the gear holds the hull 1.95 m over it)
+  const docked = [parked(new THREE.Vector3(-30, 2.4, -22), up, new THREE.Vector3(0.35, 0, 1), 'docked'), parked(new THREE.Vector3(-30, 2.4, 22), up, new THREE.Vector3(-0.6, 0, 1), 'docked')];
+  // (coasting in at 60 m/s until its time, then opening the throttle)
+  const pass = (start, z, y) => (t, out) => {
+    const u = t - t0 - start;
+    return out.set(-260 + 60 * u + (u > 0 ? 45 * u * u : 0), y + 3 * u, z - 6 * u);
+  };
+  const passes = [pass(0, 130, 16), pass(1.7, 175, 26)];
+  return ticksOf(t0, seconds, (t) => [
+    ...docked.map((d, i) => ({ id: 301 + i, kind: 'player', frame, ...pilot(i + 4), ...d })),
+    ...passes.map((path, i) => ({ id: 311 + i, kind: 'player', frame, mode: 'ship', ...pilot(i + 9), ...flown(path, t, (p, out) => out.copy(up), -0.12) })),
+  ]);
+}
+
+/**
+ * Low over the local ship's world, in its frame (turning with it), for the dev captures: another pilot's Lark set down
+ * on the ground ahead and to the left, gear down, and two more flying past low over the ground from left to right,
+ * following it 35-60 m up as it rises and falls, opening their throttles (80 to 250 m/s).
+ */
+export function surfaceTicks(game, { t0 = game.time, seconds = 30 } = {}) {
+  const s = game.ship.state;
+  const planet = s.frame;
+  const frame = frameIdOfFrame(game.system, game.station, planet);
+  const up0 = s.pos.clone().normalize();
+  const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(s.quat);
+  fwd.addScaledVector(up0, -fwd.dot(up0)).normalize();
+  const right = new THREE.Vector3().crossVectors(fwd, up0).normalize();
+  const foot = up0.clone().multiplyScalar(planet.radius);
+  // a point on the ground (or `alt` over it) at tangent-plane offsets from under the ship
+  const over = (x, z, alt, out) => {
+    const dir = out.copy(foot).addScaledVector(right, x).addScaledVector(fwd, z).normalize();
+    return dir.multiplyScalar(planet.groundRadius(dir) + alt);
+  };
+  const radial = (p, out) => out.copy(p).normalize();
+  const landedAt = over(-70, 170, 1.95, new THREE.Vector3());
+  const landed = parked(landedAt, landedAt.clone().normalize(), fwd.clone().addScaledVector(right, 0.8), 'landed');
+  // (coasting in at 80 m/s until its time, then opening the throttle)
+  const pass = (start, z, alt) => (t, out) => {
+    const u = t - t0 - start;
+    return over(-330 + 80 * u + (u > 0 ? 42 * u * u : 0), z, alt + 6 * Math.sin(u), out);
+  };
+  const passes = [pass(0, 230, 38), pass(0.45, 300, 60)];
+  return ticksOf(t0, seconds, (t) => [
+    { id: 401, kind: 'player', frame, ...pilot(5), ...landed },
+    ...passes.map((path, i) => ({ id: 411 + i, kind: 'player', frame, mode: 'ship', ...pilot(i + 2), ...flown(path, t, radial, -0.15) })),
+  ]);
+}
+
+/** Plays `ticks` (flypastTicks, crowdTicks, padsTicks, surfaceTicks) in `game.remotes` from now, through the wire's
+ * encoding and a 60 ms trip with 40 ms of jitter. */
 export function playTicks(game, ticks, opts = {}) {
   const replay = new SnapshotReplay(encodeStream(ticks, opts));
   game.remotes.replay = replay;
   return replay;
 }
 
-/** Starts the flypast (flypastTicks). */
-export const playFlypast = (game, opts = {}) => playTicks(game, flypastTicks(game, opts), opts);
+/** The scenes the dev captures play, by name. */
+export const SCENES = { flypast: flypastTicks, crowd: crowdTicks, pads: padsTicks, surface: surfaceTicks };
 
-/** Starts the crowd (crowdTicks). */
-export const playCrowd = (game, opts = {}) => playTicks(game, crowdTicks(game, opts), opts);
+/** Starts scene `name` (SCENES). */
+export const play = (game, name, opts = {}) => playTicks(game, SCENES[name](game, opts), opts);
 
 // a number in [0, 1) for tick k, the same every run
 function hash(k) {
