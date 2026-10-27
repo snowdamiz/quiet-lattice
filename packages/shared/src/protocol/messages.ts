@@ -7,7 +7,7 @@ import { questErrorCodeSchema, questOpSchema, questViewSchema } from '../quests/
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 8;
+export const PROTOCOL_VERSION = 10;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -17,6 +17,8 @@ export const PROTOCOL_VERSION = 8;
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 // 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
 // 8: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
+// 9: meters: heat and Charge state (P1.E07.T02)
+// 10: combat: fire requests and their answers, combat events with the target's health, XP events (P1.E06.T02)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -270,6 +272,24 @@ export const MineRequest = z
   })
   .refine((m) => (m.node === undefined) !== (m.flora === undefined), 'a hit is on a node or on flora');
 
+// ---------- combat (P1.E06.T02, ARCHITECTURE §20) ----------
+
+/**
+ * A shot of the ship's base gun (ARCHITECTURE §20): the client fires its tracers at once and asks the server, which
+ * resolves the shot from the pose it believes and answers with `fire` state. `aim` is the direction the guns point, in
+ * `frame` (the frame of the pose the client sent last); `time` the world time it fired at, which the server never trusts
+ * for anything but how far its believed pose has moved on since its last input (a tenth of a second at most); `seq`
+ * numbers the session's shots from 1, increasing. Strict: a shot carrying anything else (a damage amount, a target, its
+ * health) is refused whole, because no client says what a shot did.
+ */
+export const FireRequest = z.strictObject({
+  t: z.literal('fire'),
+  seq: z.number().int().min(1).max(0xffffffff),
+  time: z.number().min(0).max(1e12),
+  frame: FrameId,
+  aim: Direction,
+});
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -285,6 +305,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   CutsceneRequest,
   QuestRequest,
   MineRequest,
+  FireRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -318,6 +339,14 @@ export const WorldState = z.object({
   serverTime: z.number(),
 });
 
+/**
+ * A hit the server resolved (ARCHITECTURE §20), sent each tick to the sessions whose interest holds its target or its
+ * source: `source` the attacker's entity (null: no one), `target` the one hit, `amount` the hit's damage (after
+ * resistances, all of it though less health was left; several hits of one source on one target in a tick are summed),
+ * `damageType` what dealt it (`weapon`, `ability`, `attack`, `hazard`), `ability` its id (the weapon, skill node or
+ * creature attack), `killed` whether it died (a creature) or went down (a player), and (protocol 10) `hp`, the fraction
+ * of its health left.
+ */
 export const CombatEvent = z.object({
   kind: z.literal('combat'),
   source: EntityId.nullable(),
@@ -326,6 +355,7 @@ export const CombatEvent = z.object({
   damageType: z.string().max(24),
   ability: z.string().max(48).optional(),
   killed: z.boolean(),
+  hp: z.number().min(0).max(1).optional(),
 });
 export const QuestEvent = z.object({
   kind: z.literal('quest'),
@@ -344,11 +374,20 @@ export const ChatEvent = z.object({
   text: ChatText,
   at: z.number(),
 });
+/** What a character was given from `from` (a creature it helped kill …): an item or resource, or `units`; the inventory
+ * itself arrives as `inventory` state. `count` is what reached the inventory. */
 export const LootEvent = z.object({
   kind: z.literal('loot'),
   item: z.string().max(48),
   count: z.number().int().positive(),
   from: EntityId.nullable(),
+});
+/** XP a character earned from `from` (its share of a kill, protocol 10), and the level it now stands at. */
+export const XpEvent = z.object({
+  kind: z.literal('xp'),
+  amount: z.number().int().positive().max(1e9),
+  from: EntityId.nullable(),
+  level: z.number().int().min(1).max(50),
 });
 /** A toast for the player (docking granted, pulse drive interrupted …). */
 export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string().max(280), tone: z.enum(['info', 'good', 'warn']) });
@@ -361,7 +400,7 @@ export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string(
  */
 export const PartyNews = z.enum(['invite', 'invited', 'declined', 'expired', 'joined', 'left', 'kicked', 'leader', 'disbanded']);
 export const PartyEvent = z.object({ kind: z.literal('party'), what: PartyNews, name: CharacterName.optional() });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, NoticeEvent, PartyEvent]);
+export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
 /** One member as its party sees it: cheap on purpose (a party frame needs no more). */
@@ -530,6 +569,28 @@ export const NodesState = z.object({
   cells: z.array(NodeCellState).max(128),
 });
 
+/** Why a shot did nothing: `stale_seq` (its number is not above the last), `zone` (the player is in no zone), `weapon`
+ * (its ship has no gun fitted), `rate` (faster than the gun's cooldown allows), `stale` (stamped too far from the server's
+ * clock), `mode` (not flying a ship, as the server believes), `down` (the player is down), `frame` (aimed in another frame
+ * than the one its pose is in), `aim` (the guns cannot point that far off the ship's nose), `busy` (the world's ground is
+ * still being planned: try again). */
+export const FireRefusal = z.enum(['stale_seq', 'zone', 'weapon', 'rate', 'stale', 'mode', 'down', 'frame', 'aim', 'busy']);
+/**
+ * A shot's answer (ARCHITECTURE §20): `hit` and the entity hit (its damage, death and loot follow as events), `miss`
+ * (nothing in the gun's range along the aim), `blocked` (the first thing along it was behind the ground), or `refused`
+ * with `reason`. The fields differ from the request's, so one `fire` type serves both directions (encodeMessage).
+ */
+export const FireState = z
+  .object({
+    t: z.literal('fire'),
+    seq: z.number().int().min(1).max(0xffffffff),
+    result: z.enum(['hit', 'miss', 'blocked', 'refused']),
+    target: EntityId.optional(),
+    reason: FireRefusal.optional(),
+  })
+  .refine((m) => (m.result === 'hit') === (m.target !== undefined), 'a hit, and only a hit, names what it hit')
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why');
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -546,6 +607,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   QuestsState,
   MineState,
   NodesState,
+  FireState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;

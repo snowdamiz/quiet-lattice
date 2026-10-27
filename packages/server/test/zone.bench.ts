@@ -35,6 +35,12 @@
 // and, every fifth tick, the resource sweep that brings every session up to date with the touched cells round it (its
 // own share is reported as resourceCpu*).
 //
+// The combat trial (P1.E06.T02): 25 sessions in ships flying low over a 1 km square of the home world among its herds at
+// a Tier 3 system's fauna, each turning its nose on the creature nearest it and firing its base gun at it every cooldown
+// (8 shots a second each), so creatures are hit, die, lie for their death beat and go; herds are put down round the ships
+// as they thin out. Each tick's cost is the zone's step (its combat's corpses and events included) plus the shots that
+// arrived for it, each resolved by the combat service (its own share is reported as combatCpu*).
+//
 // The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
 // machine does not inflate (and in the station trial, the tick with its 25 players' input checks). Wall time per tick is
 // printed beside it for information, with the load average.
@@ -47,7 +53,10 @@ import { tangents } from '../src/fauna/herds.ts';
 import { MAX_CREATURES } from '../src/fauna/sim.ts';
 import { nextTime } from '../src/fauna/sky.ts';
 import { densOf, Ground, groundOf, groundPlanner, planPads } from '../src/fauna/terrain.ts';
+import { CombatService } from '../src/combat/service.ts';
 import { InventoryService } from '../src/inventory/service.ts';
+import { CharacterProgress } from '../src/persistence/components.ts';
+import { nodeGroundsHere } from '../src/resources/ground.ts';
 import { HIT_INTERVAL_S, ResourceService, SWEEP_MS } from '../src/resources/service.ts';
 import { Harness, LARK } from '../src/sim/movement/testing.ts';
 import { groundOf as movementGround, heightAt } from '../src/sim/movement/world.ts';
@@ -641,6 +650,159 @@ async function miningTrial(): Promise<TrialResult> {
   };
 }
 
+/** A quaternion turning a ship's nose (0, 0, −1) to unit direction `dir` (as test/pilot.ts). */
+function noseTo([x, y, z]: Readonly<Vec3>): Quat {
+  if (-z < -0.999999) return [0, 1, 0, 0];
+  const q: Quat = [y, -x, 0, 1 - z];
+  const n = Math.hypot(...q);
+  return [q[0] / n, q[1] / n, q[2] / n, q[3] / n];
+}
+
+/** 25 sessions in ships flying low over the home world among its herds at Tier 3, each firing at the creature nearest it. */
+async function combatTrial(): Promise<TrialResult> {
+  const rng = new Random(20261030);
+  const system = describeZoneSystem(0);
+  const body = system.bodies[system.home]!;
+  const params = body.params as PlanetParams;
+  const frame = frameId(system.seed, body.index);
+  // the world's ground at the zone's tier, planned (and kept) before they start, as the surface trials do
+  const ground = groundOf(params, 3);
+  const center = openGround(ground);
+  const [t, b] = tangents(center);
+  const dirAt = (east: number, north: number): Dir => {
+    const x = center[0] * ground.radius + t[0] * east + b[0] * north;
+    const y = center[1] * ground.radius + t[1] * east + b[1] * north;
+    const z = center[2] * ground.radius + t[2] * east + b[2] * north;
+    const l = Math.hypot(x, y, z);
+    return [x / l, y / l, z / l];
+  };
+  const over = (d: Dir, h: number): Vec3 => {
+    const r = ground.radius + Math.max(0, ground.sample(d)) + h;
+    return [d[0] * r, d[1] * r, d[2] * r];
+  };
+  let now = 0;
+  // (the zone's combat calls the service's hooks, which is made over the zone)
+  const made: { service: CombatService | null } = { service: null };
+  const zone = new Zone({ id: 'bench-combat', systemIndex: 0, system, fauna: { tier: 3 }, combat: () => made.service?.hooks ?? null });
+  const inventory = new InventoryService();
+  const progress = new CharacterProgress();
+  const service = (made.service = new CombatService({
+    zones: { zone: (id) => (id === zone.id ? zone : undefined), zoneOf: (v) => (zone.has(v) ? zone : undefined), tier: () => 3 },
+    inventory,
+    progress,
+    now: () => now,
+    grounds: nodeGroundsHere,
+    seed: 11,
+  }));
+  const walkers = zone.fauna!.speciesOf(body.index).filter((sp) => sp.kind !== 'flyer' && sp.spawn === 'herd');
+  const SPEED = 40;
+  const SIDE = 1000;
+  const REACH = 600;
+  const cooldown = 0.12;
+  const sinks: MinerSink[] = [];
+  const ships: { sink: MinerSink; east: number; north: number; heading: number; alt: number; seq: number; shot: number; pos: Vec3; target: number | null }[] =
+    [];
+  for (let i = 0; i < SESSIONS; i++) {
+    const sink = new MinerSink(i + 1, `gunner-${i}`);
+    sinks.push(sink);
+    inventory.open(sink.characterId);
+    progress.set(sink.characterId, { level: 20, xp: 0, homeSystem: 0 });
+    const east = rng.float(-SIDE / 2, SIDE / 2);
+    const north = rng.float(-SIDE / 2, SIDE / 2);
+    const alt = rng.float(60, 150);
+    const pos = over(dirAt(east, north), alt);
+    zone.join(
+      sink,
+      { kind: 'player', frame, pos, quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'ship', name: `Gunner ${i}`, people: 'thalune', level: 20 },
+      { profile: { characterId: sink.characterId, ship: LARK, skills: [] }, now: 2.3e7 },
+    );
+    ships.push({ sink, east, north, heading: rng.float(0, Math.PI * 2), alt, seq: 0, shot: 0, pos, target: null });
+  }
+  let spawned = 0;
+  const step = (time: number, tick: number) => {
+    now = time;
+    // herds put down round the ships as they thin out (a respawn, outside the measure as the herd spawner's own is not)
+    if (tick % 20 === 0 && zone.fauna!.creatureCount < 110 && walkers.length) {
+      const s = ships[rng.int(0, ships.length - 1)]!;
+      const a = rng.float(0, Math.PI * 2);
+      const at = dirAt(s.east + Math.cos(a) * 150, s.north + Math.sin(a) * 150);
+      if (zone.fauna!.spawnHerd({ body: body.index, species: walkers[rng.int(0, walkers.length - 1)]!.index, at, count: rng.int(2, 5) })) spawned++;
+    }
+    const creatures = [...zone.fauna!.creaturesIn(frame)];
+    for (const s of ships) {
+      if (Math.abs(s.east) > SIDE / 2 || Math.abs(s.north) > SIDE / 2) s.heading = Math.atan2(-s.north, -s.east);
+      else if (rng.next() < 0.01) s.heading += rng.float(-1, 1);
+      s.east += Math.cos(s.heading) * SPEED * DT;
+      s.north += Math.sin(s.heading) * SPEED * DT;
+      const prev = s.pos;
+      s.pos = over(dirAt(s.east, s.north), s.alt);
+      // the nearest creature in reach, nose on it
+      let best: { id: number; d: number; at: Vec3 } | null = null;
+      for (const c of creatures) {
+        const d = Math.hypot(c.pos[0] - s.pos[0], c.pos[1] - s.pos[1], c.pos[2] - s.pos[2]);
+        if (d < REACH && (!best || d < best.d)) best = { id: c.id, d, at: [c.pos[0], c.pos[1], c.pos[2]] };
+      }
+      s.target = best?.id ?? null;
+      const ahead = best ? best.at : over(dirAt(s.east + Math.cos(s.heading) * 100, s.north + Math.sin(s.heading) * 100), s.alt);
+      const aim = [ahead[0] - s.pos[0], ahead[1] - s.pos[1], ahead[2] - s.pos[2]];
+      const l = Math.hypot(...aim);
+      const vel: Vec3 = [(s.pos[0] - prev[0]) / DT, (s.pos[1] - prev[1]) / DT, (s.pos[2] - prev[2]) / DT];
+      zone.input(s.sink, {
+        t: 'input',
+        seq: ++s.seq,
+        time,
+        mode: 'ship',
+        pose: { frame, pos: s.pos, quat: noseTo([aim[0]! / l, aim[1]! / l, aim[2]! / l]), vel },
+        buttons: 1,
+      });
+    }
+  };
+  /** the combat service's own CPU per tick */
+  const own: number[] = [];
+  let shotSeq = 0;
+  const r = await measure(zone, sinks, rng, step, {
+    during: (time, tick) => {
+      const cpu0 = process.threadCpuUsage();
+      now = time;
+      for (const [i, s] of ships.entries()) {
+        // every cooldown, phased over the ships
+        if (s.target === null || time < s.shot) continue;
+        s.shot = time + cooldown + (i % 3) * 1e-3;
+        const c = zone.fauna!.creature(s.target);
+        if (!c) continue;
+        const aim = [c.pos[0] - s.pos[0], c.pos[1] - s.pos[1], c.pos[2] - s.pos[2]];
+        const l = Math.hypot(...aim);
+        service.fire(s.sink, { t: 'fire', seq: ++shotSeq, time, frame, aim: [aim[0]! / l, aim[1]! / l, aim[2]! / l] });
+      }
+      const cpu = process.threadCpuUsage(cpu0);
+      if (tick >= WARMUP_TICKS) own.push((cpu.user + cpu.system) / 1000);
+    },
+  });
+  const st = service.stats();
+  const zs = zone.combat.stats();
+  return {
+    ...r,
+    extra: {
+      shots: st.shots,
+      hits: st.hits,
+      misses: st.misses,
+      blocked: st.blocked,
+      refused: Object.values(st.refused).reduce((a, x) => a + x, 0),
+      ...Object.fromEntries(Object.entries(st.refused).map(([k, v]) => [`refused_${k}`, v])),
+      kills: st.kills,
+      herdsPutDown: spawned,
+      creatures: zone.fauna!.creatureCount,
+      eventsSent: zs.eventsSent,
+      eventsDropped: zs.eventsDropped,
+      sightSamples: st.sightSamples,
+      avgControlBytesPerSessionTick: Math.round(sinks.reduce((s, x) => s + x.textBytes, 0) / (sinks.length * (r.ticks + WARMUP_TICKS))),
+      combatCpuP50Ms: round(percentile(Float64Array.from(own), 50)),
+      combatCpuP95Ms: round(percentile(Float64Array.from(own), 95)),
+      combatCpuMaxMs: round(percentile(Float64Array.from(own), 100)),
+    },
+  };
+}
+
 function round(x: number): number {
   return Math.round(x * 1000) / 1000;
 }
@@ -656,6 +818,7 @@ for (const [name, run] of [
   ['nightfall: 25 players round a den at Tier 2', nightfallTrial(2)],
   ['nightfall: 25 players round a den at Tier 3', nightfallTrial(3)],
   ['mining: 25 players mining shared nodes', miningTrial],
+  ['combat: 25 players in ships firing at herds', combatTrial],
 ] as const) {
   if (only.length && !only.some((w) => name.includes(w))) continue;
   const r = await run();
