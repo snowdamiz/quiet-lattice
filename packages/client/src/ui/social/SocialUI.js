@@ -263,12 +263,14 @@ export class SocialUI {
       const mark = el('i', 'sp-mark', row);
       if (x.leader) mark.title = 'Leader';
       el('span', 'sp-name', row, x.name);
-      const end = el('span', 'sp-end', row);
-      const tag = !x.online ? 'Offline' : x.me ? 'You' : x.system !== null && x.system !== here ? (this.game.galaxy.systems[x.system]?.name ?? '') : '';
-      if (tag) el('span', 'sp-tag', end, tag);
+      // (where an absent member is: offline, or the star system it is in)
+      el('span', 'sp-tag', row, !x.online ? 'Offline' : x.me ? 'You' : x.system !== null && x.system !== here ? (this.game.galaxy.systems[x.system]?.name ?? '') : '');
+      // the leader's requests, beside the health bar
       if (live && m.leads && !x.me) {
-        if (x.online) button('sp-act', end, 'Lead', () => m.partyOp({ op: 'promote', name: x.name }));
-        button('sp-act', end, 'Kick', () => m.partyOp({ op: 'kick', name: x.name }));
+        row.classList.add('acts');
+        const acts = el('span', 'sp-acts', row);
+        if (x.online) button('sp-act', acts, 'Lead', () => m.partyOp({ op: 'promote', name: x.name }));
+        button('sp-act', acts, 'Kick', () => m.partyOp({ op: 'kick', name: x.name }));
       }
       if (x.health !== null) {
         const hp = el('div', 'sp-hp', row);
@@ -326,7 +328,9 @@ export class SocialUI {
       const acts = el('div', 'sp-inv-acts', card);
       button('btn small', acts, 'Accept', () => m.partyOp({ op: 'accept', name: inv.from }));
       button('btn small ghost', acts, 'Decline', () => m.partyOp({ op: 'decline', name: inv.from }));
-      el('span', 'sp-inv-hint', acts, 'Enter to answer');
+      const hint = el('span', 'sp-inv-hint', acts);
+      el('kbd', '', hint, 'Enter');
+      hint.title = 'Enter opens the chat panel, whose buttons take clicks';
       // the minute running out, as a hairline (set at its share now, then run down to nothing over the time left)
       const bar = el('i', 'sp-inv-time', card);
       const left = Math.max(0, inv.until - now);
@@ -367,13 +371,16 @@ export class SocialUI {
         const main = el('div', 'sb-main', row);
         r.place = el('div', 'sb-place', main, b.place);
         r.meta = el('div', 'sb-meta', main);
+        r.where = el('div', 'sb-meta', main);
         r.btn = button('btn small sb-answer', row, 'Answer', () => m.answer(b.id));
         r.refusal = el('div', 'sb-refusal', row);
         this.rows.set(b.id, r);
       }
       const system = this.game.galaxy?.systems[b.system]?.name ?? `System ${b.system}`;
       const dist = this.distanceTo(b);
-      r.meta.textContent = [system, b.from, `${b.open} of ${b.cap} open`, age(b.at), dist].filter(Boolean).join(' · ');
+      const ago = age(b.at);
+      r.meta.textContent = `${b.from} · ${b.open} of ${b.cap} open${ago ? ` · ${ago} ago` : ''}`;
+      r.where.textContent = dist ? `${system} · ${dist}` : system;
       r.refusal.textContent = m.answerRefusal?.id === b.id ? m.answerRefusal.text : '';
     }
     // (rows already in place are left there: a row moved under the pointer would lose its click)

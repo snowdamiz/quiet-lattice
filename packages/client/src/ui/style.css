@@ -2970,10 +2970,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   text-overflow: ellipsis;
 }
 .sb-meta {
-  margin-top: 2px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
+  margin-top: 1px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
   color: var(--dim);
   white-space: nowrap;
   overflow: hidden;
@@ -3025,11 +3025,16 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sp-invites:empty {
   display: none;
 }
+/* one plate: the head, a row per member, and (while the panel is open) the requests */
+.sp-party {
+  background: var(--plate);
+  border: 1px solid var(--line);
+}
 .sp-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 0 2px 4px;
+  padding: 8px 10px 6px;
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
@@ -3043,8 +3048,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   color: var(--text);
 }
 .sp-none {
-  padding: 8px 10px;
-  background: var(--plate);
+  padding: 8px 10px 9px;
+  border-top: 1px solid var(--line);
   font-size: 13px;
   color: var(--dim);
 }
@@ -3053,9 +3058,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-template-columns: 11px minmax(0, 1fr) auto;
   align-items: center;
   column-gap: 7px;
-  margin-top: 2px;
-  padding: 6px 10px 7px 8px;
-  background: var(--plate);
+  padding: 7px 10px 8px 8px;
+  border-top: 1px solid var(--line);
   border-left: 2px solid transparent;
   animation: spIn 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
@@ -3063,7 +3067,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   animation: none;
 }
 .sp-member.me {
-  border-left-color: var(--line-2);
+  border-left-color: var(--bracket);
 }
 /* the leader's mark: an amber diamond, as the map marks a target */
 .sp-mark {
@@ -3085,11 +3089,6 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .sp-member.offline .sp-name {
   color: var(--dim);
-}
-.sp-end {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
 }
 .sp-tag {
   font-family: var(--font-mono);
@@ -3116,12 +3115,25 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   color: var(--accent-hi);
   border-color: var(--accent);
 }
+/* the leader's requests, on the health bar's line */
+.sp-acts {
+  grid-column: 3;
+  grid-row: 2;
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 5px;
+}
 /* health: a 3 px bar on a dark track (the fill at 3:1 or more against it at every level) */
 .sp-hp {
   grid-column: 2 / -1;
+  grid-row: 2;
   height: 3px;
   margin-top: 5px;
   background: color-mix(in srgb, var(--text) 12%, transparent);
+}
+.sp-member.acts .sp-hp {
+  grid-column: 2;
+  align-self: center;
 }
 .sp-hp b {
   display: block;
@@ -3138,9 +3150,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sp-foot {
   display: flex;
   gap: 4px;
-  margin-top: 4px;
-  padding: 6px;
-  background: var(--plate);
+  padding: 7px 6px;
+  border-top: 1px solid var(--line);
 }
 .sp-foot input {
   flex: 1;
@@ -3207,11 +3218,6 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .sp-inv-hint {
   margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--dim);
 }
 .social-side.live .sp-inv-hint {
   display: none;

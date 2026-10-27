@@ -281,6 +281,7 @@ export class SocialModel {
   }
 
   beaconNews(m) {
+    if (m.op === 'raised' || m.op === 'ended') this.beaconRefusal = null;
     if (m.op === 'raised') {
       // (sent again on every welcome while it is up: news only the first time)
       if (m.id === this.ownId) return;
