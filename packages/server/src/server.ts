@@ -1,10 +1,10 @@
-// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → character
-// persistence → cutscenes → gateway → developer tooling. index.ts boots it for `pnpm dev:server`; integration tests call
-// startServer({ port: 0 }) and close() it. Closing is graceful: the admin channel closes, sessions are closed (each
-// character saved as it leaves), every character still in play is saved and the save queue written before the database
-// goes (§8). Developer tooling (§16, admin/config.ts): zone metrics are logged every ASTRA_METRICS_S, the dev login
-// bypass is served with ASTRA_DEV_LOGIN outside production, and the admin channel the CLI calls opens on 127.0.0.1 with
-// ASTRA_ADMIN_SECRET.
+// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → quest
+// runtime → character persistence → cutscenes → gateway → developer tooling. index.ts boots it for `pnpm dev:server`;
+// integration tests call startServer({ port: 0 }) and close() it. Closing is graceful: the admin channel closes, sessions
+// are closed (each character saved as it leaves), every character still in play is saved and the save queue written
+// before the database goes (§8). Developer tooling (§16, admin/config.ts): zone metrics are logged every ASTRA_METRICS_S,
+// the dev login bypass is served with ASTRA_DEV_LOGIN outside production, and the admin channel the CLI calls opens on
+// 127.0.0.1 with ASTRA_ADMIN_SECRET.
 import type { AddressInfo } from 'node:net';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { createTimingHash } from './accounts/password.ts';
@@ -25,6 +25,12 @@ import { CutsceneService } from './cutscenes/service.ts';
 import { CharacterProgress, coreRegistry, ShipLoadouts } from './persistence/components.ts';
 import { CharacterPersistence, type PersistenceOptions } from './persistence/service.ts';
 import { pgCharacterStore } from './persistence/store.ts';
+import { questAdmin } from './quests/admin.ts';
+import { QuestRuntime } from './quests/runtime.ts';
+import { questCutsceneNotify, questCutscenePermit, questCutscenes } from './quests/cutscenes.ts';
+import { skillRewardHooks } from './quests/skills.ts';
+import { skillServiceIn } from './skills/component.ts';
+import type { SkillService } from './skills/service.ts';
 import { WorldService } from './world/service.ts';
 import { DEFAULT_SHARD_ID, pgShardStore } from './world/shard.ts';
 import { ZoneManager } from './zones/manager.ts';
@@ -64,6 +70,8 @@ export interface RunningServer {
   zones: ZoneManager;
   /** Loads characters on join and saves them every 30 s, on leave and on close. */
   persistence: CharacterPersistence;
+  /** Every character in play's quests: events in, rewards and phases out. */
+  quests: QuestRuntime;
   /** Cutscenes in story phases (§15); the quest engine sets its `may`. */
   cutscenes: CutsceneService;
   /** Developer tooling as configured: dev login, the admin channel, the metrics interval. */
@@ -125,14 +133,30 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const timingHash = await createTimingHash();
   const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ, movement: opts.movement, metricsEveryMs: tooling.metricsMs });
   const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
-  const persistence = new CharacterPersistence({
+  const progress = new CharacterProgress();
+  // (parties are the gateway's social service and skills the registry's skill service, both made below: read only once
+  // characters are in play)
+  const quests: QuestRuntime = new QuestRuntime({
+    zones,
+    inventory,
+    progress,
+    clock,
+    log,
+    parties: { partyIdOf: (id) => ws.social.partyIdOf(id) },
+    rewards: skillRewardHooks((): SkillService | undefined => skillServiceIn(persistence.registry)),
+    cutscenes: questCutscenes(() => cutscenes),
+    dev: config.NODE_ENV !== 'production',
+  });
+  const persistence: CharacterPersistence = new CharacterPersistence({
     ...opts.persistence,
     store: pgCharacterStore(database.db),
-    registry: coreRegistry({ zones, clock, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress(), log }),
+    registry: coreRegistry({ zones, clock, inventory, ships: new ShipLoadouts(), progress, quests, log }),
     log,
   });
   // (a development server lets a client ask for a dev cutscene by itself; production only what the quest engine allows)
-  const cutscenes = new CutsceneService({ zones, dev: config.NODE_ENV !== 'production', log });
+  // (the quest engine starts its steps' cutscenes and allows a client its own; an ended one ends its step)
+  const cutscenes: CutsceneService = new CutsceneService({ zones, dev: config.NODE_ENV !== 'production', log, notify: questCutsceneNotify(() => quests) });
+  cutscenes.may = questCutscenePermit(quests, cutscenes.may);
   const ws = attachWsGateway(app.server, {
     db: database.db,
     cutscenes,
@@ -143,6 +167,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     log,
     inventory,
     persistence,
+    quests,
     // a joining character's row is read only once an edit of it out of play (the admin CLI's) has written (§8)
     ownedCharacter: (accountId, characterId) => persistence.afterEdit(characterId, () => getOwnedCharacter(database.db, accountId, characterId)),
     limits: {
@@ -162,7 +187,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     pingRedis: () => redis.ping(),
   });
   if (tooling.devLogin) registerDevLogin(app, { db: database.db, tokens, authLimiter, log });
-  const admin = new AdminService({ directory: pgDirectory(database.db), persistence, live: { zones, gateway: ws, world }, log });
+  const admin = new AdminService({ directory: pgDirectory(database.db), persistence, live: { zones, gateway: ws, world }, quests: questAdmin(quests), log });
   let adminChannel: AdminChannel | undefined;
 
   let closed: Promise<void> | undefined;
@@ -171,6 +196,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
       await adminChannel?.close();
       zones.stop();
       cutscenes.stopSweeping();
+      quests.dispose();
       await ws.close();
       await persistence.close();
       await app.close();
@@ -199,6 +225,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   cutscenes.startSweeping();
   world.start();
   persistence.start();
+  quests.start();
   log.info({ port, db: redact(config.DATABASE_URL), redis: redact(config.REDIS_URL), tickHz: config.TICK_HZ }, 'astra server ready');
   if (tooling.devLogin) log.warn({ path: '/auth/dev' }, 'dev login bypass is ON (ASTRA_DEV_LOGIN): dev accounts sign in without a password');
   if (adminChannel) log.info({ url: adminChannel.url }, 'admin channel open: pnpm --filter @astra/server cli -- <command>');
@@ -217,6 +244,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     world,
     zones,
     persistence,
+    quests,
     cutscenes,
     tooling,
     admin,

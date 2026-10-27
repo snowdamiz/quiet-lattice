@@ -1,13 +1,14 @@
 // The character state components Phase 1 has so far (docs/ARCHITECTURE.md §8), in load order: progress (level, xp and
 // home system, in the row's columns), the skill web (P1.E07.T01, src/skills), the ship loadout, the inventory (its layout
-// re-derived from the ship and the owned nodes on load) and where the character is (system, pose, frame and movement
-// mode, read from its zone entity, and on foot, where it left its ship; a saved pose movement authority would not accept
-// is not restored). Quests (P1.E09.T01) register theirs the same way; see ARCHITECTURE §8.
+// re-derived from the ship and the owned nodes on load), where the character is (system, pose, frame and movement mode,
+// read from its zone entity, and on foot, where it left its ship; a saved pose movement authority would not accept is not
+// restored) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
 import { applyLayout, inventorySchema, layoutFor, startingInventory, type Inventory } from '@astra/shared/inventory';
 import { MoveMode, Pose } from '@astra/shared/protocol';
+import { emptyQuestLog, migrateQuestLogV1, questLogProblem, questLogSchema, type QuestLog, type QuestLogV1 } from '@astra/shared/quests';
 import { shipLoadoutSchema, shipStats, type ShipLoadout } from '@astra/shared/ships';
 import type { SkillState } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
@@ -16,6 +17,7 @@ import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts'
 import { padPose, planGround, poseProblem as movementProblem } from '../sim/movement/index.ts';
 import { SKILLS, skillsComponent } from '../skills/component.ts';
 import { SkillService } from '../skills/service.ts';
+import type { QuestRuntime } from '../quests/runtime.ts';
 import type { ServerClock } from '../world/clock.ts';
 import { stationFrame, systemSeed } from '../world/home.ts';
 import type { ZoneManager } from '../zones/manager.ts';
@@ -28,6 +30,7 @@ export { SKILLS };
 export const SHIP = 'ship';
 export const INVENTORY = 'inventory';
 export const POSE = 'pose';
+export const QUESTS = 'quests';
 
 // ---------- progress: level, xp, home system ----------
 
@@ -256,6 +259,30 @@ export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>, clock: Pick<Se
   };
 }
 
+// ---------- quests ----------
+
+/**
+ * The character's quests (DESIGN 14.1: quest id → its step and counters, what it has finished, its flags, rewards owed,
+ * what was paid), held by the quest runtime while it is in play. v2 keeps steps by id (v1 kept indices, migrated through
+ * the catalog). A catalog that no longer has a quest or a step is the runtime's to reconcile on load, never a refused
+ * join; a state that cannot be right whatever the catalog says (questLogProblem), like an unreadable one, is refused
+ * rather than replaced: it is earned.
+ */
+export function questsComponent(quests: QuestRuntime): CharacterComponent<QuestLog> {
+  return {
+    key: QUESTS,
+    v: 2,
+    schema: questLogSchema,
+    migrations: { 1: (data) => migrateQuestLogV1(data as QuestLogV1, quests.catalog) },
+    onInvalid: 'refuse',
+    default: () => emptyQuestLog(),
+    check: (log) => questLogProblem(log),
+    load: (log, ctx) => quests.open(ctx.character, log),
+    save: ({ characterId }) => quests.stateOf(characterId),
+    unload: (characterId) => quests.close(characterId),
+  };
+}
+
 // ---------- the registry ----------
 
 export interface CoreComponentDeps {
@@ -268,17 +295,20 @@ export interface CoreComponentDeps {
   /** The skill web's service; when none is given, one is made over this inventory, ships and progress (the gateway finds
    * it in the registry: `skillServiceIn`). */
   skills?: SkillService;
+  /** the quest runtime; without one (tests of the other components), no quests component */
+  quests?: QuestRuntime;
   log?: PersistenceLog;
 }
 
 /** A registry holding Phase 1's components in load order: the skills read the level; the ship and the inventory read the
- * owned nodes; the inventory reads the ship. Quests come after. */
+ * owned nodes; the inventory reads the ship; the quests come last. */
 export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
   const skills = deps.skills ?? new SkillService({ inventory: deps.inventory, ships: deps.ships, progress: deps.progress });
-  return new ComponentRegistry()
+  const registry = new ComponentRegistry()
     .register(progressComponent(deps.progress))
     .register(skillsComponent(skills, { log: deps.log }))
     .register(shipComponent(deps.ships))
     .register(inventoryComponent(deps.inventory, { log: deps.log }))
     .register(poseComponent(deps.zones, deps.clock));
+  return deps.quests ? registry.register(questsComponent(deps.quests)) : registry;
 }

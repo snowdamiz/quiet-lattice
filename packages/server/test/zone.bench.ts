@@ -1,4 +1,4 @@
-// `pnpm --filter @astra/server bench`: four trials, each failing when the tick's p95 is over the budget of 10 ms
+// `pnpm --filter @astra/server bench`: five trials, each failing when the tick's p95 is over the budget of 10 ms
 // (IMPLEMENTATION_PLAN 0.3).
 //
 // The station trial: one zone with 200 entities (25 players, ships, mobs, NPCs, loot and pods, every one moving every
@@ -23,22 +23,33 @@
 // 1 km square, and every tick from then on is measured: the world's ground is planned in the worker thread while they
 // arrive (the loop yields between ticks, as the server's does), then their cells load under the per-tick budget.
 //
+// The mining trial (P1.E13.T01): 25 sessions on foot among the ~480 resource nodes within 600 m of a spot of the home
+// world, at a Tier 3 system's fauna, each beaming at a node (several at the same one at first) and sending a hit every
+// quarter second, moving on to another standing node when theirs breaks; nodes grow back after 30 s, so the trial sees
+// breaking, sharing and growing back throughout. Each tick's cost is the zone's step plus the hits that arrived for it
+// and, every fifth tick, the resource sweep that brings every session up to date with the touched cells round it (its
+// own share is reported as resourceCpu*).
+//
 // The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
 // machine does not inflate (and in the station trial, the tick with its 25 players' input checks). Wall time per tick is
 // printed beside it for information, with the load average.
 import { cpus, loadavg } from 'node:os';
 import { STATION_LAYOUT } from '@astra/shared/data';
-import { frameId, frameIdOf, Random, systemPoses, type PlanetParams } from '@astra/shared/world';
+import { encodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
+import { frameId, frameIdOf, nodeCellsNear, nodeKey, scatterNodes, Random, systemPoses, type PlanetParams } from '@astra/shared/world';
 import type { Vec3 as Dir } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';
 import { MAX_CREATURES } from '../src/fauna/sim.ts';
 import { Ground, groundOf, groundPlanner, planPads } from '../src/fauna/terrain.ts';
+import { InventoryService } from '../src/inventory/service.ts';
+import { HIT_INTERVAL_S, ResourceService, SWEEP_MS } from '../src/resources/service.ts';
 import { Harness, LARK } from '../src/sim/movement/testing.ts';
 import { groundOf as movementGround, heightAt } from '../src/sim/movement/world.ts';
 import { percentile } from '../src/zones/metrics.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
 import { Zone, type EntityInit, type EntityKind, type ZoneViewer } from '../src/zones/zone.ts';
 import { openGround } from './faunaWorld.ts';
+import { miningWorld, type Vec3 as Point } from './resourceWorld.ts';
 
 const ENTITIES = 200;
 const SESSIONS = 25;
@@ -96,13 +107,19 @@ interface TrialResult {
 /** Lets the event loop run (a worker's reply, timers), as the server's loop does between ticks. */
 const yieldLoop = () => new Promise<void>((resolve) => setImmediate(resolve));
 
-/** Ticks a zone, feeding acks back 1–4 ticks late, and measures each tick after the warm-up. */
+/** Ticks a zone, feeding acks back 1–4 ticks late, and measures each tick after the warm-up (with `during`, work the
+ * tick's cost includes beside the zone's step). */
 async function measure(
   zone: Zone,
   sinks: Sink[],
   rng: Random,
   beforeTick: (time: number, tick: number) => void,
-  { warmup = WARMUP_TICKS, ticks = TICKS, afterTick }: { warmup?: number; ticks?: number; afterTick?: (tick: number) => void } = {},
+  {
+    warmup = WARMUP_TICKS,
+    ticks = TICKS,
+    afterTick,
+    during,
+  }: { warmup?: number; ticks?: number; afterTick?: (tick: number) => void; during?: (time: number, tick: number) => void } = {},
 ): Promise<TrialResult> {
   /** acks in flight: delivered at tick `at` */
   const acks: { at: number; viewer: Sink; tick: number }[] = [];
@@ -111,10 +128,16 @@ async function measure(
 
   /** One tick: wall ms (measured by the zone) and main-thread CPU ms. */
   function tick(): [number, number] {
-    beforeTick(time, n++);
+    beforeTick(time, n);
     time += DT;
     const cpu0 = process.threadCpuUsage();
-    const wall = zone.step(time);
+    let wall = zone.step(time);
+    if (during) {
+      const t0 = performance.now();
+      during(time, n);
+      wall += performance.now() - t0;
+    }
+    n++;
     const cpu = process.threadCpuUsage(cpu0);
     for (const s of sinks) acks.push({ at: zone.tick + 1 + rng.int(0, 3), viewer: s, tick: zone.tick });
     for (let i = acks.length - 1; i >= 0; i--) {
@@ -427,17 +450,147 @@ async function arrivalTrial(): Promise<TrialResult> {
   };
 }
 
+/** A session that also takes control messages (the resource service's), counting them. */
+class MinerSink extends Sink {
+  messages = 0;
+  textBytes = 0;
+  constructor(
+    id: number,
+    readonly characterId: string,
+  ) {
+    super(id);
+  }
+  send(m: ServerMessage): void {
+    this.messages++;
+    // (encoded and checked as Session.send does)
+    this.textBytes += encodeServerMessage(m).length;
+  }
+  sendText(text: string): void {
+    this.messages++;
+    this.textBytes += text.length;
+  }
+}
+
+/** 25 sessions on foot mining the nodes round a spot of the home world, among its herds at Tier 3. */
+async function miningTrial(): Promise<TrialResult> {
+  const rng = new Random(20261029);
+  const world = miningWorld(0, 0);
+  const system = world.system;
+  const zone = new Zone({ id: 'bench-mining', systemIndex: 0, system, fauna: { tier: 3 } });
+  // the world's fauna ground, planned before they start (as the surface trials do)
+  groundOf(world.params);
+  // every node within 600 m of an open spot with a place to stand 5 m off it in sight
+  const first = world.findNode();
+  const up = first.stand.map((x) => x / Math.hypot(...first.stand)) as Point;
+  const spots: { id: string; stand: Point }[] = [];
+  for (const cell of nodeCellsNear(up[0], up[1], up[2], 600, world.R, world.level)) {
+    for (const node of scatterNodes(world.ground, world.layers, cell)) {
+      const nd = [node.x, node.y, node.z].map((x) => x / Math.hypot(node.x, node.y, node.z)) as Point;
+      for (let k = 0; k < 8; k++) {
+        const stand = world.onGround(nd, Math.cos((k * Math.PI) / 4) * 5, Math.sin((k * Math.PI) / 4) * 5);
+        const target = world.targetOf(node);
+        if (world.height(stand.map((x) => x / Math.hypot(...stand)) as Point) < 2 || Math.hypot(...stand.map((x, i) => x - target[i]!)) > 12) continue;
+        if (!world.clear(stand, target)) continue;
+        spots.push({ id: nodeKey(cell, node.type, node.k), stand });
+        break;
+      }
+    }
+  }
+  if (spots.length < 10) throw new Error(`only ${spots.length} nodes to mine`);
+  let now = 0;
+  const inventory = new InventoryService();
+  const service = new ResourceService({
+    zones: { zones: [zone], zoneOf: (v) => (zone.has(v) ? zone : undefined), tier: () => 0 },
+    inventory,
+    now: () => now,
+    grounds: { ground: () => world.ground },
+    seed: 7,
+  });
+  service.respawnSeconds = () => 30;
+  const sinks: MinerSink[] = [];
+  const miners: { sink: MinerSink; spot: number; seq: number; phase: number }[] = [];
+  for (let i = 0; i < SESSIONS; i++) {
+    const sink = new MinerSink(i + 1, `miner-${i}`);
+    inventory.open(sink.characterId);
+    sinks.push(sink);
+    // two or three to a node
+    const spot = Math.floor(i / 2.5) % spots.length;
+    zone.join(sink, {
+      kind: 'player',
+      frame: world.frame,
+      pos: [...spots[spot]!.stand],
+      quat: [0, 0, 0, 1],
+      vel: [0, 0, 0],
+      mode: 'foot',
+      name: `Miner ${i}`,
+      people: 'thalune',
+      level: 5,
+    });
+    miners.push({ sink, spot, seq: 0, phase: i % 5 });
+  }
+  const hitEvery = Math.round(HIT_INTERVAL_S / DT);
+  const sweepEvery = Math.round(SWEEP_MS / 1000 / DT);
+  /** the resource work's own CPU per tick (its share of each tick's cost) */
+  const own: number[] = [];
+  const r = await measure(zone, sinks, rng, () => {}, {
+    during: (time, tick) => {
+      const cpu0 = process.threadCpuUsage();
+      now = time;
+      for (const m of miners) {
+        if ((tick + m.phase) % hitEvery) continue;
+        const spot = spots[m.spot]!;
+        const a = service.mine(m.sink, { t: 'mine', seq: ++m.seq, frame: world.frame, node: spot.id, tool: 'multitool', time });
+        if (a.result === 'hit') continue;
+        // broken: on to another node, one still standing as a client sees it (it hides those harvested)
+        for (let k = 0; k < 8; k++) {
+          m.spot = rng.int(0, spots.length - 1);
+          if (service.nodeState(world.frame, spots[m.spot]!.id)?.respawnAt == null) break;
+        }
+        zone.patch(zone.entityOf(m.sink)!, { pos: [...spots[m.spot]!.stand] });
+      }
+      if (tick % sweepEvery === 0) service.sweep();
+      const cpu = process.threadCpuUsage(cpu0);
+      if (tick >= WARMUP_TICKS) own.push((cpu.user + cpu.system) / 1000);
+    },
+  });
+  const st = service.stats();
+  const refused = Object.values(st.refused).reduce((a, b) => a + b, 0);
+  await service.close();
+  return {
+    ...r,
+    extra: {
+      nodes: spots.length,
+      hits: st.hits,
+      refused,
+      ...Object.fromEntries(Object.entries(st.refused).map(([k, v]) => [`refused_${k}`, v])),
+      broken: st.broken,
+      touchedNodes: st.nodes,
+      cellsScattered: st.scattered,
+      nodesMessages: st.pushed,
+      avgControlBytesPerSessionTick: Math.round(sinks.reduce((s, x) => s + x.textBytes, 0) / (sinks.length * (r.ticks + WARMUP_TICKS))),
+      creatures: zone.fauna!.creatureCount,
+      resourceCpuP50Ms: round(percentile(Float64Array.from(own), 50)),
+      resourceCpuP95Ms: round(percentile(Float64Array.from(own), 95)),
+      resourceCpuMaxMs: round(percentile(Float64Array.from(own), 100)),
+    },
+  };
+}
+
 function round(x: number): number {
   return Math.round(x * 1000) / 1000;
 }
 
 let failed = false;
+/** `pnpm --filter @astra/server bench -- <words>` runs only the trials whose names hold them. */
+const only = process.argv.slice(2).filter((a) => a !== '--');
 for (const [name, run] of [
   ['station', stationTrial],
   ['surface: 25 players in 1 km²', surfaceTrial(25, 1000)],
   ['surface: 50 players in 4 km²', surfaceTrial(50, 2000)],
   ['arrival: 25 players on an unplanned world', arrivalTrial],
+  ['mining: 25 players mining shared nodes', miningTrial],
 ] as const) {
+  if (only.length && !only.some((w) => name.includes(w))) continue;
   const r = await run();
   const cpuP95 = percentile(r.cpu, 95);
   // with movement authority: the tick with its players' input checks

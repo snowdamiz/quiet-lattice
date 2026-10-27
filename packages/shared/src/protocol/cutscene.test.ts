@@ -21,6 +21,10 @@ describe('cutscene messages', () => {
       { t: 'cutscene', op: 'request', id: 'test' },
       { t: 'cutscene', op: 'done', id: 'cold_open', skipped: true },
       { t: 'cutscene', op: 'done', id: 'cold_open' },
+      { t: 'cutscene', op: 'done', id: 'cold_open', skipped: false, reason: 'finished' },
+      { t: 'cutscene', op: 'done', id: 'cold_open', skipped: true, reason: 'skipped' },
+      { t: 'cutscene', op: 'done', id: 'cold_open', skipped: true, reason: 'returned' },
+      { t: 'cutscene', op: 'done', id: 'cold_open', reason: 'returned' },
     ] as const) {
       expect(decodeClientMessage(encodeClientMessage(m))).toEqual(m);
     }
@@ -33,6 +37,10 @@ describe('cutscene messages', () => {
       { t: 'cutscene', op: 'request', id: 'test', skipped: true },
       { t: 'cutscene', op: 'play', id: 'test' },
       { t: 'cutscene', op: 'done', id: 'test', skipped: 'yes' },
+      { t: 'cutscene', op: 'done', id: 'test', reason: 'bored' },
+      { t: 'cutscene', op: 'request', id: 'test', reason: 'returned' },
+      { t: 'cutscene', op: 'done', id: 'test', skipped: false, reason: 'returned' },
+      { t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'finished' },
     ]) {
       expect(decodeClientMessage(JSON.stringify(bad))).toBeNull();
     }

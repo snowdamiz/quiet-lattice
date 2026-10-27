@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -20,7 +20,7 @@ processes will read (presence, zone membership, the server clock) is mirrored to
 ## 2. Server layout (`packages/server/src`)
 
 ```
-index.ts            boot: config → db → redis → world service → zone manager → character persistence → gateway → tooling
+index.ts            boot: config → db → redis → world service → zone manager → quest runtime → character persistence → gateway → tooling
 config.ts           env (DATABASE_URL, REDIS_URL, JWT_SECRET, PORT=8787, TICK_HZ=20), validated with zod
 db/                 Drizzle schema (schema.ts), client, migrate.ts; SQL migrations in packages/server/drizzle/
 gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters
@@ -34,9 +34,11 @@ cutscenes/          CutsceneService: cutscenes played in story phases, their cat
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
+resources/          ResourceService: mining hits, resource nodes' shared state per cell, what each player is sent (§18)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
-sim/                server-side systems added by later tasks: movement validation, combat, quests…
+quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
+sim/                server-side systems added by later tasks: movement validation, combat…
 admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
 cli/                the developer CLI (`pnpm --filter @astra/server cli -- <command>`): over the admin channel, or --direct
 ```
@@ -106,8 +108,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes); a unit test pins the number and checks the
-  history, so two branches bumping to the same number conflict at merge rather than share it.
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining); a unit test pins the
+  number and checks the history, so two branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -115,17 +117,20 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   input without one, 0, is judged on its arrival; `mode` is a prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
-  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15). Each socket's message budget is 60 a
-  second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat, party,
-  inventory, skill and cutscene requests, and the burst absorbs the backlog of a stall. Chat and invites have far smaller
-  limits of their own, per account (§13).
+  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
+  frame, node | flora, tool, time}` (§18). Each socket's message budget is 60 a second with a burst of 120: input and
+  acks take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill, cutscene and quest requests
+  and mining hits (an honest client sends 4 a second, and 8 is the most a character may), and the burst absorbs the
+  backlog of a stall. Chat, invites and mining hits have smaller limits of their own (§13, §18).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
-  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), and snapshots.
+  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests, error?}` (§17), `mine {seq,
+  frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame, reset?, cells}` (§18), and
+  snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -153,10 +158,22 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
 - **Cutscenes** (protocol 6, §15): the client sends `cutscene {op: 'request', id}` to play one where its player is and
-  `cutscene {op: 'done', id, skipped?}` when it ends (`skipped` only on done); the server answers `cutscene {op: 'play'
+  `cutscene {op: 'done', id, skipped?, reason?}` when it ends (`skipped` and `reason` only on done; protocol 7's
+  `reason` says how: `finished`, `skipped`, or `returned`, given back unplayed because another cutscene was on screen or
+  the play came too late; absent, `skipped` says finished or skipped); the server answers `cutscene {op: 'play'
   | 'ended' | 'refused', id, phase, reason?}`, `phase` being the story phase the player is in while it plays (snapshots
   do not say), `reason` one of `unknown`, `denied`, `cooldown`, `busy`, `place`, `phase`, `zone`. Ids are a-z, 0-9 and
   `_`.
+- **Mining** (protocol 8, §18): a client sends `mine {seq, frame, node, tool: 'multitool', time}` (a resource node of the
+  world `frame`, the spec's `face_i_j_type_k`) or `mine {…, flora: {kind, ref, at}}` (a plant or rock of its own flora:
+  its kind, its own key for it, where it stands) about every quarter second while its beam stays on; `seq` counts from
+  1 and increases, `time` is never trusted for speed. The server answers each with `mine {seq, frame, node | flora,
+  result}`: `hit` with `hp` (the fraction left), `depleted` with `item`, `count` (this character's share) and `added`
+  (what of it fitted), or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `world`, `unknown`,
+  `busy`, `harvested`, `range`, `los`, `heat`). `seq` 0 is a share of a node another player broke. `nodes {frame, reset?,
+  cells: [{cell, gone, hurt}]}` keeps a player on a world up to date with the touched nodes round it (`cell` is
+  `face_i_j`, nodes in it `type_k`; `hurt` pairs a node with the fraction left); a cell with neither list is as the
+  scatter places it, and `reset` replaces everything the client held for that world.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -234,6 +251,7 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
 - **Ground.** The drawn ground (§12, `drawnGround`'s pads), its heights cached per cell on a 1 m lattice. Planning a
   world's surface takes 5–100 ms, so it runs in a worker thread (`fauna/planner.worker.ts`) from the moment a player
   enters the world's frame; its cells load once it is ready. The 16 worlds most recently asked for keep their ground.
+  The plan also carries the sites' clearance, so the same ground serves the resource nodes (§18): one plan per world.
   The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
   with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
@@ -346,10 +364,11 @@ registration order, so a later one reads an earlier one's value (`ctx.get`). Pha
 `coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the ship and inventory
 read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
 second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
-layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it) and `pose` (`{system, pose, mode,
+layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `pose` (`{system, pose, mode,
 parked?}`, read from the character's zone entity, `parked` being where a character on foot left its ship; version 2;
 its `check` is movement authority's `poseProblem` (§7), so a saved pose inside the ground, in the hangar's shell, docked
-off a pad or on foot with no ship to board is not restored).
+off a pad or on foot with no ship to board is not restored) and, when the server has a quest runtime, `quests` (§17:
+held by the runtime; refused, never replaced, when unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -524,9 +543,9 @@ Resource nodes (P1.E13.T02, `world/resourceNodes.ts`) are the spec's to place: `
 node types a world carries, and `scatterNodes(ground, layers, cell)` places the nodes of one ~64 m cell (`nodeCellLevel`,
 `nodeCellsNear`) on the drawn ground, off the pads and outside every site's clearance, in deterministic math only, so the
 server and every browser engine place the same nodes bit for bit (the cross-engine smoke compares them). A node's id is
-`face_i_j_type_k` (`nodeKey`). The client clears its own flora round sites and landed ships, but never a node: the
-nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any under a landed ship, from zone
-state).
+`face_i_j_type_k` (`nodeKey`; `parseNodeKey` reads it back). The client clears its own flora round sites and landed
+ships, but never a node: the nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any
+under a landed ship, from the server's `nodes` state, §18).
 
 ## 13. Social: chat and parties
 
@@ -686,8 +705,10 @@ decides when one plays; the client presents it.
 - **The client's link** (`packages/client/src/cutscene/link.js`): online (`game.net`, P1.E04.T01's Net) a cutscene asks
   through `NetCutsceneLink` (`net.send` and `net.on('cutscene')`) and plays only on `play`, in the phase it names; a
   refusal, no answer within 5 s or a dropped connection plays nothing, and a `play` that comes too late for a request it gave up on is given back
-  with `done`. An unrequested `play` is a cutscene the server started itself (a quest step's): it plays, and its `done`
-  goes back as usual (one that cannot play now is given back at once). The server ending the one playing (`ended`)
+  with `done`. Every `done` says how it ended: `finished`, `skipped`, or `returned` for every give-back. The link is made as the game goes online (`enterWorld` calls `cutscenes.linkFor()`), so it hears a
+  `play` before the client has asked for anything. An unrequested `play` is a cutscene the server started itself (a quest
+  step's): it plays, and its `done` goes back as usual (one that cannot play now, another playing among them, is given
+  back at once, and the one playing stays the one playing). The server ending the one playing (`ended`)
   ends it here as a skip. `OfflineCutsceneLink` (a local
   layer, phase null, the messages it would have sent kept) is the dev sandbox's only: with no `game.net`, in a dev
   build.
@@ -765,8 +786,8 @@ as Bearer tokens).
   play is changed by `persistence.edit` (§8) with the same shared rules (the inventory laid out for its ship and nodes,
   `addItem`/`takeItem`/`addUnits`/`spendUnits`, `setAvailablePoints`, the pose), and its next join loads it. A
   character held by the save of its leave is waited for (up to 3 s) rather than refused. `mute` and the world commands
-  need the running server; `set-quest-step` answers `unavailable` until the quest runtime gives the service a
-  `QuestAdmin` (`setStep` in play, `setStepStored` on the stored log; P1.E09.T01).
+  need the running server. `set-quest-step` goes through the quest runtime's `QuestAdmin` (§17, `quests/admin.ts`): in
+  play `setStep` moves the quest (pushed `quests`), out of play `setStepStored` moves it in the stored log.
 - **Teleporting a character in play to another system** (until zone handoff, P1.E04.T04, replaces it with a real
   handoff): the client cannot follow a `zone` message yet, so the server takes the character out of play and saves it at
   the new placement through the same edit as one out of play (`persistence.edit(…, {leaving: session})`: its leave is
@@ -780,3 +801,176 @@ as Bearer tokens).
   server's `HOST:PORT/health`; for a character saved in the last 60 s (`saved_at`: a server elsewhere on the same
   database may hold it; an edit counts as a save too) unless `--force`; and in production unless
   `ASTRA_ADMIN_IN_PRODUCTION=1`.
+
+## 17. Quests
+
+DESIGN 14.1, P1.E09.T01. A quest is data (`@astra/shared/quests`, `QUESTS` in `catalog.ts`, validated by
+`questDefSchema`): id, title, category (DESIGN 14.2), chapter for the main story, tier, giver (`npc:…`, `terminal:…`,
+`monolith:…`, `board:…`), `auto` (started for every character that can take it: First Jobs, the demo's guided path),
+prerequisites (level, chapter, quests, flags, not-flags, people, faction rank), steps, rewards, flags set on completion
+and a repeat rule (`once`, `daily` by world-time day, `{cooldownS}`). Steps are the fifteen types of DESIGN 14.1, each with
+its parameters; things in the world are named as targets `kind:id[:id…]`, matched exactly or under a `:*` prefix.
+Steps go on to the next, or to a later `next` (a choice's options each name one); they only go forward, so entering a
+step already met (a collect step with the goods in the suit) finishes it at once and a quest always ends. While an
+optional step is current the step after it is live too (its events, its delivery, its answer, its phase), and finishing
+that one skips the optional step; an optional step cannot itself be instanced. Counting steps count in a quest-level
+counter (`counter`, default the step's id), so two steps can share one (Forty Names' 20 and 40 logs).
+
+- **The engine** (`QuestBook`, `engine.ts`) is pure: one character's quest state, changed in place by `start`, `offer`
+  and `accept`, `autoStart`, `apply(event)`, `choose` (a dialogue answer or a fork, on a live step; an answer it does not
+  offer is refused) and `abandon` (never the main story), each returning notes (started, progress, step, completed,
+  failed, abandoned, reward, pruned) for its caller to act on. It is told the world time, the character, the system it
+  is in (with its tier), where it is and what it holds (`QuestContext`). Events (`world.ts`): `tick {dt, at}` (where the
+  character is: system, frame, body, height above the radius, above the air or not, mode), `held {items}`, and from the
+  systems that see them `enter {place}`, `interact {target}`, `mine {node, id?}`, `analyze {species}`, `scan {sites}`,
+  `kill {tags, entity?}`, `wave {cleared}`, `defend_lost`, `escort {npc, status, progress?}`, `delivered {item, count,
+  to}`, `died`, `touch {monolith}`, `cutscene_end {cutscene}`. Places (`Place`: a body's frame, the Waystation's or the
+  inertial one, at its origin, a position, a point on the surface, or a spot in one of a world's cities: its plaza or its
+  market, where the client draws the trade post) resolve against the shared `SystemDescription` and the shared city plan
+  (`cityGround`: `planCities` and the ground levelled under them, cached per world), so both ends agree on where the
+  apothecary's stall in Belost's market is, and an actor's offset there (east, up, north) stands on that ground
+  (`actorPosition`).
+- **The state** (the `quests` component, v2): `active` (quest id → its step by id, counters, the distinct ids counted,
+  when it and its step began, the anchor of a step round the player, whether a dialogue's speaker was addressed; at most
+  25), `done` (quest id → times finished and when last; bounded at 4,096: repeatable quests past their wait are forgotten
+  first, then the oldest repeatable ones, and only then, logged as an error, the oldest once-only one, so saving never
+  fails), `flags`, `owed` (rewards for systems that cannot take them yet, reputation P2.E18.T01 and titles, and items
+  that did not fit, kept until claimed with `QuestRuntime.takeOwed` or a hook; owed items are retried on join) and `paid`
+  (per quest, the step rewards and answers' reputation already paid: kept across an abandon so taking a quest up again
+  pays none of it twice, and cleared when the quest is finished, so a repeat its rule allows pays anew). v1 stored step
+  indices and is migrated through the catalog (an index past the steps: the last). On load the runtime reconciles the
+  state with the catalog (`reconcile`): a quest it no longer has is dropped, one whose step it no longer has starts again
+  at its first step, each logged, never a refused join, and a step whose start is behind its quest's (a world clock
+  that came back behind its last save after a crash) is clamped. The component's `check` (`questLogProblem`) refuses
+  only what no engine path writes (a distinct id counted twice, a flag held twice): a counter a distinct-counting step
+  and a holdings step share, with fewer counts than ids remembered, is the engine's own and loads.
+- **The runtime** (`server/src/quests/runtime.ts`) holds a book per character in play, loaded and saved by persistence.
+  Each character is ticked every 500 ms, the characters spread over a 50 ms timer in round-robin slices: a tick reads its
+  entity when a live step needs it (travel, defend, survive, instanced) and applies `tick`. The inventory service's
+  changes apply `held`; `event(characterId, event)` takes the rest. An `interact` with a live deliver step's `to` takes
+  the goods first (`InventoryService.consume`, all or nothing; nothing for anyone else; a notice when short) and applies
+  `delivered`; a `kill` naming a quest actor's entity carries its tags. Rewards: XP (`xp`, plus `levels` levels' worth
+  counted at the quest's tier, else the tier of the system the character is in: DESIGN 11's level bands, `xpForLevels`)
+  to its progress, levelling its entity; units and items through the inventory service; flags into the state; skill
+  points and node unlocks through the skill service (`skillRewardHooks` over `skillServiceIn(registry)`: `grantPoints`,
+  `unlock(…, {kind: 'quest', quest})`, and `refresh` when a quest's XP raises the level); reputation and titles through
+  hooks, else owed. A completion starts any auto quest it opened. Quests start by `startQuest` (dev, tests), auto quests
+  on join, and `offer` then the client's `accept` (givers: the board, P1.E09.T06, and NPCs, P1.E09.T05, call `offer`).
+- **Instanced steps** (`phase`): a story phase (§6.1) keyed `quest:<quest>:<scene or step>` at the step's place, or round
+  where the player was when the step became live (`at: 'player'`, its anchor saved), placed under `partyIdOf`, so a party
+  on the step shares one layer; the step's actors are spawned into a phase that has none. A player is placed for one step
+  at a time (the one it was placed for while it holds, else the first live one whose place it is in), only when it is in
+  no phase or in the one this runtime put it in (a bay, an event or a cutscene's phase is never left for a quest's), and
+  re-placed only when that phase no longer holds just its party: so two quests at one place never churn phases, and a
+  party that disbanded is parted, each part getting its own actors. Leaving the step (to one not in its scene) or the
+  quest takes the player out.
+- **Cutscene steps** play through the cutscene service (§15; wired in server.ts by `quests/cutscenes.ts`): entering one
+  calls its `start(session, id, at?)`, with the step's place when it has one, the service phases the player itself, and
+  its `play` is pushed to the client unrequested. The service's `may` is the runtime's `mayPlay(session, id)` (a client
+  asks for a quest's cutscene only while a live step plays it), or its own development rule. A cutscene that ends, by
+  the client's `done` played or skipped (the gateway, `doneEndsQuestStep`) or by the service's sweep (its `notify` of
+  `ended`), calls `quests.cutsceneEnded(session, id)`, which ends the step; one the client gave back unplayed (`done`
+  with `reason: 'returned'`) ends its phase and the watching but not the step, and the retry below plays it again. A live cutscene step the player is not watching is started
+  again on join (and on its first tick, when its entity's world position is known) and on the tick at most every 5 s
+  (`CUTSCENE_RETRY_S`): one the service refused (the player in another phase, another cutscene playing) or lost with a
+  dropped connection plays once it can; the one it is watching is never started again; refusals are logged at debug
+  with their reason. Rules for quest authors: a step's cutscene is one the cutscene catalog has, or the step is marked
+  `planned` until its cutscene is authored (a unit test checks both ways); and a cutscene step that shares a `scene`
+  with an instanced step plays in that step's phase, which already has the step's actors, so the cutscene's own actors
+  are not spawned there: such a cutscene is authored to use the step's actors.
+- **A development server's quest** (`cutscene_test`, `dev`): its one step plays the test cutscene, started by the
+  server; on a development server a client takes it without an offer (`quest accept`), elsewhere it is an unknown quest.
+  The online smoke plays it as a session's first cutscene.
+- **Developer tooling** (§16): the admin service's `QuestAdmin` is `questAdmin(runtime)` (`quests/admin.ts`), so the
+  CLI's `set-quest-step <character> <quest> <step>` puts the quest at that step (its index), started if it is not on,
+  with no prerequisite, offer or wait asked and nothing paid for the steps passed over (`QuestBook.setStep`). The step is
+  entered as any step is (its phase, its cutscene, its anchor) but not checked by the engine: in play
+  (`runtime.setStep`) the runtime then checks it against what the character holds (a collect step met finishes at once)
+  and sends the client `quests`; out of play (`setStepStored` through `persistence.edit`, in the server and in the
+  CLI's direct mode at the shard's world time) the stored log changes and the next join and ticks check it. A step
+  round the player entered where the player's position was not known (set out of play, restarted by `reconcile`) is
+  anchored at its first tick. A development server's quests are unknown to the command elsewhere.
+- **On the wire** (protocol 7): `quest {seq, op}` with `op` `accept {quest}`, `abandon {quest}`, `choose {quest, step,
+  choice}`; `seq` counts the session's requests from 1 and must increase. The server answers each with `quests {seq,
+  quests, error?}`, the whole state (`QuestView`: active without anchors, steps by id, done counts, flags, what is on
+  offer), sends it after `welcome` (`seq` 0, after the party is known so a player back at a step's place returns to its
+  party's phase), and pushes it with the same `seq` whenever it moves a quest itself, with `event {kind: 'quest'}`
+  notices (`offered`, `accepted`, `progress` with counters, `step`, `completed`, `failed`; `step` is the step's index)
+  and `notice` toasts. Errors: `stale_seq`, `unknown_quest`, `not_offered`, `prerequisites`, `active`, `done`,
+  `cooldown`, `full`, `not_active`, `cannot_abandon`, `not_current`, `bad_choice`, `not_open`.
+- **The client** shows the objective line under the location panel from a `QuestBook` (`Game.objectives`): online, `Net`
+  passes each `quests` message to `book.receive`, a new objective is announced and a completed quest's event toasts, and
+  `game.questRequest(op)` sends `quest` requests (the journal and the dialogue bar, P1.E09.T03, call it); in the dev
+  sandbox the shared engine fills the book from the game's own state and events twice a second. Boards' generated jobs
+  (P1.E09.T06) will need their definitions on the wire, since the client knows only the catalog's.
+
+## 18. Resources (`packages/server/src/resources`)
+
+DESIGN 15.3, 16.6 "Resources", P1.E13.T01. Resource nodes are the shared spec's (§12): every machine places them from
+the seeds, the server holds only what players did to them, the same for everyone, and the client draws the scatter less
+what the server says is gone (P1.E13.T06). The gateway makes the `ResourceService` (`ws.resources`), hands it `mine`
+requests and starts its timer.
+
+- **Nodes are not entities.** A cell's nodes are scattered (`scatterNodes` over `drawnGround` at the zone's tier) only
+  when a hit names one of them, and kept (4,096 cells, most recently used). The ground is fauna's (§6.2): its planner
+  plans each world once in its worker thread, and the plan carries the sites' clearance beside the pads (`planGround`),
+  so a fauna `Ground` also serves the nodes (`Ground.nodes`, `resources/ground.ts`); the 16 worlds most recently asked for
+  keep it, and a world's is asked for as a player arrives on it. A touched node (`nodes.ts`) holds its hp, the damage each
+  character did (every character that hit it: those in reach bound how many), and when it heals (`HEAL_S`, 60 s after its
+  last hit) or grows back (`RESPAWN_S`: a plant 3 min, a deposit 5, a formation 8; `respawnSeconds` overrides it). At
+  most 100,000 touched nodes over every world: past that the one due soonest comes back early. Node state is in memory
+  only; a restart brings every node back.
+- **A hit**, cheapest checks first, so a client spamming far nodes costs little: `stale_seq`; `rate` (8 hits at once per
+  character, 8 a second); `stale` (stamped more than 3 s from the server's clock); `zone`; `mode` (on foot, as the zone
+  entity has it: movement authority's believed mode once P1.E03.T04 lands); `world` (the frame is the player's, a rocky
+  world); `unknown` (`parseNodeKey`: a cell on the world's grid, a type the world carries at its tier); `range` before
+  any terrain is sampled (the cell's centre further than reach and a cell); `busy` (the ground is still being planned);
+  `unknown` (no such candidate in the scatter); `harvested`; `range` (35 m from the player's position to the node: the
+  client's 30 m beam and 5 m for the eye, the node's size and a pose a tick old); `los` (the ground sampled every 2 m
+  along the beam from the eye, 1.6 m up, to the node, its ends skipped, blocked where the beam runs 0.75 m under it; rocks,
+  trees and buildings do not block); `heat` (`beam(character, seconds)`: given Heat's meter service as `meters`
+  (P1.E07.T02), a hit counts only while `meters.beamActive(character, now)` says the beam is firing, its button held
+  and out of the overheat lockout, so hits sent with the button off never mine; without it, as until Heat is wired into
+  the gateway's `ResourceService`, the beam never overheats on the server).
+- **Beam time.** A hit is worth the time since the character's last hit that counted, at most 0.5 s (an honest client
+  sends one every 0.25 s), at the multitool's 1.6 hp a second (× 1.5 on minerals with a node flagged
+  `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
+  continuously; nodes and flora share that one beam.
+- **Breaking.** The node's yield is rolled once and split by the damage each character did (whole units, largest
+  remainders first, ties to the first to hit it; `splitByDamage`), so a token hit earns a token share (nothing, a few
+  thousandths of a node) and the one who did the work takes the rest; each share × the character's `mining.yield`
+  (Optical Drill, Hot Hands) and granted into its
+  inventory: what does not fit is reported (`added` below `count`), not kept, and a character out of play loses its
+  share. The breaker's answer carries its share; every other contributor in the zone is sent `mine {seq: 0, result:
+  'depleted', …}`; the inventory is pushed as for any server-side grant. `subscribe(fn)` hears every share
+  (`MinedEvent`: character, zone, frame, node or null, type or flora kind, resource, count, added, `broke`); the gateway
+  passes each to the quest runtime (§17) as `questMineEvent(e)`: `mine {node: <type>, id: <frame>/<node>}` for a node
+  share worth something, so a `mine` step counts distinct nodes (one grown back is the same node), and nothing for
+  flora, whose carbon and ferrite count through `collect` steps.
+- **Common flora** (trees, giant growths, shrubs, ferns, crystal growths, boulders, rocks: carbon and ferrite) is each
+  client's own scatter, not shared nodes. A hit names `flora {kind, ref, at}`: the world must grow that kind
+  (`floraGrows`), `at` must be within 8 m of the ground and in range and sight, the same beam time breaks it
+  (`FLORA_HARVEST`'s hp, the client's numbers) and its yield is granted; the last 256 keys a character broke are refused
+  `harvested`, and so is flora past a budget per patch of ground, counted in hp so a giant growth costs six rocks (24 hp
+  an hour to a character in any 10 m patch; the client's flora holds about 6 hp to a patch, up to about 18 in a clump).
+  Its place cannot be checked against a scatter the server does not have, but its rate is bounded as a node's is (per
+  beam-second, as much as an honest player breaking rocks, far below a deposit's worth), and a modified client standing
+  still and naming plants that are not there gets about 7,500 units an hour from the ~40 patches in its reach, the same
+  whether it names rocks, boulders or giant growths: below what an honest beam held on rocks earns (about 19,000 ferrite
+  an hour at Heat's duty cycle). So carbon and ferrite grants are never the client's.
+- **What players are sent.** Every 250 ms (`sweep`, on the service's timer) each session whose player is in a world's
+  frame and within 500 m of its ground is sent, as `nodes`, the touched cells within 500 m of it that it does not hold or
+  that changed (`gone`: broken and growing back; `hurt`: damaged, with the fraction left rounded up to tenths, so a
+  beam's every hit is not news), an empty cell for one that went back to the scatter or that it has left 600 m behind,
+  and `reset` as it arrives on a world (again whenever it comes back to one). A client holds exactly what it was sent and
+  draws the rest as the scatter has it. Nothing is sent while no node near a player is touched, and a player is looked
+  at again only when its world's touched nodes changed (each world has a version) or it has moved. The cells round a
+  player are found through buckets of touched cells about 512 m across, worked out again once it has moved 32 m; each
+  cell's state is checked against the schema and encoded once per change, and a session's message put together from
+  those (`Session.sendText`).
+- **Bounds and cost.** A far hit never scatters or samples the ground; at most 16 grounds, 4,096 scattered cells and
+  100,000 touched nodes are kept, and a miner idle for an hour (the flora budget's) is forgotten. The bench's mining trial (25 players on foot
+  among 480 nodes, herds about, every node broken many times over) keeps the whole tick, hits and sweeps included,
+  well under the 10 ms p95.
+- **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
+  P1.E12.T04 resolves ship weapons on the server); the client's half is P1.E13.T06.
