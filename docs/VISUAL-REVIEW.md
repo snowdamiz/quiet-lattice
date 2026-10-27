@@ -291,8 +291,13 @@ with 12 frames of plate-less text over the limb. Requested: an overfull beacon l
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 5, performance 5 | 4.29 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
 
 Round 1: all small text at or above 4.5:1; the craft sweep is eased but the button, stepper and LEARN snap state in one
 frame around it, and the selected row flashes twice; after a ×3 craft the quantity stays at 3 while the row says CAN
 MAKE 1 and the materials go red (clamp to the new maximum); the result flash sits flush on its rows. Requested: a LEARN
 clip. Artifacts: `assets/renders/ui/{fabricator,fabricator-ship}/`.
+
+Round 2: the button and controls now ease and the quantity clamps; still failing: in the learn clip the fading header
+crosses the rising row; the row's tag and slot, and the footer status line, swap in one frame; the CRAFT label drops to
+1.3:1 while fading back to disabled. Requested: the stepper at its maximum.
