@@ -24,14 +24,15 @@ class Sink implements ZoneViewer {
 }
 
 function world() {
-  const zones = new ZoneManager({ clock: { now: () => 1000 } });
+  const clock = { now: () => 1000 };
+  const zones = new ZoneManager({ clock });
   const inventory = new InventoryService();
   const ships = new ShipLoadouts();
   const progress = new CharacterProgress();
   const lines: { level: string; obj: Record<string, unknown>; msg: string }[] = [];
   const at = (level: string) => (obj: object, msg: string) => lines.push({ level, obj: obj as Record<string, unknown>, msg });
   const log: PersistenceLog = { debug: at('debug'), info: at('info'), warn: at('warn'), error: at('error') };
-  const registry = coreRegistry({ zones, inventory, ships, progress, log });
+  const registry = coreRegistry({ zones, clock, inventory, ships, progress, log });
   const skills = skillServiceIn(registry)!;
   return { inventory, ships, progress, registry, skills, log, lines };
 }
@@ -54,8 +55,9 @@ describe('the skills component', () => {
     expect(skills).toBeInstanceOf(SkillService);
     // a service given is the one registered
     const given = new SkillService({ inventory: new InventoryService(), ships: new ShipLoadouts(), progress: new CharacterProgress() });
-    const zones = new ZoneManager({ clock: { now: () => 0 } });
-    const r = coreRegistry({ zones, inventory: new InventoryService(), ships: new ShipLoadouts(), progress: new CharacterProgress(), skills: given });
+    const clock = { now: () => 0 };
+    const zones = new ZoneManager({ clock });
+    const r = coreRegistry({ zones, clock, inventory: new InventoryService(), ships: new ShipLoadouts(), progress: new CharacterProgress(), skills: given });
     expect(skillServiceIn(r)).toBe(given);
     expect(skillServiceIn(new ComponentRegistry())).toBeUndefined();
   });

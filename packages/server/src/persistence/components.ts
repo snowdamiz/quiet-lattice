@@ -1,7 +1,8 @@
 // The character state components Phase 1 has so far (docs/ARCHITECTURE.md §8), in load order: progress (level, xp and
 // home system, in the row's columns), the skill web (P1.E07.T01, src/skills), the ship loadout, the inventory (its layout
 // re-derived from the ship and the owned nodes on load), where the character is (system, pose, frame and movement mode,
-// read from its zone entity) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
+// read from its zone entity, and on foot, where it left its ship; a saved pose movement authority would not accept is not
+// restored) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
@@ -10,13 +11,17 @@ import { MoveMode, Pose } from '@astra/shared/protocol';
 import { emptyQuestLog, migrateQuestLogV1, questLogProblem, questLogSchema, type QuestLog, type QuestLogV1 } from '@astra/shared/quests';
 import { shipLoadoutSchema, shipStats, type ShipLoadout } from '@astra/shared/ships';
 import type { SkillState } from '@astra/shared/skills';
+import { tierOfGalaxySystem } from '@astra/shared/world';
 import { z } from 'zod';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
+import { padPose, planGround, poseProblem as movementProblem } from '../sim/movement/index.ts';
 import { SKILLS, skillsComponent } from '../skills/component.ts';
 import { SkillService } from '../skills/service.ts';
 import type { QuestRuntime } from '../quests/runtime.ts';
+import type { ServerClock } from '../world/clock.ts';
 import { stationFrame, systemSeed } from '../world/home.ts';
 import type { ZoneManager } from '../zones/manager.ts';
+import { describeZoneSystem } from '../zones/system.ts';
 import { INPUT_LIMITS } from '../zones/zone.ts';
 import { ComponentRegistry, type CharacterComponent, type LoadContext, type PersistenceLog } from './registry.ts';
 
@@ -153,20 +158,20 @@ export const poseStateSchema = z.strictObject({
   system: z.int().min(0).max(1023),
   pose: Pose,
   mode: MoveMode,
+  /** On foot: where its ship rests (landed or docked), the one ship it may board. */
+  parked: Pose.optional(),
 });
 export type PoseState = z.infer<typeof poseStateSchema>;
 
-/** Docked at the home Waystation: where a new character starts, and where one whose saved pose is unusable goes. */
+/** Docked at the home Waystation: where a new character starts, and where one whose saved pose is unusable goes (the zone
+ * docks it on whichever pad is free, ZoneManager.join). */
 export function dockedAtHome(homeSystem: number): PoseState {
-  return { system: homeSystem, pose: { frame: stationFrame(homeSystem), pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: 'docked' };
+  return { system: homeSystem, pose: padPose(stationFrame(homeSystem), 0), mode: 'docked' };
 }
 
-/**
- * Why a saved pose cannot be used, or null: the system must exist, the frame must be one of its own (its bodies are
- * checked when the zone opens, ZoneManager.join), and the pose within the magnitudes a zone accepts (INPUT_LIMITS).
- * Terrain and station collision belong to movement authority (P1.E03.T04), which can extend this check.
- */
-export function poseProblem(at: PoseState): string | null {
+/** Why a pose cannot be placed at all, or null: the system must exist, the frame must be one of its own, and the pose
+ * within the magnitudes a zone accepts (INPUT_LIMITS). */
+export function poseShapeProblem(at: PoseState): string | null {
   let seed: number;
   try {
     seed = systemSeed(at.system);
@@ -180,25 +185,76 @@ export function poseProblem(at: PoseState): string | null {
   return null;
 }
 
-/** Where the character is: read from its entity in its zone while in play; on load, the gateway places it there. */
-export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>): CharacterComponent<PoseState> {
+/**
+ * Why a saved pose cannot be used, or null: its shape (poseShapeProblem), and the pose somewhere movement authority would
+ * accept it in its mode at
+ * server world time `now` (P1.E03.T04: its frame by the shared rule, not in the ground or the hangar's shell, landed on
+ * dry ground, docked on a pad, on the pulse drive out of the air, on foot on the ground and with a ship of its own at
+ * `parked` to board). `ship` is the ship it flies (the default Lark when it has none), `skills` the nodes it owns (its
+ * ship's stats read them: Pack Mule's second pod). The ground is read from the
+ * server's planner, never planned here: a pose on a world whose ground is not planned cannot be vouched for, so the gateway
+ * waits for it first (groundForRestore).
+ */
+export function poseProblem(at: PoseState, now: number, ship: ShipLoadout | null = null, skills: readonly string[] = []): string | null {
+  const shape = poseShapeProblem(at);
+  if (shape) return shape;
+  const tier = tierOfGalaxySystem(at.system);
+  let v;
+  try {
+    v = movementProblem(describeZoneSystem(at.system), at.pose, at.mode, now, { ship: ship ?? DEFAULT_SHIP, skills }, at.parked, { tier: () => tier });
+  } catch (err) {
+    // (a ship its owned nodes cannot fly: not vouched for, rather than the join refused)
+    return `cannot judge it: ${(err as Error).message}`;
+  }
+  return v ? `${v.rule}${v.detail ? `: ${v.detail}` : ''}` : null;
+}
+
+/**
+ * Has the server's planner plan the ground a saved pose stands on (its world's, when it is on one), so its check
+ * (poseProblem) can judge it without planning on the main thread: resolves when it is ready, or false after `timeoutMs`
+ * (the check then cannot vouch for it). `state` is a character row's stored state, read leniently: what is not a pose
+ * needs no ground.
+ */
+export async function groundForRestore(state: unknown, timeoutMs = 5000): Promise<boolean> {
+  const at = (state as { pose?: { data?: { system?: unknown; pose?: { frame?: unknown } } } } | null)?.pose?.data;
+  const system = at?.system;
+  const frame = at?.pose?.frame;
+  if (typeof system !== 'number' || typeof frame !== 'string') return true;
+  let d;
+  try {
+    d = describeZoneSystem(system);
+  } catch {
+    return true;
+  }
+  return planGround(d, frame, tierOfGalaxySystem(system), timeoutMs);
+}
+
+/** Where the character is: read from its entity in its zone while in play; on load, the gateway places it there, unless
+ * movement authority would not accept it there (`clock` is the server's, for where the bodies are). */
+export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>, clock: Pick<ServerClock, 'now'>, movement = true): CharacterComponent<PoseState> {
   return {
     key: POSE,
-    v: 1,
+    v: 2,
+    // version 2 adds where a character on foot left its ship
+    migrations: { 1: (data) => data },
     schema: poseStateSchema,
     onInvalid: 'default',
     default: (ctx) => dockedAtHome(ctx.character.homeSystem),
-    check: poseProblem,
+    // (a server not holding its players to movement authority, as tests that place them with raw poses, checks only its shape)
+    check: (at, ctx) => (movement ? poseProblem(at, clock.now(), ctx.get<ShipLoadout | null>(SHIP), ownedNodes(ctx)) : poseShapeProblem(at)),
     save: ({ viewer }) => {
       const zone = viewer ? zones.zoneOf(viewer) : undefined;
       const id = viewer && zone?.entityOf(viewer);
       const e = id === undefined || id === null ? undefined : zone?.entity(id);
       if (!zone || !e) return undefined;
       const f = e.fields;
+      const mode = (f.mode ?? 'docked') as PoseState['mode'];
+      const parked = mode === 'foot' ? zone.movement?.parkedOf(e.id) : null;
       return {
         system: zone.systemIndex,
         pose: { frame: f.frame, pos: [...f.pos], quat: [...f.quat], vel: [...f.vel] },
-        mode: (f.mode ?? 'docked') as PoseState['mode'],
+        mode,
+        ...(parked ? { parked } : {}),
       };
     },
   };
@@ -232,6 +288,11 @@ export function questsComponent(quests: QuestRuntime): CharacterComponent<QuestL
 
 export interface CoreComponentDeps {
   zones: Pick<ZoneManager, 'zoneOf'>;
+  /** the server's clock (where the bodies are, for a saved pose's check) */
+  clock: Pick<ServerClock, 'now'>;
+  /** whether the server holds its players to movement authority (true), so a saved pose is checked by its rules; off (tests
+   * that place players with raw poses), only by its shape */
+  movement?: boolean;
   inventory: InventoryService;
   ships: ShipLoadouts;
   progress: CharacterProgress;
@@ -252,6 +313,6 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(skillsComponent(skills, { log: deps.log }))
     .register(shipComponent(deps.ships))
     .register(inventoryComponent(deps.inventory, { log: deps.log }))
-    .register(poseComponent(deps.zones));
+    .register(poseComponent(deps.zones, deps.clock, deps.movement ?? true));
   return deps.quests ? registry.register(questsComponent(deps.quests)) : registry;
 }

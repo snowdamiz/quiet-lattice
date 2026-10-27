@@ -44,7 +44,8 @@ export async function runDirect(command: AdminCommand, env: Env, operator: strin
   const log = stderrLog(io);
   let quests: QuestRuntime | undefined;
   try {
-    // world time is the shard's, as the server's clock starts from it (a quest step's start is stamped with it)
+    // world time is the shard's, as the server's clock starts from it (a quest step's start is stamped with it, and a saved
+    // pose is checked where the bodies are then)
     const shard = await pgShardStore(database.db, DEFAULT_SHARD_ID).load();
     const clock = createServerClock({ epochMs: shard.epochMs, floor: shard.lastTime });
     // the registry only decodes and validates here: nothing is put in play
@@ -52,7 +53,7 @@ export async function runDirect(command: AdminCommand, env: Env, operator: strin
     const inventory = new InventoryService();
     const progress = new CharacterProgress();
     quests = new QuestRuntime({ zones, inventory, progress, clock, log, dev: config.NODE_ENV !== 'production' });
-    const registry = coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress, quests, log });
+    const registry = coreRegistry({ zones, clock, inventory, ships: new ShipLoadouts(), progress, quests, log });
     const persistence = new CharacterPersistence({ store: pgCharacterStore(database.db), registry, log });
     // (an edit writes before run() returns, and nothing is ever put in play here: there is no save queue to flush)
     const admin = new AdminService({

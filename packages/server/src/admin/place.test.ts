@@ -2,6 +2,7 @@
 import { frameId, tierOfGalaxySystem, type PlanetParams } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { groundOf } from '../fauna/terrain.ts';
+import { padPose } from '../sim/movement/index.ts';
 import { describeZoneSystem } from '../zones/system.ts';
 import { AdminError } from './commands.ts';
 import { ORBIT_MIN_M, resolvePlacement, SURFACE_CLEARANCE_M } from './place.ts';
@@ -24,9 +25,10 @@ function invalid(fn: () => unknown): string {
 
 describe('teleport placements', () => {
   it('docks at the Waystation', () => {
+    // (on a pad, as movement authority docks a ship: the zone takes whichever is free)
     expect(resolvePlacement({ system: SYSTEM, frame: 'station', pose: 'docked' })).toEqual({
       system: SYSTEM,
-      pose: { frame: frameId(desc.seed, 'station'), pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+      pose: padPose(frameId(desc.seed, 'station')!, 0),
       mode: 'docked',
     });
     expect(resolvePlacement({ system: SYSTEM, frame: `${desc.seed}:station`, pose: 'docked' }).pose.frame).toBe(frameId(desc.seed, 'station'));

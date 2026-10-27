@@ -19,7 +19,8 @@ afterAll(async () => {
 });
 
 async function start(): Promise<RunningServer> {
-  const server = await startTestServer();
+  // (its bots are put on a world with raw poses, straight from the Waystation: no movement authority here)
+  const server = await startTestServer({}, { movement: false });
   running.add(server);
   return server;
 }
