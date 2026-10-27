@@ -368,6 +368,56 @@ async function stageCutscene(page: Page, id: string): Promise<void> {
   });
 }
 
+/** What the remote-ships screen reaches of the page. */
+interface RemotePage {
+  game: {
+    traffic: { station: unknown; ships: { obj: { visible: boolean } }[] };
+    ship: { speed: number };
+    hud: { clearBanners(): void };
+  };
+  dev: { boot(): Promise<void> };
+  step(n: number): Promise<void>;
+  __holdRaf?: boolean;
+}
+
+/**
+ * Boots a game by the Waystation with its frame loop parked (as stageCutscene does) and the demo's station traffic out of
+ * the shot, then plays one of the remote layer's recorded scenes (packages/client/src/remote/replay.js: `playFlypast`,
+ * other pilots' Larks sweeping round in front of the ship; `playCrowd`, 24 of them in ranks ahead) as a snapshot stream
+ * through the wire's encoding with a 60 ms trip and 40 ms of jitter, offline, so the capture is hermetic. `seconds` of it
+ * are stepped before the still.
+ */
+async function openRemotes(page: Page, scene: 'playFlypast' | 'playCrowd', seconds: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as RemotePage).dev.boot());
+  await page.evaluate(async () => {
+    const w = window as unknown as RemotePage & { requestAnimationFrame(cb: FrameRequestCallback): number };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    await new Promise((r) => setTimeout(r, 100));
+  });
+  await page.evaluate(
+    async ({ scene, seconds }) => {
+      const w = window as unknown as RemotePage;
+      const g = w.game;
+      // (these are the server's ships: the demo's client-side traffic round the Waystation stays out of the shot)
+      g.traffic.station = null;
+      for (const s of g.traffic.ships) s.obj.visible = false;
+      g.ship.speed = 0;
+      await w.step(90);
+      const url = '/src/remote/replay.js';
+      const replay = await import(/* @vite-ignore */ url);
+      replay[scene](g);
+      await w.step(Math.round(seconds * 60));
+      // (the system's name, shown on arrival, has had its moment)
+      g.hud.clearBanners();
+    },
+    { scene, seconds },
+  );
+  // (the HUD's transitions run on real time)
+  await page.waitForTimeout(1200);
+}
+
 /** Plays the cutscene from its start (ending one under way, and any banner) and steps `t` seconds into it. */
 async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> {
   await page.evaluate(
@@ -520,6 +570,20 @@ export const SCREENS: Record<string, ScreenDef> = {
     async motion(page) {
       await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
     },
+  },
+  // remote ships (P1.E04.T02): three other pilots' Larks sweeping round in formation in front of the ship by the
+  // Waystation, drawn by the remote layer from a recorded snapshot stream played offline (openRemotes); the still 1.2 s
+  // into the pass, the clip the 2.5 s after it, interpolated through the stream's jitter at 60 fps
+  'remote-ships': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'playFlypast', 1.2),
+  },
+  // and the Phase 1 budget's 24 remote players in view at once, in ranks ahead of the ship, cruising (one kit of
+  // instanced meshes draws them all)
+  'remote-ships-crowd': {
+    hudClock: true,
+    open: (page) => openRemotes(page, 'playCrowd', 1.2),
   },
   'station-hangar': {
     hash: '#dock',

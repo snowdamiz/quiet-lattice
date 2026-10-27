@@ -57,10 +57,11 @@ export class SnapshotReplay {
 
 /**
  * A flypast for the dev captures: `count` other pilots' Larks sweeping round in formation in front of the local ship, a
- * few hundred metres out, banked into the turn, in the local ship's frame, from world time `t0` for `seconds`. `phase` is
- * how far round the arc (rad) the leader is at `t0`: at -PI/2 it is right in front of the ship, crossing left to right.
+ * hundred-odd metres out and a little above it, banked into the turn, in the local ship's frame, from world time `t0` for
+ * `seconds`. `phase` is how far round the arc (rad) the leader is at `t0`: at -PI/2 it is right in front of the ship,
+ * crossing left to right; the default has it there about 1.6 s in.
  */
-export function flypastTicks(game, { count = 3, t0 = game.time, seconds = 30, phase = -Math.PI / 2 - 0.5, depth = 600, radius = 430, rate = 0.27 } = {}) {
+export function flypastTicks(game, { count = 3, t0 = game.time, seconds = 30, phase = -Math.PI / 2 - 0.37, depth = 360, radius = 260, rate = 0.24 } = {}) {
   const s = game.ship.state;
   const frame = frameIdOfFrame(game.system, game.station, s.frame);
   const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(s.quat);
@@ -81,15 +82,16 @@ export function flypastTicks(game, { count = 3, t0 = game.time, seconds = 30, ph
     const t = t0 + k * TICK_S;
     const entities = [];
     for (let i = 0; i < count; i++) {
-      // an echelon: each wingman a little behind, outside and above the one before, rising and falling a little
-      const R = radius + 34 * i;
-      const th = phase + rate * (t - t0) - 0.085 * i;
+      // an echelon: each wingman a little behind, outside (nearer the ship) and above the one before, rising and falling a
+      // little
+      const R = radius + 22 * i;
+      const th = phase + rate * (t - t0) - 0.11 * i;
       const bob = 5 * Math.sin(0.7 * (t - t0) + 1.9 * i);
       const bobRate = 3.5 * Math.cos(0.7 * (t - t0) + 1.9 * i);
       p.copy(centre)
         .addScaledVector(right, R * Math.cos(th))
         .addScaledVector(fwd, R * Math.sin(th))
-        .addScaledVector(up, 9 * i + bob);
+        .addScaledVector(up, 12 * i + bob);
       v.copy(right)
         .multiplyScalar(-R * rate * Math.sin(th))
         .addScaledVector(fwd, R * rate * Math.cos(th))
@@ -118,13 +120,61 @@ export function flypastTicks(game, { count = 3, t0 = game.time, seconds = 30, ph
   return ticks;
 }
 
-/** Starts the flypast (flypastTicks) in `game.remotes`, through the wire's encoding and a 60 ms trip with 40 ms of
- * jitter. */
-export function playFlypast(game, opts = {}) {
-  const replay = new SnapshotReplay(encodeStream(flypastTicks(game, opts), opts));
+/**
+ * A crowd for the dev captures: `count` other pilots' Larks in ranks ahead of the local ship (`columns` abreast, each rank
+ * higher and further out), cruising slowly the way it faces, rising and falling a little: the Phase 1 budget's 24 remote
+ * players in view at once (IMPLEMENTATION_PLAN 0.3).
+ */
+export function crowdTicks(game, { count = 24, columns = 6, t0 = game.time, seconds = 30, speed = 12 } = {}) {
+  const s = game.ship.state;
+  const frame = frameIdOfFrame(game.system, game.station, s.frame);
+  const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(s.quat);
+  const p = new THREE.Vector3();
+  const ticks = [];
+  for (let k = 0; k * TICK_S <= seconds; k++) {
+    const t = t0 + k * TICK_S;
+    const entities = [];
+    for (let i = 0; i < count; i++) {
+      const col = i % columns;
+      const row = Math.floor(i / columns);
+      const bob = 3 * Math.sin(0.8 * (t - t0) + 2.3 * i);
+      p.set((col - (columns - 1) / 2) * 45 + 8 * (row % 2), 10 + row * 30 + bob, -(160 + row * 60))
+        .applyQuaternion(s.quat)
+        .add(s.pos)
+        .addScaledVector(fwd, speed * (t - t0));
+      entities.push({
+        id: 201 + i,
+        kind: 'player',
+        frame,
+        pos: p.toArray(),
+        quat: s.quat.toArray(),
+        vel: fwd
+          .clone()
+          .multiplyScalar(speed)
+          .addScaledVector(new THREE.Vector3(0, 1, 0).applyQuaternion(s.quat), 2.4 * Math.cos(0.8 * (t - t0) + 2.3 * i))
+          .toArray(),
+        mode: 'ship',
+        level: 1 + (i % 50),
+      });
+    }
+    ticks.push({ time: t, entities });
+  }
+  return ticks;
+}
+
+/** Plays `ticks` (flypastTicks, crowdTicks) in `game.remotes` from now, through the wire's encoding and a 60 ms trip
+ * with 40 ms of jitter. */
+export function playTicks(game, ticks, opts = {}) {
+  const replay = new SnapshotReplay(encodeStream(ticks, opts));
   game.remotes.replay = replay;
   return replay;
 }
+
+/** Starts the flypast (flypastTicks). */
+export const playFlypast = (game, opts = {}) => playTicks(game, flypastTicks(game, opts), opts);
+
+/** Starts the crowd (crowdTicks). */
+export const playCrowd = (game, opts = {}) => playTicks(game, crowdTicks(game, opts), opts);
 
 // a number in [0, 1) for tick k, the same every run
 function hash(k) {
