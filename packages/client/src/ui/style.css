@@ -2947,7 +2947,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
-.social-chat.open.tab-beacons .sc-beacons {
+.social-chat.open.tab-beacons .sc-beacons,
+.social-chat .sc-beacons.leaving {
   display: flex;
 }
 /* longer than the panel: it fades at the edge it scrolls on (its foot while more is below, its head once scrolled) */
@@ -3151,7 +3152,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   padding: 7px 10px 8px 8px;
   border-top: 1px solid var(--line);
   border-left: 2px solid transparent;
-  animation: spIn 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: spIn 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
 }
 .sp-member.still {
   animation: none;

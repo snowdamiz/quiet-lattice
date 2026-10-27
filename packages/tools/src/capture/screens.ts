@@ -950,6 +950,23 @@ export const SCREENS: Record<string, ScreenDef> = {
       });
     },
   },
+  // the open panel's tabs, clicked Shard → System → Party → Beacons and back, every 0.8 s: each list fades out where it
+  // stands before the next fades in, and the beacon list does the same
+  'social-tabs': {
+    hudClock: true,
+    clipSeconds: 5.2,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(page, "s.partyScene(); s.chatScene(); s.beaconsScene(); s.open('shard')", 60);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        const hud = (window as unknown as SocialWindow).game.hud;
+        const order = ['system', 'party', 'beacons', 'party', 'system', 'shard'];
+        order.forEach((t, i) => hud.later(() => document.querySelector<HTMLButtonElement>(`.sc-tab.t-${t}`)?.click(), 300 + i * 800));
+      });
+    },
+  },
   // a list longer than the panel: eight calls for aid, one answer refused (too far) in view; the list fades at its foot
   // over its scrollbar. The clip scrolls it to its end and back, eased (the list's own scroll, as a wheel would)
   'beacons-many': {

@@ -17,6 +17,7 @@ import { CHAT_MAX, PARTY_MAX } from '@astra/shared/protocol';
 import { frameOfId } from '../../net/pose.js';
 import { fmtDist } from '../HUD.js';
 import { SocialModel } from './model.js';
+import { Motion, OUT_MS } from './motion.js';
 import { KIND_LABEL, fmtAge, fmtWait } from './words.js';
 
 /** How long a line stays in the closed feed before it fades (ms): the location line's objective settles after 8 s. */
@@ -32,11 +33,9 @@ const LIST_MAX = 50;
 const HISTORY = 20;
 /** The fades, countdowns, ages and the party's health are looked at this often (ms). */
 const TICK_MS = 250;
-/** How long the panel's own moves (on the HUD's ease-out, `ease` below), cross-fades and fades take (ms). */
-const MOVE_MS = 240;
+/** How long the panel's fades take (ms); its moves are motion.js's, and a list giving way to another fades out in
+ * motion's OUT_MS before the other fades in. */
 const FADE_MS = 200;
-/** A list giving way to another fades out this fast before the other fades in. */
-const OUT_MS = 80;
 /** How far round the fixed panels a world marker is hidden (px). */
 const MARKER_MARGIN = 12;
 const TABS = ['shard', 'system', 'party', 'beacons'];
@@ -77,108 +76,6 @@ const clock = (seconds) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
 
-/** The box properties that open and close with an element (its borders too, so nothing is left to snap), and across:
- * a button opening beside others in a row with a 4 px gap. */
-const DOWN = ['height', 'marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'];
-const ACROSS = ['width', 'marginLeft', 'paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'];
-
-/** The HUD's ease-out, cubic-bezier(0.2, 0.7, 0.2, 1), as a function of time 0–1. */
-function ease(t) {
-  const curve = (u, a, b) => 3 * a * u * (1 - u) * (1 - u) + 3 * b * u * u * (1 - u) + u * u * u;
-  let lo = 0;
-  let hi = 1;
-  for (let i = 0; i < 20; i++) {
-    const mid = (lo + hi) / 2;
-    if (curve(mid, 0.2, 0.2) < t) lo = mid;
-    else hi = mid;
-  }
-  return curve((lo + hi) / 2, 0.7, 1);
-}
-
-/** An element's box properties as they stand (mid-animation, as animated), in px, and its opacity. */
-function measure(e, props) {
-  const cs = getComputedStyle(e);
-  const r = e.getBoundingClientRect();
-  const out = { opacity: Number(cs.opacity) };
-  for (const p of props) out[p] = p === 'height' ? r.height : p === 'width' ? r.width : parseFloat(cs[p]) || 0;
-  return out;
-}
-
-/** The same properties at nothing. */
-function shut(props) {
-  const out = { opacity: 0 };
-  for (const p of props) out[p] = 0;
-  if (props === ACROSS) out.marginLeft = -4;
-  return out;
-}
-
-/**
- * Tweens an element's box from `from` to `to` (px, and opacity) on the HUD's ease, a whole pixel a frame: every frame
- * between lays out on whole pixels, so text never sits half a pixel off and hops when the tween ends, which itself ends
- * exactly on where the element lays out. Its content is clipped meanwhile.
- */
-function tween(e, from, to, fill = 'none') {
-  const n = Math.max(2, Math.round((MOVE_MS / 1000) * 60));
-  const frames = [];
-  for (let k = 0; k <= n; k++) {
-    const t = ease(k / n);
-    const f = { offset: k / n, easing: 'steps(1, end)' };
-    for (const p of Object.keys(from)) {
-      const v = from[p] + (to[p] - from[p]) * t;
-      f[p] = p === 'opacity' ? v : `${k === 0 ? from[p] : k === n ? to[p] : Math.round(v)}px`;
-    }
-    frames.push(f);
-  }
-  const a = e.animate(frames, { duration: MOVE_MS, fill });
-  e.classList.add('sizing');
-  const done = () => e.classList.remove('sizing');
-  a.addEventListener('finish', done);
-  a.addEventListener('cancel', done);
-  return a;
-}
-
-/** Opens an element from nothing to its own height (or `across`, its width), fading it in. */
-function reveal(e, across = false) {
-  const props = across ? ACROSS : DOWN;
-  for (const a of e.getAnimations()) a.cancel();
-  return tween(e, shut(props), measure(e, props));
-}
-
-/** Closes an element from where it stands to nothing (or `across`), fading it out; `done()` once it is shut. */
-function conceal(e, done, across = false) {
-  const props = across ? ACROSS : DOWN;
-  const from = measure(e, props);
-  for (const a of e.getAnimations()) a.cancel();
-  const a = tween(e, from, shut(props), 'forwards');
-  a.addEventListener('finish', () => {
-    done();
-    a.cancel();
-  });
-  return a;
-}
-
-/** Eases an element's height from `from` (px) to the height it lays out at now. */
-function resize(e, from) {
-  const to = e.getBoundingClientRect().height;
-  if (Math.abs(to - from) < 0.01) return;
-  tween(e, { height: from }, { height: to });
-}
-
-/** Shows an element or not, opening or closing it (across: its width) when `animate`, else at once. One that is closing
- * stays laid out until it is shut, then is `hidden`. */
-function showing(e, show, animate, across = false) {
-  const on = e.shownTo ?? !e.hidden;
-  if (show === on) return;
-  e.shownTo = show;
-  if (!animate) {
-    for (const a of e.getAnimations()) a.cancel();
-    e.hidden = !show;
-  } else if (show) {
-    e.hidden = false;
-    reveal(e, across);
-  } else conceal(e, () => !e.shownTo && (e.hidden = true), across);
-}
-
 /** A text that comes and goes fades as it does. */
 function fadeText(e, text) {
   if ((e.textTo ?? e.textContent) === text) return;
@@ -197,12 +94,6 @@ function fadeText(e, text) {
   });
 }
 
-/** The vertical offset an element's running transform animation has it at (px). */
-function offsetY(e) {
-  const t = getComputedStyle(e).transform;
-  return t && t !== 'none' ? new DOMMatrixReadOnly(t).m42 : 0;
-}
-
 export class SocialUI {
   /** `hud` the HUD whose layer it draws into and whose clock it runs on. */
   constructor(game, hud) {
@@ -210,6 +101,8 @@ export class SocialUI {
     this.hud = hud;
     this.model = new SocialModel({ now: () => hud.now(), system: () => game.galaxy?.current?.id ?? null });
     this.model.subscribe(() => (this.dirty = true));
+    /** the boxes opening, closing, resizing and sliding, a step every frame on the HUD's clock */
+    this.motion = new Motion(() => hud.now());
     this.tab = 'shard';
     /** the newest line each chat tab has shown open: lines after it are unread */
     this.seen = { shard: 0, system: 0, party: 0 };
@@ -349,6 +242,7 @@ export class SocialUI {
       this.lastTick = now;
       this.tick(now);
     }
+    this.motion.step();
   }
 
   render(now) {
@@ -359,8 +253,20 @@ export class SocialUI {
     const pre = log ? { atBottom: log.scrollTop + log.clientHeight >= log.scrollHeight - 4 } : null;
     const beacons = open && this.tab === 'beacons';
     if (beacons !== this.chat.classList.contains('tab-beacons')) {
+      // (the list fades in once the log has faded out, and fades out before the log fades in, as two logs do)
       this.chat.classList.toggle('tab-beacons', beacons);
-      if (beacons) this.beaconsEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS, easing: 'ease-out' });
+      const view = this.beaconsEl;
+      for (const a of view.getAnimations()) a.cancel();
+      view.classList.remove('leaving');
+      if (beacons) view.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS - OUT_MS / 2, delay: OUT_MS, easing: 'ease-out', fill: 'backwards' });
+      else {
+        view.classList.add('leaving');
+        const a = view.animate([{ opacity: 1 }, { opacity: 0 }], { duration: OUT_MS, easing: 'ease-out', fill: 'forwards' });
+        a.addEventListener('finish', () => {
+          view.classList.remove('leaving');
+          a.cancel();
+        });
+      }
     }
     for (const t of TABS) this.tabButtons[t].classList.toggle('on', t === this.tab);
     setText(this.chanEl, TAB_LABEL[m.channel]);
@@ -393,7 +299,8 @@ export class SocialUI {
   renderLog(now, pre) {
     const open = this.isOpen;
     const lines = this.model.lines;
-    const want = open ? lines.filter((l) => l.channel === null || l.channel === this.tab).slice(-LOG_LINES) : lines.slice(-FEED_LINES);
+    // (none on the beacon tab: the log hidden under the list stays empty, so nothing of it shows as it fades away)
+    const want = !open ? lines.slice(-FEED_LINES) : this.tab === 'beacons' ? [] : lines.filter((l) => l.channel === null || l.channel === this.tab).slice(-LOG_LINES);
     const fresh = this.rebuild || !this.linesEl;
     if (fresh) {
       this.rebuild = false;
@@ -430,13 +337,7 @@ export class SocialUI {
     // the lines already there ease up by the room the new ones took (each line and the gap over it), from wherever a
     // slide still had them; lines gone from the top of a bottom-anchored stack move nothing
     const gap = parseFloat(getComputedStyle(box).rowGap) || 0;
-    const rise = added.reduce((h, n) => h + n.getBoundingClientRect().height + gap, 0) + offsetY(box);
-    this.slide?.cancel();
-    // (a whole pixel a frame, as the boxes ease: no line sits half a pixel off)
-    const n = Math.max(2, Math.round((MOVE_MS / 1000) * 60));
-    const frames = [];
-    for (let k = 0; k <= n; k++) frames.push({ offset: k / n, easing: 'steps(1, end)', transform: `translateY(${k === n ? 0 : Math.round(rise * (1 - ease(k / n)))}px)` });
-    this.slide = box.animate(frames, { duration: MOVE_MS });
+    this.motion.slide(box, added.reduce((h, n) => h + n.getBoundingClientRect().height + gap, 0));
   }
 
   /** A new log for the lines (the feed's, or the open tab's): the old one fades out where it stands, then the new one
@@ -448,7 +349,6 @@ export class SocialUI {
     this.linesEl = el('div', 'sc-lines', log);
     this.logEl = log;
     this.nodes.clear();
-    this.slide = null;
     log.addEventListener('scroll', () => this.clipTop(), { passive: true });
     if (!old) return;
     old.classList.add('ghost');
@@ -494,7 +394,7 @@ export class SocialUI {
       // (the frame closes with its rows as they were)
       if (this.partyShown) {
         this.partyShown = false;
-        conceal(this.partyEl, () => {
+        this.motion.conceal(this.partyEl, () => {
           if (this.partyShown) return;
           this.partyEl.classList.remove('shown');
           this.rowsEl.replaceChildren();
@@ -506,13 +406,15 @@ export class SocialUI {
       return;
     }
     const was = this.partyShown;
-    // the count and "Not in a party" fade and close as the rows grow or go, and Leave opens across beside Invite
+    // "Not in a party" fades out before anything moves over it; then the rows grow in its place (fading in as they
+    // come), Leave opens across beside Invite, and the count fades in
+    const noneLeaving = was && members.length > 0 && (this.noneEl.shownTo ?? !this.noneEl.hidden);
+    const delay = noneLeaving ? OUT_MS : 0;
     fadeText(this.countEl, members.length ? `${members.length}/${PARTY_MAX}` : '');
-    showing(this.noneEl, !members.length, was);
-    showing(this.leaveBtn, members.length > 0, was && this.footShown, true);
+    this.motion.toggle(this.noneEl, !members.length, was);
+    this.motion.toggle(this.leaveBtn, members.length > 0, was && this.footShown, { across: true, delay });
     const box = this.rowsEl;
     const from = was ? box.getBoundingClientRect().height : null;
-    for (const a of box.getAnimations()) a.cancel();
     const old = new Set(this.memberRows.keys());
     box.replaceChildren();
     this.memberRows.clear();
@@ -520,8 +422,9 @@ export class SocialUI {
     for (const x of members) {
       const row = el('div', `sp-member${x.leader ? ' leader' : ''}${x.me ? ' me' : ''}${x.online ? '' : ' offline'}`, box);
       row.dataset.name = x.name;
-      // (a member already shown does not rise in again)
+      // (a member already shown does not rise in again; a new one rises in once what it replaces has faded)
       if (old.has(x.name)) row.classList.add('still');
+      else if (delay) row.style.animationDelay = `${delay}ms`;
       const mark = el('i', 'sp-mark', row);
       if (x.leader) mark.title = 'Leader';
       el('span', 'sp-name', row, x.name);
@@ -542,17 +445,17 @@ export class SocialUI {
       this.footShown = live;
       if (live) {
         this.footEl.style.display = '';
-        if (this.partyShown) reveal(this.footEl);
+        if (this.partyShown) this.motion.reveal(this.footEl);
       } else {
         this.inviteName.blur();
-        conceal(this.footEl, () => !this.footShown && (this.footEl.style.display = 'none'));
+        this.motion.conceal(this.footEl, () => !this.footShown && (this.footEl.style.display = 'none'));
       }
     }
     if (!this.partyShown) {
       this.partyShown = true;
       this.partyEl.classList.add('shown');
-      reveal(this.partyEl);
-    } else resize(box, from);
+      this.motion.reveal(this.partyEl);
+    } else this.motion.resize(box, from, { delay });
   }
 
   /** Each member's health bar, set in place (in steps of 2%: an entity's hp in view moves finer than the bar shows). */
@@ -581,7 +484,7 @@ export class SocialUI {
     for (const card of [...this.invitesEl.children]) {
       if (keys.has(card.dataset.key) || card.leaving) continue;
       card.leaving = true;
-      conceal(card, () => card.remove());
+      this.motion.conceal(card, () => card.remove());
     }
     let before = this.invitesEl.firstChild;
     for (const inv of want) {
@@ -616,7 +519,7 @@ export class SocialUI {
       void bar.offsetWidth;
       bar.style.transition = `transform ${(left / 1000).toFixed(2)}s linear`;
       bar.style.transform = 'scaleX(0)';
-      reveal(card);
+      this.motion.reveal(card);
     }
   }
 
@@ -666,8 +569,15 @@ export class SocialUI {
       const ago = age(b.at);
       setText(r.meta, `${b.from} · ${b.open} of ${b.cap} open${ago ? ` · ${ago} ago` : ''}`);
       setText(r.where, dist ? `${system} · ${dist}` : system);
-      this.refusalUnder(r, m.answerRefusal?.id === b.id ? m.answerRefusal.text : '');
     }
+    // a refusal giving way to another (under another beacon) fades out first; then the old closes as the new opens, at
+    // once, so the rows between them move only one way
+    const said = (b) => (m.answerRefusal?.id === b.id ? m.answerRefusal.text : '');
+    const leaving = list.some((b) => {
+      const r = this.rows.get(b.id);
+      return !!r.refusal && r.refusal.textContent !== said(b);
+    });
+    for (const b of list) this.refusalUnder(this.rows.get(b.id), said(b), leaving ? OUT_MS : 0);
     // (rows already in place are left there: a row moved under the pointer would lose its click)
     list.forEach((b, i) => {
       const row = this.rows.get(b.id).row;
@@ -689,14 +599,14 @@ export class SocialUI {
   }
 
   /** The server's refusal under a beacon's row: a new one opens in, the old one closes out, and the rows below ease. */
-  refusalUnder(r, text) {
+  refusalUnder(r, text, delay) {
     if ((r.refusal?.textContent ?? '') === text) return;
     const old = r.refusal;
     r.refusal = null;
-    if (old) conceal(old, () => old.remove());
+    if (old) this.motion.conceal(old, () => old.remove());
     if (!text) return;
     r.refusal = el('div', 'sb-refusal', r.row, text);
-    reveal(r.refusal);
+    this.motion.reveal(r.refusal, { delay });
   }
 
   /** How far the player is from a beacon's place ("here" inside it), when it is in this star system. */
