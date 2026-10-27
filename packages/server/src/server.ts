@@ -1,5 +1,5 @@
 // Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → character
-// persistence → gateway. index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and
+// persistence → cutscenes → gateway. index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and
 // close() it. Closing is graceful: sessions are closed (each character saved as it leaves), every character still in
 // play is saved and the save queue written before the database goes (§8).
 import type { AddressInfo } from 'node:net';
@@ -13,6 +13,7 @@ import { registerHttpRoutes } from './gateway/http.ts';
 import { RateLimiter } from './gateway/rateLimit.ts';
 import { attachWsGateway, WS_PATH, type WsGateway } from './gateway/ws.ts';
 import { InventoryService } from './inventory/service.ts';
+import { CutsceneService } from './cutscenes/service.ts';
 import { CharacterProgress, coreRegistry, ShipLoadouts } from './persistence/components.ts';
 import { CharacterPersistence, type PersistenceOptions } from './persistence/service.ts';
 import { pgCharacterStore } from './persistence/store.ts';
@@ -51,6 +52,8 @@ export interface RunningServer {
   zones: ZoneManager;
   /** Loads characters on join and saves them every 30 s, on leave and on close. */
   persistence: CharacterPersistence;
+  /** Cutscenes in story phases (§15); the quest engine sets its `may`. */
+  cutscenes: CutsceneService;
   /** Closes sockets (saving each character), writes every pending save, then closes the HTTP server, Postgres and Redis.
    * Safe to call twice. */
   close(): Promise<void>;
@@ -108,8 +111,11 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     registry: coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress(), log }),
     log,
   });
+  // (a development server lets a client ask for a dev cutscene by itself; production only what the quest engine allows)
+  const cutscenes = new CutsceneService({ zones, dev: config.NODE_ENV !== 'production', log });
   const ws = attachWsGateway(app.server, {
     db: database.db,
+    cutscenes,
     tokens,
     clock,
     world,
@@ -138,6 +144,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const close = () =>
     (closed ??= (async () => {
       zones.stop();
+      cutscenes.stopSweeping();
       await ws.close();
       await persistence.close();
       await app.close();
@@ -154,6 +161,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const { port, address } = app.server.address() as AddressInfo;
   const urlHost = address.includes(':') ? `[${address}]` : address;
   zones.start();
+  cutscenes.startSweeping();
   world.start();
   persistence.start();
   log.info({ port, db: redact(config.DATABASE_URL), redis: redact(config.REDIS_URL), tickHz: config.TICK_HZ }, 'astra server ready');
@@ -169,6 +177,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     world,
     zones,
     persistence,
+    cutscenes,
     close,
   };
 }

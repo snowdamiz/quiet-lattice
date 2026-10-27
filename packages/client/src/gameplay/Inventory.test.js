@@ -58,22 +58,21 @@ describe('client Inventory: the demo API', () => {
     inv.warpCells--;
     expect(inv.warpCells).toBe(0);
     expect(inv.key()).not.toBe(k0);
-    inv.items = { carbon: 120, gold: 7, nonsense: 5 };
-    expect(inv.items).toEqual({ carbon: 120, gold: 7 });
-    inv.add('gold', 3);
+    inv.add('gold', 10);
+    expect(inv.items).toEqual({ gold: 10 });
     expect(inv.sellAll('gold')).toBe(10 * 202);
     expect(inv.units).toBe(2320 + 2020);
     expect(inv.sellAll('gold')).toBe(0);
   });
 
-  it('saves and restores the whole layout, refusing an invalid save', () => {
+  it('takes a whole value in its layout (the captures set their scenes up so), refusing an invalid one', () => {
     const inv = new Inventory();
     inv.add('copper', 50);
     inv.request({ op: 'transfer', from: suit(1) });
     const copy = new Inventory();
-    expect(copy.restore(JSON.parse(JSON.stringify(inv.snapshot())))).toBe(true);
+    expect(copy.restore(JSON.parse(JSON.stringify(inv.state)))).toBe(true);
     expect(copy.state).toEqual(inv.state);
-    expect(copy.restore({ ...inv.snapshot(), fragments: 3 })).toBe(false);
+    expect(copy.restore({ ...inv.state, fragments: 3 })).toBe(false);
     expect(copy.state).toEqual(inv.state);
   });
 

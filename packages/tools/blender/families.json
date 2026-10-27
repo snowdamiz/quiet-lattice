@@ -265,6 +265,12 @@
       "what": "glyph patterns for suits and hulls, liveries, title icons",
       "class": "cosmetic"
     },
+    "cutscenes": {
+      "what": "cutscene camera paths, dialogue, events and actors, one cutscene a .blend (DESIGN 19.2, 19.4; art bible 8: CAM_<cutscene>_<shot>)",
+      "kind": "cutscene",
+      "export": false,
+      "why": "a camera-only file: validate.py runs export_cutscene.py's naming and marker-grammar checks (the rules the client's parseCutscene applies) instead of the mesh checks; export_cutscene.py, not art:export, writes the JSON"
+    },
     "library": {
       "what": "the shared material library",
       "class": "library",

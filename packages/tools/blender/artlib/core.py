@@ -92,6 +92,8 @@ def validate_path(rules, path, family=None, cls=None, source=None):
     if R.is_lfs_pointer(path):
         report.error = "the file is a Git LFS pointer, not a .blend; run `git lfs pull`"
         return report
+    if rules["families"][family].get("kind") == "cutscene":
+        return _validate_cutscene(path, report, mode)
     if cls and cls not in rules["classes"]:
         report.error = f"unknown class {cls} (" + ", ".join(rules["classes"]) + ")"
         return report
@@ -123,4 +125,20 @@ def write_and_print(report, json_path=None, verbose=False, quiet=False):
         report.print(R.rel, verbose=verbose)
         if json_path:
             print(f"  report: {R.rel(json_path)}")
+    return report
+
+
+def _validate_cutscene(path, report, mode):
+    """A cutscene source (families.json kind "cutscene"): export_cutscene.py's naming and marker-grammar checks."""
+    if mode != "source":
+        report.error = "a cutscene is checked from its .blend; its export is JSON, not a .glb"
+        return report
+    import export_cutscene  # packages/tools/blender, on the path validate.py and the export scripts set
+
+    try:
+        load(path)
+    except Exception as e:
+        report.error = f"could not load: {e}"
+        return report
+    export_cutscene.validate_into(report)
     return report

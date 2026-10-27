@@ -18,10 +18,6 @@ export class Objectives {
     ];
   }
 
-  restore(index) {
-    this.index = index || 0;
-  }
-
   update(dt) {
     const g = this.game;
     if (g.mode === 'title') return;
