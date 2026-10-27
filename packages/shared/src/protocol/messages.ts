@@ -4,12 +4,13 @@
 import { z } from 'zod';
 import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
+import { discoveryKeyOk, discoveryKeySchema, discoveryKindSchema, NAME_REFUSALS } from '../discovery/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 13;
+export const PROTOCOL_VERSION = 16;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -24,6 +25,9 @@ export const PROTOCOL_VERSION = 13;
 // 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 // 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
+// 14: reserved for reputation, on its branch until it merges (P2.E18.T01)
+// 15: reserved for world events, on its branch until it merges (P2.E21.T01)
+// 16: first finders: name requests and their answers, a system's finds and their names (P2.E29.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -343,6 +347,21 @@ export const AnalyzeRequest = z.object({
  */
 export const CraftRequest = z.object({ t: z.literal('craft'), seq: z.number().int().min(1).max(0xffffffff), op: craftOpSchema });
 
+// ---------- first finders (P2.E29.T01, ARCHITECTURE §26) ----------
+
+/** What a name request may carry: chat's rules (not blank, no control, invisible or direction-changing characters), capped
+ * well above the filter's length so a name too long is answered `length` rather than dropped. */
+export const DISCOVERY_NAME_MAX = 64;
+/** A find, by its kind and its key (a species key, a body's frame id, a site key), as one of its kind. */
+const discoveryRef = { kind: discoveryKindSchema, key: discoveryKeySchema };
+/**
+ * Name a find (DESIGN 14.5): only its finder, once, within the window after the find; the server checks the name with
+ * the moderation filter and answers with `named`. Strict: the answer's fields differ, and are never a request's.
+ */
+export const NameRequest = z
+  .strictObject({ t: z.literal('name'), ...discoveryRef, name: PlainText(DISCOVERY_NAME_MAX) })
+  .refine((m) => discoveryKeyOk(m.kind, m.key), 'a key of its kind');
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -362,6 +381,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   BeaconRequest,
   AnalyzeRequest,
   CraftRequest,
+  NameRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -785,6 +805,51 @@ export const RecipesState = z.object({
     .refine((ids) => new Set(ids).size === ids.length, 'a recipe is known once'),
 });
 
+/**
+ * A find as every player sees it (ARCHITECTURE §26): its kind and key, its finder's name, the world time it was found,
+ * the name its finder gave it (absent: it keeps its procedural name, which every client makes for itself) and, while its
+ * finder may still name it, when that window closes.
+ */
+export const DiscoveryView = z
+  .object({
+    ...discoveryRef,
+    finder: CharacterName,
+    at: z.number().min(0).max(1e12),
+    name: z.string().min(1).max(DISCOVERY_NAME_MAX).optional(),
+    until: z.number().min(0).max(1e12).optional(),
+  })
+  .refine((d) => discoveryKeyOk(d.kind, d.key), 'a key of its kind')
+  .refine((d) => d.name === undefined || d.until === undefined, 'a named find has no window');
+export type DiscoveryView = z.infer<typeof DiscoveryView>;
+/** The most finds one `discoveries` message carries; a system's are sent in as many as it takes. */
+export const DISCOVERIES_MAX = 512;
+/**
+ * The finds of star system `system` (galaxy index): after `welcome`, and whenever the player's zone becomes another
+ * system's, `reset` and its finds (in as many messages as it takes, the first with `reset`); then each new find and each
+ * name given, as it happens, to everyone in the system (and to the finder wherever it is).
+ */
+export const DiscoveriesState = z.object({
+  t: z.literal('discoveries'),
+  system: z.number().int().nonnegative().max(1023),
+  reset: z.boolean().optional(),
+  entries: z.array(DiscoveryView).max(DISCOVERIES_MAX),
+});
+/** Why a name was not given: the filter's (`length`, `characters`, `blocked`, `reserved`); no such find (`unknown`); not
+ * the finder (`not_finder`); named already (`named`); the window has closed (`lapsed`), or a moderator closed it
+ * (`closed`); asked too fast (`rate`); the server could not record it just now (`busy`). */
+export const NameRefusalCode = z.enum([...NAME_REFUSALS, 'unknown', 'not_finder', 'named', 'lapsed', 'closed', 'rate', 'busy']);
+/** A name request's answer: `named` with the name as it was recorded (tidied), or `refused` with why. */
+export const NamedState = z
+  .object({
+    t: z.literal('named'),
+    ...discoveryRef,
+    result: z.enum(['named', 'refused']),
+    name: z.string().min(1).max(DISCOVERY_NAME_MAX).optional(),
+    reason: NameRefusalCode.optional(),
+  })
+  .refine((m) => (m.result === 'named') === (m.name !== undefined), 'a name given, and only one, says what it is')
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why');
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -807,6 +872,8 @@ export const ServerMessage = z.discriminatedUnion('t', [
   AnalyzeState,
   CraftState,
   RecipesState,
+  DiscoveriesState,
+  NamedState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
