@@ -2,10 +2,11 @@
 // news and beacon news as the player reads them, and the waits and ages it shows. Plain strings only: the views put them
 // in the page as text, never as markup.
 
-/** A wait the server gave in whole seconds, as said: "12 s", "2 min". */
+/** A wait the server gave in whole seconds, as said: "12 s" under a minute, else to the nearest minute ("1 min" for a
+ * minute and a quarter). */
 export function fmtWait(seconds) {
   const s = Math.max(1, Math.ceil(seconds));
-  return s < 60 ? `${s} s` : `${Math.ceil(s / 60)} min`;
+  return s < 60 ? `${s} s` : `${Math.round(s / 60)} min`;
 }
 
 /** How long ago, or how long until, in seconds: "40 s", "6 min", "2 h". */

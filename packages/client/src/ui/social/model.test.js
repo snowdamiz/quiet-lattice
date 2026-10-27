@@ -4,7 +4,7 @@
 import { encodeServerMessage } from '@astra/shared/protocol';
 import { describe, expect, it } from 'vitest';
 import { Net } from '../../net/Net.js';
-import { INVITE_MS, SocialModel } from './model.js';
+import { INVITE_MS, LOG_MAX, SocialModel } from './model.js';
 
 class FakeSocket {
   constructor() {
@@ -117,6 +117,79 @@ describe('the social model', () => {
     clock.advance(1000);
     expect(model.submit('one too many').ok).toBe(true);
     expect(sent('chat')).toHaveLength(6);
+  });
+
+  it('spends no pace on a line that did not go', () => {
+    let t = 10_000;
+    const net = new Net({ url: 'ws://test/ws', token: 'tok', characterId: 'c1', WebSocket: FakeSocket, now: () => t, timers: { setTimeout: () => 0, clearTimeout: () => {} } });
+    const model = new SocialModel({ now: () => t });
+    model.attach(net);
+    net.connect();
+    FakeSocket.last.open();
+    // (not joined yet: nothing goes)
+    for (let i = 0; i < 7; i++) expect(model.submit(`early ${i}`)).toEqual({ ok: false, keep: true });
+    expect(new Set(model.lines.map((l) => l.text))).toEqual(new Set(['Not connected']));
+    FakeSocket.last.push(WELCOME);
+    for (let i = 0; i < 5; i++) expect(model.submit(`line ${i}`).ok).toBe(true);
+    expect(FakeSocket.last.sent.filter((m) => m.t === 'chat')).toHaveLength(5);
+  });
+
+  it(`keeps the newest ${LOG_MAX} lines`, () => {
+    const { model, socket } = online();
+    for (let i = 0; i < LOG_MAX + 25; i++) socket.push({ t: 'event', event: { kind: 'chat', channel: 'shard', from: 'Bo Tran', text: `line ${i}`, at: i } });
+    expect(model.lines).toHaveLength(LOG_MAX);
+    expect(model.lines[0].text).toBe('line 25');
+    expect(model.lines.at(-1).text).toBe(`line ${LOG_MAX + 24}`);
+    expect(model.lines.at(-1).id).toBe(LOG_MAX + 25);
+  });
+
+  it("starts a reconnect's session over: invites, a pending answer and refusals go, the party comes again", () => {
+    const timers = [];
+    let t = 10_000;
+    const net = new Net({
+      url: 'ws://test/ws',
+      token: 'tok',
+      characterId: 'c1',
+      WebSocket: FakeSocket,
+      now: () => t,
+      random: () => 1,
+      timers: { setTimeout: (fn) => timers.push(fn), clearTimeout: () => {} },
+    });
+    const model = new SocialModel({ now: () => t, system: () => 4 });
+    model.attach(net);
+    net.connect();
+    FakeSocket.last.open();
+    FakeSocket.last.push(WELCOME);
+    let socket = FakeSocket.last;
+    socket.push({ t: 'party', party: PARTY });
+    socket.push({ t: 'beacons', reset: true, beacons: [beacon(3)], gone: [] });
+    model.answer(3);
+    socket.push({ t: 'denied', of: 'answer', code: 'far' });
+    model.raise();
+    socket.push({ t: 'denied', of: 'raise', code: 'no_phase' });
+    socket.push({ t: 'party', party: null });
+    socket.push({ t: 'event', event: { kind: 'party', what: 'invite', name: 'Kestrel Vane' } });
+    socket.push({ t: 'party', party: PARTY });
+    socket.push({ t: 'event', event: { kind: 'party', what: 'invite', name: 'Ilse Marr' } });
+    expect(model.invites).toHaveLength(1);
+    expect(model.answerRefusal).not.toBeNull();
+    // the connection drops, and the client joins again
+    socket.readyState = 3;
+    socket.onclose({ code: 1006, reason: '' });
+    t += 600;
+    timers.at(-1)();
+    FakeSocket.last.open();
+    socket = FakeSocket.last;
+    socket.push(WELCOME);
+    expect(model.invites).toEqual([]);
+    expect(model.answering).toBeNull();
+    expect(model.answerRefusal).toBeNull();
+    expect(model.beaconRefusal).toBeNull();
+    // (the party as it was until the server says, which it does after every welcome)
+    expect(model.party).toEqual(PARTY);
+    socket.push({ t: 'party', party: null });
+    expect(model.party).toBeNull();
+    expect(model.members()).toEqual([]);
   });
 
   it("says the server's refusals, and holds a mute for as long as the server said", () => {

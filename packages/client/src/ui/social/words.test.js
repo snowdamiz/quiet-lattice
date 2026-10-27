@@ -58,7 +58,7 @@ describe('news', () => {
   });
 
   it('says waits and ages', () => {
-    expect([fmtWait(0.2), fmtWait(12), fmtWait(59.5), fmtWait(61)]).toEqual(['1 s', '12 s', '1 min', '2 min']);
+    expect([fmtWait(0.2), fmtWait(12), fmtWait(59.5), fmtWait(75), fmtWait(95)]).toEqual(['1 s', '12 s', '1 min', '1 min', '2 min']);
     expect([fmtAge(42.9), fmtAge(125), fmtAge(7300)]).toEqual(['42 s', '2 min', '2 h']);
   });
 });

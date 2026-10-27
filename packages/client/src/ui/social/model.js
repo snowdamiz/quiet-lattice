@@ -181,14 +181,17 @@ export class SocialModel {
       this.refuse(deniedText({ of: 'chat', code: 'muted', retryS: (this.mutedUntil - now) / 1000 }));
       return { ok: false, keep: true };
     }
-    if (!this.pace.take(now)) {
-      this.refuse(deniedText({ of: 'chat', code: 'rate', retryS: this.pace.wait(now) }));
+    const wait = this.pace.wait(now);
+    if (wait > 0) {
+      this.refuse(deniedText({ of: 'chat', code: 'rate', retryS: wait }));
       return { ok: false, keep: true };
     }
+    // (a line that did not go spends nothing)
     if (!this.net?.send({ t: 'chat', channel, text })) {
       this.refuse('Not connected');
       return { ok: false, keep: true };
     }
+    this.pace.take(now);
     return { ok: true, keep: false };
   }
 
