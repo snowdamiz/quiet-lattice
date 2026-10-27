@@ -150,7 +150,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const persistence: CharacterPersistence = new CharacterPersistence({
     ...opts.persistence,
     store: pgCharacterStore(database.db),
-    registry: coreRegistry({ zones, clock, inventory, ships: new ShipLoadouts(), progress, quests, log }),
+    registry: coreRegistry({ zones, clock, movement: opts.movement, inventory, ships: new ShipLoadouts(), progress, quests, log }),
     log,
   });
   // (a development server lets a client ask for a dev cutscene by itself; production only what the quest engine allows)

@@ -140,7 +140,7 @@ describe('movement authority over the wire', () => {
     expect(zone.movement!.recent.filter((r) => r.entity === p.entityId).map((r) => r.rule)).toContain('teleport');
   });
 
-  it('keeps a client that claims to be on foot in mid-flight a ship to everyone else', async () => {
+  it('keeps a client that claims to be on foot in mid-flight a ship to everyone else, and to mining', async () => {
     const p = await Pilot.join(server);
     const watcher = await Pilot.join(server);
     const out = await takeOff(p);
@@ -149,6 +149,10 @@ describe('movement authority over the wire', () => {
     expect(c.mode).toBe('ship');
     expect(zoneOf(p).entity(p.entityId)!.fields.mode).toBe('ship');
     await waitFor(() => watcher.client.latest.get(p.entityId)?.mode === 'ship', 5000, 'the watcher to see a ship');
+    // a hit reads the mode the server believes: from a ship, refused
+    const d = zoneOf(p).system;
+    p.sock.send({ t: 'mine', seq: 1, frame: frameIdOf(d.seed, d.station.parent)!, node: '0_0_0_iron_0', tool: 'multitool', time: p.time });
+    expect(await p.sock.next('mine')).toMatchObject({ seq: 1, result: 'refused', reason: 'mode' });
     p.close();
     watcher.close();
   });

@@ -216,6 +216,21 @@ describe('character components', () => {
     });
   });
 
+  it('checks only a saved pose’s shape on a server not holding its players to movement authority', () => {
+    const { inventory, ships, progress, log } = world();
+    const clock = { now: () => 1000 };
+    const registry = coreRegistry({ zones: new ZoneManager({ clock, movement: false }), clock, movement: false, inventory, ships, progress, log });
+    const d = describeZoneSystem(HOME);
+    const g = groundOf(d, d.home)!;
+    const r = d.bodies[d.home]!.radius + heightAt(g, [0, 0, -1]) + 2;
+    // on foot with no ship of its own: restored as it was
+    const onFoot: PoseState = { system: HOME, pose: { frame: frameIdOf(d.seed, d.home), pos: [0, 0, -r], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, mode: 'foot' };
+    expect(registry.decode(stored({ pose: { v: 2, data: onFoot } }), CHARACTER, log).values.get(POSE)).toEqual(onFoot);
+    // but not in another system's frame
+    const elsewhere = { ...onFoot, pose: { ...onFoot.pose, frame: stationFrame(HOME === 0 ? 1 : 0) } };
+    expect(registry.decode(stored({ pose: { v: 2, data: elsewhere } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
+  });
+
   it('saves where a character on foot left its ship, and puts it back there to board it', () => {
     const { zones, registry } = world();
     const pose = registry.get(POSE)!;

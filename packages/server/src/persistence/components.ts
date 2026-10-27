@@ -231,7 +231,7 @@ export async function groundForRestore(state: unknown, timeoutMs = 5000): Promis
 
 /** Where the character is: read from its entity in its zone while in play; on load, the gateway places it there, unless
  * movement authority would not accept it there (`clock` is the server's, for where the bodies are). */
-export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>, clock: Pick<ServerClock, 'now'>): CharacterComponent<PoseState> {
+export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>, clock: Pick<ServerClock, 'now'>, movement = true): CharacterComponent<PoseState> {
   return {
     key: POSE,
     v: 2,
@@ -240,7 +240,8 @@ export function poseComponent(zones: Pick<ZoneManager, 'zoneOf'>, clock: Pick<Se
     schema: poseStateSchema,
     onInvalid: 'default',
     default: (ctx) => dockedAtHome(ctx.character.homeSystem),
-    check: (at, ctx) => poseProblem(at, clock.now(), ctx.get<ShipLoadout | null>(SHIP), ownedNodes(ctx)),
+    // (a server not holding its players to movement authority, as tests that place them with raw poses, checks only its shape)
+    check: (at, ctx) => (movement ? poseProblem(at, clock.now(), ctx.get<ShipLoadout | null>(SHIP), ownedNodes(ctx)) : poseShapeProblem(at)),
     save: ({ viewer }) => {
       const zone = viewer ? zones.zoneOf(viewer) : undefined;
       const id = viewer && zone?.entityOf(viewer);
@@ -289,6 +290,9 @@ export interface CoreComponentDeps {
   zones: Pick<ZoneManager, 'zoneOf'>;
   /** the server's clock (where the bodies are, for a saved pose's check) */
   clock: Pick<ServerClock, 'now'>;
+  /** whether the server holds its players to movement authority (true), so a saved pose is checked by its rules; off (tests
+   * that place players with raw poses), only by its shape */
+  movement?: boolean;
   inventory: InventoryService;
   ships: ShipLoadouts;
   progress: CharacterProgress;
@@ -309,6 +313,6 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(skillsComponent(skills, { log: deps.log }))
     .register(shipComponent(deps.ships))
     .register(inventoryComponent(deps.inventory, { log: deps.log }))
-    .register(poseComponent(deps.zones, deps.clock));
+    .register(poseComponent(deps.zones, deps.clock, deps.movement ?? true));
   return deps.quests ? registry.register(questsComponent(deps.quests)) : registry;
 }
