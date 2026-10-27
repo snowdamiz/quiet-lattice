@@ -4,8 +4,9 @@
 // and the rest is held as owed; nothing is paid twice across an abandon; an instanced step puts a party in one story
 // phase with its actors (and parts it again when the party breaks up), never fights itself or another system for a
 // player's phase, takes it out when the step ends, and names its actors' tags on kills; a cutscene step plays through the
-// cutscene service; a stored state the catalog has moved on from loads; the tick spreads its characters; and the quests
-// component round-trips through persistence, v1 included.
+// cutscene service; the admin CLI's set-quest-step moves a step in play and on a stored log; a stored state the catalog
+// has moved on from loads; the tick spreads its characters; and the quests component round-trips through persistence,
+// v1 included.
 import { totalXpFor } from '@astra/shared/combat';
 import { countOf } from '@astra/shared/inventory';
 import {
@@ -29,6 +30,7 @@ import type { CharacterStore, SaveRow } from '../persistence/store.ts';
 import { homeSystemOf } from '../world/home.ts';
 import { ZoneManager } from '../zones/manager.ts';
 import type { Zone, ZoneViewer } from '../zones/zone.ts';
+import { questAdmin } from './admin.ts';
 import { QuestRuntime, type QuestCutscenes, type QuestPush, type QuestRewardHooks } from './runtime.ts';
 
 class Viewer implements ZoneViewer {
@@ -442,6 +444,52 @@ describe('quest runtime', () => {
       ['first_jobs', 'restarted'],
       ['retired', 'dropped'],
     ]);
+  });
+
+  it('sets a quest’s step for the admin CLI: in play entered as any step, checked against what it holds and pushed; on a stored log for the next join', () => {
+    const steps = [
+      { id: 'a', type: 'interact', text: 'x', target: 'npc:a' },
+      { id: 'b', type: 'collect', text: 'y', item: 'ferrite', count: 5 },
+      fight('c', 'C'),
+      { id: 'd', type: 'interact', text: 'z', target: 'npc:d' },
+    ];
+    const w = world([quest('qa', steps)]);
+    const admin = questAdmin(w.runtime);
+    expect(admin.component).toBe(QUESTS);
+    const p = w.join();
+    w.inventory.grant(p.id, 'ferrite', 5);
+    const before = w.pushes.length;
+    // holding the ferrite, the collect step is done at once, and the fight is anchored where the player is
+    expect(admin.setStep(p.id, 'qa', 1)).toBeNull();
+    expect(p.book().active.qa).toMatchObject({ step: 'c', anchor: { system: p.zone.systemIndex } });
+    const pushed = w.pushes.slice(before).filter((x) => x.character === p.id);
+    expect(pushed.at(-1)?.push.state?.quests.active.qa?.step).toBe('c');
+    w.advance(0.5);
+    w.runtime.tickAll();
+    expect(w.actors(p.zone, p.phase())).toHaveLength(1);
+    // back to the first step: out of the fight's phase
+    expect(admin.setStep(p.id, 'qa', 0)).toBeNull();
+    expect(p.book().active.qa?.step).toBe('a');
+    expect(p.phase()).toBeNull();
+    expect(admin.setStep(p.id, 'qa', 4)).toBe('quest qa has steps 0 to 3');
+    expect(admin.setStep(p.id, 'nope', 0)).toBe('no quest nope');
+    // (the development server's own quest is unknown elsewhere)
+    expect(admin.setStep(p.id, 'cutscene_test', 0)).toBe('no quest cutscene_test');
+    expect(admin.setStep('nobody', 'qa', 0)).toBe('its quests are not in play');
+
+    // out of play: a copy of the stored log, at the world time, anchored at its first tick after the join
+    const stored = emptyQuestLog();
+    const r = admin.setStepStored(stored, 'qa', 2);
+    expect(r).toEqual({ ok: true, log: { ...emptyQuestLog(), active: { qa: { step: 'c', counters: {}, seen: {}, started: 1000.5, since: 1000.5 } } } });
+    expect(stored.active).toEqual({});
+    expect(admin.setStepStored(stored, 'qa', 9)).toEqual({ ok: false, error: 'quest qa has steps 0 to 3' });
+    expect(admin.setStepStored(stored, 'cutscene_test', 0)).toEqual({ ok: false, error: 'no quest cutscene_test' });
+    const q = w.join('thalune', (r as { log: QuestLog }).log);
+    expect(q.reply.quests.active.qa?.step).toBe('c');
+    w.advance(0.5);
+    w.runtime.tickAll();
+    expect(q.book().active.qa?.anchor).toMatchObject({ system: q.zone.systemIndex });
+    expect(w.actors(q.zone, q.phase())).toHaveLength(1);
   });
 
   it('ticks a slice of the characters each time, every one within a round', () => {

@@ -618,6 +618,72 @@ describe('the quest book', () => {
   });
 });
 
+describe('a developer’s jump to a step (set-quest-step)', () => {
+  const def = quest(
+    [
+      { id: 'one', type: 'interact', text: 'x', target: 'npc:a', rewards: { units: 10 } },
+      { id: 'two', type: 'collect', text: 'y', item: 'ferrite', count: 5 },
+      { id: 'fight', type: 'kill', text: 'Fight', targets: [{ tag: 'kestrel', count: 1 }], phase: { at: 'player', radius: 9000, actors: [] } },
+    ],
+    { prerequisites: { level: 30 } },
+  );
+  const lookup = (id: string) => (id === def.id ? def : undefined);
+
+  it('starts a quest that is not on at the step, asking no prerequisite, and pays nothing for the steps passed over', () => {
+    const b = new QuestBook(emptyQuestLog(), lookup);
+    expect(b.canStart(def.id, ctx())).toBe('prerequisites');
+    const r = b.setStep(def.id, 1, { time: 50 });
+    expect(r).toEqual({
+      ok: true,
+      notes: [
+        { kind: 'started', quest: def.id },
+        { kind: 'step', quest: def.id, step: 1, from: null },
+      ],
+    });
+    expect(b.log.active[def.id]).toEqual({ step: 'two', counters: {}, seen: {}, started: 50, since: 50 });
+    expect(b.log.paid).toEqual({});
+  });
+
+  it('moves a quest that is on, back or forward, and does not check the step against the world', () => {
+    const b = new QuestBook(emptyQuestLog(), lookup);
+    b.setStep(def.id, 0, { time: 50 });
+    // (a collect step met already is left for the caller to check: in play the runtime does)
+    expect(b.setStep(def.id, 1, { time: 60 })).toEqual({ ok: true, notes: [{ kind: 'step', quest: def.id, step: 1, from: 0 }] });
+    expect(b.log.active[def.id]).toMatchObject({ step: 'two', started: 50, since: 60 });
+    expect(b.apply({ type: 'held', items: { ferrite: 5 } }, ctx())).toContainEqual({ kind: 'step', quest: def.id, step: 2, from: 1 });
+    expect(b.setStep(def.id, 0, { time: 70 })).toMatchObject({ ok: true });
+    expect(stepOf(b, def.id)).toBe('one');
+  });
+
+  it('anchors a step round the player where it stands, or at its first tick when set where that was not known', () => {
+    const here = at(`${SEED}:station`, [10, 20, 30], 'ship');
+    const b = new QuestBook(emptyQuestLog(), lookup);
+    b.setStep(def.id, 2, { time: 50, at: here });
+    expect(b.log.active[def.id]?.anchor).toEqual({ system: HOME, frame: `${SEED}:station`, pos: [10, 20, 30] });
+
+    const stored = new QuestBook(emptyQuestLog(), lookup);
+    stored.setStep(def.id, 2, { time: 50 });
+    expect(stored.log.active[def.id]?.anchor).toBeUndefined();
+    stored.apply(tick(null), ctx());
+    expect(stored.log.active[def.id]?.anchor).toBeUndefined();
+    stored.apply(tick(here), ctx({ at: here }));
+    expect(stored.log.active[def.id]?.anchor).toEqual({ system: HOME, frame: `${SEED}:station`, pos: [10, 20, 30] });
+    // (and keeps it after)
+    stored.apply(tick(ground()), ctx({ at: ground() }));
+    expect(stored.log.active[def.id]?.anchor?.frame).toBe(`${SEED}:station`);
+  });
+
+  it('refuses a quest it does not know, a step the quest does not have, and a new quest past the cap', () => {
+    const b = new QuestBook(emptyQuestLog(), lookup);
+    expect(b.setStep('nope', 0, { time: 0 })).toEqual({ ok: false, error: 'no quest nope' });
+    expect(b.setStep(def.id, 3, { time: 0 })).toEqual({ ok: false, error: `quest ${def.id} has steps 0 to 2` });
+    expect(b.setStep(def.id, -1, { time: 0 })).toMatchObject({ ok: false });
+    for (let i = 0; i < QUEST_LIMITS.active; i++) b.log.active[`other_${i}`] = { step: 'a', counters: {}, seen: {}, started: 0, since: 0 };
+    expect(b.setStep(def.id, 0, { time: 0 })).toEqual({ ok: false, error: `${QUEST_LIMITS.active} quests are on already` });
+    expect(b.log.active[def.id]).toBeUndefined();
+  });
+});
+
 describe('a stored state the catalog has moved on from', () => {
   const def = quest([
     { id: 'one', type: 'interact', text: 'x', target: 'npc:a' },

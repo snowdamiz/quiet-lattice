@@ -78,6 +78,12 @@ export const Username = z
   .max(24)
   .regex(/^[A-Za-z0-9_-]+$/);
 export const Credentials = z.object({ username: Username, password: z.string().min(8).max(128) });
+/** Usernames starting with this, in any case, belong to the server's dev login (P1.E03.T07): registering one is refused. */
+export const DEV_USERNAME_PREFIX = 'dev-';
+/** Whether a username is a dev login's (`dev-…`, any case), which registration refuses and only the dev login reaches. */
+export function isDevUsername(username: string): boolean {
+  return username.toLowerCase().startsWith(DEV_USERNAME_PREFIX);
+}
 export const AuthResponse = z.object({ token: z.string().max(4096), accountId: Id });
 
 export const PeopleId = z.enum(['thalune', 'ixari', 'ulgani']);
@@ -193,7 +199,7 @@ export const SkillsRequest = z.object({ t: z.literal('skills'), seq: z.number().
 export const CutsceneId = z.string().regex(/^[a-z0-9][a-z0-9_]{0,47}$/);
 /** How a cutscene the server placed the player for ended (protocol 7): played to its end, skipped by the player, or given
  * back unplayed (`returned`: another cutscene was on screen, or the play came too late for a request the client gave up
- * on). A quest step ends on the first two, never on a give-back (ARCHITECTURE §16). */
+ * on). A quest step ends on the first two, never on a give-back (ARCHITECTURE §17). */
 export const CutsceneEnd = z.enum(['finished', 'skipped', 'returned']);
 export type CutsceneEnd = z.infer<typeof CutsceneEnd>;
 /** Cutscenes (protocol 6, ARCHITECTURE §15): `request` asks to play one where the player is, which the server
@@ -209,7 +215,7 @@ export const CutsceneRequest = z
   })
   .refine((m) => m.op === 'done' || (m.skipped === undefined && m.reason === undefined), 'only a done says how it ended')
   .refine((m) => m.reason === undefined || m.skipped === undefined || m.skipped === (m.reason !== 'finished'), 'skipped and reason agree');
-/** Quest request (ARCHITECTURE §16): accept a quest on offer, abandon one, or answer the current dialogue or choice step.
+/** Quest request (ARCHITECTURE §17): accept a quest on offer, abandon one, or answer the current dialogue or choice step.
  * `seq` numbers the session's requests from 1, increasing; the server answers each with `quests` state. */
 export const QuestRequest = z.object({ t: z.literal('quest'), seq: z.number().int().min(1).max(0xffffffff), op: questOpSchema });
 

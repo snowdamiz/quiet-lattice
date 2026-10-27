@@ -1,4 +1,4 @@
-// The quest engine (DESIGN 14.1, ARCHITECTURE §15): one character's quest state and the rules that move it. It does no
+// The quest engine (DESIGN 14.1, ARCHITECTURE §17): one character's quest state and the rules that move it. It does no
 // I/O and keeps no clock: it is told the time, the character, where it is and what it holds (QuestContext), and the
 // world events that happened (world.ts), and it changes the state it holds and reports what changed as notes. The
 // server's quest runtime keeps one book per character in play and acts on the notes (rewards, phases, cutscenes,
@@ -274,7 +274,9 @@ export class QuestBook {
       if (only !== undefined && id !== only) continue;
       const def = this.quest(id);
       // (a quest this build does not know, or a step it does not have, keeps its state as it is until reconciled)
-      if (def && this.log.active[id] === a && stepIndex(def, a.step) >= 0) this.advance(id, def, a, event, ctx, notes);
+      if (!def || this.log.active[id] !== a || stepIndex(def, a.step) < 0) continue;
+      if (event.type === 'tick') this.anchor(def, a, event.at);
+      this.advance(id, def, a, event, ctx, notes);
     }
     return notes;
   }
@@ -318,6 +320,34 @@ export class QuestBook {
     if (def?.category === 'main') return { ok: false, error: 'cannot_abandon' };
     delete this.log.active[quest];
     return { ok: true, notes: [{ kind: 'abandoned', quest, step: def ? Math.max(0, stepIndex(def, a.step)) : 0 }] };
+  }
+
+  // ---------- development ----------
+
+  /**
+   * A developer's jump (the admin CLI's set-quest-step): quest `quest` at step `step` (its index), started when it is
+   * not on, with no prerequisite, offer or wait asked, and nothing paid for the steps passed over. The step is entered
+   * as any step is, but not checked against the world: in play the caller checks what the character holds, and the
+   * next tick where it is. Returns the notes, or why not.
+   */
+  setStep(quest: string, step: number, ctx: Pick<QuestContext, 'time' | 'at'>): { ok: true; notes: QuestNote[] } | { ok: false; error: string } {
+    const def = this.quest(quest);
+    if (!def) return { ok: false, error: `no quest ${quest}` };
+    if (!Number.isInteger(step) || step < 0 || step >= def.steps.length) {
+      return { ok: false, error: `quest ${quest} has steps 0 to ${def.steps.length - 1}` };
+    }
+    const notes: QuestNote[] = [];
+    let a = this.log.active[quest];
+    const at = a ? stepIndex(def, a.step) : -1;
+    if (!a) {
+      if (Object.keys(this.log.active).length >= QUEST_LIMITS.active) return { ok: false, error: `${QUEST_LIMITS.active} quests are on already` };
+      a = { step: def.steps[step]!.id, counters: {}, seen: {}, started: ctx.time, since: ctx.time };
+      this.log.active[quest] = a;
+      this.offered.delete(quest);
+      notes.push({ kind: 'started', quest });
+    }
+    this.moveTo(quest, def, a, step, at >= 0 ? at : null, ctx, notes);
+    return { ok: true, notes };
   }
 
   // ---------- reading ----------
@@ -462,17 +492,29 @@ export class QuestBook {
 
   /** Moves to step `n` and checks it against where the character is and what it holds; one already met is done at once. */
   private enter(id: string, def: QuestDef, a: ActiveQuest, n: number, from: number | null, ctx: QuestContext, notes: QuestNote[]): void {
+    this.moveTo(id, def, a, n, from, ctx, notes);
+    const r = evaluate(def.steps[n]!, a, null, ctx);
+    if (r === 'done') this.complete(id, def, a, ctx, notes);
+  }
+
+  /** Moves to step `n`, unchecked: its speaker unaddressed, a step round the player anchored afresh. */
+  private moveTo(id: string, def: QuestDef, a: ActiveQuest, n: number, from: number | null, ctx: Pick<QuestContext, 'time' | 'at'>, notes: QuestNote[]): void {
     a.step = def.steps[n]!.id;
     a.since = ctx.time;
     delete a.open;
     delete a.anchor;
-    // a step round the player is anchored where the player is as it becomes live: now, or now for the step after an
-    // optional one
-    const anchored = liveSteps(def, n).some((i) => def.steps[i]!.phase?.at === 'player');
-    if (anchored && ctx.at) a.anchor = { system: ctx.at.system, frame: ctx.at.frame, pos: [...ctx.at.pos] };
+    this.anchor(def, a, ctx.at);
     notes.push({ kind: 'step', quest: id, step: n, from });
-    const r = evaluate(def.steps[n]!, a, null, ctx);
-    if (r === 'done') this.complete(id, def, a, ctx, notes);
+  }
+
+  /**
+   * Anchors a live step round the player where the player is: as it becomes live (now, or now for the step after an
+   * optional one), or, entered where that was not known (set out of play, restarted by reconcile), at its first tick.
+   */
+  private anchor(def: QuestDef, a: ActiveQuest, at: AtInfo | null | undefined): void {
+    if (a.anchor || !at) return;
+    const anchored = liveSteps(def, stepIndex(def, a.step)).some((i) => def.steps[i]!.phase?.at === 'player');
+    if (anchored) a.anchor = { system: at.system, frame: at.frame, pos: [...at.pos] };
   }
 
   private reward(id: string, rewards: Rewards, notes: QuestNote[], step?: number): void {

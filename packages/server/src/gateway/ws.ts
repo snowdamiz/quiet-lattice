@@ -11,7 +11,7 @@
 // connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
 // leaves; a cutscene done ends the quest step that played it. Quest requests go to the quest runtime (quests/), which
 // hears of every character once it has joined (after its party is known, so it can put it back in a quest step's
-// phase) and answers each request, and whose own changes reach the session as `quests` state and quest events (§16).
+// phase) and answers each request, and whose own changes reach the session as `quests` state and quest events (§17).
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token

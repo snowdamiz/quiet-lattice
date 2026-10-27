@@ -1,6 +1,6 @@
 // HTTP gateway (docs/ARCHITECTURE.md §2): accounts, characters and health. Bodies are validated with the shared protocol
 // schemas; errors reply `{ error, message }` where `error` is a stable code the client can switch on.
-import { CharacterCreate, CharacterList, CharacterSummary, Credentials, PROTOCOL_VERSION, type AuthResponse } from '@astra/shared/protocol';
+import { CharacterCreate, CharacterList, CharacterSummary, Credentials, isDevUsername, PROTOCOL_VERSION, type AuthResponse } from '@astra/shared/protocol';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { authenticate, registerAccount } from '../accounts/accounts.ts';
 import type { TokenService } from '../accounts/tokens.ts';
@@ -72,6 +72,8 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
       auth.post('/register', async (req, reply) => {
         const body = Credentials.safeParse(req.body);
         if (!body.success) return fail(reply, 400, 'invalid', 'Usernames are 3–24 letters, digits, - or _; passwords are 8–128 characters.');
+        // the dev login signs in to `dev-` accounts without a password, so no player may hold one
+        if (isDevUsername(body.data.username)) return fail(reply, 400, 'reserved_username', 'Usernames starting with "dev-" are reserved for development.');
         const r = await registerAccount(deps.db, body.data);
         if (!r.ok) return fail(reply, 409, 'username_taken', 'That username is taken.');
         const res: AuthResponse = { token: await deps.tokens.sign(r.accountId), accountId: r.accountId };

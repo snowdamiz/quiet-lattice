@@ -493,3 +493,25 @@ Format: task id, question → choice → why.
   or no answer in 5 s plays nothing); the offline link is the dev sandbox's. Protocol 6. Open: the client creates its
   networked link lazily, so a server-started cutscene before any client request is dropped (fix with the quest engine,
   P1.E09.T01); fauna's exemption for watchers is in P1.E08.T02; P1.E09.T03 extends `ui/Cinematic.js`.
+- **P1.E03.T07** Developer tooling → dev login: `POST /auth/dev {name, people?}` signs into `dev-<name>` accounts only
+  (a random password; auto-creates a "Dev <Name>" character; shares the /auth rate limit; logged at warn); usernames
+  starting `dev-` in any case are reserved at registration (400 `reserved_username`). Gating: the server refuses to
+  start with `ASTRA_DEV_LOGIN` in production; with NODE_ENV unset, dev login needs a loopback HOST. Admin channel: a
+  separate HTTP listener on 127.0.0.1:8788 with a bearer secret (sha256 + timingSafeEqual, no whitespace, 16+
+  characters in dev, 32+ and `ASTRA_ADMIN_IN_PRODUCTION=1` in production), refusing Origin headers; if the port is
+  taken the server runs without it; `x-astra-operator` is an unauthenticated audit label. The CLI
+  (`pnpm --filter @astra/server cli`) sends its secret only to loopback http after `/admin/health` answers
+  `{service:'astra-admin', version:1}` (a guard against accidents, not hostile local code); `--direct` edits the
+  database when no server answers, refusing a character saved in the last 60 s unless `--force`. Commands: who,
+  zones, metrics, teleport (docked; orbit ≥2 km or radius/4; surface 2 m up; x,y,z; a mode override), grant (negative
+  takes away, all or nothing), spawn/despawn in loaded zones (never players or creatures), set-quest-step,
+  set-skill-points (never below what levels give), mute (3600 s default, a week at most, in memory)/unmute. Online
+  characters change through the live services with `saveNow('admin')`; offline through `persistence.edit`: decode like
+  a join, validate changed components, write once at revision + 1 as a compare-and-set (`held`, `busy`, `conflict`),
+  joins wait (`afterEdit`), `close()` waits; a just-left character is waited for up to 3 s. Until P1.E04.T04, an online
+  teleport to another system is `edit(…, {leaving})` (captures the leave, writes it, drops the held copy, writes the
+  new pose) and a socket close with code 4001 and no refusal; the client reconnects into the new system. Metrics:
+  `ASTRA_METRICS_S` (10 s) logs a `tick loop` line and one `zone metrics` line per awake zone (p50/p95/max over 400
+  ticks). → Operators and tests can drive the live world without a backdoor in production. Open: P1.E03.T04 re-seats
+  its mover at the seam in `AdminService.moveInZone` (and `freePad()` for docked); P1.E09.T01 provides `QuestAdmin`;
+  P1.E04.T03's `onCorrection` ignores `mode`.

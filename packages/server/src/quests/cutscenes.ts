@@ -1,4 +1,4 @@
-// Quest steps and the cutscene service (P1.E09.T04, docs/ARCHITECTURE.md §15, §16): a cutscene step plays its cutscene
+// Quest steps and the cutscene service (P1.E09.T04, docs/ARCHITECTURE.md §15, §17): a cutscene step plays its cutscene
 // through the service's `start(session, id, at)` at the step's place, and the `play` it answers is pushed to the client
 // unrequested; a client may ask for a cutscene itself only while a live step plays it (the service's `may`, which keeps
 // its development rule); and a cutscene that ends, by the client's `done` (the gateway) or by the service (its sweep's

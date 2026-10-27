@@ -1,4 +1,4 @@
-// The quest runtime (DESIGN 14.1, 17; docs/ARCHITECTURE.md §15): the server's authority over every character's quests.
+// The quest runtime (DESIGN 14.1, 17; docs/ARCHITECTURE.md §17): the server's authority over every character's quests.
 // It holds a quest book (`@astra/shared/quests`) for each character in play, which persistence loads into it (reconciled
 // with the catalog: a quest or step the catalog no longer has never stops a join) and saves from it (the `quests`
 // component), and moves quests on from what happens in the world:
@@ -391,6 +391,44 @@ export class QuestRuntime {
       return [];
     });
     return error;
+  }
+
+  /**
+   * Puts quest `quest` of a character in play at step `step`, its index (the admin CLI's set-quest-step, through
+   * `quests/admin.ts`): started if it is not on, the step entered as any step is (phases, a cutscene), then checked
+   * against what the character holds; the client is sent the state. Null, or why not.
+   */
+  setStep(characterId: string, quest: string, step: number): string | null {
+    const h = this.held.get(characterId);
+    if (!h) return 'its quests are not in play';
+    if (!this.knows(quest)) return `no quest ${quest}`;
+    let error: string | null = null;
+    this.change(h, (ctx) => {
+      const r = h.book.setStep(quest, step, ctx);
+      if (!r.ok) {
+        error = r.error;
+        return [];
+      }
+      return [...r.notes, ...h.book.apply({ type: 'held', items: ctx.held ?? {} }, ctx, quest)];
+    });
+    return error;
+  }
+
+  /**
+   * A stored quest log (a character out of play, edited through persistence) with quest `quest` at step `step`: as
+   * `setStep`, on a copy, at the world time now, and unchecked against the world, which its next join and ticks check.
+   */
+  setStepStored(log: QuestLog, quest: string, step: number): { ok: true; log: QuestLog } | { ok: false; error: string } {
+    if (!this.knows(quest)) return { ok: false, error: `no quest ${quest}` };
+    const book = new QuestBook(structuredClone(log), this.catalog);
+    const r = book.setStep(quest, step, { time: this.clock.now() });
+    return r.ok ? { ok: true, log: book.log } : r;
+  }
+
+  /** Whether quest `id` is one this server has (a `dev` quest only on a development server). */
+  knows(id: string): boolean {
+    const def = this.catalog(id);
+    return !!def && (!def.dev || this.dev);
   }
 
   /** Whether the session's character is on a live cutscene step of cutscene `id` (the cutscene service's `may`: a client
