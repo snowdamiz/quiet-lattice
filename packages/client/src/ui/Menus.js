@@ -1,11 +1,10 @@
-// Title screen with its sign-in and character pick, pause screen, settings and controls sheets, trade terminal, the
-// inventory, the 3D navigation map and the warp sequence.
-import { PEOPLES, getHull, getItem, getPeople, getResource } from '@astra/shared/data';
+// Title screen (its sign-in and character screens are Account.js), pause screen, settings and controls sheets, trade
+// terminal, the inventory, the 3D navigation map and the warp sequence.
+import { getHull, getItem, getResource } from '@astra/shared/data';
 import { itemInfo, slotAt, stackCap, usedSlots } from '@astra/shared/inventory';
-import { CharacterName } from '@astra/shared/protocol';
 import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
-import { createCharacter, listCharacters, login, register } from '../net/api.js';
-import { clearSession, loadSession, saveSession, takeNotice } from '../net/session.js';
+import { takeNotice } from '../net/session.js';
+import { Account } from './Account.js';
 import { MapView } from './map/MapView.js';
 
 function el(tag, cls, parent, html) {
@@ -19,7 +18,7 @@ function el(tag, cls, parent, html) {
 const KEYS = [
   ['Starship', [['Steer', ['Mouse']], ['Throttle up · down', ['W', 'S']], ['Roll · strafe when hovering', ['A', 'D']], ['Thrusters up · down', ['Space', 'C']], ['Boost', ['Shift']], ['Pulse drive', ['J']], ['Land · take off', ['E']], ['Exit ship', ['F']], ['Lasers', ['LMB']], ['Camera view', ['V']], ['Look back', ['B']]]],
   ['On foot', [['Move', ['W', 'A', 'S', 'D']], ['Sprint', ['Shift']], ['Jump · jetpack', ['Space']], ['Mining beam', ['LMB']], ['Scanner pulse', ['C']], ['Interact · analyze', ['E']], ['Board ship', ['F']]]],
-  ['General', [['Inventory', ['I']], ['Navigation map', ['M']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
+  ['General', [['Inventory', ['I']], ['Navigation map', ['M']], ['Chat · a command', ['Enter', '/']], ['Next chat tab', ['Tab']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
 ];
 
 function controlsHTML() {
@@ -55,16 +54,6 @@ function applyUpgrade(game, id) {
   game.ship.skills.add(node);
   game.ship.refreshStats();
 }
-
-// the look a character is made with until character creation offers one (P1.E05.T05)
-const DEFAULT_LOOK = { palette: 0, pattern: 0, head: 0, suit: 0 };
-// a text field in a sheet row (the sign-in is functional only: its screens are P1.E04.T05's)
-const FIELD = 'width:210px;height:34px;padding:0 10px;background:transparent;border:1px solid var(--line-2);color:var(--text);font:inherit;font-size:14px;user-select:text';
-
-function esc(t) {
-  return String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-}
-
 
 // the trade panel always lists the demo's nine; the rest once some are carried
 const DEMO_RESOURCES = new Set(Object.keys(RESOURCES).filter((id) => getResource(id).demo));
@@ -170,7 +159,8 @@ export class Menus {
   }
 
   // ---------- title ----------
-  // Play opens the sign-in beside the menu; the world is entered from there (enterWorld), never from a local save.
+  // Play opens the sign-in and character screens in the menu's place (Account.js); the world is entered from there
+  // (enterWorld), never from a local save.
   buildTitle() {
     this.title = el('div', 'overlay title-screen show', this.root);
     const items = [
@@ -193,14 +183,26 @@ export class Menus {
         <div class="t-load"><div class="bar"><b></b></div><span class="mono">Preparing the home system</span></div>
         <span class="mono">Build 0.9</span>
       </footer>
-      ${this.sheetsHTML()}
-      <aside class="sheet frame" data-sheet="account"><header class="sheet-head"><h3>Play</h3><button class="close" data-close>✕</button></header><div class="account"></div></aside>`;
+      ${this.sheetsHTML()}`;
     this.startBtn = this.title.querySelector('[data-act="start"]');
     this.bindSheets(this.title);
     this.bindSettings(this.title);
-    this.bindAccount(this.title.querySelector('.account'));
+    this.account = new Account(this);
     // a refusal or a sign-out that sent the player back here, said when the sign-in next opens
     this.notice = takeNotice();
+    this.startBtn.addEventListener('click', () => {
+      this.account.show(this.notice);
+      this.notice = null;
+    });
+    // the menu by keyboard: the arrows walk its rows, Enter opens one
+    this.title.querySelector('.t-menu').addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      e.preventDefault();
+      e.stopPropagation();
+      const rows = [...this.title.querySelectorAll('.t-menu .t-item:not(:disabled)')];
+      const i = rows.indexOf(document.activeElement);
+      rows[(i + (e.key === 'ArrowDown' ? 1 : rows.length - 1)) % rows.length]?.focus();
+    });
     // sound needs a gesture first: the first click or key on the title starts it (and its music)
     const wake = () => this.game.audio.start();
     this.title.addEventListener('pointerdown', wake, { once: true });
@@ -229,17 +231,16 @@ export class Menus {
     this.connection.style.display = text ? '' : 'none';
   }
 
-  // menu items that open a sheet beside the menu (Play's sign-in, settings, controls); a second click closes it
+  // menu items that open a sheet beside the menu (settings, controls, credits); a second click closes it
   bindSheets(root) {
     root.querySelectorAll('.t-item').forEach((b) => b.addEventListener('mouseenter', () => !b.disabled && this.game.audio?.play('hover')));
     const sheets = root.querySelectorAll('[data-sheet]');
-    const items = root.querySelectorAll('[data-act="start"],[data-act="settings"],[data-act="controls"],[data-act="credits"]');
-    const sheetOf = (b) => (b.dataset.act === 'start' ? 'account' : b.dataset.act);
+    const items = root.querySelectorAll('[data-act="settings"],[data-act="controls"],[data-act="credits"]');
+    const sheetOf = (b) => b.dataset.act;
     // (the row whose sheet is open stays lit)
     const mark = () => items.forEach((b) => b.classList.toggle('open', !!root.querySelector(`.sheet.open[data-sheet="${sheetOf(b)}"]`)));
     const show = (name) => {
       if (name === 'credits') this.fillCredits(root);
-      if (name === 'account') this.openAccount();
       sheets.forEach((s) => s.classList.toggle('open', s.dataset.sheet === name && !s.classList.contains('open')));
       mark();
       this.game.audio?.play('ui');
@@ -266,6 +267,8 @@ export class Menus {
       if (ready && this.startBtn.disabled) {
         this.startBtn.disabled = false;
         this.title.querySelector('.t-load').classList.add('done');
+        // keyboard-first: Enter plays
+        if (!document.activeElement || document.activeElement === document.body) this.startBtn.focus({ preventScroll: true });
       }
     }
     if (g.overlay === 'map') this.updateMap(dt);
@@ -362,137 +365,6 @@ export class Menus {
         }),
       ),
     );
-  }
-
-  // ---------- account: sign in, then pick or make a character, and enter (DESIGN 20.2: accounts, server-held state) ----------
-  // Functional only, in the sheet beside the title's menu; the login and character screens proper are P1.E04.T05's.
-
-  openAccount() {
-    if (this.entering) return;
-    const message = this.notice;
-    this.notice = null;
-    this.session = loadSession();
-    if (this.session) this.showCharacters(message);
-    else this.renderAccount('signin', { message });
-  }
-
-  renderAccount(view, data = {}) {
-    const box = this.title.querySelector('.account');
-    const msg = data.message ? `<p class="mono" data-msg style="margin:14px 0 4px;color:var(--warm);font-size:12px;line-height:1.5">${esc(data.message)}</p>` : '';
-    const row = (label, ctl) => `<div class="set-row"><div>${label}</div><div class="ctl">${ctl}</div></div>`;
-    if (view === 'signin') {
-      box.innerHTML = `<form class="settings" data-form="signin">
-          <label class="set-row"><div>Username</div><div class="ctl"><input name="username" value="${esc(data.username ?? '')}" autocomplete="username" maxlength="24" required style="${FIELD}"></div></label>
-          <label class="set-row"><div>Password</div><div class="ctl"><input name="password" type="password" autocomplete="current-password" maxlength="128" required style="${FIELD}"></div></label>
-          ${row('', '<button type="button" class="btn ghost small" data-do="register">Create account</button><button type="submit" class="btn small">Sign in</button>')}
-        </form>${msg}`;
-    } else if (view === 'characters') {
-      this.characters = data.characters;
-      const list = data.characters.map((c) => row(`${esc(c.name)}<span class="mono" style="margin-left:10px;color:var(--dim);font-size:11px">${esc(getPeople(c.people).name)} · level ${c.level}</span>`, `<button type="button" class="btn small" data-enter="${esc(c.id)}">Enter</button>`));
-      const people = PEOPLES.map((p, i) => `<button type="button" data-v="${p.id}" class="${i === 0 ? 'on' : ''}">${esc(p.name)}</button>`).join('');
-      const create = data.characters.length < data.max
-        ? `<form class="settings" data-form="create">
-            <label class="set-row"><div>New character</div><div class="ctl"><input name="name" placeholder="Name" maxlength="20" required style="${FIELD}"></div></label>
-            ${row('People', `<div class="segmented" data-people>${people}</div><button type="submit" class="btn small">Create</button>`)}
-          </form>`
-        : '';
-      box.innerHTML = `<div class="settings">${list.join('') || row('<span style="color:var(--dim)">No characters yet</span>', '')}</div>${create}${msg}
-        <div class="settings">${row(`<span class="mono" style="color:var(--dim);font-size:11px">Signed in as ${esc(this.session.username)}</span>`, '<button type="button" class="btn ghost small" data-do="signout">Sign out</button>')}</div>`;
-    } else if (view === 'retry') {
-      box.innerHTML = `${msg}<div class="settings">${row('', '<button type="button" class="btn ghost small" data-do="signout">Sign out</button><button type="button" class="btn small" data-do="retry">Try again</button>')}</div>`;
-    } else {
-      box.innerHTML = `<div class="settings">${row(esc(data.message), '')}</div>`;
-    }
-  }
-
-  bindAccount(box) {
-    // typing goes to the form, not to the game's keys (whose listener would also swallow the space)
-    box.addEventListener('keydown', (e) => e.stopPropagation());
-    box.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (this.accountBusy) return;
-      if (e.target.dataset.form === 'signin') this.signIn(e.target, false);
-      else if (e.target.dataset.form === 'create') this.create(e.target);
-    });
-    box.addEventListener('click', (e) => {
-      const b = e.target.closest('button');
-      if (!b || this.accountBusy || b.type === 'submit') return;
-      if (b.dataset.do === 'register') this.signIn(b.form, true);
-      else if (b.dataset.do === 'signout') {
-        clearSession();
-        this.session = null;
-        this.renderAccount('signin');
-      } else if (b.dataset.do === 'retry') this.showCharacters();
-      else if (b.dataset.enter) this.enter(b.dataset.enter);
-      else if (b.closest('[data-people]')) b.parentElement.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
-    });
-  }
-
-  // runs one request at a time, the sheet's buttons ignored meanwhile
-  async accountCall(fn) {
-    this.accountBusy = true;
-    try {
-      return await fn();
-    } finally {
-      this.accountBusy = false;
-    }
-  }
-
-  async signIn(form, create) {
-    if (!form.reportValidity()) return;
-    const username = form.querySelector('[name="username"]').value.trim();
-    const password = form.querySelector('[name="password"]').value;
-    try {
-      const auth = await this.accountCall(() => (create ? register : login)({ username, password }));
-      this.session = { ...auth, username };
-      saveSession(this.session);
-      await this.showCharacters();
-    } catch (e) {
-      this.renderAccount('signin', { message: e.message, username });
-    }
-  }
-
-  async showCharacters(message = null) {
-    try {
-      const list = await this.accountCall(() => listCharacters(this.session.token));
-      this.renderAccount('characters', { ...list, message });
-    } catch (e) {
-      if (e.status === 401) {
-        clearSession();
-        this.session = null;
-        this.renderAccount('signin', { message: 'Your session has ended. Sign in again.' });
-      } else this.renderAccount('retry', { message: e.message });
-    }
-  }
-
-  async create(form) {
-    if (!form.reportValidity()) return;
-    const name = form.querySelector('[name="name"]').value.trim().replace(/\s+/g, ' ');
-    if (!CharacterName.safeParse(name).success) {
-      this.showCharacters('Names are 2–20 letters, with single spaces, apostrophes or hyphens between words.');
-      return;
-    }
-    const people = form.querySelector('[data-people] .on')?.dataset.v ?? PEOPLES[0].id;
-    try {
-      await this.accountCall(() => createCharacter(this.session.token, { name, people, look: DEFAULT_LOOK }));
-      await this.showCharacters();
-    } catch (e) {
-      await this.showCharacters(e.message);
-    }
-  }
-
-  enter(id) {
-    const c = this.characters?.find((x) => x.id === id);
-    if (!c) return;
-    this.entering = true;
-    this.renderAccount('wait', { message: `Entering the world as ${c.name}…` });
-    this.game.enterWorld(this.session, c, (reason, code) => {
-      this.entering = false;
-      if (code === 'auth') {
-        this.session = null;
-        this.renderAccount('signin', { message: reason });
-      } else this.showCharacters(reason);
-    });
   }
 
   // ---------- pause ----------

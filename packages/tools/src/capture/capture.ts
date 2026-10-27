@@ -345,7 +345,7 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
         written.push(extra);
       }
       if (tag === '16x9') written.push(...(await captureClip(page, def, outDir)));
-      errors.push(...pageErrors.map((e) => `${tag}: ${e}`));
+      errors.push(...pageErrors.filter((e) => !def.expectedErrors?.some((r) => r.test(e))).map((e) => `${tag}: ${e}`));
       await page.close();
     }
   } finally {

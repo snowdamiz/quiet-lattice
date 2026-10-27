@@ -18,9 +18,26 @@ window.step = async (frames = 60, dt = 1 / 60) => {
 // Dev scenarios (dev builds only): #sandbox, #foot, #fly, #land, #station, #dock, #space, #review:… and #cutscene:<id>
 // open the offline sandbox (Game.startSandbox: no server, nothing kept) and jump straight into a situation (#cutscene
 // plays a cutscene). Without one of these hashes the game goes through the server: Play, sign in, pick a character.
+// With `?dev` (`?dev=<name>`, `&people=<id>`) a scenario goes through the server instead, signed in by its dev login
+// (ARCHITECTURE §16) as `dev-<name>` (the scenario's name by default) and entered at once: the server holds where the
+// character is, so the scenario starts there, and #foot and #dock get out of a docked or landed ship (a move movement
+// authority allows); anywhere else is the dev CLI's `teleport`. #review and #cutscene stay offline.
 const scenario = location.hash.slice(1);
 const SCENARIOS = new Set(['sandbox', 'foot', 'fly', 'land', 'station', 'dock', 'space', 'review', 'cutscene']);
-if (import.meta.env.DEV && SCENARIOS.has(scenario.split(':')[0])) {
+const params = new URLSearchParams(location.search);
+const scenarioName = scenario.split(':')[0];
+if (import.meta.env.DEV && params.has('dev') && scenarioName !== 'review' && scenarioName !== 'cutscene') {
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  (async () => {
+    while (!game.menus.ready) await wait(200);
+    const name = params.get('dev') || (SCENARIOS.has(scenarioName) ? scenarioName : 'pilot');
+    const entered = await game.menus.account.devLogin({ name, people: params.get('people') || undefined });
+    if (!entered || (scenarioName !== 'foot' && scenarioName !== 'dock')) return;
+    // (once the server has applied an input from the ship where it set it down)
+    while (game.net?.joined && !(game.net.store.ack > 0)) await wait(100);
+    if (game.mode === 'ship' && game.ship.mode === 'landed') game.exitShip();
+  })();
+} else if (import.meta.env.DEV && SCENARIOS.has(scenarioName)) {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   (async () => {
     while (!game.menus.ready) await wait(200);

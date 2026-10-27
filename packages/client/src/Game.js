@@ -599,7 +599,8 @@ export class Game {
   advanceClock(dt) {
     const prev = this.time;
     let next = prev + dt;
-    const server = this.net?.joined ? this.net.serverTime() : null;
+    // (on the title the clock is the title shot's own, until the first welcome is taken: Account holds it a moment)
+    const server = this.net?.joined && this.mode !== 'title' ? this.net.serverTime() : null;
     if (server !== null) {
       if (server - next > CLOCK.stepBehindS) next = server;
       else next += Math.max(-dt, Math.min(dt, (server - next) * Math.min(1, dt * CLOCK.gain)));

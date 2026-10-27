@@ -525,10 +525,29 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 - **Origin.** The client calls the gateway on its own origin: `/auth/*`, `/characters`, `/health`, and the socket at `/ws`
   (`api.js`, `gameSocketUrl`). In development Vite proxies those paths to `pnpm dev:server` (`vite.config.js`;
   `ASTRA_SERVER` points them at another server), as whatever serves the client in production will.
-- **Sign-in.** `api.js` wraps register, login and the characters API, checking bodies with the shared schemas. The session
-  token is kept in `sessionStorage` (`session.js`: a reload goes straight to the character list, closing the tab signs
-  out), beside a one-shot notice for the title. `localStorage` holds only `next-horizon-settings` (look, sound, graphics);
-  the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a browser still has it.
+- **Sign-in.** `api.js` wraps register, login, the dev login and the characters API, checking bodies with the shared
+  schemas (a refusal keeps the server's code and words, and a rate limit's `Retry-After`). The session token is kept in
+  `sessionStorage` (`session.js`: Play in a tab already signed in goes straight to the character list, closing the tab
+  signs out), beside a one-shot notice for the title. There is no refresh: a token runs 7 days, the client reads its
+  `exp` claim and asks for a new sign-in a minute before it runs out, and a `401` from `/characters` or an `auth`
+  refusal on the socket forgets it and goes back to the sign-in. `localStorage` holds only `next-horizon-settings` (look,
+  sound, graphics); the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a
+  browser still has it.
+- **The account screens** (`ui/Account.js`, P1.E04.T05) take the title's left column when Play is pressed, over the
+  title shot: sign in or create an account; the account's characters (people, level, home; a new account's list is
+  empty, a new character offered); a new character (a name and a people; the full creator is P1.E05.T05's); entering.
+  `AccountFlow` holds the steps without a DOM (unit tested): one request at a time, an answer that comes after the
+  player moved on is dropped (Esc from a character still being made reads the list again once the server has answered),
+  a refusal is shown on the field it is about (the server's words: wrong password, taken or reserved name, limits, rate
+  limits), and a typed password leaves the page once sent, with its step, or on closing. Entering calls
+  `Game.enterWorld` and shows Net's states; a failure before the welcome goes back to the list with why, and Esc lets the
+  socket go. The first welcome, and everything the server says after it, is held (`holdFirstWelcome`) while Enter is
+  ticked and the title and its screens fade to black (at once in a hidden tab, whose animations do not run; at most
+  10 s); the game then places the character, takes what came meanwhile in order (a listener that throws is reported
+  and the rest still go), and its place fades up. Once the welcome is held Esc no longer cancels, and the title keeps
+  its own clock until the welcome is taken. By keyboard: Play has the focus once the title
+  is ready, Enter submits, Esc goes back a step, the arrows walk the characters and the peoples, N makes a new
+  character. The dev login's call is compiled out of production builds.
 - **`Net`** (`Net.js`) owns the socket. `connect()` sends `hello {version: PROTOCOL_VERSION, token}` and `join` together
   as the socket opens (the gateway handles a socket's messages in order). States: idle → connecting → joining → joined →
   closed. A connection that drops after a welcome goes to reconnecting and tries again after 0.5 s doubling to 30 s (each
@@ -583,7 +602,11 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 - **Dev sandbox.** In dev builds only, a scenario hash (`#sandbox`, `#foot`, `#fly`, `#land`, `#station`, `#dock`,
   `#space`, `#review:…`) or `window.dev.boot()` starts `Game.startSandbox`: offline, a new pilot by the home Waystation,
   no persistence of any kind, so the smoke specs, captures and asset reviews stay hermetic. The game itself always goes
-  through the server.
+  through the server. With `?dev` (`?dev=<name>`, `&people=<id>`) a scenario goes through the server instead, signed in
+  by the dev login (§16) as `dev-<name>` (the scenario's name by default) and entered at once: it starts where the
+  server holds the character (movement authority refuses a client that puts itself elsewhere), `#foot` and `#dock`
+  getting out of a docked or landed ship; the dev CLI's `teleport` puts it anywhere else. `#review` and `#cutscene`
+  stay offline.
 - **Remote entities** (P1.E04.T02) render from the store with 100 ms interpolation delay and up to 250 ms extrapolation,
   frame-aware (interpolate in the entity's frame; on a frame change, re-express the buffered poses).
 
@@ -880,7 +903,7 @@ as Bearer tokens).
   password, making it on first use with a random password nobody knows, and with it a character "Dev <Name>" (three
   letters added on a name clash; the reserved word marks it as a dev character, and only this route bypasses the name
   rules) of `people` (thalune by default; another people's gets a character of its own). It answers `{token, accountId,
-  character, created}`, so a client dev scenario (`#foot`, `#fly`, …; P1.E04.T05) goes through the real server in one
+  character, created}`, so a client dev scenario (`?dev#foot`, `?dev#fly`, …; P1.E04.T05, §9) goes through the real server in one
   request: dev login, then `hello` with the token and `join` the character. Rate-limited with `/auth/*`; every dev login is
   logged at warn. Only `dev-` accounts are reachable this way, and registration refuses `dev-` usernames (§5), so no
   player's account is.
