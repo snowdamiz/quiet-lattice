@@ -6,10 +6,11 @@ import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
+import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '../seasons/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 13;
+export const PROTOCOL_VERSION = 17;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -24,6 +25,10 @@ export const PROTOCOL_VERSION = 13;
 // 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 // 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
+// 14: reserved for reputation, on its branch until it merges (P2.E18.T01)
+// 15: reserved for world events, on its branch until it merges (P2.E21.T01)
+// 16: reserved for first-finder naming, on its branch until it merges (P2.E29.T01)
+// 17: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -385,9 +390,17 @@ export const Correction = z.object({ t: z.literal('correction'), seq: z.number()
 /** Zone handoff (P1.E04.T04): the client now belongs to another zone, at this pose. */
 export const ZoneChange = z.object({ t: z.literal('zone'), zone: ZoneRef, pose: Pose });
 export const Pong = z.object({ t: z.literal('pong'), id: z.number().int().nonnegative(), clientTime: z.number(), serverTime: z.number() });
+/**
+ * The world service's state (ARCHITECTURE §3, §11, §27): sent after `welcome` and whenever it changes. `season` is the
+ * season's number, `seasonStart` and `seasonEnd` (protocol 17) the world times it began and ends at, `opening` the map it
+ * opened with (how the season before ended, the Edge's shift and the systems dark this season, DESIGN 16.4).
+ */
 export const WorldState = z.object({
   t: z.literal('world'),
-  season: z.number().int().nonnegative(),
+  season: seasonNumberSchema,
+  seasonStart: z.number().min(0),
+  seasonEnd: z.number().min(0),
+  opening: seasonOpeningSchema,
   count: z.number().min(0).max(1000),
   edgeX: z.number(),
   /** tier (0–5) per galaxy system index */
@@ -785,6 +798,10 @@ export const RecipesState = z.object({
     .refine((ids) => new Set(ids).size === ids.length, 'a recipe is known once'),
 });
 
+/** The character's season titles and glyphs (protocol 17, DESIGN 16.4), oldest season first: sent after `recipes` on join
+ * and again whenever a season ends with the character's account among its winning philosophy's players. */
+export const AwardsState = z.object({ t: z.literal('awards'), awards: seasonAwardListSchema });
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -807,6 +824,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   AnalyzeState,
   CraftState,
   RecipesState,
+  AwardsState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
