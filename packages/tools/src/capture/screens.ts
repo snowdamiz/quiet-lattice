@@ -546,9 +546,11 @@ export const SCREENS: Record<string, ScreenDef> = {
     sheetFrames: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 70, 80, 89],
     async open(page) {
       await standingByShip(page);
+      // the game moves only as it is stepped from here: Charge regenerates 2/s through the glide's 5 s, 50 to 60
+      await parkLoop(page);
       await page.evaluate(() => {
         const g = (window as unknown as { game: { ship: { charge: number }; boardShip(): void } }).game;
-        g.ship.charge = 60;
+        g.ship.charge = 50;
         g.boardShip();
       });
       // the glide into the seat (4.2 s)
