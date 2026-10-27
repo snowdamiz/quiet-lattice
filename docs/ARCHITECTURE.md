@@ -957,7 +957,10 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   (warm, amber from 75%, danger red through the lockout with a tick where it ends and OVERHEAT under the dot) and Charge
   on the reticle's right arc (lilac: art bible §4) with a readout under the altitude in its style (the figure, CHARGE,
   and the rate; a sheen climbs the arc while it regenerates). Every arc sits on an opaque track in a near-black halo,
-  so the beam's glare cannot wash it out (the HUD is DOM over the canvas, outside the bloom); its strokes are sized in
+  so the beam's glare cannot wash it out (the HUD is DOM over the canvas, outside the bloom), and the track darkens in
+  the lockout so the breathing red holds 3:1 against it; the flight readouts (speed, altitude, Charge) are unplated but
+  outlined, a solid 2 px near-black ring of unblurred text shadows under every glyph, so they hold 4.5:1 over a bright
+  world's limb. The arcs' strokes are sized in
   the SVG's own units per reticle, never as non-scaling strokes, whose dashes would be measured in screen pixels and
   overrun the arc. An arc lands on its value at once (no tween) on its first draw, as it turns on and on a jump; the
   crosshair and the reticle fade in over 150 ms as they turn on.

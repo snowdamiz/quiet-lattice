@@ -88,7 +88,7 @@ async function parkLoop(page: Page): Promise<void> {
 }
 
 /** On foot beside the landed ship on the home world: the #foot scenario, which lands the ship and steps out after 1.5 s of
- * real time, on foot for good, and settled. */
+ * real time, on foot for good, out of the camera's glide, and settled. */
 async function standingByShip(page: Page): Promise<void> {
   const onFoot = () =>
     page.waitForFunction(async () => {
@@ -98,6 +98,16 @@ async function standingByShip(page: Page): Promise<void> {
   await onFoot();
   await page.waitForTimeout(2500);
   await onFoot();
+  // the camera's ease from the ship into the walker's head (4 s of game time) can outlast that on a loaded machine: stepped
+  // out, so the multitool is up and the view still before anything is taken
+  for (let i = 0; i < 60; i++) {
+    const gliding = await page.evaluate(async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { director: { pose: unknown; blend: unknown } } };
+      await w.step(10);
+      return !!(w.game.director.pose || w.game.director.blend);
+    });
+    if (!gliding) break;
+  }
   await settle(page, 90);
 }
 
@@ -636,6 +646,25 @@ export const SCREENS: Record<string, ScreenDef> = {
         g.multitool.meter = { heat: 50, overheated: false, charge: 0 };
         g.exitShip();
       });
+    },
+  },
+  // On foot after mining, the beam let go at 30 heat: the arc cooling idle (20/s on the home world by day). The stills: 30,
+  // warm, the button up. The clip: from 30 down to 2 (1.4 s, frame 84), where the empty arc fades out (0.4 s, to frame
+  // 108), the crosshair's dot left alone.
+  'hud-foot-cool': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 2,
+    sheetFrames: [0, 12, 24, 36, 48, 60, 72, 78, 82, 84, 86, 88, 90, 93, 96, 99, 102, 105, 108, 119],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      // 31, and three frames idle at 20/s: 30
+      await heatAt(page, 31, false, false);
+      await settle(page, 3);
+    },
+    async motion(page) {
+      await heatAt(page, 30, false, false);
     },
   },
   map: {
