@@ -160,6 +160,8 @@ test('two pilots chat on the shard, party up from an invite card, hand the lead 
     await sees(a, "Only the party's leader can remove");
     await say(a, '/invite Nobody Here');
     await sees(a, 'No one called Nobody Here is online');
+    // (the pace full again first: A's shard line spent a token a moment ago)
+    await until(a, 'window.game.hud.social.model.paceWait() === 0 && window.game.hud.social.model.pace.level >= 5', 20_000);
     const paced = await a.evaluate(() => {
       const m = window.game.hud.social.model;
       return [1, 2, 3, 4, 5, 6].map((i) => m.submit(`line ${i}`).ok);

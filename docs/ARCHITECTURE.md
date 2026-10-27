@@ -696,19 +696,24 @@ every chat line, mute and party change goes to the server log for moderation.
 - **The client** (P1.E15.T03, `packages/client/src/ui/social/`): `SocialModel` (`model.js`) keeps what the server sent
   (the log of chat lines, party and beacon news and refusals, the party, the invites waiting, a mute) and makes the
   requests; `SocialUI` draws it into the HUD. The chat panel sits bottom left: closed, each new line (of any channel)
-  rises in on a plate of its own and fades out of the way 10 s later (4 s after the panel closes), as the location
-  line's objective settles; Enter (or `/`) opens it as the HUD overlay `chat` (Esc closes it like any menu, and the
-  mouse is freed so the party frame's and the beacon list's buttons take clicks), with tabs for shard, system, party
-  and the beacons (§21), the tab's log and an input that Enter sends from, closing the panel. Slash commands carry only
-  what the server does: `/s`, `/sys`, `/p` (switch channel, sending what follows), `/invite`, `/accept` and `/decline`
-  (the newest invite when no name is given), `/leave`, `/promote`, `/kick`, and `/help`; a line the protocol would
-  refuse (ChatText, CharacterName) is refused there with a reason. Chat is paced as the server paces it (5 at once,
-  then 1 a second), so a fast typist is told to slow down, the text kept, before the server would count it towards a
-  mute. Every `denied` is a line in words; a mute is held for its `retryS`. The party frame sits under the location
-  line: members in join order, the leader's amber mark, health (the entity's `hp` while it is in view, else the
-  state's tenths), and where an absent member is (offline, another system); while the panel is open, invite by name
-  and leave, and for the leader promote and remove per member. Invites waiting are cards there with their minute
-  running down. Whatever a player or the server wrote goes into the page as text, never as markup.
+  rises in on a plate of its own, the lines above easing up to make room, and fades out of the way 10 s later (4 s after
+  the panel closes), as the location line's objective settles; Enter (or `/`) opens it as the HUD overlay `chat` (Esc
+  closes it like any menu, and the mouse is freed so the party frame's and the beacon list's buttons take clicks), with
+  tabs for shard, system, party and the beacons (§21), the tab's log and an input that Enter sends from, closing the
+  panel; the feed cross-fades into the log where its lines stand. Slash commands carry only what the server does: `/s`,
+  `/sys`, `/p` (switch channel, sending what follows), `/invite`, `/accept` and `/decline` (the newest invite when no
+  name is given), `/leave`, `/promote`, `/kick`, and `/help`; a line the protocol would refuse (ChatText, CharacterName)
+  is refused there with a reason. Chat is paced as the server paces it (5 at once, then 1 a second; a line that did not
+  go spends nothing), so a fast typist is told to slow down, the text kept, before the server would count it towards a
+  mute. A refused chat line or party request is a line in words in the log; a beacon request's refusal shows under its
+  beacon, or under the player's own (§21), and a watch refused for its rate is asked again quietly; a mute is held for
+  its `retryS`, the input's hint counting it down. The party frame sits under the location line: members in join order,
+  the leader's amber mark, health (the entity's `hp` while it is in view, else the state's tenths), and where an absent
+  member is (offline, another system); while the panel is open, invite by name and leave, and for the leader promote and
+  remove per member. Invites waiting are cards there with their minute running down. Rows, cards and refusals ease their
+  height as they come and go, and world markers are hidden under the party frame and the open panel (`SocialUI.covers`;
+  the remote-entity markers' keep-out of P1.E04.T02 should take the same boxes). Whatever a player or the server wrote
+  goes into the page as text, never as markup.
 
 ## 14. Skills (`packages/server/src/skills`, `@astra/shared/skills`)
 

@@ -595,7 +595,7 @@ interface SocialStage {
   partyScene(leader?: string): void;
   beaconsScene(): void;
   answerCode: string;
-  social: { model: { answer(id: number): void; submit(text: string): unknown } };
+  social: { model: { answer(id: number): void; submit(text: string): unknown; mutedUntil: number } };
 }
 interface Vec {
   clone(): Vec;
@@ -812,6 +812,15 @@ export const SCREENS: Record<string, ScreenDef> = {
           "s.social.setTab('shard'); s.social.model.submit('/invite Nobody Here'); s.social.model.pace.level = 0; s.type('Anyone up for the raid?')",
           60,
         ),
+      // muted by the server for a flood (75 s, so the hint reads a minute), a line typed anyway held in the input; and the
+      // party with a member whose connection is down
+      muted: (page) =>
+        onStage(
+          page,
+          "s.setParty('Kestrel Vane', [s.member('Kestrel Vane'), s.member('Tess Arlo'), s.member('Bo Tran', 2), s.member('Juno Reyes', 10, s.here, false)]); " +
+            "s.social.model.pace.level = 5; s.push({ t: 'denied', of: 'chat', code: 'muted', retryS: 75 }); s.type('Anyone up for the raid?')",
+          60,
+        ),
     },
     async motion(page) {
       // (the panel the stills left open closes first, and its fade runs out before the clip's first frame)
@@ -821,6 +830,9 @@ export const SCREENS: Record<string, ScreenDef> = {
         const w = window as unknown as SocialWindow;
         const s = w.__social;
         const hud = w.game.hud;
+        // (the stills' mute lifted, and the four of the party back)
+        s.social.model.mutedUntil = 0;
+        s.partyScene();
         s.clear();
         s.chat('shard', 'Kestrel Vane', 'Convoy leaving in ten minutes, two escorts wanted');
         s.chat('system', 'Ilse Marr', 'Pirate wing over the north pole, keep clear of it');
@@ -890,6 +902,7 @@ export const SCREENS: Record<string, ScreenDef> = {
   beacons: {
     hudClock: true,
     clipSeconds: 1.5,
+    showScrollbars: true,
     async open(page) {
       await stageSocial(page, 'limb');
       await onStage(page, "s.chatScene(); s.beaconsScene(); s.open('beacons'); s.social.model.answer(12)", 60);

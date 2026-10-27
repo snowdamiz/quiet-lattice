@@ -409,6 +409,12 @@ export class HUD {
         sx = cx + dx * s;
         sy = cy + dy * s;
       }
+      // (none under the party frame or the open chat panel, but the one you steer by)
+      if (!m.target && this.social.covers(sx, sy)) {
+        i--;
+        e.style.display = 'none';
+        continue;
+      }
       e.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)`;
       e.className = `marker ${m.kind} ${off ? 'off' : ''} ${m.target ? 'targeted' : ''}`;
       let eta = '';

@@ -2602,16 +2602,26 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 
 /* ================================================================ social: chat, party, call for aid (P1.E15.T03) */
-/* ui/social/SocialUI.js. Every line of text sits on a near-opaque plate (--plate), so it reads at WCAG AA over a sunlit
-   limb as over space, and no text is dimmer than --dim. Channels keep the flight deck's colours: shard warm, system teal,
-   party green; the amber accent marks the leader, the tab in use and the invites. */
+/* ui/social/SocialUI.js. Every line of text sits on a plate (--plate made opaque, so a world marker behind never shows
+   through), so it reads at WCAG AA over a sunlit limb as over space, and no text is dimmer than --dim. Channels keep the
+   flight deck's colours: shard warm, system teal, party green; the amber accent marks the leader, the tab in use and the
+   invites. Whatever grows or goes eases its height (SocialUI's reveal, conceal and resize), clipped meanwhile. */
+.social-chat,
+.social-side {
+  --sc-plate: rgb(from var(--plate) r g b);
+  --sc-plate-2: rgb(from var(--plate-2) r g b);
+  --sc-refused: color-mix(in srgb, var(--danger) 45%, var(--text));
+}
+.social-chat .sizing,
+.social-side .sizing {
+  overflow: hidden;
+}
 
 /* ---------- chat panel: bottom left, over the vitals' three bars ---------- */
 .social-chat {
   --sc-shard: var(--warm);
   --sc-system: var(--accent2);
   --sc-party: var(--good);
-  --sc-refused: color-mix(in srgb, var(--danger) 45%, var(--text));
   position: absolute;
   left: 26px;
   bottom: 118px;
@@ -2633,6 +2643,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sc-panel {
   display: flex;
   flex-direction: column;
+  background-color: var(--sc-plate);
   transition: background-color 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 .sc-panel::before {
@@ -2641,7 +2652,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 /* closed: no plate and no chrome, only the lines (each on a plate of its own); the chrome keeps its room, so nothing
    moves as the panel opens */
 .social-chat:not(.show) .sc-panel {
-  background: transparent;
+  background-color: transparent;
   border-color: transparent;
   box-shadow: none;
 }
@@ -2740,6 +2751,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   position: relative;
   height: clamp(124px, calc(100vh - 660px), 286px);
 }
+/* the lines: the same box open and closed (and for the log fading out over its successor), so a line keeps its place
+   as the feed cross-fades into the open log */
 .sc-log,
 .sc-beacons {
   position: absolute;
@@ -2749,26 +2762,31 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   overflow: hidden;
 }
 .sc-log {
-  gap: 3px;
-  padding: 8px 0;
-}
-/* the newest line at the bottom, and the log still scrolls back to its oldest */
-.sc-log > :first-child {
-  margin-top: auto;
-}
-.social-chat:not(.show) .sc-log {
-  -webkit-mask-image: linear-gradient(transparent, black 26px);
-  mask-image: linear-gradient(transparent, black 26px);
-}
-.social-chat.show .sc-log {
-  gap: 1px;
-  padding: 8px 16px 6px;
-  overflow-y: auto;
+  padding: 8px 12px;
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: var(--line-2) transparent;
 }
-.social-chat.show.tab-beacons .sc-log {
+.sc-log.full {
+  overflow-y: auto;
+}
+.sc-log.feed {
+  -webkit-mask-image: linear-gradient(transparent, black 26px);
+  mask-image: linear-gradient(transparent, black 26px);
+}
+.sc-log.ghost {
+  pointer-events: none;
+  overflow: hidden;
+}
+.social-chat.show.tab-beacons .sc-log:not(.ghost) {
   display: none;
+}
+/* the newest line at the bottom, and the open log still scrolls back to its oldest */
+.sc-lines {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .sc-line {
@@ -2776,7 +2794,6 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   max-width: 100%;
   padding: 3px 11px 4px 9px;
   border-left: 2px solid var(--chan, var(--line-2));
-  background: var(--plate);
   font-size: 13.5px;
   line-height: 1.38;
   color: var(--text);
@@ -2785,20 +2802,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   animation: scIn 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
   transition: opacity 1.2s ease-in-out;
 }
-.social-chat.show .sc-line {
-  padding: 2px 0 2px 9px;
-  background: transparent;
+.sc-log.feed .sc-line {
+  background: var(--sc-plate);
 }
 .sc-line.still {
   animation: none;
-}
-.social-chat.show .sc-line.unplate {
-  animation: scUnplate 0.2s ease-out;
-}
-@keyframes scUnplate {
-  from {
-    background-color: var(--plate);
-  }
 }
 .sc-line.gone {
   opacity: 0;
@@ -2885,20 +2893,35 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   text-transform: uppercase;
   color: var(--dim);
 }
+/* muted, or told to slow down: the hint says so in the refusals' colour, with their mark */
 .sc-hint.warn {
   color: var(--sc-refused);
+}
+.sc-hint.warn::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  vertical-align: 1px;
+  background: var(--danger);
 }
 
 /* ---------- the beacon list (the chat panel's fourth tab) ---------- */
 .sc-beacons {
   display: none;
-  padding: 0 16px;
+  padding: 0 16px 6px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--line-2) transparent;
+  scrollbar-color: var(--dim) transparent;
 }
 .social-chat.show.tab-beacons .sc-beacons {
   display: flex;
+}
+/* longer than the panel: it fades at its foot, over a scrollbar */
+.sc-beacons.scrolls {
+  -webkit-mask-image: linear-gradient(black calc(100% - 30px), transparent);
+  mask-image: linear-gradient(black calc(100% - 30px), transparent);
 }
 .sb-own,
 .sb-row {
@@ -2935,14 +2958,30 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sb-own.up .sb-own-text {
   color: var(--text);
 }
+/* a refused raise or lower, in place of what the button does */
+.sb-own .sb-own-text.refused {
+  white-space: normal;
+  font-size: 12.5px;
+  color: var(--sc-refused);
+}
+.sb-own-text.refused::before,
+.sb-refusal::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  vertical-align: 1px;
+  background: var(--danger);
+}
 .sb-own .btn {
   grid-column: 2;
   grid-row: 1 / span 2;
 }
 .sb-row {
   grid-template-columns: 52px minmax(0, 1fr) auto;
-  gap: 3px 12px;
-  padding: 9px 0 10px;
+  gap: 2px 12px;
+  padding: 7px 0 8px;
 }
 .sb-kind {
   align-self: start;
@@ -2991,21 +3030,17 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-column: 2 / -1;
   font-size: 12.5px;
   color: var(--sc-refused);
-  animation: scIn 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.sb-own .sb-refusal {
-  grid-column: 1 / -1;
+.sb-more {
+  flex: none;
+  padding: 9px 0 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
-.sb-refusal::before {
-  content: '';
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: 8px;
-  vertical-align: 1px;
-  background: var(--danger);
-}
-.sb-refusal:empty {
+.sb-more:empty {
   display: none;
 }
 .sb-empty {
@@ -3023,19 +3058,17 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   width: 256px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   pointer-events: none;
 }
 .social-side.live {
   pointer-events: auto;
 }
-.sp-party:not(.shown),
-.sp-invites:empty {
+.sp-party:not(.shown) {
   display: none;
 }
 /* one plate: the head, a row per member, and (while the panel is open) the requests */
 .sp-party {
-  background: var(--plate);
+  background: var(--sc-plate);
   border: 1px solid var(--line);
 }
 .sp-head {
@@ -3098,7 +3131,9 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sp-member.offline .sp-name {
   color: var(--dim);
 }
+/* (against the frame's right edge in every row, the leader's with requests under it too) */
 .sp-tag {
+  justify-self: end;
   font-family: var(--font-mono);
   font-size: 9.5px;
   letter-spacing: 0.14em;
@@ -3119,9 +3154,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
 }
-.sp-act:hover {
+.sp-act:hover,
+.sp-act:focus-visible {
   color: var(--accent-hi);
   border-color: var(--accent);
+  outline: none;
 }
 /* the leader's requests, on the health bar's line */
 .sp-acts {
@@ -3184,14 +3221,13 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sp-invites {
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 .sp-invite {
   position: relative;
+  margin-top: 8px;
   padding: 9px 12px 13px;
-  background: var(--plate-2);
+  background: var(--sc-plate-2);
   border-left: 2px solid var(--accent);
-  animation: spIn 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .sp-inv-head {
   display: flex;
@@ -3226,9 +3262,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .sp-inv-hint {
   margin-left: auto;
+  transition: opacity 0.2s ease-out;
 }
 .social-side.live .sp-inv-hint {
-  display: none;
+  opacity: 0;
 }
 /* the minute an invite has, running down */
 .sp-inv-time {
