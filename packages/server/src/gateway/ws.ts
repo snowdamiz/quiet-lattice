@@ -4,9 +4,11 @@
 // state (§8) and its player entity enters the world where it was saved (or docked at its home Waystation when that pose
 // is unusable, or for a new character), and `welcome` names the zone, the entity and that pose, followed at once by
 // `world` (the world service's state, sent again to every joined session whenever it changes), the character's
-// `inventory` and its `skills`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot
-// every tick, and closing the socket saves the character and takes the entity out. Inventory requests go to the inventory
-// service and skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14).
+// `inventory`, its `skills` and its `meters`. From then on `input` and `ack` go to the zone, which sends the session a
+// binary snapshot every tick, and closing the socket saves the character and takes the entity out; each input passes the
+// meter service first (heat and Charge run on inputs, and a pulse with Charge empty is refused) and is told it after the
+// zone has applied it. Inventory requests go to the inventory service and skill requests to the skill service, which answer
+// each with the authoritative state (ARCHITECTURE §7, §14, §15).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
 // connection that closes. Malformed or out-of-place messages are dropped and counted, never thrown.
 //
@@ -25,6 +27,8 @@ import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.t
 import type { Db } from '../db/client.ts';
 import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
+import { meterServiceIn } from '../meters/component.ts';
+import type { MeterService } from '../meters/service.ts';
 import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
@@ -104,6 +108,8 @@ export interface WsGatewayDeps {
   social?: SocialService;
   /** Every character's skill web in play; when none is given, the one persistence's registry loads into. */
   skills?: SkillService;
+  /** Every character's heat and Charge in play; when none is given, the one persistence's registry loads into. */
+  meters?: MeterService;
 }
 
 export interface WsStats {
@@ -116,6 +122,7 @@ export interface WsGateway {
   readonly registry: SessionRegistry;
   readonly inventory: InventoryService;
   readonly skills: SkillService;
+  readonly meters: MeterService;
   readonly social: SocialService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
@@ -165,6 +172,15 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeSkills = skills.subscribe((characterId, reply, change) => {
     if (change !== 'server') return;
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'skills', ...reply });
+  });
+  const meters = deps.meters ?? needMeters(persistence);
+  // the lockout, a recovery, Charge running out, a refused pulse and the meters moving reach the session holding the character
+  const unsubscribeMeters = meters.subscribe((characterId, view, notice) => {
+    for (const c of conns) {
+      if (c.s.state !== 'joined' || c.s.characterId !== characterId) continue;
+      c.s.send({ t: 'meters', meters: view });
+      if (notice) c.s.send({ t: 'event', event: { kind: 'notice', ...notice } });
+    }
   });
   const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
   if (!deps.social) social.start();
@@ -324,7 +340,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         return;
       case 'input': {
         if (s.state !== 'joined') return invalid(s, 'input before join');
-        const r = deps.zones.input(s, msg);
+        const now = deps.clock.now();
+        const claim = meters.gate(s.characterId!, msg, now);
+        const r = deps.zones.input(s, claim);
+        if (r === 'ok') meters.input(s.characterId!, s, claim, now);
         // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
         if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
         return;
@@ -426,6 +445,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
       s.send({ t: 'inventory', ...inventory.state(row.id) });
       s.send({ t: 'skills', ...skills.state(row.id) });
+      s.send({ t: 'meters', meters: meters.view(row.id, deps.clock.now(), { sent: true }) });
       social.joined(s, row.name);
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
@@ -437,6 +457,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     registry,
     inventory,
     skills,
+    meters,
     social,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
@@ -445,6 +466,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (!deps.social) social.stop();
       unsubscribeInventory();
       unsubscribeSkills();
+      unsubscribeMeters();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
@@ -465,6 +487,12 @@ function needSkills(persistence: CharacterPersistence): SkillService {
   const skills = skillServiceIn(persistence.registry);
   if (!skills) throw new Error('the gateway needs a skill service: give one, or a persistence registry with the skills component');
   return skills;
+}
+
+function needMeters(persistence: CharacterPersistence): MeterService {
+  const meters = meterServiceIn(persistence.registry);
+  if (!meters) throw new Error('the gateway needs a meter service: give one, or a persistence registry with the meters component');
+  return meters;
 }
 
 function seconds(ms: number): number {

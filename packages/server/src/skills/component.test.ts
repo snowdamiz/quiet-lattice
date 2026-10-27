@@ -5,7 +5,7 @@ import { emptyInventory, type Inventory } from '@astra/shared/inventory';
 import { emptySkillState, newSkillState, type SkillState } from '@astra/shared/skills';
 import { describe, expect, it } from 'vitest';
 import { InventoryService } from '../inventory/service.ts';
-import { CharacterProgress, coreRegistry, DEFAULT_SHIP, INVENTORY, POSE, PROGRESS, SHIP, ShipLoadouts, SKILLS } from '../persistence/components.ts';
+import { CharacterProgress, coreRegistry, DEFAULT_SHIP, INVENTORY, METERS, POSE, PROGRESS, SHIP, ShipLoadouts, SKILLS } from '../persistence/components.ts';
 import { CharacterLoadError, ComponentRegistry, type PersistenceLog, type StoredCharacter } from '../persistence/registry.ts';
 import { CharacterPersistence } from '../persistence/service.ts';
 import type { CharacterStore } from '../persistence/store.ts';
@@ -50,7 +50,7 @@ const PACK_MULE: SkillState = {
 describe('the skills component', () => {
   it('loads after progress and before the ship and the inventory, and leads to the service it loads into', () => {
     const { registry, skills } = world();
-    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, POSE]);
+    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, METERS, POSE]);
     expect(skills).toBeInstanceOf(SkillService);
     // a service given is the one registered
     const given = new SkillService({ inventory: new InventoryService(), ships: new ShipLoadouts(), progress: new CharacterProgress() });
