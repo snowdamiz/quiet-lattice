@@ -34,6 +34,8 @@ import { collectResources, disposeTree } from './core/dispose.js';
 import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
+import { Crafting } from './net/crafting.js';
+import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
 import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
@@ -145,6 +147,9 @@ export class Game {
     this.objectives = new ObjectiveLine(this);
     this.hud = new HUD(this, hudEl);
     this.menus = new Menus(this);
+    // the fabricators (DESIGN 15.7): the recipes known and the requests (the server decides), and their screen
+    this.crafting = new Crafting(this);
+    this.fabricator = new FabricatorPanel(this);
     // the camera's moves of its own (glides between views, dips, cutscene cameras), and the cutscenes that drive it
     this.director = new CameraDirector(this);
     this.cutscenes = new CutscenePlayer(this);
@@ -353,6 +358,7 @@ export class Game {
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
     this.inventory.send = (m) => net.send(m);
+    this.crafting?.link(net);
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
@@ -674,6 +680,7 @@ export class Game {
     if (this.mode !== 'title') this.multitool.update(dt, inp, this.mode === 'foot' && inp.enabled);
     this.hud.update(dt);
     this.menus.update(dt);
+    this.fabricator.update();
     this.updateAudio();
     this.updateDebugText();
     this.updateQuests(dt);
@@ -730,7 +737,7 @@ export class Game {
     let prompt = '';
     if (this.mode === 'ship') {
       if (ship.mode === 'landed') {
-        prompt = '<kbd>F</kbd>Exit ship &nbsp; <kbd>Space</kbd>Take off';
+        prompt = '<kbd>F</kbd>Exit ship &nbsp; <kbd>Space</kbd>Take off &nbsp; <kbd>K</kbd>Fabricator';
         if (inp.hit('KeyF')) this.exitShip();
         else if (inp.hit('Space') || inp.hit('KeyE')) ship.takeOff();
       } else if (ship.mode === 'flying') {
@@ -748,7 +755,7 @@ export class Game {
     } else if (this.mode === 'foot') {
       const p = this.player;
       if (ship.state.frame === p.state.frame && p.state.pos.distanceTo(ship.state.pos) < 9) {
-        prompt = '<kbd>F</kbd>Board ship';
+        prompt = '<kbd>F</kbd>Board ship &nbsp; <kbd>K</kbd>Fabricator';
         if (inp.hit('KeyF')) this.boardShip();
       }
       const f = p.state.frame;
@@ -756,7 +763,8 @@ export class Game {
         for (const t of f.terminals) {
           if (p.state.pos.distanceTo(t.pos) < 3.2) {
             prompt = `<kbd>E</kbd>${t.label}`;
-            if (inp.hit('KeyE')) this.menus.openTrade(t.label);
+            // (the fabricator terminal opens the Waystation's fabricator; the others the trade panel)
+            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('station') : this.menus.openTrade(t.label);
           }
         }
       }
@@ -803,6 +811,7 @@ export class Game {
     }
     if (inp.hit('KeyM')) this.menus.openMap();
     if (inp.hit('KeyI')) this.menus.openInventory();
+    if (inp.hit('KeyK')) this.openFabricator();
     if (inp.hit('KeyH')) this.menus.toggleHelp();
     if (inp.hit('KeyV') && this.mode === 'ship') {
       // chase -> far chase -> cockpit -> chase. Into or out of the seat it is a straight cut (a
@@ -818,6 +827,19 @@ export class Game {
       ship.camDistance = this.camView === 1 ? 1.8 : 1;
     }
     this.currentPrompt = prompt;
+  }
+
+  // The fabricator at hand (DESIGN 15.7; the server checks the same, ARCHITECTURE §23): docked at the Waystation, its own;
+  // aboard the ship anywhere else, or on foot beside it, the ship's (ammo and cartridges). The trade deck's terminal
+  // opens the Waystation's too (handleInteractions).
+  openFabricator() {
+    const ship = this.ship;
+    let at = null;
+    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'station' : 'ship';
+    else if (this.mode === 'foot' && ship.state.frame === this.player.state.frame && this.player.state.pos.distanceTo(ship.state.pos) < 12) at = 'ship';
+    if (at) return this.fabricator.open(at);
+    this.hud.toast("No fabricator here: board the ship, or use a Waystation's terminal", 'warn');
+    this.audio.play('error');
   }
 
   exitShip() {

@@ -282,6 +282,7 @@ the Esc hint vanishes in one frame; the selected-row tint jumps rows. Requested:
 | 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 3, spec 4, performance 5 | 3.86 |
 | 2 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 | 3 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 4 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 
 Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
 and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
@@ -297,6 +298,13 @@ Round 3: the list cross-fade, accept row, pixel snaps and opening frames are fix
 invite card showing pushes the card down in two jumps and a stall; every tween stalls for one frame early; on accept,
 the card's text and "Not in a party" show through the rows passing over them. Requested: a tab-switch clip.
 
+Round 4: every layout move now eases with no stall (feed rise 7, 7, 5, 3, 2, 2, 1, 1, 1 px; the invite card, accept and
+refusals clean); all text passes AA (feed 10–14:1, dim rows about 5:1). Still failing: on a tab switch the cleared
+unread badge vanishes and the tabs to its right jump about 22 px in one frame, and the prompt label swaps in one frame;
+the beacon list's scrollbar appears at full opacity in one frame. Minor: a repeated mute line, a refusal's wrap without
+a hanging indent, "Not in a party" beside a PARTY tab with unread, shorter health bars on leader rows. **Escalated to
+the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
+
 ## P1.E13.T05 Basic fabricator (UI)
 
 | Round | Verdict | Scores | Mean |
@@ -304,6 +312,7 @@ the card's text and "Not in a party" show through the rows passing over them. Re
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 5, performance 5 | 4.29 |
 | 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
 | 3 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
+| 4 | PASS | hierarchy 4, fit 5, motion 4, theme 5, correctness 4, spec 5, performance 5 | 4.57 |
 
 Round 1: all small text at or above 4.5:1; the craft sweep is eased but the button, stepper and LEARN snap state in one
 frame around it, and the selected row flashes twice; after a ×3 craft the quantity stays at 3 while the row says CAN
@@ -317,6 +326,8 @@ crosses the rising row; the row's tag and slot, and the footer status line, swap
 Round 3: the sequential out/in fade reads well where used; still failing: a craft's results (CAN MAKE counts, MAKES,
 needs, the stepper and CRAFT ×n) swap at full opacity in one frame; moving the selection to an uncraftable recipe snaps
 the CRAFT fill; the learn header still shows at 25% then 10% under the rising row. Requested: the stepper at 6 of 6.
+
+Round 4: PASS. Artifacts: `assets/renders/ui/{fabricator,fabricator-ship,fabricator-learn,fabricator-limits,fabricator-limits-max}/`.
 
 ## P1.E12.T02 Lark, Swift, Kestrel, Mule (art)
 
