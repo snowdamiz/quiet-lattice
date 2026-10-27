@@ -137,6 +137,21 @@ describe('NetCutsceneLink, a cutscene the server starts', () => {
     expect(net.sent).toEqual([{ t: 'cutscene', op: 'done', id: 'touch', skipped: false }]);
   });
 
+  it('gives back a server play that comes while another plays, keeping the one playing (and its end)', () => {
+    const { net, link } = setup();
+    const played = [];
+    const ended = [];
+    link.onPlay = (id) => played.push(id);
+    link.onEnded = (id) => ended.push(id);
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'cold_open', phase: 12 });
+    net.emit('cutscene', { t: 'cutscene', op: 'play', id: 'touch', phase: 13 });
+    expect(played).toEqual(['cold_open']);
+    expect(net.sent).toEqual([{ t: 'cutscene', op: 'done', id: 'touch', skipped: true }]);
+    expect(link.playing).toBe('cold_open');
+    net.emit('cutscene', { t: 'cutscene', op: 'ended', id: 'cold_open', phase: 12 });
+    expect(ended).toEqual(['cold_open']);
+  });
+
   it('still gives back a late play for a request it gave up on', async () => {
     const { net, link, timers } = setup();
     const played = [];

@@ -21,7 +21,7 @@ import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
 import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
-import { Objectives } from './gameplay/Objectives.js';
+import { AUTO_QUESTS, QuestBook, atInfo, getQuest } from '@astra/shared/quests';
 import { Asteroids } from './universe/Asteroids.js';
 import { Inventory } from './gameplay/Inventory.js';
 import { HUD } from './ui/HUD.js';
@@ -51,6 +51,35 @@ const _v2b = new THREE.Vector2();
 // otherwise it eases toward it with this gain (per second), at most twice as fast, standing still rather than going back,
 // and never more than maxAheadS ahead of it.
 const CLOCK = { gain: 0.5, maxAheadS: 0.25, stepBehindS: 1 };
+
+// The objective line under the location panel (DESIGN 14.1): the tracked quest's current step, with its count, read
+// from the character's quest book. The server decides quests (ARCHITECTURE "Quests"): online the book holds the server's
+// `quests` state (book.receive(m.quests) for each message, once the client net layer P1.E04.T01 delivers them); in the
+// sandbox the shared engine fills it from the game's own events (Game.updateQuests). The HUD and the dev tools read
+// `current`.
+class ObjectiveLine {
+  constructor(game) {
+    this.game = game;
+    this.book = new QuestBook();
+    // (the sandbox's character is at home in the system the game starts in)
+    this.home = game.galaxy.current.id;
+  }
+
+  get current() {
+    const o = this.book.objective();
+    if (!o) return null;
+    const text = o.text.replace(/\{home_planet\}/g, () => this.homePlanetName());
+    return o.of !== undefined && o.of > 1 ? `${text} · ${o.n}/${o.of}` : text;
+  }
+
+  homePlanetName() {
+    if (!this._homeName) {
+      const d = describeGalaxySystem(this.game.galaxy.systems[this.home]);
+      this._homeName = d.bodies[d.home].name;
+    }
+    return this._homeName;
+  }
+}
 
 export class Game {
   constructor(container, hudEl) {
@@ -110,7 +139,7 @@ export class Game {
     this.engine.scene.add(this.asteroids.group);
 
     this.weather = new Weather(this);
-    this.objectives = new Objectives(this);
+    this.objectives = new ObjectiveLine(this);
     this.hud = new HUD(this, hudEl);
     this.menus = new Menus(this);
     // the camera's moves of its own (glides between views, dips, cutscene cameras), and the cutscenes that drive it
@@ -321,13 +350,23 @@ export class Game {
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
     this.inventory.send = (m) => net.send(m);
-    net.on('welcome', (m, first) => this.onWelcome(m, first));
+    net.on('welcome', (m, first) => {
+      // (each session numbers its quest requests from 1)
+      this.questSeq = 0;
+      this.onWelcome(m, first);
+    });
+    net.on('quests', (m) => this.onQuests(m));
+    // the cutscene link listens from the start: the server may start the first cutscene itself (a quest step's)
+    this.cutscenes?.linkFor();
     net.on('inventory', (m, first) => {
       if (first) this.inventory.reset(m.inventory);
       else if (this.inventory.receive(m) && this.overlay === 'inventory') this.menus.showMessage('The server refused that move');
     });
     net.on('correction', (m) => this.onCorrection(m));
-    net.on('event', ({ event }) => event.kind === 'notice' && this.hud.toast(event.text, event.tone));
+    net.on('event', ({ event }) => {
+      if (event.kind === 'notice') this.hud.toast(event.text, event.tone);
+      else if (event.kind === 'quest' && event.status === 'completed') this.questDone(event.questId);
+    });
     net.on('lost', () => this.hud.toast('Connection lost · reconnecting', 'warn'));
     // (while it is down after a welcome, a line says so until it is back)
     net.on('state', (state) => this.menus.setConnection(net.everJoined && state !== 'joined' && state !== 'closed' ? 'Connection lost · reconnecting…' : null));
@@ -448,7 +487,6 @@ export class Game {
     s.vel.set(0, 0, 0);
     ship.speed = 0;
     ship.mode = 'landed';
-    this.objectives.flags.docked = true;
   }
 
   // The ship landed on a world beside a walker standing at `feet`, a wingspan off to the walker's right, facing its way.
@@ -630,7 +668,7 @@ export class Game {
     this.menus.update(dt);
     this.updateAudio();
     this.updateDebugText();
-    this.objectives.update(dt);
+    this.updateQuests(dt);
     // this frame's pose goes out (Net paces it to 20 Hz), and inventory predictions left unanswered expire
     if (this.net) {
       this.net.update();
@@ -822,7 +860,6 @@ export class Game {
   }
 
   onDocked() {
-    this.objectives.flags.docked = true;
     this.save();
     this.audio.play('dock');
     this.hud.showBanner(this.station.name.toUpperCase(), 'Docked');
@@ -830,6 +867,90 @@ export class Game {
       this.ship.shield = 100;
       this.hud.toast('Shields recharged', 'good');
     }
+  }
+
+  // ---------- quests (the sandbox) ----------
+  // Online the server moves quests and the objective line reads its state. In the sandbox the shared engine moves the
+  // book twice a second from what the game knows, as the server's quest runtime does from zone state: where the ship or
+  // walker is, what the inventory holds, the sites visited and the species analyzed (each counted once by its step).
+  updateQuests(dt) {
+    if (this.mode === 'title' || this.net) return;
+    const q = (this.questTick ||= { wait: 0, dt: 0, started: false });
+    q.dt += dt;
+    if ((q.wait -= dt) > 0) return;
+    q.wait = 0.5;
+    const book = this.objectives.book;
+    const ctx = this.questContext();
+    const notes = [];
+    if (!q.started) {
+      q.started = true;
+      notes.push(...book.autoStart(AUTO_QUESTS, ctx));
+    }
+    notes.push(...book.apply({ type: 'held', items: ctx.held }, ctx));
+    for (const id of this.structures.visited) notes.push(...book.apply({ type: 'enter', place: `site:${id.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` }, ctx));
+    for (const species of this.fauna.scannedNames) notes.push(...book.apply({ type: 'analyze', species: String(species).slice(0, 64) }, ctx));
+    notes.push(...book.apply({ type: 'tick', dt: q.dt, at: ctx.at }, ctx));
+    q.dt = 0;
+    this.questNotes(notes);
+  }
+
+  questContext() {
+    const sys = { index: this.galaxy.current.id, description: this.system.description };
+    return { time: this.time, character: { level: 1, people: 'thalune', homeSystem: this.objectives.home }, system: sys, at: this.universe.deep ? null : this.questAt(sys), held: this.inventory.items };
+  }
+
+  // where the ship or the walker is, as the server reads a zone entity: its frame (the client's planets are the
+  // description's bodies, in order), its position there, and its mode (landed in the Waystation is docked)
+  questAt(sys) {
+    const foot = this.mode === 'foot';
+    const st = foot ? this.player.state : this.ship.state;
+    const f = st.frame;
+    const i = f ? this.system.planets.indexOf(f) : -1;
+    const frame = f?.kind === 'station' ? `${sys.description.seed}:station` : i >= 0 ? `${sys.description.seed}:${i}` : null;
+    const pos = frame === null ? st.worldPosition(_v6).toArray() : st.pos.toArray();
+    const s = this.ship.mode;
+    const mode = foot ? 'foot' : s === 'pulse' ? 'pulse' : s === 'landed' ? (f?.kind === 'station' ? 'docked' : 'landed') : 'ship';
+    return atInfo(sys, frame, pos, mode);
+  }
+
+  // what the player hears of it: the next objective, as the demo's guided path did, and a quest done
+  questNotes(notes) {
+    let next = false;
+    for (const n of notes) {
+      if (n.kind === 'step' && n.from !== null) next = true;
+      else if (n.kind === 'reward' && n.rewards.units) this.inventory.units += n.rewards.units;
+      else if (n.kind === 'completed') this.questDone(n.quest);
+    }
+    if (next) this.questNext(this.objectives.current);
+  }
+
+  questNext(line) {
+    if (!line) return;
+    this.hud.toast(`Next: ${line}`, 'good');
+    this.audio.play('sell');
+  }
+
+  questDone(quest) {
+    this.hud.toast(`${getQuest(quest)?.title ?? 'Quest'} complete`, 'good');
+    this.audio.play('sell');
+  }
+
+  // Online: the server's quest state (after each welcome, the answer to each request, and whenever the server moves a
+  // quest). The objective line follows it, and a new objective is announced as the sandbox announces it.
+  onQuests(m) {
+    const before = this.objectives.current;
+    this.objectives.book.receive(m.quests);
+    const line = this.objectives.current;
+    if (before !== null && line !== before) this.questNext(line);
+  }
+
+  // Online: asks the server to accept a quest on offer, abandon one, or answer the current dialogue or choice
+  // (`{op: 'accept', quest}`, `{op: 'abandon', quest}`, `{op: 'choose', quest, step, choice}`); it answers with `quests`.
+  // The journal and the dialogue bar (P1.E09.T03) call it. False when not connected.
+  questRequest(op) {
+    if (!this.net) return false;
+    this.net.send({ t: 'quest', seq: ++this.questSeq, op });
+    return true;
   }
 
   scan() {

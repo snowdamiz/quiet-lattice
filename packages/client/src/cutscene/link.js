@@ -62,13 +62,15 @@ export class NetCutsceneLink {
   answered(m) {
     const p = this.pending;
     if (p && m.id === p.id && (m.op === 'play' || m.op === 'refused')) {
-      if (m.op === 'play') this.playing = m.id;
+      // (one already playing stays the one playing: the player gives this one back when it cannot take it now)
+      if (m.op === 'play' && this.playing === null) this.playing = m.id;
       this.settle(m.op === 'play' ? { phase: m.phase } : { refused: m.reason ?? 'refused' });
       return;
     }
     if (m.op === 'play' && m.id !== this.playing) {
-      // a play for a request the client gave up on comes too late: the server's placing is given back
-      if (this.abandoned.delete(m.id) || !this.onPlay) {
+      // a play for a request the client gave up on comes too late, and one that comes while another plays cannot play
+      // now: the server's placing is given back, and the one playing stays the one playing
+      if (this.abandoned.delete(m.id) || !this.onPlay || this.playing !== null) {
         this.net.send({ t: 'cutscene', op: 'done', id: m.id, skipped: true });
         return;
       }

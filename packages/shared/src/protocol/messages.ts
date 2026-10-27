@@ -3,10 +3,11 @@
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
+import { questErrorCodeSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 6;
+export const PROTOCOL_VERSION = 7;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -14,6 +15,7 @@ export const PROTOCOL_VERSION = 6;
 // 4: creatures' attack field (P1.E08.T01)
 // 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
+// 7: quests: quest requests (accept, abandon, choose) and quest state (P1.E09.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -199,6 +201,9 @@ export const CutsceneRequest = z
     skipped: z.boolean().optional(),
   })
   .refine((m) => m.op === 'done' || m.skipped === undefined, 'only a done says whether it was skipped');
+/** Quest request (ARCHITECTURE §16): accept a quest on offer, abandon one, or answer the current dialogue or choice step.
+ * `seq` numbers the session's requests from 1, increasing; the server answers each with `quests` state. */
+export const QuestRequest = z.object({ t: z.literal('quest'), seq: z.number().int().min(1).max(0xffffffff), op: questOpSchema });
 
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
@@ -213,6 +218,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   InventoryRequest,
   SkillsRequest,
   CutsceneRequest,
+  QuestRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -395,6 +401,15 @@ export const SkillsState = z.object({
   error: skillErrorCodeSchema.optional(),
 });
 
+/** The character's quest state: after join (`seq` 0), in answer to every quest request (`seq` the last one handled this
+ * session, `error` why it was refused), and whenever the server moves a quest (`seq` unchanged). Always the whole state. */
+export const QuestsState = z.object({
+  t: z.literal('quests'),
+  seq: z.number().int().min(0).max(0xffffffff),
+  quests: questViewSchema,
+  error: questErrorCodeSchema.optional(),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -408,6 +423,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   PartyState,
   Denied,
   CutsceneState,
+  QuestsState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;

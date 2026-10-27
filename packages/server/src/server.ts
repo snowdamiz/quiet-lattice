@@ -1,5 +1,5 @@
-// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → character
-// persistence → cutscenes → gateway. index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and
+// Builds and starts the server (docs/ARCHITECTURE.md §2): config → db → redis → world service → zone manager → quest
+// runtime → character persistence → cutscenes → gateway. index.ts boots it for `pnpm dev:server`; integration tests call startServer({ port: 0 }) and
 // close() it. Closing is graceful: sessions are closed (each character saved as it leaves), every character still in
 // play is saved and the save queue written before the database goes (§8).
 import type { AddressInfo } from 'node:net';
@@ -17,6 +17,11 @@ import { CutsceneService } from './cutscenes/service.ts';
 import { CharacterProgress, coreRegistry, ShipLoadouts } from './persistence/components.ts';
 import { CharacterPersistence, type PersistenceOptions } from './persistence/service.ts';
 import { pgCharacterStore } from './persistence/store.ts';
+import { QuestRuntime } from './quests/runtime.ts';
+import { questCutsceneNotify, questCutscenePermit, questCutscenes } from './quests/cutscenes.ts';
+import { skillRewardHooks } from './quests/skills.ts';
+import { skillServiceIn } from './skills/component.ts';
+import type { SkillService } from './skills/service.ts';
 import { WorldService } from './world/service.ts';
 import { DEFAULT_SHARD_ID, pgShardStore } from './world/shard.ts';
 import { ZoneManager } from './zones/manager.ts';
@@ -52,6 +57,8 @@ export interface RunningServer {
   zones: ZoneManager;
   /** Loads characters on join and saves them every 30 s, on leave and on close. */
   persistence: CharacterPersistence;
+  /** Every character in play's quests: events in, rewards and phases out. */
+  quests: QuestRuntime;
   /** Cutscenes in story phases (§15); the quest engine sets its `may`. */
   cutscenes: CutsceneService;
   /** Closes sockets (saving each character), writes every pending save, then closes the HTTP server, Postgres and Redis.
@@ -105,14 +112,30 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const timingHash = await createTimingHash();
   const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ });
   const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
-  const persistence = new CharacterPersistence({
+  const progress = new CharacterProgress();
+  // (parties are the gateway's social service and skills the registry's skill service, both made below: read only once
+  // characters are in play)
+  const quests: QuestRuntime = new QuestRuntime({
+    zones,
+    inventory,
+    progress,
+    clock,
+    log,
+    parties: { partyIdOf: (id) => ws.social.partyIdOf(id) },
+    rewards: skillRewardHooks((): SkillService | undefined => skillServiceIn(persistence.registry)),
+    cutscenes: questCutscenes(() => cutscenes),
+    dev: config.NODE_ENV !== 'production',
+  });
+  const persistence: CharacterPersistence = new CharacterPersistence({
     ...opts.persistence,
     store: pgCharacterStore(database.db),
-    registry: coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress: new CharacterProgress(), log }),
+    registry: coreRegistry({ zones, inventory, ships: new ShipLoadouts(), progress, quests, log }),
     log,
   });
   // (a development server lets a client ask for a dev cutscene by itself; production only what the quest engine allows)
-  const cutscenes = new CutsceneService({ zones, dev: config.NODE_ENV !== 'production', log });
+  // (the quest engine starts its steps' cutscenes and allows a client its own; an ended one ends its step)
+  const cutscenes: CutsceneService = new CutsceneService({ zones, dev: config.NODE_ENV !== 'production', log, notify: questCutsceneNotify(() => quests) });
+  cutscenes.may = questCutscenePermit(quests, cutscenes.may);
   const ws = attachWsGateway(app.server, {
     db: database.db,
     cutscenes,
@@ -123,6 +146,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     log,
     inventory,
     persistence,
+    quests,
     limits: {
       helloTimeoutMs: config.HELLO_TIMEOUT_MS,
       joinTimeoutMs: config.JOIN_TIMEOUT_MS,
@@ -145,6 +169,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     (closed ??= (async () => {
       zones.stop();
       cutscenes.stopSweeping();
+      quests.dispose();
       await ws.close();
       await persistence.close();
       await app.close();
@@ -164,6 +189,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   cutscenes.startSweeping();
   world.start();
   persistence.start();
+  quests.start();
   log.info({ port, db: redact(config.DATABASE_URL), redis: redact(config.REDIS_URL), tickHz: config.TICK_HZ }, 'astra server ready');
 
   return {
@@ -177,6 +203,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     world,
     zones,
     persistence,
+    quests,
     cutscenes,
     close,
   };
