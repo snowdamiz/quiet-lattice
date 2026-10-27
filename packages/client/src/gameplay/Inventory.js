@@ -1,8 +1,10 @@
 // The player's inventory: suit stacks and the ship's cargo pods (DESIGN 10.1), held as the shared model from
 // `@astra/shared/inventory` so the client predicts with the very functions the server decides with (ARCHITECTURE §7).
-// Stack moves go through request(): applied at once for the UI, sent to the server when a net layer is attached
-// (P1.E04.T01), and replaced by the server's state when it answers (receive()). The demo's callers keep their flat API:
-// items, units, warpCells, add, has, take, sellAll and key.
+// Stack moves go through request(): applied at once for the UI, sent to the server (Game.enterWorld sets `send`), and
+// replaced by the server's state when it answers (receive()). In the world the inventory is the server's: the state after
+// welcome replaces everything (reset()), and nothing of it is kept on the client. The demo's callers keep their flat
+// API (items, units, warpCells, add, has, take, sellAll and key), which changes only the client's copy until mining, loot
+// and trade move to the server: the next state the server sends replaces those changes.
 import { SIGNS, nodePosition, strokeEnds } from '@astra/shared/art';
 import { RESOURCE_IDS as RESOURCE_ID_LIST, RESOURCES as RESOURCE_TABLE } from '@astra/shared/data';
 import {
@@ -130,7 +132,7 @@ export class Inventory {
     /** Requests not yet answered: { seq, op, at }. */
     this.pending = [];
     this.seq = 0;
-    /** Set by the net layer: sends a client message. Offline (today) the client's own state stands. */
+    /** Set by the net layer: sends a client message. Without one (the title, the dev sandbox) the client's own state stands. */
     this.send = null;
     /** The clock pending requests age by (ms). */
     this.now = () => performance.now();
@@ -220,25 +222,11 @@ export class Inventory {
 
   // ---------- the demo's flat API (local until mining, loot and trade move to the server) ----------
 
-  /** Resources held, suit and cargo together: { id: count }. Assigning one (an old save) packs it suit first. */
+  /** Resources held, suit and cargo together: { id: count }. */
   get items() {
     const out = {};
     for (const [id, n] of Object.entries(totals(this.state))) if (RESOURCE_IDS.has(id)) out[id] = n;
     return out;
-  }
-
-  set items(flat) {
-    let s = this.state;
-    for (const id of RESOURCE_IDS) {
-      const n = countOf(s, id);
-      if (n) s = takeItem(s, id, n).inv;
-    }
-    for (const [id, n] of Object.entries(flat || {})) {
-      if (!RESOURCE_IDS.has(id) || !(n > 0)) continue;
-      const r = addItem(s, id, Math.floor(n));
-      if (r.ok) s = r.inv;
-    }
-    this.set(s);
   }
 
   get units() {
@@ -303,16 +291,12 @@ export class Inventory {
     return `${this.rev}|${this.state.units}`;
   }
 
-  // ---------- the local save (until server-held state, P1.E04.T01) ----------
+  // ---------- dev tooling ----------
 
-  /** The whole value, for the save. */
-  snapshot() {
-    return this.state;
-  }
-
-  /** Restores a saved value in this ship's layout. False (and nothing changes) when it is not a valid inventory. */
-  restore(saved) {
-    const p = parseInventory(saved);
+  /** Sets a whole inventory value in this ship's layout (the UI captures lay out their scenes with it, in the sandbox).
+   * False (and nothing changes) when it is not a valid inventory. */
+  restore(value) {
+    const p = parseInventory(value);
     if (!p.ok) return false;
     const r = applyLayout(p.inv, this.layout);
     this.set(r.ok ? r.inv : p.inv);

@@ -139,6 +139,47 @@ describe('Charge on the client', () => {
   });
 });
 
+describe('the server’s meters on the client', () => {
+  /** A stand-in for the game's Net: listeners by message type, and the server's time. */
+  function fakeNet(serverNow) {
+    const handlers = new Map();
+    return {
+      on(type, fn) {
+        handlers.set(type, [...(handlers.get(type) ?? []), fn]);
+        return () => handlers.set(type, (handlers.get(type) ?? []).filter((f) => f !== fn));
+      },
+      emit(type, m) {
+        for (const fn of handlers.get(type) ?? []) fn(m);
+      },
+      serverTime: () => serverNow,
+      count: (type) => (handlers.get(type) ?? []).length,
+    };
+  }
+
+  it('reach the ship and the multitool from whichever connection the game holds', () => {
+    const { g } = game();
+    g.ship.state.pos.copy(towardHome(g.system.description, T0, 0.9));
+    const mt = Object.create(Multitool.prototype);
+    Object.assign(mt, { game: g, meter: { heat: 0, overheated: false, charge: 0 }, heatRate: 0, firing: false });
+    const first = fakeNet(T0);
+    g.net = first;
+    g.ship.watchServer();
+    mt.watchServer();
+    const view = { heat: 70, heatMax: 100, overheated: true, charge: 37, chargeMax: 100, at: T0 };
+    first.emit('meters', { t: 'meters', meters: view });
+    expect(g.ship.charge).toBe(37);
+    expect(mt.meter).toEqual({ heat: 70, overheated: true, charge: 0 });
+    // a new sign-in: the old connection is let go
+    const second = fakeNet(T0);
+    g.net = second;
+    g.ship.watchServer();
+    mt.watchServer();
+    expect(first.count('meters')).toBe(0);
+    second.emit('meters', { t: 'meters', meters: { ...view, charge: 12 } });
+    expect(g.ship.charge).toBe(12);
+  });
+});
+
 describe('heat on the client', () => {
   /** A multitool with no viewmodel: only its meter. */
   function multitool(g) {

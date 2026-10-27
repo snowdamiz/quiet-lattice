@@ -1,4 +1,4 @@
-// The meter service (P1.E07.T02, DESIGN 9.1, ARCHITECTURE §15): the server's copy of every character in play's heat and
+// The meter service (P1.E07.T02, DESIGN 9.1, ARCHITECTURE §16): the server's copy of every character in play's heat and
 // Charge, which is the truth. The client predicts both with the same shared rules (`@astra/shared/meters`); this service
 // decides them from what it can judge itself.
 //
@@ -169,18 +169,12 @@ export class MeterService {
     return this.entries.size;
   }
 
-  /** The meters at `now`, as the client is sent them. `sent`: the caller sends them to the character's session (the state
-   * after join), so they count as pushed. */
-  view(characterId: string, now: number, { sent = false } = {}): MeterView {
+  /** The meters at `now`, as the client is sent them. (A view taken this way is not a push: the character's first input
+   * after it is pushed the meters, so a client that joined hears them once it is in the world.) */
+  view(characterId: string, now: number): MeterView {
     const e = this.entry(characterId);
     this.advance(characterId, e, now);
-    const v = viewOf(e);
-    if (sent) {
-      e.events = [];
-      e.pushed = v;
-      e.pushedAt = now;
-    }
-    return v;
+    return viewOf(e);
   }
 
   /** The profile the meters run on now (capacities, modifiers). */

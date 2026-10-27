@@ -453,3 +453,24 @@ Format: task id, question → choice → why.
   the join until P1.E07.T15 reconciles data changes. Protocol 5; join order welcome, world, inventory, skills, party;
   the protocol test requires each version number exactly once. `discovery` unlocks trust their caller. → DESIGN 9.1 as
   data the client can predict. Callers to come: level-ups and hull swaps call `skills.refresh`.
+- **P1.E04.T01** Client net layer (`packages/client/src/net`) → the client calls the gateway on its own origin
+  (`/auth`, `/characters`, `/health`, `/ws`; a Vite dev/preview proxy with an `ASTRA_SERVER` override). The session token
+  lives in sessionStorage (`astra-session`, tab-scoped) with a one-shot notice (`astra-notice`); localStorage keeps only
+  `next-horizon-settings`, and the demo's save keys are removed at boot. Net: hello and join together; reconnect only
+  after a successful join, backoff 0.5 s doubling to 30 s with 50–100% jitter, unlimited; `version`, `auth`,
+  `character` and `kicked` are final, `full` is retried, `invalid` is retried once and final only if another comes
+  within 60 s. Acks only for the newest applied tick, at most every 50 ms (a stall's backlog is acked once); the
+  snapshot store keeps 64 ticks and resets on a new session. World time: set from the first welcome, then slewed (≤2×
+  catch-up, never back, ≤0.25 s ahead), and stepped forward at once when more than 1 s behind (a hidden tab); shaders
+  run on a separate `renderTime`; inputs stamp `time` from the same clock at 20 Hz of real time with the boost bit and
+  the ship-mode mapping (flying/landing/takeoff/docking → `ship`, landed in a station → `docked`); no input outside the
+  zone's system or between the stars until P1.E04.T04. Welcome places the character (docked on the nearest pad, on
+  foot with the ship beside, the pulse drive not resumed; an unknown frame falls back to the Waystation); a reconnect
+  keeps the client's pose only in the same system, in one of its frames and not between the stars. Corrections snap
+  and re-express into the client's frame (blending is P1.E04.T03). "Save game" became "Leave the world" (a reload). The
+  account and character screens are an interim sheet until P1.E04.T05; new characters get look `{0,0,0,0}` until
+  P1.E05.T05. A dev-only offline sandbox (`import.meta.env.DEV` plus a scenario hash or `dev.boot()`) keeps scenarios,
+  reviews and captures hermetic, with no persistence; it compiles to nothing in production. The demo's flat inventory
+  API still changes only the client copy until its owners move it to the server (mining P1.E13.T01/T06, trade
+  P1.E11.T04/P1.E13.T03, rewards P1.E08.T04, death taxes P1.E06.T03, warp cells P1.E12.T05). `pnpm smoke` needs
+  `pnpm db:up` (a scratch database and Redis db 7). → The game plays through the server.

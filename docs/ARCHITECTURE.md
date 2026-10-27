@@ -29,12 +29,13 @@ session/            Session: the account, the character in play, the zone it is 
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
 social/             SocialService: chat channels, parties and invites, and their limits (§13)
+cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§15)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
-meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§15)
+meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§16)
 sim/                server-side systems added by later tasks: movement validation, combat, quests…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
@@ -94,9 +95,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   baseline `base`, the tick of the snapshot the client last acknowledged; the client keeps the states it was sent per tick,
   applies the delta onto `base` and stores the result as `tick`. An entity delta carries its changed fields and `clear`, the
   fields it no longer has. `ack` echoes the client's last applied input `seq` for reconciliation; clients number inputs
-  from 1, so `ack` 0 means no input applied yet. The client acknowledges each snapshot it applies with `ack {tick}`, at
-  most once per tick; the server diffs against the latest acknowledged tick it still holds (64 ticks, about 3 s) and
-  sends a full snapshot when it holds none. The server diffs against the state it last *sent*, not its true state, so
+  from 1, so `ack` 0 means no input applied yet. The client acknowledges the newest snapshot it has applied with
+  `ack {tick}`, at most every 50 ms (a backlog after a stall is acknowledged once); the server diffs against the latest
+  acknowledged tick it still holds (64 ticks, about 3 s) and sends a full snapshot when it holds none. The server diffs against the state it last *sent*, not its true state, so
   slow motion under the epsilon still goes out. The encoder sends only the listed fields, validates each against its
   schema, clamps unit fields, and drops and reports any field that fails, so a client never rejects what the server sent. The decoder still drops a malformed entity on its own; a client that sees
   one must not store or acknowledge that tick. Control-message encoders send the validated copy, so keys a schema does
@@ -104,23 +105,24 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 meters); a unit test pins the number and checks the history, so two branches
-  bumping to the same number conflict at merge rather than share it.
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 meters); a unit test pins the number and
+  checks the history, so two branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
-  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (one
-  per applied snapshot, at most once per tick), `ping {id, clientTime}`, `inventory {seq, op}`, `skills {seq, op}`. Each
-  socket's message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
-  interactions, chat, party, inventory and skill requests, and the burst absorbs the backlog of a stall. Chat and invites
-  have far smaller limits of their own, per account (§13).
+  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
+  for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
+  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15). Each socket's message budget is 60 a
+  second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat, party,
+  inventory, skill and cutscene requests, and the burst absorbs the backlog of a stall. Chat and invites have far smaller
+  limits of their own, per account (§13).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
-  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§15), `party {party}` (the
+  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§16), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
-  to its sender only, §13), and snapshots.
+  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -134,8 +136,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   top, drops any left unanswered for 5 s (the gateway drops an over-budget message without a reply), never sends an op
   that fails the schema, and starts over (no pending requests, `seq` from 1) on the state sent after `welcome`. The pods
   are the ship's: one per pod its `ShipLoadout` carries, checked against the bays `shipStats` gives (P1.E12.T01).
-  Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
-  picks the union whose schema accepts the message.
+  Adding, taking and units are never requests. `inventory`, `party` and `cutscene` are the types both directions use;
+  `encodeMessage` picks the union whose schema accepts the message.
 - **Creatures** (protocol 4): a `mob` entity names its `species` by index in its world's `faunaSpecies` list (its frame
   names the world), and carries `level`, `hp`, its behaviour state as `mode` and, only while it attacks, `attack`: its
   progress through the attack, 0–1, clamped like the other unit fields and cleared when the attack ends (§6.2).
@@ -147,10 +149,15 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   do; it sends the view after `inventory` on join (`seq` 0) and pushes it whenever server-side calls change it. The client
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
-- **Meters** (`@astra/shared/meters`, protocol 6): `meters {meters}` carries `{heat, heatMax, overheated, charge,
-  chargeMax, at}`, the values at world time `at` (§15). Sent after `skills` on join, then pushed: at once when the lockout
+- **Meters** (`@astra/shared/meters`, protocol 7): `meters {meters}` carries `{heat, heatMax, overheated, charge,
+  chargeMax, at}`, the values at world time `at` (§16). Sent after `skills` on join and again on the first input, then pushed: at once when the lockout
   starts or ends, Charge runs out or a server-side call changes them, and at most every 0.5 s while either moves. There is
   no request: the beam is the input's `beam` button, the pulse drive its `mode`.
+- **Cutscenes** (protocol 6, §15): the client sends `cutscene {op: 'request', id}` to play one where its player is and
+  `cutscene {op: 'done', id, skipped?}` when it ends (`skipped` only on done); the server answers `cutscene {op: 'play'
+  | 'ended' | 'refused', id, phase, reason?}`, `phase` being the story phase the player is in while it plays (snapshots
+  do not say), `reason` one of `unknown`, `denied`, `cooldown`, `busy`, `place`, `phase`, `zone`. Ids are a-z, 0-9 and
+  `_`.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 
@@ -257,7 +264,7 @@ registration order, so a later one reads an earlier one's value (`ctx.get`). Pha
 `coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the ship and inventory
 read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
 second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
-layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `meters` (§15: heat and Charge with
+layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `meters` (§16: heat and Charge with
 the world time they stood at) and `pose` (`{system, pose, mode}`, read from the character's zone entity).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
@@ -302,17 +309,80 @@ store of its own.
 
 ## 9. Client networking (`packages/client/src/net`)
 
-`Net` owns the socket: connect, `hello`, `join`, the clock offset, decoding snapshots into an entity store, sending input at
-20 Hz, and applying `correction`s through the prediction layer. Remote entities render from the store with 100 ms
-interpolation delay and up to 250 ms extrapolation, frame-aware (interpolate in the entity's frame; on a frame change,
-re-express the buffered poses). Gameplay code reads remote state from the store, never from the socket.
+The client is online only (DESIGN 16.6, 20.3): the title's Play signs in over HTTP, lists or makes characters, and enters
+the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04.T01).
+
+- **Origin.** The client calls the gateway on its own origin: `/auth/*`, `/characters`, `/health`, and the socket at `/ws`
+  (`api.js`, `gameSocketUrl`). In development Vite proxies those paths to `pnpm dev:server` (`vite.config.js`;
+  `ASTRA_SERVER` points them at another server), as whatever serves the client in production will.
+- **Sign-in.** `api.js` wraps register, login and the characters API, checking bodies with the shared schemas. The session
+  token is kept in `sessionStorage` (`session.js`: a reload goes straight to the character list, closing the tab signs
+  out), beside a one-shot notice for the title. `localStorage` holds only `next-horizon-settings` (look, sound, graphics);
+  the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a browser still has it.
+- **`Net`** (`Net.js`) owns the socket. `connect()` sends `hello {version: PROTOCOL_VERSION, token}` and `join` together
+  as the socket opens (the gateway handles a socket's messages in order). States: idle → connecting → joining → joined →
+  closed. A connection that drops after a welcome goes to reconnecting and tries again after 0.5 s doubling to 30 s (each
+  delay scaled by a random 50–100%), then joins again; a refusal another try would repeat (`version`, `auth`,
+  `character`, `kicked`), a second `invalid` within a minute (the first may be an honest client's flood after a stall,
+  so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
+  `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
+  after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
+  nobody listens for (`party`, `denied` …) are dropped quietly, and so are snapshot fields and entity kinds nothing reads
+  yet (a `mob`'s `attack` is kept in the store for P1.E04.T02). While the connection is down after a welcome, a line at
+  the top of the screen says so.
+- **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
+  onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
+  over on every welcome (a restarted server counts its ticks from 0 again). Acknowledgements go out at most once a tick
+  (50 ms), always for the newest applied tick, so the backlog a stalled page catches up on is acknowledged once rather
+  than snapshot by snapshot (which would spend the socket's budget in one burst). A tick that cannot be applied (its
+  baseline is not held, the decoder refused one of its entities, it names an entity never sent whole) is neither stored
+  nor acknowledged, so the server keeps diffing against the last good one. Snapshots before the welcome are ignored.
+  Gameplay reads remote state from the store, never from the socket.
+- **Input** goes out at 20 Hz of real time (`update()` each frame, never faster however fast frames are stepped: the
+  gateway's budget counts real seconds): `seq` from 1 on each connection, `time` the world time the pose was sampled at
+  (the clock the client placed the bodies and picked the frame with; never going back), and the game's sample
+  (`Game.inputSample`): the predicted pose of the ship or, on foot, of the walker (its quaternion built from its
+  heading), in the frame the client picked; the mode (`foot`; `pulse`; set down on a Waystation pad `docked`, elsewhere
+  `landed`; anything else a ship does `ship`: flying, taking off, landing, the docking autopilot); and the buttons (`boost`
+  while boosting, which movement authority reads). There is no input while the client is outside its zone's system or
+  between the stars, until zone handoff (P1.E04.T04).
+- **Time.** `ClockSync` (`clock.js`) estimates the server's clock from `welcome` and a `ping` every 2 s: the offset of the
+  shortest round trip of the last eight. World time (`game.time`, §3) starts at it on the first welcome, before any input;
+  from then it never goes back (`Game.advanceClock`), because movement authority judges each input at the time it
+  carries: each frame it advances by the frame's time eased toward the estimate (at most twice as fast), stands still
+  rather than going back, and is never more than 0.25 s ahead; more than 1 s behind (the frame loop stopped, as in a
+  hidden tab, or a long stall) it steps forward to the estimate at once and that frame places the bodies at the new time
+  (movement authority starts a new judging window at such a forward jump, at its arrival). Shaders animate on
+  `game.renderTime` instead, which advances by exactly the frames' time and stays small: at the server's 10^7 s a float32
+  uniform moves in 2 s steps.
+- **Welcome** places the character where the server holds it (`Game.placeFromServer`), loading the zone's system first
+  when it is not the current one: `docked` on the Waystation's pad nearest the pose; `landed`, `ship` and `pulse` at the
+  pose (the pulse drive is not resumed); `foot` with the walker at the pose and the ship on the nearest pad, or landed
+  beside it on a world. On the first join only the zone's system is marked visited. On a reconnect the client keeps its
+  own pose (it kept flying) and its next input reports it, while it is still in the zone's system and one of its frames;
+  otherwise (it warped away, the server put the character elsewhere, it is between the stars) it is placed from the
+  welcome as on a first join. The inventory sent after welcome replaces the client's (`Inventory.reset`); later states
+  reconcile its requests (§5). The mouse is captured only from a user gesture: entering the world leaves the pause
+  screen up, whose Resume captures it.
+- **Saving is the server's** (§8). `Game.save()` sends the input at once at moments worth holding (docked, a system
+  reached, a site visited). Leaving (the pause menu, or a refusal after joining) closes the socket and reloads the page,
+  so nothing of one character's client state carries into the next.
+- **Corrections** are taken as they come until prediction and reconciliation (P1.E04.T03): the pose, re-expressed into the
+  frame the client is in (DECISIONS P1.E03.T03).
+- **Dev sandbox.** In dev builds only, a scenario hash (`#sandbox`, `#foot`, `#fly`, `#land`, `#station`, `#dock`,
+  `#space`, `#review:…`) or `window.dev.boot()` starts `Game.startSandbox`: offline, a new pilot by the home Waystation,
+  no persistence of any kind, so the smoke specs, captures and asset reviews stay hermetic. The game itself always goes
+  through the server.
+- **Remote entities** (P1.E04.T02) render from the store with 100 ms interpolation delay and up to 250 ms extrapolation,
+  frame-aware (interpolate in the entity's frame; on a frame change, re-express the buffered poses).
 
 ## 10. Tests
 
 Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; integration tests (`*.int.test.ts`) start a real server on a random port against
 the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
-database is disposable.
+database is disposable. The online smoke specs (`packages/tools/src/smoke/online.spec.ts`, part of `pnpm smoke`, needing
+`pnpm db:up`) run the server against a scratch database they create and drop, and a client through Vite's proxies.
 
 ## 11. The Count meter (`packages/server/src/count`)
 
@@ -463,7 +533,92 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
   registers its component after `progress` and before `ship`; the gateway takes the one in persistence's registry
   (`skillServiceIn`) unless given one, and exposes it as `ws.skills`.
 
-## 15. Heat and Charge (`packages/server/src/meters`, `@astra/shared/meters`)
+## 15. Cutscenes
+
+DESIGN 8's cutscenes play in-engine, always in a phase (DESIGN 14.1, 17), on the camera-glide system (19.2). The server
+decides when one plays; the client presents it.
+
+- **Authoring** (`assets/blend/cutscenes/<name>.blend`, one cutscene a file): scene custom properties `cutscene` (its
+  id, a-z, 0-9 and `_`), `frame` (`station`, `home`, `body:<n>`, `inertial` or `player`), `anchor` (`origin`: the
+  frame's coordinates; `player`: relative to the player's pose when it starts, the ship at the origin nose along +Y;
+  the inertial and player frames anchor on the player) and `radius` (the phase's volume, 3000 m by default); cameras
+  `CAM_<cutscene>_<shot>`, each moved however the artist likes (a Follow Path on its curve `CAM_<cutscene>_<shot>_path`,
+  a Track To, keyed lenses), cut between by timeline markers bound to them; markers `line:<key>`, `end:<key>` and
+  `event:<name>`, their words in a Text block `CUT_<cutscene>` (JSON: lines' speaker, voice and text; banners' title
+  and sub); actors as empties `ACTOR_<name>` (`kind` npc, ship or prop, `label`, optional `hull`); an optional empty
+  `STAGE_player` where the dev scenario puts the player's ship. The render resolution is the framing (2.39:1 for the
+  letterbox); the frame range at the scene's rate is its length.
+- **Checks and export** (`packages/tools/blender/export_cutscene.py`, headless; `-- --selftest`): every rule the
+  client's `parseCutscene` applies, and the marker grammar, are checked first, and every problem is listed (an unknown
+  or wrong-case marker kind, an `end:` with no line, a key or name used twice or empty, a banner with no title or no
+  event, a marker outside the frame range, an id or frame the client refuses, a bad actor). `pnpm art:validate` runs
+  the same checks on the family `cutscenes` (families.json kind `cutscene`; the mesh checks do not apply), and a change
+  to the exporter re-validates only that family. The export writes `packages/client/public/cutscenes/<id>.json` (format
+  `astra.cutscene` 1: each shot the evaluated camera at every frame, in the engine's axes, with the vertical field of
+  view of the render framing; lines with times and lengths, a line without an end marker running its reading time cut
+  short by the next; events with optional banners; the space; the stage) and, from the same source, the server's
+  `packages/server/src/cutscenes/placements/<id>.json` (`astra.cutscene.place` 1: the space, the length, the radius and
+  the actors' poses). It never writes outside its output folders.
+- **Who and when (the server):** `CutsceneService` (`packages/server/src/cutscenes/`, built by server.ts, reached by the
+  gateway's `cutscene` case) answers a client's `cutscene request` only when `may(session, id)` allows it: the quest
+  engine (P1.E09.T01) sets `may` to its rule (the character is on that cutscene step) and starts its steps' cutscenes
+  itself with `start(session, id, at)` at the step's place; until it does nothing may, but a catalog entry marked `dev`
+  on a development server (`NODE_ENV` not production), so the test cutscene can never start in production. A session
+  asks at most once every 10 s (`COOLDOWN_S`). Asking again for the one it is watching answers with the same phase only
+  while that one is still going (its phase open, the player in it, within its bound); otherwise the request goes
+  through `may` and the cooldown again, so a step's cutscene cannot be replayed after its step. A cutscene the server
+  starts itself (`start`, the quest engine) is pushed to the client as an unrequested `play`.
+- **Where (the server):** a cutscene plays at its place. Anchored on its frame's origin, the place is that origin and
+  the player must be within the radius (`refused place` otherwise); anchored on the player, it is where the player is,
+  in the cutscene's frame, which must be the player's. The story phase is keyed by the cutscene and its place
+  (`cutscene:<id>@<frame>`, or `…#<n>` for each player-anchored place), so a party member shares a member's phase only
+  at the same place (within its radius): one far away gets its own. A player already in a phase (a bay, an event,
+  another step) is refused (`refused phase`), never pulled out; the quest engine's `at` is the step's own place, so a
+  step's cutscene plays in the step's phase. The actors spawn once into the phase, in the cutscene's frame at their
+  exported poses (turned with the anchor when it is the player), seen only by the phase's members; `done` takes the
+  player out, and the last one out closes the phase with its actors. A session that leaves (its socket closes, it is
+  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten.
+- **Out of play:** while a player watches, `cutscenes.watching(zone, entity)` is true and the client pauses the
+  player's local hazards (pirate raids, the suit's survival damage). The server bounds it: only while the player is in
+  the cutscene's phase, and no longer than the cutscene's length, the client's 1.5 s exit and a 5 s margin. Past either,
+  the service's sweep (once a second, and before each request) ends the cutscene on the server, takes the player out of
+  its phase if it is still in it, and pushes `ended` to the client, which ends it there as a skip. The sweep also forgets
+  the anchor poses of phases that have closed, however they closed. The server's fauna (§6.2) leaves alone a player
+  `phases.hiddenFromShared` hides; it must treat a watching player the same way (neither prey, intruder nor threat).
+  That is a follow-up outside the cutscene code: `fauna/sim.ts`'s `Actor.hidden` should also be true while
+  `cutscenes.watching(zone.id, id)`, the zone being given a way to ask the service.
+- **The client's link** (`packages/client/src/cutscene/link.js`): online (`game.net`, P1.E04.T01's Net) a cutscene asks
+  through `NetCutsceneLink` (`net.send` and `net.on('cutscene')`) and plays only on `play`, in the phase it names; a
+  refusal, no answer within 5 s or a dropped connection plays nothing, and a `play` that comes too late for a request it gave up on is given back
+  with `done`. An unrequested `play` is a cutscene the server started itself (a quest step's): it plays, and its `done`
+  goes back as usual (one that cannot play now is given back at once). The server ending the one playing (`ended`)
+  ends it here as a skip. `OfflineCutsceneLink` (a local
+  layer, phase null, the messages it would have sent kept) is the dev sandbox's only: with no `game.net`, in a dev
+  build.
+- **Playback** (`packages/client/src/cutscene/`): `CutscenePlayer` loads and checks a definition (`timeline.js`), asks
+  its link, then runs a `Timeline` on game time (so `window.step` and captures are exact): the clock, the lines' reveal
+  and fades, events in order. `CameraDirector` (the camera-glide system, with the demo's chase-view eases, seat glides
+  and dips) takes the camera: it glides from the player's view into the first shot (a dip when more than 600 m apart,
+  from the cockpit seat, or asked for), plays the shots on a spline through the samples (`curve.js`) expressed in the
+  cutscene's frame so they follow it as it orbits (`space.js`), and glides back to the player's view at the end. The
+  canvas's field of view is widened so the band between the letterbox bars shows exactly what Blender framed.
+  `ui/Cinematic.js` draws the letterbox and the dialogue bar each frame; events' banners go to `HUD.showBanner` as a
+  title card in the top bar (`{station}`, `{system}`, `{home}`, `{planet}` filled in, set as text, never markup), and
+  listeners (`cutscenes.on('event' | 'line' | 'start' | 'end')`) hear every event.
+- **Controls:** while one plays `game.overlay` is `'cutscene'`, so the player's controls are locked as under a menu.
+  Space, Enter or a click reveals the rest of a line, then jumps to the next behind a dip. Esc skips in one press: it
+  closes overlays (Menus.closeAll), and under pointer lock, where the browser takes Esc to release the lock and the page
+  never sees the key, the release itself (with the window focused) skips. A jump or a skip fires every event it passes
+  (a skip's marked `skipped`, without banners), so whatever listens ends where watching would have left it. The
+  cutscene keeps the screen and the controls while the camera glides home (1.5 s), then gives them back; a pointer
+  lock that Esc released brings up the pause screen then, as after any Esc, until a click.
+- **Dev:** `#cutscene:<id>` stages the ship (`CutscenePlayer.stage`, dev builds only) and plays it; `pnpm capture --
+  --ui cutscene-test` (and `cutscene-test-jump`, `cutscene-test-skip`) grab the grader's stills and clips;
+  `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end, skips it, and plays it through a
+  stand-in Net (asked for, refused, and started by the server); `cutscene-online.spec.ts` plays it through the real Net
+  against a local server (online.ts), its tug seen in the snapshots while the player watches and gone after `done`.
+
+## 16. Heat and Charge (`packages/server/src/meters`, `@astra/shared/meters`)
 
 DESIGN 9.1's two ability resources, held by the server (P1.E07.T02). The numbers are `METERS` (`@astra/shared/data`); the
 rules are `@astra/shared/meters`, pure functions both ends run.
@@ -504,8 +659,9 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   logged.
 - **The client** predicts with the same rules: the multitool steps heat each frame (`Multitool.stepHeat`), the ship its
   Charge (`Ship.updateCharge`), both reading the character's place from the client's own bodies (`characterMeterEnvironment`:
-  the walker on foot, else the ship) and the build from `Ship.meterProfile`. The net layer hands each `meters` state to
-  `multitool.reconcile(view, serverNow)` and `ship.reconcileCharge(view, serverNow)`, which take the server's values and run
-  them on to the present. The HUD shows heat on the crosshair's left arc (warm, amber from 75%, danger red through the
+  the walker on foot, else the ship) and the build from `Ship.meterProfile`. Both listen for `meters` on the game's `Net`
+  (whichever connection it holds) and take the server's values, run on to the present at the client's estimate of server
+  time (`multitool.reconcile`, `ship.reconcileCharge`). The state sent after join reaches a client still on its way into
+  the world, so the server counts it as unsent and pushes the meters again on the session's first input. The HUD shows heat on the crosshair's left arc (warm, amber from 75%, danger red through the
   lockout with a tick where it ends and OVERHEAT under the dot) and Charge on the reticle's right arc with a readout under the
   altitude (how much and which way it is going; a sheen climbs the arc while it regenerates).

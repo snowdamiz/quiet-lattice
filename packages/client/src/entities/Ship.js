@@ -613,7 +613,7 @@ export class Ship {
   }
 
   /**
-   * The server's meters (`meters` state, ARCHITECTURE §15): Charge as it held it at world time `view.at`, run on to
+   * The server's meters (`meters` state, ARCHITECTURE §16): Charge as it held it at world time `view.at`, run on to
    * `serverNow` (the client's estimate of server time) with what the ship is doing now.
    */
   reconcileCharge(view, serverNow = view.at) {
@@ -641,10 +641,20 @@ export class Ship {
   }
 
   // ---------- per-frame ----------
+  // Listens for the server's meters on whichever connection the game holds now (it changes on every sign-in).
+  watchServer() {
+    const net = this.game.net ?? null;
+    if (net === this.meterNet) return;
+    this.unwatchMeters?.();
+    this.meterNet = net;
+    this.unwatchMeters = net ? net.on('meters', ({ meters }) => this.reconcileCharge(meters, net.serverTime() ?? meters.at)) : null;
+  }
+
   update(dt, input, piloting) {
     const s = this.state;
     this.computeEnvironment();
     this.updateHazard(dt);
+    this.watchServer();
     this.updateCharge(dt);
 
     switch (this.mode) {

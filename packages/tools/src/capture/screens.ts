@@ -418,6 +418,56 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
   await page.waitForTimeout(300);
 }
 
+/** What the cutscene screens reach of the page. */
+interface CutscenePage {
+  game: {
+    cutscenes: { load(id: string): Promise<unknown>; stage(def: unknown): boolean; play(id: string): Promise<unknown>; stop(): void };
+    hud: { clearBanners(): void };
+  };
+  dev: { boot(): Promise<void> };
+  step(n: number): Promise<void>;
+  __holdRaf?: boolean;
+}
+
+/**
+ * Boots a game with the ship where the cutscene stages it and the world settled, then parks the page's own frame loop
+ * (its requestAnimationFrame callbacks are dropped), so the cutscene's clock moves only as frames are stepped: a still
+ * is taken where it was stepped to, however long the CSS waits run.
+ */
+async function stageCutscene(page: Page, id: string): Promise<void> {
+  await page.evaluate(() => (window as unknown as CutscenePage).dev.boot());
+  await page.evaluate(async (id) => {
+    const w = window as unknown as CutscenePage;
+    w.game.cutscenes.stage(await w.game.cutscenes.load(id));
+  }, id);
+  await settle(page, 120);
+  await page.evaluate(async () => {
+    const w = window as unknown as CutscenePage & { requestAnimationFrame(cb: FrameRequestCallback): number };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    // (the callback already queued runs once more, then parks)
+    await new Promise((r) => setTimeout(r, 100));
+  });
+}
+
+/** Plays the cutscene from its start (ending one under way, and any banner) and steps `t` seconds into it. */
+async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> {
+  await page.evaluate(
+    async ({ id, t }) => {
+      const w = window as unknown as CutscenePage;
+      w.game.cutscenes.stop();
+      w.game.hud.clearBanners();
+      void w.game.cutscenes.play(id);
+      await new Promise((r) => setTimeout(r, 0));
+      await w.step(Math.round(t * 60));
+    },
+    { id, t },
+  );
+  // (a banner fades in on a CSS animation, which runs on real time)
+  await page.waitForTimeout(1200);
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
@@ -530,6 +580,64 @@ export const SCREENS: Record<string, ScreenDef> = {
         g.ship.speed = 0;
       });
       await settle(page, 90);
+    },
+  },
+  // the test cutscene (P1.E09.T04; packages/client/public/cutscenes/test.json from assets/blend/cutscenes/
+  // test_cutscene.blend): the stills mid-dialogue 6.6 s in (the station shot, its banner, the second line), the approach
+  // 2.6 s in and the return 10 s in; the clip the whole of it from the player's chase view, letterbox in, three shots,
+  // three lines and the banner, to the letterbox out and the camera back on the ship (11.5 s, then 1.5 s back)
+  'cutscene-test': {
+    hudClock: true,
+    clipSeconds: 13.4,
+    // the glide in (every 14 frames), each cut and the frames either side, the banner, the exit (every 20)
+    sheetFrames: [0, 14, 28, 42, 56, 96, 170, 240, 262, 268, 300, 340, 420, 476, 484, 560, 640, 688, 700, 720, 740, 760, 780, 803],
+    async open(page) {
+      await stageCutscene(page, 'test');
+      await playCutsceneTo(page, 'test', 6.6);
+    },
+    stills16x9: {
+      approach: (page) => playCutsceneTo(page, 'test', 2.6),
+      return: (page) => playCutsceneTo(page, 'test', 10),
+    },
+    async motion(page) {
+      await page.evaluate(async () => {
+        const w = window as unknown as CutscenePage;
+        w.game.cutscenes.stop();
+        w.game.hud.clearBanners();
+        void w.game.cutscenes.play('test');
+        await new Promise((r) => setTimeout(r, 0));
+      });
+    },
+  },
+  // the test cutscene's keys (P1.E09.T04): Space on a line already read jumps to the next behind a short dip (the still
+  // 2.2 s in, the first line read; the clip from the key press: the dip, the next shot, the next line revealing)
+  'cutscene-test-jump': {
+    hudClock: true,
+    clipSeconds: 1.5,
+    sheetFrames: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 21, 24, 30, 36, 42, 48, 56, 64, 72, 80, 89],
+    async open(page) {
+      await stageCutscene(page, 'test');
+      await playCutsceneTo(page, 'test', 2.2);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true }));
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', bubbles: true }));
+      });
+    },
+  },
+  // and Esc mid-line skips it (the still 2.6 s in, the first line showing; the clip from the key press: the letterbox
+  // opening and the camera gliding back to the ship over 1.5 s)
+  'cutscene-test-skip': {
+    hudClock: true,
+    clipSeconds: 1.8,
+    sheetFrames: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100, 107],
+    async open(page) {
+      await stageCutscene(page, 'test');
+      await playCutsceneTo(page, 'test', 2.6);
+    },
+    async motion(page) {
+      await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
     },
   },
   'station-hangar': {

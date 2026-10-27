@@ -66,7 +66,7 @@ export class Multitool {
   }
 
   /**
-   * The server's meters (`meters` state, ARCHITECTURE §15): heat as it held it at world time `view.at`, run on to
+   * The server's meters (`meters` state, ARCHITECTURE §16): heat as it held it at world time `view.at`, run on to
    * `serverNow` (the client's estimate of server time) with what the tool is doing now.
    */
   reconcile(view, serverNow = view.at) {
@@ -148,10 +148,20 @@ export class Multitool {
     this.game.engine.scene.add(this.hitLight);
   }
 
+  // Listens for the server's meters on whichever connection the game holds now (it changes on every sign-in).
+  watchServer() {
+    const net = this.game.net ?? null;
+    if (net === this.meterNet) return;
+    this.unwatchMeters?.();
+    this.meterNet = net;
+    this.unwatchMeters = net ? net.on('meters', ({ meters }) => this.reconcile(meters, net.serverTime() ?? meters.at)) : null;
+  }
+
   update(dt, input, active) {
     const g = this.game;
+    this.watchServer();
     // hidden while the camera is still easing in from the ship
-    this.view.visible = g.mode === 'foot' && !g.player.headUnderwater && !g.camBlend && !g.poseBlend;
+    this.view.visible = g.mode === 'foot' && !g.player.headUnderwater && !g.director.blend && !g.director.pose;
     // and raised into view once it has arrived
     this.raise = this.view.visible ? Math.min(1, (this.raise ?? 1) + dt * 2.6) : 0;
     this.beamMat.uniforms.uTime.value += dt;

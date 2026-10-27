@@ -8,9 +8,10 @@
 // binary snapshot every tick, and closing the socket saves the character and takes the entity out; each input passes the
 // meter service first (heat and Charge run on inputs, and a pulse with Charge empty is refused) and is told it after the
 // zone has applied it. Inventory requests go to the inventory service and skill requests to the skill service, which answer
-// each with the authoritative state (ARCHITECTURE §7, §14, §15).
+// each with the authoritative state (ARCHITECTURE §7, §14, §16).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
-// connection that closes. Malformed or out-of-place messages are dropped and counted, never thrown.
+// connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
+// leaves. Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -32,6 +33,7 @@ import type { MeterService } from '../meters/service.ts';
 import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
+import { CutsceneService } from '../cutscenes/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import { skillServiceIn } from '../skills/component.ts';
 import type { SkillService } from '../skills/service.ts';
@@ -110,6 +112,8 @@ export interface WsGatewayDeps {
   skills?: SkillService;
   /** Every character's heat and Charge in play; when none is given, the one persistence's registry loads into. */
   meters?: MeterService;
+  /** Cutscenes in story phases; the gateway makes its own (a production one: no client starts any) when none is given. */
+  cutscenes?: CutsceneService;
 }
 
 export interface WsStats {
@@ -124,6 +128,7 @@ export interface WsGateway {
   readonly skills: SkillService;
   readonly meters: MeterService;
   readonly social: SocialService;
+  readonly cutscenes: CutsceneService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -145,7 +150,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   // autoPong off: ws would otherwise answer every client ping frame itself, outside the budget and the buffer cap.
   const wss = new WebSocketServer({ noServer: true, maxPayload: MAX_MESSAGE_BYTES, autoPong: false });
   const registry = new SessionRegistry();
+  const cutscenes = deps.cutscenes ?? new CutsceneService({ zones: deps.zones, log });
+  if (!deps.cutscenes) cutscenes.startSweeping();
   deps.zones.onViewerRemoved = (viewer) => {
+    cutscenes.forget(viewer);
     if (!(viewer instanceof Session)) return;
     log.debug({ session: viewer.id, zone: viewer.zoneId, entity: viewer.entityId }, 'session out of its zone');
     viewer.entityId = null;
@@ -262,6 +270,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       // every close is a dropped connection: its phase keeps its place for a while.)
       persistence.leave(s, closing ? 'shutdown' : 'logout');
       deps.zones.leave(s, 'disconnected');
+      cutscenes.forget(s);
       social.left(s);
       conns.delete(c);
       registry.remove(s);
@@ -361,6 +370,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') return invalid(s, 'party before join');
         social.party(s, msg.op);
         return;
+      case 'cutscene':
+        if (s.state !== 'joined') return invalid(s, 'cutscene before join');
+        s.send(cutscenes.handle(s, msg));
+        return;
       default:
         // cast and interact belong to later tasks; before join they are out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
@@ -413,6 +426,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         // phase keeps its place for this connection to find.
         persistence.leave(previous, 'kicked');
         deps.zones.leave(previous, 'disconnected');
+        cutscenes.forget(previous);
         previous.refuse('kicked', 'This character entered the world from another connection.');
       }
       let loaded;
@@ -445,7 +459,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
       s.send({ t: 'inventory', ...inventory.state(row.id) });
       s.send({ t: 'skills', ...skills.state(row.id) });
-      s.send({ t: 'meters', meters: meters.view(row.id, deps.clock.now(), { sent: true }) });
+      // (and again on its first input: by then the client is in the world and hears it)
+      s.send({ t: 'meters', meters: meters.view(row.id, deps.clock.now()) });
       social.joined(s, row.name);
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
@@ -459,11 +474,13 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     skills,
     meters,
     social,
+    cutscenes,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
       clearInterval(heartbeat);
       if (!deps.social) social.stop();
+      if (!deps.cutscenes) cutscenes.stopSweeping();
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeMeters();
