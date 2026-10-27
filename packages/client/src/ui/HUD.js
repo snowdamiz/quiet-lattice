@@ -100,7 +100,7 @@ export class HUD {
     this.markersEl = el('div', 'markers', this.layer);
     // on foot: a dot with two gauge arcs (heat left, jetpack right) that only show while in use, and the lockout's word
     // under them
-    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 21)}<div class="c-state">OVERHEAT</div>`);
+    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 24)}<div class="c-state">OVERHEAT</div>`);
     // in flight: reticle with shield / Charge arcs, speed to the left and altitude to the right, the throttle under the
     // speed and Charge under the altitude
     this.reticle = el(
@@ -275,7 +275,8 @@ export class HUD {
       const r = +g.dataset.r;
       const t = arcAngle(side, f);
       const p = (rr) => `${(rr * Math.cos(t) + 50).toFixed(2)} ${(rr * Math.sin(t) + 50).toFixed(2)}`;
-      m.setAttribute('d', `M ${p(r - 6)} L ${p(r + 6)}`);
+      // (across the whole halo, so it reads against the fill and the track alike)
+      m.setAttribute('d', `M ${p(r - 8)} L ${p(r + 8)}`);
     }
     g.classList.toggle('marked', show);
   }
@@ -338,10 +339,10 @@ export class HUD {
       this.arc(this.reticle, 'charge', charge.fill, charge.shown, { low: charge.fill < 0.25, regen: charge.regen, empty: charge.empty });
       this.sheen(this.reticle, 'charge', charge.regen && charge.shown, charge.fill);
       let chg = '';
-      if (charge.shown && charge.empty) chg = `<b>CHARGE EMPTY</b>`;
+      if (charge.shown && charge.empty) chg = `0<small>CHARGE EMPTY</small>`;
       else if (charge.shown) {
         const dir = charge.rate > 0.005 ? 'up' : charge.rate < -0.005 ? 'down' : '';
-        chg = `<span>CHARGE</span><b>${charge.value}</b>${dir ? `<i class="${dir}">${fmtRate(charge.rate)}</i>` : ''}`;
+        chg = `${charge.value}<small>CHARGE</small>${dir ? `<i class="${dir}">${fmtRate(charge.rate)}</i>` : ''}`;
       }
       setText(this.rChg, chg);
       this.rChg.classList.toggle('empty', charge.shown && charge.empty);

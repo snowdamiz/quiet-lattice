@@ -92,6 +92,17 @@ body {
   width: 64px;
   height: 64px;
 }
+/* the foot crosshair and the flight reticle fade in as they turn on (an animation runs again each time an element
+   comes back from display: none); their arcs are already at their values (HUD.arc's snap) */
+.crosshair,
+.ship-reticle {
+  animation: hudIn 0.15s ease-out;
+}
+@keyframes hudIn {
+  from {
+    opacity: 0;
+  }
+}
 .crosshair > b,
 .ship-reticle > b {
   position: absolute;
@@ -159,38 +170,39 @@ body {
   fill: none;
   stroke-linecap: round;
 }
-/* the crosshair: 64 px for 100 units, 0.64 px a unit; a 3.2 px fill on a 4.8 px halo */
+/* The arcs sit on an opaque track inside a near-black halo, so neither the beam's glare nor a bright sky washes them out
+   (the HUD is DOM over the canvas, never in the bloomed WebGL layer: only what is under it glows).
+   The crosshair: 64 px for 100 units, 0.64 px a unit; a 4.5 px fill and track in an 8.3 px halo. */
 .crosshair .gauge .halo {
-  stroke-width: 7.5;
+  stroke-width: 13;
 }
-.crosshair .gauge .track {
-  stroke-width: 2.5;
-}
+.crosshair .gauge .track,
 .crosshair .gauge .fill {
-  stroke-width: 5;
+  stroke-width: 7;
 }
 .crosshair .gauge.over .fill {
-  stroke-width: 5.6;
+  stroke-width: 7.5;
 }
 .crosshair .gauge .mark {
-  stroke-width: 2;
+  stroke-width: 2.5;
 }
-/* the ship's reticle: 110 px for 100 units */
+/* the ship's reticle: 110 px for 100 units; a 3 px fill and track in a 6 px halo */
 .ship-reticle .gauge .halo {
-  stroke-width: 3.8;
+  stroke-width: 5.5;
 }
 .ship-reticle .gauge .track,
 .ship-reticle .gauge .fill {
-  stroke-width: 1.45;
+  stroke-width: 2.7;
 }
 .ship-reticle .gauge .sheen {
-  stroke-width: 2.2;
+  stroke-width: 3.6;
 }
 .gauge .halo {
-  stroke: rgba(4, 8, 14, 0.5);
+  stroke: var(--ink);
+  stroke-opacity: 0.88;
 }
 .gauge .track {
-  stroke: rgba(255, 255, 255, 0.16);
+  stroke: #3b3e44;
 }
 .gauge .fill {
   stroke: rgba(255, 255, 255, 0.85);
@@ -200,10 +212,11 @@ body {
 }
 .gauge {
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.4s ease-in;
 }
 .gauge.on {
   opacity: 1;
+  transition: opacity 0.15s ease-out;
 }
 /* drawn at its value at once: the first time, as it turns on, and on a jump (HUD.arc) */
 .gauge.snap path {
@@ -242,7 +255,8 @@ body {
 .gauge.marked .mark {
   opacity: 0.9;
 }
-/* Charge (today's pulse fuel colour); while it regenerates a bright dash climbs the fill (HUD.sheen) */
+/* Charge in the pulse drive's lilac (art bible §4: a documented exception; teal is the shield's arc on the same reticle);
+   while it regenerates a bright dash climbs the fill (HUD.sheen) */
 .gauge .g-charge {
   stroke: #c7a6ff;
 }
@@ -300,7 +314,8 @@ body {
   color: rgba(241, 244, 248, 0.75);
 }
 .r-speed small,
-.r-alt small {
+.r-alt small,
+.r-chg small {
   margin-left: 4px;
   font-family: var(--font-mono);
   font-size: 10px;
@@ -326,48 +341,36 @@ body {
 .r-thr i.rev {
   background: var(--danger);
 }
-/* Charge, under the altitude as the throttle sits under the speed: how much, and which way it is going */
+/* Charge, under the altitude as the throttle sits under the speed, in the altitude's style: the figure, its small-caps
+   label, and which way it is going */
 .r-chg {
   position: absolute;
-  left: calc(100% + 4px);
-  top: calc(50% + 10px);
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-  padding: 3px 16px 3px 6px;
-  /* a near-opaque plate under the whole readout, rate included, fading only past its end: it holds 4.5:1 over a bright
-     world's limb */
-  background: linear-gradient(90deg, rgba(6, 8, 11, 0.82) calc(100% - 12px), rgba(6, 8, 11, 0));
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
-  font-family: var(--font-mono);
-  font-size: 9.5px;
+  left: calc(100% + 6px);
+  /* (7 px under the altitude's numerals) */
+  top: calc(50% + 13px);
+  font-family: var(--font-cond);
   font-weight: 500;
-  letter-spacing: 0.2em;
-  color: var(--dim);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #d4bcff;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
-.r-chg b {
-  font-size: 11.5px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: #d4bcff;
-}
 .r-chg i {
+  margin-left: 6px;
   font-style: normal;
-  font-size: 10.5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   letter-spacing: 0.04em;
-}
-.r-chg i.up {
   color: #e2d4ff;
 }
 .r-chg i.down {
   color: var(--dim);
 }
-.r-chg.empty b {
-  font-size: 10.5px;
-  letter-spacing: 0.24em;
-  /* (the danger red lifted, to hold 4.5:1 on the plate) */
+/* (the danger red lifted, to hold 4.5:1 inside the readouts' halo) */
+.r-chg.empty,
+.r-chg.empty small {
   color: #ff8a80;
 }
 .r-mode {
@@ -2483,8 +2486,19 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 
 /* legible over a bright sky: a soft dark halo under the HUD's readouts */
-.r-alt, .r-speed, .r-mode, .location, .bar label {
+.r-mode, .location, .bar label {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.25);
+}
+/* the flight readouts (speed, altitude, Charge) wear a near-black halo, unplated: figures and labels hold 4.5:1 over a
+   bright world's limb or a sunlit sky */
+.r-speed,
+.r-alt,
+.r-chg {
+  text-shadow:
+    0 0 1px var(--ink),
+    0 0 2px var(--ink),
+    0 0 4px rgba(7, 8, 11, 0.85),
+    0 1px 2px rgba(7, 8, 11, 0.9);
 }
 
 /* ---------- dev teleporter (F2, dev builds only) ---------- */
