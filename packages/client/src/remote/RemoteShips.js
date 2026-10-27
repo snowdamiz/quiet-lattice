@@ -2,7 +2,7 @@
 // instanced meshes made from that hull's model as the local ship dresses it: its hull surfaces merged into one geometry
 // per material (the cockpit interior, which the local ship shows only from the seat, left out), each landing-gear leg
 // apart so it can fold per ship, and its engine exhausts as one instanced billboard mesh. A frame's draw calls are the
-// kit's (about twenty for the Lark), however many ships are in view, and nothing is allocated per frame. Each ship
+// kit's (26 for the Lark, and their shadows), however many ships are in view, and nothing is allocated per frame. Each ship
 // folds its gear, lights its engines and strobes its beacon on its own, from the motion its snapshots describe.
 //
 // Hulls draw with their own model; until P1.E12.T02/T03 bring the others, only the Lark has one (the local ship's), and a
@@ -65,17 +65,25 @@ export class RemoteShips {
     this.group.name = 'remote ships';
     /** modelled hull id → HullKit */
     this.kits = new Map();
+    /** hull id → the modelled hull that draws it (or null), as modelledHull says, asked once */
+    this.models = new Map();
     this.clock = 0;
+  }
+
+  modelOf(hull) {
+    let id = this.models.get(hull);
+    if (id === undefined) this.models.set(hull, (id = modelledHull(hull)));
+    return id;
   }
 
   /** Whether a ship of `hull` is drawn at all. */
   draws(hull) {
-    return modelledHull(hull) !== null;
+    return this.modelOf(hull) !== null;
   }
 
   /** The kit for `hull`, built on first use once its model has loaded; null before that or for a hull not drawn. */
   kit(hull) {
-    const id = modelledHull(hull);
+    const id = this.modelOf(hull);
     if (id === null) return null;
     let kit = this.kits.get(id);
     if (!kit) {
@@ -101,7 +109,7 @@ export class RemoteShips {
       const kit = this.kit(r.hull);
       if (!kit) continue;
       const vis = (r.vis ??= { gear: 1, power: 0, thrust: 0, fwdSpeed: null, strobe: (r.id * 0.618) % 1 });
-      animate(r, vis, kit, dt, this.game);
+      animate(r, vis, kit, dt);
       const rel = _v.copy(r.world).sub(camWorld);
       if (cam && rel.length() > SHADOW_NEAR && !_frustum.intersectsSphere(_sphere.set(rel, kit.radius))) continue;
       kit.add(rel, r.worldQuat, vis, this.clock);
@@ -114,13 +122,13 @@ export class RemoteShips {
 // The gear and engines of one ship from its motion, as Ship.update does it for the local ship: the gear down when set
 // down, or slow and low; the engines idling, pushed by the acceleration along the nose, brighter past the cruise (a
 // boost) and full on the pulse drive.
-function animate(r, vis, kit, dt, game) {
+function animate(r, vis, kit, dt) {
   const pose = r.pose;
   const mode = pose.mode;
   const speed = pose.vel.length();
   const down = mode === 'landed' || mode === 'docked';
-  const alt = altitude(r, game);
-  vis.gear = THREE.MathUtils.damp(vis.gear, down || (alt < 45 && speed < 60) ? 1 : 0, 4, dt);
+  // (the ground is sampled only for a ship slow enough to want its gear)
+  vis.gear = THREE.MathUtils.damp(vis.gear, down || (speed < 60 && altitude(r) < 45) ? 1 : 0, 4, dt);
   _fwd.set(0, 0, -1).applyQuaternion(pose.quat);
   const fwdSpeed = pose.vel.dot(_fwd);
   if (dt > 0 && vis.fwdSpeed !== null) vis.thrust = THREE.MathUtils.damp(vis.thrust, THREE.MathUtils.clamp((fwdSpeed - vis.fwdSpeed) / dt / 75, 0, 1), 4, dt);
@@ -132,11 +140,13 @@ function animate(r, vis, kit, dt, game) {
 }
 
 // Height over the ground on a world (m), or Infinity; in the Waystation's hangar, the floor's.
-function altitude(r, game) {
+function altitude(r) {
   const f = r.frame;
   if (!f) return Infinity;
   if (f.sampler) {
     const d = r.pos.length();
+    // (far over the highest ground there is no need to sample it)
+    if (d > f.radius * 1.1) return Infinity;
     return d - f.groundRadius(_p.copy(r.pos).divideScalar(d));
   }
   if (f.kind === 'station' && f.inHangar?.(r.pos)) return r.pos.y;
@@ -153,7 +163,6 @@ class Part {
     this.geometry = geometry;
     this.material = material;
     this.mesh = null;
-    this.count = 0;
   }
 
   alloc(capacity) {
@@ -341,10 +350,13 @@ class HullKit {
   end() {
     for (const p of this.parts) {
       p.mesh.count = this.count;
+      // (none drawn, none of the kit's draw calls or shadow passes are made)
+      p.mesh.visible = this.count > 0;
       p.mesh.instanceMatrix.needsUpdate = true;
       if (p.mesh.instanceColor) p.mesh.instanceColor.needsUpdate = true;
     }
     this.flames.count = this.flameCount;
+    this.flames.visible = this.flameCount > 0;
     this.flames.instanceMatrix.needsUpdate = true;
     this.flames.geometry.attributes.aGlow.needsUpdate = true;
   }

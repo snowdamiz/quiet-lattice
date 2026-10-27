@@ -129,7 +129,12 @@ function onTrack(track: { t: number; pos: number[] }[], p: number[]): { d: numbe
     const seg = sub(track[i]!.pos, a.pos);
     const l2 = dot(seg, seg);
     const u = l2 > 0 ? Math.max(0, Math.min(1, dot(sub(p, a.pos), seg) / l2)) : 0;
-    const d = len(sub(p, a.pos.map((x, k) => x + seg[k]! * u)));
+    const d = len(
+      sub(
+        p,
+        a.pos.map((x, k) => x + seg[k]! * u),
+      ),
+    );
     if (d < best.d) best = { d, t: a.t + (track[i]!.t - a.t) * u };
   }
   return best;

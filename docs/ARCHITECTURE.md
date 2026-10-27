@@ -323,8 +323,8 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
   after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
   nobody listens for (`party`, `denied` …) are dropped quietly, and so are snapshot fields and entity kinds nothing reads
-  yet (a `mob`'s `attack` is kept in the store for P1.E04.T02). While the connection is down after a welcome, a line at
-  the top of the screen says so.
+  yet (a `mob`'s `attack` is kept in the store for the client's fauna, P1.E08.T09). While the connection is down after a
+  welcome, a line at the top of the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
   onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
   over on every welcome (a restarted server counts its ticks from 0 again). Acknowledgements go out at most once a tick
@@ -368,8 +368,40 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   `#space`, `#review:…`) or `window.dev.boot()` starts `Game.startSandbox`: offline, a new pilot by the home Waystation,
   no persistence of any kind, so the smoke specs, captures and asset reviews stay hermetic. The game itself always goes
   through the server.
-- **Remote entities** (P1.E04.T02) render from the store with 100 ms interpolation delay and up to 250 ms extrapolation,
-  frame-aware (interpolate in the entity's frame; on a frame change, re-express the buffered poses).
+- **Remote entities** (`src/remote/`, P1.E04.T02). `RemoteEntities` follows Net's snapshots (`attach(net)`; it starts
+  over at every welcome and zone change, where entity ids start over): players and `ship` entities, never the player's
+  own. Creatures are P1.E08.T09's; npcs (walkers) and props wait for the body rig (P1.E05.T04) and a prop catalog, loot
+  and pods for P1.E08.T04 and P1.E06.T03; none of them is followed. Each entity keeps a `PoseBuffer` (1.6 s): each tick's
+  pose stamped with the tick's time, in the entity's frame resolved to the client's own frame object (a frame of another
+  system is not shown).
+  - **Time.** The render time (`PlaybackClock`) is world time less the trip (the least lag of the last 40 snapshots,
+    timed on Net's estimate of the server's clock) and 100 ms: on world time because the bodies stand there, so a pose is
+    always placed through frames the trip and the delay ahead of it, however world time lies against the server's. It
+    never goes back, eases at 0.9–1.1 times world time, and jumps only forward (the first snapshots, a stall).
+  - **Between and past samples.** A cubic Hermite on positions and velocities where they agree, else straight lines;
+    orientations slerped. Past the newest sample, along its velocity for up to 250 ms, then held. A moving entity's pose
+    sent again (its client's report missed the tick) is skipped. A sample no velocity explains (more than 1 km off) or a
+    change between on foot and not is a cut: never interpolated across, shown as the jump it is when it is due.
+  - **Frames.** A pose is placed through its frame as the frame stands at world time (`frame.localToWorld`), so an entity
+    on a moon stays on the moon as drawn. A sample in another frame re-expresses the held ones into it, each with both
+    frames as they stood at its own time (`remote/frames.js`: a body's pose at any time by the shared kinematics, then
+    `setFrameInto`), and moves them to meet the new sample (its client placed itself in the new frame with its own
+    clock, which a hitch can leave tenths of a second off the server's; the frames move apart at up to ~1 km/s).
+    Whatever changes the drawn pose as a sample arrives (a frame change, the frames having moved apart over the delay; a
+    late sample after extrapolating) is taken up by an offset in the frame's axes that starts from where and as fast as
+    the entity was drawn and dies away critically damped (time constant 0.2 s); one over 2 km is shown as a jump.
+  - **Drawn** (`RemoteShips`): players flying, landed, docked or on the pulse drive as their ship, and `ship` entities,
+    by hull (a snapshot that names none is the Lark); players on foot are hidden, with no stand-in, until P1.E05.T04. A
+    hull draws with its own model or one of its tier's (IMPLEMENTATION_PLAN 0.3): only the Lark has one (the local
+    ship's) until P1.E12.T02/T03, so the test cutscene's Mule tug is not drawn. One kit of instanced meshes per hull, made
+    from the local ship's dressed model (hull surfaces merged per material, the cockpit interior left out, each gear leg
+    apart): about 26 draw calls for every Lark in view, each ship culled against the view (but within 100 m, for its
+    shadow), its gear, engine glow, exhaust and beacon its own, from its motion; nothing allocated per frame (24 Larks in
+    view: ~0.1 ms of CPU). No name tags or HUD markers yet.
+  - **Dev.** `remote/replay.js` plays recorded snapshot streams (the zone's encoding, a 60 ms trip with 40 ms of jitter)
+    through the same path offline: `pnpm capture -- --ui remote-ships` (a flypast) and `remote-ships-crowd` (24 in view).
+    `packages/tools/src/smoke/remote-online.spec.ts` flies two clients against a local server, one out of the
+    Waystation's sphere into its world's frame.
 
 ## 10. Tests
 
