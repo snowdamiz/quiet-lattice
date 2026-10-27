@@ -53,7 +53,7 @@ import {
 import { TokenBucket } from '../gateway/rateLimit.ts';
 import { InventoryNotHeldError, type InventoryService } from '../inventory/service.ts';
 import type { Zone, ZoneLog, ZoneViewer } from '../zones/zone.ts';
-import { NodeGroundPlanner, type NodeGroundSource } from './ground.ts';
+import { nodeGrounds, type NodeGroundSource } from './ground.ts';
 import { lineOfSight } from './los.ts';
 import { BUCKET_SHIFT, cellKey, NodeStore, RESPAWN_S, type CellState, type NodeState } from './nodes.ts';
 
@@ -138,7 +138,7 @@ export interface ResourceServiceOptions {
   now: () => number;
   /** the skill service, for `mining.yield` and faster-breaking nodes */
   skills?: { owned(characterId: string): readonly string[] };
-  /** where worlds' node grounds come from: a worker planner of its own by default */
+  /** where worlds' node grounds come from: fauna's worker planner by default (one plan per world for both) */
   grounds?: NodeGroundSource;
   /** sends a session a message (by default the session's own send(), or for `nodes` its sendText() with the message
    * put together from cells each checked and encoded once) */
@@ -223,7 +223,6 @@ export class ResourceService {
   private readonly now: () => number;
   private readonly skills?: ResourceServiceOptions['skills'];
   private readonly grounds: NodeGroundSource;
-  private readonly ownPlanner: NodeGroundPlanner | null;
   private readonly notify: (viewer: ZoneViewer, msg: ServerMessage) => void;
   /** `nodes` go out as text put together from cells encoded once (no `notify` was given) */
   private readonly asText: boolean;
@@ -247,8 +246,7 @@ export class ResourceService {
     this.inventory = opts.inventory;
     this.now = opts.now;
     this.skills = opts.skills;
-    this.ownPlanner = opts.grounds ? null : new NodeGroundPlanner({ log: opts.log });
-    this.grounds = opts.grounds ?? this.ownPlanner!;
+    this.grounds = opts.grounds ?? nodeGrounds;
     this.notify = opts.notify ?? ((viewer, msg) => (viewer as { send?: (m: ServerMessage) => void }).send?.(msg));
     this.asText = !opts.notify;
     this.log = opts.log;
@@ -280,10 +278,9 @@ export class ResourceService {
     this.timer = null;
   }
 
-  /** Stops, and stops its planner's worker. */
+  /** Stops (the planner is fauna's, which the process keeps). */
   async close(): Promise<void> {
     this.stop();
-    await this.ownPlanner?.close();
   }
 
   stats(): ResourceStats {

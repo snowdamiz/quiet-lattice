@@ -53,7 +53,7 @@ export function miningWorld(systemIndex = 0, tier: Tier = 0) {
   const body: BodySpec = system.bodies[system.home]!;
   const params = body.params as PlanetParams;
   const frame = frameId(system.seed, body.index);
-  const ground: NodeGround = nodeGroundsHere().ground(params, tier)!;
+  const ground: NodeGround = nodeGroundsHere.ground(params, tier)!;
   const R = params.radius;
   const level = nodeCellLevel(R);
   const layers: NodeLayer[] = planetNodeLayers(params, tier);
