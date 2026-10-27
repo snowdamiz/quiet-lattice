@@ -35,6 +35,7 @@ world/              WorldService: server clock, season, Count, Edge position, ti
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
 resources/          ResourceService: mining hits, resource nodes' shared state per cell, what each player is sent (§18)
+combat/             each zone's health, damage path, deaths and combat events; CombatService: shots, kills' rewards (§20)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
@@ -119,21 +120,22 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
-  frame, node | flora, tool, time}` (§18), `beacon {op}` (§21). Each socket's message budget is 60 a second with a
-  burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill,
-  cutscene, quest and beacon requests and mining hits (an honest client sends 4 a second, and 8 is the most a character
-  may), and the burst absorbs the backlog of a stall. Chat, invites, raising beacons and mining hits have smaller limits
-  of their own (§13, §18, §21).
+  frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21). Each socket's
+  message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
+  interactions, chat, party, inventory, skill, cutscene, quest and beacon requests, mining hits (an honest client sends 4
+  a second, and 8 is the most a character may) and shots (the base gun's 8 a second at most, never while mining), and
+  the burst absorbs the backlog of a stall. Chat, invites, raising beacons, mining hits and shots have smaller limits of
+  their own (§13, §18, §20, §21).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
+  `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message, party request or beacon request
   not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
-  reset?, cells}` (§18), `beacons {reset?, beacons, gone}` and `beacon {op, id, beacon? | name? | phase? | why?}`
-  (§21), and snapshots.
+  reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
+  id, beacon? | name? | phase? | why?}` (§21), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -177,6 +179,13 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   cells: [{cell, gone, hurt}]}` keeps a player on a world up to date with the touched nodes round it (`cell` is
   `face_i_j`, nodes in it `type_k`; `hurt` pairs a node with the fraction left); a cell with neither list is as the
   scatter places it, and `reset` replaces everything the client held for that world.
+- **Combat** (protocol 10, §20): a client sends `fire {seq, time, frame, aim}` for each shot of its ship's base gun, a
+  strict shape (a shot carrying any other field, an amount above all, is refused whole); the server answers each with
+  `fire {seq, result}`: `hit` with `target`, `miss`, `blocked` (behind the ground) or `refused` with `reason`
+  (`stale_seq`, `zone`, `weapon`, `rate`, `stale`, `mode`, `down`, `frame`, `aim`, `busy`). What hits did arrives as
+  `combat` events (now with `hp`, the fraction the target has left; `damageType` is what dealt it, `weapon`, `ability`,
+  `attack` or `hazard`, and `ability` its id), a kill's rewards as `xp {amount, from, level}` and `loot {item, count, from}`
+  events (`item` `units` for money). No client message carries an amount of damage; no event is ever taken from a client.
 - **Beacons** (protocol 11, §21): a client sends `beacon {op}`, `op` one of `raise`, `lower`, `watch`, `unwatch` and
   `answer {id}`; the server sends a watcher the shard's list (`beacons`: `reset` and the whole list as it starts
   watching, then new or changed beacons and the ids `gone`), the beacon's caller and answerer their news (`beacon {op:
@@ -299,9 +308,15 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   round it awake, since it sees them, but is no creature's prey, intruder or threat.
 - **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
   (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,
-  return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow. Hostile creatures pick targets from a threat
-  table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, `FaunaSim.hurt` adds damage. The
-  zone's metrics carry its fauna's worlds, creatures, cells by state and herds out at dens.
+  return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow, and `dead` for a corpse (§20). Hostile creatures
+  pick targets from a threat table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, and every
+  hit combat deals adds its damage (`FaunaSim.hurt`), so a creature turns on whoever hurts it most (and a grazer bolts);
+  only a player on foot is one it can go for. The zone's metrics carry its fauna's worlds, creatures, cells by state and
+  herds out at dens.
+- **Death** (P1.E06.T02, §20): combat reads a creature's species, herd level and size (`FaunaSim.creature`,
+  `creaturesIn`), and one it kills leaves its herd at once (`FaunaSim.kill`): the AI forgets it, and its herd and den see
+  the loss as they see a despawn (a pack wiped out starts its den's 300 s timer then, an apex its 1,800 s one, its pack
+  hunting on), while its entity stays a corpse for the death beat before combat despawns it.
 
 ## 7. Authority
 
@@ -388,6 +403,10 @@ before applying it.
   rest. The gateway has the planner plan the saved pose's world's ground before the check (`groundForRestore`), so it
   never plans on the main thread; one it still cannot judge is not vouched for. Persistence restores any other docked at
   home (§8).
+- *Combat* (§20) reads only what movement authority believes: a shot is fired from the zone entity's accepted pose
+  (carried on along its accepted velocity to the shot's time, a tenth of a second at most) and only in mode `ship`, its
+  aim held to the believed nose, and a hit's damage lands on the pool the believed mode says (the suit on foot, the
+  ship's shield and hull aboard).
 - A pose the server gives a character in play (an admin teleport within its zone, P1.E03.T07) re-seats its mover as a
   join does (`MovementAuthority.remove`, then `add` at that pose; a docked one on whichever pad is free, `freePad`), so
   its client's next input is judged from there.
@@ -1059,6 +1078,72 @@ requests and starts its timer.
 - **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
   P1.E12.T04 resolves ship weapons on the server); the client's half is P1.E13.T06.
 
+## 19. Meters
+
+Reserved for Heat and Charge (P1.E07.T02), which holds protocol 9 and this section on its branch until it merges.
+
+## 20. Combat (`packages/server/src/combat`)
+
+DESIGN 12.1, 9.1, 10.3, 14.9; P1.E06.T02. The server decides every hit: its health, its damage, deaths and what a kill
+is worth. Clients fire their tracers at once for feel and are told what happened. (§19 is Heat and Charge's, P1.E07.T02.)
+
+- **Health** is each zone's (`zone.combat`, `ZoneCombat`). A creature's is its mob stats' (`mobStats` of its body plan
+  and temperament at its herd's level; the apex takes the Pack Alpha's row), taken when it is first hurt. A player has
+  its suit's (`playerMaxHealth` of the nodes it entered with: 100, Second Skin 150) and its ship's shield and hull
+  (`shipStats` of the ship it entered with); a hit takes the suit when the server believes it on foot, else the shield
+  and then the hull. On the wire, an entity's `hp` is the fraction left of the pool in use (and aboard, `shield`), patched
+  as it changes and as a player's mode changes which pool is shown. Nothing heals yet and health is not saved: the
+  Recall (P1.E06.T03) and creature attacks (P1.E08.T02) decide recovery.
+- **One damage path**, `zone.combat.applyDamage(source, target, packet)`: `source` the attacker's entity (or null),
+  `packet` the server's description of the hit (`base`, `kind` (`weapon`, `ability`, `attack`, `hazard`), `what` dealt
+  it, its `DamageSource` for resistances, the attacker's modifiers, effects on the target). It runs the shared pipeline
+  (`computeDamage`: resistances by node, weapon or branch, the attacker's power, augments, what the target takes),
+  level-scaled only when the source is a creature (its entity's level; DECISIONS P1.E06.T01), then takes the health,
+  feeds the creature's threat table (`FaunaSim.hurt`), records the damage each character did (counted up to the health
+  left), tells the hooks who fought (`engaged`) and queues the event. A dead creature or a downed player takes no more.
+  Weapons (below), abilities (P1.E07.T03) and creature attacks (P1.E08.T02) all come through it; nothing a client sends
+  carries an amount.
+- **Death.** A creature at 0 dies: fauna takes it out of its herd at once (§6.2: its den's timers start), its entity
+  stays a corpse (`hp` 0, mode `dead`, no `attack`) for DEATH_BEAT_S (3 s) and is then despawned, and the hooks hear
+  `killed` with the damage by character and the killing blow's. A player at 0 is down (`down: 'suit' | 'ship'`): it takes
+  no more damage, fires no more, its event says `killed`, and the hooks hear `downed` (the Recall, P1.E06.T03, acts on
+  it; until then it stays down for its session).
+- **Events.** Each hit queues a `combat` event; hits of one source on one target by the same thing in a tick are summed
+  into one. After each tick's snapshots (the interest sets just worked out) each session is sent those whose target or
+  source its interest holds (`Zone.sees`), its own entity's first, at most 32 a tick; a tick queues at most 512. Each is
+  encoded once and written to every session as text.
+- **The base gun** (DESIGN 9.1: the ship lasers stay on LMB). Its numbers are the first fitted hitscan weapon's with a
+  per-shot damage, cooldown and range, through `shipStats` of the ship the player entered with and the nodes it owns now
+  (`baseGun`: the Lark's Pulse Lasers, 11 a volley every 0.12 s to 1,500 m; Gunnery and the laser nodes apply); P1.E12.T04
+  turns it into the Pulse Lasers module. The `CombatService` (`ws.combat`, made by the gateway) checks each `fire`
+  cheapest first: its `seq`; the player in a zone; a gun fitted; the gun's rate (a bucket of 3 shots refilled at one per
+  cooldown: a client firing as fast as its own cooldown lets it is never refused for jitter, and none fires faster for
+  long; a refused shot spends it too); its clock (within 3 s of the server's); the believed mode (`ship`); not down; the
+  aim's frame (its pose's); the aim within 30° of the believed nose (the lasers fire along it). Then the ray: from the
+  believed position carried on along the believed velocity to the shot's time (from its last input's stamp, 0.1 s at
+  most), along the aim, as far as the gun reaches, the shared `rayHits` against the living creatures of its frame's world
+  (hit spheres round their bodies, 0.6 × size + 1 m), and the first it meets must be in sight from the believed position
+  itself: the drawn ground (fauna's plan, §12) sampled along the stretch the origin was carried (the client's stamp
+  chooses the carry, so it never jumps ground the ship has not been seen to cross) and on to the hit, at most 96 times a
+  stretch (every 2 m on a short one), the gun's end and the target's skipped. A hit deals the gun's damage through the
+  damage path. Players are neither targets nor in the way: PvP is P2.E17.T01.
+- **A kill's worth** (`killLoot`, `@astra/shared/combat`): XP of the mob's level × 10 (DESIGN 14.9), units of 2 a level a
+  threat star (spread ×0.75–1.25 by a roll), and a row's drops (the stone-touched's Count residue, a boss's loot
+  resources; plain fauna drop none), rolled once and split by the damage each character did (`splitByDamage`, as a
+  node's yield). XP goes to the character's progress (levelling its entity and pushing the skill view, as a quest's
+  does), units and items into its inventory (what does not fit is lost), each told to its session as `xp` and `loot`
+  events (the session found where it is by then, the kill's zone first), and every one who hurt it is sent a quest `kill {tags: [fauna, temperament, body plan], entity}`.
+- **In combat** is having dealt or taken damage within 6 s: the skill service's `inCombat` (slots swap only out of it).
+- **The client** (`net/combat.js`): `Ship.fireLasers` fires its tracers and sends `fire` (`fireIntent`: the nose's
+  direction in the frame of the ship's pose, at the game's world time); `Net.combat` keeps the events that concern the
+  player, and the HUD shows a number off the reticle for each of its hits (gold for a kill), a flash for a blow taken and
+  a kill's XP and units as toasts. Until the client renders the server's herds (P1.E08.T09) its own local creatures are
+  not the ones the server's shots hit; their health bars, hit flashes and deaths come with that task.
+- **Bench.** The combat trial (25 ships flying low over a Tier 3 world's herds, each firing every cooldown at the
+  creature nearest it, herds put down as they thin) keeps the whole tick, its shots included, under the 10 ms p95.
+- **Not here.** Pirates' fights move to the server in P1.E08.T05 (the client's local pirate combat and asteroid hits are
+  its own until then, P1.E13.T07 for asteroids); creatures' attacks are P1.E08.T02; abilities P1.E07.T03.
+
 ## 21. Call-for-aid beacons (`packages/server/src/social/beacons.ts`)
 
 DESIGN 16.6's "Social" row and DESIGN 17, P1.E15.T02: a beacon broadcasts an instance's open slots to the shard, so a
@@ -1113,15 +1198,16 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   sent `beacon {op: 'joined', id, phase}`, the caller `beacon {op: 'answered', id, name}`, and the watchers the beacon's
   new slots (or its end, when that was the last).
 - **Helpers.** Since the quest runtime never re-places a player it did not place, the beacons do it for the helpers a
-  story answer placed, as the runtime does for a party (§17: a party that breaks up is split again): at every tick, a
-  helper that is no longer in the party it joined (it left, was kicked, or the party disbanded) or whose caller is no
-  longer in the chapter (its step ended, it went elsewhere, its kept place lapsed) goes back to the shared world
+  story answer placed, as the runtime does for a party (§17: a party that breaks up is split again): a helper that is no
+  longer in the party it joined (it left, was kicked, or the party disbanded: at once, as the party service tells of it,
+  `Parties.onLeft`, so the runtime never re-places a caller around it first) or whose caller is no longer in the chapter
+  (its step ended, it went elsewhere, its kept place lapsed: at the next tick) goes back to the shared world
   (`PhaseManager.leave`; a helper whose connection is down has its kept place given up, `PhaseManager.release`), logged
   as `beacon helper sent back`. So a party's private phase is only ever the party's: a kicked helper cannot stay with
   its actors, nor hold the phase open for the party's return. One that leaves the chapter by itself is forgotten.
 - **Refusals** go to the asker only, as `denied {of: 'raise' | 'lower' | 'answer' | 'watch', code, retryS?}`. Every
   raise, answer, end and helper sent back is logged at info, with the character, zone, phase and kind.
 - **The client.** `net.beacons` (`packages/client/src/net/beacons.js`) holds the list while watching (and watches again
-  after a reconnect, or once a watch refused for its rate may succeed), the character's own beacon, the phase its last answer put it in and the last refusal, and sends
-  the requests. The panel that shows them belongs to the chat and party UI (P1.E15.T03); until it lands they are
+  after a reconnect, or once a watch refused for its rate may succeed), the character's own beacon, the phase its last
+  answer put it in and the last refusal, and sends the requests. The panel that shows them belongs to the chat and party UI (P1.E15.T03); until it lands they are
   reachable from the dev console as `game.net.beacons` (`watch()`, `list()`, `answer(id)`, `raise()`, `lower()`).

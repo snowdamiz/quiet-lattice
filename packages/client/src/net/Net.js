@@ -1,7 +1,8 @@
 // The client's connection to the game server (docs/ARCHITECTURE.md §5, §9): the WebSocket's lifecycle (hello and join,
 // then reconnecting with backoff when the connection drops), routing the server's control messages to whoever listens,
 // decoding zone snapshots onto their baselines into the entity store and acknowledging them, the server clock from
-// ping/pong, and the player's input at 20 Hz. Gameplay reads remote state from `store`, never from the socket.
+// ping/pong, and the player's input at 20 Hz. Gameplay reads remote state from `store`, never from the socket. Shots go
+// to the server as `fire` intents (`fire`), and what they did comes back as events, kept by `combat` for the HUD.
 //
 // States: idle → connecting → joining (hello and join sent) → joined (welcome received) → closed; from joined a dropped
 // connection goes to reconnecting and back to connecting after a backoff. A refusal another try would only repeat (and a
@@ -10,6 +11,7 @@
 import { PROTOCOL_VERSION, decodeServerMessage, decodeSnapshot, encodeClientMessage } from '@astra/shared/protocol';
 import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
+import { CombatFeed } from './combat.js';
 import { SnapshotStore } from './snapshots.js';
 
 /** Input goes out at 20 Hz (the zone's tick) of real time, however fast frames run. */
@@ -76,6 +78,9 @@ export class Net {
     /** dropped: messages that did not decode; unsendable: messages that failed the schema here; rejected/unapplied:
      * snapshots neither stored nor acknowledged */
     this.stats = { dropped: 0, unsendable: 0, rejectedTicks: 0, unappliedTicks: 0 };
+    /** shots sent this session (numbered from 1), and what the server says they and others' did (ARCHITECTURE §20) */
+    this.fireSeq = 0;
+    this.combat = new CombatFeed(this);
     /** The call-for-aid beacons (beacons.js): the shard's list while watching, the character's own, and the requests. */
     this.beacons = new Beacons(this);
   }
@@ -225,6 +230,7 @@ export class Net {
     // a new session: its snapshots start over with a full one, and its inputs from 1
     this.store.reset();
     this.inputSeq = 0;
+    this.fireSeq = 0;
     this.lastInput = null;
     this.lastInputAt = -Infinity;
     this.cancelAck();
@@ -314,6 +320,17 @@ export class Net {
   ping(t = this.now()) {
     this.lastPingAt = t;
     this.raw({ t: 'ping', id: ++this.pingId, clientTime: t });
+  }
+
+  /** Asks the server to resolve a shot of the ship's guns (`fireIntent`: where they point, in which frame, when), numbered
+   * from 1 on each connection. The tracers are the game's own; what the shot did comes back as events. False when it did
+   * not go (no shot to send, not joined, or a shot the schema refuses). */
+  fire(intent) {
+    if (!intent || this.state !== 'joined') return false;
+    const msg = { t: 'fire', seq: this.fireSeq + 1, ...intent };
+    if (!this.raw(msg)) return false;
+    this.fireSeq = msg.seq;
+    return true;
   }
 
   /** Sends the player's input now: its predicted pose and mode, numbered from 1, and stamped with the time the game sampled

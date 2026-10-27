@@ -61,6 +61,8 @@ export class SocialService {
     this.zoneIndex = new ZoneIndex(this.roster, opts.zones);
     this.chats = new Chat(ctx, (characterId) => this.parties.online(characterId), this.zoneIndex);
     this.beacons = new Beacons(ctx, this.parties, opts.cutscenes);
+    // (a helper out of the party goes back at once, before the quest runtime re-places anyone)
+    this.parties.onLeft = (characterId) => this.beacons.partyLeft(characterId);
   }
 
   /**

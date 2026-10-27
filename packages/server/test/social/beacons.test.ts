@@ -532,8 +532,9 @@ describe('a story helper', () => {
   it('goes back to the shared world when kicked from the party; the party keeps its chapter and its boss', () => {
     const { h, phases, ana, mia, hal, party, step, chapter, boss } = chapterWithHelper();
     ana.party({ op: 'kick', name: 'Hal' });
-    h.advance(100);
+    // at once, as the party changes, not at the next sweep
     expect(phases.phaseOf(hal.entityId)).toBeNull();
+    h.advance(100);
     expect(phases.canSee(hal.entityId, boss)).toBe(false);
     expect([...chapter.members].sort()).toEqual([ana.entityId, mia.entityId].sort());
     // placed again at its step (as the quest runtime does), the party is in its own chapter, without Hal
@@ -567,9 +568,10 @@ describe('a story helper', () => {
     expect(phases.phaseOf(hal.entityId)).toBe(chapter.id);
     hal.party({ op: 'leave' });
     expect(h.social.partyIdOf('char-Ana')).toBeNull();
-    h.advance(100);
+    // at once, before the quest runtime could re-place the caller (now in no party) around it
     expect(phases.phaseOf(hal.entityId)).toBeNull();
     expect([...chapter.members]).toEqual([ana.entityId]);
+    h.advance(100);
     // placed again as a player in no party (as the quest runtime does), the caller is still in its own chapter
     expect(phases.phaseFor(ana.session, 'story', step, null)).toBe(chapter);
     expect(sentBack(h)).toEqual(['char-Hal:party']);

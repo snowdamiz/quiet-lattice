@@ -173,6 +173,16 @@ export class Beacons {
     this.flush();
   }
 
+  /**
+   * The character is out of its party (it left, was kicked or dropped, or the party disbanded): if a story answer made it a
+   * helper, it goes back to the shared world now rather than at the next sweep, so the quest runtime never re-places a
+   * caller around a helper that is no longer its party's (a party of two disbanding).
+   */
+  partyLeft(characterId: string): void {
+    const h = this.helpers.get(characterId);
+    if (h) this.keep(h);
+  }
+
   /** Forgets raising and list allowances that have refilled (they behave exactly like a missing one). */
   forget(now: number): void {
     for (const buckets of [this.allowances, this.lists]) for (const [account, a] of buckets) if (a.level(now) >= a.burst) buckets.delete(account);

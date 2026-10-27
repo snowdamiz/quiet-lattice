@@ -79,6 +79,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'cutscene', op: 'request', id: 'test' },
   { t: 'quest', seq: 1, op: { op: 'accept', quest: 'the_apothecarys_sodium' } },
   { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', tool: 'multitool', time: 3600.5 },
+  { t: 'fire', seq: 4, time: 3600.75, frame: '424242:2', aim: [0, -0.6, -0.8] },
   { t: 'beacon', op: { op: 'answer', id: 3 } },
 ];
 
@@ -126,10 +127,11 @@ const partyView = {
 };
 
 const events: GameEvent[] = [
-  { kind: 'combat', source: 5, target: 9, amount: 18, damageType: 'thermal', ability: 'lance', killed: false },
+  { kind: 'combat', source: 5, target: 9, amount: 18, damageType: 'ability', ability: 'lance', killed: false, hp: 0.4 },
   { kind: 'quest', questId: 'prologue.first-jobs', step: 2, status: 'step', counters: { carbon: 25 } },
   { kind: 'chat', channel: 'shard', from: 'Ana', text: 'hi', at: 3600 },
   { kind: 'loot', item: 'ferrite', count: 12, from: 9 },
+  { kind: 'xp', amount: 30, from: 9, level: 4 },
   { kind: 'notice', text: 'Docking permission granted', tone: 'good' },
   { kind: 'party', what: 'invite', name: 'Ana' },
 ];
@@ -166,6 +168,7 @@ const serverSamples: ServerMessage[] = [
   { t: 'quests', seq: 0, quests: questView },
   { t: 'mine', seq: 9, frame: '424242:3', node: '2_310_77_copper_4', result: 'depleted', item: 'copper', count: 12, added: 12 },
   { t: 'nodes', frame: '424242:3', cells: [{ cell: '2_310_77', gone: ['copper_4'], hurt: [['sodium_1', 0.3]] }] },
+  { t: 'fire', seq: 4, result: 'hit', target: 9 },
   { t: 'beacons', beacons: [beacon], gone: [2] },
   { t: 'beacon', op: 'raised', id: 3, beacon },
 ];
@@ -180,10 +183,9 @@ const http = {
 
 describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
-  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8:
-  // mining and resource nodes (P1.E13.T01); 9: heat and Charge (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid
-  // beacons (P1.E15.T02). A branch that changes a message bumps the version, adds its line to the history under
-  // PROTOCOL_VERSION and updates this.
+  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
+  // (P1.E13.T01); 9: meters (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid beacons (P1.E15.T02). A branch that
+  // changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
   it('is version 11, and the history under the constant names each version up to it exactly once', () => {
     expect(PROTOCOL_VERSION).toBe(11);
     const source = MESSAGES_SOURCE;
@@ -224,7 +226,7 @@ describe('protocol: control messages', () => {
       expect(decodeServerMessage(text)).toEqual(m);
       expect(decodeClientMessage(text)).toBeNull();
     }
-    expect(decodeServerMessage(encodeMessage(clientSamples.at(-1)!))).toBeNull();
+    expect(decodeServerMessage(encodeMessage(clientSamples.find((m) => m.t === 'inventory')!))).toBeNull();
   });
 
   it.each(skillOps.map((op) => [`${op.op} ${JSON.stringify(op).slice(0, 40)}`, op]))('client skills %s round-trips', (_, op) => {

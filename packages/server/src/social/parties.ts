@@ -63,6 +63,9 @@ export interface PartyInfo {
 }
 
 export class Parties {
+  /** Hears of each character that is out of its party (it left, was kicked, dropped, or the party disbanded), once the
+   * party is as it now stands: the call-for-aid beacons send a helper back at once (social/beacons.ts). */
+  onLeft: ((characterId: string) => void) | null = null;
   private readonly parties = new Map<string, Party>();
   private readonly byCharacter = new Map<string, Party>();
   /** pending invites by invitee, then by inviter */
@@ -333,13 +336,17 @@ export class Parties {
     }
     this.ctx.log?.info({ party: p.id, character: characterId, why, members: p.members.size }, 'party member left');
     this.tell(p, why === 'kicked' ? 'kicked' : 'left', m.name);
-    if (p.members.size < 2) return this.disband(p);
-    if (p.leader === characterId) {
-      p.leader = this.successor(p);
-      this.ctx.log?.info({ party: p.id, leader: p.leader }, 'party leader handed on');
-      this.tell(p, 'leader', p.members.get(p.leader)!.name);
+    if (p.members.size < 2) {
+      this.disband(p);
+    } else {
+      if (p.leader === characterId) {
+        p.leader = this.successor(p);
+        this.ctx.log?.info({ party: p.id, leader: p.leader }, 'party leader handed on');
+        this.tell(p, 'leader', p.members.get(p.leader)!.name);
+      }
+      this.flush(p);
     }
-    this.flush(p);
+    this.onLeft?.(characterId);
   }
 
   /** The longest-standing member online, else the longest-standing. */
@@ -358,9 +365,11 @@ export class Parties {
         news(o, 'disbanded');
       }
     }
+    const members = [...p.members.keys()];
     p.members.clear();
     this.parties.delete(p.id);
     this.ctx.log?.info({ party: p.id }, 'party disbanded');
+    for (const id of members) this.onLeft?.(id);
   }
 
   /**
