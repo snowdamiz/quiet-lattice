@@ -238,4 +238,15 @@ describe('a craft', () => {
       ),
     ).toBe(CRAFT_MAX);
   });
+
+  it('makes no more than CRAFT_MAX crafts at once, and only a whole number of at least one, whatever is held', () => {
+    const plenty = holding([
+      ['ferrite', 50000],
+      ['carbon', 50000],
+    ]);
+    const flak = getRecipe('flak_ammo');
+    expect(craft(plenty, flak, CRAFT_MAX)).toMatchObject({ ok: true, made: 50 * CRAFT_MAX });
+    for (const n of [CRAFT_MAX + 1, 0, -1, 1.5, Number.NaN]) expect(craft(plenty, flak, n), String(n)).toEqual({ ok: false, reason: 'materials' });
+    expect(totals(plenty)).toEqual({ ferrite: 50000, carbon: 50000 });
+  });
 });

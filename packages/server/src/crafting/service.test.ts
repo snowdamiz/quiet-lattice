@@ -295,6 +295,24 @@ describe('a craft refused changes nothing', () => {
     expect(make('flak_ammo', 'station', 20, { gap: 1 })).toMatchObject({ result: 'made', count: 1000 });
   });
 
+  it('a stale number or a character out of play spends none of the rate; a refusal after the rate check does', () => {
+    give([
+      ['ferrite', 1000],
+      ['carbon', 1000],
+    ]);
+    // (a fresh rate: the asks below come at once)
+    t += 60;
+    expect(make('flak_ammo', 'station', 1, { seq: 10, gap: 0 }).result).toBe('made');
+    for (let i = 0; i < 6; i++) expect(make('flak_ammo', 'station', 1, { seq: 10, gap: 0 }).reason).toBe('stale_seq');
+    book.close('c1');
+    expect(make('flak_ammo', 'station', 1, { seq: 11, gap: 0 }).reason).toBe('zone');
+    book.open('c1');
+    // three left of the burst: a refusal for the recipe spends one, then two crafts, then the rate
+    expect(make('torpedo', 'station', 1, { seq: 12, gap: 0 }).reason).toBe('not_known');
+    expect([13, 14, 15].map((s) => make('flak_ammo', 'station', 1, { seq: s, gap: 0 }).result)).toEqual(['made', 'made', 'refused']);
+    expect(crafting.stats().refused).toMatchObject({ rate: 1, stale_seq: 6, zone: 1, not_known: 1 });
+  });
+
   it('a stale number, a character out of play', () => {
     give(MATERIALS);
     expect(make('flak_ammo', 'station', 1, { seq: 5 })).toMatchObject({ result: 'made' });

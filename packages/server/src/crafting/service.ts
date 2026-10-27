@@ -2,7 +2,8 @@
 // ship's fabricator, or to `learn` one from its item, and the server checks the request cheapest first before anything
 // changes:
 // - its number (above the session's last), the character in play (its recipes and inventory held), its rate
-//   (CRAFT_BURST at once, CRAFT_PER_S after; a refused request spends it too, so no client probes faster);
+//   (CRAFT_BURST at once, CRAFT_PER_S after; every request that gets this far spends one, refused for the rate or any
+//   check after it or not, so no client probes faster; a stale number or a character out of play spends none);
 // - the recipe in the table (`unknown`), and for `make`: known (`not_known`); a recipe that fabricator makes in this
 //   system (`fabricator`: a Waystation's its line's Tier 0–2 recipes, the ship's only ammo and cartridges, torpedoes
 //   from Tier 2); the player where that fabricator is (`place`), as movement authority believes it (its zone entity's

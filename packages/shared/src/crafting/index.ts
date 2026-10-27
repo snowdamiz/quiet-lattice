@@ -183,9 +183,10 @@ export function reconcileKnown(stored: KnownRecipes): { knowledge: KnownRecipes;
 /**
  * What using a crafted consumable restores (data/items.ts `restores`), or null: a pulse fuel cell 100 Charge, an oxygen
  * or sodium cartridge 60 life support or hazard protection (DESIGN 15.7: "refills restore 60 instead of 40"). The hook
- * for the meters: Heat and Charge's service (P1.E07.T02) refills Charge with `refillCharge(character, amount)` when a
- * pulse fuel cell is used (taken from the inventory with `InventoryService.consume`), and the suit's life support and
- * hazard protection do the same with cartridges once they are the server's.
+ * for the meters, still pending: Heat and Charge's service is P1.E07.T02's and not on main yet; its `refillCharge` is the
+ * seam that task adds, to be called with this amount when a pulse fuel cell is used (taken from the inventory with
+ * `InventoryService.consume`). The suit's life support and hazard protection do the same with cartridges once they are
+ * the server's.
  */
 export function refillOf(item: string): { meter: 'charge' | 'life_support' | 'hazard_protection'; amount: number } | null {
   const info = itemInfo(item);

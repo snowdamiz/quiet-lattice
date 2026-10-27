@@ -123,11 +123,12 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
   frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21), `analyze {seq,
-  time, target}` (§22), `craft {seq, op}` (§23). Each socket's message budget is 60 a second with a burst of 120: input and acks take 40, leaving
-  room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and beacon requests, mining hits
-  (an honest client sends 4 a second, and 8 is the most a character may), shots (the base gun's 8 a second at most,
-  never while mining) and analyses, and the burst absorbs the backlog of a stall. Chat, invites, raising beacons, mining
-  hits, shots and analyses have smaller limits of their own (§13, §18, §20, §21, §22).
+  time, target}` (§22), `craft {seq, op}` (§23). Each socket's message budget is 60 a second with a burst of 120: input
+  and acks take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and
+  beacon requests, mining hits (an honest client sends 4 a second, and 8 is the most a character may), shots (the base
+  gun's 8 a second at most, never while mining), analyses and fabricator requests, and the burst absorbs the backlog of
+  a stall. Chat, invites, raising beacons, mining hits, shots, analyses and fabricator requests have smaller limits of
+  their own (§13, §18, §20, §21, §22, §23).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
@@ -1310,7 +1311,8 @@ gate is recipes and materials, not a skill tree.
   the ship it left (`MovementAuthority.parkedOf`; a zone without movement authority has none, so on foot it is refused).
 - **A request** (`craft {seq, op}`, §5) goes from the gateway to the `CraftingService` (`crafting/service.ts`), checked
   cheapest first: `stale_seq`; `zone` (the character's recipes and inventory held); `rate` (4 at once per character,
-  then 2 a second; a refused request spends it too); `unknown` (not in the table); then for `make`: `not_known`;
+  then 2 a second: every request that gets this far spends one, refused for the rate or anything after it or not; a
+  stale number or a character out of play spends none); `unknown` (not in the table); then for `make`: `not_known`;
   `fabricator`; `place`; and the craft itself. For `learn`: `known`, `no_item`. A craft is instant (no state held between
   request and result) and all or nothing: the shared `craft(inv, recipe, count)` takes every material from the suit
   first, then the cargo pods, and adds the output to the suit first, then the cargo, on a copy, and the inventory service
@@ -1318,13 +1320,17 @@ gate is recipes and materials, not a skill tree.
   it is `materials`; when the output does not fit even in the room the materials leave, `no_room`; either way nothing is
   used up. Crafts made are logged at debug, lessons at info.
 - **Using what is made.** Warp cells are what the client's warp spends (`Inventory.warpCells`; the warp itself stays the
-  client's until zone handoff, P1.E04.T04); the trade panel's 1,800-unit warp cell goes with the demo's `SHOP` list
-  (P1.E07.T09). What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills
-  Charge once Heat and Charge are the server's (P1.E07.T02: its meters' `refillCharge`, called with that amount as a
-  cell is used up through `InventoryService.consume`); cartridges restore 60 once the suit's life support and hazard
-  protection are the server's (today the client's `Game.updateSurvival` refills them from raw oxygen and sodium, 40 a
-  time); flak ammo stacks until the Flak Cannon fires on the server (P1.E12.T04, P2.E24.T04). Salvage (a module broken
-  down into a third of its materials, `salvageYield`) waits for modules in the inventory (P1.E12.T04, P2.E20).
+  client's until zone handoff, P1.E04.T04). The fabricator replaces the trade panel's 1,800-unit warp cell (DESIGN
+  15.7), which is gone (`pnpm gate:removed` holds it to this task): until the client mines through the server
+  (P1.E13.T06), online players get warp cells only from the starting kit and crash sites. The rest of the demo's `SHOP`
+  list, the 300-unit pulse fuel refill among it, goes with P1.E07.T09, since a crafted pulse fuel cell cannot be used
+  yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
+  once Heat and Charge are the server's, through P1.E07.T02's `refillCharge`, a seam that task adds and that is not on
+  main yet (called with that amount as a cell is used up through `InventoryService.consume`); cartridges restore 60 once
+  the suit's life support and hazard protection are the server's (today the client's `Game.updateSurvival` refills them
+  from raw oxygen and sodium, 40 a time); flak ammo stacks until the Flak Cannon fires on the server (P1.E12.T04,
+  P2.E24.T04). Salvage (a module broken down into a third of its materials, `salvageYield`) waits for modules in the
+  inventory (P1.E12.T04, P2.E20).
 - **The client** (`net/crafting.js`, `ui/Fabricator.js`). `game.crafting` keeps the recipes the server says the
   character knows, checks a request with the same shared rules (`makeProblem`, `learn`: a refusal they predict is said
   at once and never sent) and sends it; in the dev sandbox it makes the craft on the client's own inventory with them.
