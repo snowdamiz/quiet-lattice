@@ -3,7 +3,7 @@
 // above (off other ships if it can be), else none; room to spare, here and where the mark is headed, to take a side.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, labelBox, makeRoom, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
+import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, hullCorners, labelBox, makeRoom, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
 
 const W = 1920;
 const H = 1080;
@@ -159,6 +159,25 @@ describe('pilot markers', () => {
     expect(addCovers([], {})).toEqual([]);
     expect(addCovers([], { covers: () => false })).toEqual([]);
     expect(addCovers([], { covers: () => [null, { left: 5, top: 5, right: 5, bottom: 9 }] })).toEqual([]);
+  });
+
+  it("outline the local ship by its convex hull's corners only, in its own space", () => {
+    // a ship turned and moved, its hull a finely divided box (hundreds of vertices) with a sphere inside: a few points, all
+    // on the box's edges (in its own space), its 8 corners among them, none of the sphere's
+    const model = new THREE.Group();
+    model.position.set(100, -20, 5);
+    model.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.7);
+    model.add(new THREE.Mesh(new THREE.BoxGeometry(12, 4, 14, 8, 4, 8)), new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 8)));
+    const corners = hullCorners(model);
+    const n = corners.length / 3;
+    expect(n).toBeGreaterThanOrEqual(8);
+    expect(n).toBeLessThan(30);
+    const at = (x, y, z) => [...Array(n).keys()].some((i) => Math.hypot(corners[3 * i] - x, corners[3 * i + 1] - y, corners[3 * i + 2] - z) < 1e-4);
+    for (let k = 0; k < 8; k++) expect(at(k & 1 ? 6 : -6, k & 2 ? 2 : -2, k & 4 ? 7 : -7)).toBe(true);
+    for (let i = 0; i < n; i++) {
+      const out = [Math.abs(corners[3 * i]) / 6, Math.abs(corners[3 * i + 1]) / 2, Math.abs(corners[3 * i + 2]) / 7].filter((v) => v > 1 - 1e-4);
+      expect(out.length).toBeGreaterThanOrEqual(2);
+    }
   });
 
   it("keep off the local ship's outline, slice by slice, not its box", () => {

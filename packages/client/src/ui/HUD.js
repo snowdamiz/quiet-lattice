@@ -3,8 +3,7 @@ import * as THREE from 'three';
 import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { EdgeCompass } from './EdgeCompass.js';
-import { ConvexHull } from 'three/addons/math/ConvexHull.js';
-import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fits, labelWidth, makeRoom, markOf, nudge, outlineBands, placeLabel, screenBounds } from '../remote/markers.js';
+import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fits, hullCorners, labelWidth, makeRoom, markOf, nudge, outlineBands, placeLabel, screenBounds } from '../remote/markers.js';
 
 const _v = new THREE.Vector3();
 
@@ -18,30 +17,6 @@ const namedFirst = (a, b) => b.shown - a.shown;
 /** The slices the local ship's outline on screen is kept out in. */
 const OUTLINE_BANDS = 8;
 
-/** The corners (x, y, z in its own space, flat) of the convex hull round every mesh of `model`. */
-function hullCorners(model) {
-  model.updateMatrixWorld(true);
-  const toModel = new THREE.Matrix4().copy(model.matrixWorld).invert();
-  const m = new THREE.Matrix4();
-  const points = [];
-  // (one point a 2 cm cell: the hull is the same, and found sooner)
-  const cells = new Set();
-  model.traverse((o) => {
-    const pos = o.isMesh && o.geometry?.attributes.position;
-    if (!pos) return;
-    m.multiplyMatrices(toModel, o.matrixWorld);
-    for (let i = 0; i < pos.count; i++) {
-      const v = new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(m);
-      const key = `${Math.round(v.x * 50)},${Math.round(v.y * 50)},${Math.round(v.z * 50)}`;
-      if (cells.has(key)) continue;
-      cells.add(key);
-      points.push(v);
-    }
-  });
-  if (points.length < 4) return new Float32Array(points.flatMap((v) => v.toArray()));
-  const hull = new ConvexHull().setFromPoints(points);
-  return new Float32Array(hull.vertices.flatMap((v) => v.point.toArray()));
-}
 /** How long (ms) a pilot's mark or name takes to fade in or out (style.css's transition), and how long a name gone stays
  * gone at least: until its side has had room that long, or had none that long before it takes another. */
 const FADE_MS = 150;
@@ -674,7 +649,7 @@ export class HUD {
       if (p.frames === 2 && steady) side = placeLabel(p.x, p.y, w, LABEL_H, room, _label, null, ROOM_MARGIN);
       if (p.frames === 2 && !side) {
         p.hiddenAt = now;
-        p.why = 'no room';
+        p.why = steady ? 'no room' : 'too fast to read';
       }
     } else {
       const roomy = p.side && fits(p.side, p.x, p.y, w, LABEL_H, room, _label, ROOM_MARGIN);

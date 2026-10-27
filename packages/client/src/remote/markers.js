@@ -7,6 +7,7 @@
 // clear round it, here and where its mark is headed, and keeps off other pilots' ships when it can; one shown stays
 // while it has any room at all. Boxes are flat arrays of x0, y0, x1, y1.
 import * as THREE from 'three';
+import { ConvexHull } from 'three/addons/math/ConvexHull.js';
 
 /** Px between the top of a ship's bounds on screen and its mark. */
 export const MARK_GAP = 6;
@@ -87,6 +88,42 @@ export function addCovers(keepOut, social, pad = 0) {
     if (Number.isFinite(x0) && Number.isFinite(y0) && Number.isFinite(x1) && Number.isFinite(y1) && x1 > x0 && y1 > y0) keepOut.push(x0 - pad, y0 - pad, x1 + pad, y1 + pad);
   }
   return keepOut;
+}
+
+/**
+ * The corners (x, y, z in its own space, flat) of the convex hull round every mesh of `model`: the points whose projection
+ * outlines it from any side (outlineBands), a few hundred for a ship of tens of thousands of vertices. Worked out once.
+ */
+export function hullCorners(model) {
+  model.updateMatrixWorld(true);
+  const toModel = new THREE.Matrix4().copy(model.matrixWorld).invert();
+  const m = new THREE.Matrix4();
+  const points = [];
+  // (one point a 2 cm cell: the hull is the same, and found sooner)
+  const cells = new Set();
+  model.traverse((o) => {
+    const pos = o.isMesh && o.geometry?.attributes.position;
+    if (!pos) return;
+    m.multiplyMatrices(toModel, o.matrixWorld);
+    for (let i = 0; i < pos.count; i++) {
+      const v = new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(m);
+      const key = `${Math.round(v.x * 50)},${Math.round(v.y * 50)},${Math.round(v.z * 50)}`;
+      if (cells.has(key)) continue;
+      cells.add(key);
+      points.push(v);
+    }
+  });
+  if (points.length < 4) return new Float32Array(points.flatMap((v) => v.toArray()));
+  // (its faces' corners: the hull keeps every point it was given among its vertices)
+  const corners = new Set();
+  for (const face of new ConvexHull().setFromPoints(points).faces) {
+    let e = face.edge;
+    do {
+      corners.add(e.head().point);
+      e = e.next;
+    } while (e !== face.edge);
+  }
+  return new Float32Array([...corners].flatMap((v) => v.toArray()));
 }
 
 // (the z of the cross product of a - o and b - o: which way o, a, b turn)
