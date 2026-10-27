@@ -6,12 +6,13 @@ import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '..
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 4;
+export const PROTOCOL_VERSION = 5;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
 // 3: social: chat and party requests, party state, denied, party news, chat lines held to the client's rules (P1.E15.T01)
-// 4: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
+// 4: creatures' attack field (P1.E08.T01)
+// 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */

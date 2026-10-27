@@ -285,6 +285,12 @@ export class PhaseManager {
     return id === viewer || this.sees(this.placed.get(viewer), id);
   }
 
+  /** Whether entity `id` is out of the shared world's sight: a member sealed in its phase (a bay, event or raid), or one
+   * of a phase's own entities. The shared world's systems (fauna) leave such an entity alone. */
+  hiddenFromShared(id: number): boolean {
+    return !this.sees(undefined, id);
+  }
+
   // ---------- the zone's hooks ----------
 
   /**

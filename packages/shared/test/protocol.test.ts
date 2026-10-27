@@ -143,14 +143,17 @@ const http = {
 } as const;
 
 describe('protocol: version', () => {
-  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: the skill
-  // web (P1.E07.T01). A branch that changes a message bumps the version, adds its line to the history under
-  // PROTOCOL_VERSION and updates this.
-  it('is version 4, and the history under the constant names every version up to it', () => {
-    expect(PROTOCOL_VERSION).toBe(4);
+  // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
+  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01). A branch that changes a message bumps the version, adds its
+  // line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 5, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(5);
     const source = MESSAGES_SOURCE;
-    for (let v = 1; v <= PROTOCOL_VERSION; v++) expect(source, `history line for ${v}`).toMatch(new RegExp(`^// ${v}: .+\\(P\\d\\.E\\d{2}\\.T\\d{2}\\)$`, 'm'));
-    expect(source).not.toMatch(new RegExp(`^// ${PROTOCOL_VERSION + 1}: `, 'm'));
+    const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
+    for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);
+    // one line per number, 1 to the constant with none missing: two branches that both took a number conflict here
+    expect(history.map((h) => h.v)).toEqual(Array.from({ length: PROTOCOL_VERSION }, (_, i) => i + 1));
+    expect(Math.max(...history.map((h) => h.v))).toBe(PROTOCOL_VERSION);
   });
 });
 
@@ -454,6 +457,32 @@ describe('protocol: snapshots', () => {
     expect(dropped).toEqual(['5.pos']);
     expect(back.entities[0]).toEqual({ id: 5, hp: 1, shield: 0, name: 'Ana' });
     expect(back.entities[1]).toEqual(full.entities[1]);
+  });
+
+  it('carries a creature’s attack phase (0–1, clamped) and clears it when the attack ends', () => {
+    const dropped: string[] = [];
+    const attacking: EntityState = { id: 9, mode: 'attack', attack: 0.25 };
+    expect(decodeSnapshot(encodeSnapshot({ ...full, entities: [attacking] }))!.entities).toEqual([attacking]);
+    const over = decodeSnapshot(
+      encodeSnapshot(
+        {
+          ...full,
+          entities: [
+            { id: 9, attack: 1.0000001 },
+            { id: 10, attack: -1e-9 },
+          ],
+        },
+        dropped,
+      ),
+    )!;
+    expect(over.entities).toEqual([
+      { id: 9, attack: 1 },
+      { id: 10, attack: 0 },
+    ]);
+    expect(dropped).toEqual([]);
+    const done: Snapshot = { tick: 121, time: 3600.1, ack: 8, full: false, base: 120, entities: [{ id: 9, mode: 'return', clear: ['attack'] }], removed: [] };
+    expect(decodeSnapshot(encodeSnapshot(done))).toEqual(done);
+    expect(applyEntityDelta({ id: 9, mode: 'attack', attack: 0.5 }, done.entities[0])).toEqual({ id: 9, mode: 'return' });
   });
 
   it('validates every field on encode, so the client never rejects what the server sent', () => {
