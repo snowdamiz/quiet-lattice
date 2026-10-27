@@ -179,5 +179,31 @@ describe('the admin service out of play', () => {
     }
     expect(await codeOf(admin.run({ cmd: 'grant', character: 'nobody', what: 'ferrite', count: 1 }, who))).toBe('not_found');
     expect(await codeOf(admin.run({ cmd: 'set-quest-step', character: 'ves', quest: 'q', step: 1 }, who))).toBe('unavailable');
+    expect(await codeOf(admin.run({ cmd: 'rename', kind: 'body', key: '1:2', name: 'Halcyon' }, who))).toBe('unavailable');
+  });
+
+  it('renames a find through the discovery seam as its operator, and says why it did not', async () => {
+    const { persistence } = setup();
+    const asked: unknown[] = [];
+    const admin = new AdminService({
+      directory: { character: async () => null, account: async () => null },
+      persistence,
+      discoveries: {
+        rename: async (kind, key, name, by) => {
+          asked.push([kind, key, name, by]);
+          return key === '1:2'
+            ? { ok: true, find: { kind, key, finder: 'Ves', at: 5, ...(name ? { name } : {}) } }
+            : { ok: false, error: 'not_found', message: `no ${kind} ${key}` };
+        },
+      },
+    });
+    expect(await admin.run({ cmd: 'rename', kind: 'body', key: '1:2', name: 'Halcyon' }, who)).toEqual({ kind: 'body', key: '1:2', finder: 'Ves', at: 5, name: 'Halcyon' });
+    expect(await admin.run({ cmd: 'rename', kind: 'body', key: '1:2', name: null }, who)).toEqual({ kind: 'body', key: '1:2', finder: 'Ves', at: 5 });
+    expect(await codeOf(admin.run({ cmd: 'rename', kind: 'body', key: '1:3', name: 'Halcyon' }, who))).toBe('not_found');
+    expect(asked).toEqual([
+      ['body', '1:2', 'Halcyon', 'admin:tester'],
+      ['body', '1:2', null, 'admin:tester'],
+      ['body', '1:3', 'Halcyon', 'admin:tester'],
+    ]);
   });
 });

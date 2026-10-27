@@ -33,6 +33,9 @@ describe('admin command parsing', () => {
       ok(['mute', 'someone']),
       ok(['mute', 'someone', '90']),
       ok(['unmute', 'someone']),
+      ok(['rename', 'body', '424242:3', 'Halcyon']),
+      ok(['rename', 'site', '424242:3#17', 'Big', 'Sky', 'Rest']),
+      ok(['rename', 'species', '424242:3/4', '--clear']),
     ];
     for (const c of commands) expect(AdminCommand.parse(c)).toEqual(c);
     expect(commands[3]).toEqual({ cmd: 'teleport', character: 'Ves Ka', system: 12, frame: 'station', pose: 'docked' });
@@ -43,6 +46,9 @@ describe('admin command parsing', () => {
     expect(commands[10]).toEqual({ cmd: 'spawn', system: 4, spec: { kind: 'entity', entity: 'npc', frame: 'station', at: [1, 2, 3], name: 'Trader' } });
     expect(commands[14]).toEqual({ cmd: 'mute', account: 'someone' });
     expect(commands[15]).toEqual({ cmd: 'mute', account: 'someone', seconds: 90 });
+    expect(commands[17]).toEqual({ cmd: 'rename', kind: 'body', key: '424242:3', name: 'Halcyon' });
+    expect(commands[18]).toEqual({ cmd: 'rename', kind: 'site', key: '424242:3#17', name: 'Big Sky Rest' });
+    expect(commands[19]).toEqual({ cmd: 'rename', kind: 'species', key: '424242:3/4', name: null });
   });
 
   it('says what is wrong with bad arguments', () => {
@@ -62,6 +68,8 @@ describe('admin command parsing', () => {
     expect(error(['set-skill-points', 'ves', '-1'])).toMatch(/^points: /);
     expect(error(['mute', 'x', '0'])).toMatch(/^seconds: /);
     expect(error(['mute', 'x', String(8 * 86400)])).toMatch(/^seconds: /);
+    expect(error(['rename', 'body', '424242:3'])).toBe('missing <name>');
+    expect(error(['rename', 'city', '424242:3', 'Halcyon'])).toMatch(/^kind: /);
   });
 
   it('refuses commands the channel is sent that the CLI would never make', () => {
