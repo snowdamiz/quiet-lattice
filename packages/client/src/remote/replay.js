@@ -229,8 +229,9 @@ export function padsTicks(game, { t0 = game.time, seconds = 30 } = {}) {
 
 /**
  * Low over the local ship's world, in its frame (turning with it), for the dev captures: another pilot's Lark set down
- * on the ground ahead and to the right, gear down, and two more flying past low over the ground from left to right,
- * following it 45-70 m up as it rises and falls, opening their throttles (80 to 250 m/s).
+ * on the ground ahead and to the right, gear down, and three more flying past low over the ground from left to right
+ * (two together, then one 2 s behind), following it 35-70 m up as it rises and falls, opening their throttles (80 to
+ * 250 m/s).
  */
 export function surfaceTicks(game, { t0 = game.time, seconds = 30 } = {}) {
   const s = game.ship.state;
@@ -254,7 +255,7 @@ export function surfaceTicks(game, { t0 = game.time, seconds = 30 } = {}) {
     const u = t - t0 - start;
     return over(-330 + 80 * u + (u > 0 ? 42 * u * u : 0), z, alt + 6 * Math.sin(u), out);
   };
-  const passes = [pass(0, 95, 46), pass(0.5, 140, 62)];
+  const passes = [pass(0, 95, 46), pass(0.5, 140, 62), pass(2.1, 120, 40)];
   return ticksOf(t0, seconds, (t) => [
     { id: 401, kind: 'player', frame, ...pilot(5), ...landed },
     ...passes.map((path, i) => ({ id: 411 + i, kind: 'player', frame, mode: 'ship', ...pilot(i + 2), ...flown(path, t, radial, -0.15) })),

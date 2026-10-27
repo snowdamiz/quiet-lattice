@@ -620,11 +620,12 @@ export const SCREENS: Record<string, ScreenDef> = {
     open: (page) => openRemotes(page, 'pads', 1.6, 'pads'),
   },
   // low over the home world, in its turning frame: another pilot's Lark set down on the ground ahead, gear down, and two
-  // more flying past low over the ground, following it as it rises and falls, throttles opening
+  // more flying past low over the ground, following it as it rises and falls, throttles opening (the still as they
+  // cross; a third crosses during the clip)
   'remote-ships-surface': {
     hudClock: true,
     clipSeconds: 2.5,
-    open: (page) => openRemotes(page, 'surface', 1.0, 'surface'),
+    open: (page) => openRemotes(page, 'surface', 2.2, 'surface'),
   },
   'station-hangar': {
     hash: '#dock',
