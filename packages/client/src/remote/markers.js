@@ -1,11 +1,12 @@
 // Where other pilots' markers go on screen (docs/ARCHITECTURE.md §9, "Markers"): pure functions the HUD runs each frame.
 // Every pilot the local ship's sensors pick up and that is in view has a mark: MARK_GAP px over the top of its ship's
-// bounds on screen (the box the ship fills, projected), nudged off the keep-out (the fixed HUD, the local ship) when it
-// would fall on it, never dropped for it. Its name and range sit LABEL_GAP px from the mark, to its right, its left or
-// above it, over the top of the ship's bounds, never across them; a label keeps its side while that has room, and with
-// no side with room the name goes and the mark stays. A label taking a side (or coming back to one) wants ROOM_MARGIN px
-// clear round it, here and where its mark is headed, and keeps off other pilots' ships when it can; one shown stays
-// while it has any room at all. Boxes are flat arrays of x0, y0, x1, y1.
+// bounds on screen (the box the ship fills, projected; drawn in to its middle for a ship filling the screen), nudged off
+// the keep-out (the fixed HUD, the social panels, the local ship's outline) when it would fall on it, sliding round it
+// at a capped speed, never dropped for it. Its name and range sit LABEL_GAP px from the mark, to its right, its left or
+// above it, over the top of the ship's bounds, never across them; a label keeps its side while that has room all the way
+// to where its mark is headed, and with no side with room the name goes and the mark stays. A label taking a side (or
+// coming back to one) wants ROOM_MARGIN px clear round it, and keeps off other pilots' ships when it can. Boxes are flat
+// arrays of x0, y0, x1, y1.
 import * as THREE from 'three';
 import { ConvexHull } from 'three/addons/math/ConvexHull.js';
 
