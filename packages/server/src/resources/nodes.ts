@@ -62,16 +62,32 @@ export interface CellState {
   readonly nodes: Map<string, NodeState>;
 }
 
+/** Touched cells are also kept in buckets of 2^BUCKET_SHIFT cells a side (about 512 m), so the cells round a player are
+ * found by looking in a handful of buckets rather than through every touched cell of its world. */
+export const BUCKET_SHIFT = 3;
+
 /** One world's touched nodes. */
 export class WorldNodes {
   readonly cells = new Map<number, CellState>();
+  /** touched cells by bucket (bucketKey) */
+  readonly buckets = new Map<number, Set<CellState>>();
+  /** the grid level of its buckets */
+  readonly bucketLevel: number;
   constructor(
     /** its frame id */
     readonly frame: string,
     readonly params: PlanetParams,
     /** its cell grid's level */
     readonly level: number,
-  ) {}
+  ) {
+    this.bucketLevel = Math.max(0, level - BUCKET_SHIFT);
+  }
+
+  /** The bucket a cell of this world is kept in. */
+  bucketOf(cell: Pick<NodeCell, 'face' | 'i' | 'j'>): number {
+    const shift = this.level - this.bucketLevel;
+    return cellKey({ face: cell.face, i: cell.i >> shift, j: cell.j >> shift, level: this.bucketLevel });
+  }
 }
 
 /** A cell's number on a world of grid level `level` (exact in a double: under 6 × 2^34). */
@@ -177,6 +193,10 @@ export class NodeStore {
       const center = nodeCellCenter(cell, [0, 0, 0] as Vec3);
       c = { world, key, id: `${cell.face}_${cell.i}_${cell.j}`, cell, center, version: this.nextVersion++, nodes: new Map() };
       world.cells.set(key, c);
+      const b = world.bucketOf(cell);
+      let bucket = world.buckets.get(b);
+      if (!bucket) world.buckets.set(b, (bucket = new Set()));
+      bucket.add(c);
     }
     const n: NodeState = {
       id: `${c.id}_${sub}`,
@@ -283,8 +303,13 @@ export class NodeStore {
     this.states--;
     this.bump(c, changed);
     if (c.nodes.size) return;
-    c.world.cells.delete(c.key);
-    if (!c.world.cells.size) this.worlds.delete(c.world.frame);
+    const w = c.world;
+    w.cells.delete(c.key);
+    const b = w.bucketOf(c.cell);
+    const bucket = w.buckets.get(b);
+    bucket?.delete(c);
+    if (bucket?.size === 0) w.buckets.delete(b);
+    if (!w.cells.size) this.worlds.delete(w.frame);
   }
 
   private bump(c: CellState, changed: Set<CellState>): void {

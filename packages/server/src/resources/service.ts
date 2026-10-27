@@ -26,7 +26,7 @@
 //   sent. Nothing is sent to anyone while no node near them is touched.
 import { applyStatMods, modsOfNodes } from '@astra/shared/combat';
 import { getSkillNode } from '@astra/shared/data';
-import type { ClientMessage, ServerMessage } from '@astra/shared/protocol';
+import { NodeCellState as NodeCellSchema, type ClientMessage, type ServerMessage } from '@astra/shared/protocol';
 import {
   FLORA_HARVEST,
   floraGrows,
@@ -55,12 +55,12 @@ import { InventoryNotHeldError, type InventoryService } from '../inventory/servi
 import type { Zone, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import { NodeGroundPlanner, type NodeGroundSource } from './ground.ts';
 import { lineOfSight } from './los.ts';
-import { cellKey, NodeStore, RESPAWN_S, type CellState, type NodeState } from './nodes.ts';
+import { BUCKET_SHIFT, cellKey, NodeStore, RESPAWN_S, type CellState, type NodeState } from './nodes.ts';
 
 type MineRequest = Extract<ClientMessage, { t: 'mine' }>;
 type MineState = Extract<ServerMessage, { t: 'mine' }>;
 type NodesState = Extract<ServerMessage, { t: 'nodes' }>;
-type NodeCellState = NodesState['cells'][number];
+type CellWire = NodesState['cells'][number];
 export type MineRefusal = NonNullable<MineState['reason']>;
 type FloraKind = keyof typeof FLORA_HARVEST;
 type Vec3 = [number, number, number];
@@ -140,7 +140,8 @@ export interface ResourceServiceOptions {
   skills?: { owned(characterId: string): readonly string[] };
   /** where worlds' node grounds come from: a worker planner of its own by default */
   grounds?: NodeGroundSource;
-  /** sends a session a message (by default the session's own send()) */
+  /** sends a session a message (by default the session's own send(), or for `nodes` its sendText() with the message
+   * put together from cells each checked and encoded once) */
   notify?: (viewer: ZoneViewer, msg: ServerMessage) => void;
   log?: ZoneLog;
   /** seeds the yield rolls (tests) */
@@ -178,11 +179,12 @@ interface Miner {
 
 interface View {
   frame: string;
-  /** where the player was when `near` was worked out */
+  /** where the player was when `buckets` were worked out */
   at: Vec3 | null;
-  /** the cells within NODE_VIEW_M of it */
-  near: number[];
-  nearSet: Set<number>;
+  /** it was further than NODE_VIEW_M above the ground there */
+  high: boolean;
+  /** the buckets of touched cells (nodes.ts) that may hold cells within NODE_VIEW_M of it */
+  buckets: number[];
   /** what it holds: each cell sent, its id and the version sent */
   sent: Map<number, { id: string; version: number }>;
   /** a reset is due (it has just arrived on the world) */
@@ -203,6 +205,9 @@ interface World {
   R: number;
   level: number;
   cellM: number;
+  /** its touched cells' buckets: their grid level and size, m */
+  bucketLevel: number;
+  bucketM: number;
   layers: Map<number, { list: NodeLayer[]; ids: Set<string> }>;
 }
 
@@ -220,6 +225,8 @@ export class ResourceService {
   private readonly grounds: NodeGroundSource;
   private readonly ownPlanner: NodeGroundPlanner | null;
   private readonly notify: (viewer: ZoneViewer, msg: ServerMessage) => void;
+  /** `nodes` go out as text put together from cells encoded once (no `notify` was given) */
+  private readonly asText: boolean;
   private readonly log?: ZoneLog;
   private readonly rng: Random;
   private readonly listeners = new Set<MinedListener>();
@@ -228,6 +235,8 @@ export class ResourceService {
   private readonly worlds = new Map<string, World | null>();
   private readonly scattered = new Map<string, ResourceNode[]>();
   private readonly changed = new Set<CellState>();
+  /** each touched cell's state as sent, for the version it was worked out for */
+  private readonly wires = new WeakMap<CellState, { version: number; wire: Wire }>();
   private readonly counts: Omit<ResourceStats, 'nodes' | 'scatterCells'> = { hits: 0, refused: {}, broken: 0, scattered: 0, losSamples: 0, pushed: 0 };
   private readonly los = { samples: 0 };
   private readonly scratch: Vec3 = [0, 0, 0];
@@ -242,6 +251,7 @@ export class ResourceService {
     this.ownPlanner = opts.grounds ? null : new NodeGroundPlanner({ log: opts.log });
     this.grounds = opts.grounds ?? this.ownPlanner!;
     this.notify = opts.notify ?? ((viewer, msg) => (viewer as { send?: (m: ServerMessage) => void }).send?.(msg));
+    this.asText = !opts.notify;
     this.log = opts.log;
     this.rng = new Random(opts.seed ?? hashInts(Date.now() & 0x7fffffff, process.pid));
     this.store = new NodeStore(opts.maxNodes);
@@ -532,13 +542,13 @@ export class ResourceService {
   private look(viewer: ZoneViewer, v: ViewerState, world: World, tier: Tier, pos: Readonly<Vec3>, version: number): void {
     let view = v.view;
     if (!view || view.frame !== world.frame) {
-      view = v.view = { frame: world.frame, at: null, near: [], nearSet: new Set(), sent: new Map(), reset: true, checked: -1 };
+      view = v.view = { frame: world.frame, at: null, high: false, buckets: [], sent: new Map(), reset: true, checked: -1 };
       // (its ground is wanted from the moment a player is on the world, so the first hit finds it ready)
       this.grounds.ground(world.params, tier);
     }
-    const cells = this.store.cellsOf(world.frame);
-    if (!cells && !view.sent.size) {
-      if (view.reset) this.send(viewer, { t: 'nodes', frame: world.frame, reset: true, cells: [] });
+    const nodes = this.store.world(world.frame);
+    if (!nodes && !view.sent.size) {
+      if (view.reset) this.sendNodes(viewer, world.frame, true, []);
       view.reset = false;
       view.checked = version;
       return;
@@ -550,41 +560,82 @@ export class ResourceService {
     if (!view.at || Math.hypot(dir[0] - view.at[0], dir[1] - view.at[1], dir[2] - view.at[2]) * world.R > RESCAN_M) {
       const ground = this.grounds.ground(world.params, tier);
       if (!ground) return;
-      const alt = r - world.R - ground.sampler.height(dir[0], dir[1], dir[2]);
       view.at = dir;
-      view.near = alt > NODE_VIEW_M ? [] : nodeCellsNear(dir[0], dir[1], dir[2], NODE_VIEW_M, world.R, world.level).map(cellKey);
-      view.nearSet = new Set(view.near);
+      // high above the ground nothing is in view
+      view.high = r - world.R - ground.sampler.height(dir[0], dir[1], dir[2]) > NODE_VIEW_M;
+      view.buckets = view.high ? [] : nodeCellsNear(dir[0], dir[1], dir[2], NODE_VIEW_M + world.bucketM / 2, world.R, world.bucketLevel).map(cellKey);
       moved = true;
     }
     if (!moved && !view.reset && view.checked === version) return;
     view.checked = version;
-    const out: NodeCellState[] = [];
-    if (cells) {
-      for (const key of view.near) {
-        const c = view.sent.has(key) ? undefined : cells.get(key);
-        if (!c) continue;
-        out.push(cellState(c));
-        view.sent.set(key, { id: c.id, version: c.version });
+    const out: Wire[] = [];
+    const high = view.high;
+    const far = (c: CellState, m: number) => high || Math.hypot(dir[0] - c.center[0], dir[1] - c.center[1], dir[2] - c.center[2]) * world.R > m;
+    // touched cells come into view
+    if (nodes) {
+      for (const b of view.buckets) {
+        for (const c of nodes.buckets.get(b) ?? []) {
+          if (view.sent.has(c.key) || far(c, NODE_VIEW_M)) continue;
+          out.push(this.cellState(c));
+          view.sent.set(c.key, { id: c.id, version: c.version });
+        }
       }
     }
+    // those it holds change, go back to the scatter, or are left behind
     for (const [key, sent] of view.sent) {
-      const c = cells?.get(key);
-      const far = c && !view.nearSet.has(key) && Math.hypot(dir[0] - c.center[0], dir[1] - c.center[1], dir[2] - c.center[2]) * world.R > NODE_FORGET_M;
-      if (!c || far) {
-        out.push({ cell: sent.id, gone: [], hurt: [] });
+      const c = nodes?.cells.get(key);
+      if (!c || far(c, NODE_FORGET_M)) {
+        out.push(wireOf({ cell: sent.id, gone: [], hurt: [] }));
         view.sent.delete(key);
       } else if (sent.version !== c.version) {
-        out.push(cellState(c));
+        out.push(this.cellState(c));
         sent.version = c.version;
       }
     }
     if (!out.length && !view.reset) return;
     for (let i = 0; i < out.length || (i === 0 && view.reset); i += CELLS_PER_MESSAGE) {
-      const msg: NodesState = { t: 'nodes', frame: world.frame, cells: out.slice(i, i + CELLS_PER_MESSAGE) };
-      if (i === 0 && view.reset) msg.reset = true;
-      this.send(viewer, msg);
+      this.sendNodes(viewer, world.frame, i === 0 && view.reset, out.slice(i, i + CELLS_PER_MESSAGE));
     }
     view.reset = false;
+  }
+
+  /** Sends a `nodes` message: as text put together from its cells' own checked encodings (Session.sendText, as a chat
+   * line goes to many), or through `notify`. */
+  private sendNodes(viewer: ZoneViewer, frame: string, reset: boolean, cells: readonly Wire[]): void {
+    const sendText = this.asText ? (viewer as { sendText?: (text: string) => void }).sendText : undefined;
+    if (!sendText) {
+      const msg: NodesState = { t: 'nodes', frame, cells: cells.map((c) => c.state) };
+      if (reset) msg.reset = true;
+      return this.send(viewer, msg);
+    }
+    try {
+      sendText.call(viewer, `{"t":"nodes","frame":${JSON.stringify(frame)}${reset ? ',"reset":true' : ''},"cells":[${cells.map((c) => c.text).join(',')}]}`);
+      this.counts.pushed++;
+    } catch (err) {
+      this.log?.warn({ session: viewer.id, err: String(err) }, 'resource message not sent');
+    }
+  }
+
+  /** A cell's state as players are sent it, worked out (and checked and encoded) once for each of its versions. */
+  private cellState(c: CellState): Wire {
+    const known = this.wires.get(c);
+    if (known?.version === c.version) return known.wire;
+    const gone: string[] = [];
+    const hurt: [string, number][] = [];
+    for (const n of c.nodes.values()) {
+      if (n.respawnAt !== null) gone.push(n.sub);
+      else if (n.shown < 1) hurt.push([n.sub, n.shown]);
+    }
+    let wire: Wire;
+    try {
+      wire = wireOf({ cell: c.id, gone: gone.slice(0, 128), hurt: hurt.slice(0, 128) });
+    } catch (err) {
+      // (a server bug: the cell is sent as the scatter has it rather than holding up everyone's updates)
+      this.log?.warn({ cell: c.id, err: String(err) }, 'node cell not sent');
+      wire = wireOf({ cell: c.id, gone: [], hurt: [] });
+    }
+    this.wires.set(c, { version: c.version, wire });
+    return wire;
   }
 
   // ---------- worlds, cells and characters ----------
@@ -619,7 +670,17 @@ export class ResourceService {
     if (body && body.type !== 'gas' && frameId(seed, body.index) === frame) {
       const params = body.params as PlanetParams;
       const level = nodeCellLevel(params.radius);
-      world = { frame, params, R: params.radius, level, cellM: nodeCellMeters(params.radius, level), layers: new Map() };
+      const bucketLevel = Math.max(0, level - BUCKET_SHIFT);
+      world = {
+        frame,
+        params,
+        R: params.radius,
+        level,
+        cellM: nodeCellMeters(params.radius, level),
+        bucketLevel,
+        bucketM: nodeCellMeters(params.radius, bucketLevel),
+        layers: new Map(),
+      };
     }
     this.worlds.set(frame, world);
     return world;
@@ -654,15 +715,17 @@ export class ResourceService {
   }
 }
 
-/** A cell's state as players are sent it. */
-function cellState(c: CellState): NodeCellState {
-  const gone: string[] = [];
-  const hurt: [string, number][] = [];
-  for (const n of c.nodes.values()) {
-    if (n.respawnAt !== null) gone.push(n.sub);
-    else if (n.shown < 1) hurt.push([n.sub, n.shown]);
-  }
-  return { cell: c.id, gone: gone.slice(0, 128), hurt: hurt.slice(0, 128) };
+/** A cell's state and its encoding, checked against the protocol's schema (the server never sends what a client would
+ * refuse; ARCHITECTURE §5). */
+interface Wire {
+  state: CellWire;
+  text: string;
+}
+
+function wireOf(state: CellWire): Wire {
+  const r = NodeCellSchema.safeParse(state);
+  if (!r.success) throw new Error(`refusing to send an invalid node cell ${JSON.stringify(state)}: ${r.error.message}`);
+  return { state: r.data, text: JSON.stringify(r.data) };
 }
 
 /** `total` split by each one's damage, in whole units (largest remainders first, then the order given). */

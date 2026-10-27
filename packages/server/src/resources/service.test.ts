@@ -1,7 +1,7 @@
 // The resource service (P1.E13.T01) on a real zone of system 0, its home world's drawn ground planned on this thread, and
 // a hand-driven clock: mining hits measured by beam time and checked cheapest first; a node shared by two miners, broken
 // once and split by damage; growing back and healing; common flora; and the per-cell state each player is sent.
-import type { ServerMessage } from '@astra/shared/protocol';
+import { decodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
 import { FLORA_HARVEST, nodeType, type NodeGround } from '@astra/shared/world';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { miningWorld, norm, type NodeSpot, type Vec3 } from '../../test/resourceWorld.ts';
@@ -386,6 +386,41 @@ describe('what players are sent', () => {
     s.move(a, deposit.stand);
     s.service.sweep();
     expect(a.nodes()).toEqual([{ t: 'nodes', frame: world.frame, reset: true, cells: [] }]);
+  });
+
+  it('to a session, as text put together from cells encoded once: the same message, decodable as sent', () => {
+    const s = setup();
+    class TextViewer extends Viewer {
+      readonly texts: string[] = [];
+      sendText(text: string): void {
+        this.texts.push(text);
+      }
+    }
+    const a = new TextViewer(90, 'char-text');
+    s.inventory.open(a.characterId);
+    s.zone.join(a, {
+      kind: 'player',
+      frame: world.frame,
+      pos: [...deposit.stand],
+      quat: [0, 0, 0, 1],
+      vel: [0, 0, 0],
+      mode: 'foot',
+      name: 'Texter',
+      people: 'thalune',
+      level: 5,
+    });
+    const b = s.player(deposit.stand);
+    s.service.sweep();
+    expect(a.texts.map((t) => decodeServerMessage(t))).toEqual([{ t: 'nodes', frame: world.frame, reset: true, cells: [] }]);
+    expect(a.got).toEqual([]);
+    while (s.hit(b, deposit.id).result === 'hit') s.clock.t += 0.25;
+    a.texts.length = 0;
+    s.service.sweep();
+    const cell = deposit.id.split('_').slice(0, 3).join('_');
+    expect(a.texts.map((t) => decodeServerMessage(t))).toEqual([
+      { t: 'nodes', frame: world.frame, cells: [{ cell, gone: [deposit.id.slice(cell.length + 1)], hurt: [] }] },
+    ]);
+    expect(JSON.parse(a.texts[0]!)).toEqual(decodeServerMessage(a.texts[0]!));
   });
 });
 
