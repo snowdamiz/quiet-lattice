@@ -3,9 +3,10 @@
 // the ship's fabricator makes ammo and cartridges aboard anywhere but refuses a warp cell; missing materials, a recipe
 // not learned or not in the table, and no room for the output are refused with nothing used up, and asking too fast is
 // refused too. A recipe item teaches its recipe, which is written to the character's row and known again on rejoin,
-// after a server restart.
+// after a server restart. With movement authority on, a walker that got out of its docked ship uses the ship's
+// fabricator beside it and is refused once it has walked 30 m away.
 import { STARTING_RECIPES } from '@astra/shared/crafting';
-import { STATION_FABRICATOR } from '@astra/shared/data';
+import { STATION_FABRICATOR, WALKER } from '@astra/shared/data';
 import { totals } from '@astra/shared/inventory';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import { eq } from 'drizzle-orm';
@@ -14,8 +15,10 @@ import { parseConfig } from '../src/config.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
 import { characters } from '../src/db/schema.ts';
 import type { RunningServer } from '../src/server.ts';
+import { exitFeet } from '../src/sim/movement/testing.ts';
 import { homeSystemOf, stationFrame } from '../src/world/home.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
+import { Pilot } from './pilot.ts';
 
 type Answer = Extract<ServerMessage, { t: 'craft' }>;
 type Vec3 = [number, number, number];
@@ -258,5 +261,64 @@ describe('fabricators over the wire', () => {
     expect(held(id)).toMatchObject({ torpedo: 1, cobalt: 5, tritium: 5, cinderglass: 2 });
     expect(await bot.make('torpedo')).toMatchObject({ result: 'made', item: 'torpedo', count: 1 });
     bot.sock.close();
+  });
+
+  it('under movement authority, works the ship’s fabricator on foot beside the docked ship it left, and not 30 m off', async () => {
+    const live = await startTestServer();
+    try {
+      const p = await Pilot.join(live);
+      await p.sock.next('recipes');
+      const system = live.zones.zone(p.welcome.zone.id)!.system;
+      expect(p.welcome.mode).toBe('docked');
+      await p.hold('docked', 300);
+      // out beside the ship, feet 2 m over the floor, falling to it as the client's walker does
+      const feet = exitFeet(system, p.welcome.pose);
+      let y = feet[1];
+      let vy = 0;
+      for (let i = 0; i < 20; i++) {
+        vy -= WALKER.stationGravity * 0.05;
+        y = Math.max(0, y + vy * 0.05);
+        if (y === 0) vy = 0;
+        p.send({ ...p.last, pos: [feet[0], y, feet[2]], vel: [0, 0, 0] }, 'foot');
+        await sleep(50);
+      }
+      const zone = live.zones.zone(p.welcome.zone.id)!;
+      await waitFor(() => zone.entity(p.entityId)?.fields.mode === 'foot' && zone.entity(p.entityId)?.fields.pos[1] === 0, 5000, 'on the floor');
+      expect(zone.movement!.parkedOf(p.entityId)?.pos).toEqual(p.welcome.pose.pos);
+      for (const [item, n] of [
+        ['ferrite', 100],
+        ['carbon', 50],
+      ] as const)
+        expect(live.ws.inventory.grant(p.characterId, item, n).ok).toBe(true);
+      let seq = 0;
+      const ask = async (at: 'station' | 'ship') => {
+        const s = ++seq;
+        p.sock.send({ t: 'craft', seq: s, op: { op: 'make', recipe: 'flak_ammo', count: 1, at } });
+        for (;;) {
+          const m = await p.sock.next('craft');
+          if (m.seq === s) return m;
+        }
+      };
+      expect(await ask('ship')).toMatchObject({ result: 'made', item: 'flak_ammo', count: 50 });
+      // (on the hangar floor, not at the trade deck's terminal: no station fabricator here)
+      expect(await ask('station')).toMatchObject({ result: 'refused', reason: 'place' });
+      // a walk across the floor toward the hangar's middle, 30 m from the ship
+      await p.fly(
+        [
+          [feet[0], 0, feet[2]],
+          [0, 0, feet[2]],
+        ],
+        [4],
+        'foot',
+      );
+      await waitFor(() => zone.entity(p.entityId)?.fields.pos[0] === 0, 5000, 'the walk applied');
+      expect(Math.hypot(...zone.entity(p.entityId)!.fields.pos.map((c, i) => c - p.welcome.pose.pos[i]!))).toBeGreaterThan(WALKER.boardRangeM + 5);
+      expect(await ask('ship')).toMatchObject({ result: 'refused', reason: 'place' });
+      expect(totals(live.ws.inventory.get(p.characterId)!)).toMatchObject({ flak_ammo: 50, ferrite: 80, carbon: 40 });
+      expect(p.corrections).toEqual([]);
+      p.close();
+    } finally {
+      await live.close();
+    }
   });
 });
