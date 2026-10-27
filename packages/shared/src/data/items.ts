@@ -3,8 +3,9 @@
 import { z } from 'zod';
 import { idSchema, lookup, table, weaponIdSchema } from './common.ts';
 import { statModSchema } from './modifiers.ts';
+import { RECIPES, recipeItemId, type Recipe } from './recipes.ts';
 
-export const itemKindSchema = z.enum(['consumable', 'ammo', 'catalyst', 'module', 'cosmetic', 'component']);
+export const itemKindSchema = z.enum(['consumable', 'ammo', 'catalyst', 'module', 'cosmetic', 'component', 'recipe']);
 export type ItemKind = z.infer<typeof itemKindSchema>;
 
 export const itemSchema = z.strictObject({
@@ -24,10 +25,30 @@ export const itemSchema = z.strictObject({
   unique: z.boolean().optional(),
   /** Today's shop price where the demo sells the item, in units. */
   demoPrice: z.int().positive().optional(),
+  /** Recipe items: the recipe using it teaches (DESIGN 15.7), kept forever. */
+  recipe: idSchema.optional(),
 });
 export type Item = z.infer<typeof itemSchema>;
 
 const third = 1 / 3;
+
+/** Where a recipe's output is made, as its recipe item says. */
+function madeAt(r: Recipe): string {
+  const venues = { waystation: 'Waystation', capital: 'capital', sanctuary: 'Chorus sanctuary', scrapyard: 'Scrapyard' } as const;
+  const where = r.fabricators.map((f) => venues[f]);
+  const at = `${where.length > 1 ? `${where.slice(0, -1).join(', ')} and ${where.at(-1)}` : where[0]} fabricators`;
+  return r.field ? `${at}, and the ship's own fabricator${r.field.minTier ? ` from Tier ${r.field.minTier}` : ''}` : at;
+}
+
+/** Every recipe as an item (DESIGN 15.7: bought from vendors, rewarded by chains, dropped by bosses, found in vaults);
+ * using one teaches its recipe for good. */
+const RECIPE_ITEMS: Item[] = RECIPES.map((r) => ({
+  id: recipeItemId(r.id),
+  name: `${r.name} recipe`,
+  kind: 'recipe',
+  recipe: r.id,
+  text: `Teaches the ${r.name} recipe for good, crafted at ${madeAt(r)}.`,
+}));
 
 export const ITEMS = table<Item>([
   // consumables (DESIGN 15.7)
@@ -152,6 +173,8 @@ export const ITEMS = table<Item>([
     kind: 'component',
     text: 'The core of a shattered Hive Heart; the Husk hull is assembled around it.',
   },
+  // recipes, one item per recipe
+  ...RECIPE_ITEMS,
 ]);
 
 export const getItem = lookup(ITEMS, 'item');

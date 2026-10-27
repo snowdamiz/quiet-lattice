@@ -33,7 +33,6 @@ function menuHTML(items) {
 }
 
 const SHOP = [
-  { id: 'warpcell', icon: 'WRP', name: 'Warp Cell', desc: 'Fuel for one hyperdrive jump to a neighbouring star system.', price: 1800 },
   { id: 'pulse', icon: 'PLS', name: 'Pulse Fuel', desc: 'Refill the pulse drive for long hops between planets.', price: 300 },
   { id: 'shield', icon: 'SHD', name: 'Shield Recharge', desc: 'Restore the starship’s shields to full.', price: 200 },
   { id: 'beam', icon: 'DRL', name: 'Optical Drill', desc: 'The mining beam extracts half as much again, and runs cooler.', price: 4500, once: true },
@@ -60,7 +59,7 @@ function applyUpgrade(game, id) {
 const DEMO_RESOURCES = new Set(Object.keys(RESOURCES).filter((id) => getResource(id).demo));
 
 // the tag a non-resource item wears in its slot
-const KIND_TAG = { consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD', cosmetic: 'COS', component: 'CMP' };
+const KIND_TAG = { consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD', cosmetic: 'COS', component: 'CMP', recipe: 'RCP' };
 
 function slotRefOf(slot) {
   const i = Number(slot.dataset.i);
@@ -476,7 +475,7 @@ export class Menus {
     for (const it of SHOP) {
       const owned = it.once && this.bought.has(it.id);
       shop += `<div class="shop-item ${owned ? 'owned' : ''}" title="${it.desc}"><div class="ico">${it.icon}</div><h4>${it.name}</h4>
-        <div class="buy"><span>${owned ? 'Owned' : `⌬ ${it.price.toLocaleString()}`}</span><button class="btn small" data-buy="${it.id}" ${owned || inv.units < it.price || (it.id === 'warpcell' && !inv.room('warp_cell')) ? 'disabled' : ''}>${owned ? '✓' : 'Buy'}</button></div></div>`;
+        <div class="buy"><span>${owned ? 'Owned' : `⌬ ${it.price.toLocaleString()}`}</span><button class="btn small" data-buy="${it.id}" ${owned || inv.units < it.price ? 'disabled' : ''}>${owned ? '✓' : 'Buy'}</button></div></div>`;
     }
     this.trade.innerHTML = `<div class="panel frame">
       <div class="panel-head">
@@ -506,12 +505,7 @@ export class Menus {
     const g = this.game;
     const it = SHOP.find((s) => s.id === id);
     if (g.inventory.units < it.price) return g.audio.play('error');
-    if (id === 'warpcell' && !g.inventory.room('warp_cell')) {
-      g.hud.toast('No room for a warp cell in the suit or the cargo pods', 'warn');
-      return g.audio.play('error');
-    }
     g.inventory.units -= it.price;
-    if (id === 'warpcell') g.inventory.warpCells++;
     if (id === 'pulse') g.ship.pulseFuel = 100;
     if (id === 'shield') g.ship.shield = 100;
     if (id === 'beam') g.multitool.upgrade();

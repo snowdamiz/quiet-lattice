@@ -5,7 +5,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Body } from './Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { mulberry32, STATION, stationPoseInto } from '@astra/shared/world';
-import { STATION_HANGAR, STATION_LAYOUT } from '@astra/shared/data';
+import { STATION_FABRICATOR, STATION_HANGAR, STATION_LAYOUT } from '@astra/shared/data';
 
 const _v = new THREE.Vector3();
 
@@ -300,6 +300,9 @@ export class Station extends Body {
     };
     kiosk(-14, -80, 'Galactic Trade Terminal');
     kiosk(14, -80, 'Starship Outfitting');
+    // the fabricator terminal (DESIGN 15.7, P1.E13.T05), where the server's crafting service expects its user (shared data)
+    kiosk(STATION_FABRICATOR.kiosk.x, STATION_FABRICATOR.kiosk.z, 'Fabricator');
+    this.terminals.at(-1).fabricator = true;
     // back wall sign
     const sign = new THREE.Mesh(
       new THREE.PlaneGeometry(40, 10),

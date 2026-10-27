@@ -338,6 +338,182 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
   await page.waitForTimeout(300);
 }
 
+/** What the fabricator screens reach of the page. */
+interface FabricatorPage {
+  game: {
+    inventory: InventoryApi;
+    fabricator: { open(at: 'station' | 'ship'): void };
+    station: { pads: { x: number; z: number }[] };
+    ship: { state: { pos: { clone(): { set(x: number, y: number, z: number): unknown } } } };
+    player: { spawn(frame: unknown, at: unknown, heading: unknown): void };
+    system: { homePlanet: unknown };
+    dockOnPad(near: unknown): void;
+    debugGoto(planet: unknown, opts: { sunAngle: number; alt: number; azimuth: number }): void;
+    mode: string;
+    cam: { frame: unknown };
+  };
+  dev: { boot(): Promise<void> };
+}
+
+/** A mining trip's haul as it reaches a fabricator: enough for a warp cell, a pulse fuel cell and two sodium cartridges,
+ * short of oxygen and of ferrite for flak, and a torpedo recipe found on the way (to learn). */
+const FAB_SUIT: [string, number][] = [
+  ['dihydrogen', 64],
+  ['tritium', 41],
+  ['cobalt', 7],
+  ['oxygen', 12],
+  ['sodium', 46],
+  ['ferrite', 18],
+  ['carbon', 37],
+  ['copper', 22],
+  ['recipe_torpedo', 1],
+];
+
+/** Lays the haul out in the suit (the Lark's pod holding a little more), then opens fabricator `at`. */
+async function stockAndOpen(page: Page, at: 'station' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
+  await page.evaluate(
+    ({ at, suit, pod }) => {
+      const g = (window as unknown as FabricatorPage).game;
+      const inv = g.inventory;
+      // (no named functions in here: the bundler would wrap them in a helper the page does not have)
+      inv.restore({
+        ...inv.state,
+        suit: inv.state.suit.map((_, i) => (suit[i] ? { item: suit[i]![0], count: suit[i]![1] } : null)),
+        pods: inv.state.pods.map((p, k) => p.map((_, i) => (!k && pod[i] ? { item: pod[i]![0], count: pod[i]![1] } : null))),
+      });
+      g.fabricator.open(at);
+    },
+    { at, suit, pod },
+  );
+  await settle(page, 30);
+}
+
+/** Clicks a control of the fabricator screen (a recipe row, Craft, a stepper button) through its own click handler. */
+async function fabClick(page: Page, selector: string): Promise<void> {
+  await page.evaluate((s) => document.querySelector<HTMLElement>(s)?.click(), selector);
+  await page.waitForTimeout(400);
+}
+
+/**
+ * The Waystation's fabricator (P1.E13.T05): the pilot on foot at the fabricator terminal on the trade deck, its ship on
+ * a pad behind, after a mining trip. The five recipes it starts with: three it can make, two short of materials; a
+ * torpedo recipe to learn. The oxygen cartridge selected and Craft pressed: refused, "not enough oxygen", the short
+ * material flashing.
+ */
+async function openStationFabricator(page: Page): Promise<void> {
+  await stationFabricator(page);
+  await fabClick(page, '.fab-row[data-recipe="oxygen_cartridge"]');
+  await fabClick(page, '[data-make]');
+  await page.waitForTimeout(800);
+}
+
+/** The same scene at the Waystation, the fabricator opened on the warp cell it can make, nothing pressed yet. */
+async function stationFabricator(page: Page): Promise<void> {
+  await page.evaluate(() => (window as unknown as FabricatorPage).dev.boot());
+  await page.evaluate(() => {
+    const g = (window as unknown as FabricatorPage).game;
+    const pad = g.station.pads[3]!;
+    g.dockOnPad(g.ship.state.pos.clone().set(pad.x, 0, pad.z));
+    // a couple of metres back from the terminal (the kiosk at x −30, z −80 on the 7 m deck), turned to it
+    g.player.spawn(g.station, g.ship.state.pos.clone().set(-28.6, 7.05, -77.4), g.ship.state.pos.clone().set(-0.5, 0, -0.866));
+    g.mode = 'foot';
+    g.cam.frame = undefined;
+  });
+  await settle(page, 120);
+  await stockAndOpen(page, 'station', FAB_SUIT, [
+    ['tritium', 380],
+    ['carbon', 240],
+  ]);
+}
+
+/** The ship's fabricator: in the Lark landed on the home world, the haul aboard, flak ammo selected, three crafts. */
+async function openShipFabricator(page: Page): Promise<void> {
+  await page.evaluate(() => (window as unknown as FabricatorPage).dev.boot());
+  await page.evaluate(() => {
+    const g = (window as unknown as FabricatorPage).game;
+    g.debugGoto(g.system.homePlanet, { sunAngle: 40, alt: 0, azimuth: 20 });
+    g.mode = 'ship';
+    g.cam.frame = undefined;
+  });
+  await settle(page, 150);
+  await stockAndOpen(
+    page,
+    'ship',
+    FAB_SUIT.map(([id, n]) => [id, id === 'ferrite' ? 96 : n]),
+    [
+      ['tritium', 380],
+      ['carbon', 240],
+    ],
+  );
+  await fabClick(page, '.fab-row[data-recipe="flak_ammo"]');
+  await fabClick(page, '[data-q="1"]');
+  await fabClick(page, '[data-q="1"]');
+}
+
+/**
+ * A craft's motion for the clip: 0.2 s of animation time after the clip starts, Craft is pressed through the screen's
+ * own handler; the fabrication runs across the button (0.56 s, ease-in-out), then what was made shows in the line under
+ * the columns, the material counts drop and the rows that changed settle back (0.7 s). Page timers run on real time while
+ * the clip slows CSS and Web Animations tenfold, hence 2000 ms.
+ */
+const fabricatorMotion =
+  (select: string | null) =>
+  async (page: Page): Promise<void> => {
+    if (select) await fabClick(page, `.fab-row[data-recipe="${select}"]`);
+    await page.evaluate(() => setTimeout(() => document.querySelector<HTMLElement>('[data-make]')?.click(), 2000));
+  };
+
+/**
+ * A lesson's motion for the clip: 0.2 s in, LEARN is pressed on the torpedo recipe (the haul's find); its row eases up out
+ * of "Recipes to learn" into the recipe list (0.38 s) and flashes once, the heading fades out (0.2 s), the controls
+ * dimmed by the press come back, and the torpedo's details come in beside it (0.28 s).
+ */
+async function learnMotion(page: Page): Promise<void> {
+  await page.evaluate(() => setTimeout(() => document.querySelector<HTMLElement>('[data-learn="torpedo"]')?.click(), 2000));
+}
+
+/**
+ * The stepper at its limits, then a refusal, for the clip (each step 0.15 s of animation time apart; page timers run on
+ * real time while the clip slows CSS and Web Animations tenfold, hence 1500 ms): + and MAX pressed on the warp cell at 1
+ * of 1 (both dimmed: nothing happens), the flak ammo picked (it can make none), + and MAX pressed there (nothing), then
+ * Enter: refused, "not enough ferrite", the line under the columns cross-fading to it and the short ferrite flashing red.
+ */
+async function limitsMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const press = [
+      () => document.querySelector<HTMLElement>('[data-q="1"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="max"]')?.click(),
+      () => document.querySelector<HTMLElement>('.fab-row[data-recipe="flak_ammo"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="1"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="max"]')?.click(),
+      () => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true })),
+    ];
+    press.forEach((fn, k) => setTimeout(fn, 2000 + k * 1500));
+  });
+}
+
+/** The stepper at a maximum above one: the pulse fuel cell (the haul makes six) set to 6 of 6 with MAX, + and MAX dimmed
+ * and − lit. */
+async function stepperAtSix(page: Page): Promise<void> {
+  await stationFabricator(page);
+  await fabClick(page, '.fab-row[data-recipe="pulse_fuel_cell"]');
+  await fabClick(page, '[data-q="max"]');
+}
+
+/**
+ * Its clip, each step 0.2 s of animation time apart (page timers run on real time, the clip's animations tenfold slower):
+ * − to 5 (+ and MAX light up), + back to 6 (they dim), then + and MAX pressed at 6, which do nothing.
+ */
+async function stepperMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const press = ['[data-q="-1"]', '[data-q="1"]', '[data-q="1"]', '[data-q="max"]'];
+    press.forEach((sel, k) => setTimeout(() => document.querySelector<HTMLElement>(sel)?.click(), 2000 + k * 2000));
+  });
+}
+
+/** The press (every third frame), the fabrication's run across the button, the result and the rows settling. */
+const FABRICATOR_SHEET = [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 104, 112, 119];
+
 /** What the cutscene screens reach of the page. */
 interface CutscenePage {
   game: {
@@ -912,6 +1088,46 @@ export const SCREENS: Record<string, ScreenDef> = {
     async motion(page) {
       await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
     },
+  },
+  // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
+  // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the
+  // clip of a warp cell crafted; `fabricator-learn` the same, and the clip of the torpedo recipe learned;
+  // `fabricator-ship` the ship's own, landed on the home world: ammo and cartridges only (the warp cell listed as made at
+  // a Waystation), and the clip of three crafts of flak ammo
+  fabricator: {
+    clipSeconds: 2,
+    sheetFrames: FABRICATOR_SHEET,
+    open: openStationFabricator,
+    stills16x9: { craftable: (page) => fabClick(page, '.fab-row[data-recipe="warp_cell"]') },
+    motion: fabricatorMotion('warp_cell'),
+  },
+  // the stepper at its limits (+ and MAX dimmed at the most the materials make, as − is at one) and a refusal on Enter
+  'fabricator-limits': {
+    clipSeconds: 2,
+    sheetFrames: [0, 12, 21, 30, 39, 48, 57, 60, 62, 64, 66, 68, 70, 74, 80, 88, 96, 104, 112, 119],
+    open: stationFabricator,
+    motion: limitsMotion,
+  },
+  // the stepper at a maximum above one: the pulse fuel cell at 6 of 6 (+ and MAX dimmed, − lit), then −, + and + and
+  // MAX pressed at the maximum
+  'fabricator-limits-max': {
+    clipSeconds: 1.2,
+    sheetFrames: [0, 6, 11, 12, 13, 15, 20, 23, 24, 25, 27, 32, 35, 36, 37, 44, 47, 48, 49, 71],
+    open: stepperAtSix,
+    motion: stepperMotion,
+  },
+  // learning a recipe at the Waystation: LEARN on the torpedo recipe, and the row moving into the list
+  'fabricator-learn': {
+    clipSeconds: 1.2,
+    sheetFrames: [0, 6, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 34, 38, 44, 50, 58, 66, 71],
+    open: stationFabricator,
+    motion: learnMotion,
+  },
+  'fabricator-ship': {
+    clipSeconds: 2,
+    sheetFrames: FABRICATOR_SHEET,
+    open: openShipFabricator,
+    motion: fabricatorMotion(null),
   },
   'station-hangar': {
     hash: '#dock',

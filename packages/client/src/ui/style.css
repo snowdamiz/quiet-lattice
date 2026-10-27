@@ -2984,6 +2984,378 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
 }
 
+/* ---------- fabricator: the recipes known beside the selected one's materials (DESIGN 15.7) ---------- */
+/* The inventory's sibling (it wears .inv-panel): the same plate, head and footer. Amber marks only the recipe with the
+   focus and the Craft button; what can be made reads in the HUD's green, what is short of materials in its red. */
+/* one height whatever the recipe or the list holds, so nothing re-centres under the player as they change; a long
+   list scrolls */
+.fab-panel {
+  height: min(700px, 88vh);
+}
+.fab-cols {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 40px;
+}
+/* (the whole column's height, so a row moving within it is never clipped by a list that just got shorter) */
+.fab-list {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+.fab-group {
+  margin: 14px 0 2px;
+  color: var(--dim);
+}
+/* a recipe: its output's tag or icon, its name, and how many the materials held make */
+.fab-row {
+  position: relative;
+  flex: none;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 50px;
+  padding: 0 14px 0 12px;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: rgba(233, 231, 226, 0.035);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s;
+}
+.fab-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.fab-row:hover {
+  border-color: var(--line-2);
+  background: rgba(233, 231, 226, 0.05);
+}
+.fab-row.sel {
+  border-color: var(--line-2);
+  background: linear-gradient(90deg, rgba(240, 162, 74, 0.1), rgba(233, 231, 226, 0.05) 70%);
+}
+.fab-row.sel::before {
+  transform: scaleY(1);
+}
+/* a recipe just learned, rising into the list: an opaque plate over whatever it passes (the row's own look, solid) */
+.fab-row.fab-moving {
+  z-index: 1;
+  background: rgb(19, 20, 23);
+}
+.fab-row .inv-tag,
+.fab-out .inv-tag,
+.fab-mat .inv-tag {
+  position: static;
+  justify-self: start;
+}
+.fab-row .res-ico {
+  width: 15px;
+  height: 15px;
+}
+.fab-nm {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-cond);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.fab-st {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.fab-st.ok {
+  color: var(--good);
+}
+.fab-st.short {
+  color: var(--danger);
+}
+/* recipes this fabricator does not make, and recipe items to learn: quieter rows */
+.fab-row.off .fab-nm,
+.fab-row.learn .fab-nm {
+  color: var(--dim);
+}
+.fab-row.learn {
+  cursor: default;
+}
+.fab-row.learn .inv-act {
+  margin-left: 0;
+}
+.fab-side .inv-note {
+  padding-top: 18px;
+}
+/* the selected recipe */
+.fab-about {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+.fab-mats-head,
+.fab-mat {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 64px 112px;
+  align-items: center;
+  gap: 10px;
+}
+.fab-mats-head {
+  padding: 0 10px 8px;
+  border-bottom: 1px solid var(--line-2);
+  color: var(--dim);
+}
+.fab-mats-head span:first-child {
+  grid-column: 1 / 3;
+}
+.fab-mats-head span:not(:first-child) {
+  text-align: right;
+}
+.fab-mat {
+  position: relative;
+  height: 42px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.fab-mat .res-ico {
+  width: 14px;
+  height: 14px;
+}
+.fab-mat-nm {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fab-mat .num,
+.fab-mat .have,
+.fab-out .have {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.fab-mat .num {
+  color: var(--text);
+}
+.fab-mat .have {
+  color: var(--dim);
+}
+.fab-mat.short .have {
+  color: var(--danger);
+}
+/* what one go makes, against what is held */
+.fab-out {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  margin-top: 6px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+.fab-out > span:first-child {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.fab-out b {
+  font-family: var(--font-cond);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fab-out .have {
+  color: var(--dim);
+}
+/* rows a craft changed settle back from warm white, as the inventory's slots do, and the materials short of a refused
+   craft from red: one wash over the row fading out (its opacity alone animates, so the row's own background, a
+   gradient on the selected recipe, never switches under it), carried across a redraw rather than restarted */
+.fab-mat.bump::after,
+.fab-out.bump::after,
+.fab-row.bump::after,
+.fab-mat.fab-warn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(233, 231, 226, 0.14);
+  opacity: 0;
+  animation: fabFade 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.fab-mat.fab-warn::after {
+  background: rgba(255, 90, 79, 0.16);
+  animation-duration: 0.9s;
+}
+@keyframes fabFade {
+  from {
+    opacity: 1;
+  }
+}
+.fab-make {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+/* how many: a quiet stepper in the Esc key's language */
+.fab-qty {
+  display: flex;
+  align-items: stretch;
+  height: 38px;
+  border: 1px solid var(--line-2);
+}
+.fab-qty button {
+  min-width: 34px;
+  padding: 0 8px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--dim);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s ease-out, background 0.15s ease-out;
+}
+.fab-qty button:hover:not(:disabled) {
+  color: var(--text);
+  background: rgba(233, 231, 226, 0.06);
+}
+/* dimmed by colour, not opacity: an opacity group beside a value fading in the stepper briefly drew at full strength */
+.fab-qty button:disabled {
+  color: rgba(233, 231, 226, 0.22);
+  cursor: default;
+}
+.fab-qty .fab-max {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-left: 1px solid var(--line);
+}
+.fab-qty b {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+/* while a fabrication or a lesson runs, the controls that cannot be used dim, and come back after, both eased */
+.fab-panel .fab-row .inv-act {
+  transition: color 0.15s ease-out, border-color 0.15s ease-out;
+}
+.fab-busy .fab-qty button,
+.fab-busy .fab-row .inv-act {
+  color: rgba(233, 231, 226, 0.22);
+  pointer-events: none;
+}
+.fab-busy .fab-row .inv-act {
+  border-color: rgba(233, 231, 226, 0.08);
+}
+/* the Craft button eases between its fill and its outline (materials short), its clipped corner with it; its label does
+   not tween its colour across the fading fill (it would pass through the fill's own tone): it fades out as it was and
+   back in as it is (Fabricator.swapValues) */
+.fab-go {
+  flex: 1;
+  overflow: hidden;
+  transition:
+    background 0.18s ease-out,
+    border-color 0.18s ease-out,
+    clip-path 0.18s ease-out,
+    opacity 0.15s ease-out;
+}
+/* the fabrication running across the button, left to right (the sweep's transform), fading as the button lets go */
+.fab-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 246, 232, 0.2), rgba(255, 246, 232, 0.55));
+  opacity: 0;
+  transform-origin: left;
+  pointer-events: none;
+  transition: opacity 0.18s ease-out;
+}
+.fab-go.working .fab-sweep {
+  opacity: 1;
+}
+.fab-go-l {
+  position: relative;
+}
+.fab-go.working,
+.fab-go.working:disabled {
+  opacity: 1;
+}
+/* materials short: the button stays, but reads as the ghost of itself */
+.fab-go.short:not(.working) {
+  color: var(--text);
+  background: transparent;
+  border-color: var(--line-2);
+  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
+}
+.fab-go.short:not(.working):hover {
+  color: var(--accent-hi);
+  border-color: var(--accent);
+  background: rgba(240, 162, 74, 0.06);
+}
+.fab-elsewhere {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  color: var(--dim);
+}
+/* the line under the columns: what was made, or why not (a change cross-fades: the old line fades out over the new) */
+.fab-panel .inv-foot {
+  position: relative;
+}
+.fab-msg.msg i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.fab-msg.good {
+  color: var(--good);
+}
+.fab-msg.good i {
+  background: var(--good);
+}
+.fab-msg.refused i {
+  background: var(--danger);
+}
+
 /* ---------- map ---------- */
 /* (transparent: the map is drawn into the game's own canvas underneath) */
 .map-screen {

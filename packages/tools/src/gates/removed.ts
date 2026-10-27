@@ -37,6 +37,8 @@ export const RULES: Rule[] = [
   { what: 'flat RESOURCES price table', task: 'P1.E13.T03', file: `${CLIENT}/gameplay/Inventory.js`, pattern: /export const RESOURCES\b/ },
   { what: 'sell-only trade panel', task: 'P1.E11.T04', file: `${CLIENT}/ui/Menus.js`, pattern: /data-sell=/ },
   { what: 'SHOP list', task: 'P1.E07.T09', file: `${CLIENT}/ui/Menus.js`, pattern: /\bconst SHOP\b/ },
+  // DESIGN 15.7: the warp cell recipe "replaces today's 1,800-unit purchase"
+  { what: "the trade panel's 1,800-unit warp cell", task: 'P1.E13.T05', file: `${CLIENT}/ui/Menus.js`, pattern: /\bid: 'warpcell'/ },
   { what: 'applyUpgrade', task: 'P1.E07.T09', under: CLIENT, pattern: /\bapplyUpgrade\b/ },
   { what: 'death tax: ship rebuilt for 20% of units', task: 'P1.E06.T03', file: `${CLIENT}/Game.js`, pattern: /inventory\.units \* 0\.2\b/ },
   { what: 'death tax: towed home for 15% of units', task: 'P1.E06.T03', file: `${CLIENT}/entities/Pirates.js`, pattern: /\bplayerDefeated\s*\(/ },
