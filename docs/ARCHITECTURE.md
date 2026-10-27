@@ -1061,6 +1061,10 @@ requests and starts its timer.
 - **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
   P1.E12.T04 resolves ship weapons on the server); the client's half is P1.E13.T06.
 
+## 19. Meters
+
+Reserved for Heat and Charge (P1.E07.T02), which holds protocol 9 and this section on its branch until it merges.
+
 ## 20. Combat (`packages/server/src/combat`)
 
 DESIGN 12.1, 9.1, 10.3, 14.9; P1.E06.T02. The server decides every hit: its health, its damage, deaths and what a kill

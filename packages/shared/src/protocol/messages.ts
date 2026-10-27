@@ -17,7 +17,7 @@ export const PROTOCOL_VERSION = 10;
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 // 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
 // 8: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
-// 9: meters: heat and Charge state (P1.E07.T02)
+// 9: reserved for meters: heat and Charge state (P1.E07.T02, on its branch until it merges)
 // 10: combat: fire requests and their answers, combat events with the target's health, XP events (P1.E06.T02)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
