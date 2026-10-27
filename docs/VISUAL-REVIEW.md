@@ -311,3 +311,23 @@ crosses the rising row; the row's tag and slot, and the footer status line, swap
 Round 3: the sequential out/in fade reads well where used; still failing: a craft's results (CAN MAKE counts, MAKES,
 needs, the stepper and CRAFT ×n) swap at full opacity in one frame; moving the selection to an uncraftable recipe snaps
 the CRAFT fill; the learn header still shows at 25% then 10% under the rising row. Requested: the stepper at 6 of 6.
+
+## P1.E12.T02 Lark, Swift, Kestrel, Mule (art)
+
+Graded per hull with the "Models and environments" table, each file as a family of base, damaged and husked.
+
+| Round | Hull | Verdict | Scores | Mean |
+|---|---|---|---|---|
+| 1 | Lark | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 3, placeholder 3, performance 3 | 3.1 |
+| 1 | Swift | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.4 |
+| 1 | Kestrel | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 3, placeholder 3, performance 4 | 3.5 |
+| 1 | Mule | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 3, placeholder 4, performance 4 | 3.5 |
+
+Round 1, common to all four: wear as uniform noise rather than placed by use; damaged variants indistinguishable from
+the base at gameplay range; LOD0 budgets spent on uniform tessellation of flat plates rather than modelled detail
+(nozzle throats, hardpoint mounts, hatches, fasteners where the language allows); no capture of the cockpit interior or
+a boarding path; hardpoints without mount geometry. Per hull: the Lark still reads as a generic fighter under a tile
+grid and misses the calibration's draw-call ask (65 against ≤12); the Swift reads as a jet with crystal glued on; the
+Kestrel's lattice reads as stick-and-tissue rather than grown chitin; the Mule's form passes (design and silhouette 4)
+but its liveries are swamped by nacre and it lacks BAY_* empties. Artifacts: `assets/renders/{lark,swift,kestrel,mule}_*`,
+`assets/renders/review/hulls/`.
