@@ -32,6 +32,8 @@ export const Placement = z.object({
       anchor: z.enum(['origin', 'player']),
     })
     .refine((s) => s.anchor === 'player' || (s.frame !== 'inertial' && s.frame !== 'player'), 'the inertial and player frames anchor on the player'),
+  /** its length (s): with the client's exit and a margin, how long the server counts its player as watching */
+  duration: z.number().positive().max(600),
   radius: z.number().min(10).max(50_000),
   actors: z.array(Actor).max(64),
 });

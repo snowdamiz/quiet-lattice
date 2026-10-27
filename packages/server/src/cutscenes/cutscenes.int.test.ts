@@ -3,7 +3,7 @@
 // `play` with the story phase it is placed in, whose tug only it sees in its snapshots, while the other player sees the
 // ordinary world and both still see each other. Asking again answers with the same phase; `done` takes it out, the
 // phase closes and the tug leaves its snapshots; asking again at once is refused (the cooldown). A player whose socket
-// closes mid-cutscene is forgotten and no longer watching.
+// closes mid-cutscene is forgotten and no longer watching; one whose phase the server closes is told `ended`.
 import { PROTOCOL_VERSION } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from '../../test/helpers.ts';
@@ -92,9 +92,21 @@ describe('cutscenes over the wire', () => {
     await waitFor(() => server.cutscenes.playingOf(bSession) === null, 5000, 'the closed session to be forgotten');
     expect(server.cutscenes.watching(a.zone.id, b.entityId)).toBe(false);
 
+    // c's phase goes from under it (the server closed it): the sweep ends it and tells c's client
+    const c = await player();
+    c.sock.send({ t: 'cutscene', op: 'request', id: 'test' });
+    const cPlay = await c.sock.next('cutscene');
+    expect(cPlay.op).toBe('play');
+    c.zone.phases.close(cPlay.phase!);
+    expect(server.cutscenes.watching(c.zone.id, c.entityId)).toBe(false);
+    server.cutscenes.sweep();
+    expect(await c.sock.next('cutscene')).toEqual({ t: 'cutscene', op: 'ended', id: 'test', phase: cPlay.phase });
+
     expect(a.errors).toEqual([]);
     expect(b.errors).toEqual([]);
+    expect(c.errors).toEqual([]);
     a.sock.close();
-    await a.sock.closed;
+    c.sock.close();
+    await Promise.all([a.sock.closed, c.sock.closed]);
   });
 });

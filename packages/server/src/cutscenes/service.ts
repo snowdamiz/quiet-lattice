@@ -14,7 +14,9 @@
 // - Actors: spawned once into the phase, in the cutscene's frame at their exported poses (turned with the anchor when
 //   it is the player); they go when the phase closes, after the last member's `done`.
 // - Out of play: while a player watches, `watching` says so, for the systems that must leave it alone (fauna, P1.E08:
-//   neither prey, intruder nor threat), as a sealed phase hides a player from the shared world.
+//   neither prey, intruder nor threat), as a sealed phase hides a player from the shared world. The server bounds it:
+//   no longer than the cutscene's length, the client's glide home and a margin, and only while the player is in its
+//   phase. Past either, the sweep (once a second, and before each request) ends it here and tells the client `ended`.
 import { performance } from 'node:perf_hooks';
 import type { ClientMessage, ServerMessage } from '@astra/shared/protocol';
 import { frameId } from '@astra/shared/world';
@@ -30,6 +32,12 @@ type Quat = [number, number, number, number];
 
 /** Seconds a session waits between cutscene requests. */
 export const COOLDOWN_S = 10;
+/** Seconds the client takes after a cutscene's clock ends to give the camera back (the client's EXIT_SECONDS). */
+export const EXIT_S = 1.5;
+/** Seconds of slack past a cutscene's length and exit before the server stops counting the player as watching it. */
+export const WATCH_MARGIN_S = 5;
+/** How often the server sweeps for cutscenes past their bounds (ms). */
+export const SWEEP_MS = 1000;
 
 /** Where the service finds a session's zone (the ZoneManager). */
 export interface CutsceneZones {
@@ -44,8 +52,10 @@ export interface CutsceneServiceOptions {
   catalog?: Readonly<Record<string, CutsceneEntry>>;
   /** a development server: a client may ask for a `dev` cutscene by itself */
   dev?: boolean;
-  /** seconds, for the request cooldown (a monotonic clock) */
+  /** seconds, for the request cooldown and the watching bound (a monotonic clock) */
   now?: () => number;
+  /** sends a session a message the server starts (`ended`); by default the session's own send() */
+  notify?: (viewer: ZoneViewer, msg: CutsceneState) => void;
   log?: ZoneLog;
 }
 
@@ -54,6 +64,8 @@ interface Playing {
   zone: Zone;
   phase: number;
   entity: number;
+  /** when the server stops counting it as watching (seconds, `now`'s clock) */
+  until: number;
 }
 
 /** A cutscene's place: the phase location it plays at, and the pose its anchor gives its actors. */
@@ -69,34 +81,41 @@ export class CutsceneService {
   private readonly zones: CutsceneZones;
   private readonly catalog: Readonly<Record<string, CutsceneEntry>>;
   private readonly now: () => number;
+  private readonly notify: (viewer: ZoneViewer, msg: CutsceneState) => void;
   private readonly log?: ZoneLog;
   private readonly playing = new Map<ZoneViewer, Playing>();
   /** when each session's last request started a cutscene */
   private readonly lastStart = new Map<ZoneViewer, number>();
-  /** players watching, by zone */
-  private readonly watchers = new Map<string, Set<number>>();
-  /** the anchor pose of each player-anchored phase, by zone and phase */
-  private readonly anchors = new Map<string, { origin: Vec3; basis: Quat }>();
+  /** who is watching what, by zone and entity */
+  private readonly watchers = new Map<string, Map<number, Playing>>();
+  /** the anchor pose of each phase, by zone and phase, kept while the phase is open */
+  private readonly anchors = new Map<string, { zone: Zone; phase: number; origin: Vec3; basis: Quat }>();
   private nextPlace = 1;
+  private sweeper: NodeJS.Timeout | null = null;
 
   constructor(opts: CutsceneServiceOptions) {
     this.zones = opts.zones;
     this.catalog = opts.catalog ?? CUTSCENES;
     this.now = opts.now ?? (() => performance.now() / 1000);
+    this.notify = opts.notify ?? ((viewer, msg) => (viewer as { send?: (m: CutsceneState) => void }).send?.(msg));
     this.log = opts.log;
     const dev = !!opts.dev;
     this.may = (_viewer, _id, entry) => dev && !!entry.dev;
   }
 
-  /** A client's `cutscene` message, answered. A request must be allowed (`may`) and outside the cooldown. */
+  /**
+   * A client's `cutscene` message, answered. A request must be allowed (`may`) and outside the cooldown; asking again
+   * for the one it is watching, while that is still going (its phase open, the player in it, within its bound), answers
+   * with its phase and costs nothing. Anything else goes through `may` and the cooldown again.
+   */
   handle(viewer: ZoneViewer, msg: CutsceneRequest): CutsceneState {
+    this.sweep();
     if (msg.op === 'done') return this.end(viewer, msg.id);
     const id = msg.id;
     const entry = this.entry(id);
     if (!entry) return refused(id, 'unknown');
     const now = this.playing.get(viewer);
-    // (asking again for the one it is watching answers with its phase, and costs nothing)
-    if (now?.id === id) return this.start(viewer, id);
+    if (now?.id === id && this.live(now)) return { t: 'cutscene', op: 'play', id, phase: now.phase };
     if (!this.may(viewer, id, entry)) return refused(id, 'denied');
     const last = this.lastStart.get(viewer);
     if (last !== undefined && this.now() - last < COOLDOWN_S) return refused(id, 'cooldown');
@@ -111,9 +130,41 @@ export class CutsceneService {
     return p ? { id: p.id, phase: p.phase } : null;
   }
 
-  /** Whether entity `entity` in zone `zoneId` is watching a cutscene: out of play for the shared world's systems. */
+  /**
+   * Whether entity `entity` in zone `zoneId` is watching a cutscene: out of play for the shared world's systems. Only
+   * while it is in the cutscene's phase, and no longer than the cutscene's length, the exit and a margin.
+   */
   watching(zoneId: string, entity: number): boolean {
-    return this.watchers.get(zoneId)?.has(entity) ?? false;
+    const p = this.watchers.get(zoneId)?.get(entity);
+    return !!p && this.live(p);
+  }
+
+  /**
+   * Ends, here, every cutscene past its bound or whose player is no longer in its phase, and tells its client `ended`;
+   * forgets the anchors of phases that have closed. Runs once a second (startSweeping) and before each request.
+   */
+  sweep(): void {
+    for (const [viewer, p] of [...this.playing]) {
+      if (this.live(p)) continue;
+      this.stopWatching(viewer, p);
+      const entity = p.zone.entityOf(viewer);
+      if (entity !== undefined && p.zone.phases.phaseOf(entity) === p.phase) p.zone.phases.leave(viewer);
+      this.log?.info({ zone: p.zone.id, phase: p.phase, cutscene: p.id, entity: p.entity }, 'cutscene ended by the server');
+      this.notify(viewer, { t: 'cutscene', op: 'ended', id: p.id, phase: p.phase });
+    }
+    for (const [key, a] of this.anchors) if (!a.zone.phases.phase(a.phase)) this.anchors.delete(key);
+  }
+
+  /** Sweeps once a second until stopSweeping (the server runs it; unref'd, so it never holds the process). */
+  startSweeping(): void {
+    if (this.sweeper) return;
+    this.sweeper = setInterval(() => this.sweep(), SWEEP_MS);
+    this.sweeper.unref();
+  }
+
+  stopSweeping(): void {
+    if (this.sweeper) clearInterval(this.sweeper);
+    this.sweeper = null;
   }
 
   /**
@@ -130,10 +181,9 @@ export class CutsceneService {
     if (!zone || entity === undefined) return refused(id, 'zone');
     const now = this.playing.get(viewer);
     if (now) {
-      const open = zone.phases.phase(now.phase)?.open && zone.phases.phaseOf(entity) === now.phase;
-      if (now.id === id && open) return { t: 'cutscene', op: 'play', id, phase: now.phase };
-      if (open) return refused(id, 'busy');
-      this.stopWatching(viewer, now);
+      if (this.live(now)) return now.id === id ? { t: 'cutscene', op: 'play', id, phase: now.phase } : refused(id, 'busy');
+      // (one past its bound, or whose phase went: ended, and the client told)
+      this.sweep();
     }
     const place = this.placeOf(zone, entity, entry.placement, at);
     if (!place) return refused(id, 'place');
@@ -145,13 +195,14 @@ export class CutsceneService {
     }
     const phase = zone.phases.phaseFor(viewer, 'story', place.location);
     const key = `${zone.id}/${phase.id}`;
-    if (!this.anchors.has(key)) this.anchors.set(key, { origin: place.origin, basis: place.basis });
+    if (!this.anchors.has(key)) this.anchors.set(key, { zone, phase: phase.id, origin: place.origin, basis: place.basis });
     // (a party member watching it here already has the actors out)
     if (phase.entities.size === 0) this.spawnActors(zone, phase, entry.placement, this.anchors.get(key)!);
-    this.playing.set(viewer, { id, zone, phase: phase.id, entity });
+    const p: Playing = { id, zone, phase: phase.id, entity, until: this.now() + entry.placement.duration + EXIT_S + WATCH_MARGIN_S };
+    this.playing.set(viewer, p);
     let w = this.watchers.get(zone.id);
-    if (!w) this.watchers.set(zone.id, (w = new Set()));
-    w.add(entity);
+    if (!w) this.watchers.set(zone.id, (w = new Map()));
+    w.set(entity, p);
     this.log?.info({ zone: zone.id, phase: phase.id, cutscene: id, location: place.location.key, entity, members: phase.members.size }, 'cutscene started');
     return { t: 'cutscene', op: 'play', id, phase: phase.id };
   }
@@ -188,10 +239,15 @@ export class CutsceneService {
     return Object.hasOwn(this.catalog, id) ? this.catalog[id] : undefined;
   }
 
+  /** Still going: its phase open, the player in it, within its bound. */
+  private live(p: Playing): boolean {
+    return !!p.zone.phases.phase(p.phase)?.open && p.zone.phases.phaseOf(p.entity) === p.phase && this.now() < p.until;
+  }
+
   private stopWatching(viewer: ZoneViewer, p: Playing): void {
     this.playing.delete(viewer);
     const w = this.watchers.get(p.zone.id);
-    w?.delete(p.entity);
+    if (w?.get(p.entity) === p) w.delete(p.entity);
     if (w?.size === 0) this.watchers.delete(p.zone.id);
   }
 

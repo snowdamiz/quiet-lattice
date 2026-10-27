@@ -144,6 +144,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const wss = new WebSocketServer({ noServer: true, maxPayload: MAX_MESSAGE_BYTES, autoPong: false });
   const registry = new SessionRegistry();
   const cutscenes = deps.cutscenes ?? new CutsceneService({ zones: deps.zones, log });
+  if (!deps.cutscenes) cutscenes.startSweeping();
   deps.zones.onViewerRemoved = (viewer) => {
     cutscenes.forget(viewer);
     if (!(viewer instanceof Session)) return;
@@ -457,6 +458,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       closing = true;
       clearInterval(heartbeat);
       if (!deps.social) social.stop();
+      if (!deps.cutscenes) cutscenes.stopSweeping();
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeWorld();

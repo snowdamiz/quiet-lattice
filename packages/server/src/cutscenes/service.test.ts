@@ -10,11 +10,19 @@ import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import { Zone, type ZoneViewer } from '../zones/zone.ts';
 import { CUTSCENES, loadPlacement, type CutsceneEntry, type CutscenePlacement } from './catalog.ts';
-import { COOLDOWN_S, CutsceneService, multiply, rotate } from './service.ts';
+import { COOLDOWN_S, CutsceneService, EXIT_S, multiply, rotate, WATCH_MARGIN_S } from './service.ts';
 
 class Viewer implements ZoneViewer {
-  constructor(readonly id: number) {}
+  /** the control messages the server pushed it */
+  readonly pushed: unknown[] = [];
+  readonly characterId: string;
+  constructor(readonly id: number) {
+    this.characterId = `character-${id}`;
+  }
   sendBinary(): void {}
+  send(m: unknown): void {
+    this.pushed.push(m);
+  }
 }
 
 type V3 = [number, number, number];
@@ -27,6 +35,7 @@ const AROUND: CutscenePlacement = {
   id: 'around',
   source: 'test',
   space: { frame: 'player', anchor: 'player' },
+  duration: 8,
   radius: 500,
   actors: [{ id: 'echo', kind: 'npc', name: 'Echo', pos: [0, 2, -10], quat: [0, 0, 0, 1] }],
 };
@@ -38,7 +47,7 @@ function setup({ dev = true, catalog = { ...CUTSCENES } as Record<string, Cutsce
   const service = new CutsceneService({ zones: { zoneOf: (v) => viewers.get(v) }, catalog, dev, now: () => clock });
   let next = 1;
   let time = 2.3e7;
-  const step = () => zone.step((time += 0.05));
+  const step = (dt = 0.05) => zone.step((time += dt));
   const station = zone.stationFrame;
   /** a player at `pos` in `frame` (the Waystation's by default), in `party`, facing `quat`; stepped so the zone knows
    * where it is */
@@ -255,6 +264,94 @@ describe('cutscene service', () => {
     service.forget(a.viewer);
     expect(service.playingOf(a.viewer)).toBeNull();
     expect(service.watching(zone.id, a.entity)).toBe(false);
+  });
+});
+
+describe('the server’s bounds', () => {
+  it('sends a re-ask after the phase closed through may and the cooldown again, so a step’s cutscene cannot be replayed', () => {
+    const { zone, service, player, advance } = setup({ dev: false });
+    const a = player();
+    // the quest engine allows it while the character is on its step, which ends once it has played
+    let onStep = true;
+    service.may = (_v, id) => onStep && id === 'test';
+    const play = service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' });
+    expect(play.op).toBe('play');
+    onStep = false;
+    // while it is going, asking again answers with its phase (no may, no cooldown)
+    expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' })).toEqual(play);
+    // the phase closes (the grace ran out, the server closed it): a re-ask is a new request
+    zone.phases.close(play.phase!);
+    advance(COOLDOWN_S + 1);
+    expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' })).toMatchObject({ op: 'refused', reason: 'denied' });
+    expect(zone.phases.count).toBe(0);
+    // and still allowed by may, it waits out the cooldown like any request
+    onStep = true;
+    const again = service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' });
+    expect(again.op).toBe('play');
+    zone.phases.close(again.phase!);
+    expect(service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' })).toMatchObject({ op: 'refused', reason: 'cooldown' });
+  });
+
+  it('stops counting a player as watching past the cutscene’s length, exit and margin, ends it and tells the client', () => {
+    const { zone, service, player, advance } = setup();
+    const a = player();
+    const play = service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' });
+    const bound = loadPlacement('test').duration + EXIT_S + WATCH_MARGIN_S;
+    advance(bound - 0.5);
+    service.sweep();
+    expect(service.watching(zone.id, a.entity)).toBe(true);
+    expect(a.viewer.pushed).toEqual([]);
+    advance(1);
+    // past the bound it is no longer watching, even before the sweep comes round
+    expect(service.watching(zone.id, a.entity)).toBe(false);
+    service.sweep();
+    expect(a.viewer.pushed).toEqual([{ t: 'cutscene', op: 'ended', id: 'test', phase: play.phase }]);
+    expect(zone.phases.phaseOf(a.entity)).toBeNull();
+    expect(service.playingOf(a.viewer)).toBeNull();
+  });
+
+  it('stops counting a player as watching once it is no longer in the cutscene’s phase, and tells the client', () => {
+    const { zone, service, player } = setup();
+    const a = player();
+    const play = service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'test' });
+    // the phase manager put it back in the shared world (here: it left the phase; the grace does the same)
+    zone.phases.leave(a.viewer);
+    expect(service.watching(zone.id, a.entity)).toBe(false);
+    service.sweep();
+    expect(a.viewer.pushed).toEqual([{ t: 'cutscene', op: 'ended', id: 'test', phase: play.phase }]);
+    // its done afterwards changes nothing
+    expect(service.end(a.viewer, 'test')).toEqual({ t: 'cutscene', op: 'ended', id: 'test', phase: null });
+  });
+
+  it('forgets the anchor of a phase that closed through an expired disconnect hold', () => {
+    const { zone, service, player, step } = setup({ catalog: { around: { placement: AROUND, dev: true } } });
+    const anchors = () => (service as unknown as { anchors: Map<string, unknown> }).anchors.size;
+    const a = player([100, 20, -40], 'crew');
+    const play = service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'around' });
+    expect(anchors()).toBe(1);
+    // its connection drops: the phase keeps its place for the grace, then closes
+    service.forget(a.viewer);
+    zone.leave(a.viewer, 'disconnected');
+    expect(zone.phases.phase(play.phase!)?.open).toBe(true);
+    for (let i = 0; i < 20; i++) step(1);
+    expect(zone.phases.phase(play.phase!)).toBeUndefined();
+    service.sweep();
+    expect(anchors()).toBe(0);
+  });
+
+  it('keeps a party member far away in the same frame out of a player-anchored phase', () => {
+    const { zone, service, player } = setup({ catalog: { around: { placement: AROUND, dev: true } } });
+    const a = player([100, 20, -40], 'crew');
+    // 1.5 km away, still in the Waystation's frame (its sphere is 4.5 km), beyond the cutscene's 500 m
+    const far = player([100, 20, -1540], 'crew');
+    const near = player([100, 20, -440], 'crew');
+    expect(zone.entity(far.entity)!.fields.frame).toBe(zone.stationFrame);
+    const ra = service.handle(a.viewer, { t: 'cutscene', op: 'request', id: 'around' });
+    const rf = service.handle(far.viewer, { t: 'cutscene', op: 'request', id: 'around' });
+    const rn = service.handle(near.viewer, { t: 'cutscene', op: 'request', id: 'around' });
+    expect(rf.phase).not.toBe(ra.phase);
+    expect(rn.phase).toBe(ra.phase);
+    expect(zone.phases.phase(rf.phase!)!.location.center).toEqual([100, 20, -1540]);
   });
 });
 

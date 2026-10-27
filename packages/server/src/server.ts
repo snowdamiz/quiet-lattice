@@ -144,6 +144,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const close = () =>
     (closed ??= (async () => {
       zones.stop();
+      cutscenes.stopSweeping();
       await ws.close();
       await persistence.close();
       await app.close();
@@ -160,6 +161,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const { port, address } = app.server.address() as AddressInfo;
   const urlHost = address.includes(':') ? `[${address}]` : address;
   zones.start();
+  cutscenes.startSweeping();
   world.start();
   persistence.start();
   log.info({ port, db: redact(config.DATABASE_URL), redis: redact(config.REDIS_URL), tickHz: config.TICK_HZ }, 'astra server ready');

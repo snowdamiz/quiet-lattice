@@ -31,7 +31,7 @@ A source holds one cutscene, laid out the way Blender already edits cameras:
 What is written: to --out, <id>.json for the client: per shot, the evaluated camera at every frame of its range (and the
 frame it cuts on), converted to the engine's axes (Y up; Blender's +Y forward is the engine's -Z), with the vertical
 field of view of the render framing; the lines, events and stage. To --server-out, <id>.json for the server: the
-cutscene's space, its phase radius and its actors. Every rule the client's parseCutscene applies is applied here first,
+cutscene's space, its length, its phase radius and its actors. Every rule the client's parseCutscene applies is applied here first,
 and every problem in a source is listed, not only the first. The .blend is never saved.
 """
 import argparse
@@ -406,7 +406,7 @@ def export_scene(scene, source=""):
     client["shots"] = shots
     client["lines"] = lines
     client["events"] = events
-    place = {"format": PLACE_FORMAT, "version": VERSION, "id": cid, "source": source, "space": space, "radius": radius, "actors": actors}
+    place = {"format": PLACE_FORMAT, "version": VERSION, "id": cid, "source": source, "space": space, "duration": duration, "radius": radius, "actors": actors}
     return client, place
 
 
@@ -660,6 +660,7 @@ def selftest():
     # Blender +Y turned 90 deg about Z is -X; the engine's -X
     expect((nose - Vector((-1, 0, 0))).length < 1e-4, f"the staged nose (Blender +Y turned 90 deg) is the engine's -X ({tuple(round(v, 4) for v in nose)})")
     expect(place["format"] == PLACE_FORMAT and place["space"] == {"frame": "station", "anchor": "origin"} and place["radius"] == 1200, "the server placement: space and radius")
+    expect(place["duration"] == data["duration"] == 4.0, "the server placement: the cutscene's length, which bounds how long the server counts the player watching")
     expect(place["actors"] == [{"id": "tug", "kind": "ship", "name": "Waystation tug", "pos": [-40, 12, -160], "quat": [0, 0, 0, 1], "hull": "mule"}], f"the actor in the engine's axes ({place['actors']})")
 
     with tempfile.TemporaryDirectory() as d:
