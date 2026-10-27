@@ -757,7 +757,7 @@ export const AnalyzeState = z
 
 /**
  * A fabricator's answer (ARCHITECTURE §23): `made` with `item` and `count`, what the crafts added to the inventory (the
- * inventory itself follows as `inventory` state); `learned` (the recipe is known for good: `recipes` follows); or
+ * inventory itself came first, as `inventory` state); `learned` (the recipe is known for good: `recipes` came first); or
  * `refused` with `reason`, and nothing changed. It names the op and the recipe asked for. The fields differ from the
  * request's, so one `craft` type serves both directions (encodeMessage).
  */
@@ -776,7 +776,7 @@ export const CraftState = z
   .refine((m) => (m.result === 'made') === (m.item !== undefined && m.count !== undefined), 'a craft made, and only one, says what it made')
   .refine((m) => m.result === 'refused' || (m.result === 'made') === (m.op === 'make'), 'a make makes, a learn learns');
 /** The recipes the character knows, by id (DESIGN 15.7: learned once, kept forever): after `welcome` (with the inventory
- * and skills) and whenever a recipe is learned. */
+ * and skills) and whenever a recipe is learned, before the answer that learned it. */
 export const RecipesState = z.object({
   t: z.literal('recipes'),
   known: z

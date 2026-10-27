@@ -398,6 +398,14 @@ async function fabClick(page: Page, selector: string): Promise<void> {
  * material flashing.
  */
 async function openStationFabricator(page: Page): Promise<void> {
+  await stationFabricator(page);
+  await fabClick(page, '.fab-row[data-recipe="oxygen_cartridge"]');
+  await fabClick(page, '[data-make]');
+  await page.waitForTimeout(800);
+}
+
+/** The same scene at the Waystation, the fabricator opened on the warp cell it can make, nothing pressed yet. */
+async function stationFabricator(page: Page): Promise<void> {
   await page.evaluate(() => (window as unknown as FabricatorPage).dev.boot());
   await page.evaluate(() => {
     const g = (window as unknown as FabricatorPage).game;
@@ -413,9 +421,6 @@ async function openStationFabricator(page: Page): Promise<void> {
     ['tritium', 380],
     ['carbon', 240],
   ]);
-  await fabClick(page, '.fab-row[data-recipe="oxygen_cartridge"]');
-  await fabClick(page, '[data-make]');
-  await page.waitForTimeout(800);
 }
 
 /** The ship's fabricator: in the Lark landed on the home world, the haul aboard, flak ammo selected, three crafts. */
@@ -454,6 +459,15 @@ const fabricatorMotion =
     if (select) await fabClick(page, `.fab-row[data-recipe="${select}"]`);
     await page.evaluate(() => setTimeout(() => document.querySelector<HTMLElement>('[data-make]')?.click(), 2000));
   };
+
+/**
+ * A lesson's motion for the clip: 0.2 s in, LEARN is pressed on the torpedo recipe (the haul's find); its row eases up out
+ * of "Recipes to learn" into the recipe list (0.38 s) and flashes once, the heading fades out (0.2 s), the controls
+ * dimmed by the press come back, and the torpedo's details come in beside it (0.28 s).
+ */
+async function learnMotion(page: Page): Promise<void> {
+  await page.evaluate(() => setTimeout(() => document.querySelector<HTMLElement>('[data-learn="torpedo"]')?.click(), 2000));
+}
 
 /** The press (every third frame), the fabrication's run across the button, the result and the rows settling. */
 const FABRICATOR_SHEET = [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 104, 112, 119];
@@ -646,14 +660,22 @@ export const SCREENS: Record<string, ScreenDef> = {
   },
   // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
   // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the
-  // clip of a warp cell crafted; `fabricator-ship` the ship's own, landed on the home world: ammo and cartridges only (the
-  // warp cell listed as made at a Waystation), and the clip of three crafts of flak ammo
+  // clip of a warp cell crafted; `fabricator-learn` the same, and the clip of the torpedo recipe learned;
+  // `fabricator-ship` the ship's own, landed on the home world: ammo and cartridges only (the warp cell listed as made at
+  // a Waystation), and the clip of three crafts of flak ammo
   fabricator: {
     clipSeconds: 2,
     sheetFrames: FABRICATOR_SHEET,
     open: openStationFabricator,
     stills16x9: { craftable: (page) => fabClick(page, '.fab-row[data-recipe="warp_cell"]') },
     motion: fabricatorMotion('warp_cell'),
+  },
+  // learning a recipe at the Waystation: LEARN on the torpedo recipe, and the row moving into the list
+  'fabricator-learn': {
+    clipSeconds: 1.2,
+    sheetFrames: [0, 6, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 34, 38, 44, 50, 58, 66, 71],
+    open: stationFabricator,
+    motion: learnMotion,
   },
   'fabricator-ship': {
     clipSeconds: 2,

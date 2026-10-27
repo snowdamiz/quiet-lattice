@@ -103,8 +103,8 @@ export class CraftingService {
     return k ? { t: 'recipes', known: [...k.known] } : null;
   }
 
-  /** A client's fabricator request, answered (see the header). After a `learned` answer the gateway sends the new
-   * `recipes`. */
+  /** A client's fabricator request, answered (see the header). With a `learned` answer the gateway sends the new
+   * `recipes` first. */
   craft(viewer: ZoneViewer, msg: CraftRequest): CraftState {
     const op = msg.op;
     const base = { t: 'craft' as const, seq: msg.seq, op: op.op, recipe: op.recipe };

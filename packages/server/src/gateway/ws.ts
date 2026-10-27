@@ -22,7 +22,7 @@
 // Fabricator requests (make a recipe at the station's or the ship's fabricator, learn one from its item) go to the
 // crafting service (crafting/), which checks each against the recipes the character knows (the book persistence's
 // registry loads into), where the player is and what it holds, and answers it; a joining character is sent the recipes it
-// knows after its skills, and again whenever it learns one (§23).
+// knows after its skills, and again whenever it learns one, before the answer (§23).
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
@@ -467,10 +467,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       case 'craft': {
         if (s.state !== 'joined') return invalid(s, 'craft before join');
         const r = crafting.craft(s, msg);
-        s.send(r);
-        // (what a craft used and made went out as `inventory` state with the change; a recipe learned is news too)
+        // (the state before the answer, so a client shows the answer on the state it changed: what a craft used and made
+        // went out as `inventory` with the change, and a recipe learned goes out as `recipes` now)
         const known = r.result === 'learned' ? crafting.recipes(s.characterId!) : null;
         if (known) s.send(known);
+        s.send(r);
         return;
       }
       default:

@@ -202,13 +202,14 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `species`, or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `unknown`, `dead`, `world`,
   `range`, `busy`, `los`, `full`). `seq` counts from 1 and increases; `time` is checked only for staleness.
 - **Crafting** (protocol 13, §23): a client sends `craft {seq, op}`, `op` one of `make {recipe, count, at}` (`count`
-  1–100 crafts at `at`, the `station`'s fabricator or the `ship`'s) and `learn {recipe}` (from its recipe item), a strict
-  shape: no client says what a craft uses or makes. The server answers each with `craft {seq, op, recipe, result}`:
-  `made` with `item` and `count` (what reached the inventory; the inventory itself goes out as `inventory` state, before
-  the answer), `learned`, or `refused` with `reason` (`stale_seq`, `rate`, `zone`, `unknown`, `not_known`, `known`,
-  `no_item`, `place`, `fabricator`, `materials`, `no_room`). `recipes {known}` (recipe ids, each once, at most 256) is sent
-  after `skills` on join and after every recipe learned. Recipe ids are table-id shaped (48 characters); one the table
-  lacks is answered `unknown`, not dropped. `seq` counts from 1 and increases.
+  1–100 crafts at `at`, the `station`'s fabricator or the `ship`'s) and `learn {recipe}` (from its recipe item), a
+  strict shape: no client says what a craft uses or makes. The server answers each with `craft {seq, op, recipe,
+  result}`: `made` with `item` and `count` (what reached the inventory; the inventory itself goes out as `inventory`
+  state, before the answer), `learned`, or `refused` with `reason` (`stale_seq`, `rate`, `zone`, `unknown`, `not_known`,
+  `known`, `no_item`, `place`, `fabricator`, `materials`, `no_room`). `recipes {known}` (recipe ids, each once, at most
+  256) is sent after `skills` on join and whenever a recipe is learned, before the answer that learned it. Recipe ids
+  are table-id shaped (48 characters); one the table lacks is answered `unknown`, not dropped. `seq` counts from 1 and
+  increases.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.

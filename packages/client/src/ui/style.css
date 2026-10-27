@@ -2125,6 +2125,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 /* ---------- fabricator: the recipes known beside the selected one's materials (DESIGN 15.7) ---------- */
 /* The inventory's sibling (it wears .inv-panel): the same plate, head and footer. Amber marks only the recipe with the
    focus and the Craft button; what can be made reads in the HUD's green, what is short of materials in its red. */
+/* one height whatever the recipe or the list holds, so nothing re-centres under the player as they change; a long
+   list scrolls */
+.fab-panel {
+  height: min(700px, 88vh);
+}
 .fab-cols {
   flex: 1 1 auto;
   min-height: 0;
@@ -2133,8 +2138,9 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-template-rows: minmax(0, 1fr);
   gap: 40px;
 }
+/* (the whole column's height, so a row moving within it is never clipped by a list that just got shorter) */
 .fab-list {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -2252,7 +2258,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   gap: 10px;
 }
 .fab-mats-head {
-  padding-bottom: 8px;
+  padding: 0 10px 8px;
   border-bottom: 1px solid var(--line-2);
   color: var(--dim);
 }
@@ -2263,7 +2269,9 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   text-align: right;
 }
 .fab-mat {
+  position: relative;
   height: 42px;
+  padding: 0 10px;
   border-bottom: 1px solid var(--line);
   font-size: 14px;
 }
@@ -2294,23 +2302,16 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .fab-mat.short .have {
   color: var(--danger);
 }
-/* a short material, when a craft was refused for it */
-.fab-mat.fab-warn {
-  animation: fabFlash 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-@keyframes fabFlash {
-  from {
-    background: rgba(255, 90, 79, 0.16);
-  }
-}
 /* what one go makes, against what is held */
 .fab-out {
+  position: relative;
   display: grid;
   grid-template-columns: auto auto auto minmax(0, 1fr);
   align-items: center;
   gap: 10px;
   height: 46px;
   margin-top: 6px;
+  padding: 0 10px;
   font-size: 14px;
 }
 .fab-out > span:first-child {
@@ -2330,15 +2331,28 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .fab-out .have {
   color: var(--dim);
 }
-/* rows a craft changed settle back from warm white, as the inventory's slots do */
-.fab-mat.bump,
-.fab-out.bump,
-.fab-row.bump {
-  animation: fabBump 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+/* rows a craft changed settle back from warm white, as the inventory's slots do, and the materials short of a refused
+   craft from red: one wash over the row fading out (its opacity alone animates, so the row's own background, a
+   gradient on the selected recipe, never switches under it), carried across a redraw rather than restarted */
+.fab-mat.bump::after,
+.fab-out.bump::after,
+.fab-row.bump::after,
+.fab-mat.fab-warn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(233, 231, 226, 0.14);
+  opacity: 0;
+  animation: fabFade 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-@keyframes fabBump {
+.fab-mat.fab-warn::after {
+  background: rgba(255, 90, 79, 0.16);
+  animation-duration: 0.9s;
+}
+@keyframes fabFade {
   from {
-    background: rgba(233, 231, 226, 0.16);
+    opacity: 1;
   }
 }
 .fab-make {
@@ -2363,7 +2377,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   background: transparent;
   border: 0;
   cursor: pointer;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.15s, background 0.15s, opacity 0.15s ease-out;
 }
 .fab-qty button:hover:not(:disabled) {
   color: var(--text);
@@ -2390,18 +2404,38 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   border-left: 1px solid var(--line);
   border-right: 1px solid var(--line);
 }
+/* while a fabrication or a lesson runs, the controls that cannot be used dim, and come back after, both eased */
+.fab-panel .fab-row .inv-act {
+  transition: color 0.15s, border-color 0.15s, opacity 0.15s ease-out;
+}
+.fab-busy .fab-qty button,
+.fab-busy .fab-row .inv-act {
+  opacity: 0.35;
+  pointer-events: none;
+}
+/* the Craft button eases between its fill and its outline (materials short), its clipped corner with it */
 .fab-go {
   flex: 1;
   overflow: hidden;
+  transition:
+    background 0.18s ease-out,
+    color 0.18s ease-out,
+    border-color 0.18s ease-out,
+    clip-path 0.18s ease-out,
+    opacity 0.15s ease-out;
 }
-/* the fabrication running across the button, left to right */
+/* the fabrication running across the button, left to right (the sweep's transform), fading as the button lets go */
 .fab-sweep {
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, rgba(255, 246, 232, 0.2), rgba(255, 246, 232, 0.55));
-  transform: scaleX(0);
+  opacity: 0;
   transform-origin: left;
   pointer-events: none;
+  transition: opacity 0.18s ease-out;
+}
+.fab-go.working .fab-sweep {
+  opacity: 1;
 }
 .fab-go-l {
   position: relative;
@@ -2415,7 +2449,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   color: var(--text);
   background: transparent;
   border-color: var(--line-2);
-  clip-path: none;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
 }
 .fab-go.short:not(.working):hover {
   color: var(--accent-hi);
