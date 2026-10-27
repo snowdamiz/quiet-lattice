@@ -75,6 +75,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'ping', id: 1, clientTime: 1000.5 },
   { t: 'inventory', seq: 3, op: { op: 'move', from: { c: 'suit', i: 0 }, to: { c: 'pod', p: 2, i: 7 }, count: 40 } },
   { t: 'skills', seq: 4, op: { op: 'buy', node: 'well' } },
+  { t: 'cutscene', op: 'request', id: 'test' },
 ];
 
 /** Every inventory op a client may send (they share the `inventory` request type). */
@@ -133,6 +134,7 @@ const serverSamples: ServerMessage[] = [
   { t: 'skills', seq: 4, skills },
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
+  { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
 ];
 
 const http = {
@@ -145,10 +147,10 @@ const http = {
 
 describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
-  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01). A branch that changes a message bumps the version, adds its
-  // line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 5, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(5);
+  // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04). A branch that changes a message
+  // bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 6, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(6);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

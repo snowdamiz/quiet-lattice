@@ -15,11 +15,11 @@ window.step = async (frames = 60, dt = 1 / 60) => {
   }
 };
 
-// Dev scenarios (dev builds only): #sandbox, #foot, #fly, #land, #station, #dock, #space and #review:… open the offline
-// sandbox (Game.startSandbox: no server, nothing kept) and jump straight into a situation. Without one of these hashes
-// the game goes through the server: Play, sign in, pick a character.
+// Dev scenarios (dev builds only): #sandbox, #foot, #fly, #land, #station, #dock, #space, #review:… and #cutscene:<id>
+// open the offline sandbox (Game.startSandbox: no server, nothing kept) and jump straight into a situation (#cutscene
+// plays a cutscene). Without one of these hashes the game goes through the server: Play, sign in, pick a character.
 const scenario = location.hash.slice(1);
-const SCENARIOS = new Set(['sandbox', 'foot', 'fly', 'land', 'station', 'dock', 'space', 'review']);
+const SCENARIOS = new Set(['sandbox', 'foot', 'fly', 'land', 'station', 'dock', 'space', 'review', 'cutscene']);
 if (import.meta.env.DEV && SCENARIOS.has(scenario.split(':')[0])) {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   (async () => {
@@ -33,6 +33,15 @@ if (import.meta.env.DEV && SCENARIOS.has(scenario.split(':')[0])) {
     if (name === 'review') {
       const { startReview } = await import('./dev/review.js');
       startReview(game, decodeURIComponent(scenario.slice('review:'.length)));
+      return;
+    }
+    // #cutscene:<id> (dev builds) — plays public/cutscenes/<id>.json (src/cutscene/), the ship first put where the
+    // cutscene staged it
+    if (name === 'cutscene') {
+      const def = await game.cutscenes.load(arg);
+      game.cutscenes.stage(def);
+      await wait(1500);
+      game.cutscenes.play(arg);
       return;
     }
     const planet = arg !== undefined ? game.system.planets[+arg] : home;

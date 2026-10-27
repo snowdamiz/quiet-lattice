@@ -101,7 +101,7 @@ export class Multitool {
   update(dt, input, active) {
     const g = this.game;
     // hidden while the camera is still easing in from the ship
-    this.view.visible = g.mode === 'foot' && !g.player.headUnderwater && !g.camBlend && !g.poseBlend;
+    this.view.visible = g.mode === 'foot' && !g.player.headUnderwater && !g.director.blend && !g.director.pose;
     // and raised into view once it has arrived
     this.raise = this.view.visible ? Math.min(1, (this.raise ?? 1) + dt * 2.6) : 0;
     this.beamMat.uniforms.uTime.value += dt;
