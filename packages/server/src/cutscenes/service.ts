@@ -110,7 +110,7 @@ export class CutsceneService {
    */
   handle(viewer: ZoneViewer, msg: CutsceneRequest): CutsceneState {
     this.sweep();
-    if (msg.op === 'done') return this.end(viewer, msg.id);
+    if (msg.op === 'done') return this.end(viewer, msg.id, msg.reason ?? (msg.skipped ? 'skipped' : 'finished'));
     const id = msg.id;
     const entry = this.entry(id);
     if (!entry) return refused(id, 'unknown');
@@ -207,15 +207,16 @@ export class CutsceneService {
     return { t: 'cutscene', op: 'play', id, phase: phase.id };
   }
 
-  /** The session's cutscene ended (or was skipped): its player leaves the phase, which closes once it is empty. */
-  end(viewer: ZoneViewer, id: string): CutsceneState {
+  /** The session's cutscene ended (played, skipped, or given back unplayed: `how`, logged): its player leaves the phase,
+   * which closes once it is empty. */
+  end(viewer: ZoneViewer, id: string, how?: string): CutsceneState {
     const p = this.playing.get(viewer);
     if (!p || p.id !== id) return { t: 'cutscene', op: 'ended', id, phase: null };
     this.stopWatching(viewer, p);
     const entity = p.zone.entityOf(viewer);
     if (entity !== undefined && p.zone.phases.phaseOf(entity) === p.phase) p.zone.phases.leave(viewer);
     if (!p.zone.phases.phase(p.phase)) this.anchors.delete(`${p.zone.id}/${p.phase}`);
-    this.log?.info({ zone: p.zone.id, phase: p.phase, cutscene: id }, 'cutscene ended');
+    this.log?.info({ zone: p.zone.id, phase: p.phase, cutscene: id, how }, 'cutscene ended');
     return { t: 'cutscene', op: 'ended', id, phase: p.phase };
   }
 
