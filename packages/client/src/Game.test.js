@@ -449,7 +449,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
     const toasts = [];
     const g = fake({
       inventory: new Inventory(),
-      hud: { toast: (text, tone) => toasts.push([text, tone]), showBanner: (...b) => banners.push(b) },
+      hud: { toast: (text, tone) => toasts.push([text, tone]), showBanner: (...b) => banners.push(b), social: { attach: vi.fn() } },
       audio: { play: vi.fn() },
       menus: { setConnection: vi.fn(), showMessage: vi.fn() },
       overlay: null,
