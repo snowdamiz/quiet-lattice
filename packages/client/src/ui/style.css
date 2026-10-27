@@ -770,8 +770,15 @@ body {
   border-color: #c7a6ff;
 }
 /* another pilot's ship: a small teal diamond over its canopy, its name in the condensed face and the range under it */
-/* other pilots: warm white inside a sharp 2 px dark ring (4.5:1 and more over any sky, ground or hull); HUD.js places the
-   label beside the ship's bounds on screen */
+/* other pilots: warm white inside a sharp 2 px dark ring (4.5:1 and more over any sky, ground or hull), at sizes the
+   condensed face holds solid; HUD.js places the mark over the ship and the label beside the mark, and fades both in and
+   out (FADE_MS) */
+.marker.player {
+  transition: opacity 0.15s linear;
+}
+.marker.player.out {
+  opacity: 0;
+}
 .marker.player .icon {
   width: 6px;
   height: 6px;
@@ -786,9 +793,12 @@ body {
   left: 8px;
   top: -9px;
   font-family: var(--font-cond);
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 15px;
+  letter-spacing: 0.04em;
   color: #e9e7e2;
+  transition: opacity 0.15s linear;
   text-shadow:
     1px 0 0 #0b0c0e,
     -1px 0 0 #0b0c0e,
@@ -803,8 +813,13 @@ body {
     0 2px 0 #0b0c0e,
     0 -2px 0 #0b0c0e;
 }
+.marker.player .lbl.out {
+  opacity: 0;
+}
 .marker.player .lbl small {
-  font-size: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 15px;
   color: #e9e7e2;
 }
 .marker.resource .icon {

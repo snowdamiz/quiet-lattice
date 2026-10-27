@@ -2,10 +2,12 @@ import { expect, test } from '@playwright/test';
 import { SCREENS } from '../capture/screens.ts';
 
 // Other pilots' markers (P1.E04.T02) through every frame of each remote-ships capture's clip, staged as `pnpm capture`
-// stages it (offline: a recorded snapshot stream through the remote layer): no pilot's mark or label on the fixed HUD
-// (the compass, its heading and EDGE readouts, the speed, altitude and mode readouts, the reticle, the location line, the
-// vitals, a prompt) or on the local ship, and no pilot's label on another mark or another label. The local ship's bounds
-// are worked out here on their own (its meshes' boxes in its own space, projected), not taken from the HUD.
+// stages it (offline: a recorded snapshot stream through the remote layer), on the HUD's own clock at 60 frames a second:
+// every pilot the sensors pick up and in view has its mark; no pilot's mark or label on the fixed HUD (the compass, its
+// heading and EDGE readouts, the speed, altitude and mode readouts, the reticle, the location line, the vitals, a prompt)
+// or on the local ship; no pilot's label on another mark or label, or more than a few px from its mark; and no name
+// flickering in and out, or from side to side, faster than its fade. Marks and labels fading out are gone. The local
+// ship's bounds are worked out here on their own (its meshes' boxes in its own space, projected), not taken from the HUD.
 
 const SCENES = ['remote-ships', 'remote-ships-crowd', 'remote-ships-pads', 'remote-ships-surface', 'remote-ships-bay'];
 const metal = (process.env.SMOKE_GL ?? (process.platform === 'darwin' && !process.env.CI ? 'metal' : 'swiftshader')) === 'metal';
@@ -48,7 +50,7 @@ for (const scene of SCENES)
         let o: Element | null = e;
         while (o) {
           const s = getComputedStyle(o);
-          if (s.display === 'none' || s.visibility === 'hidden' || s.opacity === '0') return null;
+          if (o.classList.contains('out') || s.display === 'none' || s.visibility === 'hidden' || s.opacity === '0') return null;
           o = o.parentElement;
         }
         return { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom, what };
@@ -90,8 +92,84 @@ for (const scene of SCENES)
       };
       const HUD = '.ec-ball, .ec-hdg, .ec-dist, .r-speed, .r-alt, .r-mode, .ship-reticle > b, .crosshair > b, .location, .vitals, .prompt';
       const frame = g.frame.bind(g);
+      // (the HUD's fades and waits on the frames' clock, as in the captures)
+      const base = g.hud.now();
+      let clock = 0;
+      g.hud.now = () => base + clock;
+      const cam = g.engine.camera;
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const history = new Map<number, { mark: boolean; markAt: number; shown: boolean; shownAt: number; ever: boolean; side: string | null; sideAt: number }>();
+      let switches = 0;
+      let toggles = 0;
+      let markToggles = 0;
+      let unmarked = 0;
       for (let f = 0; f < frames; f++) {
         frame(1 / 60);
+        clock += 1000 / 60;
+        // every pilot picked up and in view has its mark
+        for (const r of g.remotes.list) {
+          if (!r.shown || !r.sense?.detected) continue;
+          const v = r.world.clone().sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
+          if (v.z > 0) continue;
+          v.applyMatrix4(cam.projectionMatrix);
+          const x = (v.x * 0.5 + 0.5) * W;
+          const y = (-v.y * 0.5 + 0.5) * H;
+          if (x < 40 || x > W - 40 || y < 40 || y > H - 40) continue;
+          const mark = document.querySelector(`.marker.player[data-id="${r.id}"]`);
+          if (!mark || mark.classList.contains('out')) {
+            unmarked++;
+            issues.push({ frame: f, what: `${r.name}, picked up at ${Math.round(r.sense.distance)} m and in view, unmarked` });
+          }
+        }
+        // marks and names: none back and forth faster than their fade (a name's first showing, and a name going with its
+        // mark, aside)
+        for (const m of document.querySelectorAll('.marker.player')) {
+          const id = Number((m as HTMLElement).dataset.id);
+          const lbl = m.querySelector('.lbl')!;
+          const name = lbl.firstChild?.textContent ?? '';
+          const mark = !m.classList.contains('out');
+          const shown = mark && !lbl.classList.contains('out');
+          const st = (lbl as HTMLElement).style;
+          const side = shown ? (st.right ? 'left' : st.transform ? 'above' : 'right') : null;
+          const h = history.get(id);
+          if (!h) {
+            // (since when, before the clip: not known)
+            history.set(id, { mark, markAt: -Infinity, shown, shownAt: -Infinity, ever: shown, side, sideAt: -Infinity });
+            continue;
+          }
+          if (mark !== h.mark) {
+            markToggles++;
+            if (clock - h.markAt < 149)
+              issues.push({
+                frame: f,
+                what: `the mark of ${name} ${mark ? 'back' : 'gone'} ${Math.round(clock - h.markAt)} ms after it ${mark ? 'went' : 'came'}`,
+              });
+            h.mark = mark;
+            h.markAt = clock;
+          }
+          if (!mark) continue;
+          if (shown !== h.shown) {
+            toggles++;
+            // (within a frame of it, as the clock adds up)
+            if (h.ever && clock - h.shownAt < 149)
+              issues.push({
+                frame: f,
+                what: `${name} ${shown ? 'back' : `gone (${g.hud.pilots.get(id)?.why})`} ${Math.round(clock - h.shownAt)} ms after it ${shown ? 'went' : 'came back'}`,
+              });
+            h.shown = shown;
+            h.shownAt = clock;
+            h.ever ||= shown;
+          }
+          if (side && h.side && side !== h.side) {
+            switches++;
+            if (clock - h.sideAt < 149) issues.push({ frame: f, what: `${name} ${h.side} to ${side} ${Math.round(clock - h.sideAt)} ms after its last move` });
+          }
+          if (side && side !== h.side) {
+            h.side = side;
+            h.sideAt = clock;
+          }
+        }
         const keepOut = [...document.querySelectorAll(HUD)].map((e) => boxOf(e, e.className || e.tagName)).filter((b): b is Box => !!b);
         const ship = shipBox();
         if (ship) keepOut.push(ship);
@@ -127,12 +205,14 @@ for (const scene of SCENES)
         }
         if (f % 10 === 9) await new Promise((r) => setTimeout(r, 0));
       }
-      return { issues, pilots, labels, gap: gaps.length ? [Math.min(...gaps), Math.max(...gaps)] : [] };
+      return { issues, pilots, labels, switches, toggles, markToggles, unmarked, gap: gaps.length ? [Math.min(...gaps), Math.max(...gaps)] : [] };
     }, frames);
     // (the scene has pilots marked, and most named)
     expect(result.pilots).toBeGreaterThan(frames);
     expect(result.labels).toBeGreaterThan(0);
-    console.log(`${scene}: ${result.labels} pilot labels in ${frames} frames, ${result.gap.map((g) => g.toFixed(1)).join('..')} px from their marks`);
-    expect(result.issues.slice(0, 12), `${result.issues.length} overlaps`).toEqual([]);
+    console.log(
+      `${scene}: ${result.pilots} pilot marks and ${result.labels} labels in ${frames} frames, ${result.gap.map((g) => g.toFixed(1)).join('..')} px from their marks; ${result.switches} side moves, ${result.toggles} names and ${result.markToggles} marks in or out; ${result.unmarked} picked up and unmarked`,
+    );
+    expect(result.issues.slice(0, 40), `${result.issues.length} overlaps`).toEqual([]);
     expect(errors).toEqual([]);
   });

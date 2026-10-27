@@ -14,7 +14,7 @@
 // (P1.E05.T04); creatures are P1.E08.T09's (fauna from snapshots); npcs (walkers) and props wait for the body rig and a
 // prop catalog, loot and pods for P1.E08.T04 and P1.E06.T03: none of them is followed here.
 import * as THREE from 'three';
-import { detects, effectiveSignature, movementSignals, shipStats } from '@astra/shared/ships';
+import { detectionDistance, effectiveSignature, movementSignals, shipStats } from '@astra/shared/ships';
 import { coverAtObjects } from '@astra/shared/world';
 import { SnapshotStore } from '../net/snapshots.js';
 import { frameOfId } from '../net/pose.js';
@@ -40,6 +40,10 @@ export const snapLimit = (speed, apart = 0) => Math.max(SNAP_M, SNAP_S * Math.ma
 /** The box a ship fills (its own space, m) for its marker while its hull's model is not yet loaded: about a Lark's. */
 const DEFAULT_BOX = new THREE.Box3(new THREE.Vector3(-6, -2, -7), new THREE.Vector3(6, 2, 7));
 const nearer = (a, b) => a.markerDist - b.markerDist;
+/** A pilot once picked up stays marked out to this many times its reach (and is picked up again only within it), and
+ * for PICKUP_HOLD_S after it last was (a ship easing off its boost does not drop out and back as its speed wavers). */
+export const PICKUP_KEEP = 1.05;
+export const PICKUP_HOLD_S = 0.5;
 /** The hull of a player or ship whose snapshot names none: the Lark every pilot starts in (DESIGN 10.1). */
 export const DEFAULT_HULL = 'lark';
 
@@ -154,30 +158,48 @@ export class RemoteEntities {
   /**
    * The other pilots' ships a ship's sensors at world position `here`, of range `range`, pick up (DESIGN 10.1, as for
    * any ship: within the range × the ship's signature as a player reads it, halved in cover, doubled boosting or on the
-   * pulse drive): `add(name, world, box, quat)` for each, nearest first (the HUD gives the nearer the room for its name):
-   * where the ship is, the box it fills in its own space and how it is turned, from which the HUD sets the marker on its
-   * bounds on screen. Pilots on foot have no marker.
+   * pulse drive): `add(name, world, box, quat, id)` for each, nearest first (the HUD gives the nearer the room for its
+   * name): where the ship is, the box it fills in its own space and how it is turned, from which the HUD sets the marker
+   * on its bounds on screen, and its id (the HUD fades a marker in and out by it). A ship once picked up is kept until
+   * PICKUP_KEEP past its reach and PICKUP_HOLD_S after, so one at the edge of it is not marked and unmarked frame by
+   * frame; a hidden one (signature 0) goes at once. Pilots on foot have no marker. Each pilot's `sense` says how its sensors read it (the dev captures show it).
    */
   markers(here, range, add) {
     const seen = this.seen;
-    const sig = this.signals;
     seen.length = 0;
     for (const r of this.list) {
-      if (r.kind !== 'player' || !r.shown) continue;
-      const stats = this.statsOf(r.hull);
-      if (!stats) continue;
-      const mode = r.pose.mode === 'pulse' ? 'pulse' : r.pose.mode === 'landed' || r.pose.mode === 'docked' ? r.pose.mode : 'space';
-      const moving = movementSignals(stats, mode, r.pose.vel.length());
-      sig.inCover = this.inCover(r.world);
-      sig.boosting = moving.boosting;
-      sig.pulsing = moving.pulsing;
-      const d = r.world.distanceTo(here);
-      if (!detects(range, effectiveSignature(stats, sig), d)) continue;
-      r.markerDist = d;
+      if (r.kind !== 'player' || !r.shown || !this.sense(r, here, range)) continue;
       seen.push(r);
     }
     seen.sort(nearer);
-    for (const r of seen) add(r.name ?? 'Pilot', r.world, this.view.boxOf?.(r.hull) ?? DEFAULT_BOX, r.worldQuat);
+    for (const r of seen) add(r.name ?? 'Pilot', r.world, this.view.boxOf?.(r.hull) ?? DEFAULT_BOX, r.worldQuat, r.id);
+  }
+
+  /** How a ship's sensors at `here`, of range `range`, read pilot `r` (its `sense`: distance, reach, signature and what
+   * raised or lowered it, detected); whether they pick it up. */
+  sense(r, here, range) {
+    const stats = this.statsOf(r.hull);
+    const s = (r.sense ??= { distance: 0, reach: 0, signature: 0, boosting: false, pulsing: false, inCover: false, detected: false, heldTill: 0 });
+    if (!stats) return (s.detected = false);
+    const sig = this.signals;
+    const mode = r.pose.mode === 'pulse' ? 'pulse' : r.pose.mode === 'landed' || r.pose.mode === 'docked' ? r.pose.mode : 'space';
+    const moving = movementSignals(stats, mode, r.pose.vel.length());
+    sig.inCover = this.inCover(r.world);
+    sig.boosting = moving.boosting;
+    sig.pulsing = moving.pulsing;
+    s.signature = effectiveSignature(stats, sig);
+    s.boosting = sig.boosting;
+    s.pulsing = sig.pulsing;
+    s.inCover = sig.inCover;
+    s.distance = r.world.distanceTo(here);
+    s.reach = detectionDistance(range, s.signature);
+    const now = this.game.time;
+    const inReach = s.signature > 0 && s.distance <= s.reach * (s.detected ? PICKUP_KEEP : 1);
+    if (inReach) s.heldTill = now + PICKUP_HOLD_S;
+    // (held while the time is within the hold: a clock set back drops it)
+    s.detected = inReach || (s.detected && s.signature > 0 && now < s.heldTill && s.heldTill - now <= PICKUP_HOLD_S);
+    r.markerDist = s.distance;
+    return s.detected;
   }
 
   // A hull's stats as it leaves the yard (its signature is the hull's own), once per hull; null for no hull known.

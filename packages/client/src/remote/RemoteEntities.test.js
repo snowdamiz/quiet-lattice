@@ -7,7 +7,7 @@ import { GALAXY_SEED, Galaxy, describeGalaxySystem, homeSystems, setFrameInto, s
 import { describe, expect, it, vi } from 'vitest';
 import { Body } from '../universe/Body.js';
 import { framePoseAt } from './frames.js';
-import { BLEND_S, RemoteEntities, SNAP_M, snapLimit } from './RemoteEntities.js';
+import { BLEND_S, PICKUP_HOLD_S, PICKUP_KEEP, RemoteEntities, SNAP_M, snapLimit } from './RemoteEntities.js';
 
 const SEED = 7;
 const Q = [0, 0, 0, 1];
@@ -142,6 +142,36 @@ describe('RemoteEntities: what it follows and shows', () => {
     const marked = [];
     remotes.markers(here, 4000, (name) => marked.push(name));
     expect(marked).toEqual(['Pilot 4', 'Pilot 1']);
+  });
+
+  it(`keeps a pilot picked up out to ${PICKUP_KEEP} × its reach and ${PICKUP_HOLD_S} s past it, and picks it up again only within it`, () => {
+    const { game } = world();
+    game.place(100);
+    const remotes = new RemoteEntities(game, { view: view() });
+    remotes.ingest(new Map([[1, { id: 1, kind: 'player', mode: 'ship', name: 'Pilot 1', frame: frameId('station'), pos: [0, 0, 0], quat: Q, vel: [0, 0, 0] }]]), 100, 100, null);
+    remotes.update(DT);
+    const here = game.station.localToWorld(new THREE.Vector3(), new THREE.Vector3());
+    const r = remotes.get(1);
+    // (a Lark's reach on a 4 km sensor: 4 km)
+    const at = (x, t = game.time) => {
+      game.time = t;
+      r.world.copy(here).x += x;
+      return remotes.sense(r, here, 4000);
+    };
+    expect(at(4100)).toBe(false);
+    expect(at(3990)).toBe(true);
+    expect(r.sense).toMatchObject({ reach: 4000, signature: 1, detected: true });
+    expect(at(4000 * PICKUP_KEEP - 10, 100.1)).toBe(true);
+    // past the margin: held a while, then gone
+    expect(at(4500, 100.2)).toBe(true);
+    expect(at(4500, 100.1 + PICKUP_HOLD_S - 0.01)).toBe(true);
+    expect(at(4500, 100.1 + PICKUP_HOLD_S + 0.01)).toBe(false);
+    // and not back until within its reach
+    expect(at(4000 * PICKUP_KEEP - 10, 101)).toBe(false);
+    expect(at(3990, 101.1)).toBe(true);
+    // a clock set back drops the hold
+    expect(at(4500, 101.15)).toBe(true);
+    expect(at(4500, 50)).toBe(false);
   });
 
   it('shows nothing in a frame of another system (the player is not in the zone’s system)', () => {

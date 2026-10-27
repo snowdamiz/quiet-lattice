@@ -1139,7 +1139,7 @@ export class Game {
     }
     // other pilots' ships, picked up by the same rule as any ship (src/remote/), each marked on its bounds on screen
     const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(_viewer);
-    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat) => add('player', name, world, { box, quat }));
+    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat, id) => add('player', name, world, { box, quat, id }));
     return out;
   }
 
