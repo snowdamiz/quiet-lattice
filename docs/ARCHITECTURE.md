@@ -34,6 +34,7 @@ count/              the Count meter (§11): lean, target, drift, burn and underd
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
+meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§15)
 sim/                server-side systems added by later tasks: movement validation, combat, quests…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
@@ -103,7 +104,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills); a unit test pins the number and checks the history, so two branches
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 meters); a unit test pins the number and checks the history, so two branches
   bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
@@ -117,7 +118,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
-  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
+  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§15), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
   to its sender only, §13), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
@@ -146,6 +147,10 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   do; it sends the view after `inventory` on join (`seq` 0) and pushes it whenever server-side calls change it. The client
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
+- **Meters** (`@astra/shared/meters`, protocol 6): `meters {meters}` carries `{heat, heatMax, overheated, charge,
+  chargeMax, at}`, the values at world time `at` (§15). Sent after `skills` on join, then pushed: at once when the lockout
+  starts or ends, Charge runs out or a server-side call changes them, and at most every 0.5 s while either moves. There is
+  no request: the beam is the input's `beam` button, the pulse drive its `mode`.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 
@@ -252,8 +257,8 @@ registration order, so a later one reads an earlier one's value (`ctx.get`). Pha
 `coreRegistry`): `progress` (level, xp, home system: the columns), `skills` (§14; the owned nodes the ship and inventory
 read), `ship` (`ShipLoadout | null`, the Lark by default, checked with `shipStats` under the owned nodes, so Pack Mule's
 second pod loads), `inventory` (its layout re-derived from the ship and the owned nodes on load, `applyLayout(saved,
-layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it) and `pose` (`{system, pose, mode}`,
-read from the character's zone entity).
+layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `meters` (§15: heat and Charge with
+the world time they stood at) and `pose` (`{system, pose, mode}`, read from the character's zone entity).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -457,3 +462,50 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
 - **Wiring**: `coreRegistry` makes the service over the same inventory, ship and progress holders unless one is given, and
   registers its component after `progress` and before `ship`; the gateway takes the one in persistence's registry
   (`skillServiceIn`) unless given one, and exposes it as `ws.skills`.
+
+## 15. Heat and Charge (`packages/server/src/meters`, `@astra/shared/meters`)
+
+DESIGN 9.1's two ability resources, held by the server (P1.E07.T02). The numbers are `METERS` (`@astra/shared/data`); the
+rules are `@astra/shared/meters`, pure functions both ends run.
+
+- **Heat** (ground), 0 to the capacity (100; Tempered Core 125): the beam adds 32/s; cooling is 20/s idle and 8/s while
+  channelling (the beam channels), times every world modifier that holds, multiplied together (frozen or cryo worlds ×1.5,
+  desert, volcanic and inferno worlds by day ×0.6, underwater ×2, night ×1.1), times the build's `heat.cooling` (Furnace).
+  At the top the meter overheats: no beam and no abilities until heat is down to 25, cooling at the idle rate meanwhile.
+  Abilities add heat in chunks (`addHeat`, refused in the lockout; a chunk reaching the top overheats).
+- **Charge** (the ship's; today's pulse fuel), 0 to the flown hull's Charge (none without a ship): regenerates 2/s in
+  sunlight inside the habitable band, nothing elsewhere, never in deep space, plus the build's `charge.regen` (Solar Kin near
+  stars and on hot worlds, catalysts); the Listener's built-in flag gives the band's rate anywhere. The pulse drive burns
+  `ShipStats.pulse.fuelBurn` (0.35/s, Reserve Tank 25% less) near bodies and drops out at 0; ship actives spend it
+  (`spendCharge`, refused unless the meter holds it all); a Waystation refills it (`refillCharge`; the price is the caller's).
+- **Where a character is** (`meterEnvironment`): its frame's world type and hazard, day or night there (the star above or
+  below the point's horizon), underwater (on foot, the feet 1.6 m under a water sea, never a glowing one), sunlight (no body
+  between it and the star; the body underfoot by its horizon), the habitable band (the shell from the home world's orbit
+  ÷1.6 to ×1.6), deep space (beyond the description's `outerOrbit`, or a deep-space zone), near the star (25 of its radii)
+  and near bodies (within the pulse drive's burn reach, `openSpeed × cruiseS` of a surface or the star). `meterConditions`
+  turns it into the `CONDITIONS` ids the tables and conditional modifiers are keyed by.
+- **Exact steps.** `stepMeters` integrates a stretch segment by segment (the beam until the overheat, the lockout until the
+  recovery, the drive until Charge is gone), so the client's 60 fps frames and the server's 20 Hz inputs reach the same
+  values but for float rounding.
+- **MeterService** runs lazily from timestamps, with no clock of its own (every call takes the world time). The gateway
+  passes each input through `gate` (the meters advance to now; a claim of `pulse` with Charge empty becomes the mode the
+  server believed, `ship` after the drive, and the session hears `Charge empty: the pulse drive will not engage` once until
+  it stops asking), then the zone, then `input`: from then on the character does what that input says, in its entity's
+  mode, where its entity stands (its zone's body poses at the last tick, made once per tick). The beam heats only in the
+  believed mode `foot` and out of the lockout, at its rate per second of server time however fast inputs come; an input's
+  activity lapses 1 s after it, so a client that stops sending is idle. The entity's `heat` wire field carries the meter in
+  steps of 0.02 (the multitool's glow others see, DESIGN 9.10). `allowsMode(id, mode, now)` is movement authority's mode
+  check (P1.E03.T04: pulse needs Charge), `beamActive(id, now)` what server-side mining (P1.E13) judges yield by; `addHeat`,
+  `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is
+  made again whenever the ship or the owned nodes change.
+- **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, at}`. A character
+  back from away has its heat cooled for the time it was gone (idle, nowhere in particular) and its Charge as it left it:
+  Charge regenerates only in play. Nothing here is earned, so an unreadable value gives the default (cool, Charge full),
+  logged.
+- **The client** predicts with the same rules: the multitool steps heat each frame (`Multitool.stepHeat`), the ship its
+  Charge (`Ship.updateCharge`), both reading the character's place from the client's own bodies (`characterMeterEnvironment`:
+  the walker on foot, else the ship) and the build from `Ship.meterProfile`. The net layer hands each `meters` state to
+  `multitool.reconcile(view, serverNow)` and `ship.reconcileCharge(view, serverNow)`, which take the server's values and run
+  them on to the present. The HUD shows heat on the crosshair's left arc (warm, amber from 75%, danger red through the
+  lockout with a tick where it ends and OVERHEAT under the dot) and Charge on the reticle's right arc with a readout under the
+  altitude (how much and which way it is going; a sheen climbs the arc while it regenerates).
