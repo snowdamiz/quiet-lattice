@@ -242,3 +242,15 @@ only by small cards, unreadable past 10 m; uniform-noise skin; in-engine materia
 chrome, crystal as white plastic, Ulgani toe bleed); uniform remeshed LOD0 with no loops at the face or joints; blinks
 that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above the ground. Artifacts:
 `assets/renders/characters/`, `assets/renders/review/characters/`.
+
+## P1.E04.T05 Login and character screens (UI)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 4, performance 5 | 4.14 |
+
+Round 1: screen changes cross-dissolve in place, so outgoing and incoming headers overlap for about 7 frames; entering
+hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen's height mid-fade and clips the
+outgoing screen (Create and Back cut to a sliver while the request is pending). Contrast is 4.9–16.3:1 on the panel;
+the title tagline, ordinals and BUILD line sit at 2.7–3.2:1 over the planet limb. Requested: registering a fresh
+account with a refusal, landing on an empty list. Artifacts: `assets/renders/ui/{title,login-error,characters,create,entering,account-flow}/`.
