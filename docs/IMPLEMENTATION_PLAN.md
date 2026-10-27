@@ -300,7 +300,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 ### E15 Social
 - [x] **P1.E15.T01 Chat and parties** · deps: E03.T02, E09.T02 · done: (server and protocol; the UI is T03) shard, system and party channels; invite, leave, leader; party members share quest phases. · verify: integration.
 - [ ] **P1.E15.T03 Chat and party UI** · deps: T01, E04.T01 · done: a chat panel (shard, system, party tabs; fades out of the way like the HUD's location line), a party frame with members' names, health and leader mark, invite/leave/promote from the frame and by `/invite`, `/leave`; rate-limited input with the server's refusals shown. (Added by the orchestrator: P1.E15.T01 is the server half and no task drew the UI.) · verify: smoke with two clients chatting and partying; visual.
-- [R] **P1.E15.T02 Call-for-aid beacon** · deps: T01 · spec: DESIGN 16.6 "Social" · done: a player in an instance with open slots broadcasts; others join from the beacon list. · verify: integration.
+- [x] **P1.E15.T02 Call-for-aid beacon** · deps: T01 · spec: DESIGN 16.6 "Social" · done: a player in an instance with open slots broadcasts; others join from the beacon list. · verify: integration.
 
 ### E16 Vertical slice, performance and QA
 - [ ] **P1.E16.T01 Bot framework** · deps: E04.T03 · files: `packages/tools/src/bots/*` · done: headless scripted clients (fly, land, walk, mine, fight, dock, accept quests) for e2e and load. · verify: `pnpm bots -- --count 10` runs 10 minutes without errors.

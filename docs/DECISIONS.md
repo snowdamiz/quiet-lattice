@@ -663,3 +663,27 @@ Format: task id, question → choice → why.
   hour at Tier 0, and level 1 to 5 takes about 100 kills. Open: packs breaking off at 30% health (P1.E08.T02); safe
   zones block combat (P1.E10.T02 / P2.E17.T01); XP granting is now in three places (quests, codex, combat) and should
   become one service.
+- **P1.E15.T02** Call-for-aid beacon (`server/src/social/beacons.ts`, ARCHITECTURE §21) → an instance is an event, a
+  raid, or a quest step's story phase; bays and phases a cutscene plays in (marked by the cutscene service, whatever
+  their key) are refused. A player inside one with open slots raises a shard-wide listing: kind, system, place (frame,
+  centre, radius), a name (the quest's title, else the location key, else the kind), quest id, caller, open slots of the
+  cap, raised and lapse times; the caller consents to that much being shown. A story instance's slots are party places
+  (`PARTY_MAX` minus the party, offline and absent members counted); any member may raise one (T01 lets any member
+  invite), so strangers join the leader's party without the leader agreeing, and a caller with no party forms one it
+  leads. A beacon ends when its instance closes, fills or is left by its caller, when lowered, or after 10 minutes.
+  Limits: per account 3 raises at once then one per 30 s (a refused raise spends nothing), one beacon per character and
+  per instance, 256 on the shard (`busy`, no retry time); whole-list `watch` 5 at once then one per 10 s per account
+  (`denied of 'watch'`, `rate`, `retryS`), a repeat watch from a watching session ignored, changes sent once per 100 ms
+  sweep; watching belongs to one connection. Held in memory (one process per shard in Phase 1; Redis when P3.E37 splits
+  shards). Answering re-checks everything before anything changes: the beacon up, not your own (an alt may answer),
+  same system (`elsewhere`), in no phase (`in_phase`), inside the instance's exit radius (1.05×, `far`); events and
+  raids place through `PhaseManager.enter` (cap and party rules), story answers join the caller's party (a helper need
+  not hold the quest; refused `gone` while the caller is away, while event and raid answers are accepted with the
+  caller's place kept). Placement never moves the entity, so no mover is re-seated; there is no travel to a beacon.
+  Story helpers are tracked and sent back to the shared world when they leave the party, are kicked, the party
+  disbands, or the caller leaves the chapter (a disconnected helper's kept place is released); helpers are not
+  re-placed on reconnect. Protocol 11. Client: `net.beacons`, driven from the dev console until P1.E15.T03's UI. → The
+  shard can call for help into its instances without bending the phase rules. Open: travel to a beacon's place has no
+  task; an event beacon's place name is its raw location key (P2.E21.T01); a party of two disbanding can race the quest
+  runtime's re-placement by up to one 100 ms sweep (the chapter reopens fresh); the quest runtime does not re-place a
+  solo player who forms a party mid-step, nor close a step's phase while a helper remains (P1.E09 follow-up).
