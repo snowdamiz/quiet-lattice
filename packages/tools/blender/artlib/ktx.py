@@ -11,6 +11,7 @@ The encoder is Khronos' KTX-Software `ktx` tool, pinned to one release: `pnpm ar
 node_modules/.cache/ktx-software-<version>/ (packages/tools/src/art/ktx.ts); KTX in the environment overrides it.
 """
 import hashlib
+import json
 import math
 import os
 import shutil
@@ -367,10 +368,42 @@ def encode_args(tool, src, dst, codec, srgb, normal, channels, s, threads):
     return a + [str(src), str(dst)]
 
 
+def _split_mixed(js, slots):
+    """An image used as colour by one material and as data by another (Blender writes one image for two of its images
+    on the same file) becomes two: the data uses get a copy (its own image, buffer view and texture) to encode linear.
+    Returns how many were split."""
+    images, textures, views = js.get("images", []), js.get("textures", []), js.get("bufferViews", [])
+    mixed = [i for i, sl in slots.items() if sl & COLOUR and sl - COLOUR and images[i].get("mimeType") != KTX2]
+    clones = {}  # colour image -> its data copy's image index
+    for i in mixed:
+        im = dict(images[i], name=f"{images[i].get('name', f'image{i}')}_linear")
+        if "bufferView" in im:
+            views.append(dict(views[im["bufferView"]]))
+            im["bufferView"] = len(views) - 1
+        images.append(im)
+        clones[i] = len(images) - 1
+    texture_clone = {}
+    for m in js.get("materials", []):
+        for slot, info in _texture_refs(m):
+            t = info.get("index")
+            if slot in COLOUR or t is None or t >= len(textures) or _image_of(textures[t]) not in clones:
+                continue
+            if t not in texture_clone:
+                copy = json.loads(json.dumps(textures[t]))
+                copy["source"] = clones[_image_of(textures[t])]
+                copy.get("extensions", {}).pop(EXT, None)
+                textures.append(copy)
+                texture_clone[t] = len(textures) - 1
+            info["index"] = texture_clone[t]
+    return len(mixed)
+
+
 def compress(src, dst, s, log=print):
     """Writes `dst`: `src` with every material texture in KTX2 behind KHR_texture_basisu (see the module doc). Images
-    already in KTX2 are kept; an image used as both colour and data is refused. Returns a summary dict."""
+    already in KTX2 are kept; an image used as both colour and data is encoded twice (sRGB for the colour uses, linear for
+    the data ones). Returns a summary dict."""
     js, bin_data = glb.read(src)
+    split = _split_mixed(js, image_slots(js))
     slots = image_slots(js)
     images = js.get("images", [])
     # byte-identical images (a livery variant whose bakes of an unchanged material came out the same) are kept once, if
@@ -434,6 +467,7 @@ def compress(src, dst, s, log=print):
     summary = {
         "images": len(todo),
         "deduplicated": len(keeper),
+        "split": split,
         "uastc": sum(1 for j in todo if j[2] == "uastc"),
         "etc1s": sum(1 for j in todo if j[2] == "etc1s"),
         "binBefore": before,
@@ -442,6 +476,7 @@ def compress(src, dst, s, log=print):
     log(
         f"  compressed {summary['images']} texture(s) to KTX2 ({summary['uastc']} UASTC, {summary['etc1s']} ETC1S"
         + (f", {summary['deduplicated']} duplicate(s) stored once" if keeper else "")
+        + (f", {split} shared by colour and data encoded twice" if split else "")
         + f"): {before / 1e6:.1f} -> {len(out) / 1e6:.1f} MB of buffers"
     )
     return summary

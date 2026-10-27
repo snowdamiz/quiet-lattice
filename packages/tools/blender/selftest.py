@@ -907,10 +907,8 @@ def test_jpeg_maps():
     js, bin_data = glb.read(raw)
     mimes = sorted({im.get("mimeType") for im in js.get("images", [])})
     expect("image/jpeg" in mimes, f"Blender writes the JPEG sources as JPEG ({mimes})")
-    views = {im["name"]: js["bufferViews"][im["bufferView"]] for im in js["images"]}
-    data = {n: bytes(bin_data[v.get("byteOffset", 0) : v.get("byteOffset", 0) + v["byteLength"]]) for n, v in views.items()}
-    twins = [n for n in data if n.startswith("shared_noise")]
-    expect(len(twins) == 2 and data[twins[0]] == data[twins[1]], f"(the shared map is written twice with the same bytes: {twins})")
+    shared_slots = [sorted(sl) for i, sl in ktx.image_slots(js).items() if js["images"][i].get("name") == "shared_noise"]
+    expect(shared_slots == [["baseColor", "normal"]], f"(Blender writes the map on one file once, as colour and as data: {shared_slots})")
     out = TMP / "jpeg_maps_ktx2.glb"
     try:
         summary = ktx.compress(raw, out, ktx.settings(RULES, "characters"), log=lambda *_: None)
@@ -924,7 +922,11 @@ def test_jpeg_maps():
         (by.get("painted_base", {}).get("ktx") or {}).get("srgb") and (by.get("painted_normal", {}).get("ktx") or {}).get("codec") == "UASTC",
         "a JPEG colour map is sRGB, a JPEG normal map UASTC",
     )
-    expect(summary["deduplicated"] == 0 and len(images) == len(js["images"]), f"the same bytes as colour and as data stay two maps, each read its own way ({summary})")
+    shared = (by.get("shared_noise", {}).get("ktx") or {}, by.get("shared_noise_linear", {}).get("ktx") or {})
+    expect(
+        summary["split"] == 1 and shared[0].get("srgb") and shared[0].get("codec") == "ETC1S" and not shared[1].get("srgb") and shared[1].get("codec") == "UASTC",
+        f"a map used as colour and as data is encoded twice: sRGB ETC1S for the colour, linear UASTC for the normal ({summary}, {shared})",
+    )
     core.load(out)
     loaded = {R.strip(i.name) for i in bpy.data.images if i.size[0]}
     expect({"painted_base", "painted_normal", "painted_rough"} <= loaded, f"the transcoded copy imports every map ({sorted(loaded)})")
