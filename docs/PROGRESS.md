@@ -88,3 +88,4 @@ saved verdicts) are in `.claude/pause/` (gitignored).
 
 Watch: the 50-player surface bench trial sits at the 10 ms gate under load, on main too; a perf item for P1.E16.
 Open decisions for the owner are unchanged: a GitHub remote for CI (P1.E01.T05).
+| 2026-10-27 | P1.E09.T01 | Quest schema and runtime: quests as data with every DESIGN 14.1 step type, a shared engine, a server runtime fed by zone, inventory and events, rewards through inventory and skills (owed for the rest), instanced steps in party-shared story phases, the `quests` component with catalog reconciliation, cutscene steps with retry, the client objective line through Net, Objectives.js deleted, admin set-quest-step. | `packages/shared/src/quests/*`, `packages/server/src/quests/*`, gateway, client Game, ARCHITECTURE §17 | 1265 unit + 95 integration tests; review REVISE ×2 → PASS |
