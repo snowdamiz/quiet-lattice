@@ -256,12 +256,18 @@ that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 4, performance 5 | 4.14 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.29 |
 
 Round 1: screen changes cross-dissolve in place, so outgoing and incoming headers overlap for about 7 frames; entering
 hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen's height mid-fade and clips the
 outgoing screen (Create and Back cut to a sliver while the request is pending). Contrast is 4.9–16.3:1 on the panel;
 the title tagline, ordinals and BUILD line sit at 2.7–3.2:1 over the planet limb. Requested: registering a fresh
 account with a refusal, landing on an empty list. Artifacts: `assets/renders/ui/{title,login-error,characters,create,entering,account-flow}/`.
+
+Round 2: steps now sequence and nothing clips; still failing: the cut into the world fades only to about 20% black and
+then jumps to flat black in one frame, its amber fill cut at 10%; the sign-in error box collapses in two frames while
+the layout eases; JOINING swaps to IN THE WORLD in one frame. Requested: the arrival with pointer lock granted (the
+captured arrival lands on the pause menu with no scrim, ordinals 3.6–3.8:1).
 
 ## P1.E15.T03 Chat and party UI (with the beacon list)
 
