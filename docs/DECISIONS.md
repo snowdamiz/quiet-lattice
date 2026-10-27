@@ -421,3 +421,18 @@ Format: task id, question → choice → why.
   Protocol 4: a unit `attack` phase; `species` is an index into the world's list. The zone's fauna tier follows the
   world service's tier map. → DESIGN 12.2's living worlds, server-owned and bounded. Open: P1.E08.T03 takes den kinds
   from the rolled species; herds moving around a sealed player hint at its presence.
+- **P1.E14.T11** Review scene additions → "100 m" means the camera 100 m from the asset's centre (LOD0 bounds) at the
+  orbit's azimuth and elevation with the game's camera, raised in 2° steps up to 60° if the ground blocks the view, plants
+  in the eye-to-asset cone hidden; heroes (by the families.json class, the demo ship as "legacy") also get 200 m. The
+  perf readout's asset cost is the median of ABBA block means (each block's two shown-minus-hidden pairs averaged),
+  `reliable` when the 95% half-width is at most 0.25 ms over at least 20 blocks, sampling adaptively up to 720 pairs;
+  without a GPU timer extension "gpu ms" is the wall time of a frame waited out with a pixel read. `pnpm turntable --
+  <file> --family [N]` writes a labelled sibling sheet (`<stem>_family.png`, rows of four views). The overlay draws
+  COL_* volumes and the families.json markers plus Light, Mount, Muzzle, Blink, Spin and Canopy pivots. Material-sheet
+  shader balls are UV-mapped over the 2nd–98th percentile UV bounds of the asset's faces using each image, cut square.
+  → The calibration graders' requests (a 100 m read, collider and marker overlays, sibling sheets, a perf number that
+  survives a loaded machine) are now standard artifacts.
+- **Orchestrator (model storage and texture size)** Exported models (`packages/client/public/models/**/*.glb`) are
+  tracked in Git LFS like `.blend` sources and renders. Hero hulls export at 1024 px and bodies at 2048 px for now, with
+  4k sources kept: a 4k Lark with three variants exported at about 650 MB, too large to download. P1.E14.T12 adds KTX2
+  (Basis) compression to the export pipeline and the client's loader; heroes re-export at 4k once it lands.
