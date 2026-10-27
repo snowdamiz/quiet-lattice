@@ -268,12 +268,17 @@ account with a refusal, landing on an empty list. Artifacts: `assets/renders/ui/
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 3, spec 4, performance 5 | 3.86 |
+| 2 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 
 Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
 and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
 down); the beacon list overruns the panel with no scroll affordance; a world-marker label shows through the party frame
 at 21:9; the leader row's tag column is misaligned. Requested: the muted state and an offline member. Artifacts:
 `assets/renders/ui/{social,social-space,party,party-invite,beacons}/`.
+
+Round 2: layout changes now ease; still failing: the open/close cross-fade overlaps two different lists as double text
+for 4–5 frames; the action row on accept still changes in one frame; some eases end with a 2 px snap; the clip opens
+with 12 frames of plate-less text over the limb. Requested: an overfull beacon list with a scroll clip.
 
 ## P1.E13.T05 Basic fabricator (UI)
 
