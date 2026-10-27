@@ -24,7 +24,6 @@
 //   it that it does not hold yet or that changed (`nodes`), an empty entry for one that went back to the scatter or that
 //   it left behind (beyond NODE_FORGET_M), and `reset` as it arrives on a world, so what it holds is exactly what it was
 //   sent. Nothing is sent to anyone while no node near them is touched.
-import { performance } from 'node:perf_hooks';
 import { applyStatMods, modsOfNodes } from '@astra/shared/combat';
 import { getSkillNode } from '@astra/shared/data';
 import type { ClientMessage, ServerMessage } from '@astra/shared/protocol';
@@ -294,7 +293,10 @@ export class ResourceService {
 
   /** A client's mining hit, answered (see the header). */
   mine(viewer: ZoneViewer, msg: MineRequest): MineState {
-    const base = msg.node !== undefined ? { t: 'mine' as const, seq: msg.seq, frame: msg.frame, node: msg.node } : { t: 'mine' as const, seq: msg.seq, frame: msg.frame, flora: msg.flora!.ref };
+    const base =
+      msg.node !== undefined
+        ? { t: 'mine' as const, seq: msg.seq, frame: msg.frame, node: msg.node }
+        : { t: 'mine' as const, seq: msg.seq, frame: msg.frame, flora: msg.flora!.ref };
     const refuse = (reason: MineRefusal): MineState => {
       this.counts.refused[reason] = (this.counts.refused[reason] ?? 0) + 1;
       return { ...base, result: 'refused', reason };
@@ -363,7 +365,14 @@ export class ResourceService {
   }
 
   /** The node broke: its yield, rolled once, shared by damage; it grows back after respawnSeconds. */
-  private harvest(zone: ResourceZone, world: World, n: NodeState, breaker: string, now: number, base: Pick<MineState, 't' | 'seq' | 'frame' | 'node'>): MineState {
+  private harvest(
+    zone: ResourceZone,
+    world: World,
+    n: NodeState,
+    breaker: string,
+    now: number,
+    base: Pick<MineState, 't' | 'seq' | 'frame' | 'node'>,
+  ): MineState {
     const type = n.type;
     const shares = splitByDamage(this.rng.int(type.yield[0], type.yield[1]), [...n.by]);
     this.store.broke(n, now + this.respawnSeconds(type), this.changed);

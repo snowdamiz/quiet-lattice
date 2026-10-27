@@ -64,7 +64,17 @@ function setup(opts: Partial<ResourceServiceOptions> = {}) {
   const player = (pos: Readonly<Vec3>, mode = 'foot') => {
     const v = new Viewer(++ids, `char-${ids}`);
     inventory.open(v.characterId);
-    zone.join(v, { kind: 'player', frame: world.frame, pos: [...pos], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode, name: `Miner ${ids}`, people: 'thalune', level: 5 });
+    zone.join(v, {
+      kind: 'player',
+      frame: world.frame,
+      pos: [...pos],
+      quat: [0, 0, 0, 1],
+      vel: [0, 0, 0],
+      mode,
+      name: `Miner ${ids}`,
+      people: 'thalune',
+      level: 5,
+    });
     seqs.set(v, 0);
     return v;
   };
@@ -136,7 +146,17 @@ describe('mining hits', () => {
     expect(r!.added).toBe(r!.count);
     expect(s.held(a, type.resource)).toBe(r!.count);
     expect(events).toEqual([
-      { characterId: a.characterId, zone: 'sys:0', frame: world.frame, node: deposit.id, what: type.id, resource: type.resource, count: r!.count, added: r!.count, broke: true },
+      {
+        characterId: a.characterId,
+        zone: 'sys:0',
+        frame: world.frame,
+        node: deposit.id,
+        what: type.id,
+        resource: type.resource,
+        count: r!.count,
+        added: r!.count,
+        broke: true,
+      },
     ]);
     s.clock.t += 1;
     expect(s.hit(a, deposit.id).reason).toBe('harvested');
@@ -177,7 +197,9 @@ describe('mining hits', () => {
   });
 
   it('a share that does not fit is reported, not kept', () => {
-    const s = setup({ inventory: { grant: (_c, _i, count) => ({ ok: true, inv: undefined as never, added: Math.min(5, count), remainder: Math.max(0, count - 5) }) } });
+    const s = setup({
+      inventory: { grant: (_c, _i, count) => ({ ok: true, inv: undefined as never, added: Math.min(5, count), remainder: Math.max(0, count - 5) }) },
+    });
     const a = s.player(deposit.stand);
     let r;
     for (let i = 0; i < 40 && (r = s.hit(a, deposit.id)).result === 'hit'; i++) s.clock.t += 0.25;
@@ -222,7 +244,8 @@ describe('mining hits', () => {
     expect(s.service.mine(a, { t: 'mine', seq: 5, frame: world.frame, node: deposit.id, tool: 'multitool', time: s.clock.t }).reason).toBe('stale_seq');
     s.hit(a, deposit.id); // (seq 1, behind)
     const seq = { n: 10 };
-    const at = (v: Viewer, extra: Record<string, unknown>) => s.service.mine(v, { t: 'mine', seq: ++seq.n, frame: world.frame, node: deposit.id, tool: 'multitool', time: s.clock.t, ...extra });
+    const at = (v: Viewer, extra: Record<string, unknown>) =>
+      s.service.mine(v, { t: 'mine', seq: ++seq.n, frame: world.frame, node: deposit.id, tool: 'multitool', time: s.clock.t, ...extra });
     expect(at(a, { time: s.clock.t - 10 }).reason).toBe('stale');
     s.clock.t += 1;
     // not on foot; another frame; the Waystation's frame
@@ -368,10 +391,43 @@ describe('what players are sent', () => {
 
 describe('splitByDamage', () => {
   it('splits a yield in whole units by damage, largest remainders first, ties in order', () => {
-    expect([...splitByDamage(10, [['a', 2], ['b', 1]])]).toEqual([['a', 7], ['b', 3]]);
-    expect([...splitByDamage(9, [['a', 1], ['b', 1], ['c', 1]])]).toEqual([['a', 3], ['b', 3], ['c', 3]]);
-    expect([...splitByDamage(10, [['a', 1], ['b', 1], ['c', 1]])]).toEqual([['a', 4], ['b', 3], ['c', 3]]);
-    expect([...splitByDamage(7, [['a', 1], ['b', 0]])]).toEqual([['a', 7]]);
+    expect([
+      ...splitByDamage(10, [
+        ['a', 2],
+        ['b', 1],
+      ]),
+    ]).toEqual([
+      ['a', 7],
+      ['b', 3],
+    ]);
+    expect([
+      ...splitByDamage(9, [
+        ['a', 1],
+        ['b', 1],
+        ['c', 1],
+      ]),
+    ]).toEqual([
+      ['a', 3],
+      ['b', 3],
+      ['c', 3],
+    ]);
+    expect([
+      ...splitByDamage(10, [
+        ['a', 1],
+        ['b', 1],
+        ['c', 1],
+      ]),
+    ]).toEqual([
+      ['a', 4],
+      ['b', 3],
+      ['c', 3],
+    ]);
+    expect([
+      ...splitByDamage(7, [
+        ['a', 1],
+        ['b', 0],
+      ]),
+    ]).toEqual([['a', 7]]);
     expect(splitByDamage(7, []).size).toBe(0);
     for (let n = 0; n < 50; n++) {
       const parts: [string, number][] = Array.from({ length: 1 + (n % 7) }, (_, i) => [`c${i}`, ((n * 7 + i * 13) % 11) + 0.37]);
