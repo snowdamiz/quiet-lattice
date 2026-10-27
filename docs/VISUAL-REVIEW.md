@@ -208,6 +208,7 @@ Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's o
 | 1 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 2, performance 4 | 3.43 |
 | 2 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 3 | 3.57 |
 | 3 | REVISE | legibility 3, hud-fit 4, motion 3, palette 4, correctness 3, spec 4, performance 5 | 3.71 |
+| 4 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 5 | 3.86 |
 
 Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
 of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
@@ -224,6 +225,13 @@ labels sit past the ship's screen bounds, 100–220 px from their own diamond; r
 for one frame and their bloom grows with distance (250–350 px at 1–2 km, brighter than the local ship's); markers still
 meet the EDGE line, the speed readout and the local ship in motion; the coarsest LOD starts at 130–200 m and smears;
 the landed remote ship shows no gear or ground contact.
+
+Round 4: labels now sit 8 px from their diamonds with no HUD overlaps in any clip frame, distant strobes no longer
+bloom, and the landed ship stands on its gear. Still failing: past about 190 m the coarsest LOD breaks into speckle
+that reshuffles every frame (heading unreadable); several ships in plain view get no diamond (a Lark closing through the
+crosshair, five diamonds for 24 docked ships, the ship dead ahead on the pads), and markers cut in and out in one frame
+or swap label sides. Requested: a debug overlay of sensor detection per ship. **Escalated to the owner after four REVISE
+rounds (plan 0.5); marked `[!]`.**
 
 ## P1.E05.T01 Skeleton and three base bodies (art)
 
