@@ -12,8 +12,8 @@
 // hidden while it is reviewed. Colliders and markers (art bible 8) are hidden and left out of the stats and framing; the
 // overlay pass draws them over the asset.
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { maskColors } from '../gameplay/modelLibrary.js';
+import { gltfLoader } from '../core/Engine.js';
+import { maskColors, textureMemory } from '../gameplay/modelLibrary.js';
 import { GLOW as FLORA_GLOW } from '../gameplay/floraModels.js';
 import { gameLook } from '@astra/shared/art';
 import { nodeReviewModel } from '../gameplay/Flora.js';
@@ -526,7 +526,7 @@ export class Review {
 
   async load(spec) {
     const { url, file, asset, variant } = parseSpec(spec);
-    const gltf = nodeAsset(spec, this.game) ?? (await new GLTFLoader().loadAsync(url));
+    const gltf = nodeAsset(spec, this.game) ?? (await gltfLoader().loadAsync(url));
     if (this.content) this.root.remove(this.content);
     this.file = file;
     this.content = gltf.scene;
@@ -813,6 +813,9 @@ export class Review {
       return false;
     };
     const helpers = (this.model?.helpers ?? []).filter((h) => !a?.nodes.length || a.nodes.some((n) => within(h, n)));
+    // GPU memory of the textures (P1.E14.T12): what is shown, and the whole file (every variant once uploaded)
+    const mb = (t) => ({ count: t.count, compressed: t.compressed, mb: +(t.bytes / 2 ** 20).toFixed(1) });
+    const textures = this.content ? { shown: mb(textureMemory(this.content, { visibleOnly: true })), file: mb(textureMemory(this.content)) } : null;
     return {
       file: this.file,
       asset: this.sel.asset,
@@ -828,6 +831,7 @@ export class Review {
       markers: helpers.filter((h) => !/^col_/i.test(nodeName(h))).length,
       // colliders, markers and pivots of what is shown, by kind (what the overlay draws)
       kinds: this.content ? countKinds(this.marked()) : {},
+      textures,
     };
   }
 
@@ -1328,6 +1332,7 @@ export class Review {
         `review  ${s.file}  ${s.asset}${s.variant !== s.asset ? ` / ${s.variant}` : ''}${others > 0 ? `  (+${others} more)` : ''}\n` +
         `light   ${this.case ?? '…'}\nLOD     ${s.lod} → ${s.shown ?? '-'} of [${s.lods.join(', ') || 'none'}]\n` +
         `tris    ${s.triangles.toLocaleString()}\nmeshes  ${s.meshes}  materials ${s.materials.length}\n` +
+        (s.textures ? `maps    ${s.textures.shown.count} (${s.textures.shown.compressed} KTX2)  ${s.textures.shown.mb} MB gpu  (file ${s.textures.file.mb} MB)\n` : '') +
         `hidden  ${s.colliders} colliders, ${s.markers} markers, ${this.floraHidden ?? 0} plants${this.aids ? '  (overlay on)' : ''}\n` +
         `camera  ${this.orbit.range ? `${this.orbit.range} m` : `${this.orbit.distance} radii`}\ncalls   ${info.calls}` +
         (p

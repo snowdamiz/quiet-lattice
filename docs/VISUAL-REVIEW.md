@@ -256,6 +256,7 @@ that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 4, performance 5 | 4.14 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.29 |
 
 Round 1: screen changes cross-dissolve in place, so outgoing and incoming headers overlap for about 7 frames; entering
 hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen's height mid-fade and clips the
@@ -263,12 +264,18 @@ outgoing screen (Create and Back cut to a sliver while the request is pending). 
 the title tagline, ordinals and BUILD line sit at 2.7–3.2:1 over the planet limb. Requested: registering a fresh
 account with a refusal, landing on an empty list. Artifacts: `assets/renders/ui/{title,login-error,characters,create,entering,account-flow}/`.
 
+Round 2: steps now sequence and nothing clips; still failing: the cut into the world fades only to about 20% black and
+then jumps to flat black in one frame, its amber fill cut at 10%; the sign-in error box collapses in two frames while
+the layout eases; JOINING swaps to IN THE WORLD in one frame. Requested: the arrival with pointer lock granted (the
+captured arrival lands on the pause menu with no scrim, ordinals 3.6–3.8:1).
+
 ## P1.E15.T03 Chat and party UI (with the beacon list)
 
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 3, spec 4, performance 5 | 3.86 |
 | 2 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 3 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 
 Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
 and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
@@ -280,13 +287,27 @@ Round 2: layout changes now ease; still failing: the open/close cross-fade overl
 for 4–5 frames; the action row on accept still changes in one frame; some eases end with a 2 px snap; the clip opens
 with 12 frames of plate-less text over the limb. Requested: an overfull beacon list with a scroll clip.
 
+Round 3: the list cross-fade, accept row, pixel snaps and opening frames are fixed; still failing: opening chat with an
+invite card showing pushes the card down in two jumps and a stall; every tween stalls for one frame early; on accept,
+the card's text and "Not in a party" show through the rows passing over them. Requested: a tab-switch clip.
+
 ## P1.E13.T05 Basic fabricator (UI)
 
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 5, performance 5 | 4.29 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
+| 3 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
 
 Round 1: all small text at or above 4.5:1; the craft sweep is eased but the button, stepper and LEARN snap state in one
 frame around it, and the selected row flashes twice; after a ×3 craft the quantity stays at 3 while the row says CAN
 MAKE 1 and the materials go red (clamp to the new maximum); the result flash sits flush on its rows. Requested: a LEARN
 clip. Artifacts: `assets/renders/ui/{fabricator,fabricator-ship}/`.
+
+Round 2: the button and controls now ease and the quantity clamps; still failing: in the learn clip the fading header
+crosses the rising row; the row's tag and slot, and the footer status line, swap in one frame; the CRAFT label drops to
+1.3:1 while fading back to disabled. Requested: the stepper at its maximum.
+
+Round 3: the sequential out/in fade reads well where used; still failing: a craft's results (CAN MAKE counts, MAKES,
+needs, the stepper and CRAFT ×n) swap at full opacity in one frame; moving the selection to an uncraftable recipe snaps
+the CRAFT fill; the learn header still shows at 25% then 10% under the rising row. Requested: the stepper at 6 of 6.
