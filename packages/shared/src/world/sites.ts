@@ -3,7 +3,8 @@
 import { Quaternion, Vector3 } from 'three';
 import { angleTo, cos, hypot3, setFromAxisAngle, sin } from '../math/det.ts';
 import { cityPads, planCities, type City } from './cities.ts';
-import type { FaunaSpecies } from './fauna.ts';
+// (fauna.ts imports hasFauna from here: neither module uses the other's exports until it is called)
+import { FAUNA_MAX_TIER, faunaSpecies, type FaunaSpecies } from './fauna.ts';
 import { surfaceAttribs, type PlanetParams, type TerrainSampler } from './planetgen.ts';
 import { Random, hashInts } from './rng.ts';
 
@@ -103,8 +104,8 @@ export function sitePads(sites: Site[]): number[] {
 // camera). Each pass below draws from a stream of its own and keeps clear of everything planned before it, so dens
 // never move a city or a site or touch the ground under one, and raising a world's tier adds dens without moving any.
 // A den has no model yet (DESIGN 19.3 lists the den models with the sites' art): nothing is drawn for one, but the
-// ground under it is levelled, as under a site, for the model to sit on. Planned with the world's species (the server's
-// fauna, P1.E08.T03), each den names who lives in it and a predator den is the kind its predator lives in.
+// ground under it is levelled, as under a site, for the model to sit on. Each den names who lives in it, from the
+// world's own species (P1.E08.T03), and a predator den is the kind its predator lives in.
 
 /** The kind of den, which is also the family of model that will stand on it (DESIGN 19.3). */
 export type DenKind = 'burrow' | 'nest' | 'roost';
@@ -137,9 +138,7 @@ const LAND_SAMPLES = 4096;
 /**
  * Who lives in a den (DESIGN 12.2's temperaments by body plan): predators by body plan, pack quad_small in burrows,
  * biped stalkers in nests and flyer divers on roosts; ambushers (quad_small or biped) in burrows; the apex (quad_heavy)
- * in its nest. Planned without the world's species, predator dens come in all three kinds in turn and a world's
- * predators use the dens whose `plans` hold their body plan; planned with them (DenOptions.species), each predator den
- * is the kind its occupant's body plan lives in (denKindFor).
+ * in its nest. A predator den is the kind its occupant's body plan lives in (denKindFor), so its `plans` hold it.
  */
 export function denPlans(role: DenRole, kind: DenKind): DenBodyPlan[] {
   if (role === 'apex') return ['quad_heavy'];
@@ -204,9 +203,9 @@ export interface Den {
   /** an ambusher's burrow: the index of the site it lies beside (in the planet's sites); -1 for every other den */
   site: number;
   seed: number;
-  /** who lives here: its occupant's index in the world's species list. Only dens planned with the world's species
-   * (DenOptions.species) name one, and only where the world has a species of the den's role. */
-  species?: number;
+  /** who lives here: its occupant's index in the world's species list (denOccupants), which a world below the
+   * occupant's tier does not carry yet (the den stands empty there); -1 for none */
+  species: number;
 }
 
 export interface DenOptions {
@@ -216,18 +215,16 @@ export interface DenOptions {
   cities?: City[];
   /** the planet's sites: dens keep off their ground, and ambushers lie beside them */
   sites?: Site[];
-  /**
-   * The world's species, to say who lives in each den (P1.E08.T03): pass its whole list, `faunaSpecies(params,
-   * FAUNA_MAX_TIER)`, whatever the tier, so a den's occupant and kind never change as the tier does (a species not yet on
-   * the world at a lower tier leaves its dens empty there). Each predator pass houses one predator species, the first
-   * pass the world's first predator and the second its second (its first again if it has one only), and its dens are the
-   * kind that predator lives in (denKindFor); ambusher burrows house the world's ambusher, the lair its apex. Without
-   * it, predator dens come in all three kinds in turn and name no occupant.
-   */
-  species?: readonly DenSpecies[];
 }
 
-/** Who lives in the dens of each planning pass (DEN_PASSES, by index), from the world's species: see DenOptions.species. */
+/**
+ * Who lives in the dens of each planning pass (DEN_PASSES, by index), from a world's whole species list (its
+ * `faunaSpecies` at FAUNA_MAX_TIER, whatever the tier planned at, so a den's occupant and kind never change with the
+ * tier; a species not yet on the world at a lower tier leaves its dens empty there). Each predator pass houses one
+ * predator species, the first pass the world's first predator and the second its second (its first again if it has only
+ * one), and its dens are the kind that predator lives in (denKindFor); ambusher burrows house the world's ambusher, the
+ * lair its apex. Every world with fauna has all three by FAUNA_MAX_TIER.
+ */
 export function denOccupants(species: readonly DenSpecies[]): (DenSpecies | null)[] {
   const of = (t: DenSpecies['temperament']) => species.filter((s) => s.temperament === t);
   const predators = of('predator');
@@ -349,11 +346,11 @@ function tangents(dir: Vector3, t: Vector3, b: Vector3) {
  * Plans a world's dens for a tier: none at Tier 0, nor on worlds without fauna. Plan the cities and sites first, on the
  * natural ground, and pass them in; `denPads` gives the ground levelled under the dens.
  */
-export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier = 0, cities = [], sites = [], species }: DenOptions = {}): Den[] {
+export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier = 0, cities = [], sites = [] }: DenOptions = {}): Den[] {
   checkTier(tier);
   const dens: Den[] = [];
   if (!hasFauna(params) || tier < DEN_PASSES[0].from) return dens;
-  const occupants = species ? denOccupants(species) : null;
+  const occupants = denOccupants(faunaSpecies(params, FAUNA_MAX_TIER));
   const p = params;
   const R = p.radius;
   const land = landArea(p, sampler);
@@ -435,7 +432,7 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
       relief: g.relief,
       site,
       seed: rng.int(0, 1e9),
-      ...(occupant ? { species: occupant.index } : {}),
+      species: occupant?.index ?? -1,
     });
     grid.add({ x: d.x, y: d.y, z: d.z, reach: padReach(...denPad(footprint, g.relief)), kind: 'den' });
   };
@@ -454,9 +451,9 @@ export function planDens(params: PlanetParams, sampler: TerrainSampler, { tier =
     if (tier < pass.from) return;
     const rng = new Random(hashInts(p.seed, 0xde75, k));
     const count = passCount(pass, land);
-    const occupant = occupants?.[k] ?? null;
+    const occupant = occupants[k] ?? null;
     if (pass.role === 'predator') {
-      // (the kind its predator lives in; with no species to say, all three kinds in turn: see denPlans)
+      // (the kind its predator lives in; a world with no predator, which faunaSpecies never makes, all three in turn)
       for (let i = 0, n = 0; i < count * 40 + 2000 && n < count; i++) {
         const kind = occupant ? denKindFor(occupant.bodyPlan) : DEN_KINDS[n % DEN_KINDS.length];
         const fp = DEN_FOOTPRINT[kind];
@@ -536,18 +533,14 @@ export interface SurfacePlan {
 
 /**
  * Plans a rocky world's surface in the order the client's Planet does: cities, then sites clear of them, then dens clear
- * of both, for the system's tier (DESIGN 11; 0, the default, plans no dens), with who lives in them if `species` is given
- * (DenOptions.species). Plans on the natural ground: `sampler` must not have pads yet. Set `params.pads = plan.pads` and
+ * of both, for the system's tier (DESIGN 11; 0, the default, plans no dens), each den housing one of the world's species
+ * (denOccupants). Plans on the natural ground: `sampler` must not have pads yet. Set `params.pads = plan.pads` and
  * `sampler.setPads(plan.pads)` before sampling the ground.
  */
-export function planSurface(
-  params: PlanetParams,
-  sampler: TerrainSampler,
-  { tier = 0, species }: { tier?: number; species?: readonly DenSpecies[] } = {},
-): SurfacePlan {
+export function planSurface(params: PlanetParams, sampler: TerrainSampler, { tier = 0 }: { tier?: number } = {}): SurfacePlan {
   if (sampler.pads?.length) throw new Error('planSurface plans on the natural ground: pass a sampler without pads');
   const cities = planCities(params, sampler);
   const sites = planSites(params, sampler, cities);
-  const dens = planDens(params, sampler, { tier, cities, sites, species });
+  const dens = planDens(params, sampler, { tier, cities, sites });
   return { cities, sites, dens, pads: [...cityPads(cities), ...sitePads(sites), ...denPads(dens)] };
 }

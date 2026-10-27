@@ -15,9 +15,9 @@
 // lands. A world's ground (its plan and its caches) is kept per world seed and radius, for the KEEP worlds most recently
 // asked for; groundOf and planHere plan on the calling thread, for tests and tools.
 //
-// A world's dens (P1.E08.T03) come from the same planner: planSurface's dens at the system's tier, planned with the
-// world's species so each names who lives in it, on the natural ground after its cities and sites. That costs 50–600 ms
-// on a large world at Tier 3 (thousands of dens), so it is a plan of its own, asked for with the ground and kept per world
+// A world's dens (P1.E08.T03) come from the same planner: the dens of the one shared plan (planSurface at the system's
+// tier, as drawnGround plans them once they are drawn), each housing one of the world's species. That costs 50–600 ms on
+// a large world at Tier 3 (thousands of dens), so it is a plan of its own, asked for with the ground and kept per world
 // and tier. Dens are spawn anchors, not geometry: until they are drawn (DENS_DRAWN, P1.E14.T10) their pads level nothing.
 //
 // The planner must never stop fauna server-wide: a worker that dies (an error, or an exit with none) is restarted once
@@ -29,18 +29,7 @@ import { createRequire } from 'node:module';
 import { performance } from 'node:perf_hooks';
 import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
-import {
-  DEN_PASSES,
-  DENS_DRAWN,
-  drawnGround,
-  FAUNA_MAX_TIER,
-  faunaSpecies,
-  hasFauna,
-  planSurface,
-  TerrainSampler,
-  type Den,
-  type PlanetParams,
-} from '@astra/shared/world';
+import { DEN_PASSES, DENS_DRAWN, drawnGround, hasFauna, planSurface, TerrainSampler, type Den, type PlanetParams } from '@astra/shared/world';
 import { CellGrid, facePoint, type FacePoint, type Vec3 } from './cells.ts';
 
 /** Spacing of a cell's height cache, m (about). */
@@ -142,14 +131,14 @@ export function hasDens(params: PlanetParams, tier: number): boolean {
 }
 
 /**
- * A world's dens at a tier, as the shared site plan places them (planSurface, on the natural ground, after its cities
- * and sites), planned with the world's whole species list so each names who lives in it and every predator den is the
- * kind its predator lives in (DenOptions.species). 50–600 ms on a large world; none below Tier 1 or without fauna.
+ * A world's dens at a tier, as the shared site plan places them (planSurface, on the natural ground after its cities and
+ * sites: the dens drawnGround levels once they are drawn), each naming who lives in it. 50–600 ms on a large world; none
+ * below Tier 1 or without fauna.
  */
 export function planDenList(params: PlanetParams, tier: number): Den[] {
   if (!hasDens(params, tier)) return [];
   const natural = { ...params, pads: null };
-  return planSurface(natural, new TerrainSampler(natural), { tier, species: faunaSpecies(params, FAUNA_MAX_TIER) }).dens;
+  return planSurface(natural, new TerrainSampler(natural), { tier }).dens;
 }
 
 /** Where worlds' grounds and dens come from. */

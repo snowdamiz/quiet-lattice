@@ -2,12 +2,13 @@
 // them, at its system's tier, with the ground levelled under them, and the sampler over that ground. The client's Planet
 // draws it, its Flora scatters on it, and the server (P1.E13.T01) places resource nodes on it, all through drawnGround,
 // so both ends scatter over the same levelled ground (ARCHITECTURE §12).
-import { cityPads, planCities, type City } from './cities.ts';
+import type { City } from './cities.ts';
 import { TerrainSampler, type PlanetParams } from './planetgen.ts';
-import { FOOTPRINT, planSurface, planSites, sitePads, type Den, type Site } from './sites.ts';
+import { FOOTPRINT, planSurface, type Den, type Site } from './sites.ts';
 
 /** Whether the client draws dens yet. Until their art lands (P1.E14.T10) it plans every world without them, so the ground
- * leaves them and their levelled pads out; P1.E14.T10 turns this on, and with it the dens of the system's tier. */
+ * leaves them and their levelled pads out; P1.E14.T10 turns this on, and with it the dens of the system's tier, as
+ * planSurface plans them (each housing one of the world's species), the very dens the server's fauna spawns at. */
 export const DENS_DRAWN = false;
 
 /** How far past a site's footprint no resource node grows (m): the client used to clear its plants this far round a site. */
@@ -46,14 +47,8 @@ export function drawnGround(params: PlanetParams, tier: number): DrawnGround {
   if (!Number.isInteger(tier) || tier < 0 || tier > 5) throw new RangeError(`a tier is 0 to 5, not ${tier}`);
   if (params.pads?.length) throw new Error('drawnGround plans on the natural ground: pass params without pads');
   const sampler = new TerrainSampler(params);
-  let plan: { cities: City[]; sites: Site[]; dens: Den[]; pads: number[] };
-  if (DENS_DRAWN) plan = planSurface(params, sampler, { tier });
-  else {
-    // (planSurface's own first two steps, without planning dens nobody draws)
-    const cities = planCities(params, sampler);
-    const sites = planSites(params, sampler, cities);
-    plan = { cities, sites, dens: [], pads: [...cityPads(cities), ...sitePads(sites)] };
-  }
+  // (until dens are drawn, planned as at Tier 0, which has none: the same cities and sites at every tier)
+  const plan = planSurface(params, sampler, { tier: DENS_DRAWN ? tier : 0 });
   params.pads = plan.pads;
   sampler.setPads(plan.pads);
   return { tier, sampler, ...plan, nodeClear: siteNodeClearance(plan.sites) };

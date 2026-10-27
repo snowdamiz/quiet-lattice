@@ -240,10 +240,8 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
   doubling each time, with one warning each time. A world's dens at the zone's tier are a plan of their own on the same
   worker (`planDenList`: `planSurface`'s dens on the natural ground, 50–600 ms on a large world at Tier 3), asked for with
-  its ground and kept per world and tier. They are planned with the world's whole species list (`DenOptions.species`,
-  `faunaSpecies` at `FAUNA_MAX_TIER`), so each den names who lives in it and a predator den is the kind its predator
-  lives in (burrow, nest or roost); the client's drawn ground plans none until `DENS_DRAWN` (§12), and must plan them
-  with the same species list when it does.
+  its ground and kept per world and tier. They are the dens of the one shared plan (§12), each naming which of the
+  world's species lives in it.
 - **Night** (`fauna/sky.ts`) is the meters' rule from the shared kinematics: night at a point when its star is on or
   below the horizon of the point's own up. At night a cell may also send out its night herd, always one of the herd
   spawner's predators, planned from the world's seed and the cell on a stream of its own with
@@ -255,8 +253,11 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   night; an ambusher's burrow beside a site keeps its one or two ambushers lurking on it until a player comes within 8 m;
   the apex's lair, in the landmark grove (the most wooded of the places a lair could go, `planDens`), sends out the apex
   and its pack at night only, and at dawn the apex heads home once it has no one to fight and goes into its lair. A
-  pack wiped out is replaced after 300 s (the apex after 1,800 s, at night), a timer the zone's fauna keeps while the
-  zone runs, beyond the cell's life; a pack that only unloads with its cell comes back when the cell next loads.
+  den's herd that loses its occupant (a pack wiped out; the apex killed, its pack then hunting on as an ordinary herd of
+  the cell) is replaced after 300 s (the apex after 1,800 s, at night), a timer the zone's fauna keeps while the zone
+  runs, beyond the cell's life; a pack that only unloads with its cell comes back when the cell next loads. A
+  once-a-night spawn (a cell's night herd, a den's night pack) is due again from the first day after it, its cell awake
+  or asleep.
   Night herds and dens' occupants spawn at each scan under the cells' load budget, never within 70 m of a player (the
   herd spawner's nearest), and only when the zone has room (they try again at the next scan). Dens spawn whether or not
   they are drawn: a den is a spawn anchor, not geometry. `FaunaOptions.dens` (as `spawner` by default) turns them off.
@@ -462,6 +463,13 @@ on the terrain sampler the workers and the server sample); and each site's clear
 pads, only once dens are drawn (`DENS_DRAWN`, which P1.E14.T10 turns on with the den art); until then no machine plans
 them into the drawn ground. The client's `Planet` plans with it at the tier its `SolarSystem` was built for, its `Flora`
 scatters on that planet's ground, and the server's resource nodes (P1.E13.T01) call the same function.
+
+A den's place depends on who lives in it (P1.E08.T03): `planDens` houses each den with one of the world's own species,
+its whole list (`faunaSpecies(params, FAUNA_MAX_TIER)`, worked out inside the shared planner, so no caller passes it or
+can leave it out; the list at any tier is a prefix of it, so a den's occupant never changes with the tier and a den
+whose species the world does not carry yet stands empty), and a predator den is the kind its predator lives in (burrow,
+nest or roost), whose footprint sets where it fits and the pad it levels. The dens the server's fauna spawns at
+(`planDenList`, §6.2) are `planSurface`'s, the dens `drawnGround` levels once they are drawn: one plan, tested to agree.
 
 Resource nodes (P1.E13.T02, `world/resourceNodes.ts`) are the spec's to place: `planetNodeLayers(params, tier)` says which
 node types a world carries, and `scatterNodes(ground, layers, cell)` places the nodes of one ~64 m cell (`nodeCellLevel`,

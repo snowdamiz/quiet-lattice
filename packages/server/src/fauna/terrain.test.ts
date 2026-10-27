@@ -1,4 +1,4 @@
-import { drawnGround, hasFauna, Random, type PlanetParams } from '@astra/shared/world';
+import { denPads, DENS_DRAWN, drawnGround, hasFauna, planSurface, Random, TerrainSampler, type PlanetParams } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import type { PlannerWorkerMode } from '../../test/plannerWorkers.ts';
@@ -86,6 +86,38 @@ describe('the ground herds walk on', () => {
   });
 });
 
+describe('one plan', () => {
+  it('the dens the server spawns at are the drawn ground’s, and its ground the drawn ground, on several worlds', () => {
+    // small worlds with fauna from a few systems, quick to plan
+    const worlds = [0, 1, 2, 5]
+      .flatMap((s) => describeZoneSystem(s).bodies.filter((b) => b.type !== 'gas' && hasFauna(b.params as PlanetParams) && b.radius < 35_000))
+      .slice(0, 5)
+      .map((b) => b.params as PlanetParams);
+    expect(worlds.length).toBe(5);
+    for (const p of worlds) {
+      for (const tier of [1, 3]) {
+        const dens = planDenList(p, tier);
+        const drawn = drawnGround({ ...p, pads: null }, tier);
+        // the whole plan, as drawnGround makes it once dens are drawn
+        const natural = { ...p, pads: null };
+        const full = planSurface(natural, new TerrainSampler(natural), { tier });
+        expect(dens).toEqual(full.dens);
+        expect(dens.length).toBeGreaterThan(0);
+        expect(planPads(p, tier)).toEqual(drawn.pads);
+        expect(drawn.cities).toEqual(full.cities);
+        expect(drawn.sites).toEqual(full.sites);
+        if (DENS_DRAWN) {
+          expect(drawn.dens).toEqual(dens);
+          expect(drawn.pads).toEqual(full.pads);
+        } else {
+          expect(drawn.dens).toEqual([]);
+          expect([...drawn.pads, ...denPads(dens)]).toEqual(full.pads);
+        }
+      }
+    }
+  });
+});
+
 describe('a world’s dens', () => {
   it('are planned in the worker at a tier, as on this thread, each naming who lives there, and kept per tier', async () => {
     // a small world no other test plans
@@ -109,7 +141,7 @@ describe('a world’s dens', () => {
       expect(warnings).toEqual([]);
       expect(dens).toEqual(planDenList(p, 3));
       expect(dens.length).toBeGreaterThan(0);
-      expect(dens.every((d) => d.species !== undefined)).toBe(true);
+      expect(dens.every((d) => d.species >= 0)).toBe(true);
       // kept for any planner; another tier is a plan of its own
       expect(densOf(p, 3)).toBe(dens);
       expect(planner.dens(p, 2)).toBeNull();

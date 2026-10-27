@@ -160,6 +160,8 @@ export interface CellInfo {
   /** distance from its centre to the nearest player at the last scan, m */
   dist: number;
   creatures: number;
+  /** creatures in its night herd while out */
+  night: number;
 }
 
 /** The fauna's numbers, for the zone's metrics. */
@@ -444,21 +446,21 @@ class WorldFauna {
    * out again when it next loads), but their respawn timers stay. */
   unload(cell: Cell): boolean {
     if (this.cells.get(cell.key) !== cell) return false;
+    for (const site of this.densByCell.get(cell.key) ?? []) {
+      const st = this.sim.denState(this.body.index, site.index, false);
+      if (!st) continue;
+      // (a pack lost meanwhile still starts its timer; a night pack comes out again, as a cell's herds come back)
+      if (st.pack && this.lost(st.pack, site)) st.respawnAt = this.respawnAt(site, this.sim.now);
+      st.pack = null;
+      st.night = null;
+      st.nightDone = false;
+      if (idleDen(st, this.sim.now)) this.sim.forgetDen(this.body.index, site.index);
+    }
     for (const h of cell.herds) {
       for (const m of h.members) {
         this.sim.zone.despawn(m.id);
         this.forget(m);
       }
-    }
-    for (const site of this.densByCell.get(cell.key) ?? []) {
-      const st = this.sim.denState(this.body.index, site.index, false);
-      if (!st) continue;
-      // (a pack lost meanwhile still starts its timer; a night pack comes out again, as a cell's herds come back)
-      if (st.pack && !st.pack.members.length) st.respawnAt = this.respawnAt(site, this.sim.now);
-      st.pack = null;
-      st.night = null;
-      st.nightDone = false;
-      if (idleDen(st, this.sim.now)) this.sim.forgetDen(this.body.index, site.index);
     }
     this.ground?.drop(cell.key);
     this.forgetCell(cell);
@@ -555,7 +557,8 @@ class WorldFauna {
   }
 
   /** At each scan, what night and the dens of the active cells send out, under the cells' load budget (what is left
-   * waits for the next scan): each cell's night herd, and each den's occupants. */
+   * waits for the next scan): each cell's night herd, and each den's occupants. Asleep cells only note what they lost
+   * and that day has come (a once-a-night spawn is due again from the first day after it, awake or not). */
   private spawnAtNightAndDens(now: number, players: readonly Actor[]): void {
     const nightHerds = this.sim.spawner && this.species.some((s) => s.spawn === 'herd' && s.temperament === 'predator');
     if (!nightHerds && !this.dens?.length) return;
@@ -563,12 +566,19 @@ class WorldFauna {
     this.full = false;
     const started = performance.now();
     for (const cell of this.cells.values()) {
-      if (cell.state !== 'active') continue;
-      if (nightHerds) this.nightHerd(cell, players);
+      if (cell.state === 'loading') continue;
+      const active = cell.state === 'active';
+      if (nightHerds) this.nightHerd(cell, players, active);
       const dens = this.densByCell.get(cell.key);
-      if (dens) for (const site of dens) this.denTick(cell, site, now, players);
-      if (performance.now() - started > this.sim.loadBudgetMs) break;
+      if (dens) for (const site of dens) this.denTick(cell, site, now, players, active);
+      if (active && performance.now() - started > this.sim.loadBudgetMs) break;
     }
+  }
+
+  /** Whether none of a herd is left (every animal despawned by someone else: killed, once combat lands), or, given a
+   * species index, none of that species (the apex gone, though its pack lives on). */
+  private lost(herd: Herd, site?: DenSite): boolean {
+    return !herd.members.some((m) => (site === undefined || m.species.index === site.den.species) && this.sim.zone.entity(m.id));
   }
 
   /** Whether it is night at a surface direction (sky.ts), by the star at the last scan. */
@@ -582,14 +592,15 @@ class WorldFauna {
     return !this.full;
   }
 
-  /** A cell at night sends out its night herd, once a night, if it plans one (herds.ts); a cell by day is ready to again. */
-  private nightHerd(cell: Cell, players: readonly Actor[]): void {
-    if (cell.nightHerd && !cell.nightHerd.members.length) cell.nightHerd = this.dropHerd(cell, cell.nightHerd);
+  /** A cell at night sends out its night herd, once a night, if it plans one (herds.ts) and is awake; a cell by day is
+   * ready to again. */
+  private nightHerd(cell: Cell, players: readonly Actor[], active: boolean): void {
+    if (cell.nightHerd && this.lost(cell.nightHerd)) cell.nightHerd = this.dropHerd(cell, cell.nightHerd);
     if (!this.nightAt((cell.center ??= this.ground!.cells.center(cell.key)))) {
       cell.nightDone = false;
       return;
     }
-    if (cell.nightDone || cell.nightHerd) return;
+    if (!active || cell.nightDone || cell.nightHerd) return;
     if (cell.nightPlan === undefined) cell.nightPlan = planNightHerd(this.params.seed, cell.key, this.species, this.sim.tier, this.ground!);
     const plan = cell.nightPlan;
     if (plan && (!this.clearOf(plan.center, players) || !this.room(plan.animals.length))) return;
@@ -597,20 +608,23 @@ class WorldFauna {
     cell.nightDone = true;
   }
 
-  /** A den in an active cell (dens.ts): notes a pack lost, then sends out what it keeps out and is not out yet. */
-  private denTick(cell: Cell, site: DenSite, now: number, players: readonly Actor[]): void {
+  /** A den in a loaded cell (dens.ts): notes a pack lost and the day come; then, if its cell is awake, sends out what it
+   * keeps out and is not out yet. */
+  private denTick(cell: Cell, site: DenSite, now: number, players: readonly Actor[], active: boolean): void {
     const sp = occupantOf(site.den, this.species);
     const st = this.sim.denState(this.body.index, site.index, sp !== null);
     if (!st) return;
-    // a pack wiped out (killed: despawned by someone else): the den waits out its respawn
-    if (st.pack && !st.pack.members.length) {
-      st.pack = this.dropHerd(cell, st.pack);
+    // a pack that has lost its occupant (killed: despawned by someone else) is lost, and the den waits out its respawn;
+    // what is left of it (the apex's pack, the apex gone) hunts on as an ordinary herd of the cell
+    if (st.pack && this.lost(st.pack, site)) {
+      if (this.lost(st.pack)) this.dropHerd(cell, st.pack);
+      st.pack = null;
       st.respawnAt = this.respawnAt(site, now);
     }
-    if (st.night && !st.night.members.length) st.night = this.dropHerd(cell, st.night);
+    if (st.night && this.lost(st.night)) st.night = this.dropHerd(cell, st.night);
     const night = this.nightAt(site.dir);
     if (!night) st.nightDone = false;
-    if (!sp) return;
+    if (!sp || !active) return;
     if (NIGHT_ONLY.has(sp.temperament) && !night) {
       if (st.pack) this.retire(cell, st);
       return;
@@ -708,7 +722,13 @@ class WorldFauna {
   }
 
   cellInfo(): CellInfo[] {
-    return [...this.cells.values()].map((c) => ({ key: c.key, state: c.state, dist: c.dist, creatures: creaturesIn(c) }));
+    return [...this.cells.values()].map((c) => ({
+      key: c.key,
+      state: c.state,
+      dist: c.dist,
+      creatures: creaturesIn(c),
+      night: c.nightHerd?.members.length ?? 0,
+    }));
   }
 }
 

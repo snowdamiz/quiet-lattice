@@ -7,7 +7,7 @@ import { along, faunaWorld, openGround, type FaunaWorld } from '../../test/fauna
 import { groundDistance, RULES } from './ai.ts';
 import type { Vec3 } from './cells.ts';
 import { APEX_RESPAWN_S, DEN_RESPAWN_S, LAIR_M, SPAWN_CLEAR_M, type DenInfo } from './dens.ts';
-import { HERD_SPREAD_M, tangents } from './herds.ts';
+import { HERD_SPREAD_M, planNightHerd, tangents, type HerdPlan } from './herds.ts';
 import { MAX_CREATURES, UNLOAD_S, type CreatureInfo } from './sim.ts';
 import { nextTime, starsAt } from './sky.ts';
 import { densOf, groundOf } from './terrain.ts';
@@ -215,19 +215,30 @@ describe('dens', () => {
     }
   });
 
-  it('send nothing out within 70 m of a player, nor when the zone is full, and send it once there is room', () => {
+  it('send nothing out within 70 m of a player, with room to spare, and send it once the player is further off', () => {
+    const w = denWorld(3, walkingPredator);
+    const d = denOf(w, 'predator', (x) => x.species!.kind !== 'flyer');
+    forceClock(w, d.dir, false);
+    w.movePlayer(d.at(SPAWN_CLEAR_M - 20, 0), 'ship');
+    w.run(3);
+    expect(w.zone.fauna!.cells(w.body.index).some((c) => c.key === w.ground.cells.keyOf(...d.dir) && c.state === 'active')).toBe(true);
+    expect(w.zone.fauna!.creatureCount + PACK_RULES.size.max).toBeLessThan(MAX_CREATURES);
+    expect(d.now().pack).toEqual([]);
+    w.movePlayer(d.at(SPAWN_CLEAR_M + 30, 0), 'ship');
+    w.run(1);
+    expect(d.now().pack.length).toBeGreaterThan(0);
+  });
+
+  it('send nothing out while the zone is full, and send it once there is room', () => {
     const w = denWorld(3, walkingPredator);
     const d = denOf(w, 'predator', (x) => x.species!.kind !== 'flyer');
     forceClock(w, d.dir, false);
     // the zone filled with a herd awake round the test's player, where it stands
     const filler = w.species.find((s) => s.temperament === 'docile' || s.temperament === 'skittish')!;
     const fill = w.spawn({ body: w.body.index, species: filler.index, at: w.at(30, 0), count: MAX_CREATURES });
-    // a second player at the den: too near at first
+    // a second player beside the den, out of the clearance
     const v2 = { id: 2, sendBinary: () => {} };
-    const second = w.zone.join(v2, { kind: 'player', frame: w.frame, pos: d.at(SPAWN_CLEAR_M - 20, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'ship' });
-    w.run(2);
-    expect(d.now().pack).toEqual([]);
-    w.zone.patch(second, { pos: d.at(SPAWN_CLEAR_M + 30, 0) });
+    w.zone.join(v2, { kind: 'player', frame: w.frame, pos: d.at(SPAWN_CLEAR_M + 30, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'ship' });
     w.run(2);
     // full, with nothing asleep to make room from
     expect(w.zone.fauna!.creatureCount).toBe(MAX_CREATURES);
@@ -236,6 +247,39 @@ describe('dens', () => {
     w.run(1);
     expect(d.now().pack.length).toBeGreaterThan(0);
     expect(w.zone.fauna!.creatureCount).toBeLessThanOrEqual(MAX_CREATURES);
+  });
+
+  it('count the apex lost once it is killed, though its pack lives on, and bring it back only after its timer', () => {
+    const w = denWorld(2, (s) => s.some((x) => x.temperament === 'apex') && walkingPredator(s));
+    const d = denOf(w, 'apex');
+    forceClock(w, d.dir, true);
+    w.movePlayer(d.at(120, 0), 'ship');
+    w.run(2);
+    const out = d.now().pack;
+    expect(out.length).toBeGreaterThan(1);
+    expect(creature(w, out[0]!).species.temperament).toBe('apex');
+    // the apex alone is killed
+    w.zone.despawn(out[0]!);
+    w.run(1);
+    expect(d.now().pack).toEqual([]);
+    const at = d.now().respawnAt;
+    expect(Math.abs(at - (w.time + APEX_RESPAWN_S))).toBeLessThan(1.5);
+    // its pack hunts on, an ordinary herd of the cell
+    for (const id of out.slice(1)) expect(w.zone.entity(id)).toBeDefined();
+    // later that night: no apex
+    const apexes = () => w.zone.fauna!.creatures().filter((c) => c.species.temperament === 'apex');
+    w.time += 600;
+    w.run(2);
+    expect(apexes()).toEqual([]);
+    // dawn: the pack is not taken into the lair, nor the timer forgotten
+    forceClock(w, d.dir, false, 300);
+    w.run(10);
+    expect(d.now().respawnAt).toBe(at);
+    for (const id of out.slice(1)) expect(w.zone.entity(id)).toBeDefined();
+    // the first night after it: the apex again
+    forceClock(w, d.dir, true, 300, at);
+    w.run(2);
+    expect(apexes().length).toBe(1);
   });
 
   it('wait for the world’s den plan, and follow the zone’s tier', () => {
@@ -270,7 +314,8 @@ describe('night', () => {
   /** A world whose herd spawner places predators, the spawner on and the dens off, and a spot on open ground near its
    * equator (where night falls every turn, whatever the season) with points round it. */
   function herdWorld() {
-    const w = faunaWorld({ tier: 3, spawner: true, fauna: { dens: false }, want: spawnerPredators });
+    // (with no time budget, every cell a player wakes loads on the tick it is woken, however busy the machine)
+    const w = faunaWorld({ tier: 3, spawner: true, fauna: { dens: false, loadBudgetMs: Infinity }, want: spawnerPredators });
     const spot = openGround(w.ground, 0.3);
     const [t, b] = tangents(spot);
     return { w, spot, at: (east: number, north: number) => w.onGround(along(spot, t, b, east, north, w.ground.radius)) };
@@ -348,5 +393,65 @@ describe('night', () => {
     w.run(10);
     const after = w.zone.fauna!.creatures().filter((c) => !byDay.has(c.herd));
     expect(after).toEqual([]);
+  });
+
+  it('holds a cell’s night herd back while a player stands within 70 m of where it would come out', () => {
+    const { w, spot } = herdWorld();
+    w.time = deepest(w, spot, true);
+    const seed = (w.body.params as PlanetParams).seed;
+    // a cell near the spot that plans a night herd
+    let found: { key: number; plan: HerdPlan } | null = null;
+    w.ground.cells.cellsNear(spot, 3000, (key) => {
+      const plan = found ? null : planNightHerd(seed, key, w.species, 3, w.ground);
+      if (plan && w.ground.sample(plan.center) > 2) found = { key, plan };
+    });
+    const { key, plan } = found!;
+    const [t, b] = tangents(plan.center);
+    const from = (m: number) => w.onGround(along(plan.center, t, b, m, 0, w.ground.radius));
+    const cell = () => w.zone.fauna!.cells(w.body.index).find((c) => c.key === key);
+    w.movePlayer(from(SPAWN_CLEAR_M - 30), 'ship');
+    w.run(3);
+    expect(cell()?.state).toBe('active');
+    expect(w.zone.fauna!.creatureCount + plan.animals.length).toBeLessThan(MAX_CREATURES);
+    expect(cell()!.night).toBe(0);
+    w.movePlayer(from(SPAWN_CLEAR_M + 30), 'ship');
+    w.run(1);
+    expect(cell()!.night).toBe(plan.animals.length);
+  });
+
+  it('sends no night herd out at nightfall while the zone is full, and sends it once there is room', () => {
+    const { w, spot, at } = herdWorld();
+    const spots = [at(0, 0), at(1000, 0), at(0, 1000), at(1000, 1000)];
+    const dusk = nextTime(w.zone.system, w.body.index, spot, w.ground.radius, true, w.time, { margin: 900 })!;
+    w.time = dusk - 60;
+    w.movePlayer(spots[0]!, 'ship');
+    spots
+      .slice(1)
+      .forEach((pos, k) =>
+        w.zone.join({ id: 10 + k, sendBinary: () => {} }, { kind: 'player', frame: w.frame, pos, quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'ship' }),
+      );
+    // (the cells round where the test's player started unload: nothing is left asleep to make room from)
+    w.run(UNLOAD_S + 2);
+    expect(w.zone.fauna!.cells(w.body.index).every((c) => c.state === 'active')).toBe(true);
+    // by day, the zone filled to its cap with a herd awake by the first player
+    const filler = w.species.find((s) => s.temperament === 'docile' || s.temperament === 'skittish')!;
+    const fill = w.spawn({ body: w.body.index, species: filler.index, at: at(30, 0), count: MAX_CREATURES - w.zone.fauna!.creatureCount });
+    expect(w.zone.fauna!.creatureCount).toBe(MAX_CREATURES);
+    // night falls on cells that plan night herds out of every player's clearance, and none comes out
+    w.run(40);
+    expect(w.zone.fauna!.isNight(w.body.index, spot)).toBe(true);
+    const seed = (w.body.params as PlanetParams).seed;
+    const due = w.zone.fauna!.cells(w.body.index).filter((c) => {
+      const plan = c.state === 'active' ? planNightHerd(seed, c.key, w.species, 3, w.ground) : null;
+      return plan && spots.every((p) => groundDistance(w.onGround(plan.center), p) > SPAWN_CLEAR_M);
+    });
+    expect(due.length).toBeGreaterThan(0);
+    expect(w.zone.fauna!.cells(w.body.index).every((c) => c.night === 0)).toBe(true);
+    expect(w.zone.fauna!.creatureCount).toBe(MAX_CREATURES);
+    // room is made: they come out, within the cap
+    for (const id of fill.creatures.slice(0, 40)) w.zone.despawn(id);
+    w.run(2);
+    expect(w.zone.fauna!.cells(w.body.index).some((c) => c.night > 0)).toBe(true);
+    expect(w.zone.fauna!.creatureCount).toBeLessThanOrEqual(MAX_CREATURES);
   });
 });

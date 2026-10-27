@@ -1,5 +1,5 @@
 // Dens (DESIGN 12.2 "Spawning", P1.E08.T03): the lairs the shared site plan places on a world with its cities and sites
-// (planSurface's dens at the system's tier, planned with the world's species so each names who lives in it), where packs
+// (planSurface's dens at the system's tier, each naming which of the world's species lives in it), where packs
 // are anchored and respawn, the apex keeps its lair and ambushers wait. Predators also come from the herd spawner round
 // the players (herds.ts); dens add packs that live at known places.
 //
@@ -12,9 +12,11 @@
 // - The apex's lair, in the world's landmark grove (the most wooded of the places a lair could go, sites.ts), sends the
 //   apex and its pack out at night only (TEMPERAMENTS: nightOnly); at dawn it heads home once it has no one to fight and
 //   goes into its lair.
-// - A pack wiped out (every animal despawned by someone else: killed, once combat lands) is replaced after
-//   DEN_RESPAWN_S (the apex after APEX_RESPAWN_S), a timer kept while the zone runs, even when the den's cell unloads; a
-//   pack that only unloads with its cell comes out again when the cell next loads.
+// - A den's herd that loses its occupant (every animal of the den's species despawned by someone else: killed, once
+//   combat lands; the apex killed, though its pack lives on and hunts on as an ordinary herd of the cell) is replaced
+//   after DEN_RESPAWN_S (the apex after APEX_RESPAWN_S), a timer kept while the zone runs, even when the den's cell
+//   unloads; a pack that only unloads with its cell comes out again when the cell next loads.
+// - A night pack comes out once a night: it is due again from the first day after it, its cell awake or asleep.
 // - Nothing comes out of a den within SPAWN_CLEAR_M of a player (the herd spawner's nearest, DESIGN 12.2), and a den
 //   spawns only when the zone has room (MAX_CREATURES), trying again at each scan.
 //
@@ -81,7 +83,7 @@ export function denSites(dens: readonly Den[], cells: CellGrid): { sites: DenSit
 /** Who lives in a den at the world's tier: its occupant from the world's species, if the world has it yet and it is of
  * the den's role; else null (an empty den). */
 export function occupantOf(den: Den, species: readonly FaunaSpecies[]): FaunaSpecies | null {
-  const sp = den.species === undefined ? undefined : species[den.species];
+  const sp = den.species >= 0 ? species[den.species] : undefined;
   return sp && sp.temperament === den.role ? sp : null;
 }
 
