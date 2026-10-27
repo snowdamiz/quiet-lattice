@@ -7,7 +7,7 @@ import { encodeServerMessage, type BeaconOp, type ClientMessage, type PartyOp, t
 import { performance } from 'node:perf_hooks';
 import type { Session } from '../session/session.ts';
 import type { ServerClock } from '../world/clock.ts';
-import { Beacons } from './beacons.ts';
+import { Beacons, type BeaconCutscenes } from './beacons.ts';
 import { Chat } from './chat.ts';
 import type { SocialContext, SocialLog, SocialZones } from './context.ts';
 import { SOCIAL_LIMITS, type SocialLimits } from './limits.ts';
@@ -25,6 +25,8 @@ export interface SocialOptions {
   limits?: Partial<SocialLimits>;
   /** validates and serialises a server message (encodeServerMessage); tests count its calls */
   encode?: (m: ServerMessage) => string;
+  /** the cutscene service: the phases cutscenes play in are not instances a beacon calls aid to */
+  cutscenes?: BeaconCutscenes;
 }
 
 export class SocialService {
@@ -58,7 +60,7 @@ export class SocialService {
     this.parties = new Parties(ctx);
     this.zoneIndex = new ZoneIndex(this.roster, opts.zones);
     this.chats = new Chat(ctx, (characterId) => this.parties.online(characterId), this.zoneIndex);
-    this.beacons = new Beacons(ctx, this.parties);
+    this.beacons = new Beacons(ctx, this.parties, opts.cutscenes);
   }
 
   /**
@@ -131,8 +133,9 @@ export class SocialService {
   }
 
   /**
-   * Lapses invites, refreshes the parties due (graces, tags, states) and checks every beacon (its instance, its caller,
-   * its slots, its time); once a refresh, checks the zone index and forgets idle allowances and spent mutes.
+   * Lapses invites, refreshes the parties due (graces, tags, states), checks every beacon (its instance, its caller, its
+   * slots, its time) and helper, and sends the beacon watchers what changed; once a refresh, checks the zone index and
+   * forgets idle allowances and spent mutes.
    */
   tick(now = this.mono()): void {
     this.parties.tick(now);

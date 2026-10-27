@@ -197,7 +197,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     if (change !== 'server') return;
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'skills', ...reply });
   });
-  const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
+  // (a cutscene's phase is no instance to call aid to: the cutscene service says which phases it plays in)
+  const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log, cutscenes });
   if (!deps.social) social.start();
   const resources = deps.resources ?? new ResourceService({ zones: deps.zones, inventory, skills, now: () => deps.clock.now(), log });
   if (!deps.resources) resources.start();

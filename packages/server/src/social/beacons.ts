@@ -1,8 +1,9 @@
 // The call-for-aid beacon (DESIGN 16.6 "Social", 17; docs/ARCHITECTURE.md §21). A player in an instance with open slots
 // raises a beacon, which lists the instance to the whole shard (its kind, star system, place and what the place is called,
 // its open slots, who raised it and when) until the instance fills, closes or is left by its caller, the caller lowers it,
-// or it lapses (beaconTtlS, ten minutes). Anyone online may watch the list: the whole of it as it starts watching, then
-// its changes, each change encoded once for every watcher.
+// or it lapses (beaconTtlS, ten minutes). Anyone online may watch the list: the whole of it as it starts watching (a few
+// times at once per account, then once every ten seconds), then its changes, gathered over a tick (100 ms) and encoded
+// once for every watcher, so the shard's broadcasts come at most ten times a second whatever is asked.
 //
 // Answering a beacon puts the answering player in that instance, through the phase manager's own placement (its caps,
 // party rule and visibility: PhaseManager.enter), once the server has checked again, then and there, that it may join:
@@ -14,8 +15,13 @@
 //   for a quest step's story phase, which holds one party, a place in the caller's party, which answering joins as an
 //   invite accepted would (`full`, `in_party`), its caller being in the instance to lead it (`gone`). A helper needs no
 //   quest of its own: it fights beside the party in the caller's chapter, and the quest runtime leaves alone a player in a
-//   phase it did not put it in.
-// Bays (a hangar's interior) and cutscenes' story phases are not instances anyone calls aid to (`kind`).
+//   phase it did not put it in. So this does what the runtime does for the party (DECISIONS P1.E09.T01: a party that
+//   breaks up is split again): a helper stays in the chapter only while it is in that party and its caller is there; once
+//   it leaves or is kicked, the party disbands, or the caller leaves the phase (its step ended, it went elsewhere, its kept
+//   place lapsed), the helper goes back to the shared world (its kept place, if its connection is down, given up), so a
+//   party's private phase is only ever the party's.
+// Bays (a hangar's interior) and phases cutscenes play in (the cutscene service marks them, whatever their key) are not
+// instances anyone calls aid to (`kind`). A raise refused for any reason spends none of the account's allowance.
 //
 // Beacons live in memory, like parties: Phase 1 runs the shard in one process (ARCHITECTURE §1), so nothing needs to
 // see them from elsewhere, and a restart drops them. Raising, answering and every end are logged.
@@ -52,6 +58,20 @@ interface Beacon {
   open: number;
 }
 
+/** A player a story beacon's answer put in its caller's phase: kept there beside its caller, in the party it joined. */
+interface Helper {
+  readonly character: string;
+  readonly caller: string;
+  readonly zone: Zone;
+  readonly phase: Phase;
+  readonly party: string;
+}
+
+/** Which phases cutscenes play in (the cutscene service): none is an instance a beacon calls aid to. */
+export interface BeaconCutscenes {
+  plays(zone: Zone, phaseId: number): boolean;
+}
+
 /** Where an online character's entity is: its zone, its entity, and the phase it is in (undefined: the shared world). */
 interface Whereabouts {
   readonly zone: Zone;
@@ -67,8 +87,11 @@ export class Beacons {
   private readonly byPhase = new Map<string, Beacon>();
   /** who watches the list, by character */
   private readonly watchers = new Map<string, Online>();
-  /** raising allowances, by account */
+  /** helpers story answers placed, by character */
+  private readonly helpers = new Map<string, Helper>();
+  /** raising allowances, and whole-list allowances, by account */
   private readonly allowances = new Map<string, TokenBucket>();
+  private readonly lists = new Map<string, TokenBucket>();
   /** changes the watchers have not been sent yet: a beacon to list afresh, or null for one that ended */
   private readonly pending = new Map<number, Beacon | null>();
   /** the whole list, encoded, as a new watcher is sent it; null when it changed since */
@@ -78,6 +101,7 @@ export class Beacons {
   constructor(
     private readonly ctx: SocialContext,
     private readonly parties: Parties,
+    private readonly cutscenes?: BeaconCutscenes,
   ) {}
 
   /** Beacons up. */
@@ -88,6 +112,11 @@ export class Beacons {
   /** Sessions watching the list. */
   get watching(): number {
     return this.watchers.size;
+  }
+
+  /** Players story answers put in their callers' phases, still kept there. */
+  get helping(): number {
+    return this.helpers.size;
   }
 
   /** Every beacon up, as the shard sees it, oldest first. */
@@ -101,33 +130,25 @@ export class Beacons {
     return b && view(b);
   }
 
-  /** Carries out a beacon request, or tells the asker why not; watchers hear of what changed. */
+  /** Carries out a beacon request, or tells the asker why not; the watchers hear of what changed at the next sweep. */
   request(o: Online, op: BeaconOp): void {
     switch (op.op) {
       case 'raise':
-        this.raise(o);
-        break;
+        return this.raise(o);
       case 'lower': {
         const b = this.byCaller.get(o.characterId);
         if (b) this.end(b, 'lowered');
         else deny(o, 'lower', 'unknown');
-        break;
+        return;
       }
       case 'watch':
-        // (changes still to go out go first, so the list it is sent is the one they lead to)
-        this.flush();
-        this.watchers.set(o.characterId, o);
-        this.listText ??= this.ctx.encode({ t: 'beacons', reset: true, beacons: this.list(), gone: [] });
-        o.session.sendText(this.listText);
-        break;
+        return this.watch(o);
       case 'unwatch':
         if (this.watchers.get(o.characterId) === o) this.watchers.delete(o.characterId);
-        break;
+        return;
       case 'answer':
-        this.answer(o, op.id);
-        break;
+        return this.answer(o, op.id);
     }
-    this.flush();
   }
 
   /** The character came online (joined, or entered again): a beacon it raised that is still up is sent to it again. */
@@ -142,34 +163,45 @@ export class Beacons {
   }
 
   /**
-   * Checks every beacon (its instance open, its caller there, not lapsed, a slot open) and sends the watchers what
-   * changed. The social service's timer calls it every tick.
+   * Checks every beacon (its instance open, its caller there, not lapsed, a slot open) and every helper (still in its
+   * caller's party, its caller still there), and sends the watchers what changed since the last sweep, in one message.
+   * The social service's timer calls it every tick: the only place the watchers are sent changes.
    */
   sweep(): void {
     for (const b of [...this.beacons.values()]) this.refresh(b);
+    for (const h of [...this.helpers.values()]) this.keep(h);
     this.flush();
   }
 
-  /** Forgets raising allowances that have refilled (they behave exactly like a missing one). */
+  /** Forgets raising and list allowances that have refilled (they behave exactly like a missing one). */
   forget(now: number): void {
-    for (const [account, a] of this.allowances) if (a.level(now) >= a.burst) this.allowances.delete(account);
+    for (const buckets of [this.allowances, this.lists]) for (const [account, a] of buckets) if (a.level(now) >= a.burst) buckets.delete(account);
   }
 
   // ---------- requests ----------
 
+  /** The whole list to a session that is not watching yet, within its account's list allowance. */
+  private watch(o: Online): void {
+    // (asked again while watching: it holds the list, and its changes come at the sweep)
+    if (this.watchers.get(o.characterId) === o) return;
+    const now = this.ctx.mono();
+    const allowance = bucket(this.lists, o.accountId, this.ctx.limits.listBurst, this.ctx.limits.listPerSecond, now);
+    if (!allowance.take(now)) return deny(o, 'watch', 'rate', { retryS: allowance.retryAfterSeconds(now) });
+    this.watchers.set(o.characterId, o);
+    // (the list as it is now; changes not yet swept go to it again at the sweep, which changes nothing it holds)
+    this.listText ??= this.ctx.encode({ t: 'beacons', reset: true, beacons: this.list(), gone: [] });
+    o.session.sendText(this.listText);
+  }
+
   private raise(o: Online): void {
     const { ctx } = this;
     if (this.byCaller.has(o.characterId)) return deny(o, 'raise', 'raised');
-    const now = ctx.mono();
-    let allowance = this.allowances.get(o.accountId);
-    if (!allowance) this.allowances.set(o.accountId, (allowance = new TokenBucket(ctx.limits.beaconBurst, ctx.limits.beaconPerSecond, now)));
-    if (!allowance.take(now)) return deny(o, 'raise', 'rate', { retryS: allowance.retryAfterSeconds(now) });
     const at = this.where(o);
     if (!at?.phase) return deny(o, 'raise', 'no_phase');
     const { zone, phase } = at;
     const quest = questOf(phase);
     const kind = phase.kind === 'event' || phase.kind === 'raid' ? phase.kind : phase.kind === 'story' && quest !== null ? 'story' : null;
-    if (kind === null) return deny(o, 'raise', 'kind');
+    if (kind === null || this.cutscenes?.plays(zone, phase.id)) return deny(o, 'raise', 'kind');
     if (this.byPhase.has(phaseKey(zone, phase))) return deny(o, 'raise', 'raised');
     if (this.beacons.size >= ctx.limits.beaconMax) return deny(o, 'raise', 'busy');
     const time = ctx.clock.now();
@@ -195,6 +227,10 @@ export class Beacons {
       ctx.log?.error({ character: b.caller, zone: zone.id, phase: phase.id, issues: listed.error.message }, 'beacon not raised: its instance cannot be listed');
       return deny(o, 'raise', 'kind');
     }
+    // (the allowance is spent only on a raise that would succeed)
+    const now = ctx.mono();
+    const allowance = bucket(this.allowances, o.accountId, ctx.limits.beaconBurst, ctx.limits.beaconPerSecond, now);
+    if (!allowance.take(now)) return deny(o, 'raise', 'rate', { retryS: allowance.retryAfterSeconds(now) });
     this.beacons.set(b.id, b);
     this.byCaller.set(b.caller, b);
     this.byPhase.set(phaseKey(zone, phase), b);
@@ -227,6 +263,10 @@ export class Beacons {
     if (typeof placed === 'string') {
       this.ctx.log?.debug({ beacon: b.id, character: o.characterId, code: placed }, 'beacon answer refused');
       return deny(o, 'answer', placed);
+    }
+    if (b.kind === 'story') {
+      const party = this.parties.partyIdOf(o.characterId)!;
+      this.helpers.set(o.characterId, { character: o.characterId, caller: b.caller, zone: b.zone, phase: placed, party });
     }
     o.session.send({ t: 'beacon', op: 'joined', id: b.id, phase: placed.id });
     this.ctx.roster.get(b.caller)?.session.send({ t: 'beacon', op: 'answered', id: b.id, name: o.name });
@@ -292,15 +332,36 @@ export class Beacons {
   private endOf(b: Beacon): BeaconEnd | null {
     if (!b.phase.open) return 'closed';
     if (this.ctx.clock.now() >= b.until) return 'expired';
-    if (!this.callerIn(b)) return 'left';
+    if (!this.present(b.caller, b.zone, b.phase)) return 'left';
     return null;
   }
 
-  /** The caller is in its instance: its entity a member, or its place kept while its connection is down. */
-  private callerIn(b: Beacon): boolean {
-    const o = this.ctx.roster.get(b.caller);
+  /** The character is in the phase: its entity a member, or its place kept while its connection is down. */
+  private present(characterId: string, zone: Zone, phase: Phase): boolean {
+    const o = this.ctx.roster.get(characterId);
     const at = o && this.where(o);
-    return (at?.zone === b.zone && at.phase === b.phase) || b.phase.held.has(b.caller);
+    return (at?.zone === zone && at.phase === phase) || phase.held.has(characterId);
+  }
+
+  /**
+   * Keeps a helper in its caller's story phase only while it is of the party it joined there and its caller is there
+   * too; otherwise it goes back to the shared world, its kept place given up if its connection is down. One that has left
+   * the phase on its own (or whose phase closed) is forgotten.
+   */
+  private keep(h: Helper): void {
+    const o = this.ctx.roster.get(h.character);
+    const at = o && this.where(o);
+    const member = at?.zone === h.zone && at.phase === h.phase;
+    if (!h.phase.open || (!member && !h.phase.held.has(h.character))) {
+      this.helpers.delete(h.character);
+      return;
+    }
+    const why = this.parties.partyIdOf(h.character) !== h.party ? 'party' : this.present(h.caller, h.zone, h.phase) ? null : 'caller';
+    if (why === null) return;
+    this.helpers.delete(h.character);
+    if (member) h.zone.phases.leave(o!.session);
+    else h.zone.phases.release(h.character);
+    this.ctx.log?.info({ character: h.character, caller: h.caller, zone: h.zone.id, phase: h.phase.id, party: h.party, why }, 'beacon helper sent back');
   }
 
   /** Slots open: below an event's or a raid's player cap (members and kept places), or in a story instance's party. */
@@ -410,6 +471,13 @@ function inside(zone: Zone, entity: number, phase: Phase): boolean {
   const c = zone.toWorld(frame, center);
   const r = radius * PHASE_VOLUME_HYSTERESIS;
   return (w[0] - c[0]) ** 2 + (w[1] - c[1]) ** 2 + (w[2] - c[2]) ** 2 <= r * r;
+}
+
+/** The account's bucket in `buckets`, made full when it has none. */
+function bucket(buckets: Map<string, TokenBucket>, account: string, burst: number, perSecond: number, now: number): TokenBucket {
+  let b = buckets.get(account);
+  if (!b) buckets.set(account, (b = new TokenBucket(burst, perSecond, now)));
+  return b;
 }
 
 function phaseKey(zone: Zone, phase: Phase): string {

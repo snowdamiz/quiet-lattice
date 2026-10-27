@@ -641,4 +641,22 @@ describe('entering a phase by name (a call for aid’s answer)', () => {
     expect(phases.enter(player([0, 0, 0], 'Q', 'char-m').viewer, story.id)).toBe('full');
     expect(story.held.size).toBe(0);
   });
+
+  it('gives a kept place up on request, as its grace running out would, closing a phase nothing else keeps open', () => {
+    const { zone, phases, player, place } = setup();
+    const a = player([0, 0, 0], null, 'char-a');
+    const b = player([0, 0, 0], null, 'char-b');
+    const raid = phases.phaseFor(a.viewer, 'raid', place('vault'));
+    phases.phaseFor(b.viewer, 'raid', place('vault'));
+    zone.leave(a.viewer, 'disconnected');
+    expect(phases.release('char-a')).toBe(true);
+    expect(phases.release('char-a')).toBe(false);
+    expect([raid.open, raid.held.size, raid.members.size]).toEqual([true, 0, 1]);
+    zone.leave(b.viewer, 'disconnected');
+    expect(phases.release('char-b')).toBe(true);
+    expect(raid.open).toBe(false);
+    // back, it is placed afresh
+    expect(phases.phaseFor(player([0, 0, 0], null, 'char-a').viewer, 'raid', place('vault'))).not.toBe(raid);
+    expect(phases.release('nobody')).toBe(false);
+  });
 });

@@ -72,8 +72,11 @@ describe('raising a beacon', () => {
       at,
       until: at + 600,
     };
+    // the watchers hear nothing at the request: the next sweep sends them what changed, encoded once for them all (the
+    // caller's own news is its own message)
+    expect([...bex.take(), ...cor.take()]).toEqual([]);
+    h.advance(100);
     for (const w of [bex, cor]) expect(listsOf(w.take())).toEqual([{ t: 'beacons', beacons: [listed], gone: [] }]);
-    // one encoding for both watchers (the caller's own news is its own message)
     expect(h.encodes.n - encodes).toBe(1);
     expect(dax.take()).toEqual([]);
     expect(h.social.beacons.of('char-Ana')).toEqual(listed);
@@ -176,6 +179,7 @@ describe('answering a beacon', () => {
     expect(newsOf(ana.take())).toEqual([{ t: 'beacon', op: 'answered', id, name: 'Bex' }]);
     expect([...event.members]).toEqual([ana.entityId, bex.entityId]);
     expect(phases.phaseOf(bex.entityId)).toBe(event.id);
+    h.advance(100);
     expect(listsOf(cor.take())).toEqual([{ t: 'beacons', beacons: [expect.objectContaining({ id, open: 10 })], gone: [] }]);
     expect(h.lines.find((l) => l.msg === 'beacon answered')?.obj).toMatchObject({
       beacon: id,
@@ -263,10 +267,13 @@ describe('answering a beacon', () => {
     dax.beacon({ op: 'watch' });
     expect(listsOf(dax.take())[0]!.beacons).toMatchObject([{ id, open: 2 }]);
     bex.beacon({ op: 'answer', id });
+    h.advance(100);
     expect(listsOf(dax.take())).toEqual([{ t: 'beacons', beacons: [expect.objectContaining({ id, open: 1 })], gone: [] }]);
     cor.beacon({ op: 'answer', id });
     expect(event.members.size).toBe(12);
-    // the last slot taken, it comes down at once
+    // the last slot taken, it comes down at once (the watchers hear it at the sweep)
+    expect(h.social.beacons.count).toBe(0);
+    h.advance(100);
     expect(listsOf(dax.take())).toEqual([{ t: 'beacons', beacons: [], gone: [id] }]);
     expect(newsOf(ana.take())).toEqual([
       { t: 'beacon', op: 'answered', id, name: 'Bex' },
@@ -440,6 +447,166 @@ describe('a story beacon', () => {
     expect(denials(eli.take())).toEqual(['answer:gone']);
     expect(h.social.partyIdOf('char-Eli')).toBeNull();
   });
+
+  it('refuses an answer while the caller is back online but not yet back in its phase, changing nothing', () => {
+    const { h, players, phases } = setup(['Ana', 'Bex']);
+    const [ana, bex] = players as [Player, Player];
+    const step = site(ana, 'quest:first_jobs:gather');
+    const chapter = phases.phaseFor(ana.session, 'story', step, null);
+    const id = raise(ana);
+    // its connection drops and it enters again: its place in the chapter is kept, its new entity not yet in it
+    h.drop(ana);
+    h.reconnect(ana);
+    h.tick();
+    expect(h.social.beacons.of('char-Ana')).toMatchObject({ id });
+    bex.beacon({ op: 'answer', id });
+    expect(denials(bex.take())).toEqual(['answer:gone']);
+    expect([h.social.partyIdOf('char-Ana'), h.social.partyIdOf('char-Bex'), phases.phaseOf(bex.entityId)]).toEqual([null, null, null]);
+    expect(chapter.open && chapter.held.has('char-Ana')).toBe(true);
+    // back in its phase (as the quest runtime re-places it), the answer goes through
+    expect(phases.phaseFor(ana.session, 'story', step, null)).toBe(chapter);
+    bex.beacon({ op: 'answer', id });
+    expect(newsOf(bex.take())).toEqual([{ t: 'beacon', op: 'joined', id, phase: chapter.id }]);
+  });
+
+  it('refuses an answer when a caller in no party is not alone in its phase (a party broke up under it), changing nothing', () => {
+    const { h, players, phases } = setup(['Ana', 'Mia', 'Bex']);
+    const [ana, mia, bex] = players as [Player, Player, Player];
+    ana.party({ op: 'invite', name: 'Mia' });
+    mia.party({ op: 'accept', name: 'Ana' });
+    const party = h.social.partyIdOf('char-Ana');
+    const step = site(ana, 'quest:first_jobs:gather');
+    const chapter = phases.phaseFor(ana.session, 'story', step, party);
+    expect(phases.phaseFor(mia.session, 'story', step, party)).toBe(chapter);
+    const id = raise(ana);
+    // the party of two disbands; Mia is still in the chapter until the quest runtime parts them
+    mia.party({ op: 'leave' });
+    expect(h.social.partyIdOf('char-Ana')).toBeNull();
+    bex.beacon({ op: 'answer', id });
+    expect(denials(bex.take())).toEqual(['answer:full']);
+    expect([h.social.partyIdOf('char-Ana'), h.social.partyIdOf('char-Bex'), phases.phaseOf(bex.entityId)]).toEqual([null, null, null]);
+    expect([...chapter.members].sort()).toEqual([ana.entityId, mia.entityId].sort());
+  });
+
+  it('refuses a phase a cutscene plays in, whatever its key, and spends no allowance on a refused raise', () => {
+    const plays = new Set<number>();
+    const h = harness({}, { cutscenes: { plays: (_zone, phase) => plays.has(phase) } });
+    const ana = h.player('Ana');
+    h.tick();
+    const scene = ana.zone.phases.phaseFor(ana.session, 'story', site(ana, 'quest:first_jobs:shop'), null);
+    plays.add(scene.id);
+    for (let i = 0; i < 10; i++) ana.beacon({ op: 'raise' });
+    expect(denials(ana.take())).toEqual(Array.from({ length: 10 }, () => 'raise:kind'));
+    // the cutscene over (its phase now an ordinary step's), the ten refusals cost nothing: three raises at once still
+    plays.delete(scene.id);
+    for (let i = 0; i < 3; i++) {
+      raise(ana);
+      ana.beacon({ op: 'lower' });
+      ana.take();
+    }
+    ana.beacon({ op: 'raise' });
+    expect(denials(ana.take())).toEqual(['raise:rate']);
+  });
+});
+
+describe('a story helper', () => {
+  /** Ana and Mia, a party at a quest step's chapter with its boss out; Hal answers Ana's beacon. */
+  function chapterWithHelper(names = ['Ana', 'Mia', 'Hal']) {
+    const { h, players, phases } = setup(names);
+    const [ana, mia, hal] = players as [Player, Player, Player];
+    ana.party({ op: 'invite', name: 'Mia' });
+    mia.party({ op: 'accept', name: 'Ana' });
+    const party = h.social.partyIdOf('char-Ana')!;
+    const step = site(ana, 'quest:first_jobs:gather');
+    const chapter = phases.phaseFor(ana.session, 'story', step, party);
+    expect(phases.phaseFor(mia.session, 'story', step, party)).toBe(chapter);
+    const boss = phases.spawn(chapter.id, { kind: 'mob', frame: ana.zone.stationFrame, pos: [0, 20, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'idle' });
+    const id = raise(ana);
+    hal.beacon({ op: 'answer', id });
+    expect(newsOf(hal.take())).toMatchObject([{ op: 'joined', phase: chapter.id }]);
+    expect(h.social.beacons.helping).toBe(1);
+    return { h, phases, ana, mia, hal, party, step, chapter, boss };
+  }
+  const sentBack = (h: Harness) => h.lines.filter((l) => l.msg === 'beacon helper sent back').map((l) => `${String(l.obj.character)}:${String(l.obj.why)}`);
+
+  it('goes back to the shared world when kicked from the party; the party keeps its chapter and its boss', () => {
+    const { h, phases, ana, mia, hal, party, step, chapter, boss } = chapterWithHelper();
+    ana.party({ op: 'kick', name: 'Hal' });
+    h.advance(100);
+    expect(phases.phaseOf(hal.entityId)).toBeNull();
+    expect(phases.canSee(hal.entityId, boss)).toBe(false);
+    expect([...chapter.members].sort()).toEqual([ana.entityId, mia.entityId].sort());
+    // placed again at its step (as the quest runtime does), the party is in its own chapter, without Hal
+    expect(phases.phaseFor(ana.session, 'story', step, party)).toBe(chapter);
+    expect(phases.phaseOf(hal.entityId)).toBeNull();
+    expect([h.social.beacons.helping, sentBack(h)]).toEqual([0, ['char-Hal:party']]);
+  });
+
+  it('goes back when it leaves the party; the party leaving its step and coming back gets a phase without it', () => {
+    const { h, phases, ana, mia, hal, party, step, chapter } = chapterWithHelper();
+    hal.party({ op: 'leave' });
+    h.advance(100);
+    expect(phases.phaseOf(hal.entityId)).toBeNull();
+    expect(sentBack(h)).toEqual(['char-Hal:party']);
+    phases.leave(ana.session);
+    phases.leave(mia.session);
+    expect(chapter.open).toBe(false);
+    const back = phases.phaseFor(ana.session, 'story', step, party);
+    expect(back).not.toBe(chapter);
+    expect([...back.members]).toEqual([ana.entityId]);
+    expect(phases.phaseOf(hal.entityId)).toBeNull();
+  });
+
+  it('goes back when its leaving disbands a party of two, and the caller keeps its chapter', () => {
+    const { h, players, phases } = setup(['Ana', 'Hal']);
+    const [ana, hal] = players as [Player, Player];
+    const step = site(ana, 'quest:first_jobs:gather');
+    const chapter = phases.phaseFor(ana.session, 'story', step, null);
+    const id = raise(ana);
+    hal.beacon({ op: 'answer', id });
+    expect(phases.phaseOf(hal.entityId)).toBe(chapter.id);
+    hal.party({ op: 'leave' });
+    expect(h.social.partyIdOf('char-Ana')).toBeNull();
+    h.advance(100);
+    expect(phases.phaseOf(hal.entityId)).toBeNull();
+    expect([...chapter.members]).toEqual([ana.entityId]);
+    // placed again as a player in no party (as the quest runtime does), the caller is still in its own chapter
+    expect(phases.phaseFor(ana.session, 'story', step, null)).toBe(chapter);
+    expect(sentBack(h)).toEqual(['char-Hal:party']);
+  });
+
+  it('goes back when its caller leaves the chapter (its step ended), which then closes with its boss', () => {
+    const { h, phases, ana, mia, hal, chapter, boss } = chapterWithHelper();
+    phases.leave(ana.session);
+    phases.leave(mia.session);
+    expect(chapter.open).toBe(true);
+    h.advance(100);
+    expect(chapter.open).toBe(false);
+    expect(ana.zone.entity(boss)).toBeUndefined();
+    expect(phases.phaseOf(hal.entityId)).toBeNull();
+    expect(sentBack(h)).toEqual(['char-Hal:caller']);
+    expect(h.lines.find((l) => l.msg === 'beacon ended')?.obj).toMatchObject({ why: 'left' });
+  });
+
+  it('keeps the place of a helper whose connection is down while it is in the party, and gives it up once it is not', () => {
+    const { h, ana, hal, chapter } = chapterWithHelper();
+    h.drop(hal);
+    h.advance(1_000);
+    expect(chapter.held.has('char-Hal')).toBe(true);
+    expect(h.social.beacons.helping).toBe(1);
+    ana.party({ op: 'kick', name: 'Hal' });
+    h.advance(100);
+    expect(chapter.held.has('char-Hal')).toBe(false);
+    expect(chapter.open).toBe(true);
+    expect([h.social.beacons.helping, sentBack(h)]).toEqual([0, ['char-Hal:party']]);
+  });
+
+  it('is forgotten once it leaves the chapter on its own', () => {
+    const { h, phases, hal } = chapterWithHelper();
+    phases.leave(hal.session);
+    h.advance(100);
+    expect([h.social.beacons.helping, sentBack(h)]).toEqual([0, []]);
+  });
 });
 
 describe('watching', () => {
@@ -454,5 +621,59 @@ describe('watching', () => {
     expect(bex.take()).toEqual([]);
     bex.beacon({ op: 'watch' });
     expect(listsOf(bex.take())).toEqual([{ t: 'beacons', reset: true, beacons: [expect.objectContaining({ id, open: 11 })], gone: [] }]);
+  });
+
+  it('sends the whole list once per watch, ignores asking again while watching, and refuses an account flooding it', () => {
+    const { h, players, phases } = setup(['Ana', 'Bex']);
+    const [ana, bex] = players as [Player, Player];
+    phases.phaseFor(ana.session, 'event', site(ana, 'wreck'));
+    raise(ana);
+    h.advance(100);
+    const encodes = h.encodes.n;
+    for (let i = 0; i < 60; i++) bex.beacon({ op: 'watch' });
+    expect(listsOf(bex.take())).toHaveLength(1);
+    // five whole lists at once per account, then one every ten seconds
+    for (let i = 0; i < 6; i++) {
+      bex.beacon({ op: 'unwatch' });
+      bex.beacon({ op: 'watch' });
+    }
+    const ms = bex.take();
+    expect(listsOf(ms)).toHaveLength(4);
+    expect(ms.filter((m) => m.t === 'denied')).toEqual([
+      { t: 'denied', of: 'watch', code: 'rate', retryS: 10 },
+      { t: 'denied', of: 'watch', code: 'rate', retryS: 10 },
+    ]);
+    expect(h.social.beacons.watching).toBe(0);
+    // the list was encoded once for all of it
+    expect(h.encodes.n - encodes).toBe(1);
+    h.advance(10_000);
+    bex.beacon({ op: 'watch' });
+    expect(listsOf(bex.take())).toHaveLength(1);
+  });
+
+  it('sends the watchers what changed over a tick in one message, at the sweep, never at the request', () => {
+    const { h, players, phases } = setup(['Ana', 'Bex', 'Cor', 'Dax', 'Eli', 'Wat']);
+    const watcher = players[5]!;
+    const callers = players.slice(0, 5);
+    watcher.beacon({ op: 'watch' });
+    watcher.take();
+    callers.forEach((p, i) => phases.phaseFor(p.session, 'event', site(p, `site ${i}`)));
+    const encodes = h.encodes.n;
+    const ids: number[] = [];
+    for (const p of callers) {
+      ids.push(raise(p));
+      p.beacon({ op: 'lower' });
+      p.take();
+    }
+    for (const p of callers.slice(0, 2)) ids.push(raise(p));
+    expect(watcher.take()).toEqual([]);
+    h.advance(100);
+    const sent = listsOf(watcher.take());
+    expect(sent).toHaveLength(1);
+    expect(sent[0]!.beacons.map((b) => b.id)).toEqual(ids.slice(5));
+    expect(sent[0]!.gone).toEqual(ids.slice(0, 5));
+    expect(h.encodes.n - encodes).toBe(1);
+    h.advance(1_000);
+    expect(watcher.take()).toEqual([]);
   });
 });

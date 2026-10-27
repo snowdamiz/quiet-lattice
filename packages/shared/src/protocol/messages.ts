@@ -281,8 +281,9 @@ export const BEACON_MAX = 256;
 export const BeaconId = z.number().int().min(1).max(0xffffffff);
 /**
  * A beacon request (DESIGN 16.6 "Social"): `raise` a beacon for the instance you are in, which lists its open slots to the
- * whole shard; `lower` yours; `watch` the shard's beacons (the whole list at once, then its changes) or `unwatch` them;
- * `answer` one, which puts you in its instance when the server finds you may join it there and then.
+ * whole shard; `lower` yours; `watch` the shard's beacons (the whole list at once, then its changes at most once a tick;
+ * asking again while watching does nothing) or `unwatch` them; `answer` one, which puts you in its instance when the
+ * server finds you may join it there and then.
  */
 export const BeaconOp = z.discriminatedUnion('op', [
   z.object({ op: z.literal('raise') }),
@@ -411,7 +412,7 @@ export type PartyView = z.infer<typeof PartyView>;
 
 /** Why a chat message, party request or beacon request was not carried out. */
 export const DeniedCode = z.enum([
-  /** this account sends chat, invites or beacons too fast; `retryS` */
+  /** this account sends chat, invites or beacons, or asks for the beacon list, too fast; `retryS` */
   'rate',
   /** the shard channel (or the invitee's pending invites, or the shard's beacons) is full right now; `retryS` when it is the channel */
   'busy',
@@ -443,7 +444,7 @@ export const DeniedCode = z.enum([
   'gone',
   /** raising a beacon while in no instance */
   'no_phase',
-  /** raising a beacon in an instance no beacon calls aid to (a hangar bay, a cutscene's phase) */
+  /** raising a beacon in an instance no beacon calls aid to (a hangar bay, a phase a cutscene plays in) */
   'kind',
   /** raising a beacon while yours (or one for your instance) is up already */
   'raised',
@@ -459,10 +460,10 @@ export const DeniedCode = z.enum([
   'full',
 ]);
 /** A chat message, party request or beacon request the server did not carry out, sent to its sender only. `of` is what
- * was asked (`raise`, `lower` and `answer` are beacon requests). */
+ * was asked (`raise`, `lower`, `answer` and `watch` are beacon requests; a `watch` is refused only for `rate`). */
 export const Denied = z.object({
   t: z.literal('denied'),
-  of: z.enum(['chat', 'invite', 'accept', 'decline', 'leave', 'kick', 'promote', 'raise', 'lower', 'answer']),
+  of: z.enum(['chat', 'invite', 'accept', 'decline', 'leave', 'kick', 'promote', 'raise', 'lower', 'answer', 'watch']),
   code: DeniedCode,
   /** seconds before asking again may succeed (rate, busy, muted) */
   retryS: z

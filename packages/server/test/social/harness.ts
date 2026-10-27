@@ -5,7 +5,7 @@ import { Session, type SessionSocket } from '../../src/session/session.ts';
 import { ZoneManager } from '../../src/zones/manager.ts';
 import type { Zone } from '../../src/zones/zone.ts';
 import type { SocialLimits } from '../../src/social/limits.ts';
-import { SocialService } from '../../src/social/service.ts';
+import { SocialService, type SocialOptions } from '../../src/social/service.ts';
 
 class FakeSocket implements SessionSocket {
   readyState: SessionSocket['readyState'] = WebSocket.OPEN;
@@ -50,7 +50,10 @@ export interface Player {
 }
 
 /** `encode` wraps the service's encoder (which counts its calls), so a test can make it fail. */
-export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m: ServerMessage, encode: (m: ServerMessage) => string) => string } = {}) {
+export function harness(
+  limits: Partial<SocialLimits> = {},
+  opts: { encode?: (m: ServerMessage, encode: (m: ServerMessage) => string) => string; cutscenes?: SocialOptions['cutscenes'] } = {},
+) {
   let mono = 1000;
   const lines: LogLine[] = [];
   const at = (level: string) => (obj: object, msg: string) => lines.push({ level, obj: obj as Record<string, unknown>, msg });
@@ -64,6 +67,7 @@ export function harness(limits: Partial<SocialLimits> = {}, opts: { encode?: (m:
     mono: () => mono,
     log,
     limits,
+    cutscenes: opts.cutscenes,
     encode: (m) => {
       encodes.n++;
       return opts.encode ? opts.encode(m, encodeServerMessage) : encodeServerMessage(m);

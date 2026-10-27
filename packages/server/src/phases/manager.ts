@@ -291,6 +291,17 @@ export class PhaseManager {
   }
 
   /**
+   * Gives up the place kept for the character since its connection dropped, as its grace running out would: for a place
+   * its holder may no longer have and that no session of its is there to leave (a call-for-aid helper whose party or
+   * caller is gone, social/beacons.ts). False when none was kept.
+   */
+  release(characterId: string): boolean {
+    if (!this.held.has(characterId)) return false;
+    this.dropHold(characterId, 'left');
+    return true;
+  }
+
+  /**
    * The session's connection dropped; the zone calls this before taking its entity out. Its player's place in its phase
    * is kept for the kind's grace, for its character to find again through phaseFor. A session with no character, or
    * none in a phase, has nothing kept.

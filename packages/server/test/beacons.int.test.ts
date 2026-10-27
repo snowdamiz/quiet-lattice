@@ -2,7 +2,8 @@
 // home Waystation: a player in an event with open slots raises a beacon, another watching the shard's list sees it and
 // answers, and the instance holds (and shows) both; a player in another system is refused; an instance that filled
 // refuses an answer before its beacon is taken down, and then the beacon comes down; answering a quest step's story
-// beacon joins the caller's party and its phase, as a helper without the quest.
+// beacon joins the caller's party and its phase, as a helper without the quest, who goes back to the shared world once it
+// is kicked from the party.
 import { PROTOCOL_VERSION, type BeaconOp, type PeopleId, type ServerMessage } from '@astra/shared/protocol';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { PhaseLocation } from '../src/phases/manager.ts';
@@ -182,6 +183,11 @@ describe('call-for-aid beacons over the wire', () => {
     expect(server.ws.social.partyIdOf(b.characterId)).toBe(id);
     expect([...chapter.members].sort()).toEqual([a.entityId, b.entityId].sort());
     await waitFor(() => server.ws.social.beacons.of(a.characterId)?.open === 4, 5000, 'one party slot fewer');
+
+    // kicked from the party, the helper goes back to the shared world, and the chapter is the caller's alone again
+    a.sock.send({ t: 'party', op: { op: 'kick', name: b.name } });
+    await waitFor(() => zone.phases.phaseOf(b.entityId) === null, 5000, 'the helper out of the chapter');
+    expect([...chapter.members]).toEqual([a.entityId]);
     zone.phases.close(chapter.id);
     await close(a, b);
   });

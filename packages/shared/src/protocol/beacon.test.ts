@@ -140,8 +140,11 @@ describe('beacon messages', () => {
       const m = { t: 'denied', of, code } satisfies ServerMessage;
       expect(decodeServerMessage(encodeMessage(m))).toEqual(m);
     }
-    const rate = { t: 'denied', of: 'raise', code: 'rate', retryS: 30 } satisfies ServerMessage;
-    expect(decodeServerMessage(encodeMessage(rate))).toEqual(rate);
-    expect(decodeServerMessage('{"t":"denied","of":"watch","code":"unknown"}')).toBeNull();
+    for (const rate of [
+      { t: 'denied', of: 'raise', code: 'rate', retryS: 30 },
+      { t: 'denied', of: 'watch', code: 'rate', retryS: 10 },
+    ] satisfies ServerMessage[])
+      expect(decodeServerMessage(encodeMessage(rate))).toEqual(rate);
+    expect(decodeServerMessage('{"t":"denied","of":"unwatch","code":"rate","retryS":1}')).toBeNull();
   });
 });

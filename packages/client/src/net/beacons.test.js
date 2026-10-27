@@ -120,6 +120,20 @@ describe('beacons on the client', () => {
     expect(beacons.refusal).toEqual({ of: 'answer', code: 'far' });
   });
 
+  it('asks again for a watch the server refused for its rate, once it may succeed, unless it stopped watching', () => {
+    const { beacons, socket, timers, requests } = joined();
+    beacons.watch();
+    socket().push({ t: 'denied', of: 'watch', code: 'rate', retryS: 10 });
+    expect(beacons.refusal).toEqual({ of: 'watch', code: 'rate', retryS: 10 });
+    expect(timers.at(-1).ms).toBe(10_000);
+    timers.at(-1).fn();
+    expect(requests()).toEqual([{ op: 'watch' }, { op: 'watch' }]);
+    socket().push({ t: 'denied', of: 'watch', code: 'rate', retryS: 10 });
+    beacons.unwatch();
+    timers.at(-1).fn();
+    expect(requests()).toEqual([{ op: 'watch' }, { op: 'watch' }, { op: 'unwatch' }]);
+  });
+
   it('watches again after a reconnect (a new connection starts unwatched), the list starting over', () => {
     const { beacons, socket, timers, requests } = joined();
     beacons.watch();

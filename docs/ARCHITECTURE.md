@@ -181,8 +181,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `answer {id}`; the server sends a watcher the shard's list (`beacons`: `reset` and the whole list as it starts
   watching, then new or changed beacons and the ids `gone`), the beacon's caller and answerer their news (`beacon {op:
   'raised' | 'answered' | 'joined' | 'ended', id, …}`, one field per op), and refusals as `denied {of: 'raise' | 'lower'
-  | 'answer', code}` with the codes `no_phase`, `kind`, `raised`, `unknown`, `elsewhere`, `far`, `in_phase`, `full`
-  beside the social ones (`rate`, `busy`, `self`, `in_party`, `gone`). One `beacon` type serves both directions.
+  | 'answer' | 'watch', code}` with the codes `no_phase`, `kind`, `raised`, `unknown`, `elsewhere`, `far`, `in_phase`,
+  `full` beside the social ones (`rate`, `busy`, `self`, `in_party`, `gone`). One `beacon` type serves both directions.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -225,6 +225,8 @@ players, `event` and `raid` 12.
   call-for-aid beacon's answer, §21): under the same cap and party rule (`full`, changing nothing), a place kept for its
   character there taken back as `phaseFor` takes it back, any other phase left; a member asked under a new party takes
   it when the phase's others are all of it. It never moves the entity, so movement authority's judging goes on as before.
+  `release(characterId)` gives up a place kept for a character whose connection is down, as its grace running out would
+  (a beacon's helper no longer of the party, §21).
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
   players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
@@ -773,7 +775,8 @@ decides when one plays; the client presents it.
   step's cutscene plays in the step's phase. The actors spawn once into the phase, in the cutscene's frame at their
   exported poses (turned with the anchor when it is the player), seen only by the phase's members; `done` takes the
   player out, and the last one out closes the phase with its actors. A session that leaves (its socket closes, it is
-  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten.
+  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten. `plays(zone, phase)` says whether cutscenes play in an
+  open phase (one the service has played in, whatever its key), which no call-for-aid beacon may be raised in (§21).
 - **Out of play:** while a player watches, `cutscenes.watching(zone, entity)` is true and the client pauses the
   player's local hazards (pirate raids, the suit's survival damage). The server bounds it: only while the player is in
   the cutscene's phase, and no longer than the cutscene's length, the client's 1.5 s exit and a 5 s margin. Past either,
@@ -1067,21 +1070,27 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
 - **Instances.** A beacon is raised for the phase its caller is in (§6.1): an `event` or a `raid`, whose slots are its
   12 players (members and places kept, as the cap counts them), or a quest step's `story` phase (keyed
   `quest:<quest>:<scene or step>` by the quest runtime, §17), which holds one party, so its slots are its caller's
-  party's (`PARTY_MAX`, 6; a caller in no party holds one). A hangar `bay` and a cutscene's story phase are not instances
-  anyone calls aid to (`kind`).
+  party's (`PARTY_MAX`, 6; a caller in no party holds one). A hangar `bay` and a phase cutscenes play in are not
+  instances anyone calls aid to (`kind`): the cutscene service marks those it plays in (`CutsceneService.plays`, given
+  to the social service by the gateway), whatever their key, since a quest's cutscene step plays in a `quest:` phase.
 - **Raising** (`beacon {op: 'raise'}`) is refused while the character has a beacon up, or its instance has one
-  (`raised`: one per character and one per instance); past the account's allowance (`rate` with `retryS`: 3 at once,
-  then one every 30 s, shared by the account's sockets); in no phase (`no_phase`), in a bay or a cutscene's phase
-  (`kind`); with no slot open (`full`); and with `BEACON_MAX` (256) up on the shard (`busy`). The caller is sent
-  `beacon {op: 'raised', id, beacon}`, and again whenever its character enters the world while the beacon is up.
+  (`raised`: one per character and one per instance); in no phase (`no_phase`), in a bay or a cutscene's phase
+  (`kind`); with no slot open (`full`); with `BEACON_MAX` (256) up on the shard (`busy`); and, checked last so that no
+  other refusal spends it, past the account's allowance (`rate` with `retryS`: 3 at once, then one every 30 s, shared
+  by the account's sockets). The caller is sent `beacon {op: 'raised', id, beacon}`, and again whenever its character
+  enters the world while the beacon is up.
 - **The listing** (`BeaconView`): its id; the instance's kind and star system (galaxy index); its place, as a frame, a
   centre in it and a radius (where to go to answer); what the place is called (the quest's title, else the location's
   key; the kind's name if neither is plain text); the quest, for a story instance; the caller's name; its open slots of
   `cap`; and the world times it was raised (`at`: its age is the client's server time less this) and lapses (`until`,
-  10 minutes later). A session that sends `watch` is sent the whole list (`beacons {reset: true, beacons, gone: []}`)
-  and from then every change (`beacons {beacons, gone}`: new beacons and those whose open slots changed, and the ids of
-  those that ended), each change encoded once for every watcher (`Session.sendText`), until it sends `unwatch` or its
-  connection closes. A new connection starts unwatched.
+  10 minutes later). A session that sends `watch` is sent the whole list (`beacons {reset: true, beacons, gone: []}`,
+  some 70 KB at 256 beacons) and from then the changes (`beacons {beacons, gone}`: new beacons and those whose open
+  slots changed, and the ids of those that ended), until it sends `unwatch` or its connection closes; a new connection
+  starts unwatched. The changes are gathered and sent only at the tick's sweep, one message encoded once for every
+  watcher (`Session.sendText`), so the shard's broadcasts come at most ten times a second however many requests arrive.
+  A `watch` from a session already watching is ignored, and an account is sent the whole list 5 times at once, then
+  once every 10 s (`denied {of: 'watch', code: 'rate', retryS}`, the session then not watching), so no flood of watch
+  and unwatch turns its message budget into megabytes.
 - **The end.** At every tick each beacon is checked, and it ends when its instance closed (`closed`), it lapsed
   (`expired`), its caller is no longer in the instance (`left`; a caller whose connection dropped keeps it up while the
   phase keeps its place, §6.1), or no slot is open (`full`, at once when an answer took the last); and when its caller
@@ -1103,9 +1112,16 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   leaving alone a player in a phase it did not put it in, and quests move only for those who hold them. The answerer is
   sent `beacon {op: 'joined', id, phase}`, the caller `beacon {op: 'answered', id, name}`, and the watchers the beacon's
   new slots (or its end, when that was the last).
-- **Refusals** go to the asker only, as `denied {of: 'raise' | 'lower' | 'answer', code, retryS?}`. Every raise,
-  answer and end is logged at info, with the character, zone, phase and kind.
+- **Helpers.** Since the quest runtime never re-places a player it did not place, the beacons do it for the helpers a
+  story answer placed, as the runtime does for a party (§17: a party that breaks up is split again): at every tick, a
+  helper that is no longer in the party it joined (it left, was kicked, or the party disbanded) or whose caller is no
+  longer in the chapter (its step ended, it went elsewhere, its kept place lapsed) goes back to the shared world
+  (`PhaseManager.leave`; a helper whose connection is down has its kept place given up, `PhaseManager.release`), logged
+  as `beacon helper sent back`. So a party's private phase is only ever the party's: a kicked helper cannot stay with
+  its actors, nor hold the phase open for the party's return. One that leaves the chapter by itself is forgotten.
+- **Refusals** go to the asker only, as `denied {of: 'raise' | 'lower' | 'answer' | 'watch', code, retryS?}`. Every
+  raise, answer, end and helper sent back is logged at info, with the character, zone, phase and kind.
 - **The client.** `net.beacons` (`packages/client/src/net/beacons.js`) holds the list while watching (and watches again
-  after a reconnect), the character's own beacon, the phase its last answer put it in and the last refusal, and sends
+  after a reconnect, or once a watch refused for its rate may succeed), the character's own beacon, the phase its last answer put it in and the last refusal, and sends
   the requests. The panel that shows them belongs to the chat and party UI (P1.E15.T03); until it lands they are
   reachable from the dev console as `game.net.beacons` (`watch()`, `list()`, `answer(id)`, `raise()`, `lower()`).

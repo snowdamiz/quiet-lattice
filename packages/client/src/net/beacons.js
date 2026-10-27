@@ -3,13 +3,14 @@
 // from the news the server sends it; the last refusal; and the requests (raise, lower, watch, unwatch, answer), which the
 // server carries out or refuses. The server decides everything (who may raise, who may join, the slots): this keeps only
 // what it was told. A new connection starts unwatched on the server, so a client that was watching asks again on every
-// welcome.
+// welcome, and a watch the server refused for its rate (an account is sent the whole list a few times at once, then once
+// every ten seconds) is asked again once it may succeed.
 //
 // The beacon panel belongs to the chat and party UI (P1.E15.T03). Until it lands this is reachable from the dev console
 // as `game.net.beacons`: `watch()`, `list()`, `answer(id)`, `raise()`, `lower()`, `own`, `refusal`.
 
 /** Beacon requests the server refuses with `denied` (of one of these). */
-const REQUESTS = new Set(['raise', 'lower', 'answer']);
+const REQUESTS = new Set(['raise', 'lower', 'answer', 'watch']);
 
 export class Beacons {
   /** `net`: the connection (Net), whose messages this listens to and sends its requests through. */
@@ -25,6 +26,8 @@ export class Beacons {
     this.joined = null;
     /** the last beacon request the server refused: `{ of, code, retryS? }`, else null */
     this.refusal = null;
+    /** the timer asking again for a watch refused for its rate */
+    this.retry = null;
     this.listeners = new Set();
     net.on('welcome', () => this.welcomed());
     net.on('beacons', (m) => this.listed(m));
@@ -46,6 +49,7 @@ export class Beacons {
   /** Stops watching, and forgets the list. */
   unwatch() {
     this.watching = false;
+    this.cancelRetry();
     this.byId.clear();
     this.changed();
     return this.net.send({ t: 'beacon', op: { op: 'unwatch' } });
@@ -84,6 +88,7 @@ export class Beacons {
     this.byId.clear();
     this.own = null;
     this.joined = null;
+    this.cancelRetry();
     if (this.watching) this.net.send({ t: 'beacon', op: { op: 'watch' } });
     this.changed();
   }
@@ -106,7 +111,22 @@ export class Beacons {
   denied(m) {
     if (!REQUESTS.has(m.of)) return;
     this.refusal = { of: m.of, code: m.code, ...(m.retryS === undefined ? {} : { retryS: m.retryS }) };
+    if (m.of === 'watch' && this.watching) this.retryWatch(m.retryS ?? 10);
     this.changed();
+  }
+
+  /** Asks to watch again in `seconds`, unless the client stops watching (or reconnects) first. */
+  retryWatch(seconds) {
+    this.cancelRetry();
+    this.retry = this.net.timers.setTimeout(() => {
+      this.retry = null;
+      if (this.watching) this.net.send({ t: 'beacon', op: { op: 'watch' } });
+    }, seconds * 1000);
+  }
+
+  cancelRetry() {
+    if (this.retry !== null) this.net.timers.clearTimeout(this.retry);
+    this.retry = null;
   }
 
   changed() {
