@@ -3,7 +3,7 @@
 // above (off other ships if it can be), else none; room to spare, here and where the mark is headed, to take a side.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, labelBox, makeRoom, markOf, nudge, placeLabel, screenBounds } from './markers.js';
+import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, labelBox, makeRoom, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
 
 const W = 1920;
 const H = 1080;
@@ -159,6 +159,19 @@ describe('pilot markers', () => {
     expect(addCovers([], {})).toEqual([]);
     expect(addCovers([], { covers: () => false })).toEqual([]);
     expect(addCovers([], { covers: () => [null, { left: 5, top: 5, right: 5, bottom: 9 }] })).toEqual([]);
+  });
+
+  it("keep off the local ship's outline, slice by slice, not its box", () => {
+    // a diamond's corners and some points inside it
+    const xy = new Float64Array([100, 0, 200, 100, 100, 200, 0, 100, 100, 100, 120, 90, 60, 140]);
+    const bands = outlineBands(xy, 7, 4, 2, []);
+    expect(bands).toEqual([48, -2, 152, 52, -2, 48, 202, 102, -2, 98, 202, 152, 48, 148, 152, 202]);
+    // every point in some slice; the box's corners in none
+    for (let i = 0; i < 7; i++) expect(hits(xy[2 * i], xy[2 * i + 1], xy[2 * i] + 0.1, xy[2 * i + 1] + 0.1, bands)).toBe(true);
+    expect(hits(0, 0, 10, 10, bands)).toBe(false);
+    expect(hits(190, 190, 200, 200, bands)).toBe(false);
+    // (too few points for an outline: none)
+    expect(outlineBands(xy, 2, 4, 2, [])).toEqual([]);
   });
 
   it('tell overlapping boxes from touching ones', () => {

@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { EdgeCompass } from './EdgeCompass.js';
-import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fits, labelWidth, makeRoom, markOf, nudge, placeLabel, screenBounds } from '../remote/markers.js';
+import { ConvexHull } from 'three/addons/math/ConvexHull.js';
+import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fits, labelWidth, makeRoom, markOf, nudge, outlineBands, placeLabel, screenBounds } from '../remote/markers.js';
 
 const _v = new THREE.Vector3();
 
@@ -12,9 +13,35 @@ const _v = new THREE.Vector3();
 const _bounds = { x0: 0, y0: 0, x1: 0, y1: 0 };
 const _mark = { x: 0, y: 0 };
 const _label = { x0: 0, y0: 0, x1: 0, y1: 0 };
-const _shipBounds = { x0: 0, y0: 0, x1: 0, y1: 0 };
+const _m4 = new THREE.Matrix4();
 const namedFirst = (a, b) => b.shown - a.shown;
-const _corner = new THREE.Vector3();
+/** The slices the local ship's outline on screen is kept out in. */
+const OUTLINE_BANDS = 8;
+
+/** The corners (x, y, z in its own space, flat) of the convex hull round every mesh of `model`. */
+function hullCorners(model) {
+  model.updateMatrixWorld(true);
+  const toModel = new THREE.Matrix4().copy(model.matrixWorld).invert();
+  const m = new THREE.Matrix4();
+  const points = [];
+  // (one point a 2 cm cell: the hull is the same, and found sooner)
+  const cells = new Set();
+  model.traverse((o) => {
+    const pos = o.isMesh && o.geometry?.attributes.position;
+    if (!pos) return;
+    m.multiplyMatrices(toModel, o.matrixWorld);
+    for (let i = 0; i < pos.count; i++) {
+      const v = new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(m);
+      const key = `${Math.round(v.x * 50)},${Math.round(v.y * 50)},${Math.round(v.z * 50)}`;
+      if (cells.has(key)) continue;
+      cells.add(key);
+      points.push(v);
+    }
+  });
+  if (points.length < 4) return new Float32Array(points.flatMap((v) => v.toArray()));
+  const hull = new ConvexHull().setFromPoints(points);
+  return new Float32Array(hull.vertices.flatMap((v) => v.point.toArray()));
+}
 /** How long (ms) a pilot's mark or name takes to fade in or out (style.css's transition), and how long a name gone stays
  * gone at least: until its side has had room that long, or had none that long before it takes another. */
 const FADE_MS = 150;
@@ -429,33 +456,36 @@ export class HUD {
     while (this.hitsEl.children.length > 12) this.hitsEl.firstChild.remove();
   }
 
-  // The local ship's bounds on screen, into `out` (null when it is not drawn or not in front): markers keep off it.
-  localShipBounds(W, H, out) {
+  // The local ship's outline on screen into `keepOut`, as OUTLINE_BANDS boxes close round it (markers.js's outlineBands):
+  // the corners of its convex hull (worked out once, in its own space), projected. None when it is not drawn, or not all
+  // in front of the camera.
+  localShipOutline(W, H, keepOut) {
     const g = this.game;
     const model = g.ship?.model;
-    if (!model || !model.visible || g.mode !== 'ship') return null;
+    if (!model || !model.visible || g.mode !== 'ship') return;
+    if (this.shipHullOf !== model) {
+      this.shipHullOf = model;
+      this.shipHull = hullCorners(model);
+      const n = this.shipHull.length / 3;
+      this.shipXY = new Float64Array(2 * n);
+      this.shipOrder = new Int32Array(n);
+      this.shipPoly = new Int32Array(2 * n + 1);
+    }
     const cam = g.engine.camera;
-    // (its box in its own space, once: corners turned with it each frame)
-    if (!this.shipBox) {
-      model.updateMatrixWorld(true);
-      const inv = model.matrixWorld.clone().invert();
-      this.shipBox = new THREE.Box3().setFromObject(model).applyMatrix4(inv);
+    const e = _m4.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse).multiply(model.matrixWorld).elements;
+    const pts = this.shipHull;
+    const xy = this.shipXY;
+    const n = pts.length / 3;
+    for (let i = 0; i < n; i++) {
+      const x = pts[3 * i];
+      const y = pts[3 * i + 1];
+      const z = pts[3 * i + 2];
+      const w = e[3] * x + e[7] * y + e[11] * z + e[15];
+      if (w < 0.01) return;
+      xy[2 * i] = ((e[0] * x + e[4] * y + e[8] * z + e[12]) / w) * 0.5 * W + W / 2;
+      xy[2 * i + 1] = (-((e[1] * x + e[5] * y + e[9] * z + e[13]) / w) * 0.5 + 0.5) * H;
     }
-    const { min, max } = this.shipBox;
-    out.x0 = out.y0 = Infinity;
-    out.x1 = out.y1 = -Infinity;
-    for (let k = 0; k < 8; k++) {
-      _corner.set(k & 1 ? max.x : min.x, k & 2 ? max.y : min.y, k & 4 ? max.z : min.z).applyMatrix4(model.matrixWorld);
-      _corner.project(cam);
-      if (_corner.z > 1) return null;
-      const x = (_corner.x * 0.5 + 0.5) * W;
-      const y = (-_corner.y * 0.5 + 0.5) * H;
-      if (x < out.x0) out.x0 = x;
-      if (x > out.x1) out.x1 = x;
-      if (y < out.y0) out.y0 = y;
-      if (y > out.y1) out.y1 = y;
-    }
-    return out;
+    outlineBands(xy, n, OUTLINE_BANDS, 4, keepOut, this.shipOrder, this.shipPoly);
   }
 
   updateMarkers() {
@@ -470,8 +500,7 @@ export class HUD {
     for (const v of this.avoid) keepOut.push(v);
     // (and the social panels, where the HUD has them)
     addCovers(keepOut, this.social, 4);
-    const ship = this.localShipBounds(W, H, _shipBounds);
-    if (ship) keepOut.push(ship.x0, ship.y0, ship.x1, ship.y1);
+    this.localShipOutline(W, H, keepOut);
     const taken = this.taken;
     taken.length = 0;
     const pilots = this.pilotsNow;

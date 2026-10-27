@@ -1,7 +1,7 @@
 // How remote ships are drawn (P1.E04.T02): which hulls have a model, one kit of instanced meshes per hull made from that
 // hull's own model, never from the player's ship (its surfaces merged into the hull and each gear leg, their materials on
 // their vertices, the cockpit interior and the ship's effects left out), three levels of detail (the model, its
-// simplification, the hull clustered under 5% of it, or the model's own LOD chain), each ship placed, culled, drawn at the
+// simplification, one shell round the hull under 5% of it, or the model's own LOD chain), each ship placed, culled, drawn at the
 // level its size on screen calls for, its gear folded and its engines lit on its own, and room made as more come.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
@@ -240,6 +240,42 @@ describe('RemoteShips', () => {
     expect(hull.levels[1].geometry.attributes.position).toBe(hull.levels[0].geometry.attributes.position);
     expect(lines).toHaveLength(1);
     expect(lines[0]).toMatch(/lark levels generated .*the coarsest \d+\.\d% of the model/);
+  });
+
+  it('makes the coarsest one solid shell: its own vertices, smooth, two-sided, the livery averaged, no lights, no plating', async () => {
+    // (the wing orange, the body white)
+    const lark = loadedShip();
+    const wing = lark.model.children[1];
+    wing.material = new THREE.MeshStandardMaterial({ name: 'Accent', color: 0xff6600, roughness: 0.4, metalness: 0.2 });
+    const game = scene(lark);
+    const ships = await ready(game);
+    const kit = ships.kits.get('lark');
+    const hull = pieceOf(ships);
+    const g = hull.levels[2].geometry;
+    expect(g.attributes.position).not.toBe(hull.levels[0].geometry.attributes.position);
+    expect(kit.materials[2].side).toBe(THREE.DoubleSide);
+    expect(kit.materials[1].side).toBe(THREE.FrontSide);
+    const { position, normal, color, aMat, aEmissive } = g.attributes;
+    let tips = 0;
+    let nose = 0;
+    for (let i = 0; i < position.count; i++) {
+      expect(Math.hypot(normal.getX(i), normal.getY(i), normal.getZ(i))).toBeCloseTo(1, 3);
+      // no plating, no glow, no light
+      expect([aMat.getZ(i), aMat.getW(i), aEmissive.getX(i), aEmissive.getY(i), aEmissive.getZ(i)]).toEqual([0, 0, 0, 0, 0]);
+      const c = [color.getX(i), color.getY(i), color.getZ(i)];
+      // a wing tip in the wing's colour and roughness, the nose in the body's: each a metre or more from the other
+      if (Math.abs(position.getX(i)) > 5) {
+        tips++;
+        c.forEach((v, k) => expect(v).toBeCloseTo(wing.material.color.toArray()[k], 3));
+        expect(aMat.getX(i)).toBeCloseTo(0.4, 3);
+      }
+      if (position.getZ(i) < -5) {
+        nose++;
+        c.forEach((v) => expect(v).toBeCloseTo(1, 3));
+      }
+    }
+    expect(tips).toBeGreaterThan(0);
+    expect(nose).toBeGreaterThan(0);
   });
 
   it("draws a model's own LOD chain where it has one: its LOD1, and its last for the coarsest", async () => {

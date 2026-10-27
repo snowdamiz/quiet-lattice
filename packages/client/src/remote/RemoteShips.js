@@ -5,11 +5,13 @@
 // is plated), so one material draws them all; the cockpit interior, which shows only from the seat, is left out.
 //
 // Three levels of detail, picked per ship by its length on screen: the model; its meshoptimizer simplification (borders
-// locked, so no gap opens between surfaces, specks pruned); and the whole hull clustered to under 5% of the model's
-// triangles (DESIGN 19.2), which casts no shadow and draws no folded gear (a ship that small shows neither). A hull whose
-// model carries its own LOD chain (`<variant>_LOD<n>` nodes, art bible 8) draws its LOD1 and its last instead of the
-// generated ones. Plating detail fades with the level (full, softer, none), so a ship tens of pixels long reads as a
-// clean silhouette rather than speckle. A frame's draw calls are a few per level in use (the hull, the legs, and the
+// locked, so no gap opens between surfaces, specks pruned); and, for a ship 60 px long and less, one shell round the
+// whole hull under 5% of the model's triangles (DESIGN 19.2: welded and simplified as one, so the small parts merge into
+// it, its normals smooth, its colour the livery's broad patches averaged a metre round each vertex, no lights, satin),
+// which casts no shadow and draws no folded gear (a ship that small shows neither). A hull whose model carries its own
+// LOD chain (`<variant>_LOD<n>` nodes, art bible 8) draws its LOD1 and its last instead of the generated ones. Plating
+// detail fades with the level (full, softer, none), so a ship tens of pixels long reads as one solid silhouette in its
+// livery rather than speckle. A frame's draw calls are a few per level in use (the hull, the legs, and the
 // shadows of the two finer levels) and the exhausts', however many ships are in view, and nothing is allocated per frame.
 // Each ship folds its gear, lights its engines (by its speed and thrust) and strobes its beacon on its own, from the
 // motion its snapshots describe.
@@ -19,7 +21,7 @@
 // The snapshots carry no livery: every hull draws in its authored one (livery 0; P1.E12.T02 paints the other two).
 import * as THREE from 'three';
 import { MeshoptSimplifier } from 'three/addons/libs/meshopt_simplifier.module.js';
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeGeometries, mergeVertices, toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
 import { getHull } from '@astra/shared/data';
 import { Ship } from '../entities/Ship.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
@@ -59,6 +61,13 @@ export const ROUGH_MIN = [0, 0.6, 0.9];
 /** The brightest a ship drawn at the coarsest may be (before tone mapping): under the bloom's threshold (1.2), so a ship
  * a few pixels long never blooms into a blot bigger than itself, whatever catches the light on it for a frame. */
 export const COARSE_MAX = 1;
+/** The coarsest level's shell (shell()): vertices nearer than WELD_M (m) are one; each vertex takes the surfaces'
+ * colour, roughness and metalness averaged over SHELL_BLUR_M round it (a Lark at 60 px is some 4 px a metre, so the
+ * blur is a few pixels: the broad patches of its livery, none of its stripes or rivets); its normals are smooth across
+ * edges gentler than SHELL_CREASE. */
+const WELD_M = 0.01;
+export const SHELL_BLUR_M = 1;
+const SHELL_CREASE = Math.PI / 3;
 
 /** Ships this close (m) are drawn even outside the view: their shadows can fall into it. */
 const SHADOW_NEAR = 100;
@@ -363,10 +372,11 @@ class HullKit {
     const merged = (b) => {
       const geometry = b.geometries.length === 1 ? b.geometries[0] : mergeGeometries(b.geometries);
       if (!geometry) throw new Error(`remote ${id}: the surfaces could not be merged`);
-      // where each surface's triangles lie in the merged index (the coarsest level clusters each on its own)
+      // where each surface's triangles lie in the merged index, and which (the lights, the backs of two-sided
+      // surfaces) the coarsest level leaves out
       let start = 0;
       geometry.userData.surfaces = b.geometries.map((g) => {
-        const range = [start, g.index.count, g.userData.lit];
+        const range = [start, g.index.count, g.userData.lit, !!g.userData.back];
         start += g.index.count;
         return range;
       });
@@ -405,7 +415,7 @@ class HullKit {
   }
 
   /** Makes the finer levels of every piece (meshoptimizer, once its WebAssembly is ready), or takes the model's own: the
-   * simplification on the model's own vertices, and the coarsest clustered from the model to COARSE_RATIO of it. */
+   * simplification on the model's own vertices, and the coarsest a shell round the model, COARSE_RATIO of it. */
   async simplify() {
     await MeshoptSimplifier.ready;
     for (const p of this.pieces) {
@@ -420,18 +430,15 @@ class HullKit {
       const fine =
         p.own?.[0] ??
         sharing(g0, join([unlit.length ? MeshoptSimplifier.simplify(unlit, pos, 3, Math.max(1, Math.floor((unlit.length * LOD1.ratio) / 3)) * 3, LOD1.error, ['LockBorder', 'Prune'])[0] : unlit, gather(index, surfaces, true)]));
-      // (each surface clustered on its own, borders and all, so no triangle spans two materials and smears one's colour
-      // or glow over the other; at under 100 px only the silhouette and the broad patches of colour show, and a surface
-      // too small to keep a triangle, a light or a rail, goes; a small piece, a gear leg, can cluster away to nothing at
-      // that share: then a larger one)
+      // (one shell round the whole piece, its small parts merged into it: see shell(); a small piece, a gear leg, can
+      // simplify away to nothing at that share: then a larger one)
       let coarse = p.own?.[1];
-      // (a gear leg, drawn far off only down on landed and docked ships, keeps a quarter of itself: clustered further it
+      // (a gear leg, drawn far off only down on landed and docked ships, keeps a quarter of itself: simplified further it
       // thins to nothing, and the ship would seem to hover)
       const least = p.gear >= 0 ? LEG_RATIO : COARSE_RATIO;
       for (const share of [least, least * 3, least * 8]) {
         if (coarse) break;
-        const tris = clustered(index, pos, surfaces, share);
-        if (tris.length) coarse = sharing(g0, tris);
+        coarse = shell(g0, share);
       }
       p.levels.push(new Level(fine), new Level(coarse ?? fine));
     }
@@ -443,7 +450,7 @@ class HullKit {
   describe() {
     const tris = Array.from({ length: this.levels }, (_, k) => this.pieces.reduce((n, p) => n + p.triangles(k), 0));
     const share = ((100 * tris.at(-1)) / tris[0]).toFixed(1);
-    return `remote ships: ${this.id} levels ${this.ownLevels ? "from the model's own LOD nodes" : 'generated (meshoptimizer: simplified, then clustered)'}: ${tris.join(' / ')} triangles, the coarsest ${share}% of the model`;
+    return `remote ships: ${this.id} levels ${this.ownLevels ? "from the model's own LOD nodes" : 'generated (meshoptimizer: simplified, then one sloppy shell)'}: ${tris.join(' / ')} triangles, the coarsest ${share}% of the model`;
   }
 
   alloc(capacity) {
@@ -648,8 +655,7 @@ export function painted(g, m) {
 }
 
 // A surface's back: its vertices again with their normals turned round, its triangles wound the other way. A surface of
-// its own, so the coarsest level never clusters a front vertex with a back one (their normals would cancel, and the
-// lighting of a triangle between them divide by nothing).
+// its own (which the coarsest level's shell leaves out: it is two-sided).
 function backOf(g) {
   const out = new THREE.BufferGeometry();
   for (const [name, attr] of Object.entries(g.attributes)) {
@@ -662,27 +668,154 @@ function backOf(g) {
   for (let i = 0; i < index.length; i += 3) back.set([index[i], index[i + 2], index[i + 1]], i);
   out.setIndex(new THREE.BufferAttribute(back, 1));
   out.userData.lit = g.userData.lit;
+  out.userData.back = true;
   return out;
 }
 
-// Each surface's triangles (`surfaces`: start, count in `index`, and whether it is lit) clustered to `share` of them,
-// together; a lit surface (a light, a glow) simplified instead, borders locked and nothing pruned, so it keeps its shape
-// and stays: clustered with the hull's grid, a few lights across the ship would join into triangles spanning it, and
-// glow as one.
-function clustered(index, pos, surfaces, share) {
-  const parts = [];
-  for (const [start, count, lit] of surfaces) {
-    const own = index.subarray(start, start + count);
-    if (lit) {
-      const [tris] = MeshoptSimplifier.simplify(own, pos, 3, Math.max(3, Math.floor((count / 3) * LOD1.ratio) * 3), LOD1.error, ['LockBorder']);
-      parts.push(tris.length ? tris : own);
+/**
+ * The coarsest level of a piece (`g0`, the model's): one shell round its unlit surfaces (their fronts), welded where they
+ * meet and simplified as one, sloppily, to `share` of the piece's triangles, so its small parts (rails, vents, gear doors,
+ * the canopy's frame) merge into the whole rather than each keeping a triangle or two that flicker in and out from one
+ * frame to the next at 30-60 px. Its normals smooth over it (but across creases sharper than SHELL_CREASE); each vertex
+ * the surfaces' colour, roughness and metalness averaged, by area, over SHELL_BLUR_M round it; no plating, no glow, no
+ * lights (a light there is under a pixel: it only twinkles). Its triangles may face either way (the simplification keeps
+ * no winding): the coarsest material is two-sided, and lights each by the way it faces the camera. Null if nothing is
+ * left.
+ */
+function shell(g0, share) {
+  const pos = g0.attributes.position;
+  const index = g0.index.array;
+  const surfaces = g0.userData.surfaces ?? [[0, index.length, false, false]];
+  // (welded: the surfaces' vertices where they meet, one)
+  const welded = new Map();
+  const at = [];
+  const of = new Int32Array(pos.count).fill(-1);
+  const tris = [];
+  for (const [start, count, lit, back] of surfaces) {
+    if (lit || back) continue;
+    for (let i = start; i < start + count; i++) {
+      const v = index[i];
+      if (of[v] < 0) {
+        const key = `${Math.round(pos.getX(v) / WELD_M)},${Math.round(pos.getY(v) / WELD_M)},${Math.round(pos.getZ(v) / WELD_M)}`;
+        let w = welded.get(key);
+        if (w === undefined) {
+          w = at.length / 3;
+          welded.set(key, w);
+          at.push(pos.getX(v), pos.getY(v), pos.getZ(v));
+        }
+        of[v] = w;
+      }
+      tris.push(of[v]);
+    }
+  }
+  const target = Math.floor((index.length / 3) * Math.min(1, share)) * 3;
+  if (tris.length < 3 || target < 3) return null;
+  const points = new Float32Array(at);
+  const [kept] = MeshoptSimplifier.simplifySloppy(new Uint32Array(tris), points, 3, null, target, 1);
+  if (!kept.length) return null;
+  // its own vertices: those the simplification kept
+  const used = new Map();
+  const shellIndex = new Uint32Array(kept.length);
+  const xyz = [];
+  for (let i = 0; i < kept.length; i++) {
+    let u = used.get(kept[i]);
+    if (u === undefined) {
+      u = used.size;
+      used.set(kept[i], u);
+      xyz.push(points[kept[i] * 3], points[kept[i] * 3 + 1], points[kept[i] * 3 + 2]);
+    }
+    shellIndex[i] = u;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(xyz, 3));
+  g.setIndex(new THREE.BufferAttribute(shellIndex, 1));
+  shade(g, g0, surfaces);
+  // (indexed again: the vertices its creases left the same, one)
+  const out = mergeVertices(toCreasedNormals(g, SHELL_CREASE));
+  out.boundingBox = g0.boundingBox;
+  return out;
+}
+
+// Gives each of the shell's vertices (`g`) the colour, roughness and metalness of the model's unlit fronts (`g0`) round it:
+// each triangle within SHELL_BLUR_M of it (its nearest point), by its area (up to a square of that side: one great panel
+// does not drown the rest) and fading to nothing at that distance; none plated, none glowing.
+function shade(g, g0, surfaces) {
+  const pos = g0.attributes.position;
+  const col = g0.attributes.color;
+  const mat = g0.attributes.aMat;
+  const index = g0.index.array;
+  const R = SHELL_BLUR_M;
+  // the model's triangles (the first index of each) by the cells of a grid of SHELL_BLUR_M their boxes cross
+  const cells = new Map();
+  const tri = new THREE.Triangle();
+  const box = new THREE.Box3();
+  for (const [start, count, lit, back] of surfaces) {
+    if (lit || back) continue;
+    for (let i = start; i < start + count; i += 3) {
+      tri.setFromAttributeAndIndices(pos, index[i], index[i + 1], index[i + 2]);
+      if (!(tri.getArea() > 0)) continue;
+      box.setFromPoints([tri.a, tri.b, tri.c]);
+      for (let x = Math.floor(box.min.x / R); x <= Math.floor(box.max.x / R); x++)
+        for (let y = Math.floor(box.min.y / R); y <= Math.floor(box.max.y / R); y++)
+          for (let z = Math.floor(box.min.z / R); z <= Math.floor(box.max.z / R); z++) {
+            const k = `${x},${y},${z}`;
+            let list = cells.get(k);
+            if (!list) cells.set(k, (list = []));
+            list.push(i);
+          }
+    }
+  }
+  const n = g.attributes.position.count;
+  const color = new Float32Array(n * 3);
+  const aMat = new Float32Array(n * 4);
+  const p = new THREE.Vector3();
+  const near = new THREE.Vector3();
+  const seen = new Map();
+  for (let v = 0; v < n; v++) {
+    p.fromBufferAttribute(g.attributes.position, v);
+    const cx = Math.floor(p.x / R);
+    const cy = Math.floor(p.y / R);
+    const cz = Math.floor(p.z / R);
+    let sum = 0;
+    let r = 0;
+    let gr = 0;
+    let bl = 0;
+    let rough = 0;
+    let metal = 0;
+    for (let dx = -1; dx <= 1; dx++)
+      for (let dy = -1; dy <= 1; dy++)
+        for (let dz = -1; dz <= 1; dz++) {
+          const list = cells.get(`${cx + dx},${cy + dy},${cz + dz}`);
+          if (!list) continue;
+          for (const i of list) {
+            // (a triangle crossing several cells, once)
+            if (seen.get(i) === v) continue;
+            seen.set(i, v);
+            tri.setFromAttributeAndIndices(pos, index[i], index[i + 1], index[i + 2]);
+            const d = tri.closestPointToPoint(p, near).distanceTo(p);
+            if (d >= R) continue;
+            const w = Math.min(tri.getArea(), R * R) * (1 - d / R);
+            const s = index[i];
+            sum += w;
+            r += w * col.getX(s);
+            gr += w * col.getY(s);
+            bl += w * col.getZ(s);
+            rough += w * mat.getX(s);
+            metal += w * mat.getY(s);
+          }
+        }
+    // (none near, which a shell's vertex, one of the model's, never is: the hull's mid grey, satin)
+    if (!sum) {
+      color.set([0.4, 0.4, 0.4], v * 3);
+      aMat.set([0.6, 0.3, 0, 0], v * 4);
       continue;
     }
-    const target = Math.floor((count / 3) * Math.min(1, share)) * 3;
-    if (target < 3) continue;
-    parts.push(MeshoptSimplifier.simplifySloppy(own, pos, 3, null, target, 1)[0]);
+    color.set([r / sum, gr / sum, bl / sum], v * 3);
+    aMat.set([rough / sum, metal / sum, 0, 0], v * 4);
   }
-  return join(parts);
+  g.setAttribute('color', new THREE.BufferAttribute(color, 3));
+  g.setAttribute('aMat', new THREE.BufferAttribute(aMat, 4));
+  g.setAttribute('aEmissive', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
 }
 
 // The triangles of the surfaces that are lit (or not), in one index.
@@ -724,6 +857,8 @@ function sharing(g0, tris) {
  * taken from each vertex (painted) and each ship (`aShip`), the plating dressed on at the level's strength. */
 export function hullMaterial(id, level, dress) {
   const m = new THREE.MeshStandardMaterial({ name: `remote ${id} ${level}`, color: 0xffffff, vertexColors: true, roughness: 1, metalness: 1 });
+  // (the coarsest's shell faces either way: see shell())
+  if (level === LEVELS - 1) m.side = THREE.DoubleSide;
   dress(m, { level });
   const dressed = m.onBeforeCompile;
   // (the plating's lines first: they read the roughness these set)

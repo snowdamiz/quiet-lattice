@@ -89,6 +89,66 @@ export function addCovers(keepOut, social, pad = 0) {
   return keepOut;
 }
 
+// (the z of the cross product of a - o and b - o: which way o, a, b turn)
+const turn = (xy, o, a, b) => (xy[2 * a] - xy[2 * o]) * (xy[2 * b + 1] - xy[2 * o + 1]) - (xy[2 * a + 1] - xy[2 * o + 1]) * (xy[2 * b] - xy[2 * o]);
+
+/**
+ * Adds to `out` (flat boxes) `bands` boxes that together cover the convex outline of the `n` points `xy` (x, y pairs, px:
+ * the local ship's convex hull's corners on screen), `pad` px larger all round: each a horizontal slice of the outline's
+ * height, as wide as the outline is within it. The local ship as the keep-out, close round its shape rather than its
+ * box, which reaches far past its wings and engines. `order` and `poly` are scratch (n and 2n + 1 long at least).
+ */
+export function outlineBands(xy, n, bands, pad, out, order = new Int32Array(n), poly = new Int32Array(2 * n + 1)) {
+  if (n < 3) return out;
+  const o = order.subarray(0, n);
+  for (let i = 0; i < n; i++) o[i] = i;
+  o.sort((a, b) => xy[2 * a] - xy[2 * b] || xy[2 * a + 1] - xy[2 * b + 1]);
+  // the outline: its convex hull (Andrew's monotone chain), its first corner again at its end
+  let k = 0;
+  for (let i = 0; i < n; i++) {
+    while (k >= 2 && turn(xy, poly[k - 2], poly[k - 1], o[i]) <= 0) k--;
+    poly[k++] = o[i];
+  }
+  for (let i = n - 2, t = k + 1; i >= 0; i--) {
+    while (k >= t && turn(xy, poly[k - 2], poly[k - 1], o[i]) <= 0) k--;
+    poly[k++] = o[i];
+  }
+  let top = Infinity;
+  let bottom = -Infinity;
+  for (let i = 0; i < k - 1; i++) {
+    top = Math.min(top, xy[2 * poly[i] + 1]);
+    bottom = Math.max(bottom, xy[2 * poly[i] + 1]);
+  }
+  const h = (bottom - top) / bands;
+  for (let b = 0; b < bands; b++) {
+    const ya = top + b * h;
+    const yb = b === bands - 1 ? bottom : ya + h;
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    // (each edge, clipped to the slice)
+    for (let i = 0; i < k - 1; i++) {
+      let p = poly[i];
+      let q = poly[i + 1];
+      if (xy[2 * p + 1] > xy[2 * q + 1]) {
+        p = q;
+        q = poly[i];
+      }
+      const px = xy[2 * p];
+      const py = xy[2 * p + 1];
+      const qx = xy[2 * q];
+      const qy = xy[2 * q + 1];
+      if (qy < ya || py > yb) continue;
+      const dy = qy - py;
+      const xa = px + (qx - px) * (dy > 0 ? Math.max(0, (ya - py) / dy) : 0);
+      const xb = px + (qx - px) * (dy > 0 ? Math.min(1, (yb - py) / dy) : 1);
+      x0 = Math.min(x0, xa, xb);
+      x1 = Math.max(x1, xa, xb);
+    }
+    if (x0 <= x1) out.push(x0 - pad, ya - pad, x1 + pad, yb + pad);
+  }
+  return out;
+}
+
 /** Where a pilot's mark goes for a ship whose screen bounds are `b`: over the middle of their top. */
 export function markOf(b, out) {
   out.x = (b.x0 + b.x1) / 2;

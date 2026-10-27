@@ -5,9 +5,10 @@ import { SCREENS } from '../capture/screens.ts';
 // stages it (offline: a recorded snapshot stream through the remote layer), on the HUD's own clock at 60 frames a second:
 // every pilot the sensors pick up and in view has its mark; no pilot's mark or label on the fixed HUD (the compass, its
 // heading and EDGE readouts, the speed, altitude and mode readouts, the reticle, the location line, the vitals, a prompt)
-// or on the local ship; no pilot's label on another mark or label, or more than a few px from its mark; and no name
-// flickering in and out, or from side to side, faster than its fade. Marks and labels fading out are gone. The local
-// ship's bounds are worked out here on their own (its meshes' boxes in its own space, projected), not taken from the HUD.
+// or on the local ship (any vertex of it on screen); no pilot's label on another mark or label, or more than a few px
+// from its mark; and no mark or name flickering in and out, or a name from side to side, faster than its fade. Marks and
+// labels fading out are gone. The local ship is worked out here on its own (its meshes' vertices, projected), not taken
+// from the HUD.
 
 const SCENES = ['remote-ships', 'remote-ships-crowd', 'remote-ships-pads', 'remote-ships-surface', 'remote-ships-bay'];
 const metal = (process.env.SMOKE_GL ?? (process.platform === 'darwin' && !process.env.CI ? 'metal' : 'swiftshader')) === 'metal';
@@ -56,39 +57,44 @@ for (const scene of SCENES)
         return { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom, what };
       };
       const overlap = (a: Box, b: Box) => a.x0 < b.x1 - 1 && a.x1 > b.x0 + 1 && a.y0 < b.y1 - 1 && a.y1 > b.y0 + 1;
-      // the local ship's box in its own space, from its meshes' boxes
+      // the local ship as drawn: every vertex of its meshes on screen (in a grid of 16 px cells), which no pilot's mark or
+      // label may lie on
       const model = g.ship.model;
-      model.updateMatrixWorld(true);
-      const toModel = model.matrixWorld.clone().invert();
       const V = model.position.constructor;
-      const lo = new V(Infinity, Infinity, Infinity);
-      const hi = new V(-Infinity, -Infinity, -Infinity);
-      model.traverse((o: { isMesh?: boolean; geometry?: { boundingBox: unknown; computeBoundingBox(): void }; matrixWorld: unknown }) => {
-        if (!o.isMesh || !o.geometry) return;
-        if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
-        const { min, max } = o.geometry.boundingBox as { min: { x: number; y: number; z: number }; max: { x: number; y: number; z: number } };
-        for (let k = 0; k < 8; k++) {
-          const c = new V(k & 1 ? max.x : min.x, k & 2 ? max.y : min.y, k & 4 ? max.z : min.z).applyMatrix4(o.matrixWorld).applyMatrix4(toModel);
-          lo.min(c);
-          hi.max(c);
-        }
+      const verts: { pos: { count: number; getX(i: number): number; getY(i: number): number; getZ(i: number): number }; m: unknown }[] = [];
+      model.traverse((o: { isMesh?: boolean; geometry?: { attributes: { position: (typeof verts)[number]['pos'] } }; matrixWorld: unknown }) => {
+        if (o.isMesh && o.geometry) verts.push({ pos: o.geometry.attributes.position, m: o.matrixWorld });
       });
-      const shipBox = (): Box | null => {
-        if (g.mode !== 'ship') return null;
+      const shipCells = (): Map<string, number[]> | null => {
+        if (g.mode !== 'ship' || !model.visible) return null;
+        model.updateMatrixWorld(true);
         const W = window.innerWidth;
         const H = window.innerHeight;
-        const b = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity, what: 'the local ship' };
-        for (let k = 0; k < 8; k++) {
-          const c = new V(k & 1 ? hi.x : lo.x, k & 2 ? hi.y : lo.y, k & 4 ? hi.z : lo.z).applyMatrix4(model.matrixWorld).project(g.engine.camera);
-          if (c.z > 1) return null;
-          const x = (c.x * 0.5 + 0.5) * W;
-          const y = (-c.y * 0.5 + 0.5) * H;
-          b.x0 = Math.min(b.x0, x);
-          b.x1 = Math.max(b.x1, x);
-          b.y0 = Math.min(b.y0, y);
-          b.y1 = Math.max(b.y1, y);
-        }
-        return b;
+        const cells = new Map<string, number[]>();
+        const c = new V();
+        for (const { pos, m } of verts)
+          for (let i = 0; i < pos.count; i++) {
+            c.set(pos.getX(i), pos.getY(i), pos.getZ(i)).applyMatrix4(m).project(g.engine.camera);
+            if (c.z > 1) continue;
+            const x = (c.x * 0.5 + 0.5) * W;
+            const y = (-c.y * 0.5 + 0.5) * H;
+            const k = `${Math.floor(x / 16)},${Math.floor(y / 16)}`;
+            const list = cells.get(k);
+            if (list) list.push(x, y);
+            else cells.set(k, [x, y]);
+          }
+        return cells;
+      };
+      const onShip = (b: Box, cells: Map<string, number[]> | null) => {
+        if (!cells) return false;
+        for (let cx = Math.floor(b.x0 / 16); cx <= Math.floor(b.x1 / 16); cx++)
+          for (let cy = Math.floor(b.y0 / 16); cy <= Math.floor(b.y1 / 16); cy++) {
+            const list = cells.get(`${cx},${cy}`);
+            if (!list) continue;
+            for (let j = 0; j < list.length; j += 2)
+              if (list[j] > b.x0 + 1 && list[j] < b.x1 - 1 && list[j + 1] > b.y0 + 1 && list[j + 1] < b.y1 - 1) return true;
+          }
+        return false;
       };
       const HUD = '.ec-ball, .ec-hdg, .ec-dist, .r-speed, .r-alt, .r-mode, .ship-reticle > b, .crosshair > b, .location, .vitals, .prompt';
       const frame = g.frame.bind(g);
@@ -171,8 +177,7 @@ for (const scene of SCENES)
           }
         }
         const keepOut = [...document.querySelectorAll(HUD)].map((e) => boxOf(e, e.className || e.tagName)).filter((b): b is Box => !!b);
-        const ship = shipBox();
-        if (ship) keepOut.push(ship);
+        const ship = shipCells();
         const marks: Box[] = [];
         const texts: Box[] = [];
         for (const m of document.querySelectorAll('.marker')) {
@@ -190,6 +195,8 @@ for (const scene of SCENES)
             if (overlap(icon, k)) issues.push({ frame: f, what: `${icon.what} on ${k.what}` });
             if (lbl && overlap(lbl, k)) issues.push({ frame: f, what: `${lbl.what} on ${k.what}` });
           }
+          if (onShip(icon, ship)) issues.push({ frame: f, what: `${icon.what} on the local ship` });
+          if (lbl && onShip(lbl, ship)) issues.push({ frame: f, what: `${lbl.what} on the local ship` });
           (icon as Box & { pilot?: boolean }).pilot = true;
           if (lbl) (lbl as Box & { pilot?: boolean; icon?: Box }).icon = icon;
         }
