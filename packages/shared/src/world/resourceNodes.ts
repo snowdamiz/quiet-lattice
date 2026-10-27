@@ -9,7 +9,7 @@
 import type { ResourceId } from '../data/resources.ts';
 import { cos, sin } from '../math/det.ts';
 import { clamp } from './noise.ts';
-import { cubeToSphere, sphereToCube, type CubeCoord, type PlanetParams, type PlanetType, type TerrainSampler } from './planetgen.ts';
+import { archetype, cubeToSphere, sphereToCube, type CubeCoord, type NumArray, type PlanetParams, type PlanetType, type TerrainSampler } from './planetgen.ts';
 import { Random, hashInts, mulberry32 } from './rng.ts';
 
 /** What a node is: a resource plant (sways, small), a mineral deposit, or a hostile world's formation. */
@@ -311,6 +311,40 @@ export function planetNodeLayers(params: Pick<PlanetParams, 'seed' | 'type' | 'h
   return out;
 }
 
+// ---------- common flora ----------
+
+/** What one plant or rock of the common flora gives when a beam breaks it (DESIGN 15.3: carbon from trees, shrubs and
+ * ferns; ferrite from rocks, boulders and crystal growths), and where it grows: on worlds with flora (`flora` above
+ * FLORA_MIN), on bare ones (the crystal growths), or anywhere. The client's flora scatter places these, for each player
+ * alone (they are not nodes); the server grants their yield (ARCHITECTURE §16). The client's own numbers. */
+export const FLORA_HARVEST = {
+  tree: { resource: 'carbon', yield: [12, 25], hp: 3, grows: 'flora' },
+  crystal_tree: { resource: 'ferrite', yield: [12, 25], hp: 3, grows: 'flora' },
+  giant: { resource: 'carbon', yield: [30, 60], hp: 6, grows: 'flora' },
+  bush: { resource: 'carbon', yield: [4, 9], hp: 1, grows: 'flora' },
+  fern: { resource: 'carbon', yield: [3, 7], hp: 1, grows: 'flora' },
+  crystal: { resource: 'ferrite', yield: [10, 20], hp: 2, grows: 'bare' },
+  boulder: { resource: 'ferrite', yield: [15, 30], hp: 3, grows: 'any' },
+  rock: { resource: 'ferrite', yield: [5, 10], hp: 1, grows: 'any' },
+} as const satisfies Record<string, { resource: ResourceId; yield: readonly [number, number]; hp: number; grows: 'flora' | 'bare' | 'any' }>;
+export type FloraKind = keyof typeof FLORA_HARVEST;
+/** A world grows trees, shrubs and ferns above this much flora (PlanetParams.flora); below it, crystal growths. */
+export const FLORA_MIN = 0.05;
+
+/** Whether a world can grow this kind of flora at all: trees, shrubs and ferns where it has flora (a crystal tree where
+ * its archetype grows crystal trees, a tree where it grows any other), crystal growths where it has none, rocks anywhere
+ * with ground. */
+export function floraGrows(kind: FloraKind, params: Pick<PlanetParams, 'flora' | 'type'>): boolean {
+  const grows = FLORA_HARVEST[kind].grows;
+  if (grows === 'any') return true;
+  if (grows === 'bare') return !(params.flora > FLORA_MIN);
+  if (!(params.flora > FLORA_MIN)) return false;
+  const trees: readonly string[] = archetype(params.type).treeKinds;
+  if (kind === 'crystal_tree') return trees.includes('crystal');
+  if (kind === 'tree') return trees.some((k) => k !== 'crystal');
+  return true;
+}
+
 // ---------- the cell grid ----------
 
 /** The size a scatter cell aims for (m): cells are a fixed cube-sphere grid of about this size per world. */
@@ -407,6 +441,33 @@ export function nodeCellsNear(x: number, y: number, z: number, radius: number, R
 /** A node's id on its world: its cell, its type and its candidate's number there. Stable for as long as the spec is. */
 export function nodeKey(cell: NodeCell, type: NodeTypeId, k: number): string {
   return `${cell.face}_${cell.i}_${cell.j}_${type}_${k}`;
+}
+
+/** What a node's id names: its cell on a world of grid level `level`, its type and its candidate's number. */
+export interface NodeRef {
+  cell: NodeCell;
+  type: NodeTypeId;
+  k: number;
+}
+
+const NODE_KEY = /^([0-5])_(0|[1-9]\d{0,5})_(0|[1-9]\d{0,5})_([a-z]+(?:_[a-z]+)*)_(0|[1-9]\d{0,3})$/;
+
+/** The cell, type and candidate a node id (nodeKey) names on a world of grid level `level`, or null when it names none:
+ * a malformed id, a type the spec lacks, or a cell outside the grid. (Whether the candidate grew is the scatter's.) */
+export function parseNodeKey(id: string, level: number): NodeRef | null {
+  const m = NODE_KEY.exec(id);
+  if (!m || !INDEX.has(m[4])) return null;
+  const n = 1 << level;
+  const i = Number(m[2]);
+  const j = Number(m[3]);
+  if (i >= n || j >= n) return null;
+  return { cell: { face: Number(m[1]), i, j, level }, type: m[4] as NodeTypeId, k: Number(m[5]) };
+}
+
+/** The planet-local unit direction of a cell's centre. */
+export function nodeCellCenter<T extends NumArray>(cell: NodeCell, out: T): T {
+  const { u0, v0, size } = nodeCellBounds(cell);
+  return cubeToSphere(cell.face, u0 + size / 2, v0 + size / 2, out);
 }
 
 // ---------- the scatter ----------

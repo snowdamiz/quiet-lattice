@@ -6,7 +6,7 @@ import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '..
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 6;
+export const PROTOCOL_VERSION = 7;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -14,6 +14,7 @@ export const PROTOCOL_VERSION = 6;
 // 4: creatures' attack field (P1.E08.T01)
 // 5: skill web requests (unlock, buy, slot, unslot, respec) and skill state (P1.E07.T01)
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
+// 7: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -200,6 +201,54 @@ export const CutsceneRequest = z
   })
   .refine((m) => m.op === 'done' || m.skipped === undefined, 'only a done says whether it was skipped');
 
+// ---------- resource nodes (P1.E13.T01, ARCHITECTURE §16) ----------
+
+/** A world's frame: a planet or moon of the system (never the Waystation's, nor the inertial frame). */
+export const WorldFrameId = z
+  .string()
+  .regex(/^(0|[1-9]\d{0,9}):(0|[1-9]\d{0,2})$/)
+  .refine((f) => Number(f.split(':')[0]) <= 0xffffffff, 'system seeds are 32-bit');
+/** A node's cell on its world: `<face>_<i>_<j>` (the shared spec's cell grid). */
+export const NodeCellId = z.string().regex(/^[0-5]_(0|[1-9]\d{0,5})_(0|[1-9]\d{0,5})$/);
+/** A node within its cell: `<type>_<k>`, its type and its candidate's number there. */
+export const NodeInCell = z
+  .string()
+  .max(32)
+  .regex(/^[a-z]+(?:_[a-z]+)*_(0|[1-9]\d{0,3})$/);
+/** A resource node's id on its world (the shared spec's nodeKey): `<face>_<i>_<j>_<type>_<k>`. */
+export const NodeId = z
+  .string()
+  .max(48)
+  .regex(/^[0-5]_(0|[1-9]\d{0,5})_(0|[1-9]\d{0,5})_[a-z]+(?:_[a-z]+)*_(0|[1-9]\d{0,3})$/);
+/** What mines: the multitool's beam, on foot. (Asteroids and the ship's Mining Laser are not nodes.) */
+export const MiningTool = z.enum(['multitool']);
+/** The common flora a beam harvests for carbon and ferrite (the client's flora scatter, not shared nodes): trees (a
+ * crystal tree gives ferrite), the giant growths, shrubs, ferns, the crystal growths of bare worlds, boulders and rocks. */
+export const FloraKind = z.enum(['tree', 'crystal_tree', 'giant', 'bush', 'fern', 'crystal', 'boulder', 'rock']);
+/** The client's own key for one plant or rock of its flora. */
+export const FloraRef = z.string().regex(/^[A-Za-z0-9_:.-]{1,48}$/);
+/** A plant or rock of the client's flora: its kind, the client's key for it, and where it stands (planet-local m). */
+export const FloraTarget = z.object({ kind: FloraKind, ref: FloraRef, at: Vec3 });
+/**
+ * A mining hit (ARCHITECTURE §16): the client's beam is on `node`, a resource node of the world `frame`, or on `flora`,
+ * a plant or rock of its own flora there; sent every quarter second or so while the beam stays on it. The server
+ * measures the beam's time itself (a hit is worth the time since the last one it took, at most half a second), checks
+ * the player and the target and answers with `mine` state. `time` is the world time of the hit, which the server never
+ * trusts for speed; a hit stamped seconds away from its clock (a stall's backlog) is refused. `seq` numbers the
+ * session's hits from 1, increasing.
+ */
+export const MineRequest = z
+  .object({
+    t: z.literal('mine'),
+    seq: z.number().int().min(1).max(0xffffffff),
+    frame: WorldFrameId,
+    node: NodeId.optional(),
+    flora: FloraTarget.optional(),
+    tool: MiningTool,
+    time: z.number().min(0).max(1e12),
+  })
+  .refine((m) => (m.node === undefined) !== (m.flora === undefined), 'a hit is on a node or on flora');
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -213,6 +262,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   InventoryRequest,
   SkillsRequest,
   CutsceneRequest,
+  MineRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -395,6 +445,60 @@ export const SkillsState = z.object({
   error: skillErrorCodeSchema.optional(),
 });
 
+/** Why a mining hit did nothing: `stale_seq` (its number is not above the last), `rate` (hits too fast), `stale` (stamped
+ * too far from the server's clock), `zone` (the player is in no zone), `mode` (not on foot), `world` (the frame is not the
+ * world the player is on, or it has no nodes), `unknown` (no such node there, or no such flora on this world), `busy`
+ * (the world's ground is still being planned: try again), `harvested` (it is waiting to grow back, or that plant was
+ * harvested already), `range` (too far), `los` (the ground is in the way), `heat` (the multitool is overheated). */
+export const MineRefusal = z.enum(['stale_seq', 'rate', 'stale', 'zone', 'mode', 'world', 'unknown', 'busy', 'harvested', 'range', 'los', 'heat']);
+/**
+ * A mining hit's answer, and a share of a node's yield: `hit` with `hp`, the fraction of the node (or plant) left (0–1);
+ * `depleted` when it broke, with `item` and `count`, this character's share of its yield (by the damage it did; all of a
+ * plant's) and `added`, what of it the inventory held (less when it was full); `refused` with `reason`, and nothing
+ * changed. It names the node hit, or the client's key for the flora hit. `seq` is the hit answered, or 0 for a share of a
+ * node another player broke. The fields differ from the request's, so one `mine` type serves both directions
+ * (encodeMessage).
+ */
+export const MineState = z
+  .object({
+    t: z.literal('mine'),
+    seq: z.number().int().min(0).max(0xffffffff),
+    frame: WorldFrameId,
+    node: NodeId.optional(),
+    flora: FloraRef.optional(),
+    result: z.enum(['hit', 'depleted', 'refused']),
+    hp: z.number().min(0).max(1).optional(),
+    reason: MineRefusal.optional(),
+    item: z.string().max(48).optional(),
+    count: z.number().int().min(0).max(1_000_000).optional(),
+    added: z.number().int().min(0).max(1_000_000).optional(),
+  })
+  .refine((m) => (m.node === undefined) !== (m.flora === undefined), 'an answer names the node or the flora hit')
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
+  .refine((m) => (m.result === 'hit') === (m.hp !== undefined), 'a hit, and only a hit, says what is left')
+  .refine(
+    (m) => (m.result === 'depleted') === (m.item !== undefined && m.count !== undefined && m.added !== undefined) && (m.added ?? 0) <= (m.count ?? 0),
+    'a depletion, and only a depletion, names the share and what of it was added',
+  );
+/** The state of one cell's touched nodes: those harvested and waiting to grow back (`gone`), and those damaged with the
+ * fraction of each left (`hurt`). A cell with neither is as the scatter places it: the client forgets what it held. */
+export const NodeCellState = z.object({
+  cell: NodeCellId,
+  gone: z.array(NodeInCell).max(128),
+  hurt: z.array(z.tuple([NodeInCell, z.number().min(0).max(1)])).max(128),
+});
+/**
+ * Resource nodes as the server holds them (ARCHITECTURE §16), for the cells round the player on world `frame`: pushed
+ * whenever a cell in view changes, as one comes into view and (empty) as one is forgotten. `reset` starts the world over:
+ * every cell the client held for it goes, and these are all it now holds (sent as the player arrives on a world).
+ */
+export const NodesState = z.object({
+  t: z.literal('nodes'),
+  frame: WorldFrameId,
+  reset: z.boolean().optional(),
+  cells: z.array(NodeCellState).max(128),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -408,6 +512,8 @@ export const ServerMessage = z.discriminatedUnion('t', [
   PartyState,
   Denied,
   CutsceneState,
+  MineState,
+  NodesState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
