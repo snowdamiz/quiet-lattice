@@ -42,16 +42,16 @@ const norm = (v: Vec3): Vec3 => {
 describe('the client’s clock as credited', () => {
   it('credits an honest clock exactly, places the bodies at it, and judges an input without one on its arrival', () => {
     const c = new ClientClock(100);
-    expect(c.credit(100.04, 100.1)).toEqual({ t: 100.04, p: 100.04, timeless: false, resync: false, gap: expect.closeTo(0.1, 9) });
+    expect(c.credit(100.04, 100.1)).toEqual({ t: 100.04, p: 100.04, timeless: false, resync: false, stale: false, gap: expect.closeTo(0.1, 9) });
     for (let i = 1; i <= 20; i++) expect(c.credit(100.04 + i * 0.05, 100.1 + i * 0.05).t).toBeCloseTo(100.04 + i * 0.05, 9);
     // no time: its arrival gap, placed at its arrival
     const t = c.credit(0, 101.5);
     expect(t).toMatchObject({ timeless: true, p: 101.5 });
     expect(t.t).toBeCloseTo(101.04 + 0.4, 9);
-    // a first input more than placeLagS behind its arrival: credited as stamped, but placed at its arrival
-    const lagged = new ClientClock(1000).credit(1000 - MOVEMENT.time.placeLagS - 5, 1000.05);
-    expect(lagged.t).toBe(1000 - MOVEMENT.time.placeLagS - 5);
-    expect(lagged.p).toBe(1000.05);
+    // a first input far behind its arrival: credited as stamped, but placed no further behind than behindS (nothing owed)
+    const lagged = new ClientClock(1000).credit(965, 1000.05);
+    expect(lagged.t).toBe(965);
+    expect(lagged.p).toBeCloseTo(1000.05 - MOVEMENT.time.behindS, 9);
   });
 
   it('never runs backwards, and never ahead of the arrival by more than aheadS', () => {
@@ -103,34 +103,52 @@ describe('the client’s clock as credited', () => {
     const late = new ClientClock(0.001);
     late.credit(10, 10);
     late.credit(10, 14);
-    expect(late.credit(12.5, 14.05)).toMatchObject({ resync: false, t: expect.closeTo(10 + 0.05 + T.perInputS + T.stallInputS, 9) });
+    expect(late.credit(12.5, 14.05)).toMatchObject({ resync: false, t: expect.closeTo(10 + 0.05 + T.perInputS, 9) });
     // a clock stepped forward in step with its arrival gap (a pause, no input meanwhile) is real time: credited
     const paused = new ClientClock(0.001);
     paused.credit(10, 10);
     expect(paused.credit(70, 70)).toMatchObject({ t: 70, resync: false });
   });
 
-  it('lets the burst ending a stall claim the stall, within burstS of its end', () => {
+  it('lets real time a running clock left unclaimed be claimed back, at twice real time at most, within drainS', () => {
     const T = MOVEMENT.time;
     // honest: a 3 s stall, everything sent in it arriving at once
     const c = new ClientClock(0.001);
     c.credit(10, 10.05);
     for (let i = 1; i <= 60; i++) expect(c.credit(10 + i * 0.05, 13.05).t).toBeCloseTo(10 + i * 0.05, 9);
-    // a 5 s silence, then stamps from where they stopped running at twice real time, arriving at the usual pace: the
-    // silence pays for no more than burstS of it, then the bank
+    // a 5 s silence, then stamps from where they stopped running at twice real time, arriving at the usual pace: claimed
+    // back at no more than twice real time (and perInputS more while the bank lasts), and never ahead of real time
     const s = new ClientClock(0.001);
     s.credit(10, 10.05);
     let t = 10;
-    let doubled = 0;
     for (let i = 1; i <= 100; i++) {
       const next = s.credit(10 + i * 0.1, 15.05 + i * 0.05);
-      // (a re-sync, once it has caught up, is no movement credit)
-      if (next.t - t > 0.075 && !next.resync) doubled++;
+      if (i > 1) expect(next.t - t).toBeLessThanOrEqual(0.05 + T.drainInputS + T.perInputS + 1e-9);
       t = next.t;
     }
-    expect(doubled).toBeLessThanOrEqual((T.burstS + T.bankS) / 0.05 + 1);
-    // never ahead of the real time since its first input, with the bank
     expect(t - 10).toBeLessThanOrEqual(15.05 + 100 * 0.05 - 10.05 + T.bankS + 1e-9);
+    // owed for drainS only: a silence left unclaimed for longer is not claimed back
+    const old = new ClientClock(0.001);
+    old.credit(10, 10.05);
+    old.credit(10.05, 15.1);
+    expect(old.owed).toBeCloseTo(5, 6);
+    let now = 15.1;
+    let stamp = 10.05;
+    for (let i = 0; i < (T.drainS + 1) * 20; i++) old.credit((stamp += 0.05), (now += 0.05));
+    expect(old.owed).toBe(0);
+    const before = old.credit((stamp += 0.05), (now += 0.05)).t;
+    let after = before;
+    for (let i = 0; i < 40; i++) after = old.credit((stamp += 0.1), (now += 0.05)).t;
+    expect(after - before - 40 * 0.05).toBeLessThanOrEqual(T.bankS + 1e-9);
+    // a clock standing still while time passes is owed nothing; one running slow is owed what it leaves
+    const frozen = new ClientClock(0.001);
+    frozen.credit(10, 10);
+    for (let i = 1; i <= 100; i++) frozen.credit(10, 10 + i * 0.05);
+    expect(frozen.owed).toBe(0);
+    const slow = new ClientClock(0.001);
+    slow.credit(10, 10);
+    for (let i = 1; i <= 100; i++) slow.credit(10 + i * 0.025, 10 + i * 0.05);
+    expect(slow.owed).toBeCloseTo(2.5, 6);
   });
 });
 
@@ -247,15 +265,23 @@ describe('a clock that banks time or runs fast gains nothing', () => {
     expect(h.send(pose(HOME, on([stand[0] + 300, stand[1], stand[2]])), 'foot', { at: h.now + 0.3 }).ok).toBe(false);
   });
 
-  it('a silence spent slowly afterwards, at twice real time', () => {
+  it('a silence spent afterwards: at no more than twice real time, and no more of it than there was', () => {
+    // 5 s without a word, then 2.5 times the boost allowance on a clock running 2.5 times as fast from where it stopped
+    const fast = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' });
+    run(fast, 20, 600, (i, now) => now);
+    const t0 = fast.now;
+    fast.now += 5;
+    const quick = run(fast, 200, BOOST_ALLOWED * 2.5, (i) => t0 + (i + 1) * 0.125);
+    expect(quick).toBeGreaterThanOrEqual(0);
+    expect(quick * 0.05).toBeLessThan(1.5);
+    // at 1.9 times: claimed back while the silence lasts, then held to real time
     const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' });
     run(h, 20, 600, (i, now) => now);
-    // 5 s without a word, then twice the boost allowance on a clock running twice as fast from where it stopped
     const t = h.now;
     h.now += 5;
-    const at = run(h, 200, BOOST_ALLOWED * 1.9, (i) => t + (i + 1) * 0.1);
+    const at = run(h, 400, BOOST_ALLOWED * 1.9, (i) => t + (i + 1) * 0.095);
     expect(at).toBeGreaterThanOrEqual(0);
-    expect(at * 0.05).toBeLessThan(MOVEMENT.time.burstS + 1.5);
+    expect(at * 0.05).toBeLessThan(5 / 0.9 + 1.5);
   });
 
   it('a stamp stepped back to bank the time it skips, then spent', () => {

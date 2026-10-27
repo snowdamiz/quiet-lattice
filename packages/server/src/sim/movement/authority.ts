@@ -186,15 +186,19 @@ export interface Credit {
   timeless: boolean;
   /** its clock stepped forward: the credited time re-synced to it with no movement credit, and judging starts afresh */
   resync: boolean;
+  /** its stamps have lagged its arrival by more than MOVEMENT.time.behindS for too long without draining: judged and
+   * placed on its arrival, as an input without a time */
+  stale: boolean;
   /** the time since the input before it (or the join) arrived */
   gap: number;
 }
 
 /**
  * The client's clock, as the server credits it (MOVEMENT.time). Each input is credited with the time its client says
- * passed since the one before, held to the real time that passed: its arrival gap, plus a little of a small bank that only
- * real time no input claimed refills, plus a stall's length for the burst that ends it; and never ahead of its arrival. A
- * clock stepped forward re-syncs it, with no credit for the step.
+ * passed since the one before, held to the real time that passed: its arrival gap, plus a little of a small bank, plus a
+ * little of the real time its running clock left unclaimed in the last `drainS` (a latency rise, a stall); and never
+ * ahead of its arrival. A clock stepped forward re-syncs it, with no credit for the step. A stamp that lags its arrival
+ * for good is placed on its arrival.
  */
 export class ClientClock {
   /** the time credited to the last input, its stamp (null when it had none), and its arrival */
@@ -203,15 +207,25 @@ export class ClientClock {
   private a: number;
   /** real time no input has claimed, up to `bankS` */
   private bank: number = MOVEMENT.time.bankS;
-  /** a stall's real time, which the burst ending it may claim until `stallUntil` (server time) */
-  private stall = 0;
-  private stallUntil = -Infinity;
+  /** real time a running clock left unclaimed, oldest first: [seconds, server time it accrued]; each is claimable for
+   * `drainS` */
+  private readonly debt: [number, number][] = [];
   /** when it last re-synced (server time) */
   private resyncedAt = -Infinity;
+  /** while its stamps lag its arrival by more than `behindS`: since when that lag has not drained, and the most it has
+   * been since */
+  private lagged: { since: number; most: number } | null = null;
 
   /** A clock for a mover that joined at server world time `joined`. */
   constructor(joined: number) {
     this.a = joined;
+  }
+
+  /** Real time it may still claim back (MOVEMENT.time.drainS). */
+  get owed(): number {
+    let n = 0;
+    for (const d of this.debt) n += d[0];
+    return n;
   }
 
   /** The times credited to an input stamped `raw` that arrived at server world time `now`. */
@@ -221,18 +235,19 @@ export class ClientClock {
     this.a = now;
     const usable = Number.isFinite(raw) && raw > 0;
     let resync = false;
+    while (this.debt.length && this.debt[0]![1] < now - T.drainS) this.debt.shift();
     if (Number.isNaN(this.t)) {
       // the first input: its own time (no later than `aheadS` past its arrival), or its arrival
       this.t = usable ? Math.min(raw, now + T.aheadS) : now;
     } else if (!usable) {
       this.t += gap;
     } else {
-      if (now > this.stallUntil) this.stall = 0;
       // what its client says passed (or, to catch up a stamp held back before, since the time credited then)...
       const said = this.raw === null ? raw - this.t : Math.max(raw - this.raw, raw - this.t);
-      // ...held to the real time that passed (its arrival gap, a little of the bank, an input's worth of a stall it ends),
-      // and never ahead of its arrival
-      let c = Math.min(Math.max(0, said), gap + Math.min(T.perInputS, this.bank) + Math.min(T.stallInputS, this.stall));
+      // ...held to the real time that passed (its arrival gap, a little of the bank, a little of what is owed), and never
+      // ahead of its arrival
+      const owed = this.owed;
+      let c = Math.min(Math.max(0, said), gap + Math.min(T.perInputS, this.bank) + Math.min(T.drainInputS, owed));
       c = Math.max(0, Math.min(c, now + T.aheadS - this.t));
       if (said - c > T.resyncS && raw >= now - T.behindS && now - this.resyncedAt >= T.resyncEveryS) {
         // a clock stepped forward past what it can be credited (or one that lagged, caught up): the credited time follows
@@ -240,28 +255,42 @@ export class ClientClock {
         resync = true;
         this.resyncedAt = now;
         this.t = Math.max(this.t, Math.min(raw, now + T.aheadS));
-        this.stall = 0;
+        this.debt.length = 0;
         this.raw = raw;
-        return { t: this.t, p: this.t, timeless: false, resync, gap };
+        this.lagged = null;
+        return { t: this.t, p: this.t, timeless: false, resync, stale: false, gap };
       }
       const over = c - gap;
       if (over > 0) {
-        const fromStall = Math.min(this.stall, over);
-        this.stall -= fromStall;
-        this.bank -= over - fromStall;
-      } else if (over < 0) {
-        // real time it did not claim: a stall's is the burst's to claim; any of it is banked, up to `bankS`
-        if (-over > T.bankS) {
-          this.stall += -over;
-          this.stallUntil = now + T.burstS;
+        // what is owed first (it expires), then the bank
+        let fromDebt = Math.min(over, T.drainInputS, owed);
+        this.bank -= over - fromDebt;
+        while (fromDebt > 0 && this.debt.length) {
+          const d = this.debt[0]!;
+          const take = Math.min(d[0], fromDebt);
+          d[0] -= take;
+          fromDebt -= take;
+          if (d[0] <= 1e-12) this.debt.shift();
         }
+      } else if (over < 0) {
+        // real time it did not claim: banked, up to `bankS`; and owed, to claim back within `drainS`, if its clock ran (a
+        // clock standing still while time passes is owed nothing)
+        if (this.raw !== null && raw > this.raw) this.debt.push([-over, now]);
         this.bank = Math.min(T.bankS, this.bank - over);
       }
       this.t += c;
     }
     this.raw = usable ? raw : null;
-    const p = !usable || now - this.t > T.placeLagS ? now : this.t;
-    return { t: this.t, p, timeless: !usable, resync, gap };
+    // a lag over `behindS` is a backlog only while it drains: one that has not drained by `drainingS` in `staleS` is stale
+    const lag = usable ? now - raw : 0;
+    if (lag <= T.behindS) this.lagged = null;
+    else if (!this.lagged || lag <= this.lagged.most - T.drainingS) this.lagged = { since: now, most: lag };
+    else this.lagged.most = Math.max(this.lagged.most, lag);
+    const stale = this.lagged !== null && now - this.lagged.since > T.staleS;
+    // placed at the credited time, trailing the arrival by no more than `behindS` and what is still owed; stale, or with no
+    // time, at the arrival
+    const p = !usable || stale ? now : Math.max(this.t, Math.min(now, now - T.behindS - this.owed));
+    return { t: this.t, p, timeless: !usable, resync, stale, gap };
   }
 }
 
@@ -706,21 +735,23 @@ export class MovementAuthority {
   }
 
   /**
-   * `x` in frame `key`, its position re-expressed there with the bodies at world time `p`: where they were for the last
-   * pose before a change of frame. The client turns its velocity into the new frame at the change and never adds the
-   * frames' relative motion, so a stretch carried across it measures its earlier poses as if the old frame had stood still
-   * from then.
+   * `x` in frame `key`, its position re-expressed there with the bodies at world time `p`, the time of the first pose in
+   * the new frame: where it is then, carried along by its own frame. The client changes frame at a frame of its own between
+   * two inputs, turning its velocity into the new frame without the frames' relative motion; until then its old frame
+   * carried it (however long that was: a page that stalled for seconds moves nothing, and its frames moved on). So only the
+   * ship's own movement is judged, give or take the frames' drift over the step in which it changed (switchSlack).
    */
   private inFrame(x: Sample, key: FrameKey, p: number): Sample {
     return x.key === key ? x : { ...x, key, pos: this.world.reframe(x.pos, x.key, key, p) };
   }
 
-  /** How far the frames of `L` and `s` drift apart over the step between them (none in one frame), with a fifth to spare.
-   * (A step is at most MOVEMENT.teleport.maxS long, and none across a clock stepped forward.) */
+  /** How far the frames of `L` and `s` drift apart between the client's change of frame and `s` (none in one frame): at
+   * most the step between them, and no more than MOVEMENT.frame.switchS of it (a running client sends every 50 ms; a stalled
+   * one changes frame on its way back). With a fifth to spare; none across a clock stepped forward. */
   private switchSlack(L: Sample, s: Sample): number {
     if (L.key === s.key || s.resync) return 0;
-    const world = this.world.toWorld(this.world.framePoseExact(L.key, L.p), L.pos);
-    return this.world.frameDrift(world, L.key, s.key, L.p) * Math.min(Math.max(0, s.t - L.t), MOVEMENT.teleport.maxS) * 1.2;
+    const world = this.world.toWorld(this.world.framePoseExact(L.key, s.p), L.pos);
+    return this.world.frameDrift(world, L.key, s.key, s.p) * Math.min(Math.max(0, s.t - L.t), MOVEMENT.frame.switchS) * 1.2;
   }
 
   // ---------- judging ----------
@@ -765,7 +796,7 @@ export class MovementAuthority {
 
     // anti-teleport and collisions on the way: the step from prev, in s's frame, over the time since (none for a clock
     // stepped forward, and at most a second: no input carries more)
-    const from = this.inFrame(prev, s.key, prev.p);
+    const from = this.inFrame(prev, s.key, s.p);
     const drift = this.switchSlack(prev, s);
     const T = MOVEMENT.teleport;
     const dt = s.resync ? 0 : Math.min(s.t - prev.t, T.maxS);
@@ -799,7 +830,7 @@ export class MovementAuthority {
         break;
       }
     }
-    const A = this.inFrame(win[ai]!, s.key, prev.p);
+    const A = this.inFrame(win[ai]!, s.key, s.p);
     // (no time may pass between two inputs, but then nothing may move: a client whose clock stands still is not let off)
     const E = Math.max(0, s.t - A.t);
     let settle = !full && s.cls === 'rest' && A.cls !== 'rest' && s.t - m.settledAt >= W ? MOVEMENT.settleM : 0;
@@ -919,7 +950,7 @@ export class MovementAuthority {
     if (frame) return fail('frame', frame.measured, frame.allowed, 'm', `${frameName(key)} where the rule picks ${frameName(frame.expected)}`);
     if (L.key !== key) {
       // a change of frame only where the rule makes it (not back and forth inside a sphere's hysteresis)
-      const step = dist(this.world.reframe(L.pos, L.key, key, L.p), pos);
+      const step = dist(this.world.reframe(L.pos, L.key, key, s.p), pos);
       const change = this.world.frameChangeProblem(L.key, key, world, poses, step + MOVEMENT.frame.marginM);
       if (change)
         return fail('frame', change.measured, change.allowed, 'm', `from ${frameName(L.key)} to ${frameName(key)} short of where the rule changes it`);
@@ -1106,7 +1137,7 @@ export class MovementAuthority {
       // the stretch goes on; across a change of frame, its poses are re-expressed in the new one as of the change
       if (s.key !== L.key) {
         m.switches.push({ t: L.t, slackM: this.switchSlack(L, s) });
-        m.seg = m.seg.map((x) => this.inFrame(x, s.key, L.p));
+        m.seg = m.seg.map((x) => this.inFrame(x, s.key, s.p));
       }
       m.seg.push(s);
       // keep the latest pose at least a window old (the next window's start) and everything since, within reason
@@ -1126,7 +1157,7 @@ export class MovementAuthority {
       m.seg = [from, s];
       m.switches = [];
     } else if (isShip(s.cls) && isShip(L.cls)) {
-      const from = this.inFrame(L, s.key, L.p);
+      const from = this.inFrame(L, s.key, s.p);
       m.boundary = this.boundaryAllowance(m, from, s);
       m.seg = [from, s];
       m.switches = L.key === s.key ? [] : [{ t: L.t, slackM: this.switchSlack(L, s) }];

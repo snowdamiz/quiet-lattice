@@ -8,33 +8,45 @@ export const MOVEMENT = {
   /** Speed windows: at least this long (FLIGHT_TOLERANCE.windowS). */
   windowS: FLIGHT_TOLERANCE.windowS,
   /**
-   * Time. Each pose is judged at the time its client says it sampled it (the input's `time`, its estimate of server time),
-   * so latency, jitter and stalls between client and server change nothing: an honest client's poses and times are its
-   * own trajectory. The time credited between two inputs, which speed is judged on, never runs ahead of the real time that
-   * passed by more than a small fixed slack:
+   * Time. Each pose is judged at the time its client says it sampled it (the input's `time`, its estimate of server time):
+   * an honest client's poses and times are its own trajectory, so the network's delays cancel, within these bounds. The
+   * time credited between two inputs, which speed is judged on, never runs ahead of the real time that passed by more than
+   * a small fixed slack:
    * - an input is credited with the time its client says passed since the previous one (or, catching up a stamp an earlier
    *   input was held behind, since the time credited then); never less than none (a clock stepped back costs that one
    *   input's time, and nothing runs backwards);
    * - and no more than its arrival gap, plus at most `perInputS` out of a bank of `bankS` that refills only with real time
-   *   no input claimed. Jitter cancels (an input held back leaves its gap unclaimed, and those bunched behind it spend it);
-   *   a client that stamps a frozen or slow clock while time passes banks no more than `bankS`, and one that runs its clock
-   *   fast is held to real time once it has spent that;
-   * - a stall (a gap no input claimed, longer than `bankS`) is real time the client's poses spent on their way: the burst
-   *   that ends it may claim it, within `burstS` of its end and no more than `stallInputS` an input (a client that falls
-   *   silent can only catch up to where it could have been all along, one input's worth at a time);
+   *   no input claimed, plus at most `drainInputS` of the real time its running clock left unclaimed (a latency rise, a
+   *   stall: its inputs arrived later than they were sent) in the last `drainS`. So a backlog drains however it arrives
+   *   (bunched, or over seconds), and a latency spike falls back, while what is owed is claimed back at no more than twice
+   *   real time at the client's 20 Hz, and only within `drainS` of when it was owed; a clock standing still while time
+   *   passes is owed nothing (it banks no more than `bankS`), and one run fast is held to real time once the bank is spent;
    * - and never ahead of the input's arrival by more than `aheadS` (a client's estimate of server time errs by about half
    *   a round trip's asymmetry).
-   * A client further behind its arrival than `behindS` (its clock lags, or its inputs were held up) is thus held to real
-   * time. A stamp more than `resyncS` past what it can be credited, from a client no longer `behindS` behind (a clock
-   * stepped forward, as the client steps one that has fallen behind after a hidden tab's pause; or a lagging one caught
-   * up), is not cashed in: the credited time re-syncs to it with no movement credit for the step (the input is held to
-   * the anti-teleport bound alone), and judging windows start afresh there. At most once in `resyncEveryS`; a step within
+   * A stamp more than `resyncS` past what it can be credited, from a client no longer `behindS` behind (a clock stepped
+   * forward, as the client steps one that has fallen behind after a hidden tab's pause; or a lagging one caught up), is not
+   * cashed in: the credited time re-syncs to it with no movement credit for the step (the input is held to the
+   * anti-teleport bound alone), and judging windows start afresh there. At most once in `resyncEveryS`; a step within
    * that is held to the bank like any other.
-   * The bodies are placed at the credited time, unless it is more than `placeLagS` behind the input's arrival (then at
-   * its arrival). An input with no usable time (none, or 0) is judged and placed on its arrival: the time between such
-   * inputs is their arrival gap, so their jitter is not cancelled (a coarser tolerance; the game's client stamps `time`).
+   * The bodies are placed at the credited time, trailing the input's arrival by no more than `behindS` and what is still
+   * owed. A stamp lagging its arrival by more than `behindS` is a backlog only while that lag drains (by `drainingS` within
+   * every `staleS`); one that does not is stale: placed at its arrival (the game's client steps its clock forward whenever
+   * it is more than `behindS` behind, so its lag never stays). An input with no usable time (none, or 0) is judged and
+   * placed on its arrival: the time between such inputs is their arrival gap, so no jitter is cancelled for them (the
+   * game's client stamps `time`).
    */
-  time: { aheadS: 0.3, perInputS: 0.05, bankS: 0.5, burstS: 1, stallInputS: 0.25, placeLagS: 30, behindS: 1, resyncS: 1, resyncEveryS: 10 },
+  time: {
+    aheadS: 0.3,
+    perInputS: 0.05,
+    bankS: 0.5,
+    drainInputS: 0.05,
+    drainS: 10,
+    behindS: 1,
+    drainingS: 0.5,
+    staleS: 3,
+    resyncS: 1,
+    resyncEveryS: 10,
+  },
   /** A world's ground is planned off the input path (in the worker thread) once a player comes near it. A pose that needs
    * it before it is ready is accepted provisionally and judged again, with everything since, as soon as it is; one still
    * waiting `holdS` later is refused, back to the last pose judged without that need. */
@@ -47,8 +59,10 @@ export const MOVEMENT = {
    * silence came before it), plus `lagS` of it and `slackM` (collision push-outs). Beyond that it is refused outright. */
   teleport: { lagS: 0.1, maxS: 1, slackM: 25, restSlackM: 1, walkerSlackM: 3 },
   /** Frames: a sphere a client should be inside counts only this far inside its edge (plus their relative motion over the
-   * poses' time step). */
-  frame: { marginM: 50 },
+   * poses' time step). A pose in a new frame is compared with the last in the old one carried along by its own frame to
+   * the new pose's time; the frames drift apart over no more than `switchS` of the step between them (the client changes
+   * frame at one of its own frames, and sends every 50 ms; one whose page stalled changes frame on its way back). */
+  frame: { marginM: 50, switchS: 0.1 },
   /**
    * Collisions between poses. The client collides once a frame (its frames are at most `frameS` long), so it can pass
    * through anything thinner than one frame's flight; a step that passes further through the ground, or a ship's centre
