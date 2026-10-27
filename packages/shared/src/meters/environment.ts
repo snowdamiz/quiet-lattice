@@ -5,6 +5,7 @@
 //
 // The client passes its own bodies (three's Vector3 positions), the server the poses of its zone's tick (plain arrays); both
 // come from the shared kinematics, so the two agree but for the moment each samples.
+import { hypot3 } from '../math/det.ts';
 import { PULSE_DRIVE } from '../ships/flight.ts';
 import { CONDITIONS, type Condition } from '../data/modifiers.ts';
 import type { Hazard, WorldType } from '../data/common.ts';
@@ -93,7 +94,7 @@ type EnvSystem = Pick<SystemDescription, 'star' | 'bodies' | 'home' | 'outerOrbi
  */
 export function meterEnvironment(d: EnvSystem, bodies: readonly BodyAt[], place: MeterPlace): MeterEnvironment {
   const [x, y, z] = xyz(place.world);
-  const r = Math.hypot(x, y, z);
+  const r = hypot3(x, y, z);
   // the unit direction from the point to the star at the origin
   const sx = r > 0 ? -x / r : 0;
   const sy = r > 0 ? -y / r : 1;
@@ -111,7 +112,7 @@ export function meterEnvironment(d: EnvSystem, bodies: readonly BodyAt[], place:
     const rx = bx - x;
     const ry = by - y;
     const rz = bz - z;
-    const dist = Math.hypot(rx, ry, rz);
+    const dist = hypot3(rx, ry, rz);
     nearest = Math.min(nearest, dist - b.radius);
     // how far the body's centre lies toward the star from the point
     const along = rx * sx + ry * sy + rz * sz;
