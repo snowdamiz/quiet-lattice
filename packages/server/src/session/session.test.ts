@@ -62,6 +62,22 @@ describe('Session', () => {
     expect(s.endReason).toBe('outbound buffer full');
   });
 
+  it('sends text already encoded as it is, under the same 1 MiB cap', () => {
+    const sock = new FakeSocket();
+    const s = new Session(1, sock, '127.0.0.1');
+    const text = JSON.stringify(pong);
+    s.sendText(text);
+    expect(sock.sent).toEqual([text]);
+    sock.readyState = WebSocket.CLOSING;
+    s.sendText(text);
+    expect(sock.sent).toHaveLength(1);
+    sock.readyState = WebSocket.OPEN;
+    sock.bufferedAmount = MAX_BUFFERED_BYTES + 1;
+    s.sendText(text);
+    expect(sock.sent).toHaveLength(1);
+    expect([sock.terminated, s.endReason]).toEqual([true, 'outbound buffer full']);
+  });
+
   it('sends binary snapshot frames only while the outbound queue is under 1 MiB', () => {
     const sock = new FakeSocket();
     const s = new Session(1, sock, '127.0.0.1');

@@ -47,6 +47,14 @@ export class Session {
     if (this.writable()) this.socket.send(encodeServerMessage(m));
   }
 
+  /**
+   * Sends a control message already validated and encoded (encodeServerMessage), under the same outbound cap as send():
+   * a message for many sessions (a shard-wide chat line, a party's state) is encoded once and written to each.
+   */
+  sendText(text: string): void {
+    if (this.writable()) this.socket.send(text);
+  }
+
   /** Sends a binary frame (a zone snapshot), under the same outbound cap as send(). */
   sendBinary(data: Uint8Array): void {
     if (this.writable()) this.socket.send(data, { binary: true });

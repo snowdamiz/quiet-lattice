@@ -11,6 +11,9 @@
 // changed, sanitising only the fields that changed (sanitizeEntity checks each field on its own, so the rest stay as
 // they were sanitised before), then encoded per session with `sanitized: true`. A wire state is never mutated
 // afterwards: snapshot histories share it.
+//
+// Its phases (phases/manager.ts) are private layers at shared places: each tick, once world positions are current, they
+// update who is inside their volumes, and every interest set passes through their visibility rule.
 import { performance } from 'node:perf_hooks';
 import {
   encodeSnapshot,
@@ -33,6 +36,8 @@ import {
   type FrameSet,
   type SystemDescription,
 } from '@astra/shared/world';
+import { FaunaSim, type FaunaOptions, type FaunaStats } from '../fauna/sim.ts';
+import { PhaseManager } from '../phases/manager.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
 import { TickTimes } from './metrics.ts';
@@ -46,7 +51,10 @@ type InputMessage = Extract<ClientMessage, { t: 'input' }>;
 /** An entity's wire fields: everything an EntityState carries but its id and `clear`. */
 export type EntityFields = Omit<EntityState, 'id' | 'clear'>;
 
-/** A new entity: its kind and pose, any other wire fields, and its party (members always see each other). */
+/**
+ * A new entity: its kind and pose, any other wire fields, and its party (members see each other wherever they are,
+ * unless a phase hides one from the other: phases/manager.ts).
+ */
 export interface EntityInit extends EntityFields {
   kind: EntityKind;
   frame: FrameId;
@@ -54,6 +62,8 @@ export interface EntityInit extends EntityFields {
   quat: Quat;
   vel: Vec3;
   party?: string | null;
+  /** its interest class, when its kind does not decide it (creatures by their size) */
+  interest?: InterestClass;
 }
 
 /** Fields every zone entity has: they place it in the world and may not be cleared. */
@@ -79,8 +89,16 @@ export const INPUT_LIMITS = { maxDistance: 1e11, maxSpeed: 1e9 } as const;
 /** Where a zone sends a session's snapshots: the gateway's Session, or a stand-in in tests and the bench. */
 export interface ZoneViewer {
   readonly id: number;
+  /** the character in play, whose place in a phase is kept for a while when its connection drops */
+  readonly characterId?: string | null;
   sendBinary(data: Uint8Array): void;
 }
+
+/**
+ * How a session leaves a zone: 'disconnected' when its connection dropped (a phase keeps its place for the grace, so a
+ * reconnect finds it again); 'left' any other way (a handoff, a logout), which takes it out of its phase at once.
+ */
+export type ZoneLeave = 'left' | 'disconnected';
 
 /** A pino-shaped logger (Fastify's). */
 export interface ZoneLog {
@@ -109,6 +127,8 @@ export interface ZoneEntity {
 
 class Entity implements ZoneEntity {
   world: Vec3 = [0, 0, 0];
+  /** the class it keeps whatever its kind and mode (EntityInit.interest) */
+  fixedCls: InterestClass | null = null;
   unvalidated = false;
   input: ZoneEntity['input'] = null;
   /** sanitised wire state; null until first built */
@@ -149,6 +169,8 @@ export interface ZoneMetrics {
   p50: number;
   p95: number;
   max: number;
+  /** its fauna's worlds, creatures and cells; null in a zone without */
+  fauna: FaunaStats | null;
 }
 
 export interface ZoneOptions {
@@ -159,6 +181,8 @@ export interface ZoneOptions {
   log?: ZoneLog;
   /** Called when a session leaves because its own entity was despawned (not when it leaves through leave()). */
   onViewerRemoved?: (viewer: ZoneViewer) => void;
+  /** the system's fauna (P1.E08.T01): its options, or false for a zone without (unit tests of the zone itself) */
+  fauna?: FaunaOptions | false;
 }
 
 export class Zone {
@@ -172,6 +196,10 @@ export class Zone {
   readonly times = new TickTimes();
   /** wire fields dropped by sanitizeEntity, ever (each is a server bug) */
   droppedFields = 0;
+  /** the private layers at places in this system, and who sees what across them */
+  readonly phases: PhaseManager;
+  /** herds round the players on this system's worlds, ticked at the start of every step; null when turned off */
+  readonly fauna: FaunaSim | null;
 
   private readonly log?: ZoneLog;
   private readonly onViewerRemoved?: (viewer: ZoneViewer) => void;
@@ -204,6 +232,8 @@ export class Zone {
     };
     for (const f of [...this.frameSet.bodies, this.frameSet.station]) this.frames.set(f.id, f);
     this.placeFrames(0);
+    this.phases = new PhaseManager(this, opts.log);
+    this.fauna = opts.fauna === false ? null : new FaunaSim(this, opts.fauna);
   }
 
   get entityCount(): number {
@@ -224,6 +254,12 @@ export class Zone {
     return frame === null || this.frames.has(frame);
   }
 
+  /** A position in one of this system's frames, in world coordinates at the last tick's time. */
+  toWorld(frame: FrameId, pos: Readonly<Vec3>): Vec3 {
+    if (!this.hasFrame(frame)) throw new RangeError(`frame ${frame} is not in system ${this.systemIndex}`);
+    return localToWorld(frame === null ? null : this.frames.get(frame)!, [pos[0], pos[1], pos[2]]);
+  }
+
   // ---------- entities ----------
 
   /** Adds an entity and returns its id (unique in this zone, never reused). */
@@ -231,8 +267,9 @@ export class Zone {
     if (!this.hasFrame(init.frame)) throw new RangeError(`frame ${init.frame} is not in system ${this.systemIndex}`);
     checkPose(init);
     const id = this.nextEntityId++;
-    const { party = null, ...fields } = init;
-    const e = new Entity(id, copyFields(fields) as EntityInit, interestClass(init.kind, init.mode), party);
+    const { party = null, interest, ...fields } = init;
+    const e = new Entity(id, copyFields(fields) as EntityInit, interest ?? interestClass(init.kind, init.mode), party);
+    e.fixedCls = interest ?? null;
     this.entities.set(id, e);
     if (party !== null) this.joinParty(id, party);
     return id;
@@ -245,6 +282,7 @@ export class Zone {
     this.hashes[e.cls].remove(id);
     if (e.party !== null) this.leaveParty(id, e.party);
     this.entities.delete(id);
+    this.phases.removed(id);
     for (const v of [...this.views.values()]) {
       if (v.entityId !== id) continue;
       this.views.delete(v.viewer);
@@ -281,7 +319,7 @@ export class Zone {
     this.touch(e);
   }
 
-  /** Puts the entity in its party (members always see each other), or in none. */
+  /** Puts the entity in its party (members see each other wherever they are, phases permitting), or in none. */
   setParty(id: number, party: string | null): void {
     const e = this.mustGet(id);
     if (e.party === party) return;
@@ -301,9 +339,10 @@ export class Zone {
   }
 
   /** Removes the session and its entity. False when it was not here. */
-  leave(viewer: ZoneViewer): boolean {
+  leave(viewer: ZoneViewer, how: ZoneLeave = 'left'): boolean {
     const v = this.views.get(viewer);
     if (!v) return false;
+    if (how === 'disconnected') this.phases.disconnected(viewer);
     this.views.delete(viewer);
     this.despawn(v.entityId);
     return true;
@@ -371,6 +410,8 @@ export class Zone {
     this.time = time;
 
     this.placeFrames(time);
+    // server-side systems first, so what they spawn and move goes out in this tick's snapshots
+    this.fauna?.step(time);
 
     const dropped: string[] = [];
     for (const e of this.entities.values()) {
@@ -381,6 +422,7 @@ export class Zone {
       else this.hashes[e.cls].remove(e.id);
     }
     if (dropped.length) this.reportDropped(dropped);
+    this.phases.update(time);
 
     for (const v of this.views.values()) {
       const snap = this.snapshotFor(v);
@@ -408,20 +450,23 @@ export class Zone {
       p50: this.times.percentile(50),
       p95: this.times.percentile(95),
       max: this.times.max(),
+      fauna: this.fauna?.stats() ?? null,
     };
   }
 
   /**
    * The session's interest set this tick, as ascending entity ids: its own entity, its party, and every entity within
-   * its class's radius (or, if already in view, within the hysteresis margin).
+   * its class's radius (or, if already in view, within the hysteresis margin); of those, only what its phase lets it see.
    */
   private updateInterest(v: View): number[] {
     const self = this.mustGet(v.entityId);
     const [x, y, z] = self.world;
     const prev = v.interest;
+    const visible = this.phases.visibleTo(self.id);
     // gathered and sorted in a reusable typed array (a native numeric sort), then copied out without duplicates
     let n = 0;
     const add = (id: number) => {
+      if (visible !== null && !visible(id)) return;
       if (n === this.scratch.length) {
         const grown = new Uint32Array(this.scratch.length * 2);
         grown.set(this.scratch);
@@ -539,7 +584,7 @@ export class Zone {
    * ship from sessions beyond 2 km instead of 50 km.
    */
   private touch(e: Entity): void {
-    const cls = interestClass(e.fields.kind, e.fields.mode);
+    const cls = e.fixedCls ?? interestClass(e.fields.kind, e.fields.mode);
     if (cls !== e.cls) {
       this.hashes[e.cls].remove(e.id);
       e.cls = cls;

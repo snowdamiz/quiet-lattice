@@ -343,14 +343,14 @@ export class Ship {
       const big = kind === 'vtol';
       const nozzle = new THREE.Mesh(bell(r, big ? 0.42 : 0.2), nozzleMat);
       nozzle.castShadow = big;
-      const throatMat = new THREE.MeshStandardMaterial({ color: 0x050607, roughness: 0.6, emissive: new THREE.Color(big ? 0x5aa8ff : 0xdfe8ff), emissiveIntensity: 0 });
+      const throatMat = new THREE.MeshStandardMaterial({ color: 0x050607, roughness: 0.6, emissive: new THREE.Color(big ? 0x5aa0ff : 0x8fb4ff), emissiveIntensity: 0 });
       const throat = new THREE.Mesh(throatGeo, throatMat);
       throat.scale.setScalar(r * 0.55);
       throat.position.y = big ? 0.34 : 0.15;
       throat.rotation.x = Math.PI / 2;
-      const jetMat = jetMaterial(big ? { core: 0xf2f7ff, outer: 0x3f86ff } : { core: 0xffffff, outer: 0xb9c6d8 });
+      const jetMat = jetMaterial(big ? { core: 0xe4eeff, outer: 0x4a86e8 } : { core: 0xdfe9ff, outer: 0x7aa2e4 });
       const jet = makeJet(jetMat);
-      const glowMat = glowMaterial(big ? 0x8fc0ff : 0xe8eeff);
+      const glowMat = glowMaterial(big ? 0x8fb8ff : 0xb8ccff);
       const glow = makeGlow(glowMat);
       glow.position.y = -r * 0.15;
       g.add(nozzle, throat, jet, glow);
@@ -372,6 +372,7 @@ export class Ship {
     ]);
     // the VTOL jets are the ones to carry the weight; the small ones trim and turn
     this.thrCost = this.thrusters.map((t) => (t.kind === 'vtol' ? 1 : t.kind === 'retro' ? 3 : 4));
+    this.thrL1 = this.thrusters.map((t) => (t.kind === 'vtol' ? 0.6 : 1.4));
     this.measW = new THREE.Vector3();
     this.measAlpha = new THREE.Vector3();
     this.measAcc = new THREE.Vector3();
@@ -430,8 +431,9 @@ export class Ship {
   }
 
   // Share out the push (m/s^2, ship space) and turn (rad/s^2) the ship needs among the thrusters:
-  // non-negative outputs, each at most 1, matching the demand in least squares with a small cost on
-  // each jet (more on the small ones), by coordinate descent from last frame's answer.
+  // non-negative outputs, each at most 1, matching the demand in least squares with a cost on each
+  // jet. The cost is mostly linear, so the answer is sparse: the few jets placed best for the job
+  // fire, not a little of everything. Coordinate descent from last frame's answer.
   allocateThrust(lin, ang) {
     const A = this.thrA;
     const n = A.length;
@@ -447,7 +449,7 @@ export class Ship {
     for (let sweep = 0; sweep < 6; sweep++) {
       for (let i = 0; i < n; i++) {
         const a = A[i];
-        let g = this.thrCost[i] * f[i];
+        let g = this.thrCost[i] * f[i] + this.thrL1[i];
         let h = this.thrCost[i];
         for (let k = 0; k < 6; k++) {
           g += W[k] * a[k] * res[k];
@@ -482,11 +484,17 @@ export class Ship {
       lin.applyQuaternion(inv);
     }
     if (this.mode !== 'landed') {
-      // a turn takes a push to start and to stop, and (with the assist holding it) to keep going;
-      // fast through the air the control surfaces do it instead
-      ang.copy(this.measAlpha).multiplyScalar(0.35).addScaledVector(this.measW, 0.7);
-      const aero = this.state.frame?.sampler ? THREE.MathUtils.smoothstep(this.atmoDensity, 0.004, 0.05) * THREE.MathUtils.smoothstep(Math.abs(this._speed), 90, 220) : 0;
-      ang.multiplyScalar(1 - aero);
+      // In vacuum a turn takes a push to start it and one to stop it, nothing in between. In air it
+      // also takes holding against the air, so the jets keep firing through a roll or a turn.
+      const inAir = this.state.frame?.sampler ? THREE.MathUtils.smoothstep(this.atmoDensity, 0.004, 0.05) : 0;
+      ang.copy(this.measAlpha).multiplyScalar(0.3).addScaledVector(this.measW, 0.6 * inAir);
+      // (and nothing for the tiny corrections of steady flight)
+      const m = ang.length();
+      ang.multiplyScalar(m > 1e-6 ? Math.max(0, m - 0.25) / m : 0);
+    }
+    {
+      const m = lin.length();
+      lin.multiplyScalar(m > 1e-6 ? Math.max(0, m - 0.8) / m : 0);
     }
     const f = this.mode === 'landed' || this.mode === 'pulse' ? this.allocateThrust(lin.set(0, 0, 0), ang.set(0, 0, 0)) : this.allocateThrust(lin, ang);
     const t = performance.now() * 0.001;
@@ -495,9 +503,9 @@ export class Ship {
     let rcsSum = 0;
     let kick = 0;
     this.thrusters.forEach((th, i) => {
-      // jets snap on and cut off fast (the small ones fastest: they pulse)
-      const want = f[i];
-      th.out = THREE.MathUtils.damp(th.out, want, want > th.out ? 30 : th.kind === 'vtol' ? 9 : 16, dt);
+      // jets snap on and cut off fast (the small ones fastest: they pulse); a whisper is nothing
+      const want = f[i] < 0.06 ? 0 : f[i];
+      th.out = THREE.MathUtils.damp(th.out, want, want > th.out ? 30 : th.kind === 'vtol' ? 9 : 18, dt);
       const p = th.out;
       if (th.kind === 'vtol') hoverSum += p;
       else {
@@ -505,32 +513,31 @@ export class Ship {
         kick = Math.max(kick, p - th.last);
       }
       th.last = p;
-      th.throatMat.emissiveIntensity = p * (th.kind === 'vtol' ? 5 : 3);
-      // (shown a little stronger than the force: a small output should still read)
-      const vis = Math.pow(p, 0.6);
+      th.throatMat.emissiveIntensity = p * (th.kind === 'vtol' ? 3 : 2);
+      const vis = Math.pow(p, 0.8);
       const ju = th.jetMat.uniforms;
-      const on = vis > 0.02;
+      const on = vis > 0.03;
       th.jetMat.visible = th.glowMat.visible = on;
       if (!on) return;
-      ju.uPower.value = vis;
       ju.uTime.value = t;
       if (th.kind === 'vtol') {
-        // a hot jet with shock diamonds in air; a thin, long, faint one in vacuum
-        ju.uLen.value = (1.4 + vis * 5.2) * (1 + (1 - air) * 0.6);
-        ju.uWidth.value = th.r * 1.15;
-        ju.uSpread.value = 1.3 + (1 - air) * 2.5;
-        ju.uDiamonds.value = air * 0.9;
-        th.glowMat.uniforms.uSize.value = th.r * (1.8 + vis);
-        th.glowMat.uniforms.uPower.value = vis * 1.3;
+        // a hot jet with faint shock diamonds in air; thinner and fainter in vacuum
+        ju.uLen.value = (1.0 + vis * 3.6) * (1 + (1 - air) * 0.4);
+        ju.uWidth.value = th.r;
+        ju.uSpread.value = 1.2 + (1 - air) * 2;
+        ju.uDiamonds.value = air * 0.6;
+        ju.uPower.value = vis * (0.45 + 0.3 * air);
+        th.glowMat.uniforms.uSize.value = th.r * (1.4 + vis * 0.6);
+        th.glowMat.uniforms.uPower.value = vis * 0.7;
       } else {
-        // cold gas: a short white burst that fans out (wider, fainter in vacuum)
-        ju.uLen.value = 0.5 + vis * (2.3 + (1 - air) * 1.4);
-        ju.uWidth.value = th.r * 1.1;
-        ju.uSpread.value = 2.4 + (1 - air) * 3;
+        // the small jets: a short pale burst that fans out (fainter in vacuum)
+        ju.uLen.value = 0.35 + vis * (1.3 + (1 - air) * 0.8);
+        ju.uWidth.value = th.r * 0.9;
+        ju.uSpread.value = 2.2 + (1 - air) * 2;
         ju.uDiamonds.value = 0;
-        ju.uPower.value = vis * (1.0 + 0.5 * air);
-        th.glowMat.uniforms.uSize.value = th.r * (2 + vis * 1.5);
-        th.glowMat.uniforms.uPower.value = vis * 1.2;
+        ju.uPower.value = vis * (0.4 + 0.25 * air);
+        th.glowMat.uniforms.uSize.value = th.r * (1.4 + vis);
+        th.glowMat.uniforms.uPower.value = vis * 0.55;
       }
     });
     this.hoverOut = hoverSum / 4;
@@ -821,17 +828,17 @@ export class Ship {
       const aF = THREE.MathUtils.clamp((set - vNow) * 2, -220, engA);
       mainA += Math.max(0, aF) * k;
       acc.addScaledVector(fwd, aF * k);
-      if (aF < 0) thr.addScaledVector(fwd, aF * k);
+      // (the nose jets brake only for a real slow-down; the trims are the main drive's own)
+      if (aF < -15) thr.addScaledVector(fwd, (aF + 15) * k);
       // flight assist: drift trimmed off, at most so hard (Space / C translate up and down on the RCS)
-      const assist = _v2.copy(vPerp).addScaledVector(_v6.set(0, 1, 0).applyQuaternion(s.quat), -vIn * 20).multiplyScalar(-1.8);
+      const slide = _v2.copy(vPerp).addScaledVector(_v6.set(0, 1, 0).applyQuaternion(s.quat), -vIn * 20);
+      const assist = slide.multiplyScalar(-1.8);
       if (assist.length() > 140) assist.setLength(140);
       acc.addScaledVector(assist, k);
-      thr.addScaledVector(assist, k);
-      // a world's pull reaches out past its air (weakly, and mostly trimmed away)
-      if (planet && up) {
-        const r = s.pos.length();
-        acc.addScaledVector(up, -(planet.gravity || 9) * (planet.radius / r) ** 2 * k);
-      }
+      // the jets fire for a drift worth trimming, the last metres a second go quietly; and under way
+      // the main engines' vectoring swings the course round with the nose, not the RCS
+      const rcsTrim = THREE.MathUtils.smoothstep(assist.length(), 3, 9) * (1 - THREE.MathUtils.smoothstep(Math.abs(vNow), 40, 120));
+      thr.addScaledVector(assist, k * rcsTrim);
     }
 
     // --- air ---

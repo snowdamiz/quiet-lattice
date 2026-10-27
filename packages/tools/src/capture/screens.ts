@@ -272,6 +272,60 @@ const inventoryScreen = (scene: InventoryScene, extra: Partial<ScreenDef> = {}):
   ...extra,
 });
 
+/** All nineteen resources (DESIGN 15.3, P1.E13.T02), a stack of each, by family: the suit holds the warp cell, the plants,
+ * the rock and deposit finds and the hostile worlds' six; the Lark's pod the asteroids' two, the Count's, the Hollow's
+ * and the Cartographers' leavings, and the mining laser. */
+const NINETEEN_SUIT: [string, number][] = [
+  ['warp_cell', 1],
+  ['carbon', 386],
+  ['sodium', 45],
+  ['oxygen', 92],
+  ['ferrite', 9999],
+  ['dihydrogen', 210],
+  ['copper', 64],
+  ['cobalt', 18],
+  ['gold', 31],
+  ['frostglass', 120],
+  ['acidsalt', 85],
+  ['cinderglass', 64],
+  ['stormquartz', 38],
+  ['gamma_crystal', 22],
+  ['murkpearl', 12],
+  ['ferrite', 2481],
+];
+const NINETEEN_POD: [string, number][] = [
+  ['tritium', 9999],
+  ['iridium', 46],
+  ['count_residue', 140],
+  ['husk_alloy', 6],
+  ['glyphstone', 3],
+  ['mining_laser', 1],
+];
+
+/** Lays the nineteen out (16x9-resources.png) and hovers the frostglass stack, so the detail line says where it comes
+ * from. */
+async function showNineteen(page: Page): Promise<void> {
+  await page.evaluate(
+    ({ suit, pod }) => {
+      const g = (window as unknown as { game: { inventory: InventoryApi; menus: { renderInventory(): void } } }).game;
+      const inv = g.inventory;
+      // (no named functions in here: the bundler would wrap them in a helper the page does not have)
+      inv.restore({
+        ...inv.state,
+        suit: inv.state.suit.map((_, i) => (suit[i] ? { item: suit[i]![0], count: suit[i]![1] } : null)),
+        pods: inv.state.pods.map((p, k) => p.map((_, i) => (!k && pod[i] ? { item: pod[i]![0], count: pod[i]![1] } : null))),
+      });
+      g.menus.renderInventory();
+    },
+    { suit: NINETEEN_SUIT, pod: NINETEEN_POD },
+  );
+  await settle(page, 30);
+  const slot = page.locator(`.inv-slot[data-c="suit"][data-i="${NINETEEN_SUIT.findIndex(([id]) => id === 'frostglass')}"]`);
+  const box = await slot.boundingBox();
+  if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.waitForTimeout(500);
+}
+
 /** The cargo list scrolled to its end: the last pod and the footer both in view. */
 async function scrollPodsToEnd(page: Page): Promise<void> {
   await page.evaluate(() => {
@@ -333,8 +387,9 @@ export const SCREENS: Record<string, ScreenDef> = {
   },
   // the inventory (P1.E06.T04): suit stacks beside the ship's cargo pods after a mining trip, the ferrite stack hovered.
   // `inventory` is the Lark every pilot starts in (one pod); `inventory-pack-mule` the Lark with Pack Mule (two pods,
-  // stacks of 15,000); `inventory-hauler` a Mule's four pods; `inventory-longhaul` a Longhaul's sixteen.
-  inventory: inventoryScreen(INVENTORY_SCENES.lark!),
+  // stacks of 15,000); `inventory-hauler` a Mule's four pods; `inventory-longhaul` a Longhaul's sixteen. `inventory` adds
+  // a still of all nineteen resources' icons (16x9-resources.png, P1.E13.T02), which the clip then shows too.
+  inventory: inventoryScreen(INVENTORY_SCENES.lark!, { stills16x9: { resources: showNineteen } }),
   'inventory-pack-mule': inventoryScreen(INVENTORY_SCENES.packMule!),
   'inventory-hauler': inventoryScreen(INVENTORY_SCENES.mule!),
   'inventory-longhaul': inventoryScreen(INVENTORY_SCENES.longhaul!),

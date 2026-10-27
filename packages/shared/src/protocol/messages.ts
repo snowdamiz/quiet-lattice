@@ -5,7 +5,12 @@ import { z } from 'zod';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 2;
+export const PROTOCOL_VERSION = 4;
+// History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
+// 1: the first protocol (P1.E02.T08)
+// 2: inventory requests and state (P1.E06.T04)
+// 3: social: chat and party requests, party state, denied, party news, chat lines held to the client's rules (P1.E15.T01)
+// 4: creatures' attack field (P1.E08.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -146,15 +151,37 @@ export const Cast = z.object({
   target: EntityId.optional(),
 });
 export const Interact = z.object({ t: z.literal('interact'), target: Id });
+/** Chat channels (DESIGN 16.6 "Social"): everyone on the shard, everyone in the sender's star system, the sender's party. */
 export const ChatChannel = z.enum(['shard', 'system', 'party']);
-export const ChatSend = z.object({ t: z.literal('chat'), channel: ChatChannel, text: PlainText(280) });
+/** The longest chat message, in UTF-16 units. */
+export const CHAT_MAX = 280;
+/** Chat text: not blank, no control, invisible or direction-changing characters (PlainText), at most CHAT_MAX units. */
+export const ChatText = PlainText(CHAT_MAX);
+export const ChatSend = z.object({ t: z.literal('chat'), channel: ChatChannel, text: ChatText });
+/** The most characters one party holds (DESIGN is silent; P1.E15.T01). */
+export const PARTY_MAX = 6;
+/**
+ * A party request. Other characters are named as a player types them (names are unique ignoring case): `invite` an
+ * online character to your party (or to a new one you lead); `accept` or `decline` the invite `name` sent you; `leave`;
+ * and, leader only, `kick` a member or `promote` one to leader.
+ */
+export const PartyOp = z.discriminatedUnion('op', [
+  z.object({ op: z.literal('invite'), name: CharacterName }),
+  z.object({ op: z.literal('accept'), name: CharacterName }),
+  z.object({ op: z.literal('decline'), name: CharacterName }),
+  z.object({ op: z.literal('leave') }),
+  z.object({ op: z.literal('kick'), name: CharacterName }),
+  z.object({ op: z.literal('promote'), name: CharacterName }),
+]);
+export const PartyRequest = z.object({ t: z.literal('party'), op: PartyOp });
+export type PartyOp = z.infer<typeof PartyOp>;
 export const Ack = z.object({ t: z.literal('ack'), tick: z.number().int().nonnegative() });
 export const Ping = z.object({ t: z.literal('ping'), id: z.number().int().nonnegative(), clientTime: z.number().min(0).max(1e15) });
 /** Inventory request (ARCHITECTURE §7): move, split, merge, transfer or compact stacks. The client applies the same shared op
  * to predict and the server answers with `inventory` state. `seq` numbers the session's requests from 1, increasing. */
 export const InventoryRequest = z.object({ t: z.literal('inventory'), seq: z.number().int().min(1).max(0xffffffff), op: inventoryOpSchema });
 
-export const ClientMessage = z.discriminatedUnion('t', [Hello, Join, Input, Cast, Interact, ChatSend, Ack, Ping, InventoryRequest]);
+export const ClientMessage = z.discriminatedUnion('t', [Hello, Join, Input, Cast, Interact, ChatSend, PartyRequest, Ack, Ping, InventoryRequest]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
 // ---------- server → client ----------
@@ -203,11 +230,14 @@ export const QuestEvent = z.object({
   status: z.enum(['offered', 'accepted', 'progress', 'step', 'completed', 'failed']),
   counters: z.record(z.string().max(48), z.number()).optional(),
 });
+/** A chat line as the server relays it: the sender's name as the server knows it, never as the client claimed. `at` is
+ * world time. The text follows the same rules as the client's, so nothing the server relays can carry control
+ * characters. */
 export const ChatEvent = z.object({
   kind: z.literal('chat'),
   channel: ChatChannel,
-  from: z.string().max(32),
-  text: z.string().max(280),
+  from: CharacterName,
+  text: ChatText,
   at: z.number(),
 });
 export const LootEvent = z.object({
@@ -218,8 +248,87 @@ export const LootEvent = z.object({
 });
 /** A toast for the player (docking granted, pulse drive interrupted …). */
 export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string().max(280), tone: z.enum(['info', 'good', 'warn']) });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, NoticeEvent]);
+/**
+ * Party news, for the chat log and toasts; the party itself arrives as `party` state. `name` is the other character:
+ * `invite` (it invites you; answer with accept or decline within the minute), `invited` (your invite reached it),
+ * `declined` (it declined your invite), `expired` (an invite between you and it lapsed), `joined`, `left` (it left, or
+ * its connection stayed down past the grace), `kicked` (by the leader; your own name when it was you), `leader` (it now
+ * leads); `disbanded` (one member was left, so the party is gone) names nobody.
+ */
+export const PartyNews = z.enum(['invite', 'invited', 'declined', 'expired', 'joined', 'left', 'kicked', 'leader', 'disbanded']);
+export const PartyEvent = z.object({ kind: z.literal('party'), what: PartyNews, name: CharacterName.optional() });
+export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, NoticeEvent, PartyEvent]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
+
+/** One member as its party sees it: cheap on purpose (a party frame needs no more). */
+export const PartyMember = z.object({
+  name: CharacterName,
+  /** connected; a member whose connection dropped keeps its place for a grace */
+  online: z.boolean(),
+  /** the galaxy system it is in; null while offline */
+  system: z.number().int().nonnegative().max(1023).nullable(),
+  /** health in tenths of full (0–10), coarse so it changes rarely; null while offline */
+  health: z.number().int().min(0).max(10).nullable(),
+});
+export const PartyView = z
+  .object({ leader: CharacterName, members: z.array(PartyMember).min(2).max(PARTY_MAX) })
+  .refine((p) => p.members.some((m) => m.name === p.leader), 'the leader must be a member');
+/**
+ * The character's party (null: none), in join order: sent after `welcome`, to every online member whenever it changes
+ * (members, leader, who is online, a member's system or coarse health), and null to one who leaves it.
+ */
+export const PartyState = z.object({ t: z.literal('party'), party: PartyView.nullable() });
+export type PartyView = z.infer<typeof PartyView>;
+
+/** Why a chat message or party request was not carried out. */
+export const DeniedCode = z.enum([
+  /** this account sends chat or invites too fast; `retryS` */
+  'rate',
+  /** the shard channel (or the invitee's pending invites) is full right now; `retryS` when it is the channel */
+  'busy',
+  /** this account may not chat until `retryS` from now */
+  'muted',
+  /** system chat while in no zone */
+  'no_zone',
+  /** party chat or a party request while in no party */
+  'no_party',
+  /** kick or promote by a member who is not the leader */
+  'not_leader',
+  /** no character by that name is online */
+  'not_found',
+  /** the request names its own sender */
+  'self',
+  /** the invitee is in a party already (or, accepting, you are) */
+  'in_party',
+  /** the party has PARTY_MAX members */
+  'party_full',
+  /** an invite to that character from you is pending already */
+  'pending',
+  /** no invite from that character is pending */
+  'no_invite',
+  /** that character is not in your party */
+  'not_member',
+  /** promote names a member whose connection is down */
+  'offline',
+  /** the inviter has gone (offline, in no party) */
+  'gone',
+]);
+/** A chat message or party request the server did not carry out, sent to its sender only. `of` is what was asked. */
+export const Denied = z.object({
+  t: z.literal('denied'),
+  of: z.enum(['chat', 'invite', 'accept', 'decline', 'leave', 'kick', 'promote']),
+  code: DeniedCode,
+  /** seconds before asking again may succeed (rate, busy, muted) */
+  retryS: z
+    .number()
+    .int()
+    .min(1)
+    .max(7 * 86400)
+    .optional(),
+  /** the character the request named */
+  name: CharacterName.optional(),
+});
+export type DeniedCode = z.infer<typeof DeniedCode>;
 
 /** The character's authoritative inventory: after join, in answer to every inventory request, and whenever the server
  * changes it (loot, mining, trade, the Recall). `seq` is the last request the server has handled this session (0: none);
@@ -231,6 +340,17 @@ export const InventoryState = z.object({
   error: inventoryErrorCodeSchema.optional(),
 });
 
-export const ServerMessage = z.discriminatedUnion('t', [Welcome, Refused, Correction, ZoneChange, Pong, WorldState, EventMessage, InventoryState]);
+export const ServerMessage = z.discriminatedUnion('t', [
+  Welcome,
+  Refused,
+  Correction,
+  ZoneChange,
+  Pong,
+  WorldState,
+  EventMessage,
+  InventoryState,
+  PartyState,
+  Denied,
+]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
