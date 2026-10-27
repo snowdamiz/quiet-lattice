@@ -71,6 +71,7 @@ export class SocialUI {
     /** the newest line each chat tab has shown open: lines after it are unread */
     this.seen = { shard: 0, system: 0, party: 0 };
     this.closedAt = -Infinity;
+    this.openedAt = -Infinity;
     this.history = [];
     this.historyAt = 0;
     this.dirty = true;
@@ -170,7 +171,8 @@ export class SocialUI {
     const now = this.hud.now();
     if (open !== this.wasOpen) {
       this.wasOpen = open;
-      if (!open) this.closedAt = now;
+      if (open) this.openedAt = now;
+      else this.closedAt = now;
       this.chat.classList.toggle('show', open);
       this.side.classList.toggle('live', open);
       this.dirty = this.rebuild = true;
@@ -204,7 +206,7 @@ export class SocialUI {
   renderBadges() {
     const m = this.model;
     for (const t of ['shard', 'system', 'party']) {
-      const n = t === this.tab && this.isOpen ? 0 : m.lines.filter((l) => l.channel === t && l.id > this.seen[t]).length;
+      const n = t === this.tab && this.isOpen ? 0 : m.lines.filter((l) => l.channel === t && l.id > this.seen[t] && !l.mine).length;
       this.tabButtons[t].badge.textContent = n ? String(Math.min(n, 99)) : '';
     }
     const own = m.net?.beacons.own?.id;
@@ -235,6 +237,8 @@ export class SocialUI {
       if (this.nodes.has(l.id)) continue;
       const node = this.lineNode(l);
       if (still) node.classList.add('still');
+      // (as the panel opens its plate fades in; the lines' own plates fade out under it, so they read all the while)
+      if (still && open && now - this.openedAt < 100) node.classList.add('unplate');
       if (!open && !this.shown(l, now)) node.classList.add('gone');
       this.log.appendChild(node);
       this.nodes.set(l.id, node);
@@ -464,6 +468,7 @@ export class SocialUI {
   closed() {
     this.input.blur();
     this.inviteName.blur();
+    this.side.classList.remove('live');
   }
 
   setTab(t) {

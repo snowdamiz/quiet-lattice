@@ -814,11 +814,13 @@ export const SCREENS: Record<string, ScreenDef> = {
         ),
     },
     async motion(page) {
+      // (the panel the stills left open closes first, and its fade runs out before the clip's first frame)
+      await page.evaluate(() => (window as unknown as SocialWindow).__social.close());
+      await page.waitForTimeout(3000);
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const s = w.__social;
         const hud = w.game.hud;
-        s.close();
         s.clear();
         s.chat('shard', 'Kestrel Vane', 'Convoy leaving in ten minutes, two escorts wanted');
         s.chat('system', 'Ilse Marr', 'Pirate wing over the north pole, keep clear of it');
@@ -870,11 +872,12 @@ export const SCREENS: Record<string, ScreenDef> = {
       open: (page) => onStage(page, "s.open('shard')"),
     },
     async motion(page) {
+      await page.evaluate(() => (window as unknown as SocialWindow).__social.close());
+      await page.waitForTimeout(3000);
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const s = w.__social;
         const hud = w.game.hud;
-        s.close();
         hud.later(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true })), 400);
         hud.later(() => document.querySelector<HTMLButtonElement>('.sp-invite .btn')?.click(), 1400);
         hud.later(() => s.close(), 2500);

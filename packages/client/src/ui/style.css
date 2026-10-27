@@ -2792,6 +2792,14 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sc-line.still {
   animation: none;
 }
+.social-chat.show .sc-line.unplate {
+  animation: scUnplate 0.2s ease-out;
+}
+@keyframes scUnplate {
+  from {
+    background-color: var(--plate);
+  }
+}
 .sc-line.gone {
   opacity: 0;
 }
