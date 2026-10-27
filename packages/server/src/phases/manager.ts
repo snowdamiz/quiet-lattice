@@ -4,7 +4,8 @@
 //
 // Every entity in a zone has a phase or none (the shared world). Members are sessions' players placed by phaseFor (or put
 // in one phase by name with enter, under the same caps and party rule: answering a call for aid, social/beacons.ts); a
-// phase's own entities (its actors: NPCs, bosses, props) are spawned through it and go with it when it closes. What a
+// phase's own entities (its actors: NPCs, bosses, props) are spawned through it, or adopted from the system that spawned
+// them (an event's creatures, which fauna moves), and go with it when it closes. What a
 // session sees is decided here (visibleTo, which the zone applies to every interest set):
 // - everything in the shared world and in its own phase;
 // - never another phase's own entities;
@@ -109,6 +110,8 @@ interface Placement {
   inside: boolean;
   /** world time it was first outside the volume; null while inside */
   outsideSince: number | null;
+  /** how one of its own entities goes when the phase closes, when another system made it (adopt); else the zone's despawn */
+  despawn?: (id: number) => void;
 }
 
 /**
@@ -333,6 +336,23 @@ export class PhaseManager {
     return id;
   }
 
+  /**
+   * Makes an entity another system spawned in the shared world one of the phase's own (an event's creatures, which
+   * fauna spawns and moves: events/service.ts): from now on only its members see it, and it goes when the phase closes,
+   * through `despawn` when given (so the system that made it forgets it too), else the zone's. A session's player, an
+   * entity in a phase already, or one the zone does not have, cannot be adopted.
+   */
+  adopt(phaseId: number, id: number, despawn?: (id: number) => void): void {
+    const phase = this.phases.get(phaseId);
+    if (!phase) throw new Error(`no open phase ${phaseId} in zone ${this.zone.id}`);
+    const e = this.zone.entity(id);
+    if (!e) throw new Error(`no entity ${id} in zone ${this.zone.id}`);
+    if (e.fields.kind === 'player') throw new Error(`entity ${id} is a player: players are placed, never adopted`);
+    if (this.placed.has(id)) throw new Error(`entity ${id} is in phase ${this.placed.get(id)!.phase.id} already`);
+    phase.entities.add(id);
+    this.placed.set(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null, despawn });
+  }
+
   /** Closes the phase now: its members go back to the shared world, kept places go, and its own entities are despawned. */
   close(phaseId: number): boolean {
     const phase = this.phases.get(phaseId);
@@ -497,6 +517,7 @@ export class PhaseManager {
     const members = phase.members.size;
     const held = phase.held.size;
     const own = [...phase.entities];
+    const despawns = own.map((id) => this.placed.get(id)?.despawn);
     for (const id of phase.members) this.placed.delete(id);
     for (const character of phase.held) this.held.delete(character);
     for (const id of own) this.placed.delete(id);
@@ -504,7 +525,16 @@ export class PhaseManager {
     phase.held.clear();
     phase.entities.clear();
     // (each despawn calls removed(), which finds nothing placed)
-    for (const id of own) this.zone.despawn(id);
+    own.forEach((id, i) => {
+      const despawn = despawns[i];
+      if (!despawn) return void this.zone.despawn(id);
+      try {
+        despawn(id);
+      } catch (err) {
+        this.log?.warn({ zone: this.zone.id, phase: phase.id, entity: id, err: String(err) }, 'phase entity not despawned by its maker');
+        this.zone.despawn(id);
+      }
+    });
     this.log?.info(
       {
         zone: this.zone.id,

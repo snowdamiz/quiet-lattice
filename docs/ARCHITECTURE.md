@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), world events (`/events`, §25), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -41,6 +41,7 @@ skills/             SkillService: each character's place on the skill web, its r
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 crafting/           CraftingService and RecipeBook: fabricator requests checked, each character's recipes and its component (§23)
+events/             EventService: world events scheduled, placed in event phases, scaled by presence, paid by contribution (§25)
 sim/                server-side systems added by later tasks: movement validation, combat…
 admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
 cli/                the developer CLI (`pnpm --filter @astra/server cli -- <command>`): over the admin channel, or --direct
@@ -112,8 +113,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
   first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
-  11 beacons, 12 analysis, 13 crafting); a unit test pins the number and checks the history, so two branches bumping to
-  the same number conflict at merge rather than share it.
+  11 beacons, 12 analysis, 13 crafting, 14 reputation (reserved for P2.E18.T01), 15 world events); a unit test pins the
+  number and checks the history, so two branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -139,7 +140,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
   reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
   id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), `craft
-  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), and snapshots.
+  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `world_event {op, event, outcome?}`,
+  `event_status {…}` and `event_reward {…}` (§25), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -210,6 +212,13 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   256) is sent after `skills` on join and whenever a recipe is learned, before the answer that learned it. Recipe ids
   are table-id shaped (48 characters); one the table lacks is answered `unknown`, not dropped. `seq` counts from 1 and
   increases.
+- **World events** (protocol 15, §25): the server sends, and no client sends anything of them, `world_event {op:
+  'announced' | 'started' | 'ended', event, outcome?}` to every session in the event's star system (`event`: its id, the
+  event's id and name, the system, its place as a frame, centre and radius, and when it starts and ends; `outcome`,
+  `completed` or `expired`, on the end only); `event_status {id, phase, level, players, wave, waves, enemies, damage,
+  objective, presence, share}` to a participant (its instance, the instance's scaling level 1–12 and players, the wave
+  and the enemies left, its own contribution and its share as things stand); and `event_reward {id, outcome, share, xp,
+  level?, units, items, rep}` as its instance ends (the inventory follows as `inventory` state).
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -254,6 +263,13 @@ players, `event` and `raid` 12.
   it when the phase's others are all of it. It never moves the entity, so movement authority's judging goes on as before.
   `release(characterId)` gives up a place kept for a character whose connection is down, as its grace running out would
   (a beacon's helper no longer of the party, §21).
+- **Own entities another system made**: `adopt(phase, entity, despawn?)` makes an entity already in the zone (not a
+  player, in no phase) one of a phase's own: from then only its members see it, and it goes when the phase closes,
+  through `despawn` when given (the system that made it forgets it too), else the zone's. A world event's instance adopts
+  the creatures fauna spawns for its waves (§25), its `despawn` taking each out of its herd before the zone despawns it.
+- **World events** (§25) place a player whose entity is inside an event's place, and in no phase, with
+  `phaseFor(viewer, 'event', location)`: the cap of 12 is what splits a crowd into instances, each scaled by the players
+  it holds (members and kept places).
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
   players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
@@ -558,7 +574,8 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
   nobody listens for (`party`, a chat or party `denied` …) are dropped quietly, and so are snapshot fields and entity
   kinds nothing reads yet (a `mob`'s `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21)
-  keeps the call-for-aid beacons it is sent. While the connection is down after a welcome, a line at
+  keeps the call-for-aid beacons it is sent, and `net.worldEvents` (`worldEvents.js`, §25) the world events and the
+  banners and toasts they raise. While the connection is down after a welcome, a line at
   the top of the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
   onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
@@ -1150,7 +1167,11 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   (`computeDamage`: resistances by node, weapon or branch, the attacker's power, augments, what the target takes),
   level-scaled only when the source is a creature (its entity's level; DECISIONS P1.E06.T01), then takes the health,
   feeds the creature's threat table (`FaunaSim.hurt`), records the damage each character did (counted up to the health
-  left), tells the hooks who fought (`engaged`) and queues the event. A dead creature or a downed player takes no more.
+  left), tells the hooks who fought (`engaged`) and what the hit took (`hit`: source, attacker, target, the health taken,
+  whether it killed; the combat service passes it to its listeners as `{kind: 'hit'}` news, which a world event counts
+  as contribution, §25) and queues the event. A dead creature or a downed player takes no more. An event instance scales
+  its creatures' health with its players (`scaleHealth(entity, factor)`: max and what is left, from the mob stats'
+  health; one not hurt yet takes it when it first is).
   Weapons (below), abilities (P1.E07.T03) and creature attacks (P1.E08.T02) all come through it; nothing a client sends
   carries an amount.
 - **Death.** A creature at 0 dies: fauna takes it out of its herd at once (§6.2: its den's timers start), its entity
@@ -1176,7 +1197,8 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   itself: the drawn ground (fauna's plan, §12) sampled along the stretch the origin was carried (the client's stamp
   chooses the carry, so it never jumps ground the ship has not been seen to cross) and on to the hit, at most 96 times a
   stretch (every 2 m on a short one), the gun's end and the target's skipped. A hit deals the gun's damage through the
-  damage path. Players are neither targets nor in the way: PvP is P2.E17.T01.
+  damage path. Players are neither targets nor in the way: PvP is P2.E17.T01. Nor is a creature the shooter's phase hides
+  from it (`phases.canSee`: another event instance's, §25): the ray passes through it.
 - **A kill's worth** (`killLoot`, `@astra/shared/combat`): XP of the mob's level × 10 (DESIGN 14.9), units of 2 a level a
   threat star (spread ×0.75–1.25 by a roll), and a row's drops (the stone-touched's Count residue, a boss's loot
   resources; plain fauna drop none), rolled once and split by the damage each character did (`splitByDamage`, as a
@@ -1216,7 +1238,8 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   enters the world while the beacon is up.
 - **The listing** (`BeaconView`): its id; the instance's kind and star system (galaxy index); its place, as a frame, a
   centre in it and a radius (where to go to answer); what the place is called (the quest's title, else the location's
-  key; the kind's name if neither is plain text); the quest, for a story instance; the caller's name; its open slots of
+  key; the kind's name if neither is plain text: a world event's location key is the event's name, `Hollow tide`, §25);
+  the quest, for a story instance; the caller's name; its open slots of
   `cap`; and the world times it was raised (`at`: its age is the client's server time less this) and lapses (`until`,
   10 minutes later). A session that sends `watch` is sent the whole list (`beacons {reset: true, beacons, gone: []}`,
   some 70 KB at 256 beacons) and from then the changes (`beacons {beacons, gone}`: new beacons and those whose open
@@ -1365,3 +1388,82 @@ gate is recipes and materials, not a skill tree.
   runs across the button (0.56 s) and the result or the refusal shows in the line under the columns once both it and the
   answer are in (the quantity then held to what the materials left make); a recipe learned moves from the recipes to
   learn into the list.
+
+## 24. Reputation
+
+Reserved for the rep model (P2.E18.T01), which holds protocol 14 and this section on its branch until it merges.
+
+## 25. World events (`packages/server/src/events`, `@astra/shared/events`)
+
+DESIGN 14.6, 16.6; P2.E21.T01. A world event is server-timed, announced to its star system, open to everyone present,
+scaled to who is there, split into instances above 12, and paid by contribution. This is the framework; each event's
+own shape (the station raid, the full Hollow tide, the superstorm rescue, the convoy run) is P2.E21.T02–T05's.
+
+- **Definitions are data** (`EVENTS`, `eventDefSchema`): id; name (plain text, the banner's title and the key of the
+  event's phase location); kind (`waves`: waves of enemies to clear); the tiers it comes to; its schedule (`everyS`,
+  `durationS`, `announceS`, `stagger`); its place (`surface`, a radius); its enemies (the world's own creatures of some
+  temperaments, at a level or the tier's); its waves (`count`, `size` at level 1, `firstS` after an instance opens,
+  `gapS` after each is cleared); its scaling (`sizePerPlayer`, `healthPerPlayer`); its contribution weights (damage,
+  objective, presence); and its rewards per player (XP, units, items, reputation). The catalog ships the Hollow tide
+  as the framework runs it (Tier 5, hourly, 20 minutes, waves of the world's predators and territorial creatures; its
+  Edge-ward Hollow and stone-touched herds are T03's).
+- **Schedule** (`eventWindow`): windows are whole periods of world time from an offset per system (`windowOffset`, drawn
+  from the system and the event when `stagger`), so every server agrees on them and a restart finds the one it left. The
+  `EventService` (the gateway's, `ws.events`, on its own 250 ms timer) runs, in every loaded zone with players whose tier
+  is in an event's range, one occurrence per window from its announcement until 30 s before its end. Zones without
+  players open none. `run(def, zone, {startsIn})` and `startNow(id)` run one off its schedule (development and tests).
+- **Place** (`events/place.ts`): a spot on dry, open ground of the system's first world (by body order) whose species at
+  the zone's tier include the enemies, drawn from the system's seed, the event and the window; the occurrence waits
+  while that world's ground is planned (fauna's planner) and is dropped when no world can host it. The place is a sphere
+  round the spot in the world's frame; the phase location's key is the event's name, which the call-for-aid listing
+  shows as the place (§21).
+- **News** (`world_event`, protocol 15): `announced` and `started` go to every session in the zone and to each one that
+  arrives while the event is on (DESIGN 14.6, "announced by banner to the system"; nothing goes shard-wide); `ended`
+  with its outcome to those there at the end.
+- **Instances.** While it runs, each sweep puts every player in no phase whose entity is inside the place in an instance
+  by the phase manager's own placement (`phaseFor(viewer, 'event', location)`, §6.1: a party member's with room, the
+  fullest with room, else a new one), so an instance holds 12 and a 13th opens another (`EVENT_PLAYERS_MAX`, the event
+  kind's cap; a test holds them together). Nobody is moved. A player in another phase (a bay, a story step) is left
+  where it is; one answering a beacon into an instance (`PhaseManager.enter`, §21) takes part like any member. A
+  participant placed is reported to its quests as `enter {place: 'event:<id>'}`.
+- **Scaling** (`eventScaling`, pure and tested): an instance's level is the players it holds, members and kept places,
+  1–12. Each wave is sent at the level then: `size × (1 + sizePerPlayer × (level − 1))` creatures (fauna's `spawnHerd`,
+  in herds of at most 5 round the spot, through the zone's creature cap: a wave with no room waits 2 s), each made the
+  instance's own (`PhaseManager.adopt`, so no other instance or the shared world sees it, and it goes with the phase)
+  and its health scaled by `1 + healthPerPlayer × (level − 1)` (`ZoneCombat.scaleHealth`). Combat never lets a shot
+  reach another phase's creature (§20). A wave is cleared when none of it is left alive (killed, or gone with its cell).
+- **Contribution** is kept per instance and character: the health its hits took from the instance's enemies (combat's
+  `hit` news, counted only while the attacker is a member of that instance), objective points (`credit(zone, entity,
+  points)`, for events whose objectives are not enemies) and the seconds it spent inside the place while the instance
+  ran. Shares (`contributionShares`): each kind is the character's part of the instance's total of it (a kind nobody
+  contributed drops out); damage and objectives weighed together are its active contribution, and one under a quarter of
+  an even share of it (`ELIGIBLE_FRACTION`) is not paid; among the paid, presence is weighed in too, and the shares sum
+  to 1. So presence alone earns nothing, the last hit counts no more than any other, and idle players (or alts) neither
+  earn nor grow the pool.
+- **Status** (`event_status`) goes to each member as it is placed, whenever its instance's level, players, wave or
+  enemies change, and at most once a second as its contribution grows.
+- **Rewards.** An instance ends when its last wave is cleared (`completed`), when everyone has left it (its phase closed:
+  `expired`), or when the occurrence's window ends (`expired`). It pays a pool of the per-player rewards times the
+  participants paid (`rewardPool`; an expired instance pays the fraction of its waves cleared), split by share with
+  `splitByDamage` (as a kill's loot is): XP into progress (the entity's level and the skill view follow), units and items
+  into the inventory (what does not fit is lost), reputation through the rep model's hook (`reputation.grant`; until
+  P2.E18.T01 wires it, reputation goes unpaid, logged at debug). Every participant is sent `event_reward`, its share 0 and
+  nothing when it was not paid; a character out of play by then earns nothing. Its phase closes (the remaining creatures
+  despawned through fauna); those it paid, and every participant of a completed instance, are not placed in that
+  occurrence again (one that only passed through, in an instance it left empty, may come back). `subscribe` hears every
+  instance's payouts (the economy's income measures, P2.E19.T05).
+- **The end.** An occurrence ends with its window, or as soon as every instance it opened has completed; `ended` says
+  `completed` only then. Instances still going end `expired`. The next window brings the next occurrence.
+- **Persistence.** None: occurrences, instances and contribution are in memory. Windows are on the world clock, so a
+  restart runs the window's occurrence afresh (announced again, contribution lost); rewards already paid are in the
+  characters' saved state.
+- **Bench.** The event trial (15 players on foot at an event's place: an instance of 12 and one of 3, each fighting its
+  own scaled waves at the base gun's rate) keeps the tick, the event service's sweep and the hits included, under the
+  10 ms p95.
+- **The client** (`net/worldEvents.js`): `net.worldEvents` keeps the events it was told of, its standing in one and its
+  last reward, and queues for the HUD a banner as an event is announced, starts and ends, and toasts as the player
+  joins an instance, as its scaling changes and as it is paid (`HUD.updateEvents`). A full event panel is later work.
+- **Not here.** Creatures do not fight back until P1.E08.T02, and fauna ignores players `phases.hiddenFromShared` hides
+  (§6.2), which a sealed event member is: when creatures attack, an instance's own creatures must take its members as
+  prey. Pirates (P1.E08.T05), NPC convoys and the Hollow are the later events' enemies; an admin command to run an event
+  is not wired (the service's `run` is there for it).

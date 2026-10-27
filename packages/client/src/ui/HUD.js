@@ -338,6 +338,7 @@ export class HUD {
     this.edgeCompass.update(!g.overlay && !cine && (mode === 'ship' || mode === 'foot'));
     this.updateMarkers();
     this.updateHits(g.net?.combat);
+    this.updateEvents(g.net?.worldEvents);
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
   }
@@ -350,6 +351,16 @@ export class HUD {
     for (const h of dealt) this.hitNumber(h.amount, h.killed);
     if (taken.length) this.flash('damage');
     for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good');
+  }
+
+  // World events (ARCHITECTURE §25): a banner as one is announced, starts and ends in the system, and toasts as the
+  // player joins an instance, its scaling changes and it is paid. (A full event panel is later work.)
+  updateEvents(feed) {
+    if (!feed) return;
+    for (const x of feed.take()) {
+      if (x.banner) this.showBanner(x.title, x.sub);
+      else this.toast(x.text, x.tone);
+    }
   }
 
   hitNumber(amount, killed) {

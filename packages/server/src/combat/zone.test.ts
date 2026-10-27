@@ -12,7 +12,7 @@ import { DEN_RESPAWN_S } from '../fauna/dens.ts';
 import { tangents } from '../fauna/herds.ts';
 import { nextTime } from '../fauna/sky.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
-import { DEATH_BEAT_S, EVENTS_PER_SESSION, type CombatHooks, type DownedReport, type KillReport } from './zone.ts';
+import { DEATH_BEAT_S, EVENTS_PER_SESSION, type CombatHooks, type DownedReport, type HitReport, type KillReport } from './zone.ts';
 
 type Want = (s: readonly FaunaSpecies[]) => boolean;
 const docile = (s: readonly FaunaSpecies[]) => s.find((x) => x.temperament === 'docile' && x.kind !== 'flyer');
@@ -39,8 +39,9 @@ class TextViewer implements ZoneViewer {
 
 /** A world with hooks that record what they hear, and players joined at points over its ground. */
 function combatWorld(want: Want = both, fauna: { dens?: boolean } = {}) {
-  const heard = { killed: [] as KillReport[], downed: [] as DownedReport[], engaged: [] as string[] };
+  const heard = { hits: [] as HitReport[], killed: [] as KillReport[], downed: [] as DownedReport[], engaged: [] as string[] };
   const hooks: CombatHooks = {
+    hit: (r) => heard.hits.push(r),
     killed: (r) => heard.killed.push(r),
     downed: (r) => heard.downed.push(r),
     engaged: (id) => heard.engaged.push(id),
@@ -87,6 +88,27 @@ describe('health', () => {
     expect(w.zone.entity(id!)!.fields.hp).toBe(1);
   });
 
+  it('is scaled for an event instance (its max and what it has left), before or after it is first hurt', () => {
+    const { w, herd, join, up } = combatWorld();
+    const sp = docile(w.species)!;
+    const [fresh, hurt] = herd(sp, w.at(30, 0), 2, 7);
+    const max = mobStats({ kind: 'fauna', bodyPlan: sp.bodyPlan, temperament: sp.temperament }, 7).health!;
+    w.zone.combat.scaleHealth(fresh!, 2.5);
+    expect(w.zone.combat.creatureHealth(fresh!)).toEqual({ hp: max * 2.5, max: max * 2.5, dead: false });
+    const a = join('a', up(w.at(0, 0), 40));
+    w.zone.combat.applyDamage(a.entity, hurt!, weapon(10));
+    w.zone.combat.scaleHealth(hurt!, 2);
+    expect(w.zone.combat.creatureHealth(hurt!)).toEqual({ hp: (max - 10) * 2, max: max * 2, dead: false });
+    expect(w.zone.entity(hurt!)!.fields.hp).toBeCloseTo((max - 10) / max, 12);
+    // scaled again, it is scaled from its mob stats' health, not twice over
+    w.zone.combat.scaleHealth(hurt!, 1);
+    expect(w.zone.combat.creatureHealth(hurt!)!.max).toBeCloseTo(max, 9);
+    expect(() => w.zone.combat.scaleHealth(hurt!, 0)).toThrow(RangeError);
+    // a player's health is no creature's
+    w.zone.combat.scaleHealth(a.entity, 3);
+    expect(w.zone.combat.playerHealth(a.entity)!.hullMax).toBe(100);
+  });
+
   it("is a player's suit (with its nodes) on foot, its ship's shield and hull aboard", () => {
     const { w, join, up } = combatWorld();
     const a = join('a', up(w.at(0, 0), 40));
@@ -107,6 +129,8 @@ describe('the damage path', () => {
     expect(w.zone.combat.creatureHealth(id!)!.hp).toBeCloseTo(max - 11, 9);
     expect(w.zone.entity(id!)!.fields.hp).toBeCloseTo((max - 11) / max, 9);
     expect(heard.engaged).toEqual(['a']);
+    // each hit is heard with what it took (an event's contribution): who dealt it, to what
+    expect(heard.hits).toEqual([{ zone: w.zone.id, source: a.entity, attacker: 'a', target: id!, dealt: 11, killed: false, at: w.zone.time }]);
     // the attacker's power applies (its modifiers are the caller's to give)
     const strong = w.zone.combat.applyDamage(a.entity, id!, { ...weapon(10), attackerMods: [{ stat: 'ability.power', op: 'mul', value: 1.5 }] })!;
     expect(strong.amount).toBeCloseTo(15, 9);
@@ -158,6 +182,11 @@ describe('a kill', () => {
     expect([...r.by]).toEqual([
       ['a', max * 0.3],
       ['b', max * 0.7],
+    ]);
+    // each hit heard before the kill, the killing blow as what it took
+    expect(heard.hits.map((h) => [h.attacker, h.dealt, h.killed])).toEqual([
+      ['a', max * 0.3, false],
+      ['b', max * 0.7, true],
     ]);
     // out of its herd and the AI at once; its entity a corpse
     expect(w.zone.fauna!.creatures().map((c) => c.id)).toEqual([other]);

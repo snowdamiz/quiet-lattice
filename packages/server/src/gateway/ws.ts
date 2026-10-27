@@ -23,6 +23,9 @@
 // crafting service (crafting/), which checks each against the recipes the character knows (the book persistence's
 // registry loads into), where the player is and what it holds, and answers it; a joining character is sent the recipes it
 // knows after its skills, and again whenever it learns one, before the answer (§23).
+// World events (events/) run on their own timer: the event service schedules them in every loaded system, tells the
+// sessions there, puts players arriving at an event's place in its instances, counts their contribution from the combat
+// service's hits and pays them by it (§25); clients send it nothing.
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
@@ -53,6 +56,7 @@ import { CutsceneService } from '../cutscenes/service.ts';
 import type { RecipeBook } from '../crafting/book.ts';
 import { recipeBookIn } from '../crafting/component.ts';
 import { CraftingService } from '../crafting/service.ts';
+import { EventService } from '../events/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import { skillServiceIn } from '../skills/component.ts';
@@ -150,6 +154,8 @@ export interface WsGatewayDeps {
   recipes?: RecipeBook;
   /** Fabricators; the gateway makes its own over the recipe book when none is given. */
   crafting?: CraftingService;
+  /** World events; the gateway makes (and starts and stops) its own when none is given, and gives it combat's news. */
+  events?: EventService;
 }
 
 export interface WsStats {
@@ -169,6 +175,7 @@ export interface WsGateway {
   readonly codex: CodexService;
   readonly analysis: AnalysisService;
   readonly crafting: CraftingService;
+  readonly events: EventService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -254,6 +261,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeAnalysis = quests ? analysis.subscribe((e) => void quests.event(e.characterId, { type: 'analyze', species: e.key })) : undefined;
   const crafting =
     deps.crafting ?? new CraftingService({ zones: deps.zones, inventory, book: deps.recipes ?? needRecipes(persistence), now: () => deps.clock.now(), log });
+  // world events: the hits combat resolves are their participants' contribution; rewards go to the same inventory,
+  // progress and skill view (reputation once the rep model, P2.E18.T01, gives a hook)
+  const events = deps.events ?? new EventService({ zones: deps.zones, now: () => deps.clock.now(), inventory, progress: deps.progress, skills, quests, log });
+  if (!deps.events) events.start();
+  const unsubscribeEvents = combat.subscribe((news) => events.combat(news));
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -583,6 +595,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     codex,
     analysis,
     crafting,
+    events,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
@@ -590,6 +603,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
       if (!deps.resources) await resources.close();
+      if (!deps.events) events.stop();
+      unsubscribeEvents();
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeQuests?.();

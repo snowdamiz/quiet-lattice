@@ -13,6 +13,7 @@ import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
 import { CombatFeed } from './combat.js';
 import { SnapshotStore } from './snapshots.js';
+import { WorldEvents } from './worldEvents.js';
 
 /** Input goes out at 20 Hz (the zone's tick) of real time, however fast frames run. */
 export const INPUT_INTERVAL_MS = 50;
@@ -83,6 +84,8 @@ export class Net {
     this.combat = new CombatFeed(this);
     /** The call-for-aid beacons (beacons.js): the shard's list while watching, the character's own, and the requests. */
     this.beacons = new Beacons(this);
+    /** World events (worldEvents.js): those the server told of, the player's standing in one, and what the HUD shows. */
+    this.worldEvents = new WorldEvents(this);
   }
 
   get joined() {

@@ -4,12 +4,13 @@
 import { z } from 'zod';
 import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
+import { EVENT_PLAYERS_MAX, eventIdSchema } from '../events/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 13;
+export const PROTOCOL_VERSION = 15;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -24,6 +25,8 @@ export const PROTOCOL_VERSION = 13;
 // 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 // 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
+// 14: reserved for reputation: its state and changes, on its branch until it merges (P2.E18.T01)
+// 15: world events: event news to the system (announced, started, ended), a participant's status (its instance, level, contribution) and rewards (P2.E21.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -785,6 +788,82 @@ export const RecipesState = z.object({
     .refine((ids) => new Set(ids).size === ids.length, 'a recipe is known once'),
 });
 
+// ---------- world events (P2.E21.T01, ARCHITECTURE §25) ----------
+
+/** An event running (or announced) in a system: unique on the shard while its server runs. */
+export const WorldEventId = z.number().int().min(1).max(0xffffffff);
+/**
+ * An event as a system hears of it (DESIGN 14.6, "announced by banner to the system"): which event and what it is called,
+ * the star system (galaxy index), its place (a sphere in one of the system's frames: going inside puts a player in one
+ * of its instances), and the world times it starts and ends.
+ */
+export const WorldEventView = z
+  .object({
+    id: WorldEventId,
+    event: eventIdSchema,
+    name: PlainText(64),
+    system: z.number().int().nonnegative().max(1023),
+    frame: FrameId,
+    center: Vec3,
+    radius: z.number().positive().max(MAX_POS),
+    starts: z.number().min(0),
+    ends: z.number().min(0),
+  })
+  .refine((e) => e.ends > e.starts, 'an event ends after it starts');
+export type WorldEventView = z.infer<typeof WorldEventView>;
+/** How an event (or one participant's instance of it) ended: its waves cleared, or its time ran out first. */
+export const EventOutcome = z.enum(['completed', 'expired']);
+/**
+ * Event news, to every session in the event's star system (and to one that arrives there while it is on): `announced`
+ * (it starts at `starts`), `started`, and `ended` with `outcome` (`completed` when every instance it opened cleared its
+ * waves).
+ */
+export const WorldEventNews = z
+  .object({
+    t: z.literal('world_event'),
+    op: z.enum(['announced', 'started', 'ended']),
+    event: WorldEventView,
+    outcome: EventOutcome.optional(),
+  })
+  .refine((m) => (m.op === 'ended') === (m.outcome !== undefined), 'an end, and only an end, says how');
+/**
+ * A participant's place in an event (DESIGN 16.6): its instance (`phase`, the event phase it is in), the instance's
+ * scaling `level` (the players it holds, 1–12; a 13th opens another instance), its players, the wave it is on of
+ * `waves` and the enemies left, and the participant's own contribution so far: damage to the instance's enemies,
+ * objective points, seconds present, and its `share` of the rewards as things stand. Sent as it is placed, whenever the
+ * level, the wave or its enemies change, and at most once a second as its contribution grows.
+ */
+export const EventStatus = z.object({
+  t: z.literal('event_status'),
+  id: WorldEventId,
+  phase: z.number().int().positive(),
+  level: z.number().int().min(1).max(EVENT_PLAYERS_MAX),
+  players: z.number().int().min(0).max(EVENT_PLAYERS_MAX),
+  wave: z.number().int().min(0).max(20),
+  waves: z.number().int().min(1).max(20),
+  enemies: z.number().int().min(0).max(1000),
+  damage: z.number().min(0).max(1e12),
+  objective: z.number().min(0).max(1e12),
+  presence: z.number().min(0).max(1e7),
+  share: z.number().min(0).max(1),
+});
+/**
+ * What a participant's instance paid it as it ended (DESIGN 14.6, "rewards by contribution"): its `share`, the XP (and
+ * the level it now stands at), units and items that reached it (the inventory itself arrives as `inventory` state), and
+ * reputation. A participant who contributed too little is sent a share of 0 and nothing.
+ */
+export const EventReward = z.object({
+  t: z.literal('event_reward'),
+  id: WorldEventId,
+  outcome: EventOutcome,
+  share: z.number().min(0).max(1),
+  xp: z.number().int().min(0).max(1e9),
+  level: z.number().int().min(1).max(50).optional(),
+  units: z.number().int().min(0).max(1e9),
+  items: z.array(z.object({ item: z.string().max(48), count: z.number().int().positive().max(1e9) })).max(16),
+  rep: z.array(z.object({ faction: z.string().max(32), amount: z.number().int().min(-1e6).max(1e6) })).max(8),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -807,6 +886,9 @@ export const ServerMessage = z.discriminatedUnion('t', [
   AnalyzeState,
   CraftState,
   RecipesState,
+  WorldEventNews,
+  EventStatus,
+  EventReward,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
