@@ -24,6 +24,7 @@ import {
   skillNode,
   structureProblems,
   type Bar,
+  type FragmentBranch,
   type Fragments,
   type SkillState,
   type SkillWeb,
@@ -191,8 +192,9 @@ export function reconcileSkills(stored: StoredSkills, web: SkillWeb = SKILL_WEB)
  * version, so it is reconciled on load like any older web's; and with what each unlock paid as its ledger tells it. v1 kept
  * no such record, but fragments were only ever spent unlocking, so each unlocked node a fragment route reaches is credited
  * its tier's fragments of its branch, in the order unlocked, while that branch's spent fragments last: never more than was
- * spent, though a node a trainer taught may take the credit of one of its branch's fragment unlocks. Anything not an object
- * is left for the schema to refuse.
+ * spent, though a node a trainer taught may take the credit of one of its branch's fragment unlocks. A node a people starts
+ * with (Thalune's Second Lung, Ixari's Pulse: first in `unlocked`, and free) is credited only after every other node,
+ * with what they leave. Anything not an object is left for the schema to refuse.
  */
 export function migrateSkillsV1(data: unknown): unknown {
   if (!data || typeof data !== 'object' || Array.isArray(data)) return data;
@@ -202,13 +204,17 @@ export function migrateSkillsV1(data: unknown): unknown {
     const spent = v1.fragments?.[b]?.spent;
     left.set(b, typeof spent === 'number' && spent > 0 ? spent : 0);
   }
-  const paid: UnlocksPaid = {};
+  const reached: { id: string; branch: FragmentBranch; count: number; people: boolean }[] = [];
   for (const id of Array.isArray(v1.unlocked) ? v1.unlocked : []) {
     const node = typeof id === 'string' ? skillNode(id) : undefined;
     const route = node && fragmentRoute(node);
-    if (!route || (left.get(route.branch) ?? 0) < route.count) continue;
-    paid[id as string] = { branch: route.branch, count: route.count };
-    left.set(route.branch, left.get(route.branch)! - route.count);
+    if (route) reached.push({ id: id as string, ...route, people: node.unlock.anyOf.some((r) => r.kind === 'people') });
+  }
+  const paid: UnlocksPaid = {};
+  for (const r of [...reached.filter((r) => !r.people), ...reached.filter((r) => r.people)]) {
+    if ((left.get(r.branch) ?? 0) < r.count) continue;
+    paid[r.id] = { branch: r.branch, count: r.count };
+    left.set(r.branch, left.get(r.branch)! - r.count);
   }
   return { web: 0, ...data, paid };
 }

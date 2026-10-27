@@ -293,6 +293,32 @@ describe('the skills component’s v1 values', () => {
     for (const junk of ['everything', null, [1, 2], 7]) expect(migrateSkillsV1(junk)).toBe(junk);
     expect(storedSkillsSchema.safeParse(migrateSkillsV1({ unlocked: 'pull' })).success).toBe(false);
   });
+
+  it('credit a people’s free node last, so it never takes another unlock’s payment and a removal mints nothing', () => {
+    const symbiotic = (spent: number) => ({ ...emptySkillState().fragments, symbiotic: { earned: 2, spent } });
+    // Thalune's Second Lung came free, first in the list; the one symbiotic fragment spent bought Bond
+    const thalune = migrateSkillsV1({ ...emptySkillState(), unlocked: ['second_lung', 'bond'], fragments: symbiotic(1) }) as StoredSkills;
+    expect(thalune.paid).toEqual({ bond: { branch: 'symbiotic', count: 1 } });
+    // Second Lung leaves the web: nothing comes back for it, and Bond keeps its payment
+    const without = skillWeb(
+      SKILL_WEB_VERSION + 1,
+      SKILL_NODES.filter((n) => n.id !== 'second_lung'),
+    );
+    const r = reconcileSkills(thalune, without);
+    expect(r.changes).toEqual([{ change: 'removed', node: 'second_lung', owned: false, fragments: null }]);
+    expect(r.stored.fragments.symbiotic).toEqual({ earned: 2, spent: 1 });
+    expect(r.stored.paid).toEqual({ bond: { branch: 'symbiotic', count: 1 } });
+    // Ixari's Pulse likewise; Long Ear took the resonance fragment
+    const ixari = migrateSkillsV1({
+      ...emptySkillState(),
+      unlocked: ['pulse', 'long_ear'],
+      fragments: { ...emptySkillState().fragments, resonance: { earned: 1, spent: 1 } },
+    }) as StoredSkills;
+    expect(ixari.paid).toEqual({ long_ear: { branch: 'resonance', count: 1 } });
+    // what the others leave, a people's node may still have paid (another people unlocked it with a fragment)
+    const both = migrateSkillsV1({ ...emptySkillState(), unlocked: ['second_lung', 'bond'], fragments: symbiotic(2) }) as StoredSkills;
+    expect(both.paid).toEqual({ bond: { branch: 'symbiotic', count: 1 }, second_lung: { branch: 'symbiotic', count: 1 } });
+  });
 });
 
 /** What a stored state reads of the web, as a short hash: ids, branches, tiers, bars, prerequisites, and the bars' sizes. */
