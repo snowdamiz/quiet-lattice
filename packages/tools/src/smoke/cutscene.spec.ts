@@ -176,7 +176,7 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
   expect(Math.abs(ended.fov[0] - ended.fov[1])).toBeLessThan(0.05);
   expect(ended.cineShown).toBe('none');
   expect(Number(ended.hud)).toBe(1);
-  expect(ended.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: false });
+  expect(ended.sent.at(-1)).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: false, reason: 'finished' });
 
   // ---- play again, and skip it with Esc ----
   const skipped = await page.evaluate(async () => {
@@ -232,7 +232,7 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
   expect(skipped.frames).toBeLessThan(100);
   expect(skipped.camOnShip).toBe(true);
   expect(skipped.camToShip).toBeLessThan(40);
-  expect(skipped.sent).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true });
+  expect(skipped.sent).toEqual({ t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'skipped' });
 
   // ---- online (a stand-in for game.net): it asks the server, and plays only on its `play`, in the phase it names ----
   const online = await page.evaluate(async () => {
@@ -293,8 +293,8 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
   expect(online.sent).toEqual([
     { t: 'cutscene', op: 'request', id: 'test' },
     { t: 'cutscene', op: 'request', id: 'test' },
-    { t: 'cutscene', op: 'done', id: 'test', skipped: true },
-    { t: 'cutscene', op: 'done', id: 'test', skipped: true },
+    { t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'skipped' },
+    { t: 'cutscene', op: 'done', id: 'test', skipped: true, reason: 'skipped' },
   ]);
 
   expect(errors, errors.join('\n')).toEqual([]);

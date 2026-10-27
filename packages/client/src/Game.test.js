@@ -3,6 +3,7 @@
 // leaving the world.
 import * as THREE from 'three';
 import { encodeServerMessage } from '@astra/shared/protocol';
+import { QuestBook } from '@astra/shared/quests';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Game } from './Game.js';
 import { Inventory } from './gameplay/Inventory.js';
@@ -403,5 +404,27 @@ describe('Game: where a welcome places the character', () => {
     expect(g.system.star.position.toArray()).toEqual([0, 0, 0]);
     expect(g.sky.reset).toHaveBeenCalled();
     expect(g.placeFromServer).toHaveBeenCalledWith(POSE, 'docked');
+  });
+});
+
+describe('Game: the online objective line', () => {
+  it('announces a new step from the server, not a count moving on the same step', () => {
+    const toasts = [];
+    const book = new QuestBook();
+    const objectives = {
+      book,
+      get current() {
+        const o = book.objective();
+        return o && (o.of > 1 ? `${o.text} · ${o.n}/${o.of}` : o.text);
+      },
+    };
+    const g = fake({ objectives, hud: { toast: (t) => toasts.push(t) }, audio: { play() {} } });
+    const view = (step, n) => ({ active: { first_jobs: { step, counters: { gather: n }, seen: {}, started: 0, since: 0 } }, done: {}, flags: [], offered: [] });
+    g.onQuests({ t: 'quests', seq: 0, quests: view('land', 0) });
+    g.onQuests({ t: 'quests', seq: 0, quests: view('gather', 0) });
+    g.onQuests({ t: 'quests', seq: 0, quests: view('gather', 5) });
+    g.onQuests({ t: 'quests', seq: 0, quests: view('gather', 12) });
+    expect(toasts).toEqual(['Next: Gather resources · 0/25']);
+    expect(objectives.current).toBe('Gather resources · 12/25');
   });
 });

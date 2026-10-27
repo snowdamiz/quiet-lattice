@@ -117,7 +117,7 @@ Commands (a character or account is named by its id or its name, ignoring case):
   spawn <system> herd species=<i> [count=<n>] [level=<n>] (near=<character> | body=<i> at=<x>,<y>,<z>)
   spawn <system> entity kind=npc|prop frame=<frame> at=<x>,<y>,<z> [name=<name>]
   despawn <system> <entity id>
-  set-quest-step <character> <quest> <step>     the quest log's step (needs the quest runtime, P1.E09.T01)
+  set-quest-step <character> <quest> <step>     a quest at its step <step> (from 0), started if it is not on
   set-skill-points <character> <n>              points available to spend (never below what levels give)
   mute <account> [seconds]                      chat mute (default ${DEFAULT_MUTE_S} s, at most ${MAX_MUTE_S} s)
   unmute <account>

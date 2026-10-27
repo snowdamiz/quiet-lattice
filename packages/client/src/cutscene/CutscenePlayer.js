@@ -130,7 +130,7 @@ export class CutscenePlayer {
     if (answer.refused) return refuse(answer.refused);
     if (this.current || (g.mode !== 'ship' && g.mode !== 'foot')) {
       // (another began meanwhile, or play ended: the server's placing is given back)
-      link.done(id, true);
+      link.done(id, 'returned');
       return refuse('busy');
     }
     return this.begin(def, link, answer.phase);
@@ -143,7 +143,7 @@ export class CutscenePlayer {
    */
   async serverStarted(link, id, phase) {
     const g = this.game;
-    const giveBack = () => link.done(id, true);
+    const giveBack = () => link.done(id, 'returned');
     if (this.current || (g.mode !== 'ship' && g.mode !== 'foot')) return giveBack();
     let def;
     try {
@@ -300,7 +300,7 @@ export class CutscenePlayer {
   leave() {
     const c = this.current;
     this.game.director.release({ exit: c.def.exit, dur: EXIT_SECONDS });
-    c.link.done(c.def.id, c.timeline.skipped);
+    c.link.done(c.def.id, c.timeline.skipped ? 'skipped' : 'finished');
   }
 
   /** The camera is home: the controls come back (and, unlocked by Esc meanwhile, the pause screen comes up as after
