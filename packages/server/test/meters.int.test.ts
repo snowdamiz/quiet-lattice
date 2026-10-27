@@ -1,7 +1,10 @@
 // Heat and Charge over the socket against the dockerised Postgres and Redis (P1.E07.T02): join sends the meters; a bot on
 // foot mines with the beam held until it overheats, is locked out while it holds the beam, and cools out of the lockout;
-// a ship regenerates Charge in sunlight inside the habitable band and not in deep space; the pulse drive is refused at
-// 0 Charge, with a notice, and engages again after a refill; and the meters survive leaving and a restart.
+// a ship regenerates Charge in sunlight inside the habitable band and not in deep space; movement authority refuses the pulse
+// drive at 0 Charge with a correction (its rule logged) and a notice, and lets it engage after a refill; and the meters
+// survive leaving and a restart. Bots that stand anywhere with raw poses run without movement authority; the pulse drive's
+// pilot flies out of the Waystation as a client does.
+import { STATION_LAYOUT } from '@astra/shared/data';
 import { PROTOCOL_VERSION, type ClientMessage, type ServerMessage } from '@astra/shared/protocol';
 import { meterEnvironment } from '@astra/shared/meters';
 import { dirToLocal, systemPoses, type Vec3 } from '@astra/shared/world';
@@ -14,7 +17,8 @@ import { characters } from '../src/db/schema.ts';
 import type { RunningServer } from '../src/server.ts';
 import { homeSystemOf, systemSeed } from '../src/world/home.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
-import { newAccount, newCharacter, startTestServer, TestSocket, uniqueShard } from './helpers.ts';
+import { newAccount, newCharacter, startTestServer, TestSocket, uniqueShard, waitFor } from './helpers.ts';
+import { Pilot } from './pilot.ts';
 
 type Meters = Extract<ServerMessage, { t: 'meters' }>;
 type Input = Extract<ClientMessage, { t: 'input' }>;
@@ -33,8 +37,9 @@ afterAll(async () => {
   await database?.close();
 });
 
-async function start(shard?: string): Promise<RunningServer> {
-  const server = await startTestServer({}, shard ? { shard } : {});
+/** A server; without movement authority unless asked (its bots stand anywhere with raw poses). */
+async function start(shard?: string, movement = false): Promise<RunningServer> {
+  const server = await startTestServer({}, { movement, ...(shard ? { shard } : {}) });
   running.add(server);
   return server;
 }
@@ -152,7 +157,7 @@ describe('heat and Charge over the socket', () => {
     s.close();
   }, 40_000);
 
-  it('regenerates Charge in sunlight inside the habitable band, not in deep space, and refuses the pulse drive at 0', async () => {
+  it('regenerates Charge in sunlight inside the habitable band, not in deep space', async () => {
     const server = await start();
     const acct = await newAccount(server);
     const character = await newCharacter(server, acct.token, { people: 'thalune' });
@@ -187,27 +192,56 @@ describe('heat and Charge over the socket', () => {
     await bot.hold(2000, 'ship', null, deep);
     await handled(s);
     expect(server.ws.meters.view(id, clock()).charge).toBeCloseTo(d0, 6);
-
-    // empty: the pulse drive is refused, the server believing the ship's mode, and the pilot told once
-    server.ws.meters.view(id, clock());
-    expect(server.ws.meters.spendCharge(id, server.ws.meters.get(id)!.charge, clock()).ok).toBe(true);
-    expect(server.ws.meters.allowsMode(id, 'pulse', clock())).toBe(false);
-    await bot.hold(500, 'pulse', null, deep);
-    await handled(s);
-    const session = [...server.ws.registry.sessions].find((x) => x.characterId === id)!;
-    const zone = server.zones.zoneOf(session)!;
-    expect(zone.entity(session.entityId!)!.fields.mode).toBe('ship');
-    const notices = s.received.filter((m) => m.t === 'event' && m.event.kind === 'notice');
-    expect(notices).toEqual([{ t: 'event', event: { kind: 'notice', text: 'Charge empty: the pulse drive will not engage', tone: 'warn' } }]);
-    expect(session.invalidMessages).toBe(0);
-
-    // a refill at a Waystation (the station's terminal takes its price, P1.E11/P1.E13): the drive engages
-    expect(server.ws.meters.refillCharge(id, clock()).charge).toBe(100);
-    await bot.hold(300, 'pulse', null, deep);
-    await handled(s);
-    expect(zone.entity(session.entityId!)!.fields.mode).toBe('pulse');
     s.close();
   }, 40_000);
+
+  it('under movement authority, corrects a pulse drive engaged with Charge empty, logging its rule, and engages it with Charge', async () => {
+    const server = await start(undefined, true);
+    const p = await Pilot.join(server);
+    const id = p.characterId;
+    const clock = () => server.world.clock.now();
+    const zone = server.zones.zone(p.welcome.zone.id)!;
+    // off the pad, out of the hangar's mouth and on, well clear of the Waystation
+    const [x, y, z] = p.welcome.pose.pos;
+    const out: Vec3 = [0, 30, STATION_LAYOUT.hangar.z1 + 60];
+    await p.hold('docked', 300);
+    await p.fly([[x, y, z], [x, 14, z], [x, 14, 40], out], [10, 40, 60]);
+    const clear: Vec3 = [0, 30, out[2] + 1500];
+    await p.fly([out, clear], [500]);
+    expect(p.corrections).toEqual([]);
+
+    // Charge run out (the meters as a character joins with them empty: no regeneration before the zone takes an input
+    // again), everything sent before handled first
+    await handled(p.sock);
+    server.ws.meters.open(id, { heat: 0, overheated: false, charge: 0, at: clock() });
+    expect(server.ws.meters.allowsMode(id, 'pulse', clock())).toBe(false);
+    // the drive engaged where the ship is: corrected back to the ship it was, the rule logged, and the pilot told why
+    const at = p.last;
+    const seq = p.send(at, 'pulse');
+    await waitFor(() => p.corrections.length > 0, 5000, 'the correction');
+    const correction = p.corrections[0]!;
+    expect(correction).toMatchObject({ seq, mode: 'ship', pose: { frame: at.frame } });
+    expect(Math.hypot(...correction.pose.pos.map((v, i) => v - at.pos[i]!))).toBeLessThan(1e-3);
+    expect(zone.movement!.recent.filter((r) => r.characterId === id)).toEqual([
+      expect.objectContaining({ rule: 'pulse_charge', unit: 'charge', detail: 'engaging with Charge empty', mode: 'ship', kicked: false }),
+    ]);
+    expect(zone.entity(p.entityId)!.fields.mode).toBe('ship');
+    const notices = () => p.sock.received.filter((m) => m.t === 'event' && m.event.kind === 'notice');
+    await waitFor(() => notices().length > 0, 5000, 'the notice');
+    expect(notices()).toEqual([{ t: 'event', event: { kind: 'notice', text: 'Charge empty: the pulse drive will not engage', tone: 'warn' } }]);
+
+    // refilled at a Waystation (the station's terminal takes its price, P1.E11/P1.E13): back where it was corrected to, it
+    // engages and cruises on (under the drive's limit so near the Waystation, about 1 km/s), with no more corrections
+    expect(server.ws.meters.refillCharge(id, clock()).charge).toBe(100);
+    p.send(at, 'ship');
+    await p.fly([clear, [0, 30, clear[2] + 800]], [800], 'pulse');
+    await handled(p.sock);
+    await waitFor(() => zone.entity(p.entityId)?.fields.mode === 'pulse', 5000, 'the drive engaged');
+    expect(p.corrections).toHaveLength(1);
+    expect(notices()).toHaveLength(1);
+    expect(server.ws.meters.allowsMode(id, 'pulse', clock())).toBe(true);
+    p.close();
+  }, 60_000);
 
   it('keeps Charge and heat across leaving and a restart, heat cooling for the time away', async () => {
     const shard = uniqueShard();
