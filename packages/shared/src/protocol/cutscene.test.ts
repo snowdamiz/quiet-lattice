@@ -1,11 +1,19 @@
-// The cutscene messages (protocol 4): a client asks for one and says when it is done; the server answers play, ended
+// The cutscene messages (protocol 5): a client asks for one and says when it is done; the server answers play, ended
 // or refused, with the story phase it plays in. One `cutscene` type serves both directions, told apart by its ops.
 import { describe, expect, it } from 'vitest';
-import { decodeClientMessage, decodeServerMessage, encodeClientMessage, encodeMessage, encodeServerMessage, PROTOCOL_VERSION } from './index.ts';
+import {
+  decodeClientMessage,
+  decodeServerMessage,
+  encodeClientMessage,
+  encodeMessage,
+  encodeServerMessage,
+  PROTOCOL_VERSION,
+  type ServerMessage,
+} from './index.ts';
 
 describe('cutscene messages', () => {
-  it('arrived with protocol 4', () => {
-    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(4);
+  it('arrived with protocol 5', () => {
+    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(5);
   });
 
   it('round-trips a request and a done, and refuses bad ids, ops and a skipped request', () => {
@@ -35,7 +43,7 @@ describe('cutscene messages', () => {
       { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
       { t: 'cutscene', op: 'ended', id: 'test', phase: null },
       ...(['unknown', 'denied', 'cooldown', 'busy', 'place', 'phase', 'zone'] as const).map((reason) => ({ t: 'cutscene' as const, op: 'refused' as const, id: 'test', phase: null, reason })),
-    ]) {
+    ] satisfies ServerMessage[]) {
       expect(decodeServerMessage(encodeServerMessage(m))).toEqual(m);
     }
     expect(() => encodeServerMessage({ t: 'cutscene', op: 'play', id: 'test', phase: 0 })).toThrow();
