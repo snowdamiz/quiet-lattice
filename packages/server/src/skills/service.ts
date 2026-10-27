@@ -10,9 +10,10 @@
 // refused when that would lose items) and, through `owned()`, the ability and meter systems to come. The level is
 // progress's and the flown hull is the ship's: points and the ship bar read them live, and never store them.
 //
-// Persistence (src/persistence, the `skills` component) puts a character in play on join with `open`, stores `get()` and
-// evicts it with `close()` once it has left; every other call is for a character the service holds and throws a
-// SkillsNotHeldError for one it does not.
+// Persistence (src/persistence, the `skills` component) puts a character in play on join with `open`, stores `stored()`
+// and evicts it with `close()` once it has left; every other call is for a character the service holds and throws a
+// SkillsNotHeldError for one it does not. Beside the state it keeps what each fragment unlock paid (never sent to the
+// client), so a node a later web removes gives its fragments back (P1.E07.T15).
 import { getHull, getTrainer, type Requirement } from '@astra/shared/data';
 import { applyLayout, layoutFor, spendUnits, type InventoryLayout } from '@astra/shared/inventory';
 import { LoadoutError, shipStats, type ShipLoadout } from '@astra/shared/ships';
@@ -22,6 +23,7 @@ import {
   fail,
   grantFragments,
   grantPoints,
+  paidProblems,
   parseSkillOp,
   parseSkillState,
   pointsOf,
@@ -29,7 +31,9 @@ import {
   respecNodes,
   setAvailablePoints,
   SKILL_PHASE,
+  storedSkills,
   unlockVia,
+  unlockWithFragments,
   WEB_REQUIREMENTS,
   type PhaseTier,
   type SkillContext,
@@ -40,6 +44,8 @@ import {
   type SkillResult,
   type SkillState,
   type SkillView,
+  type StoredSkills,
+  type UnlocksPaid,
   type UnlockSource,
 } from '@astra/shared/skills';
 import type { InventoryService } from '../inventory/service.ts';
@@ -94,6 +100,8 @@ export class SkillsNotHeldError extends Error {
 
 interface Entry {
   state: SkillState;
+  /** What each unlock bought with fragments paid (stored, never sent). */
+  paid: UnlocksPaid;
   /** The last request seq handled this session; requests must count up from it. */
   seq: number;
 }
@@ -122,17 +130,19 @@ export class SkillService {
   // ---------- in play ----------
 
   /**
-   * Puts a character's skills in play for a new session: `saved` (validated; an invalid value is an error, never silently
-   * replaced), with its people's pre-unlocked node unlocked if it is not. Replaces anything held; request numbering starts
-   * over. Returns the view to send after `welcome`.
+   * Puts a character's skills in play for a new session: `saved` and what its unlocks paid (validated; an invalid value is
+   * an error, never silently replaced), with its people's pre-unlocked node unlocked if it is not. Replaces anything held;
+   * request numbering starts over. Returns the view to send after `welcome`.
    */
-  open(characterId: string, saved: SkillState, people: string): SkillReply {
+  open(characterId: string, saved: SkillState, people: string, paid: UnlocksPaid = {}): SkillReply {
     const r = parseSkillState(saved);
     if (!r.ok) throw new Error(`saved skills of ${characterId} are invalid: ${r.error.message}`);
+    const unpaid = paidProblems(r.state, paid)[0];
+    if (unpaid) throw new Error(`saved skills of ${characterId} are invalid: ${unpaid.message}`);
     let state = r.state;
     const node = preUnlockedNode(people);
     if (node && !state.unlocked.includes(node)) state = { ...state, unlocked: [...state.unlocked, node] };
-    const e: Entry = { state, seq: 0 };
+    const e: Entry = { state, paid: { ...paid }, seq: 0 };
     this.entries.set(characterId, e);
     return this.reply(characterId, e);
   }
@@ -140,6 +150,12 @@ export class SkillService {
   /** The character's state, or null when it is not held. */
   get(characterId: string): SkillState | null {
     return this.entries.get(characterId)?.state ?? null;
+  }
+
+  /** What to store for the character (the state, this build's web and what its unlocks paid), or null when it is not held. */
+  stored(characterId: string): StoredSkills | null {
+    const e = this.entries.get(characterId);
+    return e ? storedSkills(e.state, e.paid) : null;
   }
 
   /** Forgets a character's skills and returns them (for persistence to store first). */
@@ -195,10 +211,12 @@ export class SkillService {
     const parsed = parseSkillOp(op);
     const r = parsed.ok ? this.apply(characterId, e, parsed.op) : parsed;
     if (!r.ok) return this.reply(characterId, e, r.error.code);
+    if (r.paid) e.paid = r.paid;
     return this.commit(characterId, e, r.state, 'request');
   }
 
-  private apply(characterId: string, e: Entry, op: SkillOp): SkillResult {
+  /** A request applied; an unlock also says what its unlocks have paid since. */
+  private apply(characterId: string, e: Entry, op: SkillOp): SkillResult<{ paid?: UnlocksPaid }> {
     switch (op.op) {
       case 'buy':
         return this.buyFor(characterId, e, op.node);
@@ -208,8 +226,11 @@ export class SkillService {
       case 'unslot':
         if (this.hooks.inCombat(characterId)) return fail('in_combat', 'slots swap only out of combat');
         return applySkillOp(e.state, this.context(characterId), op);
-      case 'unlock':
-        return applySkillOp(e.state, this.context(characterId), op);
+      case 'unlock': {
+        const r = unlockWithFragments(e.state, this.context(characterId), op.node);
+        if (!r.ok) return r;
+        return { ok: true, state: r.state, paid: { ...e.paid, [op.node]: { branch: r.branch, count: r.spent } } };
+      }
     }
   }
 

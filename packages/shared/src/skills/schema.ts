@@ -36,6 +36,31 @@ export const barSchema = z.enum(BARS);
 export type Bar = z.infer<typeof barSchema>;
 export const BAR_SLOTS: Readonly<Record<Bar, number>> = { ground: GROUND_SLOTS, ship: SHIP_SLOTS };
 
+/**
+ * The skill web's data version (P1.E07.T15). Raise it with every change to what a stored state reads of the web: a node's
+ * id (renamed or removed), branch, tier, bar or prerequisites, or a bar's size (the hulls' ability slots). A state stored
+ * under an older web is reconciled with this one on load (`reconcileSkills`); one stored under a newer web is refused, so
+ * a server rolled back never strips nodes it does not know. The skill web test pins what this version covers.
+ */
+export const SKILL_WEB_VERSION = 1;
+
+/** A skill web as stored states are checked and reconciled against it: its version, its nodes and the size of each bar. */
+export interface SkillWeb {
+  readonly version: number;
+  /** The node of this web with this id, or undefined. */
+  readonly node: (id: string) => SkillNode | undefined;
+  readonly slots: Readonly<Record<Bar, number>>;
+}
+
+/** This build's web. */
+export const SKILL_WEB: SkillWeb = { version: SKILL_WEB_VERSION, node: skillNode, slots: BAR_SLOTS };
+
+/** A web of these nodes (tests reconcile against a fixture web: renamed, re-tiered, a node removed). */
+export function skillWeb(version: number, nodes: readonly SkillNode[], slots: Readonly<Record<Bar, number>> = BAR_SLOTS): SkillWeb {
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  return { version, node: (id) => byId.get(id), slots };
+}
+
 /** How far up the web a node sits, for the phase ceiling: Tier I–III by number, conjunctions with Tier III (they join two
  * Tier II branches and ship with Tier III's effects), capstones above them. */
 export type PhaseTier = 1 | 2 | 3 | 4;
@@ -96,29 +121,42 @@ export const skillStateSchema = z
     }),
   })
   .superRefine((s, ctx) => {
-    const unique = (ids: readonly string[], path: string) => {
-      if (new Set(ids).size !== ids.length) ctx.addIssue({ code: 'custom', message: `a node is listed twice`, path: [path] });
-    };
-    unique(s.unlocked, 'unlocked');
-    unique(s.bought, 'bought');
-    const unlocked = new Set(s.unlocked);
-    const bought = new Set(s.bought);
-    s.bought.forEach((id, i) => {
-      if (!unlocked.has(id)) ctx.addIssue({ code: 'custom', message: `${id} is bought but not unlocked`, path: ['bought', i] });
-    });
+    for (const p of structureProblems(s)) ctx.addIssue({ code: 'custom', ...p });
     for (const bar of BARS) {
-      const seen = new Set<string>();
       s.slots[bar].forEach((id, i) => {
-        if (id === null) return;
-        const path = ['slots', bar, i];
-        if (!bought.has(id)) ctx.addIssue({ code: 'custom', message: `${id} is slotted but not owned`, path });
-        if (NODE_BY_ID.get(id)?.slot !== bar) ctx.addIssue({ code: 'custom', message: `${id} does not go on the ${bar} bar`, path });
-        if (seen.has(id)) ctx.addIssue({ code: 'custom', message: `${id} is slotted twice`, path });
-        seen.add(id);
+        if (id !== null && NODE_BY_ID.get(id)?.slot !== bar)
+          ctx.addIssue({ code: 'custom', message: `${id} does not go on the ${bar} bar`, path: ['slots', bar, i] });
       });
     }
   });
 export type SkillState = z.infer<typeof skillStateSchema>;
+
+/** What no change to the web explains, so a value showing it is refused whatever web it was stored under: a node listed
+ * twice, bought but not unlocked, or slotted but not owned or twice on one bar. */
+export function structureProblems(s: Pick<SkillState, 'unlocked' | 'bought' | 'slots'>): { message: string; path: (string | number)[] }[] {
+  const problems: { message: string; path: (string | number)[] }[] = [];
+  const unique = (ids: readonly string[], path: string) => {
+    if (new Set(ids).size !== ids.length) problems.push({ message: `a node is listed twice`, path: [path] });
+  };
+  unique(s.unlocked, 'unlocked');
+  unique(s.bought, 'bought');
+  const unlocked = new Set(s.unlocked);
+  const bought = new Set(s.bought);
+  s.bought.forEach((id, i) => {
+    if (!unlocked.has(id)) problems.push({ message: `${id} is bought but not unlocked`, path: ['bought', i] });
+  });
+  for (const bar of BARS) {
+    const seen = new Set<string>();
+    s.slots[bar].forEach((id, i) => {
+      if (id === null) return;
+      const path = ['slots', bar, i];
+      if (!bought.has(id)) problems.push({ message: `${id} is slotted but not owned`, path });
+      if (seen.has(id)) problems.push({ message: `${id} is slotted twice`, path });
+      seen.add(id);
+    });
+  }
+  return problems;
+}
 
 /** What the client is sent: the state, and what the rules read beside it, so it can predict every request. */
 export const skillViewSchema = z.strictObject({

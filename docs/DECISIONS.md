@@ -581,3 +581,29 @@ Format: task id, question → choice → why.
   Ambusher burrows keep a herd of 1–2 lurking in the burrow's footprint. → DESIGN 12.2's dens and night, with one plan
   every machine computes. Open: packs breaking off at 30% health and returning at night (combat, P1.E06); ambushers
   beside deposits (resource nodes are on main now; a later fauna task).
+- **P1.E03.T04** Movement authority (`server/src/sim/movement`, ARCHITECTURE §7) → every zone checks each player input
+  before applying it: frame (the shared `selectFrame` rule, a 5% hysteresis, the old frame carried to the new pose's
+  time over at most 0.1 s, `frame.switchS`), clearance (the shared drawn ground at the system's tier from fauna's
+  planner, provisional while it plans and re-judged within 5 s; gas-giant depths; the Waystation's hangar shell grown by
+  the 6 m ship sphere), mode legality (pulse drive out of the air and clear ahead, 2 km over ground to engage; landed on
+  dry ground; docked on a free pad; foot only out of a landed or docked ship, boarding only from beside it; the `boost`
+  bit and thick air raise the caps), the move (anti-teleport: its allowance over at most 1 s, plus 0.1 s and 25 m; no
+  tunnelling through ground or hull past one 66 ms frame) and speed over windows of at least 1 s by the flight contract,
+  carried across frame changes, cap changes, getting out and boarding (walker caps across, up and down). Speed is judged
+  on the client's own clock, reversing P1.E12.T01's server-measured contract: credited time between inputs is the
+  client's stamp difference, at most the arrival gap plus 0.05 s from a 0.5 s bank (refilled only by unclaimed real
+  time) plus 0.05 s of owed time (real time its running clock left unclaimed in the last 10 s), never more than 0.3 s
+  ahead of arrival; a frozen clock is owed nothing; a clock stepped forward past its credit re-syncs with no movement
+  credit (at most once in 10 s); a stamp lagging over a second is a backlog only while it drains, else stale and placed
+  at arrival (and keeps its credit). Accepted envelope (owner-approved shape, measured in review): total credited time ≤
+  real time + 0.5 s + 0.3 s, owed time expires after 10 s; up to 3.9× real time for 3.4 s at 60 Hz, or about 6 s of
+  allowance (roughly 10 km at boost) in one tick after 6–10 s standing still: the same as an honest stall's backlog
+  arriving at once. Refusals send `correction {seq, pose, mode}`, inputs from the old trajectory are refused quietly for
+  a second, 8 corrections in 30 s kick. Restored poses are checked by `poseProblem` (a character saved on foot needs its
+  `parked` ship), the ground planned off the main thread first. Admin in-zone teleports re-seat the mover (docked on a
+  free pad) with the correction grace, so in-flight inputs are refused quietly. A server started with
+  `movement: false` (integration tests that place players with raw poses only) checks restored poses by shape only.
+  The real client gets 0 corrections across take-off, frame crossings, boost and pulse, 4–9 s stalls and 40–75 s hidden
+  tabs. → DESIGN's server authority over movement (plan 0.3) without correcting honest clients. Open: Heat and Charge's
+  `meters.allowsMode` is wired by whichever of this and P1.E07.T02 lands second; the station's other colliders arrive
+  with P1.E11.T02; an admin teleport on foot leaves the character no ship of its own to board (P1.E03.T07 follow-up).
