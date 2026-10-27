@@ -20,7 +20,8 @@ let server: RunningServer;
 let skew = 0;
 
 beforeAll(async () => {
-  server = await startTestServer({}, { shard: uniqueShard() });
+  // (its bot is put beside the lair with raw poses, straight from the Waystation: no movement authority here)
+  server = await startTestServer({}, { shard: uniqueShard(), movement: false });
   const clock = server.world.clock;
   const real = clock.now.bind(clock);
   clock.now = () => real() + skew;
