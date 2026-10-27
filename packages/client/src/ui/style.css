@@ -3021,7 +3021,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .social-side.live {
   pointer-events: auto;
 }
-.sp-party:empty,
+.sp-party:not(.shown),
 .sp-invites:empty {
   display: none;
 }

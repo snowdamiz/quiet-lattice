@@ -108,6 +108,24 @@ export class SocialUI {
     // the party frame and the invites waiting, under the location line
     this.side = el('div', 'social-side', layer);
     this.partyEl = el('div', 'sp-party', this.side);
+    this.rowsEl = el('div', 'sp-rows', this.partyEl);
+    // (kept as it is while the rows are redrawn, so a name half typed into it stays)
+    this.footEl = el('div', 'sp-foot', this.partyEl);
+    this.inviteName = el('input', '', this.footEl);
+    this.inviteName.type = 'text';
+    this.inviteName.placeholder = 'Invite by name';
+    this.inviteName.maxLength = 20;
+    this.inviteName.spellcheck = false;
+    this.inviteName.autocomplete = 'off';
+    const invite = () => {
+      if (this.model.submit(`/invite ${this.inviteName.value}`).ok) this.inviteName.value = '';
+    };
+    this.inviteName.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.code === 'Enter' || e.code === 'NumpadEnter') invite();
+    });
+    button('btn small', this.footEl, 'Invite', invite);
+    this.leaveBtn = button('btn small ghost', this.footEl, 'Leave', () => this.model.partyOp({ op: 'leave' }));
     this.invitesEl = el('div', 'sp-invites', this.side);
 
     // the chat panel, bottom left
@@ -243,12 +261,17 @@ export class SocialUI {
     const m = this.model;
     const live = this.isOpen;
     const members = m.members();
-    const key = JSON.stringify([live, m.leads, members.map((x) => [x.name, x.online, x.system, x.health === null ? null : Math.round(x.health * 100), x.leader])]);
+    // (health in steps of 2%: an entity's hp in view moves finer than the bar shows)
+    const key = JSON.stringify([live, m.leads, members.map((x) => [x.name, x.online, x.system, x.health === null ? null : Math.round(x.health * 50), x.leader])]);
     if (key === this.partyKey) return;
     this.partyKey = key;
-    const box = this.partyEl;
+    const box = this.rowsEl;
     const old = new Map([...box.querySelectorAll('.sp-member')].map((r) => [r.dataset.name, r]));
     box.replaceChildren();
+    this.partyEl.classList.toggle('shown', live || members.length > 0);
+    this.footEl.style.display = live ? '' : 'none';
+    this.leaveBtn.style.display = members.length ? '' : 'none';
+    if (!live) this.inviteName.blur();
     if (!members.length && !live) return;
     const head = el('div', 'sp-head', box);
     el('span', '', head, 'Party');
@@ -275,29 +298,11 @@ export class SocialUI {
       if (x.health !== null) {
         const hp = el('div', 'sp-hp', row);
         const fill = el('b', '', hp);
-        fill.style.width = `${(Math.max(0, Math.min(1, x.health)) * 100).toFixed(0)}%`;
+        fill.style.width = `${Math.round(Math.max(0, Math.min(1, x.health)) * 50) * 2}%`;
         row.classList.toggle('hurt', x.health < 0.6);
         row.classList.toggle('low', x.health < 0.3);
       }
     }
-    if (!live) return;
-    const foot = el('div', 'sp-foot', box);
-    const name = el('input', '', foot);
-    name.type = 'text';
-    name.placeholder = 'Invite by name';
-    name.maxLength = 20;
-    name.spellcheck = false;
-    name.autocomplete = 'off';
-    const invite = () => {
-      const r = m.submit(`/invite ${name.value}`);
-      if (r.ok) name.value = '';
-    };
-    name.addEventListener('keydown', (e) => {
-      e.stopPropagation();
-      if (e.code === 'Enter' || e.code === 'NumpadEnter') invite();
-    });
-    button('btn small', foot, 'Invite', invite);
-    if (members.length) button('btn small ghost', foot, 'Leave', () => m.partyOp({ op: 'leave' }));
   }
 
   /** The invites waiting: who, the time left (a hairline running down the minute), accept and decline. */
@@ -457,7 +462,7 @@ export class SocialUI {
   /** Menus closed the panel (Esc, a click into the world, a send). */
   closed() {
     this.input.blur();
-    for (const i of this.side.querySelectorAll('input')) i.blur();
+    this.inviteName.blur();
   }
 
   setTab(t) {
