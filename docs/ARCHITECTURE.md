@@ -1338,6 +1338,7 @@ gate is recipes and materials, not a skill tree.
   The fabricator screen opens at the trade deck's fabricator terminal (E), and with K: docked, the Waystation's; aboard
   anywhere else, or on foot beside the ship, the ship's. It lists the known recipes this fabricator makes (how many the
   materials held make, or "missing materials"), the others as made elsewhere, and recipe items held to learn; the
-  selected recipe's materials needed against held, Craft ×n (1–100, Max); the fabrication runs across the button (0.56 s)
-  and the result or the refusal shows in the line under the columns once both it and the answer are in (the quantity
-  then held to what the materials left make); a recipe learned moves from the recipes to learn into the list.
+  selected recipe's materials needed against held, Craft ×n (1 to what the materials make, at most 100); the fabrication
+  runs across the button (0.56 s) and the result or the refusal shows in the line under the columns once both it and the
+  answer are in (the quantity then held to what the materials left make); a recipe learned moves from the recipes to
+  learn into the list.

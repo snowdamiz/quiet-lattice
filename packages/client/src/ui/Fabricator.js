@@ -29,6 +29,12 @@ const KIND_TAG = { consumable: 'CON', ammo: 'AMO', catalyst: 'CAT', module: 'MOD
 const FABRICATE_MS = 560;
 // a recipe just learned, moving from the recipes to learn into the list
 const ARRIVE_MS = 380;
+// what a learned row stood for (its tag, its LEARN button) fading into what it is now, and the line under the columns
+// into its next message: the old out over the first half, the new in over the second
+const SWAP_MS = 120;
+const LINE_MS = 140;
+// the "Recipes to learn" heading, gone within the first frames of the row's rise
+const HEAD_MS = 70;
 
 function nameOf(id) {
   return itemInfo(id)?.name ?? id;
@@ -151,6 +157,9 @@ export class FabricatorPanel {
       const row = a.animationName === 'fabFade' ? a.effect?.target : null;
       if (row?.dataset?.key) carry.push({ key: row.dataset.key, cls: row.classList.contains('fab-warn') ? 'fab-warn' : 'bump', time: a.currentTime });
     }
+    // what the line under the columns said, where it stood (to fade out under the next message)
+    const old = this.el.querySelector('.fab-msg');
+    const line = old && old.offsetParent ? { cls: old.className, html: old.innerHTML, text: old.textContent, rect: old.getBoundingClientRect() } : null;
     this.key = this.stateKey();
     const enter = this.enter;
     this.enter = false;
@@ -199,37 +208,89 @@ export class FabricatorPanel {
     if (opts.bump) for (const row of panel.querySelectorAll(opts.bump)) row.classList.add('bump');
     if (opts.warn) for (const row of panel.querySelectorAll('.fab-mat.short')) row.classList.add('fab-warn');
     if (opts.woke) {
-      // drawn as the fabrication left them (dimmed, the button filled), then let go: their transitions ease them back
+      // drawn as the fabrication left them (dimmed, the button filled), then let go: their transitions ease them back;
+      // a label that goes from dark on the fill to warm white on the outline fades out and back in rather than tweening
+      // its colour across the fading fill
       const go = panel.querySelector('.fab-go');
       panel.classList.add('fab-busy');
       go?.classList.add('working');
       void panel.offsetWidth;
       panel.classList.remove('fab-busy');
       go?.classList.remove('working');
+      if (go?.classList.contains('short')) go.querySelector('.fab-go-l')?.classList.add('fab-relabel');
     }
     if (opts.learned) this.arrive(panel, opts.learned);
     this.paintMessage();
+    if (line && !enter) this.crossLine(panel, line);
   }
 
-  // A recipe just learned: its row eases from where it stood among the recipes to learn into its place in the list and
-  // flashes once, and the "Recipes to learn" heading fades out where it stood if that was the last.
-  arrive(panel, { recipe, from, label }) {
+  // The line under the columns, changed: the old message fades out where it stood, then the new one fades in.
+  crossLine(panel, was) {
+    const now = panel.querySelector('.fab-msg');
+    if (!now || was.text === now.textContent || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const foot = panel.querySelector('.inv-foot');
+    const at = foot.getBoundingClientRect();
+    const ghost = document.createElement('div');
+    ghost.className = was.cls;
+    ghost.innerHTML = was.html;
+    Object.assign(ghost.style, {
+      position: 'absolute',
+      left: `${was.rect.left - at.left}px`,
+      top: `${was.rect.top - at.top}px`,
+      width: `${was.rect.width}px`,
+      height: `${was.rect.height}px`,
+      pointerEvents: 'none',
+    });
+    foot.appendChild(ghost);
+    // (one after the other, so the two lines never show through each other)
+    ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: LINE_MS / 2, easing: 'ease-out', fill: 'forwards' }).onfinish = () => ghost.remove();
+    now.animate([{ opacity: 0 }, { opacity: 1 }], { duration: LINE_MS / 2, delay: LINE_MS / 2, easing: 'ease-out', fill: 'backwards' });
+  }
+
+  // A recipe just learned: its row eases from where it stood among the recipes to learn into its place in the list on an
+  // opaque plate, flashing once, while what it stood for there (its RCP tag, its LEARN button) fades into what it is
+  // now (its item's tag, how many the materials make). The "Recipes to learn" heading, if that was the last, stays where
+  // it stood under the rising plate and is gone within the rise's first frames.
+  arrive(panel, { recipe, from, label, parts }) {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const list = panel.querySelector('.fab-list');
     const row = panel.querySelector(`[data-key="r-${recipe}"]`);
     if (row && from) {
       const to = row.getBoundingClientRect();
+      row.classList.add('fab-moving', 'bump');
       row.animate([{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }], {
         duration: ARRIVE_MS,
         easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
-      });
-      row.classList.add('bump');
+      }).onfinish = () => row.classList.remove('fab-moving');
+      // (what the row is now, taken before what it was is laid over it)
+      const fresh = [...row.querySelectorAll(':scope > .inv-tag, :scope > .res-ico, :scope > .fab-st')];
+      for (const p of parts ?? []) {
+        Object.assign(p.node.style, { position: 'absolute', left: `${p.dx}px`, top: `${p.dy}px`, margin: '0', pointerEvents: 'none' });
+        row.appendChild(p.node);
+        p.node.animate([{ opacity: 1 }, { opacity: 0 }], { duration: SWAP_MS / 2, easing: 'ease-out', fill: 'forwards' }).onfinish = () => p.node.remove();
+      }
+      for (const now of fresh) now.animate([{ opacity: 0 }, { opacity: 1 }], { duration: SWAP_MS / 2, delay: SWAP_MS / 2, easing: 'ease-out', fill: 'backwards' });
     }
-    if (label && !panel.querySelector('[data-group="learn"]')) {
+    if (label && list && !panel.querySelector('[data-group="learn"]')) {
+      const at = list.getBoundingClientRect();
       const ghost = label.node;
-      Object.assign(ghost.style, { position: 'fixed', left: `${label.rect.left}px`, top: `${label.rect.top}px`, width: `${label.rect.width}px`, margin: '0', pointerEvents: 'none' });
-      this.el.appendChild(ghost);
-      ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-out', fill: 'forwards' }).onfinish = () => ghost.remove();
+      Object.assign(ghost.style, {
+        position: 'absolute',
+        left: `${label.rect.left - at.left}px`,
+        top: `${label.rect.top - at.top + list.scrollTop}px`,
+        width: `${label.rect.width}px`,
+        margin: '0',
+        pointerEvents: 'none',
+      });
+      list.prepend(ghost);
+      ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: HEAD_MS, easing: 'ease-out', fill: 'forwards' }).onfinish = () => ghost.remove();
     }
+  }
+
+  /** The most crafts the stepper goes to for a recipe: as many as the materials held make (one at least), at most
+   * CRAFT_MAX. + and MAX dim there as − dims at one. */
+  maxQty(recipe, st = this.game.inventory.state) {
+    return Math.min(CRAFT_MAX, Math.max(1, craftableCount(st, recipe)));
   }
 
   // the selected recipe: what it makes, what it needs against what is held, how many, and Craft
@@ -240,6 +301,7 @@ export class FabricatorPanel {
     const item = getItem(out.item);
     const here = makesAt(r, this.at, this.tier());
     const can = craftableCount(st, r);
+    const top = this.maxQty(r, st);
     this.qty = Math.min(Math.max(1, this.qty), CRAFT_MAX);
     const mats = materialsOf(r, this.qty)
       .map((m) => {
@@ -250,7 +312,7 @@ export class FabricatorPanel {
     const short = materialsOf(r, this.qty).some((m) => countOf(st, m.item) < m.count);
     const make = here
       ? `<div class="fab-make">
-          <div class="fab-qty"><button data-q="-1" ${this.qty <= 1 ? 'disabled' : ''} title="One fewer">−</button><b>${this.qty}</b><button data-q="1" ${this.qty >= CRAFT_MAX ? 'disabled' : ''} title="One more">+</button><button class="fab-max" data-q="max" title="As many as the materials make">Max</button></div>
+          <div class="fab-qty"><button data-q="-1" ${this.qty <= 1 ? 'disabled' : ''} title="One fewer">−</button><b>${this.qty}</b><button data-q="1" ${this.qty >= top ? 'disabled' : ''} title="One more">+</button><button class="fab-max" data-q="max" ${this.qty >= top ? 'disabled' : ''} title="As many as the materials make">Max</button></div>
           <button class="btn fab-go${short ? ' short' : ''}" data-make ${this.busy ? 'disabled' : ''}><span class="fab-sweep"></span><span class="fab-go-l">Craft ×${this.qty}</span></button>
         </div>`
       : `<div class="fab-make"><div class="fab-elsewhere mono">${this.at === 'ship' ? "The ship's fabricator makes ammo and cartridges only. Craft this at a Waystation." : 'This fabricator does not make this recipe.'}</div></div>`;
@@ -285,7 +347,8 @@ export class FabricatorPanel {
     const q = e.target.closest('[data-q]');
     if (q && !q.disabled && !this.busy) {
       const r = recipeById(this.selected);
-      this.qty = q.dataset.q === 'max' ? Math.max(1, r ? craftableCount(g.inventory.state, r) : 1) : this.qty + Number(q.dataset.q);
+      const top = r ? this.maxQty(r) : 1;
+      this.qty = Math.max(1, Math.min(top, q.dataset.q === 'max' ? top : this.qty + Number(q.dataset.q)));
       g.audio.play('ui');
       return this.render();
     }
@@ -397,11 +460,17 @@ export class FabricatorPanel {
       this.msg = { text: `Learned the ${recipe?.name ?? m.recipe} recipe, for good`, tone: 'good' };
       g.audio.play('discovery');
       // where the row and its heading stood, taken before the redraw
-      const from = this.el.querySelector(`[data-key="l-${m.recipe}"]`)?.getBoundingClientRect() ?? null;
+      const was = this.el.querySelector(`[data-key="l-${m.recipe}"]`);
+      const from = was?.getBoundingClientRect() ?? null;
+      // its tag and its LEARN button, where they stood in it
+      const parts = [...(was?.querySelectorAll(':scope > .inv-tag, :scope > .res-ico, :scope > .inv-act') ?? [])].map((n) => {
+        const r = n.getBoundingClientRect();
+        return { node: n.cloneNode(true), dx: r.left - from.left, dy: r.top - from.top };
+      });
       const head = this.el.querySelector('[data-group="learn"]');
       const label = head && { node: head.cloneNode(true), rect: head.getBoundingClientRect() };
       // (the recipe selected stays so: the one learned joins the list beside it)
-      return this.render({ learned: { recipe: m.recipe, from, label } });
+      return this.render({ learned: { recipe: m.recipe, from, label, parts } });
     }
     this.refuse(m.reason, recipe, b.before, b.dimmed);
   }

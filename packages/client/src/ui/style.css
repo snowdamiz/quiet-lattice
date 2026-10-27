@@ -2140,6 +2140,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 /* (the whole column's height, so a row moving within it is never clipped by a list that just got shorter) */
 .fab-list {
+  position: relative;
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
@@ -2193,6 +2194,11 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .fab-row.sel::before {
   transform: scaleY(1);
+}
+/* a recipe just learned, rising into the list: an opaque plate over whatever it passes (the row's own look, solid) */
+.fab-row.fab-moving {
+  z-index: 1;
+  background: rgb(19, 20, 23);
 }
 .fab-row .inv-tag,
 .fab-out .inv-tag,
@@ -2413,16 +2419,38 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   opacity: 0.35;
   pointer-events: none;
 }
-/* the Craft button eases between its fill and its outline (materials short), its clipped corner with it */
+/* the Craft button eases between its fill and its outline (materials short), its clipped corner with it; its label does
+   not tween its colour across the fading fill (it would pass through the fill's own tone): it fades out dark and back
+   in warm white (fabRelabel) */
 .fab-go {
   flex: 1;
   overflow: hidden;
   transition:
     background 0.18s ease-out,
-    color 0.18s ease-out,
     border-color 0.18s ease-out,
     clip-path 0.18s ease-out,
     opacity 0.15s ease-out;
+}
+.fab-go-l.fab-relabel {
+  animation: fabRelabel 0.24s ease-in-out;
+}
+@keyframes fabRelabel {
+  0% {
+    opacity: 1;
+    color: var(--ink);
+  }
+  45% {
+    opacity: 0;
+    color: var(--ink);
+  }
+  55% {
+    opacity: 0;
+    color: var(--text);
+  }
+  100% {
+    opacity: 1;
+    color: var(--text);
+  }
 }
 /* the fabrication running across the button, left to right (the sweep's transform), fading as the button lets go */
 .fab-sweep {
@@ -2462,7 +2490,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   line-height: 1.6;
   color: var(--dim);
 }
-/* the line under the columns: what was made, or why not */
+/* the line under the columns: what was made, or why not (a change cross-fades: the old line fades out over the new) */
+.fab-panel .inv-foot {
+  position: relative;
+}
 .fab-msg.msg i {
   display: inline-block;
   width: 6px;

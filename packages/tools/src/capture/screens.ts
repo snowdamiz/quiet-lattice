@@ -469,6 +469,26 @@ async function learnMotion(page: Page): Promise<void> {
   await page.evaluate(() => setTimeout(() => document.querySelector<HTMLElement>('[data-learn="torpedo"]')?.click(), 2000));
 }
 
+/**
+ * The stepper at its limits, then a refusal, for the clip (each step 0.15 s of animation time apart; page timers run on
+ * real time while the clip slows CSS and Web Animations tenfold, hence 1500 ms): + and MAX pressed on the warp cell at 1
+ * of 1 (both dimmed: nothing happens), the flak ammo picked (it can make none), + and MAX pressed there (nothing), then
+ * Enter: refused, "not enough ferrite", the line under the columns cross-fading to it and the short ferrite flashing red.
+ */
+async function limitsMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const press = [
+      () => document.querySelector<HTMLElement>('[data-q="1"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="max"]')?.click(),
+      () => document.querySelector<HTMLElement>('.fab-row[data-recipe="flak_ammo"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="1"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="max"]')?.click(),
+      () => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true })),
+    ];
+    press.forEach((fn, k) => setTimeout(fn, 2000 + k * 1500));
+  });
+}
+
 /** The press (every third frame), the fabrication's run across the button, the result and the rows settling. */
 const FABRICATOR_SHEET = [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 104, 112, 119];
 
@@ -669,6 +689,13 @@ export const SCREENS: Record<string, ScreenDef> = {
     open: openStationFabricator,
     stills16x9: { craftable: (page) => fabClick(page, '.fab-row[data-recipe="warp_cell"]') },
     motion: fabricatorMotion('warp_cell'),
+  },
+  // the stepper at its limits (+ and MAX dimmed at the most the materials make, as − is at one) and a refusal on Enter
+  'fabricator-limits': {
+    clipSeconds: 2,
+    sheetFrames: [0, 12, 21, 30, 39, 48, 57, 60, 62, 64, 66, 68, 70, 74, 80, 88, 96, 104, 112, 119],
+    open: stationFabricator,
+    motion: limitsMotion,
   },
   // learning a recipe at the Waystation: LEARN on the torpedo recipe, and the row moving into the list
   'fabricator-learn': {
