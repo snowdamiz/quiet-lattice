@@ -403,8 +403,9 @@ const CHARACTERS = [
   { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a63', name: 'Odo Marrow-Kell', people: 'ulgani', look: LOOK, level: 12, homeSystem: homeOf('ulgani') },
 ];
 const NEW_ID = '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a64';
-/** What the browser logs for the wrong password these screens send on purpose. */
+/** What the browser logs for the wrong password, and the taken username, these screens send on purpose. */
 const REFUSED_SIGN_IN = /Failed to load resource: the server responded with a status of 401/;
+const REFUSED_SIGN_UP = /Failed to load resource: the server responded with a status of 409/;
 
 interface AccountServer {
   /** Sign-ins the server refuses before it takes one (a wrong password). */
@@ -413,10 +414,17 @@ interface AccountServer {
   delayMs?: number;
   /** The game socket: silent, or a welcome this long (real ms) after the join. */
   welcomeAfterMs?: number | null;
+  /** The account's characters (by default the three above). */
+  characters?: typeof CHARACTERS;
+  /** Usernames another account holds: signing up as one is refused. */
+  taken?: string[];
 }
 
 /** Serves the account screens' requests from the recorded answers above, and the game socket in the page. */
-async function serveAccount(page: Page, { refuseLogins = 0, delayMs = 0, welcomeAfterMs = null }: AccountServer = {}): Promise<void> {
+async function serveAccount(
+  page: Page,
+  { refuseLogins = 0, delayMs = 0, welcomeAfterMs = null, characters = CHARACTERS, taken = [] }: AccountServer = {},
+): Promise<void> {
   const later = () => new Promise((r) => setTimeout(r, delayMs));
   let refused = 0;
   const made: typeof CHARACTERS = [];
@@ -425,6 +433,13 @@ async function serveAccount(page: Page, { refuseLogins = 0, delayMs = 0, welcome
     if (refused++ < refuseLogins) await route.fulfill({ status: 401, json: { error: 'login_failed', message: 'Wrong username or password.' } });
     else await route.fulfill({ status: 200, json: { token: TOKEN, accountId: ACCOUNT_ID } });
   });
+  await page.route('**/auth/register', async (route) => {
+    await later();
+    const body = route.request().postDataJSON() as { username: string };
+    if (taken.includes(body.username.toLowerCase()))
+      await route.fulfill({ status: 409, json: { error: 'username_taken', message: 'That username is taken.' } });
+    else await route.fulfill({ status: 201, json: { token: TOKEN, accountId: ACCOUNT_ID } });
+  });
   await page.route('**/characters', async (route) => {
     await later();
     if (route.request().method() === 'POST') {
@@ -432,14 +447,14 @@ async function serveAccount(page: Page, { refuseLogins = 0, delayMs = 0, welcome
       const c = { id: NEW_ID, name: body.name, people: body.people, look: LOOK, level: 1, homeSystem: homeOf(body.people) };
       made.push(c);
       await route.fulfill({ status: 201, json: c });
-    } else await route.fulfill({ status: 200, json: { characters: [...CHARACTERS, ...made], max: 6 } });
+    } else await route.fulfill({ status: 200, json: { characters: [...characters, ...made], max: 6 } });
   });
   const galaxy = new Galaxy(GALAXY_SEED);
   await page.routeWebSocket(/\/ws$/, (ws) => {
     ws.onMessage((raw) => {
       const m = JSON.parse(String(raw)) as { t: string; characterId?: string };
       if (m.t !== 'join' || welcomeAfterMs === null) return;
-      const character = [...CHARACTERS, ...made].find((c) => c.id === m.characterId)!;
+      const character = [...characters, ...made].find((c) => c.id === m.characterId)!;
       const seed = galaxy.systems[character.homeSystem]!.seed;
       const welcome = {
         t: 'welcome',
@@ -486,6 +501,30 @@ async function signIn(page: Page, password: string): Promise<void> {
   await page.keyboard.type('tess_arlo');
   await page.keyboard.press('Tab');
   await page.keyboard.type(password);
+  await page.keyboard.press('Enter');
+}
+
+/** Back to the title as a new browser would show it: signed out, the flow closed, nothing typed, Play focused. */
+async function resetFlow(page: Page, settleMs = 800): Promise<void> {
+  await page.evaluate(() => {
+    const flow = (window as unknown as { game: { menus: { account: { flow: { close(): void; set(p: object): void } } } } }).game.menus.account.flow;
+    sessionStorage.removeItem('astra-session');
+    flow.close();
+    flow.set({ username: '' });
+  });
+  await page.waitForTimeout(settleMs);
+  await page.focus('.title-screen [data-act="start"]');
+}
+
+/** Play → Create an account → `username` and a password → Enter. */
+async function signUpAs(page: Page, username: string): Promise<void> {
+  await page.keyboard.press('Enter');
+  await page.click('.acct [data-form="signin"] [data-do="to-register"]');
+  await page.waitForSelector('.acct [data-form="register"] input[name="username"]');
+  await page.waitForTimeout(400);
+  await page.keyboard.type(username);
+  await page.keyboard.press('Tab');
+  await page.keyboard.type('correct-horse');
   await page.keyboard.press('Enter');
 }
 
@@ -549,6 +588,49 @@ export const SCREENS: Record<string, ScreenDef> = {
         [0.55, key(page, 'Enter')],
         [1.25, () => typeIn(page, 'still-wrong', 0.035)],
         [1.8, key(page, 'Enter')],
+      ]);
+    },
+  },
+  // `register`: a fresh account, its first username refused as taken, landed on its empty character list (a still of the
+  // refusal too, 16x9-refused.png; the clip: the whole sign-up from the title, by keyboard but the one link)
+  register: {
+    clipSeconds: 6.2,
+    expectedErrors: [REFUSED_SIGN_UP],
+    async open(page) {
+      await serveAccount(page, { characters: [], taken: ['tess_arlo'], delayMs: 3000 });
+      await titleReady(page);
+      await signUpAs(page, 'tess_arlo');
+      await page.waitForSelector('.acct-msgwrap.on');
+      await page.waitForTimeout(600);
+      await page.keyboard.type('ilya_sarn');
+      await page.keyboard.press('Tab');
+      await page.keyboard.type('correct-horse');
+      await page.keyboard.press('Enter');
+      await page.waitForSelector('.acct-step:not(.leaving) .acct-list [data-do="new"]');
+      await settleFlow(page);
+    },
+    stills16x9: {
+      async refused(page) {
+        await resetFlow(page);
+        await signUpAs(page, 'tess_arlo');
+        await page.waitForSelector('.acct-msgwrap.on');
+        await settleFlow(page);
+      },
+    },
+    async motion(page) {
+      // (the clip slows the page's animations tenfold already: the title has a while to come back before the first frame)
+      await resetFlow(page, 7000);
+      timeline(page, [
+        [0.3, key(page, 'Enter')],
+        [1.0, () => page.click('.acct [data-form="signin"] [data-do="to-register"]')],
+        [1.6, () => typeIn(page, 'tess_arlo')],
+        [2.1, key(page, 'Tab')],
+        [2.2, () => typeIn(page, 'correct-horse', 0.03)],
+        [2.7, key(page, 'Enter')],
+        [3.6, () => typeIn(page, 'ilya_sarn')],
+        [4.1, key(page, 'Tab')],
+        [4.2, () => typeIn(page, 'correct-horse', 0.03)],
+        [4.7, key(page, 'Enter')],
       ]);
     },
   },
@@ -619,9 +701,12 @@ export const SCREENS: Record<string, ScreenDef> = {
   // `account-flow`: the whole of it by keyboard, the still the title it starts from; the clip: Play, a sign-in refused and
   // retried, the list, a new character named and its people picked, made, entered, and the welcome's cut into the world
   'account-flow': {
-    clipSeconds: 11.6,
+    clipSeconds: 12.4,
     expectedErrors: [REFUSED_SIGN_IN],
-    sheetFrames: [0, 30, 60, 84, 108, 126, 138, 150, 174, 204, 228, 252, 276, 300, 330, 354, 378, 402, 432, 462, 492, 522, 546, 570, 600, 624, 648, 672, 695],
+    sheetFrames: [
+      0, 30, 60, 84, 108, 126, 138, 150, 174, 204, 228, 252, 276, 300, 330, 354, 378, 402, 432, 462, 492, 522, 546, 570, 596, 604, 612, 620, 628, 640, 664, 688,
+      712, 743,
+    ],
     async open(page) {
       await serveAccount(page, { refuseLogins: 1, delayMs: 3000, welcomeAfterMs: 14_000 });
       await titleReady(page);

@@ -4,8 +4,9 @@ import { GALAXY_SEED, Galaxy, frameIdOf, homeSystems } from '@astra/shared/world
 import { startOnline, type Online } from './online.ts';
 
 // The title's sign-in and character screens through the server (P1.E04.T05; online.ts: a scratch database, the server
-// with its dev login on, Vite): title → create an account → a name the server refuses, then one it takes, of the people
-// picked → the list → enter → the world, all by keyboard; a wrong password refused on its field, Esc back a step at a
+// with its dev login on, Vite): title → create an account (a reserved username refused first) → its empty list → a name
+// the server refuses, then one it takes, of the people picked → the list → enter → the world (the welcome held until
+// the screen has gone dark), all by keyboard; a wrong password refused on its field, Esc back a step at a
 // time, the session kept until signing out; the dev scenarios through the dev login (`?dev#foot` on foot in its home
 // hangar, `?dev=<name>&people=<id>#fly` in its people's home system); and `#foot` without `?dev` still the offline
 // sandbox, asking the server nothing. Credentials are made up per run and exist only in the scratch database.
@@ -83,12 +84,25 @@ test('title → a new account → a refused name, then a character of the people
   await page.click('.acct [data-form="signin"] [data-do="to-register"]');
   await page.waitForSelector('.acct [data-form="register"]');
   expect(await focused(page)).toBe('username');
+  // a username the dev login keeps: refused on its field, the password sent with it gone from the page
+  await page.keyboard.type(`dev-${p.username.slice(5)}`);
+  await page.keyboard.press('Tab');
+  await page.keyboard.type(p.password);
+  await page.keyboard.press('Enter');
+  await expect(message(page)).toContainText('reserved');
+  await expect(page.locator('.acct .acct-field[data-field="username"].bad')).toHaveCount(1);
+  expect(await focused(page)).toBe('username');
+  expect(await page.inputValue('.acct [data-form="register"] [name="password"]')).toBe('');
   await page.keyboard.type(p.username);
   await page.keyboard.press('Tab');
   await page.keyboard.type(p.password);
   await page.keyboard.press('Enter');
 
-  // a new account has no characters: straight on to make one
+  // a new account lands on its empty list, the new character offered and focused: Enter opens it
+  await page.waitForSelector('.acct-step:not(.leaving) .acct-list [data-do="new"]');
+  expect(await page.locator('.acct-step:not(.leaving) .acct-char[data-id]').count()).toBe(0);
+  expect(await focused(page)).toBe('new');
+  await page.keyboard.press('Enter');
   await page.waitForSelector('.acct [data-form="create"]');
   expect(await focused(page)).toBe('name');
   // a word the server reserves: refused, on the name field
@@ -146,8 +160,9 @@ test('a wrong password is refused on its field; Esc steps back; the session last
   await page.keyboard.press('Enter');
   await expect(message(page)).toHaveText('Wrong username or password.');
   await expect(page.locator('.acct .acct-field[data-field="password"].bad')).toHaveCount(1);
-  // the password field has the focus, its text selected to retype
+  // the password field has the focus, the refused password gone from the page
   expect(await focused(page)).toBe('password');
+  expect(await page.inputValue('.acct [data-form="signin"] [name="password"]')).toBe('');
   await page.keyboard.type(p.password);
   await page.keyboard.press('Enter');
   await page.waitForSelector('.acct-step:not(.leaving) .acct-char[data-id][aria-selected="true"]');

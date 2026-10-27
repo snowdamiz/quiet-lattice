@@ -9,15 +9,16 @@ export interface Pilot {
   name: string;
 }
 
-/** From the title: Play → create an account → the first character, of `people`, named and made → the account's list,
- * that character picked. */
+/** From the title: Play → create an account → its empty list → the first character, of `people`, named and made → the
+ * account's list, that character picked. */
 export async function signUp(page: Page, p: Pilot, people = 'thalune'): Promise<void> {
   await page.click('.title-screen [data-act="start"]');
   await page.click('.acct [data-form="signin"] [data-do="to-register"]');
   await page.fill('.acct [data-form="register"] [name="username"]', p.username);
   await page.fill('.acct [data-form="register"] [name="password"]', p.password);
   await page.click('.acct [data-form="register"] [data-do="register"]');
-  // (a new account has no characters: the flow goes straight on to make one)
+  // (a new account has no characters: its list offers a new one)
+  await page.click('.acct-step:not(.leaving) .acct-list [data-do="new"]');
   await page.fill('.acct [data-form="create"] [name="name"]', p.name);
   await page.click(`.acct [data-form="create"] [data-people] [data-v="${people}"]`);
   await page.click('.acct [data-form="create"] [data-do="create"]');

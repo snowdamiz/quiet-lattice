@@ -4,7 +4,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { GALAXY_SEED, Galaxy } from '@astra/shared/world';
 import { SIGNS } from '@astra/shared/art';
-import { AccountFlow, characterView, credentialsProblem, glyphWord, nameProblem, normalName, peopleInfo, refusalOf, SESSION_ENDED } from './Account.js';
+import { AccountFlow, characterView, credentialsProblem, glyphWord, holdFirstWelcome, nameProblem, normalName, peopleInfo, refusalOf, SESSION_ENDED } from './Account.js';
 
 const LOOK = { palette: 0, pattern: 0, head: 0, suit: 0 };
 const TESS = { id: 'c1', name: 'Tess Arlo', people: 'thalune', look: LOOK, level: 7, homeSystem: 0 };
@@ -103,17 +103,110 @@ describe('the flow', () => {
     expect(flow.view).toMatchObject({ step: 'signin', message: null });
   });
 
-  it('a new account goes straight to making its first character', async () => {
+  it('a new account lands on its empty list, a new character offered', async () => {
     const { flow } = setup({ api: { listCharacters: vi.fn(async () => ({ characters: [], max: 6 })) } });
     flow.open();
     flow.toRegister();
     await flow.submitCredentials({ username: 'new_pilot', password: 'long enough' });
+    expect(flow.view).toMatchObject({ step: 'characters', loading: false, characters: [], max: 6, selected: null });
+    flow.enter();
+    expect(flow.step).toBe('characters');
+    flow.newCharacter();
     expect(flow.view).toMatchObject({ step: 'create', draft: { name: '', people: 'thalune' } });
     // Esc: the (empty) list, then the title
     flow.back();
     expect(flow.view).toMatchObject({ step: 'characters', characters: [] });
     flow.back();
     expect(flow.view.step).toBe('closed');
+  });
+
+  it('a second sign-in or create while the first is with the server is ignored', async () => {
+    const login = deferred();
+    const { flow } = setup({ api: { login: vi.fn(() => login.promise) } });
+    flow.open();
+    const first = flow.submitCredentials({ username: 'tess_arlo', password: 'correct-horse' });
+    await flow.submitCredentials({ username: 'tess_arlo', password: 'correct-horse' });
+    expect(flow.deps.api.login).toHaveBeenCalledTimes(1);
+    login.resolve(AUTH);
+    await first;
+    expect(flow.view.step).toBe('characters');
+
+    const made = deferred();
+    flow.deps.api.createCharacter = vi.fn(() => made.promise);
+    flow.newCharacter();
+    const creating = flow.create({ name: 'Ilya Sarn', people: 'ixari' });
+    await flow.create({ name: 'Ilya Sarn', people: 'ixari' });
+    expect(flow.deps.api.createCharacter).toHaveBeenCalledTimes(1);
+    made.resolve({ ...TESS, id: 'c9', name: 'Ilya Sarn', people: 'ixari' });
+    await creating;
+    expect(flow.view.characters.map((c) => c.id)).toEqual(['c1', 'c2', 'c9']);
+  });
+
+  it('drops a refused sign-in that comes after Esc', async () => {
+    const login = deferred();
+    const { flow } = setup({ api: { login: vi.fn(() => login.promise) } });
+    flow.open();
+    const pending = flow.submitCredentials({ username: 'tess_arlo', password: 'wrong-one' });
+    flow.back();
+    login.reject(refused(401, 'login_failed', 'Wrong username or password.'));
+    await pending;
+    expect(flow.view).toMatchObject({ step: 'closed', message: null, busy: false });
+  });
+
+  it('drops a list, or its failure, that comes after Esc', async () => {
+    const list = deferred();
+    const session = { token: 'tok', accountId: 'a1', username: 'tess_arlo' };
+    const ok = setup({ session, api: { listCharacters: vi.fn(() => list.promise) } });
+    const loading = ok.flow.open();
+    ok.flow.back();
+    list.resolve({ characters: [TESS, QUILL], max: 6 });
+    await loading;
+    expect(ok.flow.view).toMatchObject({ step: 'closed', characters: [], selected: null });
+
+    const down = deferred();
+    const failed = setup({ session, api: { listCharacters: vi.fn(() => down.promise) } });
+    const failing = failed.flow.open();
+    failed.flow.back();
+    down.reject(refused(0, 'network', 'The server cannot be reached. Is it running?'));
+    await failing;
+    expect(failed.flow.view).toMatchObject({ step: 'closed', message: null });
+    expect(failed.flow.view.listFailed).toBeFalsy();
+  });
+
+  it('Esc from a character being made: the list is read again once the server has answered, and not after the title', async () => {
+    const made = deferred();
+    const { flow } = setup();
+    flow.open();
+    await flow.submitCredentials({ username: 'tess_arlo', password: 'correct-horse' });
+    flow.newCharacter();
+    flow.deps.api.createCharacter = vi.fn(() => made.promise);
+    const creating = flow.create({ name: 'Ilya Sarn', people: 'ixari' });
+    flow.back();
+    expect(flow.view).toMatchObject({ step: 'characters', loading: true });
+    const NEW = { ...TESS, id: 'c9', name: 'Ilya Sarn', people: 'ixari' };
+    flow.deps.api.listCharacters = vi.fn(async () => ({ characters: [TESS, QUILL, NEW], max: 6 }));
+    made.resolve(NEW);
+    await creating;
+    await tick();
+    // (its answer to the create step was dropped: the list as the server has it now, the first picked)
+    expect(flow.deps.api.listCharacters).toHaveBeenCalledTimes(1);
+    expect(flow.view).toMatchObject({ step: 'characters', loading: false, selected: 'c1' });
+    expect(flow.view.characters.map((c) => c.id)).toEqual(['c1', 'c2', 'c9']);
+
+    // and gone back to the title before the answer: nothing comes of it
+    const again = deferred();
+    flow.newCharacter();
+    flow.deps.api.createCharacter = vi.fn(() => again.promise);
+    flow.deps.api.listCharacters = vi.fn(async () => ({ characters: [], max: 6 }));
+    const late = flow.create({ name: 'Odo Kell', people: 'ulgani' });
+    flow.back();
+    flow.back();
+    expect(flow.step).toBe('closed');
+    again.resolve({ ...TESS, id: 'c10', name: 'Odo Kell', people: 'ulgani' });
+    await late;
+    await tick();
+    expect(flow.view.step).toBe('closed');
+    expect(flow.deps.api.listCharacters).not.toHaveBeenCalled();
   });
 
   it('a tab already signed in opens on its list; an expired or refused session asks to sign in again', async () => {
@@ -171,18 +264,14 @@ describe('the flow', () => {
     expect(flow.view.step).toBe('signin');
   });
 
-  it('picks with the arrows, stopping at the ends', async () => {
+  it("picks only the account's characters", async () => {
     const { flow } = setup();
     flow.open();
     await flow.submitCredentials({ username: 'tess_arlo', password: 'correct-horse' });
-    flow.move(1);
+    flow.select('c2');
     expect(flow.view.selected).toBe('c2');
-    flow.move(1);
-    expect(flow.view.selected).toBe('c2');
-    flow.move(-5);
-    expect(flow.view.selected).toBe('c1');
     flow.select('nobody');
-    expect(flow.view.selected).toBe('c1');
+    expect(flow.view.selected).toBe('c2');
   });
 
   it('makes a character: the name checked, a refusal on the name, then the list with it picked', async () => {
@@ -220,7 +309,7 @@ describe('the flow', () => {
     const { flow, enter, entered, nets } = setup();
     flow.open();
     await flow.submitCredentials({ username: 'tess_arlo', password: 'correct-horse' });
-    flow.move(1);
+    flow.select('c2');
     flow.enter();
     expect(enter).toHaveBeenCalledWith({ token: 'tok', accountId: 'a1', username: 'tess_arlo' }, QUILL, expect.any(Function));
     expect(flow.view).toMatchObject({ step: 'entering', entering: QUILL, connection: 'connecting' });
@@ -285,6 +374,65 @@ describe('the flow', () => {
     await tick();
     nets[0].onFail('That character is already in the world.', 'character');
     expect(await done).toBe(false);
+  });
+
+  it('dev login: an answer that comes after Esc enters nothing', async () => {
+    const answer = deferred();
+    const { flow, store, enter } = setup({ api: { devLogin: vi.fn(() => answer.promise) } });
+    const done = flow.devLogin({ name: 'foot' });
+    flow.back();
+    expect(await done).toBe(false);
+    expect(flow.view.step).toBe('signin');
+    answer.resolve({ ...AUTH, character: TESS });
+    await tick();
+    expect(enter).not.toHaveBeenCalled();
+    expect(store.save).not.toHaveBeenCalled();
+    expect(flow.view).toMatchObject({ step: 'signin', characters: [] });
+
+    // and a refusal that comes late says nothing
+    const refusedLate = deferred();
+    const late = setup({ api: { devLogin: vi.fn(() => refusedLate.promise) } });
+    late.flow.devLogin({ name: 'foot' });
+    late.flow.back();
+    late.flow.back();
+    refusedLate.reject(refused(404, 'not_found', 'No route for POST /auth/dev.'));
+    await tick();
+    expect(late.flow.view).toMatchObject({ step: 'closed', message: null });
+  });
+});
+
+describe('the welcome held until the screen is dark', () => {
+  it('holds the first welcome and what comes after it, then lets them through in order; a later welcome passes', async () => {
+    const net = fakeNet();
+    const seen = [];
+    for (const t of ['welcome', 'world', 'inventory']) net.on(t, (m, first) => seen.push(first === undefined ? t : `${t}:${first}`));
+    const dark = deferred();
+    const arrive = vi.fn(() => dark.promise);
+    holdFirstWelcome(net, arrive);
+    net.emit('world', {});
+    expect(seen).toEqual(['world']);
+    net.emit('welcome', {}, true);
+    net.emit('inventory', {}, true);
+    net.emit('world', {});
+    await tick();
+    expect(arrive).toHaveBeenCalledTimes(1);
+    expect(seen).toEqual(['world']);
+    dark.resolve();
+    await tick();
+    expect(seen).toEqual(['world', 'welcome:true', 'inventory:true', 'world']);
+    net.emit('welcome', {}, false);
+    expect(seen.at(-1)).toBe('welcome:false');
+    expect(arrive).toHaveBeenCalledTimes(1);
+  });
+
+  it('lets them through even if the screen never says it is dark', async () => {
+    const net = fakeNet();
+    const seen = [];
+    net.on('welcome', () => seen.push('welcome'));
+    holdFirstWelcome(net, () => Promise.reject(new Error('no animation')));
+    net.emit('welcome', {}, true);
+    await tick();
+    expect(seen).toEqual(['welcome']);
   });
 });
 

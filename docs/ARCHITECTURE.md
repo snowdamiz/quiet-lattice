@@ -522,14 +522,18 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   sound, graphics); the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a
   browser still has it.
 - **The account screens** (`ui/Account.js`, P1.E04.T05) take the title's left column when Play is pressed, over the
-  title shot: sign in or create an account; the account's characters (people, level, home), or straight to making one
-  when it has none; a new character (a name and a people; the full creator is P1.E05.T05's); entering. `AccountFlow`
-  holds the steps without a DOM (unit tested): one request at a time, an answer that comes after the player moved on is
-  dropped, a refusal is shown on the field it is about (the server's words: wrong password, taken or reserved name,
-  limits, rate limits). Entering calls `Game.enterWorld` and shows Net's states; a failure before the welcome goes back
-  to the list with why, Esc lets the socket go, and the first welcome cuts into the world behind a fade from black. By
-  keyboard: Play has the focus once the title is ready, Enter submits, Esc goes back a step, the arrows walk the
-  characters and the peoples, N makes a new character.
+  title shot: sign in or create an account; the account's characters (people, level, home; a new account's list is
+  empty, a new character offered); a new character (a name and a people; the full creator is P1.E05.T05's); entering.
+  `AccountFlow` holds the steps without a DOM (unit tested): one request at a time, an answer that comes after the
+  player moved on is dropped (Esc from a character still being made reads the list again once the server has answered),
+  a refusal is shown on the field it is about (the server's words: wrong password, taken or reserved name, limits, rate
+  limits), and a typed password leaves the page once sent, with its step, or on closing. Entering calls
+  `Game.enterWorld` and shows Net's states; a failure before the welcome goes back to the list with why, and Esc lets the
+  socket go. The first welcome, and everything the server says after it, is held (`holdFirstWelcome`) while Enter is
+  ticked and the screen fades to black (at most 3 s, for a tab whose animations do not run); the game then places the
+  character, takes what came meanwhile in order, and its place fades up. By keyboard: Play has the focus once the title
+  is ready, Enter submits, Esc goes back a step, the arrows walk the characters and the peoples, N makes a new
+  character. The dev login's call is compiled out of production builds.
 - **`Net`** (`Net.js`) owns the socket. `connect()` sends `hello {version: PROTOCOL_VERSION, token}` and `join` together
   as the socket opens (the gateway handles a socket's messages in order). States: idle → connecting → joining → joined →
   closed. A connection that drops after a welcome goes to reconnecting and tries again after 0.5 s doubling to 30 s (each

@@ -183,13 +183,24 @@ export class AccountFlow {
       case 'register':
         return this.set({ step: 'signin', busy: false, message: null });
       case 'create':
-        return this.set({ step: 'characters', busy: false, message: null });
+        return this.leaveCreate();
       case 'entering':
         return this.cancelEnter();
       case 'signin':
       case 'characters':
         return this.close();
     }
+  }
+
+  /** Back from a new character to the list. A character asked for and not yet answered is made or refused as the server
+   * decides, its answer to this step dropped: the list is read again once it is in, so a character made shows. */
+  leaveCreate() {
+    const pending = this.view.busy ? this.creating : null;
+    if (!pending) return this.set({ step: 'characters', busy: false, message: null });
+    this.set({ step: 'characters', busy: true, loading: true, message: null });
+    const epoch = this.epoch;
+    const reload = () => epoch === this.epoch && this.loadCharacters();
+    pending.then(reload, reload);
   }
 
   toRegister(username = this.view.username) {
@@ -228,7 +239,7 @@ export class AccountFlow {
     return this.loadCharacters();
   }
 
-  /** The account's characters from the server; an account with none goes straight to making one. */
+  /** The account's characters from the server (an account with none shows its empty list, a new character offered). */
   async loadCharacters(message = null) {
     this.set({ step: 'characters', loading: true, busy: true, listFailed: false, characters: [], max: 0, selected: null, message, username: this.session.username ?? '' });
     const epoch = this.epoch;
@@ -244,7 +255,6 @@ export class AccountFlow {
     }
     if (epoch !== this.epoch) return;
     this.set({ loading: false, busy: false, characters: list.characters, max: list.max, selected: list.characters[0]?.id ?? null });
-    if (!list.characters.length) this.newCharacter(message);
   }
 
   /** A refusal on the step it was made from; a session the server no longer takes goes back to the sign-in. */
@@ -269,14 +279,6 @@ export class AccountFlow {
 
   select(id) {
     if (this.step === 'characters' && this.view.characters.some((c) => c.id === id)) this.set({ selected: id });
-  }
-
-  /** The arrow keys: the next character up or down the list (it stops at the ends). */
-  move(delta) {
-    const list = this.view.characters;
-    if (this.step !== 'characters' || !list.length) return;
-    const i = Math.max(0, list.findIndex((c) => c.id === this.view.selected));
-    this.set({ selected: list[Math.min(list.length - 1, Math.max(0, i + delta))].id });
   }
 
   get full() {
@@ -308,12 +310,15 @@ export class AccountFlow {
     if (problem) return this.set({ message: { ...problem, tone: 'error' } });
     this.set({ busy: true, message: null });
     const epoch = this.epoch;
+    const request = (this.creating = this.deps.api.createCharacter(this.session.token, { name, people, look: DEFAULT_LOOK }));
     let c;
     try {
-      c = await this.deps.api.createCharacter(this.session.token, { name, people, look: DEFAULT_LOOK });
+      c = await request;
     } catch (e) {
       if (epoch === this.epoch) this.failed(e);
       return;
+    } finally {
+      if (this.creating === request) this.creating = null;
     }
     if (epoch !== this.epoch) return;
     this.set({ step: 'characters', busy: false, message: null, characters: [...this.view.characters, c], selected: c.id, draft: { name: '', people: PEOPLE_IDS[0] } });
@@ -373,7 +378,8 @@ export class AccountFlow {
    * could not get in (the sign-in then says why).
    */
   devLogin({ name, people } = {}) {
-    if (this.step === 'entering') return Promise.resolve(false);
+    // (compiled out of production builds, as the server's route is absent there)
+    if (!import.meta.env.DEV || this.step === 'entering') return Promise.resolve(false);
     this.settle(false);
     const promise = new Promise((resolve) => (this.pending = resolve));
     this.set({ step: 'entering', busy: false, message: null, entering: null, username: `dev-${name}`, connection: 'signing-in' });
@@ -409,7 +415,49 @@ function esc(t) {
   return String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
-const keys = (...pairs) => `<footer class="acct-keys">${pairs.map(([k, what]) => `<span>${k.map((x) => `<kbd>${x}</kbd>`).join('')}${what}</span>`).join('')}</footer>`;
+/**
+ * Holds a Net's first welcome, and everything the server says after it, until `arrive()` settles: the game places the
+ * character once the screen has gone dark, then takes what came meanwhile in the order it came, as if it had all come
+ * that much later. A later welcome (a reconnect) passes straight through.
+ */
+export function holdFirstWelcome(net, arrive) {
+  const emit = net.emit;
+  let held = null;
+  const release = () => {
+    const queue = held;
+    held = null;
+    net.emit = emit;
+    for (const [type, args] of queue) emit.call(net, type, ...args);
+  };
+  net.emit = function (type, ...args) {
+    if (held) return void held.push([type, args]);
+    if (type !== 'welcome' || args[1] !== true) return emit.call(this, type, ...args);
+    held = [[type, args]];
+    Promise.resolve()
+      .then(arrive)
+      .then(release, release);
+  };
+}
+
+function clearPasswords(root) {
+  for (const i of root.querySelectorAll('input[type="password"]')) i.value = '';
+}
+
+const keyHints = (pairs) => pairs.map(([k, what]) => `<span>${k.map((x) => `<kbd>${x}</kbd>`).join('')}${what}</span>`).join('');
+const keys = (...pairs) => `<footer class="acct-keys">${keyHints(pairs)}</footer>`;
+const LIST_KEYS = [
+  [['↑', '↓'], 'Pick'],
+  [['Enter'], 'Enter the world'],
+  [['N'], 'New'],
+  [['Esc'], 'Back'],
+];
+// (an account with no characters yet: the new character has the focus)
+const EMPTY_LIST_KEYS = [
+  [['Enter'], 'New character'],
+  [['Esc'], 'Back'],
+];
+/** What a primary action says while the server has it. */
+const pending = (text) => `<span class="acct-pending mono" aria-live="polite"><i class="acct-bar"><b></b></i>${text}</span>`;
 const msgBox = '<div class="acct-msgwrap"><p class="acct-msg" role="alert"><span></span></p></div>';
 const RAIL = { signin: 1, register: 1, characters: 2, create: 2, entering: 3 };
 
@@ -435,7 +483,10 @@ export class Account {
       store: { load: loadSession, save: saveSession, clear: clearSession, expired: (s) => sessionExpired(s) },
       enter: (session, character, onFail) => {
         this.game.enterWorld(session, character, onFail);
-        return this.game.net;
+        const net = this.game.net;
+        // the welcome waits until the screen has gone dark, so the title's shot never cuts to the world
+        if (net) holdFirstWelcome(net, () => this.darken());
+        return net;
       },
       entered: () => this.reveal(),
       galaxy: this.game.galaxy,
@@ -458,14 +509,37 @@ export class Account {
     return this.flow.devLogin(request);
   }
 
-  /** In the world: the title's shot cuts to the character's place behind a fade from black, a veil over the whole page
-   * from the moment the welcome placed it (so no frame shows the title's shot under the world's screens). */
+  /** The welcome is in: Enter is marked done, then the menu and the title's shot fade to black over the whole page (a
+   * veil above every screen). Resolves once dark, when the game places the character (holdFirstWelcome). */
+  darken() {
+    this.root.querySelectorAll('.acct-rail li').forEach((li) => li.classList.replace('on', 'done') || li.classList.add('done'));
+    const line = this.body.querySelector('.acct-step:not(.leaving) [data-connection]');
+    if (line) line.textContent = CONNECTION_TEXT.joined;
+    const veil = this.veilEl();
+    veil.className = 'acct-veil dark';
+    return new Promise((resolve) => {
+      // (its animation runs on the page's clock; a hidden tab that never runs it goes on regardless)
+      const timer = setTimeout(resolve, 3000);
+      veil.addEventListener(
+        'animationend',
+        () => {
+          clearTimeout(timer);
+          resolve();
+        },
+        { once: true },
+      );
+    });
+  }
+
+  /** In the world, placed: the veil lifts off the character's place. */
   reveal() {
-    const veil = (this.veil ||= el('div', 'acct-veil', this.menus.root));
-    veil.classList.remove('on');
-    void veil.offsetWidth;
-    veil.classList.add('on');
-    veil.addEventListener('animationend', () => veil.classList.remove('on'), { once: true });
+    const veil = this.veilEl();
+    veil.className = 'acct-veil up';
+    veil.addEventListener('animationend', () => veil.classList.remove('up'), { once: true });
+  }
+
+  veilEl() {
+    return (this.veil ||= el('div', 'acct-veil', this.menus.root));
   }
 
   // ---------- drawing ----------
@@ -474,6 +548,7 @@ export class Account {
     const changed = v.step !== prev.step;
     this.title.classList.toggle('flow', v.step !== 'closed');
     if (v.step === 'closed') {
+      clearPasswords(this.body);
       if (changed && prev.step !== 'entering') this.menus.startBtn?.focus({ preventScroll: true });
       return;
     }
@@ -487,17 +562,25 @@ export class Account {
     if (changed) this.game.audio?.play('ui');
   }
 
-  /** A new step: the old one fades up and out over it while the new one's rows rise in, one after another. */
+  /** A new step: the old one fades out where it stood (at its own height, never clipped), then the new one's rows rise
+   * in, one after another. */
   build(v, prev) {
-    // the typed username and password carry across sign-in and sign-up
-    const carry = {};
-    for (const i of this.body.querySelectorAll('input[name="username"], input[name="password"]')) carry[i.name] = i.value;
     // (opened again from the title, the column itself fades in: what it last showed just goes)
-    if (prev.step === 'closed') this.body.replaceChildren();
+    if (prev.step === 'closed') {
+      this.body.replaceChildren();
+      this.holdHeight();
+    }
     const old = this.body.querySelector('.acct-step:not(.leaving)');
     if (old) {
+      // a password never outlives its step in the page
+      clearPasswords(old);
       old.classList.add('leaving');
-      const drop = () => old.remove();
+      this.holdHeight();
+      const drop = () => {
+        if (!old.isConnected) return;
+        old.remove();
+        this.holdHeight();
+      };
       old.addEventListener('animationend', (e) => e.target === old && drop());
       // (and in any case a little later: its animation never ends while the title is hidden)
       setTimeout(drop, 4000);
@@ -508,13 +591,17 @@ export class Account {
     // rows rise in one after another, a form's own rows among them
     step.querySelectorAll(':scope > :not(form), :scope > form > *').forEach((c, i) => c.style.setProperty('--i', i));
     step.querySelectorAll('.acct-peoples > .acct-people').forEach((c, i) => c.style.setProperty('--j', i));
-    for (const [name, value] of Object.entries(carry)) {
-      const input = step.querySelector(`input[name="${name}"]`);
-      if (input && (prev.step === 'signin' || prev.step === 'register')) input.value = value;
-    }
+    // (the username typed carries across sign-in and sign-up; the flow keeps it)
     const username = step.querySelector('input[name="username"]');
-    if (username && !username.value) username.value = v.username || '';
+    if (username) username.value = v.username || '';
     this.focusFirst(step, v);
+  }
+
+  /** The column keeps the height of a step fading out until it has gone, so nothing is cut off mid-fade (the column
+   * draws nothing of its own: the release shows nowhere). */
+  holdHeight() {
+    const leaving = [...this.body.querySelectorAll(':scope > .acct-step.leaving')];
+    this.body.style.minHeight = leaving.length ? `${Math.max(...leaving.map((s) => s.offsetHeight))}px` : '';
   }
 
   focusFirst(step, v) {
@@ -539,7 +626,7 @@ export class Account {
           <div class="acct-list" role="listbox" aria-label="Characters"></div>
           ${msgBox}
           <div class="acct-actions"><button type="button" class="btn" data-do="enter">Enter the world<em>→</em></button><button type="button" class="btn ghost" data-do="signout">Sign out</button></div>
-          ${keys([['↑', '↓'], 'Pick'], [['Enter'], 'Enter the world'], [['N'], 'New'], [['Esc'], 'Back'])}`;
+          ${keys(...LIST_KEYS)}`;
       case 'create':
         return this.createHTML(v);
       case 'entering':
@@ -564,6 +651,7 @@ export class Account {
         <div class="acct-actions">
           <button type="submit" class="btn" data-do="${register ? 'register' : 'signin'}">${register ? 'Create account' : 'Sign in'}<em>→</em></button>
           <button type="button" class="acct-link" data-do="${register ? 'to-signin' : 'to-register'}">${register ? 'I have an account' : 'Create an account'}</button>
+          ${pending(register ? 'Creating the account' : 'Signing in')}
         </div>
       </form>
       ${keys([['Enter'], register ? 'Create account' : 'Sign in'], [['Tab'], 'Next field'], [['Esc'], 'Back'])}`;
@@ -594,6 +682,7 @@ export class Account {
         <div class="acct-actions">
           <button type="submit" class="btn" data-do="create">Create character<em>→</em></button>
           <button type="button" class="btn ghost" data-do="back">Back</button>
+          ${pending('Making the character')}
         </div>
       </form>
       ${keys([['Enter'], 'Create'], [['↑', '↓'], 'People'], [['Esc'], 'Back'])}`;
@@ -631,12 +720,13 @@ export class Account {
       }
       step.querySelector('[data-connection]').textContent = `${CONNECTION_TEXT[v.connection] ?? CONNECTION_TEXT.connecting}…`;
     }
-    // busy: the primary action waits, a sweep along its foot
+    // busy: the primary action waits, a sweep along its foot and a line beside it saying what it waits for
     const primary = step.querySelector('.acct-actions .btn:not(.ghost)');
     if (primary) {
       primary.classList.toggle('busy', v.busy);
       primary.disabled = v.busy || (v.step === 'characters' && !v.selected);
     }
+    step.querySelector('.acct-actions')?.classList.toggle('busy', v.busy);
     this.syncMessage(step, v, prev, built);
   }
 
@@ -646,6 +736,8 @@ export class Account {
     const redraw = list.dataset.key !== key;
     if (redraw) {
       list.dataset.key = key;
+      // (redrawn in place, as the list comes in: it eases to its new height, so what is below it never jumps)
+      const from = built ? null : list.offsetHeight;
       const rows = v.characters.map((c) => this.rowHTML(c, c.id === v.selected));
       const slots = v.max ? `${v.characters.length} of ${v.max} slots` : '';
       if (v.loading) list.innerHTML = '<div class="acct-loading"><div class="acct-bar"><b></b></div><span class="mono">Loading characters…</span></div>';
@@ -654,10 +746,16 @@ export class Account {
       else
         list.innerHTML =
           rows.join('') +
-          `<button type="button" class="acct-char acct-new" data-do="new" tabindex="${v.characters.length ? -1 : 0}"${this.flow.full ? ' disabled' : ''}><i class="acct-plus"></i><span class="acct-char-name">New character</span><span class="acct-char-sub">${v.characters.length ? slots : 'Make your first character'}</span></button>`;
+          `<button type="button" class="acct-char acct-new" data-do="new" tabindex="${v.characters.length ? -1 : 0}"${this.flow.full ? ' disabled' : ''}><i class="acct-plus"></i><span class="acct-char-name">New character</span><span class="acct-char-sub">${v.characters.length ? slots : 'No characters yet: make your first'}</span></button>`;
       list.querySelectorAll(':scope > *').forEach((c, i) => c.style.setProperty('--j', i));
       list.classList.toggle('fresh', !built);
       step.querySelector('.acct-count').textContent = v.max ? `${v.characters.length} / ${v.max}` : '';
+      const empty = !v.loading && !v.listFailed && !v.characters.length;
+      step.querySelector('.acct-keys').innerHTML = keyHints(empty ? EMPTY_LIST_KEYS : LIST_KEYS);
+      const to = list.offsetHeight;
+      if (from !== null && from !== to) {
+        list.animate([{ height: `${from}px`, overflowY: 'clip' }, { height: `${to}px`, overflowY: 'clip' }], { duration: 380, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' });
+      }
     }
     let picked = null;
     list.querySelectorAll('.acct-char[data-id]').forEach((b) => {
@@ -710,8 +808,11 @@ export class Account {
       e.preventDefault();
       const f = e.target;
       const val = (n) => f.querySelector(`[name="${n}"]`)?.value ?? '';
-      if (f.dataset.form === 'signin' || f.dataset.form === 'register') this.flow.submitCredentials({ username: val('username'), password: val('password') });
-      else if (f.dataset.form === 'create') this.flow.create({ name: val('name'), people: f.querySelector('input[name="people"]:checked')?.value });
+      if (f.dataset.form === 'signin' || f.dataset.form === 'register') {
+        this.flow.submitCredentials({ username: val('username'), password: val('password') });
+        // (once on its way, the password leaves the page; one the client refused stays to be put right)
+        if (this.flow.view.busy) clearPasswords(f);
+      } else if (f.dataset.form === 'create') this.flow.create({ name: val('name'), people: f.querySelector('input[name="people"]:checked')?.value });
     });
     root.addEventListener('click', (e) => {
       const b = e.target.closest('button');
