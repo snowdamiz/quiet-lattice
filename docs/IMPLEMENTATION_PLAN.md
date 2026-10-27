@@ -205,7 +205,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 
 ### E06 Combat model and death
 - [x] **P1.E06.T01 Combat math in shared** · deps: E02.T07 · spec: DESIGN 12.1 · done: level scaling, threat ratings, resistances by branch, hit shapes (ray, cone, sphere) with tests. · verify: unit tests.
-- [~] **P1.E06.T02 Server combat resolution** · deps: T01, E03.T04 · done: abilities and weapons resolve on the server; clients show cosmetic prediction; damage, death and loot events replicated. · verify: integration: a player kills a test mob; client-reported damage is rejected.
+- [R] **P1.E06.T02 Server combat resolution** · deps: T01, E03.T04 · done: abilities and weapons resolve on the server; clients show cosmetic prediction; damage, death and loot events replicated. · verify: integration: a player kills a test mob; client-reported damage is rejected.
 - [ ] **P1.E06.T03 The Recall** · deps: T02, E05.T04 · spec: DESIGN 7 · files: `src/Game.js` (`playerDied`, `shipDestroyed`), `src/entities/Pirates.js` (`playerDefeated`) · done: at zero health the server flags Recall; the client plays the glyph-dissolve-flash sequence (Blender VFX from E07.T14); respawn at the home anchor; the ship entity is destroyed and its cargo drops as a pod with a 10-minute owner lock; the demo's suit failure, ship rebuild and tow paths are deleted along with both death taxes. · verify: integration; smoke captures the Recall; `pnpm gate:removed`.
 - [x] **P1.E06.T04 Suit inventory and cargo pods** · deps: E02.T07 · spec: DESIGN 10.1 · files: `src/gameplay/Inventory.js` · done: inventory split into suit stacks and ship cargo pods (per hull); UI; server-authoritative. · verify: unit + integration.
 
