@@ -3,11 +3,11 @@
 // Waystation's sphere into its world's frame without a pop, a late snapshot after an extrapolation blended in, entities
 // leaving, and Net's snapshots followed.
 import * as THREE from 'three';
-import { setFrameInto } from '@astra/shared/world';
+import { GALAXY_SEED, Galaxy, describeGalaxySystem, homeSystems, setFrameInto, systemPoses } from '@astra/shared/world';
 import { describe, expect, it, vi } from 'vitest';
 import { Body } from '../universe/Body.js';
 import { framePoseAt } from './frames.js';
-import { BLEND_S, RemoteEntities } from './RemoteEntities.js';
+import { BLEND_S, RemoteEntities, SNAP_M, snapLimit } from './RemoteEntities.js';
 
 const SEED = 7;
 const Q = [0, 0, 0, 1];
@@ -106,6 +106,37 @@ describe('RemoteEntities: what it follows and shows', () => {
     remotes.ingest(new Map([[1, { id: 1, kind: 'player', mode: 'ship', frame: '99:station', pos: [0, 0, 0], quat: Q, vel: [0, 0, 0] }]]), 100, 100, null);
     remotes.update(DT);
     expect(remotes.get(1).shown).toBe(false);
+  });
+
+  it('lets entities go as they leave, those in another system’s frames too, keeping none it no longer hears of', () => {
+    const { game } = world();
+    const remotes = new RemoteEntities(game, { view: view() });
+    // 200 entities come and go, each in the snapshots for half a second, every other one in a frame of a system this
+    // client does not have (it is not drawn, and has no samples)
+    const at = (t) => {
+      const out = [];
+      for (let id = 1; id <= 200; id++) {
+        const from = 100 + id * 0.05;
+        if (t >= from - 1e-9 && t < from + 0.5 - 1e-9)
+          out.push({ id, kind: 'player', mode: 'ship', frame: id % 2 ? frameId('station') : '99:station', pos: [id, 0, 0], quat: Q, vel: [0, 0, 0] });
+      }
+      return out;
+    };
+    let most = 0;
+    let unplaced = 0;
+    play(remotes, game, at, {
+      from: 100,
+      to: 112,
+      watch: () => {
+        most = Math.max(most, remotes.list.length);
+        for (const r of remotes.list) if (r.id % 2 === 0 && (r.shown || r.buf.length)) unplaced++;
+      },
+    });
+    // (at most the ten in the snapshots at once, and those whose leaving is not yet due)
+    expect(most).toBeLessThan(16);
+    expect(remotes.list).toEqual([]);
+    expect(remotes.byId.size).toBe(0);
+    expect(unplaced).toBe(0);
   });
 
   it('forgets every frame it held when the system changes (a warp)', () => {
@@ -249,6 +280,109 @@ describe('RemoteEntities: frames of reference', () => {
     const kink = bends(raw).sort((a, b) => b - a)[2];
     expect(Math.max(...bends(drawn))).toBeLessThan(kink + 2);
     expect(drawn.at(-1).distanceTo(raw.at(-1))).toBeLessThan(0.05);
+  });
+});
+
+/** The home systems' planets and moons, with how fast each one's frame and the frame outside its sphere (the system's for
+ * a planet, its planet's for a moon) move apart at the edge of its sphere (5% out, where the zone changes frames), at
+ * most: its orbital speed and its turning there, and for a moon its planet's turning too. */
+function homeSpheres() {
+  const galaxy = new Galaxy(GALAXY_SEED);
+  const out = [];
+  for (const h of homeSystems(GALAXY_SEED)) {
+    const d = describeGalaxySystem(galaxy.systems[h.systemIndex]);
+    const poses = systemPoses(d, 1.2e7);
+    d.bodies.forEach((b, i) => {
+      const edge = b.soi * 1.05;
+      const p = poses.bodies[i];
+      const parent = b.parent === null ? null : poses.bodies[b.parent];
+      const v = new THREE.Vector3(...p.velocity).sub(parent ? new THREE.Vector3(...parent.velocity) : new THREE.Vector3());
+      const spin = new THREE.Vector3(...p.angularVelocity).length() * edge;
+      // (a moon's sphere edge is at most its orbit plus its sphere from its planet's centre)
+      const parentSpin = parent ? new THREE.Vector3(...parent.angularVelocity).length() * (b.orbitRadius + edge) : 0;
+      out.push({ system: h.systemIndex, index: i, spec: b, apart: v.length() + spin + parentSpin });
+    });
+  }
+  return out;
+}
+
+describe('RemoteEntities: the edge of a planet’s sphere', () => {
+  it('blends a ship leaving the home systems’ fastest-moving sphere for the system’s frame, its client’s clock lagging', () => {
+    const spheres = homeSpheres();
+    const worst = spheres.filter((s) => s.spec.parent === null).sort((a, b) => b.apart - a.apart)[0];
+    // a planet's frame and the system's part at up to ~5 km/s at its sphere's edge (its orbit and its spin); over the
+    // render delay, the trip and the up to a second a hitch leaves a client's clock behind, that is well past SNAP_M: the
+    // blend reaches that far
+    expect(worst.apart).toBeGreaterThan(3000);
+    expect(Math.max(...spheres.map((s) => s.apart))).toBeLessThan(8000);
+    expect(worst.apart * (0.15 + 0.8)).toBeGreaterThan(SNAP_M);
+    for (const s of spheres) expect(snapLimit(0, s.apart)).toBeGreaterThan(s.apart * (0.15 + 1));
+
+    // that planet as the client holds it, and a ship flying out of its sphere along its equator at 300 m/s
+    const b = worst.spec;
+    const star = new Body({ name: 'star', kind: 'star' });
+    const planet = new Body({
+      name: 'planet',
+      parent: star,
+      radius: b.radius,
+      soi: b.soi,
+      orbitRadius: b.orbitRadius,
+      orbitPeriod: b.orbitPeriod,
+      orbitPhase: b.orbitPhase,
+      orbitTilt: new THREE.Quaternion().fromArray(b.orbitTilt),
+      rotationPeriod: b.rotationPeriod,
+      rotationPhase: b.rotationPhase,
+      axialTilt: new THREE.Quaternion().fromArray(b.axialTilt),
+    });
+    const station = new Body({ name: 'station', kind: 'station', parent: planet, orbitRadius: b.radius * 1.5, orbitPeriod: 2400, soi: 4500 });
+    const game = {
+      time: 0,
+      system: { seed: SEED, planets: [planet] },
+      station,
+      camWorld: new THREE.Vector3(),
+      place(t) {
+        this.time = t;
+        for (const x of [star, planet, station]) {
+          framePoseAt(x, t, x);
+          x.quaternionInv.copy(x.quaternion).invert();
+        }
+      },
+    };
+    const remotes = new RemoteEntities(game, { view: view() });
+    const s = { frame: planet, pos: new THREE.Vector3(b.soi * 1.05 - 400, 0, 0), quat: new THREE.Quaternion(), vel: new THREE.Vector3(300, 0, 0) };
+    const pose = { position: new THREE.Vector3(), quaternion: new THREE.Quaternion(), velocity: new THREE.Vector3(), angularVelocity: new THREE.Vector3() };
+    let crossed = null;
+    const at = (t) => {
+      if (t > 300) s.pos.addScaledVector(s.vel, 0.05);
+      if (s.frame === planet && s.pos.length() > b.soi * 1.05) {
+        // (its client 0.8 s behind the server's clock after a hitch)
+        setFrameInto(s, framePoseAt(planet, t - 0.8, pose), null);
+        s.frame = null;
+        crossed = t;
+      }
+      return [{ id: 1, kind: 'player', mode: 'ship', frame: s.frame ? frameId(0) : null, pos: s.pos.toArray(), quat: s.quat.toArray(), vel: s.vel.toArray() }];
+    };
+    // where it is drawn, and where it would be drawn with nothing blended, in the planet's frame
+    const drawn = [];
+    const raw = [];
+    play(remotes, game, at, {
+      from: 300,
+      to: 304,
+      watch: () => {
+        const r = remotes.get(1);
+        if (!r?.shown) return;
+        drawn.push(planet.worldToLocal(r.world, new THREE.Vector3()));
+        raw.push(planet.worldToLocal(r.frame ? r.frame.localToWorld(r.pose.pos, new THREE.Vector3()) : r.pose.pos.clone(), new THREE.Vector3()));
+      },
+    });
+    expect(crossed).not.toBeNull();
+    expect(remotes.get(1).frame).toBeNull();
+    // drawn as the snapshots have it, it would leap kilometres in a frame; blended, it never steps more than its motion
+    // (riding the planet's turning: ~2.5 km/s here) and the blend's few hundred metres a second
+    const leap = Math.max(...steps(raw));
+    expect(leap).toBeGreaterThan(SNAP_M);
+    expect(Math.max(...steps(drawn))).toBeLessThan(leap / 10);
+    expect(drawn.at(-1).distanceTo(raw.at(-1))).toBeLessThan(1);
   });
 });
 

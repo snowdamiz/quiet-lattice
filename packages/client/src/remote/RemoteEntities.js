@@ -28,9 +28,10 @@ export const BLEND_S = 0.2;
 /** A drawn jump larger than this (m) is no motion to blend: it is shown... */
 export const SNAP_M = 2000;
 /** ...unless it is within this many seconds of the entity's speed, or (at a frame change) of how fast its old and new
- * frames move apart where it is: the render delay, the trip and a hitch's worth of clock (a planet's frame and the
- * system's part at up to ~5 km/s at the edge of the planet's sphere, its orbit and its spin together). */
-export const SNAP_S = 0.6;
+ * frames move apart where it is: the render delay and the trip, and the up to a second a hitch can leave a client's
+ * world time behind the server's before it steps (a planet's frame and the system's part at up to ~5 km/s at the edge of
+ * the planet's sphere, its orbit and its spin together). */
+export const SNAP_S = 1.2;
 
 /** The largest drawn jump blended rather than shown, for an entity at `speed` (m/s) or frames `apart` (m/s). */
 export const snapLimit = (speed, apart = 0) => Math.max(SNAP_M, SNAP_S * Math.max(speed, apart));
@@ -77,6 +78,12 @@ class Remote {
 
 const toWorld = (frame, local, out) => (frame ? frame.localToWorld(local, out) : out.copy(local));
 const toLocal = (frame, world, out) => (frame ? frame.worldToLocal(world, out) : out.copy(world));
+/** Direction `v`, in frame `from`'s axes, in frame `to`'s, in place. */
+function turn(v, from, to) {
+  if (from === to) return v;
+  if (from) from.dirToWorld(v, v);
+  return to ? to.dirToLocal(v, v) : v;
+}
 
 export class RemoteEntities {
   /** `view` draws the entities (RemoteShips; tests give a stand-in). */
@@ -188,12 +195,14 @@ export class RemoteEntities {
     const apart = r.buf.frame === was ? 0 : framesApartAt(was, r.buf.frame, _w);
     const limit = snapLimit(Math.max(_rate.length(), r.buf.newest.vel.length()), apart);
     const off = toLocal(r.buf.frame, _w, _l).sub(r.pose.pos);
-    if (off.length() > limit) return settle(r);
+    // (what this sample changes, the blend already running aside, is what may be too large to blend)
+    const running = turn(_k.copy(r.offset), was, r.buf.frame);
+    if (off.distanceTo(running) > limit) return settle(r);
     r.offset.copy(off);
-    // (rates in two frames are not comparable: across a frame change the blend starts at rest, which is what the drawn
-    // motion does there, both frames carrying the entity alike over the delay)
+    // (rates in two frames are not comparable: across a frame change the blend keeps the rate it had, turned into the new
+    // axes, which is what the drawn motion does there, both frames carrying the entity alike over the delay)
     if (r.buf.frame === was) r.offsetRate.copy(_rate).sub(rateOf(r, status, _l));
-    else r.offsetRate.set(0, 0, 0);
+    else turn(r.offsetRate, was, r.buf.frame);
   }
 
   /** Each frame: the render time moves on, every entity is placed and the view draws them. */
