@@ -280,5 +280,8 @@ authority for the numbers.
   and creatures; an armature on characters, NPCs and bosses, with the shared rig's bone and blendshape names; cutscene
   camera curves `CAM_<cutscene>_<shot>`. Marker prefixes match case-insensitively.
 - **Review:** every asset is captured in-engine under noon on a lush world, night on an exotic world and open space, at LOD0
-  and LOD2, with a wireframe pass and a turntable sheet (IMPLEMENTATION_PLAN 0.4, 0.10.3): `pnpm capture -- --review
-  <family>/<file>` and `packages/tools/blender/turntable.py`.
+  and LOD2, with a wireframe pass, a collider and marker overlay (`COL_*` volumes translucent, markers and `Gear*`,
+  `Blink`, `Spin` pivots labelled), a far view at LOD2 from 100 m under noon (a hero also from 200 m), a paired perf
+  readout (the asset's own cost as the median of shown-minus-hidden differences of adjacent frames) and a turntable
+  sheet, plus a sibling sheet of the asset's family (IMPLEMENTATION_PLAN 0.4, 0.10.3): `pnpm capture -- --review
+  <family>/<file>` and `packages/tools/blender/turntable.py` (`pnpm turntable -- <file.glb> [out_dir] --family`).

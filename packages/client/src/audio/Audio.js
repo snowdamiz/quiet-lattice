@@ -258,23 +258,16 @@ export class Audio {
     else if (state.context !== 'title') this.updateMusic(t, state);
   }
 
-  // RCS jets pulse, so they sound as a run of gas puffs: one at once on a fresh burst (however short),
-  // then more, quicker and louder the harder the jets are working
+  // The RCS jets: a gas hiss that swells and cuts with how hard they are working, and now and then,
+  // on a sharp fresh burst, a single puff on top of it (a stream of puffs sounded like a machine gun).
   updateRcs(st) {
     const b = this.bank;
-    if (!b.has('rcs_puff') || !st.inShip) return;
+    const level = st.inShip ? st.rcs || 0 : 0;
+    const hiss = b.setLoop('rcs_loop', level > 0.02 ? Math.min(1, 0.2 + level * 1.1) : 0, 0.92 + level * 0.2, level > 0.02 ? 0.03 : 0.07);
     const t = this.ctx.currentTime;
-    const level = st.rcs || 0;
-    if ((st.rcsKick || 0) > 0.12 && t - (this.rcsLast || 0) > 0.05) {
-      b.play('rcs', { gain: Math.min(1.3, 0.55 + st.rcsKick * 1.2) });
+    if (st.inShip && (st.rcsKick || 0) > 0.25 && t - (this.rcsLast || 0) > 0.45) {
+      b.play('rcs', { gain: hiss ? 0.35 + st.rcsKick * 0.3 : 0.6 + st.rcsKick * 0.4 });
       this.rcsLast = t;
-      this.rcsNext = t + 0.09;
-      return;
-    }
-    if (level > 0.04 && t >= (this.rcsNext || 0)) {
-      b.play('rcs', { gain: Math.min(1.1, 0.3 + level * 0.9) });
-      this.rcsLast = t;
-      this.rcsNext = t + (0.16 - 0.1 * Math.min(1, level * 1.5)) * (0.8 + Math.random() * 0.4);
     }
   }
 
@@ -296,7 +289,6 @@ export class Audio {
     // the VTOL jets: a steady roar whenever they carry the ship, louder as they work harder
     const hov = st.hover || 0;
     b.setLoop('hover_loop', ship && hov > 0.015 ? Math.min(1, 0.4 + hov * 1.8) : 0, 0.88 + hov * 0.3, 0.1);
-    // the RCS jets: a sharp puff whenever one fires up, and a stream of them while they keep firing
     this.updateRcs(st);
     on.pulse = b.setLoop('pulse_loop', st.pulse ? 0.3 + st.pulse * 0.7 : 0, 0.85 + (st.pulse || 0) * 0.25, 0.4);
     on.jet = b.setLoop('jetpack_loop', st.jet ? 1 : 0, 1, 0.06);

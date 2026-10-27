@@ -6,12 +6,13 @@ import { AuthResponse, CharacterSummary, decodeServerMessage, type CharacterCrea
 import { WebSocket } from 'ws';
 import { parseConfig, type Config } from '../src/config.ts';
 import { runMigrations } from '../src/db/migrate.ts';
-import { startServer, type RunningServer } from '../src/server.ts';
+import { startServer, type RunningServer, type StartOptions } from '../src/server.ts';
 
-/** A server on a free port. `shard` runs a shard of its own (uniqueShard()) for tests that change the world or its clock. */
-export async function startTestServer(config: Partial<Config> = {}, opts: { shard?: string } = {}): Promise<RunningServer> {
+/** A server on a free port. `shard` runs a shard of its own (uniqueShard()) for tests that change the world or its clock;
+ * `persistence` tunes character saving (a short interval). */
+export async function startTestServer(config: Partial<Config> = {}, opts: Pick<StartOptions, 'shard' | 'persistence'> = {}): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
-  return startServer({ port: 0, host: '127.0.0.1', config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config }, shard: opts.shard });
+  return startServer({ port: 0, host: '127.0.0.1', config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config }, ...opts });
 }
 
 function letters(n: number): string {

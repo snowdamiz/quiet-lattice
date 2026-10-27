@@ -430,11 +430,9 @@ body {
 .inventory .units {
   display: none;
 }
-.toast i {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  transform: rotate(45deg);
+.toast .res-ico {
+  width: 12px;
+  height: 12px;
 }
 
 /* ---------- prompt ---------- */
@@ -1494,7 +1492,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .res-row {
   display: grid;
-  grid-template-columns: 10px minmax(0, 1fr) 34px 48px auto;
+  grid-template-columns: 14px minmax(0, 1fr) 34px 48px auto;
   align-items: center;
   gap: 12px;
   min-height: 46px;
@@ -1506,10 +1504,9 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.res-row i {
-  width: 8px;
-  height: 8px;
-  transform: rotate(45deg);
+.res-row .res-ico {
+  width: 13px;
+  height: 13px;
 }
 .res-row .num {
   text-align: right;
@@ -1808,26 +1805,23 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .inv-slot.drop::before {
   transform: scaleY(1);
 }
-.inv-sw {
-  position: absolute;
-  left: 12px;
-  top: 14px;
-  width: 9px;
-  height: 9px;
+/* a resource's icon (art bible 4, Inventory.js resourceIcon): its family's shape with its own mark cut out, in its hue */
+.res-ico {
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  font-style: normal;
   background: var(--c);
+  -webkit-mask: var(--m) center / contain no-repeat;
+  mask: var(--m) center / contain no-repeat;
 }
-.inv-sw.dot {
-  border-radius: 50%;
-}
-.inv-sw.diamond {
-  transform: rotate(45deg) scale(0.9);
-}
-.inv-sw.hex {
-  width: 10px;
-  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
-}
-.inv-sw.square {
-  transform: scale(0.85);
+.inv-slot .res-ico {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 15px;
+  height: 15px;
 }
 .inv-tag {
   position: absolute;

@@ -296,3 +296,128 @@ Format: task id, question → choice → why.
   signal-profile material that emits nothing. Open: CSS-animation clip frames are timed in real time at 0.1× and can
   jitter when a screenshot overruns; seeking each animation's `currentTime` would make them exact (do it if a grader
   flags jitter).
+- **P1.E09.T02** Phases → a PhaseManager per zone (`zone.phases`); caps in `server/src/phases/kinds.ts`: story one party (a
+  player in no party is a party of one), bay 24, event 12 (DESIGN 17), raid 12 (DESIGN 16.6's "scale 1–12"; DESIGN 17
+  gives no raid cap). Placement (`phaseFor`): the player's current or kept phase at that place, then a party member's
+  phase with room, then the fullest with room (oldest on a tie), else a new one; one phase per entity. A member keeps
+  the party it was placed under (its live tag only when none was given); a story phase never holds two parties. Story
+  hides only its own actors (DESIGN 14.1, "everyone else sees the ordinary world there"); bay, event and raid seal a
+  member inside the volume (enter at the radius, leave at 105%) so it and players of every other layer cannot see each
+  other; shared-world NPCs stay visible; the phase rule overrides "party always visible". A member outside the volume
+  returns to the shared world after a 15 s grace. A disconnect (every socket close until a logout message exists, and
+  the kicked connection of a re-join) keeps the member's place for the same grace, keyed by character id: it counts
+  toward the cap and the party rule, keeps the phase open, and is reclaimed by the next `phaseFor` at that place;
+  reconnecting never extends the grace (it runs from when the member left the volume). Empty phases close at once and
+  despawn their entities; phase ids are never reused; a phase's sphere moves with its frame. → DESIGN 17's private
+  layers with the least surprise for parties and a network blip. Open: nothing calls `phaseFor` yet; the quest engine
+  (P1.E09.T01/T04), the bays (P1.E11.T03) and events (P2.E21.T01) must re-place a character on join; combat, targeting,
+  interaction and loot must check `phases.canSee`, and anything spawned for an instance must go through `phases.spawn`;
+  snapshots do not yet say which phase a client is in (P1.E09.T04 may need it); kept places rely on a zone ticking 30 s
+  after it empties, longer than the 15 s grace.
+- **Orchestrator** The space flight model no longer applies the nearby world's gravity (the user's thruster pass from the
+  planet-landing session, committed unchanged); the speed-window contract (P1.E12.T01) and movement authority
+  (P1.E03.T04) must not assume it. Unit tests run with a 60 s per-test timeout because parallel worktrees load the
+  machine (load average 85+) and the golden and fuzz suites take seconds alone.
+- **Plan amendment (orchestrator)** P1.E15.T01 (chat and parties) is the server and protocol half; no task drew the chat panel or party frame, so P1.E15.T03 "Chat and party UI" is added (deps T01 and the client net layer P1.E04.T01, visual). → The two-client exit criterion needs players to talk and party up on screen.
+- **DESIGN amendment (orchestrator, from the P2.E22.T01 review)** 16.2's "Hold counts as a third of a Feed" now reads: a Hold is a full vote of which a third is Feed, so an all-Hold day targets 383, inside Held. The literal alternative (a Hold weighs a third of a vote, all of it Feed) would send a world of Hold players to Fed, and Held (16.4) is a philosophy that must be able to win a season. The burn is one measure every 4.8 hours (16.1's "a measure every few hours", 16.2's 5 a day), not a lump at the day roll.
+- **P1.E03.T05** Character persistence → a per-character component registry (`server/src/persistence`): each subsystem
+  registers {key, version `v`, zod schema, migrations, default, load, save, unload}; Phase 1 registers progress (level,
+  xp, home in their columns), the ship loadout (default Lark), the inventory (layout re-derived from the saved loadout)
+  and the pose (system, frame, pose, mode); skills and quests register theirs later. Storage: one `characters.state`
+  jsonb of {v, data} per component plus `revision` and `saved_at` (migration 0002); a new component needs no SQL
+  migration; no child tables until state needs cross-character queries. Unreadable state: a bad pose falls back to
+  docked at home (logged); any other unreadable component, a newer `v` included, refuses the join (`full`) rather than
+  reset progress. Saves: every 30 s in 30 one-second slots (least-loaded), on logout/disconnect, kick, handoff and
+  graceful shutdown (5 s wait); only changed components; at most one waiting save per character and one writer,
+  batches of 64 in one UPDATE that skips any save whose revision is not above the row's; backoff 0.5 s → 30 s and
+  one-row retries; a stale save logs at error level. A character that left stays held until its save lands, a rejoin
+  loads the held copy, and the join pins the character during its row read; character ids are taken in lower case and
+  any other spelling is refused. One process holds a character at a time: the revision orders one process's saves and
+  does not fence two (a fence comes with P3.E37). In-memory services refuse characters they do not hold; changing a
+  character out of play is P1.E03.T07's load–modify–save. A crash loses at most one interval while writes succeed.
+  Socket close saves first, then leaves the zone as 'disconnected'. → Restart-safe characters without a schema change
+  per feature. Open: until P1.E03.T04 merges, a saved pose is client-asserted; its `poseProblem` must validate restores.
+- **P2.E22.T01** The Count meter (`server/src/count`) → weights in thirtieths: a counted action is 30, a monolith touch
+  3 (a tenth of a vote); Feed gives the Feed side 30, Hold 10 (DESIGN 16.2 as amended), Break 0; tags per action: wall
+  choice and anchor held carry feed/hold/break, convoy raided, Hive Heart and Warden are Break only, convoy escorted and
+  monolith touch Feed only. Lean = feed ÷ weight (a day with no votes has none and does not drift); target =
+  round(150 + 700 × lean), halves up; the drift is clamped to ±25 and never passes the target. The burn ticks at
+  k × 17,280 s of world time from the shard epoch (5 a day); a tick tied with midnight burns before the drift; a meter's
+  first run counts burns from boot. The meter day is floor(world time ÷ 86,400) (00:00 UTC with the default epoch).
+  Downtime burns and rolls on boot with no cap (one change, one log line, one transaction; a dev shard idle 100+ days
+  boots at 0). One vote per (account, action type, day), first wins; account ids are UUIDs, lower-cased. The underdog
+  is set by the Count's position (Break above 700, Feed below 300, Hold either way; DESIGN 16.2 amended to say so),
+  multiplier 1.5 per action tag, applied by the rep model (P2.E18.T01). "Anchor held" is a per-account vote; P2.E28.T04
+  decides whose accounts vote. Storage: `count_votes` (kept for the chronicle), `count_days`, and `shards.count`,
+  `count_day`, `burn_step` (migration 0003); writes batched (votes in 1,000-row inserts) in one transaction per save,
+  failed saves retried until written. The clock floor is max(`last_time`, latest stored vote time). The arithmetic
+  lives in the server until a client shows the target (P2.E22.T04 moves it to shared). → DESIGN 16.2's lean-not-volume
+  meter, exact at any population. Callers to come: P2.E21.T05 convoys, P2.E28.T04 anchors, P3.E33.T02 Wardens, P3.E33.T03
+  Hive Heart, P3.E34.T02/T03 wall choices, the monolith interact.
+- **P1.E14.T09** Grader calibration → the five demo baselines (ship 2.0, box station 2.1, structures 2.2, creatures 2.3,
+  flora 2.4) are all REVISE with materials 1 and detail and placeholder at 2 or below, as 0.10.5 expects, so the rubric
+  stands as written. Graders see mask-coloured families in the game's colours (`@astra/shared/art` gameLook, in the
+  review scene and the turntable), not the raw mask. Graders judged samples: 7 of 40 flora, 4 of 10 creatures, 2 of 6
+  structures; a whole family is graded on the assets its task delivers. The perf readout's single-run asset cost is
+  noisy under load (27.8 ms re-measured at 0.34 ms); P1.E14.T11 adds paired sampling, a 100 m LOD2 view, a collider and
+  marker overlay and sibling grids, which four graders asked for. Art tasks are graded after T11 lands. P1.E06.T04 (UI)
+  was graded before calibration; calibration covers the models rubric, and its verdicts are recorded in
+  `docs/VISUAL-REVIEW.md`.
+- **Orchestrator (visual gate of P1.E13.T02)** The six formation models P1.E13.T02 adds are procedural stand-ins by plan: P1.E14.T06 authors them and P1.E14.T07 deletes the generator, so grading them against "no placeholder tell" would fail by construction. E13.T02's blocking visual grade is the UI rubric on the nineteen inventory icons; the formation models are graded as authored art under P1.E14.T06, like the demo flora they sit beside (P1.E14.T04/T05).
+- **P1.E13.T02** Nineteen resources → a shared, deterministic node spec (`world/resourceNodes.ts`): 12 node types
+  (sodium and oxygen plants, the four deposits, six formations: frostglass on frozen worlds, acidsalt on shores
+  0.4–6 m above toxic and corrosive seas, cinderglass along lava fissures in valleys, stormquartz from 0.12 of mountain
+  height, gamma crystal up to 0.15, murkpearl on the seabed −18 to −1.5 m); a type is common from its resource's tier
+  and 0.2× rarer per tier short; each world carries 2 of the 4 deposits weighted by tier (re-picked if its tier
+  changes); sodium and oxygen grow on living worlds only; deposits stay ≥1.5 m above any sea; yields and hp per type;
+  ~64 m cells, ids `face_i_j_type_k`, `NODE_TYPES` append-only. Both ends scatter over `drawnGround(params, tier)`
+  (`world/ground.ts`): cities and sites planned at the system's tier, dens only once `DENS_DRAWN` is set by P1.E14.T10,
+  no node within a site's footprint + 6 m; the server must pass its own copy of params (`drawnGround` sets
+  `params.pads`). The tier passes Game → SolarSystem → Planet; the client uses `tierOf` at the default Edge until it
+  reads the server's tier map (P1.E04.T02) — if the Edge moves before then, client and server node layers differ.
+  Flora keeps main's random sequence (old plant and deposit slots skipped), so only nodes are new. Iridium, Count
+  residue, husk alloy and glyphstone get inventory entries and icons only; their sources come with P1.E13.T01
+  (asteroids), P2.E25.T01/T05, P2.E21.T03, P2.E30.T02, P3.E33.T02/T03. Icons extend the art bible §4 pip exception
+  (family outline, a cut mark per resource, the pip hue); "Ferrite Dust" is "Ferrite"; the trade panel lists the demo
+  nine plus any others carried. Nodes under a landed ship are not hidden until P1.E13.T06. → One spec the server
+  (P1.E13.T01) computes exactly as the client draws.
+- **P1.E15.T01** Chat and parties (`server/src/social`) → channels: `shard` (everyone online), `system` (the sender's
+  zone, through a per-zone index checked each second), `party` (online members anywhere); the sender hears its own line;
+  text trimmed, control and bidi characters refused by the schema (`ChatText`, `CharacterName` on ChatEvent too); one
+  serialisation per line. Limits per account: 5 at once then 1/s, a flood allowance of 10 (one per 3 s) then a 60 s
+  mute; shard-wide 20 at once then 10/s; mutes in memory, manual mute API for P1.E03.T07; every line logged. A
+  non-fatal `denied {of, code}` reply (separate from `refused`, which closes the socket). Parties: at most 6
+  (`PARTY_MAX`; DESIGN is silent); invites by name (case-insensitive), only to online characters in no party, any
+  member invites, 60 s lapse, 5 at once then one per 10 s per account, at most 8 held; offline and unknown names both
+  get `not_found`; accept joins the inviter's party as it is then, or forms one the inviter leads; only the leader
+  kicks and promotes, promoting an offline member is refused (`offline`); lead passes to the longest-standing online
+  member; a party disbands at one. Disconnect grace 15 s (the phases'), checked at each party's refresh (≤1.1 s late);
+  party state (names, online, system index, health in tenths; no ids or positions) refreshed once a second spread over
+  100 ms ticks and sent only when changed. Zone party tags follow the party service (the first production caller of
+  `setParty`). A kept phase place is reclaimed only under the party it was kept for, for every phase kind (orchestrator
+  decision): a member kicked during its grace is placed afresh. Callers that re-place on join (the quest engine, bays,
+  events) must do it after `social.joined` or pass `partyId: social.partyIdOf(character)`. Nothing social is persisted;
+  a restart dissolves parties. Protocol 3 adds party, denied and the party event; `PROTOCOL_VERSION` carries a history
+  comment and a pinned test, so concurrent bumps conflict visibly. → DESIGN 16.6's Social row at both five and five
+  thousand players. Open: P1.E04.T04 should call `social.moved(session)` on handoff; a disbanded party mid-phase leaves
+  two parties of one in one story phase until re-placed (quest engine).
+- **P1.E08.T01** Server-side fauna (`server/src/fauna`) → species from a shared deterministic `faunaSpecies(params,
+  tier)` (det math, plain data; each tier pass appends hostile species on its own stream, so a lower tier's list is a
+  prefix of a higher one's; nothing added above Tier 3; DESIGN 12.8's rows read as cumulative); not an exact port of the
+  demo's species (the demo shares its RNG with geometry) — the client keeps its own Fauna.js until P1.E08.T09. Herds
+  live in ~250 m cells on an equal-angle cube map around players near the ground (measured from the ground under the
+  player): wake within 400 m, sleep beyond 500 m (frozen and still visible), unload after 30 s asleep; at most one herd
+  per cell (0.14 per species, capped 0.6; hostile weighted 0.6; one level per herd from DESIGN 11's band). Bounds:
+  each player wakes at most 4 new cells/s (40 at once, one allowance across the zone), 256 cells per world, 150
+  creatures per zone, oldest asleep cells unload first (late arrivals in a busy system may find fewer herds; fairness
+  is P1.E16.T02's). Ground is the shared `drawnGround` planned in a worker thread from the moment a player enters the
+  world's frame (16 worlds cached; a dead or hung worker is restarted once, then planning falls back to the main
+  thread; a failing world backs off 30 s doubling); cells load only once the ground is ready. Interest by size (<1 m
+  500 m, apex 2 km, else 1.5 km). The AI's numbers live in `fauna/ai.ts` (sense 60/50/80 m, leashes 40/200/60/40 m, a
+  1 s attack phase, 15 s rest after a meal attempt — a bolted prey counts). Only players on foot are prey; players
+  hidden from the shared world (`phases.hiddenFromShared`) keep herds awake but are no creature's prey, intruder or
+  threat. No damage until P1.E08.T02 (predators break off and rest). Ambushers and the apex come only through
+  `spawnHerd` (dens, P1.E08.T03, which must handle `null` when the zone is full and should request ground ahead).
+  Protocol 4: a unit `attack` phase; `species` is an index into the world's list. The zone's fauna tier follows the
+  world service's tier map. → DESIGN 12.2's living worlds, server-owned and bounded. Open: P1.E08.T03 takes den kinds
+  from the rolled species; herds moving around a sealed player hint at its presence.

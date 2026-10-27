@@ -216,7 +216,7 @@ describe('WorldService', () => {
     // A shard created 300 days after 2026-01-01Z keeps that epoch and its season start when the server comes back.
     const store = new MemoryShardStore('test', WALL);
     const first = await setup({ store }).open();
-    first.update({ count: 400 }); // not persisted: the Count is constant in Phase 1
+    first.update({ count: 400 }); // not persisted: this store has no Count meter store (countMeter.test.ts has one)
     const t1 = first.clock.now();
     await first.close();
 

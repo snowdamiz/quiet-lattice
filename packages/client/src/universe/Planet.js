@@ -2,7 +2,7 @@
 // optional rings, plus the parameters the atmosphere pass needs.
 import * as THREE from 'three';
 import { Body } from './Body.js';
-import { TerrainSampler, planSites, sitePads, planCities, cityPads } from '@astra/shared/world';
+import { drawnGround } from '@astra/shared/world';
 import { PlanetTerrain } from '../terrain/PlanetTerrain.js';
 import { createTerrainMaterial } from '../render/terrainMaterial.js';
 import { createTreePointsMaterial } from '../render/treePoints.js';
@@ -43,12 +43,12 @@ export class Planet extends Body {
     const p = this.params;
 
     if (!this.isGas) {
-      this.sampler = new TerrainSampler(p);
-      // the cities' plains first: sites keep clear of them
-      this.cities = planCities(p, this.sampler);
-      this.sites = planSites(p, this.sampler, this.cities);
-      p.pads = [...cityPads(this.cities), ...sitePads(this.sites)];
-      this.sampler.setPads(p.pads);
+      // the ground this world is drawn on at its system's tier (shared, so the server scatters its resource nodes over
+      // the same ground): its cities, the sites clear of them, and the ground levelled under both (p.pads)
+      this.ground = drawnGround(p, opts.tier ?? 0);
+      this.sampler = this.ground.sampler;
+      this.cities = this.ground.cities;
+      this.sites = this.ground.sites;
       pool.registerPlanet(this.id, p);
       this.material = createTerrainMaterial(p, { detailStrength: p.type === 'frozen' ? 0.35 : 0.55 });
       // (no terrain drawn under a city's paving: a little inside its edge)

@@ -3,7 +3,8 @@
 // Stack moves go through request(): applied at once for the UI, sent to the server when a net layer is attached
 // (P1.E04.T01), and replaced by the server's state when it answers (receive()). The demo's callers keep their flat API:
 // items, units, warpCells, add, has, take, sellAll and key.
-import { RESOURCE_IDS as RESOURCE_ID_LIST } from '@astra/shared/data';
+import { SIGNS, nodePosition, strokeEnds } from '@astra/shared/art';
+import { RESOURCE_IDS as RESOURCE_ID_LIST, RESOURCES as RESOURCE_TABLE } from '@astra/shared/data';
 import {
   addItem,
   applyLayout,
@@ -43,18 +44,69 @@ export const PIPS = {
   glyphstone: ['square', '#7fd8ff'],
 };
 
-// Demo sell prices and the HUD's pip colours; the price table goes with station prices (P1.E13.T03).
-export const RESOURCES = {
-  carbon: { name: 'Carbon', color: PIPS.carbon[1], price: 12 },
-  ferrite: { name: 'Ferrite Dust', color: PIPS.ferrite[1], price: 14 },
-  sodium: { name: 'Sodium', color: PIPS.sodium[1], price: 41 },
-  oxygen: { name: 'Oxygen', color: PIPS.oxygen[1], price: 34 },
-  dihydrogen: { name: 'Di-hydrogen', color: PIPS.dihydrogen[1], price: 34 },
-  copper: { name: 'Copper', color: PIPS.copper[1], price: 110 },
-  cobalt: { name: 'Cobalt', color: PIPS.cobalt[1], price: 198 },
-  tritium: { name: 'Tritium', color: PIPS.tritium[1], price: 6 },
-  gold: { name: 'Gold', color: PIPS.gold[1], price: 202 },
+// Each resource's icon (P1.E13.T02): its family's shape with a mark of its own cut out of it, drawn in the pip's hue.
+// Plants: a twig, a bulb, petals. Rock, deposits and asteroids: a fracture, the H–H of di-hydrogen, tritium's nucleus,
+// a ring, a triangle, a spark, a dense core. Hostile worlds: a snowflake, a drop, a shard, a bolt, the radiation
+// trefoil, a pearl. The Count, the Hollow and the Cartographers: a Count numeral, plating with a panel gone, a glyph.
+// Marks are SVG on a 16-unit square: `s` stroked, `f` filled (both cut out), `k` kept (drawn back in).
+const FRAMES = {
+  dot: '<circle cx="8" cy="8" r="7.2"/>',
+  diamond: '<path d="M8 .5 15.5 8 8 15.5 .5 8z"/>',
+  hex: '<path d="M4.2 1.5h7.6L15.6 8l-3.8 6.5H4.2L.4 8z"/>',
+  square: '<rect x="1.3" y="1.3" width="13.4" height="13.4" rx=".8"/>',
 };
+const MARKS = {
+  carbon: '<path class="s" d="M8 12.8V6M8 9.6 5.5 7.2M8 7.8l2.5-2.4"/>',
+  sodium: '<circle class="f" cx="8" cy="6.6" r="2.4"/><path class="s" d="M8 9v3.9"/>',
+  oxygen: '<circle class="f" cx="8" cy="4.8" r="1.5"/><circle class="f" cx="11.2" cy="8" r="1.5"/><circle class="f" cx="8" cy="11.2" r="1.5"/><circle class="f" cx="4.8" cy="8" r="1.5"/>',
+  ferrite: '<path class="s" d="M4.3 9 6.5 6.6l2 2.6 2.1-2.3 1.1 1.2"/>',
+  dihydrogen: '<path class="s" d="M6 8h4"/><circle class="f" cx="5.2" cy="8" r="1.7"/><circle class="f" cx="10.8" cy="8" r="1.7"/>',
+  tritium: '<circle class="f" cx="8" cy="6.3" r="1.5"/><circle class="f" cx="6.5" cy="9" r="1.5"/><circle class="f" cx="9.5" cy="9" r="1.5"/>',
+  copper: '<circle class="s" cx="8" cy="8" r="2.7"/>',
+  cobalt: '<path class="s" d="M8 5.1 10.8 10H5.2z"/>',
+  gold: '<path class="f" d="M8 3.6 9.1 6.9 12.4 8 9.1 9.1 8 12.4 6.9 9.1 3.6 8 6.9 6.9z"/>',
+  iridium: '<path class="s" d="M8 4.5 11.5 8 8 11.5 4.5 8z"/>',
+  frostglass: '<path class="s" d="M8 3.5v9M4.1 5.75l7.8 4.5M4.1 10.25l7.8-4.5"/>',
+  acidsalt: '<path class="f" d="M8 3.3c1.9 2.6 3.2 4.3 3.2 6a3.2 3.2 0 0 1-6.4 0c0-1.7 1.3-3.4 3.2-6z"/>',
+  cinderglass: '<path class="f" d="M6 12.6 9 3.3l1.4 8z"/>',
+  stormquartz: '<path class="f" d="M9.4 2.9 5.3 8.8h2.6L6.6 13.1l4.2-6.2H8.2z"/>',
+  gamma_crystal:
+    '<circle class="f" cx="8" cy="8" r="1.1"/><path class="f" d="M8.95 6.36 10.3 4.02H5.7l1.35 2.34zM6.1 8H3.4l2.3 3.98 1.35-2.34zM8.95 9.65l1.35 2.33L12.6 8H9.9z"/>',
+  murkpearl: '<circle class="f" cx="8" cy="8.2" r="3.4"/><circle class="k" cx="6.8" cy="7" r="1"/>',
+  // a Count numeral (art bible 3.3): the ring's first four edges lit
+  count_residue: '<path class="s" d="M8 3.6 11.8 5.8v4.4L8 12.4 4.2 10.2"/><circle class="f" cx="8" cy="8" r="1.2"/>',
+  // plating along its seams, one panel gone (art bible 6)
+  husk_alloy: '<path class="s" d="M8 1.3v13.4M1.3 8h13.4" style="stroke-width:1.1"/><path class="f" d="M8.6 .6h7v7h-7z"/>',
+  // the Cartographers' sign g (art bible 3.2)
+  glyphstone: glyphMark('g'),
+};
+
+/** A Cartographer sign as a cut mark: its strokes on the seven-node lattice, 9.6 units across, and its anchor dot. */
+function glyphMark(letter) {
+  const sign = SIGNS.find((s) => s.letter === letter);
+  const at = (n) => nodePosition(n).map((c, i) => (i ? 8 - c * 9.6 : 8 + c * 9.6).toFixed(2)).join(' ');
+  const d = sign.strokes.map((s) => strokeEnds(s).map(at)).map(([a, b]) => `M${a} ${b}`);
+  return `<path class="s" d="${d.join('')}"/><circle class="f" cx="8" cy="8" r="1.3"/>`;
+}
+
+const ICON_STYLE = '.s{fill:none;stroke:#000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.f{fill:#000}.k{fill:#fff}';
+const ICON_URLS = Object.fromEntries(
+  Object.entries(PIPS).map(([id, [shape]]) => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><style>${ICON_STYLE}</style><mask id="m"><g fill="#fff">${FRAMES[shape]}</g>${MARKS[id]}</mask><rect width="16" height="16" mask="url(#m)"/></svg>`;
+    return [id, `url('data:image/svg+xml,${encodeURIComponent(svg)}')`];
+  }),
+);
+
+/** A resource's icon as HTML: an `<i class="res-ico">` masked to its shape and mark, in its pip's hue (style.css). Empty
+ * for anything that is not a resource. */
+export function resourceIcon(id, cls = '') {
+  const pip = PIPS[id];
+  return pip ? `<i class="res-ico${cls ? ` ${cls}` : ''}" style="--c:${pip[1]};--m:${ICON_URLS[id]}"></i>` : '';
+}
+
+// Every resource's name, its pip's hue and its sell price (DESIGN 15.3's base price); the price table goes with station
+// prices (P1.E13.T03).
+export const RESOURCES = Object.fromEntries(RESOURCE_TABLE.map((r) => [r.id, { name: r.name, color: PIPS[r.id][1], price: r.basePrice }]));
 
 const RESOURCE_IDS = new Set(RESOURCE_ID_LIST);
 

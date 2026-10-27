@@ -50,7 +50,7 @@ export function libraryVariants(lib, prefix) {
 // Geometry in the mesh's world space with vertex colours mixed from the palette.
 // pal: { primary, secondary, accent } (THREE.Color); glowAccent: emissive strength of the accent region.
 // aoFloor: how dark full occlusion gets (creatures use baked AO for pupils, so they go near black).
-export function recolor(mesh, pal, { glowAccent = 0, albedoCap = 0.6, aoFloor = 0.35 } = {}) {
+export function recolor(mesh, pal, opts = {}) {
   const src = mesh.geometry;
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', src.attributes.position.clone());
@@ -58,7 +58,19 @@ export function recolor(mesh, pal, { glowAccent = 0, albedoCap = 0.6, aoFloor = 
   if (src.index) geo.setIndex(src.index.clone());
   geo.applyMatrix4(mesh.matrixWorld);
   if (!geo.attributes.normal) geo.computeVertexNormals();
-  const n = geo.attributes.position.count;
+  const { col, glow } = maskColors(src, pal, opts);
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  geo.setAttribute('aGlow', new THREE.BufferAttribute(glow, 1));
+  geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(col.length / 3 * 2), 2));
+  geo.computeBoundingBox();
+  geo.computeBoundingSphere();
+  return geo;
+}
+
+/** A library mesh's colour-region mask (R primary, G secondary, B accent, A occlusion) filled with a palette: per-vertex
+ * colours and accent glow, as `recolor` gives the game and the review scene shows the grader. */
+export function maskColors(src, pal, { glowAccent = 0, albedoCap = 0.6, aoFloor = 0.35 } = {}) {
+  const n = src.attributes.position.count;
   const mask = src.attributes.color;
   const cap = (c) => {
     const mx = Math.max(c.r, c.g, c.b);
@@ -90,10 +102,5 @@ export function recolor(mesh, pal, { glowAccent = 0, albedoCap = 0.6, aoFloor = 
     col[i * 3 + 2] = (P.b * r + S.b * g + A.b * b) * k;
     glow[i] = b * glowAccent;
   }
-  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  geo.setAttribute('aGlow', new THREE.BufferAttribute(glow, 1));
-  geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(n * 2), 2));
-  geo.computeBoundingBox();
-  geo.computeBoundingSphere();
-  return geo;
+  return { col, glow };
 }

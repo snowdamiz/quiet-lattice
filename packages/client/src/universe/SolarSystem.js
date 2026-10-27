@@ -7,9 +7,11 @@ import { Star } from './Star.js';
 import { Planet } from './Planet.js';
 
 export class SolarSystem {
-  constructor(description, pool, { staged } = {}) {
+  // tier: the system's tier (DESIGN 11), which the rocky worlds plan their drawn ground for
+  constructor(description, pool, { staged, tier = 0 } = {}) {
     const d = description;
     this.description = d;
+    this.tier = tier;
     this.seed = d.seed;
     this.pool = pool;
     this.name = d.name;
@@ -51,6 +53,7 @@ export class SolarSystem {
           axialTilt: new THREE.Quaternion().fromArray(b.axialTilt),
           gravity: b.gravity,
           soi: b.soi,
+          tier: this.tier,
         },
         this.pool,
       );
