@@ -762,3 +762,25 @@ Format: task id, question → choice → why.
   Open: capital, sanctuary and Scrapyard fabricators and a recipe-table version guard (P2.E20.T01); the modular
   Waystation keeps the terminal at `STATION_FABRICATOR` (P1.E11.T02); DESIGN 15.7 may want a note that the Phase 1
   consumables are known from the start.
+- **P1.E04.T05** Login and character screens (client `ui/Account.js`, `net/{api,session}.js`, ARCHITECTURE §9) → Play
+  opens the account flow in the title's left column: sign in or register → the character list (name, people, level,
+  home system; the summary carries no current location) → a new character (name plus one of the three peoples, Thalune
+  preselected, look `{0,0,0,0}`; the server needs a people now, though P1.E05.T05 builds the creator) → enter. A new
+  account lands on its empty list. A DOM-free `AccountFlow` allows one request at a time, drops answers that arrive
+  after the player moved on, shows the server's refusals on their field (Retry-After on a rate limit), refuses a new
+  character on a full account before asking, and offers to retry a list that failed to load; there is no character
+  delete (no endpoint). Sessions: the JWT in tab-scoped sessionStorage, no refresh endpoint, a new sign-in asked a minute
+  before `exp`, an expired session cleared on Play, a 401 or an `auth` refusal clearing it and returning to sign-in; the
+  typed password is cleared once sent, on step change and on close, and sent only to the login or register endpoint.
+  Entering: a failure before the welcome returns to the list with the reason; the first welcome and every message after
+  it are held, in order and each in its own try/catch, until the title has faded to black (at most 10 s; Esc and close
+  are ignored once held), the title keeping its own clock meanwhile; the world then fades up. Dev scenarios (`#foot`,
+  `#fly`, …) stay the offline sandbox by default; `?dev` (`=<name>`, `&people=<id>`) goes through POST /auth/dev, then
+  hello and join, starting where the server holds the character (`#foot`/`#dock` get out of the ship; anywhere else is
+  the CLI's teleport); dev login is compiled out of production builds and the smoke harness starts its server with
+  `ASTRA_DEV_LOGIN=1`. Keys: Play focused when the title is ready, Enter submits, Esc goes back a step, arrows walk
+  rows, N makes a character; the Controls sheet lists the chat keys. The arrival darkens the top HUD band under the
+  banner and the location line and compass carry their own plates; the pause menu has a shade. The P1.E04.T01 sign-in
+  sheet is removed. Outside the listed files: api.js (`devLogin`, `retryAfter`), capture.ts (`expectedErrors`),
+  online.ts, the online specs (shared helpers), HUD.js and Game.js (one condition). → The Phase 1 exit's "log in, create
+  characters of different peoples" works through the real server.
