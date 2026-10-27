@@ -5,6 +5,7 @@ from pathlib import Path
 import bpy
 import numpy as np
 
+from . import ktx, meshopt
 from . import materials as M
 from . import rules as R
 from . import scene as S
@@ -411,6 +412,112 @@ def _check_material(rules, family, model, c, info, cls, meshes=()):
         c.ok(name, f"{profile_name}: " + (", ".join(M.LABELS[k] for k in textured) or "constants"))
 
 
+# ---------------------------------------------------------------------------------------------- textures (export)
+def textures(rules, family, model, report, path, compressed, legacy=False):
+    """An export's textures (P1.E14.T12), reported under the materials check: when `compressed`, every map a material
+    uses must be KTX2 Basis Universal behind KHR_texture_basisu with a full mip chain, normal maps in UASTC, colour maps
+    sRGB and data maps linear; and each variant's maps must fit its class's GPU memory budget (families.json
+    gpuTextureMB) once transcoded. Returns {variant id: GPU bytes} for the summary."""
+    c = report["materials"]
+    try:
+        images, required = ktx.inspect(path)
+    except Exception as e:  # a .glb the importer read but whose images cannot be parsed
+        c.fail(Path(path).name, f"cannot read its images: {e}")
+        return {}
+    by_name = {im["name"]: im for im in images}
+    s = ktx.settings(rules, family)
+    if legacy:
+        c.info("textures", "a demo export: exempt from texture compression until its family is rebuilt")
+    elif not compressed:
+        c.info("textures", "PNG textures: this family (families.json textures.compress) or this export keeps them uncompressed")
+    else:
+        bad = 0
+        for im in images:
+            name, slots, h = im["name"], im["slots"], im["ktx"]
+            label = "/".join(slots)
+            if im["mime"] != ktx.KTX2 or h is None:
+                c.fail(name, f"{label} map is {im['mime'] or 'an unknown type'}, not KTX2 (Basis Universal); re-export with `pnpm art:export -- {family}`")
+                bad += 1
+                continue
+            if not im["basisu"]:
+                c.fail(name, f"{label} map is KTX2 but its texture does not reach it through {ktx.EXT}")
+                bad += 1
+            if h["codec"] is None:
+                c.fail(name, f"{label} map is KTX2 but not Basis Universal (ETC1S or UASTC), which is all the client transcodes")
+                bad += 1
+                continue
+            want = ktx.CODECS[ktx.codec_for(slots, s)]
+            if "normal" in slots and h["codec"] != "UASTC":
+                c.fail(name, f"normal map in {h['codec']}: normal maps are UASTC (ETC1S bands their gradients)")
+                bad += 1
+            elif h["codec"] != want:
+                c.warn(name, f"{label} map in {h['codec']}; families.json asks for {want}")
+            if not h["fullChain"]:
+                full = int(np.floor(np.log2(max(h["width"], h["height"], 1)))) + 1
+                c.fail(name, f"{label} map has {h['levels']} mip level(s) of the {full} a {h['width']}x{h['height']} map needs")
+                bad += 1
+            colour = bool(set(slots) & ktx.COLOUR)
+            if colour != h["srgb"]:
+                c.fail(name, f"{label} map is stored {'sRGB' if h['srgb'] else 'linear'}; {'colour maps are sRGB' if colour else 'data maps are linear'}")
+                bad += 1
+        if any(im["basisu"] for im in images) and ktx.EXT not in required:
+            c.fail(Path(path).name, f"{ktx.EXT} is not in extensionsRequired (the textures have no PNG fallback)")
+            bad += 1
+        if images and not bad:
+            n = {k: sum(1 for im in images if im["ktx"] and im["ktx"]["codec"] == k) for k in ("UASTC", "ETC1S")}
+            mb = sum(im["bytes"] for im in images) / 1e6
+            c.ok("textures", f"{len(images)} KTX2 map(s) ({n['UASTC']} UASTC, {n['ETC1S']} ETC1S) with full mip chains, {mb:.1f} MB")
+    # GPU memory: each variant's maps (every LOD) once transcoded
+    gpu = {}
+    for a in model.assets:
+        for v in a.variants.values():
+            seen, total = set(), 0
+            for m in _materials_of(rules, v):
+                for img, _used in M.MaterialInfo(m).images():
+                    im = by_name.get(img.name) or by_name.get(R.strip(img.name))
+                    key = im["index"] if im else img.name
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    h = im["ktx"] if im else None
+                    w, hh = (h["width"], h["height"]) if h else tuple(img.size)
+                    total += ktx.gpu_bytes(w, hh, compressed=h is not None)
+            gpu[v.id] = total
+            budget = rules["classes"][v.cls].get("gpuTextureMB")
+            if budget is None or not total:
+                continue
+            msg = f"textures take {total / 2**20:.0f} MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included)"
+            if total > budget * 2**20:
+                c.fail(_vname(v), f"{msg}, over the {v.cls} budget of {budget} MB (families.json gpuTextureMB)")
+            else:
+                c.ok(_vname(v), f"{msg}, within the {v.cls} budget of {budget} MB")
+    return gpu
+
+
+def geometry(rules, family, model, report, path, compressed, legacy=False):
+    """An export's geometry compression (P1.E14.T12), reported under the triangle check: when `compressed`, its meshes
+    must be meshopt-compressed, with EXT_meshopt_compression and KHR_mesh_quantization both required (there is no
+    uncompressed fallback)."""
+    c = report["triangles"]
+    try:
+        info = meshopt.inspect(path)
+    except Exception as e:  # a .glb the importer read but whose JSON cannot be parsed
+        c.fail(Path(path).name, f"cannot read its buffers: {e}")
+        return
+    if not info["meshes"]:
+        return
+    if legacy:
+        c.info("geometry", "a demo export: exempt from geometry compression until its family is rebuilt")
+    elif not compressed:
+        c.info("geometry", "uncompressed geometry: this family (families.json geometry.compress) or this export keeps it")
+    elif not info["compressed"]:
+        c.fail(Path(path).name, f"geometry is not meshopt-compressed ({meshopt.EXT}); re-export with `pnpm art:export -- {family}`")
+    elif not info["required"]:
+        c.fail(Path(path).name, f"{meshopt.EXT} and {meshopt.QUANTIZATION} must be in extensionsRequired (the geometry has no uncompressed fallback)")
+    else:
+        c.ok("geometry", f"meshopt-compressed: {info['streams'] / 1e6:.1f} MB of streams")
+
+
 def _rgb(v):
     if v is None:
         return "-"
@@ -530,7 +637,9 @@ def _grid_spacing(o):
 
 
 # ---------------------------------------------------------------------------------------------- summary
-def asset_summary(rules, model):
+def asset_summary(rules, model, gpu=None):
+    """Per asset and variant: class, LODs and triangles, size, materials, and (for an export) the GPU memory its maps
+    take once transcoded."""
     out = []
     for a in model.assets:
         vs = []
@@ -549,5 +658,7 @@ def asset_summary(rules, model):
                     "materials": [R.strip(m.name) for m in _materials_of(rules, v)],
                 }
             )
+            if gpu is not None and v.id in gpu:
+                vs[-1]["gpuTextureMB"] = round(gpu[v.id] / 2**20, 1)
         out.append({"asset": a.name, "variants": vs})
     return out

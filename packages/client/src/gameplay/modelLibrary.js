@@ -3,26 +3,79 @@
 // G secondary, B accent, A baked occlusion), so the game can recolour each model for
 // every planet and species.
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { gltfLoader } from '../core/Engine.js';
 
 const libs = new Map();
 const roots = new Map();
 
 export async function loadLibrary(name, url) {
-  const meshes = new Map();
-  const tops = new Map();
+  let scene = null;
   try {
-    const gltf = await new GLTFLoader().loadAsync(url);
-    gltf.scene.updateMatrixWorld(true);
-    gltf.scene.traverse((o) => {
-      if (o.isMesh) meshes.set(o.name, o);
-    });
-    for (const o of gltf.scene.children) tops.set(o.name, o);
+    scene = (await gltfLoader().loadAsync(url)).scene;
   } catch (e) {
     console.warn(`model library ${url} not available, using procedural models`, e);
   }
+  addLibrary(name, scene);
+}
+
+/** Indexes a loaded model's scene as library `name` (its meshes by name, its top-level nodes by name); null: empty. */
+export function addLibrary(name, scene) {
+  const meshes = new Map();
+  const tops = new Map();
+  if (scene) {
+    scene.updateMatrixWorld(true);
+    scene.traverse((o) => {
+      if (o.isMesh) meshes.set(o.name, o);
+    });
+    for (const o of scene.children) tops.set(o.name, o);
+  }
   libs.set(name, meshes);
   roots.set(name, tops);
+}
+
+/** A float copy of `attr` with its real values: a quantized attribute (KHR_mesh_quantization: 16-bit integer positions,
+ * 8-bit normals) read through its normalisation, so a world matrix can move it without wrapping. */
+export function floatAttribute(attr) {
+  const k = attr.itemSize;
+  const out = new Float32Array(attr.count * k);
+  for (let i = 0; i < attr.count; i++) for (let c = 0; c < k; c++) out[i * k + c] = attr.getComponent(i, c);
+  return new THREE.BufferAttribute(out, k);
+}
+
+/** GPU memory of one texture once uploaded (bytes): a texture that brings its own mip levels (a KTX2 map transcoded to
+ * the GPU's compressed format, or to RGBA where it has none) as they are, an image texture's RGBA8 texels plus the mip
+ * chain three.js generates for it. */
+export function textureBytes(tex) {
+  if (tex.mipmaps?.[0]?.data) return tex.mipmaps.reduce((n, m) => n + (m.data?.byteLength ?? 0), 0);
+  const img = tex.image;
+  const w = img?.width ?? 0;
+  const h = img?.height ?? 0;
+  const mips = tex.generateMipmaps && tex.minFilter !== THREE.NearestFilter && tex.minFilter !== THREE.LinearFilter;
+  return Math.round(w * h * 4 * (mips ? 4 / 3 : 1));
+}
+
+/**
+ * The textures of the meshes under `root` (only the visible ones with `visibleOnly`), each counted once: `{ count,
+ * compressed, bytes }`, bytes being the GPU memory they take once uploaded (textureBytes).
+ */
+export function textureMemory(root, { visibleOnly = false } = {}) {
+  const seen = new Set();
+  const out = { count: 0, compressed: 0, bytes: 0 };
+  const visit = (o) => {
+    if (!o.isMesh) return;
+    for (const m of [].concat(o.material ?? [])) {
+      for (const v of Object.values(m)) {
+        if (!v?.isTexture || seen.has(v)) continue;
+        seen.add(v);
+        out.count++;
+        if (v.isCompressedTexture) out.compressed++;
+        out.bytes += textureBytes(v);
+      }
+    }
+  };
+  if (visibleOnly) root.traverseVisible(visit);
+  else root.traverse(visit);
+  return out;
 }
 
 // Whole node trees (e.g. a structure with its marker empties), by top-level name.
@@ -53,8 +106,8 @@ export function libraryVariants(lib, prefix) {
 export function recolor(mesh, pal, opts = {}) {
   const src = mesh.geometry;
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', src.attributes.position.clone());
-  if (src.attributes.normal) geo.setAttribute('normal', src.attributes.normal.clone());
+  geo.setAttribute('position', floatAttribute(src.attributes.position));
+  if (src.attributes.normal) geo.setAttribute('normal', floatAttribute(src.attributes.normal));
   if (src.index) geo.setIndex(src.index.clone());
   geo.applyMatrix4(mesh.matrixWorld);
   if (!geo.attributes.normal) geo.computeVertexNormals();

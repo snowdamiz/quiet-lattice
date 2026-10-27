@@ -45,6 +45,8 @@ export interface ValidateArgs {
 
 const VALUE_FLAGS = new Set(['--family', '--class', '--report', '--report-dir']);
 const BOOL_FLAGS = new Set(['--verbose', '--quiet']);
+/** Export only: KTX2 textures or PNGs, overriding families.json `textures.compress`. */
+const EXPORT_FLAGS = new Set(['--compress', '--no-compress']);
 
 export function parseValidateArgs(argv: string[]): ValidateArgs {
   const args = clean(argv);
@@ -153,7 +155,7 @@ export function parseExportArgs(argv: string[], rules: FamilyRules): { families:
     else if (['--only', '--bake-res', '--src-root', '--out-dir', '--report-dir'].includes(a)) {
       if (args[i + 1] === undefined) throw new Error(`${a} needs a value`);
       passthrough.push(a, args[++i]);
-    } else if (BOOL_FLAGS.has(a)) passthrough.push(a);
+    } else if (BOOL_FLAGS.has(a) || EXPORT_FLAGS.has(a)) passthrough.push(a);
     else if (a.startsWith('-')) throw new Error(`unknown option ${a}`);
     else if (exportable.includes(a)) families.push(a);
     else throw new Error(`unknown family ${a} (${exportable.join(', ')}, or all)`);

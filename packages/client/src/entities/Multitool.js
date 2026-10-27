@@ -1,6 +1,6 @@
 // First-person mining tool: viewmodel, beam, heat and resource extraction.
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { gltfLoader } from '../core/Engine.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 
 const _v = new THREE.Vector3();
@@ -38,7 +38,7 @@ export class Multitool {
     this.stride = 0;
     this.game.engine.viewScene.add(g);
     g.visible = false;
-    new GLTFLoader().load('/models/multitool.glb', (gltf) => {
+    gltfLoader().load('/models/multitool.glb', (gltf) => {
       gltf.scene.traverse((o) => {
         if (!o.isMesh) return;
         if (o.material.name === 'ToolGlow') o.material = this.glowMat;
