@@ -26,12 +26,15 @@ const fields = {
   name: z.string().max(32),
   hull: z.string().max(24),
   people: PeopleId,
+  /** a creature's species: its index in its planet's `faunaSpecies` list (the planet is its frame) */
   species: z.number().int().nonnegative(),
   level: z.number().int().min(1).max(50),
   hp: unit,
   shield: unit,
   heat: unit,
   anim: z.number().int().nonnegative(),
+  /** a mob's progress through the attack it is making, 0–1; absent when it is not attacking */
+  attack: unit,
   owner: EntityId,
 };
 export type EntityField = keyof typeof fields;
@@ -135,7 +138,7 @@ export function sanitizeEntity(e: EntityState, dropped: string[] = []): EntitySt
   for (const k of ENTITY_FIELDS) {
     let v = e[k] as unknown;
     if (v === undefined) continue;
-    if (k === 'hp' || k === 'shield' || k === 'heat') v = typeof v === 'number' && Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : v;
+    if (k === 'hp' || k === 'shield' || k === 'heat' || k === 'attack') v = typeof v === 'number' && Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : v;
     if (fields[k].safeParse(v).success) out[k] = v;
     else dropped.push(`${e.id}.${k}`);
   }

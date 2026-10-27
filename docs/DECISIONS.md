@@ -401,3 +401,23 @@ Format: task id, question → choice → why.
   comment and a pinned test, so concurrent bumps conflict visibly. → DESIGN 16.6's Social row at both five and five
   thousand players. Open: P1.E04.T04 should call `social.moved(session)` on handoff; a disbanded party mid-phase leaves
   two parties of one in one story phase until re-placed (quest engine).
+- **P1.E08.T01** Server-side fauna (`server/src/fauna`) → species from a shared deterministic `faunaSpecies(params,
+  tier)` (det math, plain data; each tier pass appends hostile species on its own stream, so a lower tier's list is a
+  prefix of a higher one's; nothing added above Tier 3; DESIGN 12.8's rows read as cumulative); not an exact port of the
+  demo's species (the demo shares its RNG with geometry) — the client keeps its own Fauna.js until P1.E08.T09. Herds
+  live in ~250 m cells on an equal-angle cube map around players near the ground (measured from the ground under the
+  player): wake within 400 m, sleep beyond 500 m (frozen and still visible), unload after 30 s asleep; at most one herd
+  per cell (0.14 per species, capped 0.6; hostile weighted 0.6; one level per herd from DESIGN 11's band). Bounds:
+  each player wakes at most 4 new cells/s (40 at once, one allowance across the zone), 256 cells per world, 150
+  creatures per zone, oldest asleep cells unload first (late arrivals in a busy system may find fewer herds; fairness
+  is P1.E16.T02's). Ground is the shared `drawnGround` planned in a worker thread from the moment a player enters the
+  world's frame (16 worlds cached; a dead or hung worker is restarted once, then planning falls back to the main
+  thread; a failing world backs off 30 s doubling); cells load only once the ground is ready. Interest by size (<1 m
+  500 m, apex 2 km, else 1.5 km). The AI's numbers live in `fauna/ai.ts` (sense 60/50/80 m, leashes 40/200/60/40 m, a
+  1 s attack phase, 15 s rest after a meal attempt — a bolted prey counts). Only players on foot are prey; players
+  hidden from the shared world (`phases.hiddenFromShared`) keep herds awake but are no creature's prey, intruder or
+  threat. No damage until P1.E08.T02 (predators break off and rest). Ambushers and the apex come only through
+  `spawnHerd` (dens, P1.E08.T03, which must handle `null` when the zone is full and should request ground ahead).
+  Protocol 4: a unit `attack` phase; `species` is an index into the world's list. The zone's fauna tier follows the
+  world service's tier map. → DESIGN 12.2's living worlds, server-owned and bounded. Open: P1.E08.T03 takes den kinds
+  from the rolled species; herds moving around a sealed player hint at its presence.

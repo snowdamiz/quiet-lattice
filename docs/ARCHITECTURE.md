@@ -31,8 +31,9 @@ phases/             PhaseManager (one per zone): private layers at shared places
 social/             SocialService: chat channels, parties and invites, and their limits (§13)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
+fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
-sim/                server-side systems added by later tasks: movement validation, combat, fauna, quests, skills…
+sim/                server-side systems added by later tasks: movement validation, combat, quests, skills…
 dev/                dev-only login bypass and the admin CLI (P1.E03.T07)
 ```
 
@@ -133,6 +134,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   are the ship's: one per pod its `ShipLoadout` carries, checked against the bays `shipStats` gives (P1.E12.T01).
   Adding, taking and units are never requests. `inventory` is the one type both directions use; `encodeMessage`
   picks the union whose schema accepts the message.
+- **Creatures** (protocol 4): a `mob` entity names its `species` by index in its world's `faunaSpecies` list (its frame
+  names the world), and carries `level`, `hp`, its behaviour state as `mode` and, only while it attacks, `attack`: its
+  progress through the attack, 0–1, clamped like the other unit fields and cleared when the attack ends (§6.2).
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`.
 
@@ -183,6 +187,39 @@ players, `event` and `raid` 12.
   dropping and reconnecting never extends it. One that leaves the zone any other way (a handoff, a logout) goes at once. A phase with no members and no
   kept places closes, and its own entities are despawned; `close(phase)` does the same on demand. Opening and closing
   are logged (info).
+
+### 6.2 Fauna
+
+DESIGN 12.2, P1.E08.T01; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
+docile and skittish species, then the hostile ones each tier pass appends on a random stream of its own, so the list
+only grows with the tier and an index names the same species at every tier. The zone ticks a `FaunaSim` at the start of
+each step, at the zone's tier: the zone manager passes the world service's tier when it opens the zone and calls
+`setTier` when the Edge moves it.
+
+- **Cells.** Herds live in cells of about 250 m (an equal-angle cube map) round players within 1,500 m of a world's
+  ground: a cell wakes when a player comes within 400 m of its centre and spawns the herd planned for it from the world's
+  seed and the cell alone, so everyone meets the same herd there; with no player within 500 m it sleeps (its creatures
+  stand still, unsimulated), and after 30 s asleep its creatures are despawned. Ambushers and the apex come only from
+  dens (`FaunaSim.spawnHerd`, P1.E08.T03).
+- **Bounds** (a pose is a client's claim until movement authority, and fauna holds its own limits anyway): a player
+  wakes at most 4 new cells a second (40 at once, on arrival; one allowance per player across the zone's worlds), a
+  world keeps at most 256 cells and a zone at most 150 creatures, so 50 players on foot stay within the 200-entity
+  budget. The oldest asleep cells unload first to make room; past that, waiting cells load nearest first as room is
+  made. New cells load under a 1.5 ms budget per tick.
+- **Ground.** The drawn ground (§12, `drawnGround`'s pads), its heights cached per cell on a 1 m lattice. Planning a
+  world's surface takes 5–100 ms, so it runs in a worker thread (`fauna/planner.worker.ts`) from the moment a player
+  enters the world's frame; its cells load once it is ready. The 16 worlds most recently asked for keep their ground.
+  The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
+  with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
+  restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
+  doubling each time, with one warning each time.
+- **Phases.** A player the shared world cannot see (`phases.hiddenFromShared`: sealed in a bay, event or raid phase, §6.1) still keeps the herds
+  round it awake, since it sees them, but is no creature's prey, intruder or threat.
+- **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
+  (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,
+  return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow. Hostile creatures pick targets from a threat
+  table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, `FaunaSim.hurt` adds damage. The
+  zone's metrics carry its fauna's worlds, creatures and cells by state.
 
 ## 7. Authority
 
