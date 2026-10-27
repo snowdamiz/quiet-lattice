@@ -88,7 +88,13 @@ describe('the beam, as the server judges it', () => {
   it('heats at 32/s against 8/s on foot with the beam held, per second of server time, however fast inputs come', () => {
     const t = setup();
     const at = onHomeWorld(t.zone, 2);
-    expect(meterEnvironment(t.zone.system, systemPoses(t.zone.system, t.zone.time).bodies, { frame: t.zone.system.home, world: t.zone.toWorld(at.frame, at.pos), foot: true })).toMatchObject({
+    expect(
+      meterEnvironment(t.zone.system, systemPoses(t.zone.system, t.zone.time).bodies, {
+        frame: t.zone.system.home,
+        world: t.zone.toWorld(at.frame, at.pos),
+        foot: true,
+      }),
+    ).toMatchObject({
       time: 'day',
       underwater: false,
     });
@@ -194,7 +200,9 @@ describe('Charge, as the server judges it', () => {
     const claim = t.send('pulse', null, deep);
     expect(claim.mode).toBe('ship');
     expect(t.zone.entity(t.entityId)!.fields.mode).toBe('ship');
-    expect(t.pushes.filter((p) => p.notice)).toEqual([{ view: expect.objectContaining({ charge: 0 }), notice: { text: expect.stringMatching(/Charge empty/), tone: 'warn' } }]);
+    expect(t.pushes.filter((p) => p.notice)).toEqual([
+      { view: expect.objectContaining({ charge: 0 }), notice: { text: expect.stringMatching(/Charge empty/), tone: 'warn' } },
+    ]);
     t.wait(0.05);
     expect(t.send('pulse', null, deep).mode).toBe('ship');
     expect(t.pushes.filter((p) => p.notice)).toHaveLength(1);

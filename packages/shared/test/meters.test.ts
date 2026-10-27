@@ -272,7 +272,11 @@ describe('where a character is', () => {
   };
   // the star is at the origin: sunward from the home world is −homePos
   const sunward = unit([-homePos[0], -homePos[1], -homePos[2]]);
-  const at = (dir: Vec3, alt: number): Vec3 => [homePos[0] + dir[0] * (home.radius + alt), homePos[1] + dir[1] * (home.radius + alt), homePos[2] + dir[2] * (home.radius + alt)];
+  const at = (dir: Vec3, alt: number): Vec3 => [
+    homePos[0] + dir[0] * (home.radius + alt),
+    homePos[1] + dir[1] * (home.radius + alt),
+    homePos[2] + dir[2] * (home.radius + alt),
+  ];
   const placeOnHome = (dir: Vec3, alt: number, foot = true) => meterEnvironment(d, poses.bodies, { frame: d.home, world: at(dir, alt), foot });
 
   it('the home world’s day side: day, in sunlight, inside the habitable band', () => {
@@ -294,9 +298,17 @@ describe('where a character is', () => {
     const moon = d.bodies.findIndex((b) => b.kind === 'moon');
     const m = poses.bodies[moon]!.position;
     const away = unit(m);
-    const behind: Vec3 = [m[0] + away[0] * d.bodies[moon]!.radius * 1.5, m[1] + away[1] * d.bodies[moon]!.radius * 1.5, m[2] + away[2] * d.bodies[moon]!.radius * 1.5];
+    const behind: Vec3 = [
+      m[0] + away[0] * d.bodies[moon]!.radius * 1.5,
+      m[1] + away[1] * d.bodies[moon]!.radius * 1.5,
+      m[2] + away[2] * d.bodies[moon]!.radius * 1.5,
+    ];
     expect(meterEnvironment(d, poses.bodies, { frame: null, world: behind }).sunlight).toBe(false);
-    const front: Vec3 = [m[0] - away[0] * d.bodies[moon]!.radius * 1.5, m[1] - away[1] * d.bodies[moon]!.radius * 1.5, m[2] - away[2] * d.bodies[moon]!.radius * 1.5];
+    const front: Vec3 = [
+      m[0] - away[0] * d.bodies[moon]!.radius * 1.5,
+      m[1] - away[1] * d.bodies[moon]!.radius * 1.5,
+      m[2] - away[2] * d.bodies[moon]!.radius * 1.5,
+    ];
     expect(meterEnvironment(d, poses.bodies, { frame: null, world: front }).sunlight).toBe(true);
   });
 
@@ -325,7 +337,9 @@ describe('where a character is', () => {
     expect(on(d.outerOrbit * 1.01)).toMatchObject({ deepSpace: true, habitableBand: false, nearBodies: false });
     expect(on(r, true)).toMatchObject({ deepSpace: true, habitableBand: false });
     // a ship coasting through the band, far above the system's plane and every body, burns nothing on the pulse drive
-    expect(on(r).nearBodies).toBe(Math.min(...d.bodies.map((b, i) => Math.hypot(...poses.bodies[i]!.position.map((c, k) => c - [0, r, 0][k]!)) - b.radius)) < PULSE_BURN_REACH);
+    expect(on(r).nearBodies).toBe(
+      Math.min(...d.bodies.map((b, i) => Math.hypot(...poses.bodies[i]!.position.map((c, k) => c - [0, r, 0][k]!)) - b.radius)) < PULSE_BURN_REACH,
+    );
   });
 
   it('turns into the conditions the tables are keyed by', () => {

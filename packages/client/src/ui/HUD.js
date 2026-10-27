@@ -40,22 +40,26 @@ function setText(e, html) {
   }
 }
 
-// two thin gauge arcs either side of a reticle, as one SVG
+// two thin gauge arcs either side of a reticle, as one SVG: each a track, its fill, a mark (a tick across the arc at a
+// level that matters: where the heat lockout ends) and a sheen (a bright dash that climbs the fill while it refills)
 const ARC_LEN = 1;
+// a 100-degree arc centred on the left (or right) of the circle; both start at the bottom, so gauges fill upward
+const arcAngle = (side, f) => ((side < 0 ? 130 + 100 * f : 50 - 100 * f) * Math.PI) / 180;
 function gaugeSvg(left, right, r) {
   const arc = (side) => {
-    // 100-degree arc centred on the left (or right) of the circle
-    const a0 = ((side < 0 ? 130 : -50) * Math.PI) / 180;
-    const a1 = ((side < 0 ? 230 : 50) * Math.PI) / 180;
+    const a0 = arcAngle(side, 0);
+    const a1 = arcAngle(side, 1);
     const p = (a) => `${(r * Math.cos(a) + 50).toFixed(2)} ${(r * Math.sin(a) + 50).toFixed(2)}`;
-    // both arcs start at the bottom, so gauges fill upward
-    return side < 0 ? `M ${p(a0)} A ${r} ${r} 0 0 1 ${p(a1)}` : `M ${p(a1)} A ${r} ${r} 0 0 0 ${p(a0)}`;
+    return `M ${p(a0)} A ${r} ${r} 0 0 ${side < 0 ? 1 : 0} ${p(a1)}`;
   };
-  return `<svg class="gauges" viewBox="0 0 100 100">
-    <g class="gauge left"><path class="track" d="${arc(-1)}" pathLength="1"/><path class="fill g-${left}" d="${arc(-1)}" pathLength="1"/></g>
-    <g class="gauge right"><path class="track" d="${arc(1)}" pathLength="1"/><path class="fill g-${right}" d="${arc(1)}" pathLength="1"/></g>
-  </svg>`;
+  const gauge = (side, name) =>
+    `<g class="gauge ${side < 0 ? 'left' : 'right'}" data-side="${side}" data-r="${r}"><path class="track" d="${arc(side)}" pathLength="1"/>` +
+    `<path class="fill g-${name}" d="${arc(side)}" pathLength="1"/><path class="sheen" d="${arc(side)}" pathLength="1"/><path class="mark"/></g>`;
+  return `<svg class="gauges" viewBox="0 0 100 100">${gauge(-1, left)}${gauge(1, right)}</svg>`;
 }
+
+// a rate as the readouts show it: "+2.0/s", "−0.35/s"
+const fmtRate = (v) => `${v > 0 ? '+' : '\u2212'}${Math.abs(v).toFixed(Math.abs(v) < 1 ? 2 : 1)}/s`;
 
 export class HUD {
   constructor(game, root) {
@@ -69,19 +73,22 @@ export class HUD {
     root.innerHTML = '';
     this.layer = el('div', 'hud-layer', root);
     this.markersEl = el('div', 'markers', this.layer);
-    // on foot: a dot with two gauge arcs (mining heat left, jetpack right) that only show while in use
-    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 17)}`);
-    // in flight: reticle with shield / pulse arcs, speed to the left and altitude to the right
+    // on foot: a dot with two gauge arcs (heat left, jetpack right) that only show while in use, and the lockout's word
+    // under them
+    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 17)}<div class="c-state">OVERHEAT</div>`);
+    // in flight: reticle with shield / Charge arcs, speed to the left and altitude to the right, the throttle under the
+    // speed and Charge under the altitude
     this.reticle = el(
       'div',
       'ship-reticle',
       this.layer,
-      `<b></b>${gaugeSvg('shield', 'pulse', 30)}<div class="r-speed"></div><div class="r-thr"><i></i></div><div class="r-alt"></div><div class="r-mode"></div>`,
+      `<b></b>${gaugeSvg('shield', 'charge', 30)}<div class="r-speed"></div><div class="r-thr"><i></i></div><div class="r-alt"></div><div class="r-chg"></div><div class="r-mode"></div>`,
     );
     this.rSpeed = this.reticle.querySelector('.r-speed');
     this.rAlt = this.reticle.querySelector('.r-alt');
     this.rMode = this.reticle.querySelector('.r-mode');
     this.rThr = this.reticle.querySelector('.r-thr i');
+    this.rChg = this.reticle.querySelector('.r-chg');
     // north is the edge of space
     this.edgeCompass = new EdgeCompass(game, this.layer);
     this.location = el('div', 'location', this.layer);
@@ -175,13 +182,51 @@ export class HUD {
     return `<div class="bar ${cls} ${v < 0.25 ? 'low' : ''}"><label>${label}</label><div class="track"><div class="fill" style="width:${(v * 100).toFixed(1)}%"></div></div></div>`;
   }
 
-  // fill one of the gauge arcs (0..1); `show` fades it in, otherwise it rests nearly invisible
-  arc(root, name, value, show) {
+  // fill one of the gauge arcs (0..1); `show` fades it in, otherwise it rests nearly invisible. `states` toggles classes
+  // on the gauge (by default `low` under a quarter: a gauge running out)
+  arc(root, name, value, show, states = null) {
     const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
     const v = Math.max(0, Math.min(1, value));
-    a.style.strokeDashoffset = (ARC_LEN * (1 - v)).toFixed(1);
-    a.parentNode.classList.toggle('on', show);
-    a.parentNode.classList.toggle('low', v < 0.25);
+    const off = (ARC_LEN * (1 - v)).toFixed(3);
+    if (a._off !== off) a.style.strokeDashoffset = a._off = off;
+    const g = a.parentNode;
+    g.classList.toggle('on', show);
+    for (const [cls, on] of Object.entries(states ?? { low: v < 0.25 })) g.classList.toggle(cls, !!on);
+  }
+
+  // A bright dash that climbs a gauge's fill from the bottom to its tip, eased in and out, every 1.9 s while `on` (Charge
+  // regenerating). Driven from the HUD's clock, so recordings and captures show it as play does.
+  sheen(root, name, on, v) {
+    const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
+    const sh = a.parentNode.querySelector('.sheen');
+    if (!on) {
+      if (sh._on) sh.style.opacity = 0;
+      sh._on = false;
+      return;
+    }
+    sh._on = true;
+    const t = (this.now() % 1900) / 1900;
+    const e = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+    // the dash (0.07 of the arc) centred on its way up to the fill's tip, brightest midway
+    sh.style.strokeDashoffset = (0.035 - e * Math.max(0.06, v)).toFixed(4);
+    sh.style.opacity = (0.9 * Math.sin(Math.PI * t) ** 0.7).toFixed(3);
+  }
+
+  // a tick across a gauge arc at level `f` (0..1), shown while `show`
+  mark(root, name, f, show) {
+    const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
+    const g = a.parentNode;
+    const m = g.querySelector('.mark');
+    const key = f.toFixed(3);
+    if (m._f !== key) {
+      m._f = key;
+      const side = +g.dataset.side;
+      const r = +g.dataset.r;
+      const t = arcAngle(side, f);
+      const p = (rr) => `${(rr * Math.cos(t) + 50).toFixed(2)} ${(rr * Math.sin(t) + 50).toFixed(2)}`;
+      m.setAttribute('d', `M ${p(r - 4)} L ${p(r + 4)}`);
+    }
+    g.classList.toggle('marked', show);
   }
 
   update(dt) {
@@ -204,7 +249,13 @@ export class HUD {
       const mt = g.multitool;
       this.crosshair.classList.toggle('active', mt.firing);
       this.crosshair.classList.toggle('target', !!mt.target);
-      this.arc(this.crosshair, 'heat', 1 - mt.heat, mt.firing || mt.heat > 0.05);
+      // heat fills the left arc: warm, amber once it runs hot, danger red through the lockout, with a tick where the
+      // lockout ends and the word under the dot
+      const h = mt.heat;
+      const over = mt.overheated;
+      this.arc(this.crosshair, 'heat', h, mt.firing || over || h > 0.02, { hot: !over && h >= 0.75, over });
+      this.mark(this.crosshair, 'heat', mt.recoverAt, over);
+      this.crosshair.classList.toggle('over', over);
       this.arc(this.crosshair, 'jet', player.jetFuel, player.jetFuel < 0.999);
     }
     if (mode === 'ship') {
@@ -225,7 +276,23 @@ export class HUD {
       if (this.rThr._w !== w) this.rThr.style.width = this.rThr._w = w;
       this.rThr.classList.toggle('rev', thr < 0);
       this.arc(this.reticle, 'shield', ship.shield / 100, ship.shield < 99.5);
-      this.arc(this.reticle, 'pulse', ship.pulseFuel / 100, ship.mode === 'pulse' || ship.pulseFuel < 99.5);
+      // Charge fills the right arc; a sheen climbs it while it regenerates, and the readout under the altitude says how
+      // much there is and which way it is going (shown while it is not full, or on the pulse drive)
+      const max = ship.chargeMax;
+      const c = max > 0 ? ship.charge / max : 0;
+      const regen = ship.chargeRegen > 0.005 && c < 0.999;
+      const shown = max > 0 && (ship.mode === 'pulse' || c < 0.995);
+      this.arc(this.reticle, 'charge', c, shown, { low: c < 0.25, regen, empty: max > 0 && c <= 0 });
+      this.sheen(this.reticle, 'charge', regen && shown, c);
+      let chg = '';
+      if (shown && c <= 0) chg = `<b>CHARGE EMPTY</b>`;
+      else if (shown) {
+        const rate = ship.chargeRate;
+        const dir = rate > 0.005 ? 'up' : rate < -0.005 ? 'down' : '';
+        chg = `<span>CHARGE</span><b>${Math.floor(ship.charge)}</b>${dir ? `<i class="${dir}">${fmtRate(rate)}</i>` : ''}`;
+      }
+      setText(this.rChg, chg);
+      this.rChg.classList.toggle('empty', shown && c <= 0);
     }
 
     // hostile skies
