@@ -34,6 +34,7 @@ cutscenes/          CutsceneService: cutscenes played in story phases, their cat
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
+resources/          ResourceService: mining hits, resource nodes' shared state per cell, what each player is sent (§18)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
@@ -107,24 +108,26 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests); a unit test pins the number and
-  checks the history, so two branches bumping to the same number conflict at merge rather than share it.
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining); a unit test pins the
+  number and checks the history, so two branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time` because `t` is the type tag; the server measures elapsed time itself and never
   trusts `time` for speed checks; `mode` is a prediction validated like the pose; `seq` counts from 1),
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
-  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17). Each socket's
-  message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
-  interactions, chat, party, inventory, skill, cutscene and quest requests, and the burst absorbs the backlog of a
-  stall. Chat and invites have far smaller limits of their own, per account (§13).
+  `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
+  frame, node | flora, tool, time}` (§18). Each socket's message budget is 60 a second with a burst of 120: input and
+  acks take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill, cutscene and quest requests
+  and mining hits (an honest client sends 4 a second, and 8 is the most a character may), and the burst absorbs the
+  backlog of a stall. Chat, invites and mining hits have smaller limits of their own (§13, §18).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
-  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests, error?}` (§17), and
+  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests, error?}` (§17), `mine {seq,
+  frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame, reset?, cells}` (§18), and
   snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
@@ -159,6 +162,16 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   | 'ended' | 'refused', id, phase, reason?}`, `phase` being the story phase the player is in while it plays (snapshots
   do not say), `reason` one of `unknown`, `denied`, `cooldown`, `busy`, `place`, `phase`, `zone`. Ids are a-z, 0-9 and
   `_`.
+- **Mining** (protocol 8, §18): a client sends `mine {seq, frame, node, tool: 'multitool', time}` (a resource node of the
+  world `frame`, the spec's `face_i_j_type_k`) or `mine {…, flora: {kind, ref, at}}` (a plant or rock of its own flora:
+  its kind, its own key for it, where it stands) about every quarter second while its beam stays on; `seq` counts from
+  1 and increases, `time` is never trusted for speed. The server answers each with `mine {seq, frame, node | flora,
+  result}`: `hit` with `hp` (the fraction left), `depleted` with `item`, `count` (this character's share) and `added`
+  (what of it fitted), or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `world`, `unknown`,
+  `busy`, `harvested`, `range`, `los`, `heat`). `seq` 0 is a share of a node another player broke. `nodes {frame, reset?,
+  cells: [{cell, gone, hurt}]}` keeps a player on a world up to date with the touched nodes round it (`cell` is
+  `face_i_j`, nodes in it `type_k`; `hurt` pairs a node with the fraction left); a cell with neither list is as the
+  scatter places it, and `reset` replaces everything the client held for that world.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -235,6 +248,7 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
 - **Ground.** The drawn ground (§12, `drawnGround`'s pads), its heights cached per cell on a 1 m lattice. Planning a
   world's surface takes 5–100 ms, so it runs in a worker thread (`fauna/planner.worker.ts`) from the moment a player
   enters the world's frame; its cells load once it is ready. The 16 worlds most recently asked for keep their ground.
+  The plan also carries the sites' clearance, so the same ground serves the resource nodes (§18): one plan per world.
   The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
   with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
@@ -475,9 +489,9 @@ Resource nodes (P1.E13.T02, `world/resourceNodes.ts`) are the spec's to place: `
 node types a world carries, and `scatterNodes(ground, layers, cell)` places the nodes of one ~64 m cell (`nodeCellLevel`,
 `nodeCellsNear`) on the drawn ground, off the pads and outside every site's clearance, in deterministic math only, so the
 server and every browser engine place the same nodes bit for bit (the cross-engine smoke compares them). A node's id is
-`face_i_j_type_k` (`nodeKey`). The client clears its own flora round sites and landed ships, but never a node: the
-nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any under a landed ship, from zone
-state).
+`face_i_j_type_k` (`nodeKey`; `parseNodeKey` reads it back). The client clears its own flora round sites and landed
+ships, but never a node: the nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any
+under a landed ship, from the server's `nodes` state, §18).
 
 ## 13. Social: chat and parties
 
@@ -835,3 +849,74 @@ counter (`counter`, default the step's id), so two steps can share one (Forty Na
   `game.questRequest(op)` sends `quest` requests (the journal and the dialogue bar, P1.E09.T03, call it); in the dev
   sandbox the shared engine fills the book from the game's own state and events twice a second. Boards' generated jobs
   (P1.E09.T06) will need their definitions on the wire, since the client knows only the catalog's.
+
+## 18. Resources (`packages/server/src/resources`)
+
+DESIGN 15.3, 16.6 "Resources", P1.E13.T01. Resource nodes are the shared spec's (§12): every machine places them from
+the seeds, the server holds only what players did to them, the same for everyone, and the client draws the scatter less
+what the server says is gone (P1.E13.T06). The gateway makes the `ResourceService` (`ws.resources`), hands it `mine`
+requests and starts its timer.
+
+- **Nodes are not entities.** A cell's nodes are scattered (`scatterNodes` over `drawnGround` at the zone's tier) only
+  when a hit names one of them, and kept (4,096 cells, most recently used). The ground is fauna's (§6.2): its planner
+  plans each world once in its worker thread, and the plan carries the sites' clearance beside the pads (`planGround`),
+  so a fauna `Ground` also serves the nodes (`Ground.nodes`, `resources/ground.ts`); the 16 worlds most recently asked for
+  keep it, and a world's is asked for as a player arrives on it. A touched node (`nodes.ts`) holds its hp, the damage each
+  character did (every character that hit it: those in reach bound how many), and when it heals (`HEAL_S`, 60 s after its
+  last hit) or grows back (`RESPAWN_S`: a plant 3 min, a deposit 5, a formation 8; `respawnSeconds` overrides it). At
+  most 100,000 touched nodes over every world: past that the one due soonest comes back early. Node state is in memory
+  only; a restart brings every node back.
+- **A hit**, cheapest checks first, so a client spamming far nodes costs little: `stale_seq`; `rate` (8 hits at once per
+  character, 8 a second); `stale` (stamped more than 3 s from the server's clock); `zone`; `mode` (on foot, as the zone
+  entity has it: movement authority's believed mode once P1.E03.T04 lands); `world` (the frame is the player's, a rocky
+  world); `unknown` (`parseNodeKey`: a cell on the world's grid, a type the world carries at its tier); `range` before
+  any terrain is sampled (the cell's centre further than reach and a cell); `busy` (the ground is still being planned);
+  `unknown` (no such candidate in the scatter); `harvested`; `range` (35 m from the player's position to the node: the
+  client's 30 m beam and 5 m for the eye, the node's size and a pose a tick old); `los` (the ground sampled every 2 m
+  along the beam from the eye, 1.6 m up, to the node, its ends skipped, blocked where the beam runs 0.75 m under it; rocks,
+  trees and buildings do not block); `heat` (`beam(character, seconds)`: given Heat's meter service as `meters`
+  (P1.E07.T02), a hit counts only while `meters.beamActive(character, now)` says the beam is firing, its button held
+  and out of the overheat lockout, so hits sent with the button off never mine; without it, as until Heat is wired into
+  the gateway's `ResourceService`, the beam never overheats on the server).
+- **Beam time.** A hit is worth the time since the character's last hit that counted, at most 0.5 s (an honest client
+  sends one every 0.25 s), at the multitool's 1.6 hp a second (× 1.5 on minerals with a node flagged
+  `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
+  continuously; nodes and flora share that one beam.
+- **Breaking.** The node's yield is rolled once and split by the damage each character did (whole units, largest
+  remainders first, ties to the first to hit it; `splitByDamage`), so a token hit earns a token share (nothing, a few
+  thousandths of a node) and the one who did the work takes the rest; each share × the character's `mining.yield`
+  (Optical Drill, Hot Hands) and granted into its
+  inventory: what does not fit is reported (`added` below `count`), not kept, and a character out of play loses its
+  share. The breaker's answer carries its share; every other contributor in the zone is sent `mine {seq: 0, result:
+  'depleted', …}`; the inventory is pushed as for any server-side grant. `subscribe(fn)` hears every share
+  (`MinedEvent`: character, zone, frame, node or null, type or flora kind, resource, count, added, `broke`); the gateway
+  passes each to the quest runtime (§17) as `questMineEvent(e)`: `mine {node: <type>, id: <frame>/<node>}` for a node
+  share worth something, so a `mine` step counts distinct nodes (one grown back is the same node), and nothing for
+  flora, whose carbon and ferrite count through `collect` steps.
+- **Common flora** (trees, giant growths, shrubs, ferns, crystal growths, boulders, rocks: carbon and ferrite) is each
+  client's own scatter, not shared nodes. A hit names `flora {kind, ref, at}`: the world must grow that kind
+  (`floraGrows`), `at` must be within 8 m of the ground and in range and sight, the same beam time breaks it
+  (`FLORA_HARVEST`'s hp, the client's numbers) and its yield is granted; the last 256 keys a character broke are refused
+  `harvested`, and so is flora past a budget per patch of ground, counted in hp so a giant growth costs six rocks (24 hp
+  an hour to a character in any 10 m patch; the client's flora holds about 6 hp to a patch, up to about 18 in a clump).
+  Its place cannot be checked against a scatter the server does not have, but its rate is bounded as a node's is (per
+  beam-second, as much as an honest player breaking rocks, far below a deposit's worth), and a modified client standing
+  still and naming plants that are not there gets about 7,500 units an hour from the ~40 patches in its reach, the same
+  whether it names rocks, boulders or giant growths: below what an honest beam held on rocks earns (about 19,000 ferrite
+  an hour at Heat's duty cycle). So carbon and ferrite grants are never the client's.
+- **What players are sent.** Every 250 ms (`sweep`, on the service's timer) each session whose player is in a world's
+  frame and within 500 m of its ground is sent, as `nodes`, the touched cells within 500 m of it that it does not hold or
+  that changed (`gone`: broken and growing back; `hurt`: damaged, with the fraction left rounded up to tenths, so a
+  beam's every hit is not news), an empty cell for one that went back to the scatter or that it has left 600 m behind,
+  and `reset` as it arrives on a world (again whenever it comes back to one). A client holds exactly what it was sent and
+  draws the rest as the scatter has it. Nothing is sent while no node near a player is touched, and a player is looked
+  at again only when its world's touched nodes changed (each world has a version) or it has moved. The cells round a
+  player are found through buckets of touched cells about 512 m across, worked out again once it has moved 32 m; each
+  cell's state is checked against the schema and encoded once per change, and a session's message put together from
+  those (`Session.sendText`).
+- **Bounds and cost.** A far hit never scatters or samples the ground; at most 16 grounds, 4,096 scattered cells and
+  100,000 touched nodes are kept, and a miner idle for an hour (the flora budget's) is forgotten. The bench's mining trial (25 players on foot
+  among 480 nodes, herds about, every node broken many times over) keeps the whole tick, hits and sweeps included,
+  well under the 10 ms p95.
+- **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
+  P1.E12.T04 resolves ship weapons on the server); the client's half is P1.E13.T06.

@@ -13,12 +13,15 @@
 // every zone ticks on one loop, so the server plans in a worker thread (GroundPlanner, planner.worker.ts): a world's
 // ground is asked for when a player enters its frame and is ready a few hundred milliseconds later, long before a ship
 // lands. A world's ground (its plan and its caches) is kept per world seed and radius, for the KEEP worlds most recently
-// asked for; groundOf and planHere plan on the calling thread, for tests and tools.
+// asked for; groundOf and planHere plan on the calling thread, for tests and tools. The same plan carries the sites'
+// clearance, so a ground also serves the resource nodes' scatter (`Ground.nodes`, P1.E13.T01): one plan per world.
 //
-// A world's dens (P1.E08.T03) come from the same planner: the dens of the one shared plan (planSurface at the system's
-// tier, as drawnGround plans them once they are drawn), each housing one of the world's species. That costs 50–600 ms on
-// a large world at Tier 3 (thousands of dens), so it is a plan of its own, asked for with the ground and kept per world
-// and tier. Dens are spawn anchors, not geometry: until they are drawn (DENS_DRAWN, P1.E14.T10) their pads level nothing.
+// A world's dens (P1.E08.T03) come from the same planner and the same plan: shared worldSurface plans the world's whole
+// surface at the system's tier once, its drawn ground (exactly drawnGround's pads and sites' clearance) and every den,
+// each housing one of the world's species. The dens cost 50–600 ms more on a large world at Tier 3 (thousands of them),
+// so they are a plan of their own, asked for with the ground (which comes back first, without them) and kept per world
+// and tier; their reply carries the ground of the same plan too. Dens are spawn anchors, not geometry: until they are
+// drawn (DENS_DRAWN, P1.E14.T10) their pads level nothing.
 //
 // The planner must never stop fauna server-wide: a worker that dies (an error, or an exit with none) is restarted once
 // and given its plans again, and after a second death the planner plans on the main thread (warning once); a plan that
@@ -29,7 +32,7 @@ import { createRequire } from 'node:module';
 import { performance } from 'node:perf_hooks';
 import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
-import { DEN_PASSES, DENS_DRAWN, drawnGround, hasFauna, planSurface, TerrainSampler, type Den, type PlanetParams } from '@astra/shared/world';
+import { DEN_PASSES, DENS_DRAWN, drawnGround, hasFauna, TerrainSampler, worldSurface, type Den, type NodeGround, type PlanetParams } from '@astra/shared/world';
 import { CellGrid, facePoint, type FacePoint, type Vec3 } from './cells.ts';
 
 /** Spacing of a cell's height cache, m (about). */
@@ -49,14 +52,24 @@ export class Ground {
   private readonly caches = new Map<number, Map<number, number>>();
   private readonly fp: FacePoint = { face: 0, a: 0, b: 0 };
 
-  /** A world's ground, levelled by `pads` (planPads). */
-  constructor(params: PlanetParams, pads: readonly number[]) {
+  /** A world's ground, levelled by `pads` (planPads), with its sites' clearance when the plan gave it (planGround). */
+  constructor(
+    params: PlanetParams,
+    pads: readonly number[],
+    private readonly nodeClear: readonly number[] | null = null,
+  ) {
     this.radius = params.radius;
     this.ocean = params.hasOcean;
     this.cells = new CellGrid(params.radius);
     this.lattice = Math.max(1, Math.round((this.cells.step * params.radius) / LATTICE_M));
     this.sampler = new TerrainSampler(params);
     this.sampler.setPads([...pads]);
+  }
+
+  /** The ground resource nodes are scattered over (the shared spec's NodeGround, ARCHITECTURE §12): this sampler and the
+   * sites' clearance; null for a ground planned without the clearance. */
+  get nodes(): NodeGround | null {
+    return this.nodeClear ? { sampler: this.sampler, nodeClear: this.nodeClear } : null;
   }
 
   /** The true height above sea level (m) at a direction (any length but zero): one terrain sample. */
@@ -122,7 +135,19 @@ export class Ground {
 /** The ground levelled under a world's cities and sites (and its dens, once they are drawn), as every client levels it:
  * shared drawnGround's pads at the system's tier, planned on a copy of the world's params. 5–100 ms. */
 export function planPads(params: PlanetParams, tier = 0): number[] {
-  return drawnGround({ ...params, pads: null }, tier).pads;
+  return planGround(params, tier).pads;
+}
+
+/** A world's drawn ground as a plan: the pads that level it (planPads) and its sites' clearance, which the resource
+ * nodes keep off. 5–100 ms. */
+export function planGround(params: PlanetParams, tier = 0): { pads: number[]; nodeClear: number[] } {
+  const g = drawnGround({ ...params, pads: null }, tier);
+  return { pads: g.pads, nodeClear: g.nodeClear };
+}
+
+/** A world's ground from a plan. */
+function groundFrom(params: PlanetParams, plan: { pads: readonly number[]; nodeClear?: readonly number[] }): Ground {
+  return new Ground(params, plan.pads, plan.nodeClear ?? null);
 }
 
 /** Whether a world has dens at a tier: a world with fauna, from the first den pass's tier (DEN_PASSES). */
@@ -131,14 +156,17 @@ export function hasDens(params: PlanetParams, tier: number): boolean {
 }
 
 /**
- * A world's dens at a tier, as the shared site plan places them (planSurface, on the natural ground after its cities and
- * sites: the dens drawnGround levels once they are drawn), each naming who lives in it. 50–600 ms on a large world; none
- * below Tier 1 or without fauna.
+ * A world's whole surface at a tier as one plan (shared worldSurface): its drawn ground (planGround's pads and sites'
+ * clearance, to the bit) and its dens, each naming who lives in it. 50–700 ms on a large world at Tier 3.
  */
+export function planWorld(params: PlanetParams, tier: number): { pads: number[]; nodeClear: number[]; dens: Den[] } {
+  const { ground, dens } = worldSurface({ ...params, pads: null }, tier);
+  return { pads: ground.pads, nodeClear: ground.nodeClear, dens };
+}
+
+/** A world's dens at a tier, from its one plan (planWorld): none below Tier 1 or without fauna. */
 export function planDenList(params: PlanetParams, tier: number): Den[] {
-  if (!hasDens(params, tier)) return [];
-  const natural = { ...params, pads: null };
-  return planSurface(natural, new TerrainSampler(natural), { tier }).dens;
+  return hasDens(params, tier) ? planWorld(params, tier).dens : [];
 }
 
 /** Where worlds' grounds and dens come from. */
@@ -182,14 +210,18 @@ function keep<T>(cache: Map<string, T>, id: string, g: T): T {
 /** A world's ground, planned on the calling thread if it is not kept: for tests, tools and the dev CLI. */
 export function groundOf(params: PlanetParams, tier = 0): Ground {
   const id = idOf(params, tier);
-  return kept(grounds, id) ?? keep(grounds, id, new Ground(params, planPads(params, tier)));
+  return kept(grounds, id) ?? keep(grounds, id, groundFrom(params, planGround(params, tier)));
 }
 
-/** A world's dens at a tier, planned on the calling thread if they are not kept: for tests, tools and the bench. */
+/** A world's dens at a tier, planned on the calling thread if they are not kept (with its ground, from the same plan, if
+ * that is not kept either): for tests, tools and the bench. */
 export function densOf(params: PlanetParams, tier: number): readonly Den[] {
   if (!hasDens(params, tier)) return NO_DENS;
-  const id = denIdOf(params, tier);
-  return kept(denLists, id) ?? keep(denLists, id, planDenList(params, tier));
+  const known = kept(denLists, denIdOf(params, tier));
+  if (known) return known;
+  const plan = planWorld(params, tier);
+  if (!kept(grounds, idOf(params, tier))) keep(grounds, idOf(params, tier), groundFrom(params, plan));
+  return keep(denLists, denIdOf(params, tier), plan.dens);
 }
 
 /** Plans on the calling thread: always ready. */
@@ -213,7 +245,7 @@ export interface PlannerOptions {
   workerData?: unknown;
 }
 
-/** What a plan is of: a world's ground (planPads) or its dens at a tier (planDenList). */
+/** What a plan is of: a world's ground (planGround) or its whole surface at a tier, dens and all (planWorld). */
 export type PlanKind = 'ground' | 'dens';
 
 /** A plan asked of the worker. */
@@ -236,14 +268,17 @@ interface Pending {
 interface PlanReply {
   id: string;
   pads?: number[];
+  /** the sites' clearance, for the resource nodes (planGround) */
+  nodeClear?: number[];
+  /** a world's dens (planWorld, whose reply carries its ground too) */
   dens?: Den[];
   error?: string;
 }
 
-/** The worker's side of a plan: what it posts back for a request (the pads of a ground, or a world's dens). */
+/** The worker's side of a plan: what it posts back for a request (a world's ground, or its whole surface with its dens). */
 export function answer({ id, kind, params, tier }: PlanRequest): PlanReply {
   try {
-    return kind === 'dens' ? { id, dens: planDenList(params, tier) } : { id, pads: planPads(params, tier) };
+    return kind === 'dens' ? { id, ...planWorld(params, tier) } : { id, ...planGround(params, tier) };
   } catch (err) {
     return { id, error: String(err) };
   }
@@ -333,11 +368,13 @@ export class GroundPlanner implements GroundSource {
     return false;
   }
 
-  /** Keeps a plan that came back; false when it holds nothing. */
+  /** Keeps a plan that came back (a ground with its sites' clearance, so it serves the resource nodes too; a world's dens,
+   * and its ground from the same plan if none is kept); false when it holds nothing. */
   private store(kind: PlanKind, params: PlanetParams, tier: number, reply: PlanReply): boolean {
-    if (kind === 'ground' && reply.pads) keep(grounds, idOf(params, tier), new Ground(params, reply.pads));
-    else if (kind === 'dens' && reply.dens) keep(denLists, denIdOf(params, tier), reply.dens);
-    else return false;
+    if (!reply.pads || (kind === 'dens' && !reply.dens)) return false;
+    const id = idOf(params, tier);
+    if (kind === 'ground' || !kept(grounds, id)) keep(grounds, id, groundFrom(params, { pads: reply.pads, nodeClear: reply.nodeClear }));
+    if (reply.dens) keep(denLists, denIdOf(params, tier), reply.dens);
     return true;
   }
 

@@ -542,3 +542,20 @@ Format: task id, question → choice → why.
   The admin CLI's set-quest-step works online and offline (`QuestAdmin`). Protocol 7. → DESIGN 14's engine, server-run.
   Open: events not yet emitted — interact and offers (P1.E09.T05/T06), mine (P1.E13.T01 wires `resources.subscribe`),
   kill (combat), analyze, site entry and scan, escort and waves; board jobs must send their definitions to the client.
+- **P1.E13.T01** Server-side resource nodes (`server/src/resources`, ARCHITECTURE §18) → nodes are not entities: every
+  machine scatters them from the seeds (`scatterNodes` over `drawnGround` at the zone's tier), and the server keeps only
+  what players did to them (hp, each character's damage, heal 60 s after the last hit, regrowth 3/5/8 min for plants,
+  deposits, formations), in memory, bounded (16 grounds, 4,096 scattered cells, 100,000 touched nodes). The ground is
+  fauna's planner's (one plan per world in its worker, carrying site clearance beside the pads), so nodes and pads come
+  from one plan. A hit is checked cheapest first (rate, clock stamp, zone, on foot, world, key, coarse range, planned,
+  scatter, harvested, 35 m range, ground line of sight sampled every 2 m); it is worth the beam time since the last
+  counted hit (at most 0.5 s at 1.6 hp/s), so no client mines faster than one beam held on. A broken node's yield is
+  rolled once and split by damage among every contributor (largest remainders, ties within 1e-9 to the first hitter):
+  capping contributors let taggers take the yield, so all count and a token hit earns a token share. Common flora stays
+  each client's own scatter; the server bounds it by kind, distance from the ground, range, sight, beam time, the last
+  256 keys, and 24 hp per 10 m patch per hour (so a modified client naming plants that are not there gets about 7,500
+  units an hour, less than an honest beam on rocks). Touched cells stream to nearby players as `nodes` every 250 ms
+  within 500 m (dropped at 600 m, `reset` on arrival). Quests hear node shares as `mine` events. Heat's seam:
+  `ResourceService` takes `meters` and counts a hit only while `meters.beamActive` (wired when P1.E07.T02 lands).
+  Protocol 8. → Mining is server-authoritative without making every node an entity. Open: the client half is
+  P1.E13.T06; asteroids, the Mining Laser and iridium are P1.E13.T07 (added); node state does not survive a restart.
