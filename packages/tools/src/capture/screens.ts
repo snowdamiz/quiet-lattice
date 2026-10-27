@@ -606,8 +606,36 @@ export const SCREENS: Record<string, ScreenDef> = {
       },
     },
     async motion(page) {
-      await heatAt(page, 0, false, true);
+      // the overheat still's lockout cleared and settled before the first frame: cool, the button up, the HUD told, and
+      // its fades run out (CSS runs at a tenth of real time while the clip records: OVERHEAT's 0.25 s, the arc's 0.4 s)
+      await heatAt(page, 0, false, false);
+      await page.evaluate(() => (window as unknown as { game: { hud: { update(dt: number): void } } }).game.hud.update(0));
+      await page.waitForTimeout(5000);
+      // then the beam held from cool
+      await page.evaluate(() => (window as unknown as MeterWindow).dev.button(0, true));
       await hastenHeat(page, 3);
+    },
+  },
+  // Leaving the ship on foot with the multitool still warm (heat 50): the stills are aboard and landed; the clip's first
+  // frame is the foot HUD's first, the crosshair fading in (150 ms) with its heat arc already at 50 and cooling at 20/s.
+  'hud-foot-exit': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 0.6,
+    sheetFrames: [...Array.from({ length: 20 }, (_, i) => i), 24, 29, 35],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await page.evaluate(() => (window as unknown as { game: { boardShip(): void } }).game.boardShip());
+      // aboard: the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: MeterGame & { exitShip(): void } }).game;
+        g.multitool.meter = { heat: 50, overheated: false, charge: 0 };
+        g.exitShip();
+      });
     },
   },
   map: {
