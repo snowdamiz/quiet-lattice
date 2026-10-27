@@ -294,6 +294,7 @@ export class SocialUI {
     this.listEl = el('div', 'sb-list', this.beaconsEl);
     this.moreEl = el('div', 'sb-more', this.beaconsEl);
     this.emptyEl = el('div', 'sb-empty', this.beaconsEl, 'No calls for aid on the shard');
+    this.beaconsEl.addEventListener('scroll', () => this.scrollEdges(), { passive: true });
 
     const row = el('div', 'sc-input', this.panel);
     this.chanEl = el('span', 'sc-chan', row);
@@ -410,7 +411,7 @@ export class SocialUI {
     // the lines already there ease up by the room the new ones took (each line and the gap over it), from wherever a
     // slide still had them; lines gone from the top of a bottom-anchored stack move nothing
     const gap = parseFloat(getComputedStyle(box).rowGap) || 0;
-    const rise = added.reduce((h, n) => h + n.offsetHeight + gap, 0) + offsetY(box);
+    const rise = added.reduce((h, n) => h + n.getBoundingClientRect().height + gap, 0) + offsetY(box);
     this.slide?.cancel();
     this.slide = box.animate([{ transform: `translateY(${rise}px)` }, { transform: 'translateY(0)' }], { duration: MOVE_MS, easing: EASE });
   }
@@ -651,9 +652,17 @@ export class SocialUI {
     });
     setText(this.moreEl, all.length > list.length ? `+${all.length - list.length} more` : '');
     this.emptyEl.style.display = list.length ? 'none' : '';
-    // (a list longer than the panel fades at its foot over a scrollbar)
-    const el2 = this.beaconsEl;
-    el2.classList.toggle('scrolls', el2.scrollHeight > el2.clientHeight + 1);
+    this.scrollEdges();
+  }
+
+  /** A list longer than the panel fades at the edge it scrolls on, over a scrollbar: at its foot while more is below, at
+   * its head once scrolled down. */
+  scrollEdges() {
+    const e = this.beaconsEl;
+    const above = e.scrollTop > 1;
+    const below = e.scrollTop + e.clientHeight < e.scrollHeight - 1;
+    if (above !== e.classList.contains('more-above')) e.classList.toggle('more-above', above);
+    if (below !== e.classList.contains('more-below')) e.classList.toggle('more-below', below);
   }
 
   /** The server's refusal under a beacon's row: a new one opens in, the old one closes out, and the rows below ease. */

@@ -2616,6 +2616,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .social-side .sizing {
   overflow: hidden;
 }
+/* Every box that opens, closes or slides has whole-pixel line heights, so its eases end where it lays out: nothing
+   settles by a pixel after a tween. */
 /* (closed things stay closed whatever display their class gives them) */
 .social-chat [hidden],
 .social-side [hidden] {
@@ -2769,11 +2771,29 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sc-log {
   padding: 8px 12px;
   scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-2) transparent;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .sc-log,
+  .sc-beacons {
+    scrollbar-width: thin;
+    scrollbar-color: var(--dim) transparent;
+  }
 }
 .sc-log.full {
   overflow-y: auto;
+}
+/* scrollbars that stay drawn (overlay scrollbars hide until scrolled), in the panel's greys */
+.sc-log.full::-webkit-scrollbar,
+.sc-beacons::-webkit-scrollbar {
+  width: 5px;
+}
+.sc-log.full::-webkit-scrollbar-track,
+.sc-beacons::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.sc-log.full::-webkit-scrollbar-thumb,
+.sc-beacons::-webkit-scrollbar-thumb {
+  background: var(--dim);
 }
 /* the feed stands on the panel's foot, whatever its length (one longer than the box gives way at the top) */
 .sc-log.feed {
@@ -2803,7 +2823,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   padding: 3px 11px 4px 9px;
   border-left: 2px solid var(--chan, var(--line-2));
   font-size: 13.5px;
-  line-height: 1.38;
+  line-height: 19px;
   color: var(--text);
   overflow-wrap: anywhere;
   user-select: text;
@@ -2923,18 +2943,25 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 /* ---------- the beacon list (the chat panel's fourth tab) ---------- */
 .sc-beacons {
   display: none;
-  padding: 0 16px 6px;
+  padding: 0 10px 6px 16px;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--dim) transparent;
+  scrollbar-gutter: stable;
 }
 .social-chat.open.tab-beacons .sc-beacons {
   display: flex;
 }
-/* longer than the panel: it fades at its foot, over a scrollbar */
-.sc-beacons.scrolls {
+/* longer than the panel: it fades at the edge it scrolls on (its foot while more is below, its head once scrolled) */
+.sc-beacons.more-below {
   -webkit-mask-image: linear-gradient(black calc(100% - 30px), transparent);
   mask-image: linear-gradient(black calc(100% - 30px), transparent);
+}
+.sc-beacons.more-above {
+  -webkit-mask-image: linear-gradient(transparent, black 24px);
+  mask-image: linear-gradient(transparent, black 24px);
+}
+.sc-beacons.more-above.more-below {
+  -webkit-mask-image: linear-gradient(transparent, black 24px, black calc(100% - 30px), transparent);
+  mask-image: linear-gradient(transparent, black 24px, black calc(100% - 30px), transparent);
 }
 .sb-own,
 .sb-row {
@@ -2952,6 +2979,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-column: 1;
   font-family: var(--font-mono);
   font-size: 10px;
+  line-height: 13px;
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -2963,6 +2991,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sb-own-text {
   grid-column: 1;
   font-size: 13px;
+  line-height: 17px;
   color: var(--dim);
   white-space: nowrap;
   overflow: hidden;
@@ -3025,6 +3054,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .sb-place {
   font-size: 14px;
+  line-height: 18px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -3033,6 +3063,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sb-meta {
   margin-top: 1px;
   font-size: 12px;
+  line-height: 15px;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--dim);
@@ -3044,6 +3075,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-column: 2 / -1;
   margin-top: 3px;
   font-size: 12.5px;
+  line-height: 17px;
   color: var(--sc-refused);
 }
 .sb-more {
@@ -3093,6 +3125,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   padding: 8px 10px 6px;
   font-family: var(--font-mono);
   font-size: 10px;
+  line-height: 13px;
   font-weight: 500;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -3107,6 +3140,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   padding: 8px 10px 9px;
   border-top: 1px solid var(--line);
   font-size: 13px;
+  line-height: 17px;
   color: var(--dim);
 }
 .sp-member {
@@ -3137,6 +3171,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .sp-name {
   font-size: 14px;
+  line-height: 18px;
   font-weight: 500;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -3249,6 +3284,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   justify-content: space-between;
   font-family: var(--font-mono);
   font-size: 10px;
+  line-height: 13px;
   font-weight: 500;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -3263,6 +3299,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .sp-inv-who {
   margin: 6px 0 10px;
   font-size: 13.5px;
+  line-height: 20px;
   color: var(--dim);
 }
 .sp-inv-who b {
