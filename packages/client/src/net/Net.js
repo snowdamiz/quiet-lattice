@@ -9,6 +9,7 @@
 // second `invalid` within a minute), a failure before the first welcome, and close() end in closed, with 'closed' saying
 // why.
 import { PROTOCOL_VERSION, decodeServerMessage, decodeSnapshot, encodeClientMessage } from '@astra/shared/protocol';
+import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
 import { CombatFeed } from './combat.js';
 import { SnapshotStore } from './snapshots.js';
@@ -80,6 +81,8 @@ export class Net {
     /** shots sent this session (numbered from 1), and what the server says they and others' did (ARCHITECTURE §20) */
     this.fireSeq = 0;
     this.combat = new CombatFeed(this);
+    /** The call-for-aid beacons (beacons.js): the shard's list while watching, the character's own, and the requests. */
+    this.beacons = new Beacons(this);
   }
 
   get joined() {

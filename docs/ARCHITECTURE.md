@@ -29,7 +29,7 @@ gateway/ws.ts       WebSocket upgrade (token in the first message), one Session 
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
 zones/              Zone (one star system), ZoneManager, spatial hash, interest sets, snapshot encoder
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
-social/             SocialService: chat channels, parties and invites, and their limits (§13)
+social/             SocialService: chat channels, parties and invites, and their limits (§13); call-for-aid beacons (§21)
 cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§15)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
@@ -109,9 +109,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat); a
-  unit test pins the number and checks the history, so two branches bumping to the same number conflict at merge rather
-  than share it.
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
+  11 beacons); a unit test pins the number and checks the history, so two branches bumping to the same number conflict
+  at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -120,20 +120,22 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
-  frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20). Each socket's message budget is 60 a
-  second with a burst of 120: input and acks take 40, leaving room for pings, casts, interactions, chat, party,
-  inventory, skill, cutscene and quest requests, mining hits (an honest client sends 4 a second, and 8 is the most a
-  character may) and shots (the base gun's 8 a second at most, never while mining), and the burst absorbs the backlog of
-  a stall. Chat, invites, mining hits and shots have smaller limits of their own (§13, §18, §20).
+  frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21). Each socket's
+  message budget is 60 a second with a burst of 120: input and acks take 40, leaving room for pings, casts,
+  interactions, chat, party, inventory, skill, cutscene, quest and beacon requests, mining hits (an honest client sends 4
+  a second, and 8 is the most a character may) and shots (the base gun's 8 a second at most, never while mining), and
+  the burst absorbs the backlog of a stall. Chat, invites, raising beacons, mining hits and shots have smaller limits of
+  their own (§13, §18, §20, §21).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
-  character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message or party request not carried out,
-  to its sender only, §13), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests, error?}` (§17), `mine {seq,
-  frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame, reset?, cells}` (§18), `fire {seq,
-  result, target?, reason?}` (§20), and snapshots.
+  character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message, party request or beacon request
+  not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
+  error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
+  reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
+  id, beacon? | name? | phase? | why?}` (§21), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -184,6 +186,12 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `combat` events (now with `hp`, the fraction the target has left; `damageType` is what dealt it, `weapon`, `ability`,
   `attack` or `hazard`, and `ability` its id), a kill's rewards as `xp {amount, from, level}` and `loot {item, count, from}`
   events (`item` `units` for money). No client message carries an amount of damage; no event is ever taken from a client.
+- **Beacons** (protocol 11, §21): a client sends `beacon {op}`, `op` one of `raise`, `lower`, `watch`, `unwatch` and
+  `answer {id}`; the server sends a watcher the shard's list (`beacons`: `reset` and the whole list as it starts
+  watching, then new or changed beacons and the ids `gone`), the beacon's caller and answerer their news (`beacon {op:
+  'raised' | 'answered' | 'joined' | 'ended', id, …}`, one field per op), and refusals as `denied {of: 'raise' | 'lower'
+  | 'answer' | 'watch', code}` with the codes `no_phase`, `kind`, `raised`, `unknown`, `elsewhere`, `far`, `in_phase`,
+  `full` beside the social ones (`rate`, `busy`, `self`, `in_party`, `gone`). One `beacon` type serves both directions.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -222,7 +230,12 @@ players, `event` and `raid` 12.
   phase at a time; placing it elsewhere takes it out of the old one. A member's party is the `partyId` it was placed
   under, which it keeps; without one, its entity's party tag as it stands (which the party service keeps, §13). A story
   phase never holds two parties: re-asked, or coming back, under a party its others are not in, a
-  player goes to another phase.
+  player goes to another phase. `enter(viewer, phaseId, partyId?)` puts a player in one phase by name instead (a
+  call-for-aid beacon's answer, §21): under the same cap and party rule (`full`, changing nothing), a place kept for its
+  character there taken back as `phaseFor` takes it back, any other phase left; a member asked under a new party takes
+  it when the phase's others are all of it. It never moves the entity, so movement authority's judging goes on as before.
+  `release(characterId)` gives up a place kept for a character whose connection is down, as its grace running out would
+  (a beacon's helper no longer of the party, §21).
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
   players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
@@ -497,8 +510,9 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
   `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
   after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
-  nobody listens for (`party`, `denied` …) are dropped quietly, and so are snapshot fields and entity kinds nothing reads
-  yet (a `mob`'s `attack` is kept in the store for P1.E04.T02). While the connection is down after a welcome, a line at
+  nobody listens for (`party`, a chat or party `denied` …) are dropped quietly, and so are snapshot fields and entity
+  kinds nothing reads yet (a `mob`'s `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21)
+  keeps the call-for-aid beacons it is sent. While the connection is down after a welcome, a line at
   the top of the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
   onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
@@ -653,6 +667,8 @@ every chat line, mute and party change goes to the server log for moderation.
   the handoff calls `SocialService.moved(session)`. That is what puts members in each other's interest sets anywhere in
   a zone (§6) and in one story phase through `phaseFor` (§6.1); `SocialService.partyIdOf(character)` gives the id to
   pass as `partyId`.
+- **Call-for-aid beacons** are the social service's too (`social/beacons.ts`, §21): an instance's open slots listed to
+  the shard, and answering one joins it (a story instance's answer joins the caller's party, `Parties.joinWith`).
 - **Party state** `party {party: {leader, members: [{name, online, system, health}]} | null}`: members in join order,
   each one's galaxy system and health in tenths (null while offline); sent after `welcome`, to every online member
   whenever it changes, and null to one who leaves. At each refresh it is rebuilt, compared as plain JSON and encoded
@@ -778,7 +794,8 @@ decides when one plays; the client presents it.
   step's cutscene plays in the step's phase. The actors spawn once into the phase, in the cutscene's frame at their
   exported poses (turned with the anchor when it is the player), seen only by the phase's members; `done` takes the
   player out, and the last one out closes the phase with its actors. A session that leaves (its socket closes, it is
-  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten.
+  kicked, its entity goes, a handoff, P1.E04.T04) is forgotten. `plays(zone, phase)` says whether cutscenes play in an
+  open phase (one the service has played in, whatever its key), which no call-for-aid beacon may be raised in (§21).
 - **Out of play:** while a player watches, `cutscenes.watching(zone, entity)` is true and the client pauses the
   player's local hazards (pirate raids, the suit's survival damage). The server bounds it: only while the player is in
   the cutscene's phase, and no longer than the cutscene's length, the client's 1.5 s exit and a 5 s margin. Past either,
@@ -1126,3 +1143,71 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   creature nearest it, herds put down as they thin) keeps the whole tick, its shots included, under the 10 ms p95.
 - **Not here.** Pirates' fights move to the server in P1.E08.T05 (the client's local pirate combat and asteroid hits are
   its own until then, P1.E13.T07 for asteroids); creatures' attacks are P1.E08.T02; abilities P1.E07.T03.
+
+## 21. Call-for-aid beacons (`packages/server/src/social/beacons.ts`)
+
+DESIGN 16.6's "Social" row and DESIGN 17, P1.E15.T02: a beacon broadcasts an instance's open slots to the shard, so a
+player alone in an instance finds help on a quiet shard, and players on a busy one fill the instances that have room. The
+social service holds the beacons (`SocialService.beacons`, its timer checking them every tick, 100 ms), in memory like
+the parties: Phase 1 runs the shard in one process (§1), so nothing elsewhere reads them, and a restart drops them. When
+P3.E37 splits the shard across processes they move to Redis beside the world service's mirror (§3).
+
+- **Instances.** A beacon is raised for the phase its caller is in (§6.1): an `event` or a `raid`, whose slots are its
+  12 players (members and places kept, as the cap counts them), or a quest step's `story` phase (keyed
+  `quest:<quest>:<scene or step>` by the quest runtime, §17), which holds one party, so its slots are its caller's
+  party's (`PARTY_MAX`, 6; a caller in no party holds one). A hangar `bay` and a phase cutscenes play in are not
+  instances anyone calls aid to (`kind`): the cutscene service marks those it plays in (`CutsceneService.plays`, given
+  to the social service by the gateway), whatever their key, since a quest's cutscene step plays in a `quest:` phase.
+- **Raising** (`beacon {op: 'raise'}`) is refused while the character has a beacon up, or its instance has one
+  (`raised`: one per character and one per instance); in no phase (`no_phase`), in a bay or a cutscene's phase
+  (`kind`); with no slot open (`full`); with `BEACON_MAX` (256) up on the shard (`busy`); and, checked last so that no
+  other refusal spends it, past the account's allowance (`rate` with `retryS`: 3 at once, then one every 30 s, shared
+  by the account's sockets). The caller is sent `beacon {op: 'raised', id, beacon}`, and again whenever its character
+  enters the world while the beacon is up.
+- **The listing** (`BeaconView`): its id; the instance's kind and star system (galaxy index); its place, as a frame, a
+  centre in it and a radius (where to go to answer); what the place is called (the quest's title, else the location's
+  key; the kind's name if neither is plain text); the quest, for a story instance; the caller's name; its open slots of
+  `cap`; and the world times it was raised (`at`: its age is the client's server time less this) and lapses (`until`,
+  10 minutes later). A session that sends `watch` is sent the whole list (`beacons {reset: true, beacons, gone: []}`,
+  some 70 KB at 256 beacons) and from then the changes (`beacons {beacons, gone}`: new beacons and those whose open
+  slots changed, and the ids of those that ended), until it sends `unwatch` or its connection closes; a new connection
+  starts unwatched. The changes are gathered and sent only at the tick's sweep, one message encoded once for every
+  watcher (`Session.sendText`), so the shard's broadcasts come at most ten times a second however many requests arrive.
+  A `watch` from a session already watching is ignored, and an account is sent the whole list 5 times at once, then
+  once every 10 s (`denied {of: 'watch', code: 'rate', retryS}`, the session then not watching), so no flood of watch
+  and unwatch turns its message budget into megabytes.
+- **The end.** At every tick each beacon is checked, and it ends when its instance closed (`closed`), it lapsed
+  (`expired`), its caller is no longer in the instance (`left`; a caller whose connection dropped keeps it up while the
+  phase keeps its place, §6.1), or no slot is open (`full`, at once when an answer took the last); and when its caller
+  lowers it (`lower`, `lowered`). Its caller is sent `beacon {op: 'ended', id, why}` and the watchers its id in `gone`;
+  a change in its open slots goes to the watchers as the beacon again.
+- **Answering** (`beacon {op: 'answer', id}`) is checked again there and then, cheapest first: the beacon is up
+  (`unknown`, and one whose instance closed, lapsed or was left by its caller ends now) and not the answerer's own
+  (`self`); the answerer is in the instance's star system (`elsewhere`), in no phase (`in_phase`), and inside the
+  instance's place, its volume with the phase manager's 5% hysteresis, from its pose as it stands (`far`). The server
+  never moves a player to answer: its entity stays where movement authority has it, its inputs are judged as before and
+  nothing re-seats its mover. Travelling to a beacon (a server-side relocation, which would re-seat the mover as an
+  admin teleport does, §7) is a later feature; until then the listing says where to go. The answerer is then placed by
+  `PhaseManager.enter` (§6.1), under the phase's cap and party rule, so an event or a raid that filled since it was
+  listed refuses it (`full`). A story instance's answer joins the caller's party as accepting an invite from the caller
+  would (`Parties.joinWith`, or a new party the caller leads), refused `in_party` (the answerer is in another party),
+  `full` (the party is full) and `gone` (the caller is not connected in its instance), all checked before anything
+  changes; the caller is re-placed under the party first, since a caller placed before it had a party was placed as a
+  party of one. A helper needs no quest of its own: it fights beside the party in the caller's chapter, the quest runtime
+  leaving alone a player in a phase it did not put it in, and quests move only for those who hold them. The answerer is
+  sent `beacon {op: 'joined', id, phase}`, the caller `beacon {op: 'answered', id, name}`, and the watchers the beacon's
+  new slots (or its end, when that was the last).
+- **Helpers.** Since the quest runtime never re-places a player it did not place, the beacons do it for the helpers a
+  story answer placed, as the runtime does for a party (§17: a party that breaks up is split again): a helper that is no
+  longer in the party it joined (it left, was kicked, or the party disbanded: at once, as the party service tells of it,
+  `Parties.onLeft`, so the runtime never re-places a caller around it first) or whose caller is no longer in the chapter
+  (its step ended, it went elsewhere, its kept place lapsed: at the next tick) goes back to the shared world
+  (`PhaseManager.leave`; a helper whose connection is down has its kept place given up, `PhaseManager.release`), logged
+  as `beacon helper sent back`. So a party's private phase is only ever the party's: a kicked helper cannot stay with
+  its actors, nor hold the phase open for the party's return. One that leaves the chapter by itself is forgotten.
+- **Refusals** go to the asker only, as `denied {of: 'raise' | 'lower' | 'answer' | 'watch', code, retryS?}`. Every
+  raise, answer, end and helper sent back is logged at info, with the character, zone, phase and kind.
+- **The client.** `net.beacons` (`packages/client/src/net/beacons.js`) holds the list while watching (and watches again
+  after a reconnect, or once a watch refused for its rate may succeed), the character's own beacon, the phase its last
+  answer put it in and the last refusal, and sends the requests. The panel that shows them belongs to the chat and party UI (P1.E15.T03); until it lands they are
+  reachable from the dev console as `game.net.beacons` (`watch()`, `list()`, `answer(id)`, `raise()`, `lower()`).

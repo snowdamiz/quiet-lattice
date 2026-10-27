@@ -131,6 +131,15 @@ export class CutsceneService {
   }
 
   /**
+   * Whether cutscenes play in open phase `phaseId` of `zone`: the service has played one there (its anchor is kept while
+   * the phase is open), whatever its key says. Such a phase is not an instance anyone calls aid to (social/beacons.ts).
+   */
+  plays(zone: Zone, phaseId: number): boolean {
+    const a = this.anchors.get(`${zone.id}/${phaseId}`);
+    return a?.zone === zone && !!zone.phases.phase(phaseId)?.open;
+  }
+
+  /**
    * Whether entity `entity` in zone `zoneId` is watching a cutscene: out of play for the shared world's systems. Only
    * while it is in the cutscene's phase, and no longer than the cutscene's length, the exit and a margin.
    */
