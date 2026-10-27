@@ -38,6 +38,88 @@ interface InventoryApi {
   setLoadout(l: { ship: { hull: string; modules: Record<string, string>; cargoPods: number; livery: number } | null; skills?: string[] }): boolean;
 }
 
+/** What the HUD captures drive of the game: the walker's multitool meter and the ship's Charge (P1.E07.T02). */
+interface MeterGame {
+  mode: string;
+  multitool: { meter: { heat: number; overheated: boolean; charge: number } };
+  ship: {
+    charge: number;
+    mode: string;
+    speed: number;
+    throttle: number;
+    tryPulse(): void;
+    state: { frame: unknown; pos: { set(x: number, y: number, z: number): void }; quat: { setFromRotationMatrix(m: { elements: number[] }): void } };
+  };
+  system: { homePlanet: { radius: number; position: { x: number; y: number; z: number } } };
+  cam: { frame: unknown };
+  hud: { toast(text: string, tone?: string): void };
+}
+interface MeterWindow {
+  game: MeterGame;
+  dev: { boot(): Promise<void>; button(b: number, down: boolean): void };
+  THREE?: unknown;
+}
+
+/** The walker's heat meter at `heat`, locked out or not, with the beam held (the mouse button down) or let go. */
+async function heatAt(page: Page, heat: number, overheated: boolean, held: boolean): Promise<void> {
+  await page.evaluate(
+    ({ heat, overheated, held }) => {
+      const w = window as unknown as MeterWindow;
+      w.game.multitool.meter = { heat, overheated, charge: 0 };
+      w.dev.button(0, held);
+    },
+    { heat, overheated, held },
+  );
+}
+
+/**
+ * The ship in open flight off the home world, nose on it, `side` 1 on its day side (in sunlight, inside the habitable band:
+ * Charge regenerates) or −1 on its night side (in its shadow: nothing), with Charge at `charge`.
+ */
+async function shipOffHome(page: Page, side: 1 | -1, charge: number): Promise<void> {
+  await page.evaluate(
+    ({ side, charge }) => {
+      const w = window as unknown as MeterWindow;
+      const g = w.game;
+      const ship = g.ship;
+      const home = g.system.homePlanet;
+      const p = home.position;
+      const l = Math.hypot(p.x, p.y, p.z);
+      // three radii sunward of the planet (the star at the origin), a little to one side and above; on the night side close
+      // enough to the sun line to stay in the planet's shadow
+      const r = home.radius * 3;
+      const sx = (-p.x / l) * side;
+      const sz = (-p.z / l) * side;
+      const across = side > 0 ? 0.35 : 0.12;
+      const x = p.x + sx * r + sz * r * across;
+      const y = p.y + r * (side > 0 ? 0.22 : 0.1);
+      const z = p.z + sz * r - sx * r * across;
+      ship.state.frame = null;
+      ship.state.pos.set(x, y, z);
+      // nose on the planet (−Z forward), as the #space scenario aims it
+      const fx = p.x - x;
+      const fy = p.y - y;
+      const fz = p.z - z;
+      const fl = Math.hypot(fx, fy, fz);
+      const f = [fx / fl, fy / fl, fz / fl];
+      // right = f × up(0,1,0), up' = right × f
+      const rx = -f[2];
+      const rz = f[0];
+      const rl = Math.hypot(rx, rz);
+      const right = [rx / rl, 0, rz / rl];
+      const up = [right[1] * f[2] - right[2] * f[1], right[2] * f[0] - right[0] * f[2], right[0] * f[1] - right[1] * f[0]];
+      // the rotation whose columns are right, up and −forward (a Matrix4's column-major elements: setFromRotationMatrix
+      // reads nothing else)
+      ship.state.quat.setFromRotationMatrix({ elements: [...right, 0, ...up, 0, -f[0]!, -f[1]!, -f[2]!, 0, 0, 0, 0, 1] });
+      ship.mode = 'flying';
+      ship.speed = 0;
+      ship.charge = charge;
+      g.cam.frame = undefined;
+    },
+    { side, charge },
+  );
+}
+
 /** One inventory capture: the ship (its pods aboard), the skills, and what the cargo holds. */
 interface InventoryScene {
   hull: string;
@@ -360,22 +442,56 @@ export const SCREENS: Record<string, ScreenDef> = {
       });
     },
   },
+  // In flight off the home world's day side, in sunlight inside the habitable band: Charge (the right arc and the readout
+  // under the altitude) at 58 and regenerating, a bright dash climbing its arc (P1.E07.T02). `16x9-empty.png`: Charge run
+  // out on the night side, in the planet's shadow (no regeneration), and the pulse drive refused. The clip: the regen
+  // sheen's whole climb, the readout ticking up.
   'hud-ship': {
     hudClock: true,
+    clipSeconds: 2,
     async open(page) {
       await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
-      await settle(page, 120);
+      await settle(page, 60);
+      await shipOffHome(page, 1, 58);
+      await settle(page, 90);
+    },
+    stills16x9: {
+      async empty(page) {
+        await shipOffHome(page, -1, 0);
+        await settle(page, 90);
+        await page.evaluate(() => (window as unknown as MeterWindow).game.ship.tryPulse());
+        await settle(page, 6);
+      },
+    },
+    async motion(page) {
+      await shipOffHome(page, 1, 58);
     },
   },
+  // On foot on the home world, mining: the heat arc (left of the dot) climbing with the beam held, warm (P1.E07.T02).
+  // `16x9-overheat.png`: the lockout, the arc danger red past the tick where it ends and OVERHEAT under the dot. The clip:
+  // the beam held from 84 to the top, the overheat (about 0.7 s in) and the first of the lockout's cooling.
   'hud-foot': {
     hash: '#foot',
     hudClock: true,
+    clipSeconds: 1.5,
     async open(page) {
       await page.waitForFunction(async () => {
         await (window as unknown as { step(n: number): Promise<void> }).step(4);
         return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
       });
       await settle(page, 90);
+      // (the page's own loop runs through settle's wait: heat climbs about 30 there with the beam held)
+      await heatAt(page, 38, false, true);
+      await settle(page, 6);
+    },
+    stills16x9: {
+      async overheat(page) {
+        await heatAt(page, 100, true, true);
+        await settle(page, 6);
+      },
+    },
+    async motion(page) {
+      await heatAt(page, 84, false, true);
     },
   },
   map: {
