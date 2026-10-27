@@ -213,10 +213,11 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   are table-id shaped (48 characters); one the table lacks is answered `unknown`, not dropped. `seq` counts from 1 and
   increases.
 - **Reputation** (protocol 14, §24): no client message. The server sends `reputation {reputation}`, the view `{factions:
-  [{faction, rep, rank}], titles: [{title, faction? | quest?}]}` (every faction of the table in its order, standing 0–1000,
-  the rank's id or null; the titles earned, a rank's with its faction, a quest's with its quest), after `recipes` on join
-  and whenever the server changes it, after that change's events: `rank {faction, rank, from}` (a rank reached or lost;
-  ids or null) and `title {title}` (a title earned).
+  [{faction, rep, rank}], titles: [{title, faction?, rank?, quest?}]}` (every faction of the table in its order, standing
+  0–1000, the rank's id or null; the titles earned by name, a rank's with its faction and rank, a quest's with its quest),
+  after `recipes` on join and whenever the server changes it, after that change's events: `rank {faction, rank, from}`
+  (one per faction whose rank a change moved, from the rank before to the rank after; ids or null) and `title {title}`
+  (a title earned).
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -485,13 +486,18 @@ the runtime; refused, never replaced, when unreadable).
   and on graceful shutdown (`server.close()`, which SIGINT and SIGTERM run: sessions close and save, everyone still in play
   is captured, and the queue is written within 5 s). While writes succeed, a crash loses at most the last interval; while
   they fail (the database down, retries backing off, a backlog) it loses everything not yet written.
-- A capture is synchronous and small: each component's live value, checked against its schema (a value that fails is
-  logged and its stored one kept), and only the components whose value changed since the last capture, at a revision one
-  above it. Every changed component of a capture goes in one row update, so a change that moves two components at once
-  (owed quest reputation settled into the reputation, §24) is written whole or not at all: a crash before the write
-  loses both halves, never one. Writes never block a tick: the queue holds at most one save per character (a newer
-  capture merges into the waiting one), one writer drains it in batches of up to 64, one `UPDATE … FROM (VALUES …)` statement each, which merges
-  the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
+- A capture is synchronous and small: each component's live value, checked against its schema (a value whose `save`
+  throws or that fails is logged and its stored one kept), and only the components whose value changed since the last
+  capture, at a revision one above it. The components a capture takes go in one row update, but a component it cannot
+  take does not stop the others, so a change spanning two components is written whole only when both are taken. A
+  component that must never be written without another names it in `writtenWith` (either side naming the other is
+  enough): when a capture cannot take one of them, it holds the others back too (logged at error, their stored values
+  kept, their changes left for the next capture). The reputation is written with the quest log (§24), so owed quest
+  reputation settled into it lands with the owed list it leaves, or neither does: a crash, or a quest log that cannot be
+  saved, leaves the row as it was, and the next join settles it again. While one of them cannot be saved, neither is,
+  and leaving play then loses the changes of both. Writes never block a tick: the queue holds at most one save per
+  character (a newer capture merges into the waiting one), one writer drains it in batches of up to 64, one
+  `UPDATE … FROM (VALUES …)` statement each, which merges the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
   raises `revision`, only where the row's revision is lower, so a save older than what the row holds is skipped (and
   logged as an error). A failed write is logged and retried with backoff (0.5 s doubling to 30 s), merged under anything
   captured since; a failed batch retries one character per statement, so one bad row holds back no other.
@@ -1393,45 +1399,65 @@ changes it; no client message does.
   `rankAt`): ranks follow standing down as well as up (DESIGN: "Rep is lost as well as gained"). Titles are earned and
   kept for good, whatever standing does later: a rank's title (the data's `title`) the first time standing rises
   through its threshold (`setStanding`: every rank risen through, lowest first; a rank lost and reached again earns
-  nothing more), and a quest's (`rewards.title`, Forty Names' "Unlisted"). A rank's title is held with its faction
-  (the three cities share their ranks' names), a quest's by its name, each once, at most `TITLES_MAX` (128).
+  nothing more), and a quest's (`rewards.title`, Forty Names' "Unlisted"). DESIGN 14.4 has each rank's 3–4 quest chain
+  end "in a named title"; until the chains exist (P2.E18.T02–T05) the threshold awards it, and a chain's last quest
+  giving it adds nothing. A rank's title is held by its faction and rank id (`{faction, rank}`: the three cities share
+  their ranks' names, and the data's name is the one shown), a quest's by its name (`{title, quest?}`), each once, at
+  most `TITLES_MAX` (128; the table's 18 ranks and room for quests' and seasons'). A quest's title that names a rank's
+  title is that rank's (`questTitle`, `rankOfTitle`: a rank of a faction the quest pays reputation to, else the one rank
+  of the table with that name), so a chain's last quest giving "Hand" never stores a second Hand beside the threshold's;
+  a quest's title is also held already when any title held has its name, and a rank's title takes the place of a
+  quest's title of its name.
 - **Opposed factions.** DESIGN names its opposed effects as acts: "raiding a convoy costs Compact rep, defending one
   costs Reaches rep". They are data (`REP_ACTS`): `convoy_escorted` (Compact +50, Reaches −25) and `convoy_raided`
   (Reaches +50, Compact −25), the side helped gaining and the side gone against losing half that (tunable; DESIGN gives
-  no amounts). `ReputationService.act(character, act, {scale?, counted?})` applies both in one change; the convoy run
-  (P2.E21.T05) is their source. A plain grant moves one faction only: a quest that should cost another faction lists
-  both in its rewards.
-- **The underdog's bonus** (§11, DESIGN 16.2): a gain passed with `counted` (the Count meter tag of the counted action
-  that earned it) is multiplied by `underdogRepMultiplier(count, tag)` (×1.5 for the side pulling the Count back toward
-  the middle while it sits more than 200 from it), read from the world service's Count; losses never are.
-- **The state** (the `reputation` component, v1, §8): `{rep: {<faction>: 0–1000}, titles: [{title, faction? | quest?}]}`.
-  A stored faction is any id, so a faction the table later drops still reads: the component's `reconcile`
-  (`reconcileReputation`) drops its standing and its ranks' titles, one warning per character, and the next save writes
-  it; only a value that cannot be read refuses the join. It loads after the recipes and before the quests.
+  no amounts), each with the Count meter tag of its counted action (P2.E22.T01: escorted `feed`, raided `break`).
+  `ReputationService.act(character, act, {scale?})` applies both in one change, its gain earning the underdog's bonus by
+  the act's own tag; the convoy run (P2.E21.T05) is their source. A plain grant moves one faction only: a quest that
+  should cost another faction lists both in its rewards.
+- **The underdog's bonus** (§11, DESIGN 16.2): a gain earned by a counted action (an act, or a grant passed `counted`,
+  the tag of the counted action that earned it) is multiplied by `underdogRepMultiplier(count, tag)` (×1.5 for the side
+  pulling the Count back toward the middle while it sits more than 200 from it), read from the world service's Count;
+  losses never are.
+- **The state** (the `reputation` component, v1, §8): `{rep: {<faction>: 0–1000}, titles: [{faction, rank} | {title,
+  quest?}]}`. A stored faction is any id, so a faction the table later drops still reads: the component's `reconcile`
+  (`reconcileReputation`) drops its standing and the titles of ranks the table no longer has (a renamed rank id is a
+  removal), one warning per character, and the next save writes it; only a value that cannot be read refuses the join.
+  It loads after the recipes and before the quests, and is written with the quest log (`writtenWith`, §8).
 - **The service** (`ReputationService`, `reputation/service.ts`; made by `server.ts` with the world's Count and given to
   `coreRegistry`, the gateway finds it with `reputationServiceIn`) holds each character in play's value: `grant(character,
-  faction, amount, {reason, counted?})`, `act`, `earnTitle(character, title, quest?)`, `set` (the admin CLI's), and
-  `standing`, `rankOf`, `meetsRank` and `view` to read. A character out of play is declined (null). Each change is
-  logged (a rank reached or lost at info with its reason, other moves at debug) and its listeners hear a `rank` event per
-  rank reached or lost, a `title` event per title earned, and then the view; the gateway sends those to the session
-  holding the character (§5).
+  faction, amount, {reason, counted?})` (a non-finite amount is a RangeError), `act`, `earnTitle(character, title,
+  {quest?, factions?})`, `set` (the admin CLI's), and `standing`, `rankOf`, `meetsRank` and `view` to read. A character
+  out of play is declined (null). Each change is logged (a rank reached or lost at info with its reason, other moves at
+  debug) and its listeners hear one `rank` event for each faction whose rank the change moved (from the rank before to
+  the rank after, however many thresholds it crossed), a `title` event per title earned, and then the view; the gateway
+  sends those to the session holding the character (§5). The view names each title (a rank's from the data) with its
+  faction and rank, or its quest.
 - **Sources.** Quests (§17): their rewards' and dialogue answers' reputation and their titles go through
-  `reputationRewardHooks` (`rep` and `title` with the quest, `rankOf` for rank prerequisites); a reward a hook declines is
-  held as owed. Acts (above). The admin CLI's `set-rep <character> <faction> <value>` (§16): in play through `set` (the
+  `reputationRewardHooks` (`rep` and `title` with the quest, the title with the factions the quest pays reputation to,
+  `questFactions`; `rankOf` for rank prerequisites); a reward a hook declines is held as owed. Acts (above). The admin CLI's `set-rep <character> <faction> <value>` (§16): in play through `set` (the
   client hears the change), out of play by `setStanding` on the stored value through `persistence.edit`, both earning the
   titles of the ranks risen through. Not yet: the convoy run's acts (P2.E21.T05), PvP kills' rep (DESIGN 14.9,
   P2.E17.T01–T02), world events' participation rep (P2.E21.T01), the Count's other counted actions (anchors and the wall:
   P2.E28, P3.E34), seasons' titles (P2.E22.T03, through `earnTitle`), the faction chains (P2.E18.T02–T05) and the gates
   that read ranks (trainers P2.E18.T06, hulls P2.E24.T05, the Void branch's standing gate through the skill service's
   `meets` hook, P2.E18.T03). Kills on main are fauna's (§20), whose tags name no faction.
+- **Reading ranks at load.** The `skills` component loads (and reconciles) long before the `reputation` component, so
+  while a character's components load the reputation service does not hold it yet and `rankOf` and `meetsRank` answer
+  as for no standing. A standing gate must not be read then: P2.E18.T03's Void gate (the skill service's `meets`) reads
+  reputation only once the character is in play, never from the skills component's `reconcile`, `check` or `load`, or a
+  join would judge every Free Reaches Deckhand as having no standing.
 - **Exactly once.** Nothing in the service is idempotent by itself; each source pays once by its own record, written in
-  the same row update as the standing it paid (§8: a capture writes every changed component together). A quest's step
-  rewards and answers are recorded in its `paid` record and a completion in `done`, so a crash before the save loses
-  both the record and the standing. Reputation and titles owed from before this task (P1.E09.T01 held them in the quest
-  log) are settled on join (`QuestRuntime.joined` → `settleOwed`, before the auto quests, whose rank prerequisites read
-  the result): each owed `rep` and `title` goes to its hook, oldest first, and leaves the owed list as its hook takes it.
-  The owed list and the standing change together in memory and are written in one save; a crash before it leaves the
-  row as it was, and the next join settles it again, once in all.
+  the same row update as the standing it paid: the reputation component is written with the quest log or not at all
+  (`writtenWith`, §8). A quest's step rewards and answers are recorded in its `paid` record and a completion in `done`,
+  so a crash before the save, or a quest log that cannot be saved, loses both the record and the standing. Reputation
+  and titles owed from before this task (P1.E09.T01 held them in the quest log) are settled on join
+  (`QuestRuntime.joined` → `settleOwed`, before the auto quests, whose rank prerequisites read the result): each owed
+  `rep` and `title` goes to its hook, oldest first, and leaves the owed list as its hook takes it. The owed list and the
+  standing change together in memory and are written in one save; a crash before it, or a capture that cannot take
+  either of them, leaves the row as it was, and the next join settles it again, once in all. Sources outside the quest
+  log (acts, the admin CLI) write the reputation alone; a reputation held back with a quest log that cannot be saved
+  holds their changes back too.
 - **The client** (`net/reputation.js`): `net.reputation` keeps the last view (`standing(faction)`, `rank(faction)`,
   `titles`), the rank and title events for a screen to `take()` (the last 16), and logs each change to the console. The
   reputation screens are P2.E18.T02 onward's.

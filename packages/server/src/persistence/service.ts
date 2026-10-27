@@ -546,17 +546,24 @@ export class CharacterPersistence {
 
   // ---------- capture and queue ----------
 
-  /** Captures the character's changed components and queues them at a new revision. False when nothing changed. */
+  /**
+   * Captures the character's changed components and queues them at a new revision. False when nothing changed. A
+   * component that cannot be captured (its save throws, its value fails its schema) keeps its stored value, and so does
+   * every component written with it (`writtenWith`), so a change spanning them is never written half.
+   */
   private capture(rec: Tracked, reason: SaveReason): boolean {
     const state: StoredState = {};
     const columns: Partial<CharacterColumns> = {};
     let changed = false;
+    const values: [CharacterComponent, unknown][] = [];
+    const skipped = new Set<string>();
     for (const c of this.registry.components) {
       let live: unknown;
       try {
         live = c.save({ characterId: rec.id, viewer: rec.viewer });
       } catch (err) {
         this.log?.error({ character: rec.id, component: c.key, err }, 'component failed to save; its stored value is kept');
+        skipped.add(c.key);
         continue;
       }
       if (live === undefined) continue;
@@ -567,18 +574,30 @@ export class CharacterPersistence {
           { character: rec.id, component: c.key, issue: issue && `${issue.path.join('.')}: ${issue.message}` },
           'live state fails its schema; its stored value is kept',
         );
+        skipped.add(c.key);
         continue;
       }
-      const json = encodeJson(c, parsed.data);
+      values.push([c, parsed.data]);
+    }
+    const held = skipped.size ? this.registry.heldBackWith(skipped) : skipped;
+    for (const [c, data] of values) {
+      const json = encodeJson(c, data);
       if (rec.json.get(c.key) === json) continue;
+      if (held.has(c.key)) {
+        this.log?.error(
+          { character: rec.id, component: c.key, with: [...skipped] },
+          'change held back with a component it is written with, which could not be saved; its stored value is kept',
+        );
+        continue;
+      }
       rec.json.set(c.key, json);
       changed = true;
       if (c.columns) {
-        const cols = c.columns.write(parsed.data);
+        const cols = c.columns.write(data);
         Object.assign(columns, cols);
         Object.assign(rec.stored.columns, cols);
       } else {
-        const entry = { v: c.v, data: parsed.data };
+        const entry = { v: c.v, data };
         state[c.key] = entry;
         rec.stored.state[c.key] = entry;
       }

@@ -16,12 +16,17 @@ export interface ReputationComponent extends CharacterComponent<Reputation> {
   readonly service: ReputationService;
 }
 
-export function reputationComponent(service: ReputationService, opts: { log?: PersistenceLog } = {}): ReputationComponent {
+/**
+ * `writtenWith`: the components it is only ever written together with (§8): the quest log, whose owed reputation is
+ * settled into it on join, so the owed list and the standing it paid are saved in one row update or neither is.
+ */
+export function reputationComponent(service: ReputationService, opts: { log?: PersistenceLog; writtenWith?: readonly string[] } = {}): ReputationComponent {
   return {
     key: REPUTATION,
     v: 1,
     schema: reputationSchema,
     onInvalid: 'refuse',
+    ...(opts.writtenWith?.length ? { writtenWith: [...opts.writtenWith] } : {}),
     service,
     default: () => emptyReputation(),
     reconcile: (stored, ctx) => {

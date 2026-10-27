@@ -147,7 +147,13 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     clock,
     log,
     parties: { partyIdOf: (id) => ws.social.partyIdOf(id) },
-    rewards: { ...skillRewardHooks((): SkillService | undefined => skillServiceIn(persistence.registry)), ...reputationRewardHooks(() => reputation) },
+    rewards: {
+      ...skillRewardHooks((): SkillService | undefined => skillServiceIn(persistence.registry)),
+      ...reputationRewardHooks(
+        () => reputation,
+        (id) => quests.catalog(id),
+      ),
+    },
     cutscenes: questCutscenes(() => cutscenes),
     dev: config.NODE_ENV !== 'production',
   });

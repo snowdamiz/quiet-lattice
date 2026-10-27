@@ -14,7 +14,7 @@
 // with who ran it and what it asked, and how it ended.
 import { addItem, addUnits, applyLayout, itemInfo, layoutFor, spendUnits, takeItem, type Inventory, type Result } from '@astra/shared/inventory';
 import type { ShipLoadout } from '@astra/shared/ships';
-import { setStanding, type Reputation, type StandingChange } from '@astra/shared/reputation';
+import { setStanding, titleName, type Reputation, type StandingChange } from '@astra/shared/reputation';
 import { setAvailablePoints, skillStateOf, storedSkills, type SkillResult, type StoredSkills } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
 import { eq, sql } from 'drizzle-orm';
@@ -376,7 +376,7 @@ export class AdminService {
       },
     );
     const { faction, from, to, rankFrom, rankTo, titles } = r.value;
-    return { character: c.id, name: c.name, faction, from, rep: to, rank: rankTo, was: rankFrom, titles: titles.map((t) => t.title), ...this.how(r) };
+    return { character: c.id, name: c.name, faction, from, rep: to, rank: rankTo, was: rankFrom, titles: titles.map(titleName), ...this.how(r) };
   }
 
   private async setQuestStep(cmd: Extract<AdminCommand, { cmd: 'set-quest-step' }>): Promise<AdminResult> {

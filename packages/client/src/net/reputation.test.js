@@ -36,7 +36,7 @@ describe('the client’s reputation', () => {
     expect(lines).toEqual([]);
 
     net.push({ t: 'event', event: { kind: 'rank', faction: 'compact', rank: 'hand', from: null } });
-    net.push({ t: 'event', event: { kind: 'title', title: { title: 'Hand', faction: 'compact' } } });
+    net.push({ t: 'event', event: { kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } } });
     net.push({ t: 'event', event: { kind: 'xp', amount: 5, from: null, level: 2 } });
     net.push({ t: 'reputation', reputation: view(210, [{ title: 'Hand', faction: 'compact' }]) });
     expect([r.standing('compact'), r.rank('compact'), r.titles]).toEqual([210, 'hand', [{ title: 'Hand', faction: 'compact' }]]);

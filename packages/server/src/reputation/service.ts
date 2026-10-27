@@ -1,18 +1,20 @@
 // Every character in play's reputation (DESIGN 14.4; P2.E18.T01; ARCHITECTURE §24): persistence opens a character's on
 // join (the `reputation` component), saves it and closes it; the server's own systems change it, never a client:
 // - `grant` moves standing with one faction (a quest's reward, owed reputation settled on join);
-// - `act` applies an act that moves opposed factions at once (REP_ACTS: a convoy escorted or raided);
-// - `earnTitle` adds a quest's title; `set` is the admin CLI's.
+// - `act` applies an act that moves opposed factions at once (REP_ACTS: a convoy escorted or raided), with its own Count
+//   meter tag;
+// - `earnTitle` adds a quest's title (the rank's title when it names one); `set` is the admin CLI's.
 // Every change is held to 0–1000 by the shared rules (`@astra/shared/reputation`), and a rank reached for the first time
 // earns its title. A gain earned by a counted action of the Count meter earns the underdog's bonus while the Count sits
 // far from the middle on the other side (DESIGN 16.2, `underdogRepMultiplier`). The session holding the character is told
-// through the listeners: a `rank` event for each rank reached or lost, a `title` event for each title earned, then its
-// `reputation` state.
+// through the listeners: one `rank` event for each faction whose rank a change moved (from the rank before to the rank
+// after, however many thresholds it crossed), a `title` event for each title earned, then its `reputation` state.
 //
 // Nothing here is idempotent by itself: each source pays once by its own record, written in the same row update as the
-// standing it paid (§8: one capture writes every changed component together). A quest's step rewards and dialogue
-// answers are recorded as paid in its quest log, a completion as done, and owed reputation leaves the owed list as it
-// is granted (quests/runtime.ts `settleOwed`), so a crash before the save loses both halves and the next join pays again.
+// standing it paid (§8: the `reputation` component is written with the `quests` component or not at all). A quest's
+// step rewards and dialogue answers are recorded as paid in its quest log, a completion as done, and owed reputation
+// leaves the owed list as it is granted (quests/runtime.ts `settleOwed`), so a crash before the save loses both halves
+// and the next join pays again.
 import type { FactionId } from '@astra/shared/data';
 import type { GameEvent } from '@astra/shared/protocol';
 import {
@@ -20,17 +22,20 @@ import {
   emptyReputation,
   meetsRank,
   moveStanding,
+  questTitle,
   rankIdAt,
   REP_ACTS,
   reputationView,
   setStanding,
   standingOf,
+  titleName,
+  titleView,
+  type EarnedTitle,
   type RepAct,
   type RepDelta,
   type Reputation,
   type ReputationView,
   type StandingChange,
-  type TitleView,
 } from '@astra/shared/reputation';
 import { underdogRepMultiplier, type CountTag } from '../count/meter.ts';
 import type { PersistenceLog } from '../persistence/registry.ts';
@@ -120,20 +125,27 @@ export class ReputationService {
 
   // ---------- changes ----------
 
-  /** Moves a character's standing with one faction by `amount` (a loss when negative). Null when it is not in play. */
+  /** Moves a character's standing with one faction by `amount` (a loss when negative). Null when it is not in play;
+   * throws a RangeError for an amount that is not a finite number. */
   grant(characterId: string, faction: FactionId, amount: number, opts: RepOptions): StandingChange | null {
+    if (!Number.isFinite(amount)) throw new RangeError(`grant ${faction}: amount ${amount}`);
     return this.apply(characterId, [{ faction, amount }], opts)?.[0] ?? null;
   }
 
   /**
    * An act that moves opposed factions at once (REP_ACTS): its gain and its loss, `scale` times each (a share of a
-   * convoy run by contribution, 1 by default). Null when the character is not in play.
+   * convoy run by contribution, 1 by default), its gain earning the underdog's bonus by the act's own Count meter tag.
+   * Null when the character is not in play.
    */
-  act(characterId: string, act: RepAct, opts: Partial<RepOptions> & { scale?: number } = {}): StandingChange[] | null {
+  act(characterId: string, act: RepAct, opts: { reason?: string; scale?: number } = {}): StandingChange[] | null {
     const scale = opts.scale ?? 1;
     if (!Number.isFinite(scale) || scale < 0) throw new RangeError(`act ${act}: scale ${scale}`);
-    const deltas = REP_ACTS[act].map((d) => ({ faction: d.faction, amount: d.amount * scale }));
-    return this.apply(characterId, deltas, { reason: opts.reason ?? `act:${act}`, ...(opts.counted ? { counted: opts.counted } : {}) });
+    const { counted, deltas } = REP_ACTS[act];
+    return this.apply(
+      characterId,
+      deltas.map((d) => ({ faction: d.faction, amount: d.amount * scale })),
+      { reason: opts.reason ?? `act:${act}`, counted },
+    );
   }
 
   /** Sets a character's standing with a faction (the admin CLI), held to 0–1000. Null when it is not in play. */
@@ -145,19 +157,23 @@ export class ReputationService {
     return change;
   }
 
-  /** Adds a title a quest gave (DESIGN 14.8: Forty Names' "Unlisted"). False when it was held already (or the titles are
-   * full, logged); null when the character is not in play. */
-  earnTitle(characterId: string, title: string, quest?: string): boolean | null {
+  /**
+   * Adds a title a quest gave (DESIGN 14.8: Forty Names' "Unlisted"); one that names a rank's title (a faction chain's
+   * last quest) is that rank's, `factions` (those the quest pays reputation to) saying whose when several share the
+   * name, so it is never held twice. False when it was held already (or the titles are full, logged); null when the
+   * character is not in play.
+   */
+  earnTitle(characterId: string, title: string, opts: { quest?: string; factions?: readonly FactionId[] } = {}): boolean | null {
     const r = this.held.get(characterId);
     if (!r) return null;
-    const t: TitleView = quest === undefined ? { title } : { title, quest };
+    const t = questTitle(title, opts.quest, opts.factions);
     if (!earnTitle(r, t)) {
-      if (!r.titles.some((x) => x.faction === undefined && x.title === title))
-        this.log?.error({ character: characterId, title, quest }, 'titles are full; a title was not kept');
+      if (!r.titles.some((x) => titleName(x) === titleName(t)))
+        this.log?.error({ character: characterId, title, quest: opts.quest }, 'titles are full; a title was not kept');
       return false;
     }
-    this.log?.info({ character: characterId, title, quest }, 'title earned');
-    this.push(characterId, r, [{ kind: 'title', title: { ...t } }]);
+    this.log?.info({ character: characterId, title: t, quest: opts.quest }, 'title earned');
+    this.push(characterId, r, this.titleEvents([t]));
     return true;
   }
 
@@ -171,7 +187,8 @@ export class ReputationService {
     return changes;
   }
 
-  /** Logs what changed and tells the session: a `rank` event per rank reached or lost, a `title` event per title earned. */
+  /** Logs what changed and tells the session: a `rank` event for each change that moved a faction's rank (from the rank
+   * before to the rank after), a `title` event per title earned. */
   private told(characterId: string, r: Reputation, changes: readonly StandingChange[], reason: string, bonus = 1): void {
     const events: GameEvent[] = [];
     let moved = false;
@@ -183,9 +200,16 @@ export class ReputationService {
         this.log?.info({ ...line, rank: c.rankTo, was: c.rankFrom }, 'rank changed');
         events.push({ kind: 'rank', faction: c.faction, rank: c.rankTo, from: c.rankFrom });
       } else this.log?.debug(line, 'reputation');
-      for (const t of c.titles) events.push({ kind: 'title', title: { ...t, faction: c.faction } });
+      events.push(...this.titleEvents(c.titles));
     }
     if (moved) this.push(characterId, r, events);
+  }
+
+  private titleEvents(titles: readonly EarnedTitle[]): GameEvent[] {
+    return titles.flatMap((t) => {
+      const title = titleView(t);
+      return title ? [{ kind: 'title' as const, title }] : [];
+    });
   }
 
   private push(characterId: string, r: Reputation, events: GameEvent[]): void {

@@ -106,10 +106,10 @@ describe('reputation over the wire', () => {
     expect(server.quests.event(character.id, { type: 'interact', target: 'npc:quartermaster' })).toBe(true);
     const ranked = await a.reputation((v) => rep(v, 'compact').rep === 210, 'compact at 210');
     expect(rep(ranked, 'compact')).toEqual({ faction: 'compact', rep: 210, rank: 'hand' });
-    expect(ranked.titles).toEqual([{ title: 'Hand', faction: 'compact' }]);
+    expect(ranked.titles).toEqual([{ title: 'Hand', faction: 'compact', rank: 'hand' }]);
     expect(a.news()).toEqual([
       { kind: 'rank', faction: 'compact', rank: 'hand', from: null },
-      { kind: 'title', title: { title: 'Hand', faction: 'compact' } },
+      { kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } },
     ]);
     expect(a.order()).toEqual(['rank', 'title', 'state']);
     // nothing owed: it went straight to the reputation
@@ -120,7 +120,7 @@ describe('reputation over the wire', () => {
     server.quests.event(character.id, { type: 'cutscene_end', cutscene: 'forty_names_wiped_log' });
     const titled = await a.reputation((v) => v.titles.length === 2, 'the quest’s title');
     expect(titled.titles).toEqual([
-      { title: 'Hand', faction: 'compact' },
+      { title: 'Hand', faction: 'compact', rank: 'hand' },
       { title: 'Unlisted', quest: 'forty_names' },
     ]);
     expect(a.news().at(-1)).toEqual({ kind: 'title', title: { title: 'Unlisted', quest: 'forty_names' } });
@@ -128,7 +128,17 @@ describe('reputation over the wire', () => {
     // a rejoin loads it as it was
     a.s.close();
     await released(server, character.id);
-    expect((await row(character.id)).state.reputation).toEqual({ v: 1, data: { rep: { compact: 210 }, titles: titled.titles } });
+    // (stored by rank: the name is the data's)
+    expect((await row(character.id)).state.reputation).toEqual({
+      v: 1,
+      data: {
+        rep: { compact: 210 },
+        titles: [
+          { faction: 'compact', rank: 'hand' },
+          { title: 'Unlisted', quest: 'forty_names' },
+        ],
+      },
+    });
     const b = await join(server, acct.token, character.id);
     expect(await b.reputation()).toEqual(titled);
     expect(server.ws.reputation.rankOf(character.id, 'compact')).toBe('hand');
@@ -206,7 +216,7 @@ describe('reputation over the wire', () => {
     const v1 = await a.reputation(settled, 'the owed reputation');
     expect([rep(v1, 'belost').rep, rep(v1, 'compact').rep, rep(v1, 'compact').rank]).toEqual([30, 240, 'hand']);
     expect(v1.titles).toEqual([
-      { title: 'Hand', faction: 'compact' },
+      { title: 'Hand', faction: 'compact', rank: 'hand' },
       { title: 'Unlisted', quest: 'forty_names' },
     ]);
     expect(a.news()).toContainEqual({ kind: 'rank', faction: 'compact', rank: 'hand', from: null });

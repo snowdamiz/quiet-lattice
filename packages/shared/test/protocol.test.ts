@@ -137,7 +137,7 @@ const events: GameEvent[] = [
   { kind: 'notice', text: 'Docking permission granted', tone: 'good' },
   { kind: 'party', what: 'invite', name: 'Ana' },
   { kind: 'rank', faction: 'compact', rank: 'hand', from: null },
-  { kind: 'title', title: { title: 'Hand', faction: 'compact' } },
+  { kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } },
 ];
 
 /** A beacon as the shard lists it. */
@@ -203,7 +203,7 @@ const serverSamples: ServerMessage[] = [
         { faction: 'reaches', rep: 0, rank: null },
       ],
       titles: [
-        { title: 'Hand', faction: 'compact' },
+        { title: 'Hand', faction: 'compact', rank: 'hand' },
         { title: 'Unlisted', quest: 'forty_names' },
       ],
     },

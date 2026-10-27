@@ -195,8 +195,8 @@ describe('the admin service out of play', () => {
       data: {
         rep: { compact: 520 },
         titles: [
-          { title: 'Hand', faction: 'compact' },
-          { title: 'Factor', faction: 'compact' },
+          { faction: 'compact', rank: 'hand' },
+          { faction: 'compact', rank: 'factor' },
         ],
       },
     });

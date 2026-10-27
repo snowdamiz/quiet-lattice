@@ -1,12 +1,14 @@
 // Reputation (`@astra/shared/reputation`, DESIGN 14.4; P2.E18.T01; ARCHITECTURE §24): a character's standing with each
 // faction, 0–1000 (none is 0), its rank there (the highest whose threshold, 200, 500 or 800, its standing reaches: ranks
 // follow standing down as well as up, since rep is lost as well as gained), and the titles it has earned, kept for good
-// whatever its standing does later: a rank's title the first time the rank is reached, and those quests give. The server
-// changes standing with these rules (its reputation service adds who is in play, the log and the messages); the client
-// reads the view it is sent.
+// whatever its standing does later: a rank's title the first time the rank is reached, and those quests give. A rank's
+// title is held by its faction and rank (the data names it), a quest's by its name, and a quest's title that names a
+// rank's (a chain's last quest giving "Hand") is that rank's title, so it is never held twice. The server changes
+// standing with these rules (its reputation service adds who is in play, the log and the messages); the client reads the
+// view it is sent.
 //
 // Acts that move two factions at once (DESIGN 14.4: "raiding a convoy costs Compact rep, defending one costs Reaches
-// rep") are data here (`REP_ACTS`): the side helped gains, its opposed side loses.
+// rep") are data here (`REP_ACTS`): the side helped gains, its opposed side loses, each act with its Count meter tag.
 //
 // This module imports only the data tables: the protocol imports it, never the other way round.
 import { z } from 'zod';
@@ -15,9 +17,10 @@ import { deepFreeze, FACTION_IDS, FACTION_RULES, factionIdSchema, getFaction, id
 /** Standing's bounds (DESIGN 14.4: "Rep runs 0–1000 per faction"). */
 export const REP_MIN = FACTION_RULES.repMin;
 export const REP_MAX = FACTION_RULES.repMax;
-/** The most titles a character keeps: every rank's (21) and room for quests' and seasons'. Past it no title is added. */
+/** The most titles a character keeps: every rank's (18: six factions of three) and room for quests' and seasons'. Past it
+ * no title is added. */
 export const TITLES_MAX = 128;
-/** The most factions a stored value names (the table has 7): a bound on what a corrupt row can make the server hold. */
+/** The most factions a stored value names (the table has 6): a bound on what a corrupt row can make the server hold. */
 const STORED_FACTIONS_MAX = 64;
 
 const FACTIONS_KNOWN: ReadonlySet<string> = new Set(FACTION_IDS);
@@ -32,26 +35,36 @@ export const titleSchema = z.string().trim().min(1).max(48);
 
 /** A faction as stored: any id, so a value naming one the table has since dropped still reads, and is reconciled away. */
 const storedFactionSchema = idSchema.max(32);
+/** A rank's id (a faction's ranks: `hand`, `captains_ear`…). */
+export const rankIdSchema = idSchema.max(32);
 const questRefSchema = idSchema.max(48);
 
-const earnedTitle = <F extends z.ZodType<string>>(faction: F) =>
-  z
-    .strictObject({
-      title: titleSchema,
-      /** a rank's title: the faction it was earned with (the three cities share their ranks' names) */
-      faction: faction.optional(),
-      /** a quest's title: the quest that gave it */
-      quest: questRefSchema.optional(),
-    })
-    .refine((t) => t.faction === undefined || t.quest === undefined, 'a title is a rank’s or a quest’s');
-
+/** A rank's title: held by its faction and rank, so the data's name for it is the one shown (the three cities share their
+ * ranks' names, and a rename shows the new one). */
+export const rankTitleSchema = z.strictObject({ faction: storedFactionSchema, rank: rankIdSchema });
+/** A quest's title (Forty Names' "Unlisted"): held by its name, with the quest that gave it. */
+export const questTitleSchema = z.strictObject({ title: titleSchema, quest: questRefSchema.optional() });
 /** A title a character has earned, as stored. */
-export const earnedTitleSchema = earnedTitle(storedFactionSchema);
-export type EarnedTitle = z.infer<typeof earnedTitleSchema>;
+export const earnedTitleSchema = z.union([rankTitleSchema, questTitleSchema]);
+export type RankTitle = z.infer<typeof rankTitleSchema>;
+export type QuestTitle = z.infer<typeof questTitleSchema>;
+export type EarnedTitle = RankTitle | QuestTitle;
 
-/** The key a title is held once by: a rank's is its faction's and its name, a quest's its name alone. */
-export function titleKey(t: Pick<EarnedTitle, 'title' | 'faction'>): string {
-  return t.faction === undefined ? t.title : `${t.faction}:${t.title}`;
+/** Whether a title is a rank's. */
+export function isRankTitle(t: EarnedTitle): t is RankTitle {
+  return 'rank' in t;
+}
+
+/** The key a title is held once by: a rank's is its faction and rank, a quest's its name. */
+export function titleKey(t: EarnedTitle): string {
+  return isRankTitle(t) ? `rank:${t.faction}:${t.rank}` : `title:${t.title}`;
+}
+
+/** A title's name as shown: a rank's from the data (null for a rank or faction the table does not have), a quest's own. */
+export function titleName(t: EarnedTitle): string | null {
+  if (!isRankTitle(t)) return t.title;
+  if (!isFaction(t.faction)) return null;
+  return getFaction(t.faction).ranks.find((r) => r.id === t.rank)?.title ?? null;
 }
 
 const uniqueTitles = (titles: readonly EarnedTitle[]) => new Set(titles.map(titleKey)).size === titles.length;
@@ -101,13 +114,45 @@ export interface StandingChange {
   rankFrom: string | null;
   rankTo: string | null;
   /** titles it earned: every rank reached for the first time */
-  titles: EarnedTitle[];
+  titles: RankTitle[];
 }
 
-/** Adds a title the character has not earned: false when it holds it already, or holds TITLES_MAX. Changes `r` in place. */
+/**
+ * The rank whose title a quest's title names (a chain's last quest giving "Hand"): one of `factions`' ranks (the factions
+ * the quest pays reputation to) first, else the only rank of the table with that name; null when there is none, or when
+ * several factions' ranks share it and `factions` does not say which (the cities' Guest, Neighbour, Claimant).
+ */
+export function rankOfTitle(title: string, factions: readonly FactionId[] = []): RankTitle | null {
+  const named = (fs: readonly FactionId[]) =>
+    fs.flatMap((faction) =>
+      getFaction(faction)
+        .ranks.filter((r) => r.title === title)
+        .map((r) => ({ faction, rank: r.id })),
+    );
+  const own = named([...new Set(factions)]);
+  if (own.length === 1) return own[0]!;
+  const all = named(FACTION_IDS);
+  return own.length === 0 && all.length === 1 ? all[0]! : null;
+}
+
+/** A quest's title as it is held: the rank's title it names (rankOfTitle), or its name, with the quest. */
+export function questTitle(title: string, quest?: string, factions: readonly FactionId[] = []): EarnedTitle {
+  return rankOfTitle(title, factions) ?? (quest === undefined ? { title } : { title, quest });
+}
+
+/**
+ * Adds a title the character has not earned: false when it holds it already, or holds TITLES_MAX. A quest's title counts
+ * as held when any title held has its name; a rank's title takes the place of a quest's title of its name (the same
+ * title, now known to be the rank's). Changes `r` in place.
+ */
 export function earnTitle(r: Reputation, t: EarnedTitle): boolean {
   const key = titleKey(t);
-  if (r.titles.length >= TITLES_MAX || r.titles.some((x) => titleKey(x) === key)) return false;
+  if (r.titles.some((x) => titleKey(x) === key)) return false;
+  const name = titleName(t);
+  if (!isRankTitle(t) && r.titles.some((x) => titleName(x) === name)) return false;
+  const same = isRankTitle(t) ? r.titles.findIndex((x) => !isRankTitle(x) && x.title === name) : -1;
+  if (same >= 0) r.titles.splice(same, 1);
+  else if (r.titles.length >= TITLES_MAX) return false;
   r.titles.push({ ...t });
   return true;
 }
@@ -120,10 +165,10 @@ export function setStanding(r: Reputation, faction: FactionId, value: number): S
   const from = standingOf(r, faction);
   const to = clampRep(value);
   r.rep[faction] = to;
-  const titles: EarnedTitle[] = [];
+  const titles: RankTitle[] = [];
   for (const rank of getFaction(faction).ranks) {
     if (from >= rank.rep || to < rank.rep) continue;
-    const t: EarnedTitle = { title: rank.title, faction };
+    const t: RankTitle = { faction, rank: rank.id };
     if (earnTitle(r, t)) titles.push(t);
   }
   return { faction, from, to, rankFrom: rankIdAt(faction, from), rankTo: rankIdAt(faction, to), titles };
@@ -140,24 +185,41 @@ export interface RepDelta {
   amount: number;
 }
 
+/** An act's side in the Count meter's lean (DESIGN 16.2; the server's `CountTag`). */
+export type RepActTag = 'feed' | 'hold' | 'break';
+
+/** An act: what each faction gains or loses by it, and the Count meter tag of the counted action it is. */
+export interface RepActDef {
+  readonly counted: RepActTag;
+  readonly deltas: readonly RepDelta[];
+}
+
 /**
  * Acts that move standing with opposed factions at once (DESIGN 14.4: "raiding a convoy costs Compact rep, defending one
  * costs Reaches rep"; 14.6's convoy run: "escort it (Compact rep) or raid it (Reaches rep)"): the side the act helped
- * gains, the side it went against loses half that. DESIGN gives no amounts (tunable; a bounty pays 60, DESIGN 14.8); the
- * convoy run (P2.E21.T05) is the act's source and may scale it by contribution.
+ * gains, the side it went against loses half that. Each is the Count meter's counted action of its name (P2.E22.T01: a
+ * convoy escorted Feeds, one raided Breaks), so its gain earns the underdog's bonus while the Count favours that side.
+ * DESIGN gives no amounts (tunable; a bounty pays 60, DESIGN 14.8); the convoy run (P2.E21.T05) is the act's source and
+ * may scale it by contribution.
  */
 export const REP_ACTS = deepFreeze({
   /** a Compact convoy seen safe to its destination */
-  convoy_escorted: [
-    { faction: 'compact', amount: 50 },
-    { faction: 'reaches', amount: -25 },
-  ],
+  convoy_escorted: {
+    counted: 'feed',
+    deltas: [
+      { faction: 'compact', amount: 50 },
+      { faction: 'reaches', amount: -25 },
+    ],
+  },
   /** a Compact convoy raided */
-  convoy_raided: [
-    { faction: 'reaches', amount: 50 },
-    { faction: 'compact', amount: -25 },
-  ],
-} as const satisfies Record<string, readonly RepDelta[]>);
+  convoy_raided: {
+    counted: 'break',
+    deltas: [
+      { faction: 'reaches', amount: 50 },
+      { faction: 'compact', amount: -25 },
+    ],
+  },
+} as const satisfies Record<string, RepActDef>);
 export type RepAct = keyof typeof REP_ACTS;
 export const REP_ACT_IDS = Object.keys(REP_ACTS) as RepAct[];
 
@@ -169,29 +231,29 @@ export function isRepAct(id: string): id is RepAct {
 /** What reconciling a stored value with the faction table changed. */
 export interface ReputationReconciled {
   reputation: Reputation;
-  /** factions the table no longer has: their standing, and the titles their ranks gave, are dropped */
+  /** factions the table no longer has (their standing and their ranks' titles are dropped), and `<faction>:<rank>` for
+   * ranks it no longer has (their titles are dropped) */
   dropped: string[];
 }
 
 /**
  * Brings a stored value in line with the faction table as it is now: standing with a faction the table no longer has is
- * dropped, and so are the titles its ranks gave (a quest's title stays). Returns the value itself when nothing changed.
+ * dropped, and so is the title of a rank it no longer has (a rename is a removal; a quest's title stays). Returns the
+ * value itself when nothing changed.
  */
 export function reconcileReputation(stored: Reputation): ReputationReconciled {
   const dropped = new Set<string>();
   for (const f of Object.keys(stored.rep)) if (!isFaction(f)) dropped.add(f);
-  for (const t of stored.titles) if (t.faction !== undefined && !isFaction(t.faction)) dropped.add(t.faction);
+  const gone = (t: EarnedTitle) => isRankTitle(t) && titleName(t) === null;
+  for (const t of stored.titles) if (isRankTitle(t) && gone(t)) dropped.add(isFaction(t.faction) ? `${t.faction}:${t.rank}` : t.faction);
   if (dropped.size === 0) return { reputation: stored, dropped: [] };
   const rep: Reputation['rep'] = {};
-  for (const [f, v] of Object.entries(stored.rep)) if (!dropped.has(f)) rep[f] = v;
-  const titles = stored.titles.filter((t) => t.faction === undefined || !dropped.has(t.faction));
+  for (const [f, v] of Object.entries(stored.rep)) if (isFaction(f)) rep[f] = v;
+  const titles = stored.titles.filter((t) => !gone(t));
   return { reputation: { rep, titles }, dropped: [...dropped].sort() };
 }
 
 // ---------- what the client is sent ----------
-
-/** A rank's id on the wire (a faction's ranks: `hand`, `captains_ear`…). */
-export const rankIdSchema = idSchema.max(32);
 
 /** One faction's standing as the client sees it: its value and the rank it holds (null below the first threshold). */
 export const standingViewSchema = z.strictObject({
@@ -201,9 +263,25 @@ export const standingViewSchema = z.strictObject({
 });
 export type StandingView = z.infer<typeof standingViewSchema>;
 
-/** A title as the client sees it. */
-export const titleViewSchema = earnedTitle(factionIdSchema);
+/** A title as the client sees it: its name, and a rank's faction and rank or the quest that gave it. */
+export const titleViewSchema = z
+  .strictObject({
+    title: titleSchema,
+    faction: factionIdSchema.optional(),
+    rank: rankIdSchema.optional(),
+    quest: questRefSchema.optional(),
+  })
+  .refine((t) => (t.faction === undefined) === (t.rank === undefined), 'a rank’s title names its faction and its rank')
+  .refine((t) => t.rank === undefined || t.quest === undefined, 'a title is a rank’s or a quest’s');
 export type TitleView = z.infer<typeof titleViewSchema>;
+
+/** A title as the client sees it, or null for a rank the table does not have. */
+export function titleView(t: EarnedTitle): TitleView | null {
+  const title = titleName(t);
+  if (title === null) return null;
+  if (!isRankTitle(t)) return { ...t };
+  return { title, faction: t.faction as FactionId, rank: t.rank };
+}
 
 /** A character's reputation as the client sees it: every faction of the table, in its order, and the titles earned. */
 export const reputationViewSchema = z.strictObject({
@@ -218,6 +296,6 @@ export function reputationView(r: Reputation): ReputationView {
     const rep = standingOf(r, faction);
     return { faction, rep, rank: rankIdAt(faction, rep) };
   });
-  const titles = r.titles.filter((t) => t.faction === undefined || isFaction(t.faction)).map((t) => ({ ...t })) as TitleView[];
+  const titles = r.titles.flatMap((t) => titleView(t) ?? []);
   return { factions, titles };
 }

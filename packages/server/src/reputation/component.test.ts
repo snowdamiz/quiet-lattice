@@ -4,7 +4,7 @@
 // longer has is reconciled (one warning, written back); one that cannot be read refuses the join. And owed reputation a
 // quest log saved before reputation existed holds is settled on join exactly once: across a crash before the save (the
 // next join settles it again, from the row that still holds it) and after it (the owed list and the standing are written
-// in one row update, so nothing is settled twice).
+// in one row update, so nothing is settled twice), and when either of the two cannot be saved (the other is held back).
 import { emptyQuestLog, type Owed, type QuestLog } from '@astra/shared/quests';
 import type { Reputation } from '@astra/shared/reputation';
 import { describe, expect, it } from 'vitest';
@@ -138,7 +138,7 @@ describe('the reputation component', () => {
     s.leave(v);
     expect(s.reputation.holds('c1')).toBe(false);
     await s.persistence.flush();
-    expect(store.rows.get('c1')!.state.reputation).toEqual({ v: 1, data: { rep: { compact: 210 }, titles: [{ title: 'Hand', faction: 'compact' }] } });
+    expect(store.rows.get('c1')!.state.reputation).toEqual({ v: 1, data: { rep: { compact: 210 }, titles: [{ faction: 'compact', rank: 'hand' }] } });
   });
 
   it('drops a faction the table no longer has: one warning, the rest in play, written back at the next save', async () => {
@@ -146,14 +146,14 @@ describe('the reputation component', () => {
     const data = {
       rep: { compact: 300, old_guild: 400 },
       titles: [
-        { title: 'Hand', faction: 'compact' },
-        { title: 'Elder', faction: 'old_guild' },
+        { faction: 'compact', rank: 'hand' },
+        { faction: 'old_guild', rank: 'elder' },
       ],
     };
     store.rows.set('c1', row({ reputation: { v: 1, data } }));
     const s = server(store);
     const v = s.join(store.rows.get('c1')!);
-    expect(s.reputation.get('c1')).toEqual({ rep: { compact: 300 }, titles: [{ title: 'Hand', faction: 'compact' }] });
+    expect(s.reputation.get('c1')).toEqual({ rep: { compact: 300 }, titles: [{ faction: 'compact', rank: 'hand' }] });
     const warned = s.lines.filter((l) => l.level === 'warn' && l.msg.startsWith('factions no longer in the table'));
     expect(warned).toHaveLength(1);
     expect(warned[0]!.obj).toMatchObject({ character: 'c1', component: REPUTATION, dropped: ['old_guild'] });
@@ -173,8 +173,8 @@ describe('the reputation component', () => {
         data: {
           rep: {},
           titles: [
-            { title: 'Hand', faction: 'compact' },
-            { title: 'Hand', faction: 'compact' },
+            { faction: 'compact', rank: 'hand' },
+            { faction: 'compact', rank: 'hand' },
           ],
         },
       },
@@ -213,7 +213,7 @@ describe('owed reputation from a save made before reputation existed', () => {
     expect(a.reputation.get('c1')).toEqual({
       rep: { belost: 30, compact: 240 },
       titles: [
-        { title: 'Hand', faction: 'compact' },
+        { faction: 'compact', rank: 'hand' },
         { title: 'Unlisted', quest: 'forty_names' },
       ],
     });
@@ -263,6 +263,44 @@ describe('owed reputation from a save made before reputation existed', () => {
     expect(b.reputation.get('c1')!.rep).toEqual({ belost: 30, compact: 240 });
     expect(b.quests.stateOf('c1')!.owed).toEqual([{ kind: 'skill_points', quest: 'first_jobs', count: 1 }]);
     b.persistence.abandon();
+  });
+
+  it('holds the standing back from a save that cannot write the quest log (and the other way round): never half a settle', async () => {
+    const store = new Rows();
+    store.rows.set('c1', row(before()));
+    const a = server(store);
+    a.join(store.rows.get('c1')!);
+    expect(a.reputation.get('c1')!.rep).toEqual({ belost: 30, compact: 240 });
+    // the quest log fails its schema (a bug), so it cannot be saved: the settled standing is held back with it
+    const log = a.quests.stateOf('c1')!;
+    log.flags.push('Not An Id');
+    expect(a.persistence.saveNow('c1')).toBe(true);
+    expect(await a.persistence.flush()).toBe(true);
+    for (const w of store.writes) expect(Object.keys(w.state)).not.toEqual(expect.arrayContaining([REPUTATION]));
+    expect(store.rows.get('c1')!.state.reputation).toBeUndefined();
+    expect(owedOf(store)).toEqual(OWED);
+    expect(a.lines).toContainEqual(expect.objectContaining({ level: 'error', obj: expect.objectContaining({ component: REPUTATION, with: [QUESTS] }) }));
+    // a crash now: the next join settles it again from the row, once in all
+    a.persistence.abandon();
+    const b = server(store);
+    const v = b.join(store.rows.get('c1')!);
+    expect(b.reputation.get('c1')!.rep).toEqual({ belost: 30, compact: 240 });
+
+    // the other way round: standing that fails its schema holds the quest log back, so the owed list is not cleared alone
+    (b.reputation.get('c1') as Reputation).rep.compact = 5000;
+    const writes = store.writes.length;
+    b.persistence.saveNow('c1');
+    expect(await b.persistence.flush()).toBe(true);
+    for (const w of store.writes.slice(writes)) expect(Object.keys(w.state)).not.toEqual(expect.arrayContaining([QUESTS]));
+    expect(owedOf(store)).toEqual(OWED);
+    // mended, both go in one save
+    (b.reputation.get('c1') as Reputation).rep.compact = 240;
+    b.leave(v);
+    expect(await b.persistence.flush()).toBe(true);
+    const last = store.writes.at(-1)!;
+    expect(Object.keys(last.state)).toEqual(expect.arrayContaining([QUESTS, REPUTATION]));
+    expect(owedOf(store)).toEqual([{ kind: 'skill_points', quest: 'first_jobs', count: 1 }]);
+    expect((store.rows.get('c1')!.state.reputation!.data as Reputation).rep).toEqual({ belost: 30, compact: 240 });
   });
 
   it('stays owed while no reputation service takes it', () => {

@@ -1,8 +1,11 @@
 // The reputation service (P2.E18.T01, ARCHITECTURE §24): it holds the characters in play; a grant moves one faction held
-// to 0–1000 and tells the session its rank and title events, then its state; an act moves the opposed faction too; a gain
-// earned by a counted action earns the underdog's bonus while the Count favours it; set is the admin CLI's; a quest's
-// title is kept once; a character out of play is declined (null) and nothing is told; a listener that throws is logged.
+// to 0–1000 (a non-finite amount is refused) and tells the session its rank event (one per change) and title events, then
+// its state; an act moves the opposed faction too, its gain earning the underdog's bonus by the act's own Count tag; set
+// is the admin CLI's; a quest's title is kept once, and one naming a rank's title is that rank's; a character out of play
+// is declined (null) and nothing is told; a listener that throws is logged.
 import { describe, expect, it } from 'vitest';
+import { REP_ACTS } from '@astra/shared/reputation';
+import { COUNTED_ACTIONS } from '../count/meter.ts';
 import type { PersistenceLog } from '../persistence/registry.ts';
 import { ReputationService, type ReputationPush } from './service.ts';
 
@@ -34,9 +37,9 @@ describe('the reputation service', () => {
     expect(w.rep.grant('c1', 'compact', 60, { reason: 'quest:wing_over_rolis_iii' })).toMatchObject({ from: 150, to: 210, rankTo: 'hand' });
     expect(w.last().events).toEqual([
       { kind: 'rank', faction: 'compact', rank: 'hand', from: null },
-      { kind: 'title', title: { title: 'Hand', faction: 'compact' } },
+      { kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } },
     ]);
-    expect(w.last().state.titles).toEqual([{ title: 'Hand', faction: 'compact' }]);
+    expect(w.last().state.titles).toEqual([{ title: 'Hand', faction: 'compact', rank: 'hand' }]);
     expect(w.rep.rankOf('c1', 'compact')).toBe('hand');
     expect(w.rep.meetsRank('c1', 'compact', 'hand')).toBe(true);
     expect(w.rep.meetsRank('c1', 'compact', 'factor')).toBe(false);
@@ -47,8 +50,22 @@ describe('the reputation service', () => {
     // a loss below the threshold loses the rank, not the title
     w.rep.grant('c1', 'compact', -20, { reason: 'test' });
     expect(w.last().events).toEqual([{ kind: 'rank', faction: 'compact', rank: null, from: 'hand' }]);
-    expect(w.last().state.titles).toEqual([{ title: 'Hand', faction: 'compact' }]);
+    expect(w.last().state.titles).toEqual([{ title: 'Hand', faction: 'compact', rank: 'hand' }]);
     expect(w.rep.rankOf('c1', 'compact')).toBeNull();
+  });
+
+  it('sends one rank event for a change that crosses several thresholds, from the rank before to the rank after', () => {
+    const w = world();
+    w.rep.grant('c1', 'reaches', 900, { reason: 'test' });
+    expect(w.last().events.filter((e) => e.kind === 'rank')).toEqual([{ kind: 'rank', faction: 'reaches', rank: 'captains_ear', from: null }]);
+    w.rep.grant('c1', 'reaches', -800, { reason: 'test' });
+    expect(w.last().events).toEqual([{ kind: 'rank', faction: 'reaches', rank: null, from: 'captains_ear' }]);
+  });
+
+  it('refuses an amount that is not a finite number', () => {
+    const w = world();
+    for (const amount of [NaN, Infinity, -Infinity]) expect(() => w.rep.grant('c1', 'compact', amount, { reason: 'test' })).toThrow(RangeError);
+    expect(w.rep.standing('c1', 'compact')).toBe(0);
   });
 
   it('holds standing to 0 and 1000, telling nothing when nothing moved', () => {
@@ -82,11 +99,21 @@ describe('the reputation service', () => {
   });
 
   it('pays the underdog’s bonus on gains a counted action earned while the Count favours its side, never on losses', () => {
+    // each act is the Count meter's counted action of its name, with its tag (P2.E22.T01)
+    for (const [act, action] of [
+      ['convoy_escorted', 'convoy-escorted'],
+      ['convoy_raided', 'convoy-raided'],
+    ] as const)
+      expect(COUNTED_ACTIONS[action].tags).toEqual([REP_ACTS[act].counted]);
     let count = 800;
     const w = world(() => count);
-    // Break pulls a high Count back: its gain is ×1.5, the loss it costs is not
-    w.rep.act('c1', 'convoy_raided', { counted: 'break' });
+    // a raid Breaks, pulling a high Count back: its gain is ×1.5, the loss it costs is not
+    w.rep.act('c1', 'convoy_raided');
     expect([w.rep.standing('c1', 'reaches'), w.rep.standing('c1', 'compact')]).toEqual([75, 0]);
+    // an escort Feeds: no bonus while the Count is high
+    w.rep.act('c1', 'convoy_escorted');
+    expect([w.rep.standing('c1', 'compact'), w.rep.standing('c1', 'reaches')]).toEqual([50, 50]);
+    w.rep.set('c1', 'compact', 0);
     w.rep.grant('c1', 'compact', 100, { reason: 'test', counted: 'feed' });
     expect(w.rep.standing('c1', 'compact')).toBe(100);
     w.rep.grant('c1', 'compact', -10, { reason: 'test', counted: 'break' });
@@ -105,19 +132,37 @@ describe('the reputation service', () => {
 
   it('sets standing for the admin CLI, earning the titles of the ranks risen through', () => {
     const w = world();
-    expect(w.rep.set('c1', 'belost', 600)).toMatchObject({ from: 0, to: 600, rankTo: 'neighbour', titles: [{ title: 'Guest' }, { title: 'Neighbour' }] });
+    expect(w.rep.set('c1', 'belost', 600)).toMatchObject({
+      from: 0,
+      to: 600,
+      rankTo: 'neighbour',
+      titles: [
+        { faction: 'belost', rank: 'guest' },
+        { faction: 'belost', rank: 'neighbour' },
+      ],
+    });
     expect(w.last().events.map((e) => e.kind)).toEqual(['rank', 'title', 'title']);
     expect(w.rep.set('c1', 'belost', 5000)!.to).toBe(1000);
   });
 
-  it('keeps a quest’s title once', () => {
+  it('keeps a quest’s title once, and one naming a rank’s title as that rank’s', () => {
     const w = world();
-    expect(w.rep.earnTitle('c1', 'Unlisted', 'forty_names')).toBe(true);
+    expect(w.rep.earnTitle('c1', 'Unlisted', { quest: 'forty_names' })).toBe(true);
     expect(w.last().events).toEqual([{ kind: 'title', title: { title: 'Unlisted', quest: 'forty_names' } }]);
     const n = w.pushes.length;
-    expect(w.rep.earnTitle('c1', 'Unlisted', 'forty_names')).toBe(false);
+    expect(w.rep.earnTitle('c1', 'Unlisted', { quest: 'forty_names' })).toBe(false);
     expect(w.pushes).toHaveLength(n);
-    expect(w.rep.get('c1')!.titles).toEqual([{ title: 'Unlisted', quest: 'forty_names' }]);
+    // a chain's last quest giving its rank's title, before or after the threshold: one title
+    expect(w.rep.earnTitle('c1', 'Hand', { quest: 'compact_chain_1', factions: ['compact'] })).toBe(true);
+    expect(w.last().events).toEqual([{ kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } }]);
+    expect(w.rep.grant('c1', 'compact', 250, { reason: 'test' })!.titles).toEqual([]);
+    w.rep.set('c1', 'belost', 200);
+    expect(w.rep.earnTitle('c1', 'Guest', { quest: 'belost_chain_1', factions: ['belost'] })).toBe(false);
+    expect(w.rep.get('c1')!.titles).toEqual([
+      { title: 'Unlisted', quest: 'forty_names' },
+      { faction: 'compact', rank: 'hand' },
+      { faction: 'belost', rank: 'guest' },
+    ]);
   });
 
   it('declines a character out of play and tells nothing; a listener that throws is logged', () => {
