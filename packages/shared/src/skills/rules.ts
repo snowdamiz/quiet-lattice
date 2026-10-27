@@ -12,6 +12,7 @@ import { SKILL_NODES, SKILL_RULES, type Requirement, type SkillNode, type Unlock
 import type { Branch } from '../data/common.ts';
 import {
   BAR_SLOTS,
+  BARS,
   FRAGMENT_BRANCHES,
   GROUND_SLOTS,
   isFragmentBranch,
@@ -19,6 +20,7 @@ import {
   MAX_GRANTED_POINTS,
   phaseTierOf,
   SHIP_SLOTS,
+  SKILL_WEB,
   skillNode,
   skillOpSchema,
   skillStateSchema,
@@ -31,6 +33,7 @@ import {
   type SkillOp,
   type SkillState,
   type SkillView,
+  type SkillWeb,
 } from './schema.ts';
 
 /** What the rules read besides the state: things other systems own. */
@@ -104,10 +107,10 @@ export function fragmentBalance(state: SkillState, branch: Branch): number {
   return l.earned - l.spent;
 }
 
-/** Whether `owned` holds a node of this branch and tier. */
-export function ownsTier(owned: ReadonlySet<string>, branch: Branch, tier: 1 | 2 | 3): boolean {
+/** Whether `owned` holds a node of this branch and tier (of this build's web, unless `lookup` reads another). */
+export function ownsTier(owned: ReadonlySet<string>, branch: Branch, tier: 1 | 2 | 3, lookup: SkillWeb['node'] = skillNode): boolean {
   for (const id of owned) {
-    const n = skillNode(id);
+    const n = lookup(id);
     if (n && n.branch === branch && n.tier === tier) return true;
   }
   return false;
@@ -115,10 +118,10 @@ export function ownsTier(owned: ReadonlySet<string>, branch: Branch, tier: 1 | 2
 
 /** What `node` needs that `owned` lacks, as text: a node of the tier below in the branch (both branches for a
  * conjunction), and an augment's target. Empty when every prerequisite is owned. */
-export function missingPrerequisites(node: SkillNode, owned: ReadonlySet<string>): string[] {
+export function missingPrerequisites(node: SkillNode, owned: ReadonlySet<string>, lookup: SkillWeb['node'] = skillNode): string[] {
   const missing: string[] = [];
-  for (const t of node.prereq.tiers) if (!ownsTier(owned, t.branch, t.tier)) missing.push(`a Tier ${ROMAN[t.tier]} ${t.branch} node`);
-  for (const id of node.prereq.nodes) if (!owned.has(id)) missing.push(skillNode(id)?.name ?? id);
+  for (const t of node.prereq.tiers) if (!ownsTier(owned, t.branch, t.tier, lookup)) missing.push(`a Tier ${ROMAN[t.tier]} ${t.branch} node`);
+  for (const id of node.prereq.nodes) if (!owned.has(id)) missing.push(lookup(id)?.name ?? id);
   return missing;
 }
 
@@ -418,14 +421,21 @@ export function parseSkillState(value: unknown): SkillResult {
   return problem ? fail('invalid_state', problem) : { ok: true, state: r.data };
 }
 
-/** What a schema-valid state breaks of the web's rules, or null: every owned node's prerequisites must be owned too. (The
- * level and the points are not checked: they read the level, which only ever rises.) */
-export function skillStateProblem(state: SkillState): string | null {
+/** What a structurally sound state breaks of a web (this build's unless given), or null: every node must be the web's,
+ * each bar the web's size with only its own nodes on it, and every owned node's prerequisites owned too. (The level and
+ * the points are not checked: they read the level, which only ever rises.) */
+export function skillStateProblem(state: SkillState, web: SkillWeb = SKILL_WEB): string | null {
+  for (const id of state.unlocked) if (!web.node(id)) return `unknown skill node ${id}`;
+  for (const bar of BARS) {
+    const slots = state.slots[bar];
+    if (slots.length !== web.slots[bar]) return `the ${bar} bar has ${slots.length} slots, not ${web.slots[bar]}`;
+    for (const id of slots) if (id !== null && web.node(id)?.slot !== bar) return `${id} does not go on the ${bar} bar`;
+  }
   const owned = new Set(state.bought);
   for (const id of state.bought) {
-    const node = skillNode(id);
+    const node = web.node(id);
     if (!node) return `unknown skill node ${id}`;
-    const missing = missingPrerequisites(node, owned);
+    const missing = missingPrerequisites(node, owned, web.node);
     if (missing.length) return `${node.name} is owned without ${missing.join(' and ')}`;
   }
   return null;

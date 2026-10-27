@@ -515,3 +515,114 @@ Format: task id, question → choice → why.
   ticks). → Operators and tests can drive the live world without a backdoor in production. Open: P1.E03.T04 re-seats
   its mover at the seam in `AdminService.moveInZone` (and `freePad()` for docked); P1.E09.T01 provides `QuestAdmin`;
   P1.E04.T03's `onCorrection` ignores `mode`.
+- **P1.E09.T01** Quests (`@astra/shared/quests`, `server/src/quests`) → definitions are data (DESIGN 14.1's fields; each
+  step open-world or instanced; steps only lead forward); a pure engine runs on both ends (the client predicts the
+  objective line). The server keeps one quest log per character in play, fed by the zone entity (travel, defend,
+  survive: re-checked twice a second in round-robin slices), inventory changes (collect counts what is held, any
+  resource when none is named) and reported events; deliveries take the goods through InventoryService, all or
+  nothing, on an interaction with the step's NPC (the reporting system checks range). Rewards: XP at the middle level
+  of the quest tier's band (3, 8, 15, 25, 35, 45; the system's tier when none), units, items and flags directly; skill
+  points and node unlocks through the skill service (calling `skills.refresh` after a level-up; the quest id passed for
+  the `quest` unlock route); reputation and titles held as "owed" (capped 256) until P2.E18.T01. A per-quest record of
+  paid step rewards and answer reputation survives abandons and clears on completion, so nothing is paid twice.
+  Accepting needs an offer the server made (offers in memory per session, at most 16) or an auto quest; prerequisites
+  and repeat rules are checked; main-story quests cannot be abandoned; daily repeats reset on world-time days and
+  cooldowns run from the last completion. Limits: 25 active, 4,096 done (repeatables pruned first; a forgotten
+  once-only completion logs an error and becomes takeable again), 512 flags, 32 steps, 16 actors. Instanced steps place
+  a player for one step at a time in a story phase keyed by quest and scene (or step), under its party, never pulling
+  it out of a phase the runtime didn't place; a party that breaks up is split again. The `quests` component (v2) keys
+  steps by id; on load an unknown quest is dropped and a removed step restarts its quest (logged, never refusing a
+  join); only states no engine path can write are refused. Cutscene steps start through the cutscene service (`start`
+  at the step's place); a `done` reason `finished` or `skipped` completes the step, `returned` (given back unplayed)
+  does not, and the runtime retries any live cutscene step the player isn't watching on join, its first tick and every
+  5 s. Unauthored cutscenes are marked `planned`. First Jobs is the demo's chain as data (auto-started, chapter 2, a
+  level's worth and 500 units, no skill point; DESIGN 8 gives the first point at chapter 4); The Apothecary's Sodium
+  sits in Belost's market (DESIGN 14.8 amended); "Vexmir III" is Rolis III; the pirate wing is four Kestrels (plan
+  0.8). `{placeholders}` are filled client-side; the "THE STARS ARE YOURS" banner became a "<title> complete" toast.
+  The admin CLI's set-quest-step works online and offline (`QuestAdmin`). Protocol 7. → DESIGN 14's engine, server-run.
+  Open: events not yet emitted — interact and offers (P1.E09.T05/T06), mine (P1.E13.T01 wires `resources.subscribe`),
+  kill (combat), analyze, site entry and scan, escort and waves; board jobs must send their definitions to the client.
+- **P1.E13.T01** Server-side resource nodes (`server/src/resources`, ARCHITECTURE §18) → nodes are not entities: every
+  machine scatters them from the seeds (`scatterNodes` over `drawnGround` at the zone's tier), and the server keeps only
+  what players did to them (hp, each character's damage, heal 60 s after the last hit, regrowth 3/5/8 min for plants,
+  deposits, formations), in memory, bounded (16 grounds, 4,096 scattered cells, 100,000 touched nodes). The ground is
+  fauna's planner's (one plan per world in its worker, carrying site clearance beside the pads), so nodes and pads come
+  from one plan. A hit is checked cheapest first (rate, clock stamp, zone, on foot, world, key, coarse range, planned,
+  scatter, harvested, 35 m range, ground line of sight sampled every 2 m); it is worth the beam time since the last
+  counted hit (at most 0.5 s at 1.6 hp/s), so no client mines faster than one beam held on. A broken node's yield is
+  rolled once and split by damage among every contributor (largest remainders, ties within 1e-9 to the first hitter):
+  capping contributors let taggers take the yield, so all count and a token hit earns a token share. Common flora stays
+  each client's own scatter; the server bounds it by kind, distance from the ground, range, sight, beam time, the last
+  256 keys, and 24 hp per 10 m patch per hour (so a modified client naming plants that are not there gets about 7,500
+  units an hour, less than an honest beam on rocks). Touched cells stream to nearby players as `nodes` every 250 ms
+  within 500 m (dropped at 600 m, `reset` on arrival). Quests hear node shares as `mine` events. Heat's seam:
+  `ResourceService` takes `meters` and counts a hit only while `meters.beamActive` (wired when P1.E07.T02 lands).
+  Protocol 8. → Mining is server-authoritative without making every node an entity. Open: the client half is
+  P1.E13.T06; asteroids, the Mining Laser and iridium are P1.E13.T07 (added); node state does not survive a restart.
+- **P1.E08.T03** Dens, spawning and night (`server/src/fauna`, `@astra/shared/world` ground) → one den plan for both
+  ends: `planDens` always houses dens with the world's own `faunaSpecies(params, FAUNA_MAX_TIER)`, worked out inside
+  shared (`Den.species` required, −1 empty); a den whose species the world does not carry at a lower tier stands empty
+  there; each predator pass houses one predator in the den kind it lives in. This replaces P1.E02.T05's "predator dens
+  split evenly across kinds until species roll"; the dens golden fixture was regenerated once (counts by role
+  unchanged; kinds, positions, pads and on some worlds the apex lair moved). `worldSurface(params, tier)` plans a
+  world's surface once and returns the drawn ground and every den; `drawnGround` is that ground at tier
+  `DENS_DRAWN ? tier : 0`, so pads, node clearance and dens come from one plan (tested on five worlds). The server asks
+  its planner worker for the ground (fast) and the dens (50–600 ms on a large Tier 3 world) as two requests of the same
+  plan, so herds and nodes never wait for dens; every stored ground carries the node clearance. Dens spawn while
+  `DENS_DRAWN` is off (no den art until P1.E14.T10). Night is the star on or below the point's horizon (shared
+  kinematics; fauna's `sky.ts` copy goes once P1.E07.T02's shared rule lands). Night doubling is met on average: each
+  cell may add a predators-only night herd on its own stream at (multiplier − 1) × the day herd's predator chance, and a
+  predator den adds a second pack once a night; both stay out past dawn until the cell unloads, under the creature cap;
+  once-a-night spawns are due again from the first day after, even while a cell sleeps. The apex comes out at night only,
+  while its lair's cell is awake (a player within about 400 m), with a pack of the world's walking predator; at dawn it
+  walks home once it has no target and enters the lair within 10 m; killed, its 1,800 s timer starts and its pack hunts
+  on as an ordinary herd. Packs respawn after 300 s; timers live on `FaunaSim` and are lost with the zone; a pack that
+  only unloaded with its cell comes back with no timer. Spawns keep 70 m (`SPAWN_CLEAR_M`) from players near the ground.
+  Ambusher burrows keep a herd of 1–2 lurking in the burrow's footprint. → DESIGN 12.2's dens and night, with one plan
+  every machine computes. Open: packs breaking off at 30% health and returning at night (combat, P1.E06); ambushers
+  beside deposits (resource nodes are on main now; a later fauna task).
+- **P1.E03.T04** Movement authority (`server/src/sim/movement`, ARCHITECTURE §7) → every zone checks each player input
+  before applying it: frame (the shared `selectFrame` rule, a 5% hysteresis, the old frame carried to the new pose's
+  time over at most 0.1 s, `frame.switchS`), clearance (the shared drawn ground at the system's tier from fauna's
+  planner, provisional while it plans and re-judged within 5 s; gas-giant depths; the Waystation's hangar shell grown by
+  the 6 m ship sphere), mode legality (pulse drive out of the air and clear ahead, 2 km over ground to engage; landed on
+  dry ground; docked on a free pad; foot only out of a landed or docked ship, boarding only from beside it; the `boost`
+  bit and thick air raise the caps), the move (anti-teleport: its allowance over at most 1 s, plus 0.1 s and 25 m; no
+  tunnelling through ground or hull past one 66 ms frame) and speed over windows of at least 1 s by the flight contract,
+  carried across frame changes, cap changes, getting out and boarding (walker caps across, up and down). Speed is judged
+  on the client's own clock, reversing P1.E12.T01's server-measured contract: credited time between inputs is the
+  client's stamp difference, at most the arrival gap plus 0.05 s from a 0.5 s bank (refilled only by unclaimed real
+  time) plus 0.05 s of owed time (real time its running clock left unclaimed in the last 10 s), never more than 0.3 s
+  ahead of arrival; a frozen clock is owed nothing; a clock stepped forward past its credit re-syncs with no movement
+  credit (at most once in 10 s); a stamp lagging over a second is a backlog only while it drains, else stale and placed
+  at arrival (and keeps its credit). Accepted envelope (owner-approved shape, measured in review): total credited time ≤
+  real time + 0.5 s + 0.3 s, owed time expires after 10 s; up to 3.9× real time for 3.4 s at 60 Hz, or about 6 s of
+  allowance (roughly 10 km at boost) in one tick after 6–10 s standing still: the same as an honest stall's backlog
+  arriving at once. Refusals send `correction {seq, pose, mode}`, inputs from the old trajectory are refused quietly for
+  a second, 8 corrections in 30 s kick. Restored poses are checked by `poseProblem` (a character saved on foot needs its
+  `parked` ship), the ground planned off the main thread first. Admin in-zone teleports re-seat the mover (docked on a
+  free pad) with the correction grace, so in-flight inputs are refused quietly. A server started with
+  `movement: false` (integration tests that place players with raw poses only) checks restored poses by shape only.
+  The real client gets 0 corrections across take-off, frame crossings, boost and pulse, 4–9 s stalls and 40–75 s hidden
+  tabs. → DESIGN's server authority over movement (plan 0.3) without correcting honest clients. Open: Heat and Charge's
+  `meters.allowsMode` is wired by whichever of this and P1.E07.T02 lands second; the station's other colliders arrive
+  with P1.E11.T02; an admin teleport on foot leaves the character no ship of its own to board (P1.E03.T07 follow-up).
+- **P1.E07.T15** Skill state survives data changes (`@astra/shared/skills/stored.ts`, `server/src/skills`, persistence)
+  → the `skills` component (v2) stores the state plus `web` (`SKILL_WEB_VERSION`) and `paid` (what each fragment unlock
+  paid, by branch), neither sent to the client (protocol unchanged). v1 saves become web 0, `paid` rebuilt in unlock
+  order bounded by what each branch spent (a trainer-taught node may take a sibling's credit; a people's free node, Second
+  Lung or Pulse, is credited only after every other node). The persistence registry gains a general `reconcile(value, ctx)` hook, after migrations and the schema
+  and before `check`, used at joins and admin `edit()`; a changed value is not marked stored, so the next save writes it
+  once; a reconcile that throws makes the value unreadable. `reconcileSkills(stored, web)` is pure, against the current
+  web for any stored web ≤ current: unknown ids dropped with the fragments they paid returned (a rename is a removal;
+  removed unlocks never bought are dropped too); owned nodes that lost a prerequisite refunded until stable (the largest
+  owned set closed under prerequisites), listed deepest first (capstone, Tier III and conjunctions, II, I; later-bought
+  first), keeping their unlock and payment, returning points, charging no units (a free respec of the affected nodes);
+  a re-tiered node keeps what it paid; bars padded or cut to the web's sizes, slot positions kept, a node past the end
+  or on the other bar unslotted but owned; one warning per character. A newer web refuses the join (rollback safety).
+  `SKILL_WEB_VERSION` covers id, branch, tier, bar, prerequisites and bar sizes, pinned per version by a hash test that
+  fails a web edit until the version is raised (names, text, point costs and unlock routes need no raise). A ship with
+  more pods than bays gives them back on load, logged, for any cause (replacing P1.E07.T01's refusal; the inventory
+  repacks or keeps its saved layout, all or nothing, so no item is lost); revisit when pods become crafted modules.
+  This supersedes P1.E07.T01's "fragments are never refunded" for data changes and its "an unknown id or broken
+  prerequisite refuses the join until P1.E07.T15". → Content can change the skill web without stranding characters.

@@ -1,6 +1,18 @@
 import { writeFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { GALAXY_SEED, Galaxy, TerrainSampler, denPads, describeGalaxySystem, planSurface, type Den, type PlanetParams } from '@astra/shared/world';
+import {
+  FAUNA_MAX_TIER,
+  GALAXY_SEED,
+  Galaxy,
+  TerrainSampler,
+  denKindFor,
+  denPads,
+  describeGalaxySystem,
+  faunaSpecies,
+  planSurface,
+  type Den,
+  type PlanetParams,
+} from '@astra/shared/world';
 
 // A den's levelled pad in the engine (P1.E02.T05). Until the tier function lands (P1.E02.T06) the client plans every
 // world at Tier 0, which has no dens; so the home planet is planned again here at Tier 1, as the server will plan it,
@@ -86,6 +98,13 @@ test('a Tier 1 den pad is levelled in the engine, and nothing is drawn for the d
   const plan = planSurface(params, new TerrainSampler(params), { tier: 1 });
   expect(plan.pads.slice(0, home.pads.length)).toEqual(home.pads);
   expect(plan.dens.length).toBeGreaterThan(0);
+  // each den houses one of the world's own species (P1.E08.T03), a predator den the kind its predator lives in: the
+  // dens the server's fauna spawns at
+  const species = faunaSpecies(params, FAUNA_MAX_TIER);
+  for (const d of plan.dens) {
+    expect(species[d.species]?.temperament).toBe(d.role);
+    if (d.role === 'predator') expect(d.kind).toBe(denKindFor(species[d.species]!.bodyPlan));
+  }
   // (handed over as JSON, as the server would send it)
   const dens = JSON.parse(JSON.stringify(plan.dens)) as Den[];
   expect(denPads(dens)).toEqual(plan.pads.slice(home.pads.length));
@@ -94,7 +113,10 @@ test('a Tier 1 den pad is levelled in the engine, and nothing is drawn for the d
   const sunUp = (d: Den) => d.dir[0] * home.sun[0] + d.dir[1] * home.sun[1] + d.dir[2] * home.sun[2];
   const lit = dens.filter((d) => sunUp(d) > 0.5);
   const den = (lit.length ? lit : dens).sort((a, b) => (lit.length ? b.relief - a.relief : sunUp(b) - sunUp(a)))[0];
-  testInfo.annotations.push({ type: 'den', description: `${den.kind} (${den.role}) relief ${den.relief.toFixed(2)} m, base ${den.base.toFixed(2)} m` });
+  testInfo.annotations.push({
+    type: 'den',
+    description: `${den.kind} (${den.role}: ${species[den.species]!.name}) relief ${den.relief.toFixed(2)} m, base ${den.base.toFixed(2)} m`,
+  });
 
   // a fixed camera 24 m off the den, 14 m above its ground, lit from the side; the ship set down 150 m away, out of shot
   await page.evaluate((den) => {

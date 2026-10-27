@@ -21,7 +21,8 @@ let zone: Zone;
 const home = homeSystemOf('thalune');
 
 beforeAll(async () => {
-  server = await startTestServer();
+  // (its bots are put on a world's ground with raw poses, straight from the Waystation: no movement authority here)
+  server = await startTestServer({}, { movement: false });
 });
 
 afterAll(async () => {

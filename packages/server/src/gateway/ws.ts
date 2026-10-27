@@ -5,14 +5,17 @@
 // is unusable, or for a new character), and `welcome` names the zone, the entity and that pose, followed at once by
 // `world` (the world service's state, sent again to every joined session whenever it changes), the character's
 // `inventory` and its `skills`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot
-// every tick, and closing the socket saves the character and takes the entity out. Inventory requests go to the inventory
+// every tick (an input movement authority refuses is answered with `correction`, and a client corrected too often is
+// kicked), and closing the socket saves the character and takes the entity out. Inventory requests go to the inventory
 // service and skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
 // connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
 // leaves; a cutscene done ends the quest step that played it. Quest requests go to the quest runtime (quests/), which
 // hears of every character once it has joined (after its party is known, so it can put it back in a quest step's
 // phase) and answers each request, and whose own changes reach the session as `quests` state and quest events (§17).
-// Malformed or out-of-place messages are dropped and counted, never thrown.
+// Mining hits go to the resource service (resources/), which answers each, keeps every player on a world up to date
+// with the resource nodes round it, and tells the quest runtime of each share of a node broken (§18). Malformed or
+// out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -29,12 +32,13 @@ import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.t
 import type { Db } from '../db/client.ts';
 import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
-import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
+import { groundForRestore, POSE, PROGRESS, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
 import { doneEndsQuestStep } from '../quests/cutscenes.ts';
 import type { QuestRuntime } from '../quests/runtime.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
+import { questMineEvent, ResourceService } from '../resources/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import { skillServiceIn } from '../skills/component.ts';
 import type { SkillService } from '../skills/service.ts';
@@ -116,6 +120,8 @@ export interface WsGatewayDeps {
   quests?: QuestRuntime;
   /** Cutscenes in story phases; the gateway makes its own (a production one: no client starts any) when none is given. */
   cutscenes?: CutsceneService;
+  /** Mining and resource nodes; the gateway makes (and starts and stops) its own when none is given. */
+  resources?: ResourceService;
 }
 
 export interface WsStats {
@@ -130,6 +136,7 @@ export interface WsGateway {
   readonly skills: SkillService;
   readonly social: SocialService;
   readonly cutscenes: CutsceneService;
+  readonly resources: ResourceService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -192,6 +199,16 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   });
   const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
   if (!deps.social) social.start();
+  const resources = deps.resources ?? new ResourceService({ zones: deps.zones, inventory, skills, now: () => deps.clock.now(), log });
+  if (!deps.resources) resources.start();
+  // each share of a node broken counts for the character's quests' `mine` steps (flora's carbon counts through `collect`)
+  const quests = deps.quests;
+  const unsubscribeMining = quests
+    ? resources.subscribe((e) => {
+        const q = questMineEvent(e);
+        if (q) quests.event(e.characterId, q);
+      })
+    : undefined;
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -352,6 +369,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         const r = deps.zones.input(s, msg);
         // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
         if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
+        // refused by movement authority (which logged it): the correction, and the end of a client corrected too often
+        else if (typeof r === 'object') {
+          if (r.correction) s.send({ t: 'correction', ...r.correction });
+          if (r.kick) s.refuse('kicked', 'Your ship or suit kept moving in ways the server could not accept.');
+        }
         return;
       }
       case 'ack':
@@ -380,6 +402,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
           // (a cutscene it was watching ended, played or skipped: the quest step that played it ends; given back, it does not)
           if (doneEndsQuestStep(msg, r)) deps.quests?.cutsceneEnded(s, msg.id);
         }
+        return;
+      case 'mine':
+        if (s.state !== 'joined') return invalid(s, 'mine before join');
+        s.send(resources.mine(s, msg));
         return;
       default:
         // cast and interact belong to later tasks; before join they are out of place.
@@ -419,6 +445,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     const unpin = persistence.pin(characterId);
     try {
       const row = await ownedCharacter(s.accountId!, characterId);
+      // the ground a saved pose on a world stands on, planned in the worker first, so its check reads it there
+      if (row) await groundForRestore(row.state);
       if (s.state !== 'authed') return;
       // (a row under another spelling of the id would have been read without the pin holding it)
       if (!row || row.id !== characterId) {
@@ -481,15 +509,18 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     skills,
     social,
     cutscenes,
+    resources,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
       clearInterval(heartbeat);
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
+      if (!deps.resources) await resources.close();
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeQuests?.();
+      unsubscribeMining?.();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
