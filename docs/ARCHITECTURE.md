@@ -577,7 +577,7 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     The plating fades with the level (0.55, 0.3, none), so a ship under 100 px is a clean silhouette rather than
     speckle; the coarsest dims its strong small lights under the bloom's threshold, casts no shadow and draws gear legs
     only down. Draw calls: the hull and the legs per level in use, the shadows of the two finer levels, the exhausts
-    (the Lark's 24 in the crowd: 10 more than none, against 105 more with a draw per surface), each ship culled against
+    (the crowd's 24 Larks: 17 more than none, against 105 more with a draw per surface), each ship culled against
     the view (but within 100 m, for its shadow); its gear, engine glow and exhaust (by its speed against its hull's
     cruise and its acceleration, full on the pulse drive, dark set down), and beacon its own (`aGlow`, per instance);
     only the instances drawn are uploaded, and nothing is allocated per frame. A ship landed on the world whose flora is
