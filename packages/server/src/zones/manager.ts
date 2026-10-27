@@ -11,7 +11,12 @@
 // moves (DESIGN 16.3).
 //
 // Its zones hold players to movement authority (P1.E03.T04): each player enters with its ship (the default Lark until
-// P1.E12.T05) and its skills, and each input is checked at the server clock's time of arrival.
+// P1.E12.T05) and its skills, and each input is judged at its client's time, held to the server's clock (ARCHITECTURE §7).
+//
+// Every `metricsEveryMs` (ASTRA_METRICS_S, 10 s in the server) the loop logs its own numbers ('tick loop': ticks run and
+// skipped since the last report, zones loaded and awake, sessions) and one 'zone metrics' line per awake zone at info,
+// each carrying its zone id: tick p50/p95/max over the last 400 ticks, entities, sessions, overruns and its fauna's
+// worlds, creatures and cells by state.
 import { performance } from 'node:perf_hooks';
 import type { ClientMessage, PeopleId, Pose, ServerMessage } from '@astra/shared/protocol';
 import type { ShipLoadout } from '@astra/shared/ships';
@@ -52,6 +57,8 @@ export interface ZoneManagerOptions {
   unloadAfterMs?: number;
   /** a zone tick longer than this is logged (one step) */
   overrunMs?: number;
+  /** every zone's tick metrics are logged this often, ms (0, the default: never) */
+  metricsEveryMs?: number;
   /** monotonic milliseconds (performance.now); tests drive it by hand */
   mono?: () => number;
   /** the system a zone hosts, by galaxy index (describeZoneSystem) */
@@ -121,6 +128,11 @@ export class ZoneManager {
   private readonly sleepAfterMs: number;
   private readonly unloadAfterMs: number;
   private readonly overrunMs: number;
+  private readonly metricsEveryMs: number;
+  /** when metrics were last logged (monotonic ms), and the loop's counts then */
+  private metricsAt: number;
+  private metricsTicks = 0;
+  private metricsSkipped = 0;
   private readonly slots = new Map<string, Slot>();
   private readonly byViewer = new Map<ZoneViewer, Slot>();
   private timer: NodeJS.Timeout | undefined;
@@ -137,7 +149,9 @@ export class ZoneManager {
     this.sleepAfterMs = opts.sleepAfterMs ?? 30_000;
     this.unloadAfterMs = opts.unloadAfterMs ?? 300_000;
     this.overrunMs = opts.overrunMs ?? this.stepMs;
+    this.metricsEveryMs = Math.max(0, opts.metricsEveryMs ?? 0);
     this.nextAt = this.mono() + this.stepMs;
+    this.metricsAt = this.mono();
     this.world = opts.world;
     this.movement = opts.movement ?? true;
     this.world?.subscribe((change) => this.tiersChanged(change.flipped));
@@ -290,6 +304,7 @@ export class ZoneManager {
       this.skippedTicks += behind;
       this.log?.warn({ skipped: behind, stepMs: this.stepMs, zones: this.slots.size }, 'tick loop fell behind; ticks skipped');
     }
+    if (this.metricsEveryMs > 0 && now - this.metricsAt >= this.metricsEveryMs) this.logMetrics(now);
     return ran;
   }
 
@@ -329,6 +344,49 @@ export class ZoneManager {
   /** Per-zone tick metrics: entities, sessions, p50/p95/max tick ms, overruns, and the zone's tier. */
   metrics(): ZoneStatus[] {
     return [...this.slots.values()].map((s) => ({ ...s.zone.metrics(), asleep: s.asleep, tier: s.tier, overruns: s.overruns }));
+  }
+
+  /**
+   * Logs the loop's numbers since the last report ('tick loop') and every awake zone's metrics ('zone metrics'), at info.
+   * The loop calls it every metricsEveryMs; tests call it by hand.
+   */
+  logMetrics(now = this.mono()): void {
+    const zones = this.metrics();
+    let sessions = 0;
+    for (const z of zones) sessions += z.sessions;
+    this.log?.info(
+      {
+        seconds: round((now - this.metricsAt) / 1000, 1),
+        ticks: this.ticks - this.metricsTicks,
+        skipped: this.skippedTicks - this.metricsSkipped,
+        zones: zones.length,
+        awake: zones.filter((z) => !z.asleep).length,
+        sessions,
+      },
+      'tick loop',
+    );
+    for (const z of zones) {
+      if (z.asleep) continue;
+      this.log?.info(
+        {
+          zone: z.id,
+          system: z.system,
+          tier: z.tier,
+          tick: z.tick,
+          entities: z.entities,
+          sessions: z.sessions,
+          p50: round(z.p50, 3),
+          p95: round(z.p95, 3),
+          max: round(z.max, 3),
+          overruns: z.overruns,
+          fauna: z.fauna,
+        },
+        'zone metrics',
+      );
+    }
+    this.metricsAt = now;
+    this.metricsTicks = this.ticks;
+    this.metricsSkipped = this.skippedTicks;
   }
 
   /** The world service moved the Edge: loaded zones whose system changed tier take the new one. */
@@ -382,4 +440,9 @@ export class ZoneManager {
     );
     this.timer.unref();
   }
+}
+
+function round(x: number, digits: number): number {
+  const k = 10 ** digits;
+  return Math.round(x * k) / k;
 }

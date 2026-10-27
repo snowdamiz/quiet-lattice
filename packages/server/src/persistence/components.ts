@@ -166,16 +166,9 @@ export function dockedAtHome(homeSystem: number): PoseState {
   return { system: homeSystem, pose: padPose(stationFrame(homeSystem), 0), mode: 'docked' };
 }
 
-/**
- * Why a saved pose cannot be used, or null: the system must exist, the frame must be one of its own, the pose within the
- * magnitudes a zone accepts (INPUT_LIMITS), and the pose somewhere movement authority would accept it in its mode at
- * server world time `now` (P1.E03.T04: its frame by the shared rule, not in the ground or the hangar's shell, landed on
- * dry ground, docked on a pad, on the pulse drive out of the air, on foot on the ground and with a ship of its own at
- * `parked` to board). `ship` is the ship it flies (the default Lark when it has none). The ground is read from the
- * server's planner, never planned here: a pose on a world whose ground is not planned cannot be vouched for, so the gateway
- * waits for it first (groundForRestore).
- */
-export function poseProblem(at: PoseState, now: number, ship: ShipLoadout | null = null): string | null {
+/** Why a pose cannot be placed at all, or null: the system must exist, the frame must be one of its own, and the pose
+ * within the magnitudes a zone accepts (INPUT_LIMITS). */
+export function poseShapeProblem(at: PoseState): string | null {
   let seed: number;
   try {
     seed = systemSeed(at.system);
@@ -186,6 +179,21 @@ export function poseProblem(at: PoseState, now: number, ship: ShipLoadout | null
   if (frame !== null && Number(frame.split(':')[0]) !== seed) return `frame ${frame} is not in system ${at.system}`;
   if (Math.hypot(...at.pose.pos) > INPUT_LIMITS.maxDistance) return 'position out of range';
   if (Math.hypot(...at.pose.vel) > INPUT_LIMITS.maxSpeed) return 'velocity out of range';
+  return null;
+}
+
+/**
+ * Why a saved pose cannot be used, or null: its shape (poseShapeProblem), and the pose somewhere movement authority would
+ * accept it in its mode at
+ * server world time `now` (P1.E03.T04: its frame by the shared rule, not in the ground or the hangar's shell, landed on
+ * dry ground, docked on a pad, on the pulse drive out of the air, on foot on the ground and with a ship of its own at
+ * `parked` to board). `ship` is the ship it flies (the default Lark when it has none). The ground is read from the
+ * server's planner, never planned here: a pose on a world whose ground is not planned cannot be vouched for, so the gateway
+ * waits for it first (groundForRestore).
+ */
+export function poseProblem(at: PoseState, now: number, ship: ShipLoadout | null = null): string | null {
+  const shape = poseShapeProblem(at);
+  if (shape) return shape;
   const tier = tierOfGalaxySystem(at.system);
   const v = movementProblem(describeZoneSystem(at.system), at.pose, at.mode, now, { ship: ship ?? DEFAULT_SHIP }, at.parked, { tier: () => tier });
   return v ? `${v.rule}${v.detail ? `: ${v.detail}` : ''}` : null;

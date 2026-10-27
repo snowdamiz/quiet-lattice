@@ -500,9 +500,13 @@ export class MovementAuthority {
     if (pad !== null) this.holdPad(id, pad);
   }
 
-  remove(id: number): void {
+  /** Stops holding a mover (its pad, if it held one, is free again); returns its profile, to `add` it again elsewhere (an
+   * admin teleport re-seats it so: its next input is judged from there, as at a join). */
+  remove(id: number): MoverProfile | undefined {
+    const profile = this.movers.get(id)?.profile;
     this.movers.delete(id);
     this.releasePad(id);
+    return profile;
   }
 
   /**

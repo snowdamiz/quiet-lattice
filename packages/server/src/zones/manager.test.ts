@@ -1,6 +1,6 @@
 // ZoneManager: zones open on the first join, many run side by side, empty ones sleep and unload; the fixed-step loop
-// catches up a little and skips the rest; overruns are logged; inputs and acks reach the right zone; each zone's tier
-// follows the world service.
+// catches up a little and skips the rest; overruns are logged; tick metrics are logged per zone at an interval; inputs
+// and acks reach the right zone; each zone's tier follows the world service.
 import { EDGE_X, galaxyTiers, tierOfGalaxySystem } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { systemSeed } from '../world/home.ts';
@@ -24,7 +24,7 @@ interface LogLine {
   msg: string;
 }
 
-function setup(opts: Pick<ZoneManagerOptions, 'overrunMs' | 'world' | 'movement'> = {}) {
+function setup(opts: Pick<ZoneManagerOptions, 'overrunMs' | 'world' | 'movement' | 'metricsEveryMs'> = {}) {
   let mono = 1000;
   let world = 5e6;
   const lines: LogLine[] = [];
@@ -175,6 +175,51 @@ describe('ZoneManager', () => {
       expect(z.p95).toBeGreaterThanOrEqual(z.p50);
       expect(z.max).toBeGreaterThanOrEqual(z.p95);
     }
+  });
+
+  it('logs the loop and every awake zone at the metrics interval, each line with its zone id', () => {
+    const { zones, advance, lines } = setup({ metricsEveryMs: 1000 });
+    zones.join(new Sink(1), character(0));
+    zones.join(new Sink(2), character(0, 'Ora'));
+    const idle = new Sink(3);
+    zones.join(idle, character(1, 'Tam'));
+    for (let i = 0; i < 19; i++) advance(50);
+    expect(lines.filter((l) => l.msg === 'tick loop')).toEqual([]);
+    advance(50);
+    const loop = lines.filter((l) => l.msg === 'tick loop');
+    expect(loop).toHaveLength(1);
+    expect(loop[0]).toMatchObject({ level: 'info', obj: { seconds: 1, ticks: 20, skipped: 0, zones: 2, awake: 2, sessions: 3 } });
+    const zoneLines = lines.filter((l) => l.msg === 'zone metrics').map((l) => l.obj);
+    expect(zoneLines.map((o) => [o.zone, o.system, o.entities, o.sessions, o.tick]).sort()).toEqual([
+      ['sys:0', 0, 2, 2, 20],
+      ['sys:1', 1, 1, 1, 20],
+    ]);
+    for (const o of zoneLines) {
+      expect(o).toHaveProperty('tier');
+      expect(o).toHaveProperty('fauna');
+      expect(o.p95 as number).toBeGreaterThanOrEqual(o.p50 as number);
+      expect(o.max as number).toBeGreaterThanOrEqual(o.p95 as number);
+    }
+
+    // an asleep zone is counted but not reported; counts are since the last report
+    zones.leave(idle);
+    for (let i = 0; i < 40; i++) advance(50);
+    const last = lines.filter((l) => l.msg === 'tick loop').at(-1)!;
+    expect(last.obj).toMatchObject({ ticks: 20, zones: 2, awake: 1, sessions: 2 });
+    expect(
+      lines
+        .filter((l) => l.msg === 'zone metrics')
+        .slice(-1)
+        .map((l) => l.obj.zone),
+    ).toEqual(['sys:0']);
+    expect(lines.filter((l) => l.msg === 'tick loop')).toHaveLength(3);
+  });
+
+  it('logs no metrics without an interval', () => {
+    const { zones, advance, lines } = setup();
+    zones.join(new Sink(1), character(0));
+    for (let i = 0; i < 100; i++) advance(50);
+    expect(lines.filter((l) => l.msg === 'tick loop' || l.msg === 'zone metrics')).toEqual([]);
   });
 
   it('routes inputs and acks to the session’s zone; without movement authority, clamping poses and marking them unvalidated', () => {
