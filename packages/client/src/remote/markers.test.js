@@ -3,7 +3,7 @@
 // above (off other ships if it can be), else none; room to spare, here and where the mark is headed, to take a side.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, fits, hits, labelBox, makeRoom, markOf, nudge, placeLabel, screenBounds } from './markers.js';
+import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, labelBox, makeRoom, markOf, nudge, placeLabel, screenBounds } from './markers.js';
 
 const W = 1920;
 const H = 1080;
@@ -133,6 +133,32 @@ describe('pilot markers', () => {
     expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at, ROOM_MARGIN)).toBe(false);
     // (only to take a side: one shown stays while it has room)
     expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at)).toBe(true);
+  });
+
+  it("keep off the social panels' boxes where the HUD has them: the mark nudged off, the name on another side", () => {
+    // (the party frame as a DOMRect, an invite card as x0..y1, the chat panel as x, y, width, height)
+    const social = {
+      covers: () => [
+        { left: 20, top: 200, right: 300, bottom: 420, width: 280, height: 220 },
+        { x0: 20, y0: 430, x1: 300, y1: 480 },
+        { x: 20, y: 700, width: 600, height: 300 },
+      ],
+    };
+    const keepOut = addCovers([1, 2, 3, 4], social, 4);
+    expect(keepOut).toEqual([1, 2, 3, 4, 16, 196, 304, 424, 16, 426, 304, 484, 16, 696, 624, 1004]);
+    // a mark falling on the party frame's right edge is nudged off it, never dropped
+    const mark = { x: 296, y: 300 };
+    expect(nudge(mark, keepOut, W, H)).toBeGreaterThan(0);
+    expect(hits(mark.x - MARK_R, mark.y - MARK_R, mark.x + MARK_R, mark.y + MARK_R, keepOut)).toBe(false);
+    // a name that would run onto the chat panel takes the side away from it
+    const at = out();
+    expect(placeLabel(560, 690, 80, LABEL_H, room(keepOut), at)).not.toBeNull();
+    expect(hits(at.x0, at.y0, at.x1, at.y1, keepOut)).toBe(false);
+    // none where the HUD has no panels, or its covers() answers otherwise (a point test)
+    expect(addCovers([], undefined)).toEqual([]);
+    expect(addCovers([], {})).toEqual([]);
+    expect(addCovers([], { covers: () => false })).toEqual([]);
+    expect(addCovers([], { covers: () => [null, { left: 5, top: 5, right: 5, bottom: 9 }] })).toEqual([]);
   });
 
   it('tell overlapping boxes from touching ones', () => {

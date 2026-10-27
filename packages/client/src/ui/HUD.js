@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { EdgeCompass } from './EdgeCompass.js';
-import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, blockedBy, fits, labelWidth, makeRoom, markOf, nudge, placeLabel, screenBounds } from '../remote/markers.js';
+import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fits, labelWidth, makeRoom, markOf, nudge, placeLabel, screenBounds } from '../remote/markers.js';
 
 const _v = new THREE.Vector3();
 
@@ -468,6 +468,8 @@ export class HUD {
     const keepOut = this.keepOut;
     keepOut.length = 0;
     for (const v of this.avoid) keepOut.push(v);
+    // (and the social panels, where the HUD has them)
+    addCovers(keepOut, this.social, 4);
     const ship = this.localShipBounds(W, H, _shipBounds);
     if (ship) keepOut.push(ship.x0, ship.y0, ship.x1, ship.y1);
     const taken = this.taken;

@@ -69,6 +69,26 @@ export function hit(x0, y0, x1, y1, boxes, skipFrom = -1, skipTo = -1) {
 /** Whether the box overlaps any of `boxes` (but those from `skipFrom` to `skipTo`). */
 export const hits = (x0, y0, x1, y1, boxes, skipFrom = -1, skipTo = -1) => hit(x0, y0, x1, y1, boxes, skipFrom, skipTo) >= 0;
 
+/**
+ * Adds to `keepOut` the boxes the social panels cover (the party frame, the invite cards, the open chat panel:
+ * P1.E15.T03's `social.covers()`), each `pad` px larger all round, if the HUD has them: a pilot's mark is nudged off them
+ * and its name keeps off them as off the rest of the HUD. A box may be a DOMRect (left, top, right, bottom), x0..y1, or
+ * x, y, width, height; anything else (no panels, or a covers() that answers otherwise) adds none.
+ */
+export function addCovers(keepOut, social, pad = 0) {
+  const boxes = typeof social?.covers === 'function' ? social.covers() : null;
+  if (!boxes || typeof boxes[Symbol.iterator] !== 'function') return keepOut;
+  for (const b of boxes) {
+    if (!b) continue;
+    const x0 = b.left ?? b.x0 ?? b.x;
+    const y0 = b.top ?? b.y0 ?? b.y;
+    const x1 = b.right ?? b.x1 ?? x0 + b.width;
+    const y1 = b.bottom ?? b.y1 ?? y0 + b.height;
+    if (Number.isFinite(x0) && Number.isFinite(y0) && Number.isFinite(x1) && Number.isFinite(y1) && x1 > x0 && y1 > y0) keepOut.push(x0 - pad, y0 - pad, x1 + pad, y1 + pad);
+  }
+  return keepOut;
+}
+
 /** Where a pilot's mark goes for a ship whose screen bounds are `b`: over the middle of their top. */
 export function markOf(b, out) {
   out.x = (b.x0 + b.x1) / 2;
