@@ -145,6 +145,11 @@ export class NodeStore {
     return this.heap.size;
   }
 
+  /** Changes whenever any cell's version does (the next version to be given out). */
+  get version(): number {
+    return this.nextVersion;
+  }
+
   /** The world's touched nodes, if it has any. */
   world(frame: string): WorldNodes | undefined {
     return this.worlds.get(frame);

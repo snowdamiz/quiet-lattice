@@ -9,7 +9,8 @@
 // service and skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
 // connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
-// leaves. Malformed or out-of-place messages are dropped and counted, never thrown.
+// leaves. Mining hits go to the resource service (resources/), which answers each and keeps every player on a world up
+// to date with the resource nodes round it. Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
 // bucket) for every frame it sends (messages and control pings and pongs alike) and an invalid-message allowance, and a
@@ -30,6 +31,7 @@ import { POSE, PROGRESS, type PoseState, type Progress } from '../persistence/co
 import { CharacterLoadError } from '../persistence/registry.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
+import { ResourceService } from '../resources/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import { skillServiceIn } from '../skills/component.ts';
 import type { SkillService } from '../skills/service.ts';
@@ -108,6 +110,8 @@ export interface WsGatewayDeps {
   skills?: SkillService;
   /** Cutscenes in story phases; the gateway makes its own (a production one: no client starts any) when none is given. */
   cutscenes?: CutsceneService;
+  /** Mining and resource nodes; the gateway makes (and starts and stops) its own when none is given. */
+  resources?: ResourceService;
 }
 
 export interface WsStats {
@@ -122,6 +126,7 @@ export interface WsGateway {
   readonly skills: SkillService;
   readonly social: SocialService;
   readonly cutscenes: CutsceneService;
+  readonly resources: ResourceService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -176,6 +181,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   });
   const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log });
   if (!deps.social) social.start();
+  const resources = deps.resources ?? new ResourceService({ zones: deps.zones, inventory, skills, now: () => deps.clock.now(), log });
+  if (!deps.resources) resources.start();
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -355,6 +362,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') return invalid(s, 'cutscene before join');
         s.send(cutscenes.handle(s, msg));
         return;
+      case 'mine':
+        if (s.state !== 'joined') return invalid(s, 'mine before join');
+        s.send(resources.mine(s, msg));
+        return;
       default:
         // cast and interact belong to later tasks; before join they are out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
@@ -453,12 +464,14 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     skills,
     social,
     cutscenes,
+    resources,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
       clearInterval(heartbeat);
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
+      if (!deps.resources) await resources.close();
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeWorld();

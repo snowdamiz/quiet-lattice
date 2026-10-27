@@ -91,8 +91,9 @@ export interface NodePlannerOptions {
   log?: { warn(obj: object, msg: string): void };
   timeoutMs?: number;
   retryMs?: number;
-  /** the worker's script: planner.worker.ts by default (tests stand in workers that misbehave) */
+  /** the worker's script and its workerData: planner.worker.ts by default (tests stand in workers that misbehave) */
   script?: URL;
+  workerData?: unknown;
 }
 
 interface Pending {
@@ -226,7 +227,7 @@ export class NodeGroundPlanner implements NodeGroundSource {
 
   private start(): Worker {
     if (this.worker) return this.worker;
-    const w = new Worker(this.opts.script ?? new URL('./planner.worker.ts', import.meta.url), { execArgv: workerExecArgv() });
+    const w = new Worker(this.opts.script ?? new URL('./planner.worker.ts', import.meta.url), { execArgv: workerExecArgv(), workerData: this.opts.workerData });
     w.unref();
     w.on('message', (reply: { id: string; plan?: PlannedGround; error?: string }) => {
       const p = this.pending.get(reply.id);
