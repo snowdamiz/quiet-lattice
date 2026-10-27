@@ -496,6 +496,16 @@ describe('Game: analysis (P1.E08.T04)', () => {
     expect(banners).toHaveLength(1);
   });
 
+  it('calls the species by the name its first finder gave it, when it has one', () => {
+    const { socket, banners, toasts } = online();
+    socket.push(WELCOME);
+    socket.push({ t: 'discoveries', system: 0, reset: true, entries: [{ kind: 'species', key: SPECIES.key, finder: 'Bo Tran', at: 5, name: 'Velar Prime' }] });
+    socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
+    socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
+    expect(banners.map((b) => b[0])).toEqual(['VELAR PRIME']);
+    expect(toasts).toEqual([['Velar Prime · in your codex', undefined]]);
+  });
+
   /** A game with a walker on a world, a creature of the client's own herds in its sights, and E pressed. */
   function aiming(net) {
     const sp = { name: 'Ambling Tovar Grazer', kind: 'quad', skittish: true, size: 1.5 };

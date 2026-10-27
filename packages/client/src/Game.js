@@ -993,13 +993,15 @@ export class Game {
   }
 
   // The server's answer to an analysis: a first one shows the species as the codex now holds it and the XP it earned, a
-  // known one says so, a refused one says why.
+  // known one says so, a refused one says why. The species goes by the name its first finder gave it, if it has one
+  // (DESIGN 14.5; net.discoveries), else by its procedural name.
   onAnalyze(m) {
     const s = m.species;
+    const name = s && (this.net?.discoveries.displayName('species', s.key, s.name) ?? s.name);
     if (m.result === 'new') {
       this.audio.play('discovery');
-      this.hud.showBanner(s.name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
-    } else if (m.result === 'known') this.hud.toast(`${s.name} · in your codex`);
+      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
+    } else if (m.result === 'known') this.hud.toast(`${name} · in your codex`);
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
