@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import type { PlannerWorkerMode } from '../../test/plannerWorkers.ts';
 import type { Vec3 } from './cells.ts';
-import { Ground, groundOf, GroundPlanner, LATTICE_M, planPads } from './terrain.ts';
+import { densOf, Ground, groundOf, GroundPlanner, LATTICE_M, planDenList, planPads } from './terrain.ts';
 
 const system = describeZoneSystem(0);
 const home = system.bodies[system.home]!;
@@ -80,6 +80,41 @@ describe('the ground herds walk on', () => {
       }
       // kept: the next ask is answered at once, by any planner
       expect(groundOf(p)).toBe(g);
+    } finally {
+      await planner.close();
+    }
+  });
+});
+
+describe('a world’s dens', () => {
+  it('are planned in the worker at a tier, as on this thread, each naming who lives there, and kept per tier', async () => {
+    // a small world no other test plans
+    const small = describeZoneSystem(8)
+      .bodies.filter((b) => b.type !== 'gas' && hasFauna(b.params as PlanetParams))
+      .sort((a, b) => a.radius - b.radius)[0]!;
+    const p = small.params as PlanetParams;
+    const warnings: string[] = [];
+    const planner = new GroundPlanner({ log: { warn: (_, msg) => warnings.push(msg) } });
+    try {
+      // none below Tier 1, with nothing to plan
+      expect(planner.dens(p, 0)).toEqual([]);
+      expect(planner.planning).toBe(0);
+      expect(planner.dens(p, 3)).toBeNull();
+      expect(planner.dens(p, 3)).toBeNull();
+      expect(planner.planning).toBe(1);
+      const deadline = Date.now() + 30_000;
+      while (!planner.dens(p, 3) && Date.now() < deadline) await new Promise((r) => setTimeout(r, 20));
+      const dens = planner.dens(p, 3)!;
+      expect(planner.mainThread).toBe(false);
+      expect(warnings).toEqual([]);
+      expect(dens).toEqual(planDenList(p, 3));
+      expect(dens.length).toBeGreaterThan(0);
+      expect(dens.every((d) => d.species !== undefined)).toBe(true);
+      // kept for any planner; another tier is a plan of its own
+      expect(densOf(p, 3)).toBe(dens);
+      expect(planner.dens(p, 2)).toBeNull();
+      // the world's params are left as they were
+      expect(p.pads ?? null).toBeNull();
     } finally {
       await planner.close();
     }

@@ -15,6 +15,11 @@
 // lands. A world's ground (its plan and its caches) is kept per world seed and radius, for the KEEP worlds most recently
 // asked for; groundOf and planHere plan on the calling thread, for tests and tools.
 //
+// A world's dens (P1.E08.T03) come from the same planner: planSurface's dens at the system's tier, planned with the
+// world's species so each names who lives in it, on the natural ground after its cities and sites. That costs 50–600 ms
+// on a large world at Tier 3 (thousands of dens), so it is a plan of its own, asked for with the ground and kept per world
+// and tier. Dens are spawn anchors, not geometry: until they are drawn (DENS_DRAWN, P1.E14.T10) their pads level nothing.
+//
 // The planner must never stop fauna server-wide: a worker that dies (an error, or an exit with none) is restarted once
 // and given its plans again, and after a second death the planner plans on the main thread (warning once); a plan that
 // hangs past PLAN_TIMEOUT_MS restarts the worker and is sent again, and is given up if it hangs twice; a world whose plan
@@ -24,7 +29,18 @@ import { createRequire } from 'node:module';
 import { performance } from 'node:perf_hooks';
 import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
-import { DENS_DRAWN, drawnGround, TerrainSampler, type PlanetParams } from '@astra/shared/world';
+import {
+  DEN_PASSES,
+  DENS_DRAWN,
+  drawnGround,
+  FAUNA_MAX_TIER,
+  faunaSpecies,
+  hasFauna,
+  planSurface,
+  TerrainSampler,
+  type Den,
+  type PlanetParams,
+} from '@astra/shared/world';
 import { CellGrid, facePoint, type FacePoint, type Vec3 } from './cells.ts';
 
 /** Spacing of a cell's height cache, m (about). */
@@ -120,34 +136,56 @@ export function planPads(params: PlanetParams, tier = 0): number[] {
   return drawnGround({ ...params, pads: null }, tier).pads;
 }
 
-/** Where worlds' grounds come from. */
+/** Whether a world has dens at a tier: a world with fauna, from the first den pass's tier (DEN_PASSES). */
+export function hasDens(params: PlanetParams, tier: number): boolean {
+  return tier >= DEN_PASSES[0]!.from && hasFauna(params);
+}
+
+/**
+ * A world's dens at a tier, as the shared site plan places them (planSurface, on the natural ground, after its cities
+ * and sites), planned with the world's whole species list so each names who lives in it and every predator den is the
+ * kind its predator lives in (DenOptions.species). 50–600 ms on a large world; none below Tier 1 or without fauna.
+ */
+export function planDenList(params: PlanetParams, tier: number): Den[] {
+  if (!hasDens(params, tier)) return [];
+  const natural = { ...params, pads: null };
+  return planSurface(natural, new TerrainSampler(natural), { tier, species: faunaSpecies(params, FAUNA_MAX_TIER) }).dens;
+}
+
+/** Where worlds' grounds and dens come from. */
 export interface GroundSource {
   /** The world's ground for a system of `tier` if it is ready; otherwise it starts planning it (once) and returns null. */
   ground(params: PlanetParams, tier?: number): Ground | null;
+  /** The world's dens at `tier` (planDenList) if they are ready; otherwise it starts planning them (once) and returns
+   * null. A source without it plans no dens. */
+  dens?(params: PlanetParams, tier: number): readonly Den[] | null;
 }
 
-/** Worlds whose ground is kept. */
+/** Worlds whose ground (and, per tier, whose dens) are kept. */
 export const KEEP = 16;
 const grounds = new Map<string, Ground>();
+const denLists = new Map<string, readonly Den[]>();
+const NO_DENS: readonly Den[] = Object.freeze([]);
 /** A world's ground is the same at every tier until dens are drawn (they join it by tier). */
 const idOf = (params: PlanetParams, tier: number) => `${params.seed}:${params.radius}${DENS_DRAWN ? `:${tier}` : ''}`;
+const denIdOf = (params: PlanetParams, tier: number) => `${params.seed}:${params.radius}:${tier}`;
 
-/** A kept ground, marked the most recently used. */
-function kept(id: string): Ground | undefined {
-  const g = grounds.get(id);
+/** A kept plan, marked the most recently used. */
+function kept<T>(cache: Map<string, T>, id: string): T | undefined {
+  const g = cache.get(id);
   if (g) {
-    grounds.delete(id);
-    grounds.set(id, g);
+    cache.delete(id);
+    cache.set(id, g);
   }
   return g;
 }
 
-function keep(id: string, g: Ground): Ground {
-  grounds.delete(id);
-  grounds.set(id, g);
-  for (const k of grounds.keys()) {
-    if (grounds.size <= KEEP) break;
-    grounds.delete(k);
+function keep<T>(cache: Map<string, T>, id: string, g: T): T {
+  cache.delete(id);
+  cache.set(id, g);
+  for (const k of cache.keys()) {
+    if (cache.size <= KEEP) break;
+    cache.delete(k);
   }
   return g;
 }
@@ -155,11 +193,18 @@ function keep(id: string, g: Ground): Ground {
 /** A world's ground, planned on the calling thread if it is not kept: for tests, tools and the dev CLI. */
 export function groundOf(params: PlanetParams, tier = 0): Ground {
   const id = idOf(params, tier);
-  return kept(id) ?? keep(id, new Ground(params, planPads(params, tier)));
+  return kept(grounds, id) ?? keep(grounds, id, new Ground(params, planPads(params, tier)));
+}
+
+/** A world's dens at a tier, planned on the calling thread if they are not kept: for tests, tools and the bench. */
+export function densOf(params: PlanetParams, tier: number): readonly Den[] {
+  if (!hasDens(params, tier)) return NO_DENS;
+  const id = denIdOf(params, tier);
+  return kept(denLists, id) ?? keep(denLists, id, planDenList(params, tier));
 }
 
 /** Plans on the calling thread: always ready. */
-export const planHere: GroundSource = { ground: groundOf };
+export const planHere: GroundSource = { ground: groundOf, dens: densOf };
 
 /** A plan taking longer than this is taken to have hung: the worker is restarted and the plan sent again, ms. */
 export const PLAN_TIMEOUT_MS = 10_000;
@@ -179,7 +224,19 @@ export interface PlannerOptions {
   workerData?: unknown;
 }
 
+/** What a plan is of: a world's ground (planPads) or its dens at a tier (planDenList). */
+export type PlanKind = 'ground' | 'dens';
+
+/** A plan asked of the worker. */
+export interface PlanRequest {
+  id: string;
+  kind: PlanKind;
+  params: PlanetParams;
+  tier: number;
+}
+
 interface Pending {
+  kind: PlanKind;
   params: PlanetParams;
   tier: number;
   timer: NodeJS.Timeout;
@@ -190,7 +247,17 @@ interface Pending {
 interface PlanReply {
   id: string;
   pads?: number[];
+  dens?: Den[];
   error?: string;
+}
+
+/** The worker's side of a plan: what it posts back for a request (the pads of a ground, or a world's dens). */
+export function answer({ id, kind, params, tier }: PlanRequest): PlanReply {
+  try {
+    return kind === 'dens' ? { id, dens: planDenList(params, tier) } : { id, pads: planPads(params, tier) };
+  } catch (err) {
+    return { id, error: String(err) };
+  }
 }
 
 /**
@@ -209,12 +276,12 @@ function workerExecArgv(): string[] {
   }
 }
 
-/** Plans in a worker thread, one world at a time; a world asked for again while it is planned waits for the same plan
- * (see the header for what it does when the worker or a plan fails). */
+/** Plans in a worker thread, one plan at a time; a ground or a den list asked for again while it is planned waits for
+ * the same plan (see the header for what it does when the worker or a plan fails). */
 export class GroundPlanner implements GroundSource {
-  /** worlds being planned, by id */
+  /** plans in hand, by request id (`ground:…` or `dens:…`) */
   private readonly pending = new Map<string, Pending>();
-  /** worlds whose plan failed: when they may be tried again, and the backoff that set it */
+  /** plans that failed: when they may be tried again, and the backoff that set it */
   private readonly failures = new Map<string, { until: number; backoff: number }>();
   private worker: Worker | null = null;
   private deaths = 0;
@@ -231,23 +298,19 @@ export class GroundPlanner implements GroundSource {
   }
 
   ground(params: PlanetParams, tier = 0): Ground | null {
-    const id = idOf(params, tier);
-    const g = kept(id);
-    if (g) return g;
-    if (this.pending.has(id) || performance.now() < (this.failures.get(id)?.until ?? -Infinity)) return null;
-    if (this.onMainThread) {
-      try {
-        return keep(id, new Ground(params, planPads(params, tier)));
-      } catch (err) {
-        this.failed(id, String(err));
-        return null;
-      }
-    }
-    this.send(id, { params, tier, hangs: 0 });
-    return null;
+    const g = kept(grounds, idOf(params, tier));
+    if (g || !this.ask('ground', params, tier)) return g ?? null;
+    return kept(grounds, idOf(params, tier)) ?? null;
   }
 
-  /** Worlds being planned now. */
+  dens(params: PlanetParams, tier: number): readonly Den[] | null {
+    if (!hasDens(params, tier)) return NO_DENS;
+    const d = kept(denLists, denIdOf(params, tier));
+    if (d || !this.ask('dens', params, tier)) return d ?? null;
+    return kept(denLists, denIdOf(params, tier)) ?? null;
+  }
+
+  /** Plans in hand now. */
   get planning(): number {
     return this.pending.size;
   }
@@ -266,20 +329,46 @@ export class GroundPlanner implements GroundSource {
     await w?.terminate();
   }
 
+  /** Starts a plan not kept, unless it is in hand or backing off. True when it was planned here and then (on the main
+   * thread), and is now kept. */
+  private ask(kind: PlanKind, params: PlanetParams, tier: number): boolean {
+    const id = kind === 'ground' ? `ground:${idOf(params, tier)}` : `dens:${denIdOf(params, tier)}`;
+    if (this.pending.has(id) || performance.now() < (this.failures.get(id)?.until ?? -Infinity)) return false;
+    if (this.onMainThread) {
+      const reply = answer({ id, kind, params, tier });
+      if (reply.error === undefined) return this.store(kind, params, tier, reply);
+      this.failed(id, kind, reply.error);
+      return false;
+    }
+    this.send(id, { kind, params, tier, hangs: 0 });
+    return false;
+  }
+
+  /** Keeps a plan that came back; false when it holds nothing. */
+  private store(kind: PlanKind, params: PlanetParams, tier: number, reply: PlanReply): boolean {
+    if (kind === 'ground' && reply.pads) keep(grounds, idOf(params, tier), new Ground(params, reply.pads));
+    else if (kind === 'dens' && reply.dens) keep(denLists, denIdOf(params, tier), reply.dens);
+    else return false;
+    return true;
+  }
+
   private send(id: string, p: Omit<Pending, 'timer'>): void {
     const timer = setTimeout(() => this.hung(id), this.timeoutMs);
     timer.unref();
     this.pending.set(id, { ...p, timer });
-    this.start().postMessage({ id, params: p.params, tier: p.tier });
+    const request: PlanRequest = { id, kind: p.kind, params: p.params, tier: p.tier };
+    this.start().postMessage(request);
   }
 
   /** A plan failed (it threw, or hung twice): the world waits out a backoff before it is tried again. */
-  private failed(id: string, error: string): void {
+  private failed(id: string, kind: PlanKind, error: string): void {
     const backoff = Math.min(RETRY_MAX_MS, (this.failures.get(id)?.backoff ?? this.retryMs / 2) * 2);
     this.failures.set(id, { until: performance.now() + backoff, backoff });
     this.log.warn(
       { world: id, err: error, retryInS: Math.round(backoff / 100) / 10 },
-      'ground planning failed; the world keeps no herds until it is tried again',
+      kind === 'ground'
+        ? 'ground planning failed; the world keeps no herds until it is tried again'
+        : 'den planning failed; the world’s dens spawn nothing until it is tried again',
     );
   }
 
@@ -292,7 +381,7 @@ export class GroundPlanner implements GroundSource {
     this.log.warn({ world: id, timeoutMs: this.timeoutMs, hangs: p.hangs }, 'ground plan timed out; restarting the planner worker');
     if (p.hangs > 1) {
       this.pending.delete(id);
-      this.failed(id, 'timed out twice');
+      this.failed(id, p.kind, 'timed out twice');
     }
     this.restart();
   }
@@ -339,10 +428,8 @@ export class GroundPlanner implements GroundSource {
       if (!p || this.worker !== w) return;
       clearTimeout(p.timer);
       this.pending.delete(reply.id);
-      if (reply.pads) {
-        this.failures.delete(reply.id);
-        keep(reply.id, new Ground(p.params, reply.pads));
-      } else this.failed(reply.id, reply.error ?? 'no pads');
+      if (this.store(p.kind, p.params, p.tier, reply)) this.failures.delete(reply.id);
+      else this.failed(reply.id, p.kind, reply.error ?? `no ${p.kind === 'ground' ? 'pads' : 'dens'}`);
     });
     w.on('error', (err) => this.died(w, String(err)));
     w.on('exit', (code) => this.died(w, `exited with code ${code}`));

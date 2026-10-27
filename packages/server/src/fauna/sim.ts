@@ -19,8 +19,14 @@
 // Players a shared-world entity cannot see (sealed in a bay, event or raid phase, §6.1) still wake cells (they see the
 // herds) but are nobody's prey, intruder or threat.
 //
-// Seams for the tasks that follow: spawnHerd places a herd anywhere (den packs, ambushers and the apex, P1.E08.T03; the
-// dev CLI, P1.E03.T07); hurt adds threat (combat, P1.E06.T02); setTier follows the Edge (the zone manager calls it).
+// Night and dens (P1.E08.T03). At each scan the active cells also send out what night and their dens hold: at night
+// (the star below the cell's horizon, sky.ts) a cell may add its night herd of predators (herds.ts), and each den in an
+// active cell keeps its occupants out, respawns them on its timer and brings the apex out at night (dens.ts). These
+// spawn under the same time budget as loading cells, never within SPAWN_CLEAR_M of a player, and only when the zone has
+// room; a world's dens are planned off the tick with its ground (terrain.ts) and wait for it.
+//
+// Seams for the tasks that follow: spawnHerd places a herd anywhere (the dev CLI, P1.E03.T07); hurt adds threat
+// (combat, P1.E06.T02); setTier follows the Edge (the zone manager calls it).
 import { performance } from 'node:perf_hooks';
 import { addThreat } from '@astra/shared/combat';
 import { PACK_RULES } from '@astra/shared/data';
@@ -33,6 +39,7 @@ import {
   Random,
   tierOfGalaxySystem,
   type BodySpec,
+  type Den,
   type FaunaSpecies,
   type PlanetParams,
   type SystemDescription,
@@ -40,9 +47,26 @@ import {
 } from '@astra/shared/world';
 import type { InterestClass } from '../zones/interest.ts';
 import type { EntityFields, EntityInit, ZoneEntity } from '../zones/zone.ts';
-import { herdTick, move, newCreature, orientation, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
+import { groundDistance, herdTick, move, newCreature, orientation, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
 import type { Vec3 } from './cells.ts';
-import { animal, HERD_SPREAD_M, levelFor, offsetDir, planCellHerd, tangents, type HerdPlan } from './herds.ts';
+import {
+  APEX_RESPAWN_S,
+  DEN_RESPAWN_S,
+  denRandom,
+  denSites,
+  idleDen,
+  LAIR_M,
+  newDenState,
+  NIGHT_ONLY,
+  occupantOf,
+  planDenHerd,
+  SPAWN_CLEAR_M,
+  type DenInfo,
+  type DenSite,
+  type DenState,
+} from './dens.ts';
+import { animal, HERD_SPREAD_M, levelFor, offsetDir, planCellHerd, planNightHerd, tangents, type HerdPlan } from './herds.ts';
+import { isNight, starsAt } from './sky.ts';
 import { groundOf, groundPlanner, type Ground, type GroundSource } from './terrain.ts';
 
 /** Players within this height above a world's ground keep herds about them, m (the demo's 1,500 m, which it measured
@@ -92,8 +116,10 @@ export interface FaunaOptions {
   /** the system's tier; by default its tier with the Edge where it stands in Phase 1 (the zone manager passes the world
    * service's) */
   tier?: Tier;
-  /** false: cells hold no planned herds, only those spawnHerd places (tests and dev scenes) */
+  /** false: cells hold no planned herds (by day or night), only those spawnHerd places (tests and dev scenes) */
   spawner?: boolean;
+  /** whether dens send out their occupants (dens.ts); as `spawner` by default */
+  dens?: boolean;
   /** where worlds' grounds come from: the server's worker planner by default; tests plan on their own thread */
   grounds?: GroundSource;
   /** LOAD_BUDGET_MS, for tests */
@@ -141,6 +167,8 @@ export interface FaunaStats {
   worlds: number;
   creatures: number;
   cells: Record<CellState, number>;
+  /** herds out at dens (packs, night packs, ambushers, the apex) */
+  denHerds: number;
 }
 
 /** How small a creature is seen from 500 m only (the loot radius), and how the apex is seen from 2 km (the walker
@@ -160,7 +188,17 @@ interface Cell {
   readonly herds: Herd[];
   /** its planned herd, once worked out (null: none); a cell waiting for room keeps it */
   plan?: HerdPlan | null;
+  /** its night herd's plan, once worked out at night (null: none) */
+  nightPlan?: HerdPlan | null;
+  /** its night herd while out */
+  nightHerd: Herd | null;
+  /** it has sent out its night herd this night */
+  nightDone: boolean;
+  /** its centre, once asked for */
+  center?: Vec3;
 }
+
+const newCell = (key: number, now: number, dist: number): Cell => ({ key, state: 'loading', since: now, dist, herds: [], nightHerd: null, nightDone: false });
 
 /** What was last sent of a creature. */
 interface Sent {
@@ -183,6 +221,8 @@ interface Allowance {
   at: number;
 }
 
+/** Den state keys: body × DEN_KEY + the den's index (a world plans a few thousand dens at most). */
+const DEN_KEY = 1 << 20;
 const changed = (a: readonly number[], b: readonly number[], eps: number) => a.some((x, i) => Math.abs(x - b[i]!) > eps);
 const creaturesIn = (cell: Cell) => cell.herds.reduce((n, h) => n + h.members.length, 0);
 
@@ -204,6 +244,14 @@ class WorldFauna {
   private waitForRoomUntil = -Infinity;
   /** the highest the ground rises above sea level, about (the client's bound on its terrain, and its volcanoes) */
   private readonly peak: number;
+  /** its dens at `densTier` (null until planned), and those in each cell */
+  private dens: DenSite[] | null = null;
+  private densTier = -1;
+  private densByCell = new Map<number, DenSite[]>();
+  /** the star in the world's frame at the last scan (sky.ts) */
+  private star: Vec3 = [0, 0, 0];
+  /** the zone had no room for what this scan would spawn */
+  private full = false;
 
   constructor(
     private readonly sim: FaunaSim,
@@ -229,11 +277,16 @@ class WorldFauna {
   /** Steps the world with the players in its frame; those within SURFACE_ALT_M of its ground keep herds about them. */
   step(dt: number, now: number, inFrame: readonly Actor[]): void {
     this.ground ??= this.sim.grounds.ground(this.params, this.sim.tier);
+    // (its dens are asked for with its ground, and planned after it)
+    const dens =
+      this.sim.densOn && this.densTier !== this.sim.tier ? (this.sim.grounds.dens?.(this.params, this.sim.tier) ?? (this.sim.grounds.dens ? null : [])) : null;
     if (!this.ground) return;
+    if (dens) this.setDens(dens);
     const players = inFrame.filter((p) => this.nearGround(p.pos));
     this.scanIn -= dt;
     if (this.scanIn <= 0) {
       this.scan(now, players);
+      this.spawnAtNightAndDens(now, players);
       this.scanIn = SCAN_S;
     }
     this.load(now);
@@ -303,7 +356,7 @@ class WorldFauna {
       for (const [key, d] of w.near) {
         if (d < (near.get(key) ?? Infinity)) near.set(key, d);
         if (d > ACTIVE_M || this.cells.has(key) || allowance.tokens < 1 || !this.roomForCell()) continue;
-        const cell: Cell = { key, state: 'loading', since: now, dist: d, herds: [] };
+        const cell = newCell(key, now, d);
         this.cells.set(key, cell);
         this.loading.add(cell);
         allowance.tokens -= 1;
@@ -387,7 +440,8 @@ class WorldFauna {
     return true;
   }
 
-  /** Despawns a cell's creatures and forgets it. False when it was not loaded. */
+  /** Despawns a cell's creatures and forgets it. False when it was not loaded. Its dens' occupants go with it (to come
+   * out again when it next loads), but their respawn timers stay. */
   unload(cell: Cell): boolean {
     if (this.cells.get(cell.key) !== cell) return false;
     for (const h of cell.herds) {
@@ -395,6 +449,16 @@ class WorldFauna {
         this.sim.zone.despawn(m.id);
         this.forget(m);
       }
+    }
+    for (const site of this.densByCell.get(cell.key) ?? []) {
+      const st = this.sim.denState(this.body.index, site.index, false);
+      if (!st) continue;
+      // (a pack lost meanwhile still starts its timer; a night pack comes out again, as a cell's herds come back)
+      if (st.pack && !st.pack.members.length) st.respawnAt = this.respawnAt(site, this.sim.now);
+      st.pack = null;
+      st.night = null;
+      st.nightDone = false;
+      if (idleDen(st, this.sim.now)) this.sim.forgetDen(this.body.index, site.index);
     }
     this.ground?.drop(cell.key);
     this.forgetCell(cell);
@@ -416,7 +480,7 @@ class WorldFauna {
     const key = this.groundNow().cells.keyOf(dir[0], dir[1], dir[2]);
     let cell = this.cells.get(key);
     if (!cell) {
-      cell = { key, state: 'loading', since: now, dist: Infinity, herds: [] };
+      cell = newCell(key, now, Infinity);
       this.cells.set(key, cell);
     }
     if (cell.state === 'loading' && !this.open(cell, now)) {
@@ -475,6 +539,150 @@ class WorldFauna {
     return herd;
   }
 
+  /** Takes the world's dens at the zone's tier (planned off the tick), indexed by the cell each stands in. */
+  private setDens(dens: readonly Den[]): void {
+    const { sites, byCell } = denSites(dens, this.ground!.cells);
+    this.dens = sites;
+    this.densByCell = byCell;
+    this.densTier = this.sim.tier;
+    // (dens past the end of a shorter list, the tier having fallen: what they have out stays, as ordinary herds)
+    this.sim.forgetDensFrom(this.body.index, sites.length);
+  }
+
+  /** Whether its dens at the zone's tier are planned. */
+  get densReady(): boolean {
+    return this.densTier === this.sim.tier;
+  }
+
+  /** At each scan, what night and the dens of the active cells send out, under the cells' load budget (what is left
+   * waits for the next scan): each cell's night herd, and each den's occupants. */
+  private spawnAtNightAndDens(now: number, players: readonly Actor[]): void {
+    const nightHerds = this.sim.spawner && this.species.some((s) => s.spawn === 'herd' && s.temperament === 'predator');
+    if (!nightHerds && !this.dens?.length) return;
+    this.star = this.sim.starIn(this.body.index, now);
+    this.full = false;
+    const started = performance.now();
+    for (const cell of this.cells.values()) {
+      if (cell.state !== 'active') continue;
+      if (nightHerds) this.nightHerd(cell, players);
+      const dens = this.densByCell.get(cell.key);
+      if (dens) for (const site of dens) this.denTick(cell, site, now, players);
+      if (performance.now() - started > this.sim.loadBudgetMs) break;
+    }
+  }
+
+  /** Whether it is night at a surface direction (sky.ts), by the star at the last scan. */
+  nightAt(dir: Readonly<Vec3>): boolean {
+    return isNight(this.star, dir, this.ground!.radius);
+  }
+
+  /** Whether the zone has (or can make) room for `n` more creatures; once it has not, nothing more is tried this scan. */
+  private room(n: number): boolean {
+    if (!this.full && !this.sim.makeRoom(n)) this.full = true;
+    return !this.full;
+  }
+
+  /** A cell at night sends out its night herd, once a night, if it plans one (herds.ts); a cell by day is ready to again. */
+  private nightHerd(cell: Cell, players: readonly Actor[]): void {
+    if (cell.nightHerd && !cell.nightHerd.members.length) cell.nightHerd = this.dropHerd(cell, cell.nightHerd);
+    if (!this.nightAt((cell.center ??= this.ground!.cells.center(cell.key)))) {
+      cell.nightDone = false;
+      return;
+    }
+    if (cell.nightDone || cell.nightHerd) return;
+    if (cell.nightPlan === undefined) cell.nightPlan = planNightHerd(this.params.seed, cell.key, this.species, this.sim.tier, this.ground!);
+    const plan = cell.nightPlan;
+    if (plan && (!this.clearOf(plan.center, players) || !this.room(plan.animals.length))) return;
+    if (plan) cell.herds.push((cell.nightHerd = this.spawnPlan(plan, this.sim.rng)));
+    cell.nightDone = true;
+  }
+
+  /** A den in an active cell (dens.ts): notes a pack lost, then sends out what it keeps out and is not out yet. */
+  private denTick(cell: Cell, site: DenSite, now: number, players: readonly Actor[]): void {
+    const sp = occupantOf(site.den, this.species);
+    const st = this.sim.denState(this.body.index, site.index, sp !== null);
+    if (!st) return;
+    // a pack wiped out (killed: despawned by someone else): the den waits out its respawn
+    if (st.pack && !st.pack.members.length) {
+      st.pack = this.dropHerd(cell, st.pack);
+      st.respawnAt = this.respawnAt(site, now);
+    }
+    if (st.night && !st.night.members.length) st.night = this.dropHerd(cell, st.night);
+    const night = this.nightAt(site.dir);
+    if (!night) st.nightDone = false;
+    if (!sp) return;
+    if (NIGHT_ONLY.has(sp.temperament) && !night) {
+      if (st.pack) this.retire(cell, st);
+      return;
+    }
+    const wantPack = !st.pack && now >= st.respawnAt;
+    const wantNight = sp.temperament === 'predator' && night && !st.nightDone && !st.night;
+    if ((!wantPack && !wantNight) || !this.clearOf(site.dir, players)) return;
+    if (wantPack) st.pack = this.spawnDen(cell, site, sp, 0);
+    if (wantNight) st.nightDone = (st.night = this.spawnDen(cell, site, sp, 1)) !== null;
+  }
+
+  /** When a den whose pack was lost at `now` sends it out again. */
+  private respawnAt(site: DenSite, now: number): number {
+    return now + (site.den.role === 'apex' ? APEX_RESPAWN_S : DEN_RESPAWN_S);
+  }
+
+  /** A night-only den's herd out by day (the apex at dawn): once none of it has anyone to fight, it heads home, and at its
+   * lair it goes in (despawns), its pack with it. */
+  private retire(cell: Cell, st: DenState): void {
+    const herd = st.pack!;
+    if (herd.members.some((m) => m.target !== null)) return;
+    const lead = herd.members[0]!;
+    if (groundDistance(lead.pos, herd.home) <= LAIR_M) st.pack = this.dropHerd(cell, herd);
+    else if (lead.state !== 'return') lead.state = 'return';
+  }
+
+  /** Sends out a den's herd for `slot` (0 its pack, 1 its night pack) if the zone has room for it; null when not. */
+  private spawnDen(cell: Cell, site: DenSite, sp: FaunaSpecies, slot: number): Herd | null {
+    const plan = planDenHerd(this.params.seed, site, sp, this.sim.tier, slot);
+    // (the apex brings its pack: PACK_RULES)
+    if (!this.room(plan.animals.length + (sp.temperament === 'apex' ? PACK_RULES.size.max : 0))) return null;
+    const herd = this.spawnPlan(plan, denRandom(this.params.seed, site, slot, 1));
+    cell.herds.push(herd);
+    return herd;
+  }
+
+  /** Takes a herd out of its cell, despawning whatever is left of it. Returns null (for the slot it held). */
+  private dropHerd(cell: Cell, herd: Herd): null {
+    for (const m of herd.members) {
+      this.sim.zone.despawn(m.id);
+      this.forget(m);
+    }
+    herd.members.length = 0;
+    const i = cell.herds.indexOf(herd);
+    if (i >= 0) cell.herds.splice(i, 1);
+    return null;
+  }
+
+  /** Whether no player near the ground stands within SPAWN_CLEAR_M of a surface direction (along the ground, about). */
+  private clearOf(dir: Readonly<Vec3>, players: readonly Actor[]): boolean {
+    const r = this.ground!.radius;
+    for (const { pos } of players) {
+      const l = Math.hypot(pos[0], pos[1], pos[2]) || 1;
+      if (Math.hypot(pos[0] / l - dir[0], pos[1] / l - dir[1], pos[2] / l - dir[2]) * r < SPAWN_CLEAR_M) return false;
+    }
+    return true;
+  }
+
+  denInfo(): DenInfo[] {
+    return (this.dens ?? []).map((site) => {
+      const st = this.sim.denState(this.body.index, site.index, false);
+      return {
+        index: site.index,
+        den: site.den,
+        species: occupantOf(site.den, this.species),
+        pack: st?.pack?.members.map((m) => m.id) ?? [],
+        night: st?.night?.members.map((m) => m.id) ?? [],
+        respawnAt: st?.respawnAt ?? -Infinity,
+      };
+    });
+  }
+
   /** Sends what changed of a creature: its pose, its state, its attack phase. */
   private sync(m: Creature): void {
     const last = this.sent.get(m.id);
@@ -508,8 +716,10 @@ class WorldFauna {
 export class FaunaSim {
   /** the system's tier, which sets its worlds' species and their levels */
   tier: Tier;
-  /** whether cells spawn their planned herds */
+  /** whether cells spawn their planned herds (and their night herds) */
   readonly spawner: boolean;
+  /** whether dens send out their occupants */
+  readonly densOn: boolean;
   readonly grounds: GroundSource;
   readonly loadBudgetMs: number;
   readonly rng: Random;
@@ -519,6 +729,11 @@ export class FaunaSim {
   private readonly bodies = new Map<string, { body: BodySpec; params: PlanetParams }>();
   private readonly worlds = new Map<number, WorldFauna>();
   private readonly allowances = new Map<number, Allowance>();
+  /** dens with something out or a timer running (the rest are as new), by body × DEN_KEY + den index: kept while the
+   * zone runs, beyond their cells' and worlds' lives */
+  private readonly denStates = new Map<number, DenState>();
+  /** the star in each body's frame at a time (sky.ts), worked out once per scan */
+  private stars: { time: number; at: Vec3[] } | null = null;
   private lastTime: number | null = null;
 
   constructor(
@@ -527,6 +742,7 @@ export class FaunaSim {
   ) {
     this.tier = opts.tier ?? tierOfGalaxySystem(zone.systemIndex);
     this.spawner = opts.spawner ?? true;
+    this.densOn = opts.dens ?? this.spawner;
     this.grounds = opts.grounds ?? groundPlanner;
     this.loadBudgetMs = opts.loadBudgetMs ?? LOAD_BUDGET_MS;
     this.rng = new Random(hashInts(zone.system.seed, 0xfa11a));
@@ -587,14 +803,64 @@ export class FaunaSim {
   }
 
   /** Changes the tier (the Edge moved): worlds take the new species list from their next cell on (lists only grow or
-   * shrink at the end, so herds already out keep their species). */
+   * shrink at the end, so herds already out keep their species), and their dens at the new tier once planned (den lists
+   * too only grow or shrink at the end, so a den keeps its index and what it has out). */
   setTier(tier: Tier): void {
     this.tier = tier;
     for (const w of this.worlds.values()) w.species = faunaSpecies(w.params, tier);
   }
 
+  /** World time at the last step. */
+  get now(): number {
+    return this.lastTime ?? 0;
+  }
+
+  /** The star in body `body`'s frame at world time `time` (sky.ts). */
+  starIn(body: number, time: number): Vec3 {
+    if (this.stars?.time !== time) this.stars = { time, at: starsAt(this.zone.system, time) };
+    return this.stars.at[body]!;
+  }
+
+  /** Whether it is night at the zone's last step at a point on a world's surface (a position in its frame, or any
+   * direction), by the star then (sky.ts). */
+  isNight(body: number, at: Readonly<Vec3>): boolean {
+    const l = Math.hypot(at[0], at[1], at[2]);
+    const b = this.zone.system.bodies[body];
+    if (!b || !(l > 0)) throw new RangeError('a place on a world is needed');
+    return isNight(this.starIn(body, this.now), [at[0] / l, at[1] / l, at[2] / l], b.radius);
+  }
+
+  /** A den's state, made if `create` and it has none. */
+  denState(body: number, index: number, create: boolean): DenState | undefined {
+    const key = body * DEN_KEY + index;
+    let st = this.denStates.get(key);
+    if (!st && create) this.denStates.set(key, (st = newDenState()));
+    return st;
+  }
+
+  /** Forgets a den's state (it has nothing out and no timer running). */
+  forgetDen(body: number, index: number): void {
+    this.denStates.delete(body * DEN_KEY + index);
+  }
+
+  /** Forgets the states of a world's dens from index `from` on. */
+  forgetDensFrom(body: number, from: number): void {
+    for (const key of this.denStates.keys()) if (Math.floor(key / DEN_KEY) === body && key % DEN_KEY >= from) this.denStates.delete(key);
+  }
+
+  /** A world's dens at the zone's tier, once planned (none before, or on a world nobody is on): who lives in each and what
+   * it has out. */
+  dens(body: number): DenInfo[] {
+    return this.worlds.get(body)?.denInfo() ?? [];
+  }
+
+  /** Whether a world's dens at the zone's tier are planned (they spawn only then). */
+  densReady(body: number): boolean {
+    return !!this.worlds.get(body)?.densReady;
+  }
+
   /**
-   * Places a herd of a species on a world, on the ground below `at` (seam for dens, P1.E08.T03, and dev tools). Its cell
+   * Places a herd of a species on a world, on the ground below `at` (seam for dev tools and tests). Its cell
    * is loaded if it was not (planning the world's ground on this thread if it is not ready), and the herd lives and
    * unloads with it. Returns the herd id and creature ids, or null when the zone is full (MAX_CREATURES, after unloading
    * every asleep cell it could).
@@ -692,7 +958,9 @@ export class FaunaSim {
   stats(): FaunaStats {
     const cells = { loading: 0, active: 0, asleep: 0 };
     for (const n of Object.values(this.cellCounts())) for (const k of Object.keys(cells) as CellState[]) cells[k] += n[k];
-    return { worlds: this.worlds.size, creatures: this.creatureCount, cells };
+    let denHerds = 0;
+    for (const st of this.denStates.values()) denHerds += (st.pack ? 1 : 0) + (st.night ? 1 : 0);
+    return { worlds: this.worlds.size, creatures: this.creatureCount, cells, denHerds };
   }
 
   /** A world's fauna, made if it is not kept yet. */

@@ -212,7 +212,7 @@ players, `event` and `raid` 12.
 
 ### 6.2 Fauna
 
-DESIGN 12.2, P1.E08.T01; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
+DESIGN 12.2, P1.E08.T01 and T03; `fauna/`. A world's species come from shared `faunaSpecies(params, tier)`: its own
 docile and skittish species, then the hostile ones each tier pass appends on a random stream of its own, so the list
 only grows with the tier and an index names the same species at every tier. The zone ticks a `FaunaSim` at the start of
 each step, at the zone's tier: the zone manager passes the world service's tier when it opens the zone and calls
@@ -222,7 +222,7 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   ground: a cell wakes when a player comes within 400 m of its centre and spawns the herd planned for it from the world's
   seed and the cell alone, so everyone meets the same herd there; with no player within 500 m it sleeps (its creatures
   stand still, unsimulated), and after 30 s asleep its creatures are despawned. Ambushers and the apex come only from
-  dens (`FaunaSim.spawnHerd`, P1.E08.T03).
+  dens (below).
 - **Bounds** (a pose is a client's claim until movement authority, and fauna holds its own limits anyway): a player
   wakes at most 4 new cells a second (40 at once, on arrival; one allowance per player across the zone's worlds), a
   world keeps at most 256 cells and a zone at most 150 creatures, so 50 players on foot stay within the 200-entity
@@ -234,14 +234,35 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   The planner never stops fauna server-wide: a worker that dies (an error, or an exit without one) is restarted once
   with its plans, and after a second death planning moves to the main thread (one warning); a plan that hangs 10 s
   restarts the worker and goes again, and is given up if it hangs twice; a world whose plan fails is retried after 30 s,
-  doubling each time, with one warning each time.
+  doubling each time, with one warning each time. A world's dens at the zone's tier are a plan of their own on the same
+  worker (`planDenList`: `planSurface`'s dens on the natural ground, 50–600 ms on a large world at Tier 3), asked for with
+  its ground and kept per world and tier. They are planned with the world's whole species list (`DenOptions.species`,
+  `faunaSpecies` at `FAUNA_MAX_TIER`), so each den names who lives in it and a predator den is the kind its predator
+  lives in (burrow, nest or roost); the client's drawn ground plans none until `DENS_DRAWN` (§12), and must plan them
+  with the same species list when it does.
+- **Night** (`fauna/sky.ts`) is the meters' rule from the shared kinematics: night at a point when its star is on or
+  below the horizon of the point's own up. At night a cell may also send out its night herd, always one of the herd
+  spawner's predators, planned from the world's seed and the cell on a stream of its own with
+  (`FAUNA_SPAWNING.nightPredatorSpawnMult` − 1) times the chance its day herd is a predator's, so night doubles the
+  predators the herd spawner places (DESIGN 12.2, 12.8). It comes out once a night, when night falls on an active cell
+  or the cell wakes at night, and stays until the cell unloads.
+- **Dens** (DESIGN 12.2, `fauna/dens.ts`) live in the cells they stand in: while its cell is active a den keeps its
+  occupants out, as herds of the cell homed on the den. A predator den keeps its pack out, and at night a second, once a
+  night; an ambusher's burrow beside a site keeps its one or two ambushers lurking on it until a player comes within 8 m;
+  the apex's lair, in the landmark grove (the most wooded of the places a lair could go, `planDens`), sends out the apex
+  and its pack at night only, and at dawn the apex heads home once it has no one to fight and goes into its lair. A
+  pack wiped out is replaced after 300 s (the apex after 1,800 s, at night), a timer the zone's fauna keeps while the
+  zone runs, beyond the cell's life; a pack that only unloads with its cell comes back when the cell next loads.
+  Night herds and dens' occupants spawn at each scan under the cells' load budget, never within 70 m of a player (the
+  herd spawner's nearest), and only when the zone has room (they try again at the next scan). Dens spawn whether or not
+  they are drawn: a den is a spawn anchor, not geometry. `FaunaOptions.dens` (as `spawner` by default) turns them off.
 - **Phases.** A player the shared world cannot see (`phases.hiddenFromShared`: sealed in a bay, event or raid phase, §6.1) still keeps the herds
   round it awake, since it sees them, but is no creature's prey, intruder or threat.
 - **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
   (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,
   return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow. Hostile creatures pick targets from a threat
   table (`@astra/shared/combat`): sensing a player on foot adds threat by nearness, `FaunaSim.hurt` adds damage. The
-  zone's metrics carry its fauna's worlds, creatures and cells by state.
+  zone's metrics carry its fauna's worlds, creatures, cells by state and herds out at dens.
 
 ## 7. Authority
 
