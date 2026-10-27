@@ -276,7 +276,7 @@ export class HUD {
       const t = arcAngle(side, f);
       const p = (rr) => `${(rr * Math.cos(t) + 50).toFixed(2)} ${(rr * Math.sin(t) + 50).toFixed(2)}`;
       // (across the whole halo, so it reads against the fill and the track alike)
-      m.setAttribute('d', `M ${p(r - 8)} L ${p(r + 8)}`);
+      m.setAttribute('d', `M ${p(r - 9)} L ${p(r + 9)}`);
     }
     g.classList.toggle('marked', show);
   }

@@ -172,9 +172,9 @@ body {
 }
 /* The arcs sit on an opaque track inside a near-black halo, so neither the beam's glare nor a bright sky washes them out
    (the HUD is DOM over the canvas, never in the bloomed WebGL layer: only what is under it glows).
-   The crosshair: 64 px for 100 units, 0.64 px a unit; a 4.5 px fill and track in an 8.3 px halo. */
+   The crosshair: 64 px for 100 units, 0.64 px a unit; a 4.5 px fill and track in a 9.6 px halo (2.5 px a side). */
 .crosshair .gauge .halo {
-  stroke-width: 13;
+  stroke-width: 15;
 }
 .crosshair .gauge .track,
 .crosshair .gauge .fill {
@@ -199,7 +199,7 @@ body {
 }
 .gauge .halo {
   stroke: var(--ink);
-  stroke-opacity: 0.88;
+  stroke-opacity: 0.92;
 }
 .gauge .track {
   stroke: #3b3e44;
@@ -241,9 +241,10 @@ body {
   stroke: var(--danger);
   animation: overBreath 0.9s ease-in-out infinite alternate;
 }
+/* (a breath, not a blink: at its faintest the red still reads against the track and the halo) */
 @keyframes overBreath {
   to {
-    stroke-opacity: 0.55;
+    stroke-opacity: 0.8;
   }
 }
 .gauge .mark {
