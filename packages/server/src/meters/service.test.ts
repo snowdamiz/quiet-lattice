@@ -1,8 +1,9 @@
 // The meter service (P1.E07.T02): the beam heats only while the server believes the character is on foot, at the beam's
 // rate per second of server time however fast inputs come, and only out of the lockout; an input's activity lapses when
 // inputs stop; the world where the entity stands sets the rates (sunlight and the band for Charge, deep space none); the
-// pulse drive is refused with Charge empty; owned nodes and the hull set the capacities; pushes go out on events and while
-// the meters move; heat glows on the entity; and saved meters cool for the time the character was away.
+// pulse drive is allowed only with Charge (with a moment's grace to drop out), and a client asking for it empty is told
+// why; owned nodes and the hull set the capacities; pushes go out on events and while the meters move; heat glows on the
+// entity; and saved meters cool for the time the character was away.
 import { Buttons, type ClientMessage } from '@astra/shared/protocol';
 import { meterEnvironment, type MeterSave, type MeterView } from '@astra/shared/meters';
 import type { ShipLoadout } from '@astra/shared/ships';
@@ -39,13 +40,22 @@ function setup(opts: { owned?: string[]; ship?: ShipLoadout | null; saved?: Part
   meters.open(ID, { heat: 0, overheated: false, charge: 100, at: now, ...opts.saved });
   const entityId = zone.join(viewer, { kind: 'player', frame: zone.stationFrame, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'docked' });
   let seq = 0;
-  /** Sends one input at the current time as the gateway would: gate, the zone, then the meters. */
+  const input = (mode: Input['mode'], frame: string | null, pos: Vec3, buttons = 0): Input => ({
+    t: 'input',
+    seq: ++seq,
+    time: now,
+    mode,
+    pose: { frame, pos, quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+    buttons,
+  });
+  /** Sends one input at the current time as the gateway would: the meters hear the claim, the zone (no movement authority
+   * here: what it judges is sim/movement's to test) applies it, then the meters take it up. */
   const send = (mode: Input['mode'], frame: string | null, pos: Vec3, buttons = 0): Input => {
-    const msg: Input = { t: 'input', seq: ++seq, time: now, mode, pose: { frame, pos, quat: [0, 0, 0, 1], vel: [0, 0, 0] }, buttons };
-    const claim = meters.gate(ID, msg, now);
-    expect(zone.input(viewer, claim)).toBe('ok');
-    meters.input(ID, viewer, claim, now);
-    return claim;
+    const msg = input(mode, frame, pos, buttons);
+    meters.claim(ID, msg, now);
+    expect(zone.input(viewer, msg)).toBe('ok');
+    meters.input(ID, viewer, msg, now);
+    return msg;
   };
   return {
     zone,
@@ -54,6 +64,7 @@ function setup(opts: { owned?: string[]; ship?: ShipLoadout | null; saved?: Part
     pushes,
     entityId,
     send,
+    input,
     get now() {
       return now;
     },
@@ -225,26 +236,33 @@ describe('Charge, as the server judges it', () => {
     expect(t.meters.view(ID, t.now).charge).toBeCloseTo(50, 6);
   });
 
-  it('refuses the pulse drive with Charge empty, saying so once, and lets it engage again with Charge', () => {
+  it('allows the pulse drive only with Charge, and tells a client asking to engage it empty why, once until it stops', () => {
     const t = setup({ saved: { charge: 0 } });
     const deep: Vec3 = [t.zone.system.outerOrbit * 1.5, 0, 0];
     t.send('ship', null, deep);
     t.pushes.length = 0;
     expect(t.meters.allowsMode(ID, 'pulse', t.now)).toBe(false);
+    expect(t.meters.allowsMode(ID, 'pulse', t.now, 5)).toBe(false);
     expect(t.meters.allowsMode(ID, 'ship', t.now)).toBe(true);
-    const claim = t.send('pulse', null, deep);
-    expect(claim.mode).toBe('ship');
-    expect(t.zone.entity(t.entityId)!.fields.mode).toBe('ship');
-    expect(t.pushes.filter((p) => p.notice)).toEqual([
+    // (movement authority refuses the claim, so the zone never applies it: the meters only hear it)
+    const notices = () => t.pushes.filter((p) => p.notice);
+    t.meters.claim(ID, t.input('pulse', null, deep), t.now);
+    expect(notices()).toEqual([
       { view: expect.objectContaining({ charge: 0 }), notice: { text: expect.stringMatching(/Charge empty/), tone: 'warn' } },
     ]);
     t.wait(0.05);
-    expect(t.send('pulse', null, deep).mode).toBe('ship');
-    expect(t.pushes.filter((p) => p.notice)).toHaveLength(1);
-    // a refill at a Waystation (its price is the station's to take)
+    t.meters.claim(ID, t.input('pulse', null, deep), t.now);
+    expect(notices()).toHaveLength(1);
+    // it stopped asking, then asks again: told again
+    t.send('ship', null, deep);
+    t.meters.claim(ID, t.input('pulse', null, deep), t.now);
+    expect(notices()).toHaveLength(2);
+    // a refill at a Waystation (its price is the station's to take): the drive engages, and nothing is said
     expect(t.meters.refillCharge(ID, t.now).charge).toBe(100);
     t.wait(0.05);
-    expect(t.send('pulse', null, deep).mode).toBe('pulse');
+    expect(t.meters.allowsMode(ID, 'pulse', t.now)).toBe(true);
+    t.send('pulse', null, deep);
+    expect(notices()).toHaveLength(2);
     expect(t.zone.entity(t.entityId)!.fields.mode).toBe('pulse');
   });
 
@@ -263,7 +281,13 @@ describe('Charge, as the server judges it', () => {
     }
     expect(t.meters.view(ID, t.now).charge).toBe(0);
     expect(t.pushes.some((x) => x.view.charge === 0)).toBe(true);
-    expect(t.zone.entity(t.entityId)!.fields.mode).toBe('ship');
+    // the drive is out: it may not engage, but for a grace (the client's own drop-out on the wire) it may cruise on; no
+    // notice, as nothing was refused
+    expect(t.meters.allowsMode(ID, 'pulse', t.now)).toBe(false);
+    expect(t.meters.allowsMode(ID, 'pulse', t.now, 1)).toBe(true);
+    expect(t.pushes.some((x) => x.notice)).toBe(false);
+    t.wait(1.1);
+    expect(t.meters.allowsMode(ID, 'pulse', t.now, 1)).toBe(false);
   });
 });
 

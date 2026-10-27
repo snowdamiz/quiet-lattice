@@ -7,8 +7,8 @@
 // `inventory`, its `skills` and its `meters`. From then on `input` and `ack` go to the zone, which sends the session a
 // binary snapshot every tick (an input movement authority refuses is answered with `correction`, and a client corrected
 // too often is kicked), and closing the socket saves the character and takes the entity out; each input passes the meter
-// service first (heat and Charge run on inputs, and a pulse with Charge empty is refused) and is told it after the zone has
-// applied it. Inventory requests go to the inventory service and skill requests to the skill service, which answer each
+// service first (heat and Charge run on inputs; movement authority refuses the pulse drive with Charge empty, and the
+// session is told why) and is told it after the zone has applied it. Inventory requests go to the inventory service and skill requests to the skill service, which answer each
 // with the authoritative state (ARCHITECTURE §7, §14, §19).
 // Chat and party requests go to the social service (social/), which hears of every character that joins and every
 // connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
@@ -205,6 +205,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'skills', ...reply });
   });
   const meters = deps.meters ?? needMeters(persistence);
+  // movement authority asks them whether a claimed mode is allowed: the pulse drive needs Charge (refused as a correction)
+  deps.zones.meters = meters;
   // the lockout, a recovery, Charge running out, a refused pulse and the meters moving reach the session holding the character
   const unsubscribeMeters = meters.subscribe((characterId, view, notice) => {
     for (const c of conns) {
@@ -385,9 +387,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       case 'input': {
         if (s.state !== 'joined') return invalid(s, 'input before join');
         const now = deps.clock.now();
-        const claim = meters.gate(s.characterId!, msg, now);
-        const r = deps.zones.input(s, claim);
-        if (r === 'ok') meters.input(s.characterId!, s, claim, now);
+        // the meters run to now first (movement authority asks them about the pulse drive), then the zone judges and applies
+        meters.claim(s.characterId!, msg, now);
+        const r = deps.zones.input(s, msg);
+        if (r === 'ok') meters.input(s.characterId!, s, msg, now);
         // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
         if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
         // refused by movement authority (which logged it): the correction, and the end of a client corrected too often
@@ -544,6 +547,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeMeters();
+      if (deps.zones.meters === meters) deps.zones.meters = null;
       unsubscribeQuests?.();
       unsubscribeMining?.();
       unsubscribeWorld();

@@ -436,6 +436,41 @@ describe('cheats are refused', () => {
     expect(refusal(stubbed.send(pose(HOME, scale(up, ground + 1501)), 'pulse')).violation).toMatchObject({ rule: 'pulse_altitude' });
   });
 
+  it('the pulse drive with Charge empty: engaging, or cruising on past the drop-out’s grace (the character’s meters)', () => {
+    // a stand-in for the meter service: Charge, and when it ran out
+    const meter = { charge: 0, emptiedAt: -Infinity };
+    const asked: [string, string, number][] = [];
+    const meters = {
+      allowsMode(id: string, mode: string, now: number, graceS = 0) {
+        asked.push([id, mode, graceS]);
+        return mode !== 'pulse' || meter.charge > 0 || now - meter.emptiedAt <= graceS;
+      },
+    };
+    const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' }, {}, { meters });
+    // engaging with Charge empty: corrected back to the ship it was, the rule logged
+    const r = refusal(h.send(pose(null, OPEN), 'pulse'));
+    expect(r.violation).toMatchObject({ rule: 'pulse_charge', unit: 'charge', detail: 'engaging with Charge empty' });
+    expect(r.correction).toMatchObject({ mode: 'ship' });
+    expect(asked).toEqual([['char-1', 'pulse', 0]]);
+    expect(h.lines.find((l) => l.msg === 'movement corrected')?.obj).toMatchObject({ rule: 'pulse_charge', character: 'char-1' });
+    // the ship's own modes are never asked about
+    h.now += MOVEMENT.correction.graceS;
+    expect(h.send(pose(null, OPEN), 'ship').ok).toBe(true);
+    expect(asked).toHaveLength(1);
+    // with Charge it engages, and cruises on as it runs out for the grace, asked with it
+    meter.charge = 40;
+    expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);
+    meter.charge = 0;
+    meter.emptiedAt = h.now;
+    expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);
+    expect(asked.at(-1)).toEqual(['char-1', 'pulse', MOVEMENT.pulse.chargeGraceS]);
+    // past it, the drive is out
+    h.now += MOVEMENT.pulse.chargeGraceS;
+    expect(refusal(h.send(pose(null, OPEN), 'pulse')).violation).toMatchObject({ rule: 'pulse_charge', detail: 'cruising on past the drop-out' });
+    // without meters (a restore's check, the tests of the other rules) nothing is asked
+    expect(inSpace().send(pose(null, OPEN), 'pulse').ok).toBe(true);
+  });
+
   it('a ship below the ground, inside the hangar shell, or in a gas giant’s depths', () => {
     const { up, ground } = dryLand();
     const h = new Harness(D, { pose: pose(HOME, scale(up, ground + 20)), mode: 'ship' });

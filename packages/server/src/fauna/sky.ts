@@ -1,8 +1,9 @@
 // Day and night on a world's surface (P1.E08.T03): night doubles predator spawns and brings out the apex (DESIGN 12.2,
-// 12.8). The rule is the meters' (P1.E07.T02's meterEnvironment): it is day at a point when its star is above the
-// horizon of the point's own up, and night otherwise; here from the shared kinematics (bodies' poses from the world time,
-// ARCHITECTURE §3), so the server's night is where every client draws it. Points are in a world's own turning frame, as
-// creatures are.
+// 12.8). The rule is the meters' own (`isNight` in @astra/shared/meters, P1.E07.T02): it is night at a point when its star
+// is on or below the horizon of the point's own up; here with the star from the shared kinematics (bodies' poses from the
+// world time, ARCHITECTURE §3), so the server's night is where every client draws it. Points are in a world's own turning
+// frame, as creatures are.
+import { isNight } from '@astra/shared/meters';
 import { dirToLocal, systemPoses, type SystemMotions } from '@astra/shared/world';
 import type { Vec3 } from './cells.ts';
 
@@ -12,15 +13,9 @@ export function starsAt(system: SystemMotions, time: number): Vec3[] {
   return systemPoses(system, time).bodies.map((p) => dirToLocal(p, [-p.position[0], -p.position[1], -p.position[2]]));
 }
 
-/** Whether it is night at the point `r` metres from a world's centre along unit direction `dir` (its own up): its star
- * (`star`, from starsAt) on or below that point's horizon. */
-export function isNight(star: Readonly<Vec3>, dir: Readonly<Vec3>, r: number): boolean {
-  return dir[0] * star[0] + dir[1] * star[1] + dir[2] * star[2] <= r;
-}
-
 /** Whether it is night at time `time` at a point on body `body` (`dir` a unit direction, `r` from its centre). */
 export function nightAt(system: SystemMotions, body: number, dir: Readonly<Vec3>, r: number, time: number): boolean {
-  return isNight(starsAt(system, time)[body]!, dir, r);
+  return isNight(dir, starsAt(system, time)[body]!, r);
 }
 
 /**

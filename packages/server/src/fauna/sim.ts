@@ -30,6 +30,7 @@
 import { performance } from 'node:perf_hooks';
 import { addThreat } from '@astra/shared/combat';
 import { PACK_RULES } from '@astra/shared/data';
+import { isNight } from '@astra/shared/meters';
 import type { EntityField } from '@astra/shared/protocol';
 import {
   faunaSpecies,
@@ -66,7 +67,7 @@ import {
   type DenState,
 } from './dens.ts';
 import { animal, HERD_SPREAD_M, levelFor, offsetDir, planCellHerd, planNightHerd, tangents, type HerdPlan } from './herds.ts';
-import { isNight, starsAt } from './sky.ts';
+import { starsAt } from './sky.ts';
 import { groundOf, groundPlanner, type Ground, type GroundSource } from './terrain.ts';
 
 /** Players within this height above a world's ground keep herds about them, m (the demo's 1,500 m, which it measured
@@ -581,9 +582,9 @@ class WorldFauna {
     return !herd.members.some((m) => (site === undefined || m.species.index === site.den.species) && this.sim.zone.entity(m.id));
   }
 
-  /** Whether it is night at a surface direction (sky.ts), by the star at the last scan. */
+  /** Whether it is night at a surface direction (the meters' rule, sky.ts), by the star at the last scan. */
   nightAt(dir: Readonly<Vec3>): boolean {
-    return isNight(this.star, dir, this.ground!.radius);
+    return isNight(dir, this.star, this.ground!.radius);
   }
 
   /** Whether the zone has (or can make) room for `n` more creatures; once it has not, nothing more is tried this scan. */

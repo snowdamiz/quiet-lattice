@@ -8,8 +8,8 @@
 // requests: the beam heats only while the server believes the character is on foot (the zone's mode for its entity) and
 // the meter is out of the lockout, at the beam's own rate per second of server time however fast inputs arrive; it holds
 // at most ACTIVITY_HOLD_S past the last input, so a client that stops sending goes idle. The pulse drive burns Charge only
-// in the believed mode `pulse`, and `gate` refuses that mode while Charge is empty (movement authority applies the mode the
-// server believes, P1.E03.T04).
+// in the believed mode `pulse`; movement authority (P1.E03.T04) asks `allowsMode` and refuses the drive with a correction
+// while Charge is empty, and `claim` tells the session why.
 //
 // Mining (P1.E13) is paid in the beam time this service judged: `takeBeam` hands over the seconds the beam fired since it
 // last did, so a client earns what it fired, however it times its hits.
@@ -106,6 +106,8 @@ interface Entry {
   glow: number;
   /** Seconds the beam fired (`stepMeters`' `beamS`: held, on foot, out of the lockout) since mining last took them. */
   beamS: number;
+  /** When Charge last ran out in play (world time, the end of the stretch it ran out in), for the drive's drop-out grace. */
+  emptiedAt: number;
   /** Not yet in the world since it was opened: the time it was away runs heat (it cools) but never Charge, which regenerates
    * only in play (the Listener's anywhere included). Its first input ends it. */
   away: boolean;
@@ -158,6 +160,7 @@ export class MeterService {
       pulseRefused: false,
       glow: -1,
       beamS: 0,
+      emptiedAt: -Infinity,
       away: true,
     });
   }
@@ -204,32 +207,32 @@ export class MeterService {
 
   /**
    * Movement authority's question (P1.E03.T04): may the character be in `mode` now? Everything but the pulse drive, which
-   * needs Charge.
+   * needs Charge; one that ran out of it no more than `graceS` ago may still be cruising on it (its client drops out on its
+   * own meter, a moment behind on the wire).
    */
-  allowsMode(characterId: string, mode: MoveMode, now: number): boolean {
+  allowsMode(characterId: string, mode: MoveMode, now: number, graceS = 0): boolean {
     if (mode !== 'pulse') return true;
     const e = this.entry(characterId);
     this.advance(characterId, e, now);
-    return canEngagePulse(e.state, e.profile);
+    return canEngagePulse(e.state, e.profile) || now - e.emptiedAt <= graceS;
   }
 
   /**
-   * An input as the meters judge it, before the zone applies it: the meters advance to `now`, and a claim of the pulse drive
-   * with Charge empty is refused, the character staying in the mode the server believed (a ship's `ship` when that was the
-   * drive). The character hears why once, until it stops asking.
+   * An input's claim, before the zone judges it: the meters advance to `now` (so movement authority's `allowsMode` reads
+   * them as of the input), and a claim to engage the pulse drive with Charge empty, which movement authority refuses, is
+   * told why: once, until the client stops asking.
    */
-  gate(characterId: string, msg: InputMessage, now: number): InputMessage {
+  claim(characterId: string, msg: InputMessage, now: number): void {
     const e = this.entry(characterId);
     this.advance(characterId, e, now);
-    if (msg.mode !== 'pulse') {
-      e.pulseRefused = false;
-      return msg;
+    // (cruising on as Charge runs out is the drive dropping out, not a refusal to engage)
+    if (msg.mode !== 'pulse' || e.mode === 'pulse' || canEngagePulse(e.state, e.profile)) {
+      if (msg.mode !== 'pulse') e.pulseRefused = false;
+      return;
     }
-    if (canEngagePulse(e.state, e.profile)) return msg;
-    const notice = e.pulseRefused ? undefined : { text: 'Charge empty: the pulse drive will not engage', tone: 'warn' as const };
+    if (e.pulseRefused) return;
     e.pulseRefused = true;
-    if (notice) this.push(characterId, e, now, notice);
-    return { ...msg, mode: e.mode && e.mode !== 'pulse' ? e.mode : 'ship' };
+    this.push(characterId, e, now, { text: 'Charge empty: the pulse drive will not engage', tone: 'warn' });
   }
 
   /**
@@ -313,17 +316,19 @@ export class MeterService {
     this.reprofile(e, characterId);
     if (!(now > e.at)) return;
     const busyTo = Math.min(now, Math.max(e.at, e.activeUntil));
-    if (busyTo > e.at) this.run(e, e.activity, busyTo - e.at);
-    if (now > busyTo) this.run(e, IDLE, now - busyTo);
+    if (busyTo > e.at) this.run(e, e.activity, busyTo - e.at, busyTo);
+    if (now > busyTo) this.run(e, IDLE, now - busyTo, now);
     e.at = now;
   }
 
-  private run(e: Entry, act: MeterActivity, dt: number): void {
+  /** Runs the meters `dt` seconds doing `act`, the stretch ending at world time `end`. */
+  private run(e: Entry, act: MeterActivity, dt: number, end: number): void {
     const step = stepMeters(e.state, e.profile, e.env, act, dt, e.conditions);
     e.beamS += step.beamS;
     // (away, Charge stands as the ship was left)
     e.state = e.away ? { ...step.state, charge: e.state.charge } : step.state;
     e.events.push(...(e.away ? step.events.filter((ev) => ev !== 'charge_empty') : step.events));
+    if (!e.away && step.events.includes('charge_empty')) e.emptiedAt = end;
     // the drive dropped out: it stays out until an input claims it again
     if (act.pulse && !step.pulse) e.activity = { ...e.activity, pulse: false };
   }

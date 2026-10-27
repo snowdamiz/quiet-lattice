@@ -78,6 +78,17 @@ export const NOWHERE: Readonly<MeterEnvironment> = Object.freeze({
   nearBodies: false,
 });
 
+/**
+ * Day and night's one rule (the meters' and fauna's, P1.E08.T03): whether it is night at a point on a world, its star on
+ * or below the horizon of the point's own up. `up` is the point's unit direction from the world's centre, `toStar` the
+ * vector from the world's centre to the star and `r` the point's distance from that centre, all in the same axes (the
+ * world's own turning ones, or the system's): the star is above the horizon when the point's up has it further along than
+ * the point itself is, up · toStar > r.
+ */
+export function isNight(up: readonly [number, number, number], toStar: readonly [number, number, number], r: number): boolean {
+  return up[0] * toStar[0] + up[1] * toStar[1] + up[2] * toStar[2] <= r;
+}
+
 function xyz(p: Vec3Like): [number, number, number] {
   return Array.isArray(p) ? [p[0], p[1], p[2]] : [(p as { x: number }).x, (p as { y: number }).y, (p as { z: number }).z];
 }
@@ -119,8 +130,8 @@ export function meterEnvironment(d: EnvSystem, bodies: readonly BodyAt[], place:
     if (place.frame === i) {
       world = b.type;
       hazards = b.params.hazard ? [b.params.hazard.kind] : [];
-      // the point's own up is away from the body's centre: the star is above its horizon when up · toStar > 0
-      time = along < 0 ? 'day' : 'night';
+      // the point's own up is away from the body's centre; the star is at the origin, so the body's centre to it is −centre
+      time = dist > 0 && !isNight([-rx / dist, -ry / dist, -rz / dist], [-bx, -by, -bz], dist) ? 'day' : 'night';
       const p = b.params;
       const water = p.type !== 'gas' && p.hasOcean && p.water.emissive === 0;
       underwater = !!place.foot && water && b.radius - dist > UNDERWATER_DEPTH;
