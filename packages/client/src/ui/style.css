@@ -121,18 +121,20 @@ body {
 .c-state {
   position: absolute;
   left: 50%;
-  top: calc(100% - 6px);
+  top: calc(100% - 2px);
   transform: translate(-50%, -3px);
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.32em;
-  /* (the tracking trails the last letter: pull it back so the word centres under the dot) */
-  margin-right: -0.32em;
-  padding: 2px 14px;
-  color: #ff7a70;
-  /* a soft scrim, so the word reads over bright ground as the toasts and the objective do */
-  background: radial-gradient(closest-side, rgba(4, 8, 14, 0.5), rgba(4, 8, 14, 0));
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.26em;
+  /* (the tracking trails the last letter: the right padding is short by it, so the word centres under the dot) */
+  padding: 4px calc(9px - 0.26em) 4px 9px;
+  color: #ff8a80;
+  /* a near-opaque flight-deck plate, edged in danger red: the word holds 4.5:1 over the brightest sunlit ground */
+  background: rgba(6, 8, 11, 0.82);
+  border-left: 2px solid var(--danger);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -328,9 +330,11 @@ body {
   display: flex;
   align-items: baseline;
   gap: 7px;
-  padding: 3px 18px 3px 4px;
-  /* a soft scrim, fading out right, up and down, so the readout holds over a bright world's limb */
-  background: radial-gradient(farthest-side at 0 50%, rgba(4, 8, 14, 0.5), rgba(4, 8, 14, 0.3) 60%, rgba(4, 8, 14, 0));
+  padding: 3px 16px 3px 6px;
+  /* a near-opaque plate under the whole readout, rate included, fading only past its end: it holds 4.5:1 over a bright
+     world's limb */
+  background: linear-gradient(90deg, rgba(6, 8, 11, 0.82) calc(100% - 12px), rgba(6, 8, 11, 0));
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
   font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: 500;
@@ -347,7 +351,7 @@ body {
 }
 .r-chg i {
   font-style: normal;
-  font-size: 9.5px;
+  font-size: 10.5px;
   letter-spacing: 0.04em;
 }
 .r-chg i.up {
@@ -357,9 +361,10 @@ body {
   color: var(--dim);
 }
 .r-chg.empty b {
-  font-size: 9.5px;
+  font-size: 10.5px;
   letter-spacing: 0.24em;
-  color: var(--danger);
+  /* (the danger red lifted, to hold 4.5:1 on the plate) */
+  color: #ff8a80;
 }
 .r-mode {
   position: absolute;
@@ -2474,7 +2479,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 
 /* legible over a bright sky: a soft dark halo under the HUD's readouts */
-.r-alt, .r-speed, .r-mode, .r-chg, .c-state, .location, .bar label {
+.r-alt, .r-speed, .r-mode, .location, .bar label {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.25);
 }
 
