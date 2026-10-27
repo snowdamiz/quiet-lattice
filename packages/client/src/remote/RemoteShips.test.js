@@ -5,7 +5,7 @@
 // level its size on screen calls for, its gear folded and its engines lit on its own, and room made as more come.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { COARSE_RATIO, LIGHTS_FAR, LIGHTS_NEAR, LOD_PX, PANEL_STRENGTH, PLATED_ENV, RemoteShips, hullMaterial, lightsAt, lodFor, modelledHull, painted, plating, strobeAt } from './RemoteShips.js';
+import { COARSE_MAX, COARSE_RATIO, LIGHTS_FAR, LIGHTS_NEAR, LOD_PX, PANEL_STRENGTH, PLATED_ENV, ROUGH_MIN, RemoteShips, hullMaterial, lightsAt, lodFor, modelledHull, painted, plating, strobeAt } from './RemoteShips.js';
 
 /** A loaded ship as Ship.load leaves one: the model (a rounded hull, a wing, an engine glow, the cockpit interior, a gear
  * leg on its pivot) in the ship's group beside its own effects and cockpit screens; `paint` its hull colour. `lods` adds
@@ -113,29 +113,30 @@ describe('remote hulls', () => {
 
   it('carry each surface’s material on its vertices: colour, roughness, metalness, plating, glow; the throats dark', () => {
     const vertex = (g, attr, i = 0) => Array.from(g.attributes[attr].array.slice(i * g.attributes[attr].itemSize, (i + 1) * g.attributes[attr].itemSize));
-    const hull = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Hull', color: 0x808080, roughness: 0.4, metalness: 0.3 }));
+    const [hull] = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Hull', color: 0x808080, roughness: 0.4, metalness: 0.3 }));
     expect(vertex(hull, 'aMat')).toEqual([0.4, 0.3, 1, 0].map((x) => Math.fround(x)));
     expect(vertex(hull, 'color')[0]).toBeCloseTo(new THREE.Color(0x808080).r, 6);
     expect(hull.userData.lit).toBe(false);
-    const glass = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Glass', color: 0x21303c }));
+    const [glass] = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'Glass', color: 0x21303c }));
     // only the plated surfaces are: the glass, the glows and the unnamed are not
     expect(vertex(glass, 'aMat')[2]).toBe(0);
-    const engine = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'EngineGlow', emissive: 0x66bbff, emissiveIntensity: 0.2 }));
+    const [engine] = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'EngineGlow', emissive: 0x66bbff, emissiveIntensity: 0.2 }));
     expect(vertex(engine, 'aMat')[2]).toBe(0);
     // (its colour at full: each ship's power scales it)
     expect(vertex(engine, 'aMat')[3]).toBe(1);
     expect(engine.userData.lit).toBe(true);
     expect(vertex(engine, 'aEmissive')[2]).toBeCloseTo(1, 6);
-    const beacon = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'NavWhite', emissive: 0xffffff }));
+    const [beacon] = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ name: 'NavWhite', emissive: 0xffffff }));
     expect(vertex(beacon, 'aMat')[3]).toBe(2);
-    const throat = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ emissive: 0x5aa0ff, emissiveIntensity: 2 }));
+    const [throat] = painted(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ emissive: 0x5aa0ff, emissiveIntensity: 2 }));
     expect(vertex(throat, 'aEmissive')).toEqual([0, 0, 0]);
     expect(vertex(throat, 'aMat')[2]).toBe(0);
     expect(throat.userData.lit).toBe(false);
-    // a two-sided surface gets its back faces
-    const sheet = painted(new THREE.PlaneGeometry(), new THREE.MeshStandardMaterial({ name: 'Dark', side: THREE.DoubleSide }));
-    expect(sheet.index.count).toBe(2 * 6);
-    expect(vertex(sheet, 'normal', 4)[2]).toBe(-1);
+    const [front, back] = painted(new THREE.PlaneGeometry(), new THREE.MeshStandardMaterial({ name: 'Dark', side: THREE.DoubleSide }));
+    // a two-sided surface gets its back as a surface of its own, wound the other way, its normals turned round
+    expect(back.index.count).toBe(front.index.count);
+    expect(vertex(back, 'normal', 0)[2]).toBe(-1);
+    expect(Array.from(back.index.array.slice(0, 3))).toEqual([front.index.array[0], front.index.array[2], front.index.array[1]]);
   });
 
   it('wear one material per level that reads them, the plating only on plated vertices, read after it sets roughness', () => {
@@ -156,7 +157,7 @@ describe('remote hulls', () => {
     expect(m.vertexColors).toBe(true);
     expect(f).toContain('uniform float uPanelStrength;');
     expect(f.match(/uPanelStrength \* vMat\.z \* vShip\.w/g)).toHaveLength(2);
-    expect(f.indexOf('roughnessFactor = vMat.x;')).toBeLessThan(f.indexOf('roughnessFactor = clamp(roughnessFactor'));
+    expect(f.indexOf('roughnessFactor = max(vMat.x, 0.00);')).toBeLessThan(f.indexOf('roughnessFactor = clamp(roughnessFactor'));
     expect(f).toContain('metalnessFactor = vMat.y;');
     expect(f).toContain('totalEmissiveRadiance = vEmissive');
     expect(shader.vertexShader).toContain('vShip = aShip;');
@@ -164,6 +165,15 @@ describe('remote hulls', () => {
     expect(f).not.toContain('#include <envmap_physical_pars_fragment>');
     expect(f.match(new RegExp(`envMapIntensity \\* mix\\(1\\.0, ${PLATED_ENV.toFixed(2)}, vMat\\.z\\)`, 'g')).length).toBeGreaterThan(1);
     expect(PANEL_STRENGTH[2]).toBe(0);
+    // the smaller levels satin, so a few pixels cannot catch the sun as one hot pixel
+    const coarse = { uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader };
+    hullMaterial('lark', 2, () => {}).onBeforeCompile(coarse);
+    expect(coarse.fragmentShader).toContain(`roughnessFactor = max(vMat.x, ${ROUGH_MIN[2].toFixed(2)});`);
+    expect(ROUGH_MIN[2]).toBeGreaterThan(0.8);
+    // and a ship that small never brighter than the bloom's threshold, whatever catches the light on it
+    expect(coarse.fragmentShader).toContain(`gl_FragColor.rgb = min(gl_FragColor.rgb, vec3(${COARSE_MAX.toFixed(2)}));`);
+    expect(COARSE_MAX).toBeLessThan(1.2);
+    expect(f).not.toContain('gl_FragColor.rgb = min(');
   });
 });
 
@@ -183,8 +193,8 @@ describe('remote ships’ lights and plating', () => {
 
   it(`dim with distance, past ${LIGHTS_FAR} m under the bloom’s threshold (1.2) even at the strobe’s flash`, () => {
     expect(lightsAt(LIGHTS_NEAR)).toBe(1);
-    expect(lightsAt(150)).toBeLessThan(1);
-    expect(lightsAt(150)).toBeGreaterThan(lightsAt(250));
+    expect(lightsAt(LIGHTS_NEAR + 20)).toBeLessThan(1);
+    expect(lightsAt(LIGHTS_NEAR + 20)).toBeGreaterThan(lightsAt(LIGHTS_FAR - 20));
     for (const d of [LIGHTS_FAR, 1000, 3600]) expect(strobeAt(0.05, 0, lightsAt(d))).toBeLessThan(1.2);
   });
 

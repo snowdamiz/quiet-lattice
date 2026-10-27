@@ -11,7 +11,7 @@ export const MARK_GAP = 6;
 /** Half the mark's size (px): a 6 px diamond. */
 export const MARK_R = 3;
 /** Px between the mark's edge and its label. */
-export const LABEL_GAP = 7;
+export const LABEL_GAP = 8;
 /** A ship whose bounds on screen pass this share of the screen's width or height has no marker. */
 export const PLAIN = 0.3;
 /** A label's height (px): its name over its range. */

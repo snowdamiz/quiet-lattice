@@ -52,6 +52,13 @@ const LOD_HYSTERESIS = 1.15;
 export const PANEL_STRENGTH = [0.55, 0.55, 0];
 /** How much of the environment's light the plated surfaces reflect, as the local ship's do (Ship.load). */
 export const PLATED_ENV = 0.45;
+/** The least roughness at each level: the model's own; on the smaller levels a few pixels' normals could catch the sun
+ * as a single hot pixel, which flickers as the ship turns and blooms far bigger than the ship (specular aliasing), so
+ * their surfaces go satin. */
+export const ROUGH_MIN = [0, 0.6, 0.9];
+/** The brightest a ship drawn at the coarsest may be (before tone mapping): under the bloom's threshold (1.2), so a ship
+ * a few pixels long never blooms into a blot bigger than itself, whatever catches the light on it for a frame. */
+export const COARSE_MAX = 1;
 
 /** Ships this close (m) are drawn even outside the view: their shadows can fall into it. */
 const SHADOW_NEAR = 100;
@@ -64,8 +71,8 @@ const STROBE = 2;
 /** A remote ship's lights (its strobe, nav and sensor lights, the glow of its exhaust) at full within LIGHTS_NEAR m of the
  * camera, dimmed with distance to LIGHTS_FAR_SHARE of it by LIGHTS_FAR m and beyond: there the strobe's 6 is under the
  * bloom's threshold (1.2), so a light far off is the few pixels it covers, never a bloom bigger than the ship. */
-export const LIGHTS_NEAR = 80;
-export const LIGHTS_FAR = 320;
+export const LIGHTS_NEAR = 40;
+export const LIGHTS_FAR = 150;
 export const LIGHTS_FAR_SHARE = 0.15;
 /** The strobe as the local ship's (Ship.update): 0.4, flashing to 6 once every STROBE_S, its flash ramped up and down
  * over STROBE_RAMP_S each way (some three frames), not switched. */
@@ -348,7 +355,7 @@ class HullKit {
         if (!b) buckets.set(key, (b = { gear, lod, geometries: [] }));
         // into the ship's space, or its gear pivot's
         _m.multiplyMatrices(gear < 0 ? toShip : this.gears[gear].fromPivot, o.matrixWorld);
-        b.geometries.push(painted(surface(o.geometry).applyMatrix4(_m), src));
+        b.geometries.push(...painted(surface(o.geometry).applyMatrix4(_m), src));
       }
       for (const c of o.children) walk(c, gear, lod);
     };
@@ -405,10 +412,14 @@ class HullKit {
       const g0 = p.levels[0].geometry;
       const pos = g0.attributes.position.array;
       const index = new Uint32Array(g0.index.array);
-      const target = (share, least) => Math.max(least, Math.floor((index.length * share) / 3)) * 3;
-      // (borders locked, so no gap opens between surfaces; specks smaller than the error pruned whole: the rails, rivets
-      // and antennas that only flicker at a few pixels)
-      const fine = p.own?.[0] ?? sharing(g0, MeshoptSimplifier.simplify(index, pos, 3, target(LOD1.ratio, 1), LOD1.error, ['LockBorder', 'Prune'])[0]);
+      const surfaces = g0.userData.surfaces ?? [[0, index.length, false]];
+      // (the unlit surfaces simplified together, borders locked, so no gap opens between surfaces, and specks smaller
+      // than the error pruned whole: the rails, rivets and antennas that only flicker at a few pixels; the lights, a few
+      // hundred triangles, kept whole, or the pruning would take them too)
+      const unlit = gather(index, surfaces, false);
+      const fine =
+        p.own?.[0] ??
+        sharing(g0, join([unlit.length ? MeshoptSimplifier.simplify(unlit, pos, 3, Math.max(1, Math.floor((unlit.length * LOD1.ratio) / 3)) * 3, LOD1.error, ['LockBorder', 'Prune'])[0] : unlit, gather(index, surfaces, true)]));
       // (each surface clustered on its own, borders and all, so no triangle spans two materials and smears one's colour
       // or glow over the other; at under 100 px only the silhouette and the broad patches of colour show, and a surface
       // too small to keep a triangle, a light or a rail, goes; a small piece, a gear leg, can cluster away to nothing at
@@ -419,7 +430,7 @@ class HullKit {
       const least = p.gear >= 0 ? LEG_RATIO : COARSE_RATIO;
       for (const share of [least, least * 3, least * 8]) {
         if (coarse) break;
-        const tris = clustered(index, pos, g0.userData.surfaces ?? [[0, index.length]], share);
+        const tris = clustered(index, pos, surfaces, share);
         if (tris.length) coarse = sharing(g0, tris);
       }
       p.levels.push(new Level(fine), new Level(coarse ?? fine));
@@ -513,7 +524,9 @@ class HullKit {
       l.mesh.setMatrixAt(i, p.gear < 0 ? _t : this.gears[p.gear].m);
       l.glow.setXYZW(i, engine, strobe, lights, vis.plating ?? 1);
     }
-    this.addExhaust(vis.power, vis.pulse, Math.max(lights, 0.5));
+    // (a ship drawn at the coarsest, under 60 px long, trails no exhaust: a couple of pixels of it, additive, only
+    // flickered and bloomed)
+    if (!coarse) this.addExhaust(vis.power, vis.pulse, lights);
   }
 
   // Each engine's trail of glows behind its nozzle, longer and brighter with the power (Ship.update's flames).
@@ -609,7 +622,8 @@ function surface(source) {
   return g;
 }
 
-/** Writes the surface's material onto its vertices, as the one hull material reads them (hullMaterial): `color`, `aMat`
+/** Writes the surface's material onto its vertices, as the one hull material reads them (hullMaterial), and returns it
+ * (and its back, for a two-sided surface: backOf): `color`, `aMat`
  * (roughness, metalness, plated or not, its glow) and `aEmissive` (its own glow; for the engines' throats and the beacon,
  * their colour, which each ship's power and flash then scale). The thrusters' throats glow only as they fire, which a
  * remote ship's snapshots do not tell: dark. A two-sided surface gets its back faces as triangles of their own. */
@@ -628,50 +642,57 @@ export function painted(g, m) {
   g.setAttribute('color', new THREE.BufferAttribute(color, 3));
   g.setAttribute('aMat', new THREE.BufferAttribute(mat, 4));
   g.setAttribute('aEmissive', new THREE.BufferAttribute(emissive, 3));
-  const out = m.side === THREE.DoubleSide ? twoSided(g) : g;
   // (a light: a glow, or an emissive bright enough to read as one; the glass's faint tint is not)
-  out.userData.lit = glow > 0 || Math.max(m.emissive.r, m.emissive.g, m.emissive.b) * intensity >= 0.5;
-  return out;
+  g.userData.lit = glow > 0 || Math.max(m.emissive.r, m.emissive.g, m.emissive.b) * intensity >= 0.5;
+  return m.side === THREE.DoubleSide ? [g, backOf(g)] : [g];
 }
 
-// The surface and its back: every vertex again with its normal turned round, every triangle again wound the other way.
-function twoSided(g) {
+// A surface's back: its vertices again with their normals turned round, its triangles wound the other way. A surface of
+// its own, so the coarsest level never clusters a front vertex with a back one (their normals would cancel, and the
+// lighting of a triangle between them divide by nothing).
+function backOf(g) {
   const out = new THREE.BufferGeometry();
-  const n = g.attributes.position.count;
   for (const [name, attr] of Object.entries(g.attributes)) {
-    const a = new Float32Array(attr.array.length * 2);
-    a.set(attr.array);
-    a.set(attr.array, attr.array.length);
-    if (name === 'normal') for (let i = attr.array.length; i < a.length; i++) a[i] = -a[i];
+    const a = Float32Array.from(attr.array);
+    if (name === 'normal') for (let i = 0; i < a.length; i++) a[i] = -a[i];
     out.setAttribute(name, new THREE.BufferAttribute(a, attr.itemSize));
   }
   const index = g.index.array;
-  const both = new Uint32Array(index.length * 2);
-  both.set(index);
-  for (let i = 0; i < index.length; i += 3) both.set([index[i] + n, index[i + 2] + n, index[i + 1] + n], index.length + i);
-  out.setIndex(new THREE.BufferAttribute(both, 1));
+  const back = new Uint32Array(index.length);
+  for (let i = 0; i < index.length; i += 3) back.set([index[i], index[i + 2], index[i + 1]], i);
+  out.setIndex(new THREE.BufferAttribute(back, 1));
+  out.userData.lit = g.userData.lit;
   return out;
 }
 
 // Each surface's triangles (`surfaces`: start, count in `index`, and whether it is lit) clustered to `share` of them,
-// together; a lit surface (a light, a glow) simplified as the finer level's instead, keeping its shape: clustered with the
-// hull's grid, a few lights across the ship would join into triangles spanning it, and glow as one.
+// together; a lit surface (a light, a glow) simplified instead, borders locked and nothing pruned, so it keeps its shape
+// and stays: clustered with the hull's grid, a few lights across the ship would join into triangles spanning it, and
+// glow as one.
 function clustered(index, pos, surfaces, share) {
   const parts = [];
-  let n = 0;
   for (const [start, count, lit] of surfaces) {
     const own = index.subarray(start, start + count);
-    let tris;
-    if (lit) [tris] = MeshoptSimplifier.simplify(own, pos, 3, Math.max(3, Math.floor((count / 3) * LOD1.ratio) * 3), LOD1.error, ['LockBorder', 'Prune']);
-    else {
-      const target = Math.floor((count / 3) * Math.min(1, share)) * 3;
-      if (target < 3) continue;
-      [tris] = MeshoptSimplifier.simplifySloppy(own, pos, 3, null, target, 1);
+    if (lit) {
+      const [tris] = MeshoptSimplifier.simplify(own, pos, 3, Math.max(3, Math.floor((count / 3) * LOD1.ratio) * 3), LOD1.error, ['LockBorder']);
+      parts.push(tris.length ? tris : own);
+      continue;
     }
-    parts.push(tris);
-    n += tris.length;
+    const target = Math.floor((count / 3) * Math.min(1, share)) * 3;
+    if (target < 3) continue;
+    parts.push(MeshoptSimplifier.simplifySloppy(own, pos, 3, null, target, 1)[0]);
   }
-  const out = new Uint32Array(n);
+  return join(parts);
+}
+
+// The triangles of the surfaces that are lit (or not), in one index.
+function gather(index, surfaces, lit) {
+  return join(surfaces.filter((s) => !!s[2] === lit).map(([start, count]) => index.subarray(start, start + count)));
+}
+
+// Index arrays end to end.
+function join(parts) {
+  const out = new Uint32Array(parts.reduce((n, t) => n + t.length, 0));
   let at = 0;
   for (const t of parts) {
     out.set(t, at);
@@ -708,7 +729,7 @@ export function hullMaterial(id, level, dress) {
   // (the plating's lines first: they read the roughness these set)
   m.onBeforeCompile = (shader, renderer) => {
     dressed?.call(m, shader, renderer);
-    perVertex(shader);
+    perVertex(shader, ROUGH_MIN[level] ?? 0, level === LEVELS - 1 ? COARSE_MAX : Infinity);
   };
   const key = m.customProgramCacheKey?.() ?? '';
   m.customProgramCacheKey = () => `${key}|remote-hull`;
@@ -717,8 +738,9 @@ export function hullMaterial(id, level, dress) {
 
 /** Rewrites a standard material's shaders to read its surface from its vertices (painted()) and each instance's
  * `aShip`: its engines' glow, its strobe, how much its other lights shine (by distance), and how much plating it shows.
- * The plated surfaces reflect PLATED_ENV of the environment's light, as the local ship's do. */
-export function perVertex(shader) {
+ * The plated surfaces reflect PLATED_ENV of the environment's light, as the local ship's do; no surface is smoother than
+ * `roughMin`, and none brighter than `brightest`. */
+export function perVertex(shader, roughMin = 0, brightest = Infinity) {
   shader.vertexShader = shader.vertexShader
     .replace('#include <common>', '#include <common>\nattribute vec4 aMat;\nattribute vec3 aEmissive;\nattribute vec4 aShip;\nvarying vec4 vMat;\nvarying vec3 vEmissive;\nvarying vec4 vShip;')
     .replace('#include <begin_vertex>', '#include <begin_vertex>\nvMat = aMat;\nvEmissive = aEmissive;\nvShip = aShip;');
@@ -728,9 +750,10 @@ export function perVertex(shader) {
       '#include <envmap_physical_pars_fragment>',
       THREE.ShaderChunk.envmap_physical_pars_fragment.replaceAll('* envMapIntensity', `* envMapIntensity * mix(1.0, ${PLATED_ENV.toFixed(2)}, vMat.z)`),
     )
-    .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = vMat.x;')
+    .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>\nroughnessFactor = max(vMat.x, ${roughMin.toFixed(2)});`)
     .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\nmetalnessFactor = vMat.y;')
     .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance = vEmissive * (vMat.w > 1.5 ? vShip.y : vMat.w > 0.5 ? vShip.x : vShip.z);')
+    .replace('#include <opaque_fragment>', Number.isFinite(brightest) ? `#include <opaque_fragment>\ngl_FragColor.rgb = min(gl_FragColor.rgb, vec3(${brightest.toFixed(2)}));` : '#include <opaque_fragment>')
     // (the plating only where the surface is plated, as much as the ship shows)
     .replace(/uPanelStrength(?=\s*[,)])/g, 'uPanelStrength * vMat.z * vShip.w');
 }

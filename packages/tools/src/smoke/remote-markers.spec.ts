@@ -40,6 +40,7 @@ for (const scene of SCENES)
       const issues: Issue[] = [];
       let pilots = 0;
       let labels = 0;
+      const gaps: number[] = [];
       type Box = { x0: number; y0: number; x1: number; y1: number; what: string };
       const boxOf = (e: Element, what: string): Box | null => {
         const r = e.getBoundingClientRect();
@@ -117,16 +118,21 @@ for (const scene of SCENES)
         for (const t of texts) {
           const own = (t as Box & { icon?: Box }).icon;
           if (!own) continue;
+          // its name and range a fixed few px from its mark (beside it, or above)
+          const gap = Math.max(t.x0 - own.x1, own.x0 - t.x1, own.y0 - t.y1, t.y0 - own.y1);
+          gaps.push(gap);
+          if (gap < 5 || gap > 11) issues.push({ frame: f, what: `${t.what} ${gap.toFixed(1)} px from its mark` });
           for (const o of marks) if (o !== own && overlap(t, o)) issues.push({ frame: f, what: `${t.what} on ${o.what}` });
           for (const o of texts) if (o !== t && overlap(t, o)) issues.push({ frame: f, what: `${t.what} on ${o.what}` });
         }
         if (f % 10 === 9) await new Promise((r) => setTimeout(r, 0));
       }
-      return { issues, pilots, labels };
+      return { issues, pilots, labels, gap: gaps.length ? [Math.min(...gaps), Math.max(...gaps)] : [] };
     }, frames);
     // (the scene has pilots marked, and most named)
     expect(result.pilots).toBeGreaterThan(frames);
     expect(result.labels).toBeGreaterThan(0);
+    console.log(`${scene}: ${result.labels} pilot labels in ${frames} frames, ${result.gap.map((g) => g.toFixed(1)).join('..')} px from their marks`);
     expect(result.issues.slice(0, 12), `${result.issues.length} overlaps`).toEqual([]);
     expect(errors).toEqual([]);
   });
