@@ -110,8 +110,9 @@ export class CodexService {
     return { result: 'new', entry: r.entry, ...this.grantXp(characterId, SPECIES_XP) };
   }
 
-  /** Adds XP to a character's progress: what was granted, and the level it rose to (null when it did not). */
-  private grantXp(characterId: string, xp: number): { xp: number; level: number | null } {
+  /** Adds XP to a character's progress: what was granted, and the level it rose to (null when it did not). The codex's
+   * discoveries earn through it: a first analysis here, a first find in the discovery service (P2.E29.T01). */
+  grantXp(characterId: string, xp: number): { xp: number; level: number | null } {
     const p = this.progress.get(characterId);
     if (!p) {
       this.log?.warn({ character: characterId, xp }, 'analysis XP for a character whose progress is not held; not granted');

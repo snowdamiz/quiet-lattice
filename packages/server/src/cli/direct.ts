@@ -1,5 +1,5 @@
 // The CLI's direct mode (P1.E03.T07, docs/ARCHITECTURE.md §16): with no server running, a command that changes a
-// character out of play (teleport, grant, set-quest-step, set-skill-points) runs here, through the same admin service and
+// character out of play (teleport, grant, set-quest-step, set-skill-points), or a find's name (rename), runs here, through the same admin service and
 // persistence's load–modify–save as the server's, against DATABASE_URL. One process holds a character at a time (§8),
 // and a server holding it would overwrite the change at its next save, so direct mode is refused while a server answers
 // at HOST:PORT, for a character saved in the last RECENT_SAVE_MS (a server elsewhere on the same database may hold it)
@@ -10,6 +10,8 @@ import { AdminError, type AdminCommand } from '../admin/commands.ts';
 import { AdminService, pgDirectory, type AdminLog, type AdminResult } from '../admin/service.ts';
 import { parseConfig, type Env } from '../config.ts';
 import { createDatabase } from '../db/client.ts';
+import { renameFind, viewOf } from '../discovery/service.ts';
+import { pgDiscoveryStore } from '../discovery/store.ts';
 import { InventoryService } from '../inventory/service.ts';
 import { CharacterProgress, coreRegistry, ShipLoadouts } from '../persistence/components.ts';
 import { CharacterPersistence } from '../persistence/service.ts';
@@ -60,6 +62,14 @@ export async function runDirect(command: AdminCommand, env: Env, operator: strin
       directory: pgDirectory(database.db),
       persistence,
       quests: questAdmin(quests),
+      // (a find's name is the shard's row: no server holds it, so it is written here; a running server would cache the
+      // old name, which is why direct mode is refused while one answers)
+      discoveries: {
+        rename: async (kind, key, name, by) => {
+          const r = await renameFind(pgDiscoveryStore(database.db, DEFAULT_SHARD_ID), kind, key, name, by, clock.now());
+          return r.ok ? { ok: true, find: viewOf(r.record, clock.now()) } : r;
+        },
+      },
       log,
       recentSaveMs: opts.force ? 0 : RECENT_SAVE_MS,
     });
