@@ -206,8 +206,32 @@ Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's o
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 2, performance 4 | 3.43 |
+| 2 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 3 | 3.57 |
 
 Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
 of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
 on sensor detection, a varied 24-pilot crowd, three LODs by screen length, speed-scaled glow and exhaust, and `-pads`
 and `-surface` captures; the server sends no NPC ships until P1.E08.T05. Artifacts: `assets/renders/ui/remote-ships*/`.
+
+Round 2: marker range text overlaps its own ship and falls to 1.3–2.4:1 over lit ground; markers hang at a fixed world
+offset, so they drift hundreds of pixels off near ships, and collide with the fixed HUD and each other; far Larks
+shimmer; pads (+3.97 ms for 3 ships) and surface (+3.0 ms, over 16.7 ms) cost out of proportion, the coarsest LOD is 25%
+of LOD0 (§19.2 wants under 5%) and casts shadows. Requested: a full bay phase, 24 Larks docked, with the perf readout.
+
+## P1.E05.T01 Skeleton and three base bodies (art)
+
+Graded per people with the "Models and environments" table, each file as a family of ten variants.
+
+| Round | People | Verdict | Scores | Mean |
+|---|---|---|---|---|
+| 1 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 2, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.2 |
+| 1 | Ixari | REVISE | design 3, silhouette 3, proportion 3, materials 2, detail 2, topology 4, consistency 4, fitness 3, placeholder 2, performance 4 | 3.0 |
+| 1 | Ulgani | REVISE | design 2, silhouette 3, proportion 4, materials 2, detail 2, topology 3, consistency 4, fitness 3, placeholder 2, performance 4 | 2.9 |
+
+Round 1, common to all three: mascot faces (a fixed smile, goggle or button-ring eyes, no nose, lips or brow); smooth
+mannequin bodies without anatomical landmarks; suits from primitives (torus bands, rounded boxes, straight rods) that
+break each people's design language (Ixari facets, Thalune shingled shell, Ulgani grown chitin lattice); heads that differ
+only by small cards, unreadable past 10 m; uniform-noise skin; in-engine material errors (back-lit fins black, nacre as
+chrome, crystal as white plastic, Ulgani toe bleed); uniform remeshed LOD0 with no loops at the face or joints; blinks
+that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above the ground. Artifacts:
+`assets/renders/characters/`, `assets/renders/review/characters/`.
