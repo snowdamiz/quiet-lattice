@@ -87,6 +87,20 @@ async function parkLoop(page: Page): Promise<void> {
   });
 }
 
+/** On foot beside the landed ship on the home world: the #foot scenario, which lands the ship and steps out after 1.5 s of
+ * real time, on foot for good, and settled. */
+async function standingByShip(page: Page): Promise<void> {
+  const onFoot = () =>
+    page.waitForFunction(async () => {
+      await (window as unknown as { step(n: number): Promise<void> }).step(4);
+      return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
+    });
+  await onFoot();
+  await page.waitForTimeout(2500);
+  await onFoot();
+  await settle(page, 90);
+}
+
 /** The heat meter runs `k` times as fast as the game for the clip, so a whole overheat cycle fits a few seconds of it. */
 async function hastenHeat(page: Page, k: number): Promise<void> {
   await page.evaluate((k) => {
@@ -521,6 +535,29 @@ export const SCREENS: Record<string, ScreenDef> = {
   // under the altitude) at 58 and regenerating, a bright dash climbing its arc (P1.E07.T02). `16x9-empty.png`: Charge run
   // out on the night side, in the planet's shadow (no regeneration), and the pulse drive refused. The clip: the regen
   // sheen's whole climb, the readout ticking up.
+  // Boarding in play with Charge at 60 (the ship's, set while the pilot stood beside it on the home world's day side): the
+  // stills are aboard and landed after the glide into the seat, the reticle not yet up; the clip starts as the ship
+  // takes off, its first frame the first the reticle (and its Charge arc, readout and regen sheen) is drawn: the arc at 60
+  // at once, lilac, the sheen from the next frame.
+  'hud-ship-board': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 1.5,
+    sheetFrames: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 70, 80, 89],
+    async open(page) {
+      await standingByShip(page);
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: { ship: { charge: number }; boardShip(): void } }).game;
+        g.ship.charge = 60;
+        g.boardShip();
+      });
+      // the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => (window as unknown as { game: { ship: { takeOff(): void } } }).game.ship.takeOff());
+    },
+  },
   'hud-ship': {
     hudClock: true,
     clipSeconds: 2,
@@ -554,16 +591,7 @@ export const SCREENS: Record<string, ScreenDef> = {
     hudClock: true,
     clipSeconds: 3,
     async open(page) {
-      const onFoot = () =>
-        page.waitForFunction(async () => {
-          await (window as unknown as { step(n: number): Promise<void> }).step(4);
-          return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
-        });
-      await onFoot();
-      // (the #foot scenario lands the ship, then steps out after 1.5 s of real time: on foot for good only after that)
-      await page.waitForTimeout(2500);
-      await onFoot();
-      await settle(page, 90);
+      await standingByShip(page);
       await parkLoop(page);
       // 38, and five frames of beam at 24/s: 40
       await heatAt(page, 38, false, true);
