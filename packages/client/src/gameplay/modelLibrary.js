@@ -25,10 +25,11 @@ export async function loadLibrary(name, url) {
   roots.set(name, tops);
 }
 
-/** GPU memory of one texture once uploaded (bytes): a compressed (KTX2-transcoded) texture's own mip levels as they
- * are, an image texture's RGBA8 texels plus the mip chain three.js generates for it. */
+/** GPU memory of one texture once uploaded (bytes): a texture that brings its own mip levels (a KTX2 map transcoded to
+ * the GPU's compressed format, or to RGBA where it has none) as they are, an image texture's RGBA8 texels plus the mip
+ * chain three.js generates for it. */
 export function textureBytes(tex) {
-  if (tex.isCompressedTexture) return tex.mipmaps.reduce((n, m) => n + (m.data?.byteLength ?? 0), 0);
+  if (tex.mipmaps?.[0]?.data) return tex.mipmaps.reduce((n, m) => n + (m.data?.byteLength ?? 0), 0);
   const img = tex.image;
   const w = img?.width ?? 0;
   const h = img?.height ?? 0;

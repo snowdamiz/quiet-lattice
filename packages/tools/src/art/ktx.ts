@@ -19,10 +19,26 @@ export interface KtxRelease {
 
 /** The official release assets by `${process.platform}-${process.arch}`. */
 export const KTX_RELEASES: Readonly<Record<string, KtxRelease>> = {
-  'darwin-arm64': { file: `KTX-Software-${KTX_VERSION}-Darwin-arm64.pkg`, sha256: '500bd8f9d63358c3f3a0d83b724c8574436a72c37dc0e4bad90ec1ca38032c3c', kind: 'pkg' },
-  'darwin-x64': { file: `KTX-Software-${KTX_VERSION}-Darwin-x86_64.pkg`, sha256: 'efecc685ab891a6e119a9fdc8cbe038e135f9a367eb2f5d8a059553f947f1fea', kind: 'pkg' },
-  'linux-x64': { file: `KTX-Software-${KTX_VERSION}-Linux-x86_64.tar.bz2`, sha256: 'a8781bad05f9624edbf910b7f258cd0a4ba7d3e63b49ecc0a0ab440bf6a0a245', kind: 'tar' },
-  'linux-arm64': { file: `KTX-Software-${KTX_VERSION}-Linux-arm64.tar.bz2`, sha256: '60382e7b842177b8048bd58ccdc770383f8ef65b94452a25d3afdb55f2405c5a', kind: 'tar' },
+  'darwin-arm64': {
+    file: `KTX-Software-${KTX_VERSION}-Darwin-arm64.pkg`,
+    sha256: '500bd8f9d63358c3f3a0d83b724c8574436a72c37dc0e4bad90ec1ca38032c3c',
+    kind: 'pkg',
+  },
+  'darwin-x64': {
+    file: `KTX-Software-${KTX_VERSION}-Darwin-x86_64.pkg`,
+    sha256: 'efecc685ab891a6e119a9fdc8cbe038e135f9a367eb2f5d8a059553f947f1fea',
+    kind: 'pkg',
+  },
+  'linux-x64': {
+    file: `KTX-Software-${KTX_VERSION}-Linux-x86_64.tar.bz2`,
+    sha256: 'a8781bad05f9624edbf910b7f258cd0a4ba7d3e63b49ecc0a0ab440bf6a0a245',
+    kind: 'tar',
+  },
+  'linux-arm64': {
+    file: `KTX-Software-${KTX_VERSION}-Linux-arm64.tar.bz2`,
+    sha256: '60382e7b842177b8048bd58ccdc770383f8ef65b94452a25d3afdb55f2405c5a',
+    kind: 'tar',
+  },
 };
 
 /** Where the pinned release lives once fetched: `<dir>/bin/ktx` beside `<dir>/lib/libktx.*` (the binary's rpath). */
