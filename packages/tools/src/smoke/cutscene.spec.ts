@@ -239,8 +239,12 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
     const g = window.game;
     const handlers = new Map<string, ((m: unknown) => void)[]>();
     const sent: unknown[] = [];
+    // (what the game itself calls on its net each frame, standing still: no server clock yet, nothing to send)
     g.net = {
       joined: true,
+      serverTime: () => null,
+      update: () => {},
+      sendInput: () => false,
       send: (m: unknown) => (sent.push(m), true),
       on: (type: string, fn: (m: unknown) => void) => {
         handlers.set(type, [...(handlers.get(type) ?? []), fn]);
