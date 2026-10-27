@@ -274,3 +274,14 @@ and shifted 16 px as the panel opens, the invite card and party frame resizing o
 down); the beacon list overruns the panel with no scroll affordance; a world-marker label shows through the party frame
 at 21:9; the leader row's tag column is misaligned. Requested: the muted state and an offline member. Artifacts:
 `assets/renders/ui/{social,social-space,party,party-invite,beacons}/`.
+
+## P1.E13.T05 Basic fabricator (UI)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 5, performance 5 | 4.29 |
+
+Round 1: all small text at or above 4.5:1; the craft sweep is eased but the button, stepper and LEARN snap state in one
+frame around it, and the selected row flashes twice; after a ×3 craft the quantity stays at 3 while the row says CAN
+MAKE 1 and the materials go red (clamp to the new maximum); the result flash sits flush on its rows. Requested: a LEARN
+clip. Artifacts: `assets/renders/ui/{fabricator,fabricator-ship}/`.
