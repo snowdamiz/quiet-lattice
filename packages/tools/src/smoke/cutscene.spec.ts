@@ -139,6 +139,7 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
       k,
       frames,
       active: g.cutscenes.active,
+      overlayAfter: g.overlay,
       result: (window as unknown as { __result: { value?: unknown } }).__result.value,
       camOnShip: g.cam.frame === ship.frame,
       camToShip,
@@ -158,8 +159,9 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
     { name: 'cleared', skipped: false },
   ]);
   expect(ended.trace.banners).toHaveLength(1);
-  // the controls come back as the camera starts home
-  expect(ended.atEnd).toBeNull();
+  // the controls stay with the cutscene while the camera goes home, and come back once it is there
+  expect(ended.atEnd).toBe('cutscene');
+  expect(ended.overlayAfter).toBeNull();
   // eased out over the exit, never closing again
   expect(ended.k.every((v, i) => i === 0 || v <= ended.k[i - 1]!)).toBe(true);
   expect(ended.k.at(-1)).toBe(0);
@@ -189,6 +191,9 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true }));
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Escape', bubbles: true }));
     const after = { ...g.cutscenes.state(), overlay: g.overlay };
+    await window.step(1);
+    const overlayDuring = g.overlay;
+    const pauseShown = document.querySelector('.pause-menu')?.classList.contains('show') ?? false;
     let frames = 0;
     while (g.cutscenes.active && frames < 600) {
       await window.step(1);
@@ -198,6 +203,9 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
     const ship = g.ship.state;
     return {
       after,
+      overlayDuring,
+      pauseShown,
+      overlayAfter: g.overlay,
       frames,
       result,
       trace,
@@ -207,7 +215,11 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
     };
   });
   expect(skipped.after.phase).toBe('exit');
+  // (Esc closed the overlay as it skipped; the cutscene keeps the screen, and no pause screen, until the camera is home)
   expect(skipped.after.overlay).toBeNull();
+  expect(skipped.overlayDuring).toBe('cutscene');
+  expect(skipped.pauseShown).toBe(false);
+  expect(skipped.overlayAfter).toBeNull();
   expect(skipped.after.clock).toBe(11.5);
   expect(skipped.trace.lines.map((l) => l.id)).toEqual(['hail']);
   expect(skipped.trace.events).toEqual([

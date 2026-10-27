@@ -186,6 +186,7 @@ export class CutscenePlayer {
     g.director.abort();
     if (c.timeline.phase === 'play') this.leave();
     this.current = null;
+    if (g.overlay === 'cutscene') g.overlay = null;
     g.hud.clearBanners();
     this.render();
     c.done({ id: c.def.id, stopped: true, phase: c.phase, events: c.timeline.fired.map((e) => e.name) });
@@ -245,6 +246,13 @@ export class CutscenePlayer {
     }
     if (was === 'play' && c.timeline.phase !== 'play') this.leave();
     if (c.timeline.phase === 'done') return this.finish();
+    // (Esc's own handlers clear the overlay and may bring up the pause screen as they skip: the cutscene keeps the
+    // screen, and the controls, until the camera is home)
+    const g = this.game;
+    if (!g.overlay) {
+      g.overlay = 'cutscene';
+      g.menus.updatePauseHint();
+    }
     this.render();
   }
 
@@ -260,19 +268,22 @@ export class CutscenePlayer {
   // ---------- inside ----------
 
   /** The clock is done (or skipped): the camera starts back, the controls come back, and the server hears. */
+  /** The clock is done (or skipped): the camera starts back, and the server hears. The controls stay with the cutscene
+   * until the camera is home (finish). */
   leave() {
     const c = this.current;
-    const g = this.game;
-    g.director.release({ exit: c.def.exit, dur: EXIT_SECONDS });
-    if (g.overlay === 'cutscene') g.overlay = null;
-    // (unlocked by Esc while it played, the pause screen comes up as it would have)
-    g.menus.updatePauseHint();
+    this.game.director.release({ exit: c.def.exit, dur: EXIT_SECONDS });
     c.link.done(c.def.id, c.timeline.skipped);
   }
 
+  /** The camera is home: the controls come back (and, unlocked by Esc meanwhile, the pause screen comes up as after
+   * any Esc). */
   finish() {
     const c = this.current;
+    const g = this.game;
     this.current = null;
+    if (g.overlay === 'cutscene') g.overlay = null;
+    g.menus.updatePauseHint();
     this.render();
     const result = { id: c.def.id, skipped: c.timeline.skipped, phase: c.phase, events: c.timeline.fired.map((e) => e.name) };
     this.emit('end', result);

@@ -471,9 +471,10 @@ decides when one plays; the client presents it.
 - **Controls:** while one plays `game.overlay` is `'cutscene'`, so the player's controls are locked as under a menu.
   Space, Enter or a click reveals the rest of a line, then jumps to the next behind a dip. Esc skips in one press: it
   closes overlays (Menus.closeAll), and under pointer lock, where the browser takes Esc to release the lock and the page
-  never sees the key, the release itself (with the window focused) skips; the pause screen then comes up as after any
-  Esc, until a click. A jump or a skip fires every event it passes (a skip's marked `skipped`, without banners), so
-  whatever listens ends where watching would have left it. The controls come back as the camera starts home.
+  never sees the key, the release itself (with the window focused) skips. A jump or a skip fires every event it passes
+  (a skip's marked `skipped`, without banners), so whatever listens ends where watching would have left it. The
+  cutscene keeps the screen and the controls while the camera glides home (1.5 s), then gives them back; a pointer
+  lock that Esc released brings up the pause screen then, as after any Esc, until a click.
 - **Dev:** `#cutscene:<id>` stages the ship (`CutscenePlayer.stage`, dev builds only) and plays it; `pnpm capture --
   --ui cutscene-test` (and `cutscene-test-jump`, `cutscene-test-skip`) grab the grader's stills and clips;
   `packages/tools/src/smoke/cutscene.spec.ts` plays the test cutscene end to end, skips it, and plays it online through
