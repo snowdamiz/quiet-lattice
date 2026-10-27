@@ -607,3 +607,22 @@ Format: task id, question → choice → why.
   tabs. → DESIGN's server authority over movement (plan 0.3) without correcting honest clients. Open: Heat and Charge's
   `meters.allowsMode` is wired by whichever of this and P1.E07.T02 lands second; the station's other colliders arrive
   with P1.E11.T02; an admin teleport on foot leaves the character no ship of its own to board (P1.E03.T07 follow-up).
+- **P1.E07.T15** Skill state survives data changes (`@astra/shared/skills/stored.ts`, `server/src/skills`, persistence)
+  → the `skills` component (v2) stores the state plus `web` (`SKILL_WEB_VERSION`) and `paid` (what each fragment unlock
+  paid, by branch), neither sent to the client (protocol unchanged). v1 saves become web 0, `paid` rebuilt in unlock
+  order bounded by what each branch spent (a trainer-taught node may take a sibling's credit; a people's free node, Second
+  Lung or Pulse, is credited only after every other node). The persistence registry gains a general `reconcile(value, ctx)` hook, after migrations and the schema
+  and before `check`, used at joins and admin `edit()`; a changed value is not marked stored, so the next save writes it
+  once; a reconcile that throws makes the value unreadable. `reconcileSkills(stored, web)` is pure, against the current
+  web for any stored web ≤ current: unknown ids dropped with the fragments they paid returned (a rename is a removal;
+  removed unlocks never bought are dropped too); owned nodes that lost a prerequisite refunded until stable (the largest
+  owned set closed under prerequisites), listed deepest first (capstone, Tier III and conjunctions, II, I; later-bought
+  first), keeping their unlock and payment, returning points, charging no units (a free respec of the affected nodes);
+  a re-tiered node keeps what it paid; bars padded or cut to the web's sizes, slot positions kept, a node past the end
+  or on the other bar unslotted but owned; one warning per character. A newer web refuses the join (rollback safety).
+  `SKILL_WEB_VERSION` covers id, branch, tier, bar, prerequisites and bar sizes, pinned per version by a hash test that
+  fails a web edit until the version is raised (names, text, point costs and unlock routes need no raise). A ship with
+  more pods than bays gives them back on load, logged, for any cause (replacing P1.E07.T01's refusal; the inventory
+  repacks or keeps its saved layout, all or nothing, so no item is lost); revisit when pods become crafted modules.
+  This supersedes P1.E07.T01's "fragments are never refunded" for data changes and its "an unknown id or broken
+  prerequisite refuses the join until P1.E07.T15". → Content can change the skill web without stranding characters.
