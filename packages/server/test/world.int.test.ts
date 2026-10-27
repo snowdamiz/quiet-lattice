@@ -122,15 +122,16 @@ describe('world service', () => {
       s.send({ t: 'join', characterId: character.id });
       await waitFor(() => s.received.some((m) => m.t === 'quests'), 5000, 'quests');
       // `world` comes right after `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `recipes`
-      // (P1.E13.T05), `party` (P1.E15.T01) and quest state (P1.E09.T01) follow, the last after the news that a new
-      // character is given First Jobs
-      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world', 'inventory', 'skills', 'recipes', 'party', 'event', 'event', 'quests']);
+      // (P1.E13.T05), season `awards` (P2.E22.T03), `party` (P1.E15.T01) and quest state (P1.E09.T01) follow, the last
+      // after the news that a new character is given First Jobs
+      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world', 'inventory', 'skills', 'recipes', 'awards', 'party', 'event', 'event', 'quests']);
       const [welcome, world] = s.received.splice(0) as [
         Extract<(typeof s.received)[number], { t: 'welcome' }>,
         Extract<(typeof s.received)[number], { t: 'world' }>,
       ];
       expect(WorldMessageSchema.parse(world)).toEqual(world);
       expect(world).toMatchObject({ season: 1, count: 500, edgeX: EDGE_X, tiers: galaxyTiers(EDGE_X).map((t) => t.tier) });
+      expect(world).toMatchObject({ seasonStart: server.world.state().seasonStart, seasonEnd: server.world.state().seasonEnd, opening: { from: null } });
       expect(world.serverTime).toBeGreaterThanOrEqual(welcome.serverTime);
 
       // a socket that has signed in but joined no character is not told
