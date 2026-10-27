@@ -19,6 +19,10 @@
 // hooks (kills grant XP and loot, and tell the quest runtime) and the skill service's `inCombat` (§20). Requests to
 // analyze a creature go to the analysis service (codex/), which checks each, answers it, records the species in the
 // character's codex (the one persistence's registry loads into) and tells the quest runtime of each analysis made (§22).
+// Fabricator requests (make a recipe at the station's or the ship's fabricator, learn one from its item) go to the
+// crafting service (crafting/), which checks each against the recipes the character knows (the book persistence's
+// registry loads into), where the player is and what it holds, and answers it; a joining character is sent the recipes it
+// knows after its skills, and again whenever it learns one (§23).
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
@@ -46,6 +50,9 @@ import { AnalysisService } from '../codex/analysis.ts';
 import { codexServiceIn } from '../codex/component.ts';
 import type { CodexService } from '../codex/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
+import type { RecipeBook } from '../crafting/book.ts';
+import { recipeBookIn } from '../crafting/component.ts';
+import { CraftingService } from '../crafting/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import { skillServiceIn } from '../skills/component.ts';
@@ -139,6 +146,10 @@ export interface WsGatewayDeps {
   codex?: CodexService;
   /** Analysis of creatures; the gateway makes its own over the codex when none is given. */
   analysis?: AnalysisService;
+  /** Every character's recipes in play; when none is given, the book persistence's registry loads into. */
+  recipes?: RecipeBook;
+  /** Fabricators; the gateway makes its own over the recipe book when none is given. */
+  crafting?: CraftingService;
 }
 
 export interface WsStats {
@@ -157,6 +168,7 @@ export interface WsGateway {
   readonly combat: CombatService;
   readonly codex: CodexService;
   readonly analysis: AnalysisService;
+  readonly crafting: CraftingService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -240,6 +252,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const analysis = deps.analysis ?? new AnalysisService({ zones: deps.zones, codex, now: () => deps.clock.now(), log });
   // each analysis made, first or not, counts for the character's quests' `analyze` steps (one species once each)
   const unsubscribeAnalysis = quests ? analysis.subscribe((e) => void quests.event(e.characterId, { type: 'analyze', species: e.key })) : undefined;
+  const crafting =
+    deps.crafting ?? new CraftingService({ zones: deps.zones, inventory, book: deps.recipes ?? needRecipes(persistence), now: () => deps.clock.now(), log });
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -450,6 +464,15 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') return invalid(s, 'analyze before join');
         s.send(analysis.analyze(s, msg));
         return;
+      case 'craft': {
+        if (s.state !== 'joined') return invalid(s, 'craft before join');
+        const r = crafting.craft(s, msg);
+        s.send(r);
+        // (what a craft used and made went out as `inventory` state with the change; a recipe learned is news too)
+        const known = r.result === 'learned' ? crafting.recipes(s.characterId!) : null;
+        if (known) s.send(known);
+        return;
+      }
       default:
         // cast and interact belong to later tasks; before join they are out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
@@ -537,6 +560,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
       s.send({ t: 'inventory', ...inventory.state(row.id) });
       s.send({ t: 'skills', ...skills.state(row.id) });
+      const known = crafting.recipes(row.id);
+      if (known) s.send(known);
       social.joined(s, row.name);
       // (after the party is known: a player back in a quest step's place goes back to its party's phase)
       if (deps.quests) s.send({ t: 'quests', ...deps.quests.joined(s) });
@@ -556,6 +581,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     combat,
     codex,
     analysis,
+    crafting,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
@@ -596,6 +622,12 @@ function needCodex(persistence: CharacterPersistence): CodexService {
   const codex = codexServiceIn(persistence.registry);
   if (!codex) throw new Error('the gateway needs a codex: give one, or a persistence registry with the codex component');
   return codex;
+}
+
+function needRecipes(persistence: CharacterPersistence): RecipeBook {
+  const book = recipeBookIn(persistence.registry);
+  if (!book) throw new Error('the gateway needs a recipe book: give one, or a persistence registry with the recipes component');
+  return book;
 }
 
 function seconds(ms: number): number {

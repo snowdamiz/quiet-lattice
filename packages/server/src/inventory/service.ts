@@ -152,6 +152,15 @@ export class InventoryService {
     return this.change(characterId, (inv) => applyLayout(inv, layoutFor(loadout)));
   }
 
+  /**
+   * Several changes as one (a craft takes its materials and adds what it makes, P1.E13.T05): `fn` works on the current
+   * inventory with the pure shared operations and returns the result. All or nothing: a refusal changes nothing, and a
+   * success is one change, pushed once. `fn` must not throw.
+   */
+  transact<T extends object>(characterId: string, fn: (inv: Inventory) => Result<T>): Result<T> {
+    return this.change(characterId, fn);
+  }
+
   /** The ship died: empties its cargo pods and returns what they held, for the lootable pod (DESIGN 10.1; P1.E06.T03). The
    * suit is untouched. The pods themselves go when the caller sets the loadout to the next hull (or none). */
   dropCargo(characterId: string): CargoDrop {

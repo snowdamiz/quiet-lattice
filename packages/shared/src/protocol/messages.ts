@@ -3,12 +3,13 @@
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
 import { codexSpeciesSchema } from '../codex/index.ts';
+import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 12;
+export const PROTOCOL_VERSION = 13;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -22,6 +23,7 @@ export const PROTOCOL_VERSION = 12;
 // 10: combat: fire requests and their answers, combat events with the target's health, XP events (P1.E06.T02)
 // 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 // 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
+// 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -331,6 +333,16 @@ export const AnalyzeRequest = z.object({
   target: EntityId,
 });
 
+// ---------- crafting (P1.E13.T05, ARCHITECTURE §23) ----------
+
+/**
+ * A fabricator request (DESIGN 15.7): `make` `count` crafts of a recipe at the station's or the ship's fabricator, or
+ * `learn` a recipe from its item. The server checks the recipe, where the player is and what it holds, and answers with
+ * `craft`; what the craft used and made arrives as `inventory` state. `seq` numbers the session's requests from 1,
+ * increasing.
+ */
+export const CraftRequest = z.object({ t: z.literal('craft'), seq: z.number().int().min(1).max(0xffffffff), op: craftOpSchema });
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -349,6 +361,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   FireRequest,
   BeaconRequest,
   AnalyzeRequest,
+  CraftRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -742,6 +755,36 @@ export const AnalyzeState = z
   .refine((m) => (m.result === 'refused') === (m.species === undefined), 'an analysis made names the species')
   .refine((m) => (m.result === 'new') === (m.xp !== undefined), 'a first analysis, and only one, says what it earned');
 
+/**
+ * A fabricator's answer (ARCHITECTURE §23): `made` with `item` and `count`, what the crafts added to the inventory (the
+ * inventory itself follows as `inventory` state); `learned` (the recipe is known for good: `recipes` follows); or
+ * `refused` with `reason`, and nothing changed. It names the op and the recipe asked for. The fields differ from the
+ * request's, so one `craft` type serves both directions (encodeMessage).
+ */
+export const CraftState = z
+  .object({
+    t: z.literal('craft'),
+    seq: z.number().int().min(1).max(0xffffffff),
+    op: z.enum(['make', 'learn']),
+    recipe: recipeIdSchema,
+    result: z.enum(['made', 'learned', 'refused']),
+    item: z.string().max(48).optional(),
+    count: z.number().int().min(1).max(1_000_000).optional(),
+    reason: craftRefusalSchema.optional(),
+  })
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
+  .refine((m) => (m.result === 'made') === (m.item !== undefined && m.count !== undefined), 'a craft made, and only one, says what it made')
+  .refine((m) => m.result === 'refused' || (m.result === 'made') === (m.op === 'make'), 'a make makes, a learn learns');
+/** The recipes the character knows, by id (DESIGN 15.7: learned once, kept forever): after `welcome` (with the inventory
+ * and skills) and whenever a recipe is learned. */
+export const RecipesState = z.object({
+  t: z.literal('recipes'),
+  known: z
+    .array(recipeIdSchema)
+    .max(KNOWN_MAX)
+    .refine((ids) => new Set(ids).size === ids.length, 'a recipe is known once'),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -762,6 +805,8 @@ export const ServerMessage = z.discriminatedUnion('t', [
   BeaconsState,
   BeaconNews,
   AnalyzeState,
+  CraftState,
+  RecipesState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
