@@ -220,6 +220,42 @@ describe('the skills component', () => {
     expect(lines).toEqual([]);
   });
 
+  it('rejoins from the copy still held before its save lands, with the skills as reconciled and nothing more to say', async () => {
+    const { registry, skills, lines, log } = world();
+    let release!: () => void;
+    const landed = new Promise<void>((r) => (release = r));
+    const store: CharacterStore = {
+      write: async (rows) => {
+        await landed;
+        return new Set(rows.map((r) => r.id));
+      },
+    };
+    const p = new CharacterPersistence({ store, registry, log });
+    const empty = emptySkillState();
+    // under web 0, Gravity Hook (gone now) was Gravitic's Tier I and Slam stood on it
+    const old: StoredSkills = {
+      web: 0,
+      ...empty,
+      unlocked: ['gravity_hook', 'slam'],
+      bought: ['gravity_hook', 'slam'],
+      fragments: { ...empty.fragments, gravitic: { earned: 4, spent: 4 } },
+      paid: { gravity_hook: GRAVITIC(1), slam: GRAVITIC(3) },
+    };
+    const row = { ...CHARACTER, level: 30, xp: 0, revision: 0, state: { skills: { v: 2, data: old } } };
+    const first = new Sink(1);
+    p.join(first, row);
+    const reconciled = skills.get('c1');
+    expect(reconciled).toMatchObject({ bought: [], fragments: { gravitic: { earned: 4, spent: 3 } } });
+    p.leave(first);
+    expect(p.status('c1')).toMatchObject({ inPlay: false, pending: true });
+    // the row still holds web 0; the join reads the copy persistence holds, already reconciled: no second refund, no warning
+    p.join(new Sink(2), row);
+    expect(skills.get('c1')).toEqual(reconciled);
+    expect(lines.filter((l) => l.obj.component === SKILLS)).toHaveLength(1);
+    release();
+    await p.flush();
+  });
+
   it('gives back the pod of a Pack Mule a web change refunded, and keeps what the pod holds', () => {
     const { registry, inventory, ships, skills, lines, log } = world();
     const p = new CharacterPersistence({ store: { write: async (rows) => new Set(rows.map((r) => r.id)) }, registry, log });

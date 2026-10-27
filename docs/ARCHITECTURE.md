@@ -664,8 +664,9 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
   fragments paid (`{node: {branch, count}}`; other routes pay nothing). Neither is sent to the client. The service keeps
   `paid` beside the state (the `unlock` request records it) and `stored(id)` is what the component saves. v1 values (the
   state alone) migrate to web 0 with `paid` read from the ledger: each fragment-routed unlock, in order, credited its
-  tier's fragments while its branch's `spent` lasts. The schema checks structure only (`structureProblems`, and `paid` ⊆
-  unlocked with no more paid per branch than spent).
+  tier's fragments while its branch's `spent` lasts, a people's free node (Second Lung, Pulse) only after every other
+  node. The schema checks structure only (`structureProblems`, and `paid` ⊆ unlocked with no more paid per branch than
+  spent). An admin edit reads and writes this stored form (`skillStateOf`, `storedSkills`), reconciled as a join reads it.
 - **Reconcile** (`reconcileSkills(stored, web)`, the component's `reconcile`, at decode, so the ship, the inventory and an
   edit read the result): a value stored under this web or an older one is brought in line with this build's web; one
   already in line comes back unchanged. A node the web does not have (renamed to a new id, or removed) is dropped from
