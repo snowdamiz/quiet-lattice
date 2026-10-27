@@ -17,6 +17,7 @@ import * as THREE from 'three';
 import { SnapshotStore } from '../net/snapshots.js';
 import { frameOfId } from '../net/pose.js';
 import { PoseBuffer } from './buffer.js';
+import { framesApartAt } from './frames.js';
 import { PlaybackClock } from './clock.js';
 import { RemoteShips } from './RemoteShips.js';
 
@@ -24,8 +25,15 @@ import { RemoteShips } from './RemoteShips.js';
 export const FOLLOWED = new Set(['player', 'ship']);
 /** The time constant (s) a drawn jump is blended out with (critically damped: mostly gone in 4 of them). */
 export const BLEND_S = 0.2;
-/** A drawn jump larger than this (m) is no motion to blend: it is shown. */
+/** A drawn jump larger than this (m) is no motion to blend: it is shown... */
 export const SNAP_M = 2000;
+/** ...unless it is within this many seconds of the entity's speed, or (at a frame change) of how fast its old and new
+ * frames move apart where it is: the render delay, the trip and a hitch's worth of clock (a planet's frame and the
+ * system's part at up to ~5 km/s at the edge of the planet's sphere, its orbit and its spin together). */
+export const SNAP_S = 0.6;
+
+/** The largest drawn jump blended rather than shown, for an entity at `speed` (m/s) or frames `apart` (m/s). */
+export const snapLimit = (speed, apart = 0) => Math.max(SNAP_M, SNAP_S * Math.max(speed, apart));
 /** The hull of a player or ship whose snapshot names none: the Lark every pilot starts in (DESIGN 10.1). */
 export const DEFAULT_HULL = 'lark';
 
@@ -177,8 +185,10 @@ export class RemoteEntities {
     const result = r.buf.push(time, frame, e.pos, e.quat, e.vel, e.mode ?? null);
     if (!drawn || result === 'stale' || result === 'repeat') return;
     const status = r.buf.sample(this.renderTime, r.pose);
+    const apart = r.buf.frame === was ? 0 : framesApartAt(was, r.buf.frame, _w);
+    const limit = snapLimit(Math.max(_rate.length(), r.buf.newest.vel.length()), apart);
     const off = toLocal(r.buf.frame, _w, _l).sub(r.pose.pos);
-    if (off.length() > SNAP_M) return settle(r);
+    if (off.length() > limit) return settle(r);
     r.offset.copy(off);
     // (rates in two frames are not comparable: across a frame change the blend starts at rest, which is what the drawn
     // motion does there, both frames carrying the entity alike over the delay)

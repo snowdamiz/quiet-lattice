@@ -18,6 +18,22 @@ export function framePoseAt(frame, t, out, depth = 0) {
   return frame.kind === 'station' ? stationPoseInto(frame, t, parent, out) : bodyPoseInto(frame, t, parent, out);
 }
 
+const _r = new THREE.Vector3();
+
+/** Writes into `out` the world velocity of the point of `frame` (as it stands now) at world position `world`: the frame's
+ * own velocity and its turning there (zero for the inertial frame). */
+export function frameVelocityAt(frame, world, out) {
+  if (!frame) return out.set(0, 0, 0);
+  return out.crossVectors(frame.angularVelocity, _r.subVectors(world, frame.position)).add(frame.velocity);
+}
+
+/** How fast frames `a` and `b` (as they stand now) move apart at world position `world` (m/s). */
+export function framesApartAt(a, b, world) {
+  return frameVelocityAt(a, world, _va).sub(frameVelocityAt(b, world, _vb)).length();
+}
+const _va = new THREE.Vector3();
+const _vb = new THREE.Vector3();
+
 /** Re-expresses `state` ({pos, quat, vel} in three's objects), a pose taken at world time `t` in frame `from`, in frame
  * `to` (null: the system's inertial frame), in place. */
 export function reframeAt(state, from, to, t) {

@@ -14,16 +14,34 @@ import { reframeAt } from './frames.js';
 export const BUFFER_SIZE = 32;
 /** How far past its newest sample an entity is extrapolated (ARCHITECTURE §9); after that it holds. */
 export const EXTRAPOLATE_S = 0.25;
-/** A sample further than this from where the one before it and their velocities put it is a jump, not motion. */
+/** A sample further than this from where the one before it and their velocities put it is a jump, not motion... */
 export const TELEPORT_M = 1000;
+/** ...or than this many seconds of its speed: a snapshot labels the last pose its client reported with the tick's time,
+ * so when two reports land in one tick the spacing is off by a tick's travel (14 km at the pulse drive's 280 km/s). */
+export const TELEPORT_S = 0.3;
+
+/** How far off its motion an entity moving at `speed` (m/s) may be before it is a jump: TELEPORT_M, or TELEPORT_S of its
+ * speed. */
+export const jumpLimit = (speed) => Math.max(TELEPORT_M, speed * TELEPORT_S);
+/** How far (s) a pose's own time is taken to be from its tick's: its client's reports reach the ticks a tick or so apart. */
+export const SKEW_S = 0.15;
+/** Below this speed (m/s) a pose's time is not estimated from its motion: the motion says too little. */
+const SKEW_SPEED = 5;
+/** How much of the estimated skew each sample keeps (the rest falls back to the tick's time over a second or so, so
+ * errors never pile up). */
+const SKEW_KEEP = 0.95;
 
 const _d = new THREE.Vector3();
 const _p = new THREE.Vector3();
+const _v = new THREE.Vector3();
 const _s = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: new THREE.Vector3() };
 
 class Sample {
   constructor() {
+    /** the pose's own time as estimated (interpolation runs on it), its tick's time, and the difference */
     this.t = 0;
+    this.label = 0;
+    this.skew = 0;
     this.pos = new THREE.Vector3();
     this.quat = new THREE.Quaternion();
     this.vel = new THREE.Vector3();
@@ -71,12 +89,25 @@ export class PoseBuffer {
    * moving entity's pose sent again: its client's next report had not reached the tick), 'cut', 'reframed' (the samples
    * held were re-expressed in `frame`) or 'ok'.
    */
-  push(t, frame, pos, quat, vel, mode = null) {
+  push(label, frame, pos, quat, vel, mode = null) {
     const prev = this.newest;
-    if (prev && t <= prev.t) return 'stale';
+    if (prev && label <= prev.label) return 'stale';
     // The server sends the last pose the entity's client reported; a tick that saw no new report repeats it. A moving
     // entity is never in the same place twice, so the repeat says nothing about where it was at this tick.
     if (prev && frame === this.frame && same(prev.pos, pos) && sameQuat(prev.quat, quat) && !still(vel)) return 'repeat';
+    // The pose's own time. Its tick's time labels the last report its client sent, which may be a tick old, or the
+    // second of two that reached one tick: labelled as they are, a steady flight would lurch. Along a steady motion, how
+    // much further the entity went than the labels' spacing says is how much further apart the reports were taken.
+    let skew = 0;
+    if (prev && frame === this.frame && onFoot(prev.mode) === onFoot(mode)) {
+      const v = _v.fromArray(vel).add(prev.vel).multiplyScalar(0.5);
+      const sp2 = v.lengthSq();
+      if (sp2 > SKEW_SPEED * SKEW_SPEED) {
+        const r = _d.fromArray(pos).sub(prev.pos).addScaledVector(v, -(label - prev.label)).dot(v) / sp2;
+        if (Math.abs(r) <= 2 * SKEW_S) skew = Math.max(-SKEW_S, Math.min(SKEW_S, SKEW_KEEP * (prev.skew + r)));
+      }
+    }
+    const t = prev ? Math.max(label + skew, prev.t + 1e-3) : label;
     let result = 'ok';
     if (prev && frame !== this.frame) {
       // where the newest sample would be at this one's time, riding with its frame, as this frame sees it then
@@ -103,6 +134,8 @@ export class PoseBuffer {
     const s = this.at(this.length);
     this.length++;
     s.t = t;
+    s.label = label;
+    s.skew = skew;
     s.pos.fromArray(pos);
     s.quat.fromArray(quat);
     s.vel.fromArray(vel);
@@ -121,7 +154,7 @@ export class PoseBuffer {
           .add(prev.pos)
           .sub(s.pos)
           .length();
-        if (miss > TELEPORT_M) s.cut = true;
+        if (miss > jumpLimit(Math.max(prev.vel.length(), s.vel.length()))) s.cut = true;
         else s.smooth = !prev.conv && miss <= Math.max(0.5, 0.2 * prev.pos.distanceTo(s.pos));
       }
     }

@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { Body } from '../universe/Body.js';
-import { EXTRAPOLATE_S, PoseBuffer, TELEPORT_M } from './buffer.js';
+import { EXTRAPOLATE_S, PoseBuffer, SKEW_S, TELEPORT_M } from './buffer.js';
 import { framePoseAt, reframeAt } from './frames.js';
 
 const Q = [0, 0, 0, 1];
@@ -126,6 +126,66 @@ describe('PoseBuffer: what it keeps', () => {
     expect(b.length).toBe(32);
     expect(b.at(0).t).toBeCloseTo(100 + 8 * 0.05, 9);
     expect(b.newest.t).toBeCloseTo(100 + 39 * 0.05, 9);
+  });
+});
+
+/**
+ * What a zone sends of a steady flight `path(t)` reported by its client at 20 Hz: each tick (every 50 ms from t0) labels
+ * with its own time the last report that had reached it, the reports taken at `phase` past each tick and arriving
+ * 5-45 ms later (deterministic jitter), so some ticks see none (and repeat the last) and some two (and send the later).
+ */
+function zoneOf(path, { t0 = 100, seconds = 3, phase = 0.03, seed = 1 } = {}) {
+  const reports = [];
+  for (let i = 0; i * 0.05 < seconds + 0.2; i++) {
+    const at = t0 - 0.1 + i * 0.05 + phase;
+    const jitter = 0.005 + 0.04 * (((Math.sin((i + 1) * 12.9898 * seed) * 43758.5453) % 1) + 1) % 1;
+    reports.push({ at, arrives: at + jitter, ...path(at) });
+  }
+  const ticks = [];
+  for (let k = 0; k * 0.05 <= seconds; k++) {
+    const T = t0 + k * 0.05;
+    let last = null;
+    for (const r of reports) if (r.arrives <= T && (!last || r.at > last.at)) last = r;
+    if (last) ticks.push({ T, ...last });
+  }
+  return ticks;
+}
+
+describe('PoseBuffer: reports bunched into ticks', () => {
+  // two pilots side by side, 100 m apart, on the pulse drive (280 km/s) and at a cruise (120 m/s), their clients'
+  // reports reaching the ticks on different beats
+  for (const speed of [280000, 120]) {
+    it(`draws pilots side by side at ${speed} m/s at their own steady pace, never cut, never apart`, () => {
+      const pilots = [0, 100].map((y, i) => {
+        const b = new PoseBuffer();
+        const results = zoneOf((t) => ({ pos: [speed * (t - 100), y, 0], vel: [speed, 0, 0] }), { phase: 0.012 + 0.025 * i, seed: i + 1 }).map((s) =>
+          b.push(s.T, null, s.pos, Q, s.vel, 'pulse'),
+        );
+        return { b, results };
+      });
+      // (labelled as they are, some steps would be a tick's travel off: 14 km at the pulse drive)
+      for (const p of pilots) expect(p.results).not.toContain('cut');
+      const out = pose();
+      const xs = [[], []];
+      // (over the last 1.4 s of the 1.6 s held)
+      for (let t = 101.5; t < 102.9; t += 1 / 60) pilots.forEach((p, i) => (p.b.sample(t, out), xs[i].push(out.pos.x)));
+      const step = speed / 60;
+      for (const x of xs) {
+        const steps = x.slice(1).map((v, k) => v - x[k]);
+        // each frame's step within 10% of the flight's own
+        expect(Math.min(...steps)).toBeGreaterThan(step * 0.9);
+        expect(Math.max(...steps)).toBeLessThan(step * 1.1);
+      }
+      // and side by side as they fly, to within a tick of travel (their clients report 25 ms apart, which the ticks'
+      // labels cannot tell)
+      for (let k = 0; k < xs[0].length; k++) expect(Math.abs(xs[0][k] - xs[1][k])).toBeLessThan(speed * 0.05);
+    });
+  }
+
+  it('keeps the ticks’ times for a steady flight reported on the beat', () => {
+    const b = new PoseBuffer();
+    for (const s of zoneOf((t) => ({ pos: [80 * (t - 100), 0, 0], vel: [80, 0, 0] }), { phase: 0.0 })) b.push(s.T, null, s.pos, Q, s.vel);
+    for (let i = 1; i < b.length; i++) expect(Math.abs(b.at(i).t - b.at(i).label)).toBeLessThan(SKEW_S);
   });
 });
 
