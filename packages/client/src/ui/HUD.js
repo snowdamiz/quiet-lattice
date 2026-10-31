@@ -380,6 +380,9 @@ export class HUD {
   update(dt) {
     const g = this.game;
     if (!this.visible) return;
+    // (first: the chat and party UI reads the page's layout before it writes, which holds only before the rest of the HUD
+    // has written this frame)
+    this.social.update();
     const mode = g.mode;
     const ship = g.ship;
     const player = g.player;
@@ -523,7 +526,6 @@ export class HUD {
     this.updateHits(g.net?.combat);
     this.updateAbilities();
     this.updateEvents(g.net?.worldEvents);
-    this.social.update();
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
   }
