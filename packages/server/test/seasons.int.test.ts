@@ -239,9 +239,9 @@ describe('seasons', () => {
         s.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
         s.send({ t: 'join', characterId: character.id });
         await waitFor(() => s.received.some((m) => m.t === 'quests'), 5000, 'the join');
-        // a character with no award is sent none, after its recipes
+        // a character with no award is sent none, after its reputation
         const types = s.received.map((m) => m.t);
-        expect(types.indexOf('awards')).toBe(types.indexOf('recipes') + 1);
+        expect(types.indexOf('awards')).toBe(types.indexOf('reputation') + 1);
         expect(s.received.find((m) => m.t === 'awards')).toEqual({ t: 'awards', awards: [] });
         sockets.push(s);
       }
@@ -317,4 +317,46 @@ describe('seasons', () => {
       await server.close();
     }
   }, 90_000);
+
+  it("gives a character that joins as its season's awards are written the award, though its join read the account's awards before them", async () => {
+    const shard = uniqueShard();
+    const end = (dayOf((Date.now() - DEFAULT_SHARD_EPOCH_MS) / 1000) + 30) * DAY_S;
+    await database.db.insert(shards).values({
+      id: shard,
+      epoch: new Date(DEFAULT_SHARD_EPOCH_MS),
+      lastTime: end - 8,
+      season: 1,
+      seasonStart: end - SMALL_SEASON_LENGTH_S,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+    });
+    const server = await startTestServer({}, { shard });
+    try {
+      const keeper = await newAccount(server);
+      const character = await newCharacter(server, keeper.token);
+      expect(server.world.countAction(keeper.accountId, 'wall-choice', 'hold')).toBe(true);
+      // the join's read of the account's awards is held until the season's end has been written and told: it comes back
+      // without the award, as a read made just before the write would
+      const read = server.seasons.awardsOf.bind(server.seasons);
+      let release!: () => void;
+      const held = new Promise<void>((resolve) => (release = resolve));
+      server.seasons.awardsOf = async (accountId) => {
+        const before = await read(accountId);
+        await held;
+        return before;
+      };
+      // (the test's listener is registered after the gateway's, so it hears the end once the gateway has)
+      const told = new Promise<void>((resolve) => server.world.onSeasonEnded(() => resolve()));
+      const socket = await TestSocket.open(server.wsUrl);
+      socket.send({ t: 'hello', version: PROTOCOL_VERSION, token: keeper.token });
+      socket.send({ t: 'join', characterId: character.id });
+      await told;
+      release();
+      const award = seasonAward(1, 'held');
+      await waitFor(() => socket.received.some((m) => m.t === 'quests'), 5000, 'the join');
+      expect(socket.received.filter((m) => m.t === 'awards')).toEqual([{ t: 'awards', awards: [award] }]);
+      socket.close();
+    } finally {
+      await server.close();
+    }
+  }, 60_000);
 });

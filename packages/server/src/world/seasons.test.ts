@@ -180,6 +180,23 @@ describe('seasons in the world service', () => {
     await world.close();
   });
 
+  it("stamps a vote with the time the meter was played to, so a clock that crosses the season's midnight mid-call leaves it in the old season", async () => {
+    const end = (DAY + 1) * DAY_S;
+    const s = shard({ season: 6, seasonStart: end - SMALL_SEASON_LENGTH_S, seasonLength: SMALL_SEASON_LENGTH_S });
+    let mono = 0;
+    let step = 0;
+    // (each reading of the clock moves it on 2 s once `step` is set: whatever reads it a second time lands after midnight)
+    const world = await WorldService.open({ store: s.store, log, wallNow: () => WALL, monoNow: () => ((mono += step), mono - step) });
+    mono = (17 * 3600 + 59 * 60 + 59) * 1000; // 23:59:59 on day 300
+    step = 2000;
+    world.countAction(A, 'convoy-escorted', 'feed');
+    step = 0;
+    await world.flush();
+    expect(s.store.votes).toEqual([expect.objectContaining({ accountId: A, day: DAY, at: end - 1 })]);
+    expect(world.state().season).toBe(6);
+    await world.close();
+  });
+
   it("plays a season's end that passed while the server was down on boot, from the votes and actives it stored", async () => {
     const s = shard({ season: 2, seasonStart: (DAY + 2) * DAY_S - SMALL_SEASON_LENGTH_S, seasonLength: SMALL_SEASON_LENGTH_S });
     const first = await s.open();
