@@ -179,15 +179,16 @@ export class Motion {
   /**
    * Eases a value (opacity-like, not stepped to pixels) of `key` from where it stands to `to` over `ms`, calling
    * `apply(v)` each frame; `from` where it starts the first time `key` is eased. Asked for the value it is easing to or
-   * rests at, it starts no ease (a redraw asking again never restarts it from `from`).
+   * rests at, it starts no ease and writes nothing (a redraw asking again never restarts it from `from`).
    */
   value(key, to, apply, { from = 0, ms = 120 } = {}) {
     const cur = this.runs.get(key);
     if (cur?.kind === 'value' && cur.f1 === to) return;
     const f0 = cur?.kind === 'value' ? cur.last : (this.rest.get(key) ?? from);
+    const applied = !cur && this.rest.has(key);
     this.runs.delete(key);
     this.rest.set(key, to);
-    if (f0 === to) return apply(to);
+    if (f0 === to) return applied ? undefined : apply(to);
     this.begin(key, { kind: 'value', m: null, f0, f1: to, o0: null, o1: null, delay: 0, ms, apply });
   }
 
@@ -273,7 +274,7 @@ export class Motion {
     r.ms ??= MOVE_MS;
     this.runs.set(e, r);
     if (r.kind === 'value') return r.apply(r.f0);
-    r.land = Math.max(FRAME_MS, r.ms * landed(Math.abs(r.f1 - r.f0)));
+    r.land = r.ms * landed(Math.abs(r.f1 - r.f0)) + FRAME_MS;
     if (r.kind !== 'y') e.classList.add('sizing');
     place(e, r.kind, r.m, r.f0);
     if (r.o !== null) e.style.opacity = String(r.o);
@@ -303,9 +304,9 @@ export class Motion {
       r.last = f;
       if (r.o1 !== null) {
         // (a closing box fades out from the start, before it moves, unless it has no delay: then it fades over the frames
-        // its room takes to close, evenly, reaching nothing on the frame the room does; an opening one fades in over the
-        // later part of its growth)
-        if (r.o1 < r.o0) r.o = r.delay ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / Math.min(OUT_MS, r.delay + r.ms)) : r.last === r.f1 ? r.o1 : r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / r.land);
+        // its room takes to close and one more, evenly, each of them showing it; an opening one fades in over the later
+        // part of its growth)
+        if (r.o1 < r.o0) r.o = r.delay ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / Math.min(OUT_MS, r.delay + r.ms)) : r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / r.land);
         else r.o = r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
         if (r.o1 > r.o0 && p <= 0) r.o = r.o0;
         e.style.opacity = String(r.o);

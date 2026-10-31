@@ -39,29 +39,43 @@ describe('covers', () => {
   });
 });
 
-/** A beacon list as `SocialUI` draws it, over a page of fakes: its rows, scroll box and the properties the box is given. */
+/** A beacon list as `SocialUI` draws it, over a page of fakes: its rows, scroll box and the properties the box is given,
+ * and `writes()`, how many times anything on the page has been written to (text, style, class, children). */
 function beaconList(beaconRows) {
   const made = [];
-  const fake = () => ({
-    style: {},
-    children: [],
-    textContent: '',
-    className: '',
-    classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
-    appendChild(c) {
-      this.children.push(c);
-      return c;
-    },
-    insertBefore(c, before) {
-      const at = before ? this.children.indexOf(before) : -1;
-      this.children.splice(at < 0 ? this.children.length : at, 0, c);
-      return c;
-    },
-    addEventListener() {},
-    animate: () => ({ addEventListener() {} }),
-    getAnimations: () => [],
-    remove() {},
-  });
+  let written = 0;
+  const fake = () => {
+    let text = '';
+    const e = {
+      style: new Proxy({}, { set: (o, k, v) => ((o[k] = v), written++, true) }),
+      children: [],
+      className: '',
+      classList: { add: () => written++, remove: () => written++, toggle: () => written++, contains: () => false },
+      get textContent() {
+        return text;
+      },
+      set textContent(v) {
+        text = v;
+        written++;
+      },
+      appendChild(c) {
+        written++;
+        this.children.push(c);
+        return c;
+      },
+      insertBefore(c, before) {
+        written++;
+        const at = before ? this.children.indexOf(before) : -1;
+        this.children.splice(at < 0 ? this.children.length : at, 0, c);
+        return c;
+      },
+      addEventListener() {},
+      animate: () => (written++, { addEventListener() {} }),
+      getAnimations: () => [],
+      remove: () => written++,
+    };
+    return e;
+  };
   vi.stubGlobal('document', {
     createElement() {
       const e = fake();
@@ -90,22 +104,54 @@ function beaconList(beaconRows) {
     t += 1000 / 60;
     ui.motion.step();
   };
-  return { ui, props, made, frame };
+  return { ui, props, made, frame, writes: () => written + props.length };
 }
 
 describe('the beacon list', () => {
   const rows = [1, 2, 3].map((id) => ({ id, kind: 'raid', place: `Place ${id}`, from: 'Kestrel Vane', open: 2, cap: 4, at: 90, system: 0, frame: 0, center: [0, 0, 0], radius: 10 }));
 
-  it('is drawn once, and left as it stands while its rows say the same', () => {
-    const { ui, made } = beaconList(rows);
+  it('is drawn once, and left as it stands (nothing written, to a row, a count or a scrollbar property) while its rows say the same', () => {
+    const { ui, made, writes } = beaconList(rows);
     ui.renderBeacons();
     const drawn = made.length;
+    const written = writes();
     expect(ui.listEl.children).toHaveLength(3);
+    expect(written).toBeGreaterThan(0);
     for (let i = 0; i < 5; i++) ui.renderBeacons();
     expect(made).toHaveLength(drawn);
+    expect(writes()).toBe(written);
     ui.model.net.beacons.list = () => rows.slice(0, 2);
     ui.renderBeacons();
     expect(ui.rows.size).toBe(2);
+    expect(writes()).toBeGreaterThan(written);
+    vi.unstubAllGlobals();
+  });
+
+  it('starts its edge fades and scrollbar on the frame a move under it makes it overflow, not at the next tick', () => {
+    const { ui, props, frame } = beaconList(rows);
+    ui.renderBeacons();
+    ui.beaconsEl.scrollHeight = 200;
+    ui.scrollEdges();
+    for (let i = 0; i < 12; i++) frame();
+    const bar = () => props.filter(([n]) => n === '--sb-bar').map(([, v]) => Number(v));
+    expect(bar().at(-1)).toBe(0);
+    ui.game.overlay = 'chat';
+    ui.hud = { now: () => 0 };
+    ui.tab = 'beacons';
+    ui.wasOpen = true;
+    ui.dirty = false;
+    ui.lastTick = Infinity;
+    const moves = () => ui.motion.slide({ style: {}, classList: { add() {}, remove() {} } }, 10);
+    const before = bar().length;
+    // an idle frame looks at nothing; the one a move has grown the list under looks at once
+    ui.update();
+    expect(bar()).toHaveLength(before);
+    ui.beaconsEl.scrollHeight = 320;
+    moves();
+    ui.update();
+    expect(bar().length).toBeGreaterThan(before);
+    frame();
+    expect(bar().at(-1)).toBeGreaterThan(0);
     vi.unstubAllGlobals();
   });
 

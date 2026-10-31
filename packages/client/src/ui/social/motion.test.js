@@ -66,27 +66,42 @@ function box(width, height) {
 }
 
 describe('a badge clearing', () => {
-  it('fades to nothing on the frame its slot closes, as it shrinks', () => {
+  function clear() {
     vi.stubGlobal('getComputedStyle', () => ({ paddingLeft: '4px', paddingRight: '4px', borderLeftWidth: '0px', borderRightWidth: '0px' }));
     let t = 0;
     const motion = new Motion(() => t);
     const e = box(21, 15);
-    motion.toggle(e, false, true, { across: true, ms: 150, gap: 7, quick: true });
+    motion.toggle(e, false, true, { across: true, ms: 150, gap: 7, quick: true, whole: true });
     const seen = [];
     for (let i = 0; i < 12 && motion.moving(e); i++) {
       t += 1000 / 60;
       motion.step();
-      seen.push({ room: parseFloat(e.style.width) + 7 + parseFloat(e.style.marginLeft), opacity: Number(e.style.opacity) });
+      seen.push({ width: e.style.width, room: parseFloat(e.style.width) + 7 + parseFloat(e.style.marginRight), opacity: Number(e.style.opacity) });
     }
     vi.unstubAllGlobals();
+    return { e, seen };
+  }
+
+  it('keeps its face whole while its room closes, over the same few frames', () => {
+    const { e, seen } = clear();
     expect(e.hidden).toBe(true);
     const closed = seen.findIndex((f) => f.room === 0);
     expect(closed).toBe(5);
-    expect(seen.slice(0, closed).every((f) => f.opacity > 0)).toBe(true);
-    for (let i = 1; i <= closed; i++) expect(seen[i].opacity).toBeLessThanOrEqual(seen[i - 1].opacity);
-    expect(seen[closed].opacity).toBe(0);
-    // (as much of its brightness as of its room: never gone from view at full brightness)
-    for (const f of seen.filter((f) => Number.isFinite(f.room))) expect(f.opacity).toBeCloseTo(f.room / 28, 1);
+    for (const f of seen.filter((f) => f.width)) expect(f.width).toBe('21px');
+    // (the room is given up from the right, a pixel or more on every frame)
+    for (let i = 1; i <= closed; i++) expect(seen[i].room).toBeLessThan(seen[i - 1].room);
+  });
+
+  it('fades evenly over those frames, each showing it, and is all but gone on the frame after the room is', () => {
+    const { seen } = clear();
+    const closed = seen.findIndex((f) => f.room === 0);
+    expect(seen.slice(0, closed + 1).every((f) => f.opacity > 0.05 && f.opacity < 1)).toBe(true);
+    for (let i = 1; i <= closed + 1; i++) expect(seen[i].opacity).toBeLessThan(seen[i - 1].opacity);
+    expect(seen[closed + 1].opacity).toBeLessThan(0.02);
+    // (no frame loses much more than a fifth of its brightness, none stands still)
+    const steps = seen.slice(0, closed + 1).map((f, i) => (i ? seen[i - 1].opacity - f.opacity : 1 - f.opacity));
+    expect(Math.max(...steps)).toBeLessThan(0.25);
+    expect(Math.min(...steps)).toBeGreaterThan(0.03);
   });
 });
 
@@ -109,11 +124,22 @@ describe('an eased value', () => {
       t += 1000 / 60;
       motion.step();
     }
-    expect(shown.slice(before).every((v) => v === 1)).toBe(true);
+    expect(shown).toHaveLength(before);
     motion.value(key, 0, apply);
     t += 1000 / 60;
     motion.step();
     expect(shown.at(-1)).toBeLessThan(1);
     expect(shown.at(-1)).toBeGreaterThan(0.8);
+  });
+
+  it('writes the value it starts at once, and nothing for asking again', () => {
+    const motion = new Motion(() => 0);
+    const shown = [];
+    for (let i = 0; i < 5; i++) motion.value({}, 0, (v) => shown.push(v));
+    const key = {};
+    for (let i = 0; i < 5; i++) motion.value(key, 0, (v) => shown.push(v));
+    expect(shown).toEqual([0, 0, 0, 0, 0, 0]);
+    motion.value(key, 0, (v) => shown.push(v));
+    expect(shown).toHaveLength(6);
   });
 });
