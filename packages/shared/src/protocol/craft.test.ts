@@ -23,7 +23,11 @@ describe('crafting messages', () => {
   });
 
   it('round-trips make and learn requests, and refuses malformed ones', () => {
-    for (const m of [make, learn, ...(['capital', 'sanctuary', 'scrapyard', 'ship'] as const).map((at) => ({ ...make, op: { ...make.op, at, count: CRAFT_MAX } }))] satisfies ClientMessage[])
+    for (const m of [
+      make,
+      learn,
+      ...(['capital', 'sanctuary', 'scrapyard', 'ship'] as const).map((at) => ({ ...make, op: { ...make.op, at, count: CRAFT_MAX } })),
+    ] satisfies ClientMessage[])
       expect(decodeClientMessage(encodeClientMessage(m))).toEqual(m);
     for (const bad of [
       { ...make, seq: 0 },
