@@ -61,6 +61,7 @@ import type { CodexService } from '../codex/service.ts';
 import { CutsceneService } from '../cutscenes/service.ts';
 import type { RecipeBook } from '../crafting/book.ts';
 import { recipeBookIn } from '../crafting/component.ts';
+import type { FabricatorPlaces } from '../crafting/places.ts';
 import { CraftingService } from '../crafting/service.ts';
 import { plateBookIn, type PlateBook } from '../discovery/plates.ts';
 import { DiscoveryService } from '../discovery/service.ts';
@@ -167,6 +168,8 @@ export interface WsGatewayDeps {
   recipes?: RecipeBook;
   /** Fabricators; the gateway makes its own over the recipe book when none is given. */
   crafting?: CraftingService;
+  /** the terminals of places beyond every zone's Waystation, for the crafting service the gateway makes */
+  fabricatorPlaces?: FabricatorPlaces;
   /** The shard the server runs (its finds are the shard's); DEFAULT_SHARD_ID when none is given. */
   shard?: string;
   /** First finds; the gateway makes (and starts and stops) its own over the shard's store, the persistence registry's
@@ -294,7 +297,15 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   // each analysis made, first or not, counts for the character's quests' `analyze` steps (one species once each)
   const unsubscribeAnalysis = quests ? analysis.subscribe((e) => void quests.event(e.characterId, { type: 'analyze', species: e.key })) : undefined;
   const crafting =
-    deps.crafting ?? new CraftingService({ zones: deps.zones, inventory, book: deps.recipes ?? needRecipes(persistence), now: () => deps.clock.now(), log });
+    deps.crafting ??
+    new CraftingService({
+      zones: deps.zones,
+      inventory,
+      book: deps.recipes ?? needRecipes(persistence),
+      now: () => deps.clock.now(),
+      places: deps.fabricatorPlaces,
+      log,
+    });
   // first finds: the shard's, paid through the codex's XP and the plates persistence's registry loads into
   const discovery =
     deps.discovery === null

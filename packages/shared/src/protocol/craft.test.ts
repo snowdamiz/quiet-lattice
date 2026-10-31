@@ -14,7 +14,7 @@ import {
   type ServerMessage,
 } from './index.ts';
 
-const make = { t: 'craft', seq: 1, op: { op: 'make', recipe: 'warp_cell', count: 2, at: 'station' } } as const satisfies ClientMessage;
+const make = { t: 'craft', seq: 1, op: { op: 'make', recipe: 'warp_cell', count: 2, at: 'waystation' } } as const satisfies ClientMessage;
 const learn = { t: 'craft', seq: 2, op: { op: 'learn', recipe: 'torpedo' } } as const satisfies ClientMessage;
 
 describe('crafting messages', () => {

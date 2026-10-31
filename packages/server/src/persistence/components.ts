@@ -12,6 +12,7 @@
 import { applyLayout, inventorySchema, layoutFor, startingInventory, type Inventory } from '@astra/shared/inventory';
 import { MoveMode, Pose } from '@astra/shared/protocol';
 import { emptyQuestLog, migrateQuestLogV1, questLogProblem, questLogSchema, type QuestLog, type QuestLogV1 } from '@astra/shared/quests';
+import type { RecipeTableView } from '@astra/shared/crafting';
 import { shipLoadoutSchema, shipStats, type ShipLoadout } from '@astra/shared/ships';
 import type { StoredSkills } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
@@ -337,6 +338,8 @@ export interface CoreComponentDeps {
   codex?: CodexService;
   /** Every character's recipes; when none is given, the registry makes its own (the gateway finds it: `recipeBookIn`). */
   recipes?: RecipeBook;
+  /** the recipe table the recipes component reconciles with: a build's own unless a test gives a rolled-back one */
+  recipeTable?: RecipeTableView;
   /** Every character's reputation; when none is given, the registry makes its own, with no Count to read for the
    * underdog's bonus (the gateway and the quest runtime find it: `reputationServiceIn`). */
   reputation?: ReputationService;
@@ -363,7 +366,7 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(metersComponent(meters, { log: deps.log }))
     .register(poseComponent(deps.zones, deps.clock, deps.movement ?? true))
     .register(codexComponent(codex, { log: deps.log }))
-    .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log }))
+    .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log, table: deps.recipeTable }))
     // (written with the quest log, whose owed reputation is settled into it: both in one save, or neither, §24)
     .register(reputationComponent(deps.reputation ?? new ReputationService({ log: deps.log }), { log: deps.log, writtenWith: deps.quests ? [QUESTS] : [] }))
     // (written with the progress, whose XP a plate records as paid: both in one save, or neither, §25)

@@ -55,23 +55,23 @@ describe('the client’s crafting', () => {
     const c = new Crafting({ inventory: stocked(WARP) });
     const net = fakeNet();
     c.link(net);
-    expect(c.make('warp_cell', 1, 'station', 0)).toBeNull();
+    expect(c.make('warp_cell', 1, 'waystation', 0)).toBeNull();
     expect(c.waiting).toBe(true);
-    expect(c.make('warp_cell', 2, 'station', 0)).toBe('materials');
+    expect(c.make('warp_cell', 2, 'waystation', 0)).toBe('materials');
     expect(c.make('warp_cell', 1, 'ship', 0)).toBe('fabricator');
-    expect(c.make('torpedo', 1, 'station', 0)).toBe('not_known');
-    expect(c.make('no_such', 1, 'station', 0)).toBe('unknown');
+    expect(c.make('torpedo', 1, 'waystation', 0)).toBe('not_known');
+    expect(c.make('no_such', 1, 'waystation', 0)).toBe('unknown');
     expect(c.learn('torpedo')).toBe('no_item');
     expect(c.learn('warp_cell')).toBe('known');
-    expect(net.sent).toEqual([{ t: 'craft', seq: 1, op: { op: 'make', recipe: 'warp_cell', count: 1, at: 'station' } }]);
+    expect(net.sent).toEqual([{ t: 'craft', seq: 1, op: { op: 'make', recipe: 'warp_cell', count: 1, at: 'waystation' } }]);
     // (the client's inventory is the server's to change: asking changes nothing here)
     expect(totals(c.game.inventory.state)).toEqual({ dihydrogen: 60, tritium: 25, cobalt: 5 });
     net.push({ t: 'welcome' });
     expect(c.waiting).toBe(false);
-    expect(c.make('warp_cell', 1, 'station', 0)).toBeNull();
+    expect(c.make('warp_cell', 1, 'waystation', 0)).toBeNull();
     expect(net.sent.at(-1)).toMatchObject({ seq: 1 });
     net.joined = false;
-    expect(c.make('warp_cell', 1, 'station', 0)).toBe('zone');
+    expect(c.make('warp_cell', 1, 'waystation', 0)).toBe('zone');
   });
 
   it('hears the answers to its own requests only', () => {
@@ -80,7 +80,7 @@ describe('the client’s crafting', () => {
     c.link(net);
     const heard = [];
     c.on((m) => heard.push(m));
-    c.make('warp_cell', 1, 'station', 0);
+    c.make('warp_cell', 1, 'waystation', 0);
     const answer = { t: 'craft', seq: 1, op: 'make', recipe: 'warp_cell', result: 'made', item: 'warp_cell', count: 1 };
     net.push({ t: 'craft', seq: 7, op: 'make', recipe: 'warp_cell', result: 'refused', reason: 'stale_seq' });
     net.push(answer);
@@ -93,7 +93,7 @@ describe('the client’s crafting', () => {
     const c = new Crafting({ inventory: stocked([...WARP, ['recipe_torpedo', 1]]) });
     const heard = [];
     c.on((m) => heard.push(m));
-    expect(c.make('warp_cell', 1, 'station', 0)).toBeNull();
+    expect(c.make('warp_cell', 1, 'waystation', 0)).toBeNull();
     expect(heard).toEqual([{ t: 'craft', seq: 1, op: 'make', recipe: 'warp_cell', result: 'made', item: 'warp_cell', count: 1 }]);
     expect(totals(c.game.inventory.state)).toEqual({ dihydrogen: 10, tritium: 5, warp_cell: 1, recipe_torpedo: 1 });
     expect(c.learn('torpedo')).toBeNull();

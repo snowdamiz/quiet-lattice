@@ -1,31 +1,42 @@
 // The recipes' persistence component (ARCHITECTURE §8, §23): the recipes a character knows, stored as the `recipes`
-// entry of its `state` (v1, `{known: [ids]}`). It is earned, so a value that cannot be read refuses the join rather than
-// being replaced; a character saved before crafting existed (no entry) gets the starting recipes. The recipe table can
-// change under it, so on load it is reconciled with the table as it is now (`reconcileKnown`): a recipe the table no
-// longer has is dropped, one warning per character, and the next save writes it.
-import { knownRecipesSchema, reconcileKnown, startingKnowledge, type KnownRecipes } from '@astra/shared/crafting';
+// entry of its `state` (v2, `{table, known: [ids]}`; v1 was the ids alone). It is earned, so a value that cannot be read
+// refuses the join rather than being replaced; a character saved before crafting existed (no entry) gets the starting
+// recipes. The recipe table can change under it, so on load it is reconciled with the table as it is now
+// (`reconcileRecipes`): a recipe the table no longer has is dropped, one warning per character, unless the character was
+// saved under a NEWER table (a server rolled back): then it keeps every recipe it learned, the warning says so, and the
+// next save writes the newer table's version back so nothing is lost by the rollback.
+import { RECIPE_TABLE, reconcileRecipes, startingStored, storedRecipesSchema, type RecipeTableView, type StoredRecipes } from '@astra/shared/crafting';
 import type { CharacterComponent, ComponentRegistry, PersistenceLog } from '../persistence/registry.ts';
 import { RecipeBook } from './book.ts';
 
 export const RECIPES = 'recipes';
 
 /** The component, and the book it loads into (so whoever holds the registry reaches the book: `recipeBookIn`). */
-export interface RecipesComponent extends CharacterComponent<KnownRecipes> {
+export interface RecipesComponent extends CharacterComponent<StoredRecipes> {
   readonly book: RecipeBook;
 }
 
-export function recipesComponent(book: RecipeBook, opts: { log?: PersistenceLog } = {}): RecipesComponent {
+/** `table` stands in for the recipe table (tests give a rolled-back one); a build's own is the default. */
+export function recipesComponent(book: RecipeBook, opts: { log?: PersistenceLog; table?: RecipeTableView } = {}): RecipesComponent {
+  const table = opts.table ?? RECIPE_TABLE;
   return {
     key: RECIPES,
-    v: 1,
-    schema: knownRecipesSchema,
+    v: 2,
+    schema: storedRecipesSchema,
+    // v1 was the ids alone, stored before the table had a version: under table 0, so it is reconciled like any older table's
+    migrations: { 1: (data) => (data && typeof data === 'object' && !Array.isArray(data) ? { table: 0, ...data } : data) },
     onInvalid: 'refuse',
     book,
-    default: () => startingKnowledge(),
+    default: () => startingStored(),
     reconcile: (stored, ctx) => {
-      const r = reconcileKnown(stored);
-      if (r.dropped.length) ctx.warn({ dropped: r.dropped }, 'recipes no longer in the table since the character was saved; dropped');
-      return r.knowledge;
+      const r = reconcileRecipes(stored, table);
+      if (r.rolledBack)
+        ctx.warn(
+          { storedTable: stored.table, table: table.version, heldOver: r.heldOver },
+          'recipes were learned under a newer recipe table than this server has; all kept, those it lacks cannot be made until it is back',
+        );
+      else if (r.dropped.length) ctx.warn({ dropped: r.dropped }, 'recipes no longer in the table since the character was saved; dropped');
+      return r.stored;
     },
     load: (stored, ctx) => {
       const id = ctx.character.id;
@@ -35,7 +46,7 @@ export function recipesComponent(book: RecipeBook, opts: { log?: PersistenceLog 
     },
     save: ({ characterId }) => {
       const k = book.get(characterId);
-      return k ? { known: [...k.known] } : undefined;
+      return k ? { table: k.table, known: [...k.known] } : undefined;
     },
     unload: (characterId) => void book.close(characterId),
   };

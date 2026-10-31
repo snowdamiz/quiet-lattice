@@ -13,7 +13,7 @@ import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputati
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 16;
+export const PROTOCOL_VERSION = 17;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -31,6 +31,7 @@ export const PROTOCOL_VERSION = 16;
 // 14: reputation: standing, ranks and titles by faction, rank and title events (P2.E18.T01)
 // 15: meters: heat and Charge state (P1.E07.T02)
 // 16: first finders: name requests and their answers, a system's finds and their names (P2.E29.T01)
+// 17: fabricators: a craft names its fabricator as waystation, capital, sanctuary, scrapyard or ship (was station or ship) (P2.E20.T01)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */

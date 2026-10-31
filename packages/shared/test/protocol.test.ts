@@ -82,7 +82,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'fire', seq: 4, time: 3600.75, frame: '424242:2', aim: [0, -0.6, -0.8] },
   { t: 'beacon', op: { op: 'answer', id: 3 } },
   { t: 'analyze', seq: 1, time: 3600.5, target: 12 },
-  { t: 'craft', seq: 2, op: { op: 'make', recipe: 'warp_cell', count: 3, at: 'station' } },
+  { t: 'craft', seq: 2, op: { op: 'make', recipe: 'warp_cell', count: 3, at: 'waystation' } },
   { t: 'name', kind: 'site', key: '424242:3#17', name: "Vel'ka's Rest" },
 ];
 

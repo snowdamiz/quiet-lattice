@@ -1,15 +1,16 @@
-// Fabricators (DESIGN 15.7; P1.E13.T05; ARCHITECTURE §23): a client asks to `make` a recipe at the station's or the
-// ship's fabricator, or to `learn` one from its item, and the server checks the request cheapest first before anything
-// changes:
+// Fabricators (DESIGN 15.7; P1.E13.T05, P2.E20.T01; ARCHITECTURE §23): a client asks to `make` a recipe at a place's
+// fabricator (a Waystation's, a capital's, a sanctuary's, the Scrapyard's) or the ship's, or to `learn` one from its item,
+// and the server checks the request cheapest first before anything changes:
 // - its number (above the session's last), the character in play (its recipes and inventory held), its rate
 //   (CRAFT_BURST at once, CRAFT_PER_S after; every request that gets this far spends one, refused for the rate or any
 //   check after it or not, so no client probes faster; a stale number or a character out of play spends none);
 // - the recipe in the table (`unknown`), and for `make`: known (`not_known`); a recipe that fabricator makes in this
-//   system (`fabricator`: a Waystation's its line's Tier 0–2 recipes, the ship's only ammo and cartridges, torpedoes
-//   from Tier 2); the player where that fabricator is (`place`), as movement authority believes it (its zone entity's
-//   frame, mode and position): the station's docked at the zone's Waystation, or on foot within reach of its fabricator
-//   terminal (STATION_FABRICATOR); the ship's aboard its ship in any mode, or on foot beside the ship it left
-//   (movement authority's `parkedOf`, within the boarding reach);
+//   system (`fabricator`: a Waystation's its line's Tier 0–2 recipes, a capital's its line up to Tier 3, a sanctuary's
+//   the catalysts, the Scrapyard's the Void recipes, the ship's only ammo and cartridges, torpedoes from Tier 2); the
+//   player where that fabricator is (`place`), as movement authority believes it (its zone entity's frame, mode and
+//   position): a place's on foot within reach of one of its terminals in the zone (`FabricatorPlaces`: the Waystation's
+//   is STATION_FABRICATOR, docked on a pad works too; later places register theirs), the ship's aboard its ship in any
+//   mode, or on foot beside the ship it left (movement authority's `parkedOf`, within the boarding reach);
 // - then the craft itself, all or nothing through the inventory service (`transact`): every material taken from the
 //   suit and the cargo pods, the output added; short of a material (`materials`) or with no room for the output even
 //   in the room the materials leave (`no_room`), nothing is used up.
@@ -18,15 +19,17 @@
 //
 // Crafting is instant (a choice, DECISIONS P1.E13.T05): nothing is held server-side between the request and the result,
 // so a craft cannot be interrupted half-way, and the rate bounds it as the analyzer's is bounded.
-import { craft, learn, makesAt, recipeById, type CraftRefusal, type FabricatorKind } from '@astra/shared/crafting';
-import { STATION_FABRICATOR, WALKER } from '@astra/shared/data';
-import { fail } from '@astra/shared/inventory';
+import { craft, learn, makesAt, recipeById, type CraftRefusal, type FabricatorKind, type RecipeSource } from '@astra/shared/crafting';
+import { recipeItemId } from '@astra/shared/data';
+import { WALKER } from '@astra/shared/data';
+import { fail, type Result } from '@astra/shared/inventory';
 import type { ClientMessage, Pose, ServerMessage } from '@astra/shared/protocol';
 import { tierOfGalaxySystem, type Tier } from '@astra/shared/world';
 import { TokenBucket } from '../gateway/rateLimit.ts';
 import type { InventoryService } from '../inventory/service.ts';
 import type { Zone, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import type { RecipeBook } from './book.ts';
+import { FabricatorPlaces } from './places.ts';
 
 type CraftRequest = Extract<ClientMessage, { t: 'craft' }>;
 type CraftState = Extract<ServerMessage, { t: 'craft' }>;
@@ -61,6 +64,8 @@ export interface CraftingServiceOptions {
   book: RecipeBook;
   /** world time, s (the server clock) */
   now: () => number;
+  /** the terminals of places beyond every zone's Waystation (capitals, sanctuaries, the Scrapyard register theirs here) */
+  places?: FabricatorPlaces;
   log?: ZoneLog;
 }
 
@@ -77,6 +82,7 @@ export class CraftingService {
   private readonly inventory: InventoryService;
   private readonly book: RecipeBook;
   private readonly now: () => number;
+  private readonly places: FabricatorPlaces;
   private readonly log?: ZoneLog;
   /** each session's last request number */
   private readonly lastSeq = new WeakMap<ZoneViewer, number>();
@@ -90,6 +96,7 @@ export class CraftingService {
     this.inventory = opts.inventory;
     this.book = opts.book;
     this.now = opts.now;
+    this.places = opts.places ?? new FabricatorPlaces();
     this.log = opts.log;
   }
 
@@ -99,8 +106,22 @@ export class CraftingService {
 
   /** The recipes a character in play knows, as the client is sent them (`recipes`), or null when it is not held. */
   recipes(characterId: string): Extract<ServerMessage, { t: 'recipes' }> | null {
-    const k = this.book.get(characterId);
-    return k ? { t: 'recipes', known: [...k.known] } : null;
+    const known = this.book.known(characterId);
+    return known ? { t: 'recipes', known } : null;
+  }
+
+  /**
+   * Hands a character a recipe's item from one of the sources DESIGN 15.7 names, through the inventory (all or nothing:
+   * with no room it is refused and the source keeps it). A vendor's sale (P2.E19) and a vault's find call this after taking
+   * their own price or opening; a quest's reward is the quest runtime's `items` and a boss's drop the combat service's, both
+   * the same inventory grant, so every source ends in an item the character learns with `craft {op: 'learn'}`. Throws for a
+   * recipe the table lacks.
+   */
+  award(characterId: string, recipeId: string, source: RecipeSource, count = 1): Result<{ added: number; remainder: number }> {
+    if (!recipeById(recipeId)) throw new RangeError(`no recipe ${recipeId}`);
+    const r = this.inventory.grant(characterId, recipeItemId(recipeId), count, { partial: false });
+    if (r.ok) this.log?.info({ character: characterId, recipe: recipeId, source, count }, 'recipe item awarded');
+    return r;
   }
 
   /** A client's fabricator request, answered (see the header). With a `learned` answer the gateway sends the new
@@ -165,18 +186,19 @@ export class CraftingService {
 
   /** Whether the player is where fabricator `at` is (see the header), as the zone believes it. */
   private at(zone: CraftingZone, self: number, f: { frame: string | null; pos: Vec3; mode?: string }, at: FabricatorKind): boolean {
-    if (at === 'station') {
-      if (f.frame !== `${zone.system.seed}:station`) return false;
-      if (f.mode === 'docked') return true;
-      const u = STATION_FABRICATOR.use;
-      return f.mode === 'foot' && Math.hypot(f.pos[0] - u.x, f.pos[1] - u.y, f.pos[2] - u.z) <= STATION_FABRICATOR.reachM;
+    if (at === 'ship') {
+      if (f.mode !== undefined && ABOARD.has(f.mode)) return true;
+      if (f.mode !== 'foot') return false;
+      const parked = zone.movement?.parkedOf(self);
+      if (!parked || parked.frame !== f.frame) return false;
+      const p = parked.pos;
+      return Math.hypot(f.pos[0] - p[0], f.pos[1] - p[1], f.pos[2] - p[2]) <= WALKER.boardRangeM + SHIP_FABRICATOR_SLACK_M;
     }
-    if (f.mode !== undefined && ABOARD.has(f.mode)) return true;
-    if (f.mode !== 'foot') return false;
-    const parked = zone.movement?.parkedOf(self);
-    if (!parked || parked.frame !== f.frame) return false;
-    const p = parked.pos;
-    return Math.hypot(f.pos[0] - p[0], f.pos[1] - p[1], f.pos[2] - p[2]) <= WALKER.boardRangeM + SHIP_FABRICATOR_SLACK_M;
+    return this.places.in(zone).some((p) => {
+      if (p.fabricator !== at || f.frame !== p.frame) return false;
+      if (f.mode === 'docked') return p.docked;
+      return f.mode === 'foot' && Math.hypot(f.pos[0] - p.use[0], f.pos[1] - p.use[1], f.pos[2] - p.use[2]) <= p.reachM;
+    });
   }
 
   /** The zone's tier (the world service's, as the zone manager keeps it). */

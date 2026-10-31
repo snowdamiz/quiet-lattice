@@ -71,7 +71,7 @@ async function join(token: string, characterId: string) {
       });
     },
     /** sends a request without waiting (a burst) */
-    send(op: { op: 'make'; recipe: string; count: number; at: 'station' | 'ship' } | { op: 'learn'; recipe: string }): number {
+    send(op: { op: 'make'; recipe: string; count: number; at: 'waystation' | 'ship' } | { op: 'learn'; recipe: string }): number {
       const s = ++seq;
       sock.send({ t: 'craft', seq: s, op });
       return s;
@@ -84,7 +84,7 @@ async function join(token: string, characterId: string) {
       }
     },
     /** asks to make `count` of a recipe at a fabricator, paced within the rate; the server's answer */
-    async make(recipe: string, at: 'station' | 'ship' = 'station', count = 1): Promise<Answer> {
+    async make(recipe: string, at: 'waystation' | 'ship' = 'waystation', count = 1): Promise<Answer> {
       await sleep(550);
       return this.answer(this.send({ op: 'make', recipe, count, at }));
     },
@@ -168,7 +168,7 @@ describe('fabricators over the wire', () => {
     expect(await bot.make('sodium_cartridge', 'ship', 3)).toMatchObject({ result: 'made', item: 'sodium_cartridge', count: 3 });
     before = held(id);
     expect(await bot.make('warp_cell', 'ship')).toMatchObject({ result: 'refused', reason: 'fabricator' });
-    expect(await bot.make('warp_cell', 'station')).toMatchObject({ result: 'refused', reason: 'place' });
+    expect(await bot.make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
     expect(held(id)).toEqual(before);
 
     // back in the hangar on foot: the terminal on the trade deck, not the hangar floor
@@ -222,7 +222,7 @@ describe('fabricators over the wire', () => {
 
     // ten asks at once: the first few answered, the rest refused for the rate
     await sleep(2500);
-    const seqs = Array.from({ length: 10 }, () => bot.send({ op: 'make', recipe: 'flak_ammo', count: 1, at: 'station' }));
+    const seqs = Array.from({ length: 10 }, () => bot.send({ op: 'make', recipe: 'flak_ammo', count: 1, at: 'waystation' }));
     const answers = await Promise.all(seqs.map((s) => bot.answer(s)));
     const rate = answers.filter((a) => a.result === 'refused' && a.reason === 'rate').length;
     expect(rate).toBeGreaterThanOrEqual(5);
@@ -291,7 +291,7 @@ describe('fabricators over the wire', () => {
       ] as const)
         expect(live.ws.inventory.grant(p.characterId, item, n).ok).toBe(true);
       let seq = 0;
-      const ask = async (at: 'station' | 'ship') => {
+      const ask = async (at: 'waystation' | 'ship') => {
         const s = ++seq;
         p.sock.send({ t: 'craft', seq: s, op: { op: 'make', recipe: 'flak_ammo', count: 1, at } });
         for (;;) {
@@ -301,7 +301,7 @@ describe('fabricators over the wire', () => {
       };
       expect(await ask('ship')).toMatchObject({ result: 'made', item: 'flak_ammo', count: 50 });
       // (on the hangar floor, not at the trade deck's terminal: no station fabricator here)
-      expect(await ask('station')).toMatchObject({ result: 'refused', reason: 'place' });
+      expect(await ask('waystation')).toMatchObject({ result: 'refused', reason: 'place' });
       // a walk across the floor toward the hangar's middle, 30 m from the ship
       await p.fly(
         [

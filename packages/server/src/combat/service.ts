@@ -20,7 +20,7 @@
 //   share is told to the character's session as `xp` and `loot` events; every one who hurt it hears `kill {tags,
 //   entity}` for its quests.
 // - In combat: a character that dealt or took damage within IN_COMBAT_S (skills swap slots only out of it).
-import { killLoot, levelForXp, modsOfNodes, rayHits } from '@astra/shared/combat';
+import { killLoot, levelForXp, modsOfNodes, rayHits, recipeDrops } from '@astra/shared/combat';
 import type { StatMod } from '@astra/shared/data';
 import type { ClientMessage, GameEvent, ServerMessage } from '@astra/shared/protocol';
 import type { QuestWorldEvent } from '@astra/shared/quests';
@@ -338,6 +338,10 @@ export class CombatService {
         for (const { item, shares } of items) {
           const n = this.grant(characterId, item, shares.get(characterId) ?? 0);
           if (n > 0) events.push({ kind: 'loot', item, count: n, from: r.entity });
+        }
+        // a boss's recipes: each fighter rolls its own (DESIGN 15.7), and the items are theirs to learn
+        for (const item of recipeDrops(r.ref, () => this.rng.next())) {
+          if (this.grant(characterId, item, 1) > 0) events.push({ kind: 'loot', item, count: 1, from: r.entity });
         }
         if (at && events.length) this.tell(at.viewer, events);
         try {

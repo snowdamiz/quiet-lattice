@@ -766,7 +766,7 @@ export class Game {
           if (p.state.pos.distanceTo(t.pos) < 3.2) {
             prompt = `<kbd>E</kbd>${t.label}`;
             // (the fabricator terminal opens the Waystation's fabricator; the others the trade panel)
-            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('station') : this.menus.openTrade(t.label);
+            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('waystation') : this.menus.openTrade(t.label);
           }
         }
       }
@@ -837,7 +837,7 @@ export class Game {
   openFabricator() {
     const ship = this.ship;
     let at = null;
-    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'station' : 'ship';
+    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'waystation' : 'ship';
     else if (this.mode === 'foot' && ship.state.frame === this.player.state.frame && this.player.state.pos.distanceTo(ship.state.pos) < 12) at = 'ship';
     if (at) return this.fabricator.open(at);
     this.hud.toast("No fabricator here: board the ship, or use a Waystation's terminal", 'warn');

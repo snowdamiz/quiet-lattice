@@ -77,7 +77,7 @@ function give(items: [string, number][]): void {
 const held = (): Record<string, number> => totals(inventory.get('c1')!);
 
 /** Asks the fabricator, a second after the last ask (within the rate). */
-function make(recipe: string, at: 'station' | 'ship' = 'station', count = 1, opts: { seq?: number; gap?: number } = {}): Answer {
+function make(recipe: string, at: 'waystation' | 'ship' = 'waystation', count = 1, opts: { seq?: number; gap?: number } = {}): Answer {
   t += opts.gap ?? 1;
   return crafting.craft(viewer, { t: 'craft', seq: opts.seq ?? ++seq, op: { op: 'make', recipe, count, at } });
 }
@@ -131,7 +131,7 @@ describe('the station’s fabricator', () => {
       ['carbon', 40],
     ]);
     expect(inventory.grant('c1', 'ferrite', 50, { to: 'cargo' }).ok).toBe(true);
-    expect(make('flak_ammo', 'station', 4)).toMatchObject({ result: 'made', item: 'flak_ammo', count: 200 });
+    expect(make('flak_ammo', 'waystation', 4)).toMatchObject({ result: 'made', item: 'flak_ammo', count: 200 });
     expect(held()).toEqual({ flak_ammo: 200 });
   });
 
@@ -188,7 +188,7 @@ describe('the ship’s fabricator', () => {
     expect(held()).toEqual(before);
     // away from a Waystation, the station's fabricator is not there
     fields = { frame: WORLD, pos: [1e6, 0, 0], mode: 'landed' };
-    expect(make('warp_cell', 'station')).toMatchObject({ result: 'refused', reason: 'place' });
+    expect(make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
   });
 
   it('makes torpedoes only from Tier 2 (DESIGN 15.7: field-craftable at Tier 2+)', () => {
@@ -252,7 +252,7 @@ describe('a craft refused changes nothing', () => {
       ['tritium', 40],
       ['cobalt', 10],
     ]);
-    expect(make('warp_cell', 'station', 2)).toMatchObject({ result: 'refused', reason: 'materials' });
+    expect(make('warp_cell', 'waystation', 2)).toMatchObject({ result: 'refused', reason: 'materials' });
     expect(make('oxygen_cartridge')).toMatchObject({ result: 'refused', reason: 'materials' });
     expect(held()).toEqual({ dihydrogen: 99, tritium: 40, cobalt: 10 });
   });
@@ -284,15 +284,15 @@ describe('a craft refused changes nothing', () => {
       ['ferrite', 1000],
       ['carbon', 1000],
     ]);
-    const answers = Array.from({ length: CRAFT_BURST + 2 }, () => make('flak_ammo', 'station', 1, { gap: 0 }).result);
+    const answers = Array.from({ length: CRAFT_BURST + 2 }, () => make('flak_ammo', 'waystation', 1, { gap: 0 }).result);
     expect(answers).toEqual([...Array(CRAFT_BURST).fill('made'), 'refused', 'refused']);
     expect(crafting.stats().refused).toEqual({ rate: 2 });
     expect(held()).toMatchObject({ flak_ammo: 50 * CRAFT_BURST });
-    expect(make('flak_ammo', 'station', 1, { gap: 1 / CRAFT_PER_S }).result).toBe('made');
-    expect(make('flak_ammo', 'station', 1, { gap: 0 }).result).toBe('refused');
+    expect(make('flak_ammo', 'waystation', 1, { gap: 1 / CRAFT_PER_S }).result).toBe('made');
+    expect(make('flak_ammo', 'waystation', 1, { gap: 0 }).result).toBe('refused');
     // a hundred crafts in one ask is one ask
-    expect(make('flak_ammo', 'station', CRAFT_MAX, { gap: 5 })).toMatchObject({ result: 'refused', reason: 'materials' });
-    expect(make('flak_ammo', 'station', 20, { gap: 1 })).toMatchObject({ result: 'made', count: 1000 });
+    expect(make('flak_ammo', 'waystation', CRAFT_MAX, { gap: 5 })).toMatchObject({ result: 'refused', reason: 'materials' });
+    expect(make('flak_ammo', 'waystation', 20, { gap: 1 })).toMatchObject({ result: 'made', count: 1000 });
   });
 
   it('a stale number or a character out of play spends none of the rate; a refusal after the rate check does', () => {
@@ -302,24 +302,24 @@ describe('a craft refused changes nothing', () => {
     ]);
     // (a fresh rate: the asks below come at once)
     t += 60;
-    expect(make('flak_ammo', 'station', 1, { seq: 10, gap: 0 }).result).toBe('made');
-    for (let i = 0; i < 6; i++) expect(make('flak_ammo', 'station', 1, { seq: 10, gap: 0 }).reason).toBe('stale_seq');
+    expect(make('flak_ammo', 'waystation', 1, { seq: 10, gap: 0 }).result).toBe('made');
+    for (let i = 0; i < 6; i++) expect(make('flak_ammo', 'waystation', 1, { seq: 10, gap: 0 }).reason).toBe('stale_seq');
     book.close('c1');
-    expect(make('flak_ammo', 'station', 1, { seq: 11, gap: 0 }).reason).toBe('zone');
+    expect(make('flak_ammo', 'waystation', 1, { seq: 11, gap: 0 }).reason).toBe('zone');
     book.open('c1');
     // three left of the burst: a refusal for the recipe spends one, then two crafts, then the rate
-    expect(make('torpedo', 'station', 1, { seq: 12, gap: 0 }).reason).toBe('not_known');
-    expect([13, 14, 15].map((s) => make('flak_ammo', 'station', 1, { seq: s, gap: 0 }).result)).toEqual(['made', 'made', 'refused']);
+    expect(make('torpedo', 'waystation', 1, { seq: 12, gap: 0 }).reason).toBe('not_known');
+    expect([13, 14, 15].map((s) => make('flak_ammo', 'waystation', 1, { seq: s, gap: 0 }).result)).toEqual(['made', 'made', 'refused']);
     expect(crafting.stats().refused).toMatchObject({ rate: 1, stale_seq: 6, zone: 1, not_known: 1 });
   });
 
   it('a stale number, a character out of play', () => {
     give(MATERIALS);
-    expect(make('flak_ammo', 'station', 1, { seq: 5 })).toMatchObject({ result: 'made' });
-    expect(make('flak_ammo', 'station', 1, { seq: 5 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
-    expect(make('flak_ammo', 'station', 1, { seq: 4 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 5 })).toMatchObject({ result: 'made' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 5 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 4 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
     book.close('c1');
-    expect(make('flak_ammo', 'station', 1, { seq: 6 })).toMatchObject({ result: 'refused', reason: 'zone' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 6 })).toMatchObject({ result: 'refused', reason: 'zone' });
     expect(crafting.craft({ id: 2, characterId: null, sendBinary: () => {} }, { t: 'craft', seq: 1, op: { op: 'learn', recipe: 'torpedo' } })).toMatchObject({
       result: 'refused',
       reason: 'zone',
