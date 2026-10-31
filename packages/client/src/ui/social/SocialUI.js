@@ -46,8 +46,9 @@ const PARTY = 8;
 const INVITES = 16;
 const ALL = FRONT | LOG | LIST | PARTY | INVITES;
 const STAGE_BUDGET_MS = 0.4;
-/** The space the tabs keep between them (px): what a badge closing gives way to. */
-const TAB_GAP = 20;
+/** How near a badge closing lets the tab that follows come to its far edge (px): the 20 px the tabs keep between them,
+ * less the two it may overlap the tab it belongs to by, at its faintest, rather than touch the next. */
+const TAB_GAP = 18;
 const TABS = ['shard', 'system', 'party', 'beacons'];
 const TAB_LABEL = { shard: 'Shard', system: 'System', party: 'Party', beacons: 'Beacons' };
 const PLACEHOLDER = { shard: 'Say something to the shard', system: 'Say something to this system', party: 'Say something to your party' };

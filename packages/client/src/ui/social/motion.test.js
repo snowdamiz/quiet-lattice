@@ -71,7 +71,7 @@ describe('a badge clearing', () => {
     let t = 0;
     const motion = new Motion(() => t);
     const e = box(21, 15);
-    motion.toggle(e, false, true, { across: true, ms: 150, gap: 7, quick: true, whole: true, keep: 20 });
+    motion.toggle(e, false, true, { across: true, ms: 150, gap: 7, quick: true, whole: true, keep: 18 });
     const seen = [];
     for (let i = 0; i < 12 && motion.moving(e); i++) {
       t += 1000 / 60;
@@ -88,8 +88,8 @@ describe('a badge clearing', () => {
     const closed = seen.findIndex((f) => f.room === 0);
     expect(closed).toBe(5);
     for (const f of seen.filter((f) => f.width)) expect(f.width).toBe('21px');
-    // (what follows, 20 px past the room, never comes over it: the face slides left as it nears)
-    for (const f of seen.filter((f) => f.width)) expect(7 + 21 + f.shift).toBeLessThanOrEqual(f.room + 20 + 0.001);
+    // (what follows is never nearer than `keep` to the face's far edge: the face slides left as it comes)
+    for (const f of seen.filter((f) => f.width)) expect(7 + 21 + f.shift).toBeLessThanOrEqual(f.room + 18 + 0.001);
     // (the room is given up from the right, a pixel or more on every frame)
     for (let i = 1; i <= closed; i++) expect(seen[i].room).toBeLessThan(seen[i - 1].room);
   });
