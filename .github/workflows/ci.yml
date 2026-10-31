@@ -34,10 +34,11 @@ jobs:
       # LFS holds ~2 GB of renders; fetch only the models the client serves, so a run stays inside the free bandwidth quota
       - uses: actions/checkout@v5
       - run: git lfs pull --include="packages/client/public/**"
+      # before setup-node: it caches pnpm's store when package.json names pnpm, so pnpm must already be on PATH
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - run: corepack enable pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
@@ -69,6 +70,8 @@ jobs:
           echo "count=$n" >> "$GITHUB_OUTPUT"
           # the validator may pick more than the changed files (a tooling change re-validates every source); .blend files are small, the renders are not
           if [ "$n" != 0 ]; then git lfs pull --include="*.blend"; fi
+      - uses: pnpm/action-setup@v4
+        if: steps.changed.outputs.count != '0'
       - uses: actions/setup-node@v5
         if: steps.changed.outputs.count != '0'
         with:
@@ -81,6 +84,5 @@ jobs:
       - name: Validate changed art
         if: steps.changed.outputs.count != '0'
         run: |
-          corepack enable pnpm
           pnpm install --frozen-lockfile
           pnpm art:validate -- --changed ${{ steps.changed.outputs.base }}
