@@ -192,6 +192,15 @@ describe('the ship’s fabricator', () => {
     expect(make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
   });
 
+  it('a Waystation’s fabricator works docked on any of its four pads and not docked far from it in its frame', () => {
+    for (let pad = 0; pad < 4; pad++) {
+      fields = { frame: STATION, pos: padPose(STATION, pad).pos as Vec3, mode: 'docked' };
+      expect(make('warp_cell', 'waystation'), `pad ${pad}`).toMatchObject({ result: 'made' });
+    }
+    fields = { frame: STATION, pos: [0, 40, 600], mode: 'docked' };
+    expect(make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
+  });
+
   it('makes torpedoes only from Tier 2 (DESIGN 15.7: field-craftable at Tier 2+)', () => {
     book.open('c1', { known: [...STARTING_RECIPES, 'torpedo'] });
     give([
@@ -361,9 +370,9 @@ describe('the fabricators of places that come later (P2.E20.T01)', () => {
   const SCRAPYARD: Vec3 = [5, 0, 5];
   const places = (): FabricatorPlaces => {
     const p = new FabricatorPlaces();
-    p.register(fabricatorPlace('capital:thalune', { frame: WORLD, use: CAPITAL, reachM: 4, docked: false }), (z) => z.systemIndex === HOME);
-    p.register(fabricatorPlace('sanctuary:chorus-1', { frame: WORLD, use: SANCTUARY, reachM: 4, docked: false }), (z) => z.systemIndex === HOME);
-    p.register(fabricatorPlace('scrapyard', { frame: 'scrapyard:0', use: SCRAPYARD, reachM: 4, docked: true }), (z) => z.id === 'zone:home');
+    p.register(fabricatorPlace('capital:thalune', { frame: WORLD, use: CAPITAL, reachM: 4, dockedReachM: null }), (z) => z.systemIndex === HOME);
+    p.register(fabricatorPlace('sanctuary:chorus-1', { frame: WORLD, use: SANCTUARY, reachM: 4, dockedReachM: null }), (z) => z.systemIndex === HOME);
+    p.register(fabricatorPlace('scrapyard', { frame: 'scrapyard:0', use: SCRAPYARD, reachM: 4, dockedReachM: 30 }), (z) => z.id === 'zone:home');
     return p;
   };
   let withPlaces: FabricatorPlaces;
@@ -388,9 +397,7 @@ describe('the fabricators of places that come later (P2.E20.T01)', () => {
       ['copper', 20],
       ['cinderglass', 10],
     ]);
-    // the Waystation's fabricator is a Tier 0–2 one: it does not make a railgun, wherever the player stands
     expect(make('railgun', 'waystation')).toMatchObject({ result: 'refused', reason: 'fabricator' });
-    // the capital's refuses a player who is not at a capital: docked at the Waystation, in the open, or at the wrong spot
     expect(make('railgun', 'capital')).toMatchObject({ result: 'refused', reason: 'place' });
     at(WORLD, [CAPITAL[0] + 30, CAPITAL[1], CAPITAL[2]]);
     expect(make('railgun', 'capital')).toMatchObject({ result: 'refused', reason: 'place' });
@@ -400,7 +407,6 @@ describe('the fabricators of places that come later (P2.E20.T01)', () => {
     at(WORLD, [CAPITAL[0] + 3, CAPITAL[1], CAPITAL[2]]);
     expect(make('railgun', 'capital')).toMatchObject({ result: 'made', item: 'railgun', count: 1 });
     expect(make('beam_lance', 'capital')).toMatchObject({ result: 'made', item: 'beam_lance' });
-    // standing at the capital's terminal does not make the Waystation's or the sanctuary's fabricator available
     expect(make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
     expect(make('frostglass_catalyst', 'sanctuary')).toMatchObject({ result: 'refused', reason: 'not_known' });
   });
@@ -443,22 +449,24 @@ describe('the fabricators of places that come later (P2.E20.T01)', () => {
     expect(make('pressure_hull_module', 'scrapyard')).toMatchObject({ result: 'refused', reason: 'place' });
     at('scrapyard:0', [5, 0, 7]);
     expect(make('pressure_hull_module', 'scrapyard')).toMatchObject({ result: 'made', item: 'pressure_hull_module' });
-    at('scrapyard:0', [90, 0, 0], 'docked');
+    at('scrapyard:0', [20, 0, 5], 'docked');
     expect(make('husk_plating', 'scrapyard')).toMatchObject({ result: 'made', item: 'husk_plating' });
+    // docked 85 m off the terminal is out of its docked reach
+    at('scrapyard:0', [90, 0, 0], 'docked');
+    expect(make('husk_plating', 'scrapyard')).toMatchObject({ result: 'refused', reason: 'place' });
     // the Husk hull is assembled with the hull (P3.E36.T02), not by an item craft
     expect(make('husk_hull', 'scrapyard')).toMatchObject({ result: 'refused', reason: 'fabricator' });
-    // the same frame in another zone is not the Scrapyard
     expect(withPlaces.in({ id: 'zone:other', systemIndex: HOME, system })).toHaveLength(3);
   });
 
   it('registers a place once, only for a place id, and never a Waystation', () => {
     const p = new FabricatorPlaces();
     const where = () => true;
-    const cap = fabricatorPlace('capital:x', { frame: 'f', use: [0, 0, 0], reachM: 1, docked: false });
+    const cap = fabricatorPlace('capital:x', { frame: 'f', use: [0, 0, 0], reachM: 1, dockedReachM: null });
     p.register(cap, where);
     expect(() => p.register(cap, where)).toThrow(/already/);
     expect(() => p.register({ ...cap, id: 'harbour:x' }, where)).toThrow(RangeError);
-    expect(() => p.register(fabricatorPlace('waystation', { frame: 'f', use: [0, 0, 0], reachM: 1, docked: true }), where)).toThrow(RangeError);
+    expect(() => p.register(fabricatorPlace('waystation', { frame: 'f', use: [0, 0, 0], reachM: 1, dockedReachM: 10 }), where)).toThrow(RangeError);
     expect(p.in({ id: 'a', systemIndex: 0, system }).map((x) => x.id)).toEqual(['waystation', 'capital:x']);
   });
 });

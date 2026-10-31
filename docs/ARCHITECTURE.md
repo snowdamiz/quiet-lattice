@@ -1480,7 +1480,9 @@ gate is recipes and materials, not a skill tree.
   reward `items` entry (the runtime's `inventory.grant`); a boss's drop is its table's `loot.recipes`, each rolled for every
   fighter on its own at `RECIPE_DROPS.chance` (0.25; the combat service grants it with the kill's loot, `loot` event). The
   table marks each recipe's source (`learnedFrom`, `recipesFrom(source)`); who sells, rewards or drops which is content
-  (P2.E19, the chains, bosses and vaults), and until it lands only the boss drops reach players.
+  (P2.E19, the chains, bosses and vaults), and until it lands no recipe item reaches a player in this build: the boss
+  drop is in the kill path, but no boss spawns yet (the combat zone builds fauna only), and no vendor, vault or chain
+  grants one.
 - **The table's version** (`RECIPE_TABLE_VERSION`, data/recipes.ts) is stored with what a character knows (`table`), as
   the skill web's is. On load (`reconcileRecipes`): saved under the same or an older table, a recipe the table lacks is
   dropped (one warning); saved under a NEWER table (a server rolled back), nothing is dropped: every recipe stays known, one
@@ -1496,10 +1498,11 @@ gate is recipes and materials, not a skill tree.
   zone's tier), never a warp cell. None assembles a hull: the Husk hull is the Scrapyard's with the ship (P3.E36.T02).
   The wire names the fabricator in `craft {at}` (protocol 17: `waystation`, `capital`, `sanctuary`, `scrapyard`, `ship`).
 - **Where.** As the zone believes the player (its entity's frame, position and mode; movement authority's, §7): a place's
-  fabricator needs the player on foot within a terminal's reach, or docked where the place allows it, in the frame of a
-  terminal the zone has for it (`FabricatorPlaces.in(zone)`, `crafting/places.ts`; a terminal is a `FabricatorPlace`:
-  place id, frame, use point, reach, docked). Every zone has its Waystation's: the zone's Waystation frame, docked on a pad
-  or within `STATION_FABRICATOR.reachM` (4.5 m) of the terminal's use point on the trade deck (`data/station.ts`, 1.2 m in
+  fabricator needs the player on foot within a terminal's reach, or docked within its docked reach (`dockedReachM`, null
+  where the place has no docking), in the frame of a terminal the zone has for it (`FabricatorPlaces.in(zone)`,
+  `crafting/places.ts`; a terminal is a `FabricatorPlace`: place id, frame, use point, reach, docked reach). Every zone has
+  its Waystation's: the zone's Waystation frame, docked on a pad (the reach covers the farthest pad's edge, 130 m from the
+  terminal) or within `STATION_FABRICATOR.reachM` (4.5 m) of the terminal's use point on the trade deck (`data/station.ts`, 1.2 m in
   front of the kiosk at x −30, z −80 on the 7 m deck; the client builds the kiosk there). The others come with their places:
   a place id names its fabricator (`capital:<city>`, `sanctuary:<name>`, `scrapyard`; `fabricatorOfPlace`), and the task that
   places a terminal registers it (`crafting.places.register(place, where)`) with no change to the rules: capitals P1.E10.T02,

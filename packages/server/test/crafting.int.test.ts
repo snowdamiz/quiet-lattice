@@ -334,15 +334,15 @@ describe('fabricator tiers, recipe sources and the version guard over the wire (
 
   it('station tiers gate recipes: a Waystation refuses a Tier 3 recipe a capital makes at its terminal; sanctuary and Scrapyard make their lines', async () => {
     server.ws.crafting.places.register(
-      fabricatorPlace('capital:thalune', { frame: worldFrame(), use: surface(0), reachM: 4, docked: false }),
+      fabricatorPlace('capital:thalune', { frame: worldFrame(), use: surface(0), reachM: 4, dockedReachM: null }),
       (z) => z.systemIndex === HOME,
     );
     server.ws.crafting.places.register(
-      fabricatorPlace('sanctuary:chorus-1', { frame: worldFrame(), use: surface(500), reachM: 4, docked: false }),
+      fabricatorPlace('sanctuary:chorus-1', { frame: worldFrame(), use: surface(500), reachM: 4, dockedReachM: null }),
       (z) => z.systemIndex === HOME,
     );
     server.ws.crafting.places.register(
-      fabricatorPlace('scrapyard', { frame: worldFrame(), use: surface(900), reachM: 4, docked: false }),
+      fabricatorPlace('scrapyard', { frame: worldFrame(), use: surface(900), reachM: 4, dockedReachM: null }),
       (z) => z.systemIndex === HOME,
     );
     const { acct, id } = await character();
@@ -357,11 +357,9 @@ describe('fabricator tiers, recipe sources and the version guard over the wire (
       ['ferrite', 20],
     ]);
     for (const r of ['railgun', 'frostglass_catalyst', 'pressure_hull_module']) expect(await bot.learn(r)).toMatchObject({ result: 'learned' });
-    // at the Waystation's terminal: its tier band stops at 2
     await bot.go(STATION, TERMINAL, 'foot');
     expect(await bot.make('railgun', 'waystation')).toMatchObject({ result: 'refused', reason: 'fabricator' });
     expect(await bot.make('railgun', 'capital')).toMatchObject({ result: 'refused', reason: 'place' });
-    // at the capital's terminal
     await bot.go(worldFrame(), surface(0), 'foot');
     expect(await bot.make('railgun', 'capital')).toMatchObject({ result: 'made', item: 'railgun', count: 1 });
     expect(await bot.make('frostglass_catalyst', 'capital')).toMatchObject({ result: 'refused', reason: 'fabricator' });
@@ -378,14 +376,11 @@ describe('fabricator tiers, recipe sources and the version guard over the wire (
   it('recipes as items from a vendor, a chain’s reward path, a boss drop and a vault: each is learned, and known forever after a restart', async () => {
     const { acct, id } = await character();
     let bot = await join(acct.token, id);
-    // a vendor's sale: paid in units, the item through the crafting service
     expect(server.ws.inventory.earn(id, 2000).ok).toBe(true);
     expect(server.ws.inventory.spend(id, 1500).ok).toBe(true);
     grantRecipe(id, 'torpedo');
-    // a vault's find, and a chain's reward (the quest runtime grants items through the inventory the same way)
     expect(server.ws.crafting.award(id, 'beam_lance', 'vault').ok).toBe(true);
     expect(server.ws.inventory.grant(id, recipeItemId('cargo_pod'), 1, { partial: true }).ok).toBe(true);
-    // a boss's drop: its kill report through the combat service's hooks, until the recipes it rolls have come
     const dropped = (): string[] =>
       Object.keys(held(id)).filter((i) => i.startsWith('recipe_') && !['recipe_torpedo', 'recipe_beam_lance', 'recipe_cargo_pod'].includes(i));
     const report = {
@@ -425,7 +420,6 @@ describe('fabricator tiers, recipe sources and the version guard over the wire (
       .set({ state: { ...(r0!.state as object), recipes: saved } })
       .where(eq(characters.id, id));
     const bot = await join(acct.token, id);
-    // the client is only told what this table has
     expect(bot.recipes).toEqual({ t: 'recipes', known: [...STARTING_RECIPES, 'torpedo'] });
     expect(await bot.make('recipe_from_a_later_build')).toMatchObject({ result: 'refused', reason: 'unknown' });
     give(id, [['recipe_beam_lance', 1]]);

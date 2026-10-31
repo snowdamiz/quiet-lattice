@@ -109,9 +109,6 @@ export function outputOf(recipe: Recipe): { item: string; count: number } | null
   return recipe.output.kind === 'item' ? { item: recipe.output.item, count: recipe.output.count } : null;
 }
 
-/** The tier band a Waystation's fabricator crafts (DESIGN 15.7: "Tier 1 stations craft Tier 0–2 recipes"). */
-export const STATION_MAX_TIER: number = FABRICATORS.find((f) => f.id === 'waystation')!.maxTier!;
-
 /** The highest recipe tier a fabricator makes (data/recipes.ts `FABRICATORS`), or null where it crafts a named line instead of
  * a tier band (the sanctuary's catalysts, the Scrapyard's Void recipes, the ship's field recipes). */
 export function maxTierOf(at: FabricatorKind): number | null {

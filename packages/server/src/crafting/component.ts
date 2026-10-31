@@ -24,7 +24,7 @@ export function recipesComponent(book: RecipeBook, opts: { log?: PersistenceLog;
     v: 2,
     schema: storedRecipesSchema,
     // v1 was the ids alone, stored before the table had a version: under table 0, so it is reconciled like any older table's
-    migrations: { 1: (data) => (data && typeof data === 'object' && !Array.isArray(data) ? { table: 0, ...data } : data) },
+    migrations: { 1: (data) => (data && typeof data === 'object' && !Array.isArray(data) ? { ...data, table: 0 } : data) },
     onInvalid: 'refuse',
     book,
     default: () => startingStored(),

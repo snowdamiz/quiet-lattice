@@ -380,10 +380,8 @@ describe('a kill', () => {
       for (const item of new Set(got[who])) {
         expect(countOf(have, item), `${who} ${item}`).toBe(got[who]!.filter((x) => x === item).length);
       }
-      // only the boss's own recipes drop, as recipe items
       for (const item of got[who]!) expect(listed.map(recipeItemId)).toContain(item);
     }
-    // a creature that lists none drops none
     expect(recipeDrops({ kind: 'fauna', bodyPlan: sp.bodyPlan, temperament: sp.temperament }, () => 0)).toEqual([]);
     expect(recipeDrops({ kind: 'boss', id: 'outpost_overseer' }, () => 0.99)).toEqual([]);
   });

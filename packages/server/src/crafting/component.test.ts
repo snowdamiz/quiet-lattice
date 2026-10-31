@@ -154,6 +154,12 @@ describe('the recipes component', () => {
     expect(writes.at(-1)!.state.recipes).toEqual({ v: 2, data: { table: RECIPE_TABLE_VERSION, known: ['warp_cell', 'torpedo'] } });
   });
 
+  it('reads a v1 value as table 0 even when it carries a table key of its own', () => {
+    const { registry } = world();
+    const state = { recipes: { v: 1, data: { table: RECIPE_TABLE_VERSION + 9, known: ['warp_cell', 'torpedo'] } } };
+    expect(registry.decode(stored(state), CHARACTER).values.get(RECIPES)).toEqual({ table: RECIPE_TABLE_VERSION, known: ['warp_cell', 'torpedo'] });
+  });
+
   describe('a rolled-back recipe table (the version guard)', () => {
     // an older table than the one the character was saved under: a version lower, without two recipes this build has
     const OLD: RecipeTableView = { version: RECIPE_TABLE_VERSION - 1, has: (id) => id !== 'torpedo' && id !== 'railgun' && id !== 'recipe_from_the_future' };
@@ -174,9 +180,7 @@ describe('the recipes component', () => {
         heldOver: ['torpedo', 'railgun', 'recipe_from_the_future'],
       });
       expect(lines.some((l) => l.msg.includes('dropped'))).toBe(false);
-      // the client is told only what the table has: a recipe no table has is never sent
       expect(book.known('c1')).toEqual(['warp_cell', 'torpedo', 'railgun']);
-      // and the save keeps them under the newer version, so the rollback loses nothing
       expect(book.learn('c1', 'pulse_fuel_cell')).toBe(true);
       persistence.leave(v);
       await persistence.flush();

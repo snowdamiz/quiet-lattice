@@ -8,9 +8,10 @@
 //   system (`fabricator`: a Waystation's its line's Tier 0–2 recipes, a capital's its line up to Tier 3, a sanctuary's
 //   the catalysts, the Scrapyard's the Void recipes, the ship's only ammo and cartridges, torpedoes from Tier 2); the
 //   player where that fabricator is (`place`), as movement authority believes it (its zone entity's frame, mode and
-//   position): a place's on foot within reach of one of its terminals in the zone (`FabricatorPlaces`: the Waystation's
-//   is STATION_FABRICATOR, docked on a pad works too; later places register theirs), the ship's aboard its ship in any
-//   mode, or on foot beside the ship it left (movement authority's `parkedOf`, within the boarding reach);
+//   position): a place's on foot within reach of one of its terminals in the zone, or docked within its `dockedReachM`
+//   (`FabricatorPlaces`: the Waystation's is STATION_FABRICATOR, docked on any pad; later places register theirs), the
+//   ship's aboard its ship in any mode, or on foot beside the ship it left (movement authority's `parkedOf`, within the
+//   boarding reach);
 // - then the craft itself, all or nothing through the inventory service (`transact`): every material taken from the
 //   suit and the cargo pods, the output added; short of a material (`materials`) or with no room for the output even
 //   in the room the materials leave (`no_room`), nothing is used up.
@@ -20,8 +21,7 @@
 // Crafting is instant (a choice, DECISIONS P1.E13.T05): nothing is held server-side between the request and the result,
 // so a craft cannot be interrupted half-way, and the rate bounds it as the analyzer's is bounded.
 import { craft, learn, makesAt, recipeById, type CraftRefusal, type FabricatorKind, type RecipeSource } from '@astra/shared/crafting';
-import { recipeItemId } from '@astra/shared/data';
-import { WALKER } from '@astra/shared/data';
+import { recipeItemId, WALKER } from '@astra/shared/data';
 import { fail, type Result } from '@astra/shared/inventory';
 import type { ClientMessage, Pose, ServerMessage } from '@astra/shared/protocol';
 import { tierOfGalaxySystem, type Tier } from '@astra/shared/world';
@@ -115,8 +115,8 @@ export class CraftingService {
    * Hands a character a recipe's item from one of the sources DESIGN 15.7 names, through the inventory (all or nothing:
    * with no room it is refused and the source keeps it). A vendor's sale (P2.E19) and a vault's find call this after taking
    * their own price or opening; a quest's reward is the quest runtime's `items` and a boss's drop the combat service's, both
-   * the same inventory grant, so every source ends in an item the character learns with `craft {op: 'learn'}`. Throws for a
-   * recipe the table lacks.
+   * the same inventory grant, so every source ends in an item the character learns with `craft {op: 'learn'}`. No source calls
+   * this yet (no vendor, vault, chain content or boss exists in this build). Throws for a recipe the table lacks.
    */
   award(characterId: string, recipeId: string, source: RecipeSource, count = 1): Result<{ added: number; remainder: number }> {
     if (!recipeById(recipeId)) throw new RangeError(`no recipe ${recipeId}`);
@@ -197,8 +197,9 @@ export class CraftingService {
     }
     return this.places.in(zone).some((p) => {
       if (p.fabricator !== at || f.frame !== p.frame) return false;
-      if (f.mode === 'docked') return p.docked;
-      return f.mode === 'foot' && Math.hypot(f.pos[0] - p.use[0], f.pos[1] - p.use[1], f.pos[2] - p.use[2]) <= p.reachM;
+      const away = Math.hypot(f.pos[0] - p.use[0], f.pos[1] - p.use[1], f.pos[2] - p.use[2]);
+      if (f.mode === 'docked') return p.dockedReachM !== null && away <= p.dockedReachM;
+      return f.mode === 'foot' && away <= p.reachM;
     });
   }
 

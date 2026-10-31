@@ -3,7 +3,7 @@
 // The Waystation's terminal exists (data/station.ts); the capitals' (P1.E10.T02), the sanctuaries' and the Scrapyard's
 // (P1.E11.T05) are registered with the server by the task that places them, with no change to the crafting rules.
 import { z } from 'zod';
-import { STATION_FABRICATOR } from '../data/station.ts';
+import { STATION_FABRICATOR, STATION_LAYOUT } from '../data/station.ts';
 import type { PlaceFabricatorKind } from './index.ts';
 
 /**
@@ -32,8 +32,9 @@ export interface FabricatorPlace {
   use: readonly [number, number, number];
   /** how far from `use` the server lets a walker work it, m */
   reachM: number;
-  /** whether a ship docked at the place can use it without leaving the ship (a Waystation's pads) */
-  docked: boolean;
+  /** how far from `use` a ship docked at the place can use it without leaving the ship, m (a Waystation's pads), or null where
+   * only a walker can */
+  dockedReachM: number | null;
 }
 
 /** A place with its fabricator named from its id; throws for an id of no place kind. */
@@ -46,5 +47,7 @@ export function fabricatorPlace(id: string, spot: Omit<FabricatorPlace, 'id' | '
 /** The Waystation of the system whose seed this is: its terminal on the trade deck, and its pads. */
 export function waystationPlace(systemSeed: number | string): FabricatorPlace {
   const u = STATION_FABRICATOR.use;
-  return fabricatorPlace('waystation', { frame: `${systemSeed}:station`, use: [u.x, u.y, u.z], reachM: STATION_FABRICATOR.reachM, docked: true });
+  // a docked ship sits on one of the pads, as far from the terminal as the farthest pad's edge
+  const dockedReachM = Math.ceil(Math.max(...STATION_LAYOUT.pads.map((p) => Math.hypot(p.x - u.x, p.z - u.z))) + STATION_LAYOUT.padRadius);
+  return fabricatorPlace('waystation', { frame: `${systemSeed}:station`, use: [u.x, u.y, u.z], reachM: STATION_FABRICATOR.reachM, dockedReachM });
 }

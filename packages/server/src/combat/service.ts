@@ -339,7 +339,8 @@ export class CombatService {
           const n = this.grant(characterId, item, shares.get(characterId) ?? 0);
           if (n > 0) events.push({ kind: 'loot', item, count: n, from: r.entity });
         }
-        // a boss's recipes: each fighter rolls its own (DESIGN 15.7), and the items are theirs to learn
+        // a boss's recipes: each fighter rolls its own (DESIGN 15.7), and the items are theirs to learn (no boss spawns yet, so
+        // nothing reaches here until one does)
         for (const item of recipeDrops(r.ref, () => this.rng.next())) {
           if (this.grant(characterId, item, 1) > 0) events.push({ kind: 'loot', item, count: 1, from: r.entity });
         }

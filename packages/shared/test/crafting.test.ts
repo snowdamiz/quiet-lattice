@@ -27,9 +27,8 @@ import {
   refillOf,
   STARTING_RECIPES,
   startingKnowledge,
-  STATION_MAX_TIER,
 } from '../src/crafting/index.ts';
-import { getItem, getRecipe, ITEMS, RECIPES, recipeItemId, recipeOfItem, STATION_FABRICATOR, STATION_HANGAR } from '../src/data/index.ts';
+import { getItem, getRecipe, ITEMS, RECIPES, recipeItemId, recipeOfItem, RECIPE_TABLE_VERSION, STATION_FABRICATOR, STATION_HANGAR, STATION_LAYOUT } from '../src/data/index.ts';
 import { addItem, countOf, emptyInventory, layoutFor, totals, type Inventory } from '../src/inventory/index.ts';
 
 const LARK = { hull: 'lark' as const, modules: {}, cargoPods: 1, livery: 0 };
@@ -117,7 +116,6 @@ describe('what a character knows', () => {
     const r = reconcileRecipes(stored, rolledBack);
     expect(r).toEqual({ stored, dropped: [], heldOver: ['torpedo', 'old_recipe'], rolledBack: true });
     expect(r.stored).toBe(stored);
-    // the same character under a table that is not older drops what the table lacks
     expect(reconcileRecipes(stored, { version: RECIPE_TABLE.version, has: rolledBack.has }).dropped).toEqual(['torpedo', 'old_recipe']);
   });
 
@@ -140,7 +138,7 @@ describe('what the consumables restore (the meters’ hook)', () => {
 
 describe('fabricators', () => {
   it('a Waystation makes the item recipes of its line up to Tier 2; the ship only ammo and cartridges', () => {
-    expect(STATION_MAX_TIER).toBe(2);
+    expect(maxTierOf('waystation')).toBe(2);
     const station = RECIPES.filter((r) => makesAt(r, 'waystation', 0)).map((r) => r.id);
     expect(station).toEqual(RECIPES.filter((r) => r.fabricators.includes('waystation') && r.tier <= 2 && r.output.kind === 'item').map((r) => r.id));
     for (const id of PHASE_1) expect(station, id).toContain(id);
@@ -309,10 +307,8 @@ describe('fabricator tiers (P2.E20.T01, DESIGN 15.7)', () => {
       for (const r of RECIPES.filter((x) => x.output.kind === 'item' && x.fabricators.includes(at)))
         expect(makesAt(r, at, 0), `${at} ${r.id}`).toBe(r.tier <= top);
     }
-    // a Tier 3 module is a capital's, never a Waystation's
     expect(makesAt(getRecipe('railgun'), 'waystation', 5)).toBe(false);
     expect(makesAt(getRecipe('railgun'), 'capital', 0)).toBe(true);
-    // the Tier 2 beam lance is made at both
     expect(makesAt(getRecipe('beam_lance'), 'waystation', 0)).toBe(true);
     expect(makesAt(getRecipe('beam_lance'), 'capital', 0)).toBe(true);
     // the gate reads the band in the data, not a constant: a recipe over it at a banded fabricator is refused
@@ -351,7 +347,7 @@ describe('fabricator tiers (P2.E20.T01, DESIGN 15.7)', () => {
     expect(fabricatorOfPlace('scrapyard')).toBe('scrapyard');
     for (const bad of ['ship', 'capital', 'capital:', 'Capital:x', 'harbour:x', '', 'scrapyard:2']) expect(fabricatorOfPlace(bad), bad).toBeNull();
     expect(placeIdSchema.safeParse('capital:thalune').success).toBe(true);
-    expect(() => fabricatorPlace('ship', { frame: 'f', use: [0, 0, 0], reachM: 1, docked: false })).toThrow(RangeError);
+    expect(() => fabricatorPlace('ship', { frame: 'f', use: [0, 0, 0], reachM: 1, dockedReachM: null })).toThrow(RangeError);
     const w = waystationPlace(77);
     expect(w).toEqual({
       id: 'waystation',
@@ -359,14 +355,41 @@ describe('fabricator tiers (P2.E20.T01, DESIGN 15.7)', () => {
       frame: '77:station',
       use: [STATION_FABRICATOR.use.x, STATION_FABRICATOR.use.y, STATION_FABRICATOR.use.z],
       reachM: STATION_FABRICATOR.reachM,
-      docked: true,
+      dockedReachM: w.dockedReachM,
     });
-    // a place's spot cannot name another fabricator than its id does
+    // a ship docked on any of the four pads is within the Waystation's docked reach, and a mile off is not
+    const farthest = Math.max(...STATION_LAYOUT.pads.map((p) => Math.hypot(p.x - STATION_FABRICATOR.use.x, p.z - STATION_FABRICATOR.use.z)));
+    expect(w.dockedReachM).toBeGreaterThanOrEqual(farthest);
+    expect(w.dockedReachM).toBeLessThan(farthest + 40);
     expect(fabricatorPlace('capital:x', { ...w, fabricator: 'scrapyard' } as never).fabricator).toBe('capital');
   });
 
   it('every recipe names how its item is found, and every source has recipes', () => {
     for (const source of ['vendor', 'faction', 'boss', 'vault'] as const) expect(recipesFrom(source).every((r) => r.learnedFrom === source)).toBe(true);
     expect(recipesFrom('vendor').length + recipesFrom('faction').length + recipesFrom('boss').length + recipesFrom('vault').length).toBe(RECIPES.length);
+  });
+});
+
+/** The recipe table as a stored book reads it, as a short hash: the ids of its recipes. */
+function recipeFingerprint(ids: readonly string[]): string {
+  const text = [...ids].sort().join('\n');
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 0x01000193) >>> 0;
+  return h.toString(16).padStart(8, '0');
+}
+
+/** The fingerprint of each table version: a new version adds its own. */
+const RECIPE_FINGERPRINTS: Record<number, string> = { 1: '43ae41af' };
+
+describe('the recipe table’s version', () => {
+  it('names the table as it is: a recipe added or removed raises RECIPE_TABLE_VERSION', () => {
+    // When this fails, the recipe ids changed: raise RECIPE_TABLE_VERSION in packages/shared/src/data/recipes.ts and add the
+    // new fingerprint above, so a server rolled back keeps the recipes this one saved instead of dropping what it does not know.
+    expect(recipeFingerprint(RECIPES.map((r) => r.id)), `recipe table ${RECIPE_TABLE_VERSION}`).toBe(RECIPE_FINGERPRINTS[RECIPE_TABLE_VERSION]);
+    const base = recipeFingerprint(['a', 'b']);
+    expect(recipeFingerprint(['a', 'b', 'c'])).not.toBe(base);
+    expect(recipeFingerprint(['a'])).not.toBe(base);
+    expect(recipeFingerprint(['a', 'c'])).not.toBe(base);
+    expect(recipeFingerprint(['b', 'a'])).toBe(base);
   });
 });
