@@ -71,20 +71,43 @@ describe('the banner queue', () => {
     expect(log.released).toEqual([BANNER_MS * 1.8]);
   });
 
-  it('drops a banner that waited too long, and everything on a clear', () => {
+  it('drops a banner that waited too long, lets the band go with the last one it showed, and drops everything on a clear', () => {
     const { queue, log, advance } = rig();
-    queue.push({ title: 'A' });
-    queue.push({ title: 'B' });
-    queue.push({ title: 'C' });
-    advance(BANNER_STALE_MS + BANNER_MS);
-    expect(log.shown.map((x) => x[1])).toEqual(['A', 'B']);
-    queue.push({ title: 'D' });
-    queue.push({ title: 'E' });
+    for (const title of ['A', 'B', 'C', 'D', 'E']) queue.push({ title });
+    advance(BANNER_STALE_MS + BANNER_MS * 3);
+    expect(log.shown.map((x) => x[1])).toEqual(['A', 'B', 'C', 'D']);
+    // (D's release timer sees E waiting and holds the band; E is stale by the time its turn comes)
+    expect(log.released).toEqual([BANNER_MS * 4]);
+    queue.push({ title: 'F' });
+    queue.push({ title: 'G' });
     queue.clear();
     advance(BANNER_MS * 3);
-    expect(log.shown.map((x) => x[1])).toEqual(['A', 'B', 'D']);
-    queue.push({ title: 'F' });
-    expect(log.shown.at(-1)[1]).toBe('F');
+    expect(log.shown.map((x) => x[1])).toEqual(['A', 'B', 'C', 'D', 'F']);
+    queue.push({ title: 'H' });
+    expect(log.shown.at(-1)[1]).toBe('H');
+  });
+
+  it('shows three banners raised within a second, as a planet-side login raises them', () => {
+    const { queue, log, advance } = rig();
+    queue.push({ title: 'PLANET' });
+    advance(300);
+    queue.push({ title: 'EVENT' });
+    advance(300);
+    queue.push({ title: 'STAR SYSTEM' });
+    advance(BANNER_MS * 3);
+    expect(log.shown.map((x) => x[1])).toEqual(['PLANET', 'EVENT', 'STAR SYSTEM']);
+    expect(log.released).toHaveLength(1);
+  });
+
+  it('keeps a world event’s banner waiting behind two others', () => {
+    const { queue, log, advance } = rig();
+    queue.push({ title: 'PLANET' });
+    queue.push({ title: 'STAR SYSTEM' });
+    queue.push({ title: 'EVENT STARTED', sub: 'WORLD EVENT' });
+    advance(BANNER_MS * 2 - 1);
+    expect(log.shown.map((x) => x[1])).toEqual(['PLANET', 'STAR SYSTEM']);
+    advance(1);
+    expect(log.shown.at(-1)).toEqual([BANNER_MS * 2, 'EVENT STARTED']);
   });
 
   it('ignores a release timer left from before a clear or a newer banner, as one on a clock that was swapped out would be', () => {

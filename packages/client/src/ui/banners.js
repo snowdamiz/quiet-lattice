@@ -8,8 +8,8 @@ export const BANNER_MS = 7000;
 /** The fractions of that spent fading in and fading out (`@keyframes banner`: in by 10%, out from 80%). */
 export const BANNER_FADE_IN = 0.1;
 export const BANNER_FADE_OUT = 0.2;
-/** A banner that waited longer than this for its turn is stale and dropped. */
-export const BANNER_STALE_MS = 12000;
+/** A banner that waited longer than this for its turn is stale and dropped. Three holds: a planet-side login raises three banners at once, and the third waits two. */
+export const BANNER_STALE_MS = BANNER_MS * 3;
 
 export class BannerQueue {
   /**
@@ -44,7 +44,11 @@ export class BannerQueue {
     }
     let item;
     while ((item = this.items.shift()) && now - item.at > BANNER_STALE_MS);
-    if (!item) return;
+    if (!item) {
+      // the release timer held the band for banners that turned out stale
+      this.release();
+      return;
+    }
     this.show(item);
     this.until = now + BANNER_MS;
     this.cancel(this.releaseTimer);
