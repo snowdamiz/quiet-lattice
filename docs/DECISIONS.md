@@ -833,3 +833,26 @@ Format: task id, question → choice → why.
   in whole pixels. The two-client smoke now signs in through the P1.E04.T05 screens. → DESIGN's social UI on the
   P1.E15.T01 server half. Merged after a fifth REVISE (4.14) under the owner's rule; the open motion notes are
   P1.E15.T04.
+- **P1.E07.T02** Heat and Charge (shared `meters`, server `meters/*`, movement authority's `pulse_charge`, persistence
+  `meters`, protocol 15, ARCHITECTURE §19; client Multitool.js, Ship.js, HUD.js) → the server decides both meters: pure
+  shared rules (`stepMeters`, integrated segment by segment) run on both ends with the numbers in `METERS` data, and the
+  MeterService runs lazily from timestamps. Night is the star on or below the point's horizon, one shared `isNight` that
+  fauna uses too. The beam heats only in the believed mode `foot`, out of the lockout, at most 32/s of server time, and
+  goes idle 1 s after the last input; a mining hit counts only while `beamActive` and is paid through `takeBeam` (the
+  beam seconds since the last hit, capped). The gateway passes each input through `meters.claim` before the zone, so
+  movement authority's `allowsMode` reads Charge as of now, and calls `meters.input` once the zone accepted it; an empty
+  Charge refuses the pulse drive as rule `pulse_charge` and corrects to the prior mode, telling the session once.
+  Cruising on after Charge runs out is accepted for `MOVEMENT.pulse.chargeGraceS` (1 s) on the input's credited clock;
+  engaging gets no grace. The drive burns per accepted input for the client time movement authority credited it, never on
+  the server clock (without movement authority, the time since the last input, at most 1 s). The gateway locates the
+  character right after the zone join, and a stretch flown before the meters know the place is charged as near a body,
+  never free. Persistence: a `meters` component (v1, after `inventory`) stores `{heat, overheated, charge, at}`; heat
+  cools for the time away, Charge stays as left and regenerates only in play, an unreadable value gives cool and full
+  (logged). HUD: an opaque track inside a near-black halo, 4.5 px strokes, 150 ms fades, the Charge figure unplated in
+  the altitude's style on a solid ring; Charge stays lilac as an art bible §4 exception (teal is the shield's and the
+  jetpack's). Main reserved protocol 9 and §19 while the branch was open; it merged as protocol 15, the 9 line kept as a
+  pointer. The `#foot` captures wait for dry ground, every banner gone and the multitool raised. → DESIGN's heat and
+  Charge, server-held. Open: crafted pulse fuel cells and the Waystation's paid refill should call `refillCharge`
+  (P1.E13.T05 left the hook); `HUD.arc` snaps on jumps over 8% (P1.E07.T03 eases it); art bible §4 should list the
+  Charge rate's #E2D4FF and the HUD danger text #FF8A80; a fresh mover's late first input is still credited its arrival
+  gap (P1.E03.T04's finding).
