@@ -1024,7 +1024,14 @@ interface EventPage {
     boardShip(): void;
     exitShip(): void;
     player: { pitch: number; heading: { applyAxisAngle(axis: unknown, angle: number): void }; state: { pos: { clone(): { normalize(): unknown } } } };
-    hud: { clearBanners(): void; showBanner(title: string, sub: string): void; updateEvents(feed: unknown): void; banners: { until: number }; now(): number };
+    hud: {
+      clearBanners(): void;
+      showBanner(title: string, sub: string): void;
+      updateEvents(feed: unknown): void;
+      banners: { until: number };
+      now(): number;
+      band: HTMLElement;
+    };
   };
 }
 
@@ -1091,7 +1098,13 @@ async function announceEvent(page: Page, queued = false): Promise<void> {
       on.world_event!({ t: 'world_event', op: 'announced', event });
       const { hud } = game;
       if (queued) hud.showBanner(game.system.name.toUpperCase(), 'Star System');
-      else hud.clearBanners();
+      else {
+        // (the band that held the still goes at once, so the clip's band darkens in with the text)
+        hud.band.style.transition = 'none';
+        hud.clearBanners();
+        void hud.band.offsetWidth;
+        hud.band.style.transition = '';
+      }
       hud.updateEvents(feed);
     },
     {
