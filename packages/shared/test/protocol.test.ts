@@ -167,6 +167,7 @@ const serverSamples: ServerMessage[] = [
   ...events.map((event) => ({ t: 'event' as const, event })),
   { t: 'inventory', seq: 3, inventory },
   { t: 'skills', seq: 4, skills },
+  { t: 'meters', meters: { heat: 62.5, heatMax: 125, overheated: false, charge: 40.25, chargeMax: 100, at: 3600.5 } },
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
   { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
@@ -233,11 +234,12 @@ const http = {
 describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
   // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
-  // (P1.E13.T01); 9: meters (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid beacons (P1.E15.T02); 12: analysis and
-  // the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation (P2.E18.T01); 15: first finders (P2.E29.T01). A
-  // branch that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 15, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(15);
+  // (P1.E13.T01); 9: reserved for meters, which merged as 15 (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid
+  // beacons (P1.E15.T02); 12: analysis and the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation
+  // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01). A branch that changes a message bumps the
+  // version, adds its line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 16, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(16);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

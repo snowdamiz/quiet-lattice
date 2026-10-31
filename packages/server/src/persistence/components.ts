@@ -1,10 +1,11 @@
 // The character state components Phase 1 has so far (docs/ARCHITECTURE.md §8), in load order: progress (level, xp and
 // home system, in the row's columns), the skill web (P1.E07.T01, src/skills), the ship loadout, the inventory (its layout
-// re-derived from the ship and the owned nodes on load), where the character is (system, pose, frame and movement mode,
-// read from its zone entity, and on foot, where it left its ship; a saved pose movement authority would not accept is not
-// restored), its codex (the species it has analyzed, P1.E08.T04, src/codex), the recipes it knows (P1.E13.T05,
-// src/crafting), its reputation (standing by faction and titles, P2.E18.T01, src/reputation), its codex plates (its first
-// finds, P2.E29.T01, src/discovery) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
+// re-derived from the ship and the owned nodes on load), heat and Charge (P1.E07.T02, src/meters: their capacities from
+// the ship and the owned nodes), where the character is (system, pose, frame and movement mode, read from its zone
+// entity, and on foot, where it left its ship; a saved pose movement authority would not accept is not restored), its
+// codex (the species it has analyzed, P1.E08.T04, src/codex), the recipes it knows (P1.E13.T05, src/crafting), its
+// reputation (standing by faction and titles, P2.E18.T01, src/reputation), its codex plates (its first finds, P2.E29.T01,
+// src/discovery) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
@@ -21,6 +22,8 @@ import { RecipeBook } from '../crafting/book.ts';
 import { RECIPES, recipesComponent } from '../crafting/component.ts';
 import { PLATES, PlateBook, platesComponent } from '../discovery/plates.ts';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
+import { METERS, metersComponent } from '../meters/component.ts';
+import { MeterService } from '../meters/service.ts';
 import { REPUTATION, reputationComponent } from '../reputation/component.ts';
 import { ReputationService } from '../reputation/service.ts';
 import { padPose, planGround, poseProblem as movementProblem } from '../sim/movement/index.ts';
@@ -38,6 +41,7 @@ export const PROGRESS = 'progress';
 export { CODEX, PLATES, RECIPES, REPUTATION, SKILLS };
 export const SHIP = 'ship';
 export const INVENTORY = 'inventory';
+export { METERS };
 export const POSE = 'pose';
 export const QUESTS = 'quests';
 
@@ -325,6 +329,9 @@ export interface CoreComponentDeps {
   /** The skill web's service; when none is given, one is made over this inventory, ships and progress (the gateway finds
    * it in the registry: `skillServiceIn`). */
   skills?: SkillService;
+  /** Heat and Charge; when none is given, one is made over these ships, the skill service and the zones (the gateway finds
+   * it in the registry: `meterServiceIn`). */
+  meters?: MeterService;
   /** Every character's codex; when none is given, one is made over this progress and skill service (the gateway finds it
    * in the registry: `codexServiceIn`). */
   codex?: CodexService;
@@ -341,16 +348,19 @@ export interface CoreComponentDeps {
 }
 
 /** A registry holding the components in load order: the skills read the level; the ship and the inventory read the owned
- * nodes; the inventory reads the ship; the codex, the recipes, the reputation and the plates read nothing; the quests come last
- * (owed reputation is settled into the reputation once the character is in play, QuestRuntime.joined). */
+ * nodes; the inventory reads the ship; the meters read the ship and the owned nodes; the codex, the recipes, the
+ * reputation and the plates read nothing; the quests come last (owed reputation is settled into the reputation once the
+ * character is in play, QuestRuntime.joined). */
 export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
   const skills = deps.skills ?? new SkillService({ inventory: deps.inventory, ships: deps.ships, progress: deps.progress });
+  const meters = deps.meters ?? new MeterService({ ships: deps.ships, skills, zones: deps.zones });
   const codex = deps.codex ?? new CodexService({ progress: deps.progress, skills, log: deps.log });
   const registry = new ComponentRegistry()
     .register(progressComponent(deps.progress))
     .register(skillsComponent(skills, { log: deps.log }))
     .register(shipComponent(deps.ships))
     .register(inventoryComponent(deps.inventory, { log: deps.log }))
+    .register(metersComponent(meters, { log: deps.log }))
     .register(poseComponent(deps.zones, deps.clock, deps.movement ?? true))
     .register(codexComponent(codex, { log: deps.log }))
     .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log }))

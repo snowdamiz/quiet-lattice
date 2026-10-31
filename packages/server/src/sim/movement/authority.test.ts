@@ -436,6 +436,88 @@ describe('cheats are refused', () => {
     expect(refusal(stubbed.send(pose(HOME, scale(up, ground + 1501)), 'pulse')).violation).toMatchObject({ rule: 'pulse_altitude' });
   });
 
+  it('the pulse drive with Charge empty: engaging, or cruising on past the drop-out’s grace (the character’s meters)', () => {
+    // a stand-in for the meter service: Charge, and when it ran out
+    const meter = { charge: 0, emptiedAt: -Infinity };
+    const asked: [string, string, number][] = [];
+    const flown: [string, number][] = [];
+    const meters = {
+      allowsMode(id: string, mode: string, now: number, graceS = 0, at = now) {
+        asked.push([id, mode, graceS]);
+        return mode !== 'pulse' || meter.charge > 0 || at - meter.emptiedAt <= graceS;
+      },
+      flown(_id: string, mode: string, seconds: number) {
+        flown.push([mode, seconds]);
+      },
+    };
+    const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' }, {}, { meters });
+    // engaging with Charge empty: corrected back to the ship it was, the rule logged
+    const r = refusal(h.send(pose(null, OPEN), 'pulse'));
+    expect(r.violation).toMatchObject({ rule: 'pulse_charge', unit: 'charge', detail: 'engaging with Charge empty' });
+    expect(r.correction).toMatchObject({ mode: 'ship' });
+    expect(asked).toEqual([['char-1', 'pulse', 0]]);
+    expect(h.lines.find((l) => l.msg === 'movement corrected')?.obj).toMatchObject({ rule: 'pulse_charge', character: 'char-1' });
+    // (a refused input is not flown)
+    expect(flown).toEqual([]);
+    // the ship's own modes are never asked about
+    h.now += MOVEMENT.correction.graceS;
+    expect(h.send(pose(null, OPEN), 'ship').ok).toBe(true);
+    expect(asked).toHaveLength(1);
+    // with Charge it engages, and cruises on as it runs out for the grace, asked with it; each accepted input is reported
+    // flown for the client time credited to it
+    meter.charge = 40;
+    expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);
+    expect(flown.at(-1)![0]).toBe('pulse');
+    expect(flown.at(-1)![1]).toBeCloseTo(0.05, 6);
+    meter.charge = 0;
+    meter.emptiedAt = h.now;
+    expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);
+    expect(asked.at(-1)).toEqual(['char-1', 'pulse', MOVEMENT.pulse.chargeGraceS]);
+    // past it, the drive is out
+    h.now += MOVEMENT.pulse.chargeGraceS;
+    expect(refusal(h.send(pose(null, OPEN), 'pulse')).violation).toMatchObject({ rule: 'pulse_charge', detail: 'cruising on past the drop-out' });
+    // without meters (a restore's check, the tests of the other rules) nothing is asked
+    expect(inSpace().send(pose(null, OPEN), 'pulse').ok).toBe(true);
+  });
+
+  it('reports each accepted input’s credited flight to the meters once, a correction’s rewind not paid for twice', () => {
+    // (the pose a correction rewinds to is re-timed to the refused input's credited time, so the stretch after it starts
+    // where the last one paid ended)
+    let flown = 0;
+    const meters = {
+      allowsMode: () => true,
+      flown(_id: string, _mode: string, seconds: number) {
+        flown += seconds;
+      },
+    };
+    const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' }, {}, { meters });
+    const start = h.now;
+    const space = flightCaps(shipStats(LARK), 'space').allowed;
+    let p: Vec3 = [...OPEN];
+    // 2 s at 0.9 of the cap, then on at 1.4 of it until corrected: rewound to its window's start, a second back
+    for (let i = 0; i < 40; i++) {
+      p = [p[0] + space * 0.9 * 0.05, p[1], p[2]];
+      expect(h.send(pose(null, p), 'ship').ok).toBe(true);
+    }
+    let corrected: MovementRefusal | null = null;
+    while (!corrected) {
+      p = [p[0] + space * 1.4 * 0.05, p[1], p[2]];
+      const v = h.send(pose(null, p), 'ship');
+      if (!v.ok && refusal(v).correction) corrected = refusal(v);
+    }
+    // the client follows the correction and flies on from it
+    const back = corrected.correction!.pose.pos as Vec3;
+    expect(back[0]).toBeLessThan(p[0] - space * 1.4 * 0.05 * 5);
+    p = [...back];
+    for (let i = 0; i < 20; i++) {
+      p = [p[0] + space * 0.9 * 0.05, p[1], p[2]];
+      expect(h.send(pose(null, p), 'ship').ok).toBe(true);
+    }
+    // every second it was reported to have flown is one its client's clock ran, once
+    expect(flown).toBeLessThanOrEqual(h.now - start + 1e-6);
+    expect(flown).toBeGreaterThan(h.now - start - MOVEMENT.correction.graceS - 0.2);
+  });
+
   it('a ship below the ground, inside the hangar shell, or in a gas giant’s depths', () => {
     const { up, ground } = dryLand();
     const h = new Harness(D, { pose: pose(HOME, scale(up, ground + 20)), mode: 'ship' });

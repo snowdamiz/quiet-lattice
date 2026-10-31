@@ -211,7 +211,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 
 ### E07 Skill web (Tier I and II)
 - [x] **P1.E07.T01 Skill state on the server** · deps: E02.T07, E03.T05 · spec: DESIGN 9.1 · done: points, unlocked set, bought set, slots, fragment ledger, respec; prerequisite and tier-level validation. · verify: unit and integration.
-- [R] **P1.E07.T02 Heat and Charge** · deps: T01 · files: `src/entities/Multitool.js` (heat), `src/entities/Ship.js` (pulseFuel) · done: server-authoritative meters with the world modifiers (planet type, day, underwater), overheat lockout, Charge regen in sunlight; HUD readouts. · verify: unit tests of the cooling table; smoke HUD.
+- [x] **P1.E07.T02 Heat and Charge** · deps: T01 · files: `src/entities/Multitool.js` (heat), `src/entities/Ship.js` (pulseFuel) · done: server-authoritative meters with the world modifiers (planet type, day, underwater), overheat lockout, Charge regen in sunlight; HUD readouts. · verify: unit tests of the cooling table; smoke HUD.
 - [ ] **P1.E07.T03 Ability runtime** · deps: T02, E06.T02 · done: cast request → validation → effect → replication → client VFX; cooldowns; keys 1–6 on foot, 1–4 in flight; LMB stays tool/gun. · verify: integration casts a test ability from each slot.
 - [ ] **P1.E07.T04 Gravitic I–II** · deps: T03 · done: Pull, Heavy Footing, Tractor Beam, Slam, Well, Dense Bones, Mass Sense, Inertial Brake, Pull Many per DESIGN 9.2. · verify: one integration test per node (Pull moves a mob 25 m; Well slows 60%; Slam knocks down in radius).
 - [ ] **P1.E07.T05 Thermal I–II** · deps: T03 · done: Lance (the beam as damage), Tempered Core, Focused Lasers, Flare, Sear, Vent, Hot Hands, Ablative Plating, Chain. · verify: per-node tests.

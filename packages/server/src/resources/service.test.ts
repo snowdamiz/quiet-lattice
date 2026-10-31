@@ -1,11 +1,12 @@
 // The resource service (P1.E13.T01) on a real zone of system 0, its home world's drawn ground planned on this thread, and
 // a hand-driven clock: mining hits measured by beam time and checked cheapest first; a node shared by two miners, broken
 // once and split by damage; growing back and healing; common flora; and the per-cell state each player is sent.
-import { decodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
+import { Buttons, decodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
 import { FLORA_HARVEST, nodeType, type NodeGround } from '@astra/shared/world';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { miningWorld, norm, type NodeSpot, type Vec3 } from '../../test/resourceWorld.ts';
 import { InventoryService } from '../inventory/service.ts';
+import { MeterService } from '../meters/service.ts';
 import { Zone, type ZoneViewer } from '../zones/zone.ts';
 import { HEAL_S, RESPAWN_S } from './nodes.ts';
 import {
@@ -126,6 +127,16 @@ function setup(opts: Partial<ResourceServiceOptions> = {}) {
     throw new Error('the node never broke');
   };
   return { zone, inventory, clock, service, grounds, player, move, hit, flora, held, breakNode };
+}
+
+/** The beam button as `v`'s client sends it: an input on foot at the clock's time, held or not, opening its meters first. */
+function beamButton(meters: MeterService, v: Viewer, clock: { t: number }) {
+  meters.open(v.characterId, { heat: 0, overheated: false, charge: 0, at: clock.t });
+  let seq = 0;
+  return (held: boolean) => {
+    const pose = { frame: world.frame, pos: [0, 0, 0] as Vec3, quat: [0, 0, 0, 1] as [number, number, number, number], vel: [0, 0, 0] as Vec3 };
+    meters.input(v.characterId, v, { t: 'input', seq: ++seq, time: clock.t, mode: 'foot', pose, buttons: held ? Buttons.beam : 0 }, clock.t);
+  };
 }
 
 describe('mining hits', () => {
@@ -338,46 +349,110 @@ describe('mining hits', () => {
     expect(at(a, {}).reason).toBe('busy');
   });
 
-  it('with Heat’s meters, mine only while they say the beam is firing (held, out of the lockout)', () => {
+  it('with Heat’s meters, mine only while they say the beam is firing (held, out of the lockout), on the beam time they took', () => {
     let firing = false;
     const asked: [string, number][] = [];
-    const s = setup({ meters: { beamActive: (id, now) => (asked.push([id, now]), firing) } });
+    const taken: [string, number, number][] = [];
+    const s = setup({
+      meters: {
+        beamActive: (id, now) => (asked.push([id, now]), firing),
+        takeBeam: (id, now, max) => (taken.push([id, now, max]), 0.1),
+      },
+    });
     const a = s.player(deposit.stand);
-    // the beam button not held: nothing
+    const hp = nodeType(deposit.node.type).hp;
+    // the beam button not held: nothing, and no beam time taken
     expect(s.hit(a, deposit.id).reason).toBe('heat');
     expect(asked).toEqual([[a.characterId, s.clock.t]]);
+    expect(taken).toEqual([]);
     expect(s.service.nodeState(world.frame, deposit.id)).toBeUndefined();
+    // firing: the hit is worth the beam time the meters hand over, at most HIT_CREDIT_MAX_S
     firing = true;
     s.clock.t += 0.25;
-    expect(s.hit(a, deposit.id).result).toBe('hit');
+    expect(s.hit(a, deposit.id).hp).toBeCloseTo(1 - (0.1 * MULTITOOL_POWER) / hp, 9);
+    expect(taken).toEqual([[a.characterId, s.clock.t, HIT_CREDIT_MAX_S]]);
     // overheated (the lockout): nothing again
     firing = false;
     s.clock.t += 0.25;
-    const hp = s.service.nodeState(world.frame, deposit.id)!.hp;
     expect(s.hit(a, deposit.id).reason).toBe('heat');
-    expect(s.service.nodeState(world.frame, deposit.id)!.hp).toBe(hp);
+    expect(s.service.nodeState(world.frame, deposit.id)!.hp).toBeCloseTo(hp - 0.1 * MULTITOOL_POWER, 9);
+    expect(taken.length).toBe(1);
     // a character the meters do not hold is not firing
-    const t = setup({
-      meters: {
-        beamActive: () => {
-          throw new Error('not held');
-        },
-      },
-    });
+    const notHeld = () => {
+      throw new Error('not held');
+    };
+    const t = setup({ meters: { beamActive: notHeld, takeBeam: notHeld } });
     expect(t.hit(t.player(deposit.stand), deposit.id).reason).toBe('heat');
+    const u = setup({ meters: { beamActive: () => true, takeBeam: notHeld } });
+    expect(u.hit(u.player(deposit.stand), deposit.id).reason).toBe('heat');
   });
 
-  it('are refused `los` with the ground in the way, and `heat` when the multitool may not fire', () => {
+  it('with Heat’s meters, a client pressing the beam only for its hits earns only the beam time they saw', () => {
+    const meters = new MeterService({ ships: { get: () => null }, skills: { owned: () => [] } });
+    const s = setup({ meters });
+    const a = s.player(deposit.stand);
+    const press = beamButton(meters, a, s.clock);
+    const by = () => s.service.nodeState(world.frame, deposit.id)?.by.get(a.characterId) ?? 0;
+    // pressed at the hit's instant and let go with it, every quarter second: the beam never fired, so nothing
+    for (let i = 0; i < 4; i++) {
+      s.clock.t += 0.25;
+      press(true);
+      expect(s.hit(a, deposit.id).result).toBe('hit');
+      press(false);
+    }
+    expect(by()).toBe(0);
+    // pressed a fiftieth of a second before each hit: that fiftieth, and no more (a quarter second a hit before Heat
+    // took the beam's time from the meters)
+    const PRESS_S = 0.02;
+    let fired = 0;
+    for (let i = 0; i < 12; i++) {
+      s.clock.t += 0.25 - PRESS_S;
+      press(true);
+      s.clock.t += PRESS_S;
+      fired += PRESS_S;
+      expect(s.hit(a, deposit.id).result).toBe('hit');
+      press(false);
+      expect(by()).toBeLessThanOrEqual(fired * MULTITOOL_POWER + 1e-9);
+    }
+    expect(by()).toBeCloseTo(fired * MULTITOOL_POWER, 9);
+    // and the meter barely warmed: the duty cycle a pulsing client dodged is the one it no longer gets paid for
+    expect(meters.view(a.characterId, s.clock.t).heat).toBeLessThan(5);
+  });
+
+  it('with Heat’s meters, a client holding the beam earns what it did before: a quarter second a hit', () => {
+    const before = setup();
+    const meters = new MeterService({ ships: { get: () => null }, skills: { owned: () => [] } });
+    const s = setup({ meters });
+    const a = s.player(deposit.stand);
+    const b = before.player(deposit.stand);
+    const press = beamButton(meters, a, s.clock);
+    // the beam held, an input every twentieth of a second and a hit every quarter, the first after a quarter second of
+    // beam: 16 hits in 4 s, short of the overheat (100 / (32 − 8) a second: 4.2 s), or until the node breaks
+    press(true);
+    for (let i = 0; i < 16; i++) {
+      for (let k = 0; k < 5; k++) {
+        s.clock.t += 0.05;
+        press(true);
+      }
+      const r = s.hit(a, deposit.id);
+      const ref = before.hit(b, deposit.id);
+      before.clock.t += 0.25;
+      expect(r.result).toBe(ref.result);
+      if (r.result === 'hit') expect(r.hp).toBeCloseTo(ref.hp!, 9);
+      else {
+        expect(r).toMatchObject({ result: 'depleted', item: ref.item, count: ref.count });
+        break;
+      }
+    }
+    expect(meters.view(a.characterId, s.clock.t).overheated).toBe(false);
+  });
+
+  it('are refused `los` with the ground in the way', () => {
     const blocked = world.findNode({ blocked: true });
     const s = setup();
     const a = s.player(blocked.stand);
     expect(s.hit(a, blocked.id).reason).toBe('los');
     expect(s.service.nodeState(world.frame, blocked.id)).toBeUndefined();
-    const b = s.player(deposit.stand);
-    const asked: [string, number][] = [];
-    s.service.beam = (id, seconds) => (asked.push([id, seconds]), false);
-    expect(s.hit(b, deposit.id).reason).toBe('heat');
-    expect(asked).toEqual([[b.characterId, 0.25]]);
   });
 
   it('yield and breaking speed follow the skill web (Optical Drill, Hot Hands)', () => {

@@ -6,7 +6,7 @@ import { WALKER } from '@astra/shared/data';
 import type { ShipLoadout } from '@astra/shared/ships';
 import { frameIdOf, frameKeyOf, systemPoses, type FrameKey, type PlanetParams, type SystemDescription } from '@astra/shared/world';
 import { planHere, type Ground as Terrain, type GroundSource } from '../../fauna/terrain.ts';
-import { MovementAuthority, type MoveMode, type MoverProfile, type MovementVerdict } from './authority.ts';
+import { MovementAuthority, type MoveMode, type MoverMeters, type MoverProfile, type MovementVerdict } from './authority.ts';
 import { dist, groundOf, heightAt, len, rotate, type Quat, type Vec3 } from './world.ts';
 
 export const LARK: ShipLoadout = { hull: 'lark', modules: { s1: 'pulse_lasers' }, cargoPods: 1, livery: 0 };
@@ -33,12 +33,13 @@ export class Harness {
   /** how far the client's clock is ahead of the server's (its estimate of server time errs) */
   skew = 0;
 
-  /** `opts.grounds`: where grounds come from (planned on the test's thread by default) */
+  /** `opts.grounds`: where grounds come from (planned on the test's thread by default); `opts.meters`: the characters'
+   * meters (none by default: the pulse drive's Charge is not asked) */
   constructor(
     readonly d: SystemDescription,
     start: { pose: Pose; mode: MoveMode },
     profile: Partial<MoverProfile> = {},
-    opts: { now?: number; id?: number; grounds?: GroundSource } = {},
+    opts: { now?: number; id?: number; grounds?: GroundSource; meters?: MoverMeters } = {},
     readonly id = opts.id ?? 1,
   ) {
     this.now = opts.now ?? 1e6;
@@ -46,6 +47,7 @@ export class Harness {
       zone: 'test',
       system: d,
       grounds: opts.grounds ?? planHere,
+      meters: opts.meters,
       log: {
         warn: (obj, msg) => this.lines.push({ level: 'warn', obj: obj as Record<string, unknown>, msg }),
         debug: (obj, msg) => this.lines.push({ level: 'debug', obj: obj as Record<string, unknown>, msg }),

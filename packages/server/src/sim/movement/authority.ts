@@ -12,7 +12,8 @@
 //    not be below the ground (the shared terrain sampler, levelled under cities and sites as the client levels it), in a
 //    gas giant's depths or inside the Waystation's hangar shell; a walker may not be below the ground, outside the hangar,
 //    or higher than anything it could stand on for longer than a fall from there takes. Its mode must be legal there: the
-//    pulse drive only outside the air, clear of what is ahead and high enough over a world to engage; landed only on dry
+//    pulse drive only with Charge in the character's meters (P1.E07.T02: to engage, and to cruise on past a moment's grace
+//    after it runs out), outside the air, clear of what is ahead and high enough over a world to engage; landed only on dry
 //    ground on a world; docked only on a Waystation pad no other ship holds; on foot only on a world's ground or in a
 //    hangar, and only after getting out of a landed or docked ship; boarding only the ship it is beside.
 // 3. The move from the last valid pose. A jump beyond the allowance in the time since (at most a second of it: no input
@@ -90,6 +91,16 @@ export type MoveMode = InputMessage['mode'];
 export interface MovementLog {
   warn(obj: object, msg: string): void;
   debug(obj: object, msg: string): void;
+}
+
+/** The characters' meters (Heat and Charge, P1.E07.T02's MeterService). */
+export interface MoverMeters {
+  /** Whether one may be in `mode` at server world time `now`: the pulse drive needs Charge, or to have run out of it no
+   * more than `graceS` before `at` (the claim's credited time). */
+  allowsMode(characterId: string, mode: MoveMode, now: number, graceS?: number, at?: number): boolean;
+  /** An accepted input's flight: `seconds` of its client's time in `mode`, as credited here, up to credited time `at`
+   * (what the pulse drive burns Charge for). */
+  flown(characterId: string, mode: MoveMode, seconds: number, now: number, at: number): void;
 }
 
 /** What movement authority needs of a player: who it is (for the log), its ship and its skills. */
@@ -393,6 +404,8 @@ export interface MovementAuthorityOptions {
   grounds?: GroundSource;
   /** The system's tier now, which its worlds' ground is drawn for (0 by default). */
   tier?: () => number;
+  /** The characters' meters: the pulse drive needs Charge. Without them (tests, a restore's check) it is not asked. */
+  meters?: MoverMeters;
 }
 
 /**
@@ -443,6 +456,7 @@ export class MovementAuthority {
   kicks = 0;
   private readonly zone: string;
   private readonly log?: MovementLog;
+  private readonly meters?: MoverMeters;
   private readonly movers = new Map<number, Mover>();
   /** the movers holding each pad: its ship docked there, or left there while its pilot walks */
   private readonly pads: Set<number>[] = STATION_LAYOUT.pads.map(() => new Set<number>());
@@ -453,6 +467,7 @@ export class MovementAuthority {
   constructor(opts: MovementAuthorityOptions) {
     this.zone = opts.zone;
     this.log = opts.log;
+    this.meters = opts.meters;
     this.world = new MovementWorld(opts.system, opts.grounds ?? groundPlanner, opts.tier);
   }
 
@@ -579,6 +594,11 @@ export class MovementAuthority {
     this.holdIfSkipped(m, { seq: msg.seq, msg, credit, r: now });
     m.graceUntil = -Infinity;
     this.accept(m, L, s);
+    // the meters' account of it: the time credited since the last valid pose (none for a clock stepped forward), flown in its
+    // mode, which the pulse drive pays Charge for; so a client pays for the flight accepted however it bunches its inputs,
+    // each second once (a correction's pose is re-timed to the refused input's credited time, and that never runs back)
+    const character = m.profile.characterId;
+    if (this.meters && character !== undefined) this.meters.flown(character, s.mode, s.resync ? 0 : Math.max(0, s.t - L.t), now, s.t);
     return { ok: true, mode: s.mode, vel: s.vel };
   }
 
@@ -1005,9 +1025,14 @@ export class MovementAuthority {
 
     switch (s.cls) {
       case 'pulse': {
+        const engaging = L.cls !== 'pulse';
+        // Charge, as the character's meters have it now (the gateway ran them to this input's arrival before the zone)
+        const id = m.profile.characterId;
+        if (this.meters && id !== undefined && !this.meters.allowsMode(id, 'pulse', s.r, engaging ? 0 : MOVEMENT.pulse.chargeGraceS, s.t)) {
+          return fail('pulse_charge', 0, 0, 'charge', engaging ? 'engaging with Charge empty' : 'cruising on past the drop-out');
+        }
         const air = this.world.airAt(key, pos, world, poses);
         if (air > AIR.pulseCeiling) return fail('pulse_air', air, AIR.pulseCeiling, 'density');
-        const engaging = L.cls !== 'pulse';
         const path = L.key === key ? dist(L.pos, pos) : 0;
         const need = (engaging ? PULSE_DRIVE.engageClearM : PULSE_DRIVE.dropOutM) - MOVEMENT.pulse.clearanceM;
         if (s.clearAhead + path < need) return fail('pulse_clearance', s.clearAhead, need, 'm', engaging ? 'engaging' : 'cruising');
