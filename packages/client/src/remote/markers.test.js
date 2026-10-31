@@ -1,6 +1,7 @@
 // Where other pilots' markers go (P1.E04.T02): over the ship's bounds on screen, nudged off the keep-out rather than
 // dropped, the label a fixed few px beside the mark, on the side it had while that has room, else right, left or
 // above (off other ships if it can be), else none; room to spare, here and where the mark is headed, to take a side.
+import { SocialUI } from '../ui/social/SocialUI.js';
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, hullCorners, labelBox, makeRoom, makeSlide, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
@@ -207,6 +208,26 @@ describe('pilot markers', () => {
     expect(addCovers([], {})).toEqual([]);
     expect(addCovers([], { covers: () => false })).toEqual([]);
     expect(addCovers([], { covers: () => [null, { left: 5, top: 5, right: 5, bottom: 9 }] })).toEqual([]);
+  });
+
+  it("nudge off the boxes the real SocialUI.covers() gives with no arguments (the party frame, an invite card, the chat panel)", () => {
+    const rect = (left, top, width, height) => ({ x: left, y: top, left, top, width, height, right: left + width, bottom: top + height });
+    const ui = Object.create(SocialUI.prototype);
+    ui.keepOut = [rect(26, 112, 256, 198), rect(26, 318, 256, 100), rect(26, 574, 440, 388)];
+    const keepOut = addCovers([], ui, 4);
+    expect(keepOut).toHaveLength(12);
+    for (const mark of [
+      { x: 150, y: 200 },
+      { x: 280, y: 360 },
+      { x: 200, y: 700 },
+    ]) {
+      expect(hits(mark.x - MARK_R, mark.y - MARK_R, mark.x + MARK_R, mark.y + MARK_R, keepOut)).toBe(true);
+      expect(nudge(mark, keepOut, W, H)).toBeGreaterThan(0);
+      expect(hits(mark.x - MARK_R, mark.y - MARK_R, mark.x + MARK_R, mark.y + MARK_R, keepOut)).toBe(false);
+    }
+    // no panel showing: nothing added
+    ui.keepOut = [];
+    expect(addCovers([], ui, 4)).toEqual([]);
   });
 
   it("outline the local ship by its convex hull's corners only, in its own space", () => {
