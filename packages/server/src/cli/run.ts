@@ -153,7 +153,7 @@ function splitOptions(argv: readonly string[]): { opts: Options; args: string[] 
     else if (a === '--force') opts.force = true;
     else if (a === '-h' || a === '--help') opts.help = true;
     // (rename's argument, not an option of the CLI's)
-    else if (a === CLEAR_NAME) args.push(a);
+    else if (a === CLEAR_NAME && args[0] === 'rename') args.push(a);
     else if (a === '--url' || a === '--operator') {
       const v = argv[++i];
       if (v === undefined) return `${a} needs a value`;

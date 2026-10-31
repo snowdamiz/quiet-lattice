@@ -25,9 +25,9 @@
 // knows after its skills, and again whenever it learns one, before the answer (§23). A joining character is sent its
 // reputation (standing, ranks and titles by faction) after its recipes, and whenever the server changes it, after that
 // change's rank and title events (§24); no client message changes it.
-// knows after its skills, and again whenever it learns one, before the answer (§23). First finds go to the discovery
-// service (discovery/), which hears of every analysis made, looks for landings and site visits among the characters in
-// play, pays and tells their finders, answers name requests, and sends a joining character its system's finds (§25).
+// First finds go to the discovery service (discovery/), which hears of every analysis made, looks for landings and site
+// visits among the characters in play, pays and tells their finders, answers name requests, and sends a joining
+// character its system's finds (§25).
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token

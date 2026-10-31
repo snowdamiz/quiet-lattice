@@ -23,6 +23,7 @@
 import {
   FIRST_FINDER_XP,
   NAME_WINDOW_S,
+  PLATES_MAX,
   SITE_REACH_M,
   checkDiscoveryName,
   discoveryId,
@@ -124,6 +125,8 @@ interface SystemFinds {
   state: 'loading' | 'ready' | 'failed';
   retryAt: number;
   finds: Map<string, DiscoveryRecord>;
+  /** ids of the finds learned since its load began: newer than the rows that load reads */
+  fresh: Set<string>;
   /** wall time (ms) a player was last in it */
   used: number;
 }
@@ -296,19 +299,21 @@ export class DiscoveryService {
   }
 
   /**
-   * Pays a find to its finder, in play: a plate and FIRST_FINDER_XP, unless its plates show the find (paid already) or
-   * are full; then its entity takes any level gained, its client hears of it, and it is saved at once. False when nothing
+   * Pays a find to its finder, in play: FIRST_FINDER_XP and a plate, unless its plates show the find (paid already) or
+   * are full, or no XP could be granted (then no plate either); then its entity takes any level gained, its client hears of it, and it is saved at once. False when nothing
    * was paid.
    */
   private pay(characterId: string, r: DiscoveryRecord): boolean {
     if (r.finderId !== characterId || !this.plates.holds(characterId)) return false;
-    const added = this.plates.add(characterId, { kind: r.kind, key: r.key, at: r.at });
-    if (added === 'known') return false;
-    if (added === 'full') {
+    if (this.plates.has(characterId, r.kind, r.key)) return false;
+    if (this.plates.get(characterId)!.plates.length >= PLATES_MAX) {
       this.log?.error({ character: characterId, kind: r.kind, key: r.key }, 'codex plates are at their bound; a first find earned nothing');
       return false;
     }
     const g = this.xp.grantXp(characterId, FIRST_FINDER_XP);
+    // (the plate is the record of payment: none without the XP, so the next join pays it)
+    if (g.xp === 0) return false;
+    this.plates.add(characterId, { kind: r.kind, key: r.key, at: r.at });
     this.counts.paid++;
     const s = this.inPlay.get(characterId)?.session;
     const zone = s ? this.zones.zoneOf(s) : undefined;
@@ -412,8 +417,9 @@ export class DiscoveryService {
     const sys = this.systems.get(r.systemSeed);
     const had = sys?.finds.get(id);
     if (had && same(had, r)) return;
-    sys?.finds.set(id, { ...r });
     if (!sys) return;
+    sys.finds.set(id, { ...r });
+    if (sys.state === 'loading') sys.fresh.add(id);
     const text = encodeServerMessage({ t: 'discoveries', system: sys.index, entries: [this.view(r)] });
     const finder = r.finderId ? this.inPlay.get(r.finderId)?.session : undefined;
     for (const p of this.inPlay.values()) if (this.sent.get(p.session) === sys.seed || p.session === finder) p.session.sendText(text);
@@ -440,18 +446,23 @@ export class DiscoveryService {
   private system(zone: DiscoveryZone): SystemFinds {
     const seed = zone.system.seed;
     let sys = this.systems.get(seed);
-    if (!sys) this.systems.set(seed, (sys = { seed, index: zone.systemIndex, state: 'failed', retryAt: 0, finds: new Map(), used: Date.now() }));
+    if (!sys) this.systems.set(seed, (sys = { seed, index: zone.systemIndex, state: 'failed', retryAt: 0, finds: new Map(), fresh: new Set(), used: Date.now() }));
     if (sys.state === 'failed' && Date.now() >= sys.retryAt) this.load(sys);
     return sys;
   }
 
   private load(sys: SystemFinds): void {
     sys.state = 'loading';
+    sys.fresh.clear();
     this.store
       .forSystem(sys.seed)
       .then((rows) => {
-        // (finds learned while it loaded stay; the store's rows are the truth for the rest)
-        for (const r of rows) sys.finds.set(discoveryId(r.kind, r.key), r);
+        // (finds learned while it loaded stay, being newer than the rows it read; the rows are the truth for the rest)
+        for (const r of rows) {
+          const id = discoveryId(r.kind, r.key);
+          if (!sys.fresh.has(id)) sys.finds.set(id, r);
+        }
+        sys.fresh.clear();
         sys.state = 'ready';
         for (const p of this.inPlay.values()) {
           const zone = p.session.state === 'joined' ? this.zones.zoneOf(p.session) : undefined;

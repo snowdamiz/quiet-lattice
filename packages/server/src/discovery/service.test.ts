@@ -14,7 +14,7 @@ import { describeZoneSystem } from '../zones/system.ts';
 import { proceduralName, sitesReached } from './places.ts';
 import { PlateBook, platesComponent } from './plates.ts';
 import { DiscoveryService, type DiscoverySession, type DiscoveryZone } from './service.ts';
-import { memoryDiscoveryStore } from './store.ts';
+import { memoryDiscoveryStore, type DiscoveryRecord } from './store.ts';
 
 type Vec3 = [number, number, number];
 
@@ -238,6 +238,56 @@ describe('first finds', () => {
     expect(t.plates.get(a.characterId)!.plates).toHaveLength(1);
   });
 
+  it('earns no plate while no XP can be granted, and pays both at its next join', async () => {
+    const t = setup();
+    const a = t.join('Ana Vel');
+    // (progress not held: the XP cannot be granted, so a plate would record a payment never made)
+    t.progress.delete(a.characterId);
+    t.service.analyzed({ characterId: a.characterId, key: SPECIES });
+    await t.settle();
+    expect(t.store.rows.size).toBe(1);
+    expect(t.plates.get(a.characterId)!.plates).toEqual([]);
+    expect(t.service.stats().paid).toBe(0);
+    expect(t.saved).toEqual([]);
+    t.progress.set(a.characterId, { level: 1, xp: 0, homeSystem: HOME });
+    t.service.joined(a, a.name);
+    await t.settle();
+    expect(t.xp(a)).toBe(FIRST_FINDER_XP);
+    expect(t.plates.get(a.characterId)!.plates).toHaveLength(1);
+  });
+
+  it('keeps a find learned while its system was loading over the older row the load reads', async () => {
+    const t = setup();
+    const ana: DiscoveryRecord = {
+      kind: 'species',
+      key: SPECIES,
+      systemSeed: system.seed,
+      finderId: 'c-ana-vel',
+      finderName: 'Ana Vel',
+      at: 1000,
+      name: null,
+      nameState: 'open',
+      nameUntil: 1000 + NAME_WINDOW_S,
+    };
+    t.store.rows.set(`species|${SPECIES}`, ana);
+    // the load reads its rows, and takes its time delivering them: the row it read is not the latest by then
+    const read = t.store.forSystem.bind(t.store);
+    let deliver!: () => void;
+    const held = new Promise<void>((r) => (deliver = r));
+    t.store.forSystem = async (seed) => {
+      const rows = await read(seed);
+      await held;
+      return rows;
+    };
+    const a = t.join('Ana Vel');
+    await flush();
+    expect(await t.service.request(a, { t: 'name', kind: 'species', key: SPECIES, name: 'Halcyon' })).toMatchObject({ result: 'named' });
+    deliver();
+    await t.settle();
+    expect(t.service.known('species', SPECIES)).toMatchObject({ name: 'Halcyon', nameState: 'named' });
+    expect(a.finds().get(`species|${SPECIES}`)).toMatchObject({ name: 'Halcyon' });
+  });
+
   it('sends a player its new system’s finds when its zone changes system', async () => {
     const t = setup();
     const a = t.join('Ana Vel');
@@ -312,6 +362,9 @@ describe('naming a find', () => {
     expect(await t.service.rename('species', SPECIES, 'Fuck Rock', 'admin:ops')).toMatchObject({ ok: false, error: 'invalid' });
     expect(await t.service.rename('species', `${FRAME}/7`, 'Halcyon', 'admin:ops')).toMatchObject({ ok: false, error: 'not_found' });
     expect(await t.service.rename('site', SPECIES, 'Halcyon', 'admin:ops')).toMatchObject({ ok: false, error: 'invalid' });
+    // and a second rename, which leaves the state as it was, reaches them too
+    expect(await t.service.rename('species', SPECIES, 'Other Name', 'admin:ops')).toMatchObject({ ok: true });
+    expect(t.b.finds().get(`species|${SPECIES}`)).toMatchObject({ name: 'Other Name' });
     const cleared = await t.service.rename('species', SPECIES, null, 'admin:ops');
     expect(cleared).toEqual({
       ok: true,
