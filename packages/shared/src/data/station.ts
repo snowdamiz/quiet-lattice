@@ -41,3 +41,26 @@ export const STATION_LAYOUT: StationLayout = deepFreeze({
 
 /** The hangar's interior bounds (the client's `HANGAR`). */
 export const STATION_HANGAR: StationBox = STATION_LAYOUT.hangar;
+
+const point = z.strictObject({ x: z.number(), y: z.number(), z: z.number() });
+
+export const stationTerminalSchema = z.strictObject({
+  /** The kiosk's centre on the trade deck's floor. */
+  kiosk: point,
+  /** Where its user stands: 1.2 m in front of the kiosk, as at the deck's other kiosks (the client's terminal point). */
+  use: point,
+  /** How far from `use` the server lets a walker work it, m: the client's 3.2 m prompt and slack for a pose a tick old. */
+  reachM: z.number().positive(),
+});
+export type StationTerminal = z.infer<typeof stationTerminalSchema>;
+
+/**
+ * The Waystation's fabricator terminal (DESIGN 15.7: "fabricator terminals at every Waystation"), on the trade deck at the
+ * hangar's back (its floor 7 m up, from z −90 to −68), left of the trade terminal. The client builds its kiosk here and
+ * the server's crafting service (P1.E13.T05) lets a walker standing at it use the station's fabricator.
+ */
+export const STATION_FABRICATOR: StationTerminal = deepFreeze({
+  kiosk: { x: -30, y: 7, z: -80 },
+  use: { x: -30, y: 7, z: -78.8 },
+  reachM: 4.5,
+});

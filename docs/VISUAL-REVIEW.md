@@ -206,8 +206,148 @@ Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's o
 | Round | Verdict | Scores | Mean |
 |---|---|---|---|
 | 1 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 2, performance 4 | 3.43 |
+| 2 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 3 | 3.57 |
+| 3 | REVISE | legibility 3, hud-fit 4, motion 3, palette 4, correctness 3, spec 4, performance 5 | 3.71 |
+| 4 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 5 | 3.86 |
 
 Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
 of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
 on sensor detection, a varied 24-pilot crowd, three LODs by screen length, speed-scaled glow and exhaust, and `-pads`
 and `-surface` captures; the server sends no NPC ships until P1.E08.T05. Artifacts: `assets/renders/ui/remote-ships*/`.
+
+Round 2: marker range text overlaps its own ship and falls to 1.3–2.4:1 over lit ground; markers hang at a fixed world
+offset, so they drift hundreds of pixels off near ships, and collide with the fixed HUD and each other; far Larks
+shimmer; pads (+3.97 ms for 3 ships) and surface (+3.0 ms, over 16.7 ms) cost out of proportion, the coarsest LOD is 25%
+of LOD0 (§19.2 wants under 5%) and casts shadows. Requested: a full bay phase, 24 Larks docked, with the perf readout.
+
+Round 3: performance now passes (crowd +0.25 ms, bay +1–1.5 ms, coarsest LOD 2.8%, +17 draw calls). Still failing: name
+labels sit past the ship's screen bounds, 100–220 px from their own diamond; remote nav and strobe lights flash full on
+for one frame and their bloom grows with distance (250–350 px at 1–2 km, brighter than the local ship's); markers still
+meet the EDGE line, the speed readout and the local ship in motion; the coarsest LOD starts at 130–200 m and smears;
+the landed remote ship shows no gear or ground contact.
+
+Round 4: labels now sit 8 px from their diamonds with no HUD overlaps in any clip frame, distant strobes no longer
+bloom, and the landed ship stands on its gear. Still failing: past about 190 m the coarsest LOD breaks into speckle
+that reshuffles every frame (heading unreadable); several ships in plain view get no diamond (a Lark closing through the
+crosshair, five diamonds for 24 docked ships, the ship dead ahead on the pads), and markers cut in and out in one frame
+or swap label sides. Requested: a debug overlay of sensor detection per ship. **Escalated to the owner after four REVISE
+rounds (plan 0.5); marked `[!]`.**
+
+## P1.E05.T01 Skeleton and three base bodies (art)
+
+Graded per people with the "Models and environments" table, each file as a family of ten variants.
+
+| Round | People | Verdict | Scores | Mean |
+|---|---|---|---|---|
+| 1 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 2, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.2 |
+| 1 | Ixari | REVISE | design 3, silhouette 3, proportion 3, materials 2, detail 2, topology 4, consistency 4, fitness 3, placeholder 2, performance 4 | 3.0 |
+| 1 | Ulgani | REVISE | design 2, silhouette 3, proportion 4, materials 2, detail 2, topology 3, consistency 4, fitness 3, placeholder 2, performance 4 | 2.9 |
+
+Round 1, common to all three: mascot faces (a fixed smile, goggle or button-ring eyes, no nose, lips or brow); smooth
+mannequin bodies without anatomical landmarks; suits from primitives (torus bands, rounded boxes, straight rods) that
+break each people's design language (Ixari facets, Thalune shingled shell, Ulgani grown chitin lattice); heads that differ
+only by small cards, unreadable past 10 m; uniform-noise skin; in-engine material errors (back-lit fins black, nacre as
+chrome, crystal as white plastic, Ulgani toe bleed); uniform remeshed LOD0 with no loops at the face or joints; blinks
+that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above the ground. Artifacts:
+`assets/renders/characters/`, `assets/renders/review/characters/`.
+
+## P1.E04.T05 Login and character screens (UI)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 4, performance 5 | 4.14 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.29 |
+| 3 | REVISE | hierarchy 3, fit 5, motion 3, theme 5, correctness 4, spec 4, performance 5 | 4.14 |
+| 4 | PASS | hierarchy 4, fit 5, motion 4, theme 5, correctness 5, spec 4, performance 5 | 4.57 |
+
+Round 1: screen changes cross-dissolve in place, so outgoing and incoming headers overlap for about 7 frames; entering
+hard-cuts from the lit menu to flat black; the panel snaps to the shorter screen's height mid-fade and clips the
+outgoing screen (Create and Back cut to a sliver while the request is pending). Contrast is 4.9–16.3:1 on the panel;
+the title tagline, ordinals and BUILD line sit at 2.7–3.2:1 over the planet limb. Requested: registering a fresh
+account with a refusal, landing on an empty list. Artifacts: `assets/renders/ui/{title,login-error,characters,create,entering,account-flow}/`.
+
+Round 2: steps now sequence and nothing clips; still failing: the cut into the world fades only to about 20% black and
+then jumps to flat black in one frame, its amber fill cut at 10%; the sign-in error box collapses in two frames while
+the layout eases; JOINING swaps to IN THE WORLD in one frame. Requested: the arrival with pointer lock granted (the
+captured arrival lands on the pause menu with no scrim, ordinals 3.6–3.8:1).
+
+Round 3: the fade to black and up, the step sequencing and the error box are clean; the panels and pause menu pass AA.
+Still failing: on arrival the location line and the banner's eyebrow sit on a lit ceiling beam at 2–2.6:1; the slot
+counter is 4.3–4.5:1; "JOINING" and "IN THE WORLD" overlap for about 10 frames, as do the rail ordinal and its tick;
+the Esc hint vanishes in one frame; the selected-row tint jumps rows. Requested: the list at 6 of 6.
+
+Round 4: PASS. Artifacts: `assets/renders/ui/{title,login-error,register,characters,characters-full,create,entering,account-flow,arrival}/`.
+
+## P1.E15.T03 Chat and party UI (with the beacon list)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 3, spec 4, performance 5 | 3.86 |
+| 2 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 3 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 4 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+
+Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
+and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
+down); the beacon list overruns the panel with no scroll affordance; a world-marker label shows through the party frame
+at 21:9; the leader row's tag column is misaligned. Requested: the muted state and an offline member. Artifacts:
+`assets/renders/ui/{social,social-space,party,party-invite,beacons}/`.
+
+Round 2: layout changes now ease; still failing: the open/close cross-fade overlaps two different lists as double text
+for 4–5 frames; the action row on accept still changes in one frame; some eases end with a 2 px snap; the clip opens
+with 12 frames of plate-less text over the limb. Requested: an overfull beacon list with a scroll clip.
+
+Round 3: the list cross-fade, accept row, pixel snaps and opening frames are fixed; still failing: opening chat with an
+invite card showing pushes the card down in two jumps and a stall; every tween stalls for one frame early; on accept,
+the card's text and "Not in a party" show through the rows passing over them. Requested: a tab-switch clip.
+
+Round 4: every layout move now eases with no stall (feed rise 7, 7, 5, 3, 2, 2, 1, 1, 1 px; the invite card, accept and
+refusals clean); all text passes AA (feed 10–14:1, dim rows about 5:1). Still failing: on a tab switch the cleared
+unread badge vanishes and the tabs to its right jump about 22 px in one frame, and the prompt label swaps in one frame;
+the beacon list's scrollbar appears at full opacity in one frame. Minor: a repeated mute line, a refusal's wrap without
+a hanging indent, "Not in a party" beside a PARTY tab with unread, shorter health bars on leader rows. **Escalated to
+the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
+
+## P1.E13.T05 Basic fabricator (UI)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 3, spec 5, performance 5 | 4.29 |
+| 2 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
+| 3 | REVISE | hierarchy 4, fit 5, motion 3, theme 5, correctness 4, spec 5, performance 5 | 4.43 |
+| 4 | PASS | hierarchy 4, fit 5, motion 4, theme 5, correctness 4, spec 5, performance 5 | 4.57 |
+
+Round 1: all small text at or above 4.5:1; the craft sweep is eased but the button, stepper and LEARN snap state in one
+frame around it, and the selected row flashes twice; after a ×3 craft the quantity stays at 3 while the row says CAN
+MAKE 1 and the materials go red (clamp to the new maximum); the result flash sits flush on its rows. Requested: a LEARN
+clip. Artifacts: `assets/renders/ui/{fabricator,fabricator-ship}/`.
+
+Round 2: the button and controls now ease and the quantity clamps; still failing: in the learn clip the fading header
+crosses the rising row; the row's tag and slot, and the footer status line, swap in one frame; the CRAFT label drops to
+1.3:1 while fading back to disabled. Requested: the stepper at its maximum.
+
+Round 3: the sequential out/in fade reads well where used; still failing: a craft's results (CAN MAKE counts, MAKES,
+needs, the stepper and CRAFT ×n) swap at full opacity in one frame; moving the selection to an uncraftable recipe snaps
+the CRAFT fill; the learn header still shows at 25% then 10% under the rising row. Requested: the stepper at 6 of 6.
+
+Round 4: PASS. Artifacts: `assets/renders/ui/{fabricator,fabricator-ship,fabricator-learn,fabricator-limits,fabricator-limits-max}/`.
+
+## P1.E12.T02 Lark, Swift, Kestrel, Mule (art)
+
+Graded per hull with the "Models and environments" table, each file as a family of base, damaged and husked.
+
+| Round | Hull | Verdict | Scores | Mean |
+|---|---|---|---|---|
+| 1 | Lark | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 3, placeholder 3, performance 3 | 3.1 |
+| 1 | Swift | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.4 |
+| 1 | Kestrel | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 3, placeholder 3, performance 4 | 3.5 |
+| 1 | Mule | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 3, placeholder 4, performance 4 | 3.5 |
+
+Round 1, common to all four: wear as uniform noise rather than placed by use; damaged variants indistinguishable from
+the base at gameplay range; LOD0 budgets spent on uniform tessellation of flat plates rather than modelled detail
+(nozzle throats, hardpoint mounts, hatches, fasteners where the language allows); no capture of the cockpit interior or
+a boarding path; hardpoints without mount geometry. Per hull: the Lark still reads as a generic fighter under a tile
+grid and misses the calibration's draw-call ask (65 against ≤12); the Swift reads as a jet with crystal glued on; the
+Kestrel's lattice reads as stick-and-tissue rather than grown chitin; the Mule's form passes (design and silhouette 4)
+but its liveries are swamped by nacre and it lacks BAY_* empties. Artifacts: `assets/renders/{lark,swift,kestrel,mule}_*`,
+`assets/renders/review/hulls/`.

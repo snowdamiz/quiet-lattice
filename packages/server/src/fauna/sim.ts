@@ -25,8 +25,9 @@
 // spawn under the same time budget as loading cells, never within SPAWN_CLEAR_M of a player, and only when the zone has
 // room; a world's dens are planned off the tick with its ground (terrain.ts) and wait for it.
 //
-// Seams for the tasks that follow: spawnHerd places a herd anywhere (the dev CLI, P1.E03.T07); hurt adds threat
-// (combat, P1.E06.T02); setTier follows the Edge (the zone manager calls it).
+// Seams for the tasks that follow: spawnHerd places a herd anywhere (the dev CLI, P1.E03.T07); combat (P1.E06.T02,
+// combat/zone.ts) reads a creature (`creature`, `creaturesIn`), adds threat with `hurt` and takes a dead one out of its
+// herd with `kill`, then despawns its corpse after the death beat; setTier follows the Edge (the zone manager calls it).
 import { performance } from 'node:perf_hooks';
 import { addThreat } from '@astra/shared/combat';
 import { PACK_RULES } from '@astra/shared/data';
@@ -150,6 +151,20 @@ export interface CreatureInfo {
   pos: Vec3;
   target: number | null;
   attack: number | null;
+}
+
+/** A living creature as combat reads it (FaunaSim.creature). */
+export interface CombatCreature {
+  id: number;
+  body: number;
+  /** its world's frame id */
+  frame: string;
+  species: FaunaSpecies;
+  /** its herd's level */
+  level: number;
+  scale: number;
+  /** where it is in its world's frame now (the sim's own array: read, never keep) */
+  pos: Readonly<Vec3>;
 }
 
 export type CellState = 'loading' | 'active' | 'asleep';
@@ -718,6 +733,18 @@ class WorldFauna {
     if (clear.length || Object.keys(set).length) this.sim.zone.patch(m.id, set, clear);
   }
 
+  /** A creature dies (combat, P1.E06.T02): it leaves its herd at once, so the herd and its den see the loss (a pack wiped
+   * out starts its den's respawn timer at the next scan, an apex killed its 1,800 s one) and the AI forgets it; its entity
+   * stays, a corpse, until combat despawns it. False when it is not one of this world's living creatures. */
+  kill(id: number): boolean {
+    const c = this.creatures.get(id);
+    if (!c) return false;
+    const i = c.herd.members.indexOf(c);
+    if (i >= 0) c.herd.members.splice(i, 1);
+    this.forget(c);
+    return true;
+  }
+
   info(m: Creature): CreatureInfo {
     return { id: m.id, body: this.body.index, herd: m.herd.id, species: m.species, state: m.state, pos: [...m.pos], target: m.target, attack: m.attack };
   }
@@ -944,6 +971,29 @@ export class FaunaSim {
       }
       return true;
     }
+    return false;
+  }
+
+  /** A living creature as combat reads it (P1.E06.T02): its world, species, herd level, size and where it is; null for an
+   * entity that is not one (or no longer is: killed). */
+  creature(id: number): CombatCreature | null {
+    for (const w of this.worlds.values()) {
+      const c = w.creatures.get(id);
+      if (c) return { id, body: w.body.index, frame: w.frame, species: c.species, level: c.herd.level, scale: c.scale, pos: c.pos };
+    }
+    return null;
+  }
+
+  /** The living creatures of the world whose frame is `frame` (none when it keeps none), for combat's hit tests. Read only:
+   * the sim moves them every tick. */
+  creaturesIn(frame: string): Iterable<Readonly<Pick<Creature, 'id' | 'pos' | 'species' | 'scale'>>> {
+    for (const w of this.worlds.values()) if (w.frame === frame) return w.creatures.values();
+    return [];
+  }
+
+  /** A creature dies (combat's seam, P1.E06.T02): see WorldFauna.kill. False when it is not a living creature here. */
+  kill(id: number): boolean {
+    for (const w of this.worlds.values()) if (w.kill(id)) return true;
     return false;
   }
 

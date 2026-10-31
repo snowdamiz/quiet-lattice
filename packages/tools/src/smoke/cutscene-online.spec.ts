@@ -1,5 +1,6 @@
 import { randomBytes, randomInt } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
+import { enterPicked, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 
 // The test cutscene through the server, as players run it (online.ts: a scratch database, the server, Vite): a pilot
@@ -49,15 +50,16 @@ async function enterAsNewPilot(page: Page): Promise<string[]> {
   await page.goto(`${online.url}/`);
   await page.waitForFunction(() => 'game' in window && 'step' in window, null, { timeout: 60_000 });
   await until(page, 'window.game.menus.ready', 120_000);
-  await page.click('.title-screen [data-act="start"]');
-  await page.fill('.account [name="username"]', `smoke_${Date.now().toString(36)}${letters(4)}`);
-  await page.fill('.account [name="password"]', `pw-${randomBytes(9).toString('hex')}`);
-  await page.click('.account [data-do="register"]');
-  await page.fill('.account [name="name"]', `Pilot ${letters(1).toUpperCase()}${letters(7)}`);
-  await page.click('.account [data-people] [data-v="thalune"]');
-  await page.click('.account [data-form="create"] [type="submit"]');
-  await page.waitForSelector('.account [data-enter]');
-  await page.click('.account [data-enter]');
+  await signUp(
+    page,
+    {
+      username: `smoke_${Date.now().toString(36)}${letters(4)}`,
+      password: `pw-${randomBytes(9).toString('hex')}`,
+      name: `Pilot ${letters(1).toUpperCase()}${letters(7)}`,
+    },
+    'thalune',
+  );
+  await enterPicked(page);
   await until(page, "window.game.net?.joined && window.game.mode !== 'title'", 120_000);
   await until(page, 'window.game.net.store.ack > 0 && window.game.net.store.entities.has(window.game.net.entityId)', 30_000);
   return errors;

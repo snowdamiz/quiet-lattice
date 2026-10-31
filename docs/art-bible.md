@@ -281,6 +281,46 @@ authority for the numbers.
   it, one collection per variant and LOD named `<variant>_LOD0` … `<variant>_LOD3` (a lone variant uses the asset's name);
   colliders and markers beside the LODs. The `REF` collection from section 1. Collections starting with `_` are ignored.
 - **Exported layout:** `packages/client/public/models/<family>/<file>.glb`, nodes `<asset>/<variant>/<variant>_LOD<n>`.
+- **Exported textures and geometry** (P1.E14.T12): every map a material uses ships as KTX2 (Basis Universal) behind
+  `KHR_texture_basisu`, with its full mip chain and no PNG fallback: normal maps in UASTC (rate-distortion optimised,
+  then Zstandard), base colour, emissive, AO and metallic-roughness in ETC1S, from PNG or JPEG sources; byte-identical
+  maps read the same way are stored once, and a map used both as colour and as data is encoded once each way. Then the
+  meshes are reordered, quantized (`KHR_mesh_quantization`: positions at 14 bits of each mesh's bounds, texture
+  coordinates at two bits more than the family's largest texture, 14 for 4k) and meshopt-compressed
+  (`EXT_meshopt_compression`), every marker, pivot and LOD node left where it was and each variant's materials kept its
+  own. Creatures and flora are not quantized (only compressed): their client code reads `_pivot` and the colour masks
+  through the node's matrix, so those stay exact floats. All extensions used are required. The settings are
+  `families.json` `textures` and `geometry` (a landmark whose seams show at 14 bits sets its family's `positionBits`);
+  a family may opt out with its own `{"compress": false}`, and `pnpm art:export -- <family> --no-compress --out-dir
+  <scratch>` writes the export as Blender does, to compare against (never into the models: validation of shipped models
+  refuses it). The validator and the turntable import a compressed export with its
+  maps transcoded back to PNG (the texels the client shows; Blender decodes meshopt itself). The validator fails a map
+  that is not KTX2, a normal map not in UASTC, a colour map not sRGB or a data map not linear, a short mip chain,
+  geometry that is not meshopt-compressed, an extension missing from `extensionsRequired`, and a variant whose maps take
+  more GPU memory once transcoded (8 bits a texel, mips included) than its class's `gpuTextureMB`: 512 MB for a hero,
+  128 MB for the 2k classes, 32 MB for the 1k ones. The tools are Khronos' KTX-Software `ktx` 4.4.2, which `pnpm
+  art:export`, `art:test`, `turntable` and `art:validate` of a `.glb` fetch on first use into `node_modules/.cache/`
+  (checked against its SHA-256; `KTX=<path to ktx>` uses another build), and glTF-Transform 4.5.1 with meshoptimizer
+  1.3.0, pinned in `packages/tools`. The client loads every model through `gltfLoader()` (`src/core/Engine.js`): three's
+  `MeshoptDecoder` and `KTX2Loader`, with the Basis transcoder served from `packages/client/public/basis/` (a copy of
+  three's that a unit test keeps equal to the installed version). The review readout reports the maps' GPU memory.
+- **What a hero hull downloads, measured** (the 4k Lark: three variants, 15 baked material sets and 2 glass maps, 49
+  4k maps, about 125k triangles a variant at LOD0): 572 MB as Blender writes it (PNG maps, plain geometry); 107 MB as
+  shipped, about 36 MB a variant. The 49 maps are 100 MB of that: 17 UASTC normal maps 66 MB, 17 ETC1S
+  metallic-roughness (with AO) maps 18 MB, 15 ETC1S base colour maps 16 MB; the geometry is 6.5 MB of meshopt streams
+  (28 MB plain). Review captures stay within 1.45% of pixels (at 16/255) of the PNG export's under all three lights.
+  Each variant's maps take 320–363 MB of GPU memory at 8 bits a texel (1280–1451 MB as PNGs); the review readout on an
+  Apple GPU (ASTC and ETC2) shows 213–245 MB. Normal maps dominate both. If downloads must shrink further, the lever is
+  the texture budget, not the codecs: one 4k atlas per variant (DESIGN 19.2's "4k textures on heroes" read as a
+  texel budget per hero, not per material), with secondary materials (interior, glass) at 2k, would cut the maps
+  several-fold. That is the art owner's call per asset; nothing is atlased today.
+- **Remote hulls stream their mips** (proposal, P1.E16.T03): a 4k hero variant at about 300 MB of GPU memory cannot be
+  held 24 times (DESIGN's 24 remote players in view). Every mip level already ships in the KTX2 maps, so other players'
+  ships load their textures from a lower level: 512 px by default, 1k once the hull covers about 300 px on screen, 2k
+  beyond about 700 px; full 4k only for the player's own ship and close views (hangar, cutscene). Textures are shared
+  per hull and livery (one upload for every ship wearing it), under a global budget for remote hulls (for example
+  1.5 GB) that drops the least recently seen to their next lower level. At 1k a variant takes about 22 MB, so 24
+  distinct hulls fit in about 540 MB (about 135 MB at 512 px). No second export and no extra download.
 - **Engine conventions** (DESIGN 19.4): hull material names `Hull`, `Accent`, `Trim`, `Dark`, `Glass`, `EngineGlow`, `Nav*`
   (via `engine_name`, section 5); `Gear*` pivot empties for articulated landing gear, `Canopy*`, `CockpitInterior`; hardpoint
   empties `HP_S_*`, `HP_M_*`, `HP_L_*` (size in the name) and bay empties `BAY_*`; weapon modules carry `Mount` (where they

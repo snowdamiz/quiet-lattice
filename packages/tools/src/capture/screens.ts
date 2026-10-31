@@ -1,6 +1,7 @@
 // The UI screens `pnpm capture -- --ui <screen>` knows how to reach. Each later UI task adds its screen here, so the
 // grader always gets its 16:9 and 21:9 captures and a 60 fps clip the same way.
 import type { Page } from '@playwright/test';
+import { GALAXY_SEED, Galaxy, homeSystems } from '@astra/shared/world';
 
 export interface ScreenDef {
   /** dev scenario hash to open the client with */
@@ -23,6 +24,8 @@ export interface ScreenDef {
   /** Run the HUD's clock and timers (game.hud.now / later / cancel) on the clip's clock, so toasts and fades last as long
    * in the clip as in play. */
   hudClock?: boolean;
+  /** Console errors the screen causes on purpose (the browser reports a refused request, say), not counted against it. */
+  expectedErrors?: RegExp[];
 }
 
 /** Steps the game by hand, then waits out the HUD's CSS transitions (they run on real time, not game time). */
@@ -466,6 +469,182 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
   await page.waitForTimeout(300);
 }
 
+/** What the fabricator screens reach of the page. */
+interface FabricatorPage {
+  game: {
+    inventory: InventoryApi;
+    fabricator: { open(at: 'station' | 'ship'): void };
+    station: { pads: { x: number; z: number }[] };
+    ship: { state: { pos: { clone(): { set(x: number, y: number, z: number): unknown } } } };
+    player: { spawn(frame: unknown, at: unknown, heading: unknown): void };
+    system: { homePlanet: unknown };
+    dockOnPad(near: unknown): void;
+    debugGoto(planet: unknown, opts: { sunAngle: number; alt: number; azimuth: number }): void;
+    mode: string;
+    cam: { frame: unknown };
+  };
+  dev: { boot(): Promise<void> };
+}
+
+/** A mining trip's haul as it reaches a fabricator: enough for a warp cell, a pulse fuel cell and two sodium cartridges,
+ * short of oxygen and of ferrite for flak, and a torpedo recipe found on the way (to learn). */
+const FAB_SUIT: [string, number][] = [
+  ['dihydrogen', 64],
+  ['tritium', 41],
+  ['cobalt', 7],
+  ['oxygen', 12],
+  ['sodium', 46],
+  ['ferrite', 18],
+  ['carbon', 37],
+  ['copper', 22],
+  ['recipe_torpedo', 1],
+];
+
+/** Lays the haul out in the suit (the Lark's pod holding a little more), then opens fabricator `at`. */
+async function stockAndOpen(page: Page, at: 'station' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
+  await page.evaluate(
+    ({ at, suit, pod }) => {
+      const g = (window as unknown as FabricatorPage).game;
+      const inv = g.inventory;
+      // (no named functions in here: the bundler would wrap them in a helper the page does not have)
+      inv.restore({
+        ...inv.state,
+        suit: inv.state.suit.map((_, i) => (suit[i] ? { item: suit[i]![0], count: suit[i]![1] } : null)),
+        pods: inv.state.pods.map((p, k) => p.map((_, i) => (!k && pod[i] ? { item: pod[i]![0], count: pod[i]![1] } : null))),
+      });
+      g.fabricator.open(at);
+    },
+    { at, suit, pod },
+  );
+  await settle(page, 30);
+}
+
+/** Clicks a control of the fabricator screen (a recipe row, Craft, a stepper button) through its own click handler. */
+async function fabClick(page: Page, selector: string): Promise<void> {
+  await page.evaluate((s) => document.querySelector<HTMLElement>(s)?.click(), selector);
+  await page.waitForTimeout(400);
+}
+
+/**
+ * The Waystation's fabricator (P1.E13.T05): the pilot on foot at the fabricator terminal on the trade deck, its ship on
+ * a pad behind, after a mining trip. The five recipes it starts with: three it can make, two short of materials; a
+ * torpedo recipe to learn. The oxygen cartridge selected and Craft pressed: refused, "not enough oxygen", the short
+ * material flashing.
+ */
+async function openStationFabricator(page: Page): Promise<void> {
+  await stationFabricator(page);
+  await fabClick(page, '.fab-row[data-recipe="oxygen_cartridge"]');
+  await fabClick(page, '[data-make]');
+  await page.waitForTimeout(800);
+}
+
+/** The same scene at the Waystation, the fabricator opened on the warp cell it can make, nothing pressed yet. */
+async function stationFabricator(page: Page): Promise<void> {
+  await page.evaluate(() => (window as unknown as FabricatorPage).dev.boot());
+  await page.evaluate(() => {
+    const g = (window as unknown as FabricatorPage).game;
+    const pad = g.station.pads[3]!;
+    g.dockOnPad(g.ship.state.pos.clone().set(pad.x, 0, pad.z));
+    // a couple of metres back from the terminal (the kiosk at x −30, z −80 on the 7 m deck), turned to it
+    g.player.spawn(g.station, g.ship.state.pos.clone().set(-28.6, 7.05, -77.4), g.ship.state.pos.clone().set(-0.5, 0, -0.866));
+    g.mode = 'foot';
+    g.cam.frame = undefined;
+  });
+  await settle(page, 120);
+  await stockAndOpen(page, 'station', FAB_SUIT, [
+    ['tritium', 380],
+    ['carbon', 240],
+  ]);
+}
+
+/** The ship's fabricator: in the Lark landed on the home world, the haul aboard, flak ammo selected, three crafts. */
+async function openShipFabricator(page: Page): Promise<void> {
+  await page.evaluate(() => (window as unknown as FabricatorPage).dev.boot());
+  await page.evaluate(() => {
+    const g = (window as unknown as FabricatorPage).game;
+    g.debugGoto(g.system.homePlanet, { sunAngle: 40, alt: 0, azimuth: 20 });
+    g.mode = 'ship';
+    g.cam.frame = undefined;
+  });
+  await settle(page, 150);
+  await stockAndOpen(
+    page,
+    'ship',
+    FAB_SUIT.map(([id, n]) => [id, id === 'ferrite' ? 96 : n]),
+    [
+      ['tritium', 380],
+      ['carbon', 240],
+    ],
+  );
+  await fabClick(page, '.fab-row[data-recipe="flak_ammo"]');
+  await fabClick(page, '[data-q="1"]');
+  await fabClick(page, '[data-q="1"]');
+}
+
+/**
+ * A craft's motion for the clip: 0.2 s of animation time after the clip starts, Craft is pressed through the screen's
+ * own handler; the fabrication runs across the button (0.56 s, ease-in-out), then what was made shows in the line under
+ * the columns, the material counts drop and the rows that changed settle back (0.7 s). Page timers run on real time while
+ * the clip slows CSS and Web Animations tenfold, hence 2000 ms.
+ */
+const fabricatorMotion =
+  (select: string | null) =>
+  async (page: Page): Promise<void> => {
+    if (select) await fabClick(page, `.fab-row[data-recipe="${select}"]`);
+    await page.evaluate(() => setTimeout(() => document.querySelector<HTMLElement>('[data-make]')?.click(), 2000));
+  };
+
+/**
+ * A lesson's motion for the clip: 0.2 s in, LEARN is pressed on the torpedo recipe (the haul's find); its row eases up out
+ * of "Recipes to learn" into the recipe list (0.38 s) and flashes once, the heading fades out (0.2 s), the controls
+ * dimmed by the press come back, and the torpedo's details come in beside it (0.28 s).
+ */
+async function learnMotion(page: Page): Promise<void> {
+  await page.evaluate(() => setTimeout(() => document.querySelector<HTMLElement>('[data-learn="torpedo"]')?.click(), 2000));
+}
+
+/**
+ * The stepper at its limits, then a refusal, for the clip (each step 0.15 s of animation time apart; page timers run on
+ * real time while the clip slows CSS and Web Animations tenfold, hence 1500 ms): + and MAX pressed on the warp cell at 1
+ * of 1 (both dimmed: nothing happens), the flak ammo picked (it can make none), + and MAX pressed there (nothing), then
+ * Enter: refused, "not enough ferrite", the line under the columns cross-fading to it and the short ferrite flashing red.
+ */
+async function limitsMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const press = [
+      () => document.querySelector<HTMLElement>('[data-q="1"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="max"]')?.click(),
+      () => document.querySelector<HTMLElement>('.fab-row[data-recipe="flak_ammo"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="1"]')?.click(),
+      () => document.querySelector<HTMLElement>('[data-q="max"]')?.click(),
+      () => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true })),
+    ];
+    press.forEach((fn, k) => setTimeout(fn, 2000 + k * 1500));
+  });
+}
+
+/** The stepper at a maximum above one: the pulse fuel cell (the haul makes six) set to 6 of 6 with MAX, + and MAX dimmed
+ * and − lit. */
+async function stepperAtSix(page: Page): Promise<void> {
+  await stationFabricator(page);
+  await fabClick(page, '.fab-row[data-recipe="pulse_fuel_cell"]');
+  await fabClick(page, '[data-q="max"]');
+}
+
+/**
+ * Its clip, each step 0.2 s of animation time apart (page timers run on real time, the clip's animations tenfold slower):
+ * − to 5 (+ and MAX light up), + back to 6 (they dim), then + and MAX pressed at 6, which do nothing.
+ */
+async function stepperMotion(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const press = ['[data-q="-1"]', '[data-q="1"]', '[data-q="1"]', '[data-q="max"]'];
+    press.forEach((sel, k) => setTimeout(() => document.querySelector<HTMLElement>(sel)?.click(), 2000 + k * 2000));
+  });
+}
+
+/** The press (every third frame), the fabrication's run across the button, the result and the rows settling. */
+const FABRICATOR_SHEET = [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 104, 112, 119];
+
 /** What the cutscene screens reach of the page. */
 interface CutscenePage {
   game: {
@@ -516,6 +695,181 @@ async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> 
   await page.waitForTimeout(1200);
 }
 
+// ---------- the sign-in and character screens (P1.E04.T05) ----------
+// Hermetic: the gateway's answers are recorded here and served by the page's own routes (no game server runs), and the
+// game socket is answered in the page too: silent (the entering step waits on it), or a welcome after a while.
+
+const ACCOUNT_ID = '5d0c2b7e-8a41-4c39-9f0e-2b6f1d7c9a10';
+/** A session token shaped as the server's (only its expiry is read by the client), good until 2100. */
+const TOKEN = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${Buffer.from(JSON.stringify({ sub: ACCOUNT_ID, exp: 4102444800 })).toString('base64url')}.capture`;
+const LOOK = { palette: 0, pattern: 0, head: 0, suit: 0 };
+const homeOf = (people: string) => homeSystems(GALAXY_SEED).find((h) => h.people === people)!.systemIndex;
+const CHARACTERS = [
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a61', name: 'Tess Arlo', people: 'thalune', look: LOOK, level: 7, homeSystem: homeOf('thalune') },
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a62', name: 'Quill Ventrasse', people: 'ixari', look: LOOK, level: 3, homeSystem: homeOf('ixari') },
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a63', name: 'Odo Marrow-Kell', people: 'ulgani', look: LOOK, level: 12, homeSystem: homeOf('ulgani') },
+];
+const NEW_ID = '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a64';
+/** A full account: the three above and three more, six of six. */
+const SIX = [
+  ...CHARACTERS,
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a65', name: 'Mira Okonta', people: 'thalune', look: LOOK, level: 22, homeSystem: homeOf('thalune') },
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a66', name: 'Sefa Lune', people: 'ixari', look: LOOK, level: 15, homeSystem: homeOf('ixari') },
+  { id: '0b6e4f1a-3c2d-4e5f-8a9b-1c2d3e4f5a67', name: "Bram O'Hollow", people: 'ulgani', look: LOOK, level: 9, homeSystem: homeOf('ulgani') },
+];
+/** What the browser logs for the wrong password, and the taken username, these screens send on purpose. */
+const REFUSED_SIGN_IN = /Failed to load resource: the server responded with a status of 401/;
+const REFUSED_SIGN_UP = /Failed to load resource: the server responded with a status of 409/;
+
+interface AccountServer {
+  /** Sign-ins the server refuses before it takes one (a wrong password). */
+  refuseLogins?: number;
+  /** How long each answer takes, ms of real time (the clip runs animations ten times slower). */
+  delayMs?: number;
+  /** The game socket: silent, or a welcome this long (real ms) after the join. */
+  welcomeAfterMs?: number | null;
+  /** The account's characters (by default the three above). */
+  characters?: typeof CHARACTERS;
+  /** Usernames another account holds: signing up as one is refused. */
+  taken?: string[];
+}
+
+/** Serves the account screens' requests from the recorded answers above, and the game socket in the page. */
+async function serveAccount(
+  page: Page,
+  { refuseLogins = 0, delayMs = 0, welcomeAfterMs = null, characters = CHARACTERS, taken = [] }: AccountServer = {},
+): Promise<void> {
+  const later = () => new Promise((r) => setTimeout(r, delayMs));
+  let refused = 0;
+  const made: typeof CHARACTERS = [];
+  await page.route('**/auth/login', async (route) => {
+    await later();
+    if (refused++ < refuseLogins) await route.fulfill({ status: 401, json: { error: 'login_failed', message: 'Wrong username or password.' } });
+    else await route.fulfill({ status: 200, json: { token: TOKEN, accountId: ACCOUNT_ID } });
+  });
+  await page.route('**/auth/register', async (route) => {
+    await later();
+    const body = route.request().postDataJSON() as { username: string };
+    if (taken.includes(body.username.toLowerCase()))
+      await route.fulfill({ status: 409, json: { error: 'username_taken', message: 'That username is taken.' } });
+    else await route.fulfill({ status: 201, json: { token: TOKEN, accountId: ACCOUNT_ID } });
+  });
+  await page.route('**/characters', async (route) => {
+    await later();
+    if (route.request().method() === 'POST') {
+      const body = route.request().postDataJSON() as { name: string; people: string };
+      const c = { id: NEW_ID, name: body.name, people: body.people, look: LOOK, level: 1, homeSystem: homeOf(body.people) };
+      made.push(c);
+      await route.fulfill({ status: 201, json: c });
+    } else await route.fulfill({ status: 200, json: { characters: [...characters, ...made], max: 6 } });
+  });
+  const galaxy = new Galaxy(GALAXY_SEED);
+  await page.routeWebSocket(/\/ws$/, (ws) => {
+    ws.onMessage((raw) => {
+      const m = JSON.parse(String(raw)) as { t: string; characterId?: string };
+      if (m.t !== 'join' || welcomeAfterMs === null) return;
+      const character = [...characters, ...made].find((c) => c.id === m.characterId)!;
+      const seed = galaxy.systems[character.homeSystem]!.seed;
+      const welcome = {
+        t: 'welcome',
+        accountId: ACCOUNT_ID,
+        character,
+        entityId: 7,
+        serverTime: 3.15e7,
+        zone: { id: `sys:${character.homeSystem}`, systemSeed: seed },
+        // docked on a hangar pad of its home Waystation, as a new character starts
+        pose: { frame: `${seed}:station`, pos: [30, 2.4, 22], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+        mode: 'docked',
+      };
+      setTimeout(() => ws.send(JSON.stringify(welcome)), welcomeAfterMs);
+    });
+  });
+}
+
+/** The title, ready to play, Play focused (as the title leaves it), the HUD's audio off. */
+async function titleReady(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    (window as unknown as { game: { audio: { start(): void } } }).game.audio.start = () => {};
+  });
+  await page.waitForFunction(async () => {
+    await (window as unknown as { step(n: number): Promise<void> }).step(2);
+    const b = document.querySelector<HTMLButtonElement>('.title-screen [data-act="start"]');
+    return !!b && !b.disabled;
+  });
+  await settle(page, 30);
+  await page.waitForTimeout(2500);
+  await page.focus('.title-screen [data-act="start"]');
+}
+
+/** Steps a few frames and waits out the flow's CSS (it runs on real time outside a clip). */
+async function settleFlow(page: Page, ms = 1600): Promise<void> {
+  await settle(page, 10);
+  await page.waitForTimeout(ms);
+}
+
+/** Play → sign in as tess_arlo (`password`) → Enter. */
+async function signIn(page: Page, password: string): Promise<void> {
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('.acct [data-form="signin"] input[name="username"]');
+  await page.waitForTimeout(400);
+  await page.keyboard.type('tess_arlo');
+  await page.keyboard.press('Tab');
+  await page.keyboard.type(password);
+  await page.keyboard.press('Enter');
+}
+
+/** Back to the title as a new browser would show it: signed out, the flow closed, nothing typed, Play focused. */
+async function resetFlow(page: Page, settleMs = 800): Promise<void> {
+  await page.evaluate(() => {
+    const flow = (window as unknown as { game: { menus: { account: { flow: { close(): void; set(p: object): void } } } } }).game.menus.account.flow;
+    sessionStorage.removeItem('astra-session');
+    flow.close();
+    flow.set({ username: '' });
+  });
+  await page.waitForTimeout(settleMs);
+  await page.focus('.title-screen [data-act="start"]');
+}
+
+/** The mouse captured, as a player's click grants it (headless Chromium refuses the real pointer lock: the game's own
+ * fallback), so the world shows without the pause menu. */
+async function grantLock(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const input = (window as unknown as { game: { input: { fallbackLock: boolean; locked: boolean } } }).game.input;
+    input.fallbackLock = true;
+    input.locked = true;
+    document.dispatchEvent(new Event('pointerlockchange'));
+  });
+}
+
+/** Play → Create an account → `username` and a password → Enter. */
+async function signUpAs(page: Page, username: string): Promise<void> {
+  await page.keyboard.press('Enter');
+  await page.click('.acct [data-form="signin"] [data-do="to-register"]');
+  await page.waitForSelector('.acct [data-form="register"] input[name="username"]');
+  await page.waitForTimeout(400);
+  await page.keyboard.type(username);
+  await page.keyboard.press('Tab');
+  await page.keyboard.type('correct-horse');
+  await page.keyboard.press('Enter');
+}
+
+/** Runs `steps` in the background, each `at` seconds of clip time in (the clip slows the page's animations tenfold, so
+ * a clip second is ten real ones): the page is driven as a player drives it, by keys, while the frames are taken. */
+function timeline(page: Page, steps: [number, () => Promise<unknown>][]): void {
+  const t0 = Date.now();
+  void (async () => {
+    for (const [at, run] of steps) {
+      const wait = t0 + at * 10_000 - Date.now();
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+      await run();
+    }
+  })().catch((e) => console.error(`clip timeline: ${e instanceof Error ? e.message : e}`));
+}
+
+/** Types as a player does in the clip: `perChar` seconds of clip time a letter. */
+const typeIn = (page: Page, text: string, perChar = 0.045) => page.keyboard.type(text, { delay: perChar * 10_000 });
+const key = (page: Page, k: string) => () => page.keyboard.press(k);
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
@@ -539,6 +893,220 @@ export const SCREENS: Record<string, ScreenDef> = {
           a.play();
         }
       });
+    },
+  },
+  // The sign-in and character screens (P1.E04.T05), each still on its step, each clip its motion. `login-error`: a wrong
+  // password refused (the clip: back to the title, Play, the password retyped and refused again).
+  'login-error': {
+    clipSeconds: 2.6,
+    expectedErrors: [REFUSED_SIGN_IN],
+    async open(page) {
+      await serveAccount(page, { refuseLogins: 99, delayMs: 300 });
+      await titleReady(page);
+      await signIn(page, 'not-my-password');
+      await page.waitForSelector('.acct-msgwrap.on');
+      await settleFlow(page);
+    },
+    async motion(page) {
+      timeline(page, [
+        [0.05, key(page, 'Escape')],
+        [0.55, key(page, 'Enter')],
+        [1.25, () => typeIn(page, 'still-wrong', 0.035)],
+        [1.8, key(page, 'Enter')],
+      ]);
+    },
+  },
+  // `register`: a fresh account, its first username refused as taken, landed on its empty character list (a still of the
+  // refusal too, 16x9-refused.png; the clip: the whole sign-up from the title, by keyboard but the one link)
+  register: {
+    clipSeconds: 6.2,
+    expectedErrors: [REFUSED_SIGN_UP],
+    async open(page) {
+      await serveAccount(page, { characters: [], taken: ['tess_arlo'], delayMs: 3000 });
+      await titleReady(page);
+      await signUpAs(page, 'tess_arlo');
+      await page.waitForSelector('.acct-msgwrap.on');
+      await page.waitForTimeout(600);
+      await page.keyboard.type('ilya_sarn');
+      await page.keyboard.press('Tab');
+      await page.keyboard.type('correct-horse');
+      await page.keyboard.press('Enter');
+      await page.waitForSelector('.acct-step:not(.leaving) .acct-list [data-do="new"]');
+      await settleFlow(page);
+    },
+    stills16x9: {
+      async refused(page) {
+        await resetFlow(page);
+        await signUpAs(page, 'tess_arlo');
+        await page.waitForSelector('.acct-msgwrap.on');
+        await settleFlow(page);
+      },
+    },
+    async motion(page) {
+      // (the clip slows the page's animations tenfold already: the title has a while to come back before the first frame)
+      await resetFlow(page, 7000);
+      timeline(page, [
+        [0.3, key(page, 'Enter')],
+        [1.0, () => page.click('.acct [data-form="signin"] [data-do="to-register"]')],
+        [1.6, () => typeIn(page, 'tess_arlo')],
+        [2.1, key(page, 'Tab')],
+        [2.2, () => typeIn(page, 'correct-horse', 0.03)],
+        [2.7, key(page, 'Enter')],
+        [3.6, () => typeIn(page, 'ilya_sarn')],
+        [4.1, key(page, 'Tab')],
+        [4.2, () => typeIn(page, 'correct-horse', 0.03)],
+        [4.7, key(page, 'Enter')],
+      ]);
+    },
+  },
+  // `characters`: the account's three, one of each people (the clip: the list loading and rising in, the arrows walking it)
+  characters: {
+    clipSeconds: 2.6,
+    async open(page) {
+      await serveAccount(page, { delayMs: 300 });
+      await titleReady(page);
+      await signIn(page, 'correct-horse');
+      await page.waitForSelector('.acct-char[data-id]');
+      await settleFlow(page);
+    },
+    async motion(page) {
+      timeline(page, [
+        [0.05, key(page, 'Escape')],
+        [0.55, key(page, 'Enter')],
+        [1.7, key(page, 'ArrowDown')],
+        [2.05, key(page, 'ArrowDown')],
+      ]);
+    },
+  },
+  // `characters-full`: an account at six of six, New character disabled (the clip: the picked row moving down two and
+  // back one, its bar, indent and tint easing together)
+  'characters-full': {
+    clipSeconds: 1.6,
+    async open(page) {
+      await serveAccount(page, { characters: SIX });
+      await titleReady(page);
+      await signIn(page, 'correct-horse');
+      await page.waitForSelector('.acct-step:not(.leaving) .acct-char[data-id]');
+      await settleFlow(page);
+    },
+    async motion(page) {
+      timeline(page, [
+        [0.05, key(page, 'ArrowDown')],
+        [0.5, key(page, 'ArrowDown')],
+        [1.0, key(page, 'ArrowUp')],
+      ]);
+    },
+  },
+  // `create`: a new character named, the Ixari picked and opened on its body, home and saying (the clip: down to the
+  // Ulgani and back)
+  create: {
+    clipSeconds: 1.6,
+    async open(page) {
+      await serveAccount(page);
+      await titleReady(page);
+      await signIn(page, 'correct-horse');
+      await page.waitForSelector('.acct-char[data-id]');
+      await page.waitForTimeout(800);
+      await page.keyboard.press('n');
+      await page.waitForSelector('.acct [data-form="create"] input[name="name"]');
+      await page.waitForTimeout(400);
+      await page.keyboard.type('Ilya Sarn');
+      await page.keyboard.press('ArrowDown');
+      await settleFlow(page);
+    },
+    async motion(page) {
+      timeline(page, [
+        [0.05, key(page, 'ArrowDown')],
+        [0.8, key(page, 'ArrowUp')],
+      ]);
+    },
+  },
+  // `entering`: the character picked, the game socket open and the welcome not yet in (the clip: Esc back to the list,
+  // and Enter again)
+  entering: {
+    clipSeconds: 1.8,
+    async open(page) {
+      await serveAccount(page);
+      await titleReady(page);
+      await signIn(page, 'correct-horse');
+      await page.waitForSelector('.acct-char[data-id]');
+      await page.waitForTimeout(800);
+      await page.keyboard.press('Enter');
+      await page.waitForSelector('.acct-step[data-step="entering"]');
+      await settleFlow(page);
+    },
+    async motion(page) {
+      timeline(page, [
+        [0.05, key(page, 'Escape')],
+        [0.75, key(page, 'Enter')],
+      ]);
+    },
+  },
+  // `account-flow`: the whole of it by keyboard, the still the title it starts from; the clip: Play, a sign-in refused and
+  // retried, the list, a new character named and its people picked, made, entered, and the welcome's cut into the world
+  'account-flow': {
+    clipSeconds: 13,
+    expectedErrors: [REFUSED_SIGN_IN],
+    sheetFrames: [
+      0, 30, 60, 84, 108, 126, 138, 150, 174, 204, 228, 252, 276, 300, 330, 354, 378, 402, 432, 462, 492, 522, 546, 570, 596, 604, 612, 620, 628, 636, 644, 660,
+      680, 700, 720, 750, 779,
+    ],
+    async open(page) {
+      await serveAccount(page, { refuseLogins: 1, delayMs: 3000, welcomeAfterMs: 14_000 });
+      await titleReady(page);
+    },
+    async motion(page) {
+      timeline(page, [
+        [0.3, key(page, 'Enter')],
+        [0.9, () => typeIn(page, 'tess_arlo')],
+        [1.4, key(page, 'Tab')],
+        [1.5, () => typeIn(page, 'wrong-pass', 0.03)],
+        [1.9, key(page, 'Enter')],
+        [2.8, () => typeIn(page, 'correct-horse', 0.03)],
+        [3.3, key(page, 'Enter')],
+        [4.9, key(page, 'ArrowDown')],
+        [5.2, key(page, 'ArrowDown')],
+        [5.6, key(page, 'n')],
+        [6.2, () => typeIn(page, 'Ilya Sarn')],
+        [6.8, key(page, 'ArrowDown')],
+        [7.5, key(page, 'Enter')],
+        // (the mouse captured, as the player's click on Resume would: the clip arrives in the world itself)
+        [8.4, () => grantLock(page)],
+        [8.6, key(page, 'Enter')],
+      ]);
+    },
+  },
+  // `arrival`: a new Ixari character arrived, docked in its home Waystation's hangar. The stills: the pause menu that
+  // entering leaves up (the mouse is captured only from a click), on its shade over the lit hangar; and 16x9-resumed.png,
+  // the mouse captured, the world as the player then sees it, its arrival banner over the top band; 16x9-settled.png, the
+  // banner gone, the top line on its own. The clip: that world going on (the hangar's traffic).
+  arrival: {
+    clipSeconds: 2,
+    async open(page) {
+      await serveAccount(page, { welcomeAfterMs: 400 });
+      await titleReady(page);
+      await signIn(page, 'correct-horse');
+      await page.waitForSelector('.acct-step:not(.leaving) .acct-char[data-id]');
+      await page.waitForTimeout(800);
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      await page.waitForFunction(async () => {
+        await (window as unknown as { step(n: number): Promise<void> }).step(2);
+        return (window as unknown as { game: { mode: string } }).game.mode !== 'title';
+      });
+      await settle(page, 120);
+      await page.waitForTimeout(1500);
+    },
+    stills16x9: {
+      async resumed(page) {
+        await grantLock(page);
+        await settle(page, 60);
+      },
+      // the arrival banner gone (it and the band under it last 7 s): the top line on its own over the hangar's lights
+      async settled(page) {
+        await page.waitForTimeout(7500);
+        await settle(page, 30);
+      },
     },
   },
   // In flight off the home world's day side, in sunlight inside the habitable band: Charge (the right arc and the readout
@@ -759,6 +1327,46 @@ export const SCREENS: Record<string, ScreenDef> = {
     async motion(page) {
       await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
     },
+  },
+  // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
+  // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the
+  // clip of a warp cell crafted; `fabricator-learn` the same, and the clip of the torpedo recipe learned;
+  // `fabricator-ship` the ship's own, landed on the home world: ammo and cartridges only (the warp cell listed as made at
+  // a Waystation), and the clip of three crafts of flak ammo
+  fabricator: {
+    clipSeconds: 2,
+    sheetFrames: FABRICATOR_SHEET,
+    open: openStationFabricator,
+    stills16x9: { craftable: (page) => fabClick(page, '.fab-row[data-recipe="warp_cell"]') },
+    motion: fabricatorMotion('warp_cell'),
+  },
+  // the stepper at its limits (+ and MAX dimmed at the most the materials make, as − is at one) and a refusal on Enter
+  'fabricator-limits': {
+    clipSeconds: 2,
+    sheetFrames: [0, 12, 21, 30, 39, 48, 57, 60, 62, 64, 66, 68, 70, 74, 80, 88, 96, 104, 112, 119],
+    open: stationFabricator,
+    motion: limitsMotion,
+  },
+  // the stepper at a maximum above one: the pulse fuel cell at 6 of 6 (+ and MAX dimmed, − lit), then −, + and + and
+  // MAX pressed at the maximum
+  'fabricator-limits-max': {
+    clipSeconds: 1.2,
+    sheetFrames: [0, 6, 11, 12, 13, 15, 20, 23, 24, 25, 27, 32, 35, 36, 37, 44, 47, 48, 49, 71],
+    open: stepperAtSix,
+    motion: stepperMotion,
+  },
+  // learning a recipe at the Waystation: LEARN on the torpedo recipe, and the row moving into the list
+  'fabricator-learn': {
+    clipSeconds: 1.2,
+    sheetFrames: [0, 6, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 34, 38, 44, 50, 58, 66, 71],
+    open: stationFabricator,
+    motion: learnMotion,
+  },
+  'fabricator-ship': {
+    clipSeconds: 2,
+    sheetFrames: FABRICATOR_SHEET,
+    open: openShipFabricator,
+    motion: fabricatorMotion(null),
   },
   'station-hangar': {
     hash: '#dock',

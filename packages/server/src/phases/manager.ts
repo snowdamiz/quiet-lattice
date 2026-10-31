@@ -2,7 +2,8 @@
 // layers at shared places. A phase is opened at a location (a key naming the place, and a sphere in one of the system's
 // frames, which moves with it) for a kind with a cap (kinds.ts), filled by presence and closed once it has no members.
 //
-// Every entity in a zone has a phase or none (the shared world). Members are sessions' players placed by phaseFor; a
+// Every entity in a zone has a phase or none (the shared world). Members are sessions' players placed by phaseFor (or put
+// in one phase by name with enter, under the same caps and party rule: answering a call for aid, social/beacons.ts); a
 // phase's own entities (its actors: NPCs, bosses, props) are spawned through it and go with it when it closes. What a
 // session sees is decided here (visibleTo, which the zone applies to every interest set):
 // - everything in the shared world and in its own phase;
@@ -227,6 +228,55 @@ export class PhaseManager {
   }
 
   /**
+   * Puts the session's player in open phase `phaseId` itself, rather than whichever phase phaseFor would pick at its place:
+   * how a player answering a call for aid (social/beacons.ts) joins the caller's instance. The phase must have room for it
+   * under `partyId` by the rules phaseFor places by (below its player cap, or a story phase's one party); else nothing
+   * changes and the answer is 'full' ('closed': no such open phase). A place kept for its character in this phase is taken
+   * back as phaseFor takes it back (under the party it was kept for; under another it is given up first). Placed, it
+   * leaves any other phase it was in or had a place kept in, and keeps `partyId` (without one, its entity's party tag
+   * counts) as phaseFor's members do. Asked for the phase it is in already, it stays and takes `partyId` when the phase's
+   * others are all of it ('full' otherwise). Its entity does not move, so movement authority judges its inputs as before.
+   */
+  enter(viewer: ZoneViewer, phaseId: number, partyId?: string | null): Phase | 'closed' | 'full' {
+    const phase = this.phases.get(phaseId);
+    if (!phase) return 'closed';
+    const id = this.zone.entityOf(viewer);
+    if (id === undefined) throw new Error(`session ${viewer.id} is not in zone ${this.zone.id}`);
+    const party = partyId === undefined ? this.zone.entity(id)!.party : partyId;
+    const current = this.placed.get(id);
+    if (current?.member && current.phase === phase) {
+      if (partyId === undefined) return phase;
+      if (!this.fits(phase, partyId, id)) return 'full';
+      current.party = partyId;
+      return phase;
+    }
+    const character = viewer.characterId ?? null;
+    let hold = character === null ? undefined : this.held.get(character);
+    if (hold?.phase === phase && (hold.party !== party || !this.fits(phase, party, id))) {
+      // back under another party: the place kept here is given up, as phaseFor gives it up
+      this.dropHold(character!, 'moved');
+      hold = undefined;
+      if (!phase.open) return 'closed';
+    }
+    // (a place kept here counts towards the cap already)
+    if (hold?.phase !== phase && !this.admits(phase, party)) return 'full';
+    if (hold) {
+      this.held.delete(character!);
+      hold.phase.held.delete(character!);
+      if (hold.phase !== phase && hold.phase.size === 0) this.shut(hold.phase, 'empty');
+    }
+    if (current) this.detach(id, current, 'moved');
+    const outsideSince = hold?.phase === phase ? hold.outsideSince : null;
+    phase.members.add(id);
+    this.placed.set(id, { phase, member: true, party: partyId, character, inside: outsideSince === null, outsideSince });
+    this.log?.debug(
+      { zone: this.zone.id, phase: phase.id, kind: phase.kind, location: phase.location.key, entity: id, members: phase.members.size, via: 'enter' },
+      'phase member joined',
+    );
+    return phase;
+  }
+
+  /**
    * Takes the session's player out of its phase, back to the shared world, and gives up any place kept for its
    * character. False when it was in none and had none kept.
    */
@@ -238,6 +288,17 @@ export class PhaseManager {
     if (p?.member) this.detach(id!, p, 'left');
     if (kept) this.dropHold(character, 'left');
     return !!p?.member || kept;
+  }
+
+  /**
+   * Gives up the place kept for the character since its connection dropped, as its grace running out would: for a place
+   * its holder may no longer have and that no session of its is there to leave (a call-for-aid helper whose party or
+   * caller is gone, social/beacons.ts). False when none was kept.
+   */
+  release(characterId: string): boolean {
+    if (!this.held.has(characterId)) return false;
+    this.dropHold(characterId, 'left');
+    return true;
   }
 
   /**

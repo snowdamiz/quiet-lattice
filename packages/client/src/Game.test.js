@@ -259,6 +259,10 @@ describe('Game: the world clock', () => {
     const g = fake({ time: 3 });
     g.advanceClock(0.5);
     expect([g.time, g.renderTime]).toEqual([3.5, 3.5]);
+    // joined, its welcome not yet taken (the account screens hold it while the screen goes dark): still the title's
+    const held = fake({ time: 3, mode: 'title', net: { joined: true, serverTime: () => 2.6e7 } });
+    held.advanceClock(0.5);
+    expect([held.time, held.renderTime]).toEqual([3.5, 3.5]);
   });
 
   it('eases toward the server clock, the render clock advancing by the frames alone', () => {
@@ -426,5 +430,117 @@ describe('Game: the online objective line', () => {
     g.onQuests({ t: 'quests', seq: 0, quests: view('gather', 12) });
     expect(toasts).toEqual(['Next: Gather resources · 0/25']);
     expect(objectives.current).toBe('Gather resources · 12/25');
+  });
+});
+
+describe('Game: analysis (P1.E08.T04)', () => {
+  const SPECIES = { key: '1:2/0', world: '1:2', index: 0, name: 'Horned Velar Bull', temperament: 'territorial', threat: 2, bodyPlan: 'quad_heavy', bond: 'big_game', at: 1000 };
+
+  beforeEach(() => {
+    FakeSocket.all = [];
+    vi.stubGlobal('WebSocket', FakeSocket);
+    vi.stubGlobal('location', { protocol: 'http:', host: 'play.test', reload: vi.fn() });
+    vi.stubGlobal('window', { sessionStorage: memoryStorage(), localStorage: memoryStorage() });
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  function online() {
+    const banners = [];
+    const toasts = [];
+    const g = fake({
+      inventory: new Inventory(),
+      hud: { toast: (text, tone) => toasts.push([text, tone]), showBanner: (...b) => banners.push(b) },
+      audio: { play: vi.fn() },
+      menus: { setConnection: vi.fn(), showMessage: vi.fn() },
+      overlay: null,
+      onWelcome: vi.fn(),
+    });
+    g.enterWorld({ token: 'tok' }, { id: 'c1' }, vi.fn());
+    const socket = FakeSocket.all.at(-1);
+    socket.open();
+    return { g, socket, banners, toasts };
+  }
+
+  it('asks the server, numbering the session’s requests from 1 and stamping its world time; nothing before the welcome', () => {
+    const { g, socket } = online();
+    expect(g.analyze(42)).toBe(false);
+    socket.push(WELCOME);
+    g.time = 1000.5;
+    expect(g.analyze(42)).toBe(true);
+    expect(g.analyze(43)).toBe(true);
+    expect(socket.sent.filter((m) => m.t === 'analyze')).toEqual([
+      { t: 'analyze', seq: 1, time: 1000.5, target: 42 },
+      { t: 'analyze', seq: 2, time: 1000.5, target: 43 },
+    ]);
+    // a new session (a reconnect's welcome) numbers from 1 again
+    socket.push(WELCOME);
+    g.analyze(44);
+    expect(socket.sent.filter((m) => m.t === 'analyze').at(-1)).toMatchObject({ seq: 1, target: 44 });
+    expect(fake({ net: null }).analyze(42)).toBe(false);
+  });
+
+  it('shows the server’s answer: the species as the codex holds it and the XP, known, or why not', () => {
+    const { socket, banners, toasts } = online();
+    socket.push(WELCOME);
+    socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
+    expect(banners).toEqual([['HORNED VELAR BULL', 'New Species Analyzed', ['Heavy quadruped · Territorial · ★★☆☆☆', 'Bond: with Big Game', '+300 XP']]]);
+    socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
+    socket.push({ t: 'analyze', seq: 3, target: 42, result: 'refused', reason: 'los' });
+    socket.push({ t: 'analyze', seq: 4, target: 42, result: 'refused', reason: 'stale_seq' });
+    expect(toasts).toEqual([
+      ['Horned Velar Bull · in your codex', undefined],
+      ['No clear line to it', 'warn'],
+      ['Analysis failed', 'warn'],
+    ]);
+    expect(banners).toHaveLength(1);
+  });
+
+  /** A game with a walker on a world, a creature of the client's own herds in its sights, and E pressed. */
+  function aiming(net) {
+    const sp = { name: 'Ambling Tovar Grazer', kind: 'quad', skittish: true, size: 1.5 };
+    const banners = [];
+    const world = { sampler: {}, kind: 'planet' };
+    const g = fake({
+      net,
+      mode: 'foot',
+      input: { hit: (k) => k === 'KeyE', down: () => false },
+      ship: { state: { frame: null, pos: new THREE.Vector3() } },
+      player: { state: { frame: world, pos: new THREE.Vector3(0, 100, 0) } },
+      cities: { planet: null },
+      structures: { nearestInteract: () => null },
+      fauna: { pick: () => ({ c: { sp }, t: 12 }), scanned: new Set(), scannedNames: new Set(), scare: vi.fn() },
+      multitool: { target: null, firing: false },
+      cam: { pos: new THREE.Vector3(), quat: new THREE.Quaternion() },
+      inventory: new Inventory(),
+      hud: { showBanner: (...b) => banners.push(b) },
+      audio: { play: vi.fn() },
+    });
+    return { g, sp, banners };
+  }
+
+  it('in the dev sandbox analyzes the client’s own creature for its quest book, and pays nothing for it', () => {
+    const { g, sp, banners } = aiming(null);
+    const units = g.inventory.units;
+    g.handleInteractions();
+    expect(g.fauna.scannedNames.has(sp.name)).toBe(true);
+    expect(g.inventory.units).toBe(units);
+    expect(banners).toEqual([['AMBLING TOVAR GRAZER', 'New Species Discovered', ['Quadruped · Skittish · 1.8 m']]]);
+    // known now: its name only
+    g.handleInteractions();
+    expect(g.currentPrompt).toBe(sp.name);
+    expect(banners).toHaveLength(1);
+  });
+
+  it('online leaves the client’s own creatures alone: their name, no analysis, no reward', () => {
+    const net = { joined: true, send: vi.fn() };
+    const { g, sp, banners } = aiming(net);
+    const units = g.inventory.units;
+    g.handleInteractions();
+    expect(g.currentPrompt).toBe(sp.name);
+    expect(g.fauna.scannedNames.size).toBe(0);
+    expect(g.inventory.units).toBe(units);
+    expect(banners).toEqual([]);
+    expect(net.send).not.toHaveBeenCalled();
   });
 });

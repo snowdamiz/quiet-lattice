@@ -6,13 +6,14 @@
 // it near bodies and will not engage on an empty meter. The client predicts; the server's `meters` state is the truth
 // (`reconcileCharge`).
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { gltfLoader } from '../core/Engine.js';
 import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
 import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
 import { canEngagePulse, meterEnvironment, meterProfile, meterRates, stepMeters } from '@astra/shared/meters';
+import { fireIntent } from '../net/combat.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -113,7 +114,7 @@ export class Ship {
   }
 
   async load() {
-    const gltf = await new GLTFLoader().loadAsync('/models/ship.glb');
+    const gltf = await gltfLoader().loadAsync('/models/ship.glb');
     const model = gltf.scene;
     model.traverse((o) => {
       if (o.isMesh) {
@@ -1399,6 +1400,8 @@ export class Ship {
       this.lasers.push({ life: 0.35, side, offset: new THREE.Vector3(5.75 * side, -0.62, -2.5) });
     }
     this.game.onShipFire?.(this);
+    // online, the shot is the server's to resolve (the tracers above are cosmetic): its hits come back as events
+    this.game.net?.fire(fireIntent(this.game, this.state));
   }
 
   updateLasers(dt) {

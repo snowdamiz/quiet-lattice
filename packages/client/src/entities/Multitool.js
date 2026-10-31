@@ -6,8 +6,8 @@
 // is the truth (`reconcile`). What goes to the server is the button (`held`), never the prediction: the server decides when
 // the beam stops, so a prediction that runs a little ahead of it can never talk it out of overheating.
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { canFireBeam, meterRates, stepMeters } from '@astra/shared/meters';
+import { gltfLoader } from '../core/Engine.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { characterMeterEnvironment } from './Ship.js';
 
@@ -112,7 +112,7 @@ export class Multitool {
     this.stride = 0;
     this.game.engine.viewScene.add(g);
     g.visible = false;
-    new GLTFLoader().load('/models/multitool.glb', (gltf) => {
+    gltfLoader().load('/models/multitool.glb', (gltf) => {
       gltf.scene.traverse((o) => {
         if (!o.isMesh) return;
         if (o.material.name === 'ToolGlow') o.material = this.glowMat;

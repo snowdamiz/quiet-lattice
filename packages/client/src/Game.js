@@ -22,6 +22,7 @@ import { Cities } from './gameplay/Cities.js';
 import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { AUTO_QUESTS, QuestBook, atInfo, getQuest } from '@astra/shared/quests';
+import { bondLine, codexLine } from '@astra/shared/codex';
 import { Asteroids } from './universe/Asteroids.js';
 import { Inventory } from './gameplay/Inventory.js';
 import { HUD } from './ui/HUD.js';
@@ -33,6 +34,8 @@ import { collectResources, disposeTree } from './core/dispose.js';
 import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
+import { Crafting } from './net/crafting.js';
+import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
 import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
@@ -51,6 +54,8 @@ const _v2b = new THREE.Vector2();
 // otherwise it eases toward it with this gain (per second), at most twice as fast, standing still rather than going back,
 // and never more than maxAheadS ahead of it.
 const CLOCK = { gain: 0.5, maxAheadS: 0.25, stepBehindS: 1 };
+// What the player is told when the server refuses an analysis, by its reason (any other: ANALYZE_REFUSED.other).
+const ANALYZE_REFUSED = { range: 'Too far to analyze', los: 'No clear line to it', mode: 'Analyze on foot', dead: 'Nothing left to analyze', rate: 'Analyzer recharging', busy: 'Analyzer calibrating', full: 'Codex full', other: 'Analysis failed' };
 
 // The objective line under the location panel (DESIGN 14.1): the tracked quest's current step, with its count, read
 // from the character's quest book. The server decides quests (ARCHITECTURE "Quests"): online the book holds the server's
@@ -142,6 +147,9 @@ export class Game {
     this.objectives = new ObjectiveLine(this);
     this.hud = new HUD(this, hudEl);
     this.menus = new Menus(this);
+    // the fabricators (DESIGN 15.7): the recipes known and the requests (the server decides), and their screen
+    this.crafting = new Crafting(this);
+    this.fabricator = new FabricatorPanel(this);
     // the camera's moves of its own (glides between views, dips, cutscene cameras), and the cutscenes that drive it
     this.director = new CameraDirector(this);
     this.cutscenes = new CutscenePlayer(this);
@@ -350,12 +358,15 @@ export class Game {
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
     this.inventory.send = (m) => net.send(m);
+    this.crafting?.link(net);
     net.on('welcome', (m, first) => {
-      // (each session numbers its quest requests from 1)
+      // (each session numbers its quest and analysis requests from 1)
       this.questSeq = 0;
+      this.analyzeSeq = 0;
       this.onWelcome(m, first);
     });
     net.on('quests', (m) => this.onQuests(m));
+    net.on('analyze', (m) => this.onAnalyze(m));
     // the cutscene link listens from the start: the server may start the first cutscene itself (a quest step's)
     this.cutscenes?.linkFor();
     net.on('inventory', (m, first) => {
@@ -589,7 +600,8 @@ export class Game {
   advanceClock(dt) {
     const prev = this.time;
     let next = prev + dt;
-    const server = this.net?.joined ? this.net.serverTime() : null;
+    // (on the title the clock is the title shot's own, until the first welcome is taken: Account holds it a moment)
+    const server = this.net?.joined && this.mode !== 'title' ? this.net.serverTime() : null;
     if (server !== null) {
       if (server - next > CLOCK.stepBehindS) next = server;
       else next += Math.max(-dt, Math.min(dt, (server - next) * Math.min(1, dt * CLOCK.gain)));
@@ -667,6 +679,7 @@ export class Game {
     if (this.mode !== 'title') this.multitool.update(dt, inp, this.mode === 'foot' && inp.enabled);
     this.hud.update(dt);
     this.menus.update(dt);
+    this.fabricator.update();
     this.updateAudio();
     this.updateDebugText();
     this.updateQuests(dt);
@@ -723,7 +736,7 @@ export class Game {
     let prompt = '';
     if (this.mode === 'ship') {
       if (ship.mode === 'landed') {
-        prompt = '<kbd>F</kbd>Exit ship &nbsp; <kbd>Space</kbd>Take off';
+        prompt = '<kbd>F</kbd>Exit ship &nbsp; <kbd>Space</kbd>Take off &nbsp; <kbd>K</kbd>Fabricator';
         if (inp.hit('KeyF')) this.exitShip();
         else if (inp.hit('Space') || inp.hit('KeyE')) ship.takeOff();
       } else if (ship.mode === 'flying') {
@@ -741,7 +754,7 @@ export class Game {
     } else if (this.mode === 'foot') {
       const p = this.player;
       if (ship.state.frame === p.state.frame && p.state.pos.distanceTo(ship.state.pos) < 9) {
-        prompt = '<kbd>F</kbd>Board ship';
+        prompt = '<kbd>F</kbd>Board ship &nbsp; <kbd>K</kbd>Fabricator';
         if (inp.hit('KeyF')) this.boardShip();
       }
       const f = p.state.frame;
@@ -749,7 +762,8 @@ export class Game {
         for (const t of f.terminals) {
           if (p.state.pos.distanceTo(t.pos) < 3.2) {
             prompt = `<kbd>E</kbd>${t.label}`;
-            if (inp.hit('KeyE')) this.menus.openTrade(t.label);
+            // (the fabricator terminal opens the Waystation's fabricator; the others the trade panel)
+            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('station') : this.menus.openTrade(t.label);
           }
         }
       }
@@ -779,15 +793,16 @@ export class Game {
       if (!prompt && tool && !(pc && pc.t < tool.t)) prompt = `<kbd>LMB</kbd>Mine ${tool.label}`;
       if (!prompt && pc) {
         const sp = pc.c.sp;
-        const known = this.fauna.scanned.has(sp) || this.fauna.scannedNames.has(sp.name);
+        // Analysis is the server's (P1.E08.T04): online it takes the server's creatures (analyze), which the client draws
+        // from P1.E08.T09 on; these herds are the client's own, so online they show their name only. The dev sandbox
+        // analyzes its own for its quest book (updateQuests), and pays nothing for it.
+        const known = !!this.net || this.fauna.scanned.has(sp) || this.fauna.scannedNames.has(sp.name);
         prompt = known ? `${sp.name}` : `<kbd>E</kbd>Analyze ${sp.name}`;
         if (!known && inp.hit('KeyE')) {
           this.fauna.scanned.add(sp);
           this.fauna.scannedNames.add(sp.name);
-          const reward = 400 + Math.floor(Math.random() * 500);
-          this.inventory.units += reward;
           this.audio.play('discovery');
-          this.hud.showBanner(sp.name.toUpperCase(), 'New Species Discovered', [`${sp.kind === 'flyer' ? 'Airborne' : sp.kind === 'biped' ? 'Bipedal' : 'Quadruped'} · ${sp.skittish ? 'Skittish' : 'Docile'} · ${(sp.size * 1.2).toFixed(1)} m`, `+${reward} units`]);
+          this.hud.showBanner(sp.name.toUpperCase(), 'New Species Discovered', [`${sp.kind === 'flyer' ? 'Airborne' : sp.kind === 'biped' ? 'Bipedal' : 'Quadruped'} · ${sp.skittish ? 'Skittish' : 'Docile'} · ${(sp.size * 1.2).toFixed(1)} m`]);
         }
         if (this.multitool.firing && pc.t < 35) this.fauna.scare(pc.c);
       }
@@ -795,6 +810,7 @@ export class Game {
     }
     if (inp.hit('KeyM')) this.menus.openMap();
     if (inp.hit('KeyI')) this.menus.openInventory();
+    if (inp.hit('KeyK')) this.openFabricator();
     if (inp.hit('KeyH')) this.menus.toggleHelp();
     if (inp.hit('KeyV') && this.mode === 'ship') {
       // chase -> far chase -> cockpit -> chase. Into or out of the seat it is a straight cut (a
@@ -810,6 +826,19 @@ export class Game {
       ship.camDistance = this.camView === 1 ? 1.8 : 1;
     }
     this.currentPrompt = prompt;
+  }
+
+  // The fabricator at hand (DESIGN 15.7; the server checks the same, ARCHITECTURE §23): docked at the Waystation, its own;
+  // aboard the ship anywhere else, or on foot beside it, the ship's (ammo and cartridges). The trade deck's terminal
+  // opens the Waystation's too (handleInteractions).
+  openFabricator() {
+    const ship = this.ship;
+    let at = null;
+    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'station' : 'ship';
+    else if (this.mode === 'foot' && ship.state.frame === this.player.state.frame && this.player.state.pos.distanceTo(ship.state.pos) < 12) at = 'ship';
+    if (at) return this.fabricator.open(at);
+    this.hud.toast("No fabricator here: board the ship, or use a Waystation's terminal", 'warn');
+    this.audio.play('error');
   }
 
   exitShip() {
@@ -954,6 +983,25 @@ export class Game {
     if (!this.net) return false;
     this.net.send({ t: 'quest', seq: ++this.questSeq, op });
     return true;
+  }
+
+  // Online: asks the server to analyze creature `target`, its zone entity id (ARCHITECTURE §22); the server checks it
+  // and answers with `analyze` (onAnalyze). Aiming at the server's creatures comes with drawing them (P1.E08.T09). False
+  // when not connected.
+  analyze(target) {
+    if (!this.net?.joined) return false;
+    return this.net.send({ t: 'analyze', seq: ++this.analyzeSeq, time: this.time, target });
+  }
+
+  // The server's answer to an analysis: a first one shows the species as the codex now holds it and the XP it earned, a
+  // known one says so, a refused one says why.
+  onAnalyze(m) {
+    const s = m.species;
+    if (m.result === 'new') {
+      this.audio.play('discovery');
+      this.hud.showBanner(s.name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
+    } else if (m.result === 'known') this.hud.toast(`${s.name} · in your codex`);
+    else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
   scan() {

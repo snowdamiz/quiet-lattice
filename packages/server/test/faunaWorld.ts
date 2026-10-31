@@ -1,6 +1,7 @@
 // A world to test fauna on: a zone of galaxy system 0 at a chosen tier, a body whose species fit the test, a player on
 // foot on dry, open ground, and helpers to place things on the ground around it and run the zone's clock.
 import { faunaSpecies, frameId, type BodySpec, type FaunaSpecies, type PlanetParams, type Tier } from '@astra/shared/world';
+import type { CombatHooks } from '../src/combat/zone.ts';
 import type { Vec3 } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';
 import type { FaunaOptions, HerdRequest } from '../src/fauna/sim.ts';
@@ -89,6 +90,8 @@ export function faunaWorld(opts: {
   want: (species: readonly FaunaSpecies[]) => boolean;
   spawner?: boolean;
   fauna?: Omit<FaunaOptions, 'tier' | 'spawner'>;
+  /** who the zone's combat tells of kills and players down (P1.E06.T02) */
+  combat?: () => CombatHooks | null;
 }): FaunaWorld {
   const system = describeZoneSystem(SYSTEM);
   const body = findWorld(opts.tier, opts.want);
@@ -97,6 +100,7 @@ export function faunaWorld(opts: {
     systemIndex: SYSTEM,
     system,
     fauna: { tier: opts.tier, spawner: opts.spawner ?? false, grounds: planHere, ...opts.fauna },
+    combat: opts.combat,
   });
   const ground = groundOf(body.params as PlanetParams);
   const home = openGround(ground);

@@ -1333,6 +1333,18 @@ kbd,
   color: var(--faint);
   transition: color 0.15s;
 }
+/* the title's small type held to AA over the scene: the menu's numbers, the tagline, the footer (BUILD on a plate of
+   its own, over the planet's bright limb) */
+.title-screen .t-item i,
+.title-screen .logo-tag,
+.title-screen .t-foot .mono {
+  color: var(--dim);
+}
+.title-screen .t-foot > .mono {
+  padding: 5px 9px 5px 10px;
+  background: var(--plate-2);
+  border: 1px solid var(--line);
+}
 /* the active-row bar on the left edge */
 .t-item::before {
   content: '';
@@ -1419,6 +1431,842 @@ kbd,
 @keyframes loadSweep {
   from { transform: translateX(-100%); }
   to { transform: translateX(300%); }
+}
+/* the menu by keyboard: a focused row lights as a hovered one */
+.t-item:focus-visible {
+  outline: none;
+  color: var(--text);
+  padding-left: 6px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%);
+}
+.t-item:focus-visible i {
+  color: var(--accent);
+}
+.t-item:focus-visible::before {
+  transform: scaleY(1);
+}
+.t-item:focus-visible em {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- account: sign in, characters, a new character, entering (ui/Account.js) ---------- */
+/* In the title's left column, where the menu was: the menu slides out, the flow's column slides in, and each step's rows
+   rise in one after another. Amber marks the focus and the picked row, as on the menu. Each people wears its palette
+   (art bible §4) on an emblem shaped by its design language (§2: the shell, the facet, the lattice), and on the new
+   character step its name is written in the Cartographer signs, in glyph light (§3.4), beside its saying. */
+.ppl-thalune {
+  --people: #2e8f84;
+  --people-2: #ede6d6;
+  --shape: polygon(50% 100%, 0 60%, 4% 32%, 20% 9%, 50% 0, 80% 9%, 96% 32%, 100% 60%);
+}
+.ppl-ixari {
+  --people: #7a4fd0;
+  --people-2: #b9a6ff;
+  --shape: polygon(50% 0, 88% 24%, 88% 76%, 50% 100%, 12% 76%, 12% 24%);
+}
+.ppl-ulgani {
+  --people: #d9962b;
+  --people-2: #f2ead3;
+  --shape: polygon(50% 4%, 98% 92%, 2% 92%);
+}
+/* (the menu and the column hand over one after the other, never both half there) */
+.title-screen .t-main {
+  transition: opacity 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, visibility 0s;
+}
+.title-screen.flow .t-main {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-24px, -50%);
+  transition: opacity 0.18s ease-in, transform 0.24s cubic-bezier(0.4, 0, 0.7, 0.2), visibility 0s 0.24s;
+}
+/* a deeper shade behind the column while it is open, so its small type holds over the bright limb */
+.acct-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 62%, transparent), color-mix(in srgb, var(--ink) 38%, transparent) 34%, transparent 62%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.title-screen.flow .acct-scrim {
+  opacity: 1;
+}
+.acct {
+  --glyph: #d8f6ff;
+  --glyph-halo: #7fd8ff;
+  --acct-top: clamp(28px, calc(50vh - 370px), 200px);
+  position: absolute;
+  left: calc(clamp(32px, 7vw, 120px) - 18px);
+  top: var(--acct-top);
+  width: min(498px, calc(100vw - 32px));
+  max-height: calc(100vh - var(--acct-top) - 24px);
+  padding: 4px 6px 6px 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  outline: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-16px);
+  transition: opacity 0.18s ease-in, transform 0.24s cubic-bezier(0.4, 0, 0.7, 0.2), visibility 0s 0.24s;
+}
+.acct::-webkit-scrollbar {
+  display: none;
+}
+.title-screen.flow .acct {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, visibility 0s;
+}
+.acct-mark {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.acct-mark b {
+  margin-right: 0.35em;
+  font-weight: 400;
+  color: var(--accent);
+}
+/* where the flow stands: sign in, character, enter */
+.acct-rail {
+  display: flex;
+  align-items: center;
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.acct-rail li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s;
+}
+.acct-rail li + li::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  margin: 0 14px 0 6px;
+  background: var(--line-2);
+}
+.acct-rail i {
+  position: relative;
+  min-width: 1.5em;
+  font-style: normal;
+  transition: color 0.3s;
+}
+.acct-rail li.on {
+  color: var(--text);
+}
+.acct-rail li.on i {
+  color: var(--accent);
+}
+/* a step done: its number fades out (0.13 s, eased in), then an amber tick takes its place */
+.acct-rail li.done i {
+  color: transparent;
+  transition: color 0.13s cubic-bezier(0.4, 0, 1, 1);
+}
+.acct-rail li.done i::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 4px;
+  margin: -4px 0 0 -5px;
+  border-left: 1.5px solid var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  transform: rotate(-45deg);
+  animation: acctTick 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+}
+@keyframes acctTick {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.4);
+  }
+}
+.acct-body {
+  position: relative;
+  margin-top: 34px;
+}
+/* one step gives way to the next in sequence: the old fades out (0.15 s, eased in), then the new one's rows rise */
+.acct-step > :not(form),
+.acct-form > * {
+  animation: acctIn 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 170ms);
+}
+.acct-step.leaving {
+  position: absolute;
+  inset: 0 0 auto 0;
+  pointer-events: none;
+  animation: acctOut 0.15s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+.acct-step.leaving > :not(form),
+.acct-step.leaving .acct-form > * {
+  animation: none;
+}
+@keyframes acctIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes acctOut {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.acct-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 1.6vw, 30px);
+  line-height: 1.15;
+  letter-spacing: 0.13em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.acct-titlerow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+/* (thin mono figures: a step lighter than the key hints' grey, to read as bright as they do) */
+.acct .acct-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
+}
+.acct-lede {
+  margin: 12px 0 0;
+  max-width: 440px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+.acct-lede b {
+  font-weight: 500;
+  color: var(--text);
+}
+.acct-form {
+  margin-top: 26px;
+}
+/* a field: its label and rule above a bare line of type, underlined in amber from the left while it has the focus */
+.acct-field {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 12px;
+  margin-top: 18px;
+}
+.acct-form > .acct-field:first-child {
+  margin-top: 0;
+}
+.acct .acct-label {
+  color: var(--dim);
+  transition: color 0.2s;
+}
+.acct .acct-hint {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--dim);
+}
+.acct-field input {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 44px;
+  margin-top: 2px;
+  padding: 0 2px;
+  font-family: var(--font-ui);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  caret-color: var(--accent);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line-2);
+  border-radius: 0;
+  outline: none;
+  user-select: text;
+}
+.acct-field input[type='password'] {
+  letter-spacing: 0.16em;
+}
+.acct-field input::selection {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.acct-field input:-webkit-autofill {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--accent);
+  transition: background-color 600000s 0s;
+}
+.acct-line {
+  grid-column: 1 / -1;
+  height: 1px;
+  margin-top: -1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.2s;
+}
+.acct-field:focus-within .acct-line {
+  transform: scaleX(1);
+}
+.acct .acct-field:focus-within .acct-label {
+  color: var(--accent-hi);
+}
+.acct-field.bad .acct-line {
+  transform: scaleX(1);
+  background: var(--danger);
+}
+.acct .acct-field.bad .acct-label {
+  color: var(--danger);
+}
+/* a refusal opens a line under the form (the rows below ease down), its rule red; a notice's is warm */
+/* (Account.js eases its height and the box's fade on one curve, opening and closing alike; anchored to its foot, the
+   box shrinks with the room it takes until both are gone together) */
+.acct-msgwrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 0;
+  overflow: hidden;
+}
+.acct-msgwrap.on {
+  height: auto;
+}
+.acct-msg {
+  flex: none;
+  margin: 0;
+  padding-top: 22px;
+}
+.acct-msg span {
+  display: block;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  border-left: 2px solid var(--danger);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--danger) 14%, transparent), transparent 85%);
+}
+.acct-msg.notice span {
+  border-left-color: var(--warm);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--warm) 10%, transparent), transparent 85%);
+}
+.acct-msgwrap.on .acct-msg span {
+  animation: acctMsg 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes acctMsg {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+.acct-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 26px;
+}
+/* waiting on the server: a line under the actions says for what (in the gap above the keys: nothing moves) */
+.acct .acct-pending {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 11px);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--dim);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s ease-in, transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct .acct-pending .acct-bar {
+  width: 44px;
+}
+.acct-actions.busy .acct-pending {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s;
+}
+.acct .btn {
+  height: 42px;
+  padding: 0 22px;
+}
+.acct .btn em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct .btn:hover:not(:disabled) em {
+  transform: translateX(3px);
+}
+.acct .btn:focus-visible {
+  outline: 1px solid var(--accent-hi);
+  outline-offset: 3px;
+}
+.acct .btn.ghost:focus-visible {
+  color: var(--accent-hi);
+  border-color: var(--accent);
+  outline: none;
+}
+/* waiting on the server: the button keeps its colour, a dark sweep runs along its foot */
+.acct .btn.busy:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+.acct .btn.busy::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  height: 2px;
+  background: var(--ink);
+  opacity: 0.6;
+  animation: loadSweep 1.1s ease-in-out infinite;
+}
+.acct-link {
+  height: 42px;
+  padding: 0 2px;
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 10px) / 0 1px no-repeat;
+  border: none;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.15s, background-size 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-link:hover,
+.acct-link:focus-visible {
+  color: var(--accent-hi);
+  background-size: 100% 1px;
+}
+.acct-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 34px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.acct-keys span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.acct-keys kbd {
+  height: 20px;
+  min-width: 20px;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.acct-keys kbd:last-of-type {
+  margin-right: 6px;
+}
+/* the account's characters, and the people choices: rows like the menu's, the picked one lit and barred in amber */
+.acct-list {
+  display: grid;
+  margin-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.acct-list > * {
+  animation: acctIn 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--j, 0) * 55ms + 260ms);
+}
+.acct-list.fresh > * {
+  animation-delay: calc(var(--j, 0) * 45ms);
+}
+.acct-char,
+.acct-people {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  row-gap: 3px;
+  width: 100%;
+  min-height: 64px;
+  padding: 11px 12px 11px 0;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  isolation: isolate;
+  transition: padding 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+/* the picked row's amber tint, behind its content: it fades between rows on the bar's curve (a gradient cannot be
+   tweened, its opacity can) */
+.acct-char::after,
+.acct-people::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 75%);
+  opacity: 0;
+  transition: opacity 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-char:hover:not(:disabled):not(.static)::after,
+.acct-people:hover::after {
+  opacity: 0.6;
+}
+.acct-char[aria-selected='true']::after,
+.acct-char.static::after,
+.acct-people.on::after {
+  opacity: 1;
+}
+.acct-char::before,
+.acct-people::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-char[aria-selected='true'],
+.acct-char.static,
+.acct-people.on {
+  padding-left: 6px;
+}
+.acct-char[aria-selected='true']::before,
+.acct-char.static::before,
+.acct-people.on::before,
+.acct-new:focus-visible::before {
+  transform: scaleY(1);
+}
+.acct-char.static {
+  cursor: default;
+}
+.acct-char-name,
+.acct-people-name {
+  min-width: 0;
+  font-family: var(--font-cond);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.acct-char-sub,
+.acct-people-sub {
+  grid-column: 2 / -1;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.acct .acct-char-lv,
+.acct .acct-people-tag {
+  color: var(--dim);
+  transition: color 0.2s;
+}
+.acct .acct-char[aria-selected='true'] .acct-char-lv,
+.acct .acct-char.static .acct-char-lv {
+  color: var(--accent-hi);
+}
+.acct-new .acct-char-name {
+  color: var(--dim);
+  transition: color 0.15s;
+}
+.acct-new:hover:not(:disabled) .acct-char-name,
+.acct-new:focus-visible .acct-char-name {
+  color: var(--accent-hi);
+}
+.acct-new:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.acct-loading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  border-bottom: 1px solid var(--line);
+}
+.acct .acct-loading .mono {
+  color: var(--dim);
+}
+/* a people's emblem: its outline in its main colour round a core of its second, in the shape of its design language */
+.acct-emblem,
+.acct-plus {
+  position: relative;
+  display: block;
+  grid-row: 1 / span 2;
+  width: 22px;
+  height: 24px;
+  font-style: normal;
+  background: var(--people, var(--line-2));
+  clip-path: var(--shape, polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%));
+}
+.acct-emblem::before,
+.acct-emblem::after,
+.acct-plus::before {
+  content: '';
+  position: absolute;
+  clip-path: inherit;
+}
+.acct-emblem::before,
+.acct-plus::before {
+  inset: 2px;
+  background: var(--plate-2);
+}
+.acct-emblem::after {
+  inset: 7px 6.5px;
+  background: var(--people-2, var(--dim));
+}
+.acct-plus[data-mark]::after {
+  content: attr(data-mark);
+}
+.acct-plus::after {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--dim);
+}
+.acct-new:hover:not(:disabled) .acct-plus,
+.acct-new:focus-visible .acct-plus {
+  background: var(--accent);
+}
+/* the peoples: a radio each (the arrows walk them); the picked one opens on its body, its home and its saying */
+.acct-peoples {
+  min-width: 0;
+  margin: 24px 0 0;
+  padding: 0;
+  border: none;
+}
+.acct-peoples legend {
+  padding: 0;
+  margin-bottom: 8px;
+}
+.acct-peoples legend + .acct-people {
+  border-top: 1px solid var(--line);
+}
+.acct-peoples > .acct-people {
+  animation: acctIn 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--j, 0) * 55ms + var(--i, 0) * 45ms + 200ms);
+}
+.acct-people input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.acct-people:has(input:focus-visible) .acct-people-name {
+  color: var(--accent-hi);
+}
+.acct-people-more {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.acct-people.on .acct-people-more {
+  grid-template-rows: 1fr;
+}
+.acct-people-inner {
+  min-height: 0;
+  display: grid;
+  gap: 8px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.acct-people.on .acct-people-inner {
+  opacity: 1;
+  transition: opacity 0.4s 0.12s;
+}
+.acct-people-body {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--dim);
+}
+.acct .acct-people-home {
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
+.acct-saying {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 2px;
+}
+.acct-saying q {
+  font-size: 14px;
+  color: var(--text);
+}
+.acct-glyphs {
+  flex: none;
+  color: var(--glyph);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--glyph-halo) 70%, transparent));
+}
+.acct-entering {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.acct-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+.acct-bar {
+  position: relative;
+  flex: none;
+  width: 140px;
+  height: 1px;
+  background: var(--line-2);
+  overflow: hidden;
+}
+.acct-bar b {
+  display: block;
+  width: 35%;
+  height: 100%;
+  background: var(--accent);
+  animation: loadSweep 1.4s ease-in-out infinite;
+}
+/* the welcome in: the sweep gives way to a fill that reaches the end of the bar as the screen reaches black */
+.acct-bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.acct-step.arriving .acct-bar b {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+}
+.acct-step.arriving .acct-bar i {
+  animation: acctFill 0.57s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+@keyframes acctFill {
+  to {
+    transform: none;
+  }
+}
+/* (the keys and their rule fade out with the panel's ease, an animation of their own: their rise-in's fill would
+   otherwise hold them and drop them in one frame) */
+.acct-step.arriving .acct-keys {
+  animation: acctTextOut 0.16s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+.acct .acct-progress .mono {
+  color: var(--dim);
+}
+/* the connection's words change in place, in sequence as the steps do: the old fade out (0.13 s, eased in), then the
+   new rise in where they stood */
+.acct-conn {
+  display: inline-grid;
+}
+.acct-conn > span {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+.acct-conn > span.fresh {
+  animation: acctIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+}
+.acct-conn > span.gone {
+  animation: acctTextOut 0.13s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+@keyframes acctTextOut {
+  to {
+    opacity: 0;
+  }
+}
+/* the welcome's cut into the world, over every screen: Enter ticked, the menu and the title's shot fade to black (eased
+   in), the character is placed, and its place fades up */
+.acct-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  background: var(--ink);
+  opacity: 0;
+}
+.acct-veil.dark {
+  animation: acctDark 0.45s cubic-bezier(0.45, 0, 0.55, 1) 0.12s both;
+}
+.acct-veil.up {
+  animation: acctUp 1.1s cubic-bezier(0.4, 0, 0.6, 1) both;
+}
+@keyframes acctDark {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes acctUp {
+  0%,
+  6% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acct,
+  .acct *,
+  .acct-veil,
+  .title-screen .t-main {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
 }
 
 /* ---------- sheets (settings, controls) beside a menu ---------- */
@@ -1680,6 +2528,20 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .pause-menu .t-item {
   animation: none;
+}
+/* the pause menu over whatever the world shows (a lit hangar, a ship passing): a near-opaque shade behind its column,
+   so its small type holds AA over any scene, the numbers and the place at --dim */
+.pause-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: clamp(440px, 46vw, 820px);
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 94%, transparent) 0%, color-mix(in srgb, var(--ink) 92%, transparent) 60%, transparent 100%);
+}
+.pause-menu .where,
+.pause-menu :where(.t-item) i {
+  color: var(--dim);
 }
 
 /* ---------- panel screens (trade, controls) ---------- */
@@ -2275,6 +3137,378 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
 }
 
+/* ---------- fabricator: the recipes known beside the selected one's materials (DESIGN 15.7) ---------- */
+/* The inventory's sibling (it wears .inv-panel): the same plate, head and footer. Amber marks only the recipe with the
+   focus and the Craft button; what can be made reads in the HUD's green, what is short of materials in its red. */
+/* one height whatever the recipe or the list holds, so nothing re-centres under the player as they change; a long
+   list scrolls */
+.fab-panel {
+  height: min(700px, 88vh);
+}
+.fab-cols {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 40px;
+}
+/* (the whole column's height, so a row moving within it is never clipped by a list that just got shorter) */
+.fab-list {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+.fab-group {
+  margin: 14px 0 2px;
+  color: var(--dim);
+}
+/* a recipe: its output's tag or icon, its name, and how many the materials held make */
+.fab-row {
+  position: relative;
+  flex: none;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 50px;
+  padding: 0 14px 0 12px;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: rgba(233, 231, 226, 0.035);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s;
+}
+.fab-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.fab-row:hover {
+  border-color: var(--line-2);
+  background: rgba(233, 231, 226, 0.05);
+}
+.fab-row.sel {
+  border-color: var(--line-2);
+  background: linear-gradient(90deg, rgba(240, 162, 74, 0.1), rgba(233, 231, 226, 0.05) 70%);
+}
+.fab-row.sel::before {
+  transform: scaleY(1);
+}
+/* a recipe just learned, rising into the list: an opaque plate over whatever it passes (the row's own look, solid) */
+.fab-row.fab-moving {
+  z-index: 1;
+  background: rgb(19, 20, 23);
+}
+.fab-row .inv-tag,
+.fab-out .inv-tag,
+.fab-mat .inv-tag {
+  position: static;
+  justify-self: start;
+}
+.fab-row .res-ico {
+  width: 15px;
+  height: 15px;
+}
+.fab-nm {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-cond);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.fab-st {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.fab-st.ok {
+  color: var(--good);
+}
+.fab-st.short {
+  color: var(--danger);
+}
+/* recipes this fabricator does not make, and recipe items to learn: quieter rows */
+.fab-row.off .fab-nm,
+.fab-row.learn .fab-nm {
+  color: var(--dim);
+}
+.fab-row.learn {
+  cursor: default;
+}
+.fab-row.learn .inv-act {
+  margin-left: 0;
+}
+.fab-side .inv-note {
+  padding-top: 18px;
+}
+/* the selected recipe */
+.fab-about {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+.fab-mats-head,
+.fab-mat {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 64px 112px;
+  align-items: center;
+  gap: 10px;
+}
+.fab-mats-head {
+  padding: 0 10px 8px;
+  border-bottom: 1px solid var(--line-2);
+  color: var(--dim);
+}
+.fab-mats-head span:first-child {
+  grid-column: 1 / 3;
+}
+.fab-mats-head span:not(:first-child) {
+  text-align: right;
+}
+.fab-mat {
+  position: relative;
+  height: 42px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.fab-mat .res-ico {
+  width: 14px;
+  height: 14px;
+}
+.fab-mat-nm {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fab-mat .num,
+.fab-mat .have,
+.fab-out .have {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.fab-mat .num {
+  color: var(--text);
+}
+.fab-mat .have {
+  color: var(--dim);
+}
+.fab-mat.short .have {
+  color: var(--danger);
+}
+/* what one go makes, against what is held */
+.fab-out {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  margin-top: 6px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+.fab-out > span:first-child {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.fab-out b {
+  font-family: var(--font-cond);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fab-out .have {
+  color: var(--dim);
+}
+/* rows a craft changed settle back from warm white, as the inventory's slots do, and the materials short of a refused
+   craft from red: one wash over the row fading out (its opacity alone animates, so the row's own background, a
+   gradient on the selected recipe, never switches under it), carried across a redraw rather than restarted */
+.fab-mat.bump::after,
+.fab-out.bump::after,
+.fab-row.bump::after,
+.fab-mat.fab-warn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(233, 231, 226, 0.14);
+  opacity: 0;
+  animation: fabFade 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.fab-mat.fab-warn::after {
+  background: rgba(255, 90, 79, 0.16);
+  animation-duration: 0.9s;
+}
+@keyframes fabFade {
+  from {
+    opacity: 1;
+  }
+}
+.fab-make {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+/* how many: a quiet stepper in the Esc key's language */
+.fab-qty {
+  display: flex;
+  align-items: stretch;
+  height: 38px;
+  border: 1px solid var(--line-2);
+}
+.fab-qty button {
+  min-width: 34px;
+  padding: 0 8px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--dim);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s ease-out, background 0.15s ease-out;
+}
+.fab-qty button:hover:not(:disabled) {
+  color: var(--text);
+  background: rgba(233, 231, 226, 0.06);
+}
+/* dimmed by colour, not opacity: an opacity group beside a value fading in the stepper briefly drew at full strength */
+.fab-qty button:disabled {
+  color: rgba(233, 231, 226, 0.22);
+  cursor: default;
+}
+.fab-qty .fab-max {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-left: 1px solid var(--line);
+}
+.fab-qty b {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+/* while a fabrication or a lesson runs, the controls that cannot be used dim, and come back after, both eased */
+.fab-panel .fab-row .inv-act {
+  transition: color 0.15s ease-out, border-color 0.15s ease-out;
+}
+.fab-busy .fab-qty button,
+.fab-busy .fab-row .inv-act {
+  color: rgba(233, 231, 226, 0.22);
+  pointer-events: none;
+}
+.fab-busy .fab-row .inv-act {
+  border-color: rgba(233, 231, 226, 0.08);
+}
+/* the Craft button eases between its fill and its outline (materials short), its clipped corner with it; its label does
+   not tween its colour across the fading fill (it would pass through the fill's own tone): it fades out as it was and
+   back in as it is (Fabricator.swapValues) */
+.fab-go {
+  flex: 1;
+  overflow: hidden;
+  transition:
+    background 0.18s ease-out,
+    border-color 0.18s ease-out,
+    clip-path 0.18s ease-out,
+    opacity 0.15s ease-out;
+}
+/* the fabrication running across the button, left to right (the sweep's transform), fading as the button lets go */
+.fab-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 246, 232, 0.2), rgba(255, 246, 232, 0.55));
+  opacity: 0;
+  transform-origin: left;
+  pointer-events: none;
+  transition: opacity 0.18s ease-out;
+}
+.fab-go.working .fab-sweep {
+  opacity: 1;
+}
+.fab-go-l {
+  position: relative;
+}
+.fab-go.working,
+.fab-go.working:disabled {
+  opacity: 1;
+}
+/* materials short: the button stays, but reads as the ghost of itself */
+.fab-go.short:not(.working) {
+  color: var(--text);
+  background: transparent;
+  border-color: var(--line-2);
+  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
+}
+.fab-go.short:not(.working):hover {
+  color: var(--accent-hi);
+  border-color: var(--accent);
+  background: rgba(240, 162, 74, 0.06);
+}
+.fab-elsewhere {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  color: var(--dim);
+}
+/* the line under the columns: what was made, or why not (a change cross-fades: the old line fades out over the new) */
+.fab-panel .inv-foot {
+  position: relative;
+}
+.fab-msg.msg i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.fab-msg.good {
+  color: var(--good);
+}
+.fab-msg.good i {
+  background: var(--good);
+}
+.fab-msg.refused i {
+  background: var(--danger);
+}
+
 /* ---------- map ---------- */
 /* (transparent: the map is drawn into the game's own canvas underneath) */
 .map-screen {
@@ -2529,6 +3763,87 @@ input[type='range'].range:hover::-webkit-slider-thumb {
     0 -1px 0 var(--ring),
     0.71px -0.71px 0 var(--ring),
     0 0 4px rgba(7, 8, 11, 0.85);
+}
+/* the top line (where you are, the compass's reading, a banner) over the brightest of scenes, a hangar's strip lights:
+   a dark ring close round the letters, as the flight readouts have */
+.location .body,
+.ec-read,
+.banner .b-sub,
+.banner .b-title {
+  text-shadow:
+    0 0 1px var(--ink),
+    0 0 3px var(--ink),
+    0 0 6px color-mix(in srgb, var(--ink) 90%, transparent),
+    0 0 12px color-mix(in srgb, var(--ink) 70%, transparent);
+}
+/* and where you are and the compass's reading each on a soft dark backing of their own, faded at its edges, so they
+   hold AA however bright what lies behind them (the banner's band, below, does the rest while one shows) */
+.location .body,
+.ec-read {
+  position: relative;
+  isolation: isolate;
+}
+.ec-read {
+  width: max-content;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text);
+}
+.ec-read small {
+  color: var(--dim);
+}
+.location .body::before,
+.ec-read::before {
+  content: '';
+  position: absolute;
+  inset: -9px -36px -9px -18px;
+  z-index: -1;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  mask:
+    linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 36px), transparent),
+    linear-gradient(180deg, transparent, #000 9px, #000 calc(100% - 9px), transparent);
+  mask-composite: intersect;
+}
+.ec-read::before {
+  inset: -8px -28px;
+  mask:
+    linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent),
+    linear-gradient(180deg, transparent, #000 8px, #000 calc(100% - 8px), transparent);
+  mask-composite: intersect;
+}
+/* while a banner shows (a system reached, a world found), the top of the view darkens on a soft gradient under it and
+   the readouts beside it, in and out with the banner */
+.hud-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 330px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ink) 88%, transparent) 0,
+    color-mix(in srgb, var(--ink) 86%, transparent) 200px,
+    color-mix(in srgb, var(--ink) 45%, transparent) 265px,
+    transparent 330px
+  );
+}
+.hud-band.show {
+  animation: hudBand 7s ease-in-out forwards;
+}
+@keyframes hudBand {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ---------- dev teleporter (F2, dev builds only) ---------- */

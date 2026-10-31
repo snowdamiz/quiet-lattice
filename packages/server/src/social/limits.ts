@@ -1,8 +1,10 @@
-// Chat and party limits (P1.E15.T01; docs/ARCHITECTURE.md §13). Chat sits inside the gateway's per-socket message
-// budget (60/s, burst 120: gateway/ws.ts) with a far smaller limit of its own, per account so that an account's four
-// sockets share it. The party size is ours: DESIGN does not give one. The disconnect grace is the phases' (15 s), so a
-// dropped connection keeps its party exactly as long as it keeps its place in a phase.
-import { PARTY_MAX } from '@astra/shared/protocol';
+// Chat, party and beacon limits (P1.E15.T01, T02; docs/ARCHITECTURE.md §13, §21). Chat sits inside the gateway's
+// per-socket message budget (60/s, burst 120: gateway/ws.ts) with a far smaller limit of its own, per account so that an
+// account's four sockets share it. The party size is ours: DESIGN does not give one. The disconnect grace is the phases'
+// (15 s), so a dropped connection keeps its party exactly as long as it keeps its place in a phase. A beacon reaches the
+// whole shard, so raising one is rate-limited per account like chat, and a beacon lapses after ten minutes; the whole
+// list (up to some 70 KB) is sent to an account a few times at once, then once every ten seconds.
+import { BEACON_MAX, PARTY_MAX } from '@astra/shared/protocol';
 import { PHASE_KINDS } from '../phases/kinds.ts';
 
 export interface SocialLimits {
@@ -31,6 +33,16 @@ export interface SocialLimits {
   tickMs: number;
   /** every party is refreshed (graces checked, tags checked, state sent if it changed) once this often, spread over the ticks */
   refreshMs: number;
+  /** beacons an account may raise at once, then `beaconPerSecond` */
+  beaconBurst: number;
+  beaconPerSecond: number;
+  /** a beacon lapses this long after it is raised, seconds of world time */
+  beaconTtlS: number;
+  /** beacons up on the shard at once (at most BEACON_MAX); more are refused as `busy` */
+  beaconMax: number;
+  /** whole beacon lists an account may be sent at once (each `watch` that is not already watching), then `listPerSecond` */
+  listBurst: number;
+  listPerSecond: number;
 }
 
 export const SOCIAL_LIMITS: Readonly<SocialLimits> = Object.freeze({
@@ -49,4 +61,10 @@ export const SOCIAL_LIMITS: Readonly<SocialLimits> = Object.freeze({
   graceMs: PHASE_KINDS.story.graceS * 1000,
   tickMs: 100,
   refreshMs: 1000,
+  beaconBurst: 3,
+  beaconPerSecond: 1 / 30,
+  beaconTtlS: 600,
+  beaconMax: BEACON_MAX,
+  listBurst: 5,
+  listPerSecond: 0.1,
 });
