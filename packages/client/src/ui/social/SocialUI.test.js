@@ -127,7 +127,7 @@ describe('the beacon list', () => {
     vi.unstubAllGlobals();
   });
 
-  it('starts its edge fades and scrollbar on the frame a move under it makes it overflow, not at the next tick', () => {
+  it('starts its edge fades and scrollbar on the frame after a move under it makes it overflow, not at the next tick', () => {
     const { ui, props, frame } = beaconList(rows);
     ui.renderBeacons();
     ui.beaconsEl.scrollHeight = 200;
@@ -148,6 +148,8 @@ describe('the beacon list', () => {
     expect(bar()).toHaveLength(before);
     ui.beaconsEl.scrollHeight = 320;
     moves();
+    // (the frame that moved it, then the next, which reads the page as that frame left it)
+    ui.update();
     ui.update();
     expect(bar().length).toBeGreaterThan(before);
     frame();

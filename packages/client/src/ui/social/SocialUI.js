@@ -279,9 +279,9 @@ export class SocialUI {
     if (frame) {
       this.motion.step();
       // (a list that grows under a move, a refusal opening in, overflows frame by frame, with no scroll or redraw to say
-      // so: its edges are looked at on every frame something moves, and the one after)
+      // so: its edges are looked at at the start of every frame after one something moved, and the one after that)
       const busy = this.motion.moving();
-      if (busy || this.wasBusy) this.edges();
+      if (busy || this.wasBusy) this.edgesDue = true;
       this.wasBusy = busy;
     }
   }
