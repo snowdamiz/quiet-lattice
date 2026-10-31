@@ -65,6 +65,33 @@ describe('world events on the client', () => {
     expect(feed.take()).toEqual([]);
   });
 
+  it('names the event’s world in its banner’s eyebrow, once the game can say which it is', () => {
+    const { feed, push } = joined();
+    feed.worldName = (frame) => (frame === '1:2' ? 'Orxa II' : null);
+    push({ t: 'world_event', op: 'announced', event: tide });
+    push({ t: 'world_event', op: 'started', event: tide });
+    push({ t: 'world_event', op: 'ended', event: tide, outcome: 'expired' });
+    expect(feed.take().map((b) => b.sub)).toEqual(['World event · Orxa II · in 3 minutes', 'World event · Orxa II · under way', 'World event · Orxa II · over']);
+    feed.worldName = () => null;
+    push({ t: 'world_event', op: 'announced', event: { ...tide, id: 4, frame: '1:7' } });
+    expect(feed.take().map((b) => b.sub)).toEqual(['World event · in 3 minutes']);
+  });
+
+  it.each([
+    [0, 'starting now'],
+    [-5, 'starting now'],
+    [1, 'in under a minute'],
+    [29, 'in under a minute'],
+    [30, 'in a minute'],
+    [89, 'in a minute'],
+    [90, 'in 2 minutes'],
+    [180, 'in 3 minutes'],
+  ])('says an event %i s off is %s', (seconds, said) => {
+    const { feed, push } = joined();
+    push({ t: 'world_event', op: 'announced', event: { ...tide, starts: 1000 + seconds, ends: 3000 } });
+    expect(feed.take()[0].sub).toBe(`World event · ${said}`);
+  });
+
   it('keeps the player’s standing, says when it joins an instance or its scaling changes, and shows its reward', () => {
     const { feed, push } = joined();
     push({ t: 'world_event', op: 'started', event: tide });

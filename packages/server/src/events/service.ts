@@ -606,9 +606,6 @@ export class EventService {
     const payouts: EventPayout[] = [];
     for (const [character] of parts) {
       const share = shares.get(character) ?? 0;
-      // (one paid, or there when its instance was won, has had its event; one that passed through an instance it left
-      // empty may come back)
-      if (share > 0 || outcome === 'completed') occ.paid.add(character);
       if (occ.takingPart.get(character) === inst) occ.takingPart.delete(character);
       const at = sessions.get(character) ?? this.sessionOf(character);
       const gotXp = this.grantXp(character, xp.get(character) ?? 0, at);
@@ -618,6 +615,9 @@ export class EventService {
         .map(({ faction, sign, shares: s }) => ({ faction, amount: this.rep(character, faction, sign * (s.get(character) ?? 0), def.id) }))
         .filter((x) => x.amount !== 0);
       const payout: EventPayout = { character, share, xp: gotXp?.xp ?? 0, units: gotUnits, items: gotItems, rep: gotRep };
+      // (one paid something, or there when its instance was won, has had its event; one that passed through an instance
+      // it left empty, or that expired with no wave cleared and so paid nothing, may come back)
+      if (payout.xp > 0 || payout.units > 0 || gotItems.length > 0 || gotRep.length > 0 || outcome === 'completed') occ.paid.add(character);
       payouts.push(payout);
       const text = this.encode({
         t: 'event_reward',

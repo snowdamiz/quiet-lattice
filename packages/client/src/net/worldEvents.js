@@ -18,6 +18,8 @@ export class WorldEvents {
     /** the last reward it was paid, or null */
     this.reward = null;
     this.queue = [];
+    /** names the world a frame id is (set by the game, which knows the system's bodies); null when it knows none */
+    this.worldName = () => null;
     net.on('world_event', (m) => this.news(m));
     net.on('event_status', (m) => this.standing(m));
     net.on('event_reward', (m) => this.paid(m));
@@ -33,14 +35,19 @@ export class WorldEvents {
     if (m.op === 'ended') {
       this.events.delete(e.id);
       if (this.status?.id === e.id) this.status = null;
-      this.push({ banner: true, title: e.name.toUpperCase(), sub: m.outcome === 'completed' ? 'World event · cleared' : 'World event · over' });
+      this.push({ banner: true, title: e.name.toUpperCase(), sub: this.eyebrow(e, m.outcome === 'completed' ? 'cleared' : 'over') });
       return;
     }
     const known = this.events.get(e.id);
     this.events.set(e.id, { ...e, op: m.op });
     if (known?.op === m.op) return;
-    if (m.op === 'announced') this.push({ banner: true, title: e.name.toUpperCase(), sub: `World event · in ${minutes(e.starts - (this.net.serverTime() ?? e.starts))}` });
-    else this.push({ banner: true, title: e.name.toUpperCase(), sub: 'World event · under way' });
+    if (m.op === 'announced') this.push({ banner: true, title: e.name.toUpperCase(), sub: this.eyebrow(e, until(e.starts - (this.net.serverTime() ?? e.starts))) });
+    else this.push({ banner: true, title: e.name.toUpperCase(), sub: this.eyebrow(e, 'under way') });
+  }
+
+  /** The banner's eyebrow: what it is, where (the event's world, once the game can name it) and how it stands. */
+  eyebrow(e, state) {
+    return ['World event', this.worldName(e.frame), state].filter(Boolean).join(' · ');
   }
 
   standing(m) {
@@ -72,7 +79,10 @@ export class WorldEvents {
   }
 }
 
-function minutes(seconds) {
-  const m = Math.max(0, Math.round(seconds / 60));
-  return m <= 1 ? 'a minute' : `${m} minutes`;
+/** "starting now", "in under a minute", "in 2 minutes": under 30 s it is not yet a minute, and 90 s rounds to two. */
+function until(seconds) {
+  if (seconds <= 0) return 'starting now';
+  if (seconds < 30) return 'in under a minute';
+  const m = Math.round(seconds / 60);
+  return m <= 1 ? 'in a minute' : `in ${m} minutes`;
 }

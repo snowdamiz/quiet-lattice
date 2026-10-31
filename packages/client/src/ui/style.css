@@ -529,7 +529,7 @@ body {
   opacity: 0;
 }
 .banner.show {
-  animation: banner 7s ease-in-out forwards;
+  animation: banner var(--banner-ms) ease-in-out forwards;
 }
 .banner .b-sub {
   font-family: var(--font-cond);
@@ -3642,21 +3642,13 @@ input[type='range'].range:hover::-webkit-slider-thumb {
     color-mix(in srgb, var(--ink) 45%, transparent) 265px,
     transparent 330px
   );
+  transition: opacity var(--banner-out-ms) ease-in-out;
 }
+/* a transition and not a keyframed run, so a banner that follows another leaves it lit (ui/banners.js lets it go as the
+   last one's text starts to fade out) */
 .hud-band.show {
-  animation: hudBand 7s ease-in-out forwards;
-}
-@keyframes hudBand {
-  0% {
-    opacity: 0;
-  }
-  10%,
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  opacity: 1;
+  transition-duration: var(--banner-in-ms);
 }
 
 /* ---------- dev teleporter (F2, dev builds only) ---------- */

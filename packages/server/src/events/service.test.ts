@@ -401,6 +401,24 @@ describe('contribution and rewards', () => {
     expect(s.occurrence().instances).toMatchObject([{ players: 1, wave: 0 }]);
   });
 
+  it('does not count a player an instance expired on with no wave cleared as paid: it paid nothing, and the player may take part again', () => {
+    const s = setup();
+    const a = s.join('ana');
+    const def = drill();
+    const { place } = started(s, def, [a]);
+    s.run(1.2);
+    s.zone.combat.applyDamage(a.entity, s.occurrence().instances[0]!.mobs[0]!, { base: 1, kind: 'weapon' });
+    s.run(0.3);
+    expect(s.occurrence().instances[0]!.cleared).toBe(0);
+    s.move(a.entity, s.zone.stationFrame, [0, 0, 0], 'docked');
+    s.run(16);
+    expect(s.payouts[0]![0]).toMatchObject({ character: 'ana', xp: 0, units: 0, items: [], rep: [] });
+    expect(s.payouts[0]![0]!.share).toBeGreaterThan(0);
+    s.move(a.entity, place.frame, place.center);
+    s.run(0.3);
+    expect(s.occurrence().instances).toMatchObject([{ players: 1, wave: 0 }]);
+  });
+
   it('ends with its only instance won: its players back in the shared world, and nobody placed in it after', () => {
     const s = setup();
     const a = s.join('ana');

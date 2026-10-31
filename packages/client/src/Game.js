@@ -357,6 +357,8 @@ export class Game {
     old?.close();
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
+    // (a world event's banner names the world it is on)
+    net.worldEvents.worldName = (frame) => frameOfId(this.system, this.station, frame)?.name ?? null;
     this.inventory.send = (m) => net.send(m);
     this.crafting?.link(net);
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
