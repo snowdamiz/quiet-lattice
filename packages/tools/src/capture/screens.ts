@@ -1,6 +1,7 @@
 // The UI screens `pnpm capture -- --ui <screen>` knows how to reach. Each later UI task adds its screen here, so the
 // grader always gets its 16:9 and 21:9 captures and a 60 fps clip the same way.
 import type { Page } from '@playwright/test';
+import { EVENTS } from '@astra/shared/events';
 import { GALAXY_SEED, Galaxy, homeSystems } from '@astra/shared/world';
 
 export interface ScreenDef {
@@ -739,6 +740,98 @@ function timeline(page: Page, steps: [number, () => Promise<unknown>][]): void {
 const typeIn = (page: Page, text: string, perChar = 0.045) => page.keyboard.type(text, { delay: perChar * 10_000 });
 const key = (page: Page, k: string) => () => page.keyboard.press(k);
 
+interface EventPage {
+  game: {
+    mode: string;
+    system: { homePlanet: unknown };
+    debugGoto(planet: unknown, at: { sunAngle: number; alt: number; azimuth: number }): void;
+    boardShip(): void;
+    exitShip(): void;
+    player: { pitch: number; heading: { applyAxisAngle(axis: unknown, angle: number): void }; state: { pos: { clone(): { normalize(): unknown } } } };
+    hud: { clearBanners(): void; updateEvents(feed: unknown): void };
+  };
+}
+
+/** On foot on the home world (the `#foot` scenario), back aboard and landed again with the sun `sunAngle` degrees from
+ * overhead (past 90 it is night), then out, looking along open ground and down a little, so the ground lies behind the
+ * HUD's top band. */
+function eventGround(sunAngle: number) {
+  return async (page: Page) => {
+    const onFoot = () =>
+      page.waitForFunction(async () => {
+        await (window as unknown as { step(n: number): Promise<void> }).step(4);
+        return (window as unknown as EventPage).game.mode === 'foot';
+      });
+    await onFoot();
+    // (the scenario lands and steps out on real-time waits: let it finish before landing again)
+    await page.waitForTimeout(2500);
+    await onFoot();
+    await page.evaluate((sunAngle) => {
+      const g = (window as unknown as EventPage).game;
+      g.boardShip();
+      g.debugGoto(g.system.homePlanet, { sunAngle, alt: 0, azimuth: 20 });
+    }, sunAngle);
+    await settle(page, 60);
+    await page.evaluate(() => (window as unknown as EventPage).game.exitShip());
+    await onFoot();
+    await page.evaluate(() => {
+      const { player } = (window as unknown as EventPage).game;
+      player.heading.applyAxisAngle(player.state.pos.clone().normalize(), Math.PI * 1.5);
+      player.pitch = -0.5;
+    });
+    // (stepping out blends the view down to the pilot's eyes over 4 s)
+    await settle(page, 300);
+  };
+}
+
+/** The catalog's event announced to the system two minutes before it starts (protocol 15, ARCHITECTURE §25): its news
+ * handed to the client's own feed (net/worldEvents.js), and the feed's banner to the HUD, as a connection's would be. */
+async function announceEvent(page: Page): Promise<void> {
+  const def = EVENTS[0]!;
+  const event = {
+    id: 1,
+    event: def.id,
+    name: def.name,
+    system: 0,
+    frame: '0:1',
+    center: [0, 0, 0],
+    radius: def.place.radius,
+    starts: def.schedule.announceS,
+    ends: def.schedule.announceS + def.schedule.durationS,
+  };
+  // (tsx names the stub's functions with esbuild's __name helper, which the page lacks)
+  await page.evaluate('window.__name ??= (f) => f');
+  await page.evaluate(
+    async ({ url, event }) => {
+      const { WorldEvents } = await import(/* @vite-ignore */ url);
+      const on: Record<string, (m: unknown) => void> = {};
+      const feed = new WorldEvents({ on: (t: string, fn: (m: unknown) => void) => (on[t] = fn), serverTime: () => 0 });
+      on.world_event!({ t: 'world_event', op: 'announced', event });
+      const { hud } = (window as unknown as EventPage).game;
+      hud.clearBanners();
+      hud.updateEvents(feed);
+    },
+    { url: '/src/net/worldEvents.js', event },
+  );
+}
+
+/** A world event's banner (P2.E21.T01): the stills with it fully in; the clip from its news, in, held and out. */
+function eventBannerScreen(sunAngle: number): ScreenDef {
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 7.5,
+    // its fade in (every 6 frames), the hold, its fade out (every 14)
+    sheetFrames: [0, 6, 12, 18, 24, 30, 36, 42, 48, 120, 200, 280, 336, 350, 364, 378, 392, 406, 420, 449],
+    async open(page) {
+      await eventGround(sunAngle)(page);
+      await announceEvent(page);
+      await page.waitForTimeout(2000);
+    },
+    motion: announceEvent,
+  };
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
@@ -1129,6 +1222,10 @@ export const SCREENS: Record<string, ScreenDef> = {
     open: openShipFabricator,
     motion: fabricatorMotion(null),
   },
+  // a world event announced (P2.E21.T01, ARCHITECTURE §25): its banner over the home world's ground by day
+  // (`event-banner`) and the same ground at night (`event-banner-night`)
+  'event-banner': eventBannerScreen(40),
+  'event-banner-night': eventBannerScreen(140),
   'station-hangar': {
     hash: '#dock',
     async open(page) {

@@ -335,7 +335,10 @@ export class EventService {
       if (this.byKey.has(key) || this.finished.has(key)) continue;
       if (w.starts < this.since) {
         this.finished.set(key, w.ends);
-        this.log?.info({ zone: zone.id, event: def.id, window: w.k, starts: w.starts, since: this.since }, 'event window skipped: it began before the server started');
+        this.log?.info(
+          { zone: zone.id, event: def.id, window: w.k, starts: w.starts, since: this.since },
+          'event window skipped: it began before the server started',
+        );
         continue;
       }
       this.open(def, zone, w.starts, w.ends, key, w.k);

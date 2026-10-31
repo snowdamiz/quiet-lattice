@@ -269,11 +269,15 @@ players, `event` and `raid` 12.
   character there taken back as `phaseFor` takes it back, any other phase left; a member asked under a new party takes
   it when the phase's others are all of it. It never moves the entity, so movement authority's judging goes on as before.
   `release(characterId)` gives up a place kept for a character whose connection is down, as its grace running out would
-  (a beacon's helper no longer of the party, §21).
+  (a beacon's helper no longer of the party, §21). `guard(phaseId, admits)` gives a phase's owner the say over who joins
+  it: `admits(characterId)` is asked of each player about to be placed in it, by `phaseFor` (which then picks another
+  phase) or `enter` (answering `full`); a place kept for a character is its own and is not asked about again. An event's
+  instance refuses a character its occurrence has paid or has in another instance (§25).
 - **Own entities another system made**: `adopt(phase, entity, despawn?)` makes an entity already in the zone (not a
   player, in no phase) one of a phase's own: from then only its members see it, and it goes when the phase closes,
   through `despawn` when given (the system that made it forgets it too), else the zone's. A world event's instance adopts
   the creatures fauna spawns for its waves (§25), its `despawn` taking each out of its herd before the zone despawns it.
+  Fauna runs an adopted herd apart in its phase and keeps its cell loaded until the phase lets it go (§6.2).
 - **World events** (§25) place a player whose entity is inside an event's place, and in no phase, with
   `phaseFor(viewer, 'event', location)`: the cap of 12 is what splits a crowd into instances, each scaled by the players
   it holds (members and kept places).
@@ -346,7 +350,12 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   herd spawner's nearest), and only when the zone has room (they try again at the next scan). Dens spawn whether or not
   they are drawn: a den is a spawn anchor, not geometry. `FaunaOptions.dens` (as `spawner` by default) turns them off.
 - **Phases.** A player the shared world cannot see (`phases.hiddenFromShared`: sealed in a bay, event or raid phase, §6.1) still keeps the herds
-  round it awake, since it sees them, but is no creature's prey, intruder or threat.
+  round it awake, since it sees them, but is no shared-world creature's prey, intruder or threat. A herd a phase has made
+  its own (`PhaseManager.adopt`: an event's wave, §25) is run apart, each tick, with that phase's members (sealed or not)
+  as the only players it notices and that phase's creatures as the only others: it hunts no shared-world player or prey,
+  and the shared world's grazers do not flee it nor its predators hunt it. Its cell may sleep while nobody is near, but
+  never unloads while it holds such a herd, and the creature cap passes it by for the next oldest asleep cell; the phase
+  closing (its `despawn`: `kill`, then the zone's) lets the herd go.
 - **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
   (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,
   return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow, and `dead` for a corpse (§20). Hostile creatures
@@ -1281,8 +1290,9 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   never moves a player to answer: its entity stays where movement authority has it, its inputs are judged as before and
   nothing re-seats its mover. Travelling to a beacon (a server-side relocation, which would re-seat the mover as an
   admin teleport does, §7) is a later feature; until then the listing says where to go. The answerer is then placed by
-  `PhaseManager.enter` (§6.1), under the phase's cap and party rule, so an event or a raid that filled since it was
-  listed refuses it (`full`). A story instance's answer joins the caller's party as accepting an invite from the caller
+  `PhaseManager.enter` (§6.1), under the phase's cap and party rule and its owner's guard, so an event or a raid that
+  filled since it was listed refuses it (`full`), and so does a world event's instance for a character its occurrence
+  has paid or has in another instance (§25). A story instance's answer joins the caller's party as accepting an invite from the caller
   would (`Parties.joinWith`, or a new party the caller leads), refused `in_party` (the answerer is in another party),
   `full` (the party is full) and `gone` (the caller is not connected in its instance), all checked before anything
   changes; the caller is re-placed under the party first, since a caller placed before it had a party was placed as a
@@ -1495,14 +1505,16 @@ own shape (the station raid, the full Hollow tide, the superstorm rescue, the co
   `durationS`, `announceS`, `stagger`); its place (`surface`, a radius); its enemies (the world's own creatures of some
   temperaments, at a level or the tier's); its waves (`count`, `size` at level 1, `firstS` after an instance opens,
   `gapS` after each is cleared); its scaling (`sizePerPlayer`, `healthPerPlayer`); its contribution weights (damage,
-  objective, presence); and its rewards per player (XP, units, items, reputation). The catalog ships the Hollow tide
-  as the framework runs it (Tier 5, hourly, 20 minutes, waves of the world's predators and territorial creatures; its
-  Edge-ward Hollow and stone-touched herds are T03's).
+  objective, presence); and its rewards per player (XP, units, items, reputation). The catalog ships one event, the
+  Hollow tide as the framework runs it (Tier 5, hourly, 20 minutes, waves of the world's predators and territorial
+  creatures), a stand-in that P2.E21.T03 replaces with the full event (its Edge-ward Hollow and stone-touched herds).
 - **Schedule** (`eventWindow`): windows are whole periods of world time from an offset per system (`windowOffset`, drawn
-  from the system and the event when `stagger`), so every server agrees on them and a restart finds the one it left. The
-  `EventService` (the gateway's, `ws.events`, on its own 250 ms timer) runs, in every loaded zone with players whose tier
-  is in an event's range, one occurrence per window from its announcement until 30 s before its end. Zones without
-  players open none. `run(def, zone, {startsIn})` and `startNow(id)` run one off its schedule (development and tests).
+  from the system and the event when `stagger`), so every server agrees on them. The `EventService` (the gateway's,
+  `ws.events`, on its own 250 ms timer) runs, in every loaded zone with players whose tier is in an event's range, one
+  occurrence per window from its announcement until 30 s before its end. Zones without players open none. A window that
+  began before the service was made (the server restarted mid-window) is skipped and logged (`event window skipped`):
+  nothing records whom its occurrence paid, so running it again could pay them twice. `run(def, zone, {startsIn})` and
+  `startNow(id)` run one off its schedule (development and tests).
 - **Place** (`events/place.ts`): a spot on dry, open ground of the system's first world (by body order) whose species at
   the zone's tier include the enemies, drawn from the system's seed, the event and the window; the occurrence waits
   while that world's ground is planned (fauna's planner) and is dropped when no world can host it. The place is a sphere
@@ -1516,13 +1528,21 @@ own shape (the station raid, the full Hollow tide, the superstorm rescue, the co
   fullest with room, else a new one), so an instance holds 12 and a 13th opens another (`EVENT_PLAYERS_MAX`, the event
   kind's cap; a test holds them together). Nobody is moved. A player in another phase (a bay, a story step) is left
   where it is; one answering a beacon into an instance (`PhaseManager.enter`, §21) takes part like any member. A
-  participant placed is reported to its quests as `enter {place: 'event:<id>'}`.
+  character takes part in one instance of an occurrence: from its first contribution there (placed, present, a hit) that
+  instance is its own until it ends. Each instance's phase is guarded (`PhaseManager.guard`, §6.1), so neither placement
+  nor a beacon puts in it a character the occurrence has paid or has in another instance (a beacon's answer is refused
+  `full`); one that left its instance past the grace is put back in that one when it comes back to the place (by
+  `enter`), and waits outside while it is full. A participant placed is reported to its quests as `enter {place:
+  'event:<id>'}`.
 - **Scaling** (`eventScaling`, pure and tested): an instance's level is the players it holds, members and kept places,
   1–12. Each wave is sent at the level then: `size × (1 + sizePerPlayer × (level − 1))` creatures (fauna's `spawnHerd`,
   in herds of at most 5 round the spot, through the zone's creature cap: a wave with no room waits 2 s), each made the
   instance's own (`PhaseManager.adopt`, so no other instance or the shared world sees it, and it goes with the phase)
   and its health scaled by `1 + healthPerPlayer × (level − 1)` (`ZoneCombat.scaleHealth`). Combat never lets a shot
-  reach another phase's creature (§20). A wave is cleared when none of it is left alive (killed, or gone with its cell).
+  reach another phase's creature (§20). Fauna keeps a cell holding a phase's creatures loaded (it may sleep while nobody
+  is near, but neither unloads nor gives way to the creature cap), and runs them apart: they notice the phase's members
+  only and prey only on its creatures, and the shared world's herds neither hunt nor flee them. So a wave is cleared
+  only when all of it has been killed.
 - **Contribution** is kept per instance and character: the health its hits took from the instance's enemies (combat's
   `hit` news, counted only while the attacker is a member of that instance), objective points (`credit(zone, entity,
   points)`, for events whose objectives are not enemies) and the seconds it spent inside the place while the instance
@@ -1537,24 +1557,22 @@ own shape (the station raid, the full Hollow tide, the superstorm rescue, the co
   `expired`), or when the occurrence's window ends (`expired`). It pays a pool of the per-player rewards times the
   participants paid (`rewardPool`; an expired instance pays the fraction of its waves cleared), split by share with
   `splitByDamage` (as a kill's loot is): XP into progress (the entity's level and the skill view follow), units and items
-  into the inventory (what does not fit is lost), reputation through the rep model's hook (`reputation.grant`; until
-  P2.E18.T01 wires it, reputation goes unpaid, logged at debug). Every participant is sent `event_reward`, its share 0 and
+  into the inventory (what does not fit is lost), standing through the reputation service (`grant`, reason
+  `event:<id>`, §24; `rep` says what it moved, held to 0–1000). Every participant is sent `event_reward`, its share 0 and
   nothing when it was not paid; a character out of play by then earns nothing. Its phase closes (the remaining creatures
   despawned through fauna); those it paid, and every participant of a completed instance, are not placed in that
   occurrence again (one that only passed through, in an instance it left empty, may come back). `subscribe` hears every
   instance's payouts (the economy's income measures, P2.E19.T05).
 - **The end.** An occurrence ends with its window, or as soon as every instance it opened has completed; `ended` says
   `completed` only then. Instances still going end `expired`. The next window brings the next occurrence.
-- **Persistence.** None: occurrences, instances and contribution are in memory. Windows are on the world clock, so a
-  restart runs the window's occurrence afresh (announced again, contribution lost); rewards already paid are in the
-  characters' saved state.
+- **Persistence.** None: occurrences, instances and contribution are in memory. A restart loses the window's occurrence
+  (contribution lost, the window skipped; see Schedule); rewards already paid are in the characters' saved state.
 - **Bench.** The event trial (15 players on foot at an event's place: an instance of 12 and one of 3, each fighting its
   own scaled waves at the base gun's rate) keeps the tick, the event service's sweep and the hits included, under the
   10 ms p95.
 - **The client** (`net/worldEvents.js`): `net.worldEvents` keeps the events it was told of, its standing in one and its
   last reward, and queues for the HUD a banner as an event is announced, starts and ends, and toasts as the player
   joins an instance, as its scaling changes and as it is paid (`HUD.updateEvents`). A full event panel is later work.
-- **Not here.** Creatures do not fight back until P1.E08.T02, and fauna ignores players `phases.hiddenFromShared` hides
-  (§6.2), which a sealed event member is: when creatures attack, an instance's own creatures must take its members as
-  prey. Pirates (P1.E08.T05), NPC convoys and the Hollow are the later events' enemies; an admin command to run an event
+- **Not here.** Creatures do not fight back until P1.E08.T02 (an instance's own creatures already go for its members
+  only). Pirates (P1.E08.T05), NPC convoys and the Hollow are the later events' enemies; an admin command to run an event
   is not wired (the service's `run` is there for it).
