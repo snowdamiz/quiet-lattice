@@ -29,6 +29,8 @@ import { questAdmin } from './quests/admin.ts';
 import { QuestRuntime } from './quests/runtime.ts';
 import { questCutsceneNotify, questCutscenePermit, questCutscenes } from './quests/cutscenes.ts';
 import { skillRewardHooks } from './quests/skills.ts';
+import { reputationRewardHooks } from './reputation/quests.ts';
+import { ReputationService } from './reputation/service.ts';
 import { skillServiceIn } from './skills/component.ts';
 import type { SkillService } from './skills/service.ts';
 import { WorldService } from './world/service.ts';
@@ -134,6 +136,8 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const zones = new ZoneManager({ clock, world, log, tickHz: config.TICK_HZ, movement: opts.movement, metricsEveryMs: tooling.metricsMs });
   const inventory = new InventoryService((err) => log.error({ err }, 'inventory listener failed'));
   const progress = new CharacterProgress();
+  // (gains earned by the Count meter's counted actions read the Count for the underdog's bonus, DESIGN 16.2)
+  const reputation = new ReputationService({ count: () => world.state().count, log });
   // (parties are the gateway's social service and skills the registry's skill service, both made below: read only once
   // characters are in play)
   const quests: QuestRuntime = new QuestRuntime({
@@ -143,14 +147,20 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     clock,
     log,
     parties: { partyIdOf: (id) => ws.social.partyIdOf(id) },
-    rewards: skillRewardHooks((): SkillService | undefined => skillServiceIn(persistence.registry)),
+    rewards: {
+      ...skillRewardHooks((): SkillService | undefined => skillServiceIn(persistence.registry)),
+      ...reputationRewardHooks(
+        () => reputation,
+        (id) => quests.catalog(id),
+      ),
+    },
     cutscenes: questCutscenes(() => cutscenes),
     dev: config.NODE_ENV !== 'production',
   });
   const persistence: CharacterPersistence = new CharacterPersistence({
     ...opts.persistence,
     store: pgCharacterStore(database.db),
-    registry: coreRegistry({ zones, clock, movement: opts.movement, inventory, ships: new ShipLoadouts(), progress, quests, log }),
+    registry: coreRegistry({ zones, clock, movement: opts.movement, inventory, ships: new ShipLoadouts(), progress, reputation, quests, log }),
     log,
   });
   // (a development server lets a client ask for a dev cutscene by itself; production only what the quest engine allows)

@@ -118,12 +118,15 @@ describe('movement authority over the wire', () => {
     await new Promise((r) => setTimeout(r, MOVEMENT.correction.graceS * 1000));
     const fast = flightCaps(shipStats(DEFAULT_LOADOUT.ship!), 'space').allowed * 3;
     const from = valid.pos as Vec3;
+    const flewFrom = p.seq + 1;
     await p.fly([from, [from[0], from[1], from[2] + 2000]], [fast]);
     await waitFor(() => p.corrections.length > 1, 5000, 'a correction for speeding');
     const speeding = p.corrections[1]!;
     expect(speeding.mode).toBe('ship');
-    // back to where the too-fast window began: no further along than the first pose it flew from there
-    expect(speeding.pose.pos[2] - from[2]).toBeLessThan(fast * 0.15);
+    // back to where the too-fast window began: no further along than the first pose it flew from there (how far that
+    // first pose was depends on how late this process's 50 ms timer fired, which a loaded machine stretches)
+    const first = p.sent.find((s) => s.seq === flewFrom)!.pose;
+    expect(speeding.pose.pos[2] - from[2]).toBeLessThanOrEqual(first.pos[2] - from[2] + 1e-6);
     expect(warnings.some((w) => w.msg === 'movement corrected' && w.obj.entity === p.entityId && w.obj.rule === 'speed')).toBe(true);
 
     // and keeps cheating: refused with `kicked`

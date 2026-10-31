@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), reputation (`/reputation`, §24), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -40,6 +40,8 @@ persistence/        character state: the component registry, Phase 1's component
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
+crafting/           CraftingService and RecipeBook: fabricator requests checked, each character's recipes and its component (§23)
+reputation/         ReputationService: each character's standing by faction, ranks and titles, its component, the quest hooks (§24)
 sim/                server-side systems added by later tasks: movement validation, combat…
 admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
 cli/                the developer CLI (`pnpm --filter @astra/server cli -- <command>`): over the admin channel, or --direct
@@ -111,8 +113,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
   first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
-  11 beacons, 12 analysis); a unit test pins the number and checks the history, so two branches bumping to the same
-  number conflict at merge rather than share it.
+  11 beacons, 12 analysis, 13 crafting, 14 reputation); a unit test pins the number and checks the history, so two
+  branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -122,21 +124,23 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
   frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21), `analyze {seq,
-  time, target}` (§22). Each socket's message budget is 60 a second with a burst of 120: input and acks take 40, leaving
-  room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and beacon requests, mining hits
-  (an honest client sends 4 a second, and 8 is the most a character may), shots (the base gun's 8 a second at most,
-  never while mining) and analyses, and the burst absorbs the backlog of a stall. Chat, invites, raising beacons, mining
-  hits, shots and analyses have smaller limits of their own (§13, §18, §20, §21, §22).
+  time, target}` (§22), `craft {seq, op}` (§23). Each socket's message budget is 60 a second with a burst of 120: input
+  and acks take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and
+  beacon requests, mining hits (an honest client sends 4 a second, and 8 is the most a character may), shots (the base
+  gun's 8 a second at most, never while mining), analyses and fabricator requests, and the burst absorbs the backlog of
+  a stall. Chat, invites, raising beacons, mining hits, shots, analyses and fabricator requests have smaller limits of
+  their own (§13, §18, §20, §21, §22, §23).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot`, `xp` (§20), `notice` (toasts) and `party` (party news), `world {season, count, edgeX, tiers, serverTime}` (sent right after
+  `loot`, `xp` (§20), `notice` (toasts), `party` (party news), `rank` and `title` (§24), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message, party request or beacon request
   not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
   reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
-  id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), and
+  id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), `craft
+  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `reputation {reputation}` (§24), and
   snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
@@ -199,6 +203,21 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   world, index, name, temperament, threat, body plan, Bond eligibility, when first analyzed) and `xp`, `known` with
   `species`, or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `unknown`, `dead`, `world`,
   `range`, `busy`, `los`, `full`). `seq` counts from 1 and increases; `time` is checked only for staleness.
+- **Crafting** (protocol 13, §23): a client sends `craft {seq, op}`, `op` one of `make {recipe, count, at}` (`count`
+  1–100 crafts at `at`, the `station`'s fabricator or the `ship`'s) and `learn {recipe}` (from its recipe item), a
+  strict shape: no client says what a craft uses or makes. The server answers each with `craft {seq, op, recipe,
+  result}`: `made` with `item` and `count` (what reached the inventory; the inventory itself goes out as `inventory`
+  state, before the answer), `learned`, or `refused` with `reason` (`stale_seq`, `rate`, `zone`, `unknown`, `not_known`,
+  `known`, `no_item`, `place`, `fabricator`, `materials`, `no_room`). `recipes {known}` (recipe ids, each once, at most
+  256) is sent after `skills` on join and whenever a recipe is learned, before the answer that learned it. Recipe ids
+  are table-id shaped (48 characters); one the table lacks is answered `unknown`, not dropped. `seq` counts from 1 and
+  increases.
+- **Reputation** (protocol 14, §24): no client message. The server sends `reputation {reputation}`, the view `{factions:
+  [{faction, rep, rank}], titles: [{title, faction?, rank?, quest?}]}` (every faction of the table in its order, standing
+  0–1000, the rank's id or null; the titles earned by name, a rank's with its faction and rank, a quest's with its quest),
+  after `recipes` on join and whenever the server changes it, after that change's events: `rank {faction, rank, from}`
+  (one per faction whose rank a change moved, from the rank before to the rank after; ids or null) and `title {title}`
+  (a title earned).
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -445,8 +464,11 @@ load, `applyLayout(saved, layoutFor({ship, skills}))`; kept as saved, and logged
 ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a saved pose inside the ground, in the
 hangar's shell, docked off a pad or on foot with no ship to board is not restored), `codex` (§22: the species analyzed,
 per world, `v` 1, held by the codex service; reconciled with the species data on load; refused, never replaced, when
-unreadable) and, when the server has a quest runtime, `quests` (§17: held by the runtime; refused, never replaced, when
-unreadable).
+unreadable), `recipes` (§23: the recipes the character knows, `v` 1, held by the recipe book; the starting recipes by
+default; reconciled with the recipe table on load; refused, never replaced, when unreadable), `reputation` (§24: standing
+by faction and the titles earned, `v` 1, held by the reputation service; none by default; reconciled with the faction
+table on load; refused, never replaced, when unreadable) and, when the server has a quest runtime, `quests` (§17: held by
+the runtime; refused, never replaced, when unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -464,11 +486,18 @@ unreadable).
   and on graceful shutdown (`server.close()`, which SIGINT and SIGTERM run: sessions close and save, everyone still in play
   is captured, and the queue is written within 5 s). While writes succeed, a crash loses at most the last interval; while
   they fail (the database down, retries backing off, a backlog) it loses everything not yet written.
-- A capture is synchronous and small: each component's live value, checked against its schema (a value that fails is
-  logged and its stored one kept), and only the components whose value changed since the last capture, at a revision one
-  above it. Writes never block a tick: the queue holds at most one save per character (a newer capture merges into the
-  waiting one), one writer drains it in batches of up to 64, one `UPDATE … FROM (VALUES …)` statement each, which merges
-  the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
+- A capture is synchronous and small: each component's live value, checked against its schema (a value whose `save`
+  throws or that fails is logged and its stored one kept), and only the components whose value changed since the last
+  capture, at a revision one above it. The components a capture takes go in one row update, but a component it cannot
+  take does not stop the others, so a change spanning two components is written whole only when both are taken. A
+  component that must never be written without another names it in `writtenWith` (either side naming the other is
+  enough): when a capture cannot take one of them, it holds the others back too (logged at error, their stored values
+  kept, their changes left for the next capture). The reputation is written with the quest log (§24), so owed quest
+  reputation settled into it lands with the owed list it leaves, or neither does: a crash, or a quest log that cannot be
+  saved, leaves the row as it was, and the next join settles it again. While one of them cannot be saved, neither is,
+  and leaving play then loses the changes of both. Writes never block a tick: the queue holds at most one save per
+  character (a newer capture merges into the waiting one), one writer drains it in batches of up to 64, one
+  `UPDATE … FROM (VALUES …)` statement each, which merges the entries into `state` (`state || new`, so keys this server does not know survive), sets the columns it carries and
   raises `revision`, only where the row's revision is lower, so a save older than what the row holds is skipped (and
   logged as an error). A failed write is logged and retried with backoff (0.5 s doubling to 30 s), merged under anything
   captured since; a failed batch retries one character per statement, so one bad row holds back no other.
@@ -495,7 +524,7 @@ unreadable).
   it), then the edit is made, the character's joins held throughout. Like a save, an edit assumes one process holds the
   character (the CLI's direct mode is refused while a server answers).
 
-**Adding a component** (quests P1.E09.T01, flags, reputation): export `xComponent(service)` returning a
+**Adding a component** (quests P1.E09.T01, reputation P2.E18.T01, flags): export `xComponent(service)` returning a
 `CharacterComponent` with its key, `v: 1`, the zod schema of the stored value, `default`, `load`, `save` and `unload`
 (`onInvalid: 'refuse'` for anything a player earned), and register it in `coreRegistry` after the components it reads and
 before those that read it (skills, P1.E07.T01, go before the ship and the inventory, which pass the owned nodes to
@@ -513,10 +542,29 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 - **Origin.** The client calls the gateway on its own origin: `/auth/*`, `/characters`, `/health`, and the socket at `/ws`
   (`api.js`, `gameSocketUrl`). In development Vite proxies those paths to `pnpm dev:server` (`vite.config.js`;
   `ASTRA_SERVER` points them at another server), as whatever serves the client in production will.
-- **Sign-in.** `api.js` wraps register, login and the characters API, checking bodies with the shared schemas. The session
-  token is kept in `sessionStorage` (`session.js`: a reload goes straight to the character list, closing the tab signs
-  out), beside a one-shot notice for the title. `localStorage` holds only `next-horizon-settings` (look, sound, graphics);
-  the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a browser still has it.
+- **Sign-in.** `api.js` wraps register, login, the dev login and the characters API, checking bodies with the shared
+  schemas (a refusal keeps the server's code and words, and a rate limit's `Retry-After`). The session token is kept in
+  `sessionStorage` (`session.js`: Play in a tab already signed in goes straight to the character list, closing the tab
+  signs out), beside a one-shot notice for the title. There is no refresh: a token runs 7 days, the client reads its
+  `exp` claim and asks for a new sign-in a minute before it runs out, and a `401` from `/characters` or an `auth`
+  refusal on the socket forgets it and goes back to the sign-in. `localStorage` holds only `next-horizon-settings` (look,
+  sound, graphics); the demo's old save (`next-horizon-save-v2`, `astra-nullius-save-v2`) is removed at boot wherever a
+  browser still has it.
+- **The account screens** (`ui/Account.js`, P1.E04.T05) take the title's left column when Play is pressed, over the
+  title shot: sign in or create an account; the account's characters (people, level, home; a new account's list is
+  empty, a new character offered); a new character (a name and a people; the full creator is P1.E05.T05's); entering.
+  `AccountFlow` holds the steps without a DOM (unit tested): one request at a time, an answer that comes after the
+  player moved on is dropped (Esc from a character still being made reads the list again once the server has answered),
+  a refusal is shown on the field it is about (the server's words: wrong password, taken or reserved name, limits, rate
+  limits), and a typed password leaves the page once sent, with its step, or on closing. Entering calls
+  `Game.enterWorld` and shows Net's states; a failure before the welcome goes back to the list with why, and Esc lets the
+  socket go. The first welcome, and everything the server says after it, is held (`holdFirstWelcome`) while Enter is
+  ticked and the title and its screens fade to black (at once in a hidden tab, whose animations do not run; at most
+  10 s); the game then places the character, takes what came meanwhile in order (a listener that throws is reported
+  and the rest still go), and its place fades up. Once the welcome is held Esc no longer cancels, and the title keeps
+  its own clock until the welcome is taken. By keyboard: Play has the focus once the title
+  is ready, Enter submits, Esc goes back a step, the arrows walk the characters and the peoples, N makes a new
+  character. The dev login's call is compiled out of production builds.
 - **`Net`** (`Net.js`) owns the socket. `connect()` sends `hello {version: PROTOCOL_VERSION, token}` and `join` together
   as the socket opens (the gateway handles a socket's messages in order). States: idle → connecting → joining → joined →
   closed. A connection that drops after a welcome goes to reconnecting and tries again after 0.5 s doubling to 30 s (each
@@ -527,8 +575,8 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
   nobody listens for (`party`, a chat or party `denied` …) are dropped quietly, and so are snapshot fields and entity
   kinds nothing reads yet (a `mob`'s `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21)
-  keeps the call-for-aid beacons it is sent. While the connection is down after a welcome, a line at
-  the top of the screen says so.
+  keeps the call-for-aid beacons it is sent, and `net.reputation` (`reputation.js`, §24) the character's reputation.
+  While the connection is down after a welcome, a line at the top of the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
   onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
   over on every welcome (a restarted server counts its ticks from 0 again). Acknowledgements go out at most once a tick
@@ -571,7 +619,11 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 - **Dev sandbox.** In dev builds only, a scenario hash (`#sandbox`, `#foot`, `#fly`, `#land`, `#station`, `#dock`,
   `#space`, `#review:…`) or `window.dev.boot()` starts `Game.startSandbox`: offline, a new pilot by the home Waystation,
   no persistence of any kind, so the smoke specs, captures and asset reviews stay hermetic. The game itself always goes
-  through the server.
+  through the server. With `?dev` (`?dev=<name>`, `&people=<id>`) a scenario goes through the server instead, signed in
+  by the dev login (§16) as `dev-<name>` (the scenario's name by default) and entered at once: it starts where the
+  server holds the character (movement authority refuses a client that puts itself elsewhere), `#foot` and `#dock`
+  getting out of a docked or landed ship; the dev CLI's `teleport` puts it anywhere else. `#review` and `#cutscene`
+  stay offline.
 - **Remote entities** (P1.E04.T02) render from the store with 100 ms interpolation delay and up to 250 ms extrapolation,
   frame-aware (interpolate in the entity's frame; on a frame change, re-express the buffered poses).
 
@@ -868,7 +920,7 @@ as Bearer tokens).
   password, making it on first use with a random password nobody knows, and with it a character "Dev <Name>" (three
   letters added on a name clash; the reserved word marks it as a dev character, and only this route bypasses the name
   rules) of `people` (thalune by default; another people's gets a character of its own). It answers `{token, accountId,
-  character, created}`, so a client dev scenario (`#foot`, `#fly`, …; P1.E04.T05) goes through the real server in one
+  character, created}`, so a client dev scenario (`?dev#foot`, `?dev#fly`, …; P1.E04.T05, §9) goes through the real server in one
   request: dev login, then `hello` with the token and `join` the character. Rate-limited with `/auth/*`; every dev login is
   logged at warn. Only `dev-` accounts are reachable this way, and registration refuses `dev-` usernames (§5), so no
   player's account is.
@@ -889,6 +941,7 @@ as Bearer tokens).
   (near=<character> | body=<i> at=<x,y,z>)` (FaunaSim.spawnHerd, §6.2) and `spawn <system> entity kind=npc|prop
   frame=<f> at=<x,y,z> [name]`, `despawn <system> <entity>` (not players or creatures), both only in a loaded zone;
   `set-quest-step <character> <quest> <step>`; `set-skill-points <character> <n>` (SkillService.setPoints, §14);
+  `set-rep <character> <faction> <value>` (standing 0–1000, `ReputationService.set` in play, `setStanding` out of it, §24);
   `mute <account> [seconds]` (3,600 by default, a week at most) and `unmute <account>` (SocialService, §13). Characters
   and accounts are named by id or by name, ignoring case. Frames are `station`, `inertial`, a body index or a frame id;
   poses are `docked` (station frame), `orbit[:alt]` (above a body's sea level along +x, by default a quarter of its
@@ -913,9 +966,9 @@ as Bearer tokens).
   session's messages (its inputs in the old system's frames are no strikes) and closes the socket without a refusal
   (code 4001, `MOVED_CLOSE_CODE`). The client's Net reconnects as after any dropped connection, and its welcome places
   it where the server now holds it (`Game.onWelcome`, §9).
-- **Direct mode** (`--direct`): with no server running, teleport, grant, set-quest-step and set-skill-points run in the
-  CLI itself against `DATABASE_URL`, through the same admin service and `persistence.edit`, printing their audit lines
-  on stderr. One process holds a character at a time (§8), so direct mode is refused while anything answers at the
+- **Direct mode** (`--direct`): with no server running, teleport, grant, set-quest-step, set-skill-points and set-rep run
+  in the CLI itself against `DATABASE_URL`, through the same admin service and `persistence.edit`, printing their audit
+  lines on stderr. One process holds a character at a time (§8), so direct mode is refused while anything answers at the
   server's `HOST:PORT/health`; for a character saved in the last 60 s (`saved_at`: a server elsewhere on the same
   database may hold it; an edit counts as a save too) unless `--force`; and in production unless
   `ASTRA_ADMIN_IN_PRODUCTION=1`.
@@ -952,8 +1005,10 @@ counter (`counter`, default the step's id), so two steps can share one (Forty Na
   when it and its step began, the anchor of a step round the player, whether a dialogue's speaker was addressed; at most
   25), `done` (quest id → times finished and when last; bounded at 4,096: repeatable quests past their wait are forgotten
   first, then the oldest repeatable ones, and only then, logged as an error, the oldest once-only one, so saving never
-  fails), `flags`, `owed` (rewards for systems that cannot take them yet, reputation P2.E18.T01 and titles, and items
-  that did not fit, kept until claimed with `QuestRuntime.takeOwed` or a hook; owed items are retried on join) and `paid`
+  fails), `flags`, `owed` (rewards a system declined: reputation and titles held before the reputation service existed
+  or while it did not hold the character, skill points and nodes the skill service refused, and items that did not fit,
+  kept until claimed with `QuestRuntime.takeOwed` or a hook; owed items are retried on join, and owed reputation and
+  titles settled on join, §24) and `paid`
   (per quest, the step rewards and answers' reputation already paid: kept across an abandon so taking a quest up again
   pays none of it twice, and cleared when the quest is finished, so a repeat its rule allows pays anew). v1 stored step
   indices and is migrated through the catalog (an index past the steps: the last). On load the runtime reconciles the
@@ -972,7 +1027,8 @@ counter (`counter`, default the step's id), so two steps can share one (Forty Na
   to its progress, levelling its entity; units and items through the inventory service; flags into the state; skill
   points and node unlocks through the skill service (`skillRewardHooks` over `skillServiceIn(registry)`: `grantPoints`,
   `unlock(…, {kind: 'quest', quest})`, and `refresh` when a quest's XP raises the level); reputation and titles through
-  hooks, else owed. A completion starts any auto quest it opened. Quests start by `startQuest` (dev, tests), auto quests
+  the reputation service's hooks with the quest (`reputationRewardHooks`, §24), else owed; rank prerequisites read its
+  `rankOf`. A completion starts any auto quest it opened. Quests start by `startQuest` (dev, tests), auto quests
   on join, and `offer` then the client's `accept` (givers: the board, P1.E09.T06, and NPCs, P1.E09.T05, call `offer`).
 - **Instanced steps** (`phase`): a story phase (§6.1) keyed `quest:<quest>:<scene or step>` at the step's place, or round
   where the player was when the step became live (`at: 'player'`, its anchor saved), placed under `partyIdOf`, so a party
@@ -1270,3 +1326,138 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   banner (the codex line, Bond, the XP), a known one's toast, a refusal's reason. Until the client draws the server's
   creatures (P1.E08.T09) it has no server creature to aim at: online, its own demo herds show their names but cannot be
   analyzed; the dev sandbox still analyzes its own herds for its quest book, and pays nothing for it.
+
+## 23. Fabricators (`packages/server/src/crafting`, `@astra/shared/crafting`)
+
+DESIGN 15.7, 15.3, 10.1; P1.E13.T05. Crafting is the main use for raw materials, and the server makes every craft: a
+client asks, the server checks the recipe, where the player is and what it holds, and changes the inventory itself. The
+gate is recipes and materials, not a skill tree.
+
+- **Recipes are items.** Every recipe of the table (`data/recipes.ts`) has an item `recipe_<id>` (`recipeItemId`, kind
+  `recipe`, stacking, so vendors and the market can sell several; `data/items.ts`). Using one (`learn`) uses it up and
+  writes the recipe into the character's knowledge for good; one already known is refused `known` and the item kept.
+  What a character knows is the `recipes` persistence component (§8, `{known: [ids]}`, v1) held by the `RecipeBook`
+  (`crafting/book.ts`, made by `coreRegistry`; the gateway finds it with `recipeBookIn`). A new character, or one saved
+  before crafting, knows `STARTING_RECIPES`: Phase 1's consumables (warp cell, pulse fuel cell, oxygen and sodium
+  cartridges, flak ammo), so the warp cell that replaces the demo's 1,800-unit purchase is craftable from the first
+  Waystation. Vendors, chains, drops and vaults hand out the rest (P2.E20.T01). On load the stored list is reconciled
+  with the table (`reconcileKnown`: a recipe the table dropped is dropped, one warning); only an unreadable value refuses
+  the join.
+- **Two fabricators** (`makesAt`). A Waystation's makes the item recipes of its line (`fabricators` includes
+  `waystation`) up to Tier 2 (`FABRICATORS`, "Tier 1 stations craft Tier 0–2 recipes"): every consumable but the
+  catalysts, the Tier 1–2 modules. The ship's own makes only the field-craftable recipes (`field`: pulse fuel, both
+  cartridges, flak ammo; torpedoes from a Tier 2 system, by the zone's tier), never a warp cell. Neither assembles a hull.
+  Capitals', sanctuaries' and the Scrapyard's fabricators come with those places (P1.E10.T02, P1.E11.T05, P2.E20.T01).
+- **Where.** As the zone believes the player (its entity's frame, position and mode; movement authority's, §7): the
+  station's fabricator needs the player in the zone's Waystation frame, docked (in its ship on a pad) or on foot within
+  `STATION_FABRICATOR.reachM` (4.5 m) of the fabricator terminal's use point on the trade deck (`data/station.ts`,
+  1.2 m in front of the kiosk at x −30, z −80 on the 7 m deck; the client builds the kiosk there); the ship's needs it
+  aboard its ship in any mode (`ship`, `pulse`, `landed`, `docked`) or on foot within the boarding reach (9 m) plus 5 m of
+  the ship it left (`MovementAuthority.parkedOf`; a zone without movement authority has none, so on foot it is refused).
+- **A request** (`craft {seq, op}`, §5) goes from the gateway to the `CraftingService` (`crafting/service.ts`), checked
+  cheapest first: `stale_seq`; `zone` (the character's recipes and inventory held); `rate` (4 at once per character,
+  then 2 a second: every request that gets this far spends one, refused for the rate or anything after it or not; a
+  stale number or a character out of play spends none); `unknown` (not in the table); then for `make`: `not_known`;
+  `fabricator`; `place`; and the craft itself. For `learn`: `known`, `no_item`. A craft is instant (no state held between
+  request and result) and all or nothing: the shared `craft(inv, recipe, count)` takes every material from the suit
+  first, then the cargo pods, and adds the output to the suit first, then the cargo, on a copy, and the inventory service
+  applies the result as one change (`InventoryService.transact`, pushed once as `inventory` state). Short of a material
+  it is `materials`; when the output does not fit even in the room the materials leave, `no_room`; either way nothing is
+  used up. Crafts made are logged at debug, lessons at info.
+- **Using what is made.** Warp cells are what the client's warp spends (`Inventory.warpCells`; the warp itself stays the
+  client's until zone handoff, P1.E04.T04). The fabricator replaces the trade panel's 1,800-unit warp cell (DESIGN
+  15.7), which is gone (`pnpm gate:removed` holds it to this task): until the client mines through the server
+  (P1.E13.T06), online players get warp cells only from the starting kit and crash sites. The rest of the demo's `SHOP`
+  list, the 300-unit pulse fuel refill among it, goes with P1.E07.T09, since a crafted pulse fuel cell cannot be used
+  yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
+  once Heat and Charge are the server's, through P1.E07.T02's `refillCharge`, a seam that task adds and that is not on
+  main yet (called with that amount as a cell is used up through `InventoryService.consume`); cartridges restore 60 once
+  the suit's life support and hazard protection are the server's (today the client's `Game.updateSurvival` refills them
+  from raw oxygen and sodium, 40 a time); flak ammo stacks until the Flak Cannon fires on the server (P1.E12.T04,
+  P2.E24.T04). Salvage (a module broken down into a third of its materials, `salvageYield`) waits for modules in the
+  inventory (P1.E12.T04, P2.E20).
+- **The client** (`net/crafting.js`, `ui/Fabricator.js`). `game.crafting` keeps the recipes the server says the
+  character knows, checks a request with the same shared rules (`makeProblem`, `learn`: a refusal they predict is said
+  at once and never sent) and sends it; in the dev sandbox it makes the craft on the client's own inventory with them.
+  The fabricator screen opens at the trade deck's fabricator terminal (E), and with K: docked, the Waystation's; aboard
+  anywhere else, or on foot beside the ship, the ship's. It lists the known recipes this fabricator makes (how many the
+  materials held make, or "missing materials"), the others as made elsewhere, and recipe items held to learn; the
+  selected recipe's materials needed against held, Craft ×n (1 to what the materials make, at most 100); the fabrication
+  runs across the button (0.56 s) and the result or the refusal shows in the line under the columns once both it and the
+  answer are in (the quantity then held to what the materials left make); a recipe learned moves from the recipes to
+  learn into the list.
+
+## 24. Reputation (`packages/server/src/reputation`, `@astra/shared/reputation`)
+
+DESIGN 14.4, 14.2, 14.8, 16.2; P2.E18.T01. A character's standing with each faction of the table (`FACTIONS`: the
+Compact, the Free Reaches, the Chorus and the three cities), its rank there and the titles it has earned. The server
+changes it; no client message does.
+
+- **The rules** (`@astra/shared/reputation`, pure, both ends). Standing runs 0–1000 per faction (`FACTION_RULES`), a
+  faction with none being at 0; every change is held to those bounds in whole points (`clampRep`). The rank is the highest
+  of the faction's three whose threshold (200, 500, 800: the ranks' `rep`) standing reaches (`rankIdAt`, the data's
+  `rankAt`): ranks follow standing down as well as up (DESIGN: "Rep is lost as well as gained"). Titles are earned and
+  kept for good, whatever standing does later: a rank's title (the data's `title`) the first time standing rises
+  through its threshold (`setStanding`: every rank risen through, lowest first; a rank lost and reached again earns
+  nothing more), and a quest's (`rewards.title`, Forty Names' "Unlisted"). DESIGN 14.4 has each rank's 3–4 quest chain
+  end "in a named title"; until the chains exist (P2.E18.T02–T05) the threshold awards it, and a chain's last quest
+  giving it adds nothing. A rank's title is held by its faction and rank id (`{faction, rank}`: the three cities share
+  their ranks' names, and the data's name is the one shown), a quest's by its name (`{title, quest?}`), each once, at
+  most `TITLES_MAX` (128; the table's 18 ranks and room for quests' and seasons'). A quest's title that names a rank's
+  title is that rank's (`questTitle`, `rankOfTitle`: a rank of a faction the quest pays reputation to, else the one rank
+  of the table with that name), so a chain's last quest giving "Hand" never stores a second Hand beside the threshold's;
+  a quest's title is also held already when any title held has its name, and a rank's title takes the place of a
+  quest's title of its name.
+- **Opposed factions.** DESIGN names its opposed effects as acts: "raiding a convoy costs Compact rep, defending one
+  costs Reaches rep". They are data (`REP_ACTS`): `convoy_escorted` (Compact +50, Reaches −25) and `convoy_raided`
+  (Reaches +50, Compact −25), the side helped gaining and the side gone against losing half that (tunable; DESIGN gives
+  no amounts), each with the Count meter tag of its counted action (P2.E22.T01: escorted `feed`, raided `break`).
+  `ReputationService.act(character, act, {scale?})` applies both in one change, its gain earning the underdog's bonus by
+  the act's own tag; the convoy run (P2.E21.T05) is their source. A plain grant moves one faction only: a quest that
+  should cost another faction lists both in its rewards.
+- **The underdog's bonus** (§11, DESIGN 16.2): a gain earned by a counted action (an act, or a grant passed `counted`,
+  the tag of the counted action that earned it) is multiplied by `underdogRepMultiplier(count, tag)` (×1.5 for the side
+  pulling the Count back toward the middle while it sits more than 200 from it), read from the world service's Count;
+  losses never are.
+- **The state** (the `reputation` component, v1, §8): `{rep: {<faction>: 0–1000}, titles: [{faction, rank} | {title,
+  quest?}]}`. A stored faction is any id, so a faction the table later drops still reads: the component's `reconcile`
+  (`reconcileReputation`) drops its standing and the titles of ranks the table no longer has (a renamed rank id is a
+  removal), one warning per character, and the next save writes it; only a value that cannot be read refuses the join.
+  It loads after the recipes and before the quests, and is written with the quest log (`writtenWith`, §8).
+- **The service** (`ReputationService`, `reputation/service.ts`; made by `server.ts` with the world's Count and given to
+  `coreRegistry`, the gateway finds it with `reputationServiceIn`) holds each character in play's value: `grant(character,
+  faction, amount, {reason, counted?})` (a non-finite amount is a RangeError), `act`, `earnTitle(character, title,
+  {quest?, factions?})`, `set` (the admin CLI's), and `standing`, `rankOf`, `meetsRank` and `view` to read. A character
+  out of play is declined (null). Each change is logged (a rank reached or lost at info with its reason, other moves at
+  debug) and its listeners hear one `rank` event for each faction whose rank the change moved (from the rank before to
+  the rank after, however many thresholds it crossed), a `title` event per title earned, and then the view; the gateway
+  sends those to the session holding the character (§5). The view names each title (a rank's from the data) with its
+  faction and rank, or its quest.
+- **Sources.** Quests (§17): their rewards' and dialogue answers' reputation and their titles go through
+  `reputationRewardHooks` (`rep` and `title` with the quest, the title with the factions the quest pays reputation to,
+  `questFactions`; `rankOf` for rank prerequisites); a reward a hook declines is held as owed. Acts (above). The admin CLI's `set-rep <character> <faction> <value>` (§16): in play through `set` (the
+  client hears the change), out of play by `setStanding` on the stored value through `persistence.edit`, both earning the
+  titles of the ranks risen through. Not yet: the convoy run's acts (P2.E21.T05), PvP kills' rep (DESIGN 14.9,
+  P2.E17.T01–T02), world events' participation rep (P2.E21.T01), the Count's other counted actions (anchors and the wall:
+  P2.E28, P3.E34), seasons' titles (P2.E22.T03, through `earnTitle`), the faction chains (P2.E18.T02–T05) and the gates
+  that read ranks (trainers P2.E18.T06, hulls P2.E24.T05, the Void branch's standing gate through the skill service's
+  `meets` hook, P2.E18.T03). Kills on main are fauna's (§20), whose tags name no faction.
+- **Reading ranks at load.** The `skills` component loads (and reconciles) long before the `reputation` component, so
+  while a character's components load the reputation service does not hold it yet and `rankOf` and `meetsRank` answer
+  as for no standing. A standing gate must not be read then: P2.E18.T03's Void gate (the skill service's `meets`) reads
+  reputation only once the character is in play, never from the skills component's `reconcile`, `check` or `load`, or a
+  join would judge every Free Reaches Deckhand as having no standing.
+- **Exactly once.** Nothing in the service is idempotent by itself; each source pays once by its own record, written in
+  the same row update as the standing it paid: the reputation component is written with the quest log or not at all
+  (`writtenWith`, §8). A quest's step rewards and answers are recorded in its `paid` record and a completion in `done`,
+  so a crash before the save, or a quest log that cannot be saved, loses both the record and the standing. Reputation
+  and titles owed from before this task (P1.E09.T01 held them in the quest log) are settled on join
+  (`QuestRuntime.joined` → `settleOwed`, before the auto quests, whose rank prerequisites read the result): each owed
+  `rep` and `title` goes to its hook, oldest first, and leaves the owed list as its hook takes it. The owed list and the
+  standing change together in memory and are written in one save; a crash before it, or a capture that cannot take
+  either of them, leaves the row as it was, and the next join settles it again, once in all. Sources outside the quest
+  log (acts, the admin CLI) write the reputation alone; a reputation held back with a quest log that cannot be saved
+  holds their changes back too.
+- **The client** (`net/reputation.js`): `net.reputation` keeps the last view (`standing(faction)`, `rank(faction)`,
+  `titles`), the rank and title events for a screen to `take()` (the last 16), and logs each change to the console. The
+  reputation screens are P2.E18.T02 onward's.

@@ -738,3 +738,77 @@ Format: task id, question → choice → why.
   adopted); remote-hull texture streaming by screen size moved to P1.E16.T03. → Hero assets ship at 4k within the GPU
   budget. Open: nothing validates that creature and flora exports are unquantized beyond the families setting; the hull
   (P1.E12.T02) and body (P1.E05.T01) branches re-export through this before they merge.
+- **P1.E13.T05** Basic fabricator (`@astra/shared/crafting`, `server/src/crafting`, client `ui/Fabricator.js`,
+  ARCHITECTURE §23) → recipes are stackable `recipe_<id>` items (kind `recipe`, one per recipe in the table, generated
+  text); using one teaches it for good without a fabricator, refused and kept if already known. The `recipes` component
+  (v1 `{known}`) defaults to the starting recipes for new characters and those saved before it, drops unknown ids with
+  one warning, refuses an unreadable value; at most 256 known, ids up to 48 characters. Every character knows the five
+  Phase 1 consumables (warp cell, pulse fuel cell, oxygen and sodium cartridges, flak ammo) from the start, although
+  DESIGN 15.7 makes recipes vendor items: no vendors exist until P2.E20.T01, and the warp cell recipe replaces the
+  1,800-unit purchase. Crafts are server-decided and instant: materials from the suit then the cargo, output to the suit
+  then the cargo, `no_room` judged after the materials free their slots, all or nothing through
+  `InventoryService.transact`; count 1–100; rate 4 at once then 2/s per character, spent by every refusal after the
+  stale-seq and in-play checks. The station fabricator is reached docked on any pad at the zone's Waystation, or on foot
+  within 4.5 m of the kiosk at shared `STATION_FABRICATOR` (trade deck, centre (−30, 7, −80)); a Waystation makes Tier
+  0–2 item recipes (so known module recipes and torpedoes too). The ship fabricator works aboard in any mode, or on foot
+  within 9 + 5 m of the parked ship movement authority holds (refused on foot without it), and makes recipes with a
+  `field` entry at the zone's tier (pulse fuel cell, cartridges, flak; torpedoes from Tier 2); warp cells only at a
+  station. The client names the fabricator (`at`); K opens the one at hand, E at the kiosk. Protocol 13 adds `craft`
+  both ways and `recipes {known}` (after `skills` on join; before a lesson's answer). The demo's 1,800-unit warp cell
+  purchase is deleted, with a `gate:removed` rule: until P1.E13.T06 online players get warp cells only from the starting
+  kit and crash sites. Crafted pulse fuel cells (P1.E07.T02's `refillCharge`), cartridges (whichever task moves life
+  support to the server) and flak ammo (the Flak Cannon) cannot be used yet; warp cells are spent on the client until
+  P1.E12.T05. Station.js gained the box kiosk (outside the task's files). → DESIGN 15.7's consumables line, server-run.
+  Open: capital, sanctuary and Scrapyard fabricators and a recipe-table version guard (P2.E20.T01); the modular
+  Waystation keeps the terminal at `STATION_FABRICATOR` (P1.E11.T02); DESIGN 15.7 may want a note that the Phase 1
+  consumables are known from the start.
+- **P1.E04.T05** Login and character screens (client `ui/Account.js`, `net/{api,session}.js`, ARCHITECTURE §9) → Play
+  opens the account flow in the title's left column: sign in or register → the character list (name, people, level,
+  home system; the summary carries no current location) → a new character (name plus one of the three peoples, Thalune
+  preselected, look `{0,0,0,0}`; the server needs a people now, though P1.E05.T05 builds the creator) → enter. A new
+  account lands on its empty list. A DOM-free `AccountFlow` allows one request at a time, drops answers that arrive
+  after the player moved on, shows the server's refusals on their field (Retry-After on a rate limit), refuses a new
+  character on a full account before asking, and offers to retry a list that failed to load; there is no character
+  delete (no endpoint). Sessions: the JWT in tab-scoped sessionStorage, no refresh endpoint, a new sign-in asked a minute
+  before `exp`, an expired session cleared on Play, a 401 or an `auth` refusal clearing it and returning to sign-in; the
+  typed password is cleared once sent, on step change and on close, and sent only to the login or register endpoint.
+  Entering: a failure before the welcome returns to the list with the reason; the first welcome and every message after
+  it are held, in order and each in its own try/catch, until the title has faded to black (at most 10 s; Esc and close
+  are ignored once held), the title keeping its own clock meanwhile; the world then fades up. Dev scenarios (`#foot`,
+  `#fly`, …) stay the offline sandbox by default; `?dev` (`=<name>`, `&people=<id>`) goes through POST /auth/dev, then
+  hello and join, starting where the server holds the character (`#foot`/`#dock` get out of the ship; anywhere else is
+  the CLI's teleport); dev login is compiled out of production builds and the smoke harness starts its server with
+  `ASTRA_DEV_LOGIN=1`. Keys: Play focused when the title is ready, Enter submits, Esc goes back a step, arrows walk
+  rows, N makes a character; the Controls sheet lists the chat keys. The arrival darkens the top HUD band under the
+  banner and the location line and compass carry their own plates; the pause menu has a shade. The P1.E04.T01 sign-in
+  sheet is removed. Outside the listed files: api.js (`devLogin`, `retryAfter`), capture.ts (`expectedErrors`),
+  online.ts, the online specs (shared helpers), HUD.js and Game.js (one condition). → The Phase 1 exit's "log in, create
+  characters of different peoples" works through the real server.
+- **Plan 0.1 step 5** What happens to a task that fails four visual grades? → one more grade; a PASS merges, and a fifth
+  REVISE merges too, with its open notes filed as follow-up tasks in the plan. → The owner's call (2026-10-31): the three
+  tasks escalated at four REVISE rounds (P1.E07.T02, P1.E04.T02, P1.E15.T03) had passed code review and gated most of the
+  remaining Phase 1 work, so the bar stays and the open notes become tracked work instead of a stall.
+- **P2.E18.T01** Rep model (server `reputation/*`, shared `reputation`, persistence `writtenWith`, protocol 14,
+  ARCHITECTURE §24) → standing is 0–1000 per faction, clamped and rounded to whole points (so ×1.5 rounds half up); a
+  faction with no entry is at 0. Ranks sit at the data's 200/500/800, and a rank and its unlocks are lost when standing
+  falls below the threshold. A rank's title is earned the first time its threshold is reached (the chains that would award
+  it do not exist yet), kept for good, stored by faction and rank id with its shown name from the data. A quest title that
+  names a rank's title becomes that rank's title, looked up first among the factions the quest gives reputation to, else
+  the one rank of that name in the table (Guest, Neighbour and Claimant need the faction); a quest title is held once by
+  name. At most 128 titles (rank titles past that are not kept; a quest's is logged as an error and dropped from the owed
+  list); a stored value names at most 64 factions, more refuses the join. Opposed effects are `REP_ACTS` data only
+  (`convoy_escorted` Compact +50 / Reaches −25, `convoy_raided` the reverse; DESIGN gives no amounts), each act carrying
+  its own Count tag; a plain grant moves one faction. The underdog ×1.5 applies only to counted gains, never to losses or
+  quest reputation. No decay, no daily cap. Owed reputation and titles from P1.E09.T01 settle in `QuestRuntime.joined`,
+  before auto quests, oldest first; exactly-once comes from components declaring `writtenWith` partners (reputation with
+  the quest log): if one of a pair cannot be captured, neither is written and both retry at the next save, and leaving
+  play then loses the changes of both. Reconcile drops standing and rank titles for factions no longer in the table (one
+  warning per character); an unreadable value refuses the join; the component loads after `recipes` and before `quests`.
+  Protocol 14: a `reputation` state after `recipes` on join and after every change, one `rank` event per change (from the
+  rank before to the rank after, however many thresholds it crossed), one `title` event per title, no client message.
+  `set-rep` takes a known faction and 0–1000, in play through the service and out of play through `edit()`, and an
+  admin-set standing earns the titles of the ranks it rises through. The client keeps the last view and 16 rank or title
+  events and has no UI until P2.E18.T02. Outside the brief: server.ts, cli/format.ts, cli/direct.ts, two tests and a
+  comment in shared quests/engine.ts. → DESIGN 14.4's ranks and titles, server-held. Open: the skills component loads
+  before reputation, so P2.E18.T03's Void gate must read reputation only once the character is in play; P1.E09.T01's 256
+  `paid` records mean re-accepting an abandoned quest after 256 others re-pays its step reputation (a P1.E09 follow-up).

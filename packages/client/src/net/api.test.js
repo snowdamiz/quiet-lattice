@@ -1,6 +1,6 @@
 // The gateway's HTTP side as the client calls it (P1.E04.T01): bodies checked both ways, the server's error codes kept.
 import { describe, expect, it } from 'vitest';
-import { ApiError, createCharacter, gameSocketUrl, listCharacters, login, register } from './api.js';
+import { ApiError, createCharacter, devLogin, gameSocketUrl, listCharacters, login, register } from './api.js';
 
 /** A fetch that answers with `status` and `body`, recording what it was asked. */
 function server(status, body) {
@@ -48,6 +48,22 @@ describe('api', () => {
     expect(proxyError.message).toMatch(/cannot be reached/);
     const odd = await listCharacters('tok', server(200, { characters: 'none' })).catch((e) => e);
     expect(odd.code).toBe('bad_response');
+  });
+
+  it("keeps a rate limit's wait from its Retry-After header", async () => {
+    const fetchImpl = async () => ({ ok: false, status: 429, headers: new Headers({ 'retry-after': '12' }), json: async () => ({ error: 'rate_limited', message: 'Too many attempts. Try again in a moment.' }) });
+    const err = await login({ username: 'pilot', password: 'long enough' }, { fetchImpl }).catch((e) => e);
+    expect([err.code, err.retryAfter]).toEqual(['rate_limited', 12]);
+    const plain = await login({ username: 'pilot', password: 'long enough' }, server(401, { error: 'login_failed', message: 'Wrong username or password.' })).catch((e) => e);
+    expect(plain.retryAfter).toBeNull();
+  });
+
+  it('signs in through the dev login, which answers the character too', async () => {
+    const s = server(200, { token: 't'.repeat(40), accountId: 'a1', character: CHARACTER, created: true });
+    expect(await devLogin({ name: 'foot', people: 'ixari' }, s)).toEqual({ token: 't'.repeat(40), accountId: 'a1', character: CHARACTER });
+    expect(s.calls[0]).toMatchObject({ method: 'POST', path: '/auth/dev', body: { name: 'foot', people: 'ixari' } });
+    const off = await devLogin({ name: 'foot' }, server(404, { error: 'not_found', message: 'No route for POST /auth/dev.' })).catch((e) => e);
+    expect([off.status, off.code]).toEqual([404, 'not_found']);
   });
 
   it('finds the game socket on the page origin', () => {

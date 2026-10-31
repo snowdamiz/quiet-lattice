@@ -36,6 +36,25 @@ export function loadSession() {
   }
 }
 
+/** When a session token expires (ms since the epoch), from its `exp` claim; null when it has none or cannot be read. The
+ * client only reads the claim to know when to ask for a new sign-in: the server verifies the token. */
+export function tokenExpiry(token) {
+  try {
+    const part = String(token).split('.')[1];
+    const json = JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '=')));
+    return typeof json.exp === 'number' && Number.isFinite(json.exp) ? json.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Whether a session's token has run out, or will within a minute (sessions last 7 days, ARCHITECTURE §2: there is no
+ * refresh, a new sign-in makes a new one). */
+export function sessionExpired(session, now = Date.now()) {
+  const exp = tokenExpiry(session.token);
+  return exp !== null && exp - 60_000 <= now;
+}
+
 export function saveSession(session) {
   try {
     storage()?.setItem(SESSION, JSON.stringify({ token: session.token, accountId: session.accountId, username: session.username }));

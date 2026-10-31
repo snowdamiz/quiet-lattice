@@ -96,8 +96,13 @@ export class Pilot {
     return this.welcome.serverTime + (performance.now() - this.welcomedAt) / 1000;
   }
 
+  /** The poses it sent, newest last (the last 512), by input `seq`. */
+  readonly sent: { seq: number; pose: Pose }[] = [];
+
   send(pose: Pose, mode: Mode, buttons = 0): number {
     this.last = pose;
+    this.sent.push({ seq: this.seq + 1, pose });
+    if (this.sent.length > 512) this.sent.shift();
     this.sock.send({ t: 'input', seq: ++this.seq, time: this.stamps ? this.time : 0, mode, pose, buttons });
     return this.seq;
   }

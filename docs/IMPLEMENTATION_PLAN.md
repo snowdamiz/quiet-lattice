@@ -13,7 +13,7 @@ The loop is an **orchestrator** that dispatches work to **subagents** (0.9) and 
 2. **Form a batch.** From the eligible set, pick tasks whose `files` do not overlap and whose `done` criteria do not touch the same systems, up to the concurrency cap (0.9.3). Two writers never share a file set.
 3. **Dispatch.** For each task in the batch, mark `[~]`, create its branch and worktree, and brief a worker subagent with the template in Appendix C: the task block verbatim, the DESIGN.md sections under `spec`, the global rules, the art-track rules where relevant, the verify commands and the report format.
 4. **Workers implement and verify.** A worker reads before writing, implements, runs every command under `verify` inside its worktree, and reports. A task with no passing verification is not done.
-5. **Grade.** Every task passes a **code review subagent** on its diff (0.9.5). Every **visual task** (0.10.1) additionally passes the **visual grading subagent** (0.10); while it is there the task is marked `[R]`. A REVISE verdict goes back to the same worker with the grader's notes; the task stays `[R]`. After four REVISE rounds the orchestrator marks `[!]` and escalates to a human with the full review log.
+5. **Grade.** Every task passes a **code review subagent** on its diff (0.9.5). Every **visual task** (0.10.1) additionally passes the **visual grading subagent** (0.10); while it is there the task is marked `[R]`. A REVISE verdict goes back to the same worker with the grader's notes; the task stays `[R]`. After four REVISE rounds the task gets one more grade (the owner's rule, 2026-10-31): a PASS merges, and a fifth REVISE merges too, with its open notes filed as follow-up tasks in this plan.
 6. **Merge.** On PASS from every gate, the orchestrator merges the branch into `main`, re-runs the task's `verify` plus `pnpm typecheck && pnpm test && pnpm smoke` on the merged tree, then marks `[x]`, appends to `docs/PROGRESS.md` (date, task id, worker summary, files touched, grader verdicts), records any spec interpretation in `docs/DECISIONS.md` (task id, question, choice, why), and commits as `P1.E03.T02: <title>`. A merge that breaks `main` is reverted and the task goes back to `[~]` with the failure attached.
 7. **On worker failure after 3 attempts:** mark `[!]`, write the blocker as an indented note under the task, and continue with the rest of the batch. Never mark `[x]` to move on.
 8. **Phase exit:** when every task in the phase is `[x]` and the exit criteria pass, tag the repository `phase-N` and write `docs/PHASE-N-REPORT.md`.
@@ -190,10 +190,10 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 
 ### E04 Client networking
 - [x] **P1.E04.T01 Client net layer and server-held state** · deps: E03.T05 · files: `src/gameplay/Save.js`, `src/Game.js` (`startGame`, `save`), `src/ui/Menus.js` · done: connect, authenticate, pick a character, join the home zone; `Save.js` and every localStorage save path deleted; autosave now means server sync. · verify: smoke with a local server: login → spawn; `pnpm gate:removed` (Save.js).
-- [!] **P1.E04.T02 Remote entities** · deps: T01, E03.T02 · done: remote players and NPC ships rendered from snapshots with interpolation and extrapolation, frame-aware; remote walkers use the body rig once E05.T04 lands (until then they render as their ship when aboard and are hidden on foot, with no stand-in body). · verify: e2e with two headless clients: each sees the other's ship move.
+- [R] **P1.E04.T02 Remote entities** · deps: T01, E03.T02 · done: remote players and NPC ships rendered from snapshots with interpolation and extrapolation, frame-aware; remote walkers use the body rig once E05.T04 lands (until then they render as their ship when aboard and are hidden on foot, with no stand-in body). · verify: e2e with two headless clients: each sees the other's ship move.
 - [ ] **P1.E04.T03 Prediction and reconciliation** · deps: T02, E03.T04 · files: `src/entities/Ship.js`, `src/entities/Player.js` · done: local ship and walker predict; server corrections blended; smoothing tuned. · verify: e2e under 100 ms latency and 2% loss keeps the local/server error under 0.5 m.
 - [ ] **P1.E04.T04 Zone handoff** · deps: T03 · files: `src/universe/Universe.js` · done: the client reads the world service's tier map (the `world` message) and rebuilds a system whose tier changed, so the client's dens and node layers follow the server's Edge (added by the orchestrator, from P1.E04.T02); leaving a system (`LEAVE`/`ENTER`) hands the client to the next zone or a "deep space" zone without a loading screen; the warp sequence hands off too. · verify: e2e flies between two systems and warps; no entity duplication.
-- [R] **P1.E04.T05 Login and character screens** · deps: T01 · files: `src/ui/Menus.js` (title) · done: title → login → character list → create (people picked in E05.T05) → enter; dev scenarios (`#foot`, `#fly`, …) keep working through dev login. · verify: smoke through the flow.
+- [x] **P1.E04.T05 Login and character screens** · deps: T01 · files: `src/ui/Menus.js` (title) · done: title → login → character list → create (people picked in E05.T05) → enter; dev scenarios (`#foot`, `#fly`, …) keep working through dev login. · verify: smoke through the flow.
 
 ### E05 Characters and the three peoples
 - [R] **P1.E05.T01 (art) Shared skeleton and three base bodies** · deps: E14.T02 · spec: DESIGN 5, 19.2 · done: `assets/blend/characters/` with one skeleton, Thalune, Ixari and Ulgani bodies (LOD0 60–150k tris, 4 LODs, 4k PBR), facial blendshapes, six head or crest variants each, four suit sets each. · verify: `pnpm art:validate -- characters`; turntables; review scene. → `[R]`
@@ -211,7 +211,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 
 ### E07 Skill web (Tier I and II)
 - [x] **P1.E07.T01 Skill state on the server** · deps: E02.T07, E03.T05 · spec: DESIGN 9.1 · done: points, unlocked set, bought set, slots, fragment ledger, respec; prerequisite and tier-level validation. · verify: unit and integration.
-- [!] **P1.E07.T02 Heat and Charge** · deps: T01 · files: `src/entities/Multitool.js` (heat), `src/entities/Ship.js` (pulseFuel) · done: server-authoritative meters with the world modifiers (planet type, day, underwater), overheat lockout, Charge regen in sunlight; HUD readouts. · verify: unit tests of the cooling table; smoke HUD.
+- [R] **P1.E07.T02 Heat and Charge** · deps: T01 · files: `src/entities/Multitool.js` (heat), `src/entities/Ship.js` (pulseFuel) · done: server-authoritative meters with the world modifiers (planet type, day, underwater), overheat lockout, Charge regen in sunlight; HUD readouts. · verify: unit tests of the cooling table; smoke HUD.
 - [ ] **P1.E07.T03 Ability runtime** · deps: T02, E06.T02 · done: cast request → validation → effect → replication → client VFX; cooldowns; keys 1–6 on foot, 1–4 in flight; LMB stays tool/gun. · verify: integration casts a test ability from each slot.
 - [ ] **P1.E07.T04 Gravitic I–II** · deps: T03 · done: Pull, Heavy Footing, Tractor Beam, Slam, Well, Dense Bones, Mass Sense, Inertial Brake, Pull Many per DESIGN 9.2. · verify: one integration test per node (Pull moves a mob 25 m; Well slows 60%; Slam knocks down in radius).
 - [ ] **P1.E07.T05 Thermal I–II** · deps: T03 · done: Lance (the beam as damage), Tempered Core, Focused Lasers, Flare, Sear, Vent, Hot Hands, Ablative Plating, Chain. · verify: per-node tests.
@@ -281,7 +281,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [x] **P1.E13.T02 Nineteen resources** · deps: E02.T07 · files: `src/gameplay/Flora.js` (`DEPOSITS`, resource plants) · done: inventory, icons and node types for the ten new resources placed on their worlds by the shared scatter spec. · verify: golden scatter counts per world type; smoke.
 - [ ] **P1.E13.T03 Station prices, buy and sell** · deps: T02, E11.T04 · files: `src/gameplay/Inventory.js` (`RESOURCES`) · done: per-station prices from base × tier factor (static in Phase 1), buy at 1.25×; the flat price table deleted. · verify: integration; `pnpm gate:removed`.
 - [ ] **P1.E13.T04 Payout rebalance** · deps: T03 · spec: DESIGN 15.6 · files: `src/gameplay/Structures.js`, `src/Game.js` (discoveries) · done: site and discovery payouts cut to a third at Tier 0 and scaled by tier; XP added. · verify: unit table test.
-- [R] **P1.E13.T05 Basic fabricator** · deps: T02 · spec: DESIGN 15.7 · done: consumable recipes (warp cell, pulse fuel cell, cartridges, flak ammo), recipe items, station and ship fabricators. · verify: integration.
+- [x] **P1.E13.T05 Basic fabricator** · deps: T02 · spec: DESIGN 15.7 · done: consumable recipes (warp cell, pulse fuel cell, cartridges, flak ammo), recipe items, station and ship fabricators. · verify: integration.
 
 ### E14 Art pipeline (parallel track)
 - [x] **P1.E14.T01 Validation and export tooling** · deps: E01.T02 · spec: DESIGN 19.1, 19.4 · files: `tools/blender/validate.py`, `tools/blender/export_<family>.py`, `pnpm art:*` · done: validation of naming, triangle budgets by class, LOD count, material set, scale references; export scripts per family that bake and write `.glb`; CI hook. · verify: run against the demo's exported `.glb` files reports the expected failures.
@@ -331,7 +331,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E17.T04 War zones** · deps: E28.T04 · done: war-zone volumes around the three anchors with no bounty and faction flagging. · verify: integration.
 
 ### E18 Factions and reputation
-- [ ] **P2.E18.T01 Rep model** · deps: P1.E03.T05 · spec: DESIGN 14.4 · done: per-faction rep 0–1000, ranks at 200/500/800, gains and losses from events, titles. · verify: unit and integration.
+- [x] **P2.E18.T01 Rep model** · deps: P1.E03.T05 · spec: DESIGN 14.4 · done: per-faction rep 0–1000, ranks at 200/500/800, gains and losses from events, titles. · verify: unit and integration.
 - [ ] **P2.E18.T02 Compact chain** · deps: T01, P1.E09.T01 · done: Hand, Factor, Lanewarden chains and unlocks (double bounties, Tier 2 hulls at Waystations, Hangar Rights, the Warden-breaker gate). · verify: e2e.
 - [ ] **P2.E18.T03 Free Reaches chain** · deps: T01, P1.E11.T05 · done: Deckhand, Cutter, Captain's Ear; the Scrapyard market and Void quartermaster; the Void branch gate flips from a story flag to Reaches standing. · verify: e2e.
 - [ ] **P2.E18.T04 Chorus chain** · deps: T01 · done: Listener, Reader, Voice; sanctuary at B/E stars built from the station kit variant; respec discount; Resonance Tier II–III. · verify: e2e.
@@ -351,7 +351,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E20.T03 Catalysts and cosmetics** · deps: T01 · done: sanctuary catalyst recipes with timed buffs; glyph cosmetics from Count residue with boss-drop patterns; liveries from city chains. · verify: integration; smoke.
 
 ### E21 World events
-- [ ] **P2.E21.T01 Event framework** · deps: P1.E09.T02 · spec: DESIGN 14.6, 16.6 · done: server-scheduled events with presence scaling 1–12, instancing above 12, contribution tracking, banner announcements, rewards. · verify: unit tests on scaling; integration with 1 and 15 bots.
+- [R] **P2.E21.T01 Event framework** · deps: P1.E09.T02 · spec: DESIGN 14.6, 16.6 · done: server-scheduled events with presence scaling 1–12, instancing above 12, contribution tracking, banner announcements, rewards. · verify: unit tests on scaling; integration with 1 and 15 bots.
 - [ ] **P2.E21.T02 Station raid event** · deps: T01, P1.E11.T05 · done: the repeatable shared version of chapter 11. · verify: e2e.
 - [ ] **P2.E21.T03 Hollow tide** · deps: T01, E25.T05 · done: twenty-minute waves from the Edge-ward side; stones turn herds stone-touched for the duration. · verify: e2e.
 - [ ] **P2.E21.T04 Superstorm rescue** · deps: T01 · files: `src/render/Weather.js`, `src/Game.js` (lightning) · done: a downed pilot under the ceiling with a lightning countdown. · verify: e2e.
@@ -360,7 +360,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 ### E22 The Count meter and the Edge
 - [x] **P2.E22.T01 Lean and burn** · deps: P1.E03.T06 · spec: DESIGN 16.2 · done: counted actions tagged Feed/Break, one vote per account per action type per day, daily lean, target, drift up to 25/day, burn 5/day, underdog bonus. · verify: unit tests with synthetic action logs at 3 and 3,000 accounts give the same drift for the same lean.
 - [ ] **P2.E22.T02 The Edge moves** · deps: T01, P1.E02.T06 · files: `src/ui/map/EdgeOfSpace.js`, `src/universe/Cosmos.js` (`edgeX`) · done: Edge position and system tiers as functions of the meter; dark stations flagged; the galaxy map and sky show the current Edge. · verify: unit tests; smoke at three meter values.
-- [ ] **P2.E22.T03 Seasons** · deps: T01 · spec: DESIGN 16.4 · done: season start at 500, length 4 or 8 weeks from daily actives, end-of-season bucket, next-season map state, titles and glyphs for the leading philosophy, the chronicle record. · verify: integration with an accelerated clock.
+- [~] **P2.E22.T03 Seasons** · deps: T01 · spec: DESIGN 16.4 · done: season start at 500, length 4 or 8 weeks from daily actives, end-of-season bucket, next-season map state, titles and glyphs for the leading philosophy, the chronicle record. · verify: integration with an accelerated clock.
 - [ ] **P2.E22.T04 Where players see it** · deps: T02 · done: the sanctuary glyph wall, Edge Sense HUD readout, weekly server message, per-account measures in the chronicle. · verify: smoke.
 
 ### E23 Skill web completion
@@ -404,7 +404,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E28.T05 (art) Act III cutscene cameras and sets** · deps: E27.T02 · done: cameras and dressing. → `[R]`
 
 ### E29 Discovery and the codex
-- [ ] **P2.E29.T01 First-finder naming** · deps: P1.E08.T04 · spec: DESIGN 14.5 · done: first analysis, landing or site visit names it server-wide with a moderation filter; procedural names as fallback; codex plates. · verify: integration with two clients racing.
+- [~] **P2.E29.T01 First-finder naming** · deps: P1.E08.T04 · spec: DESIGN 14.5 · done: first analysis, landing or site visit names it server-wide with a moderation filter; procedural names as fallback; codex plates. · verify: integration with two clients racing.
 - [ ] **P2.E29.T02 Surveys and ship discovery** · deps: T01, E25.T08 · done: full-survey completion grants XP and a fragment; Deep Sweep analysis of grazers. · verify: integration.
 - [ ] **P2.E29.T03 Codex UI** · deps: T01 · done: species, worlds, sites, lore, Hollow sightings; Bond eligibility shown. · verify: smoke.
 

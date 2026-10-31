@@ -3,12 +3,17 @@
 // game server (vite.config.js). Bodies are checked with the shared protocol's schemas both ways.
 import { AuthResponse, CharacterList, CharacterSummary } from '@astra/shared/protocol';
 
-/** A refused or failed request: `code` is the server's stable error code (or 'network', 'bad_response'). */
+/** The dev login's answer (server gateway/devLogin.ts): a session and the character it signs in as. Dev builds only. */
+const DevLoginResponse = import.meta.env.DEV ? AuthResponse.extend({ character: CharacterSummary }) : null;
+
+/** A refused or failed request: `code` is the server's stable error code (or 'network', 'bad_response'); `retryAfter`
+ * the seconds a rate-limited one says to wait (null when it says nothing). */
 export class ApiError extends Error {
-  constructor(status, code, message) {
+  constructor(status, code, message, retryAfter = null) {
     super(message);
     this.status = status;
     this.code = code;
+    this.retryAfter = retryAfter;
   }
 }
 
@@ -35,7 +40,8 @@ async function call(method, path, { body, token, schema, fetchImpl = fetch } = {
   }
   if (!res.ok) {
     const message = typeof data?.message === 'string' ? data.message : res.status >= 500 ? 'The server cannot be reached. Is it running?' : `Request failed (${res.status}).`;
-    throw new ApiError(res.status, typeof data?.error === 'string' ? data.error : 'http', message);
+    const retry = Number(res.headers?.get?.('retry-after'));
+    throw new ApiError(res.status, typeof data?.error === 'string' ? data.error : 'http', message, retry > 0 ? retry : null);
   }
   const parsed = schema.safeParse(data);
   if (!parsed.success) throw new ApiError(res.status, 'bad_response', 'The server sent something this client does not understand. Reload the page.');
@@ -56,4 +62,12 @@ export function listCharacters(token, opts) {
 
 export function createCharacter(token, character, opts) {
   return call('POST', '/characters', { token, body: character, schema: CharacterSummary, ...opts });
+}
+
+/** Dev builds: the server's dev login (`POST /auth/dev {name, people?}`, ARCHITECTURE §16) signs in to the account
+ * `dev-<name>` with no password and answers its session and character. A server without ASTRA_DEV_LOGIN answers 404. */
+export function devLogin(request, opts) {
+  // (compiled out of production builds: there the server has no such route)
+  if (!import.meta.env.DEV) return Promise.reject(new ApiError(404, 'not_found', 'There is no dev login in this build.'));
+  return call('POST', '/auth/dev', { body: request, schema: DevLoginResponse, ...opts });
 }
