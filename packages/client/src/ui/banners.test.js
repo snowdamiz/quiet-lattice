@@ -10,12 +10,14 @@ const css = readFileSync(new URL('./style.css', import.meta.url), 'utf8');
 function rig() {
   let clock = 0;
   let timers = [];
+  const made = [];
   const log = { shown: [], released: [] };
   const queue = new BannerQueue({
     now: () => clock,
     later: (fn, ms) => {
       const t = { at: clock + ms, fn };
       timers.push(t);
+      made.push(t);
       return t;
     },
     cancel: (t) => (timers = timers.filter((x) => x !== t)),
@@ -33,7 +35,7 @@ function rig() {
     }
     clock = end;
   };
-  return { queue, log, advance };
+  return { queue, log, advance, made };
 }
 
 describe('the banner queue', () => {
@@ -83,6 +85,18 @@ describe('the banner queue', () => {
     expect(log.shown.map((x) => x[1])).toEqual(['A', 'B', 'D']);
     queue.push({ title: 'F' });
     expect(log.shown.at(-1)[1]).toBe('F');
+  });
+
+  it('ignores a release timer left from before a clear or a newer banner, as one on a clock that was swapped out would be', () => {
+    const { queue, log, advance, made } = rig();
+    queue.push({ title: 'A' });
+    const stale = made.at(-1);
+    queue.clear();
+    queue.push({ title: 'B' });
+    stale.fn();
+    expect(log.released).toEqual([]);
+    advance(BANNER_MS * 0.8 + 1);
+    expect(log.released).toHaveLength(1);
   });
 
   it('shows a banner at once when nothing is showing', () => {

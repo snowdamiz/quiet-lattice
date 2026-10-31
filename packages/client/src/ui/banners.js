@@ -26,6 +26,8 @@ export class BannerQueue {
     this.until = 0;
     this.pumpTimer = null;
     this.releaseTimer = null;
+    /** counts banners shown and clears: a release timer a swapped clock could not cancel finds itself out of date */
+    this.epoch = 0;
   }
 
   push(item) {
@@ -46,8 +48,9 @@ export class BannerQueue {
     this.show(item);
     this.until = now + BANNER_MS;
     this.cancel(this.releaseTimer);
+    const epoch = ++this.epoch;
     this.releaseTimer = this.later(() => {
-      if (!this.items.length) this.release();
+      if (epoch === this.epoch && !this.items.length) this.release();
     }, BANNER_MS * (1 - BANNER_FADE_OUT));
     if (this.items.length) this.pump();
   }
@@ -56,6 +59,7 @@ export class BannerQueue {
   clear() {
     this.items = [];
     this.until = 0;
+    this.epoch++;
     this.cancel(this.pumpTimer);
     this.cancel(this.releaseTimer);
   }

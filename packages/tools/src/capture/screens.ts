@@ -1018,12 +1018,13 @@ const key = (page: Page, k: string) => () => page.keyboard.press(k);
 interface EventPage {
   game: {
     mode: string;
-    system: { homePlanet: unknown };
+    system: { name: string; homePlanet: unknown };
+    station: unknown;
     debugGoto(planet: unknown, at: { sunAngle: number; alt: number; azimuth: number }): void;
     boardShip(): void;
     exitShip(): void;
     player: { pitch: number; heading: { applyAxisAngle(axis: unknown, angle: number): void }; state: { pos: { clone(): { normalize(): unknown } } } };
-    hud: { clearBanners(): void; updateEvents(feed: unknown): void };
+    hud: { clearBanners(): void; showBanner(title: string, sub: string): void; updateEvents(feed: unknown): void; banners: { until: number }; now(): number };
   };
 }
 
@@ -1060,33 +1061,45 @@ function eventGround(sunAngle: number) {
 }
 
 /** The catalog's event announced to the system two minutes before it starts (protocol 15, ARCHITECTURE §25): its news
- * handed to the client's own feed (net/worldEvents.js), and the feed's banner to the HUD, as a connection's would be. */
-async function announceEvent(page: Page): Promise<void> {
+ * handed to the client's own feed (net/worldEvents.js), and the feed's banner to the HUD, as a connection's would be.
+ * It is on the home world, which the feed names as the game does. A banner showing is cleared first, unless `queued`:
+ * then the system's own arrival banner is raised first, as Game.js raises it on entry, and the event's waits behind it. */
+async function announceEvent(page: Page, queued = false): Promise<void> {
   const def = EVENTS[0]!;
-  const event = {
-    id: 1,
-    event: def.id,
-    name: def.name,
-    system: 0,
-    frame: '0:1',
-    center: [0, 0, 0],
-    radius: def.place.radius,
-    starts: def.schedule.announceS,
-    ends: def.schedule.announceS + def.schedule.durationS,
-  };
   // (tsx names the stub's functions with esbuild's __name helper, which the page lacks)
   await page.evaluate('window.__name ??= (f) => f');
   await page.evaluate(
-    async ({ url, event }) => {
+    async ({ url, poseUrl, def, queued }) => {
       const { WorldEvents } = await import(/* @vite-ignore */ url);
+      const { frameIdOfFrame, frameOfId } = await import(/* @vite-ignore */ poseUrl);
+      const { game } = window as unknown as EventPage;
+      const frame = frameIdOfFrame(game.system, game.station, game.system.homePlanet);
+      const event = {
+        id: 1,
+        event: def.id,
+        name: def.name,
+        system: 0,
+        frame,
+        center: [0, 0, 0],
+        radius: def.radius,
+        starts: def.announceS,
+        ends: def.announceS + def.durationS,
+      };
       const on: Record<string, (m: unknown) => void> = {};
       const feed = new WorldEvents({ on: (t: string, fn: (m: unknown) => void) => (on[t] = fn), serverTime: () => 0 });
+      feed.worldName = (f: string) => frameOfId(game.system, game.station, f)?.name ?? null;
       on.world_event!({ t: 'world_event', op: 'announced', event });
-      const { hud } = (window as unknown as EventPage).game;
-      hud.clearBanners();
+      const { hud } = game;
+      if (queued) hud.showBanner(game.system.name.toUpperCase(), 'Star System');
+      else hud.clearBanners();
       hud.updateEvents(feed);
     },
-    { url: '/src/net/worldEvents.js', event },
+    {
+      url: '/src/net/worldEvents.js',
+      poseUrl: '/src/net/pose.js',
+      def: { id: def.id, name: def.name, radius: def.place.radius, announceS: def.schedule.announceS, durationS: def.schedule.durationS },
+      queued,
+    },
   );
 }
 
@@ -1103,7 +1116,31 @@ function eventBannerScreen(sunAngle: number): ScreenDef {
       await announceEvent(page);
       await page.waitForTimeout(2000);
     },
-    motion: announceEvent,
+    motion: (page) => announceEvent(page),
+  };
+}
+
+/** The same banner reached the way a player entering a system during an event gets it (P2.E21.T01, visual round 1): the
+ * system's own arrival banner first, the event's queued behind it, no clearBanners between. The clip runs from the
+ * arrival banner fading in until the event's is fully in; its sheet takes a frame every 6 across the hand-off. */
+function eventBannerQueuedScreen(): ScreenDef {
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 14,
+    // the arrival banner in and held (every 60), its fade out through the event banner's fade in (every 6), the event banner held
+    sheetFrames: [0, 30, 60, 120, 180, 240, 300, ...Array.from({ length: 27 }, (_, i) => 330 + i * 6), 500, 600, 720, 839],
+    async open(page) {
+      await eventGround(40)(page);
+      // (the scenario's own arrival banner has run its life by now; wait for any that has not, so the clip starts bare)
+      await page.waitForFunction(() => {
+        const { hud } = (window as unknown as EventPage).game;
+        return hud.banners.until <= hud.now();
+      });
+      await page.evaluate(() => (window as unknown as EventPage).game.hud.clearBanners());
+      await page.waitForTimeout(1500);
+    },
+    motion: (page) => announceEvent(page, true),
   };
 }
 
@@ -1501,6 +1538,7 @@ export const SCREENS: Record<string, ScreenDef> = {
   // (`event-banner`) and the same ground at night (`event-banner-night`)
   'event-banner': eventBannerScreen(40),
   'event-banner-night': eventBannerScreen(140),
+  'event-banner-queued': eventBannerQueuedScreen(),
   'station-hangar': {
     hash: '#dock',
     async open(page) {
