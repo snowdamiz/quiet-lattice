@@ -12,8 +12,6 @@ type Quat = readonly [number, number, number, number];
 export const AIM_CONE_DEG = 30;
 /** How far the server carries its believed pose on along its velocity to the shot's time, at most, s (two inputs). */
 export const LEAD_MAX_S = 0.1;
-/** Slack on a creature's hit sphere, m: it moves on between the snapshot the client aimed at and the server's tick. */
-export const HIT_SLACK_M = 1;
 
 export interface Gun {
   hardpoint: string;
@@ -50,15 +48,4 @@ export function aimWithin(aim: Vec3, q: Quat, coneDeg = AIM_CONE_DEG): boolean {
   const nl = Math.hypot(n[0], n[1], n[2]) || 1;
   const cos = (aim[0] * n[0] + aim[1] * n[1] + aim[2] * n[2]) / (len * nl);
   return cos >= Math.cos((coneDeg * Math.PI) / 180);
-}
-
-/** A creature's hit sphere: round its body (a walker's centre stands its half height over its feet), the rig's 1 m at
- * size 1, with HIT_SLACK_M. `pos` is in its world's frame. */
-export function creatureSphere(c: { pos: Vec3; scale: number; species: { size: number; kind: string } }): { pos: [number, number, number]; radius: number } {
-  const size = c.species.size * c.scale;
-  const radius = size * 0.6 + HIT_SLACK_M;
-  if (c.species.kind === 'flyer') return { pos: [c.pos[0], c.pos[1], c.pos[2]], radius };
-  const l = Math.hypot(c.pos[0], c.pos[1], c.pos[2]) || 1;
-  const up = size * 0.5;
-  return { pos: [c.pos[0] + (c.pos[0] / l) * up, c.pos[1] + (c.pos[1] / l) * up, c.pos[2] + (c.pos[2] / l) * up], radius };
 }

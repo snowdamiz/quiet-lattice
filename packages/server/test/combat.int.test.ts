@@ -3,10 +3,10 @@
 // creature and shoots it dead with the base gun: every shot is resolved by the server from the pose it believes, the hits
 // and the death come back as combat events, the corpse lies for the death beat and goes, and the kill's XP and units reach
 // the character. A client that says what its shot did, or sends a combat event of its own, changes nothing.
+import { creatureSphere } from '@astra/shared/combat';
 import type { GameEvent, ServerMessage } from '@astra/shared/protocol';
 import { faunaSpecies, frameId, type FaunaSpecies, type PlanetParams } from '@astra/shared/world';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { creatureSphere } from '../src/combat/gun.ts';
 import { DEATH_BEAT_S } from '../src/combat/zone.ts';
 import type { Vec3 } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';

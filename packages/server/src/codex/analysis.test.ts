@@ -4,7 +4,7 @@
 // it should: out of range, the ground in the way, from a ship, a dead creature, one on another world, no creature at
 // all, too fast, a stale stamp or number, a ground still planning, a codex full.
 import { CODEX_LIMITS, codexEntryFor, emptyCodex, SPECIES_XP, speciesKey, type Codex } from '@astra/shared/codex';
-import { totalXpFor } from '@astra/shared/combat';
+import { creatureSphere, totalXpFor } from '@astra/shared/combat';
 import type { ServerMessage } from '@astra/shared/protocol';
 import type { FaunaSpecies } from '@astra/shared/world';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -15,7 +15,7 @@ import { CharacterProgress } from '../persistence/components.ts';
 import { lineOfSight } from '../resources/los.ts';
 import { EYE_M } from '../resources/service.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
-import { ANALYZE_BURST, ANALYZE_RANGE_M, ANALYZE_SLACK_M, AnalysisService, hitRadius, type AnalysisZone, type AnalyzedEvent } from './analysis.ts';
+import { ANALYZE_BURST, ANALYZE_RANGE_M, ANALYZE_SLACK_M, AnalysisService, type AnalysisZone, type AnalyzedEvent } from './analysis.ts';
 import { CodexService } from './service.ts';
 
 type Answer = Extract<ServerMessage, { t: 'analyze' }>;
@@ -35,7 +35,9 @@ const unit = (p: Readonly<Vec3>): Vec3 => {
 };
 /** Where the service measures from and to: the player's eye, and a walker's middle. */
 const eyeOf = (stand: Readonly<Vec3>) => lift(stand, EYE_M);
-const middleOf = (feet: Readonly<Vec3>, sp: FaunaSpecies = walker) => lift(feet, sp.kind === 'flyer' ? 0 : hitRadius(sp) * 0.8);
+const middleOf = (feet: Readonly<Vec3>, sp: FaunaSpecies = walker) => creatureSphere({ pos: feet, scale: 1, species: sp }).pos;
+/** A spawned creature's hit sphere, at its own scale: what the service measures to. */
+const sphereOf = (id: number) => creatureSphere(w.zone.fauna!.creature(id)!);
 const sight = (stand: Readonly<Vec3>, feet: Readonly<Vec3>) =>
   lineOfSight({ R: g.radius, height: (x, y, z) => g.sample([x, y, z]) }, eyeOf(stand), middleOf(feet));
 
@@ -145,8 +147,8 @@ describe('analyzing a creature', () => {
 
   it('refuses a creature out of range, measured from the eye to its middle, and takes one just within', () => {
     const id = creature(open.feet);
-    const middle = middleOf(open.feet);
-    const reach = ANALYZE_RANGE_M + hitRadius(walker) + ANALYZE_SLACK_M;
+    const { pos: middle, radius } = sphereOf(id);
+    const reach = ANALYZE_RANGE_M + radius + ANALYZE_SLACK_M;
     // an eye `d` metres from its middle, up a slope the ground does not block
     const [tt] = tangents(unit(middle));
     const up = unit(middle);
@@ -173,8 +175,8 @@ describe('analyzing a creature', () => {
     expect(progress.get('c1')!.xp).toBe(0);
     expect(heard).toEqual([]);
     // from high enough over the stand (a jetpack's climb), in sight and still in range
-    const reach = ANALYZE_RANGE_M + hitRadius(walker) + ANALYZE_SLACK_M;
-    const over = [10, 20, 30, 40, 50].map((h) => lift(hill.stand, h)).find((p) => sight(p, hill.feet) && dist(eyeOf(p), middleOf(hill.feet)) < reach - 1);
+    const reach = ANALYZE_RANGE_M + sphereOf(id).radius + ANALYZE_SLACK_M;
+    const over = [10, 20, 30, 40, 50].map((h) => lift(hill.stand, h)).find((p) => sight(p, hill.feet) && dist(eyeOf(p), sphereOf(id).pos) < reach - 1);
     if (over) {
       w.movePlayer(over);
       expect(ask(id).result).toBe('new');
@@ -260,7 +262,7 @@ describe('analyzing a creature', () => {
       entityOf: (v) => zone.entityOf(v),
       entity: (e) => zone.entity(e),
       patch: (e, set, clear) => zone.patch(e, set, clear),
-      fauna: { tier: 0, grounds: { ground: () => null } },
+      fauna: { tier: 0, grounds: { ground: () => null }, creature: (c) => zone.fauna!.creature(c) },
       phases: zone.phases,
     };
     expect(ask(id, { svc: service(planning) })).toMatchObject({ result: 'refused', reason: 'busy' });
@@ -273,8 +275,4 @@ describe('analyzing a creature', () => {
     expect(heard).toEqual([]);
   });
 
-  it('reaches a creature by its size: a flyer’s body, a big walker’s middle', () => {
-    expect(hitRadius({ size: 2, kind: 'quad' })).toBeCloseTo(2 * 1.15 * 0.9);
-    expect(hitRadius({ size: 2, kind: 'flyer' })).toBeCloseTo(2 * 1.15 * 0.6);
-  });
 });

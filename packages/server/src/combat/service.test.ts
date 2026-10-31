@@ -1,7 +1,7 @@
 // The combat service (P1.E06.T02) on a real zone of system 0 with its fauna and a hand-driven clock: shots of the base gun
 // resolved from the pose the zone believes and checked cheapest first (rate, clock, mode, frame, aim), the ray against the
 // creatures within the gun's range, line of sight over the ground, and a kill's XP and loot shared by damage and told.
-import { killLoot, killXp, totalXpFor } from '@astra/shared/combat';
+import { creatureSphere, killLoot, killXp, totalXpFor } from '@astra/shared/combat';
 import { getWeapon } from '@astra/shared/data';
 import type { ServerMessage } from '@astra/shared/protocol';
 import type { QuestWorldEvent } from '@astra/shared/quests';
@@ -16,7 +16,7 @@ import { CharacterProgress } from '../persistence/components.ts';
 import { nodeGroundsHere, type NodeGroundSource } from '../resources/ground.ts';
 import { splitByDamage } from '../resources/service.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
-import { creatureSphere, LEAD_MAX_S } from './gun.ts';
+import { LEAD_MAX_S } from './gun.ts';
 import { CombatService, FIRE_BURST, IN_COMBAT_S, killTags, type CombatServiceOptions } from './service.ts';
 
 type Vec3 = [number, number, number];

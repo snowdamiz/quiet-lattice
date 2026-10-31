@@ -8,16 +8,18 @@
 //   which will let `ship` through for those species;
 // - the target a creature of the player's zone that its phase lets it see (a phase's own creature is no other player's),
 //   alive (no hp left: dead), on the world the player stands on, of a species its world carries;
-// - in range: from the player's eye to the creature's middle no further than the demo's analysis reach (ANALYZE_RANGE_M,
-//   the client's aim pick, Fauna.pick(…, 70)) plus the creature's hit radius and ANALYZE_SLACK_M (a pose a tick old);
+// - in range: from the player's eye to the middle of the creature's hit sphere (`creatureSphere`, the model shots and
+//   casts take) no further than the demo's analysis reach (ANALYZE_RANGE_M, the client's aim pick, Fauna.pick(…, 70))
+//   plus the sphere's radius and ANALYZE_SLACK_M (a pose a tick old);
 // - in sight over the drawn ground (resources/los.ts, the beam's test), on the ground the creature walks on.
 // The analysis is instant, as the demo's was (no scan to hold the target through), and bounded by its rate instead.
 // Then the codex records the species (codex/service.ts): a first time with its XP (the player's entity takes a level it
 // gained), after that as known, earning nothing. Every analysis made, first or not, is heard by listeners (the quest
 // runtime's `analyze` steps, which count species by `speciesKey`).
 import { codexSpecies, speciesKey } from '@astra/shared/codex';
+import { creatureSphere } from '@astra/shared/combat';
 import type { ClientMessage, ServerMessage } from '@astra/shared/protocol';
-import { frameKeyOf, tierOfGalaxySystem, type FaunaSpecies, type PlanetParams, type Tier } from '@astra/shared/world';
+import { frameKeyOf, tierOfGalaxySystem, type PlanetParams, type Tier } from '@astra/shared/world';
 import type { FaunaSim } from '../fauna/sim.ts';
 import type { PhaseManager } from '../phases/manager.ts';
 import { groundPlanner, type GroundSource } from '../fauna/terrain.ts';
@@ -45,15 +47,9 @@ export const ANALYZE_STALE_S = 3;
 /** A character that has not asked for this long is forgotten (its rate), s. */
 export const ANALYST_IDLE_S = 600;
 
-/** A creature's hit radius as the client's aim pick takes it (Fauna.pick: 0.9 of its size, a flyer's 0.6), at the largest
- * an animal of its species is drawn (1.15 times its size). */
-export function hitRadius(sp: Pick<FaunaSpecies, 'size' | 'kind'>): number {
-  return sp.size * 1.15 * (sp.kind === 'flyer' ? 0.6 : 0.9);
-}
-
 /** A zone, as analysis uses it. */
 export type AnalysisZone = Pick<Zone, 'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'patch'> & {
-  readonly fauna: Pick<FaunaSim, 'tier' | 'grounds'> | null;
+  readonly fauna: Pick<FaunaSim, 'tier' | 'grounds' | 'creature'> | null;
   readonly phases: Pick<PhaseManager, 'canSee'>;
 };
 
@@ -157,10 +153,9 @@ export class AnalysisService {
     const body = this.bodyOf(zone, world);
     const sp = body ? worldSpecies(world, body)[c.species] : undefined;
     if (!body || !sp) return refuse('unknown');
-    // from the eye to the creature's middle (a walker's stands on its feet, a flyer's position is its body)
+    // from the eye to the middle of the creature's hit sphere (the one every hit test takes, at the animal's own scale)
     const eye = lift(player.fields.pos, EYE_M);
-    const r = hitRadius(sp);
-    const middle = lift(c.pos, sp.kind === 'flyer' ? 0 : r * 0.8);
+    const { pos: middle, radius: r } = creatureSphere({ pos: c.pos, scale: zone.fauna?.creature(msg.target)?.scale ?? 1, species: sp });
     if (!(dist(eye, middle) <= ANALYZE_RANGE_M + r + ANALYZE_SLACK_M)) return refuse('range');
     const ground = (zone.fauna?.grounds ?? this.grounds).ground(body, this.tierOf(zone));
     if (!ground) return refuse('busy');
