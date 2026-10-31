@@ -270,6 +270,17 @@ export function orbitOffset(orbit, size) {
   return new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(d);
 }
 
+/** A mesh's bounds in its own space. A skinned mesh's are its posed vertices': its geometry can sit in a space only the
+ * skin undoes (KHR_mesh_quantization folds the dequantizing transform into the inverse bind matrices). */
+export function meshBox(o) {
+  if (o.isSkinnedMesh) {
+    o.computeBoundingBox();
+    return o.boundingBox;
+  }
+  if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+  return o.geometry.boundingBox;
+}
+
 // ---------------------------------------------------------------------------------------------- the game's look
 
 // Creatures and flora carry a colour-region mask in their vertex colours that the game fills with a species' or a
@@ -788,8 +799,7 @@ export class Review {
     const inv = new THREE.Matrix4().copy(this.root.matrixWorld).invert();
     this.content.traverseVisible((o) => {
       if (!o.isMesh || this.isAid(o)) return;
-      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
-      box.union(_box.copy(o.geometry.boundingBox).applyMatrix4(_m.multiplyMatrices(inv, o.matrixWorld)));
+      box.union(_box.copy(meshBox(o)).applyMatrix4(_m.multiplyMatrices(inv, o.matrixWorld)));
     });
     return box.isEmpty() ? box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 1)) : box;
   }

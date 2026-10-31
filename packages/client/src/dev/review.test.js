@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { gameLook } from '@astra/shared/art';
-import { abba, applyGameLook, assetCost, blockDiffs, collectLods, countKinds, helperKind, orbitOffset, pairedDiffs, parseSpec, pickLod, placeLabels, showLod, spread } from './review.js';
+import { abba, applyGameLook, assetCost, blockDiffs, collectLods, countKinds, helperKind, meshBox, orbitOffset, pairedDiffs, parseSpec, pickLod, placeLabels, showLod, spread } from './review.js';
 
 // A node tree in the export layout (art bible 8), as GLTFLoader builds it: three.js names sanitised, Blender's names
 // kept in userData.name.
@@ -218,6 +218,31 @@ describe('review: the far view', () => {
     const lifted = orbitOffset({ azimuth: 35, elevation: 16, distance: 1.7, range: 100, lift: 4 }, 8);
     expect(THREE.MathUtils.radToDeg(Math.asin(lifted.y / 100))).toBeCloseTo(20, 6);
     expect(orbitOffset({ azimuth: 35, elevation: 16, distance: 1.7, range: null, lift: 4 }, 8).y).toBeCloseTo(near.y, 9);
+  });
+});
+
+describe('review: framing bounds', () => {
+  it('frames a quantized skinned body by its posed vertices, not its normalised attributes', () => {
+    // a 2 m body as glTF-Transform quantizes a skinned mesh: positions normalised to [-1, 1], the dequantizing scale and
+    // offset folded into the inverse bind matrix (GLTFLoader binds with the mesh's own matrix, keeping those inverses)
+    const geometry = new THREE.BoxGeometry(2, 2, 2);
+    const n = geometry.getAttribute('position').count;
+    geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(new Uint16Array(n * 4), 4));
+    geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(new Float32Array(n * 4).map((_, i) => (i % 4 === 0 ? 1 : 0)), 4));
+    const body = new THREE.SkinnedMesh(geometry, new THREE.MeshBasicMaterial());
+    const pelvis = new THREE.Bone();
+    pelvis.position.set(0, 0.95, 0);
+    const root = new THREE.Group().add(pelvis, body);
+    root.updateMatrixWorld(true);
+    const dequantize = new THREE.Matrix4().compose(new THREE.Vector3(0, 1, 0), new THREE.Quaternion(), new THREE.Vector3(0.3, 1, 0.15));
+    body.bind(new THREE.Skeleton([pelvis], [pelvis.matrixWorld.clone().invert().multiply(dequantize)]), body.matrixWorld);
+    root.updateMatrixWorld(true);
+
+    expect(body.geometry.boundingBox).toBeNull();
+    const box = meshBox(body);
+    expect(box.min.toArray().map((x) => +x.toFixed(6))).toEqual([-0.3, 0, -0.15]);
+    expect(box.max.toArray().map((x) => +x.toFixed(6))).toEqual([0.3, 2, 0.15]);
+    expect(meshBox(mesh('Crate_LOD0')).getSize(new THREE.Vector3()).toArray()).toEqual([1, 1, 1]);
   });
 });
 
