@@ -28,7 +28,18 @@ import {
   STARTING_RECIPES,
   startingKnowledge,
 } from '../src/crafting/index.ts';
-import { getItem, getRecipe, ITEMS, RECIPES, recipeItemId, recipeOfItem, RECIPE_TABLE_VERSION, STATION_FABRICATOR, STATION_HANGAR, STATION_LAYOUT } from '../src/data/index.ts';
+import {
+  getItem,
+  getRecipe,
+  ITEMS,
+  RECIPES,
+  recipeItemId,
+  recipeOfItem,
+  RECIPE_TABLE_VERSION,
+  STATION_FABRICATOR,
+  STATION_HANGAR,
+  STATION_LAYOUT,
+} from '../src/data/index.ts';
 import { addItem, countOf, emptyInventory, layoutFor, totals, type Inventory } from '../src/inventory/index.ts';
 
 const LARK = { hull: 'lark' as const, modules: {}, cargoPods: 1, livery: 0 };
