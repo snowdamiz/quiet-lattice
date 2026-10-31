@@ -136,6 +136,8 @@ const events: GameEvent[] = [
   { kind: 'xp', amount: 30, from: 9, level: 4 },
   { kind: 'notice', text: 'Docking permission granted', tone: 'good' },
   { kind: 'party', what: 'invite', name: 'Ana' },
+  { kind: 'rank', faction: 'compact', rank: 'hand', from: null },
+  { kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } },
 ];
 
 /** A beacon as the shard lists it. */
@@ -204,6 +206,19 @@ const serverSamples: ServerMessage[] = [
   { t: 'craft', seq: 2, op: 'make', recipe: 'flak_ammo', result: 'made', item: 'flak_ammo', count: 150 },
   { t: 'recipes', known: ['warp_cell', 'pulse_fuel_cell', 'torpedo'] },
   {
+    t: 'reputation',
+    reputation: {
+      factions: [
+        { faction: 'compact', rep: 230, rank: 'hand' },
+        { faction: 'reaches', rep: 0, rank: null },
+      ],
+      titles: [
+        { title: 'Hand', faction: 'compact', rank: 'hand' },
+        { title: 'Unlisted', quest: 'forty_names' },
+      ],
+    },
+  },
+  {
     t: 'awards',
     awards: [
       { season: 1, bucket: 'fed', title: 'Seedbearer', glyph: 'season_1_fed' },
@@ -224,11 +239,10 @@ describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
   // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
   // (P1.E13.T01); 9: meters (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid beacons (P1.E15.T02); 12: analysis and
-  // the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14–16 reserved for reputation (P2.E18.T01), world events
-  // (P2.E21.T01) and first-finder naming (P2.E29.T01); 17: seasons (P2.E22.T03). A branch that changes a message bumps the
-  // version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 17, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(17);
+  // the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation (P2.E18.T01); 15: seasons (P2.E22.T03). A branch that
+  // changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 15, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(15);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

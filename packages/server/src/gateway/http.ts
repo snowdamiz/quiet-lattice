@@ -1,4 +1,4 @@
-// HTTP gateway (docs/ARCHITECTURE.md §2): accounts, characters, finished seasons' chronicles (§27) and health. Bodies are
+// HTTP gateway (docs/ARCHITECTURE.md §2): accounts, characters, finished seasons' chronicles (§25) and health. Bodies are
 // validated with the shared protocol schemas; errors reply `{ error, message }` where `error` is a stable code the client
 // can switch on.
 import { CharacterCreate, CharacterList, CharacterSummary, Credentials, isDevUsername, PROTOCOL_VERSION, type AuthResponse } from '@astra/shared/protocol';
@@ -140,7 +140,7 @@ export function registerHttpRoutes(app: FastifyInstance, deps: HttpGatewayDeps):
     }
   });
 
-  // ---------- /seasons: a finished season's chronicle (DESIGN 16.4, §27), to a signed-in player ----------
+  // ---------- /seasons: a finished season's chronicle (DESIGN 16.4, §25), to a signed-in player ----------
   app.get('/seasons/:season/chronicle', async (req, reply) => {
     const accountId = await requireAccount(req, reply);
     if (!accountId) return reply;

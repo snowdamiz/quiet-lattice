@@ -1,4 +1,4 @@
-// Every character in play's season awards (DESIGN 16.4; ARCHITECTURE §27): the titles and glyphs seasons gave its
+// Every character in play's season awards (DESIGN 16.4; ARCHITECTURE §25): the titles and glyphs seasons gave its
 // account's winning philosophy. Persistence opens a character's on join (the `seasonAwards` component), saves and closes
 // them; the gateway merges in what the account earned (`season_awards`) as the character enters the world, and what a
 // season gives while it is in play. Nothing a client sends reaches it.

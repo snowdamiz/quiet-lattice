@@ -1,4 +1,4 @@
-// The gateway's HTTP side (docs/ARCHITECTURE.md §2, §5): accounts, characters and finished seasons' chronicles (§27). The
+// The gateway's HTTP side (docs/ARCHITECTURE.md §2, §5): accounts, characters and finished seasons' chronicles (§25). The
 // client talks to the server on its own origin, as it will when the gateway serves it; in development Vite proxies /auth,
 // /characters, /seasons, /health and /ws to the game server (vite.config.js). Bodies are checked with the shared protocol's
 // schemas both ways.

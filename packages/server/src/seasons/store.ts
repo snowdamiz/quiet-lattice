@@ -1,4 +1,4 @@
-// Seasons in Postgres (ARCHITECTURE §27): each account active on each meter day (`daily_actives`), each finished season's
+// Seasons in Postgres (ARCHITECTURE §25): each account active on each meter day (`daily_actives`), each finished season's
 // chronicle (`season_chronicles`) and the titles and glyphs it awarded (`season_awards`). A season's end is written in the
 // Count meter's save transaction (count/store.ts), after the votes and rolls of that save, so its winners are read from
 // every vote it had and its chronicle lands with the shard row's move to the next season, or not at all.

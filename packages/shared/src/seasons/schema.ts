@@ -1,4 +1,4 @@
-// Seasons as data (DESIGN 16.4; P2.E22.T03; ARCHITECTURE §27): the buckets a season ends in, the map a season opens with,
+// Seasons as data (DESIGN 16.4; P2.E22.T03; ARCHITECTURE §25): the buckets a season ends in, the map a season opens with,
 // the titles and glyphs a season awards, and the chronicle a finished season leaves. Zod schemas both ends validate with,
 // and the constants they bound.
 //

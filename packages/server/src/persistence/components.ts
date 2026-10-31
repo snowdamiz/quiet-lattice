@@ -3,8 +3,8 @@
 // re-derived from the ship and the owned nodes on load), where the character is (system, pose, frame and movement mode,
 // read from its zone entity, and on foot, where it left its ship; a saved pose movement authority would not accept is not
 // restored), its codex (the species it has analyzed, P1.E08.T04, src/codex), the recipes it knows (P1.E13.T05,
-// src/crafting), the titles and glyphs its seasons awarded (P2.E22.T03, src/seasons) and its quests (held by the quest
-// runtime, P1.E09.T01); see ARCHITECTURE §8.
+// src/crafting), its reputation (standing by faction and titles, P2.E18.T01, src/reputation), the titles and glyphs its
+// seasons awarded (P2.E22.T03, src/seasons) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
@@ -20,6 +20,8 @@ import { CodexService } from '../codex/service.ts';
 import { RecipeBook } from '../crafting/book.ts';
 import { RECIPES, recipesComponent } from '../crafting/component.ts';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
+import { REPUTATION, reputationComponent } from '../reputation/component.ts';
+import { ReputationService } from '../reputation/service.ts';
 import { SeasonAwards } from '../seasons/awards.ts';
 import { SEASON_AWARDS, seasonAwardsComponent } from '../seasons/component.ts';
 import { padPose, planGround, poseProblem as movementProblem } from '../sim/movement/index.ts';
@@ -34,7 +36,7 @@ import { INPUT_LIMITS } from '../zones/zone.ts';
 import { ComponentRegistry, type CharacterComponent, type LoadContext, type PersistenceLog } from './registry.ts';
 
 export const PROGRESS = 'progress';
-export { CODEX, RECIPES, SEASON_AWARDS, SKILLS };
+export { CODEX, RECIPES, REPUTATION, SEASON_AWARDS, SKILLS };
 export const SHIP = 'ship';
 export const INVENTORY = 'inventory';
 export const POSE = 'pose';
@@ -329,6 +331,9 @@ export interface CoreComponentDeps {
   codex?: CodexService;
   /** Every character's recipes; when none is given, the registry makes its own (the gateway finds it: `recipeBookIn`). */
   recipes?: RecipeBook;
+  /** Every character's reputation; when none is given, the registry makes its own, with no Count to read for the
+   * underdog's bonus (the gateway and the quest runtime find it: `reputationServiceIn`). */
+  reputation?: ReputationService;
   /** Every character's season awards; when none is given, the registry makes its own (the gateway finds it:
    * `seasonAwardsIn`). */
   awards?: SeasonAwards;
@@ -338,7 +343,8 @@ export interface CoreComponentDeps {
 }
 
 /** A registry holding the components in load order: the skills read the level; the ship and the inventory read the owned
- * nodes; the inventory reads the ship; the codex, the recipes and the season awards read nothing; the quests come last. */
+ * nodes; the inventory reads the ship; the codex, the recipes, the reputation and the season awards read nothing; the quests
+ * come last (owed reputation is settled into the reputation once the character is in play, QuestRuntime.joined). */
 export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
   const skills = deps.skills ?? new SkillService({ inventory: deps.inventory, ships: deps.ships, progress: deps.progress });
   const codex = deps.codex ?? new CodexService({ progress: deps.progress, skills, log: deps.log });
@@ -350,6 +356,8 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(poseComponent(deps.zones, deps.clock, deps.movement ?? true))
     .register(codexComponent(codex, { log: deps.log }))
     .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log }))
+    // (written with the quest log, whose owed reputation is settled into it: both in one save, or neither, §24)
+    .register(reputationComponent(deps.reputation ?? new ReputationService({ log: deps.log }), { log: deps.log, writtenWith: deps.quests ? [QUESTS] : [] }))
     .register(seasonAwardsComponent(deps.awards ?? new SeasonAwards((err) => deps.log?.error({ err }, 'season award listener failed')), { log: deps.log }));
   return deps.quests ? registry.register(questsComponent(deps.quests)) : registry;
 }

@@ -6,11 +6,13 @@ import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
+import { factionIdSchema } from '../data/index.ts';
+import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputation/index.ts';
 import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '../seasons/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 17;
+export const PROTOCOL_VERSION = 15;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -25,10 +27,8 @@ export const PROTOCOL_VERSION = 17;
 // 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 // 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
-// 14: reserved for reputation, on its branch until it merges (P2.E18.T01)
-// 15: reserved for world events, on its branch until it merges (P2.E21.T01)
-// 16: reserved for first-finder naming, on its branch until it merges (P2.E29.T01)
-// 17: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
+// 14: reputation: standing, ranks and titles by faction, rank and title events (P2.E18.T01)
+// 15: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -391,8 +391,8 @@ export const Correction = z.object({ t: z.literal('correction'), seq: z.number()
 export const ZoneChange = z.object({ t: z.literal('zone'), zone: ZoneRef, pose: Pose });
 export const Pong = z.object({ t: z.literal('pong'), id: z.number().int().nonnegative(), clientTime: z.number(), serverTime: z.number() });
 /**
- * The world service's state (ARCHITECTURE §3, §11, §27): sent after `welcome` and whenever it changes. `season` is the
- * season's number, `seasonStart` and `seasonEnd` (protocol 17) the world times it began and ends at, `opening` the map it
+ * The world service's state (ARCHITECTURE §3, §11, §25): sent after `welcome` and whenever it changes. `season` is the
+ * season's number, `seasonStart` and `seasonEnd` (protocol 15) the world times it began and ends at, `opening` the map it
  * opened with (how the season before ended, the Edge's shift and the systems dark this season, DESIGN 16.4).
  */
 export const WorldState = z.object({
@@ -469,7 +469,17 @@ export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string(
  */
 export const PartyNews = z.enum(['invite', 'invited', 'declined', 'expired', 'joined', 'left', 'kicked', 'leader', 'disbanded']);
 export const PartyEvent = z.object({ kind: z.literal('party'), what: PartyNews, name: CharacterName.optional() });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent]);
+/** A rank with a faction reached or lost (protocol 14, ARCHITECTURE §24): `rank` the rank held now and `from` the one held
+ * before (ids of the faction's ranks; null below its first threshold). Up when `rank` is the higher. */
+export const RankEvent = z.object({
+  kind: z.literal('rank'),
+  faction: factionIdSchema,
+  rank: rankIdSchema.nullable(),
+  from: rankIdSchema.nullable(),
+});
+/** A title earned (protocol 14): a rank's, the first time it is reached, or a quest's. */
+export const TitleEvent = z.object({ kind: z.literal('title'), title: titleViewSchema });
+export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent, RankEvent, TitleEvent]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
 /** One member as its party sees it: cheap on purpose (a party frame needs no more). */
@@ -798,7 +808,11 @@ export const RecipesState = z.object({
     .refine((ids) => new Set(ids).size === ids.length, 'a recipe is known once'),
 });
 
-/** The character's season titles and glyphs (protocol 17, DESIGN 16.4), oldest season first: sent after `recipes` on join
+/** The character's reputation (ARCHITECTURE §24): every faction's standing and rank, and the titles it has earned; sent
+ * after `recipes` on join and whenever the server changes it (after the `rank` and `title` events of that change). */
+export const ReputationState = z.object({ t: z.literal('reputation'), reputation: reputationViewSchema });
+
+/** The character's season titles and glyphs (protocol 15, DESIGN 16.4), oldest season first: sent after `recipes` on join
  * and again whenever a season ends with the character's account among its winning philosophy's players. */
 export const AwardsState = z.object({ t: z.literal('awards'), awards: seasonAwardListSchema });
 
@@ -824,6 +838,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   AnalyzeState,
   CraftState,
   RecipesState,
+  ReputationState,
   AwardsState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
