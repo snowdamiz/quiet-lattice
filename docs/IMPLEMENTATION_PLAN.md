@@ -406,9 +406,10 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E28.T05 (art) Act III cutscene cameras and sets** · deps: E27.T02 · done: cameras and dressing. → `[R]`
 
 ### E29 Discovery and the codex
-- [~] **P2.E29.T01 First-finder naming** · deps: P1.E08.T04 · spec: DESIGN 14.5 · done: first analysis, landing or site visit names it server-wide with a moderation filter; procedural names as fallback; codex plates. · verify: integration with two clients racing.
+- [x] **P2.E29.T01 First-finder naming** · deps: P1.E08.T04 · spec: DESIGN 14.5 · done: first analysis, landing or site visit names it server-wide with a moderation filter; procedural names as fallback; codex plates. · verify: integration with two clients racing.
 - [ ] **P2.E29.T02 Surveys and ship discovery** · deps: T01, E25.T08 · done: full-survey completion grants XP and a fragment; Deep Sweep analysis of grazers. · verify: integration.
-- [ ] **P2.E29.T03 Codex UI** · deps: T01 · done: species, worlds, sites, lore, Hollow sightings; Bond eligibility shown. · verify: smoke.
+- [ ] **P2.E29.T03 Codex UI** · deps: T01 · done: species, worlds, sites, lore, Hollow sightings; Bond eligibility shown; first-finder names on the landing banner, the HUD location line, the map and site labels, and naming from the UI (P2.E29.T01 shows them only in the analysis banner and toast; amended by the orchestrator). · verify: smoke.
+- [ ] **P2.E29.T04 Name filter: digit and ligature stand-ins (added by the orchestrator)** · deps: T01 · files: `packages/shared/src/discovery/*`, `packages/shared/src/data/names.ts` · done: (from P2.E29.T01's second review, merged under the two-round limit) the name filter reads 9 and 6 as g alongside its other digit look-alikes, reads æ as a and as ae and œ as o and as oe so either form of a blocked word is caught, and checks reserved words with separators removed ("Ad min", "Ad-min Rock"); tests cover Ni99er, Ni99a, Fa99ot, Ni66er, Fæggøt, Fæggot, Ræpist and the split reserved words, and the digit list in the `names.ts` comment matches. · verify: `pnpm test`; a probe of the round-2 reviewer's names and their uppercase forms.
 
 ### E30 Mysteries
 - [ ] **P2.E30.T01 Forty Names complete** · deps: P1.E09.T09, E27.T01 · done: all forty logs placed across Tiers 1–4, the twenty and forty beats, the wiped-log cutscene, the Unlisted title. · verify: e2e.

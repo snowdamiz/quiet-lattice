@@ -856,3 +856,25 @@ Format: task id, question → choice → why.
   (P1.E13.T05 left the hook); `HUD.arc` snaps on jumps over 8% (P1.E07.T03 eases it); art bible §4 should list the
   Charge rate's #E2D4FF and the HUD danger text #FF8A80; a fresh mover's late first input is still credited its arrival
   gap (P1.E03.T04's finding).
+- **P2.E29.T01** First-finder naming (shared `discovery`, `data/names.ts`, server `discovery/*`, persistence `plates`,
+  migration 0004, protocol 16, ARCHITECTURE §25) → finds are per shard, keyed shard + kind + key. A species's first
+  analysis on the shard counts whether or not it is the character's first; a landing counts when the zone believes the
+  player `landed` or on `foot` on a planet or moon (not gas giants or the Waystation); a site counts within 30 m
+  (`SITE_REACH_M`) of its footprint's edge, in any mode, checked every 0.5 s. The finder alone may name it, once, within
+  600 s of world time (DESIGN is silent); after that it keeps its procedural name for good. Names: 3–24 characters with
+  at least 2 letters, Latin letters and digits with one space, apostrophe or hyphen between words; only letters the
+  filter can read (accented a–z plus ı ø ł đ ð ħ ŧ ſ ß æ œ þ ƀ ƚ ƶ, folded to plain letters before the checks; any other
+  letter is refused as `characters`); blocked fragments and words (with `foggot` for ø), reserved words and reserved
+  names (the game's, every people, capital and faction) in `data/names.ts`. Names need not be unique. A moderator's
+  `rename` skips only the reserved-name checks, and `--clear` keeps the procedural name for good and closes the window.
+  A finder's deleted character leaves the find and name (finder null). Payment is a per-character codex plate
+  `{kind, key, at}` (capped at 4,096; past it a find earns no plate and no XP), saved together with progress
+  (`writtenWith`) and added only once its 2000 XP was granted; every join pays any own find without a plate. Finds
+  learned while a system loads win over older rows. Name requests: 3 at once, then 1 every 5 s per character.
+  Integration tests run with first finds off unless they ask. The client shows names only in the species analysis
+  banner and the "in your codex" toast, holds only its current system's finds, and names from the dev console until
+  P2.E29.T03; the demo's 250–650 unit payout per discovery banner is deleted outright (a `gate:removed` rule), leaving
+  nothing for P1.E13.T04's discovery half to rebalance (site payouts in Structures.js stay with P1.E07.T11 and
+  P1.E13.T04). → DESIGN 14.5, server-held. Merged after a second review REVISE under the two-round limit: digit and
+  ligature stand-ins (9 or 6 for g, æ as a) and separator-split reserved words still pass, filed as P2.E29.T04.
+  P2.E29.T03 is amended to carry names to the landing banner, location line, map and site labels.
