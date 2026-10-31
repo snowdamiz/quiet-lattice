@@ -1,6 +1,7 @@
 import { randomBytes, randomInt } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
 import { GALAXY_SEED, Galaxy, frameIdOf, homeSystems } from '@astra/shared/world';
+import { enterPicked, openList, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 
 // The game through the server (P1.E04.T01): sign up, make a character, enter, and spawn docked at the people's home
@@ -73,21 +74,9 @@ async function openTitle(page: Page): Promise<void> {
   await until(page, 'window.game.menus.ready', 120_000);
 }
 
-/** Play → sign up → make a character of `people` → its row in the list. */
-async function signUp(page: Page, pilot: ReturnType<typeof newPilot>, people: string): Promise<void> {
-  await page.click('.title-screen [data-act="start"]');
-  await page.fill('.account [name="username"]', pilot.username);
-  await page.fill('.account [name="password"]', pilot.password);
-  await page.click('.account [data-do="register"]');
-  await page.fill('.account [name="name"]', pilot.name);
-  await page.click(`.account [data-people] [data-v="${people}"]`);
-  await page.click('.account [data-form="create"] [type="submit"]');
-  await page.waitForSelector('.account [data-enter]');
-}
-
 /** Enter with the listed character, and wait until the server's snapshots echo the client's input. */
 async function enter(page: Page): Promise<void> {
-  await page.click('.account [data-enter]');
+  await enterPicked(page);
   await until(page, "window.game.net?.joined && window.game.mode !== 'title'", 120_000);
   await until(page, 'window.game.net.store.ack > 0 && window.game.net.store.entities.has(window.game.net.entityId)', 30_000);
 }
@@ -176,8 +165,7 @@ test('a reload resumes the character where the server holds it', async ({ page }
   await page.reload();
   await openTitle(page);
   // still signed in (the session is this tab's): Play lists the character
-  await page.click('.title-screen [data-act="start"]');
-  await page.waitForSelector('.account [data-enter]');
+  await openList(page);
   await enter(page);
 
   const after = await page.evaluate(() => {

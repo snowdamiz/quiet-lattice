@@ -369,6 +369,22 @@ export const RECIPES = table<Recipe>([
 
 export const getRecipe = lookup(RECIPES, 'recipe');
 
+/** Recipe items (DESIGN 15.7: "recipes are items … learned once, kept forever"): the item that teaches a recipe is
+ * `recipe_<recipe id>`, one per recipe in the item registry (items.ts). */
+export const RECIPE_ITEM_PREFIX = 'recipe_';
+
+/** The item that teaches `recipe`. */
+export function recipeItemId(recipe: string): string {
+  return `${RECIPE_ITEM_PREFIX}${recipe}`;
+}
+
+/** The recipe an item teaches, or null when it is not a recipe item of a recipe this table has. */
+export function recipeOfItem(item: string): string | null {
+  if (!item.startsWith(RECIPE_ITEM_PREFIX)) return null;
+  const id = item.slice(RECIPE_ITEM_PREFIX.length);
+  return RECIPES.some((r) => r.id === id) ? id : null;
+}
+
 /** Salvage (DESIGN 15.7): any module breaks down at a fabricator into a third of its materials, rounded down. */
 export const SALVAGE = deepFreeze({ divisor: 3, lines: ['module'] as const });
 
