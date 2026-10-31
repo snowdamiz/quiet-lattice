@@ -31,9 +31,9 @@ jobs:
           --health-cmd "redis-cli ping"
           --health-interval 2s --health-timeout 3s --health-retries 30
     steps:
+      # LFS holds ~2 GB of renders; fetch only the models the client serves, so a run stays inside the free bandwidth quota
       - uses: actions/checkout@v5
-        with:
-          lfs: true
+      - run: git lfs pull --include="packages/client/public/**"
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -58,7 +58,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          lfs: true
           fetch-depth: 0
       - name: Changed .blend sources
         id: changed
@@ -68,6 +67,8 @@ jobs:
           echo "base=$base" >> "$GITHUB_OUTPUT"
           n=$(git diff --name-only "$base" HEAD -- '*.blend' | wc -l)
           echo "count=$n" >> "$GITHUB_OUTPUT"
+          # the validator may pick more than the changed files (a tooling change re-validates every source); .blend files are small, the renders are not
+          if [ "$n" != 0 ]; then git lfs pull --include="*.blend"; fi
       - uses: actions/setup-node@v5
         if: steps.changed.outputs.count != '0'
         with:
