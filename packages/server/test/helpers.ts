@@ -13,7 +13,7 @@ import { startServer, type RunningServer, type StartOptions } from '../src/serve
  * asked for here; the admin channel); `movement: false` lets players be put anywhere with raw poses. */
 export async function startTestServer(
   config: Partial<Config> = {},
-  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement'> = {},
+  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement' | 'clock'> = {},
 ): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
   return startServer({

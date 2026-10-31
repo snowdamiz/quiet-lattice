@@ -52,6 +52,8 @@ export interface StartOptions {
   persistence?: Omit<PersistenceOptions, 'store' | 'registry' | 'log'>;
   /** Hold players to movement authority (true; integration tests that put players anywhere with raw poses turn it off). */
   movement?: boolean;
+  /** The server clock's sources (the monotonic one advances world time), ms; tests that judge timing drive them by hand. */
+  clock?: { wallNow?: () => number; monoNow?: () => number };
   /** Developer tooling overrides, applied after the environment's ASTRA_* variables (admin/config.ts). */
   tooling?: Partial<ToolingInput>;
 }
@@ -122,7 +124,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
 
   let world: WorldService;
   try {
-    world = await WorldService.open({ store: pgShardStore(database.db, opts.shard ?? DEFAULT_SHARD_ID), mirror: redis.redis, log });
+    world = await WorldService.open({ store: pgShardStore(database.db, opts.shard ?? DEFAULT_SHARD_ID), mirror: redis.redis, log, ...opts.clock });
   } catch (err) {
     await Promise.allSettled([database.close(), redis.close()]);
     await app.close();
