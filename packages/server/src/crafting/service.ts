@@ -82,7 +82,8 @@ export class CraftingService {
   private readonly inventory: InventoryService;
   private readonly book: RecipeBook;
   private readonly now: () => number;
-  private readonly places: FabricatorPlaces;
+  /** the terminals of places beyond every Waystation: the tasks that place a capital, a sanctuary or the Scrapyard register theirs */
+  readonly places: FabricatorPlaces;
   private readonly log?: ZoneLog;
   /** each session's last request number */
   private readonly lastSeq = new WeakMap<ZoneViewer, number>();

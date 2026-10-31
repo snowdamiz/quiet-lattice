@@ -112,7 +112,7 @@ describe('what a character knows', () => {
   });
 
   it('a rolled-back table keeps every learned recipe and the newer version (the version guard)', () => {
-    const rolledBack = { version: RECIPE_TABLE.version - 1, has: (id: string) => id !== 'torpedo' };
+    const rolledBack = { version: RECIPE_TABLE.version - 1, has: (id: string) => id !== 'torpedo' && id !== 'old_recipe' };
     const stored = { table: RECIPE_TABLE.version, known: ['warp_cell', 'torpedo', 'old_recipe'] };
     const r = reconcileRecipes(stored, rolledBack);
     expect(r).toEqual({ stored, dropped: [], heldOver: ['torpedo', 'old_recipe'], rolledBack: true });

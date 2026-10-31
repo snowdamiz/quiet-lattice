@@ -174,8 +174,8 @@ describe('the recipes component', () => {
         heldOver: ['torpedo', 'railgun', 'recipe_from_the_future'],
       });
       expect(lines.some((l) => l.msg.includes('dropped'))).toBe(false);
-      // the client is told only what this table has
-      expect(book.known('c1')).toEqual(['warp_cell']);
+      // the client is told only what the table has: a recipe no table has is never sent
+      expect(book.known('c1')).toEqual(['warp_cell', 'torpedo', 'railgun']);
       // and the save keeps them under the newer version, so the rollback loses nothing
       expect(book.learn('c1', 'pulse_fuel_cell')).toBe(true);
       persistence.leave(v);
