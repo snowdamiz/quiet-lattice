@@ -30,7 +30,10 @@
 // First finds go to the discovery service (discovery/), which hears of every analysis made, looks for landings and site
 // visits among the characters in play, pays and tells their finders, answers name requests, and sends a joining
 // character its system's finds (§25).
-// Seasons (seasons/, §26): a character that joins counts its account active for the day, and is given the titles and
+// World events (events/) run on their own timer: the event service schedules them in every loaded system, tells the
+// sessions there, puts players arriving at an event's place in its instances, counts their contribution from the combat
+// service's hits and pays them by it (§26); clients send it nothing.
+// Seasons (seasons/, §27): a character that joins counts its account active for the day, and is given the titles and
 // glyphs its account's seasons earned (read with its row, merged into its `seasonAwards` component) and sent them as
 // `awards` after its reputation; when a season's end is written, each joined character of its winners is given the
 // season's award, and sent `awards` again.
@@ -69,6 +72,7 @@ import { CraftingService } from '../crafting/service.ts';
 import { plateBookIn, type PlateBook } from '../discovery/plates.ts';
 import { DiscoveryService } from '../discovery/service.ts';
 import { pgDiscoveryStore } from '../discovery/store.ts';
+import { EventService } from '../events/service.ts';
 import { reputationServiceIn } from '../reputation/component.ts';
 import type { ReputationService } from '../reputation/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
@@ -181,6 +185,8 @@ export interface WsGatewayDeps {
    * plates and the codex's XP when none is given, and has none with null (no finds are looked for, name requests are
    * dropped). */
   discovery?: DiscoveryService | null;
+  /** World events; the gateway makes (and starts and stops) its own when none is given, and gives it combat's news. */
+  events?: EventService;
   /** Every character's reputation in play; when none is given, the one persistence's registry loads into. */
   reputation?: ReputationService;
   /** Daily actives, an account's season awards and each season's end; without it (tests of the gateway alone) a join
@@ -210,6 +216,7 @@ export interface WsGateway {
   readonly analysis: AnalysisService;
   readonly crafting: CraftingService;
   readonly discovery: DiscoveryService | null;
+  readonly events: EventService;
   readonly reputation: ReputationService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
@@ -352,6 +359,12 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (c.s.state === 'joined' && winners.has(c.s.accountId!.toLowerCase())) awards.grant(c.s.characterId!, [awarded.award]);
     }
   });
+  // world events: the hits combat resolves are their participants' contribution; rewards go to the same inventory,
+  // progress, skill view and reputation
+  const events =
+    deps.events ?? new EventService({ zones: deps.zones, now: () => deps.clock.now(), inventory, progress: deps.progress, skills, quests, reputation, log });
+  if (!deps.events) events.start();
+  const unsubscribeEvents = combat.subscribe((news) => events.combat(news));
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -713,6 +726,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     analysis,
     crafting,
     discovery,
+    events,
     reputation,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
@@ -721,6 +735,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
       if (!deps.resources) await resources.close();
+      if (!deps.events) events.stop();
+      unsubscribeEvents();
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeMeters();

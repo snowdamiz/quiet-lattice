@@ -878,3 +878,31 @@ Format: task id, question → choice → why.
   P1.E13.T04). → DESIGN 14.5, server-held. Merged after a second review REVISE under the two-round limit: digit and
   ligature stand-ins (9 or 6 for g, æ as a) and separator-split reserved words still pass, filed as P2.E29.T04.
   P2.E29.T03 is amended to carry names to the landing banner, location line, map and site labels.
+- **P2.E21.T01** Event framework (server `events/*`, shared `events`, `PhaseManager.adopt`/`guard`, combat `hit` news
+  and `ZoneCombat.scaleHealth`, fauna phase herds, client `ui/banners.js`, protocol 17, ARCHITECTURE §26 with notes in
+  §6.1, §6.2, §21) → the one event shipped is the Hollow tide, a stand-in P2.E21.T03 replaces: Tier 5 only, hourly
+  windows staggered per system, 20 minutes announced 2 minutes ahead, a dry open place 600 m across on the system's first
+  world (body order) whose species include the enemies, drawn from the system seed, event and window; the world's own
+  predators and territorials in 5 waves of 3 (30 s after an instance opens, then 45 s after each clear); each player
+  paid 9000 XP, 1500 units, 4 Count residue and 25 Chorus standing (Chorus a choice). No occurrence opens with under
+  30 s left or in a zone without players; a window that began before the service did is skipped and logged (no
+  persistence: a restart loses the window's occurrence and contribution, paid rewards stay saved). Only the star system
+  hears of it. Level is members plus kept places (1–12), read at each wave: wave size ×(1 + 0.5(L−1)), health
+  ×(1 + 0.1(L−1)), herds of at most 5, a wave with no creature-cap room waits 2 s; instancing above 12. A wave is cleared
+  only when all of it is killed: a cell holding a phase's creatures never unloads (it may sleep) and the cap passes it
+  by. Contribution: damage 0.6, objectives 0.25, presence 0.15 (a kind nobody contributed drops out); under a quarter of
+  an even share is unpaid and does not count toward the pool; the pool is per-player rewards × players paid; an expired
+  instance pays for the fraction of waves cleared, split by damage. An instance completes or expires; the occurrence
+  reports `completed` only if every instance did. One instance per character per occurrence through `PhaseManager.guard`
+  for placement and beacons (a refused beacon answer is `full`); a character joins `paid` only when something was paid
+  or its instance was won, and never re-enters once paid. Players out of play at payout lose their rewards, as with kill
+  loot. Participation reputation goes through `ReputationService.grant` (reason `event:<id>`, not a counted Count act).
+  Adopted herds think in their phase (its members and creatures); shared-world herds ignore phase creatures. Each
+  placement sends `enter {place:'event:<id>'}`. Creatures do not fight back until P1.E08.T02. The banner reads
+  "World event · <world> · <state>" ("starting now" at 0, "in under a minute" below 30 s). The shared banner queue holds
+  each banner for `BANNER_MS` (7 s), the constant the CSS keyframes run on, keeps the band lit between consecutive
+  banners and releases it when none follows or the rest are stale; a banner is stale after three holds (21 s). The base
+  gun's targets pass a phase `canSee` filter. → DESIGN 14.6 and 16.6, server-held. Open: alts earn about 20–25% more
+  per damage in groups of 2–5; `worldEvents.js` builds item names with `replace`, not the resource table; a footprint
+  scrim instead of the full-width band for every banner; P1.E07.T03 reconciles the `fire` canSee filter with its
+  shared `creatureTargets` when it lands.

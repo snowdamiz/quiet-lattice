@@ -1,4 +1,4 @@
-// The season awards' persistence component (P2.E22.T03, ARCHITECTURE §8, §26): written with the reputation, which holds
+// The season awards' persistence component (P2.E22.T03, ARCHITECTURE §8, §27): written with the reputation, which holds
 // the titles its awards earn, so a capture that cannot take one of the two writes neither, and an award never reaches
 // the row without its title.
 import { seasonAward, type SeasonAward } from '@astra/shared/seasons';
@@ -97,7 +97,6 @@ describe('the season awards component', () => {
     expect(written(0)).not.toContain(SEASON_AWARDS);
     expect(store.row.state.reputation).toBeUndefined();
     expect(lines).toContainEqual({ level: 'error', obj: expect.objectContaining({ component: REPUTATION, with: [SEASON_AWARDS] }) });
-    // mended, both go in one save
     (awards.get('c1') as SeasonAward[]).pop();
     const before = store.writes.length;
     persistence.saveNow('c1');

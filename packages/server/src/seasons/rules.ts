@@ -1,4 +1,4 @@
-// A season's roll as the server decides it (DESIGN 16.4; P2.E22.T03; ARCHITECTURE §26). Pure: the world service ends a
+// A season's roll as the server decides it (DESIGN 16.4; P2.E22.T03; ARCHITECTURE §27). Pure: the world service ends a
 // season with endSeason() on its shard clock, and the meter's store picks the winning philosophy's players with
 // seasonWinners() from the season's stored votes, in the transaction that writes the season's chronicle.
 //

@@ -73,7 +73,7 @@ export interface RunningServer {
   ws: WsGateway;
   /** Season, Count, Edge, tiers and the server clock. */
   world: WorldService;
-  /** Daily actives, season awards and finished seasons' chronicles (§26). */
+  /** Daily actives, season awards and finished seasons' chronicles (§27). */
   seasons: SeasonService;
   /** Every zone in the process and the tick loop. */
   zones: ZoneManager;

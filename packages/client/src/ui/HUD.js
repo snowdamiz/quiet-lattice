@@ -4,6 +4,7 @@ import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { EdgeCompass } from './EdgeCompass.js';
 import { SocialUI } from './social/SocialUI.js';
+import { BANNER_FADE_IN, BANNER_FADE_OUT, BANNER_MS, BannerQueue } from './banners.js';
 
 const _v = new THREE.Vector3();
 
@@ -132,6 +133,17 @@ export class HUD {
     this.social = new SocialUI(game, this);
     // (beside the layer, not in it: banners show through a cutscene, which fades the rest of the HUD out)
     this.banner = el('div', 'banner', root);
+    // (the banners' keyframes and band run on these: style.css)
+    root.style.setProperty('--banner-ms', `${BANNER_MS}ms`);
+    root.style.setProperty('--banner-in-ms', `${BANNER_MS * BANNER_FADE_IN}ms`);
+    root.style.setProperty('--banner-out-ms', `${BANNER_MS * BANNER_FADE_OUT}ms`);
+    this.banners = new BannerQueue({
+      now: () => this.now(),
+      later: (fn, ms) => this.later(fn, ms),
+      cancel: (id) => this.cancel(id),
+      show: (b) => this.raiseBanner(b),
+      release: () => this.band.classList.remove('show'),
+    });
     this.flashEl = el('div', 'flash', root);
     this.underwater = el('div', 'underwater', root);
     this.speedLines = el('canvas', 'speedlines', root);
@@ -178,20 +190,10 @@ export class HUD {
 
   // Banners queue instead of overwriting each other; one that waited too long is stale and dropped.
   showBanner(title, sub, lines = []) {
-    (this.bannerQueue ||= []).push({ title, sub, lines, at: this.now() });
-    this.pumpBanners();
+    this.banners.push({ title, sub, lines });
   }
 
-  pumpBanners() {
-    const now = this.now();
-    if (now < (this.bannerUntil || 0)) {
-      this.cancel(this.bannerTimer);
-      this.bannerTimer = this.later(() => this.pumpBanners(), this.bannerUntil - now + 50);
-      return;
-    }
-    let b;
-    while ((b = this.bannerQueue.shift()) && now - b.at > 12000);
-    if (!b) return;
+  raiseBanner(b) {
     // two lines only — what it is and its name; the details (and rewards, which the units counter
     // shows) were reading as filler
     // (as text, never markup: banners carry names players and the server chose)
@@ -203,20 +205,16 @@ export class HUD {
     // raised in a cutscene, it is a title card in the letterbox's top bar, and stays there for its life
     this.banner.classList.toggle('in-bar', !!this.game.cutscenes?.active);
     this.banner.classList.remove('show');
-    this.band.classList.remove('show');
     void this.banner.offsetWidth;
     this.banner.classList.add('show');
-    // (in a cutscene's top bar it is on black already)
-    if (!this.game.cutscenes?.active) this.band.classList.add('show');
-    this.bannerUntil = now + 6200;
-    if (this.bannerQueue.length) this.pumpBanners();
+    // (in a cutscene's top bar it is on black already.) The band is a transition, not a restarted animation: one banner
+    // following another leaves it lit, and only the text fades out and in
+    this.band.classList.toggle('show', !this.game.cutscenes?.active);
   }
 
   /** Drops the banner showing and those waiting. */
   clearBanners() {
-    this.bannerQueue = [];
-    this.bannerUntil = 0;
-    this.cancel(this.bannerTimer);
+    this.banners.clear();
     this.banner.classList.remove('show');
     this.band.classList.remove('show');
   }
@@ -437,6 +435,7 @@ export class HUD {
     this.edgeCompass.update((!g.overlay || chatting) && !cine && (mode === 'ship' || mode === 'foot'));
     this.updateMarkers();
     this.updateHits(g.net?.combat);
+    this.updateEvents(g.net?.worldEvents);
     this.social.update();
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
@@ -450,6 +449,16 @@ export class HUD {
     for (const h of dealt) this.hitNumber(h.amount, h.killed);
     if (taken.length) this.flash('damage');
     for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good');
+  }
+
+  // World events (ARCHITECTURE §26): a banner as one is announced, starts and ends in the system, and toasts as the
+  // player joins an instance, its scaling changes and it is paid. (A full event panel is later work.)
+  updateEvents(feed) {
+    if (!feed) return;
+    for (const x of feed.take()) {
+      if (x.banner) this.showBanner(x.title, x.sub);
+      else this.toast(x.text, x.tone);
+    }
   }
 
   hitNumber(amount, killed) {

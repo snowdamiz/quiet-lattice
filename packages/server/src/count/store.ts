@@ -4,7 +4,7 @@
 // up on missed days is one write. A restart reloads the votes of the days not yet rolled, so the open day's ledger and its
 // one-vote rule carry on.
 //
-// The seasons the meter runs in persist with it (§26): the accounts active each day, each season that ended (its winners'
+// The seasons the meter runs in persist with it (§27): the accounts active each day, each season that ended (its winners'
 // awards and its chronicle, seasons/store.ts) and the season the shard moved on to, in the same transaction, after that
 // save's votes and rolls, so a season's end reads every vote it had and lands with the Count's return to 500 or not at all.
 import { seasonOpeningSchema } from '@astra/shared/seasons';

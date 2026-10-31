@@ -58,7 +58,7 @@ export const characters = pgTable(
  * One row per world shard, created on its server's first boot (docs/ARCHITECTURE.md §3, DESIGN 16.4): the epoch its
  * world time counts from, the latest world time its server saved (so the clock never starts below it after a restart)
  * and its season: its number, start and length, the mean daily actives its length was chosen from and the map it opened
- * with (§26). World times are seconds since the epoch.
+ * with (§27). World times are seconds since the epoch.
  */
 export const shards = pgTable(
   'shards',
@@ -80,10 +80,10 @@ export const shards = pgTable(
     countDay: integer('count_day'),
     /** The last burn tick (world time ÷ 17,280 s, floored) burned into the Count; null until the meter first runs. */
     burnStep: integer('burn_step'),
-    /** The mean daily actives of the month before the season, its length chosen from (§26); null for the first season,
+    /** The mean daily actives of the month before the season, its length chosen from (§27); null for the first season,
      * which took the default length. */
     seasonActives: doublePrecision('season_actives'),
-    /** The map the season opened with (DESIGN 16.4, §26): how the season before ended, the Edge's shift (ly) and the
+    /** The map the season opened with (DESIGN 16.4, §27): how the season before ended, the Edge's shift (ly) and the
      * systems dark this season; the baseline for the first. P2.E22.T02 applies it. */
     seasonOpening: jsonb('season_opening').$type<SeasonOpening>().notNull().default({ from: null, edgeShiftLy: 0, dark: [] }),
   },
@@ -186,7 +186,7 @@ export const discoveries = pgTable(
 );
 
 /**
- * Each account active on each meter day (§26): an account that entered the world that day, once. A season's length is
+ * Each account active on each meter day (§27): an account that entered the world that day, once. A season's length is
  * chosen from the mean of the month before it (DESIGN 16.4). No foreign key to `accounts`: it is history.
  */
 export const dailyActives = pgTable(
@@ -202,7 +202,7 @@ export const dailyActives = pgTable(
 );
 
 /**
- * Each finished season's chronicle (DESIGN 16.4, §26), written in the meter's transaction when the season ends: when it
+ * Each finished season's chronicle (DESIGN 16.4, §27), written in the meter's transaction when the season ends: when it
  * ran, its length and the mean daily actives that chose it, the map it opened with, the Count it ended at and so its
  * bucket, the winning philosophy with its title and glyph and how many accounts earned them, the map the next season
  * opens with, and its notable first finds. Its meter path is the season's rows of `count_days`.
@@ -243,7 +243,7 @@ export const seasonChronicles = pgTable(
 );
 
 /**
- * The title and glyph each account of a season's winning philosophy earned (DESIGN 16.4, §26), written with the
+ * The title and glyph each account of a season's winning philosophy earned (DESIGN 16.4, §27), written with the
  * season's chronicle. Its characters carry them in their `seasonAwards` component, merged in when they enter the world.
  * No foreign key to `accounts`: it is history.
  */

@@ -372,7 +372,7 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log }))
     // (written with the quest log, whose owed reputation is settled into it: both in one save, or neither, §24)
     .register(reputationComponent(deps.reputation ?? new ReputationService({ log: deps.log }), { log: deps.log, writtenWith: deps.quests ? [QUESTS] : [] }))
-    // (written with the reputation, which holds the titles its awards earn: both in one save, or neither, §26)
+    // (written with the reputation, which holds the titles its awards earn: both in one save, or neither, §27)
     .register(
       seasonAwardsComponent(deps.awards ?? new SeasonAwards((err) => deps.log?.error({ err }, 'season award listener failed')), {
         log: deps.log,

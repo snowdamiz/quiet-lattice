@@ -9,7 +9,7 @@
 // days that passed while the server was down are played on boot. The Edge stands at EDGE_X and the tiers are
 // galaxyTiers(edgeX); update() is the lever the Edge following the Count (P2.E22.T02) and dev tooling pull.
 //
-// Seasons (DESIGN 16.4, ARCHITECTURE §26) roll on the same clock: the meter is played to the season's end (the first meter
+// Seasons (DESIGN 16.4, ARCHITECTURE §27) roll on the same clock: the meter is played to the season's end (the first meter
 // midnight at or after its start plus its length), the Count's bucket there decides how it ended, and the next season
 // starts at that midnight with the Count back at 500, the length the last month's daily actives choose and the map the
 // bucket leaves (`opening`: the Edge's shift and the systems dark, data the Edge following the meter, P2.E22.T02, applies;

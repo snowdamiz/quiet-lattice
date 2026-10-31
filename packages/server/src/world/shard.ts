@@ -1,5 +1,5 @@
 // A shard's row in Postgres (`shards`, docs/ARCHITECTURE.md §3): its epoch, the latest world time its server saved, its
-// season (DESIGN 16.4, §26: number, start, length, the mean daily actives the length was chosen from, the map it opened
+// season (DESIGN 16.4, §27: number, start, length, the mean daily actives the length was chosen from, the map it opened
 // with) and its Count (DESIGN 16.1, §11). The row is created the first time a server boots the shard; after that the
 // meter's saves move its Count and season on, so the epoch and the season survive restarts; the saved time is only ever
 // raised. The Count meter's votes and rolls, the daily actives and the seasons' chronicles are kept beside it
