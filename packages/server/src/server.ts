@@ -56,6 +56,9 @@ export interface StartOptions {
   movement?: boolean;
   /** Developer tooling overrides, applied after the environment's ASTRA_* variables (admin/config.ts). */
   tooling?: Partial<ToolingInput>;
+  /** Look for first finds (true; integration tests of other systems turn it off, so a test's landing or analysis on the
+   * shared shard earns no first finder's XP that its next run would not). */
+  discovery?: boolean;
 }
 
 export interface RunningServer {
@@ -70,7 +73,7 @@ export interface RunningServer {
   ws: WsGateway;
   /** Season, Count, Edge, tiers and the server clock. */
   world: WorldService;
-  /** Daily actives, season awards and finished seasons' chronicles (§25). */
+  /** Daily actives, season awards and finished seasons' chronicles (§26). */
   seasons: SeasonService;
   /** Every zone in the process and the tick loop. */
   zones: ZoneManager;
@@ -192,6 +195,9 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     progress,
     seasons,
     awards,
+    // (first finds are the shard's)
+    shard: opts.shard ?? DEFAULT_SHARD_ID,
+    discovery: opts.discovery === false ? null : undefined,
     // a joining character's row is read only once an edit of it out of play (the admin CLI's) has written (§8)
     ownedCharacter: (accountId, characterId) => persistence.afterEdit(characterId, () => getOwnedCharacter(database.db, accountId, characterId)),
     limits: {
@@ -212,7 +218,14 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     chronicles: seasons,
   });
   if (tooling.devLogin) registerDevLogin(app, { db: database.db, tokens, authLimiter, log });
-  const admin = new AdminService({ directory: pgDirectory(database.db), persistence, live: { zones, gateway: ws, world }, quests: questAdmin(quests), log });
+  const admin = new AdminService({
+    directory: pgDirectory(database.db),
+    persistence,
+    live: { zones, gateway: ws, world },
+    quests: questAdmin(quests),
+    discoveries: ws.discovery ?? undefined,
+    log,
+  });
   let adminChannel: AdminChannel | undefined;
 
   let closed: Promise<void> | undefined;

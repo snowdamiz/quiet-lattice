@@ -1,4 +1,4 @@
-// The daily actives tally (ARCHITECTURE §25): how many distinct accounts entered the world on each meter day, kept in
+// The daily actives tally (ARCHITECTURE §26): how many distinct accounts entered the world on each meter day, kept in
 // memory by the world service so a season's end can choose the next season's length (DESIGN 16.4: four weeks while the
 // last month's daily actives are few) without waiting on the database. The open day keeps its accounts, so an account is
 // counted once a day; closed days keep only their count, and only as far back as a season's choice reads. Each account

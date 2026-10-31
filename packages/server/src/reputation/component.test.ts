@@ -109,7 +109,7 @@ describe('the reputation component', () => {
     const { registry, reputation } = server(new Rows());
     const keys = registry.components.map((c) => c.key);
     expect(keys.indexOf(REPUTATION)).toBe(keys.indexOf(RECIPES) + 1);
-    expect(keys.indexOf(QUESTS)).toBe(keys.length - 1);
+    expect(keys.at(-1)).toBe(QUESTS);
     expect(keys.indexOf(QUESTS)).toBeGreaterThan(keys.indexOf(REPUTATION));
     expect(reputationServiceIn(registry)).toBe(reputation);
     expect(reputationServiceIn(new ComponentRegistry())).toBeUndefined();

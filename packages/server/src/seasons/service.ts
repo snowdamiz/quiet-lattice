@@ -1,4 +1,4 @@
-// The seasons as the gateway sees them (DESIGN 16.4; ARCHITECTURE §25): an account that enters the world is counted
+// The seasons as the gateway sees them (DESIGN 16.4; ARCHITECTURE §26): an account that enters the world is counted
 // active for the day (the next season's length is chosen from that), what an account has earned is read as its character
 // enters, each season's end reaches whoever listens once its awards are written, and a finished season's chronicle is
 // served (cached: a finished season never changes). The seasons themselves roll in the world service, on its clock.

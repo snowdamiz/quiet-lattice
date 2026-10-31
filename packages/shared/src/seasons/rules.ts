@@ -1,4 +1,4 @@
-// Season rules that read the galaxy and the glyph alphabet (DESIGN 16.4; P2.E22.T03; ARCHITECTURE §25): how long a season
+// Season rules that read the galaxy and the glyph alphabet (DESIGN 16.4; P2.E22.T03; ARCHITECTURE §26): how long a season
 // runs and where it ends, the map the next one opens with, and the title and glyph a season gives. Pure and deterministic:
 // the server decides with them, and a client can draw what the server sent with the same functions.
 import { countDigits, transliterate, type Stroke } from '../art/glyphs.ts';

@@ -1,4 +1,4 @@
-// The season awards' persistence component (ARCHITECTURE §8, §25): the titles and glyphs a character carries from the
+// The season awards' persistence component (ARCHITECTURE §8, §26): the titles and glyphs a character carries from the
 // seasons its account's philosophy won, stored as the `seasonAwards` entry of its `state` (v1, `{awards: [...]}`, one a
 // season, oldest first). It is earned, so a value that cannot be read refuses the join rather than being replaced; a
 // character with no entry has none. The account's awards in `season_awards` are the record: the gateway merges them in

@@ -11,8 +11,9 @@
 // moves (DESIGN 16.3).
 //
 // Its zones hold players to movement authority (P1.E03.T04): each player enters with its ship (the default Lark until
-// P1.E12.T05) and its skills, and each input is judged at its client's time, held to the server's clock (ARCHITECTURE §7).
-// Their combat (P1.E06.T02) tells `combat`, the gateway's combat service, of kills, players down and who is fighting.
+// P1.E12.T05) and its skills, and each input is judged at its client's time, held to the server's clock (ARCHITECTURE §7);
+// the pulse drive also needs Charge in the character's meters (`meters`, set by the gateway: §19). Their combat
+// (P1.E06.T02) tells `combat`, the gateway's combat service, of kills, players down and who is fighting.
 //
 // Every `metricsEveryMs` (ASTRA_METRICS_S, 10 s in the server) the loop logs its own numbers ('tick loop': ticks run and
 // skipped since the last report, zones loaded and awake, sessions) and one 'zone metrics' line per awake zone at info,
@@ -24,6 +25,7 @@ import type { ShipLoadout } from '@astra/shared/ships';
 import { tierOfGalaxySystem, type SystemDescription, type Tier } from '@astra/shared/world';
 import { DEFAULT_LOADOUT } from '../inventory/service.ts';
 import type { CombatHooks } from '../combat/zone.ts';
+import type { MoverMeters } from '../sim/movement/index.ts';
 import type { ServerClock } from '../world/clock.ts';
 import { systemZoneId } from '../world/home.ts';
 import type { TierFlip, WorldSource } from '../world/service.ts';
@@ -116,6 +118,12 @@ export class ZoneManager {
    * treating it as in one. Not called for leave().
    */
   onViewerRemoved?: (viewer: ZoneViewer, zone: Zone) => void;
+  /**
+   * The characters' meters (Heat and Charge, P1.E07.T02), which every zone's movement authority asks whether a mode is
+   * allowed (the pulse drive needs Charge). The gateway sets them once it has them (they are made with the persistence
+   * registry, after the zones); until then, and without them, no mode is refused for want of Charge.
+   */
+  meters: MoverMeters | null = null;
   /** Who every zone's combat tells of kills, players down and characters fighting (the gateway's combat service, which
    * it sets once it has made one); until then, and without one, nobody: a kill grants nothing. */
   combat: CombatHooks | null = null;
@@ -143,6 +151,11 @@ export class ZoneManager {
   private timer: NodeJS.Timeout | undefined;
   private nextAt: number;
   private lastTime = -Infinity;
+  /** what the zones are given: the meters as they are set now */
+  private readonly moverMeters: MoverMeters = {
+    allowsMode: (characterId, mode, now, graceS, at) => this.meters?.allowsMode(characterId, mode, now, graceS, at) ?? true,
+    flown: (characterId, mode, seconds, now, at) => this.meters?.flown(characterId, mode, seconds, now, at),
+  };
 
   constructor(opts: ZoneManagerOptions) {
     this.clock = opts.clock;
@@ -197,6 +210,7 @@ export class ZoneManager {
         log: this.log,
         onViewerRemoved: (viewer) => this.removed(viewer, zone),
         movement: this.movement,
+        meters: this.moverMeters,
         fauna: { tier },
         combat: () => this.combat,
       });

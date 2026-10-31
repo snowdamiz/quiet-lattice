@@ -1,9 +1,11 @@
-// Day and night on a world, as fauna reads it (P1.E08.T03): the meters' rule from the shared kinematics.
+// Day and night on a world, as fauna reads it (P1.E08.T03): the meters' rule (`isNight`, @astra/shared/meters) from the
+// shared kinematics, agreeing with what the meters themselves say there.
+import { isNight, meterEnvironment } from '@astra/shared/meters';
 import { dirToWorld, localToWorld, Random, systemPoses } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { describeZoneSystem } from '../zones/system.ts';
 import type { Vec3 } from './cells.ts';
-import { isNight, nextTime, nightAt, starsAt } from './sky.ts';
+import { nextTime, nightAt, starsAt } from './sky.ts';
 
 const system = describeZoneSystem(0);
 const home = system.bodies[system.home]!;
@@ -31,7 +33,9 @@ describe('day and night on a world', () => {
         const up = dirToWorld(pose, dir);
         const day = -(up[0] * p[0] + up[1] * p[1] + up[2] * p[2]) > 0;
         expect(nightAt(system, body.index, dir, r, t), `${body.name} at ${t}`).toBe(!day);
-        expect(isNight(starsAt(system, t)[body.index]!, dir, r)).toBe(!day);
+        expect(isNight(dir, starsAt(system, t)[body.index]!, r)).toBe(!day);
+        // the meters' own reading of the place (their environment, in the system's frame)
+        expect(meterEnvironment(system, systemPoses(system, t).bodies, { frame: body.index, world: p }).time).toBe(day ? 'day' : 'night');
         if (!day) nights++;
       }
       // about half the world is in the dark at any time
