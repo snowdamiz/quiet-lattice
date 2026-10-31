@@ -16,6 +16,7 @@ export const NAME_BLOCKED_FRAGMENTS: readonly string[] = deepFreeze([
   'nigger',
   'nigga',
   'faggot',
+  'foggot',
   'whore',
   'hitler',
   'porn',

@@ -115,28 +115,43 @@ export const NAME_REFUSALS = ['length', 'characters', 'blocked', 'reserved'] as 
 export type NameRefusal = (typeof NAME_REFUSALS)[number];
 export type NameCheck = { ok: true; name: string } | { ok: false; reason: NameRefusal };
 
-/** Latin letters: Basic Latin, Latin-1's and Latin Extended-A and B's (a narrow script, so a look-alike letter of another
- * one cannot slip a blocked or reserved word past the filter). */
-const LETTER = 'A-Za-z\\u00c0-\\u00d6\\u00d8-\\u00f6\\u00f8-\\u024f';
-/** Words of letters and digits, one space, apostrophe or hyphen between two. */
-const NAME_SHAPE = new RegExp(`^[${LETTER}0-9]+(?:[ '\\-][${LETTER}0-9]+)*$`);
-const LETTERS = new RegExp(`[${LETTER}]`, 'g');
+/** Letters that do not decompose into a base letter and a mark, read as the letters they look like. */
+const FOLD: Readonly<Record<string, string>> = {
+  ı: 'i', ø: 'o', ł: 'l', đ: 'd', ð: 'd', ħ: 'h', ŧ: 't', ſ: 's', ß: 'ss', æ: 'ae', œ: 'oe', þ: 'th', ƀ: 'b', ƚ: 'l', ƶ: 'z',
+};
 /** Digits read as the letters players write with them. */
 const LOOKALIKE: Readonly<Record<string, string>> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '8': 'b' };
 
-/** A name as typed, tidied: composed, trimmed, its runs of spaces one space. */
-export function tidyName(raw: string): string {
-  return raw.normalize('NFC').trim().replace(/\s+/g, ' ');
-}
-
-/** What the filter compares: lower case, accents stripped, look-alike digits as letters, nothing but letters and digits. */
+/** What the filter compares: lower case, accents stripped, look-alike letters and digits as letters, nothing but letters
+ * and digits. */
 export function nameSkeleton(s: string): string {
   return s
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .toLowerCase()
+    .replace(/[\u00c0-\u024f]/g, (c) => FOLD[c] ?? c)
     .replace(/[0-9]/g, (d) => LOOKALIKE[d] ?? d)
     .replace(/[^a-z0-9]/g, '');
+}
+
+/** Latin letters: Basic Latin, Latin-1's and Latin Extended-A and B's that the skeleton reads as letters (a narrow script,
+ * so a look-alike letter of another one cannot slip a blocked or reserved word past the filter). Built from the skeleton
+ * itself, so the letters accepted are exactly the letters the filter can read. */
+const LETTER = (() => {
+  let set = 'A-Za-z';
+  for (let c = 0xc0; c <= 0x24f; c++) {
+    const ch = String.fromCharCode(c);
+    if (/^[a-z]+$/.test(nameSkeleton(ch))) set += `\\u${c.toString(16).padStart(4, '0')}`;
+  }
+  return set;
+})();
+/** Words of letters and digits, one space, apostrophe or hyphen between two. */
+const NAME_SHAPE = new RegExp(`^[${LETTER}0-9]+(?:[ '\\-][${LETTER}0-9]+)*$`);
+const LETTERS = new RegExp(`[${LETTER}]`, 'g');
+
+/** A name as typed, tidied: composed, trimmed, its runs of spaces one space. */
+export function tidyName(raw: string): string {
+  return raw.normalize('NFC').trim().replace(/\s+/g, ' ');
 }
 
 /** A skeleton with each run of one letter as one ("fuuuck" as "fuck"). */

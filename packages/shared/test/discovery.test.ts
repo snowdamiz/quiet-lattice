@@ -98,6 +98,27 @@ describe('the moderation filter', () => {
     expect(reason('Passage Rock')).toBeNull();
   });
 
+  it('refuses blocked and reserved words written with letters that do not decompose', () => {
+    for (const name of ['Nıgger', 'Hıtler', 'Føggøt', 'Whøre', 'Pørn', 'Rapıst', 'Bıtch', 'Shıt Rock', 'ſhit', 'Sħit', 'Dıck Rock', 'Fuck Łiar']) {
+      expect(reason(name), name).toBe('blocked');
+    }
+    expect(reason('Admın')).toBe('reserved');
+    expect(reason('Straße')).toBeNull();
+    expect(reason('Łódź')).toBeNull();
+    expect(reason('Ħalcyon')).toBeNull();
+    expect(nameSkeleton('Þor Æther Œuvre Ssß')).toBe('thoraetheroeuvressss');
+  });
+
+  it('refuses a letter it cannot read, so the letters it takes are the letters it reads', () => {
+    for (const name of ['Halǆcyon', 'Halɛcyon', 'Halŋcyon', 'Halǝcyon']) expect(reason(name), name).toBe('characters');
+    for (let c = 0xc0; c <= 0x24f; c++) {
+      const ch = String.fromCharCode(c);
+      const verdict = reason(`Hal${ch}cyon`);
+      if (verdict === 'characters') expect(nameSkeleton(ch), ch).not.toMatch(/^[a-z]+$/);
+      else expect(nameSkeleton(ch), ch).toMatch(/^[a-z]+$/);
+    }
+  });
+
   it('refuses names that pass for the game’s own, unless a moderator gives them', () => {
     for (const name of [
       'Admin',
