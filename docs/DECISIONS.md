@@ -812,3 +812,24 @@ Format: task id, question → choice → why.
   comment in shared quests/engine.ts. → DESIGN 14.4's ranks and titles, server-held. Open: the skills component loads
   before reputation, so P2.E18.T03's Void gate must read reputation only once the character is in play; P1.E09.T01's 256
   `paid` records mean re-accepting an abandoned quest after 256 others re-pays its step reputation (a P1.E09 follow-up).
+- **P1.E15.T03** Chat and party UI with the beacon list (client `ui/social/*`, HUD, ARCHITECTURE §9 and §13) → the
+  chat panel is a bottom-left HUD overlay; the HUD stays up while it is open, Esc closes it and the mouse is freed for the
+  frame's and the beacon list's buttons. Enter or `/` opens, Enter sends and closes, Tab cycles shard, system, party and
+  beacons, Up and Down recall the last 20 sent lines; the Controls sheet lists the chat keys. Commands are only what the
+  server carries (`/s`, `/sys`, `/p` with long forms, `/invite`, `/kick`, `/promote`, `/leave`, `/accept` and `/decline`
+  for the newest invite when no name is given); `/help` and `//` (a literal slash) are client-side, and a line the
+  protocol would refuse is refused in the panel with a reason. The client runs the server's pace as a token bucket (5 at
+  once, then 1 a second), so a fast typist is told to slow down, text kept, before the server counts toward a mute; a
+  mute is held for its `retryS` with a countdown. The model keeps 200 lines, the open log shows 100, the closed feed 6;
+  feed lines rise in on their own plates and fade 10 s later or 4 s after the panel closes, drawn as text, never markup.
+  Each tab counts lines newer than the last it showed while open; a cleared badge collapses over 150 ms; PARTY clears out
+  of a party. Party health is the entity's `hp` in view, else the party state's tenths; the leader has an amber mark and
+  an absent member shows offline or the other system. An invite's minute runs on the client, at most 8 held (the server's
+  `busy`). The leader promotes and removes from the open frame; anyone invites by name or leaves; buttons share a fixed
+  column. The beacon list is watched all session from attach, re-asked after a reconnect and quietly after a rate
+  refusal, shows the newest 50 with the rest counted; a beacon refusal shows under its row, a chat or party refusal is a
+  log line in words. World markers hide under the social panels except hostiles and the player's own ship, and
+  `covers()` with no arguments returns those boxes for P1.E04.T02. Layout changes ease one box at a time on the HUD clock
+  in whole pixels. The two-client smoke now signs in through the P1.E04.T05 screens. → DESIGN's social UI on the
+  P1.E15.T01 server half. Merged after a fifth REVISE (4.14) under the owner's rule; the open motion notes are
+  P1.E15.T04.

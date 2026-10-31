@@ -3915,3 +3915,742 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .bar.hull .fill {
   background: linear-gradient(90deg, #ff8a5a, #ffd08e);
 }
+
+/* ================================================================ social: chat, party, call for aid (P1.E15.T03) */
+/* ui/social/SocialUI.js. Every line of text sits on a plate (--plate made opaque, so a world marker behind never shows
+   through), so it reads at WCAG AA over a sunlit limb as over space, and no text is dimmer than --dim. Channels keep the
+   flight deck's colours: shard warm, system teal, party green; the amber accent marks the leader, the tab in use and the
+   invites. Whatever grows or goes eases its height (SocialUI's reveal, conceal and resize), clipped meanwhile. */
+.social-chat,
+.social-side {
+  --sc-plate: rgb(from var(--plate) r g b);
+  --sc-plate-2: rgb(from var(--plate-2) r g b);
+  --sc-refused: color-mix(in srgb, var(--danger) 45%, var(--text));
+}
+.social-chat .sizing,
+.social-side .sizing {
+  overflow: hidden;
+}
+/* Every box that opens, closes or slides has whole-pixel line heights, so its eases end where it lays out: nothing
+   settles by a pixel after a tween. */
+/* (closed things stay closed whatever display their class gives them) */
+.social-chat [hidden],
+.social-side [hidden] {
+  display: none !important;
+}
+
+/* ---------- chat panel: bottom left, over the vitals' three bars ---------- */
+.social-chat {
+  --sc-shard: var(--warm);
+  --sc-system: var(--accent2);
+  --sc-party: var(--good);
+  position: absolute;
+  left: 26px;
+  bottom: 118px;
+  width: min(440px, calc(100vw - 52px));
+  pointer-events: none;
+}
+.social-chat.open {
+  pointer-events: auto;
+}
+.social-chat .ch-shard {
+  --chan: var(--sc-shard);
+}
+.social-chat .ch-system {
+  --chan: var(--sc-system);
+}
+.social-chat .ch-party {
+  --chan: var(--sc-party);
+}
+.sc-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--sc-plate);
+  transition: background-color 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.sc-panel::before {
+  transition: opacity 0.2s ease-out;
+}
+/* closed: no plate and no chrome, only the lines (each on a plate of its own); the chrome keeps its room, so nothing
+   moves as the panel opens */
+.social-chat:not(.open) .sc-panel {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.social-chat:not(.open) .sc-panel::before {
+  opacity: 0;
+}
+.sc-tabs,
+.sc-input,
+.sc-hint {
+  transition: opacity 0.2s ease-out, transform 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.social-chat:not(.open) .sc-tabs,
+.social-chat:not(.open) .sc-input,
+.social-chat:not(.open) .sc-hint {
+  opacity: 0;
+}
+.social-chat:not(.open) .sc-tabs {
+  transform: translateY(4px);
+}
+.social-chat:not(.open) .sc-input,
+.social-chat:not(.open) .sc-hint {
+  transform: translateY(-4px);
+}
+
+.sc-tabs {
+  display: flex;
+  gap: 20px;
+  height: 36px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.sc-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.sc-tab:hover,
+.sc-tab.on {
+  color: var(--text);
+}
+.sc-tab::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.sc-tab.on::after {
+  transform: scaleX(1);
+}
+.sc-badge {
+  padding: 0 4px;
+  white-space: nowrap;
+  font-style: normal;
+  font-size: 9.5px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--ink);
+  background: var(--chan, var(--text));
+  text-shadow: none;
+}
+.sc-tab.t-shard {
+  --chan: var(--sc-shard);
+}
+.sc-tab.t-system {
+  --chan: var(--sc-system);
+}
+.sc-tab.t-party {
+  --chan: var(--sc-party);
+}
+.sc-tab.t-beacons {
+  --chan: var(--accent);
+}
+
+.sc-body {
+  position: relative;
+  height: clamp(124px, calc(100vh - 660px), 286px);
+}
+/* the lines: the same box open and closed (and for the log fading out over its successor), so a line keeps its place
+   as the feed cross-fades into the open log */
+.sc-log,
+.sc-beacons {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sc-log {
+  padding: 8px 12px;
+  scrollbar-gutter: stable;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .sc-log,
+  .sc-beacons {
+    scrollbar-width: thin;
+    scrollbar-color: var(--dim) transparent;
+  }
+}
+.sc-log.full {
+  overflow-y: auto;
+}
+/* scrollbars that stay drawn (overlay scrollbars hide until scrolled), in the panel's greys */
+.sc-log.full::-webkit-scrollbar,
+.sc-beacons::-webkit-scrollbar {
+  width: 5px;
+}
+.sc-log.full::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.sc-log.full::-webkit-scrollbar-thumb {
+  background: var(--dim);
+}
+/* (the beacon list's fades in with its overflow: --sb-bar eased 0–1 by SocialUI) */
+.sc-beacons::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--text) calc(var(--sb-bar, 0) * 6%), transparent);
+}
+.sc-beacons::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--dim) calc(var(--sb-bar, 0) * 100%), transparent);
+}
+/* the feed stands on the panel's foot, whatever its length (one longer than the box gives way at the top) */
+.sc-log.feed {
+  justify-content: flex-end;
+}
+.sc-log.feed .sc-lines {
+  margin-top: 0;
+}
+.sc-log.ghost {
+  pointer-events: none;
+  overflow: hidden;
+}
+.social-chat.open.tab-beacons .sc-log:not(.ghost) {
+  display: none;
+}
+/* the newest line at the bottom, and the open log still scrolls back to its oldest */
+.sc-lines {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sc-line {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 3px 11px 4px 9px;
+  border-left: 2px solid var(--chan, var(--line-2));
+  font-size: 13.5px;
+  line-height: 19px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  user-select: text;
+  animation: scIn 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: opacity 1.2s ease-in-out;
+}
+.sc-log.feed .sc-line {
+  background: var(--sc-plate);
+}
+.sc-line.still {
+  animation: none;
+}
+.sc-line.gone {
+  opacity: 0;
+}
+/* a line the log's top edge would cut shows not at all (no wrapped tail without its speaker) */
+.sc-line.cut {
+  opacity: 0;
+  transition-duration: 0.2s;
+}
+.sc-who {
+  margin-right: 8px;
+  font-family: var(--font-cond);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--chan);
+}
+.sc-line.note {
+  color: var(--dim);
+}
+.sc-line.tone-party {
+  --chan: var(--sc-party);
+}
+.sc-line.tone-beacon {
+  --chan: var(--accent);
+}
+.sc-line.refusal {
+  --chan: var(--danger);
+  color: var(--sc-refused);
+}
+@keyframes scIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+.sc-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 16px;
+  border-top: 1px solid var(--line);
+}
+.sc-chan {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chan);
+}
+.sc-chan::after {
+  content: '›';
+  margin-left: 8px;
+  color: var(--dim);
+}
+.sc-input input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  caret-color: var(--accent);
+  user-select: text;
+}
+.sc-input input::placeholder {
+  color: var(--dim);
+}
+.sc-count {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.sc-hint {
+  padding: 0 16px 10px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+/* muted, or told to slow down: the hint says so in the refusals' colour, with their mark */
+.sc-hint.warn {
+  color: var(--sc-refused);
+}
+.sc-hint.warn::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  vertical-align: 1px;
+  background: var(--danger);
+}
+
+/* ---------- the beacon list (the chat panel's fourth tab) ---------- */
+.sc-beacons {
+  display: none;
+  padding: 0 10px 6px 16px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+.social-chat.open.tab-beacons .sc-beacons,
+.social-chat .sc-beacons.leaving {
+  display: flex;
+}
+/* longer than the panel: it fades at the edge it scrolls on (its foot while more is below, its head once scrolled),
+   each fade eased in and out by SocialUI (--sb-above, --sb-below, 0–1) */
+.sc-beacons {
+  -webkit-mask-image: linear-gradient(rgb(0 0 0 / calc(1 - var(--sb-above, 0))), black 24px, black calc(100% - 30px), rgb(0 0 0 / calc(1 - var(--sb-below, 0))));
+  mask-image: linear-gradient(rgb(0 0 0 / calc(1 - var(--sb-above, 0))), black 24px, black calc(100% - 30px), rgb(0 0 0 / calc(1 - var(--sb-below, 0))));
+}
+.sb-own,
+.sb-row {
+  flex: none;
+  display: grid;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+.sb-own {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 14px;
+  padding: 10px 0 11px;
+}
+.sb-own-title {
+  grid-column: 1;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 13px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.sb-own.up .sb-own-title {
+  color: var(--accent-hi);
+}
+.sb-own-text {
+  grid-column: 1;
+  font-size: 13px;
+  line-height: 17px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sb-own.up .sb-own-text {
+  color: var(--text);
+}
+/* a refused raise or lower, in place of what the button does */
+.sb-own .sb-own-text.refused {
+  white-space: normal;
+  font-size: 12.5px;
+  color: var(--sc-refused);
+}
+/* (a refusal that wraps hangs its second line under its first word, clear of the mark) */
+.sb-own .sb-own-text.refused,
+.sb-refusal {
+  padding-left: 14px;
+  text-indent: -14px;
+}
+.sb-own-text.refused::before,
+.sb-refusal::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  vertical-align: 1px;
+  background: var(--danger);
+}
+.sb-own .btn {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+/* (no row gap: a refusal opening under a row brings its own margin, which eases with it) */
+.sb-row {
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 0 12px;
+  padding: 7px 0 8px;
+}
+.sb-kind {
+  align-self: start;
+  height: 18px;
+  margin-top: 1px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kind);
+  border: 1px solid var(--kind);
+}
+.sb-kind.k-story {
+  --kind: var(--accent2);
+}
+.sb-kind.k-event {
+  --kind: var(--warm);
+}
+.sb-kind.k-raid {
+  --kind: color-mix(in srgb, var(--danger) 60%, var(--text));
+}
+.sb-main {
+  min-width: 0;
+}
+.sb-place {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sb-meta {
+  margin-top: 1px;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sb-refusal {
+  grid-column: 2 / -1;
+  margin-top: 3px;
+  font-size: 12.5px;
+  line-height: 17px;
+  color: var(--sc-refused);
+}
+.sb-more {
+  flex: none;
+  padding: 9px 0 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.sb-more:empty {
+  display: none;
+}
+.sb-empty {
+  flex: none;
+  padding: 16px 0;
+  font-size: 13px;
+  color: var(--dim);
+}
+
+/* ---------- party frame and invites: under the location line ---------- */
+.social-side {
+  position: absolute;
+  left: 26px;
+  top: 112px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+.social-side.live {
+  pointer-events: auto;
+}
+.sp-party:not(.shown) {
+  display: none;
+}
+/* one plate: the head, a row per member, and (while the panel is open) the requests */
+.sp-party {
+  background: var(--sc-plate);
+  border: 1px solid var(--line);
+}
+.sp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 10px 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 13px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.sp-head b {
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+.sp-none {
+  padding: 8px 10px 9px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 17px;
+  color: var(--dim);
+}
+/* (a column of its own at the right for the tag and the leader's requests, so every row's health bar is as long, the
+   leader's view or not) */
+.sp-member {
+  display: grid;
+  grid-template-columns: 11px minmax(0, 1fr) 92px;
+  align-items: center;
+  column-gap: 7px;
+  padding: 7px 10px 8px 8px;
+  border-top: 1px solid var(--line);
+  border-left: 2px solid transparent;
+  animation: spIn 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.sp-member.still {
+  animation: none;
+}
+.sp-member.me {
+  border-left-color: var(--bracket);
+}
+/* the leader's mark: an amber diamond, as the map marks a target */
+.sp-mark {
+  width: 7px;
+  height: 7px;
+  justify-self: center;
+}
+.sp-member.leader .sp-mark {
+  background: var(--accent);
+  transform: rotate(45deg);
+}
+.sp-name {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-member.offline .sp-name {
+  color: var(--dim);
+}
+/* (against the frame's right edge in every row, the leader's with requests under it too) */
+.sp-tag {
+  justify-self: end;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.sp-act {
+  height: 20px;
+  padding: 0 7px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid var(--line-2);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.sp-act:hover,
+.sp-act:focus-visible {
+  color: var(--accent-hi);
+  border-color: var(--accent);
+  outline: none;
+}
+/* the leader's requests, on the health bar's line */
+.sp-acts {
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: end;
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+/* health: a 3 px bar on a dark track (the fill at 3:1 or more against it at every level) */
+.sp-hp {
+  grid-column: 2;
+  grid-row: 2;
+  height: 3px;
+  margin-top: 5px;
+  background: color-mix(in srgb, var(--text) 12%, transparent);
+}
+.sp-member.acts .sp-hp {
+  align-self: center;
+}
+.sp-hp b {
+  display: block;
+  height: 100%;
+  background: var(--good);
+  transition: width 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.3s;
+}
+.sp-member.hurt .sp-hp b {
+  background: var(--warm);
+}
+.sp-member.low .sp-hp b {
+  background: var(--danger);
+}
+.sp-foot {
+  display: flex;
+  gap: 4px;
+  padding: 7px 6px;
+  border-top: 1px solid var(--line);
+}
+.sp-foot input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 9px;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid var(--line-2);
+  outline: none;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text);
+  user-select: text;
+}
+.sp-foot input:focus {
+  border-color: var(--accent);
+}
+.sp-foot input::placeholder {
+  color: var(--dim);
+}
+
+.sp-invites {
+  display: flex;
+  flex-direction: column;
+}
+.sp-invite {
+  position: relative;
+  margin-top: 8px;
+  padding: 9px 12px 13px;
+  background: var(--sc-plate-2);
+  border-left: 2px solid var(--accent);
+}
+.sp-inv-head {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 13px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent-hi);
+}
+.sp-inv-head b {
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.sp-inv-who {
+  margin: 6px 0 10px;
+  font-size: 13.5px;
+  line-height: 20px;
+  color: var(--dim);
+}
+.sp-inv-who b {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+.sp-inv-acts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sp-inv-hint {
+  margin-left: auto;
+  transition: opacity 0.2s ease-out;
+}
+.social-side.live .sp-inv-hint {
+  opacity: 0;
+}
+/* the minute an invite has, running down */
+.sp-inv-time {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+}
+@keyframes spIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
