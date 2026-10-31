@@ -193,12 +193,16 @@ describe('the ship’s fabricator', () => {
   });
 
   it('a Waystation’s fabricator works docked on any of its four pads and not docked far from it in its frame', () => {
+    give([
+      ['tritium', 150],
+      ['dihydrogen', 50],
+    ]);
     for (let pad = 0; pad < 4; pad++) {
       fields = { frame: STATION, pos: padPose(STATION, pad).pos as Vec3, mode: 'docked' };
-      expect(make('warp_cell', 'waystation'), `pad ${pad}`).toMatchObject({ result: 'made' });
+      expect(make('pulse_fuel_cell', 'waystation'), `pad ${pad}`).toMatchObject({ result: 'made' });
     }
     fields = { frame: STATION, pos: [0, 40, 600], mode: 'docked' };
-    expect(make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
+    expect(make('pulse_fuel_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
   });
 
   it('makes torpedoes only from Tier 2 (DESIGN 15.7: field-craftable at Tier 2+)', () => {
