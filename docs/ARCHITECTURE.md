@@ -844,7 +844,8 @@ every chat line, mute and party change goes to the server log for moderation.
   the leader's amber mark, health (the entity's `hp` while it is in view, else the state's tenths), and where an absent
   member is (offline, another system); while the panel is open, invite by name and leave, and for the leader promote and
   remove per member. Invites waiting are cards there with their minute running down. Each change moves one box
-  (`motion.js`, stepped every frame on the HUD clock: a whole pixel, at least one a frame, landing where it lays out);
+  (`motion.js`, stepped every frame on the HUD clock: a whole pixel, at least one a frame, landing where it lays out;
+  `SocialUI.update` runs first in the HUD's frame, so the layout it reads is the last frame's, before any HUD write);
   what goes fades out before anything moves over where it was, and what comes fades in as it grows. World markers are
   hidden under (or left of) the party frame, the invite cards and the open panel, but for hostiles and the player's own
   ship (`hud.social.covers(x, y, kind)`); `covers()` with no arguments gives those panels' boxes, which remote entities'
