@@ -5,8 +5,9 @@
 // phase with its actors (and parts it again when the party breaks up), never fights itself or another system for a
 // player's phase, takes it out when the step ends, and names its actors' tags on kills; a cutscene step plays through the
 // cutscene service; the admin CLI's set-quest-step moves a step in play and on a stored log; a stored state the catalog
-// has moved on from loads; the tick spreads its characters; and the quests component round-trips through persistence,
-// v1 included.
+// has moved on from loads; the tick spreads its characters; the quests component round-trips through persistence, v1
+// included; and reputation and titles go to their hooks with their quest (settled from owed on join, once), and rank
+// prerequisites read the rank hook (P2.E18.T01).
 import { totalXpFor } from '@astra/shared/combat';
 import { countOf } from '@astra/shared/inventory';
 import {
@@ -394,6 +395,88 @@ describe('quest runtime', () => {
     w.inventory.consume(a.id, 'ferrite', 9999);
     w.runtime.joined(a.viewer);
     expect(owedItems()).toBe(before - 9999);
+  });
+
+  it('gives a quest’s reputation and title to their hooks with the quest, holds them owed while a hook declines, and reads ranks for prerequisites', () => {
+    const given: unknown[][] = [];
+    let taking = true;
+    let rank: string | null = null;
+    const rewards: QuestRewardHooks = {
+      rep: (id, faction, amount, quest) => (given.push(['rep', id, faction, amount, quest]), taking),
+      title: (id, title, quest) => (given.push(['title', id, title, quest]), taking),
+      rankOf: (_id, faction) => (faction === 'compact' ? rank : null),
+    };
+    const job = quest('job', [{ id: 'a', type: 'interact', text: 'x', target: 'npc:a' }], {
+      repeat: { cooldownS: 60 },
+      rewards: { rep: [{ faction: 'compact', amount: 60 }], title: 'Tester' },
+    });
+    const ranked = quest('ranked', [{ id: 'a', type: 'interact', text: 'x', target: 'npc:a' }], {
+      prerequisites: { rank: { faction: 'compact', rank: 'hand' } },
+    });
+    const w = world([job, ranked], { rewards });
+    const a = w.join();
+    w.runtime.startQuest(a.id, 'job');
+    w.runtime.event(a.id, { type: 'interact', target: 'npc:a' });
+    expect(given).toEqual([
+      ['rep', a.id, 'compact', 60, 'job'],
+      ['title', a.id, 'Tester', 'job'],
+    ]);
+    expect(a.book().owed).toEqual([]);
+    // declined (its system did not hold the character): owed, with the quest
+    taking = false;
+    w.advance(120);
+    w.runtime.startQuest(a.id, 'job');
+    w.runtime.event(a.id, { type: 'interact', target: 'npc:a' });
+    expect(a.book().owed).toEqual([
+      { kind: 'rep', quest: 'job', faction: 'compact', amount: 60 },
+      { kind: 'title', quest: 'job', title: 'Tester' },
+    ]);
+    // a rank prerequisite reads the rank hook
+    expect(w.runtime.offer(a.id, 'ranked')).toBe('prerequisites');
+    rank = 'hand';
+    expect(w.runtime.offer(a.id, 'ranked')).toBeNull();
+  });
+
+  it('settles owed reputation and titles on join through their hooks, oldest first, once; what a hook declines stays owed', () => {
+    const given: unknown[][] = [];
+    const declined = new Set<string>(['reaches']);
+    const rewards: QuestRewardHooks = {
+      rep: (id, faction, amount, quest) => (given.push(['rep', faction, amount, quest]), !declined.has(faction)),
+      title: (id, title, quest) => (given.push(['title', title, quest]), true),
+    };
+    const w = world([], { rewards });
+    const saved: QuestLog = {
+      ...emptyQuestLog(),
+      owed: [
+        { kind: 'item', quest: 'big', item: 'ferrite', count: 5 },
+        { kind: 'rep', quest: 'the_apothecarys_sodium', faction: 'belost', amount: 30 },
+        { kind: 'rep', quest: 'raid', faction: 'reaches', amount: 40 },
+        { kind: 'skill_points', quest: 'first_jobs', count: 1 },
+        { kind: 'title', quest: 'forty_names', title: 'Unlisted' },
+      ],
+    };
+    const a = w.join('thalune', saved);
+    expect(given).toEqual([
+      ['rep', 'belost', 30, 'the_apothecarys_sodium'],
+      ['rep', 'reaches', 40, 'raid'],
+      ['title', 'Unlisted', 'forty_names'],
+    ]);
+    // (the owed item went into the inventory on join, as before)
+    expect(a.book().owed).toEqual([
+      { kind: 'rep', quest: 'raid', faction: 'reaches', amount: 40 },
+      { kind: 'skill_points', quest: 'first_jobs', count: 1 },
+    ]);
+    const settled = w.lines.find((l) => l.msg === 'owed quest rewards settled')!;
+    expect(settled.obj.settled).toEqual([saved.owed[1], saved.owed[4]]);
+    // a second join pays only what is still owed, once its hook takes it
+    given.length = 0;
+    declined.clear();
+    w.runtime.joined(a.viewer);
+    expect(given).toEqual([['rep', 'reaches', 40, 'raid']]);
+    expect(a.book().owed).toEqual([{ kind: 'skill_points', quest: 'first_jobs', count: 1 }]);
+    given.length = 0;
+    w.runtime.joined(a.viewer);
+    expect(given).toEqual([]);
   });
 
   it('names an actor’s tags on its kill, and plays a cutscene step through the cutscene service, at its place', () => {

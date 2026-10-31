@@ -11,7 +11,8 @@
 // - a client asks only to accept a quest on offer, abandon one, or answer a dialogue or choice (`request`).
 // Rewards go where they belong: XP to the character's progress (a level's worth counted at the quest's tier), units and
 // items to its inventory, flags to its quest state, skill points and node unlocks to the skill service; reputation and
-// titles to hooks their systems register, and held as owed until one exists.
+// titles to the reputation service (P2.E18.T01). A reward whose hook declines is held as owed; owed reputation and titles
+// are settled on the next join.
 //
 // An instanced step's player is put in a story phase (phases/manager.ts) keyed by quest and step (or scene) at the
 // step's place, under its party (`partyIdOf`), so the members of a party on that step share one layer and its actors,
@@ -82,11 +83,13 @@ export type QuestListener = (characterId: string, push: QuestPush) => void;
  * or one that declines, the reward is held as owed (`takeOwed` hands it over later).
  */
 export interface QuestRewardHooks {
-  rep?(characterId: string, faction: FactionId, amount: number): boolean;
+  /** moves the character's standing with a faction (the reputation service, P2.E18.T01), for quest `quest` */
+  rep?(characterId: string, faction: FactionId, amount: number, quest: string): boolean;
   skillPoints?(characterId: string, count: number): boolean;
   /** unlocks a skill node through quest `quest`'s route (the node lists the quest among its unlocks) */
   node?(characterId: string, node: string, quest: string): boolean;
-  title?(characterId: string, title: string): boolean;
+  /** a title quest `quest` gave (the reputation service keeps them) */
+  title?(characterId: string, title: string, quest: string): boolean;
   /** the character's level rose (the skill service refreshes the view that reads it) */
   levelled?(characterId: string, level: number): void;
   /** the character's rank with a faction, for rank prerequisites */
@@ -278,8 +281,9 @@ export class QuestRuntime {
 
   /**
    * The session's character is in play, its entity in a zone and its party known (the gateway calls this after the
-   * social service hears of the join): auto quests start, its holdings and position are read (a returning player is put
-   * back in its step's phase), owed items are tried again, and request numbering starts over. Returns the state to send.
+   * social service hears of the join): owed reputation and titles go to their system, auto quests start, its holdings and
+   * position are read (a returning player is put back in its step's phase), owed items are tried again, and request
+   * numbering starts over. Returns the state to send.
    */
   joined(viewer: ZoneViewer): QuestReply {
     const h = this.mustHold(viewer.characterId ?? '');
@@ -288,6 +292,8 @@ export class QuestRuntime {
     h.last = this.clock.now();
     h.placed = null;
     h.cutsceneTried = -Infinity;
+    // (before the auto quests: their rank prerequisites read the standing owed reputation adds)
+    this.settleOwed(h);
     this.change(
       h,
       (ctx) => {
@@ -777,11 +783,11 @@ export class QuestRuntime {
       this.log?.error({ err, character: h.id, quest }, 'quest reward could not reach the inventory');
     }
     for (const { faction, amount } of r.rep ?? [])
-      if (!this.hook(h, quest, 'rep', () => this.hooks.rep?.(h.id, faction, amount))) owe({ kind: 'rep', quest, faction, amount });
+      if (!this.hook(h, quest, 'rep', () => this.hooks.rep?.(h.id, faction, amount, quest))) owe({ kind: 'rep', quest, faction, amount });
     if (r.skillPoints && !this.hook(h, quest, 'skillPoints', () => this.hooks.skillPoints?.(h.id, r.skillPoints!)))
       owe({ kind: 'skill_points', quest, count: r.skillPoints });
     for (const node of r.nodes ?? []) if (!this.hook(h, quest, 'node', () => this.hooks.node?.(h.id, node, quest))) owe({ kind: 'node', quest, node });
-    if (r.title && !this.hook(h, quest, 'title', () => this.hooks.title?.(h.id, r.title!))) owe({ kind: 'title', quest, title: r.title });
+    if (r.title && !this.hook(h, quest, 'title', () => this.hooks.title?.(h.id, r.title!, quest))) owe({ kind: 'title', quest, title: r.title });
   }
 
   /** Runs a reward hook; one that throws is logged and counts as declined (the reward is held as owed). */
@@ -800,6 +806,30 @@ export class QuestRuntime {
     if (def?.tier !== undefined) return def.tier;
     const zone = h.viewer ? this.zones.zoneOf(h.viewer) : undefined;
     return zone ? questTier(this.systemOf(zone)) : 0;
+  }
+
+  /**
+   * Owed reputation and titles (held before the reputation service existed, P2.E18.T01, or while its hook declined) go to
+   * their hooks now, oldest first; what a hook takes leaves the owed list, what it declines stays owed. Exactly once:
+   * the quest log and the standing it paid change together in memory, so the next capture writes both in one row update
+   * (ARCHITECTURE §8), and a crash before that write loses both, leaving the owed list for the next join to settle.
+   */
+  private settleOwed(h: Held): void {
+    if (!h.book.log.owed.some((o) => o.kind === 'rep' || o.kind === 'title')) return;
+    const kept: Owed[] = [];
+    const settled: Owed[] = [];
+    for (const o of h.book.log.owed) {
+      const took =
+        o.kind === 'rep'
+          ? this.hook(h, o.quest, 'rep', () => this.hooks.rep?.(h.id, o.faction, o.amount, o.quest))
+          : o.kind === 'title'
+            ? this.hook(h, o.quest, 'title', () => this.hooks.title?.(h.id, o.title, o.quest))
+            : false;
+      (took ? settled : kept).push(o);
+    }
+    if (settled.length === 0) return;
+    h.book.log.owed = kept;
+    this.log?.info({ character: h.id, settled, owed: kept.length }, 'owed quest rewards settled');
   }
 
   /** Items owed because the inventory was full go in now, as far as they fit. */
