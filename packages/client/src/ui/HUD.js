@@ -91,6 +91,12 @@ export const CAST_REFUSED = {
 };
 /** A slot's ring as the bar draws it: a near-black halo, a track, and the cooldown's sweep over it. */
 const RING = `<svg viewBox="0 0 40 40"><circle class="halo" cx="20" cy="20" r="15"/><circle class="track" cx="20" cy="20" r="15"/><circle class="sweep" cx="20" cy="20" r="15" pathLength="1"/></svg>`;
+/** A cooldown's seconds left as the bar shows them: whole from ten up, tenths under ten, so a countdown is never a lone
+ * digit a key could be read as. */
+export function countdown(left) {
+  const tenths = Math.ceil(left * 10 - 1e-6) / 10;
+  return tenths >= 10 ? String(Math.ceil(left - 1e-6)) : tenths.toFixed(1);
+}
 /** The bar rests dim this long after the last thing that moved on it, ms. */
 const BAR_REST_MS = 4000;
 
@@ -485,9 +491,10 @@ export class HUD {
 
   // The bar the player casts from (ARCHITECTURE §25), under the prompt: a ring a working slot with its key in it and the
   // node's name under it. A cooldown is the ring drawn back to full in the bar's colour (heat's warm on foot, Charge's
-  // lilac in flight) as the server's clock runs out, the seconds left in place of the key; a toggle that is on fills it;
-  // a cast the server took flashes it, and one it refused edges it in danger red with the reason under the bar. Shown
-  // while a node is slotted on the bar the mode casts from; it rests dim once nothing on it has moved for BAR_REST_MS.
+  // lilac in flight) as the server's clock runs out, the seconds left in that colour in place of the key (`countdown`);
+  // a toggle that is on thickens it; a cast the server took flashes it, and one it refused edges it in danger red with
+  // the reason beside the bar. Shown while a node is slotted on the bar the mode casts from; it rests dim once nothing on
+  // it has moved for BAR_REST_MS.
   updateAbilities() {
     const g = this.game;
     const bar = g.abilities && !g.director?.pose ? castBar(g) : null;
@@ -515,7 +522,7 @@ export class HUD {
       const off = cooling ? Math.min(1, x.left / x.length).toFixed(3) : '0';
       if (sweep._off !== off) sweep.style.strokeDashoffset = sweep._off = off;
       const key = e.querySelector('.ab-key');
-      const label = cooling ? String(Math.ceil(x.left - 1e-6)) : String(x.key);
+      const label = cooling ? countdown(x.left) : String(x.key);
       if (key._t !== label) key.textContent = key._t = label;
       e.classList.toggle('cooling', cooling);
       e.classList.toggle('lit', x.on);

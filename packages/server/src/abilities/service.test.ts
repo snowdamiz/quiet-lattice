@@ -364,6 +364,15 @@ describe('effects over time', () => {
     expect(casts[0]!.ctx.creatures(40).map((t) => t.id)).toContain(c.id);
   });
 
+  it('asks the effect what only it knows before paying anything', () => {
+    const effects = new Map<string, AbilityEffect>([['pulse', { check: () => 'target', cast: () => void casts.push({ node: 'pulse', ctx: null as never }) }]]);
+    svc = service({ book: abilityBook(new Map([['pulse', { node: 'pulse', target: 'self' }]]), effects) });
+    expect(cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'target' });
+    expect(meter.heat).toBe(0);
+    expect(casts).toEqual([]);
+    expect(svc.state('c1').cooldowns).toEqual([]);
+  });
+
   it('keeps a bug in an effect to that effect: the cast is still answered', () => {
     const effects = new Map<string, AbilityEffect>([
       [

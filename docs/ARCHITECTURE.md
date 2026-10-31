@@ -38,6 +38,7 @@ resources/          ResourceService: mining hits, resource nodes' shared state p
 combat/             each zone's health, damage path, deaths and combat events; CombatService: shots, kills' rewards (§20)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
+abilities/          CastService: casts of slotted actives checked, paid, cooled down, run and replicated; the book of effects (§25)
 meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§19)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
@@ -114,14 +115,14 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
   first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 reserved for
-  meters, 10 combat, 11 beacons, 12 analysis, 13 crafting, 14 reputation, 15 meters); a unit test pins the number and
+  meters, 10 combat, 11 beacons, 12 analysis, 13 crafting, 14 reputation, 15 meters, 16 abilities); a unit test pins the number and
   checks the history, so two branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
   passed, §7, so the client must stamp it and step it forward, never back, when it falls more than a second behind; an
   input without one, 0, is judged on its arrival; `mode` is a prediction validated like the pose; `seq` counts from 1),
-  `cast {seq, slot, aim, target?}`, `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
+  `cast {seq, time, node, slot, frame, aim, target?}` (§25), `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
   frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21), `analyze {seq,
@@ -133,7 +134,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   their own (§13, §18, §20, §21, §22, §23).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot`, `xp` (§20), `notice` (toasts), `party` (party news), `rank` and `title` (§24), `world {season, count, edgeX, tiers, serverTime}` (sent right after
+  `loot`, `xp` (§20), `cast` (§25), `notice` (toasts), `party` (party news), `rank` and `title` (§24), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
   by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§19),
   `party {party}` (the
@@ -142,8 +143,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
   reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
   id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), `craft
-  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `reputation {reputation}` (§24), and
-  snapshots.
+  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `reputation {reputation}` (§24), `cast
+  {seq, node, slot, result, reason?, readyAt?}` and `abilities {cooldowns, on}` (§25), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -224,6 +225,17 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   after `recipes` on join and whenever the server changes it, after that change's events: `rank {faction, rank, from}`
   (one per faction whose rank a change moved, from the rank before to the rank after; ids or null) and `title {title}`
   (a title earned).
+- **Abilities** (protocol 16, §25): a client sends `cast {seq, time, node, slot, frame, aim, target?}` for a key press, a
+  strict shape (no client says what a cast did): `node` the one it sees in `slot` (0–5) of the bar its mode casts from,
+  `aim` a direction in `frame` (its pose's), `target` an entity id when the ability names one, `time` checked only for
+  staleness; node ids are the skill web's (lower-case, 48 characters). The server answers each with `cast {seq, node,
+  slot, result}`: `cast` (with `readyAt`, when its cooldown ends), `ended` (a toggle turned off) or `refused` with `reason`
+  (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `down`, `slot`, `not_owned`, `not_slotted`, `unknown`, `cooldown` with
+  `readyAt`, `frame`, `target`, `unseen`, `dead`, `range`, `busy`, `los`, `heat`, `charge`). `abilities {cooldowns: [{node,
+  readyAt}], on}` (at most 16 of each) is sent after `meters` on join and before the answer to every cast carried out;
+  `seq` counts from 1 and increases. A cast carried out reaches every session that sees its caster or its target as a
+  `cast` event `{caster, node, phase: 'cast' | 'end', at, frame, aim, target?}`; what it did arrives as `combat` events.
+  One `cast` type serves both directions.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
   `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
@@ -1265,8 +1277,9 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   outlined, a solid 2 px near-black ring of unblurred text shadows under every glyph, so they hold 4.5:1 over a bright
   world's limb. The arcs' strokes are sized in
   the SVG's own units per reticle, never as non-scaling strokes, whose dashes would be measured in screen pixels and
-  overrun the arc. An arc lands on its value at once (no tween) on its first draw, as it turns on and on a jump; the
-  crosshair and the reticle fade in over 150 ms as they turn on.
+  overrun the arc. An arc lands on its value at once (no tween) on its first draw and as it turns on; a jump (more than
+  8% in a frame: a sync, a refill, an ability's chunk of heat) eases onto the value over 150 ms, ease-out, on the HUD's
+  clock (P1.E07.T03, §25); the crosshair and the reticle fade in over 150 ms as they turn on.
 
 ## 20. Combat (`packages/server/src/combat`)
 
@@ -1308,7 +1321,8 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   aim's frame (its pose's); the aim within 30° of the believed nose (the lasers fire along it). Then the ray: from the
   believed position carried on along the believed velocity to the shot's time (from its last input's stamp, 0.1 s at
   most), along the aim, as far as the gun reaches, the shared `rayHits` against the living creatures of its frame's world
-  (hit spheres round their bodies, 0.6 × size + 1 m), and the first it meets must be in sight from the believed position
+  that its phase lets the player see (`creatureTargets`, §25; hit spheres round their bodies, `creatureSphere`: 0.6 ×
+  size + 1 m), and the first it meets must be in sight from the believed position
   itself: the drawn ground (fauna's plan, §12) sampled along the stretch the origin was carried (the client's stamp
   chooses the carry, so it never jumps ground the ship has not been seen to cross) and on to the hit, at most 96 times a
   stretch (every 2 m on a short one), the gun's end and the target's skipped. A hit deals the gun's damage through the
@@ -1416,9 +1430,9 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   cockpit with Deep Sweep, P2.E29.T02, which lets `ship` through for those species); `unknown` (no `mob` entity of that id
   in the player's zone that its phase lets it see, `phases.canSee`, so a phase's own creature is none to anyone else and
   nothing more of it is told; or a species its world does not carry); `dead` (no hp left); `world` (it is not on the world the
-  player's frame names); `range` (from the eye, 1.6 m up, to the creature's middle, more than the demo's reach of 70 m
-  plus its hit radius, 1.15 × its size × 0.9, a flyer's 0.6, as the client's aim pick takes it, plus 5 m for a pose a tick
-  old); `busy` (the ground not planned yet); `los` (the drawn ground in the way, sampled as the beam's is, §18). Every
+  player's frame names); `range` (from the eye, 1.6 m up, to the middle of the creature's hit sphere, more than the demo's
+  reach of 70 m plus the sphere's radius, plus 5 m for a pose a tick old; the sphere is `creatureSphere` at the animal's
+  own scale, the one shots and casts take, §25); `busy` (the ground not planned yet); `los` (the drawn ground in the way, sampled as the beam's is, §18). Every
   analysis that passes is heard by listeners (`subscribe`), first or not: the gateway passes each to the quest runtime as
   `analyze {species: <key>}` (§17), so a quest's `analyze` step counts species the server saw analyzed.
 - **The codex** (`CodexService`, `codex/service.ts`, made by `coreRegistry` over the progress holder and the skill service
@@ -1580,3 +1594,65 @@ changes it; no client message does.
 - **The client** (`net/reputation.js`): `net.reputation` keeps the last view (`standing(faction)`, `rank(faction)`,
   `titles`), the rank and title events for a screen to `take()` (the last 16), and logs each change to the console. The
   reputation screens are P2.E18.T02 onward's.
+
+## 25. Abilities (`packages/server/src/abilities`, `@astra/shared/abilities`)
+
+DESIGN 9.1's actives, cast by the server (P1.E07.T03). A key press is an intent; the server decides whether the cast
+happens and what it does, and tells everyone who can see it. The branches' tasks (P1.E07.T04–T10) add abilities as data and
+effects; this runtime casts them all.
+
+- **The data.** A skill node is the truth of what an ability is and costs: its bar (`node.slot`: heat or materials on the
+  ground bar, Charge on the ship's), its heat or Charge per cast, its cooldown and its numbers (`@astra/shared/data`). An
+  `Ability` (`@astra/shared/abilities`, `ABILITIES` by node) adds only what a cast names: `target` (`self`: nothing, on or
+  round the caster; `entity`: one entity it can see, of the kinds in `on`, `mob` or `player`, within `rangeM` or the node's
+  range; `aim`: only where it looks) and `toggle` (on with one cast, paid, its cooldown started; off with the next, free).
+  `cooldownOf(node)` reads a node's clock (a shared cooldown runs on the other node's: Crush on Well's; once-a-world and
+  once-a-day cooldowns, Tier III and capstones, throw until Phase 2 casts them); `castCost` what the runtime pays (heat
+  from the ground bar, Charge from the ship's; health, materials and heat per second are the effect's); `barOfMode` which bar a mode
+  casts from (`foot` the ground bar, `ship` the ship's; none landed, docked or on the pulse drive).
+- **The book** (`book.ts`): each ability paired with its effect, the server's code for it, `{check?, cast, end?}`.
+  `abilityBook()` refuses to build (the server does not start) an ability without an effect or the reverse, one filed
+  under another node, a node that is always on, an `entity` ability that takes no kind, or a cooldown casts cannot run.
+  This build's book is empty: no branch has landed its abilities yet, so every slotted node is refused `unknown`. Tests
+  and the integration test cast a fixture book (`test/abilityFixture.ts`) over real nodes, never shipped.
+- **A cast** (`CastService.cast`, `service.ts`) is checked cheapest first, nothing paid or started until all pass: its
+  `seq`; the character in play; its rate (6 at once, 3 a second); its stamp (within 3 s); the bar the mode movement
+  authority believes casts from (§7); not down (§20); the slot one of the bar's working ones (six on the ground, the flown
+  hull's `abilitySlots` aboard: the skill view's `shipSlots`); the node owned and in that slot of that bar; an ability in
+  the book (a toggle that is on goes off here: `ended`); its cooldown; the aim's frame (the pose's); for an `entity`
+  cast, the target: one the caster can see by the phase rule (§6.1; one it cannot is `unseen`, told apart from none at
+  all by nothing), of a kind the ability takes, alive (a creature's health not dead, a player not down), on the caster's
+  world, within reach from the caster's eye (1.6 m over its feet; a ship's centre aboard) to its hit sphere plus 2 m of
+  slack, and in sight over the drawn ground (`clearSight`, combat's); then the effect's own `check`; then the cost through
+  the meters (§19: `addHeat`, refused in the lockout, a chunk reaching the top overheating; `spendCharge`, refused unless
+  it holds it all). Carried out, the cooldown runs from now, a toggle goes on, the effect runs (a bug in it is logged and
+  costs only it), and the cast goes out as a `cast` event to every session whose interest holds the caster or the target
+  (`Zone.sees`, at once: casts are rare).
+- **What an effect gets** (`CastContext`): the caster's character and entity, the node, the ability, the bar, the world
+  time, the frame, origin and unit aim, the checked target; `creatures(reach?)`, the creatures of its world it can see with
+  their hit spheres (`creatureTargets`, combat's, for areas and cones with `hitTest`, `@astra/shared/combat`); `damage(target,
+  base)`, a hit through the zone's one damage path (§20) as the node's ability, with the caster's node modifiers and
+  augments; and `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play.
+- **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
+  does); `state(id)` is the `abilities` message. `step(now)` runs every 50 ms (`start`, the gateway's): due timers, and
+  toggles whose caster is out of the bar's mode, down or out of its zone go off (`end`, an `end` event). A character's
+  last connection closing ends its toggles and drops its timers (`left`).
+- **One hit sphere, one phase rule.** A creature's hit sphere is `creatureSphere` (`@astra/shared/combat`): 0.6 of its
+  size at its own scale plus a metre of slack, round its body (a walker's centre half its size over its feet). Shots
+  (§20), casts and analyses (§22) all take it; `creatureTargets` (`combat/targets.ts`) gives a shot or a cast only the
+  creatures the player's phase lets it see.
+- **The client** (`net/abilities.js`): `Abilities` keeps the bars from the `skills` view, the server's cooldowns and
+  toggles, the casts on their way and the last refusal; keys 1–6 on foot and 1–5 in flight (as many as the hull works;
+  `Game.castKeys`) send a cast of what is in that slot with the eye's look (the nose in flight) in the pose's frame and,
+  for an `entity` ability, the nearest living entity of a kind it takes within 8° of the aim and its reach. LMB stays the
+  multitool's beam and the ship's guns. A `cast` event plays the effect a branch registered for its node
+  (`registerAbilityFx(node, {cast, end?})`); none is registered until the branches' tasks and their art (P1.E07.T14)
+  land. The HUD's bar (`HUD.updateAbilities`) shows the working slots of the bar the mode casts from under the prompt,
+  while a node is slotted there: a ring a slot, in the arcs' language (a near-black halo and disc, an opaque track), drawn
+  full in the bar's colour (heat's warm, Charge's lilac) when ready, drawn back up as the server's cooldown runs out with
+  the seconds left in place of the key (whole from ten, tenths under ten, never a lone digit), thicker while a toggle is
+  on, flaring as the server takes a cast and edged in danger red beside the reason as it refuses one; it rests at 55% once
+  nothing on it has moved for 4 s. The client never decides a cooldown. Its gauge arcs (§19) ease a jump over 150 ms
+  (ease-out, on the HUD's clock, following the value as it moves meanwhile) and land at once only on their first draw and
+  as they turn on.
+

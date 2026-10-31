@@ -178,6 +178,74 @@ async function hastenHeat(page: Page, k: number): Promise<void> {
   }, k);
 }
 
+/** The client's ability model and clocks as a capture drives them: no server, so the screen says what one would. */
+interface AbilityWindow {
+  game: MeterGame & {
+    time: number;
+    abilities: {
+      skills(view: unknown): void;
+      state(m: unknown): void;
+      answer(m: unknown): void;
+      pending: Map<number, { bar: string; slot: number; node: string; at: number }>;
+      now(): number;
+    };
+    hud: { later(fn: () => void, ms: number): number };
+  };
+}
+
+/** The bars as the server's skills view would hold them, the ship bar working `shipSlots` slots. */
+async function slotAbilities(page: Page, ground: (string | null)[], ship: (string | null)[], shipSlots: number): Promise<void> {
+  await page.evaluate(
+    ({ ground, ship, shipSlots }) => {
+      // (no named functions in here: the page has no helper for their names)
+      const slots = { ground: [...ground, ...Array(6 - ground.length).fill(null)], ship: [...ship, ...Array(5 - ship.length).fill(null)] };
+      (window as unknown as AbilityWindow).game.abilities.skills({ state: { slots }, shipSlots });
+    },
+    { ground, ship, shipSlots },
+  );
+}
+
+/** The server's cooldowns: each node ready again `left` seconds from the game's world time now; `on` the toggles on. */
+async function coolingDown(page: Page, left: Record<string, number>, on: string[] = []): Promise<void> {
+  await page.evaluate(
+    ({ left, on }) => {
+      const g = (window as unknown as AbilityWindow).game;
+      g.abilities.state({ t: 'abilities', cooldowns: Object.entries(left).map(([node, s]) => ({ node, readyAt: g.time + s })), on });
+    },
+    { left, on },
+  );
+}
+
+/**
+ * A key press's round trip as a server would answer it, on the HUD's clock from now: the cast sent at `at` ms, answered
+ * `rtt` ms later, carried out (its cooldown running `cooldownS` from then, the meter paid `pay`: heat on the ground bar,
+ * Charge on the ship's) or refused for `refused`.
+ */
+async function castRoundTrip(
+  page: Page,
+  c: { bar: 'ground' | 'ship'; slot: number; node: string; at: number; rtt?: number; cooldownS?: number; pay?: number; refused?: string; seq: number },
+): Promise<void> {
+  await page.evaluate((c) => {
+    const g = (window as unknown as AbilityWindow).game;
+    const a = g.abilities;
+    g.hud.later(() => {
+      a.pending.set(c.seq, { bar: c.bar, slot: c.slot, node: c.node, at: a.now() });
+      g.hud.later(() => {
+        if (c.refused) {
+          const readyAt = (a as unknown as { cooldowns: Map<string, number> }).cooldowns.get(c.node);
+          a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'refused', reason: c.refused, readyAt });
+          return;
+        }
+        const cooldowns = [...(a as unknown as { cooldowns: Map<string, number> }).cooldowns].map(([node, readyAt]) => ({ node, readyAt }));
+        a.state({ t: 'abilities', cooldowns: [...cooldowns.filter((x) => x.node !== c.node), { node: c.node, readyAt: g.time + c.cooldownS! }], on: [] });
+        a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'cast', readyAt: g.time + c.cooldownS! });
+        if (c.bar === 'ground') g.multitool.meter = { ...g.multitool.meter, heat: g.multitool.meter.heat + (c.pay ?? 0) };
+        else g.ship.charge -= c.pay ?? 0;
+      }, c.rtt ?? 60);
+    }, c.at);
+  }, c);
+}
+
 /**
  * The ship in open flight off the home world, nose just past it, `side` 1 on its day side (in sunlight, inside the habitable band:
  * Charge regenerates) or −1 on its night side (in its shadow: nothing), with Charge at `charge`.
@@ -1489,6 +1557,65 @@ export const SCREENS: Record<string, ScreenDef> = {
       await shipOffHome(page, 1, 58);
       // (the empty still's refusal is not this scene's)
       await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
+    },
+  },
+  // The ability bar on foot (P1.E07.T03), under the prompt: six ground slots, keys 1–6, each a ring with its key and the
+  // node's name (Pulse, Pull, Flare, Well, Regrow, Veil); Well cooling with 13 of its 20 s left and Regrow 4 of 10, their
+  // rings drawn back in heat's warm with the seconds left in them; heat at 35 on the crosshair's left arc.
+  // `16x9-refused.png`: Well pressed again while it cools, refused by the server: its ring edged in danger red and COOLING
+  // DOWN beside the bar. The clip: key 1 pressed 0.2 s in, the server's answer 60 ms later, Pulse's ring flaring and its
+  // cooldown starting (6 s), Pulse's 10 heat landing on the arc eased over 150 ms; key 1 again 2.2 s in, refused, the red
+  // edge and the reason for 1.6 s; Regrow ready about 4 s in; Pulse ready again about 6.3 s in, its ring full and its key
+  // back.
+  'hud-abilities': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 6.8,
+    sheetFrames: [0, 12, 14, 16, 18, 20, 22, 26, 30, 40, 60, 120, 132, 136, 150, 200, 240, 250, 300, 370, 376, 380, 390, 407],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await settle(page, 2);
+    },
+    stills16x9: {
+      async refused(page) {
+        await castRoundTrip(page, { bar: 'ground', slot: 3, node: 'well', at: 0, rtt: 0, refused: 'cooldown', seq: 1 });
+        await settle(page, 2);
+      },
+    },
+    async motion(page) {
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await page.evaluate(() => {
+        const a = (window as unknown as AbilityWindow).game.abilities as unknown as { refusal: unknown };
+        a.refusal = null;
+      });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 200, cooldownS: 6, pay: 10, seq: 2 });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 2200, refused: 'cooldown', seq: 3 });
+    },
+  },
+  // The ability bar in flight (P1.E07.T03): a Wayfarer's four ship slots, keys 1–4 (Tractor Beam, Deep Sweep, Repair
+  // Drones, Inertial Brake), Deep Sweep cooling with 21 of its 30 s left and Inertial Brake 6 of 15, their rings drawn back
+  // in Charge's lilac; Charge at 72 on the reticle's right arc. The clip: key 1 pressed 0.2 s in, the server's answer, the
+  // ring flaring and Tractor Beam's 12 s cooldown starting, its 15 Charge coming off the arc eased over 150 ms.
+  'hud-abilities-flight': {
+    hudClock: true,
+    clipSeconds: 2,
+    sheetFrames: [0, 6, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 34, 40, 50, 60, 80, 100, 110, 119],
+    async open(page) {
+      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+      await settle(page, 60);
+      await shipOffHome(page, 1, 72);
+      await settle(page, 90);
+      await slotAbilities(page, [], ['tractor_beam', 'deep_sweep', 'repair_drones', 'inertial_brake'], 4);
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 6 });
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await castRoundTrip(page, { bar: 'ship', slot: 0, node: 'tractor_beam', at: 200, cooldownS: 12, pay: 15, seq: 1 });
     },
   },
   // On foot on the home world, mining a plant or rock a few metres off with the beam held, its impact glare behind the

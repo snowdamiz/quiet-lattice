@@ -279,7 +279,8 @@ body {
 /* ---------- the ability bar (keys 1–6 on foot, 1–5 in flight) ----------
    A ring a slot in the arcs' language: a near-black halo, an opaque track, and the bar's colour (heat's warm on foot,
    Charge's lilac in flight) drawn round it from the top, full when the slot is ready and drawn back up as its cooldown
-   runs out, the seconds left in place of the key. 34 px rings, so the bar sits under the prompt at 720p too. */
+   runs out, the seconds left in its colour in place of the key. 34 px rings in 80 px slots (the longest names, INERTIAL
+   BRAKE and REPAIR DRONES, fit under them), so the bar sits under the prompt at 720p too. */
 .abilities {
   --ab: var(--warm);
   position: absolute;
@@ -303,16 +304,16 @@ body {
 }
 .ab-row {
   display: flex;
-  gap: 12px;
+  gap: 4px;
 }
 .ab-slot {
   position: relative;
-  width: 34px;
+  width: 80px;
   height: 48px;
 }
 .ab-slot svg {
   position: absolute;
-  left: 0;
+  left: 23px;
   top: 0;
   width: 34px;
   height: 34px;
@@ -326,6 +327,9 @@ body {
   stroke: var(--ink);
   stroke-opacity: 0.92;
   stroke-width: 7.5;
+  /* (a near-opaque disc inside the ring: the key and the seconds hold over sunlit ground) */
+  fill: var(--ink);
+  fill-opacity: 0.74;
 }
 .ab-slot .track {
   stroke: #3b3e44;
@@ -375,7 +379,7 @@ body {
 }
 .ab-key {
   position: absolute;
-  left: 0;
+  left: 23px;
   top: 0;
   width: 34px;
   height: 34px;
@@ -390,8 +394,10 @@ body {
   color: var(--text);
   transition: color 0.3s ease-out;
 }
+/* (the seconds left, in the bar's colour: a timer, never read as a key) */
 .ab-slot.cooling .ab-key {
-  color: var(--dim);
+  color: var(--ab);
+  font-size: 15px;
 }
 .ab-name {
   position: absolute;
@@ -401,19 +407,14 @@ body {
   font-family: var(--font-cond);
   font-style: normal;
   font-weight: 500;
-  font-size: 11px;
+  font-size: 10.5px;
   line-height: 1;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--dim);
-  /* (outlined like the flight readouts, so it holds over a bright sky) */
-  text-shadow:
-    0 0 1px #050608,
-    1px 0 0 #050608,
-    -1px 0 0 #050608,
-    0 1px 0 #050608,
-    0 -1px 0 #050608;
+  max-width: 80px;
+  overflow: hidden;
+  color: rgba(233, 231, 226, 0.78);
 }
 /* why the server refused a cast: the lockout word's plate, to the right of the bar */
 .ab-why {
@@ -3894,12 +3895,14 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .r-mode, .location, .bar label {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.25);
 }
-/* the flight readouts (speed, altitude, Charge), unplated, are outlined: a solid 2 px near-black ring under every glyph
-   (unblurred shadows a pixel and two out, all round), softened past it, so figures, labels and rates hold 4.5:1 on any
-   ground, a bright world's limb or a sunlit sky */
+/* the flight readouts (speed, altitude, Charge) and the ability bar's keys and names, unplated, are outlined: a solid 2 px
+   near-black ring under every glyph (unblurred shadows a pixel and two out, all round), softened past it, so figures,
+   labels and rates hold 4.5:1 on any ground, a bright world's limb or a sunlit sky */
 .r-speed,
 .r-alt,
-.r-chg {
+.r-chg,
+.ab-key,
+.ab-name {
   --ring: #0b0c0e;
   text-shadow:
     2px 0 0 var(--ring),

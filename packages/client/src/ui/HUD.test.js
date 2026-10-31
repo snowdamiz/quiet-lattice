@@ -4,7 +4,7 @@
 // the regen sheen waits for the fill to be drawn. (On stand-ins for the gauge's SVG elements: the client's tests run
 // without a DOM.)
 import { describe, expect, it } from 'vitest';
-import { ARC_EASE_MS, HUD } from './HUD.js';
+import { ARC_EASE_MS, countdown, HUD } from './HUD.js';
 
 /** One gauge as HUD.arc and HUD.sheen reach it: the root, its `<g class="gauge">`, the fill and the sheen paths. */
 function gauge(name = 'charge') {
@@ -121,5 +121,17 @@ describe('the gauge arcs', () => {
     expect(x.has('snap')).toBe(true);
     h.arc(x.root, 'heat', 0.404, true, { hot: false, over: false });
     expect(x.has('snap')).toBe(false);
+  });
+});
+
+describe('the ability bar’s countdown', () => {
+  it('shows whole seconds from ten up and tenths under, never a lone digit a key could be read as', () => {
+    expect(countdown(20)).toBe('20');
+    expect(countdown(10.2)).toBe('11');
+    expect(countdown(9.96)).toBe('10');
+    expect(countdown(9.94)).toBe('10');
+    expect(countdown(9.86)).toBe('9.9');
+    expect(countdown(4)).toBe('4.0');
+    expect(countdown(0.01)).toBe('0.1');
   });
 });
