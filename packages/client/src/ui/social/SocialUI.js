@@ -253,6 +253,9 @@ export class SocialUI {
     // (the list's overflow is read first, before anything is written: the page has laid out what the last frame wrote)
     if (frame && this.fitDue) this.fit();
     if (frame && this.edgesDue) this.edges();
+    // (the log's scroll too, before the panel's classes change)
+    const log = this.logEl;
+    const pre = log ? { atBottom: log.scrollTop + log.clientHeight >= log.scrollHeight - 4 } : null;
     if (open !== this.wasOpen) {
       this.wasOpen = open;
       if (!open) this.closedAt = now;
@@ -265,7 +268,7 @@ export class SocialUI {
       this.dirty = false;
       this.due = ALL;
     }
-    if (this.due) this.render(now);
+    if (this.due) this.render(now, pre);
     if (now - this.lastTick >= TICK_MS) {
       this.lastTick = now;
       this.tick(now);
@@ -285,11 +288,8 @@ export class SocialUI {
    * due, in turn. A stage that would take the frame past its budget waits for the next frame (a tab switch or an accepted
    * invite is a few frames' work, none of them a frame's), and the stages after it with it.
    */
-  render(now) {
+  render(now, pre) {
     const open = this.isOpen;
-    // (the log's scroll read first, before anything is written)
-    const log = this.logEl;
-    const pre = log && this.due & LOG ? { atBottom: log.scrollTop + log.clientHeight >= log.scrollHeight - 4 } : null;
     const beacons = open && this.tab === 'beacons';
     const stages = [
       [FRONT, () => this.renderFront(open, beacons)],
