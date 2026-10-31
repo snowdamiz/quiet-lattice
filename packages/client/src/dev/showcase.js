@@ -127,9 +127,7 @@ export function install() {
   // no stale arrival banners left over from the jumps between shots
   const quiet = () => {
     const H = game.hud;
-    H.bannerQueue = [];
-    H.bannerUntil = 0;
-    H.banner.classList.remove('show');
+    H.clearBanners();
     H.toasts.innerHTML = '';
   };
 

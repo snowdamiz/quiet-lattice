@@ -11,7 +11,9 @@
 // - the player is in the instance's star system (`elsewhere`), in no instance already (`in_phase`), and inside the
 //   instance's place (`far`). The server never moves a player to answer, so its entity stays where movement authority
 //   has it and its inputs are judged as before; getting there is the player's to do (the beacon says where).
-// - there is a slot for it: below an event's or a raid's player cap (`full`, checked by the phase manager as it places);
+// - there is a slot for it: below an event's or a raid's player cap, and one the instance's owner lets it into (`full`,
+//   checked by the phase manager as it places: an event's instance keeps out a character its occurrence has paid or has
+//   in another of its instances, PhaseManager.guard);
 //   for a quest step's story phase, which holds one party, a place in the caller's party, which answering joins as an
 //   invite accepted would (`full`, `in_party`), its caller being in the instance to lead it (`gone`). A helper needs no
 //   quest of its own: it fights beside the party in the caller's chapter, and the quest runtime leaves alone a player in a

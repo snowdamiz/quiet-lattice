@@ -16,6 +16,7 @@ import { CombatFeed } from './combat.js';
 import { Discoveries } from './discoveries.js';
 import { Reputation } from './reputation.js';
 import { SnapshotStore } from './snapshots.js';
+import { WorldEvents } from './worldEvents.js';
 
 /** Input goes out at 20 Hz (the zone's tick) of real time, however fast frames run. */
 export const INPUT_INTERVAL_MS = 50;
@@ -88,6 +89,8 @@ export class Net {
     this.beacons = new Beacons(this);
     /** First finds (discoveries.js): the current system's, who found them and what they are called, and name requests. */
     this.discoveries = new Discoveries(this);
+    /** World events (worldEvents.js): those the server told of, the player's standing in one, and what the HUD shows. */
+    this.worldEvents = new WorldEvents(this);
     /** The character's standing, ranks and titles as the server last sent them, and their news (reputation.js, §24). */
     this.reputation = new Reputation(this);
   }

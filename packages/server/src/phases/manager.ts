@@ -3,8 +3,10 @@
 // frames, which moves with it) for a kind with a cap (kinds.ts), filled by presence and closed once it has no members.
 //
 // Every entity in a zone has a phase or none (the shared world). Members are sessions' players placed by phaseFor (or put
-// in one phase by name with enter, under the same caps and party rule: answering a call for aid, social/beacons.ts); a
-// phase's own entities (its actors: NPCs, bosses, props) are spawned through it and go with it when it closes. What a
+// in one phase by name with enter, under the same caps and party rule: answering a call for aid, social/beacons.ts), and
+// a phase's owner may refuse a character either way (guard: an event's instance, one its occurrence has paid); a
+// phase's own entities (its actors: NPCs, bosses, props) are spawned through it, or adopted from the system that spawned
+// them (an event's creatures, which fauna moves), and go with it when it closes. What a
 // session sees is decided here (visibleTo, which the zone applies to every interest set):
 // - everything in the shared world and in its own phase;
 // - never another phase's own entities;
@@ -76,6 +78,8 @@ class PhaseState implements Phase {
   readonly members = new Set<number>();
   readonly held = new Set<string>();
   readonly entities = new Set<number>();
+  /** its owner's say over who joins it (guard), asked of each character about to be placed in it */
+  admits: ((character: string | null) => boolean) | null = null;
   /** the volume's centre in world coordinates at the last tick */
   center: Vec3 = [0, 0, 0];
 
@@ -109,6 +113,8 @@ interface Placement {
   inside: boolean;
   /** world time it was first outside the volume; null while inside */
   outsideSince: number | null;
+  /** how one of its own entities goes when the phase closes, when another system made it (adopt); else the zone's despawn */
+  despawn?: (id: number) => void;
 }
 
 /**
@@ -209,14 +215,14 @@ export class PhaseManager {
     }
     if (!chosen && party !== null) {
       for (const p of this.byPlace.get(place) ?? []) {
-        if (this.admits(p, party) && this.hasPartyMember(p, party)) {
+        if (this.admits(p, party) && this.lets(p, character) && this.hasPartyMember(p, party)) {
           chosen = p;
           break;
         }
       }
     }
     if (!chosen) {
-      for (const p of this.byPlace.get(place) ?? []) if (this.admits(p, party) && (!chosen || p.size > chosen.size)) chosen = p;
+      for (const p of this.byPlace.get(place) ?? []) if (this.admits(p, party) && this.lets(p, character) && (!chosen || p.size > chosen.size)) chosen = p;
     }
     chosen ??= this.openPhase(kind, location);
 
@@ -258,8 +264,8 @@ export class PhaseManager {
       hold = undefined;
       if (!phase.open) return 'closed';
     }
-    // (a place kept here counts towards the cap already)
-    if (hold?.phase !== phase && !this.admits(phase, party)) return 'full';
+    // (a place kept here counts towards the cap already, and is its own)
+    if (hold?.phase !== phase && !(this.admits(phase, party) && this.lets(phase, character))) return 'full';
     if (hold) {
       this.held.delete(character!);
       hold.phase.held.delete(character!);
@@ -331,6 +337,35 @@ export class PhaseManager {
     phase.entities.add(id);
     this.placed.set(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null });
     return id;
+  }
+
+  /**
+   * Makes an entity another system spawned in the shared world one of the phase's own (an event's creatures, which
+   * fauna spawns and moves: events/service.ts): from now on only its members see it, and it goes when the phase closes,
+   * through `despawn` when given (so the system that made it forgets it too), else the zone's. A session's player, an
+   * entity in a phase already, or one the zone does not have, cannot be adopted.
+   */
+  adopt(phaseId: number, id: number, despawn?: (id: number) => void): void {
+    const phase = this.phases.get(phaseId);
+    if (!phase) throw new Error(`no open phase ${phaseId} in zone ${this.zone.id}`);
+    const e = this.zone.entity(id);
+    if (!e) throw new Error(`no entity ${id} in zone ${this.zone.id}`);
+    if (e.fields.kind === 'player') throw new Error(`entity ${id} is a player: players are placed, never adopted`);
+    if (this.placed.has(id)) throw new Error(`entity ${id} is in phase ${this.placed.get(id)!.phase.id} already`);
+    phase.entities.add(id);
+    this.placed.set(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null, despawn });
+  }
+
+  /**
+   * Gives a phase's owner the say over who joins it, beyond its cap and party rule: `admits` is asked for the character
+   * of each player about to be placed in it, and one it refuses is not (phaseFor picks another phase; enter answers
+   * 'full'). An event's instance refuses a character its occurrence has paid or has in another instance
+   * (events/service.ts). A place kept for a character is its own, and is not asked about again.
+   */
+  guard(phaseId: number, admits: (character: string | null) => boolean): void {
+    const phase = this.phases.get(phaseId);
+    if (!phase) throw new Error(`no open phase ${phaseId} in zone ${this.zone.id}`);
+    phase.admits = admits;
   }
 
   /** Closes the phase now: its members go back to the shared world, kept places go, and its own entities are despawned. */
@@ -445,6 +480,11 @@ export class PhaseManager {
     return true;
   }
 
+  /** Whether a phase's owner lets a character in (guard). */
+  private lets(p: PhaseState, character: string | null): boolean {
+    return p.admits === null || p.admits(character);
+  }
+
   private hasPartyMember(p: PhaseState, party: string): boolean {
     for (const q of this.partiesIn(p)) if (q === party) return true;
     return false;
@@ -497,6 +537,7 @@ export class PhaseManager {
     const members = phase.members.size;
     const held = phase.held.size;
     const own = [...phase.entities];
+    const despawns = own.map((id) => this.placed.get(id)?.despawn);
     for (const id of phase.members) this.placed.delete(id);
     for (const character of phase.held) this.held.delete(character);
     for (const id of own) this.placed.delete(id);
@@ -504,7 +545,16 @@ export class PhaseManager {
     phase.held.clear();
     phase.entities.clear();
     // (each despawn calls removed(), which finds nothing placed)
-    for (const id of own) this.zone.despawn(id);
+    own.forEach((id, i) => {
+      const despawn = despawns[i];
+      if (!despawn) return void this.zone.despawn(id);
+      try {
+        despawn(id);
+      } catch (err) {
+        this.log?.warn({ zone: this.zone.id, phase: phase.id, entity: id, err: String(err) }, 'phase entity not despawned by its maker');
+        this.zone.despawn(id);
+      }
+    });
     this.log?.info(
       {
         zone: this.zone.id,
