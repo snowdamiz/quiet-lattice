@@ -1,4 +1,4 @@
-// World event messages (protocol 15, P2.E21.T01): what the server may say of an event, and what a client refuses.
+// World event messages (protocol 17, P2.E21.T01): what the server may say of an event, and what a client refuses.
 import { describe, expect, it } from 'vitest';
 import { decodeServerMessage, encodeServerMessage, InvalidMessageError, type ServerMessage } from './index.ts';
 

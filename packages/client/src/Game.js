@@ -547,7 +547,8 @@ export class Game {
         boost: !foot && ship.boosting,
         jet: foot && this.player.jetting,
         sprint: foot && this.player.sprinting,
-        beam: foot && this.multitool.firing,
+        // (the button, not whether the beam fires: the server decides the lockout)
+        beam: foot && this.multitool.held,
         interact: inp.down('KeyE'),
         up: !foot && inp.down('Space'),
         down: !foot && inp.down('KeyC'),
@@ -751,7 +752,7 @@ export class Game {
         else if (low && ship.canLand()) prompt = '<kbd>E</kbd>Land';
         else if (low) prompt = '<kbd>S</kbd>Slow down to land';
         // (offered only where it will engage: out of the air and clear of anything close)
-        else if ((!ship.frame?.sampler || ship.altitude > 2500) && ship.atmoDensity <= 0.001 && ship.pulseLimit().dist >= 600) prompt = '<kbd>J</kbd>Pulse drive';
+        else if ((!ship.frame?.sampler || ship.altitude > 2500) && ship.atmoDensity <= 0.001 && ship.pulseLimit().dist >= 600 && ship.charge > 0) prompt = '<kbd>J</kbd>Pulse drive';
       } else if (ship.mode === 'pulse') {
         prompt = '<kbd>J</kbd>Disengage pulse';
       }
@@ -998,13 +999,15 @@ export class Game {
   }
 
   // The server's answer to an analysis: a first one shows the species as the codex now holds it and the XP it earned, a
-  // known one says so, a refused one says why.
+  // known one says so, a refused one says why. The species goes by the name its first finder gave it, if it has one
+  // (DESIGN 14.5; net.discoveries), else by its procedural name.
   onAnalyze(m) {
     const s = m.species;
+    const name = s && (this.net?.discoveries.displayName('species', s.key, s.name) ?? s.name);
     if (m.result === 'new') {
       this.audio.play('discovery');
-      this.hud.showBanner(s.name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
-    } else if (m.result === 'known') this.hud.toast(`${s.name} · in your codex`);
+      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
+    } else if (m.result === 'known') this.hud.toast(`${name} · in your codex`);
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
@@ -1101,8 +1104,6 @@ export class Game {
       else if (f.isGas) lines.push('Warning: not landable');
       this.hud.showBanner(f.name.toUpperCase(), `${p.label}${f.kind === 'moon' ? ' Moon' : ' Planet'}`, lines);
       this.audio.play('discovery');
-      const reward = 250 + Math.floor(Math.random() * 400);
-      this.inventory.units += reward;
     }
   }
 

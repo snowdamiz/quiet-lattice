@@ -97,6 +97,11 @@ export const MOVEMENT = {
     clearanceM: 25,
     /** Below PULSE_DRIVE.engageAltitudeM by this much. */
     altitudeM: 50,
+    /** Cruising on as Charge runs out (Heat and Charge, P1.E07.T02): the client drops out of the drive when its own
+     * predicted meter empties, which may trail the server's a little; inputs on the drive are taken until this much of the
+     * client's credited time past the moment the server's burn (on that same credited time) emptied it. Engaging takes
+     * none: the drive needs Charge to engage. */
+    chargeGraceS: 1,
   },
   landed: {
     /** A landed ship rests on its gear over dry ground: its gear this much into the ground or this much above it. */
@@ -158,6 +163,8 @@ export type MovementRule =
   | 'pulse_air'
   | 'pulse_clearance'
   | 'pulse_altitude'
+  /** the pulse drive with Charge empty (the character's meters, P1.E07.T02): engaging, or cruising on past the drop-out */
+  | 'pulse_charge'
   /** landed off the ground, on water or not on a world */
   | 'landed'
   /** docked off a pad or outside a Waystation */
@@ -179,6 +186,6 @@ export interface Violation {
   /** what the server measured and what it allows, in `unit` */
   measured: number;
   allowed: number;
-  unit: 'm/s' | 'm' | 's' | 'density';
+  unit: 'm/s' | 'm' | 's' | 'density' | 'charge';
   detail?: string;
 }

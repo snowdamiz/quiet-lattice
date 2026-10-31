@@ -1,4 +1,4 @@
-// World events on the server (DESIGN 14.6, 16.6; P2.E21.T01; ARCHITECTURE §25). The gateway makes the EventService, starts
+// World events on the server (DESIGN 14.6, 16.6; P2.E21.T01; ARCHITECTURE §26). The gateway makes the EventService, starts
 // its timer and gives it the combat service's news; it runs every event of the catalog (`@astra/shared/events`) in every
 // loaded system it comes to.
 //

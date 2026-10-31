@@ -1,4 +1,4 @@
-// The client's side of world events (docs/ARCHITECTURE.md §25, DESIGN 14.6): the server announces each event to its star
+// The client's side of world events (docs/ARCHITECTURE.md §26, DESIGN 14.6): the server announces each event to its star
 // system, puts a player who goes to its place in one of its instances and pays by contribution when it ends. The feed
 // keeps the events the server has told of (`events`, by id), the player's standing in the one it is in (`status`: the
 // instance, its scaling level, the wave, the enemies left, its contribution and share) and its last reward, and queues

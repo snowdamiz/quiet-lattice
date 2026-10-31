@@ -1,4 +1,4 @@
-// Where an event runs (ARCHITECTURE §25): a spot on dry, open ground of the system's first world that carries the event's
+// Where an event runs (ARCHITECTURE §26): a spot on dry, open ground of the system's first world that carries the event's
 // enemies at the zone's tier, drawn afresh for each window from the system's seed, the event and the window, so a restart
 // finds the same spot. The place is a sphere round that spot in the world's frame (it turns with the world); its phase
 // location's key is the event's name, which the call-for-aid listing shows as the place (§21).

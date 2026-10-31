@@ -185,6 +185,7 @@ line-jump and skip clips were added after the verdict in `assets/renders/ui/cuts
 | 2 | REVISE | hierarchy 4, fit 5, motion 4, theme 4, correctness 3, spec 5, performance 5 | 4.29 |
 | 3 | REVISE | hierarchy 3, fit 4, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 | 4 | REVISE | hierarchy 3, fit 5, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.29 |
+| 5 | PASS | hierarchy 5, fit 5, motion 5, theme 4, correctness 5, spec 5, performance 5 | 4.86 |
 
 Round 1: OVERHEAT and the Charge rate under 4.5:1 over bright ground; the heat arc drew full at any level (the fill now
 follows heat ÷ capacity). Round 2: the Charge arc swept up from empty, red, on the ship HUD's first frames (now set at
@@ -198,6 +199,13 @@ Round 4: the beam-held heat arc now reads (fill 6.5:1 against its track, halo ab
 limb (2.3:1 against its halo, 1.2:1 against the limb) and the grey CHARGE label (about 3:1 where the limb turns blue);
 the lockout's red fill against the empty track at about 2.9:1 (under 3:1 for non-text UI). Requested: an idle cool-down
 clip from about 30 heat to 0. **Escalated to the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
+
+Round 5 (2026-10-31, the owner's rule: one more grade, then merge), on the tree merged with main: PASS. The Charge rate
+sits on a solid 2 px ring at 13.5:1 over the limb, the CHARGE label is 11.7:1, the lockout red is 3.6–3.9:1 against its
+darkened track, and the idle cool-down drains and fades out with no pop. Minor: the rate's #E2D4FF and the text red
+#FF8A80 are not in art bible §4; `HUD.arc` snaps on any jump over 8% (an ability's heat chunk or a Waystation refill
+would pop; P1.E07.T03 eases it); `hud-ship-board` stills show the ship before its reticle; the empty Charge track is
+1.85:1 against its halo (the red readout carries the state). Artifacts: `assets/renders/ui/hud-{foot,foot-cool,foot-exit,ship,ship-board}/`.
 
 ## P1.E04.T02 Remote entities (in-engine scene)
 
@@ -242,6 +250,9 @@ Graded per people with the "Models and environments" table, each file as a famil
 | 1 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 2, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.2 |
 | 1 | Ixari | REVISE | design 3, silhouette 3, proportion 3, materials 2, detail 2, topology 4, consistency 4, fitness 3, placeholder 2, performance 4 | 3.0 |
 | 1 | Ulgani | REVISE | design 2, silhouette 3, proportion 4, materials 2, detail 2, topology 3, consistency 4, fitness 3, placeholder 2, performance 4 | 2.9 |
+| 2 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.3 |
+| 2 | Ixari | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.5 |
+| 2 | Ulgani | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 4, placeholder 3, performance 4 | 3.4 |
 
 Round 1, common to all three: mascot faces (a fixed smile, goggle or button-ring eyes, no nose, lips or brow); smooth
 mannequin bodies without anatomical landmarks; suits from primitives (torus bands, rounded boxes, straight rods) that
@@ -250,6 +261,17 @@ only by small cards, unreadable past 10 m; uniform-noise skin; in-engine materia
 chrome, crystal as white plastic, Ulgani toe bleed); uniform remeshed LOD0 with no loops at the face or joints; blinks
 that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above the ground. Artifacts:
 `assets/renders/characters/`, `assets/renders/review/characters/`.
+
+Round 2 (2026-10-31, at 5fa9b38e, from the KTX2 + meshopt exports; the review camera had framed the feet of quantized
+skinned bodies until this round): faces are no longer mascots (Ixari and Ulgani lidded, Thalune neutral slit), blinks
+close, L/R pairs exist, heights and feet are fixed, the Ixari and Thalune suits speak their languages, crests reach
+20–38 cm. Still failing on all three: the six heads share one skull and differ only above the scalp; bodies below the
+neck are mannequins with few landmarks; suits lack seams, weave, padding and wear; nothing breaks the outline at 100 m
+except colour. Per people: Ixari's suit crystal is a flat regular hex array and its skin reads navy at noon; Thalune's
+eyes bulge past the skull, its nacre bakes as metal (black at noon and night), its blink is a translucent bubble and its
+neck folds; Ulgani's lattice is straight tubes over a unitard with torus rings, white flank cards and toe bleed. The
+in-engine wireframe pass draws a mis-posed copy of each body, so LOD0 loops could not be checked in-engine. Verdicts in
+full: `~/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e05t01_r2_*.md`. Artifacts as in round 1.
 
 ## P1.E04.T05 Login and character screens (UI)
 

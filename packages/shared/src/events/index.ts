@@ -1,4 +1,4 @@
-// World events (`@astra/shared/events`, DESIGN 14.6, 16.6; P2.E21.T01; ARCHITECTURE §25): what an event is, as data, and
+// World events (`@astra/shared/events`, DESIGN 14.6, 16.6; P2.E21.T01; ARCHITECTURE §26): what an event is, as data, and
 // the pure rules the server runs it by and the client reads.
 //
 // - An event is a definition (`EventDef`): its id and name, its shape (`kind`), the systems it comes to (a tier range),
