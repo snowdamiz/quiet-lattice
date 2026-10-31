@@ -1,4 +1,4 @@
-// The abilities a server casts (ARCHITECTURE §25): each slotted active's `Ability` (what a cast names, shared data) paired
+// The abilities a server casts (ARCHITECTURE §28): each slotted active's `Ability` (what a cast names, shared data) paired
 // with its effect, the server's code for what it does. A branch's task adds both for each of its actives (P1.E07.T04–T10);
 // an ability without its effect, or an effect without its ability, stops the server from starting.
 import { ABILITIES, cooldownOf, type Ability } from '@astra/shared/abilities';

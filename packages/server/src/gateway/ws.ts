@@ -29,7 +29,17 @@
 // change's rank and title events (§24); no client message changes it. Casts of slotted actives go to the cast service
 // (abilities/), which checks each against what the zone believes, pays it from the meters, runs its effect and sends the
 // cast to whoever sees it; a joining character is sent its cooldowns and toggles after its meters, and again before the
-// answer to every cast carried out (§25).
+// answer to every cast carried out (§28).
+// First finds go to the discovery service (discovery/), which hears of every analysis made, looks for landings and site
+// visits among the characters in play, pays and tells their finders, answers name requests, and sends a joining
+// character its system's finds (§25).
+// World events (events/) run on their own timer: the event service schedules them in every loaded system, tells the
+// sessions there, puts players arriving at an event's place in its instances, counts their contribution from the combat
+// service's hits and pays them by it (§26); clients send it nothing.
+// Seasons (seasons/, §27): a character that joins counts its account active for the day, and is given the titles and
+// glyphs its account's seasons earned (read with its row, merged into its `seasonAwards` component) and sent them as
+// `awards` after its reputation; when a season's end is written, each joined character of its winners is given the
+// season's award, and sent `awards` again.
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
@@ -64,15 +74,24 @@ import { CutsceneService } from '../cutscenes/service.ts';
 import type { RecipeBook } from '../crafting/book.ts';
 import { recipeBookIn } from '../crafting/component.ts';
 import { CraftingService } from '../crafting/service.ts';
+import { plateBookIn, type PlateBook } from '../discovery/plates.ts';
+import { DiscoveryService } from '../discovery/service.ts';
+import { pgDiscoveryStore } from '../discovery/store.ts';
+import { EventService } from '../events/service.ts';
 import { reputationServiceIn } from '../reputation/component.ts';
 import type { ReputationService } from '../reputation/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
+import type { SeasonAward } from '@astra/shared/seasons';
+import type { SeasonAwards } from '../seasons/awards.ts';
+import { seasonAwardsIn } from '../seasons/component.ts';
+import type { SeasonGateway } from '../seasons/service.ts';
 import { CloseCode, Session, SessionRegistry } from '../session/session.ts';
 import { skillServiceIn } from '../skills/component.ts';
 import type { SkillService } from '../skills/service.ts';
 import { SocialService } from '../social/service.ts';
 import type { ServerClock } from '../world/clock.ts';
 import type { WorldSource } from '../world/service.ts';
+import { DEFAULT_SHARD_ID } from '../world/shard.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import { clientKey, TokenBucket } from './rateLimit.ts';
 
@@ -165,10 +184,24 @@ export interface WsGatewayDeps {
   recipes?: RecipeBook;
   /** Fabricators; the gateway makes its own over the recipe book when none is given. */
   crafting?: CraftingService;
+  /** The shard the server runs (its finds are the shard's); DEFAULT_SHARD_ID when none is given. */
+  shard?: string;
+  /** First finds; the gateway makes (and starts and stops) its own over the shard's store, the persistence registry's
+   * plates and the codex's XP when none is given, and has none with null (no finds are looked for, name requests are
+   * dropped). */
+  discovery?: DiscoveryService | null;
+  /** World events; the gateway makes (and starts and stops) its own when none is given, and gives it combat's news. */
+  events?: EventService;
   /** Every character's reputation in play; when none is given, the one persistence's registry loads into. */
   reputation?: ReputationService;
   /** The abilities casts may cast and their effects (this build's when none is given; tests cast fixtures). */
   abilities?: AbilityBook;
+  /** Daily actives, an account's season awards and each season's end; without it (tests of the gateway alone) a join
+   * counts nobody active and reads no awards. */
+  seasons?: SeasonGateway;
+  /** Every character's season awards in play; when none is given, the holder persistence's registry loads into (none
+   * when its registry has no `seasonAwards` component: no `awards` are sent). */
+  awards?: SeasonAwards;
 }
 
 export interface WsStats {
@@ -189,6 +222,8 @@ export interface WsGateway {
   readonly codex: CodexService;
   readonly analysis: AnalysisService;
   readonly crafting: CraftingService;
+  readonly discovery: DiscoveryService | null;
+  readonly events: EventService;
   readonly reputation: ReputationService;
   readonly casts: CastService;
   stats(): WsStats;
@@ -289,6 +324,23 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeAnalysis = quests ? analysis.subscribe((e) => void quests.event(e.characterId, { type: 'analyze', species: e.key })) : undefined;
   const crafting =
     deps.crafting ?? new CraftingService({ zones: deps.zones, inventory, book: deps.recipes ?? needRecipes(persistence), now: () => deps.clock.now(), log });
+  // first finds: the shard's, paid through the codex's XP and the plates persistence's registry loads into
+  const discovery =
+    deps.discovery === null
+      ? null
+      : (deps.discovery ??
+        new DiscoveryService({
+          store: pgDiscoveryStore(deps.db, deps.shard ?? DEFAULT_SHARD_ID),
+          zones: deps.zones,
+          plates: needPlates(persistence),
+          xp: codex,
+          saveNow: (characterId, reason) => persistence.saveNow(characterId, reason),
+          now: () => deps.clock.now(),
+          log,
+        }));
+  if (discovery && !deps.discovery) discovery.start();
+  // every analysis made may be the shard's first of its species
+  const unsubscribeDiscovery = discovery ? analysis.subscribe((e) => discovery.analyzed(e)) : undefined;
   const reputation = deps.reputation ?? needReputation(persistence);
   // standing the server moved (a quest's reward, owed reputation settled, an act, the admin CLI) reaches the session
   // holding the character: its rank and title events, then its state
@@ -299,6 +351,28 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       c.s.send({ t: 'reputation', reputation: push.state });
     }
   });
+  // a season's title and glyph given to a character in play reach its session (as `awards`, everything it holds)
+  const awards = deps.awards ?? seasonAwardsIn(persistence.registry);
+  const unsubscribeAwards = awards?.subscribe((characterId, _added, all) => {
+    for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'awards', awards: [...all] });
+  });
+  // a season's end, once written: each joined character of an account among its winners is given its award. The last
+  // season's winners are kept, for a character whose join read its account's awards just before they were written.
+  let lastSeason: { award: SeasonAward; winners: Set<string> } | null = null;
+  const unsubscribeSeasons = deps.seasons?.onSeasonEnded(({ awarded }) => {
+    if (!awards) return;
+    const winners = new Set(awarded.accounts.map((a) => a.toLowerCase()));
+    lastSeason = { award: awarded.award, winners };
+    for (const c of conns) {
+      if (c.s.state === 'joined' && winners.has(c.s.accountId!.toLowerCase())) awards.grant(c.s.characterId!, [awarded.award]);
+    }
+  });
+  // world events: the hits combat resolves are their participants' contribution; rewards go to the same inventory,
+  // progress, skill view and reputation
+  const events =
+    deps.events ?? new EventService({ zones: deps.zones, now: () => deps.clock.now(), inventory, progress: deps.progress, skills, quests, reputation, log });
+  if (!deps.events) events.start();
+  const unsubscribeEvents = combat.subscribe((news) => events.combat(news));
 
   // casts of slotted actives: checked against the zone's belief and the skill web, paid from the meters
   const casts = new CastService({ zones: deps.zones, skills, meters, now: () => deps.clock.now(), book: deps.abilities, log });
@@ -385,6 +459,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       social.left(s);
       // (unless the character came back on another connection meanwhile, whose toggles they are now)
       if (s.characterId && registry.holding(s.characterId) === s) casts.left(s.characterId);
+      discovery?.left(s);
       conns.delete(c);
       registry.remove(s);
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
@@ -537,6 +612,15 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         s.send(r);
         return;
       }
+      case 'name':
+        if (s.state !== 'joined') return invalid(s, 'name before join');
+        if (!discovery) return invalid(s, 'no discovery service');
+        // (answered once the store has decided, without holding up the session's other messages)
+        discovery.request(s, msg).then(
+          (r) => s.send(r),
+          (err: unknown) => log.error({ err, session: s.id }, 'name request failed'),
+        );
+        return;
       default:
         // interact belongs to a later task; before join it is out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
@@ -574,7 +658,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     // the row may not have it yet, and persistence loads from what it holds.
     const unpin = persistence.pin(characterId);
     try {
-      const row = await ownedCharacter(s.accountId!, characterId);
+      // (the titles and glyphs the account's seasons earned are read with the row, and merged in once it is loaded)
+      const [row, earned] = await Promise.all([ownedCharacter(s.accountId!, characterId), awards && deps.seasons ? deps.seasons.awardsOf(s.accountId!) : []]);
       // the ground a saved pose on a world stands on, planned in the worker first, so its check reads it there
       if (row) await groundForRestore(row.state);
       if (s.state !== 'authed') return;
@@ -603,6 +688,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         s.refuse('full', 'Your character could not be loaded. Try again later.');
         return;
       }
+      // (before the session is joined, so the award listener sends nothing: the awards go out after the recipes)
+      const last = lastSeason as { award: SeasonAward; winners: Set<string> } | null;
+      const given = awards?.grant(row.id, last?.winners.has(s.accountId!.toLowerCase()) ? [...earned, last.award] : earned);
+      if (given?.length) log.info({ character: row.id, seasons: given.map((a) => a.season) }, 'season awards given on join');
       const at = loaded.get<PoseState>(POSE);
       const progress = loaded.get<Progress>(PROGRESS);
       const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem }, at);
@@ -633,9 +722,14 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (known) s.send(known);
       const standing = reputation.view(row.id);
       if (standing) s.send({ t: 'reputation', reputation: standing });
+      const held = awards?.get(row.id);
+      if (held) s.send({ t: 'awards', awards: [...held] });
+      deps.seasons?.markActive(s.accountId!);
       social.joined(s, row.name);
       // (after the party is known: a player back in a quest step's place goes back to its party's phase)
       if (deps.quests) s.send({ t: 'quests', ...deps.quests.joined(s) });
+      // (its system's finds follow once they are known)
+      discovery?.joined(s, row.name);
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
       unpin();
@@ -654,6 +748,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     codex,
     analysis,
     crafting,
+    discovery,
+    events,
     reputation,
     casts,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
@@ -664,6 +760,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
       if (!deps.resources) await resources.close();
+      if (!deps.events) events.stop();
+      unsubscribeEvents();
       unsubscribeInventory();
       unsubscribeSkills();
       unsubscribeMeters();
@@ -673,7 +771,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (deps.zones.combat === combat.hooks) deps.zones.combat = null;
       skills.hooks = skillHooks;
       unsubscribeAnalysis?.();
+      unsubscribeDiscovery?.();
+      if (discovery && !deps.discovery) discovery.stop();
       unsubscribeReputation();
+      unsubscribeAwards?.();
+      unsubscribeSeasons?.();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
       const sockets = [...conns].map((c) => c.ws);
@@ -706,6 +808,12 @@ function needCodex(persistence: CharacterPersistence): CodexService {
   const codex = codexServiceIn(persistence.registry);
   if (!codex) throw new Error('the gateway needs a codex: give one, or a persistence registry with the codex component');
   return codex;
+}
+
+function needPlates(persistence: CharacterPersistence): PlateBook {
+  const plates = plateBookIn(persistence.registry);
+  if (!plates) throw new Error('the gateway needs a plate book: give a discovery service, or a persistence registry with the plates component');
+  return plates;
 }
 
 function needRecipes(persistence: CharacterPersistence): RecipeBook {

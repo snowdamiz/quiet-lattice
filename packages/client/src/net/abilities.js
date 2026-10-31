@@ -1,4 +1,4 @@
-// The client's side of abilities (docs/ARCHITECTURE.md §25): casts are the server's to decide. A key press sends a `cast`
+// The client's side of abilities (docs/ARCHITECTURE.md §28): casts are the server's to decide. A key press sends a `cast`
 // for the node the player sees in that slot of the bar its mode casts from (the ground bar on foot, the ship's in flight),
 // with where it looks and, for an ability that names one, the entity it is looking at. The bars come with the `skills`
 // view, the cooldowns and toggles as the server's `abilities` state, and its answers say why a cast did nothing. Every

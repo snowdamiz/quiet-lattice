@@ -19,3 +19,4 @@ export * from './bosses.ts';
 export * from './progression.ts';
 export * from './walker.ts';
 export * from './station.ts';
+export * from './names.ts';

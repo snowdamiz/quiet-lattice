@@ -660,3 +660,81 @@ describe('entering a phase by name (a call for aid’s answer)', () => {
     expect(phases.release('nobody')).toBe(false);
   });
 });
+
+describe('guarding a phase (an event’s instance refusing a character its occurrence has paid)', () => {
+  it('keeps out a character its owner refuses, by placement or by name, but not one coming back to its kept place', () => {
+    const { zone, phases, player, place } = setup();
+    const a = player([0, 0, 0], null, 'char-a');
+    const event = phases.phaseFor(a.viewer, 'event', place('wreck'));
+    const refused = new Set(['char-b', 'char-c']);
+    phases.guard(event.id, (c) => c !== null && !refused.has(c));
+    // placement passes it by for another phase at the place; enter answers full
+    const b = player([0, 0, 0], null, 'char-b');
+    const other = phases.phaseFor(b.viewer, 'event', place('wreck'));
+    expect(other).not.toBe(event);
+    const c = player([0, 0, 0], null, 'char-c');
+    expect(phases.enter(c.viewer, event.id)).toBe('full');
+    expect(phases.phaseOf(c.entity)).toBeNull();
+    const d = player([0, 0, 0], null, 'char-d');
+    expect(phases.enter(d.viewer, event.id)).toBe(event);
+    expect(phases.phaseFor(player([0, 0, 0], null, 'char-e').viewer, 'event', place('wreck'))).toBe(event);
+    // a's place, kept across a dropped connection, is still a's once its owner refuses it
+    zone.leave(a.viewer, 'disconnected');
+    refused.add('char-a');
+    expect(phases.phaseFor(player([0, 0, 0], null, 'char-a').viewer, 'event', place('wreck'))).toBe(event);
+    expect(() => phases.guard(9999, () => true)).toThrow(/no open phase/);
+  });
+});
+
+describe('adopting an entity another system spawned (an event’s creatures)', () => {
+  it('hides it from all but the phase’s members, and lets its maker despawn it when the phase closes', () => {
+    const { zone, phases, player, place, step, init } = setup();
+    const a = player([0, 0, 0], null, 'char-a');
+    const b = player([0, 0, 0], null, 'char-b');
+    const event = phases.phaseFor(a.viewer, 'event', place('wreck'));
+    const mob = zone.spawn(init([20, 0, 0], { kind: 'mob', mode: 'idle' }));
+    const prop = zone.spawn(init([30, 0, 0], { kind: 'prop' }));
+    step();
+    expect(zone.sees(b.viewer, mob)).toBe(true);
+    const gone: number[] = [];
+    phases.adopt(event.id, mob, (id) => {
+      gone.push(id);
+      zone.despawn(id);
+    });
+    phases.adopt(event.id, prop);
+    step();
+    expect(phases.phaseOf(mob)).toBe(event.id);
+    expect([...event.entities].sort()).toEqual([mob, prop].sort());
+    expect(zone.sees(a.viewer, mob)).toBe(true);
+    expect(zone.sees(b.viewer, mob)).toBe(false);
+    expect(phases.hiddenFromShared(mob)).toBe(true);
+    // a player is placed, never adopted; nor is anything in a phase already, or not in the zone
+    expect(() => phases.adopt(event.id, b.entity)).toThrow(/player/);
+    expect(() => phases.adopt(event.id, mob)).toThrow(/already/);
+    expect(() => phases.adopt(event.id, 9999)).toThrow(/no entity/);
+    expect(() => phases.adopt(9999, prop)).toThrow(/no open phase/);
+    // the last member out: the phase closes, its maker despawns the mob and the zone the prop
+    phases.leave(a.viewer);
+    expect(event.open).toBe(false);
+    expect(gone).toEqual([mob]);
+    expect(zone.entity(mob)).toBeUndefined();
+    expect(zone.entity(prop)).toBeUndefined();
+  });
+
+  it('forgets an adopted entity the zone despawns, and still despawns one whose maker throws', () => {
+    const { zone, phases, player, place, init, logged } = setup();
+    const a = player([0, 0, 0], null, 'char-a');
+    const event = phases.phaseFor(a.viewer, 'event', place('wreck'));
+    const early = zone.spawn(init([20, 0, 0], { kind: 'mob' }));
+    const late = zone.spawn(init([25, 0, 0], { kind: 'mob' }));
+    phases.adopt(event.id, early);
+    phases.adopt(event.id, late, () => {
+      throw new Error('boom');
+    });
+    zone.despawn(early);
+    expect([...event.entities]).toEqual([late]);
+    phases.close(event.id);
+    expect(zone.entity(late)).toBeUndefined();
+    expect(logged.some((l) => l.msg === 'phase entity not despawned by its maker')).toBe(true);
+  });
+});

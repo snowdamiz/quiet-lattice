@@ -8,7 +8,7 @@ wrong, it changes this file in the same commit and logs the change in DECISIONS.
 
 | Package | Runs in | Owns |
 |---|---|---|
-| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), reputation (`/reputation`, §24), glyphs (`/art`) |
+| `@astra/shared` | Node and the browser | deterministic world (`/world`), data tables (`/data`), protocol schemas and codecs (`/protocol`), combat math, quests (`/quests`, §17), the codex (`/codex`, §22), reputation (`/reputation`, §24), first finds and the name filter (`/discovery`, §25), world events (`/events`, §26), seasons (`/seasons`, §27), glyphs (`/art`) |
 | `@astra/server` | Node 22 under tsx | the gateway, zones, the world service, persistence |
 | `@astra/client` | the browser | rendering, input, prediction, UI |
 | `@astra/tools` | Node, Blender | gates, bots, smoke/e2e, capture, art export |
@@ -23,7 +23,7 @@ processes will read (presence, zone membership, the server clock) is mirrored to
 index.ts            boot: config → db → redis → world service → zone manager → quest runtime → character persistence → gateway → tooling
 config.ts           env (DATABASE_URL, REDIS_URL, JWT_SECRET, PORT=8787, TICK_HZ=20), validated with zod
 db/                 Drizzle schema (schema.ts), client, migrate.ts; SQL migrations in packages/server/drizzle/
-gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters
+gateway/http.ts     HTTP: POST /auth/register, POST /auth/login, GET /health, GET/POST /characters, GET /seasons/:n/chronicle
 gateway/devLogin.ts POST /auth/dev, the dev-only login bypass (§16)
 gateway/ws.ts       WebSocket upgrade (token in the first message), one Session per socket
 session/            Session: the account, the character in play, the zone it is in, its outbound queue
@@ -33,16 +33,20 @@ social/             SocialService: chat channels, parties and invites, and their
 cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§15)
 world/              WorldService: server clock, season, Count, Edge position, tier map
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
+seasons/            seasons (§27): a season's end and winners, the daily actives tally, season awards and their component,
+                    the chronicle and awards in SQL, SeasonService (the gateway's and HTTP's view)
 fauna/              herds in cells round players on a world's surface, their AI, creatures as zone entities (§6.2)
 resources/          ResourceService: mining hits, resource nodes' shared state per cell, what each player is sent (§18)
 combat/             each zone's health, damage path, deaths and combat events; CombatService: shots, kills' rewards (§20)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
-abilities/          CastService: casts of slotted actives checked, paid, cooled down, run and replicated; the book of effects (§25)
+abilities/          CastService: casts of slotted actives checked, paid, cooled down, run and replicated; the book of effects (§28)
 meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§19)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 crafting/           CraftingService and RecipeBook: fabricator requests checked, each character's recipes and its component (§23)
+discovery/          DiscoveryService: first finds seen, claimed, paid and named, and the shard's store; codex plates' component (§25)
+events/             EventService: world events scheduled, placed in event phases, scaled by presence, paid by contribution (§26)
 reputation/         ReputationService: each character's standing by faction, ranks and titles, its component, the quest hooks (§24)
 sim/                server-side systems added by later tasks: movement validation, combat…
 admin/              developer tooling (§16): its ASTRA_* config, the admin commands and service, the loopback admin channel
@@ -63,8 +67,8 @@ server pushes no periodic time of its own: a pong is the better sample because t
 `world` carries a `serverTime` too.
 
 The shard's row (`shards`, created on the shard's first boot) holds its epoch (2026-01-01Z for a new shard), its season
-(number, start in world time, length; DESIGN 16.4) and `last_time`, the latest world time its server saved (every minute and
-on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
+(number, start in world time, length, the mean daily actives the length was chosen from and the map it opened with;
+DESIGN 16.4, §27) and `last_time`, the latest world time its server saved (every minute and on shutdown). At boot the world service (`world/service.ts`) starts the clock at the wall time since the epoch, but never
 below `last_time` nor below the time of any stored Count-meter vote not yet rolled (§11; a vote can land after the last
 time save), and advances it with the monotonic clock; so `t` carries on across a restart and never steps backwards, even
 when the host's wall clock has. The world service mirrors its state to Redis under `astra:shard:<id>:world` (JSON,
@@ -115,36 +119,41 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
   first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 reserved for
-  meters, 10 combat, 11 beacons, 12 analysis, 13 crafting, 14 reputation, 15 meters, 16 abilities); a unit test pins the number and
-  checks the history, so two branches bumping to the same number conflict at merge rather than share it.
+  meters, 10 combat, 11 beacons, 12 analysis, 13 crafting, 14 reputation, 15 meters, 16 first finders, 17 world events, 18 seasons, 19
+  abilities);
+  a unit test pins the number and checks the history, so two branches bumping to the same number conflict at merge
+  rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
   passed, §7, so the client must stamp it and step it forward, never back, when it falls more than a second behind; an
   input without one, 0, is judged on its arrival; `mode` is a prediction validated like the pose; `seq` counts from 1),
-  `cast {seq, time, node, slot, frame, aim, target?}` (§25), `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
+  `cast {seq, time, node, slot, frame, aim, target?}` (§28), `interact {target}`, `chat {channel, text}`, `party {op}` (§13), `ack {tick}` (only
   for the newest applied tick, at most every 50 ms, so a backlog is acknowledged once), `ping {id, clientTime}`,
   `inventory {seq, op}`, `skills {seq, op}`, `cutscene {op, id, skipped?}` (§15), `quest {seq, op}` (§17), `mine {seq,
   frame, node | flora, tool, time}` (§18), `fire {seq, time, frame, aim}` (§20), `beacon {op}` (§21), `analyze {seq,
-  time, target}` (§22), `craft {seq, op}` (§23). Each socket's message budget is 60 a second with a burst of 120: input
+  time, target}` (§22), `craft {seq, op}` (§23), `name {kind, key, name}` (§25). Each socket's message budget is 60 a second with a burst of 120: input
   and acks take 40, leaving room for pings, casts, interactions, chat, party, inventory, skill, cutscene, quest and
   beacon requests, mining hits (an honest client sends 4 a second, and 8 is the most a character may), shots (the base
-  gun's 8 a second at most, never while mining), analyses and fabricator requests, and the burst absorbs the backlog of
-  a stall. Chat, invites, raising beacons, mining hits, shots, analyses and fabricator requests have smaller limits of
-  their own (§13, §18, §20, §21, §22, §23).
+  gun's 8 a second at most, never while mining), analyses, fabricator and name requests, and the burst absorbs the
+  backlog of a stall. Chat, invites, raising beacons, mining hits, shots, analyses, fabricator and name requests have
+  smaller limits of their own (§13, §18, §20, §21, §22, §23, §25).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
-  `loot`, `xp` (§20), `cast` (§25), `notice` (toasts), `party` (party news), `rank` and `title` (§24), `world {season, count, edgeX, tiers, serverTime}` (sent right after
-  `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
-  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§19),
-  `party {party}` (the
+  `loot`, `xp` (§20), `cast` (§28), `notice` (toasts), `party` (party news), `rank` and `title` (§24), `world {season, seasonStart,
+  seasonEnd, opening, count, edgeX, tiers, serverTime}` (sent right after `welcome` and to every joined session whenever
+  the world service's state changes; `tiers` is each galaxy system's tier by index; protocol 18's `seasonStart`,
+  `seasonEnd` and `opening` are the season's world times and the map it opened with, §27), `pong`, `inventory {seq,
+  inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§19), `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message, party request or beacon request
   not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
   reset?, cells}` (§18), `fire {seq, result, target?, reason?}` (§20), `beacons {reset?, beacons, gone}` and `beacon {op,
   id, beacon? | name? | phase? | why?}` (§21), `analyze {seq, target, result, reason?, species?, xp?}` (§22), `craft
-  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `reputation {reputation}` (§24), `cast
-  {seq, node, slot, result, reason?, readyAt?}` and `abilities {cooldowns, on}` (§25), and snapshots.
+  {seq, op, recipe, result, item?, count?, reason?}` and `recipes {known}` (§23), `reputation {reputation}` (§24), `awards
+  {awards}` (§27), `discoveries {system, reset?, entries}` and `named {kind, key, result, name?, reason?}` (§25),
+  `world_event {op, event, outcome?}`, `event_status {…}` and `event_reward {…}` (§26), `cast {seq, node, slot,
+  result, reason?, readyAt?}` and `abilities {cooldowns, on}` (§28), and snapshots.
 - **Inventory** (`@astra/shared/inventory`, protocol 2): the value is `{stackMax, units, suit, pods}`, the suit's slots and
   each cargo pod's slots holding `{item, count}` stacks or null; only resources, items and units, never fragments, skill
   points or reputation (the schema is strict). A client asks only for stack moves: `op` is `move {from, to, count?}`,
@@ -225,7 +234,27 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   after `recipes` on join and whenever the server changes it, after that change's events: `rank {faction, rank, from}`
   (one per faction whose rank a change moved, from the rank before to the rank after; ids or null) and `title {title}`
   (a title earned).
-- **Abilities** (protocol 16, §25): a client sends `cast {seq, time, node, slot, frame, aim, target?}` for a key press, a
+- **First finders** (protocol 16, §25): a client sends `name {kind, key, name}` to name a find of its own, a strict
+  shape whose `name` keeps chat's text rules (not blank, no control, invisible or direction-changing characters) and at
+  most 64 units, so a name the filter refuses is answered rather than dropped; `key` must be one of `kind`'s (a species
+  key, a body's frame id, a site key `<seed>:<body>#<index>`). The server answers each with `named {kind, key, result}`:
+  `named` with the name as recorded (tidied), or `refused` with `reason` (`length`, `characters`, `blocked`, `reserved`,
+  `unknown`, `not_finder`, `named`, `lapsed`, `closed`, `rate`, `busy`). `discoveries {system, reset?, entries}` carries
+  a star system's finds (`{kind, key, finder, at, name?, until?}`, at most 512 a message): `reset` and the whole system
+  after `welcome` and whenever the player's zone becomes another system's, then new finds and names as they happen.
+- **World events** (protocol 17, §26): the server sends, and no client sends anything of them, `world_event {op:
+  'announced' | 'started' | 'ended', event, outcome?}` to every session in the event's star system (`event`: its id, the
+  event's id and name, the system, its place as a frame, centre and radius, and when it starts and ends; `outcome`,
+  `completed` or `expired`, on the end only); `event_status {id, phase, level, players, wave, waves, enemies, damage,
+  objective, presence, share}` to a participant (its instance, the instance's scaling level 1–12 and players, the wave
+  and the enemies left, its own contribution and its share as things stand); and `event_reward {id, outcome, share, xp,
+  level?, units, items, rep}` as its instance ends (the inventory follows as `inventory` state).
+- **Seasons** (protocol 18, §27): `world` carries the season's `seasonStart` and `seasonEnd` (world times) and
+  `opening {from, edgeShiftLy, dark}`, the map it opened with (`from` how the season before ended, null for the first).
+  `awards {awards}` is the character's season titles and glyphs (`{season, bucket, title, glyph}`, one a season, oldest
+  first, at most 256), sent after `reputation` on join and again whenever a season's end gives the character one. No
+  client message touches either.
+- **Abilities** (protocol 19, §28): a client sends `cast {seq, time, node, slot, frame, aim, target?}` for a key press, a
   strict shape (no client says what a cast did): `node` the one it sees in `slot` (0–5) of the bar its mode casts from,
   `aim` a direction in `frame` (its pose's), `target` an entity id when the ability names one, `time` checked only for
   staleness; node ids are the skill web's (lower-case, 48 characters). The server answers each with `cast {seq, node,
@@ -237,7 +266,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `cast` event `{caster, node, phase: 'cast' | 'end', at, frame, aim, target?}`; what it did arrives as `combat` events.
   One `cast` type serves both directions.
 - **HTTP bodies** use the same module: `Credentials`, `AuthResponse`, `CharacterCreate`, `CharacterSummary`,
-  `CharacterList`. Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
+  `CharacterList`; a season's chronicle is `SeasonChronicle` from `@astra/shared/seasons` (§27). Usernames starting with `dev-` in any case (`isDevUsername`) belong to the dev login (§16):
   `POST /auth/register` refuses them, `400 {error: 'reserved_username'}`.
 
 ## 6. Zones
@@ -279,7 +308,18 @@ players, `event` and `raid` 12.
   character there taken back as `phaseFor` takes it back, any other phase left; a member asked under a new party takes
   it when the phase's others are all of it. It never moves the entity, so movement authority's judging goes on as before.
   `release(characterId)` gives up a place kept for a character whose connection is down, as its grace running out would
-  (a beacon's helper no longer of the party, §21).
+  (a beacon's helper no longer of the party, §21). `guard(phaseId, admits)` gives a phase's owner the say over who joins
+  it: `admits(characterId)` is asked of each player about to be placed in it, by `phaseFor` (which then picks another
+  phase) or `enter` (answering `full`); a place kept for a character is its own and is not asked about again. An event's
+  instance refuses a character its occurrence has paid or has in another instance (§26).
+- **Own entities another system made**: `adopt(phase, entity, despawn?)` makes an entity already in the zone (not a
+  player, in no phase) one of a phase's own: from then only its members see it, and it goes when the phase closes,
+  through `despawn` when given (the system that made it forgets it too), else the zone's. A world event's instance adopts
+  the creatures fauna spawns for its waves (§26), its `despawn` taking each out of its herd before the zone despawns it.
+  Fauna runs an adopted herd apart in its phase and keeps its cell loaded until the phase lets it go (§6.2).
+- **World events** (§26) place a player whose entity is inside an event's place, and in no phase, with
+  `phaseFor(viewer, 'event', location)`: the cap of 12 is what splits a crowd into instances, each scaled by the players
+  it holds (members and kept places).
 - **Visibility** filters every interest set after the distance and party rules (the phase rule wins over the party
   rule): a session sees the shared world and its own phase; never another phase's own entities; and another phase's
   players unless either is **sealed**, a member inside its phase's volume (5% hysteresis) in a kind that isolates
@@ -349,7 +389,12 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   herd spawner's nearest), and only when the zone has room (they try again at the next scan). Dens spawn whether or not
   they are drawn: a den is a spawn anchor, not geometry. `FaunaOptions.dens` (as `spawner` by default) turns them off.
 - **Phases.** A player the shared world cannot see (`phases.hiddenFromShared`: sealed in a bay, event or raid phase, §6.1) still keeps the herds
-  round it awake, since it sees them, but is no creature's prey, intruder or threat.
+  round it awake, since it sees them, but is no shared-world creature's prey, intruder or threat. A herd a phase has made
+  its own (`PhaseManager.adopt`: an event's wave, §26) is run apart, each tick, with that phase's members (sealed or not)
+  as the only players it notices and that phase's creatures as the only others: it hunts no shared-world player or prey,
+  and the shared world's grazers do not flee it nor its predators hunt it. Its cell may sleep while nobody is near, but
+  never unloads while it holds such a herd, and the creature cap passes it by for the next oldest asleep cell; the phase
+  closing (its `despawn`: `kill`, then the zone's) lets the herd go.
 - **On the wire**, creatures are seen from 500 m when under a metre, 2 km for the apex and 1.5 km otherwise
   (`EntityInit.interest`, kept through every update). Their `mode` is one of idle, wander, flee, fly, alert, charge,
   return, stalk, rush, attack, feint, lurk, circle, dive, climb, follow, and `dead` for a corpse (§20). Hostile creatures
@@ -469,7 +514,9 @@ before applying it.
 
 Postgres tables (Drizzle): `accounts`, `shards` (§3) and `characters` (people, name, look, level, xp, home system, and
 `state`, `revision`, `saved_at`). The shard's row also holds the Count and how far its meter has run; the meter's votes
-and daily rolls are in `count_votes` and `count_days` (§11). Migrations are generated with drizzle-kit and applied with
+and daily rolls are in `count_votes` and `count_days` (§11); a shard's first finds in `discoveries` (§25); the daily
+actives, the seasons' chronicles and their awards in `daily_actives`, `season_chronicles` and `season_awards` (§27,
+migration 0005). Migrations are generated with drizzle-kit and applied with
 `pnpm db:migrate`.
 
 **Character state** (`src/persistence`, P1.E03.T05). Every subsystem that owns part of a character registers one
@@ -490,8 +537,11 @@ per world, `v` 1, held by the codex service; reconciled with the species data on
 unreadable), `recipes` (§23: the recipes the character knows, `v` 1, held by the recipe book; the starting recipes by
 default; reconciled with the recipe table on load; refused, never replaced, when unreadable), `reputation` (§24: standing
 by faction and the titles earned, `v` 1, held by the reputation service; none by default; reconciled with the faction
-table on load; refused, never replaced, when unreadable) and, when the server has a quest runtime, `quests` (§17: held by
-the runtime; refused, never replaced, when unreadable).
+table on load; refused, never replaced, when unreadable), `seasonAwards` (§27: the season titles and glyphs it carries,
+`v` 1, held by `SeasonAwards`; none by default; refused, never replaced, when unreadable, and written with the reputation,
+which holds the titles its seasons earned), `plates` (§25: the codex plates of the character's first finds, `v` 1, held by
+the plate book; refused, never replaced, when unreadable) and, when the server has a quest runtime, `quests` (§17: held
+by the runtime; refused, never replaced, when unreadable).
 
 - **Load** on `join`, from what persistence still holds for the character (it left moments ago and that save may not have
   landed) or else from its row; the join pins the character while it reads the row. A missing component gets its default;
@@ -594,13 +644,14 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   delay scaled by a random 50–100%), then joins again; a refusal another try would repeat (`version`, `auth`,
   `character`, `kicked`), a second `invalid` within a minute (the first may be an honest client's flood after a stall,
   so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
-  `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
-  after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
-  nobody listens for are dropped quietly, and so are snapshot fields and entity kinds nothing reads yet (a `mob`'s
+  `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `awards` (§27; `net.awards` keeps the last),
+  `inventory` (with `first` for the state sent after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the
+  connection's `state`, `lost`, `closed`; types nobody listens for are dropped quietly, and so are snapshot fields and entity kinds nothing reads yet (a `mob`'s
   `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21) keeps the call-for-aid beacons it is
-  sent, `net.reputation` (`reputation.js`, §24) the character's reputation, and the chat and party UI (§13) listens for
-  `party`, `denied`, `beacon` and the chat and party events. While the connection is down after a welcome, a line at the
-  top of the screen says so.
+  sent, `net.reputation` (`reputation.js`, §24) the character's reputation, `net.worldEvents` (`worldEvents.js`, §26)
+  the world events and the banners and toasts they raise, and the chat and party UI (§13) listens for `party`,
+  `denied`, `beacon` and the chat and party events. While the connection is down after a welcome, a line at the top of
+  the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
   onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
   over on every welcome (a restarted server counts its ticks from 0 again). Acknowledgements go out at most once a tick
@@ -687,6 +738,11 @@ its one-vote rule; the clock never starts below a stored vote's time (§3). The 
 Break above 700, Feed below 300) and its rep multiplier (`underdogRepMultiplier(count, tag)`, 1.5, Hold included on
 either side) are pure functions for the rep model to apply. All the arithmetic is pure and integer-exact (votes are
 summed in thirtieths), so the same lean gives the same Count bit for bit at three accounts and at three thousand.
+
+The meter runs in seasons (§27): `advance()` plays it to the season's end (a midnight), where the season ends in the
+Count's bucket and the next starts with the Count at `COUNT_START`; a day's roll is stored with the season it ended in, so
+a season's rolled days are its meter path. The meter's save also writes the daily actives, each season that ended (its
+winners' awards and chronicle) and the shard's move to the next season, in the same transaction.
 
 ## 12. The ground both ends draw (`@astra/shared/world`)
 
@@ -990,7 +1046,9 @@ as Bearer tokens).
   frame=<f> at=<x,y,z> [name]`, `despawn <system> <entity>` (not players or creatures), both only in a loaded zone;
   `set-quest-step <character> <quest> <step>`; `set-skill-points <character> <n>` (SkillService.setPoints, §14);
   `set-rep <character> <faction> <value>` (standing 0–1000, `ReputationService.set` in play, `setStanding` out of it, §24);
-  `mute <account> [seconds]` (3,600 by default, a week at most) and `unmute <account>` (SocialService, §13). Characters
+  `mute <account> [seconds]` (3,600 by default, a week at most) and `unmute <account>` (SocialService, §13); `rename
+  <species|body|site> <key> <name|--clear>` (a first find's name, §25: the filter's rules but the reserved names hold;
+  `--clear` gives it its procedural name for good; a name of several words may come unquoted). Characters
   and accounts are named by id or by name, ignoring case. Frames are `station`, `inertial`, a body index or a frame id;
   poses are `docked` (station frame), `orbit[:alt]` (above a body's sea level along +x, by default a quarter of its
   radius and at least 2 km; or out from the Waystation along +z), `surface[:lat,lon]` (on a rocky body's drawn ground,
@@ -1014,9 +1072,9 @@ as Bearer tokens).
   session's messages (its inputs in the old system's frames are no strikes) and closes the socket without a refusal
   (code 4001, `MOVED_CLOSE_CODE`). The client's Net reconnects as after any dropped connection, and its welcome places
   it where the server now holds it (`Game.onWelcome`, §9).
-- **Direct mode** (`--direct`): with no server running, teleport, grant, set-quest-step, set-skill-points and set-rep run
-  in the CLI itself against `DATABASE_URL`, through the same admin service and `persistence.edit`, printing their audit
-  lines on stderr. One process holds a character at a time (§8), so direct mode is refused while anything answers at the
+- **Direct mode** (`--direct`): with no server running, teleport, grant, set-quest-step, set-skill-points, set-rep and
+  rename (on the default shard's `discoveries`) run in the CLI itself against `DATABASE_URL`, through the same admin
+  service and `persistence.edit`, printing their audit lines on stderr. One process holds a character at a time (§8), so direct mode is refused while anything answers at the
   server's `HOST:PORT/health`; for a character saved in the last 60 s (`saved_at`: a server elsewhere on the same
   database may hold it; an edit counts as a save too) unless `--force`; and in production unless
   `ASTRA_ADMIN_IN_PRODUCTION=1`.
@@ -1279,7 +1337,7 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   the SVG's own units per reticle, never as non-scaling strokes, whose dashes would be measured in screen pixels and
   overrun the arc. An arc lands on its value at once (no tween) on its first draw and as it turns on; a jump (more than
   8% in a frame: a sync, a refill, an ability's chunk of heat) eases onto the value over 150 ms, ease-out, on the HUD's
-  clock (P1.E07.T03, §25); the crosshair and the reticle fade in over 150 ms as they turn on.
+  clock (P1.E07.T03, §28); the crosshair and the reticle fade in over 150 ms as they turn on.
 
 ## 20. Combat (`packages/server/src/combat`)
 
@@ -1299,7 +1357,11 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   (`computeDamage`: resistances by node, weapon or branch, the attacker's power, augments, what the target takes),
   level-scaled only when the source is a creature (its entity's level; DECISIONS P1.E06.T01), then takes the health,
   feeds the creature's threat table (`FaunaSim.hurt`), records the damage each character did (counted up to the health
-  left), tells the hooks who fought (`engaged`) and queues the event. A dead creature or a downed player takes no more.
+  left), tells the hooks who fought (`engaged`) and what the hit took (`hit`: source, attacker, target, the health taken,
+  whether it killed; the combat service passes it to its listeners as `{kind: 'hit'}` news, which a world event counts
+  as contribution, §26) and queues the event. A dead creature or a downed player takes no more. An event instance scales
+  its creatures' health with its players (`scaleHealth(entity, factor)`: max and what is left, from the mob stats'
+  health; one not hurt yet takes it when it first is).
   Weapons (below), abilities (P1.E07.T03) and creature attacks (P1.E08.T02) all come through it; nothing a client sends
   carries an amount.
 - **Death.** A creature at 0 dies: fauna takes it out of its herd at once (§6.2: its den's timers start), its entity
@@ -1321,12 +1383,13 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   aim's frame (its pose's); the aim within 30° of the believed nose (the lasers fire along it). Then the ray: from the
   believed position carried on along the believed velocity to the shot's time (from its last input's stamp, 0.1 s at
   most), along the aim, as far as the gun reaches, the shared `rayHits` against the living creatures of its frame's world
-  that its phase lets the player see (`creatureTargets`, §25; hit spheres round their bodies, `creatureSphere`: 0.6 ×
+  that its phase lets the player see (`creatureTargets`, §28; hit spheres round their bodies, `creatureSphere`: 0.6 ×
   size + 1 m), and the first it meets must be in sight from the believed position
   itself: the drawn ground (fauna's plan, §12) sampled along the stretch the origin was carried (the client's stamp
   chooses the carry, so it never jumps ground the ship has not been seen to cross) and on to the hit, at most 96 times a
   stretch (every 2 m on a short one), the gun's end and the target's skipped. A hit deals the gun's damage through the
-  damage path. Players are neither targets nor in the way: PvP is P2.E17.T01.
+  damage path. Players are neither targets nor in the way: PvP is P2.E17.T01. Nor is a creature the shooter's phase hides
+  from it (`phases.canSee`: another event instance's, §26): the ray passes through it.
 - **A kill's worth** (`killLoot`, `@astra/shared/combat`): XP of the mob's level × 10 (DESIGN 14.9), units of 2 a level a
   threat star (spread ×0.75–1.25 by a roll), and a row's drops (the stone-touched's Count residue, a boss's loot
   resources; plain fauna drop none), rolled once and split by the damage each character did (`splitByDamage`, as a
@@ -1366,7 +1429,8 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   enters the world while the beacon is up.
 - **The listing** (`BeaconView`): its id; the instance's kind and star system (galaxy index); its place, as a frame, a
   centre in it and a radius (where to go to answer); what the place is called (the quest's title, else the location's
-  key; the kind's name if neither is plain text); the quest, for a story instance; the caller's name; its open slots of
+  key; the kind's name if neither is plain text: a world event's location key is the event's name, `Hollow tide`, §26);
+  the quest, for a story instance; the caller's name; its open slots of
   `cap`; and the world times it was raised (`at`: its age is the client's server time less this) and lapses (`until`,
   10 minutes later). A session that sends `watch` is sent the whole list (`beacons {reset: true, beacons, gone: []}`,
   some 70 KB at 256 beacons) and from then the changes (`beacons {beacons, gone}`: new beacons and those whose open
@@ -1388,8 +1452,9 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   never moves a player to answer: its entity stays where movement authority has it, its inputs are judged as before and
   nothing re-seats its mover. Travelling to a beacon (a server-side relocation, which would re-seat the mover as an
   admin teleport does, §7) is a later feature; until then the listing says where to go. The answerer is then placed by
-  `PhaseManager.enter` (§6.1), under the phase's cap and party rule, so an event or a raid that filled since it was
-  listed refuses it (`full`). A story instance's answer joins the caller's party as accepting an invite from the caller
+  `PhaseManager.enter` (§6.1), under the phase's cap and party rule and its owner's guard, so an event or a raid that
+  filled since it was listed refuses it (`full`), and so does a world event's instance for a character its occurrence
+  has paid or has in another instance (§26). A story instance's answer joins the caller's party as accepting an invite from the caller
   would (`Parties.joinWith`, or a new party the caller leads), refused `in_party` (the answerer is in another party),
   `full` (the party is full) and `gone` (the caller is not connected in its instance), all checked before anything
   changes; the caller is re-placed under the party first, since a caller placed before it had a party was placed as a
@@ -1432,7 +1497,7 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   nothing more of it is told; or a species its world does not carry); `dead` (no hp left); `world` (it is not on the world the
   player's frame names); `range` (from the eye, 1.6 m up, to the middle of the creature's hit sphere, more than the demo's
   reach of 70 m plus the sphere's radius, plus 5 m for a pose a tick old; the sphere is `creatureSphere` at the animal's
-  own scale, the one shots and casts take, §25); `busy` (the ground not planned yet); `los` (the drawn ground in the way, sampled as the beam's is, §18). Every
+  own scale, the one shots and casts take, §28); `busy` (the ground not planned yet); `los` (the drawn ground in the way, sampled as the beam's is, §18). Every
   analysis that passes is heard by listeners (`subscribe`), first or not: the gateway passes each to the quest runtime as
   `analyze {species: <key>}` (§17), so a quest's `analyze` step counts species the server saw analyzed.
 - **The codex** (`CodexService`, `codex/service.ts`, made by `coreRegistry` over the progress holder and the skill service
@@ -1453,8 +1518,9 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   and Bond reach, keeping `at`; one warning per character. Only a value that cannot be read refuses the join.
 - **Survey bookkeeping** for P2.E29 and the Symbiotic fragment (DESIGN 9.1, 14.5): `analyzedOn(codex, world)` counts a
   world's species analyzed and `analyzedEvery(codex, world, count)` says whether every one of a list `count` long is (a
-  world's list at a tier is a prefix of its whole list). Survey rewards, first-finder naming and codex plates are
-  P2.E29.T01–T02's; the codex UI, and a `codex` state message to feed it, P2.E29.T03's.
+  world's list at a tier is a prefix of its whole list). Survey rewards are P2.E29.T02's; first-finder naming and codex
+  plates are P2.E29.T01's (§25: every analysis made is the discovery service's too, and a first find earns through the
+  codex's XP grant, `CodexService.grantXp`); the codex UI, and a `codex` state message to feed it, P2.E29.T03's.
 - **The client** (`Game.analyze(target)`, `Game.onAnalyze`) sends the request and shows the answer: a first analysis's
   banner (the codex line, Bond, the XP), a known one's toast, a refusal's reason. Until the client draws the server's
   creatures (P1.E08.T09) it has no server creature to aim at: online, its own demo herds show their names but cannot be
@@ -1566,13 +1632,14 @@ changes it; no client message does.
   the rank after, however many thresholds it crossed), a `title` event per title earned, and then the view; the gateway
   sends those to the session holding the character (§5). The view names each title (a rank's from the data) with its
   faction and rank, or its quest.
-- **Sources.** Quests (§17): their rewards' and dialogue answers' reputation and their titles go through
+- **Sources.** Seasons (§27): each season title a character is awarded goes through `earnTitle` (`server.ts`, on
+  `SeasonAwards.subscribe`), so the title is also in its reputation. Quests (§17): their rewards' and dialogue answers' reputation and their titles go through
   `reputationRewardHooks` (`rep` and `title` with the quest, the title with the factions the quest pays reputation to,
   `questFactions`; `rankOf` for rank prerequisites); a reward a hook declines is held as owed. Acts (above). The admin CLI's `set-rep <character> <faction> <value>` (§16): in play through `set` (the
   client hears the change), out of play by `setStanding` on the stored value through `persistence.edit`, both earning the
   titles of the ranks risen through. Not yet: the convoy run's acts (P2.E21.T05), PvP kills' rep (DESIGN 14.9,
   P2.E17.T01–T02), world events' participation rep (P2.E21.T01), the Count's other counted actions (anchors and the wall:
-  P2.E28, P3.E34), seasons' titles (P2.E22.T03, through `earnTitle`), the faction chains (P2.E18.T02–T05) and the gates
+  P2.E28, P3.E34), the faction chains (P2.E18.T02–T05) and the gates
   that read ranks (trainers P2.E18.T06, hulls P2.E24.T05, the Void branch's standing gate through the skill service's
   `meets` hook, P2.E18.T03). Kills on main are fauna's (§20), whose tags name no faction.
 - **Reading ranks at load.** The `skills` component loads (and reconciles) long before the `reputation` component, so
@@ -1595,7 +1662,224 @@ changes it; no client message does.
   `titles`), the rank and title events for a screen to `take()` (the last 16), and logs each change to the console. The
   reputation screens are P2.E18.T02 onward's.
 
-## 25. Abilities (`packages/server/src/abilities`, `@astra/shared/abilities`)
+## 25. First finders (`packages/server/src/discovery`, `@astra/shared/discovery`)
+
+DESIGN 14.5, 14.9; P2.E29.T01. The first player on a shard to analyze a species, land on a planet or moon, or reach a site
+is its finder: the find is the shard's, shown to everyone, worth `FIRST_FINDER_XP` (2,000) and a codex plate to its
+finder, who may name it once. Naming is prestige: what a find earns does not depend on it. Everything is seen by the
+server from what it believes; no client says it found anything.
+
+- **Keys.** A find is its kind and a key unique in that kind, starting with its system's seed: a species by
+  `speciesKey` (`<world frame>/<index>`, §22), a planet or moon by its frame id (§4), a site by its world's frame id and
+  its index among the world's planned sites, `<seed>:<body>#<index>` (`planSites` order: the drawn ground every client and
+  the server share, §12; a site's type is `SITE_TYPES[index % 4]`, as `planSites` deals them).
+- **Finds** (`DiscoveryService`, `discovery/service.ts`, made by the gateway over the shard's store, the plates
+  persistence's registry loads into and the codex's XP grant). A species: every analysis the analysis service makes
+  (`subscribe`, §22), first for the character or not. A planet or moon: a player in play its zone believes `landed` on it
+  or on `foot` there (movement authority lets a player out only from a landed ship, so a player on foot has landed; the
+  `foot` case catches one who got out between two looks). A site: a player its zone believes within `SITE_REACH_M` (30 m)
+  of the site's footprint, measured from the middle of its levelled ground (the sites' clearance on the zone's planned
+  ground, `places.ts`), in any mode. Landings and sites are looked for every `SCAN_MS` (0.5 s) over the characters in
+  play, never per input; site checks run only below half the world's mountains plus the reach, a chord test first.
+- **The store** (`discovery/store.ts`, the `discoveries` table: shard, kind, key, system seed, finder id and name, world
+  time found, name, name state, window's end, who named it and when; primary key shard + kind + key; indexed by system
+  and by finder). A claim inserts the row with `ON CONFLICT DO NOTHING`: of two players racing (in one process or
+  several), one inserts it and is the finder; the other reads the finder's row back. Each star system's finds are loaded
+  when a player is first in it (retried after 5 s when the load fails) and kept (up to 128 systems), so a find already
+  made is never claimed again; a claim in flight is not repeated by the same character; an analysis made before its
+  system's finds are loaded is claimed anyway and the store decides. A finder's character going leaves its find, with
+  its name (finder id `set null`).
+- **Paid once.** A claim won pays its finder through `CodexService.grantXp` (the codex's XP path, which levels the entity
+  and refreshes the skill view) and adds a codex plate (`plates` component, `{plates: [{kind, key, at}]}`, v1, at most
+  `PLATES_MAX` 4,096: past it a find is still its finder's but earns nothing, logged as an error). The plate is the
+  record of the payment: a find is paid only while its finder holds no plate for it, and plate and XP land in one save,
+  asked for at once (`saveNow`). A finder out of play when its claim lands, or whose save a crash lost, is paid at its
+  next join: the gateway's join reads the character's finds back (`byFinder`) and pays any without a plate. The finder
+  hears `event {kind: 'notice'}` ("First to find <procedural name>: name it within 10 min") and `event {kind: 'xp'}`.
+- **Naming.** Within `NAME_WINDOW_S` (600 s of world time) of the find its finder may name it once (`name`): checked
+  cheapest first (its rate, 3 at once then one per 5 s per character; the find; its finder; named, closed or lapsed; the
+  filter), then written by the store only on the finder's own find, still `open`, never named, at a world time no later
+  than its window's end, so a second name or one past the window writes nothing (the row decides, whatever the service
+  held; a refused write is answered by what the row now says). Names are immutable after that but for a moderator's
+  `rename` (state `renamed`) or clear (state `cleared`: the procedural name for good, and the finder can no longer name
+  it, `closed`). A find never named keeps its procedural name, which every client makes itself (species, body and site
+  names from the shared generators); the server's own (`proceduralName`) is for notices and the CLI.
+- **The moderation filter** (`checkDiscoveryName`, `@astra/shared/discovery`; lists in `data/names.ts`). A name is
+  tidied (composed, trimmed, spaces collapsed), 3–24 UTF-16 units, words of Latin letters and digits (Basic Latin,
+  Latin-1, Latin Extended-A and B, so a look-alike letter of another script cannot slip a word past it) with one space,
+  apostrophe or hyphen between two, and at least two letters. It is compared as a skeleton (lower case, accents stripped,
+  0 1 3 4 5 7 8 read as o i e a s t b, nothing but letters and digits): a blocked fragment anywhere in it (also with runs
+  of a letter run together) is `blocked`; a blocked word as one of its words, or as the whole name run together, is
+  `blocked` (words like these sit innocently inside others, so they are not fragments); a reserved word (admin,
+  moderator, dev, official, system…) as one of its words, or a reserved name (the game's title, powers and people, every
+  people, capital and faction of the data tables) as the whole of it, is `reserved`. Moderators' renames skip only the
+  reserved names. On the wire the name keeps chat's text rules (§5, §13).
+- **Shown to everyone.** The gateway calls `joined(session, name)` after a join (after `quests`): the character's system's
+  finds go out as `discoveries` with `reset` once they are loaded, and again whenever its zone becomes another system's
+  (the scan notices), and every new find and every name given or changed goes to everyone sent that system's finds (and
+  to its finder, wherever it is). The client keeps them in `net.discoveries` (`net/discoveries.js`): the current
+  system's finds (another system's news is ignored; a welcome starts over), `displayName(kind, key, procedural)` (the
+  finder's name, else the procedural one), `mine()` (what its character may still name), `name(kind, key, name)` and the
+  last `named` answer. One place shows names through it so far: the analysis banner and the known species' toast
+  (`Game.onAnalyze`); the HUD's location line, the codex UI and a field to name a find in are later tasks' (P2.E29.T03),
+  until when a finder names a find from the dev console (`game.net.discoveries.name(…)`).
+- **Tests.** Integration tests run with first finds off unless they ask (`startTestServer(…, {discovery: true})`), on a
+  shard of their own: a find on the shared shard pays its finder XP on a database's first run and not on the next, which
+  no other test's XP should depend on. The production server and the online smoke run with them on.
+
+## 26. World events (`packages/server/src/events`, `@astra/shared/events`)
+
+DESIGN 14.6, 16.6; P2.E21.T01. A world event is server-timed, announced to its star system, open to everyone present,
+scaled to who is there, split into instances above 12, and paid by contribution. This is the framework; each event's
+own shape (the station raid, the full Hollow tide, the superstorm rescue, the convoy run) is P2.E21.T02–T05's.
+
+- **Definitions are data** (`EVENTS`, `eventDefSchema`): id; name (plain text, the banner's title and the key of the
+  event's phase location); kind (`waves`: waves of enemies to clear); the tiers it comes to; its schedule (`everyS`,
+  `durationS`, `announceS`, `stagger`); its place (`surface`, a radius); its enemies (the world's own creatures of some
+  temperaments, at a level or the tier's); its waves (`count`, `size` at level 1, `firstS` after an instance opens,
+  `gapS` after each is cleared); its scaling (`sizePerPlayer`, `healthPerPlayer`); its contribution weights (damage,
+  objective, presence); and its rewards per player (XP, units, items, reputation). The catalog ships one event, the
+  Hollow tide as the framework runs it (Tier 5, hourly, 20 minutes, waves of the world's predators and territorial
+  creatures), a stand-in that P2.E21.T03 replaces with the full event (its Edge-ward Hollow and stone-touched herds).
+- **Schedule** (`eventWindow`): windows are whole periods of world time from an offset per system (`windowOffset`, drawn
+  from the system and the event when `stagger`), so every server agrees on them. The `EventService` (the gateway's,
+  `ws.events`, on its own 250 ms timer) runs, in every loaded zone with players whose tier is in an event's range, one
+  occurrence per window from its announcement until 30 s before its end. Zones without players open none. A window that
+  began before the service was made (the server restarted mid-window) is skipped and logged (`event window skipped`):
+  nothing records whom its occurrence paid, so running it again could pay them twice. `run(def, zone, {startsIn})` and
+  `startNow(id)` run one off its schedule (development and tests).
+- **Place** (`events/place.ts`): a spot on dry, open ground of the system's first world (by body order) whose species at
+  the zone's tier include the enemies, drawn from the system's seed, the event and the window; the occurrence waits
+  while that world's ground is planned (fauna's planner) and is dropped when no world can host it. The place is a sphere
+  round the spot in the world's frame; the phase location's key is the event's name, which the call-for-aid listing
+  shows as the place (§21).
+- **News** (`world_event`, protocol 17): `announced` and `started` go to every session in the zone and to each one that
+  arrives while the event is on (DESIGN 14.6, "announced by banner to the system"; nothing goes shard-wide); `ended`
+  with its outcome to those there at the end.
+- **Instances.** While it runs, each sweep puts every player in no phase whose entity is inside the place in an instance
+  by the phase manager's own placement (`phaseFor(viewer, 'event', location)`, §6.1: a party member's with room, the
+  fullest with room, else a new one), so an instance holds 12 and a 13th opens another (`EVENT_PLAYERS_MAX`, the event
+  kind's cap; a test holds them together). Nobody is moved. A player in another phase (a bay, a story step) is left
+  where it is; one answering a beacon into an instance (`PhaseManager.enter`, §21) takes part like any member. A
+  character takes part in one instance of an occurrence: from its first contribution there (placed, present, a hit) that
+  instance is its own until it ends. Each instance's phase is guarded (`PhaseManager.guard`, §6.1), so neither placement
+  nor a beacon puts in it a character the occurrence has paid or has in another instance (a beacon's answer is refused
+  `full`); one that left its instance past the grace is put back in that one when it comes back to the place (by
+  `enter`), and waits outside while it is full. A participant placed is reported to its quests as `enter {place:
+  'event:<id>'}`.
+- **Scaling** (`eventScaling`, pure and tested): an instance's level is the players it holds, members and kept places,
+  1–12. Each wave is sent at the level then: `size × (1 + sizePerPlayer × (level − 1))` creatures (fauna's `spawnHerd`,
+  in herds of at most 5 round the spot, through the zone's creature cap: a wave with no room waits 2 s), each made the
+  instance's own (`PhaseManager.adopt`, so no other instance or the shared world sees it, and it goes with the phase)
+  and its health scaled by `1 + healthPerPlayer × (level − 1)` (`ZoneCombat.scaleHealth`). Combat never lets a shot
+  reach another phase's creature (§20). Fauna keeps a cell holding a phase's creatures loaded (it may sleep while nobody
+  is near, but neither unloads nor gives way to the creature cap), and runs them apart: they notice the phase's members
+  only and prey only on its creatures, and the shared world's herds neither hunt nor flee them. So a wave is cleared
+  only when all of it has been killed.
+- **Contribution** is kept per instance and character: the health its hits took from the instance's enemies (combat's
+  `hit` news, counted only while the attacker is a member of that instance), objective points (`credit(zone, entity,
+  points)`, for events whose objectives are not enemies) and the seconds it spent inside the place while the instance
+  ran. Shares (`contributionShares`): each kind is the character's part of the instance's total of it (a kind nobody
+  contributed drops out); damage and objectives weighed together are its active contribution, and one under a quarter of
+  an even share of it (`ELIGIBLE_FRACTION`) is not paid; among the paid, presence is weighed in too, and the shares sum
+  to 1. So presence alone earns nothing, the last hit counts no more than any other, and idle players (or alts) neither
+  earn nor grow the pool.
+- **Status** (`event_status`) goes to each member as it is placed, whenever its instance's level, players, wave or
+  enemies change, and at most once a second as its contribution grows.
+- **Rewards.** An instance ends when its last wave is cleared (`completed`), when everyone has left it (its phase closed:
+  `expired`), or when the occurrence's window ends (`expired`). It pays a pool of the per-player rewards times the
+  participants paid (`rewardPool`; an expired instance pays the fraction of its waves cleared), split by share with
+  `splitByDamage` (as a kill's loot is): XP into progress (the entity's level and the skill view follow), units and items
+  into the inventory (what does not fit is lost), standing through the reputation service (`grant`, reason
+  `event:<id>`, §24; `rep` says what it moved, held to 0–1000). Every participant is sent `event_reward`, its share 0 and
+  nothing when it was not paid; a character out of play by then earns nothing. Its phase closes (the remaining creatures
+  despawned through fauna); those it paid, and every participant of a completed instance, are not placed in that
+  occurrence again (one that only passed through, in an instance it left empty, may come back). `subscribe` hears every
+  instance's payouts (the economy's income measures, P2.E19.T05).
+- **The end.** An occurrence ends with its window, or as soon as every instance it opened has completed; `ended` says
+  `completed` only then. Instances still going end `expired`. The next window brings the next occurrence.
+- **Persistence.** None: occurrences, instances and contribution are in memory. A restart loses the window's occurrence
+  (contribution lost, the window skipped; see Schedule); rewards already paid are in the characters' saved state.
+- **Bench.** The event trial (15 players on foot at an event's place: an instance of 12 and one of 3, each fighting its
+  own scaled waves at the base gun's rate) keeps the tick, the event service's sweep and the hits included, under the
+  10 ms p95.
+- **The client** (`net/worldEvents.js`): `net.worldEvents` keeps the events it was told of, its standing in one and its
+  last reward, and queues for the HUD a banner as an event is announced, starts and ends, and toasts as the player
+  joins an instance, as its scaling changes and as it is paid (`HUD.updateEvents`). A full event panel is later work.
+- **Not here.** Creatures do not fight back until P1.E08.T02 (an instance's own creatures already go for its members
+  only). Pirates (P1.E08.T05), NPC convoys and the Hollow are the later events' enemies; an admin command to run an event
+  is not wired (the service's `run` is there for it).
+
+## 27. Seasons (`packages/server/src/seasons`, `@astra/shared/seasons`)
+
+DESIGN 16.4; P2.E22.T03. The meter (§11) runs in seasons, and how each one ends decides the next one's map, who earns
+its title and glyph, and what its chronicle says. The world service rolls them on the shard clock; the rules are shared.
+
+- **A season** is its number (from 1), start (world time), length (`SEASON_LENGTH_S`, eight weeks, or
+  `SMALL_SEASON_LENGTH_S`, four), the mean daily actives the length was chosen from (null for the first) and the map it
+  opened with, all on the shard's row (`shards.season`, `season_start`, `season_length`, `season_actives`,
+  `season_opening`). It ends at `seasonEndOf(start, length)`: the first meter midnight at or after start + length. The
+  first season starts when the shard first boots and takes the default length (it has no month before it), so it runs
+  to the midnight after its eighth week; every later season starts and ends on midnights, so each meter day, its votes and
+  its drift belong to one season. `world.state()` and the `world` message carry `seasonStart`, `seasonEnd` and `opening`.
+- **Its end** (`WorldService.advance`, every second and before each counted action, and on boot for a season that ended
+  while the server was down): the meter is played to the season's end, including that midnight's burn and the ending
+  day's drift; the Count there is the season's bucket (`bucketOf`: Fed at 700 and up, Held 300–699, Broken under 300);
+  the next season starts at that midnight with the Count back at `COUNT_START` (500), the length the daily actives choose
+  and the map the bucket leaves (`endSeason`, `seasons/rules.ts`). Subscribers hear it as one world change carrying the
+  ended season (`WorldChange.season`); the meter then carries on in the new season. A downtime spanning several season
+  ends plays each in turn.
+- **The length** (`seasonLengthFor`): four weeks while the mean daily actives of the 30 meter days before the season's
+  start are under `SMALL_POPULATION_ACTIVES` (100), eight from it. A daily active is an account that entered the world
+  (a character joined) that meter day, counted once: `world.markActive(accountId)`, called by the gateway on join, is
+  kept in memory by `DailyActives` (the open day's accounts, earlier days' counts back a month) and saved with the meter
+  to `daily_actives (shard, day, account)`; a restart reloads the counts from the month before the season's end and the
+  open day's accounts.
+- **The next map** (`seasonOpening(bucket, season)`): after Fed the Edge recedes `SEASON_EDGE_SHIFT_LY` (10 ly; at seed
+  424242 the Edge-ward fringe goes from 6 systems to 1); after Broken it advances as far (10 systems Edge-ward) and 2–3 of
+  the Edge-ward fringe systems at that Edge start dark (`darkSystems`: drawn by `hashInts(galaxy seed, season)`, the same
+  every run); after Held, and for the first season, the baseline. Each map comes from the one season before it, never
+  added up. It is data on the shard's row and in `world.opening`: the Edge following the meter (P2.E22.T02) is to apply
+  `edgeShiftLy` to `edgeX` and flag the `dark` systems' stations, reading `state().opening` and hearing the roll through
+  `subscribe` (a change with `season`).
+- **The winners** (`seasonWinners`): the accounts whose own counted actions in the season (its stored votes cast in
+  [start, end)), read as the meter reads a day's (their lean, and the target it pulls toward), land in the season's
+  bucket, with at least one full vote's weight (`TITLE_MIN_WEIGHT`; a monolith touch is a tenth). So the Fed season's
+  are those who fed, the Held season's those who held, or fed and broke alike, and the Broken season's those who broke.
+  Each earns the season's award (`seasonAward`): the bucket's title (`SEASON_HONOURS`: Fed "Seedbearer", Held "Keeper of
+  the Middle", Broken "Anchorbreaker") and its glyph (`season_<n>_<bucket>`, a cosmetic record, `seasonGlyph`: the
+  philosophy's word, seed, hold or free, in Cartographer signs, ringed by the season's number as a Count numeral, worn on
+  suit and hull; the art is the client's).
+- **Saving** (count/store.ts, seasons/store.ts): the season's end goes with the meter's next save, in its transaction
+  after that save's votes, rolls and daily actives: its winners are read from `count_votes` (by day, then by time),
+  their awards written to `season_awards (shard, season, account)`, its chronicle to `season_chronicles (shard,
+  season)`, and the shard's row moved to the next season with the Count's position; a failed save is kept and written by
+  the next, so the season's end lands with the Count's return to 500 or not at all, and a chronicle or award stored
+  already is left. Once it is written, `onSeasonEnded` listeners hear it with the accounts it awarded.
+- **Awards in play** (`seasons/awards.ts`, `component.ts`). `season_awards` is the account's record; each character
+  carries its own copy in the `seasonAwards` component (§8), held by `SeasonAwards` in play. As a character joins, the
+  gateway reads the account's awards with its row and merges any it lacks (one a season, in season order: a character
+  made after a season carries its account's award too), then sends `awards` after `reputation`; when a season's end is
+  written, each joined character of an account among its winners is given the award and sent `awards` again. A character
+  out of play then gets it on its next join. `SeasonAwards.subscribe` is the hook through which the server takes each
+  title into the reputation (§24) with its `earnTitle` (the same title held already is kept once, so a season that
+  awards a bucket's title again adds none; the glyph is kept only here). The `seasonAwards` component is written with the
+  reputation (`writtenWith`, §8): a capture that cannot take one holds the other back, so an award never reaches the row
+  without its title.
+- **The chronicle** (DESIGN 16.4: "what the server did"): `GET /seasons/:season/chronicle`, with the session's Bearer
+  token, answers a finished season's `SeasonChronicle`: when it ran and how long, the mean daily actives its length was
+  chosen from, the map it opened with, the meter's path (each of its rolled days from `count_days`: Count, drift, lean,
+  votes), the Count at its end and its bucket, the winning philosophy with its title and glyph and how many accounts
+  earned them, the map the next season opens with, and its notable first finds (`finds`, at most 64, the rest dropped on
+  write; P2.E29.T01 names them through `pgShardStore`'s `firstFinds` hook, read in the chronicle's transaction; none
+  until then). A season not yet ended (or whose end is not written yet) is `404 no_chronicle`, a bad number `400`, no
+  token `401`. `SeasonService` caches each chronicle it has read (a finished season never changes). HTTP rather than a
+  socket request: a chronicle is a document, which grows with P2.E22.T04's per-account measures, and fetching one spends
+  nothing of a socket's message budget. The client fetches it with `seasonChronicle(token, season)` (`net/api.js`; Vite
+  proxies `/seasons`).
+- **Not here**: the Reckoning in a season's final week (P3.E34.T03), the Edge moving with the meter and dark stations
+  drawn (P2.E22.T02), where players see it (P2.E22.T04), drift content per season (P3.E35.T01).
+## 28. Abilities (`packages/server/src/abilities`, `@astra/shared/abilities`)
 
 DESIGN 9.1's actives, cast by the server (P1.E07.T03). A key press is an intent; the server decides whether the cast
 happens and what it does, and tells everyone who can see it. The branches' tasks (P1.E07.T04–T10) add abilities as data and

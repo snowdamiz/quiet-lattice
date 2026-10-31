@@ -11,10 +11,11 @@ import { startServer, type RunningServer, type StartOptions } from '../src/serve
 /** A server on a free port. `shard` runs a shard of its own (uniqueShard()) for tests that change the world or its clock;
  * `persistence` tunes character saving (a short interval); `tooling` turns developer tools on (the dev login, off unless
  * asked for here; the admin channel); `movement: false` lets players be put anywhere with raw poses; `abilities` casts a
- * fixture book. */
+ * fixture book. First finds are off unless `discovery` is true (on a shard of the test's own): a first find on the shared
+ * shard pays its finder XP on a database's first run and not on the next, which no other test's XP should depend on. */
 export async function startTestServer(
   config: Partial<Config> = {},
-  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement' | 'abilities'> = {},
+  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement' | 'discovery' | 'abilities'> = {},
 ): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
   return startServer({
@@ -22,6 +23,7 @@ export async function startTestServer(
     host: '127.0.0.1',
     config: { LOG_LEVEL: 'silent', AUTH_RATE_BURST: 1000, ...config },
     ...opts,
+    discovery: opts.discovery ?? false,
     // (an admin channel, if the environment opens one, goes on a free port)
     tooling: { ASTRA_DEV_LOGIN: false, ASTRA_ADMIN_PORT: 0, ...opts.tooling },
   });

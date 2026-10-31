@@ -1,4 +1,4 @@
-// Abilities (DESIGN 9.1–9.8, ARCHITECTURE §25): how a slotted active is cast. The skill node is the truth of what an
+// Abilities (DESIGN 9.1–9.8, ARCHITECTURE §28): how a slotted active is cast. The skill node is the truth of what an
 // ability is and costs (its bar, its heat or Charge, its cooldown and numbers, `@astra/shared/data`); an `Ability` adds only
 // what a cast names. The server's cast service (packages/server/src/abilities) checks every cast against it, and the
 // client reads it to know what to send. A branch's task adds its abilities here as data and their effects on the server.

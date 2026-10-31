@@ -4,15 +4,18 @@
 import { z } from 'zod';
 import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
+import { discoveryKeyOk, discoveryKeySchema, discoveryKindSchema, NAME_REFUSALS } from '../discovery/index.ts';
+import { EVENT_PLAYERS_MAX, eventIdSchema } from '../events/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { meterViewSchema } from '../meters/schema.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { factionIdSchema } from '../data/index.ts';
 import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputation/index.ts';
+import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '../seasons/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 16;
+export const PROTOCOL_VERSION = 19;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -29,7 +32,10 @@ export const PROTOCOL_VERSION = 16;
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
 // 14: reputation: standing, ranks and titles by faction, rank and title events (P2.E18.T01)
 // 15: meters: heat and Charge state (P1.E07.T02)
-// 16: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
+// 16: first finders: name requests and their answers, a system's finds and their names (P2.E29.T01)
+// 17: world events: event news to the system (announced, started, ended), a participant's status (its instance, level, contribution) and rewards (P2.E21.T01)
+// 18: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
+// 19: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -173,7 +179,7 @@ export const Input = z.object({
 /** A skill node's id: the skill web's (`@astra/shared/data`), id-shaped, at most 48 characters. */
 export const NodeRef = z.string().regex(/^[a-z][a-z0-9_]{0,47}$/);
 /**
- * Casting a slotted active (ARCHITECTURE §25, DESIGN 9.1): `node` the one the player sees in `slot` (0–5, keys 1–6) of the
+ * Casting a slotted active (ARCHITECTURE §28, DESIGN 9.1): `node` the one the player sees in `slot` (0–5, keys 1–6) of the
  * bar its mode casts from (the ground bar on foot, the ship's in flight), `aim` where it looks in `frame` (its pose's),
  * `target` the entity it names when the ability names one, and `time` the world time it was cast, which the server never
  * trusts beyond refusing one stamped seconds away. The server checks it all against what it believes and answers with
@@ -361,6 +367,21 @@ export const AnalyzeRequest = z.object({
  */
 export const CraftRequest = z.object({ t: z.literal('craft'), seq: z.number().int().min(1).max(0xffffffff), op: craftOpSchema });
 
+// ---------- first finders (P2.E29.T01, ARCHITECTURE §25) ----------
+
+/** What a name request may carry: chat's rules (not blank, no control, invisible or direction-changing characters), capped
+ * well above the filter's length so a name too long is answered `length` rather than dropped. */
+export const DISCOVERY_NAME_MAX = 64;
+/** A find, by its kind and its key (a species key, a body's frame id, a site key), as one of its kind. */
+const discoveryRef = { kind: discoveryKindSchema, key: discoveryKeySchema };
+/**
+ * Name a find (DESIGN 14.5): only its finder, once, within the window after the find; the server checks the name with
+ * the moderation filter and answers with `named`. Strict: the answer's fields differ, and are never a request's.
+ */
+export const NameRequest = z
+  .strictObject({ t: z.literal('name'), ...discoveryRef, name: PlainText(DISCOVERY_NAME_MAX) })
+  .refine((m) => discoveryKeyOk(m.kind, m.key), 'a key of its kind');
+
 export const ClientMessage = z.discriminatedUnion('t', [
   Hello,
   Join,
@@ -380,6 +401,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   BeaconRequest,
   AnalyzeRequest,
   CraftRequest,
+  NameRequest,
 ]);
 export type ClientMessage = z.infer<typeof ClientMessage>;
 
@@ -403,9 +425,17 @@ export const Correction = z.object({ t: z.literal('correction'), seq: z.number()
 /** Zone handoff (P1.E04.T04): the client now belongs to another zone, at this pose. */
 export const ZoneChange = z.object({ t: z.literal('zone'), zone: ZoneRef, pose: Pose });
 export const Pong = z.object({ t: z.literal('pong'), id: z.number().int().nonnegative(), clientTime: z.number(), serverTime: z.number() });
+/**
+ * The world service's state (ARCHITECTURE §3, §11, §27): sent after `welcome` and whenever it changes. `season` is the
+ * season's number, `seasonStart` and `seasonEnd` (protocol 18) the world times it began and ends at, `opening` the map it
+ * opened with (how the season before ended, the Edge's shift and the systems dark this season, DESIGN 16.4).
+ */
 export const WorldState = z.object({
   t: z.literal('world'),
-  season: z.number().int().nonnegative(),
+  season: seasonNumberSchema,
+  seasonStart: z.number().min(0),
+  seasonEnd: z.number().min(0),
+  opening: seasonOpeningSchema,
   count: z.number().min(0).max(1000),
   edgeX: z.number(),
   /** tier (0–5) per galaxy system index */
@@ -485,7 +515,7 @@ export const RankEvent = z.object({
 /** A title earned (protocol 14): a rank's, the first time it is reached, or a quest's. */
 export const TitleEvent = z.object({ kind: z.literal('title'), title: titleViewSchema });
 /**
- * A cast the server carried out (protocol 16, ARCHITECTURE §25), to every session whose interest holds its caster or its
+ * A cast the server carried out (protocol 19, ARCHITECTURE §28), to every session whose interest holds its caster or its
  * target, for its effect to be drawn: `caster` cast `node` at world time `at`, from where it stood in `frame` along `aim`
  * (its unit direction there), at `target` when it named one; `end` when a toggle went off. What it did to anyone arrives as
  * `combat` events and state, never here.
@@ -845,12 +875,135 @@ export const RecipesState = z.object({
     .refine((ids) => new Set(ids).size === ids.length, 'a recipe is known once'),
 });
 
+/**
+ * A find as every player sees it (ARCHITECTURE §25): its kind and key, its finder's name, the world time it was found,
+ * the name its finder gave it (absent: it keeps its procedural name, which every client makes for itself) and, while its
+ * finder may still name it, when that window closes.
+ */
+export const DiscoveryView = z
+  .object({
+    ...discoveryRef,
+    finder: CharacterName,
+    at: z.number().min(0).max(1e12),
+    name: z.string().min(1).max(DISCOVERY_NAME_MAX).optional(),
+    until: z.number().min(0).max(1e12).optional(),
+  })
+  .refine((d) => discoveryKeyOk(d.kind, d.key), 'a key of its kind')
+  .refine((d) => d.name === undefined || d.until === undefined, 'a named find has no window');
+export type DiscoveryView = z.infer<typeof DiscoveryView>;
+/** The most finds one `discoveries` message carries; a system's are sent in as many as it takes. */
+export const DISCOVERIES_MAX = 512;
+/**
+ * The finds of star system `system` (galaxy index): after `welcome`, and whenever the player's zone becomes another
+ * system's, `reset` and its finds (in as many messages as it takes, the first with `reset`); then each new find and each
+ * name given, as it happens, to everyone in the system (and to the finder wherever it is).
+ */
+export const DiscoveriesState = z.object({
+  t: z.literal('discoveries'),
+  system: z.number().int().nonnegative().max(1023),
+  reset: z.boolean().optional(),
+  entries: z.array(DiscoveryView).max(DISCOVERIES_MAX),
+});
+/** Why a name was not given: the filter's (`length`, `characters`, `blocked`, `reserved`); no such find (`unknown`); not
+ * the finder (`not_finder`); named already (`named`); the window has closed (`lapsed`), or a moderator closed it
+ * (`closed`); asked too fast (`rate`); the server could not record it just now (`busy`). */
+export const NameRefusalCode = z.enum([...NAME_REFUSALS, 'unknown', 'not_finder', 'named', 'lapsed', 'closed', 'rate', 'busy']);
+/** A name request's answer: `named` with the name as it was recorded (tidied), or `refused` with why. */
+export const NamedState = z
+  .object({
+    t: z.literal('named'),
+    ...discoveryRef,
+    result: z.enum(['named', 'refused']),
+    name: z.string().min(1).max(DISCOVERY_NAME_MAX).optional(),
+    reason: NameRefusalCode.optional(),
+  })
+  .refine((m) => (m.result === 'named') === (m.name !== undefined), 'a name given, and only one, says what it is')
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why');
+
+// ---------- world events (P2.E21.T01, ARCHITECTURE §26) ----------
+
+/** An event running (or announced) in a system: unique on the shard while its server runs. */
+export const WorldEventId = z.number().int().min(1).max(0xffffffff);
+/**
+ * An event as a system hears of it (DESIGN 14.6, "announced by banner to the system"): which event and what it is called,
+ * the star system (galaxy index), its place (a sphere in one of the system's frames: going inside puts a player in one
+ * of its instances), and the world times it starts and ends.
+ */
+export const WorldEventView = z
+  .object({
+    id: WorldEventId,
+    event: eventIdSchema,
+    name: PlainText(64),
+    system: z.number().int().nonnegative().max(1023),
+    frame: FrameId,
+    center: Vec3,
+    radius: z.number().positive().max(MAX_POS),
+    starts: z.number().min(0),
+    ends: z.number().min(0),
+  })
+  .refine((e) => e.ends > e.starts, 'an event ends after it starts');
+export type WorldEventView = z.infer<typeof WorldEventView>;
+/** How an event (or one participant's instance of it) ended: its waves cleared, or its time ran out first. */
+export const EventOutcome = z.enum(['completed', 'expired']);
+/**
+ * Event news, to every session in the event's star system (and to one that arrives there while it is on): `announced`
+ * (it starts at `starts`), `started`, and `ended` with `outcome` (`completed` when every instance it opened cleared its
+ * waves).
+ */
+export const WorldEventNews = z
+  .object({
+    t: z.literal('world_event'),
+    op: z.enum(['announced', 'started', 'ended']),
+    event: WorldEventView,
+    outcome: EventOutcome.optional(),
+  })
+  .refine((m) => (m.op === 'ended') === (m.outcome !== undefined), 'an end, and only an end, says how');
+/**
+ * A participant's place in an event (DESIGN 16.6): its instance (`phase`, the event phase it is in), the instance's
+ * scaling `level` (the players it holds, 1–12; a 13th opens another instance), its players, the wave it is on of
+ * `waves` and the enemies left, and the participant's own contribution so far: damage to the instance's enemies,
+ * objective points, seconds present, and its `share` of the rewards as things stand. Sent as it is placed, whenever the
+ * level, the wave or its enemies change, and at most once a second as its contribution grows.
+ */
+export const EventStatus = z.object({
+  t: z.literal('event_status'),
+  id: WorldEventId,
+  phase: z.number().int().positive(),
+  level: z.number().int().min(1).max(EVENT_PLAYERS_MAX),
+  players: z.number().int().min(0).max(EVENT_PLAYERS_MAX),
+  wave: z.number().int().min(0).max(20),
+  waves: z.number().int().min(1).max(20),
+  enemies: z.number().int().min(0).max(1000),
+  damage: z.number().min(0).max(1e12),
+  objective: z.number().min(0).max(1e12),
+  presence: z.number().min(0).max(1e7),
+  share: z.number().min(0).max(1),
+});
+/**
+ * What a participant's instance paid it as it ended (DESIGN 14.6, "rewards by contribution"): its `share`, the XP (and
+ * the level it now stands at), units and items that reached it (the inventory itself arrives as `inventory` state), and
+ * reputation. A participant who contributed too little is sent a share of 0 and nothing.
+ */
+export const EventReward = z.object({
+  t: z.literal('event_reward'),
+  id: WorldEventId,
+  outcome: EventOutcome,
+  share: z.number().min(0).max(1),
+  xp: z.number().int().min(0).max(1e9),
+  level: z.number().int().min(1).max(50).optional(),
+  units: z.number().int().min(0).max(1e9),
+  items: z.array(z.object({ item: z.string().max(48), count: z.number().int().positive().max(1e9) })).max(16),
+  rep: z.array(z.object({ faction: z.string().max(32), amount: z.number().int().min(-1e6).max(1e6) })).max(8),
+});
 /** The character's reputation (ARCHITECTURE §24): every faction's standing and rank, and the titles it has earned; sent
  * after `recipes` on join and whenever the server changes it (after the `rank` and `title` events of that change). */
 export const ReputationState = z.object({ t: z.literal('reputation'), reputation: reputationViewSchema });
 
+/** The character's season titles and glyphs (protocol 18, DESIGN 16.4), oldest season first: sent after `reputation` on join
+ * and again whenever a season ends with the character's account among its winning philosophy's players. */
+export const AwardsState = z.object({ t: z.literal('awards'), awards: seasonAwardListSchema });
 /**
- * Why a cast did nothing (ARCHITECTURE §25), cheapest check first: `stale_seq` (its number is not above the last), `rate`
+ * Why a cast did nothing (ARCHITECTURE §28), cheapest check first: `stale_seq` (its number is not above the last), `rate`
  * (casting too fast), `stale` (stamped too far from the server's clock), `zone` (the player is in no zone), `mode` (no bar
  * casts in the mode the server believes: landed, docked, on the pulse drive), `down` (the player is down), `slot` (no such
  * working slot: past the hull's ability slots), `not_owned` (the node is not the character's), `not_slotted` (the node is
@@ -903,7 +1056,7 @@ export const CastState = z
 /** The most cooldowns and toggles a character runs at once: every slot of both bars. */
 export const COOLDOWNS_MAX = 16;
 /**
- * The character's cooldowns and toggles as the server holds them (ARCHITECTURE §25): every node cooling down with the world
+ * The character's cooldowns and toggles as the server holds them (ARCHITECTURE §28): every node cooling down with the world
  * time it is ready again (a shared cooldown under the node whose clock it runs on), and the toggles that are on. Sent after
  * `meters` on join and whenever a cast changes them, before its answer. The client shows them and never decides them.
  */
@@ -936,7 +1089,13 @@ export const ServerMessage = z.discriminatedUnion('t', [
   AnalyzeState,
   CraftState,
   RecipesState,
+  DiscoveriesState,
+  NamedState,
+  WorldEventNews,
+  EventStatus,
+  EventReward,
   ReputationState,
+  AwardsState,
   CastState,
   AbilitiesState,
 ]);

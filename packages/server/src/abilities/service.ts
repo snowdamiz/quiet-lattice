@@ -1,4 +1,4 @@
-// The ability runtime (DESIGN 9.1, ARCHITECTURE §25; P1.E07.T03): a client's `cast` checked against what the server
+// The ability runtime (DESIGN 9.1, ARCHITECTURE §28; P1.E07.T03): a client's `cast` checked against what the server
 // believes, paid from the bar's meter, its cooldown started, its effect run, and the cast replicated to every session that
 // can see it. The gateway makes the service, hands it `cast` requests and sends the answers; effects come from the book.
 //

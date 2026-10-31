@@ -14,7 +14,7 @@
 //   the first it meets must be in sight over the drawn ground (sight.ts) from the believed position itself: along the
 //   stretch the origin was carried, which the ship has not been seen to cross, and on from there to the hit, so no carry
 //   puts a shot past ground in the way. It takes the gun's damage through the zone's one damage path. Players are not
-//   targets: PvP is P2.E17.T01.
+//   targets: PvP is P2.E17.T01; nor is a creature the shooter's phase hides from it (an event instance's, §6.1).
 // - A kill: its XP (`killXp`: level × 10) and loot (`killLoot`: units, a row's drops) are rolled once and shared by the
 //   damage each character did (`splitByDamage`, as a node's yield is), XP to its progress (levelling its entity, and the
 //   skill view that reads the level), units and items into its inventory (what does not fit is lost, reported), and each
@@ -36,7 +36,7 @@ import type { Zone, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import { aimWithin, baseGun, LEAD_MAX_S, type Gun } from './gun.ts';
 import { clearSight } from './sight.ts';
 import { creatureTargets } from './targets.ts';
-import type { CombatHooks, DownedReport, KillReport } from './zone.ts';
+import type { CombatHooks, DownedReport, HitReport, KillReport } from './zone.ts';
 
 type FireRequest = Extract<ClientMessage, { t: 'fire' }>;
 type FireState = Extract<ServerMessage, { t: 'fire' }>;
@@ -65,7 +65,8 @@ export interface CombatZones {
 }
 
 /** A kill or a player down, as listeners hear it. */
-export type CombatNews = { kind: 'killed'; report: KillReport } | { kind: 'downed'; report: DownedReport };
+/** A hit, a kill or a player down, as listeners hear it (an event's contribution counts hits, events/service.ts). */
+export type CombatNews = { kind: 'hit'; report: HitReport } | { kind: 'killed'; report: KillReport } | { kind: 'downed'; report: DownedReport };
 export type CombatListener = (news: CombatNews) => void;
 
 export interface CombatServiceOptions {
@@ -151,13 +152,17 @@ export class CombatService {
     this.log = opts.log;
     this.rng = new Random(opts.seed ?? hashInts(Date.now() & 0x7fffffff, process.pid));
     this.hooks = {
+      hit: (r) => {
+        if (this.listeners.size) this.emit({ kind: 'hit', report: r });
+      },
       killed: (r) => this.killed(r),
       downed: (r) => this.emit({ kind: 'downed', report: r }),
       engaged: (characterId, at) => this.engaged(characterId, at),
     };
   }
 
-  /** Listens to every kill and every player going down (the Recall, P1.E06.T03, will). */
+  /** Listens to every hit that took health (an event's contribution, events/service.ts), every kill and every player going
+   * down (the Recall, P1.E06.T03, will). */
   subscribe(fn: CombatListener): () => void {
     this.listeners.add(fn);
     return () => this.listeners.delete(fn);

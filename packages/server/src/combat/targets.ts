@@ -1,4 +1,4 @@
-// What a player can hit on its world (ARCHITECTURE §20, §25): the creatures a shot or a cast tests against, every one
+// What a player can hit on its world (ARCHITECTURE §20, §28): the creatures a shot or a cast tests against, every one
 // through the same two rules, so neither ever reaches what its player cannot see: the shared hit sphere
 // (`creatureSphere`, `@astra/shared/combat`) and the phase rule (§6.1: a phase's own creature is no one else's).
 import { creatureSphere } from '@astra/shared/combat';

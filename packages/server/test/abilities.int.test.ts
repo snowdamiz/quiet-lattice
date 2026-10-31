@@ -1,4 +1,4 @@
-// Abilities over the wire (P1.E07.T03, ARCHITECTURE §25), against the dockerised Postgres and Redis: a character with the
+// Abilities over the wire (P1.E07.T03, ARCHITECTURE §28), against the dockerised Postgres and Redis: a character with the
 // test ability slotted on every key casts it from each of slots 1–6 on foot and 1–4 flying a four-slot hull, each cast
 // checked, paid, cooled down and run by the server and told to the caster and to a player beside it; and each refusal
 // (not owned, not slotted, cooling down, the heat lockout, Charge short, out of range, unseen) reaches the client with its

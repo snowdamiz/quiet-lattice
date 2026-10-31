@@ -1,7 +1,9 @@
-// The gateway's HTTP side (docs/ARCHITECTURE.md §2, §5): accounts and characters. The client talks to the server on its own
-// origin, as it will when the gateway serves it; in development Vite proxies /auth, /characters, /health and /ws to the
-// game server (vite.config.js). Bodies are checked with the shared protocol's schemas both ways.
+// The gateway's HTTP side (docs/ARCHITECTURE.md §2, §5): accounts, characters and finished seasons' chronicles (§27). The
+// client talks to the server on its own origin, as it will when the gateway serves it; in development Vite proxies /auth,
+// /characters, /seasons, /health and /ws to the game server (vite.config.js). Bodies are checked with the shared protocol's
+// schemas both ways.
 import { AuthResponse, CharacterList, CharacterSummary } from '@astra/shared/protocol';
+import { seasonChronicleSchema } from '@astra/shared/seasons';
 
 /** The dev login's answer (server gateway/devLogin.ts): a session and the character it signs in as. Dev builds only. */
 const DevLoginResponse = import.meta.env.DEV ? AuthResponse.extend({ character: CharacterSummary }) : null;
@@ -62,6 +64,12 @@ export function listCharacters(token, opts) {
 
 export function createCharacter(token, character, opts) {
   return call('POST', '/characters', { token, body: character, schema: CharacterSummary, ...opts });
+}
+
+/** A finished season's chronicle (DESIGN 16.4: what the server did that season), for a signed-in player; a season that has
+ * not ended is refused `no_chronicle` (404). */
+export function seasonChronicle(token, season, opts) {
+  return call('GET', `/seasons/${season}/chronicle`, { token, schema: seasonChronicleSchema, ...opts });
 }
 
 /** Dev builds: the server's dev login (`POST /auth/dev {name, people?}`, ARCHITECTURE §16) signs in to the account

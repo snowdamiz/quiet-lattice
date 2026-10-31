@@ -1,4 +1,4 @@
-// The cast service (P1.E07.T03, ARCHITECTURE §25) over a real zone with fauna: every check a cast passes, the cooldowns
+// The cast service (P1.E07.T03, ARCHITECTURE §28) over a real zone with fauna: every check a cast passes, the cooldowns
 // and toggles it starts, the effects' timers, and who is told of it.
 import type { Ability } from '@astra/shared/abilities';
 import { creatureSphere } from '@astra/shared/combat';

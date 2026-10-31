@@ -5,6 +5,7 @@ import { LY, fmtLy } from '@astra/shared/world';
 import { castBar } from '../net/abilities.js';
 import { EdgeCompass } from './EdgeCompass.js';
 import { SocialUI } from './social/SocialUI.js';
+import { BANNER_FADE_IN, BANNER_FADE_OUT, BANNER_MS, BannerQueue } from './banners.js';
 
 const _v = new THREE.Vector3();
 
@@ -72,7 +73,7 @@ const ARC_JUMP = 0.08;
 export const ARC_EASE_MS = 150;
 const easeOut = (t) => 1 - (1 - t) ** 3;
 
-/** What the bar says of a cast the server refused, by its reason (ARCHITECTURE §25). */
+/** What the bar says of a cast the server refused, by its reason (ARCHITECTURE §28). */
 export const CAST_REFUSED = {
   cooldown: 'COOLING DOWN',
   heat: 'OVERHEATED',
@@ -159,7 +160,7 @@ export class HUD {
     this.toasts = el('div', 'toasts', this.layer);
     // the server's word on the player's shots: damage numbers off the reticle
     this.hitsEl = el('div', 'hits', this.layer);
-    // the bar the player casts from, keys 1–6 on foot and 1–5 in flight, with its cooldowns (ARCHITECTURE §25)
+    // the bar the player casts from, keys 1–6 on foot and 1–5 in flight, with its cooldowns (ARCHITECTURE §28)
     this.abilitiesEl = el('div', 'abilities', this.layer, '<div class="ab-row"></div><div class="ab-why"></div>');
     this.abRow = this.abilitiesEl.querySelector('.ab-row');
     this.abWhy = this.abilitiesEl.querySelector('.ab-why');
@@ -167,6 +168,17 @@ export class HUD {
     this.social = new SocialUI(game, this);
     // (beside the layer, not in it: banners show through a cutscene, which fades the rest of the HUD out)
     this.banner = el('div', 'banner', root);
+    // (the banners' keyframes and band run on these: style.css)
+    root.style.setProperty('--banner-ms', `${BANNER_MS}ms`);
+    root.style.setProperty('--banner-in-ms', `${BANNER_MS * BANNER_FADE_IN}ms`);
+    root.style.setProperty('--banner-out-ms', `${BANNER_MS * BANNER_FADE_OUT}ms`);
+    this.banners = new BannerQueue({
+      now: () => this.now(),
+      later: (fn, ms) => this.later(fn, ms),
+      cancel: (id) => this.cancel(id),
+      show: (b) => this.raiseBanner(b),
+      release: () => this.band.classList.remove('show'),
+    });
     this.flashEl = el('div', 'flash', root);
     this.underwater = el('div', 'underwater', root);
     this.speedLines = el('canvas', 'speedlines', root);
@@ -213,20 +225,10 @@ export class HUD {
 
   // Banners queue instead of overwriting each other; one that waited too long is stale and dropped.
   showBanner(title, sub, lines = []) {
-    (this.bannerQueue ||= []).push({ title, sub, lines, at: this.now() });
-    this.pumpBanners();
+    this.banners.push({ title, sub, lines });
   }
 
-  pumpBanners() {
-    const now = this.now();
-    if (now < (this.bannerUntil || 0)) {
-      this.cancel(this.bannerTimer);
-      this.bannerTimer = this.later(() => this.pumpBanners(), this.bannerUntil - now + 50);
-      return;
-    }
-    let b;
-    while ((b = this.bannerQueue.shift()) && now - b.at > 12000);
-    if (!b) return;
+  raiseBanner(b) {
     // two lines only — what it is and its name; the details (and rewards, which the units counter
     // shows) were reading as filler
     // (as text, never markup: banners carry names players and the server chose)
@@ -238,20 +240,16 @@ export class HUD {
     // raised in a cutscene, it is a title card in the letterbox's top bar, and stays there for its life
     this.banner.classList.toggle('in-bar', !!this.game.cutscenes?.active);
     this.banner.classList.remove('show');
-    this.band.classList.remove('show');
     void this.banner.offsetWidth;
     this.banner.classList.add('show');
-    // (in a cutscene's top bar it is on black already)
-    if (!this.game.cutscenes?.active) this.band.classList.add('show');
-    this.bannerUntil = now + 6200;
-    if (this.bannerQueue.length) this.pumpBanners();
+    // (in a cutscene's top bar it is on black already.) The band is a transition, not a restarted animation: one banner
+    // following another leaves it lit, and only the text fades out and in
+    this.band.classList.toggle('show', !this.game.cutscenes?.active);
   }
 
   /** Drops the banner showing and those waiting. */
   clearBanners() {
-    this.bannerQueue = [];
-    this.bannerUntil = 0;
-    this.cancel(this.bannerTimer);
+    this.banners.clear();
     this.banner.classList.remove('show');
     this.band.classList.remove('show');
   }
@@ -484,12 +482,13 @@ export class HUD {
     this.updateMarkers();
     this.updateHits(g.net?.combat);
     this.updateAbilities();
+    this.updateEvents(g.net?.worldEvents);
     this.social.update();
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
   }
 
-  // The bar the player casts from (ARCHITECTURE §25), under the prompt: a ring a working slot with its key in it and the
+  // The bar the player casts from (ARCHITECTURE §28), under the prompt: a ring a working slot with its key in it and the
   // node's name under it. A cooldown is the ring drawn back to full in the bar's colour (heat's warm on foot, Charge's
   // lilac in flight) as the server's clock runs out, the seconds left in that colour in place of the key (`countdown`);
   // a toggle that is on thickens it; a cast the server took flashes it, and one it refused edges it in danger red with
@@ -552,6 +551,16 @@ export class HUD {
     for (const h of dealt) this.hitNumber(h.amount, h.killed);
     if (taken.length) this.flash('damage');
     for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good');
+  }
+
+  // World events (ARCHITECTURE §26): a banner as one is announced, starts and ends in the system, and toasts as the
+  // player joins an instance, its scaling changes and it is paid. (A full event panel is later work.)
+  updateEvents(feed) {
+    if (!feed) return;
+    for (const x of feed.take()) {
+      if (x.banner) this.showBanner(x.title, x.sub);
+      else this.toast(x.text, x.tone);
+    }
   }
 
   hitNumber(amount, killed) {
