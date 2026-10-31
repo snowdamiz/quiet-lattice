@@ -2,6 +2,7 @@
 // db:generate` and committed under packages/server/drizzle/. A character's state beyond its columns (pose, frame, ship,
 // inventory, and skills, quests and flags as their tasks arrive) lives in its `state` jsonb, one versioned entry per
 // component of the persistence registry (src/persistence/registry.ts), so a new component needs no migration.
+import type { DiscoveryKind } from '@astra/shared/discovery';
 import type { CharacterLook, PeopleId } from '@astra/shared/protocol';
 import type { StoredState } from '../persistence/registry.ts';
 import { sql } from 'drizzle-orm';
@@ -129,8 +130,56 @@ export const countDays = pgTable(
   (t) => [primaryKey({ columns: [t.shardId, t.day] })],
 );
 
+/** Where a find's name stands: its finder may still give one (`open`, until `name_until`), its finder gave one
+ * (`named`), a moderator gave one (`renamed`) or took it away for good (`cleared`: the procedural name stays). */
+export type NameState = 'open' | 'named' | 'renamed' | 'cleared';
+
+/**
+ * First finds (DESIGN 14.5, docs/ARCHITECTURE.md §25): one row per find of a shard, the first player to analyze a species,
+ * land on a planet or moon, or reach a site. The key is unique per shard and kind, so of two players racing, one inserts
+ * the row and is its finder, and the other finds it there. A find is history: its finder's character may go (its id goes
+ * null, its name stays).
+ */
+export const discoveries = pgTable(
+  'discoveries',
+  {
+    shardId: text('shard_id')
+      .notNull()
+      .references(() => shards.id, { onDelete: 'cascade' }),
+    kind: text('kind').$type<DiscoveryKind>().notNull(),
+    /** A species key, a body's frame id or a site key (@astra/shared/discovery); it starts with its system's seed. */
+    key: text('key').notNull(),
+    /** The seed of the star system it is in: a joining player is sent its system's finds. */
+    systemSeed: bigint('system_seed', { mode: 'number' }).notNull(),
+    finderId: uuid('finder_id').references(() => characters.id, { onDelete: 'set null' }),
+    /** The finder's character name, as everyone is shown it. */
+    finderName: text('finder_name').notNull(),
+    /** World time (s) it was found. */
+    at: doublePrecision('at').notNull(),
+    /** The name it was given; null while it keeps its procedural name. */
+    name: text('name'),
+    nameState: text('name_state').$type<NameState>().notNull().default('open'),
+    /** World time (s) until which its finder may name it. */
+    nameUntil: doublePrecision('name_until').notNull(),
+    /** World time (s) it was named, or renamed or cleared by a moderator. */
+    namedAt: doublePrecision('named_at'),
+    /** Who named it last: `finder`, or `admin:<operator>`. */
+    namedBy: text('named_by'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.shardId, t.kind, t.key] }),
+    index('discoveries_system_idx').on(t.shardId, t.systemSeed),
+    index('discoveries_finder_idx').on(t.shardId, t.finderId),
+    check('discoveries_kind_check', sql`${t.kind} in ('species', 'body', 'site')`),
+    check('discoveries_name_state_check', sql`${t.nameState} in ('open', 'named', 'renamed', 'cleared')`),
+    check('discoveries_name_check', sql`(${t.name} is null) = (${t.nameState} in ('open', 'cleared'))`),
+  ],
+);
+
 export type AccountRow = typeof accounts.$inferSelect;
 export type CharacterRow = typeof characters.$inferSelect;
 export type ShardRow = typeof shards.$inferSelect;
 export type CountVoteRow = typeof countVotes.$inferSelect;
 export type CountDayRow = typeof countDays.$inferSelect;
+export type DiscoveryRow = typeof discoveries.$inferSelect;

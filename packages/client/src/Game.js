@@ -357,6 +357,8 @@ export class Game {
     old?.close();
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
+    // (a world event's banner names the world it is on)
+    net.worldEvents.worldName = (frame) => frameOfId(this.system, this.station, frame)?.name ?? null;
     this.inventory.send = (m) => net.send(m);
     this.crafting?.link(net);
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
@@ -997,13 +999,15 @@ export class Game {
   }
 
   // The server's answer to an analysis: a first one shows the species as the codex now holds it and the XP it earned, a
-  // known one says so, a refused one says why.
+  // known one says so, a refused one says why. The species goes by the name its first finder gave it, if it has one
+  // (DESIGN 14.5; net.discoveries), else by its procedural name.
   onAnalyze(m) {
     const s = m.species;
+    const name = s && (this.net?.discoveries.displayName('species', s.key, s.name) ?? s.name);
     if (m.result === 'new') {
       this.audio.play('discovery');
-      this.hud.showBanner(s.name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
-    } else if (m.result === 'known') this.hud.toast(`${s.name} · in your codex`);
+      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
+    } else if (m.result === 'known') this.hud.toast(`${name} · in your codex`);
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
@@ -1100,8 +1104,6 @@ export class Game {
       else if (f.isGas) lines.push('Warning: not landable');
       this.hud.showBanner(f.name.toUpperCase(), `${p.label}${f.kind === 'moon' ? ' Moon' : ' Planet'}`, lines);
       this.audio.play('discovery');
-      const reward = 250 + Math.floor(Math.random() * 400);
-      this.inventory.units += reward;
     }
   }
 

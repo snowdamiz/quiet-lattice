@@ -856,3 +856,53 @@ Format: task id, question → choice → why.
   (P1.E13.T05 left the hook); `HUD.arc` snaps on jumps over 8% (P1.E07.T03 eases it); art bible §4 should list the
   Charge rate's #E2D4FF and the HUD danger text #FF8A80; a fresh mover's late first input is still credited its arrival
   gap (P1.E03.T04's finding).
+- **P2.E29.T01** First-finder naming (shared `discovery`, `data/names.ts`, server `discovery/*`, persistence `plates`,
+  migration 0004, protocol 16, ARCHITECTURE §25) → finds are per shard, keyed shard + kind + key. A species's first
+  analysis on the shard counts whether or not it is the character's first; a landing counts when the zone believes the
+  player `landed` or on `foot` on a planet or moon (not gas giants or the Waystation); a site counts within 30 m
+  (`SITE_REACH_M`) of its footprint's edge, in any mode, checked every 0.5 s. The finder alone may name it, once, within
+  600 s of world time (DESIGN is silent); after that it keeps its procedural name for good. Names: 3–24 characters with
+  at least 2 letters, Latin letters and digits with one space, apostrophe or hyphen between words; only letters the
+  filter can read (accented a–z plus ı ø ł đ ð ħ ŧ ſ ß æ œ þ ƀ ƚ ƶ, folded to plain letters before the checks; any other
+  letter is refused as `characters`); blocked fragments and words (with `foggot` for ø), reserved words and reserved
+  names (the game's, every people, capital and faction) in `data/names.ts`. Names need not be unique. A moderator's
+  `rename` skips only the reserved-name checks, and `--clear` keeps the procedural name for good and closes the window.
+  A finder's deleted character leaves the find and name (finder null). Payment is a per-character codex plate
+  `{kind, key, at}` (capped at 4,096; past it a find earns no plate and no XP), saved together with progress
+  (`writtenWith`) and added only once its 2000 XP was granted; every join pays any own find without a plate. Finds
+  learned while a system loads win over older rows. Name requests: 3 at once, then 1 every 5 s per character.
+  Integration tests run with first finds off unless they ask. The client shows names only in the species analysis
+  banner and the "in your codex" toast, holds only its current system's finds, and names from the dev console until
+  P2.E29.T03; the demo's 250–650 unit payout per discovery banner is deleted outright (a `gate:removed` rule), leaving
+  nothing for P1.E13.T04's discovery half to rebalance (site payouts in Structures.js stay with P1.E07.T11 and
+  P1.E13.T04). → DESIGN 14.5, server-held. Merged after a second review REVISE under the two-round limit: digit and
+  ligature stand-ins (9 or 6 for g, æ as a) and separator-split reserved words still pass, filed as P2.E29.T04.
+  P2.E29.T03 is amended to carry names to the landing banner, location line, map and site labels.
+- **P2.E21.T01** Event framework (server `events/*`, shared `events`, `PhaseManager.adopt`/`guard`, combat `hit` news
+  and `ZoneCombat.scaleHealth`, fauna phase herds, client `ui/banners.js`, protocol 17, ARCHITECTURE §26 with notes in
+  §6.1, §6.2, §21) → the one event shipped is the Hollow tide, a stand-in P2.E21.T03 replaces: Tier 5 only, hourly
+  windows staggered per system, 20 minutes announced 2 minutes ahead, a dry open place 600 m across on the system's first
+  world (body order) whose species include the enemies, drawn from the system seed, event and window; the world's own
+  predators and territorials in 5 waves of 3 (30 s after an instance opens, then 45 s after each clear); each player
+  paid 9000 XP, 1500 units, 4 Count residue and 25 Chorus standing (Chorus a choice). No occurrence opens with under
+  30 s left or in a zone without players; a window that began before the service did is skipped and logged (no
+  persistence: a restart loses the window's occurrence and contribution, paid rewards stay saved). Only the star system
+  hears of it. Level is members plus kept places (1–12), read at each wave: wave size ×(1 + 0.5(L−1)), health
+  ×(1 + 0.1(L−1)), herds of at most 5, a wave with no creature-cap room waits 2 s; instancing above 12. A wave is cleared
+  only when all of it is killed: a cell holding a phase's creatures never unloads (it may sleep) and the cap passes it
+  by. Contribution: damage 0.6, objectives 0.25, presence 0.15 (a kind nobody contributed drops out); under a quarter of
+  an even share is unpaid and does not count toward the pool; the pool is per-player rewards × players paid; an expired
+  instance pays for the fraction of waves cleared, split by damage. An instance completes or expires; the occurrence
+  reports `completed` only if every instance did. One instance per character per occurrence through `PhaseManager.guard`
+  for placement and beacons (a refused beacon answer is `full`); a character joins `paid` only when something was paid
+  or its instance was won, and never re-enters once paid. Players out of play at payout lose their rewards, as with kill
+  loot. Participation reputation goes through `ReputationService.grant` (reason `event:<id>`, not a counted Count act).
+  Adopted herds think in their phase (its members and creatures); shared-world herds ignore phase creatures. Each
+  placement sends `enter {place:'event:<id>'}`. Creatures do not fight back until P1.E08.T02. The banner reads
+  "World event · <world> · <state>" ("starting now" at 0, "in under a minute" below 30 s). The shared banner queue holds
+  each banner for `BANNER_MS` (7 s), the constant the CSS keyframes run on, keeps the band lit between consecutive
+  banners and releases it when none follows or the rest are stale; a banner is stale after three holds (21 s). The base
+  gun's targets pass a phase `canSee` filter. → DESIGN 14.6 and 16.6, server-held. Open: alts earn about 20–25% more
+  per damage in groups of 2–5; `worldEvents.js` builds item names with `replace`, not the resource table; a footprint
+  scrim instead of the full-width band for every banner; P1.E07.T03 reconciles the `fire` canSee filter with its
+  shared `creatureTargets` when it lands.

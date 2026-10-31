@@ -70,6 +70,10 @@ export function format(cmd: AdminCommand, r: AdminResult): string {
       return `${String(r.username)} muted for ${String(r.seconds)} s`;
     case 'unmute':
       return r.wasMuted ? `${String(r.username)} unmuted` : `${String(r.username)} was not muted`;
+    case 'rename':
+      return r.name === undefined
+        ? `${String(r.kind)} ${String(r.key)} (found by ${String(r.finder)}) keeps its procedural name${r.procedural ? `, ${String(r.procedural)}` : ''}, for good`
+        : `${String(r.kind)} ${String(r.key)} (found by ${String(r.finder)}) is now named ${String(r.name)}`;
   }
 }
 
