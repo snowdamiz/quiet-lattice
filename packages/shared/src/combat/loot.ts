@@ -2,7 +2,7 @@
 // resources, Count residue from the stone-touched and the Hollow, ship parts in space, codex entries; XP = mob level × 10;
 // fragments never) but no amounts: the numbers here are this table's (DECISIONS P1.E06.T02). The server rolls a
 // kill's loot once and shares it, and the kill's XP, among everyone who hurt it by the damage each did.
-import { COMBAT, deepFreeze, getBoss, getMob } from '../data/index.ts';
+import { COMBAT, deepFreeze, getBoss, getMob, recipeItemId } from '../data/index.ts';
 import type { ResourceId } from '../data/index.ts';
 import { assertLevel, killXp } from './level.ts';
 import { threatRating, type MobRef } from './mobs.ts';
@@ -42,4 +42,20 @@ export function killLoot(ref: MobRef, level: number, roll: () => number = () => 
   const units = Math.max(1, Math.round(KILL_LOOT.unitsPerLevelStar * level * stars * between(KILL_LOOT.unitsSpread)));
   const items = dropsOf(ref).map((item) => ({ item, count: Math.max(1, Math.round(KILL_LOOT.resourcePerStar * stars * between(KILL_LOOT.resourceSpread))) }));
   return { xp: killXp(level), units, items };
+}
+
+export const RECIPE_DROPS = deepFreeze({
+  /** Each recipe a boss's table lists drops as its recipe item with this chance per recipe, rolled for each fighter on its
+   * own (a recipe is not shared out: DESIGN 15.7, "dropped by bosses (unique)"; learned once, kept forever, so a repeat
+   * is a spare to sell). */
+  chance: 0.25,
+});
+
+/** The recipe items one fighter gets from a kill (`roll` is called once per recipe the boss lists, in order; only bosses
+ * have recipes). */
+export function recipeDrops(ref: MobRef, roll: () => number = () => 0.5): string[] {
+  if (ref.kind !== 'boss') return [];
+  return getBoss(ref.id)
+    .loot.recipes.filter(() => roll() < RECIPE_DROPS.chance)
+    .map(recipeItemId);
 }

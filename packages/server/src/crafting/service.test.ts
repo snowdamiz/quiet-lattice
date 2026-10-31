@@ -4,8 +4,8 @@
 // and every check refuses as it should, changing nothing: a recipe not known or not in the table, the wrong fabricator
 // (the ship's never makes a warp cell), the wrong place, short materials, no room for the output, too fast, a stale
 // number, a character out of play. A recipe item teaches its recipe for good.
-import { CRAFT_MAX, STARTING_RECIPES } from '@astra/shared/crafting';
-import { STATION_FABRICATOR, WALKER } from '@astra/shared/data';
+import { CRAFT_MAX, fabricatorPlace, STARTING_RECIPES, type FabricatorKind } from '@astra/shared/crafting';
+import { RECIPE_TABLE_VERSION, RECIPES, recipeItemId, STATION_FABRICATOR, WALKER } from '@astra/shared/data';
 import { addItem, totals, type Inventory } from '@astra/shared/inventory';
 import type { Pose, ServerMessage } from '@astra/shared/protocol';
 import type { Tier } from '@astra/shared/world';
@@ -16,6 +16,7 @@ import { homeSystemOf, stationFrame } from '../world/home.ts';
 import { describeZoneSystem } from '../zones/system.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
 import { RecipeBook } from './book.ts';
+import { FabricatorPlaces } from './places.ts';
 import { CRAFT_BURST, CRAFT_PER_S, CraftingService, SHIP_FABRICATOR_SLACK_M, type CraftingZone } from './service.ts';
 
 type Answer = Extract<ServerMessage, { t: 'craft' }>;
@@ -77,7 +78,7 @@ function give(items: [string, number][]): void {
 const held = (): Record<string, number> => totals(inventory.get('c1')!);
 
 /** Asks the fabricator, a second after the last ask (within the rate). */
-function make(recipe: string, at: 'station' | 'ship' = 'station', count = 1, opts: { seq?: number; gap?: number } = {}): Answer {
+function make(recipe: string, at: FabricatorKind = 'waystation', count = 1, opts: { seq?: number; gap?: number } = {}): Answer {
   t += opts.gap ?? 1;
   return crafting.craft(viewer, { t: 'craft', seq: opts.seq ?? ++seq, op: { op: 'make', recipe, count, at } });
 }
@@ -131,7 +132,7 @@ describe('the station’s fabricator', () => {
       ['carbon', 40],
     ]);
     expect(inventory.grant('c1', 'ferrite', 50, { to: 'cargo' }).ok).toBe(true);
-    expect(make('flak_ammo', 'station', 4)).toMatchObject({ result: 'made', item: 'flak_ammo', count: 200 });
+    expect(make('flak_ammo', 'waystation', 4)).toMatchObject({ result: 'made', item: 'flak_ammo', count: 200 });
     expect(held()).toEqual({ flak_ammo: 200 });
   });
 
@@ -188,7 +189,20 @@ describe('the ship’s fabricator', () => {
     expect(held()).toEqual(before);
     // away from a Waystation, the station's fabricator is not there
     fields = { frame: WORLD, pos: [1e6, 0, 0], mode: 'landed' };
-    expect(make('warp_cell', 'station')).toMatchObject({ result: 'refused', reason: 'place' });
+    expect(make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
+  });
+
+  it('a Waystation’s fabricator works docked on any of its four pads and not docked far from it in its frame', () => {
+    give([
+      ['tritium', 150],
+      ['dihydrogen', 50],
+    ]);
+    for (let pad = 0; pad < 4; pad++) {
+      fields = { frame: STATION, pos: padPose(STATION, pad).pos as Vec3, mode: 'docked' };
+      expect(make('pulse_fuel_cell', 'waystation'), `pad ${pad}`).toMatchObject({ result: 'made' });
+    }
+    fields = { frame: STATION, pos: [0, 40, 600], mode: 'docked' };
+    expect(make('pulse_fuel_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
   });
 
   it('makes torpedoes only from Tier 2 (DESIGN 15.7: field-craftable at Tier 2+)', () => {
@@ -252,7 +266,7 @@ describe('a craft refused changes nothing', () => {
       ['tritium', 40],
       ['cobalt', 10],
     ]);
-    expect(make('warp_cell', 'station', 2)).toMatchObject({ result: 'refused', reason: 'materials' });
+    expect(make('warp_cell', 'waystation', 2)).toMatchObject({ result: 'refused', reason: 'materials' });
     expect(make('oxygen_cartridge')).toMatchObject({ result: 'refused', reason: 'materials' });
     expect(held()).toEqual({ dihydrogen: 99, tritium: 40, cobalt: 10 });
   });
@@ -284,15 +298,15 @@ describe('a craft refused changes nothing', () => {
       ['ferrite', 1000],
       ['carbon', 1000],
     ]);
-    const answers = Array.from({ length: CRAFT_BURST + 2 }, () => make('flak_ammo', 'station', 1, { gap: 0 }).result);
+    const answers = Array.from({ length: CRAFT_BURST + 2 }, () => make('flak_ammo', 'waystation', 1, { gap: 0 }).result);
     expect(answers).toEqual([...Array(CRAFT_BURST).fill('made'), 'refused', 'refused']);
     expect(crafting.stats().refused).toEqual({ rate: 2 });
     expect(held()).toMatchObject({ flak_ammo: 50 * CRAFT_BURST });
-    expect(make('flak_ammo', 'station', 1, { gap: 1 / CRAFT_PER_S }).result).toBe('made');
-    expect(make('flak_ammo', 'station', 1, { gap: 0 }).result).toBe('refused');
+    expect(make('flak_ammo', 'waystation', 1, { gap: 1 / CRAFT_PER_S }).result).toBe('made');
+    expect(make('flak_ammo', 'waystation', 1, { gap: 0 }).result).toBe('refused');
     // a hundred crafts in one ask is one ask
-    expect(make('flak_ammo', 'station', CRAFT_MAX, { gap: 5 })).toMatchObject({ result: 'refused', reason: 'materials' });
-    expect(make('flak_ammo', 'station', 20, { gap: 1 })).toMatchObject({ result: 'made', count: 1000 });
+    expect(make('flak_ammo', 'waystation', CRAFT_MAX, { gap: 5 })).toMatchObject({ result: 'refused', reason: 'materials' });
+    expect(make('flak_ammo', 'waystation', 20, { gap: 1 })).toMatchObject({ result: 'made', count: 1000 });
   });
 
   it('a stale number or a character out of play spends none of the rate; a refusal after the rate check does', () => {
@@ -302,24 +316,24 @@ describe('a craft refused changes nothing', () => {
     ]);
     // (a fresh rate: the asks below come at once)
     t += 60;
-    expect(make('flak_ammo', 'station', 1, { seq: 10, gap: 0 }).result).toBe('made');
-    for (let i = 0; i < 6; i++) expect(make('flak_ammo', 'station', 1, { seq: 10, gap: 0 }).reason).toBe('stale_seq');
+    expect(make('flak_ammo', 'waystation', 1, { seq: 10, gap: 0 }).result).toBe('made');
+    for (let i = 0; i < 6; i++) expect(make('flak_ammo', 'waystation', 1, { seq: 10, gap: 0 }).reason).toBe('stale_seq');
     book.close('c1');
-    expect(make('flak_ammo', 'station', 1, { seq: 11, gap: 0 }).reason).toBe('zone');
+    expect(make('flak_ammo', 'waystation', 1, { seq: 11, gap: 0 }).reason).toBe('zone');
     book.open('c1');
     // three left of the burst: a refusal for the recipe spends one, then two crafts, then the rate
-    expect(make('torpedo', 'station', 1, { seq: 12, gap: 0 }).reason).toBe('not_known');
-    expect([13, 14, 15].map((s) => make('flak_ammo', 'station', 1, { seq: s, gap: 0 }).result)).toEqual(['made', 'made', 'refused']);
+    expect(make('torpedo', 'waystation', 1, { seq: 12, gap: 0 }).reason).toBe('not_known');
+    expect([13, 14, 15].map((s) => make('flak_ammo', 'waystation', 1, { seq: s, gap: 0 }).result)).toEqual(['made', 'made', 'refused']);
     expect(crafting.stats().refused).toMatchObject({ rate: 1, stale_seq: 6, zone: 1, not_known: 1 });
   });
 
   it('a stale number, a character out of play', () => {
     give(MATERIALS);
-    expect(make('flak_ammo', 'station', 1, { seq: 5 })).toMatchObject({ result: 'made' });
-    expect(make('flak_ammo', 'station', 1, { seq: 5 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
-    expect(make('flak_ammo', 'station', 1, { seq: 4 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 5 })).toMatchObject({ result: 'made' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 5 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 4 })).toMatchObject({ result: 'refused', reason: 'stale_seq' });
     book.close('c1');
-    expect(make('flak_ammo', 'station', 1, { seq: 6 })).toMatchObject({ result: 'refused', reason: 'zone' });
+    expect(make('flak_ammo', 'waystation', 1, { seq: 6 })).toMatchObject({ result: 'refused', reason: 'zone' });
     expect(crafting.craft({ id: 2, characterId: null, sendBinary: () => {} }, { t: 'craft', seq: 1, op: { op: 'learn', recipe: 'torpedo' } })).toMatchObject({
       result: 'refused',
       reason: 'zone',
@@ -353,6 +367,151 @@ describe('learning a recipe', () => {
   });
 });
 
+describe('the fabricators of places that come later (P2.E20.T01)', () => {
+  // each is data and a rule keyed to the place id; the task that places a terminal only registers where it is
+  const CAPITAL: Vec3 = [120, 3, -40];
+  const SANCTUARY: Vec3 = [-900, 12, 40];
+  const SCRAPYARD: Vec3 = [5, 0, 5];
+  const places = (): FabricatorPlaces => {
+    const p = new FabricatorPlaces();
+    p.register(fabricatorPlace('capital:thalune', { frame: WORLD, use: CAPITAL, reachM: 4, dockedReachM: null }), (z) => z.systemIndex === HOME);
+    p.register(fabricatorPlace('sanctuary:chorus-1', { frame: WORLD, use: SANCTUARY, reachM: 4, dockedReachM: null }), (z) => z.systemIndex === HOME);
+    p.register(fabricatorPlace('scrapyard', { frame: 'scrapyard:0', use: SCRAPYARD, reachM: 4, dockedReachM: 30 }), (z) => z.id === 'zone:home');
+    return p;
+  };
+  let withPlaces: FabricatorPlaces;
+  beforeEach(() => {
+    withPlaces = places();
+    crafting = new CraftingService({
+      zones: { zoneOf: (v) => (v === viewer ? zone : undefined), tier: () => tier },
+      inventory,
+      book,
+      now: () => t,
+      places: withPlaces,
+    });
+  });
+  const at = (frame: string, pos: Vec3, mode = 'foot') => void (fields = { frame, pos, mode });
+
+  it('a capital makes the Tier 3 recipes a Waystation cannot, on foot at its terminal only', () => {
+    book.open('c1', { known: [...STARTING_RECIPES, 'railgun', 'beam_lance'] });
+    give([
+      ['iridium', 40],
+      ['gold', 40],
+      ['stormquartz', 20],
+      ['copper', 20],
+      ['cinderglass', 10],
+    ]);
+    expect(make('railgun', 'waystation')).toMatchObject({ result: 'refused', reason: 'fabricator' });
+    expect(make('railgun', 'capital')).toMatchObject({ result: 'refused', reason: 'place' });
+    at(WORLD, [CAPITAL[0] + 30, CAPITAL[1], CAPITAL[2]]);
+    expect(make('railgun', 'capital')).toMatchObject({ result: 'refused', reason: 'place' });
+    // docked there is not at its terminal (a capital has no pad that is its fabricator)
+    at(WORLD, CAPITAL, 'docked');
+    expect(make('railgun', 'capital')).toMatchObject({ result: 'refused', reason: 'place' });
+    at(WORLD, [CAPITAL[0] + 3, CAPITAL[1], CAPITAL[2]]);
+    expect(make('railgun', 'capital')).toMatchObject({ result: 'made', item: 'railgun', count: 1 });
+    expect(make('beam_lance', 'capital')).toMatchObject({ result: 'made', item: 'beam_lance' });
+    expect(make('warp_cell', 'waystation')).toMatchObject({ result: 'refused', reason: 'place' });
+    expect(make('frostglass_catalyst', 'sanctuary')).toMatchObject({ result: 'refused', reason: 'not_known' });
+  });
+
+  it('a capital refuses a recipe of the sanctuary’s or the Scrapyard’s line, and the Waystation’s line is made there too', () => {
+    book.open('c1', { known: [...STARTING_RECIPES, 'frostglass_catalyst', 'husk_plating', 'pressure_hull_module'] });
+    at(WORLD, CAPITAL);
+    for (const r of ['frostglass_catalyst', 'husk_plating', 'pressure_hull_module'])
+      expect(make(r, 'capital'), r).toMatchObject({ result: 'refused', reason: 'fabricator' });
+    give([
+      ['ferrite', 20],
+      ['carbon', 10],
+    ]);
+    expect(make('flak_ammo', 'capital')).toMatchObject({ result: 'made', count: 50 });
+  });
+
+  it('a sanctuary makes the catalysts and nothing else', () => {
+    book.open('c1', { known: [...STARTING_RECIPES, 'frostglass_catalyst', 'stormquartz_catalyst', 'railgun'] });
+    give([
+      ['frostglass', 10],
+      ['stormquartz', 10],
+    ]);
+    expect(make('frostglass_catalyst', 'sanctuary')).toMatchObject({ result: 'refused', reason: 'place' });
+    at(WORLD, SANCTUARY);
+    expect(make('frostglass_catalyst', 'sanctuary')).toMatchObject({ result: 'made', item: 'frostglass_catalyst' });
+    expect(make('stormquartz_catalyst', 'sanctuary')).toMatchObject({ result: 'made', item: 'stormquartz_catalyst' });
+    expect(make('railgun', 'sanctuary')).toMatchObject({ result: 'refused', reason: 'fabricator' });
+    expect(make('warp_cell', 'sanctuary')).toMatchObject({ result: 'refused', reason: 'fabricator' });
+  });
+
+  it('the Scrapyard makes the Void recipes, in its own frame and docked, and not the hull', () => {
+    book.open('c1', { known: [...STARTING_RECIPES, 'pressure_hull_module', 'husk_plating', 'husk_hull'] });
+    give([
+      ['murkpearl', 20],
+      ['ferrite', 20],
+      ['husk_alloy', 80],
+      ['count_residue', 10],
+      ['glyphstone', 20],
+    ]);
+    expect(make('pressure_hull_module', 'scrapyard')).toMatchObject({ result: 'refused', reason: 'place' });
+    at('scrapyard:0', [5, 0, 7]);
+    expect(make('pressure_hull_module', 'scrapyard')).toMatchObject({ result: 'made', item: 'pressure_hull_module' });
+    at('scrapyard:0', [20, 0, 5], 'docked');
+    expect(make('husk_plating', 'scrapyard')).toMatchObject({ result: 'made', item: 'husk_plating' });
+    // docked 85 m off the terminal is out of its docked reach
+    at('scrapyard:0', [90, 0, 0], 'docked');
+    expect(make('husk_plating', 'scrapyard')).toMatchObject({ result: 'refused', reason: 'place' });
+    // the Husk hull is assembled with the hull (P3.E36.T02), not by an item craft
+    expect(make('husk_hull', 'scrapyard')).toMatchObject({ result: 'refused', reason: 'fabricator' });
+    expect(withPlaces.in({ id: 'zone:other', systemIndex: HOME, system })).toHaveLength(3);
+  });
+
+  it('registers a place once, only for a place id, and never a Waystation', () => {
+    const p = new FabricatorPlaces();
+    const where = () => true;
+    const cap = fabricatorPlace('capital:x', { frame: 'f', use: [0, 0, 0], reachM: 1, dockedReachM: null });
+    p.register(cap, where);
+    expect(() => p.register(cap, where)).toThrow(/already/);
+    expect(() => p.register({ ...cap, id: 'harbour:x' }, where)).toThrow(RangeError);
+    expect(() => p.register(fabricatorPlace('waystation', { frame: 'f', use: [0, 0, 0], reachM: 1, dockedReachM: 10 }), where)).toThrow(RangeError);
+    expect(p.in({ id: 'a', systemIndex: 0, system }).map((x) => x.id)).toEqual(['waystation', 'capital:x']);
+  });
+});
+
+describe('recipes from every source (DESIGN 15.7)', () => {
+  // each source ends in a recipe item in the inventory, which the character learns through the fabricator
+  it('a vendor’s sale: the price is paid and the recipe item arrives, to be learned once', () => {
+    inventory.earn('c1', 5000);
+    expect(inventory.spend('c1', 1200).ok).toBe(true);
+    expect(crafting.award('c1', 'torpedo', 'vendor').ok).toBe(true);
+    expect(held()).toEqual({ recipe_torpedo: 1 });
+    expect(study('torpedo')).toMatchObject({ result: 'learned' });
+    expect(book.knows('c1', 'torpedo')).toBe(true);
+    expect(held()).toEqual({});
+  });
+
+  it('a vault’s find and a chain’s reward are the same grant: several of one, a spare kept when it is known already', () => {
+    expect(crafting.award('c1', 'railgun', 'vault', 2).ok).toBe(true);
+    expect(held()).toEqual({ recipe_railgun: 2 });
+    expect(study('railgun')).toMatchObject({ result: 'learned' });
+    expect(study('railgun')).toMatchObject({ result: 'refused', reason: 'known' });
+    expect(held()).toEqual({ recipe_railgun: 1 });
+  });
+
+  it('is refused whole when the suit and cargo have no room, and for a recipe the table lacks', () => {
+    // one stack per recipe item, until there is no stack left for the next
+    let next: string | undefined;
+    for (const r of RECIPES) {
+      if (!inventory.grant('c1', recipeItemId(r.id), 1, { partial: false }).ok) {
+        next = r.id;
+        break;
+      }
+    }
+    expect(next).toBeDefined();
+    const before = held();
+    expect(crafting.award('c1', next!, 'vault').ok).toBe(false);
+    expect(held()).toEqual(before);
+    expect(() => crafting.award('c1', 'no_such_recipe', 'vault')).toThrow(RangeError);
+  });
+});
+
 describe('the recipe book', () => {
   it('holds each character in play’s recipes, and refuses a change to one out of play or a recipe the table lacks', () => {
     const b = new RecipeBook();
@@ -362,11 +521,11 @@ describe('the recipe book', () => {
     expect(b.learn('c2', 'torpedo')).toBe(true);
     expect(b.learn('c2', 'torpedo')).toBe(false);
     expect(() => b.learn('c2', 'nope')).toThrow(RangeError);
-    expect(b.get('c2')).toEqual({ known: ['warp_cell', 'torpedo'] });
+    expect(b.get('c2')).toEqual({ table: RECIPE_TABLE_VERSION, known: ['warp_cell', 'torpedo'] });
     expect(b.knows('c2', 'warp_cell')).toBe(true);
     expect(b.close('c2')).toBe(true);
     expect(b.close('c2')).toBe(false);
     b.open('c3');
-    expect(b.get('c3')).toEqual({ known: [...STARTING_RECIPES] });
+    expect(b.get('c3')).toEqual({ table: RECIPE_TABLE_VERSION, known: [...STARTING_RECIPES] });
   });
 });

@@ -369,6 +369,13 @@ export const RECIPES = table<Recipe>([
 
 export const getRecipe = lookup(RECIPES, 'recipe');
 
+/**
+ * The recipe table's version (P2.E20.T01), stored with what a character has learned (the `recipes` component), the way the
+ * skill web's is. Raise it whenever a recipe is added or removed, so a server rolled back to an older table can tell a
+ * character saved under a newer one and keep what it learned instead of dropping recipes it does not know.
+ */
+export const RECIPE_TABLE_VERSION = 1;
+
 /** Recipe items (DESIGN 15.7: "recipes are items … learned once, kept forever"): the item that teaches a recipe is
  * `recipe_<recipe id>`, one per recipe in the item registry (items.ts). */
 export const RECIPE_ITEM_PREFIX = 'recipe_';

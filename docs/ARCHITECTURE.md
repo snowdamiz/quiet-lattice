@@ -216,8 +216,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   world, index, name, temperament, threat, body plan, Bond eligibility, when first analyzed) and `xp`, `known` with
   `species`, or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `unknown`, `dead`, `world`,
   `range`, `busy`, `los`, `full`). `seq` counts from 1 and increases; `time` is checked only for staleness.
-- **Crafting** (protocol 13, §23): a client sends `craft {seq, op}`, `op` one of `make {recipe, count, at}` (`count`
-  1–100 crafts at `at`, the `station`'s fabricator or the `ship`'s) and `learn {recipe}` (from its recipe item), a
+- **Crafting** (protocol 13, `at` named from 19, §23): a client sends `craft {seq, op}`, `op` one of `make {recipe, count, at}`
+  (`count` 1–100 crafts at `at`: `waystation`, `capital`, `sanctuary`, `scrapyard` or `ship`) and `learn {recipe}` (from its recipe item), a
   strict shape: no client says what a craft uses or makes. The server answers each with `craft {seq, op, recipe,
   result}`: `made` with `item` and `count` (what reached the inventory; the inventory itself goes out as `inventory`
   state, before the answer), `learned`, or `refused` with `reason` (`stale_seq`, `rate`, `zone`, `unknown`, `not_known`,
@@ -520,8 +520,9 @@ load, `applyLayout(saved, layoutFor({ship, skills}))`; kept as saved, and logged
 ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a saved pose inside the ground, in the
 hangar's shell, docked off a pad or on foot with no ship to board is not restored), `codex` (§22: the species analyzed,
 per world, `v` 1, held by the codex service; reconciled with the species data on load; refused, never replaced, when
-unreadable), `recipes` (§23: the recipes the character knows, `v` 1, held by the recipe book; the starting recipes by
-default; reconciled with the recipe table on load; refused, never replaced, when unreadable), `reputation` (§24: standing
+unreadable), `recipes` (§23: the recipes the character knows and the recipe table version they were stored under, `v` 2, held by the
+recipe book; the starting recipes by default; reconciled with the recipe table on load, keeping every recipe when stored
+under a newer table; refused, never replaced, when unreadable), `reputation` (§24: standing
 by faction and the titles earned, `v` 1, held by the reputation service; none by default; reconciled with the faction
 table on load; refused, never replaced, when unreadable), `seasonAwards` (§27: the season titles and glyphs it carries,
 `v` 1, held by `SeasonAwards`; none by default; refused, never replaced, when unreadable, and written with the reputation,
@@ -1512,31 +1513,54 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
 
 ## 23. Fabricators (`packages/server/src/crafting`, `@astra/shared/crafting`)
 
-DESIGN 15.7, 15.3, 10.1; P1.E13.T05. Crafting is the main use for raw materials, and the server makes every craft: a
+DESIGN 15.7, 15.3, 10.1; P1.E13.T05, P2.E20.T01. Crafting is the main use for raw materials, and the server makes every craft: a
 client asks, the server checks the recipe, where the player is and what it holds, and changes the inventory itself. The
 gate is recipes and materials, not a skill tree.
 
 - **Recipes are items.** Every recipe of the table (`data/recipes.ts`) has an item `recipe_<id>` (`recipeItemId`, kind
   `recipe`, stacking, so vendors and the market can sell several; `data/items.ts`). Using one (`learn`) uses it up and
   writes the recipe into the character's knowledge for good; one already known is refused `known` and the item kept.
-  What a character knows is the `recipes` persistence component (§8, `{known: [ids]}`, v1) held by the `RecipeBook`
+  What a character knows is the `recipes` persistence component (§8, `{table, known: [ids]}`, v2) held by the `RecipeBook`
   (`crafting/book.ts`, made by `coreRegistry`; the gateway finds it with `recipeBookIn`). A new character, or one saved
   before crafting, knows `STARTING_RECIPES`: Phase 1's consumables (warp cell, pulse fuel cell, oxygen and sodium
   cartridges, flak ammo), so the warp cell that replaces the demo's 1,800-unit purchase is craftable from the first
-  Waystation. Vendors, chains, drops and vaults hand out the rest (P2.E20.T01). On load the stored list is reconciled
-  with the table (`reconcileKnown`: a recipe the table dropped is dropped, one warning); only an unreadable value refuses
-  the join.
-- **Two fabricators** (`makesAt`). A Waystation's makes the item recipes of its line (`fabricators` includes
-  `waystation`) up to Tier 2 (`FABRICATORS`, "Tier 1 stations craft Tier 0–2 recipes"): every consumable but the
-  catalysts, the Tier 1–2 modules. The ship's own makes only the field-craftable recipes (`field`: pulse fuel, both
-  cartridges, flak ammo; torpedoes from a Tier 2 system, by the zone's tier), never a warp cell. Neither assembles a hull.
-  Capitals', sanctuaries' and the Scrapyard's fabricators come with those places (P1.E10.T02, P1.E11.T05, P2.E20.T01).
-- **Where.** As the zone believes the player (its entity's frame, position and mode; movement authority's, §7): the
-  station's fabricator needs the player in the zone's Waystation frame, docked (in its ship on a pad) or on foot within
-  `STATION_FABRICATOR.reachM` (4.5 m) of the fabricator terminal's use point on the trade deck (`data/station.ts`,
-  1.2 m in front of the kiosk at x −30, z −80 on the 7 m deck; the client builds the kiosk there); the ship's needs it
-  aboard its ship in any mode (`ship`, `pulse`, `landed`, `docked`) or on foot within the boarding reach (9 m) plus 5 m of
-  the ship it left (`MovementAuthority.parkedOf`; a zone without movement authority has none, so on foot it is refused).
+  Waystation. Every other recipe is learned from its item.
+- **Where the items come from** (DESIGN 15.7; each ends in a `recipe_<id>` item in the inventory, learned with
+  `craft {op: 'learn'}`): a vendor's sale (P2.E19) and a vault's find call `CraftingService.award(character, recipe,
+  source)` after taking their own price or opening, an all-or-nothing grant of the item; a chain's reward is a quest
+  reward `items` entry (the runtime's `inventory.grant`); a boss's drop is its table's `loot.recipes`, each rolled for every
+  fighter on its own at `RECIPE_DROPS.chance` (0.25; the combat service grants it with the kill's loot, `loot` event). The
+  table marks each recipe's source (`learnedFrom`, `recipesFrom(source)`); who sells, rewards or drops which is content
+  (P2.E19, the chains, bosses and vaults), and until it lands no recipe item reaches a player in this build: the boss
+  drop is in the kill path, but no boss spawns yet (the combat zone builds fauna only), and no vendor, vault or chain
+  grants one.
+- **The table's version** (`RECIPE_TABLE_VERSION`, data/recipes.ts) is stored with what a character knows (`table`), as
+  the skill web's is. On load (`reconcileRecipes`): saved under the same or an older table, a recipe the table lacks is
+  dropped (one warning); saved under a NEWER table (a server rolled back), nothing is dropped: every recipe stays known, one
+  warning lists those this table lacks (`heldOver`; they are `unknown` to a craft and not sent to the client), and the newer
+  version is written back, so the rollback and the roll-forward lose nothing. A v1 value (no table) reads as table 0. Raise
+  the version whenever a recipe is added or removed.
+- **Five fabricators** (`FABRICATORS`, data/recipes.ts; `makesAt`). Four are a place's: a Waystation's (`waystation`:
+  the item recipes of its line up to Tier 2, "Tier 1 stations craft Tier 0–2 recipes"), a capital's (`capital`: its line up
+  to Tier 3: every Waystation recipe, the Tier 3 modules and the glyphs), a Chorus sanctuary's (`sanctuary`: the catalysts)
+  and the Scrapyard's (`scrapyard`: the Void recipes, the pressure hull and Husk plating); a recipe lists the fabricators
+  that make it (`fabricators`), and a fabricator with a tier band (`maxTier`) refuses a recipe above it. The ship's own makes
+  only the field-craftable recipes (`field`: pulse fuel, both cartridges, flak ammo; torpedoes from a Tier 2 system, by the
+  zone's tier), never a warp cell. None assembles a hull: the Husk hull is the Scrapyard's with the ship (P3.E36.T02).
+  The wire names the fabricator in `craft {at}` (protocol 19: `waystation`, `capital`, `sanctuary`, `scrapyard`, `ship`).
+- **Where.** As the zone believes the player (its entity's frame, position and mode; movement authority's, §7): a place's
+  fabricator needs the player on foot within a terminal's reach, or docked within its docked reach (`dockedReachM`, null
+  where the place has no docking), in the frame of a terminal the zone has for it (`FabricatorPlaces.in(zone)`,
+  `crafting/places.ts`; a terminal is a `FabricatorPlace`: place id, frame, use point, reach, docked reach). Every zone has
+  its Waystation's: the zone's Waystation frame, docked on a pad (the reach covers the farthest pad's edge, 130 m from the
+  terminal) or within `STATION_FABRICATOR.reachM` (4.5 m) of the terminal's use point on the trade deck (`data/station.ts`, 1.2 m in
+  front of the kiosk at x −30, z −80 on the 7 m deck; the client builds the kiosk there). The others come with their places:
+  a place id names its fabricator (`capital:<city>`, `sanctuary:<name>`, `scrapyard`; `fabricatorOfPlace`), and the task that
+  places a terminal registers it (`crafting.places.register(place, where)`) with no change to the rules: capitals P1.E10.T02,
+  the Scrapyard P1.E11.T05, a sanctuary with the Chorus content. Until then none is reachable (no zone has one registered,
+  so a request for it is `place`); tests register fixture terminals. The ship's needs the player aboard its ship in any mode
+  (`ship`, `pulse`, `landed`, `docked`) or on foot within the boarding reach (9 m) plus 5 m of the ship it left
+  (`MovementAuthority.parkedOf`; a zone without movement authority has none, so on foot it is refused).
 - **A request** (`craft {seq, op}`, §5) goes from the gateway to the `CraftingService` (`crafting/service.ts`), checked
   cheapest first: `stale_seq`; `zone` (the character's recipes and inventory held); `rate` (4 at once per character,
   then 2 a second: every request that gets this far spends one, refused for the rate or anything after it or not; a
@@ -1563,7 +1587,8 @@ gate is recipes and materials, not a skill tree.
   character knows, checks a request with the same shared rules (`makeProblem`, `learn`: a refusal they predict is said
   at once and never sent) and sends it; in the dev sandbox it makes the craft on the client's own inventory with them.
   The fabricator screen opens at the trade deck's fabricator terminal (E), and with K: docked, the Waystation's; aboard
-  anywhere else, or on foot beside the ship, the ship's. It lists the known recipes this fabricator makes (how many the
+  anywhere else, or on foot beside the ship, the ship's. Its title line is the fabricator's (`FABRICATORS` name and tier band
+  or line), so a capital's, a sanctuary's and the Scrapyard's terminal open the same screen once their places register one. It lists the known recipes this fabricator makes (how many the
   materials held make, or "missing materials"), the others as made elsewhere, and recipe items held to learn; the
   selected recipe's materials needed against held, Craft ×n (1 to what the materials make, at most 100); the fabrication
   runs across the button (0.56 s) and the result or the refusal shows in the line under the columns once both it and the
