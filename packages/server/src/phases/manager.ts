@@ -3,7 +3,8 @@
 // frames, which moves with it) for a kind with a cap (kinds.ts), filled by presence and closed once it has no members.
 //
 // Every entity in a zone has a phase or none (the shared world). Members are sessions' players placed by phaseFor (or put
-// in one phase by name with enter, under the same caps and party rule: answering a call for aid, social/beacons.ts); a
+// in one phase by name with enter, under the same caps and party rule: answering a call for aid, social/beacons.ts), and
+// a phase's owner may refuse a character either way (guard: an event's instance, one its occurrence has paid); a
 // phase's own entities (its actors: NPCs, bosses, props) are spawned through it, or adopted from the system that spawned
 // them (an event's creatures, which fauna moves), and go with it when it closes. What a
 // session sees is decided here (visibleTo, which the zone applies to every interest set):
@@ -77,6 +78,8 @@ class PhaseState implements Phase {
   readonly members = new Set<number>();
   readonly held = new Set<string>();
   readonly entities = new Set<number>();
+  /** its owner's say over who joins it (guard), asked of each character about to be placed in it */
+  admits: ((character: string | null) => boolean) | null = null;
   /** the volume's centre in world coordinates at the last tick */
   center: Vec3 = [0, 0, 0];
 
@@ -212,14 +215,14 @@ export class PhaseManager {
     }
     if (!chosen && party !== null) {
       for (const p of this.byPlace.get(place) ?? []) {
-        if (this.admits(p, party) && this.hasPartyMember(p, party)) {
+        if (this.admits(p, party) && this.lets(p, character) && this.hasPartyMember(p, party)) {
           chosen = p;
           break;
         }
       }
     }
     if (!chosen) {
-      for (const p of this.byPlace.get(place) ?? []) if (this.admits(p, party) && (!chosen || p.size > chosen.size)) chosen = p;
+      for (const p of this.byPlace.get(place) ?? []) if (this.admits(p, party) && this.lets(p, character) && (!chosen || p.size > chosen.size)) chosen = p;
     }
     chosen ??= this.openPhase(kind, location);
 
@@ -261,8 +264,8 @@ export class PhaseManager {
       hold = undefined;
       if (!phase.open) return 'closed';
     }
-    // (a place kept here counts towards the cap already)
-    if (hold?.phase !== phase && !this.admits(phase, party)) return 'full';
+    // (a place kept here counts towards the cap already, and is its own)
+    if (hold?.phase !== phase && !(this.admits(phase, party) && this.lets(phase, character))) return 'full';
     if (hold) {
       this.held.delete(character!);
       hold.phase.held.delete(character!);
@@ -351,6 +354,18 @@ export class PhaseManager {
     if (this.placed.has(id)) throw new Error(`entity ${id} is in phase ${this.placed.get(id)!.phase.id} already`);
     phase.entities.add(id);
     this.placed.set(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null, despawn });
+  }
+
+  /**
+   * Gives a phase's owner the say over who joins it, beyond its cap and party rule: `admits` is asked for the character
+   * of each player about to be placed in it, and one it refuses is not (phaseFor picks another phase; enter answers
+   * 'full'). An event's instance refuses a character its occurrence has paid or has in another instance
+   * (events/service.ts). A place kept for a character is its own, and is not asked about again.
+   */
+  guard(phaseId: number, admits: (character: string | null) => boolean): void {
+    const phase = this.phases.get(phaseId);
+    if (!phase) throw new Error(`no open phase ${phaseId} in zone ${this.zone.id}`);
+    phase.admits = admits;
   }
 
   /** Closes the phase now: its members go back to the shared world, kept places go, and its own entities are despawned. */
@@ -463,6 +478,11 @@ export class PhaseManager {
     if (party === null) return false;
     for (const q of this.partiesIn(p)) if (q !== party) return false;
     return true;
+  }
+
+  /** Whether a phase's owner lets a character in (guard). */
+  private lets(p: PhaseState, character: string | null): boolean {
+    return p.admits === null || p.admits(character);
   }
 
   private hasPartyMember(p: PhaseState, party: string): boolean {

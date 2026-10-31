@@ -661,6 +661,31 @@ describe('entering a phase by name (a call for aid’s answer)', () => {
   });
 });
 
+describe('guarding a phase (an event’s instance refusing a character its occurrence has paid)', () => {
+  it('keeps out a character its owner refuses, by placement or by name, but not one coming back to its kept place', () => {
+    const { zone, phases, player, place } = setup();
+    const a = player([0, 0, 0], null, 'char-a');
+    const event = phases.phaseFor(a.viewer, 'event', place('wreck'));
+    const refused = new Set(['char-b', 'char-c']);
+    phases.guard(event.id, (c) => c !== null && !refused.has(c));
+    // placement passes it by for another phase at the place; enter answers full
+    const b = player([0, 0, 0], null, 'char-b');
+    const other = phases.phaseFor(b.viewer, 'event', place('wreck'));
+    expect(other).not.toBe(event);
+    const c = player([0, 0, 0], null, 'char-c');
+    expect(phases.enter(c.viewer, event.id)).toBe('full');
+    expect(phases.phaseOf(c.entity)).toBeNull();
+    const d = player([0, 0, 0], null, 'char-d');
+    expect(phases.enter(d.viewer, event.id)).toBe(event);
+    expect(phases.phaseFor(player([0, 0, 0], null, 'char-e').viewer, 'event', place('wreck'))).toBe(event);
+    // a's place, kept across a dropped connection, is still a's once its owner refuses it
+    zone.leave(a.viewer, 'disconnected');
+    refused.add('char-a');
+    expect(phases.phaseFor(player([0, 0, 0], null, 'char-a').viewer, 'event', place('wreck'))).toBe(event);
+    expect(() => phases.guard(9999, () => true)).toThrow(/no open phase/);
+  });
+});
+
 describe('adopting an entity another system spawned (an event’s creatures)', () => {
   it('hides it from all but the phase’s members, and lets its maker despawn it when the phase closes', () => {
     const { zone, phases, player, place, step, init } = setup();
