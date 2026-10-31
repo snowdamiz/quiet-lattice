@@ -417,7 +417,7 @@ async function captureClip(page: Page, def: (typeof SCREENS)[string], outDir: st
   const sp = join(outDir, 'clip-sheet.png');
   const readout = (await def.readout?.(page)) ?? '';
   if (readout) writeFileSync(join(outDir, 'readout.txt'), readout + '\n');
-  writeFileSync(sp, await contactSheet(page, sheet, 5, 480, readout));
+  writeFileSync(sp, await contactSheet(page, sheet, 5, 480, readout.split('\n')[0]));
   return [sp, join(outDir, '_frames')];
 }
 

@@ -253,7 +253,14 @@ export class SocialUI {
       this.lastTick = now;
       this.tick(now);
     }
-    if (frame) this.motion.step();
+    if (frame) {
+      this.motion.step();
+      // (a list that grows under a move, a refusal opening in, overflows frame by frame, with no scroll or redraw to say
+      // so: its edges are looked at on every frame something moves, and the one after)
+      const busy = this.motion.moving();
+      if ((busy || this.wasBusy) && open && this.tab === 'beacons') this.scrollEdges();
+      this.wasBusy = busy;
+    }
   }
 
   render(now) {
@@ -302,11 +309,11 @@ export class SocialUI {
   }
 
   /** A tab's count: one that comes opens across and fades in, one that goes fades as it closes (on the tab underline's
-   * ease, 150 ms), so the tabs beside it slide rather than jump. */
+   * ease, 150 ms), so the tabs beside it slide rather than jump; its face stays whole as the room closes. */
   badge(t, n) {
     const b = this.tabButtons[t].badge;
     if (n) setText(b, String(Math.min(n, 99)));
-    this.motion.toggle(b, n > 0, this.isOpen, { across: true, ms: 150, gap: 7, quick: true });
+    this.motion.toggle(b, n > 0, this.isOpen, { across: true, ms: 150, gap: 7, quick: true, whole: true });
   }
 
   /** The input's channel and what it invites: on a change while the panel is open, they fade out and the new fade in, as
@@ -451,14 +458,20 @@ export class SocialUI {
     const body = members.length ? 'rows' : 'none';
     // joining or leaving a party while it shows, "Not in a party" and the rows give way to each other: the old fades
     // out where it stands, then the frame eases to the new (one height moving, so nothing below stalls or turns back);
-    // Leave opens across beside Invite once the old has gone, and the count fades
+    // Leave opens across beside Invite once the old has gone, and the count fades in then
     const swap = was && this.partyBody !== null && body !== this.partyBody;
     this.partyBody = body;
-    fadeText(this.countEl, members.length ? `${members.length}/${PARTY_MAX}` : '');
+    const count = members.length ? `${members.length}/${PARTY_MAX}` : '';
+    // (a count that comes waits for "Not in a party" to be gone, as the rows do)
+    if (!swap || !members.length) fadeText(this.countEl, count);
     this.motion.toggle(this.leaveBtn, members.length > 0, was && this.footShown, { across: true, delay: swap ? OUT_MS : 0 });
     const box = this.rowsEl;
-    if (swap) this.motion.replace(box, () => this.buildRows(members, live, null));
-    else {
+    if (swap) {
+      this.motion.replace(box, () => {
+        this.buildRows(members, live, null);
+        fadeText(this.countEl, count);
+      });
+    } else {
       const from = was ? box.getBoundingClientRect().height : null;
       this.buildRows(members, live, new Set(this.memberRows.keys()));
       if (was) this.motion.resize(box, from);
