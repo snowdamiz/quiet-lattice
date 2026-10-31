@@ -348,7 +348,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E19.T05 Income tuning** · deps: T01, E21.T01 · spec: DESIGN 15.6 · done: bot-measured income per tier within the table's bands; ladder prices adjusted. · verify: `pnpm bots -- --economy` report.
 
 ### E20 Crafting
-- [~] **P2.E20.T01 Fabricator tiers and recipe items** · deps: P1.E13.T05 · spec: DESIGN 15.7 · done: station tiers gate recipes; recipes as items from vendors, chains, drops, vaults; learned forever. Also capital, sanctuary and Scrapyard fabricators, and a version guard so a rolled-back recipe table cannot drop learned recipes (amended by the orchestrator from P1.E13.T05). · verify: integration.
+- [x] **P2.E20.T01 Fabricator tiers and recipe items** · deps: P1.E13.T05 · spec: DESIGN 15.7 · done: station tiers gate recipes; recipes as items from vendors, chains, drops, vaults; learned forever. Also capital, sanctuary and Scrapyard fabricators, and a version guard so a rolled-back recipe table cannot drop learned recipes (amended by the orchestrator from P1.E13.T05). · verify: integration.
 - [ ] **P2.E20.T02 Module recipes and salvage** · deps: T01, E24.T03 · done: all module recipes; hazard platings as modules; salvage to a third of materials. · verify: integration.
 - [ ] **P2.E20.T03 Catalysts and cosmetics** · deps: T01 · done: sanctuary catalyst recipes with timed buffs; glyph cosmetics from Count residue with boss-drop patterns; liveries from city chains. · verify: integration; smoke.
 
