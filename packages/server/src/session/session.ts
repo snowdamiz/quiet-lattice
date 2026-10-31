@@ -144,6 +144,11 @@ export class SessionRegistry {
     return previous && previous !== s ? previous : undefined;
   }
 
+  /** The session holding the character in play, if any. */
+  holding(characterId: string): Session | undefined {
+    return this.byCharacter.get(characterId);
+  }
+
   get size(): number {
     return this.sessions.size;
   }

@@ -10,10 +10,11 @@ import { startServer, type RunningServer, type StartOptions } from '../src/serve
 
 /** A server on a free port. `shard` runs a shard of its own (uniqueShard()) for tests that change the world or its clock;
  * `persistence` tunes character saving (a short interval); `tooling` turns developer tools on (the dev login, off unless
- * asked for here; the admin channel); `movement: false` lets players be put anywhere with raw poses. */
+ * asked for here; the admin channel); `movement: false` lets players be put anywhere with raw poses; `abilities` casts a
+ * fixture book. */
 export async function startTestServer(
   config: Partial<Config> = {},
-  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement'> = {},
+  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement' | 'abilities'> = {},
 ): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
   return startServer({

@@ -7,6 +7,7 @@
 // 127.0.0.1 with ASTRA_ADMIN_SECRET.
 import type { AddressInfo } from 'node:net';
 import Fastify, { type FastifyInstance } from 'fastify';
+import type { AbilityBook } from './abilities/book.ts';
 import { createTimingHash } from './accounts/password.ts';
 import { createTokenService } from './accounts/tokens.ts';
 import { openAdminChannel, type AdminChannel } from './admin/channel.ts';
@@ -54,6 +55,8 @@ export interface StartOptions {
   movement?: boolean;
   /** Developer tooling overrides, applied after the environment's ASTRA_* variables (admin/config.ts). */
   tooling?: Partial<ToolingInput>;
+  /** The abilities casts may cast, with their effects (this build's by default; integration tests cast fixtures). */
+  abilities?: AbilityBook;
 }
 
 export interface RunningServer {
@@ -178,6 +181,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
     inventory,
     persistence,
     quests,
+    abilities: opts.abilities,
     // (kills add XP to the same progress the quests and persistence hold)
     progress,
     // a joining character's row is read only once an edit of it out of play (the admin CLI's) has written (§8)
