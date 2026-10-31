@@ -25,7 +25,8 @@ export const TARGET_CONE_DEG = 8;
 /** The eye over a walker's feet, m (Player's EYE_HEIGHT, the server's EYE_M). */
 const EYE_M = 1.6;
 
-/** Effects by node: what a branch draws when a cast of its node is seen. Each is `{ cast(event, game), end?(event, game) }`. */
+/** Effects by node: what a branch draws when a cast of its node is seen. Each is `{ cast(event, game), end?(event, game) }`;
+ * the event names no `caster` (or no `target`) the player's phase hides. */
 const FX = new Map();
 
 /** Registers what a node's cast looks like (P1.E07.T04–T10, art P1.E07.T14). One effect a node. */

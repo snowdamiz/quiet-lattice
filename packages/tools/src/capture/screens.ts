@@ -18,6 +18,15 @@ export interface ScreenDef {
   sheetFrames?: readonly number[];
   /** Extra 16:9 stills, taken after the main one and before the clip: `16x9-<name>.png` after `pose` drives the page. */
   stills16x9?: Record<string, (page: Page) => Promise<void>>;
+  /** Extra stills taken at both aspects, after `stills16x9`: `16x9-<name>.png` and `21x9-<name>.png`. */
+  stills?: Record<string, (page: Page) => Promise<void>>;
+  /** The aspect the clip is taken at. Default 16:9. */
+  clipAspect?: '16x9' | '21x9';
+  /** Regions of the page (CSS selectors, padded by `pad` px) whose clip frames go on 4x sheets of their own,
+   * `crops-<name>.png`, each frame of `sheetFrames` cropped from a lossless capture. */
+  crops?: readonly { name: string; selector: string; pad?: number }[];
+  /** Time the HUD's update each clip frame, and print its cost on the clip sheet and in `hud-cost.json`. */
+  hudCost?: boolean;
   /** Draw scrollbars (headless Chromium hides them by default), for screens whose scroll affordance is being judged. */
   showScrollbars?: boolean;
   /** How long the clip runs (s; 60 frames a second): long enough for the whole motion. Default 1. */
@@ -1705,16 +1714,23 @@ export const SCREENS: Record<string, ScreenDef> = {
   // The ability bar on foot (P1.E07.T03), under the prompt: six ground slots, keys 1–6, each a ring with its key and the
   // node's name (Pulse, Pull, Flare, Well, Regrow, Veil); Well cooling with 13 of its 20 s left and Regrow 4 of 10, their
   // rings drawn back in heat's warm with the seconds left in them; heat at 35 on the crosshair's left arc.
-  // `16x9-refused.png`: Well pressed again while it cools, refused by the server: its ring edged in danger red and COOLING
-  // DOWN beside the bar. The clip: key 1 pressed 0.2 s in, the server's answer 60 ms later, Pulse's ring flaring and its
-  // cooldown starting (6 s), Pulse's 10 heat landing on the arc eased over 150 ms; key 1 again 2.2 s in, refused, the red
-  // edge and the reason for 1.6 s; Regrow ready about 4 s in; Pulse ready again about 6.3 s in, its ring full and its key
-  // back.
+  // `*-refused.png` (both aspects): Well pressed again while it cools, refused by the server: its ring edged in danger red
+  // and COOLING DOWN on a plate over it. `*-rest.png`: nothing on the bar moved for 4 s, so it rests at 55% with its names
+  // hidden. The clip (the bar waking from rest as it starts): key 1 pressed 0.2 s in, the server's answer 60 ms later,
+  // Pulse's ring flaring and its cooldown starting (6 s), Pulse's 10 heat easing onto the arc over 250 ms with the new
+  // chunk drawn bright; key 1 again 2.2 s in, refused, the red edge and the plate over slot 1 for 1.6 s; Regrow ready
+  // about 4 s in and Pulse about 6.3 s in, each ring brightening for a beat as it comes back. The sheet's title is the
+  // HUD's per-frame cost; `crops-*.png` are 4x crops of the crosshair and slot 1.
   'hud-abilities': {
     hash: '#foot',
     hudClock: true,
+    hudCost: true,
     clipSeconds: 6.8,
-    sheetFrames: [0, 12, 14, 16, 18, 20, 22, 26, 30, 40, 60, 120, 132, 136, 150, 200, 240, 250, 300, 370, 376, 380, 390, 407],
+    sheetFrames: [0, 12, 14, 16, 18, 20, 22, 26, 30, 34, 60, 120, 132, 136, 150, 200, 240, 246, 252, 300, 376, 382, 388, 407],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
     async open(page) {
       await standingByShip(page);
       await parkLoop(page);
@@ -1723,9 +1739,15 @@ export const SCREENS: Record<string, ScreenDef> = {
       await coolingDown(page, { well: 13, regrow: 4 });
       await settle(page, 2);
     },
-    stills16x9: {
+    stills: {
       async refused(page) {
         await castRoundTrip(page, { bar: 'ground', slot: 3, node: 'well', at: 0, rtt: 0, refused: 'cooldown', seq: 1 });
+        await settle(page, 2);
+      },
+      async rest(page) {
+        await coolingDown(page, {});
+        await settle(page, 2);
+        await page.waitForTimeout(4500);
         await settle(page, 2);
       },
     },
@@ -1740,14 +1762,53 @@ export const SCREENS: Record<string, ScreenDef> = {
       await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 2200, refused: 'cooldown', seq: 3 });
     },
   },
+  // A cast's cost on foot at 21:9 (P1.E07.T03, the grader's round-2 request): heat at 20, the same six ground slots, all
+  // ready. The clip, at 21:9: key 3 pressed 0.2 s in, the server's answer 60 ms later, Flare's ring flaring and its 12 s
+  // cooldown starting, its 30 heat easing onto the crosshair's left arc over 250 ms (20 to 50) with the new chunk drawn
+  // bright; key 3 again 1.4 s in, refused while it cools: the red edge and COOLING DOWN on a plate over slot 3, gone 1.6 s
+  // later. `crops-reticle.png` and `crops-slot.png` are 4x crops of the crosshair and slot 3; the sheet's title is the
+  // HUD's per-frame cost.
+  'hud-abilities-cost': {
+    hash: '#foot',
+    hudClock: true,
+    hudCost: true,
+    clipAspect: '21x9',
+    clipSeconds: 3.4,
+    sheetFrames: [0, 12, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 36, 48, 84, 88, 89, 90, 92, 96, 110, 150, 180, 203],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(3)', pad: 30 },
+    ],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 20, false, false);
+      await coolingDown(page, {});
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await heatAt(page, 20, false, false);
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 200, cooldownS: 12, pay: 30, seq: 1 });
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 1400, refused: 'cooldown', seq: 2 });
+    },
+  },
   // The ability bar in flight (P1.E07.T03): a Wayfarer's four ship slots, keys 1–4 (Tractor Beam, Deep Sweep, Repair
   // Drones, Inertial Brake), Deep Sweep cooling with 21 of its 30 s left and Inertial Brake 6 of 15, their rings drawn back
-  // in Charge's lilac; Charge at 72 on the reticle's right arc. The clip: key 1 pressed 0.2 s in, the server's answer, the
-  // ring flaring and Tractor Beam's 12 s cooldown starting, its 15 Charge coming off the arc eased over 150 ms.
+  // in the flight deck's warm white with the seconds left in it (lilac is Charge's alone: only the reticle's right arc
+  // and a cast's chunk of it wear it); Charge at 72 on that arc. The clip: key 1 pressed 0.2 s in, the server's answer,
+  // the ring flaring and Tractor Beam's 12 s cooldown starting, its 15 Charge coming off the arc over 250 ms with the cost
+  // drawn bright as it drains; Inertial Brake ready 1.2 s in, its ring brightening for a beat. The sheet's title is the
+  // HUD's per-frame cost; `crops-*.png` are 4x crops of the reticle and slot 1.
   'hud-abilities-flight': {
     hudClock: true,
+    hudCost: true,
     clipSeconds: 2,
-    sheetFrames: [0, 6, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 34, 40, 50, 60, 80, 100, 110, 119],
+    sheetFrames: [0, 6, 12, 14, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 34, 40, 60, 72, 76, 80, 90, 119],
+    crops: [
+      { name: 'reticle', selector: '.ship-reticle', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
     async open(page) {
       await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
       await settle(page, 60);
@@ -1758,6 +1819,7 @@ export const SCREENS: Record<string, ScreenDef> = {
       await settle(page, 2);
     },
     async motion(page) {
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 1.2 });
       await castRoundTrip(page, { bar: 'ship', slot: 0, node: 'tractor_beam', at: 200, cooldownS: 12, pay: 15, seq: 1 });
     },
   },
