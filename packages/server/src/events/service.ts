@@ -5,17 +5,24 @@
 // - Schedule. Each sweep (SWEEP_MS) every zone with players finds each event's window on the world clock
 //   (`eventWindow`: whole periods from a per-system offset, so a restart finds the same window) and, from its
 //   announcement until shortly before its end, runs one occurrence of it there. Its place is resolved first (place.ts: a
-//   spot on dry ground of the first world that carries its enemies; it waits while that world's ground is planned).
+//   spot on dry ground of the first world that carries its enemies; it waits while that world's ground is planned). A
+//   window that began before the service was made is skipped, logged: nothing records whom its occurrence paid before a
+//   restart, so running it again could pay them twice.
 // - Announcement. Every session in the system is sent the news (`world_event`: announced, started, ended), and so is one
 //   that arrives while the event is on (DESIGN 14.6, "announced by banner to the system").
 // - Instances. While it runs, a player in no phase whose entity is inside the place is put in one of its instances by
 //   the phase manager's own placement (`phaseFor(viewer, 'event', location)`: a party member's instance with room, else
 //   the fullest with room, else a new one), so an instance holds EVENT_PLAYERS_MAX (12) and a 13th opens another (DESIGN
 //   16.6). Entities never move for it. A player answering a beacon into one (`PhaseManager.enter`, §21) takes part too.
+//   A character takes part in one instance of an occurrence: each instance's phase is guarded (`PhaseManager.guard`) so
+//   that neither placement nor a beacon puts a character in it that the occurrence has paid or has in another instance,
+//   and one that left its instance for a while is put back in that one when it returns (or waits outside while it is
+//   full), never in another.
 // - Scaling. An instance's level is the players it holds (members and kept places), 1–12 (`eventScaling`): each wave it
 //   sends is that much larger and its enemies' health that much greater, as the level stands when the wave comes.
 //   Enemies are the world's own creatures (fauna's `spawnHerd`), made the instance's own (`PhaseManager.adopt`: only its
-//   members see them, and they go with it) and their health scaled (`ZoneCombat.scaleHealth`).
+//   members see them, and they go with it; fauna keeps their cell loaded while they are, and they hunt only its members)
+//   and their health scaled (`ZoneCombat.scaleHealth`). A wave is cleared when all of it has been killed.
 // - Contribution, per instance and character: the health its hits took from the instance's enemies (combat's `hit` news,
 //   only while it is a member of that instance), objective points (`credit`, for events whose objectives are not
 //   enemies) and seconds inside the place while the instance ran. Each member is sent its `event_status` (the level, the
@@ -24,14 +31,14 @@
 // - Rewards. An instance ends when its last wave is cleared (`completed`), when its time runs out or when everyone has
 //   left it (`expired`, paying for the waves cleared). It pays a pool of the per-player rewards times the participants
 //   paid, split by their shares (`contributionShares`, then `splitByDamage` as a kill's loot is): XP into progress (the
-//   entity's level and the skill view follow), units and items into the inventory, reputation through the rep model
-//   when there is one (P2.E18.T01; until then it goes unpaid). Each participant is sent `event_reward`. Its phase then
-//   closes; those it paid, and all of a completed instance's, are not placed in that occurrence again (one that only
-//   passed through an instance it left empty may come back). A character out of play when it ends earns nothing (as
-//   with a kill's loot).
+//   entity's level and the skill view follow), units and items into the inventory, reputation through the reputation
+//   service's `grant` (§24). Each participant is sent `event_reward`. Its phase then closes; those it paid, and all of a
+//   completed instance's, are not placed in that occurrence again (one that only passed through an instance it left
+//   empty may come back, to a new one). A character out of play when it ends earns nothing (as with a kill's loot).
 // - The occurrence ends when its window does, or once every instance it opened has completed, with `ended` news; the
-//   next window brings the next. Nothing is persisted: a restart runs the window's occurrence afresh.
+//   next window brings the next. Nothing is persisted: a restart loses the window's occurrence (see Schedule).
 import { levelForXp } from '@astra/shared/combat';
+import type { FactionId } from '@astra/shared/data';
 import {
   contributionShares,
   eventApplies,
@@ -53,6 +60,7 @@ import type { HitReport } from '../combat/zone.ts';
 import { InventoryNotHeldError, type InventoryService } from '../inventory/service.ts';
 import type { Progress } from '../persistence/components.ts';
 import type { Phase } from '../phases/manager.ts';
+import type { ReputationService } from '../reputation/service.ts';
 import { splitByDamage } from '../resources/service.ts';
 import type { Zone, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import { along, enemySpecies, resolvePlace, type EventPlace } from './place.ts';
@@ -86,8 +94,8 @@ export interface EventServiceOptions {
   skills?: { refresh?(characterId: string): void };
   /** the quest runtime: a participant placed in an event is an `enter {place: 'event:<id>'}` */
   quests?: { event(characterId: string, event: QuestWorldEvent): unknown };
-  /** the rep model (P2.E18.T01); without it an event's reputation goes unpaid */
-  reputation?: { grant(characterId: string, faction: string, amount: number): void };
+  /** the reputation service (§24); without it an event's reputation goes unpaid */
+  reputation?: Pick<ReputationService, 'grant'>;
   /** the events it runs (the shared catalog by default) */
   catalog?: readonly EventDef[];
   log?: ZoneLog;
@@ -112,6 +120,8 @@ interface Occurrence {
   news: string | null;
   /** characters an instance of it paid, or that were in an instance of it that completed: never placed in it again */
   readonly paid: Set<string>;
+  /** each character taking part, and its instance: the only one of the occurrence it is placed in until that ends */
+  readonly takingPart: Map<string, Instance>;
   readonly rng: Random;
   opened: number;
   completed: number;
@@ -164,7 +174,7 @@ export interface EventPayout {
   xp: number;
   units: number;
   items: { item: string; count: number }[];
-  rep: { faction: string; amount: number }[];
+  rep: { faction: FactionId; amount: number }[];
 }
 
 export class EventService {
@@ -177,6 +187,8 @@ export class EventService {
   private readonly reputation?: EventServiceOptions['reputation'];
   private readonly catalog: readonly EventDef[];
   private readonly log?: ZoneLog;
+  /** world time the service was made: a window that began before it is skipped (see the header) */
+  private readonly since: number;
   private readonly occurrences = new Map<number, Occurrence>();
   private readonly byKey = new Map<string, Occurrence>();
   /** windows whose occurrence has ended (or could not run), until the window is over */
@@ -198,6 +210,7 @@ export class EventService {
     this.reputation = opts.reputation;
     this.catalog = opts.catalog ?? EVENTS;
     this.log = opts.log;
+    this.since = opts.now();
   }
 
   start(): void {
@@ -320,6 +333,11 @@ export class EventService {
       if (now < w.announce || now > w.ends - MIN_LEFT_S) continue;
       const key = `${def.id}@${zone.id}#${w.k}`;
       if (this.byKey.has(key) || this.finished.has(key)) continue;
+      if (w.starts < this.since) {
+        this.finished.set(key, w.ends);
+        this.log?.info({ zone: zone.id, event: def.id, window: w.k, starts: w.starts, since: this.since }, 'event window skipped: it began before the server started');
+        continue;
+      }
       this.open(def, zone, w.starts, w.ends, key, w.k);
     }
   }
@@ -339,6 +357,7 @@ export class EventService {
       told: new WeakSet(),
       news: null,
       paid: new Set(),
+      takingPart: new Map(),
       rng: new Random(hashInts(zone.system.seed, hashString(def.id), k)),
       opened: 0,
       completed: 0,
@@ -404,7 +423,10 @@ export class EventService {
     };
   }
 
-  /** Puts every player in no phase whose entity is inside the place in an instance (the phase manager's placement). */
+  /**
+   * Puts every player in no phase whose entity is inside the place in an instance: back in its own when it has one (it
+   * waits outside while that is full), else by the phase manager's placement.
+   */
   private place(occ: Occurrence, zone: Zone, viewers: ReadonlyMap<number, ZoneViewer>): void {
     const place = occ.place!;
     const c = zone.toWorld(place.frame, place.center);
@@ -414,7 +436,9 @@ export class EventService {
       if (!character || occ.paid.has(character) || zone.phases.phaseOf(entity) !== null) continue;
       const e = zone.entity(entity);
       if (!e || e.fields.kind !== 'player' || !inside(e.world, c, r2)) continue;
-      const phase = zone.phases.phaseFor(viewer, 'event', place.location);
+      const own = occ.takingPart.get(character);
+      const phase = own ? zone.phases.enter(viewer, own.phase.id) : zone.phases.phaseFor(viewer, 'event', place.location);
+      if (typeof phase === 'string') continue;
       let inst = occ.instances.get(phase.id);
       if (!inst) {
         inst = {
@@ -431,6 +455,8 @@ export class EventService {
         };
         occ.instances.set(phase.id, inst);
         occ.opened++;
+        const opened = inst;
+        zone.phases.guard(phase.id, (ch) => ch !== null && !occ.paid.has(ch) && (occ.takingPart.get(ch) ?? opened) === opened);
         this.log?.info({ zone: zone.id, event: occ.def.id, occurrence: occ.id, phase: phase.id, instances: occ.instances.size }, 'event instance opened');
       }
       scoreOf(inst, character);
@@ -580,12 +606,13 @@ export class EventService {
       // (one paid, or there when its instance was won, has had its event; one that passed through an instance it left
       // empty may come back)
       if (share > 0 || outcome === 'completed') occ.paid.add(character);
+      if (occ.takingPart.get(character) === inst) occ.takingPart.delete(character);
       const at = sessions.get(character) ?? this.sessionOf(character);
       const gotXp = this.grantXp(character, xp.get(character) ?? 0, at);
       const gotUnits = this.earn(character, units.get(character) ?? 0);
       const gotItems = items.map(({ item, shares: s }) => ({ item, count: this.grant(character, item, s.get(character) ?? 0) })).filter((x) => x.count > 0);
       const gotRep = rep
-        .map(({ faction, sign, shares: s }) => ({ faction, amount: this.rep(character, faction, sign * (s.get(character) ?? 0)) }))
+        .map(({ faction, sign, shares: s }) => ({ faction, amount: this.rep(character, faction, sign * (s.get(character) ?? 0), def.id) }))
         .filter((x) => x.amount !== 0);
       const payout: EventPayout = { character, share, xp: gotXp?.xp ?? 0, units: gotUnits, items: gotItems, rep: gotRep };
       payouts.push(payout);
@@ -700,15 +727,16 @@ export class EventService {
     }
   }
 
-  private rep(characterId: string, faction: string, amount: number): number {
+  /** Standing into the reputation service; what it moved (0 when the character is not in play, or is at a bound). */
+  private rep(characterId: string, faction: FactionId, amount: number, event: string): number {
     if (amount === 0) return 0;
     if (!this.reputation) {
-      this.log?.debug({ character: characterId, faction, amount }, 'event reputation unpaid: no rep model');
+      this.log?.debug({ character: characterId, faction, amount }, 'event reputation unpaid: no reputation service');
       return 0;
     }
     try {
-      this.reputation.grant(characterId, faction, amount);
-      return amount;
+      const moved = this.reputation.grant(characterId, faction, amount, { reason: `event:${event}` });
+      return moved ? moved.to - moved.from : 0;
     } catch (err) {
       this.log?.warn({ character: characterId, faction, amount, err: String(err) }, 'event reputation not paid');
       return 0;
@@ -734,9 +762,13 @@ export class EventService {
   }
 }
 
+/** A participant's contribution to its instance, from its first (the instance it takes part in from then on). */
 function scoreOf(inst: Instance, character: string): Contribution {
   let s = inst.scores.get(character);
-  if (!s) inst.scores.set(character, (s = { damage: 0, objective: 0, presence: 0 }));
+  if (!s) {
+    inst.scores.set(character, (s = { damage: 0, objective: 0, presence: 0 }));
+    inst.occ.takingPart.set(character, inst);
+  }
   return s;
 }
 

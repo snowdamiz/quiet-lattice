@@ -279,8 +279,9 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     }
   });
   // world events: the hits combat resolves are their participants' contribution; rewards go to the same inventory,
-  // progress and skill view (reputation once the rep model, P2.E18.T01, gives a hook)
-  const events = deps.events ?? new EventService({ zones: deps.zones, now: () => deps.clock.now(), inventory, progress: deps.progress, skills, quests, log });
+  // progress, skill view and reputation
+  const events =
+    deps.events ?? new EventService({ zones: deps.zones, now: () => deps.clock.now(), inventory, progress: deps.progress, skills, quests, reputation, log });
   if (!deps.events) events.start();
   const unsubscribeEvents = combat.subscribe((news) => events.combat(news));
 

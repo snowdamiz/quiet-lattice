@@ -94,13 +94,15 @@ export const AI = {
   forgetAfterS: 5,
 } as const;
 
-/** A player as the AI sees it: where it is in the world's frame, whether it is on foot (ships pass overhead), and whether
- * the shared world cannot see it (sealed in a phase that isolates players, §6.1). */
+/** A player as the AI sees it: where it is in the world's frame, whether it is on foot (ships pass overhead), whether
+ * the creatures thinking cannot see it (for the shared world's: sealed in a phase that isolates players, §6.1), and the
+ * phase it is a member of (null: none). A phase's own creatures are shown only its members (sim.ts). */
 export interface Actor {
   id: number;
   pos: Vec3;
   onFoot: boolean;
   hidden: boolean;
+  phase: number | null;
 }
 
 /** Whether herds take notice of a player: as prey, intruder or threat, or someone to flee or keep clear of. */

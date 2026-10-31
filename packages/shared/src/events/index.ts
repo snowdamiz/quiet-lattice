@@ -14,7 +14,7 @@
 //   standing about (or bringing idle alts) earns nothing; the rest split a pool of the per-player rewards times their
 //   number by their shares, so a crowd earns on average what one player earns, and the one who did the work takes most.
 import { z } from 'zod';
-import { FACTIONS } from '../data/index.ts';
+import { factionIdSchema } from '../data/index.ts';
 import { itemInfo } from '../inventory/index.ts';
 
 /** Players one event instance holds (DESIGN 17: "12 in an event"): its level runs 1–12, and a 13th opens another. The
@@ -100,14 +100,11 @@ export const eventDefSchema = z
           }),
         )
         .max(8),
-      /** reputation with factions (paid through the rep model, P2.E18.T01, once it is there) */
+      /** standing with factions (the reputation service's `grant`, ARCHITECTURE §24) */
       rep: z
         .array(
           z.strictObject({
-            faction: z
-              .string()
-              .max(32)
-              .refine((id) => FACTIONS.some((f) => f.id === id), 'a faction'),
+            faction: factionIdSchema,
             amount: z.int().min(-1000).max(1000),
           }),
         )

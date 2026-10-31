@@ -11,6 +11,7 @@ import type { CombatHooks } from '../combat/zone.ts';
 import { planHere, type GroundSource } from '../fauna/terrain.ts';
 import { InventoryService } from '../inventory/service.ts';
 import { CharacterProgress } from '../persistence/components.ts';
+import { ReputationService } from '../reputation/service.ts';
 import { splitByDamage } from '../resources/service.ts';
 import { describeZoneSystem } from '../zones/system.ts';
 import { Zone, type ZoneViewer } from '../zones/zone.ts';
@@ -64,7 +65,7 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
   const inventory = new InventoryService();
   const progress = new CharacterProgress();
   const quests: [string, QuestWorldEvent][] = [];
-  const reps: [string, string, number][] = [];
+  const reputation = new ReputationService();
   const payouts: EventPayout[][] = [];
   let now = 1e6;
   const events = (made.events = new EventService({
@@ -73,7 +74,7 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
     inventory,
     progress,
     quests: { event: (id, e) => quests.push([id, e]) },
-    reputation: opts.rep === false ? undefined : { grant: (id, f, n) => reps.push([id, f, n]) },
+    reputation: opts.rep === false ? undefined : reputation,
     catalog: opts.catalog ?? [],
   }));
   events.subscribe((p) => payouts.push([...p]));
@@ -84,7 +85,7 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
     inventory,
     progress,
     quests,
-    reps,
+    reputation,
     payouts,
     get now() {
       return now;
@@ -94,6 +95,7 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
       const viewer = new Viewer(nextId++, name);
       const entity = zone.join(viewer, { kind: 'player', frame: zone.stationFrame, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'docked' });
       inventory.open(name);
+      reputation.open(name);
       progress.set(name, { level: 10, xp: 50_000, homeSystem: 0 });
       return { viewer, entity };
     },
@@ -325,7 +327,8 @@ describe('contribution and rewards', () => {
     expect(s.inventory.get('ana')!.units - unitsBefore.ana).toBe(reward.units);
     expect(reward.units + b.viewer.of('event_reward')[0]!.units).toBe(2 * def.rewards.units);
     expect(s.progress.get('ana')!.xp).toBe(50_000 + reward.xp);
-    expect(s.reps.reduce((n, [, f, x]) => n + (f === 'chorus' ? x : 0), 0)).toBe(20);
+    expect(s.reputation.standing('ana', 'chorus') + s.reputation.standing('bo', 'chorus')).toBe(20);
+    expect(reward.rep).toEqual([{ faction: 'chorus', amount: s.reputation.standing('ana', 'chorus') }]);
     expect(stranger.viewer.of('event_reward')).toEqual([]);
     // the instance closed, its players back in the shared world and not placed again in this occurrence
     expect(s.zone.phases.phaseOf(a.entity)).toBeNull();
