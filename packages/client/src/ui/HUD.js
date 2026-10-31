@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { EdgeCompass } from './EdgeCompass.js';
+import { SocialUI } from './social/SocialUI.js';
 
 const _v = new THREE.Vector3();
 
@@ -95,6 +96,8 @@ export class HUD {
     this.toasts = el('div', 'toasts', this.layer);
     // the server's word on the player's shots: damage numbers off the reticle
     this.hitsEl = el('div', 'hits', this.layer);
+    // chat, the party frame and the call-for-aid list (P1.E15.T03)
+    this.social = new SocialUI(game, this);
     // (beside the layer, not in it: banners show through a cutscene, which fades the rest of the HUD out)
     this.banner = el('div', 'banner', root);
     this.flashEl = el('div', 'flash', root);
@@ -220,9 +223,10 @@ export class HUD {
     const player = g.player;
     this.root.dataset.mode = mode;
     // out of the way under the map and the other menus; a cutscene fades it out as its letterbox closes in, but for the
-    // banners it raises
+    // banners it raises; the chat panel open is part of it
     const cine = g.cutscenes?.letterbox ?? 0;
-    const hidden = g.overlay && g.overlay !== 'cutscene';
+    const chatting = g.overlay === 'chat';
+    const hidden = g.overlay && g.overlay !== 'cutscene' && !chatting;
     this.layer.style.visibility = hidden ? 'hidden' : '';
     this.banner.style.visibility = hidden ? 'hidden' : '';
     this.band.style.visibility = hidden || cine > 0 ? 'hidden' : '';
@@ -335,9 +339,10 @@ export class HUD {
     }
 
     // (drawn into the picture, where the top bar of a cutscene's letterbox goes)
-    this.edgeCompass.update(!g.overlay && !cine && (mode === 'ship' || mode === 'foot'));
+    this.edgeCompass.update((!g.overlay || chatting) && !cine && (mode === 'ship' || mode === 'foot'));
     this.updateMarkers();
     this.updateHits(g.net?.combat);
+    this.social.update();
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
   }
@@ -411,6 +416,12 @@ export class HUD {
         const s = Math.min((W / 2 - margin) / Math.abs(dx || 1e-6), (H / 2 - margin) / Math.abs(dy || 1e-6));
         sx = cx + dx * s;
         sy = cy + dy * s;
+      }
+      // (none under the party frame or the open chat panel, but the one you steer by, hostiles and your own ship)
+      if (!m.target && this.social.covers(sx, sy, m.kind)) {
+        i--;
+        e.style.display = 'none';
+        continue;
       }
       e.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)`;
       e.className = `marker ${m.kind} ${off ? 'off' : ''} ${m.target ? 'targeted' : ''}`;

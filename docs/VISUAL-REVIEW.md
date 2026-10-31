@@ -286,6 +286,7 @@ Round 4: PASS. Artifacts: `assets/renders/ui/{title,login-error,register,charact
 | 2 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 | 3 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 | 4 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 5 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 
 Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
 and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
@@ -307,6 +308,14 @@ unread badge vanishes and the tabs to its right jump about 22 px in one frame, a
 the beacon list's scrollbar appears at full opacity in one frame. Minor: a repeated mute line, a refusal's wrap without
 a hanging indent, "Not in a party" beside a PARTY tab with unread, shorter health bars on leader rows. **Escalated to
 the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
+
+Round 5 (2026-10-31, the owner's rule: one more grade, then merge): the tabs now slide over 6 frames when a badge clears,
+the prompt label cross-fades, and all four minor notes are fixed. Still failing motion: an overflowing beacon list drops
+its scrollbar thumb (about 175 to 55) and its bottom-edge fade in one frame on every redraw, then eases them back over 6
+frames, so they blink every 8 to 15 frames (`beacons/_frames` 048→049, `beacons-many/_frames` 017→018 and on); the
+cleared badge itself is clipped away in two frames at full brightness. Minor: `party-invite/21x9.png` caught mid-fade;
+the beacon scroll crawls 13 frames at a 1 px floor; the smallest caps tags sit at 4.4–4.6:1; no frame-time readout.
+Merged under the rule; the notes are P1.E15.T04. Artifacts: `assets/renders/ui/{social,social-space,social-tabs,party,party-invite,beacons,beacons-many}/`.
 
 ## P1.E13.T05 Basic fabricator (UI)
 
