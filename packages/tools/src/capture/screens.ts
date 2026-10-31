@@ -607,7 +607,7 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
 interface FabricatorPage {
   game: {
     inventory: InventoryApi;
-    fabricator: { open(at: 'station' | 'ship'): void };
+    fabricator: { open(at: 'waystation' | 'ship'): void };
     station: { pads: { x: number; z: number }[] };
     ship: { state: { pos: { clone(): { set(x: number, y: number, z: number): unknown } } } };
     player: { spawn(frame: unknown, at: unknown, heading: unknown): void };
@@ -635,7 +635,7 @@ const FAB_SUIT: [string, number][] = [
 ];
 
 /** Lays the haul out in the suit (the Lark's pod holding a little more), then opens fabricator `at`. */
-async function stockAndOpen(page: Page, at: 'station' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
+async function stockAndOpen(page: Page, at: 'waystation' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
   await page.evaluate(
     ({ at, suit, pod }) => {
       const g = (window as unknown as FabricatorPage).game;
@@ -685,7 +685,7 @@ async function stationFabricator(page: Page): Promise<void> {
     g.cam.frame = undefined;
   });
   await settle(page, 120);
-  await stockAndOpen(page, 'station', FAB_SUIT, [
+  await stockAndOpen(page, 'waystation', FAB_SUIT, [
     ['tritium', 380],
     ['carbon', 240],
   ]);

@@ -6,13 +6,16 @@
 // Recipes are items (data/items.ts: `recipe_<id>`): using one teaches its recipe for good, and what a character knows
 // is kept by persistence (the `recipes` component). There is no crafting skill tree: the gate is recipes and materials.
 import { z } from 'zod';
-import { FABRICATORS, getItem, RECIPES, recipeItemId, type Recipe } from '../data/index.ts';
+import { FABRICATORS, fabricatorIdSchema, getItem, RECIPE_TABLE_VERSION, RECIPES, recipeItemId, type FabricatorId, type Recipe } from '../data/index.ts';
 import { addItem, countOf, itemInfo, takeItem, type Inventory } from '../inventory/index.ts';
 
-/** The fabricators Phase 1 has: a Waystation's (its terminal on the trade deck, or docked there) and the ship's own. */
-export const FABRICATOR_KINDS = ['station', 'ship'] as const;
-export const fabricatorKindSchema = z.enum(FABRICATOR_KINDS);
-export type FabricatorKind = z.infer<typeof fabricatorKindSchema>;
+/** The fabricators there are (DESIGN 15.7): the four of a place (a Waystation's, a capital's, a Chorus sanctuary's, the
+ * Scrapyard's) and the ship's own. */
+export const FABRICATOR_KINDS = fabricatorIdSchema.options;
+export const fabricatorKindSchema = fabricatorIdSchema;
+export type FabricatorKind = FabricatorId;
+/** The fabricators found at a place, as opposed to the ship's own. */
+export type PlaceFabricatorKind = Exclude<FabricatorKind, 'ship'>;
 
 /** The most crafts one request makes (a stack of 50 warp cells is 2,500 di-hydrogen already). */
 export const CRAFT_MAX = 100;
@@ -45,6 +48,31 @@ export type KnownRecipes = z.infer<typeof knownRecipesSchema>;
 export function startingKnowledge(): KnownRecipes {
   return { known: [...STARTING_RECIPES] };
 }
+
+/**
+ * What the `recipes` component stores (v2): the recipes known and the version of the recipe table they were stored under
+ * (0: before the table had one). A server rolled back to an older table sees a number above its own and keeps every
+ * recipe (`reconcileRecipes`): what a character learned is kept forever.
+ */
+export const storedRecipesSchema = z.strictObject({
+  table: z.int().min(0).max(1_000_000),
+  known: knownRecipesSchema.shape.known,
+});
+export type StoredRecipes = z.infer<typeof storedRecipesSchema>;
+
+/** A new character's stored knowledge, under this build's table. */
+export function startingStored(): StoredRecipes {
+  return { table: RECIPE_TABLE_VERSION, ...startingKnowledge() };
+}
+
+/** A recipe table as the reconcile reads it: its version and which recipes it has (a fixture stands in for a rolled-back one). */
+export interface RecipeTableView {
+  readonly version: number;
+  has(recipe: string): boolean;
+}
+
+/** This build's recipe table. */
+export const RECIPE_TABLE: RecipeTableView = { version: RECIPE_TABLE_VERSION, has: (id) => byId.has(id) };
 
 /**
  * What a client asks of a fabricator (ARCHITECTURE §23): `make` `count` crafts of `recipe` at the fabricator `at` (the
@@ -81,18 +109,33 @@ export function outputOf(recipe: Recipe): { item: string; count: number } | null
   return recipe.output.kind === 'item' ? { item: recipe.output.item, count: recipe.output.count } : null;
 }
 
-/** The tier band a Waystation's fabricator crafts (DESIGN 15.7: "Tier 1 stations craft Tier 0–2 recipes"). */
-export const STATION_MAX_TIER: number = FABRICATORS.find((f) => f.id === 'waystation')!.maxTier!;
+/** The highest recipe tier a fabricator makes (data/recipes.ts `FABRICATORS`), or null where it crafts a named line instead of
+ * a tier band (the sanctuary's catalysts, the Scrapyard's Void recipes, the ship's field recipes). */
+export function maxTierOf(at: FabricatorKind): number | null {
+  return FABRICATORS.find((f) => f.id === at)!.maxTier;
+}
 
 /**
- * Whether a fabricator makes a recipe, in a system of tier `tier`: a Waystation's makes the item recipes of its line up
- * to its tier band; the ship's only the field-craftable ones (ammo and cartridges, DESIGN 15.7), each from its system
- * tier (torpedoes from Tier 2). Neither assembles a hull.
+ * Whether a fabricator makes a recipe, in a system of tier `tier` (P2.E20.T01): the ship's only the field-craftable ones
+ * (ammo and cartridges, DESIGN 15.7), each from its system tier (torpedoes from Tier 2); a place's the item recipes that
+ * list it among their `fabricators`, up to its tier band where it has one (a Waystation's Tier 0–2, a capital's up to
+ * Tier 3). None assembles a hull: the Husk hull is the Scrapyard's, with the ship's (P3.E36.T02).
  */
 export function makesAt(recipe: Recipe, at: FabricatorKind, tier: number): boolean {
   if (!outputOf(recipe)) return false;
   if (at === 'ship') return recipe.field !== null && tier >= recipe.field.minTier;
-  return recipe.fabricators.includes('waystation') && recipe.tier <= STATION_MAX_TIER;
+  if (!recipe.fabricators.includes(at)) return false;
+  const top = maxTierOf(at);
+  return top === null || recipe.tier <= top;
+}
+
+/** How a recipe is learned, as the table says (DESIGN 15.7: bought from vendors, rewarded by chains, dropped by bosses,
+ * found in vaults): the source of its recipe item. */
+export type RecipeSource = Recipe['learnedFrom'];
+
+/** The recipes whose item a source hands out. */
+export function recipesFrom(source: RecipeSource): Recipe[] {
+  return RECIPES.filter((r) => r.learnedFrom === source);
 }
 
 /** What `count` crafts use up: each input resource and component times `count`. */
@@ -170,14 +213,32 @@ export function learn(inv: Inventory, knowledge: KnownRecipes, recipeId: string)
   return { ok: true, inv: r.inv, known: { known: [...knowledge.known, recipe.id] } };
 }
 
+/** What a stored knowledge became under a table (`reconcileRecipes`). */
+export interface RecipesReconciled {
+  stored: StoredRecipes;
+  /** Recipes the table lacks, dropped (the table moved on: a newer or same-version table removed them). */
+  dropped: string[];
+  /** Recipes the table lacks that were kept anyway, because the character was saved under a newer table. */
+  heldOver: string[];
+  /** The character was saved under a newer table than this build's: nothing is dropped, and its table version is kept. */
+  rolledBack: boolean;
+}
+
 /**
- * A stored knowledge brought in line with the recipe table as it is now (the persistence component's `reconcile`): a
- * recipe the table no longer has is dropped, and listed in `dropped`; the rest keep their order. Returns the stored value
- * itself when nothing changed.
+ * A stored knowledge brought in line with a recipe table (the persistence component's `reconcile`), and the version guard
+ * of DESIGN 15.7's "learned once, kept forever" (P2.E20.T01):
+ * - saved under the same or an older table, a recipe the table lacks is dropped and listed in `dropped`, and the stored
+ *   table becomes this one's;
+ * - saved under a NEWER table (this server was rolled back), nothing is dropped: every recipe stays known, those this table
+ *   lacks listed in `heldOver`, and the newer version is kept so the next save does not make them look older. They cannot
+ *   be made until the table that has them is back (`unknown`), but they are not lost.
+ * Returns the stored value itself when nothing changed.
  */
-export function reconcileKnown(stored: KnownRecipes): { knowledge: KnownRecipes; dropped: string[] } {
-  const dropped = stored.known.filter((id) => !byId.has(id));
-  return dropped.length ? { knowledge: { known: stored.known.filter((id) => byId.has(id)) }, dropped } : { knowledge: stored, dropped };
+export function reconcileRecipes(stored: StoredRecipes, table: RecipeTableView = RECIPE_TABLE): RecipesReconciled {
+  const missing = stored.known.filter((id) => !table.has(id));
+  if (stored.table > table.version) return { stored, dropped: [], heldOver: missing, rolledBack: true };
+  if (!missing.length && stored.table === table.version) return { stored, dropped: [], heldOver: [], rolledBack: false };
+  return { stored: { table: table.version, known: stored.known.filter((id) => table.has(id)) }, dropped: missing, heldOver: [], rolledBack: false };
 }
 
 /**
@@ -199,3 +260,5 @@ export function inTableOrder(ids: Iterable<string>): Recipe[] {
   const set = new Set(ids);
   return RECIPES.filter((r) => set.has(r.id));
 }
+
+export * from './places.ts';

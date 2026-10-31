@@ -64,7 +64,7 @@ export class Crafting {
   }
 
   /**
-   * Asks fabricator `at` ('station' | 'ship') for `count` crafts of `recipe` in a system of tier `tier`. Returns the
+   * Asks fabricator `at` ('waystation' | 'capital' | 'sanctuary' | 'scrapyard' | 'ship') for `count` crafts of `recipe` in a system of tier `tier`. Returns the
    * refusal the shared rules predict (`not_known`, `fabricator`, `materials`, `no_room`, …: nothing is sent), or null
    * once it is asked; the answer comes to the listeners.
    */

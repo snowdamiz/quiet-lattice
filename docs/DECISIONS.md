@@ -953,3 +953,22 @@ Format: task id, question → choice → why.
   frame into `readout.txt`, listing frames over 1 ms. → closes P1.E15.T03's fifth grade. Open: the stage guard's "first
   stage always runs" rests on `spent > 0`, which a finer timer (a cross-origin-isolated page) would break; the list
   scrolls in whole pixels; the edge fades mask the scrollbar's end; the badge trims 1–3 px in its last frames.
+- **P2.E20.T01** Fabricator tiers and recipe items (shared `crafting`, `crafting/places.ts`, `data/recipes.ts`, server
+  `crafting/*`, combat kill path, protocol 19, ARCHITECTURE §23, DESIGN 15.7) → `craft {at}` names the fabricator class:
+  `waystation` (was `station`), `capital`, `sanctuary`, `scrapyard`, `ship`. `makesAt` gates each recipe by its
+  `fabricators` list and the class's top tier: the Waystation up to Tier 2 whatever the system's tier, a capital its own
+  line up to Tier 3 (no catalysts, no Scrapyard recipes), sanctuaries and the Scrapyard by line; no fabricator builds a
+  hull (the Husk is learnable, made in P3.E36.T02). A terminal is data: every zone has its Waystation's, and capitals
+  (`capital:<city>`), sanctuaries (`sanctuary:<name>`) and the Scrapyard register theirs with `crafting.places.register`
+  when those places exist; until then they are refused `place`. Docked use works within a place's `dockedReachM` (the
+  Waystation's 130 m reaches every pad; null means no docking). Every recipe source ends in a `recipe_<id>` item that
+  `learn` teaches for good: vendors and vaults call `CraftingService.award`, chains are quest `items`, and each listed
+  boss recipe rolls at 0.25 for each fighter who did damage (a duplicate stays a spare; no room means lost); no source
+  hands out recipe items in this build (no vendor, vault, chain or spawning boss yet). The `recipes` component is v2
+  `{table, known}` with `RECIPE_TABLE_VERSION` 1 and a fingerprint test that fails when the recipe ids change without a
+  version rise: a character saved under a newer table keeps every recipe (one warning) and the newer version is written
+  back; a recipe the same-version table lacks is dropped; a v1 row reads as table 0; clients get only this table's
+  recipes; a rollback to the P1.E13.T05 build refuses this build's characters rather than dropping recipes. DESIGN 15.7
+  now says the Phase 1 consumables are known from the start. → DESIGN 15.7, server-held. Open: place registration
+  compares `where` by identity and has no unregister; `award` does not check the recipe's `learnedFrom`; a boss recipe
+  drop with no room has no owed path.

@@ -86,7 +86,7 @@ describe('character components', () => {
     expect(d.values.get(PROGRESS)).toEqual({ level: 3, xp: 120, homeSystem: HOME });
     expect(d.values.get(CODEX)).toEqual({ worlds: {} });
     expect(d.values.get(PLATES)).toEqual({ plates: [] });
-    expect(d.values.get(RECIPES)).toEqual({ known: ['warp_cell', 'pulse_fuel_cell', 'oxygen_cartridge', 'sodium_cartridge', 'flak_ammo'] });
+    expect(d.values.get(RECIPES)).toEqual({ table: 1, known: ['warp_cell', 'pulse_fuel_cell', 'oxygen_cartridge', 'sodium_cartridge', 'flak_ammo'] });
     expect(d.values.get(REPUTATION)).toEqual({ rep: {}, titles: [] });
     expect(d.values.get(SHIP)).toEqual(DEFAULT_SHIP);
     const inv = d.values.get(INVENTORY) as Inventory;

@@ -16,7 +16,7 @@ import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 19;
+export const PROTOCOL_VERSION = 20;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -36,7 +36,8 @@ export const PROTOCOL_VERSION = 19;
 // 16: first finders: name requests and their answers, a system's finds and their names (P2.E29.T01)
 // 17: world events: event news to the system (announced, started, ended), a participant's status (its instance, level, contribution) and rewards (P2.E21.T01)
 // 18: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
-// 19: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
+// 19: fabricators: a craft names its fabricator as waystation, capital, sanctuary, scrapyard or ship (was station or ship) (P2.E20.T01)
+// 20: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -516,7 +517,7 @@ export const RankEvent = z.object({
 /** A title earned (protocol 14): a rank's, the first time it is reached, or a quest's. */
 export const TitleEvent = z.object({ kind: z.literal('title'), title: titleViewSchema });
 /**
- * A cast the server carried out (protocol 19, ARCHITECTURE §28), to every session whose interest holds its caster or its
+ * A cast the server carried out (protocol 20, ARCHITECTURE §28), to every session whose interest holds its caster or its
  * target, for its effect to be drawn: `caster` cast `node` at world time `at`, from where it stood in `frame` along `aim`
  * (its unit direction there), at `target` when it named one; `end` when a toggle went off. Each session is named only the
  * entities its phase lets it see (no `caster`, or no `target`, otherwise). What it did to anyone arrives as `combat` events
