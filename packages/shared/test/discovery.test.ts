@@ -9,6 +9,7 @@ import {
   emptyPlates,
   hasPlate,
   nameSkeleton,
+  nameSkeletons,
   parseSiteKey,
   PLATES_MAX,
   platesSchema,
@@ -107,6 +108,29 @@ describe('the moderation filter', () => {
     expect(reason('Łódź')).toBeNull();
     expect(reason('Ħalcyon')).toBeNull();
     expect(nameSkeleton('Þor Æther Œuvre Ssß')).toBe('thoraetheroeuvressss');
+  });
+
+  it('reads 9 and 6 as g, and æ and œ as either spelling', () => {
+    for (const name of ['Ni99er', 'Ni99a', 'Fa99ot', 'Ni66er', 'Fæggøt', 'Fæggot', 'Ræpist']) {
+      expect(reason(name), name).toBe('blocked');
+      expect(reason(name.toUpperCase()), name.toUpperCase()).toBe('blocked');
+    }
+    expect(reason('Kepler 9')).toBeNull();
+    expect(reason('Site 66')).toBeNull();
+    expect(reason('Aether')).toBeNull();
+    expect(reason('Æther')).toBeNull();
+    expect(reason('Œuvre')).toBeNull();
+    expect(nameSkeletons('Fæggøt')).toEqual(['faeggot', 'faggot']);
+    expect(nameSkeletons('Straße')).toEqual(['strasse']);
+  });
+
+  it('refuses a reserved word split by separators', () => {
+    for (const name of ['Ad min', 'Ad-min Rock', 'Rock Ad min', "Ad'min", 'AD MIN', 'Mo derator', 'Staf f Rock', 'Syst em', 'Ad m1n']) {
+      expect(reason(name), name).toBe('reserved');
+    }
+    expect(reason('Ad min', { reserved: false })).toBeNull();
+    expect(reason('Admiral Rock')).toBeNull();
+    expect(reason('Ad Hoc')).toBeNull();
   });
 
   it('refuses a letter it cannot read, so the letters it takes are the letters it reads', () => {
