@@ -1,4 +1,4 @@
-// Where a shard's first finds persist (docs/ARCHITECTURE.md §26): the `discoveries` table, one row per find, keyed by
+// Where a shard's first finds persist (docs/ARCHITECTURE.md §25): the `discoveries` table, one row per find, keyed by
 // shard, kind and key. Every change that decides something is one statement whose condition is the rule, so Postgres
 // arbitrates between players (and, later, processes) racing:
 // - a claim inserts the row unless one is there (ON CONFLICT DO NOTHING on the key): of two players finding the same

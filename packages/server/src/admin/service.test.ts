@@ -6,7 +6,8 @@ import { countOf, type Inventory } from '@astra/shared/inventory';
 import { emptySkillState, SKILL_WEB_VERSION, type StoredSkills } from '@astra/shared/skills';
 import { describe, expect, it } from 'vitest';
 import { InventoryService } from '../inventory/service.ts';
-import { CharacterProgress, coreRegistry, INVENTORY, ShipLoadouts, SKILLS } from '../persistence/components.ts';
+import { CharacterProgress, coreRegistry, INVENTORY, REPUTATION, ShipLoadouts, SKILLS } from '../persistence/components.ts';
+import { reputationServiceIn } from '../reputation/component.ts';
 import type { PersistenceLog, StoredState } from '../persistence/registry.ts';
 import { CharacterPersistence, type StoredCharacterRow } from '../persistence/service.ts';
 import type { CharacterStore, SaveRow } from '../persistence/store.ts';
@@ -170,6 +171,45 @@ describe('the admin service out of play', () => {
     expect(skills.get(CHARACTER)).toEqual(now);
     expect(skills.points(CHARACTER).available).toBe(7);
     expect(warned()).toHaveLength(1);
+  });
+
+  it('sets standing in the stored reputation by the shared rule, earning the ranks’ titles, and its next join loads it', async () => {
+    const { store, persistence, admin, row } = setup();
+    row.state = { reputation: { v: 1, data: { rep: { compact: 120, old_guild: 5 }, titles: [] } } };
+    expect(await admin.run({ cmd: 'set-rep', character: 'ves', faction: 'compact', value: 520 }, who)).toEqual({
+      character: CHARACTER,
+      name: 'Ves',
+      faction: 'compact',
+      from: 120,
+      rep: 520,
+      rank: 'factor',
+      was: null,
+      titles: ['Hand', 'Factor'],
+      online: false,
+      revision: 1,
+      changed: [REPUTATION],
+    });
+    // (reconciled as a join reads it: the faction the table lacks is gone)
+    expect(store.rows.get(CHARACTER)!.state.reputation).toEqual({
+      v: 1,
+      data: {
+        rep: { compact: 520 },
+        titles: [
+          { faction: 'compact', rank: 'hand' },
+          { faction: 'compact', rank: 'factor' },
+        ],
+      },
+    });
+    expect(await admin.run({ cmd: 'set-rep', character: 'ves', faction: 'compact', value: 10 }, who)).toMatchObject({
+      rep: 10,
+      rank: null,
+      was: 'factor',
+      titles: [],
+    });
+    persistence.join(viewer, (await store.read(CHARACTER))!);
+    const rep = reputationServiceIn(persistence.registry)!;
+    expect(rep.standing(CHARACTER, 'compact')).toBe(10);
+    expect(rep.get(CHARACTER)!.titles).toHaveLength(2);
   });
 
   it('needs the server for what only a live server holds', async () => {

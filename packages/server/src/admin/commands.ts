@@ -2,8 +2,10 @@
 // admin channel (channel.ts) or of the database directly (cli/direct.ts), as zod schemas both ends validate, the CLI's
 // argument parser, and the errors a command ends with. The server never trusts the shape the CLI sent: the channel parses
 // every request with `AdminCommand`.
+import { FACTION_IDS } from '@astra/shared/data';
 import { discoveryKindSchema } from '@astra/shared/discovery';
 import { DISCOVERY_NAME_MAX, MoveMode } from '@astra/shared/protocol';
+import { REP_MAX, REP_MIN } from '@astra/shared/reputation';
 import { z } from 'zod';
 
 /** A character or account: its id (a uuid) or its name, ignoring case. */
@@ -62,6 +64,8 @@ export const AdminCommand = z.discriminatedUnion('cmd', [
   z.strictObject({ cmd: z.literal('despawn'), system: SystemIndex, entity: z.int().min(1).max(0xffffffff) }),
   z.strictObject({ cmd: z.literal('set-quest-step'), character: Ref, quest: z.string().trim().min(1).max(64), step: z.int().min(0).max(1000) }),
   z.strictObject({ cmd: z.literal('set-skill-points'), character: Ref, points: z.int().min(0).max(1_000_000) }),
+  /** a character's standing with a faction (DESIGN 14.4), 0–1000 */
+  z.strictObject({ cmd: z.literal('set-rep'), character: Ref, faction: z.enum(FACTION_IDS), value: z.int().min(REP_MIN).max(REP_MAX) }),
   z.strictObject({ cmd: z.literal('mute'), account: Ref, seconds: z.int().min(1).max(MAX_MUTE_S).optional() }),
   z.strictObject({ cmd: z.literal('unmute'), account: Ref }),
   z.strictObject({
@@ -130,6 +134,8 @@ Commands (a character or account is named by its id or its name, ignoring case):
   despawn <system> <entity id>
   set-quest-step <character> <quest> <step>     a quest at its step <step> (from 0), started if it is not on
   set-skill-points <character> <n>              points available to spend (never below what levels give)
+  set-rep <character> <faction> <value>         standing with a faction, 0-1000 (${FACTION_IDS.join(', ')});
+                                                  a rank reached for the first time earns its title
   mute <account> [seconds]                      chat mute (default ${DEFAULT_MUTE_S} s, at most ${MAX_MUTE_S} s)
   unmute <account>
   rename <species|body|site> <key> <name|--clear>
@@ -140,8 +146,8 @@ Commands (a character or account is named by its id or its name, ignoring case):
 Options:
   --json            print the server's answer as JSON
   --direct          change a character in the database with no server running (teleport, grant, set-quest-step,
-                    set-skill-points); refused while a server answers at HOST:PORT, and for a character saved in the
-                    last minute (a server elsewhere may hold it) unless --force
+                    set-skill-points, set-rep); refused while a server answers at HOST:PORT, and for a character saved
+                    in the last minute (a server elsewhere may hold it) unless --force
   --force           with --direct: edit a character saved in the last minute anyway
   --url <url>       the admin channel, on this machine (default ASTRA_ADMIN_URL, else http://127.0.0.1:ASTRA_ADMIN_PORT,
                     8788); the secret goes only to a loopback address that answers as the admin channel
@@ -245,6 +251,12 @@ export function parseCommand(args: readonly string[]): Parsed {
       const a = take(['character', 'n']);
       if (typeof a === 'string') return { ok: false, error: a };
       raw = { cmd, character: a.character, points: int(a.n) };
+      break;
+    }
+    case 'set-rep': {
+      const a = take(['character', 'faction', 'value']);
+      if (typeof a === 'string') return { ok: false, error: a };
+      raw = { cmd, character: a.character, faction: a.faction, value: int(a.value) };
       break;
     }
     case 'mute': {

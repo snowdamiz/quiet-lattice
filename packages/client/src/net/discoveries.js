@@ -1,4 +1,4 @@
-// First finds as the client holds them (P2.E29.T01, docs/ARCHITECTURE.md §26): the finds of the star system the player is
+// First finds as the client holds them (P2.E29.T01, docs/ARCHITECTURE.md §25): the finds of the star system the player is
 // in, as the server sends them (the whole system's after every welcome and whenever the player's zone becomes another
 // system's, then each new find and each name given), the answer to the player's last name request, and the request
 // itself. The server decides everything (who found what first, whether a name is taken): this keeps what it was told.

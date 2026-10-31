@@ -135,7 +135,7 @@ export const countDays = pgTable(
 export type NameState = 'open' | 'named' | 'renamed' | 'cleared';
 
 /**
- * First finds (DESIGN 14.5, docs/ARCHITECTURE.md §26): one row per find of a shard, the first player to analyze a species,
+ * First finds (DESIGN 14.5, docs/ARCHITECTURE.md §25): one row per find of a shard, the first player to analyze a species,
  * land on a planet or moon, or reach a site. The key is unique per shard and kind, so of two players racing, one inserts
  * the row and is its finder, and the other finds it there. A find is history: its finder's character may go (its id goes
  * null, its name stays).

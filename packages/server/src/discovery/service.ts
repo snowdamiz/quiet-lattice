@@ -1,4 +1,4 @@
-// First finders (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §26): the server sees every first find itself, records it for the
+// First finders (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §25): the server sees every first find itself, records it for the
 // whole shard, pays its finder once, lets the finder name it once through the moderation filter, and tells everyone.
 //
 // - **Finds.** A species: every analysis the analysis service makes (codex/analysis.ts, `subscribe`), first for the

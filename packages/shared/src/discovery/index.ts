@@ -1,4 +1,4 @@
-// First finders (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §26): the first player on a shard to analyze a species, land on a
+// First finders (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §25): the first player on a shard to analyze a species, land on a
 // planet or moon, or reach a site is its finder. The find is the shard's (every player sees who found it and what it is
 // called), worth FIRST_FINDER_XP and a codex plate to the finder, who may name it once, within NAME_WINDOW_S, through the
 // moderation filter (`checkDiscoveryName`); unnamed, it keeps its procedural name. Naming is prestige: what a find earns

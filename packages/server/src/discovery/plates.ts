@@ -1,4 +1,4 @@
-// Codex plates (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §8, §26): the first finds a character made, each with when, held
+// Codex plates (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §8, §25): the first finds a character made, each with when, held
 // while it is in play and stored as the `plates` entry of its `state` (v1, `{plates: [{kind, key, at}]}`). A plate is
 // also the record that its find's XP was paid: the discovery service pays a find to its finder only while it has no
 // plate, and both land in the same save, so a find is paid once whenever its reward is looked at (as it is found, and

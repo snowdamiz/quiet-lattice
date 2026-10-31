@@ -1,4 +1,4 @@
-// What the discovery service reads of the world (P2.E29.T01; ARCHITECTURE §26): a find's procedural name, the name it keeps
+// What the discovery service reads of the world (P2.E29.T01; ARCHITECTURE §25): a find's procedural name, the name it keeps
 // until its finder gives it one (for the finder's notice and the admin CLI; every client makes the same names for
 // itself), and where a world's sites stand, from the drawn ground its zone already plans (the sites' clearance, which
 // the resource nodes keep off, holds each site's direction and footprint, in `planSites` order: the site keys' index).

@@ -1,6 +1,6 @@
 // The admin commands' effects (P1.E03.T07, docs/ARCHITECTURE.md §16). A command that changes a character changes it
 // through the live services while it is in play, so authority holds and its client hears the usual state messages
-// (`inventory`, `skills`, a `correction`); out of play, through persistence's load–modify–save
+// (`inventory`, `skills`, `reputation`, a `correction`); out of play, through persistence's load–modify–save
 // (`CharacterPersistence.edit`), which is refused while the character is held or joining and holds its joins until the
 // write lands. A character that left a moment ago is held until its last save is written; a command waits a little for
 // that rather than refuse.
@@ -15,6 +15,7 @@
 import type { DiscoveryKind } from '@astra/shared/discovery';
 import { addItem, addUnits, applyLayout, itemInfo, layoutFor, spendUnits, takeItem, type Inventory, type Result } from '@astra/shared/inventory';
 import type { ShipLoadout } from '@astra/shared/ships';
+import { setStanding, titleName, type Reputation, type StandingChange } from '@astra/shared/reputation';
 import { setAvailablePoints, skillStateOf, storedSkills, type SkillResult, type StoredSkills } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
 import { eq, sql } from 'drizzle-orm';
@@ -23,7 +24,7 @@ import type { RenameResult } from '../discovery/service.ts';
 import type { Db } from '../db/client.ts';
 import { accounts, characters } from '../db/schema.ts';
 import type { WsGateway } from '../gateway/ws.ts';
-import { INVENTORY, POSE, PROGRESS, SHIP, SKILLS, type PoseState, type Progress } from '../persistence/components.ts';
+import { INVENTORY, POSE, PROGRESS, REPUTATION, SHIP, SKILLS, type PoseState, type Progress } from '../persistence/components.ts';
 import type { CharacterEdit, CharacterPersistence, EditRefusal, EditVerdict } from '../persistence/service.ts';
 import { REFUSE_GRACE_MS, type Session } from '../session/session.ts';
 import { systemZoneId } from '../world/home.ts';
@@ -36,7 +37,7 @@ import { resolvePlacement } from './place.ts';
 /** What the service reaches in a running server. */
 export interface AdminLive {
   zones: ZoneManager;
-  gateway: Pick<WsGateway, 'registry' | 'inventory' | 'skills' | 'social' | 'stats'>;
+  gateway: Pick<WsGateway, 'registry' | 'inventory' | 'skills' | 'social' | 'stats' | 'reputation'>;
   /** each system's tier as the Edge stands (a surface teleport stands on the ground drawn at it) */
   world?: Pick<WorldSource, 'tierOf'>;
 }
@@ -56,7 +57,7 @@ export interface QuestAdmin {
 }
 
 /**
- * The first finders' admin seam (P2.E29.T01, ARCHITECTURE §26): a moderator's rename of a find, or its clear (null: its
+ * The first finders' admin seam (P2.E29.T01, ARCHITECTURE §25): a moderator's rename of a find, or its clear (null: its
  * procedural name for good). The running server's discovery service (which tells everyone in the find's system), or a
  * store's in the CLI's direct mode. Without one, rename is `unavailable`.
  */
@@ -196,6 +197,8 @@ export class AdminService {
         return this.setQuestStep(cmd);
       case 'set-skill-points':
         return this.setSkillPoints(cmd);
+      case 'set-rep':
+        return this.setRep(cmd);
       case 'mute':
         return this.mute(cmd, who);
       case 'unmute':
@@ -365,6 +368,31 @@ export class AdminService {
       },
     );
     return { character: c.id, name: c.name, asked: cmd.points, available: r.value, ...this.how(r) };
+  }
+
+  /** A character's standing with a faction (P2.E18.T01): in play through the reputation service (its client is sent its
+   * rank and title events and `reputation`), out of play on the stored value, by the same shared rule (`setStanding`:
+   * a rank reached for the first time earns its title). */
+  private async setRep(cmd: Extract<AdminCommand, { cmd: 'set-rep' }>): Promise<AdminResult> {
+    const c = await this.character(cmd.character);
+    const r = await this.change<StandingChange>(
+      c,
+      (s) => {
+        const done = this.needLive('set-rep').gateway.reputation.set(s.characterId!, cmd.faction, cmd.value, 'admin');
+        if (!done) throw new AdminError('held', `${c.name} is between zones; try again`);
+        this.persistence.saveNow(c.id, 'admin');
+        return done;
+      },
+      (e) => {
+        // (the stored value as a join reads it: reconciled with the faction table)
+        const rep = e.get<Reputation>(REPUTATION);
+        const done = setStanding(rep, cmd.faction, cmd.value);
+        e.set(REPUTATION, rep);
+        return done;
+      },
+    );
+    const { faction, from, to, rankFrom, rankTo, titles } = r.value;
+    return { character: c.id, name: c.name, faction, from, rep: to, rank: rankTo, was: rankFrom, titles: titles.map(titleName), ...this.how(r) };
   }
 
   private async setQuestStep(cmd: Extract<AdminCommand, { cmd: 'set-quest-step' }>): Promise<AdminResult> {

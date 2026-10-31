@@ -53,6 +53,11 @@ export function format(cmd: AdminCommand, r: AdminResult): string {
     }
     case 'set-skill-points':
       return `${String(r.name)}: ${String(r.available)} skill points available${r.available !== r.asked ? ` (asked ${String(r.asked)}: never below what levels give less what is spent)` : ''}${r.online ? ' (online)' : offline(r)}`;
+    case 'set-rep': {
+      const rank = r.rank === null ? 'no rank' : `rank ${String(r.rank)}`;
+      const titles = (r.titles as string[]).length ? `, earned ${(r.titles as string[]).join(', ')}` : '';
+      return `${String(r.name)}: ${String(r.faction)} standing ${String(r.from)} -> ${String(r.rep)} (${rank}${titles})${r.online ? ' (online)' : offline(r)}`;
+    }
     case 'set-quest-step':
       return `${String(r.name)}: quest ${String(r.quest)} at step ${String(r.step)}${r.online ? ' (online)' : offline(r)}`;
     case 'spawn':

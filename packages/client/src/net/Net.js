@@ -2,7 +2,8 @@
 // then reconnecting with backoff when the connection drops), routing the server's control messages to whoever listens,
 // decoding zone snapshots onto their baselines into the entity store and acknowledging them, the server clock from
 // ping/pong, and the player's input at 20 Hz. Gameplay reads remote state from `store`, never from the socket. Shots go
-// to the server as `fire` intents (`fire`), and what they did comes back as events, kept by `combat` for the HUD.
+// to the server as `fire` intents (`fire`), and what they did comes back as events, kept by `combat` for the HUD. The
+// character's reputation is kept by `reputation` as the server sends it.
 //
 // States: idle → connecting → joining (hello and join sent) → joined (welcome received) → closed; from joined a dropped
 // connection goes to reconnecting and back to connecting after a backoff. A refusal another try would only repeat (and a
@@ -13,6 +14,7 @@ import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
 import { CombatFeed } from './combat.js';
 import { Discoveries } from './discoveries.js';
+import { Reputation } from './reputation.js';
 import { SnapshotStore } from './snapshots.js';
 
 /** Input goes out at 20 Hz (the zone's tick) of real time, however fast frames run. */
@@ -86,6 +88,8 @@ export class Net {
     this.beacons = new Beacons(this);
     /** First finds (discoveries.js): the current system's, who found them and what they are called, and name requests. */
     this.discoveries = new Discoveries(this);
+    /** The character's standing, ranks and titles as the server last sent them, and their news (reputation.js, §24). */
+    this.reputation = new Reputation(this);
   }
 
   get joined() {

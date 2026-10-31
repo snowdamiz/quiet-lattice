@@ -105,6 +105,13 @@ export interface CharacterComponent<T = unknown> {
   save(ctx: SaveContext): T | undefined;
   /** Forgets the character (after its final save was captured). */
   unload?(characterId: string): void;
+  /**
+   * Keys of components this one is only ever written together with (either side naming the other is enough): when a
+   * capture cannot take one of them (its `save` threw, or its value failed its schema), the others are held back from
+   * that capture too, their stored values kept and their changes left for the next capture, so a change spanning them
+   * (owed quest reputation settled into the reputation, §24) is written whole or not at all.
+   */
+  readonly writtenWith?: readonly string[];
 }
 
 /** A character whose stored state cannot be loaded; the join is refused. */
@@ -145,6 +152,24 @@ export class ComponentRegistry {
 
   get(key: string): AnyComponent | undefined {
     return this.list.find((c) => c.key === key);
+  }
+
+  /** The components a capture holds back when it cannot take those of `skipped`: these, and every component written with
+   * one of them (`writtenWith`, either way round, transitively). */
+  heldBackWith(skipped: ReadonlySet<string>): Set<string> {
+    const held = new Set(skipped);
+    for (let grew = held.size > 0; grew;) {
+      grew = false;
+      for (const c of this.list) {
+        for (const k of c.writtenWith ?? []) {
+          if (held.has(c.key) === held.has(k)) continue;
+          held.add(c.key);
+          held.add(k);
+          grew = true;
+        }
+      }
+    }
+    return held;
   }
 
   /**

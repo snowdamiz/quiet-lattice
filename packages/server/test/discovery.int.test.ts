@@ -1,4 +1,4 @@
-// First finders over the wire (P2.E29.T01, ARCHITECTURE §26), against the dockerised Postgres and Redis on a shard of the
+// First finders over the wire (P2.E29.T01, ARCHITECTURE §25), against the dockerised Postgres and Redis on a shard of the
 // test's own (nothing found yet): two players race to land on the same world, to analyze the same new species and to
 // reach the same site, and each time one is the finder, paid 2000 XP once and told so, and both hear who found it. The
 // finder names a find (a blocked name refused, a good one taken and heard by the other player, a second refused); a

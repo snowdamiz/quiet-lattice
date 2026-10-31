@@ -1,4 +1,4 @@
-// What a first finder may call what it found (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §26): the moderation filter's rules as
+// What a first finder may call what it found (DESIGN 14.5, P2.E29.T01; ARCHITECTURE §25): the moderation filter's rules as
 // data, read by `checkDiscoveryName` (@astra/shared/discovery). The lists are small on purpose: they catch the obvious, and
 // moderators rename the rest with the admin CLI (`rename`). Every entry is matched against a name's skeleton: lower case,
 // accents stripped, the digits players use for letters read as those letters (0 o, 1 i, 3 e, 4 a, 5 s, 7 t, 8 b).

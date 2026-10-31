@@ -1,4 +1,4 @@
-// The first finders' messages (protocol 16, P2.E29.T01): a request to name a find, its answer, and a system's finds with
+// The first finders' messages (protocol 15, P2.E29.T01): a request to name a find, its answer, and a system's finds with
 // their names. A request's name is held to chat's text rules on the wire; the moderation filter's own rules are the
 // server's to answer (`named` with a reason), so a name too long is answered rather than dropped.
 import { describe, expect, it } from 'vitest';
@@ -16,8 +16,8 @@ import {
 const ask = { t: 'name', kind: 'body', key: '424242:3', name: 'Halcyon' } as const satisfies ClientMessage;
 
 describe('first-finder messages', () => {
-  it('arrived with protocol 16', () => {
-    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(16);
+  it('arrived with protocol 15', () => {
+    expect(PROTOCOL_VERSION).toBeGreaterThanOrEqual(15);
   });
 
   it('round-trips a request for every kind, and refuses malformed ones', () => {

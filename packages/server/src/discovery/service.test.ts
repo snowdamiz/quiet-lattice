@@ -1,4 +1,4 @@
-// The discovery service (P2.E29.T01, ARCHITECTURE §26) over a store in memory with the Postgres store's rules, a real
+// The discovery service (P2.E29.T01, ARCHITECTURE §25) over a store in memory with the Postgres store's rules, a real
 // star system and its drawn ground: first finds by analysis, landing and site visit, one finder of two racing, paid once
 // (as found, and on join for a find made out of play), named once within the window through the filter, renamed or
 // cleared by a moderator, and every player in the system told.
