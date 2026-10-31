@@ -177,7 +177,17 @@ const serverSamples: ServerMessage[] = [
   { t: 'correction', seq: 7, pose, mode: 'ship' },
   { t: 'zone', zone: { id: 'sys:1', systemSeed: 77 }, pose: { ...pose, frame: null } },
   { t: 'pong', id: 1, clientTime: 1000.5, serverTime: 3600.3 },
-  { t: 'world', season: 1, count: 500, edgeX: 2.5e6, tiers: [0, 0, 0, 1, 2], serverTime: 3600 },
+  {
+    t: 'world',
+    season: 2,
+    seasonStart: 4_838_400,
+    seasonEnd: 7_257_600,
+    opening: { from: 'broken', edgeShiftLy: -10, dark: [33, 44, 57] },
+    count: 500,
+    edgeX: 2.5e6,
+    tiers: [0, 0, 0, 1, 2],
+    serverTime: 3600,
+  },
   ...events.map((event) => ({ t: 'event' as const, event })),
   { t: 'inventory', seq: 3, inventory },
   { t: 'skills', seq: 4, skills },
@@ -261,6 +271,13 @@ const serverSamples: ServerMessage[] = [
       ],
     },
   },
+  {
+    t: 'awards',
+    awards: [
+      { season: 1, bucket: 'fed', title: 'Seedbearer', glyph: 'season_1_fed' },
+      { season: 3, bucket: 'held', title: 'Keeper of the Middle', glyph: 'season_3_held' },
+    ],
+  },
 ];
 
 const http = {
@@ -276,10 +293,11 @@ describe('protocol: version', () => {
   // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
   // (P1.E13.T01); 9: reserved for meters, which merged as 15 (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid
   // beacons (P1.E15.T02); 12: analysis and the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation
-  // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01); 17: world events (P2.E21.T01). A branch that
-  // changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 17, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(17);
+  // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01); 17: world events (P2.E21.T01); 18: seasons
+  // (P2.E22.T03). A branch that changes a message bumps the version, adds its line to the history under PROTOCOL_VERSION
+  // and updates this.
+  it('is version 18, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(18);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);
@@ -451,7 +469,43 @@ describe('protocol: control messages', () => {
       '{"t":"skills","seq":1,"op":{"op":"unlock","node":"pull","via":"trainer"}}',
     ];
     for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
-    expect(decodeServerMessage('{"t":"world","season":1,"count":5000,"edgeX":0,"tiers":[],"serverTime":0}')).toBeNull();
+    const world = {
+      t: 'world',
+      season: 1,
+      seasonStart: 0,
+      seasonEnd: 2_419_200,
+      opening: { from: null, edgeShiftLy: 0, dark: [] },
+      count: 500,
+      edgeX: 0,
+      tiers: [],
+      serverTime: 0,
+    };
+    expect(decodeServerMessage(JSON.stringify(world))).toEqual(world);
+    for (const bad of [
+      { count: 5000 },
+      { season: 0 },
+      { seasonStart: undefined },
+      { opening: { from: 'lost', edgeShiftLy: 0, dark: [] } },
+      { opening: { from: 'broken', edgeShiftLy: -10, dark: [3, 3] } },
+      { opening: { from: 'broken', edgeShiftLy: -10, dark: [1, 2, 3, 4] } },
+      { opening: { from: null, edgeShiftLy: 0, dark: [], extra: 1 } },
+    ]) {
+      expect(decodeServerMessage(JSON.stringify({ ...world, ...bad })), JSON.stringify(bad)).toBeNull();
+    }
+    // season awards: one a season, oldest first, a known bucket, a glyph id that names its season and bucket
+    const award = { season: 2, bucket: 'broken', title: 'Anchorbreaker', glyph: 'season_2_broken' };
+    expect(decodeServerMessage(JSON.stringify({ t: 'awards', awards: [award] }))).toEqual({ t: 'awards', awards: [award] });
+    for (const awards of [
+      [award, award],
+      [award, { ...award, season: 1, glyph: 'season_1_broken' }],
+      [{ ...award, bucket: 'lost' }],
+      [{ ...award, glyph: 'season_0_broken' }],
+      [{ ...award, title: 'x'.repeat(49) }],
+      [{ ...award, title: 'Anchor\u202ebreaker' }],
+      [{ ...award, worn: true }],
+    ]) {
+      expect(decodeServerMessage(JSON.stringify({ t: 'awards', awards })), JSON.stringify(awards)).toBeNull();
+    }
     // party state: two to PARTY_MAX members, a leader among them, coarse health, a system index
     const member = { name: 'Ana', online: true, system: 0, health: 10 };
     for (const party of [

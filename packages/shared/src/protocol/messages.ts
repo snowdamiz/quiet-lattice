@@ -11,10 +11,11 @@ import { meterViewSchema } from '../meters/schema.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { factionIdSchema } from '../data/index.ts';
 import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputation/index.ts';
+import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '../seasons/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 17;
+export const PROTOCOL_VERSION = 18;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -33,6 +34,7 @@ export const PROTOCOL_VERSION = 17;
 // 15: meters: heat and Charge state (P1.E07.T02)
 // 16: first finders: name requests and their answers, a system's finds and their names (P2.E29.T01)
 // 17: world events: event news to the system (announced, started, ended), a participant's status (its instance, level, contribution) and rewards (P2.E21.T01)
+// 18: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -410,9 +412,17 @@ export const Correction = z.object({ t: z.literal('correction'), seq: z.number()
 /** Zone handoff (P1.E04.T04): the client now belongs to another zone, at this pose. */
 export const ZoneChange = z.object({ t: z.literal('zone'), zone: ZoneRef, pose: Pose });
 export const Pong = z.object({ t: z.literal('pong'), id: z.number().int().nonnegative(), clientTime: z.number(), serverTime: z.number() });
+/**
+ * The world service's state (ARCHITECTURE §3, §11, §27): sent after `welcome` and whenever it changes. `season` is the
+ * season's number, `seasonStart` and `seasonEnd` (protocol 18) the world times it began and ends at, `opening` the map it
+ * opened with (how the season before ended, the Edge's shift and the systems dark this season, DESIGN 16.4).
+ */
 export const WorldState = z.object({
   t: z.literal('world'),
-  season: z.number().int().nonnegative(),
+  season: seasonNumberSchema,
+  seasonStart: z.number().min(0),
+  seasonEnd: z.number().min(0),
+  opening: seasonOpeningSchema,
   count: z.number().min(0).max(1000),
   edgeX: z.number(),
   /** tier (0–5) per galaxy system index */
@@ -949,6 +959,10 @@ export const EventReward = z.object({
  * after `recipes` on join and whenever the server changes it (after the `rank` and `title` events of that change). */
 export const ReputationState = z.object({ t: z.literal('reputation'), reputation: reputationViewSchema });
 
+/** The character's season titles and glyphs (protocol 18, DESIGN 16.4), oldest season first: sent after `reputation` on join
+ * and again whenever a season ends with the character's account among its winning philosophy's players. */
+export const AwardsState = z.object({ t: z.literal('awards'), awards: seasonAwardListSchema });
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -978,6 +992,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   EventStatus,
   EventReward,
   ReputationState,
+  AwardsState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
