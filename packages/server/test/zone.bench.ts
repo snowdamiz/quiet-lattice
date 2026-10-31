@@ -881,7 +881,8 @@ const corrected = Object.values(checks).reduce((n, c) => n + c.corrections, 0);
 console.log(JSON.stringify({ trial: 'input check cost, µs', ...checks }, null, 2));
 const checkSkipped = overloaded(checkLoad);
 if ((!checkSkipped && dearest >= CHECK_BUDGET_US) || corrected > 0) {
-  if (!checkSkipped && dearest >= CHECK_BUDGET_US) console.error(`FAIL (input checks): an input check's CPU median ${dearest} µs is over ${CHECK_BUDGET_US} µs`);
+  if (!checkSkipped && dearest >= CHECK_BUDGET_US)
+    console.error(`FAIL (input checks): an input check's CPU median ${dearest} µs is over ${CHECK_BUDGET_US} µs`);
   if (corrected > 0) console.error(`FAIL (input checks): ${corrected} honest inputs were corrected`);
   failed = true;
 } else if (checkSkipped) {
