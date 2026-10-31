@@ -351,7 +351,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E20.T03 Catalysts and cosmetics** · deps: T01 · done: sanctuary catalyst recipes with timed buffs; glyph cosmetics from Count residue with boss-drop patterns; liveries from city chains. · verify: integration; smoke.
 
 ### E21 World events
-- [~] **P2.E21.T01 Event framework** · deps: P1.E09.T02 · spec: DESIGN 14.6, 16.6 · done: server-scheduled events with presence scaling 1–12, instancing above 12, contribution tracking, banner announcements, rewards. · verify: unit tests on scaling; integration with 1 and 15 bots.
+- [R] **P2.E21.T01 Event framework** · deps: P1.E09.T02 · spec: DESIGN 14.6, 16.6 · done: server-scheduled events with presence scaling 1–12, instancing above 12, contribution tracking, banner announcements, rewards. · verify: unit tests on scaling; integration with 1 and 15 bots.
 - [ ] **P2.E21.T02 Station raid event** · deps: T01, P1.E11.T05 · done: the repeatable shared version of chapter 11. · verify: e2e.
 - [ ] **P2.E21.T03 Hollow tide** · deps: T01, E25.T05 · done: twenty-minute waves from the Edge-ward side; stones turn herds stone-touched for the duration. · verify: e2e.
 - [ ] **P2.E21.T04 Superstorm rescue** · deps: T01 · files: `src/render/Weather.js`, `src/Game.js` (lightning) · done: a downed pilot under the ceiling with a lightning countdown. · verify: e2e.
@@ -360,7 +360,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 ### E22 The Count meter and the Edge
 - [x] **P2.E22.T01 Lean and burn** · deps: P1.E03.T06 · spec: DESIGN 16.2 · done: counted actions tagged Feed/Break, one vote per account per action type per day, daily lean, target, drift up to 25/day, burn 5/day, underdog bonus. · verify: unit tests with synthetic action logs at 3 and 3,000 accounts give the same drift for the same lean.
 - [ ] **P2.E22.T02 The Edge moves** · deps: T01, P1.E02.T06 · files: `src/ui/map/EdgeOfSpace.js`, `src/universe/Cosmos.js` (`edgeX`) · done: Edge position and system tiers as functions of the meter; dark stations flagged; the galaxy map and sky show the current Edge. · verify: unit tests; smoke at three meter values.
-- [ ] **P2.E22.T03 Seasons** · deps: T01 · spec: DESIGN 16.4 · done: season start at 500, length 4 or 8 weeks from daily actives, end-of-season bucket, next-season map state, titles and glyphs for the leading philosophy, the chronicle record. · verify: integration with an accelerated clock.
+- [~] **P2.E22.T03 Seasons** · deps: T01 · spec: DESIGN 16.4 · done: season start at 500, length 4 or 8 weeks from daily actives, end-of-season bucket, next-season map state, titles and glyphs for the leading philosophy, the chronicle record. · verify: integration with an accelerated clock.
 - [ ] **P2.E22.T04 Where players see it** · deps: T02 · done: the sanctuary glyph wall, Edge Sense HUD readout, weekly server message, per-account measures in the chronicle. · verify: smoke.
 
 ### E23 Skill web completion
@@ -404,7 +404,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 - [ ] **P2.E28.T05 (art) Act III cutscene cameras and sets** · deps: E27.T02 · done: cameras and dressing. → `[R]`
 
 ### E29 Discovery and the codex
-- [ ] **P2.E29.T01 First-finder naming** · deps: P1.E08.T04 · spec: DESIGN 14.5 · done: first analysis, landing or site visit names it server-wide with a moderation filter; procedural names as fallback; codex plates. · verify: integration with two clients racing.
+- [~] **P2.E29.T01 First-finder naming** · deps: P1.E08.T04 · spec: DESIGN 14.5 · done: first analysis, landing or site visit names it server-wide with a moderation filter; procedural names as fallback; codex plates. · verify: integration with two clients racing.
 - [ ] **P2.E29.T02 Surveys and ship discovery** · deps: T01, E25.T08 · done: full-survey completion grants XP and a fragment; Deep Sweep analysis of grazers. · verify: integration.
 - [ ] **P2.E29.T03 Codex UI** · deps: T01 · done: species, worlds, sites, lore, Hollow sightings; Bond eligibility shown. · verify: smoke.
 
