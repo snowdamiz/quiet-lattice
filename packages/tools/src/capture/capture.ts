@@ -19,7 +19,6 @@
 // touches a dev server or browser someone else is using. Console errors on the page fail the capture.
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { loadavg } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from '@playwright/test';
@@ -363,58 +362,41 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
  * The screen's motion at 60 fps (`clipSeconds`, default 1 s). The page's own loop is stopped and each game frame stepped
  * by hand; CSS transitions and animations (which run on real time) are slowed tenfold through the DevTools Animation
  * domain, so each frame is taken 1/60 s of animation time after the last one. With `hudClock` the HUD's clock and timers
- * (game.hud.now / later / cancel) run on the clip's clock too. With `hudCost` each frame's HUD update is timed (its script
- * alone, in this headless browser: the style and layout it causes come after it).
+ * (game.hud.now / later / cancel) run on the clip's clock too.
  */
 async function captureClip(page: Page, def: (typeof SCREENS)[string], outDir: string): Promise<string[]> {
   const frames = Math.round((def.clipSeconds ?? 1) * 60);
-  await page.evaluate(
-    ({ hudClock, hudCost }) => {
-      type Timer = { id: number; at: number; fn: () => void };
-      const w = window as unknown as {
-        game: {
-          frame(dt: number): void;
-          hud: { now(): number; later(fn: () => void, ms: number): number; cancel(id: number): void; update(dt: number): void };
-        };
-        __clip: { frame(dt: number): void; t: number; timers: Timer[]; id: number };
-        __hudCost?: number[];
+  await page.evaluate((hudClock) => {
+    type Timer = { id: number; at: number; fn: () => void };
+    const w = window as unknown as {
+      game: { frame(dt: number): void; hud: { now(): number; later(fn: () => void, ms: number): number; cancel(id: number): void } };
+      __clip: { frame(dt: number): void; t: number; timers: Timer[]; id: number };
+    };
+    const g = w.game;
+    const frame = g.frame.bind(g);
+    g.frame = () => {};
+    const clip = (w.__clip = {
+      t: 0,
+      timers: [] as Timer[],
+      id: 0,
+      frame(dt: number) {
+        frame(dt);
+        clip.t += dt;
+        const due = clip.timers.filter((x) => x.at <= clip.t * 1000);
+        clip.timers = clip.timers.filter((x) => x.at > clip.t * 1000);
+        for (const x of due) x.fn();
+      },
+    });
+    if (hudClock) {
+      const base = g.hud.now();
+      g.hud.now = () => base + clip.t * 1000;
+      g.hud.later = (fn, ms) => {
+        clip.timers.push({ id: ++clip.id, at: clip.t * 1000 + ms, fn });
+        return clip.id;
       };
-      const g = w.game;
-      if (hudCost) {
-        const update = g.hud.update.bind(g.hud);
-        const took = (w.__hudCost = [] as number[]);
-        g.hud.update = (dt) => {
-          const t0 = performance.now();
-          update(dt);
-          took.push(performance.now() - t0);
-        };
-      }
-      const frame = g.frame.bind(g);
-      g.frame = () => {};
-      const clip = (w.__clip = {
-        t: 0,
-        timers: [] as Timer[],
-        id: 0,
-        frame(dt: number) {
-          frame(dt);
-          clip.t += dt;
-          const due = clip.timers.filter((x) => x.at <= clip.t * 1000);
-          clip.timers = clip.timers.filter((x) => x.at > clip.t * 1000);
-          for (const x of due) x.fn();
-        },
-      });
-      if (hudClock) {
-        const base = g.hud.now();
-        g.hud.now = () => base + clip.t * 1000;
-        g.hud.later = (fn, ms) => {
-          clip.timers.push({ id: ++clip.id, at: clip.t * 1000 + ms, fn });
-          return clip.id;
-        };
-        g.hud.cancel = (id) => (clip.timers = clip.timers.filter((x) => x.id !== id));
-      }
-    },
-    { hudClock: !!def.hudClock, hudCost: !!def.hudCost },
-  );
+      g.hud.cancel = (id) => (clip.timers = clip.timers.filter((x) => x.id !== id));
+    }
+  }, !!def.hudClock);
   const RATE = 0.1;
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Animation.enable');
@@ -453,28 +435,11 @@ async function captureClip(page: Page, def: (typeof SCREENS)[string], outDir: st
     if (wait > 0) await new Promise((r) => setTimeout(r, wait));
   }
   await cdp.send('Animation.setPlaybackRate', { playbackRate: 1 });
-  const written: string[] = [];
-  let title = '';
-  if (def.hudCost) {
-    const took = await page.evaluate(() => (window as unknown as { __hudCost: number[] }).__hudCost);
-    const sorted = [...took].sort((a, b) => a - b);
-    const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))]!;
-    const cost = {
-      frames: took.length,
-      meanMs: took.reduce((a, b) => a + b, 0) / took.length,
-      p50Ms: at(0.5),
-      p95Ms: at(0.95),
-      maxMs: sorted.at(-1)!,
-      load: loadavg()[0],
-    };
-    const cp = join(outDir, 'hud-cost.json');
-    writeFileSync(cp, `${JSON.stringify(cost, null, 2)}\n`);
-    written.push(cp);
-    const ms = (v: number) => v.toFixed(2);
-    title = `HUD update per frame (script, headless): mean ${ms(cost.meanMs)} ms, p50 ${ms(cost.p50Ms)}, p95 ${ms(cost.p95Ms)}, max ${ms(cost.maxMs)} over ${cost.frames} frames (load ${cost.load.toFixed(0)})`;
-  }
   const sp = join(outDir, 'clip-sheet.png');
-  writeFileSync(sp, await contactSheet(page, sheet, 5, 480, title));
+  const readout = (await def.readout?.(page)) ?? '';
+  if (readout) writeFileSync(join(outDir, 'readout.txt'), readout + '\n');
+  writeFileSync(sp, await contactSheet(page, sheet, 5, 480, readout.split('\n')[0]));
+  const written: string[] = [];
   for (const [k, c] of crops.entries()) {
     const cp = join(outDir, `crops-${c.name}.png`);
     writeFileSync(cp, await contactSheet(page, cropSheets[k]!, Math.max(1, Math.floor(2400 / (c.clip.width * 4))), c.clip.width * 4, `${c.name}, 4x`, true));

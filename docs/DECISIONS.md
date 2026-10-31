@@ -941,3 +941,15 @@ Format: task id, question → choice → why.
   eight weeks ago rolls its missed seasons with no meter play (dev databases only); `writeSeasonEnd` loads a season's
   votes into memory (a SQL GROUP BY later); daily actives count joins, not presence; one save writing two season ends
   gives a racing join only the later; `daily_actives` is never pruned; the chronicle's first finds wait for P2.E22.T05.
+- **P1.E15.T04** Chat and party UI motion follow-ups (client `ui/social/{motion,SocialUI}.js`, `style.css` social rules,
+  capture `screens.ts`, `capture.ts`) → the beacon thumb and edge fades blinked because the motion helper forgot where an
+  ease had landed, so each redraw re-eased from 0: it now keeps each value's rest point and writes nothing at rest; the
+  beacon list redraws only when its rows' text, the own beacon or a refusal changes; the thumb fades only when the list
+  starts or stops overflowing, checked every frame a move runs. A cleared badge keeps its face whole and gives up its
+  room through a negative margin while its opacity eases to zero over the same frames. The redraw runs in stages (front,
+  log, list, party, invites) under a 0.4 ms frame budget, a stage over it waiting a frame, so no frame passes 1 ms. Caps
+  tags and buttons use `--sc-caps` (0.88), meta lines `--sc-meta` (0.74). The party count appears after "Not in a party"
+  has gone. `.social-chat` and `.social-side` carry `contain: layout style`. Captures time `SocialUI.update` per captured
+  frame into `readout.txt`, listing frames over 1 ms. → closes P1.E15.T03's fifth grade. Open: the stage guard's "first
+  stage always runs" rests on `spent > 0`, which a finer timer (a cross-origin-isolated page) would break; the list
+  scrolls in whole pixels; the edge fades mask the scrollbar's end; the badge trims 1–3 px in its last frames.
