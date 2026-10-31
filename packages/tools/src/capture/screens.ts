@@ -104,9 +104,11 @@ async function standingByShip(page: Page): Promise<void> {
   await page.waitForTimeout(2500);
   await onFoot();
   // (where the scenario sets the ship down turns with the world under real time: a loaded machine can put it in the sea)
-  if (await page.evaluate(() => (window as unknown as { game: { player: { swimming: boolean } } }).game.player.swimming)) {
-    throw new Error('the #foot scenario set the ship down in the sea: capture again');
-  }
+  const inSea = await page.evaluate(() => {
+    const p = (window as unknown as { game: { player: { state: { frame: { ocean?: boolean; radius: number }; pos: { length(): number } } } } }).game.player;
+    return !!p.state.frame.ocean && p.state.pos.length() < p.state.frame.radius;
+  });
+  if (inSea) throw new Error('the #foot scenario set the ship down in the sea: capture again');
   // the camera's ease from the ship into the walker's head (4 s of game time) can outlast that on a loaded machine: stepped
   // out, so the multitool is up and the view still before anything is taken
   for (let i = 0; i < 60; i++) {
@@ -118,12 +120,16 @@ async function standingByShip(page: Page): Promise<void> {
     if (!gliding) break;
   }
   await settle(page, 90);
-  // and the arrival banner run out (it and the band under it last 7 s of the page's own time), the multitool raised
+  // and the arrival banners run out (each, and the band under it, lasts 7 s of the page's own time), the multitool raised
   await page.waitForFunction(
     async () => {
-      const w = window as unknown as { step(n: number): Promise<void>; game: { hud: { bannerUntil?: number }; multitool: { raise?: number } } };
+      const w = window as unknown as {
+        step(n: number): Promise<void>;
+        game: { hud: { bannerUntil?: number; bannerQueue?: unknown[] }; multitool: { raise?: number } };
+      };
       await w.step(4);
-      return performance.now() > (w.game.hud.bannerUntil ?? 0) + 1000 && (w.game.multitool.raise ?? 0) >= 1;
+      const hud = w.game.hud;
+      return !hud.bannerQueue?.length && performance.now() > (hud.bannerUntil ?? 0) + 1000 && (w.game.multitool.raise ?? 0) >= 1;
     },
     null,
     { timeout: 60_000, polling: 100 },
