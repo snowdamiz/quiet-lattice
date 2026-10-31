@@ -256,6 +256,21 @@ describe('answering a beacon', () => {
     expect(denials(bex.take())).toEqual(['answer:unknown']);
   });
 
+  it('refuses one the instance’s owner keeps out (an event’s instance, a character it has paid), leaving the beacon up', () => {
+    const { h, players, phases } = setup(['Ana', 'Bex', 'Cor']);
+    const [ana, bex, cor] = players as [Player, Player, Player];
+    const event = phases.phaseFor(ana.session, 'event', site(ana, 'wreck'));
+    phases.guard(event.id, (c) => c !== 'char-Bex');
+    const id = raise(ana);
+    bex.beacon({ op: 'answer', id });
+    expect(denials(bex.take())).toEqual(['answer:full']);
+    expect(phases.phaseOf(bex.entityId)).toBeNull();
+    h.advance(100);
+    expect(h.social.beacons.of('char-Ana')).toMatchObject({ open: 11 });
+    cor.beacon({ op: 'answer', id });
+    expect(newsOf(cor.take())).toMatchObject([{ op: 'joined', phase: event.id }]);
+  });
+
   it('takes a beacon down as answers fill the instance', () => {
     const { h, players, phases } = setup(['Ana', 'Bex', 'Cor', 'Dax']);
     const [ana, bex, cor, dax] = players as [Player, Player, Player, Player];

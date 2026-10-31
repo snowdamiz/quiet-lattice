@@ -878,3 +878,66 @@ Format: task id, question → choice → why.
   P1.E13.T04). → DESIGN 14.5, server-held. Merged after a second review REVISE under the two-round limit: digit and
   ligature stand-ins (9 or 6 for g, æ as a) and separator-split reserved words still pass, filed as P2.E29.T04.
   P2.E29.T03 is amended to carry names to the landing banner, location line, map and site labels.
+- **P2.E21.T01** Event framework (server `events/*`, shared `events`, `PhaseManager.adopt`/`guard`, combat `hit` news
+  and `ZoneCombat.scaleHealth`, fauna phase herds, client `ui/banners.js`, protocol 17, ARCHITECTURE §26 with notes in
+  §6.1, §6.2, §21) → the one event shipped is the Hollow tide, a stand-in P2.E21.T03 replaces: Tier 5 only, hourly
+  windows staggered per system, 20 minutes announced 2 minutes ahead, a dry open place 600 m across on the system's first
+  world (body order) whose species include the enemies, drawn from the system seed, event and window; the world's own
+  predators and territorials in 5 waves of 3 (30 s after an instance opens, then 45 s after each clear); each player
+  paid 9000 XP, 1500 units, 4 Count residue and 25 Chorus standing (Chorus a choice). No occurrence opens with under
+  30 s left or in a zone without players; a window that began before the service did is skipped and logged (no
+  persistence: a restart loses the window's occurrence and contribution, paid rewards stay saved). Only the star system
+  hears of it. Level is members plus kept places (1–12), read at each wave: wave size ×(1 + 0.5(L−1)), health
+  ×(1 + 0.1(L−1)), herds of at most 5, a wave with no creature-cap room waits 2 s; instancing above 12. A wave is cleared
+  only when all of it is killed: a cell holding a phase's creatures never unloads (it may sleep) and the cap passes it
+  by. Contribution: damage 0.6, objectives 0.25, presence 0.15 (a kind nobody contributed drops out); under a quarter of
+  an even share is unpaid and does not count toward the pool; the pool is per-player rewards × players paid; an expired
+  instance pays for the fraction of waves cleared, split by damage. An instance completes or expires; the occurrence
+  reports `completed` only if every instance did. One instance per character per occurrence through `PhaseManager.guard`
+  for placement and beacons (a refused beacon answer is `full`); a character joins `paid` only when something was paid
+  or its instance was won, and never re-enters once paid. Players out of play at payout lose their rewards, as with kill
+  loot. Participation reputation goes through `ReputationService.grant` (reason `event:<id>`, not a counted Count act).
+  Adopted herds think in their phase (its members and creatures); shared-world herds ignore phase creatures. Each
+  placement sends `enter {place:'event:<id>'}`. Creatures do not fight back until P1.E08.T02. The banner reads
+  "World event · <world> · <state>" ("starting now" at 0, "in under a minute" below 30 s). The shared banner queue holds
+  each banner for `BANNER_MS` (7 s), the constant the CSS keyframes run on, keeps the band lit between consecutive
+  banners and releases it when none follows or the rest are stale; a banner is stale after three holds (21 s). The base
+  gun's targets pass a phase `canSee` filter. → DESIGN 14.6 and 16.6, server-held. Open: alts earn about 20–25% more
+  per damage in groups of 2–5; `worldEvents.js` builds item names with `replace`, not the resource table; a footprint
+  scrim instead of the full-width band for every banner; P1.E07.T03 reconciles the `fire` canSee filter with its
+  shared `creatureTargets` when it lands.
+- **P2.E29.T04** Name filter: digit and ligature stand-ins (shared `discovery`, `data/names.ts`) → 6 and 9 read as g
+  beside the other digit look-alikes; æ and œ are read both long (ae, oe) and short (a, o) by running the blocked and
+  reserved checks once per reading, all ligatures one way at a time (no listed word has two ligature slots); a letter is
+  accepted only if every reading of it is a–z, so the accepted set stays derived from the skeleton; reserved words are
+  checked over every run of neighbouring words joined, so "Ad min" and "Ad-min Rock" are refused (single letters can
+  join into a reserved word, e.g. "G M"; moderators rename the rare real case). → closes P2.E29.T01's second review.
+  Open (P2.E29.T05): blocked words split by a separator inside a longer name; the digit reading also makes "9M" read as
+  the reserved "gm"; v-for-u and ph-for-f stand-ins.
+- **P2.E22.T03** Seasons (shared `seasons`, server `seasons/*`, world service, count store, migration 0005, protocol 18,
+  ARCHITECTURE §27) → season 1 starts at the shard's first boot with the default eight weeks, ending on the meter midnight
+  after (it can run up to a day longer); every later season starts and ends on meter midnights, the first at or after
+  start + length, with the Count at 500. The bucket is read after the last day's drift and the midnight burn (that day's
+  roll belongs to the old season; the new season's first burn is at 04:48): Fed 700 and up, Held 300–699, Broken under
+  300. Length: four weeks if the mean daily actives of the 30 meter days before the start is under 100, else eight; a
+  daily active is an account that joined a character that meter day, counted once (a session spanning midnight is not
+  counted again; days the server was down count as zero); nothing recorded logins before, hence the `daily_actives`
+  table. The next map is only the Edge shift and the dark systems: Fed recedes the Edge 10 ly, Broken advances it 10 ly
+  and darkens 2–3 Edge-ward Tier-5 systems at the advanced Edge by `hashInts(galaxy seed, season)`, Held and the first
+  season keep the baseline; openings do not add up (each comes from the previous season only); the opening is data on
+  the shard row until P2.E22.T02 moves `edgeX`, and DESIGN 16.4's other bucket effects are left to their own systems,
+  which read `opening.from`. Winners are accounts whose own season lean, read like a day's lean, lands in the season's
+  bucket (Held's include accounts that fed and broke equally), with at least one full vote of weight; awards are per
+  account, carried by every character of it including later ones: the title (Seedbearer, Keeper of the Middle,
+  Anchorbreaker), earned once in the reputation through `earnTitle`, and the glyph `season_<n>_<bucket>` (the
+  philosophy's word in Cartographer signs ringed by the season numeral, worn on suit and hull; the art is the client's).
+  Awards live in `season_awards` and a `seasonAwards` component saved with the reputation (`writtenWith`). The season's
+  end, awards, chronicle and the shard row move land in one insert-if-absent transaction; a vote is stamped with the
+  clock reading the meter ran to; a join that read awards just before a season's end was written still receives that
+  award. A chronicle (meter path, bucket, winning philosophy, darkened systems, next opening, at most 64 finds) exists
+  only for a finished season, served at `GET /seasons/:season/chronicle` to any signed-in account. Migration 0005 is
+  chained after 0004 with a later journal time, so databases already at 0004 receive it. → DESIGN 16.4, server-held.
+  Open: no shard lease (two processes on one shard both write the season's end; P3.E37); a shard first booted over
+  eight weeks ago rolls its missed seasons with no meter play (dev databases only); `writeSeasonEnd` loads a season's
+  votes into memory (a SQL GROUP BY later); daily actives count joins, not presence; one save writing two season ends
+  gives a racing join only the later; `daily_actives` is never pruned; the chronicle's first finds wait for P2.E22.T05.

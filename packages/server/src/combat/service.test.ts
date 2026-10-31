@@ -285,6 +285,35 @@ describe('a shot', () => {
     expect(shot(3, t0 + LEAD_MAX_S)).toMatchObject({ result: 'hit', target: c.id });
   });
 
+  it('passes through a creature the shooter’s phase hides from it (another event instance’s) to the one behind it', () => {
+    const s = setup();
+    const near = s.creature(docile(s.w.species), 30);
+    const far = s.creature(docile(s.w.species), 30, 0.5);
+    const a = s.pilot('a', add(s.over(near.at(), 60), s.along(near.at()), -60), near.at());
+    const b = s.pilot('b', add(s.over(near.at(), 80), s.along(near.at()), -80), near.at());
+    // b's event instance holds the near one; a is in the shared world, b in it
+    const place = { key: 'Hollow tide', frame: s.w.frame, center: near.at(), radius: 500 };
+    const phase = s.w.zone.phases.phaseFor(b.viewer, 'event', place);
+    s.w.zone.phases.adopt(phase.id, near.id);
+    s.w.zone.step((s.w.time += 0.05));
+    expect(a.fire(far.at())).toMatchObject({ result: 'hit', target: far.id });
+    expect(s.w.zone.combat.creatureHealth(near.id)!.hp).toBe(s.w.zone.combat.creatureHealth(near.id)!.max);
+    s.w.time += 1;
+    expect(b.fire(near.at())).toMatchObject({ result: 'hit', target: near.id });
+  });
+
+  it('tells listeners of every hit that took health, and of the kill', () => {
+    const s = setup();
+    const heard: string[] = [];
+    const off = s.service.subscribe((n) => heard.push(n.kind === 'hit' ? `hit:${n.report.attacker}:${n.report.dealt}` : n.kind));
+    const c = s.creature(docile(s.w.species), 30);
+    const a = s.pilot('a', s.over(c.at(), 60), c.at());
+    a.fire(c.at());
+    s.w.zone.combat.applyDamage(a.entity, c.id, { base: 1e6, kind: 'weapon' });
+    expect(heard).toEqual([`hit:a:${GUN.damage}`, `hit:a:${s.w.zone.combat.creatureHealth(c.id)!.max - GUN.damage!}`, 'killed']);
+    off();
+  });
+
   it('is never at a player (PvP is P2.E17.T01), nor blocked by one', () => {
     const s = setup();
     const c = s.creature(docile(s.w.species), 30);
