@@ -25,6 +25,7 @@ import {
   poseProblem,
   PROGRESS,
   RECIPES,
+  REPUTATION,
   SHIP,
   ShipLoadouts,
   SKILLS,
@@ -74,10 +75,11 @@ describe('character components', () => {
   it('gives a new character its level, the Lark, the starting kit with the Lark’s one pod, and a berth at home', () => {
     const { registry } = world();
     const d = registry.decode(stored({}, { level: 3, xp: 120 }), CHARACTER);
-    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, POSE, CODEX, RECIPES]);
+    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, POSE, CODEX, RECIPES, REPUTATION]);
     expect(d.values.get(PROGRESS)).toEqual({ level: 3, xp: 120, homeSystem: HOME });
     expect(d.values.get(CODEX)).toEqual({ worlds: {} });
     expect(d.values.get(RECIPES)).toEqual({ known: ['warp_cell', 'pulse_fuel_cell', 'oxygen_cartridge', 'sodium_cartridge', 'flak_ammo'] });
+    expect(d.values.get(REPUTATION)).toEqual({ rep: {}, titles: [] });
     expect(d.values.get(SHIP)).toEqual(DEFAULT_SHIP);
     const inv = d.values.get(INVENTORY) as Inventory;
     expect(inv.pods).toHaveLength(1);

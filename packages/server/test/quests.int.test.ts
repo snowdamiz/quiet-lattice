@@ -2,8 +2,8 @@
 // DESIGN 14.8's "The Apothecary's Sodium" is played end to end by bot clients and the events the systems that do not
 // exist yet will send (a board's offer, mining's sodium, the NPC framework's interaction): accepted by request, collected
 // from the inventory, delivered in the apothecary's shop, an instanced step in Belost's market whose apothecary only the party on it sees
-// (a player on it alone has its own; a passer-by sees neither), answered in dialogue, rewarded; and a character's quests
-// as it left them after the server restarts, mid-quest and finished.
+// (a player on it alone has its own; a passer-by sees neither), answered in dialogue, rewarded (Belost's reputation
+// included, P2.E18.T01); and a character's quests as it left them after the server restarts, mid-quest and finished.
 import { countOf } from '@astra/shared/inventory';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import { BELOST_SYSTEM, getQuest, resolvePlace, type Place, type QuestOp } from '@astra/shared/quests';
@@ -156,9 +156,15 @@ describe('quests over the wire', () => {
     expect(done.quests.flags).toEqual(['heard_the_lake_stone']);
     expect(a.sock.received).toContainEqual({ t: 'event', event: { kind: 'quest', questId: APOTHECARY, step: 2, status: 'completed' } });
     await waitFor(() => a.sock.received.some((m) => m.t === 'inventory' && m.inventory.units === units + 600), 5000, 'the units');
-    // Hazard Weave's unlock reaches the skill service through the quest's route; reputation waits for P2.E18.T01
+    // Hazard Weave's unlock reaches the skill service through the quest's route, Belost's 30 the reputation (P2.E18.T01)
     expect(server.ws.skills.get(a.characterId)!.unlocked).toContain('hazard_weave');
-    expect(server.quests.stateOf(a.characterId)!.owed).toEqual([{ kind: 'rep', quest: APOTHECARY, faction: 'belost', amount: 30 }]);
+    expect(server.quests.stateOf(a.characterId)!.owed).toEqual([]);
+    expect(server.ws.reputation.standing(a.characterId, 'belost')).toBe(30);
+    await waitFor(
+      () => a.sock.received.some((m) => m.t === 'reputation' && m.reputation.factions.some((f) => f.faction === 'belost' && f.rep === 30)),
+      5000,
+      'the reputation',
+    );
     expect(a.phase()).toBeNull();
     expect(a.zone.entity(theirs!)).toBeDefined();
     expect((await b.ask({ op: 'choose', quest: APOTHECARY, step: 'lake', choice: 'nothing' })).quests.flags).toEqual([]);
@@ -186,7 +192,8 @@ describe('quests over the wire', () => {
     expect(a2.first.quests).toMatchObject({ done: { [APOTHECARY]: 1 }, flags: ['heard_the_lake_stone'], active: { first_jobs: { step: 'site' } } });
     expect(server.ws.skills.get(a.characterId)!.unlocked).toContain('hazard_weave');
     expect(server.ws.inventory.get(a.characterId)!.units).toBe(units + 600);
-    expect(server.quests.stateOf(a.characterId)!.owed).toHaveLength(1);
+    expect(server.quests.stateOf(a.characterId)!.owed).toEqual([]);
+    expect(server.ws.reputation.standing(a.characterId, 'belost')).toBe(30);
     // finished once, it is not on offer again
     expect(server.quests.offer(a.characterId, APOTHECARY)).toBe('done');
     c2.sock.close();

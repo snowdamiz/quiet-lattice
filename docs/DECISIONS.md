@@ -784,3 +784,31 @@ Format: task id, question → choice → why.
   sheet is removed. Outside the listed files: api.js (`devLogin`, `retryAfter`), capture.ts (`expectedErrors`),
   online.ts, the online specs (shared helpers), HUD.js and Game.js (one condition). → The Phase 1 exit's "log in, create
   characters of different peoples" works through the real server.
+- **Plan 0.1 step 5** What happens to a task that fails four visual grades? → one more grade; a PASS merges, and a fifth
+  REVISE merges too, with its open notes filed as follow-up tasks in the plan. → The owner's call (2026-10-31): the three
+  tasks escalated at four REVISE rounds (P1.E07.T02, P1.E04.T02, P1.E15.T03) had passed code review and gated most of the
+  remaining Phase 1 work, so the bar stays and the open notes become tracked work instead of a stall.
+- **P2.E18.T01** Rep model (server `reputation/*`, shared `reputation`, persistence `writtenWith`, protocol 14,
+  ARCHITECTURE §24) → standing is 0–1000 per faction, clamped and rounded to whole points (so ×1.5 rounds half up); a
+  faction with no entry is at 0. Ranks sit at the data's 200/500/800, and a rank and its unlocks are lost when standing
+  falls below the threshold. A rank's title is earned the first time its threshold is reached (the chains that would award
+  it do not exist yet), kept for good, stored by faction and rank id with its shown name from the data. A quest title that
+  names a rank's title becomes that rank's title, looked up first among the factions the quest gives reputation to, else
+  the one rank of that name in the table (Guest, Neighbour and Claimant need the faction); a quest title is held once by
+  name. At most 128 titles (rank titles past that are not kept; a quest's is logged as an error and dropped from the owed
+  list); a stored value names at most 64 factions, more refuses the join. Opposed effects are `REP_ACTS` data only
+  (`convoy_escorted` Compact +50 / Reaches −25, `convoy_raided` the reverse; DESIGN gives no amounts), each act carrying
+  its own Count tag; a plain grant moves one faction. The underdog ×1.5 applies only to counted gains, never to losses or
+  quest reputation. No decay, no daily cap. Owed reputation and titles from P1.E09.T01 settle in `QuestRuntime.joined`,
+  before auto quests, oldest first; exactly-once comes from components declaring `writtenWith` partners (reputation with
+  the quest log): if one of a pair cannot be captured, neither is written and both retry at the next save, and leaving
+  play then loses the changes of both. Reconcile drops standing and rank titles for factions no longer in the table (one
+  warning per character); an unreadable value refuses the join; the component loads after `recipes` and before `quests`.
+  Protocol 14: a `reputation` state after `recipes` on join and after every change, one `rank` event per change (from the
+  rank before to the rank after, however many thresholds it crossed), one `title` event per title, no client message.
+  `set-rep` takes a known faction and 0–1000, in play through the service and out of play through `edit()`, and an
+  admin-set standing earns the titles of the ranks it rises through. The client keeps the last view and 16 rank or title
+  events and has no UI until P2.E18.T02. Outside the brief: server.ts, cli/format.ts, cli/direct.ts, two tests and a
+  comment in shared quests/engine.ts. → DESIGN 14.4's ranks and titles, server-held. Open: the skills component loads
+  before reputation, so P2.E18.T03's Void gate must read reputation only once the character is in play; P1.E09.T01's 256
+  `paid` records mean re-accepting an abandoned quest after 256 others re-pays its step reputation (a P1.E09 follow-up).

@@ -46,7 +46,8 @@ export interface QuestContext {
   at?: AtInfo | null;
   /** what its inventory holds now, by item: a collect step it enters is checked against it */
   held?: Readonly<Record<string, number>>;
-  /** its rank with a faction, for rank prerequisites (until the rep model exists, none: such quests stay closed) */
+  /** its rank with a faction (a rank's id, or null), for rank prerequisites (the server's reputation service; without it,
+   * none: such quests stay closed) */
   rank?(faction: FactionId): string | null;
 }
 
