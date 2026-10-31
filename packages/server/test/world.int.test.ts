@@ -121,9 +121,10 @@ describe('world service', () => {
       s.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
       s.send({ t: 'join', characterId: character.id });
       await waitFor(() => s.received.some((m) => m.t === 'quests'), 5000, 'quests');
-      // `world` comes right after `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `party`
-      // (P1.E15.T01) and quest state (P1.E09.T01) follow, the last after the news that a new character is given First Jobs
-      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world', 'inventory', 'skills', 'party', 'event', 'event', 'quests']);
+      // `world` comes right after `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `recipes`
+      // (P1.E13.T05), `party` (P1.E15.T01) and quest state (P1.E09.T01) follow, the last after the news that a new
+      // character is given First Jobs
+      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world', 'inventory', 'skills', 'recipes', 'party', 'event', 'event', 'quests']);
       const [welcome, world] = s.received.splice(0) as [
         Extract<(typeof s.received)[number], { t: 'welcome' }>,
         Extract<(typeof s.received)[number], { t: 'world' }>,

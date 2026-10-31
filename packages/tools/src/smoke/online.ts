@@ -89,6 +89,7 @@ export async function startOnline(): Promise<Online> {
   let out = '';
   const adminPort = await freePort();
   const adminSecret = randomBytes(16).toString('hex');
+  // (with the dev login on, which the dev scenarios' `?dev` signs in through: P1.E04.T05)
   const env = {
     ...process.env,
     DATABASE_URL: dbUrl,
@@ -96,6 +97,7 @@ export async function startOnline(): Promise<Online> {
     HOST: '127.0.0.1',
     LOG_LEVEL: 'warn',
     NODE_ENV: 'development',
+    ASTRA_DEV_LOGIN: '1',
     ASTRA_ADMIN_PORT: String(adminPort),
     ASTRA_ADMIN_SECRET: adminSecret,
   };

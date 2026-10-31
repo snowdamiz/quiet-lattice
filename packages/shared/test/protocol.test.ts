@@ -82,6 +82,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'fire', seq: 4, time: 3600.75, frame: '424242:2', aim: [0, -0.6, -0.8] },
   { t: 'beacon', op: { op: 'answer', id: 3 } },
   { t: 'analyze', seq: 1, time: 3600.5, target: 12 },
+  { t: 'craft', seq: 2, op: { op: 'make', recipe: 'warp_cell', count: 3, at: 'station' } },
 ];
 
 /** A character's quest state as the server sends it. */
@@ -190,6 +191,8 @@ const serverSamples: ServerMessage[] = [
       at: 3600.5,
     },
   },
+  { t: 'craft', seq: 2, op: 'make', recipe: 'flak_ammo', result: 'made', item: 'flak_ammo', count: 150 },
+  { t: 'recipes', known: ['warp_cell', 'pulse_fuel_cell', 'torpedo'] },
 ];
 
 const http = {
@@ -204,10 +207,10 @@ describe('protocol: version', () => {
   // 1: the first protocol (P1.E02.T08); 2: inventory (P1.E06.T04); 3: social, chat and parties (P1.E15.T01); 4: creatures'
   // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
   // (P1.E13.T01); 9: meters (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid beacons (P1.E15.T02); 12: analysis and
-  // the codex (P1.E08.T04). A branch that changes a message bumps the version, adds its line to the history under
-  // PROTOCOL_VERSION and updates this.
-  it('is version 12, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(12);
+  // the codex (P1.E08.T04); 13: crafting (P1.E13.T05). A branch that changes a message bumps the version, adds its line to
+  // the history under PROTOCOL_VERSION and updates this.
+  it('is version 13, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(13);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

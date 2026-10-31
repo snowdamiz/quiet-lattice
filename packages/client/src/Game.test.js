@@ -262,6 +262,10 @@ describe('Game: the world clock', () => {
     const g = fake({ time: 3 });
     g.advanceClock(0.5);
     expect([g.time, g.renderTime]).toEqual([3.5, 3.5]);
+    // joined, its welcome not yet taken (the account screens hold it while the screen goes dark): still the title's
+    const held = fake({ time: 3, mode: 'title', net: { joined: true, serverTime: () => 2.6e7 } });
+    held.advanceClock(0.5);
+    expect([held.time, held.renderTime]).toEqual([3.5, 3.5]);
   });
 
   it('eases toward the server clock, the render clock advancing by the frames alone', () => {

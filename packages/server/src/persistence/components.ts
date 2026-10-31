@@ -2,8 +2,8 @@
 // home system, in the row's columns), the skill web (P1.E07.T01, src/skills), the ship loadout, the inventory (its layout
 // re-derived from the ship and the owned nodes on load), where the character is (system, pose, frame and movement mode,
 // read from its zone entity, and on foot, where it left its ship; a saved pose movement authority would not accept is not
-// restored), its codex (the species it has analyzed, P1.E08.T04, src/codex) and its quests (held by the quest runtime,
-// P1.E09.T01); see ARCHITECTURE §8.
+// restored), its codex (the species it has analyzed, P1.E08.T04, src/codex), the recipes it knows (P1.E13.T05,
+// src/crafting) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
@@ -16,6 +16,8 @@ import { tierOfGalaxySystem } from '@astra/shared/world';
 import { z } from 'zod';
 import { CODEX, codexComponent } from '../codex/component.ts';
 import { CodexService } from '../codex/service.ts';
+import { RecipeBook } from '../crafting/book.ts';
+import { RECIPES, recipesComponent } from '../crafting/component.ts';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
 import { padPose, planGround, poseProblem as movementProblem } from '../sim/movement/index.ts';
 import { SKILLS, skillsComponent } from '../skills/component.ts';
@@ -29,7 +31,7 @@ import { INPUT_LIMITS } from '../zones/zone.ts';
 import { ComponentRegistry, type CharacterComponent, type LoadContext, type PersistenceLog } from './registry.ts';
 
 export const PROGRESS = 'progress';
-export { CODEX, SKILLS };
+export { CODEX, RECIPES, SKILLS };
 export const SHIP = 'ship';
 export const INVENTORY = 'inventory';
 export const POSE = 'pose';
@@ -322,13 +324,15 @@ export interface CoreComponentDeps {
   /** Every character's codex; when none is given, one is made over this progress and skill service (the gateway finds it
    * in the registry: `codexServiceIn`). */
   codex?: CodexService;
+  /** Every character's recipes; when none is given, the registry makes its own (the gateway finds it: `recipeBookIn`). */
+  recipes?: RecipeBook;
   /** the quest runtime; without one (tests of the other components), no quests component */
   quests?: QuestRuntime;
   log?: PersistenceLog;
 }
 
 /** A registry holding Phase 1's components in load order: the skills read the level; the ship and the inventory read the
- * owned nodes; the inventory reads the ship; the codex reads nothing; the quests come last. */
+ * owned nodes; the inventory reads the ship; the codex and the recipes read nothing; the quests come last. */
 export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
   const skills = deps.skills ?? new SkillService({ inventory: deps.inventory, ships: deps.ships, progress: deps.progress });
   const codex = deps.codex ?? new CodexService({ progress: deps.progress, skills, log: deps.log });
@@ -338,6 +342,7 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(shipComponent(deps.ships))
     .register(inventoryComponent(deps.inventory, { log: deps.log }))
     .register(poseComponent(deps.zones, deps.clock, deps.movement ?? true))
-    .register(codexComponent(codex, { log: deps.log }));
+    .register(codexComponent(codex, { log: deps.log }))
+    .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log }));
   return deps.quests ? registry.register(questsComponent(deps.quests)) : registry;
 }

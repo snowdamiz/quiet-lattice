@@ -711,3 +711,76 @@ Format: task id, question → choice → why.
   Protocol 12. → The codex and its XP are the server's. Open: two creature hit-sphere models (analysis's aim pick and
   combat's sphere) to unify with P1.E08.T09; XP granting is in three places (quests, combat, codex); bonding a world
   boss is P1.E07.T07's call.
+- **P1.E14.T12** Compressed textures and geometry in exported models (`tools/blender/artlib/{ktx,meshopt}.py`,
+  `tools/src/art/{ktx,meshopt}.ts`, client `gltfLoader()`) → after Blender writes a .glb, every material map becomes
+  KTX2 (Basis Universal) under `KHR_texture_basisu`, required, no PNG fallback, full mip chains: UASTC (quality 2, RDO
+  lambda 4, Zstd 18) for normal maps and extension slots, normals renormalised per mip; ETC1S (quality 128, effort 2)
+  for base colour, emissive, AO and metallic-roughness; sheen and specular colour maps sRGB; PNG and JPEG sources; a map
+  used as both colour and data is encoded twice; byte-identical maps of one colour space stored once. Geometry is then
+  meshopt-compressed at "high" (`EXT_meshopt_compression`, required) with `KHR_mesh_quantization` (positions 14 bits
+  per mesh by default, settable per family; texture coordinates the family's largest texture size + 2 bits, 12–16),
+  materials never merged across variants, replaced skins pruned; creatures and flora are compressed without
+  quantization so the vertex rig (`_limb`, `_pivot`, `_glow`) and colour masks stay exact floats; the step refuses to
+  write if any empty (marker, pivot, LOD node) moved, vanished or took a mesh. Families opt out in `families.json`;
+  `--no-compress` writes only to an `--out-dir`, never into `public/models`. The encoder is KTX-Software `ktx` 4.4.2,
+  fetched for darwin and linux (no Windows build) with pinned SHA-256s checked before anything is unpacked or run (`KTX`
+  and `ART_KTX_JOBS` override; CI's art job validates `.blend` files and never needs it); glTF-Transform 4.5.1 and
+  meshoptimizer 1.3.0 are pinned. The validator and turntable import a copy with maps decoded to PNG and check KTX2 by
+  the extension, UASTC normals, colour spaces, full mips, required extensions, compressed geometry, and each variant's
+  GPU texture memory against `families.json` `gpuTextureMB` (hero 512, 2k classes 128, 1k classes 32, at 8 bits a
+  texel with mips; DESIGN gives none); demo exports are exempt. The client sets up one KTX2Loader (transcoder in
+  `public/basis`, kept equal to three's by a test) and three's MeshoptDecoder; every model loads through `gltfLoader()`;
+  `recolor` converts positions to float first; the review readout reports texture GPU memory. Measured on the 4k Lark
+  (three variants, 49 maps): 572 MB as PNG → 106.8 MB shipped (99.7 MB textures, 6.5 MB geometry from 27.9), GPU
+  320/363/363 MB a variant, worst 1.44% of pixels over 16/255 in 36 review captures. The task's 60 MB target (the
+  orchestrator's estimate) was amended to 110 MB: no codec setting reaches 60 MB while normals stay UASTC (geometry alone
+  was 28 MB; all-ETC1S 73 MB). Levers left for the art owner: one 4k atlas per variant (a per-hero texel budget, not
+  adopted); remote-hull texture streaming by screen size moved to P1.E16.T03. → Hero assets ship at 4k within the GPU
+  budget. Open: nothing validates that creature and flora exports are unquantized beyond the families setting; the hull
+  (P1.E12.T02) and body (P1.E05.T01) branches re-export through this before they merge.
+- **P1.E13.T05** Basic fabricator (`@astra/shared/crafting`, `server/src/crafting`, client `ui/Fabricator.js`,
+  ARCHITECTURE §23) → recipes are stackable `recipe_<id>` items (kind `recipe`, one per recipe in the table, generated
+  text); using one teaches it for good without a fabricator, refused and kept if already known. The `recipes` component
+  (v1 `{known}`) defaults to the starting recipes for new characters and those saved before it, drops unknown ids with
+  one warning, refuses an unreadable value; at most 256 known, ids up to 48 characters. Every character knows the five
+  Phase 1 consumables (warp cell, pulse fuel cell, oxygen and sodium cartridges, flak ammo) from the start, although
+  DESIGN 15.7 makes recipes vendor items: no vendors exist until P2.E20.T01, and the warp cell recipe replaces the
+  1,800-unit purchase. Crafts are server-decided and instant: materials from the suit then the cargo, output to the suit
+  then the cargo, `no_room` judged after the materials free their slots, all or nothing through
+  `InventoryService.transact`; count 1–100; rate 4 at once then 2/s per character, spent by every refusal after the
+  stale-seq and in-play checks. The station fabricator is reached docked on any pad at the zone's Waystation, or on foot
+  within 4.5 m of the kiosk at shared `STATION_FABRICATOR` (trade deck, centre (−30, 7, −80)); a Waystation makes Tier
+  0–2 item recipes (so known module recipes and torpedoes too). The ship fabricator works aboard in any mode, or on foot
+  within 9 + 5 m of the parked ship movement authority holds (refused on foot without it), and makes recipes with a
+  `field` entry at the zone's tier (pulse fuel cell, cartridges, flak; torpedoes from Tier 2); warp cells only at a
+  station. The client names the fabricator (`at`); K opens the one at hand, E at the kiosk. Protocol 13 adds `craft`
+  both ways and `recipes {known}` (after `skills` on join; before a lesson's answer). The demo's 1,800-unit warp cell
+  purchase is deleted, with a `gate:removed` rule: until P1.E13.T06 online players get warp cells only from the starting
+  kit and crash sites. Crafted pulse fuel cells (P1.E07.T02's `refillCharge`), cartridges (whichever task moves life
+  support to the server) and flak ammo (the Flak Cannon) cannot be used yet; warp cells are spent on the client until
+  P1.E12.T05. Station.js gained the box kiosk (outside the task's files). → DESIGN 15.7's consumables line, server-run.
+  Open: capital, sanctuary and Scrapyard fabricators and a recipe-table version guard (P2.E20.T01); the modular
+  Waystation keeps the terminal at `STATION_FABRICATOR` (P1.E11.T02); DESIGN 15.7 may want a note that the Phase 1
+  consumables are known from the start.
+- **P1.E04.T05** Login and character screens (client `ui/Account.js`, `net/{api,session}.js`, ARCHITECTURE §9) → Play
+  opens the account flow in the title's left column: sign in or register → the character list (name, people, level,
+  home system; the summary carries no current location) → a new character (name plus one of the three peoples, Thalune
+  preselected, look `{0,0,0,0}`; the server needs a people now, though P1.E05.T05 builds the creator) → enter. A new
+  account lands on its empty list. A DOM-free `AccountFlow` allows one request at a time, drops answers that arrive
+  after the player moved on, shows the server's refusals on their field (Retry-After on a rate limit), refuses a new
+  character on a full account before asking, and offers to retry a list that failed to load; there is no character
+  delete (no endpoint). Sessions: the JWT in tab-scoped sessionStorage, no refresh endpoint, a new sign-in asked a minute
+  before `exp`, an expired session cleared on Play, a 401 or an `auth` refusal clearing it and returning to sign-in; the
+  typed password is cleared once sent, on step change and on close, and sent only to the login or register endpoint.
+  Entering: a failure before the welcome returns to the list with the reason; the first welcome and every message after
+  it are held, in order and each in its own try/catch, until the title has faded to black (at most 10 s; Esc and close
+  are ignored once held), the title keeping its own clock meanwhile; the world then fades up. Dev scenarios (`#foot`,
+  `#fly`, …) stay the offline sandbox by default; `?dev` (`=<name>`, `&people=<id>`) goes through POST /auth/dev, then
+  hello and join, starting where the server holds the character (`#foot`/`#dock` get out of the ship; anywhere else is
+  the CLI's teleport); dev login is compiled out of production builds and the smoke harness starts its server with
+  `ASTRA_DEV_LOGIN=1`. Keys: Play focused when the title is ready, Enter submits, Esc goes back a step, arrows walk
+  rows, N makes a character; the Controls sheet lists the chat keys. The arrival darkens the top HUD band under the
+  banner and the location line and compass carry their own plates; the pause menu has a shade. The P1.E04.T01 sign-in
+  sheet is removed. Outside the listed files: api.js (`devLogin`, `retryAfter`), capture.ts (`expectedErrors`),
+  online.ts, the online specs (shared helpers), HUD.js and Game.js (one condition). → The Phase 1 exit's "log in, create
+  characters of different peoples" works through the real server.
