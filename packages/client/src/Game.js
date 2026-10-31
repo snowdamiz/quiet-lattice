@@ -1098,8 +1098,6 @@ export class Game {
       else if (f.isGas) lines.push('Warning: not landable');
       this.hud.showBanner(f.name.toUpperCase(), `${p.label}${f.kind === 'moon' ? ' Moon' : ' Planet'}`, lines);
       this.audio.play('discovery');
-      const reward = 250 + Math.floor(Math.random() * 400);
-      this.inventory.units += reward;
     }
   }
 
