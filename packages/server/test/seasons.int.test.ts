@@ -22,7 +22,7 @@ import { parseConfig } from '../src/config.ts';
 import { DAY_S, dayOf } from '../src/count/meter.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
 import { runMigrations } from '../src/db/migrate.ts';
-import { characters, countDays, dailyActives, seasonAwards, seasonChronicles, shards } from '../src/db/schema.ts';
+import { characters, countDays, countVotes, dailyActives, seasonAwards, seasonChronicles, shards } from '../src/db/schema.ts';
 import { readChronicle } from '../src/seasons/store.ts';
 import { DEFAULT_SHARD_EPOCH_MS } from '../src/world/clock.ts';
 import { worldKey, WorldService, type SeasonEnded, type WorldMirrorRecord } from '../src/world/service.ts';
@@ -364,4 +364,43 @@ describe('seasons', () => {
       await server.close();
     }
   }, 60_000);
+
+  it("counts only the votes cast inside a season toward its winners, though the vote that ends it is cast after midnight and saved with its end", async () => {
+    const shard = uniqueShard();
+    const end = (dayOf((Date.now() - DEFAULT_SHARD_EPOCH_MS) / 1000) + 30) * DAY_S;
+    await database.db.insert(shards).values({
+      id: shard,
+      epoch: new Date(DEFAULT_SHARD_EPOCH_MS),
+      lastTime: end - 3600,
+      season: 1,
+      seasonStart: end - SMALL_SEASON_LENGTH_S,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+    });
+    let wall = DEFAULT_SHARD_EPOCH_MS + (end - 3600) * 1000;
+    let mono = 0;
+    const wallNow = () => wall;
+    const world = await WorldService.open({ store: pgShardStore(database.db, shard, { wallNow }), mirror: redis, wallNow, monoNow: () => mono });
+    try {
+      const [fed, held] = [randomUUID(), randomUUID()];
+      expect(world.countAction(fed, 'convoy-escorted', 'feed')).toBe(true);
+      expect(world.countAction(held, 'wall-choice', 'hold')).toBe(true);
+      await world.flush();
+      mono += 2 * HOUR_MS;
+      wall += 2 * HOUR_MS;
+      // 01:00, before any tick has rolled the midnight: this vote rolls the season itself, and is the next season's. Were it
+      // counted toward the old one, `fed`'s feed and break would balance to the Held bucket's winners
+      expect(world.countAction(fed, 'convoy-raided', 'break')).toBe(true);
+      await world.flush();
+      expect(world.state()).toMatchObject({ season: 2, seasonStart: end });
+      expect((await readChronicle(database.db, shard, 1))!).toMatchObject({ bucket: 'held', awarded: 1 });
+      expect(await awardedAccounts(shard, 1)).toEqual([held]);
+      const raid = await database.db
+        .select({ at: countVotes.at, day: countVotes.day })
+        .from(countVotes)
+        .where(and(eq(countVotes.shardId, shard), eq(countVotes.accountId, fed), eq(countVotes.action, 'convoy-raided')));
+      expect(raid).toEqual([{ at: end + 3600, day: dayOf(end) }]);
+    } finally {
+      await world.close();
+    }
+  }, 30_000);
 });
