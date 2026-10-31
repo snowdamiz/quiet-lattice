@@ -133,19 +133,31 @@ const FOLD: Readonly<Record<string, string>> = {
   ƚ: 'l',
   ƶ: 'z',
 };
+/** The ligatures' other reading: players write "Fæggot" for "Faggot" as often as for "Faeggot". */
+const FOLD_SHORT: Readonly<Record<string, string>> = { ...FOLD, æ: 'a', œ: 'o' };
+const FOLDS = [FOLD, FOLD_SHORT];
 /** Digits read as the letters players write with them. */
-const LOOKALIKE: Readonly<Record<string, string>> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '8': 'b' };
+const LOOKALIKE: Readonly<Record<string, string>> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '6': 'g', '7': 't', '8': 'b', '9': 'g' };
 
-/** What the filter compares: lower case, accents stripped, look-alike letters and digits as letters, nothing but letters
- * and digits. */
-export function nameSkeleton(s: string): string {
+function skeleton(s: string, fold: Readonly<Record<string, string>>): string {
   return s
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .toLowerCase()
-    .replace(/[\u00c0-\u024f]/g, (c) => FOLD[c] ?? c)
+    .replace(/[\u00c0-\u024f]/g, (c) => fold[c] ?? c)
     .replace(/[0-9]/g, (d) => LOOKALIKE[d] ?? d)
     .replace(/[^a-z0-9]/g, '');
+}
+
+/** What the filter compares: lower case, accents stripped, look-alike letters and digits as letters, nothing but letters
+ * and digits. Ligatures are spelt out (æ as "ae"); `nameSkeletons` also has them as their first letter. */
+export function nameSkeleton(s: string): string {
+  return skeleton(s, FOLD);
+}
+
+/** Every reading of a string's skeleton: one per way of reading a ligature (æ as "ae" or "a", œ as "oe" or "o"). */
+export function nameSkeletons(s: string): string[] {
+  return [...new Set(FOLDS.map((fold) => skeleton(s, fold)))];
 }
 
 /** Latin letters: Basic Latin, Latin-1's and Latin Extended-A and B's that the skeleton reads as letters (a narrow script,
@@ -155,7 +167,7 @@ const LETTER = (() => {
   let set = 'A-Za-z';
   for (let c = 0xc0; c <= 0x24f; c++) {
     const ch = String.fromCharCode(c);
-    if (/^[a-z]+$/.test(nameSkeleton(ch))) set += `\\u${c.toString(16).padStart(4, '0')}`;
+    if (nameSkeletons(ch).every((k) => /^[a-z]+$/.test(k))) set += `\\u${c.toString(16).padStart(4, '0')}`;
   }
   return set;
 })();
@@ -173,28 +185,45 @@ function runTogether(s: string): string {
   return s.replace(/(.)\1+/g, '$1');
 }
 
-const BLOCKED_WORDS = new Set(NAME_BLOCKED_WORDS.map(nameSkeleton));
-const RESERVED_WORDS = new Set(NAME_RESERVED_WORDS.map(nameSkeleton));
-const RESERVED = new Set(NAME_RESERVED.map(nameSkeleton));
+const BLOCKED_WORDS = new Set(NAME_BLOCKED_WORDS.flatMap(nameSkeletons));
+const RESERVED_WORDS = new Set(NAME_RESERVED_WORDS.flatMap(nameSkeletons));
+const RESERVED = new Set(NAME_RESERVED.flatMap(nameSkeletons));
+
+/** Whether any run of neighbouring words, written together, is in `set` ("Ad min", "Ad-min Rock" for "admin"). */
+function holdsRun(words: readonly string[], set: ReadonlySet<string>): boolean {
+  for (let i = 0; i < words.length; i++) {
+    for (let j = i, run = ''; j < words.length; j++) {
+      run += words[j];
+      if (set.has(run)) return true;
+    }
+  }
+  return false;
+}
 
 /**
  * The moderation filter (DESIGN 14.5): the name tidied, or why it is refused. A name is DISCOVERY_NAME_RULES' length,
  * words of Latin letters and digits with one space, apostrophe or hyphen between two, and at least two letters; none of
- * its forms (its skeleton, with runs of a letter as one) holds a blocked fragment, none of its words nor the whole of it
- * run together is a blocked word; and, unless `reserved` is false (an admin's rename), none of its words is a reserved
- * word and the whole of it is not a reserved name. The rules are data (`data/names.ts`).
+ * its forms (its skeleton, with runs of a letter as one, a ligature read either way) holds a blocked fragment, none of
+ * its words nor the whole of it run together is a blocked word; and, unless `reserved` is false (an admin's rename),
+ * no run of its words written together is a reserved word and the whole of it is not a reserved name. The rules are
+ * data (`data/names.ts`).
  */
 export function checkDiscoveryName(raw: string, opts: { reserved?: boolean } = {}): NameCheck {
   const name = tidyName(raw);
   const refuse = (reason: NameRefusal): NameCheck => ({ ok: false, reason });
   if (name.length < DISCOVERY_NAME_RULES.minLength || name.length > DISCOVERY_NAME_RULES.maxLength) return refuse('length');
   if (!NAME_SHAPE.test(name) || (name.match(LETTERS)?.length ?? 0) < DISCOVERY_NAME_RULES.minLetters) return refuse('characters');
-  const whole = nameSkeleton(name);
-  const forms = [whole, runTogether(whole)];
-  if (NAME_BLOCKED_FRAGMENTS.some((f) => forms.some((s) => s.includes(f)))) return refuse('blocked');
-  const words = name.split(/[ '-]/).map(nameSkeleton).filter(Boolean);
-  if ([...words, whole].some((w) => BLOCKED_WORDS.has(w) || BLOCKED_WORDS.has(runTogether(w)))) return refuse('blocked');
-  if (opts.reserved !== false && (words.some((w) => RESERVED_WORDS.has(w)) || RESERVED.has(whole))) return refuse('reserved');
+  const readings = FOLDS.map((fold) => ({
+    whole: skeleton(name, fold),
+    words: name
+      .split(/[ '-]/)
+      .map((w) => skeleton(w, fold))
+      .filter(Boolean),
+  }));
+  const any = (test: (r: { whole: string; words: string[] }) => boolean) => readings.some(test);
+  if (any(({ whole }) => NAME_BLOCKED_FRAGMENTS.some((f) => whole.includes(f) || runTogether(whole).includes(f)))) return refuse('blocked');
+  if (any(({ whole, words }) => [...words, whole].some((w) => BLOCKED_WORDS.has(w) || BLOCKED_WORDS.has(runTogether(w))))) return refuse('blocked');
+  if (opts.reserved !== false && any(({ whole, words }) => holdsRun(words, RESERVED_WORDS) || RESERVED.has(whole))) return refuse('reserved');
   return { ok: true, name };
 }
 
