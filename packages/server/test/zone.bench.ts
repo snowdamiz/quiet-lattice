@@ -43,7 +43,11 @@
 //
 // The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
 // machine does not inflate (and in the station trial, the tick with its 25 players' input checks). Wall time per tick is
-// printed beside it for information, with the load average.
+// printed beside it for information, with the load average. Even CPU time stretches on a machine running far more
+// processes than it has cores (cache and memory contention, SMT siblings), so a budget is judged only when the 1-minute
+// load average, read before and after the trial, is at most MAX_LOAD_PER_CPU times the CPU count; above it the budget
+// checks are reported as skipped, with the load, and do not fail the run. A bug that is not about the budget (honest
+// inputs corrected, a missing entity) still fails at any load.
 import { cpus, loadavg } from 'node:os';
 import { STATION_LAYOUT } from '@astra/shared/data';
 import { encodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
@@ -71,6 +75,9 @@ const SESSIONS = 25;
 const WARMUP_TICKS = 300;
 const TICKS = 2000;
 const BUDGET_P95_MS = 10;
+/** Budgets are judged only while the 1-minute load average is at most this many times the CPU count. */
+const MAX_LOAD_PER_CPU = 2;
+const MAX_LOAD = MAX_LOAD_PER_CPU * cpus().length;
 /** One input's check, where it is dearest, may cost this much CPU (its median over batches; its p95 is printed): 200
  * players' inputs a tick then take at most half the tick's budget. */
 const CHECK_BUDGET_US = 25;
@@ -807,6 +814,11 @@ function round(x: number): number {
   return Math.round(x * 1000) / 1000;
 }
 
+const load1m = () => loadavg()[0]!;
+/** Why a budget cannot be judged at the 1-minute load average `load`, or null when it can. */
+const overloaded = (load: number): string | null =>
+  load > MAX_LOAD ? `load average ${round(load)} is over ${MAX_LOAD} (${MAX_LOAD_PER_CPU}x the ${cpus().length} CPUs)` : null;
+
 let failed = false;
 /** `pnpm --filter @astra/server bench -- <words>` runs only the trials whose names hold them. */
 const only = process.argv.slice(2).filter((a) => a !== '--');
@@ -821,7 +833,9 @@ for (const [name, run] of [
   ['combat: 25 players in ships firing at herds', combatTrial],
 ] as const) {
   if (only.length && !only.some((w) => name.includes(w))) continue;
+  const loadBefore = load1m();
   const r = await run();
+  const load = Math.max(loadBefore, load1m());
   const cpuP95 = percentile(r.cpu, 95);
   // with movement authority: the tick with its players' input checks
   const withInputsP95 = r.inputs
@@ -839,31 +853,41 @@ for (const [name, run] of [
       corrections: r.corrections ?? 0,
     };
   report(name, r, cpuP95);
+  const skipped = overloaded(load);
   const failures: string[] = [];
-  if (cpuP95 >= BUDGET_P95_MS) failures.push(`tick CPU p95 ${round(cpuP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
-  if (withInputsP95 !== null && withInputsP95 >= BUDGET_P95_MS)
+  if (!skipped && cpuP95 >= BUDGET_P95_MS) failures.push(`tick CPU p95 ${round(cpuP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
+  if (!skipped && withInputsP95 !== null && withInputsP95 >= BUDGET_P95_MS)
     failures.push(`tick CPU p95 with its input checks ${round(withInputsP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
   if (r.corrections) failures.push(`${r.corrections} honest inputs were corrected, the first: ${JSON.stringify(r.corrected)}`);
   if (failures.length) {
     for (const f of failures) console.error(`FAIL (${name}): ${f}`);
     failed = true;
+  } else if (skipped) {
+    console.log(`SKIP (${name}): budget not judged, ${skipped}; tick CPU p95 ${round(cpuP95)} ms (budget ${BUDGET_P95_MS} ms)`);
   } else {
     const inputs = withInputsP95 === null ? '' : ` (${round(withInputsP95)} ms with its input checks)`;
-    console.log(`PASS (${name}): tick CPU p95 ${round(cpuP95)} ms${inputs} < ${BUDGET_P95_MS} ms at ${r.avgEntities} entities and ${r.sessions} sessions`);
+    console.log(
+      `PASS (${name}): tick CPU p95 ${round(cpuP95)} ms${inputs} < ${BUDGET_P95_MS} ms at ${r.avgEntities} entities and ${r.sessions} sessions, load ${round(load)}`,
+    );
   }
 }
 
 // one input check where it is dearest
+const checkLoadBefore = load1m();
 const checks = checkCost();
+const checkLoad = Math.max(checkLoadBefore, load1m());
 const dearest = Math.max(...Object.values(checks).map((c) => c.p50));
 const corrected = Object.values(checks).reduce((n, c) => n + c.corrections, 0);
 console.log(JSON.stringify({ trial: 'input check cost, µs', ...checks }, null, 2));
-if (dearest >= CHECK_BUDGET_US || corrected > 0) {
-  if (dearest >= CHECK_BUDGET_US) console.error(`FAIL (input checks): an input check's CPU median ${dearest} µs is over ${CHECK_BUDGET_US} µs`);
+const checkSkipped = overloaded(checkLoad);
+if ((!checkSkipped && dearest >= CHECK_BUDGET_US) || corrected > 0) {
+  if (!checkSkipped && dearest >= CHECK_BUDGET_US) console.error(`FAIL (input checks): an input check's CPU median ${dearest} µs is over ${CHECK_BUDGET_US} µs`);
   if (corrected > 0) console.error(`FAIL (input checks): ${corrected} honest inputs were corrected`);
   failed = true;
+} else if (checkSkipped) {
+  console.log(`SKIP (input checks): budget not judged, ${checkSkipped}; an input check ${dearest} µs at its dearest (median), budget ${CHECK_BUDGET_US} µs`);
 } else {
-  console.log(`PASS (input checks): an input check ${dearest} µs at its dearest (median) < ${CHECK_BUDGET_US} µs`);
+  console.log(`PASS (input checks): an input check ${dearest} µs at its dearest (median) < ${CHECK_BUDGET_US} µs, load ${round(checkLoad)}`);
 }
 await groundPlanner.close();
 if (failed) process.exit(1);
@@ -886,7 +910,7 @@ function report(name: string, r: TrialResult, cpuP95: number): void {
         avgInterest: r.avgInterest,
         avgSnapshotBytes: r.avgSnapshotBytes,
         ...r.extra,
-        load1m: round(loadavg()[0]!),
+        load1m: round(load1m()),
         cpus: cpus().length,
         node: process.version,
       },
