@@ -76,11 +76,11 @@ function clear(e) {
 const px = (v) => parseFloat(v) || 0;
 
 /** A box's metrics down (its height and what is round it) or across (its width), as it lays out now. */
-function metrics(e, kind, gap = GAP, whole = false) {
+function metrics(e, kind, gap = GAP, whole = false, keep = Infinity) {
   const r = e.getBoundingClientRect();
   if (kind === 'height') return { h: r.height };
   const cs = getComputedStyle(e);
-  if (kind === 'across') return { w: r.width, gap, whole, pl: px(cs.paddingLeft), pr: px(cs.paddingRight), bl: px(cs.borderLeftWidth), br: px(cs.borderRightWidth) };
+  if (kind === 'across') return { w: r.width, gap, whole, keep, pl: px(cs.paddingLeft), pr: px(cs.paddingRight), bl: px(cs.borderLeftWidth), br: px(cs.borderRightWidth) };
   return { h: r.height, mt: px(cs.marginTop), mb: px(cs.marginBottom), pt: px(cs.paddingTop), pb: px(cs.paddingBottom), bt: px(cs.borderTopWidth), bb: px(cs.borderBottomWidth) };
 }
 
@@ -104,9 +104,12 @@ function place(e, kind, m, f) {
   }
   if (kind === 'across' && m.whole) {
     // (the face stays at its full width and the room is given up through its right margin, so what is left of it is
-    // the whole badge, not a squeezed one)
+    // the whole badge, not a squeezed one; and once what follows has come within `keep` of its far edge, it slides left
+    // with it, so the two never overlap)
     e.style.width = `${m.w}px`;
     e.style.marginRight = `${f - m.gap - m.w}px`;
+    const shift = Math.max(0, m.gap + m.w - f - m.keep);
+    e.style.transform = shift ? `translateX(${-shift}px)` : '';
     return;
   }
   if (kind === 'across') {
@@ -147,19 +150,19 @@ export class Motion {
 
   /** Opens `e` from nothing (or from where a close had it) to its own size, down or `across` (bringing a flex `gap`),
    * fading in as it grows; over `ms`, after `delay` ms (while something closing fades out). */
-  reveal(e, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, whole = false } = {}) {
+  reveal(e, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, whole = false, keep } = {}) {
     const kind = across ? 'across' : 'down';
     const cur = this.runs.get(e);
     const f0 = cur?.kind === kind ? cur.last : 0;
     const o0 = cur?.o ?? 0;
     this.stop(e);
-    const m = metrics(e, kind, gap, whole);
+    const m = metrics(e, kind, gap, whole, keep);
     this.begin(e, { kind, m, f0, f1: footprint(m, kind), o0, o1: 1, delay, ms });
   }
 
   /** Closes `e`: it fades out first (`OUT_MS`, or as it shrinks when `delay` is 0), then shrinks to nothing over `ms`;
    * `then()` once it is shut (and its styles are taken off after that, so hide or remove it there). */
-  conceal(e, then, { across = false, delay = OUT_MS, ms = MOVE_MS, gap = GAP, whole = false } = {}) {
+  conceal(e, then, { across = false, delay = OUT_MS, ms = MOVE_MS, gap = GAP, whole = false, keep } = {}) {
     const kind = across ? 'across' : 'down';
     const cur = this.runs.get(e);
     let m;
@@ -170,7 +173,7 @@ export class Motion {
       this.runs.delete(e);
     } else {
       this.stop(e);
-      m = metrics(e, kind, gap, whole);
+      m = metrics(e, kind, gap, whole, keep);
       f0 = footprint(m, kind);
     }
     this.begin(e, { kind, m, f0, f1: 0, o0: cur?.o ?? 1, o1: 0, delay, ms, then });
@@ -243,7 +246,7 @@ export class Motion {
 
   /** Shows `e` or not: opening or closing it (across: its width) when `animate`, else at once. One closing stays laid
    * out until it is shut, then is `hidden`. */
-  toggle(e, show, animate, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, quick = false, whole = false } = {}) {
+  toggle(e, show, animate, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, quick = false, whole = false, keep } = {}) {
     const on = e.shownTo ?? !e.hidden;
     if (show === on) return;
     e.shownTo = show;
@@ -252,8 +255,8 @@ export class Motion {
       e.hidden = !show;
     } else if (show) {
       e.hidden = false;
-      this.reveal(e, { across, delay, ms, gap, whole });
-    } else this.conceal(e, () => !e.shownTo && (e.hidden = true), { across, ms, gap, whole, ...(quick ? { delay: 0 } : {}) });
+      this.reveal(e, { across, delay, ms, gap, whole, keep });
+    } else this.conceal(e, () => !e.shownTo && (e.hidden = true), { across, ms, gap, whole, keep, ...(quick ? { delay: 0 } : {}) });
   }
 
   /** Whether `e` is opening or closing just now; with no box, whether anything is moving. */

@@ -45,7 +45,9 @@ const LIST = 4;
 const PARTY = 8;
 const INVITES = 16;
 const ALL = FRONT | LOG | LIST | PARTY | INVITES;
-const STAGE_BUDGET_MS = 0.7;
+const STAGE_BUDGET_MS = 0.4;
+/** The space the tabs keep between them (px): what a badge closing gives way to. */
+const TAB_GAP = 20;
 const TABS = ['shard', 'system', 'party', 'beacons'];
 const TAB_LABEL = { shard: 'Shard', system: 'System', party: 'Party', beacons: 'Beacons' };
 const PLACEHOLDER = { shard: 'Say something to the shard', system: 'Say something to this system', party: 'Say something to your party' };
@@ -356,7 +358,7 @@ export class SocialUI {
   badge(t, n) {
     const b = this.tabButtons[t].badge;
     if (n) setText(b, String(Math.min(n, 99)));
-    this.motion.toggle(b, n > 0, this.isOpen, { across: true, ms: 150, gap: 7, quick: true, whole: true });
+    this.motion.toggle(b, n > 0, this.isOpen, { across: true, ms: 150, gap: 7, quick: true, whole: true, keep: TAB_GAP });
   }
 
   /** The input's channel and what it invites: on a change while the panel is open, they fade out and the new fade in, as
