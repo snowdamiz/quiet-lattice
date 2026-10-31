@@ -33,6 +33,7 @@ describe('admin command parsing', () => {
       ok(['mute', 'someone']),
       ok(['mute', 'someone', '90']),
       ok(['unmute', 'someone']),
+      ok(['set-rep', 'ves', 'compact', '230']),
     ];
     for (const c of commands) expect(AdminCommand.parse(c)).toEqual(c);
     expect(commands[3]).toEqual({ cmd: 'teleport', character: 'Ves Ka', system: 12, frame: 'station', pose: 'docked' });
@@ -43,6 +44,7 @@ describe('admin command parsing', () => {
     expect(commands[10]).toEqual({ cmd: 'spawn', system: 4, spec: { kind: 'entity', entity: 'npc', frame: 'station', at: [1, 2, 3], name: 'Trader' } });
     expect(commands[14]).toEqual({ cmd: 'mute', account: 'someone' });
     expect(commands[15]).toEqual({ cmd: 'mute', account: 'someone', seconds: 90 });
+    expect(commands[17]).toEqual({ cmd: 'set-rep', character: 'ves', faction: 'compact', value: 230 });
   });
 
   it('says what is wrong with bad arguments', () => {
@@ -62,6 +64,10 @@ describe('admin command parsing', () => {
     expect(error(['set-skill-points', 'ves', '-1'])).toMatch(/^points: /);
     expect(error(['mute', 'x', '0'])).toMatch(/^seconds: /);
     expect(error(['mute', 'x', String(8 * 86400)])).toMatch(/^seconds: /);
+    expect(error(['set-rep', 'ves', 'compact'])).toBe('missing <value>');
+    expect(error(['set-rep', 'ves', 'pirates', '10'])).toMatch(/^faction: /);
+    expect(error(['set-rep', 'ves', 'compact', '1001'])).toMatch(/^value: /);
+    expect(error(['set-rep', 'ves', 'compact', '-1'])).toMatch(/^value: /);
   });
 
   it('refuses commands the channel is sent that the CLI would never make', () => {

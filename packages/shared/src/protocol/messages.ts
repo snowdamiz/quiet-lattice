@@ -7,10 +7,12 @@ import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '..
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
 import { meterViewSchema } from '../meters/schema.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
+import { factionIdSchema } from '../data/index.ts';
+import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputation/index.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 14;
+export const PROTOCOL_VERSION = 15;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -20,12 +22,13 @@ export const PROTOCOL_VERSION = 14;
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 // 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
 // 8: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
-// 9: reserved for meters while they were on their branch; they merged as 14 (P1.E07.T02)
+// 9: reserved for meters while they were on their branch; they merged as 15 (P1.E07.T02)
 // 10: combat: fire requests and their answers, combat events with the target's health, XP events (P1.E06.T02)
 // 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 // 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
-// 14: meters: heat and Charge state (P1.E07.T02)
+// 14: reputation: standing, ranks and titles by faction, rank and title events (P2.E18.T01)
+// 15: meters: heat and Charge state (P1.E07.T02)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -458,7 +461,17 @@ export const NoticeEvent = z.object({ kind: z.literal('notice'), text: z.string(
  */
 export const PartyNews = z.enum(['invite', 'invited', 'declined', 'expired', 'joined', 'left', 'kicked', 'leader', 'disbanded']);
 export const PartyEvent = z.object({ kind: z.literal('party'), what: PartyNews, name: CharacterName.optional() });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent]);
+/** A rank with a faction reached or lost (protocol 14, ARCHITECTURE §24): `rank` the rank held now and `from` the one held
+ * before (ids of the faction's ranks; null below its first threshold). Up when `rank` is the higher. */
+export const RankEvent = z.object({
+  kind: z.literal('rank'),
+  faction: factionIdSchema,
+  rank: rankIdSchema.nullable(),
+  from: rankIdSchema.nullable(),
+});
+/** A title earned (protocol 14): a rank's, the first time it is reached, or a quest's. */
+export const TitleEvent = z.object({ kind: z.literal('title'), title: titleViewSchema });
+export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent, RankEvent, TitleEvent]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
 /** One member as its party sees it: cheap on purpose (a party frame needs no more). */
@@ -792,6 +805,10 @@ export const RecipesState = z.object({
     .refine((ids) => new Set(ids).size === ids.length, 'a recipe is known once'),
 });
 
+/** The character's reputation (ARCHITECTURE §24): every faction's standing and rank, and the titles it has earned; sent
+ * after `recipes` on join and whenever the server changes it (after the `rank` and `title` events of that change). */
+export const ReputationState = z.object({ t: z.literal('reputation'), reputation: reputationViewSchema });
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -815,6 +832,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   AnalyzeState,
   CraftState,
   RecipesState,
+  ReputationState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
