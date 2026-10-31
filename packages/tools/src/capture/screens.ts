@@ -25,6 +25,9 @@ export interface ScreenDef {
   /** Run the HUD's clock and timers (game.hud.now / later / cancel) on the clip's clock, so toasts and fades last as long
    * in the clip as in play. */
   hudClock?: boolean;
+  /** Text written to `readout.txt` beside the clip sheet (its first line printed under the sheet), read once the last frame
+   * is in (the cost of the UI the clip shows, say). */
+  readout?(page: Page): Promise<string>;
   /** Console errors the screen causes on purpose (the browser reports a refused request, say), not counted against it. */
   expectedErrors?: RegExp[];
 }
@@ -758,6 +761,86 @@ async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> 
  * server would: chat comes back as the player's line, an invite to someone online is sent, accepting joins the
  * inviter's party, an answer to a beacon is refused (`answerCode`). `window.__social` drives it.
  */
+/** Times the chat and party UI's own work (its moves and redraws) in each frame of the clip that follows: every update
+ * between one captured frame and the next adds to that frame's figure, so the readout and the clip count the same frames. */
+async function socialCostProbe(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { __social: { social: { update(frame?: boolean): void } }; __clip: { frame(dt: number): void }; __socialCost: number[] };
+    const ui = w.__social.social;
+    const update = ui.update.bind(ui);
+    let spent = 0;
+    ui.update = (frame?: boolean) => {
+      const t = performance.now();
+      update(frame);
+      spent += performance.now() - t;
+    };
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    w.__socialCost = [];
+    clip.frame = (dt: number) => {
+      spent = 0;
+      frame(dt);
+      w.__socialCost.push(spent);
+    };
+  });
+}
+
+/** What the UI's cost over the clip is held to (ms). */
+const SOCIAL_BUDGET_MS = 1;
+
+/** The UI's per-frame cost over the clip, as the readout under its sheet: the mean, the 95th percentile and the worst
+ * frame, against the 16.7 ms a frame at 60 fps has, and the index of every frame over the 1 ms budget. */
+async function socialCostReadout(page: Page): Promise<string> {
+  const ms = await page.evaluate(() => (window as unknown as { __socialCost: number[] }).__socialCost);
+  const sorted = [...ms].sort((a, b) => a - b);
+  const mean = ms.reduce((a, b) => a + b, 0) / Math.max(1, ms.length);
+  const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))] ?? 0;
+  const over = ms.flatMap((v, i) => (v > SOCIAL_BUDGET_MS ? [`${String(i).padStart(3, '0')} (${v.toFixed(3)} ms)`] : []));
+  return [
+    `social UI frame cost over ${ms.length} frames: mean ${mean.toFixed(3)} ms, p95 ${at(0.95).toFixed(3)} ms, worst ${(sorted.at(-1) ?? 0).toFixed(3)} ms (of 16.7 ms)`,
+    `frames over ${SOCIAL_BUDGET_MS} ms: ${over.length ? over.join(', ') : 'none'}`,
+  ].join('\n');
+}
+
+/** Watches the beacon list over the clip that follows, frame by frame: its rows being built or taken out, its text being
+ * rewritten (an age moving on) and its scrollbar and edge fades being written. */
+async function socialRestWatch(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { __clip: { frame(dt: number): void }; __socialCost: number[]; __rest: { rows: number[]; text: number[]; bar: number[] } };
+    const scroller = document.querySelector('.sc-beacons') as HTMLElement;
+    const watched = { rows: [] as number[], text: [] as number[], bar: [] as number[] };
+    w.__rest = watched;
+    const obs = new MutationObserver(() => {});
+    obs.observe(scroller, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class'] });
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    let i = 0;
+    clip.frame = (dt: number) => {
+      frame(dt);
+      const seen = { rows: false, text: false, bar: false };
+      for (const r of obs.takeRecords()) {
+        const t = r.target as HTMLElement;
+        if (t === scroller && r.type === 'attributes' && r.attributeName === 'style') seen.bar = true;
+        else if (r.type === 'childList' && t.classList.contains('sb-meta')) seen.text = true;
+        else if (r.type === 'childList' || (r.type === 'attributes' && t.closest('.sb-list'))) seen.rows = true;
+      }
+      for (const k of ['rows', 'text', 'bar'] as const) if (seen[k]) watched[k].push(i);
+      i++;
+    };
+  });
+}
+
+/** The cost readout and what the list did at rest: which frames rebuilt a row, rewrote an age or wrote a scrollbar or edge
+ * property. */
+async function socialRestReadout(page: Page): Promise<string> {
+  const rest = await page.evaluate(() => (window as unknown as { __rest: { rows: number[]; text: number[]; bar: number[] } }).__rest);
+  const list = (v: number[]) => (v.length ? `${v.length} (frames ${v.map((n) => String(n).padStart(3, '0')).join(', ')})` : 'none');
+  return [
+    await socialCostReadout(page),
+    `beacon list at rest: rows rebuilt or restyled on ${list(rest.rows)}; age text rewritten on ${list(rest.text)}; scrollbar or edge property written on ${list(rest.bar)}`,
+  ].join('\n');
+}
+
 export const SOCIAL_STAGE = String.raw`
 import { Net } from '/src/net/Net.js';
 
@@ -1947,15 +2030,18 @@ export const SCREENS: Record<string, ScreenDef> = {
   'party-invite': {
     hudClock: true,
     clipSeconds: 3.5,
+    readout: socialCostReadout,
     sheetFrames: [0, 6, 12, 18, 24, 30, 36, 60, 84, 90, 96, 102, 108, 114, 120, 144, 150, 156, 162, 180, 209],
     async open(page) {
       await stageSocial(page, 'limb');
-      await onStage(page, "s.chatScene(); s.news('invite', 'Kestrel Vane'); s.age(8000)", 60);
+      // (the feed's lines are long gone, so the still is not taken as one fades)
+      await onStage(page, "s.chatScene(); s.news('invite', 'Kestrel Vane'); s.age(8000); for (const l of s.social.model.lines) l.at -= 30000", 60);
     },
     stills16x9: {
       open: (page) => onStage(page, "s.open('shard')"),
     },
     async motion(page) {
+      await socialCostProbe(page);
       // (closed, and drawn closed, before the first frame)
       await page.evaluate(() => {
         const s = (window as unknown as SocialWindow).__social;
@@ -1979,6 +2065,7 @@ export const SCREENS: Record<string, ScreenDef> = {
   beacons: {
     hudClock: true,
     clipSeconds: 1.5,
+    readout: socialCostReadout,
     showScrollbars: true,
     async open(page) {
       await stageSocial(page, 'limb');
@@ -1993,6 +2080,7 @@ export const SCREENS: Record<string, ScreenDef> = {
         ),
     },
     async motion(page) {
+      await socialCostProbe(page);
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const s = w.__social;
@@ -2007,11 +2095,13 @@ export const SCREENS: Record<string, ScreenDef> = {
   'social-tabs': {
     hudClock: true,
     clipSeconds: 5.2,
+    readout: socialCostReadout,
     async open(page) {
       await stageSocial(page, 'limb');
       await onStage(page, "s.partyScene(); s.chatScene(); s.beaconsScene(); s.open('shard')", 60);
     },
     async motion(page) {
+      await socialCostProbe(page);
       await page.evaluate(() => {
         const hud = (window as unknown as SocialWindow).game.hud;
         const order = ['system', 'party', 'beacons', 'party', 'system', 'shard'];
@@ -2019,30 +2109,52 @@ export const SCREENS: Record<string, ScreenDef> = {
       });
     },
   },
+  // beacons-many held still: scrolled to the middle of the list (both edge fades on) with the panel open and the beacons'
+  // ages moving on, beside a party frame of the player leading, one member offline (OFFLINE, LEAD and KICK on show). The
+  // list must not redraw, blink or move while it stands
+  'beacons-rest': {
+    hudClock: true,
+    clipSeconds: 2,
+    readout: socialRestReadout,
+    showScrollbars: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(
+        page,
+        "s.chatScene(); s.manyBeaconsScene(); s.setParty('Tess Arlo', [s.member('Kestrel Vane'), s.member('Tess Arlo'), s.member('Bo Tran', 2), s.member('Ilse Marr', 0, s.here, false)]); s.open('beacons'); s.social.model.answer(15)",
+        60,
+      );
+      await onStage(page, "const l = document.querySelector('.sc-beacons'); l.scrollTop = Math.round((l.scrollHeight - l.clientHeight) / 2)", 60);
+    },
+    async motion(page) {
+      await socialCostProbe(page);
+      await socialRestWatch(page);
+    },
+  },
   // a list longer than the panel: eight calls for aid, one answer refused (too far) in view; the list fades at its foot
   // over its scrollbar. The clip scrolls it to its end and back, eased (the list's own scroll, as a wheel would)
   'beacons-many': {
     hudClock: true,
     clipSeconds: 3,
+    readout: socialCostReadout,
     showScrollbars: true,
     async open(page) {
       await stageSocial(page, 'limb');
       await onStage(page, "s.chatScene(); s.manyBeaconsScene(); s.open('beacons'); s.social.model.answer(15)", 60);
     },
     async motion(page) {
+      await socialCostProbe(page);
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const list = document.querySelector('.sc-beacons') as HTMLElement;
         const end = Math.round(list.scrollHeight - list.clientHeight);
-        // down over a second from 0.3 s, a pause, and back up over a second: eased in and out, a whole pixel a frame and
-        // at least one until it lands (a fractional scroll offset is rounded, which held a frame here and there), each
-        // step due half a millisecond before its frame so none slips into the next
-        const ys: number[] = [0];
-        for (let k = 1; k <= 60; k++) {
+        // down over a second from 0.3 s, a pause, and back up over a second, eased in and out. A scroll offset is a whole
+        // pixel, so the ends of the ease move a pixel every few frames (under a pixel a frame on average) rather than
+        // one a frame; each step is due half a millisecond before its frame so none slips into the next
+        const ys: number[] = [];
+        for (let k = 0; k <= 60; k++) {
           const t = k / 60;
-          const y = Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2));
-          const last = ys[k - 1]!;
-          ys.push(last >= end ? end : Math.min(end, Math.max(y, last + 1)));
+          ys.push(Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)));
         }
         ys.forEach((y, k) => {
           w.game.hud.later(() => (list.scrollTop = y), 300 + k * (1000 / 60) - 0.5);
