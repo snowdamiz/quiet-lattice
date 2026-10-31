@@ -7,7 +7,8 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # the smoke suite renders in software (SwiftShader): 23 specs at 1–3 min each
+    timeout-minutes: 90
     env:
       CI: 'true'
       DATABASE_URL: postgres://astra:astra@127.0.0.1:55432/astra
