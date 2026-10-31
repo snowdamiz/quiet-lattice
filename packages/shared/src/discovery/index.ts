@@ -117,7 +117,21 @@ export type NameCheck = { ok: true; name: string } | { ok: false; reason: NameRe
 
 /** Letters that do not decompose into a base letter and a mark, read as the letters they look like. */
 const FOLD: Readonly<Record<string, string>> = {
-  ı: 'i', ø: 'o', ł: 'l', đ: 'd', ð: 'd', ħ: 'h', ŧ: 't', ſ: 's', ß: 'ss', æ: 'ae', œ: 'oe', þ: 'th', ƀ: 'b', ƚ: 'l', ƶ: 'z',
+  ı: 'i',
+  ø: 'o',
+  ł: 'l',
+  đ: 'd',
+  ð: 'd',
+  ħ: 'h',
+  ŧ: 't',
+  ſ: 's',
+  ß: 'ss',
+  æ: 'ae',
+  œ: 'oe',
+  þ: 'th',
+  ƀ: 'b',
+  ƚ: 'l',
+  ƶ: 'z',
 };
 /** Digits read as the letters players write with them. */
 const LOOKALIKE: Readonly<Record<string, string>> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '8': 'b' };

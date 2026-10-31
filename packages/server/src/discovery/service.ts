@@ -446,7 +446,8 @@ export class DiscoveryService {
   private system(zone: DiscoveryZone): SystemFinds {
     const seed = zone.system.seed;
     let sys = this.systems.get(seed);
-    if (!sys) this.systems.set(seed, (sys = { seed, index: zone.systemIndex, state: 'failed', retryAt: 0, finds: new Map(), fresh: new Set(), used: Date.now() }));
+    if (!sys)
+      this.systems.set(seed, (sys = { seed, index: zone.systemIndex, state: 'failed', retryAt: 0, finds: new Map(), fresh: new Set(), used: Date.now() }));
     if (sys.state === 'failed' && Date.now() >= sys.retryAt) this.load(sys);
     return sys;
   }
