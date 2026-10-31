@@ -120,6 +120,8 @@ export class Motion {
     this.now = now;
     /** element → its move */
     this.runs = new Map();
+    /** key → where its eased value came to rest, so asking for the same value again starts nothing */
+    this.rest = new Map();
   }
 
   /** Opens `e` from nothing (or from where a close had it) to its own size, down or `across` (bringing a flex `gap`),
@@ -155,13 +157,15 @@ export class Motion {
 
   /**
    * Eases a value (opacity-like, not stepped to pixels) of `key` from where it stands to `to` over `ms`, calling
-   * `apply(v)` each frame; `from` where it starts when nothing is easing it yet.
+   * `apply(v)` each frame; `from` where it starts the first time `key` is eased. Asked for the value it is easing to or
+   * rests at, it starts no ease (a redraw asking again never restarts it from `from`).
    */
   value(key, to, apply, { from = 0, ms = 120 } = {}) {
     const cur = this.runs.get(key);
-    const f0 = cur?.kind === 'value' ? cur.last : from;
     if (cur?.kind === 'value' && cur.f1 === to) return;
+    const f0 = cur?.kind === 'value' ? cur.last : (this.rest.get(key) ?? from);
     this.runs.delete(key);
+    this.rest.set(key, to);
     if (f0 === to) return apply(to);
     this.begin(key, { kind: 'value', m: null, f0, f1: to, o0: null, o1: null, delay: 0, ms, apply });
   }
@@ -276,9 +280,11 @@ export class Motion {
       if (f !== r.last) place(e, r.kind, r.m, f);
       r.last = f;
       if (r.o1 !== null) {
-        // (a closing box fades out from the start, before it moves; an opening one fades in over the later part of its
+        // (a closing box fades out from the start, before it moves, unless it has no delay: then it fades with the room
+        // it gives up, reaching nothing on the frame the room does; an opening one fades in over the later part of its
         // growth)
-        r.o = r.o1 < r.o0 ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / Math.min(OUT_MS, r.delay + r.ms)) : r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
+        if (r.o1 < r.o0) r.o = r.delay ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / Math.min(OUT_MS, r.delay + r.ms)) : (r.f0 === r.f1 ? r.o1 : r.o1 + (r.o0 - r.o1) * Math.min(1, Math.max(0, (r.last - r.f1) / (r.f0 - r.f1))));
+        else r.o = r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
         if (r.o1 > r.o0 && p <= 0) r.o = r.o0;
         e.style.opacity = String(r.o);
       }

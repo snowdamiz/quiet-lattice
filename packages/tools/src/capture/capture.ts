@@ -415,7 +415,9 @@ async function captureClip(page: Page, def: (typeof SCREENS)[string], outDir: st
   }
   await cdp.send('Animation.setPlaybackRate', { playbackRate: 1 });
   const sp = join(outDir, 'clip-sheet.png');
-  writeFileSync(sp, await contactSheet(page, sheet, 5, 480));
+  const readout = (await def.readout?.(page)) ?? '';
+  if (readout) writeFileSync(join(outDir, 'readout.txt'), readout + '\n');
+  writeFileSync(sp, await contactSheet(page, sheet, 5, 480, readout));
   return [sp, join(outDir, '_frames')];
 }
 

@@ -4113,6 +4113,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   --sc-plate: rgb(from var(--plate) r g b);
   --sc-plate-2: rgb(from var(--plate-2) r g b);
   --sc-refused: color-mix(in srgb, var(--danger) 45%, var(--text));
+  /* (the 9.5 px mono caps tags, whose thin strokes measure a notch under the colour they are set in: lifted from --dim) */
+  --sc-caps: rgba(233, 231, 226, 0.88);
 }
 .social-chat .sizing,
 .social-side .sizing {
@@ -4428,7 +4430,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
 }
 /* muted, or told to slow down: the hint says so in the refusals' colour, with their mark */
 .sc-hint.warn {
@@ -4694,7 +4696,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
   white-space: nowrap;
 }
 .sp-act {
@@ -4704,7 +4706,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
   background: transparent;
   border: 1px solid var(--line-2);
   cursor: pointer;

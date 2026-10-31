@@ -215,6 +215,8 @@ export class SocialUI {
     this.emptyEl = el('div', 'sb-empty', this.beaconsEl, 'No calls for aid on the shard');
     this.beaconsEl.addEventListener('scroll', () => this.scrollEdges(), { passive: true });
     this.edgeKeys = { above: {}, below: {}, bar: {} };
+    /** the words the list was last drawn from */
+    this.beaconsKey = '';
 
     const row = el('div', 'sc-input', this.panel);
     this.chanEl = el('span', 'sc-chan', row);
@@ -583,10 +585,23 @@ export class SocialUI {
     const serverNow = m.net?.serverTime() ?? null;
     const age = (t) => (serverNow === null ? '' : fmtAge(serverNow - t));
     const own = beacons?.own ?? null;
-    this.ownEl.classList.toggle('up', !!own);
-    // (a refused raise or lower says why in the line under the title, in place of what the button does)
+    // (what the title line says: a refused raise or lower says why in place of what the button does)
     const refused = m.beaconRefusal?.text ?? null;
     const ownText = refused ?? (own ? `${own.place} · ${own.open} of ${own.cap} open${serverNow === null ? '' : ` · lapses in ${fmtAge(own.until - serverNow)}`}` : OWN_IDLE);
+    const all = (beacons?.list() ?? []).filter((b) => b.id !== own?.id);
+    const list = all.slice(0, LIST_MAX);
+    // (the words of every row, found first: the rows are touched only when one of them changed, so a tick that changes
+    // nothing leaves the list as it stands)
+    const shown = list.map((b) => {
+      const system = this.game.galaxy?.systems[b.system]?.name ?? `System ${b.system}`;
+      const dist = this.distanceTo(b);
+      const ago = age(b.at);
+      return { b, meta: `${b.from} · ${b.open} of ${b.cap} open${ago ? ` · ${ago} ago` : ''}`, where: dist ? `${system} · ${dist}` : system, refusal: m.answerRefusals.get(b.id) ?? '' };
+    });
+    const key = JSON.stringify([!!own, ownText, refused !== null, all.length, shown.map((x) => [x.b.id, x.b.kind, x.b.place, x.meta, x.where, x.refusal])]);
+    if (key === this.beaconsKey) return this.scrollEdges();
+    this.beaconsKey = key;
+    this.ownEl.classList.toggle('up', !!own);
     if (this.ownText.textContent !== ownText) {
       const was = this.ownText.classList.contains('refused');
       this.ownText.textContent = ownText;
@@ -594,15 +609,13 @@ export class SocialUI {
       if (was !== !!refused) this.ownText.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS, easing: 'ease-out' });
     }
     setText(this.ownBtn, own ? 'Lower' : 'Raise beacon');
-    const all = (beacons?.list() ?? []).filter((b) => b.id !== own?.id);
-    const list = all.slice(0, LIST_MAX);
     const keep = new Set(list.map((b) => b.id));
     for (const [id, r] of this.rows) {
       if (keep.has(id)) continue;
       r.row.remove();
       this.rows.delete(id);
     }
-    for (const b of list) {
+    for (const { b, meta, where } of shown) {
       let r = this.rows.get(b.id);
       if (!r) {
         const row = el('div', 'sb-row');
@@ -615,15 +628,12 @@ export class SocialUI {
         r.btn = button('btn small sb-answer', row, 'Answer', () => m.answer(b.id));
         this.rows.set(b.id, r);
       }
-      const system = this.game.galaxy?.systems[b.system]?.name ?? `System ${b.system}`;
-      const dist = this.distanceTo(b);
-      const ago = age(b.at);
-      setText(r.meta, `${b.from} · ${b.open} of ${b.cap} open${ago ? ` · ${ago} ago` : ''}`);
-      setText(r.where, dist ? `${system} · ${dist}` : system);
+      setText(r.meta, meta);
+      setText(r.where, where);
     }
     // (each beacon keeps the server's last refusal of an answer to it; one opening under its row moves the rows below
     // it one way)
-    for (const b of list) this.refusalUnder(this.rows.get(b.id), m.answerRefusals.get(b.id) ?? '');
+    for (const { b, refusal } of shown) this.refusalUnder(this.rows.get(b.id), refusal);
     // (rows already in place are left there: a row moved under the pointer would lose its click)
     list.forEach((b, i) => {
       const row = this.rows.get(b.id).row;
