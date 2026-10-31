@@ -124,7 +124,19 @@ describe('world service', () => {
       // `world` comes right after `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `recipes`
       // (P1.E13.T05), `reputation` (P2.E18.T01), season `awards` (P2.E22.T03), `party` (P1.E15.T01) and quest state
       // (P1.E09.T01) follow, the last after the news that a new character is given First Jobs
-      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world', 'inventory', 'skills', 'recipes', 'reputation', 'awards', 'party', 'event', 'event', 'quests']);
+      expect(s.received.map((m) => m.t)).toEqual([
+        'welcome',
+        'world',
+        'inventory',
+        'skills',
+        'recipes',
+        'reputation',
+        'awards',
+        'party',
+        'event',
+        'event',
+        'quests',
+      ]);
       const [welcome, world] = s.received.splice(0) as [
         Extract<(typeof s.received)[number], { t: 'welcome' }>,
         Extract<(typeof s.received)[number], { t: 'world' }>,
