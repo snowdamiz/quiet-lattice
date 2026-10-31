@@ -8,6 +8,7 @@ import type { QuestWorldEvent } from '@astra/shared/quests';
 import { Random } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import type { CombatHooks } from '../combat/zone.ts';
+import { MAX_CREATURES } from '../fauna/sim.ts';
 import { planHere, type GroundSource } from '../fauna/terrain.ts';
 import { InventoryService } from '../inventory/service.ts';
 import { CharacterProgress } from '../persistence/components.ts';
@@ -15,7 +16,7 @@ import { ReputationService } from '../reputation/service.ts';
 import { splitByDamage } from '../resources/service.ts';
 import { describeZoneSystem } from '../zones/system.ts';
 import { Zone, type ZoneViewer } from '../zones/zone.ts';
-import { resolvePlace } from './place.ts';
+import { along, resolvePlace } from './place.ts';
 import { EventService, type EventPayout } from './service.ts';
 
 type Vec3 = [number, number, number];
@@ -53,6 +54,8 @@ class Viewer implements ZoneViewer {
 }
 
 function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boolean } = {}) {
+  const lines: { msg: string; obj: object }[] = [];
+  const log = { info: (obj: object, msg: string) => lines.push({ obj, msg }), warn: () => {}, debug: () => {} };
   const made: { events: EventService | null } = { events: null };
   const hooks: CombatHooks = { hit: (r) => made.events?.combat({ kind: 'hit', report: r }) };
   const zone = new Zone({
@@ -68,19 +71,24 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
   const reputation = new ReputationService();
   const payouts: EventPayout[][] = [];
   let now = 1e6;
+  const zones = { zones: [zone], zone: (id: string) => (id === zone.id ? zone : undefined), tier: () => TIER } as const;
   const events = (made.events = new EventService({
-    zones: { zones: [zone], zone: (id) => (id === zone.id ? zone : undefined), tier: () => TIER },
+    zones,
     now: () => now,
     inventory,
     progress,
     quests: { event: (id, e) => quests.push([id, e]) },
     reputation: opts.rep === false ? undefined : reputation,
     catalog: opts.catalog ?? [],
+    log,
   }));
   events.subscribe((p) => payouts.push([...p]));
   let nextId = 1;
   const s = {
     zone,
+    zones,
+    log,
+    lines,
     events,
     inventory,
     progress,
@@ -410,5 +418,144 @@ describe('contribution and rewards', () => {
     s.move(late.entity, place.frame, place.center);
     s.run(0.6);
     expect(s.zone.phases.phaseOf(late.entity)).toBeNull();
+  });
+});
+
+describe('one occurrence, one instance, one payout', () => {
+  /** 13 players at the place: 12 in one instance (the first, ana, among them) and the 13th in a second */
+  function two(def: EventDef) {
+    const s = setup();
+    const players = [s.join('ana'), ...Array.from({ length: 12 }, () => s.join())];
+    const { place } = started(s, def, players);
+    const [big, small] = s.occurrence().instances;
+    expect([big!.players, small!.players]).toEqual([12, 1]);
+    return { s, players, place, big: big!, small: small! };
+  }
+
+  it('keeps a player its instance paid out of the occurrence, by a call for aid into another instance as by walking in', () => {
+    const def = drill({ waves: { count: 2, size: 1, firstS: 1, gapS: 1 } });
+    const s = setup();
+    const a = s.join('ana');
+    const b = s.join('bo');
+    const { place } = started(s, def, [a]);
+    s.run(1.2);
+    s.kill(s.occurrence().instances[0]!.mobs, [[a.entity, 1]]);
+    s.run(0.3);
+    // ana cleared a wave of two and leaves: her instance, left empty, pays her half the pool
+    s.move(a.entity, s.zone.stationFrame, [0, 0, 0], 'docked');
+    s.run(16);
+    expect(s.payouts).toEqual([[expect.objectContaining({ character: 'ana', share: 1, xp: 500 })]]);
+    const xp = s.progress.get('ana')!.xp;
+    // bo opens a new instance; ana, back at the place, answers its call for aid (as social/beacons.ts does)
+    s.move(b.entity, place.frame, place.center);
+    s.move(a.entity, place.frame, place.center);
+    s.run(0.3);
+    const [inst] = s.occurrence().instances;
+    expect(inst!.players).toBe(1);
+    expect(s.zone.phases.phaseOf(a.entity)).toBeNull();
+    expect(s.zone.phases.enter(a.viewer, inst!.phase)).toBe('full');
+    s.run(1.2);
+    s.kill(s.occurrence().instances[0]!.mobs, [[b.entity, 1]]);
+    s.run(1.6);
+    s.kill(s.occurrence().instances[0]!.mobs, [[b.entity, 1]]);
+    s.run(0.3);
+    expect(s.payouts).toHaveLength(2);
+    expect(s.payouts[1]!.map((p) => p.character)).toEqual(['bo']);
+    expect(s.progress.get('ana')!.xp).toBe(xp);
+    expect(a.viewer.of('event_reward')).toHaveLength(1);
+  });
+
+  it('puts a player who left its instance back in that one, never in another, and has only that one pay it', () => {
+    const def = drill();
+    const { s, players, place, big, small } = two(def);
+    const [ana] = players as [{ viewer: Viewer; entity: number }];
+    s.run(1.2);
+    s.zone.combat.applyDamage(ana.entity, s.occurrence().instances[0]!.mobs[0]!, { base: 1, kind: 'weapon' });
+    s.run(0.3);
+    expect(s.occurrence().instances[0]!.scores.get('ana')!.damage).toBeGreaterThan(0);
+    // out of the place past the grace: back in the shared world, a slot open in her instance
+    s.move(ana.entity, s.zone.stationFrame, [0, 0, 0], 'docked');
+    s.run(16);
+    expect(s.zone.phases.phaseOf(ana.entity)).toBeNull();
+    // the other instance, which has room, takes no call for aid from her
+    expect(s.zone.phases.enter(ana.viewer, small.phase)).toBe('full');
+    // a newcomer fills her instance's slot; back at the place she waits outside rather than join the other
+    const dex = s.join('dex');
+    s.move(dex.entity, place.frame, place.center);
+    s.run(0.3);
+    expect(s.zone.phases.phaseOf(dex.entity)).toBe(big.phase);
+    s.move(ana.entity, place.frame, place.center);
+    s.run(0.6);
+    expect(s.zone.phases.phaseOf(ana.entity)).toBeNull();
+    // a slot opens in hers: she is put back in it
+    s.zone.phases.leave(dex.viewer);
+    s.move(dex.entity, s.zone.stationFrame, [0, 0, 0], 'docked');
+    s.run(0.3);
+    expect(s.zone.phases.phaseOf(ana.entity)).toBe(big.phase);
+    // the window ends: each instance pays its own, and ana once
+    s.run(s.occurrence().ends - s.now + 0.5);
+    expect(s.payouts).toHaveLength(2);
+    const paidTo = s.payouts.flatMap((p) => p.map((x) => x.character));
+    expect(paidTo.filter((c) => c === 'ana')).toHaveLength(1);
+    expect(ana.viewer.of('event_reward')).toHaveLength(1);
+  });
+
+  it('does not count a wave cleared when its creatures’ cell falls asleep with nobody near: the cell stays loaded', () => {
+    const s = setup();
+    const a = s.join('ana');
+    const def = drill({ place: { kind: 'surface', radius: 600 }, waves: { count: 1, size: 1, firstS: 1, gapS: 1 } });
+    const { place } = started(s, def, [a]);
+    s.run(1.2);
+    const [mob] = s.occurrence().instances[0]!.mobs;
+    s.zone.combat.applyDamage(a.entity, mob!, { base: 1, kind: 'weapon' });
+    // inside the place on the far side, more than 500 m from the wave: its cell sleeps, and stays loaded past 30 s
+    const r = Math.hypot(...place.center);
+    const far = along(place.dir, -595, 0, place.worldRadius).map((x) => x * r) as Vec3;
+    s.move(a.entity, place.frame, far);
+    s.run(2);
+    const cellOf = () => s.zone.fauna!.cells(place.body).find((c) => c.creatures > 0);
+    expect(cellOf()?.state).toBe('asleep');
+    s.run(35);
+    expect(s.zone.fauna!.creature(mob!)).not.toBeNull();
+    expect(s.zone.fauna!.makeRoom(MAX_CREATURES)).toBe(false);
+    expect(s.zone.fauna!.creature(mob!)).not.toBeNull();
+    expect(s.occurrence().instances[0]).toMatchObject({ cleared: 0, mobs: [mob] });
+    expect(s.payouts).toEqual([]);
+    // killed, it clears
+    s.move(a.entity, place.frame, place.center);
+    s.kill([mob!], [[a.entity, 1]]);
+    s.run(0.3);
+    expect(s.payouts).toEqual([[expect.objectContaining({ character: 'ana', share: 1 })]]);
+  });
+
+  it('skips a window that began before the service did (a restart), so nobody is paid for it twice, and runs the next', () => {
+    const def = drill({ schedule: { everyS: 1000, durationS: 600, announceS: 60, stagger: false }, waves: { count: 1, size: 1, firstS: 1, gapS: 1 } });
+    const s = setup({ catalog: [def] });
+    const a = s.join('ana');
+    const w = eventWindow(def, 0, s.now);
+    expect(w.starts).toBe(s.now);
+    s.run(0.3);
+    const { place } = s.events.list()[0]!;
+    s.move(a.entity, place!.frame, place!.center);
+    s.run(1.5);
+    s.kill(s.occurrence().instances[0]!.mobs, [[a.entity, 1]]);
+    s.run(0.3);
+    expect(s.payouts).toHaveLength(1);
+    const xp = s.progress.get('ana')!.xp;
+    // the server restarts mid-window, ana still at the place
+    const restarted = new EventService({ zones: s.zones, now: () => s.now, inventory: s.inventory, progress: s.progress, catalog: [def], log: s.log });
+    for (let i = 0; i < 12; i++) {
+      s.run(0.25);
+      restarted.sweep(s.now);
+    }
+    expect(restarted.list()).toEqual([]);
+    expect(s.zone.phases.phaseOf(a.entity)).toBeNull();
+    expect(s.progress.get('ana')!.xp).toBe(xp);
+    expect(s.lines.filter((l) => l.msg.startsWith('event window skipped'))).toEqual([
+      { msg: 'event window skipped: it began before the server started', obj: expect.objectContaining({ event: 'drill', window: w.k }) },
+    ]);
+    const next = eventWindow(def, 0, w.ends);
+    restarted.sweep(next.announce + 1);
+    expect(restarted.list()).toMatchObject([{ event: 'drill', starts: next.starts }]);
   });
 });
