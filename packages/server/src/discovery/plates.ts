@@ -58,12 +58,16 @@ export interface PlatesComponent extends CharacterComponent<Plates> {
   readonly book: PlateBook;
 }
 
-export function platesComponent(book: PlateBook, opts: { log?: PersistenceLog } = {}): PlatesComponent {
+/** `writtenWith`: the components it is only ever written together with (§8): the progress, whose XP a plate records as
+ * paid, so a plate and its XP are saved in one row update or neither is (a plate alone would be a payment never made, XP
+ * alone one made again on the next join). */
+export function platesComponent(book: PlateBook, opts: { log?: PersistenceLog; writtenWith?: readonly string[] } = {}): PlatesComponent {
   return {
     key: PLATES,
     v: 1,
     schema: platesSchema,
     onInvalid: 'refuse',
+    ...(opts.writtenWith?.length ? { writtenWith: [...opts.writtenWith] } : {}),
     book,
     default: () => emptyPlates(),
     load: (stored, ctx) => {

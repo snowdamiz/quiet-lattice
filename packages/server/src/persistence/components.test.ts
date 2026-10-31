@@ -32,9 +32,10 @@ import {
   SKILLS,
   type PoseState,
 } from './components.ts';
+import { plateBookIn } from '../discovery/plates.ts';
 import { CharacterLoadError, type PersistenceLog, type StoredCharacter } from './registry.ts';
 import { CharacterPersistence } from './service.ts';
-import type { CharacterStore } from './store.ts';
+import type { CharacterStore, SaveRow } from './store.ts';
 
 const HOME = homeSystemOf('thalune');
 const CHARACTER = { id: 'c1', name: 'Ves', people: 'thalune' as const, homeSystem: HOME };
@@ -282,6 +283,53 @@ describe('character components', () => {
     expect(registry.decode(stored({ pose: { v: 2, data: elsewhere } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
     expect(registry.decode(stored({ pose: { v: 2, data: { ...elsewhere, mode: 'flying' } } }), CHARACTER, log).values.get(POSE)).toEqual(dockedAtHome(HOME));
     expect(lines.filter((l) => l.level === 'warn' && l.obj.component === POSE)).toHaveLength(2);
+  });
+});
+
+describe('plates and the XP they record as paid', () => {
+  function play() {
+    const { registry, progress, log } = world();
+    const writes: SaveRow[] = [];
+    const store: CharacterStore = {
+      write: async (rows) => {
+        writes.push(...structuredClone(rows));
+        return new Set(rows.map((r) => r.id));
+      },
+    };
+    const p = new CharacterPersistence({ store, registry, log });
+    p.join(new Sink(1), { ...CHARACTER, level: 1, xp: 0, revision: 0, state: {} });
+    return { p, progress, book: plateBookIn(registry)!, writes };
+  }
+  const plate = { kind: 'body', key: '424242:3', at: 10 } as const;
+  const lands = (w: SaveRow) => ({ xp: w.columns.xp !== undefined, plates: PLATES in w.state });
+  const touches = (w: SaveRow) => lands(w).xp || lands(w).plates;
+
+  it('holds the XP back from a save that cannot take the plates, and the plates from one that cannot take the XP', async () => {
+    const { p, progress, book, writes } = play();
+    progress.get('c1')!.xp = 2000;
+    expect(book.add('c1', plate)).toBe('added');
+    // a plate that fails the schema (a bug) cannot be saved: the XP it records waits too
+    (book.get('c1') as { plates: unknown[] }).plates.push({ kind: 'nothing', key: 'x', at: 0 });
+    p.saveNow('c1');
+    expect(await p.flush()).toBe(true);
+    expect(writes.filter(touches)).toEqual([]);
+
+    // mended, both go in one save
+    (book.get('c1') as { plates: unknown[] }).plates.pop();
+    p.saveNow('c1');
+    expect(await p.flush()).toBe(true);
+    expect(writes.filter(touches).map(lands)).toEqual([{ xp: true, plates: true }]);
+
+    // the other way round: XP that fails its schema holds the next plate back
+    progress.get('c1')!.xp = -1;
+    expect(book.add('c1', { kind: 'body', key: '424242:4', at: 20 })).toBe('added');
+    p.saveNow('c1');
+    expect(await p.flush()).toBe(true);
+    expect(writes.filter(touches)).toHaveLength(1);
+    progress.get('c1')!.xp = 4000;
+    p.saveNow('c1');
+    expect(await p.flush()).toBe(true);
+    expect(writes.filter(touches).slice(1).map(lands)).toEqual([{ xp: true, plates: true }]);
   });
 });
 

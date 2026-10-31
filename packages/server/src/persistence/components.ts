@@ -356,6 +356,7 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log }))
     // (written with the quest log, whose owed reputation is settled into it: both in one save, or neither, §24)
     .register(reputationComponent(deps.reputation ?? new ReputationService({ log: deps.log }), { log: deps.log, writtenWith: deps.quests ? [QUESTS] : [] }))
-    .register(platesComponent(deps.plates ?? new PlateBook(), { log: deps.log }));
+    // (written with the progress, whose XP a plate records as paid: both in one save, or neither, §25)
+    .register(platesComponent(deps.plates ?? new PlateBook(), { log: deps.log, writtenWith: [PROGRESS] }));
   return deps.quests ? registry.register(questsComponent(deps.quests)) : registry;
 }
