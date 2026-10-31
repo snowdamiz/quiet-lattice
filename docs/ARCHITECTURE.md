@@ -216,7 +216,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   world, index, name, temperament, threat, body plan, Bond eligibility, when first analyzed) and `xp`, `known` with
   `species`, or `refused` with `reason` (`stale_seq`, `rate`, `stale`, `zone`, `mode`, `unknown`, `dead`, `world`,
   `range`, `busy`, `los`, `full`). `seq` counts from 1 and increases; `time` is checked only for staleness.
-- **Crafting** (protocol 13, `at` named from 17, §23): a client sends `craft {seq, op}`, `op` one of `make {recipe, count, at}`
+- **Crafting** (protocol 13, `at` named from 19, §23): a client sends `craft {seq, op}`, `op` one of `make {recipe, count, at}`
   (`count` 1–100 crafts at `at`: `waystation`, `capital`, `sanctuary`, `scrapyard` or `ship`) and `learn {recipe}` (from its recipe item), a
   strict shape: no client says what a craft uses or makes. The server answers each with `craft {seq, op, recipe,
   result}`: `made` with `item` and `count` (what reached the inventory; the inventory itself goes out as `inventory`
