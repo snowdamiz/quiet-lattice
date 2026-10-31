@@ -3,7 +3,8 @@
 // checked, paid, cooled down and run by the server and told to the caster and to a player beside it; and each refusal
 // (not owned, not slotted, cooling down, the heat lockout, Charge short, out of range, unseen) reaches the client with its
 // reason, changing nothing. Cooldowns are the server's: they are sent on join and survive a reconnect. A toggle the server
-// ends (its node unslotted, its caster out of the bar's mode, its connection gone or replaced) reaches the player's bar.
+// ends (its node unslotted, its caster out of the bar's mode, its connection gone or replaced) reaches the player's bar;
+// its effect's timers run while its character is in play and are dropped once its last connection closes.
 import { cooldownOf } from '@astra/shared/abilities';
 import { getSkillNode } from '@astra/shared/data';
 import { PROTOCOL_VERSION, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
@@ -22,7 +23,7 @@ import { homeSystemOf } from '../src/world/home.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
 import type { Zone, ZoneViewer } from '../src/zones/zone.ts';
 import { CAST_PER_S } from '../src/abilities/service.ts';
-import { FIXTURE_GROUND, FIXTURE_SHIP, FIXTURE_TOGGLE, fixtureBook } from './abilityFixture.ts';
+import { FIXTURE_GROUND, FIXTURE_SHIP, FIXTURE_TIMER_S, FIXTURE_TOGGLE, fixtureBook } from './abilityFixture.ts';
 import { along, openGround } from './faunaWorld.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
 
@@ -305,7 +306,7 @@ describe('abilities over the wire', () => {
   );
 
   it(
-    'tells the player’s bar of a toggle the server ended: its node unslotted, out of the bar’s mode, its connection replaced or closed',
+    'tells the player’s bar of a toggle the server ended: its node unslotted, out of the bar’s mode, its connection replaced or closed; drops its timers with the last connection',
     { timeout: 30_000 },
     async () => {
       const c = await character();
@@ -324,6 +325,7 @@ describe('abilities over the wire', () => {
       expect((await bot.slot('ground', 0, null)).error).toBeUndefined();
       expect(bot.on()).toEqual([]);
       expect(ends().at(-1)).toBe(lit);
+      await waitFor(() => fixture.timers.includes(lit), 5000, 'the toggle’s timer');
 
       await bot.slot('ground', 0, FIXTURE_TOGGLE.node);
       lit = await on();
@@ -346,6 +348,8 @@ describe('abilities over the wire', () => {
       bot.sock.close();
       await waitFor(() => ends().at(-1) === lit, 5000, 'the closed connection’s toggle ended');
       expect(server.ws.casts.state(c.id).on).toEqual([]);
+      await sleep(FIXTURE_TIMER_S * 2000);
+      expect(fixture.timers).not.toContain(lit);
     },
   );
 });
