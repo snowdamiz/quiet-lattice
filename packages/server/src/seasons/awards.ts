@@ -3,8 +3,8 @@
 // them; the gateway merges in what the account earned (`season_awards`) as the character enters the world, and what a
 // season gives while it is in play. Nothing a client sends reaches it.
 //
-// Subscribers hear each award a character in play is given: the gateway tells its client; the reputation model (P2.E18.T01)
-// is to take the title through its `earnTitle` here when it lands.
+// Subscribers hear each award a character in play is given: the gateway tells its client; the server takes each title
+// into the character's reputation through its `earnTitle` (P2.E18.T01).
 import { AWARDS_MAX, type SeasonAward, type StoredSeasonAwards } from '@astra/shared/seasons';
 
 /** `added`: the awards just given to character `characterId`; `all`: everything it now holds, oldest season first. */

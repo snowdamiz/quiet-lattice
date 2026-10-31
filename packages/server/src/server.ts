@@ -142,8 +142,11 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
   const progress = new CharacterProgress();
   // (gains earned by the Count meter's counted actions read the Count for the underdog's bonus, DESIGN 16.2)
   const reputation = new ReputationService({ count: () => world.state().count, log });
-  // (each character in play's season titles and glyphs; a follow-up moves the titles into the reputation's earnTitle)
+  // (each character in play's season titles and glyphs; a title is also earned in the reputation, DESIGN 14.4)
   const awards = new SeasonAwards((err) => log.error({ err }, 'season award listener failed'));
+  awards.subscribe((characterId, added) => {
+    for (const award of added) reputation.earnTitle(characterId, award.title);
+  });
   const seasons = new SeasonService({ world, db: database.db, log });
   // (parties are the gateway's social service and skills the registry's skill service, both made below: read only once
   // characters are in play)

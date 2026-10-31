@@ -272,6 +272,11 @@ describe('seasons', () => {
       await new Promise((r) => setTimeout(r, 300));
       expect(breakerSocket.received.filter((m) => m.t === 'awards')).toEqual([{ t: 'awards', awards: [] }]);
       expect(await awardedAccounts(shard, 1)).toEqual([keeper.accountId.toLowerCase()]);
+      // the title is also the keeper's in the reputation, told with a title event; the breaker earned none
+      const titlesOf = (s: TestSocket) => s.received.flatMap((m) => (m.t === 'reputation' ? m.reputation.titles : []));
+      expect(keeperSocket.received).toContainEqual({ t: 'event', event: { kind: 'title', title: { title: award.title } } });
+      expect(titlesOf(keeperSocket)).toEqual([{ title: award.title }]);
+      expect(titlesOf(breakerSocket)).toEqual([]);
 
       // the chronicle, to a signed-in player: season 1's, Held at 474 over its one rolled day; season 2 has none yet
       const res = await api<SeasonChronicle>(server, 'GET', '/seasons/1/chronicle', { token: breaker.token });

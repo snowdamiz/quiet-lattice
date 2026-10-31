@@ -1451,13 +1451,14 @@ changes it; no client message does.
   the rank after, however many thresholds it crossed), a `title` event per title earned, and then the view; the gateway
   sends those to the session holding the character (§5). The view names each title (a rank's from the data) with its
   faction and rank, or its quest.
-- **Sources.** Quests (§17): their rewards' and dialogue answers' reputation and their titles go through
+- **Sources.** Seasons (§25): each season title a character is awarded goes through `earnTitle` (`server.ts`, on
+  `SeasonAwards.subscribe`), so the title is also in its reputation. Quests (§17): their rewards' and dialogue answers' reputation and their titles go through
   `reputationRewardHooks` (`rep` and `title` with the quest, the title with the factions the quest pays reputation to,
   `questFactions`; `rankOf` for rank prerequisites); a reward a hook declines is held as owed. Acts (above). The admin CLI's `set-rep <character> <faction> <value>` (§16): in play through `set` (the
   client hears the change), out of play by `setStanding` on the stored value through `persistence.edit`, both earning the
   titles of the ranks risen through. Not yet: the convoy run's acts (P2.E21.T05), PvP kills' rep (DESIGN 14.9,
   P2.E17.T01–T02), world events' participation rep (P2.E21.T01), the Count's other counted actions (anchors and the wall:
-  P2.E28, P3.E34), seasons' titles (P2.E22.T03, through `earnTitle`), the faction chains (P2.E18.T02–T05) and the gates
+  P2.E28, P3.E34), the faction chains (P2.E18.T02–T05) and the gates
   that read ranks (trainers P2.E18.T06, hulls P2.E24.T05, the Void branch's standing gate through the skill service's
   `meets` hook, P2.E18.T03). Kills on main are fauna's (§20), whose tags name no faction.
 - **Reading ranks at load.** The `skills` component loads (and reconciles) long before the `reputation` component, so
@@ -1528,10 +1529,11 @@ its title and glyph, and what its chronicle says. The world service rolls them o
 - **Awards in play** (`seasons/awards.ts`, `component.ts`). `season_awards` is the account's record; each character
   carries its own copy in the `seasonAwards` component (§8), held by `SeasonAwards` in play. As a character joins, the
   gateway reads the account's awards with its row and merges any it lacks (one a season, in season order: a character
-  made after a season carries its account's award too), then sends `awards` after `recipes`; when a season's end is
+  made after a season carries its account's award too), then sends `awards` after `reputation`; when a season's end is
   written, each joined character of an account among its winners is given the award and sent `awards` again. A character
-  out of play then gets it on its next join. `SeasonAwards.subscribe` is the hook through which the reputation model
-  (P2.E18.T01) is to take each title with its `earnTitle`.
+  out of play then gets it on its next join. `SeasonAwards.subscribe` is the hook through which the server takes each
+  title into the reputation (§24) with its `earnTitle` (the same title held already is kept once, so a season that
+  awards a bucket's title again adds none; the glyph is kept only here).
 - **The chronicle** (DESIGN 16.4: "what the server did"): `GET /seasons/:season/chronicle`, with the session's Bearer
   token, answers a finished season's `SeasonChronicle`: when it ran and how long, the mean daily actives its length was
   chosen from, the map it opened with, the meter's path (each of its rolled days from `count_days`: Count, drift, lean,
