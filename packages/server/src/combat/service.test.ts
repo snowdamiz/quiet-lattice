@@ -128,6 +128,22 @@ describe('a shot', () => {
     expect(s.service.stats()).toMatchObject({ shots: 1, hits: 1 });
   });
 
+  it('passes through a creature its phase hides from the player', () => {
+    const s = setup();
+    const near = s.creature(docile(s.w.species), 30);
+    const a = s.pilot('a', s.over(near.at(), 60), near.at());
+    // (a phase's own creature in the fauna's place: the phase rule says what this player may see)
+    const phases = s.w.zone.phases;
+    const sees = phases.canSee.bind(phases);
+    phases.canSee = (viewer, id) => id !== near.id && sees(viewer, id);
+    expect(a.fire(near.at())).toEqual({ t: 'fire', seq: 1, result: 'miss' });
+    const { hp, max } = s.w.zone.combat.creatureHealth(near.id)!;
+    expect(hp).toBe(max);
+    phases.canSee = sees;
+    s.w.time += 1;
+    expect(a.fire(near.at())).toMatchObject({ result: 'hit', target: near.id });
+  });
+
   it('is refused, cheapest first, out of turn, out of a zone, with no gun, too stale, out of a ship, in another frame, or aimed off the nose', () => {
     const s = setup();
     const c = s.creature(docile(s.w.species), 30);
