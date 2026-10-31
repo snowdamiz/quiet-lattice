@@ -158,6 +158,7 @@ describe('the beacon list', () => {
   it('keeps its scrollbar and edge fades through every redraw, fading the bar only when it starts to overflow', () => {
     const { ui, props, frame } = beaconList(rows);
     ui.renderBeacons();
+    ui.scrollEdges();
     for (let i = 0; i < 10; i++) frame();
     const at = (name) => Number(props.filter(([n]) => n === name).at(-1)[1]);
     expect(at('--sb-bar')).toBe(1);

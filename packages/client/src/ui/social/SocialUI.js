@@ -117,6 +117,8 @@ export class SocialUI {
     this.nodes = new Map();
     /** beacon id → its row in the list */
     this.rows = new Map();
+    /** the input's channel and placeholder fades running */
+    this.promptAnims = [];
     this.partyKey = '';
     this.partyShown = false;
     this.footShown = false;
@@ -237,6 +239,8 @@ export class SocialUI {
   update(frame = true) {
     const open = this.isOpen;
     const now = this.hud.now();
+    // (the list's overflow is read first, before anything is written: the page has laid out what the last frame wrote)
+    if (frame && this.edgesDue) this.edges();
     if (open !== this.wasOpen) {
       this.wasOpen = open;
       if (!open) this.closedAt = now;
@@ -258,7 +262,7 @@ export class SocialUI {
       // (a list that grows under a move, a refusal opening in, overflows frame by frame, with no scroll or redraw to say
       // so: its edges are looked at on every frame something moves, and the one after)
       const busy = this.motion.moving();
-      if ((busy || this.wasBusy) && open && this.tab === 'beacons') this.scrollEdges();
+      if (busy || this.wasBusy) this.edges();
       this.wasBusy = busy;
     }
   }
@@ -270,16 +274,20 @@ export class SocialUI {
     const log = this.logEl;
     const pre = log ? { atBottom: log.scrollTop + log.clientHeight >= log.scrollHeight - 4 } : null;
     const beacons = open && this.tab === 'beacons';
+    // (the badges measure what they close, so they are first, before anything here has written to the page)
+    if (open && this.tab !== 'beacons') this.seen[this.tab] = m.lineId;
+    this.renderBadges();
+    const opening = beacons && !this.chat.classList.contains('tab-beacons');
     if (beacons !== this.chat.classList.contains('tab-beacons')) {
       // (the list fades in once the log has faded out, and fades out before the log fades in, as two logs do)
       this.chat.classList.toggle('tab-beacons', beacons);
       const view = this.beaconsEl;
-      for (const a of view.getAnimations()) a.cancel();
+      this.viewAnim?.cancel();
       view.classList.remove('leaving');
-      if (beacons) view.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS - OUT_MS / 2, delay: OUT_MS, easing: 'ease-out', fill: 'backwards' });
+      if (beacons) this.viewAnim = view.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS - OUT_MS / 2, delay: OUT_MS, easing: 'ease-out', fill: 'backwards' });
       else {
         view.classList.add('leaving');
-        const a = view.animate([{ opacity: 1 }, { opacity: 0 }], { duration: OUT_MS, easing: 'ease-out', fill: 'forwards' });
+        const a = (this.viewAnim = view.animate([{ opacity: 1 }, { opacity: 0 }], { duration: OUT_MS, easing: 'ease-out', fill: 'forwards' }));
         a.addEventListener('finish', () => {
           view.classList.remove('leaving');
           a.cancel();
@@ -288,10 +296,10 @@ export class SocialUI {
     }
     for (const t of TABS) this.tabButtons[t].classList.toggle('on', t === this.tab);
     this.prompt(m.channel);
-    if (open && this.tab !== 'beacons') this.seen[this.tab] = m.lineId;
-    this.renderBadges();
     this.renderLog(now, pre);
-    if (beacons) this.renderBeacons();
+    // (the list is drawn on the frame after the tab is picked, while it is still clear: its rows are a frame's work)
+    if (opening) this.dirty = true;
+    else if (beacons) this.renderBeacons();
     this.renderParty();
     this.renderInvites(now);
   }
@@ -328,14 +336,17 @@ export class SocialUI {
       this.input.placeholder = PLACEHOLDER[channel];
     };
     const parts = [this.chanEl, this.input];
-    for (const e of parts) for (const a of e.getAnimations()) a.cancel();
+    // (their animations are kept, not asked for: asking the page for them flushes its layout)
+    for (const a of this.promptAnims) a.cancel();
+    this.promptAnims = [];
     if (first) return apply();
     const outs = parts.map((e) => e.animate([{ opacity: 1 }, { opacity: 0 }], { duration: OUT_MS, easing: 'ease-out', fill: 'forwards' }));
+    this.promptAnims = outs;
     outs[0].addEventListener('finish', () => {
       if (this.promptFor !== channel) return;
       apply();
       for (const a of outs) a.cancel();
-      for (const e of parts) e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS - OUT_MS / 2, easing: 'ease-out' });
+      this.promptAnims = parts.map((e) => e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_MS - OUT_MS / 2, easing: 'ease-out' }));
     });
   }
 
@@ -349,11 +360,17 @@ export class SocialUI {
     const lines = this.model.lines;
     // (none on the beacon tab: the log hidden under the list stays empty, so nothing of it shows as it fades away)
     const want = !open ? lines.slice(-FEED_LINES) : this.tab === 'beacons' ? [] : lines.filter((l) => l.channel === null || l.channel === this.tab).slice(-LOG_LINES);
-    const fresh = this.rebuild || !this.linesEl;
-    if (fresh) {
+    if (this.rebuild || !this.linesEl) {
+      // (a new log is made now, and its lines go into it on the next frame: it is clear for the first 100 ms of its
+      // fade, so nothing shows of the wait, and no frame has the tab switch's whole cost)
       this.rebuild = false;
       this.crossfade(open);
+      this.filling = true;
+      this.dirty = true;
+      return;
     }
+    const fresh = this.filling;
+    this.filling = false;
     const box = this.linesEl;
     const keep = new Set(want.map((l) => l.id));
     for (const [id, node] of this.nodes) {
@@ -375,6 +392,7 @@ export class SocialUI {
     }
     const log = this.logEl;
     if (fresh) {
+      if (!want.length) return;
       if (open) log.scrollTop = log.scrollHeight;
       this.clipTop();
       return;
@@ -612,7 +630,10 @@ export class SocialUI {
       return { b, meta: `${b.from} · ${b.open} of ${b.cap} open${ago ? ` · ${ago} ago` : ''}`, where: dist ? `${system} · ${dist}` : system, refusal: m.answerRefusals.get(b.id) ?? '' };
     });
     const key = JSON.stringify([!!own, ownText, refused !== null, all.length, shown.map((x) => [x.b.id, x.b.kind, x.b.place, x.meta, x.where, x.refusal])]);
-    if (key === this.beaconsKey) return this.scrollEdges();
+    if (key === this.beaconsKey) {
+      this.edgesDue = true;
+      return;
+    }
     this.beaconsKey = key;
     this.ownEl.classList.toggle('up', !!own);
     if (this.ownText.textContent !== ownText) {
@@ -654,7 +675,14 @@ export class SocialUI {
     });
     setText(this.moreEl, all.length > list.length ? `+${all.length - list.length} more` : '');
     this.emptyEl.style.display = list.length ? 'none' : '';
-    this.scrollEdges();
+    this.edgesDue = true;
+  }
+
+  /** The list's edges, looked at once the beacon tab is up (and by the frame that follows a change to the list, not the
+   * one that makes it: that frame has written to the page, and reading its overflow would lay it all out at once). */
+  edges() {
+    this.edgesDue = false;
+    if (this.isOpen && this.tab === 'beacons') this.scrollEdges();
   }
 
   /** A list longer than the panel fades at the edge it scrolls on, over a scrollbar: at its foot while more is below, at
