@@ -377,6 +377,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   // casts of slotted actives: checked against the zone's belief and the skill web, paid from the meters
   const casts = new CastService({ zones: deps.zones, skills, meters, now: () => deps.clock.now(), book: deps.abilities, log });
   casts.start();
+  // a toggle whose node left its bar ends at once; a toggle the server ended reaches the bar of the session holding it
+  const unsubscribeSkillCasts = skills.subscribe((characterId) => casts.skillsChanged(characterId));
+  const unsubscribeCasts = casts.subscribe((characterId) => {
+    for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send(casts.state(characterId));
+  });
 
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
@@ -457,7 +462,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       deps.zones.leave(s, 'disconnected');
       cutscenes.forget(s);
       social.left(s);
-      // (unless the character came back on another connection meanwhile, whose toggles they are now)
+      // (unless the character came back on another connection meanwhile: its effects' timers carry on there, and its
+      // toggles, cast by the entity that just left, end on the next step)
       if (s.characterId && registry.holding(s.characterId) === s) casts.left(s.characterId);
       discovery?.left(s);
       conns.delete(c);
@@ -757,6 +763,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       closing = true;
       clearInterval(heartbeat);
       casts.stop();
+      unsubscribeCasts();
+      unsubscribeSkillCasts();
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
       if (!deps.resources) await resources.close();

@@ -2,7 +2,8 @@
 // test ability slotted on every key casts it from each of slots 1–6 on foot and 1–4 flying a four-slot hull, each cast
 // checked, paid, cooled down and run by the server and told to the caster and to a player beside it; and each refusal
 // (not owned, not slotted, cooling down, the heat lockout, Charge short, out of range, unseen) reaches the client with its
-// reason, changing nothing. Cooldowns are the server's: they are sent on join and survive a reconnect.
+// reason, changing nothing. Cooldowns are the server's: they are sent on join and survive a reconnect. A toggle the server
+// ends (its node unslotted, its caster out of the bar's mode, its connection gone or replaced) reaches the player's bar.
 import { cooldownOf } from '@astra/shared/abilities';
 import { getSkillNode } from '@astra/shared/data';
 import { PROTOCOL_VERSION, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
@@ -21,7 +22,7 @@ import { homeSystemOf } from '../src/world/home.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
 import type { Zone, ZoneViewer } from '../src/zones/zone.ts';
 import { CAST_PER_S } from '../src/abilities/service.ts';
-import { FIXTURE_GROUND, FIXTURE_SHIP, fixtureBook } from './abilityFixture.ts';
+import { FIXTURE_GROUND, FIXTURE_SHIP, FIXTURE_TOGGLE, fixtureBook } from './abilityFixture.ts';
 import { along, openGround } from './faunaWorld.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
 
@@ -103,15 +104,17 @@ async function join(token: string, characterId: string) {
         return f?.mode === mode && f.frame === FRAME && Math.hypot(f.pos[0] - pos[0], f.pos[1] - pos[1], f.pos[2] - pos[2]) < 1e-6;
       });
     },
-    /** slots a node as a player does */
-    async slot(bar: 'ground' | 'ship', index: number, node: string) {
+    /** slots a node as a player does, or empties the slot */
+    async slot(bar: 'ground' | 'ship', index: number, node: string | null) {
       const s = ++skillSeq;
-      sock.send({ t: 'skills', seq: s, op: { op: 'slot', bar, index, node } });
+      sock.send({ t: 'skills', seq: s, op: node === null ? { op: 'unslot', bar, index } : { op: 'slot', bar, index, node } });
       for (;;) {
         const m = await sock.next('skills');
         if (m.seq === s) return m;
       }
     },
+    /** the toggles on in the last `abilities` state it was sent */
+    on: () => sock.received.filter((m): m is Extract<ServerMessage, { t: 'abilities' }> => m.t === 'abilities').at(-1)?.on,
     /** casts `node` from `slot`, within the cast rate; the server's answer (the abilities state is sent before it, when it
      * was carried out) */
     async cast(node: string, slot: number, extra: { target?: number; aim?: Vec3 } = {}): Promise<Answer> {
@@ -270,17 +273,21 @@ describe('abilities over the wire', () => {
 
       // flying the Wayfarer over the world, keys 1–4 cast the ship bar's, paid in Charge
       await bot.stand(at(0, 0, 60), 'ship');
-      const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
-      let spent = 0;
+      const charge = () => server.ws.meters.view(c.id, server.world.clock.now()).charge;
       const ready = new Map<string, number>();
       for (const [i, a] of FIXTURE_SHIP.entries()) {
+        const cost = getSkillNode(a.node).cost!.charge!;
+        // (its turn within the cast rate first, so the Charge is read just before it goes)
+        await sleep(1000 / CAST_PER_S);
+        const before = charge();
         const r = await bot.cast(a.node, i);
         expect(r, a.node).toMatchObject({ result: 'cast', node: a.node, slot: i });
         ready.set(a.node, r.readyAt!);
-        spent += getSkillNode(a.node).cost!.charge!;
+        // (less what the sun gave back while the cast was on its way)
+        expect(before - charge(), a.node).toBeGreaterThan(cost - 2);
+        expect(before - charge(), a.node).toBeLessThanOrEqual(cost);
       }
       expect(fixture.casts.slice(-4).map((x) => [x.node.id, x.bar])).toEqual(FIXTURE_SHIP.map((a) => [a.node, 'ship']));
-      expect(server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeCloseTo(charge0 - spent, 0);
       // a fifth slot the Wayfarer does not have; the ground bar's nodes are not the ship's
       expect(await bot.cast('pulse', 4)).toMatchObject({ result: 'refused', reason: 'slot' });
       expect(await bot.cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'not_slotted' });
@@ -294,6 +301,51 @@ describe('abilities over the wire', () => {
       expect(await bot.cast('tractor_beam', 0)).toMatchObject({ result: 'refused', reason: 'cooldown', readyAt: ready.get('tractor_beam') });
       near.sock.close();
       bot.sock.close();
+    },
+  );
+
+  it(
+    'tells the player’s bar of a toggle the server ended: its node unslotted, out of the bar’s mode, its connection replaced or closed',
+    { timeout: 30_000 },
+    async () => {
+      const c = await character();
+      let bot = await join(c.token, c.id);
+      own(c.id);
+      await bot.slot('ground', 0, FIXTURE_TOGGLE.node);
+      await bot.stand(at(0, 40));
+      const ends = () => fixture.ends.filter((x) => x.characterId === c.id);
+      const on = async () => {
+        expect(await bot.cast('lance', 0)).toMatchObject({ result: 'cast' });
+        expect(bot.on()).toEqual(['lance']);
+        return fixture.casts.at(-1)!;
+      };
+
+      let lit = await on();
+      expect((await bot.slot('ground', 0, null)).error).toBeUndefined();
+      expect(bot.on()).toEqual([]);
+      expect(ends().at(-1)).toBe(lit);
+
+      await bot.slot('ground', 0, FIXTURE_TOGGLE.node);
+      lit = await on();
+      await bot.stand(at(0, 40, 60), 'ship');
+      await waitFor(() => bot.on()?.length === 0, 5000, 'the toggle off in flight');
+      expect(ends().at(-1)).toBe(lit);
+
+      // a new connection for the character: the old one's entity has left, its toggle is never sent as on and goes off
+      await bot.stand(at(0, 40));
+      lit = await on();
+      const old = bot;
+      bot = await join(c.token, c.id);
+      expect(bot.abilities.on).toEqual([]);
+      await waitFor(() => ends().at(-1) === lit, 5000, 'the replaced connection’s toggle ended');
+      expect(server.ws.casts.state(c.id).on).toEqual([]);
+      old.sock.close();
+
+      await bot.stand(at(0, 40));
+      lit = await on();
+      bot.sock.close();
+      await waitFor(() => ends().at(-1) === lit, 5000, 'the closed connection’s toggle ended');
+      expect(server.ws.casts.state(c.id).on).toEqual([]);
     },
   );
 });

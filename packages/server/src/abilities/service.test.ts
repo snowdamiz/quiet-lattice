@@ -9,9 +9,10 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { faunaWorld, type FaunaWorld } from '../../test/faunaWorld.ts';
 import type { NodeGroundSource } from '../resources/ground.ts';
 import { EYE_M } from '../resources/service.ts';
+import { MOVEMENT } from '../sim/movement/rules.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
 import { abilityBook, type AbilityEffect, type CastContext } from './book.ts';
-import { CAST_BURST, CAST_SLACK_M, CAST_STALE_S, CastService, type CastServiceOptions } from './service.ts';
+import { CAST_BURST, CAST_SLACK_M, CAST_STALE_S, CastService, mayHarm, type CastServiceOptions } from './service.ts';
 
 type Vec3 = [number, number, number];
 type Answer = Extract<ServerMessage, { t: 'cast' }>;
@@ -68,22 +69,29 @@ let shipSlots: number;
 let meter: { heat: number; overheated: boolean; charge: number };
 let casts: { node: string; ctx: CastContext }[];
 let ended: string[];
+/** what each toggle that went off was ended with */
+let endings: CastContext[];
+/** the characters the service said it ended toggles of */
+let told: string[];
 let now: number;
 let seq: number;
 let svc: CastService;
 let grounds: NodeGroundSource;
 
-function service(opts: Partial<CastServiceOptions> = {}): CastService {
+function service(opts: Partial<CastServiceOptions> = {}, abilities: readonly Ability[] = ABILITIES): CastService {
   const effects = new Map<string, AbilityEffect>(
-    ABILITIES.map((a) => [
+    abilities.map((a) => [
       a.node,
       {
         cast: (ctx: CastContext) => void casts.push({ node: a.node, ctx }),
-        end: (ctx: CastContext) => void ended.push(ctx.node.id),
+        end: (ctx: CastContext) => {
+          ended.push(ctx.node.id);
+          endings.push(ctx);
+        },
       },
     ]),
   );
-  return new CastService({
+  const svc = new CastService({
     zones: { zoneOf: (v) => (w.zone.has(v) ? w.zone : undefined), tier: () => 0 },
     skills: { get: (id) => (id === 'c1' ? skills : null), view: () => ({ shipSlots }) },
     meters: {
@@ -100,10 +108,12 @@ function service(opts: Partial<CastServiceOptions> = {}): CastService {
       },
     },
     now: () => now,
-    book: abilityBook(new Map(ABILITIES.map((a) => [a.node, a])), effects),
+    book: abilityBook(new Map(abilities.map((a) => [a.node, a])), effects),
     grounds: { ground: (p, t) => grounds.ground(p, t) },
     ...opts,
   });
+  svc.subscribe((id) => told.push(id));
+  return svc;
 }
 
 /** Owns and slots nodes: the ground bar's first, then the ship's. */
@@ -155,6 +165,8 @@ beforeEach(() => {
   meter = { heat: 0, overheated: false, charge: 100 };
   casts = [];
   ended = [];
+  endings = [];
+  told = [];
   now = 1000;
   seq = 0;
   grounds = OPEN;
@@ -320,6 +332,16 @@ describe('a cast at an entity', () => {
     expect(meter.heat).toBe(15);
   });
 
+  it('reaches a player flying a ship to its collision sphere', () => {
+    const other = new Viewer(2, 'c2');
+    const eye = lift(w.zone.entity(w.player)!.fields.pos as Vec3, EYE_M);
+    const reach = 20 + MOVEMENT.shipRadiusM + CAST_SLACK_M;
+    const ship = w.zone.join(other, { kind: 'player', frame: w.frame, pos: lift(eye, reach + 0.3), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'ship' });
+    expect(refusal(cast('regrow', 3, { target: ship }))).toBe('range');
+    w.zone.patch(ship, { pos: lift(eye, reach - 0.3) });
+    expect(cast('regrow', 3, { target: ship }).result).toBe('cast');
+  });
+
   it('refuses a target in another frame, however near its numbers are', () => {
     const c = creatureAt(15);
     w.zone.patch(w.player, { frame: `${w.zone.system.seed}:station`, pos: [...c.sphere().pos] });
@@ -393,6 +415,149 @@ describe('effects over time', () => {
   });
 });
 
+describe('a toggle', () => {
+  const pullToggle: Ability = { node: 'pull', target: 'entity', on: ['mob'], toggle: true };
+  const lance: Ability = { node: 'lance', target: 'aim', toggle: true };
+  const beam: Ability = { node: 'tractor_beam', target: 'self', toggle: true };
+
+  it('goes off before its cooldown is looked at: one with a cooldown turns off at once, free', () => {
+    svc = service({}, [pullToggle]);
+    const c = creatureAt(15);
+    expect(cast('pull', 1, { target: c.id })).toMatchObject({ result: 'cast', readyAt: now + 10 });
+    now += 0.5;
+    expect(cast('pull', 1, { target: c.id })).toEqual({ t: 'cast', seq: 2, node: 'pull', slot: 1, result: 'ended' });
+    expect(meter.heat).toBe(15);
+    expect(cast('pull', 1, { target: c.id })).toMatchObject({ result: 'refused', reason: 'cooldown', readyAt: 1010 });
+  });
+
+  it('ends with what turned it on, whatever the cast that turns it off names', () => {
+    svc = service({}, [pullToggle]);
+    const c = creatureAt(15);
+    const far = new Viewer(3, 'c3');
+    const stranger = w.zone.join(far, { kind: 'player', frame: w.frame, pos: w.at(0, 6000), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    w.run(0.1);
+    cast('pull', 1, { target: c.id });
+    expect(cast('pull', 1, { target: stranger, aim: [1, 0, 0] }).result).toBe('ended');
+    expect(endings).toEqual([casts[0]!.ctx]);
+    expect(endings[0]!.target).toBe(c.id);
+    expect(viewer.events().map((e) => [e.phase, e.target, e.aim])).toEqual([
+      ['cast', c.id, [0, 0, -1]],
+      ['end', c.id, [0, 0, -1]],
+    ]);
+    expect(far.events()).toEqual([]);
+  });
+
+  it('ends once its node leaves the bar or the character’s web, on a skills change or the next step, and says whose', () => {
+    slot(['lance']);
+    svc = service({}, [lance]);
+    expect(cast('lance', 0).result).toBe('cast');
+    // moved within the bar it holds
+    slot([null, 'lance']);
+    svc.skillsChanged('c1');
+    expect(svc.state('c1').on).toEqual(['lance']);
+    // unslotted (still owned): never reported on, and off on the skills change
+    skills = { ...skills, slots: { ...skills.slots, ground: Array(6).fill(null) } };
+    expect(svc.state('c1').on).toEqual([]);
+    expect(ended).toEqual([]);
+    svc.skillsChanged('c1');
+    expect(ended).toEqual(['lance']);
+    expect(told).toEqual(['c1']);
+    // respecced away while slotted: off on the next step, and a cast of it then is no cast of a toggle that is on
+    slot(['lance']);
+    expect(cast('lance', 0).result).toBe('cast');
+    skills = { ...skills, bought: [] };
+    svc.step(now);
+    expect(ended).toEqual(['lance', 'lance']);
+    expect(told).toEqual(['c1', 'c1']);
+    expect(refusal(cast('lance', 0))).toBe('not_owned');
+    expect(viewer.events().map((e) => e.phase)).toEqual(['cast', 'end', 'cast', 'end']);
+  });
+
+  it('ends once the hull no longer has its slot', () => {
+    move(lift(w.at(0, 0), 50), 'ship');
+    slot([], [null, 'tractor_beam']);
+    svc = service({}, [beam]);
+    expect(cast('tractor_beam', 1).result).toBe('cast');
+    svc.step(now);
+    expect(ended).toEqual([]);
+    shipSlots = 1;
+    svc.step(now);
+    expect(ended).toEqual(['tractor_beam']);
+    expect(told).toEqual(['c1']);
+  });
+
+  it('ends when its caster leaves the bar’s mode, and is never reported on in the meantime', () => {
+    slot(['lance']);
+    svc = service({}, [lance]);
+    cast('lance', 0);
+    move(w.at(0, 0), 'landed');
+    expect(svc.state('c1').on).toEqual([]);
+    svc.step(now);
+    expect(ended).toEqual(['lance']);
+    expect(told).toEqual(['c1']);
+    svc.step(now);
+    expect(told).toEqual(['c1']);
+  });
+
+  it('ends when its caster goes down', () => {
+    slot(['lance']);
+    svc = service({}, [lance]);
+    cast('lance', 0);
+    w.zone.combat.applyDamage(null, w.player, { base: 1e6, kind: 'hazard' });
+    expect(svc.state('c1').on).toEqual([]);
+    svc.step(now);
+    expect(ended).toEqual(['lance']);
+    expect(told).toEqual(['c1']);
+  });
+
+  it('ends when its caster’s entity leaves play, though its character comes straight back', () => {
+    slot(['lance']);
+    svc = service({}, [lance]);
+    cast('lance', 0);
+    w.zone.leave(viewer);
+    w.player = w.zone.join(viewer, { kind: 'player', frame: w.frame, pos: w.at(0, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    expect(svc.state('c1').on).toEqual([]);
+    svc.step(now);
+    expect(ended).toEqual(['lance']);
+    expect(told).toEqual(['c1']);
+  });
+
+  it('ends when its character leaves play, and says so', () => {
+    slot(['lance']);
+    svc = service({}, [lance]);
+    cast('lance', 0);
+    svc.left('c1');
+    expect(ended).toEqual(['lance']);
+    expect(endings[0]).toBe(casts[0]!.ctx);
+    expect(told).toEqual(['c1']);
+    expect(svc.state('c1').on).toEqual([]);
+  });
+});
+
+describe('harm', () => {
+  it('comes to creatures, never to a player before PvP, nor to anything in the Waystation, caster or target', () => {
+    const c = creatureAt(15);
+    const other = new Viewer(2, 'c2');
+    const theirs = w.zone.join(other, { kind: 'player', frame: w.frame, pos: w.at(5, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    w.run(0.1);
+    cast('pull', 1, { target: c.id });
+    const ctx = casts[0]!.ctx;
+    expect(mayHarm(w.zone, w.player, c.id)).toBe(true);
+    expect(mayHarm(w.zone, w.player, theirs)).toBe(false);
+    expect(ctx.damage(theirs, 50)).toBeNull();
+    expect(w.zone.combat.playerHealth(theirs)).toMatchObject({ suit: 100, suitMax: 100 });
+    w.zone.patch(w.player, { frame: w.zone.stationFrame });
+    expect(mayHarm(w.zone, w.player, c.id)).toBe(false);
+    expect(ctx.damage(c.id, 5)).toBeNull();
+    expect(w.zone.combat.creatureHealth(c.id)!.hp).toBe(w.zone.combat.creatureHealth(c.id)!.max);
+    w.zone.patch(w.player, { frame: w.frame });
+    w.zone.patch(c.id, { frame: w.zone.stationFrame });
+    expect(mayHarm(w.zone, w.player, c.id)).toBe(false);
+    w.zone.patch(c.id, { frame: w.frame });
+    expect(ctx.damage(c.id, 5)?.amount).toBeGreaterThan(0);
+  });
+});
+
 describe('replication', () => {
   it('tells the caster and every session that sees it, and no one else', () => {
     const near = new Viewer(2, 'c2');
@@ -409,6 +574,27 @@ describe('replication', () => {
     expect(viewer.events()).toEqual([e, self]);
     expect(near.events()).toEqual([e, self]);
     expect(far.events()).toEqual([]);
+  });
+
+  it('names to each session only those of the caster and its target that its phase lets it see', () => {
+    const near = new Viewer(2, 'c2');
+    w.zone.join(near, { kind: 'player', frame: w.frame, pos: w.at(30, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    // the caster's story phase, and a creature of its own there: the caster stays in its neighbour's sight, the creature not
+    const story = w.zone.phases.phaseFor(viewer, 'story', { key: 'test:mine', frame: w.frame, center: w.at(10, 0), radius: 100 });
+    const mine = creatureAt(15);
+    w.zone.phases.adopt(story.id, mine.id);
+    w.run(0.1);
+    cast('pull', 1, { target: mine.id });
+    expect(viewer.events().at(-1)).toMatchObject({ caster: w.player, target: mine.id });
+    expect(near.events()).toEqual([{ kind: 'cast', caster: w.player, node: 'pull', phase: 'cast', at: now, frame: w.frame, aim: [0, 0, -1] }]);
+    // sealed in an event's instance, the caster is out of its neighbour's sight, the shared creature it casts at is not
+    w.zone.phases.phaseFor(viewer, 'event', { key: 'test:event', frame: w.frame, center: w.at(0, 0), radius: 100 });
+    const shared = creatureAt(12);
+    w.run(0.1);
+    now += 20;
+    cast('pull', 1, { target: shared.id });
+    expect(viewer.events().at(-1)).toMatchObject({ caster: w.player, target: shared.id });
+    expect(near.events().at(-1)).toEqual({ kind: 'cast', node: 'pull', phase: 'cast', at: now, frame: w.frame, aim: [0, 0, -1], target: shared.id });
   });
 });
 

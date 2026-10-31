@@ -2,8 +2,8 @@
 // ability is and costs (its bar, its heat or Charge, its cooldown and numbers, `@astra/shared/data`); an `Ability` adds only
 // what a cast names. The server's cast service (packages/server/src/abilities) checks every cast against it, and the
 // client reads it to know what to send. A branch's task adds its abilities here as data and their effects on the server.
-import { getSkillNode, type SkillNode } from '../data/index.ts';
-import type { Bar } from '../skills/index.ts';
+import { getSkillNode, SKILL_NODES, type SkillNode } from '../data/index.ts';
+import { GROUND_SLOTS, SHIP_SLOTS, type Bar } from '../skills/index.ts';
 
 /**
  * What a cast names besides its slot and aim:
@@ -45,6 +45,12 @@ export function cooldownOf(node: SkillNode): { key: string; seconds: number } | 
   }
   throw new RangeError(`${node.id}'s cooldown is once per ${c.per}, which casts do not run yet`);
 }
+
+/** The most cooldowns a character runs at once: one for every clock of the web (a shared cooldown runs on another's), since a
+ * cooldown outlives its node being unslotted or respecced away. */
+export const COOLDOWNS_MAX: number = SKILL_NODES.filter((n) => n.slot !== null && n.cooldown?.kind === 'seconds').length;
+/** The most toggles a character has on at once: a toggle ends once its node is no longer slotted on its bar. */
+export const TOGGLES_MAX: number = GROUND_SLOTS + SHIP_SLOTS;
 
 /** What a cast pays from the bar's meter: heat on the ground, Charge aboard. Other costs (health, materials, heat per
  * second) are the effect's to take. */

@@ -8,8 +8,9 @@
 // - the bar the mode movement authority believes casts from (on foot the ground bar, flying the ship's; none landed,
 //   docked or on the pulse drive), the caster not down, the slot one of the bar's working ones (all six on the ground, the
 //   hull's ability slots aboard), the node owned, and slotted there;
-// - an ability that casts the node (the book); a toggle that is on goes off here, free;
-// - its cooldown (the node's clock, or the one it shares), and the aim in the frame of the caster's pose;
+// - an ability that casts the node (the book), and the aim in the frame of the caster's pose; a toggle that is on goes off
+//   here, free, ended with what turned it on;
+// - its cooldown (the node's clock, or the one it shares);
 // - an `entity` cast's target: one the caster can see (its phase's rule: none it cannot is told apart from none at all),
 //   of a kind the ability takes, alive and on the caster's world, within reach of the caster's eye (to its hit sphere, the
 //   shared model, with CAST_SLACK_M for a pose a tick old) and in sight over the drawn ground;
@@ -17,9 +18,12 @@
 // - and its cost: heat on the ground (refused in the lockout; a chunk reaching the top overheats), Charge aboard (refused
 //   unless the meter holds it all).
 // Then the cooldown runs from now, a toggle goes on, the effect runs, and the cast goes out as a `cast` event to every
-// session whose interest holds the caster or its target. Cooldowns are kept by character for the server's run, so a
-// reconnect does not clear them. Effects' own timers (`after`) and the toggles' watch (off once the caster is out of the
-// bar's mode, down or out of play) run on `step`, which `start` calls every STEP_MS.
+// session whose interest holds the caster or its target, naming only the entities that session's phase lets it see.
+// Cooldowns are kept by character for the server's run, so a reconnect does not clear them. A toggle holds only while its
+// caster's entity is in play, in the bar's mode and up, and its node owned and in a working slot of that bar: one that no
+// longer holds is ended on `step` (which `start` calls every STEP_MS, beside the effects' own timers, `after`), on a
+// change to the character's skills and before the character's next cast, and the gateway is told (`subscribe`) so the
+// player's bar is too; `state` never reports one that no longer holds. Effects harm only what `mayHarm` allows.
 import { barOfMode, castCost, cooldownOf, reachOf } from '@astra/shared/abilities';
 import { creatureSphere, modsOfNodes } from '@astra/shared/combat';
 import { getSkillNode } from '@astra/shared/data';
@@ -31,6 +35,7 @@ import { creatureTargets } from '../combat/targets.ts';
 import { TokenBucket } from '../gateway/rateLimit.ts';
 import { nodeGrounds, type NodeGroundSource } from '../resources/ground.ts';
 import { EYE_M } from '../resources/service.ts';
+import { MOVEMENT } from '../sim/movement/rules.ts';
 import type { Zone, ZoneEntity, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import { abilityBook, type AbilityBook, type BookEntry, type CastContext } from './book.ts';
 
@@ -49,14 +54,17 @@ export const CAST_STALE_S = 3;
 /** Slack on an `entity` cast's reach for a pose a tick or two old, m. */
 export const CAST_SLACK_M = 2;
 /** A player's hit sphere as casts reach it: round a walker's chest, or a ship's collision sphere. */
-export const PLAYER_SPHERE = { foot: { up: 0.9, radius: 1.5 }, ship: { up: 0, radius: 6 } } as const;
+export const PLAYER_SPHERE = { foot: { up: 0.9, radius: 1.5 }, ship: { up: 0, radius: MOVEMENT.shipRadiusM } } as const;
 /** How often `start` runs the effects' timers and watches the toggles, ms. */
 export const STEP_MS = 50;
 /** A caster that has not cast for this long is forgotten (its rate), s. */
 export const CASTER_IDLE_S = 600;
 
 /** A zone, as casts use it. */
-export type CastZone = Pick<Zone, 'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'viewers' | 'sees' | 'combat' | 'fauna' | 'phases'>;
+export type CastZone = Pick<
+  Zone,
+  'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'viewers' | 'sees' | 'combat' | 'fauna' | 'phases' | 'stationFrame'
+>;
 
 /** Where the service finds a session's zone and a zone's tier (the ZoneManager). */
 export interface CastZones {
@@ -90,6 +98,9 @@ export interface CastStats {
   refused: Partial<Record<CastRefusal, number>>;
 }
 
+/** Told the character whose toggles the server ended (not by its own cast, whose answer carries the change). */
+export type CastListener = (characterId: string) => void;
+
 /** A toggle that is on: what turned it on, to end it with. */
 interface On {
   ctx: CastContext;
@@ -119,6 +130,7 @@ export class CastService {
   private readonly counts: CastStats = { asked: 0, cast: 0, ended: 0, refused: {} };
   private interval: NodeJS.Timeout | null = null;
   private lastPrune = -Infinity;
+  private readonly listeners = new Set<CastListener>();
 
   constructor(opts: CastServiceOptions) {
     this.zones = opts.zones;
@@ -146,7 +158,13 @@ export class CastService {
     this.interval = null;
   }
 
-  /** The character's cooldowns still running and its toggles on, as `abilities` state. */
+  /** Hears of every character whose toggles the server ended, to send it its `state`. */
+  subscribe(fn: CastListener): () => void {
+    this.listeners.add(fn);
+    return () => this.listeners.delete(fn);
+  }
+
+  /** The character's cooldowns still running and its toggles on (those that still hold), as `abilities` state. */
   state(characterId: string, now = this.now()): AbilitiesState {
     const cooldowns: AbilitiesState['cooldowns'] = [];
     const running = this.cooldowns.get(characterId);
@@ -157,7 +175,9 @@ export class CastService {
       }
       if (!running.size) this.cooldowns.delete(characterId);
     }
-    return { t: 'abilities', cooldowns, on: [...(this.on.get(characterId)?.keys() ?? [])] };
+    const on: string[] = [];
+    for (const [node, lit] of this.on.get(characterId) ?? []) if (this.holds(characterId, node, lit)) on.push(node);
+    return { t: 'abilities', cooldowns, on };
   }
 
   /** A client's cast, answered (see the header). A cast carried out has changed the `state` the gateway sends first. */
@@ -176,6 +196,7 @@ export class CastService {
     const now = this.now();
     if (!this.caster(characterId, now).take(now * 1000)) return refuse('rate');
     if (!(Math.abs(msg.time - now) <= CAST_STALE_S)) return refuse('stale');
+    if (this.settle(characterId)) this.notify(characterId);
     const zone = this.zones.zoneOf(viewer);
     const self = zone?.entityOf(viewer);
     const me = zone && self !== undefined ? zone.entity(self) : undefined;
@@ -190,13 +211,12 @@ export class CastService {
     const entry = this.book.get(msg.node);
     if (!entry) return refuse('unknown');
     if (msg.frame !== me.fields.frame) return refuse('frame');
-
-    const ctx = this.context(characterId, zone, self, me, bar, entry, msg, now, skills.bought);
-    const lit = this.on.get(characterId)?.get(msg.node);
-    if (lit) {
-      this.end(characterId, msg.node, ctx);
+    if (this.on.get(characterId)?.has(msg.node)) {
+      this.end(characterId, msg.node);
       return { ...base, result: 'ended' };
     }
+
+    const ctx = this.context(characterId, zone, self, me, bar, entry, msg, now, skills.bought);
     const cd = cooldownOf(ctx.node);
     const readyAt = cd ? this.cooldowns.get(characterId)?.get(cd.key) : undefined;
     if (readyAt !== undefined && readyAt > now) return refuse('cooldown', readyAt);
@@ -214,6 +234,7 @@ export class CastService {
     if (cd) {
       let running = this.cooldowns.get(characterId);
       if (!running) this.cooldowns.set(characterId, (running = new Map()));
+      for (const [key, at] of running) if (at <= now) running.delete(key);
       running.set(cd.key, now + cd.seconds);
     }
     if (entry.ability.toggle) {
@@ -228,26 +249,27 @@ export class CastService {
     return cd ? { ...out, readyAt: now + cd.seconds } : out;
   }
 
-  /** Runs the effects' timers that are due, and ends the toggles whose casters are out of the bar's mode, down or out of
-   * their zone. */
+  /** Runs the effects' timers that are due, and ends the toggles that no longer hold (see the header). */
   step(now: number): void {
     if (this.timers.length && this.timers[0]!.at <= now) {
       const due = this.timers.filter((t) => t.at <= now);
       this.timers = this.timers.filter((t) => t.at > now);
       for (const t of due) this.run(t.fn, t.characterId, 'timer');
     }
-    for (const [characterId, lit] of this.on) {
-      for (const [node, { ctx, zone }] of lit) {
-        const e = zone.entity(ctx.caster);
-        if (!e || barOfMode(e.fields.mode) !== ctx.bar || zone.combat.isDown(ctx.caster)) this.end(characterId, node, ctx);
-      }
-    }
+    for (const characterId of [...this.on.keys()]) if (this.settle(characterId)) this.notify(characterId);
+  }
+
+  /** The character's skills changed (a respec, a slot, a hull's slots): its toggles whose nodes left their bars end. */
+  skillsChanged(characterId: string): void {
+    if (this.settle(characterId)) this.notify(characterId);
   }
 
   /** A character out of play: its toggles end and its effects' timers are dropped. Its cooldowns stay for its return. */
   left(characterId: string): void {
-    for (const [node, { ctx }] of this.on.get(characterId) ?? []) this.end(characterId, node, ctx);
+    const lit = this.on.get(characterId);
+    for (const node of [...(lit?.keys() ?? [])]) this.end(characterId, node);
     this.timers = this.timers.filter((t) => t.characterId !== characterId);
+    if (lit) this.notify(characterId);
   }
 
   // ---------- internals ----------
@@ -280,13 +302,15 @@ export class CastService {
       creatures: (reach) => (f.frame === null ? [] : creatureTargets(zone, self, f.frame, reach === undefined ? undefined : { at: origin, reach })),
       // (with the caster's power and augments: the nodes it owns)
       damage: (target, amount) =>
-        zone.combat.applyDamage(self, target, {
-          base: amount,
-          kind: 'ability',
-          what: msg.node,
-          source: { node: msg.node, augments: owned.filter((n) => getSkillNode(n).type === 'augment') },
-          attackerMods: modsOfNodes(owned),
-        }),
+        !mayHarm(zone, self, target)
+          ? null
+          : zone.combat.applyDamage(self, target, {
+              base: amount,
+              kind: 'ability',
+              what: msg.node,
+              source: { node: msg.node, augments: owned.filter((n) => getSkillNode(n).type === 'augment') },
+              attackerMods: modsOfNodes(owned),
+            }),
       after: (delayS, fn) => this.after(characterId, delayS, fn),
     };
   }
@@ -334,7 +358,30 @@ export class CastService {
     return clearSight(ground.sampler, from, to);
   }
 
-  private end(characterId: string, node: string, ctx: CastContext): void {
+  /** Whether a toggle that is on still holds: its caster's entity in play, in the bar's mode and up, its node owned and in
+   * a working slot of that bar. */
+  private holds(characterId: string, node: string, { ctx, zone }: On): boolean {
+    const e = zone.entity(ctx.caster);
+    if (!e || barOfMode(e.fields.mode) !== ctx.bar || zone.combat.isDown(ctx.caster)) return false;
+    const skills = this.skills.get(characterId);
+    if (!skills?.bought.includes(node)) return false;
+    const working = ctx.bar === 'ground' ? GROUND_SLOTS : this.skills.view(characterId).shipSlots;
+    return skills.slots[ctx.bar].slice(0, working).includes(node);
+  }
+
+  /** Ends the character's toggles that no longer hold; whether any did. */
+  private settle(characterId: string): boolean {
+    let ended = false;
+    for (const [node, lit] of this.on.get(characterId) ?? []) {
+      if (this.holds(characterId, node, lit)) continue;
+      this.end(characterId, node);
+      ended = true;
+    }
+    return ended;
+  }
+
+  /** Turns a toggle off with what turned it on: its effect's `end` and the `end` event see that cast, never a later one. */
+  private end(characterId: string, node: string): void {
     const lit = this.on.get(characterId);
     const on = lit?.get(node);
     if (!lit || !on) return;
@@ -342,8 +389,18 @@ export class CastService {
     if (!lit.size) this.on.delete(characterId);
     this.counts.ended++;
     const effect = this.book.get(node)?.effect;
-    if (effect?.end) this.run(() => effect.end!(ctx), characterId, node);
-    this.announce(on.zone, ctx, 'end');
+    if (effect?.end) this.run(() => effect.end!(on.ctx), characterId, node);
+    this.announce(on.zone, on.ctx, 'end');
+  }
+
+  private notify(characterId: string): void {
+    for (const l of this.listeners) {
+      try {
+        l(characterId);
+      } catch (err) {
+        this.log?.warn({ character: characterId, err: String(err) }, 'cast listener failed');
+      }
+    }
   }
 
   private after(characterId: string, delayS: number, fn: () => void): void {
@@ -362,20 +419,35 @@ export class CastService {
     }
   }
 
-  /** Sends the cast (or a toggle's end) to every session of the zone whose interest holds its caster or its target. */
+  /** Sends the cast (or a toggle's end) to every session of the zone whose interest holds its caster or its target, naming
+   * only those of the two its phase lets it see. */
   private announce(zone: CastZone, ctx: CastContext, phase: CastEvent['phase']): void {
-    const event: CastEvent = { kind: 'cast', caster: ctx.caster, node: ctx.node.id, phase, at: this.now(), frame: ctx.frame, aim: [...ctx.aim] };
-    if (ctx.target !== null) event.target = ctx.target;
-    let text: string;
-    try {
-      text = encodeServerMessage({ t: 'event', event });
-    } catch (err) {
-      this.log?.warn({ zone: zone.id, event, err: String(err) }, 'cast event not sent');
-      return;
-    }
+    const at = this.now();
+    const texts = new Map<number, string | null>();
+    const text = (caster: boolean, target: boolean): string | null => {
+      const k = (caster ? 1 : 0) | (target ? 2 : 0);
+      if (!texts.has(k)) {
+        const event: CastEvent = { kind: 'cast', node: ctx.node.id, phase, at, frame: ctx.frame, aim: [...ctx.aim] };
+        if (caster) event.caster = ctx.caster;
+        if (target) event.target = ctx.target!;
+        try {
+          texts.set(k, encodeServerMessage({ t: 'event', event }));
+        } catch (err) {
+          this.log?.warn({ zone: zone.id, event, err: String(err) }, 'cast event not sent');
+          texts.set(k, null);
+        }
+      }
+      return texts.get(k)!;
+    };
+    const target = ctx.target;
     for (const [viewer, own] of zone.viewers()) {
       if (!viewer.sendText) continue;
-      if (own === ctx.caster || zone.sees(viewer, ctx.caster) || (ctx.target !== null && zone.sees(viewer, ctx.target))) viewer.sendText(text);
+      if (own !== ctx.caster && !zone.sees(viewer, ctx.caster) && (target === null || !zone.sees(viewer, target))) continue;
+      const caster = zone.phases.canSee(own, ctx.caster);
+      const named = target !== null && zone.phases.canSee(own, target);
+      if (!caster && !named) continue;
+      const t = text(caster, named);
+      if (t !== null) viewer.sendText(t);
     }
   }
 
@@ -394,6 +466,15 @@ export class CastService {
     c.seen = now;
     return c.bucket;
   }
+}
+
+/** Whether a cast's caster may harm `target`: no player until PvP defines it (P2.E17.T01), and nothing in a safe zone,
+ * caster or target (the Waystation's sphere, its frame; a capital's arrives with P1.E10.T02). */
+export function mayHarm(zone: Pick<CastZone, 'entity' | 'stationFrame'>, caster: number, target: number): boolean {
+  const t = zone.entity(target);
+  if (!t || t.fields.kind === 'player') return false;
+  const safe = (e: ZoneEntity | undefined) => !e || e.fields.frame === zone.stationFrame;
+  return !safe(t) && !safe(zone.entity(caster));
 }
 
 /** A position raised `by` metres along its own up (the direction from its world's centre). */

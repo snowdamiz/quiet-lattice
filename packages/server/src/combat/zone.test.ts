@@ -292,6 +292,29 @@ describe('combat events', () => {
     expect(near.viewer.events()).toMatchObject([{ target: id, killed: true, hp: 0 }]);
   });
 
+  it('never name to a session an entity its phase hides: a hit on one is not sent, a hit by one goes without its source', () => {
+    const { w, herd, join, up } = combatWorld();
+    const [mine] = herd(docile(w.species)!, w.at(30, 0));
+    const [hunter] = herd(predator(w.species)!, w.at(-30, 0));
+    const a = join('a', up(w.at(0, 0), 40));
+    const near = join('near', w.at(-10, 0), 'foot');
+    // a's story phase holds both creatures; a stays in its neighbour's sight, they do not
+    const story = w.zone.phases.phaseFor(a.viewer, 'story', { key: 'test:mine', frame: w.frame, center: w.at(0, 0), radius: 200 });
+    w.zone.phases.adopt(story.id, mine!);
+    w.zone.phases.adopt(story.id, hunter!);
+    w.run(0.05);
+    a.viewer.events();
+    near.viewer.events();
+    w.zone.combat.applyDamage(a.entity, mine!, weapon(4));
+    w.zone.combat.applyDamage(hunter!, a.entity, { base: 1, kind: 'attack', what: 'leap' });
+    w.run(0.05);
+    expect(a.viewer.events()).toMatchObject([
+      { source: a.entity, target: mine },
+      { source: hunter, target: a.entity },
+    ]);
+    expect(near.viewer.events()).toEqual([expect.objectContaining({ source: null, target: a.entity, damageType: 'attack', ability: 'leap' })]);
+  });
+
   it(`are at most ${EVENTS_PER_SESSION} a session a tick, its own entity's first`, () => {
     const { w, herd, join, up } = combatWorld();
     const many = herd(docile(w.species)!, w.at(30, 0), EVENTS_PER_SESSION + 8);

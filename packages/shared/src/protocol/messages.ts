@@ -2,6 +2,7 @@
 // zone snapshots are binary (see snapshot.ts). Every message is a zod schema so both ends validate what they receive.
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
+import { COOLDOWNS_MAX, TOGGLES_MAX } from '../abilities/index.ts';
 import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
 import { discoveryKeyOk, discoveryKeySchema, discoveryKindSchema, NAME_REFUSALS } from '../discovery/index.ts';
@@ -517,12 +518,13 @@ export const TitleEvent = z.object({ kind: z.literal('title'), title: titleViewS
 /**
  * A cast the server carried out (protocol 19, ARCHITECTURE §28), to every session whose interest holds its caster or its
  * target, for its effect to be drawn: `caster` cast `node` at world time `at`, from where it stood in `frame` along `aim`
- * (its unit direction there), at `target` when it named one; `end` when a toggle went off. What it did to anyone arrives as
- * `combat` events and state, never here.
+ * (its unit direction there), at `target` when it named one; `end` when a toggle went off. Each session is named only the
+ * entities its phase lets it see (no `caster`, or no `target`, otherwise). What it did to anyone arrives as `combat` events
+ * and state, never here.
  */
 export const CastEvent = z.object({
   kind: z.literal('cast'),
-  caster: EntityId,
+  caster: EntityId.optional(),
   node: NodeRef,
   phase: z.enum(['cast', 'end']),
   at: z.number().min(0),
@@ -1053,17 +1055,16 @@ export const CastState = z
   })
   .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
   .refine((m) => m.reason !== 'cooldown' || m.readyAt !== undefined, 'a cooldown says when it ends');
-/** The most cooldowns and toggles a character runs at once: every slot of both bars. */
-export const COOLDOWNS_MAX = 16;
 /**
  * The character's cooldowns and toggles as the server holds them (ARCHITECTURE §28): every node cooling down with the world
  * time it is ready again (a shared cooldown under the node whose clock it runs on), and the toggles that are on. Sent after
- * `meters` on join and whenever a cast changes them, before its answer. The client shows them and never decides them.
+ * `meters` on join, whenever a cast changes them (before its answer) and whenever the server ends a toggle. The client
+ * shows them and never decides them.
  */
 export const AbilitiesState = z.object({
   t: z.literal('abilities'),
   cooldowns: z.array(z.object({ node: NodeRef, readyAt: z.number().min(0) })).max(COOLDOWNS_MAX),
-  on: z.array(NodeRef).max(COOLDOWNS_MAX),
+  on: z.array(NodeRef).max(TOGGLES_MAX),
 });
 
 export const ServerMessage = z.discriminatedUnion('t', [
