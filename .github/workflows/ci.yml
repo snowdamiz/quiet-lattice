@@ -12,7 +12,7 @@ jobs:
       CI: 'true'
       DATABASE_URL: postgres://astra:astra@127.0.0.1:55432/astra
       REDIS_URL: redis://127.0.0.1:56379
-      JWT_SECRET: ci-only-secret
+      JWT_SECRET: ci-only-secret-not-for-prod
     services:
       postgres:
         image: postgres:16
