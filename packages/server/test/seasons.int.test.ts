@@ -7,12 +7,14 @@
 import { randomUUID } from 'node:crypto';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import {
+  CHRONICLE_FINDS_MAX,
   darkSystems,
   SEASON_EDGE_SHIFT_LY,
   SEASON_LENGTH_S,
   SMALL_SEASON_LENGTH_S,
   seasonAward,
   seasonChronicleSchema,
+  seasonOpening,
   type SeasonChronicle,
 } from '@astra/shared/seasons';
 import { and, asc, eq } from 'drizzle-orm';
@@ -23,7 +25,7 @@ import { DAY_S, dayOf } from '../src/count/meter.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
 import { runMigrations } from '../src/db/migrate.ts';
 import { characters, countDays, countVotes, dailyActives, seasonAwards, seasonChronicles, shards } from '../src/db/schema.ts';
-import { readChronicle } from '../src/seasons/store.ts';
+import { readChronicle, writeSeasonEnd } from '../src/seasons/store.ts';
 import { DEFAULT_SHARD_EPOCH_MS } from '../src/world/clock.ts';
 import { worldKey, WorldService, type SeasonEnded, type WorldMirrorRecord } from '../src/world/service.ts';
 import { pgShardStore } from '../src/world/shard.ts';
@@ -87,7 +89,6 @@ describe('seasons', () => {
     world.onSeasonEnded((e) => told.push(e));
     expect(world.state()).toMatchObject({ season: 1, count: 500, seasonLength: SEASON_LENGTH_S, seasonEnd: (D + 57) * DAY_S });
 
-    // season 1: a, b and c escort convoys every day (Feed); d raids one on the first day (Break); all four play daily
     world.countAction(d, 'convoy-raided', 'break');
     for (let day = D; day < D + 57; day++) {
       for (const id of [a, b, c, d]) world.markActive(id);
@@ -116,11 +117,9 @@ describe('seasons', () => {
       count: 500,
     });
     expect((JSON.parse((await redis.get(worldKey(shard)))!) as WorldMirrorRecord).season).toBe(2);
-    // the title and glyph went to the Feed accounts only, and they were told once the chronicle was written
     expect(await awardedAccounts(shard, 1)).toEqual([a, b, c].sort());
     expect(told.map((t) => [t.ended.season, t.ended.bucket, [...t.awarded.accounts].sort()])).toEqual([[1, 'fed', [a, b, c].sort()]]);
     expect(told[0]!.awarded.award).toEqual(seasonAward(1, 'fed'));
-    // the chronicle: when it ran, its meter's path (each of its 57 days' rolls), the Count at its end, the next map
     const first = (await readChronicle(database.db, shard, 1))!;
     expect(seasonChronicleSchema.parse(first)).toEqual(first);
     expect(first).toMatchObject({
@@ -144,7 +143,6 @@ describe('seasons', () => {
     expect(first.path.at(-1)).toMatchObject({ day: D + 56, count: 850 });
     expect(await readChronicle(database.db, shard, 2)).toBeNull();
 
-    // a restart: season 2 carries on from the shard's row, its map and its length as stored
     await world.close();
     world = await open();
     expect(world.state()).toMatchObject({
@@ -154,8 +152,6 @@ describe('seasons', () => {
       opening: { from: 'fed', edgeShiftLy: SEASON_EDGE_SHIFT_LY },
     });
 
-    // season 2: the server fills (110 accounts a day), and three of them kill Wardens daily (Break); the server goes down
-    // at 01:00 on day 94, after the crowd has come in
     const crowd = Array.from({ length: 110 }, () => randomUUID());
     const breakers = crowd.slice(0, 3);
     for (let day = D + 57; day < D + 84; day++) {
@@ -188,7 +184,6 @@ describe('seasons', () => {
       seasonLength: SEASON_LENGTH_S,
       opening: { from: 'broken', edgeShiftLy: -SEASON_EDGE_SHIFT_LY, dark: darkSystems(3) },
     });
-    // season 3 from 500: ten days of five burns, no votes
     expect(world.state().count).toBe(500 - 5 * 10);
     const row = await shardRow(shard);
     expect(row).toMatchObject({ season: 3, seasonLength: SEASON_LENGTH_S, seasonOpening: { from: 'broken', dark: darkSystems(3) } });
@@ -202,7 +197,6 @@ describe('seasons', () => {
       [1, 'fed'],
       [2, 'broken'],
     ]);
-    // every day after season 2's end rolled in season 3
     const after = await database.db
       .select()
       .from(countDays)
@@ -239,14 +233,12 @@ describe('seasons', () => {
         s.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
         s.send({ t: 'join', characterId: character.id });
         await waitFor(() => s.received.some((m) => m.t === 'quests'), 5000, 'the join');
-        // a character with no award is sent none, after its reputation
         const types = s.received.map((m) => m.t);
         expect(types.indexOf('awards')).toBe(types.indexOf('reputation') + 1);
         expect(s.received.find((m) => m.t === 'awards')).toEqual({ t: 'awards', awards: [] });
         sockets.push(s);
       }
       const [keeperSocket, breakerSocket] = sockets as [TestSocket, TestSocket];
-      // both entered the world today: counted active once each
       const day = dayOf(server.world.clock.now());
       expect(server.world.dailyActives(day)).toBe(2);
       await server.world.flush();
@@ -272,13 +264,11 @@ describe('seasons', () => {
       await new Promise((r) => setTimeout(r, 300));
       expect(breakerSocket.received.filter((m) => m.t === 'awards')).toEqual([{ t: 'awards', awards: [] }]);
       expect(await awardedAccounts(shard, 1)).toEqual([keeper.accountId.toLowerCase()]);
-      // the title is also the keeper's in the reputation, told with a title event; the breaker earned none
       const titlesOf = (s: TestSocket) => s.received.flatMap((m) => (m.t === 'reputation' ? m.reputation.titles : []));
       expect(keeperSocket.received).toContainEqual({ t: 'event', event: { kind: 'title', title: { title: award.title } } });
       expect(titlesOf(keeperSocket)).toEqual([{ title: award.title }]);
       expect(titlesOf(breakerSocket)).toEqual([]);
 
-      // the chronicle, to a signed-in player: season 1's, Held at 474 over its one rolled day; season 2 has none yet
       const res = await api<SeasonChronicle>(server, 'GET', '/seasons/1/chronicle', { token: breaker.token });
       expect(res.status).toBe(200);
       expect(seasonChronicleSchema.parse(res.body)).toEqual(res.body);
@@ -299,7 +289,6 @@ describe('seasons', () => {
       expect((await api(server, 'GET', '/seasons/0/chronicle', { token: breaker.token })).status).toBe(400);
       expect((await api(server, 'GET', '/seasons/1e3/chronicle', { token: breaker.token })).status).toBe(400);
 
-      // the keeper's character keeps it: saved with the character as it leaves, and sent again when it comes back
       const characterId = [...server.ws.registry.sessions].find((x) => x.accountId === keeper.accountId && x.state === 'joined')!.characterId!;
       keeperSocket.close();
       await waitFor(() => server.persistence.status(characterId) === null, 10_000, 'the save on leaving');
@@ -309,7 +298,6 @@ describe('seasons', () => {
       back.send({ t: 'hello', version: PROTOCOL_VERSION, token: keeper.token });
       back.send({ t: 'join', characterId });
       expect(await back.next('awards')).toEqual({ t: 'awards', awards: [award] });
-      // a character the account makes after the season carries the account's award too, from the season's record
       const alt = await newCharacter(server, keeper.token);
       back.close();
       const altSocket = await TestSocket.open(server.wsUrl);
@@ -365,7 +353,7 @@ describe('seasons', () => {
     }
   }, 60_000);
 
-  it("counts only the votes cast inside a season toward its winners, though the vote that ends it is cast after midnight and saved with its end", async () => {
+  it('counts only the votes cast inside a season toward its winners, though the vote that ends it is cast after midnight and saved with its end', async () => {
     const shard = uniqueShard();
     const end = (dayOf((Date.now() - DEFAULT_SHARD_EPOCH_MS) / 1000) + 30) * DAY_S;
     await database.db.insert(shards).values({
@@ -403,4 +391,18 @@ describe('seasons', () => {
       await world.close();
     }
   }, 30_000);
+
+  it('keeps a chronicle readable when the first-finds hook names more finds than a chronicle holds', async () => {
+    const shard = uniqueShard();
+    const start = 20 * DAY_S;
+    await database.db
+      .insert(shards)
+      .values({ id: shard, epoch: new Date(DEFAULT_SHARD_EPOCH_MS), season: 1, seasonStart: start, seasonLength: SMALL_SEASON_LENGTH_S });
+    const position = { season: 1, start, length: SMALL_SEASON_LENGTH_S, actives: null, opening: seasonOpening(null, 1) };
+    const next = { season: 2, start: start + SMALL_SEASON_LENGTH_S, length: SMALL_SEASON_LENGTH_S, actives: 0, opening: seasonOpening('held', 2) };
+    const ended = { ...position, end: next.start, count: 500, bucket: 'held' as const, next };
+    const finds = Array.from({ length: CHRONICLE_FINDS_MAX + 1 }, (_, i) => ({ kind: 'species', name: `Find ${i}`, by: null, at: start + i }));
+    await database.db.transaction((tx) => writeSeasonEnd(tx, shard, ended, async () => finds));
+    expect((await readChronicle(database.db, shard, 1))!.finds).toEqual(finds.slice(0, CHRONICLE_FINDS_MAX));
+  });
 });

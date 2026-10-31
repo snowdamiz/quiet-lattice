@@ -14,12 +14,17 @@ export interface SeasonAwardsComponent extends CharacterComponent<StoredSeasonAw
   readonly awards: SeasonAwards;
 }
 
-export function seasonAwardsComponent(awards: SeasonAwards, opts: { log?: PersistenceLog } = {}): SeasonAwardsComponent {
+/**
+ * `writtenWith`: the components it is only ever written together with (§8): the reputation, which holds the titles its
+ * awards earn, so an award never reaches the row without its title (nothing earns the title again on a later join).
+ */
+export function seasonAwardsComponent(awards: SeasonAwards, opts: { log?: PersistenceLog; writtenWith?: readonly string[] } = {}): SeasonAwardsComponent {
   return {
     key: SEASON_AWARDS,
     v: 1,
     schema: storedSeasonAwardsSchema,
     onInvalid: 'refuse',
+    ...(opts.writtenWith?.length ? { writtenWith: [...opts.writtenWith] } : {}),
     awards,
     default: () => ({ awards: [] }),
     load: (stored, ctx) => {

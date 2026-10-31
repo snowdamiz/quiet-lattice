@@ -1731,13 +1731,16 @@ its title and glyph, and what its chronicle says. The world service rolls them o
   written, each joined character of an account among its winners is given the award and sent `awards` again. A character
   out of play then gets it on its next join. `SeasonAwards.subscribe` is the hook through which the server takes each
   title into the reputation (§24) with its `earnTitle` (the same title held already is kept once, so a season that
-  awards a bucket's title again adds none; the glyph is kept only here).
+  awards a bucket's title again adds none; the glyph is kept only here). The `seasonAwards` component is written with the
+  reputation (`writtenWith`, §8): a capture that cannot take one holds the other back, so an award never reaches the row
+  without its title.
 - **The chronicle** (DESIGN 16.4: "what the server did"): `GET /seasons/:season/chronicle`, with the session's Bearer
   token, answers a finished season's `SeasonChronicle`: when it ran and how long, the mean daily actives its length was
   chosen from, the map it opened with, the meter's path (each of its rolled days from `count_days`: Count, drift, lean,
   votes), the Count at its end and its bucket, the winning philosophy with its title and glyph and how many accounts
-  earned them, the map the next season opens with, and its notable first finds (`finds`; P2.E29.T01 names them through
-  `pgShardStore`'s `firstFinds` hook, read in the chronicle's transaction; none until then). A season not yet ended (or
+  earned them, the map the next season opens with, and its notable first finds (`finds`, at most 64, the rest dropped on
+  write; P2.E29.T01 names them through `pgShardStore`'s `firstFinds` hook, read in the chronicle's transaction; none
+  until then). A season not yet ended (or
   whose end is not written yet) is `404 no_chronicle`, a bad number `400`, no token `401`. `SeasonService` caches each
   chronicle it has read (a finished season never changes). HTTP rather than a socket request: a chronicle is a document,
   which grows with P2.E22.T04's per-account measures, and fetching one spends nothing of a socket's message budget. The

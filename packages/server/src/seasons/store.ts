@@ -4,6 +4,7 @@
 // every vote it had and its chronicle lands with the shard row's move to the next season, or not at all.
 import {
   BUCKET_PHILOSOPHY,
+  CHRONICLE_FINDS_MAX,
   chronicleFindSchema,
   seasonAward,
   seasonAwardSchema,
@@ -100,7 +101,7 @@ export async function writeSeasonEnd(tx: Tx, shardId: string, e: SeasonEnd, firs
       glyph: award.glyph,
       awarded: accounts.length,
       next: e.next.opening,
-      finds: finds.map((f) => chronicleFindSchema.parse(f)),
+      finds: finds.slice(0, CHRONICLE_FINDS_MAX).map((f) => chronicleFindSchema.parse(f)),
     })
     .onConflictDoNothing();
   return { season: e.season, award, accounts };
