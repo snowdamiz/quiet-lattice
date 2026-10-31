@@ -12,7 +12,7 @@ import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputati
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 15;
+export const PROTOCOL_VERSION = 16;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -29,6 +29,7 @@ export const PROTOCOL_VERSION = 15;
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
 // 14: reputation: standing, ranks and titles by faction, rank and title events (P2.E18.T01)
 // 15: meters: heat and Charge state (P1.E07.T02)
+// 16: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -169,10 +170,22 @@ export const Input = z.object({
   buttons: z.number().int().min(0).max(255),
   aim: Quat.optional(),
 });
-export const Cast = z.object({
+/** A skill node's id: the skill web's (`@astra/shared/data`), id-shaped, at most 48 characters. */
+export const NodeRef = z.string().regex(/^[a-z][a-z0-9_]{0,47}$/);
+/**
+ * Casting a slotted active (ARCHITECTURE §25, DESIGN 9.1): `node` the one the player sees in `slot` (0–5, keys 1–6) of the
+ * bar its mode casts from (the ground bar on foot, the ship's in flight), `aim` where it looks in `frame` (its pose's),
+ * `target` the entity it names when the ability names one, and `time` the world time it was cast, which the server never
+ * trusts beyond refusing one stamped seconds away. The server checks it all against what it believes and answers with
+ * `cast` state. `seq` numbers the session's casts from 1, increasing. Strict: no client says what a cast did.
+ */
+export const Cast = z.strictObject({
   t: z.literal('cast'),
-  seq: z.number().int().nonnegative(),
+  seq: z.number().int().min(1).max(0xffffffff),
+  time: z.number().min(0).max(1e12),
+  node: NodeRef,
   slot: z.number().int().min(0).max(5),
+  frame: FrameId,
   aim: Direction,
   target: EntityId.optional(),
 });
@@ -471,7 +484,23 @@ export const RankEvent = z.object({
 });
 /** A title earned (protocol 14): a rank's, the first time it is reached, or a quest's. */
 export const TitleEvent = z.object({ kind: z.literal('title'), title: titleViewSchema });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent, RankEvent, TitleEvent]);
+/**
+ * A cast the server carried out (protocol 16, ARCHITECTURE §25), to every session whose interest holds its caster or its
+ * target, for its effect to be drawn: `caster` cast `node` at world time `at`, from where it stood in `frame` along `aim`
+ * (its unit direction there), at `target` when it named one; `end` when a toggle went off. What it did to anyone arrives as
+ * `combat` events and state, never here.
+ */
+export const CastEvent = z.object({
+  kind: z.literal('cast'),
+  caster: EntityId,
+  node: NodeRef,
+  phase: z.enum(['cast', 'end']),
+  at: z.number().min(0),
+  frame: FrameId,
+  aim: Direction,
+  target: EntityId.optional(),
+});
+export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent, RankEvent, TitleEvent, CastEvent]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
 /** One member as its party sees it: cheap on purpose (a party frame needs no more). */
@@ -809,6 +838,70 @@ export const RecipesState = z.object({
  * after `recipes` on join and whenever the server changes it (after the `rank` and `title` events of that change). */
 export const ReputationState = z.object({ t: z.literal('reputation'), reputation: reputationViewSchema });
 
+/**
+ * Why a cast did nothing (ARCHITECTURE §25), cheapest check first: `stale_seq` (its number is not above the last), `rate`
+ * (casting too fast), `stale` (stamped too far from the server's clock), `zone` (the player is in no zone), `mode` (no bar
+ * casts in the mode the server believes: landed, docked, on the pulse drive), `down` (the player is down), `slot` (no such
+ * working slot: past the hull's ability slots), `not_owned` (the node is not the character's), `not_slotted` (the node is
+ * not in that slot of the bar the mode casts from), `unknown` (no ability casts that node yet), `cooldown` (cooling down:
+ * `readyAt`), `frame` (aimed in another frame than its pose's), `target` (it names no target, or one of a kind it does
+ * not take), `unseen` (no entity it can see by that id: none, or its phase hides it), `dead` (the target is dead or down),
+ * `range` (too far), `busy` (the world's ground is still being planned: try again), `los` (the ground is in the way),
+ * `heat` (the multitool is overheated), `charge` (not enough Charge).
+ */
+export const CastRefusal = z.enum([
+  'stale_seq',
+  'rate',
+  'stale',
+  'zone',
+  'mode',
+  'down',
+  'slot',
+  'not_owned',
+  'not_slotted',
+  'unknown',
+  'cooldown',
+  'frame',
+  'target',
+  'unseen',
+  'dead',
+  'range',
+  'busy',
+  'los',
+  'heat',
+  'charge',
+]);
+export type CastRefusal = z.infer<typeof CastRefusal>;
+/**
+ * A cast's answer: `cast` (carried out: its cost paid, its cooldown running until `readyAt`, the state sent first), `ended`
+ * (a toggle turned off), or `refused` with `reason` (and `readyAt` when it is cooling down), nothing changed. It names the
+ * node and slot asked for. The fields differ from the request's, so one `cast` type serves both directions (encodeMessage).
+ */
+export const CastState = z
+  .object({
+    t: z.literal('cast'),
+    seq: z.number().int().min(1).max(0xffffffff),
+    node: NodeRef,
+    slot: z.number().int().min(0).max(5),
+    result: z.enum(['cast', 'ended', 'refused']),
+    reason: CastRefusal.optional(),
+    readyAt: z.number().min(0).optional(),
+  })
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
+  .refine((m) => m.reason !== 'cooldown' || m.readyAt !== undefined, 'a cooldown says when it ends');
+/** The most cooldowns and toggles a character runs at once: every slot of both bars. */
+export const COOLDOWNS_MAX = 16;
+/**
+ * The character's cooldowns and toggles as the server holds them (ARCHITECTURE §25): every node cooling down with the world
+ * time it is ready again (a shared cooldown under the node whose clock it runs on), and the toggles that are on. Sent after
+ * `meters` on join and whenever a cast changes them, before its answer. The client shows them and never decides them.
+ */
+export const AbilitiesState = z.object({
+  t: z.literal('abilities'),
+  cooldowns: z.array(z.object({ node: NodeRef, readyAt: z.number().min(0) })).max(COOLDOWNS_MAX),
+  on: z.array(NodeRef).max(COOLDOWNS_MAX),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -833,6 +926,8 @@ export const ServerMessage = z.discriminatedUnion('t', [
   CraftState,
   RecipesState,
   ReputationState,
+  CastState,
+  AbilitiesState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;
