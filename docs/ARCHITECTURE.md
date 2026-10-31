@@ -1336,8 +1336,10 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   world's limb. The arcs' strokes are sized in
   the SVG's own units per reticle, never as non-scaling strokes, whose dashes would be measured in screen pixels and
   overrun the arc. An arc lands on its value at once (no tween) on its first draw and as it turns on; a jump (more than
-  8% in a frame: a sync, a refill, an ability's chunk of heat) eases onto the value over 150 ms, ease-out, on the HUD's
-  clock (P1.E07.T03, §28); the crosshair and the reticle fade in over 150 ms as they turn on.
+  8% in a frame: a sync, a refill) eases onto the value over 250 ms, ease-out, on the HUD's clock, and so does a cast's
+  cost whatever its size (the heat arc on foot, Charge in flight; the change within 200 ms of the cast's answer, either
+  first), its part of the fill drawn brighter in the arc's colour while it eases (P1.E07.T03, §28); the crosshair and the
+  reticle fade in over 150 ms as they turn on.
 
 ## 20. Combat (`packages/server/src/combat`)
 
@@ -1371,8 +1373,9 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   it; until then it stays down for its session).
 - **Events.** Each hit queues a `combat` event; hits of one source on one target by the same thing in a tick are summed
   into one. After each tick's snapshots (the interest sets just worked out) each session is sent those whose target or
-  source its interest holds (`Zone.sees`), its own entity's first, at most 32 a tick; a tick queues at most 512. Each is
-  encoded once and written to every session as text.
+  source its interest holds (`Zone.sees`), its own entity's first, at most 32 a tick; a tick queues at most 512. A
+  session is never named an entity its phase hides (§6.1): a hit on one is not sent to it, a hit by one goes without its
+  `source` (P1.E07.T03). Each is encoded once (twice for a hidden source) and written to every session as text.
 - **The base gun** (DESIGN 9.1: the ship lasers stay on LMB). Its numbers are the first fitted hitscan weapon's with a
   per-shot damage, cooldown and range, through `shipStats` of the ship the player entered with and the nodes it owns now
   (`baseGun`: the Lark's Pulse Lasers, 11 a volley every 0.12 s to 1,500 m; Gunnery and the laser nodes apply); P1.E12.T04
@@ -1903,7 +1906,8 @@ effects; this runtime casts them all.
   `seq`; the character in play; its rate (6 at once, 3 a second); its stamp (within 3 s); the bar the mode movement
   authority believes casts from (§7); not down (§20); the slot one of the bar's working ones (six on the ground, the flown
   hull's `abilitySlots` aboard: the skill view's `shipSlots`); the node owned and in that slot of that bar; an ability in
-  the book (a toggle that is on goes off here: `ended`); its cooldown; the aim's frame (the pose's); for an `entity`
+  the book; the aim's frame (the pose's); a toggle that is on goes off here (`ended`, free, before its cooldown is looked
+  at); its cooldown; for an `entity`
   cast, the target: one the caster can see by the phase rule (§6.1; one it cannot is `unseen`, told apart from none at
   all by nothing), of a kind the ability takes, alive (a creature's health not dead, a player not down), on the caster's
   world, within reach from the caster's eye (1.6 m over its feet; a ship's centre aboard) to its hit sphere plus 2 m of
@@ -1911,16 +1915,26 @@ effects; this runtime casts them all.
   the meters (§19: `addHeat`, refused in the lockout, a chunk reaching the top overheating; `spendCharge`, refused unless
   it holds it all). Carried out, the cooldown runs from now, a toggle goes on, the effect runs (a bug in it is logged and
   costs only it), and the cast goes out as a `cast` event to every session whose interest holds the caster or the target
-  (`Zone.sees`, at once: casts are rare).
+  (`Zone.sees`, at once: casts are rare), naming to each only those of the two its phase lets it see (no `caster`, or no
+  `target`, otherwise); combat's events keep the same rule (§20: a hit on an entity a session's phase hides is not sent
+  to it, a hit by one is sent without its `source`).
 - **What an effect gets** (`CastContext`): the caster's character and entity, the node, the ability, the bar, the world
   time, the frame, origin and unit aim, the checked target; `creatures(reach?)`, the creatures of its world it can see with
   their hit spheres (`creatureTargets`, combat's, for areas and cones with `hitTest`, `@astra/shared/combat`); `damage(target,
   base)`, a hit through the zone's one damage path (§20) as the node's ability, with the caster's node modifiers and
-  augments; and `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play.
+  augments, and only where `mayHarm` allows (null otherwise): never a player until PvP defines it (P2.E17.T01), nothing
+  in a safe zone, caster or target (the Waystation's sphere, its frame; a capital's, P1.E10.T02, joins it there); and
+  `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
-  does); `state(id)` is the `abilities` message. `step(now)` runs every 50 ms (`start`, the gateway's): due timers, and
-  toggles whose caster is out of the bar's mode, down or out of its zone go off (`end`, an `end` event). A character's
-  last connection closing ends its toggles and drops its timers (`left`).
+  does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
+  cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
+  while the entity that cast it is in play, in the bar's mode and up, and its node is owned and in a working slot of that
+  bar; one that no longer holds goes off, ended with the cast that turned it on (`end`, an `end` event): on `step(now)`,
+  every 50 ms (`start`, the gateway's, beside the due timers), on a change to the character's skills (the gateway passes
+  the skill service's news on: `skillsChanged`) and before the character's next cast. The gateway hears of each
+  (`subscribe`) and sends the session holding the character its `abilities` state; `state` never reports a toggle that
+  no longer holds. A reconnect's new entity is not the one that cast it, so its toggles go off. A character's last
+  connection closing ends its toggles and drops its timers (`left`).
 - **One hit sphere, one phase rule.** A creature's hit sphere is `creatureSphere` (`@astra/shared/combat`): 0.6 of its
   size at its own scale plus a metre of slack, round its body (a walker's centre half its size over its feet). Shots
   (§20), casts and analyses (§22) all take it; `creatureTargets` (`combat/targets.ts`) gives a shot or a cast only the
@@ -1933,10 +1947,12 @@ effects; this runtime casts them all.
   (`registerAbilityFx(node, {cast, end?})`); none is registered until the branches' tasks and their art (P1.E07.T14)
   land. The HUD's bar (`HUD.updateAbilities`) shows the working slots of the bar the mode casts from under the prompt,
   while a node is slotted there: a ring a slot, in the arcs' language (a near-black halo and disc, an opaque track), drawn
-  full in the bar's colour (heat's warm, Charge's lilac) when ready, drawn back up as the server's cooldown runs out with
-  the seconds left in place of the key (whole from ten, tenths under ten, never a lone digit), thicker while a toggle is
-  on, flaring as the server takes a cast and edged in danger red beside the reason as it refuses one; it rests at 55% once
-  nothing on it has moved for 4 s. The client never decides a cooldown. Its gauge arcs (§19) ease a jump over 150 ms
-  (ease-out, on the HUD's clock, following the value as it moves meanwhile) and land at once only on their first draw and
-  as they turn on.
+  full in the bar's colour (heat's warm on foot, the flight deck's warm white in flight: lilac is Charge's alone) when
+  ready, drawn back up as the server's cooldown runs out with the seconds left in place of the key (whole from ten,
+  tenths under ten, never a lone digit) and brightening for 200 ms once ready, thicker while a toggle is on, flaring as
+  the server takes a cast (size and brightness on one 0.36 s ease-out, from 1.22 times and 1.4 times, warm white's 1.08)
+  and edged in danger red as it refuses one, the reason on a plate over that slot; it rests at 55%, its names hidden,
+  once nothing on it has moved for 4 s. The client never decides a cooldown. Its gauge arcs (§19) ease a jump and a
+  cast's cost over 250 ms (ease-out, on the HUD's clock, following the value as it moves meanwhile), the cost's chunk
+  drawn bright, and land at once only on their first draw and as they turn on.
 

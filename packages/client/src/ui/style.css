@@ -275,14 +275,36 @@ body {
   stroke-dashoffset: 0.07;
   opacity: 0;
 }
+/* a cast's cost while it eases on (heat) or off (Charge): its part of the fill drawn brighter in the gauge's own colour */
+.gauge .chunk {
+  stroke-dasharray: 0 2;
+  opacity: 0;
+}
+.crosshair .gauge .chunk {
+  stroke-width: 7;
+}
+.ship-reticle .gauge .chunk {
+  stroke-width: 2.7;
+}
+.gauge .k-heat {
+  stroke: #ffdfae;
+}
+.gauge.hot .k-heat {
+  stroke: #ffc98a;
+}
+.gauge .k-charge {
+  stroke: #e6d9ff;
+}
 
 /* ---------- the ability bar (keys 1–6 on foot, 1–5 in flight) ----------
    A ring a slot in the arcs' language: a near-black halo, an opaque track, and the bar's colour (heat's warm on foot,
-   Charge's lilac in flight) drawn round it from the top, full when the slot is ready and drawn back up as its cooldown
-   runs out, the seconds left in its colour in place of the key. 34 px rings in 80 px slots (the longest names, INERTIAL
+   the flight deck's warm white in flight: lilac is Charge's alone, art bible §4) drawn round it from the top, full when
+   the slot is ready and drawn back up as its cooldown runs out, the seconds left in its colour in place of the key. 34 px rings in 80 px slots (the longest names, INERTIAL
    BRAKE and REPAIR DRONES, fit under them), so the bar sits under the prompt at 720p too. */
 .abilities {
   --ab: var(--warm);
+  /* the flare's and the ready beat's brightness at their start: brighter warm, never clipped to white */
+  --ab-flare: 1.4;
   position: absolute;
   left: 50%;
   bottom: 14px;
@@ -291,7 +313,9 @@ body {
   transition: opacity 0.4s ease-in;
 }
 .abilities[data-bar='ship'] {
-  --ab: #c7a6ff;
+  --ab: var(--text);
+  /* (warm white has no headroom: any more and it clips to white) */
+  --ab-flare: 1.08;
 }
 .abilities.on {
   opacity: 1;
@@ -367,14 +391,34 @@ body {
 .ab-slot.refused .sweep {
   stroke-opacity: 0.35;
 }
-/* the server took the cast: the ring flares and settles */
+/* the server took the cast: the ring flares and settles, its brightness on the same ease-out as its size (the HUD's
+   cubic) */
 .ab-slot.cast svg {
-  animation: abCast 0.36s cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: abCast 0.36s cubic-bezier(0.33, 1, 0.68, 1);
 }
 @keyframes abCast {
   from {
     transform: rotate(-90deg) scale(1.22);
-    filter: brightness(1.9);
+    filter: brightness(var(--ab-flare));
+  }
+}
+/* its cooldown ran out: the ring and its key brighten for a beat */
+.ab-slot.ready svg,
+.ab-slot.ready .ab-key {
+  animation: abReady 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.ab-slot.ready svg {
+  animation-name: abReadyRing;
+}
+@keyframes abReadyRing {
+  from {
+    transform: rotate(-90deg) scale(1.1);
+    filter: brightness(var(--ab-flare));
+  }
+}
+@keyframes abReady {
+  from {
+    filter: brightness(var(--ab-flare));
   }
 }
 .ab-key {
@@ -407,20 +451,23 @@ body {
   font-family: var(--font-cond);
   font-style: normal;
   font-weight: 500;
-  font-size: 10.5px;
+  font-size: 12px;
   line-height: 1;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
-  max-width: 80px;
-  overflow: hidden;
   color: rgba(233, 231, 226, 0.78);
+  transition: opacity 0.25s ease-out;
 }
-/* why the server refused a cast: the lockout word's plate, to the right of the bar */
+/* at rest the rings alone: the names come back as the bar wakes */
+.abilities.rest .ab-name {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+/* why the server refused a cast: the lockout word's plate, over the refused slot's ring (HUD.updateAbilities sets `left`) */
 .ab-why {
   position: absolute;
-  left: calc(100% + 14px);
-  top: 6px;
+  bottom: calc(100% + 4px);
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
@@ -433,12 +480,12 @@ body {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
   white-space: nowrap;
   opacity: 0;
-  transform: translateX(-4px);
+  transform: translate(-50%, 4px);
   transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .ab-why.show {
   opacity: 1;
-  transform: none;
+  transform: translate(-50%, 0);
 }
 
 /* ---------- ship reticle ---------- */

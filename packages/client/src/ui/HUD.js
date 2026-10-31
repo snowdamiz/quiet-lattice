@@ -44,8 +44,9 @@ function setText(e, html) {
 }
 
 // two thin gauge arcs either side of a reticle, as one SVG: each a dark halo (so it reads over a bright sky or the beam's
-// glare), a track, its fill, a mark (a tick across the arc at a level that matters: where the heat lockout ends) and a
-// sheen (a bright dash that climbs the fill while it refills)
+// glare), a track, its fill, a chunk (a cast's cost, drawn bright over the fill while it eases on or off), a mark (a tick
+// across the arc at a level that matters: where the heat lockout ends) and a sheen (a bright dash that climbs the fill
+// while it refills)
 const ARC_LEN = 1;
 // a 100-degree arc centred on the left (or right) of the circle; both start at the bottom, so gauges fill upward
 const arcAngle = (side, f) => ((side < 0 ? 130 + 100 * f : 50 - 100 * f) * Math.PI) / 180;
@@ -58,7 +59,8 @@ function gaugeSvg(left, right, r) {
   };
   const gauge = (side, name) =>
     `<g class="gauge ${side < 0 ? 'left' : 'right'}" data-side="${side}" data-r="${r}"><path class="halo" d="${arc(side)}"/><path class="track" d="${arc(side)}" pathLength="1"/>` +
-    `<path class="fill g-${name}" d="${arc(side)}" pathLength="1"/><path class="sheen" d="${arc(side)}" pathLength="1"/><path class="mark"/></g>`;
+    `<path class="fill g-${name}" d="${arc(side)}" pathLength="1"/><path class="chunk k-${name}" d="${arc(side)}" pathLength="1"/>` +
+    `<path class="sheen" d="${arc(side)}" pathLength="1"/><path class="mark"/></g>`;
   return `<svg class="gauges" viewBox="0 0 100 100">${gauge(-1, left)}${gauge(1, right)}</svg>`;
 }
 
@@ -67,10 +69,12 @@ const fmtRate = (v) => `${v > 0 ? '+' : '\u2212'}${Math.abs(v).toFixed(Math.abs(
 
 // a gauge level: a finite 0–1 (anything else draws as empty, never as a full arc)
 const unit = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
-/** A change of more than this much of an arc in one frame is a jump (a server sync, a refill, an ability's chunk of heat):
- * the gauge eases onto it over ARC_EASE_MS, fast then settling, rather than trailing it frame by frame. */
+/** A change of more than this much of an arc in one frame is a jump (a server sync, a refill): the gauge eases onto it over
+ * ARC_EASE_MS, fast then settling, rather than trailing it frame by frame. A cast's cost eases on or off whatever its size. */
 const ARC_JUMP = 0.08;
-export const ARC_EASE_MS = 150;
+export const ARC_EASE_MS = 250;
+/** A cast's answer and the meter it paid from arrive this close together, either first, ms. */
+const COST_WINDOW_MS = 200;
 const easeOut = (t) => 1 - (1 - t) ** 3;
 
 /** What the bar says of a cast the server refused, by its reason (ARCHITECTURE §28). */
@@ -100,6 +104,12 @@ export function countdown(left) {
 }
 /** The bar rests dim this long after the last thing that moved on it, ms. */
 const BAR_REST_MS = 4000;
+/** Plays a slot's one-shot animation (`cast` or `ready`) from its start, in place of the other. */
+function beat(e, cls) {
+  e.classList.remove('cast', 'ready');
+  void e.offsetWidth;
+  e.classList.add(cls);
+}
 
 /** The heat arc as the HUD draws it from the multitool: filled to heat ÷ capacity, shown while the beam fires, the meter is
  * warm or locked out; amber from 75%, danger red through the lockout, with a tick where the lockout ends. */
@@ -275,19 +285,24 @@ export class HUD {
   // on the gauge (by default `low` under a quarter: a gauge running out), always from the value itself. The first time a
   // gauge is drawn and as it turns on it is drawn `snap`: at its value and in its colours at once, with no transition from
   // wherever it stood (the class lasts the one frame). A jump eases onto the value over ARC_EASE_MS on the HUD's clock,
-  // following it as it moves on meanwhile, the CSS transition off while it does.
-  arc(root, name, value, show, states = null) {
+  // following it as it moves on meanwhile, the CSS transition off while it does. `costAt` is when the HUD saw a cast on
+  // this gauge's bar answered: a change within COST_WINDOW_MS of it is that cast's cost, eased whatever its size, the
+  // part of the fill between the old level and the tip drawn bright (the heat landing, the Charge coming off) as it goes.
+  arc(root, name, value, show, states = null, costAt = null) {
     const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
     const g = a.parentNode;
     const v = unit(value);
     const now = this.now();
     const snap = a._v === undefined || (show && !g.classList.contains('on'));
+    const cost = costAt !== null && now - costAt < COST_WINDOW_MS;
     if (snap) a._ease = null;
-    else if (Math.abs(v - a._v) > ARC_JUMP) a._ease = { from: a._drawn ?? a._v, at: now };
+    else if (Math.abs(v - a._v) > ARC_JUMP || (cost && Math.abs(v - a._v) > 1e-4 && !a._ease?.cost)) a._ease = { from: a._drawn ?? a._v, at: now, cost: false };
+    if (a._ease && cost && a._ease.at >= costAt - COST_WINDOW_MS) a._ease.cost = true;
     a._v = v;
     let drawn = v;
+    let t = 1;
     if (a._ease) {
-      const t = (now - a._ease.at) / ARC_EASE_MS;
+      t = (now - a._ease.at) / ARC_EASE_MS;
       if (t >= 1) a._ease = null;
       else drawn = a._ease.from + (v - a._ease.from) * easeOut(Math.max(0, t));
     }
@@ -295,8 +310,30 @@ export class HUD {
     g.classList.toggle('snap', snap || !!a._ease);
     const off = (ARC_LEN * (1 - drawn)).toFixed(3);
     if (a._off !== off) a.style.strokeDashoffset = a._off = off;
+    const k = a._chunk || (a._chunk = g.querySelector('.chunk'));
+    if (k) {
+      // (from the lower of the old level and the new up to the tip: heat's new chunk growing, Charge's cost draining)
+      const lo = a._ease?.cost ? Math.min(a._ease.from, v) : drawn;
+      const len = Math.max(0, drawn - lo);
+      const chunk = len > 1e-3 ? `${len.toFixed(4)}|${lo.toFixed(4)}|${Math.min(1, (1 - t) / 0.4).toFixed(3)}` : '';
+      if (k._c !== chunk) {
+        k._c = chunk;
+        const [l, at, o] = chunk ? chunk.split('|') : ['0', '0', '0'];
+        k.style.strokeDasharray = `${l} 2`;
+        k.style.strokeDashoffset = String(-at);
+        k.style.opacity = o;
+      }
+    }
     g.classList.toggle('on', show);
     for (const [cls, on] of Object.entries(states ?? { low: v < 0.25 })) g.classList.toggle(cls, !!on);
+  }
+
+  /** When the HUD first saw the last cast the server carried out from `bar` answered, on its clock (null: none yet). */
+  costAt(bar) {
+    const c = this.game.abilities?.lastCast;
+    if (!c || c.bar !== bar) return null;
+    if (this._cost?.of !== c) this._cost = { of: c, at: this.now() };
+    return this._cost.at;
   }
 
   // A bright dash that climbs a gauge's fill from the bottom to its tip, eased in and out, every 1.9 s while `on` (Charge
@@ -368,7 +405,7 @@ export class HUD {
       // heat fills the left arc: warm, amber once it runs hot, danger red through the lockout, with a tick where the
       // lockout ends and the word under the dot
       const heat = heatGauge(mt);
-      this.arc(this.crosshair, 'heat', heat.fill, heat.show, { hot: heat.hot, over: heat.over });
+      this.arc(this.crosshair, 'heat', heat.fill, heat.show, { hot: heat.hot, over: heat.over }, this.costAt('ground'));
       this.mark(this.crosshair, 'heat', heat.mark, heat.over);
       this.crosshair.classList.toggle('over', heat.over);
       this.arc(this.crosshair, 'jet', player.jetFuel, player.jetFuel < 0.999);
@@ -394,7 +431,7 @@ export class HUD {
       // Charge fills the right arc; a sheen climbs it while it regenerates, and the readout under the altitude says how
       // much there is and which way it is going (shown while it is not full, or on the pulse drive)
       const charge = chargeGauge(ship);
-      this.arc(this.reticle, 'charge', charge.fill, charge.shown, { low: charge.fill < 0.25, regen: charge.regen, empty: charge.empty });
+      this.arc(this.reticle, 'charge', charge.fill, charge.shown, { low: charge.fill < 0.25, regen: charge.regen, empty: charge.empty }, this.costAt('ship'));
       this.sheen(this.reticle, 'charge', charge.regen && charge.shown, charge.fill);
       let chg = '';
       if (charge.shown && charge.empty) chg = `0<small>CHARGE EMPTY</small>`;
@@ -489,11 +526,11 @@ export class HUD {
   }
 
   // The bar the player casts from (ARCHITECTURE §28), under the prompt: a ring a working slot with its key in it and the
-  // node's name under it. A cooldown is the ring drawn back to full in the bar's colour (heat's warm on foot, Charge's
-  // lilac in flight) as the server's clock runs out, the seconds left in that colour in place of the key (`countdown`);
-  // a toggle that is on thickens it; a cast the server took flashes it, and one it refused edges it in danger red with
-  // the reason beside the bar. Shown while a node is slotted on the bar the mode casts from; it rests dim once nothing on
-  // it has moved for BAR_REST_MS.
+  // node's name under it. A cooldown is the ring drawn back to full in the bar's colour (heat's warm on foot, the flight
+  // deck's warm white in flight) as the server's clock runs out, the seconds left in that colour in place of the key
+  // (`countdown`), and the ring brightens for a beat once it is ready; a toggle that is on thickens it; a cast the server
+  // took flares it, and one it refused edges it in danger red with the reason on a plate above it. Shown while a node is
+  // slotted on the bar the mode casts from; once nothing on it has moved for BAR_REST_MS it rests dim, its names hidden.
   updateAbilities() {
     const g = this.game;
     const bar = g.abilities && !g.director?.pose ? castBar(g) : null;
@@ -523,21 +560,29 @@ export class HUD {
       const key = e.querySelector('.ab-key');
       const label = cooling ? countdown(x.left) : String(x.key);
       if (key._t !== label) key.textContent = key._t = label;
+      // (a cooldown run out on this slot's node, not a node newly slotted: the ring's beat)
+      if (e._cooling && !cooling && e._node === x.node) beat(e, 'ready');
+      e._cooling = cooling;
+      e._node = x.node;
       e.classList.toggle('cooling', cooling);
       e.classList.toggle('lit', x.on);
       e.classList.toggle('sending', x.sending);
       e.classList.toggle('refused', !!x.refused);
       if (x.castAt !== null && e._castAt !== x.castAt) {
         e._castAt = x.castAt;
-        e.classList.remove('cast');
-        void e.offsetWidth;
-        e.classList.add('cast');
+        beat(e, 'cast');
       }
       busy ||= cooling || x.on || x.sending || !!x.refused;
     });
-    const refusal = slots.find((x) => x.refused)?.refused ?? null;
-    const why = refusal ? (CAST_REFUSED[refusal] ?? 'TRY AGAIN') : '';
-    if (why) this.abWhy.textContent = why;
+    const refused = slots.findIndex((x) => x.refused);
+    const why = refused >= 0 ? (CAST_REFUSED[slots[refused].refused] ?? 'TRY AGAIN') : '';
+    if (why) {
+      this.abWhy.textContent = why;
+      // (over the refused slot's ring)
+      const e = this.abRow.children[refused];
+      const x = `${e.offsetLeft + e.offsetWidth / 2}px`;
+      if (this.abWhy._x !== x) this.abWhy.style.left = this.abWhy._x = x;
+    }
     this.abWhy.classList.toggle('show', !!why);
     if (busy) this._abBusyAt = now;
     this.abilitiesEl.classList.toggle('rest', now - (this._abBusyAt ?? 0) > BAR_REST_MS);
