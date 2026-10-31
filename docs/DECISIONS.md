@@ -906,3 +906,11 @@ Format: task id, question → choice → why.
   per damage in groups of 2–5; `worldEvents.js` builds item names with `replace`, not the resource table; a footprint
   scrim instead of the full-width band for every banner; P1.E07.T03 reconciles the `fire` canSee filter with its
   shared `creatureTargets` when it lands.
+- **P2.E29.T04** Name filter: digit and ligature stand-ins (shared `discovery`, `data/names.ts`) → 6 and 9 read as g
+  beside the other digit look-alikes; æ and œ are read both long (ae, oe) and short (a, o) by running the blocked and
+  reserved checks once per reading, all ligatures one way at a time (no listed word has two ligature slots); a letter is
+  accepted only if every reading of it is a–z, so the accepted set stays derived from the skeleton; reserved words are
+  checked over every run of neighbouring words joined, so "Ad min" and "Ad-min Rock" are refused (single letters can
+  join into a reserved word, e.g. "G M"; moderators rename the rare real case). → closes P2.E29.T01's second review.
+  Open (P2.E29.T05): blocked words split by a separator inside a longer name; the digit reading also makes "9M" read as
+  the reserved "gm"; v-for-u and ph-for-f stand-ins.
