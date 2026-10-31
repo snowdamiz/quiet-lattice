@@ -68,6 +68,8 @@ export class HUD {
     this.later = (fn, ms) => setTimeout(fn, ms);
     this.cancel = (id) => clearTimeout(id);
     root.innerHTML = '';
+    // under everything else: the top of the view darkens while a banner shows, so it and the top line hold over any scene
+    this.band = el('div', 'hud-band', root);
     this.layer = el('div', 'hud-layer', root);
     this.markersEl = el('div', 'markers', this.layer);
     // on foot: a dot with two gauge arcs (mining heat left, jetpack right) that only show while in use
@@ -112,6 +114,7 @@ export class HUD {
     this.visible = v;
     this.layer.style.display = v ? '' : 'none';
     this.banner.style.display = v ? '' : 'none';
+    this.band.style.display = v ? '' : 'none';
     if (!v) this.edgeCompass.update(false);
   }
 
@@ -168,8 +171,11 @@ export class HUD {
     // raised in a cutscene, it is a title card in the letterbox's top bar, and stays there for its life
     this.banner.classList.toggle('in-bar', !!this.game.cutscenes?.active);
     this.banner.classList.remove('show');
+    this.band.classList.remove('show');
     void this.banner.offsetWidth;
     this.banner.classList.add('show');
+    // (in a cutscene's top bar it is on black already)
+    if (!this.game.cutscenes?.active) this.band.classList.add('show');
     this.bannerUntil = now + 6200;
     if (this.bannerQueue.length) this.pumpBanners();
   }
@@ -180,6 +186,7 @@ export class HUD {
     this.bannerUntil = 0;
     this.cancel(this.bannerTimer);
     this.banner.classList.remove('show');
+    this.band.classList.remove('show');
   }
 
   flash(kind) {
@@ -222,6 +229,7 @@ export class HUD {
     const hidden = g.overlay && g.overlay !== 'cutscene' && !chatting;
     this.layer.style.visibility = hidden ? 'hidden' : '';
     this.banner.style.visibility = hidden ? 'hidden' : '';
+    this.band.style.visibility = hidden || cine > 0 ? 'hidden' : '';
     const fade = cine > 0 ? (1 - cine).toFixed(3) : '';
     if (this.layer.style.opacity !== fade) this.layer.style.opacity = fade;
 

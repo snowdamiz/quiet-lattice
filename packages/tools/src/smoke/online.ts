@@ -84,7 +84,8 @@ export async function startOnline(): Promise<Online> {
   let server: ChildProcess | null = null;
   let vite: { close(): Promise<void> } | null = null;
   let out = '';
-  const env = { ...process.env, DATABASE_URL: dbUrl, REDIS_URL, HOST: '127.0.0.1', LOG_LEVEL: 'warn', NODE_ENV: 'development' };
+  // (with the dev login on, which the dev scenarios' `?dev` signs in through: P1.E04.T05)
+  const env = { ...process.env, DATABASE_URL: dbUrl, REDIS_URL, HOST: '127.0.0.1', LOG_LEVEL: 'warn', NODE_ENV: 'development', ASTRA_DEV_LOGIN: '1' };
   let port = 0;
 
   const launchServer = async () => {
