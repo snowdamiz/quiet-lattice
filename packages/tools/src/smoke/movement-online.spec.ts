@@ -2,20 +2,30 @@
 // flying out of the Waystation into its world's frame, boosting and engaging the pulse drive, through page stalls of 4 s
 // and 9 s (its first input back often changes frame), and a hidden tab's 40 s pause (its clock steps forward on its
 // return). It is never corrected and never kicked. Needs `pnpm db:up`.
+//
+// Movement authority judges the client's time against the server's (ARCHITECTURE §7), and a loaded machine stretches both
+// clocks' timers and sockets differently, so the stalls are played on clocks the spec steps: the server's (online.ts
+// `stepped`) and the page's (`performance.now`, with its frames stepped by hand). Each 50 ms step moves both, runs the
+// page's frames, and waits until the server has handled the input they sent, so the server sees exactly the gaps and times
+// the client meant. A stall or a pause is a jump of both clocks with no frames and no inputs.
 import { randomBytes, randomInt } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
 import { enterPicked, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 
 let online: Online;
+let stepped: Online;
 test.beforeAll(async () => {
   online = await startOnline();
+  stepped = await startOnline({ stepped: true });
 });
 test.afterAll(async () => {
   await online?.stop();
+  await stepped?.stop();
 });
 test.afterEach(async ({ page }, info) => {
-  if (info.status !== info.expectedStatus) for (const l of online.serverOutput().split('\n')) if (/movement/.test(l)) console.log('SERVER', l.slice(0, 600));
+  if (info.status !== info.expectedStatus)
+    for (const l of [...online.serverOutput().split('\n'), ...stepped.serverOutput().split('\n')]) if (/movement/.test(l)) console.log('SERVER', l.slice(0, 600));
   await page.evaluate(() => (window as { game?: { net?: { close(): void } } }).game?.net?.close()).catch(() => {});
   await page.waitForTimeout(200);
 });
@@ -41,8 +51,8 @@ async function until(page: Page, pred: string, timeout = 60_000) {
 }
 
 /** A new account and character, in the world, its corrections and any close recorded. */
-async function enterNew(page: Page) {
-  await page.goto(`${online.url}/`);
+async function enterNew(page: Page, on = online) {
+  await page.goto(`${on.url}/`);
   await page.waitForFunction(() => 'game' in window && 'step' in window, null, { timeout: 60_000 });
   await until(page, 'window.game.menus.ready', 120_000);
   await signUp(page, pilot(), 'thalune');
@@ -101,6 +111,62 @@ async function flyOut(page: Page) {
   await hold(page, ['Space'], 1500);
 }
 
+const STEP_MS = 50;
+const FRAMES_PER_STEP = 2;
+
+type Stepped = Window & { __advance(ms: number): void; __step(ms: number, frames: number): Promise<void> };
+
+/**
+ * From here the server's clock and the page's move only when the spec moves them: both are frozen where they stand (the
+ * page's `performance.now`, which the game's net layer and its 20 Hz input cadence run on, and its animation frames, which
+ * `step` drives instead), and a fresh clock sample is taken at the standstill, whose round trip is nothing.
+ */
+async function freeze(page: Page, on: Online) {
+  await on.clock!.freeze();
+  await page.evaluate(async () => {
+    const w = window as unknown as Stepped & { game: { net: { ping(): void; clock: { samples: unknown[] } } } };
+    let t = performance.now();
+    performance.now = () => t;
+    w.__advance = (ms) => {
+      t += ms;
+    };
+    w.requestAnimationFrame = () => 0;
+    w.__step = async (ms, frames) => {
+      const g = (window as unknown as { game: { frame(dt: number): void; net: { state: string; inputSeq: number; store: { ack: number } } } }).game;
+      for (let i = 0; i < frames; i++) {
+        t += ms / frames;
+        g.frame(ms / frames / 1000);
+      }
+      const deadline = Date.now() + 120_000;
+      while (g.net.state === 'joined' && g.net.store.ack < g.net.inputSeq && Date.now() < deadline) await new Promise((r) => setTimeout(r, 4));
+    };
+    const have = w.game.net.clock.samples.length;
+    w.game.net.ping();
+    while (w.game.net.clock.samples.length === have) await new Promise((r) => setTimeout(r, 4));
+  });
+}
+
+/** `ms` of both clocks on, in steps of frames, each waiting for the server to handle the input it sent. */
+async function play(page: Page, on: Online, ms: number) {
+  for (let left = ms; left > 0; left -= STEP_MS) {
+    await on.clock!.advance(Math.min(left, STEP_MS));
+    await page.evaluate(([step, frames]) => (window as unknown as Stepped).__step(step!, frames!), [Math.min(left, STEP_MS), FRAMES_PER_STEP]);
+  }
+}
+
+/** A stall: both clocks jump `ms`, with no frame run and no input sent. */
+async function stall(page: Page, on: Online, ms: number) {
+  await on.clock!.advance(ms);
+  await page.evaluate((ms) => (window as unknown as Stepped).__advance(ms), ms);
+}
+
+async function holdFor(page: Page, on: Online, keys: string[], ms: number) {
+  for (const k of keys) await page.keyboard.down(k);
+  await play(page, on, ms);
+  for (const k of keys) await page.keyboard.up(k);
+}
+
+
 test('takes off, flies out of the Waystation, boosts and engages the pulse drive without a correction', async ({ page }) => {
   test.setTimeout(240_000);
   await flyOut(page);
@@ -114,19 +180,19 @@ test('takes off, flies out of the Waystation, boosts and engages the pulse drive
 });
 
 test('flies on through page stalls of 4 s and 9 s and a hidden tab’s 40 s pause without a correction', async ({ page }) => {
-  test.setTimeout(300_000);
-  await flyOut(page);
+  test.setTimeout(900_000);
+  await enterNew(page, stepped);
+  await freeze(page, stepped);
+  await play(page, stepped, 2000);
+  await holdFor(page, stepped, ['KeyE'], 100);
+  await play(page, stepped, 3000);
+  await holdFor(page, stepped, ['Space'], 1500);
   await page.keyboard.down('KeyW');
-  await page.waitForTimeout(8000);
+  await play(page, stepped, 8000);
   for (const ms of [4000, 9000]) {
     // the page busy: no frame runs, no input leaves
-    await page.evaluate((ms) => {
-      const end = performance.now() + ms;
-      while (performance.now() < end) {
-        // (busy)
-      }
-    }, ms);
-    await page.waitForTimeout(ms * 2 + 3000);
+    await stall(page, stepped, ms);
+    await play(page, stepped, 6000);
     expect(await state(page), `after a ${ms} ms stall`).toEqual({ corrections: [], closed: null, state: 'joined' });
   }
   // a hidden tab: its frame loop stops for 40 s, then runs again
@@ -135,12 +201,12 @@ test('flies on through page stalls of 4 s and 9 s and a hidden tab’s 40 s paus
     g.__frame = g.frame;
     g.frame = () => {};
   });
-  await page.waitForTimeout(40_000);
+  await stall(page, stepped, 40_000);
   await page.evaluate(() => {
     const g = (window as unknown as { game: Record<string, unknown> }).game;
     g.frame = g.__frame;
   });
-  await page.waitForTimeout(10_000);
+  await play(page, stepped, 10_000);
   await page.keyboard.up('KeyW');
   expect(await state(page), 'after a 40 s pause').toEqual({ corrections: [], closed: null, state: 'joined' });
 });
