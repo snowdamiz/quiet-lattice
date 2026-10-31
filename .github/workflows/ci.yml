@@ -1,5 +1,10 @@
 name: CI
 
+# The fast checks only. The slow ones run locally before a merge:
+#   pnpm db:up && pnpm db:migrate && pnpm test:int   integration (Postgres, Redis)
+#   pnpm smoke                                       Playwright smoke (~45 min under SwiftShader on a CI runner)
+#   pnpm art:validate -- --changed                   changed .blend sources (needs Blender)
+
 on:
   push:
   pull_request:
@@ -7,79 +12,22 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
       CI: 'true'
-      DATABASE_URL: postgres://astra:astra@127.0.0.1:55432/astra
-      REDIS_URL: redis://127.0.0.1:56379
-      JWT_SECRET: ci-only-secret
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: astra
-          POSTGRES_PASSWORD: astra
-          POSTGRES_DB: astra
-        ports: ['55432:5432']
-        options: >-
-          --health-cmd "pg_isready -U astra -d astra"
-          --health-interval 2s --health-timeout 3s --health-retries 30
-      redis:
-        image: redis:7
-        ports: ['56379:6379']
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 2s --health-timeout 3s --health-retries 30
     steps:
+      # LFS holds ~2 GB of renders; fetch only the models the client serves, so a run stays inside the free bandwidth quota
       - uses: actions/checkout@v5
-        with:
-          lfs: true
+      - run: git lfs pull --include="packages/client/public/**"
+      # before setup-node: it caches pnpm's store when package.json names pnpm, so pnpm must already be on PATH
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - run: corepack enable pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
       - name: Unit and golden tests
         run: pnpm test
-      - name: Integration tests
-        run: pnpm db:migrate && pnpm test:int
       - name: Removed-code gate
         run: pnpm gate:removed
-      - name: Smoke (headless Chromium, SwiftShader)
-        run: |
-          pnpm --filter @astra/tools exec playwright install --with-deps chromium
-          SMOKE_GL=swiftshader pnpm smoke
-
-  art:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          lfs: true
-          fetch-depth: 0
-      - name: Changed .blend sources
-        id: changed
-        run: |
-          base="${{ github.event.pull_request.base.sha || github.event.before }}"
-          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then base=$(git rev-list --max-parents=0 HEAD); fi
-          echo "base=$base" >> "$GITHUB_OUTPUT"
-          n=$(git diff --name-only "$base" HEAD -- '*.blend' | wc -l)
-          echo "count=$n" >> "$GITHUB_OUTPUT"
-      - uses: actions/setup-node@v5
-        if: steps.changed.outputs.count != '0'
-        with:
-          node-version: 22
-      - name: Install Blender
-        if: steps.changed.outputs.count != '0'
-        run: |
-          curl -sSL https://download.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz | tar -xJ -C "$RUNNER_TEMP"
-          echo "BLENDER=$RUNNER_TEMP/blender-5.2.3-linux-x64/blender" >> "$GITHUB_ENV"
-      - name: Validate changed art
-        if: steps.changed.outputs.count != '0'
-        run: |
-          corepack enable pnpm
-          pnpm install --frozen-lockfile
-          pnpm art:validate -- --changed ${{ steps.changed.outputs.base }}
