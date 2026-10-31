@@ -114,6 +114,16 @@ async function standingByShip(page: Page): Promise<void> {
     if (!gliding) break;
   }
   await settle(page, 90);
+  // and the arrival banner run out (it and the band under it last 7 s of the page's own time), the multitool raised
+  await page.waitForFunction(
+    async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { hud: { bannerUntil?: number }; multitool: { raise?: number } } };
+      await w.step(4);
+      return performance.now() > (w.game.hud.bannerUntil ?? 0) + 1000 && (w.game.multitool.raise ?? 0) >= 1;
+    },
+    null,
+    { timeout: 60_000, polling: 100 },
+  );
 }
 
 /**
