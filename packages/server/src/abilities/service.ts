@@ -217,9 +217,9 @@ export class CastService {
       running.set(cd.key, now + cd.seconds);
     }
     if (entry.ability.toggle) {
-      let lit = this.on.get(characterId);
-      if (!lit) this.on.set(characterId, (lit = new Map()));
-      lit.set(msg.node, { ctx, zone });
+      let toggles = this.on.get(characterId);
+      if (!toggles) this.on.set(characterId, (toggles = new Map()));
+      toggles.set(msg.node, { ctx, zone });
     }
     this.counts.cast++;
     this.run(() => entry.effect.cast(ctx), characterId, msg.node);
@@ -383,6 +383,11 @@ export class CastService {
     if (now - this.lastPrune >= 60) {
       this.lastPrune = now;
       for (const [id, c] of this.casters) if (now - c.seen > CASTER_IDLE_S) this.casters.delete(id);
+      // (cooldowns run out whether or not their character is in play: those that have are forgotten)
+      for (const [id, running] of this.cooldowns) {
+        for (const [node, readyAt] of running) if (readyAt <= now) running.delete(node);
+        if (!running.size) this.cooldowns.delete(id);
+      }
     }
     let c = this.casters.get(characterId);
     if (!c) this.casters.set(characterId, (c = { bucket: new TokenBucket(CAST_BURST, CAST_PER_S, now * 1000), seen: now }));

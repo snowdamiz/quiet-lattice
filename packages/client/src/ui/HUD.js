@@ -85,7 +85,7 @@ export const CAST_REFUSED = {
   not_owned: 'NOT ON THE BAR',
   not_slotted: 'NOT ON THE BAR',
   slot: 'NOT ON THE BAR',
-  unknown: 'NOT AWAKENED YET',
+  unknown: 'CANNOT CAST YET',
   mode: 'NOT HERE',
   down: 'DOWN',
 };
