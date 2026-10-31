@@ -221,11 +221,14 @@ export class Motion {
       delay: OUT_MS,
       start: (r) => {
         build();
-        e.style.height = '';
-        r.f1 = e.getBoundingClientRect().height;
-        e.style.height = `${r.f0}px`;
         r.o0 = 0;
         r.o1 = 1;
+        // (the height it lays out at is read on the next frame, when the page has laid out what was built)
+        r.fit = () => {
+          e.style.height = '';
+          r.f1 = e.getBoundingClientRect().height;
+          e.style.height = `${r.f0}px`;
+        };
       },
     });
   }
@@ -298,6 +301,9 @@ export class Motion {
       if (p > 0 && r.start) {
         r.start(r);
         r.start = null;
+      } else if (r.fit) {
+        r.fit();
+        r.fit = null;
       }
       const f = stepValue(r.f0, r.f1, p, r.last);
       if (f !== r.last) place(e, r.kind, r.m, f);

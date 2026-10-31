@@ -4117,6 +4117,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   --sc-caps: rgba(233, 231, 226, 0.88);
   /* (the beacon rows' small meta lines: --dim's 0.64 leaves their thin strokes near 5:1, so they are held a notch above it) */
   --sc-meta: rgba(233, 231, 226, 0.74);
+  /* (a read of the page's layout in here, which the panels' moves make, lays out these boxes and not the page round them) */
+  contain: layout style;
 }
 .social-chat .sizing,
 .social-side .sizing {
