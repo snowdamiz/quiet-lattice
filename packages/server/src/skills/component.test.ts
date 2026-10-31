@@ -15,6 +15,7 @@ import {
   POSE,
   PROGRESS,
   RECIPES,
+  REPUTATION,
   SHIP,
   ShipLoadouts,
   SKILLS,
@@ -66,7 +67,7 @@ const PACK_MULE: SkillState = {
 describe('the skills component', () => {
   it('loads after progress and before the ship and the inventory, and leads to the service it loads into', () => {
     const { registry, skills } = world();
-    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, POSE, CODEX, RECIPES]);
+    expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, POSE, CODEX, RECIPES, REPUTATION]);
     expect(skills).toBeInstanceOf(SkillService);
     // a service given is the one registered
     const given = new SkillService({ inventory: new InventoryService(), ships: new ShipLoadouts(), progress: new CharacterProgress() });
