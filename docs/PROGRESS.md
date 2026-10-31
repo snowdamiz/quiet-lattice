@@ -124,3 +124,11 @@ remaining notes as follow-ups); it blocks the three `[!]` tasks and, behind them
 branches (P1.E07.T03+), prediction (P1.E04.T03), server creatures on the client (P1.E08.T09) and remote bodies
 (P1.E05.T04). Still open from before: a GitHub remote for CI (P1.E01.T05). Fresh worktrees need
 `git lfs checkout packages/client/public/models` before smoke.
+
+## Resumed (2026-10-31)
+
+The owner's rule for the three escalated tasks: one more grade, then merge (plan 0.1 step 5, amended).
+
+| Date | Task | Summary | Files | Gates |
+|---|---|---|---|---|
+| 2026-10-31 | P2.E18.T01 | Rep model: per-faction standing 0–1000 with ranks at 200/500/800, gains and losses as acts and grants with the underdog ×1.5 on counted gains, rank and quest titles stored by faction and rank, owed quest reputation settled exactly once through paired component saves (`writtenWith`), `set-rep` in the CLI; protocol 14. | `packages/server/src/{reputation,persistence,admin}/*`, `packages/shared/src/reputation`, client `net/reputation`, ARCHITECTURE §8, §24 | 1738 unit + 116 integration; review REVISE (half-written settlement, title duplicates) then PASS |
