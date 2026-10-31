@@ -93,10 +93,12 @@ async function parkLoop(page: Page): Promise<void> {
 /** On foot beside the landed ship on the home world: the #foot scenario, which lands the ship and steps out after 1.5 s of
  * real time, on foot for good, out of the camera's glide, and settled. */
 async function standingByShip(page: Page): Promise<void> {
+  // (on the world: getting out of the sandbox's first ship, still by the Waystation, is on foot too, in its hangar)
   const onFoot = () =>
     page.waitForFunction(async () => {
-      await (window as unknown as { step(n: number): Promise<void> }).step(4);
-      return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
+      const w = window as unknown as { step(n: number): Promise<void>; game: { mode: string; player: { state: { frame?: { sampler?: unknown } } } } };
+      await w.step(4);
+      return w.game.mode === 'foot' && !!w.game.player.state.frame?.sampler;
     });
   await onFoot();
   await page.waitForTimeout(2500);
@@ -112,6 +114,39 @@ async function standingByShip(page: Page): Promise<void> {
     if (!gliding) break;
   }
   await settle(page, 90);
+}
+
+/**
+ * Turns the walker to the heading nearest its own (5° steps either way) whose crosshair is on a plant or rock under 3 m tall,
+ * 4 to 25 m off, so the beam's impact glare sits right behind the crosshair. Where the #foot scenario leaves the walker
+ * facing varies with how fast the machine runs its landing, and the flora's hit spheres miss a tall tree's trunk at eye
+ * level, so the beam can strike a rock hidden behind one.
+ */
+async function faceFlora(page: Page): Promise<void> {
+  const found = await page.evaluate(async () => {
+    type V = { copy(v: V): V; clone(): V; normalize(): V; applyAxisAngle(axis: V, a: number): V; distanceTo(v: V): number };
+    const w = window as unknown as {
+      step(n: number): Promise<void>;
+      game: {
+        player: { heading: V; state: { pos: V } };
+        cam: { pos: V };
+        multitool: { target: { point: V; scale: number; sp: { height: number } } | null };
+      };
+    };
+    const g = w.game;
+    const up = g.player.state.pos.clone().normalize();
+    const start = g.player.heading.clone();
+    for (let i = 0; i <= 72; i++) {
+      const turn = (((i + 1) >> 1) * (i % 2 ? 1 : -1) * Math.PI) / 36;
+      g.player.heading.copy(start).applyAxisAngle(up, turn);
+      await w.step(2);
+      const t = g.multitool.target;
+      const d = t ? t.point.distanceTo(g.cam.pos) : 0;
+      if (t && t.sp.height * t.scale < 3 && d >= 4 && d <= 25) return true;
+    }
+    return false;
+  });
+  if (!found) throw new Error('no plant or rock 4 to 25 m off in any direction from where the walker stands');
 }
 
 /** The heat meter runs `k` times as fast as the game for the clip, so a whole overheat cycle fits a few seconds of it. */
@@ -1161,7 +1196,8 @@ export const SCREENS: Record<string, ScreenDef> = {
       await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
     },
   },
-  // On foot on the home world, mining with the beam held: the heat arc (left of the dot) at 40 of 100, 40% of it lit, warm
+  // On foot on the home world, mining a plant or rock a few metres off with the beam held, its impact glare behind the
+  // crosshair: the heat arc (left of the dot) at 40 of 100, 40% of it lit, warm
   // (P1.E07.T02). `16x9-overheat.png`: the lockout at the top, the arc danger red with a tick where the lockout ends and
   // OVERHEAT under the dot. The clip: a whole cycle with the beam held throughout, the meter at three times the game's
   // pace: from cool it climbs, turns amber at 75, overheats at 100 (about 1.4 s in), cools through the lockout to the tick
@@ -1172,6 +1208,7 @@ export const SCREENS: Record<string, ScreenDef> = {
     clipSeconds: 3,
     async open(page) {
       await standingByShip(page);
+      await faceFlora(page);
       await parkLoop(page);
       // 38, and five frames of beam at 24/s: 40
       await heatAt(page, 38, false, true);
