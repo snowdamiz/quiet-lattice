@@ -382,3 +382,18 @@ grid and misses the calibration's draw-call ask (65 against ≤12); the Swift re
 Kestrel's lattice reads as stick-and-tissue rather than grown chitin; the Mule's form passes (design and silhouette 4)
 but its liveries are swamped by nacre and it lacks BAY_* empties. Artifacts: `assets/renders/{lark,swift,kestrel,mule}_*`,
 `assets/renders/review/hulls/`.
+
+## P2.E21.T01 Event framework (banner announcement)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 5, fit 4, motion 3, theme 5, correctness 5, spec 5, performance 5 | 4.57 |
+| 2 | PASS | hierarchy 5, fit 4, motion 5, theme 5, correctness 4, spec 5, performance 5 | 4.71 |
+
+Round 1: the clip was clean, but the shared banner queue let the next banner start at 6.2 s while the 7 s fade still
+ran, so a queued banner vanished in one frame and the band restarted, which a login during an event always hits; the
+eyebrow named no place; "in a minute" under 30 s. Round 2, with the requested `event-banner-queued` hand-off: the band
+holds 19.7–20.6 across the hand-off, the largest band step is 3.7 grey levels, nothing pops; title 12.5–15.7:1, eyebrow
+7.7–9.3:1. Minor: a third banner within 2 s was dropped as stale (fixed after the grade: the cutoff is three holds); the
+full-width band stays heavier than the HUD language (a footprint scrim later, for all banners). Artifacts:
+`assets/renders/ui/event-banner{,-night,-queued}/`.
