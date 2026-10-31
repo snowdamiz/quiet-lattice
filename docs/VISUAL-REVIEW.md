@@ -397,3 +397,17 @@ holds 19.7–20.6 across the hand-off, the largest band step is 3.7 grey levels,
 7.7–9.3:1. Minor: a third banner within 2 s was dropped as stale (fixed after the grade: the cutoff is three holds); the
 full-width band stays heavier than the HUD language (a footprint scrim later, for all banners). Artifacts:
 `assets/renders/ui/event-banner{,-night,-queued}/`.
+
+## P1.E15.T04 Chat and party UI motion follow-ups
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 4 | 4.00 |
+| 2 | PASS | hierarchy 4, fit 4, motion 5, theme 4, correctness 5, spec 5, performance 5 | 4.57 |
+
+Round 1: the scrollbar blink, the scroll crawl, the tag contrast and the mid-fade still were fixed; the cleared badge
+still vanished in two frames (its close squeezed the face before the gap). Round 2: the badge fades whole (opacity 0.96
+to 0.07 over 018–023 while the next tab slides), overflow fades start with the overflow, the party count waits for the
+old line, meta lines 5.7–6.3:1, worst frames 0.7–1.0 ms; the requested `beacons-rest` shows no redraw at rest with
+OFFLINE, LEAD and KICK. Minor: whole-pixel scroll steps; edge fades over the scrollbar's end; 1–3 px badge trim;
+party-invite's worst frame at exactly 1.0 ms. Artifacts: `assets/renders/ui/{beacons,beacons-many,beacons-rest,social-tabs,party-invite}/`.
