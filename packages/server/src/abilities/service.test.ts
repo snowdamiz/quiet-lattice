@@ -189,9 +189,13 @@ describe('a cast', () => {
     expect(svc.state('c1').cooldowns).toEqual([]);
   });
 
-  it('runs a shared cooldown on the node it shares (Crush on Well’s clock)', () => {
+  it('runs a shared cooldown on the node it shares (Crush on Well’s clock), whichever is cast', () => {
     expect(cast('well', 4).result).toBe('cast');
     expect(cast('crush', 5)).toMatchObject({ result: 'refused', reason: 'cooldown', readyAt: now + 20 });
+    expect(svc.state('c1').cooldowns).toEqual([{ node: 'well', readyAt: now + 20 }]);
+    now += 20;
+    expect(cast('crush', 5)).toMatchObject({ result: 'cast', readyAt: now + 20 });
+    expect(cast('well', 4)).toMatchObject({ result: 'refused', reason: 'cooldown', readyAt: now + 20 });
     expect(svc.state('c1').cooldowns).toEqual([{ node: 'well', readyAt: now + 20 }]);
   });
 
@@ -316,9 +320,9 @@ describe('a cast at an entity', () => {
     expect(meter.heat).toBe(15);
   });
 
-  it('refuses a target on another world', () => {
+  it('refuses a target in another frame, however near its numbers are', () => {
     const c = creatureAt(15);
-    w.zone.patch(w.player, { frame: `${w.zone.system.seed}:station`, pos: [0, 2, 0] });
+    w.zone.patch(w.player, { frame: `${w.zone.system.seed}:station`, pos: [...c.sphere().pos] });
     expect(refusal(cast('pull', 1, { target: c.id }))).toBe('range');
   });
 });
@@ -400,8 +404,10 @@ describe('replication', () => {
     w.run(0.1);
     cast('pull', 1, { target: c.id, aim: [0, 3, 4] });
     const e: CastEvent = { kind: 'cast', caster: w.player, node: 'pull', phase: 'cast', at: now, frame: w.frame, aim: [0, 0.6, 0.8], target: c.id };
-    expect(viewer.events()).toEqual([e]);
-    expect(near.events()).toEqual([e]);
+    cast('pulse', 0);
+    const self: CastEvent = { kind: 'cast', caster: w.player, node: 'pulse', phase: 'cast', at: now, frame: w.frame, aim: [0, 0, -1] };
+    expect(viewer.events()).toEqual([e, self]);
+    expect(near.events()).toEqual([e, self]);
     expect(far.events()).toEqual([]);
   });
 });
