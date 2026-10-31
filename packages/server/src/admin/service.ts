@@ -12,6 +12,7 @@
 // The same service runs in the server (live services given, reached over the admin channel) and in the CLI's direct mode
 // (no server: only out-of-play edits, refused for a character saved moments ago unless forced). Every command is logged
 // with who ran it and what it asked, and how it ended.
+import type { DiscoveryKind } from '@astra/shared/discovery';
 import { addItem, addUnits, applyLayout, itemInfo, layoutFor, spendUnits, takeItem, type Inventory, type Result } from '@astra/shared/inventory';
 import type { ShipLoadout } from '@astra/shared/ships';
 import { setStanding, titleName, type Reputation, type StandingChange } from '@astra/shared/reputation';
@@ -19,6 +20,7 @@ import { setAvailablePoints, skillStateOf, storedSkills, type SkillResult, type 
 import { tierOfGalaxySystem } from '@astra/shared/world';
 import { eq, sql } from 'drizzle-orm';
 import { isUuid } from '../characters/characters.ts';
+import type { RenameResult } from '../discovery/service.ts';
 import type { Db } from '../db/client.ts';
 import { accounts, characters } from '../db/schema.ts';
 import type { WsGateway } from '../gateway/ws.ts';
@@ -52,6 +54,15 @@ export interface QuestAdmin {
   readonly component: string;
   /** The stored quest log with the quest at `step`, or why not. */
   setStepStored(log: unknown, quest: string, step: number): { ok: true; log: unknown } | { ok: false; error: string };
+}
+
+/**
+ * The first finders' admin seam (P2.E29.T01, ARCHITECTURE §25): a moderator's rename of a find, or its clear (null: its
+ * procedural name for good). The running server's discovery service (which tells everyone in the find's system), or a
+ * store's in the CLI's direct mode. Without one, rename is `unavailable`.
+ */
+export interface DiscoveryAdmin {
+  rename(kind: DiscoveryKind, key: string, name: string | null, by: string): Promise<RenameResult>;
 }
 
 /** How the server closes the connection of a character it moved to another star system: not a refusal, so the client
@@ -98,6 +109,7 @@ export interface AdminDeps {
   /** The running server's services; absent in the CLI's direct mode. */
   live?: AdminLive;
   quests?: QuestAdmin;
+  discoveries?: DiscoveryAdmin;
   log?: AdminLog;
   /** How long a command waits for a character held by its last save (or a join) to be free, ms (3000). */
   heldWaitMs?: number;
@@ -133,6 +145,7 @@ export class AdminService {
   private readonly persistence: CharacterPersistence;
   private readonly live?: AdminLive;
   private readonly quests?: QuestAdmin;
+  private readonly discoveries?: DiscoveryAdmin;
   private readonly log?: AdminLog;
   private readonly heldWaitMs: number;
   private readonly recentSaveMs: number;
@@ -142,6 +155,7 @@ export class AdminService {
     this.persistence = deps.persistence;
     this.live = deps.live;
     this.quests = deps.quests;
+    this.discoveries = deps.discoveries;
     this.log = deps.log;
     this.heldWaitMs = deps.heldWaitMs ?? 3000;
     this.recentSaveMs = deps.recentSaveMs ?? 0;
@@ -189,6 +203,8 @@ export class AdminService {
         return this.mute(cmd, who);
       case 'unmute':
         return this.unmute(cmd);
+      case 'rename':
+        return this.rename(cmd, who);
     }
   }
 
@@ -519,6 +535,16 @@ export class AdminService {
     const social = this.needLive('unmute').gateway.social;
     const a = await this.account(cmd.account);
     return { account: a.id, username: a.username, wasMuted: social.unmute(a.id) };
+  }
+
+  // ---------- finds ----------
+
+  private async rename(cmd: Extract<AdminCommand, { cmd: 'rename' }>, who: Operator): Promise<AdminResult> {
+    const d = this.discoveries;
+    if (!d) throw new AdminError('unavailable', 'finds unavailable: this service has no discovery service');
+    const r = await d.rename(cmd.kind, cmd.key, cmd.name, `admin:${who.name}`);
+    if (!r.ok) throw new AdminError(r.error, r.message);
+    return { ...r.find };
   }
 
   /** The account a command names: its id or its username, ignoring case. */

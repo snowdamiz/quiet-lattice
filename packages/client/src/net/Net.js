@@ -13,6 +13,7 @@ import { PROTOCOL_VERSION, decodeServerMessage, decodeSnapshot, encodeClientMess
 import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
 import { CombatFeed } from './combat.js';
+import { Discoveries } from './discoveries.js';
 import { Reputation } from './reputation.js';
 import { SnapshotStore } from './snapshots.js';
 
@@ -85,6 +86,8 @@ export class Net {
     this.combat = new CombatFeed(this);
     /** The call-for-aid beacons (beacons.js): the shard's list while watching, the character's own, and the requests. */
     this.beacons = new Beacons(this);
+    /** First finds (discoveries.js): the current system's, who found them and what they are called, and name requests. */
+    this.discoveries = new Discoveries(this);
     /** The character's standing, ranks and titles as the server last sent them, and their news (reputation.js, §24). */
     this.reputation = new Reputation(this);
   }

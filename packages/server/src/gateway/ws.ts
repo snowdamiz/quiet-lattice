@@ -27,6 +27,9 @@
 // knows after its meters, and again whenever it learns one, before the answer (§23). A joining character is sent its
 // reputation (standing, ranks and titles by faction) after its recipes, and whenever the server changes it, after that
 // change's rank and title events (§24); no client message changes it.
+// First finds go to the discovery service (discovery/), which hears of every analysis made, looks for landings and site
+// visits among the characters in play, pays and tells their finders, answers name requests, and sends a joining
+// character its system's finds (§25).
 // Malformed or out-of-place messages are dropped and counted, never thrown.
 //
 // Every connection's cost is bounded: sockets per IP and per account are capped, each socket has one budget (token
@@ -59,6 +62,9 @@ import { CutsceneService } from '../cutscenes/service.ts';
 import type { RecipeBook } from '../crafting/book.ts';
 import { recipeBookIn } from '../crafting/component.ts';
 import { CraftingService } from '../crafting/service.ts';
+import { plateBookIn, type PlateBook } from '../discovery/plates.ts';
+import { DiscoveryService } from '../discovery/service.ts';
+import { pgDiscoveryStore } from '../discovery/store.ts';
 import { reputationServiceIn } from '../reputation/component.ts';
 import type { ReputationService } from '../reputation/service.ts';
 import { questMineEvent, ResourceService } from '../resources/service.ts';
@@ -68,6 +74,7 @@ import type { SkillService } from '../skills/service.ts';
 import { SocialService } from '../social/service.ts';
 import type { ServerClock } from '../world/clock.ts';
 import type { WorldSource } from '../world/service.ts';
+import { DEFAULT_SHARD_ID } from '../world/shard.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import { clientKey, TokenBucket } from './rateLimit.ts';
 
@@ -160,6 +167,12 @@ export interface WsGatewayDeps {
   recipes?: RecipeBook;
   /** Fabricators; the gateway makes its own over the recipe book when none is given. */
   crafting?: CraftingService;
+  /** The shard the server runs (its finds are the shard's); DEFAULT_SHARD_ID when none is given. */
+  shard?: string;
+  /** First finds; the gateway makes (and starts and stops) its own over the shard's store, the persistence registry's
+   * plates and the codex's XP when none is given, and has none with null (no finds are looked for, name requests are
+   * dropped). */
+  discovery?: DiscoveryService | null;
   /** Every character's reputation in play; when none is given, the one persistence's registry loads into. */
   reputation?: ReputationService;
 }
@@ -182,6 +195,7 @@ export interface WsGateway {
   readonly codex: CodexService;
   readonly analysis: AnalysisService;
   readonly crafting: CraftingService;
+  readonly discovery: DiscoveryService | null;
   readonly reputation: ReputationService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
@@ -281,6 +295,23 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeAnalysis = quests ? analysis.subscribe((e) => void quests.event(e.characterId, { type: 'analyze', species: e.key })) : undefined;
   const crafting =
     deps.crafting ?? new CraftingService({ zones: deps.zones, inventory, book: deps.recipes ?? needRecipes(persistence), now: () => deps.clock.now(), log });
+  // first finds: the shard's, paid through the codex's XP and the plates persistence's registry loads into
+  const discovery =
+    deps.discovery === null
+      ? null
+      : (deps.discovery ??
+        new DiscoveryService({
+          store: pgDiscoveryStore(deps.db, deps.shard ?? DEFAULT_SHARD_ID),
+          zones: deps.zones,
+          plates: needPlates(persistence),
+          xp: codex,
+          saveNow: (characterId, reason) => persistence.saveNow(characterId, reason),
+          now: () => deps.clock.now(),
+          log,
+        }));
+  if (discovery && !deps.discovery) discovery.start();
+  // every analysis made may be the shard's first of its species
+  const unsubscribeDiscovery = discovery ? analysis.subscribe((e) => discovery.analyzed(e)) : undefined;
   const reputation = deps.reputation ?? needReputation(persistence);
   // standing the server moved (a quest's reward, owed reputation settled, an act, the admin CLI) reaches the session
   // holding the character: its rank and title events, then its state
@@ -371,6 +402,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       deps.zones.leave(s, 'disconnected');
       cutscenes.forget(s);
       social.left(s);
+      discovery?.left(s);
       conns.delete(c);
       registry.remove(s);
       log.debug({ session: s.id, code, invalid: s.invalidMessages, rateLimited: s.rateLimited, reason: s.endReason }, 'socket closed');
@@ -515,6 +547,15 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         s.send(r);
         return;
       }
+      case 'name':
+        if (s.state !== 'joined') return invalid(s, 'name before join');
+        if (!discovery) return invalid(s, 'no discovery service');
+        // (answered once the store has decided, without holding up the session's other messages)
+        discovery.request(s, msg).then(
+          (r) => s.send(r),
+          (err: unknown) => log.error({ err, session: s.id }, 'name request failed'),
+        );
+        return;
       default:
         // cast and interact belong to later tasks; before join they are out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
@@ -613,6 +654,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       social.joined(s, row.name);
       // (after the party is known: a player back in a quest step's place goes back to its party's phase)
       if (deps.quests) s.send({ t: 'quests', ...deps.quests.joined(s) });
+      // (its system's finds follow once they are known)
+      discovery?.joined(s, row.name);
       log.info({ session: s.id, account: s.accountId, character: row.id, zone: s.zoneId }, 'joined');
     } finally {
       unpin();
@@ -631,6 +674,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     codex,
     analysis,
     crafting,
+    discovery,
     reputation,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
@@ -648,6 +692,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (deps.zones.combat === combat.hooks) deps.zones.combat = null;
       skills.hooks = skillHooks;
       unsubscribeAnalysis?.();
+      unsubscribeDiscovery?.();
+      if (discovery && !deps.discovery) discovery.stop();
       unsubscribeReputation();
       unsubscribeWorld();
       server.off('upgrade', onUpgrade);
@@ -681,6 +727,12 @@ function needCodex(persistence: CharacterPersistence): CodexService {
   const codex = codexServiceIn(persistence.registry);
   if (!codex) throw new Error('the gateway needs a codex: give one, or a persistence registry with the codex component');
   return codex;
+}
+
+function needPlates(persistence: CharacterPersistence): PlateBook {
+  const plates = plateBookIn(persistence.registry);
+  if (!plates) throw new Error('the gateway needs a plate book: give a discovery service, or a persistence registry with the plates component');
+  return plates;
 }
 
 function needRecipes(persistence: CharacterPersistence): RecipeBook {

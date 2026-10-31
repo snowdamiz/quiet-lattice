@@ -48,6 +48,18 @@ describe('the developer CLI', () => {
     expect(a.err[0]).toMatch(/ASTRA_ADMIN_SECRET is not set/);
   });
 
+  it('takes rename’s --clear as its argument, not an option', async () => {
+    const a = io();
+    expect(await runCli(['rename', 'body', '424242:3', '--clear'], {}, a.io)).toBe(EXIT.unreachable);
+    expect(a.err[0]).toMatch(/ASTRA_ADMIN_SECRET is not set/);
+  });
+
+  it('knows --clear as rename’s argument only', async () => {
+    const a = io();
+    expect(await runCli(['who', '--clear'], {}, a.io)).toBe(EXIT.usage);
+    expect(a.err[0]).toMatch(/unknown option --clear/);
+  });
+
   it('refuses direct mode in production without the opt-in', async () => {
     const a = io();
     const production = { NODE_ENV: 'production', JWT_SECRET: 'p'.repeat(40) };

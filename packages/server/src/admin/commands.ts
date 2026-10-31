@@ -3,7 +3,8 @@
 // argument parser, and the errors a command ends with. The server never trusts the shape the CLI sent: the channel parses
 // every request with `AdminCommand`.
 import { FACTION_IDS } from '@astra/shared/data';
-import { MoveMode } from '@astra/shared/protocol';
+import { discoveryKindSchema } from '@astra/shared/discovery';
+import { DISCOVERY_NAME_MAX, MoveMode } from '@astra/shared/protocol';
 import { REP_MAX, REP_MIN } from '@astra/shared/reputation';
 import { z } from 'zod';
 
@@ -16,6 +17,8 @@ const Vec3 = z.tuple([Coord, Coord, Coord]);
 const FrameArg = z.string().trim().min(1).max(32);
 /** A pose preset (`docked`, `orbit[:altitude]`, `surface[:lat,lon]`) or a position `x,y,z` in metres in the frame. */
 const PoseArg = z.string().trim().min(1).max(96);
+/** The flag that clears a find's name for good (`rename <kind> <key> --clear`). */
+export const CLEAR_NAME = '--clear';
 /** The longest mute: a week, the `denied` message's `retryS` bound. */
 export const MAX_MUTE_S = 7 * 86400;
 export const DEFAULT_MUTE_S = 3600;
@@ -65,6 +68,14 @@ export const AdminCommand = z.discriminatedUnion('cmd', [
   z.strictObject({ cmd: z.literal('set-rep'), character: Ref, faction: z.enum(FACTION_IDS), value: z.int().min(REP_MIN).max(REP_MAX) }),
   z.strictObject({ cmd: z.literal('mute'), account: Ref, seconds: z.int().min(1).max(MAX_MUTE_S).optional() }),
   z.strictObject({ cmd: z.literal('unmute'), account: Ref }),
+  z.strictObject({
+    cmd: z.literal('rename'),
+    kind: discoveryKindSchema,
+    /** a species key, a body's frame id or a site key */
+    key: z.string().trim().min(3).max(32),
+    /** the find's new name, or null: cleared, its procedural name for good */
+    name: z.string().trim().min(1).max(DISCOVERY_NAME_MAX).nullable(),
+  }),
 ]);
 export type AdminCommand = z.infer<typeof AdminCommand>;
 export type CommandName = AdminCommand['cmd'];
@@ -127,6 +138,10 @@ Commands (a character or account is named by its id or its name, ignoring case):
                                                   a rank reached for the first time earns its title
   mute <account> [seconds]                      chat mute (default ${DEFAULT_MUTE_S} s, at most ${MAX_MUTE_S} s)
   unmute <account>
+  rename <species|body|site> <key> <name|--clear>
+                                                a first find's name (the filter's rules but reserved names hold);
+                                                --clear: its procedural name for good. key: <seed>:<body>
+                                                (body), <seed>:<body>/<i> (species), <seed>:<body>#<i> (site)
 
 Options:
   --json            print the server's answer as JSON
@@ -256,6 +271,14 @@ export function parseCommand(args: readonly string[]): Parsed {
       const a = take(['account']);
       if (typeof a === 'string') return { ok: false, error: a };
       raw = { cmd, account: a.account };
+      break;
+    }
+    case 'rename': {
+      // (a name of several words may come unquoted: the words after the key are the name)
+      if (positional.length > 3) positional.splice(2, positional.length - 2, positional.slice(2).join(' '));
+      const a = take(['kind', 'key', 'name']);
+      if (typeof a === 'string') return { ok: false, error: a };
+      raw = { cmd, kind: a.kind, key: a.key, name: a.name === CLEAR_NAME ? null : a.name };
       break;
     }
     default:
