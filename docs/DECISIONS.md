@@ -914,3 +914,30 @@ Format: task id, question → choice → why.
   join into a reserved word, e.g. "G M"; moderators rename the rare real case). → closes P2.E29.T01's second review.
   Open (P2.E29.T05): blocked words split by a separator inside a longer name; the digit reading also makes "9M" read as
   the reserved "gm"; v-for-u and ph-for-f stand-ins.
+- **P2.E22.T03** Seasons (shared `seasons`, server `seasons/*`, world service, count store, migration 0005, protocol 18,
+  ARCHITECTURE §27) → season 1 starts at the shard's first boot with the default eight weeks, ending on the meter midnight
+  after (it can run up to a day longer); every later season starts and ends on meter midnights, the first at or after
+  start + length, with the Count at 500. The bucket is read after the last day's drift and the midnight burn (that day's
+  roll belongs to the old season; the new season's first burn is at 04:48): Fed 700 and up, Held 300–699, Broken under
+  300. Length: four weeks if the mean daily actives of the 30 meter days before the start is under 100, else eight; a
+  daily active is an account that joined a character that meter day, counted once (a session spanning midnight is not
+  counted again; days the server was down count as zero); nothing recorded logins before, hence the `daily_actives`
+  table. The next map is only the Edge shift and the dark systems: Fed recedes the Edge 10 ly, Broken advances it 10 ly
+  and darkens 2–3 Edge-ward Tier-5 systems at the advanced Edge by `hashInts(galaxy seed, season)`, Held and the first
+  season keep the baseline; openings do not add up (each comes from the previous season only); the opening is data on
+  the shard row until P2.E22.T02 moves `edgeX`, and DESIGN 16.4's other bucket effects are left to their own systems,
+  which read `opening.from`. Winners are accounts whose own season lean, read like a day's lean, lands in the season's
+  bucket (Held's include accounts that fed and broke equally), with at least one full vote of weight; awards are per
+  account, carried by every character of it including later ones: the title (Seedbearer, Keeper of the Middle,
+  Anchorbreaker), earned once in the reputation through `earnTitle`, and the glyph `season_<n>_<bucket>` (the
+  philosophy's word in Cartographer signs ringed by the season numeral, worn on suit and hull; the art is the client's).
+  Awards live in `season_awards` and a `seasonAwards` component saved with the reputation (`writtenWith`). The season's
+  end, awards, chronicle and the shard row move land in one insert-if-absent transaction; a vote is stamped with the
+  clock reading the meter ran to; a join that read awards just before a season's end was written still receives that
+  award. A chronicle (meter path, bucket, winning philosophy, darkened systems, next opening, at most 64 finds) exists
+  only for a finished season, served at `GET /seasons/:season/chronicle` to any signed-in account. Migration 0005 is
+  chained after 0004 with a later journal time, so databases already at 0004 receive it. → DESIGN 16.4, server-held.
+  Open: no shard lease (two processes on one shard both write the season's end; P3.E37); a shard first booted over
+  eight weeks ago rolls its missed seasons with no meter play (dev databases only); `writeSeasonEnd` loads a season's
+  votes into memory (a SQL GROUP BY later); daily actives count joins, not presence; one save writing two season ends
+  gives a racing join only the later; `daily_actives` is never pruned; the chronicle's first finds wait for P2.E22.T05.
