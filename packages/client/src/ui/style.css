@@ -303,6 +303,9 @@ body {
    BRAKE and REPAIR DRONES, fit under them), so the bar sits under the prompt at 720p too. */
 .abilities {
   --ab: var(--warm);
+  /* a slot's width and the gap between slots (the refusal plate is placed by them) */
+  --ab-w: 80px;
+  --ab-gap: 4px;
   /* the flare's and the ready beat's brightness at their start: brighter warm, never clipped to white */
   --ab-flare: 1.4;
   position: absolute;
@@ -328,11 +331,11 @@ body {
 }
 .ab-row {
   display: flex;
-  gap: 4px;
+  gap: var(--ab-gap);
 }
 .ab-slot {
   position: relative;
-  width: 80px;
+  width: var(--ab-w);
   height: 48px;
 }
 .ab-slot svg {
@@ -464,9 +467,11 @@ body {
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
 }
-/* why the server refused a cast: the lockout word's plate, over the refused slot's ring (HUD.updateAbilities sets `left`) */
+/* why the server refused a cast: the lockout word's plate, over the refused slot's ring (HUD.updateAbilities sets its
+   index, --why-i) */
 .ab-why {
   position: absolute;
+  left: calc(var(--why-i, 0) * (var(--ab-w) + var(--ab-gap)) + var(--ab-w) / 2);
   bottom: calc(100% + 4px);
   font-family: var(--font-mono);
   font-size: 11px;

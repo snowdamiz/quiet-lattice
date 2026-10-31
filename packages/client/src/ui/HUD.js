@@ -104,11 +104,14 @@ export function countdown(left) {
 }
 /** The bar rests dim this long after the last thing that moved on it, ms. */
 const BAR_REST_MS = 4000;
-/** Plays a slot's one-shot animation (`cast` or `ready`) from its start, in place of the other. */
+/** Plays a slot's one-shot animation (`cast` or `ready`) from its start, in place of the other. Each class goes once its
+ * animation ends, so the next is a plain add; one still running is taken off now and the new one put on next frame (the
+ * animation restarts without forcing a layout in the frame). */
 function beat(e, cls) {
-  e.classList.remove('cast', 'ready');
-  void e.offsetWidth;
-  e.classList.add(cls);
+  if (e.classList.contains('cast') || e.classList.contains('ready')) {
+    e.classList.remove('cast', 'ready');
+    e._beat = cls;
+  } else e.classList.add(cls);
 }
 
 /** The heat arc as the HUD draws it from the multitool: filled to heat ÷ capacity, shown while the beam fires, the meter is
@@ -547,11 +550,16 @@ export class HUD {
         .map((x) => `<div class="ab-slot${x.node ? '' : ' empty'}">${RING}<b class="ab-key">${x.key}</b><i class="ab-name"></i></div>`)
         .join('');
       this.abRow.querySelectorAll('.ab-name').forEach((n, i) => (n.textContent = slots[i].name ?? ''));
+      for (const e of this.abRow.children) e.addEventListener('animationend', () => e.classList.remove('cast', 'ready'));
       this._abBusyAt = now;
     }
     let busy = false;
     slots.forEach((x, i) => {
       const e = this.abRow.children[i];
+      if (e._beat) {
+        e.classList.add(e._beat);
+        e._beat = null;
+      }
       const cooling = x.left > 0 && x.length > 0;
       // (the ring drawn back as the cooldown runs out: none of it left at the cast, all of it when ready)
       const sweep = e.querySelector('.sweep');
@@ -578,10 +586,8 @@ export class HUD {
     const why = refused >= 0 ? (CAST_REFUSED[slots[refused].refused] ?? 'TRY AGAIN') : '';
     if (why) {
       this.abWhy.textContent = why;
-      // (over the refused slot's ring)
-      const e = this.abRow.children[refused];
-      const x = `${e.offsetLeft + e.offsetWidth / 2}px`;
-      if (this.abWhy._x !== x) this.abWhy.style.left = this.abWhy._x = x;
+      // (over the refused slot's ring: the stylesheet places it by the slot's index)
+      if (this.abWhy._i !== refused) this.abWhy.style.setProperty('--why-i', (this.abWhy._i = refused));
     }
     this.abWhy.classList.toggle('show', !!why);
     if (busy) this._abBusyAt = now;
