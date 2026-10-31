@@ -103,6 +103,10 @@ async function standingByShip(page: Page): Promise<void> {
   await onFoot();
   await page.waitForTimeout(2500);
   await onFoot();
+  // (where the scenario sets the ship down turns with the world under real time: a loaded machine can put it in the sea)
+  if (await page.evaluate(() => (window as unknown as { game: { player: { swimming: boolean } } }).game.player.swimming)) {
+    throw new Error('the #foot scenario set the ship down in the sea: capture again');
+  }
   // the camera's ease from the ship into the walker's head (4 s of game time) can outlast that on a loaded machine: stepped
   // out, so the multitool is up and the view still before anything is taken
   for (let i = 0; i < 60; i++) {
