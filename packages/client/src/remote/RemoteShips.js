@@ -463,7 +463,7 @@ class HullKit {
         // their levels share)
         const mesh = new THREE.InstancedMesh(withAttribute(l.geometry, 'aShip', l.glow), this.materials[k], capacity);
         mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        // (the coarsest casts none: a ship under 100 px long throws no shadow worth its draw calls)
+        // (the coarsest casts none: a ship under 60 px long throws no shadow worth its draw calls)
         mesh.castShadow = k < LEVELS - 1;
         mesh.receiveShadow = true;
         // (each ship is culled on its own)
