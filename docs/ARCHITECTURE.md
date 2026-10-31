@@ -38,6 +38,7 @@ resources/          ResourceService: mining hits, resource nodes' shared state p
 combat/             each zone's health, damage path, deaths and combat events; CombatService: shots, kills' rewards (§20)
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
+meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§19)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 crafting/           CraftingService and RecipeBook: fabricator requests checked, each character's recipes and its component (§23)
@@ -112,9 +113,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
 - **Versioning:** `PROTOCOL_VERSION` in shared; the client sends it in `hello`, whose shape is frozen across versions;
   the server reads it with `peekVersion` before full validation and refuses a mismatch with `refused {code: 'version'}`.
   A branch that changes a message takes the next number and adds its line to the history under the constant (1 the
-  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 meters, 10 combat,
-  11 beacons, 12 analysis, 13 crafting, 14 reputation); a unit test pins the number and checks the history, so two
-  branches bumping to the same number conflict at merge rather than share it.
+  first protocol, 2 inventory, 3 social, 4 creatures, 5 skills, 6 cutscenes, 7 quests, 8 mining, 9 reserved for
+  meters, 10 combat, 11 beacons, 12 analysis, 13 crafting, 14 reputation, 15 meters); a unit test pins the number and
+  checks the history, so two branches bumping to the same number conflict at merge rather than share it.
 - **Client → server:** `hello {version, token}`, `join {characterId}`, `input {seq, time, mode, pose: {frame, pos, quat,
   vel}, buttons, aim?}` at 20 Hz (`time`, because `t` is the type tag, is the client's estimate of server time when it
   sampled the pose: movement authority judges the pose and its speed at that time, crediting no more of it than really
@@ -134,7 +135,8 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `xp` (§20), `notice` (toasts), `party` (party news), `rank` and `title` (§24), `world {season, count, edgeX, tiers, serverTime}` (sent right after
   `welcome` and to every joined session whenever the world service's state changes; `tiers` is each galaxy system's tier
-  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `party {party}` (the
+  by index), `pong`, `inventory {seq, inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§19),
+  `party {party}` (the
   character's party, or null, §13), `denied {of, code, retryS?, name?}` (a chat message, party request or beacon request
   not carried out, to its sender only, §13, §21), `cutscene {op, id, phase, reason?}` (§15), `quests {seq, quests,
   error?}` (§17), `mine {seq, frame, node | flora, result, hp?, reason?, item?, count?, added?}` and `nodes {frame,
@@ -168,6 +170,10 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   do; it sends the view after `inventory` on join (`seq` 0) and pushes it whenever server-side calls change it. The client
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
+- **Meters** (`@astra/shared/meters`, protocol 15): `meters {meters}` carries `{heat, heatMax, overheated, charge,
+  chargeMax, at}`, the values at world time `at` (§19). Sent after `skills` on join and again on the first input, then pushed: at once when the lockout
+  starts or ends, Charge runs out or a server-side call changes them, and at most every 0.5 s while either moves. There is
+  no request: the beam is the input's `beam` button, the pulse drive its `mode`.
 - **Cutscenes** (protocol 6, §15): the client sends `cutscene {op: 'request', id}` to play one where its player is and
   `cutscene {op: 'done', id, skipped?, reason?}` when it ends (`skipped` and `reason` only on done; protocol 7's
   `reason` says how: `finished`, `skipped`, or `returned`, given back unplayed because another cutscene was on screen or
@@ -311,8 +317,8 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
   own, kept per world and tier: the ground (`planGround`) comes back first, without them, and the dens' reply carries
   the ground of its plan too, kept with its clearance (`Ground.nodes`) when no ground is kept yet. Tests hold the pads,
   the nodes' clearance and the dens to one plan.
-- **Night** (`fauna/sky.ts`) is the meters' rule from the shared kinematics: night at a point when its star is on or
-  below the horizon of the point's own up. At night a cell may also send out its night herd, always one of the herd
+- **Night** (`fauna/sky.ts`) is the meters' rule (`isNight` in `@astra/shared/meters`, §19, one function for both) from
+  the shared kinematics: night at a point when its star is on or below the horizon of the point's own up. At night a cell may also send out its night herd, always one of the herd
   spawner's predators, planned from the world's seed and the cell on a stream of its own with
   (`FAUNA_SPAWNING.nightPredatorSpawnMult` − 1) times the chance its day herd is a predator's, so night doubles the
   predators the herd spawner places (DESIGN 12.2, 12.8). It comes out once a night, when night falls on an active cell
@@ -400,10 +406,14 @@ before applying it.
   Waystation's hangar shell grown by its 6 m collision sphere (`STATION_LAYOUT` in `@astra/shared/data`; the rest of the
   station's colliders arrive with P1.E11.T02); a walker may not be below the ground, outside the hangar (Grav Boots
   aside), or more than 400 m over the ground for longer than 45 s.
-- *The mode* must be legal there: the pulse drive only out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM`
-  to engage, `dropOutM` while cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world,
-  2 km over its ground; `landed` only on a world's dry ground; `docked` only on a Waystation pad no other ship holds (a
-  joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
+- *The mode* must be legal there: the pulse drive only with Charge in the character's meters (§19: the zones ask the
+  gateway's `MeterService.allowsMode`; to engage it needs some, and cruising on is taken for `MOVEMENT.pulse.chargeGraceS`,
+  1 s of the client's credited time after it ran out, as the client drops out on its own predicted meter; refused as
+  `pulse_charge`), out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM` to engage, `dropOutM` while
+  cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world, 2 km over its ground. Each
+  accepted input is reported to the meters (`flown`) with the client time credited to it since the last valid pose (none
+  for a clock stepped forward), which the pulse drive burns Charge for. `landed` only on a world's dry ground; `docked`
+  only on a Waystation pad no other ship holds (a joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
   a world's ground or in a hangar, and only out of a landed or docked ship, which it can board again only from beside it.
   In mode `ship` the `boost` button bit raises the caps to the boost cap, and air thicker than `AIR.flightModelFrom` to
   the `atmo` cap: a client must send the bit while it boosts.
@@ -459,7 +469,8 @@ columns. Components load in registration order, so a later one reads an earlier 
 ship and inventory read; reconciled with the skill web on load), `ship` (`ShipLoadout | null`, the Lark by default,
 checked with `shipStats` under the owned nodes, so Pack Mule's second pod loads; pods beyond its bays, which only a data
 change makes, are given back on load, logged), `inventory` (its layout re-derived from the ship and the owned nodes on
-load, `applyLayout(saved, layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `pose`
+load, `applyLayout(saved, layoutFor({ship, skills}))`; kept as saved, and logged, when the ship cannot hold it), `meters`
+(§19: heat and Charge with the world time they stood at), `pose`
 (`{system, pose, mode, parked?}`, read from the character's zone entity, `parked` being where a character on foot left its
 ship; version 2; its `check` is movement authority's `poseProblem` (§7), so a saved pose inside the ground, in the
 hangar's shell, docked off a pad or on foot with no ship to board is not restored), `codex` (§22: the species analyzed,
@@ -477,9 +488,9 @@ the runtime; refused, never replaced, when unreadable).
   every later component reads the result; it logs what it changed and the result is written back at the next save (a live
   capture and an edit's values are never reconciled: they are this build's). A value that cannot be read (a newer
   `v`, no migration, the schema or `check` fails) follows `onInvalid`: the pose falls back to docked at the home
-  Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement); every other
-  component refuses the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries
-  the loaded pose.
+  Waystation, logged (so does a saved frame the zone does not have: `ZoneManager.join` with a placement), and the meters
+  fall back to their default (cool, the ship's Charge full: nothing earned, §19), logged; every other component refuses
+  the join (`refused {code: 'full'}`, logged) rather than silently replace progress. `welcome` carries the loaded pose.
 - **Save** every 30 s per character in play, staggered (the interval split into 30 slots, each character in the
   least-loaded, one slot captured per second); on leave (logout, disconnect, the older connection of a duplicate join),
   captured before the entity leaves its zone; on zone handoff (P1.E04.T04 calls `persistence.saveNow(id, 'handoff')`);
@@ -1127,14 +1138,19 @@ requests and starts its timer.
   `unknown` (no such candidate in the scatter); `harvested`; `range` (35 m from the player's position to the node: the
   client's 30 m beam and 5 m for the eye, the node's size and a pose a tick old); `los` (the ground sampled every 2 m
   along the beam from the eye, 1.6 m up, to the node, its ends skipped, blocked where the beam runs 0.75 m under it; rocks,
-  trees and buildings do not block); `heat` (`beam(character, seconds)`: given Heat's meter service as `meters`
-  (P1.E07.T02), a hit counts only while `meters.beamActive(character, now)` says the beam is firing, its button held
-  and out of the overheat lockout, so hits sent with the button off never mine; without it, as until Heat is wired into
-  the gateway's `ResourceService`, the beam never overheats on the server).
-- **Beam time.** A hit is worth the time since the character's last hit that counted, at most 0.5 s (an honest client
-  sends one every 0.25 s), at the multitool's 1.6 hp a second (× 1.5 on minerals with a node flagged
-  `deposits_break_faster`, Hot Hands). However fast a client sends, a character mines no faster than one beam held on
-  continuously; nodes and flora share that one beam.
+  trees and buildings do not block); `heat` (given Heat's meter service as `meters` (P1.E07.T02), a hit counts only
+  while `meters.beamActive(character, now)` says the beam is firing, its button held, on foot and out of the overheat
+  lockout, so hits sent with the button off never mine; the gateway's `ResourceService` is given it, §19; without it,
+  in tests of the resource service alone, the beam is always taken as firing).
+- **Beam time.** A hit is worth beam time, at most 0.5 s (an honest client sends one every 0.25 s), at the multitool's
+  1.6 hp a second (× 1.5 on minerals with a node flagged `deposits_break_faster`, Hot Hands). With Heat's meters it is
+  the beam time the server judged: `meters.takeBeam(character, now, 0.5)` hands over the seconds the meters ran the beam
+  firing (`stepMeters`' `beamS`: held, on foot, out of the lockout) since the last hit that counted, and the rest past
+  0.5 s is dropped. So a client is paid for the beam it fired, however it times its hits: one that presses the button
+  only for each hit earns next to nothing, and every beam-second it is paid for heated the meter, so Heat's duty cycle
+  bounds the mining rate. A client holding the beam earns a quarter second a hit, as before. Without the meters, a hit
+  is worth the time since the last that counted (the first, one hit interval). However fast a client sends, a character
+  mines no faster than one beam held on continuously; nodes and flora share that one beam.
 - **Breaking.** The node's yield is rolled once and split by the damage each character did (whole units, largest
   remainders first, ties to the first to hit it; `splitByDamage`), so a token hit earns a token share (nothing, a few
   thousandths of a node) and the one who did the work takes the rest; each share × the character's `mining.yield`
@@ -1174,9 +1190,83 @@ requests and starts its timer.
 - **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
   P1.E12.T04 resolves ship weapons on the server); the client's half is P1.E13.T06.
 
-## 19. Meters
+## 19. Meters (`packages/server/src/meters`, `@astra/shared/meters`)
 
-Reserved for Heat and Charge (P1.E07.T02), which holds protocol 9 and this section on its branch until it merges.
+DESIGN 9.1's two ability resources, held by the server (P1.E07.T02). The numbers are `METERS` (`@astra/shared/data`); the
+rules are `@astra/shared/meters`, pure functions both ends run.
+
+- **Heat** (ground), 0 to the capacity (100; Tempered Core 125): the beam adds 32/s; cooling is 20/s idle and 8/s while
+  channelling (the beam channels), times every world modifier that holds, multiplied together (frozen or cryo worlds ×1.5,
+  desert, volcanic and inferno worlds by day ×0.6, underwater ×2, night ×1.1), times the build's `heat.cooling` (Furnace).
+  At the top the meter overheats: no beam and no abilities until heat is down to 25, cooling at the idle rate meanwhile.
+  Abilities add heat in chunks (`addHeat`, refused in the lockout; a chunk reaching the top overheats).
+- **Charge** (the ship's; today's pulse fuel), 0 to the flown hull's Charge (none without a ship): regenerates 2/s in
+  sunlight inside the habitable band, nothing elsewhere, never in deep space, plus the build's `charge.regen` (Solar Kin near
+  stars and on hot worlds, catalysts); the Listener's built-in flag gives the band's rate anywhere. The pulse drive burns
+  `ShipStats.pulse.fuelBurn` (0.35/s, Reserve Tank 25% less) near bodies and drops out at 0: on the server per accepted
+  input, for the flight movement authority credited it (below); ship actives spend it (`spendCharge`, refused unless the
+  meter holds it all); a Waystation refills it (`refillCharge`; the price is the caller's).
+- **Where a character is** (`meterEnvironment`): its frame's world type and hazard, day or night there (`isNight`: the
+  star on or below the point's own horizon, the one rule fauna's night uses too, §6), underwater (on foot, the feet 1.6 m
+  under a water sea, never a glowing one), sunlight (no body between it and the star; the body underfoot by its
+  horizon), the habitable band (the shell from the home world's orbit
+  ÷1.6 to ×1.6), deep space (beyond the description's `outerOrbit`, or a deep-space zone), near the star (25 of its radii)
+  and near bodies (within the pulse drive's burn reach, `openSpeed × cruiseS` of a surface or the star). `meterConditions`
+  turns it into the `CONDITIONS` ids the tables and conditional modifiers are keyed by.
+- **Exact steps.** `stepMeters` integrates a stretch segment by segment (the beam until the overheat, the lockout until the
+  recovery, the drive until Charge is gone), so the client's 60 fps frames and the server's 20 Hz inputs reach the same
+  values but for float rounding.
+- **MeterService** runs lazily from timestamps, with no clock of its own (every call takes the world time). The gateway
+  passes each input through `claim` (the meters advance to now; a claim to engage `pulse` with Charge empty, which
+  movement authority refuses, has the session hear `Charge empty: the pulse drive will not engage` once until it stops
+  asking), then the zone (movement authority, §7, asks `allowsMode` and reports the input `flown`), then `input`: from
+  then on the character does what that input says, in its entity's mode, where its entity stands (its zone's body poses
+  at the last tick, made once per tick). The beam heats only in the believed mode `foot` and out of the lockout, at its
+  rate per second of server time however fast inputs come; the beam's activity lapses 1 s after an input, so a client
+  that stops sending is idle. The pulse drive never burns on the clock: each input movement authority accepts on it pays
+  for the client time the authority credited it (`flown(id, mode, seconds, now, at)`), so a client that holds its inputs
+  back and sends them in bunches pays for every second of flight accepted, as a steady one does, and runs out at the
+  same point (the authority's credit is held to real time, so it pays no more either); in a zone without movement
+  authority (tests driving raw poses), for the time since its last input as it arrived, at most 1 s. A stretch burns
+  where it began, as far as the meters know: the gateway puts them where the entity entered its zone (`locate`, right
+  after the join), so the first input's stretch, the time since the join, is paid where the ship was (rejoining on the
+  drive and staying silent buys nothing); one flown before the meters know the place at all is charged as near a body.
+  A correction's pose is re-timed to the refused input's credited time, so no second is paid twice. The entity's `heat`
+  wire field carries the meter in steps of 0.02 (the multitool's glow others see, DESIGN 9.10).
+  `allowsMode(id, mode, now, graceS?, at?)` is movement authority's mode check (§7: the pulse drive needs Charge, or,
+  given a grace, to have run out of it no more than `graceS` before the claim's credited time `at`: the moment the burn
+  emptied it, on that clock, or when a ship active spent the last of it, put on that clock by its offset from server time
+  at the last accepted input; the gateway sets the service as the zone
+  manager's `meters`, which every zone's authority asks; a zone without movement authority, in tests driving raw poses,
+  asks nothing); `beamActive(id, now)` is what the gateway's resource service judges every mining
+  hit by (§18: refused `heat` with the button up or in the lockout), and `takeBeam(id, now, max)` is what it pays the hit
+  in: the seconds the beam fired since the last were taken, at most `max`; `addHeat`,
+  `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is
+  made again whenever the ship or the owned nodes change.
+- **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, at}`. A character
+  back from away has its heat cooled for the time it was gone (idle, nowhere in particular) and its Charge as it left it:
+  Charge regenerates only in play, from the first input after it joins (the Listener's anywhere-flag included). Nothing
+  here is earned, so an unreadable value gives the default (cool, Charge full), logged.
+- **The client** predicts with the same rules: the multitool steps heat each frame (`Multitool.tickMeter`), the ship its
+  Charge (`Ship.updateCharge`), both reading the character's place from the client's own bodies
+  (`characterMeterEnvironment`: the walker on foot, else the ship) and the build from `Ship.meterProfile`. The input's
+  `beam` bit is the button held (`multitool.held`), never the prediction of whether it fires: the server decides the
+  lockout, so a prediction a little ahead of it cannot stop it short of overheating. Both listen for `meters` on the
+  game's `Net` (whichever connection it holds) and take the server's values, run on to the present at the client's
+  estimate of server time (`multitool.reconcile`, `ship.reconcileCharge`); a lockout the client predicted is kept against
+  a view the server made before it can have seen the inputs sent then (within the Net clock's round trip and 0.1 s of the
+  predicted overheat). The state sent after join reaches a client still on its way into the world, so the server counts
+  it as unsent and pushes the meters again on the session's first input. The HUD shows heat on the crosshair's left arc
+  (warm, amber from 75%, danger red through the lockout with a tick where it ends and OVERHEAT under the dot) and Charge
+  on the reticle's right arc (lilac: art bible §4) with a readout under the altitude in its style (the figure, CHARGE,
+  and the rate; a sheen climbs the arc while it regenerates). Every arc sits on an opaque track in a near-black halo,
+  so the beam's glare cannot wash it out (the HUD is DOM over the canvas, outside the bloom), and the track darkens in
+  the lockout so the breathing red holds 3:1 against it; the flight readouts (speed, altitude, Charge) are unplated but
+  outlined, a solid 2 px near-black ring of unblurred text shadows under every glyph, so they hold 4.5:1 over a bright
+  world's limb. The arcs' strokes are sized in
+  the SVG's own units per reticle, never as non-scaling strokes, whose dashes would be measured in screen pixels and
+  overrun the arc. An arc lands on its value at once (no tween) on its first draw, as it turns on and on a jump; the
+  crosshair and the reticle fade in over 150 ms as they turn on.
 
 ## 20. Combat (`packages/server/src/combat`)
 
