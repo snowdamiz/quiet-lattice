@@ -1,8 +1,9 @@
 // The combat service (P1.E06.T02) on a real zone of system 0 with its fauna and a hand-driven clock: shots of the base gun
 // resolved from the pose the zone believes and checked cheapest first (rate, clock, mode, frame, aim), the ray against the
 // creatures within the gun's range, line of sight over the ground, and a kill's XP and loot shared by damage and told.
-import { killLoot, killXp, totalXpFor } from '@astra/shared/combat';
-import { getWeapon } from '@astra/shared/data';
+import { killLoot, killXp, recipeDrops, RECIPE_DROPS, totalXpFor } from '@astra/shared/combat';
+import { getBoss, getWeapon, recipeItemId } from '@astra/shared/data';
+import { countOf } from '@astra/shared/inventory';
 import type { ServerMessage } from '@astra/shared/protocol';
 import type { QuestWorldEvent } from '@astra/shared/quests';
 import type { ShipLoadout } from '@astra/shared/ships';
@@ -338,6 +339,53 @@ describe('a kill', () => {
       ['b', { type: 'kill', tags: ['fauna', 'docile', sp.bodyPlan], entity: c.id }],
     ]);
     expect(s.service.stats().kills).toBe(1);
+  });
+
+  it('drops a boss’s recipes as items, each fighter rolling for itself, and nothing from a creature without any (DESIGN 15.7)', () => {
+    const s = setup();
+    const sp = docile(s.w.species);
+    const ref = { kind: 'boss', id: 'hive_heart' } as const;
+    const listed = getBoss(ref.id).loot.recipes;
+    expect(listed.length).toBeGreaterThan(1);
+    const report = (by: [string, number][]) => ({
+      zone: s.w.zone.id,
+      entity: 1,
+      frame: s.w.frame,
+      species: sp,
+      level: 30,
+      ref,
+      by: new Map(by),
+      killer: by[0]![0],
+      at: s.w.time,
+    });
+    s.inventory.open('a');
+    s.inventory.open('b');
+    // the service rolls from its seed: the units, then each resource, once for the kill; then the recipes, fighter by fighter
+    const rng = new Random(7);
+    const got: Record<string, string[]> = { a: [], b: [] };
+    for (let kill = 0; kill < 12; kill++) {
+      killLoot(ref, 30, () => rng.next());
+      for (const who of ['a', 'b']) got[who]!.push(...recipeDrops(ref, () => rng.next()));
+      s.service.hooks.killed!(
+        report([
+          ['a', 10],
+          ['b', 5],
+        ]),
+      );
+    }
+    expect(RECIPE_DROPS.chance).toBeGreaterThan(0);
+    expect(got.a!.length + got.b!.length).toBeGreaterThan(0);
+    for (const who of ['a', 'b']) {
+      const have = s.inventory.get(who)!;
+      for (const item of new Set(got[who])) {
+        expect(countOf(have, item), `${who} ${item}`).toBe(got[who]!.filter((x) => x === item).length);
+      }
+      // only the boss's own recipes drop, as recipe items
+      for (const item of got[who]!) expect(listed.map(recipeItemId)).toContain(item);
+    }
+    // a creature that lists none drops none
+    expect(recipeDrops({ kind: 'fauna', bodyPlan: sp.bodyPlan, temperament: sp.temperament }, () => 0)).toEqual([]);
+    expect(recipeDrops({ kind: 'boss', id: 'outpost_overseer' }, () => 0.99)).toEqual([]);
   });
 
   it('keeps a character in combat while it deals or takes damage, and a while after', () => {

@@ -5,8 +5,8 @@
 // refused too. A recipe item teaches its recipe, which is written to the character's row and known again on rejoin,
 // after a server restart. With movement authority on, a walker that got out of its docked ship uses the ship's
 // fabricator beside it and is refused once it has walked 30 m away.
-import { STARTING_RECIPES } from '@astra/shared/crafting';
-import { STATION_FABRICATOR, WALKER } from '@astra/shared/data';
+import { fabricatorPlace, STARTING_RECIPES, type FabricatorKind } from '@astra/shared/crafting';
+import { RECIPE_TABLE_VERSION, recipeItemId, STATION_FABRICATOR, WALKER } from '@astra/shared/data';
 import { totals } from '@astra/shared/inventory';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import { eq } from 'drizzle-orm';
@@ -17,6 +17,7 @@ import { characters } from '../src/db/schema.ts';
 import type { RunningServer } from '../src/server.ts';
 import { exitFeet } from '../src/sim/movement/testing.ts';
 import { homeSystemOf, stationFrame } from '../src/world/home.ts';
+import { describeZoneSystem } from '../src/zones/system.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
 import { Pilot } from './pilot.ts';
 
@@ -71,7 +72,7 @@ async function join(token: string, characterId: string) {
       });
     },
     /** sends a request without waiting (a burst) */
-    send(op: { op: 'make'; recipe: string; count: number; at: 'waystation' | 'ship' } | { op: 'learn'; recipe: string }): number {
+    send(op: { op: 'make'; recipe: string; count: number; at: FabricatorKind } | { op: 'learn'; recipe: string }): number {
       const s = ++seq;
       sock.send({ t: 'craft', seq: s, op });
       return s;
@@ -84,7 +85,7 @@ async function join(token: string, characterId: string) {
       }
     },
     /** asks to make `count` of a recipe at a fabricator, paced within the rate; the server's answer */
-    async make(recipe: string, at: 'waystation' | 'ship' = 'waystation', count = 1): Promise<Answer> {
+    async make(recipe: string, at: FabricatorKind = 'waystation', count = 1): Promise<Answer> {
       await sleep(550);
       return this.answer(this.send({ op: 'make', recipe, count, at }));
     },
@@ -251,7 +252,7 @@ describe('fabricators over the wire', () => {
     bot.sock.close();
     await waitFor(() => server.persistence.status(id)?.inPlay !== true, 5000, 'the character out of play');
     expect(await server.persistence.flush()).toBe(true);
-    expect((await row(id)).state).toMatchObject({ recipes: { v: 1, data: { known: [...STARTING_RECIPES, 'torpedo'] } } });
+    expect((await row(id)).state).toMatchObject({ recipes: { v: 2, data: { table: RECIPE_TABLE_VERSION, known: [...STARTING_RECIPES, 'torpedo'] } } });
 
     // a new server on the same database: known on rejoin, and made
     await server.close();
@@ -320,5 +321,120 @@ describe('fabricators over the wire', () => {
     } finally {
       await live.close();
     }
+  });
+});
+
+describe('fabricator tiers, recipe sources and the version guard over the wire (P2.E20.T01)', () => {
+  const homeZone = () => server.zones.zones.find((z) => z.systemIndex === HOME)!;
+  const homeSystem = describeZoneSystem(HOME);
+  const homeBody = homeSystem.bodies.find((b) => b.type !== 'gas')!;
+  const surface = (dx = 0): Vec3 => [homeBody.radius + 2 + dx, 0, 0];
+  const worldFrame = () => `${homeSystem.seed}:${homeBody.index}`;
+  const grantRecipe = (id: string, recipe: string) => expect(server.ws.crafting.award(id, recipe, 'vendor').ok).toBe(true);
+
+  it('station tiers gate recipes: a Waystation refuses a Tier 3 recipe a capital makes at its terminal; sanctuary and Scrapyard make their lines', async () => {
+    server.ws.crafting.places.register(
+      fabricatorPlace('capital:thalune', { frame: worldFrame(), use: surface(0), reachM: 4, docked: false }),
+      (z) => z.systemIndex === HOME,
+    );
+    server.ws.crafting.places.register(
+      fabricatorPlace('sanctuary:chorus-1', { frame: worldFrame(), use: surface(500), reachM: 4, docked: false }),
+      (z) => z.systemIndex === HOME,
+    );
+    server.ws.crafting.places.register(
+      fabricatorPlace('scrapyard', { frame: worldFrame(), use: surface(900), reachM: 4, docked: false }),
+      (z) => z.systemIndex === HOME,
+    );
+    const { acct, id } = await character();
+    const bot = await join(acct.token, id);
+    for (const r of ['railgun', 'frostglass_catalyst', 'pressure_hull_module']) grantRecipe(id, r);
+    give(id, [
+      ['iridium', 20],
+      ['gold', 10],
+      ['stormquartz', 10],
+      ['frostglass', 10],
+      ['murkpearl', 20],
+      ['ferrite', 20],
+    ]);
+    for (const r of ['railgun', 'frostglass_catalyst', 'pressure_hull_module']) expect(await bot.learn(r)).toMatchObject({ result: 'learned' });
+    // at the Waystation's terminal: its tier band stops at 2
+    await bot.go(STATION, TERMINAL, 'foot');
+    expect(await bot.make('railgun', 'waystation')).toMatchObject({ result: 'refused', reason: 'fabricator' });
+    expect(await bot.make('railgun', 'capital')).toMatchObject({ result: 'refused', reason: 'place' });
+    // at the capital's terminal
+    await bot.go(worldFrame(), surface(0), 'foot');
+    expect(await bot.make('railgun', 'capital')).toMatchObject({ result: 'made', item: 'railgun', count: 1 });
+    expect(await bot.make('frostglass_catalyst', 'capital')).toMatchObject({ result: 'refused', reason: 'fabricator' });
+    expect(await bot.make('frostglass_catalyst', 'sanctuary')).toMatchObject({ result: 'refused', reason: 'place' });
+    await bot.go(worldFrame(), surface(500), 'foot');
+    expect(await bot.make('frostglass_catalyst', 'sanctuary')).toMatchObject({ result: 'made', item: 'frostglass_catalyst' });
+    expect(await bot.make('pressure_hull_module', 'sanctuary')).toMatchObject({ result: 'refused', reason: 'fabricator' });
+    await bot.go(worldFrame(), surface(900), 'foot');
+    expect(await bot.make('pressure_hull_module', 'scrapyard')).toMatchObject({ result: 'made', item: 'pressure_hull_module' });
+    expect(held(id)).toMatchObject({ railgun: 1, frostglass_catalyst: 1, pressure_hull_module: 1 });
+    bot.sock.close();
+  });
+
+  it('recipes as items from a vendor, a chain’s reward path, a boss drop and a vault: each is learned, and known forever after a restart', async () => {
+    const { acct, id } = await character();
+    let bot = await join(acct.token, id);
+    // a vendor's sale: paid in units, the item through the crafting service
+    expect(server.ws.inventory.earn(id, 2000).ok).toBe(true);
+    expect(server.ws.inventory.spend(id, 1500).ok).toBe(true);
+    grantRecipe(id, 'torpedo');
+    // a vault's find, and a chain's reward (the quest runtime grants items through the inventory the same way)
+    expect(server.ws.crafting.award(id, 'beam_lance', 'vault').ok).toBe(true);
+    expect(server.ws.inventory.grant(id, recipeItemId('cargo_pod'), 1, { partial: true }).ok).toBe(true);
+    // a boss's drop: its kill report through the combat service's hooks, until the recipes it rolls have come
+    const dropped = (): string[] =>
+      Object.keys(held(id)).filter((i) => i.startsWith('recipe_') && !['recipe_torpedo', 'recipe_beam_lance', 'recipe_cargo_pod'].includes(i));
+    const report = {
+      zone: homeZone().id,
+      entity: 1,
+      frame: STATION,
+      species: { temperament: 'docile', bodyPlan: 'quadruped' } as never,
+      level: 30,
+      ref: { kind: 'boss', id: 'hive_heart' } as const,
+      by: new Map([[id, 10]]),
+      killer: id,
+      at: 0,
+    };
+    for (let i = 0; i < 60 && !dropped().length; i++) server.ws.combat.hooks.killed!(report);
+    expect(dropped().length).toBeGreaterThan(0);
+    const bossRecipe = dropped()[0]!.slice('recipe_'.length);
+    for (const r of ['torpedo', 'beam_lance', 'cargo_pod', bossRecipe]) expect(await bot.learn(r), r).toMatchObject({ result: 'learned', recipe: r });
+    const expected = [...STARTING_RECIPES, 'torpedo', 'beam_lance', 'cargo_pod', bossRecipe];
+    expect(server.ws.crafting.recipes(id)!.known).toEqual(expected);
+    bot.sock.close();
+    await waitFor(() => server.persistence.status(id)?.inPlay !== true, 5000, 'the character out of play');
+    expect(await server.persistence.flush()).toBe(true);
+    await server.close();
+    server = await startTestServer({}, { movement: false });
+    bot = await join(acct.token, id);
+    expect(bot.recipes).toEqual({ t: 'recipes', known: expected });
+    bot.sock.close();
+  });
+
+  it('a rolled-back recipe table cannot drop a learned recipe: a row saved under a newer table keeps every recipe through a session, and says so', async () => {
+    const { acct, id } = await character();
+    const newer = RECIPE_TABLE_VERSION + 5;
+    const saved = { v: 2, data: { table: newer, known: [...STARTING_RECIPES, 'torpedo', 'recipe_from_a_later_build'] } };
+    const [r0] = await database.db.select().from(characters).where(eq(characters.id, id));
+    await database.db
+      .update(characters)
+      .set({ state: { ...(r0!.state as object), recipes: saved } })
+      .where(eq(characters.id, id));
+    const bot = await join(acct.token, id);
+    // the client is only told what this table has
+    expect(bot.recipes).toEqual({ t: 'recipes', known: [...STARTING_RECIPES, 'torpedo'] });
+    expect(await bot.make('recipe_from_a_later_build')).toMatchObject({ result: 'refused', reason: 'unknown' });
+    give(id, [['recipe_beam_lance', 1]]);
+    expect(await bot.learn('beam_lance')).toMatchObject({ result: 'learned' });
+    bot.sock.close();
+    await waitFor(() => server.persistence.status(id)?.inPlay !== true, 5000, 'the character out of play');
+    expect(await server.persistence.flush()).toBe(true);
+    expect((await row(id)).state).toMatchObject({
+      recipes: { v: 2, data: { table: newer, known: [...STARTING_RECIPES, 'torpedo', 'recipe_from_a_later_build', 'beam_lance'] } },
+    });
   });
 });
