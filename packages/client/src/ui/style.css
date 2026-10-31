@@ -92,6 +92,17 @@ body {
   width: 64px;
   height: 64px;
 }
+/* the foot crosshair and the flight reticle fade in as they turn on (an animation runs again each time an element
+   comes back from display: none); their arcs are already at their values (HUD.arc's snap) */
+.crosshair,
+.ship-reticle {
+  animation: hudIn 0.15s ease-out;
+}
+@keyframes hudIn {
+  from {
+    opacity: 0;
+  }
+}
 .crosshair > b,
 .ship-reticle > b {
   position: absolute;
@@ -113,6 +124,36 @@ body {
   background: #ffd9a8;
   transform: scale(1.3);
 }
+/* the heat lockout: the dot dims to the danger tint, and the word sits under it until the meter has cooled */
+.crosshair.over > b {
+  background: #ffb0a8;
+  transform: none;
+}
+.c-state {
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 2px);
+  transform: translate(-50%, -3px);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.26em;
+  /* (the tracking trails the last letter: the right padding is short by it, so the word centres under the dot) */
+  padding: 4px calc(9px - 0.26em) 4px 9px;
+  color: #ff8a80;
+  /* a near-opaque flight-deck plate, edged in danger red: the word holds 4.5:1 over the brightest sunlit ground */
+  background: rgba(6, 8, 11, 0.82);
+  border-left: 2px solid var(--danger);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.crosshair.over .c-state {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 /* gauge arcs shared by the crosshair and the ship reticle */
 .gauges {
@@ -122,39 +163,117 @@ body {
   height: 100%;
   overflow: visible;
 }
+/* Widths are in the SVG's own units (its viewBox is 100 across), so each reticle sets its own for the pixels it is drawn
+   at: a non-scaling stroke would measure the dashes in screen pixels too, and the fills (dashes sized by pathLength in
+   user units) would overrun the arc on the small crosshair. */
 .gauge path {
   fill: none;
   stroke-linecap: round;
-  stroke-width: 1.6;
-  vector-effect: non-scaling-stroke;
+}
+/* The arcs sit on an opaque track inside a near-black halo, so neither the beam's glare nor a bright sky washes them out
+   (the HUD is DOM over the canvas, never in the bloomed WebGL layer: only what is under it glows).
+   The crosshair: 64 px for 100 units, 0.64 px a unit; a 4.5 px fill and track in a 9.6 px halo (2.5 px a side). */
+.crosshair .gauge .halo {
+  stroke-width: 15;
+}
+.crosshair .gauge .track,
+.crosshair .gauge .fill {
+  stroke-width: 7;
+}
+.crosshair .gauge.over .fill {
+  stroke-width: 7.5;
+}
+.crosshair .gauge .mark {
+  stroke-width: 2.5;
+}
+/* the ship's reticle: 110 px for 100 units; a 3 px fill and track in a 6 px halo */
+.ship-reticle .gauge .halo {
+  stroke-width: 5.5;
+}
+.ship-reticle .gauge .track,
+.ship-reticle .gauge .fill {
+  stroke-width: 2.7;
+}
+.ship-reticle .gauge .sheen {
+  stroke-width: 3.6;
+}
+.gauge .halo {
+  stroke: var(--ink);
+  stroke-opacity: 0.92;
 }
 .gauge .track {
-  stroke: rgba(255, 255, 255, 0.14);
+  stroke: #3b3e44;
+  transition: stroke 0.3s ease-out;
+}
+/* in the lockout the track darkens, so the breathing red holds 3:1 against it at its faintest */
+.gauge.over .track {
+  stroke: #24262a;
 }
 .gauge .fill {
   stroke: rgba(255, 255, 255, 0.85);
-  stroke-dasharray: 1 1;
-  transition: stroke-dashoffset 0.15s linear;
+  /* one dash the arc's length, its gap longer than the arc: an empty gauge shows no stub of the next dash at its top */
+  stroke-dasharray: 1 2;
+  transition: stroke-dashoffset 0.15s linear, stroke 0.3s ease-out, stroke-width 0.3s ease-out;
 }
 .gauge {
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.4s ease-in;
 }
 .gauge.on {
   opacity: 1;
+  transition: opacity 0.15s ease-out;
 }
-.gauge .g-heat {
-  stroke: #ffc27a;
+/* drawn at its value at once: the first time, as it turns on, and on a jump (HUD.arc) */
+.gauge.snap path {
+  transition: none;
 }
 .gauge .g-jet,
 .gauge .g-shield {
   stroke: var(--accent2);
 }
-.gauge .g-pulse {
-  stroke: #c7a6ff;
-}
 .gauge.low .fill {
   stroke: var(--danger);
+}
+/* heat fills warm, runs amber once hot, and through the lockout is danger red and breathes, a tick across the arc where
+   the lockout ends */
+.gauge .g-heat {
+  stroke: var(--warm);
+}
+.gauge.hot .g-heat {
+  stroke: var(--accent);
+}
+.gauge.over .g-heat {
+  stroke: var(--danger);
+  animation: overBreath 0.9s ease-in-out infinite alternate;
+}
+/* (a breath, not a blink: at its faintest the red still reads against the track and the halo) */
+@keyframes overBreath {
+  to {
+    stroke-opacity: 0.8;
+  }
+}
+.gauge .mark {
+  stroke: var(--text);
+  stroke-linecap: butt;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+.gauge.marked .mark {
+  opacity: 0.9;
+}
+/* Charge in the pulse drive's lilac (art bible §4: a documented exception; teal is the shield's arc on the same reticle);
+   while it regenerates a bright dash climbs the fill (HUD.sheen) */
+.gauge .g-charge {
+  stroke: #c7a6ff;
+}
+.gauge.low .g-charge {
+  stroke: var(--danger);
+}
+.gauge .sheen {
+  stroke: #f1eaff;
+  stroke-dasharray: 0.07 2;
+  stroke-dashoffset: 0.07;
+  opacity: 0;
 }
 
 /* ---------- ship reticle ---------- */
@@ -201,12 +320,14 @@ body {
   color: rgba(241, 244, 248, 0.75);
 }
 .r-speed small,
-.r-alt small {
+.r-alt small,
+.r-chg small {
   margin-left: 4px;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.16em;
-  color: var(--dim);
+  /* (lifted from --dim: small mono caps over a bright limb need more than its 0.64) */
+  color: rgba(233, 231, 226, 0.86);
 }
 /* the throttle, a hairline under the speed */
 .r-thr {
@@ -226,6 +347,38 @@ body {
 }
 .r-thr i.rev {
   background: var(--danger);
+}
+/* Charge, under the altitude as the throttle sits under the speed, in the altitude's style: the figure, its small-caps
+   label, and which way it is going */
+.r-chg {
+  position: absolute;
+  left: calc(100% + 6px);
+  /* (7 px under the altitude's numerals) */
+  top: calc(50% + 13px);
+  font-family: var(--font-cond);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #d4bcff;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.r-chg i {
+  margin-left: 6px;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: #e2d4ff;
+}
+.r-chg i.down {
+  color: rgba(233, 231, 226, 0.86);
+}
+/* (the danger red lifted, to hold 4.5:1 inside the readouts' halo) */
+.r-chg.empty,
+.r-chg.empty small {
+  color: #ff8a80;
 }
 .r-mode {
   position: absolute;
@@ -3574,8 +3727,42 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 
 /* legible over a bright sky: a soft dark halo under the HUD's readouts */
-.r-alt, .r-speed, .r-mode, .location, .bar label {
+.r-mode, .location, .bar label {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.25);
+}
+/* the flight readouts (speed, altitude, Charge), unplated, are outlined: a solid 2 px near-black ring under every glyph
+   (unblurred shadows a pixel and two out, all round), softened past it, so figures, labels and rates hold 4.5:1 on any
+   ground, a bright world's limb or a sunlit sky */
+.r-speed,
+.r-alt,
+.r-chg {
+  --ring: #0b0c0e;
+  text-shadow:
+    2px 0 0 var(--ring),
+    1.85px 0.77px 0 var(--ring),
+    1.41px 1.41px 0 var(--ring),
+    0.77px 1.85px 0 var(--ring),
+    0 2px 0 var(--ring),
+    -0.77px 1.85px 0 var(--ring),
+    -1.41px 1.41px 0 var(--ring),
+    -1.85px 0.77px 0 var(--ring),
+    -2px 0 0 var(--ring),
+    -1.85px -0.77px 0 var(--ring),
+    -1.41px -1.41px 0 var(--ring),
+    -0.77px -1.85px 0 var(--ring),
+    0 -2px 0 var(--ring),
+    0.77px -1.85px 0 var(--ring),
+    1.41px -1.41px 0 var(--ring),
+    1.85px -0.77px 0 var(--ring),
+    1px 0 0 var(--ring),
+    0.71px 0.71px 0 var(--ring),
+    0 1px 0 var(--ring),
+    -0.71px 0.71px 0 var(--ring),
+    -1px 0 0 var(--ring),
+    -0.71px -0.71px 0 var(--ring),
+    0 -1px 0 var(--ring),
+    0.71px -0.71px 0 var(--ring),
+    0 0 4px rgba(7, 8, 11, 0.85);
 }
 /* the top line (where you are, the compass's reading, a banner) over the brightest of scenes, a hangar's strip lights:
    a dark ring close round the letters, as the flight readouts have */

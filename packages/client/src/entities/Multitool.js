@@ -1,28 +1,102 @@
 // First-person mining tool: viewmodel, beam, heat and resource extraction.
+//
+// Heat (DESIGN 9.1) runs on the shared rules (`@astra/shared/meters`) the server decides it by: the beam heats at 32/s
+// against 8/s of cooling, idle the meter sheds 20/s, the world where the walker stands scales the cooling, and at the top
+// the meter overheats and locks the beam out until it has cooled to 25. The client predicts; the server's `meters` state
+// is the truth (`reconcile`). What goes to the server is the button (`held`), never the prediction: the server decides when
+// the beam stops, so a prediction that runs a little ahead of it can never talk it out of overheating.
 import * as THREE from 'three';
+import { canFireBeam, meterRates, stepMeters } from '@astra/shared/meters';
 import { gltfLoader } from '../core/Engine.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
+import { characterMeterEnvironment } from './Ship.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
+/** Inputs go at 20 Hz and the server answers as they land: a view this long past a round trip from our overheat has seen
+ * the inputs we sent then. */
+const STALE_SLACK_S = 0.1;
 
 export class Multitool {
   constructor(game) {
     this.game = game;
-    this.heat = 0;
-    this.overheated = false;
+    // the heat meter (the shared MeterState's heat half; Charge is the ship's)
+    this.meter = { heat: 0, overheated: false, charge: 0 };
+    // heat per second now (+ heating, − cooling), for the HUD
+    this.heatRate = 0;
+    // the beam's button held (what the input says), and whether the beam fires (held, out of the lockout)
+    this.held = false;
     this.firing = false;
+    // the server's time when this client last predicted an overheat (null: none, or no server)
+    this.overheatedAt = null;
     this.target = null;
     this.power = 1.6;
-    this.heatRate = 0.32;
     this.kick = 0;
     this.buildViewModel();
     this.buildBeam();
   }
 
+  // the demo shop's beam upgrade: mining yield (DESIGN 9.8's Optical Drill); heat is the meter's
   upgrade() {
     this.power = 2.4;
-    this.heatRate = 0.22;
+  }
+
+  /** Heat as a fraction of the meter's capacity, 0–1 (the HUD's arc, the tool's glow, the beam's sound). */
+  get heat() {
+    return this.meter.heat / this.heatMax;
+  }
+
+  get heatMax() {
+    return this.game.ship.meterProfile.heatCapacity;
+  }
+
+  /** Locked out: no beam (and no abilities) until heat falls to `recoverAt`. */
+  get overheated() {
+    return this.meter.overheated;
+  }
+
+  /** Where the lockout ends, as a fraction of the capacity. */
+  get recoverAt() {
+    return this.game.ship.meterProfile.recoverBelow / this.heatMax;
+  }
+
+  /** A frame of the meter with the beam's button `held` or not: the input will say so, and the beam fires this frame
+   * (returned) only out of the lockout. */
+  tickMeter(dt, held) {
+    this.held = held;
+    const fire = held && canFireBeam(this.meter);
+    this.stepHeat(dt, held);
+    return fire;
+  }
+
+  /** The meter over `dt` seconds: the beam heats while `held` (and stops the moment it overheats), cooling by the world
+   * where the character is. */
+  stepHeat(dt, held) {
+    const g = this.game;
+    const profile = g.ship.meterProfile;
+    const env = characterMeterEnvironment(g);
+    const act = { beam: held, pulse: false };
+    const step = stepMeters(this.meter, profile, env, act, dt);
+    this.meter = { ...step.state, charge: 0 };
+    this.heatRate = meterRates(this.meter, profile, env, act).heat;
+    if (step.events.includes('overheated')) {
+      this.overheatedAt = g.net?.serverTime?.() ?? null;
+      g.hud?.toast('Multitool overheated', 'warn');
+    }
+  }
+
+  /**
+   * The server's meters (`meters` state, ARCHITECTURE §19): heat as it held it at world time `view.at`, run on to
+   * `serverNow` (the client's estimate of server time) with what the tool is doing now.
+   */
+  reconcile(view, serverNow = view.at) {
+    // A view the server made before the inputs we sent as we overheated can have reached it knows nothing of our lockout:
+    // it keeps (the server, judging the button, overheats too, a moment later).
+    const rtt = (this.game.net?.clock?.rtt ?? 0) / 1000;
+    const stale = this.meter.overheated && !view.overheated && this.overheatedAt !== null && view.at < this.overheatedAt + rtt + STALE_SLACK_S;
+    this.meter = { heat: view.heat, overheated: view.overheated || stale, charge: 0 };
+    const dt = Math.max(0, Math.min(1, serverNow - view.at));
+    if (dt > 0) this.stepHeat(dt, this.held);
   }
 
   buildViewModel() {
@@ -98,18 +172,24 @@ export class Multitool {
     this.game.engine.scene.add(this.hitLight);
   }
 
+  // Listens for the server's meters on whichever connection the game holds now (it changes on every sign-in).
+  watchServer() {
+    const net = this.game.net ?? null;
+    if (net === this.meterNet) return;
+    this.unwatchMeters?.();
+    this.meterNet = net;
+    this.unwatchMeters = net ? net.on('meters', ({ meters }) => this.reconcile(meters, net.serverTime() ?? meters.at)) : null;
+  }
+
   update(dt, input, active) {
     const g = this.game;
+    this.watchServer();
     // hidden while the camera is still easing in from the ship
     this.view.visible = g.mode === 'foot' && !g.player.headUnderwater && !g.director.blend && !g.director.pose;
     // and raised into view once it has arrived
     this.raise = this.view.visible ? Math.min(1, (this.raise ?? 1) + dt * 2.6) : 0;
     this.beamMat.uniforms.uTime.value += dt;
-    const wantFire = active && input.mouse(0) && !this.overheated;
-    if (this.overheated) {
-      this.heat = Math.max(0, this.heat - dt * 0.45);
-      if (this.heat < 0.25) this.overheated = false;
-    }
+    const wantFire = this.tickMeter(dt, active && input.mouse(0) && g.mode === 'foot');
     this.target = null;
     let hitPoint = null;
     if (g.mode === 'foot') {
@@ -132,11 +212,6 @@ export class Multitool {
         }
       }
       if (wantFire) {
-        this.heat = Math.min(1, this.heat + dt * this.heatRate);
-        if (this.heat >= 1) {
-          this.overheated = true;
-          g.hud.toast('Mining beam overheated', 'warn');
-        }
         if (this.target) {
           const res = g.flora.hit(this.target, this.power * dt);
           if (res && res.res) {
@@ -145,8 +220,6 @@ export class Multitool {
             g.audio.play('pickup');
           }
         }
-      } else if (!this.overheated) {
-        this.heat = Math.max(0, this.heat - dt * 0.6);
       }
     }
     this.firing = wantFire && g.mode === 'foot';

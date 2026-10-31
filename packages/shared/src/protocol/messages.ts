@@ -5,13 +5,14 @@ import { z } from 'zod';
 import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
 import { inventoryErrorCodeSchema, inventoryOpSchema, inventorySchema } from '../inventory/index.ts';
+import { meterViewSchema } from '../meters/schema.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { factionIdSchema } from '../data/index.ts';
 import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputation/index.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 14;
+export const PROTOCOL_VERSION = 15;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -21,12 +22,13 @@ export const PROTOCOL_VERSION = 14;
 // 6: cutscenes: request and done, play, ended and refused with the story phase (P1.E09.T04)
 // 7: quests: quest requests (accept, abandon, choose) and quest state; a cutscene done says how it ended (P1.E09.T01)
 // 8: mining: hits on resource nodes and their answers, and the nodes' state per cell (P1.E13.T01)
-// 9: meters: heat and Charge state; reserved, on its branch until it merges (P1.E07.T02)
+// 9: reserved for meters while they were on their branch; they merged as 15 (P1.E07.T02)
 // 10: combat: fire requests and their answers, combat events with the target's health, XP events (P1.E06.T02)
 // 11: call-for-aid beacons: raise, lower, watch and answer; the shard's beacon list, beacon news, beacon refusals (P1.E15.T02)
 // 12: analysis: a creature analyzed and the answer, with the species' codex entry and the XP it earned (P1.E08.T04)
 // 13: crafting: make and learn requests at a fabricator and their answers, the recipes a character knows (P1.E13.T05)
 // 14: reputation: standing, ranks and titles by faction, rank and title events (P2.E18.T01)
+// 15: meters: heat and Charge state (P1.E07.T02)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -655,6 +657,11 @@ export const NodesState = z.object({
   cells: z.array(NodeCellState).max(128),
 });
 
+/** The character's heat and Charge (DESIGN 9.1, ARCHITECTURE §19) as the server holds them at world time `meters.at`: after
+ * join, whenever the lockout starts or ends or Charge runs out, and every half second while either meter moves. The client
+ * predicts both with the same shared rules and takes these as the truth. */
+export const MetersState = z.object({ t: z.literal('meters'), meters: meterViewSchema });
+
 /** Why a shot did nothing: `stale_seq` (its number is not above the last), `zone` (the player is in no zone), `weapon`
  * (its ship has no gun fitted), `rate` (faster than the gun's cooldown allows), `stale` (stamped too far from the server's
  * clock), `mode` (not flying a ship, as the server believes), `down` (the player is down), `frame` (aimed in another frame
@@ -812,6 +819,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   EventMessage,
   InventoryState,
   SkillsState,
+  MetersState,
   PartyState,
   Denied,
   CutsceneState,

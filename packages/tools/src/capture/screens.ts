@@ -41,6 +41,192 @@ interface InventoryApi {
   setLoadout(l: { ship: { hull: string; modules: Record<string, string>; cargoPods: number; livery: number } | null; skills?: string[] }): boolean;
 }
 
+/** What the HUD captures drive of the game: the walker's multitool meter and the ship's Charge (P1.E07.T02). */
+interface MeterGame {
+  mode: string;
+  multitool: { meter: { heat: number; overheated: boolean; charge: number } };
+  ship: {
+    charge: number;
+    mode: string;
+    speed: number;
+    throttle: number;
+    tryPulse(): void;
+    state: { frame: unknown; pos: { set(x: number, y: number, z: number): void }; quat: { setFromRotationMatrix(m: { elements: number[] }): void } };
+  };
+  system: { homePlanet: { radius: number; position: { x: number; y: number; z: number } } };
+  cam: { frame: unknown };
+  hud: { toast(text: string, tone?: string): void };
+}
+interface MeterWindow {
+  game: MeterGame;
+  dev: { boot(): Promise<void>; button(b: number, down: boolean): void };
+  THREE?: unknown;
+}
+
+/** The walker's heat meter at `heat`, locked out or not, with the beam held (the mouse button down) or let go. */
+async function heatAt(page: Page, heat: number, overheated: boolean, held: boolean): Promise<void> {
+  await page.evaluate(
+    ({ heat, overheated, held }) => {
+      const w = window as unknown as MeterWindow;
+      w.game.multitool.meter = { heat, overheated, charge: 0 };
+      w.dev.button(0, held);
+    },
+    { heat, overheated, held },
+  );
+}
+
+/**
+ * Parks the page's own frame loop (its requestAnimationFrame callbacks are dropped), so the game moves only as frames are
+ * stepped: the meter a still is taken at is the one it was stepped to, however long the CSS waits run.
+ */
+async function parkLoop(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const w = window as unknown as { __holdRaf?: boolean };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    // (the callback already queued runs once more, then parks)
+    await new Promise((r) => setTimeout(r, 100));
+  });
+}
+
+/** On foot beside the landed ship on the home world: the #foot scenario, which lands the ship and steps out after 1.5 s of
+ * real time, on foot for good, out of the camera's glide, and settled. */
+async function standingByShip(page: Page): Promise<void> {
+  // (on the world: getting out of the sandbox's first ship, still by the Waystation, is on foot too, in its hangar)
+  const onFoot = () =>
+    page.waitForFunction(async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { mode: string; player: { state: { frame?: { sampler?: unknown } } } } };
+      await w.step(4);
+      return w.game.mode === 'foot' && !!w.game.player.state.frame?.sampler;
+    });
+  await onFoot();
+  await page.waitForTimeout(2500);
+  await onFoot();
+  // (where the scenario sets the ship down turns with the world under real time: a loaded machine can put it in the sea)
+  const inSea = await page.evaluate(() => {
+    const p = (window as unknown as { game: { player: { state: { frame: { ocean?: boolean; radius: number }; pos: { length(): number } } } } }).game.player;
+    return !!p.state.frame.ocean && p.state.pos.length() < p.state.frame.radius;
+  });
+  if (inSea) throw new Error('the #foot scenario set the ship down in the sea: capture again');
+  // the camera's ease from the ship into the walker's head (4 s of game time) can outlast that on a loaded machine: stepped
+  // out, so the multitool is up and the view still before anything is taken
+  for (let i = 0; i < 60; i++) {
+    const gliding = await page.evaluate(async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { director: { pose: unknown; blend: unknown } } };
+      await w.step(10);
+      return !!(w.game.director.pose || w.game.director.blend);
+    });
+    if (!gliding) break;
+  }
+  await settle(page, 90);
+  // and the arrival banners run out (each, and the band under it, lasts 7 s of the page's own time), the multitool raised
+  await page.waitForFunction(
+    async () => {
+      const w = window as unknown as {
+        step(n: number): Promise<void>;
+        game: { hud: { bannerUntil?: number; bannerQueue?: unknown[] }; multitool: { raise?: number } };
+      };
+      await w.step(4);
+      const hud = w.game.hud;
+      return !hud.bannerQueue?.length && performance.now() > (hud.bannerUntil ?? 0) + 1000 && (w.game.multitool.raise ?? 0) >= 1;
+    },
+    null,
+    { timeout: 60_000, polling: 100 },
+  );
+}
+
+/**
+ * Turns the walker to the heading nearest its own (5° steps either way) whose crosshair is on a plant or rock under 3 m tall,
+ * 4 to 25 m off, so the beam's impact glare sits right behind the crosshair. Where the #foot scenario leaves the walker
+ * facing varies with how fast the machine runs its landing, and the flora's hit spheres miss a tall tree's trunk at eye
+ * level, so the beam can strike a rock hidden behind one.
+ */
+async function faceFlora(page: Page): Promise<void> {
+  const found = await page.evaluate(async () => {
+    type V = { copy(v: V): V; clone(): V; normalize(): V; applyAxisAngle(axis: V, a: number): V; distanceTo(v: V): number };
+    const w = window as unknown as {
+      step(n: number): Promise<void>;
+      game: {
+        player: { heading: V; state: { pos: V } };
+        cam: { pos: V };
+        multitool: { target: { point: V; scale: number; sp: { height: number } } | null };
+      };
+    };
+    const g = w.game;
+    const up = g.player.state.pos.clone().normalize();
+    const start = g.player.heading.clone();
+    for (let i = 0; i <= 72; i++) {
+      const turn = (((i + 1) >> 1) * (i % 2 ? 1 : -1) * Math.PI) / 36;
+      g.player.heading.copy(start).applyAxisAngle(up, turn);
+      await w.step(2);
+      const t = g.multitool.target;
+      const d = t ? t.point.distanceTo(g.cam.pos) : 0;
+      if (t && t.sp.height * t.scale < 3 && d >= 4 && d <= 25) return true;
+    }
+    return false;
+  });
+  if (!found) throw new Error('no plant or rock 4 to 25 m off in any direction from where the walker stands');
+}
+
+/** The heat meter runs `k` times as fast as the game for the clip, so a whole overheat cycle fits a few seconds of it. */
+async function hastenHeat(page: Page, k: number): Promise<void> {
+  await page.evaluate((k) => {
+    const mt = (window as unknown as { game: { multitool: { stepHeat(dt: number, held: boolean): void } } }).game.multitool;
+    const step = mt.stepHeat.bind(mt);
+    mt.stepHeat = (dt, held) => step(dt * k, held);
+  }, k);
+}
+
+/**
+ * The ship in open flight off the home world, nose just past it, `side` 1 on its day side (in sunlight, inside the habitable band:
+ * Charge regenerates) or −1 on its night side (in its shadow: nothing), with Charge at `charge`.
+ */
+async function shipOffHome(page: Page, side: 1 | -1, charge: number): Promise<void> {
+  await page.evaluate(
+    ({ side, charge }) => {
+      const w = window as unknown as MeterWindow;
+      const g = w.game;
+      const ship = g.ship;
+      const home = g.system.homePlanet;
+      const p = home.position;
+      const l = Math.hypot(p.x, p.y, p.z);
+      // three radii sunward of the planet (the star at the origin), a little to one side and above; on the night side close
+      // enough to the sun line to stay in the planet's shadow
+      const r = home.radius * 3;
+      const sx = (-p.x / l) * side;
+      const sz = (-p.z / l) * side;
+      const across = side > 0 ? 0.35 : 0.12;
+      const x = p.x + sx * r + sz * r * across;
+      const y = p.y + r * (side > 0 ? 0.22 : 0.1);
+      const z = p.z + sz * r - sx * r * across;
+      ship.state.frame = null;
+      ship.state.pos.set(x, y, z);
+      // the nose (−Z forward) past the planet's limb, so the planet fills one side of the frame and the reticle and its
+      // readouts sit over open space, as they do in flight
+      const fx = p.x - sz * r * 0.75 - x;
+      const fy = p.y - y;
+      const fz = p.z + sx * r * 0.75 - z;
+      const fl = Math.hypot(fx, fy, fz);
+      const f = [fx / fl, fy / fl, fz / fl];
+      // right = f × up(0,1,0), up' = right × f
+      const rx = -f[2];
+      const rz = f[0];
+      const rl = Math.hypot(rx, rz);
+      const right = [rx / rl, 0, rz / rl];
+      const up = [right[1] * f[2] - right[2] * f[1], right[2] * f[0] - right[0] * f[2], right[0] * f[1] - right[1] * f[0]];
+      // the rotation whose columns are right, up and −forward (a Matrix4's column-major elements: setFromRotationMatrix
+      // reads nothing else)
+      ship.state.quat.setFromRotationMatrix({ elements: [...right, 0, ...up, 0, -f[0]!, -f[1]!, -f[2]!, 0, 0, 0, 0, 1] });
+      ship.mode = 'flying';
+      ship.speed = 0;
+      ship.charge = charge;
+      g.cam.frame = undefined;
+    },
+    { side, charge },
+  );
+}
+
 /** One inventory capture: the ship (its pods aboard), the skills, and what the cargo holds. */
 interface InventoryScene {
   hull: string;
@@ -1253,22 +1439,132 @@ export const SCREENS: Record<string, ScreenDef> = {
       },
     },
   },
-  'hud-ship': {
+  // In flight off the home world's day side, in sunlight inside the habitable band: Charge (the right arc and the readout
+  // under the altitude) at 58 and regenerating, a bright dash climbing its arc (P1.E07.T02). `16x9-empty.png`: Charge run
+  // out on the night side, in the planet's shadow (no regeneration), and the pulse drive refused. The clip: the regen
+  // sheen's whole climb, the readout ticking up.
+  // Boarding in play with Charge at 60 (the ship's, set while the pilot stood beside it on the home world's day side): the
+  // stills are aboard and landed after the glide into the seat, the reticle not yet up; the clip starts as the ship
+  // takes off, its first frame the first the reticle (and its Charge arc, readout and regen sheen) is drawn: the arc at 60
+  // at once, lilac, the sheen from the next frame.
+  'hud-ship-board': {
+    hash: '#foot',
     hudClock: true,
+    clipSeconds: 1.5,
+    sheetFrames: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 70, 80, 89],
     async open(page) {
-      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
-      await settle(page, 120);
+      await standingByShip(page);
+      // the game moves only as it is stepped from here: Charge regenerates 2/s through the glide's 5 s, 50 to 60
+      await parkLoop(page);
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: { ship: { charge: number }; boardShip(): void } }).game;
+        g.ship.charge = 50;
+        g.boardShip();
+      });
+      // the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => (window as unknown as { game: { ship: { takeOff(): void } } }).game.ship.takeOff());
     },
   },
+  'hud-ship': {
+    hudClock: true,
+    clipSeconds: 2,
+    async open(page) {
+      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+      await settle(page, 60);
+      await shipOffHome(page, 1, 58);
+      await settle(page, 90);
+    },
+    stills16x9: {
+      async empty(page) {
+        await shipOffHome(page, -1, 0);
+        await settle(page, 90);
+        await page.evaluate(() => (window as unknown as MeterWindow).game.ship.tryPulse());
+        await settle(page, 6);
+      },
+    },
+    async motion(page) {
+      await shipOffHome(page, 1, 58);
+      // (the empty still's refusal is not this scene's)
+      await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
+    },
+  },
+  // On foot on the home world, mining a plant or rock a few metres off with the beam held, its impact glare behind the
+  // crosshair: the heat arc (left of the dot) at 40 of 100, 40% of it lit, warm
+  // (P1.E07.T02). `16x9-overheat.png`: the lockout at the top, the arc danger red with a tick where the lockout ends and
+  // OVERHEAT under the dot. The clip: a whole cycle with the beam held throughout, the meter at three times the game's
+  // pace: from cool it climbs, turns amber at 75, overheats at 100 (about 1.4 s in), cools through the lockout to the tick
+  // at 25 (about 2.6 s) and the lockout lifts, the beam heating again.
   'hud-foot': {
     hash: '#foot',
     hudClock: true,
+    clipSeconds: 3,
     async open(page) {
-      await page.waitForFunction(async () => {
-        await (window as unknown as { step(n: number): Promise<void> }).step(4);
-        return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
+      await standingByShip(page);
+      await faceFlora(page);
+      await parkLoop(page);
+      // 38, and five frames of beam at 24/s: 40
+      await heatAt(page, 38, false, true);
+      await settle(page, 5);
+    },
+    stills16x9: {
+      async overheat(page) {
+        await heatAt(page, 100, true, true);
+        await settle(page, 3);
+      },
+    },
+    async motion(page) {
+      // the overheat still's lockout cleared and settled before the first frame: cool, the button up, the HUD told, and
+      // its fades run out (CSS runs at a tenth of real time while the clip records: OVERHEAT's 0.25 s, the arc's 0.4 s)
+      await heatAt(page, 0, false, false);
+      await page.evaluate(() => (window as unknown as { game: { hud: { update(dt: number): void } } }).game.hud.update(0));
+      await page.waitForTimeout(5000);
+      // then the beam held from cool
+      await page.evaluate(() => (window as unknown as MeterWindow).dev.button(0, true));
+      await hastenHeat(page, 3);
+    },
+  },
+  // Leaving the ship on foot with the multitool still warm (heat 50): the stills are aboard and landed; the clip's first
+  // frame is the foot HUD's first, the crosshair fading in (150 ms) with its heat arc already at 50 and cooling at 20/s.
+  'hud-foot-exit': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 0.6,
+    sheetFrames: [...Array.from({ length: 20 }, (_, i) => i), 24, 29, 35],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await page.evaluate(() => (window as unknown as { game: { boardShip(): void } }).game.boardShip());
+      // aboard: the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: MeterGame & { exitShip(): void } }).game;
+        g.multitool.meter = { heat: 50, overheated: false, charge: 0 };
+        g.exitShip();
       });
-      await settle(page, 90);
+    },
+  },
+  // On foot after mining, the beam let go at 30 heat: the arc cooling idle (20/s on the home world by day). The stills: 30,
+  // warm, the button up. The clip: from 30 down to 2 (1.4 s, frame 84), where the empty arc fades out (0.4 s, to frame
+  // 108), the crosshair's dot left alone.
+  'hud-foot-cool': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 2,
+    sheetFrames: [0, 12, 24, 36, 48, 60, 72, 78, 82, 84, 86, 88, 90, 93, 96, 99, 102, 105, 108, 119],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      // 31, and three frames idle at 20/s: 30
+      await heatAt(page, 31, false, false);
+      await settle(page, 3);
+    },
+    async motion(page) {
+      await heatAt(page, 30, false, false);
     },
   },
   map: {

@@ -4,10 +4,12 @@
 // state (§8) and its player entity enters the world where it was saved (or docked at its home Waystation when that pose
 // is unusable, or for a new character), and `welcome` names the zone, the entity and that pose, followed at once by
 // `world` (the world service's state, sent again to every joined session whenever it changes), the character's
-// `inventory` and its `skills`. From then on `input` and `ack` go to the zone, which sends the session a binary snapshot
-// every tick (an input movement authority refuses is answered with `correction`, and a client corrected too often is
-// kicked), and closing the socket saves the character and takes the entity out. Inventory requests go to the inventory
-// service and skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14).
+// `inventory`, its `skills` and its `meters`. From then on `input` and `ack` go to the zone, which sends the session a
+// binary snapshot every tick (an input movement authority refuses is answered with `correction`, and a client corrected
+// too often is kicked), and closing the socket saves the character and takes the entity out; each input passes the meter
+// service first (heat and Charge run on inputs; movement authority refuses the pulse drive with Charge empty, and the
+// session is told why) and is told it after the zone has applied it. Inventory requests go to the inventory service and
+// skill requests to the skill service, which answer each with the authoritative state (ARCHITECTURE §7, §14, §19).
 // Chat, party and call-for-aid beacon requests go to the social service (social/), which hears of every character that
 // joins and every connection that closes. Cutscene requests go to the cutscene service (cutscenes/), which forgets a session as it
 // leaves; a cutscene done ends the quest step that played it. Quest requests go to the quest runtime (quests/), which
@@ -22,7 +24,7 @@
 // Fabricator requests (make a recipe at the station's or the ship's fabricator, learn one from its item) go to the
 // crafting service (crafting/), which checks each against the recipes the character knows (the book persistence's
 // registry loads into), where the player is and what it holds, and answers it; a joining character is sent the recipes it
-// knows after its skills, and again whenever it learns one, before the answer (§23). A joining character is sent its
+// knows after its meters, and again whenever it learns one, before the answer (§23). A joining character is sent its
 // reputation (standing, ranks and titles by faction) after its recipes, and whenever the server changes it, after that
 // change's rank and title events (§24); no client message changes it.
 // Malformed or out-of-place messages are dropped and counted, never thrown.
@@ -43,6 +45,8 @@ import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.t
 import type { Db } from '../db/client.ts';
 import type { CharacterRow } from '../db/schema.ts';
 import type { InventoryService } from '../inventory/service.ts';
+import { meterServiceIn } from '../meters/component.ts';
+import type { MeterService } from '../meters/service.ts';
 import { groundForRestore, POSE, PROGRESS, type CharacterProgress, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
 import { doneEndsQuestStep } from '../quests/cutscenes.ts';
@@ -134,6 +138,8 @@ export interface WsGatewayDeps {
   social?: SocialService;
   /** Every character's skill web in play; when none is given, the one persistence's registry loads into. */
   skills?: SkillService;
+  /** Every character's heat and Charge in play; when none is given, the one persistence's registry loads into. */
+  meters?: MeterService;
   /** Every character in play's quests (its component registered with persistence); without one, quest requests are
    * dropped. */
   quests?: QuestRuntime;
@@ -168,6 +174,7 @@ export interface WsGateway {
   readonly registry: SessionRegistry;
   readonly inventory: InventoryService;
   readonly skills: SkillService;
+  readonly meters: MeterService;
   readonly social: SocialService;
   readonly cutscenes: CutsceneService;
   readonly resources: ResourceService;
@@ -236,10 +243,23 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     if (change !== 'server') return;
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send({ t: 'skills', ...reply });
   });
+  const meters = deps.meters ?? needMeters(persistence);
+  // movement authority asks them whether a claimed mode is allowed: the pulse drive needs Charge (refused as a correction)
+  deps.zones.meters = meters;
+  // the lockout, a recovery, Charge running out, a refused pulse and the meters moving reach the session holding the character
+  const unsubscribeMeters = meters.subscribe((characterId, view, notice) => {
+    for (const c of conns) {
+      if (c.s.state !== 'joined' || c.s.characterId !== characterId) continue;
+      c.s.send({ t: 'meters', meters: view });
+      if (notice) c.s.send({ t: 'event', event: { kind: 'notice', ...notice } });
+    }
+  });
   // (a cutscene's phase is no instance to call aid to: the cutscene service says which phases it plays in)
   const social = deps.social ?? new SocialService({ zones: deps.zones, clock: deps.clock, log, cutscenes });
   if (!deps.social) social.start();
-  const resources = deps.resources ?? new ResourceService({ zones: deps.zones, inventory, skills, now: () => deps.clock.now(), log });
+  // (a mining hit counts only while the meters say the beam fires, the button held on foot out of the lockout, and is worth
+  // the beam seconds they saw fire since the last)
+  const resources = deps.resources ?? new ResourceService({ zones: deps.zones, inventory, skills, meters, now: () => deps.clock.now(), log });
   if (!deps.resources) resources.start();
   // each share of a node broken counts for the character's quests' `mine` steps (flora's carbon counts through `collect`)
   const quests = deps.quests;
@@ -428,7 +448,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         return;
       case 'input': {
         if (s.state !== 'joined') return invalid(s, 'input before join');
+        const now = deps.clock.now();
+        // the meters run to now first (movement authority asks them about the pulse drive), then the zone judges and applies
+        meters.claim(s.characterId!, msg, now);
         const r = deps.zones.input(s, msg);
+        if (r === 'ok') meters.input(s.characterId!, s, msg, now);
         // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
         if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
         // refused by movement authority (which logged it): the correction, and the end of a client corrected too often
@@ -564,6 +588,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.entityId = joined.entityId;
       s.zoneId = joined.zone.id;
       s.state = 'joined';
+      // the meters learn where it entered: movement authority credits its first input with the time since, flown there
+      meters.locate(row.id, s, deps.clock.now());
       s.send({
         t: 'welcome',
         accountId: s.accountId!,
@@ -578,6 +604,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
       s.send({ t: 'inventory', ...inventory.state(row.id) });
       s.send({ t: 'skills', ...skills.state(row.id) });
+      // (and again on its first input: by then the client is in the world and hears it)
+      s.send({ t: 'meters', meters: meters.view(row.id, deps.clock.now()) });
       const known = crafting.recipes(row.id);
       if (known) s.send(known);
       const standing = reputation.view(row.id);
@@ -595,6 +623,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     registry,
     inventory,
     skills,
+    meters,
     social,
     cutscenes,
     resources,
@@ -612,6 +641,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (!deps.resources) await resources.close();
       unsubscribeInventory();
       unsubscribeSkills();
+      unsubscribeMeters();
+      if (deps.zones.meters === meters) deps.zones.meters = null;
       unsubscribeQuests?.();
       unsubscribeMining?.();
       if (deps.zones.combat === combat.hooks) deps.zones.combat = null;
@@ -638,6 +669,12 @@ function needSkills(persistence: CharacterPersistence): SkillService {
   const skills = skillServiceIn(persistence.registry);
   if (!skills) throw new Error('the gateway needs a skill service: give one, or a persistence registry with the skills component');
   return skills;
+}
+
+function needMeters(persistence: CharacterPersistence): MeterService {
+  const meters = meterServiceIn(persistence.registry);
+  if (!meters) throw new Error('the gateway needs a meter service: give one, or a persistence registry with the meters component');
+  return meters;
 }
 
 function needCodex(persistence: CharacterPersistence): CodexService {
