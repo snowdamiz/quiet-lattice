@@ -34,6 +34,7 @@ import { collectResources, disposeTree } from './core/dispose.js';
 import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
+import { Abilities, CAST_KEYS, castBar, castIntent, playAbilityFx } from './net/abilities.js';
 import { Crafting } from './net/crafting.js';
 import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
@@ -109,6 +110,9 @@ export class Game {
     this.timeBase = 0;
     // the connection to the server, once a character is picked (enterWorld); none on the title or in the dev sandbox
     this.net = null;
+    // the action bars and their cooldowns as the server says, the casts keys 1–6 send, and the effects of those seen
+    this.abilities = new Abilities({ now: () => this.hud.now() });
+    this.abilities.listen((e) => playAbilityFx(this, e));
     this.camWorld = new THREE.Vector3();
     this.camWorldQuat = new THREE.Quaternion();
     this.camWorldQuatInv = new THREE.Quaternion();
@@ -359,6 +363,7 @@ export class Game {
     net.input = () => this.inputSample();
     this.inventory.send = (m) => net.send(m);
     this.crafting?.link(net);
+    this.abilities.link(net);
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
@@ -396,6 +401,7 @@ export class Game {
     if (net.everJoined) return this.leaveWorld(reason);
     this.net = null;
     this.inventory.send = null;
+    this.abilities.link(null);
     this.hud.social.attach(null);
     onFail?.(reason, refusal?.code ?? null);
   }
@@ -733,6 +739,14 @@ export class Game {
   }
 
   // ---------- gameplay interactions ----------
+  // Keys 1–6 cast the ground bar's actives on foot and 1–5 the ship bar's in flight, as many as the hull has slots
+  // (DESIGN 9.1); LMB stays the multitool's beam and the ship's guns. The server decides every cast (net/abilities.js).
+  castKeys() {
+    const bar = this.net?.joined ? castBar(this) : null;
+    if (!bar) return;
+    for (let i = 0; i < this.abilities.count(bar); i++) if (this.input.hit(CAST_KEYS[i])) this.abilities.cast(bar, i, castIntent(this, bar));
+  }
+
   handleInteractions() {
     const inp = this.input;
     const ship = this.ship;
@@ -811,6 +825,7 @@ export class Game {
       }
       if (inp.hit('KeyC')) this.scan();
     }
+    this.castKeys();
     if (inp.hit('KeyM')) this.menus.openMap();
     if (inp.hit('KeyI')) this.menus.openInventory();
     if (inp.hit('KeyK')) this.openFabricator();

@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
+import { castBar } from '../net/abilities.js';
 import { EdgeCompass } from './EdgeCompass.js';
 import { SocialUI } from './social/SocialUI.js';
 
@@ -65,9 +66,33 @@ const fmtRate = (v) => `${v > 0 ? '+' : '\u2212'}${Math.abs(v).toFixed(Math.abs(
 
 // a gauge level: a finite 0–1 (anything else draws as empty, never as a full arc)
 const unit = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
-/** A change of more than this much of an arc in one frame is a jump (a server sync, a refill, a chunk of heat): the gauge
- * lands on it at once rather than tweening up from where it was. */
+/** A change of more than this much of an arc in one frame is a jump (a server sync, a refill, an ability's chunk of heat):
+ * the gauge eases onto it over ARC_EASE_MS, fast then settling, rather than trailing it frame by frame. */
 const ARC_JUMP = 0.08;
+export const ARC_EASE_MS = 150;
+const easeOut = (t) => 1 - (1 - t) ** 3;
+
+/** What the bar says of a cast the server refused, by its reason (ARCHITECTURE §25). */
+export const CAST_REFUSED = {
+  cooldown: 'COOLING DOWN',
+  heat: 'OVERHEATED',
+  charge: 'NOT ENOUGH CHARGE',
+  range: 'OUT OF RANGE',
+  los: 'NO LINE OF SIGHT',
+  target: 'NO TARGET',
+  unseen: 'NO TARGET',
+  dead: 'TARGET DOWN',
+  not_owned: 'NOT ON THE BAR',
+  not_slotted: 'NOT ON THE BAR',
+  slot: 'NOT ON THE BAR',
+  unknown: 'NOT AWAKENED YET',
+  mode: 'NOT HERE',
+  down: 'DOWN',
+};
+/** A slot's ring as the bar draws it: a near-black halo, a track, and the cooldown's sweep over it. */
+const RING = `<svg viewBox="0 0 40 40"><circle class="halo" cx="20" cy="20" r="15"/><circle class="track" cx="20" cy="20" r="15"/><circle class="sweep" cx="20" cy="20" r="15" pathLength="1"/></svg>`;
+/** The bar rests dim this long after the last thing that moved on it, ms. */
+const BAR_REST_MS = 4000;
 
 /** The heat arc as the HUD draws it from the multitool: filled to heat ÷ capacity, shown while the beam fires, the meter is
  * warm or locked out; amber from 75%, danger red through the lockout, with a tick where the lockout ends. */
@@ -128,6 +153,10 @@ export class HUD {
     this.toasts = el('div', 'toasts', this.layer);
     // the server's word on the player's shots: damage numbers off the reticle
     this.hitsEl = el('div', 'hits', this.layer);
+    // the bar the player casts from, keys 1–6 on foot and 1–5 in flight, with its cooldowns (ARCHITECTURE §25)
+    this.abilitiesEl = el('div', 'abilities', this.layer, '<div class="ab-row"></div><div class="ab-why"></div>');
+    this.abRow = this.abilitiesEl.querySelector('.ab-row');
+    this.abWhy = this.abilitiesEl.querySelector('.ab-why');
     // chat, the party frame and the call-for-aid list (P1.E15.T03)
     this.social = new SocialUI(game, this);
     // (beside the layer, not in it: banners show through a cutscene, which fades the rest of the HUD out)
@@ -240,16 +269,27 @@ export class HUD {
 
   // Fill one of the gauge arcs (0..1); `show` fades it in, otherwise it rests nearly invisible. `states` toggles classes
   // on the gauge (by default `low` under a quarter: a gauge running out), always from the value itself. The first time a
-  // gauge is drawn, as it turns on, and on a jump, it is drawn `snap`: at its value and in its colours at once, with no
-  // transition from wherever it stood (the class lasts the one frame).
+  // gauge is drawn and as it turns on it is drawn `snap`: at its value and in its colours at once, with no transition from
+  // wherever it stood (the class lasts the one frame). A jump eases onto the value over ARC_EASE_MS on the HUD's clock,
+  // following it as it moves on meanwhile, the CSS transition off while it does.
   arc(root, name, value, show, states = null) {
     const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
     const g = a.parentNode;
     const v = unit(value);
-    const snap = a._v === undefined || (show && !g.classList.contains('on')) || Math.abs(v - a._v) > ARC_JUMP;
+    const now = this.now();
+    const snap = a._v === undefined || (show && !g.classList.contains('on'));
+    if (snap) a._ease = null;
+    else if (Math.abs(v - a._v) > ARC_JUMP) a._ease = { from: a._drawn ?? a._v, at: now };
     a._v = v;
-    g.classList.toggle('snap', snap);
-    const off = (ARC_LEN * (1 - v)).toFixed(3);
+    let drawn = v;
+    if (a._ease) {
+      const t = (now - a._ease.at) / ARC_EASE_MS;
+      if (t >= 1) a._ease = null;
+      else drawn = a._ease.from + (v - a._ease.from) * easeOut(Math.max(0, t));
+    }
+    a._drawn = drawn;
+    g.classList.toggle('snap', snap || !!a._ease);
+    const off = (ARC_LEN * (1 - drawn)).toFixed(3);
     if (a._off !== off) a.style.strokeDashoffset = a._off = off;
     g.classList.toggle('on', show);
     for (const [cls, on] of Object.entries(states ?? { low: v < 0.25 })) g.classList.toggle(cls, !!on);
@@ -437,9 +477,64 @@ export class HUD {
     this.edgeCompass.update((!g.overlay || chatting) && !cine && (mode === 'ship' || mode === 'foot'));
     this.updateMarkers();
     this.updateHits(g.net?.combat);
+    this.updateAbilities();
     this.social.update();
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
+  }
+
+  // The bar the player casts from (ARCHITECTURE §25), under the prompt: a ring a working slot with its key in it and the
+  // node's name under it. A cooldown is the ring drawn back to full in the bar's colour (heat's warm on foot, Charge's
+  // lilac in flight) as the server's clock runs out, the seconds left in place of the key; a toggle that is on fills it;
+  // a cast the server took flashes it, and one it refused edges it in danger red with the reason under the bar. Shown
+  // while a node is slotted on the bar the mode casts from; it rests dim once nothing on it has moved for BAR_REST_MS.
+  updateAbilities() {
+    const g = this.game;
+    const bar = g.abilities && !g.director?.pose ? castBar(g) : null;
+    const slots = bar ? g.abilities.slots(bar, g.time) : [];
+    const shown = slots.some((x) => x.node);
+    this.abilitiesEl.classList.toggle('on', shown);
+    if (!shown) return;
+    const now = this.now();
+    const layout = `${bar}:${slots.map((x) => x.node ?? '').join(',')}`;
+    if (this.abRow._layout !== layout) {
+      this.abRow._layout = layout;
+      this.abilitiesEl.dataset.bar = bar;
+      this.abRow.innerHTML = slots
+        .map((x) => `<div class="ab-slot${x.node ? '' : ' empty'}">${RING}<b class="ab-key">${x.key}</b><i class="ab-name"></i></div>`)
+        .join('');
+      this.abRow.querySelectorAll('.ab-name').forEach((n, i) => (n.textContent = slots[i].name ?? ''));
+      this._abBusyAt = now;
+    }
+    let busy = false;
+    slots.forEach((x, i) => {
+      const e = this.abRow.children[i];
+      const cooling = x.left > 0 && x.length > 0;
+      // (the ring drawn back as the cooldown runs out: none of it left at the cast, all of it when ready)
+      const sweep = e.querySelector('.sweep');
+      const off = cooling ? Math.min(1, x.left / x.length).toFixed(3) : '0';
+      if (sweep._off !== off) sweep.style.strokeDashoffset = sweep._off = off;
+      const key = e.querySelector('.ab-key');
+      const label = cooling ? String(Math.ceil(x.left - 1e-6)) : String(x.key);
+      if (key._t !== label) key.textContent = key._t = label;
+      e.classList.toggle('cooling', cooling);
+      e.classList.toggle('lit', x.on);
+      e.classList.toggle('sending', x.sending);
+      e.classList.toggle('refused', !!x.refused);
+      if (x.castAt !== null && e._castAt !== x.castAt) {
+        e._castAt = x.castAt;
+        e.classList.remove('cast');
+        void e.offsetWidth;
+        e.classList.add('cast');
+      }
+      busy ||= cooling || x.on || x.sending || !!x.refused;
+    });
+    const refusal = slots.find((x) => x.refused)?.refused ?? null;
+    const why = refusal ? (CAST_REFUSED[refusal] ?? 'TRY AGAIN') : '';
+    if (why) this.abWhy.textContent = why;
+    this.abWhy.classList.toggle('show', !!why);
+    if (busy) this._abBusyAt = now;
+    this.abilitiesEl.classList.toggle('rest', now - (this._abBusyAt ?? 0) > BAR_REST_MS);
   }
 
   // What the server says the player's shots did and the blows it took (ARCHITECTURE §20): a number rising off the reticle

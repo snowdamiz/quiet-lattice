@@ -118,7 +118,16 @@ async function join(token: string, characterId: string) {
       await sleep(lastCast + 1000 / CAST_PER_S - Date.now());
       lastCast = Date.now();
       const s = ++castSeq;
-      sock.send({ t: 'cast', seq: s, time: time(), node, slot, frame: FRAME, aim: extra.aim ?? [0, 0, -1], ...(extra.target === undefined ? {} : { target: extra.target }) });
+      sock.send({
+        t: 'cast',
+        seq: s,
+        time: time(),
+        node,
+        slot,
+        frame: FRAME,
+        aim: extra.aim ?? [0, 0, -1],
+        ...(extra.target === undefined ? {} : { target: extra.target }),
+      });
       for (;;) {
         const m = await sock.next('cast');
         if (m.seq === s) return m;
@@ -131,7 +140,20 @@ async function join(token: string, characterId: string) {
 
 /** Owns every fixture node (and the Tier I nodes they stand on), as trainers and monoliths would unlock them. */
 function own(id: string): void {
-  for (const node of ['pull', 'pulse', 'lance', 'bond', 'vent', 'sear', 'harmonic', 'regrow', 'tractor_beam', 'deep_sweep', 'repair_drones', 'inertial_brake']) {
+  for (const node of [
+    'pull',
+    'pulse',
+    'lance',
+    'bond',
+    'vent',
+    'sear',
+    'harmonic',
+    'regrow',
+    'tractor_beam',
+    'deep_sweep',
+    'repair_drones',
+    'inertial_brake',
+  ]) {
     expect(server.ws.skills.unlock(id, node, { kind: 'dev' }), node).toMatchObject({ ok: true });
     expect(server.ws.skills.buy(id, node), node).toMatchObject({ ok: true });
   }
@@ -149,112 +171,129 @@ function sees(zone: Zone, viewer: number, id: number): boolean {
 }
 
 describe('abilities over the wire', () => {
-  it('casts the test ability from each of slots 1–6 on foot and 1–4 in flight, refuses with its reason, and keeps the server’s cooldowns', { timeout: 60_000 }, async () => {
-    const c = await character();
-    let bot = await join(c.token, c.id);
-    expect(bot.abilities).toEqual({ t: 'abilities', cooldowns: [], on: [] });
-    own(c.id);
-    for (const [i, a] of FIXTURE_GROUND.entries()) expect((await bot.slot('ground', i, a.node)).error, a.node).toBeUndefined();
-    for (const [i, a] of FIXTURE_SHIP.entries()) expect((await bot.slot('ship', i, a.node)).error, a.node).toBeUndefined();
+  it(
+    'casts the test ability from each of slots 1–6 on foot and 1–4 in flight, refuses with its reason, and keeps the server’s cooldowns',
+    { timeout: 60_000 },
+    async () => {
+      const c = await character();
+      let bot = await join(c.token, c.id);
+      expect(bot.abilities).toEqual({ t: 'abilities', cooldowns: [], on: [] });
+      own(c.id);
+      for (const [i, a] of FIXTURE_GROUND.entries()) expect((await bot.slot('ground', i, a.node)).error, a.node).toBeUndefined();
+      for (const [i, a] of FIXTURE_SHIP.entries()) expect((await bot.slot('ship', i, a.node)).error, a.node).toBeUndefined();
 
-    // docked, no bar casts
-    expect(await bot.cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'mode' });
+      // docked, no bar casts
+      expect(await bot.cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'mode' });
 
-    // on foot on the world, a creature 12 m off and a player beside it who sees the casts
-    await bot.stand(at(0));
-    const other = await character();
-    const near = await join(other.token, other.id);
-    await near.stand(at(8, 8));
-    while (!nodeGrounds.ground(params, 0)) await sleep(100);
-    const mob = creature(bot.zone, at(12));
-    await waitFor(() => sees(bot.zone, near.entity, bot.entity), 5000, 'the caster in its neighbour’s view');
+      // on foot on the world, a creature 12 m off and a player beside it who sees the casts
+      await bot.stand(at(0));
+      const other = await character();
+      const near = await join(other.token, other.id);
+      await near.stand(at(8, 8));
+      while (!nodeGrounds.ground(params, 0)) await sleep(100);
+      const mob = creature(bot.zone, at(12));
+      await waitFor(() => sees(bot.zone, near.entity, bot.entity), 5000, 'the caster in its neighbour’s view');
 
-    // keys 1–6: each slot's node cast, paid in heat, its cooldown the server's, its effect run once
-    const heat = () => server.ws.meters.view(c.id, server.world.clock.now()).heat;
-    for (const [i, a] of FIXTURE_GROUND.entries()) {
-      const node = getSkillNode(a.node);
-      // (its turn within the cast rate first, so the heat is read just before it goes)
-      await sleep(1000 / CAST_PER_S);
-      const before = heat();
-      const r = await bot.cast(a.node, i, a.target === 'entity' ? { target: mob } : {});
-      expect(r, a.node).toMatchObject({ result: 'cast', node: a.node, slot: i });
-      // (less what cooled while the cast was on its way)
-      expect(heat() - before, a.node).toBeGreaterThan((node.cost?.heat ?? 0) - 2);
-      expect(heat() - before, a.node).toBeLessThanOrEqual(node.cost?.heat ?? 0);
-      expect(r.readyAt! - bot.time(), a.node).toBeCloseTo(cooldownOf(node)!.seconds, 0);
-    }
-    expect(fixture.casts.map((x) => x.node.id)).toEqual(FIXTURE_GROUND.map((a) => a.node));
-    expect(fixture.casts.filter((x) => x.target === mob)).toHaveLength(2);
-    const state = bot.sock.received.filter((m): m is Extract<ServerMessage, { t: 'abilities' }> => m.t === 'abilities').at(-1)!;
-    expect(state.cooldowns.map((x) => x.node).sort()).toEqual(FIXTURE_GROUND.map((a) => a.node).sort());
-    // told to the caster and to the player beside it; what the casts at the creature did follows as combat events
-    await waitFor(() => near.events().length === 6, 5000, 'the casts in the neighbour’s events');
-    expect(bot.events().map((e) => [e.caster, e.node])).toEqual(FIXTURE_GROUND.map((a) => [bot.entity, a.node]));
-    expect(near.events().map((e) => e.node)).toEqual(FIXTURE_GROUND.map((a) => a.node));
-    expect(near.events()[1]).toMatchObject({ target: mob, frame: FRAME, phase: 'cast' });
-    await waitFor(() => bot.sock.received.some((m) => m.t === 'event' && m.event.kind === 'combat' && m.event.target === mob && m.event.ability === 'pull'), 5000, 'Pull’s hit');
+      // keys 1–6: each slot's node cast, paid in heat, its cooldown the server's, its effect run once
+      const heat = () => server.ws.meters.view(c.id, server.world.clock.now()).heat;
+      for (const [i, a] of FIXTURE_GROUND.entries()) {
+        const node = getSkillNode(a.node);
+        // (its turn within the cast rate first, so the heat is read just before it goes)
+        await sleep(1000 / CAST_PER_S);
+        const before = heat();
+        const r = await bot.cast(a.node, i, a.target === 'entity' ? { target: mob } : {});
+        expect(r, a.node).toMatchObject({ result: 'cast', node: a.node, slot: i });
+        // (less what cooled while the cast was on its way)
+        expect(heat() - before, a.node).toBeGreaterThan((node.cost?.heat ?? 0) - 2);
+        expect(heat() - before, a.node).toBeLessThanOrEqual(node.cost?.heat ?? 0);
+        expect(r.readyAt! - bot.time(), a.node).toBeCloseTo(cooldownOf(node)!.seconds, 0);
+      }
+      expect(fixture.casts.map((x) => x.node.id)).toEqual(FIXTURE_GROUND.map((a) => a.node));
+      expect(fixture.casts.filter((x) => x.target === mob)).toHaveLength(2);
+      const state = bot.sock.received.filter((m): m is Extract<ServerMessage, { t: 'abilities' }> => m.t === 'abilities').at(-1)!;
+      expect(state.cooldowns.map((x) => x.node).sort()).toEqual(FIXTURE_GROUND.map((a) => a.node).sort());
+      // told to the caster and to the player beside it; what the casts at the creature did follows as combat events
+      await waitFor(() => near.events().length === 6, 5000, 'the casts in the neighbour’s events');
+      expect(bot.events().map((e) => [e.caster, e.node])).toEqual(FIXTURE_GROUND.map((a) => [bot.entity, a.node]));
+      expect(near.events().map((e) => e.node)).toEqual(FIXTURE_GROUND.map((a) => a.node));
+      expect(near.events()[1]).toMatchObject({ target: mob, frame: FRAME, phase: 'cast' });
+      await waitFor(
+        () => bot.sock.received.some((m) => m.t === 'event' && m.event.kind === 'combat' && m.event.target === mob && m.event.ability === 'pull'),
+        5000,
+        'Pull’s hit',
+      );
 
-    // refused with the reason, nothing changed: cooling down, not owned, not slotted, out of range, unseen
-    const before = fixture.casts.length;
-    const cd = await bot.cast('pulse', 0);
-    expect(cd).toMatchObject({ result: 'refused', reason: 'cooldown' });
-    expect(cd.readyAt).toBe(state.cooldowns.find((x) => x.node === 'pulse')!.readyAt);
-    expect(await bot.cast('well', 0)).toMatchObject({ result: 'refused', reason: 'not_owned' });
-    expect(await bot.cast('pull', 0)).toMatchObject({ result: 'refused', reason: 'not_slotted' });
-    const far = creature(bot.zone, at(60));
-    expect(await bot.cast('sear', 3, { target: far })).toMatchObject({ result: 'refused', reason: 'cooldown' });
-    // (another character with the same bars, out of its cooldowns)
-    const third = await character();
-    const fresh = await join(third.token, third.id);
-    own(third.id);
-    await fresh.slot('ground', 1, 'pull');
-    await fresh.slot('ground', 3, 'sear');
-    await fresh.stand(at(2));
-    expect(await fresh.cast('sear', 3, { target: far })).toMatchObject({ result: 'refused', reason: 'range' });
-    const sealed = { id: 9_000_001, characterId: 'phase-owner', sendBinary: () => {} } as ZoneViewer;
-    fresh.zone.join(sealed, { kind: 'player', frame: FRAME, pos: at(30, 30), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
-    const theirs = fresh.zone.phases.phaseFor(sealed, 'story', { key: 'test:abilities', frame: FRAME, center: at(10), radius: 100 });
-    const hidden = fresh.zone.phases.spawn(theirs.id, { kind: 'mob', frame: FRAME, pos: at(10), quat: [0, 0, 0, 1], vel: [0, 0, 0], species: walker.index, level: 1, hp: 1 });
-    expect(await fresh.cast('pull', 1, { target: hidden })).toMatchObject({ result: 'refused', reason: 'unseen' });
-    // the heat lockout; and flying, Charge short
-    server.ws.meters.addHeat(third.id, 100, server.world.clock.now());
-    await fresh.slot('ground', 0, 'pulse');
-    expect(await fresh.cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'heat' });
-    await fresh.slot('ship', 0, 'tractor_beam');
-    await fresh.stand(at(2, 0, 60), 'ship');
-    const now = server.world.clock.now();
-    expect(server.ws.meters.spendCharge(third.id, server.ws.meters.view(third.id, now).charge - 5, now).ok).toBe(true);
-    expect(await fresh.cast('tractor_beam', 0)).toMatchObject({ result: 'refused', reason: 'charge' });
-    expect(fixture.casts.length).toBe(before);
-    fresh.zone.phases.close(theirs.id);
-    fresh.zone.leave(sealed);
-    fresh.sock.close();
+      // refused with the reason, nothing changed: cooling down, not owned, not slotted, out of range, unseen
+      const before = fixture.casts.length;
+      const cd = await bot.cast('pulse', 0);
+      expect(cd).toMatchObject({ result: 'refused', reason: 'cooldown' });
+      expect(cd.readyAt).toBe(state.cooldowns.find((x) => x.node === 'pulse')!.readyAt);
+      expect(await bot.cast('well', 0)).toMatchObject({ result: 'refused', reason: 'not_owned' });
+      expect(await bot.cast('pull', 0)).toMatchObject({ result: 'refused', reason: 'not_slotted' });
+      const far = creature(bot.zone, at(60));
+      expect(await bot.cast('sear', 3, { target: far })).toMatchObject({ result: 'refused', reason: 'cooldown' });
+      // (another character with the same bars, out of its cooldowns)
+      const third = await character();
+      const fresh = await join(third.token, third.id);
+      own(third.id);
+      await fresh.slot('ground', 1, 'pull');
+      await fresh.slot('ground', 3, 'sear');
+      await fresh.stand(at(2));
+      expect(await fresh.cast('sear', 3, { target: far })).toMatchObject({ result: 'refused', reason: 'range' });
+      const sealed = { id: 9_000_001, characterId: 'phase-owner', sendBinary: () => {} } as ZoneViewer;
+      fresh.zone.join(sealed, { kind: 'player', frame: FRAME, pos: at(30, 30), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+      const theirs = fresh.zone.phases.phaseFor(sealed, 'story', { key: 'test:abilities', frame: FRAME, center: at(10), radius: 100 });
+      const hidden = fresh.zone.phases.spawn(theirs.id, {
+        kind: 'mob',
+        frame: FRAME,
+        pos: at(10),
+        quat: [0, 0, 0, 1],
+        vel: [0, 0, 0],
+        species: walker.index,
+        level: 1,
+        hp: 1,
+      });
+      expect(await fresh.cast('pull', 1, { target: hidden })).toMatchObject({ result: 'refused', reason: 'unseen' });
+      // the heat lockout; and flying, Charge short
+      server.ws.meters.addHeat(third.id, 100, server.world.clock.now());
+      await fresh.slot('ground', 0, 'pulse');
+      expect(await fresh.cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'heat' });
+      await fresh.slot('ship', 0, 'tractor_beam');
+      await fresh.stand(at(2, 0, 60), 'ship');
+      const now = server.world.clock.now();
+      expect(server.ws.meters.spendCharge(third.id, server.ws.meters.view(third.id, now).charge - 5, now).ok).toBe(true);
+      expect(await fresh.cast('tractor_beam', 0)).toMatchObject({ result: 'refused', reason: 'charge' });
+      expect(fixture.casts.length).toBe(before);
+      fresh.zone.phases.close(theirs.id);
+      fresh.zone.leave(sealed);
+      fresh.sock.close();
 
-    // flying the Wayfarer over the world, keys 1–4 cast the ship bar's, paid in Charge
-    await bot.stand(at(0, 0, 60), 'ship');
-    const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
-    let spent = 0;
-    const ready = new Map<string, number>();
-    for (const [i, a] of FIXTURE_SHIP.entries()) {
-      const r = await bot.cast(a.node, i);
-      expect(r, a.node).toMatchObject({ result: 'cast', node: a.node, slot: i });
-      ready.set(a.node, r.readyAt!);
-      spent += getSkillNode(a.node).cost!.charge!;
-    }
-    expect(fixture.casts.slice(-4).map((x) => [x.node.id, x.bar])).toEqual(FIXTURE_SHIP.map((a) => [a.node, 'ship']));
-    expect(server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeCloseTo(charge0 - spent, 0);
-    // a fifth slot the Wayfarer does not have; the ground bar's nodes are not the ship's
-    expect(await bot.cast('pulse', 4)).toMatchObject({ result: 'refused', reason: 'slot' });
-    expect(await bot.cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'not_slotted' });
+      // flying the Wayfarer over the world, keys 1–4 cast the ship bar's, paid in Charge
+      await bot.stand(at(0, 0, 60), 'ship');
+      const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
+      let spent = 0;
+      const ready = new Map<string, number>();
+      for (const [i, a] of FIXTURE_SHIP.entries()) {
+        const r = await bot.cast(a.node, i);
+        expect(r, a.node).toMatchObject({ result: 'cast', node: a.node, slot: i });
+        ready.set(a.node, r.readyAt!);
+        spent += getSkillNode(a.node).cost!.charge!;
+      }
+      expect(fixture.casts.slice(-4).map((x) => [x.node.id, x.bar])).toEqual(FIXTURE_SHIP.map((a) => [a.node, 'ship']));
+      expect(server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeCloseTo(charge0 - spent, 0);
+      // a fifth slot the Wayfarer does not have; the ground bar's nodes are not the ship's
+      expect(await bot.cast('pulse', 4)).toMatchObject({ result: 'refused', reason: 'slot' });
+      expect(await bot.cast('pulse', 0)).toMatchObject({ result: 'refused', reason: 'not_slotted' });
 
-    // the cooldowns are the server's: they come back with the character on a new connection
-    bot.sock.close();
-    await waitFor(() => !server.ws.registry.holding(c.id), 5000, 'the old connection gone');
-    bot = await join(c.token, c.id);
-    for (const [node, readyAt] of ready) expect(bot.abilities.cooldowns, node).toContainEqual({ node, readyAt });
-    await bot.stand(at(0, 0, 60), 'ship');
-    expect(await bot.cast('tractor_beam', 0)).toMatchObject({ result: 'refused', reason: 'cooldown', readyAt: ready.get('tractor_beam') });
-    near.sock.close();
-    bot.sock.close();
-  });
+      // the cooldowns are the server's: they come back with the character on a new connection
+      bot.sock.close();
+      await waitFor(() => !server.ws.registry.holding(c.id), 5000, 'the old connection gone');
+      bot = await join(c.token, c.id);
+      for (const [node, readyAt] of ready) expect(bot.abilities.cooldowns, node).toContainEqual({ node, readyAt });
+      await bot.stand(at(0, 0, 60), 'ship');
+      expect(await bot.cast('tractor_beam', 0)).toMatchObject({ result: 'refused', reason: 'cooldown', readyAt: ready.get('tractor_beam') });
+      near.sock.close();
+      bot.sock.close();
+    },
+  );
 });

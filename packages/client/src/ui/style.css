@@ -276,6 +276,170 @@ body {
   opacity: 0;
 }
 
+/* ---------- the ability bar (keys 1–6 on foot, 1–5 in flight) ----------
+   A ring a slot in the arcs' language: a near-black halo, an opaque track, and the bar's colour (heat's warm on foot,
+   Charge's lilac in flight) drawn round it from the top, full when the slot is ready and drawn back up as its cooldown
+   runs out, the seconds left in place of the key. 34 px rings, so the bar sits under the prompt at 720p too. */
+.abilities {
+  --ab: var(--warm);
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.4s ease-in;
+}
+.abilities[data-bar='ship'] {
+  --ab: #c7a6ff;
+}
+.abilities.on {
+  opacity: 1;
+  transition: opacity 0.15s ease-out;
+}
+/* nothing on it moved for a while: out of the way, still readable */
+.abilities.on.rest {
+  opacity: 0.55;
+  transition: opacity 0.8s ease-in-out;
+}
+.ab-row {
+  display: flex;
+  gap: 12px;
+}
+.ab-slot {
+  position: relative;
+  width: 34px;
+  height: 48px;
+}
+.ab-slot svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+.ab-slot circle {
+  fill: none;
+}
+.ab-slot .halo {
+  stroke: var(--ink);
+  stroke-opacity: 0.92;
+  stroke-width: 7.5;
+}
+.ab-slot .track {
+  stroke: #3b3e44;
+  stroke-width: 3;
+  transition: stroke 0.3s ease-out;
+}
+.ab-slot .sweep {
+  stroke: var(--ab);
+  stroke-width: 3;
+  stroke-linecap: butt;
+  stroke-dasharray: 1 2;
+  /* (the server's clock moves it every frame: a short linear catch-up, as the gauges' fills) */
+  transition: stroke-dashoffset 0.15s linear, stroke 0.3s ease-out, stroke-width 0.2s ease-out;
+}
+.ab-slot.cooling .sweep {
+  stroke-opacity: 0.8;
+}
+.ab-slot.empty .sweep {
+  stroke-opacity: 0;
+}
+.ab-slot.empty {
+  opacity: 0.4;
+}
+/* a toggle that is on: the ring thickens in its colour, the key in it too */
+.ab-slot.lit .sweep {
+  stroke-width: 4.5;
+}
+.ab-slot.lit .ab-key {
+  color: var(--ab);
+}
+/* refused: the track edged in danger red while the reason shows */
+.ab-slot.refused .track {
+  stroke: var(--danger);
+}
+.ab-slot.refused .sweep {
+  stroke-opacity: 0.35;
+}
+/* the server took the cast: the ring flares and settles */
+.ab-slot.cast svg {
+  animation: abCast 0.36s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes abCast {
+  from {
+    transform: rotate(-90deg) scale(1.22);
+    filter: brightness(1.9);
+  }
+}
+.ab-key {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-cond);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  transition: color 0.3s ease-out;
+}
+.ab-slot.cooling .ab-key {
+  color: var(--dim);
+}
+.ab-name {
+  position: absolute;
+  left: 50%;
+  top: 37px;
+  transform: translateX(-50%);
+  font-family: var(--font-cond);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--dim);
+  /* (outlined like the flight readouts, so it holds over a bright sky) */
+  text-shadow:
+    0 0 1px #050608,
+    1px 0 0 #050608,
+    -1px 0 0 #050608,
+    0 1px 0 #050608,
+    0 -1px 0 #050608;
+}
+/* why the server refused a cast: the lockout word's plate, to the right of the bar */
+.ab-why {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  padding: 5px calc(8px - 0.22em) 5px 8px;
+  color: #ff8a80;
+  background: rgba(6, 8, 11, 0.82);
+  border-left: 2px solid var(--danger);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ab-why.show {
+  opacity: 1;
+  transform: none;
+}
+
 /* ---------- ship reticle ---------- */
 .ship-reticle {
   width: 110px;

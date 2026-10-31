@@ -500,7 +500,18 @@ export const CastEvent = z.object({
   aim: Direction,
   target: EntityId.optional(),
 });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent, RankEvent, TitleEvent, CastEvent]);
+export const GameEvent = z.discriminatedUnion('kind', [
+  CombatEvent,
+  QuestEvent,
+  ChatEvent,
+  LootEvent,
+  XpEvent,
+  NoticeEvent,
+  PartyEvent,
+  RankEvent,
+  TitleEvent,
+  CastEvent,
+]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
 /** One member as its party sees it: cheap on purpose (a party frame needs no more). */

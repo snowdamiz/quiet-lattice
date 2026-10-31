@@ -1,9 +1,10 @@
-// The HUD's gauge arcs (P1.E07.T02): a gauge drawn for the first time, turned on, or jumping (a server sync, a refill)
-// lands on its value at once, in its value's colours, with no tween from where it stood; frame-to-frame changes tween;
-// and the regen sheen waits for the fill to be drawn. (On stand-ins for the gauge's SVG elements: the client's tests run
+// The HUD's gauge arcs (P1.E07.T02, P1.E07.T03): a gauge drawn for the first time or turned on lands on its value at once,
+// in its value's colours, with no tween from where it stood; a jump (a server sync, a refill, an ability's chunk of heat)
+// eases onto its value over ARC_EASE_MS, fast then settling, in its new colours at once; frame-to-frame changes tween; and
+// the regen sheen waits for the fill to be drawn. (On stand-ins for the gauge's SVG elements: the client's tests run
 // without a DOM.)
 import { describe, expect, it } from 'vitest';
-import { HUD } from './HUD.js';
+import { ARC_EASE_MS, HUD } from './HUD.js';
 
 /** One gauge as HUD.arc and HUD.sheen reach it: the root, its `<g class="gauge">`, the fill and the sheen paths. */
 function gauge(name = 'charge') {
@@ -21,10 +22,11 @@ function gauge(name = 'charge') {
   return { root, g, fill, sheen, has: (c) => classes.has(c) };
 }
 
-/** A HUD with nothing but its clock (half way through the sheen's climb). */
+/** A HUD with nothing but its clock (from half way through the sheen's climb). */
 function hud() {
   const h = Object.create(HUD.prototype);
-  h.now = () => 950;
+  h.t = 950;
+  h.now = () => h.t;
   return h;
 }
 
@@ -52,7 +54,7 @@ describe('the gauge arcs', () => {
     expect(Number(x.sheen.style.strokeDashoffset)).toBeGreaterThan(0.035 - 0.581);
   });
 
-  it('lands on a jump from empty and red, in its new colours at once', () => {
+  it('eases a jump from empty and red onto its value, fast then settling, in its new colours at once', () => {
     const h = hud();
     const x = gauge();
     frame(h, x, 0, { regen: false });
@@ -60,10 +62,40 @@ describe('the gauge arcs', () => {
     expect(x.has('low')).toBe(true);
     expect(x.has('snap')).toBe(false);
     frame(h, x, 0.58);
-    expect(x.fill.style.strokeDashoffset).toBe('0.420');
+    // (from where it stood, the CSS transition off while the HUD eases it)
+    expect(x.fill.style.strokeDashoffset).toBe('1.000');
     expect(x.has('snap')).toBe(true);
     expect(x.has('low')).toBe(false);
     expect(Number(x.sheen.style.opacity ?? 0)).toBe(0);
+    h.t += ARC_EASE_MS / 2;
+    frame(h, x, 0.58);
+    const half = 1 - Number(x.fill.style.strokeDashoffset);
+    expect(half).toBeGreaterThan(0.58 * 0.75);
+    expect(half).toBeLessThan(0.58);
+    h.t += ARC_EASE_MS / 2;
+    frame(h, x, 0.58);
+    expect(x.fill.style.strokeDashoffset).toBe('0.420');
+    expect(x.has('snap')).toBe(false);
+  });
+
+  it('eases a chunk of heat on, following the meter as it cools meanwhile', () => {
+    const h = hud();
+    const x = gauge('heat');
+    const heat = (v) => h.arc(x.root, 'heat', v, true, { hot: v >= 0.75, over: false });
+    heat(0.2);
+    heat(0.2);
+    // a cast's 25 heat in one go, then cooling a little every frame
+    const drawn = [];
+    for (let i = 0; i <= 10; i++) {
+      heat(0.45 - i * 0.003);
+      drawn.push(1 - Number(x.fill.style.strokeDashoffset));
+      h.t += 16;
+    }
+    for (let i = 1; i < drawn.length; i++) expect(drawn[i]).toBeGreaterThanOrEqual(drawn[i - 1] - 0.004);
+    // more of the way in its first half than its second (an ease out), and on the meter once it has run
+    expect(drawn[4] - drawn[0]).toBeGreaterThan(drawn[9] - drawn[5]);
+    expect(drawn[10]).toBeCloseTo(0.45 - 10 * 0.003, 3);
+    expect(x.has('snap')).toBe(false);
   });
 
   it('lands as it turns on after resting off, and tweens small changes from frame to frame', () => {

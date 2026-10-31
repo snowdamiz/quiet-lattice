@@ -110,7 +110,12 @@ function service(opts: Partial<CastServiceOptions> = {}): CastService {
 function slot(ground: (string | null)[], ship: (string | null)[] = []): void {
   const s = emptySkillState();
   const owned = [...ground, ...ship].filter((n): n is string => n !== null);
-  skills = { ...s, unlocked: owned, bought: owned, slots: { ground: ground.concat(Array(6 - ground.length).fill(null)), ship: ship.concat(Array(5 - ship.length).fill(null)) } };
+  skills = {
+    ...s,
+    unlocked: owned,
+    bought: owned,
+    slots: { ground: ground.concat(Array(6 - ground.length).fill(null)), ship: ship.concat(Array(5 - ship.length).fill(null)) },
+  };
 }
 
 function cast(node: string, slotIndex: number, extra: { target?: number; aim?: Vec3; time?: number; seq?: number; frame?: string | null } = {}): Answer {
@@ -265,7 +270,16 @@ describe('a cast at an entity', () => {
     const other = new Viewer(2, 'c2');
     const theirs = w.zone.join(other, { kind: 'player', frame: w.frame, pos: w.at(5, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
     const phase = w.zone.phases.phaseFor(other, 'story', { key: 'test:theirs', frame: w.frame, center: w.at(10, 0), radius: 100 });
-    const hidden = w.zone.phases.spawn(phase.id, { kind: 'mob', frame: w.frame, pos: w.at(10, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], species: 0, level: 1, hp: 1 });
+    const hidden = w.zone.phases.spawn(phase.id, {
+      kind: 'mob',
+      frame: w.frame,
+      pos: w.at(10, 0),
+      quat: [0, 0, 0, 1],
+      vel: [0, 0, 0],
+      species: 0,
+      level: 1,
+      hp: 1,
+    });
     expect(w.zone.phases.canSee(theirs, hidden)).toBe(true);
     expect(refusal(cast('pull', 1, { target: hidden }))).toBe('unseen');
     // a player is no creature
@@ -282,7 +296,11 @@ describe('a cast at an entity', () => {
     const s = c.sphere();
     // the player stood off from the creature's sphere at a reach just past, then just within, Pull's 25 m and the slack
     const away = (d: number) => {
-      const dir = unit([s.pos[0] - w.zone.entity(w.player)!.fields.pos[0], s.pos[1] - w.zone.entity(w.player)!.fields.pos[1], s.pos[2] - w.zone.entity(w.player)!.fields.pos[2]]);
+      const dir = unit([
+        s.pos[0] - w.zone.entity(w.player)!.fields.pos[0],
+        s.pos[1] - w.zone.entity(w.player)!.fields.pos[1],
+        s.pos[2] - w.zone.entity(w.player)!.fields.pos[2],
+      ]);
       const eye: Vec3 = [s.pos[0] - dir[0] * d, s.pos[1] - dir[1] * d, s.pos[2] - dir[2] * d];
       move(lift(eye, -EYE_M));
     };
@@ -347,7 +365,16 @@ describe('effects over time', () => {
   });
 
   it('keeps a bug in an effect to that effect: the cast is still answered', () => {
-    const effects = new Map<string, AbilityEffect>([['pulse', { cast: () => { throw new Error('boom'); } }]]);
+    const effects = new Map<string, AbilityEffect>([
+      [
+        'pulse',
+        {
+          cast: () => {
+            throw new Error('boom');
+          },
+        },
+      ],
+    ]);
     svc = service({ book: abilityBook(new Map([['pulse', { node: 'pulse', target: 'self' }]]), effects) });
     expect(cast('pulse', 0).result).toBe('cast');
   });
@@ -378,7 +405,9 @@ describe('the book', () => {
     expect(() => abilityBook(new Map([['pulse', pulse]]), new Map())).toThrow(/no effect/);
     expect(() => abilityBook(new Map(), new Map([['pulse', effect]]))).toThrow(/no ability/);
     expect(() => abilityBook(new Map([['pull', pulse]]), new Map([['pull', effect]]))).toThrow(/another node/);
-    expect(() => abilityBook(new Map([['tempered_core', { node: 'tempered_core', target: 'self' }]]), new Map([['tempered_core', effect]]))).toThrow(/always on/);
+    expect(() => abilityBook(new Map([['tempered_core', { node: 'tempered_core', target: 'self' }]]), new Map([['tempered_core', effect]]))).toThrow(
+      /always on/,
+    );
     expect(() => abilityBook(new Map([['attune', { node: 'attune', target: 'self' }]]), new Map([['attune', effect]]))).toThrow(/once per world/);
     expect(() => abilityBook(new Map([['pull', { node: 'pull', target: 'entity' }]]), new Map([['pull', effect]]))).toThrow(/no kind/);
   });

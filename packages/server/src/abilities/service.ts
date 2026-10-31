@@ -69,7 +69,10 @@ export interface CastServiceOptions {
   /** each character's place on the skill web: its bars and owned nodes (`get`) and the hull's working ship slots (`view`) */
   skills: { get(characterId: string): SkillState | null; view(characterId: string): { shipSlots: number } };
   /** heat and Charge: what a cast pays */
-  meters: { addHeat(characterId: string, amount: number, now: number): { ok: boolean }; spendCharge(characterId: string, amount: number, now: number): { ok: boolean } };
+  meters: {
+    addHeat(characterId: string, amount: number, now: number): { ok: boolean };
+    spendCharge(characterId: string, amount: number, now: number): { ok: boolean };
+  };
   /** world time, s (the server clock) */
   now: () => number;
   /** the abilities cast and their effects (this build's by default) */
@@ -249,7 +252,17 @@ export class CastService {
 
   // ---------- internals ----------
 
-  private context(characterId: string, zone: CastZone, self: number, me: ZoneEntity, bar: Bar, entry: BookEntry, msg: CastRequest, now: number, owned: readonly string[]): CastContext {
+  private context(
+    characterId: string,
+    zone: CastZone,
+    self: number,
+    me: ZoneEntity,
+    bar: Bar,
+    entry: BookEntry,
+    msg: CastRequest,
+    now: number,
+    owned: readonly string[],
+  ): CastContext {
     const f = me.fields;
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);
     const origin: Vec3 = bar === 'ground' ? lift(f.pos, EYE_M) : [f.pos[0], f.pos[1], f.pos[2]];

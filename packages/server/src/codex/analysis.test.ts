@@ -274,5 +274,4 @@ describe('analyzing a creature', () => {
     expect(progress.get('c1')!.xp).toBe(0);
     expect(heard).toEqual([]);
   });
-
 });
