@@ -573,10 +573,11 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   so it is retried), a failure before the first welcome, and `close()` end in closed. Messages are routed with
   `on(type, fn)`: `welcome` (with `first`, false on a reconnect), `world`, `inventory` (with `first` for the state sent
   after welcome), `correction`, `zone`, `event`, `refused`, `pong`, and the connection's `state`, `lost`, `closed`; types
-  nobody listens for (`party`, a chat or party `denied` …) are dropped quietly, and so are snapshot fields and entity
-  kinds nothing reads yet (a `mob`'s `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21)
-  keeps the call-for-aid beacons it is sent, and `net.reputation` (`reputation.js`, §24) the character's reputation.
-  While the connection is down after a welcome, a line at the top of the screen says so.
+  nobody listens for are dropped quietly, and so are snapshot fields and entity kinds nothing reads yet (a `mob`'s
+  `attack` is kept in the store for P1.E04.T02); `net.beacons` (`beacons.js`, §21) keeps the call-for-aid beacons it is
+  sent, `net.reputation` (`reputation.js`, §24) the character's reputation, and the chat and party UI (§13) listens for
+  `party`, `denied`, `beacon` and the chat and party events. While the connection is down after a welcome, a line at the
+  top of the screen says so.
 - **Snapshots** decode into `net.store` (`snapshots.js`): the states it was sent for the last 64 ticks, deltas applied
   onto their `base`; `entities` is the latest state and `ack` the last input `seq` the server applied. The store starts
   over on every welcome (a restarted server counts its ticks from 0 again). Acknowledgements go out at most once a tick
@@ -745,6 +746,30 @@ every chat line, mute and party change goes to the server log for moderation.
   `self`, `in_party`, `party_full`, `pending`, `no_invite`, `not_member`, `offline` (promote names a member whose
   connection is down), `gone` (the inviter is offline in no party), `busy` (the invitee holds 8 invites), `rate` with
   `retryS`.
+- **The client** (P1.E15.T03, `packages/client/src/ui/social/`): `SocialModel` (`model.js`) keeps what the server sent
+  (the log of chat lines, party and beacon news and refusals, the party, the invites waiting, a mute) and makes the
+  requests; `SocialUI` draws it into the HUD. The chat panel sits bottom left: closed, each new line (of any channel)
+  rises in on a plate of its own, the lines above easing up to make room, and fades out of the way 10 s later (4 s after
+  the panel closes), as the location line's objective settles; Enter (or `/`) opens it as the HUD overlay `chat` (Esc
+  closes it like any menu, and the mouse is freed so the party frame's and the beacon list's buttons take clicks), with
+  tabs for shard, system, party and the beacons (§21), the tab's log and an input that Enter sends from, closing the
+  panel; the feed cross-fades into the log where its lines stand. Slash commands carry only what the server does: `/s`,
+  `/sys`, `/p` (switch channel, sending what follows), `/invite`, `/accept` and `/decline` (the newest invite when no
+  name is given), `/leave`, `/promote`, `/kick`, and `/help`; a line the protocol would refuse (ChatText, CharacterName)
+  is refused there with a reason. Chat is paced as the server paces it (5 at once, then 1 a second; a line that did not
+  go spends nothing), so a fast typist is told to slow down, the text kept, before the server would count it towards a
+  mute. A refused chat line or party request is a line in words in the log; a beacon request's refusal shows under its
+  beacon, or under the player's own (§21), and a watch refused for its rate is asked again quietly; a mute is held for
+  its `retryS`, the input's hint counting it down. The party frame sits under the location line: members in join order,
+  the leader's amber mark, health (the entity's `hp` while it is in view, else the state's tenths), and where an absent
+  member is (offline, another system); while the panel is open, invite by name and leave, and for the leader promote and
+  remove per member. Invites waiting are cards there with their minute running down. Each change moves one box
+  (`motion.js`, stepped every frame on the HUD clock: a whole pixel, at least one a frame, landing where it lays out);
+  what goes fades out before anything moves over where it was, and what comes fades in as it grows. World markers are
+  hidden under (or left of) the party frame, the invite cards and the open panel, but for hostiles and the player's own
+  ship (`hud.social.covers(x, y, kind)`); `covers()` with no arguments gives those panels' boxes, which remote entities'
+  pilot markers keep out of (P1.E04.T02). Whatever a player or the server wrote goes into the page as text, never as
+  markup.
 
 ## 14. Skills (`packages/server/src/skills`, `@astra/shared/skills`)
 
@@ -1280,8 +1305,12 @@ P3.E37 splits the shard across processes they move to Redis beside the world ser
   raise, answer, end and helper sent back is logged at info, with the character, zone, phase and kind.
 - **The client.** `net.beacons` (`packages/client/src/net/beacons.js`) holds the list while watching (and watches again
   after a reconnect, or once a watch refused for its rate may succeed), the character's own beacon, the phase its last
-  answer put it in and the last refusal, and sends the requests. The panel that shows them belongs to the chat and party UI (P1.E15.T03); until it lands they are
-  reachable from the dev console as `game.net.beacons` (`watch()`, `list()`, `answer(id)`, `raise()`, `lower()`).
+  answer put it in and the last refusal, and sends the requests. The chat and party UI (§13, P1.E15.T03) watches from
+  the first welcome and shows the list as the chat panel's fourth tab: the player's own beacon (raise or lower it) over
+  the shard's, newest first, each with its kind, place, caller, open slots of the cap, age, star system and, in this
+  one, the distance to its place ("here" inside it), and an answer button with the server's refusal in words under the
+  beacon answered (`elsewhere`, `far`, `in_phase`, `full`, `gone` …). A beacon newly called in the player's own system
+  is a line in the log. The tab shows how many are up.
 
 ## 22. Analysis and the codex (`packages/server/src/codex`, `@astra/shared/codex`)
 

@@ -402,8 +402,9 @@ export class Parties {
   }
 
   /**
-   * An entity's hp (0–1) in tenths. No damage model sets hp on players yet, so an entity without one is whole; one whose
-   * hp is not a finite number (a bug elsewhere) shows as whole too, and is logged once, rather than failing the state.
+   * An entity's hp (0–1) in tenths: combat puts a player's pool in use on its entity, the suit on foot and the hull
+   * aboard (ARCHITECTURE §20). An entity with none yet is whole; one whose hp is not a finite number (a bug elsewhere)
+   * shows as whole too, and is logged once, rather than failing the state.
    */
   private health(characterId: string, hp: number | undefined): number {
     if (hp === undefined) return 10;
