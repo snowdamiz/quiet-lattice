@@ -94,7 +94,8 @@ describe('movement authority over the wire', () => {
       const frame = await p.flyOn(d, [0, 0.1, 0.995], 1400, 5000, 2 /* boost */);
       expect(frame).toBe(frameIdOf(d.seed, d.station.parent));
       await p.settled();
-      expect(p.corrections, `${stamps ? 'stamped' : 'no time'}`).toEqual([]);
+      const why = () => JSON.stringify(warnings.filter((w) => w.obj.entity === p.entityId && w.msg === 'movement corrected').map((w) => w.obj));
+      expect(p.corrections, `${stamps ? 'stamped' : 'no time'}: ${why()}`).toEqual([]);
       await waitFor(() => zone.entity(p.entityId)?.fields.frame === frame, 5000, 'the last input applied');
       expect(zone.movement!.recent.filter((r) => r.entity === p.entityId)).toEqual([]);
       // (and a client that sends no time is logged as such, once)

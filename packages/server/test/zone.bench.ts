@@ -75,9 +75,10 @@ const SESSIONS = 25;
 const WARMUP_TICKS = 300;
 const TICKS = 2000;
 const BUDGET_P95_MS = 10;
-/** Budgets are judged only while the 1-minute load average is at most this many times the CPU count. */
+/** Budgets are judged only while the 1-minute load average is at most this many times the CPU count (BENCH_MAX_LOAD
+ * sets the load itself, to judge on a loaded machine anyway). */
 const MAX_LOAD_PER_CPU = 2;
-const MAX_LOAD = MAX_LOAD_PER_CPU * cpus().length;
+const MAX_LOAD = Number(process.env.BENCH_MAX_LOAD) || MAX_LOAD_PER_CPU * cpus().length;
 /** One input's check, where it is dearest, may cost this much CPU (its median over batches; its p95 is printed): 200
  * players' inputs a tick then take at most half the tick's budget. */
 const CHECK_BUDGET_US = 25;
@@ -817,7 +818,9 @@ function round(x: number): number {
 const load1m = () => loadavg()[0]!;
 /** Why a budget cannot be judged at the 1-minute load average `load`, or null when it can. */
 const overloaded = (load: number): string | null =>
-  load > MAX_LOAD ? `load average ${round(load)} is over ${MAX_LOAD} (${MAX_LOAD_PER_CPU}x the ${cpus().length} CPUs)` : null;
+  load > MAX_LOAD
+    ? `load average ${round(load)} is over ${MAX_LOAD}, the most budgets are judged at (${MAX_LOAD_PER_CPU}x the ${cpus().length} CPUs unless BENCH_MAX_LOAD says otherwise)`
+    : null;
 
 let failed = false;
 /** `pnpm --filter @astra/server bench -- <words>` runs only the trials whose names hold them. */
