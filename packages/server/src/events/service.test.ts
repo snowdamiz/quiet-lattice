@@ -17,7 +17,7 @@ import { splitByDamage } from '../resources/service.ts';
 import { describeZoneSystem } from '../zones/system.ts';
 import { Zone, type ZoneViewer } from '../zones/zone.ts';
 import { along, resolvePlace } from './place.ts';
-import { EventService, type EventPayout } from './service.ts';
+import { EventService, type EventPayout, type EventZones } from './service.ts';
 
 type Vec3 = [number, number, number];
 const TIER = 3;
@@ -71,7 +71,7 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
   const reputation = new ReputationService();
   const payouts: EventPayout[][] = [];
   let now = 1e6;
-  const zones = { zones: [zone], zone: (id: string) => (id === zone.id ? zone : undefined), tier: () => TIER } as const;
+  const zones: EventZones = { zones: [zone], zone: (id) => (id === zone.id ? zone : undefined), tier: () => TIER };
   const events = (made.events = new EventService({
     zones,
     now: () => now,
