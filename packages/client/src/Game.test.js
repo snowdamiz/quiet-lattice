@@ -7,12 +7,13 @@ import { QuestBook } from '@astra/shared/quests';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Game } from './Game.js';
 import { Inventory } from './gameplay/Inventory.js';
+import { Abilities } from './net/abilities.js';
 import { walkerQuat } from './net/pose.js';
 import { FrameState } from './universe/Body.js';
 
 /** A Game object with no constructor run: just `parts`. */
 function fake(parts = {}) {
-  return Object.assign(Object.create(Game.prototype), { time: 0, timeBase: 0, net: null, ...parts });
+  return Object.assign(Object.create(Game.prototype), { time: 0, timeBase: 0, net: null, abilities: new Abilities(), ...parts });
 }
 
 /** sessionStorage and localStorage as the browser keeps them. */
@@ -503,6 +504,16 @@ describe('Game: analysis (P1.E08.T04)', () => {
     expect(banners).toHaveLength(1);
   });
 
+  it('calls the species by the name its first finder gave it, when it has one', () => {
+    const { socket, banners, toasts } = online();
+    socket.push(WELCOME);
+    socket.push({ t: 'discoveries', system: 0, reset: true, entries: [{ kind: 'species', key: SPECIES.key, finder: 'Bo Tran', at: 5, name: 'Velar Prime' }] });
+    socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
+    socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
+    expect(banners.map((b) => b[0])).toEqual(['VELAR PRIME']);
+    expect(toasts).toEqual([['Velar Prime · in your codex', undefined]]);
+  });
+
   /** A game with a walker on a world, a creature of the client's own herds in its sights, and E pressed. */
   function aiming(net) {
     const sp = { name: 'Ambling Tovar Grazer', kind: 'quad', skittish: true, size: 1.5 };
@@ -549,5 +560,32 @@ describe('Game: analysis (P1.E08.T04)', () => {
     expect(g.inventory.units).toBe(units);
     expect(banners).toEqual([]);
     expect(net.send).not.toHaveBeenCalled();
+  });
+});
+
+describe('the cast keys', () => {
+  /** A game in `mode` (the ship in `shipMode`), keys `held` pressed this frame, its casts recorded. */
+  function keyed(mode, shipMode, held, shipSlots = 2) {
+    const casts = [];
+    const abilities = new Abilities();
+    abilities.shipSlots = shipSlots;
+    abilities.cast = (bar, slot) => casts.push([bar, slot]);
+    const g = fake({ mode, abilities, ship: { mode: shipMode, state: { frame: null } }, net: { joined: true }, input: { hit: (code) => held.includes(code) } });
+    g.castKeys();
+    return casts;
+  }
+
+  it('casts the ground bar on 1–6 on foot and the hull’s ship slots in flight; nothing landed, docked or on the pulse drive', () => {
+    expect(keyed('foot', 'landed', ['Digit1', 'Digit6', 'Digit7', 'KeyQ'])).toEqual([
+      ['ground', 0],
+      ['ground', 5],
+    ]);
+    expect(keyed('ship', 'flying', ['Digit1', 'Digit2', 'Digit3'])).toEqual([
+      ['ship', 0],
+      ['ship', 1],
+    ]);
+    expect(keyed('ship', 'flying', ['Digit5'], 5)).toEqual([['ship', 4]]);
+    expect(keyed('ship', 'landed', ['Digit1'])).toEqual([]);
+    expect(keyed('ship', 'pulse', ['Digit1'])).toEqual([]);
   });
 });

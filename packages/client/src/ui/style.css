@@ -92,6 +92,17 @@ body {
   width: 64px;
   height: 64px;
 }
+/* the foot crosshair and the flight reticle fade in as they turn on (an animation runs again each time an element
+   comes back from display: none); their arcs are already at their values (HUD.arc's snap) */
+.crosshair,
+.ship-reticle {
+  animation: hudIn 0.15s ease-out;
+}
+@keyframes hudIn {
+  from {
+    opacity: 0;
+  }
+}
 .crosshair > b,
 .ship-reticle > b {
   position: absolute;
@@ -113,6 +124,36 @@ body {
   background: #ffd9a8;
   transform: scale(1.3);
 }
+/* the heat lockout: the dot dims to the danger tint, and the word sits under it until the meter has cooled */
+.crosshair.over > b {
+  background: #ffb0a8;
+  transform: none;
+}
+.c-state {
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 2px);
+  transform: translate(-50%, -3px);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.26em;
+  /* (the tracking trails the last letter: the right padding is short by it, so the word centres under the dot) */
+  padding: 4px calc(9px - 0.26em) 4px 9px;
+  color: #ff8a80;
+  /* a near-opaque flight-deck plate, edged in danger red: the word holds 4.5:1 over the brightest sunlit ground */
+  background: rgba(6, 8, 11, 0.82);
+  border-left: 2px solid var(--danger);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.crosshair.over .c-state {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 /* gauge arcs shared by the crosshair and the ship reticle */
 .gauges {
@@ -122,39 +163,334 @@ body {
   height: 100%;
   overflow: visible;
 }
+/* Widths are in the SVG's own units (its viewBox is 100 across), so each reticle sets its own for the pixels it is drawn
+   at: a non-scaling stroke would measure the dashes in screen pixels too, and the fills (dashes sized by pathLength in
+   user units) would overrun the arc on the small crosshair. */
 .gauge path {
   fill: none;
   stroke-linecap: round;
-  stroke-width: 1.6;
-  vector-effect: non-scaling-stroke;
+}
+/* The arcs sit on an opaque track inside a near-black halo, so neither the beam's glare nor a bright sky washes them out
+   (the HUD is DOM over the canvas, never in the bloomed WebGL layer: only what is under it glows).
+   The crosshair: 64 px for 100 units, 0.64 px a unit; a 4.5 px fill and track in a 9.6 px halo (2.5 px a side). */
+.crosshair .gauge .halo {
+  stroke-width: 15;
+}
+.crosshair .gauge .track,
+.crosshair .gauge .fill {
+  stroke-width: 7;
+}
+.crosshair .gauge.over .fill {
+  stroke-width: 7.5;
+}
+.crosshair .gauge .mark {
+  stroke-width: 2.5;
+}
+/* the ship's reticle: 110 px for 100 units; a 3 px fill and track in a 6 px halo */
+.ship-reticle .gauge .halo {
+  stroke-width: 5.5;
+}
+.ship-reticle .gauge .track,
+.ship-reticle .gauge .fill {
+  stroke-width: 2.7;
+}
+.ship-reticle .gauge .sheen {
+  stroke-width: 3.6;
+}
+.gauge .halo {
+  stroke: var(--ink);
+  stroke-opacity: 0.92;
 }
 .gauge .track {
-  stroke: rgba(255, 255, 255, 0.14);
+  stroke: #3b3e44;
+  transition: stroke 0.3s ease-out;
+}
+/* in the lockout the track darkens, so the breathing red holds 3:1 against it at its faintest */
+.gauge.over .track {
+  stroke: #24262a;
 }
 .gauge .fill {
   stroke: rgba(255, 255, 255, 0.85);
-  stroke-dasharray: 1 1;
-  transition: stroke-dashoffset 0.15s linear;
+  /* one dash the arc's length, its gap longer than the arc: an empty gauge shows no stub of the next dash at its top */
+  stroke-dasharray: 1 2;
+  transition: stroke-dashoffset 0.15s linear, stroke 0.3s ease-out, stroke-width 0.3s ease-out;
 }
 .gauge {
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.4s ease-in;
 }
 .gauge.on {
   opacity: 1;
+  transition: opacity 0.15s ease-out;
 }
-.gauge .g-heat {
-  stroke: #ffc27a;
+/* drawn at its value at once: the first time, as it turns on, and on a jump (HUD.arc) */
+.gauge.snap path {
+  transition: none;
 }
 .gauge .g-jet,
 .gauge .g-shield {
   stroke: var(--accent2);
 }
-.gauge .g-pulse {
-  stroke: #c7a6ff;
-}
 .gauge.low .fill {
   stroke: var(--danger);
+}
+/* heat fills warm, runs amber once hot, and through the lockout is danger red and breathes, a tick across the arc where
+   the lockout ends */
+.gauge .g-heat {
+  stroke: var(--warm);
+}
+.gauge.hot .g-heat {
+  stroke: var(--accent);
+}
+.gauge.over .g-heat {
+  stroke: var(--danger);
+  animation: overBreath 0.9s ease-in-out infinite alternate;
+}
+/* (a breath, not a blink: at its faintest the red still reads against the track and the halo) */
+@keyframes overBreath {
+  to {
+    stroke-opacity: 0.8;
+  }
+}
+.gauge .mark {
+  stroke: var(--text);
+  stroke-linecap: butt;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+.gauge.marked .mark {
+  opacity: 0.9;
+}
+/* Charge in the pulse drive's lilac (art bible §4: a documented exception; teal is the shield's arc on the same reticle);
+   while it regenerates a bright dash climbs the fill (HUD.sheen) */
+.gauge .g-charge {
+  stroke: #c7a6ff;
+}
+.gauge.low .g-charge {
+  stroke: var(--danger);
+}
+.gauge .sheen {
+  stroke: #f1eaff;
+  stroke-dasharray: 0.07 2;
+  stroke-dashoffset: 0.07;
+  opacity: 0;
+}
+/* a cast's cost while it eases on (heat) or off (Charge): its part of the fill drawn brighter in the gauge's own colour */
+.gauge .chunk {
+  stroke-dasharray: 0 2;
+  opacity: 0;
+}
+.crosshair .gauge .chunk {
+  stroke-width: 7;
+}
+.ship-reticle .gauge .chunk {
+  stroke-width: 2.7;
+}
+.gauge .k-heat {
+  stroke: #ffdfae;
+}
+.gauge.hot .k-heat {
+  stroke: #ffc98a;
+}
+.gauge .k-charge {
+  stroke: #e6d9ff;
+}
+
+/* ---------- the ability bar (keys 1–6 on foot, 1–5 in flight) ----------
+   A ring a slot in the arcs' language: a near-black halo, an opaque track, and the bar's colour (heat's warm on foot,
+   the flight deck's warm white in flight: lilac is Charge's alone, art bible §4) drawn round it from the top, full when
+   the slot is ready and drawn back up as its cooldown runs out, the seconds left in its colour in place of the key. 34 px rings in 80 px slots (the longest names, INERTIAL
+   BRAKE and REPAIR DRONES, fit under them), so the bar sits under the prompt at 720p too. */
+.abilities {
+  --ab: var(--warm);
+  /* a slot's width and the gap between slots (the refusal plate is placed by them) */
+  --ab-w: 80px;
+  --ab-gap: 4px;
+  /* the flare's and the ready beat's brightness at their start: brighter warm, never clipped to white */
+  --ab-flare: 1.4;
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.4s ease-in;
+}
+.abilities[data-bar='ship'] {
+  --ab: var(--text);
+  /* (warm white has no headroom: any more and it clips to white) */
+  --ab-flare: 1.08;
+}
+.abilities.on {
+  opacity: 1;
+  transition: opacity 0.15s ease-out;
+}
+/* nothing on it moved for a while: out of the way, still readable */
+.abilities.on.rest {
+  opacity: 0.55;
+  transition: opacity 0.8s ease-in-out;
+}
+.ab-row {
+  display: flex;
+  gap: var(--ab-gap);
+}
+.ab-slot {
+  position: relative;
+  width: var(--ab-w);
+  height: 48px;
+}
+.ab-slot svg {
+  position: absolute;
+  left: 23px;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+.ab-slot circle {
+  fill: none;
+}
+.ab-slot .halo {
+  stroke: var(--ink);
+  stroke-opacity: 0.92;
+  stroke-width: 7.5;
+  /* (a near-opaque disc inside the ring: the key and the seconds hold over sunlit ground) */
+  fill: var(--ink);
+  fill-opacity: 0.74;
+}
+.ab-slot .track {
+  stroke: #3b3e44;
+  stroke-width: 3;
+  transition: stroke 0.3s ease-out;
+}
+.ab-slot .sweep {
+  stroke: var(--ab);
+  stroke-width: 3;
+  stroke-linecap: butt;
+  stroke-dasharray: 1 2;
+  /* (the server's clock moves it every frame: a short linear catch-up, as the gauges' fills) */
+  transition: stroke-dashoffset 0.15s linear, stroke 0.3s ease-out, stroke-width 0.2s ease-out;
+}
+.ab-slot.cooling .sweep {
+  stroke-opacity: 0.8;
+}
+.ab-slot.empty .sweep {
+  stroke-opacity: 0;
+}
+.ab-slot.empty {
+  opacity: 0.4;
+}
+/* a toggle that is on: the ring thickens in its colour, the key in it too */
+.ab-slot.lit .sweep {
+  stroke-width: 4.5;
+}
+.ab-slot.lit .ab-key {
+  color: var(--ab);
+}
+/* refused: the track edged in danger red while the reason shows */
+.ab-slot.refused .track {
+  stroke: var(--danger);
+}
+.ab-slot.refused .sweep {
+  stroke-opacity: 0.35;
+}
+/* the server took the cast: the ring flares and settles, its brightness on the same ease-out as its size (the HUD's
+   cubic) */
+.ab-slot.cast svg {
+  animation: abCast 0.36s cubic-bezier(0.33, 1, 0.68, 1);
+}
+@keyframes abCast {
+  from {
+    transform: rotate(-90deg) scale(1.22);
+    filter: brightness(var(--ab-flare));
+  }
+}
+/* its cooldown ran out: the ring and its key brighten for a beat */
+.ab-slot.ready svg,
+.ab-slot.ready .ab-key {
+  animation: abReady 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.ab-slot.ready svg {
+  animation-name: abReadyRing;
+}
+@keyframes abReadyRing {
+  from {
+    transform: rotate(-90deg) scale(1.1);
+    filter: brightness(var(--ab-flare));
+  }
+}
+@keyframes abReady {
+  from {
+    filter: brightness(var(--ab-flare));
+  }
+}
+.ab-key {
+  position: absolute;
+  left: 23px;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-cond);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  transition: color 0.3s ease-out;
+}
+/* (the seconds left, in the bar's colour: a timer, never read as a key) */
+.ab-slot.cooling .ab-key {
+  color: var(--ab);
+  font-size: 15px;
+}
+.ab-name {
+  position: absolute;
+  left: 50%;
+  top: 37px;
+  transform: translateX(-50%);
+  font-family: var(--font-cond);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(233, 231, 226, 0.78);
+  transition: opacity 0.25s ease-out;
+}
+/* at rest the rings alone: the names come back as the bar wakes */
+.abilities.rest .ab-name {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+/* why the server refused a cast: the lockout word's plate, over the refused slot's ring (HUD.updateAbilities sets its
+   index, --why-i) */
+.ab-why {
+  position: absolute;
+  left: calc(var(--why-i, 0) * (var(--ab-w) + var(--ab-gap)) + var(--ab-w) / 2);
+  bottom: calc(100% + 4px);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  padding: 5px calc(8px - 0.22em) 5px 8px;
+  color: #ff8a80;
+  background: rgba(6, 8, 11, 0.82);
+  border-left: 2px solid var(--danger);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ab-why.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 /* ---------- ship reticle ---------- */
@@ -201,12 +537,14 @@ body {
   color: rgba(241, 244, 248, 0.75);
 }
 .r-speed small,
-.r-alt small {
+.r-alt small,
+.r-chg small {
   margin-left: 4px;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.16em;
-  color: var(--dim);
+  /* (lifted from --dim: small mono caps over a bright limb need more than its 0.64) */
+  color: rgba(233, 231, 226, 0.86);
 }
 /* the throttle, a hairline under the speed */
 .r-thr {
@@ -226,6 +564,38 @@ body {
 }
 .r-thr i.rev {
   background: var(--danger);
+}
+/* Charge, under the altitude as the throttle sits under the speed, in the altitude's style: the figure, its small-caps
+   label, and which way it is going */
+.r-chg {
+  position: absolute;
+  left: calc(100% + 6px);
+  /* (7 px under the altitude's numerals) */
+  top: calc(50% + 13px);
+  font-family: var(--font-cond);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #d4bcff;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.r-chg i {
+  margin-left: 6px;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: #e2d4ff;
+}
+.r-chg i.down {
+  color: rgba(233, 231, 226, 0.86);
+}
+/* (the danger red lifted, to hold 4.5:1 inside the readouts' halo) */
+.r-chg.empty,
+.r-chg.empty small {
+  color: #ff8a80;
 }
 .r-mode {
   position: absolute;
@@ -529,7 +899,7 @@ body {
   opacity: 0;
 }
 .banner.show {
-  animation: banner 7s ease-in-out forwards;
+  animation: banner var(--banner-ms) ease-in-out forwards;
 }
 .banner .b-sub {
   font-family: var(--font-cond);
@@ -3627,8 +3997,44 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 
 /* legible over a bright sky: a soft dark halo under the HUD's readouts */
-.r-alt, .r-speed, .r-mode, .location, .bar label {
+.r-mode, .location, .bar label {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.25);
+}
+/* the flight readouts (speed, altitude, Charge) and the ability bar's keys and names, unplated, are outlined: a solid 2 px
+   near-black ring under every glyph (unblurred shadows a pixel and two out, all round), softened past it, so figures,
+   labels and rates hold 4.5:1 on any ground, a bright world's limb or a sunlit sky */
+.r-speed,
+.r-alt,
+.r-chg,
+.ab-key,
+.ab-name {
+  --ring: #0b0c0e;
+  text-shadow:
+    2px 0 0 var(--ring),
+    1.85px 0.77px 0 var(--ring),
+    1.41px 1.41px 0 var(--ring),
+    0.77px 1.85px 0 var(--ring),
+    0 2px 0 var(--ring),
+    -0.77px 1.85px 0 var(--ring),
+    -1.41px 1.41px 0 var(--ring),
+    -1.85px 0.77px 0 var(--ring),
+    -2px 0 0 var(--ring),
+    -1.85px -0.77px 0 var(--ring),
+    -1.41px -1.41px 0 var(--ring),
+    -0.77px -1.85px 0 var(--ring),
+    0 -2px 0 var(--ring),
+    0.77px -1.85px 0 var(--ring),
+    1.41px -1.41px 0 var(--ring),
+    1.85px -0.77px 0 var(--ring),
+    1px 0 0 var(--ring),
+    0.71px 0.71px 0 var(--ring),
+    0 1px 0 var(--ring),
+    -0.71px 0.71px 0 var(--ring),
+    -1px 0 0 var(--ring),
+    -0.71px -0.71px 0 var(--ring),
+    0 -1px 0 var(--ring),
+    0.71px -0.71px 0 var(--ring),
+    0 0 4px rgba(7, 8, 11, 0.85);
 }
 /* the top line (where you are, the compass's reading, a banner) over the brightest of scenes, a hangar's strip lights:
    a dark ring close round the letters, as the flight readouts have */
@@ -3695,21 +4101,13 @@ input[type='range'].range:hover::-webkit-slider-thumb {
     color-mix(in srgb, var(--ink) 45%, transparent) 265px,
     transparent 330px
   );
+  transition: opacity var(--banner-out-ms) ease-in-out;
 }
+/* a transition and not a keyframed run, so a banner that follows another leaves it lit (ui/banners.js lets it go as the
+   last one's text starts to fade out) */
 .hud-band.show {
-  animation: hudBand 7s ease-in-out forwards;
-}
-@keyframes hudBand {
-  0% {
-    opacity: 0;
-  }
-  10%,
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  opacity: 1;
+  transition-duration: var(--banner-in-ms);
 }
 
 /* ---------- dev teleporter (F2, dev builds only) ---------- */
@@ -3979,6 +4377,12 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   --sc-plate: rgb(from var(--plate) r g b);
   --sc-plate-2: rgb(from var(--plate-2) r g b);
   --sc-refused: color-mix(in srgb, var(--danger) 45%, var(--text));
+  /* (the 9.5 px mono caps tags, whose thin strokes measure a notch under the colour they are set in: lifted from --dim) */
+  --sc-caps: rgba(233, 231, 226, 0.88);
+  /* (the beacon rows' small meta lines: --dim's 0.64 leaves their thin strokes near 5:1, so they are held a notch above it) */
+  --sc-meta: rgba(233, 231, 226, 0.74);
+  /* (a read of the page's layout in here, which the panels' moves make, lays out these boxes and not the page round them) */
+  contain: layout style;
 }
 .social-chat .sizing,
 .social-side .sizing {
@@ -4294,7 +4698,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
 }
 /* muted, or told to slow down: the hint says so in the refusals' colour, with their mark */
 .sc-hint.warn {
@@ -4356,7 +4760,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-column: 1;
   font-size: 13px;
   line-height: 17px;
-  color: var(--dim);
+  color: var(--sc-meta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4436,7 +4840,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   line-height: 15px;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
-  color: var(--dim);
+  color: var(--sc-meta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4560,7 +4964,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
   white-space: nowrap;
 }
 .sp-act {
@@ -4570,7 +4974,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
   background: transparent;
   border: 1px solid var(--line-2);
   cursor: pointer;

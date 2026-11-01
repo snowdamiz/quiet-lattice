@@ -8,9 +8,11 @@
 //   little: its number, the character's hit rate, its clock, the player (on foot, on that world), the id (a node type the
 //   world carries, a cell within reach of the player) and only then the scatter (is there such a node, is it standing),
 //   the range from the player's believed pose (its zone entity's: movement authority's, P1.E03.T04, once it lands) and a
-//   coarse line of sight over the drawn ground. The beam's time is measured here: a hit is worth the time since the
-//   character's last one, at most HIT_CREDIT_MAX_S, so however fast a client sends, it mines no faster than one beam held
-//   on continuously (and Heat, P1.E07.T02, cuts that further through `beam`).
+//   coarse line of sight over the drawn ground. A hit is worth beam time, at most HIT_CREDIT_MAX_S: with Heat's meters
+//   (P1.E07.T02) only while they say the beam fires, and only the seconds they judged it firing since the character's
+//   last hit that counted, so a client earns the beam it fired however it times its hits, and Heat's duty cycle holds;
+//   without them, the time since that hit. Either way, however fast a client sends, it mines no faster than one beam
+//   held on continuously.
 // - A node broken: its yield is rolled once and shared by the damage each character did (nobody's work is taken by a
 //   last hit, and a crowd does not multiply it), each share scaled by that character's `mining.yield` and granted into
 //   its inventory (what does not fit is reported, not kept); listeners (the quest engine's `mine` steps, P1.E09.T01) hear
@@ -166,9 +168,13 @@ export interface ResourceServiceOptions {
    * put together from cells each checked and encoded once) */
   notify?: (viewer: ZoneViewer, msg: ServerMessage) => void;
   log?: ZoneLog;
-  /** Heat (P1.E07.T02's meter service): when given, the multitool fires only while it says the character's beam is
-   * firing (the beam button held, on foot, out of the overheat lockout); `beam` asks it */
-  meters?: { beamActive(characterId: string, now: number): boolean };
+  /** Heat (P1.E07.T02's meter service): when given, a hit counts only while it says the character's beam is firing (the
+   * beam button held, on foot, out of the overheat lockout), and is worth the beam seconds it judged firing since the
+   * last hit that counted (taken) */
+  meters?: {
+    beamActive(characterId: string, now: number): boolean;
+    takeBeam(characterId: string, now: number, max: number): number;
+  };
   /** seeds the yield rolls (tests) */
   seed?: number;
   /** touched nodes kept at most (MAX_NODE_STATES) */
@@ -192,7 +198,7 @@ export interface ResourceStats {
 
 interface Miner {
   readonly bucket: TokenBucket;
-  /** world time of its last hit that counted */
+  /** world time of its last hit that counted (what a hit is worth without Heat's meters) */
   lastBeam: number;
   /** world time of its last hit */
   lastSeen: number;
@@ -241,15 +247,12 @@ interface World {
 export class ResourceService {
   /** How long a broken node takes to grow back, s (RESPAWN_S by kind; tests and the dev CLI shorten it). */
   respawnSeconds: (type: NodeType) => number = (t) => RESPAWN_S[t.kind];
-  /** Whether the multitool may fire `seconds` more for the character: with Heat's meters (`opts.meters`, P1.E07.T02),
-   * only while they say its beam is firing (held, out of the lockout; Heat itself adds the beam's heat from the held
-   * button); without them, always. */
-  beam: (characterId: string, seconds: number) => boolean;
   readonly store: NodeStore;
   private readonly zones: ResourceZones;
   private readonly inventory: Pick<InventoryService, 'grant'>;
   private readonly now: () => number;
   private readonly skills?: ResourceServiceOptions['skills'];
+  private readonly meters?: ResourceServiceOptions['meters'];
   private readonly grounds: NodeGroundSource;
   private readonly notify: (viewer: ZoneViewer, msg: ServerMessage) => void;
   /** `nodes` go out as text put together from cells encoded once (no `notify` was given) */
@@ -280,17 +283,7 @@ export class ResourceService {
     this.log = opts.log;
     this.rng = new Random(opts.seed ?? hashInts(Date.now() & 0x7fffffff, process.pid));
     this.store = new NodeStore(opts.maxNodes);
-    const meters = opts.meters;
-    this.beam = meters
-      ? (characterId) => {
-          try {
-            return meters.beamActive(characterId, this.now());
-          } catch {
-            // (a character the meters do not hold is not firing)
-            return false;
-          }
-        }
-      : () => true;
+    this.meters = opts.meters;
   }
 
   /** Listens to every share of every node or plant broken (the quest engine's `mine` steps). */
@@ -497,11 +490,19 @@ export class ResourceService {
     return lineOfSight(ground.sampler, eye, target, this.los) ? null : 'los';
   }
 
-  /** The beam time this hit is worth (at most HIT_CREDIT_MAX_S since the last that counted), or null when the multitool
-   * may not fire (Heat). */
+  /** The beam time this hit is worth, at most HIT_CREDIT_MAX_S, and it counts: with Heat's meters, the seconds they judged
+   * the beam firing since the last hit that counted, or null when they say it is not firing now; without them, the time
+   * since that hit. */
   private credit(characterId: string, miner: Miner, now: number): number | null {
+    if (this.meters) {
+      try {
+        return this.meters.beamActive(characterId, now) ? this.meters.takeBeam(characterId, now, HIT_CREDIT_MAX_S) : null;
+      } catch {
+        // (a character the meters do not hold is not firing)
+        return null;
+      }
+    }
     const credit = Math.min(HIT_CREDIT_MAX_S, Math.max(0, now - miner.lastBeam));
-    if (!this.beam(characterId, credit)) return null;
     miner.lastBeam = Math.max(miner.lastBeam, now);
     return credit;
   }

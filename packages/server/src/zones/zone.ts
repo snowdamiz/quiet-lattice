@@ -48,7 +48,7 @@ import {
 } from '@astra/shared/world';
 import { ZoneCombat, type CombatHooks } from '../combat/zone.ts';
 import { FaunaSim, type FaunaOptions, type FaunaStats } from '../fauna/sim.ts';
-import { hangarWaitPose, MovementAuthority, padPose, type MoverProfile, type MovementRefusal } from '../sim/movement/index.ts';
+import { hangarWaitPose, MovementAuthority, padPose, type MoverMeters, type MoverProfile, type MovementRefusal } from '../sim/movement/index.ts';
 import { PhaseManager } from '../phases/manager.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
 import { INTEREST_CLASSES, INTEREST_HYSTERESIS, INTEREST_RADIUS, interestClass, type InterestClass } from './interest.ts';
@@ -198,6 +198,8 @@ export interface ZoneOptions {
   /** Hold player inputs to movement authority (P1.E03.T04). The ZoneManager's zones do; tests and tools driving raw poses
    * leave it off. */
   movement?: boolean;
+  /** the characters' meters, which movement authority asks whether a mode is allowed (the pulse drive needs Charge) */
+  meters?: MoverMeters;
   /** the system's fauna (P1.E08.T01): its options, or false for a zone without (unit tests of the zone itself) */
   fauna?: FaunaOptions | false;
   /** who hears of kills, players going down and characters fighting (the gateway's combat service, through the
@@ -257,7 +259,7 @@ export class Zone {
     for (const f of [...this.frameSet.bodies, this.frameSet.station]) this.frames.set(f.id, f);
     // (its worlds' ground is the one fauna walks on: planned in the worker, for the system's tier)
     const tier = () => this.fauna?.tier ?? tierOfGalaxySystem(opts.systemIndex);
-    this.movement = opts.movement ? new MovementAuthority({ zone: opts.id, system: opts.system, log: opts.log, tier }) : null;
+    this.movement = opts.movement ? new MovementAuthority({ zone: opts.id, system: opts.system, log: opts.log, tier, meters: opts.meters }) : null;
     this.placeFrames(0);
     this.phases = new PhaseManager(this, opts.log);
     this.fauna = opts.fauna === false ? null : new FaunaSim(this, opts.fauna);

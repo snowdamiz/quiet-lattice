@@ -31,6 +31,20 @@ export function ease(t) {
 /** Ease in and out, clamped to 0–1: how opacity goes. */
 const smooth = (q) => (q <= 0 ? 0 : q >= 1 ? 1 : q * q * (3 - 2 * q));
 
+/** How far into its time (0–1) a move of `d` px has come within half a pixel of landing, whole pixels being all it shows. */
+function landed(d) {
+  if (d < 1) return 0;
+  const to = 1 - 0.5 / d;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 16; i++) {
+    const mid = (lo + hi) / 2;
+    if (ease(mid) < to) lo = mid;
+    else hi = mid;
+  }
+  return hi;
+}
+
 /**
  * What a stepped move shows at progress `p` (0–1, of time) from `from` to `to`, having shown `last` the frame before:
  * a whole pixel on the eased curve, but at least one pixel on from `last` toward `to` (never the same as the frame
@@ -49,7 +63,7 @@ export function stepValue(from, to, p, last) {
 }
 
 /** The inline styles a move sets, all taken off once it lands. */
-const STYLES = ['height', 'width', 'marginTop', 'marginBottom', 'marginLeft', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight'];
+const STYLES = ['height', 'width', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight'];
 const BORDERS = ['borderTopWidth', 'borderBottomWidth', 'borderLeftWidth', 'borderRightWidth'];
 
 function clear(e) {
@@ -62,11 +76,11 @@ function clear(e) {
 const px = (v) => parseFloat(v) || 0;
 
 /** A box's metrics down (its height and what is round it) or across (its width), as it lays out now. */
-function metrics(e, kind, gap = GAP) {
+function metrics(e, kind, gap = GAP, whole = false, keep = Infinity) {
   const r = e.getBoundingClientRect();
   if (kind === 'height') return { h: r.height };
   const cs = getComputedStyle(e);
-  if (kind === 'across') return { w: r.width, gap, pl: px(cs.paddingLeft), pr: px(cs.paddingRight), bl: px(cs.borderLeftWidth), br: px(cs.borderRightWidth) };
+  if (kind === 'across') return { w: r.width, gap, whole, keep, pl: px(cs.paddingLeft), pr: px(cs.paddingRight), bl: px(cs.borderLeftWidth), br: px(cs.borderRightWidth) };
   return { h: r.height, mt: px(cs.marginTop), mb: px(cs.marginBottom), pt: px(cs.paddingTop), pb: px(cs.paddingBottom), bt: px(cs.borderTopWidth), bb: px(cs.borderBottomWidth) };
 }
 
@@ -86,6 +100,16 @@ function place(e, kind, m, f) {
   }
   if (kind === 'y') {
     e.style.transform = f ? `translateY(${f}px)` : '';
+    return;
+  }
+  if (kind === 'across' && m.whole) {
+    // (the face stays at its full width and the room is given up through its right margin, so what is left of it is
+    // the whole badge, not a squeezed one; and once what follows has come within `keep` of its far edge, it slides left
+    // with it, so the two never overlap)
+    e.style.width = `${m.w}px`;
+    e.style.marginRight = `${f - m.gap - m.w}px`;
+    const shift = Math.max(0, m.gap + m.w - f - m.keep);
+    e.style.transform = shift ? `translateX(${-shift}px)` : '';
     return;
   }
   if (kind === 'across') {
@@ -120,23 +144,25 @@ export class Motion {
     this.now = now;
     /** element → its move */
     this.runs = new Map();
+    /** key → where its eased value came to rest, so asking for the same value again starts nothing */
+    this.rest = new Map();
   }
 
   /** Opens `e` from nothing (or from where a close had it) to its own size, down or `across` (bringing a flex `gap`),
    * fading in as it grows; over `ms`, after `delay` ms (while something closing fades out). */
-  reveal(e, { across = false, delay = 0, ms = MOVE_MS, gap = GAP } = {}) {
+  reveal(e, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, whole = false, keep } = {}) {
     const kind = across ? 'across' : 'down';
     const cur = this.runs.get(e);
     const f0 = cur?.kind === kind ? cur.last : 0;
     const o0 = cur?.o ?? 0;
     this.stop(e);
-    const m = metrics(e, kind, gap);
+    const m = metrics(e, kind, gap, whole, keep);
     this.begin(e, { kind, m, f0, f1: footprint(m, kind), o0, o1: 1, delay, ms });
   }
 
   /** Closes `e`: it fades out first (`OUT_MS`, or as it shrinks when `delay` is 0), then shrinks to nothing over `ms`;
    * `then()` once it is shut (and its styles are taken off after that, so hide or remove it there). */
-  conceal(e, then, { across = false, delay = OUT_MS, ms = MOVE_MS, gap = GAP } = {}) {
+  conceal(e, then, { across = false, delay = OUT_MS, ms = MOVE_MS, gap = GAP, whole = false, keep } = {}) {
     const kind = across ? 'across' : 'down';
     const cur = this.runs.get(e);
     let m;
@@ -147,7 +173,7 @@ export class Motion {
       this.runs.delete(e);
     } else {
       this.stop(e);
-      m = metrics(e, kind, gap);
+      m = metrics(e, kind, gap, whole, keep);
       f0 = footprint(m, kind);
     }
     this.begin(e, { kind, m, f0, f1: 0, o0: cur?.o ?? 1, o1: 0, delay, ms, then });
@@ -155,14 +181,17 @@ export class Motion {
 
   /**
    * Eases a value (opacity-like, not stepped to pixels) of `key` from where it stands to `to` over `ms`, calling
-   * `apply(v)` each frame; `from` where it starts when nothing is easing it yet.
+   * `apply(v)` each frame; `from` where it starts the first time `key` is eased. Asked for the value it is easing to or
+   * rests at, it starts no ease and writes nothing (a redraw asking again never restarts it from `from`).
    */
   value(key, to, apply, { from = 0, ms = 120 } = {}) {
     const cur = this.runs.get(key);
-    const f0 = cur?.kind === 'value' ? cur.last : from;
     if (cur?.kind === 'value' && cur.f1 === to) return;
+    const f0 = cur?.kind === 'value' ? cur.last : (this.rest.get(key) ?? from);
+    const applied = !cur && this.rest.has(key);
     this.runs.delete(key);
-    if (f0 === to) return apply(to);
+    this.rest.set(key, to);
+    if (f0 === to) return applied ? undefined : apply(to);
     this.begin(key, { kind: 'value', m: null, f0, f1: to, o0: null, o1: null, delay: 0, ms, apply });
   }
 
@@ -195,11 +224,14 @@ export class Motion {
       delay: OUT_MS,
       start: (r) => {
         build();
-        e.style.height = '';
-        r.f1 = e.getBoundingClientRect().height;
-        e.style.height = `${r.f0}px`;
         r.o0 = 0;
         r.o1 = 1;
+        // (the height it lays out at is read on the next frame, when the page has laid out what was built)
+        r.fit = () => {
+          e.style.height = '';
+          r.f1 = e.getBoundingClientRect().height;
+          e.style.height = `${r.f0}px`;
+        };
       },
     });
   }
@@ -214,7 +246,7 @@ export class Motion {
 
   /** Shows `e` or not: opening or closing it (across: its width) when `animate`, else at once. One closing stays laid
    * out until it is shut, then is `hidden`. */
-  toggle(e, show, animate, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, quick = false } = {}) {
+  toggle(e, show, animate, { across = false, delay = 0, ms = MOVE_MS, gap = GAP, quick = false, whole = false, keep } = {}) {
     const on = e.shownTo ?? !e.hidden;
     if (show === on) return;
     e.shownTo = show;
@@ -223,13 +255,13 @@ export class Motion {
       e.hidden = !show;
     } else if (show) {
       e.hidden = false;
-      this.reveal(e, { across, delay, ms, gap });
-    } else this.conceal(e, () => !e.shownTo && (e.hidden = true), { across, ms, gap, ...(quick ? { delay: 0 } : {}) });
+      this.reveal(e, { across, delay, ms, gap, whole, keep });
+    } else this.conceal(e, () => !e.shownTo && (e.hidden = true), { across, ms, gap, whole, keep, ...(quick ? { delay: 0 } : {}) });
   }
 
-  /** Whether `e` is opening or closing just now. */
+  /** Whether `e` is opening or closing just now; with no box, whether anything is moving. */
   moving(e) {
-    return this.runs.has(e);
+    return e === undefined ? this.runs.size > 0 : this.runs.has(e);
   }
 
   /** Stops `e`'s move where it is, and takes its styles off (it lays out as it is). */
@@ -248,6 +280,7 @@ export class Motion {
     r.ms ??= MOVE_MS;
     this.runs.set(e, r);
     if (r.kind === 'value') return r.apply(r.f0);
+    r.land = r.ms * landed(Math.abs(r.f1 - r.f0)) + FRAME_MS;
     if (r.kind !== 'y') e.classList.add('sizing');
     place(e, r.kind, r.m, r.f0);
     if (r.o !== null) e.style.opacity = String(r.o);
@@ -271,14 +304,19 @@ export class Motion {
       if (p > 0 && r.start) {
         r.start(r);
         r.start = null;
+      } else if (r.fit) {
+        r.fit();
+        r.fit = null;
       }
       const f = stepValue(r.f0, r.f1, p, r.last);
       if (f !== r.last) place(e, r.kind, r.m, f);
       r.last = f;
       if (r.o1 !== null) {
-        // (a closing box fades out from the start, before it moves; an opening one fades in over the later part of its
-        // growth)
-        r.o = r.o1 < r.o0 ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / Math.min(OUT_MS, r.delay + r.ms)) : r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
+        // (a closing box fades out from the start, before it moves, unless it has no delay: then it fades over the frames
+        // its room takes to close and one more, evenly, each of them showing it; an opening one fades in over the later
+        // part of its growth)
+        if (r.o1 < r.o0) r.o = r.delay ? r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / Math.min(OUT_MS, r.delay + r.ms)) : r.o0 + (r.o1 - r.o0) * smooth(r.elapsed / r.land);
+        else r.o = r.o0 + (r.o1 - r.o0) * smooth((p - 0.25) / 0.75);
         if (r.o1 > r.o0 && p <= 0) r.o = r.o0;
         e.style.opacity = String(r.o);
       }

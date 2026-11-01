@@ -47,6 +47,12 @@ export const RULES: Rule[] = [
   { what: 'the objective chain and "THE STARS ARE YOURS" banner', task: 'P1.E09.T01', file: `${CLIENT}/gameplay/Objectives.js` },
   { what: '"THE STARS ARE YOURS" banner', task: 'P1.E09.T01', under: CLIENT, pattern: /THE STARS ARE YOURS/ },
   { what: 'localStorage save', task: 'P1.E04.T01', file: `${CLIENT}/gameplay/Save.js` },
+  {
+    what: 'demo discovery payout (250 to 650 units on a banner; the server pays 2000 XP once)',
+    task: 'P2.E29.T01',
+    file: `${CLIENT}/Game.js`,
+    pattern: /\b250 \+ Math\.floor\(Math\.random\(\) \* 400\)/,
+  },
   { what: 'demo multitool model', task: 'P1.E05.T03', file: 'packages/client/public/models/multitool.glb' },
 ];
 

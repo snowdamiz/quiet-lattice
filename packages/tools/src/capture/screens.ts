@@ -1,6 +1,7 @@
 // The UI screens `pnpm capture -- --ui <screen>` knows how to reach. Each later UI task adds its screen here, so the
 // grader always gets its 16:9 and 21:9 captures and a 60 fps clip the same way.
 import type { Page } from '@playwright/test';
+import { EVENTS } from '@astra/shared/events';
 import { GALAXY_SEED, Galaxy, homeSystems } from '@astra/shared/world';
 
 export interface ScreenDef {
@@ -17,6 +18,13 @@ export interface ScreenDef {
   sheetFrames?: readonly number[];
   /** Extra 16:9 stills, taken after the main one and before the clip: `16x9-<name>.png` after `pose` drives the page. */
   stills16x9?: Record<string, (page: Page) => Promise<void>>;
+  /** Extra stills taken at both aspects, after `stills16x9`: `16x9-<name>.png` and `21x9-<name>.png`. */
+  stills?: Record<string, (page: Page) => Promise<void>>;
+  /** The aspect the clip is taken at. Default 16:9. */
+  clipAspect?: '16x9' | '21x9';
+  /** Regions of the page (CSS selectors, padded by `pad` px) whose clip frames go on 4x sheets of their own,
+   * `crops-<name>.png`, each frame of `sheetFrames` cropped from a lossless capture. */
+  crops?: readonly { name: string; selector: string; pad?: number }[];
   /** Draw scrollbars (headless Chromium hides them by default), for screens whose scroll affordance is being judged. */
   showScrollbars?: boolean;
   /** How long the clip runs (s; 60 frames a second): long enough for the whole motion. Default 1. */
@@ -24,6 +32,9 @@ export interface ScreenDef {
   /** Run the HUD's clock and timers (game.hud.now / later / cancel) on the clip's clock, so toasts and fades last as long
    * in the clip as in play. */
   hudClock?: boolean;
+  /** Text written to `readout.txt` beside the clip sheet (its first line printed under the sheet), read once the last frame
+   * is in (the cost of the UI the clip shows, say). */
+  readout?(page: Page): Promise<string>;
   /** Console errors the screen causes on purpose (the browser reports a refused request, say), not counted against it. */
   expectedErrors?: RegExp[];
 }
@@ -39,6 +50,260 @@ interface InventoryApi {
   restore(saved: unknown): boolean;
   add(id: string, n: number, to?: 'auto' | 'suit' | 'cargo'): number;
   setLoadout(l: { ship: { hull: string; modules: Record<string, string>; cargoPods: number; livery: number } | null; skills?: string[] }): boolean;
+}
+
+/** What the HUD captures drive of the game: the walker's multitool meter and the ship's Charge (P1.E07.T02). */
+interface MeterGame {
+  mode: string;
+  multitool: { meter: { heat: number; overheated: boolean; charge: number } };
+  ship: {
+    charge: number;
+    mode: string;
+    speed: number;
+    throttle: number;
+    tryPulse(): void;
+    state: { frame: unknown; pos: { set(x: number, y: number, z: number): void }; quat: { setFromRotationMatrix(m: { elements: number[] }): void } };
+  };
+  system: { homePlanet: { radius: number; position: { x: number; y: number; z: number } } };
+  cam: { frame: unknown };
+  hud: { toast(text: string, tone?: string): void };
+}
+interface MeterWindow {
+  game: MeterGame;
+  dev: { boot(): Promise<void>; button(b: number, down: boolean): void };
+  THREE?: unknown;
+}
+
+/** The walker's heat meter at `heat`, locked out or not, with the beam held (the mouse button down) or let go. */
+async function heatAt(page: Page, heat: number, overheated: boolean, held: boolean): Promise<void> {
+  await page.evaluate(
+    ({ heat, overheated, held }) => {
+      const w = window as unknown as MeterWindow;
+      w.game.multitool.meter = { heat, overheated, charge: 0 };
+      w.dev.button(0, held);
+    },
+    { heat, overheated, held },
+  );
+}
+
+/**
+ * Parks the page's own frame loop (its requestAnimationFrame callbacks are dropped), so the game moves only as frames are
+ * stepped: the meter a still is taken at is the one it was stepped to, however long the CSS waits run.
+ */
+async function parkLoop(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const w = window as unknown as { __holdRaf?: boolean };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    // (the callback already queued runs once more, then parks)
+    await new Promise((r) => setTimeout(r, 100));
+  });
+}
+
+/** On foot beside the landed ship on the home world: the #foot scenario, which lands the ship and steps out after 1.5 s of
+ * real time, on foot for good, out of the camera's glide, and settled. */
+async function standingByShip(page: Page): Promise<void> {
+  // (on the world: getting out of the sandbox's first ship, still by the Waystation, is on foot too, in its hangar)
+  const onFoot = () =>
+    page.waitForFunction(async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { mode: string; player: { state: { frame?: { sampler?: unknown } } } } };
+      await w.step(4);
+      return w.game.mode === 'foot' && !!w.game.player.state.frame?.sampler;
+    });
+  await onFoot();
+  await page.waitForTimeout(2500);
+  await onFoot();
+  // (where the scenario sets the ship down turns with the world under real time: a loaded machine can put it in the sea)
+  const inSea = await page.evaluate(() => {
+    const p = (window as unknown as { game: { player: { state: { frame: { ocean?: boolean; radius: number }; pos: { length(): number } } } } }).game.player;
+    return !!p.state.frame.ocean && p.state.pos.length() < p.state.frame.radius;
+  });
+  if (inSea) throw new Error('the #foot scenario set the ship down in the sea: capture again');
+  // the camera's ease from the ship into the walker's head (4 s of game time) can outlast that on a loaded machine: stepped
+  // out, so the multitool is up and the view still before anything is taken
+  for (let i = 0; i < 60; i++) {
+    const gliding = await page.evaluate(async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { director: { pose: unknown; blend: unknown } } };
+      await w.step(10);
+      return !!(w.game.director.pose || w.game.director.blend);
+    });
+    if (!gliding) break;
+  }
+  await settle(page, 90);
+  // and the arrival banners run out (each, and the band under it, lasts 7 s of the page's own time), the multitool raised
+  await page.waitForFunction(
+    async () => {
+      const w = window as unknown as {
+        step(n: number): Promise<void>;
+        game: { hud: { bannerUntil?: number; bannerQueue?: unknown[] }; multitool: { raise?: number } };
+      };
+      await w.step(4);
+      const hud = w.game.hud;
+      return !hud.bannerQueue?.length && performance.now() > (hud.bannerUntil ?? 0) + 1000 && (w.game.multitool.raise ?? 0) >= 1;
+    },
+    null,
+    { timeout: 60_000, polling: 100 },
+  );
+}
+
+/**
+ * Turns the walker to the heading nearest its own (5° steps either way) whose crosshair is on a plant or rock under 3 m tall,
+ * 4 to 25 m off, so the beam's impact glare sits right behind the crosshair. Where the #foot scenario leaves the walker
+ * facing varies with how fast the machine runs its landing, and the flora's hit spheres miss a tall tree's trunk at eye
+ * level, so the beam can strike a rock hidden behind one.
+ */
+async function faceFlora(page: Page): Promise<void> {
+  const found = await page.evaluate(async () => {
+    type V = { copy(v: V): V; clone(): V; normalize(): V; applyAxisAngle(axis: V, a: number): V; distanceTo(v: V): number };
+    const w = window as unknown as {
+      step(n: number): Promise<void>;
+      game: {
+        player: { heading: V; state: { pos: V } };
+        cam: { pos: V };
+        multitool: { target: { point: V; scale: number; sp: { height: number } } | null };
+      };
+    };
+    const g = w.game;
+    const up = g.player.state.pos.clone().normalize();
+    const start = g.player.heading.clone();
+    for (let i = 0; i <= 72; i++) {
+      const turn = (((i + 1) >> 1) * (i % 2 ? 1 : -1) * Math.PI) / 36;
+      g.player.heading.copy(start).applyAxisAngle(up, turn);
+      await w.step(2);
+      const t = g.multitool.target;
+      const d = t ? t.point.distanceTo(g.cam.pos) : 0;
+      if (t && t.sp.height * t.scale < 3 && d >= 4 && d <= 25) return true;
+    }
+    return false;
+  });
+  if (!found) throw new Error('no plant or rock 4 to 25 m off in any direction from where the walker stands');
+}
+
+/** The heat meter runs `k` times as fast as the game for the clip, so a whole overheat cycle fits a few seconds of it. */
+async function hastenHeat(page: Page, k: number): Promise<void> {
+  await page.evaluate((k) => {
+    const mt = (window as unknown as { game: { multitool: { stepHeat(dt: number, held: boolean): void } } }).game.multitool;
+    const step = mt.stepHeat.bind(mt);
+    mt.stepHeat = (dt, held) => step(dt * k, held);
+  }, k);
+}
+
+/** The client's ability model and clocks as a capture drives them: no server, so the screen says what one would. */
+interface AbilityWindow {
+  game: MeterGame & {
+    time: number;
+    abilities: {
+      skills(view: unknown): void;
+      state(m: unknown): void;
+      answer(m: unknown): void;
+      pending: Map<number, { bar: string; slot: number; node: string; at: number }>;
+      now(): number;
+    };
+    hud: { later(fn: () => void, ms: number): number };
+  };
+}
+
+/** The bars as the server's skills view would hold them, the ship bar working `shipSlots` slots. */
+async function slotAbilities(page: Page, ground: (string | null)[], ship: (string | null)[], shipSlots: number): Promise<void> {
+  await page.evaluate(
+    ({ ground, ship, shipSlots }) => {
+      // (no named functions in here: the page has no helper for their names)
+      const slots = { ground: [...ground, ...Array(6 - ground.length).fill(null)], ship: [...ship, ...Array(5 - ship.length).fill(null)] };
+      (window as unknown as AbilityWindow).game.abilities.skills({ state: { slots }, shipSlots });
+    },
+    { ground, ship, shipSlots },
+  );
+}
+
+/** The server's cooldowns: each node ready again `left` seconds from the game's world time now; `on` the toggles on. */
+async function coolingDown(page: Page, left: Record<string, number>, on: string[] = []): Promise<void> {
+  await page.evaluate(
+    ({ left, on }) => {
+      const g = (window as unknown as AbilityWindow).game;
+      g.abilities.state({ t: 'abilities', cooldowns: Object.entries(left).map(([node, s]) => ({ node, readyAt: g.time + s })), on });
+    },
+    { left, on },
+  );
+}
+
+/**
+ * A key press's round trip as a server would answer it, on the HUD's clock from now: the cast sent at `at` ms, answered
+ * `rtt` ms later, carried out (its cooldown running `cooldownS` from then, the meter paid `pay`: heat on the ground bar,
+ * Charge on the ship's) or refused for `refused`.
+ */
+async function castRoundTrip(
+  page: Page,
+  c: { bar: 'ground' | 'ship'; slot: number; node: string; at: number; rtt?: number; cooldownS?: number; pay?: number; refused?: string; seq: number },
+): Promise<void> {
+  await page.evaluate((c) => {
+    const g = (window as unknown as AbilityWindow).game;
+    const a = g.abilities;
+    g.hud.later(() => {
+      a.pending.set(c.seq, { bar: c.bar, slot: c.slot, node: c.node, at: a.now() });
+      g.hud.later(() => {
+        if (c.refused) {
+          const readyAt = (a as unknown as { cooldowns: Map<string, number> }).cooldowns.get(c.node);
+          a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'refused', reason: c.refused, readyAt });
+          return;
+        }
+        const cooldowns = [...(a as unknown as { cooldowns: Map<string, number> }).cooldowns].map(([node, readyAt]) => ({ node, readyAt }));
+        a.state({ t: 'abilities', cooldowns: [...cooldowns.filter((x) => x.node !== c.node), { node: c.node, readyAt: g.time + c.cooldownS! }], on: [] });
+        a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'cast', readyAt: g.time + c.cooldownS! });
+        if (c.bar === 'ground') g.multitool.meter = { ...g.multitool.meter, heat: g.multitool.meter.heat + (c.pay ?? 0) };
+        else g.ship.charge -= c.pay ?? 0;
+      }, c.rtt ?? 60);
+    }, c.at);
+  }, c);
+}
+
+/**
+ * The ship in open flight off the home world, nose just past it, `side` 1 on its day side (in sunlight, inside the habitable band:
+ * Charge regenerates) or −1 on its night side (in its shadow: nothing), with Charge at `charge`.
+ */
+async function shipOffHome(page: Page, side: 1 | -1, charge: number): Promise<void> {
+  await page.evaluate(
+    ({ side, charge }) => {
+      const w = window as unknown as MeterWindow;
+      const g = w.game;
+      const ship = g.ship;
+      const home = g.system.homePlanet;
+      const p = home.position;
+      const l = Math.hypot(p.x, p.y, p.z);
+      // three radii sunward of the planet (the star at the origin), a little to one side and above; on the night side close
+      // enough to the sun line to stay in the planet's shadow
+      const r = home.radius * 3;
+      const sx = (-p.x / l) * side;
+      const sz = (-p.z / l) * side;
+      const across = side > 0 ? 0.35 : 0.12;
+      const x = p.x + sx * r + sz * r * across;
+      const y = p.y + r * (side > 0 ? 0.22 : 0.1);
+      const z = p.z + sz * r - sx * r * across;
+      ship.state.frame = null;
+      ship.state.pos.set(x, y, z);
+      // the nose (−Z forward) past the planet's limb, so the planet fills one side of the frame and the reticle and its
+      // readouts sit over open space, as they do in flight
+      const fx = p.x - sz * r * 0.75 - x;
+      const fy = p.y - y;
+      const fz = p.z + sx * r * 0.75 - z;
+      const fl = Math.hypot(fx, fy, fz);
+      const f = [fx / fl, fy / fl, fz / fl];
+      // right = f × up(0,1,0), up' = right × f
+      const rx = -f[2];
+      const rz = f[0];
+      const rl = Math.hypot(rx, rz);
+      const right = [rx / rl, 0, rz / rl];
+      const up = [right[1] * f[2] - right[2] * f[1], right[2] * f[0] - right[0] * f[2], right[0] * f[1] - right[1] * f[0]];
+      // the rotation whose columns are right, up and −forward (a Matrix4's column-major elements: setFromRotationMatrix
+      // reads nothing else)
+      ship.state.quat.setFromRotationMatrix({ elements: [...right, 0, ...up, 0, -f[0]!, -f[1]!, -f[2]!, 0, 0, 0, 0, 1] });
+      ship.mode = 'flying';
+      ship.speed = 0;
+      ship.charge = charge;
+      g.cam.frame = undefined;
+    },
+    { side, charge },
+  );
 }
 
 /** One inventory capture: the ship (its pods aboard), the skills, and what the cargo holds. */
@@ -342,7 +607,7 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
 interface FabricatorPage {
   game: {
     inventory: InventoryApi;
-    fabricator: { open(at: 'station' | 'ship'): void };
+    fabricator: { open(at: 'waystation' | 'ship'): void };
     station: { pads: { x: number; z: number }[] };
     ship: { state: { pos: { clone(): { set(x: number, y: number, z: number): unknown } } } };
     player: { spawn(frame: unknown, at: unknown, heading: unknown): void };
@@ -370,7 +635,7 @@ const FAB_SUIT: [string, number][] = [
 ];
 
 /** Lays the haul out in the suit (the Lark's pod holding a little more), then opens fabricator `at`. */
-async function stockAndOpen(page: Page, at: 'station' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
+async function stockAndOpen(page: Page, at: 'waystation' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
   await page.evaluate(
     ({ at, suit, pod }) => {
       const g = (window as unknown as FabricatorPage).game;
@@ -420,7 +685,7 @@ async function stationFabricator(page: Page): Promise<void> {
     g.cam.frame = undefined;
   });
   await settle(page, 120);
-  await stockAndOpen(page, 'station', FAB_SUIT, [
+  await stockAndOpen(page, 'waystation', FAB_SUIT, [
     ['tritium', 380],
     ['carbon', 240],
   ]);
@@ -727,6 +992,93 @@ async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> 
  * server would: chat comes back as the player's line, an invite to someone online is sent, accepting joins the
  * inviter's party, an answer to a beacon is refused (`answerCode`). `window.__social` drives it.
  */
+/** Times one UI's own work in each frame of the clip that follows (the chat and party UI's moves and redraws, or the whole
+ * HUD's update): every update between one captured frame and the next adds to that frame's figure, so the readout and the
+ * clip count the same frames. */
+async function uiCostProbe(page: Page, of: 'social' | 'hud'): Promise<void> {
+  await page.evaluate((of) => {
+    type Ui = { update(arg?: unknown): void };
+    const w = window as unknown as { __social: { social: Ui }; game: { hud: Ui }; __clip: { frame(dt: number): void }; __uiCost: number[] };
+    const ui = of === 'social' ? w.__social.social : w.game.hud;
+    const update = ui.update.bind(ui);
+    let spent = 0;
+    ui.update = (arg?: unknown) => {
+      const t = performance.now();
+      update(arg);
+      spent += performance.now() - t;
+    };
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    w.__uiCost = [];
+    clip.frame = (dt: number) => {
+      spent = 0;
+      frame(dt);
+      w.__uiCost.push(spent);
+    };
+  }, of);
+}
+
+/** What the UI's cost over the clip is held to (ms). */
+const UI_BUDGET_MS = 1;
+
+/** The probed UI's per-frame cost over the clip (`uiCostProbe`), as the readout under its sheet: the mean, the 95th
+ * percentile and the worst frame, against the 16.7 ms a frame at 60 fps has, and the index of every frame over the 1 ms
+ * budget. */
+const uiCostReadout =
+  (label: string) =>
+  async (page: Page): Promise<string> => {
+    const ms = await page.evaluate(() => (window as unknown as { __uiCost: number[] }).__uiCost);
+    const sorted = [...ms].sort((a, b) => a - b);
+    const mean = ms.reduce((a, b) => a + b, 0) / Math.max(1, ms.length);
+    const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))] ?? 0;
+    const over = ms.flatMap((v, i) => (v > UI_BUDGET_MS ? [`${String(i).padStart(3, '0')} (${v.toFixed(3)} ms)`] : []));
+    return [
+      `${label} frame cost over ${ms.length} frames: mean ${mean.toFixed(3)} ms, p95 ${at(0.95).toFixed(3)} ms, worst ${(sorted.at(-1) ?? 0).toFixed(3)} ms (of 16.7 ms)`,
+      `frames over ${UI_BUDGET_MS} ms: ${over.length ? over.join(', ') : 'none'}`,
+    ].join('\n');
+  };
+const socialCostReadout = uiCostReadout('social UI');
+const hudCostReadout = uiCostReadout('HUD');
+
+/** Watches the beacon list over the clip that follows, frame by frame: its rows being built or taken out, its text being
+ * rewritten (an age moving on) and its scrollbar and edge fades being written. */
+async function socialRestWatch(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { __clip: { frame(dt: number): void }; __uiCost: number[]; __rest: { rows: number[]; text: number[]; bar: number[] } };
+    const scroller = document.querySelector('.sc-beacons') as HTMLElement;
+    const watched = { rows: [] as number[], text: [] as number[], bar: [] as number[] };
+    w.__rest = watched;
+    const obs = new MutationObserver(() => {});
+    obs.observe(scroller, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class'] });
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    let i = 0;
+    clip.frame = (dt: number) => {
+      frame(dt);
+      const seen = { rows: false, text: false, bar: false };
+      for (const r of obs.takeRecords()) {
+        const t = r.target as HTMLElement;
+        if (t === scroller && r.type === 'attributes' && r.attributeName === 'style') seen.bar = true;
+        else if (r.type === 'childList' && t.classList.contains('sb-meta')) seen.text = true;
+        else if (r.type === 'childList' || (r.type === 'attributes' && t.closest('.sb-list'))) seen.rows = true;
+      }
+      for (const k of ['rows', 'text', 'bar'] as const) if (seen[k]) watched[k].push(i);
+      i++;
+    };
+  });
+}
+
+/** The cost readout and what the list did at rest: which frames rebuilt a row, rewrote an age or wrote a scrollbar or edge
+ * property. */
+async function socialRestReadout(page: Page): Promise<string> {
+  const rest = await page.evaluate(() => (window as unknown as { __rest: { rows: number[]; text: number[]; bar: number[] } }).__rest);
+  const list = (v: number[]) => (v.length ? `${v.length} (frames ${v.map((n) => String(n).padStart(3, '0')).join(', ')})` : 'none');
+  return [
+    await socialCostReadout(page),
+    `beacon list at rest: rows rebuilt or restyled on ${list(rest.rows)}; age text rewritten on ${list(rest.text)}; scrollbar or edge property written on ${list(rest.bar)}`,
+  ].join('\n');
+}
+
 export const SOCIAL_STAGE = String.raw`
 import { Net } from '/src/net/Net.js';
 
@@ -1170,6 +1522,148 @@ function timeline(page: Page, steps: [number, () => Promise<unknown>][]): void {
 const typeIn = (page: Page, text: string, perChar = 0.045) => page.keyboard.type(text, { delay: perChar * 10_000 });
 const key = (page: Page, k: string) => () => page.keyboard.press(k);
 
+interface EventPage {
+  game: {
+    mode: string;
+    system: { name: string; homePlanet: unknown };
+    station: unknown;
+    debugGoto(planet: unknown, at: { sunAngle: number; alt: number; azimuth: number }): void;
+    boardShip(): void;
+    exitShip(): void;
+    player: { pitch: number; heading: { applyAxisAngle(axis: unknown, angle: number): void }; state: { pos: { clone(): { normalize(): unknown } } } };
+    hud: {
+      clearBanners(): void;
+      showBanner(title: string, sub: string): void;
+      updateEvents(feed: unknown): void;
+      banners: { until: number };
+      now(): number;
+      band: HTMLElement;
+    };
+  };
+}
+
+/** On foot on the home world (the `#foot` scenario), back aboard and landed again with the sun `sunAngle` degrees from
+ * overhead (past 90 it is night), then out, looking along open ground and down a little, so the ground lies behind the
+ * HUD's top band. */
+function eventGround(sunAngle: number) {
+  return async (page: Page) => {
+    const onFoot = () =>
+      page.waitForFunction(async () => {
+        await (window as unknown as { step(n: number): Promise<void> }).step(4);
+        return (window as unknown as EventPage).game.mode === 'foot';
+      });
+    await onFoot();
+    // (the scenario lands and steps out on real-time waits: let it finish before landing again)
+    await page.waitForTimeout(2500);
+    await onFoot();
+    await page.evaluate((sunAngle) => {
+      const g = (window as unknown as EventPage).game;
+      g.boardShip();
+      g.debugGoto(g.system.homePlanet, { sunAngle, alt: 0, azimuth: 20 });
+    }, sunAngle);
+    await settle(page, 60);
+    await page.evaluate(() => (window as unknown as EventPage).game.exitShip());
+    await onFoot();
+    await page.evaluate(() => {
+      const { player } = (window as unknown as EventPage).game;
+      player.heading.applyAxisAngle(player.state.pos.clone().normalize(), Math.PI * 1.5);
+      player.pitch = -0.5;
+    });
+    // (stepping out blends the view down to the pilot's eyes over 4 s)
+    await settle(page, 300);
+  };
+}
+
+/** The catalog's event announced to the system two minutes before it starts (protocol 17, ARCHITECTURE §26): its news
+ * handed to the client's own feed (net/worldEvents.js), and the feed's banner to the HUD, as a connection's would be.
+ * It is on the home world, which the feed names as the game does. A banner showing is cleared first, unless `queued`:
+ * then the system's own arrival banner is raised first, as Game.js raises it on entry, and the event's waits behind it. */
+async function announceEvent(page: Page, queued = false): Promise<void> {
+  const def = EVENTS[0]!;
+  // (tsx names the stub's functions with esbuild's __name helper, which the page lacks)
+  await page.evaluate('window.__name ??= (f) => f');
+  await page.evaluate(
+    async ({ url, poseUrl, def, queued }) => {
+      const { WorldEvents } = await import(/* @vite-ignore */ url);
+      const { frameIdOfFrame, frameOfId } = await import(/* @vite-ignore */ poseUrl);
+      const { game } = window as unknown as EventPage;
+      const frame = frameIdOfFrame(game.system, game.station, game.system.homePlanet);
+      const event = {
+        id: 1,
+        event: def.id,
+        name: def.name,
+        system: 0,
+        frame,
+        center: [0, 0, 0],
+        radius: def.radius,
+        starts: def.announceS,
+        ends: def.announceS + def.durationS,
+      };
+      const on: Record<string, (m: unknown) => void> = {};
+      const feed = new WorldEvents({ on: (t: string, fn: (m: unknown) => void) => (on[t] = fn), serverTime: () => 0 });
+      feed.worldName = (f: string) => frameOfId(game.system, game.station, f)?.name ?? null;
+      on.world_event!({ t: 'world_event', op: 'announced', event });
+      const { hud } = game;
+      if (queued) hud.showBanner(game.system.name.toUpperCase(), 'Star System');
+      else {
+        // (the band that held the still goes at once, so the clip's band darkens in with the text)
+        hud.band.style.transition = 'none';
+        hud.clearBanners();
+        void hud.band.offsetWidth;
+        hud.band.style.transition = '';
+      }
+      hud.updateEvents(feed);
+    },
+    {
+      url: '/src/net/worldEvents.js',
+      poseUrl: '/src/net/pose.js',
+      def: { id: def.id, name: def.name, radius: def.place.radius, announceS: def.schedule.announceS, durationS: def.schedule.durationS },
+      queued,
+    },
+  );
+}
+
+/** A world event's banner (P2.E21.T01): the stills with it fully in; the clip from its news, in, held and out. */
+function eventBannerScreen(sunAngle: number): ScreenDef {
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 7.5,
+    // its fade in (every 6 frames), the hold, its fade out (every 14)
+    sheetFrames: [0, 6, 12, 18, 24, 30, 36, 42, 48, 120, 200, 280, 336, 350, 364, 378, 392, 406, 420, 449],
+    async open(page) {
+      await eventGround(sunAngle)(page);
+      await announceEvent(page);
+      await page.waitForTimeout(2000);
+    },
+    motion: (page) => announceEvent(page),
+  };
+}
+
+/** The same banner reached the way a player entering a system during an event gets it (P2.E21.T01, visual round 1): the
+ * system's own arrival banner first, the event's queued behind it, no clearBanners between. The clip runs from the
+ * arrival banner fading in until the event's is fully in; its sheet takes a frame every 6 across the hand-off. */
+function eventBannerQueuedScreen(): ScreenDef {
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 14,
+    // the arrival banner in and held (every 60), its fade out through the event banner's fade in (every 6), the event banner held
+    sheetFrames: [0, 30, 60, 120, 180, 240, 300, ...Array.from({ length: 27 }, (_, i) => 330 + i * 6), 500, 600, 720, 839],
+    async open(page) {
+      await eventGround(40)(page);
+      // (the scenario's own arrival banner has run its life by now; wait for any that has not, so the clip starts bare)
+      await page.waitForFunction(() => {
+        const { hud } = (window as unknown as EventPage).game;
+        return hud.banners.until <= hud.now();
+      });
+      await page.evaluate(() => (window as unknown as EventPage).game.hud.clearBanners());
+      await page.waitForTimeout(1500);
+    },
+    motion: (page) => announceEvent(page, true),
+  };
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
@@ -1409,22 +1903,247 @@ export const SCREENS: Record<string, ScreenDef> = {
       },
     },
   },
-  'hud-ship': {
+  // In flight off the home world's day side, in sunlight inside the habitable band: Charge (the right arc and the readout
+  // under the altitude) at 58 and regenerating, a bright dash climbing its arc (P1.E07.T02). `16x9-empty.png`: Charge run
+  // out on the night side, in the planet's shadow (no regeneration), and the pulse drive refused. The clip: the regen
+  // sheen's whole climb, the readout ticking up.
+  // Boarding in play with Charge at 60 (the ship's, set while the pilot stood beside it on the home world's day side): the
+  // stills are aboard and landed after the glide into the seat, the reticle not yet up; the clip starts as the ship
+  // takes off, its first frame the first the reticle (and its Charge arc, readout and regen sheen) is drawn: the arc at 60
+  // at once, lilac, the sheen from the next frame.
+  'hud-ship-board': {
+    hash: '#foot',
     hudClock: true,
+    clipSeconds: 1.5,
+    sheetFrames: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 70, 80, 89],
     async open(page) {
-      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
-      await settle(page, 120);
+      await standingByShip(page);
+      // the game moves only as it is stepped from here: Charge regenerates 2/s through the glide's 5 s, 50 to 60
+      await parkLoop(page);
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: { ship: { charge: number }; boardShip(): void } }).game;
+        g.ship.charge = 50;
+        g.boardShip();
+      });
+      // the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => (window as unknown as { game: { ship: { takeOff(): void } } }).game.ship.takeOff());
     },
   },
+  'hud-ship': {
+    hudClock: true,
+    clipSeconds: 2,
+    async open(page) {
+      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+      await settle(page, 60);
+      await shipOffHome(page, 1, 58);
+      await settle(page, 90);
+    },
+    stills16x9: {
+      async empty(page) {
+        await shipOffHome(page, -1, 0);
+        await settle(page, 90);
+        await page.evaluate(() => (window as unknown as MeterWindow).game.ship.tryPulse());
+        await settle(page, 6);
+      },
+    },
+    async motion(page) {
+      await shipOffHome(page, 1, 58);
+      // (the empty still's refusal is not this scene's)
+      await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
+    },
+  },
+  // The ability bar on foot (P1.E07.T03), under the prompt: six ground slots, keys 1–6, each a ring with its key and the
+  // node's name (Pulse, Pull, Flare, Well, Regrow, Veil); Well cooling with 13 of its 20 s left and Regrow 4 of 10, their
+  // rings drawn back in heat's warm with the seconds left in them; heat at 35 on the crosshair's left arc.
+  // `*-refused.png` (both aspects): Well pressed again while it cools, refused by the server: its ring edged in danger red
+  // and COOLING DOWN on a plate over it. `*-rest.png`: nothing on the bar moved for 4 s, so it rests at 55% with its names
+  // hidden. The clip (the bar waking from rest as it starts): key 1 pressed 0.2 s in, the server's answer 60 ms later,
+  // Pulse's ring flaring and its cooldown starting (6 s), Pulse's 10 heat easing onto the arc over 250 ms with the new
+  // chunk drawn bright; key 1 again 2.2 s in, refused, the red edge and the plate over slot 1 for 1.6 s; Regrow ready
+  // about 4 s in and Pulse about 6.3 s in, each ring brightening for a beat as it comes back. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost; `crops-*.png` are 4x crops of the crosshair and slot 1.
+  'hud-abilities': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 6.8,
+    readout: hudCostReadout,
+    sheetFrames: [0, 12, 14, 16, 18, 20, 22, 26, 30, 34, 60, 120, 132, 136, 150, 200, 240, 246, 252, 300, 376, 382, 388, 407],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await settle(page, 2);
+    },
+    stills: {
+      async refused(page) {
+        await castRoundTrip(page, { bar: 'ground', slot: 3, node: 'well', at: 0, rtt: 0, refused: 'cooldown', seq: 1 });
+        await settle(page, 2);
+      },
+      async rest(page) {
+        await coolingDown(page, {});
+        await settle(page, 2);
+        await page.waitForTimeout(4500);
+        await settle(page, 2);
+      },
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await page.evaluate(() => {
+        const a = (window as unknown as AbilityWindow).game.abilities as unknown as { refusal: unknown };
+        a.refusal = null;
+      });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 200, cooldownS: 6, pay: 10, seq: 2 });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 2200, refused: 'cooldown', seq: 3 });
+    },
+  },
+  // A cast's cost on foot at 21:9 (P1.E07.T03, the grader's round-2 request): heat at 20, the same six ground slots, all
+  // ready. The clip, at 21:9: key 3 pressed 0.2 s in, the server's answer 60 ms later, Flare's ring flaring and its 12 s
+  // cooldown starting, its 30 heat easing onto the crosshair's left arc over 250 ms (20 to 50) with the new chunk drawn
+  // bright; key 3 again 1.4 s in, refused while it cools: the red edge and COOLING DOWN on a plate over slot 3, gone 1.6 s
+  // later. `crops-reticle.png` and `crops-slot.png` are 4x crops of the crosshair and slot 3; the sheet's title (and
+  // readout.txt) is the HUD's per-frame cost.
+  'hud-abilities-cost': {
+    hash: '#foot',
+    hudClock: true,
+    clipAspect: '21x9',
+    readout: hudCostReadout,
+    clipSeconds: 3.4,
+    sheetFrames: [0, 12, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 36, 48, 84, 88, 89, 90, 92, 96, 110, 150, 180, 203],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(3)', pad: 30 },
+    ],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 20, false, false);
+      await coolingDown(page, {});
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await heatAt(page, 20, false, false);
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 200, cooldownS: 12, pay: 30, seq: 1 });
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 1400, refused: 'cooldown', seq: 2 });
+    },
+  },
+  // The ability bar in flight (P1.E07.T03): a Wayfarer's four ship slots, keys 1–4 (Tractor Beam, Deep Sweep, Repair
+  // Drones, Inertial Brake), Deep Sweep cooling with 21 of its 30 s left and Inertial Brake 6 of 15, their rings drawn back
+  // in the flight deck's warm white with the seconds left in it (lilac is Charge's alone: only the reticle's right arc
+  // and a cast's chunk of it wear it); Charge at 72 on that arc. The clip: key 1 pressed 0.2 s in, the server's answer,
+  // the ring flaring and Tractor Beam's 12 s cooldown starting, its 15 Charge coming off the arc over 250 ms with the cost
+  // drawn bright as it drains; Inertial Brake ready 1.2 s in, its ring brightening for a beat. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost; `crops-*.png` are 4x crops of the reticle and slot 1.
+  'hud-abilities-flight': {
+    hudClock: true,
+    clipSeconds: 2,
+    readout: hudCostReadout,
+    sheetFrames: [0, 6, 12, 14, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 34, 40, 60, 72, 76, 80, 90, 119],
+    crops: [
+      { name: 'reticle', selector: '.ship-reticle', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
+    async open(page) {
+      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+      await settle(page, 60);
+      await shipOffHome(page, 1, 72);
+      await settle(page, 90);
+      await slotAbilities(page, [], ['tractor_beam', 'deep_sweep', 'repair_drones', 'inertial_brake'], 4);
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 6 });
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 1.2 });
+      await castRoundTrip(page, { bar: 'ship', slot: 0, node: 'tractor_beam', at: 200, cooldownS: 12, pay: 15, seq: 1 });
+    },
+  },
+  // On foot on the home world, mining a plant or rock a few metres off with the beam held, its impact glare behind the
+  // crosshair: the heat arc (left of the dot) at 40 of 100, 40% of it lit, warm
+  // (P1.E07.T02). `16x9-overheat.png`: the lockout at the top, the arc danger red with a tick where the lockout ends and
+  // OVERHEAT under the dot. The clip: a whole cycle with the beam held throughout, the meter at three times the game's
+  // pace: from cool it climbs, turns amber at 75, overheats at 100 (about 1.4 s in), cools through the lockout to the tick
+  // at 25 (about 2.6 s) and the lockout lifts, the beam heating again.
   'hud-foot': {
     hash: '#foot',
     hudClock: true,
+    clipSeconds: 3,
     async open(page) {
-      await page.waitForFunction(async () => {
-        await (window as unknown as { step(n: number): Promise<void> }).step(4);
-        return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
+      await standingByShip(page);
+      await faceFlora(page);
+      await parkLoop(page);
+      // 38, and five frames of beam at 24/s: 40
+      await heatAt(page, 38, false, true);
+      await settle(page, 5);
+    },
+    stills16x9: {
+      async overheat(page) {
+        await heatAt(page, 100, true, true);
+        await settle(page, 3);
+      },
+    },
+    async motion(page) {
+      // the overheat still's lockout cleared and settled before the first frame: cool, the button up, the HUD told, and
+      // its fades run out (CSS runs at a tenth of real time while the clip records: OVERHEAT's 0.25 s, the arc's 0.4 s)
+      await heatAt(page, 0, false, false);
+      await page.evaluate(() => (window as unknown as { game: { hud: { update(dt: number): void } } }).game.hud.update(0));
+      await page.waitForTimeout(5000);
+      // then the beam held from cool
+      await page.evaluate(() => (window as unknown as MeterWindow).dev.button(0, true));
+      await hastenHeat(page, 3);
+    },
+  },
+  // Leaving the ship on foot with the multitool still warm (heat 50): the stills are aboard and landed; the clip's first
+  // frame is the foot HUD's first, the crosshair fading in (150 ms) with its heat arc already at 50 and cooling at 20/s.
+  'hud-foot-exit': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 0.6,
+    sheetFrames: [...Array.from({ length: 20 }, (_, i) => i), 24, 29, 35],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await page.evaluate(() => (window as unknown as { game: { boardShip(): void } }).game.boardShip());
+      // aboard: the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: MeterGame & { exitShip(): void } }).game;
+        g.multitool.meter = { heat: 50, overheated: false, charge: 0 };
+        g.exitShip();
       });
-      await settle(page, 90);
+    },
+  },
+  // On foot after mining, the beam let go at 30 heat: the arc cooling idle (20/s on the home world by day). The stills: 30,
+  // warm, the button up. The clip: from 30 down to 2 (1.4 s, frame 84), where the empty arc fades out (0.4 s, to frame
+  // 108), the crosshair's dot left alone.
+  'hud-foot-cool': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 2,
+    sheetFrames: [0, 12, 24, 36, 48, 60, 72, 78, 82, 84, 86, 88, 90, 93, 96, 99, 102, 105, 108, 119],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      // 31, and three frames idle at 20/s: 30
+      await heatAt(page, 31, false, false);
+      await settle(page, 3);
+    },
+    async motion(page) {
+      await heatAt(page, 30, false, false);
     },
   },
   map: {
@@ -1610,6 +2329,11 @@ export const SCREENS: Record<string, ScreenDef> = {
     open: openShipFabricator,
     motion: fabricatorMotion(null),
   },
+  // a world event announced (P2.E21.T01, ARCHITECTURE §26): its banner over the home world's ground by day
+  // (`event-banner`) and the same ground at night (`event-banner-night`)
+  'event-banner': eventBannerScreen(40),
+  'event-banner-night': eventBannerScreen(140),
+  'event-banner-queued': eventBannerQueuedScreen(),
   'station-hangar': {
     hash: '#dock',
     async open(page) {
@@ -1709,15 +2433,18 @@ export const SCREENS: Record<string, ScreenDef> = {
   'party-invite': {
     hudClock: true,
     clipSeconds: 3.5,
+    readout: socialCostReadout,
     sheetFrames: [0, 6, 12, 18, 24, 30, 36, 60, 84, 90, 96, 102, 108, 114, 120, 144, 150, 156, 162, 180, 209],
     async open(page) {
       await stageSocial(page, 'limb');
-      await onStage(page, "s.chatScene(); s.news('invite', 'Kestrel Vane'); s.age(8000)", 60);
+      // (the feed's lines are long gone, so the still is not taken as one fades)
+      await onStage(page, "s.chatScene(); s.news('invite', 'Kestrel Vane'); s.age(8000); for (const l of s.social.model.lines) l.at -= 30000", 60);
     },
     stills16x9: {
       open: (page) => onStage(page, "s.open('shard')"),
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       // (closed, and drawn closed, before the first frame)
       await page.evaluate(() => {
         const s = (window as unknown as SocialWindow).__social;
@@ -1741,6 +2468,7 @@ export const SCREENS: Record<string, ScreenDef> = {
   beacons: {
     hudClock: true,
     clipSeconds: 1.5,
+    readout: socialCostReadout,
     showScrollbars: true,
     async open(page) {
       await stageSocial(page, 'limb');
@@ -1755,6 +2483,7 @@ export const SCREENS: Record<string, ScreenDef> = {
         ),
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const s = w.__social;
@@ -1769,11 +2498,13 @@ export const SCREENS: Record<string, ScreenDef> = {
   'social-tabs': {
     hudClock: true,
     clipSeconds: 5.2,
+    readout: socialCostReadout,
     async open(page) {
       await stageSocial(page, 'limb');
       await onStage(page, "s.partyScene(); s.chatScene(); s.beaconsScene(); s.open('shard')", 60);
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       await page.evaluate(() => {
         const hud = (window as unknown as SocialWindow).game.hud;
         const order = ['system', 'party', 'beacons', 'party', 'system', 'shard'];
@@ -1781,30 +2512,52 @@ export const SCREENS: Record<string, ScreenDef> = {
       });
     },
   },
+  // beacons-many held still: scrolled to the middle of the list (both edge fades on) with the panel open and the beacons'
+  // ages moving on, beside a party frame of the player leading, one member offline (OFFLINE, LEAD and KICK on show). The
+  // list must not redraw, blink or move while it stands
+  'beacons-rest': {
+    hudClock: true,
+    clipSeconds: 2,
+    readout: socialRestReadout,
+    showScrollbars: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(
+        page,
+        "s.chatScene(); s.manyBeaconsScene(); s.setParty('Tess Arlo', [s.member('Kestrel Vane'), s.member('Tess Arlo'), s.member('Bo Tran', 2), s.member('Ilse Marr', 0, s.here, false)]); s.open('beacons'); s.social.model.answer(15)",
+        60,
+      );
+      await onStage(page, "const l = document.querySelector('.sc-beacons'); l.scrollTop = Math.round((l.scrollHeight - l.clientHeight) / 2)", 60);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'social');
+      await socialRestWatch(page);
+    },
+  },
   // a list longer than the panel: eight calls for aid, one answer refused (too far) in view; the list fades at its foot
   // over its scrollbar. The clip scrolls it to its end and back, eased (the list's own scroll, as a wheel would)
   'beacons-many': {
     hudClock: true,
     clipSeconds: 3,
+    readout: socialCostReadout,
     showScrollbars: true,
     async open(page) {
       await stageSocial(page, 'limb');
       await onStage(page, "s.chatScene(); s.manyBeaconsScene(); s.open('beacons'); s.social.model.answer(15)", 60);
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const list = document.querySelector('.sc-beacons') as HTMLElement;
         const end = Math.round(list.scrollHeight - list.clientHeight);
-        // down over a second from 0.3 s, a pause, and back up over a second: eased in and out, a whole pixel a frame and
-        // at least one until it lands (a fractional scroll offset is rounded, which held a frame here and there), each
-        // step due half a millisecond before its frame so none slips into the next
-        const ys: number[] = [0];
-        for (let k = 1; k <= 60; k++) {
+        // down over a second from 0.3 s, a pause, and back up over a second, eased in and out. A scroll offset is a whole
+        // pixel, so the ends of the ease move a pixel every few frames (under a pixel a frame on average) rather than
+        // one a frame; each step is due half a millisecond before its frame so none slips into the next
+        const ys: number[] = [];
+        for (let k = 0; k <= 60; k++) {
           const t = k / 60;
-          const y = Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2));
-          const last = ys[k - 1]!;
-          ys.push(last >= end ? end : Math.min(end, Math.max(y, last + 1)));
+          ys.push(Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)));
         }
         ys.forEach((y, k) => {
           w.game.hud.later(() => (list.scrollTop = y), 300 + k * (1000 / 60) - 0.5);

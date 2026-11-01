@@ -137,7 +137,7 @@ export class Cockpit {
         g.fillRect(14, y + 8, 228 * Math.max(0, Math.min(1, v)), 14);
       };
       bar('SHIELDS', ship.shield / 100, 30, cyan);
-      bar('PULSE FUEL', ship.pulseFuel / 100, 80, '#c7a6ff');
+      bar('CHARGE', ship.chargeMax > 0 ? ship.charge / ship.chargeMax : 0, 80, '#c7a6ff');
       g.fillStyle = amber;
       g.font = "600 16px 'Barlow Condensed', sans-serif";
       g.fillText(game.focusFrame ? game.focusFrame.name.toUpperCase() : 'DEEP SPACE', 14, 140);

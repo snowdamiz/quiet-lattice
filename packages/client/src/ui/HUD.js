@@ -2,9 +2,11 @@
 import * as THREE from 'three';
 import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
+import { castBar } from '../net/abilities.js';
 import { EdgeCompass } from './EdgeCompass.js';
 import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fits, hullCorners, labelWidth, makeRoom, makeSlide, markOf, nudge, outlineBands, placeLabel, screenBounds } from '../remote/markers.js';
 import { SocialUI } from './social/SocialUI.js';
+import { BANNER_FADE_IN, BANNER_FADE_OUT, BANNER_MS, BannerQueue } from './banners.js';
 
 const _v = new THREE.Vector3();
 
@@ -71,21 +73,93 @@ function setText(e, html) {
   }
 }
 
-// two thin gauge arcs either side of a reticle, as one SVG
+// two thin gauge arcs either side of a reticle, as one SVG: each a dark halo (so it reads over a bright sky or the beam's
+// glare), a track, its fill, a chunk (a cast's cost, drawn bright over the fill while it eases on or off), a mark (a tick
+// across the arc at a level that matters: where the heat lockout ends) and a sheen (a bright dash that climbs the fill
+// while it refills)
 const ARC_LEN = 1;
+// a 100-degree arc centred on the left (or right) of the circle; both start at the bottom, so gauges fill upward
+const arcAngle = (side, f) => ((side < 0 ? 130 + 100 * f : 50 - 100 * f) * Math.PI) / 180;
 function gaugeSvg(left, right, r) {
   const arc = (side) => {
-    // 100-degree arc centred on the left (or right) of the circle
-    const a0 = ((side < 0 ? 130 : -50) * Math.PI) / 180;
-    const a1 = ((side < 0 ? 230 : 50) * Math.PI) / 180;
+    const a0 = arcAngle(side, 0);
+    const a1 = arcAngle(side, 1);
     const p = (a) => `${(r * Math.cos(a) + 50).toFixed(2)} ${(r * Math.sin(a) + 50).toFixed(2)}`;
-    // both arcs start at the bottom, so gauges fill upward
-    return side < 0 ? `M ${p(a0)} A ${r} ${r} 0 0 1 ${p(a1)}` : `M ${p(a1)} A ${r} ${r} 0 0 0 ${p(a0)}`;
+    return `M ${p(a0)} A ${r} ${r} 0 0 ${side < 0 ? 1 : 0} ${p(a1)}`;
   };
-  return `<svg class="gauges" viewBox="0 0 100 100">
-    <g class="gauge left"><path class="track" d="${arc(-1)}" pathLength="1"/><path class="fill g-${left}" d="${arc(-1)}" pathLength="1"/></g>
-    <g class="gauge right"><path class="track" d="${arc(1)}" pathLength="1"/><path class="fill g-${right}" d="${arc(1)}" pathLength="1"/></g>
-  </svg>`;
+  const gauge = (side, name) =>
+    `<g class="gauge ${side < 0 ? 'left' : 'right'}" data-side="${side}" data-r="${r}"><path class="halo" d="${arc(side)}"/><path class="track" d="${arc(side)}" pathLength="1"/>` +
+    `<path class="fill g-${name}" d="${arc(side)}" pathLength="1"/><path class="chunk k-${name}" d="${arc(side)}" pathLength="1"/>` +
+    `<path class="sheen" d="${arc(side)}" pathLength="1"/><path class="mark"/></g>`;
+  return `<svg class="gauges" viewBox="0 0 100 100">${gauge(-1, left)}${gauge(1, right)}</svg>`;
+}
+
+// a rate as the readouts show it: "+2.0/s", "−0.35/s"
+const fmtRate = (v) => `${v > 0 ? '+' : '\u2212'}${Math.abs(v).toFixed(Math.abs(v) < 1 ? 2 : 1)}/s`;
+
+// a gauge level: a finite 0–1 (anything else draws as empty, never as a full arc)
+const unit = (v) => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
+/** A change of more than this much of an arc in one frame is a jump (a server sync, a refill): the gauge eases onto it over
+ * ARC_EASE_MS, fast then settling, rather than trailing it frame by frame. A cast's cost eases on or off whatever its size. */
+const ARC_JUMP = 0.08;
+export const ARC_EASE_MS = 250;
+/** A cast's answer and the meter it paid from arrive this close together, either first, ms. */
+const COST_WINDOW_MS = 200;
+const easeOut = (t) => 1 - (1 - t) ** 3;
+
+/** What the bar says of a cast the server refused, by its reason (ARCHITECTURE §28). */
+export const CAST_REFUSED = {
+  cooldown: 'COOLING DOWN',
+  heat: 'OVERHEATED',
+  charge: 'NOT ENOUGH CHARGE',
+  range: 'OUT OF RANGE',
+  los: 'NO LINE OF SIGHT',
+  target: 'NO TARGET',
+  unseen: 'NO TARGET',
+  dead: 'TARGET DOWN',
+  not_owned: 'NOT ON THE BAR',
+  not_slotted: 'NOT ON THE BAR',
+  slot: 'NOT ON THE BAR',
+  unknown: 'CANNOT CAST YET',
+  mode: 'NOT HERE',
+  down: 'DOWN',
+};
+/** A slot's ring as the bar draws it: a near-black halo, a track, and the cooldown's sweep over it. */
+const RING = `<svg viewBox="0 0 40 40"><circle class="halo" cx="20" cy="20" r="15"/><circle class="track" cx="20" cy="20" r="15"/><circle class="sweep" cx="20" cy="20" r="15" pathLength="1"/></svg>`;
+/** A cooldown's seconds left as the bar shows them: whole from ten up, tenths under ten, so a countdown is never a lone
+ * digit a key could be read as. */
+export function countdown(left) {
+  const tenths = Math.ceil(left * 10 - 1e-6) / 10;
+  return tenths >= 10 ? String(Math.ceil(left - 1e-6)) : tenths.toFixed(1);
+}
+/** The bar rests dim this long after the last thing that moved on it, ms. */
+const BAR_REST_MS = 4000;
+/** Plays a slot's one-shot animation (`cast` or `ready`) from its start, in place of the other. Each class goes once its
+ * animation ends, so the next is a plain add; one still running is taken off now and the new one put on next frame (the
+ * animation restarts without forcing a layout in the frame). */
+function beat(e, cls) {
+  if (e.classList.contains('cast') || e.classList.contains('ready')) {
+    e.classList.remove('cast', 'ready');
+    e._beat = cls;
+  } else e.classList.add(cls);
+}
+
+/** The heat arc as the HUD draws it from the multitool: filled to heat ÷ capacity, shown while the beam fires, the meter is
+ * warm or locked out; amber from 75%, danger red through the lockout, with a tick where the lockout ends. */
+export function heatGauge(mt) {
+  const fill = unit(mt.heat);
+  const over = !!mt.overheated;
+  return { fill, show: !!mt.firing || over || fill > 0.02, hot: !over && fill >= 0.75, over, mark: unit(mt.recoverAt) };
+}
+
+/** The Charge arc and its readout as the HUD draws them from the ship: filled to Charge ÷ capacity, shown while not full or
+ * on the pulse drive, regenerating (the sheen), and the rate (+ regenerating, − burning). */
+export function chargeGauge(ship) {
+  const max = Number.isFinite(ship.chargeMax) ? ship.chargeMax : 0;
+  const fill = max > 0 ? unit(ship.charge / max) : 0;
+  const shown = max > 0 && (ship.mode === 'pulse' || fill < 0.995);
+  const rate = Number.isFinite(ship.chargeRate) ? ship.chargeRate : 0;
+  return { fill, shown, empty: max > 0 && fill <= 0, regen: ship.chargeRegen > 0.005 && fill < 0.999, rate, value: Math.floor(fill * max + 1e-6) };
 }
 
 export class HUD {
@@ -102,19 +176,22 @@ export class HUD {
     this.band = el('div', 'hud-band', root);
     this.layer = el('div', 'hud-layer', root);
     this.markersEl = el('div', 'markers', this.layer);
-    // on foot: a dot with two gauge arcs (mining heat left, jetpack right) that only show while in use
-    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 17)}`);
-    // in flight: reticle with shield / pulse arcs, speed to the left and altitude to the right
+    // on foot: a dot with two gauge arcs (heat left, jetpack right) that only show while in use, and the lockout's word
+    // under them
+    this.crosshair = el('div', 'crosshair', this.layer, `<b></b>${gaugeSvg('heat', 'jet', 24)}<div class="c-state">OVERHEAT</div>`);
+    // in flight: reticle with shield / Charge arcs, speed to the left and altitude to the right, the throttle under the
+    // speed and Charge under the altitude
     this.reticle = el(
       'div',
       'ship-reticle',
       this.layer,
-      `<b></b>${gaugeSvg('shield', 'pulse', 30)}<div class="r-speed"></div><div class="r-thr"><i></i></div><div class="r-alt"></div><div class="r-mode"></div>`,
+      `<b></b>${gaugeSvg('shield', 'charge', 30)}<div class="r-speed"></div><div class="r-thr"><i></i></div><div class="r-alt"></div><div class="r-chg"></div><div class="r-mode"></div>`,
     );
     this.rSpeed = this.reticle.querySelector('.r-speed');
     this.rAlt = this.reticle.querySelector('.r-alt');
     this.rMode = this.reticle.querySelector('.r-mode');
     this.rThr = this.reticle.querySelector('.r-thr i');
+    this.rChg = this.reticle.querySelector('.r-chg');
     // north is the edge of space
     this.edgeCompass = new EdgeCompass(game, this.layer);
     this.location = el('div', 'location', this.layer);
@@ -126,10 +203,25 @@ export class HUD {
     this.toasts = el('div', 'toasts', this.layer);
     // the server's word on the player's shots: damage numbers off the reticle
     this.hitsEl = el('div', 'hits', this.layer);
+    // the bar the player casts from, keys 1–6 on foot and 1–5 in flight, with its cooldowns (ARCHITECTURE §28)
+    this.abilitiesEl = el('div', 'abilities', this.layer, '<div class="ab-row"></div><div class="ab-why"></div>');
+    this.abRow = this.abilitiesEl.querySelector('.ab-row');
+    this.abWhy = this.abilitiesEl.querySelector('.ab-why');
     // chat, the party frame and the call-for-aid list (P1.E15.T03)
     this.social = new SocialUI(game, this);
     // (beside the layer, not in it: banners show through a cutscene, which fades the rest of the HUD out)
     this.banner = el('div', 'banner', root);
+    // (the banners' keyframes and band run on these: style.css)
+    root.style.setProperty('--banner-ms', `${BANNER_MS}ms`);
+    root.style.setProperty('--banner-in-ms', `${BANNER_MS * BANNER_FADE_IN}ms`);
+    root.style.setProperty('--banner-out-ms', `${BANNER_MS * BANNER_FADE_OUT}ms`);
+    this.banners = new BannerQueue({
+      now: () => this.now(),
+      later: (fn, ms) => this.later(fn, ms),
+      cancel: (id) => this.cancel(id),
+      show: (b) => this.raiseBanner(b),
+      release: () => this.band.classList.remove('show'),
+    });
     this.flashEl = el('div', 'flash', root);
     this.underwater = el('div', 'underwater', root);
     this.speedLines = el('canvas', 'speedlines', root);
@@ -151,6 +243,7 @@ export class HUD {
       this.inventory,
       this.prompt,
       this.toasts,
+      this.abilitiesEl,
     ].filter(Boolean);
     this.avoid = [];
     this.avoidAt = -Infinity;
@@ -206,20 +299,10 @@ export class HUD {
 
   // Banners queue instead of overwriting each other; one that waited too long is stale and dropped.
   showBanner(title, sub, lines = []) {
-    (this.bannerQueue ||= []).push({ title, sub, lines, at: this.now() });
-    this.pumpBanners();
+    this.banners.push({ title, sub, lines });
   }
 
-  pumpBanners() {
-    const now = this.now();
-    if (now < (this.bannerUntil || 0)) {
-      this.cancel(this.bannerTimer);
-      this.bannerTimer = this.later(() => this.pumpBanners(), this.bannerUntil - now + 50);
-      return;
-    }
-    let b;
-    while ((b = this.bannerQueue.shift()) && now - b.at > 12000);
-    if (!b) return;
+  raiseBanner(b) {
     // two lines only — what it is and its name; the details (and rewards, which the units counter
     // shows) were reading as filler
     // (as text, never markup: banners carry names players and the server chose)
@@ -231,20 +314,16 @@ export class HUD {
     // raised in a cutscene, it is a title card in the letterbox's top bar, and stays there for its life
     this.banner.classList.toggle('in-bar', !!this.game.cutscenes?.active);
     this.banner.classList.remove('show');
-    this.band.classList.remove('show');
     void this.banner.offsetWidth;
     this.banner.classList.add('show');
-    // (in a cutscene's top bar it is on black already)
-    if (!this.game.cutscenes?.active) this.band.classList.add('show');
-    this.bannerUntil = now + 6200;
-    if (this.bannerQueue.length) this.pumpBanners();
+    // (in a cutscene's top bar it is on black already.) The band is a transition, not a restarted animation: one banner
+    // following another leaves it lit, and only the text fades out and in
+    this.band.classList.toggle('show', !this.game.cutscenes?.active);
   }
 
   /** Drops the banner showing and those waiting. */
   clearBanners() {
-    this.bannerQueue = [];
-    this.bannerUntil = 0;
-    this.cancel(this.bannerTimer);
+    this.banners.clear();
     this.banner.classList.remove('show');
     this.band.classList.remove('show');
   }
@@ -266,19 +345,105 @@ export class HUD {
     return `<div class="bar ${cls} ${v < 0.25 ? 'low' : ''}"><label>${label}</label><div class="track"><div class="fill" style="width:${(v * 100).toFixed(1)}%"></div></div></div>`;
   }
 
-  // fill one of the gauge arcs (0..1); `show` fades it in, otherwise it rests nearly invisible
-  arc(root, name, value, show) {
+  // Fill one of the gauge arcs (0..1); `show` fades it in, otherwise it rests nearly invisible. `states` toggles classes
+  // on the gauge (by default `low` under a quarter: a gauge running out), always from the value itself. The first time a
+  // gauge is drawn and as it turns on it is drawn `snap`: at its value and in its colours at once, with no transition from
+  // wherever it stood (the class lasts the one frame). A jump eases onto the value over ARC_EASE_MS on the HUD's clock,
+  // following it as it moves on meanwhile, the CSS transition off while it does. `costAt` is when the HUD saw a cast on
+  // this gauge's bar answered: a change within COST_WINDOW_MS of it is that cast's cost, eased whatever its size, the
+  // part of the fill between the old level and the tip drawn bright (the heat landing, the Charge coming off) as it goes.
+  arc(root, name, value, show, states = null, costAt = null) {
     const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
-    const v = Math.max(0, Math.min(1, value));
-    a.style.strokeDashoffset = (ARC_LEN * (1 - v)).toFixed(1);
-    a.parentNode.classList.toggle('on', show);
-    a.parentNode.classList.toggle('low', v < 0.25);
+    const g = a.parentNode;
+    const v = unit(value);
+    const now = this.now();
+    const snap = a._v === undefined || (show && !g.classList.contains('on'));
+    const cost = costAt !== null && now - costAt < COST_WINDOW_MS;
+    if (snap) a._ease = null;
+    else if (Math.abs(v - a._v) > ARC_JUMP || (cost && Math.abs(v - a._v) > 1e-4 && !a._ease?.cost)) a._ease = { from: a._drawn ?? a._v, at: now, cost: false };
+    if (a._ease && cost && a._ease.at >= costAt - COST_WINDOW_MS) a._ease.cost = true;
+    a._v = v;
+    let drawn = v;
+    let t = 1;
+    if (a._ease) {
+      t = (now - a._ease.at) / ARC_EASE_MS;
+      if (t >= 1) a._ease = null;
+      else drawn = a._ease.from + (v - a._ease.from) * easeOut(Math.max(0, t));
+    }
+    a._drawn = drawn;
+    g.classList.toggle('snap', snap || !!a._ease);
+    const off = (ARC_LEN * (1 - drawn)).toFixed(3);
+    if (a._off !== off) a.style.strokeDashoffset = a._off = off;
+    const k = a._chunk || (a._chunk = g.querySelector('.chunk'));
+    if (k) {
+      // (from the lower of the old level and the new up to the tip: heat's new chunk growing, Charge's cost draining)
+      const lo = a._ease?.cost ? Math.min(a._ease.from, v) : drawn;
+      const len = Math.max(0, drawn - lo);
+      const chunk = len > 1e-3 ? `${len.toFixed(4)}|${lo.toFixed(4)}|${Math.min(1, (1 - t) / 0.4).toFixed(3)}` : '';
+      if (k._c !== chunk) {
+        k._c = chunk;
+        const [l, at, o] = chunk ? chunk.split('|') : ['0', '0', '0'];
+        k.style.strokeDasharray = `${l} 2`;
+        k.style.strokeDashoffset = String(-at);
+        k.style.opacity = o;
+      }
+    }
+    g.classList.toggle('on', show);
+    for (const [cls, on] of Object.entries(states ?? { low: v < 0.25 })) g.classList.toggle(cls, !!on);
+  }
+
+  /** When the HUD first saw the last cast the server carried out from `bar` answered, on its clock (null: none yet). */
+  costAt(bar) {
+    const c = this.game.abilities?.lastCast;
+    if (!c || c.bar !== bar) return null;
+    if (this._cost?.of !== c) this._cost = { of: c, at: this.now() };
+    return this._cost.at;
+  }
+
+  // A bright dash that climbs a gauge's fill from the bottom to its tip, eased in and out, every 1.9 s while `on` (Charge
+  // regenerating). Driven from the HUD's clock, so recordings and captures show it as play does.
+  sheen(root, name, on, v) {
+    const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
+    const g = a.parentNode;
+    const sh = g.querySelector('.sheen');
+    // (only over a fill already drawn: not while the gauge lands on its value, nor while it is off)
+    if (!on || !g.classList.contains('on') || g.classList.contains('snap')) {
+      if (sh._on) sh.style.opacity = 0;
+      sh._on = false;
+      return;
+    }
+    sh._on = true;
+    const t = (this.now() % 1900) / 1900;
+    const e = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+    // the dash (0.07 of the arc) centred on its way up to the fill's tip, brightest midway
+    sh.style.strokeDashoffset = (0.035 - e * Math.max(0.06, v)).toFixed(4);
+    sh.style.opacity = (0.9 * Math.sin(Math.PI * t) ** 0.7).toFixed(3);
+  }
+
+  // a tick across a gauge arc at level `f` (0..1), shown while `show`
+  mark(root, name, f, show) {
+    const a = (root._arcs ||= {})[name] || (root._arcs[name] = root.querySelector(`.g-${name}`));
+    const g = a.parentNode;
+    const m = g.querySelector('.mark');
+    const key = f.toFixed(3);
+    if (m._f !== key) {
+      m._f = key;
+      const side = +g.dataset.side;
+      const r = +g.dataset.r;
+      const t = arcAngle(side, f);
+      const p = (rr) => `${(rr * Math.cos(t) + 50).toFixed(2)} ${(rr * Math.sin(t) + 50).toFixed(2)}`;
+      // (across the whole halo, so it reads against the fill and the track alike)
+      m.setAttribute('d', `M ${p(r - 9)} L ${p(r + 9)}`);
+    }
+    g.classList.toggle('marked', show);
   }
 
   update(dt) {
     const g = this.game;
     if (!this.visible) return;
+    // (first: both read the page's layout, which holds only before the rest of the HUD has written this frame)
     this.readAvoid();
+    this.social.update();
     const mode = g.mode;
     const ship = g.ship;
     const player = g.player;
@@ -304,7 +469,12 @@ export class HUD {
       const mt = g.multitool;
       this.crosshair.classList.toggle('active', mt.firing);
       this.crosshair.classList.toggle('target', !!mt.target);
-      this.arc(this.crosshair, 'heat', 1 - mt.heat, mt.firing || mt.heat > 0.05);
+      // heat fills the left arc: warm, amber once it runs hot, danger red through the lockout, with a tick where the
+      // lockout ends and the word under the dot
+      const heat = heatGauge(mt);
+      this.arc(this.crosshair, 'heat', heat.fill, heat.show, { hot: heat.hot, over: heat.over }, this.costAt('ground'));
+      this.mark(this.crosshair, 'heat', heat.mark, heat.over);
+      this.crosshair.classList.toggle('over', heat.over);
       this.arc(this.crosshair, 'jet', player.jetFuel, player.jetFuel < 0.999);
     }
     if (mode === 'ship') {
@@ -325,7 +495,19 @@ export class HUD {
       if (this.rThr._w !== w) this.rThr.style.width = this.rThr._w = w;
       this.rThr.classList.toggle('rev', thr < 0);
       this.arc(this.reticle, 'shield', ship.shield / 100, ship.shield < 99.5);
-      this.arc(this.reticle, 'pulse', ship.pulseFuel / 100, ship.mode === 'pulse' || ship.pulseFuel < 99.5);
+      // Charge fills the right arc; a sheen climbs it while it regenerates, and the readout under the altitude says how
+      // much there is and which way it is going (shown while it is not full, or on the pulse drive)
+      const charge = chargeGauge(ship);
+      this.arc(this.reticle, 'charge', charge.fill, charge.shown, { low: charge.fill < 0.25, regen: charge.regen, empty: charge.empty }, this.costAt('ship'));
+      this.sheen(this.reticle, 'charge', charge.regen && charge.shown, charge.fill);
+      let chg = '';
+      if (charge.shown && charge.empty) chg = `0<small>CHARGE EMPTY</small>`;
+      else if (charge.shown) {
+        const dir = charge.rate > 0.005 ? 'up' : charge.rate < -0.005 ? 'down' : '';
+        chg = `${charge.value}<small>CHARGE</small>${dir ? `<i class="${dir}">${fmtRate(charge.rate)}</i>` : ''}`;
+      }
+      setText(this.rChg, chg);
+      this.rChg.classList.toggle('empty', charge.shown && charge.empty);
     }
 
     // hostile skies
@@ -403,7 +585,8 @@ export class HUD {
     this.edgeCompass.update((!g.overlay || chatting) && !cine && (mode === 'ship' || mode === 'foot'));
     this.updateMarkers();
     this.updateHits(g.net?.combat);
-    this.social.update();
+    this.updateAbilities();
+    this.updateEvents(g.net?.worldEvents);
     this.updateSpeedLines(dt);
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
   }
@@ -421,6 +604,72 @@ export class HUD {
     }
   }
 
+  // The bar the player casts from (ARCHITECTURE §28), under the prompt: a ring a working slot with its key in it and the
+  // node's name under it. A cooldown is the ring drawn back to full in the bar's colour (heat's warm on foot, the flight
+  // deck's warm white in flight) as the server's clock runs out, the seconds left in that colour in place of the key
+  // (`countdown`), and the ring brightens for a beat once it is ready; a toggle that is on thickens it; a cast the server
+  // took flares it, and one it refused edges it in danger red with the reason on a plate above it. Shown while a node is
+  // slotted on the bar the mode casts from; once nothing on it has moved for BAR_REST_MS it rests dim, its names hidden.
+  updateAbilities() {
+    const g = this.game;
+    const bar = g.abilities && !g.director?.pose ? castBar(g) : null;
+    const slots = bar ? g.abilities.slots(bar, g.time) : [];
+    const shown = slots.some((x) => x.node);
+    this.abilitiesEl.classList.toggle('on', shown);
+    if (!shown) return;
+    const now = this.now();
+    const layout = `${bar}:${slots.map((x) => x.node ?? '').join(',')}`;
+    if (this.abRow._layout !== layout) {
+      this.abRow._layout = layout;
+      this.abilitiesEl.dataset.bar = bar;
+      this.abRow.innerHTML = slots
+        .map((x) => `<div class="ab-slot${x.node ? '' : ' empty'}">${RING}<b class="ab-key">${x.key}</b><i class="ab-name"></i></div>`)
+        .join('');
+      this.abRow.querySelectorAll('.ab-name').forEach((n, i) => (n.textContent = slots[i].name ?? ''));
+      for (const e of this.abRow.children) e.addEventListener('animationend', () => e.classList.remove('cast', 'ready'));
+      this._abBusyAt = now;
+    }
+    let busy = false;
+    slots.forEach((x, i) => {
+      const e = this.abRow.children[i];
+      if (e._beat) {
+        e.classList.add(e._beat);
+        e._beat = null;
+      }
+      const cooling = x.left > 0 && x.length > 0;
+      // (the ring drawn back as the cooldown runs out: none of it left at the cast, all of it when ready)
+      const sweep = e.querySelector('.sweep');
+      const off = cooling ? Math.min(1, x.left / x.length).toFixed(3) : '0';
+      if (sweep._off !== off) sweep.style.strokeDashoffset = sweep._off = off;
+      const key = e.querySelector('.ab-key');
+      const label = cooling ? countdown(x.left) : String(x.key);
+      if (key._t !== label) key.textContent = key._t = label;
+      // (a cooldown run out on this slot's node, not a node newly slotted: the ring's beat)
+      if (e._cooling && !cooling && e._node === x.node) beat(e, 'ready');
+      e._cooling = cooling;
+      e._node = x.node;
+      e.classList.toggle('cooling', cooling);
+      e.classList.toggle('lit', x.on);
+      e.classList.toggle('sending', x.sending);
+      e.classList.toggle('refused', !!x.refused);
+      if (x.castAt !== null && e._castAt !== x.castAt) {
+        e._castAt = x.castAt;
+        beat(e, 'cast');
+      }
+      busy ||= cooling || x.on || x.sending || !!x.refused;
+    });
+    const refused = slots.findIndex((x) => x.refused);
+    const why = refused >= 0 ? (CAST_REFUSED[slots[refused].refused] ?? 'TRY AGAIN') : '';
+    if (why) {
+      this.abWhy.textContent = why;
+      // (over the refused slot's ring: the stylesheet places it by the slot's index)
+      if (this.abWhy._i !== refused) this.abWhy.style.setProperty('--why-i', (this.abWhy._i = refused));
+    }
+    this.abWhy.classList.toggle('show', !!why);
+    if (busy) this._abBusyAt = now;
+    this.abilitiesEl.classList.toggle('rest', now - (this._abBusyAt ?? 0) > BAR_REST_MS);
+  }
+
   // What the server says the player's shots did and the blows it took (ARCHITECTURE §20): a number rising off the reticle
   // for each hit (gold for a kill), a flash for a blow taken, and a kill's XP and loot as toasts.
   updateHits(feed) {
@@ -429,6 +678,16 @@ export class HUD {
     for (const h of dealt) this.hitNumber(h.amount, h.killed);
     if (taken.length) this.flash('damage');
     for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good');
+  }
+
+  // World events (ARCHITECTURE §26): a banner as one is announced, starts and ends in the system, and toasts as the
+  // player joins an instance, its scaling changes and it is paid. (A full event panel is later work.)
+  updateEvents(feed) {
+    if (!feed) return;
+    for (const x of feed.take()) {
+      if (x.banner) this.showBanner(x.title, x.sub);
+      else this.toast(x.text, x.tone);
+    }
   }
 
   hitNumber(amount, killed) {

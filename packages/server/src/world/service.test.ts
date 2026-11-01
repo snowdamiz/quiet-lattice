@@ -78,14 +78,23 @@ describe('WorldService', () => {
     const { open } = setup();
     const world = await open();
     const s = world.state();
-    expect(s).toMatchObject({ revision: 1, season: 1, seasonStart: 300 * 86_400, seasonLength: SEASON_LENGTH_S, count: 500, edgeX: EDGE_X });
+    expect(s).toMatchObject({
+      revision: 1,
+      season: 1,
+      seasonStart: 300 * 86_400,
+      seasonLength: SEASON_LENGTH_S,
+      seasonEnd: 356 * 86_400,
+      opening: { from: null, edgeShiftLy: 0, dark: [] },
+      count: 500,
+      edgeX: EDGE_X,
+    });
     expect(COUNT_START).toBe(500);
     expect(s.tiers).toEqual(galaxyTiers(EDGE_X).map((t) => t.tier));
     expect(s.tiers).toHaveLength(galaxyTiers().length);
     for (let i = 0; i < s.tiers.length; i++) expect(world.tierOf(i)).toBe(tierOfGalaxySystem(i));
     expect(() => world.tierOf(s.tiers.length)).toThrow(RangeError);
     expect(() => world.tierOf(1.5)).toThrow(RangeError);
-    expect(Object.isFrozen(s) && Object.isFrozen(s.tiers)).toBe(true);
+    expect(Object.isFrozen(s) && Object.isFrozen(s.tiers) && Object.isFrozen(s.opening) && Object.isFrozen(s.opening.dark)).toBe(true);
   });
 
   it('builds a valid `world` message with the server time', async () => {
@@ -94,7 +103,18 @@ describe('WorldService', () => {
     advance(2500);
     const m = world.message();
     expect(WorldMessageSchema.parse(m)).toEqual(m);
-    expect(m).toEqual({ t: 'world', season: 1, count: 500, edgeX: EDGE_X, tiers: [...world.state().tiers], serverTime: 300 * 86_400 + 2.5 });
+    expect(m).toEqual({
+      t: 'world',
+      season: 1,
+      // (the first season runs eight weeks from first boot, to the midnight after)
+      seasonStart: 300 * 86_400,
+      seasonEnd: 356 * 86_400,
+      opening: { from: null, edgeShiftLy: 0, dark: [] },
+      count: 500,
+      edgeX: EDGE_X,
+      tiers: [...world.state().tiers],
+      serverTime: 300 * 86_400 + 2.5,
+    });
     expect(m.serverTime).toBe(world.clock.now());
   });
 

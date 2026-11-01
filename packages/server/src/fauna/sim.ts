@@ -17,7 +17,10 @@
 // room. Past that, waiting cells load as room is made, nearest first.
 //
 // Players a shared-world entity cannot see (sealed in a bay, event or raid phase, §6.1) still wake cells (they see the
-// herds) but are nobody's prey, intruder or threat.
+// herds) but are nobody's prey, intruder or threat to the shared world's herds. A herd a phase has made its own (an
+// event's creatures, PhaseManager.adopt) lives apart in that phase: it notices the phase's members only (sealed or not)
+// and the phase's other creatures only, and the shared world's herds neither hunt it nor flee it. Its cell may sleep, but
+// never unloads while it holds such a herd (nor does the creature cap take it), since the phase decides when it goes.
 //
 // Night and dens (P1.E08.T03). At each scan the active cells also send out what night and their dens hold: at night
 // (the star below the cell's horizon, sky.ts) a cell may add its night herd of predators (herds.ts), and each den in an
@@ -31,6 +34,7 @@
 import { performance } from 'node:perf_hooks';
 import { addThreat } from '@astra/shared/combat';
 import { PACK_RULES } from '@astra/shared/data';
+import { isNight } from '@astra/shared/meters';
 import type { EntityField } from '@astra/shared/protocol';
 import {
   faunaSpecies,
@@ -67,7 +71,7 @@ import {
   type DenState,
 } from './dens.ts';
 import { animal, HERD_SPREAD_M, levelFor, offsetDir, planCellHerd, planNightHerd, tangents, type HerdPlan } from './herds.ts';
-import { isNight, starsAt } from './sky.ts';
+import { starsAt } from './sky.ts';
 import { groundOf, groundPlanner, type Ground, type GroundSource } from './terrain.ts';
 
 /** Players within this height above a world's ground keep herds about them, m (the demo's 1,500 m, which it measured
@@ -105,7 +109,7 @@ const MAX_DT = 0.25;
 export interface FaunaZone {
   readonly systemIndex: number;
   readonly system: SystemDescription;
-  readonly phases: { hiddenFromShared(id: number): boolean };
+  readonly phases: { hiddenFromShared(id: number): boolean; phaseOf(id: number): number | null };
   spawn(init: EntityInit): number;
   patch(id: number, set: Partial<EntityFields>, clear?: readonly EntityField[]): void;
   despawn(id: number): boolean;
@@ -308,8 +312,8 @@ class WorldFauna {
     }
     this.load(now);
 
-    const live = new Map<number, Creature>();
-    const herds: Herd[] = [];
+    // the shared world's herds (null), and each phase's own apart (see the header); a phase adopts a whole herd
+    const apart = new Map<number | null, { herds: Herd[]; creatures: Map<number, Creature> }>();
     for (const cell of this.cells.values()) {
       if (cell.state !== 'active') continue;
       for (const h of cell.herds) {
@@ -320,17 +324,23 @@ class WorldFauna {
           h.members.splice(i, 1);
           this.forget(m);
         }
-        herds.push(h);
-        for (const m of h.members) live.set(m.id, m);
+        const phase = h.members.length ? this.sim.zone.phases.phaseOf(h.members[0]!.id) : null;
+        let world = apart.get(phase);
+        if (!world) apart.set(phase, (world = { herds: [], creatures: new Map() }));
+        world.herds.push(h);
+        for (const m of h.members) world.creatures.set(m.id, m);
       }
     }
-    const ctx: Ctx = { dt, now, ground: this.ground, rng: this.sim.rng, players: new Map(players.map((p) => [p.id, p])), creatures: live };
-    for (const h of herds) {
-      herdTick(h, ctx);
-      for (const m of h.members) {
-        think(m, ctx);
-        move(m, ctx);
-        this.sync(m);
+    for (const [phase, world] of apart) {
+      const seen = phase === null ? players : players.flatMap((p) => (p.phase === phase ? [{ ...p, hidden: false }] : []));
+      const ctx: Ctx = { dt, now, ground: this.ground, rng: this.sim.rng, players: new Map(seen.map((p) => [p.id, p])), creatures: world.creatures };
+      for (const h of world.herds) {
+        herdTick(h, ctx);
+        for (const m of h.members) {
+          think(m, ctx);
+          move(m, ctx);
+          this.sync(m);
+        }
       }
     }
   }
@@ -399,6 +409,12 @@ class WorldFauna {
     if (this.ground!.cachedCells > this.cells.size + STRAY_CACHES) this.ground!.retain(this.cells);
   }
 
+  /** Whether a cell holds a herd a phase has made its own, which goes with the phase, not with the cell. */
+  private keeps(cell: Cell): boolean {
+    for (const h of cell.herds) for (const m of h.members) if (this.sim.zone.phases.phaseOf(m.id) !== null) return true;
+    return false;
+  }
+
   /** Whether the world may take one more cell, unloading its oldest asleep cell if it must. */
   private roomForCell(): boolean {
     if (this.cells.size < MAX_CELLS) return true;
@@ -406,11 +422,11 @@ class WorldFauna {
     return oldest !== null && this.unload(oldest);
   }
 
-  /** The cell asleep the longest (with creatures in it, if `withCreatures`), or null. */
+  /** The cell asleep the longest that may unload (with creatures in it, if `withCreatures`), or null. */
   oldestAsleep(withCreatures: boolean): Cell | null {
     let oldest: Cell | null = null;
     for (const c of this.cells.values()) {
-      if (c.state !== 'asleep' || (withCreatures && creaturesIn(c) === 0)) continue;
+      if (c.state !== 'asleep' || (withCreatures && creaturesIn(c) === 0) || this.keeps(c)) continue;
       if (!oldest || c.since < oldest.since) oldest = c;
     }
     return oldest;
@@ -457,10 +473,10 @@ class WorldFauna {
     return true;
   }
 
-  /** Despawns a cell's creatures and forgets it. False when it was not loaded. Its dens' occupants go with it (to come
-   * out again when it next loads), but their respawn timers stay. */
+  /** Despawns a cell's creatures and forgets it. False when it was not loaded, or holds a phase's herd. Its dens'
+   * occupants go with it (to come out again when it next loads), but their respawn timers stay. */
   unload(cell: Cell): boolean {
-    if (this.cells.get(cell.key) !== cell) return false;
+    if (this.cells.get(cell.key) !== cell || this.keeps(cell)) return false;
     for (const site of this.densByCell.get(cell.key) ?? []) {
       const st = this.sim.denState(this.body.index, site.index, false);
       if (!st) continue;
@@ -596,9 +612,9 @@ class WorldFauna {
     return !herd.members.some((m) => (site === undefined || m.species.index === site.den.species) && this.sim.zone.entity(m.id));
   }
 
-  /** Whether it is night at a surface direction (sky.ts), by the star at the last scan. */
+  /** Whether it is night at a surface direction (the meters' rule, sky.ts), by the star at the last scan. */
   nightAt(dir: Readonly<Vec3>): boolean {
-    return isNight(this.star, dir, this.ground!.radius);
+    return isNight(dir, this.star, this.ground!.radius);
   }
 
   /** Whether the zone has (or can make) room for `n` more creatures; once it has not, nothing more is tried this scan. */
@@ -815,7 +831,8 @@ export class FaunaSim {
       if (!(alt >= -SURFACE_DEPTH_M)) continue;
       let list = byBody.get(world.body.index);
       if (!list) byBody.set(world.body.index, (list = []));
-      list.push({ id, pos: [f.pos[0], f.pos[1], f.pos[2]], onFoot: f.mode === 'foot', hidden: this.zone.phases.hiddenFromShared(id) });
+      const { phases } = this.zone;
+      list.push({ id, pos: [f.pos[0], f.pos[1], f.pos[2]], onFoot: f.mode === 'foot', hidden: phases.hiddenFromShared(id), phase: phases.phaseOf(id) });
     }
     for (const index of byBody.keys()) if (!this.worlds.has(index)) this.world(index);
     for (const [index, w] of this.worlds) {

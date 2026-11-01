@@ -8,7 +8,7 @@
 import { userInfo } from 'node:os';
 import { DEFAULT_ADMIN_PORT } from '../admin/config.ts';
 import { ADMIN_HEALTH_PATH, ADMIN_PATH, AdminHealth } from '../admin/channel.ts';
-import { AdminError, AdminReply, parseCommand, USAGE, type AdminCommand } from '../admin/commands.ts';
+import { AdminError, AdminReply, CLEAR_NAME, parseCommand, USAGE, type AdminCommand } from '../admin/commands.ts';
 import type { AdminResult } from '../admin/service.ts';
 import type { Env } from '../config.ts';
 import { runDirect } from './direct.ts';
@@ -152,6 +152,8 @@ function splitOptions(argv: readonly string[]): { opts: Options; args: string[] 
     else if (a === '--direct') opts.direct = true;
     else if (a === '--force') opts.force = true;
     else if (a === '-h' || a === '--help') opts.help = true;
+    // (rename's argument, not an option of the CLI's)
+    else if (a === CLEAR_NAME && args[0] === 'rename') args.push(a);
     else if (a === '--url' || a === '--operator') {
       const v = argv[++i];
       if (v === undefined) return `${a} needs a value`;

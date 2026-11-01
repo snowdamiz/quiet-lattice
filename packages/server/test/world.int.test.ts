@@ -121,16 +121,32 @@ describe('world service', () => {
       s.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
       s.send({ t: 'join', characterId: character.id });
       await waitFor(() => s.received.some((m) => m.t === 'quests'), 5000, 'quests');
-      // `world` comes right after `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `recipes`
-      // (P1.E13.T05), `reputation` (P2.E18.T01), `party` (P1.E15.T01) and quest state (P1.E09.T01) follow, the last after
-      // the news that a new character is given First Jobs
-      expect(s.received.map((m) => m.t)).toEqual(['welcome', 'world', 'inventory', 'skills', 'recipes', 'reputation', 'party', 'event', 'event', 'quests']);
+      // `world` comes right after `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `meters`
+      // (P1.E07.T02), `abilities` (P1.E07.T03), `recipes` (P1.E13.T05), `reputation` (P2.E18.T01), season `awards`
+      // (P2.E22.T03), `party` (P1.E15.T01) and quest state (P1.E09.T01) follow, the last after the news that a new character
+      // is given First Jobs
+      expect(s.received.map((m) => m.t)).toEqual([
+        'welcome',
+        'world',
+        'inventory',
+        'skills',
+        'meters',
+        'abilities',
+        'recipes',
+        'reputation',
+        'awards',
+        'party',
+        'event',
+        'event',
+        'quests',
+      ]);
       const [welcome, world] = s.received.splice(0) as [
         Extract<(typeof s.received)[number], { t: 'welcome' }>,
         Extract<(typeof s.received)[number], { t: 'world' }>,
       ];
       expect(WorldMessageSchema.parse(world)).toEqual(world);
       expect(world).toMatchObject({ season: 1, count: 500, edgeX: EDGE_X, tiers: galaxyTiers(EDGE_X).map((t) => t.tier) });
+      expect(world).toMatchObject({ seasonStart: server.world.state().seasonStart, seasonEnd: server.world.state().seasonEnd, opening: { from: null } });
       expect(world.serverTime).toBeGreaterThanOrEqual(welcome.serverTime);
 
       // a socket that has signed in but joined no character is not told

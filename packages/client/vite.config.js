@@ -6,6 +6,7 @@ const server = process.env.ASTRA_SERVER || 'http://127.0.0.1:8787';
 const proxy = {
   '/auth': server,
   '/characters': server,
+  '/seasons': server,
   '/health': server,
   '/ws': { target: server.replace(/^http/, 'ws'), ws: true },
 };

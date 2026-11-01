@@ -13,8 +13,10 @@ import { PROTOCOL_VERSION, decodeServerMessage, decodeSnapshot, encodeClientMess
 import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
 import { CombatFeed } from './combat.js';
+import { Discoveries } from './discoveries.js';
 import { Reputation } from './reputation.js';
 import { SnapshotStore } from './snapshots.js';
+import { WorldEvents } from './worldEvents.js';
 
 /** Input goes out at 20 Hz (the zone's tick) of real time, however fast frames run. */
 export const INPUT_INTERVAL_MS = 50;
@@ -56,6 +58,8 @@ export class Net {
     this.welcome = null;
     this.world = null;
     this.refusal = null;
+    /** The character's season titles and glyphs (the server's `awards`, oldest season first): none until it says. */
+    this.awards = [];
     /** The player's entity in its zone, and the zone. */
     this.entityId = null;
     this.zone = null;
@@ -85,6 +89,10 @@ export class Net {
     this.combat = new CombatFeed(this);
     /** The call-for-aid beacons (beacons.js): the shard's list while watching, the character's own, and the requests. */
     this.beacons = new Beacons(this);
+    /** First finds (discoveries.js): the current system's, who found them and what they are called, and name requests. */
+    this.discoveries = new Discoveries(this);
+    /** World events (worldEvents.js): those the server told of, the player's standing in one, and what the HUD shows. */
+    this.worldEvents = new WorldEvents(this);
     /** The character's standing, ranks and titles as the server last sent them, and their news (reputation.js, §24). */
     this.reputation = new Reputation(this);
   }
@@ -93,7 +101,7 @@ export class Net {
     return this.state === 'joined';
   }
 
-  /** Listens for a server message type ('welcome', 'world', 'inventory', 'pong', 'refused', 'correction', 'zone', 'event'),
+  /** Listens for a server message type ('welcome', 'world', 'awards', 'inventory', 'pong', 'refused', 'correction', 'zone', 'event'),
    * a decoded 'snapshot', or the connection's 'state', 'lost' and 'closed'. Returns the unsubscribe. */
   on(type, fn) {
     let list = this.handlers.get(type);
@@ -214,6 +222,9 @@ export class Net {
         break;
       case 'world':
         this.world = m;
+        break;
+      case 'awards':
+        this.awards = m.awards;
         break;
       case 'refused':
         this.refusal = m;
