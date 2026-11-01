@@ -44,9 +44,12 @@ describe('skill service', () => {
     progress.set(ID, { level: 20, xp: 0, homeSystem: 0 });
     ships.set(ID, { ...DEFAULT_SHIP, hull: 'swift', modules: {} });
     expect(skills.view(ID)).toMatchObject({ level: 20, shipSlots: 3 });
+    expect(skills.shipSlots(ID)).toBe(3);
     expect(skills.points(ID)).toEqual({ fromLevels: 20, granted: 0, earned: 20, spent: 0, available: 20 });
     ships.set(ID, null);
     expect(skills.view(ID).shipSlots).toBe(0);
+    expect(skills.shipSlots(ID)).toBe(0);
+    expect(() => skills.shipSlots('nobody')).toThrow();
     // standing comes from its hook
     skills.hooks.meets = (_, r) => r.faction === 'reaches';
     expect(skills.view(ID).met).toEqual([{ kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' }]);
