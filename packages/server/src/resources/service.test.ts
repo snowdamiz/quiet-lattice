@@ -470,6 +470,21 @@ describe('mining hits', () => {
   });
 });
 
+describe('Hot Hands', () => {
+  it('alone breaks mineral deposits half again as fast and yields half again as much', () => {
+    const owned = new Map<string, string[]>();
+    const s = setup({ skills: { owned: (id) => owned.get(id) ?? [] } });
+    const a = s.player(deposit.stand);
+    owned.set(a.characterId, ['hot_hands']);
+    const type = nodeType(deposit.node.type);
+    expect(s.hit(a, deposit.id).hp).toBeCloseTo(1 - (0.25 * MULTITOOL_POWER * 1.5) / type.hp, 9);
+    let r;
+    while ((r = s.hit(a, deposit.id)).result === 'hit') s.clock.t += 0.25;
+    expect(r.count).toBeGreaterThanOrEqual(Math.round(type.yield[0] * 1.5));
+    expect(r.count).toBeLessThanOrEqual(Math.round(type.yield[1] * 1.5));
+  });
+});
+
 describe('Optical Drill', () => {
   it('yields half as much again from a deposit, and does not break it any faster (that is Hot Hands)', () => {
     const owned = new Map<string, string[]>();

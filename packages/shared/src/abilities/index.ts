@@ -4,6 +4,9 @@
 // client reads it to know what to send. A branch's task adds its abilities here as data and their effects on the server.
 import { getSkillNode, SKILL_NODES, type SkillNode } from '../data/index.ts';
 import { GROUND_SLOTS, SHIP_SLOTS, type Bar } from '../skills/index.ts';
+import { THERMAL_ABILITIES } from './thermal.ts';
+
+export * from './thermal.ts';
 
 /**
  * What a cast names besides its slot and aim:
@@ -29,8 +32,8 @@ export interface Ability {
   readonly toggle?: boolean;
 }
 
-/** The abilities this build casts, by node. Each branch's task adds its own (P1.E07.T04–T10). */
-export const ABILITIES: ReadonlyMap<string, Ability> = new Map<string, Ability>();
+/** The abilities this build casts, by node. Each branch's task adds its own list here (P1.E07.T04–T10). */
+export const ABILITIES: ReadonlyMap<string, Ability> = new Map<string, Ability>([...THERMAL_ABILITIES].map((a) => [a.node, a]));
 
 /** Seconds a slotted active's cooldown lasts, and the node whose clock it runs on (a shared cooldown is the other node's:
  * Crush's is Well's); null for a node with none. Once-a-world and once-a-day cooldowns (Attune, Unremembered: Tier III and
