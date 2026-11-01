@@ -9,15 +9,18 @@
 // - One damage path, `applyDamage(source, target, packet)`: the shared pipeline (`computeDamage`: resistances, the
 //   attacker's power, augments, what the target takes), level-scaled only when the source is a creature (DECISIONS
 //   P1.E06.T01), then health, threat (fauna's `hurt`, so a creature turns on whoever hurts it most, and grazers bolt), the
-//   damage each character did (for the kill's shares) and the event. Weapons (combat/service.ts), abilities (P1.E07.T03)
-//   and creature attacks (P1.E08.T02) all call it; nothing a client sends carries an amount.
+//   damage each character did (for the kill's shares), the hooks' `hit` (what each hit took: an event's contribution,
+//   events/service.ts) and the event. Weapons (combat/service.ts), abilities (P1.E07.T03) and creature attacks
+//   (P1.E08.T02) all call it; nothing a client sends carries an amount. An event instance scales its creatures' health
+//   with its players (`scaleHealth`, DESIGN 16.6).
 // - Death. A creature at 0 hp dies: fauna takes it out of its herd at once (its den's timers start), its entity stays a
 //   corpse (`hp` 0, mode `dead`) for DEATH_BEAT_S and is then despawned, and the hooks hear of the kill with the damage
 //   each character did (the service grants XP and loot by those shares). A player at 0 is down: it takes no more damage,
 //   fires no more, and the hooks hear of it (the Recall, P1.E06.T03, acts on it).
 // - Events. Each hit queues a `combat` event (several by one source on one target in a tick are summed into one); after
 //   each tick's snapshots, every session whose interest holds its target or its source is sent it, its own entity's
-//   first, at most EVENTS_PER_SESSION a tick; a tick queues at most EVENTS_PER_TICK.
+//   first, at most EVENTS_PER_SESSION a tick; a tick queues at most EVENTS_PER_TICK. A session is never named an entity its
+//   phase hides: a hit on one is not sent to it, and a hit by one is sent without its source.
 import { computeDamage, mobStats, modsOfNodes, playerMaxHealth, type DamageSource, type MobRef } from '@astra/shared/combat';
 import type { Resistance, StatMod } from '@astra/shared/data';
 import { encodeServerMessage, type EntityField, type GameEvent } from '@astra/shared/protocol';
@@ -87,6 +90,21 @@ export interface KillReport {
   at: number;
 }
 
+/** One hit as the hooks hear it (an event's contribution, events/service.ts): who dealt it, to what, and the health it
+ * took (a creature's counted up to the health it had left, as a kill's shares are). */
+export interface HitReport {
+  zone: string;
+  /** the attacker's entity, or null */
+  source: number | null;
+  /** the attacker's character, when a player dealt it */
+  attacker: string | null;
+  target: number;
+  /** the health the hit took */
+  dealt: number;
+  killed: boolean;
+  at: number;
+}
+
 /** A player gone down (its suit's health at 0 on foot, its ship's hull aboard): what the Recall (P1.E06.T03) acts on. */
 export interface DownedReport {
   zone: string;
@@ -100,6 +118,8 @@ export interface DownedReport {
 
 /** Who hears of what combat does: the gateway's combat service (grants, the in-combat clock, the Recall later). */
 export interface CombatHooks {
+  /** every hit that took health, before its kill or down is heard of */
+  hit?(report: HitReport): void;
   killed?(report: KillReport): void;
   downed?(report: DownedReport): void;
   /** a character dealt or took damage at world time `at` */
@@ -121,12 +141,16 @@ export interface CombatZone {
   viewers(): IterableIterator<[ZoneViewer, number]>;
   /** whether the session's interest set held the entity at the last tick */
   sees(viewer: ZoneViewer, id: number): boolean;
+  /** whether the session whose entity is `viewer` may see entity `id`, phases considered */
+  readonly phases: { canSee(viewer: number, id: number): boolean };
 }
 
 interface CreatureVitals {
   readonly kind: 'creature';
   hp: number;
-  readonly max: number;
+  max: number;
+  /** the factor its mob stats' health is scaled by (scaleHealth) */
+  scale: number;
   readonly level: number;
   readonly resistances: readonly Resistance[];
   readonly hollow: boolean;
@@ -142,13 +166,13 @@ interface PlayerVitals {
   readonly kind: 'player';
   readonly characterId: string | null;
   suit: number;
-  readonly suitMax: number;
+  suitMax: number;
   hull: number;
-  readonly hullMax: number;
+  hullMax: number;
   shield: number;
-  readonly shieldMax: number;
+  shieldMax: number;
   /** its own modifiers (Grey Blood's damage taken) */
-  readonly mods: readonly StatMod[];
+  mods: readonly StatMod[];
   down: DownedReport['cause'] | null;
   /** the hp and shield fractions last put on its entity */
   shown: { hp: number; shield: number | null } | null;
@@ -180,6 +204,8 @@ export interface CombatStats {
 export class ZoneCombat {
   private readonly vitals = new Map<number, Vitals>();
   private readonly profiles = new Map<number, CombatProfile>();
+  /** creatures whose health is scaled (an event's presence scaling) and are not hurt yet */
+  private readonly healthScales = new Map<number, number>();
   /** corpses and when each goes, in death order */
   private readonly corpses: { id: number; until: number }[] = [];
   /** this tick's events, by source, target and what dealt them */
@@ -196,10 +222,35 @@ export class ZoneCombat {
     this.profiles.set(entity, { characterId: profile.characterId, ship: profile.ship, skills: [...profile.skills] });
   }
 
+  /**
+   * A player's ship or nodes changed (a node bought or refunded, a respec, a hull swapped): its capacities are worked out
+   * again and each pool keeps its fraction, so a plate bought mid-flight is no repair, a plate refunded is no wound, and a
+   * refund then a rebuy gains nothing. A pool at 0 stays at 0: a downed player stays down.
+   */
+  retuned(entity: number, change: { ship: ShipLoadout | null; skills: readonly string[] }): void {
+    const p = this.profiles.get(entity);
+    if (!p) return;
+    this.profiles.set(entity, { ...p, ship: change.ship ?? p.ship, skills: [...change.skills] });
+    const v = this.vitals.get(entity);
+    if (v?.kind !== 'player') return;
+    const next = this.playerVitals(entity);
+    // (a pool that had no capacity, a ship that failed to load, starts full)
+    const keep = (now: number, was: number, max: number) => (was > 0 ? (now / was) * max : max);
+    v.suit = keep(v.suit, v.suitMax, next.suitMax);
+    v.hull = keep(v.hull, v.hullMax, next.hullMax);
+    v.shield = keep(v.shield, v.shieldMax, next.shieldMax);
+    v.suitMax = next.suitMax;
+    v.hullMax = next.hullMax;
+    v.shieldMax = next.shieldMax;
+    v.mods = next.mods;
+    if (this.zone.entity(entity)) this.show(entity, v);
+  }
+
   /** An entity left the zone (despawned): its health and corpse go with it. */
   removed(entity: number): void {
     this.vitals.delete(entity);
     this.profiles.delete(entity);
+    this.healthScales.delete(entity);
     const i = this.corpses.findIndex((c) => c.id === entity);
     if (i >= 0) this.corpses.splice(i, 1);
   }
@@ -212,6 +263,26 @@ export class ZoneCombat {
   /** What a player entered with (its ship and nodes), or undefined for an entity that is not a player's. */
   profileOf(entity: number): Readonly<CombatProfile> | undefined {
     return this.profiles.get(entity);
+  }
+
+  /**
+   * Scales a creature's health by `factor` (an event instance's presence scaling, DESIGN 16.6: its max and what it has
+   * left), however it has been hurt so far; one not hurt yet takes it when it is first. Nothing for an entity that is not
+   * a living creature.
+   */
+  scaleHealth(entity: number, factor: number): void {
+    if (!(Number.isFinite(factor) && factor > 0)) throw new RangeError(`a health scale must be positive, not ${factor}`);
+    const v = this.vitals.get(entity);
+    if (v?.kind === 'creature') {
+      if (v.dead) return;
+      const f = factor / v.scale;
+      v.max *= f;
+      v.hp *= f;
+      v.scale = factor;
+      this.zone.patch(entity, { hp: v.hp / v.max });
+      return;
+    }
+    if (!v && this.zone.entity(entity)?.fields.kind === 'mob') this.healthScales.set(entity, factor);
   }
 
   /** A creature's health and max (full until first hurt), or null for an entity that is not a living creature's. */
@@ -263,8 +334,9 @@ export class ZoneCombat {
     const attacker = source === null ? null : this.characterOf(source);
     let killed: boolean;
     let hp: number;
+    let dealt: number;
     if (v.kind === 'creature') {
-      const dealt = Math.min(amount, v.hp);
+      dealt = Math.min(amount, v.hp);
       v.hp -= dealt;
       if (attacker !== null && dealt > 0) v.by.set(attacker, (v.by.get(attacker) ?? 0) + dealt);
       if (source !== null && amount > 0) this.zone.fauna?.hurt(target, source, amount);
@@ -273,6 +345,7 @@ export class ZoneCombat {
       hp = v.hp / v.max;
       this.zone.patch(target, { hp });
     } else {
+      dealt = amount;
       hp = this.takePlayer(v, target, amount);
       killed = v.down !== null;
     }
@@ -281,6 +354,10 @@ export class ZoneCombat {
     if (hooks?.engaged) {
       if (attacker !== null) this.call(() => hooks.engaged!(attacker, now));
       if (v.kind === 'player' && v.characterId !== null) this.call(() => hooks.engaged!(v.characterId!, now));
+    }
+    if (hooks?.hit && dealt > 0) {
+      const report: HitReport = { zone: this.zone.id, source, attacker, target, dealt, killed, at: now };
+      this.call(() => hooks.hit!(report));
     }
     this.queueEvent(source, target, amount, packet, killed, hp);
     if (killed && v.kind === 'creature') this.die(target, v, attacker, now, hooks);
@@ -303,24 +380,28 @@ export class ZoneCombat {
     if (!this.queue.size) return;
     const events = [...this.queue.values()];
     this.queue.clear();
-    const texts: (string | null | undefined)[] = new Array(events.length);
-    const text = (i: number) => {
-      if (texts[i] === undefined) {
+    // (each event's text as is, and without its source for a session whose phase hides that)
+    const texts: (string | null | undefined)[] = new Array(events.length * 2);
+    const text = (i: number, anonymous: boolean) => {
+      const k = i * 2 + (anonymous ? 1 : 0);
+      if (texts[k] === undefined) {
         try {
-          texts[i] = encodeServerMessage({ t: 'event', event: events[i]! });
+          texts[k] = encodeServerMessage({ t: 'event', event: anonymous ? { ...events[i]!, source: null } : events[i]! });
         } catch (err) {
           // (a server bug: the event is dropped rather than the rest)
           this.opts.log?.warn({ zone: this.zone.id, event: events[i], err: String(err) }, 'combat event not sent');
-          texts[i] = null;
+          texts[k] = null;
         }
       }
-      return texts[i];
+      return texts[k];
     };
     for (const [viewer, own] of this.zone.viewers()) {
       if (!viewer.sendText) continue;
       let sent = 0;
       const send = (i: number) => {
-        const t = text(i);
+        const e = events[i]!;
+        if (!this.zone.phases.canSee(own, e.target)) return;
+        const t = text(i, e.source !== null && !this.zone.phases.canSee(own, e.source));
         if (t === null) return;
         if (sent >= EVENTS_PER_SESSION) {
           this.counts.eventsDropped++;
@@ -363,8 +444,24 @@ export class ZoneCombat {
       return null;
     }
     if (stats.health === null) return null;
-    const { health, level, resistances, hollow } = stats;
-    return { kind: 'creature', hp: health, max: health, level, resistances, hollow, ref, species: c.species, frame: c.frame, by: new Map(), dead: false };
+    const { level, resistances, hollow } = stats;
+    const scale = this.healthScales.get(id) ?? 1;
+    this.healthScales.delete(id);
+    const health = stats.health * scale;
+    return {
+      kind: 'creature',
+      hp: health,
+      max: health,
+      scale,
+      level,
+      resistances,
+      hollow,
+      ref,
+      species: c.species,
+      frame: c.frame,
+      by: new Map(),
+      dead: false,
+    };
   }
 
   private playerVitals(id: number): PlayerVitals {

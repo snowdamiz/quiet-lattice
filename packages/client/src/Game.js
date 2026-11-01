@@ -10,7 +10,7 @@ import { Weather } from './render/Weather.js';
 import { SpeedLines } from './render/SpeedLines.js';
 import { Lightning } from './render/Lightning.js';
 import { MAX_PLANETS } from './render/AtmospherePass.js';
-import { Ship, GEAR_HEIGHT } from './entities/Ship.js';
+import { Ship, GEAR_HEIGHT, characterMeterEnvironment } from './entities/Ship.js';
 import { Player } from './entities/Player.js';
 import { Multitool } from './entities/Multitool.js';
 import { Traffic } from './entities/Traffic.js';
@@ -19,8 +19,11 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
+import { EDGE_X, streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
+import { SUIT, footHazard } from '@astra/shared/data';
+import { cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
+import { meterConditions } from '@astra/shared/meters';
 import { AUTO_QUESTS, QuestBook, atInfo, getQuest } from '@astra/shared/quests';
 import { bondLine, codexLine } from '@astra/shared/codex';
 import { Asteroids } from './universe/Asteroids.js';
@@ -34,11 +37,14 @@ import { collectResources, disposeTree } from './core/dispose.js';
 import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
+import { Abilities, CAST_KEYS, castBar, castIntent, playAbilityFx } from './net/abilities.js';
 import { Crafting } from './net/crafting.js';
 import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
 import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
+import { Prediction } from './net/prediction.js';
+import { RemoteEntities } from './remote/RemoteEntities.js';
 
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -46,6 +52,7 @@ const _v3 = new THREE.Vector3();
 const _v4 = new THREE.Vector3();
 const _v5 = new THREE.Vector3();
 const _v6 = new THREE.Vector3();
+const _viewer = new THREE.Vector3();
 const _q1 = new THREE.Quaternion();
 const _c1 = new THREE.Color();
 const _m4 = new THREE.Matrix4();
@@ -109,6 +116,12 @@ export class Game {
     this.timeBase = 0;
     // the connection to the server, once a character is picked (enterWorld); none on the title or in the dev sandbox
     this.net = null;
+    // what the character owns and its people, as the server's skill view says: the exo-suit's walker, suit and scan follow it
+    this.build = { skills: [], people: undefined };
+    this.suitMods = suitMods(this.build);
+    // the action bars and their cooldowns as the server says, the casts keys 1–6 send, and the effects of those seen
+    this.abilities = new Abilities({ now: () => this.hud.now() });
+    this.abilities.listen((e) => playAbilityFx(this, e));
     this.camWorld = new THREE.Vector3();
     this.camWorldQuat = new THREE.Quaternion();
     this.camWorldQuatInv = new THREE.Quaternion();
@@ -142,6 +155,13 @@ export class Game {
     this.cities = new Cities(this);
     this.asteroids = new Asteroids(this);
     this.engine.scene.add(this.asteroids.group);
+    // other players and the server's ships, from the zone's snapshots (src/remote/)
+    this.remotes = new RemoteEntities(this);
+    this.engine.scene.add(this.remotes.group);
+    // what the player's inputs said, to rewind to and replay from when the server corrects one (P1.E04.T03)
+    this.prediction = new Prediction((id) => frameOfId(this.system, this.station, id));
+    // the bad network the connection runs through (dev builds' `?lag`, net/link.js), or none
+    this.netLink = null;
 
     this.weather = new Weather(this);
     this.objectives = new ObjectiveLine(this);
@@ -345,6 +365,20 @@ export class Game {
     this.startGame(true);
   }
 
+  // The exo-suit's numbers for what the character owns (DESIGN 9.8): the walker's speeds and tank, the suit's drain and
+  // cartridges, the scan's reach. The server holds the walker to the same ones (movement authority).
+  applyBuild() {
+    this.player.setBuild(this.build);
+    this.suitMods = suitMods(this.build);
+  }
+
+  // (the ship flies with the nodes the server says the pilot owns too: the Pilot branch's passives, DESIGN 9.7)
+  onSkills(view) {
+    this.build = { ...this.build, skills: view.state.bought };
+    this.applyBuild();
+    this.ship.setSkills(view.state.bought);
+  }
+
   // ---------- online: the server holds the character (DESIGN 17, docs/ARCHITECTURE.md §5, §9) ----------
 
   // Enters the world as one of the account's characters: Net signs in on the socket and joins, the welcome says where
@@ -355,16 +389,30 @@ export class Game {
     const old = this.net;
     this.net = null;
     old?.close();
-    const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
+    // (dev builds: through a bad network, when `?lag` asked for one)
+    const link = this.netLink ? { WebSocket: this.netLink.WebSocket } : {};
+    const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id, ...link }));
     net.input = () => this.inputSample();
+    this.remotes.attach(net);
+    // (a world event's banner names the world it is on)
+    net.worldEvents.worldName = (frame) => frameOfId(this.system, this.station, frame)?.name ?? null;
     this.inventory.send = (m) => net.send(m);
     this.crafting?.link(net);
+    this.abilities.link(net);
+    this.build = { skills: [], people: character.people };
+    this.applyBuild();
+    net.on('skills', (m) => this.onSkills(m.skills));
+    // chat, the party and the call-for-aid beacons (P1.E15.T03)
+    this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
-      // (each session numbers its quest and analysis requests from 1)
+      // (each session numbers its quest and analysis requests from 1, and its inputs)
       this.questSeq = 0;
       this.analyzeSeq = 0;
+      this.prediction.reset();
       this.onWelcome(m, first);
     });
+    net.on('input', (m) => this.prediction.record(m));
+    net.on('snapshot', () => this.checkPrediction());
     net.on('quests', (m) => this.onQuests(m));
     net.on('analyze', (m) => this.onAnalyze(m));
     // the cutscene link listens from the start: the server may start the first cutscene itself (a quest step's)
@@ -394,6 +442,8 @@ export class Game {
     if (net.everJoined) return this.leaveWorld(reason);
     this.net = null;
     this.inventory.send = null;
+    this.abilities.link(null);
+    this.hud.social.attach(null);
     onFail?.(reason, refusal?.code ?? null);
   }
 
@@ -439,6 +489,7 @@ export class Game {
     const ship = this.ship;
     const s = ship.state;
     const frame = frameOfId(this.system, this.station, pose.frame);
+    ship.blend.clear();
     this.cutscenes.stop();
     this.director.stop();
     this.cam.frame = undefined;
@@ -542,29 +593,67 @@ export class Game {
         boost: !foot && ship.boosting,
         jet: foot && this.player.jetting,
         sprint: foot && this.player.sprinting,
-        beam: foot && this.multitool.firing,
+        // (the button, not whether the beam fires: the server decides the lockout)
+        beam: foot && this.multitool.held,
         interact: inp.down('KeyE'),
         up: !foot && inp.down('Space'),
         down: !foot && inp.down('KeyC'),
       }),
+      // (where the eye looks, which a held beam follows on the server: Lance; the walker's own quaternion has no pitch)
+      ...(foot ? { aim: this.player.camQuat.toArray() } : {}),
     };
   }
 
-  // The server refused a predicted pose (movement authority) and says where the character is. Until prediction and
-  // reconciliation (P1.E04.T03) blend and replay, the client takes that pose, re-expressed in the frame it is in
-  // (DECISIONS P1.E03.T03: never adopt the server's frame).
+  // The server refused a predicted pose (movement authority, ARCHITECTURE §7), or an operator moved the character: it holds
+  // it at `pose` in `mode` as of input `seq`. The mover rewinds there and replays what the client did since
+  // (Prediction.take), in the frame it is in (DECISIONS P1.E03.T03: never adopt the server's frame), and is drawn there
+  // blended, or with the jump shown where it is larger than a blend could explain. A mode it cannot take in its stride (the
+  // server holding it set down, aboard as it got out or out as it boarded) places it as a welcome does; a correction to an
+  // input no longer kept is taken as it comes.
   onCorrection(m) {
     if (this.mode !== 'ship' && this.mode !== 'foot') return;
-    const frame = frameOfId(this.system, this.station, m.pose.frame);
-    if (frame === undefined) return;
     const foot = this.mode === 'foot';
-    const st = foot ? this.player.state : this.ship.state;
-    const keep = st.frame;
-    st.frame = frame;
-    localPoseInto(m.pose, st);
-    st.setFrame(keep);
-    if (foot) headingOf(st.quat, this.player.up(_v1), this.player.heading);
-    else this.ship.speed = Math.max(0, _v2.set(0, 0, -1).applyQuaternion(st.quat).dot(st.vel));
+    const ship = this.ship;
+    const mover = foot ? this.player : ship;
+    const st = mover.state;
+    const now = foot ? 'foot' : moveModeOf(this.mode, ship.mode, st.frame);
+    const flying = (mode) => mode === 'ship' || mode === 'pulse';
+    const stride = m.mode === now || (flying(m.mode) && flying(now));
+    if (!stride) {
+      this.prediction.corrected(this.net?.inputSeq ?? 0);
+      return this.placeFromServer(m.pose, m.mode);
+    }
+    const drawn = mover.drawnState();
+    _v1.copy(drawn.pos);
+    _v2.copy(drawn.vel);
+    _q1.copy(drawn.quat);
+    // (off the pulse drive the server still holds it on, the ship stays on its engines at its own speed)
+    const own = m.mode === 'pulse' && now !== 'pulse';
+    if (this.prediction.take(m.seq, m.pose, m.mode, st, this.time, own, now === 'pulse' && m.mode !== 'pulse')) {
+      if (!mover.blend.take(_v1, _q1, _v2, st)) this.cam.frame = undefined;
+    } else {
+      const frame = frameOfId(this.system, this.station, m.pose.frame);
+      if (frame === undefined) return;
+      const keep = st.frame;
+      st.frame = frame;
+      localPoseInto(m.pose, st);
+      st.setFrame(keep);
+      mover.blend.clear();
+      this.cam.frame = undefined;
+    }
+    this.prediction.corrected(this.net?.inputSeq ?? 0);
+    if (foot) return;
+    if (ship.mode === 'pulse' && m.mode !== 'pulse') ship.refusePulse();
+    ship.speed = Math.max(0, _v2.set(0, 0, -1).applyQuaternion(st.quat).dot(st.vel));
+  }
+
+  // Each snapshot says where the server holds the player's entity as of the last input it handled: a correction the client
+  // never heard (lost on the way) shows there, and is taken as if it had come.
+  checkPrediction() {
+    const net = this.net;
+    const e = net && (this.mode === 'ship' || this.mode === 'foot') ? net.store.entities.get(net.entityId) : undefined;
+    const unheard = e && this.prediction.check(net.store.ack, e);
+    if (unheard) this.onCorrection(unheard);
   }
 
   // Back to the title: the connection closes (the server saves the character as it goes) and the page starts afresh, so
@@ -652,12 +741,14 @@ export class Game {
     } else {
       this.ship.update(dt, inp, this.mode === 'ship' && inp.enabled);
       this.ship.state.setFrame(this.chooseFrame(this.ship.state));
+      this.ship.blend.step(dt, this.ship.state.frame);
       // watching a cutscene the player is out of play: no raid closes in, and the suit's hazards wait
       const watching = this.cutscenes.active;
       if (!watching) this.pirates.update(dt);
       if (this.mode === 'foot') {
         this.player.update(dt, inp);
         this.player.state.setFrame(this.chooseFrame(this.player.state));
+        this.player.blend.step(dt, this.player.state.frame);
         if (!watching) this.updateSurvival(dt);
       }
       // during a glide or a cutscene the views compute their own pose, and the director places the real camera
@@ -729,6 +820,14 @@ export class Game {
   }
 
   // ---------- gameplay interactions ----------
+  // Keys 1–6 cast the ground bar's actives on foot and 1–5 the ship bar's in flight, as many as the hull has slots
+  // (DESIGN 9.1); LMB stays the multitool's beam and the ship's guns. The server decides every cast (net/abilities.js).
+  castKeys() {
+    const bar = this.net?.joined ? castBar(this) : null;
+    if (!bar) return;
+    for (let i = 0; i < this.abilities.count(bar); i++) if (this.input.hit(CAST_KEYS[i])) this.abilities.cast(bar, i, castIntent(this, bar));
+  }
+
   handleInteractions() {
     const inp = this.input;
     const ship = this.ship;
@@ -746,7 +845,7 @@ export class Game {
         else if (low && ship.canLand()) prompt = '<kbd>E</kbd>Land';
         else if (low) prompt = '<kbd>S</kbd>Slow down to land';
         // (offered only where it will engage: out of the air and clear of anything close)
-        else if ((!ship.frame?.sampler || ship.altitude > 2500) && ship.atmoDensity <= 0.001 && ship.pulseLimit().dist >= 600) prompt = '<kbd>J</kbd>Pulse drive';
+        else if ((!ship.frame?.sampler || ship.altitude > 2500) && ship.atmoDensity <= 0.001 && ship.pulseLimit().dist >= 600 && ship.charge > 0) prompt = '<kbd>J</kbd>Pulse drive';
       } else if (ship.mode === 'pulse') {
         prompt = '<kbd>J</kbd>Disengage pulse';
       }
@@ -762,7 +861,7 @@ export class Game {
           if (p.state.pos.distanceTo(t.pos) < 3.2) {
             prompt = `<kbd>E</kbd>${t.label}`;
             // (the fabricator terminal opens the Waystation's fabricator; the others the trade panel)
-            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('station') : this.menus.openTrade(t.label);
+            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('waystation') : this.menus.openTrade(t.label);
           }
         }
       }
@@ -807,6 +906,7 @@ export class Game {
       }
       if (inp.hit('KeyC')) this.scan();
     }
+    this.castKeys();
     if (inp.hit('KeyM')) this.menus.openMap();
     if (inp.hit('KeyI')) this.menus.openInventory();
     if (inp.hit('KeyK')) this.openFabricator();
@@ -833,7 +933,7 @@ export class Game {
   openFabricator() {
     const ship = this.ship;
     let at = null;
-    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'station' : 'ship';
+    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'waystation' : 'ship';
     else if (this.mode === 'foot' && ship.state.frame === this.player.state.frame && this.player.state.pos.distanceTo(ship.state.pos) < 12) at = 'ship';
     if (at) return this.fabricator.open(at);
     this.hud.toast("No fabricator here: board the ship, or use a Waystation's terminal", 'warn');
@@ -892,8 +992,8 @@ export class Game {
     this.save();
     this.audio.play('dock');
     this.hud.showBanner(this.station.name.toUpperCase(), 'Docked');
-    if (this.ship.shield < 100) {
-      this.ship.shield = 100;
+    if (this.ship.shield < this.ship.stats.shieldMax) {
+      this.ship.shield = this.ship.stats.shieldMax;
       this.hud.toast('Shields recharged', 'good');
     }
   }
@@ -993,25 +1093,28 @@ export class Game {
   }
 
   // The server's answer to an analysis: a first one shows the species as the codex now holds it and the XP it earned, a
-  // known one says so, a refused one says why.
+  // known one says so, a refused one says why. The species goes by the name its first finder gave it, if it has one
+  // (DESIGN 14.5; net.discoveries), else by its procedural name.
   onAnalyze(m) {
     const s = m.species;
+    const name = s && (this.net?.discoveries.displayName('species', s.key, s.name) ?? s.name);
     if (m.result === 'new') {
       this.audio.play('discovery');
-      this.hud.showBanner(s.name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
-    } else if (m.result === 'known') this.hud.toast(`${s.name} · in your codex`);
+      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
+    } else if (m.result === 'known') this.hud.toast(`${name} · in your codex`);
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
   scan() {
     if (this.scanCooldown > this.time) return;
-    this.scanCooldown = this.time + 3;
+    this.scanCooldown = this.time + SUIT.scan.cooldownS;
     this.hud.scanPulse();
     this.audio.play('scan');
-    const found = this.flora.scan(this.player.state, 180);
+    const range = scanRanges(this.suitMods);
+    const found = this.flora.scan(this.player.state, range.depositM);
     this.scanMarkers = found.map((f) => ({ ...f, expires: this.time + 25 }));
     this.hud.toast(found.length ? `${found.length} deposits nearby` : 'Nothing nearby');
-    const { nearest } = this.structures.scanReveal(this.player.state.pos, 3000);
+    const { nearest } = this.structures.scanReveal(this.player.state.pos, range.siteM);
     if (nearest) {
       const km = nearest.d < 1000 ? `${nearest.d.toFixed(0)} m` : `${(nearest.d / 1000).toFixed(1)} km`;
       setTimeout(() => this.hud.toast(`${nearest.s.label} · ${km}`, 'good'), 900);
@@ -1027,23 +1130,19 @@ export class Game {
     const p = this.player;
     const f = p.state.frame;
     if (!f || f.kind === 'station') {
-      p.lifeSupport = Math.min(100, p.lifeSupport + dt * 5);
-      p.hazard = Math.min(100, p.hazard + dt * 10);
+      p.lifeSupport = Math.min(100, p.lifeSupport + dt * SUIT.stationRegenPerS.lifeSupport);
+      p.hazard = Math.min(100, p.hazard + dt * SUIT.stationRegenPerS.hazard);
       return;
     }
-    p.lifeSupport = Math.max(0, p.lifeSupport - dt * 0.35);
-    const type = f.params.type;
-    // (worlds hostile to ships are far worse on foot: protection lasts seconds, not minutes)
-    const FOOT = { heat: 9, pressure: 6, acid: 3, radiation: 3.5, storm: 1.5, cryo: 2.5 };
-    const hz = f.params.hazard;
+    p.lifeSupport = Math.max(0, p.lifeSupport - dt * SUIT.lifeSupportDrainPerS);
+    // (worlds hostile to ships are far worse on foot: protection lasts seconds, not minutes; a mild world's lowlands are
+    // breathable: only above its mist line does the air eat at the suit)
     const mist = f.params.mist;
-    // (a mild world's lowlands are breathable: only above its mist line does the air eat at the suit)
-    const harsh = mist
-      ? mistHazard(mist, p.state.pos.length() - f.radius).foot
-      : Math.max({ frozen: 1, desert: 1, toxic: 1.2, volcanic: 1.5, barren: 0.6, dead: 0.8 }[type] || 0, hz ? FOOT[hz.kind] * (hz.dps / 5) : 0);
-    const night = this.isDark ? 1.4 : 1;
-    if (harsh) p.hazard = Math.max(0, p.hazard - dt * harsh * night * 0.6);
-    else p.hazard = Math.min(100, p.hazard + dt * 2);
+    const harsh = footHazard(f.params.type, f.params.hazard ?? null, mist ? mistHazard(mist, p.state.pos.length() - f.radius).foot : null);
+    if (harsh) {
+      const env = characterMeterEnvironment(this);
+      p.hazard = Math.max(0, p.hazard - dt * hazardDrainPerS(harsh, env.time === 'night', this.suitMods, meterConditions(env)));
+    } else p.hazard = Math.min(100, p.hazard + dt * SUIT.hazardRegenPerS);
     for (const [key, label] of [['hazard', 'Hazard protection low'], ['lifeSupport', 'Life support low']]) {
       const low = p[key] < 30;
       if (low && !p[`_warned_${key}`]) {
@@ -1061,12 +1160,13 @@ export class Game {
       }
     } else p.health = Math.min(100, p.health + dt * 1.5);
     if (p.health <= 0) this.playerDied();
-    if (p.lifeSupport < 25 && this.inventory.take('oxygen', 10)) {
-      p.lifeSupport = Math.min(100, p.lifeSupport + 40);
+    const restore = cartridgeRestore(this.suitMods);
+    if (p.lifeSupport < SUIT.cartridge.below && this.inventory.take('oxygen', SUIT.cartridge.units)) {
+      p.lifeSupport = Math.min(100, p.lifeSupport + restore);
       this.hud.toast('Life support recharged', 'good');
     }
-    if (p.hazard < 25 && this.inventory.take('sodium', 10)) {
-      p.hazard = Math.min(100, p.hazard + 40);
+    if (p.hazard < SUIT.cartridge.below && this.inventory.take('sodium', SUIT.cartridge.units)) {
+      p.hazard = Math.min(100, p.hazard + restore);
       this.hud.toast('Hazard protection recharged', 'good');
     }
   }
@@ -1096,8 +1196,6 @@ export class Game {
       else if (f.isGas) lines.push('Warning: not landable');
       this.hud.showBanner(f.name.toUpperCase(), `${p.label}${f.kind === 'moon' ? ' Moon' : ' Planet'}`, lines);
       this.audio.play('discovery');
-      const reward = 250 + Math.floor(Math.random() * 400);
-      this.inventory.units += reward;
     }
   }
 
@@ -1154,6 +1252,12 @@ export class Game {
         for (const t of f.terminals) add('station', t.label, f.localToWorld(_v3.copy(t.pos).add(new THREE.Vector3(0, 2, 0)), new THREE.Vector3()));
       }
     }
+    // other pilots' ships, picked up by the same rule as any ship (src/remote/), each marked on its bounds on screen, its
+    // range the sensors' (from the ship, or the pilot on foot), not the camera's
+    const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(_viewer);
+    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat, id) =>
+      add('player', name, world, { box, quat, id, dist: world.distanceTo(viewer) }),
+    );
     return out;
   }
 
@@ -1244,6 +1348,7 @@ export class Game {
     this.pirates.syncVisual();
     this.ship.syncVisual(this.camWorld);
     this.ship.group.visible = true;
+    this.remotes.update(dt);
     this.flora.update(dt, current);
     this.fauna.update(dt, current);
     this.structures.update(dt, current);
@@ -1272,6 +1377,17 @@ export class Game {
     }
   }
 
+  // where the world service says the Edge stands (`world.edgeX`: the Count moves it); the default before the first
+  // `world` message
+  get edge() {
+    return this.net?.world?.edgeX ?? EDGE_X;
+  }
+
+  // whether the server says galaxy system `id`'s Waystation is dark (`world.dark`). (Not `isDark`: that is the night.)
+  stationDark(id) {
+    return !!this.net?.world?.dark.includes(id);
+  }
+
   // the sky from the camera's true galactic position
   updateSky() {
     const eye = this.universe.toLy(this.camWorld, _v4);
@@ -1282,6 +1398,7 @@ export class Game {
       vis: this.engine.atmoPass.uniforms.uStarVis.value,
       visited: this.system.info,
       starRel: this.universe.deep ? null : _v5.copy(sun.position).sub(this.camWorld),
+      edge: this.edge,
     });
     this.engine.scene.background = this.sky.texture;
     // (the image light follows the sky, but at most every few seconds: it costs a few ms)
@@ -1352,8 +1469,8 @@ export class Game {
     this.inventory.units -= loss;
     this.pirates.clear();
     this.placeShipNearStation();
-    this.ship.hull = 100;
-    this.ship.shield = 100;
+    this.ship.hull = this.ship.stats.hullMax;
+    this.ship.shield = this.ship.stats.shieldMax;
     this.ship.wind.set(0, 0, 0);
     this.hud.showBanner('SHIP DESTROYED', cause, [`Rebuilt at ${this.station.name} · -${loss} units`]);
     this.save();

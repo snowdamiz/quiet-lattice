@@ -16,8 +16,8 @@ function el(tag, cls, parent, html) {
 }
 
 const KEYS = [
-  ['Starship', [['Steer', ['Mouse']], ['Throttle up · down', ['W', 'S']], ['Roll · strafe when hovering', ['A', 'D']], ['Thrusters up · down', ['Space', 'C']], ['Boost', ['Shift']], ['Pulse drive', ['J']], ['Land · take off', ['E']], ['Exit ship', ['F']], ['Lasers', ['LMB']], ['Camera view', ['V']], ['Look back', ['B']]]],
-  ['On foot', [['Move', ['W', 'A', 'S', 'D']], ['Sprint', ['Shift']], ['Jump · jetpack', ['Space']], ['Mining beam', ['LMB']], ['Scanner pulse', ['C']], ['Interact · analyze', ['E']], ['Board ship', ['F']]]],
+  ['Starship', [['Steer', ['Mouse']], ['Throttle up · down', ['W', 'S']], ['Roll · strafe when hovering', ['A', 'D']], ['Thrusters up · down', ['Space', 'C']], ['Boost', ['Shift']], ['Pulse drive', ['J']], ['Land · take off', ['E']], ['Exit ship', ['F']], ['Lasers', ['LMB']], ['Ship abilities', ['1–5']], ['Camera view', ['V']], ['Look back', ['B']]]],
+  ['On foot', [['Move', ['W', 'A', 'S', 'D']], ['Sprint', ['Shift']], ['Jump · jetpack', ['Space']], ['Mining beam', ['LMB']], ['Abilities', ['1–6']], ['Scanner pulse', ['C']], ['Interact · analyze', ['E']], ['Board ship', ['F']]]],
   ['General', [['Inventory', ['I']], ['Navigation map', ['M']], ['Chat · a command', ['Enter', '/']], ['Next chat tab', ['Tab']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
 ];
 
@@ -30,29 +30,6 @@ function menuHTML(items) {
   return items
     .map(([act, label, cls = '', disabled = false], i) => `<button class="t-item ${cls}" data-act="${act}" ${disabled ? 'disabled' : ''}><i>${String(i + 1).padStart(2, '0')}</i><span>${label}</span><em>→</em></button>`)
     .join('');
-}
-
-const SHOP = [
-  { id: 'pulse', icon: 'PLS', name: 'Pulse Fuel', desc: 'Refill the pulse drive for long hops between planets.', price: 300 },
-  { id: 'shield', icon: 'SHD', name: 'Shield Recharge', desc: 'Restore the starship’s shields to full.', price: 200 },
-  { id: 'beam', icon: 'DRL', name: 'Optical Drill', desc: 'The mining beam extracts half as much again, and runs cooler.', price: 4500, once: true },
-  { id: 'jet', icon: 'JET', name: 'Efficient Jetpack', desc: 'Jetpack fuel lasts twice as long.', price: 3500, once: true },
-  { id: 'thrust', icon: 'THR', name: 'Photon Thrusters', desc: 'A quarter more top speed for the starship.', price: 6000, once: true },
-  // for hostile skies
-  { id: 'thermal', icon: 'THM', name: 'Thermal Plating', desc: 'The hull holds out three times longer in searing heat and cryogenic cold.', price: 6500, once: true },
-  { id: 'pressure', icon: 'PRS', name: 'Pressure Hull', desc: 'Three times longer under crushing atmospheres and in the depths of gas giants.', price: 8000, once: true },
-  { id: 'coating', icon: 'HAZ', name: 'Hazard Coating', desc: 'Shrugs off acid, radiation and storm damage three times longer.', price: 5500, once: true },
-];
-
-// the shop's starship upgrades are the Pilot nodes they became (DESIGN 9.7)
-const PILOT_NODES = { thrust: 'photon_thrusters', thermal: 'thermal_plating', pressure: 'pressure_hull', coating: 'hazard_coating' };
-
-// what a starship upgrade does: the ship flies with its node
-function applyUpgrade(game, id) {
-  const node = PILOT_NODES[id];
-  if (!node) return;
-  game.ship.skills.add(node);
-  game.ship.refreshStats();
 }
 
 // the trade panel always lists the demo's nine; the rest once some are carried
@@ -119,7 +96,6 @@ export class Menus {
   constructor(game) {
     this.game = game;
     this.root = el('div', 'menus', document.body);
-    this.bought = new Set();
     this.loadSettings();
     this.buildTitle();
     this.pauseHint = el('div', 'overlay pause-menu', this.root);
@@ -471,20 +447,13 @@ export class Menus {
       rows += `<div class="res-row ${n ? '' : 'empty'}">${resourceIcon(id)}<span>${r.name}</span><span class="num">${n}</span><span class="price">${r.price}u</span>
         <button class="btn ghost small" data-sell="${id}" ${n ? '' : 'disabled'}>Sell</button></div>`;
     }
-    let shop = '';
-    for (const it of SHOP) {
-      const owned = it.once && this.bought.has(it.id);
-      shop += `<div class="shop-item ${owned ? 'owned' : ''}" title="${it.desc}"><div class="ico">${it.icon}</div><h4>${it.name}</h4>
-        <div class="buy"><span>${owned ? 'Owned' : `⌬ ${it.price.toLocaleString()}`}</span><button class="btn small" data-buy="${it.id}" ${owned || inv.units < it.price ? 'disabled' : ''}>${owned ? '✓' : 'Buy'}</button></div></div>`;
-    }
-    this.trade.innerHTML = `<div class="panel frame">
+    this.trade.innerHTML = `<div class="panel frame" style="width:min(560px,94vw)">
       <div class="panel-head">
         <div><div class="label">${this.tradeLabel || 'Trade terminal'}</div><h2>${this.tradePlace || g.station.name}</h2></div>
         <div class="balance"><b class="u">${inv.units.toLocaleString()}</b><button class="close-x" data-close>✕</button></div>
       </div>
       <div class="trade-cols">
         <section><h4 class="mono col-title">Sell</h4>${rows}</section>
-        <section><h4 class="mono col-title">Buy</h4><div class="shop-grid">${shop}</div></section>
       </div>
     </div>`;
     this.trade.querySelectorAll('[data-sell]').forEach((b) =>
@@ -497,25 +466,7 @@ export class Menus {
         this.renderTrade();
       }),
     );
-    this.trade.querySelectorAll('[data-buy]').forEach((b) => b.addEventListener('click', () => this.buy(b.dataset.buy)));
     this.trade.querySelector('[data-close]').addEventListener('click', () => this.closeAll());
-  }
-
-  buy(id) {
-    const g = this.game;
-    const it = SHOP.find((s) => s.id === id);
-    if (g.inventory.units < it.price) return g.audio.play('error');
-    g.inventory.units -= it.price;
-    if (id === 'pulse') g.ship.pulseFuel = 100;
-    if (id === 'shield') g.ship.shield = 100;
-    if (id === 'beam') g.multitool.upgrade();
-    if (id === 'jet') g.player.jetEfficiency = 2;
-    applyUpgrade(g, id);
-    if (it.once) this.bought.add(id);
-    g.audio.play('sell');
-    g.hud.toast(`Purchased: ${it.name}`, 'good');
-    g.save();
-    this.renderTrade();
   }
 
   refreshTradeUnits() {

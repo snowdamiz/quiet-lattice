@@ -18,4 +18,6 @@ export * from './mobs.ts';
 export * from './bosses.ts';
 export * from './progression.ts';
 export * from './walker.ts';
+export * from './suit.ts';
 export * from './station.ts';
+export * from './names.ts';

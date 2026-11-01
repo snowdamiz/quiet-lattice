@@ -6,8 +6,8 @@
 // welcome, and a watch the server refused for its rate (an account is sent the whole list a few times at once, then once
 // every ten seconds) is asked again once it may succeed.
 //
-// The beacon panel belongs to the chat and party UI (P1.E15.T03). Until it lands this is reachable from the dev console
-// as `game.net.beacons`: `watch()`, `list()`, `answer(id)`, `raise()`, `lower()`, `own`, `refusal`.
+// The chat and party UI (ui/social, P1.E15.T03) shows it as the chat panel's beacon tab; from the dev console it is
+// `game.net.beacons`: `watch()`, `list()`, `answer(id)`, `raise()`, `lower()`, `own`, `refusal`.
 
 /** Beacon requests the server refuses with `denied` (of one of these). */
 const REQUESTS = new Set(['raise', 'lower', 'answer', 'watch']);

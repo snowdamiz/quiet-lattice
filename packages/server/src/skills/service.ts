@@ -174,6 +174,19 @@ export class SkillService {
     return this.entry(characterId).state.bought;
   }
 
+  /** Ship actives the hull it flies can slot (`view`'s `shipSlots` without the rest of the view). What the ability service asks
+   * every step, so it reads this and not `view`. */
+  shipSlots(characterId: string): number {
+    this.entry(characterId);
+    const ship = this.ships.get(characterId) ?? null;
+    return ship ? getHull(ship.hull).abilitySlots : 0;
+  }
+
+  /** What flies and what it flies with: the ship and the nodes owned now (what movement authority and combat re-tune to). */
+  flight(characterId: string): { ship: ShipLoadout | null; skills: readonly string[] } {
+    return { ship: this.ships.get(characterId) ?? null, skills: this.owned(characterId) };
+  }
+
   /** Its points: one per level, plus those granted, less those spent. */
   points(characterId: string): SkillPoints {
     return pointsOf(this.entry(characterId).state, this.level(characterId));
@@ -368,10 +381,9 @@ export class SkillService {
   }
 
   private context(characterId: string): SkillContext {
-    const ship = this.ships.get(characterId) ?? null;
     return {
       level: this.level(characterId),
-      shipSlots: ship ? getHull(ship.hull).abilitySlots : 0,
+      shipSlots: this.shipSlots(characterId),
       meets: (req) => this.hooks.meets(characterId, req),
       maxTier: this.maxTier,
     };

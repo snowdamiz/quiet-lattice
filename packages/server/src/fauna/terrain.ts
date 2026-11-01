@@ -240,6 +240,8 @@ export interface PlannerOptions {
   /** PLAN_TIMEOUT_MS and RETRY_MS, for tests */
   timeoutMs?: number;
   retryMs?: number;
+  /** the clock its back-offs run on, ms (performance.now by default); tests stand in one they step */
+  now?: () => number;
   /** the worker's script and its workerData: planner.worker.ts by default; tests stand in workers that misbehave */
   script?: URL;
   workerData?: unknown;
@@ -314,11 +316,13 @@ export class GroundPlanner implements GroundSource {
   private readonly log: { warn(obj: object, msg: string): void };
   private readonly timeoutMs: number;
   private readonly retryMs: number;
+  private readonly now: () => number;
 
   constructor(private readonly opts: PlannerOptions = {}) {
     this.log = opts.log ?? console;
     this.timeoutMs = opts.timeoutMs ?? PLAN_TIMEOUT_MS;
     this.retryMs = opts.retryMs ?? RETRY_MS;
+    this.now = opts.now ?? (() => performance.now());
   }
 
   ground(params: PlanetParams, tier = 0): Ground | null {
@@ -357,7 +361,7 @@ export class GroundPlanner implements GroundSource {
    * thread), and is now kept. */
   private ask(kind: PlanKind, params: PlanetParams, tier: number): boolean {
     const id = kind === 'ground' ? `ground:${idOf(params, tier)}` : `dens:${denIdOf(params, tier)}`;
-    if (this.pending.has(id) || performance.now() < (this.failures.get(id)?.until ?? -Infinity)) return false;
+    if (this.pending.has(id) || this.now() < (this.failures.get(id)?.until ?? -Infinity)) return false;
     if (this.onMainThread) {
       const reply = answer({ id, kind, params, tier });
       if (reply.error === undefined) return this.store(kind, params, tier, reply);
@@ -389,7 +393,7 @@ export class GroundPlanner implements GroundSource {
   /** A plan failed (it threw, or hung twice): the world waits out a backoff before it is tried again. */
   private failed(id: string, kind: PlanKind, error: string): void {
     const backoff = Math.min(RETRY_MAX_MS, (this.failures.get(id)?.backoff ?? this.retryMs / 2) * 2);
-    this.failures.set(id, { until: performance.now() + backoff, backoff });
+    this.failures.set(id, { until: this.now() + backoff, backoff });
     this.log.warn(
       { world: id, err: error, retryInS: Math.round(backoff / 100) / 10 },
       kind === 'ground'

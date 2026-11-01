@@ -382,6 +382,70 @@ describe('phases', () => {
   });
 });
 
+describe('a phase’s own herds (an event’s, adopted)', () => {
+  it('hunt the phase’s members only, take only its creatures as prey, and are neither fled nor hunted by the shared world', () => {
+    const w = faunaWorld({
+      tier: 3,
+      spawner: false,
+      want: (s) => s.some((x) => x.temperament === 'predator' && x.kind !== 'flyer') && s.some((x) => x.temperament === 'skittish' && x.kind !== 'flyer'),
+    });
+    const pred = w.species.find((x) => x.temperament === 'predator' && x.kind !== 'flyer')!;
+    const shy = w.species.find((x) => x.temperament === 'skittish' && x.kind !== 'flyer')!;
+    // the test's player is sealed in an event phase; someone in the shared world stands on foot within the hunter's senses
+    const phase = w.zone.phases.phaseFor(w.viewer, 'event', { key: 'fauna-test', frame: w.frame, center: w.at(0, 0), radius: 50 });
+    const out = w.zone.join(
+      { id: 2, sendBinary: () => {} },
+      { kind: 'player', frame: w.frame, pos: w.at(-40, 50), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' },
+    );
+    w.run(0.5);
+    const own = (ids: number[]) => {
+      for (const id of ids) w.zone.phases.adopt(phase.id, id);
+      return ids[0]!;
+    };
+    const hunter = own(w.spawn({ body: w.body.index, species: pred.index, at: w.at(-40, 0), count: 1 }).creatures);
+    const ownPrey = own(w.spawn({ body: w.body.index, species: shy.index, at: w.at(55, 0), count: 1 }).creatures);
+    // the shared world's: a grazer in the hunter's path, and a predator beside the phase's grazer
+    const grazer = w.spawn({ body: w.body.index, species: shy.index, at: w.at(-25, 0), count: 1 }).creatures[0]!;
+    const sharedHunter = w.spawn({ body: w.body.index, species: pred.index, at: w.at(70, 0), count: 1 }).creatures[0]!;
+    const of = (id: number) => w.zone.fauna!.creatures().find((x) => x.id === id)!;
+    const hunted = new Set<number | null>();
+    const sharedHunted = new Set<number | null>();
+    w.run(15, () => {
+      hunted.add(of(hunter).target);
+      sharedHunted.add(of(sharedHunter).target);
+      expect(of(grazer).state).not.toBe('flee');
+    });
+    expect(hunted).toContain(w.player);
+    expect(hunted).not.toContain(out);
+    expect(sharedHunted).not.toContain(ownPrey);
+    expect(sharedHunted).not.toContain(w.player);
+  });
+
+  it('keep their cell loaded while it sleeps, whatever the creature cap wants, until the phase lets them go', () => {
+    const w = lush(0, false);
+    const sp = w.species.find((x) => x.spawn === 'herd')!;
+    // (a volume the player stays inside while it is far enough off for the herd's cell to sleep)
+    const phase = w.zone.phases.phaseFor(w.viewer, 'event', { key: 'fauna-test', frame: w.frame, center: w.at(0, 0), radius: SLEEP_M * 8 });
+    const { creatures } = w.spawn({ body: w.body.index, species: sp.index, at: w.at(0, 0), count: 2 });
+    for (const id of creatures) w.zone.phases.adopt(phase.id, id, (x) => (w.zone.fauna!.kill(x), w.zone.despawn(x)));
+    w.movePlayer(w.at(SLEEP_M * 4, 0));
+    w.run(1);
+    // the cap passes the phase's cell by, though it has slept longer, for the shared world's asleep after it
+    const shared = w.spawn({ body: w.body.index, species: sp.index, at: w.at(-SLEEP_M * 2, 0), count: 2 }).creatures;
+    w.run(1);
+    expect(w.zone.fauna!.makeRoom(MAX_CREATURES - w.zone.fauna!.creatureCount + 1)).toBe(true);
+    expect(shared.map((id) => w.zone.fauna!.creature(id))).toEqual([null, null]);
+    w.run(UNLOAD_S + 5);
+    expect(w.zone.fauna!.cells(w.body.index).find((c) => c.creatures > 0)?.state).toBe('asleep');
+    expect(w.zone.fauna!.makeRoom(MAX_CREATURES)).toBe(false);
+    expect(creatures.map((id) => w.zone.fauna!.creature(id) !== null)).toEqual([true, true]);
+    w.zone.phases.close(phase.id);
+    w.run(1);
+    expect(living(w)).toEqual([]);
+    expect(w.zone.fauna!.cells(w.body.index).filter((c) => c.creatures > 0)).toEqual([]);
+  });
+});
+
 describe('ground planning', () => {
   it('waits for the world’s ground: no cells load until it is ready', () => {
     let ready = false;

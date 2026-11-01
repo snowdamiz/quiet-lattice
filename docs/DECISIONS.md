@@ -812,3 +812,350 @@ Format: task id, question → choice → why.
   comment in shared quests/engine.ts. → DESIGN 14.4's ranks and titles, server-held. Open: the skills component loads
   before reputation, so P2.E18.T03's Void gate must read reputation only once the character is in play; P1.E09.T01's 256
   `paid` records mean re-accepting an abandoned quest after 256 others re-pays its step reputation (a P1.E09 follow-up).
+- **P1.E15.T03** Chat and party UI with the beacon list (client `ui/social/*`, HUD, ARCHITECTURE §9 and §13) → the
+  chat panel is a bottom-left HUD overlay; the HUD stays up while it is open, Esc closes it and the mouse is freed for the
+  frame's and the beacon list's buttons. Enter or `/` opens, Enter sends and closes, Tab cycles shard, system, party and
+  beacons, Up and Down recall the last 20 sent lines; the Controls sheet lists the chat keys. Commands are only what the
+  server carries (`/s`, `/sys`, `/p` with long forms, `/invite`, `/kick`, `/promote`, `/leave`, `/accept` and `/decline`
+  for the newest invite when no name is given); `/help` and `//` (a literal slash) are client-side, and a line the
+  protocol would refuse is refused in the panel with a reason. The client runs the server's pace as a token bucket (5 at
+  once, then 1 a second), so a fast typist is told to slow down, text kept, before the server counts toward a mute; a
+  mute is held for its `retryS` with a countdown. The model keeps 200 lines, the open log shows 100, the closed feed 6;
+  feed lines rise in on their own plates and fade 10 s later or 4 s after the panel closes, drawn as text, never markup.
+  Each tab counts lines newer than the last it showed while open; a cleared badge collapses over 150 ms; PARTY clears out
+  of a party. Party health is the entity's `hp` in view, else the party state's tenths; the leader has an amber mark and
+  an absent member shows offline or the other system. An invite's minute runs on the client, at most 8 held (the server's
+  `busy`). The leader promotes and removes from the open frame; anyone invites by name or leaves; buttons share a fixed
+  column. The beacon list is watched all session from attach, re-asked after a reconnect and quietly after a rate
+  refusal, shows the newest 50 with the rest counted; a beacon refusal shows under its row, a chat or party refusal is a
+  log line in words. World markers hide under the social panels except hostiles and the player's own ship, and
+  `covers()` with no arguments returns those boxes for P1.E04.T02. Layout changes ease one box at a time on the HUD clock
+  in whole pixels. The two-client smoke now signs in through the P1.E04.T05 screens. → DESIGN's social UI on the
+  P1.E15.T01 server half. Merged after a fifth REVISE (4.14) under the owner's rule; the open motion notes are
+  P1.E15.T04.
+- **P1.E07.T02** Heat and Charge (shared `meters`, server `meters/*`, movement authority's `pulse_charge`, persistence
+  `meters`, protocol 15, ARCHITECTURE §19; client Multitool.js, Ship.js, HUD.js) → the server decides both meters: pure
+  shared rules (`stepMeters`, integrated segment by segment) run on both ends with the numbers in `METERS` data, and the
+  MeterService runs lazily from timestamps. Night is the star on or below the point's horizon, one shared `isNight` that
+  fauna uses too. The beam heats only in the believed mode `foot`, out of the lockout, at most 32/s of server time, and
+  goes idle 1 s after the last input; a mining hit counts only while `beamActive` and is paid through `takeBeam` (the
+  beam seconds since the last hit, capped). The gateway passes each input through `meters.claim` before the zone, so
+  movement authority's `allowsMode` reads Charge as of now, and calls `meters.input` once the zone accepted it; an empty
+  Charge refuses the pulse drive as rule `pulse_charge` and corrects to the prior mode, telling the session once.
+  Cruising on after Charge runs out is accepted for `MOVEMENT.pulse.chargeGraceS` (1 s) on the input's credited clock;
+  engaging gets no grace. The drive burns per accepted input for the client time movement authority credited it, never on
+  the server clock (without movement authority, the time since the last input, at most 1 s). The gateway locates the
+  character right after the zone join, and a stretch flown before the meters know the place is charged as near a body,
+  never free. Persistence: a `meters` component (v1, after `inventory`) stores `{heat, overheated, charge, at}`; heat
+  cools for the time away, Charge stays as left and regenerates only in play, an unreadable value gives cool and full
+  (logged). HUD: an opaque track inside a near-black halo, 4.5 px strokes, 150 ms fades, the Charge figure unplated in
+  the altitude's style on a solid ring; Charge stays lilac as an art bible §4 exception (teal is the shield's and the
+  jetpack's). Main reserved protocol 9 and §19 while the branch was open; it merged as protocol 15, the 9 line kept as a
+  pointer. The `#foot` captures wait for dry ground, every banner gone and the multitool raised. → DESIGN's heat and
+  Charge, server-held. Open: crafted pulse fuel cells and the Waystation's paid refill should call `refillCharge`
+  (P1.E13.T05 left the hook); `HUD.arc` snaps on jumps over 8% (P1.E07.T03 eases it); art bible §4 should list the
+  Charge rate's #E2D4FF and the HUD danger text #FF8A80; a fresh mover's late first input is still credited its arrival
+  gap (P1.E03.T04's finding).
+- **P2.E29.T01** First-finder naming (shared `discovery`, `data/names.ts`, server `discovery/*`, persistence `plates`,
+  migration 0004, protocol 16, ARCHITECTURE §25) → finds are per shard, keyed shard + kind + key. A species's first
+  analysis on the shard counts whether or not it is the character's first; a landing counts when the zone believes the
+  player `landed` or on `foot` on a planet or moon (not gas giants or the Waystation); a site counts within 30 m
+  (`SITE_REACH_M`) of its footprint's edge, in any mode, checked every 0.5 s. The finder alone may name it, once, within
+  600 s of world time (DESIGN is silent); after that it keeps its procedural name for good. Names: 3–24 characters with
+  at least 2 letters, Latin letters and digits with one space, apostrophe or hyphen between words; only letters the
+  filter can read (accented a–z plus ı ø ł đ ð ħ ŧ ſ ß æ œ þ ƀ ƚ ƶ, folded to plain letters before the checks; any other
+  letter is refused as `characters`); blocked fragments and words (with `foggot` for ø), reserved words and reserved
+  names (the game's, every people, capital and faction) in `data/names.ts`. Names need not be unique. A moderator's
+  `rename` skips only the reserved-name checks, and `--clear` keeps the procedural name for good and closes the window.
+  A finder's deleted character leaves the find and name (finder null). Payment is a per-character codex plate
+  `{kind, key, at}` (capped at 4,096; past it a find earns no plate and no XP), saved together with progress
+  (`writtenWith`) and added only once its 2000 XP was granted; every join pays any own find without a plate. Finds
+  learned while a system loads win over older rows. Name requests: 3 at once, then 1 every 5 s per character.
+  Integration tests run with first finds off unless they ask. The client shows names only in the species analysis
+  banner and the "in your codex" toast, holds only its current system's finds, and names from the dev console until
+  P2.E29.T03; the demo's 250–650 unit payout per discovery banner is deleted outright (a `gate:removed` rule), leaving
+  nothing for P1.E13.T04's discovery half to rebalance (site payouts in Structures.js stay with P1.E07.T11 and
+  P1.E13.T04). → DESIGN 14.5, server-held. Merged after a second review REVISE under the two-round limit: digit and
+  ligature stand-ins (9 or 6 for g, æ as a) and separator-split reserved words still pass, filed as P2.E29.T04.
+  P2.E29.T03 is amended to carry names to the landing banner, location line, map and site labels.
+- **P2.E21.T01** Event framework (server `events/*`, shared `events`, `PhaseManager.adopt`/`guard`, combat `hit` news
+  and `ZoneCombat.scaleHealth`, fauna phase herds, client `ui/banners.js`, protocol 17, ARCHITECTURE §26 with notes in
+  §6.1, §6.2, §21) → the one event shipped is the Hollow tide, a stand-in P2.E21.T03 replaces: Tier 5 only, hourly
+  windows staggered per system, 20 minutes announced 2 minutes ahead, a dry open place 600 m across on the system's first
+  world (body order) whose species include the enemies, drawn from the system seed, event and window; the world's own
+  predators and territorials in 5 waves of 3 (30 s after an instance opens, then 45 s after each clear); each player
+  paid 9000 XP, 1500 units, 4 Count residue and 25 Chorus standing (Chorus a choice). No occurrence opens with under
+  30 s left or in a zone without players; a window that began before the service did is skipped and logged (no
+  persistence: a restart loses the window's occurrence and contribution, paid rewards stay saved). Only the star system
+  hears of it. Level is members plus kept places (1–12), read at each wave: wave size ×(1 + 0.5(L−1)), health
+  ×(1 + 0.1(L−1)), herds of at most 5, a wave with no creature-cap room waits 2 s; instancing above 12. A wave is cleared
+  only when all of it is killed: a cell holding a phase's creatures never unloads (it may sleep) and the cap passes it
+  by. Contribution: damage 0.6, objectives 0.25, presence 0.15 (a kind nobody contributed drops out); under a quarter of
+  an even share is unpaid and does not count toward the pool; the pool is per-player rewards × players paid; an expired
+  instance pays for the fraction of waves cleared, split by damage. An instance completes or expires; the occurrence
+  reports `completed` only if every instance did. One instance per character per occurrence through `PhaseManager.guard`
+  for placement and beacons (a refused beacon answer is `full`); a character joins `paid` only when something was paid
+  or its instance was won, and never re-enters once paid. Players out of play at payout lose their rewards, as with kill
+  loot. Participation reputation goes through `ReputationService.grant` (reason `event:<id>`, not a counted Count act).
+  Adopted herds think in their phase (its members and creatures); shared-world herds ignore phase creatures. Each
+  placement sends `enter {place:'event:<id>'}`. Creatures do not fight back until P1.E08.T02. The banner reads
+  "World event · <world> · <state>" ("starting now" at 0, "in under a minute" below 30 s). The shared banner queue holds
+  each banner for `BANNER_MS` (7 s), the constant the CSS keyframes run on, keeps the band lit between consecutive
+  banners and releases it when none follows or the rest are stale; a banner is stale after three holds (21 s). The base
+  gun's targets pass a phase `canSee` filter. → DESIGN 14.6 and 16.6, server-held. Open: alts earn about 20–25% more
+  per damage in groups of 2–5; `worldEvents.js` builds item names with `replace`, not the resource table; a footprint
+  scrim instead of the full-width band for every banner; P1.E07.T03 reconciles the `fire` canSee filter with its
+  shared `creatureTargets` when it lands.
+- **P2.E29.T04** Name filter: digit and ligature stand-ins (shared `discovery`, `data/names.ts`) → 6 and 9 read as g
+  beside the other digit look-alikes; æ and œ are read both long (ae, oe) and short (a, o) by running the blocked and
+  reserved checks once per reading, all ligatures one way at a time (no listed word has two ligature slots); a letter is
+  accepted only if every reading of it is a–z, so the accepted set stays derived from the skeleton; reserved words are
+  checked over every run of neighbouring words joined, so "Ad min" and "Ad-min Rock" are refused (single letters can
+  join into a reserved word, e.g. "G M"; moderators rename the rare real case). → closes P2.E29.T01's second review.
+  Open (P2.E29.T05): blocked words split by a separator inside a longer name; the digit reading also makes "9M" read as
+  the reserved "gm"; v-for-u and ph-for-f stand-ins.
+- **P2.E22.T03** Seasons (shared `seasons`, server `seasons/*`, world service, count store, migration 0005, protocol 18,
+  ARCHITECTURE §27) → season 1 starts at the shard's first boot with the default eight weeks, ending on the meter midnight
+  after (it can run up to a day longer); every later season starts and ends on meter midnights, the first at or after
+  start + length, with the Count at 500. The bucket is read after the last day's drift and the midnight burn (that day's
+  roll belongs to the old season; the new season's first burn is at 04:48): Fed 700 and up, Held 300–699, Broken under
+  300. Length: four weeks if the mean daily actives of the 30 meter days before the start is under 100, else eight; a
+  daily active is an account that joined a character that meter day, counted once (a session spanning midnight is not
+  counted again; days the server was down count as zero); nothing recorded logins before, hence the `daily_actives`
+  table. The next map is only the Edge shift and the dark systems: Fed recedes the Edge 10 ly, Broken advances it 10 ly
+  and darkens 2–3 Edge-ward Tier-5 systems at the advanced Edge by `hashInts(galaxy seed, season)`, Held and the first
+  season keep the baseline; openings do not add up (each comes from the previous season only); the opening is data on
+  the shard row until P2.E22.T02 moves `edgeX`, and DESIGN 16.4's other bucket effects are left to their own systems,
+  which read `opening.from`. Winners are accounts whose own season lean, read like a day's lean, lands in the season's
+  bucket (Held's include accounts that fed and broke equally), with at least one full vote of weight; awards are per
+  account, carried by every character of it including later ones: the title (Seedbearer, Keeper of the Middle,
+  Anchorbreaker), earned once in the reputation through `earnTitle`, and the glyph `season_<n>_<bucket>` (the
+  philosophy's word in Cartographer signs ringed by the season numeral, worn on suit and hull; the art is the client's).
+  Awards live in `season_awards` and a `seasonAwards` component saved with the reputation (`writtenWith`). The season's
+  end, awards, chronicle and the shard row move land in one insert-if-absent transaction; a vote is stamped with the
+  clock reading the meter ran to; a join that read awards just before a season's end was written still receives that
+  award. A chronicle (meter path, bucket, winning philosophy, darkened systems, next opening, at most 64 finds) exists
+  only for a finished season, served at `GET /seasons/:season/chronicle` to any signed-in account. Migration 0005 is
+  chained after 0004 with a later journal time, so databases already at 0004 receive it. → DESIGN 16.4, server-held.
+  Open: no shard lease (two processes on one shard both write the season's end; P3.E37); a shard first booted over
+  eight weeks ago rolls its missed seasons with no meter play (dev databases only); `writeSeasonEnd` loads a season's
+  votes into memory (a SQL GROUP BY later); daily actives count joins, not presence; one save writing two season ends
+  gives a racing join only the later; `daily_actives` is never pruned; the chronicle's first finds wait for P2.E22.T05.
+- **P1.E15.T04** Chat and party UI motion follow-ups (client `ui/social/{motion,SocialUI}.js`, `style.css` social rules,
+  capture `screens.ts`, `capture.ts`) → the beacon thumb and edge fades blinked because the motion helper forgot where an
+  ease had landed, so each redraw re-eased from 0: it now keeps each value's rest point and writes nothing at rest; the
+  beacon list redraws only when its rows' text, the own beacon or a refusal changes; the thumb fades only when the list
+  starts or stops overflowing, checked every frame a move runs. A cleared badge keeps its face whole and gives up its
+  room through a negative margin while its opacity eases to zero over the same frames. The redraw runs in stages (front,
+  log, list, party, invites) under a 0.4 ms frame budget, a stage over it waiting a frame, so no frame passes 1 ms. Caps
+  tags and buttons use `--sc-caps` (0.88), meta lines `--sc-meta` (0.74). The party count appears after "Not in a party"
+  has gone. `.social-chat` and `.social-side` carry `contain: layout style`. Captures time `SocialUI.update` per captured
+  frame into `readout.txt`, listing frames over 1 ms. → closes P1.E15.T03's fifth grade. Open: the stage guard's "first
+  stage always runs" rests on `spent > 0`, which a finer timer (a cross-origin-isolated page) would break; the list
+  scrolls in whole pixels; the edge fades mask the scrollbar's end; the badge trims 1–3 px in its last frames.
+- **P2.E20.T01** Fabricator tiers and recipe items (shared `crafting`, `crafting/places.ts`, `data/recipes.ts`, server
+  `crafting/*`, combat kill path, protocol 19, ARCHITECTURE §23, DESIGN 15.7) → `craft {at}` names the fabricator class:
+  `waystation` (was `station`), `capital`, `sanctuary`, `scrapyard`, `ship`. `makesAt` gates each recipe by its
+  `fabricators` list and the class's top tier: the Waystation up to Tier 2 whatever the system's tier, a capital its own
+  line up to Tier 3 (no catalysts, no Scrapyard recipes), sanctuaries and the Scrapyard by line; no fabricator builds a
+  hull (the Husk is learnable, made in P3.E36.T02). A terminal is data: every zone has its Waystation's, and capitals
+  (`capital:<city>`), sanctuaries (`sanctuary:<name>`) and the Scrapyard register theirs with `crafting.places.register`
+  when those places exist; until then they are refused `place`. Docked use works within a place's `dockedReachM` (the
+  Waystation's 130 m reaches every pad; null means no docking). Every recipe source ends in a `recipe_<id>` item that
+  `learn` teaches for good: vendors and vaults call `CraftingService.award`, chains are quest `items`, and each listed
+  boss recipe rolls at 0.25 for each fighter who did damage (a duplicate stays a spare; no room means lost); no source
+  hands out recipe items in this build (no vendor, vault, chain or spawning boss yet). The `recipes` component is v2
+  `{table, known}` with `RECIPE_TABLE_VERSION` 1 and a fingerprint test that fails when the recipe ids change without a
+  version rise: a character saved under a newer table keeps every recipe (one warning) and the newer version is written
+  back; a recipe the same-version table lacks is dropped; a v1 row reads as table 0; clients get only this table's
+  recipes; a rollback to the P1.E13.T05 build refuses this build's characters rather than dropping recipes. DESIGN 15.7
+  now says the Phase 1 consumables are known from the start. → DESIGN 15.7, server-held. Open: place registration
+  compares `where` by identity and has no unregister; `award` does not check the recipe's `learnedFrom`; a boss recipe
+  drop with no room has no owed path.
+- **P2.E29.T05** Name filter: split blocked words (shared `discovery`, `data/names.ts`) → blocked words are checked over
+  every run of neighbouring words joined, as reserved words are ("Sh it Rock", "Co ck Rock", "Na zi Moon" refused);
+  the blocked lists also read v as u and `p+h+` as f, and a name is checked as written, with repeats run together, and
+  with runs of three or more cut to two ("Niggger", "Asss", "Phhuck" refused), the list entries never shrunk so "Pis"
+  and "Assen" pass. Reserved words read the digits 0 1 3 4 5 7 8 as letters in the word-run check but not 6 and 9, so
+  catalog names like "Outpost 9M" and "Kepler 9 M" are not read as the reserved "gm"; the whole-name reserved check
+  reads every digit, so "Ed9e" and "Ul9ani" stay reserved (a narrower departure from the task line, which asked for no
+  digit reading on reserved lists; keeping the rest keeps "Th3 C0unt" and "Adm1n" reserved). A sweep test over about
+  330 real place names, the 927 names the generator makes for seed 424242 and the 12 reserved names refuses nothing it
+  should pass; "Twatt" (repeats run together) and "John o' Groats" (two separators) stay refused, and single letters
+  can join into a blocked word ("Se X"); moderators rename the rare real case. → closes P2.E29.T04's review.
+- **P1.E07.T03** Ability runtime (server `abilities/*`, `combat/targets.ts`, combat zone events, gateway,
+  `@astra/shared/abilities`, protocol 20, client `net/abilities.js`, HUD, ARCHITECTURE §28) → a cast names node and slot
+  (so `not_owned` and `not_slotted` are told apart and a stale bar refuses). The server checks, cheapest first: seq,
+  rate (a burst of 6, then 3 a second), the clock stamp (±3 s), the believed mode picking the bar (foot for the ground
+  bar's 6 slots, flying for the hull's working ship slots, keys 1–5 per DESIGN 9.1; landed, docked and the pulse drive
+  cast nothing), not down, a working slot, ownership, the slot holding the node, an ability for it, its cooldown (shared
+  cooldowns run on the other node's clock), the aim's frame, then for an entity target the phase (a hidden target is
+  `unseen`, the same as none), its kind, alive, on the caster's world, in reach from the eye (1.6 m up on foot, the
+  ship's centre in flight) to its hit sphere plus 2 m, and line of sight; then the effect's own check; then the cost
+  (heat through `meters.addHeat`, refused only in the lockout, so a chunk reaching 100 overheats; Charge only if all of
+  it is there). Cooldowns live in memory per character for the server's run. Lance-like costs are toggles: on pays and
+  starts the cooldown, off is free and comes before the cooldown check; a toggle holds only while its caster's entity is
+  in play, in the bar's mode and up and its node owned and slotted on that bar, ends with the context that turned it on,
+  and the session is told whenever the server ends one. Effects get `creatures`, `damage` (the zone's one damage path,
+  with the caster's mods) and `after()` timers that outlive a handoff and going down and drop when the last connection
+  closes; an effect that throws leaves the cast paid and answered `cast`; no channels yet (none in Tier I–II).
+  `mayHarm` refuses players until P2.E17.T01 and anything in a safe zone (today the Waystation's frame, caster or target).
+  A cast or combat event names only the ids the viewer's phase shows. One hit sphere (`creatureSphere`: 0.6 × size ×
+  scale + 1 m) serves shots, casts and analysis, so analysis reach changes (heavy walkers lose up to about 1.4 m, small
+  creatures and flyers gain up to about 0.9 m, no longer matching the client's 0.9 × size aim pick); player cast
+  spheres are 1.5 m round a point 0.9 m up on foot and `MOVEMENT.shipRadiusM` in a ship; one `creatureTargets` with the
+  phase check serves gunfire and casts, so the base gun skips creatures its shooter's phase hides (a change to
+  P1.E06.T02). The shipped ability book is empty ("CANNOT CAST YET"); the test ability lives in tests only; the server
+  refuses to start if the book and data disagree. Wire bounds: 41 cooldowns, 11 toggles. The client picks the nearest
+  living accepted entity within 8° and reach + 3 m. HUD: a ring per slot (warm on foot, warm white in flight, lilac
+  only on the Charge arc and its cost chunk), countdowns in tenths under 10 s, names 12 px hidden at rest, a refused
+  cast's reason over its slot, a 200 ms ready beat, and every meter jump over 8% and every cast's cost eased over 250 ms
+  (reversing P1.E07.T02's land-at-once rule). `SocialUI.update` runs first in the HUD frame. → DESIGN 9.1's runtime;
+  the seven branches add data and effects. Open: phase-spawned creatures have no hit sphere for shots, casts or
+  analysis; VFX are the branches' and P1.E07.T14's; the client's pick skips the player's own entity (Regrow on self,
+  P1.E07.T07); `settle()` at the start of a cast is untested; `holds()` rebuilds the skill view every step for ship
+  toggles; the cost eases run about 185–200 ms and the flight ready beat about 70 ms.
+- **P2.E22.T05** First finds in the season chronicle (server `discovery/chronicle.ts`, `seasons/store.ts`, count store,
+  shard, `server.ts`, ARCHITECTURE §25 and §27) → a chronicle names the finds a finder named during the season
+  (`namedAt` in [start, end), by naming time, not find time), earliest first, as kind, name, the finder's character
+  name (kept after the character is deleted) and the time; only the finder's own names count (renamed, cleared and
+  never-named finds are out); "notable" is the earliest 64; the hook reads in the season-end transaction; a find failing
+  its schema is dropped with a warning instead of failing the meter's save, and the query reads 128 rows so a bad one
+  does not displace a good one; a later moderator rename does not change a written chronicle. → DESIGN 16.4's "who named
+  what". Open: no index for the query (32 ms at 200,000 finds, once per season end); a naming that commits just after
+  the chronicle's save is in neither season.
+- **P1.E16.T06** Load-proof timing tests (server test `pilot`, `steppedServer`, `movement.int`, `zone.bench`; `fauna/terrain`
+  and `server.ts` clock seams; smoke `online.ts` and `movement-online.spec.ts`) → tests that judge authority time drive
+  the clocks instead of wall time: a scripted pilot and a second test server share a stepped monotonic clock
+  (`StartOptions.clock`), and the pilot waits for the server's ack before each step, so load cannot skew client and
+  server time differently; the ground planner takes an injectable `now` for its back-off; the stall smoke spec runs
+  its own stepped server and freezes the page clock, driving the game's own rAF so its 0.066 s frame clamp still
+  guards; zones keep ticking on real time (stepping their clock would deadlock the ack wait). The bench prints the
+  load average beside every p95 and reports its budget checks as skipped above twice the CPU count
+  (`BENCH_MAX_LOAD` overrides), while corrections and other non-budget failures still fail at any load. Production
+  behaviour is unchanged (both seams default to today's clocks). Each rewritten test passed 20 runs in a row beside two
+  parallel `pnpm test` runs and still fails when its rule is broken. → keeps the merge gate honest on a loaded
+  machine. Open: a SKIP exits 0 like a PASS; the stall spec carries on silently when its ack deadline runs out;
+  smoke's `online.ts` hard-codes Redis index 7 (harmless while nothing reads Redis); the persistence and events timing
+  flakes are not covered yet.
+- **P1.E04.T02** Remote entities (client `remote/*`: `RemoteEntities`, `RemoteShips`, `buffer`, `clock`, `frames`,
+  `markers`, `replay`; HUD pilot markers, `Game.js`, ARCHITECTURE §9) → followed kinds: players and `ship` entities,
+  never the player's own; creatures, NPCs, props, loot and pods wait for their tasks; players on foot are hidden with no
+  stand-in until P1.E05.T04. Render time is world time less the trip (least lag of the last 40 snapshots) and 100 ms,
+  never going back, easing 0.9–1.1×, jumping forward only. Pose times: a moving entity's samples are retimed from its
+  motion, at most 0.15 s after or 0.1 s before the tick's time. Between and past samples: cubic Hermite where positions
+  and velocities agree, else lines; extrapolation along velocity for 250 ms, then hold. A sample 1 km or 0.3 s of speed
+  off, or a change between on foot and not, is a cut. Frame changes re-express held samples with both frames at their
+  own times, the leftover an offset decaying critically damped over 0.2 s (over 2 km or 1.2 s of speed it shows as a
+  jump; a teleport into a frame is a cut). Disconnected ships hold their last pose. A hull draws with its own model or
+  one of its tier only (only the Lark has one), so a hull with neither is neither drawn nor marked. Every hull draws
+  livery 0 until snapshots carry livery. Three LODs by length on screen (240/60 px, 15% hysteresis); the coarsest is one
+  welded two-sided shell (the Lark's 3.2%) with averaged livery colour, no plating, glow, lights, exhaust or shadow, gear
+  legs only. Engines and gear follow each ship's motion as the local ship's do; lights full within 40 m, 15% by 150 m,
+  under the bloom threshold, dropped at the coarsest LOD. Pilot marks come from client-side sensor detection (range ×
+  the hull's signature, doubled boosting or pulsing, halved in cover, held at 1.05× for 0.5 s), so once Cloak, Silent
+  Running or Veil land the server must withhold hidden ships from snapshots; ranges are measured from your own ship. A
+  name hides above 1,200 px/s of mark travel and returns after 150 ms of room. A mark on the keep-out (the fixed HUD,
+  the social panels through `social.covers()`, and the ability bar when it is up) slides round it at up to 600 px/s and
+  is never dropped. → DESIGN 10.1, 19.2. Merged after a fifth visual REVISE (4.14) under the owner's rule; the open
+  notes are P1.E04.T06. Open: a 57 px mark jump as a mark comes out from behind the compass; no scene yet puts a mark
+  near the ability bar, so that keep-out is untested in captures.
+- **P1.E07.T05** Thermal I–II (shared and server `abilities/thermal.ts`, `abilities/statuses.ts`, CastContext, meters
+  `beamTime`/`dumpHeat`, `ShipStats.reentryDamage`, client input `aim`, ARCHITECTURE §28) → DESIGN 9.3 gives no damage
+  numbers, so: Lance (a toggle on the multitool beam, no heat beyond the beam's 32/s) deals 12 per second of the
+  meters' beam time every 0.25 s to the nearest creature on the look ray within 30 m and in sight, culled round the
+  eye now (reach 30 + 2 + 8 for Chain); it follows the last on-foot `input.aim` unvalidated, which gains accuracy only
+  (the gun's precedent: damage is bounded by beam time, range, sight and one target; P2.E17.T01's turn-rate rule must
+  also bound the on-foot look once Lance reaches players). Chain gives half of each tick to the nearest other creature
+  within 8 m of the first's centre, no sight check on the arc. Flare bursts 18 on every creature in its 60° 12 m cone
+  and in sight and burns 6/s for 4 s; Sear is a mob-only entity cast at 30 m, refused `target` before payment if the
+  creature may not be harmed, burning 5/s for 8 s with no blow; Vent deals 0.6 per heat dumped (60 at 100, 75 with
+  Tempered Core) within 10 m and in sight, refused in the lockout; Flare and Vent are refused `busy` while the ground
+  plans. Burns are a per-caster status ticking every 0.5 s: a re-ignition extends to the later end at the greater
+  power and never stacks; a generation token keeps one loop per status; a refused tick, death or the phase rule ends a
+  burn for good; burns continue while the caster is down and are dropped with its statuses when it leaves play. Damage
+  reads the caster's nodes live and requires the phase rule. New context capabilities, general for every branch:
+  `time`, `owns`, `pose`, `sight` ('busy' while planning), `groundReady`, `canHarm`, `creatures(reach, at)`,
+  `meters.beamTime`/`dumpHeat`, and `status` apply/get/active/remove/dropCaster. Passives: Tempered Core (capacity
+  125), Focused Lasers (×1.3, 2200 m), Hot Hands (×1.5 yield, faster breaking), Ablative Plating (heat hazard ÷3; its
+  re-entry half has no consumer until P1.E06.T07). `SkillService.shipSlots` gives the runtime's hold check a narrow
+  read, and `settle()` at a cast's start has its race test. → DESIGN 9.3, server-held. Open: no client visuals
+  (P1.E07.T14); no wire event for a burn; Flare does not interrupt bite swarms yet (P1.E08.T02).
+- **P1.E07.T10** Exo-suit I–II (shared `exosuit/*`, `data/suit.ts`; server movement authority, zones, gateway; client
+  Game.js survival, Player.js, Menus.js, Multitool.js) → all nine passives at DESIGN 9.8's numbers, the demo's suit
+  numbers moved into a shared `SUIT` table (`suitMods`, `hazardDrainPerS`, `cartridgeRestore`, `scanRanges`). Life
+  support and hazard protection stay on the client as in the demo, only their numbers moved: a departure from 0.3 until
+  P1.E06.T06 (Suit meters on the server) lands; the server holds Sprint Stride's cap and Optical Drill's yield. "Night"
+  for Cold Blood and the ×1.4 hazard drain is the star below the horizon (`isNight`, from sunset, not the dusk band),
+  replacing `Game.isDark` (daylight < 0.3); "day" for Heat Shroud is the star above the horizon at the walker. Cold
+  Blood and Heat Shroud zero the whole on-foot drain on their worlds, the world's ship hazard included; Hazard Weave's
+  ×0.6 applies after the ×1.4, to every source including mist. Cartridge Recycler adds 20 to both refills (40 → 60);
+  the trigger (below 25) and cost (10 units) are unchanged. Optical Drill raises yield only (×1.5, ×2.25 with Hot
+  Hands). Scanner Lens raises only the site range (3 km → 6 km); deposits stay 180 m. Efficient Jetpack doubles the
+  tank's seconds, regen unchanged, client-only feel (the server does not model the tank); Long Jump leaves the server's
+  walker caps alone (the jet's 14 m/s climb covers a 7 m/s jump). The Ulgani's no-drain on toxic and corrosive worlds
+  and the Thalune's swim speed now reach the client; Sprint Stride also raises Thalune swim. Movement authority
+  re-reads the owned nodes at join and on every skills change (`Zone.reskill`), effective from the next input; the 1 s
+  speed window is judged at the current cap (a buy allows ~2 m retroactively). The demo shop's Optical Drill and
+  Efficient Jetpack rows and `Multitool.upgrade()` deleted; `SHOP` and `applyUpgrade` left for P1.E07.T09. Merge of
+  main: the Hot Hands and Optical Drill tests both kept (different skills; the combined ×2.25 case sits in the skill-web
+  test). Open: combat keeps join-time skills until P1.E06.T05; the join path's owned skills untested (P1.E06.T05's join
+  test); an in-session zone handoff (P1.E04.T04) must carry the current owned nodes; the client never uses the
+  oxygen or sodium cartridge items, and its refills change only the client's copy (P1.E06.T06).
+- **P1.E07.T09** Pilot I–II (`@astra/shared/data/skills/pilot.ts`, `ships/stats.ts`, `ships/environment.ts`, server
+  `combat/zone.ts`, `sim/movement/authority.ts`, `zones/*`, `gateway/ws.ts`, client `Ship.js`, `Game.js`, `Menus.js`,
+  ARCHITECTURE §7, §19, §20) → Throttle Tuning ×1.1 and Photon Thrusters ×1.25 multiply (×1.375, 825 m/s on the
+  Lark); Shield and Hull 125 are ×1.25 of each hull's own (as under P1.E02.T07). Soft Landing: the server refuses a
+  ship coming to rest faster than `landingSpeedMax × FLIGHT_TOLERANCE.factor` (rule `landing_speed`), judging the
+  larger of the reported speed and the step's displacement, only for steps over 0.02 s; the client gates the start of
+  a landing. The platings divide damage in the shared `hazardDamagePerS`, which only the client ticks, so hazard hull
+  damage stays the client's until P1.E06.T07. Shield Recharge is deleted with no replacement: the dock refill restores
+  shields and the server heals nothing; the trade terminal only sells now (follow-up for P1.E13.T03). One live
+  re-tune path, replacing P1.E07.T10's `reskill`: one gateway subscription on every skills notification
+  (`SkillService.flight` → `ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune` + `ZoneCombat.retuned`);
+  on a `LoadoutError` the ship keeps its numbers and a warning is logged. The join carries `SkillService.flight` (ship
+  and owned nodes). `SkillService.shipSlots` is a narrow read for the toggles' hold check, and `context()` reads it,
+  not the other way round (the merge's stack overflow). The SHOP list and `applyUpgrade` deleted. Client: `Game.onSkills`
+  is the only listener and calls `ship.setSkills`, which keeps each pool's fraction like the server; the dock refill and
+  `shipDestroyed` read `stats.shieldMax`/`hullMax`. Open: the HUD and cockpit bars still divide by 100 (folded into
+  P1.E04.T06); a hull swap carries each pool's fraction, and the live re-tune's hull argument is tested only on the
+  Lark (both folded into P1.E12.T05).
+- **P1.E06.T05** Combat follows the build (`combat/zone.ts`, `zones/*`, `gateway/ws.ts`, tests; delivered on P1.E07.T09's
+  branch) → the done line's `Zone.reskill` is `Zone.retune`. `ZoneCombat.retuned` swaps the profile's ship and skills
+  and recomputes the suit, hull and shield maxima and the damage mods on every skills change, each pool keeping its
+  fraction: a pool at 0 stays 0 and the player stays down, a refund never kills, refund then rebuy gains nothing
+  (replacing T09's "damage taken stays" and the floor of 1); a pool whose old maximum was 0 starts full. Vitals are
+  rewritten in place, no longer cached for good; a player never hurt gets full vitals at the current maxima when first
+  hit. Hollowed is not a combat mod (its flag is aggro and nothing reads it yet), so the damage-mod tests use Grey
+  Blood; whoever wires Hollowed reads the live owned nodes. Over the wire, a mid-fight respec of the plating takes the
+  hull maximum 125 → 100 and the next hit lands on the new maximum; Dense Bones and Grey Blood are unit-tested on
+  `retuned`. The join test with Sprint Stride owned is P1.E07.T10's `exosuit.int.test.ts` on `flight`, plus two Pilot
+  join tests (four nodes; a stored Swift hull). A mid-fight respec is not blocked: the fraction rule makes it neither a
+  heal nor a wound.
+- **P2.E22.T02** The Edge moves (shared `seasons/edge.ts`, `seasons/rules.ts`, `world/tiers.ts`, `protocol/messages.ts`
+  (protocol 21), server `world/service.ts`, client `Game.js`, `ui/map/GalaxyMap.js`, `EdgeOfSpace.js`,
+  `render/UniverseSky.js`, `ui/style.css`, ARCHITECTURE §11) → the Count moves the Edge not at all from 300 to 700 and
+  in a straight line to ±10 ly at 0 and 1,000, never jumping; the shifts add (Edge = default + the opening's shift + the
+  Count's), so a Broken-opened season at Count 0 has the Edge 20 ly in. Tier jumps: DESIGN's "the next shell steps up a
+  tier" is read as the fringe line moving in (at 10 ly in, systems 33 and 56 go Tier 3 → 5; at 20 ly, seven do); on
+  the high side Tier 5 drops to 4. Dark stations: the opening's set, plus below 300 the systems the Count itself pushed
+  Edge-ward, those on the fringe at `edgeAt(count, opening)` but not at `edgeAt(300, opening)` (measured from the
+  season's middle Edge, not the default); the Count's own relight bit by bit as the fringe moves back out, all by 300,
+  with no hysteresis; the opening's relight at 700 and go dark again if the Count falls back below 700 in the same
+  season. Chorus sanctuaries (B- and E-class stars, "any tier, safe", DESIGN 11) never go dark, though their tiers
+  still flip, and a Broken opening's `darkSystems` never draws one, so it still opens 2–3 dark (at seed 424242 most of
+  the fringe is B or E class; the baseline season at Count 0 has 1 dark, system 3). The server sends `dark` in the
+  `world` message (protocol 21) and the client reads `net.world.dark` (one copy; `game.world` dropped); the Edge, tiers
+  and dark set are never saved and are recomputed on every boot; `world.update()` takes only `{count}`. The station
+  query is `Game.stationDark(id)`, apart from the per-frame night boolean `isDark`. The drawn wall moves 20,000 ly for
+  each light year the Edge moves. The map: the "The Edge" label on a dark plate (pale-blue bar; lilac is Charge's),
+  easing between anchors; each dark system marked with a seam-light ring that fades in and out over about 0.4 s and
+  flickers 40–60%, its name in #9FE8DA ahead of its neighbours'; the info panel's "Waystation: Dark" row and a "Shift"
+  row ("Advanced 20 ly", "Receded 10 ly", "At its default") in place of "Expansion 0.0000 c"; the Edge tooltip shows
+  "Count n / 1000" to everyone (overlaps P2.E22.T04 and Edge Sense). The sky: its wall wears the art bible's Edge
+  palette (opal crests; a sky-only `uSky` flag) while the map keeps its own look; an Edge-only change redraws one cube
+  face a frame into a back buffer with the membrane's churn held at the last full draw. Open: the client builds a
+  system at the default Edge's tier until P1.E04.T04, and persistence `components.ts` and `quests/world.ts` read the
+  default-Edge tier; the drawn wall can stand up to 400,000 ly past a ship near it, unclamped; the smoke hands the
+  client a world message rather than having the server send three Counts.
+- **P1.E04.T03** Prediction and reconciliation (client `net/prediction.js`, `net/link.js`, `main.js` (the dev-only link wiring), `Ship.js`, `Player.js`, `Game.js` `onCorrection`/`checkPrediction`, `Net` 'input', `entities/pulseExit.test.js`; smoke `prediction-online.spec.ts`, `tools/src/smoke/online.ts` (`sql()`), `server/test/steppedServer.ts` (`/thaw`); ARCHITECTURE §9) → local/server error is the distance between the server's snapshot pose at its `ack` and the pose the client sent for that input, in the same frame; 100 ms latency and 2% loss are 100 ms each way (200 ms round trip) and messages dropped each way from the welcome on (a real WebSocket never drops; loss there shows as delay). What reconciles: the `correction` message, plus a snapshot whose pose for the sent `ack` is over 0.5 m off in the same frame (a lost correction); inputs sent before the last correction was taken, and poses the server holds in another frame (the sphere edge, P1.E04.T07), are not compared. History 64 inputs; lost-correction match distance 0.5 m, or a pulse/no-pulse mismatch. The rewind re-bases position and velocity on the server's pose; a refused mode is carried on at the server's velocity, or the ship's own speed once off the drive; a correction that takes the ship off the drive carries on at the server's velocity whatever mode the input was sent in; a ship's turning is replayed in its own axes; a walker keeps its own look (reversing P1.E03.T03). A correction for an input at or before the fence (a repeat, one held past the server's grace, an operator teleport just after one) is never re-based on what that input sent: the server's pose is carried on at the mover's own velocity from that input's time (the server's where it refused the mode that input was sent in), orientation kept; exact only at constant velocity (up to about 200 m off at the engines' 160 m/s² past the 1 s grace; P1.E04.T07). The fence and the correction count move only once a correction is taken, after the frame check. Modes the client can't follow, or an input no longer kept, are placed as at a welcome or taken as they come; a ship-mode correction while on the pulse drive drops the drive. Physics moves at once and a render-only Blend (critically damped, τ = 0.125 s, the chase camera's own rate) covers the move; past max(10 m, 0.5 s × speed) it snaps and the chase camera resets. An input is sent at the pulse drop-out, because authority judges the engines' first pose from the drive's last (`pulseExit.test.js` pins it; the flight e2e drops out two frames after an input so it fails without it). The link conditioner is dev builds only (`?lag=&loss=&seed=`, gated on `import.meta.env.DEV`). Server authority unchanged; honest clients get no corrections under 100 ms latency and 2% loss.

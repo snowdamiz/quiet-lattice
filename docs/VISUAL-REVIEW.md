@@ -185,6 +185,7 @@ line-jump and skip clips were added after the verdict in `assets/renders/ui/cuts
 | 2 | REVISE | hierarchy 4, fit 5, motion 4, theme 4, correctness 3, spec 5, performance 5 | 4.29 |
 | 3 | REVISE | hierarchy 3, fit 4, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 | 4 | REVISE | hierarchy 3, fit 5, motion 4, theme 4, correctness 4, spec 5, performance 5 | 4.29 |
+| 5 | PASS | hierarchy 5, fit 5, motion 5, theme 4, correctness 5, spec 5, performance 5 | 4.86 |
 
 Round 1: OVERHEAT and the Charge rate under 4.5:1 over bright ground; the heat arc drew full at any level (the fill now
 follows heat ÷ capacity). Round 2: the Charge arc swept up from empty, red, on the ship HUD's first frames (now set at
@@ -199,6 +200,13 @@ limb (2.3:1 against its halo, 1.2:1 against the limb) and the grey CHARGE label 
 the lockout's red fill against the empty track at about 2.9:1 (under 3:1 for non-text UI). Requested: an idle cool-down
 clip from about 30 heat to 0. **Escalated to the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
 
+Round 5 (2026-10-31, the owner's rule: one more grade, then merge), on the tree merged with main: PASS. The Charge rate
+sits on a solid 2 px ring at 13.5:1 over the limb, the CHARGE label is 11.7:1, the lockout red is 3.6–3.9:1 against its
+darkened track, and the idle cool-down drains and fades out with no pop. Minor: the rate's #E2D4FF and the text red
+#FF8A80 are not in art bible §4; `HUD.arc` snaps on any jump over 8% (an ability's heat chunk or a Waystation refill
+would pop; P1.E07.T03 eases it); `hud-ship-board` stills show the ship before its reticle; the empty Charge track is
+1.85:1 against its halo (the red readout carries the state). Artifacts: `assets/renders/ui/hud-{foot,foot-cool,foot-exit,ship,ship-board}/`.
+
 ## P1.E04.T02 Remote entities (in-engine scene)
 
 Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's own art is P1.E12.T02's.
@@ -209,6 +217,7 @@ Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's o
 | 2 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 3 | 3.57 |
 | 3 | REVISE | legibility 3, hud-fit 4, motion 3, palette 4, correctness 3, spec 4, performance 5 | 3.71 |
 | 4 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 5 | 3.86 |
+| 5 | REVISE | legibility 4, hud-fit 4, motion 4, palette 4, correctness 4, spec 4, performance 5 | 4.14 |
 
 Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
 of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
@@ -233,6 +242,15 @@ crosshair, five diamonds for 24 docked ships, the ship dead ahead on the pads), 
 or swap label sides. Requested: a debug overlay of sensor detection per ship. **Escalated to the owner after four REVISE
 rounds (plan 0.5); marked `[!]`.**
 
+Round 5 (2026-10-31, the owner's rule: one more grade, then merge): every criterion at 4 or above, and every round-4
+note fixed: the coarsest LOD holds a solid silhouette past 190 m, every ship in plain view keeps a diamond (the Lark
+through the crosshair, the pad Lark, the bay), markers keep their sides, and the requested sensor overlay shows every
+pilot detected, so earlier gaps were screen logic. Still under the 4.5 mean: labels all one weight from 10 m to 4 km;
+up to 20 marks at once; a fading label left behind its moving diamond and fades of 80–130 ms ending in a snap; the
+diamond stroke at about 70% of the teal; far names drawn over a nearer hull; no capture of a withheld or boosting
+signature. Merged under the rule; the notes are P1.E04.T06. Performance: the remote layer 0.21–0.5 ms CPU, +9–18.5
+draw calls, coarsest LOD 3.2% of LOD0. Artifacts: `assets/renders/ui/remote-ships*/`.
+
 ## P1.E05.T01 Skeleton and three base bodies (art)
 
 Graded per people with the "Models and environments" table, each file as a family of ten variants.
@@ -242,6 +260,12 @@ Graded per people with the "Models and environments" table, each file as a famil
 | 1 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 2, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.2 |
 | 1 | Ixari | REVISE | design 3, silhouette 3, proportion 3, materials 2, detail 2, topology 4, consistency 4, fitness 3, placeholder 2, performance 4 | 3.0 |
 | 1 | Ulgani | REVISE | design 2, silhouette 3, proportion 4, materials 2, detail 2, topology 3, consistency 4, fitness 3, placeholder 2, performance 4 | 2.9 |
+| 2 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.3 |
+| 2 | Ixari | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.5 |
+| 2 | Ulgani | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 4, placeholder 3, performance 4 | 3.4 |
+| 3 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.3 |
+| 3 | Ixari | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.5 |
+| 3 | Ulgani | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 4, placeholder 3, performance 4 | 3.5 |
 
 Round 1, common to all three: mascot faces (a fixed smile, goggle or button-ring eyes, no nose, lips or brow); smooth
 mannequin bodies without anatomical landmarks; suits from primitives (torus bands, rounded boxes, straight rods) that
@@ -250,6 +274,25 @@ only by small cards, unreadable past 10 m; uniform-noise skin; in-engine materia
 chrome, crystal as white plastic, Ulgani toe bleed); uniform remeshed LOD0 with no loops at the face or joints; blinks
 that bulge instead of closing; L/R shape pairs missing; Ulgani feet 3.9 cm above the ground. Artifacts:
 `assets/renders/characters/`, `assets/renders/review/characters/`.
+
+Round 2 (2026-10-31, at 5fa9b38e, from the KTX2 + meshopt exports; the review camera had framed the feet of quantized
+skinned bodies until this round): faces are no longer mascots (Ixari and Ulgani lidded, Thalune neutral slit), blinks
+close, L/R pairs exist, heights and feet are fixed, the Ixari and Thalune suits speak their languages, crests reach
+20–38 cm. Still failing on all three: the six heads share one skull and differ only above the scalp; bodies below the
+neck are mannequins with few landmarks; suits lack seams, weave, padding and wear; nothing breaks the outline at 100 m
+except colour. Per people: Ixari's suit crystal is a flat regular hex array and its skin reads navy at noon; Thalune's
+eyes bulge past the skull, its nacre bakes as metal (black at noon and night), its blink is a translucent bubble and its
+neck folds; Ulgani's lattice is straight tubes over a unitard with torus rings, white flank cards and toe bleed. The
+in-engine wireframe pass draws a mis-posed copy of each body, so LOD0 loops could not be checked in-engine. Verdicts in
+full: `~/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e05t01_r2_*.md`. Artifacts as in round 1.
+
+Round 3 (2026-10-31, at dc3463b9): the wireframe now draws on the posed body; the black Ulgani crest and Thalune
+nacre at noon were baked occlusion and are fixed; Ulgani's suits are chitin lattices over bare skin; Ixari's tiles are
+raised and tinted. Scores stalled (3.3, 3.5, 3.5). Still failing on all three: no anatomy below the neck, heads that
+differ only above the scalp, skin that shifts colour between the lighting cases, nothing breaking the outline at 100 m
+but colour, and toes that regressed into torn shards. Per people: Thalune's eyes still bulge and its hands are not
+webbed; Ixari's crystal is one reused straight shaft; Ulgani has no pore pits and its fronds repeat. Round 4 is a
+focused pass on the notes repeated across rounds 2 and 3.
 
 ## P1.E04.T05 Login and character screens (UI)
 
@@ -286,6 +329,7 @@ Round 4: PASS. Artifacts: `assets/renders/ui/{title,login-error,register,charact
 | 2 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 | 3 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 | 4 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
+| 5 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 5 | 4.14 |
 
 Round 1: layout changes jump in one frame while the fades are eased (the feed stack on a new line, the feed swapped
 and shifted 16 px as the panel opens, the invite card and party frame resizing on accept, a beacon refusal pushing rows
@@ -307,6 +351,14 @@ unread badge vanishes and the tabs to its right jump about 22 px in one frame, a
 the beacon list's scrollbar appears at full opacity in one frame. Minor: a repeated mute line, a refusal's wrap without
 a hanging indent, "Not in a party" beside a PARTY tab with unread, shorter health bars on leader rows. **Escalated to
 the owner after four REVISE rounds (plan 0.5); marked `[!]`.**
+
+Round 5 (2026-10-31, the owner's rule: one more grade, then merge): the tabs now slide over 6 frames when a badge clears,
+the prompt label cross-fades, and all four minor notes are fixed. Still failing motion: an overflowing beacon list drops
+its scrollbar thumb (about 175 to 55) and its bottom-edge fade in one frame on every redraw, then eases them back over 6
+frames, so they blink every 8 to 15 frames (`beacons/_frames` 048→049, `beacons-many/_frames` 017→018 and on); the
+cleared badge itself is clipped away in two frames at full brightness. Minor: `party-invite/21x9.png` caught mid-fade;
+the beacon scroll crawls 13 frames at a 1 px floor; the smallest caps tags sit at 4.4–4.6:1; no frame-time readout.
+Merged under the rule; the notes are P1.E15.T04. Artifacts: `assets/renders/ui/{social,social-space,social-tabs,party,party-invite,beacons,beacons-many}/`.
 
 ## P1.E13.T05 Basic fabricator (UI)
 
@@ -342,6 +394,10 @@ Graded per hull with the "Models and environments" table, each file as a family 
 | 1 | Swift | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.4 |
 | 1 | Kestrel | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 3, placeholder 3, performance 4 | 3.5 |
 | 1 | Mule | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 3, placeholder 4, performance 4 | 3.5 |
+| 2 | Lark | REVISE | design 4, silhouette 5, proportion 4, materials 3, detail 4, topology 4, consistency 5, fitness 4, placeholder 4, performance 4 | 4.1 |
+| 2 | Swift | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 4, placeholder 3, performance 4 | 3.4 |
+| 2 | Kestrel | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 4, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.8 |
+| 2 | Mule | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 4, topology 4, consistency 4, fitness 3, placeholder 4, performance 4 | 3.8 |
 
 Round 1, common to all four: wear as uniform noise rather than placed by use; damaged variants indistinguishable from
 the base at gameplay range; LOD0 budgets spent on uniform tessellation of flat plates rather than modelled detail
@@ -351,3 +407,75 @@ grid and misses the calibration's draw-call ask (65 against ≤12); the Swift re
 Kestrel's lattice reads as stick-and-tissue rather than grown chitin; the Mule's form passes (design and silhouette 4)
 but its liveries are swamped by nacre and it lacks BAY_* empties. Artifacts: `assets/renders/{lark,swift,kestrel,mule}_*`,
 `assets/renders/review/hulls/`.
+
+## P2.E21.T01 Event framework (banner announcement)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 5, fit 4, motion 3, theme 5, correctness 5, spec 5, performance 5 | 4.57 |
+| 2 | PASS | hierarchy 5, fit 4, motion 5, theme 5, correctness 4, spec 5, performance 5 | 4.71 |
+
+Round 1: the clip was clean, but the shared banner queue let the next banner start at 6.2 s while the 7 s fade still
+ran, so a queued banner vanished in one frame and the band restarted, which a login during an event always hits; the
+eyebrow named no place; "in a minute" under 30 s. Round 2, with the requested `event-banner-queued` hand-off: the band
+holds 19.7–20.6 across the hand-off, the largest band step is 3.7 grey levels, nothing pops; title 12.5–15.7:1, eyebrow
+7.7–9.3:1. Minor: a third banner within 2 s was dropped as stale (fixed after the grade: the cutoff is three holds); the
+full-width band stays heavier than the HUD language (a footprint scrim later, for all banners). Artifacts:
+`assets/renders/ui/event-banner{,-night,-queued}/`.
+
+## P1.E15.T04 Chat and party UI motion follow-ups
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 4, correctness 4, spec 5, performance 4 | 4.00 |
+| 2 | PASS | hierarchy 4, fit 4, motion 5, theme 4, correctness 5, spec 5, performance 5 | 4.57 |
+
+Round 1: the scrollbar blink, the scroll crawl, the tag contrast and the mid-fade still were fixed; the cleared badge
+still vanished in two frames (its close squeezed the face before the gap). Round 2: the badge fades whole (opacity 0.96
+to 0.07 over 018–023 while the next tab slides), overflow fades start with the overflow, the party count waits for the
+old line, meta lines 5.7–6.3:1, worst frames 0.7–1.0 ms; the requested `beacons-rest` shows no redraw at rest with
+OFFLINE, LEAD and KICK. Minor: whole-pixel scroll steps; edge fades over the scrollbar's end; 1–3 px badge trim;
+party-invite's worst frame at exactly 1.0 ms. Artifacts: `assets/renders/ui/{beacons,beacons-many,beacons-rest,social-tabs,party-invite}/`.
+
+## P1.E07.T03 Ability runtime (ability bar and eased meter costs)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 3, correctness 4, spec 5, performance 4 | 3.86 |
+| 2 | PASS | hierarchy 5, fit 5, motion 5, theme 5, correctness 5, spec 5, performance 5 | 5.00 |
+
+Round 1: the cast flare went white for one frame; small heat chunks skipped the arc's ease, so the cost moved 2 px;
+flight rings and timers in Charge lilac broke art bible §4; the refusal plate sat 480 px from its slot on the gun grip.
+Round 2: the flare and cost ease together, every cost eases onto its arc drawn brighter, the flight bar is warm white,
+the plate sits over its slot, names hide at rest, ready beats show, and the HUD stays under 1 ms; the requested 21:9
+cost clip is in `hud-abilities-cost`. Minor: the cost eases run about 185–200 ms (asked 250); the flight ready beat
+is about 70 ms; long flight names nearly touch at 1920. Artifacts: `assets/renders/ui/hud-abilities{,-flight,-cost}/`.
+
+Round 2 of P1.E12.T02 (2026-10-31; the Lark, Mule and Kestrel at 3413edb7, the Swift at 72d2df4b): the Lark's shell
+and silhouette now read (silhouette and consistency 5), the Kestrel's members curve and fuse like grown bone, the
+Mule's dome and aft plate are clean and its damage reads at 100 m. Still failing on all four: wear as noise instead of
+placed by use, 1024 bakes against the 4096 hero target, LOD2 maps not baked from LOD0, more than 12 draws, and
+blockout cockpits, hardpoints or boarding paths. Per hull: the Lark's clean white hull and unscorched damage; the
+Mule's colliders miss the pod, dome and aft plate and its strobe sits on the medium hardpoint; the Kestrel's uniform
+crackle, tech stipple and box cockpit; the Swift still reads as a jet, with a material mosaic, whole-face emissive and
+liveries that barely change it (its open-space GPU reading of about 7 ms came from a shared GPU and is to be
+re-measured). Round 3 dispatched with the four verdicts.
+
+## P2.E22.T02 The Edge moves (galaxy map, sky, dark stations)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 3, HUD fit 4, motion 3, palette 3, correctness 4, spec 3, performance 4 | 3.43 |
+| 2 | REVISE | hierarchy 4, HUD fit 5, motion 4, palette 4, correctness 4, spec 5, performance 5 | 4.43 |
+| 3 | PASS | hierarchy 5, HUD fit 5, motion 4, palette 4, correctness 4, spec 5, performance 5 | 4.57 |
+
+Round 1: the map label sat on the wall's brightest part at 1.2–1.6:1; the sky's wall re-rolled in one frame whenever
+the Edge moved again, and the label hopped between anchors; the sky's Edge was saturated violet with mint ribbons
+against the bible's opal; no capture showed a dark system. Round 2: the label on a plate (10.5–13.4:1), the sky's
+re-roll and the label hop gone, violet and mint gone, the requested Broken-season capture in `edge-dark`; still the
+info captions at 3.1:1, dark marks popping in one frame, grey rather than opal highlights, and a mark reading on a
+neighbour's name. Round 3: captions 5.1–5.8:1, marks fade and flicker with their own seam-light names, opal crests at
+every Count, sanctuaries exempt (Duntha unmarked), the Shift row, credits on a plate. Minor: a relit station's label
+changes style in one frame while its ring eases out; the pale-blue and peach fringe play does not survive the sky's
+grade; Venmirix and Tervelost's rings still interlock; the map's worst frame 2.6 ms; edge-dark's clip opens on a fading
+selection. Artifacts: `assets/renders/ui/{edge-map,edge-sky,edge-dark}/`.

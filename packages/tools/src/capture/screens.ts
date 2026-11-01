@@ -1,7 +1,9 @@
 // The UI screens `pnpm capture -- --ui <screen>` knows how to reach. Each later UI task adds its screen here, so the
 // grader always gets its 16:9 and 21:9 captures and a 60 fps clip the same way.
 import type { Page } from '@playwright/test';
-import { GALAXY_SEED, Galaxy, homeSystems } from '@astra/shared/world';
+import { EVENTS } from '@astra/shared/events';
+import { darkAt, edgeAt, seasonOpening } from '@astra/shared/seasons';
+import { EDGE_X, GALAXY_SEED, Galaxy, galaxyTiers, homeSystems } from '@astra/shared/world';
 
 export interface ScreenDef {
   /** dev scenario hash to open the client with */
@@ -17,6 +19,13 @@ export interface ScreenDef {
   sheetFrames?: readonly number[];
   /** Extra 16:9 stills, taken after the main one and before the clip: `16x9-<name>.png` after `pose` drives the page. */
   stills16x9?: Record<string, (page: Page) => Promise<void>>;
+  /** Extra stills taken at both aspects, after `stills16x9`: `16x9-<name>.png` and `21x9-<name>.png`. */
+  stills?: Record<string, (page: Page) => Promise<void>>;
+  /** The aspect the clip is taken at. Default 16:9. */
+  clipAspect?: '16x9' | '21x9';
+  /** Regions of the page (CSS selectors, padded by `pad` px) whose clip frames go on 4x sheets of their own,
+   * `crops-<name>.png`, each frame of `sheetFrames` cropped from a lossless capture. */
+  crops?: readonly { name: string; selector: string; pad?: number }[];
   /** Draw scrollbars (headless Chromium hides them by default), for screens whose scroll affordance is being judged. */
   showScrollbars?: boolean;
   /** How long the clip runs (s; 60 frames a second): long enough for the whole motion. Default 1. */
@@ -24,6 +33,9 @@ export interface ScreenDef {
   /** Run the HUD's clock and timers (game.hud.now / later / cancel) on the clip's clock, so toasts and fades last as long
    * in the clip as in play. */
   hudClock?: boolean;
+  /** Text written to `readout.txt` beside the clip sheet (its first line printed under the sheet), read once the last frame
+   * is in (the cost of the UI the clip shows, say). */
+  readout?(page: Page): Promise<string>;
   /** Console errors the screen causes on purpose (the browser reports a refused request, say), not counted against it. */
   expectedErrors?: RegExp[];
 }
@@ -39,6 +51,260 @@ interface InventoryApi {
   restore(saved: unknown): boolean;
   add(id: string, n: number, to?: 'auto' | 'suit' | 'cargo'): number;
   setLoadout(l: { ship: { hull: string; modules: Record<string, string>; cargoPods: number; livery: number } | null; skills?: string[] }): boolean;
+}
+
+/** What the HUD captures drive of the game: the walker's multitool meter and the ship's Charge (P1.E07.T02). */
+interface MeterGame {
+  mode: string;
+  multitool: { meter: { heat: number; overheated: boolean; charge: number } };
+  ship: {
+    charge: number;
+    mode: string;
+    speed: number;
+    throttle: number;
+    tryPulse(): void;
+    state: { frame: unknown; pos: { set(x: number, y: number, z: number): void }; quat: { setFromRotationMatrix(m: { elements: number[] }): void } };
+  };
+  system: { homePlanet: { radius: number; position: { x: number; y: number; z: number } } };
+  cam: { frame: unknown };
+  hud: { toast(text: string, tone?: string): void };
+}
+interface MeterWindow {
+  game: MeterGame;
+  dev: { boot(): Promise<void>; button(b: number, down: boolean): void };
+  THREE?: unknown;
+}
+
+/** The walker's heat meter at `heat`, locked out or not, with the beam held (the mouse button down) or let go. */
+async function heatAt(page: Page, heat: number, overheated: boolean, held: boolean): Promise<void> {
+  await page.evaluate(
+    ({ heat, overheated, held }) => {
+      const w = window as unknown as MeterWindow;
+      w.game.multitool.meter = { heat, overheated, charge: 0 };
+      w.dev.button(0, held);
+    },
+    { heat, overheated, held },
+  );
+}
+
+/**
+ * Parks the page's own frame loop (its requestAnimationFrame callbacks are dropped), so the game moves only as frames are
+ * stepped: the meter a still is taken at is the one it was stepped to, however long the CSS waits run.
+ */
+async function parkLoop(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const w = window as unknown as { __holdRaf?: boolean };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    // (the callback already queued runs once more, then parks)
+    await new Promise((r) => setTimeout(r, 100));
+  });
+}
+
+/** On foot beside the landed ship on the home world: the #foot scenario, which lands the ship and steps out after 1.5 s of
+ * real time, on foot for good, out of the camera's glide, and settled. */
+async function standingByShip(page: Page): Promise<void> {
+  // (on the world: getting out of the sandbox's first ship, still by the Waystation, is on foot too, in its hangar)
+  const onFoot = () =>
+    page.waitForFunction(async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { mode: string; player: { state: { frame?: { sampler?: unknown } } } } };
+      await w.step(4);
+      return w.game.mode === 'foot' && !!w.game.player.state.frame?.sampler;
+    });
+  await onFoot();
+  await page.waitForTimeout(2500);
+  await onFoot();
+  // (where the scenario sets the ship down turns with the world under real time: a loaded machine can put it in the sea)
+  const inSea = await page.evaluate(() => {
+    const p = (window as unknown as { game: { player: { state: { frame: { ocean?: boolean; radius: number }; pos: { length(): number } } } } }).game.player;
+    return !!p.state.frame.ocean && p.state.pos.length() < p.state.frame.radius;
+  });
+  if (inSea) throw new Error('the #foot scenario set the ship down in the sea: capture again');
+  // the camera's ease from the ship into the walker's head (4 s of game time) can outlast that on a loaded machine: stepped
+  // out, so the multitool is up and the view still before anything is taken
+  for (let i = 0; i < 60; i++) {
+    const gliding = await page.evaluate(async () => {
+      const w = window as unknown as { step(n: number): Promise<void>; game: { director: { pose: unknown; blend: unknown } } };
+      await w.step(10);
+      return !!(w.game.director.pose || w.game.director.blend);
+    });
+    if (!gliding) break;
+  }
+  await settle(page, 90);
+  // and the arrival banners run out (each, and the band under it, lasts 7 s of the page's own time), the multitool raised
+  await page.waitForFunction(
+    async () => {
+      const w = window as unknown as {
+        step(n: number): Promise<void>;
+        game: { hud: { bannerUntil?: number; bannerQueue?: unknown[] }; multitool: { raise?: number } };
+      };
+      await w.step(4);
+      const hud = w.game.hud;
+      return !hud.bannerQueue?.length && performance.now() > (hud.bannerUntil ?? 0) + 1000 && (w.game.multitool.raise ?? 0) >= 1;
+    },
+    null,
+    { timeout: 60_000, polling: 100 },
+  );
+}
+
+/**
+ * Turns the walker to the heading nearest its own (5° steps either way) whose crosshair is on a plant or rock under 3 m tall,
+ * 4 to 25 m off, so the beam's impact glare sits right behind the crosshair. Where the #foot scenario leaves the walker
+ * facing varies with how fast the machine runs its landing, and the flora's hit spheres miss a tall tree's trunk at eye
+ * level, so the beam can strike a rock hidden behind one.
+ */
+async function faceFlora(page: Page): Promise<void> {
+  const found = await page.evaluate(async () => {
+    type V = { copy(v: V): V; clone(): V; normalize(): V; applyAxisAngle(axis: V, a: number): V; distanceTo(v: V): number };
+    const w = window as unknown as {
+      step(n: number): Promise<void>;
+      game: {
+        player: { heading: V; state: { pos: V } };
+        cam: { pos: V };
+        multitool: { target: { point: V; scale: number; sp: { height: number } } | null };
+      };
+    };
+    const g = w.game;
+    const up = g.player.state.pos.clone().normalize();
+    const start = g.player.heading.clone();
+    for (let i = 0; i <= 72; i++) {
+      const turn = (((i + 1) >> 1) * (i % 2 ? 1 : -1) * Math.PI) / 36;
+      g.player.heading.copy(start).applyAxisAngle(up, turn);
+      await w.step(2);
+      const t = g.multitool.target;
+      const d = t ? t.point.distanceTo(g.cam.pos) : 0;
+      if (t && t.sp.height * t.scale < 3 && d >= 4 && d <= 25) return true;
+    }
+    return false;
+  });
+  if (!found) throw new Error('no plant or rock 4 to 25 m off in any direction from where the walker stands');
+}
+
+/** The heat meter runs `k` times as fast as the game for the clip, so a whole overheat cycle fits a few seconds of it. */
+async function hastenHeat(page: Page, k: number): Promise<void> {
+  await page.evaluate((k) => {
+    const mt = (window as unknown as { game: { multitool: { stepHeat(dt: number, held: boolean): void } } }).game.multitool;
+    const step = mt.stepHeat.bind(mt);
+    mt.stepHeat = (dt, held) => step(dt * k, held);
+  }, k);
+}
+
+/** The client's ability model and clocks as a capture drives them: no server, so the screen says what one would. */
+interface AbilityWindow {
+  game: MeterGame & {
+    time: number;
+    abilities: {
+      skills(view: unknown): void;
+      state(m: unknown): void;
+      answer(m: unknown): void;
+      pending: Map<number, { bar: string; slot: number; node: string; at: number }>;
+      now(): number;
+    };
+    hud: { later(fn: () => void, ms: number): number };
+  };
+}
+
+/** The bars as the server's skills view would hold them, the ship bar working `shipSlots` slots. */
+async function slotAbilities(page: Page, ground: (string | null)[], ship: (string | null)[], shipSlots: number): Promise<void> {
+  await page.evaluate(
+    ({ ground, ship, shipSlots }) => {
+      // (no named functions in here: the page has no helper for their names)
+      const slots = { ground: [...ground, ...Array(6 - ground.length).fill(null)], ship: [...ship, ...Array(5 - ship.length).fill(null)] };
+      (window as unknown as AbilityWindow).game.abilities.skills({ state: { slots }, shipSlots });
+    },
+    { ground, ship, shipSlots },
+  );
+}
+
+/** The server's cooldowns: each node ready again `left` seconds from the game's world time now; `on` the toggles on. */
+async function coolingDown(page: Page, left: Record<string, number>, on: string[] = []): Promise<void> {
+  await page.evaluate(
+    ({ left, on }) => {
+      const g = (window as unknown as AbilityWindow).game;
+      g.abilities.state({ t: 'abilities', cooldowns: Object.entries(left).map(([node, s]) => ({ node, readyAt: g.time + s })), on });
+    },
+    { left, on },
+  );
+}
+
+/**
+ * A key press's round trip as a server would answer it, on the HUD's clock from now: the cast sent at `at` ms, answered
+ * `rtt` ms later, carried out (its cooldown running `cooldownS` from then, the meter paid `pay`: heat on the ground bar,
+ * Charge on the ship's) or refused for `refused`.
+ */
+async function castRoundTrip(
+  page: Page,
+  c: { bar: 'ground' | 'ship'; slot: number; node: string; at: number; rtt?: number; cooldownS?: number; pay?: number; refused?: string; seq: number },
+): Promise<void> {
+  await page.evaluate((c) => {
+    const g = (window as unknown as AbilityWindow).game;
+    const a = g.abilities;
+    g.hud.later(() => {
+      a.pending.set(c.seq, { bar: c.bar, slot: c.slot, node: c.node, at: a.now() });
+      g.hud.later(() => {
+        if (c.refused) {
+          const readyAt = (a as unknown as { cooldowns: Map<string, number> }).cooldowns.get(c.node);
+          a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'refused', reason: c.refused, readyAt });
+          return;
+        }
+        const cooldowns = [...(a as unknown as { cooldowns: Map<string, number> }).cooldowns].map(([node, readyAt]) => ({ node, readyAt }));
+        a.state({ t: 'abilities', cooldowns: [...cooldowns.filter((x) => x.node !== c.node), { node: c.node, readyAt: g.time + c.cooldownS! }], on: [] });
+        a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'cast', readyAt: g.time + c.cooldownS! });
+        if (c.bar === 'ground') g.multitool.meter = { ...g.multitool.meter, heat: g.multitool.meter.heat + (c.pay ?? 0) };
+        else g.ship.charge -= c.pay ?? 0;
+      }, c.rtt ?? 60);
+    }, c.at);
+  }, c);
+}
+
+/**
+ * The ship in open flight off the home world, nose just past it, `side` 1 on its day side (in sunlight, inside the habitable band:
+ * Charge regenerates) or −1 on its night side (in its shadow: nothing), with Charge at `charge`.
+ */
+async function shipOffHome(page: Page, side: 1 | -1, charge: number): Promise<void> {
+  await page.evaluate(
+    ({ side, charge }) => {
+      const w = window as unknown as MeterWindow;
+      const g = w.game;
+      const ship = g.ship;
+      const home = g.system.homePlanet;
+      const p = home.position;
+      const l = Math.hypot(p.x, p.y, p.z);
+      // three radii sunward of the planet (the star at the origin), a little to one side and above; on the night side close
+      // enough to the sun line to stay in the planet's shadow
+      const r = home.radius * 3;
+      const sx = (-p.x / l) * side;
+      const sz = (-p.z / l) * side;
+      const across = side > 0 ? 0.35 : 0.12;
+      const x = p.x + sx * r + sz * r * across;
+      const y = p.y + r * (side > 0 ? 0.22 : 0.1);
+      const z = p.z + sz * r - sx * r * across;
+      ship.state.frame = null;
+      ship.state.pos.set(x, y, z);
+      // the nose (−Z forward) past the planet's limb, so the planet fills one side of the frame and the reticle and its
+      // readouts sit over open space, as they do in flight
+      const fx = p.x - sz * r * 0.75 - x;
+      const fy = p.y - y;
+      const fz = p.z + sx * r * 0.75 - z;
+      const fl = Math.hypot(fx, fy, fz);
+      const f = [fx / fl, fy / fl, fz / fl];
+      // right = f × up(0,1,0), up' = right × f
+      const rx = -f[2];
+      const rz = f[0];
+      const rl = Math.hypot(rx, rz);
+      const right = [rx / rl, 0, rz / rl];
+      const up = [right[1] * f[2] - right[2] * f[1], right[2] * f[0] - right[0] * f[2], right[0] * f[1] - right[1] * f[0]];
+      // the rotation whose columns are right, up and −forward (a Matrix4's column-major elements: setFromRotationMatrix
+      // reads nothing else)
+      ship.state.quat.setFromRotationMatrix({ elements: [...right, 0, ...up, 0, -f[0]!, -f[1]!, -f[2]!, 0, 0, 0, 0, 1] });
+      ship.mode = 'flying';
+      ship.speed = 0;
+      ship.charge = charge;
+      g.cam.frame = undefined;
+    },
+    { side, charge },
+  );
 }
 
 /** One inventory capture: the ship (its pods aboard), the skills, and what the cargo holds. */
@@ -342,7 +608,7 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
 interface FabricatorPage {
   game: {
     inventory: InventoryApi;
-    fabricator: { open(at: 'station' | 'ship'): void };
+    fabricator: { open(at: 'waystation' | 'ship'): void };
     station: { pads: { x: number; z: number }[] };
     ship: { state: { pos: { clone(): { set(x: number, y: number, z: number): unknown } } } };
     player: { spawn(frame: unknown, at: unknown, heading: unknown): void };
@@ -370,7 +636,7 @@ const FAB_SUIT: [string, number][] = [
 ];
 
 /** Lays the haul out in the suit (the Lark's pod holding a little more), then opens fabricator `at`. */
-async function stockAndOpen(page: Page, at: 'station' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
+async function stockAndOpen(page: Page, at: 'waystation' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
   await page.evaluate(
     ({ at, suit, pod }) => {
       const g = (window as unknown as FabricatorPage).game;
@@ -420,7 +686,7 @@ async function stationFabricator(page: Page): Promise<void> {
     g.cam.frame = undefined;
   });
   await settle(page, 120);
-  await stockAndOpen(page, 'station', FAB_SUIT, [
+  await stockAndOpen(page, 'waystation', FAB_SUIT, [
     ['tritium', 380],
     ['carbon', 240],
   ]);
@@ -547,6 +813,162 @@ async function stageCutscene(page: Page, id: string): Promise<void> {
   });
 }
 
+/** What the remote-ships screens reach of the page (three's objects as the page has them). */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+interface RemotePage {
+  game: {
+    traffic: { station: unknown; ships: { obj: { visible: boolean } }[] };
+    ship: { speed: number; state: { pos: any; quat: any } };
+    station: unknown;
+    system: { homePlanet: unknown };
+    hud: { clearBanners(): void };
+    remotes: { view: { prepare(hull: string): Promise<unknown> } };
+    hints?: Record<string, boolean>;
+    cam: { frame: unknown };
+    dockOnPad(near: unknown, quat: unknown): void;
+    debugGoto(planet: unknown, opts: Record<string, unknown>): void;
+  };
+  dev: { boot(): Promise<void> };
+  step(n: number): Promise<void>;
+  __holdRaf?: boolean;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+/**
+ * Boots a game with its frame loop parked (as stageCutscene does) and the demo's station traffic out of the shot, puts the
+ * ship where the scene wants it (`space`: off the Waystation, as the sandbox starts; `pads`: docked on its hangar pad at
+ * (30, -22), facing the mouth; `surface`: hovering 40 m over lowland on the home world, in the morning sun) and lets the
+ * world settle (its ground streams in from the workers), then plays
+ * one of the remote layer's recorded scenes (packages/client/src/remote/replay.js SCENES: `flypast`, `crowd`, `pads`,
+ * `surface`) as a snapshot stream through the wire's encoding with a 60 ms trip and 40 ms of jitter, offline, so the
+ * capture is hermetic. `seconds` of it are stepped before the still.
+ */
+async function openRemotes(
+  page: Page,
+  scene: 'flypast' | 'crowd' | 'pads' | 'surface' | 'bay',
+  seconds: number,
+  stage: 'space' | 'pads' | 'surface' = 'space',
+): Promise<void> {
+  await page.evaluate(() => (window as unknown as RemotePage).dev.boot());
+  await page.evaluate(async () => {
+    const w = window as unknown as RemotePage & { requestAnimationFrame(cb: FrameRequestCallback): number };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    await new Promise((r) => setTimeout(r, 100));
+  });
+  await page.evaluate(
+    async ({ scene, seconds, stage }) => {
+      const w = window as unknown as RemotePage;
+      const g = w.game;
+      // (these are the server's ships: the demo's client-side traffic round the Waystation stays out of the shot)
+      g.traffic.station = null;
+      for (const s of g.traffic.ships) s.obj.visible = false;
+      g.ship.speed = 0;
+      // (the hover hint has been read)
+      g.hints = { ...g.hints, vtol: true };
+      const pos = g.ship.state.pos;
+      if (stage === 'pads') {
+        const V = pos.constructor;
+        g.dockOnPad(new V(30, 2.4, -22), new g.ship.state.quat.constructor().setFromAxisAngle(new V(0, 1, 0), Math.PI));
+      } else if (stage === 'surface') g.debugGoto(g.system.homePlanet, { sunAngle: 38, alt: 40, azimuth: 0 });
+      g.cam.frame = undefined;
+      await g.remotes.view.prepare('lark');
+      // (the ground streams in from the workers, a few frames at a time, finest last)
+      for (let i = 0; i < (stage === 'surface' ? 60 : 15); i++) {
+        await w.step(6);
+        await new Promise((r) => setTimeout(r, 150));
+      }
+      const url = '/src/remote/replay.js';
+      const replay = await import(/* @vite-ignore */ url);
+      replay.play(g, scene);
+      await w.step(Math.round(seconds * 60));
+      // (the system's name, shown on arrival, has had its moment)
+      g.hud.clearBanners();
+    },
+    { scene, seconds, stage },
+  );
+  // (the HUD's transitions run on real time)
+  await page.waitForTimeout(1200);
+}
+
+/**
+ * A dev overlay over the remote-ships screens, drawn after every frame: for each other pilot, how the local ship's sensors
+ * read it (its distance against its reach, the sensor range × its signature, and what raised or lowered the signature:
+ * boosting, the pulse drive, cover) and whether they pick it up; and what the HUD made of it (its mark where it should be,
+ * or nudged off the HUD, or none and why; its name, on which side, or dropped for want of room and what took it). A tag
+ * under each pilot in view, and a table of them all (those out of view too) down the right. Tells a pilot undetected by
+ * design (past its reach) from one the HUD left unmarked.
+ */
+async function sensorsOverlay(page: Page): Promise<void> {
+  // (tsx names the functions below with a helper the page does not have)
+  await page.evaluate('window.__name ??= (f) => f');
+  await page.evaluate(() => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const g = (window as any).game;
+    const layer = document.createElement('div');
+    layer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:50;font:500 10px/12px ui-monospace,Menlo,monospace;color:#e9e7e2';
+    document.body.append(layer);
+    const tags = document.createElement('div');
+    const table = document.createElement('div');
+    table.style.cssText = 'position:absolute;right:12px;top:64px;padding:6px 8px;background:rgba(8,9,12,0.78);border:1px solid #3a3d44;white-space:pre';
+    layer.append(tags, table);
+    const V = g.camWorld.constructor;
+    const v = new V();
+    const km = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m)} m`);
+    const ways = ['', 'nudged out', 'nudged up', 'nudged down', 'nudged left', 'nudged right'];
+    const draw = () => {
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const rows: string[] = [];
+      let html = '';
+      const pilots = g.remotes.list.filter((r: any) => r.kind === 'player').sort((a: any, b: any) => (a.sense?.distance ?? 0) - (b.sense?.distance ?? 0));
+      for (const r of pilots) {
+        const s = r.sense;
+        const p = g.hud.pilots.get(r.id);
+        const marked = p && !p.goneAt;
+        v.copy(r.world).sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
+        const behind = v.z > 0;
+        v.applyMatrix4(g.engine.camera.projectionMatrix);
+        const x = (v.x * 0.5 + 0.5) * W;
+        const y = (-v.y * 0.5 + 0.5) * H;
+        const inView = !behind && x >= 0 && x <= W && y >= 0 && y <= H;
+        const why = !r.shown ? 'not drawn' : !s ? 'not read' : !s.signature ? 'hidden (signature 0)' : `past its reach`;
+        const sensed = s?.detected ? 'DETECTED' : `NOT DETECTED, ${why}`;
+        const flags = s ? [s.boosting && 'boost x2', s.pulsing && 'pulse x2', s.inCover && 'cover /2'].filter(Boolean).join(' ') : '';
+        const mark = !s?.detected
+          ? 'no mark'
+          : marked
+            ? p.nudged
+              ? `mark ${ways[p.nudged]}`
+              : 'mark'
+            : behind
+              ? 'no mark, behind'
+              : inView
+                ? 'no mark, at the edge'
+                : 'no mark, out of view';
+        const name = !marked ? '' : p.shown ? `name ${p.side}` : `name dropped${p.why ? ` (${p.why})` : ''}`;
+        rows.push(
+          `${(r.name ?? 'Pilot').padEnd(14)} ${km(s?.distance ?? 0).padStart(7)} / ${km(s?.reach ?? 0).padStart(6)}  sig ${(s?.signature ?? 0).toFixed(2)} ${flags.padEnd(9)} ${(s?.detected ? 'DETECTED' : 'not detected').padEnd(12)} ${mark}${name ? `, ${name}` : ''}`,
+        );
+        if (!inView) continue;
+        const colour = !s?.detected ? '#ff6b5e' : !marked || (p && !p.shown) ? '#f2b84b' : '#7fe0a0';
+        html += `<div style="position:absolute;left:${x.toFixed(0)}px;top:${(y + 10).toFixed(0)}px;transform:translateX(-50%);padding:1px 4px;background:rgba(8,9,12,0.72);border-left:2px solid ${colour};white-space:nowrap">${r.name ?? 'Pilot'} ${km(s?.distance ?? 0)} / ${km(s?.reach ?? 0)}${flags ? ` ${flags}` : ''}<br><span style="color:${colour}">${sensed}</span>${s?.detected ? ` · ${mark}${name ? ` · ${name}` : ''}` : ''}</div>`;
+      }
+      tags.innerHTML = html;
+      const read = pilots.find((r: any) => r.sense?.signature > 0)?.sense;
+      table.textContent = `SENSORS: reach = range ${km(read ? read.reach / read.signature : 0)} x signature; held to 1.05 x reach and 0.5 s past it\n${'pilot'.padEnd(14)} ${'dist'.padStart(7)} / ${'reach'.padStart(6)}  signature            HUD\n${rows.join('\n')}`;
+    };
+    const frame = g.frame.bind(g);
+    g.frame = (dt: number) => {
+      frame(dt);
+      draw();
+    };
+    draw();
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+  });
+}
+
 /** Plays the cutscene from its start (ending one under way, and any banner) and steps `t` seconds into it. */
 async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> {
   await page.evaluate(
@@ -562,6 +984,368 @@ async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> 
   );
   // (a banner fades in on a CSS animation, which runs on real time)
   await page.waitForTimeout(1200);
+}
+
+/**
+ * The chat and party UI's stage (P1.E15.T03), as page source (tsx would wrap functions written here in helpers the page
+ * does not have): the client's own Net, beacon list and social UI, fed recorded server messages through a socket the
+ * page plays the server for, in the offline sandbox, so the captures are hermetic. The socket answers requests as the
+ * server would: chat comes back as the player's line, an invite to someone online is sent, accepting joins the
+ * inviter's party, an answer to a beacon is refused (`answerCode`). `window.__social` drives it.
+ */
+/** Times one UI's own work in each frame of the clip that follows (the chat and party UI's moves and redraws, or the whole
+ * HUD's update): every update between one captured frame and the next adds to that frame's figure, so the readout and the
+ * clip count the same frames. */
+async function uiCostProbe(page: Page, of: 'social' | 'hud'): Promise<void> {
+  await page.evaluate((of) => {
+    type Ui = { update(arg?: unknown): void };
+    const w = window as unknown as { __social: { social: Ui }; game: { hud: Ui }; __clip: { frame(dt: number): void }; __uiCost: number[] };
+    const ui = of === 'social' ? w.__social.social : w.game.hud;
+    const update = ui.update.bind(ui);
+    let spent = 0;
+    ui.update = (arg?: unknown) => {
+      const t = performance.now();
+      update(arg);
+      spent += performance.now() - t;
+    };
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    w.__uiCost = [];
+    clip.frame = (dt: number) => {
+      spent = 0;
+      frame(dt);
+      w.__uiCost.push(spent);
+    };
+  }, of);
+}
+
+/** What the UI's cost over the clip is held to (ms). */
+const UI_BUDGET_MS = 1;
+
+/** The probed UI's per-frame cost over the clip (`uiCostProbe`), as the readout under its sheet: the mean, the 95th
+ * percentile and the worst frame, against the 16.7 ms a frame at 60 fps has, and the index of every frame over the 1 ms
+ * budget. */
+const uiCostReadout =
+  (label: string) =>
+  async (page: Page): Promise<string> => {
+    const ms = await page.evaluate(() => (window as unknown as { __uiCost: number[] }).__uiCost);
+    const sorted = [...ms].sort((a, b) => a - b);
+    const mean = ms.reduce((a, b) => a + b, 0) / Math.max(1, ms.length);
+    const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))] ?? 0;
+    const over = ms.flatMap((v, i) => (v > UI_BUDGET_MS ? [`${String(i).padStart(3, '0')} (${v.toFixed(3)} ms)`] : []));
+    return [
+      `${label} frame cost over ${ms.length} frames: mean ${mean.toFixed(3)} ms, p95 ${at(0.95).toFixed(3)} ms, worst ${(sorted.at(-1) ?? 0).toFixed(3)} ms (of 16.7 ms)`,
+      `frames over ${UI_BUDGET_MS} ms: ${over.length ? over.join(', ') : 'none'}`,
+    ].join('\n');
+  };
+const socialCostReadout = uiCostReadout('social UI');
+const hudCostReadout = uiCostReadout('HUD');
+
+/** Watches the beacon list over the clip that follows, frame by frame: its rows being built or taken out, its text being
+ * rewritten (an age moving on) and its scrollbar and edge fades being written. */
+async function socialRestWatch(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { __clip: { frame(dt: number): void }; __uiCost: number[]; __rest: { rows: number[]; text: number[]; bar: number[] } };
+    const scroller = document.querySelector('.sc-beacons') as HTMLElement;
+    const watched = { rows: [] as number[], text: [] as number[], bar: [] as number[] };
+    w.__rest = watched;
+    const obs = new MutationObserver(() => {});
+    obs.observe(scroller, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class'] });
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    let i = 0;
+    clip.frame = (dt: number) => {
+      frame(dt);
+      const seen = { rows: false, text: false, bar: false };
+      for (const r of obs.takeRecords()) {
+        const t = r.target as HTMLElement;
+        if (t === scroller && r.type === 'attributes' && r.attributeName === 'style') seen.bar = true;
+        else if (r.type === 'childList' && t.classList.contains('sb-meta')) seen.text = true;
+        else if (r.type === 'childList' || (r.type === 'attributes' && t.closest('.sb-list'))) seen.rows = true;
+      }
+      for (const k of ['rows', 'text', 'bar'] as const) if (seen[k]) watched[k].push(i);
+      i++;
+    };
+  });
+}
+
+/** The cost readout and what the list did at rest: which frames rebuilt a row, rewrote an age or wrote a scrollbar or edge
+ * property. */
+async function socialRestReadout(page: Page): Promise<string> {
+  const rest = await page.evaluate(() => (window as unknown as { __rest: { rows: number[]; text: number[]; bar: number[] } }).__rest);
+  const list = (v: number[]) => (v.length ? `${v.length} (frames ${v.map((n) => String(n).padStart(3, '0')).join(', ')})` : 'none');
+  return [
+    await socialCostReadout(page),
+    `beacon list at rest: rows rebuilt or restyled on ${list(rest.rows)}; age text rewritten on ${list(rest.text)}; scrollbar or edge property written on ${list(rest.bar)}`,
+  ].join('\n');
+}
+
+export const SOCIAL_STAGE = String.raw`
+import { Net } from '/src/net/Net.js';
+
+const game = window.game;
+const sockets = [];
+const ME = 'Tess Arlo';
+const ONLINE = ['Kestrel Vane', 'Bo Tran', 'Ilse Marr', 'Juno Reyes'];
+const T0 = 5000;
+const later = (fn) => setTimeout(fn, 0);
+
+class FakeSocket {
+  constructor(url) {
+    this.url = url;
+    this.readyState = 0;
+    this.sent = [];
+    sockets.push(this);
+    later(() => {
+      this.readyState = 1;
+      if (this.onopen) this.onopen();
+    });
+  }
+  send(text) {
+    const m = JSON.parse(text);
+    this.sent.push(m);
+    later(() => stage.reply(m));
+  }
+  close() {
+    this.readyState = 3;
+  }
+}
+
+const stage = {
+  net: null,
+  socket: null,
+  party: null,
+  beacons: [],
+  answerCode: 'far',
+  raiseCode: 'no_phase',
+  get social() {
+    return game.hud.social;
+  },
+  get here() {
+    return game.galaxy.current.id;
+  },
+  async start() {
+    const net = new Net({ url: 'ws://capture/ws', token: 'capture', characterId: 'c-me', WebSocket: FakeSocket });
+    this.net = net;
+    this.social.attach(net);
+    net.connect();
+    await new Promise((r) => setTimeout(r, 30));
+    this.socket = sockets[sockets.length - 1];
+    const look = { palette: 0, pattern: 0, head: 0, suit: 0 };
+    this.push({
+      t: 'welcome',
+      accountId: 'a-me',
+      character: { id: 'c-me', name: ME, people: 'thalune', look, level: 7, homeSystem: this.here },
+      entityId: 1,
+      serverTime: T0,
+      zone: { id: 'sys:' + this.here, systemSeed: game.system.seed },
+      pose: { frame: null, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+      mode: 'ship',
+    });
+    this.clear();
+  },
+  push(m) {
+    this.socket.onmessage({ data: JSON.stringify(m) });
+  },
+  /** Forgets the log. */
+  clear() {
+    const m = this.social.model;
+    m.lines.length = 0;
+    this.social.rebuild = true;
+    m.changed();
+  },
+  /** Moves every line in the log, and every invite, ms milliseconds into the past. */
+  age(ms) {
+    const m = this.social.model;
+    for (const l of m.lines) l.at -= ms;
+    for (const i of m.invites) {
+      i.at -= ms;
+      i.until -= ms;
+    }
+    this.social.rebuild = true;
+    this.social.model.changed();
+  },
+  chat(channel, from, text) {
+    this.push({ t: 'event', event: { kind: 'chat', channel, from, text, at: T0 } });
+  },
+  news(what, name) {
+    this.push({ t: 'event', event: name ? { kind: 'party', what, name } : { kind: 'party', what } });
+  },
+  member(name, health = 10, system = this.here, online = true) {
+    return { name, online, system: online ? system : null, health: online ? health : null };
+  },
+  setParty(leader, members) {
+    this.party = members ? { leader, members } : null;
+    this.push({ t: 'party', party: this.party });
+  },
+  open(tab) {
+    this.social.open();
+    if (tab) this.social.setTab(tab);
+  },
+  close() {
+    this.social.close();
+  },
+  /** Types a line into the open panel and presses Enter in it. */
+  type(text) {
+    const input = this.social.input;
+    input.value = text;
+    input.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true }));
+  },
+  /** The server's side of each request. */
+  reply(m) {
+    if (m.t === 'chat') return this.chat(m.channel, ME, m.text);
+    if (m.t === 'party') {
+      const op = m.op;
+      const named = op.name && ONLINE.find((n) => n.toLowerCase() === op.name.toLowerCase());
+      if (op.op === 'invite') return named ? this.news('invited', named) : this.push({ t: 'denied', of: 'invite', code: 'not_found', name: op.name });
+      if (op.op === 'accept') {
+        this.setParty(named, [this.member(named), this.member(ME), this.member('Bo Tran', 8)]);
+        return this.news('joined', ME);
+      }
+      if (op.op === 'leave') {
+        this.setParty(null);
+        return this.news('left', ME);
+      }
+      if (op.op === 'promote' && this.party) {
+        this.news('leader', named);
+        return this.setParty(named, this.party.members);
+      }
+      if (op.op === 'kick' && this.party) {
+        this.news('kicked', named);
+        return this.setParty(this.party.leader, this.party.members.filter((x) => x.name !== named));
+      }
+      return;
+    }
+    if (m.t === 'beacon') {
+      if (m.op.op === 'answer') return this.push({ t: 'denied', of: 'answer', code: this.answerCode });
+      if (m.op.op === 'raise') return this.push({ t: 'denied', of: 'raise', code: this.raiseCode });
+      if (m.op.op === 'watch') return this.push({ t: 'beacons', reset: true, beacons: this.beacons, gone: [] });
+    }
+  },
+
+  // ---------- scenes ----------
+
+  /** Several lines in each channel, the newest last. */
+  chatScene() {
+    const sys = game.system.name;
+    this.chat('shard', 'Kestrel Vane', 'Convoy leaving ' + sys + ' in ten minutes, two escorts wanted');
+    this.chat('system', 'Ilse Marr', 'Pirate wing over the north pole, keep clear of it');
+    this.chat('shard', 'Juno Reyes', 'Saw a Hollow drifter past the third moon. Nobody aboard.');
+    this.chat('party', 'Kestrel Vane', 'Regroup at pad three when you can');
+    this.chat('system', 'Bo Tran', 'Waystation traffic is heavy tonight');
+    this.chat('shard', 'Bo Tran', 'Anyone selling cobalt near the belt?');
+    this.chat('party', 'Bo Tran', 'Hull at thirty percent, give me a minute');
+    this.chat('system', 'Juno Reyes', 'Storm front rolling over the southern sea');
+    this.chat('shard', ME, 'Heading for the Waystation now');
+    this.chat('party', ME, 'Covering you, take your time');
+    this.chat('shard', 'Ilse Marr', 'Selling frostglass at the ' + sys + ' board, fair prices');
+    this.chat('system', 'Kestrel Vane', 'Docking queue at the Waystation is clear again');
+    this.chat('party', 'Ilse Marr', 'Two jumps out, back within the hour');
+  },
+  /** Four in the party: the leader, the player, one hurt badly, one in another system. */
+  partyScene(leader = 'Kestrel Vane') {
+    const elsewhere = game.galaxy.systems.find((s) => s.id !== this.here).id;
+    this.setParty(leader, [this.member('Kestrel Vane'), this.member(ME), this.member('Bo Tran', 2), this.member('Ilse Marr', 7, elsewhere)]);
+  },
+  /** Eight calls for aid, more than the panel shows: the three, and five more here and elsewhere. */
+  manyBeaconsScene() {
+    this.beaconsScene();
+    const seed = game.system.seed;
+    const others = game.galaxy.systems.filter((s) => s.id !== this.here).slice(0, 3).map((s) => s.id);
+    const b = (id, kind, place, from, open, cap, ago, system, frame) =>
+      ({ id, kind, system, frame, center: [0, 0, 0], radius: 600, place, from, open, cap, at: T0 - ago, until: T0 - ago + 600 });
+    this.beacons = this.beacons.concat([
+      b(15, 'event', 'Pirate Convoy Ambush', 'Juno Reyes', 9, 12, 75, this.here, seed + ':station'),
+      b(16, 'story', 'Signal in the Static', 'Kestrel Vane', 5, 6, 210, others[0], seed + ':0'),
+      b(17, 'raid', 'The Hive Heart', 'Ilse Marr', 6, 12, 300, others[1], seed + ':0'),
+      b(18, 'event', 'Stone-touched Herd', 'Bo Tran', 10, 12, 450, others[2], seed + ':0'),
+      b(19, 'story', 'Adrift', 'Juno Reyes', 3, 6, 520, this.here, seed + ':station'),
+    ]);
+    this.push({ t: 'beacons', reset: true, beacons: this.beacons, gone: [] });
+  },
+  /** Three calls for aid: a raid at the Waystation and a story chapter in this system, an event in another. */
+  beaconsScene() {
+    const seed = game.system.seed;
+    const elsewhere = game.galaxy.systems.find((s) => s.id !== this.here).id;
+    // (the story chapter on the ground below the ship, the raid round the Waystation)
+    const home = game.system.homePlanet;
+    const st = game.ship.state;
+    const below = st.frame === home ? st.pos.clone().normalize().multiplyScalar(home.radius).toArray() : [0, 0, 0];
+    const b = (id, kind, place, from, open, cap, ago, extra) =>
+      Object.assign({ id, kind, system: this.here, frame: seed + ':station', center: [0, 0, 0], radius: 400, place, from, open, cap, at: T0 - ago, until: T0 - ago + 600 }, extra);
+    this.beacons = [
+      b(12, 'raid', 'Raid on the Waystation', 'Kestrel Vane', 3, 12, 130, {}),
+      b(13, 'story', 'The Missing', 'Ilse Marr', 4, 6, 380, { frame: seed + ':' + game.system.planets.indexOf(home), center: below, radius: 2000 }),
+      b(14, 'event', 'Ferrite Wreck', 'Bo Tran', 7, 12, 40, { system: elsewhere }),
+    ];
+    this.push({ t: 'beacons', reset: true, beacons: this.beacons, gone: [] });
+  },
+};
+window.__social = stage;
+`;
+
+/** What the captures reach of the stage. */
+interface SocialStage {
+  start(): Promise<void>;
+  clear(): void;
+  age(ms: number): void;
+  chat(channel: string, from: string, text: string): void;
+  news(what: string, name?: string): void;
+  setParty(leader: string | null, members?: unknown[]): void;
+  open(tab?: string): void;
+  close(): void;
+  type(text: string): void;
+  chatScene(): void;
+  partyScene(leader?: string): void;
+  beaconsScene(): void;
+  answerCode: string;
+  social: { model: { answer(id: number): void; submit(text: string): unknown; mutedUntil: number }; update(): void };
+}
+interface Vec {
+  clone(): Vec;
+  set(x: number, y: number, z: number): Vec;
+}
+interface Quat {
+  clone(): Quat;
+  multiply(q: Quat): Quat;
+  setFromAxisAngle(axis: Vec, angle: number): Quat;
+}
+interface SocialWindow {
+  __social: SocialStage;
+  dev: { boot(): Promise<void> };
+  game: {
+    system: { homePlanet: unknown };
+    debugGoto(planet: unknown, o: object): void;
+    ship: { state: { pos: Vec; quat: Quat } };
+    hud: { later(fn: () => void, ms: number): number; clearBanners(): void };
+  };
+}
+
+/** Boots the sandbox, puts the camera where `view` says (`limb`: low over the sunlit home world, the bright ground behind
+ * the chat panel; `space`: the default start by the Waystation, dark sky behind the panel), and starts the stage. */
+async function stageSocial(page: Page, view: 'limb' | 'space'): Promise<void> {
+  await page.evaluate(() => (window as unknown as SocialWindow).dev.boot());
+  // (no named functions in the page code: tsx would wrap them in a helper the page does not have)
+  await page.evaluate((view) => {
+    const g = (window as unknown as SocialWindow).game;
+    const p = g.system.homePlanet as { radius: number };
+    // limb: 0.2 radii up in the morning sun, nose down 24°, so the sunlit disc fills the lower half and its limb crosses
+    // the picture above the chat panel; space: the start by the Waystation, nose up 43° to the dark sky
+    if (view === 'limb') g.debugGoto(p, { sunAngle: 35, alt: p.radius * 0.2, azimuth: 40, land: false });
+    const s = g.ship.state;
+    s.quat.multiply(s.quat.clone().setFromAxisAngle(s.pos.clone().set(1, 0, 0), view === 'limb' ? -0.42 : 0.75));
+  }, view);
+  await settle(page, 120);
+  await page.evaluate(() => (window as unknown as SocialWindow).game.hud.clearBanners());
+  await page.addScriptTag({ type: 'module', content: SOCIAL_STAGE });
+  await page.waitForFunction(() => !!(window as unknown as SocialWindow).__social);
+  await page.evaluate(() => (window as unknown as SocialWindow).__social.start());
+}
+
+/** Runs `fn` on the stage in the page and lets the HUD draw it. */
+async function onStage(page: Page, fn: string, frames = 30): Promise<void> {
+  await page.evaluate(`(async () => { const s = window.__social; ${fn}; })()`);
+  await settle(page, frames);
 }
 
 // ---------- the sign-in and character screens (P1.E04.T05) ----------
@@ -738,6 +1522,330 @@ function timeline(page: Page, steps: [number, () => Promise<unknown>][]): void {
 /** Types as a player does in the clip: `perChar` seconds of clip time a letter. */
 const typeIn = (page: Page, text: string, perChar = 0.045) => page.keyboard.type(text, { delay: perChar * 10_000 });
 const key = (page: Page, k: string) => () => page.keyboard.press(k);
+
+interface EventPage {
+  game: {
+    mode: string;
+    system: { name: string; homePlanet: unknown };
+    station: unknown;
+    debugGoto(planet: unknown, at: { sunAngle: number; alt: number; azimuth: number }): void;
+    boardShip(): void;
+    exitShip(): void;
+    player: { pitch: number; heading: { applyAxisAngle(axis: unknown, angle: number): void }; state: { pos: { clone(): { normalize(): unknown } } } };
+    hud: {
+      clearBanners(): void;
+      showBanner(title: string, sub: string): void;
+      updateEvents(feed: unknown): void;
+      banners: { until: number };
+      now(): number;
+      band: HTMLElement;
+    };
+  };
+}
+
+/** On foot on the home world (the `#foot` scenario), back aboard and landed again with the sun `sunAngle` degrees from
+ * overhead (past 90 it is night), then out, looking along open ground and down a little, so the ground lies behind the
+ * HUD's top band. */
+function eventGround(sunAngle: number) {
+  return async (page: Page) => {
+    const onFoot = () =>
+      page.waitForFunction(async () => {
+        await (window as unknown as { step(n: number): Promise<void> }).step(4);
+        return (window as unknown as EventPage).game.mode === 'foot';
+      });
+    await onFoot();
+    // (the scenario lands and steps out on real-time waits: let it finish before landing again)
+    await page.waitForTimeout(2500);
+    await onFoot();
+    await page.evaluate((sunAngle) => {
+      const g = (window as unknown as EventPage).game;
+      g.boardShip();
+      g.debugGoto(g.system.homePlanet, { sunAngle, alt: 0, azimuth: 20 });
+    }, sunAngle);
+    await settle(page, 60);
+    await page.evaluate(() => (window as unknown as EventPage).game.exitShip());
+    await onFoot();
+    await page.evaluate(() => {
+      const { player } = (window as unknown as EventPage).game;
+      player.heading.applyAxisAngle(player.state.pos.clone().normalize(), Math.PI * 1.5);
+      player.pitch = -0.5;
+    });
+    // (stepping out blends the view down to the pilot's eyes over 4 s)
+    await settle(page, 300);
+  };
+}
+
+/** The catalog's event announced to the system two minutes before it starts (protocol 17, ARCHITECTURE §26): its news
+ * handed to the client's own feed (net/worldEvents.js), and the feed's banner to the HUD, as a connection's would be.
+ * It is on the home world, which the feed names as the game does. A banner showing is cleared first, unless `queued`:
+ * then the system's own arrival banner is raised first, as Game.js raises it on entry, and the event's waits behind it. */
+async function announceEvent(page: Page, queued = false): Promise<void> {
+  const def = EVENTS[0]!;
+  // (tsx names the stub's functions with esbuild's __name helper, which the page lacks)
+  await page.evaluate('window.__name ??= (f) => f');
+  await page.evaluate(
+    async ({ url, poseUrl, def, queued }) => {
+      const { WorldEvents } = await import(/* @vite-ignore */ url);
+      const { frameIdOfFrame, frameOfId } = await import(/* @vite-ignore */ poseUrl);
+      const { game } = window as unknown as EventPage;
+      const frame = frameIdOfFrame(game.system, game.station, game.system.homePlanet);
+      const event = {
+        id: 1,
+        event: def.id,
+        name: def.name,
+        system: 0,
+        frame,
+        center: [0, 0, 0],
+        radius: def.radius,
+        starts: def.announceS,
+        ends: def.announceS + def.durationS,
+      };
+      const on: Record<string, (m: unknown) => void> = {};
+      const feed = new WorldEvents({ on: (t: string, fn: (m: unknown) => void) => (on[t] = fn), serverTime: () => 0 });
+      feed.worldName = (f: string) => frameOfId(game.system, game.station, f)?.name ?? null;
+      on.world_event!({ t: 'world_event', op: 'announced', event });
+      const { hud } = game;
+      if (queued) hud.showBanner(game.system.name.toUpperCase(), 'Star System');
+      else {
+        // (the band that held the still goes at once, so the clip's band darkens in with the text)
+        hud.band.style.transition = 'none';
+        hud.clearBanners();
+        void hud.band.offsetWidth;
+        hud.band.style.transition = '';
+      }
+      hud.updateEvents(feed);
+    },
+    {
+      url: '/src/net/worldEvents.js',
+      poseUrl: '/src/net/pose.js',
+      def: { id: def.id, name: def.name, radius: def.place.radius, announceS: def.schedule.announceS, durationS: def.schedule.durationS },
+      queued,
+    },
+  );
+}
+
+/** A world event's banner (P2.E21.T01): the stills with it fully in; the clip from its news, in, held and out. */
+function eventBannerScreen(sunAngle: number): ScreenDef {
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 7.5,
+    // its fade in (every 6 frames), the hold, its fade out (every 14)
+    sheetFrames: [0, 6, 12, 18, 24, 30, 36, 42, 48, 120, 200, 280, 336, 350, 364, 378, 392, 406, 420, 449],
+    async open(page) {
+      await eventGround(sunAngle)(page);
+      await announceEvent(page);
+      await page.waitForTimeout(2000);
+    },
+    motion: (page) => announceEvent(page),
+  };
+}
+
+/** The same banner reached the way a player entering a system during an event gets it (P2.E21.T01, visual round 1): the
+ * system's own arrival banner first, the event's queued behind it, no clearBanners between. The clip runs from the
+ * arrival banner fading in until the event's is fully in; its sheet takes a frame every 6 across the hand-off. */
+function eventBannerQueuedScreen(): ScreenDef {
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 14,
+    // the arrival banner in and held (every 60), its fade out through the event banner's fade in (every 6), the event banner held
+    sheetFrames: [0, 30, 60, 120, 180, 240, 300, ...Array.from({ length: 27 }, (_, i) => 330 + i * 6), 500, 600, 720, 839],
+    async open(page) {
+      await eventGround(40)(page);
+      // (the scenario's own arrival banner has run its life by now; wait for any that has not, so the clip starts bare)
+      await page.waitForFunction(() => {
+        const { hud } = (window as unknown as EventPage).game;
+        return hud.banners.until <= hud.now();
+      });
+      await page.evaluate(() => (window as unknown as EventPage).game.hud.clearBanners());
+      await page.waitForTimeout(1500);
+    },
+    motion: (page) => announceEvent(page, true),
+  };
+}
+
+// ---------- the Edge following the Count (P2.E22.T02) ----------
+// The offline sandbox has no world service, so the capture hands the game the `world` message the server would send for a
+// Count, built by the same functions the server uses (edgeAt, galaxyTiers), and the map and the sky draw the Edge from it.
+
+interface EdgeWindow {
+  game: {
+    net: unknown;
+    galaxy: { systems: { id: number; x: number; y: number; z: number }[]; here: { x: number; y: number; z: number } };
+    menus: { openMap(): void; setMapTab(tab: string): void; mapView: EdgeMapView };
+    universe: { leave(): void; anchor: { set(x: number, y: number, z: number): void } };
+    ship: { state: { frame: unknown; pos: { set(x: number, y: number, z: number): void }; quat: { set(x: number, y: number, z: number, w: number): void } } };
+    cam: { frame: unknown };
+    hud: { clearBanners(): void };
+    sky: { reset(): void };
+  };
+  dev: { boot(): Promise<void> };
+  __clip: { frame(dt: number): void };
+}
+interface EdgeMapView {
+  fly: unknown;
+  selected: unknown;
+  items: { kind: string; sys?: { id: number } }[];
+  select(it: unknown): void;
+  camera: { position: { set(x: number, y: number, z: number): void } };
+  controls: { target: { set(x: number, y: number, z: number): void } };
+}
+
+type Opening = 'fed' | 'held' | 'broken' | null;
+
+/** The `world` message for the Count at `count` in the season whose opening is `from` (null: the baseline). */
+function worldAtCount(count: number, from: Opening = null) {
+  const opening = seasonOpening(from, 5);
+  const edgeX = edgeAt(count, opening);
+  return {
+    t: 'world',
+    season: 5,
+    seasonStart: 0,
+    seasonEnd: 4_838_400,
+    opening,
+    count,
+    edgeX,
+    tiers: galaxyTiers(edgeX).map((t) => t.tier),
+    dark: [...darkAt(count, opening)],
+    serverTime: 1000,
+  };
+}
+
+/** Hands the page the `world` message the server would send. The game reads it from its connection (`net.world`), and the
+ * offline sandbox has none, so the client's own Net, never connected, stands in. */
+async function handWorld(page: Page, world: unknown): Promise<void> {
+  await page.evaluate(async (world) => {
+    const g = (window as unknown as EdgeWindow).game;
+    if (!g.net) {
+      const module = '/src/net/Net.js';
+      const { Net } = await import(/* @vite-ignore */ module);
+      g.net = new Net({ url: 'ws://offline.invalid/', token: '', characterId: '' });
+    }
+    (g.net as { world: unknown }).world = world;
+  }, world);
+}
+
+/** Hands the page a `world` message for the Count and lets the map and the sky draw it. */
+async function setCount(page: Page, count: number, from: Opening = null): Promise<void> {
+  await handWorld(page, worldAtCount(count, from));
+  await settle(page, 12);
+  await clearBanner(page);
+}
+
+/** Takes the system banner (staging leaves one up) off the screen before a still: dropped, and given its fade out. */
+async function clearBanner(page: Page): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).game.hud.clearBanners());
+  await page.waitForTimeout(700);
+}
+
+/** The galaxy map from the side, the cluster to the left and the wall a little right of the middle, so a wall that moves a few
+ * hundred thousand ly is seen to move across the frame. */
+async function openEdgeMap(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await handWorld(page, worldAtCount(count));
+  await page.evaluate(
+    ({ at }) => {
+      const w = window as unknown as EdgeWindow;
+      w.game.menus.openMap();
+      w.game.menus.setMapTab('galaxy');
+      const v = w.game.menus.mapView;
+      v.fly = null;
+      v.controls.target.set(at - 1.5e6, 0, 0);
+      v.camera.position.set(at - 1.5e6, 8e5, 3.6e6);
+    },
+    { at: EDGE_X },
+  );
+  await settle(page, 60);
+}
+
+/** The galaxy map at cluster zoom in a season opened Broken, with the Count at `count`: the whole cluster in frame, from above and
+ * a little to the side, its dark Waystations marked. */
+async function openDarkMap(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await handWorld(page, worldAtCount(count, 'broken'));
+  await page.evaluate(() => {
+    const w = window as unknown as EdgeWindow;
+    w.game.menus.openMap();
+    w.game.menus.setMapTab('galaxy');
+    const v = w.game.menus.mapView;
+    v.fly = null;
+    const sys = w.game.galaxy.systems;
+    const c = { x: 0, y: 0, z: 0 };
+    for (const s of sys) {
+      c.x += s.x / sys.length;
+      c.y += s.y / sys.length;
+      c.z += s.z / sys.length;
+    }
+    v.controls.target.set(c.x, c.y, c.z);
+    v.camera.position.set(c.x - 70, c.y + 105, c.z + 120);
+  });
+  await settle(page, 60);
+}
+
+/** Selects the system `id`, or the Edge (`edge`), as a click would, so the map's info panel shows it. */
+async function selectOnMap(page: Page, pick: { system: number } | { edge: true } | null): Promise<void> {
+  await page.evaluate((pick) => {
+    const v = (window as unknown as EdgeWindow).game.menus.mapView;
+    v.select(
+      pick === null
+        ? null
+        : 'system' in pick
+          ? v.items.find((it) => it.kind === 'system' && it.sys?.id === pick.system)
+          : v.items.find((it) => it.kind === 'edge'),
+    );
+  }, pick);
+  await settle(page, 12);
+}
+
+/** The sky from deep space 1.2 million ly short of the wall's baseline, the ship nose to +X, the Waystation's system left
+ * far behind. */
+async function openEdgeSky(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await handWorld(page, worldAtCount(count));
+  await page.evaluate(
+    ({ at }) => {
+      const w = window as unknown as EdgeWindow;
+      const g = w.game;
+      g.ship.state.frame = null;
+      g.ship.state.pos.set(0, 0, 0);
+      g.ship.state.quat.set(0, -Math.SQRT1_2, 0, Math.SQRT1_2);
+      g.cam.frame = undefined;
+      g.universe.leave();
+      g.universe.anchor.set(at - 1.2e6, 0, 0);
+      g.sky.reset();
+    },
+    { at: EDGE_X },
+  );
+  await settle(page, 90);
+  await clearBanner(page);
+}
+
+/** The clip's frames, each handing the page the world for the Count a frame later (0 to 1000, and there and back). The first
+ * world is in and drawn before the first frame is taken, so the clip starts on the Count it sweeps from, not on the last still's. */
+async function sweepCount(page: Page, frames: number, from: Opening = null, deselect = false): Promise<void> {
+  const worlds = Array.from({ length: frames }, (_, i) => {
+    const t = i / (frames - 1);
+    return worldAtCount(Math.round(1000 * (t < 0.5 ? t * 2 : 2 - t * 2)), from);
+  });
+  await handWorld(page, worlds[0]);
+  if (deselect) await selectOnMap(page, null);
+  // (the clip's frame loop has taken over `step` by now, so its own frames draw it: the sky takes a face a frame, and the clip
+  // must not start on the picture before)
+  await page.evaluate(() => {
+    const w = window as unknown as EdgeWindow & { game: { sky: { face: number; edgeAt: number; drawnEdge: number } } };
+    for (let i = 0; i < 90 && (i < 12 || w.game.sky.face >= 0 || w.game.sky.edgeAt !== w.game.sky.drawnEdge); i++) w.__clip.frame(1 / 60);
+  });
+  await page.evaluate((worlds) => {
+    const w = window as unknown as EdgeWindow;
+    const frame = w.__clip.frame.bind(w.__clip);
+    let i = 0;
+    w.__clip.frame = (dt) => {
+      (w.game.net as { world: unknown }).world = worlds[Math.min(i++, worlds.length - 1)];
+      frame(dt);
+    };
+  }, worlds);
+}
 
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
@@ -978,22 +2086,247 @@ export const SCREENS: Record<string, ScreenDef> = {
       },
     },
   },
-  'hud-ship': {
+  // In flight off the home world's day side, in sunlight inside the habitable band: Charge (the right arc and the readout
+  // under the altitude) at 58 and regenerating, a bright dash climbing its arc (P1.E07.T02). `16x9-empty.png`: Charge run
+  // out on the night side, in the planet's shadow (no regeneration), and the pulse drive refused. The clip: the regen
+  // sheen's whole climb, the readout ticking up.
+  // Boarding in play with Charge at 60 (the ship's, set while the pilot stood beside it on the home world's day side): the
+  // stills are aboard and landed after the glide into the seat, the reticle not yet up; the clip starts as the ship
+  // takes off, its first frame the first the reticle (and its Charge arc, readout and regen sheen) is drawn: the arc at 60
+  // at once, lilac, the sheen from the next frame.
+  'hud-ship-board': {
+    hash: '#foot',
     hudClock: true,
+    clipSeconds: 1.5,
+    sheetFrames: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 70, 80, 89],
     async open(page) {
-      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
-      await settle(page, 120);
+      await standingByShip(page);
+      // the game moves only as it is stepped from here: Charge regenerates 2/s through the glide's 5 s, 50 to 60
+      await parkLoop(page);
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: { ship: { charge: number }; boardShip(): void } }).game;
+        g.ship.charge = 50;
+        g.boardShip();
+      });
+      // the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => (window as unknown as { game: { ship: { takeOff(): void } } }).game.ship.takeOff());
     },
   },
+  'hud-ship': {
+    hudClock: true,
+    clipSeconds: 2,
+    async open(page) {
+      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+      await settle(page, 60);
+      await shipOffHome(page, 1, 58);
+      await settle(page, 90);
+    },
+    stills16x9: {
+      async empty(page) {
+        await shipOffHome(page, -1, 0);
+        await settle(page, 90);
+        await page.evaluate(() => (window as unknown as MeterWindow).game.ship.tryPulse());
+        await settle(page, 6);
+      },
+    },
+    async motion(page) {
+      await shipOffHome(page, 1, 58);
+      // (the empty still's refusal is not this scene's)
+      await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
+    },
+  },
+  // The ability bar on foot (P1.E07.T03), under the prompt: six ground slots, keys 1–6, each a ring with its key and the
+  // node's name (Pulse, Pull, Flare, Well, Regrow, Veil); Well cooling with 13 of its 20 s left and Regrow 4 of 10, their
+  // rings drawn back in heat's warm with the seconds left in them; heat at 35 on the crosshair's left arc.
+  // `*-refused.png` (both aspects): Well pressed again while it cools, refused by the server: its ring edged in danger red
+  // and COOLING DOWN on a plate over it. `*-rest.png`: nothing on the bar moved for 4 s, so it rests at 55% with its names
+  // hidden. The clip (the bar waking from rest as it starts): key 1 pressed 0.2 s in, the server's answer 60 ms later,
+  // Pulse's ring flaring and its cooldown starting (6 s), Pulse's 10 heat easing onto the arc over 250 ms with the new
+  // chunk drawn bright; key 1 again 2.2 s in, refused, the red edge and the plate over slot 1 for 1.6 s; Regrow ready
+  // about 4 s in and Pulse about 6.3 s in, each ring brightening for a beat as it comes back. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost; `crops-*.png` are 4x crops of the crosshair and slot 1.
+  'hud-abilities': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 6.8,
+    readout: hudCostReadout,
+    sheetFrames: [0, 12, 14, 16, 18, 20, 22, 26, 30, 34, 60, 120, 132, 136, 150, 200, 240, 246, 252, 300, 376, 382, 388, 407],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await settle(page, 2);
+    },
+    stills: {
+      async refused(page) {
+        await castRoundTrip(page, { bar: 'ground', slot: 3, node: 'well', at: 0, rtt: 0, refused: 'cooldown', seq: 1 });
+        await settle(page, 2);
+      },
+      async rest(page) {
+        await coolingDown(page, {});
+        await settle(page, 2);
+        await page.waitForTimeout(4500);
+        await settle(page, 2);
+      },
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await page.evaluate(() => {
+        const a = (window as unknown as AbilityWindow).game.abilities as unknown as { refusal: unknown };
+        a.refusal = null;
+      });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 200, cooldownS: 6, pay: 10, seq: 2 });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 2200, refused: 'cooldown', seq: 3 });
+    },
+  },
+  // A cast's cost on foot at 21:9 (P1.E07.T03, the grader's round-2 request): heat at 20, the same six ground slots, all
+  // ready. The clip, at 21:9: key 3 pressed 0.2 s in, the server's answer 60 ms later, Flare's ring flaring and its 12 s
+  // cooldown starting, its 30 heat easing onto the crosshair's left arc over 250 ms (20 to 50) with the new chunk drawn
+  // bright; key 3 again 1.4 s in, refused while it cools: the red edge and COOLING DOWN on a plate over slot 3, gone 1.6 s
+  // later. `crops-reticle.png` and `crops-slot.png` are 4x crops of the crosshair and slot 3; the sheet's title (and
+  // readout.txt) is the HUD's per-frame cost.
+  'hud-abilities-cost': {
+    hash: '#foot',
+    hudClock: true,
+    clipAspect: '21x9',
+    readout: hudCostReadout,
+    clipSeconds: 3.4,
+    sheetFrames: [0, 12, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 36, 48, 84, 88, 89, 90, 92, 96, 110, 150, 180, 203],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(3)', pad: 30 },
+    ],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 20, false, false);
+      await coolingDown(page, {});
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await heatAt(page, 20, false, false);
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 200, cooldownS: 12, pay: 30, seq: 1 });
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 1400, refused: 'cooldown', seq: 2 });
+    },
+  },
+  // The ability bar in flight (P1.E07.T03): a Wayfarer's four ship slots, keys 1–4 (Tractor Beam, Deep Sweep, Repair
+  // Drones, Inertial Brake), Deep Sweep cooling with 21 of its 30 s left and Inertial Brake 6 of 15, their rings drawn back
+  // in the flight deck's warm white with the seconds left in it (lilac is Charge's alone: only the reticle's right arc
+  // and a cast's chunk of it wear it); Charge at 72 on that arc. The clip: key 1 pressed 0.2 s in, the server's answer,
+  // the ring flaring and Tractor Beam's 12 s cooldown starting, its 15 Charge coming off the arc over 250 ms with the cost
+  // drawn bright as it drains; Inertial Brake ready 1.2 s in, its ring brightening for a beat. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost; `crops-*.png` are 4x crops of the reticle and slot 1.
+  'hud-abilities-flight': {
+    hudClock: true,
+    clipSeconds: 2,
+    readout: hudCostReadout,
+    sheetFrames: [0, 6, 12, 14, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 34, 40, 60, 72, 76, 80, 90, 119],
+    crops: [
+      { name: 'reticle', selector: '.ship-reticle', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
+    async open(page) {
+      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+      await settle(page, 60);
+      await shipOffHome(page, 1, 72);
+      await settle(page, 90);
+      await slotAbilities(page, [], ['tractor_beam', 'deep_sweep', 'repair_drones', 'inertial_brake'], 4);
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 6 });
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 1.2 });
+      await castRoundTrip(page, { bar: 'ship', slot: 0, node: 'tractor_beam', at: 200, cooldownS: 12, pay: 15, seq: 1 });
+    },
+  },
+  // On foot on the home world, mining a plant or rock a few metres off with the beam held, its impact glare behind the
+  // crosshair: the heat arc (left of the dot) at 40 of 100, 40% of it lit, warm
+  // (P1.E07.T02). `16x9-overheat.png`: the lockout at the top, the arc danger red with a tick where the lockout ends and
+  // OVERHEAT under the dot. The clip: a whole cycle with the beam held throughout, the meter at three times the game's
+  // pace: from cool it climbs, turns amber at 75, overheats at 100 (about 1.4 s in), cools through the lockout to the tick
+  // at 25 (about 2.6 s) and the lockout lifts, the beam heating again.
   'hud-foot': {
     hash: '#foot',
     hudClock: true,
+    clipSeconds: 3,
     async open(page) {
-      await page.waitForFunction(async () => {
-        await (window as unknown as { step(n: number): Promise<void> }).step(4);
-        return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
+      await standingByShip(page);
+      await faceFlora(page);
+      await parkLoop(page);
+      // 38, and five frames of beam at 24/s: 40
+      await heatAt(page, 38, false, true);
+      await settle(page, 5);
+    },
+    stills16x9: {
+      async overheat(page) {
+        await heatAt(page, 100, true, true);
+        await settle(page, 3);
+      },
+    },
+    async motion(page) {
+      // the overheat still's lockout cleared and settled before the first frame: cool, the button up, the HUD told, and
+      // its fades run out (CSS runs at a tenth of real time while the clip records: OVERHEAT's 0.25 s, the arc's 0.4 s)
+      await heatAt(page, 0, false, false);
+      await page.evaluate(() => (window as unknown as { game: { hud: { update(dt: number): void } } }).game.hud.update(0));
+      await page.waitForTimeout(5000);
+      // then the beam held from cool
+      await page.evaluate(() => (window as unknown as MeterWindow).dev.button(0, true));
+      await hastenHeat(page, 3);
+    },
+  },
+  // Leaving the ship on foot with the multitool still warm (heat 50): the stills are aboard and landed; the clip's first
+  // frame is the foot HUD's first, the crosshair fading in (150 ms) with its heat arc already at 50 and cooling at 20/s.
+  'hud-foot-exit': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 0.6,
+    sheetFrames: [...Array.from({ length: 20 }, (_, i) => i), 24, 29, 35],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await page.evaluate(() => (window as unknown as { game: { boardShip(): void } }).game.boardShip());
+      // aboard: the glide into the seat (4.2 s)
+      await settle(page, 300);
+    },
+    async motion(page) {
+      await page.evaluate(() => {
+        const g = (window as unknown as { game: MeterGame & { exitShip(): void } }).game;
+        g.multitool.meter = { heat: 50, overheated: false, charge: 0 };
+        g.exitShip();
       });
-      await settle(page, 90);
+    },
+  },
+  // On foot after mining, the beam let go at 30 heat: the arc cooling idle (20/s on the home world by day). The stills: 30,
+  // warm, the button up. The clip: from 30 down to 2 (1.4 s, frame 84), where the empty arc fades out (0.4 s, to frame
+  // 108), the crosshair's dot left alone.
+  'hud-foot-cool': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 2,
+    sheetFrames: [0, 12, 24, 36, 48, 60, 72, 78, 82, 84, 86, 88, 90, 93, 96, 99, 102, 105, 108, 119],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      // 31, and three frames idle at 20/s: 30
+      await heatAt(page, 31, false, false);
+      await settle(page, 3);
+    },
+    async motion(page) {
+      await heatAt(page, 30, false, false);
     },
   },
   map: {
@@ -1089,6 +2422,56 @@ export const SCREENS: Record<string, ScreenDef> = {
       await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
     },
   },
+  // remote ships (P1.E04.T02): three other pilots' Larks sweeping round in formation in front of the ship by the
+  // Waystation, drawn by the remote layer from a recorded snapshot stream played offline (openRemotes); the still 1.2 s
+  // into the pass, the clip the 2.5 s after it, interpolated through the stream's jitter at 60 fps
+  'remote-ships': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'flypast', 1.2),
+  },
+  // the Phase 1 budget's 24 remote players in view at once, each about its own business (heading, speed, turn and climb),
+  // a hundred metres to a few kilometres out, each marked with its name and range; one draws away past the 4 km a ship's
+  // sensors pick a Lark up at, and its marker drops during the clip (one kit of instanced meshes draws them all, the far
+  // ones simplified)
+  'remote-ships-crowd': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: (page) => openRemotes(page, 'crowd', 1.2),
+  },
+  // the crowd with the sensors' and the HUD's reading of each pilot over it (sensorsOverlay, a dev overlay): which pilots
+  // the local ship's sensors pick up, and what became of each one's mark and name
+  'remote-ships-crowd-sensors': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: async (page) => {
+      await openRemotes(page, 'crowd', 1.2);
+      await sensorsOverlay(page);
+    },
+  },
+  // the Waystation's hangar from the player's docked ship: two other pilots' Larks docked on the pads beside it, gear
+  // down, and two more flying past outside the mouth one after the other, throttles opening (their exhausts lengthen)
+  'remote-ships-pads': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'pads', 1.6, 'pads'),
+  },
+  // low over the home world, in its turning frame: another pilot's Lark set down on the ground ahead, gear down, and two
+  // more flying past low over the ground, following it as it rises and falls, throttles opening (the still as they
+  // cross; a third crosses during the clip)
+  'remote-ships-surface': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'surface', 2.2, 'surface'),
+  },
+  // a Waystation bay phase full, from the player's ship docked on its pad: 24 other pilots' Larks docked round it, gear
+  // down (the hangar has 4 pads until the modular Waystation; the others stand on the floor's berths); the worst case of
+  // remote ships a bay phase allows, for its look and its perf readout (perf.json)
+  'remote-ships-bay': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: (page) => openRemotes(page, 'bay', 1.0, 'pads'),
+  },
   // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
   // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the
   // clip of a warp cell crafted; `fabricator-learn` the same, and the clip of the torpedo recipe learned;
@@ -1129,6 +2512,11 @@ export const SCREENS: Record<string, ScreenDef> = {
     open: openShipFabricator,
     motion: fabricatorMotion(null),
   },
+  // a world event announced (P2.E21.T01, ARCHITECTURE §26): its banner over the home world's ground by day
+  // (`event-banner`) and the same ground at night (`event-banner-night`)
+  'event-banner': eventBannerScreen(40),
+  'event-banner-night': eventBannerScreen(140),
+  'event-banner-queued': eventBannerQueuedScreen(),
   'station-hangar': {
     hash: '#dock',
     async open(page) {
@@ -1137,6 +2525,291 @@ export const SCREENS: Record<string, ScreenDef> = {
         return (window as unknown as { game: { mode: string } }).game.mode === 'foot';
       });
       await settle(page, 90);
+    },
+  },
+  // chat and party (P1.E15.T03), low over the sunlit home world: the panel open on the shard tab with several lines in
+  // each channel and the party frame above it; stills of the system and party tabs, and of refusals (the server's, an
+  // invite to no one online; the panel's own, a line typed faster than the server would take it, kept in the input).
+  // The clip: new lines rising into the closed feed, the panel opening and closing on a line sent, and the lines fading
+  // out of the way (each ten seconds after it came, those the panel showed four seconds after it closed).
+  social: {
+    hudClock: true,
+    clipSeconds: 14,
+    sheetFrames: [0, 18, 24, 54, 60, 90, 96, 102, 108, 138, 144, 150, 156, 380, 400, 420, 620, 680, 740, 790, 839],
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(page, "s.partyScene(); s.chatScene(); s.open('shard')", 60);
+    },
+    stills16x9: {
+      system: (page) => onStage(page, "s.social.setTab('system')"),
+      party: (page) => onStage(page, "s.social.setTab('party')"),
+      refusal: (page) =>
+        onStage(
+          page,
+          "s.social.setTab('shard'); s.social.model.submit('/invite Nobody Here'); s.social.model.pace.level = 0; s.type('Anyone up for the raid?')",
+          60,
+        ),
+      // muted by the server for a flood (75 s, so the hint reads a minute), a line typed anyway held in the input; and the
+      // party with a member whose connection is down
+      muted: (page) =>
+        onStage(
+          page,
+          "s.setParty('Kestrel Vane', [s.member('Kestrel Vane'), s.member('Tess Arlo'), s.member('Bo Tran', 2), s.member('Juno Reyes', 10, s.here, false)]); " +
+            "s.social.model.pace.level = 5; s.push({ t: 'denied', of: 'chat', code: 'muted', retryS: 75 }); s.type('Anyone up for the raid?')",
+          60,
+        ),
+    },
+    async motion(page) {
+      // the panel the stills left open closes, the stills' mute is lifted and the four of the party are back, and the
+      // feed holds three lines from six seconds ago; all of it drawn now, so its fades run out before the first frame
+      await page.evaluate(() => {
+        const s = (window as unknown as SocialWindow).__social;
+        s.social.model.mutedUntil = 0;
+        s.close();
+        s.partyScene();
+        s.clear();
+        s.chat('shard', 'Kestrel Vane', 'Convoy leaving in ten minutes, two escorts wanted');
+        s.chat('system', 'Ilse Marr', 'Pirate wing over the north pole, keep clear of it');
+        s.chat('party', 'Bo Tran', 'Hull at thirty percent, give me a minute');
+        s.age(6000);
+        s.social.update();
+      });
+      await page.waitForTimeout(3000);
+      await page.evaluate(() => {
+        const w = window as unknown as SocialWindow;
+        const s = w.__social;
+        const hud = w.game.hud;
+        hud.later(() => s.chat('shard', 'Juno Reyes', 'Saw a Hollow drifter past the third moon'), 300);
+        hud.later(() => s.chat('party', 'Kestrel Vane', 'Regroup at pad three'), 900);
+        hud.later(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true })), 1500);
+        hud.later(() => s.type('On my way'), 2300);
+      });
+    },
+  },
+  // the same panel over open space by the Waystation, closed: the feed's lines on their plates against the dark
+  'social-space': {
+    hudClock: true,
+    async open(page) {
+      await stageSocial(page, 'space');
+      await onStage(page, "s.partyScene(); s.chatScene(); s.open('shard')", 60);
+    },
+    stills16x9: {
+      party: (page) => onStage(page, "s.social.setTab('party')"),
+      closed: (page) => onStage(page, 's.close()', 60),
+    },
+  },
+  // the party frame: four members, the leader marked, one badly hurt, one in another system; the panel open on the party
+  // tab (invite and leave under the frame); stills with the player leading (promote and remove on each member) and closed
+  party: {
+    hudClock: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(page, "s.partyScene(); s.chatScene(); s.open('party')", 60);
+    },
+    stills16x9: {
+      leader: (page) => onStage(page, "s.partyScene('Tess Arlo')"),
+      closed: (page) => onStage(page, 's.partyScene(); s.close()', 60),
+    },
+  },
+  // an invite waiting, the panel closed (Enter to answer), its minute running down; a still with the panel open; the
+  // clip: the panel opens, Accept, the party frame rises in where the card was, the panel closes
+  'party-invite': {
+    hudClock: true,
+    clipSeconds: 3.5,
+    readout: socialCostReadout,
+    sheetFrames: [0, 6, 12, 18, 24, 30, 36, 60, 84, 90, 96, 102, 108, 114, 120, 144, 150, 156, 162, 180, 209],
+    async open(page) {
+      await stageSocial(page, 'limb');
+      // (the feed's lines are long gone, so the still is not taken as one fades)
+      await onStage(page, "s.chatScene(); s.news('invite', 'Kestrel Vane'); s.age(8000); for (const l of s.social.model.lines) l.at -= 30000", 60);
+    },
+    stills16x9: {
+      open: (page) => onStage(page, "s.open('shard')"),
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'social');
+      // (closed, and drawn closed, before the first frame)
+      await page.evaluate(() => {
+        const s = (window as unknown as SocialWindow).__social;
+        s.close();
+        s.social.update();
+      });
+      await page.waitForTimeout(3000);
+      await page.evaluate(() => {
+        const w = window as unknown as SocialWindow;
+        const s = w.__social;
+        const hud = w.game.hud;
+        hud.later(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true })), 400);
+        hud.later(() => document.querySelector<HTMLButtonElement>('.sp-invite .btn')?.click(), 1400);
+        hud.later(() => s.close(), 2500);
+      });
+    },
+  },
+  // the call-for-aid list: three beacons (a raid at the Waystation and a story chapter here, an event in another system)
+  // with an answer refused (too far from the raid's place); stills with a raise refused (in no instance) and with the
+  // player's own beacon up; the clip: an answer refused, its reason rising in under the beacon
+  beacons: {
+    hudClock: true,
+    clipSeconds: 1.5,
+    readout: socialCostReadout,
+    showScrollbars: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(page, "s.chatScene(); s.beaconsScene(); s.open('beacons'); s.social.model.answer(12)", 60);
+    },
+    stills16x9: {
+      'raise-refused': (page) => onStage(page, 's.social.model.raise()'),
+      own: (page) =>
+        onStage(
+          page,
+          "const b = Object.assign({}, s.beacons[1], { id: 20, from: 'Tess Arlo', open: 2, cap: 6 }); s.push({ t: 'beacon', op: 'raised', id: 20, beacon: b })",
+        ),
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'social');
+      await page.evaluate(() => {
+        const w = window as unknown as SocialWindow;
+        const s = w.__social;
+        // (the event is in another star system)
+        s.answerCode = 'elsewhere';
+        w.game.hud.later(() => s.social.model.answer(14), 300);
+      });
+    },
+  },
+  // the open panel's tabs, clicked Shard → System → Party → Beacons and back, every 0.8 s: each list fades out where it
+  // stands before the next fades in, and the beacon list does the same
+  'social-tabs': {
+    hudClock: true,
+    clipSeconds: 5.2,
+    readout: socialCostReadout,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(page, "s.partyScene(); s.chatScene(); s.beaconsScene(); s.open('shard')", 60);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'social');
+      await page.evaluate(() => {
+        const hud = (window as unknown as SocialWindow).game.hud;
+        const order = ['system', 'party', 'beacons', 'party', 'system', 'shard'];
+        order.forEach((t, i) => hud.later(() => document.querySelector<HTMLButtonElement>(`.sc-tab.t-${t}`)?.click(), 300 + i * 800));
+      });
+    },
+  },
+  // beacons-many held still: scrolled to the middle of the list (both edge fades on) with the panel open and the beacons'
+  // ages moving on, beside a party frame of the player leading, one member offline (OFFLINE, LEAD and KICK on show). The
+  // list must not redraw, blink or move while it stands
+  'beacons-rest': {
+    hudClock: true,
+    clipSeconds: 2,
+    readout: socialRestReadout,
+    showScrollbars: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(
+        page,
+        "s.chatScene(); s.manyBeaconsScene(); s.setParty('Tess Arlo', [s.member('Kestrel Vane'), s.member('Tess Arlo'), s.member('Bo Tran', 2), s.member('Ilse Marr', 0, s.here, false)]); s.open('beacons'); s.social.model.answer(15)",
+        60,
+      );
+      await onStage(page, "const l = document.querySelector('.sc-beacons'); l.scrollTop = Math.round((l.scrollHeight - l.clientHeight) / 2)", 60);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'social');
+      await socialRestWatch(page);
+    },
+  },
+  // a list longer than the panel: eight calls for aid, one answer refused (too far) in view; the list fades at its foot
+  // over its scrollbar. The clip scrolls it to its end and back, eased (the list's own scroll, as a wheel would)
+  'beacons-many': {
+    hudClock: true,
+    clipSeconds: 3,
+    readout: socialCostReadout,
+    showScrollbars: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(page, "s.chatScene(); s.manyBeaconsScene(); s.open('beacons'); s.social.model.answer(15)", 60);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'social');
+      await page.evaluate(() => {
+        const w = window as unknown as SocialWindow;
+        const list = document.querySelector('.sc-beacons') as HTMLElement;
+        const end = Math.round(list.scrollHeight - list.clientHeight);
+        // down over a second from 0.3 s, a pause, and back up over a second, eased in and out. A scroll offset is a whole
+        // pixel, so the ends of the ease move a pixel every few frames (under a pixel a frame on average) rather than
+        // one a frame; each step is due half a millisecond before its frame so none slips into the next
+        const ys: number[] = [];
+        for (let k = 0; k <= 60; k++) {
+          const t = k / 60;
+          ys.push(Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)));
+        }
+        ys.forEach((y, k) => {
+          w.game.hud.later(() => (list.scrollTop = y), 300 + k * (1000 / 60) - 0.5);
+          w.game.hud.later(() => (list.scrollTop = end - y), 1700 + k * (1000 / 60) - 0.5);
+        });
+      });
+    },
+  },
+  // The Edge following the Count (P2.E22.T02): the galaxy map and the sky in deep space with the Count at its lowest (the Edge
+  // 10 ly in, the wall drawn 200,000 ly nearer), at the middle (the baseline) and at its highest (10 ly out). The still is the
+  // lowest; `count-500` and `count-1000` are the others; the clip sweeps the Count from 0 up to 1000 and back, the wall
+  // sliding with it. The sheet's title (and readout.txt) is the HUD's per-frame cost.
+  'edge-map': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    readout: hudCostReadout,
+    async open(page) {
+      await openEdgeMap(page, 0);
+    },
+    stills: {
+      'count-500': (page) => setCount(page, 500),
+      'count-1000': (page) => setCount(page, 1000),
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await sweepCount(page, 180, null, true);
+    },
+  },
+  'edge-sky': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    readout: hudCostReadout,
+    async open(page) {
+      await openEdgeSky(page, 0);
+    },
+    stills: {
+      'count-500': (page) => setCount(page, 500),
+      'count-1000': (page) => setCount(page, 1000),
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await sweepCount(page, 180);
+    },
+  },
+  // The galaxy map at cluster zoom in a season opened Broken: the still is Count 0, every dark Waystation (the opening's three
+  // and the ones the low Count pushed Edge-ward) marked on its star; `count-1000` is the Count at its highest, the marks gone;
+  // `dark-selected` a dark system chosen (its "Waystation: Dark" row) and `edge-selected` the Edge (Distance, Expansion, Count).
+  // The clip sweeps the Count 0 → 1000 → 0, the marks going out at 700 and coming back with it. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost.
+  'edge-dark': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    readout: hudCostReadout,
+    async open(page) {
+      await openDarkMap(page, 0);
+    },
+    stills: {
+      'count-1000': (page) => setCount(page, 1000, 'broken'),
+      'dark-selected': async (page) => {
+        await setCount(page, 0, 'broken');
+        await selectOnMap(page, { system: seasonOpening('broken', 5).dark[0]! });
+      },
+      'edge-selected': async (page) => {
+        await selectOnMap(page, { edge: true });
+      },
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await sweepCount(page, 180, 'broken', true);
     },
   },
 };

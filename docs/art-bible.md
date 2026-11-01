@@ -154,7 +154,7 @@ green or spore green.
 plates, one amber accent `#F0A24A`, teal secondary `#8FD3C8`, danger `#FF5A4F`. Lore UI (dialogue busts, the journal's lore
 lines, Count readouts) adds the glyph light and the speaker's people palette.
 
-**Resource pips** are the one documented exception to that palette (P1.E06.T04). Each resource wears a small pip in
+**Resource pips** are the first documented exception to that palette (P1.E06.T04). Each resource wears a small pip in
 inventory slots, pickup toasts and trade rows: a shape by where it comes from and a muted hue of its own. The rule: a pip
 says which resource this is and nothing else. It never marks a state (full, selected, at risk, low, refused); states keep
 the flight-deck colours, amber for focus and cargo at risk, danger red for danger. Pip hues stay muted and clear of danger
@@ -169,6 +169,15 @@ red and the amber accent. The values live in `PIPS` in `packages/client/src/game
 
 Items that are not resources wear a three-letter kind tag (CON, AMO, CAT, MOD, COS, CMP) in warm white on a hairline
 border, not a pip. P1.E13.T02's resource icons replace the pips' shapes, keeping the hues and the rule.
+
+**Charge lilac** is the HUD's second documented exception (P1.E07.T02): the ship's Charge meter (the reticle's right arc,
+its readout under the altitude, the cockpit's CHARGE bar) is lilac `#C7A6FF` for the arc, `#D4BCFF` for the figure and
+`#F1EAFF` for the regen sheen. The palette has no free colour for it: teal is the shield's arc on the same reticle (and the
+jetpack's on foot), amber is focus and heat, warm white is plain type, danger red is danger; a second teal arc beside the
+shield's would read as one meter. Lilac is the pulse drive's colour since the demo, so Charge reads as what the drive
+burns. The rule matches the pips': lilac says "Charge" and nothing else; its states keep the flight-deck colours (danger
+red when low or empty). It never marks focus, and only Charge (and the scanner's points of interest, the demo's other
+lilac) wears it.
 
 ## 5. The shared material library
 

@@ -12,7 +12,8 @@
 //    not be below the ground (the shared terrain sampler, levelled under cities and sites as the client levels it), in a
 //    gas giant's depths or inside the Waystation's hangar shell; a walker may not be below the ground, outside the hangar,
 //    or higher than anything it could stand on for longer than a fall from there takes. Its mode must be legal there: the
-//    pulse drive only outside the air, clear of what is ahead and high enough over a world to engage; landed only on dry
+//    pulse drive only with Charge in the character's meters (P1.E07.T02: to engage, and to cruise on past a moment's grace
+//    after it runs out), outside the air, clear of what is ahead and high enough over a world to engage; landed only on dry
 //    ground on a world; docked only on a Waystation pad no other ship holds; on foot only on a world's ground or in a
 //    hangar, and only after getting out of a landed or docked ship; boarding only the ship it is beside.
 // 3. The move from the last valid pose. A jump beyond the allowance in the time since (at most a second of it: no input
@@ -46,6 +47,7 @@ import { Buttons, type ClientMessage, type Pose } from '@astra/shared/protocol';
 import {
   AIR,
   allowanceAfterChange,
+  FLIGHT_TOLERANCE,
   flightCaps,
   PULSE_DRIVE,
   SHIP_GEAR_HEIGHT,
@@ -90,6 +92,16 @@ export type MoveMode = InputMessage['mode'];
 export interface MovementLog {
   warn(obj: object, msg: string): void;
   debug(obj: object, msg: string): void;
+}
+
+/** The characters' meters (Heat and Charge, P1.E07.T02's MeterService). */
+export interface MoverMeters {
+  /** Whether one may be in `mode` at server world time `now`: the pulse drive needs Charge, or to have run out of it no
+   * more than `graceS` before `at` (the claim's credited time). */
+  allowsMode(characterId: string, mode: MoveMode, now: number, graceS?: number, at?: number): boolean;
+  /** An accepted input's flight: `seconds` of its client's time in `mode`, as credited here, up to credited time `at`
+   * (what the pulse drive burns Charge for). */
+  flown(characterId: string, mode: MoveMode, seconds: number, now: number, at: number): void;
 }
 
 /** What movement authority needs of a player: who it is (for the log), its ship and its skills. */
@@ -324,9 +336,10 @@ interface Hold {
 }
 
 class Mover {
-  readonly ship: ShipStats;
-  readonly walker: WalkerStats;
-  readonly walkerCaps: WalkerCaps;
+  profile!: MoverProfile;
+  ship!: ShipStats;
+  walker!: WalkerStats;
+  walkerCaps!: WalkerCaps;
   readonly clock: ClientClock;
   last!: Sample;
   /** the current window segment, oldest first; seg[0] is the previous segment's last pose when `boundary` is set */
@@ -356,13 +369,21 @@ class Mover {
   /** A mover joining at server world time `joined`. */
   constructor(
     readonly id: number,
-    readonly profile: MoverProfile,
+    profile: MoverProfile,
     joined: number,
   ) {
-    this.ship = shipStats(profile.ship, { skills: profile.skills });
-    this.walker = walkerStats({ skills: profile.skills, people: profile.people });
-    this.walkerCaps = walkerCaps(this.walker);
+    this.retune(profile);
     this.clock = new ClientClock(joined);
+  }
+
+  /** Takes the numbers of a profile: the ship's and the walker's, from the hull, modules and nodes it names. */
+  retune(profile: MoverProfile): void {
+    const ship = shipStats(profile.ship, { skills: profile.skills });
+    const walker = walkerStats({ skills: profile.skills, people: profile.people });
+    this.profile = profile;
+    this.ship = ship;
+    this.walker = walker;
+    this.walkerCaps = walkerCaps(walker);
   }
 }
 
@@ -393,6 +414,8 @@ export interface MovementAuthorityOptions {
   grounds?: GroundSource;
   /** The system's tier now, which its worlds' ground is drawn for (0 by default). */
   tier?: () => number;
+  /** The characters' meters: the pulse drive needs Charge. Without them (tests, a restore's check) it is not asked. */
+  meters?: MoverMeters;
 }
 
 /**
@@ -443,6 +466,7 @@ export class MovementAuthority {
   kicks = 0;
   private readonly zone: string;
   private readonly log?: MovementLog;
+  private readonly meters?: MoverMeters;
   private readonly movers = new Map<number, Mover>();
   /** the movers holding each pad: its ship docked there, or left there while its pilot walks */
   private readonly pads: Set<number>[] = STATION_LAYOUT.pads.map(() => new Set<number>());
@@ -453,6 +477,7 @@ export class MovementAuthority {
   constructor(opts: MovementAuthorityOptions) {
     this.zone = opts.zone;
     this.log = opts.log;
+    this.meters = opts.meters;
     this.world = new MovementWorld(opts.system, opts.grounds ?? groundPlanner, opts.tier);
   }
 
@@ -498,6 +523,15 @@ export class MovementAuthority {
     this.movers.set(id, m);
     const pad = first.cls === 'foot' ? (m.parked?.pad ?? null) : first.pad;
     if (pad !== null) this.holdPad(id, pad);
+  }
+
+  /**
+   * Holds mover `id` to the numbers of the ship and nodes it has now (a node bought or refunded, a hull swapped): its next
+   * input is judged on them. Throws a LoadoutError, holding it to what it had, for a ship that cannot fly.
+   */
+  retune(id: number, change: Pick<MoverProfile, 'ship' | 'skills'>): void {
+    const m = this.movers.get(id);
+    if (m) m.retune({ ...m.profile, ...change });
   }
 
   /**
@@ -579,6 +613,11 @@ export class MovementAuthority {
     this.holdIfSkipped(m, { seq: msg.seq, msg, credit, r: now });
     m.graceUntil = -Infinity;
     this.accept(m, L, s);
+    // the meters' account of it: the time credited since the last valid pose (none for a clock stepped forward), flown in its
+    // mode, which the pulse drive pays Charge for; so a client pays for the flight accepted however it bunches its inputs,
+    // each second once (a correction's pose is re-timed to the refused input's credited time, and that never runs back)
+    const character = m.profile.characterId;
+    if (this.meters && character !== undefined) this.meters.flown(character, s.mode, s.resync ? 0 : Math.max(0, s.t - L.t), now, s.t);
     return { ok: true, mode: s.mode, vel: s.vel };
   }
 
@@ -1005,9 +1044,14 @@ export class MovementAuthority {
 
     switch (s.cls) {
       case 'pulse': {
+        const engaging = L.cls !== 'pulse';
+        // Charge, as the character's meters have it now (the gateway ran them to this input's arrival before the zone)
+        const id = m.profile.characterId;
+        if (this.meters && id !== undefined && !this.meters.allowsMode(id, 'pulse', s.r, engaging ? 0 : MOVEMENT.pulse.chargeGraceS, s.t)) {
+          return fail('pulse_charge', 0, 0, 'charge', engaging ? 'engaging with Charge empty' : 'cruising on past the drop-out');
+        }
         const air = this.world.airAt(key, pos, world, poses);
         if (air > AIR.pulseCeiling) return fail('pulse_air', air, AIR.pulseCeiling, 'density');
-        const engaging = L.cls !== 'pulse';
         const path = L.key === key ? dist(L.pos, pos) : 0;
         const need = (engaging ? PULSE_DRIVE.engageClearM : PULSE_DRIVE.dropOutM) - MOVEMENT.pulse.clearanceM;
         if (s.clearAhead + path < need) return fail('pulse_clearance', s.clearAhead, need, 'm', engaging ? 'engaging' : 'cruising');
@@ -1021,7 +1065,7 @@ export class MovementAuthority {
       case 'rest':
         return s.mode === 'docked'
           ? this.dockedLegality(m, L, s, fail)
-          : this.landedLegality(s, body, groundR, landH, ground?.ocean ?? false, near && !ground, fail);
+          : (this.landedLegality(s, body, groundR, landH, ground?.ocean ?? false, near && !ground, fail) ?? this.landingSpeed(m, L, s, near && !ground, fail));
       default:
         return null;
     }
@@ -1043,6 +1087,20 @@ export class MovementAuthority {
     if (gear < -L.belowM || gear > L.aboveM) return fail('landed', gear, gear < 0 ? -L.belowM : L.aboveM, 'm', 'gear off the ground');
     if (ocean && landH < 0.5 - L.waterM) return fail('landed', landH, 0.5 - L.waterM, 'm', 'on water');
     return null;
+  }
+
+  /**
+   * A ship coming to rest on a world is no faster than its hull lets it land (`ShipStats.landingSpeedMax`: 160, Soft Landing
+   * 220), under FLIGHT_TOLERANCE: by the speed it reports, and by how far it moved since the last pose it was flying at. The
+   * landing begins on the client (its autopilot brakes from there), so this is what the server sees of it.
+   */
+  private landingSpeed(m: Mover, L: Sample, s: Sample, pending: boolean, fail: FailFn): Violation | null {
+    if (pending || L.cls === 'rest' || L.cls === 'foot') return null;
+    const dt = s.t - L.t;
+    const moved = L.key === s.key && !s.resync && dt > MOVEMENT.landed.speedMinDtS ? dist(L.pos, s.pos) / dt : 0;
+    const speed = Math.max(len(L.vel), moved);
+    const allowed = m.ship.landingSpeedMax * FLIGHT_TOLERANCE.factor;
+    return speed > allowed ? fail('landing_speed', speed, allowed, 'm/s', 'too fast to land') : null;
   }
 
   private dockedLegality(m: Mover, L: Sample, s: Sample, fail: FailFn): Violation | null {

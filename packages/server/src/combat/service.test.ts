@@ -1,8 +1,9 @@
 // The combat service (P1.E06.T02) on a real zone of system 0 with its fauna and a hand-driven clock: shots of the base gun
 // resolved from the pose the zone believes and checked cheapest first (rate, clock, mode, frame, aim), the ray against the
 // creatures within the gun's range, line of sight over the ground, and a kill's XP and loot shared by damage and told.
-import { killLoot, killXp, totalXpFor } from '@astra/shared/combat';
-import { getWeapon } from '@astra/shared/data';
+import { creatureSphere, killLoot, killXp, recipeDrops, RECIPE_DROPS, totalXpFor } from '@astra/shared/combat';
+import { getBoss, getWeapon, recipeItemId } from '@astra/shared/data';
+import { countOf } from '@astra/shared/inventory';
 import type { ServerMessage } from '@astra/shared/protocol';
 import type { QuestWorldEvent } from '@astra/shared/quests';
 import type { ShipLoadout } from '@astra/shared/ships';
@@ -16,7 +17,7 @@ import { CharacterProgress } from '../persistence/components.ts';
 import { nodeGroundsHere, type NodeGroundSource } from '../resources/ground.ts';
 import { splitByDamage } from '../resources/service.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
-import { creatureSphere, LEAD_MAX_S } from './gun.ts';
+import { LEAD_MAX_S } from './gun.ts';
 import { CombatService, FIRE_BURST, IN_COMBAT_S, killTags, type CombatServiceOptions } from './service.ts';
 
 type Vec3 = [number, number, number];
@@ -126,6 +127,22 @@ describe('a shot', () => {
     expect(s.w.zone.combat.creatureHealth(c.id)!.hp).toBeCloseTo(max - GUN.damage!, 9);
     expect(s.w.zone.entity(c.id)!.fields.hp).toBeCloseTo((max - GUN.damage!) / max, 9);
     expect(s.service.stats()).toMatchObject({ shots: 1, hits: 1 });
+  });
+
+  it('passes through a creature its phase hides from the player', () => {
+    const s = setup();
+    const near = s.creature(docile(s.w.species), 30);
+    const a = s.pilot('a', s.over(near.at(), 60), near.at());
+    // (a phase's own creature in the fauna's place: the phase rule says what this player may see)
+    const phases = s.w.zone.phases;
+    const sees = phases.canSee.bind(phases);
+    phases.canSee = (viewer, id) => id !== near.id && sees(viewer, id);
+    expect(a.fire(near.at())).toEqual({ t: 'fire', seq: 1, result: 'miss' });
+    const { hp, max } = s.w.zone.combat.creatureHealth(near.id)!;
+    expect(hp).toBe(max);
+    phases.canSee = sees;
+    s.w.time += 1;
+    expect(a.fire(near.at())).toMatchObject({ result: 'hit', target: near.id });
   });
 
   it('is refused, cheapest first, out of turn, out of a zone, with no gun, too stale, out of a ship, in another frame, or aimed off the nose', () => {
@@ -284,6 +301,35 @@ describe('a shot', () => {
     expect(shot(3, t0 + LEAD_MAX_S)).toMatchObject({ result: 'hit', target: c.id });
   });
 
+  it('passes through a creature the shooter’s phase hides from it (another event instance’s) to the one behind it', () => {
+    const s = setup();
+    const near = s.creature(docile(s.w.species), 30);
+    const far = s.creature(docile(s.w.species), 30, 0.5);
+    const a = s.pilot('a', add(s.over(near.at(), 60), s.along(near.at()), -60), near.at());
+    const b = s.pilot('b', add(s.over(near.at(), 80), s.along(near.at()), -80), near.at());
+    // b's event instance holds the near one; a is in the shared world, b in it
+    const place = { key: 'Hollow tide', frame: s.w.frame, center: near.at(), radius: 500 };
+    const phase = s.w.zone.phases.phaseFor(b.viewer, 'event', place);
+    s.w.zone.phases.adopt(phase.id, near.id);
+    s.w.zone.step((s.w.time += 0.05));
+    expect(a.fire(far.at())).toMatchObject({ result: 'hit', target: far.id });
+    expect(s.w.zone.combat.creatureHealth(near.id)!.hp).toBe(s.w.zone.combat.creatureHealth(near.id)!.max);
+    s.w.time += 1;
+    expect(b.fire(near.at())).toMatchObject({ result: 'hit', target: near.id });
+  });
+
+  it('tells listeners of every hit that took health, and of the kill', () => {
+    const s = setup();
+    const heard: string[] = [];
+    const off = s.service.subscribe((n) => heard.push(n.kind === 'hit' ? `hit:${n.report.attacker}:${n.report.dealt}` : n.kind));
+    const c = s.creature(docile(s.w.species), 30);
+    const a = s.pilot('a', s.over(c.at(), 60), c.at());
+    a.fire(c.at());
+    s.w.zone.combat.applyDamage(a.entity, c.id, { base: 1e6, kind: 'weapon' });
+    expect(heard).toEqual([`hit:a:${GUN.damage}`, `hit:a:${s.w.zone.combat.creatureHealth(c.id)!.max - GUN.damage!}`, 'killed']);
+    off();
+  });
+
   it('is never at a player (PvP is P2.E17.T01), nor blocked by one', () => {
     const s = setup();
     const c = s.creature(docile(s.w.species), 30);
@@ -338,6 +384,51 @@ describe('a kill', () => {
       ['b', { type: 'kill', tags: ['fauna', 'docile', sp.bodyPlan], entity: c.id }],
     ]);
     expect(s.service.stats().kills).toBe(1);
+  });
+
+  it('drops a boss’s recipes as items, each fighter rolling for itself, and nothing from a creature without any (DESIGN 15.7)', () => {
+    const s = setup();
+    const sp = docile(s.w.species);
+    const ref = { kind: 'boss', id: 'hive_heart' } as const;
+    const listed = getBoss(ref.id).loot.recipes;
+    expect(listed.length).toBeGreaterThan(1);
+    const report = (by: [string, number][]) => ({
+      zone: s.w.zone.id,
+      entity: 1,
+      frame: s.w.frame,
+      species: sp,
+      level: 30,
+      ref,
+      by: new Map(by),
+      killer: by[0]![0],
+      at: s.w.time,
+    });
+    s.inventory.open('a');
+    s.inventory.open('b');
+    // the service rolls from its seed: the units, then each resource, once for the kill; then the recipes, fighter by fighter
+    const rng = new Random(7);
+    const got: Record<string, string[]> = { a: [], b: [] };
+    for (let kill = 0; kill < 12; kill++) {
+      killLoot(ref, 30, () => rng.next());
+      for (const who of ['a', 'b']) got[who]!.push(...recipeDrops(ref, () => rng.next()));
+      s.service.hooks.killed!(
+        report([
+          ['a', 10],
+          ['b', 5],
+        ]),
+      );
+    }
+    expect(RECIPE_DROPS.chance).toBeGreaterThan(0);
+    expect(got.a!.length + got.b!.length).toBeGreaterThan(0);
+    for (const who of ['a', 'b']) {
+      const have = s.inventory.get(who)!;
+      for (const item of new Set(got[who])) {
+        expect(countOf(have, item), `${who} ${item}`).toBe(got[who]!.filter((x) => x === item).length);
+      }
+      for (const item of got[who]!) expect(listed.map(recipeItemId)).toContain(item);
+    }
+    expect(recipeDrops({ kind: 'fauna', bodyPlan: sp.bodyPlan, temperament: sp.temperament }, () => 0)).toEqual([]);
+    expect(recipeDrops({ kind: 'boss', id: 'outpost_overseer' }, () => 0.99)).toEqual([]);
   });
 
   it('keeps a character in combat while it deals or takes damage, and a while after', () => {

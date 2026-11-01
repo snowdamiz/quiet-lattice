@@ -2,7 +2,9 @@
 // db:generate` and committed under packages/server/drizzle/. A character's state beyond its columns (pose, frame, ship,
 // inventory, and skills, quests and flags as their tasks arrive) lives in its `state` jsonb, one versioned entry per
 // component of the persistence registry (src/persistence/registry.ts), so a new component needs no migration.
+import type { DiscoveryKind } from '@astra/shared/discovery';
 import type { CharacterLook, PeopleId } from '@astra/shared/protocol';
+import type { ChronicleFind, Philosophy, SeasonBucket, SeasonOpening } from '@astra/shared/seasons';
 import type { StoredState } from '../persistence/registry.ts';
 import { sql } from 'drizzle-orm';
 import { bigint, check, doublePrecision, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
@@ -55,7 +57,8 @@ export const characters = pgTable(
 /**
  * One row per world shard, created on its server's first boot (docs/ARCHITECTURE.md §3, DESIGN 16.4): the epoch its
  * world time counts from, the latest world time its server saved (so the clock never starts below it after a restart)
- * and its season. World times are seconds since the epoch.
+ * and its season: its number, start and length, the mean daily actives its length was chosen from and the map it opened
+ * with (§27). World times are seconds since the epoch.
  */
 export const shards = pgTable(
   'shards',
@@ -77,6 +80,12 @@ export const shards = pgTable(
     countDay: integer('count_day'),
     /** The last burn tick (world time ÷ 17,280 s, floored) burned into the Count; null until the meter first runs. */
     burnStep: integer('burn_step'),
+    /** The mean daily actives of the month before the season, its length chosen from (§27); null for the first season,
+     * which took the default length. */
+    seasonActives: doublePrecision('season_actives'),
+    /** The map the season opened with (DESIGN 16.4, §27): how the season before ended, the Edge's shift (ly) and the
+     * systems dark this season; the baseline for the first. The Edge follows it with the Count (world/service.ts). */
+    seasonOpening: jsonb('season_opening').$type<SeasonOpening>().notNull().default({ from: null, edgeShiftLy: 0, dark: [] }),
   },
   (t) => [
     check('shards_season_check', sql`${t.season} >= 1`),
@@ -129,8 +138,140 @@ export const countDays = pgTable(
   (t) => [primaryKey({ columns: [t.shardId, t.day] })],
 );
 
+/** Where a find's name stands: its finder may still give one (`open`, until `name_until`), its finder gave one
+ * (`named`), a moderator gave one (`renamed`) or took it away for good (`cleared`: the procedural name stays). */
+export type NameState = 'open' | 'named' | 'renamed' | 'cleared';
+
+/**
+ * First finds (DESIGN 14.5, docs/ARCHITECTURE.md §25): one row per find of a shard, the first player to analyze a species,
+ * land on a planet or moon, or reach a site. The key is unique per shard and kind, so of two players racing, one inserts
+ * the row and is its finder, and the other finds it there. A find is history: its finder's character may go (its id goes
+ * null, its name stays).
+ */
+export const discoveries = pgTable(
+  'discoveries',
+  {
+    shardId: text('shard_id')
+      .notNull()
+      .references(() => shards.id, { onDelete: 'cascade' }),
+    kind: text('kind').$type<DiscoveryKind>().notNull(),
+    /** A species key, a body's frame id or a site key (@astra/shared/discovery); it starts with its system's seed. */
+    key: text('key').notNull(),
+    /** The seed of the star system it is in: a joining player is sent its system's finds. */
+    systemSeed: bigint('system_seed', { mode: 'number' }).notNull(),
+    finderId: uuid('finder_id').references(() => characters.id, { onDelete: 'set null' }),
+    /** The finder's character name, as everyone is shown it. */
+    finderName: text('finder_name').notNull(),
+    /** World time (s) it was found. */
+    at: doublePrecision('at').notNull(),
+    /** The name it was given; null while it keeps its procedural name. */
+    name: text('name'),
+    nameState: text('name_state').$type<NameState>().notNull().default('open'),
+    /** World time (s) until which its finder may name it. */
+    nameUntil: doublePrecision('name_until').notNull(),
+    /** World time (s) it was named, or renamed or cleared by a moderator. */
+    namedAt: doublePrecision('named_at'),
+    /** Who named it last: `finder`, or `admin:<operator>`. */
+    namedBy: text('named_by'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.shardId, t.kind, t.key] }),
+    index('discoveries_system_idx').on(t.shardId, t.systemSeed),
+    index('discoveries_finder_idx').on(t.shardId, t.finderId),
+    check('discoveries_kind_check', sql`${t.kind} in ('species', 'body', 'site')`),
+    check('discoveries_name_state_check', sql`${t.nameState} in ('open', 'named', 'renamed', 'cleared')`),
+    check('discoveries_name_check', sql`(${t.name} is null) = (${t.nameState} in ('open', 'cleared'))`),
+  ],
+);
+
+/**
+ * Each account active on each meter day (§27): an account that entered the world that day, once. A season's length is
+ * chosen from the mean of the month before it (DESIGN 16.4). No foreign key to `accounts`: it is history.
+ */
+export const dailyActives = pgTable(
+  'daily_actives',
+  {
+    shardId: text('shard_id')
+      .notNull()
+      .references(() => shards.id, { onDelete: 'cascade' }),
+    day: integer('day').notNull(),
+    accountId: uuid('account_id').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.shardId, t.day, t.accountId] })],
+);
+
+/**
+ * Each finished season's chronicle (DESIGN 16.4, §27), written in the meter's transaction when the season ends: when it
+ * ran, its length and the mean daily actives that chose it, the map it opened with, the Count it ended at and so its
+ * bucket, the winning philosophy with its title and glyph and how many accounts earned them, the map the next season
+ * opens with, and its notable first finds. Its meter path is the season's rows of `count_days`.
+ */
+export const seasonChronicles = pgTable(
+  'season_chronicles',
+  {
+    shardId: text('shard_id')
+      .notNull()
+      .references(() => shards.id, { onDelete: 'cascade' }),
+    season: integer('season').notNull(),
+    /** World times (s) it began and ended. */
+    seasonStart: doublePrecision('season_start').notNull(),
+    seasonEnd: doublePrecision('season_end').notNull(),
+    /** Its length (s), as chosen when it began. */
+    seasonLength: integer('season_length').notNull(),
+    actives: doublePrecision('actives'),
+    opening: jsonb('opening').$type<SeasonOpening>().notNull(),
+    /** The Count at its end. */
+    count: integer('count').notNull(),
+    bucket: text('bucket').$type<SeasonBucket>().notNull(),
+    philosophy: text('philosophy').$type<Philosophy>().notNull(),
+    title: text('title').notNull(),
+    glyph: text('glyph').notNull(),
+    /** Accounts that earned its title and glyph. */
+    awarded: integer('awarded').notNull(),
+    /** The map the next season opens with. */
+    next: jsonb('next').$type<SeasonOpening>().notNull(),
+    /** Notable first finds (P2.E29.T01 names them). */
+    finds: jsonb('finds').$type<ChronicleFind[]>().notNull().default([]),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.shardId, t.season] }),
+    check('season_chronicles_bucket_check', sql`${t.bucket} in ('fed', 'held', 'broken')`),
+    check('season_chronicles_count_check', sql`${t.count} between 0 and 1000`),
+  ],
+);
+
+/**
+ * The title and glyph each account of a season's winning philosophy earned (DESIGN 16.4, §27), written with the
+ * season's chronicle. Its characters carry them in their `seasonAwards` component, merged in when they enter the world.
+ * No foreign key to `accounts`: it is history.
+ */
+export const seasonAwards = pgTable(
+  'season_awards',
+  {
+    shardId: text('shard_id')
+      .notNull()
+      .references(() => shards.id, { onDelete: 'cascade' }),
+    season: integer('season').notNull(),
+    accountId: uuid('account_id').notNull(),
+    bucket: text('bucket').$type<SeasonBucket>().notNull(),
+    title: text('title').notNull(),
+    glyph: text('glyph').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.shardId, t.season, t.accountId] }),
+    index('season_awards_account_idx').on(t.shardId, t.accountId),
+    check('season_awards_bucket_check', sql`${t.bucket} in ('fed', 'held', 'broken')`),
+  ],
+);
+
 export type AccountRow = typeof accounts.$inferSelect;
 export type CharacterRow = typeof characters.$inferSelect;
 export type ShardRow = typeof shards.$inferSelect;
 export type CountVoteRow = typeof countVotes.$inferSelect;
 export type CountDayRow = typeof countDays.$inferSelect;
+export type DiscoveryRow = typeof discoveries.$inferSelect;
+export type SeasonChronicleRow = typeof seasonChronicles.$inferSelect;
+export type SeasonAwardRow = typeof seasonAwards.$inferSelect;

@@ -665,7 +665,7 @@ Today's site payouts (600–1,600 units from an outpost or monolith at Tier 0) a
 
 ### 15.7 Crafting
 **Where.** Fabricator terminals at every Waystation and capital (Tier 1 stations craft Tier 0–2 recipes, capitals everything up to Tier 3, the Scrapyard the Void recipes, Chorus sanctuaries the catalysts). The ship carries a small fabricator for ammo and cartridges only, so you can rearm in the field.
-**Recipes** are items: bought from vendors (common), rewarded by chains (faction), dropped by bosses (unique), or found in vaults (Cartographer). Learned once, kept forever. No crafting skill tree: the gate is recipes and materials, so crafting pulls you across tiers and worlds rather than up a separate ladder.
+**Recipes** are items: bought from vendors (common), rewarded by chains (faction), dropped by bosses (unique), or found in vaults (Cartographer). Learned once, kept forever. No crafting skill tree: the gate is recipes and materials, so crafting pulls you across tiers and worlds rather than up a separate ladder. The Phase 1 consumables (warp cell, pulse fuel cell, oxygen and sodium cartridges, flak ammo) are known from the start, so a new character crafts them at the first Waystation; every other recipe is learned from its item.
 Three lines:
 
 *Consumables*

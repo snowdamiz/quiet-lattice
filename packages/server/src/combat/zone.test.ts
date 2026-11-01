@@ -12,7 +12,7 @@ import { DEN_RESPAWN_S } from '../fauna/dens.ts';
 import { tangents } from '../fauna/herds.ts';
 import { nextTime } from '../fauna/sky.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
-import { DEATH_BEAT_S, EVENTS_PER_SESSION, type CombatHooks, type DownedReport, type KillReport } from './zone.ts';
+import { DEATH_BEAT_S, EVENTS_PER_SESSION, type CombatHooks, type DownedReport, type HitReport, type KillReport } from './zone.ts';
 
 type Want = (s: readonly FaunaSpecies[]) => boolean;
 const docile = (s: readonly FaunaSpecies[]) => s.find((x) => x.temperament === 'docile' && x.kind !== 'flyer');
@@ -39,8 +39,9 @@ class TextViewer implements ZoneViewer {
 
 /** A world with hooks that record what they hear, and players joined at points over its ground. */
 function combatWorld(want: Want = both, fauna: { dens?: boolean } = {}) {
-  const heard = { killed: [] as KillReport[], downed: [] as DownedReport[], engaged: [] as string[] };
+  const heard = { hits: [] as HitReport[], killed: [] as KillReport[], downed: [] as DownedReport[], engaged: [] as string[] };
   const hooks: CombatHooks = {
+    hit: (r) => heard.hits.push(r),
     killed: (r) => heard.killed.push(r),
     downed: (r) => heard.downed.push(r),
     engaged: (id) => heard.engaged.push(id),
@@ -87,6 +88,27 @@ describe('health', () => {
     expect(w.zone.entity(id!)!.fields.hp).toBe(1);
   });
 
+  it('is scaled for an event instance (its max and what it has left), before or after it is first hurt', () => {
+    const { w, herd, join, up } = combatWorld();
+    const sp = docile(w.species)!;
+    const [fresh, hurt] = herd(sp, w.at(30, 0), 2, 7);
+    const max = mobStats({ kind: 'fauna', bodyPlan: sp.bodyPlan, temperament: sp.temperament }, 7).health!;
+    w.zone.combat.scaleHealth(fresh!, 2.5);
+    expect(w.zone.combat.creatureHealth(fresh!)).toEqual({ hp: max * 2.5, max: max * 2.5, dead: false });
+    const a = join('a', up(w.at(0, 0), 40));
+    w.zone.combat.applyDamage(a.entity, hurt!, weapon(10));
+    w.zone.combat.scaleHealth(hurt!, 2);
+    expect(w.zone.combat.creatureHealth(hurt!)).toEqual({ hp: (max - 10) * 2, max: max * 2, dead: false });
+    expect(w.zone.entity(hurt!)!.fields.hp).toBeCloseTo((max - 10) / max, 12);
+    // scaled again, it is scaled from its mob stats' health, not twice over
+    w.zone.combat.scaleHealth(hurt!, 1);
+    expect(w.zone.combat.creatureHealth(hurt!)!.max).toBeCloseTo(max, 9);
+    expect(() => w.zone.combat.scaleHealth(hurt!, 0)).toThrow(RangeError);
+    // a player's health is no creature's
+    w.zone.combat.scaleHealth(a.entity, 3);
+    expect(w.zone.combat.playerHealth(a.entity)!.hullMax).toBe(100);
+  });
+
   it("is a player's suit (with its nodes) on foot, its ship's shield and hull aboard", () => {
     const { w, join, up } = combatWorld();
     const a = join('a', up(w.at(0, 0), 40));
@@ -107,6 +129,8 @@ describe('the damage path', () => {
     expect(w.zone.combat.creatureHealth(id!)!.hp).toBeCloseTo(max - 11, 9);
     expect(w.zone.entity(id!)!.fields.hp).toBeCloseTo((max - 11) / max, 9);
     expect(heard.engaged).toEqual(['a']);
+    // each hit is heard with what it took (an event's contribution): who dealt it, to what
+    expect(heard.hits).toEqual([{ zone: w.zone.id, source: a.entity, attacker: 'a', target: id!, dealt: 11, killed: false, at: w.zone.time }]);
     // the attacker's power applies (its modifiers are the caller's to give)
     const strong = w.zone.combat.applyDamage(a.entity, id!, { ...weapon(10), attackerMods: [{ stat: 'ability.power', op: 'mul', value: 1.5 }] })!;
     expect(strong.amount).toBeCloseTo(15, 9);
@@ -158,6 +182,11 @@ describe('a kill', () => {
     expect([...r.by]).toEqual([
       ['a', max * 0.3],
       ['b', max * 0.7],
+    ]);
+    // each hit heard before the kill, the killing blow as what it took
+    expect(heard.hits.map((h) => [h.attacker, h.dealt, h.killed])).toEqual([
+      ['a', max * 0.3, false],
+      ['b', max * 0.7, true],
     ]);
     // out of its herd and the AI at once; its entity a corpse
     expect(w.zone.fauna!.creatures().map((c) => c.id)).toEqual([other]);
@@ -263,6 +292,29 @@ describe('combat events', () => {
     expect(near.viewer.events()).toMatchObject([{ target: id, killed: true, hp: 0 }]);
   });
 
+  it('never name to a session an entity its phase hides: a hit on one is not sent, a hit by one goes without its source', () => {
+    const { w, herd, join, up } = combatWorld();
+    const [mine] = herd(docile(w.species)!, w.at(30, 0));
+    const [hunter] = herd(predator(w.species)!, w.at(-30, 0));
+    const a = join('a', up(w.at(0, 0), 40));
+    const near = join('near', w.at(-10, 0), 'foot');
+    // a's story phase holds both creatures; a stays in its neighbour's sight, they do not
+    const story = w.zone.phases.phaseFor(a.viewer, 'story', { key: 'test:mine', frame: w.frame, center: w.at(0, 0), radius: 200 });
+    w.zone.phases.adopt(story.id, mine!);
+    w.zone.phases.adopt(story.id, hunter!);
+    w.run(0.05);
+    a.viewer.events();
+    near.viewer.events();
+    w.zone.combat.applyDamage(a.entity, mine!, weapon(4));
+    w.zone.combat.applyDamage(hunter!, a.entity, { base: 1, kind: 'attack', what: 'leap' });
+    w.run(0.05);
+    expect(a.viewer.events()).toMatchObject([
+      { source: a.entity, target: mine },
+      { source: hunter, target: a.entity },
+    ]);
+    expect(near.viewer.events()).toEqual([expect.objectContaining({ source: null, target: a.entity, damageType: 'attack', ability: 'leap' })]);
+  });
+
   it(`are at most ${EVENTS_PER_SESSION} a session a tick, its own entity's first`, () => {
     const { w, herd, join, up } = combatWorld();
     const many = herd(docile(w.species)!, w.at(30, 0), EVENTS_PER_SESSION + 8);
@@ -278,5 +330,65 @@ describe('combat events', () => {
     expect(got[0]).toMatchObject({ source: hunter, target: near.entity, damageType: 'attack', ability: 'leap' });
     expect(a.viewer.events()).toHaveLength(EVENTS_PER_SESSION);
     expect(w.zone.combat.stats().eventsDropped).toBeGreaterThan(0);
+  });
+});
+
+describe('a player re-tuned to the nodes it owns now (P1.E06.T05)', () => {
+  const LARK_ONE = { hull: 'lark', modules: { s1: 'pulse_lasers' }, cargoPods: 1, livery: 0 } as const;
+  const retune = (w: ReturnType<typeof combatWorld>['w'], entity: number, skills: string[]) => w.zone.combat.retuned(entity, { ship: LARK_ONE, skills });
+  const hit = (w: ReturnType<typeof combatWorld>['w'], entity: number, base: number) => w.zone.combat.applyDamage(null, entity, { base, kind: 'attack' });
+
+  it('keeps the suit pool’s fraction: Dense Bones bought mid-session scales what is left, a refund scales it back, the cycle gains nothing', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    hit(w, a.entity, 60);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 40, suitMax: 100 });
+    retune(w, a.entity, ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suitMax: 120 });
+    expect(w.zone.combat.playerHealth(a.entity)!.suit).toBeCloseTo(48, 9);
+    expect(w.zone.entity(a.entity)!.fields.hp).toBeCloseTo(0.4, 6);
+    retune(w, a.entity, []);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suitMax: 100 });
+    expect(w.zone.combat.playerHealth(a.entity)!.suit).toBeCloseTo(40, 9);
+  });
+
+  it('a suit at 0 stays at 0 and the player stays down, bought or refunded', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    expect(hit(w, a.entity, 500)).toMatchObject({ killed: true });
+    retune(w, a.entity, ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 0, suitMax: 120, down: 'suit' });
+    expect(w.zone.combat.isDown(a.entity)).toBe(true);
+    expect(w.zone.entity(a.entity)!.fields.hp).toBe(0);
+    retune(w, a.entity, []);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 0, suitMax: 100, down: 'suit' });
+  });
+
+  it('changes the damage taken at once: Grey Blood’s +10% from the next hit, refunded it is gone', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(10, 9);
+    retune(w, a.entity, ['grey_blood']);
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(11, 9);
+    retune(w, a.entity, []);
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(10, 9);
+  });
+
+  it('a respec in a fight changes the maxima and the damage taken together', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot', ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 120, suitMax: 120 });
+    hit(w, a.entity, 30);
+    retune(w, a.entity, ['grey_blood']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suitMax: 100 });
+    expect(w.zone.combat.playerHealth(a.entity)!.suit).toBeCloseTo(75, 9);
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(11, 9);
+  });
+
+  it('a pool that was never hurt is full at the new maximum', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    retune(w, a.entity, ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 120, suitMax: 120 });
   });
 });

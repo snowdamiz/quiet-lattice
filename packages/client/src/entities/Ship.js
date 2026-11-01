@@ -1,13 +1,20 @@
 // Player starship: model, arcade flight model with flight assist, auto landing /
 // takeoff, pulse drive, docking autopilot and a smoothed chase camera.
+//
+// Its Charge (DESIGN 9.1, today's pulse fuel) runs on the shared rules (`@astra/shared/meters`) the server decides it by:
+// it regenerates 2/s in sunlight inside the system's habitable band and nothing in deep space, and the pulse drive burns
+// it near bodies and will not engage on an empty meter. The client predicts; the server's `meters` state is the truth
+// (`reconcileCharge`).
 import * as THREE from 'three';
 import { gltfLoader } from '../core/Engine.js';
 import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
-import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
+import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, hazardDamagePerS, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
+import { canEngagePulse, meterEnvironment, meterProfile, meterRates, stepMeters } from '@astra/shared/meters';
 import { fireIntent } from '../net/combat.js';
+import { Blend } from '../net/prediction.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -27,6 +34,28 @@ const LOADOUT = shipLoadoutSchema.parse({ hull: 'lark', modules: { s1: 'pulse_la
 const AIR_THRUST = 75 / 240;
 
 export const GEAR_HEIGHT = 1.95;
+
+const _mw = new THREE.Vector3();
+let _env = null;
+let _envKey = null;
+
+/**
+ * Where the character is, as the meters read it (`@astra/shared/meters`): the walker's place on foot, else the ship's
+ * (the entity the server judges by). Made once a frame for the multitool and the ship both.
+ */
+export function characterMeterEnvironment(game) {
+  const foot = game.mode === 'foot';
+  const st = foot ? game.player.state : game.ship.state;
+  const key = `${game.time}|${foot}|${st.pos.x}|${st.pos.y}|${st.pos.z}|${st.frame?.name}`;
+  if (_env && key === _envKey) return _env;
+  const sys = game.system;
+  const f = st.frame;
+  const body = f && f.kind !== 'station' ? sys.planets.indexOf(f) : -1;
+  const frame = !f ? null : f.kind === 'station' ? 'station' : body >= 0 ? body : null;
+  _env = meterEnvironment(sys.description, sys.planets, { frame, world: st.worldPosition(_mw), foot, deepSpace: !!game.universe?.deep });
+  _envKey = key;
+  return _env;
+}
 // where the landed hull comes down within reach of a walker, in ship space (x0, x1, z0, z1): the
 // fuselage, and the engine pods with the wings over them
 const FOOTPRINT = [
@@ -38,6 +67,9 @@ export class Ship {
   constructor(game) {
     this.game = game;
     this.state = new FrameState();
+    // the ship as drawn and as the chase camera follows it: its state, with a correction's blend while one runs
+    this.blend = new Blend();
+    this.drawn = new FrameState();
     this.group = new THREE.Group();
     this.group.name = 'ship';
     this.mode = 'flying'; // flying | landing | landed | takeoff | docking | pulse
@@ -49,7 +81,7 @@ export class Ship {
     this.gear = 1;
     this.boosting = false;
     this.thrust = 0;
-    // what the ship is, and the Pilot nodes it flies with (the demo shop's upgrades, until the skill web lands)
+    // what the ship is, and the nodes its pilot owns (the server's `skills` view, `setSkills`)
     this.loadout = LOADOUT;
     this.skills = new Set();
     this.refreshStats();
@@ -58,8 +90,11 @@ export class Ship {
     this.hull = this.stats.hullMax;
     this.hazardLevel = 0;
     this.wind = new THREE.Vector3();
-    // Charge: today's pulse fuel (DESIGN 9.1)
-    this.pulseFuel = this.stats.charge;
+    // Charge (DESIGN 9.1): today's pulse fuel; its rate now (+ regenerating, − burning) and the regeneration alone, for
+    // the HUD
+    this.charge = this.meterProfile.chargeCapacity;
+    this.chargeRate = 0;
+    this.chargeRegen = 0;
     this.launchFuel = 100;
     this.pulse = { spool: 0, speed: 0, active: false };
     this.altitude = Infinity;
@@ -550,9 +585,48 @@ export class Ship {
   // one of them changes
   refreshStats() {
     this.stats = shipStats(this.loadout, { skills: this.skills });
+    // the meters' capacities and modifiers (heat's too: the multitool reads them here)
+    this.meterProfile = meterProfile({ ship: this.loadout, skills: this.skills });
+    if (this.charge !== undefined) this.charge = Math.min(this.charge, this.meterProfile.chargeCapacity);
     // the flight model's hard limit, a little over the boost cap the server holds the ship to
     this.vmax = flightCaps(this.stats, 'boost').max * CLIENT_SPEED_HEADROOM;
     this.gun = this.stats.hardpoints.find((h) => h.weapon === 'pulse_lasers');
+  }
+
+  // The nodes the pilot owns, as the server's skills view lists them. The set is kept (the inventory's layout reads it), and
+  // each pool keeps its fraction, as the server's does (ZoneCombat.retuned).
+  setSkills(nodes) {
+    const had = this.stats;
+    this.skills.clear();
+    for (const n of nodes) this.skills.add(n);
+    this.refreshStats();
+    this.shield = had.shieldMax > 0 ? (this.shield / had.shieldMax) * this.stats.shieldMax : this.stats.shieldMax;
+    this.hull = had.hullMax > 0 ? (this.hull / had.hullMax) * this.stats.hullMax : this.stats.hullMax;
+  }
+
+  get chargeMax() {
+    return this.meterProfile.chargeCapacity;
+  }
+
+  // Charge over this frame: regenerating or not where the character is, burning on the pulse drive near bodies
+  updateCharge(dt) {
+    const env = characterMeterEnvironment(this.game);
+    const act = { beam: false, pulse: this.mode === 'pulse' };
+    const meter = { heat: 0, overheated: false, charge: this.charge };
+    this.charge = stepMeters(meter, this.meterProfile, env, act, dt).state.charge;
+    const rates = meterRates({ ...meter, charge: this.charge }, this.meterProfile, env, act);
+    this.chargeRate = rates.charge;
+    this.chargeRegen = rates.regen;
+  }
+
+  /**
+   * The server's meters (`meters` state, ARCHITECTURE §19): Charge as it held it at world time `view.at`, run on to
+   * `serverNow` (the client's estimate of server time) with what the ship is doing now.
+   */
+  reconcileCharge(view, serverNow = view.at) {
+    this.charge = Math.min(view.charge, this.chargeMax);
+    const dt = Math.max(0, Math.min(1, serverNow - view.at));
+    if (dt > 0) this.updateCharge(dt);
   }
 
   // speed along the nose; setting it (a scripted arrival, a teleport) sets the throttle to hold it
@@ -574,10 +648,21 @@ export class Ship {
   }
 
   // ---------- per-frame ----------
+  // Listens for the server's meters on whichever connection the game holds now (it changes on every sign-in).
+  watchServer() {
+    const net = this.game.net ?? null;
+    if (net === this.meterNet) return;
+    this.unwatchMeters?.();
+    this.meterNet = net;
+    this.unwatchMeters = net ? net.on('meters', ({ meters }) => this.reconcileCharge(meters, net.serverTime() ?? meters.at)) : null;
+  }
+
   update(dt, input, piloting) {
     const s = this.state;
     this.computeEnvironment();
     this.updateHazard(dt);
+    this.watchServer();
+    this.updateCharge(dt);
 
     switch (this.mode) {
       case 'flying':
@@ -1057,8 +1142,9 @@ export class Ship {
       this.game.hud?.toast('Pulse drive unavailable inside atmosphere', 'warn');
       return;
     }
-    if (this.pulseFuel <= 0) {
-      this.game.hud?.toast('Pulse drive fuel depleted', 'warn');
+    if (!canEngagePulse({ heat: 0, overheated: false, charge: this.charge }, this.meterProfile)) {
+      this.game.hud?.toast('Charge empty: the pulse drive will not engage', 'warn');
+      this.game.audio?.play('error');
       return;
     }
     // (rather than engage and drop straight out again)
@@ -1140,21 +1226,31 @@ export class Ship {
     s.vel.copy(fwd).multiplyScalar(this.pulse.speed);
     this.speed = this.pulse.speed;
     this.thrust = 1;
-    // fuel burns close to the planets; out in the open gaps (and between the stars) the drive
-    // cruises on the interstellar medium, or no trip beyond the home system would ever end
-    if (dist < PULSE_DRIVE.openSpeed * PULSE_DRIVE.cruiseS) this.pulseFuel = Math.max(0, this.pulseFuel - dt * this.stats.pulse.fuelBurn);
+    // (Charge burns close to the bodies, updateCharge: out in the open gaps and between the stars the drive cruises on the
+    // interstellar medium, or no trip beyond the home system would ever end)
     this.shake = Math.max(this.shake, 0.08);
 
-    const exit = (inp && (inp.hit('KeyJ') || inp.hit('Space') || inp.hit('KeyS'))) || this.pulseFuel <= 0 ||
+    const exit = (inp && (inp.hit('KeyJ') || inp.hit('Space') || inp.hit('KeyS'))) || this.charge <= 0 ||
       this.atmoDensity > 0.001 || dist < 400;
     if (exit) this.exitPulse();
   }
 
   exitPulse() {
+    // (the drive's stretch is reported up to here: movement authority judges what follows on the engines from the last
+    // pose it had on the drive, and the frames since that input went at the drive's speed)
+    this.game.net?.sendInput();
     this.mode = 'flying';
     this.speed = Math.min(this.pulse.speed, PULSE_DRIVE.exitSpeedMax);
     const fwd = _v.set(0, 0, -1).applyQuaternion(this.state.quat);
     this.state.vel.copy(fwd).multiplyScalar(this.speed);
+    this.game.audio?.play('pulseExit');
+  }
+
+  // The server refused the pulse drive (ARCHITECTURE §7: a Charge it holds empty): back on the engines at the velocity its
+  // correction carries on with.
+  refusePulse() {
+    this.mode = 'flying';
+    this.pulse.spool = 0;
     this.game.audio?.play('pulseExit');
   }
 
@@ -1274,7 +1370,7 @@ export class Ship {
     if (depth <= 0) return;
     // how much of each kind of hostile sky the hull takes (Thermal Plating and the like divide it)
     const taken = this.stats.hazardDamage[hz.kind] ?? 1;
-    let dmg = hz.dps * Math.pow(depth, hz.curve || 1.3) * dt * taken;
+    let dmg = hazardDamagePerS(hz, depth, this.stats) * dt;
     const t = g.time;
     if (hz.kind === 'heat') {
       this.hazardHeat = depth * (0.75 + 0.15 * Math.sin(t * 17));
@@ -1382,8 +1478,12 @@ export class Ship {
     }
   }
 
+  drawnState() {
+    return this.blend.apply(this.state, this.drawn);
+  }
+
   updateCamera(dt, input, out) {
-    const s = this.state;
+    const s = this.drawnState();
     let snap = false;
     if (out.frame !== s.frame) {
       // velocities are per frame: no acceleration to read across the change
@@ -1507,7 +1607,7 @@ export class Ship {
       return false;
     };
     if (!blocked(cam)) return;
-    const from = _v5.copy(this.state.pos);
+    const from = _v5.copy(this.drawn.pos);
     from.y += 1.5;
     let clear = 0;
     for (let i = 1; i <= 24; i++) {
@@ -1542,9 +1642,9 @@ export class Ship {
   }
 
   syncVisual(camWorld) {
-    const wp = this.state.worldPosition(_v);
-    this.group.position.copy(wp).sub(camWorld);
-    this.state.worldQuaternion(this.group.quaternion);
+    const s = this.drawnState();
+    this.group.position.copy(s.worldPosition(_v)).sub(camWorld);
+    s.worldQuaternion(this.group.quaternion);
     // the hull glows on the faces leading into the flow
     if (this.heatU && this.flowLocal) this.heatU.uHeatDir.value.copy(this.flowLocal).negate().applyQuaternion(this.group.quaternion);
     // landing light at low altitude

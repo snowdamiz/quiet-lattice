@@ -1,11 +1,11 @@
 // The ship's base gun (P1.E06.T02): its numbers from the data through shipStats, the aim it allows off the ship's nose,
-// creatures' hit spheres, and the coarse line of sight over the ground.
+// and the coarse line of sight over the ground.
 import { getWeapon } from '@astra/shared/data';
 import { shipStats } from '@astra/shared/ships';
 import { describe, expect, it } from 'vitest';
 import { noseTo } from '../../test/pilot.ts';
 import { DEFAULT_LOADOUT } from '../inventory/service.ts';
-import { AIM_CONE_DEG, aimWithin, baseGun, creatureSphere, HIT_SLACK_M, noseOf } from './gun.ts';
+import { AIM_CONE_DEG, aimWithin, baseGun, noseOf } from './gun.ts';
 import { clearSight, SIGHT_SAMPLES } from './sight.ts';
 
 type Vec3 = [number, number, number];
@@ -32,6 +32,17 @@ describe('the base gun', () => {
   });
 });
 
+describe('Focused Lasers', () => {
+  it('lengthen the base gun’s range to 2200 m and add 30% to its damage', () => {
+    const plain = baseGun(shipStats(DEFAULT_LOADOUT.ship!))!;
+    const focused = baseGun(shipStats(DEFAULT_LOADOUT.ship!, { skills: ['focused_lasers'] }))!;
+    expect(plain.rangeM).toBe(1500);
+    expect(focused.rangeM).toBe(2200);
+    expect(focused.damage).toBeCloseTo(plain.damage * 1.3, 9);
+    expect(focused.cooldownS).toBe(plain.cooldownS);
+  });
+});
+
 describe('aiming', () => {
   it("reads the ship's nose as the client's lasers fire (its −z)", () => {
     for (const d of [unit([1, 2, 3]), unit([0, 0, -1]), unit([0, -1, 0.001]), unit([-0.3, 0.1, 0.9])]) {
@@ -48,15 +59,6 @@ describe('aiming', () => {
     expect(aimWithin(off(AIM_CONE_DEG + 0.5), q)).toBe(false);
     expect(aimWithin([0, 0, 1], q)).toBe(false);
     expect(aimWithin([0, 0, 0], q)).toBe(false);
-  });
-
-  it("puts a walker's hit sphere round its body and a flyer's on it, with slack", () => {
-    const pos: Vec3 = [0, 1000, 0];
-    const walker = creatureSphere({ pos, scale: 1, species: { size: 2, kind: 'quad' } });
-    expect(walker.radius).toBeCloseTo(2 * 0.6 + HIT_SLACK_M, 9);
-    expect(walker.pos[1]).toBeCloseTo(1001, 9);
-    const flyer = creatureSphere({ pos, scale: 1, species: { size: 2, kind: 'flyer' } });
-    expect(flyer.pos).toEqual(pos);
   });
 });
 

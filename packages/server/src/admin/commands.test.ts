@@ -34,6 +34,9 @@ describe('admin command parsing', () => {
       ok(['mute', 'someone', '90']),
       ok(['unmute', 'someone']),
       ok(['set-rep', 'ves', 'compact', '230']),
+      ok(['rename', 'body', '424242:3', 'Halcyon']),
+      ok(['rename', 'site', '424242:3#17', 'Big', 'Sky', 'Rest']),
+      ok(['rename', 'species', '424242:3/4', '--clear']),
     ];
     for (const c of commands) expect(AdminCommand.parse(c)).toEqual(c);
     expect(commands[3]).toEqual({ cmd: 'teleport', character: 'Ves Ka', system: 12, frame: 'station', pose: 'docked' });
@@ -45,6 +48,9 @@ describe('admin command parsing', () => {
     expect(commands[14]).toEqual({ cmd: 'mute', account: 'someone' });
     expect(commands[15]).toEqual({ cmd: 'mute', account: 'someone', seconds: 90 });
     expect(commands[17]).toEqual({ cmd: 'set-rep', character: 'ves', faction: 'compact', value: 230 });
+    expect(commands[18]).toEqual({ cmd: 'rename', kind: 'body', key: '424242:3', name: 'Halcyon' });
+    expect(commands[19]).toEqual({ cmd: 'rename', kind: 'site', key: '424242:3#17', name: 'Big Sky Rest' });
+    expect(commands[20]).toEqual({ cmd: 'rename', kind: 'species', key: '424242:3/4', name: null });
   });
 
   it('says what is wrong with bad arguments', () => {
@@ -68,6 +74,8 @@ describe('admin command parsing', () => {
     expect(error(['set-rep', 'ves', 'pirates', '10'])).toMatch(/^faction: /);
     expect(error(['set-rep', 'ves', 'compact', '1001'])).toMatch(/^value: /);
     expect(error(['set-rep', 'ves', 'compact', '-1'])).toMatch(/^value: /);
+    expect(error(['rename', 'body', '424242:3'])).toBe('missing <name>');
+    expect(error(['rename', 'city', '424242:3', 'Halcyon'])).toMatch(/^kind: /);
   });
 
   it('refuses commands the channel is sent that the CLI would never make', () => {

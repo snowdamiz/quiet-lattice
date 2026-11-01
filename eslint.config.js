@@ -48,7 +48,8 @@ export default tseslint.config(
     // World generation gives the same bits on every engine (DESIGN 17): its transcendental functions come from
     // packages/shared/src/math/det.ts, never from Math (whose last bits differ between engines), nor from three.js
     // methods and classes that call Math for them. (Math.sqrt, abs, floor, round, min, max, imul and fround are exact.)
-    files: ['packages/shared/src/{world,math}/**/*.ts'],
+    // The meters (heat and Charge) too: the client predicts them with what the server decides them by.
+    files: ['packages/shared/src/{world,math,meters}/**/*.ts'],
     ignores: ['**/*.test.ts'],
     rules: {
       'no-restricted-properties': [

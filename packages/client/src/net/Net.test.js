@@ -99,10 +99,23 @@ function joined(opts) {
   h.socket().open();
   h.advance(40);
   h.socket().push(welcome());
-  h.socket().push({ t: 'world', season: 1, count: 500, edgeX: 50, tiers: [0, 1], serverTime: 1000 });
+  h.socket().push(WORLD);
   h.socket().push({ t: 'inventory', seq: 0, inventory: INVENTORY });
   return h;
 }
+
+const WORLD = {
+  t: 'world',
+  season: 1,
+  seasonStart: 0,
+  seasonEnd: 4_838_400,
+  opening: { from: null, edgeShiftLy: 0, dark: [] },
+  count: 500,
+  edgeX: 50,
+  tiers: [0, 1],
+  dark: [],
+  serverTime: 1000,
+};
 
 const entity = (id, x) => ({ id, kind: 'player', frame: '1:station', pos: [x, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'docked' });
 
@@ -131,6 +144,23 @@ describe('Net: joining', () => {
     expect(h.net.world.count).toBe(500);
     h.socket().push({ t: 'inventory', seq: 0, inventory: INVENTORY });
     expect(h.events.filter((e) => e[0] === 'inventory').map((e) => e[2])).toEqual([true, false]);
+  });
+
+  it("keeps the season's state and the character's season awards as the server sends them", () => {
+    const h = joined();
+    expect(h.net.world).toMatchObject({ season: 1, seasonEnd: 4_838_400, opening: { from: null, dark: [] } });
+    expect(h.net.awards).toEqual([]);
+    const awards = [{ season: 1, bucket: 'broken', title: 'Anchorbreaker', glyph: 'season_1_broken' }];
+    const heard = [];
+    h.net.on('awards', (m) => heard.push(m.awards));
+    h.socket().push({ t: 'awards', awards });
+    h.socket().push({ ...WORLD, season: 2, seasonStart: 4_838_400, seasonEnd: 7_257_600, opening: { from: 'broken', edgeShiftLy: -10, dark: [33, 57] } });
+    expect(h.net.awards).toEqual(awards);
+    expect(heard).toEqual([awards]);
+    expect(h.net.world).toMatchObject({ season: 2, opening: { from: 'broken', dark: [33, 57] } });
+    // an award list the protocol refuses (two for one season) is dropped, and what was held stays
+    h.socket().onmessage({ data: JSON.stringify({ t: 'awards', awards: [...awards, ...awards] }) });
+    expect(h.net.awards).toEqual(awards);
   });
 
   it('estimates the server clock from welcome, then from pongs, the shortest round trip winning', () => {

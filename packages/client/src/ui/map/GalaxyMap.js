@@ -5,10 +5,30 @@
 // is the edge of space.
 import * as THREE from 'three';
 import { mapNoiseGLSL, starPointVert, starPointFrag, starfieldPoints, worldPointVert, worldPointFrag, discVert, discFrag, nebFrag } from './mapCommon.js';
-import { EDGE_X, edgeX, mulberry32, cosmos, GALAXY, fmtLy } from '@astra/shared/world';
+import { EDGE_X, edgeX, wallX, mulberry32, cosmos, GALAXY, fmtLy } from '@astra/shared/world';
 import { buildEdge, EDGE_SEED } from './EdgeOfSpace.js';
 
 const _v = new THREE.Vector3();
+const NO_DARK = Object.freeze([]);
+
+// where the Edge stands against its default (the Count and the season move it, light year for light year)
+export function edgeShift(edge) {
+  const d = edge - EDGE_X;
+  if (Math.abs(d) < 0.05) return 'At its default';
+  return `${d < 0 ? 'Advanced' : 'Receded'} ${fmtLy(Math.abs(d))}`;
+}
+const EDGE_LABEL_TAU = 0.1;
+// a dark mark fades in and out as the label glides: ease-out, a time constant of 0.1 s (95% in 0.3 s); once faded out it is gone
+const DARK_FADE_TAU = 0.1;
+const DARK_GONE = 0.02;
+// a dark system's ring, in star units (neighbouring systems lie about 2 apart at cluster zoom), and its husk disc
+const DARK_RING = 2.0;
+const DARK_HUSK = 1.7;
+// the Hollow's seam light flickers between 40% and 60% (art bible §4, §6)
+const SEAM_LIGHT = 0.5;
+const SEAM_FLICKER = 0.1;
+// systems whose labels a dark one's would overlap give way to it (a label's width is about this many pixels a letter)
+const LABEL_PX = 7.6;
 
 export { fmtLy };
 
@@ -198,9 +218,11 @@ export class GalaxyMap {
       labelVisible: (v) => this.edgeItem.inView && (this.camDist > 1.5e5 || v.selected === this.edgeItem),
     };
     this.items.push(this.galaxyItem, this.edgeItem);
-    // points across the wall, to pin its label on whichever part is in view
+    // points across the wall, to pin its label on whichever part is in view (set by applyEdge)
+    this.edgeAt = null;
     this.edgeAnchors = [];
-    for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) this.edgeAnchors.push(new THREE.Vector3(edgeX(i * 1e6, j * 1e6) - 2e4, i * 1e6, j * 1e6));
+    this.labelAt = new THREE.Vector3();
+    this.applyEdge(g.edge);
 
     // markers: you are here, visited, selection, route
     const ringGeo = new THREE.RingGeometry(1, 1.07, 96);
@@ -214,6 +236,15 @@ export class GalaxyMap {
     this.visited = new THREE.Group();
     scene.add(this.visited);
     this.visitedMat = ringMat(0.8, 0.85, 1.2, 0.55);
+    // dark Waystations (DESIGN 16.5): a near-black disc over the star (its glow still shows round it) ringed in the Hollow's
+    // seam light, faded in and out per system (syncDark, fadeDark)
+    this.darkMarks = new THREE.Group();
+    scene.add(this.darkMarks);
+    this.darkShown = new Map();
+    this.darkHuskGeo = new THREE.CircleGeometry(1, 32);
+    this.darkRingGeo = new THREE.RingGeometry(1, 1.1, 64);
+    this.darkRingColor = new THREE.Color(0x9fe8da).multiplyScalar(2.2);
+    this.darkIds = null;
 
     const RN = 96;
     const rt = new Float32Array(RN);
@@ -398,12 +429,22 @@ export class GalaxyMap {
   labelVisible(v, it) {
     const g = this.game;
     const s = it.sys;
+    if (this.darkShown.get(s.id)?.to) return this.camDist < 3e4;
     if (s === g.galaxy.current) return this.camDist < 3e4;
     if (v.selected === it || v.hovered === it) return this.camDist < 3e4;
+    if (it.crowded) return false;
     const d = v.camera.position.distanceTo(it.position);
     if (s.visited && d < 400) return true;
     if (this.neighbors.has(s) && d < 220) return true;
     return d < 60;
+  }
+
+  // a system's label by what it is: a dark Waystation (its own seam-light name), where you are, a neighbour, or a far star
+  classLabel(it) {
+    const s = it.sys;
+    const gal = this.game.galaxy;
+    it.labelClass = this.darkShown.get(s.id)?.to ? 'dark' : s === gal.current ? 'you-sys' : this.neighbors.has(s) ? '' : 'minor';
+    if (it.el) it.el.className = `map-label ${it.labelClass}`;
   }
 
   refresh() {
@@ -411,10 +452,7 @@ export class GalaxyMap {
     const gal = g.galaxy;
     this.neighbors = new Set(gal.neighbors(10).map((n) => n.s));
     this.items.forEach((it) => {
-      if (it.kind !== 'system') return;
-      const s = it.sys;
-      it.labelClass = s === gal.current ? 'you-sys' : this.neighbors.has(s) ? '' : 'minor';
-      if (it.el) it.el.className = `map-label ${it.labelClass}`;
+      if (it.kind === 'system') this.classLabel(it);
     });
     this.visited.clear();
     for (const s of gal.systems) {
@@ -440,10 +478,12 @@ export class GalaxyMap {
     // from inside the galaxy the edge is a far, dim glow; its light show comes up once the view
     // pulls out past the neighbouring galaxies, or closes on it
     const cam = v.camera.position;
-    this.edgeDist = edgeX(cam.y, cam.z) - cam.x;
+    this.applyEdge(g.edge);
+    this.syncDark();
+    this.edgeDist = edgeX(cam.y, cam.z, this.edgeAt) - cam.x;
     const reveal = Math.max(THREE.MathUtils.smoothstep(this.camDist, 2e5, 1.5e6), 1 - THREE.MathUtils.smoothstep(this.edgeDist, 4e5, 2.6e6));
-    this.edge.update(time, pr, reveal, proj);
-    this.placeEdgeLabel();
+    this.edge.update(time, pr, reveal, proj, this.edgeAt);
+    this.placeEdgeLabel(dt);
     this.bandMat.uniforms.uAlpha.value = 0.9 * (1 - THREE.MathUtils.smoothstep(cam.length(), 1500, 5000));
     for (const m of this.pointMats) m.uniforms.uProj.value = proj;
     this.sysMat.uniforms.uPixelRatio.value = pr;
@@ -465,6 +505,8 @@ export class GalaxyMap {
     this.herePulse.scale.setScalar((2.4 + pulse * 9) * k);
     this.herePulse.material.opacity = (1 - pulse) * 0.8;
     for (const m of this.visited.children) m.quaternion.copy(q);
+    this.fadeDark(dt, time, q, k);
+    this.placeDarkLabels(k);
 
     const sel = v.selected;
     this.selRing.visible = !!sel && sel.kind === 'system' && (sel.sys !== cur || g.universe.deep);
@@ -488,9 +530,116 @@ export class GalaxyMap {
     }
   }
 
+  // A mark on each system whose Waystation the server says is dark (`world.dark`), so the loss reads at cluster zoom without
+  // selecting the star; a system joins the marks fading in when the set grows and leaves them fading out (fadeDark) when
+  // the Count relights it. The system's own label turns seam-light while it is marked.
+  syncDark() {
+    const dark = this.game.net?.world?.dark ?? NO_DARK;
+    if (dark === this.darkIds) return;
+    this.darkIds = dark;
+    const now = new Set(dark);
+    for (const [id, mark] of this.darkShown) if (!now.has(id)) mark.to = 0;
+    for (const id of dark) {
+      const known = this.darkShown.get(id);
+      if (known) {
+        known.to = 1;
+        continue;
+      }
+      const s = this.game.galaxy.systems[id];
+      if (!s) continue;
+      const husk = new THREE.Mesh(this.darkHuskGeo, new THREE.MeshBasicMaterial({ color: 0x050508, transparent: true, opacity: 0, depthTest: false, depthWrite: false }));
+      husk.userData.size = DARK_HUSK;
+      husk.renderOrder = 5;
+      const ring = new THREE.Mesh(
+        this.darkRingGeo,
+        new THREE.MeshBasicMaterial({ color: this.darkRingColor, transparent: true, opacity: 0, depthTest: false, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }),
+      );
+      ring.userData.size = DARK_RING;
+      ring.renderOrder = 6;
+      for (const m of [husk, ring]) {
+        m.position.set(s.x, s.y, s.z);
+        m.frustumCulled = false;
+        this.darkMarks.add(m);
+      }
+      // (a phase of its own, so the rings do not flicker in step)
+      this.darkShown.set(id, { husk, ring, to: 1, shown: 0, phase: id * 2.399, item: this.items.find((it) => it.sys === s) });
+    }
+    for (const mark of this.darkShown.values()) if (mark.item) this.classLabel(mark.item);
+  }
+
+  // Each mark eases towards where it is going (in at 1, out at 0): its ring from nothing to the seam light's 50% and from 70% of
+  // its size to all of it, then flickering between 40% and 60%; a mark that has faded out is dropped.
+  fadeDark(dt, time, q, k) {
+    const ease = 1 - Math.exp(-dt / DARK_FADE_TAU);
+    for (const [id, mark] of this.darkShown) {
+      mark.shown += (mark.to - mark.shown) * ease;
+      if (!mark.to && mark.shown < DARK_GONE) {
+        for (const m of [mark.husk, mark.ring]) {
+          this.darkMarks.remove(m);
+          m.material.dispose();
+        }
+        this.darkShown.delete(id);
+        if (mark.item) this.classLabel(mark.item);
+        continue;
+      }
+      const flicker = SEAM_LIGHT + SEAM_FLICKER * (0.6 * Math.sin(time * 19.5 + mark.phase) + 0.4 * Math.sin(time * 48.4 + mark.phase * 2.3));
+      mark.ring.material.opacity = mark.shown * flicker;
+      mark.husk.material.opacity = mark.shown;
+      for (const m of [mark.husk, mark.ring]) {
+        m.quaternion.copy(q);
+        m.scale.setScalar(m.userData.size * k * (0.7 + 0.3 * mark.shown));
+      }
+    }
+  }
+
+  // The label of a marked system sits clear of its ring and ahead of the labels round it: a neighbour's label that it would
+  // cover gives way (a crowded label stays on screen if its system is the one selected, hovered or where you are).
+  placeDarkLabels(k) {
+    const v = this.view;
+    const W = v.root.clientWidth;
+    const H = v.root.clientHeight;
+    const rects = [];
+    for (const [id, mark] of this.darkShown) {
+      const it = mark.item;
+      if (!it) continue;
+      it.labelOffset = 1.1 * DARK_RING * k * v.pixelsPerUnit(it.position) + 6;
+      if (!mark.to) continue;
+      _v.copy(it.position).project(v.camera);
+      if (_v.z >= 1) continue;
+      const x = (_v.x * 0.5 + 0.5) * W + it.labelOffset;
+      const y = (-_v.y * 0.5 + 0.5) * H - 8;
+      rects.push({ id, x, y, w: it.label.length * LABEL_PX + 8, h: 20 });
+    }
+    for (const it of this.items) {
+      if (it.kind !== 'system') continue;
+      it.crowded = false;
+      if (!rects.length || it.sys === this.game.galaxy.current || this.darkShown.get(it.sys.id)?.to) continue;
+      _v.copy(it.position).project(v.camera);
+      if (_v.z >= 1) continue;
+      const x = (_v.x * 0.5 + 0.5) * W + (it.labelOffset ?? 12);
+      const y = (-_v.y * 0.5 + 0.5) * H - 8;
+      const w = it.label.length * LABEL_PX + 8;
+      it.crowded = rects.some((r) => x < r.x + r.w && x + w > r.x && y < r.y + r.h && y + 20 > r.y);
+    }
+  }
+
+  // The wall stands where the world service says the Edge is (`game.edge`, the Count moves it): the selectable Edge
+  // and the points its label is pinned to follow it.
+  applyEdge(edge) {
+    if (edge === this.edgeAt) return;
+    this.edgeAt = edge;
+    const it = this.edgeItem;
+    const wall = wallX(edge);
+    it.position.set(wall - 1e4, 0, 0);
+    it.labelPosition.set(wall - 3e5, 1.6e6, 0);
+    it.focusTarget.set(wall - 1e4, 0, 0);
+    this.edgeAnchors.length = 0;
+    for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) this.edgeAnchors.push(new THREE.Vector3(edgeX(i * 1e6, j * 1e6, edge) - 2e4, i * 1e6, j * 1e6));
+  }
+
   // the wall is too big to label at one point: pin the label to the part of it nearest the
   // upper right of the screen, and pick it there
-  placeEdgeLabel() {
+  placeEdgeLabel(dt) {
     const cam = this.view.camera;
     let best = null;
     let bd = 1e9;
@@ -504,19 +653,23 @@ export class GalaxyMap {
       }
     }
     const it = this.edgeItem;
+    const was = it.inView;
     it.inView = !!best;
     if (best) {
-      it.position.copy(best);
-      it.labelPosition.copy(best);
+      // (it glides to a new anchor rather than hopping: ease-out over about 0.3 s, a time constant of 0.1)
+      if (was) this.labelAt.lerp(best, 1 - Math.exp(-dt / EDGE_LABEL_TAU));
+      else this.labelAt.copy(best);
+      it.position.copy(this.labelAt);
+      it.labelPosition.copy(this.labelAt);
     }
   }
 
   // closer to the edge, the lens bends and fringes, pulled out toward it
   grade(u, camera) {
-    const ex = edgeX(camera.position.y, camera.position.z);
+    const ex = edgeX(camera.position.y, camera.position.z, this.edgeAt);
     const d = ex - camera.position.x;
     u.uWarp.value = 1 - THREE.MathUtils.smoothstep(d, 2e5, 2.2e6);
-    _v.set(EDGE_X, 0, 0).project(camera);
+    _v.set(wallX(this.edgeAt), 0, 0).project(camera);
     const dir = new THREE.Vector2(_v.x * camera.aspect, _v.y);
     if (_v.z > 1) dir.multiplyScalar(-1);
     if (dir.lengthSq() < 1e-4) dir.set(1, 0);
@@ -541,7 +694,10 @@ export class GalaxyMap {
     const cur = g.galaxy.current;
     const h = g.galaxy.here;
     if (it.kind === 'edge') {
-      return { title: 'The Edge', kind: 'End of the universe', stats: [['Distance', fmtLy(edgeX(h.y, h.z) - h.x)], ['Expansion', '0.0000 c']] };
+      const count = g.net?.world?.count;
+      const stats = [['Distance', fmtLy(edgeX(h.y, h.z, this.edgeAt) - h.x)], ['Shift', edgeShift(this.edgeAt)]];
+      if (count !== undefined) stats.push(['Count', `${count} / 1000`]);
+      return { title: 'The Edge', kind: 'End of the universe', stats };
     }
     if (it.kind === 'galaxy') {
       return { title: GALAXY.name, kind: 'Spiral galaxy · home', stats: [['Across', fmtLy(GALAXY.radius * 2)], ['To the core', fmtLy(GALAXY.center.length())]] };
@@ -552,7 +708,7 @@ export class GalaxyMap {
     return {
       title: s.name,
       kind: here ? 'You are here' : `Class ${s.cls} star${s.visited ? ' · visited' : ''}`,
-      stats: here ? [] : [['Distance', fmtLy(d)], ['Warp cells', String(g.inventory.warpCells)]],
+      stats: [...(here ? [] : [['Distance', fmtLy(d)], ['Warp cells', String(g.inventory.warpCells)]]), ...(g.stationDark(s.id) ? [['Waystation', 'Dark']] : [])],
       warp: !here,
       course: !here,
     };
