@@ -36,7 +36,7 @@ function ignite(ctx: CastContext, target: number, dps: number, durationS: number
 const lances = new WeakMap<CastContext, { on: boolean; dealt: number }>();
 
 /** The beam's `seconds` of firing, along the caster's look now: the nearest creature it meets within the node's range and in
- * sight takes `dps` for each, and with Chain a second one within its reach of the first takes a share. */
+ * sight takes `dps` for each, and with Chain the nearest other creature whose centre is within its reach of the first's takes a share. */
 function lanceHits(ctx: CastContext, seconds: number): void {
   const pose = ctx.pose();
   const shape = shapeOfNode('lance');
@@ -49,8 +49,13 @@ function lanceHits(ctx: CastContext, seconds: number): void {
   if (!ctx.owns('chain')) return;
   const chain = getSkillNode('chain').params;
   const others = near.filter((c) => c.id !== first.id);
-  const next = hitTest({ kind: 'sphere', radius: chain.rangeM! }, { origin: first.pos }, others).slice(0, chain.extraTargets ?? 1);
-  for (const h of next) ctx.damage(h.target.id, damage * N.lance.chainShare);
+  const reach = chain.rangeM!;
+  const next = others
+    .map((c) => ({ c, d: Math.hypot(c.pos[0] - first.pos[0], c.pos[1] - first.pos[1], c.pos[2] - first.pos[2]) }))
+    .filter((x) => x.d <= reach)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, chain.extraTargets ?? 1);
+  for (const { c } of next) ctx.damage(c.id, damage * N.lance.chainShare);
 }
 
 export const THERMAL_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([

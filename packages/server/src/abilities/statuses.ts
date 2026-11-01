@@ -1,6 +1,11 @@
 // Statuses on entities (ARCHITECTURE §28): what an ability leaves on its target for a while, like a burn. A status belongs to
 // the character that put it there, so two players' burns on one creature each run their own clock and their own power;
-// `active` asks whether anyone's holds (Cauterize, Brand). They expire on the world clock and are kept per zone.
+// `active` asks whether anyone's holds (Cauterize, Brand). They expire on the world clock and are kept per zone. The effect
+// that ticks a status (a burn) is told of its end by `get`, which still answers for GRACE_S past `until`, so its last tick,
+// a step late, deals the end of the interval.
+
+/** How long past its end a status is still the one its effect is ticking, s. */
+export const GRACE_S = 1;
 
 export interface Status {
   /** world time it ends, s */
@@ -17,7 +22,7 @@ export class Statuses {
 
   /** Puts `id` on `target` for `durationS` from the character: a fresh status, or the character's own running one made to
    * last until the later of the two ends and act at the greater power. True when it was fresh (none of the character's
-   * was running). */
+   * was running or just ended: its effect ticks it still). */
   apply(zone: string, characterId: string, target: number, id: string, durationS: number, power = 1): boolean {
     const now = this.now();
     this.prune(now);
@@ -28,15 +33,16 @@ export class Statuses {
     let byCharacter = byId.get(id);
     if (!byCharacter) byId.set(id, (byCharacter = new Map()));
     const running = byCharacter.get(characterId);
+    const held = !!running && running.until + GRACE_S > now;
     const live = !!running && running.until > now;
     byCharacter.set(characterId, { until: Math.max(live ? running.until : 0, now + durationS), power: live ? Math.max(running.power, power) : power });
-    return !live;
+    return !held;
   }
 
-  /** The character's own running `id` on `target`, or null. */
+  /** The character's own `id` on `target` while it runs and for GRACE_S after, or null. */
   get(zone: string, characterId: string, target: number, id: string): Status | null {
     const s = this.zones.get(zone)?.get(target)?.get(id)?.get(characterId);
-    return s && s.until > this.now() ? s : null;
+    return s && s.until + GRACE_S > this.now() ? s : null;
   }
 
   /** Whether anyone's `id` runs on `target`. */
@@ -59,7 +65,7 @@ export class Statuses {
     for (const [zone, byEntity] of this.zones) {
       for (const [entity, byId] of byEntity) {
         for (const [id, byCharacter] of byId) {
-          for (const [c, s] of byCharacter) if (s.until <= now) byCharacter.delete(c);
+          for (const [c, s] of byCharacter) if (s.until + GRACE_S <= now) byCharacter.delete(c);
           if (!byCharacter.size) byId.delete(id);
         }
         if (!byId.size) byEntity.delete(entity);

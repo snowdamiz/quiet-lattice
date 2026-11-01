@@ -58,7 +58,8 @@ export interface CastContext {
   readonly status: {
     /** Puts `id` on `target` for `durationS` at `power`; true when this caster's was not running (start its ticks). */
     apply(target: number, id: string, durationS: number, power?: number): boolean;
-    /** This caster's running `id` on `target` (`until` the world time it ends, `power`), or null. */
+    /** This caster's `id` on `target` (`until` the world time it ends, `power`) while it runs and for a second after, so an
+     * effect ticking it sees its end; or null. */
     get(target: number, id: string): { until: number; power: number } | null;
     /** Whether anyone's `id` runs on `target`. */
     active(target: number, id: string): boolean;

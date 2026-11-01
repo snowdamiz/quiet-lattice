@@ -1,6 +1,6 @@
 // The cast service (P1.E07.T03, ARCHITECTURE §28) over a real zone with fauna: every check a cast passes, the cooldowns
 // and toggles it starts, the effects' timers, and who is told of it.
-import type { Ability } from '@astra/shared/abilities';
+import { ABILITIES as SHIPPED, type Ability } from '@astra/shared/abilities';
 import { creatureSphere } from '@astra/shared/combat';
 import { decodeServerMessage, type CastRefusal, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
 import { emptySkillState, type SkillState } from '@astra/shared/skills';
@@ -620,7 +620,7 @@ describe('the book', () => {
     expect(() => abilityBook(new Map([['pull', { node: 'pull', target: 'entity' }]]), new Map([['pull', effect]]))).toThrow(/no kind/);
   });
 
-  it('ships no ability yet: each branch adds its own', () => {
-    expect(abilityBook().size).toBe(0);
+  it("ships the branches' abilities, each with its effect", () => {
+    expect(abilityBook().size).toBe(SHIPPED.size);
   });
 });
