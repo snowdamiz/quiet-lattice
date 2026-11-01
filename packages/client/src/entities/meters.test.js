@@ -315,3 +315,24 @@ describe('heat on the client', () => {
     expect(mt.recoverAt).toBe(0.2);
   });
 });
+
+describe('the nodes the ship flies with', () => {
+  it('are the server’s owned nodes: its speed, shield, hull and landing follow them, the damage it has taken stays, and the set is kept', () => {
+    const { g } = game();
+    const owned = g.ship.skills;
+    expect(g.ship.stats).toMatchObject({ shieldMax: 100, hullMax: 100, landingSpeedMax: 160 });
+    g.ship.shield = 40;
+    g.ship.hull = 70;
+    g.ship.setSkills(['photon_thrusters', 'shield_capacitor', 'hull_plating', 'soft_landing']);
+    expect(g.ship.skills).toBe(owned);
+    expect(g.ship.stats).toMatchObject({ shieldMax: 125, hullMax: 125, landingSpeedMax: 220 });
+    expect(g.ship.stats.speed.space).toBe(750);
+    expect(g.ship.shield).toBe(65);
+    expect(g.ship.hull).toBe(95);
+    g.ship.setSkills(['photon_thrusters']);
+    expect(g.ship.skills.has('hull_plating')).toBe(false);
+    expect(g.ship.stats).toMatchObject({ shieldMax: 100, hullMax: 100, landingSpeedMax: 160 });
+    expect(g.ship.shield).toBe(40);
+    expect(g.ship.hull).toBe(70);
+  });
+});
