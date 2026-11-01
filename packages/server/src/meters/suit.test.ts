@@ -30,12 +30,13 @@ class Viewer implements ZoneViewer {
 }
 
 /** The system with its home world made `type`, carrying `hazard` (a ship hazard of `dps`, or none). */
-function worldOf(type: string, hazard: { kind: Hazard; dps: number } | null) {
+function worldOf(type: string, hazard: { kind: Hazard; dps: number } | null, mist?: { line: number; band: number; rate: number }) {
   const d = structuredClone(BASE);
   const b = d.bodies[d.home]!;
   (b as { type: string }).type = type;
   (b.params as { type: string }).type = type;
   (b.params as { hazard: unknown }).hazard = hazard ? { ...hazard, label: hazard.kind, ceiling: 9000 } : null;
+  if (mist) (b.params as { mist: unknown }).mist = mist;
   return d;
 }
 
@@ -47,6 +48,7 @@ interface Opts {
   people?: 'ulgani';
   saved?: { lifeSupport?: number; hazard?: number };
   combat?: boolean;
+  mist?: { line: number; band: number; rate: number };
 }
 
 /** A service over one zone with the character's entity in it, its real inventory and the time. */
@@ -55,7 +57,7 @@ function rig(opts: Opts = {}) {
   const zone = new Zone({
     id: 'sys:0',
     systemIndex: 0,
-    system: worldOf(opts.type ?? 'lush', opts.hazard === undefined ? null : opts.hazard),
+    system: worldOf(opts.type ?? 'lush', opts.hazard === undefined ? null : opts.hazard, opts.mist),
     fauna: false,
     combat: () => ({ downed: (r) => downed.push(r) }),
   });
@@ -164,6 +166,18 @@ describe('life support and hazard protection drain from the place the server bel
     const t = rig({ type: 'frozen' });
     t.stand(false, 10);
     expect(t.view().hazard).toBeCloseTo(94, 3);
+  });
+
+  it('a mild world’s mist drains above its line and nowhere below it', () => {
+    const mist = { line: 700, band: 150, rate: 1.2 };
+    const high = rig({ mist });
+    const at = high.home(false, mist.line + mist.band + 50);
+    high.send('foot', at.frame, at.pos);
+    high.wait(10);
+    expect(high.view().hazard).toBeCloseTo(100 - 10 * 0.6 * 1.2, 3);
+    const low = rig({ mist, saved: { hazard: 50 } });
+    low.stand(false, 10);
+    expect(low.view().hazard).toBeCloseTo(70, 3);
   });
 
   it('drains ×1.4 at night, by the star below the horizon', () => {
