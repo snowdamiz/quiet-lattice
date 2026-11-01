@@ -24,10 +24,14 @@ def cargo_pod(lod):
             K.tube(m, hoop, 0, 0, "WS_Shell", "rib", smooth=True, up=(1, 0, 0), profile=[(-0.08, -0.02), (-0.06, 0.05), (0.0, 0.07), (0.06, 0.05), (0.08, -0.02)])
     for x in (-1.45, 1.45):
         s = 1 if x > 0 else -1
-        ring = [(x, p[0], p[1]) for p in sec[:-1]]
-        ctr = (x + s * 0.12, 0.0, 1.1)
+        ring = [np.array([x, p[0], p[1]]) for p in sec[:-1]]
+        c0 = np.array([x, 0.0, 1.1])
+        mid = [c0 + (q - c0) * 0.72 + np.array([s * 0.1, 0, 0]) for q in ring]
+        tip = c0 + np.array([s * 0.17, 0, 0])
         for k in range(len(ring)):
-            K.patch(m, [[ring[k], ring[(k + 1) % len(ring)]], [ctr, ctr]], "WS_Metal", "machine", toward=lambda q, s=s: q + np.array([s * 3.0, 0, 0]))
+            k2 = (k + 1) % len(ring)
+            K.patch(m, [[ring[k], ring[k2]], [mid[k], mid[k2]]], "WS_Shell", "lip", away=c0 - np.array([s, 0, 0]))
+            K.patch(m, [[mid[k], mid[k2]], [tip, tip]], "WS_Shell", "accent", away=c0 - np.array([s, 0, 0]), smooth=True)
     # skids
     for y in (-0.55, 0.55):
         K.box(m, (-1.5, y - 0.12, 0.0), (1.5, y + 0.12, 0.28), "WS_Metal", "lattice")

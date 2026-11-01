@@ -62,7 +62,13 @@ def place(a_mw, a_asset, a_sock, b_asset, b_sock, label=None):
 
 I = Matrix.Identity(4)
 hangar = put("ws_hangar", I)
-door = mate(hangar, "ws_hangar", "Socket_BayDoor", "ws_baydoor", "Socket_DoorMount")
+sa, sb = sock("ws_hangar", "Socket_BayDoor"), sock("ws_baydoor", "Socket_DoorMount")
+door = hangar @ sa @ ROT @ sb.inverted()
+print(f"JOIN ws_hangar.Socket_BayDoor <- ws_baydoor.Socket_DoorMount  gap {((hangar @ sa).translation - (door @ sb).translation).length:.4f} m (leaves shown 55% open)")
+for o in bpy.data.collections["ws_baydoor_LOD0"].objects:
+    c = o.copy()
+    kit.objects.link(c)
+    c.matrix_world = door @ Matrix.Translation((o.get("open_x", 0.0) * 0.55, 0.0, 0.0)) @ o.matrix_world
 deck = mate(hangar, "ws_hangar", "Socket_TradeDeck", "ws_tradedeck", "Socket_DeckMount")
 fab = place(deck, "ws_tradedeck", "Socket_Fabricator", "ws_fabricator", "Socket_Floor")
 spine1 = mate(hangar, "ws_hangar", "Socket_Spine", "ws_spine", "Socket_Aft", "spine1")
@@ -104,6 +110,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", "p
 from artlib import ktx  # noqa: E402
 import tempfile  # noqa: E402
 
+# (the kit's minimal glTF settings group would shadow the importer's own, which carries more sockets)
+for g in bpy.data.node_groups:
+    if g.name.startswith("glTF Material Output"):
+        g.name = "kit glTF settings"
 tmp = tempfile.mkdtemp(prefix="kitsheet-")
 dec = os.path.join(tmp, "lark.glb")
 ktx.decoded_copy(lark_glb, dec)
@@ -179,7 +189,7 @@ for nm, e, rot in (("key", 4.5, (50, 0, 35)), ("fill", 0.9, (115, 0, 210)), ("ri
     L.rotation_euler = tuple(math.radians(v) for v in rot)
     sc.collection.objects.link(L)
 inner = bpy.data.objects.new("hall", bpy.data.lights.new("hall", "AREA"))
-inner.data.energy = 3.5e6
+inner.data.energy = 4.0e5
 inner.data.size = 100
 inner.location = (0, 15, 40)
 sc.collection.objects.link(inner)
@@ -188,20 +198,21 @@ sc.collection.objects.link(cam)
 sc.camera = cam
 cam.data.clip_end = 6000
 views = {
-    "exterior": ((-330.0, -260.0, 170.0), (0.0, 110.0, 10.0), 32),
+    "exterior": ((-420.0, -40.0, 230.0), (0.0, 105.0, 0.0), 30),
     "approach": ((90.0, -230.0, 30.0), (-5.0, 0.0, 22.0), 28),
     "hangar": ((-58.0, -52.0, 14.0), (10.0, 70.0, 4.0), 22),
-    "fabricator": ((-26.5, 66.0, 9.6), (-30.0, 80.0, 7.6), 30),
+    "fabricator": ((-24.5, 64.5, 9.8), (-30.0, 80.0, 8.0), 28),
+    "spine": ((150.0, 95.0, 70.0), (0.0, 150.0, 12.0), 30),
 }
 if SY:
     rock = SY[0]
-    for i, (pos, e) in enumerate((((2200.0, 0.0, 10.0), 4.0e6), ((2200.0, -60.0, 0.0), 1.5e6))):
+    for i, (pos, e) in enumerate((((2200.0, 0.0, 10.0), 5.0e5), ((2200.0, -60.0, 0.0), 1.2e5))):
         L = bpy.data.objects.new(f"cavity{i}", bpy.data.lights.new(f"cavity{i}", "POINT"))
         L.data.energy = e
         L.data.color = (1.0, 0.62, 0.42)
         L.location = pos
         sc.collection.objects.link(L)
-    views["scrapyard_mouth"] = ((2200.0 + 140.0, -330.0, 70.0), (2200.0, -40.0, 0.0), 30)
+    views["scrapyard_mouth"] = ((2200.0 + 120.0, -380.0, 60.0), (2200.0, -60.0, 0.0), 30)
     d1 = SY[1][1] @ Matrix.Translation((0.0, -17.0, 0.0))
     p1 = d1.translation
     views["scrapyard_cavity"] = ((2200.0 + 6.0, -62.0, 18.0), (p1.x, p1.y, p1.z), 18)
