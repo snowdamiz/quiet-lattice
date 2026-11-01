@@ -111,6 +111,8 @@ export class Game {
     this.timeBase = 0;
     // the connection to the server, once a character is picked (enterWorld); none on the title or in the dev sandbox
     this.net = null;
+    // the world service's latest `world` message (the season, the Count, where the Edge stands, each system's tier); none out of the world
+    this.world = null;
     // the action bars and their cooldowns as the server says, the casts keys 1–6 send, and the effects of those seen
     this.abilities = new Abilities({ now: () => this.hud.now() });
     this.abilities.listen((e) => playAbilityFx(this, e));
@@ -360,6 +362,7 @@ export class Game {
     const old = this.net;
     this.net = null;
     old?.close();
+    this.world = null;
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
     // (a world event's banner names the world it is on)
@@ -369,6 +372,7 @@ export class Game {
     this.abilities.link(net);
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
+    net.on('world', (m) => (this.world = m));
     net.on('welcome', (m, first) => {
       // (each session numbers its quest and analysis requests from 1)
       this.questSeq = 0;
@@ -403,6 +407,7 @@ export class Game {
     if (refusal?.code === 'auth') clearSession();
     if (net.everJoined) return this.leaveWorld(reason);
     this.net = null;
+    this.world = null;
     this.inventory.send = null;
     this.abilities.link(null);
     this.hud.social.attach(null);
@@ -585,6 +590,7 @@ export class Game {
   leaveWorld(notice = null) {
     const net = this.net;
     this.net = null;
+    this.world = null;
     this.inventory.send = null;
     net?.close();
     if (notice) setNotice(notice);
@@ -1297,12 +1303,12 @@ export class Game {
   // where the world service says the Edge stands (`world.edgeX`: the Count moves it); the default before the first
   // `world` message
   get edge() {
-    return this.net?.world?.edgeX ?? EDGE_X;
+    return this.world?.edgeX ?? EDGE_X;
   }
 
   // whether the server has galaxy system `id`'s Waystation dark (a Broken season's opening, until the Count climbs back to Fed)
   isDark(id) {
-    return darkAt(this.net?.world?.count ?? 500, this.net?.world?.opening ?? { dark: [] }).includes(id);
+    return !!this.world && darkAt(this.world.count, this.world.opening).includes(id);
   }
 
   // the sky from the camera's true galactic position

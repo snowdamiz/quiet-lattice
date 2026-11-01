@@ -557,7 +557,7 @@ export class GalaxyMap {
     const cur = g.galaxy.current;
     const h = g.galaxy.here;
     if (it.kind === 'edge') {
-      const count = g.net?.world?.count;
+      const count = g.world?.count;
       const stats = [['Distance', fmtLy(edgeX(h.y, h.z, this.edgeAt) - h.x)], ['Expansion', '0.0000 c']];
       if (count !== undefined) stats.push(['Count', `${count} / 1000`]);
       return { title: 'The Edge', kind: 'End of the universe', stats };
