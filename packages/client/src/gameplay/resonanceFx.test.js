@@ -147,6 +147,7 @@ describe('Long Ear', () => {
       const game = Object.assign(Object.create(Game.prototype), {
         build: { skills: [] },
         player: { setBuild: vi.fn() },
+        ship: { setSkills: vi.fn() },
         camWorld: new THREE.Vector3(0, 1000, 0),
         system: { star: { position: new THREE.Vector3(1, 0, 0) } },
         mode: 'foot',
@@ -167,6 +168,7 @@ describe('Long Ear', () => {
     const game = Object.assign(Object.create(Game.prototype), {
       build: { skills: [], people: undefined },
       player: { setBuild: vi.fn() },
+      ship: { setSkills: vi.fn() },
       beaconsOnMap: false,
     });
     game.onSkills({ state: { bought: ['long_ear'] } });
