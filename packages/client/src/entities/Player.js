@@ -1,6 +1,7 @@
 // First-person explorer: walks on spherical planets (gravity toward the
 // planet centre) or inside stations (artificial gravity), with jetpack & swimming.
 import * as THREE from 'three';
+import { walkerStats } from '@astra/shared/ships';
 import { FrameState } from '../universe/Body.js';
 import { Blend } from '../net/prediction.js';
 
@@ -36,6 +37,13 @@ export class Player {
     this.camQuat = new THREE.Quaternion();
     this.landShake = 0;
     this.fallSpeed = 0;
+    this.walker = walkerStats();
+  }
+
+  /** The walker's numbers for what the character owns and its people (Sprint Stride, Long Jump, Efficient Jetpack): the
+   * speeds and the tank the server holds it to. */
+  setBuild(build) {
+    this.walker = walkerStats(build);
   }
 
   up(out) {
@@ -105,8 +113,8 @@ export class Player {
     if (input.down('KeyD')) strafeIn += 1;
     if (input.down('KeyA')) strafeIn -= 1;
     this.sprinting = input.down('ShiftLeft') && fwdIn > 0 && this.grounded;
-    let speed = this.sprinting ? 9.5 : 5.2;
-    if (this.swimming) speed = 3.2;
+    let speed = this.sprinting ? this.walker.sprint : 5.2;
+    if (this.swimming) speed = this.walker.swim;
     const wish = _v2.copy(this.heading).multiplyScalar(fwdIn).addScaledVector(right, strafeIn);
     if (wish.lengthSq() > 1) wish.normalize();
     wish.multiplyScalar(speed);
@@ -125,7 +133,7 @@ export class Player {
       newUp -= g * dt;
       // jump / jetpack
       if (input.hit('Space') && this.grounded) {
-        newUp = 5.5;
+        newUp = this.walker.jump;
         this.grounded = false;
         this.game.audio?.play('jump');
       }
@@ -134,7 +142,7 @@ export class Player {
         newUp += (g + 9) * dt;
         newUp = Math.min(newUp, 14);
         horiz.addScaledVector(this.heading, fwdIn * 6 * dt);
-        this.jetFuel = Math.max(0, this.jetFuel - (dt * 0.42) / (this.jetEfficiency || 1));
+        this.jetFuel = Math.max(0, this.jetFuel - dt / this.walker.jetFuelS);
         this.jetting = true;
       }
       if (this.grounded) this.jetFuel = Math.min(1, this.jetFuel + dt * 0.6);
