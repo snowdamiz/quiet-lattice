@@ -182,6 +182,14 @@ async function play(page: Page, ms: number, frames = FRAMES_PER_STEP) {
   }
 }
 
+/** Single frames until an input has just gone out (the inputs go every 50 ms, two frames apart, some three). */
+async function playToInput(page: Page) {
+  const seq = () => page.evaluate(() => (window as W).game.net.inputSeq as number);
+  const was = await seq();
+  for (let i = 0; i < 4 && (await seq()) === was; i++) await play(page, STEP_MS / FRAMES_PER_STEP, 1);
+  expect(await seq(), 'no input went out in four frames').toBeGreaterThan(was);
+}
+
 async function holdFor(page: Page, keys: string[], ms: number) {
   for (const k of keys) await page.keyboard.down(k);
   await play(page, ms);
@@ -296,8 +304,8 @@ test('in flight: out of the Waystation into its world’s frame, boosting and on
   await play(page, 4000);
   await tap(page, 'KeyJ');
   await play(page, 5000);
-  // (a frame off the 50 ms cadence the inputs go at, so the drop-out falls between two of them)
-  await play(page, STEP_MS / FRAMES_PER_STEP, 1);
+  // (the drop-out is the frame after an input went out, so it falls between two of them)
+  await playToInput(page);
   await tap(page, 'KeyJ');
   await play(page, 3000);
   const j = await judge(page);
