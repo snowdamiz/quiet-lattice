@@ -11,11 +11,12 @@ async function run(grace: number): Promise<{ code: number | null; out: string; m
   const child = spawn(process.execPath, [cli, 'test', 'harness-hang', '--reporter=list'], {
     env: { ...process.env, SMOKE_HARNESS_HANG: '1', SMOKE_HARNESS_HANG_GRACE: String(grace) },
     stdio: ['ignore', 'pipe', 'pipe'],
+    detached: true,
   });
   let out = '';
   child.stdout.on('data', (d) => (out += d));
   child.stderr.on('data', (d) => (out += d));
-  const killer = setTimeout(() => child.kill('SIGKILL'), 120_000);
+  const killer = setTimeout(() => process.kill(-child.pid!, 'SIGKILL'), 120_000);
   const code = await new Promise<number | null>((r) => child.once('exit', r));
   clearTimeout(killer);
   return { code, out, ms: Date.now() - t0 };

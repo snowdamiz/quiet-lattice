@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
-    "smoke": "playwright test smoke",
+    "smoke": "tsx src/smoke/run.ts",
     "e2e": "playwright test e2e"
   },
   "dependencies": {
