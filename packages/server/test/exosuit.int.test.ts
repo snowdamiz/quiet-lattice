@@ -44,16 +44,19 @@ async function onFoot(): Promise<Pilot> {
   return p;
 }
 
-/** Sprints `seconds` down the hangar at `v` m/s, an input every 50 ms. */
-async function sprint(p: Pilot, v: number, fromZ: number, steps = 30): Promise<void> {
-  const frame = p.welcome.pose.frame;
-  let z = fromZ;
-  p.send({ frame, pos: [-22, 0, z], quat: [0, 0, 0, 1], vel: [0, 0, -v] }, 'foot');
-  await new Promise((r) => setTimeout(r, 50));
-  for (let i = 0; i < steps; i++) {
-    z += v * 0.05;
-    p.send({ frame, pos: [-22, 0, z], quat: [0, 0, 0, 1], vel: [0, 0, v] }, 'foot');
+/** Sprints on from where the pilot last was, down the hangar at `v` m/s of its own clock, an input every 50 ms, for `ms`
+ * or until `until` holds. */
+async function sprint(p: Pilot, v: number, ms: number, until: () => boolean = () => false): Promise<void> {
+  const { frame, pos } = p.last;
+  let z = pos[2]!;
+  let at = performance.now();
+  const end = at + ms;
+  while (performance.now() < end && !until()) {
     await new Promise((r) => setTimeout(r, 50));
+    const now = performance.now();
+    z += (v * (now - at)) / 1000;
+    at = now;
+    p.send({ frame, pos: [pos[0]!, 0, z], quat: [0, 0, 0, 1], vel: [0, 0, v] }, 'foot');
   }
 }
 
@@ -63,8 +66,8 @@ describe('Sprint Stride over the wire', () => {
     const id = p.characterId;
     // 14 m/s is past the plain sprint's cap with its tolerance (12.95) and under Sprint Stride's (14.65)
     expect(STATION_LAYOUT.hangar.z1).toBeGreaterThan(40);
-    await sprint(p, 14, -40);
-    await waitFor(() => p.corrections.length > 0, 5000, 'the plain walker corrected');
+    await sprint(p, 14, 4000, () => p.corrections.length > 0);
+    expect(p.corrections.length, 'the plain walker corrected').toBeGreaterThan(0);
 
     for (const node of ['long_jump', 'sprint_stride']) {
       expect(server.ws.skills.unlock(id, node, { kind: 'dev' }).ok).toBe(true);
@@ -73,9 +76,9 @@ describe('Sprint Stride over the wire', () => {
     expect(server.ws.skills.owned(id)).toContain('sprint_stride');
     // (it takes the correction, and goes on from where the server put it)
     const corrected = p.corrections.length;
-    const from = p.corrections.at(-1)!.pose.pos[2];
+    p.send(p.corrections.at(-1)!.pose, 'foot');
     await new Promise((r) => setTimeout(r, MOVEMENT.correction.graceS * 1000));
-    await sprint(p, 14, from, 20);
+    await sprint(p, 14, 2000);
     await new Promise((r) => setTimeout(r, 300));
     expect(p.corrections.length).toBe(corrected);
     expect(p.errors).toEqual([]);
