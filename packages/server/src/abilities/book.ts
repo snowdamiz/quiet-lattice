@@ -7,6 +7,7 @@ import type { CastRefusal, FrameId } from '@astra/shared/protocol';
 import type { Bar } from '@astra/shared/skills';
 import type { CreatureTarget } from '../combat/targets.ts';
 import type { DamageOutcome } from '../combat/zone.ts';
+import { THERMAL_EFFECTS } from './thermal.ts';
 
 type Vec3 = [number, number, number];
 
@@ -34,6 +35,36 @@ export interface CastContext {
   damage(target: number, base: number): DamageOutcome | null;
   /** Runs `fn` `delayS` seconds on (a burn's ticks, a slow's end), unless the caster has left play by then. */
   after(delayS: number, fn: () => void): void;
+  /** World time now, s: `now` is the cast's, and an effect that runs on after it (a held beam, a burn) asks this. */
+  time(): number;
+  /** Whether the caster owns `node` now (an augment's effect, a passive's: Chain on Lance). */
+  owns(node: string): boolean;
+  /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame
+   * (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
+  pose(): { origin: Readonly<Vec3>; aim: Readonly<Vec3> } | null;
+  /** Whether the ground leaves a clear line from the caster's eye to `to` (false while the world's ground is still being
+   * planned: try again next tick). */
+  sight(to: Readonly<Vec3>): boolean;
+  /** Whether the caster may harm `target` at all (`mayHarm`): for an effect that marks it and deals no damage itself. */
+  canHarm(target: number): boolean;
+  /** The caster's meters, as an effect reads and spends them beyond the cost the runtime took. */
+  readonly meters: {
+    /** Seconds the beam has fired in all, as the meters judged it; the difference between two readings is what it did. */
+    beamTime(): number;
+    /** Vent: all the heat gone, and how much; null in the lockout. */
+    dumpHeat(): number | null;
+  };
+  /** What an ability leaves on a target for a while, per caster (`Statuses`). */
+  readonly status: {
+    /** Puts `id` on `target` for `durationS` at `power`; true when this caster's was not running (start its ticks). */
+    apply(target: number, id: string, durationS: number, power?: number): boolean;
+    /** This caster's running `id` on `target` (`until` the world time it ends, `power`), or null. */
+    get(target: number, id: string): { until: number; power: number } | null;
+    /** Whether anyone's `id` runs on `target`. */
+    active(target: number, id: string): boolean;
+    /** Ends this caster's `id` on `target`. */
+    remove(target: number, id: string): void;
+  };
 }
 
 /** What an ability does on the server. Everything the runtime checks (bar, slot, cooldown, the meter, the target's sight
@@ -47,8 +78,8 @@ export interface AbilityEffect {
   end?(cast: CastContext): void;
 }
 
-/** The server's effects, by node. Each branch's task adds its own beside its abilities. */
-export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>();
+/** The server's effects, by node. Each branch's task adds its own list here, from its own file (thermal.ts). */
+export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([...THERMAL_EFFECTS]);
 
 export interface BookEntry {
   readonly ability: Ability;

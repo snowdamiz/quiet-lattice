@@ -27,10 +27,12 @@
 import { barOfMode, castCost, cooldownOf, reachOf } from '@astra/shared/abilities';
 import { creatureSphere, modsOfNodes } from '@astra/shared/combat';
 import { getSkillNode } from '@astra/shared/data';
-import { encodeServerMessage, type CastRefusal, type ClientMessage, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
+import type { HeatDump } from '@astra/shared/meters';
+import { encodeServerMessage, type CastRefusal, type ClientMessage, type FrameId, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
 import { GROUND_SLOTS, type Bar, type SkillState } from '@astra/shared/skills';
 import { frameKeyOf, tierOfGalaxySystem, type PlanetParams, type Tier } from '@astra/shared/world';
 import { clearSight } from '../combat/sight.ts';
+import { noseOf } from '../combat/gun.ts';
 import { creatureTargets } from '../combat/targets.ts';
 import { TokenBucket } from '../gateway/rateLimit.ts';
 import { nodeGrounds, type NodeGroundSource } from '../resources/ground.ts';
@@ -38,6 +40,7 @@ import { EYE_M } from '../resources/service.ts';
 import { MOVEMENT } from '../sim/movement/rules.ts';
 import type { Zone, ZoneEntity, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import { abilityBook, type AbilityBook, type BookEntry, type CastContext } from './book.ts';
+import { Statuses } from './statuses.ts';
 
 type CastRequest = Extract<ClientMessage, { t: 'cast' }>;
 type CastState = Extract<ServerMessage, { t: 'cast' }>;
@@ -74,12 +77,14 @@ export interface CastZones {
 
 export interface CastServiceOptions {
   zones: CastZones;
-  /** each character's place on the skill web: its bars and owned nodes (`get`) and the hull's working ship slots (`view`) */
-  skills: { get(characterId: string): SkillState | null; view(characterId: string): { shipSlots: number } };
-  /** heat and Charge: what a cast pays */
+  /** each character's place on the skill web: its bars and owned nodes (`get`) and the hull's working ship slots */
+  skills: { get(characterId: string): SkillState | null; shipSlots(characterId: string): number };
+  /** heat and Charge: what a cast pays, and what an effect reads and spends beyond it (`CastContext.meters`) */
   meters: {
     addHeat(characterId: string, amount: number, now: number): { ok: boolean };
     spendCharge(characterId: string, amount: number, now: number): { ok: boolean };
+    beamTime(characterId: string, now: number): number;
+    dumpHeat(characterId: string, now: number): HeatDump;
   };
   /** world time, s (the server clock) */
   now: () => number;
@@ -131,6 +136,7 @@ export class CastService {
   private interval: NodeJS.Timeout | null = null;
   private lastPrune = -Infinity;
   private readonly listeners = new Set<CastListener>();
+  private readonly statuses: Statuses;
 
   constructor(opts: CastServiceOptions) {
     this.zones = opts.zones;
@@ -140,6 +146,7 @@ export class CastService {
     this.book = opts.book ?? abilityBook();
     this.grounds = opts.grounds ?? nodeGrounds;
     this.log = opts.log;
+    this.statuses = new Statuses(opts.now);
   }
 
   stats(): CastStats {
@@ -205,7 +212,7 @@ export class CastService {
     const bar = barOfMode(me.fields.mode);
     if (!bar) return refuse('mode');
     if (zone.combat.isDown(self)) return refuse('down');
-    if (msg.slot >= (bar === 'ground' ? GROUND_SLOTS : this.skills.view(characterId).shipSlots)) return refuse('slot');
+    if (msg.slot >= (bar === 'ground' ? GROUND_SLOTS : this.skills.shipSlots(characterId))) return refuse('slot');
     if (!skills.bought.includes(msg.node)) return refuse('not_owned');
     if (skills.slots[bar][msg.slot] !== msg.node) return refuse('not_slotted');
     const entry = this.book.get(msg.node);
@@ -288,6 +295,7 @@ export class CastService {
     const f = me.fields;
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);
     const origin: Vec3 = bar === 'ground' ? lift(f.pos, EYE_M) : [f.pos[0], f.pos[1], f.pos[2]];
+    const aim: Vec3 = [msg.aim[0] / al, msg.aim[1] / al, msg.aim[2] / al];
     return {
       characterId,
       caster: self,
@@ -297,7 +305,7 @@ export class CastService {
       now,
       frame: f.frame,
       origin,
-      aim: [msg.aim[0] / al, msg.aim[1] / al, msg.aim[2] / al],
+      aim,
       target: entry.ability.target === 'entity' ? (msg.target ?? null) : null,
       creatures: (reach) => (f.frame === null ? [] : creatureTargets(zone, self, f.frame, reach === undefined ? undefined : { at: origin, reach })),
       // (with the caster's power and augments: the nodes it owns)
@@ -312,7 +320,34 @@ export class CastService {
               attackerMods: modsOfNodes(owned),
             }),
       after: (delayS, fn) => this.after(characterId, delayS, fn),
+      time: () => this.now(),
+      owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
+      pose: () => this.poseOf(zone, self, f.frame, bar, origin, aim),
+      sight: (to) => this.inSight(zone, f.frame, this.poseOf(zone, self, f.frame, bar, origin, aim)?.origin ?? origin, to) === true,
+      canHarm: (target) => mayHarm(zone, self, target),
+      meters: {
+        beamTime: () => this.meters.beamTime(characterId, this.now()),
+        dumpHeat: () => {
+          const r = this.meters.dumpHeat(characterId, this.now());
+          return r.ok ? r.dumped : null;
+        },
+      },
+      status: {
+        apply: (target, id, durationS, power) => this.statuses.apply(zone.id, characterId, target, id, durationS, power),
+        get: (target, id) => this.statuses.get(zone.id, characterId, target, id),
+        active: (target, id) => this.statuses.active(zone.id, target, id),
+        remove: (target, id) => this.statuses.remove(zone.id, characterId, target, id),
+      },
     };
+  }
+
+  /** The caster's eye and look now (see `CastContext.pose`): its entity's pose lifted to the eye on foot, its look the one the
+   * client last sent with its input (the cast's own `aim` without one); null once the entity is gone from play or the frame. */
+  private poseOf(zone: CastZone, self: number, frame: FrameId, bar: Bar, origin: Readonly<Vec3>, aim: Readonly<Vec3>): { origin: Vec3; aim: Vec3 } | null {
+    const e = zone.entity(self);
+    if (!e || e.fields.frame !== frame) return null;
+    const look = e.input?.aim;
+    return { origin: bar === 'ground' ? lift(e.fields.pos, EYE_M) : [e.fields.pos[0], e.fields.pos[1], e.fields.pos[2]], aim: look ? noseOf(look) : [aim[0], aim[1], aim[2]] };
   }
 
   /** Why an `entity` cast's target is out of its reach, or null: seen, of a kind it takes, alive, on the caster's world,
@@ -365,7 +400,7 @@ export class CastService {
     if (!e || barOfMode(e.fields.mode) !== ctx.bar || zone.combat.isDown(ctx.caster)) return false;
     const skills = this.skills.get(characterId);
     if (!skills?.bought.includes(node)) return false;
-    const working = ctx.bar === 'ground' ? GROUND_SLOTS : this.skills.view(characterId).shipSlots;
+    const working = ctx.bar === 'ground' ? GROUND_SLOTS : this.skills.shipSlots(characterId);
     return skills.slots[ctx.bar].slice(0, working).includes(node);
   }
 

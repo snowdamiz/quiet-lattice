@@ -66,7 +66,7 @@ let w: FaunaWorld;
 let viewer: Viewer;
 let skills: SkillState;
 let shipSlots: number;
-let meter: { heat: number; overheated: boolean; charge: number };
+let meter: { heat: number; overheated: boolean; charge: number; beamS: number };
 let casts: { node: string; ctx: CastContext }[];
 let ended: string[];
 /** what each toggle that went off was ended with */
@@ -93,7 +93,7 @@ function service(opts: Partial<CastServiceOptions> = {}, abilities: readonly Abi
   );
   const svc = new CastService({
     zones: { zoneOf: (v) => (w.zone.has(v) ? w.zone : undefined), tier: () => 0 },
-    skills: { get: (id) => (id === 'c1' ? skills : null), view: () => ({ shipSlots }) },
+    skills: { get: (id) => (id === 'c1' ? skills : null), shipSlots: () => shipSlots },
     meters: {
       addHeat: (_id, amount) => {
         if (meter.overheated) return { ok: false };
@@ -105,6 +105,13 @@ function service(opts: Partial<CastServiceOptions> = {}, abilities: readonly Abi
         if (meter.charge < amount) return { ok: false };
         meter.charge -= amount;
         return { ok: true };
+      },
+      beamTime: () => meter.beamS,
+      dumpHeat: () => {
+        if (meter.overheated) return { ok: false, error: 'overheated' };
+        const dumped = meter.heat;
+        meter.heat = 0;
+        return { ok: true, state: { heat: 0, overheated: false, charge: meter.charge }, events: [], dumped };
       },
     },
     now: () => now,
@@ -162,7 +169,7 @@ beforeEach(() => {
   w.player = w.zone.join(viewer, { kind: 'player', frame: w.frame, pos: w.at(0, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
   w.run(0.1);
   shipSlots = 2;
-  meter = { heat: 0, overheated: false, charge: 100 };
+  meter = { heat: 0, overheated: false, charge: 100, beamS: 0 };
   casts = [];
   ended = [];
   endings = [];
