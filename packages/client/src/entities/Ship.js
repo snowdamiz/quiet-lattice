@@ -590,14 +590,14 @@ export class Ship {
   }
 
   // The nodes the pilot owns, as the server's skills view lists them. The set is kept (the inventory's layout reads it), and
-  // the damage already taken stays, as the server's does (CombatZone.retuned).
+  // each pool keeps its fraction, as the server's does (ZoneCombat.retuned).
   setSkills(nodes) {
     const had = this.stats;
     this.skills.clear();
     for (const n of nodes) this.skills.add(n);
     this.refreshStats();
-    this.shield = Math.max(0, this.stats.shieldMax - (had.shieldMax - this.shield));
-    this.hull = Math.max(1, this.stats.hullMax - (had.hullMax - this.hull));
+    this.shield = had.shieldMax > 0 ? (this.shield / had.shieldMax) * this.stats.shieldMax : this.stats.shieldMax;
+    this.hull = had.hullMax > 0 ? (this.hull / had.hullMax) * this.stats.hullMax : this.stats.hullMax;
   }
 
   get chargeMax() {

@@ -944,8 +944,8 @@ export class Game {
     this.save();
     this.audio.play('dock');
     this.hud.showBanner(this.station.name.toUpperCase(), 'Docked');
-    if (this.ship.shield < 100) {
-      this.ship.shield = 100;
+    if (this.ship.shield < this.ship.stats.shieldMax) {
+      this.ship.shield = this.ship.stats.shieldMax;
       this.hud.toast('Shields recharged', 'good');
     }
   }
@@ -1409,8 +1409,8 @@ export class Game {
     this.inventory.units -= loss;
     this.pirates.clear();
     this.placeShipNearStation();
-    this.ship.hull = 100;
-    this.ship.shield = 100;
+    this.ship.hull = this.ship.stats.hullMax;
+    this.ship.shield = this.ship.stats.shieldMax;
     this.ship.wind.set(0, 0, 0);
     this.hud.showBanner('SHIP DESTROYED', cause, [`Rebuilt at ${this.station.name} · -${loss} units`]);
     this.save();
