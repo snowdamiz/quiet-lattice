@@ -134,6 +134,33 @@ for i, mw in enumerate((Matrix.Translation((p13.x, p13.y, 0.45 + 1.95)) @ Matrix
     e.matrix_world = mw
     kit.objects.link(e)
 
+# the Scrapyard, assembled 2 km off: gate in the mouth, three docks and two decks on the cavity wall
+SY = None
+if sy_blend:
+    with bpy.data.libraries.load(sy_blend, link=False) as (src, dst):
+        dst.collections = [c for c in src.collections if c.startswith("sy_")]
+    sy_off = Matrix.Translation((2200.0, 0.0, 0.0))
+    rock = put("sy_rock", sy_off, "sy_rock")
+    mate(rock, "sy_rock", "Socket_Mouth", "sy_mouth", "Socket_GateMount", "sy_gate")
+    docks = {}
+    for k in (1, 2, 3):
+        docks[k] = mate(rock, "sy_rock", f"Socket_Dock_{k}", "sy_dock", "Socket_DockAnchor", f"sy_dock{k}")
+    decks = {}
+    for k in (1, 2):
+        decks[k] = mate(rock, "sy_rock", f"Socket_Deck_{k}", "sy_deck", "Socket_DeckAnchor", f"sy_deck{k}")
+    SY = (rock, docks, decks)
+    pad = docks[1] @ Matrix.Translation((0.0, -17.0, 0.0))
+    e = bpy.data.objects.new("lark_sy", None)
+    e.instance_type = "COLLECTION"
+    e.instance_collection = lark_coll
+    e.matrix_world = pad @ Matrix.Translation((0, 0, 1.95)) @ Matrix.Rotation(0.6, 4, "Z")
+    kit.objects.link(e)
+    for i, (dk, p) in enumerate(((decks[1], (-6.0, -9.0, 0.0)), (decks[1], (1.0, -11.5, 0.0)), (decks[2], (-3.0, -7.4, 0.0)), (docks[1], (1.6, -3.0, 0.0)))):
+        b = bip_src.copy()
+        b.hide_render = False
+        b.matrix_world = dk @ Matrix.Translation(p) @ Matrix.Rotation(0.4 * i, 4, "Z")
+        kit.objects.link(b)
+
 # render: EEVEE, a dark sky with a key sun and a cool fill
 try:
     sc.render.engine = "BLENDER_EEVEE"
@@ -166,6 +193,18 @@ views = {
     "hangar": ((-58.0, -52.0, 14.0), (10.0, 70.0, 4.0), 22),
     "fabricator": ((-26.5, 66.0, 9.6), (-30.0, 80.0, 7.6), 30),
 }
+if SY:
+    rock = SY[0]
+    for i, (pos, e) in enumerate((((2200.0, 0.0, 10.0), 4.0e6), ((2200.0, -60.0, 0.0), 1.5e6))):
+        L = bpy.data.objects.new(f"cavity{i}", bpy.data.lights.new(f"cavity{i}", "POINT"))
+        L.data.energy = e
+        L.data.color = (1.0, 0.62, 0.42)
+        L.location = pos
+        sc.collection.objects.link(L)
+    views["scrapyard_mouth"] = ((2200.0 + 140.0, -330.0, 70.0), (2200.0, -40.0, 0.0), 30)
+    d1 = SY[1][1] @ Matrix.Translation((0.0, -17.0, 0.0))
+    p1 = d1.translation
+    views["scrapyard_cavity"] = ((2200.0 + 6.0, -62.0, 18.0), (p1.x, p1.y, p1.z), 18)
 paths = []
 for k, (pos, tgt, lens) in views.items():
     cam.location = pos

@@ -97,19 +97,29 @@ def build_lod(lod):
         K.revolve(m, [(1.6, Z), (1.6, Z + 0.25), (1.3, Z + 0.35), (0.9, Z + 0.35)], (32, 20, 12, 8)[lod], "WS_Shell", "lip", center=(0, -8.0, 0), axis="z", away=(0, -8.0, Z - 2))
         K.revolve(m, [(0.9, Z + 0.35), (0.0, Z + 0.36)], (32, 20, 12, 8)[lod], "WS_Metal", "light", center=(0, -8.0, 0), axis="z", away=(0, -8.0, Z - 2))
         # the board: a framed display across the back wall
-        K.box(m, (-18.0, -0.35, Z + 1.0), (-6.0, -0.05, Z + 4.4), "WS_Metal", "trim")
-        K.box(m, (-17.6, -0.42, Z + 1.3), (-6.4, -0.35, Z + 4.1), "WS_Metal", "light")
+        K.box(m, (-18.0, -0.45, Z + 1.0), (-6.0, -0.12, Z + 4.4), "WS_Metal", "trim")
+        K.box(m, (-17.6, -0.52, Z + 1.3), (-6.4, -0.45, Z + 4.1), "WS_Metal", "light")
+    # the deck's own back lining: lapped rows over the hangar's back wall (8 cm proud of it), the blue dado where carts
+    # and crates knock it, a lattice cornice under the canopy
+    LY = -0.08
+    for i, z0 in enumerate(np.arange(Z, Z + 10.0, 2.0)):
+        key = "plate_band" if i == 0 else ("accent" if i == 4 else "plate")
+        lap = 0.1 if lod <= 1 else 0.0
+        K.patch(m, [[(-HX, LY - lap, z0), (-HX, LY, z0 + 2.0)], [(HX, LY - lap, z0), (HX, LY, z0 + 2.0)]], "WS_Shell", key, u_off=i * 2.3, toward=lambda c: c + np.array([0, -5.0, 0]))
+    if lod <= 1:
+        for x in np.arange(-60.0, 60.1, 10.0):
+            K.beam(m, np.array([x, LY - 0.25, Z]), np.array([x, LY - 0.25, Z + 10.0]), 0.5, 0.4, "WS_Shell", "rib", up=(0, -1, 0), bevel=0.1 if lod == 0 else 0.0)
     # service doors into the spine, 3.0 x 2.0 m, in shell frames
     for x in (-42.0, 0.0, 42.0):
-        K.box(m, (x - 1.6, -0.5, Z), (x - 1.0, 0.0, Z + 3.4), "WS_Shell", "lip")
-        K.box(m, (x + 1.0, -0.5, Z), (x + 1.6, 0.0, Z + 3.4), "WS_Shell", "lip")
-        K.box(m, (x - 1.6, -0.5, Z + 3.0), (x + 1.6, 0.0, Z + 3.4), "WS_Shell", "signal")
-        K.box(m, (x - 1.0, -0.12, Z), (x + 1.0, -0.02, Z + 3.0), "WS_Metal", "machine")
+        K.box(m, (x - 1.6, -0.6, Z), (x - 1.0, -0.08, Z + 3.4), "WS_Shell", "lip")
+        K.box(m, (x + 1.0, -0.6, Z), (x + 1.6, -0.08, Z + 3.4), "WS_Shell", "lip")
+        K.box(m, (x - 1.6, -0.6, Z + 3.0), (x + 1.6, -0.08, Z + 3.4), "WS_Shell", "signal")
+        K.box(m, (x - 1.0, -0.22, Z), (x + 1.0, -0.12, Z + 3.0), "WS_Metal", "machine")
         K.box(m, (x - 1.0, -1.2, Z), (x + 1.0, -0.5, Z + 0.02), "WS_Shell", "lip", skip=("-z",))
     # decals: the Compact mark over the Quartermaster, chevrons at the stair head
     z = Z + 0.025
     m.add([(-1.8, -D + 4.6, z), (1.8, -D + 4.6, z), (1.8, -D + 1.0, z), (-1.8, -D + 1.0, z)], [(0.25, 0.25), (0.5, 0.25), (0.5, 0.5), (0.25, 0.5)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
-    y = -0.06
+    y = -0.14
     m.add([(-3.0, y, Z + 5.4), (3.0, y, Z + 5.4), (3.0, y, Z + 11.4), (-3.0, y, Z + 11.4)][::-1], [(0.0, 0.25), (0.25, 0.25), (0.25, 0.5), (0.0, 0.5)][::-1], "WS_Decal", toward=lambda c: c + np.array([0, -1.0, 0]))
     # a slab of the mark on the deck before each counter, worn where boots stop
     for x in (30.0, 45.0, -30.0):
@@ -126,7 +136,7 @@ def build(sc, root):
         m.build(f"ws_tradedeck_L{lod}", c)
         # the main door into the spine, a part the station opens
         d = K.Mesh()
-        K.box(d, (-1.0, -0.3, Z), (1.0, -0.15, Z + 3.0), "WS_Metal", "machine")
+        K.box(d, (-1.0, -0.4, Z), (1.0, -0.25, Z + 3.0), "WS_Metal", "machine")
         d.build(f"Door_Spine_L{lod}", c)
     K.collider(asset, "COL_Deck", (-HX, -D, Z - 0.9), (HX, 0.0, Z))
     K.collider(asset, "COL_Rail_Front_L", (-HX, -D, Z), (-STAIR_W / 2 - 0.2, -D + 0.3, Z + 1.1))

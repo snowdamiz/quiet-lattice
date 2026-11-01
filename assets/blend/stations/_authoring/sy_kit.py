@@ -21,7 +21,17 @@ def _dir(theta, phi):
     return np.array([math.sin(theta) * math.cos(phi), -math.cos(theta), math.sin(theta) * math.sin(phi)])
 
 
+AXES = (0.92, 1.32, 0.78)  # an elongated rock, the mouth at the end of its long axis
+LOBE = np.array([0.55, 0.35, 0.76])
+
+
 def radius(d, inner=False):
+    ell = 1.0 / math.sqrt((d[0] / AXES[0]) ** 2 + (d[1] / AXES[1]) ** 2 + (d[2] / AXES[2]) ** 2)
+    lobe = 1 + 0.16 * max(0.0, float(np.dot(d, LOBE / np.linalg.norm(LOBE)))) ** 3
+    return ell * lobe * _radius(d, inner)
+
+
+def _radius(d, inner=False):
     f = 0.0
     tot = 0.0
     for k, fr, ph in WAVES:
@@ -35,10 +45,11 @@ def radius(d, inner=False):
     if not inner:
         for c, size, depth in CRATERS:
             c = c / np.linalg.norm(c)
-            ang = math.acos(max(-1, min(1, np.dot(c, d))))
-            if ang < size:
-                t = ang / size
-                r *= 1 - depth * (1 - t * t) + depth * 0.6 * math.exp(-((t - 1) / 0.15) ** 2)
+            x = math.acos(max(-1, min(1, np.dot(c, d)))) / size
+            if x < 2.0:
+                bowl = -depth * (1 - x * x) if x < 1 else 0.0
+                rim = depth * 0.45 * math.exp(-(((x - 1) / 0.28) ** 2))
+                r *= 1 + bowl + rim
         return r
     return r * INNER * (1 + 0.05 * f)
 
@@ -96,11 +107,10 @@ def tunnel(m, lod):
 
 
 def patch_plates(m, lod):
-    """Salvage plates bolted over breaches in the rock: the Reaches patch what they cannot fix."""
-    if lod >= 2:
-        return
+    """Salvage plates bolted over breaches in the rock: the Reaches patch what they cannot fix. Every LOD keeps every
+    plate (LOD2-3 as flat quads without frames), so the colour patches never pop."""
     rng = np.random.default_rng(9)
-    for k in range(14 if lod == 0 else 7):
+    for k in range(14):
         t = rng.uniform(0.5, 2.6)
         p = rng.uniform(0, 2 * math.pi)
         d = _dir(t, p)
@@ -112,12 +122,20 @@ def patch_plates(m, lod):
         y = np.cross(n, x)
         w, h = rng.uniform(6, 14), rng.uniform(4, 9)
         key = ["plate", "oxide", "patch"][k % 3]
-        pts = [c + x * sx * w / 2 + y * sy * h / 2 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
-        g = [[pts[0], pts[3]], [pts[1], pts[2]]]
-        K.patch(m, g, "SY_Scrap", key, away=c - n * 3)
+        onto = lambda q, lift=0.3: (q / np.linalg.norm(q)) * (radius(q / np.linalg.norm(q)) + lift)
+        nn = 4 if lod <= 1 else 1
+        grid = np.zeros((nn + 1, nn + 1, 3))
+        for i in range(nn + 1):
+            for j in range(nn + 1):
+                grid[i, j] = onto(c + x * (i / nn - 0.5) * w + y * (j / nn - 0.5) * h)
+        K.patch(m, grid, "SY_Scrap", key, away=c - n * 3)
+        if lod >= 2:
+            continue
+        edge = [(-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (-0.5, 0.5), (-0.5, -0.5)]
         for e in range(4):
-            a, b = pts[e], pts[(e + 1) % 4]
-            K.beam(m, a + n * 0.15, b + n * 0.15, 0.35, 0.3, "SY_Scrap", "girder", up=tuple(n))
+            (a0, b0), (a1, b1) = edge[e], edge[e + 1]
+            pts = [onto(c + x * (a0 + (a1 - a0) * t) * w + y * (b0 + (b1 - b0) * t) * h, 0.45) for t in np.linspace(0, 1, 5)]
+            K.tube(m, pts, 0, 0, "SY_Scrap", "girder", smooth=False, up=tuple(n), profile=[(-0.18, -0.15), (0.18, -0.15), (0.18, 0.15), (-0.18, 0.15), (-0.18, -0.15)])
 
 
 def rock_lod(lod):
@@ -302,11 +320,11 @@ def deck_lod(lod):
 
 SOCKETS = {
     # (name, theta from the mouth, phi round it, inset) on the cavity wall, +Y pointing into the cavity
-    "Socket_Dock_1": (1.35, 3.6, 0.0),
-    "Socket_Dock_2": (1.75, 5.6, 0.0),
-    "Socket_Dock_3": (1.15, 1.2, 0.0),
-    "Socket_Deck_1": (2.2, 4.7, 0.0),
-    "Socket_Deck_2": (2.5, 2.4, 0.0),
+    "Socket_Dock_1": (1.30, math.pi + 0.25, 0.0),
+    "Socket_Dock_2": (1.90, 0.15, 0.0),
+    "Socket_Dock_3": (2.40, math.pi - 0.40, 0.0),
+    "Socket_Deck_1": (1.60, -0.45, 0.0),
+    "Socket_Deck_2": (2.05, math.pi + 0.55, 0.0),
 }
 
 
@@ -319,19 +337,34 @@ def build(sc, root):
             print(f"{name} LOD{lod}: {m.tris():,} tris, {len(m.mats)} materials")
             m.build(f"{name}_L{lod}", c)
         if name == "sy_rock":
-            K.collider(asset, "COL_Rock_Back", (-70, 30, -70), (70, 75, 70))
-            for k in range(8):
-                a = k * math.pi / 4
-                xf = Matrix.Rotation(-a, 4, "Y") @ Matrix.Translation((62.0, 0.0, 0.0))
-                K.collider(asset, f"COL_Rock_Wall_{k + 1}", (-12.0, -70.0, -26.0), (14.0, 40.0, 26.0), xf=xf)
+            # the rock's colliders: shell sectors between the cavity and the skin, from the same radius as the mesh
+            n_ = 0
+            for band, (t0, t1) in enumerate(((0.55, 1.05), (1.05, 1.6), (1.6, 2.15), (2.15, 2.7), (2.7, math.pi))):
+                nphi = 8 if band < 4 else 1
+                for k in range(nphi):
+                    p0, p1 = 2 * math.pi * k / nphi, 2 * math.pi * (k + 1) / nphi
+                    tm, pm = (t0 + t1) / 2, (p0 + p1) / 2
+                    d = _dir(tm, pm) if band < 4 else np.array([0.0, 1.0, 0.0])
+                    ro, ri = radius(d), radius(d, True)
+                    ang_t = (t1 - t0)
+                    ang_p = (p1 - p0) * math.sin(tm) if band < 4 else 2 * math.pi * math.sin(2.9)
+                    rm = (ro + ri) / 2
+                    w, h = rm * ang_p * 1.08, rm * ang_t * 1.08
+                    if band == 4:
+                        w = h = rm * 0.9
+                    q = Vector(d).to_track_quat("Z", "Y").to_matrix().to_4x4()
+                    xf = Matrix.Translation(Vector(d * rm)) @ q
+                    n_ += 1
+                    K.collider(asset, f"COL_Rock_{n_:02d}", (-w / 2, -h / 2, -(ro - ri) / 2), (w / 2, h / 2, (ro - ri) / 2), xf=xf)
             # the mouth's socket: at the rim's centre, +Y out of the rock (toward -Y world)
             mid = np.mean([_dir(MOUTH * 1.1, p) * radius(_dir(MOUTH * 1.1, p)) for p in np.linspace(0, 2 * math.pi, 16)], 0)
             K.empty(asset, "Socket_Mouth", (0.0, float(mid[1]), 0.0), rot=(0, 0, math.pi), size=8.0, props={"interface": "mouth"})
             for nm, (t, p, _) in SOCKETS.items():
                 d = _dir(t, p)
                 pos = d * radius(d, True) * 0.97
-                inward = -d
-                q = Vector(inward).to_track_quat("Y", "Z")
+                # level: +Y runs horizontally into the cavity, Z stays up, so docks and decks sit flat
+                inward = Vector((-d[0], -d[1], 0.0)).normalized()
+                q = inward.to_track_quat("Y", "Z")
                 o = K.empty(asset, nm, tuple(pos), rot=tuple(q.to_euler()), size=4.0, props={"interface": "anchor"})
             K.empty(asset, "BAY_Mouth", (0.0, -R0 - 40.0, 0.0), size=8.0, props={"approach": True})
             K.empty(asset, "Light_Cavity", (0.0, 0.0, 0.0), size=3.0, props={"color": "#FF8A5C", "intensity": 1.6, "distance": 110.0})
