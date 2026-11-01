@@ -383,6 +383,10 @@ Graded per hull with the "Models and environments" table, each file as a family 
 | 1 | Swift | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.4 |
 | 1 | Kestrel | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 3, placeholder 3, performance 4 | 3.5 |
 | 1 | Mule | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 3, placeholder 4, performance 4 | 3.5 |
+| 2 | Lark | REVISE | design 4, silhouette 5, proportion 4, materials 3, detail 4, topology 4, consistency 5, fitness 4, placeholder 4, performance 4 | 4.1 |
+| 2 | Swift | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 4, placeholder 3, performance 4 | 3.4 |
+| 2 | Kestrel | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 4, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.8 |
+| 2 | Mule | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 4, topology 4, consistency 4, fitness 3, placeholder 4, performance 4 | 3.8 |
 
 Round 1, common to all four: wear as uniform noise rather than placed by use; damaged variants indistinguishable from
 the base at gameplay range; LOD0 budgets spent on uniform tessellation of flat plates rather than modelled detail
@@ -435,3 +439,13 @@ Round 2: the flare and cost ease together, every cost eases onto its arc drawn b
 the plate sits over its slot, names hide at rest, ready beats show, and the HUD stays under 1 ms; the requested 21:9
 cost clip is in `hud-abilities-cost`. Minor: the cost eases run about 185–200 ms (asked 250); the flight ready beat
 is about 70 ms; long flight names nearly touch at 1920. Artifacts: `assets/renders/ui/hud-abilities{,-flight,-cost}/`.
+
+Round 2 of P1.E12.T02 (2026-10-31; the Lark, Mule and Kestrel at 3413edb7, the Swift at 72d2df4b): the Lark's shell
+and silhouette now read (silhouette and consistency 5), the Kestrel's members curve and fuse like grown bone, the
+Mule's dome and aft plate are clean and its damage reads at 100 m. Still failing on all four: wear as noise instead of
+placed by use, 1024 bakes against the 4096 hero target, LOD2 maps not baked from LOD0, more than 12 draws, and
+blockout cockpits, hardpoints or boarding paths. Per hull: the Lark's clean white hull and unscorched damage; the
+Mule's colliders miss the pod, dome and aft plate and its strobe sits on the medium hardpoint; the Kestrel's uniform
+crackle, tech stipple and box cockpit; the Swift still reads as a jet, with a material mosaic, whole-face emissive and
+liveries that barely change it (its open-space GPU reading of about 7 ms came from a shared GPU and is to be
+re-measured). Round 3 dispatched with the four verdicts.
