@@ -175,10 +175,10 @@ async function freeze(page: Page) {
 }
 
 /** `ms` of both clocks on, in 50 ms steps, each waiting for the server to handle the inputs it put on the wire. */
-async function play(page: Page, ms: number) {
+async function play(page: Page, ms: number, frames = FRAMES_PER_STEP) {
   for (let left = ms; left > 0; left -= STEP_MS) {
     await online.clock!.advance(Math.min(left, STEP_MS));
-    await page.evaluate(([step, n]) => (window as W).__step(step!, n!), [Math.min(left, STEP_MS), FRAMES_PER_STEP]);
+    await page.evaluate(([step, n]) => (window as W).__step(step!, n!), [Math.min(left, STEP_MS), frames]);
   }
 }
 
@@ -296,6 +296,8 @@ test('in flight: out of the Waystation into its world’s frame, boosting and on
   await play(page, 4000);
   await tap(page, 'KeyJ');
   await play(page, 5000);
+  // (a frame off the 50 ms cadence the inputs go at, so the drop-out falls between two of them)
+  await play(page, STEP_MS / FRAMES_PER_STEP, 1);
   await tap(page, 'KeyJ');
   await play(page, 3000);
   const j = await judge(page);
