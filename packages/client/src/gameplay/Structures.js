@@ -555,6 +555,16 @@ export class Structures {
     return { count: n, nearest };
   }
 
+  /** Reveals every site of the planet (Deep Sweep from orbit); how many were still hidden. */
+  revealAll() {
+    let n = 0;
+    for (const s of this.sites) {
+      if (!s.known) n++;
+      s.known = true;
+    }
+    return n;
+  }
+
   markers(camLocal) {
     const out = [];
     if (!this.planet) return out;

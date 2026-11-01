@@ -34,7 +34,9 @@ import { collectResources, disposeTree } from './core/dispose.js';
 import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
+import { scanRanges } from '@astra/shared/abilities';
 import { Abilities, CAST_KEYS, castBar, castIntent, playAbilityFx } from './net/abilities.js';
+import './gameplay/resonanceFx.js';
 import { Crafting } from './net/crafting.js';
 import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
@@ -1034,19 +1036,34 @@ export class Game {
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
+  // The scan on C, today's: deposits and sites within the character's scan range (Long Ear's doubles it). Online, the Pulse
+  // (DESIGN 9.4, a slotted active) is the same reveal with the server's stun beside it: its cast event runs `revealScan`.
   scan() {
     if (this.scanCooldown > this.time) return;
     this.scanCooldown = this.time + 3;
+    this.revealScan();
+  }
+
+  revealScan() {
+    const { depositM, siteM } = scanRanges(this.abilities.owned);
     this.hud.scanPulse();
     this.audio.play('scan');
-    const found = this.flora.scan(this.player.state, 180);
+    const found = this.flora.scan(this.player.state, depositM);
     this.scanMarkers = found.map((f) => ({ ...f, expires: this.time + 25 }));
     this.hud.toast(found.length ? `${found.length} deposits nearby` : 'Nothing nearby');
-    const { nearest } = this.structures.scanReveal(this.player.state.pos, 3000);
+    const { nearest } = this.structures.scanReveal(this.player.state.pos, siteM);
     if (nearest) {
       const km = nearest.d < 1000 ? `${nearest.d.toFixed(0)} m` : `${(nearest.d / 1000).toFixed(1)} km`;
       setTimeout(() => this.hud.toast(`${nearest.s.label} · ${km}`, 'good'), 900);
     }
+  }
+
+  /** Deep Sweep (DESIGN 9.4): every site of the world the cast named, from orbit. */
+  revealSites(frame) {
+    if (frameIdOfFrame(this.system, this.station, this.structures.planet) !== frame) return;
+    const n = this.structures.revealAll();
+    this.audio.play('scan');
+    this.hud.toast(n ? `${n} sites revealed` : 'No new sites below', n ? 'good' : 'info');
   }
 
   onShipFire(ship) {
