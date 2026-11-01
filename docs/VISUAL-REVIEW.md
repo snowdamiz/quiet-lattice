@@ -460,3 +460,22 @@ Mule's colliders miss the pod, dome and aft plate and its strobe sits on the med
 crackle, tech stipple and box cockpit; the Swift still reads as a jet, with a material mosaic, whole-face emissive and
 liveries that barely change it (its open-space GPU reading of about 7 ms came from a shared GPU and is to be
 re-measured). Round 3 dispatched with the four verdicts.
+
+## P2.E22.T02 The Edge moves (galaxy map, sky, dark stations)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 3, HUD fit 4, motion 3, palette 3, correctness 4, spec 3, performance 4 | 3.43 |
+| 2 | REVISE | hierarchy 4, HUD fit 5, motion 4, palette 4, correctness 4, spec 5, performance 5 | 4.43 |
+| 3 | PASS | hierarchy 5, HUD fit 5, motion 4, palette 4, correctness 4, spec 5, performance 5 | 4.57 |
+
+Round 1: the map label sat on the wall's brightest part at 1.2–1.6:1; the sky's wall re-rolled in one frame whenever
+the Edge moved again, and the label hopped between anchors; the sky's Edge was saturated violet with mint ribbons
+against the bible's opal; no capture showed a dark system. Round 2: the label on a plate (10.5–13.4:1), the sky's
+re-roll and the label hop gone, violet and mint gone, the requested Broken-season capture in `edge-dark`; still the
+info captions at 3.1:1, dark marks popping in one frame, grey rather than opal highlights, and a mark reading on a
+neighbour's name. Round 3: captions 5.1–5.8:1, marks fade and flicker with their own seam-light names, opal crests at
+every Count, sanctuaries exempt (Duntha unmarked), the Shift row, credits on a plate. Minor: a relit station's label
+changes style in one frame while its ring eases out; the pale-blue and peach fringe play does not survive the sky's
+grade; Venmirix and Tervelost's rings still interlock; the map's worst frame 2.6 ms; edge-dark's clip opens on a fading
+selection. Artifacts: `assets/renders/ui/{edge-map,edge-sky,edge-dark}/`.

@@ -1132,3 +1132,29 @@ Format: task id, question → choice → why.
   `retuned`. The join test with Sprint Stride owned is P1.E07.T10's `exosuit.int.test.ts` on `flight`, plus two Pilot
   join tests (four nodes; a stored Swift hull). A mid-fight respec is not blocked: the fraction rule makes it neither a
   heal nor a wound.
+- **P2.E22.T02** The Edge moves (shared `seasons/edge.ts`, `seasons/rules.ts`, `world/tiers.ts`, `protocol/messages.ts`
+  (protocol 21), server `world/service.ts`, client `Game.js`, `ui/map/GalaxyMap.js`, `EdgeOfSpace.js`,
+  `render/UniverseSky.js`, `ui/style.css`, ARCHITECTURE §11) → the Count moves the Edge not at all from 300 to 700 and
+  in a straight line to ±10 ly at 0 and 1,000, never jumping; the shifts add (Edge = default + the opening's shift + the
+  Count's), so a Broken-opened season at Count 0 has the Edge 20 ly in. Tier jumps: DESIGN's "the next shell steps up a
+  tier" is read as the fringe line moving in (at 10 ly in, systems 33 and 56 go Tier 3 → 5; at 20 ly, seven do); on
+  the high side Tier 5 drops to 4. Dark stations: the opening's set, plus below 300 the systems the Count itself pushed
+  Edge-ward, those on the fringe at `edgeAt(count, opening)` but not at `edgeAt(300, opening)` (measured from the
+  season's middle Edge, not the default); the Count's own relight bit by bit as the fringe moves back out, all by 300,
+  with no hysteresis; the opening's relight at 700 and go dark again if the Count falls back below 700 in the same
+  season. Chorus sanctuaries (B- and E-class stars, "any tier, safe", DESIGN 11) never go dark, though their tiers
+  still flip, and a Broken opening's `darkSystems` never draws one, so it still opens 2–3 dark (at seed 424242 most of
+  the fringe is B or E class; the baseline season at Count 0 has 1 dark, system 3). The server sends `dark` in the
+  `world` message (protocol 21) and the client reads `net.world.dark` (one copy; `game.world` dropped); the Edge, tiers
+  and dark set are never saved and are recomputed on every boot; `world.update()` takes only `{count}`. The station
+  query is `Game.stationDark(id)`, apart from the per-frame night boolean `isDark`. The drawn wall moves 20,000 ly for
+  each light year the Edge moves. The map: the "The Edge" label on a dark plate (pale-blue bar; lilac is Charge's),
+  easing between anchors; each dark system marked with a seam-light ring that fades in and out over about 0.4 s and
+  flickers 40–60%, its name in #9FE8DA ahead of its neighbours'; the info panel's "Waystation: Dark" row and a "Shift"
+  row ("Advanced 20 ly", "Receded 10 ly", "At its default") in place of "Expansion 0.0000 c"; the Edge tooltip shows
+  "Count n / 1000" to everyone (overlaps P2.E22.T04 and Edge Sense). The sky: its wall wears the art bible's Edge
+  palette (opal crests; a sky-only `uSky` flag) while the map keeps its own look; an Edge-only change redraws one cube
+  face a frame into a back buffer with the membrane's churn held at the last full draw. Open: the client builds a
+  system at the default Edge's tier until P1.E04.T04, and persistence `components.ts` and `quests/world.ts` read the
+  default-Edge tier; the drawn wall can stand up to 400,000 ly past a ship near it, unclamped; the smoke hands the
+  client a world message rather than having the server send three Counts.
