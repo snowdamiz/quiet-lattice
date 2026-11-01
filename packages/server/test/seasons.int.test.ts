@@ -9,6 +9,7 @@ import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import {
   CHRONICLE_FINDS_MAX,
   darkSystems,
+  darkAt,
   edgeAt,
   SEASON_EDGE_SHIFT_LY,
   SEASON_LENGTH_S,
@@ -520,7 +521,10 @@ describe('seasons', () => {
     const world = await open();
     const heard: { season?: number; edgeX: number; from: number }[] = [];
     world.subscribe((c) => heard.push({ season: c.season?.season, edgeX: c.state.edgeX, from: c.previous.edgeX }));
-    expect(world.state()).toMatchObject({ season: 4, count: 120, edgeX: edgeAt(120, { edgeShiftLy: 0 }), dark: [] });
+    // (the Count at 120 has pushed systems Edge-ward: their stations are dark, and the roll relights them)
+    const pushed = darkAt(120, { edgeShiftLy: 0, dark: [] });
+    expect(pushed.length).toBeGreaterThan(0);
+    expect(world.state()).toMatchObject({ season: 4, count: 120, edgeX: edgeAt(120, { edgeShiftLy: 0 }), dark: pushed });
     const before = [...world.state().tiers];
     mono += 18 * HOUR_MS;
     wall += 18 * HOUR_MS;
