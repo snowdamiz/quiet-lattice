@@ -2,6 +2,7 @@
 // planet centre) or inside stations (artificial gravity), with jetpack & swimming.
 import * as THREE from 'three';
 import { FrameState } from '../universe/Body.js';
+import { Blend } from '../net/prediction.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -16,6 +17,9 @@ export class Player {
   constructor(game) {
     this.game = game;
     this.state = new FrameState();
+    // the walker as its eye sees from: its state, with a correction's blend while one runs
+    this.blend = new Blend();
+    this.drawn = new FrameState();
     this.heading = new THREE.Vector3(0, 0, -1);
     this.pitch = 0;
     this.grounded = false;
@@ -41,6 +45,7 @@ export class Player {
   }
 
   spawn(frame, feetPos, heading) {
+    this.blend.clear();
     this.state.frame = frame;
     this.state.pos.copy(feetPos);
     this.state.vel.set(0, 0, 0);
@@ -275,9 +280,13 @@ export class Player {
     this.game.audio?.play('hurt');
   }
 
+  drawnState() {
+    return this.blend.apply(this.state, this.drawn);
+  }
+
   // Camera transform in the player's frame
   cameraState(out, time) {
-    const s = this.state;
+    const s = this.drawnState();
     out.frame = s.frame;
     const up = this.up(_v3).clone();
     const bobAmt = this.grounded ? 1 : 0;

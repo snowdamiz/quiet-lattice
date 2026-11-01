@@ -40,6 +40,7 @@ import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
 import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
+import { Prediction } from './net/prediction.js';
 import { RemoteEntities } from './remote/RemoteEntities.js';
 
 const _v1 = new THREE.Vector3();
@@ -151,6 +152,8 @@ export class Game {
     // other players and the server's ships, from the zone's snapshots (src/remote/)
     this.remotes = new RemoteEntities(this);
     this.engine.scene.add(this.remotes.group);
+    // what the player's inputs said, to rewind to and replay from when the server corrects one (P1.E04.T03)
+    this.prediction = new Prediction((id) => frameOfId(this.system, this.station, id));
 
     this.weather = new Weather(this);
     this.objectives = new ObjectiveLine(this);
@@ -375,11 +378,14 @@ export class Game {
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
-      // (each session numbers its quest and analysis requests from 1)
+      // (each session numbers its quest and analysis requests from 1, and its inputs)
       this.questSeq = 0;
       this.analyzeSeq = 0;
+      this.prediction.reset();
       this.onWelcome(m, first);
     });
+    net.on('input', (m) => this.prediction.record(m));
+    net.on('snapshot', () => this.checkPrediction());
     net.on('quests', (m) => this.onQuests(m));
     net.on('analyze', (m) => this.onAnalyze(m));
     // the cutscene link listens from the start: the server may start the first cutscene itself (a quest step's)
@@ -456,6 +462,7 @@ export class Game {
     const ship = this.ship;
     const s = ship.state;
     const frame = frameOfId(this.system, this.station, pose.frame);
+    ship.blend.clear();
     this.cutscenes.stop();
     this.director.stop();
     this.cam.frame = undefined;
@@ -568,21 +575,50 @@ export class Game {
     };
   }
 
-  // The server refused a predicted pose (movement authority) and says where the character is. Until prediction and
-  // reconciliation (P1.E04.T03) blend and replay, the client takes that pose, re-expressed in the frame it is in
-  // (DECISIONS P1.E03.T03: never adopt the server's frame).
+  // The server refused a predicted pose (movement authority, ARCHITECTURE §7), or an operator moved the character: it holds
+  // it at `pose` in `mode` as of input `seq`. The mover rewinds there and replays what the client did since
+  // (Prediction.take), in the frame it is in (DECISIONS P1.E03.T03: never adopt the server's frame), and is drawn there
+  // blended, or with the jump shown where it is larger than a blend could explain. A mode it cannot take in its stride (the
+  // server holding it set down, aboard as it got out or out as it boarded) places it as a welcome does; a correction to an
+  // input no longer kept is taken as it comes.
   onCorrection(m) {
     if (this.mode !== 'ship' && this.mode !== 'foot') return;
-    const frame = frameOfId(this.system, this.station, m.pose.frame);
-    if (frame === undefined) return;
     const foot = this.mode === 'foot';
-    const st = foot ? this.player.state : this.ship.state;
-    const keep = st.frame;
-    st.frame = frame;
-    localPoseInto(m.pose, st);
-    st.setFrame(keep);
-    if (foot) headingOf(st.quat, this.player.up(_v1), this.player.heading);
-    else this.ship.speed = Math.max(0, _v2.set(0, 0, -1).applyQuaternion(st.quat).dot(st.vel));
+    const ship = this.ship;
+    const mover = foot ? this.player : ship;
+    const st = mover.state;
+    const now = foot ? 'foot' : moveModeOf(this.mode, ship.mode, st.frame);
+    const stride = foot ? m.mode === 'foot' : m.mode === 'ship' || m.mode === 'pulse' || m.mode === now;
+    this.prediction.corrected(this.net?.inputSeq ?? 0);
+    if (!stride) return this.placeFromServer(m.pose, m.mode);
+    const drawn = mover.drawnState();
+    _v1.copy(drawn.pos);
+    _v2.copy(drawn.vel);
+    _q1.copy(drawn.quat);
+    if (this.prediction.take(m.seq, m.pose, m.mode, st, this.time)) {
+      if (!mover.blend.take(_v1, _q1, _v2, st)) this.cam.frame = undefined;
+    } else {
+      const frame = frameOfId(this.system, this.station, m.pose.frame);
+      if (frame === undefined) return;
+      const keep = st.frame;
+      st.frame = frame;
+      localPoseInto(m.pose, st);
+      st.setFrame(keep);
+      mover.blend.clear();
+      this.cam.frame = undefined;
+    }
+    if (foot) return;
+    if (ship.mode === 'pulse' && m.mode !== 'pulse') ship.refusePulse();
+    ship.speed = Math.max(0, _v2.set(0, 0, -1).applyQuaternion(st.quat).dot(st.vel));
+  }
+
+  // Each snapshot says where the server holds the player's entity as of the last input it handled: a correction the client
+  // never heard (lost on the way) shows there, and is taken as if it had come.
+  checkPrediction() {
+    const net = this.net;
+    const e = net && (this.mode === 'ship' || this.mode === 'foot') ? net.store.entities.get(net.entityId) : undefined;
+    const unheard = e && this.prediction.check(net.store.ack, e, net.store.time);
+    if (unheard) this.onCorrection(unheard);
   }
 
   // Back to the title: the connection closes (the server saves the character as it goes) and the page starts afresh, so
@@ -670,12 +706,14 @@ export class Game {
     } else {
       this.ship.update(dt, inp, this.mode === 'ship' && inp.enabled);
       this.ship.state.setFrame(this.chooseFrame(this.ship.state));
+      this.ship.blend.step(dt, this.ship.state.frame);
       // watching a cutscene the player is out of play: no raid closes in, and the suit's hazards wait
       const watching = this.cutscenes.active;
       if (!watching) this.pirates.update(dt);
       if (this.mode === 'foot') {
         this.player.update(dt, inp);
         this.player.state.setFrame(this.chooseFrame(this.player.state));
+        this.player.blend.step(dt, this.player.state.frame);
         if (!watching) this.updateSurvival(dt);
       }
       // during a glide or a cutscene the views compute their own pose, and the director places the real camera
