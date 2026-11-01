@@ -1555,8 +1555,8 @@ async function setCount(page: Page, count: number): Promise<void> {
   await settle(page, 12);
 }
 
-/** The galaxy map, its camera 1.8 million ly out from the wall's baseline looking at it from inside the cluster's side, so a
- * wall that moves a few hundred thousand ly is seen to move. */
+/** The galaxy map from the side, the cluster to the left and the wall a little right of the middle, so a wall that moves a few
+ * hundred thousand ly is seen to move across the frame. */
 async function openEdgeMap(page: Page, count: number): Promise<void> {
   await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
   await page.evaluate(
@@ -1567,9 +1567,8 @@ async function openEdgeMap(page: Page, count: number): Promise<void> {
       w.game.menus.setMapTab('galaxy');
       const v = w.game.menus.mapView;
       v.fly = null;
-      const d = Math.hypot(-1, 0.22, 0.38);
-      v.controls.target.set(at - 1e4, 0, 0);
-      v.camera.position.set(at - 1e4 - (1.8e6 * 1) / d, (1.8e6 * 0.22) / d, (1.8e6 * 0.38) / d);
+      v.controls.target.set(at - 1.5e6, 0, 0);
+      v.camera.position.set(at - 1.5e6, 8e5, 3.6e6);
     },
     { world: worldAtCount(count), at: EDGE_X },
   );
