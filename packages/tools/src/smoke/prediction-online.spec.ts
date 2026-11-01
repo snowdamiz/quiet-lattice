@@ -304,8 +304,10 @@ test('in flight: out of the Waystation into its world’s frame, boosting and on
   await play(page, 4000);
   await tap(page, 'KeyJ');
   await play(page, 5000);
-  // (the drop-out is the frame after an input went out, so it falls between two of them)
+  // (the drop-out is the second frame after an input went out: the drive's last frame has no input of its own, and the next
+  // one is the engines'. Without the input exitPulse sends, authority sees the ship jump 470 m)
   await playToInput(page);
+  await play(page, STEP_MS / FRAMES_PER_STEP, 1);
   await tap(page, 'KeyJ');
   await play(page, 3000);
   const j = await judge(page);
