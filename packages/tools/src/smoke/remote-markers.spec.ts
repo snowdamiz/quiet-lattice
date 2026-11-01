@@ -38,12 +38,24 @@ for (const scene of SCENES)
       E.resize();
     });
     await def.open(page);
+    // (both casting bars full, whichever the scene's mode casts from: the marks keep clear of it too)
+    await page.evaluate(async () => {
+      const slots = {
+        ground: ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'],
+        ship: ['tractor_beam', 'deep_sweep', 'repair_drones', 'inertial_brake', null],
+      };
+      (window.game as unknown as { abilities: { skills(v: unknown): void } }).abilities.skills({ state: { slots }, shipSlots: 4 });
+      await window.step(2);
+    });
+    // (its fade-in runs on the page's own clock, which the stepped frames do not advance)
+    await page.waitForTimeout(600);
     const frames = Math.round((def.clipSeconds ?? 1) * 60);
     const result = await page.evaluate(async (frames) => {
       const g = window.game;
       const issues: Issue[] = [];
       let pilots = 0;
       let labels = 0;
+      let barFrames = 0;
       const gaps: number[] = [];
       type Box = { x0: number; y0: number; x1: number; y1: number; what: string };
       const boxOf = (e: Element, what: string): Box | null => {
@@ -97,7 +109,7 @@ for (const scene of SCENES)
           }
         return false;
       };
-      const HUD = '.ec-ball, .ec-hdg, .ec-dist, .r-speed, .r-alt, .r-mode, .ship-reticle > b, .crosshair > b, .location, .vitals, .prompt';
+      const HUD = '.ec-ball, .ec-hdg, .ec-dist, .r-speed, .r-alt, .r-mode, .ship-reticle > b, .crosshair > b, .location, .vitals, .prompt, .abilities';
       const frame = g.frame.bind(g);
       // (the HUD's fades and waits on the frames' clock, as in the captures)
       const base = g.hud.now();
@@ -207,6 +219,7 @@ for (const scene of SCENES)
           }
         }
         const keepOut = [...document.querySelectorAll(HUD)].map((e) => boxOf(e, e.className || e.tagName)).filter((b): b is Box => !!b);
+        if (keepOut.some((b) => b.what.startsWith('abilities'))) barFrames++;
         const ship = shipCells();
         const marks: Box[] = [];
         const texts: Box[] = [];
@@ -249,13 +262,24 @@ for (const scene of SCENES)
         }
         if (f % 10 === 9) await new Promise((r) => setTimeout(r, 0));
       }
-      return { issues, pilots, labels, switches, toggles, markToggles, unmarked, jumps, gap: gaps.length ? [Math.min(...gaps), Math.max(...gaps)] : [] };
+      return {
+        issues,
+        pilots,
+        labels,
+        barFrames,
+        switches,
+        toggles,
+        markToggles,
+        unmarked,
+        jumps,
+        gap: gaps.length ? [Math.min(...gaps), Math.max(...gaps)] : [],
+      };
     }, frames);
     // (the scene has pilots marked, and most named)
     expect(result.pilots).toBeGreaterThan(frames);
     expect(result.labels).toBeGreaterThan(0);
     console.log(
-      `${scene}: ${result.pilots} pilot marks and ${result.labels} labels in ${frames} frames, ${result.gap.map((g) => g.toFixed(1)).join('..')} px from their marks; ${result.switches} side moves, ${result.toggles} names and ${result.markToggles} marks in or out; ${result.unmarked} picked up and unmarked; ${result.jumps} marks jumping`,
+      `${scene}: ${result.pilots} pilot marks and ${result.labels} labels in ${frames} frames, ${result.gap.map((g) => g.toFixed(1)).join('..')} px from their marks; ${result.switches} side moves, ${result.toggles} names and ${result.markToggles} marks in or out; ${result.unmarked} picked up and unmarked; ${result.jumps} marks jumping; the ability bar up in ${result.barFrames}`,
     );
     expect(result.issues.slice(0, 40), `${result.issues.length} overlaps`).toEqual([]);
     expect(errors).toEqual([]);
