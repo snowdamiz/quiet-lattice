@@ -286,7 +286,7 @@ describe('refills at the line spend the server’s inventory', () => {
     expect(w.held('oxygen')).toBe(0);
     expect(w.view().lifeSupport).toBeGreaterThan(60);
     // the pack is empty now: it drains to zero
-    await w.wait(300);
+    await w.wait(190);
     expect(w.view().lifeSupport).toBe(0);
     w.s.close();
     await rig.stop();
@@ -364,8 +364,10 @@ describe('the gateway keeps the suit on the server’s clock', () => {
     await w.stand(FROZEN);
     rig.advance(45);
     await waitFor(() => news.some((n) => (n as { kind: string }).kind === 'downed'), 5000, 'the hazard death');
-    const pushed = await metersWhere(w, (m) => m.hazard === 0);
-    expect(pushed.lifeSupport).toBeLessThan(100);
+    // (it died in the one stretch, so the client hears the revived meters)
+    const pushed = await metersWhere(w, (m) => m.hazard === 60);
+    expect(pushed.lifeSupport).toBe(60);
+    expect(w.health()).toMatchObject({ down: null });
     w.s.close();
     await rig.stop();
   }, 60_000);
