@@ -153,7 +153,7 @@ try {
     const file = join(out, `${s.name}.png`);
     writeFileSync(file, Buffer.from(rec.png.slice(rec.png.indexOf(',') + 1), 'base64'));
     delete (rec as { png?: string }).png;
-    log.push({ ...rec, spec: glb ? basename(glb) : spec, gl, at: new Date().toISOString() });
+    log.push({ ...rec, spec: glb ? basename(glb) : spec, gl, errors: [...errors], at: new Date().toISOString() });
     console.log(`wrote ${file}  (ground blocks: ${rec.groundBlocks}, elevation ${rec.orbit.elevation}${rec.far ? `, far lift ${rec.far.lift}` : ''})`);
   }
   writeFileSync(join(out, 'shots.json'), JSON.stringify(log, null, 2) + '\n');
