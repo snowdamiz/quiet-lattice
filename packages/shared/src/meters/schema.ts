@@ -11,12 +11,22 @@ const MAX_TIME = 1e12;
 const heat = z.number().min(0).max(MAX_HEAT);
 const charge = z.number().min(0).max(MAX_CHARGE);
 const time = z.number().min(0).max(MAX_TIME);
+const suit = z.number().min(0).max(100);
 
-/** The meters as stored: their values at world time `at` (heat keeps cooling after; Charge waits for the ship). */
-export const meterSaveSchema = z.strictObject({ heat, overheated: z.boolean(), charge, at: time });
+/** The meters as stored: their values at world time `at` (heat keeps cooling after; Charge waits for the ship; the suit's two
+ * wait for the character: a save from before them has them full). */
+export const meterSaveSchema = z.strictObject({
+  heat,
+  overheated: z.boolean(),
+  charge,
+  at: time,
+  lifeSupport: suit.default(100),
+  hazard: suit.default(100),
+});
 export type MeterSave = z.infer<typeof meterSaveSchema>;
 
-/** The meters as the client is sent them: values at world time `at`, with the capacities the build gives. */
+/** The meters as the client is sent them: values at world time `at`, with the capacities the build gives (the suit's two are
+ * out of 100). */
 export const meterViewSchema = z
   .strictObject({
     heat,
@@ -24,6 +34,8 @@ export const meterViewSchema = z
     overheated: z.boolean(),
     charge,
     chargeMax: charge,
+    lifeSupport: suit,
+    hazard: suit,
     at: time,
   })
   .refine((m) => m.heat <= m.heatMax && m.charge <= m.chargeMax, 'a meter above its capacity');

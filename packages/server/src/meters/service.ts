@@ -14,6 +14,14 @@
 // ACTIVITY_HOLD_S). Movement authority asks `allowsMode` and refuses the drive with a correction while Charge is empty;
 // `claim` tells the session why.
 //
+// The exo-suit's two meters (P1.E06.T06, DESIGN 9.8) run the same way: life support and hazard protection are advanced to the
+// server's time from the character's last place (on foot on a world, inside a station, or aboard), by the shared `stepSuit`.
+// On a world they drain by the place, the night and the build; a draining meter that reaches the refill line (25) is refilled
+// from the character's real inventory (a crafted cartridge, else 10 units of raw oxygen or sodium); health is lost at zero
+// and regained while both hold, straight into combat's suit vitals, which put the character down at 0 (the Recall, P1.E06.T03,
+// acts on that). `sweep` brings every character on foot up to date a few times a second, so a client that sends nothing
+// still drains, starves and dies on the server's clock. Aboard a ship the suit is topped up and does not move.
+//
 // Mining (P1.E13) is paid in the beam time this service judged: `takeBeam` hands over the seconds the beam fired since it
 // last did, so a client earns what it fired, however it times its hits.
 //
@@ -21,9 +29,21 @@
 // character's meters on join, stores `get()` (the meters as of the last time they were advanced, with that time) and closes
 // them once it has left. Listeners (the gateway) hear the meters to push: after an overheat, a recovery, Charge running
 // out, a refused pulse, a server-side change, and every METER_PUSH_S while either meter moves.
+import { cartridgeItemRestore } from '@astra/shared/exosuit';
 import { Buttons, type ClientMessage } from '@astra/shared/protocol';
+import { SUIT, type PeopleId } from '@astra/shared/data';
+import { countOf } from '@astra/shared/inventory';
 import {
   NOWHERE,
+  NOT_REFILLABLE,
+  fullSuit,
+  spanHealth,
+  stepSuit,
+  suitPlaceOf,
+  suitProfile,
+  suitStarved,
+  suitRates,
+  SUIT_MAX,
   addHeat,
   canEngagePulse,
   clampMeters,
@@ -43,9 +63,13 @@ import {
   type MeterSave,
   type MeterState,
   type MeterView,
+  type SuitMeter,
+  type SuitProfile,
+  type SuitState,
 } from '@astra/shared/meters';
 import type { ShipLoadout } from '@astra/shared/ships';
 import { frameKeyOf, systemPoses, type SystemPoses } from '@astra/shared/world';
+import type { InventoryService } from '../inventory/service.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import type { Zone, ZoneViewer } from '../zones/zone.ts';
 
@@ -54,6 +78,44 @@ type MoveMode = InputMessage['mode'];
 
 /** While a meter moves, its session hears it at most this often (s of world time); events go at once. */
 export const METER_PUSH_S = 0.5;
+/** The suit's meters are pushed once either has moved this much since the last push (the client predicts them with the same
+ * rules, so a small drift is not worth a message); a refill and a meter reaching zero go at once. */
+export const SUIT_PUSH_DELTA = 2;
+/** `sweep` should be called at least this often (s). */
+export const SUIT_SWEEP_S = 0.5;
+/** The most refills one advance may make (a long stretch away from the server's clock; each restores 40 or more). */
+const MAX_REFILLS = 32;
+
+/** What a refill is made of: a crafted cartridge item first, else raw units of the resource. */
+const REFILL = {
+  lifeSupport: { cartridge: 'oxygen_cartridge', raw: 'oxygen', text: 'Life support recharged' },
+  hazard: { cartridge: 'sodium_cartridge', raw: 'sodium', text: 'Hazard protection recharged' },
+} as const;
+
+/** What a refill is made of: the character's real inventory, spent on the server. */
+export interface SuitSupplies {
+  count(characterId: string, item: string): number;
+  /** Takes exactly `count` of `item`; false (and nothing taken) when the character holds fewer or is not in play. */
+  take(characterId: string, item: string, count: number): boolean;
+}
+
+/** The supplies of an inventory service. */
+export function inventorySupplies(inventory: Pick<InventoryService, 'get' | 'consume'>): SuitSupplies {
+  return {
+    count: (characterId, item) => {
+      const inv = inventory.get(characterId);
+      return inv ? countOf(inv, item) : 0;
+    },
+    take: (characterId, item, count) => {
+      try {
+        return inventory.consume(characterId, item, count).ok;
+      } catch {
+        return false;
+      }
+    },
+  };
+}
+
 /** What an input says the character is doing (the beam held, the pulse drive) holds this long past it, then lapses. */
 export const ACTIVITY_HOLD_S = 1;
 /** The entity's `heat` wire field (the glow on its multitool others see, DESIGN 9.10) moves in steps of this. */
@@ -74,6 +136,11 @@ export interface MeterServiceDeps {
   skills: { owned(characterId: string): readonly string[] };
   /** Where each session's entity is. Without it every character is nowhere in particular (unit tests). */
   zones?: Pick<ZoneManager, 'zoneOf'>;
+  /** What a suit refill spends (the inventory service's). Without it nothing can be refilled. */
+  supplies?: SuitSupplies;
+  /** Whether the character is in combat (the combat service's `inCombat`; Second Skin's floor holds only out of it). Set by the
+   * gateway once combat exists: `meters.inCombat = ...`. */
+  inCombat?: (characterId: string) => boolean;
   /** Hears a listener that threw (the gateway logs it). */
   onListenerError?: (err: unknown) => void;
 }
@@ -107,7 +174,9 @@ interface Entry {
   ship: ShipLoadout | null | undefined;
   owned: readonly string[];
   /** Events since the last push. */
-  events: MeterEvent[];
+  events: (MeterEvent | SuitEvent)[];
+  /** A toast to go with the next push (a refill). */
+  notice: MeterNotice | undefined;
   pushed: MeterView | null;
   pushedAt: number;
   /** A refused pulse was told; the next one is told only after the client stops asking. */
@@ -125,10 +194,23 @@ interface Entry {
   flown: boolean;
   /** World time the last input was applied (the burn's fallback without movement authority), NaN before the first. */
   lastInput: number;
+  /** Life support and hazard protection, current to `at` like the rest. */
+  suit: SuitState;
+  suitProfile: SuitProfile;
+  /** The character's people (its perk reaches the suit), as its entity says. */
+  people: PeopleId | undefined;
+  /** The session viewer the character's entity is looked up by (set as it enters its zone), for health through combat. */
+  viewer: ZoneViewer | undefined;
+  /** The suit as last pushed, and whether health was being lost then. */
+  suitPushed: SuitState | null;
+  starved: boolean;
   /** Not yet in the world since it was opened: the time it was away runs heat (it cools) but never Charge, which regenerates
    * only in play (the Listener's anywhere included). Its first input ends it. */
   away: boolean;
 }
+
+/** What the suit did that is told at once: a refill from the pack, a meter at zero and health going. */
+type SuitEvent = 'suit_refilled' | 'suit_failing';
 
 const IDLE: MeterActivity = { beam: false, pulse: false };
 
@@ -139,6 +221,9 @@ export class MeterService {
   private readonly skills: MeterServiceDeps['skills'];
   private readonly zones?: MeterServiceDeps['zones'];
   private readonly onListenerError: (err: unknown) => void;
+  private readonly supplies?: SuitSupplies;
+  /** Whether the character is in combat (set by the gateway when combat exists). */
+  inCombat?: (characterId: string) => boolean;
   /** Each zone's body poses at its last tick, made once per tick for every character in it. */
   private readonly poses = new WeakMap<Zone, { tick: number; poses: SystemPoses }>();
 
@@ -147,6 +232,8 @@ export class MeterService {
     this.skills = deps.skills;
     this.zones = deps.zones;
     this.onListenerError = deps.onListenerError ?? (() => {});
+    this.supplies = deps.supplies;
+    this.inCombat = deps.inCombat;
   }
 
   // ---------- in play ----------
@@ -162,6 +249,12 @@ export class MeterService {
     const profile = meterProfile({ ship: ship ?? null, skills: owned });
     this.entries.set(characterId, {
       state: clampMeters({ heat: saved.heat, overheated: saved.overheated, charge: saved.charge }, profile),
+      suit: { lifeSupport: saved.lifeSupport, hazard: saved.hazard },
+      suitProfile: suitProfile({ skills: owned }),
+      people: undefined,
+      viewer: undefined,
+      suitPushed: null,
+      starved: false,
       at: saved.at,
       activity: IDLE,
       activeUntil: saved.at,
@@ -174,6 +267,7 @@ export class MeterService {
       ship,
       owned,
       events: [],
+      notice: undefined,
       pushed: null,
       pushedAt: -Infinity,
       pulseRefused: false,
@@ -299,6 +393,8 @@ export class MeterService {
     e.flown = false;
     e.lastInput = now;
     e.mode = mode;
+    // (the ship has air: the suit is topped up whenever the character is aboard)
+    if (mode !== 'foot') e.suit = fullSuit();
     // (the drive burns per input, above and in `flown`, never on the clock: a stretch it did not fly is not paid for)
     e.activity = { beam: mode === 'foot' && (msg.buttons & Buttons.beam) !== 0, pulse: false };
     e.activeUntil = now + ACTIVITY_HOLD_S;
@@ -398,6 +494,7 @@ export class MeterService {
     const busyTo = Math.min(now, Math.max(e.at, e.activeUntil));
     if (busyTo > e.at) this.run(e, e.activity, busyTo - e.at);
     if (now > busyTo) this.run(e, IDLE, now - busyTo);
+    if (now > e.at) this.runSuit(characterId, e, now - e.at, now);
     e.at = now;
   }
 
@@ -409,6 +506,73 @@ export class MeterService {
     // (away, Charge stands as the ship was left)
     e.state = e.away ? { ...step.state, charge: e.state.charge } : step.state;
     e.events.push(...step.events);
+  }
+
+  /**
+   * Brings every character on foot up to date (call it every SUIT_SWEEP_S): a character's suit drains, starves and costs it
+   * its health on the server's clock whether or not its client is sending, and a hazard death is decided here even for one
+   * that has stopped.
+   */
+  sweep(now: number): void {
+    for (const [characterId, e] of this.entries) {
+      if (e.away || !e.placed || e.mode !== 'foot') continue;
+      this.advance(characterId, e, now);
+      this.maybePush(characterId, e, now);
+    }
+  }
+
+  /** Runs the suit `dt` seconds from `e.at` on foot where the character was last placed (nothing while away or aboard), taking
+   * refills from its inventory where a draining meter reaches the line and its health through combat. */
+  private runSuit(characterId: string, e: Entry, dt: number, now: number): void {
+    if (e.away || !e.placed || e.mode !== 'foot') return;
+    const place = suitPlaceOf(e.env, true);
+    const conditions = this.suitConditions(characterId, e);
+    const refillable: Record<SuitMeter, boolean> = { lifeSupport: place === 'world', hazard: place === 'world' };
+    let left = dt;
+    const spent = e.at;
+    for (let guard = 0; left > 0 && guard < MAX_REFILLS; guard++) {
+      const step = stepSuit(e.suit, e.suitProfile, e.env, place, left, conditions, refillable);
+      e.suit = step.state;
+      left -= step.elapsed;
+      for (const span of step.spans) this.health(e, spanHealth(span), spent + (dt - left));
+      if (!step.refill) break;
+      if (!this.refill(characterId, e, step.refill, now)) refillable[step.refill] = false;
+    }
+    const rates = suitRates(e.suitProfile, e.env, place, conditions);
+    const starved = place === 'world' && suitStarved(e.suit, rates);
+    if (starved && !e.starved) e.events.push('suit_failing');
+    e.starved = starved;
+  }
+
+  /** The conditions the suit's modifiers are judged by: where the character is, and whether it is out of combat. */
+  private suitConditions(characterId: string, e: Entry): ReadonlySet<string> {
+    if (this.inCombat?.(characterId)) return e.conditions;
+    return new Set([...e.conditions, 'out_of_combat']);
+  }
+
+  /** One refill of `meter`: a crafted cartridge if the character holds one, else SUIT.cartridge.units of the raw resource.
+   * False when it holds neither. */
+  private refill(characterId: string, e: Entry, meter: SuitMeter, now: number): boolean {
+    const r = REFILL[meter];
+    const supplies = this.supplies;
+    if (!supplies) return false;
+    let restore: number;
+    if (supplies.count(characterId, r.cartridge) >= 1 && supplies.take(characterId, r.cartridge, 1)) {
+      restore = cartridgeItemRestore(r.cartridge, e.suitProfile.mods);
+    } else if (supplies.count(characterId, r.raw) >= SUIT.cartridge.units && supplies.take(characterId, r.raw, SUIT.cartridge.units)) {
+      restore = e.suitProfile.restore;
+    } else return false;
+    e.suit = { ...e.suit, [meter]: Math.min(SUIT_MAX, e.suit[meter] + restore) };
+    e.events.push('suit_refilled');
+    e.notice = { text: r.text, tone: 'good' };
+    return true;
+  }
+
+  /** Health the suit cost or gave, through combat's vitals of the character's entity (a hazard death is combat's down). */
+  private health(e: Entry, delta: number, at: number): void {
+    const zone = e.viewer ? this.zones?.zoneOf(e.viewer) : undefined;
+    const id = e.viewer ? zone?.entityOf(e.viewer) : undefined;
+    if (zone && id !== undefined) zone.combat.suitHealth(id, delta, at);
   }
 
   /** The pulse drive's burn for `seconds` of flight ending at `at` (near bodies only: where the meters last had the
@@ -436,6 +600,7 @@ export class MeterService {
     e.owned = owned;
     e.profile = meterProfile({ ship: ship ?? null, skills: owned });
     e.state = clampMeters(e.state, e.profile);
+    e.suitProfile = suitProfile({ skills: owned, people: e.people });
   }
 
   /** Puts the meters where the viewer's entity is (nowhere in particular without one), and returns its mode. */
@@ -447,6 +612,12 @@ export class MeterService {
     e.env = zone && entity ? this.environment(zone, entity.fields.frame, entity.fields.pos, m === 'foot') : NOWHERE;
     e.conditions = meterConditions(e.env);
     e.placed = true;
+    e.viewer = viewer;
+    const people = entity?.fields.people as PeopleId | undefined;
+    if (people !== e.people) {
+      e.people = people;
+      e.suitProfile = suitProfile({ skills: e.owned, people });
+    }
     return m;
   }
 
@@ -466,14 +637,20 @@ export class MeterService {
     if (e.events.length || !e.pushed) return this.push(characterId, e, now);
     const v = viewOf(e);
     const p = e.pushed;
-    const moved = Math.abs(v.heat - p.heat) > 0.01 || Math.abs(v.charge - p.charge) > 0.01;
+    const moved =
+      Math.abs(v.heat - p.heat) > 0.01 ||
+      Math.abs(v.charge - p.charge) > 0.01 ||
+      Math.abs(v.lifeSupport - p.lifeSupport) >= SUIT_PUSH_DELTA ||
+      Math.abs(v.hazard - p.hazard) >= SUIT_PUSH_DELTA;
     const capacities = v.heatMax !== p.heatMax || v.chargeMax !== p.chargeMax || v.overheated !== p.overheated;
     if (capacities || (moved && now - e.pushedAt >= METER_PUSH_S)) this.push(characterId, e, now);
   }
 
-  private push(characterId: string, e: Entry, now: number, notice?: MeterNotice): void {
+  private push(characterId: string, e: Entry, now: number, told?: MeterNotice): void {
     const view = viewOf(e);
+    const notice = told ?? e.notice;
     e.events = [];
+    e.notice = undefined;
     e.pushed = view;
     e.pushedAt = now;
     // one failing listener must neither undo the change nor keep it from the others
@@ -496,7 +673,14 @@ export class MeterService {
 const round3 = (v: number) => Math.round(v * 1000) / 1000;
 
 function save(e: Entry): MeterSave {
-  return { heat: e.state.heat, overheated: e.state.overheated, charge: e.state.charge, at: e.at };
+  return {
+    heat: e.state.heat,
+    overheated: e.state.overheated,
+    charge: e.state.charge,
+    lifeSupport: e.suit.lifeSupport,
+    hazard: e.suit.hazard,
+    at: e.at,
+  };
 }
 
 function viewOf(e: Entry): MeterView {
@@ -507,6 +691,8 @@ function viewOf(e: Entry): MeterView {
     overheated: e.state.overheated,
     charge: Math.min(p.chargeCapacity, round3(e.state.charge)),
     chargeMax: p.chargeCapacity,
+    lifeSupport: Math.min(SUIT_MAX, round3(e.suit.lifeSupport)),
+    hazard: Math.min(SUIT_MAX, round3(e.suit.hazard)),
     at: e.at,
   };
 }

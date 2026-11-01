@@ -2,7 +2,7 @@
 // (`walkerStats`, ships) and mining yield (the resource service): how fast hazard protection drains, how much a cartridge
 // refill restores, and how far a scan reaches. Pure functions both ends run; the numbers are `SUIT` (`@astra/shared/data`) and
 // the modifiers the owned nodes' (and the people's perk's) tables.
-import { SUIT, SKILL_NODES, getPeople, getSkillNode } from '../data/index.ts';
+import { SUIT, SKILL_NODES, getItem, getPeople, getSkillNode } from '../data/index.ts';
 import type { PeopleId, StatMod } from '../data/index.ts';
 import { applyStatMods } from '../combat/stats.ts';
 
@@ -31,6 +31,12 @@ export function cartridgeRestore(mods: readonly StatMod[]): number {
   return applyStatMods(SUIT.cartridge.restore, 'suit.cartridge_restore', mods);
 }
 
+/** What a crafted cartridge restores (an Oxygen or Sodium cartridge item's own 60), with the build's modifiers: Cartridge Recycler
+ * adds its 20 to it as to a raw refill (DESIGN 9.8). */
+export function cartridgeItemRestore(item: 'oxygen_cartridge' | 'sodium_cartridge', mods: readonly StatMod[]): number {
+  return applyStatMods(getItem(item).restores?.amount ?? SUIT.cartridge.restore, 'suit.cartridge_restore', mods);
+}
+
 /** The multiple of the hazard drain the build leaves, given the conditions that hold now (`meterConditions`): 1; Hazard Weave
  * ×0.6; Cold Blood at night on frozen worlds and Heat Shroud by day on desert and volcanic worlds ×0, for good. */
 export function hazardDrainMult(mods: readonly StatMod[], conditions: ReadonlySet<string>): number {
@@ -41,6 +47,20 @@ export function hazardDrainMult(mods: readonly StatMod[], conditions: ReadonlySe
 export function hazardDrainPerS(strength: number, dark: boolean, mods: readonly StatMod[], conditions: ReadonlySet<string>): number {
   if (strength <= 0) return 0;
   return strength * (dark ? SUIT.nightMult : 1) * SUIT.hazardDrainPerS * hazardDrainMult(mods, conditions);
+}
+
+/** Life support drained a second on a world, with the build's modifiers (Second Lung ×0.7). */
+export function lifeSupportDrainPerS(mods: readonly StatMod[], conditions: ReadonlySet<string>): number {
+  return applyStatMods(SUIT.lifeSupportDrainPerS, 'suit.life_support_drain', mods, { holds: (c) => conditions.has(c) });
+}
+
+/** The least each meter may fall to under the conditions that hold now: 0, or Second Skin's 20 outside combat. */
+export function suitFloors(mods: readonly StatMod[], conditions: ReadonlySet<string>): { lifeSupport: number; hazard: number } {
+  const holds = (c: string) => conditions.has(c);
+  return {
+    lifeSupport: applyStatMods(0, 'suit.life_support_floor', mods, { holds }),
+    hazard: applyStatMods(0, 'suit.hazard_floor', mods, { holds }),
+  };
 }
 
 /** How far a scan reaches, m: deposits (180) and sites (3 km; Scanner Lens 6 km). */

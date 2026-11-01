@@ -299,6 +299,31 @@ export class ZoneCombat {
     return { suit, suitMax, hull, hullMax, shield, shieldMax, down };
   }
 
+  /**
+   * The suit's own doing to a player's health on foot (P1.E06.T06): life support or hazard protection at zero costs it, and it
+   * comes back while both hold. `delta` is the health lost (negative) or regained, straight from the meters: no resistance,
+   * no damage-taken modifier, no combat event, and it does not put the player in combat. Health at 0 puts it down (`suit`,
+   * no source), as a hit would. Nothing for a player not on foot, already down, or an entity that is not a player's.
+   */
+  suitHealth(entity: number, delta: number, now = this.zone.time): void {
+    if (!(delta !== 0) || !Number.isFinite(delta) || !this.onFoot(entity)) return;
+    const v = this.vitalsOf(entity);
+    if (v?.kind !== 'player' || v.down !== null) return;
+    if (delta > 0) {
+      if (v.suit >= v.suitMax) return;
+      v.suit = Math.min(v.suitMax, v.suit + delta);
+      this.show(entity, v);
+      return;
+    }
+    v.suit = Math.max(0, v.suit + delta);
+    if (v.suit <= v.suitMax * 1e-9) {
+      v.suit = 0;
+      v.down = 'suit';
+    }
+    this.show(entity, v);
+    if (v.down !== null) this.goDown(entity, v, null, now, this.opts.hooks?.() ?? null);
+  }
+
   /** Whether a player is down (its health at 0, waiting for the Recall). */
   isDown(entity: number): boolean {
     const v = this.vitals.get(entity);

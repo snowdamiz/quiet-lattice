@@ -24,6 +24,9 @@ export const suitSchema = z.strictObject({
    * not minutes. */
   hazardKind: z.partialRecord(z.enum(HAZARDS), rate),
   hazardRefDps: rate,
+  /** Health lost a second while life support or hazard protection is at zero, and regained a second on a world while both hold. */
+  healthLostPerS: rate,
+  healthRegainPerS: rate,
   cartridge: z.strictObject({
     /** Restored by a refill of raw oxygen or sodium (Cartridge Recycler adds 20). */
     restore: rate,
@@ -50,6 +53,8 @@ export const SUIT: Suit = deepFreeze({
   worldHazard: { frozen: 1, desert: 1, toxic: 1.2, volcanic: 1.5, barren: 0.6, dead: 0.8 },
   hazardKind: { heat: 9, pressure: 6, acid: 3, radiation: 3.5, storm: 1.5, cryo: 2.5 },
   hazardRefDps: 5,
+  healthLostPerS: 4,
+  healthRegainPerS: 1.5,
   cartridge: { restore: 40, below: 25, units: 10 },
   scan: { depositM: 180, siteM: 3000, cooldownS: 3 },
 });

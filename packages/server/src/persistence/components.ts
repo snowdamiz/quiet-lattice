@@ -25,7 +25,7 @@ import { RECIPES, recipesComponent } from '../crafting/component.ts';
 import { PLATES, PlateBook, platesComponent } from '../discovery/plates.ts';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
 import { METERS, metersComponent } from '../meters/component.ts';
-import { MeterService } from '../meters/service.ts';
+import { MeterService, inventorySupplies } from '../meters/service.ts';
 import { REPUTATION, reputationComponent } from '../reputation/component.ts';
 import { ReputationService } from '../reputation/service.ts';
 import { SeasonAwards } from '../seasons/awards.ts';
@@ -362,7 +362,7 @@ export interface CoreComponentDeps {
  * reputation once the character is in play, QuestRuntime.joined). */
 export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
   const skills = deps.skills ?? new SkillService({ inventory: deps.inventory, ships: deps.ships, progress: deps.progress });
-  const meters = deps.meters ?? new MeterService({ ships: deps.ships, skills, zones: deps.zones });
+  const meters = deps.meters ?? new MeterService({ ships: deps.ships, skills, zones: deps.zones, supplies: inventorySupplies(deps.inventory) });
   const codex = deps.codex ?? new CodexService({ progress: deps.progress, skills, log: deps.log });
   const registry = new ComponentRegistry()
     .register(progressComponent(deps.progress))
