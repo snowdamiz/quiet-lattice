@@ -81,7 +81,7 @@ describe('character components', () => {
     const d = registry.decode(stored({}, { level: 3, xp: 120 }), CHARACTER);
     expect(registry.components.map((c) => c.key)).toEqual([PROGRESS, SKILLS, SHIP, INVENTORY, METERS, POSE, CODEX, RECIPES, REPUTATION, SEASON_AWARDS, PLATES]);
     // cool, the Lark's Charge full
-    expect(d.values.get(METERS)).toEqual({ heat: 0, overheated: false, charge: 100, at: 0 });
+    expect(d.values.get(METERS)).toEqual({ heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 100, at: 0 });
     expect(d.values.get(SEASON_AWARDS)).toEqual({ awards: [] });
     expect(d.values.get(PROGRESS)).toEqual({ level: 3, xp: 120, homeSystem: HOME });
     expect(d.values.get(CODEX)).toEqual({ worlds: {} });

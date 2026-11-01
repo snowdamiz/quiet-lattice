@@ -19,11 +19,11 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
+import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
-import { SUIT, footHazard } from '@astra/shared/data';
-import { cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
-import { meterConditions } from '@astra/shared/meters';
+import { SUIT } from '@astra/shared/data';
+import { cartridgeItemRestore, cartridgeRestore, scanRanges, suitMods } from '@astra/shared/exosuit';
+import { meterConditions, spanHealth, stepSuit, suitPlaceOf } from '@astra/shared/meters';
 import { AUTO_QUESTS, QuestBook, atInfo, getQuest } from '@astra/shared/quests';
 import { bondLine, codexLine } from '@astra/shared/codex';
 import { Asteroids } from './universe/Asteroids.js';
@@ -412,6 +412,7 @@ export class Game {
       else if (this.inventory.receive(m) && this.overlay === 'inventory') this.menus.showMessage('The server refused that move');
     });
     net.on('correction', (m) => this.onCorrection(m));
+    net.on('meters', ({ meters }) => this.onSuitMeters(meters));
     net.on('event', ({ event }) => {
       if (event.kind === 'notice') this.hud.toast(event.text, event.tone);
       else if (event.kind === 'quest' && event.status === 'completed') this.questDone(event.questId);
@@ -1078,48 +1079,72 @@ export class Game {
     this.pirates.shipFired(ship);
   }
 
+  // Life support and hazard protection (DESIGN 9.8). The server decides them (the meter service, ARCHITECTURE §19) from the
+  // same shared rules and spends the refills from its inventory; this predicts them for feel and is corrected by its
+  // `meters` state. Health at zero is predicted too, so the SUIT FAILURE shows without waiting (the Recall, P1.E06.T03, takes
+  // that over: the server already decides who is down).
   updateSurvival(dt) {
     const p = this.player;
-    const f = p.state.frame;
-    if (!f || f.kind === 'station') {
-      p.lifeSupport = Math.min(100, p.lifeSupport + dt * SUIT.stationRegenPerS.lifeSupport);
-      p.hazard = Math.min(100, p.hazard + dt * SUIT.stationRegenPerS.hazard);
-      return;
-    }
-    p.lifeSupport = Math.max(0, p.lifeSupport - dt * SUIT.lifeSupportDrainPerS);
-    // (worlds hostile to ships are far worse on foot: protection lasts seconds, not minutes; a mild world's lowlands are
-    // breathable: only above its mist line does the air eat at the suit)
-    const mist = f.params.mist;
-    const harsh = footHazard(f.params.type, f.params.hazard ?? null, mist ? mistHazard(mist, p.state.pos.length() - f.radius).foot : null);
-    if (harsh) {
-      const env = characterMeterEnvironment(this);
-      p.hazard = Math.max(0, p.hazard - dt * hazardDrainPerS(harsh, env.time === 'night', this.suitMods, meterConditions(env)));
-    } else p.hazard = Math.min(100, p.hazard + dt * SUIT.hazardRegenPerS);
-    for (const [key, label] of [['hazard', 'Hazard protection low'], ['lifeSupport', 'Life support low']]) {
-      const low = p[key] < 30;
-      if (low && !p[`_warned_${key}`]) {
-        p[`_warned_${key}`] = true;
-        this.hud.toast(`${label} low — mine ${key === 'hazard' ? 'sodium' : 'oxygen'}`, 'warn');
-        this.audio.play('error');
+    const env = characterMeterEnvironment(this);
+    const place = suitPlaceOf(env, true);
+    const state = this.stepSuitState(p, env, place, dt, true);
+    if (place === 'world') {
+      for (const span of state.spans) p.health = Math.min(100, Math.max(0, p.health + spanHealth(span)));
+      for (const [key, label] of [['hazard', 'Hazard protection low'], ['lifeSupport', 'Life support low']]) {
+        const low = p[key] < 30;
+        if (low && !p[`_warned_${key}`]) {
+          p[`_warned_${key}`] = true;
+          this.hud.toast(`${label} low — mine ${key === 'hazard' ? 'sodium' : 'oxygen'}`, 'warn');
+          this.audio.play('error');
+        }
+        if (p[key] > 45) p[`_warned_${key}`] = false;
       }
-      if (p[key] > 45) p[`_warned_${key}`] = false;
-    }
-    if (p.lifeSupport <= 0 || p.hazard <= 0) {
-      p.health = Math.max(0, p.health - dt * 4);
-      if (!this._warnT || this.time - this._warnT > 6) {
+      const starved = state.spans.some((s) => s.starved);
+      if (starved && (!this._warnT || this.time - this._warnT > 6)) {
         this._warnT = this.time;
         this.hud.toast(p.lifeSupport <= 0 ? 'Life support depleted!' : 'Hazard protection failing!', 'warn');
       }
-    } else p.health = Math.min(100, p.health + dt * 1.5);
-    if (p.health <= 0) this.playerDied();
-    const restore = cartridgeRestore(this.suitMods);
-    if (p.lifeSupport < SUIT.cartridge.below && this.inventory.take('oxygen', SUIT.cartridge.units)) {
-      p.lifeSupport = Math.min(100, p.lifeSupport + restore);
-      this.hud.toast('Life support recharged', 'good');
+      if (p.health <= 0) this.playerDied();
     }
-    if (p.hazard < SUIT.cartridge.below && this.inventory.take('sodium', SUIT.cartridge.units)) {
-      p.hazard = Math.min(100, p.hazard + restore);
-      this.hud.toast('Hazard protection recharged', 'good');
+  }
+
+  // The suit over `dt` seconds on the shared rules. A refill is predicted (the line crossed with the pack holding raw
+  // oxygen or sodium, or a cartridge) but spends nothing here: the server takes it from the inventory it holds.
+  stepSuitState(p, env, place, dt, refills) {
+    const mods = this.suitMods;
+    const profile = { mods, restore: cartridgeRestore(mods) };
+    const conditions = new Set([...meterConditions(env), 'out_of_combat']);
+    const spans = [];
+    const refillable = { lifeSupport: false, hazard: false };
+    const stock = { lifeSupport: ['oxygen', 'oxygen_cartridge'], hazard: ['sodium', 'sodium_cartridge'] };
+    const has = (key) => this.inventory.has(stock[key][1], 1) || this.inventory.has(stock[key][0], SUIT.cartridge.units);
+    for (const key of ['lifeSupport', 'hazard']) refillable[key] = refills && place === 'world' && has(key);
+    let left = dt;
+    for (let guard = 0; guard < 8; guard++) {
+      const step = stepSuit({ lifeSupport: p.lifeSupport, hazard: p.hazard }, profile, env, place, left, conditions, refillable);
+      p.lifeSupport = step.state.lifeSupport;
+      p.hazard = step.state.hazard;
+      spans.push(...step.spans);
+      left -= step.elapsed;
+      if (!step.refill) break;
+      const crafted = this.inventory.has(stock[step.refill][1], 1);
+      const gain = crafted ? cartridgeItemRestore(stock[step.refill][1], mods) : profile.restore;
+      p[step.refill] = Math.min(100, p[step.refill] + gain);
+      refillable[step.refill] = false;
+    }
+    return { spans };
+  }
+
+  // The server's suit (the `meters` state): its values at world time `view.at`, run on to now with the same rules.
+  onSuitMeters(view) {
+    const p = this.player;
+    p.lifeSupport = view.lifeSupport;
+    p.hazard = view.hazard;
+    if (this.mode !== 'foot') return;
+    const dt = Math.max(0, Math.min(1, (this.net?.serverTime?.() ?? view.at) - view.at));
+    if (dt > 0) {
+      const env = characterMeterEnvironment(this);
+      this.stepSuitState(p, env, suitPlaceOf(env, true), dt, false);
     }
   }
 

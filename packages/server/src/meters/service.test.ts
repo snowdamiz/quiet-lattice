@@ -367,8 +367,8 @@ describe('builds, server-side changes and saves', () => {
     expect(t.meters.view(ID, t.now)).toMatchObject({ heat: 50, overheated: true, charge: 33 });
     t.wait(10);
     expect(t.meters.view(ID, t.now)).toMatchObject({ heat: 0, overheated: false, charge: 33 });
-    expect(t.meters.get(ID)).toEqual({ heat: 0, overheated: false, charge: 33, at: t.now });
-    expect(t.meters.close(ID)).toEqual({ heat: 0, overheated: false, charge: 33, at: t.now });
+    expect(t.meters.get(ID)).toEqual({ heat: 0, overheated: false, charge: 33, lifeSupport: 100, hazard: 100, at: t.now });
+    expect(t.meters.close(ID)).toEqual({ heat: 0, overheated: false, charge: 33, lifeSupport: 100, hazard: 100, at: t.now });
     expect(() => t.meters.view(ID, t.now)).toThrow(MetersNotHeldError);
   });
 
