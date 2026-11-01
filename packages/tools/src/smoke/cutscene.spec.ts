@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './harness.ts';
 
 // The test cutscene (packages/client/public/cutscenes/test.json, exported from assets/blend/cutscenes/
 // test_cutscene.blend) plays end to end on window.step: the letterbox eases in and the player's controls lock; its lines

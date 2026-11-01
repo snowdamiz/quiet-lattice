@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './harness.ts';
 
 // The client boots, starts a game, runs 180 frames and draws something that is not black, with no console errors.
 test('client boots and renders', async ({ page }) => {

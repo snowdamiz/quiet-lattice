@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './harness.ts';
 
 // Compressed models in the browser (P1.E14.T12): once the game is up (its Engine has set the KTX2 loader up for this
 // GPU), the game's own gltfLoader() loads a fixture with KTX2 maps (an ETC1S colour map and a UASTC normal map, behind

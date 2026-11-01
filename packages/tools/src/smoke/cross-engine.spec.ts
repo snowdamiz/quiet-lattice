@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { expect, firefox, test, webkit, type BrowserType, type Page } from '@playwright/test';
+import { firefox, webkit, type BrowserType, type Page } from '@playwright/test';
+import { expect, test } from './harness.ts';
 import * as World from '@astra/shared/world';
 import { compareBits, engineMath, sampleDirections, worldBits } from './world-bits.ts';
 

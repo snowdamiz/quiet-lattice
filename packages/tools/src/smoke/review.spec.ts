@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './harness.ts';
 
 // The asset review scene (P1.E14.T03, T11): `#review:ship` loads the demo ship, settles it under noon on the lush world
 // and resolves `review.ready`; the ship draws triangles, LOD2 can be picked (the demo ship has no LOD nodes, so every

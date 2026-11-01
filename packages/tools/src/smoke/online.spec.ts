@@ -1,5 +1,6 @@
 import { randomBytes, randomInt } from 'node:crypto';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './harness.ts';
 import { GALAXY_SEED, Galaxy, frameIdOf, homeSystems } from '@astra/shared/world';
 import { enterPicked, openList, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';

@@ -1,5 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './harness.ts';
 import { SCREENS } from '../capture/screens.ts';
+import { smokeGl } from './gl.ts';
 
 // Other pilots' markers (P1.E04.T02) through every frame of each remote-ships capture's clip, staged as `pnpm capture`
 // stages it (offline: a recorded snapshot stream through the remote layer), on the HUD's own clock at 60 frames a second:
@@ -12,9 +13,8 @@ import { SCREENS } from '../capture/screens.ts';
 // vertices, projected), not taken from the HUD.
 
 const SCENES = ['remote-ships', 'remote-ships-crowd', 'remote-ships-pads', 'remote-ships-surface', 'remote-ships-bay'];
-const metal = (process.env.SMOKE_GL ?? (process.platform === 'darwin' && !process.env.CI ? 'metal' : 'swiftshader')) === 'metal';
 // (as captured, where a GPU makes that cheap)
-if (metal) test.use({ viewport: { width: 1920, height: 1080 } });
+if (smokeGl === 'metal') test.use({ viewport: { width: 1920, height: 1080 } });
 
 interface Issue {
   frame: number;
