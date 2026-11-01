@@ -263,6 +263,9 @@ Graded per people with the "Models and environments" table, each file as a famil
 | 2 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.3 |
 | 2 | Ixari | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.5 |
 | 2 | Ulgani | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 4, placeholder 3, performance 4 | 3.4 |
+| 3 | Thalune | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 | 3.3 |
+| 3 | Ixari | REVISE | design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.5 |
+| 3 | Ulgani | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 4, placeholder 3, performance 4 | 3.5 |
 
 Round 1, common to all three: mascot faces (a fixed smile, goggle or button-ring eyes, no nose, lips or brow); smooth
 mannequin bodies without anatomical landmarks; suits from primitives (torus bands, rounded boxes, straight rods) that
@@ -282,6 +285,14 @@ eyes bulge past the skull, its nacre bakes as metal (black at noon and night), i
 neck folds; Ulgani's lattice is straight tubes over a unitard with torus rings, white flank cards and toe bleed. The
 in-engine wireframe pass draws a mis-posed copy of each body, so LOD0 loops could not be checked in-engine. Verdicts in
 full: `~/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e05t01_r2_*.md`. Artifacts as in round 1.
+
+Round 3 (2026-10-31, at dc3463b9): the wireframe now draws on the posed body; the black Ulgani crest and Thalune
+nacre at noon were baked occlusion and are fixed; Ulgani's suits are chitin lattices over bare skin; Ixari's tiles are
+raised and tinted. Scores stalled (3.3, 3.5, 3.5). Still failing on all three: no anatomy below the neck, heads that
+differ only above the scalp, skin that shifts colour between the lighting cases, nothing breaking the outline at 100 m
+but colour, and toes that regressed into torn shards. Per people: Thalune's eyes still bulge and its hands are not
+webbed; Ixari's crystal is one reused straight shaft; Ulgani has no pore pits and its fronds repeat. Round 4 is a
+focused pass on the notes repeated across rounds 2 and 3.
 
 ## P1.E04.T05 Login and character screens (UI)
 
