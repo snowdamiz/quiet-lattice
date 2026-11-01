@@ -4,7 +4,7 @@
 // whatever its size, its chunk of the fill drawn bright while it does; frame-to-frame changes tween; and the regen sheen
 // waits for the fill to be drawn. (On stand-ins for the gauge's SVG elements: the client's tests run without a DOM.)
 import * as THREE from 'three';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ARC_EASE_MS, countdown, HUD } from './HUD.js';
 
 /** One gauge as HUD.arc and HUD.sheen reach it: the root, its `<g class="gauge">`, the fill and the sheen paths. */
@@ -249,5 +249,187 @@ describe('where a hit number rises', () => {
       3: creature(400, 0, -20),
     });
     for (const id of [1, 2, 3, 99]) expect(h.hitAnchor(id), `creature ${id}`).toBeNull();
+  });
+});
+
+describe('the numbers a hit raises', () => {
+  const was = { window: globalThis.window, document: globalThis.document };
+  afterEach(() => {
+    globalThis.window = was.window;
+    globalThis.document = was.document;
+  });
+
+  /** An element as the HUD makes and fills one: no layout, only what it was given. */
+  function fakeEl(tag = 'div') {
+    return {
+      tag,
+      className: '',
+      style: {},
+      textContent: '',
+      children: [],
+      animations: [],
+      isConnected: true,
+      appendChild(c) {
+        c.parent = this;
+        this.children.push(c);
+        return c;
+      },
+      get firstChild() {
+        return this.children[0];
+      },
+      replaceChildren(...c) {
+        this.children = c;
+      },
+      remove() {
+        this.isConnected = false;
+        if (this.parent) this.parent.children = this.parent.children.filter((x) => x !== this);
+      },
+      animate(frames, options) {
+        this.animations.push({ frames, options });
+      },
+      classList: { add() {}, remove() {}, toggle() {} },
+    };
+  }
+
+  /** A HUD over a 1920×1080 view with creatures `records` (id → record) drawn, its clock `h.t` in ms. */
+  function rising(records = {}) {
+    globalThis.window = { innerWidth: 1920, innerHeight: 1080 };
+    globalThis.document = { createElement: fakeEl };
+    const camera = new THREE.PerspectiveCamera(70, 16 / 9, 0.1, 1e5);
+    camera.updateProjectionMatrix();
+    const h = Object.create(HUD.prototype);
+    h.t = 0;
+    h.now = () => h.t;
+    h.later = () => 0;
+    h.hitsEl = fakeEl();
+    h.game = {
+      engine: { camera },
+      camWorld: new THREE.Vector3(),
+      camWorldQuatInv: new THREE.Quaternion(),
+      remotes: { get: (id) => records[id] },
+      fauna: { speciesOf: (r) => r.sp },
+    };
+    return h;
+  }
+  const creature = (x, y, z) => ({ drawn: true, world: new THREE.Vector3(x, y, z), frame: null, sp: { size: 2, kind: 'quad' } });
+
+  /** Where the number `e` is, px from the top of the view, `ms` after it was raised, read off the keyframes the browser runs. */
+  function topAt(e, ms) {
+    const { frames, options } = e.animations[0];
+    const u = ms / options.duration;
+    const y = (f) => Number(/translate\(-50%, (-?[\d.]+)px\)/.exec(f.transform)[1]);
+    const next = frames.findIndex((f) => f.offset >= u);
+    const [a, b] = [frames[Math.max(next - 1, 0)], frames[next]];
+    const k = b.offset === a.offset ? 0 : (u - a.offset) / (b.offset - a.offset);
+    return Number.parseFloat(e.style.top) + y(a) + (y(b) - y(a)) * k;
+  }
+  const sizeOf = (e) => Number.parseFloat(e.style.fontSize);
+
+  it('stacks the numbers on one creature as a column that climbs, none sitting on another, kills included', () => {
+    const h = rising({ 7: creature(0, 0, -20) });
+    const raised = [];
+    // (a burst, then a kill, then a late one: as the shots of a fight land)
+    for (const [t, amount, killed] of [[0, 15, false], [60, 24, false], [120, 31, true], [180, 26, true], [300, 19, false], [520, 12, false]]) {
+      h.t = t;
+      h.hitNumber(amount, killed, 7);
+      raised.push({ at: t, e: h.hitsEl.children.at(-1) });
+    }
+    let overlaps = 0;
+    let closest = Infinity;
+    for (let t = 0; t <= 1500; t += 8) {
+      const showing = raised.filter((n) => t >= n.at && t - n.at < 880);
+      for (const a of showing) {
+        for (const b of showing) {
+          if (a === b) continue;
+          const [aTop, bTop] = [topAt(a.e, t - a.at), topAt(b.e, t - b.at)];
+          // b is the younger, so it is the one above
+          if (b.at <= a.at) continue;
+          const gap = aTop - (bTop + sizeOf(b.e));
+          closest = Math.min(closest, gap);
+          if (gap < 0) overlaps++;
+        }
+      }
+    }
+    expect(overlaps).toBe(0);
+    // (and a few pixels clear of the one below, not touching it)
+    expect(closest).toBeGreaterThanOrEqual(3.5);
+    // a kill is larger, so its clearance is too
+    expect(sizeOf(raised[2].e)).toBeGreaterThanOrEqual(26);
+  });
+
+  it('starts a fresh column when the numbers before have gone, and gives each creature its own', () => {
+    const h = rising({ 7: creature(0, 0, -20), 8: creature(6, 0, -20) });
+    h.hitNumber(10, false, 7);
+    h.hitNumber(10, false, 8);
+    const [a, b] = h.hitsEl.children;
+    // (each over its own creature, at the same height: neither stacked on the other)
+    expect(Number.parseFloat(a.style.top)).toBeCloseTo(Number.parseFloat(b.style.top), 3);
+    expect(Number.parseFloat(b.style.left)).toBeGreaterThan(Number.parseFloat(a.style.left));
+    h.t = 2000;
+    h.hitNumber(10, false, 7);
+    expect(Number.parseFloat(h.hitsEl.children.at(-1).style.top)).toBeCloseTo(Number.parseFloat(a.style.top), 3);
+  });
+
+  it('raises a number over the creature it hit, and off the reticle for one that is not on the screen, all of those in one column', () => {
+    const h = rising({ 7: creature(10, 0, -20), 9: creature(0, 0, 20), 10: creature(400, 0, -20) });
+    h.hitNumber(10, false, 7);
+    const over = h.hitsEl.children[0];
+    const at = h.hitAnchor(7);
+    expect(Number.parseFloat(over.style.left)).toBeGreaterThan(960 + 100);
+    expect(Math.abs(Number.parseFloat(over.style.left) - at.x)).toBeLessThanOrEqual(8);
+    expect(Number.parseFloat(over.style.top)).toBeCloseTo(at.y, 3);
+    // behind the camera, off the screen, or not drawn at all: the reticle, one column between them
+    h.hitNumber(11, false, 9);
+    h.hitNumber(12, false, 10);
+    h.hitNumber(13, false, 99);
+    const off = h.hitsEl.children.slice(1);
+    for (const e of off) expect(Math.abs(Number.parseFloat(e.style.left) - 960)).toBeLessThanOrEqual(8);
+    expect(Number.parseFloat(off[0].style.top)).toBeCloseTo(1080 * 0.44, 3);
+    const tops = off.map((e) => Number.parseFloat(e.style.top));
+    expect(tops[1]).toBeLessThanOrEqual(tops[0] - 23);
+    expect(tops[2]).toBeLessThanOrEqual(tops[1] - 23);
+  });
+
+  it('pops in over about a tenth of a second, scaled up and fading in, then rises and fades out', () => {
+    const h = rising({});
+    h.hitNumber(15, false, 99);
+    const { frames, options } = h.hitsEl.children[0].animations[0];
+    expect(options.duration).toBe(900);
+    expect(frames[0]).toMatchObject({ offset: 0, opacity: 0 });
+    expect(frames[0].transform).toMatch(/scale\(0\.7\)/);
+    const popped = frames.find((f) => f.opacity === 1);
+    expect(popped.offset * options.duration).toBeGreaterThanOrEqual(80);
+    expect(popped.offset * options.duration).toBeLessThanOrEqual(120);
+    expect(popped.transform).toMatch(/scale\(1\)/);
+    expect(frames.at(-1).opacity).toBe(0);
+  });
+
+  it('shows what a frame of kills paid as one toast of each kind, not one per kill', () => {
+    const h = rising({});
+    h.toast = vi.fn();
+    const gained = [
+      { what: 'xp', count: 30 },
+      { what: 'units', count: 5 },
+      { what: 'xp', count: 30 },
+      { what: 'xp', count: 30 },
+      { what: 'units', count: 7 },
+    ];
+    h.updateHits({ take: () => ({ dealt: [], taken: [], gained }) });
+    expect(h.toast.mock.calls).toEqual([
+      ['+90 XP', 'good', { repeat: true }],
+      ['+12 units', 'good', { repeat: true }],
+    ]);
+  });
+
+  it('puts a third line under an analysis banner and keeps system and docking banners to two', () => {
+    const h = rising({});
+    h.banner = fakeEl();
+    h.band = fakeEl();
+    h.game.cutscenes = null;
+    h.raiseBanner({ title: 'GANPHA BEAST', sub: 'New Species Analyzed', lines: [], detail: 'Grazer · Skittish · ★☆☆☆☆ · Bond: eligible' });
+    expect(h.banner.children.map((c) => c.className)).toEqual(['b-sub', 'b-title', 'b-line']);
+    expect(h.banner.children[2].textContent).toBe('Grazer · Skittish · ★☆☆☆☆ · Bond: eligible');
+    h.raiseBanner({ title: 'SOL', sub: 'Star System', lines: ['dropped', 'too'], detail: '' });
+    expect(h.banner.children.map((c) => c.className)).toEqual(['b-sub', 'b-title']);
   });
 });

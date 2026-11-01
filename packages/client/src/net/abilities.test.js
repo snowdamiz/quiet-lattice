@@ -125,4 +125,33 @@ describe('the target an entity cast names', () => {
     expect(pickTarget(net, '1:2', eye, aim, ability, node)).toBeNull();
     expect(pickTarget(net, '1:2', eye, aim, { ...ability, on: ['player'] }, node)).toBe(7);
   });
+
+  describe('with the creatures the client draws', () => {
+    const put = (net, id, e) => net.store.entities.set(id, { frame: '1:2', kind: 'mob', mode: 'idle', hp: 1, ...e });
+    const eye = { x: 0, y: 0, z: 0 };
+    const aim = { x: 0, y: 0, z: -1, length: () => 1 };
+    const at = (id, x, y, z) => ({ id, pos: { x, y, z } });
+
+    it('names a creature by where it is drawn, not by where the snapshots last put it', () => {
+      const net = fakeNet();
+      // (the snapshots hold 11 dead ahead and 12 far off the aim; as drawn, it is the other way about)
+      put(net, 11, { pos: [0, 0, -10] });
+      put(net, 12, { pos: [30, 0, -10] });
+      expect(pickTarget(net, '1:2', eye, aim, ability, node)).toBe(11);
+      expect(pickTarget(net, '1:2', eye, aim, ability, node, [at(11, 30, 0, -10), at(12, 0.2, 0, -10)])).toBe(12);
+      // one drawn past the ability's reach is out, whatever the snapshots say
+      expect(pickTarget(net, '1:2', eye, aim, ability, node, [at(11, 0, 0, -60)])).toBeNull();
+    });
+
+    it('ignores the mobs in the store once it is given the drawn ones, and still reads other entities from the store', () => {
+      const net = fakeNet();
+      put(net, 5, { pos: [0, 0, -9] });
+      put(net, 6, { kind: 'player', pos: [0, 0, -6] });
+      expect(pickTarget(net, '1:2', eye, aim, ability, node, [])).toBeNull();
+      expect(pickTarget(net, '1:2', eye, aim, { ...ability, on: ['mob', 'player'] }, node, [])).toBe(6);
+      // (a drawn creature is not offered to an ability that takes no creatures)
+      expect(pickTarget(net, '1:2', eye, aim, { ...ability, on: ['player'] }, node, [at(8, 0, 0, -5)])).toBe(6);
+      expect(pickTarget(net, '1:2', eye, aim, ability, node, [at(8, 0.1, 0, -5)])).toBe(8);
+    });
+  });
 });

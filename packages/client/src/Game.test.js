@@ -489,14 +489,21 @@ describe('Game: analysis (P1.E08.T04)', () => {
   });
 
   it('shows the server’s answer: the species as the codex holds it and the XP, known, or why not', () => {
-    const { socket, banners, toasts } = online();
+    const { g, socket, banners, toasts } = online();
     socket.push(WELCOME);
+    expect(g.analyzed.size).toBe(0);
     socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
-    expect(banners).toEqual([['HORNED VELAR BULL', 'New Species Analyzed', ['Heavy quadruped · Territorial · ★★☆☆☆', 'Bond: with Big Game', '+300 XP']]]);
+    expect(g.analyzed.has(SPECIES.key)).toBe(true);
+    // a new session knows no species until the server says so again
+    socket.push(WELCOME);
+    expect(g.analyzed.size).toBe(0);
+    // (the codex line and Bond are the banner's third line; the XP a reward toast, as a kill's)
+    expect(banners).toEqual([['HORNED VELAR BULL', 'New Species Analyzed', [], 'Heavy quadruped · Territorial · ★★☆☆☆ · Bond: with Big Game']]);
     socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
     socket.push({ t: 'analyze', seq: 3, target: 42, result: 'refused', reason: 'los' });
     socket.push({ t: 'analyze', seq: 4, target: 42, result: 'refused', reason: 'stale_seq' });
     expect(toasts).toEqual([
+      ['+300 XP', 'good'],
       ['Horned Velar Bull · in your codex', undefined],
       ['No clear line to it', 'warn'],
       ['Analysis failed', 'warn'],
@@ -511,11 +518,14 @@ describe('Game: analysis (P1.E08.T04)', () => {
     socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
     socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
     expect(banners.map((b) => b[0])).toEqual(['VELAR PRIME']);
-    expect(toasts).toEqual([['Velar Prime · in your codex', undefined]]);
+    expect(toasts).toEqual([
+      ['+300 XP', 'good'],
+      ['Velar Prime · in your codex', undefined],
+    ]);
   });
 
   /** A game with a walker on a world, the server's creature `id` drawn in its sights (or none), and E pressed. */
-  function aiming(net, pick = { id: 42, sp: { name: 'Ambling Tovar Grazer' }, t: 12 }) {
+  function aiming(net, pick = { id: 42, sp: { name: 'Ambling Tovar Grazer' }, t: 12 }, extra = {}) {
     const world = { sampler: {}, kind: 'planet' };
     const g = fake({
       net,
@@ -531,6 +541,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
       inventory: new Inventory(),
       hud: { showBanner: vi.fn() },
       audio: { play: vi.fn() },
+      ...extra,
     });
     return g;
   }
@@ -547,6 +558,25 @@ describe('Game: analysis (P1.E08.T04)', () => {
     // the server's answer pays and writes the codex (onAnalyze); nothing is shown or paid here
     expect(g.hud.showBanner).not.toHaveBeenCalled();
     expect(g.inventory.units).toBe(units);
+  });
+
+  it('says a species is in the codex, once the server has said so, instead of offering to analyze it again', () => {
+    const net = { joined: true, send: vi.fn() };
+    const world = { sampler: {}, kind: 'planet' };
+    const pick = { id: 42, sp: { name: 'Ambling Tovar Grazer' }, r: { frame: world, species: 3 }, t: 12 };
+    const g = aiming(net, pick, { system: { seed: 1, planets: [world] }, station: null, cam: { frame: world, pos: new THREE.Vector3(), quat: new THREE.Quaternion() } });
+    g.handleInteractions();
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
+    expect(net.send).toHaveBeenCalledTimes(1);
+    // (the server's answer names the species by its codex key: the world's frame id and the species' index)
+    g.analyzed = new Set(['1:0/3']);
+    g.handleInteractions();
+    expect(g.currentPrompt).toBe('Ambling Tovar Grazer · in your codex');
+    expect(net.send).toHaveBeenCalledTimes(1);
+    // another species of the world is still offered
+    g.analyzed = new Set(['1:0/4']);
+    g.handleInteractions();
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
   });
 
   it('offers nothing with no creature in the sights, and analyzes nothing offline', () => {

@@ -912,7 +912,7 @@ interface FaunaPage {
 /** The herd's stream (replay.js `herdTicks`): creature 601 is killed this many seconds in, 603 in the clip. */
 const HERD_KILLS = { 601: 9, 603: 23.6 };
 /** Where in the stream (s) each still and the clip start; the clip's scripted fight runs from the last. */
-const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.5, flash: 9.7, analysis: 10.2, clip: 22 };
+const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.5, flash: 9.7, analysis: 10.2, offscreen: 12, clip: 22 };
 
 /**
  * On foot on the home world with the server's herd ahead, played into the remote layer as a recorded snapshot stream
@@ -944,10 +944,11 @@ async function openHerd(page: Page, night: boolean): Promise<void> {
         const heading = new V().crossVectors(up, toSun).normalize();
         g.player.spawn(planet, up.clone().multiplyScalar(planet.groundRadius(up) + 0.5), heading);
         g.cam.frame = undefined;
-        // (the ground streams in from the workers, a few frames at a time)
-        for (let i = 0; i < 30; i++) {
+        // (the ground streams in from the workers, a few frames at a time, finest last: until the pool has been idle a while)
+        for (let i = 0, idle = 0; i < 200 && idle < 8; i++) {
           await w.step(6);
           await new Promise((r) => setTimeout(r, 120));
+          idle = g.pool.pending() === 0 ? idle + 1 : 0;
         }
       }
       g.hud.clearBanners();
@@ -991,9 +992,10 @@ async function openHerd(page: Page, night: boolean): Promise<void> {
         const from = g.player.state.pos;
         for (const k of [0.25, 0.5, 0.75]) g.flora.clearAround(from.clone().lerp(r.pos, k), 5, 4);
       }
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0, idle = 0; i < 100 && (i < 6 || idle < 4); i++) {
         await w.step(10);
         await new Promise((r) => setTimeout(r, 120));
+        idle = g.pool.pending() === 0 ? idle + 1 : 0;
       }
       await w.__herd.aim(601);
       await w.__herd.stepTo(at.base);
@@ -1206,8 +1208,8 @@ async function uiCostProbe(page: Page, of: 'social' | 'hud'): Promise<void> {
 const UI_BUDGET_MS = 1;
 
 /** The probed UI's per-frame cost over the clip (`uiCostProbe`), as the readout under its sheet: the mean, the 95th
- * percentile and the worst frame, against the 16.7 ms a frame at 60 fps has, and the index of every frame over the 1 ms
- * budget. */
+ * percentile and the worst frame, against the 16.7 ms a frame at 60 fps has, and how many frames went over the 1 ms
+ * budget, with their indexes. */
 const uiCostReadout =
   (label: string) =>
   async (page: Page): Promise<string> => {
@@ -1215,10 +1217,10 @@ const uiCostReadout =
     const sorted = [...ms].sort((a, b) => a - b);
     const mean = ms.reduce((a, b) => a + b, 0) / Math.max(1, ms.length);
     const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))] ?? 0;
-    const over = ms.flatMap((v, i) => (v > UI_BUDGET_MS ? [`${String(i).padStart(3, '0')} (${v.toFixed(3)} ms)`] : []));
+    const over = ms.flatMap((v, i) => (v > UI_BUDGET_MS ? [`#${i}, ${v.toFixed(1)} ms`] : []));
     return [
       `${label} frame cost over ${ms.length} frames: mean ${mean.toFixed(3)} ms, p95 ${at(0.95).toFixed(3)} ms, worst ${(sorted.at(-1) ?? 0).toFixed(3)} ms (of 16.7 ms)`,
-      `frames over ${UI_BUDGET_MS} ms: ${over.length ? over.join(', ') : 'none'}`,
+      `frames over ${UI_BUDGET_MS} ms: ${over.length ? `${over.length} ${over.length === 1 ? 'frame' : 'frames'} (${over.join('; ')})` : 'none'}`,
     ].join('\n');
   };
 const socialCostReadout = uiCostReadout('social UI');
@@ -1916,6 +1918,26 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
       await holdHud(page, { banner: 1800 });
       await page.waitForTimeout(200);
     },
+    // hits on creatures behind the walker, which are not on the screen: their numbers rise from the reticle, in one column
+    async offscreen(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => {
+        const w = window as unknown as FaunaPage;
+        await w.__herd.stepTo(at);
+        // turned away from the herd: the point opposite creature 602, through the walker
+        const from = w.game.player.state.pos;
+        const away = from.clone().multiplyScalar(2).sub(w.game.remotes.get(602).pos);
+        for (let i = 0; i < 30; i++) {
+          w.dev.footAim(away, 0.6);
+          await w.step(1);
+        }
+        for (const [id, amount] of [[602, 17], [603, 23], [602, 9]] as const) {
+          w.__herd.hit(id, amount);
+          await w.step(2);
+        }
+      }, HERD_AT.offscreen);
+      await holdHud(page, { number: 380 });
+    },
     // the clip's first frame: the herd as the fight starts, the walker aimed at the creature that will die
     async start(page) {
       await clearHud(page);
@@ -2567,7 +2589,8 @@ export const SCREENS: Record<string, ScreenDef> = {
   // world in daylight with the server's herd ahead (a recorded snapshot stream played into the remote layer, offline), the
   // HUD fed by the combat events the server would send. The stills: the herd with the analysis prompt on the creature in the
   // crosshair; `numbers` stacked damage numbers over two creatures; `kill` the killing blow in gold with a toast for its XP
-  // and one for its loot, the creature down; `flash` a blow taken; `analysis` the codex banner for a drawn creature. The
+  // and one for its loot, the creature down; `flash` a blow taken; `analysis` the codex banner (three lines) for a drawn creature;
+  // `offscreen` hits on creatures behind the walker, their numbers rising from the reticle. The
   // clip is a fight from 22 s into the stream, the HUD's per-frame cost in readout.txt.
   'fauna-combat': {
     hash: '#foot',

@@ -5,7 +5,7 @@ import { startOnline, type Online } from './online.ts';
 // The server's herds on two clients (P1.E08.T09), as players run it (online.ts: a scratch database, the server, Vite): two
 // dev-login scenarios (`?dev#foot`, which go through the server) are put on the home world's ground by the admin channel's
 // teleport, a herd is spawned beside them by its spawn, and each client must draw the very herd the server holds: the
-// same creatures, species and places, as instances of the species' rig, moving. One of them analyzes a creature it is
+// same creatures, species and places, as instances of the species' rig. One of them analyzes a creature it is
 // looking at and the server answers with the codex entry: the banner is the drawn creature's.
 
 let online: Online;
@@ -125,7 +125,7 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
   // every one of them reaches both clients, drawn as an instance of its species' rig
   for (const page of [a, b]) {
     await until(page, `[${herd}].every((id) => window.game.remotes.get(id)?.shown === true)`, 60_000);
-    await until(page, 'window.game.fauna.shown.some((r) => r.drawn)', 30_000);
+    await until(page, `[${herd}].every((id) => window.game.remotes.get(id)?.drawn === true)`, 30_000);
   }
   // (a few seconds of them going about, on real time)
   await a.waitForTimeout(1500);
@@ -138,16 +138,17 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
   // and in the same places, up to when each reads the world (they go slowly, and their poses are one stream's)
   const [ha, hb] = [herdOf(onA), herdOf(onB)];
   ha.forEach((s, i) => expect(Math.hypot(...s.pos.map((x, k) => x - hb[i]!.pos[k]!)), `creature ${s.id}`).toBeLessThan(4));
-  // each client's instanced mesh for the species holds the creatures in view
+  // each client's instanced mesh for the herd's species holds the spawned creatures
   for (const page of [a, b]) {
-    const meshes = await page.evaluate(() => {
-      const f = window.game.fauna;
-      return [...f.worlds.values()].flatMap((w: { drawn: Map<number, { mesh: { count: number; isInstancedMesh: boolean } }> }) =>
-        [...w.drawn.values()].map((d) => d.mesh.isInstancedMesh),
-      );
-    });
-    expect(meshes.length).toBeGreaterThan(0);
-    expect(meshes.every(Boolean)).toBe(true);
+    const mesh = await page.evaluate((ids) => {
+      const g = window.game;
+      const r = g.remotes.get(ids[0]);
+      const d = g.fauna.worlds.get(r.frame).drawn.get(r.species);
+      return { instanced: d.mesh.isInstancedMesh as boolean, count: d.mesh.count as number, drawn: ids.filter((id: number) => g.remotes.get(id).drawn).length };
+    }, herd);
+    expect(mesh.instanced).toBe(true);
+    expect(mesh.drawn).toBe(herd.length);
+    expect(mesh.count).toBeGreaterThanOrEqual(herd.length);
   }
 
   // A analyzes the nearest of the herd: picked as the crosshair would (a ray from the camera to the creature), asked of the
@@ -177,6 +178,9 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
   await until(a, "document.querySelector('.banner')?.innerText.toLowerCase().includes('new species analyzed')", 30_000);
   const banner = await a.evaluate(() => (document.querySelector('.banner') as HTMLElement).innerText);
   expect(banner.toLowerCase()).toContain(picked!.name.toLowerCase());
+  // (the codex line, with its threat stars, and Bond, as the banner's third line; the XP as a toast)
+  expect(banner).toMatch(/★[☆★]*.*Bond: /);
+  await until(a, "[...document.querySelectorAll('.toast')].some((t) => /^\\+\\d+ XP$/.test(t.textContent))", 30_000);
 
   await Promise.all([a, b].map((p) => p.evaluate(() => window.game.net.close())));
   expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
