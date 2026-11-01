@@ -136,7 +136,7 @@ def build(sc, root):
     K.collider_mesh(asset, "COL_Stairs", [(-STAIR_W / 2, -D - run, 0), (STAIR_W / 2, -D - run, 0), (STAIR_W / 2, -D, Z), (-STAIR_W / 2, -D, Z), (-STAIR_W / 2, -D, 0), (STAIR_W / 2, -D, 0)], [(0, 1, 2, 3), (4, 5, 1, 0)[::-1], (0, 3, 4), (1, 5, 2), (3, 2, 5, 4)])
     for x in (30.0, 45.0):
         K.collider(asset, f"COL_Counter_{int(x)}", (x - 1.6, -10.45, Z), (x + 1.6, -9.55, Z + 1.1))
-    K.empty(asset, "Socket_Mount", (0, 0, 0), size=4.0, props={"interface": "tradedeck"})
+    K.empty(asset, "Socket_DeckMount", (0, 0, 0), size=4.0, props={"interface": "tradedeck"})
     K.empty(asset, "Socket_Fabricator", FAB, size=1.5, props={"interface": "place", "use": [FAB[0], FAB[1] - 1.2, FAB[2]]})
     K.empty(asset, "Interact_Trade", (30.0, -10.9, Z + 1.1), size=0.4)
     K.empty(asset, "Interact_Outfitter", (45.0, -10.9, Z + 1.1), size=0.4)

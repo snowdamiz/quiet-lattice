@@ -76,6 +76,6 @@ def build(sc, root):
             print(f"{name} LOD{lod}: {m.tris():,} tris, {len(m.mats)} materials")
             m.build(f"{name}_L{lod}", c)
         K.collider(asset, f"COL_{name.split('_')[1].capitalize()}", *col)
-        K.empty(asset, "Socket_Floor", (0, 0, 0), size=0.5, props={"interface": "place"})
+        K.empty(asset, "Socket_" + name.split("_")[1].capitalize() + "Floor", (0, 0, 0), size=0.5, props={"interface": "place"})
         if name == "ws_refuelpost":
             K.empty(asset, "Interact_Refuel", (-0.3, -0.35, 1.25), size=0.2)

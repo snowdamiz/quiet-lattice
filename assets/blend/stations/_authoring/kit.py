@@ -112,16 +112,16 @@ def _cum(pts):
     return np.concatenate([[0.0], np.cumsum(d)])
 
 
-def patch(m, grid, mat, key=None, smooth=False, u_off=0.0, flip=False, t_range=(0.0, 1.0), v_metres=None, uv_fn=None, away=None, toward=None, away_rows=None):
+def patch(m, grid, mat, key=None, smooth=False, u_off=0.0, flip=False, t_range=(0.0, 1.0), v_metres=None, uv_fn=None, away=None, toward=None, away_rows=None, tile_m=8.0):
     """grid: (nu, nv, 3). u runs along axis 0 in metres, v across axis 1 normalised into the strip `key` (or, with
     v_metres, in metres from the strip bottom; or uv_fn(point) -> (u, v) for planar maps)."""
     g = np.asarray(grid, np.float64)
     nu, nv = g.shape[:2]
-    us = np.stack([_cum(g[:, j]) for j in range(nv)], 1) * U_PER_M + u_off
+    us = np.stack([_cum(g[:, j]) for j in range(nv)], 1) * (U_PER_M if key is not None or v_metres is not None else 1.0 / tile_m) + u_off
     vs = np.stack([_cum(g[i]) for i in range(nu)], 0)
     sv = strip_v(mat, key) if key else (0.0, 1.0)
     if key is None and v_metres is None:
-        vs = vs * U_PER_M  # a tileable material: metres in both directions
+        vs = vs / tile_m  # a tileable material: metres in both directions
     elif v_metres is not None:
         span = (sv[1] - sv[0])
         vs = sv[0] + np.clip(vs / v_metres, 0, 1) * span

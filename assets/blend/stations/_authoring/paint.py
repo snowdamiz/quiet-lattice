@@ -645,9 +645,10 @@ def reaches_scrap():
         base = base * (1 + (st.noise(6, 3) - 0.5)[..., None] * 0.12)
         st.set(base=base, rough=0.55 + rust * 0.25 - chips * 0.15 + n * 0.08, metal=0.55 - rust * 0.45 + chips * 0.4, height=h)
 
-    scrap_row(s.strip("plate", 0, 512), [GUNMETAL, GUNMETAL * 1.15, OXIDE, GUNMETAL * 0.85], seed=1)
-    scrap_row(s.strip("oxide", 512, 1024), [OXIDE, OXIDE * 0.8, OXIDE * 1.1, GUNMETAL], seed=2)
-    scrap_row(s.strip("patch", 1024, 1536), [PATCH * 0.9, GUNMETAL, OXIDE, PATCH * 0.7, GUNMETAL * 1.2], plate_w=(0.6, 1.8), seed=3)
+    # one colour per strip so the geometry, not the texture, decides the zones; the deliberate mismatch is the patch strip
+    scrap_row(s.strip("plate", 0, 512), [GUNMETAL, GUNMETAL * 1.07, GUNMETAL * 0.94], seed=1)
+    scrap_row(s.strip("oxide", 512, 1024), [OXIDE, OXIDE * 0.93, OXIDE * 1.06], seed=2)
+    scrap_row(s.strip("patch", 1024, 1536), [PATCH * 0.85, GUNMETAL * 1.05, PATCH * 0.72, OXIDE * 0.95], plate_w=(1.2, 2.6), seed=3)
     # girder flange, 1 m: gunmetal with a weld line down the middle and rust at both edges
     st = s.strip("girder", 1536, 1792)
     v, u = st.v, st.u
@@ -718,8 +719,7 @@ def reaches_grate():
     cross = dist_to_grid(v, 0.2) < 0.006
     h = np.where(bars | cross, 0.0, -1.0) - (1 - smooth(0.0, 0.02, panel)) * 0.2
     pid = (np.floor(uu / 2.0) * 5 + row * 3) % 7
-    tint = mix(col(GUNMETAL * 1.2, v.shape), col(OXIDE * 0.9, v.shape), (pid == 3).astype(np.float32))
-    tint = mix(tint, col(PATCH * 0.8, v.shape), (pid == 5).astype(np.float32))
+    tint = col(GUNMETAL * 1.2, v.shape) * (1 + (pid[..., None] / 7.0 - 0.5) * 0.12)
     base = np.where((bars | cross)[..., None], tint, srgb("#0d0d0e")).astype(np.float32)
     rust = smooth(0.6, 0.85, st.noise(10, 5)) * (bars | cross)
     base = mix(base, col(RUST, v.shape), rust * 0.6)

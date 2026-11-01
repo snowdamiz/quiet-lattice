@@ -148,6 +148,6 @@ def build(sc, root):
         a = k * math.pi / 2 + math.pi / 4
         xf = Matrix.Translation((math.cos(a) * (RR / 2 + 3.0), 0, math.sin(a) * (RR / 2 + 3.0))) @ Matrix.Rotation(-a, 4, "Y")
         K.collider(asset, f"COL_Spoke_{k + 1}", (-RR / 2 + 7.0, -3.2, -3.2), (RR / 2 - 9.4, 3.2, 3.2), xf=xf)
-    K.empty(asset, "Socket_Aft", (0, -HUB_L / 2, 0), rot=P.socket_rotation((0, -1, 0)), size=4.0, props={"interface": "collar"})
-    K.empty(asset, "Socket_Fore", (0, HUB_L / 2, 0), size=4.0, props={"interface": "collar"})
+    K.empty(asset, "Socket_HubAft", (0, -HUB_L / 2, 0), rot=P.socket_rotation((0, -1, 0)), size=4.0, props={"interface": "collar"})
+    K.empty(asset, "Socket_HubFore", (0, HUB_L / 2, 0), size=4.0, props={"interface": "collar"})
     return asset

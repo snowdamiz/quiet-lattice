@@ -70,5 +70,5 @@ def build(sc, root):
         print(f"ws_baydoor LOD{lod}: {tot:,} tris")
     for side, sx in (("L", -1), ("R", 1)):
         K.collider(asset, f"COL_BayDoor_{side}", (min(0, 65 * sx), 0.3, 0.0), (max(0, 65 * sx), 3.0, H))
-    K.empty(asset, "Socket_Mount", (0, 0, 0), size=6.0, props={"interface": "baydoor"})
+    K.empty(asset, "Socket_DoorMount", (0, 0, 0), size=6.0, props={"interface": "baydoor"})
     return asset
