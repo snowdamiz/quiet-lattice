@@ -1,14 +1,32 @@
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 import { expect, killProcessTree, test } from './harness.ts';
 
 // A spec whose page stops answering must fail within its own timeout (plus the guard's grace), not hold the run up
 // until Playwright's close of the stuck page gives up 16 minutes later.
 const cli = createRequire(import.meta.url).resolve('@playwright/test/cli');
+const childConfig = fileURLToPath(new URL('./harness.config.ts', import.meta.url));
 
-async function run(grace: number, cleanup: boolean): Promise<{ code: number | null; out: string }> {
-  const child = spawn(process.execPath, [cli, 'test', 'harness-hang', '--reporter=list'], {
-    env: { ...process.env, SMOKE_HARNESS_HANG: '1', SMOKE_HARNESS_HANG_GRACE: String(grace), SMOKE_HARNESS_HANG_CLEANUP: cleanup ? '1' : '' },
+async function run({
+  grace,
+  cleanup,
+  ci,
+  outputDir,
+}: {
+  grace: number;
+  cleanup: boolean;
+  ci: boolean;
+  outputDir: string;
+}): Promise<{ code: number | null; out: string }> {
+  const child = spawn(process.execPath, [cli, 'test', '--config', childConfig, '--output', outputDir, '--reporter=list'], {
+    env: {
+      ...process.env,
+      ...(ci ? { CI: '1' } : {}),
+      SMOKE_HARNESS_HANG: '1',
+      SMOKE_HARNESS_HANG_GRACE: String(grace),
+      SMOKE_HARNESS_HANG_CLEANUP: cleanup ? '1' : '',
+    },
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: true,
   });
@@ -29,14 +47,14 @@ async function run(grace: number, cleanup: boolean): Promise<{ code: number | nu
   }
 }
 
-for (const { grace, cleanup } of [
-  { grace: 15_000, cleanup: true },
-  { grace: 1000, cleanup: false },
-  { grace: 1000, cleanup: true },
+for (const { grace, cleanup, ci } of [
+  { grace: 15_000, cleanup: true, ci: false },
+  { grace: 1000, cleanup: false, ci: false },
+  { grace: 1000, cleanup: true, ci: true },
 ])
-  test(`a hung page fails at its 6 s timeout, closing grace ${grace / 1000} s, cleanup ${cleanup}, and the next test still runs`, async () => {
+  test(`a hung page fails at its 6 s timeout, closing grace ${grace / 1000} s, cleanup ${cleanup}, CI ${ci}, and the next test still runs`, async () => {
     test.setTimeout(90_000);
-    const { code, out } = await run(grace, cleanup);
+    const { code, out } = await run({ grace, cleanup, ci, outputDir: test.info().outputPath('child') });
     expect(out).toContain('Test timeout of 6000ms exceeded');
     expect(out).toMatch(/1 failed/);
     expect(out).toMatch(/1 passed/);
