@@ -4,7 +4,7 @@ review scene (#review:stations/<file>), and optionally rendered in Blender at LO
 
   Blender -b --factory-startup -P assemble_review.py -- <kit.blend> <out.glb> [--kit waystation|scrapyard]
       [--cut px,py,pz,nx,ny,nz] [--cut-only sy_rock,sy_mouth] [--cap sy_rock] [--figures] [--lark <lark.glb>]
-      [--door 0..1] [--render <png> --cam ex,ey,ez,tx,ty,tz[,lens]] [--size WxH]
+      [--door 0..1] [--compress] [--render <png> --cam ex,ey,ez,tx,ty,tz[,lens]] [--size WxH]
 
 Mating rule (kitsheet.py's): a module's socket joins another's when they coincide with +Y opposed, Z kept up; `place`
 sockets keep their orientation. --cut deletes everything on the +n side of the plane through p (Blender axes). Every join
@@ -12,6 +12,7 @@ is printed with its gap, and so is every pair of sockets of different placed mod
 import math
 import os
 import sys
+from pathlib import Path
 import tempfile
 
 import bmesh
@@ -343,6 +344,16 @@ if light_specs:
         used.append("KHR_lights_punctual")
     glb.write(out, manifest, binary)
 print(f"REVIEW LIGHTS: {len(light_specs)} live point lights from authored markers")
+if "--compress" in argv:
+    from artlib import ktx, meshopt, rules as rules_lib
+    rules = rules_lib.load()
+    with tempfile.TemporaryDirectory(prefix="station-review-compress-") as folder:
+        tex_out = Path(folder) / "textures.glb"
+        mesh_out = Path(folder) / "compressed.glb"
+        ktx.compress(Path(out), tex_out, ktx.settings(rules, "stations"))
+        meshopt.compress(tex_out, mesh_out, meshopt.settings(rules, "stations"))
+        os.replace(mesh_out, out)
+    print("REVIEW COMPRESSION: station KTX2 and meshopt settings")
 tris = [sum(len(p.vertices) - 2 for c in n.children if c.type == "MESH" for p in c.data.polygons) for n in lod_nodes]
 print(f"ASSEMBLED {kit_name}: {len(placed)} modules, {len(figures)} bipeds, {len(larks)} Larks; tris per LOD {tris}; wrote {out} ({os.path.getsize(out) / 1e6:.1f} MB)")
 
