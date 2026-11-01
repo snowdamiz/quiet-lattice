@@ -308,10 +308,11 @@ describe('cheats the review found are refused', () => {
     const toggle = new Harness(D, { pose: pose(HOME, at(0, 1.95)), mode: 'landed' });
     for (let i = 0; i < 60; i++) toggle.send(pose(HOME, at(80 * (i + 1), i % 2 ? 1.95 : 2.5)), i % 2 ? 'landed' : 'ship', { dt: 1 / 60, buttons: BOOST });
     expect(toggle.refusals.length).toBe(60);
-    // (at 20 Hz, 1.4 km/s, under the boost cap: nothing gained, nothing refused)
+    // (at 20 Hz, 1.4 km/s, under the boost cap: the flying inputs fit the speed rule and gain nothing; each coming down to rest at
+    // that speed is refused as a landing too fast for the hull)
     const slow = new Harness(D, { pose: pose(HOME, at(0, 1.95)), mode: 'landed' });
     for (let i = 0; i < 60; i++) slow.send(pose(HOME, at(70 * (i + 1), i % 2 ? 1.95 : 2.5)), i % 2 ? 'landed' : 'ship', { buttons: BOOST });
-    expect(slow.refusals.length, JSON.stringify(first(slow))).toBe(0);
+    expect(slow.refusals.map((r) => (r as MovementRefusal).violation!.rule)).toEqual(Array(30).fill('landing_speed'));
     // out beside the ship, then boarding it 500 m further on
     const cycle = new Harness(D, { pose: pose(HOME, at(0, 1.95)), mode: 'landed' });
     for (let i = 0; i < 10; i++) {
