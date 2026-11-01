@@ -2,6 +2,7 @@
 // carries on across restarts; the state is mirrored to Redis; a client that joins is sent `world` right after
 // `welcome`, and again when the world changes. Each test runs a shard of its own, so changing it touches nothing else.
 import { PROTOCOL_VERSION, WorldState as WorldMessageSchema } from '@astra/shared/protocol';
+import { darkAt } from '@astra/shared/seasons';
 import { EDGE_X, galaxyTiers } from '@astra/shared/world';
 import { eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -145,7 +146,7 @@ describe('world service', () => {
         Extract<(typeof s.received)[number], { t: 'world' }>,
       ];
       expect(WorldMessageSchema.parse(world)).toEqual(world);
-      expect(world).toMatchObject({ season: 1, count: 500, edgeX: EDGE_X, tiers: galaxyTiers(EDGE_X).map((t) => t.tier) });
+      expect(world).toMatchObject({ season: 1, count: 500, edgeX: EDGE_X, tiers: galaxyTiers(EDGE_X).map((t) => t.tier), dark: [] });
       expect(world).toMatchObject({ seasonStart: server.world.state().seasonStart, seasonEnd: server.world.state().seasonEnd, opening: { from: null } });
       expect(world.serverTime).toBeGreaterThanOrEqual(welcome.serverTime);
 
@@ -159,6 +160,8 @@ describe('world service', () => {
       const changed = await s.next('world');
       expect(changed.tiers).toEqual(galaxyTiers(EDGE_X - 10).map((t) => t.tier));
       expect(changed.edgeX).toBe(EDGE_X - 10);
+      expect(changed.dark).toEqual(darkAt(0, { edgeShiftLy: 0, dark: [] }));
+      expect(changed.dark.length).toBeGreaterThan(0);
       expect(changed.serverTime).toBeGreaterThanOrEqual(world.serverTime);
       expect(server.zones.tier(welcome.zone.id)).toBe(0); // a home system stays Tier 0
       expect(waiting.received).toEqual([]);

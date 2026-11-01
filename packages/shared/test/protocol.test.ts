@@ -187,6 +187,7 @@ const serverSamples: ServerMessage[] = [
     count: 500,
     edgeX: 2.5e6,
     tiers: [0, 0, 0, 1, 2],
+    dark: [3, 4],
     serverTime: 3600,
   },
   ...events.map((event) => ({ t: 'event' as const, event })),
@@ -299,8 +300,8 @@ describe('protocol: version', () => {
   // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01); 17: world events (P2.E21.T01); 18: seasons
   // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03). A branch that changes a message bumps the
   // version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 20, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(20);
+  it('is version 21, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(21);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);
@@ -485,6 +486,7 @@ describe('protocol: control messages', () => {
       count: 500,
       edgeX: 0,
       tiers: [],
+      dark: [],
       serverTime: 0,
     };
     expect(decodeServerMessage(JSON.stringify(world))).toEqual(world);

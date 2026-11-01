@@ -1,7 +1,7 @@
 // The Edge following the Count in the world service (DESIGN 16.3, P2.E22.T02) against an in-memory shard, the clocks run by
 // hand: the published Edge, tier map and dark stations are functions of the Count and the season's opening, a season's roll
 // moves them once and a restart finds them where they were; zones read the new tiers.
-import { darkSystems, edgeAt, SEASON_DAY_S, SEASON_EDGE_SHIFT_LY, SMALL_SEASON_LENGTH_S, type SeasonOpening } from '@astra/shared/seasons';
+import { BROKEN_BELOW, darkAt, darkSystems, edgeAt, SEASON_DAY_S, SEASON_EDGE_SHIFT_LY, SMALL_SEASON_LENGTH_S, type SeasonOpening } from '@astra/shared/seasons';
 import { EDGE_X, galaxyTiers } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { MemoryShard } from '../../test/memoryShard.ts';
@@ -67,7 +67,7 @@ describe('the Edge following the Count', () => {
       const edge = edgeAt(count, BASELINE);
       expect(world.state().edgeX).toBe(edge);
       expect(world.state().tiers).toEqual(tiersAt(edge));
-      expect(world.message()).toMatchObject({ count, edgeX: edge, tiers: tiersAt(edge) });
+      expect(world.message()).toMatchObject({ count, edgeX: edge, tiers: tiersAt(edge), dark: darkAt(count, BASELINE) });
     }
     // 0 and 1000 are the farthest the Count alone takes it; the middle of the meter is the baseline
     expect(changes.map((c) => c.state.edgeX)).toEqual([EDGE_X - 10, EDGE_X - 5, EDGE_X, EDGE_X, EDGE_X + 5, EDGE_X + 10, EDGE_X]);
@@ -170,6 +170,64 @@ describe('the Edge following the Count', () => {
     expect(again.state()).toMatchObject({ count: 699, edgeX: edgeAt(699, state.opening), dark });
     expect(again.state().tiers).toEqual(state.tiers);
     await again.close();
+  });
+
+  it('darkens the stations the Count itself pushed Edge-ward below Broken, tells the clients, and relights them as the Count climbs', async () => {
+    const s = shard(500);
+    const world = await s.open();
+    const heard: WorldChange[] = [];
+    world.subscribe((c) => heard.push(c));
+    expect(world.state().dark).toEqual([]);
+
+    world.update({ count: 0 });
+    const dark = darkAt(0, BASELINE);
+    expect(dark.length).toBeGreaterThanOrEqual(2);
+    expect(world.state().dark).toEqual(dark);
+    expect(world.message().dark).toEqual(dark);
+    // (the same systems the Count flipped to Tier 5: Edge-ward at 10 ly in and not at the baseline)
+    const [home, low] = [tiersAt(EDGE_X), world.state().tiers];
+    for (const id of dark) {
+      expect(home[id]).not.toBe(5);
+      expect(world.tierOf(id)).toBe(5);
+      expect(world.isDark(id)).toBe(true);
+    }
+    expect(heard.at(-1)?.flipped.map((f) => f.system)).toEqual(expect.arrayContaining([...dark]));
+
+    // half way back up they are fewer, and above the threshold they are all relit
+    world.update({ count: 150 });
+    const half = world.state().dark;
+    expect(half.length).toBeLessThan(dark.length);
+    for (const id of half) expect(dark).toContain(id);
+    world.update({ count: BROKEN_BELOW });
+    expect(world.state().dark).toEqual([]);
+    for (const id of dark) expect(world.isDark(id)).toBe(false);
+    expect(world.state().tiers).toEqual(home);
+
+    // and after a restart at Count 0 they are dark again, with nothing saved but the Count
+    world.update({ count: 0 });
+    await world.flush();
+    await world.close();
+    const again = await s.open();
+    expect(again.state().dark).toEqual(dark);
+    expect(again.state().tiers).toEqual(low);
+    await again.close();
+  });
+
+  it('adds the Count-pushed stations to a Broken season\'s own, and the roll that ends the season keeps them dark only while the Count is low', async () => {
+    const s = shard(100, { season: 6 });
+    const world = await s.open();
+    s.hours(18);
+    world.advance();
+    const opened = world.state().dark;
+    expect(opened).toEqual(darkSystems(7));
+    world.update({ count: 0 });
+    const low = world.state().dark;
+    expect(low).toEqual(darkAt(0, world.state().opening));
+    expect(low.length).toBeGreaterThan(opened.length);
+    for (const id of opened) expect(low).toContain(id);
+    world.update({ count: 500 });
+    expect(world.state().dark).toEqual(opened);
+    await world.close();
   });
 
   it("plays a season's roll that passed while the server was down once, on boot, and keeps the Edge after it", async () => {

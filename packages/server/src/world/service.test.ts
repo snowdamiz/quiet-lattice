@@ -116,6 +116,7 @@ describe('WorldService', () => {
       count: 500,
       edgeX: EDGE_X,
       tiers: [...world.state().tiers],
+      dark: [],
       serverTime: 300 * 86_400 + 2.5,
     });
     expect(m.serverTime).toBe(world.clock.now());

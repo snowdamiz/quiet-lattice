@@ -11,6 +11,7 @@ import {
   darkSystems,
   edgeAt,
   seasonOpening,
+  type SeasonOpening,
 } from '../src/seasons/index.ts';
 import { EDGE_WALL_LY_PER_LY, EDGE_X, edgeX, galaxyTiers, wallX } from '../src/world/index.ts';
 
@@ -75,7 +76,56 @@ describe('the Count moving the Edge', () => {
     expect(darkAt(FED_FROM - 1, opening)).toEqual(opening.dark);
     expect(darkAt(FED_FROM, opening)).toEqual([]);
     expect(darkAt(1000, opening)).toEqual([]);
-    expect(darkAt(0, seasonOpening('held', 5))).toEqual([]);
+    expect(darkAt(500, seasonOpening('held', 5))).toEqual([]);
+  });
+
+  describe('below the Broken threshold (DESIGN 16.3 "Low": Edge-ward systems flip to Tier 5; their Waystations go dark)', () => {
+    const tier5 = (edge: number) => new Set(galaxyTiers(edge).filter((t) => t.edgeWard && t.tier === 5).map((t) => t.id));
+    const pushedBy = (count: number, opening: Pick<SeasonOpening, 'edgeShiftLy'>) => {
+      const held = tier5(edgeAt(BROKEN_BELOW, opening));
+      return [...tier5(edgeAt(count, opening))].filter((id) => !held.has(id)).sort((a, b) => a - b);
+    };
+
+    it('darkens the systems the Count itself pushed to Tier 5, in a season that opened with none dark', () => {
+      expect(darkAt(BROKEN_BELOW, NONE)).toEqual([]);
+      expect(darkAt(BROKEN_BELOW - 1, NONE)).toEqual([]);
+      const low = darkAt(0, NONE);
+      expect(low.length).toBeGreaterThanOrEqual(2);
+      expect(low).toEqual(pushedBy(0, NONE));
+      // (the ones that flipped 3 → 5 between the baseline and 10 ly in)
+      const [at, in10] = [tiersAt(EDGE_X), tiersAt(EDGE_X - COUNT_EDGE_SHIFT_LY)];
+      for (const id of low) {
+        expect(at[id]).not.toBe(5);
+        expect(in10[id]).toBe(5);
+      }
+      expect(low).toEqual([...low].sort((a, b) => a - b));
+    });
+
+    it('darkens more as the Count falls and relights them as it climbs, back to none at the threshold', () => {
+      let last: readonly number[] = [];
+      for (let count = BROKEN_BELOW; count >= 0; count -= 10) {
+        const now = darkAt(count, NONE);
+        for (const id of last) expect(now).toContain(id);
+        last = now;
+      }
+      expect(darkAt(250, NONE).length).toBeLessThan(darkAt(0, NONE).length);
+      expect(darkAt(699, NONE)).toEqual([]);
+      expect(darkAt(FED_FROM, NONE)).toEqual([]);
+    });
+
+    it("adds them to the season's opening's own, and is the same set the opening's Edge calls Edge-ward", () => {
+      const broken = seasonOpening('broken', 7);
+      const low = darkAt(0, broken);
+      expect(low).toEqual([...new Set([...broken.dark, ...pushedBy(0, broken)])].sort((a, b) => a - b));
+      expect(low.length).toBeGreaterThan(broken.dark.length);
+      for (const id of broken.dark) expect(low).toContain(id);
+      expect(darkAt(BROKEN_BELOW, broken)).toEqual(broken.dark);
+      expect(darkAt(FED_FROM, broken)).toEqual([]);
+      // a Fed opening already stands 10 ly out: the Count at 0 brings it back to the baseline and darkens what that crossed
+      const fed = seasonOpening('fed', 7);
+      expect(darkAt(0, fed)).toEqual(pushedBy(0, fed));
+      expect(darkAt(0, fed).length).toBeGreaterThan(0);
+    });
   });
 });
 
