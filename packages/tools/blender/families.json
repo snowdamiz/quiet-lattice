@@ -236,10 +236,16 @@
       "requiredMarkers": [{ "pattern": "COL_*", "type": "MESH", "min": 1, "why": "the walker collides with every city piece" }]
     },
     "stations": {
-      "what": "the modular Waystation kit, the Scrapyard kit and the Hive",
-      "class": "building",
-      "size": { "building": { "axis": "max", "range": [1, 1500] } },
-      "requiredMarkers": [{ "pattern": "COL_*", "type": "MESH", "min": 1, "why": "ships and walkers collide with station modules" }]
+      "what": "the modular Waystation kit, the Scrapyard kit and the Hive: kit pieces share one 2k atlas per kit (art bible 5)",
+      "class": "kit",
+      "classRules": [
+        { "match": ["ws_hangar", "ws_ring", "sy_rock*"], "class": "building", "why": "the hangar bay, the ring and the Scrapyard's rock are whole buildings (130-150 m)" }
+      ],
+      "size": { "building": { "axis": "max", "range": [1, 1500] }, "kit": { "axis": "max", "range": [0.2, 140] } },
+      "requiredMarkers": [
+        { "pattern": "COL_*", "type": "MESH", "min": 1, "why": "ships and walkers collide with station modules" },
+        { "pattern": "Socket_*", "type": "EMPTY", "min": 1, "why": "the station builder (P1.E11.T02) joins modules socket to socket, +Y out of each mating face" }
+      ]
     },
     "sites": {
       "what": "outposts, monoliths, beacons, crash sites, dens, Cartographer vaults, glyph stones",
