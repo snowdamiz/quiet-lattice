@@ -48,6 +48,8 @@ interface Opts {
   people?: 'ulgani';
   saved?: { lifeSupport?: number; hazard?: number };
   combat?: boolean;
+  /** Enters the zone already on foot on the home world (a character that logs in standing in the open). */
+  joinOnFoot?: boolean;
   mist?: { line: number; band: number; rate: number };
 }
 
@@ -79,13 +81,21 @@ function rig(opts: Opts = {}) {
   let now = 2.3e7;
   zone.step(now);
   meters.open(ID, { heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 100, at: now, ...opts.saved });
+  const spawn = (() => {
+    if (!opts.joinOnFoot) return { frame: zone.stationFrame, pos: [0, 0, 0] as Vec3, mode: 'docked' as const };
+    const d = zone.system;
+    const p = systemPoses(d, zone.time).bodies[d.home]!;
+    const [x, y, z] = p.position;
+    const l = Math.hypot(x, y, z);
+    const local = dirToLocal(p, [-x / l, -y / l, -z / l]);
+    const r = d.bodies[d.home]!.radius + 2;
+    return { frame: `${d.seed}:${d.home}`, pos: [local[0] * r, local[1] * r, local[2] * r] as Vec3, mode: 'foot' as const };
+  })();
   const entityId = zone.join(viewer, {
     kind: 'player',
-    frame: zone.stationFrame,
-    pos: [0, 0, 0],
+    ...spawn,
     quat: [0, 0, 0, 1],
     vel: [0, 0, 0],
-    mode: 'docked',
     ...(opts.people ? { people: opts.people } : {}),
   });
   zone.combat.joined(entityId, { characterId: ID, ship: LARK, skills: owned as string[] });
@@ -226,6 +236,13 @@ describe('life support and hazard protection drain from the place the server bel
     expect(t.view()).toMatchObject({ lifeSupport: 80, hazard: 70 });
     t.stand(false, 10);
     expect(t.view().hazard).toBeCloseTo(64, 3);
+  });
+
+  it('stands still for a character that entered on foot until its first input', () => {
+    const t = rig({ type: 'frozen', joinOnFoot: true, saved: { lifeSupport: 80, hazard: 70 } });
+    t.wait(100);
+    t.sweep();
+    expect(t.view()).toMatchObject({ lifeSupport: 80, hazard: 70 });
   });
 
   it('runs on the server’s clock whether or not inputs come, and the same however they are spread', () => {
@@ -440,6 +457,30 @@ describe('health through combat’s suit vitals', () => {
     const engaged = vi.spyOn(t.zone.combat, 'applyDamage');
     t.stand(false, 5);
     expect(engaged).not.toHaveBeenCalled();
+  });
+});
+
+describe('suit health in combat’s vitals', () => {
+  it('touches only a player on foot that is not down', () => {
+    const t = rig();
+    t.stand(false, 0);
+    const c = t.zone.combat;
+    // aboard its ship the pool is the ship's: the suit's is not touched
+    const at = t.home(false);
+    t.send('landed', at.frame, at.pos);
+    c.suitHealth(t.entityId, -30);
+    expect(t.health().suit).toBe(100);
+    t.send('foot', at.frame, at.pos);
+    c.suitHealth(t.entityId, -30);
+    expect(t.health().suit).toBe(70);
+    c.suitHealth(t.entityId, 500);
+    expect(t.health().suit).toBe(100);
+    c.suitHealth(t.entityId, -1000);
+    expect(t.health()).toMatchObject({ suit: 0, down: 'suit' });
+    c.suitHealth(t.entityId, 50);
+    expect(t.health().suit).toBe(0);
+    expect(t.downed).toHaveLength(1);
+    c.suitHealth(999, -10);
   });
 });
 

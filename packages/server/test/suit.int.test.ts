@@ -342,6 +342,33 @@ describe('health and the hazard death', () => {
   }, 60_000);
 });
 
+describe('the gateway keeps the suit on the server’s clock', () => {
+  it('sweeps on its own: a silent client drains, starves and is put down with no one calling the service', async () => {
+    const rig = await start();
+    const w = await character(rig);
+    rig.server.ws.meters.open(w.id, { heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 6, at: rig.clock() });
+    await w.stand(FROZEN);
+    rig.advance(45);
+    await waitFor(() => w.health().down === 'suit', 5000, 'the hazard death');
+    const pushed = await metersWhere(w, (m) => m.hazard === 0);
+    expect(pushed.lifeSupport).toBeLessThan(100);
+    w.s.close();
+    await rig.stop();
+  }, 60_000);
+
+  it('knows when the character is in combat (Second Skin’s floor holds only out of it)', async () => {
+    const rig = await start();
+    const w = await character(rig);
+    expect(rig.server.ws.meters.inCombat?.(w.id)).toBe(false);
+    rig.server.ws.combat.hooks.engaged?.(w.id, rig.clock());
+    expect(rig.server.ws.meters.inCombat?.(w.id)).toBe(true);
+    rig.advance(10);
+    expect(rig.server.ws.meters.inCombat?.(w.id)).toBe(false);
+    w.s.close();
+    await rig.stop();
+  }, 60_000);
+});
+
 describe('the suit is kept', () => {
   it('across leaving: as it was left, with nothing drained while away', async () => {
     const rig = await start();
