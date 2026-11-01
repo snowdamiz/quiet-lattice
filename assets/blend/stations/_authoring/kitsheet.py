@@ -176,7 +176,8 @@ try:
     sc.render.engine = "BLENDER_EEVEE"
 except TypeError:
     sc.render.engine = "BLENDER_EEVEE_NEXT"
-sc.render.resolution_x, sc.render.resolution_y = 1600, 900
+sc.render.resolution_x, sc.render.resolution_y = 1280, 720
+sc.eevee.taa_render_samples = 16
 w = bpy.data.worlds.new("w")
 sc.world = w
 w.use_nodes = True
@@ -191,6 +192,7 @@ for nm, e, rot in (("key", 4.5, (50, 0, 35)), ("fill", 0.9, (115, 0, 210)), ("ri
 inner = bpy.data.objects.new("hall", bpy.data.lights.new("hall", "AREA"))
 inner.data.energy = 4.0e5
 inner.data.size = 100
+inner.data.use_shadow = False
 inner.location = (0, 15, 40)
 sc.collection.objects.link(inner)
 cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
@@ -210,6 +212,7 @@ if SY:
         L = bpy.data.objects.new(f"cavity{i}", bpy.data.lights.new(f"cavity{i}", "POINT"))
         L.data.energy = e
         L.data.color = (1.0, 0.62, 0.42)
+        L.data.use_shadow = False
         L.location = pos
         sc.collection.objects.link(L)
     views["scrapyard_mouth"] = ((2200.0 + 120.0, -380.0, 60.0), (2200.0, -60.0, 0.0), 30)
