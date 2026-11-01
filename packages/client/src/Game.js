@@ -43,6 +43,7 @@ import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
 import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
+import { RemoteEntities } from './remote/RemoteEntities.js';
 
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -50,6 +51,7 @@ const _v3 = new THREE.Vector3();
 const _v4 = new THREE.Vector3();
 const _v5 = new THREE.Vector3();
 const _v6 = new THREE.Vector3();
+const _viewer = new THREE.Vector3();
 const _q1 = new THREE.Quaternion();
 const _c1 = new THREE.Color();
 const _m4 = new THREE.Matrix4();
@@ -152,6 +154,9 @@ export class Game {
     this.cities = new Cities(this);
     this.asteroids = new Asteroids(this);
     this.engine.scene.add(this.asteroids.group);
+    // other players and the server's ships, from the zone's snapshots (src/remote/)
+    this.remotes = new RemoteEntities(this);
+    this.engine.scene.add(this.remotes.group);
 
     this.weather = new Weather(this);
     this.objectives = new ObjectiveLine(this);
@@ -379,6 +384,7 @@ export class Game {
     old?.close();
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
+    this.remotes.attach(net);
     // (a world event's banner names the world it is on)
     net.worldEvents.worldName = (frame) => frameOfId(this.system, this.station, frame)?.name ?? null;
     this.inventory.send = (m) => net.send(m);
@@ -1194,6 +1200,12 @@ export class Game {
         for (const t of f.terminals) add('station', t.label, f.localToWorld(_v3.copy(t.pos).add(new THREE.Vector3(0, 2, 0)), new THREE.Vector3()));
       }
     }
+    // other pilots' ships, picked up by the same rule as any ship (src/remote/), each marked on its bounds on screen, its
+    // range the sensors' (from the ship, or the pilot on foot), not the camera's
+    const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(_viewer);
+    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat, id) =>
+      add('player', name, world, { box, quat, id, dist: world.distanceTo(viewer) }),
+    );
     return out;
   }
 
@@ -1284,6 +1296,7 @@ export class Game {
     this.pirates.syncVisual();
     this.ship.syncVisual(this.camWorld);
     this.ship.group.visible = true;
+    this.remotes.update(dt);
     this.flora.update(dt, current);
     this.fauna.update(dt, current);
     this.structures.update(dt, current);

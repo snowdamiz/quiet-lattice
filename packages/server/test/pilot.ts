@@ -4,6 +4,10 @@
 // time at all, as an old client), applying and acknowledging every snapshot, and keeping every message the server sends.
 // It can fly out of a sphere of influence into the frame beyond, picking its frame by the shared rule with the bodies
 // where its own clock has them, as the client does.
+//
+// Given a ManualClock (the server's own, through `startTestServer({}, { clock })`), it is stepped instead of paced: between
+// inputs it waits until the server has handled the last, then steps the clock by the input interval, so the server sees
+// exactly the arrival gaps and times the pilot meant, whatever the machine's load does to timers and sockets.
 import { performance } from 'node:perf_hooks';
 import { PROTOCOL_VERSION, type Pose, type PeopleId, type ServerMessage } from '@astra/shared/protocol';
 import {
@@ -31,6 +35,15 @@ type Welcome = Extract<ServerMessage, { t: 'welcome' }>;
 const INPUT_MS = 50;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** A monotonic clock a test steps by hand (ms): the server's (StartOptions.clock) and its stepped pilots' share it. */
+export class ManualClock {
+  ms = 1000;
+  readonly now = (): number => this.ms;
+  advance(ms: number): void {
+    this.ms += ms;
+  }
+}
+
 /** A quaternion turning the ship's nose (0, 0, −1) to unit direction `dir`. */
 export function noseTo([x, y, z]: Readonly<Vec3>): Quat {
   if (-z < -0.999999) return [0, 1, 0, 0];
@@ -43,8 +56,8 @@ export class Pilot {
   seq = 0;
   /** the last pose sent */
   last: Pose;
-  /** when welcome arrived, on the wall clock (ms) */
-  private readonly welcomedAt = performance.now();
+  /** when welcome arrived, on its clock (ms) */
+  private readonly welcomedAt: number;
 
   private constructor(
     readonly sock: TestSocket,
@@ -56,26 +69,39 @@ export class Pilot {
     readonly errors: unknown[],
     /** whether its inputs carry its time (false: `time` 0, as a client with no clock) */
     readonly stamps: boolean,
+    private readonly clock: ManualClock | undefined,
+    /** the newest input `seq` a snapshot has told it the server handled */
+    private readonly handled: { seq: number },
   ) {
     this.last = welcome.pose;
+    this.welcomedAt = this.now();
   }
 
   /** Signs a new account up, makes a character of `people` and joins with it. */
   static async join(
     server: RunningServer,
     people: PeopleId = 'thalune',
-    opts: { stamps?: boolean; /** runs with the new character's id before it joins (a level to set) */ before?: (characterId: string) => Promise<void> } = {},
+    opts: {
+      stamps?: boolean;
+      clock?: ManualClock;
+      /** runs with the new character's id before it joins (a level to set) */
+      before?: (characterId: string) => Promise<void>;
+      /** joins this earlier pilot's character again (once it has left) instead of making a new one */
+      as?: Pilot;
+    } = {},
   ): Promise<Pilot> {
-    const acct = await newAccount(server);
-    const characterId = (await newCharacter(server, acct.token, { people })).id;
+    const acct = opts.as ? { token: opts.as.token, accountId: opts.as.accountId } : await newAccount(server);
+    const characterId = opts.as ? opts.as.characterId : (await newCharacter(server, acct.token, { people })).id;
     await opts.before?.(characterId);
     const sock = await TestSocket.open(server.wsUrl);
     const client = new SnapshotClient();
     const errors: unknown[] = [];
+    const handled = { seq: 0 };
     sock.ws.on('message', (data, isBinary) => {
       if (!isBinary) return;
       try {
         const snap = client.receive(new Uint8Array(data as Buffer));
+        handled.seq = Math.max(handled.seq, snap.ack);
         sock.send({ t: 'ack', tick: snap.tick });
       } catch (err) {
         errors.push(err);
@@ -84,7 +110,7 @@ export class Pilot {
     sock.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
     sock.send({ t: 'join', characterId });
     const welcome = await sock.next('welcome');
-    return new Pilot(sock, client, welcome, acct.token, characterId, acct.accountId, errors, opts.stamps ?? true);
+    return new Pilot(sock, client, welcome, acct.token, characterId, acct.accountId, errors, opts.stamps ?? true, opts.clock, handled);
   }
 
   get entityId(): number {
@@ -98,7 +124,32 @@ export class Pilot {
 
   /** Its estimate of server time now: welcome's, and the time since on its own clock. */
   get time(): number {
-    return this.welcome.serverTime + (performance.now() - this.welcomedAt) / 1000;
+    return this.welcome.serverTime + (this.now() - this.welcomedAt) / 1000;
+  }
+
+  private now(): number {
+    return this.clock ? this.clock.ms : performance.now();
+  }
+
+  /** Lets `ms` of the clock pass with nothing sent: slept through, or stepped (once the server has handled every input
+   * sent). */
+  async idle(ms: number): Promise<void> {
+    if (!this.clock) {
+      await sleep(ms);
+      return;
+    }
+    await this.settled();
+    this.clock.advance(ms);
+  }
+
+  /** Resolves once the server has handled every input sent (a snapshot's `ack` has caught up with `seq`), and so has sent
+   * any `correction` for them. */
+  async settled(timeoutMs = 60_000): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    while (this.handled.seq < this.seq && this.sock.ws.readyState === this.sock.ws.OPEN) {
+      if (Date.now() > deadline) throw new Error(`the server did not handle input ${this.seq} (it handled ${this.handled.seq})`);
+      await sleep(5);
+    }
   }
 
   /** The poses it sent, newest last (the last 512), by input `seq`. */
@@ -122,11 +173,11 @@ export class Pilot {
     let key: FrameKey = frameKeyOf(system, this.last.frame)!;
     let local = [...this.last.pos] as Vec3;
     let heading: Vec3 = [...dir];
-    const end = performance.now() + ms;
-    let at = performance.now();
-    while (performance.now() < end) {
-      await sleep(INPUT_MS);
-      const now = performance.now();
+    const end = this.now() + ms;
+    let at = this.now();
+    while (this.now() < end) {
+      await this.idle(INPUT_MS);
+      const now = this.now();
       const step = (speed * (now - at)) / 1000;
       at = now;
       local = [local[0] + heading[0] * step, local[1] + heading[1] * step, local[2] + heading[2] * step];
@@ -146,10 +197,10 @@ export class Pilot {
 
   /** Sends the same pose at 20 Hz for `ms`. */
   async hold(mode: Mode, ms: number): Promise<void> {
-    const end = performance.now() + ms;
-    while (performance.now() < end) {
+    const end = this.now() + ms;
+    while (this.now() < end) {
       this.send(this.last, mode);
-      await sleep(INPUT_MS);
+      await this.idle(INPUT_MS);
     }
   }
 
@@ -162,11 +213,11 @@ export class Pilot {
       const v = speeds[Math.min(i, speeds.length - 1)]!;
       const d = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
       const dir: Vec3 = [(b[0] - a[0]) / d, (b[1] - a[1]) / d, (b[2] - a[2]) / d];
-      const t0 = performance.now();
+      const t0 = this.now();
       for (;;) {
-        await sleep(INPUT_MS);
+        await this.idle(INPUT_MS);
         // where the speed has taken it by now, never past the leg's end
-        const k = Math.min(1, (v * (performance.now() - t0)) / 1000 / d);
+        const k = Math.min(1, (v * (this.now() - t0)) / 1000 / d);
         const p: Vec3 = [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
         this.send({ frame, pos: p, quat: noseTo(dir), vel: [dir[0] * v, dir[1] * v, dir[2] * v] }, mode, buttons);
         if (k >= 1) break;

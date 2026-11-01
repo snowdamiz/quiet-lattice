@@ -56,6 +56,8 @@ export interface StartOptions {
   persistence?: Omit<PersistenceOptions, 'store' | 'registry' | 'log'>;
   /** Hold players to movement authority (true; integration tests that put players anywhere with raw poses turn it off). */
   movement?: boolean;
+  /** The server clock's sources (the monotonic one advances world time), ms; tests that judge timing drive them by hand. */
+  clock?: { wallNow?: () => number; monoNow?: () => number };
   /** Developer tooling overrides, applied after the environment's ASTRA_* variables (admin/config.ts). */
   tooling?: Partial<ToolingInput>;
   /** The abilities casts may cast, with their effects (this build's by default; integration tests cast fixtures). */
@@ -137,6 +139,7 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
       store: pgShardStore(database.db, opts.shard ?? DEFAULT_SHARD_ID, { firstFinds: seasonFinds, log }),
       mirror: redis.redis,
       log,
+      ...opts.clock,
     });
   } catch (err) {
     await Promise.allSettled([database.close(), redis.close()]);

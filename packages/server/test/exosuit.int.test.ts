@@ -61,6 +61,30 @@ async function sprint(p: Pilot, v: number, ms: number, until: () => boolean = ()
 }
 
 describe('Sprint Stride over the wire', () => {
+  it('holds a character that joins owning it to the faster walker from its first input', { timeout: 60_000 }, async () => {
+    const first = await onFoot();
+    const id = first.characterId;
+    for (const node of ['long_jump', 'sprint_stride']) {
+      expect(server.ws.skills.unlock(id, node, { kind: 'dev' }).ok).toBe(true);
+      expect(server.ws.skills.buy(id, node)).toMatchObject({ ok: true });
+    }
+    first.close();
+    await waitFor(() => server.zones.zone(first.welcome.zone.id)!.entity(first.entityId) === undefined, 5000, 'the first session gone');
+
+    const p = await Pilot.join(server, 'ixari', { as: first });
+    expect(server.ws.skills.owned(id)).toContain('sprint_stride');
+    const frame = p.welcome.pose.frame;
+    p.send({ frame, pos: [-22, 0, -22], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, 'foot');
+    await waitFor(() => server.zones.zone(p.welcome.zone.id)!.entity(p.entityId)?.fields.mode === 'foot', 5000, 'the pilot on foot');
+    // 14 m/s is past the plain sprint's cap with its tolerance (12.95) and under Sprint Stride's (14.65)
+    await sprint(p, 14, 2000);
+    await new Promise((r) => setTimeout(r, 300));
+    expect(p.corrections).toEqual([]);
+    expect(p.errors).toEqual([]);
+    p.close();
+  });
+
+
   it('lifts the speed a walker is held to the moment the node is bought', { timeout: 60_000 }, async () => {
     const p = await onFoot();
     const id = p.characterId;

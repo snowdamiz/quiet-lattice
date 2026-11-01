@@ -2,6 +2,11 @@
 // honestly is never corrected; one that teleports and speeds is snapped back with `correction` (its entity put back where
 // the correction says), logged with its account, character, the rule and the measured and allowed values, and after
 // repeated cheating refused with `kicked`.
+//
+// The authority judges a client's time against the server's, by design (ARCHITECTURE §7), so a test that scripts a client
+// must control both clocks. The tests that judge timing (speed, a frame handoff, a client with no clock) run on a server
+// whose clock is a ManualClock, with pilots that step it (test/pilot.ts): the server sees exactly the arrival gaps and times
+// the pilot meant, whatever the machine's load does to timers and sockets.
 import { STATION_LAYOUT } from '@astra/shared/data';
 import { flightCaps, shipStats, SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
 import { frameIdOf } from '@astra/shared/world';
@@ -9,19 +14,25 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { DEFAULT_LOADOUT } from '../src/inventory/service.ts';
 import type { RunningServer } from '../src/server.ts';
 import { MOVEMENT } from '../src/sim/movement/index.ts';
-import { startTestServer, waitFor } from './helpers.ts';
-import { Pilot } from './pilot.ts';
+import { startTestServer, uniqueShard, waitFor } from './helpers.ts';
+import { ManualClock, Pilot } from './pilot.ts';
 
 type Vec3 = [number, number, number];
 
+type Warning = { obj: Record<string, unknown>; msg: string };
+
 let server: RunningServer;
-/** warn lines the server logged while the suite ran */
-const warnings: { obj: Record<string, unknown>; msg: string }[] = [];
+/** a server of its own shard, whose clock only `clock` moves */
+let stepped: RunningServer;
+const clock = new ManualClock();
+/** warn lines the stepped server logged while the suite ran */
+const warnings: Warning[] = [];
 
 beforeAll(async () => {
   server = await startTestServer();
+  stepped = await startTestServer({}, { shard: uniqueShard(), clock: { monoNow: clock.now } });
   // the zones log through the server's logger (silent in tests): listen in on its warnings
-  const log = server.app.log as unknown as { warn: (obj: object, msg: string) => void };
+  const log = stepped.app.log as unknown as { warn: (obj: object, msg: string) => void };
   const warn = log.warn.bind(log);
   log.warn = (obj: object, msg: string) => {
     warnings.push({ obj: obj as Record<string, unknown>, msg });
@@ -31,6 +42,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await server?.close();
+  await stepped?.close();
 });
 
 /** Off the pad it joined on, up, and out of the hangar's mouth. */
@@ -41,7 +53,7 @@ async function takeOff(p: Pilot): Promise<Vec3> {
   return out;
 }
 
-const zoneOf = (p: Pilot) => server.zones.zone(p.welcome.zone.id)!;
+const zoneOf = (p: Pilot, s = server) => s.zones.zone(p.welcome.zone.id)!;
 
 describe('movement authority over the wire', () => {
   it('joins docked on a pad, and never corrects a client that flies honestly', async () => {
@@ -72,17 +84,19 @@ describe('movement authority over the wire', () => {
     p.close();
   });
 
-  it('never corrects a client flying out of the Waystation’s sphere into its world’s frame, stamping its time or not', { timeout: 60_000 }, async () => {
+  it('never corrects a client flying out of the Waystation’s sphere into its world’s frame, stamping its time or not', { timeout: 120_000 }, async () => {
     for (const stamps of [true, false]) {
-      const p = await Pilot.join(server, 'thalune', { stamps });
+      const p = await Pilot.join(stepped, 'thalune', { stamps, clock });
       await takeOff(p);
-      const zone = zoneOf(p);
+      const zone = zoneOf(p, stepped);
       const d = zone.system;
       // boosting outward, through the edge of the Waystation's sphere and 5% beyond it
       const frame = await p.flyOn(d, [0, 0.1, 0.995], 1400, 5000, 2 /* boost */);
       expect(frame).toBe(frameIdOf(d.seed, d.station.parent));
+      await p.settled();
+      const why = () => JSON.stringify(warnings.filter((w) => w.obj.entity === p.entityId && w.msg === 'movement corrected').map((w) => w.obj));
+      expect(p.corrections, `${stamps ? 'stamped' : 'no time'}: ${why()}`).toEqual([]);
       await waitFor(() => zone.entity(p.entityId)?.fields.frame === frame, 5000, 'the last input applied');
-      expect(p.corrections, `${stamps ? 'stamped' : 'no time'}`).toEqual([]);
       expect(zone.movement!.recent.filter((r) => r.entity === p.entityId)).toEqual([]);
       // (and a client that sends no time is logged as such, once)
       expect(warnings.filter((w) => w.msg.includes('sends no time') && w.obj.entity === p.entityId).length).toBe(stamps ? 0 : 1);
@@ -90,19 +104,21 @@ describe('movement authority over the wire', () => {
     }
   });
 
-  it('snaps back a client that teleports and speeds, logs it, and kicks it when it keeps on', async () => {
-    const p = await Pilot.join(server);
+  it('snaps back a client that teleports and speeds, logs it, and kicks it when it keeps on', { timeout: 120_000 }, async () => {
+    const p = await Pilot.join(stepped, 'thalune', { clock });
     const out = await takeOff(p);
     const before = warnings.length;
 
     // a teleport: 3 km in one input
     const valid = p.last;
+    await p.idle(50);
     const seq = p.send({ ...valid, pos: [out[0], out[1], out[2] + 3000] }, 'ship');
+    await p.settled();
     await waitFor(() => p.corrections.length === 1, 5000, 'the correction');
     expect(p.corrections[0]).toEqual({ t: 'correction', seq, pose: valid, mode: 'ship' });
-    const zone = zoneOf(p);
+    const zone = zoneOf(p, stepped);
     expect(zone.entity(p.entityId)!.fields.pos).toEqual(valid.pos);
-    await waitFor(() => warnings.length > before, 2000, 'the log line');
+    await waitFor(() => warnings.length > before, 5000, 'the log line');
     expect(warnings.find((w) => w.msg === 'movement corrected' && w.obj.entity === p.entityId)?.obj).toMatchObject({
       zone: p.welcome.zone.id,
       account: p.accountId,
@@ -115,16 +131,16 @@ describe('movement authority over the wire', () => {
     expect(logged.measured as number).toBeGreaterThan(logged.allowed as number);
 
     // it takes the correction, then flies at three times the space cap
-    await new Promise((r) => setTimeout(r, MOVEMENT.correction.graceS * 1000));
+    await p.idle(MOVEMENT.correction.graceS * 1000);
     const fast = flightCaps(shipStats(DEFAULT_LOADOUT.ship!), 'space').allowed * 3;
     const from = valid.pos as Vec3;
     const flewFrom = p.seq + 1;
     await p.fly([from, [from[0], from[1], from[2] + 2000]], [fast]);
+    await p.settled();
     await waitFor(() => p.corrections.length > 1, 5000, 'a correction for speeding');
     const speeding = p.corrections[1]!;
     expect(speeding.mode).toBe('ship');
-    // back to where the too-fast window began: no further along than the first pose it flew from there (how far that
-    // first pose was depends on how late this process's 50 ms timer fired, which a loaded machine stretches)
+    // back to where the too-fast window began: no further along than the first pose it flew from there
     const first = p.sent.find((s) => s.seq === flewFrom)!.pose;
     expect(speeding.pose.pos[2] - from[2]).toBeLessThanOrEqual(first.pos[2] - from[2] + 1e-6);
     expect(warnings.some((w) => w.msg === 'movement corrected' && w.obj.entity === p.entityId && w.obj.rule === 'speed')).toBe(true);
@@ -132,14 +148,14 @@ describe('movement authority over the wire', () => {
     // and keeps cheating: refused with `kicked`
     for (let i = 0; i < 400 && p.sock.ws.readyState === p.sock.ws.OPEN; i++) {
       p.send({ ...valid, pos: [from[0] + 2000 + i, from[1], from[2]] }, 'ship');
-      await new Promise((r) => setTimeout(r, 50));
+      await p.idle(50);
     }
-    const refused = await p.sock.next('refused', 1000);
+    const refused = await p.sock.next('refused', 10_000);
     expect(refused.code).toBe('kicked');
     expect(p.corrections.length).toBe(MOVEMENT.kick.count);
     expect(warnings.some((w) => w.msg.includes('kicked') && w.obj.character === p.characterId && w.obj.account === p.accountId)).toBe(true);
     await p.sock.closed;
-    await waitFor(() => zone.entity(p.entityId) === undefined, 5000, 'its entity out of the zone');
+    await waitFor(() => zone.entity(p.entityId) === undefined, 30_000, 'its entity out of the zone');
     expect(zone.movement!.recent.filter((r) => r.entity === p.entityId).map((r) => r.rule)).toContain('teleport');
   });
 
