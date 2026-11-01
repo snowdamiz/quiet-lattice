@@ -18,7 +18,8 @@ export const BURNING = 'burning';
  * two ends at the greater rate, with the ticks it already has. */
 function ignite(ctx: CastContext, target: number, dps: number, durationS: number): void {
   if (!ctx.status.apply(target, BURNING, durationS, dps)) return;
-  let last = ctx.time();
+  // (from the moment the status began, which the status was given, not from a clock read a moment later)
+  let last = ctx.status.get(target, BURNING)!.until - durationS;
   const tick = (): void => {
     const s = ctx.status.get(target, BURNING);
     if (!s) return;
