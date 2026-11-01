@@ -2,7 +2,8 @@
 // data, read by `checkDiscoveryName` (@astra/shared/discovery). The lists are small on purpose: they catch the obvious, and
 // moderators rename the rest with the admin CLI (`rename`). Every entry is matched against a name's skeleton: lower case,
 // accents stripped, the digits players use for letters read as those letters (0 o, 1 i, 3 e, 4 a, 5 s, 6 g, 7 t, 8 b,
-// 9 g), and the ligatures æ and œ read both ways (æ as ae and as a, œ as oe and as o).
+// 9 g; the reserved word list leaves 6 and 9 alone), and the ligatures æ and œ read both ways (æ as ae and as a, œ as oe and as
+// o). The blocked lists are also read with v as u and ph as f, and with runs of a letter as one or cut to two.
 import { deepFreeze } from './common.ts';
 import { FACTIONS } from './factions.ts';
 import { PEOPLES } from './peoples.ts';

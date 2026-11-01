@@ -136,16 +136,19 @@ const FOLD: Readonly<Record<string, string>> = {
 /** The ligatures' other reading: players write "Fæggot" for "Faggot" as often as for "Faeggot". */
 const FOLD_SHORT: Readonly<Record<string, string>> = { ...FOLD, æ: 'a', œ: 'o' };
 const FOLDS = [FOLD, FOLD_SHORT];
-/** Digits read as the letters players write with them. */
+/** Digits read as the letters players write with them, for the blocked lists. */
 const LOOKALIKE: Readonly<Record<string, string>> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '6': 'g', '7': 't', '8': 'b', '9': 'g' };
+/** The reserved word lists' digits: 6 and 9 stay digits, or catalogue names such as "Outpost 9M" and "Kepler 9 M" would
+ * read as the reserved "gm". The whole-name check reads them as g anyway ("Ed9e" for "Edge"): no whole name is a word. */
+const RESERVED_LOOKALIKE: Readonly<Record<string, string>> = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '8': 'b' };
 
-function skeleton(s: string, fold: Readonly<Record<string, string>>): string {
+function skeleton(s: string, fold: Readonly<Record<string, string>>, digits: Readonly<Record<string, string>> = LOOKALIKE): string {
   return s
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .toLowerCase()
     .replace(/[\u00c0-\u024f]/g, (c) => fold[c] ?? c)
-    .replace(/[0-9]/g, (d) => LOOKALIKE[d] ?? d)
+    .replace(/[0-9]/g, (d) => digits[d] ?? d)
     .replace(/[^a-z0-9]/g, '');
 }
 
@@ -185,16 +188,35 @@ function runTogether(s: string): string {
   return s.replace(/(.)\1+/g, '$1');
 }
 
+/** A skeleton with each run of three or more of one letter as two: the blocked words that double a letter ("nigger",
+ * "ass", "piss") are dressed up with a third ("niggger"), which running together would shrink past their pair. */
+function runsCapped(s: string): string {
+  return s.replace(/(.)\1{2,}/g, '$1$1');
+}
+
+/** The ways a blocked word is dressed up in letters: v for u ("cvnt"), ph for f ("phuck", "phhuck"), a letter repeated
+ * ("shiiit"), each alone or with the others. A blocked word is looked for in a skeleton read every one of these ways. */
+const DRESSINGS: readonly ((s: string) => string)[] = [false, true].flatMap((vu) =>
+  [false, true].flatMap((ph) =>
+    [(s: string) => s, runTogether, runsCapped].map((shrink) => (s: string) => {
+      if (vu) s = s.replace(/v/g, 'u');
+      if (ph) s = s.replace(/p+h+/g, 'f');
+      return shrink(s);
+    }),
+  ),
+);
+
 const BLOCKED_WORDS = new Set(NAME_BLOCKED_WORDS.flatMap(nameSkeletons));
 const RESERVED_WORDS = new Set(NAME_RESERVED_WORDS.flatMap(nameSkeletons));
 const RESERVED = new Set(NAME_RESERVED.flatMap(nameSkeletons));
 
-/** Whether any run of neighbouring words, written together, is in `set` ("Ad min", "Ad-min Rock" for "admin"). */
-function holdsRun(words: readonly string[], set: ReadonlySet<string>): boolean {
+/** Whether any run of neighbouring words, written together (and dressed as `dressings` say), is in `set` ("Ad min",
+ * "Ad-min Rock" for "admin"; "Sh it Rock" for "shit"). */
+function holdsRun(words: readonly string[], set: ReadonlySet<string>, dressings: readonly ((s: string) => string)[] = [(s) => s]): boolean {
   for (let i = 0; i < words.length; i++) {
     for (let j = i, run = ''; j < words.length; j++) {
       run += words[j];
-      if (set.has(run)) return true;
+      if (dressings.some((dress) => set.has(dress(run)))) return true;
     }
   }
   return false;
@@ -202,28 +224,32 @@ function holdsRun(words: readonly string[], set: ReadonlySet<string>): boolean {
 
 /**
  * The moderation filter (DESIGN 14.5): the name tidied, or why it is refused. A name is DISCOVERY_NAME_RULES' length,
- * words of Latin letters and digits with one space, apostrophe or hyphen between two, and at least two letters; none of
- * its forms (its skeleton, with runs of a letter as one, a ligature read either way) holds a blocked fragment, none of
- * its words nor the whole of it run together is a blocked word; and, unless `reserved` is false (an admin's rename),
- * no run of its words written together is a reserved word and the whole of it is not a reserved name. The rules are
- * data (`data/names.ts`).
+ * words of Latin letters and digits with one space, apostrophe or hyphen between two, and at least two letters. Read with
+ * digits as letters (a ligature either way), and with v as u, ph as f and repeated letters as one or as two, none of its forms may
+ * hold a blocked fragment, and no run of its words written together may be a blocked word ("Sh it Rock"). Unless
+ * `reserved` is false (an admin's rename), no run of its words written together, digits read except 6 and 9, is a
+ * reserved word, and the whole of it, every digit read, is not a reserved name. The rules are data (`data/names.ts`).
  */
 export function checkDiscoveryName(raw: string, opts: { reserved?: boolean } = {}): NameCheck {
   const name = tidyName(raw);
   const refuse = (reason: NameRefusal): NameCheck => ({ ok: false, reason });
   if (name.length < DISCOVERY_NAME_RULES.minLength || name.length > DISCOVERY_NAME_RULES.maxLength) return refuse('length');
   if (!NAME_SHAPE.test(name) || (name.match(LETTERS)?.length ?? 0) < DISCOVERY_NAME_RULES.minLetters) return refuse('characters');
-  const readings = FOLDS.map((fold) => ({
-    whole: skeleton(name, fold),
-    words: name
-      .split(/[ '-]/)
-      .map((w) => skeleton(w, fold))
-      .filter(Boolean),
-  }));
-  const any = (test: (r: { whole: string; words: string[] }) => boolean) => readings.some(test);
-  if (any(({ whole }) => NAME_BLOCKED_FRAGMENTS.some((f) => whole.includes(f) || runTogether(whole).includes(f)))) return refuse('blocked');
-  if (any(({ whole, words }) => [...words, whole].some((w) => BLOCKED_WORDS.has(w) || BLOCKED_WORDS.has(runTogether(w))))) return refuse('blocked');
-  if (opts.reserved !== false && any(({ whole, words }) => holdsRun(words, RESERVED_WORDS) || RESERVED.has(whole))) return refuse('reserved');
+  const split = name.split(/[ '-]/);
+  const readings = (digits: Readonly<Record<string, string>>) =>
+    FOLDS.map((fold) => ({
+      whole: skeleton(name, fold, digits),
+      words: split.map((w) => skeleton(w, fold, digits)).filter(Boolean),
+    }));
+  const blocked = readings(LOOKALIKE);
+  if (blocked.some(({ whole }) => DRESSINGS.some((dress) => NAME_BLOCKED_FRAGMENTS.some((f) => dress(whole).includes(f))))) return refuse('blocked');
+  if (blocked.some(({ words }) => holdsRun(words, BLOCKED_WORDS, DRESSINGS))) return refuse('blocked');
+  if (
+    opts.reserved !== false &&
+    (readings(RESERVED_LOOKALIKE).some(({ words }) => holdsRun(words, RESERVED_WORDS)) || blocked.some(({ whole }) => RESERVED.has(whole)))
+  ) {
+    return refuse('reserved');
+  }
   return { ok: true, name };
 }
 
