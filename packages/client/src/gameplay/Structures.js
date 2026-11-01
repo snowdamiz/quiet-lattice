@@ -445,6 +445,7 @@ export class Structures {
     if (!this.planet) return;
     this.time += dt;
     const sunLocal = this.planet.dirToLocal(_v.copy(g.system.star.position).sub(this.planet.position).normalize(), new THREE.Vector3());
+    this.showBeacons();
     for (const s of this.sites) {
       const d = s.pos.distanceTo(camLocal);
       if (!s.built && d < 2200) this.build(s);
@@ -553,6 +554,12 @@ export class Structures {
       n++;
     }
     return { count: n, nearest };
+  }
+
+  /** Long Ear (DESIGN 9.4): its owner has the planet's Signal Beacons on the map from the start. */
+  showBeacons() {
+    if (!this.game.beaconsOnMap) return;
+    for (const s of this.sites) if (s.type === 'beacon') s.known = true;
   }
 
   /** Reveals every site of the planet (Deep Sweep from orbit); how many were still hidden. */

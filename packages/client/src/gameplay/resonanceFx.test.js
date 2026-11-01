@@ -3,6 +3,9 @@
 import { RESONANCE_NUMBERS } from '@astra/shared/abilities';
 import { scanRanges, suitMods } from '@astra/shared/exosuit';
 import { describe, expect, it, vi } from 'vitest';
+import * as THREE from 'three';
+import { Game } from '../Game.js';
+import { Structures } from './Structures.js';
 import { playAbilityFx } from '../net/abilities.js';
 import './resonanceFx.js';
 
@@ -54,5 +57,47 @@ describe('Long Ear', () => {
     expect(scanRanges(suitMods({ skills: [] }))).toEqual({ depositM: 180, siteM: 3000 });
     expect(scanRanges(suitMods({ skills: ['long_ear'] }))).toEqual({ depositM: 360, siteM: 6000 });
     expect(scanRanges(suitMods({ skills: ['pulse', 'choir'] }))).toEqual({ depositM: 180, siteM: 3000 });
+  });
+
+  it('puts Signal Beacons on the map for its owner and no other site: markers draw only the known ones', () => {
+    // a planet whose sites are all out of every range the frame's own reveals use
+    const planet = {
+      sampler: {},
+      radius: 1000,
+      position: new THREE.Vector3(),
+      worldToLocal: (v, out) => out.copy(v),
+      dirToLocal: (v, out) => out.copy(v),
+    };
+    const site = (type, id) => ({ id, type, label: type, known: false, pos: new THREE.Vector3(0, 8000, 0), dir: new THREE.Vector3(0, 1, 0) });
+    const draw = (owned) => {
+      const game = Object.assign(Object.create(Game.prototype), {
+        build: { skills: [] },
+        player: { setBuild: vi.fn() },
+        camWorld: new THREE.Vector3(0, 1000, 0),
+        system: { star: { position: new THREE.Vector3(1, 0, 0) } },
+        mode: 'foot',
+      });
+      game.onSkills({ state: { bought: owned } });
+      const structures = new Structures(game);
+      structures.planet = planet;
+      structures.sites = [site('beacon', 'a#0'), site('outpost', 'a#1'), site('beacon', 'a#2')];
+      structures.update(1 / 60, planet);
+      return structures.markers(new THREE.Vector3(0, 8000, 0)).map((m) => m.s.id);
+    };
+    expect(draw([])).toEqual([]);
+    expect(draw(['scanner_lens', 'pulse'])).toEqual([]);
+    expect(draw(['long_ear'])).toEqual(['a#0', 'a#2']);
+  });
+
+  it('is read from the skill view the server sends', () => {
+    const game = Object.assign(Object.create(Game.prototype), {
+      build: { skills: [], people: undefined },
+      player: { setBuild: vi.fn() },
+      beaconsOnMap: false,
+    });
+    game.onSkills({ state: { bought: ['long_ear'] } });
+    expect(game.beaconsOnMap).toBe(true);
+    game.onSkills({ state: { bought: [] } });
+    expect(game.beaconsOnMap).toBe(false);
   });
 });

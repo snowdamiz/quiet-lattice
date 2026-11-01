@@ -22,7 +22,7 @@ import { Cities } from './gameplay/Cities.js';
 import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { SUIT, footHazard } from '@astra/shared/data';
-import { cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
+import { beaconsOnMap, cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
 import { meterConditions } from '@astra/shared/meters';
 import { AUTO_QUESTS, QuestBook, atInfo, getQuest } from '@astra/shared/quests';
 import { bondLine, codexLine } from '@astra/shared/codex';
@@ -119,6 +119,7 @@ export class Game {
     // what the character owns and its people, as the server's skill view says: the exo-suit's walker, suit and scan follow it
     this.build = { skills: [], people: undefined };
     this.suitMods = suitMods(this.build);
+    this.beaconsOnMap = false;
     // the action bars and their cooldowns as the server says, the casts keys 1–6 send, and the effects of those seen
     this.abilities = new Abilities({ now: () => this.hud.now() });
     this.abilities.listen((e) => playAbilityFx(this, e));
@@ -366,6 +367,7 @@ export class Game {
   applyBuild() {
     this.player.setBuild(this.build);
     this.suitMods = suitMods(this.build);
+    this.beaconsOnMap = beaconsOnMap(this.build.skills);
   }
 
   onSkills(view) {
