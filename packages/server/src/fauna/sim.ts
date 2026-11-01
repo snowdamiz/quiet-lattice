@@ -52,7 +52,7 @@ import {
 } from '@astra/shared/world';
 import type { InterestClass } from '../zones/interest.ts';
 import type { EntityFields, EntityInit, ZoneEntity } from '../zones/zone.ts';
-import { carry, groundDistance, herdTick, move, newCreature, orientation, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
+import { carry, groundDistance, herdTick, move, newCreature, orientation, resting, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
 import type { Vec3 } from './cells.ts';
 import {
   APEX_RESPAWN_S,
@@ -1068,6 +1068,9 @@ export class FaunaSim {
     const now = this.lastTime ?? 0;
     c.pull = { from: norm(c.pos), to: norm(to), start: now, end: now + Math.max(durationS, 1e-3) };
     c.speed = 0;
+    c.attack = null;
+    c.holdUntil = 0;
+    c.state = resting(c);
     return true;
   }
 

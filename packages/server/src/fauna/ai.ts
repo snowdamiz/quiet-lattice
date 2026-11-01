@@ -657,7 +657,7 @@ export const calmed = (c: Creature, now: number): boolean => c.threat.calmUntil 
 export const knockedDown = (c: Creature, now: number): boolean => now < c.downUntil;
 
 /** The state a creature rests in when nothing else is steering it. */
-const resting = (c: Creature): CreatureState => (isFlyer(c) ? 'fly' : c.species.temperament === 'ambusher' && c.state === 'lurk' ? 'lurk' : 'idle');
+export const resting = (c: Creature): CreatureState => (isFlyer(c) ? 'fly' : c.species.temperament === 'ambusher' && c.state === 'lurk' ? 'lurk' : 'idle');
 
 /** A knocked-down creature lies where it fell; whatever it was doing stops, an attack in progress with it. */
 function lieDown(c: Creature) {
@@ -668,7 +668,7 @@ function lieDown(c: Creature) {
 
 /**
  * A pulled creature's tick (Pull): carried from where it was to the point it lands at, on the ground there (a flyer comes down
- * to head height on the way), doing nothing meanwhile; it stands where the pull ends. True while it is being carried, so
+ * to head height on the way), doing nothing meanwhile; it goes on from where the pull ends. True while it is being carried, so
  * that its decision and its walk are skipped.
  */
 export function carry(c: Creature, ctx: Ctx): boolean {
@@ -684,10 +684,7 @@ export function carry(c: Creature, ctx: Ctx): boolean {
   if (flyer) c.alt += (AI.carriedAltM - c.alt) * t;
   const h = ctx.ground.height(dir);
   c.pos = scaleV(dir, ctx.ground.radius + (ctx.ground.ocean ? Math.max(h, flyer ? 0 : 0.3) : h) + (flyer ? c.alt : 0));
-  if (f >= 1) {
-    c.pull = null;
-    c.state = resting(c);
-  }
+  if (f >= 1) c.pull = null;
   return true;
 }
 
