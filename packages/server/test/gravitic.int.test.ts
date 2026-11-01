@@ -158,8 +158,6 @@ async function join(token: string, characterId: string) {
 function creature(zone: Zone, feet: Readonly<Vec3>): number {
   return zone.fauna!.spawnHerd({ body: body.index, species: walker.index, at: [...feet], count: 1, level: 2 })!.creatures[0]!;
 }
-const health = (zone: Zone, id: number) => zone.combat.creatureHealth(id)!;
-const lost = (zone: Zone, id: number) => health(zone, id).max - health(zone, id).hp;
 const heat = (id: string) => server.ws.meters.view(id, server.world.clock.now()).heat;
 /** The heat the cast left, at the moment it was cast (the answer says when it is ready again): heat cools while the test reads it. */
 const heatCast = (id: string, answer: Answer, cooldownS: number) => server.ws.meters.view(id, answer.readyAt! - cooldownS).heat;
@@ -169,7 +167,10 @@ const info = (zone: Zone, id: number) => zone.fauna!.creatures().find((c) => c.i
 /** What the movement authority says of the caster's fall, as a test scripts it: the authority is not on in this server (the bots
  * stand on the world with raw poses), and its own `fall` is tested in sim/movement/gravitic.test.ts. */
 function scriptFall(zone: Zone, script: () => { aboveM: number; peakM: number } | null): () => void {
-  Object.defineProperty(zone, 'movement', { value: { fall: script, hold: () => true, pulsing: () => false, setPoses: () => {}, remove: () => undefined }, configurable: true });
+  Object.defineProperty(zone, 'movement', {
+    value: { fall: script, hold: () => true, pulsing: () => false, setPoses: () => {}, remove: () => undefined },
+    configurable: true,
+  });
   return () => Object.defineProperty(zone, 'movement', { value: null, configurable: true });
 }
 
@@ -301,45 +302,53 @@ describe('Gravitic over the wire', () => {
     },
   );
 
-  it('Tractor Beam: 15 charge on the ship bar, a 12 s cooldown, cast at nothing it draws rocks (the client’s), and a player is no ship to hold until PvP', { timeout: 40_000 }, async () => {
-    const c = await character();
-    const bot = await join(c.token, c.id);
-    own(c.id, ['tractor_beam', 'inertial_brake']);
-    expect((await bot.slot(0, 'tractor_beam', 'ship')).error).toBeUndefined();
-    expect((await bot.slot(1, 'inertial_brake', 'ship')).error).toBeUndefined();
-    const up = at(0).map((x) => x * 1.002) as Vec3;
-    await bot.stand(up, 'ship');
-    const other = await character();
-    const rival = await join(other.token, other.id);
-    await rival.stand(up.map((x) => x * 1.00002) as Vec3, 'ship');
-    expect(getSkillNode('tractor_beam').params).toMatchObject({ holdS: 3, targets: 1 });
-    const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
-    expect(await bot.cast('tractor_beam', 0, { target: rival.entity })).toMatchObject({ result: 'refused', reason: 'target' });
-    const answer = await bot.cast('tractor_beam', 0);
-    expect(answer).toMatchObject({ result: 'cast', node: 'tractor_beam' });
-    expect(answer.readyAt! - bot.time()).toBeCloseTo(12, 0);
-    expect(charge0 - server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeGreaterThan(15 - 2);
-    expect(bot.casts('tractor_beam')).toMatchObject([{ caster: bot.entity, phase: 'cast' }]);
-    bot.sock.close();
-    rival.sock.close();
-  });
+  it(
+    'Tractor Beam: 15 charge on the ship bar, a 12 s cooldown, cast at nothing it draws rocks (the client’s), and a player is no ship to hold until PvP',
+    { timeout: 40_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['tractor_beam', 'inertial_brake']);
+      expect((await bot.slot(0, 'tractor_beam', 'ship')).error).toBeUndefined();
+      expect((await bot.slot(1, 'inertial_brake', 'ship')).error).toBeUndefined();
+      const up = at(0).map((x) => x * 1.002) as Vec3;
+      await bot.stand(up, 'ship');
+      const other = await character();
+      const rival = await join(other.token, other.id);
+      await rival.stand(up.map((x) => x * 1.00002) as Vec3, 'ship');
+      expect(getSkillNode('tractor_beam').params).toMatchObject({ holdS: 3, targets: 1 });
+      const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
+      expect(await bot.cast('tractor_beam', 0, { target: rival.entity })).toMatchObject({ result: 'refused', reason: 'target' });
+      const answer = await bot.cast('tractor_beam', 0);
+      expect(answer).toMatchObject({ result: 'cast', node: 'tractor_beam' });
+      expect(answer.readyAt! - bot.time()).toBeCloseTo(12, 0);
+      expect(charge0 - server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeGreaterThan(15 - 2);
+      expect(bot.casts('tractor_beam')).toMatchObject([{ caster: bot.entity, phase: 'cast' }]);
+      bot.sock.close();
+      rival.sock.close();
+    },
+  );
 
-  it('Inertial Brake: 20 charge on the ship bar, a 15 s cooldown; the cast is shown to the sessions that see the ship, whose client stops and turns it', { timeout: 40_000 }, async () => {
-    const c = await character();
-    const bot = await join(c.token, c.id);
-    own(c.id, ['tractor_beam', 'inertial_brake']);
-    expect((await bot.slot(0, 'inertial_brake', 'ship')).error).toBeUndefined();
-    const up = at(0).map((x) => x * 1.002) as Vec3;
-    await bot.stand(up, 'ship');
-    const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
-    const answer = await bot.cast('inertial_brake', 0);
-    expect(answer).toMatchObject({ result: 'cast', node: 'inertial_brake' });
-    expect(answer.readyAt! - bot.time()).toBeCloseTo(15, 0);
-    expect(charge0 - server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeGreaterThan(20 - 2);
-    expect(getSkillNode('inertial_brake').params.durationS).toBe(6);
-    expect(bot.casts('inertial_brake')).toMatchObject([{ caster: bot.entity, phase: 'cast' }]);
-    bot.sock.close();
-  });
+  it(
+    'Inertial Brake: 20 charge on the ship bar, a 15 s cooldown; the cast is shown to the sessions that see the ship, whose client stops and turns it',
+    { timeout: 40_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['tractor_beam', 'inertial_brake']);
+      expect((await bot.slot(0, 'inertial_brake', 'ship')).error).toBeUndefined();
+      const up = at(0).map((x) => x * 1.002) as Vec3;
+      await bot.stand(up, 'ship');
+      const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
+      const answer = await bot.cast('inertial_brake', 0);
+      expect(answer).toMatchObject({ result: 'cast', node: 'inertial_brake' });
+      expect(answer.readyAt! - bot.time()).toBeCloseTo(15, 0);
+      expect(charge0 - server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeGreaterThan(20 - 2);
+      expect(getSkillNode('inertial_brake').params.durationS).toBe(6);
+      expect(bot.casts('inertial_brake')).toMatchObject([{ caster: bot.entity, phase: 'cast' }]);
+      bot.sock.close();
+    },
+  );
 
   it('Dense Bones: +20% health, there for a suit bought mid-session', { timeout: 40_000 }, async () => {
     const c = await character();

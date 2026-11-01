@@ -2141,7 +2141,7 @@ effects; this runtime casts them all.
 - **The book** (`book.ts`): each ability paired with its effect, the server's code for it, `{check?, cast, end?}`.
   `abilityBook()` refuses to build (the server does not start) an ability without an effect or the reverse, one filed
   under another node, a node that is always on, an `entity` ability that takes no kind, or a cooldown casts cannot run.
-  This build's book holds the branches that have landed (Thermal I–II and Resonance I–II so far, P1.E07.T05 and T06; every other slotted node is
+  This build's book holds the branches that have landed (Gravitic, Thermal and Resonance I–II so far, P1.E07.T04–T06; every other slotted node is
   refused `unknown`); each branch adds its abilities from `@astra/shared/abilities/<branch>.ts` and its effects from
   `abilities/<branch>.ts`, one line apiece in `ABILITIES` and `EFFECTS`. Tests and the integration test cast a fixture book
   (`test/abilityFixture.ts`) over real nodes, never shipped.

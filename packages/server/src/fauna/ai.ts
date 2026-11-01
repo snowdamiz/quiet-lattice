@@ -31,7 +31,23 @@ import type { Ground } from './terrain.ts';
 
 /** A creature's behaviour, as its `mode` on the wire. */
 export type CreatureState =
-  'idle' | 'wander' | 'flee' | 'fly' | 'alert' | 'charge' | 'return' | 'stalk' | 'rush' | 'attack' | 'feint' | 'lurk' | 'circle' | 'dive' | 'climb' | 'follow' | 'down';
+  | 'idle'
+  | 'wander'
+  | 'flee'
+  | 'fly'
+  | 'alert'
+  | 'charge'
+  | 'return'
+  | 'stalk'
+  | 'rush'
+  | 'attack'
+  | 'feint'
+  | 'lurk'
+  | 'circle'
+  | 'dive'
+  | 'climb'
+  | 'follow'
+  | 'down';
 
 /** States in which a creature is going for a target. */
 const HUNTING: ReadonlySet<CreatureState> = new Set(['charge', 'stalk', 'rush', 'attack', 'feint', 'circle', 'dive', 'climb']);

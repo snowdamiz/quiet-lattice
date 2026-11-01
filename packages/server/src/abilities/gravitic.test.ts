@@ -119,7 +119,10 @@ function resist(id: number, resistances: readonly unknown[]): void {
 /** The caster's movement as the authority last accepted it, scripted. */
 function fall(script: () => { aboveM: number; peakM: number } | null) {
   const hold = vi.fn(() => true);
-  Object.defineProperty(w.zone, 'movement', { value: { fall: script, hold, pulsing: () => false, setPoses: () => {}, remove: () => undefined }, configurable: true });
+  Object.defineProperty(w.zone, 'movement', {
+    value: { fall: script, hold, pulsing: () => false, setPoses: () => {}, remove: () => undefined },
+    configurable: true,
+  });
   return hold;
 }
 
@@ -523,7 +526,18 @@ describe('Slam with the movement authority', () => {
       w.zone.patch(w.player, { pos });
       w.run(0.05);
       now += 0.05;
-      const verdict = authority.check(w.player, { t: 'input', seq: ++seqIn, time: w.time, mode: 'foot', pose: { frame: w.frame, pos, quat: [0, 0, 0, 1], vel: [up[0] * vUp, up[1] * vUp, up[2] * vUp] }, buttons: 0 }, w.time);
+      const verdict = authority.check(
+        w.player,
+        {
+          t: 'input',
+          seq: ++seqIn,
+          time: w.time,
+          mode: 'foot',
+          pose: { frame: w.frame, pos, quat: [0, 0, 0, 1], vel: [up[0] * vUp, up[1] * vUp, up[2] * vUp] },
+          buttons: 0,
+        },
+        w.time,
+      );
       if (!verdict.ok) corrections.push(verdict);
       svc.step(now);
       if (!slammed && airTime > 1.1) {

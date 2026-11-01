@@ -52,7 +52,22 @@ import {
 } from '@astra/shared/world';
 import type { InterestClass } from '../zones/interest.ts';
 import type { EntityFields, EntityInit, ZoneEntity } from '../zones/zone.ts';
-import { carry, groundDistance, herdTick, move, newCreature, orientation, resting, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
+import {
+  carry,
+  groundDistance,
+  herdTick,
+  move,
+  newCreature,
+  orientation,
+  resting,
+  settle,
+  think,
+  velocity,
+  type Actor,
+  type Creature,
+  type Ctx,
+  type Herd,
+} from './ai.ts';
 import type { Vec3 } from './cells.ts';
 import {
   APEX_RESPAWN_S,
@@ -1090,7 +1105,14 @@ export class FaunaSim {
    * position) that `affects` accepts keeps only the share `keep` of its speed. Creatures walking in are caught too, and one
    * leaving is free; where bubbles overlap the slowest holds.
    */
-  slowField(frame: string, center: Readonly<Vec3>, radiusM: number, keep: number, durationS: number, affects: (creature: number) => boolean = () => true): void {
+  slowField(
+    frame: string,
+    center: Readonly<Vec3>,
+    radiusM: number,
+    keep: number,
+    durationS: number,
+    affects: (creature: number) => boolean = () => true,
+  ): void {
     this.slowFields.push({ frame, center: [center[0], center[1], center[2]], radiusM, keep, until: (this.lastTime ?? 0) + durationS, affects });
   }
 
