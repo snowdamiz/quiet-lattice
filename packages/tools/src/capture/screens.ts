@@ -2,7 +2,8 @@
 // grader always gets its 16:9 and 21:9 captures and a 60 fps clip the same way.
 import type { Page } from '@playwright/test';
 import { EVENTS } from '@astra/shared/events';
-import { GALAXY_SEED, Galaxy, homeSystems } from '@astra/shared/world';
+import { darkAt, edgeAt, seasonOpening } from '@astra/shared/seasons';
+import { EDGE_X, GALAXY_SEED, Galaxy, galaxyTiers, homeSystems } from '@astra/shared/world';
 
 export interface ScreenDef {
   /** dev scenario hash to open the client with */
@@ -1664,6 +1665,188 @@ function eventBannerQueuedScreen(): ScreenDef {
   };
 }
 
+// ---------- the Edge following the Count (P2.E22.T02) ----------
+// The offline sandbox has no world service, so the capture hands the game the `world` message the server would send for a
+// Count, built by the same functions the server uses (edgeAt, galaxyTiers), and the map and the sky draw the Edge from it.
+
+interface EdgeWindow {
+  game: {
+    net: unknown;
+    galaxy: { systems: { id: number; x: number; y: number; z: number }[]; here: { x: number; y: number; z: number } };
+    menus: { openMap(): void; setMapTab(tab: string): void; mapView: EdgeMapView };
+    universe: { leave(): void; anchor: { set(x: number, y: number, z: number): void } };
+    ship: { state: { frame: unknown; pos: { set(x: number, y: number, z: number): void }; quat: { set(x: number, y: number, z: number, w: number): void } } };
+    cam: { frame: unknown };
+    hud: { clearBanners(): void };
+    sky: { reset(): void };
+  };
+  dev: { boot(): Promise<void> };
+  __clip: { frame(dt: number): void };
+}
+interface EdgeMapView {
+  fly: unknown;
+  selected: unknown;
+  items: { kind: string; sys?: { id: number } }[];
+  select(it: unknown): void;
+  camera: { position: { set(x: number, y: number, z: number): void } };
+  controls: { target: { set(x: number, y: number, z: number): void } };
+}
+
+type Opening = 'fed' | 'held' | 'broken' | null;
+
+/** The `world` message for the Count at `count` in the season whose opening is `from` (null: the baseline). */
+function worldAtCount(count: number, from: Opening = null) {
+  const opening = seasonOpening(from, 5);
+  const edgeX = edgeAt(count, opening);
+  return {
+    t: 'world',
+    season: 5,
+    seasonStart: 0,
+    seasonEnd: 4_838_400,
+    opening,
+    count,
+    edgeX,
+    tiers: galaxyTiers(edgeX).map((t) => t.tier),
+    dark: [...darkAt(count, opening)],
+    serverTime: 1000,
+  };
+}
+
+/** Hands the page the `world` message the server would send. The game reads it from its connection (`net.world`), and the
+ * offline sandbox has none, so the client's own Net, never connected, stands in. */
+async function handWorld(page: Page, world: unknown): Promise<void> {
+  await page.evaluate(async (world) => {
+    const g = (window as unknown as EdgeWindow).game;
+    if (!g.net) {
+      const module = '/src/net/Net.js';
+      const { Net } = await import(/* @vite-ignore */ module);
+      g.net = new Net({ url: 'ws://offline.invalid/', token: '', characterId: '' });
+    }
+    (g.net as { world: unknown }).world = world;
+  }, world);
+}
+
+/** Hands the page a `world` message for the Count and lets the map and the sky draw it. */
+async function setCount(page: Page, count: number, from: Opening = null): Promise<void> {
+  await handWorld(page, worldAtCount(count, from));
+  await settle(page, 12);
+  await clearBanner(page);
+}
+
+/** Takes the system banner (staging leaves one up) off the screen before a still: dropped, and given its fade out. */
+async function clearBanner(page: Page): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).game.hud.clearBanners());
+  await page.waitForTimeout(700);
+}
+
+/** The galaxy map from the side, the cluster to the left and the wall a little right of the middle, so a wall that moves a few
+ * hundred thousand ly is seen to move across the frame. */
+async function openEdgeMap(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await handWorld(page, worldAtCount(count));
+  await page.evaluate(
+    ({ at }) => {
+      const w = window as unknown as EdgeWindow;
+      w.game.menus.openMap();
+      w.game.menus.setMapTab('galaxy');
+      const v = w.game.menus.mapView;
+      v.fly = null;
+      v.controls.target.set(at - 1.5e6, 0, 0);
+      v.camera.position.set(at - 1.5e6, 8e5, 3.6e6);
+    },
+    { at: EDGE_X },
+  );
+  await settle(page, 60);
+}
+
+/** The galaxy map at cluster zoom in a season opened Broken, with the Count at `count`: the whole cluster in frame, from above and
+ * a little to the side, its dark Waystations marked. */
+async function openDarkMap(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await handWorld(page, worldAtCount(count, 'broken'));
+  await page.evaluate(() => {
+    const w = window as unknown as EdgeWindow;
+    w.game.menus.openMap();
+    w.game.menus.setMapTab('galaxy');
+    const v = w.game.menus.mapView;
+    v.fly = null;
+    const sys = w.game.galaxy.systems;
+    const c = { x: 0, y: 0, z: 0 };
+    for (const s of sys) {
+      c.x += s.x / sys.length;
+      c.y += s.y / sys.length;
+      c.z += s.z / sys.length;
+    }
+    v.controls.target.set(c.x, c.y, c.z);
+    v.camera.position.set(c.x - 70, c.y + 105, c.z + 120);
+  });
+  await settle(page, 60);
+}
+
+/** Selects the system `id`, or the Edge (`edge`), as a click would, so the map's info panel shows it. */
+async function selectOnMap(page: Page, pick: { system: number } | { edge: true } | null): Promise<void> {
+  await page.evaluate((pick) => {
+    const v = (window as unknown as EdgeWindow).game.menus.mapView;
+    v.select(
+      pick === null
+        ? null
+        : 'system' in pick
+          ? v.items.find((it) => it.kind === 'system' && it.sys?.id === pick.system)
+          : v.items.find((it) => it.kind === 'edge'),
+    );
+  }, pick);
+  await settle(page, 12);
+}
+
+/** The sky from deep space 1.2 million ly short of the wall's baseline, the ship nose to +X, the Waystation's system left
+ * far behind. */
+async function openEdgeSky(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await handWorld(page, worldAtCount(count));
+  await page.evaluate(
+    ({ at }) => {
+      const w = window as unknown as EdgeWindow;
+      const g = w.game;
+      g.ship.state.frame = null;
+      g.ship.state.pos.set(0, 0, 0);
+      g.ship.state.quat.set(0, -Math.SQRT1_2, 0, Math.SQRT1_2);
+      g.cam.frame = undefined;
+      g.universe.leave();
+      g.universe.anchor.set(at - 1.2e6, 0, 0);
+      g.sky.reset();
+    },
+    { at: EDGE_X },
+  );
+  await settle(page, 90);
+  await clearBanner(page);
+}
+
+/** The clip's frames, each handing the page the world for the Count a frame later (0 to 1000, and there and back). The first
+ * world is in and drawn before the first frame is taken, so the clip starts on the Count it sweeps from, not on the last still's. */
+async function sweepCount(page: Page, frames: number, from: Opening = null, deselect = false): Promise<void> {
+  const worlds = Array.from({ length: frames }, (_, i) => {
+    const t = i / (frames - 1);
+    return worldAtCount(Math.round(1000 * (t < 0.5 ? t * 2 : 2 - t * 2)), from);
+  });
+  await handWorld(page, worlds[0]);
+  if (deselect) await selectOnMap(page, null);
+  // (the clip's frame loop has taken over `step` by now, so its own frames draw it: the sky takes a face a frame, and the clip
+  // must not start on the picture before)
+  await page.evaluate(() => {
+    const w = window as unknown as EdgeWindow & { game: { sky: { face: number; edgeAt: number; drawnEdge: number } } };
+    for (let i = 0; i < 90 && (i < 12 || w.game.sky.face >= 0 || w.game.sky.edgeAt !== w.game.sky.drawnEdge); i++) w.__clip.frame(1 / 60);
+  });
+  await page.evaluate((worlds) => {
+    const w = window as unknown as EdgeWindow;
+    const frame = w.__clip.frame.bind(w.__clip);
+    let i = 0;
+    w.__clip.frame = (dt) => {
+      (w.game.net as { world: unknown }).world = worlds[Math.min(i++, worlds.length - 1)];
+      frame(dt);
+    };
+  }, worlds);
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
@@ -2564,6 +2747,69 @@ export const SCREENS: Record<string, ScreenDef> = {
           w.game.hud.later(() => (list.scrollTop = end - y), 1700 + k * (1000 / 60) - 0.5);
         });
       });
+    },
+  },
+  // The Edge following the Count (P2.E22.T02): the galaxy map and the sky in deep space with the Count at its lowest (the Edge
+  // 10 ly in, the wall drawn 200,000 ly nearer), at the middle (the baseline) and at its highest (10 ly out). The still is the
+  // lowest; `count-500` and `count-1000` are the others; the clip sweeps the Count from 0 up to 1000 and back, the wall
+  // sliding with it. The sheet's title (and readout.txt) is the HUD's per-frame cost.
+  'edge-map': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    readout: hudCostReadout,
+    async open(page) {
+      await openEdgeMap(page, 0);
+    },
+    stills: {
+      'count-500': (page) => setCount(page, 500),
+      'count-1000': (page) => setCount(page, 1000),
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await sweepCount(page, 180, null, true);
+    },
+  },
+  'edge-sky': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    readout: hudCostReadout,
+    async open(page) {
+      await openEdgeSky(page, 0);
+    },
+    stills: {
+      'count-500': (page) => setCount(page, 500),
+      'count-1000': (page) => setCount(page, 1000),
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await sweepCount(page, 180);
+    },
+  },
+  // The galaxy map at cluster zoom in a season opened Broken: the still is Count 0, every dark Waystation (the opening's three
+  // and the ones the low Count pushed Edge-ward) marked on its star; `count-1000` is the Count at its highest, the marks gone;
+  // `dark-selected` a dark system chosen (its "Waystation: Dark" row) and `edge-selected` the Edge (Distance, Expansion, Count).
+  // The clip sweeps the Count 0 → 1000 → 0, the marks going out at 700 and coming back with it. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost.
+  'edge-dark': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    readout: hudCostReadout,
+    async open(page) {
+      await openDarkMap(page, 0);
+    },
+    stills: {
+      'count-1000': (page) => setCount(page, 1000, 'broken'),
+      'dark-selected': async (page) => {
+        await setCount(page, 0, 'broken');
+        await selectOnMap(page, { system: seasonOpening('broken', 5).dark[0]! });
+      },
+      'edge-selected': async (page) => {
+        await selectOnMap(page, { edge: true });
+      },
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await sweepCount(page, 180, 'broken', true);
     },
   },
 };

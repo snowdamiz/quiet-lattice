@@ -1060,3 +1060,102 @@ Format: task id, question → choice → why.
   is never dropped. → DESIGN 10.1, 19.2. Merged after a fifth visual REVISE (4.14) under the owner's rule; the open
   notes are P1.E04.T06. Open: a 57 px mark jump as a mark comes out from behind the compass; no scene yet puts a mark
   near the ability bar, so that keep-out is untested in captures.
+- **P1.E07.T05** Thermal I–II (shared and server `abilities/thermal.ts`, `abilities/statuses.ts`, CastContext, meters
+  `beamTime`/`dumpHeat`, `ShipStats.reentryDamage`, client input `aim`, ARCHITECTURE §28) → DESIGN 9.3 gives no damage
+  numbers, so: Lance (a toggle on the multitool beam, no heat beyond the beam's 32/s) deals 12 per second of the
+  meters' beam time every 0.25 s to the nearest creature on the look ray within 30 m and in sight, culled round the
+  eye now (reach 30 + 2 + 8 for Chain); it follows the last on-foot `input.aim` unvalidated, which gains accuracy only
+  (the gun's precedent: damage is bounded by beam time, range, sight and one target; P2.E17.T01's turn-rate rule must
+  also bound the on-foot look once Lance reaches players). Chain gives half of each tick to the nearest other creature
+  within 8 m of the first's centre, no sight check on the arc. Flare bursts 18 on every creature in its 60° 12 m cone
+  and in sight and burns 6/s for 4 s; Sear is a mob-only entity cast at 30 m, refused `target` before payment if the
+  creature may not be harmed, burning 5/s for 8 s with no blow; Vent deals 0.6 per heat dumped (60 at 100, 75 with
+  Tempered Core) within 10 m and in sight, refused in the lockout; Flare and Vent are refused `busy` while the ground
+  plans. Burns are a per-caster status ticking every 0.5 s: a re-ignition extends to the later end at the greater
+  power and never stacks; a generation token keeps one loop per status; a refused tick, death or the phase rule ends a
+  burn for good; burns continue while the caster is down and are dropped with its statuses when it leaves play. Damage
+  reads the caster's nodes live and requires the phase rule. New context capabilities, general for every branch:
+  `time`, `owns`, `pose`, `sight` ('busy' while planning), `groundReady`, `canHarm`, `creatures(reach, at)`,
+  `meters.beamTime`/`dumpHeat`, and `status` apply/get/active/remove/dropCaster. Passives: Tempered Core (capacity
+  125), Focused Lasers (×1.3, 2200 m), Hot Hands (×1.5 yield, faster breaking), Ablative Plating (heat hazard ÷3; its
+  re-entry half has no consumer until P1.E06.T07). `SkillService.shipSlots` gives the runtime's hold check a narrow
+  read, and `settle()` at a cast's start has its race test. → DESIGN 9.3, server-held. Open: no client visuals
+  (P1.E07.T14); no wire event for a burn; Flare does not interrupt bite swarms yet (P1.E08.T02).
+- **P1.E07.T10** Exo-suit I–II (shared `exosuit/*`, `data/suit.ts`; server movement authority, zones, gateway; client
+  Game.js survival, Player.js, Menus.js, Multitool.js) → all nine passives at DESIGN 9.8's numbers, the demo's suit
+  numbers moved into a shared `SUIT` table (`suitMods`, `hazardDrainPerS`, `cartridgeRestore`, `scanRanges`). Life
+  support and hazard protection stay on the client as in the demo, only their numbers moved: a departure from 0.3 until
+  P1.E06.T06 (Suit meters on the server) lands; the server holds Sprint Stride's cap and Optical Drill's yield. "Night"
+  for Cold Blood and the ×1.4 hazard drain is the star below the horizon (`isNight`, from sunset, not the dusk band),
+  replacing `Game.isDark` (daylight < 0.3); "day" for Heat Shroud is the star above the horizon at the walker. Cold
+  Blood and Heat Shroud zero the whole on-foot drain on their worlds, the world's ship hazard included; Hazard Weave's
+  ×0.6 applies after the ×1.4, to every source including mist. Cartridge Recycler adds 20 to both refills (40 → 60);
+  the trigger (below 25) and cost (10 units) are unchanged. Optical Drill raises yield only (×1.5, ×2.25 with Hot
+  Hands). Scanner Lens raises only the site range (3 km → 6 km); deposits stay 180 m. Efficient Jetpack doubles the
+  tank's seconds, regen unchanged, client-only feel (the server does not model the tank); Long Jump leaves the server's
+  walker caps alone (the jet's 14 m/s climb covers a 7 m/s jump). The Ulgani's no-drain on toxic and corrosive worlds
+  and the Thalune's swim speed now reach the client; Sprint Stride also raises Thalune swim. Movement authority
+  re-reads the owned nodes at join and on every skills change (`Zone.reskill`), effective from the next input; the 1 s
+  speed window is judged at the current cap (a buy allows ~2 m retroactively). The demo shop's Optical Drill and
+  Efficient Jetpack rows and `Multitool.upgrade()` deleted; `SHOP` and `applyUpgrade` left for P1.E07.T09. Merge of
+  main: the Hot Hands and Optical Drill tests both kept (different skills; the combined ×2.25 case sits in the skill-web
+  test). Open: combat keeps join-time skills until P1.E06.T05; the join path's owned skills untested (P1.E06.T05's join
+  test); an in-session zone handoff (P1.E04.T04) must carry the current owned nodes; the client never uses the
+  oxygen or sodium cartridge items, and its refills change only the client's copy (P1.E06.T06).
+- **P1.E07.T09** Pilot I–II (`@astra/shared/data/skills/pilot.ts`, `ships/stats.ts`, `ships/environment.ts`, server
+  `combat/zone.ts`, `sim/movement/authority.ts`, `zones/*`, `gateway/ws.ts`, client `Ship.js`, `Game.js`, `Menus.js`,
+  ARCHITECTURE §7, §19, §20) → Throttle Tuning ×1.1 and Photon Thrusters ×1.25 multiply (×1.375, 825 m/s on the
+  Lark); Shield and Hull 125 are ×1.25 of each hull's own (as under P1.E02.T07). Soft Landing: the server refuses a
+  ship coming to rest faster than `landingSpeedMax × FLIGHT_TOLERANCE.factor` (rule `landing_speed`), judging the
+  larger of the reported speed and the step's displacement, only for steps over 0.02 s; the client gates the start of
+  a landing. The platings divide damage in the shared `hazardDamagePerS`, which only the client ticks, so hazard hull
+  damage stays the client's until P1.E06.T07. Shield Recharge is deleted with no replacement: the dock refill restores
+  shields and the server heals nothing; the trade terminal only sells now (follow-up for P1.E13.T03). One live
+  re-tune path, replacing P1.E07.T10's `reskill`: one gateway subscription on every skills notification
+  (`SkillService.flight` → `ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune` + `ZoneCombat.retuned`);
+  on a `LoadoutError` the ship keeps its numbers and a warning is logged. The join carries `SkillService.flight` (ship
+  and owned nodes). `SkillService.shipSlots` is a narrow read for the toggles' hold check, and `context()` reads it,
+  not the other way round (the merge's stack overflow). The SHOP list and `applyUpgrade` deleted. Client: `Game.onSkills`
+  is the only listener and calls `ship.setSkills`, which keeps each pool's fraction like the server; the dock refill and
+  `shipDestroyed` read `stats.shieldMax`/`hullMax`. Open: the HUD and cockpit bars still divide by 100 (folded into
+  P1.E04.T06); a hull swap carries each pool's fraction, and the live re-tune's hull argument is tested only on the
+  Lark (both folded into P1.E12.T05).
+- **P1.E06.T05** Combat follows the build (`combat/zone.ts`, `zones/*`, `gateway/ws.ts`, tests; delivered on P1.E07.T09's
+  branch) → the done line's `Zone.reskill` is `Zone.retune`. `ZoneCombat.retuned` swaps the profile's ship and skills
+  and recomputes the suit, hull and shield maxima and the damage mods on every skills change, each pool keeping its
+  fraction: a pool at 0 stays 0 and the player stays down, a refund never kills, refund then rebuy gains nothing
+  (replacing T09's "damage taken stays" and the floor of 1); a pool whose old maximum was 0 starts full. Vitals are
+  rewritten in place, no longer cached for good; a player never hurt gets full vitals at the current maxima when first
+  hit. Hollowed is not a combat mod (its flag is aggro and nothing reads it yet), so the damage-mod tests use Grey
+  Blood; whoever wires Hollowed reads the live owned nodes. Over the wire, a mid-fight respec of the plating takes the
+  hull maximum 125 → 100 and the next hit lands on the new maximum; Dense Bones and Grey Blood are unit-tested on
+  `retuned`. The join test with Sprint Stride owned is P1.E07.T10's `exosuit.int.test.ts` on `flight`, plus two Pilot
+  join tests (four nodes; a stored Swift hull). A mid-fight respec is not blocked: the fraction rule makes it neither a
+  heal nor a wound.
+- **P2.E22.T02** The Edge moves (shared `seasons/edge.ts`, `seasons/rules.ts`, `world/tiers.ts`, `protocol/messages.ts`
+  (protocol 21), server `world/service.ts`, client `Game.js`, `ui/map/GalaxyMap.js`, `EdgeOfSpace.js`,
+  `render/UniverseSky.js`, `ui/style.css`, ARCHITECTURE §11) → the Count moves the Edge not at all from 300 to 700 and
+  in a straight line to ±10 ly at 0 and 1,000, never jumping; the shifts add (Edge = default + the opening's shift + the
+  Count's), so a Broken-opened season at Count 0 has the Edge 20 ly in. Tier jumps: DESIGN's "the next shell steps up a
+  tier" is read as the fringe line moving in (at 10 ly in, systems 33 and 56 go Tier 3 → 5; at 20 ly, seven do); on
+  the high side Tier 5 drops to 4. Dark stations: the opening's set, plus below 300 the systems the Count itself pushed
+  Edge-ward, those on the fringe at `edgeAt(count, opening)` but not at `edgeAt(300, opening)` (measured from the
+  season's middle Edge, not the default); the Count's own relight bit by bit as the fringe moves back out, all by 300,
+  with no hysteresis; the opening's relight at 700 and go dark again if the Count falls back below 700 in the same
+  season. Chorus sanctuaries (B- and E-class stars, "any tier, safe", DESIGN 11) never go dark, though their tiers
+  still flip, and a Broken opening's `darkSystems` never draws one, so it still opens 2–3 dark (at seed 424242 most of
+  the fringe is B or E class; the baseline season at Count 0 has 1 dark, system 3). The server sends `dark` in the
+  `world` message (protocol 21) and the client reads `net.world.dark` (one copy; `game.world` dropped); the Edge, tiers
+  and dark set are never saved and are recomputed on every boot; `world.update()` takes only `{count}`. The station
+  query is `Game.stationDark(id)`, apart from the per-frame night boolean `isDark`. The drawn wall moves 20,000 ly for
+  each light year the Edge moves. The map: the "The Edge" label on a dark plate (pale-blue bar; lilac is Charge's),
+  easing between anchors; each dark system marked with a seam-light ring that fades in and out over about 0.4 s and
+  flickers 40–60%, its name in #9FE8DA ahead of its neighbours'; the info panel's "Waystation: Dark" row and a "Shift"
+  row ("Advanced 20 ly", "Receded 10 ly", "At its default") in place of "Expansion 0.0000 c"; the Edge tooltip shows
+  "Count n / 1000" to everyone (overlaps P2.E22.T04 and Edge Sense). The sky: its wall wears the art bible's Edge
+  palette (opal crests; a sky-only `uSky` flag) while the map keeps its own look; an Edge-only change redraws one cube
+  face a frame into a back buffer with the membrane's churn held at the last full draw. Open: the client builds a
+  system at the default Edge's tier until P1.E04.T04, and persistence `components.ts` and `quests/world.ts` read the
+  default-Edge tier; the drawn wall can stand up to 400,000 ly past a ship near it, unclamped; the smoke hands the
+  client a world message rather than having the server send three Counts.
+- **P1.E04.T03** Prediction and reconciliation (client `net/prediction.js`, `net/link.js`, `main.js` (the dev-only link wiring), `Ship.js`, `Player.js`, `Game.js` `onCorrection`/`checkPrediction`, `Net` 'input', `entities/pulseExit.test.js`; smoke `prediction-online.spec.ts`, `tools/src/smoke/online.ts` (`sql()`), `server/test/steppedServer.ts` (`/thaw`); ARCHITECTURE §9) → local/server error is the distance between the server's snapshot pose at its `ack` and the pose the client sent for that input, in the same frame; 100 ms latency and 2% loss are 100 ms each way (200 ms round trip) and messages dropped each way from the welcome on (a real WebSocket never drops; loss there shows as delay). What reconciles: the `correction` message, plus a snapshot whose pose for the sent `ack` is over 0.5 m off in the same frame (a lost correction); inputs sent before the last correction was taken, and poses the server holds in another frame (the sphere edge, P1.E04.T07), are not compared. History 64 inputs; lost-correction match distance 0.5 m, or a pulse/no-pulse mismatch. The rewind re-bases position and velocity on the server's pose; a refused mode is carried on at the server's velocity, or the ship's own speed once off the drive; a correction that takes the ship off the drive carries on at the server's velocity whatever mode the input was sent in; a ship's turning is replayed in its own axes; a walker keeps its own look (reversing P1.E03.T03). A correction for an input at or before the fence (a repeat, one held past the server's grace, an operator teleport just after one) is never re-based on what that input sent: the server's pose is carried on at the mover's own velocity from that input's time (the server's where it refused the mode that input was sent in), orientation kept; exact only at constant velocity (up to about 200 m off at the engines' 160 m/s² past the 1 s grace; P1.E04.T07). The fence and the correction count move only once a correction is taken, after the frame check. Modes the client can't follow, or an input no longer kept, are placed as at a welcome or taken as they come; a ship-mode correction while on the pulse drive drops the drive. Physics moves at once and a render-only Blend (critically damped, τ = 0.125 s, the chase camera's own rate) covers the move; past max(10 m, 0.5 s × speed) it snaps and the chase camera resets. An input is sent at the pulse drop-out, because authority judges the engines' first pose from the drive's last (`pulseExit.test.js` pins it; the flight e2e drops out two frames after an input so it fails without it). The link conditioner is dev builds only (`?lag=&loss=&seed=`, gated on `import.meta.env.DEV`). Server authority unchanged; honest clients get no corrections under 100 ms latency and 2% loss.

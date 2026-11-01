@@ -57,7 +57,7 @@ import { CombatService } from '../combat/service.ts';
 import { getOwnedCharacter, isUuid, toSummary } from '../characters/characters.ts';
 import type { Db } from '../db/client.ts';
 import type { CharacterRow } from '../db/schema.ts';
-import type { InventoryService } from '../inventory/service.ts';
+import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
 import { meterServiceIn } from '../meters/component.ts';
 import type { MeterService } from '../meters/service.ts';
 import { groundForRestore, POSE, PROGRESS, type CharacterProgress, type PoseState, type Progress } from '../persistence/components.ts';
@@ -390,6 +390,18 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   casts.start();
   // a toggle whose node left its bar ends at once; a toggle the server ended reaches the bar of the session holding it
   const unsubscribeSkillCasts = skills.subscribe((characterId) => casts.skillsChanged(characterId));
+  // a node bought or refunded changes what the ship can do: movement authority and combat hold the player to it from then
+  const unsubscribeFlight = skills.subscribe((characterId) => {
+    for (const c of conns) {
+      if (c.s.state !== 'joined' || c.s.characterId !== characterId) continue;
+      const { ship, skills: owned } = skills.flight(characterId);
+      try {
+        deps.zones.retune(c.s, { ship: ship ?? DEFAULT_LOADOUT.ship!, skills: owned });
+      } catch (err) {
+        log.warn({ character: characterId, err: String(err) }, 'the ship cannot be re-tuned to the nodes owned; it keeps its numbers');
+      }
+    }
+  });
   const unsubscribeCasts = casts.subscribe((characterId) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send(casts.state(characterId));
   });
@@ -711,7 +723,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (given?.length) log.info({ character: row.id, seasons: given.map((a) => a.season) }, 'season awards given on join');
       const at = loaded.get<PoseState>(POSE);
       const progress = loaded.get<Progress>(PROGRESS);
-      const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem }, at);
+      const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem, ...skills.flight(row.id) }, at);
       if (joined.fellBack) log.warn({ character: row.id, saved: at, reason: joined.fellBack }, 'saved pose unusable; docked at the home Waystation');
       s.entityId = joined.entityId;
       s.zoneId = joined.zone.id;
@@ -776,6 +788,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       casts.stop();
       unsubscribeCasts();
       unsubscribeSkillCasts();
+      unsubscribeFlight();
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
       if (!deps.resources) await resources.close();

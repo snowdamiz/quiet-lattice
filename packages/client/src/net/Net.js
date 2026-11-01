@@ -102,7 +102,8 @@ export class Net {
   }
 
   /** Listens for a server message type ('welcome', 'world', 'awards', 'inventory', 'pong', 'refused', 'correction', 'zone', 'event'),
-   * a decoded 'snapshot', or the connection's 'state', 'lost' and 'closed'. Returns the unsubscribe. */
+   * a decoded 'snapshot', each 'input' as it goes out, or the connection's 'state', 'lost' and 'closed'. Returns the
+   * unsubscribe. */
   on(type, fn) {
     let list = this.handlers.get(type);
     if (!list) this.handlers.set(type, (list = []));
@@ -361,6 +362,7 @@ export class Net {
     this.inputSeq = msg.seq;
     this.lastInput = msg;
     this.lastInputAt = t;
+    this.emit('input', msg);
     return true;
   }
 }

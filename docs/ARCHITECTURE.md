@@ -31,7 +31,7 @@ zones/              Zone (one star system), ZoneManager, spatial hash, interest 
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
 social/             SocialService: chat channels, parties and invites, and their limits (§13); call-for-aid beacons (§21)
 cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§15)
-world/              WorldService: server clock, season, Count, Edge position, tier map
+world/              WorldService: server clock, season, Count, Edge position (a function of the Count), tier map, dark stations
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 seasons/            seasons (§27): a season's end and winners, the daily actives tally, season awards and their component,
                     the chronicle and awards in SQL, SeasonService (the gateway's and HTTP's view)
@@ -469,11 +469,18 @@ before applying it.
   `pulse_charge`), out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM` to engage, `dropOutM` while
   cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world, 2 km over its ground. Each
   accepted input is reported to the meters (`flown`) with the client time credited to it since the last valid pose (none
-  for a clock stepped forward), which the pulse drive burns Charge for. `landed` only on a world's dry ground; `docked`
+  for a clock stepped forward), which the pulse drive burns Charge for. `landed` only on a world's dry ground, and coming
+  to rest no faster than the hull may land (`ShipStats.landingSpeedMax`: 160, Soft Landing 220, under `FLIGHT_TOLERANCE`'s
+  factor; by the speed it reports and the speed it moved over the step from its last pose; refused as `landing_speed`; the
+  landing itself begins on the client, whose autopilot brakes from there, so this is all of it the server sees); `docked`
   only on a Waystation pad no other ship holds (a joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
   a world's ground or in a hangar, and only out of a landed or docked ship, which it can board again only from beside it.
   In mode `ship` the `boost` button bit raises the caps to the boost cap, and air thicker than `AIR.flightModelFrom` to
   the `atmo` cap: a client must send the bit while it boosts.
+- *The numbers follow the pilot.* A mover's ship and walker stats are made from the ship and nodes it entered with and made
+  again by `MovementAuthority.retune` when they change (`Zone.retune`, which also re-tunes combat, §20; the gateway calls it
+  for every session of a character on a change to its skills): the next input is judged on them, with no rejoin. A node
+  refunded in flight lowers the allowance at once.
 - *The move* from the last valid pose: no further than its allowance covers in the time since (at most a second of it,
   whatever silence came before: the client moves its ship a clamped 66 ms frame at a time), plus a tenth of a second's
   worth and 25 m (anti-teleport); and not through the ground, nor a flying ship's centre through the hangar's
@@ -690,8 +697,38 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 - **Saving is the server's** (§8). `Game.save()` sends the input at once at moments worth holding (docked, a system
   reached, a site visited). Leaving (the pause menu, or a refusal after joining) closes the socket and reloads the page,
   so nothing of one character's client state carries into the next.
-- **Corrections** are taken as they come until prediction and reconciliation (P1.E04.T03): the pose, re-expressed into the
-  frame the client is in (DECISIONS P1.E03.T03).
+- **Prediction and reconciliation** (`net/prediction.js`, P1.E04.T03). The client moves its ship and its walker itself
+  and sends the pose it predicts, keeping what each input said (the last 64, about 3 s). A `correction` (or an operator's
+  teleport) holds the mover at a pose as of input `seq`: the client rewinds there and replays what it did since, its
+  motion in the frame re-based on the server's pose; where the server refused the mode the client sent (the pulse drive
+  on a Charge it holds empty), it is carried on from the server's pose at the server's velocity, or at its own when the
+  ship has left the drive the server still holds it on. A ship's turning since is replayed onto the server's orientation;
+  a walker keeps looking where its player looks. A mode it cannot take in its stride (set down, aboard as it got out, out
+  as it boarded), and a correction to an input no longer kept, place it as a welcome does. All of it is re-expressed into
+  the frame the client is in (DECISIONS P1.E03.T03: never adopt the server's frame). Each snapshot's account of the entity
+  as of its `ack` is compared with what the client sent then, in the same frame: further than 0.5 m (or the pulse drive
+  refused) is a correction the client never heard (lost on the way), taken the same way. The inputs sent before a
+  correction was taken are the old trajectory, which the server refuses quietly, and are not compared; nor is a pose the
+  server holds in another frame than it was sent in, re-expressed at the edge of a sphere at a tick a repeated or lost
+  snapshot leaves the client unable to name. A correction for an input of that old trajectory (a repeat, one the server
+  held back past its grace, an operator's teleport just after one) is never re-based on what that input sent, or its
+  offset would be applied twice: the server's pose is carried on at the mover's own velocity from that input's time, or
+  at the server's where the correction refuses the mode that input was sent in or takes the ship off the pulse drive,
+  and the orientation is kept. The rewind moves the mover at once, so its next input fits the server's pose; the drawn
+  ship, the chase camera and the walker's eye carry the difference as a `Blend` (an offset, its rate and a turn, in the
+  frame's axes) that leaves from where and as fast as the mover was drawn and dies away critically damped with a time
+  constant of 0.125 s, the chase camera's own follow, unless it is more than 10 m and half a second of the mover's
+  speed: that is shown as the jump it is, the chase camera put back behind the ship. Leaving the pulse drive sends an
+  input at once, so the drive's stretch is reported up to the drop-out: movement authority judges the engines' first
+  pose from the drive's last.
+- **A bad network on demand** (`net/link.js`, dev builds): `?lag=<ms>&loss=<%>` (`&seed=<n>`) runs the connection through
+  a stand-in for the WebSocket class that holds every message that long each way and loses that share of them each way,
+  from the welcome on, keeping each way's order. `packages/tools/src/smoke/prediction-online.spec.ts` plays the game
+  through it at 100 ms and 2% against a stepped server (P1.E16.T06; the link runs on the page's stepped clock) and judges
+  each snapshot's pose for the player's entity against what the client sent for the same input: within 0.5 m in flight
+  (out of the Waystation into its world's frame, boosting, the pulse drive), in the home world's shadow on an empty Charge
+  (the client refusing the engage itself; a mispredicted engage refused by the server, rewound and blended) and on foot,
+  with corrections blended (one only a snapshot told of) and shown as jumps past the limit.
 - **Dev sandbox.** In dev builds only, a scenario hash (`#sandbox`, `#foot`, `#fly`, `#land`, `#station`, `#dock`,
   `#space`, `#review:…`) or `window.dev.boot()` starts `Game.startSandbox`: offline, a new pilot by the home Waystation,
   no persistence of any kind, so the smoke specs, captures and asset reviews stay hermetic. The game itself always goes
@@ -847,6 +884,34 @@ steady lean the Count is back on the target at each day's end, having burned 5 b
 in 0–1,000. `runMeter` plays both clocks forward in time order; the service runs it every second and before every
 counted action, publishes the new Count as one ordinary world change (`world` to clients, the Redis mirror) and logs
 one line.
+
+**The Edge follows the Count** (DESIGN 16.3, P2.E22.T02). `WorldState.edgeX` is not stored: it is `edgeAt(count, opening)`
+(`@astra/shared/seasons`, `seasons/edge.ts`), EDGE_X plus the season's opening shift (§27) plus `countShiftLy(count)`: none
+from 300 through 700 (the baseline), then a straight line out to 10 ly at 1,000 and in to 10 ly at 0, so the Edge stands
+within 20 ly of its default at the most. `tiers` is `galaxyTiers(edgeX)` (the fringe moves light year for light year with
+it, so at seed 424242 it runs from 1 system at 10 ly out to 10 at 10 ly in, 6 at the baseline) and `dark` is `darkAt(count,
+opening)`: the systems the season opened dark, and below 300 the ones the Count itself pushed Edge-ward (on the fringe at
+`edgeAt(count, opening)` but not at `edgeAt(300, opening)`, DESIGN 16.3 "Low"), the Count's own relit as it climbs and all of
+them at 700. A Chorus sanctuary (a B- or E-class star, DESIGN 11 "any tier, safe") never goes dark, in either set: `darkAt`
+leaves it out (`isSanctuary` in `@astra/shared/world`, by the shared galaxy's star class), though its tier still flips, and a
+Broken opening's `darkSystems` never draws one. Every change of the Count, and a season's roll (the opening changes as the
+Count returns to 500), recomputes the three together in `commit()`, so subscribers hear one change that moves the Edge,
+the tier map (`flipped`) and the dark set at once, the zone manager re-tiers the zones it holds from it, and the mirror
+carries all of them. Nothing of it is saved: a restart works it out again from the saved Count and opening, so a roll
+played on boot and a roll played live end on the same Edge and nothing moves it twice. `world.update({count})` is the only
+lever (dev tooling and tests); there is no way to set the Edge on its own.
+Not yet: a dark station's Hive build and raid (DESIGN 16.3), which are for the station and Hive tasks to read
+`world.isDark(system)` and `state().dark`.
+
+The client draws the Edge from the same message, `net.world` (one copy: `game.edge` reads its `edgeX`, `game.stationDark(id)`
+its `dark` (protocol 21; the client never works the set out itself), the map's tooltip its Count, and its shift from the default, "Advanced 20 ly" or "Receded 10 ly"). The Edge the tiers follow moves tens of light years in a cluster 110 ly across; the wall
+the map and the sky draw stands 3.1 million ly out and would not visibly move by that, so it moves `EDGE_WALL_LY_PER_LY`
+(20,000) light years for each (`wallX(edge)`, `edgeX(y, z, edge)` in `@astra/shared/world`; the wall stays beyond the
+farthest galaxy at the most the Count and an opening move it, 20 ly, 400,000 ly of wall). `EdgeOfSpace.update(…, edge)` slides
+every part of the wall with one uniform; `GalaxyMap` moves the selectable Edge, its label anchors and its lens with it;
+`UniverseSky` redraws the whole sky when the Edge moves; `Universe.clearance` and the edge compass measure to it. Until
+P1.E04.T04 lands the client does not rebuild a system whose tier changed (its dens and node layers follow the tier of the
+Edge it was built at), but the map, the sky, the compass and the tier a client reads from `world.tiers` follow it at once.
 
 Persistence: the shard's row holds `count`, `count_day` (the last day rolled) and `burn_step` (the last burn tick
 applied); votes go to `count_votes`, rolls to `count_days`. The service gathers new votes, rolls and the meter's position
@@ -1036,7 +1101,9 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
   is) and `units` change nothing. Server-side calls: `grantPoints`, `setPoints` (the CLI's "set skill points": never below what levels give less
   what is spent), `grantFragments` (P1.E07.T11 decides the count: Listener, Uncounted), `unlock(id, node, source)`,
   `buy`, `respec`, and `refresh` when the level or the hull changes. `owned(id)` is what `shipStats`, movement authority's
-  profile, abilities and meters read; `subscribe` hears every change (`request` or `server`), and the gateway pushes the
+  profile, abilities and meters read; `shipSlots(id)` the flown hull's working ship slots (what the ability service asks every
+  step), and `flight(id)` the ship and the owned nodes together (what the gateway re-tunes movement and combat to, §28);
+  `subscribe` hears every change (`request` or `server`), and the gateway pushes the
   `server` ones.
 - **Wiring**: `coreRegistry` makes the service over the same inventory, ship and progress holders unless one is given, and
   registers its component after `progress` and before `ship`; the gateway takes the one in persistence's registry
@@ -1469,8 +1536,12 @@ is worth. Clients fire their tracers at once for feel and are told what happened
 
 - **Health** is each zone's (`zone.combat`, `ZoneCombat`). A creature's is its mob stats' (`mobStats` of its body plan
   and temperament at its herd's level; the apex takes the Pack Alpha's row), taken when it is first hurt. A player has
-  its suit's (`playerMaxHealth` of the nodes it entered with: 100, Second Skin 150) and its ship's shield and hull
-  (`shipStats` of the ship it entered with); a hit takes the suit when the server believes it on foot, else the shield
+  its suit's (`playerMaxHealth` of the nodes it owns: 100, Second Skin 150) and its ship's shield and hull
+  (`shipStats` of the ship it flies and the nodes it owns: Shield Capacitor and Hull Plating make them 125, §28); those
+  are what it entered with until its nodes or hull change (a join carries `SkillService.flight`), when `ZoneCombat.retuned`
+  works the capacities and the damage mods out again and each pool keeps its fraction (a plate bought in flight repairs
+  nothing, one refunded wounds nothing and never kills, a pool at 0 stays at 0 and the player stays down, a refund then a
+  rebuy gains nothing); a hit takes the suit when the server believes it on foot, else the shield
   and then the hull. On the wire, an entity's `hp` is the fraction left of the pool in use (and aboard, `shield`), patched
   as it changes and as a player's mode changes which pool is shown. Nothing heals yet and health is not saved: the
   Recall (P1.E06.T03) and creature attacks (P1.E08.T02) decide recovery.
@@ -1714,8 +1785,8 @@ gate is recipes and materials, not a skill tree.
   client's until zone handoff, P1.E04.T04). The fabricator replaces the trade panel's 1,800-unit warp cell (DESIGN
   15.7), which is gone (`pnpm gate:removed` holds it to this task): until the client mines through the server
   (P1.E13.T06), online players get warp cells only from the starting kit and crash sites. The rest of the demo's `SHOP`
-  list, the 300-unit pulse fuel refill among it, goes with P1.E07.T09, since a crafted pulse fuel cell cannot be used
-  yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
+  list, the 300-unit pulse fuel refill among it, went with P1.E07.T09 (§28): the trade terminal only buys, and a crafted
+  pulse fuel cell cannot be used yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
   once Heat and Charge are the server's, through P1.E07.T02's `refillCharge`, a seam that task adds and that is not on
   main yet (called with that amount as a cell is used up through `InventoryService.consume`); cartridges restore 60 once
   the suit's life support and hazard protection are the server's (today the client's `Game.updateSurvival` refills them
@@ -1994,9 +2065,8 @@ its title and glyph, and what its chronicle says. The world service rolls them o
   424242 the Edge-ward fringe goes from 6 systems to 1); after Broken it advances as far (10 systems Edge-ward) and 2–3 of
   the Edge-ward fringe systems at that Edge start dark (`darkSystems`: drawn by `hashInts(galaxy seed, season)`, the same
   every run); after Held, and for the first season, the baseline. Each map comes from the one season before it, never
-  added up. It is data on the shard's row and in `world.opening`: the Edge following the meter (P2.E22.T02) is to apply
-  `edgeShiftLy` to `edgeX` and flag the `dark` systems' stations, reading `state().opening` and hearing the roll through
-  `subscribe` (a change with `season`).
+  added up. It is data on the shard's row and in `world.opening`: the world service applies `edgeShiftLy` to `edgeX` and flags
+  the `dark` systems' stations (§11, P2.E22.T02), so the roll is one change that moves the Edge, the tier map and the dark set.
 - **The winners** (`seasonWinners`): the accounts whose own counted actions in the season (its stored votes cast in
   [start, end)), read as the meter reads a day's (their lean, and the target it pulls toward), land in the season's
   bucket, with at least one full vote's weight (`TITLE_MIN_WEIGHT`; a monolith touch is a tenth). So the Fed season's
@@ -2034,8 +2104,8 @@ its title and glyph, and what its chronicle says. The world service rolls them o
   socket request: a chronicle is a document, which grows with P2.E22.T04's per-account measures, and fetching one spends
   nothing of a socket's message budget. The client fetches it with `seasonChronicle(token, season)` (`net/api.js`; Vite
   proxies `/seasons`).
-- **Not here**: the Reckoning in a season's final week (P3.E34.T03), the Edge moving with the meter and dark stations
-  drawn (P2.E22.T02), where players see it (P2.E22.T04), drift content per season (P3.E35.T01).
+- **Not here**: the Reckoning in a season's final week (P3.E34.T03), the dark stations' Hive build and raids (§11 says what
+  the world service flags), where players see it (P2.E22.T04), drift content per season (P3.E35.T01).
 ## 28. Abilities (`packages/server/src/abilities`, `@astra/shared/abilities`)
 
 DESIGN 9.1's actives, cast by the server (P1.E07.T03). A key press is an intent; the server decides whether the cast
@@ -2054,8 +2124,10 @@ effects; this runtime casts them all.
 - **The book** (`book.ts`): each ability paired with its effect, the server's code for it, `{check?, cast, end?}`.
   `abilityBook()` refuses to build (the server does not start) an ability without an effect or the reverse, one filed
   under another node, a node that is always on, an `entity` ability that takes no kind, or a cooldown casts cannot run.
-  This build's book is empty: no branch has landed its abilities yet, so every slotted node is refused `unknown`. Tests
-  and the integration test cast a fixture book (`test/abilityFixture.ts`) over real nodes, never shipped.
+  This build's book holds the branches that have landed (Thermal I–II so far, P1.E07.T05; every other slotted node is
+  refused `unknown`); each branch adds its abilities from `@astra/shared/abilities/<branch>.ts` and its effects from
+  `abilities/<branch>.ts`, one line apiece in `ABILITIES` and `EFFECTS`. Tests and the integration test cast a fixture book
+  (`test/abilityFixture.ts`) over real nodes, never shipped.
 - **A cast** (`CastService.cast`, `service.ts`) is checked cheapest first, nothing paid or started until all pass: its
   `seq`; the character in play; its rate (6 at once, 3 a second); its stamp (within 3 s); the bar the mode movement
   authority believes casts from (§7); not down (§20); the slot one of the bar's working ones (six on the ground, the flown
@@ -2073,12 +2145,46 @@ effects; this runtime casts them all.
   `target`, otherwise); combat's events keep the same rule (§20: a hit on an entity a session's phase hides is not sent
   to it, a hit by one is sent without its `source`).
 - **What an effect gets** (`CastContext`): the caster's character and entity, the node, the ability, the bar, the world
-  time, the frame, origin and unit aim, the checked target; `creatures(reach?)`, the creatures of its world it can see with
-  their hit spheres (`creatureTargets`, combat's, for areas and cones with `hitTest`, `@astra/shared/combat`); `damage(target,
-  base)`, a hit through the zone's one damage path (§20) as the node's ability, with the caster's node modifiers and
-  augments, and only where `mayHarm` allows (null otherwise): never a player until PvP defines it (P2.E17.T01), nothing
-  in a safe zone, caster or target (the Waystation's sphere, its frame; a capital's, P1.E10.T02, joins it there); and
-  `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play.
+  time, the frame, origin and unit aim, the checked target; `creatures(reach?, at?)`, the creatures of its world it can see with
+  their hit spheres, with `reach` only those that may lie within it of `at` (the cast's origin unless given: an effect that runs on
+  after its cast culls round where its caster is now; `creatureTargets`, combat's, for areas and cones with `hitTest`,
+  `@astra/shared/combat`); `damage(target, base)`, a hit through the zone's one damage path (§20) as the node's ability, with
+  the modifiers and augments of the nodes the caster owns at that moment (so a refunded node stops counting in a toggle still
+  on), and only where `mayHarm` allows and the caster's phase still lets it see the target (null otherwise): never a player
+  until PvP defines it (P2.E17.T01), nothing in a safe zone, caster or target (the Waystation's sphere, its frame; a capital's,
+  P1.E10.T02, joins it there); and
+  `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play. Past the cast, as
+  the branches need them (Thermal I–II, P1.E07.T05; general, so the other branches reuse them): `time()`, the world clock now
+  (`now` is the cast's); `owns(node)`, the caster's web now (an augment, a passive); `pose()`, the caster's eye and look now,
+  in the cast's frame, for an effect that runs on after its cast (a held beam): the entity's pose raised to the eye, the look
+  the client last sent with its input (`aim`, the eye's quaternion, which the client sends on foot) or the cast's own aim without
+  one, null once the entity has left play or its frame; `sight(to)`, whether the drawn ground leaves a line from that eye
+  (`'busy'` while the ground is still being planned, false once the caster is gone) and `groundReady()`, whether the ground is
+  planned (an area cast refuses `busy` until it is); `canHarm(target)`, `damage`'s rule for an effect that marks and deals no
+  blow;
+  `meters.beamTime()` (the seconds the beam has fired in all as the meters judged it, §19: a difference of two readings is what
+  the beam did, however its client timed its inputs) and `meters.dumpHeat()` (Vent: all the heat out, how much, null in the
+  lockout); and `status`, the caster's marks on targets (`Statuses`, `abilities/statuses.ts`): `apply(target, id, durationS,
+  power)` (true when this caster's was not running, so its effect starts the ticks; a running one is made to last to the later
+  end at the greater power), `get` (also for a second after its end, so the ticking effect deals the last of the interval),
+  `active` (anyone's, for Cauterize and Brand) and `remove`. Each carries a `gen`, new when it begins (none running, or
+  removed, or ended a second ago) and kept when a later application extends it: the effect ticking it ends when it reads
+  another, so one status never has two tick loops. Statuses are kept per zone and caster, pruned a second after their end, and
+  all a caster's are dropped when it leaves play (`left`, with its timers).
+- **Thermal I–II** (`@astra/shared/abilities/thermal.ts`, `abilities/thermal.ts`; DESIGN 9.3). Lance is a toggle on the
+  multitool beam: the heat is the beam's own 32 a second (the meters', §19), and while it is on every 0.25 s the effect
+  deals `12 ×` the beam seconds the meters judged since the last tick to the nearest creature on the look ray within 30 m and
+  in sight (resistances apply: crystal creatures resist Thermal); with Chain the nearest other creature within 8 m of the
+  first's centre takes half of it. Flare bursts 18 on every creature in its 60° cone to 12 m (in sight) and ignites it; Sear
+  (an `entity` cast on a creature within 30 m, refused `target` if it may not be harmed) ignites with no blow of its own;
+  Vent dumps all the heat and deals `0.6 ×` the heat dumped to every creature within 10 m. A burn is a `burning` status
+  dealing 6 a second for 4 s (Flare) or 5 for 8 s (Sear) in 0.5 s ticks through `ctx.damage`, stopping on death or, for good,
+  when a tick is refused (the target in a safe zone or out of the caster's phase view: it is not alight again on coming out); a second ignition by the same caster makes it last to the later end at the greater power
+  and never doubles its ticks. Tempered Core, Focused Lasers, Hot Hands and Ablative Plating are not cast: the meters'
+  profile (§19), `shipStats` (the base gun's range and damage, §20, and `reentryDamage` and `hazardDamage`), and the mining
+  service (§18) read their nodes. The server's ship has no hazard damage yet (the client computes it), and no re-entry damage
+  exists on either side (Ablative Plating's re-entry half has no consumer until one is planned); when they do, they multiply
+  by `hazardDamage[kind]` and `shipStats(...).reentryDamage`.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
@@ -2109,4 +2215,38 @@ effects; this runtime casts them all.
   once nothing on it has moved for 4 s. The client never decides a cooldown. Its gauge arcs (§19) ease a jump and a
   cast's cost over 250 ms (ease-out, on the HUD's clock, following the value as it moves meanwhile), the cost's chunk
   drawn bright, and land at once only on their first draw and as they turn on.
+- **The Pilot branch's Tier I–II** (P1.E07.T09, DESIGN 9.7) are nine passives, so the book gains nothing: a passive is never
+  cast, it changes a number a system reads. Each is data (`@astra/shared/data/skills/pilot.ts`, a `mods` list) and
+  `shipStats` applies it for every consumer: Throttle Tuning ×1.1 and Photon Thrusters ×1.25 on `ship.speed_max`
+  (they multiply: 600 → 825 m/s for the Lark), which movement authority's flight caps judge each input by (§7); Soft Landing
+  sets `ship.landing_speed_max` to 220 (160 without), which the authority holds a ship coming to rest to; Reserve Tank ×0.75
+  on `ship.pulse_fuel_burn`, which the meters burn the drive by (§19: 0.35/s, 0.2625/s); Shield Capacitor and Hull Plating
+  ×1.25 on `ship.shield_max` and `ship.hull_max` (125 on the Lark, 125% of the hull's own on any other), which the zone's
+  combat gives the ship (§20); Thermal Plating, Pressure Hull and Hazard Coating ×⅓ on `ship.hazard_damage_<kind>` (heat and
+  cryo; pressure; acid, radiation and storm), which `hazardDamagePerS` (`@astra/shared/ships`) applies to a hostile sky's
+  damage, the one rule the client's `Ship.updateHazard` takes its hull damage by. The server has no hazard tick of its own
+  yet: the ship's hull is the client's in the sky until the Recall and the client ship system make it the server's
+  (P1.E06.T03, P1.E12.T03); the plating is the number that tick will read. A node bought or refunded changes all of these in
+  play, not at the next join: the gateway re-tunes the character's session (`SkillService.flight` is the ship and nodes
+  owned; `Zone.retune`, §7, §20) and the meters re-profile themselves (§19). The client's ship takes its nodes from the
+  server's `skills` view (`Ship.setSkills`), which is how the demo's shop upgrades (`SHOP`, `applyUpgrade`) became the web.
+- **Two narrow reads.** The toggles' hold check runs every 50 ms for each character with one on, so the ship bar's working
+  slots come from `SkillService.shipSlots(id)` (the flown hull's `abilitySlots`) and not from rebuilding the whole view
+  (`view`, which also asks standing and points). A cast settles the character's old toggles before it is looked at, so a
+  press from a character's new connection is a new cast, never the first connection's toggle going off.
 
+- **The Exo-suit's Tier I–II (P1.E07.T10)** are all passives: nothing in the book, no new `CastContext`. A passive changes the
+  system its stat names, through the stat modifiers on its node (`@astra/shared/data`), read by whoever owns that system.
+  The walker (`walkerStats`, §7): Sprint Stride's sprint 11.5 m/s, Long Jump's jump 7, Efficient Jetpack's tank twice as long;
+  movement authority holds a walker to its caps and learns the build at the join (`skills.owned`) and again on every change to
+  it (`ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune`, from the gateway's one skill subscription): Sprint Stride bought
+  mid-session is allowed from the next input. The client's `Player` takes the same numbers (`setBuild`, from the `skills`
+  view's bought nodes). Mining (§18): Optical Drill is a `mining.yield` ×1.5 that stacks with Hot Hands (breaking speed is
+  Hot Hands'). The suit and the scan (`@astra/shared/exosuit`, numbers `SUIT`): life support and hazard protection are still
+  the client's (the demo's `Game.updateSurvival`; no server meter holds them yet), but every number is shared. Hazard drain is
+  `strength × (1.4 in the dark) × 0.6 × mult`, the strength `footHazard` (the world's own or its ship hazard's foot strength,
+  a mild world's mist alone), the mult Hazard Weave's 0.6, Cold Blood's 0 at night on a frozen world and Heat Shroud's 0 by
+  day on a desert or volcanic one (the people's perk joins them: Ulgani 0 on toxic and corrosive worlds), conditions from
+  `meterConditions` (§19), so night is the one rule the meters and fauna use. A refill from the pack (below 25, 10 raw units)
+  restores `cartridgeRestore` (40, Cartridge Recycler 60); the scan reaches `scanRanges` (180 m for deposits, 3 km for sites,
+  Scanner Lens 6 km). The demo shop's Optical Drill and Efficient Jetpack rows are gone.

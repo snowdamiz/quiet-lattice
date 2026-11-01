@@ -278,6 +278,11 @@ export class ZoneManager {
     return left;
   }
 
+  /** Holds the session's player to the ship and nodes it has now (Zone.retune). False when it is in no zone. */
+  retune(viewer: ZoneViewer, change: { ship: ShipLoadout | null; skills: readonly string[] }): boolean {
+    return this.byViewer.get(viewer)?.zone.retune(viewer, change) ?? false;
+  }
+
   input(viewer: ZoneViewer, msg: Extract<ClientMessage, { t: 'input' }>): InputResult {
     return this.byViewer.get(viewer)?.zone.input(viewer, msg, this.clock.now()) ?? 'unknown';
   }

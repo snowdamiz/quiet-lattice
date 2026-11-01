@@ -36,11 +36,6 @@ export class Multitool {
     this.buildBeam();
   }
 
-  // the demo shop's beam upgrade: mining yield (DESIGN 9.8's Optical Drill); heat is the meter's
-  upgrade() {
-    this.power = 2.4;
-  }
-
   /** Heat as a fraction of the meter's capacity, 0–1 (the HUD's arc, the tool's glow, the beam's sound). */
   get heat() {
     return this.meter.heat / this.heatMax;

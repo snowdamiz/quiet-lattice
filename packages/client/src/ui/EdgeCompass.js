@@ -152,7 +152,7 @@ export class EdgeCompass {
     if (!show) return;
     const g = this.game;
     // the frame of the galaxy at the camera: world axes are galactic axes, only shifted
-    const dist = edgeBearing(g.universe.toLy(g.camWorld, _here), this.north);
+    const dist = edgeBearing(g.universe.toLy(g.camWorld, _here), this.north, g.edge);
     this.up.set(0, 1, 0).addScaledVector(this.north, -this.north.y).normalize();
     this.east.crossVectors(this.north, this.up);
     // ball-local (x west, y up, z north) to world, then to the camera's view

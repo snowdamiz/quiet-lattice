@@ -1,6 +1,7 @@
 // ZoneManager: zones open on the first join, many run side by side, empty ones sleep and unload; the fixed-step loop
 // catches up a little and skips the rest; overruns are logged; tick metrics are logged per zone at an interval; inputs
 // and acks reach the right zone; each zone's tier follows the world service.
+import { edgeAt } from '@astra/shared/seasons';
 import { EDGE_X, galaxyTiers, tierOfGalaxySystem } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { systemSeed } from '../world/home.ts';
@@ -315,8 +316,8 @@ describe('ZoneManager', () => {
   it("takes each zone's tier from the world service and follows it as the Edge moves", async () => {
     const world = await WorldService.open({ store: { id: 't', load: async () => newShardRecord('t', 0, 0), saveTime: async () => {} } });
     const { zones, lines } = setup({ world });
-    // a system the Edge-ward fringe takes in when the Edge comes 25 ly nearer, and one it leaves alone
-    const nearer = galaxyTiers(EDGE_X - 25);
+    // a system the Edge-ward fringe takes in when the Count drops to 0 and the Edge comes 10 ly nearer, and one it leaves alone
+    const nearer = galaxyTiers(edgeAt(0, { edgeShiftLy: 0 }));
     const flips = galaxyTiers(EDGE_X).findIndex((t, i) => t.tier !== nearer[i]!.tier);
     const stays = 0;
     expect(flips).toBeGreaterThan(0);
@@ -326,7 +327,7 @@ describe('ZoneManager', () => {
     expect(zones.tier(`sys:${stays}`)).toBe(0);
     expect(zones.tier('sys:999')).toBeUndefined();
 
-    world.update({ edgeX: EDGE_X - 25 });
+    world.update({ count: 0 });
     expect(zones.tier(`sys:${flips}`)).toBe(5);
     expect(zones.tier(`sys:${stays}`)).toBe(0);
     expect(lines.filter((l) => l.msg === 'zone tier changed').map((l) => l.obj)).toEqual([{ zone: `sys:${flips}`, from: tierOfGalaxySystem(flips), to: 5 }]);
@@ -341,16 +342,16 @@ describe('ZoneManager', () => {
 
   it("gives each zone's fauna its tier, and the new tier when the Edge moves", async () => {
     const world = await WorldService.open({ store: { id: 't', load: async () => newShardRecord('t', 0, 0), saveTime: async () => {} } });
-    // the world service's Edge already stands 25 ly nearer than the default when the zone opens
-    world.update({ edgeX: EDGE_X - 25 });
-    const nearer = galaxyTiers(EDGE_X - 25);
+    // the world service's Edge already stands 10 ly nearer than the default when the zone opens
+    world.update({ count: 0 });
+    const nearer = galaxyTiers(edgeAt(0, { edgeShiftLy: 0 }));
     const moved = nearer.findIndex((t, i) => t.tier !== tierOfGalaxySystem(i));
     const { zones } = setup({ world });
     const zone = zones.join(new Sink(1), character(moved)).zone;
     expect(zone.fauna!.tier).toBe(nearer[moved]!.tier);
     expect(zone.fauna!.tier).not.toBe(tierOfGalaxySystem(moved));
     // the Edge goes back: the fauna follows
-    world.update({ edgeX: EDGE_X });
+    world.update({ count: 500 });
     expect(zones.tier(zone.id)).toBe(tierOfGalaxySystem(moved));
     expect(zone.fauna!.tier).toBe(tierOfGalaxySystem(moved));
   });

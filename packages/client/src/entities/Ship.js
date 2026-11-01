@@ -11,9 +11,10 @@ import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
-import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
+import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, hazardDamagePerS, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
 import { canEngagePulse, meterEnvironment, meterProfile, meterRates, stepMeters } from '@astra/shared/meters';
 import { fireIntent } from '../net/combat.js';
+import { Blend } from '../net/prediction.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -66,6 +67,9 @@ export class Ship {
   constructor(game) {
     this.game = game;
     this.state = new FrameState();
+    // the ship as drawn and as the chase camera follows it: its state, with a correction's blend while one runs
+    this.blend = new Blend();
+    this.drawn = new FrameState();
     this.group = new THREE.Group();
     this.group.name = 'ship';
     this.mode = 'flying'; // flying | landing | landed | takeoff | docking | pulse
@@ -77,7 +81,7 @@ export class Ship {
     this.gear = 1;
     this.boosting = false;
     this.thrust = 0;
-    // what the ship is, and the Pilot nodes it flies with (the demo shop's upgrades, until the skill web lands)
+    // what the ship is, and the nodes its pilot owns (the server's `skills` view, `setSkills`)
     this.loadout = LOADOUT;
     this.skills = new Set();
     this.refreshStats();
@@ -587,6 +591,17 @@ export class Ship {
     // the flight model's hard limit, a little over the boost cap the server holds the ship to
     this.vmax = flightCaps(this.stats, 'boost').max * CLIENT_SPEED_HEADROOM;
     this.gun = this.stats.hardpoints.find((h) => h.weapon === 'pulse_lasers');
+  }
+
+  // The nodes the pilot owns, as the server's skills view lists them. The set is kept (the inventory's layout reads it), and
+  // each pool keeps its fraction, as the server's does (ZoneCombat.retuned).
+  setSkills(nodes) {
+    const had = this.stats;
+    this.skills.clear();
+    for (const n of nodes) this.skills.add(n);
+    this.refreshStats();
+    this.shield = had.shieldMax > 0 ? (this.shield / had.shieldMax) * this.stats.shieldMax : this.stats.shieldMax;
+    this.hull = had.hullMax > 0 ? (this.hull / had.hullMax) * this.stats.hullMax : this.stats.hullMax;
   }
 
   get chargeMax() {
@@ -1221,10 +1236,21 @@ export class Ship {
   }
 
   exitPulse() {
+    // (the drive's stretch is reported up to here: movement authority judges what follows on the engines from the last
+    // pose it had on the drive, and the frames since that input went at the drive's speed)
+    this.game.net?.sendInput();
     this.mode = 'flying';
     this.speed = Math.min(this.pulse.speed, PULSE_DRIVE.exitSpeedMax);
     const fwd = _v.set(0, 0, -1).applyQuaternion(this.state.quat);
     this.state.vel.copy(fwd).multiplyScalar(this.speed);
+    this.game.audio?.play('pulseExit');
+  }
+
+  // The server refused the pulse drive (ARCHITECTURE §7: a Charge it holds empty): back on the engines at the velocity its
+  // correction carries on with.
+  refusePulse() {
+    this.mode = 'flying';
+    this.pulse.spool = 0;
     this.game.audio?.play('pulseExit');
   }
 
@@ -1344,7 +1370,7 @@ export class Ship {
     if (depth <= 0) return;
     // how much of each kind of hostile sky the hull takes (Thermal Plating and the like divide it)
     const taken = this.stats.hazardDamage[hz.kind] ?? 1;
-    let dmg = hz.dps * Math.pow(depth, hz.curve || 1.3) * dt * taken;
+    let dmg = hazardDamagePerS(hz, depth, this.stats) * dt;
     const t = g.time;
     if (hz.kind === 'heat') {
       this.hazardHeat = depth * (0.75 + 0.15 * Math.sin(t * 17));
@@ -1452,8 +1478,12 @@ export class Ship {
     }
   }
 
+  drawnState() {
+    return this.blend.apply(this.state, this.drawn);
+  }
+
   updateCamera(dt, input, out) {
-    const s = this.state;
+    const s = this.drawnState();
     let snap = false;
     if (out.frame !== s.frame) {
       // velocities are per frame: no acceleration to read across the change
@@ -1577,7 +1607,7 @@ export class Ship {
       return false;
     };
     if (!blocked(cam)) return;
-    const from = _v5.copy(this.state.pos);
+    const from = _v5.copy(this.drawn.pos);
     from.y += 1.5;
     let clear = 0;
     for (let i = 1; i <= 24; i++) {
@@ -1612,9 +1642,9 @@ export class Ship {
   }
 
   syncVisual(camWorld) {
-    const wp = this.state.worldPosition(_v);
-    this.group.position.copy(wp).sub(camWorld);
-    this.state.worldQuaternion(this.group.quaternion);
+    const s = this.drawnState();
+    this.group.position.copy(s.worldPosition(_v)).sub(camWorld);
+    s.worldQuaternion(this.group.quaternion);
     // the hull glows on the faces leading into the flow
     if (this.heatU && this.flowLocal) this.heatU.uHeatDir.value.copy(this.flowLocal).negate().applyQuaternion(this.group.quaternion);
     // landing light at low altitude

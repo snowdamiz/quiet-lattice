@@ -1,6 +1,7 @@
 // WorldService against an in-memory shard store and a fake Redis: the Phase 1 state, the tier map, subscribe and
 // unsubscribe, the mirror, and the clock's epoch and floor from the shard's record.
 import { WorldState as WorldMessageSchema } from '@astra/shared/protocol';
+import { edgeAt } from '@astra/shared/seasons';
 import { EDGE_X, galaxyTiers, tierOfGalaxySystem } from '@astra/shared/world';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_SHARD_EPOCH_MS } from './clock.ts';
@@ -66,7 +67,9 @@ function setup(opts: Partial<WorldServiceOptions> & { store?: MemoryShardStore }
 }
 
 /** An Edge position that flips some systems' tiers (the fringe moves in light year for light year with the Edge). */
-const NEARER_EDGE = EDGE_X - 25;
+// the Count at its lowest takes the Edge its furthest in
+const NEARER_COUNT = 0;
+const NEARER_EDGE = edgeAt(NEARER_COUNT, { edgeShiftLy: 0 });
 
 afterEach(() => {
   logs.length = 0;
@@ -113,6 +116,7 @@ describe('WorldService', () => {
       count: 500,
       edgeX: EDGE_X,
       tiers: [...world.state().tiers],
+      dark: [],
       serverTime: 300 * 86_400 + 2.5,
     });
     expect(m.serverTime).toBe(world.clock.now());
@@ -126,7 +130,7 @@ describe('WorldService', () => {
     world.subscribe((c) => a.push(c));
     const unsubscribeB = world.subscribe((c) => b.push(c));
 
-    const change = world.update({ edgeX: NEARER_EDGE })!;
+    const change = world.update({ count: NEARER_COUNT })!;
     const before = galaxyTiers(EDGE_X);
     const after = galaxyTiers(NEARER_EDGE);
     const expected = after.flatMap((t, i) => (t.tier === before[i]!.tier ? [] : [{ system: i, from: before[i]!.tier, to: t.tier }]));
@@ -134,7 +138,7 @@ describe('WorldService', () => {
     expect(expected.every((f) => f.to === 5)).toBe(true); // an advancing Edge only ever raises tiers to 5
     expect(change.flipped).toEqual(expected);
     expect(change.state).toBe(world.state());
-    expect(change.state).toMatchObject({ revision: 2, edgeX: NEARER_EDGE, count: 500 });
+    expect(change.state).toMatchObject({ revision: 2, edgeX: NEARER_EDGE, count: NEARER_COUNT });
     expect(change.state.tiers).toEqual(after.map((t) => t.tier));
     expect(change.previous.tiers).toEqual(before.map((t) => t.tier));
     expect(a).toEqual([change]);
@@ -143,9 +147,13 @@ describe('WorldService', () => {
 
     unsubscribeB();
     unsubscribeB(); // twice is harmless
-    const second = world.update({ count: 480 })!;
-    expect(second.flipped).toEqual([]);
-    expect(second.state).toMatchObject({ revision: 3, count: 480, edgeX: NEARER_EDGE });
+    const second = world.update({ count: 20 })!;
+    // (a Count of 20 holds the Edge a little less far in than 0 does, so the outermost system steps back down)
+    expect(second.flipped).toEqual(
+      galaxyTiers(edgeAt(20, { edgeShiftLy: 0 })).flatMap((t, i) => (t.tier === after[i]!.tier ? [] : [{ system: i, from: after[i]!.tier, to: t.tier }])),
+    );
+    expect(second.flipped.every((f) => f.to < f.from)).toBe(true);
+    expect(second.state).toMatchObject({ revision: 3, count: 20, edgeX: edgeAt(20, { edgeShiftLy: 0 }) });
     expect(a).toEqual([change, second]);
     expect(b).toEqual([change]);
   });
@@ -155,12 +163,10 @@ describe('WorldService', () => {
     const world = await open();
     const heard: WorldChange[] = [];
     world.subscribe((c) => heard.push(c));
-    expect(world.update({})).toBeNull();
-    expect(world.update({ count: 500, edgeX: EDGE_X })).toBeNull();
+    expect(world.update({ count: 500 })).toBeNull();
     expect(() => world.update({ count: 1001 })).toThrow(RangeError);
     expect(() => world.update({ count: -1 })).toThrow(RangeError);
     expect(() => world.update({ count: Number.NaN })).toThrow(RangeError);
-    expect(() => world.update({ edgeX: Number.POSITIVE_INFINITY })).toThrow(RangeError);
     expect(heard).toEqual([]);
     expect(world.state().revision).toBe(1);
   });
@@ -173,7 +179,7 @@ describe('WorldService', () => {
       throw new Error('boom');
     });
     world.subscribe((c) => heard.push(c.state.revision));
-    world.update({ edgeX: NEARER_EDGE });
+    world.update({ count: NEARER_COUNT });
     expect(heard).toEqual([2]);
     expect(logs.some((l) => l.level === 'error' && l.msg === 'world listener failed')).toBe(true);
   });
@@ -193,11 +199,11 @@ describe('WorldService', () => {
     });
 
     advance(1000);
-    world.update({ edgeX: NEARER_EDGE });
+    world.update({ count: NEARER_COUNT });
     await world.flush();
     expect(redis.writes).toBe(2);
     const r = redis.record('test');
-    expect(r).toMatchObject({ revision: 2, edgeX: NEARER_EDGE, count: 500, time: 300 * 86_400 + 1 });
+    expect(r).toMatchObject({ revision: 2, edgeX: NEARER_EDGE, count: NEARER_COUNT, time: 300 * 86_400 + 1 });
     expect(r.tiers).toEqual(world.state().tiers);
   });
 

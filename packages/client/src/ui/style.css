@@ -2876,8 +2876,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .trade-cols {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-  gap: 36px;
+  grid-template-columns: minmax(0, 1fr);
 }
 .col-title {
   margin: 0 0 8px;
@@ -2915,65 +2914,6 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .res-row.empty {
   color: var(--faint);
-}
-.shop-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-.shop-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 14px 16px 12px;
-  background: var(--plate-2);
-  transition: background 0.15s;
-}
-.shop-item:hover {
-  background: rgba(30, 28, 26, 0.98);
-}
-.shop-item .ico {
-  align-self: flex-start;
-  height: 20px;
-  padding: 0 6px;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  border: 1px solid rgba(240, 162, 74, 0.45);
-}
-.shop-item h4 {
-  margin: 4px 0 0;
-  font-family: var(--font-cond);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.shop-item p {
-  margin: 0;
-  flex: 1;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--dim);
-}
-.shop-item .buy {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 6px;
-}
-.shop-item .buy span {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--warm);
-}
-.shop-item.owned .buy span {
-  color: var(--good);
 }
 
 /* ---------- inventory: suit stacks beside the ship's cargo pods ---------- */
@@ -3857,6 +3797,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   flex-direction: column;
   gap: 5px;
 }
+/* (the captions carry the row's meaning: --faint on the plate was 3.1:1, --dim is AA) */
+.map-info .stats .mono {
+  color: var(--dim);
+}
 .stats b {
   font-family: var(--font-mono);
   font-weight: 400;
@@ -3922,6 +3866,15 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .map-label.you-sys small {
   color: rgba(255, 196, 120, 0.7);
 }
+/* a system whose Waystation is dark: its own name in the Hollow's seam light, ahead of the labels round it */
+.map-label.dark {
+  z-index: 2;
+  color: #9fe8da;
+  font-weight: 600;
+}
+.map-label.dark:hover {
+  color: #fff;
+}
 .map-label.you {
   color: var(--accent-hi);
   font-family: var(--font-mono);
@@ -3937,12 +3890,17 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 20px;
   letter-spacing: 0.3em;
   color: #fff;
-  text-shadow: 0 0 24px rgba(160, 120, 255, 0.9), 0 0 4px rgba(0, 0, 0, 0.8);
+  /* on the wall's brightest part (opal white) the letters need a plate of their own, as the sky's EDGE readout has */
+  padding: 8px 14px 8px 18px;
+  background: rgba(11, 11, 16, 0.94);
+  border-left: 2px solid rgba(207, 232, 247, 0.9);
+  box-shadow: 0 0 22px rgba(11, 11, 16, 0.75);
+  text-shadow: none;
 }
 .map-label.edge small {
   font-size: 10px;
   letter-spacing: 0.24em;
-  color: rgba(233, 231, 226, 0.7);
+  color: rgba(233, 231, 226, 0.86);
 }
 .map-label.big {
   font-family: var(--font-display);
@@ -4048,6 +4006,22 @@ input[type='range'].range:hover::-webkit-slider-thumb {
     0 0 6px color-mix(in srgb, var(--ink) 90%, transparent),
     0 0 12px color-mix(in srgb, var(--ink) 70%, transparent);
 }
+/* the credits readout on the same plate, mirrored (4.3:1 over a bright wall at 21:9 without it) */
+.inventory {
+  isolation: isolate;
+}
+.inventory::before {
+  content: '';
+  position: absolute;
+  inset: -9px -18px -9px -36px;
+  z-index: -1;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  mask:
+    linear-gradient(270deg, transparent, #000 18px, #000 calc(100% - 36px), transparent),
+    linear-gradient(180deg, transparent, #000 9px, #000 calc(100% - 9px), transparent);
+  mask-composite: intersect;
+}
 /* and where you are and the compass's reading each on a soft dark backing of their own, faded at its edges, so they
    hold AA however bright what lies behind them (the banner's band, below, does the rest while one shows) */
 .location .body,
@@ -4063,6 +4037,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .ec-read small {
   color: var(--dim);
+}
+/* (the caption over the brightest walls: --dim on the plate came to 4.4:1) */
+.ec-read .ec-dist small {
+  color: var(--accent-hi);
 }
 .location .body::before,
 .ec-read::before {

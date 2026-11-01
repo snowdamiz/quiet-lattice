@@ -5,7 +5,7 @@ import { countDigits, transliterate, type Stroke } from '../art/glyphs.ts';
 import { EDGE_X } from '../world/edge.ts';
 import { GALAXY_SEED } from '../world/galaxy.ts';
 import { hashInts, Random } from '../world/rng.ts';
-import { galaxyTiers } from '../world/tiers.ts';
+import { galaxyTiers, isSanctuary } from '../world/tiers.ts';
 import { DARK_SYSTEMS_MAX, SEASON_DAY_S, SEASON_LENGTH_S, SMALL_SEASON_LENGTH_S, type SeasonAward, type SeasonBucket, type SeasonOpening } from './schema.ts';
 
 /** A season's length is chosen from the mean daily actives of this many meter days before it starts (DESIGN 16.4: "the
@@ -54,13 +54,14 @@ const DARK_SALT = 0x5ea5;
 
 /**
  * The 2–3 galaxy systems a season opens dark after a Broken one (DESIGN 16.3–16.4: "Edge-ward systems flip to Tier 5; their
- * Waystations go dark"): drawn from the Edge-ward fringe with the Edge advanced SEASON_EDGE_SHIFT_LY, by the galaxy's seed
- * and the season's number, so the same season darkens the same systems on every run. Ascending.
+ * Waystations go dark"): drawn from the Edge-ward fringe with the Edge advanced SEASON_EDGE_SHIFT_LY, never from a Chorus
+ * sanctuary (a B- or E-class star, which darkAt leaves lit; without the exclusion a season could open with none dark), by
+ * the galaxy's seed and the season's number, so the same season darkens the same systems on every run. Ascending.
  */
 export function darkSystems(season: number, galaxySeed: number = GALAXY_SEED): number[] {
   if (!(Number.isInteger(season) && season >= 1)) throw new RangeError(`a season is a whole number from 1, not ${season}`);
   const candidates = galaxyTiers(EDGE_X - SEASON_EDGE_SHIFT_LY, galaxySeed)
-    .filter((s) => s.edgeWard && s.tier === 5)
+    .filter((s) => s.edgeWard && s.tier === 5 && !isSanctuary(s.id, galaxySeed))
     .map((s) => s.id);
   const rng = new Random(hashInts(galaxySeed, season, DARK_SALT));
   const n = Math.min(candidates.length, rng.int(DARK_SYSTEMS_MIN, DARK_SYSTEMS_MAX));

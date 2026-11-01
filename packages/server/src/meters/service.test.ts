@@ -331,6 +331,36 @@ describe('builds, server-side changes and saves', () => {
     expect(t.pushes.map((p) => p.view.charge)).toEqual([100, 100, 60]);
   });
 
+  it('dumps all the heat at once for Vent, saying how much, and refuses it in the lockout', () => {
+    const t = setup({ saved: { heat: 60 } });
+    expect(t.meters.dumpHeat(ID, t.now)).toMatchObject({ ok: true, dumped: 60, state: { heat: 0 } });
+    expect(t.pushes.at(-1)!.view.heat).toBe(0);
+    expect(t.meters.dumpHeat(ID, t.now)).toMatchObject({ ok: true, dumped: 0 });
+    t.meters.addHeat(ID, 100, t.now);
+    expect(t.meters.dumpHeat(ID, t.now)).toEqual({ ok: false, error: 'overheated' });
+    expect(t.meters.view(ID, t.now).heat).toBe(100);
+  });
+
+  it('counts the beam’s firing in all, for what the beam does besides mining, whoever takes mining’s share', () => {
+    const t = setup();
+    const at = onHomeWorld(t.zone, 2);
+    t.send('foot', at.frame, at.pos);
+    expect(t.meters.beamTime(ID, t.now)).toBe(0);
+    t.send('foot', at.frame, at.pos, Buttons.beam);
+    for (let i = 0; i < 20; i++) {
+      t.wait(0.05);
+      t.send('foot', at.frame, at.pos, Buttons.beam);
+    }
+    expect(t.meters.beamTime(ID, t.now)).toBeCloseTo(1, 6);
+    expect(t.meters.takeBeam(ID, t.now, 10)).toBeCloseTo(1, 6);
+    expect(t.meters.beamTime(ID, t.now)).toBeCloseTo(1, 6);
+    t.wait(0.5);
+    t.send('foot', at.frame, at.pos);
+    expect(t.meters.beamTime(ID, t.now)).toBeCloseTo(1.5, 6);
+    t.wait(5);
+    expect(t.meters.beamTime(ID, t.now)).toBeCloseTo(1.5, 6);
+  });
+
   it('cools saved heat for the time the character was away, and keeps its Charge as it was', () => {
     const t = setup({ saved: { heat: 90, overheated: true, charge: 33, at: 2.3e7 - 2 } });
     // 2 s away: 90 − 40 = 50, still locked out

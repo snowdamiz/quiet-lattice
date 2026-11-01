@@ -9,6 +9,8 @@ import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import {
   CHRONICLE_FINDS_MAX,
   darkSystems,
+  darkAt,
+  edgeAt,
   SEASON_EDGE_SHIFT_LY,
   SEASON_LENGTH_S,
   SMALL_SEASON_LENGTH_S,
@@ -17,6 +19,7 @@ import {
   seasonOpening,
   type SeasonChronicle,
 } from '@astra/shared/seasons';
+import { EDGE_X, galaxyTiers } from '@astra/shared/world';
 import { and, asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -490,5 +493,65 @@ describe('seasons', () => {
     expect(warnings).toHaveLength(1);
     expect(warnings[0]!.msg).toMatch(/dropped a first find/);
     expect(warnings[0]!.obj).toMatchObject({ shard, season: 1, find: { name: 'Quill' } });
+  });
+  it('moves the Edge once when a season rolls, saves it with the season, and finds it where it was after a restart', async () => {
+    const shard = uniqueShard();
+    const D = 40;
+    // a shard in a season (season 4, four weeks) that ends at midnight after day D, the Count at 120: Broken
+    let wall = DEFAULT_SHARD_EPOCH_MS + (D * DAY_S + 6 * 3600) * 1000;
+    let mono = 0;
+    await database.db.insert(shards).values({
+      id: shard,
+      epoch: new Date(DEFAULT_SHARD_EPOCH_MS),
+      lastTime: D * DAY_S + 6 * 3600,
+      season: 4,
+      seasonStart: (D + 1) * DAY_S - SMALL_SEASON_LENGTH_S,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+      count: 120,
+      seasonActives: 4,
+      seasonOpening: { from: 'held', edgeShiftLy: 0, dark: [] },
+    });
+    const open = () => {
+      mono = 0;
+      const wallNow = () => wall;
+      return WorldService.open({ store: pgShardStore(database.db, shard, { wallNow }), mirror: redis, wallNow, monoNow: () => mono });
+    };
+    const mirrored = async () => JSON.parse((await redis.get(worldKey(shard)))!) as WorldMirrorRecord;
+
+    const world = await open();
+    const heard: { season?: number; edgeX: number; from: number }[] = [];
+    world.subscribe((c) => heard.push({ season: c.season?.season, edgeX: c.state.edgeX, from: c.previous.edgeX }));
+    // (the Count at 120 has pushed systems Edge-ward: their stations are dark, and the roll relights them)
+    const pushed = darkAt(120, { edgeShiftLy: 0, dark: [] });
+    expect(pushed.length).toBeGreaterThan(0);
+    expect(world.state()).toMatchObject({ season: 4, count: 120, edgeX: edgeAt(120, { edgeShiftLy: 0 }), dark: pushed });
+    const before = [...world.state().tiers];
+    mono += 18 * HOUR_MS;
+    wall += 18 * HOUR_MS;
+    world.advance();
+    await world.flush();
+
+    // the roll moved the published Edge, the tier map and the dark set once: to the Broken opening's 10 ly in, with the
+    // season's 2-3 dark systems
+    const opening = seasonOpening('broken', 5);
+    const edge = EDGE_X - SEASON_EDGE_SHIFT_LY;
+    expect(heard.filter((h) => h.edgeX !== h.from)).toEqual([{ season: 4, edgeX: edge, from: edgeAt(120, { edgeShiftLy: 0 }) }]);
+    const tiers = galaxyTiers(edge).map((t) => t.tier);
+    expect(tiers.some((t, i) => t !== before[i])).toBe(true);
+    expect(world.state()).toMatchObject({ season: 5, count: 500, edgeX: edge, tiers, dark: opening.dark });
+    expect(opening.dark.length).toBeGreaterThanOrEqual(2);
+    expect(await mirrored()).toMatchObject({ season: 5, edgeX: edge, tiers, dark: opening.dark });
+    expect(await shardRow(shard)).toMatchObject({ season: 5, count: 500, seasonOpening: opening });
+    await world.close();
+
+    // a restart works the same Edge out of the saved Count and opening, and nothing moves it again
+    const again = await open();
+    const moved: number[] = [];
+    again.subscribe((c) => moved.push(c.state.edgeX));
+    again.advance();
+    expect(again.state()).toMatchObject({ season: 5, edgeX: edge, tiers, dark: opening.dark });
+    expect(moved).toEqual([]);
+    expect(await mirrored()).toMatchObject({ season: 5, edgeX: edge, tiers, dark: opening.dark });
+    await again.close();
   });
 });

@@ -44,12 +44,25 @@ describe('skill service', () => {
     progress.set(ID, { level: 20, xp: 0, homeSystem: 0 });
     ships.set(ID, { ...DEFAULT_SHIP, hull: 'swift', modules: {} });
     expect(skills.view(ID)).toMatchObject({ level: 20, shipSlots: 3 });
+    expect(skills.shipSlots(ID)).toBe(3);
     expect(skills.points(ID)).toEqual({ fromLevels: 20, granted: 0, earned: 20, spent: 0, available: 20 });
     ships.set(ID, null);
     expect(skills.view(ID).shipSlots).toBe(0);
+    expect(skills.shipSlots(ID)).toBe(0);
+    expect(() => skills.shipSlots('nobody')).toThrow(SkillsNotHeldError);
     // standing comes from its hook
     skills.hooks.meets = (_, r) => r.faction === 'reaches';
     expect(skills.view(ID).met).toEqual([{ kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' }]);
+  });
+
+  it('says what flies and what it flies with, as bought', () => {
+    const { skills, own, ships } = world();
+    expect(skills.flight(ID)).toEqual({ ship: ships.get(ID), skills: [] });
+    own('throttle_tuning', 'hull_plating');
+    expect(skills.flight(ID)).toEqual({ ship: ships.get(ID), skills: ['throttle_tuning', 'hull_plating'] });
+    ships.set(ID, null);
+    expect(skills.flight(ID).ship).toBeNull();
+    expect(() => skills.flight('nobody')).toThrow(SkillsNotHeldError);
   });
 
   it('adds a people’s node a saved state lacks, refuses an invalid one, and refuses characters it does not hold', () => {
