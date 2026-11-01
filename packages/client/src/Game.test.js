@@ -282,6 +282,49 @@ describe('Game: rewinding to a correction (P1.E04.T03)', () => {
     expect(g.prediction.fence).toBe(9);
   });
 
+  /** Inputs 5 to `last`, 0.05 s apart from world time 10, at `vel` along −z from z = −500. */
+  const record = (g, last, vel = 100) => {
+    for (let seq = 5; seq <= last; seq++) {
+      const time = 10 + (seq - 5) * 0.05;
+      g.prediction.record({ seq, time, mode: 'ship', pose: { frame: null, pos: [0, 0, -500 - vel * (time - 10)], quat: Q, vel: [0, 0, -vel] } });
+    }
+  };
+
+  it('ends a correction heard twice where one leaves it', () => {
+    const { g, state } = flying([0, 0, -525], [0, 0, -100]);
+    record(g, 9);
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    expect(state.pos.toArray()).toEqual([4, 0, -525]);
+    expect(state.vel.toArray()).toEqual([0, 0, -100]);
+    expect(g.prediction.stats.corrections).toBe(2);
+  });
+
+  it('carries the server’s pose on from a later input of the dropped trajectory, not the offset again', () => {
+    const { g, state } = flying([0, 0, -525], [0, 0, -100]);
+    record(g, 9);
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    g.onCorrection({ t: 'correction', seq: 8, mode: 'ship', pose: { frame: null, pos: [4, 0, -515], quat: Q, vel: [0, 0, -100] } });
+    expect(state.pos.toArray()).toEqual([4, 0, -525]);
+  });
+
+  it('puts an operator’s teleport just after a correction where the server put the character', () => {
+    const { g, state } = flying([0, 0, -525], [0, 0, -100]);
+    record(g, 9);
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    g.onCorrection({ t: 'correction', seq: 9, mode: 'ship', pose: { frame: null, pos: [100, 5000, -2000], quat: Q, vel: [0, 0, 0] } });
+    expect(state.pos.x).toBe(100);
+    expect(state.pos.y).toBe(5000);
+    expect(state.pos.z).toBeCloseTo(-2000 - 100 * 0.05);
+  });
+
+  it('counts a correction only once it is taken', () => {
+    const { g } = flying([0, 0, -525], [0, 0, -110]);
+    g.onCorrection({ t: 'correction', seq: 5, mode: 'ship', pose: { frame: '2:station', pos: [0, 0, 0], quat: Q, vel: [0, 0, 0] } });
+    expect(g.prediction.stats.corrections).toBe(0);
+    expect(g.prediction.fence).toBe(0);
+  });
+
   it('drops a refused pulse drive and carries the server’s pose on at its velocity', () => {
     const { g, ship, state } = flying([0, 0, -700], [0, 0, -900], 'pulse');
     g.prediction.record(sent([0, 0, -520], [0, 0, -400], 'pulse'));

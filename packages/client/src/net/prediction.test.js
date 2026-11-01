@@ -141,6 +141,38 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     expect(w.pos.x).toBe(1);
   });
 
+  it('replays a pitch-then-yaw turn in the ship’s own axes onto the server’s orientation', () => {
+    const p = new Prediction(inertial());
+    const about = (axis, a) => new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(...axis), a);
+    const sentQ = about([0, 1, 0], 0.7);
+    const serverQ = about([0, 0, 1], 0.5);
+    const turn = about([1, 0, 0], 0.4).multiply(about([0, 1, 0], 0.3));
+    p.record(sent(1, 0, [0, 0, 0], { quat: sentQ.toArray() }));
+    const s = state(null, [0, 0, 0], [0, 0, 0], sentQ.clone().multiply(turn).toArray());
+    p.take(1, { frame: null, pos: [0, 0, 0], quat: serverQ.toArray(), vel: [0, 0, 0] }, 'ship', s, 0.2);
+    expect(s.quat.angleTo(serverQ.clone().multiply(turn))).toBeLessThan(1e-6);
+  });
+
+  it('carries the server’s pose on at the mover’s velocity for an input at or before the fence, and keeps its turn', () => {
+    const p = new Prediction(inertial());
+    for (let seq = 5; seq <= 11; seq++) p.record(sent(seq, 10 + (seq - 5) * 0.05, [500 + (seq - 5) * 5, 0, 0], { vel: [100, 0, 0] }));
+    const s = state(null, [525, 0, 0], [100, 0, 0]);
+    const pose = { frame: null, pos: [500, 3, 0], quat: [0, 0, 0, 1], vel: [100, 0, 0] };
+    p.take(5, pose, 'ship', s, 10.25);
+    p.corrected(10);
+    expect(s.pos.toArray()).toEqual([525, 3, 0]);
+    p.take(5, pose, 'ship', s, 10.25);
+    expect(s.pos.toArray()).toEqual([525, 3, 0]);
+    p.take(8, { ...pose, pos: [515, 3, 0] }, 'ship', s, 10.25);
+    expect(s.pos.x).toBeCloseTo(515 + 100 * 0.1);
+    expect(s.pos.y).toBe(3);
+    expect(s.vel.toArray()).toEqual([100, 0, 0]);
+    // after the fence it is re-based as ever
+    p.record(sent(12, 10.35, [535, 0, 0], { vel: [100, 0, 0] }));
+    p.take(12, { ...pose, pos: [535, 1, 0] }, 'ship', s, 10.4);
+    expect(s.pos.y).toBe(4);
+  });
+
   it('rewinds a mover now in another frame, with the frames as they stood at the corrected input', () => {
     const { planet, station, resolve, place } = world();
     const p = new Prediction(resolve);

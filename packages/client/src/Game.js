@@ -596,8 +596,10 @@ export class Game {
     const now = foot ? 'foot' : moveModeOf(this.mode, ship.mode, st.frame);
     const flying = (mode) => mode === 'ship' || mode === 'pulse';
     const stride = m.mode === now || (flying(m.mode) && flying(now));
-    this.prediction.corrected(this.net?.inputSeq ?? 0);
-    if (!stride) return this.placeFromServer(m.pose, m.mode);
+    if (!stride) {
+      this.prediction.corrected(this.net?.inputSeq ?? 0);
+      return this.placeFromServer(m.pose, m.mode);
+    }
     const drawn = mover.drawnState();
     _v1.copy(drawn.pos);
     _v2.copy(drawn.vel);
@@ -615,6 +617,7 @@ export class Game {
       mover.blend.clear();
       this.cam.frame = undefined;
     }
+    this.prediction.corrected(this.net?.inputSeq ?? 0);
     if (foot) return;
     if (ship.mode === 'pulse' && m.mode !== 'pulse') ship.refusePulse();
     ship.speed = Math.max(0, _v2.set(0, 0, -1).applyQuaternion(st.quat).dot(st.vel));

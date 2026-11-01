@@ -112,6 +112,10 @@ export class Prediction {
    * velocity, or at its own with `own` (the mover keeps a mode of its own: off the pulse drive the server still holds it
    * on). A ship's turning since, in its own axes, is replayed onto the server's orientation; a walker faces its own
    * heading. False when there is nothing to rewind from (an input no longer kept, a frame not of this system).
+   *
+   * An input at or before the fence is of the old trajectory, which the mover has already left by taking a correction: its
+   * pose is not one to re-base on (the offset would be applied twice), so the server's pose is carried on at the mover's own
+   * velocity, as in a refused mode, and its orientation kept.
    */
   take(seq, pose, mode, state, now, own = false) {
     const r = this.at(seq);
@@ -119,6 +123,10 @@ export class Prediction {
     if (!r || frame === undefined) return false;
     // both as they stood at that input's time, in the frame the mover is in now
     const server = reframeAt(wireInto(_server, pose), frame, state.frame, r.time);
+    if (seq <= this.fence) {
+      state.pos.copy(server.pos).addScaledVector(state.vel, Math.max(0, now - r.time));
+      return true;
+    }
     const sent = reframeAt(copyInto(_sent, r), r.frame, state.frame, r.time);
     if (mode !== r.mode) {
       if (!own) state.vel.copy(server.vel);
