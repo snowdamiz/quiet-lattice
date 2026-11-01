@@ -27,7 +27,7 @@ describe('mining messages', () => {
     for (const m of [hit, flora] satisfies ClientMessage[]) expect(decodeClientMessage(encodeClientMessage(m))).toEqual(m);
   });
 
-  it('takes a flora ref that names its world: the frame, a dot and the client\'s instance key, at the longest it can be', () => {
+  it("takes a flora ref that names its world: the frame, a dot and the client's instance key, at the longest it can be", () => {
     const ref = '4294967295:999.5_999999_999999_n99_4294967295';
     expect(ref.length).toBeLessThanOrEqual(48);
     const m = { ...flora, flora: { ...tree, ref } };
