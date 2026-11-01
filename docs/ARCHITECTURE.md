@@ -705,13 +705,15 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   server holds in another frame than it was sent in, re-expressed at the edge of a sphere at a tick a repeated or lost
   snapshot leaves the client unable to name. A correction for an input of that old trajectory (a repeat, one the server
   held back past its grace, an operator's teleport just after one) is never re-based on what that input sent, or its
-  offset would be applied twice: the server's pose is carried on at the mover's own velocity from that input's time. The rewind moves the mover at once, so its next input fits the server's pose;
-  the drawn ship, the chase camera and the walker's eye carry the difference as a `Blend` (an offset, its rate and a turn,
-  in the frame's axes) that leaves from where and as fast as the mover was drawn and dies away critically damped with a
-  time constant of 0.125 s, the chase camera's own follow, unless it is more than 10 m and half a second of the mover's
-  speed: that is shown as the jump it is, the chase camera put back behind the ship. Leaving the pulse drive sends an input
-  at once, so the drive's stretch is reported up to the drop-out: movement authority judges the engines' first pose from
-  the drive's last.
+  offset would be applied twice: the server's pose is carried on at the mover's own velocity from that input's time, or
+  at the server's where the correction refuses the mode that input was sent in or takes the ship off the pulse drive,
+  and the orientation is kept. The rewind moves the mover at once, so its next input fits the server's pose; the drawn
+  ship, the chase camera and the walker's eye carry the difference as a `Blend` (an offset, its rate and a turn, in the
+  frame's axes) that leaves from where and as fast as the mover was drawn and dies away critically damped with a time
+  constant of 0.125 s, the chase camera's own follow, unless it is more than 10 m and half a second of the mover's
+  speed: that is shown as the jump it is, the chase camera put back behind the ship. Leaving the pulse drive sends an
+  input at once, so the drive's stretch is reported up to the drop-out: movement authority judges the engines' first
+  pose from the drive's last.
 - **A bad network on demand** (`net/link.js`, dev builds): `?lag=<ms>&loss=<%>` (`&seed=<n>`) runs the connection through
   a stand-in for the WebSocket class that holds every message that long each way and loses that share of them each way,
   from the welcome on, keeping each way's order. `packages/tools/src/smoke/prediction-online.spec.ts` plays the game
