@@ -332,3 +332,63 @@ describe('combat events', () => {
     expect(w.zone.combat.stats().eventsDropped).toBeGreaterThan(0);
   });
 });
+
+describe('a player re-tuned to the nodes it owns now (P1.E06.T05)', () => {
+  const LARK_ONE = { hull: 'lark', modules: { s1: 'pulse_lasers' }, cargoPods: 1, livery: 0 } as const;
+  const retune = (w: ReturnType<typeof combatWorld>['w'], entity: number, skills: string[]) => w.zone.combat.retuned(entity, { ship: LARK_ONE, skills });
+  const hit = (w: ReturnType<typeof combatWorld>['w'], entity: number, base: number) => w.zone.combat.applyDamage(null, entity, { base, kind: 'attack' });
+
+  it('keeps the suit pool’s fraction: Dense Bones bought mid-session scales what is left, a refund scales it back, the cycle gains nothing', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    hit(w, a.entity, 60);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 40, suitMax: 100 });
+    retune(w, a.entity, ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suitMax: 120 });
+    expect(w.zone.combat.playerHealth(a.entity)!.suit).toBeCloseTo(48, 9);
+    expect(w.zone.entity(a.entity)!.fields.hp).toBeCloseTo(0.4, 6);
+    retune(w, a.entity, []);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suitMax: 100 });
+    expect(w.zone.combat.playerHealth(a.entity)!.suit).toBeCloseTo(40, 9);
+  });
+
+  it('a suit at 0 stays at 0 and the player stays down, bought or refunded', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    expect(hit(w, a.entity, 500)).toMatchObject({ killed: true });
+    retune(w, a.entity, ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 0, suitMax: 120, down: 'suit' });
+    expect(w.zone.combat.isDown(a.entity)).toBe(true);
+    expect(w.zone.entity(a.entity)!.fields.hp).toBe(0);
+    retune(w, a.entity, []);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 0, suitMax: 100, down: 'suit' });
+  });
+
+  it('changes the damage taken at once: Grey Blood’s +10% from the next hit, refunded it is gone', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(10, 9);
+    retune(w, a.entity, ['grey_blood']);
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(11, 9);
+    retune(w, a.entity, []);
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(10, 9);
+  });
+
+  it('a respec in a fight changes the maxima and the damage taken together', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot', ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 120, suitMax: 120 });
+    hit(w, a.entity, 30);
+    retune(w, a.entity, ['grey_blood']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suitMax: 100 });
+    expect(w.zone.combat.playerHealth(a.entity)!.suit).toBeCloseTo(75, 9);
+    expect(hit(w, a.entity, 10)!.amount).toBeCloseTo(11, 9);
+  });
+
+  it('a pool that was never hurt is full at the new maximum', () => {
+    const { w, join } = combatWorld();
+    const a = join('a', w.at(5, 0), 'foot');
+    retune(w, a.entity, ['dense_bones']);
+    expect(w.zone.combat.playerHealth(a.entity)).toMatchObject({ suit: 120, suitMax: 120 });
+  });
+});

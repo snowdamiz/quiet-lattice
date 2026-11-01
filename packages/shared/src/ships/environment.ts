@@ -4,7 +4,8 @@
 // same numbers from a pose.
 import type { BodySpec, SystemDescription } from '../world/system.ts';
 import type { SystemPoses, Vec3 } from '../world/kinematics.ts';
-import type { PlanetParams } from '../world/planetgen.ts';
+import type { Hazard, PlanetParams } from '../world/planetgen.ts';
+import type { ShipStats } from './stats.ts';
 
 /** A landed ship's centre sits this far above the ground (its gear), m; flying, the ground pushes it out at 0.6 of it. */
 export const SHIP_GEAR_HEIGHT = 1.95;
@@ -92,4 +93,16 @@ export function pulseClearance(d: SystemDescription, poses: SystemPoses, world: 
   const toward = !forward || (s[0] - world[0]) * forward[0] + (s[1] - world[1]) * forward[1] + (s[2] - world[2]) * forward[2] > 0;
   if (toward) ahead = Math.min(ahead, station);
   return { min, ahead };
+}
+
+/** How deep in a world's hostile layer a ship is at `altitudeM` over the ground (or, in a gas giant, under the cloud tops): 0 at
+ * the ceiling and above it, 1 at the ground. */
+export function hazardDepth(hazard: Pick<Hazard, 'ceiling'>, altitudeM: number): number {
+  return Math.min(1, Math.max(0, 1 - altitudeM / hazard.ceiling));
+}
+
+/** The damage a hostile layer does a ship per second at `depth` (see `hazardDepth`), after its plating: Thermal Plating, Pressure
+ * Hull and Hazard Coating divide their hazards by three (`ShipStats.hazardDamage`). The shield takes it first, then the hull. */
+export function hazardDamagePerS(hazard: Pick<Hazard, 'kind' | 'dps' | 'curve'>, depth: number, stats: Pick<ShipStats, 'hazardDamage'>): number {
+  return hazard.dps * Math.pow(depth, hazard.curve || 1.3) * (stats.hazardDamage[hazard.kind] ?? 1);
 }
