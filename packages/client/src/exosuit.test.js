@@ -7,6 +7,8 @@ import { Game } from './Game.js';
 import { Inventory } from './gameplay/Inventory.js';
 import { Body } from './universe/Body.js';
 import { Player } from './entities/Player.js';
+import { Prediction } from './net/prediction.js';
+import { SnapshotStore } from './net/snapshots.js';
 
 const DT = 1 / 60;
 
@@ -180,6 +182,51 @@ describe('the suit on a frozen world', () => {
     g.player.lifeSupport = 10;
     g.updateSurvival(1e-6);
     expect(g.player.lifeSupport).toBeLessThan(10);
+  });
+
+  it('keeps an online predicted death on foot and reconciles health and recovery from the server', () => {
+    const g = onFrozenWorld({ night: false });
+    // Use the real death and boarding methods: either would reset the suit and change the next input's mode.
+    delete g.playerDied;
+    const died = vi.spyOn(g, 'playerDied');
+    const boarded = vi.spyOn(g, 'boardShip');
+    g.hud.showBanner = vi.fn();
+    g.hud.flash = vi.fn();
+    g.director = { startPoseBlend: vi.fn(), viewTarget: () => ({}) };
+    g.ship = { setCockpit: vi.fn(), updateCamera: vi.fn(), state: {} };
+    const store = new SnapshotStore();
+    g.net = { entityId: 7, store, serverTime: () => g.time };
+    g.prediction = new Prediction(() => g.player.state.frame);
+    const pose = { frame: `${g.system.description.seed}:${g.system.description.home}`, pos: g.player.state.pos.toArray(), quat: [0, 0, 0, 1], vel: [0, 0, 0] };
+    store.apply({ full: true, tick: 1, time: g.time, ack: 0, entities: [{ id: 7, kind: 'player', mode: 'foot', hp: 0.04, ...pose }], removed: [] });
+    g.checkPrediction();
+    expect(g.player.health).toBe(4);
+    g.player.hazard = 0;
+    g.updateSurvival(2);
+    expect(g.player.health).toBe(0);
+    expect(g.player.hazard).toBe(0);
+    expect(g.player.lifeSupport).toBeCloseTo(99.3, 6);
+    expect(g.mode).toBe('foot');
+    expect(g.player.state.pos.toArray()).toEqual(pose.pos);
+    expect(died).not.toHaveBeenCalled();
+    expect(boarded).not.toHaveBeenCalled();
+    expect(g.hud.showBanner).not.toHaveBeenCalled();
+
+    // A server recovery arrives through the existing two channels; neither moves the walker.
+    g.onSuitMeters({ lifeSupport: 60, hazard: 60, at: g.time });
+    store.apply({ full: false, base: 1, tick: 2, time: g.time, ack: 0, entities: [{ id: 7, hp: 0.6 }], removed: [] });
+    g.checkPrediction();
+    expect(g.player.health).toBe(60);
+    expect(g.player.lifeSupport).toBe(60);
+    expect(g.player.hazard).toBe(60);
+    expect(g.mode).toBe('foot');
+    expect(g.player.state.pos.toArray()).toEqual(pose.pos);
+    expect(boarded).not.toHaveBeenCalled();
+
+    // An aboard snapshot's hp is hull, not suit health.
+    store.apply({ full: false, base: 2, tick: 3, time: g.time, ack: 0, entities: [{ id: 7, mode: 'landed', hp: 0.1 }], removed: [] });
+    g.checkPrediction();
+    expect(g.player.health).toBe(60);
   });
 
   it('takes the server\'s suit from its meters state, run on to now', () => {

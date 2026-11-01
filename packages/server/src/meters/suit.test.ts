@@ -8,9 +8,9 @@ import type { Hazard } from '@astra/shared/data';
 import { countOf } from '@astra/shared/inventory';
 import type { ClientMessage } from '@astra/shared/protocol';
 import type { MeterNotice } from './service.ts';
-import type { MeterView } from '@astra/shared/meters';
+import { meterEnvironment, type MeterView } from '@astra/shared/meters';
 import type { ShipLoadout } from '@astra/shared/ships';
-import { dirToLocal, systemPoses, type Vec3 } from '@astra/shared/world';
+import { dirToLocal, localToWorld, systemPoses, type Vec3 } from '@astra/shared/world';
 import { describe, expect, it, vi } from 'vitest';
 import type { DownedReport } from '../combat/zone.ts';
 import { DEFAULT_LOADOUT, InventoryService } from '../inventory/service.ts';
@@ -197,6 +197,46 @@ describe('life support and hazard protection drain from the place the server bel
     night.stand(true, 10);
     expect(night.view().hazard).toBeCloseTo(100 - 8.4, 3);
     expect(100 - day.view().hazard).toBeCloseTo(6, 3);
+  });
+
+  it.each([
+    { type: 'frozen', owned: ['cold_blood'], starts: 'night', ends: 'day' },
+    { type: 'desert', owned: ['heat_shroud'], starts: 'day', ends: 'night' },
+    { type: 'frozen', owned: [], starts: 'night', ends: 'day' },
+  ])('refreshes $type $owned conditions across $starts to $ends without another input', ({ type, owned, starts, ends }) => {
+    const t = rig({ type, owned });
+    const d = t.zone.system;
+    const radius = d.bodies[d.home]!.radius + 2;
+    const environment = (pos: Vec3, time: number) => {
+      const poses = systemPoses(d, time);
+      return meterEnvironment(d, poses.bodies, { frame: d.home, world: localToWorld(poses.bodies[d.home]!, pos), foot: true });
+    };
+    // Pick a point crossing the real rotating world's terminator within 20 s, without changing its local pose afterward.
+    let pos: Vec3 | undefined;
+    for (let i = 0; i < 3600; i++) {
+      const a = (i / 3600) * Math.PI * 2;
+      const candidate: Vec3 = [radius * Math.cos(a), 0, radius * Math.sin(a)];
+      if (environment(candidate, t.now).time === starts && environment(candidate, t.now + 20).time === ends) {
+        pos = candidate;
+        break;
+      }
+    }
+    if (!pos) throw new Error('No terminator crossing in the fixture');
+    t.send('foot', `${d.seed}:${d.home}`, pos);
+    let expected = 100;
+    let afterTransition = 0;
+    for (let i = 0; i < 80; i++) {
+      const env = environment(pos, t.now);
+      const immune = owned.length > 0 && env.time === starts;
+      expected -= immune ? 0 : 0.5 * SUIT.hazardDrainPerS * (env.time === 'night' ? SUIT.nightMult : 1);
+      if (env.time === ends) afterTransition += 0.5;
+      t.wait(0.5);
+      t.sweep();
+    }
+    expect(afterTransition).toBeGreaterThanOrEqual(20);
+    expect(t.view().hazard).toBeCloseTo(expected, 3);
+    expect(t.view().hazard).toBeLessThan(88);
+    expect(t.zone.entity(t.entityId)!.fields.pos).toEqual(pos);
   });
 
   it('regains where nothing is hard, 2/s', () => {

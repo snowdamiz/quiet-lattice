@@ -652,12 +652,14 @@ export class Game {
   }
 
   // Each snapshot says where the server holds the player's entity as of the last input it handled: a correction the client
-  // never heard (lost on the way) shows there, and is taken as if it had come.
+  // never heard (lost on the way) shows there, and is taken as if it had come. On foot its hp is the server's suit health,
+  // expressed as a fraction; the local HUD keeps it as a percentage. Aboard, hp is hull and must not replace suit health.
   checkPrediction() {
     const net = this.net;
     const e = net && (this.mode === 'ship' || this.mode === 'foot') ? net.store.entities.get(net.entityId) : undefined;
     const unheard = e && this.prediction.check(net.store.ack, e);
     if (unheard) this.onCorrection(unheard);
+    if (e?.mode === 'foot' && e.hp !== undefined) this.player.health = e.hp * 100;
   }
 
   // Back to the title: the connection closes (the server saves the character as it goes) and the page starts afresh, so
@@ -1146,8 +1148,8 @@ export class Game {
 
   // Life support and hazard protection (DESIGN 9.8). The server decides them (the meter service, ARCHITECTURE §19) from the
   // same shared rules and spends the refills from its inventory; this predicts them for feel and is corrected by its
-  // `meters` state. Health at zero is predicted too, so the SUIT FAILURE shows without waiting (the Recall, P1.E06.T03, takes
-  // that over: the server already decides who is down).
+  // `meters` state. Health prediction is cosmetic online and reconciles from snapshots: only the server decides death
+  // and recovery. The dev sandbox still handles its own suit failure until the Recall replaces it (P1.E06.T03).
   updateSurvival(dt) {
     const p = this.player;
     const env = characterMeterEnvironment(this);
@@ -1169,7 +1171,7 @@ export class Game {
         this._warnT = this.time;
         this.hud.toast(p.lifeSupport <= 0 ? 'Life support depleted!' : 'Hazard protection failing!', 'warn');
       }
-      if (p.health <= 0) this.playerDied();
+      if (!this.net && p.health <= 0) this.playerDied();
     }
   }
 

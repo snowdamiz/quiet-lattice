@@ -512,12 +512,14 @@ export class MeterService {
   /**
    * Brings every character on foot up to date (call it every SUIT_SWEEP_S): a character's suit drains, starves and costs it
    * its health on the server's clock whether or not its client is sending, and a hazard death is decided here even for one
-   * that has stopped.
+   * that has stopped. After advancing the previous interval, sample its authoritative pose and the current sky for the next,
+   * as an input does: a day/night transition changes rates within one sweep, even with no further input.
    */
   sweep(now: number): void {
     for (const [characterId, e] of this.entries) {
       if (e.away || !e.placed || e.mode !== 'foot') continue;
       this.advance(characterId, e, now);
+      if (e.viewer) e.mode = this.place(e, e.viewer) ?? e.mode;
       this.maybePush(characterId, e, now);
     }
   }
@@ -538,7 +540,8 @@ export class MeterService {
       let died = false;
       for (const span of step.spans) died = this.health(e, spanHealth(span), spent + (dt - left)) || died;
       if (died) {
-        // the stopgap revive of `ZoneCombat.suitHealth`: the rest of the stretch is dropped with the meters that ran it
+        // Recovery is at this advance's endpoint until Recall owns it: no retroactive repeated deaths or refill costs
+        // during a delayed sweep. Future advances resume normally from the server's recovered suit.
         e.suit = { lifeSupport: SUIT_MAX * SUIT_REVIVE, hazard: SUIT_MAX * SUIT_REVIVE };
         e.starved = false;
         return;

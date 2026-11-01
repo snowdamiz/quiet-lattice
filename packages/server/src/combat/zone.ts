@@ -327,7 +327,8 @@ export class ZoneCombat {
    *
    * Returns whether the player went down. STOPGAP until P1.E06.T03's Recall: nothing clears `down` yet, so a suit death is
    * reported (`downed`, for the Recall to hook into) and the player is revived at once, in place, at `SUIT_REVIVE` of its
-   * health, as the client's own SUIT FAILURE does. The caller sets its meters to the same fraction.
+   * health. The caller sets its meters to the same fraction. The online client follows the server's snapshots and does
+   * not board or move the character from predicted health.
    */
   suitHealth(entity: number, delta: number, now = this.zone.time): boolean {
     if (!(delta !== 0) || !Number.isFinite(delta) || !this.onFoot(entity)) return false;
