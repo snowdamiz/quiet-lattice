@@ -6,6 +6,11 @@ import { applyPanelDetail } from '../render/panelMaterial.js';
 
 const CELL = 3000;
 const RANGE = 2;
+// Tractor Beam: the rocks it draws (the nearest few in the cone of its half-angle), how fast, and how far from the hull they stop
+const TRACTOR_MAX = 6;
+const TRACTOR_CONE_COS = Math.cos((50 * Math.PI) / 180);
+const TRACTOR_PULL_MPS = 200;
+const TRACTOR_STANDOFF_M = 30;
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
 const _m = new THREE.Matrix4();
@@ -51,6 +56,9 @@ export class Asteroids {
     }
     this.list = [];
     this.debris = [];
+    // the rocks a Tractor Beam is drawing to the hull, until the time its pull ends
+    this.drawn = [];
+    this.drawnUntil = 0;
     this.lastCell = '';
   }
 
@@ -59,6 +67,7 @@ export class Asteroids {
     this.cells.clear();
     this.destroyed.clear();
     this.list = [];
+    this.drawn = [];
     this.lastCell = '';
   }
 
@@ -163,8 +172,52 @@ export class Asteroids {
       m.instanceMatrix.needsUpdate = true;
       m.instanceColor.needsUpdate = true;
     });
+    this.updateDrawn(dt);
     this.collideShip(dt);
     this.updateDebris(dt);
+  }
+
+  /**
+   * Tractor Beam (DESIGN 9.2): the rocks within `rangeM` of the hull and in the half-cone ahead of it, nearest first (at most
+   * `TRACTOR_MAX`), and the debris about, are drawn to it for `seconds`. The asteroid field is the client's (the server holds
+   * none), so is what the beam does to it.
+   */
+  tractor(ship, rangeM, seconds) {
+    const wp = ship.state.worldPosition(_v2);
+    const nose = ship.state.worldDir(_v.set(0, 0, -1).applyQuaternion(ship.state.quat), new THREE.Vector3()).normalize();
+    const near = [];
+    for (const a of this.list) {
+      const to = a.pos.clone().sub(wp);
+      const d = to.length();
+      if (d - a.size > rangeM || d < 1e-3 || to.dot(nose) / d < TRACTOR_CONE_COS) continue;
+      near.push({ a, d });
+    }
+    near.sort((x, y) => x.d - y.d);
+    this.drawn = near.slice(0, TRACTOR_MAX).map((n) => n.a);
+    this.drawnUntil = this.game.time + seconds;
+    for (const d of this.debris) d.drawn = true;
+  }
+
+  updateDrawn(dt) {
+    if (!this.drawn.length && !this.debris.some((d) => d.drawn)) return;
+    const ship = this.game.ship;
+    if (this.game.time >= this.drawnUntil || (ship.mode !== 'flying' && ship.mode !== 'pulse')) {
+      this.drawn = [];
+      for (const d of this.debris) d.drawn = false;
+      return;
+    }
+    const wp = ship.state.worldPosition(_v2);
+    for (const a of this.drawn) {
+      const to = _v.copy(wp).sub(a.pos);
+      const d = to.length();
+      const hold = a.size + TRACTOR_STANDOFF_M;
+      if (d > hold) a.pos.addScaledVector(to, Math.min(TRACTOR_PULL_MPS * dt, d - hold) / d);
+    }
+    for (const d of this.debris) {
+      if (!d.drawn) continue;
+      const to = _v.copy(wp).sub(d.p);
+      d.v.copy(to.normalize().multiplyScalar(TRACTOR_PULL_MPS));
+    }
   }
 
   collideShip() {

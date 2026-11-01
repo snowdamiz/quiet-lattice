@@ -1,6 +1,7 @@
 // First-person explorer: walks on spherical planets (gravity toward the
 // planet centre) or inside stations (artificial gravity), with jetpack & swimming.
 import * as THREE from 'three';
+import { landingOf } from '@astra/shared/abilities';
 import { walkerStats } from '@astra/shared/ships';
 import { FrameState } from '../universe/Body.js';
 import { Blend } from '../net/prediction.js';
@@ -38,12 +39,22 @@ export class Player {
     this.landShake = 0;
     this.fallSpeed = 0;
     this.walker = walkerStats();
+    // the nodes owned (Heavy Footing changes how a landing hurts), and Slam's cut jetpack until the next landing
+    this.skills = [];
+    this.slamming = false;
   }
 
   /** The walker's numbers for what the character owns and its people (Sprint Stride, Long Jump, Efficient Jetpack): the
    * speeds and the tank the server holds it to. */
   setBuild(build) {
     this.walker = walkerStats(build);
+    this.skills = build?.skills ?? [];
+  }
+
+  /** Slam (DESIGN 9.2): the jetpack is cut and the walker falls, to the landing that sets the knockdown off. */
+  slam() {
+    this.slamming = true;
+    this.jetting = false;
   }
 
   up(out) {
@@ -138,7 +149,7 @@ export class Player {
         this.game.audio?.play('jump');
       }
       this.jetting = false;
-      if (input.down('Space') && !this.grounded && this.jetFuel > 0 && this.airTime > 0.2) {
+      if (input.down('Space') && !this.grounded && !this.slamming && this.jetFuel > 0 && this.airTime > 0.2) {
         newUp += (g + 9) * dt;
         newUp = Math.min(newUp, 14);
         horiz.addScaledVector(this.heading, fwdIn * 6 * dt);
@@ -163,10 +174,14 @@ export class Player {
     this.game.cities?.collidePlayer(this);
     this.game.fauna?.collidePlayer(this);
     this.game.ship?.collidePlayer(this);
-    if (this.grounded && !wasGrounded && this.lastFall > 7) {
-      this.landShake = Math.min(1, this.lastFall / 20);
-      this.game.audio?.play('land');
-      if (this.lastFall > 16) this.damage((this.lastFall - 16) * 4);
+    if (this.grounded || this.swimming) this.slamming = false;
+    if (this.grounded && !wasGrounded) {
+      const landing = landingOf(this.lastFall, this.skills);
+      if (landing.thud) {
+        this.game.audio?.play('land');
+        this.landShake = landing.shake;
+      }
+      if (landing.damage > 0) this.damage(landing.damage);
     }
     this.lastFall = this.fallSpeed;
 

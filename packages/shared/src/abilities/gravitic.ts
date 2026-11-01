@@ -55,13 +55,57 @@ export function slamRadius(fallM: number): number {
   return minRadiusM! + (maxRadiusM! - minRadiusM!) * f;
 }
 
-/** What a walker owning these nodes lands with (Heavy Footing): no fall damage, and no stagger (the landing shake). */
-export function landing(owned: readonly string[]): { fallDamage: boolean; stagger: boolean } {
+/** What a landing costs a walker (today's Player.js numbers): a fall faster than `shakeFrom` m/s shakes the view, by its speed
+ * over `shakeAt`; one faster than `damageFrom` hurts, `damagePerMps` for each m/s over. */
+export const LANDING = { shakeFrom: 7, shakeAt: 20, damageFrom: 16, damagePerMps: 4 } as const;
+
+/**
+ * What landing at `fallSpeed` m/s does to a walker owning these nodes: the shake of the view (0–1, the stagger) and the damage.
+ * Heavy Footing takes the damage away (no fall damage) and the shake with it (jetpack landings never stagger); the thud's
+ * sound is the landing's, not a stagger, and stays.
+ */
+export function landingOf(fallSpeed: number, owned: readonly string[]): { thud: boolean; shake: number; damage: number } {
   const flags = new Set(owned.includes('heavy_footing') ? getSkillNode('heavy_footing').flags : []);
-  return { fallDamage: !flags.has('no_fall_damage'), stagger: !flags.has('no_landing_stagger') };
+  const thud = fallSpeed > LANDING.shakeFrom;
+  return {
+    thud,
+    shake: thud && !flags.has('no_landing_stagger') ? Math.min(1, fallSpeed / LANDING.shakeAt) : 0,
+    damage: fallSpeed > LANDING.damageFrom && !flags.has('no_fall_damage') ? (fallSpeed - LANDING.damageFrom) * LANDING.damagePerMps : 0,
+  };
 }
 
 /** Whether a scanner of a character owning these nodes shows creatures and deposits through terrain (Mass Sense). */
 export function massSense(owned: readonly string[]): boolean {
   return owned.includes('mass_sense');
+}
+
+/** A creature as a client holds it from the server's snapshots. */
+interface SeenEntity {
+  readonly kind: string;
+  readonly frame: string | null;
+  readonly pos: readonly number[];
+  readonly species?: number;
+}
+
+/**
+ * The heavy creatures a Mass Sense scan shows: those of `entities` on world `frame`, within `rangeM` of `from` (a position in the
+ * same frame), whose species (by the index the wire carries, from the world's `faunaSpecies`) has the heavy body plan. They
+ * are shown wherever they stand, behind the ground or not: the scan reads the snapshots, not the view.
+ */
+export function heavyCreatures(
+  entities: Iterable<readonly [number, SeenEntity]>,
+  species: readonly { readonly name: string; readonly bodyPlan: string }[],
+  frame: string,
+  from: readonly number[],
+  rangeM: number,
+): { id: number; name: string; pos: [number, number, number] }[] {
+  const out: { id: number; name: string; pos: [number, number, number] }[] = [];
+  for (const [id, e] of entities) {
+    if (e.kind !== 'mob' || e.frame !== frame || e.species === undefined) continue;
+    const sp = species[e.species];
+    if (!sp || sp.bodyPlan !== GRAVITIC_NUMBERS.massSense.heavyPlan) continue;
+    if (Math.hypot(e.pos[0]! - from[0]!, e.pos[1]! - from[1]!, e.pos[2]! - from[2]!) > rangeM) continue;
+    out.push({ id, name: sp.name, pos: [e.pos[0]!, e.pos[1]!, e.pos[2]!] });
+  }
+  return out;
 }

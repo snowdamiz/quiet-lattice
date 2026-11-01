@@ -19,7 +19,8 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { EDGE_X, streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
+import { EDGE_X, streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, faunaSpecies, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
+import { heavyCreatures, massSense } from '@astra/shared/abilities';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { SUIT, footHazard } from '@astra/shared/data';
 import { beaconsOnMap, cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
@@ -38,6 +39,7 @@ import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
 import { Abilities, CAST_KEYS, castBar, castIntent, playAbilityFx } from './net/abilities.js';
+import './gameplay/graviticFx.js';
 import './gameplay/resonanceFx.js';
 import { Crafting } from './net/crafting.js';
 import { FabricatorPanel } from './ui/Fabricator.js';
@@ -1121,13 +1123,29 @@ export class Game {
     this.audio.play('scan');
     const range = scanRanges(this.suitMods);
     const found = this.flora.scan(this.player.state, range.depositM);
-    this.scanMarkers = found.map((f) => ({ ...f, expires: this.time + 25 }));
-    this.hud.toast(found.length ? `${found.length} deposits nearby` : 'Nothing nearby');
+    const heavy = this.heavyCreatures(range.depositM);
+    this.scanMarkers = [...found, ...heavy].map((f) => ({ ...f, expires: this.time + 25 }));
+    const deposits = found.length ? `${found.length} deposits nearby` : 'Nothing nearby';
+    this.hud.toast(heavy.length ? `${found.length ? deposits : 'No deposits nearby'} · ${heavy.length} heavy creatures` : deposits);
     const { nearest } = this.structures.scanReveal(this.player.state.pos, range.siteM);
     if (nearest) {
       const km = nearest.d < 1000 ? `${nearest.d.toFixed(0)} m` : `${(nearest.d / 1000).toFixed(1)} km`;
       setTimeout(() => this.hud.toast(`${nearest.s.label} · ${km}`, 'good'), 900);
     }
+  }
+
+  /** Mass Sense (DESIGN 9.2): the heavy creatures the server's snapshots hold within `rangeM`, as scan markers, for a scanner
+   * that has the node. The scan reads the snapshots, not the view, so the terrain hides nothing from it. */
+  heavyCreatures(rangeM) {
+    const frame = this.player.state.frame;
+    const id = frameIdOfFrame(this.system, this.station, frame);
+    if (!massSense(this.build.skills) || !this.net || !frame?.params || !id) return [];
+    const species = faunaSpecies(frame.params, frame.ground?.tier ?? 0);
+    return heavyCreatures(this.net.store.entities, species, id, this.player.state.pos.toArray(), rangeM).map((c) => ({
+      label: c.name,
+      pos: new THREE.Vector3(...c.pos),
+      frame,
+    }));
   }
 
   /** Deep Sweep (DESIGN 9.4): every site of the world the cast named, from orbit. */

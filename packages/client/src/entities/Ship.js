@@ -97,8 +97,10 @@ export class Ship {
     this.chargeRegen = 0;
     this.launchFuel = 100;
     this.pulse = { spool: 0, speed: 0, active: false };
-    // (a Jammer's hold on the pulse drive, game time)
+    // (a Jammer's hold on the pulse drive, a Tractor Beam's hold on the ship, an Inertial Brake's immunity to storm gusts: game time)
     this.jammedUntil = 0;
+    this.heldUntil = 0;
+    this.stormImmuneUntil = 0;
     this.altitude = Infinity;
     this.seaAltitude = Infinity;
     this.atmoDensity = 0;
@@ -666,6 +668,10 @@ export class Ship {
     this.watchServer();
     this.updateCharge(dt);
 
+    if (this.heldUntil > this.game.time && this.mode === 'flying') {
+      this.speed = 0;
+      s.vel.set(0, 0, 0);
+    }
     switch (this.mode) {
       case 'flying':
         this.updateFlight(dt, input, piloting);
@@ -1138,6 +1144,25 @@ export class Ship {
     }
   }
 
+  // ---------- Gravitic (DESIGN 9.2) ----------
+  /** Inertial Brake: stopped dead and turning no more, at once, and no storm gust moves the ship for `seconds`. The server's
+   * movement authority takes the stop as any slowing; the throttle is what holds the ship still afterwards. */
+  brake(seconds) {
+    this.speed = 0;
+    this.state.vel.set(0, 0, 0);
+    this.angVel.set(0, 0, 0);
+    this.wind.set(0, 0, 0);
+    this.stormImmuneUntil = this.game.time + seconds;
+  }
+
+  /** A Tractor Beam holds the ship where it is for `seconds`: no thrust moves it (the server refuses what strays). */
+  hold(seconds) {
+    this.heldUntil = this.game.time + seconds;
+    this.speed = 0;
+    this.state.vel.set(0, 0, 0);
+    this.game.hud?.toast('Held by a tractor beam', 'warn');
+  }
+
   // ---------- pulse drive ----------
   /** A Jammer has the pulse drive (the server refuses it until then): out of it now, and no engaging for `seconds`. */
   jam(seconds) {
@@ -1395,13 +1420,16 @@ export class Ship {
       if (Math.random() < dt * 0.5) g.audio?.play('hiss');
     } else if (hz.kind === 'storm' && this.mode !== 'landed') {
       // gales: a wandering push across the sky, and lightning strikes now and then
-      const up = this.upVector(_v4);
-      const gust = _v5.set(Math.sin(t * 0.37 + 1.3) + Math.sin(t * 1.9) * 0.4, 0, Math.cos(t * 0.29) + Math.sin(t * 2.3 + 2) * 0.4);
-      if (up) gust.addScaledVector(up, -gust.dot(up));
-      this.wind.addScaledVector(gust, dt * 26 * depth);
-      this.state.vel.addScaledVector(this.wind, dt);
-      this.angVel.x += (Math.random() - 0.5) * dt * 3 * depth;
-      this.angVel.z += (Math.random() - 0.5) * dt * 4 * depth;
+      // (an Inertial Brake's pilot is steady in them: the lightning still strikes)
+      if (this.stormImmuneUntil <= g.time) {
+        const up = this.upVector(_v4);
+        const gust = _v5.set(Math.sin(t * 0.37 + 1.3) + Math.sin(t * 1.9) * 0.4, 0, Math.cos(t * 0.29) + Math.sin(t * 2.3 + 2) * 0.4);
+        if (up) gust.addScaledVector(up, -gust.dot(up));
+        this.wind.addScaledVector(gust, dt * 26 * depth);
+        this.state.vel.addScaledVector(this.wind, dt);
+        this.angVel.x += (Math.random() - 0.5) * dt * 3 * depth;
+        this.angVel.z += (Math.random() - 0.5) * dt * 4 * depth;
+      }
       this.shake = Math.max(this.shake, depth * 0.3);
       this.nextStrike = (this.nextStrike ?? 3) - dt * (0.4 + depth);
       if (this.nextStrike <= 0) {
