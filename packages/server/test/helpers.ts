@@ -15,7 +15,7 @@ import { startServer, type RunningServer, type StartOptions } from '../src/serve
  * shard pays its finder XP on a database's first run and not on the next, which no other test's XP should depend on. */
 export async function startTestServer(
   config: Partial<Config> = {},
-  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement' | 'discovery' | 'abilities'> = {},
+  opts: Pick<StartOptions, 'shard' | 'persistence' | 'tooling' | 'movement' | 'discovery' | 'abilities' | 'clock'> = {},
 ): Promise<RunningServer> {
   await runMigrations(parseConfig(process.env).DATABASE_URL);
   return startServer({

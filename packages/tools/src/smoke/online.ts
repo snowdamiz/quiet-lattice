@@ -25,6 +25,8 @@ export interface Online {
   serverUrl: string;
   /** What the server has printed (warnings and errors), for a failure's report. */
   serverOutput(): string;
+  /** With `stepped`: the server's clock. It runs on real time until `freeze`d, then moves only by `advance`. */
+  clock?: { freeze(): Promise<void>; advance(ms: number): Promise<void> };
   /** Stops the server gracefully (it saves everyone in play), waits `downMs`, and starts it again on the same port and
    * database: a restart as players live through it. */
   restartServer(downMs?: number): Promise<void>;
@@ -79,7 +81,8 @@ async function healthy(url: string, server: ChildProcess, output: () => string, 
   throw new Error(`the server did not become healthy within ${timeoutMs / 1000} s:\n${output()}`);
 }
 
-export async function startOnline(): Promise<Online> {
+/** `stepped`: the server's clock is the spec's to step (packages/server/test/steppedServer.ts), for specs that judge timing. */
+export async function startOnline(opts: { stepped?: boolean } = {}): Promise<Online> {
   const name = `astra_smoke_${Date.now().toString(36)}_${randomBytes(3).toString('hex')}`;
   if (!SCRATCH.test(name)) throw new Error(`not a scratch database name: ${name}`);
   adminSql(`CREATE DATABASE "${name}"`);
@@ -102,11 +105,12 @@ export async function startOnline(): Promise<Online> {
     ASTRA_ADMIN_SECRET: adminSecret,
   };
   let port = 0;
+  let clockPort = 0;
 
   const launchServer = async () => {
-    const s = spawn(process.execPath, ['--import', 'tsx', 'src/index.ts'], {
+    const s = spawn(process.execPath, ['--import', 'tsx', opts.stepped ? 'test/steppedServer.ts' : 'src/index.ts'], {
       cwd: SERVER_DIR,
-      env: { ...env, PORT: String(port) },
+      env: { ...env, PORT: String(port), STEPPED_CLOCK_PORT: String(clockPort) },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     server = s;
@@ -134,6 +138,7 @@ export async function startOnline(): Promise<Online> {
     if (migrated.status !== 0) throw new Error(`db:migrate failed: ${migrated.stderr || migrated.stdout}`);
 
     port = await freePort();
+    clockPort = opts.stepped ? await freePort() : 0;
     await launchServer();
     const serverUrl = `http://127.0.0.1:${port}`;
 
@@ -167,7 +172,12 @@ export async function startOnline(): Promise<Online> {
       });
       return (await res.json()) as { ok: boolean; result?: unknown; error?: string; message?: string };
     };
-    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, restartServer, admin, stop };
+    const control = async (path: string) => {
+      const r = await fetch(`http://127.0.0.1:${clockPort}${path}`);
+      if (!r.ok) throw new Error(`the server's clock control answered ${r.status}`);
+    };
+    const clock = opts.stepped ? { freeze: () => control('/freeze'), advance: (ms: number) => control(`/advance?ms=${ms}`) } : undefined;
+    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, clock, restartServer, admin, stop };
   } catch (err) {
     await stop();
     throw err;
