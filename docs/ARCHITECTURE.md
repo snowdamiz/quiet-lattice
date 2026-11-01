@@ -796,8 +796,8 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     knocks one off. With no room the name goes and the mark stays. Marks and names fade in and out over 150 ms (each
     pilot's marker its own element, by its id); a name fading out fades where it last stood, its mark going on without
     it, and keeps its room while it does. The keep-out: the reticle and its speed, altitude and mode readouts, the
-    compass and its heading and EDGE readouts, the location line, the vitals, prompts, toasts (their boxes read every
-    quarter second before the frame writes), the social panels where the HUD has them (`hud.social.covers()`,
+    compass and its heading and EDGE readouts, the location line, the vitals, prompts, toasts and the ability bar when it is up
+    (their boxes read every quarter second before the frame writes), the social panels where the HUD has them (`hud.social.covers()`,
     P1.E15.T03), and the local ship's outline, projected each frame (its convex hull's corners, worked out once, in 8
     horizontal slices: close round its wings and engines, not its box). `packages/tools/src/smoke/remote-markers.spec.ts`
     steps every frame of each remote-ships capture's clip on the HUD's clock and fails on a pilot picked up and in view
