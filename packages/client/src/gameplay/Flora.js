@@ -347,7 +347,7 @@ export class Flora {
       const t = nodeType(layer.type);
       const look = NODE_LOOKS[t.id];
       add({
-        name: t.id, label: t.label, res: t.resource, node: t.id, deposit: t.kind !== 'plant',
+        name: t.id, label: t.label, res: t.resource, hp: t.hp, node: t.id, deposit: t.kind !== 'plant',
         build: look.build, radius: look.radius, glow: look.glow, wind: look.wind ?? 0, shadow: !!look.shadow, nearDist: look.nearDist, rough: look.rough,
         seed: hashInts(p.seed, 0x40de, NODE_TYPE_IDS.indexOf(t.id)), spec: { node: layer }, collide: !!look.collide,
       });
