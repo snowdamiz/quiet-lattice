@@ -92,33 +92,37 @@ describe('the Pilot nodes over the wire', () => {
     p.close();
   });
 
-  it('hold a character that joins owning them to the same: accepted at the boosted speed from the first input, with the shield and hull', { timeout: 60_000 }, async () => {
-    const first = await pilotOfLevel(16);
-    const id = first.characterId;
-    const nodes = ['throttle_tuning', 'photon_thrusters', 'shield_capacitor', 'hull_plating'];
-    for (const node of nodes) {
-      expect(server.ws.skills.unlock(id, node, { kind: 'dev' }).ok, node).toBe(true);
-      expect(server.ws.skills.buy(id, node), node).toMatchObject({ ok: true });
-    }
-    first.close();
-    await waitFor(() => server.zones.zone(first.welcome.zone.id)!.entity(first.entityId) === undefined, 5000, 'the first session gone');
+  it(
+    'hold a character that joins owning them to the same: accepted at the boosted speed from the first input, with the shield and hull',
+    { timeout: 60_000 },
+    async () => {
+      const first = await pilotOfLevel(16);
+      const id = first.characterId;
+      const nodes = ['throttle_tuning', 'photon_thrusters', 'shield_capacitor', 'hull_plating'];
+      for (const node of nodes) {
+        expect(server.ws.skills.unlock(id, node, { kind: 'dev' }).ok, node).toBe(true);
+        expect(server.ws.skills.buy(id, node), node).toMatchObject({ ok: true });
+      }
+      first.close();
+      await waitFor(() => server.zones.zone(first.welcome.zone.id)!.entity(first.entityId) === undefined, 5000, 'the first session gone');
 
-    const p = await Pilot.join(server, 'thalune', { clock, as: first });
-    expect(server.ws.skills.owned(id)).toEqual(nodes);
-    const zone = server.zones.zone(p.welcome.zone.id)!;
-    expect(zone.combat.playerHealth(p.entityId)).toMatchObject({ shield: 125, shieldMax: 125, hull: 125, hullMax: 125 });
+      const p = await Pilot.join(server, 'thalune', { clock, as: first });
+      expect(server.ws.skills.owned(id)).toEqual(nodes);
+      const zone = server.zones.zone(p.welcome.zone.id)!;
+      expect(zone.combat.playerHealth(p.entityId)).toMatchObject({ shield: 125, shieldMax: 125, hull: 125, hullMax: 125 });
 
-    const [x, y, z] = p.welcome.pose.pos;
-    const out: Vec3 = [0, 30, STATION_LAYOUT.hangar.z1 + 60];
-    await p.fly([[x, y, z], [x, 14, z], [x, 14, 40], out], [10, 40, 60]);
-    await p.fly([out, [out[0], out[1], out[2] + 1800]], [780]);
-    await p.hold('ship', 300);
-    await p.settled();
-    expect(p.corrections).toEqual([]);
-    expect(p.errors).toEqual([]);
-    expect(zone.movement!.recent.filter((r) => r.entity === p.entityId)).toEqual([]);
-    p.close();
-  });
+      const [x, y, z] = p.welcome.pose.pos;
+      const out: Vec3 = [0, 30, STATION_LAYOUT.hangar.z1 + 60];
+      await p.fly([[x, y, z], [x, 14, z], [x, 14, 40], out], [10, 40, 60]);
+      await p.fly([out, [out[0], out[1], out[2] + 1800]], [780]);
+      await p.hold('ship', 300);
+      await p.settled();
+      expect(p.corrections).toEqual([]);
+      expect(p.errors).toEqual([]);
+      expect(zone.movement!.recent.filter((r) => r.entity === p.entityId)).toEqual([]);
+      p.close();
+    },
+  );
 
   it('a respec in a fight takes the plating off at once, each pool keeping its fraction', { timeout: 60_000 }, async () => {
     const p = await pilotOfLevel(16);
