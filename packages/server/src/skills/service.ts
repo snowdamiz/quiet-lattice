@@ -174,11 +174,12 @@ export class SkillService {
     return this.entry(characterId).state.bought;
   }
 
-  /** How many slots of the ship bar work: the flown hull's (none without a ship). What the ability service asks every step, so
-   * it reads this and not `view`. */
+  /** Ship actives the hull it flies can slot (`view`'s `shipSlots` without the rest of the view). What the ability service asks
+   * every step, so it reads this and not `view`. */
   shipSlots(characterId: string): number {
     this.entry(characterId);
-    return this.context(characterId).shipSlots;
+    const ship = this.ships.get(characterId) ?? null;
+    return ship ? getHull(ship.hull).abilitySlots : 0;
   }
 
   /** What flies and what it flies with: the ship and the nodes owned now (what movement authority and combat re-tune to). */
