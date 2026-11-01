@@ -648,6 +648,26 @@ describe('cheats are refused', () => {
     expect(walkerStats({ skills: ['sprint_stride'] }).sprint).toBe(11.5);
     expect(sprint([], 16)).toBeGreaterThan(0);
   });
+
+  it('holds a walker to the speeds of the nodes it owns now: Sprint Stride bought mid-session lifts the cap from the next input, a respec lowers it', () => {
+    const run = (h: Harness, from: number, v: number) => {
+      let z = from;
+      h.send(pose(STATION, [-22, 0, z]), 'foot', { dt: 2 });
+      for (let i = 0; i < 30; i++) h.send(pose(STATION, [-22, 0, (z += v * 0.05)]), 'foot');
+      return h.refusals.length;
+    };
+    // (14 m/s is past the plain sprint's cap with its tolerance, 12.95, and under Sprint Stride's, 14.65)
+    const h = docked();
+    h.send(pose(STATION, [-22, 0, -22]), 'foot');
+    expect(run(h, -40, 14)).toBeGreaterThan(0);
+    const before = h.refusals.length;
+    h.a.reskill(h.id, ['sprint_stride']);
+    h.send(pose(STATION, [-22, 0, -40]), 'foot', { dt: 3 });
+    expect(run(h, -40, 14)).toBe(before);
+    h.a.reskill(h.id, []);
+    h.send(pose(STATION, [-22, 0, -40]), 'foot', { dt: 3 });
+    expect(run(h, -40, 14)).toBeGreaterThan(before);
+  });
 });
 
 describe('corrections', () => {

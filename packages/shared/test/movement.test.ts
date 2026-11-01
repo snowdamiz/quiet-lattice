@@ -31,14 +31,15 @@ const has = (source: string, snippet: string) => expect(source.includes(snippet)
 describe('the walker', () => {
   it('is today’s Player.js', () => {
     expect(walkerSchema.safeParse(WALKER).success).toBe(true);
-    has(PLAYER, `let speed = this.sprinting ? ${WALKER.sprintSpeed} : ${WALKER.walkSpeed};`);
-    has(PLAYER, `if (this.swimming) speed = ${WALKER.swimSpeed};`);
-    has(PLAYER, `newUp = ${WALKER.jumpSpeed};`);
+    // (the speeds, the jump and the tank follow the build: Sprint Stride, Long Jump, Efficient Jetpack, the Thalune's swimming)
+    has(PLAYER, `let speed = this.sprinting ? this.walker.sprint : ${WALKER.walkSpeed};`);
+    has(PLAYER, 'if (this.swimming) speed = this.walker.swim;');
+    has(PLAYER, 'newUp = this.walker.jump;');
     has(PLAYER, `const accel = this.grounded ? ${WALKER.accel.ground} : this.swimming ? ${WALKER.accel.swim} : ${WALKER.accel.air};`);
     has(PLAYER, `newUp += (g + ${WALKER.jet.thrust}) * dt;`);
     has(PLAYER, `newUp = Math.min(newUp, ${WALKER.jet.climbMax});`);
     has(PLAYER, `horiz.addScaledVector(this.heading, fwdIn * ${WALKER.jet.push} * dt);`);
-    has(PLAYER, `(dt * ${1 / WALKER.jet.fuelS}) / (this.jetEfficiency || 1)`);
+    has(PLAYER, 'dt / this.walker.jetFuelS');
     has(PLAYER, `this.airTime > ${WALKER.jet.afterS}`);
     has(PLAYER, `if (this.grounded) this.jetFuel = Math.min(1, this.jetFuel + dt * ${WALKER.jet.regenPerS});`);
     has(PLAYER, `this.jetFuel = Math.min(1, this.jetFuel + dt * ${WALKER.jet.swimRegenPerS});`);
