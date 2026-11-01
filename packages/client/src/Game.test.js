@@ -90,7 +90,7 @@ describe('Game: where a closed connection sends the player', () => {
   afterEach(() => vi.unstubAllGlobals());
 
   /** A game entering the world; its welcome handling is stubbed (this is about the connection). */
-  function entering() {
+  function entering(character = { id: 'c1' }) {
     const onFail = vi.fn();
     const g = fake({
       inventory: new Inventory(),
@@ -98,9 +98,10 @@ describe('Game: where a closed connection sends the player', () => {
       menus: { setConnection: vi.fn(), showMessage: vi.fn() },
       overlay: null,
       onWelcome: vi.fn(),
+      player: { setBuild: vi.fn() },
     });
     session.setItem('astra-session', JSON.stringify({ token: 'tok', accountId: 'a1', username: 'pilot' }));
-    g.enterWorld({ token: 'tok' }, { id: 'c1' }, onFail);
+    g.enterWorld({ token: 'tok' }, character, onFail);
     const socket = FakeSocket.all.at(-1);
     socket.open();
     return { g, onFail, socket, net: g.net };
@@ -149,6 +150,14 @@ describe('Game: where a closed connection sends the player', () => {
     expect(g.menus.setConnection).toHaveBeenLastCalledWith('Connection lost · reconnecting…');
     expect(g.hud.toast).toHaveBeenCalledWith('Connection lost · reconnecting', 'warn');
     expect(location.reload).not.toHaveBeenCalled();
+  });
+
+  it('builds the exo-suit from the character’s people and the bought nodes of each skill view the server sends', () => {
+    const { g, net } = entering({ id: 'c1', people: 'ulgani' });
+    expect(g.build).toEqual({ skills: [], people: 'ulgani' });
+    net.emit('skills', { skills: { state: { bought: ['sprint_stride'], slots: { ground: [], ship: [] } }, shipSlots: 0 } });
+    expect(g.build).toEqual({ skills: ['sprint_stride'], people: 'ulgani' });
+    expect(g.player.setBuild).toHaveBeenLastCalledWith(g.build);
   });
 
   it('ignores the closing of a connection it has replaced', () => {
@@ -459,6 +468,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
       menus: { setConnection: vi.fn(), showMessage: vi.fn() },
       overlay: null,
       onWelcome: vi.fn(),
+      player: { setBuild: vi.fn() },
     });
     g.enterWorld({ token: 'tok' }, { id: 'c1' }, vi.fn());
     const socket = FakeSocket.all.at(-1);
