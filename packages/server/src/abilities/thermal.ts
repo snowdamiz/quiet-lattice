@@ -14,15 +14,17 @@ const N = THERMAL_NUMBERS;
 export const BURNING = 'burning';
 
 /** Sets `target` alight for `durationS` at `dps` for the caster (`CastContext.status`), and deals the burn in ticks until it
- * ends or the target dies or can no longer be harmed. A target already burning from this caster burns for the later of the
- * two ends at the greater rate, with the ticks it already has. */
+ * ends or the target dies or can no longer be harmed (a refused tick ends it for good: a target that comes back out of a
+ * safe zone is not alight). A target already burning from this caster burns for the later of the two ends at the greater rate,
+ * with the ticks it already has. */
 function ignite(ctx: CastContext, target: number, dps: number, durationS: number): void {
   if (!ctx.status.apply(target, BURNING, durationS, dps)) return;
+  const began = ctx.status.get(target, BURNING)!;
   // (from the moment the status began, which the status was given, not from a clock read a moment later)
-  let last = ctx.status.get(target, BURNING)!.until - durationS;
+  let last = began.until - durationS;
   const tick = (): void => {
     const s = ctx.status.get(target, BURNING);
-    if (!s) return;
+    if (!s || s.gen !== began.gen) return;
     const at = Math.min(ctx.time(), s.until);
     const out = at > last ? ctx.damage(target, s.power * (at - last)) : null;
     const stopped = at > last && out === null;
@@ -42,15 +44,16 @@ function lanceHits(ctx: CastContext, seconds: number): void {
   const pose = ctx.pose();
   const shape = shapeOfNode('lance');
   if (!pose || shape?.kind !== 'ray') return;
-  const near = ctx.creatures(shape.range + 2);
+  const chain = getSkillNode('chain').params;
+  const reach = chain.rangeM!;
+  // (round the eye it has now, not where it was switched on; the second of a Chain may lie its reach past the first)
+  const near = ctx.creatures(shape.range + 2 + reach, pose.origin);
   const first = hitTest(shape, { origin: pose.origin, dir: pose.aim }, near)[0]?.target;
   if (!first || ctx.sight(first.pos) !== true) return;
   const damage = N.lance.dps * seconds;
   ctx.damage(first.id, damage);
   if (!ctx.owns('chain')) return;
-  const chain = getSkillNode('chain').params;
   const others = near.filter((c) => c.id !== first.id);
-  const reach = chain.rangeM!;
   const next = others
     .map((c) => ({ c, d: Math.hypot(c.pos[0] - first.pos[0], c.pos[1] - first.pos[1], c.pos[2] - first.pos[2]) }))
     .filter((x) => x.d <= reach)
@@ -60,7 +63,7 @@ function lanceHits(ctx: CastContext, seconds: number): void {
 }
 
 /** An area cast is refused `busy` while the ground its line of sight reads is still being planned, as an `entity` cast is. */
-const groundPlanned = (ctx: CastContext): 'busy' | null => (ctx.sight(ctx.origin) === 'busy' ? 'busy' : null);
+const groundPlanned = (ctx: CastContext): 'busy' | null => (ctx.groundReady() ? null : 'busy');
 
 export const THERMAL_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([
   [

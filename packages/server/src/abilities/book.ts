@@ -29,8 +29,9 @@ export interface CastContext {
   /** the entity it names (`entity` casts, checked: seen, alive, in reach and in sight), or null */
   readonly target: number | null;
   /** The living creatures of the caster's world that it can see, with their hit spheres (the shared model); with `reach`,
-   * only those that may lie within it of `origin`. */
-  creatures(reach?: number): CreatureTarget[];
+   * only those that may lie within it of `at` (the cast's `origin` unless given: an effect that outlives its cast culls
+   * round where its caster is now). */
+  creatures(reach?: number, at?: Readonly<Vec3>): CreatureTarget[];
   /** Deals `base` damage to an entity through the zone's one damage path, as this node's ability. */
   damage(target: number, base: number): DamageOutcome | null;
   /** Runs `fn` `delayS` seconds on (a burn's ticks, a slow's end), unless the caster has left play by then. */
@@ -42,6 +43,9 @@ export interface CastContext {
   /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame
    * (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
   pose(): { origin: Readonly<Vec3>; aim: Readonly<Vec3> } | null;
+  /** Whether the ground that sight reads over the caster's world is planned (always, off a world's surface); an area cast
+   * refuses `busy` while it is not. */
+  groundReady(): boolean;
   /** Whether the ground leaves a clear line from the caster's eye to `to`; 'busy' while the world's ground is still being
    * planned (a `check` refuses `busy`, a held beam tries again next tick). False too once the caster is gone. */
   sight(to: Readonly<Vec3>): boolean | 'busy';
@@ -58,9 +62,10 @@ export interface CastContext {
   readonly status: {
     /** Puts `id` on `target` for `durationS` at `power`; true when this caster's was not running (start its ticks). */
     apply(target: number, id: string, durationS: number, power?: number): boolean;
-    /** This caster's `id` on `target` (`until` the world time it ends, `power`) while it runs and for a second after, so an
-     * effect ticking it sees its end; or null. */
-    get(target: number, id: string): { until: number; power: number } | null;
+    /** This caster's `id` on `target` (`until` the world time it ends, `power`, and the `gen` of the application that began it:
+     * a ticking effect ends when it reads another) while it runs and for a second after, so an effect ticking it sees its end;
+     * or null. */
+    get(target: number, id: string): { until: number; power: number; gen: number } | null;
     /** Whether anyone's `id` runs on `target`. */
     active(target: number, id: string): boolean;
     /** Ends this caster's `id` on `target`. */

@@ -12,11 +12,15 @@ export interface Status {
   until: number;
   /** how hard it acts (a burn's damage per second); a later application keeps the greater */
   power: number;
+  /** which application began it: kept by a later one that extends it, new when the status began over (removed or ended).
+   * The effect that ticks it ends when it reads another, so no two ticking loops ever serve one status. */
+  gen: number;
 }
 
 export class Statuses {
   private readonly zones = new Map<string, Map<number, Map<string, Map<string, Status>>>>();
   private lastPrune = -Infinity;
+  private lastGen = 0;
 
   constructor(private readonly now: () => number) {}
 
@@ -35,7 +39,11 @@ export class Statuses {
     const running = byCharacter.get(characterId);
     const held = !!running && running.until + GRACE_S > now;
     const live = !!running && running.until > now;
-    byCharacter.set(characterId, { until: Math.max(live ? running.until : 0, now + durationS), power: live ? Math.max(running.power, power) : power });
+    byCharacter.set(characterId, {
+      until: Math.max(live ? running.until : 0, now + durationS),
+      power: live ? Math.max(running.power, power) : power,
+      gen: running && held ? running.gen : ++this.lastGen,
+    });
     return !held;
   }
 
@@ -56,6 +64,20 @@ export class Statuses {
   remove(zone: string, characterId: string, target: number, id: string): void {
     const byCharacter = this.zones.get(zone)?.get(target)?.get(id);
     byCharacter?.delete(characterId);
+  }
+
+  /** Ends every status the character put anywhere (it left play: nothing ticks them any more). */
+  dropCaster(characterId: string): void {
+    for (const [zone, byEntity] of this.zones) {
+      for (const [entity, byId] of byEntity) {
+        for (const [id, byCharacter] of byId) {
+          byCharacter.delete(characterId);
+          if (!byCharacter.size) byId.delete(id);
+        }
+        if (!byId.size) byEntity.delete(entity);
+      }
+      if (!byEntity.size) this.zones.delete(zone);
+    }
   }
 
   /** Forgets the statuses that have ended (and the entities, ids and zones left with none), at most once a second. */

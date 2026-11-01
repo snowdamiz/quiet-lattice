@@ -223,7 +223,7 @@ export class CastService {
       return { ...base, result: 'ended' };
     }
 
-    const ctx = this.context(characterId, zone, self, me, bar, entry, msg, now, skills.bought);
+    const ctx = this.context(characterId, zone, self, me, bar, entry, msg, now);
     const cd = cooldownOf(ctx.node);
     const readyAt = cd ? this.cooldowns.get(characterId)?.get(cd.key) : undefined;
     if (readyAt !== undefined && readyAt > now) return refuse('cooldown', readyAt);
@@ -276,6 +276,7 @@ export class CastService {
     const lit = this.on.get(characterId);
     for (const node of [...(lit?.keys() ?? [])]) this.end(characterId, node);
     this.timers = this.timers.filter((t) => t.characterId !== characterId);
+    this.statuses.dropCaster(characterId);
     if (lit) this.notify(characterId);
   }
 
@@ -290,13 +291,15 @@ export class CastService {
     entry: BookEntry,
     msg: CastRequest,
     now: number,
-    owned: readonly string[],
   ): CastContext {
     const f = me.fields;
     const frame = f.frame;
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);
     const origin: Vec3 = bar === 'ground' ? lift(f.pos, EYE_M) : [f.pos[0], f.pos[1], f.pos[2]];
     const aim: Vec3 = [msg.aim[0] / al, msg.aim[1] / al, msg.aim[2] / al];
+    // (the phase rule holds for as long as an effect runs on, as for a burn's ticks: a creature the caster can no longer see is
+    // not harmed)
+    const harmable = (target: number): boolean => mayHarm(zone, self, target) && zone.phases.canSee(self, target);
     return {
       characterId,
       caster: self,
@@ -308,27 +311,30 @@ export class CastService {
       origin,
       aim,
       target: entry.ability.target === 'entity' ? (msg.target ?? null) : null,
-      creatures: (reach) => (f.frame === null ? [] : creatureTargets(zone, self, f.frame, reach === undefined ? undefined : { at: origin, reach })),
-      // (with the caster's power and augments: the nodes it owns)
-      damage: (target, amount) =>
-        !mayHarm(zone, self, target)
-          ? null
-          : zone.combat.applyDamage(self, target, {
-              base: amount,
-              kind: 'ability',
-              what: msg.node,
-              source: { node: msg.node, augments: owned.filter((n) => getSkillNode(n).type === 'augment') },
-              attackerMods: modsOfNodes(owned),
-            }),
+      creatures: (reach, at) => (f.frame === null ? [] : creatureTargets(zone, self, f.frame, reach === undefined ? undefined : { at: at ?? origin, reach })),
+      // (with the caster's power and augments: the nodes it owns now, as `owns` reads them, so a refunded one stops counting
+      // in a toggle that is still on)
+      damage: (target, amount) => {
+        if (!harmable(target)) return null;
+        const owned = this.skills.get(characterId)?.bought ?? [];
+        return zone.combat.applyDamage(self, target, {
+          base: amount,
+          kind: 'ability',
+          what: msg.node,
+          source: { node: msg.node, augments: owned.filter((n) => getSkillNode(n).type === 'augment') },
+          attackerMods: modsOfNodes(owned),
+        });
+      },
       after: (delayS, fn) => this.after(characterId, delayS, fn),
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
       pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
+      groundReady: () => this.groundOf(zone, frame) !== 'busy',
       sight: (to) => {
         const eye = this.poseOf(zone, self, frame, bar, origin, aim)?.origin;
         return eye === undefined ? false : this.inSight(zone, frame, eye, to);
       },
-      canHarm: (target) => mayHarm(zone, self, target),
+      canHarm: harmable,
       meters: {
         beamTime: () => this.meters.beamTime(characterId, this.now()),
         dumpHeat: () => {
@@ -391,13 +397,18 @@ export class CastService {
   /** Whether the line from `from` to `to` stays over the ground of the world `frame` names (always off a world's
    * surface); 'busy' while that ground is still being planned. */
   private inSight(zone: CastZone, frame: string | null, from: Readonly<Vec3>, to: Readonly<Vec3>): boolean | 'busy' {
-    if (frame === null) return true;
+    const ground = this.groundOf(zone, frame);
+    return ground === null ? true : ground === 'busy' ? 'busy' : clearSight(ground.sampler, from, to);
+  }
+
+  /** The drawn ground of the world `frame` names, null where there is none to be in the way (space, a gas giant), 'busy'
+   * while it is still being planned. */
+  private groundOf(zone: CastZone, frame: string | null) {
+    if (frame === null) return null;
     const key = frameKeyOf(zone.system, frame);
     const body = typeof key === 'number' ? zone.system.bodies[key] : undefined;
-    if (!body || body.type === 'gas') return true;
-    const ground = this.grounds.ground(body.params as PlanetParams, this.zones.tier(zone.id) ?? tierOfGalaxySystem(zone.systemIndex));
-    if (!ground) return 'busy';
-    return clearSight(ground.sampler, from, to);
+    if (!body || body.type === 'gas') return null;
+    return this.grounds.ground(body.params as PlanetParams, this.zones.tier(zone.id) ?? tierOfGalaxySystem(zone.systemIndex)) ?? 'busy';
   }
 
   /** Whether a toggle that is on still holds: its caster's entity in play, in the bar's mode and up, its node owned and in
