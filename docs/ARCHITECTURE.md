@@ -2165,3 +2165,18 @@ effects; this runtime casts them all.
   cast's cost over 250 ms (ease-out, on the HUD's clock, following the value as it moves meanwhile), the cost's chunk
   drawn bright, and land at once only on their first draw and as they turn on.
 
+- **The Exo-suit's Tier I–II (P1.E07.T10)** are all passives: nothing in the book, no new `CastContext`. A passive changes the
+  system its stat names, through the stat modifiers on its node (`@astra/shared/data`), read by whoever owns that system.
+  The walker (`walkerStats`, §7): Sprint Stride's sprint 11.5 m/s, Long Jump's jump 7, Efficient Jetpack's tank twice as long;
+  movement authority holds a walker to its caps and learns the build at the join (`skills.owned`) and again on every change to
+  it (`ZoneManager.reskill` → `MovementAuthority.reskill`, from the gateway's skill subscription): Sprint Stride bought
+  mid-session is allowed from the next input. The client's `Player` takes the same numbers (`setBuild`, from the `skills`
+  view's bought nodes). Mining (§18): Optical Drill is a `mining.yield` ×1.5 that stacks with Hot Hands (breaking speed is
+  Hot Hands'). The suit and the scan (`@astra/shared/exosuit`, numbers `SUIT`): life support and hazard protection are still
+  the client's (the demo's `Game.updateSurvival`; no server meter holds them yet), but every number is shared. Hazard drain is
+  `strength × (1.4 in the dark) × 0.6 × mult`, the strength `footHazard` (the world's own or its ship hazard's foot strength,
+  a mild world's mist alone), the mult Hazard Weave's 0.6, Cold Blood's 0 at night on a frozen world and Heat Shroud's 0 by
+  day on a desert or volcanic one (the people's perk joins them: Ulgani 0 on toxic and corrosive worlds), conditions from
+  `meterConditions` (§19), so night is the one rule the meters and fauna use. A refill from the pack (below 25, 10 raw units)
+  restores `cartridgeRestore` (40, Cartridge Recycler 60); the scan reaches `scanRanges` (180 m for deposits, 3 km for sites,
+  Scanner Lens 6 km). The demo shop's Optical Drill and Efficient Jetpack rows are gone.
