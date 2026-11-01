@@ -168,6 +168,24 @@ describe('the moderation filter', () => {
     for (const name of ['Vega', 'Phoenix', 'Philadelphia', 'Alpha', 'Vulcan', 'Pharos', 'Devon', 'Phobos']) expect(reason(name), name).toBeNull();
   });
 
+  it('refuses a third letter of a doubled one in a blocked word', () => {
+    for (const name of ['Niggger', 'Nigggger', 'Fagggot', 'Phagggot', 'Faggggot Rock', 'Ni ggg er', 'Asss', 'Asssss', 'Pisss', 'Pissss Moon']) {
+      expect(reason(name), name).toBe('blocked');
+    }
+    for (const name of ['As Rock', 'Pis', 'Pis Moon', 'Assen', 'Kassel', 'Passau', 'Essen', 'Vvardenfell', 'Ivvy', 'Pivvo'])
+      expect(reason(name), name).toBeNull();
+  });
+
+  it('refuses a doubled h in ph for f', () => {
+    for (const name of ['Phhuck', 'Phhag', 'Phhaggot', 'Pphuck', 'Phhhuuuck', 'Phhhagggot']) expect(reason(name), name).toBe('blocked');
+  });
+
+  it('reads 6 and 9 as g in a reserved name, but not in its words', () => {
+    for (const name of ['Ed9e', 'Ed6e', 'The Ed9e', 'Pa55a9e', 'Carto9rapher', 'Ul9ani']) expect(reason(name), name).toBe('reserved');
+    for (const name of ['Outpost 9M', 'Planet 6 M', 'Kepler 9 M']) expect(reason(name), name).toBeNull();
+    expect(reason('Ed9e', { reserved: false })).toBeNull();
+  });
+
   it('refuses a letter it cannot read, so the letters it takes are the letters it reads', () => {
     for (const name of ['Halǆcyon', 'Halɛcyon', 'Halŋcyon', 'Halǝcyon']) expect(reason(name), name).toBe('characters');
     for (let c = 0xc0; c <= 0x24f; c++) {

@@ -253,6 +253,12 @@ const EUROPE = [
   'Fürth',
   'Bad Kissingen',
   'Nuremberg',
+  'Assen',
+  'Kassel',
+  'Essen',
+  'Vvardenfell',
+  'Ivvy',
+  'Pivvo',
 ];
 const GAME = [
   'Outpost 9M',
