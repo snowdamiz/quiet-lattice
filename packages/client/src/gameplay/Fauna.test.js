@@ -266,7 +266,7 @@ describe('Fauna: the server’s herds, drawn', () => {
   });
 
   it('turns a creature toward the heading the server gives, never faster than 270°/s, and keeps its heading once it is dead', () => {
-    const { game, planet, remotes, fauna } = world();
+    const { game, planet, remotes } = world();
     game.place(100);
     game.camWorld.copy(planet.localToWorld(new THREE.Vector3(...at(0, 30)), new THREE.Vector3()));
     const walker = SPECIES.findIndex((s) => s.kind !== 'flyer');

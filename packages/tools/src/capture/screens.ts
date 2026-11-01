@@ -1931,7 +1931,11 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
           w.dev.footAim(away, 0.6);
           await w.step(1);
         }
-        for (const [id, amount] of [[602, 17], [603, 23], [602, 9]] as const) {
+        for (const [id, amount] of [
+          [602, 17],
+          [603, 23],
+          [602, 9],
+        ] as const) {
           w.__herd.hit(id, amount);
           await w.step(2);
         }
