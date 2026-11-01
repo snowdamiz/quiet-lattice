@@ -3857,6 +3857,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   flex-direction: column;
   gap: 5px;
 }
+/* (the captions carry the row's meaning: --faint on the plate was 3.1:1, --dim is AA) */
+.map-info .stats .mono {
+  color: var(--dim);
+}
 .stats b {
   font-family: var(--font-mono);
   font-weight: 400;
@@ -3922,6 +3926,15 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .map-label.you-sys small {
   color: rgba(255, 196, 120, 0.7);
 }
+/* a system whose Waystation is dark: its own name in the Hollow's seam light, ahead of the labels round it */
+.map-label.dark {
+  z-index: 2;
+  color: #9fe8da;
+  font-weight: 600;
+}
+.map-label.dark:hover {
+  color: #fff;
+}
 .map-label.you {
   color: var(--accent-hi);
   font-family: var(--font-mono);
@@ -3940,7 +3953,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   /* on the wall's brightest part (opal white) the letters need a plate of their own, as the sky's EDGE readout has */
   padding: 8px 14px 8px 18px;
   background: rgba(11, 11, 16, 0.94);
-  border-left: 2px solid rgba(190, 160, 255, 0.85);
+  border-left: 2px solid rgba(207, 232, 247, 0.9);
   box-shadow: 0 0 22px rgba(11, 11, 16, 0.75);
   text-shadow: none;
 }
@@ -4052,6 +4065,22 @@ input[type='range'].range:hover::-webkit-slider-thumb {
     0 0 3px var(--ink),
     0 0 6px color-mix(in srgb, var(--ink) 90%, transparent),
     0 0 12px color-mix(in srgb, var(--ink) 70%, transparent);
+}
+/* the credits readout on the same plate, mirrored (4.3:1 over a bright wall at 21:9 without it) */
+.inventory {
+  isolation: isolate;
+}
+.inventory::before {
+  content: '';
+  position: absolute;
+  inset: -9px -18px -9px -36px;
+  z-index: -1;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  mask:
+    linear-gradient(270deg, transparent, #000 18px, #000 calc(100% - 36px), transparent),
+    linear-gradient(180deg, transparent, #000 9px, #000 calc(100% - 9px), transparent);
+  mask-composite: intersect;
 }
 /* and where you are and the compass's reading each on a soft dark backing of their own, faded at its edges, so they
    hold AA however bright what lies behind them (the banner's band, below, does the rest while one shows) */

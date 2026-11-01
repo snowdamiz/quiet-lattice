@@ -5,7 +5,7 @@ import { EDGE_WALL_LY_PER_LY, EDGE_X, mulberry32 } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { buildEdge, EDGE_SEED, edgeBearing } from './EdgeOfSpace.js';
 import { Game } from '../../Game.js';
-import { GalaxyMap } from './GalaxyMap.js';
+import { GalaxyMap, edgeShift } from './GalaxyMap.js';
 
 const shifts = (edge) => {
   const found = [];
@@ -26,6 +26,20 @@ describe('the edge of space', () => {
     expect(shifts(edge).every((s) => s === -10 * EDGE_WALL_LY_PER_LY)).toBe(true);
     edge.update(0, 1, 1, 800, EDGE_X + 10);
     expect(shifts(edge).every((s) => s === 10 * EDGE_WALL_LY_PER_LY)).toBe(true);
+  });
+
+  it("dresses the sky's wall in the art bible's Edge and leaves the map's as it was", () => {
+    const flags = (edge) => {
+      const found = [];
+      edge.group.traverse((o) => o.material?.uniforms?.uSky && found.push(o.material.uniforms.uSky.value));
+      return found;
+    };
+    const map = buildEdge(mulberry32(EDGE_SEED));
+    const sky = buildEdge(mulberry32(EDGE_SEED), { sky: true });
+    expect(flags(map)).toHaveLength(5);
+    expect(flags(map).every((f) => f === 0)).toBe(true);
+    expect(flags(sky)).toHaveLength(5);
+    expect(flags(sky).every((f) => f === 1)).toBe(true);
   });
 
   it('shifts the shaders by the one uniform the parts share, so none of them stays where it was', () => {
@@ -123,32 +137,174 @@ describe('the galaxy map', () => {
     expect(m.edgeItem.labelPosition.distanceTo(a)).toBe(0);
   });
 
-  it('marks each dark system on the map, and only while the server says it is dark', () => {
-    const systems = [0, 1, 2, 3].map((id) => ({ id, x: id * 10, y: 0, z: 0 }));
-    const world = { dark: [1, 3] };
+  // a map with just the parts the dark marks and their labels use
+  const markedMap = (world, count = 4) => {
+    const systems = Array.from({ length: count }, (_, id) => ({ id, name: `Sys${id}`, x: id * 10, y: 0, z: 0 }));
+    const items = systems.map((sys) => ({ kind: 'system', sys, label: sys.name, position: new THREE.Vector3(sys.x, sys.y, sys.z), labelClass: '' }));
     const m = Object.assign(map(), {
-      game: { net: { world }, galaxy: { systems } },
+      game: { net: { world }, galaxy: { systems, current: systems[0] } },
+      items,
+      neighbors: new Set(),
       darkMarks: new THREE.Group(),
+      darkShown: new Map(),
       darkRingGeo: new THREE.RingGeometry(1, 1.1, 8),
-      darkHuskMat: new THREE.MeshBasicMaterial(),
-      darkRingMat: new THREE.MeshBasicMaterial(),
       darkHuskGeo: new THREE.CircleGeometry(1, 8),
+      darkRingColor: new THREE.Color(),
       darkIds: null,
     });
+    return m;
+  };
+  const run = (m, seconds, time = 0) => {
+    const q = new THREE.Quaternion();
+    for (let t = 0; t < seconds; t += 1 / 60) m.fadeDark(1 / 60, time + t, q, 1);
+  };
+  const ringOf = (m, id) => m.darkShown.get(id).ring;
+
+  it('marks each dark system on the map, and only while the server says it is dark', () => {
+    const world = { dark: [1, 3] };
+    const m = markedMap(world);
     m.syncDark();
     const stars = m.darkMarks.children.map((c) => c.position.x);
     expect(stars.sort()).toEqual([10, 10, 30, 30]);
     const marks = [...m.darkMarks.children];
     m.syncDark();
     expect(m.darkMarks.children).toEqual(marks);
-    // the Count climbs to Fed: the server says none is dark, and the marks are gone
-    world.dark = [];
-    expect(m.darkMarks.children).toHaveLength(4);
+    run(m, 0.6);
+    // the Count climbs to Fed: the server says none is dark; the marks fade out and are then gone
     m.game.net.world = { dark: [] };
     m.syncDark();
+    expect(m.darkMarks.children).toHaveLength(4);
+    run(m, 0.2);
+    expect(m.darkMarks.children).toHaveLength(4);
+    run(m, 0.5);
     expect(m.darkMarks.children).toHaveLength(0);
+    expect(m.darkShown.size).toBe(0);
     m.game.net = null;
     m.syncDark();
     expect(m.darkMarks.children).toHaveLength(0);
+  });
+
+  it('fades a mark in over about 0.4 s, ring from nothing to 40–60% and from 70% of its size to all of it, and out the same way', () => {
+    const m = markedMap({ dark: [2] });
+    m.syncDark();
+    const ring = ringOf(m, 2);
+    const full = ring.userData.size;
+    expect(ring.material.opacity).toBe(0);
+    m.fadeDark(1 / 60, 0, new THREE.Quaternion(), 1);
+    expect(ring.scale.x).toBeGreaterThan(0.7 * full);
+    expect(ring.scale.x).toBeLessThan(0.8 * full);
+    let last = ring.scale.x;
+    for (let i = 0; i < 24; i++) {
+      m.fadeDark(1 / 60, 0, new THREE.Quaternion(), 1);
+      expect(ring.scale.x).toBeGreaterThanOrEqual(last);
+      last = ring.scale.x;
+    }
+    // (0.4 s on, 98% of the way)
+    expect(ring.scale.x).toBeGreaterThan(0.99 * full);
+    expect(ring.material.opacity).toBeGreaterThan(0.39);
+    expect(ring.material.opacity).toBeLessThan(0.61);
+    expect(m.darkShown.get(2).husk.material.opacity).toBeGreaterThan(0.97);
+    // relit: it fades back down to nothing and is dropped, easing the same way
+    m.game.net.world = { dark: [] };
+    m.syncDark();
+    const before = ring.scale.x;
+    m.fadeDark(1 / 60, 0, new THREE.Quaternion(), 1);
+    expect(ring.scale.x).toBeLessThan(before);
+    let now = ring.material.opacity;
+    for (let i = 0; i < 24 && m.darkShown.has(2); i++) {
+      m.fadeDark(1 / 60, 0, new THREE.Quaternion(), 1);
+      if (m.darkShown.has(2)) {
+        expect(ring.material.opacity).toBeLessThanOrEqual(now);
+        now = ring.material.opacity;
+      }
+    }
+    expect(m.darkShown.has(2)).toBe(false);
+    // (and a mark relit and darkened again while it fades stays one mark)
+    m.game.net.world = { dark: [2] };
+    m.syncDark();
+    m.game.net.world = { dark: [] };
+    m.syncDark();
+    m.game.net.world = { dark: [2] };
+    m.syncDark();
+    expect(m.darkMarks.children).toHaveLength(2);
+  });
+
+  it("flickers each ring between 40% and 60% once it is in, each in a phase of its own", () => {
+    const m = markedMap({ dark: [1, 2] });
+    m.syncDark();
+    run(m, 0.6);
+    const seen = [[], []];
+    const q = new THREE.Quaternion();
+    for (let i = 0; i < 600; i++) {
+      m.fadeDark(1 / 60, 1 + i / 60, q, 1);
+      [1, 2].forEach((id, k) => seen[k].push(ringOf(m, id).material.opacity));
+    }
+    for (const opacities of seen) {
+      expect(Math.min(...opacities)).toBeGreaterThanOrEqual(0.4 - 1e-9);
+      expect(Math.max(...opacities)).toBeLessThanOrEqual(0.6 + 1e-9);
+      expect(Math.max(...opacities) - Math.min(...opacities)).toBeGreaterThan(0.1);
+    }
+    expect(seen[0].some((o, i) => Math.abs(o - seen[1][i]) > 0.02)).toBe(true);
+  });
+
+  it("gives a dark system its own label in the seam light, and takes it back when the station relights", () => {
+    const m = markedMap({ dark: [2] });
+    const el = (it) => (it.el = { className: '' });
+    m.items.forEach(el);
+    m.camDist = 100;
+    m.syncDark();
+    expect(m.items[2].labelClass).toBe('dark');
+    expect(m.items[2].el.className).toBe('map-label dark');
+    expect(m.labelVisible({ selected: null, hovered: null, camera: { position: new THREE.Vector3() } }, m.items[2])).toBe(true);
+    expect(m.items[1].labelClass).toBe('');
+    m.game.net.world = { dark: [] };
+    m.syncDark();
+    run(m, 0.6);
+    expect(m.items[2].labelClass).toBe('minor');
+    expect(m.items[2].el.className).toBe('map-label minor');
+  });
+
+  it("puts a dark system's label ahead of its neighbours': clear of its ring, and a neighbour it would cover gives way", () => {
+    const m = markedMap({ dark: [1] });
+    m.syncDark();
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+    camera.position.set(20, 0, 60);
+    camera.lookAt(20, 0, 0);
+    camera.updateMatrixWorld();
+    m.view = { camera, root: { clientWidth: 1000, clientHeight: 1000 }, pixelsPerUnit: () => 20 };
+    // system 2 stands right of system 1 (10 units, 200 px), system 3 right of that; make 2's label sit under 1's
+    m.items[2].position.set(10.5, 0, 0);
+    m.items[2].labelOffset = 12;
+    m.placeDarkLabels(1);
+    const ring = 1.1 * m.darkShown.get(1).ring.userData.size;
+    expect(m.items[1].labelOffset).toBeCloseTo(ring * 20 + 6, 6);
+    expect(m.items[2].crowded).toBe(true);
+    expect(m.items[3].crowded).toBe(false);
+    expect(m.items[1].crowded).toBe(false);
+    // the system you are in is never crowded out
+    m.game.galaxy.current = m.items[2].sys;
+    m.placeDarkLabels(1);
+    expect(m.items[2].crowded).toBe(false);
+    // and with nothing dark nothing is
+    m.game.net.world = { dark: [] };
+    m.syncDark();
+    run(m, 0.6);
+    m.game.galaxy.current = m.items[0].sys;
+    m.placeDarkLabels(1);
+    expect(m.items.every((it) => !it.crowded)).toBe(true);
+  });
+
+  it('says how far the Edge has moved from its default, in place of an expansion rate', () => {
+    expect(edgeShift(EDGE_X)).toBe('At its default');
+    expect(edgeShift(EDGE_X - 20)).toBe('Advanced 20 ly');
+    expect(edgeShift(EDGE_X + 10)).toBe('Receded 10 ly');
+    expect(edgeShift(EDGE_X - 2.5)).toBe('Advanced 2.5 ly');
+    const m = Object.assign(map(), {
+      edgeAt: EDGE_X + 10,
+      game: Object.assign(Object.create(Game.prototype), { net: { world: { count: 1000 } }, galaxy: { here: { x: 0, y: 0, z: 0 } } }),
+    });
+    const stats = m.describe({ kind: 'edge' }).stats;
+    expect(stats.map(([k]) => k)).toEqual(['Distance', 'Shift', 'Count']);
+    expect(stats[1]).toEqual(['Shift', 'Receded 10 ly']);
   });
 });

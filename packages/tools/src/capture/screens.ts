@@ -1730,6 +1730,13 @@ async function handWorld(page: Page, world: unknown): Promise<void> {
 async function setCount(page: Page, count: number, from: Opening = null): Promise<void> {
   await handWorld(page, worldAtCount(count, from));
   await settle(page, 12);
+  await clearBanner(page);
+}
+
+/** Takes the system banner (staging leaves one up) off the screen before a still: dropped, and given its fade out. */
+async function clearBanner(page: Page): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).game.hud.clearBanners());
+  await page.waitForTimeout(700);
 }
 
 /** The galaxy map from the side, the cluster to the left and the wall a little right of the middle, so a wall that moves a few
@@ -1807,11 +1814,11 @@ async function openEdgeSky(page: Page, count: number): Promise<void> {
       g.universe.leave();
       g.universe.anchor.set(at - 1.2e6, 0, 0);
       g.sky.reset();
-      g.hud.clearBanners();
     },
     { at: EDGE_X },
   );
   await settle(page, 90);
+  await clearBanner(page);
 }
 
 /** The clip's frames, each handing the page the world for the Count a frame later (0 to 1000, and there and back). The first

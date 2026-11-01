@@ -10,7 +10,25 @@ import { buildEdge, EDGE_SEED } from './EdgeOfSpace.js';
 
 const _v = new THREE.Vector3();
 const NO_DARK = Object.freeze([]);
+
+// where the Edge stands against its default (the Count and the season move it, light year for light year)
+export function edgeShift(edge) {
+  const d = edge - EDGE_X;
+  if (Math.abs(d) < 0.05) return 'At its default';
+  return `${d < 0 ? 'Advanced' : 'Receded'} ${fmtLy(Math.abs(d))}`;
+}
 const EDGE_LABEL_TAU = 0.1;
+// a dark mark fades in and out as the label glides: ease-out, a time constant of 0.1 s (95% in 0.3 s); once faded out it is gone
+const DARK_FADE_TAU = 0.1;
+const DARK_GONE = 0.02;
+// a dark system's ring, in star units (neighbouring systems lie about 2 apart at cluster zoom), and its husk disc
+const DARK_RING = 2.0;
+const DARK_HUSK = 1.7;
+// the Hollow's seam light flickers between 40% and 60% (art bible §4, §6)
+const SEAM_LIGHT = 0.5;
+const SEAM_FLICKER = 0.1;
+// systems whose labels a dark one's would overlap give way to it (a label's width is about this many pixels a letter)
+const LABEL_PX = 7.6;
 
 export { fmtLy };
 
@@ -218,13 +236,14 @@ export class GalaxyMap {
     this.visited = new THREE.Group();
     scene.add(this.visited);
     this.visitedMat = ringMat(0.8, 0.85, 1.2, 0.55);
-    // dark Waystations (DESIGN 16.5): the star filled with a husk and ringed in the Hollow's seam-light
+    // dark Waystations (DESIGN 16.5): a near-black disc over the star (its glow still shows round it) ringed in the Hollow's
+    // seam light, faded in and out per system (syncDark, fadeDark)
     this.darkMarks = new THREE.Group();
     scene.add(this.darkMarks);
-    this.darkHuskMat = new THREE.MeshBasicMaterial({ color: 0x050508, transparent: true, depthTest: false, depthWrite: false });
-    this.darkRingMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0x9fe8da).multiplyScalar(2.2), transparent: true, opacity: 0.5, depthTest: false, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+    this.darkShown = new Map();
     this.darkHuskGeo = new THREE.CircleGeometry(1, 32);
     this.darkRingGeo = new THREE.RingGeometry(1, 1.1, 64);
+    this.darkRingColor = new THREE.Color(0x9fe8da).multiplyScalar(2.2);
     this.darkIds = null;
 
     const RN = 96;
@@ -410,12 +429,22 @@ export class GalaxyMap {
   labelVisible(v, it) {
     const g = this.game;
     const s = it.sys;
+    if (this.darkShown.get(s.id)?.to) return this.camDist < 3e4;
     if (s === g.galaxy.current) return this.camDist < 3e4;
     if (v.selected === it || v.hovered === it) return this.camDist < 3e4;
+    if (it.crowded) return false;
     const d = v.camera.position.distanceTo(it.position);
     if (s.visited && d < 400) return true;
     if (this.neighbors.has(s) && d < 220) return true;
     return d < 60;
+  }
+
+  // a system's label by what it is: a dark Waystation (its own seam-light name), where you are, a neighbour, or a far star
+  classLabel(it) {
+    const s = it.sys;
+    const gal = this.game.galaxy;
+    it.labelClass = this.darkShown.get(s.id)?.to ? 'dark' : s === gal.current ? 'you-sys' : this.neighbors.has(s) ? '' : 'minor';
+    if (it.el) it.el.className = `map-label ${it.labelClass}`;
   }
 
   refresh() {
@@ -425,8 +454,7 @@ export class GalaxyMap {
     this.items.forEach((it) => {
       if (it.kind !== 'system') return;
       const s = it.sys;
-      it.labelClass = s === gal.current ? 'you-sys' : this.neighbors.has(s) ? '' : 'minor';
-      if (it.el) it.el.className = `map-label ${it.labelClass}`;
+      this.classLabel(it);
     });
     this.visited.clear();
     for (const s of gal.systems) {
@@ -479,10 +507,8 @@ export class GalaxyMap {
     this.herePulse.scale.setScalar((2.4 + pulse * 9) * k);
     this.herePulse.material.opacity = (1 - pulse) * 0.8;
     for (const m of this.visited.children) m.quaternion.copy(q);
-    for (const m of this.darkMarks.children) {
-      m.quaternion.copy(q);
-      m.scale.setScalar(m.userData.size * k);
-    }
+    this.fadeDark(dt, time, q, k);
+    this.placeDarkLabels(k);
 
     const sel = v.selected;
     this.selRing.visible = !!sel && sel.kind === 'system' && (sel.sys !== cur || g.universe.deep);
@@ -507,26 +533,95 @@ export class GalaxyMap {
   }
 
   // A mark on each system whose Waystation the server says is dark (`world.dark`), so the loss reads at cluster zoom without
-  // selecting the star; rebuilt when the set changes, gone once the Count relights them.
+  // selecting the star; a system joins the marks fading in when the set grows and leaves them fading out (fadeDark) when
+  // the Count relights it. The system's own label turns seam-light while it is marked.
   syncDark() {
     const dark = this.game.net?.world?.dark ?? NO_DARK;
     if (dark === this.darkIds) return;
     this.darkIds = dark;
-    this.darkMarks.clear();
+    const now = new Set(dark);
+    for (const [id, mark] of this.darkShown) if (!now.has(id)) mark.to = 0;
     for (const id of dark) {
+      const known = this.darkShown.get(id);
+      if (known) {
+        known.to = 1;
+        continue;
+      }
       const s = this.game.galaxy.systems[id];
       if (!s) continue;
-      const husk = new THREE.Mesh(this.darkHuskGeo, this.darkHuskMat);
-      husk.userData.size = 1.7;
+      const husk = new THREE.Mesh(this.darkHuskGeo, new THREE.MeshBasicMaterial({ color: 0x050508, transparent: true, opacity: 0, depthTest: false, depthWrite: false }));
+      husk.userData.size = DARK_HUSK;
       husk.renderOrder = 5;
-      const ring = new THREE.Mesh(this.darkRingGeo, this.darkRingMat);
-      ring.userData.size = 2.6;
+      const ring = new THREE.Mesh(
+        this.darkRingGeo,
+        new THREE.MeshBasicMaterial({ color: this.darkRingColor, transparent: true, opacity: 0, depthTest: false, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }),
+      );
+      ring.userData.size = DARK_RING;
       ring.renderOrder = 6;
       for (const m of [husk, ring]) {
         m.position.set(s.x, s.y, s.z);
         m.frustumCulled = false;
         this.darkMarks.add(m);
       }
+      // (a phase of its own, so the rings do not flicker in step)
+      this.darkShown.set(id, { husk, ring, to: 1, shown: 0, phase: id * 2.399, item: this.items.find((it) => it.sys === s) });
+    }
+    for (const mark of this.darkShown.values()) if (mark.item) this.classLabel(mark.item);
+  }
+
+  // Each mark eases towards where it is going (in at 1, out at 0): its ring from nothing to the seam light's 50% and from 70% of
+  // its size to all of it, then flickering between 40% and 60%; a mark that has faded out is dropped.
+  fadeDark(dt, time, q, k) {
+    const ease = 1 - Math.exp(-dt / DARK_FADE_TAU);
+    for (const [id, mark] of this.darkShown) {
+      mark.shown += (mark.to - mark.shown) * ease;
+      if (!mark.to && mark.shown < DARK_GONE) {
+        for (const m of [mark.husk, mark.ring]) {
+          this.darkMarks.remove(m);
+          m.material.dispose();
+        }
+        this.darkShown.delete(id);
+        if (mark.item) this.classLabel(mark.item);
+        continue;
+      }
+      const flicker = SEAM_LIGHT + SEAM_FLICKER * (0.6 * Math.sin(time * 19.5 + mark.phase) + 0.4 * Math.sin(time * 48.4 + mark.phase * 2.3));
+      mark.ring.material.opacity = mark.shown * flicker;
+      mark.husk.material.opacity = mark.shown;
+      for (const m of [mark.husk, mark.ring]) {
+        m.quaternion.copy(q);
+        m.scale.setScalar(m.userData.size * k * (0.7 + 0.3 * mark.shown));
+      }
+    }
+  }
+
+  // The label of a marked system sits clear of its ring and ahead of the labels round it: a neighbour's label that it would
+  // cover gives way (a crowded label stays on screen if its system is the one selected, hovered or where you are).
+  placeDarkLabels(k) {
+    const v = this.view;
+    const W = v.root.clientWidth;
+    const H = v.root.clientHeight;
+    const rects = [];
+    for (const [id, mark] of this.darkShown) {
+      const it = mark.item;
+      if (!it) continue;
+      it.labelOffset = 1.1 * DARK_RING * k * v.pixelsPerUnit(it.position) + 6;
+      if (!mark.to) continue;
+      _v.copy(it.position).project(v.camera);
+      if (_v.z >= 1) continue;
+      const x = (_v.x * 0.5 + 0.5) * W + it.labelOffset;
+      const y = (-_v.y * 0.5 + 0.5) * H - 8;
+      rects.push({ id, x, y, w: it.label.length * LABEL_PX + 8, h: 20 });
+    }
+    for (const it of this.items) {
+      if (it.kind !== 'system') continue;
+      it.crowded = false;
+      if (!rects.length || it.sys === this.game.galaxy.current || this.darkShown.get(it.sys.id)?.to) continue;
+      _v.copy(it.position).project(v.camera);
+      if (_v.z >= 1) continue;
+      const x = (_v.x * 0.5 + 0.5) * W + (it.labelOffset ?? 12);
+      const y = (-_v.y * 0.5 + 0.5) * H - 8;
+      const w = it.label.length * LABEL_PX + 8;
+      it.crowded = rects.some((r) => x < r.x + r.w && x + w > r.x && y < r.y + r.h && y + 20 > r.y);
     }
   }
 
@@ -602,7 +697,7 @@ export class GalaxyMap {
     const h = g.galaxy.here;
     if (it.kind === 'edge') {
       const count = g.net?.world?.count;
-      const stats = [['Distance', fmtLy(edgeX(h.y, h.z, this.edgeAt) - h.x)], ['Expansion', '0.0000 c']];
+      const stats = [['Distance', fmtLy(edgeX(h.y, h.z, this.edgeAt) - h.x)], ['Shift', edgeShift(this.edgeAt)]];
       if (count !== undefined) stats.push(['Count', `${count} / 1000`]);
       return { title: 'The Edge', kind: 'End of the universe', stats };
     }

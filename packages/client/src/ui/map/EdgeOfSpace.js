@@ -59,8 +59,14 @@ const membraneFrag = /* glsl */ `
   ${mapNoiseGLSL}
   // seen from inside the sky the wall wears the art bible's Edge (§4): opal white, pale blue and pale peach, weighted by the
   // iridescence's three phases, in place of its raw cosine hues (violet and mint)
+  const vec3 OPAL = vec3(0.96, 0.93, 0.97);
+  // one colour or the other in a fringe, not their mean: the opal's play of pale blue and pale peach
+  vec3 play(vec3 w) {
+    vec3 k = w * w * w;
+    return (OPAL * k.x * 0.6 + vec3(0.81, 0.91, 0.97) * k.y + vec3(0.97, 0.89, 0.82) * k.z) / (k.x * 0.6 + k.y + k.z + 1e-3);
+  }
   vec3 pale(vec3 w) {
-    return (vec3(0.96, 0.93, 0.97) * w.x + vec3(0.81, 0.91, 0.97) * w.y + vec3(0.97, 0.89, 0.82) * w.z * 1.4) / (w.x + w.y + w.z * 1.4 + 1e-3);
+    return (OPAL * w.x + vec3(0.81, 0.91, 0.97) * w.y + vec3(0.97, 0.89, 0.82) * w.z) / (w.x + w.y + w.z + 1e-3);
   }
   float fbm3(vec3 p) {
     float s = 0.0;
@@ -87,9 +93,11 @@ const membraneFrag = /* glsl */ `
       float ff = fbm(p * 1.4 + q * 1.3 + vec3(0.0, 0.0, t * 0.006));
       vec3 hue = 0.5 + 0.5 * cos(6.2831853 * (ff * 0.55 + fres * 0.5 + vec3(0.0, 0.33, 0.67)));
       hue = mix(hue, pale(hue) * 0.8, uSky);
-      vec3 far = (vec3(0.07, 0.04, 0.17) + hue * vec3(0.08, 0.07, 0.11)) * (0.35 + 0.65 * smoothstep(-0.4, 0.7, ff)) * (0.7 + 1.2 * fres);
+      // (the sky's far wall is a neutral dusk, not violet, so it stays an opal's whatever the Count has done to its distance)
+      vec3 far = (mix(vec3(0.07, 0.04, 0.17), vec3(0.085, 0.08, 0.095), uSky) + hue * vec3(0.08, 0.07, 0.11)) * (0.35 + 0.65 * smoothstep(-0.4, 0.7, ff)) * (0.7 + 1.2 * fres);
       col = far;
-      float closeUp = smoothstep(0.25, 0.8, uReveal);
+      // (seen from inside the sky the film comes up sooner: a wall a few hundred thousand light years further out is no less opal)
+      float closeUp = smoothstep(mix(0.25, 0.05, uSky), mix(0.8, 0.45, uSky), uReveal);
       // (the full film only once it is near enough to show: it is the costly part)
       if (closeUp > 0.0) {
         // the membrane itself: doubly domain-warped flow (a cosmic web caught in a soap film)
@@ -106,6 +114,11 @@ const membraneFrag = /* glsl */ `
         deep = mix(deep, mix(vec3(0.14, 0.12, 0.17), vec3(0.1, 0.14, 0.19), smoothstep(-0.4, 0.5, f)), uSky);
         // mostly dark, deep-violet film; the light lives in the filaments and the iridescent folds
         vec3 film = deep * 0.4 + irid * (0.07 + 0.85 * fil) * smoothstep(-0.2, 0.7, f + 0.2) + vec3(1.0, 0.94, 1.0) * fil * 0.55;
+        // the sky's wisps: opal at their crests, and the opal's colour play (pale blue, pale peach) in the fringes round them
+        // (the sky's own grade warms what it draws, so the crests are drawn a little cool)
+        float halo = pow(max(rid, 0.0), 7.0) * smoothstep(-0.2, 0.7, f + 0.2) * (1.0 - fil);
+        vec3 wisp = deep * 0.4 + play(irid) * halo * 1.1 + OPAL * vec3(0.97, 0.97, 1.3) * fil * 1.7;
+        film = mix(film, wisp, uSky);
         // quantum foam: brief pinpricks of light across the film
         vec3 cs = vW * ${(0.11 / 1e4).toExponential(4)};
         vec3 cell = floor(cs);
@@ -130,7 +143,7 @@ const membraneFrag = /* glsl */ `
     float r = length(vW.yz);
     float rim = 1.0 - smoothstep(${(SPAN * 0.32).toFixed(1)}, ${(SPAN * 0.5).toFixed(1)}, r);
     // from deep inside the galaxy the wall is only a far glow; it comes up as the view closes in
-    float reveal = uLayer < 0.5 ? mix(0.22, 1.0, uReveal) : uReveal;
+    float reveal = uLayer < 0.5 ? mix(mix(0.22, 0.8, uSky), 1.0, uReveal) : uReveal;
     gl_FragColor = vec4(col * rim * uIntensity * reveal, 1.0);
   }`;
 

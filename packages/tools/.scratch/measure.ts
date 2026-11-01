@@ -1,0 +1,31 @@
+// scratch: sky stats of a png: percentiles of luminance over a region (x0..x1, y0..y1), mean colour, top-10% mean colour, mint/violet counts
+import { readFileSync } from 'node:fs';
+import { chromium } from '@playwright/test';
+const [file, x0 = '0', y0 = '0', x1 = '1920', y1 = '1080'] = process.argv.slice(2);
+const b = await chromium.launch();
+const page = await b.newPage();
+await page.goto('about:blank');
+await page.evaluate('window.__name = (f) => f');
+const dataUrl = 'data:image/png;base64,' + readFileSync(file!).toString('base64');
+const r = await page.evaluate(async ([url, x0, y0, x1, y1]) => {
+  const img = new Image();
+  img.src = url as string;
+  await img.decode();
+  const c = document.createElement('canvas');
+  c.width = img.width; c.height = img.height;
+  const g = c.getContext('2d')!;
+  g.drawImage(img, 0, 0);
+  const [ax, ay, bx, by] = [x0, y0, x1, y1].map(Number) as number[];
+  const d = g.getImageData(ax, ay, bx - ax, by - ay).data;
+  const px: number[][] = [];
+  for (let i = 0; i < d.length; i += 4) px.push([d[i], d[i + 1], d[i + 2], 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]]);
+  px.sort((p, q) => p[3] - q[3]);
+  const mean = (a: number[][]) => [0, 1, 2].map((k) => Math.round(a.reduce((s, p) => s + p[k], 0) / a.length));
+  const hex = (m: number[]) => '#' + m.map((v) => v.toString(16).padStart(2, '0')).join('');
+  const top = px.slice(Math.floor(px.length * 0.9));
+  const top1 = px.slice(Math.floor(px.length * 0.99));
+  const sat = (p: number[]) => { const mx = Math.max(p[0], p[1], p[2]), mn = Math.min(p[0], p[1], p[2]); return mx ? (mx - mn) / mx : 0; };
+  return { mean: hex(mean(px)), top10: hex(mean(top)), top1: hex(mean(top1)), p50: Math.round(px[Math.floor(px.length * .5)][3]), p90: Math.round(px[Math.floor(px.length * .9)][3]), p99: Math.round(px[Math.floor(px.length * .99)][3]), meanSat: +(px.reduce((s, p) => s + sat(p), 0) / px.length).toFixed(3) };
+}, [dataUrl, x0, y0, x1, y1]);
+console.log(file, JSON.stringify(r));
+await b.close();
