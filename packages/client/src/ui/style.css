@@ -927,7 +927,8 @@ body {
 .banner .b-line {
   font-size: 12.5px;
   letter-spacing: 0.06em;
-  color: var(--dim);
+  /* (the analysis's codex line, whose hollow stars are the thinnest strokes on the banner: full text colour holds 4.5:1 over the day sky) */
+  color: var(--text);
   margin-top: 2px;
 }
 @keyframes banner {

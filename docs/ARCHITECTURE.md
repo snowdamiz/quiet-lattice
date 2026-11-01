@@ -785,10 +785,11 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     with none, or an index past it, is followed but not drawn). The species' colours, size, speeds and `shape` seed build
     its body (the library variant of its body plan, or the procedural stand-in until P1.E14.T07), so every client draws
     the same animal; one InstancedMesh per species per world, camera-relative like the ships (position from the placed
-    world position, orientation `frame × pose`), capacity doubling as herds grow. The gait is read off how fast the
+    world position, orientation `frame × pose`, the pose's heading eased toward the server's over 0.15 s at no more than
+    270°/s and frozen once the creature is `dead`), capacity doubling as herds grow. The gait is read off how fast the
     creature is drawn moving (a smoothed speed against the species' walk pace; a flyer flaps always) and the stride phase
     integrated from it, so legs do not slide; a creature whose mode is `dead` rolls onto its side over 0.45 s (a flyer
-    drops to the ground first) and stays until the snapshots stop naming it (3 s). The server sends no per-animal scale:
+    drops to the ground first) and stays until the snapshots stop naming it (3 s); one first seen dead lies down at once, without the fall. The server sends no per-animal scale:
     creatures are drawn at their species' size, and the shared hit sphere (`creatureSphere`, scale 1) is what the
     crosshair pick (`Fauna.pick`, in the camera's own frame, so the ray and the creatures never disagree by a frame's
     motion), ability targets (`Fauna.targets`, which `pickTarget` reads instead of the snapshot store for creatures) and

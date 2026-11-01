@@ -1005,17 +1005,31 @@ async function openHerd(page: Page, night: boolean): Promise<void> {
   await page.waitForTimeout(600);
 }
 
-/** Holds every animation of the HUD where it is `ms` into it (the numbers' rise, the flash, a banner), for a still. */
-async function holdHud(page: Page, ms: { number?: number; flash?: number; banner?: number }): Promise<void> {
-  await page.evaluate((ms) => {
+/** Holds every animation of the HUD where it is `ms` into it (the numbers' rise, the flash, a banner), for a still. Returns how
+ * many damage numbers were showing. The numbers are the game's own for as long as the page takes to be shot, which a loaded machine
+ * can stretch past their life (the HUD removes each after 1 s of wall clock); copies of them, held, are what the still shows. */
+async function holdHud(page: Page, ms: { number?: number; flash?: number; banner?: number }): Promise<number> {
+  return page.evaluate((ms) => {
+    let numbers = 0;
     for (const a of document.getAnimations()) {
-      const el = (a.effect as KeyframeEffect | null)?.target as Element | null;
+      const el = (a.effect as KeyframeEffect | null)?.target as HTMLElement | null;
       if (!el) continue;
       const at = el.closest('.hit-number') ? ms.number : el.closest('.flash') ? ms.flash : el.closest('.banner') ? ms.banner : undefined;
       if (at === undefined) continue;
+      if (el.classList.contains('hit-number')) {
+        const keep = el.cloneNode(true) as HTMLElement;
+        el.parentElement?.appendChild(keep);
+        const held = keep.animate((a.effect as KeyframeEffect).getKeyframes(), { duration: 900, easing: 'linear', fill: 'forwards' });
+        held.pause();
+        held.currentTime = at;
+        el.remove();
+        numbers++;
+        continue;
+      }
       a.pause();
       a.currentTime = at;
     }
+    return numbers;
   }, ms);
 }
 
@@ -1922,27 +1936,31 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
     },
     // hits on creatures behind the walker, which are not on the screen: their numbers rise from the reticle, in one column
     async offscreen(page) {
-      await clearHud(page);
-      await page.evaluate(async (at) => {
-        const w = window as unknown as FaunaPage;
-        await w.__herd.stepTo(at);
-        // turned away from the herd: the point opposite creature 602, through the walker
-        const from = w.game.player.state.pos;
-        const away = from.clone().multiplyScalar(2).sub(w.game.remotes.get(602).pos);
-        for (let i = 0; i < 30; i++) {
-          w.dev.footAim(away, 0.6);
-          await w.step(1);
-        }
-        for (const [id, amount] of [
-          [602, 17],
-          [603, 23],
-          [602, 9],
-        ] as const) {
-          w.__herd.hit(id, amount);
-          await w.step(2);
-        }
-      }, HERD_AT.offscreen);
-      await holdHud(page, { number: 380 });
+      // (the numbers must be showing when they are held: a slow page can let them go before it gets here, so the hits are raised again)
+      for (let attempt = 0; ; attempt++) {
+        await clearHud(page);
+        await page.evaluate(async (at) => {
+          const w = window as unknown as FaunaPage;
+          await w.__herd.stepTo(at);
+          // turned away from the herd: the point opposite creature 602, through the walker
+          const from = w.game.player.state.pos;
+          const away = from.clone().multiplyScalar(2).sub(w.game.remotes.get(602).pos);
+          for (let i = 0; i < 30; i++) {
+            w.dev.footAim(away, 0.6);
+            await w.step(1);
+          }
+          for (const [id, amount] of [
+            [602, 17],
+            [603, 23],
+            [602, 9],
+          ] as const) {
+            w.__herd.hit(id, amount);
+            await w.step(2);
+          }
+        }, HERD_AT.offscreen);
+        if ((await holdHud(page, { number: 380 })) >= 3) break;
+        if (attempt >= 5) throw new Error('the off-screen damage numbers were gone before they could be held');
+      }
     },
     // the clip's first frame: the herd as the fight starts, the walker aimed at the creature that will die
     async start(page) {
