@@ -592,7 +592,8 @@ export class Game {
     const mover = foot ? this.player : ship;
     const st = mover.state;
     const now = foot ? 'foot' : moveModeOf(this.mode, ship.mode, st.frame);
-    const stride = foot ? m.mode === 'foot' : m.mode === 'ship' || m.mode === 'pulse' || m.mode === now;
+    const flying = (mode) => mode === 'ship' || mode === 'pulse';
+    const stride = m.mode === now || (flying(m.mode) && flying(now));
     this.prediction.corrected(this.net?.inputSeq ?? 0);
     if (!stride) return this.placeFromServer(m.pose, m.mode);
     const drawn = mover.drawnState();
