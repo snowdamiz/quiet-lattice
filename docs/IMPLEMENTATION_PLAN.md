@@ -1,6 +1,6 @@
 # Astra Nullius: Implementation Plan
 
-**Spec:** [DESIGN.md](DESIGN.md) (design v1.0). **Plan version:** 1.0, October 2026.
+**Spec:** [DESIGN.md](DESIGN.md) (design v1.0). **Plan version:** 1.1, November 2026.
 **Purpose:** a task graph an autonomous agent loop can execute end to end, from today's demo to the Phase 3 game. Every task has dependencies, a "done when" and a "verify" an agent can run.
 
 ---
@@ -8,7 +8,7 @@
 ## 0. Running this plan with an agent loop
 
 ### 0.1 Loop protocol (one iteration of the orchestrator)
-The loop is an **orchestrator** that dispatches work to **subagents** (0.9) and owns this file. It does not implement tasks itself beyond trivial ones; it plans batches, briefs workers, merges, grades and records.
+The loop is an **orchestrator** that dispatches work to **subagents using the current provider's native delegation tools** (0.9) and owns this file. When delegation is available, it does not implement tasks itself beyond trivial ones; it plans batches, briefs workers, merges, grades and records. Section 0.9 defines the fallback when delegation is unavailable.
 1. **Read this file.** Collect every task marked `[ ]` whose `deps` are all `[x]`, lowest phase first. Tasks tagged `(art)` run on the parallel art track and are always eligible when their deps are met.
 2. **Form a batch.** From the eligible set, pick tasks whose `files` do not overlap and whose `done` criteria do not touch the same systems, up to the concurrency cap (0.9.3). Two writers never share a file set.
 3. **Dispatch.** For each task in the batch, mark `[~]`, create its branch and worktree, and brief a worker subagent with the template in Appendix C: the task block verbatim, the DESIGN.md sections under `spec`, the global rules, the art-track rules where relevant, the verify commands and the report format.
@@ -70,10 +70,14 @@ pnpm workspaces · Node 22 · TypeScript for `shared`, `server`, `tools`; the cl
 
 ### 0.9 Subagents: how the work is parallelised
 
+This workflow is provider-neutral. Orchestrator, worker, reviewer, grader and QA runner are responsibilities, not provider-specific agent types. Use the native subagent tools exposed by the current session: **Codex uses Codex subagents**, Claude Code uses its native subagents, and other providers use their equivalent. Inherit the session's model defaults unless the user requests a different available model. Running this plan does not require another provider's CLI, account, named model or agent configuration.
+
+At the start of a run, inspect the available delegation tools, context-isolation controls and concurrency limits. Map dispatch, follow-up, result collection and completion to those tools, and record the chosen runtime and effective concurrency in `docs/PROGRESS.md`. If delegation is unavailable, the orchestrator may implement and verify tasks sequentially, recording that limitation. Independent review and visual grading remain pending until a fresh reviewer with the required capabilities is available; self-review does not satisfy either gate.
+
 #### 0.9.1 Roles
 | Role | Count | Owns | Never does |
 |---|---|---|---|
-| **Orchestrator** | 1 | this file, batching, briefing, merging, the logs, escalation | implements anything larger than a one-file fix; grades its own work |
+| **Orchestrator** | 1 | this file, batching, briefing, merging, the logs, escalation | implements anything larger than a one-file fix when delegation is available; grades its own work |
 | **Code worker** | up to 4 at once | one task at a time in its own worktree: implementation, tests, verify, report | edits this file; touches files outside its task's `files` without saying so in the report; marks status |
 | **Art worker** | up to 2 at once | one `(art)` task at a time: `.blend` source, renders, validation, export, review captures | ships anything that failed validation; edits engine code beyond the asset's loader hooks |
 | **Visual grader** | 1 (fresh instance per verdict) | PASS/REVISE verdicts on visual tasks against the rubric (0.10) | edits assets or code; sees the worker's reasoning or chat, only its artifacts |
@@ -81,19 +85,19 @@ pnpm workspaces · Node 22 · TypeScript for `shared`, `server`, `tools`; the cl
 | **QA runner** | 1 | long verifications: e2e playthroughs, bot load tests, soak tests; reports regressions | changes code to make a test pass |
 
 #### 0.9.2 Isolation
-Each dispatched task gets a branch `task/<id>` (e.g. `task/P1-E03-T02`) and a git worktree. Workers commit to their branch only. The orchestrator merges to `main` after all gates pass and re-verifies on `main`. Two tasks that would touch the same file are never in the same batch; if a worker discovers it must touch a file outside its `files`, it stops and reports, and the orchestrator either widens the task or serialises it.
+Each dispatched task gets a branch containing its task id (e.g. `task/P1-E03-T02` or `codex/task/P1-E03-T02`, following the current environment's branch-prefix rules) and a git worktree. Native subagents may share the parent's checkout by default: assign each worker an explicit worktree path and branch, and have it verify both before editing. Workers commit to their branch only. The orchestrator merges to `main` after all gates pass and re-verifies on `main`. Two tasks that would touch the same file are never in the same batch; if a worker discovers it must touch a file outside its `files`, it stops and reports, and the orchestrator either widens the task or serialises it. Worktree locations are not tied to a provider; when switching providers, retain existing task branches, worktrees and saved artifacts.
 
 #### 0.9.3 Concurrency
-Default cap: 4 code workers + 2 art workers + graders and QA as needed. The orchestrator fills the batch by dependency readiness, then by phase, then by the longest estimated task first so the critical path stays busy. The art track is kept full whenever an art task is eligible, because art has the longest lead time and gates the most downstream work (bodies before remote players, kits before cities, the Waystation before bays).
+Role caps: up to 4 code workers, 2 art workers, 1 visual grader, 1 code reviewer and 1 QA runner. These are upper bounds, not required counts. All active roles together must fit the current session's agent limit, counting the orchestrator if the runtime does; lower concurrency further for local resource limits. For example, a four-agent limit including the orchestrator leaves three concurrent subagents total. Queue excess work and free worker slots for review and QA; limited capacity serialises roles without skipping gates. The orchestrator fills the batch by dependency readiness, then by phase, then by the longest estimated task first so the critical path stays busy. Keep art work active within available capacity whenever an art task is eligible, because art has the longest lead time and gates the most downstream work (bodies before remote players, kits before cities, the Waystation before bays).
 
 #### 0.9.4 Briefing and reporting
-Workers are briefed with Appendix C's template and nothing else: the task block, the spec sections, the rules, the files, the verify commands, the report format. A brief that would need to retell this document means the task is too big; split it in the plan first. Reports come back in the fixed format in Appendix C so the orchestrator can merge and log without reading the worker's transcript.
+Workers are briefed with Appendix C's template and nothing else: the task block, the spec sections, the rules, the files, the verify commands, the report format. Use a fresh context with transcript inheritance disabled where supported; reviewers and visual graders must receive only their assigned brief and evidence, never the worker's transcript. If the runtime cannot provide that separation, leave the independent review gate pending. A brief that would need to retell this document means the task is too big; split it in the plan first. Reports come back in the fixed format in Appendix C so the orchestrator can merge and log without reading the worker's transcript. Deliver REVISE notes through the native follow-up mechanism; if the original worker cannot be resumed, brief a replacement on the same task branch and worktree with its saved report and the notes.
 
 #### 0.9.5 Code review gate
 A fresh reviewer subagent receives the diff, the task block and the global rules, and returns PASS or REVISE with findings. REVISE is mandatory for: client-side authority over anything in the server-authority list; a new system without tests; demo code left alive after its replacement; a budget regression in a perf-tagged task; an unlogged spec interpretation. Style findings are advisory and never block.
 
 #### 0.9.6 Long verifications
-e2e playthroughs, bot load tests and soaks run in the QA runner in the background; the orchestrator continues dispatching and merges the task only when the QA report arrives green. A red QA report reopens the task to its worker with the report attached.
+e2e playthroughs, bot load tests and soaks run in the QA runner in the background when supported and capacity permits; otherwise run them sequentially. The orchestrator continues dispatching within the session limit and merges the task only when the QA report arrives green. A red QA report reopens the task to its worker with the report attached.
 
 ### 0.10 Visual grading: nothing visual ships ungraded
 
@@ -498,6 +502,8 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 Phase 1: 109 tasks (16 art). Phase 2: 70 tasks (12 art). Phase 3: 29 tasks (5 art). Total 208. (Counted by `grep -c '^- \[ \] \*\*P1\.' docs/IMPLEMENTATION_PLAN.md` and so on; the loop should recount rather than trust this line.)
 
 ## Appendix B: the first batches the orchestrator will dispatch
+These are logical batches; split them into smaller dispatches when the session's concurrency limit requires it (0.9.3).
+
 Batch 1 (serial, one worker: everything depends on it): P1.E01.T01.
 Batch 2 (parallel): P1.E01.T02, P1.E01.T04, P1.E01.T06.
 Batch 3 (parallel): P1.E01.T03, P1.E01.T07, P1.E02.T01 (after T02), P1.E14.T01 (art track opens).
@@ -508,7 +514,8 @@ From batch 5 the art track stays full: P1.E05.T01 (bodies) and P1.E14.T04 (trees
 
 ### C.1 Worker brief (code or art)
 ```
-You are implementing one task of docs/IMPLEMENTATION_PLAN.md in the worktree at <path> on branch task/<id>.
+You are implementing one task of docs/IMPLEMENTATION_PLAN.md in the worktree at <path> on branch <assigned branch>.
+Verify your working directory and branch before editing; run all commands in that worktree.
 
 TASK (verbatim):
 <the task line, including deps, spec, files, done, verify>
