@@ -122,11 +122,10 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
   const herd = (spawned.result as { creatures: number[]; name: string }).creatures;
   expect(herd).toHaveLength(4);
 
-  // every one of them reaches both clients, drawn as an instance of its species' rig
-  for (const page of [a, b]) {
-    await until(page, `[${herd}].every((id) => window.game.remotes.get(id)?.shown === true)`, 60_000);
-    await until(page, `[${herd}].every((id) => window.game.remotes.get(id)?.drawn === true)`, 30_000);
-  }
+  // every one of them reaches both clients; on A, 40 m off, each is drawn as an instance of its species' rig (B, further
+  // away and looking elsewhere, may have them out of view)
+  for (const page of [a, b]) await until(page, `[${herd}].every((id) => window.game.remotes.get(id)?.shown === true)`, 60_000);
+  await until(a, `[${herd}].every((id) => window.game.remotes.get(id)?.drawn === true)`, 30_000);
   // (a few seconds of them going about, on real time)
   await a.waitForTimeout(1500);
   const [onA, onB] = await Promise.all([seen(a), seen(b)]);
@@ -138,9 +137,9 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
   // and in the same places, up to when each reads the world (they go slowly, and their poses are one stream's)
   const [ha, hb] = [herdOf(onA), herdOf(onB)];
   ha.forEach((s, i) => expect(Math.hypot(...s.pos.map((x, k) => x - hb[i]!.pos[k]!)), `creature ${s.id}`).toBeLessThan(4));
-  // each client's instanced mesh for the herd's species holds the spawned creatures
-  for (const page of [a, b]) {
-    const mesh = await page.evaluate((ids) => {
+  // A's instanced mesh for the herd's species holds the spawned creatures
+  {
+    const mesh = await a.evaluate((ids) => {
       const g = window.game;
       const r = g.remotes.get(ids[0]);
       const d = g.fauna.worlds.get(r.frame).drawn.get(r.species);
@@ -166,6 +165,9 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
     (window as unknown as { __answers: unknown[] }).__answers = [];
     g.net.on('analyze', (m: unknown) => (window as unknown as { __answers: unknown[] }).__answers.push(m));
     g.net.on('refused', (m: unknown) => (window as unknown as { __answers: unknown[] }).__answers.push(m));
+    const toasts: string[] = ((window as unknown as { __toasts: string[] }).__toasts = []);
+    const toast = g.hud.toast.bind(g.hud);
+    g.hud.toast = (text: string, ...rest: unknown[]) => (toasts.push(text), toast(text, ...rest));
     const sent = hit ? g.analyze(hit.id) : null;
     return hit
       ? { id: hit.id, name: hit.sp.name, t: hit.t, sent }
@@ -180,7 +182,7 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
   expect(banner.toLowerCase()).toContain(picked!.name.toLowerCase());
   // (the codex line, with its threat stars, and Bond, as the banner's third line; the XP as a toast)
   expect(banner).toMatch(/★[☆★]*.*Bond: /);
-  await until(a, "[...document.querySelectorAll('.toast')].some((t) => /^\\+\\d+ XP$/.test(t.textContent))", 30_000);
+  await until(a, 'window.__toasts.some((t) => /^\\+\\d+ XP$/.test(t))', 30_000);
 
   await Promise.all([a, b].map((p) => p.evaluate(() => window.game.net.close())));
   expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
