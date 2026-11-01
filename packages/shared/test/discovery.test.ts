@@ -158,7 +158,7 @@ describe('the moderation filter', () => {
       expect(reason(name), name).toBeNull();
     for (const name of ['Th3 C0unt', 'Ad m1n', 'D3v Rock', 'St4ff']) expect(reason(name), name).toBe('reserved');
     expect(reason('Ni99er')).toBe('blocked');
-    expect(reason('S 9 ex')).toBe('blocked');
+    expect(reason('S 3 x')).toBe('blocked');
   });
 
   it('refuses v for u and ph for f in blocked words', () => {
