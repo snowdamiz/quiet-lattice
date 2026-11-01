@@ -697,8 +697,38 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 - **Saving is the server's** (§8). `Game.save()` sends the input at once at moments worth holding (docked, a system
   reached, a site visited). Leaving (the pause menu, or a refusal after joining) closes the socket and reloads the page,
   so nothing of one character's client state carries into the next.
-- **Corrections** are taken as they come until prediction and reconciliation (P1.E04.T03): the pose, re-expressed into the
-  frame the client is in (DECISIONS P1.E03.T03).
+- **Prediction and reconciliation** (`net/prediction.js`, P1.E04.T03). The client moves its ship and its walker itself
+  and sends the pose it predicts, keeping what each input said (the last 64, about 3 s). A `correction` (or an operator's
+  teleport) holds the mover at a pose as of input `seq`: the client rewinds there and replays what it did since, its
+  motion in the frame re-based on the server's pose; where the server refused the mode the client sent (the pulse drive
+  on a Charge it holds empty), it is carried on from the server's pose at the server's velocity, or at its own when the
+  ship has left the drive the server still holds it on. A ship's turning since is replayed onto the server's orientation;
+  a walker keeps looking where its player looks. A mode it cannot take in its stride (set down, aboard as it got out, out
+  as it boarded), and a correction to an input no longer kept, place it as a welcome does. All of it is re-expressed into
+  the frame the client is in (DECISIONS P1.E03.T03: never adopt the server's frame). Each snapshot's account of the entity
+  as of its `ack` is compared with what the client sent then, in the same frame: further than 0.5 m (or the pulse drive
+  refused) is a correction the client never heard (lost on the way), taken the same way. The inputs sent before a
+  correction was taken are the old trajectory, which the server refuses quietly, and are not compared; nor is a pose the
+  server holds in another frame than it was sent in, re-expressed at the edge of a sphere at a tick a repeated or lost
+  snapshot leaves the client unable to name. A correction for an input of that old trajectory (a repeat, one the server
+  held back past its grace, an operator's teleport just after one) is never re-based on what that input sent, or its
+  offset would be applied twice: the server's pose is carried on at the mover's own velocity from that input's time, or
+  at the server's where the correction refuses the mode that input was sent in or takes the ship off the pulse drive,
+  and the orientation is kept. The rewind moves the mover at once, so its next input fits the server's pose; the drawn
+  ship, the chase camera and the walker's eye carry the difference as a `Blend` (an offset, its rate and a turn, in the
+  frame's axes) that leaves from where and as fast as the mover was drawn and dies away critically damped with a time
+  constant of 0.125 s, the chase camera's own follow, unless it is more than 10 m and half a second of the mover's
+  speed: that is shown as the jump it is, the chase camera put back behind the ship. Leaving the pulse drive sends an
+  input at once, so the drive's stretch is reported up to the drop-out: movement authority judges the engines' first
+  pose from the drive's last.
+- **A bad network on demand** (`net/link.js`, dev builds): `?lag=<ms>&loss=<%>` (`&seed=<n>`) runs the connection through
+  a stand-in for the WebSocket class that holds every message that long each way and loses that share of them each way,
+  from the welcome on, keeping each way's order. `packages/tools/src/smoke/prediction-online.spec.ts` plays the game
+  through it at 100 ms and 2% against a stepped server (P1.E16.T06; the link runs on the page's stepped clock) and judges
+  each snapshot's pose for the player's entity against what the client sent for the same input: within 0.5 m in flight
+  (out of the Waystation into its world's frame, boosting, the pulse drive), in the home world's shadow on an empty Charge
+  (the client refusing the engage itself; a mispredicted engage refused by the server, rewound and blended) and on foot,
+  with corrections blended (one only a snapshot told of) and shown as jumps past the limit.
 - **Dev sandbox.** In dev builds only, a scenario hash (`#sandbox`, `#foot`, `#fly`, `#land`, `#station`, `#dock`,
   `#space`, `#review:…`) or `window.dev.boot()` starts `Game.startSandbox`: offline, a new pilot by the home Waystation,
   no persistence of any kind, so the smoke specs, captures and asset reviews stay hermetic. The game itself always goes
