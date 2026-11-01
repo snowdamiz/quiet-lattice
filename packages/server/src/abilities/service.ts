@@ -326,7 +326,7 @@ export class CastService {
       pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
       sight: (to) => {
         const eye = this.poseOf(zone, self, frame, bar, origin, aim)?.origin;
-        return eye !== undefined && this.inSight(zone, frame, eye, to) === true;
+        return eye === undefined ? false : this.inSight(zone, frame, eye, to);
       },
       canHarm: (target) => mayHarm(zone, self, target),
       meters: {

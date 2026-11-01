@@ -618,7 +618,7 @@ describe('what an effect is given beyond the cast', () => {
     expect(ctx.sight([0, 0, 0])).toBe(false);
   });
 
-  it('says whether the ground leaves a line from the eye: open ground yes, a wall no, a world not planned yet no', () => {
+  it('says whether the ground leaves a line from the eye: open ground yes, a wall no, a world not planned yet busy', () => {
     cast('pulse', 0);
     const ctx = casts[0]!.ctx;
     const c = creatureAt(15);
@@ -626,7 +626,7 @@ describe('what an effect is given beyond the cast', () => {
     grounds = WALL;
     expect(ctx.sight(c.sphere().pos)).toBe(false);
     grounds = PLANNING;
-    expect(ctx.sight(c.sphere().pos)).toBe(false);
+    expect(ctx.sight(c.sphere().pos)).toBe('busy');
   });
 
   it('says whether the caster may harm a target, as damage does', () => {

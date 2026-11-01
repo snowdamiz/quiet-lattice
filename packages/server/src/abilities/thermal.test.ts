@@ -340,6 +340,16 @@ describe('Flare', () => {
   });
 });
 
+describe('the ground not planned yet', () => {
+  it('refuses an area cast busy, costing nothing, as an entity cast is', () => {
+    own(['flare', 'vent']);
+    grounds = { ground: () => null };
+    expect(cast('flare', 0)).toMatchObject({ result: 'refused', reason: 'busy' });
+    expect(cast('vent', 1)).toMatchObject({ result: 'refused', reason: 'busy' });
+    expect(meter.heat).toBe(0);
+  });
+});
+
 describe('Sear', () => {
   beforeEach(() => own(['sear']));
 

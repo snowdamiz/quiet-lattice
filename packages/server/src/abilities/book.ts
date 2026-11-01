@@ -42,9 +42,9 @@ export interface CastContext {
   /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame
    * (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
   pose(): { origin: Readonly<Vec3>; aim: Readonly<Vec3> } | null;
-  /** Whether the ground leaves a clear line from the caster's eye to `to` (false while the world's ground is still being
-   * planned: try again next tick). */
-  sight(to: Readonly<Vec3>): boolean;
+  /** Whether the ground leaves a clear line from the caster's eye to `to`; 'busy' while the world's ground is still being
+   * planned (a `check` refuses `busy`, a held beam tries again next tick). False too once the caster is gone. */
+  sight(to: Readonly<Vec3>): boolean | 'busy';
   /** Whether the caster may harm `target` at all (`mayHarm`): for an effect that marks it and deals no damage itself. */
   canHarm(target: number): boolean;
   /** The caster's meters, as an effect reads and spends them beyond the cost the runtime took. */

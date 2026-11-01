@@ -44,7 +44,7 @@ function lanceHits(ctx: CastContext, seconds: number): void {
   if (!pose || shape?.kind !== 'ray') return;
   const near = ctx.creatures(shape.range + 2);
   const first = hitTest(shape, { origin: pose.origin, dir: pose.aim }, near)[0]?.target;
-  if (!first || !ctx.sight(first.pos)) return;
+  if (!first || ctx.sight(first.pos) !== true) return;
   const damage = N.lance.dps * seconds;
   ctx.damage(first.id, damage);
   if (!ctx.owns('chain')) return;
@@ -58,6 +58,9 @@ function lanceHits(ctx: CastContext, seconds: number): void {
     .slice(0, chain.extraTargets ?? 1);
   for (const { c } of next) ctx.damage(c.id, damage * N.lance.chainShare);
 }
+
+/** An area cast is refused `busy` while the ground its line of sight reads is still being planned, as an `entity` cast is. */
+const groundPlanned = (ctx: CastContext): 'busy' | null => (ctx.sight(ctx.origin) === 'busy' ? 'busy' : null);
 
 export const THERMAL_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([
   [
@@ -87,12 +90,13 @@ export const THERMAL_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<strin
   [
     'flare',
     {
+      check: groundPlanned,
       cast(ctx) {
         const shape = shapeOfNode('flare');
         if (shape?.kind !== 'cone') return;
         const burnS = ctx.node.params.burnS!;
         for (const h of hitTest(shape, { origin: ctx.origin, dir: ctx.aim }, ctx.creatures(shape.range))) {
-          if (!ctx.sight(h.target.pos)) continue;
+          if (ctx.sight(h.target.pos) !== true) continue;
           const out = ctx.damage(h.target.id, N.flare.burst);
           if (out && !out.killed) ignite(ctx, h.target.id, N.flare.burnDps, burnS);
         }
@@ -112,12 +116,13 @@ export const THERMAL_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<strin
     // All the heat out at once, as a shockwave round the caster whose damage is what left.
     'vent',
     {
+      check: groundPlanned,
       cast(ctx) {
         const dumped = ctx.meters.dumpHeat();
         if (!dumped) return;
         const damage = dumped * N.vent.damagePerHeat;
         for (const h of hitTest({ kind: 'sphere', radius: N.vent.radiusM }, { origin: ctx.origin }, ctx.creatures(N.vent.radiusM))) {
-          if (ctx.sight(h.target.pos)) ctx.damage(h.target.id, damage);
+          if (ctx.sight(h.target.pos) === true) ctx.damage(h.target.id, damage);
         }
       },
     },
