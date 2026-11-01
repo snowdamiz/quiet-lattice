@@ -169,7 +169,9 @@ describe('the Count moving the Edge', () => {
       for (const id of pushed) expect(tiersAt(edgeAt(0, NONE))[id]).toBe(5);
       expect(darkAt(0, NONE).filter((id) => pushed.includes(id))).toEqual([]);
       const fed = seasonOpening('fed', 7);
-      const pushedFed = galaxyTiers(edgeAt(0, fed)).filter((t) => t.edgeWard && t.tier === 5 && isSanctuary(t.id) && tiersAt(edgeAt(BROKEN_BELOW, fed))[t.id] !== 5);
+      const pushedFed = galaxyTiers(edgeAt(0, fed)).filter(
+        (t) => t.edgeWard && t.tier === 5 && isSanctuary(t.id) && tiersAt(edgeAt(BROKEN_BELOW, fed))[t.id] !== 5,
+      );
       expect(pushedFed.length).toBeGreaterThan(0);
       expect(darkAt(0, fed).filter((id) => pushedFed.some((t) => t.id === id))).toEqual([]);
     });
