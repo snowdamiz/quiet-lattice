@@ -52,6 +52,8 @@ const HIT_RISE_PX = 42;
 const HIT_PX = 19;
 const HIT_KILL_PX = 26;
 const HIT_GAP_PX = 4;
+// (a digit's advance in em, a little over the condensed face's, to decide which numbers share a column)
+const HIT_GLYPH_EM = 0.62;
 const hitRise = (u) => 1 - (1 - Math.min(Math.max(u, 0), 1)) ** 2;
 const HIT_FRAMES = [0, HIT_POP_MS / HIT_MS, 0.25, 0.4, 0.55, 0.7, 0.85, 1].map((u) => ({
   offset: u,
@@ -702,6 +704,7 @@ export class HUD {
     if (taken.length) this.flash('damage');
     // (one toast for each kind of reward a frame brought: an area attack that kills several would otherwise push the earlier
     // toasts out of the stack)
+    if (!gained.length) return;
     const totals = new Map();
     for (const x of gained) totals.set(x.what, (totals.get(x.what) ?? 0) + x.count);
     for (const [what, count] of totals) this.toast(what === 'xp' ? `+${count} XP` : `+${count} ${what === 'units' ? 'units' : RESOURCES[what]?.name ?? what}`, 'good', { repeat: true });
@@ -737,24 +740,30 @@ export class HUD {
   }
 
   // A hit's damage rising: over the creature it landed on (the reticle when that is not on screen), gold and larger for a
-  // kill. The numbers on one target climb as a column: a new one starts a full line above the top of those still showing
-  // (where they are by now, having risen), so none sits on another.
+  // kill. A new number starts a full line above the top of every live one it could touch, whichever creature that one is
+  // for (where it is by now, having risen): it rises faster than the older ones, so it never closes on them, and none
+  // sits on another.
   hitNumber(amount, killed, target) {
     const e = el('div', 'hit-number', this.hitsEl);
     e.textContent = String(amount > 0 ? Math.max(1, Math.round(amount)) : 0);
     const now = this.now();
-    const anchor = this.hitAnchor(target);
-    const at = anchor ?? { x: window.innerWidth / 2, y: window.innerHeight * 0.44 };
-    // (every number off the screen rises from the one reticle, whichever creature it was: they share a column)
-    const lane = anchor ? target : 'reticle';
+    const at = this.hitAnchor(target) ?? { x: window.innerWidth / 2, y: window.innerHeight * 0.44 };
     const px = killed ? HIT_KILL_PX : HIT_PX;
+    // (a little sideways in turn, so the column reads as separate hits)
+    const dx = ((this.hitsEl.children.length % 3) - 1) * 8;
+    const x = at.x + dx;
+    const half = (e.textContent.length * px * HIT_GLYPH_EM) / 2;
     const live = (this.hitLive ??= []).filter((h) => now - h.at < HIT_MS && h.el.isConnected);
     this.hitLive = live;
     let top = at.y;
-    for (const h of live) if (h.lane === lane) top = Math.min(top, h.top - HIT_RISE_PX * hitRise((now - h.at) / HIT_MS) - px - HIT_GAP_PX);
-    live.push({ el: e, lane, at: now, top });
-    // (a little sideways in turn, so the column reads as separate hits)
-    const dx = ((this.hitsEl.children.length % 3) - 1) * 8;
+    for (const h of live) {
+      if (Math.abs(x - h.x) >= half + h.half) continue;
+      const nowTop = h.top - HIT_RISE_PX * hitRise((now - h.at) / HIT_MS);
+      // (one wholly below where this starts stays below it: the new number rises away from it)
+      if (nowTop >= at.y + px) continue;
+      top = Math.min(top, nowTop - px - HIT_GAP_PX);
+    }
+    live.push({ el: e, at: now, top, x, half });
     // (the reticle readouts' type and the HUD's palette: style.css's tokens)
     Object.assign(e.style, {
       position: 'absolute', left: `${at.x + dx}px`, top: `${top}px`, transform: 'translate(-50%, 0)', pointerEvents: 'none',

@@ -524,6 +524,17 @@ describe('Game: analysis (P1.E08.T04)', () => {
     expect(banners).toHaveLength(1);
   });
 
+  it('marks a species the server calls known, not only a new one, and reads the banner’s Bond with the owned nodes', () => {
+    const { g, socket, banners } = online();
+    socket.push(WELCOME);
+    socket.push({ t: 'analyze', seq: 1, target: 42, result: 'known', species: SPECIES });
+    expect(g.analyzed.has(SPECIES.key)).toBe(true);
+    // a Big Game owner can bond what the entry alone only offers through that node
+    g.build = { ...g.build, skills: ['big_game'] };
+    socket.push({ t: 'analyze', seq: 2, target: 42, result: 'new', species: SPECIES, xp: 300 });
+    expect(banners.at(-1)[3]).toBe('Heavy quadruped · Territorial · ★★☆☆☆ · Bond: eligible');
+  });
+
   it('calls the species by the name its first finder gave it, when it has one', () => {
     const { socket, banners, toasts } = online();
     socket.push(WELCOME);
@@ -573,7 +584,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
     expect(g.inventory.units).toBe(units);
   });
 
-  it('says a species is in the codex, once the server has said so, instead of offering to analyze it again', () => {
+  it('labels a species in the codex as such once the server has said so, and still sends E: a known analysis counts for a quest step', () => {
     const net = { joined: true, send: vi.fn() };
     const world = { sampler: {}, kind: 'planet' };
     const pick = { id: 42, sp: { name: 'Ambling Tovar Grazer' }, r: { frame: world, species: 3 }, t: 12 };
@@ -584,12 +595,25 @@ describe('Game: analysis (P1.E08.T04)', () => {
     // (the server's answer names the species by its codex key: the world's frame id and the species' index)
     g.analyzed = new Set(['1:0/3']);
     g.handleInteractions();
-    expect(g.currentPrompt).toBe('Ambling Tovar Grazer · in your codex');
-    expect(net.send).toHaveBeenCalledTimes(1);
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Ambling Tovar Grazer · in your codex');
+    expect(net.send).toHaveBeenCalledTimes(2);
+    expect(net.send.mock.calls[1][0]).toMatchObject({ t: 'analyze', target: 42 });
     // another species of the world is still offered
     g.analyzed = new Set(['1:0/4']);
     g.handleInteractions();
     expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
+  });
+
+  it('lets First Jobs’ analyze step be advanced by a species analysed earlier in the session', () => {
+    // (the server credits every analysis, known or new, to the quest's current analyze step; only the client could withhold it)
+    const net = { joined: true, send: vi.fn() };
+    const world = { sampler: {}, kind: 'planet' };
+    const pick = { id: 7, sp: { name: 'Skittish Ganpha Beast' }, r: { frame: world, species: 0 }, t: 5 };
+    const g = aiming(net, pick, { system: { seed: 1, planets: [world] }, station: null, cam: { frame: world, pos: new THREE.Vector3(), quat: new THREE.Quaternion() } });
+    g.analyzed = new Set(['1:0/0']);
+    g.handleInteractions();
+    expect(g.currentPrompt).toContain('in your codex');
+    expect(net.send.mock.calls.map((c) => c[0])).toEqual([expect.objectContaining({ t: 'analyze', target: 7 })]);
   });
 
   it('offers nothing with no creature in the sights, and analyzes nothing offline', () => {

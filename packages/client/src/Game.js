@@ -847,12 +847,11 @@ export class Game {
       if (!prompt && tool && !(pc && pc.t < tool.t)) prompt = `<kbd>LMB</kbd>Mine ${tool.label}`;
       // Analysis is the server's (P1.E08.T04): it checks the creature, range and sight, and answers with the codex entry (onAnalyze)
       if (!prompt && pc) {
-        // (a species the server has said is in the codex is no longer offered: the prompt only says so)
-        if (pc.r && this.analyzed?.has(speciesKey(frameIdOfFrame(this.system, this.station, pc.r.frame), pc.r.species))) prompt = `${pc.sp.name} · in your codex`;
-        else {
-          prompt = `<kbd>E</kbd>Analyze ${pc.sp.name}`;
-          if (inp.hit('KeyE')) this.analyze(pc.id);
-        }
+        // (a species the server has said is in the codex is labelled so but still sent: the server credits every analysis to a
+        // quest's analyze step, known species included, and only the current step hears it)
+        const known = pc.r && this.analyzed?.has(speciesKey(frameIdOfFrame(this.system, this.station, pc.r.frame), pc.r.species));
+        prompt = `<kbd>E</kbd>${known ? `${pc.sp.name} · in your codex` : `Analyze ${pc.sp.name}`}`;
+        if (inp.hit('KeyE')) this.analyze(pc.id);
       }
       if (inp.hit('KeyC')) this.scan();
     }
@@ -1051,7 +1050,7 @@ export class Game {
     if (m.result === 'new') {
       this.audio.play('discovery');
       // (the codex line and what Bond can do with it are the banner's third line; the XP is a reward toast, as a kill's is)
-      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [], `${codexLine(s)} · ${bondLine(s)}`);
+      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [], `${codexLine(s)} · ${bondLine(s, this.build.skills)}`);
       this.hud.toast(`+${m.xp} XP`, 'good', { repeat: true });
     } else if (m.result === 'known') this.hud.toast(`${name} · in your codex`);
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');

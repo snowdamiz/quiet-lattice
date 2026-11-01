@@ -390,6 +390,50 @@ describe('the numbers a hit raises', () => {
     expect(tops[2]).toBeLessThanOrEqual(tops[1] - 23);
   });
 
+  it('stacks a number against any live one it would touch, whichever creature or lane that one is for', () => {
+    // (a creature just above the crosshair, 30 m ahead, hit in the same frame as one that is off screen: they share no lane
+    // but sit 8 px apart sideways)
+    const h = rising({ 7: creature(0, 0, -30), 8: creature(400, 0, -20) });
+    const anchor = h.hitAnchor(7);
+    expect(anchor.y).toBeGreaterThan(1080 * 0.44 - 20);
+    expect(anchor.y).toBeLessThan(1080 * 0.44 + 20);
+    h.hitNumber(15, false, 7);
+    h.hitNumber(17, false, 8);
+    h.hitNumber(23, false, 7);
+    const raised = [...h.hitsEl.children].map((e, i) => ({ e, at: 0, i }));
+    let overlaps = 0;
+    for (let t = 0; t <= 880; t += 8) {
+      for (const a of raised) {
+        for (const b of raised) {
+          if (b.i <= a.i) continue;
+          const xGap = Math.abs(Number.parseFloat(a.e.style.left) - Number.parseFloat(b.e.style.left)) - (String(a.e.textContent).length * sizeOf(a.e) * 0.62 + String(b.e.textContent).length * sizeOf(b.e) * 0.62) / 2;
+          if (xGap >= 0) continue;
+          const [aTop, bTop] = [topAt(a.e, t), topAt(b.e, t)];
+          const [hi, lo] = aTop < bTop ? [[aTop, a.e], [bTop, b.e]] : [[bTop, b.e], [aTop, a.e]];
+          if (lo[0] < hi[0] + sizeOf(hi[1])) overlaps++;
+        }
+      }
+    }
+    expect(overlaps).toBe(0);
+  });
+
+  it('stacks a number turned to another creature against the one just hit, and leaves a number below it alone', () => {
+    const h = rising({ 7: creature(0, 0, -30), 8: creature(0.2, 0, -30) });
+    h.hitNumber(15, false, 7);
+    h.t = 300;
+    h.hitNumber(11, false, 8);
+    const [a, b] = h.hitsEl.children;
+    const aNow = Number.parseFloat(a.style.top) - 42 * (1 - (1 - 300 / 900) ** 2);
+    expect(Number.parseFloat(b.style.top)).toBeLessThanOrEqual(aNow - 19 - 3.5);
+    // a live number that has not reached this one's start (a lower creature's) pushes nothing
+    const low = rising({ 7: creature(0, -6, -20), 8: creature(0, 6, -20) });
+    low.hitNumber(15, false, 7);
+    low.hitNumber(11, false, 8);
+    const [c, d] = low.hitsEl.children;
+    expect(Number.parseFloat(d.style.top)).toBeCloseTo(low.hitAnchor(8).y, 3);
+    expect(Number.parseFloat(c.style.top)).toBeCloseTo(low.hitAnchor(7).y, 3);
+  });
+
   it('pops in over about a tenth of a second, scaled up and fading in, then rises and fades out', () => {
     const h = rising({});
     h.hitNumber(15, false, 99);
