@@ -9,6 +9,7 @@
 //     az=<deg>,el=<deg>,dist=<radii>  an orbit (clear=1 raises the elevation in 2° steps until the ground is out of the way)
 //     eye=x/y/z,target=x/y/z       an explicit camera in the asset's Blender axes (Z up), metres
 //   plus wire=1 for wireframe, perf=1..5 for paired performance readouts, and fov=<deg> for vertical field of view.
+//   lift=<m> moves only the review asset radially above planetary terrain; never allowed for performance shots.
 //
 // A --glb is copied to packages/client/public/models/stations/_review_<pid>.glb for the run and deleted after it, so
 // neither the validator nor an export ever sees it. Writes <out>/<name>.png per shot and <out>/shots.json.
@@ -77,6 +78,20 @@ try {
   await page.evaluate(() => {
     const r = (window as any).review;
     const orig = r.updateView.bind(r);
+    const sampleInterleaved = r.sampleInterleaved.bind(r);
+    type PerfFrame = { shown: boolean; cpu: number | null; gpu: number | null; calls: number | null; tris: number | null };
+    r.sampleInterleaved = async (pairs: number, frames: PerfFrame[]) => {
+      const disjoint = await sampleInterleaved(pairs, frames);
+      r.__sampleCounts = {
+        total: frames.length,
+        shown: frames.filter((f) => f.shown).length,
+        hidden: frames.filter((f) => !f.shown).length,
+        nullCpu: frames.filter((f) => f.cpu === null).length,
+        nullGpu: frames.filter((f) => f.gpu === null).length,
+        missingWorkCounts: frames.filter((f) => f.calls === null || f.tris === null).length,
+      };
+      return disjoint;
+    };
     r.updateView = () => {
       orig();
       if (!r.__cam) return;
@@ -94,13 +109,22 @@ try {
   let current = '';
   for (const s of shots) {
     if (s.light !== current) {
-      await page.evaluate((l: string) => (window as any).review.light(l), s.light);
+      await page.evaluate(async (l: string) => {
+        const r = (window as any).review;
+        await r.light(l);
+        r.__reviewLift = 0;
+      }, s.light);
       current = s.light;
     }
     const rec = await page.evaluate(async (s: Shot) => {
       const r = (window as any).review;
       const E = r.game.engine;
       const lod = Number(s.lod ?? 0);
+      const lift = Number(s.lift ?? 0);
+      if (!Number.isFinite(lift) || lift < 0 || (lift && (!r.frame || Number(s.perf ?? 0)))) throw new Error('lift is only for non-performance planetary review shots');
+      const delta = lift - (r.__reviewLift ?? 0);
+      if (delta) r.root.position.addScaledVector(r.root.position.clone().normalize(), delta);
+      r.__reviewLift = lift;
       const v3 = (x: string) => x.split('/').map(Number);
       r.__cam = s.eye ? [v3(s.eye), v3(s.target)] : null;
       if (s.fov) {
@@ -128,8 +152,8 @@ try {
       const debugRenderer = glContext.getExtension('WEBGL_debug_renderer_info');
       const perfRuns = Number(s.perf ?? 0);
       if (!Number.isInteger(perfRuns) || perfRuns < 0 || perfRuns > 5) throw new Error('perf must be a run count from 0 to 5');
-      const perf = [];
-      for (let run = 0; run < perfRuns; run++) perf.push(await r.perf({ pairs: 120 }));
+      const perf: unknown[] = [];
+      for (let run = 0; run < perfRuns; run++) perf.push({ ...(await r.perf({ pairs: 120 })), sampleCounts: { ...r.__sampleCounts } });
       const res = {
         name: s.name,
         renderer: glContext.getParameter(debugRenderer ? debugRenderer.UNMASKED_RENDERER_WEBGL : glContext.RENDERER),
@@ -138,6 +162,7 @@ try {
         far,
         orbit: { ...r.orbit },
         groundBlocks: r.groundBlocks(),
+        reviewAltitudeAdjustmentM: lift,
         fov: E.camera.fov,
         shown: r.shown,
         calls,
