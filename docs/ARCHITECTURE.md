@@ -889,8 +889,8 @@ node types a world carries, and `scatterNodes(ground, layers, cell)` places the 
 `nodeCellsNear`) on the drawn ground, off the pads and outside every site's clearance, in deterministic math only, so the
 server and every browser engine place the same nodes bit for bit (the cross-engine smoke compares them). A node's id is
 `face_i_j_type_k` (`nodeKey`; `parseNodeKey` reads it back). The client clears its own flora round sites and landed
-ships, but never a node: the nodes it hides are the ones mined (locally until P1.E13.T06 hides harvested nodes, and any
-under a landed ship, from the server's `nodes` state, §18).
+ships, but never a node: the nodes it hides are the ones the server's `nodes` state says are gone (§18, P1.E13.T06), and
+one under a landed ship stays drawn unless it says so.
 
 ## 13. Social: chat and parties
 
@@ -1379,7 +1379,19 @@ requests and starts its timer.
   among 480 nodes, herds about, every node broken many times over) keeps the whole tick, hits and sweeps included,
   well under the 10 ms p95.
 - **Not here.** Asteroids and the ship's Mining Laser, and with them iridium from Tier 3+ belts, are P1.E13.T07's (after
-  P1.E12.T04 resolves ship weapons on the server); the client's half is P1.E13.T06.
+  P1.E12.T04 resolves ship weapons on the server).
+- **The client** (P1.E13.T06, `client/src/net/mining.js`, `gameplay/Flora.js`, `entities/Multitool.js`). `Net.mining` holds
+  what `nodes` says per world and cell (`gone`, `hurt`; an empty cell or a `reset` drops what it held) and sends the beam's
+  hits. The flora keeps drawing every node from the shared scatter and leaves out those the state says are gone (they are
+  not reachable by the beam and do not hold anyone up), drawing the hurt ones as hurt as the server says. While the beam
+  stays on a node or a plant the multitool asks for a hit every 0.25 s (`mine {node}` by the node's id, `mine {flora: {kind,
+  ref, at}}` with the flora's own instance key as `ref`); nothing is hidden, broken or granted by sending one. A node goes
+  when an answer says it `depleted` (or `harvested`, a hit lost to another miner) and returns when the state stops listing
+  it; the inventory is the server's own push and a pickup shows when the answer carries a share. A plant is worn down for
+  the look of it (never past a sliver) and gone when its answer says it broke: the client hides as many broken plants as the
+  server remembers refusing (256), per session. Ground cleared for a landed ship or a site is left out of the cell's own
+  instances when the cell is made, not marked mined. Offline (the dev sandbox) the beam wears things down and nothing is
+  mined.
 
 ## 19. Meters (`packages/server/src/meters`, `@astra/shared/meters`)
 
@@ -1712,8 +1724,9 @@ gate is recipes and materials, not a skill tree.
   used up. Crafts made are logged at debug, lessons at info.
 - **Using what is made.** Warp cells are what the client's warp spends (`Inventory.warpCells`; the warp itself stays the
   client's until zone handoff, P1.E04.T04). The fabricator replaces the trade panel's 1,800-unit warp cell (DESIGN
-  15.7), which is gone (`pnpm gate:removed` holds it to this task): until the client mines through the server
-  (P1.E13.T06), online players get warp cells only from the starting kit and crash sites. The rest of the demo's `SHOP`
+  15.7), which is gone (`pnpm gate:removed` holds it to this task): the client mines through the server now
+  (P1.E13.T06), so the beam's carbon and ferrite reach the fabricator; before it, online players got warp cells only from
+  the starting kit and crash sites. The rest of the demo's `SHOP`
   list, the 300-unit pulse fuel refill among it, goes with P1.E07.T09, since a crafted pulse fuel cell cannot be used
   yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
   once Heat and Charge are the server's, through P1.E07.T02's `refillCharge`, a seam that task adds and that is not on
