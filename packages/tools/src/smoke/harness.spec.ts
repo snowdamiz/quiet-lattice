@@ -21,7 +21,7 @@ async function run(grace: number): Promise<{ code: number | null; out: string; m
   return { code, out, ms: Date.now() - t0 };
 }
 
-for (const grace of [15_000, 0])
+for (const grace of [15_000, 1000])
   test(`a hung page fails at its 6 s timeout, closing grace ${grace / 1000} s, and the next test still runs`, async () => {
     test.setTimeout(150_000);
     const { code, out, ms } = await run(grace);
@@ -31,5 +31,5 @@ for (const grace of [15_000, 0])
     expect(code).toBe(1);
     // (the child starts, runs the 6 s test, closes, restarts its worker and runs the next test)
     expect(ms, out).toBeLessThan(6000 + grace + 30_000);
-    if (grace === 0) expect(out).toContain('hang guard: the page did not close in time');
+    if (grace < 15_000) expect(out).toContain('hang guard: the page did not close in time');
   });

@@ -40,7 +40,8 @@ function killBrowser(pid: number): void {
 export const test = base.extend<{ closeGraceMs: number; hangGuard: void }>({
   closeGraceMs: [15_000, { option: true }],
   hangGuard: [
-    async ({ browser, closeGraceMs }, use) => {
+    // Depends on `context` only to be torn down before it: the close of a stuck page is what hangs, so the timer has to be running by then.
+    async ({ browser, context: _context, closeGraceMs }, use) => {
       const pid = process.platform === 'win32' ? null : await browserPid(browser);
       await use();
       const open = browser.contexts();

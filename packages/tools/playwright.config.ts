@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 import { smokeGlArgs, smokeViewport } from './src/smoke/gl.ts';
 
 // Client smoke and e2e runs against the Vite dev server, driving frames with window.step() instead of waiting on
-// requestAnimationFrame, on the software renderer (src/smoke/gl.ts).
+// requestAnimationFrame, on the renderer src/smoke/gl.ts picks.
 const PORT = Number(process.env.SMOKE_PORT) || 5190;
 
 export default defineConfig({
