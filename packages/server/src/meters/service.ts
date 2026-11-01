@@ -35,7 +35,6 @@ import { SUIT, type PeopleId } from '@astra/shared/data';
 import { countOf } from '@astra/shared/inventory';
 import {
   NOWHERE,
-  NOT_REFILLABLE,
   fullSuit,
   spanHealth,
   stepSuit,

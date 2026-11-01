@@ -351,7 +351,10 @@ describe('refills spend the character’s real inventory', () => {
   });
 
   it('a crafted cartridge first, one item, restoring 60 (80 with Cartridge Recycler)', () => {
-    for (const [owned, restored] of [[[], 60], [['cartridge_recycler'], 80]] as const) {
+    for (const [owned, restored] of [
+      [[], 60],
+      [['cartridge_recycler'], 80],
+    ] as const) {
       const t = rig({ type: 'frozen', owned: [...owned], stock: { sodium: 50, sodium_cartridge: 2 }, saved: { hazard: 30 } });
       t.stand(false, TO_LINE + 1);
       expect(t.held('sodium_cartridge')).toBe(1);

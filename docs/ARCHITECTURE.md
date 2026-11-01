@@ -41,7 +41,7 @@ combat/             each zone's health, damage path, deaths and combat events; C
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 abilities/          CastService: casts of slotted actives checked, paid, cooled down, run and replicated; the book of effects (§28)
-meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§19)
+meters/             MeterService: each character's heat, Charge and suit meters, judged from its inputs, and its persistence component (§19)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 crafting/           CraftingService and RecipeBook: fabricator requests checked, each character's recipes and its component (§23)
@@ -180,9 +180,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   do; it sends the view after `inventory` on join (`seq` 0) and pushes it whenever server-side calls change it. The client
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
-- **Meters** (`@astra/shared/meters`, protocol 15): `meters {meters}` carries `{heat, heatMax, overheated, charge,
-  chargeMax, at}`, the values at world time `at` (§19). Sent after `skills` on join and again on the first input, then pushed: at once when the lockout
-  starts or ends, Charge runs out or a server-side call changes them, and at most every 0.5 s while either moves. There is
+- **Meters** (`@astra/shared/meters`, protocol 15; the suit's two, 21): `meters {meters}` carries `{heat, heatMax,
+  overheated, charge, chargeMax, lifeSupport, hazard, at}`, the values at world time `at` (§19). Sent after `skills` on join and again on the first input, then pushed: at once when the lockout
+  starts or ends, Charge runs out, a suit refill is made, a suit meter reaches zero or a server-side call changes them, and at most every 0.5 s while heat or Charge moves (the suit's two when either has moved by 2). There is
   no request: the beam is the input's `beam` button, the pulse drive its `mode`.
 - **Cutscenes** (protocol 6, §15): the client sends `cutscene {op: 'request', id}` to play one where its player is and
   `cutscene {op: 'done', id, skipped?, reason?}` when it ends (`skipped` and `reason` only on done; protocol 7's
@@ -1443,11 +1443,32 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   in: the seconds the beam fired since the last were taken, at most `max`; `addHeat`,
   `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is
   made again whenever the ship or the owned nodes change.
-- **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, at}`. A character
+- **The suit's meters** (P1.E06.T06, DESIGN 9.8): life support and hazard protection, each 0 to 100, are the service's too,
+  run by `stepSuit` (`@astra/shared/meters`) from the same timestamps, with the numbers in `SUIT` and the build's
+  modifiers from `@astra/shared/exosuit` (`suitMods` of the owned nodes and the people's perk: Second Lung, Hazard Weave,
+  Cold Blood, Heat Shroud, Deep Diver, Cartridge Recycler, Second Skin's floor of 20, the Ulgani). They run only while the
+  server believes the character is on foot (`mode` `foot`, placed by its first input; nothing while it is away): on a world
+  life support drains 0.35/s and hazard protection by `MeterEnvironment.footHazard` (the world's own and its ship hazard's foot
+  strength, or a mild world's mist at the altitude; ×1.4 where the star is below the horizon; the build's multiples) or
+  regains 2/s where nothing is hard; inside a station both refill (5/s, 10/s); aboard a ship they are topped up and do not
+  move. Where a draining meter reaches 25, `stepSuit` stops there and the service refills it from the character's real
+  inventory (`SuitSupplies`, the inventory service's): a crafted cartridge first (one item, restoring its 60 plus the
+  build's +20), else 10 raw oxygen or sodium (restoring 40, 60 with Cartridge Recycler); with neither the meter drains on.
+  Health is combat's (§20): while a meter is at zero and not recovering the service takes 4/s from the character's suit
+  vitals, and gives 1.5/s back on a world while both hold, through `ZoneCombat.suitHealth` (no resistance, no combat
+  event, not in combat); health at 0 puts the character down (`downed`, cause `suit`, no source: what the Recall reads,
+  P1.E06.T03). `sweep(now)` (the gateway calls it every 0.5 s) brings every character on foot up to date, so a client that
+  sends nothing still drains, starves and dies on the server's clock. Second Skin's floor holds only out of combat
+  (`meters.inCombat`, the combat service's).
+- **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, lifeSupport, hazard,
+  at}` (a save from before the suit's two has them full). A character
   back from away has its heat cooled for the time it was gone (idle, nowhere in particular) and its Charge as it left it:
-  Charge regenerates only in play, from the first input after it joins (the Listener's anywhere-flag included). Nothing
-  here is earned, so an unreadable value gives the default (cool, Charge full), logged.
-- **The client** predicts with the same rules: the multitool steps heat each frame (`Multitool.tickMeter`), the ship its
+  Charge regenerates only in play, from the first input after it joins (the Listener's anywhere-flag included), and the
+  suit's two are as it left them and move only in play. Nothing
+  here is earned, so an unreadable value gives the default (cool, Charge full, suit full), logged.
+- **The client** predicts with the same rules (the suit's two in `Game.updateSurvival`, which takes the shared `stepSuit`,
+  predicts a refill from what the pack holds without spending it, predicts health for the SUIT FAILURE banner until the
+  Recall replaces it, and takes the server's `lifeSupport` and `hazard` from every `meters` state, run on to now): the multitool steps heat each frame (`Multitool.tickMeter`), the ship its
   Charge (`Ship.updateCharge`), both reading the character's place from the client's own bodies
   (`characterMeterEnvironment`: the walker on foot, else the ship) and the build from `Ship.meterProfile`. The input's
   `beam` bit is the button held (`multitool.held`), never the prediction of whether it fires: the server decides the

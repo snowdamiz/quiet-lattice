@@ -5,7 +5,8 @@
 //   Pack Alpha's row), taken when it is first hurt. A player has its suit's health (`playerMaxHealth` of the nodes it
 //   entered with: 100, Second Skin 150) on foot, and its ship's shield and hull (`shipStats`) aboard; which one a hit
 //   takes is the mode the server believes. Health goes on the wire as the entity's `hp` (the pool in use, a fraction) and,
-//   aboard, `shield`. Nothing heals here yet (the Recall, P1.E06.T03, and creature attacks, P1.E08.T02, decide that).
+//   aboard, `shield`. The suit's own meters cost a player on foot health at zero and give it back (`suitHealth`, P1.E06.T06);
+//   nothing else heals here yet (the Recall, P1.E06.T03, and creature attacks, P1.E08.T02, decide that).
 // - One damage path, `applyDamage(source, target, packet)`: the shared pipeline (`computeDamage`: resistances, the
 //   attacker's power, augments, what the target takes), level-scaled only when the source is a creature (DECISIONS
 //   P1.E06.T01), then health, threat (fauna's `hurt`, so a creature turns on whoever hurts it most, and grazers bolt), the

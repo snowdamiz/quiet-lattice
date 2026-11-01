@@ -177,7 +177,9 @@ describe('health', () => {
 
   it('is lost all the while for a meter that starts at zero and is not recovering', () => {
     expect(walk({ lifeSupport: 0, hazard: 100 }, 5).spans).toEqual([{ starved: true, s: 5 }]);
-    expect(walk({ lifeSupport: 100, hazard: 0 }, 5, { world: 'frozen', time: 'night', footHazard: 1 }, ['cold_blood']).spans).toEqual([{ starved: true, s: 5 }]);
+    expect(walk({ lifeSupport: 100, hazard: 0 }, 5, { world: 'frozen', time: 'night', footHazard: 1 }, ['cold_blood']).spans).toEqual([
+      { starved: true, s: 5 },
+    ]);
   });
 
   it('is regained while a meter climbs out of zero', () => {

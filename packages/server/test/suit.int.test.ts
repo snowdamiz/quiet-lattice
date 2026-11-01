@@ -159,19 +159,23 @@ describe('the suit drains on the worlds the server believes the character is on'
     ['a volcanic world’s own hazard', VOLCANIC],
     ['a toxic world’s own hazard', TOXIC],
     ['a heat hazard (the inferno’s ship hazard on foot)', INFERNO],
-  ])('drains by %s', async (_, body) => {
-    expect(body).toBeGreaterThanOrEqual(0);
-    const b = SYSTEM.bodies[body]!;
-    const strength = footHazard(b.type, b.params.hazard ?? null);
-    expect(strength).toBeGreaterThan(0);
-    const rig = await start();
-    const w = await character(rig);
-    await w.stand(body);
-    await w.wait(5);
-    expect(w.view().hazard).toBeCloseTo(100 - 5 * SUIT.hazardDrainPerS * strength, 3);
-    w.s.close();
-    await rig.stop();
-  }, 60_000);
+  ])(
+    'drains by %s',
+    async (_, body) => {
+      expect(body).toBeGreaterThanOrEqual(0);
+      const b = SYSTEM.bodies[body]!;
+      const strength = footHazard(b.type, b.params.hazard ?? null);
+      expect(strength).toBeGreaterThan(0);
+      const rig = await start();
+      const w = await character(rig);
+      await w.stand(body);
+      await w.wait(5);
+      expect(w.view().hazard).toBeCloseTo(100 - 5 * SUIT.hazardDrainPerS * strength, 3);
+      w.s.close();
+      await rig.stop();
+    },
+    60_000,
+  );
 
   it('regains hazard protection where nothing is hard, and both inside a station', async () => {
     const rig = await start();
