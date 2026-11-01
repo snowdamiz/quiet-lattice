@@ -26,6 +26,13 @@ const scenario = location.hash.slice(1);
 const SCENARIOS = new Set(['sandbox', 'foot', 'fly', 'land', 'station', 'dock', 'space', 'review', 'cutscene']);
 const params = new URLSearchParams(location.search);
 const scenarioName = scenario.split(':')[0];
+// `?lag=<ms>&loss=<%>` (dev builds, `&seed=<n>` for its dice): the game's connection runs through a bad network
+// (net/link.js), each message held that long each way and that share of them lost each way.
+if (import.meta.env.DEV && (params.has('lag') || params.has('loss'))) {
+  import('./net/link.js').then(({ linkConditioner }) => {
+    game.netLink = linkConditioner({ latencyMs: Number(params.get('lag') ?? 0), loss: Number(params.get('loss') ?? 0) / 100, seed: Number(params.get('seed') ?? 1) });
+  });
+}
 if (import.meta.env.DEV && params.has('dev') && scenarioName !== 'review' && scenarioName !== 'cutscene') {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   (async () => {

@@ -154,6 +154,8 @@ export class Game {
     this.engine.scene.add(this.remotes.group);
     // what the player's inputs said, to rewind to and replay from when the server corrects one (P1.E04.T03)
     this.prediction = new Prediction((id) => frameOfId(this.system, this.station, id));
+    // the bad network the connection runs through (dev builds' `?lag`, net/link.js), or none
+    this.netLink = null;
 
     this.weather = new Weather(this);
     this.objectives = new ObjectiveLine(this);
@@ -367,7 +369,9 @@ export class Game {
     const old = this.net;
     this.net = null;
     old?.close();
-    const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
+    // (dev builds: through a bad network, when `?lag` asked for one)
+    const link = this.netLink ? { WebSocket: this.netLink.WebSocket } : {};
+    const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id, ...link }));
     net.input = () => this.inputSample();
     this.remotes.attach(net);
     // (a world event's banner names the world it is on)
