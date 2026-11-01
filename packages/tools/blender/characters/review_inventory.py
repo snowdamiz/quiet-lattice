@@ -58,7 +58,13 @@ for suffix in ('', '_grayscale'):
     for extension in ('png', 'json'):
         add(root / f'assets/renders/review/characters/{people}_lineup_far_lod2{suffix}.{extension}', export)
 for extension, dependency in (('blend', source), ('glb', export)):
-    add(studio / f'validate/characters__{people}.{extension}.json', dependency)
+    validation_path = studio / f'validate/characters__{people}.{extension}.json'
+    validation = json.loads(validation_path.read_text())
+    assert validation['file'] == str(dependency.relative_to(root)), 'Validation names another input'
+    assert validation['status'] == 'PASS' and validation['error'] is None, 'Validation failed'
+    assert validation['summary']['checks'] == dict.fromkeys(('naming', 'triangles', 'lods', 'materials', 'scale'), 'PASS')
+    assert validation['summary']['fail'] == 0, 'Validation contains failures'
+    add(validation_path, dependency)
 
 artifacts = []
 for path, dependency in expected:
@@ -80,6 +86,7 @@ for variant in variants:
         assert case['scene']['triangles'] > case['withoutAsset']['triangles'], 'No measured asset work'
         assert asset['pairs'] > 0 and case['scene']['gpuSamples'] > 0
         capture_checks.append({'variant': variant, 'case': case['case'], 'gpu_timing': case['gpuTiming'],
+                               'graphics_api': capture['gl'], 'viewport': capture['viewport'],
                                'pairs': asset['pairs'], 'reliable': asset['reliable'],
                                'triangles': asset['triangles'], 'draw_calls': asset['drawCalls'],
                                'page_errors': len(capture['errors'])})
