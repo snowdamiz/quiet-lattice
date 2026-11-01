@@ -78,9 +78,21 @@ export class Pilot {
   }
 
   /** Signs a new account up, makes a character of `people` and joins with it. */
-  static async join(server: RunningServer, people: PeopleId = 'thalune', opts: { stamps?: boolean; clock?: ManualClock } = {}): Promise<Pilot> {
-    const acct = await newAccount(server);
-    const characterId = (await newCharacter(server, acct.token, { people })).id;
+  static async join(
+    server: RunningServer,
+    people: PeopleId = 'thalune',
+    opts: {
+      stamps?: boolean;
+      clock?: ManualClock;
+      /** runs with the new character's id before it joins (a level to set) */
+      before?: (characterId: string) => Promise<void>;
+      /** joins this earlier pilot's character again (once it has left) instead of making a new one */
+      as?: Pilot;
+    } = {},
+  ): Promise<Pilot> {
+    const acct = opts.as ? { token: opts.as.token, accountId: opts.as.accountId } : await newAccount(server);
+    const characterId = opts.as ? opts.as.characterId : (await newCharacter(server, acct.token, { people })).id;
+    await opts.before?.(characterId);
     const sock = await TestSocket.open(server.wsUrl);
     const client = new SnapshotClient();
     const errors: unknown[] = [];

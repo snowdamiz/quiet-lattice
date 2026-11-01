@@ -287,6 +287,14 @@ export function addHeat(s: MeterState, p: MeterProfile, amount: number): MeterRe
   return { ok: true, state: { ...s, heat }, events: [] };
 }
 
+/** Vent (DESIGN 9.3): all the heat at once, as an ability spends it on purpose. Refused in the lockout, like any ability;
+ * `dumped` is the heat that left. */
+export type HeatDump = { ok: true; state: MeterState; events: MeterEvent[]; dumped: number } | { ok: false; error: 'overheated' };
+export function dumpHeat(s: MeterState): HeatDump {
+  if (s.overheated) return { ok: false, error: 'overheated' };
+  return { ok: true, state: { ...s, heat: 0 }, events: [], dumped: s.heat };
+}
+
 /** A ship active's Charge: refused unless the meter holds it all. */
 export function spendCharge(s: MeterState, amount: number): MeterResult {
   const a = Math.max(0, amount);

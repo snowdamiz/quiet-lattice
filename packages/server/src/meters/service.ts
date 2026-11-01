@@ -27,12 +27,14 @@ import {
   addHeat,
   canEngagePulse,
   clampMeters,
+  dumpHeat,
   meterConditions,
   meterEnvironment,
   meterProfile,
   refillCharge,
   spendCharge,
   stepMeters,
+  type HeatDump,
   type MeterActivity,
   type MeterEnvironment,
   type MeterEvent,
@@ -114,6 +116,8 @@ interface Entry {
   glow: number;
   /** Seconds the beam fired (`stepMeters`' `beamS`: held, on foot, out of the lockout) since mining last took them. */
   beamS: number;
+  /** Every second the beam has fired since the meters were opened (nothing takes it), for what else the beam does (Lance). */
+  beamTotalS: number;
   /** When Charge last ran out in play, for the drive's drop-out grace: the moment the drive's burn emptied it, on the clock
    * the burn ran on (movement authority's credited time), or when a ship active spent the last of it. */
   emptiedAt: number;
@@ -175,6 +179,7 @@ export class MeterService {
       pulseRefused: false,
       glow: -1,
       beamS: 0,
+      beamTotalS: 0,
       emptiedAt: -Infinity,
       flown: false,
       lastInput: NaN,
@@ -327,11 +332,32 @@ export class MeterService {
     return s;
   }
 
+  /** The seconds the beam has fired in all (as the meters ran: held, on foot, out of the lockout), which only grows. A
+   * caller that wants what the beam did since it last looked keeps the difference: Lance's damage is the beam's, however
+   * its client times its inputs. */
+  beamTime(characterId: string, now: number): number {
+    const e = this.entry(characterId);
+    this.advance(characterId, e, now);
+    return e.beamTotalS;
+  }
+
   // ---------- server-side changes (abilities, P1.E07.T03; the Waystation's refill) ----------
 
   /** An ability's heat: refused in the lockout. */
   addHeat(characterId: string, amount: number, now: number): MeterResult {
     return this.change(characterId, now, (s, p) => addHeat(s, p, amount));
+  }
+
+  /** Vent: all the heat gone at once, `dumped` of it; refused in the lockout. */
+  dumpHeat(characterId: string, now: number): HeatDump {
+    const e = this.entry(characterId);
+    this.advance(characterId, e, now);
+    const r = dumpHeat(e.state);
+    if (!r.ok) return r;
+    e.state = r.state;
+    e.events.push(...r.events);
+    this.push(characterId, e, now);
+    return r;
   }
 
   /** A ship active's Charge: refused unless the meter holds it. */
@@ -379,6 +405,7 @@ export class MeterService {
   private run(e: Entry, act: MeterActivity, dt: number): void {
     const step = stepMeters(e.state, e.profile, e.env, act, dt, e.conditions);
     e.beamS += step.beamS;
+    e.beamTotalS += step.beamS;
     // (away, Charge stands as the ship was left)
     e.state = e.away ? { ...step.state, charge: e.state.charge } : step.state;
     e.events.push(...step.events);

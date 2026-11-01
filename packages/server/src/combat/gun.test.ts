@@ -32,6 +32,17 @@ describe('the base gun', () => {
   });
 });
 
+describe('Focused Lasers', () => {
+  it('lengthen the base gun’s range to 2200 m and add 30% to its damage', () => {
+    const plain = baseGun(shipStats(DEFAULT_LOADOUT.ship!))!;
+    const focused = baseGun(shipStats(DEFAULT_LOADOUT.ship!, { skills: ['focused_lasers'] }))!;
+    expect(plain.rangeM).toBe(1500);
+    expect(focused.rangeM).toBe(2200);
+    expect(focused.damage).toBeCloseTo(plain.damage * 1.3, 9);
+    expect(focused.cooldownS).toBe(plain.cooldownS);
+  });
+});
+
 describe('aiming', () => {
   it("reads the ship's nose as the client's lasers fire (its −z)", () => {
     for (const d of [unit([1, 2, 3]), unit([0, 0, -1]), unit([0, -1, 0.001]), unit([-0.3, 0.1, 0.9])]) {
