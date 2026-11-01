@@ -366,6 +366,8 @@ export class Game {
     this.inventory.send = (m) => net.send(m);
     this.crafting?.link(net);
     this.abilities.link(net);
+    // the ship flies with the nodes the server says the pilot owns (the Pilot branch's passives, DESIGN 9.7)
+    net.on('skills', (m) => this.ship.setSkills(m.skills.state.bought));
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
     net.on('welcome', (m, first) => {

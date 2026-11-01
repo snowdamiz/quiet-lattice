@@ -77,7 +77,7 @@ export class Ship {
     this.gear = 1;
     this.boosting = false;
     this.thrust = 0;
-    // what the ship is, and the Pilot nodes it flies with (the demo shop's upgrades, until the skill web lands)
+    // what the ship is, and the nodes its pilot owns (the server's `skills` view, `setSkills`)
     this.loadout = LOADOUT;
     this.skills = new Set();
     this.refreshStats();
@@ -587,6 +587,17 @@ export class Ship {
     // the flight model's hard limit, a little over the boost cap the server holds the ship to
     this.vmax = flightCaps(this.stats, 'boost').max * CLIENT_SPEED_HEADROOM;
     this.gun = this.stats.hardpoints.find((h) => h.weapon === 'pulse_lasers');
+  }
+
+  // The nodes the pilot owns, as the server's skills view lists them. The set is kept (the inventory's layout reads it), and
+  // a shield or hull the nodes raise gains what they added, as the server's does (CombatZone.retuned).
+  setSkills(nodes) {
+    const had = this.stats;
+    this.skills.clear();
+    for (const n of nodes) this.skills.add(n);
+    this.refreshStats();
+    this.shield = Math.min(this.stats.shieldMax, this.shield + Math.max(0, this.stats.shieldMax - had.shieldMax));
+    this.hull = Math.min(this.stats.hullMax, this.hull + Math.max(0, this.stats.hullMax - had.hullMax));
   }
 
   get chargeMax() {
