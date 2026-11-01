@@ -983,3 +983,44 @@ Format: task id, question → choice → why.
   330 real place names, the 927 names the generator makes for seed 424242 and the 12 reserved names refuses nothing it
   should pass; "Twatt" (repeats run together) and "John o' Groats" (two separators) stay refused, and single letters
   can join into a blocked word ("Se X"); moderators rename the rare real case. → closes P2.E29.T04's review.
+- **P1.E07.T03** Ability runtime (server `abilities/*`, `combat/targets.ts`, combat zone events, gateway,
+  `@astra/shared/abilities`, protocol 20, client `net/abilities.js`, HUD, ARCHITECTURE §28) → a cast names node and slot
+  (so `not_owned` and `not_slotted` are told apart and a stale bar refuses). The server checks, cheapest first: seq,
+  rate (a burst of 6, then 3 a second), the clock stamp (±3 s), the believed mode picking the bar (foot for the ground
+  bar's 6 slots, flying for the hull's working ship slots, keys 1–5 per DESIGN 9.1; landed, docked and the pulse drive
+  cast nothing), not down, a working slot, ownership, the slot holding the node, an ability for it, its cooldown (shared
+  cooldowns run on the other node's clock), the aim's frame, then for an entity target the phase (a hidden target is
+  `unseen`, the same as none), its kind, alive, on the caster's world, in reach from the eye (1.6 m up on foot, the
+  ship's centre in flight) to its hit sphere plus 2 m, and line of sight; then the effect's own check; then the cost
+  (heat through `meters.addHeat`, refused only in the lockout, so a chunk reaching 100 overheats; Charge only if all of
+  it is there). Cooldowns live in memory per character for the server's run. Lance-like costs are toggles: on pays and
+  starts the cooldown, off is free and comes before the cooldown check; a toggle holds only while its caster's entity is
+  in play, in the bar's mode and up and its node owned and slotted on that bar, ends with the context that turned it on,
+  and the session is told whenever the server ends one. Effects get `creatures`, `damage` (the zone's one damage path,
+  with the caster's mods) and `after()` timers that outlive a handoff and going down and drop when the last connection
+  closes; an effect that throws leaves the cast paid and answered `cast`; no channels yet (none in Tier I–II).
+  `mayHarm` refuses players until P2.E17.T01 and anything in a safe zone (today the Waystation's frame, caster or target).
+  A cast or combat event names only the ids the viewer's phase shows. One hit sphere (`creatureSphere`: 0.6 × size ×
+  scale + 1 m) serves shots, casts and analysis, so analysis reach changes (heavy walkers lose up to about 1.4 m, small
+  creatures and flyers gain up to about 0.9 m, no longer matching the client's 0.9 × size aim pick); player cast
+  spheres are 1.5 m round a point 0.9 m up on foot and `MOVEMENT.shipRadiusM` in a ship; one `creatureTargets` with the
+  phase check serves gunfire and casts, so the base gun skips creatures its shooter's phase hides (a change to
+  P1.E06.T02). The shipped ability book is empty ("CANNOT CAST YET"); the test ability lives in tests only; the server
+  refuses to start if the book and data disagree. Wire bounds: 41 cooldowns, 11 toggles. The client picks the nearest
+  living accepted entity within 8° and reach + 3 m. HUD: a ring per slot (warm on foot, warm white in flight, lilac
+  only on the Charge arc and its cost chunk), countdowns in tenths under 10 s, names 12 px hidden at rest, a refused
+  cast's reason over its slot, a 200 ms ready beat, and every meter jump over 8% and every cast's cost eased over 250 ms
+  (reversing P1.E07.T02's land-at-once rule). `SocialUI.update` runs first in the HUD frame. → DESIGN 9.1's runtime;
+  the seven branches add data and effects. Open: phase-spawned creatures have no hit sphere for shots, casts or
+  analysis; VFX are the branches' and P1.E07.T14's; the client's pick skips the player's own entity (Regrow on self,
+  P1.E07.T07); `settle()` at the start of a cast is untested; `holds()` rebuilds the skill view every step for ship
+  toggles; the cost eases run about 185–200 ms and the flight ready beat about 70 ms.
+- **P2.E22.T05** First finds in the season chronicle (server `discovery/chronicle.ts`, `seasons/store.ts`, count store,
+  shard, `server.ts`, ARCHITECTURE §25 and §27) → a chronicle names the finds a finder named during the season
+  (`namedAt` in [start, end), by naming time, not find time), earliest first, as kind, name, the finder's character
+  name (kept after the character is deleted) and the time; only the finder's own names count (renamed, cleared and
+  never-named finds are out); "notable" is the earliest 64; the hook reads in the season-end transaction; a find failing
+  its schema is dropped with a warning instead of failing the meter's save, and the query reads 128 rows so a bad one
+  does not displace a good one; a later moderator rename does not change a written chronicle. → DESIGN 16.4's "who named
+  what". Open: no index for the query (32 ms at 200,000 finds, once per season end); a naming that commits just after
+  the chronicle's save is in neither season.

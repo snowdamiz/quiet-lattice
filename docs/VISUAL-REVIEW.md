@@ -217,6 +217,7 @@ Graded with the UI/HUD/VFX table read for an in-engine scene; the ship model's o
 | 2 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 3 | 3.57 |
 | 3 | REVISE | legibility 3, hud-fit 4, motion 3, palette 4, correctness 3, spec 4, performance 5 | 3.71 |
 | 4 | REVISE | legibility 3, hud-fit 4, motion 4, palette 4, correctness 3, spec 4, performance 5 | 3.86 |
+| 5 | REVISE | legibility 4, hud-fit 4, motion 4, palette 4, correctness 4, spec 4, performance 5 | 4.14 |
 
 Round 1: 24 identical Larks in a grid with no markers (unreadable crowd); distant remote ships badly aliased; no capture
 of a ship on a pad, near the planet or of an NPC ship, and no engine glow by speed. Fixed with `player` HUD markers gated
@@ -240,6 +241,15 @@ that reshuffles every frame (heading unreadable); several ships in plain view ge
 crosshair, five diamonds for 24 docked ships, the ship dead ahead on the pads), and markers cut in and out in one frame
 or swap label sides. Requested: a debug overlay of sensor detection per ship. **Escalated to the owner after four REVISE
 rounds (plan 0.5); marked `[!]`.**
+
+Round 5 (2026-10-31, the owner's rule: one more grade, then merge): every criterion at 4 or above, and every round-4
+note fixed: the coarsest LOD holds a solid silhouette past 190 m, every ship in plain view keeps a diamond (the Lark
+through the crosshair, the pad Lark, the bay), markers keep their sides, and the requested sensor overlay shows every
+pilot detected, so earlier gaps were screen logic. Still under the 4.5 mean: labels all one weight from 10 m to 4 km;
+up to 20 marks at once; a fading label left behind its moving diamond and fades of 80–130 ms ending in a snap; the
+diamond stroke at about 70% of the teal; far names drawn over a nearer hull; no capture of a withheld or boosting
+signature. Merged under the rule; the notes are P1.E04.T06. Performance: the remote layer 0.21–0.5 ms CPU, +9–18.5
+draw calls, coarsest LOD 3.2% of LOD0. Artifacts: `assets/renders/ui/remote-ships*/`.
 
 ## P1.E05.T01 Skeleton and three base bodies (art)
 
@@ -411,3 +421,17 @@ to 0.07 over 018–023 while the next tab slides), overflow fades start with the
 old line, meta lines 5.7–6.3:1, worst frames 0.7–1.0 ms; the requested `beacons-rest` shows no redraw at rest with
 OFFLINE, LEAD and KICK. Minor: whole-pixel scroll steps; edge fades over the scrollbar's end; 1–3 px badge trim;
 party-invite's worst frame at exactly 1.0 ms. Artifacts: `assets/renders/ui/{beacons,beacons-many,beacons-rest,social-tabs,party-invite}/`.
+
+## P1.E07.T03 Ability runtime (ability bar and eased meter costs)
+
+| Round | Verdict | Scores | Mean |
+|---|---|---|---|
+| 1 | REVISE | hierarchy 4, fit 4, motion 3, theme 3, correctness 4, spec 5, performance 4 | 3.86 |
+| 2 | PASS | hierarchy 5, fit 5, motion 5, theme 5, correctness 5, spec 5, performance 5 | 5.00 |
+
+Round 1: the cast flare went white for one frame; small heat chunks skipped the arc's ease, so the cost moved 2 px;
+flight rings and timers in Charge lilac broke art bible §4; the refusal plate sat 480 px from its slot on the gun grip.
+Round 2: the flare and cost ease together, every cost eases onto its arc drawn brighter, the flight bar is warm white,
+the plate sits over its slot, names hide at rest, ready beats show, and the HUD stays under 1 ms; the requested 21:9
+cost clip is in `hud-abilities-cost`. Minor: the cost eases run about 185–200 ms (asked 250); the flight ready beat
+is about 70 ms; long flight names nearly touch at 1920. Artifacts: `assets/renders/ui/hud-abilities{,-flight,-cost}/`.
