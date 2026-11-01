@@ -1732,6 +1732,13 @@ server from what it believes; no client says it found anything.
   last `named` answer. One place shows names through it so far: the analysis banner and the known species' toast
   (`Game.onAnalyze`); the HUD's location line, the codex UI and a field to name a find in are later tasks' (P2.E29.T03),
   until when a finder names a find from the dev console (`game.net.discoveries.name(…)`).
+- **In the season chronicle** (§27). A season's end names its finds: `seasonFinds` (`discovery/chronicle.ts`) reads, in
+  the transaction that writes the chronicle, the finds whose finder's name was given (`namedAt`) in the season's window
+  `[start, end)`, earliest first, with the name, the finder's character name and the world time it was named. The window
+  is the naming's, not the find's: a find made in a season's last minutes and named in the next is the next one's, so the
+  chronicle is complete at the moment it is written. Only a finder's own name counts (state `named`): a find a moderator
+  has renamed or cleared is left out, since the chronicle says who named what, and a find never named has no name to
+  record. `startServer` hands the hook to `pgShardStore`, which passes it to the Count meter's store (§11).
 - **Tests.** Integration tests run with first finds off unless they ask (`startTestServer(…, {discovery: true})`), on a
   shard of their own: a find on the shared shard pays its finder XP on a database's first run and not on the next, which
   no other test's XP should depend on. The production server and the online smoke run with them on.
@@ -1880,8 +1887,10 @@ its title and glyph, and what its chronicle says. The world service rolls them o
   chosen from, the map it opened with, the meter's path (each of its rolled days from `count_days`: Count, drift, lean,
   votes), the Count at its end and its bucket, the winning philosophy with its title and glyph and how many accounts
   earned them, the map the next season opens with, and its notable first finds (`finds`, at most 64, the rest dropped on
-  write; P2.E29.T01 names them through `pgShardStore`'s `firstFinds` hook, read in the chronicle's transaction; none
-  until then). A season not yet ended (or whose end is not written yet) is `404 no_chronicle`, a bad number `400`, no
+  write; the names finders gave during the season, §25: `seasonFinds`, `discovery/chronicle.ts`, which `startServer`
+  passes to `pgShardStore` as its `firstFinds` hook, read in the transaction that writes the chronicle). A
+  find that fails `chronicleFindSchema` is dropped with a warning, never thrown, so one bad row cannot fail the meter's
+  save and with it the season's end. A season not yet ended (or whose end is not written yet) is `404 no_chronicle`, a bad number `400`, no
   token `401`. `SeasonService` caches each chronicle it has read (a finished season never changes). HTTP rather than a
   socket request: a chronicle is a document, which grows with P2.E22.T04's per-account measures, and fetching one spends
   nothing of a socket's message budget. The client fetches it with `seasonChronicle(token, season)` (`net/api.js`; Vite

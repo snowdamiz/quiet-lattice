@@ -98,7 +98,7 @@ export const chronicleDaySchema = z.strictObject({
   votes: z.int().min(0),
 });
 export type ChronicleDay = z.infer<typeof chronicleDaySchema>;
-/** A notable first find of the season (P2.E29.T01 names them): what it is, its name, who named it and when. */
+/** A first find named during the season (ARCHITECTURE §25, §27): what it is, its name, who named it and when. */
 export const chronicleFindSchema = z.strictObject({
   kind: z.string().min(1).max(24),
   name: z.string().min(1).max(64),

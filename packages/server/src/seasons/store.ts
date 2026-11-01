@@ -36,9 +36,14 @@ export interface SeasonAwarded {
   accounts: readonly string[];
 }
 
-/** Where a season's notable first finds come from: P2.E29.T01's names, read in the transaction that writes its
- * chronicle. Without one, a chronicle names none. */
+/** Where a season's notable first finds come from: the discovery service's names (`seasonFinds`, discovery/chronicle.ts),
+ * read in the transaction that writes its chronicle. Without one, a chronicle names none. */
 export type FirstFinds = (tx: Tx, window: { shardId: string; season: number; start: number; end: number }) => Promise<ChronicleFind[]>;
+
+/** Where a find the chronicle cannot hold is reported. */
+export interface FindsLog {
+  warn(obj: object, msg: string): void;
+}
 
 /** Rows per INSERT: at 6 parameters an award, far under Postgres's 65,535. */
 const CHUNK = 1000;
@@ -69,7 +74,7 @@ export async function readActives(db: Db, shardId: string, from: number, today: 
  * Writes a season's end: picks its winners from every vote cast in it (seasonWinners), stores their awards and the
  * chronicle (a season stored already is left as it is) and returns what it awarded.
  */
-export async function writeSeasonEnd(tx: Tx, shardId: string, e: SeasonEnd, firstFinds?: FirstFinds): Promise<SeasonAwarded> {
+export async function writeSeasonEnd(tx: Tx, shardId: string, e: SeasonEnd, firstFinds?: FirstFinds, log?: FindsLog): Promise<SeasonAwarded> {
   const rows = await tx
     .select({ accountId: countVotes.accountId, action: countVotes.action, tag: countVotes.tag, at: countVotes.at })
     .from(countVotes)
@@ -83,7 +88,19 @@ export async function writeSeasonEnd(tx: Tx, shardId: string, e: SeasonEnd, firs
       .map((accountId) => ({ shardId, season: e.season, accountId, bucket: award.bucket, title: award.title, glyph: award.glyph }));
     await tx.insert(seasonAwards).values(chunk).onConflictDoNothing();
   }
-  const finds = firstFinds ? await firstFinds(tx, { shardId, season: e.season, start: e.start, end: e.end }) : [];
+  const named = firstFinds ? await firstFinds(tx, { shardId, season: e.season, start: e.start, end: e.end }) : [];
+  // A find that does not fit is dropped, not thrown: this runs inside the meter's save, which a bad name must not fail.
+  const finds: ChronicleFind[] = [];
+  for (const f of named) {
+    if (finds.length >= CHRONICLE_FINDS_MAX) break;
+    const parsed = chronicleFindSchema.safeParse(f);
+    if (parsed.success) finds.push(parsed.data);
+    else
+      log?.warn(
+        { shard: shardId, season: e.season, find: f, issues: parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`) },
+        'dropped a first find from the season chronicle',
+      );
+  }
   await tx
     .insert(seasonChronicles)
     .values({
@@ -101,7 +118,7 @@ export async function writeSeasonEnd(tx: Tx, shardId: string, e: SeasonEnd, firs
       glyph: award.glyph,
       awarded: accounts.length,
       next: e.next.opening,
-      finds: finds.slice(0, CHRONICLE_FINDS_MAX).map((f) => chronicleFindSchema.parse(f)),
+      finds,
     })
     .onConflictDoNothing();
   return { season: e.season, award, accounts };

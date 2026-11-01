@@ -10,7 +10,7 @@ import { COUNT_START } from '../count/meter.ts';
 import { pgCountStore, type CountStore } from '../count/store.ts';
 import type { Db } from '../db/client.ts';
 import { shards } from '../db/schema.ts';
-import type { FirstFinds } from '../seasons/store.ts';
+import type { FindsLog, FirstFinds } from '../seasons/store.ts';
 import { DEFAULT_SHARD_EPOCH_MS } from './clock.ts';
 
 /** The one shard of Phase 1 (one shard per region comes with P3.E37). */
@@ -76,8 +76,8 @@ export function newShardRecord(id: string, epochMs: number, wallMs: number): Sha
 }
 
 /** Shard `id`'s row in Postgres. `epochMs` and `wallNow` only shape the row a first boot creates; `firstFinds` names a
- * season's notable first finds in its chronicle (P2.E29.T01). */
-export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallNow?: () => number; firstFinds?: FirstFinds } = {}): ShardStore {
+ * season's notable first finds in its chronicle (§25, §27) and `log` hears the ones it drops. */
+export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallNow?: () => number; firstFinds?: FirstFinds; log?: FindsLog } = {}): ShardStore {
   return {
     id,
     async load() {
@@ -117,6 +117,6 @@ export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallN
         .set({ lastTime: sql`greatest(${shards.lastTime}, ${time}::double precision)` })
         .where(eq(shards.id, id));
     },
-    count: pgCountStore(db, id, { firstFinds: opts.firstFinds }),
+    count: pgCountStore(db, id, { firstFinds: opts.firstFinds, log: opts.log }),
   };
 }
