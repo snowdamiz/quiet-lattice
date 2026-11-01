@@ -813,6 +813,162 @@ async function stageCutscene(page: Page, id: string): Promise<void> {
   });
 }
 
+/** What the remote-ships screens reach of the page (three's objects as the page has them). */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+interface RemotePage {
+  game: {
+    traffic: { station: unknown; ships: { obj: { visible: boolean } }[] };
+    ship: { speed: number; state: { pos: any; quat: any } };
+    station: unknown;
+    system: { homePlanet: unknown };
+    hud: { clearBanners(): void };
+    remotes: { view: { prepare(hull: string): Promise<unknown> } };
+    hints?: Record<string, boolean>;
+    cam: { frame: unknown };
+    dockOnPad(near: unknown, quat: unknown): void;
+    debugGoto(planet: unknown, opts: Record<string, unknown>): void;
+  };
+  dev: { boot(): Promise<void> };
+  step(n: number): Promise<void>;
+  __holdRaf?: boolean;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+/**
+ * Boots a game with its frame loop parked (as stageCutscene does) and the demo's station traffic out of the shot, puts the
+ * ship where the scene wants it (`space`: off the Waystation, as the sandbox starts; `pads`: docked on its hangar pad at
+ * (30, -22), facing the mouth; `surface`: hovering 40 m over lowland on the home world, in the morning sun) and lets the
+ * world settle (its ground streams in from the workers), then plays
+ * one of the remote layer's recorded scenes (packages/client/src/remote/replay.js SCENES: `flypast`, `crowd`, `pads`,
+ * `surface`) as a snapshot stream through the wire's encoding with a 60 ms trip and 40 ms of jitter, offline, so the
+ * capture is hermetic. `seconds` of it are stepped before the still.
+ */
+async function openRemotes(
+  page: Page,
+  scene: 'flypast' | 'crowd' | 'pads' | 'surface' | 'bay',
+  seconds: number,
+  stage: 'space' | 'pads' | 'surface' = 'space',
+): Promise<void> {
+  await page.evaluate(() => (window as unknown as RemotePage).dev.boot());
+  await page.evaluate(async () => {
+    const w = window as unknown as RemotePage & { requestAnimationFrame(cb: FrameRequestCallback): number };
+    const raf = window.requestAnimationFrame.bind(window);
+    w.__holdRaf = true;
+    window.requestAnimationFrame = (cb) => (w.__holdRaf ? 0 : raf(cb));
+    await new Promise((r) => setTimeout(r, 100));
+  });
+  await page.evaluate(
+    async ({ scene, seconds, stage }) => {
+      const w = window as unknown as RemotePage;
+      const g = w.game;
+      // (these are the server's ships: the demo's client-side traffic round the Waystation stays out of the shot)
+      g.traffic.station = null;
+      for (const s of g.traffic.ships) s.obj.visible = false;
+      g.ship.speed = 0;
+      // (the hover hint has been read)
+      g.hints = { ...g.hints, vtol: true };
+      const pos = g.ship.state.pos;
+      if (stage === 'pads') {
+        const V = pos.constructor;
+        g.dockOnPad(new V(30, 2.4, -22), new g.ship.state.quat.constructor().setFromAxisAngle(new V(0, 1, 0), Math.PI));
+      } else if (stage === 'surface') g.debugGoto(g.system.homePlanet, { sunAngle: 38, alt: 40, azimuth: 0 });
+      g.cam.frame = undefined;
+      await g.remotes.view.prepare('lark');
+      // (the ground streams in from the workers, a few frames at a time, finest last)
+      for (let i = 0; i < (stage === 'surface' ? 60 : 15); i++) {
+        await w.step(6);
+        await new Promise((r) => setTimeout(r, 150));
+      }
+      const url = '/src/remote/replay.js';
+      const replay = await import(/* @vite-ignore */ url);
+      replay.play(g, scene);
+      await w.step(Math.round(seconds * 60));
+      // (the system's name, shown on arrival, has had its moment)
+      g.hud.clearBanners();
+    },
+    { scene, seconds, stage },
+  );
+  // (the HUD's transitions run on real time)
+  await page.waitForTimeout(1200);
+}
+
+/**
+ * A dev overlay over the remote-ships screens, drawn after every frame: for each other pilot, how the local ship's sensors
+ * read it (its distance against its reach, the sensor range × its signature, and what raised or lowered the signature:
+ * boosting, the pulse drive, cover) and whether they pick it up; and what the HUD made of it (its mark where it should be,
+ * or nudged off the HUD, or none and why; its name, on which side, or dropped for want of room and what took it). A tag
+ * under each pilot in view, and a table of them all (those out of view too) down the right. Tells a pilot undetected by
+ * design (past its reach) from one the HUD left unmarked.
+ */
+async function sensorsOverlay(page: Page): Promise<void> {
+  // (tsx names the functions below with a helper the page does not have)
+  await page.evaluate('window.__name ??= (f) => f');
+  await page.evaluate(() => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const g = (window as any).game;
+    const layer = document.createElement('div');
+    layer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:50;font:500 10px/12px ui-monospace,Menlo,monospace;color:#e9e7e2';
+    document.body.append(layer);
+    const tags = document.createElement('div');
+    const table = document.createElement('div');
+    table.style.cssText = 'position:absolute;right:12px;top:64px;padding:6px 8px;background:rgba(8,9,12,0.78);border:1px solid #3a3d44;white-space:pre';
+    layer.append(tags, table);
+    const V = g.camWorld.constructor;
+    const v = new V();
+    const km = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m)} m`);
+    const ways = ['', 'nudged out', 'nudged up', 'nudged down', 'nudged left', 'nudged right'];
+    const draw = () => {
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const rows: string[] = [];
+      let html = '';
+      const pilots = g.remotes.list.filter((r: any) => r.kind === 'player').sort((a: any, b: any) => (a.sense?.distance ?? 0) - (b.sense?.distance ?? 0));
+      for (const r of pilots) {
+        const s = r.sense;
+        const p = g.hud.pilots.get(r.id);
+        const marked = p && !p.goneAt;
+        v.copy(r.world).sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
+        const behind = v.z > 0;
+        v.applyMatrix4(g.engine.camera.projectionMatrix);
+        const x = (v.x * 0.5 + 0.5) * W;
+        const y = (-v.y * 0.5 + 0.5) * H;
+        const inView = !behind && x >= 0 && x <= W && y >= 0 && y <= H;
+        const why = !r.shown ? 'not drawn' : !s ? 'not read' : !s.signature ? 'hidden (signature 0)' : `past its reach`;
+        const sensed = s?.detected ? 'DETECTED' : `NOT DETECTED, ${why}`;
+        const flags = s ? [s.boosting && 'boost x2', s.pulsing && 'pulse x2', s.inCover && 'cover /2'].filter(Boolean).join(' ') : '';
+        const mark = !s?.detected
+          ? 'no mark'
+          : marked
+            ? p.nudged
+              ? `mark ${ways[p.nudged]}`
+              : 'mark'
+            : behind
+              ? 'no mark, behind'
+              : inView
+                ? 'no mark, at the edge'
+                : 'no mark, out of view';
+        const name = !marked ? '' : p.shown ? `name ${p.side}` : `name dropped${p.why ? ` (${p.why})` : ''}`;
+        rows.push(
+          `${(r.name ?? 'Pilot').padEnd(14)} ${km(s?.distance ?? 0).padStart(7)} / ${km(s?.reach ?? 0).padStart(6)}  sig ${(s?.signature ?? 0).toFixed(2)} ${flags.padEnd(9)} ${(s?.detected ? 'DETECTED' : 'not detected').padEnd(12)} ${mark}${name ? `, ${name}` : ''}`,
+        );
+        if (!inView) continue;
+        const colour = !s?.detected ? '#ff6b5e' : !marked || (p && !p.shown) ? '#f2b84b' : '#7fe0a0';
+        html += `<div style="position:absolute;left:${x.toFixed(0)}px;top:${(y + 10).toFixed(0)}px;transform:translateX(-50%);padding:1px 4px;background:rgba(8,9,12,0.72);border-left:2px solid ${colour};white-space:nowrap">${r.name ?? 'Pilot'} ${km(s?.distance ?? 0)} / ${km(s?.reach ?? 0)}${flags ? ` ${flags}` : ''}<br><span style="color:${colour}">${sensed}</span>${s?.detected ? ` · ${mark}${name ? ` · ${name}` : ''}` : ''}</div>`;
+      }
+      tags.innerHTML = html;
+      const read = pilots.find((r: any) => r.sense?.signature > 0)?.sense;
+      table.textContent = `SENSORS: reach = range ${km(read ? read.reach / read.signature : 0)} x signature; held to 1.05 x reach and 0.5 s past it\n${'pilot'.padEnd(14)} ${'dist'.padStart(7)} / ${'reach'.padStart(6)}  signature            HUD\n${rows.join('\n')}`;
+    };
+    const frame = g.frame.bind(g);
+    g.frame = (dt: number) => {
+      frame(dt);
+      draw();
+    };
+    draw();
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+  });
+}
+
 /** Plays the cutscene from its start (ending one under way, and any banner) and steps `t` seconds into it. */
 async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> {
   await page.evaluate(
@@ -2189,6 +2345,56 @@ export const SCREENS: Record<string, ScreenDef> = {
     async motion(page) {
       await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true })));
     },
+  },
+  // remote ships (P1.E04.T02): three other pilots' Larks sweeping round in formation in front of the ship by the
+  // Waystation, drawn by the remote layer from a recorded snapshot stream played offline (openRemotes); the still 1.2 s
+  // into the pass, the clip the 2.5 s after it, interpolated through the stream's jitter at 60 fps
+  'remote-ships': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'flypast', 1.2),
+  },
+  // the Phase 1 budget's 24 remote players in view at once, each about its own business (heading, speed, turn and climb),
+  // a hundred metres to a few kilometres out, each marked with its name and range; one draws away past the 4 km a ship's
+  // sensors pick a Lark up at, and its marker drops during the clip (one kit of instanced meshes draws them all, the far
+  // ones simplified)
+  'remote-ships-crowd': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: (page) => openRemotes(page, 'crowd', 1.2),
+  },
+  // the crowd with the sensors' and the HUD's reading of each pilot over it (sensorsOverlay, a dev overlay): which pilots
+  // the local ship's sensors pick up, and what became of each one's mark and name
+  'remote-ships-crowd-sensors': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: async (page) => {
+      await openRemotes(page, 'crowd', 1.2);
+      await sensorsOverlay(page);
+    },
+  },
+  // the Waystation's hangar from the player's docked ship: two other pilots' Larks docked on the pads beside it, gear
+  // down, and two more flying past outside the mouth one after the other, throttles opening (their exhausts lengthen)
+  'remote-ships-pads': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'pads', 1.6, 'pads'),
+  },
+  // low over the home world, in its turning frame: another pilot's Lark set down on the ground ahead, gear down, and two
+  // more flying past low over the ground, following it as it rises and falls, throttles opening (the still as they
+  // cross; a third crosses during the clip)
+  'remote-ships-surface': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    open: (page) => openRemotes(page, 'surface', 2.2, 'surface'),
+  },
+  // a Waystation bay phase full, from the player's ship docked on its pad: 24 other pilots' Larks docked round it, gear
+  // down (the hangar has 4 pads until the modular Waystation; the others stand on the floor's berths); the worst case of
+  // remote ships a bay phase allows, for its look and its perf readout (perf.json)
+  'remote-ships-bay': {
+    hudClock: true,
+    clipSeconds: 2,
+    open: (page) => openRemotes(page, 'bay', 1.0, 'pads'),
   },
   // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
   // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the
