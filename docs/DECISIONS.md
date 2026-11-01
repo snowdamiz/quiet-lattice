@@ -1024,3 +1024,17 @@ Format: task id, question → choice → why.
   does not displace a good one; a later moderator rename does not change a written chronicle. → DESIGN 16.4's "who named
   what". Open: no index for the query (32 ms at 200,000 finds, once per season end); a naming that commits just after
   the chronicle's save is in neither season.
+- **P1.E16.T06** Load-proof timing tests (server test `pilot`, `steppedServer`, `movement.int`, `zone.bench`; `fauna/terrain`
+  and `server.ts` clock seams; smoke `online.ts` and `movement-online.spec.ts`) → tests that judge authority time drive
+  the clocks instead of wall time: a scripted pilot and a second test server share a stepped monotonic clock
+  (`StartOptions.clock`), and the pilot waits for the server's ack before each step, so load cannot skew client and
+  server time differently; the ground planner takes an injectable `now` for its back-off; the stall smoke spec runs
+  its own stepped server and freezes the page clock, driving the game's own rAF so its 0.066 s frame clamp still
+  guards; zones keep ticking on real time (stepping their clock would deadlock the ack wait). The bench prints the
+  load average beside every p95 and reports its budget checks as skipped above twice the CPU count
+  (`BENCH_MAX_LOAD` overrides), while corrections and other non-budget failures still fail at any load. Production
+  behaviour is unchanged (both seams default to today's clocks). Each rewritten test passed 20 runs in a row beside two
+  parallel `pnpm test` runs and still fails when its rule is broken. → keeps the merge gate honest on a loaded
+  machine. Open: a SKIP exits 0 like a PASS; the stall spec carries on silently when its ack deadline runs out;
+  smoke's `online.ts` hard-codes Redis index 7 (harmless while nothing reads Redis); the persistence and events timing
+  flakes are not covered yet.
