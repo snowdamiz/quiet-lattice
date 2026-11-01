@@ -514,10 +514,8 @@ describe('Game: analysis (P1.E08.T04)', () => {
     expect(toasts).toEqual([['Velar Prime · in your codex', undefined]]);
   });
 
-  /** A game with a walker on a world, a creature of the client's own herds in its sights, and E pressed. */
-  function aiming(net) {
-    const sp = { name: 'Ambling Tovar Grazer', kind: 'quad', skittish: true, size: 1.5 };
-    const banners = [];
+  /** A game with a walker on a world, the server's creature `id` drawn in its sights (or none), and E pressed. */
+  function aiming(net, pick = { id: 42, sp: { name: 'Ambling Tovar Grazer' }, t: 12 }) {
     const world = { sampler: {}, kind: 'planet' };
     const g = fake({
       net,
@@ -527,39 +525,40 @@ describe('Game: analysis (P1.E08.T04)', () => {
       player: { state: { frame: world, pos: new THREE.Vector3(0, 100, 0) } },
       cities: { planet: null },
       structures: { nearestInteract: () => null },
-      fauna: { pick: () => ({ c: { sp }, t: 12 }), scanned: new Set(), scannedNames: new Set(), scare: vi.fn() },
+      fauna: { pick: vi.fn(() => pick) },
       multitool: { target: null, firing: false },
-      cam: { pos: new THREE.Vector3(), quat: new THREE.Quaternion() },
+      camWorld: new THREE.Vector3(1, 2, 3),
+      camWorldQuat: new THREE.Quaternion(),
       inventory: new Inventory(),
-      hud: { showBanner: (...b) => banners.push(b) },
+      hud: { showBanner: vi.fn() },
       audio: { play: vi.fn() },
     });
-    return { g, sp, banners };
+    return g;
   }
 
-  it('in the dev sandbox analyzes the client’s own creature for its quest book, and pays nothing for it', () => {
-    const { g, sp, banners } = aiming(null);
+  it('asks the server to analyze the drawn creature in the crosshair, within 70 m along the aim from the camera', () => {
+    const net = { joined: true, send: vi.fn() };
+    const g = aiming(net);
     const units = g.inventory.units;
     g.handleInteractions();
-    expect(g.fauna.scannedNames.has(sp.name)).toBe(true);
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
+    expect(g.fauna.pick).toHaveBeenCalledWith(g.camWorld, expect.objectContaining({ x: 0, y: 0, z: -1 }), 70);
+    expect(net.send).toHaveBeenCalledTimes(1);
+    expect(net.send.mock.calls[0][0]).toMatchObject({ t: 'analyze', target: 42 });
+    // the server's answer pays and writes the codex (onAnalyze); nothing is shown or paid here
+    expect(g.hud.showBanner).not.toHaveBeenCalled();
     expect(g.inventory.units).toBe(units);
-    expect(banners).toEqual([['AMBLING TOVAR GRAZER', 'New Species Discovered', ['Quadruped · Skittish · 1.8 m']]]);
-    // known now: its name only
-    g.handleInteractions();
-    expect(g.currentPrompt).toBe(sp.name);
-    expect(banners).toHaveLength(1);
   });
 
-  it('online leaves the client’s own creatures alone: their name, no analysis, no reward', () => {
+  it('offers nothing with no creature in the sights, and analyzes nothing offline', () => {
     const net = { joined: true, send: vi.fn() };
-    const { g, sp, banners } = aiming(net);
-    const units = g.inventory.units;
-    g.handleInteractions();
-    expect(g.currentPrompt).toBe(sp.name);
-    expect(g.fauna.scannedNames.size).toBe(0);
-    expect(g.inventory.units).toBe(units);
-    expect(banners).toEqual([]);
+    const none = aiming(net, null);
+    none.handleInteractions();
+    expect(none.currentPrompt).toBeFalsy();
     expect(net.send).not.toHaveBeenCalled();
+    const offline = aiming(null);
+    offline.handleInteractions();
+    expect(offline.hud.showBanner).not.toHaveBeenCalled();
   });
 });
 

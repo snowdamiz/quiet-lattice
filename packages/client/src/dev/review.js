@@ -1019,7 +1019,7 @@ export class Review {
       if (this.active) {
         g.multitool.view.visible = false;
         g.ship.group.visible = false;
-        if (g.fauna?.root) g.fauna.root.visible = false;
+        if (g.fauna) g.fauna.group.visible = false;
       }
       render(dt);
       if (this.active && this.aids) this.drawAids();

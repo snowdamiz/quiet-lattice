@@ -1,17 +1,14 @@
-// Procedural creatures. Each species is one InstancedMesh; limbs are animated in
-// the vertex shader from per-vertex limb ids + pivots and per-instance gait phase.
+// The server's herds, drawn (P1.E08.T09; DESIGN 12.2, docs/ARCHITECTURE.md §6.2, §9). The server owns every creature, its
+// species, level, behaviour and place; RemoteEntities follows each `mob` entity from the zone's snapshots (one pose buffer
+// each, read at the render time, placed through its frame as that stands now) and hands the ones it shows here. A species
+// is an index into its world's shared `faunaSpecies` list, so every client builds the same body for it from that
+// species' colours and shape seed. Each species is one InstancedMesh; limbs are animated in the vertex shader from
+// per-vertex limb ids + pivots and per-instance gait phase, the gait read off how fast the creature is drawn moving.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { Random, makeName, archetype } from '@astra/shared/world';
+import { creatureSphere } from '@astra/shared/combat';
+import { FAUNA_MAX_TIER, Random, faunaSpecies } from '@astra/shared/world';
 import { libraryMesh, libraryVariants, recolor } from './modelLibrary.js';
-
-const HIDES = [0xb08850, 0xa0502a, 0x8a8a92, 0xd8c8a0, 0x5a4030, 0xc07040, 0x6a6058, 0x4a6a8a, 0x6a4a7a, 0x3a7a6a, 0x8a3a4a];
-
-const _v = new THREE.Vector3();
-const _v2 = new THREE.Vector3();
-const _q = new THREE.Quaternion();
-const _m = new THREE.Matrix4();
-const _s = new THREE.Vector3();
 
 // limb ids: 0 body, 1..4 legs (FL, FR, BL, BR), 5 tail, 6 head, 7/8 wings L/R
 function part(geo, limb, pivot, color, glow = 0) {
@@ -188,9 +185,7 @@ function buildFlyer(rng, cols) {
 // A modelled creature from public/models/creatures.glb, recoloured for the species and scaled
 // to the procedural body it replaces. Library meshes carry `_limb`, `_pivot` (Blender axes)
 // and `_glow` attributes, which feed the same vertex-shader animation as the procedural ones.
-const BODY_PLANS = { quad: ['quad_grazer', 'quad_grazer', 'quad_heavy', 'quad_small'], biped: ['biped'], flyer: ['flyer'] };
-function libraryCreature(kind, rng, cols, ref) {
-  const prefix = rng.pick(BODY_PLANS[kind]);
+function libraryCreature(kind, prefix, rng, cols, ref) {
   const variants = libraryVariants('creatures', prefix);
   if (!variants.length) return null;
   const mesh = libraryMesh('creatures', rng.pick(variants));
@@ -349,323 +344,290 @@ function creatureMaterial(time, { leg = 1, plan = 0 } = {}) {
   return mat;
 }
 
-// Bold, alien colour schemes for the colour-region masks: a richer hide (primary), a strongly contrasting
-// secondary for the markings (cream, dark or an opposing hue) and the world's flora colour as the accent.
-// Uses its own random stream so the species' rng sequence (and so their names) is unchanged.
-function markings(base, accent, prng, extra) {
-  const hsl = {};
-  base.getHSL(hsl);
-  const hide = new THREE.Color().setHSL((hsl.h + prng.float(-0.05, 0.05) + 1) % 1, Math.min(0.8, hsl.s * 1.3 + 0.1), THREE.MathUtils.clamp(hsl.l, 0.3, 0.55));
-  const scheme = prng.int(0, 2);
-  let second;
-  if (scheme === 0) second = hide.clone().lerp(new THREE.Color(0xfff2dc), 0.72);
-  else if (scheme === 1) second = hide.clone().multiplyScalar(0.3);
-  else second = new THREE.Color().setHSL((hsl.h + prng.pick([0.4, 0.5, 0.6])) % 1, 0.5, hsl.l > 0.42 ? 0.28 : 0.68);
-  return { base: hide.getHex(), belly: second.getHex(), legs: hide.clone().multiplyScalar(0.6).getHex(), accent: accent.getHex(), horn: 0xe8e0d0, ...extra };
-}
+/** How long a creature takes to go down once the server calls it dead, s (the corpse stays about 3 s). */
+export const FALL_S = 0.45;
+/** Capacity an instanced species starts with; it doubles when a world's herds outgrow it. */
+const START_CAPACITY = 32;
+/** A creature calls out when the player on foot is this close, m. */
+const CALL_RANGE = 45;
 
-const ADJ = ['Ambling', 'Skittish', 'Lumbering', 'Prancing', 'Burrowing', 'Grazing', 'Crested', 'Spined', 'Glowing', 'Hopping'];
-const NOUN = { quad: ['Grazer', 'Strider', 'Hoofer', 'Crawler', 'Beast'], biped: ['Walker', 'Stalker', 'Runner'], flyer: ['Glider', 'Flutterer', 'Skywing'] };
+const _rel = new THREE.Vector3();
+const _up = new THREE.Vector3();
+const _p = new THREE.Vector3();
+const _c = new THREE.Vector3();
+const _q = new THREE.Quaternion();
+const _qz = new THREE.Quaternion();
+const _m = new THREE.Matrix4();
+const _s = new THREE.Vector3();
+const _frustum = new THREE.Frustum();
+const _pv = new THREE.Matrix4();
+const _sphere = new THREE.Sphere();
+const _z = new THREE.Vector3(0, 0, 1);
+const _ray = new THREE.Vector3();
+const _t = new THREE.Vector3();
+const _walk = new THREE.Vector3();
+const _push = new THREE.Vector3();
+
+/** One species as this client draws it: the shared data, the body made from it and the instanced mesh that shows it. */
+class Drawn {
+  constructor(sp, time) {
+    this.sp = sp;
+    const rng = new Random(sp.shape);
+    const proc = sp.kind === 'flyer' ? buildFlyer(rng, sp.colors) : buildQuadruped(rng, sp.colors, sp.kind === 'biped');
+    const model = libraryCreature(sp.kind, sp.bodyPlan, rng, sp.colors, proc) || proc;
+    if (model === proc) model.legLen = hipHeight(proc.geo) || proc.legLen;
+    this.model = model;
+    this.geo = model.geo;
+    this.mat = creatureMaterial(time, { leg: model.legLen || 1, plan: sp.kind === 'flyer' ? 2 : sp.kind === 'biped' ? 1 : 0 });
+    this.max = 0;
+    this.count = 0;
+    this.mesh = null;
+    this.grow(START_CAPACITY);
+  }
+
+  /** Room for `n` instances (the attributes and mesh made afresh, twice as big as asked, when there is not). */
+  grow(n) {
+    if (n <= this.max) return;
+    const max = Math.max(n, this.max * 2);
+    const old = this.mesh;
+    const mesh = new THREE.InstancedMesh(this.geo, this.mat, max);
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.phase = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
+    this.gait = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
+    this.seed = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
+    for (const a of [this.phase, this.gait, this.seed]) a.setUsage(THREE.DynamicDrawUsage);
+    this.geo.setAttribute('aPhase', this.phase);
+    this.geo.setAttribute('aGait', this.gait);
+    this.geo.setAttribute('aSeed', this.seed);
+    mesh.count = 0;
+    mesh.frustumCulled = false;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    if (old) {
+      old.parent?.add(mesh);
+      old.parent?.remove(old);
+      old.dispose();
+    }
+    this.mesh = mesh;
+    this.max = max;
+  }
+
+  dispose() {
+    this.mesh.parent?.remove(this.mesh);
+    this.mesh.dispose();
+    this.geo.dispose();
+    this.mat.dispose();
+  }
+}
 
 export class Fauna {
   constructor(game) {
     this.game = game;
     this.group = new THREE.Group();
-    this.planet = null;
-    this.species = [];
-    this.creatures = [];
+    this.group.name = 'fauna';
     this.time = { value: 0 };
-    this.anchor = new THREE.Vector3();
-    this.scanned = new Set();
-    this.scannedNames = new Set();
+    /** world (the client's body) → { list: its species (shared data), drawn: index → Drawn, once a creature of it shows } */
+    this.worlds = new Map();
+    /** the creatures shown this frame (RemoteEntities' records) */
+    this.shown = [];
   }
 
-  setPlanet(planet) {
-    if (planet === this.planet) return;
-    if (this.root) {
-      this.root.parent?.remove(this.root);
-      for (const sp of this.species) {
-        sp.mesh.geometry.dispose();
-        sp.mesh.material.dispose();
-      }
-    }
-    this.species = [];
-    this.creatures = [];
-    this.root = null;
-    this.planet = planet;
-    if (!planet || !planet.sampler) return;
-    const p = planet.params;
-    const a = archetype(p.type);
-    if (p.type === 'barren' || p.lifeless || p.flora < 0.08) return;
-    const rng = new Random(p.seed ^ 0xfa11a);
-    this.root = new THREE.Group();
-    planet.root.add(this.root);
-    const n = p.flora > 0.5 ? rng.int(3, 4) : rng.int(1, 2);
-    for (let i = 0; i < n; i++) {
-      const kind = i === n - 1 && rng.chance(0.75) ? 'flyer' : rng.chance(0.25) ? 'biped' : 'quad';
-      const fc = a.floraColors;
-      // hides that stand out against the vegetation, with a hint of the world's flora hue, and bold markings
-      // (same rng calls in the same order as before, so species keep their names)
-      const base = new THREE.Color(rng.pick(HIDES)).lerp(new THREE.Color(rng.pick(fc)), rng.float(0.1, 0.3));
-      const accent = new THREE.Color(rng.pick(fc));
-      const glow = rng.chance(0.5);
-      const glowEyes = rng.chance(0.3);
-      const cols = markings(base, accent, new Random(((p.seed ^ 0xc0105) + i * 7919) >>> 0), { glow, glowEyes });
-      const proc = kind === 'flyer' ? buildFlyer(rng, cols) : buildQuadruped(rng, cols, kind === 'biped');
-      const model = libraryCreature(kind, rng, cols, proc) || proc;
-      if (model === proc) model.legLen = hipHeight(proc.geo) || proc.legLen;
-      let size = kind === 'flyer' ? rng.float(1.2, 2.2) : kind === 'biped' ? rng.float(0.8, 2.2) : Math.pow(rng.next(), 1.5) * 3.2 + 0.5;
-      // body plans keep sizes that suit them
-      if (model.plan === 'quad_heavy') size = Math.max(size, 2.2);
-      if (model.plan === 'quad_small') size = Math.min(size, 0.9);
-      const max = kind === 'flyer' ? 16 : 10;
-      const plan = kind === 'flyer' ? 2 : kind === 'biped' ? 1 : 0;
-      const mesh = new THREE.InstancedMesh(model.geo, creatureMaterial(this.time, { leg: model.legLen || 1, plan }), max);
-      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      const phase = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
-      const gait = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
-      const seed = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
-      phase.setUsage(THREE.DynamicDrawUsage);
-      gait.setUsage(THREE.DynamicDrawUsage);
-      seed.setUsage(THREE.DynamicDrawUsage);
-      mesh.geometry.setAttribute('aPhase', phase);
-      mesh.geometry.setAttribute('aGait', gait);
-      mesh.geometry.setAttribute('aSeed', seed);
-      mesh.count = 0;
-      mesh.frustumCulled = false;
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      this.root.add(mesh);
-      const name = `${rng.pick(ADJ)} ${makeName(rng, 2, 2)} ${rng.pick(NOUN[kind === 'quad' ? 'quad' : kind])}`;
-      this.species.push({
-        kind, name, size, model, mesh, phase, gait, seed, max,
-        skittish: rng.chance(0.6), herd: kind === 'flyer' ? rng.int(4, 9) : rng.int(2, 5),
-        walk: (kind === 'biped' ? 2.2 : 1.6) * Math.sqrt(size), run: (kind === 'biped' ? 9 : 7) * Math.sqrt(size),
-      });
-    }
+  /** Lets every species go: the system changed or the zone started over. */
+  reset() {
+    for (const w of this.worlds.values()) for (const d of w.drawn.values()) d.dispose();
+    this.worlds.clear();
+    this.shown.length = 0;
   }
 
-  update(dt, planet) {
+  world(frame) {
+    let w = this.worlds.get(frame);
+    if (!w) {
+      // (a Waystation, the inertial frame or a world without fauna has no species, so no creature in it is drawn)
+      const list = frame?.params ? faunaSpecies(frame.params, FAUNA_MAX_TIER) : [];
+      this.worlds.set(frame, (w = { list, drawn: new Map() }));
+    }
+    return w;
+  }
+
+  /** The species creature `r` is (shared data), or undefined when its world has no such species. */
+  speciesOf(r) {
+    return r.frame && r.species !== null ? this.world(r.frame).list[r.species] : undefined;
+  }
+
+  /** Whether the record `r` (RemoteEntities') is a creature that can be drawn. */
+  draws(r) {
+    return this.speciesOf(r) !== undefined;
+  }
+
+  drawnOf(r) {
+    const w = this.world(r.frame);
+    let d = w.drawn.get(r.species);
+    if (!d) {
+      d = new Drawn(w.list[r.species], this.time);
+      w.drawn.set(r.species, d);
+      this.group.add(d.mesh);
+    }
+    return d;
+  }
+
+  /** Each frame: draws the creatures among `list` (RemoteEntities' records) that are shown, each at its pose as placed
+   * (`world`, `worldQuat`, camera-relative here), its gait read off how fast it is drawn moving. */
+  update(list, dt) {
     const g = this.game;
-    let target = null;
-    let camLocal = null;
-    if (planet && planet.sampler) {
-      camLocal = planet.worldToLocal(g.camWorld, _v2).clone();
-      if (camLocal.length() - planet.radius < 1500) target = planet;
-    }
-    if (target !== this.planet) this.setPlanet(target);
-    if (!this.planet || !this.root) return;
     this.time.value += dt;
-    const P = this.planet;
-    // spawn herds around the camera
-    for (const sp of this.species) {
-      const alive = this.creatures.filter((c) => c.sp === sp).length;
-      if (alive + sp.herd <= sp.max && (!sp.nextSpawn || this.time.value > sp.nextSpawn)) {
-        sp.nextSpawn = this.time.value + 4 + Math.random() * 6;
-        this.spawnHerd(sp, camLocal);
-      }
-    }
-    const player = g.mode === 'foot' && g.player.state.frame === P ? g.player.state.pos : null;
-    for (let i = this.creatures.length - 1; i >= 0; i--) {
-      const c = this.creatures[i];
-      if (c.pos.distanceTo(camLocal) > 420) {
-        this.creatures.splice(i, 1);
-        continue;
-      }
-      const wasFleeing = c.state === 'flee';
-      this.think(c, dt, player);
-      this.move(c, dt);
-      // vocalize now and then when the player is close
-      if (player) {
-        const d = c.pos.distanceTo(player);
-        c.callT = (c.callT ?? 3 + Math.random() * 10) - dt;
-        const alarm = !wasFleeing && c.state === 'flee';
-        if ((c.callT <= 0 || alarm) && d < 45) {
-          c.callT = 6 + Math.random() * 12;
-          const vol = 0.13 * (1 - d / 50) * Math.min(1.5, 0.5 + c.sp.size * 0.4);
-          g.audio.creature({ size: c.sp.size * c.scale, kind: c.sp.kind, seed: c.sp.voice ?? (c.sp.voice = Math.random()), vol, alarm });
-        }
-      }
-    }
-    // render
-    this.anchor.copy(camLocal);
-    this.root.position.copy(this.anchor);
-    for (const sp of this.species) sp.mesh.count = 0;
-    for (const c of this.creatures) {
-      const sp = c.sp;
-      const k = sp.mesh.count++;
-      const up = _v.copy(c.pos).normalize();
-      const fwd = c.heading;
-      const right = new THREE.Vector3().crossVectors(up, fwd).normalize();
-      const f2 = new THREE.Vector3().crossVectors(right, up);
-      _m.makeBasis(right, up, f2);
-      _q.setFromRotationMatrix(_m);
-      if (sp.kind === 'flyer') _q.multiply(new THREE.Quaternion().setFromAxisAngle(f2.set(0, 0, 1), c.bank || 0));
-      _s.setScalar(sp.size * c.scale);
-      _m.compose(_v2.copy(c.pos).sub(this.anchor), _q, _s);
-      sp.mesh.setMatrixAt(k, _m);
-      sp.phase.array[k] = c.phase;
-      sp.gait.array[k] = c.gait;
-      sp.seed.array[k] = c.seed ?? (c.seed = Math.random());
-    }
-    for (const sp of this.species) {
-      sp.mesh.instanceMatrix.needsUpdate = true;
-      sp.phase.needsUpdate = true;
-      sp.gait.needsUpdate = true;
-      sp.seed.needsUpdate = true;
-    }
-  }
-
-  spawnHerd(sp, camLocal) {
-    const P = this.planet;
-    const up = camLocal.clone().normalize();
-    const t1 = new THREE.Vector3(0, 1, 0).cross(up).normalize();
-    const t2 = new THREE.Vector3().crossVectors(up, t1);
-    const a = Math.random() * Math.PI * 2;
-    const d = 70 + Math.random() * 160;
-    const center = up.clone().multiplyScalar(P.radius).addScaledVector(t1, Math.cos(a) * d).addScaledVector(t2, Math.sin(a) * d).normalize();
-    if (P.heightAt(center) < 1 && sp.kind !== 'flyer') return;
-    const heading = t1.clone().applyAxisAngle(center, Math.random() * Math.PI * 2);
-    for (let i = 0; i < sp.herd; i++) {
-      const off = center.clone().multiplyScalar(P.radius).addScaledVector(t1, (Math.random() - 0.5) * 14).addScaledVector(t2, (Math.random() - 0.5) * 14).normalize();
-      const h = P.surfaceRadius(off);
-      if (sp.kind !== 'flyer' && h < P.radius + 0.5) continue;
-      const c = {
-        sp, pos: off.clone().multiplyScalar(h), heading: heading.clone(), phase: Math.random() * 6, gait: 0, speed: 0,
-        state: 'idle', timer: Math.random() * 3, scale: 0.85 + Math.random() * 0.3, target: null,
-        alt: sp.kind === 'flyer' ? 25 + Math.random() * 30 : 0, circle: Math.random() < 0.5 ? 1 : -1,
-      };
-      this.creatures.push(c);
-    }
-  }
-
-  think(c, dt, player) {
-    const sp = c.sp;
-    c.timer -= dt;
-    if (sp.kind === 'flyer') {
-      c.state = 'fly';
-      return;
-    }
-    if (player) {
-      const d = c.pos.distanceTo(player);
-      if (sp.skittish && d < 14 + sp.size * 3 && c.state !== 'flee') {
-        c.state = 'flee';
-        c.timer = 4 + Math.random() * 2;
-        const away = c.pos.clone().sub(player);
-        const up = _v.copy(c.pos).normalize();
-        c.heading.copy(away.addScaledVector(up, -away.dot(up)).normalize());
-      }
-    }
-    if (c.timer <= 0) {
-      if (c.state === 'idle') {
-        c.state = 'wander';
-        c.timer = 3 + Math.random() * 6;
-        const up = _v.copy(c.pos).normalize();
-        c.heading.applyAxisAngle(up, (Math.random() - 0.5) * 2.5);
+    const now = this.time.value;
+    this.shown.length = 0;
+    for (const w of this.worlds.values()) for (const d of w.drawn.values()) d.count = 0;
+    const cam = g.engine?.camera;
+    const inView = cam ? _frustum.setFromProjectionMatrix(_pv.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse)) : null;
+    const camWorld = g.camWorld;
+    const player = g.mode === 'foot' && g.player ? g.player.state.worldPosition(_walk) : null;
+    for (const r of list) {
+      if (r.kind !== 'mob') continue;
+      r.drawn = false;
+      if (!r.shown) continue;
+      const d = this.drawnOf(r);
+      const sp = d.sp;
+      this.shown.push(r);
+      const vis = (r.vis ??= { phase: ((r.id * 0.6180339) % 1) * 6.28, speed: 0, seed: (r.id * 0.7548777) % 1, deadAt: null, callT: 3 + ((r.id * 0.41) % 1) * 10, mode: null });
+      const dead = r.pose.mode === 'dead';
+      if (dead && vis.deadAt === null) vis.deadAt = now;
+      else if (!dead) vis.deadAt = null;
+      // how fast it is drawn moving in its frame: the gait follows (a held pose, past the newest sample, is standing)
+      const moving = !dead && (r.status === 'interpolate' || r.status === 'extrapolate');
+      vis.speed = THREE.MathUtils.damp(vis.speed, moving ? r.pose.vel.length() : 0, 8, dt);
+      let gait;
+      if (sp.kind === 'flyer') {
+        vis.phase += dt * 9;
+        gait = dead ? 0 : 1;
       } else {
-        c.state = 'idle';
-        c.timer = 2 + Math.random() * 5;
+        gait = THREE.MathUtils.clamp(vis.speed / sp.walk, 0, 1.4);
+        // cadence matched to the leg swing: during one stance (half a cycle) a planted foot sweeps 2·L·sin(amp) back
+        // relative to the hip, so the body must travel exactly that far for the foot not to slide
+        const L = (d.model.legLen || 0.8) * sp.size;
+        const stride = 2 * L * Math.max(Math.sin(legAmp(gait)), 0.03);
+        vis.phase += (vis.speed / stride) * Math.PI * dt;
+      }
+      this.voice(r, vis, sp, player, dt);
+      const rel = _rel.copy(r.world).sub(camWorld);
+      if (inView && rel.lengthSq() > 2500 && !inView.intersectsSphere(_sphere.set(rel, sp.size * 2.5 + 2))) continue;
+      _q.copy(r.worldQuat);
+      if (vis.deadAt !== null) this.fall(r, vis, d, now, rel);
+      _s.setScalar(sp.size);
+      _m.compose(rel, _q, _s);
+      if (d.count === d.max) d.grow(d.count + 1);
+      const k = d.count++;
+      d.mesh.setMatrixAt(k, _m);
+      d.phase.array[k] = vis.phase;
+      d.gait.array[k] = gait;
+      d.seed.array[k] = vis.seed;
+      r.drawn = true;
+    }
+    for (const w of this.worlds.values()) {
+      for (const d of w.drawn.values()) {
+        d.mesh.count = d.count;
+        d.mesh.instanceMatrix.needsUpdate = true;
+        d.phase.needsUpdate = true;
+        d.gait.needsUpdate = true;
+        d.seed.needsUpdate = true;
       }
     }
   }
 
-  move(c, dt) {
-    const P = this.planet;
-    const sp = c.sp;
-    const up = _v.copy(c.pos).normalize().clone();
-    let targetSpeed = 0;
-    if (c.state === 'wander') targetSpeed = sp.walk;
-    if (c.state === 'flee') targetSpeed = sp.run;
-    if (c.state === 'fly') targetSpeed = 9 + sp.size * 2;
-    c.speed = THREE.MathUtils.damp(c.speed, targetSpeed, 3, dt);
-    if (sp.kind === 'flyer') {
-      c.heading.applyAxisAngle(up, c.circle * dt * 0.35);
-      c.bank = -c.circle * 0.4;
+  // A creature the server has called dead goes down: it rolls onto its side about its middle over FALL_S and settles on
+  // the ground; a flyer drops to it first (the corpse is still where the server left it, in the air).
+  fall(r, vis, d, now, rel) {
+    const t = now - vis.deadAt;
+    const e = THREE.MathUtils.smoothstep(t, 0, FALL_S);
+    const size = d.sp.size;
+    const flyer = d.sp.kind === 'flyer';
+    const roll = (flyer ? Math.PI : Math.PI / 2) * e;
+    // the middle of the body in its own space; rolling about it, the body's low edge ends up about 0.3 of its size off the ground
+    const mid = _c.set(0, (flyer ? 0 : 0.5) * size, 0);
+    _qz.setFromAxisAngle(_z, roll);
+    _p.copy(mid).sub(_t.copy(mid).applyQuaternion(_qz)).applyQuaternion(_q);
+    rel.add(_p);
+    const up = _t.set(0, 1, 0).applyQuaternion(_q);
+    if (flyer) {
+      const frame = r.frame;
+      const ground = frame?.surfaceRadius ? frame.surfaceRadius(_c.copy(r.pos).normalize()) : null;
+      const alt = ground === null ? 0 : Math.max(0, r.pos.length() - ground - 0.4 * size);
+      rel.addScaledVector(up, -Math.min(alt, 4.9 * t * t));
+    } else rel.addScaledVector(up, -0.2 * size * e);
+    _q.multiply(_qz);
+  }
+
+  // Calls now and then when the player on foot is close, and when a creature bolts.
+  voice(r, vis, sp, player, dt) {
+    const mode = r.pose.mode;
+    const alarm = mode === 'flee' && vis.mode !== 'flee';
+    vis.mode = mode;
+    if (!player || mode === 'dead') return;
+    const d = r.world.distanceTo(player);
+    vis.callT -= dt;
+    if ((vis.callT <= 0 || alarm) && d < CALL_RANGE) {
+      vis.callT = 6 + ((r.id * 0.37 + this.time.value) % 1) * 12;
+      const vol = 0.13 * (1 - d / 50) * Math.min(1.5, 0.5 + sp.size * 0.4);
+      this.game.audio.creature({ size: sp.size, kind: sp.kind, seed: vis.seed, vol, alarm });
     }
-    c.heading.addScaledVector(up, -c.heading.dot(up)).normalize();
-    const next = c.pos.clone().addScaledVector(c.heading, c.speed * dt);
-    const dir = next.clone().normalize();
-    const ground = P.surfaceRadius(dir);
-    if (sp.kind === 'flyer') {
-      const gr = Math.max(ground, P.ocean ? P.radius : 0);
-      c.pos.copy(dir.multiplyScalar(gr + c.alt + Math.sin(this.time.value * 0.7 + c.phase) * 3));
-      c.phase += dt * 9;
-      c.gait = 1;
-      return;
+  }
+
+  /** The creatures shown this frame, as `{ r, sp }` for tools that need where they stand. */
+  creatures() {
+    return this.shown.map((r) => ({ r, sp: this.speciesOf(r) }));
+  }
+
+  /** The living creatures shown in `frame` (one of the client's bodies), each `{ id, pos }`: where it is drawn, in the frame,
+   * at the middle of its hit sphere (the shared `creatureSphere`, the one the server tests casts, shots and analyses by). */
+  targets(frame) {
+    const out = [];
+    for (const r of this.shown) {
+      if (r.frame !== frame || r.pose.mode === 'dead') continue;
+      const sp = this.speciesOf(r);
+      const s = creatureSphere({ pos: [r.pos.x, r.pos.y, r.pos.z], scale: 1, species: { size: sp.size, kind: sp.kind } });
+      out.push({ id: r.id, pos: new THREE.Vector3(s.pos[0], s.pos[1], s.pos[2]) });
     }
-    // avoid water and steep climbs
-    if (P.ocean && ground < P.radius + 0.3) {
-      c.heading.negate();
-      c.speed *= 0.3;
-      return;
-    }
-    // walk round rocks and deposits, and never through the player
-    if (c.speed > 0.05) {
-      const body = c.sp.size * c.scale * 0.45;
-      let blocked = null;
-      for (const inst of this.game.flora.instancesNear(next, body + 3, (s) => s.collide || s.rock)) {
-        const r = inst.sp.hitRadius * inst.scale + body;
-        if (inst.pos.distanceTo(next) < r) {
-          blocked = inst.pos;
-          break;
-        }
-      }
-      const player = this.game.mode === 'foot' && this.game.player.state.frame === P ? this.game.player.state.pos : null;
-      // heads and necks reach well past the body: keep them out of the player's face
-      if (!blocked && player && player.distanceTo(next) < c.sp.size * c.scale * 1.1 + 1.0) blocked = player;
-      if (blocked) {
-        // turn away from the obstacle, sliding along it rather than stopping dead
-        const away = c.pos.clone().sub(blocked);
-        away.addScaledVector(up, -away.dot(up)).normalize();
-        c.heading.lerp(away, 0.35).addScaledVector(up, -c.heading.dot(up)).normalize();
-        c.speed *= 0.6;
-        return;
-      }
-    }
-    c.pos.copy(dir.multiplyScalar(ground));
-    // cadence matched to the leg swing: during one stance (half a cycle) a planted foot sweeps 2·L·sin(amp)
-    // back relative to the hip, so the body must travel exactly that far for the foot not to slide
-    c.gait = THREE.MathUtils.clamp(c.speed / sp.walk, 0, 1.4);
-    const L = (sp.model.legLen || 0.8) * sp.size * c.scale;
-    const stride = 2 * L * Math.max(Math.sin(legAmp(c.gait)), 0.03);
-    c.phase += (c.speed / stride) * Math.PI * dt;
+    return out;
   }
 
   // walkers are solid: the player is pushed round their bodies instead of walking through them
   collidePlayer(player) {
-    const P = this.planet;
-    if (!P || player.state.frame !== P) return;
+    const frame = player.state.frame;
+    if (!frame) return;
     const p = player.state.pos;
-    const up = _v.copy(p).normalize();
-    for (const c of this.creatures) {
-      if (c.sp.kind === 'flyer') continue;
-      const r = c.sp.size * c.scale * 0.5 + 0.4;
-      const d = p.clone().sub(c.pos);
-      const vert = d.dot(up);
-      if (vert > c.sp.size * c.scale * 1.2) continue;
-      d.addScaledVector(up, -vert);
-      const dist = d.length();
-      if (dist < r && dist > 1e-4) p.addScaledVector(d, (r - dist) / dist);
+    const up = _up.copy(p).normalize();
+    for (const r of this.shown) {
+      if (r.frame !== frame || r.pose.mode === 'dead') continue;
+      const sp = this.speciesOf(r);
+      if (sp.kind === 'flyer') continue;
+      const rad = sp.size * 0.5 + 0.4;
+      const away = _push.copy(p).sub(r.pos);
+      const vert = away.dot(up);
+      if (vert > sp.size * 1.2) continue;
+      away.addScaledVector(up, -vert);
+      const dist = away.length();
+      if (dist < rad && dist > 1e-4) p.addScaledVector(away, (rad - dist) / dist);
     }
   }
 
-  // creature in the player's crosshair
+  /**
+   * The creature along a ray (`origin`, unit `dir`, in world coordinates), nearest first, within `maxDist`: the one the
+   * crosshair is on. It is tested as the server tests shots, casts and analyses (the shared `creatureSphere`, round the body
+   * at its species' size). A corpse is not picked. `{ id, sp, r, t }` (its zone entity id, species data, record and distance),
+   * or null.
+   */
   pick(origin, dir, maxDist) {
     let best = null;
-    for (const c of this.creatures) {
-      const r = c.sp.size * c.scale * (c.sp.kind === 'flyer' ? 0.6 : 0.9);
-      const center = c.pos.clone().addScaledVector(_v.copy(c.pos).normalize(), c.sp.kind === 'flyer' ? 0 : r * 0.8);
+    for (const r of this.shown) {
+      if (r.pose.mode === 'dead') continue;
+      const sp = this.speciesOf(r);
+      const s = creatureSphere({ pos: [r.pos.x, r.pos.y, r.pos.z], scale: 1, species: { size: sp.size, kind: sp.kind } });
+      const center = r.frame.localToWorld(_ray.set(s.pos[0], s.pos[1], s.pos[2]), _ray);
       const oc = center.sub(origin);
       const t = oc.dot(dir);
       if (t < 0 || t > maxDist) continue;
-      const d2 = oc.lengthSq() - t * t;
-      if (d2 < r * r && (!best || t < best.t)) best = { c, t };
+      if (oc.lengthSq() - t * t < s.radius * s.radius && (!best || t < best.t)) best = { id: r.id, sp, r, t };
     }
     return best;
-  }
-
-  scare(c) {
-    c.state = 'flee';
-    c.timer = 5;
   }
 }

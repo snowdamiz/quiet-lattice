@@ -11,8 +11,8 @@
 //
 // Drawn: players flying, landed or docked as their ship, and `ship` entities (NPC ships, cutscene actors), by hull
 // (RemoteShips; a snapshot without one is the Lark every pilot starts in). Players on foot are hidden until the body rig
-// (P1.E05.T04); creatures are P1.E08.T09's (fauna from snapshots); npcs (walkers) and props wait for the body rig and a
-// prop catalog, loot and pods for P1.E08.T04 and P1.E06.T03: none of them is followed here.
+// (P1.E05.T04); creatures (`mob` entities) are drawn by Fauna (P1.E08.T09), from the same pose buffers; npcs (walkers) and
+// props wait for the body rig and a prop catalog, loot and pods for P1.E06.T03: none of them is followed here.
 import * as THREE from 'three';
 import { detectionDistance, effectiveSignature, movementSignals, shipStats } from '@astra/shared/ships';
 import { coverAtObjects } from '@astra/shared/world';
@@ -24,7 +24,7 @@ import { PlaybackClock } from './clock.js';
 import { RemoteShips } from './RemoteShips.js';
 
 /** The entity kinds this layer follows. */
-export const FOLLOWED = new Set(['player', 'ship']);
+export const FOLLOWED = new Set(['player', 'ship', 'mob']);
 /** The time constant (s) a drawn jump is blended out with (critically damped: mostly gone in 4 of them). */
 export const BLEND_S = 0.2;
 /** A drawn jump larger than this (m) is no motion to blend: it is shown... */
@@ -60,6 +60,11 @@ class Remote {
     this.name = null;
     this.people = null;
     this.hull = DEFAULT_HULL;
+    /** a creature's species (its index in its world's list), level, health (0-1) and attack phase, as last sent */
+    this.species = null;
+    this.level = null;
+    this.hp = null;
+    this.attack = null;
     this.buf = new PoseBuffer();
     /** the buffer's pose at the render time (frame, pos, quat, vel, mode, since) */
     this.pose = { frame: null, pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: new THREE.Vector3(), mode: null, since: -Infinity };
@@ -95,10 +100,11 @@ function turn(v, from, to) {
 }
 
 export class RemoteEntities {
-  /** `view` draws the entities (RemoteShips; tests give a stand-in). */
-  constructor(game, { view = new RemoteShips(game) } = {}) {
+  /** `view` draws the ships (RemoteShips; tests give a stand-in) and `fauna` the creatures (the game's Fauna). */
+  constructor(game, { view = new RemoteShips(game), fauna = game.fauna ?? null } = {}) {
     this.game = game;
     this.view = view;
+    this.fauna = fauna;
     this.group = view.group;
     this.byId = new Map();
     this.list = [];
@@ -250,6 +256,10 @@ export class RemoteEntities {
       r.name = e.name ?? null;
       r.people = e.people ?? null;
       r.hull = e.hull ?? DEFAULT_HULL;
+      r.species = e.species ?? null;
+      r.level = e.level ?? null;
+      r.hp = e.hp ?? null;
+      r.attack = e.attack ?? null;
       this.addSample(r, e, time);
     }
     for (const r of this.list) if (r.seen !== stamp && r.goneAt === null) r.goneAt = time;
@@ -323,10 +333,11 @@ export class RemoteEntities {
       toWorld(r.frame, r.pos, r.world);
       if (r.frame) r.worldQuat.copy(r.frame.quaternion).multiply(r.pose.quat);
       else r.worldQuat.copy(r.pose.quat);
-      r.shown = (r.kind !== 'player' || r.pose.mode !== 'foot') && this.view.draws(r.hull);
+      r.shown = r.kind === 'mob' ? !!this.fauna?.draws(r) : (r.kind !== 'player' || r.pose.mode !== 'foot') && this.view.draws(r.hull);
       if (r.shown && r.pose.mode === 'landed') this.setDown(r);
     }
     this.view.update(this.list, dt);
+    this.fauna?.update(this.list, dt);
   }
 
   // A ship set down on a world flattens the plants under it, as the player's does (Ship.touchDown), once where it sits.

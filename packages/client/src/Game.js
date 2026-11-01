@@ -49,6 +49,7 @@ const _v4 = new THREE.Vector3();
 const _v5 = new THREE.Vector3();
 const _v6 = new THREE.Vector3();
 const _viewer = new THREE.Vector3();
+const _aim = new THREE.Vector3();
 const _q1 = new THREE.Quaternion();
 const _c1 = new THREE.Color();
 const _m4 = new THREE.Matrix4();
@@ -143,7 +144,9 @@ export class Game {
     this.pirates = new Pirates(this);
     this.flora = new Flora(this);
     this.engine.scene.add(this.flora.group);
+    // the server's herds, drawn from the zone's snapshots by RemoteEntities (below)
     this.fauna = new Fauna(this);
+    this.engine.scene.add(this.fauna.group);
     this.structures = new Structures(this);
     this.cities = new Cities(this);
     this.asteroids = new Asteroids(this);
@@ -284,7 +287,7 @@ export class Game {
     if (this.system) this.disposeSystem(this.system, this.station, true);
     this.flora.reset();
     this.pirates?.clear();
-    this.fauna.setPlanet(null);
+    this.fauna.reset();
     this.structures.setPlanet(null);
     this.cities.setPlanet(null);
     this.system = built.system;
@@ -813,23 +816,13 @@ export class Game {
       // whichever is nearer along the aim ray gets the prompt: a creature in front of a
       // tree can be analyzed, a rock in front of a creature can be mined
       let pc = null;
-      if (!prompt && f && f.sampler) pc = this.fauna.pick(this.cam.pos, new THREE.Vector3(0, 0, -1).applyQuaternion(this.cam.quat), 70);
+      if (!prompt) pc = this.fauna.pick(this.camWorld, _aim.set(0, 0, -1).applyQuaternion(this.camWorldQuat), 70);
       const tool = this.multitool.target;
       if (!prompt && tool && !(pc && pc.t < tool.t)) prompt = `<kbd>LMB</kbd>Mine ${tool.label}`;
+      // Analysis is the server's (P1.E08.T04): it checks the creature, range and sight, and answers with the codex entry (onAnalyze)
       if (!prompt && pc) {
-        const sp = pc.c.sp;
-        // Analysis is the server's (P1.E08.T04): online it takes the server's creatures (analyze), which the client draws
-        // from P1.E08.T09 on; these herds are the client's own, so online they show their name only. The dev sandbox
-        // analyzes its own for its quest book (updateQuests), and pays nothing for it.
-        const known = !!this.net || this.fauna.scanned.has(sp) || this.fauna.scannedNames.has(sp.name);
-        prompt = known ? `${sp.name}` : `<kbd>E</kbd>Analyze ${sp.name}`;
-        if (!known && inp.hit('KeyE')) {
-          this.fauna.scanned.add(sp);
-          this.fauna.scannedNames.add(sp.name);
-          this.audio.play('discovery');
-          this.hud.showBanner(sp.name.toUpperCase(), 'New Species Discovered', [`${sp.kind === 'flyer' ? 'Airborne' : sp.kind === 'biped' ? 'Bipedal' : 'Quadruped'} · ${sp.skittish ? 'Skittish' : 'Docile'} · ${(sp.size * 1.2).toFixed(1)} m`]);
-        }
-        if (this.multitool.firing && pc.t < 35) this.fauna.scare(pc.c);
+        prompt = `<kbd>E</kbd>Analyze ${pc.sp.name}`;
+        if (inp.hit('KeyE')) this.analyze(pc.id);
       }
       if (inp.hit('KeyC')) this.scan();
     }
@@ -928,7 +921,7 @@ export class Game {
   // ---------- quests (the sandbox) ----------
   // Online the server moves quests and the objective line reads its state. In the sandbox the shared engine moves the
   // book twice a second from what the game knows, as the server's quest runtime does from zone state: where the ship or
-  // walker is, what the inventory holds, the sites visited and the species analyzed (each counted once by its step).
+  // walker is, what the inventory holds and the sites visited.
   updateQuests(dt) {
     if (this.mode === 'title' || this.net) return;
     const q = (this.questTick ||= { wait: 0, dt: 0, started: false });
@@ -944,7 +937,6 @@ export class Game {
     }
     notes.push(...book.apply({ type: 'held', items: ctx.held }, ctx));
     for (const id of this.structures.visited) notes.push(...book.apply({ type: 'enter', place: `site:${id.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` }, ctx));
-    for (const species of this.fauna.scannedNames) notes.push(...book.apply({ type: 'analyze', species: String(species).slice(0, 64) }, ctx));
     notes.push(...book.apply({ type: 'tick', dt: q.dt, at: ctx.at }, ctx));
     q.dt = 0;
     this.questNotes(notes);
@@ -1012,7 +1004,7 @@ export class Game {
   }
 
   // Online: asks the server to analyze creature `target`, its zone entity id (ARCHITECTURE §22); the server checks it
-  // and answers with `analyze` (onAnalyze). Aiming at the server's creatures comes with drawing them (P1.E08.T09). False
+  // and answers with `analyze` (onAnalyze). The crosshair's creature is one of the server's, as drawn (Fauna.pick). False
   // when not connected.
   analyze(target) {
     if (!this.net?.joined) return false;
@@ -1279,7 +1271,6 @@ export class Game {
     this.ship.group.visible = true;
     this.remotes.update(dt);
     this.flora.update(dt, current);
-    this.fauna.update(dt, current);
     this.structures.update(dt, current);
     // (cities' lights show from orbit, and from the station above their world)
     this.cities.update(dt, focus?.sampler ? focus : focus?.kind === 'station' && !this.indoor ? focus.parent : null);

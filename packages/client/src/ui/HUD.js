@@ -9,6 +9,7 @@ import { SocialUI } from './social/SocialUI.js';
 import { BANNER_FADE_IN, BANNER_FADE_OUT, BANNER_MS, BannerQueue } from './banners.js';
 
 const _v = new THREE.Vector3();
+const _up = new THREE.Vector3();
 
 // Other pilots' markers are placed by src/remote/markers.js: the mark over the ship's bounds on screen, the label beside
 // the mark, both clear of the keep-out (the fixed HUD, the local ship) and of each other.
@@ -272,8 +273,9 @@ export class HUD {
   }
 
   // (as plain text: a toast can carry the server's words, a notice event, which must never be read as markup)
-  toast(text, kind = 'info') {
-    if (text === this.lastToast && this.now() - this.lastToastT < 2500) return;
+  // (`repeat`: a reward is shown every time it comes, though the last toast said the same: two kills paid the same)
+  toast(text, kind = 'info', { repeat = false } = {}) {
+    if (!repeat && text === this.lastToast && this.now() - this.lastToastT < 2500) return;
     this.lastToast = text;
     this.lastToastT = this.now();
     const t = el('div', `toast ${kind}`, this.toasts);
@@ -675,9 +677,9 @@ export class HUD {
   updateHits(feed) {
     if (!feed) return;
     const { dealt, taken, gained } = feed.take();
-    for (const h of dealt) this.hitNumber(h.amount, h.killed);
+    for (const h of dealt) this.hitNumber(h.amount, h.killed, h.target);
     if (taken.length) this.flash('damage');
-    for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good');
+    for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good', { repeat: true });
   }
 
   // World events (ARCHITECTURE §26): a banner as one is announced, starts and ends in the system, and toasts as the
@@ -690,13 +692,41 @@ export class HUD {
     }
   }
 
-  hitNumber(amount, killed) {
+  // Where a hit on creature `id` shows: over its head, on screen. Null when it is not drawn this frame (out of view, behind the
+  // camera, or not a creature the client draws), and the number then rises off the reticle.
+  hitAnchor(id) {
+    const g = this.game;
+    const r = g.remotes?.get(id);
+    const sp = r?.drawn && g.fauna.speciesOf(r);
+    if (!sp) return null;
+    const cam = g.engine.camera;
+    _v.copy(r.world).sub(g.camWorld);
+    // (over the head of a walker, the body of a flyer: straight up from its feet along its world's up)
+    const up = r.frame ? _up.copy(r.world).sub(r.frame.position).normalize() : _up.set(0, 1, 0);
+    _v.addScaledVector(up, sp.size * (sp.kind === 'flyer' ? 0.5 : 1.25)).applyQuaternion(g.camWorldQuatInv);
+    if (_v.z >= 0) return null;
+    _v.applyMatrix4(cam.projectionMatrix);
+    const x = (_v.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (-_v.y * 0.5 + 0.5) * window.innerHeight;
+    return x > 0 && x < window.innerWidth && y > 0 && y < window.innerHeight ? { x, y } : null;
+  }
+
+  // A hit's damage rising: over the creature it landed on (the reticle when that is not on screen), gold and larger for a
+  // kill. Hits landing together on one creature climb a step each, and sideways in turn, so none sits on another.
+  hitNumber(amount, killed, target) {
     const e = el('div', 'hit-number', this.hitsEl);
     e.textContent = String(amount > 0 ? Math.max(1, Math.round(amount)) : 0);
+    const at = this.hitAnchor(target);
+    const now = this.now();
+    const live = (this.hitLive ??= []).filter((h) => now - h.at < 600 && h.el.isConnected);
+    const stacked = live.filter((h) => h.target === target).length;
+    this.hitLive = live;
+    live.push({ el: e, target, at: now });
     const dx = ((this.hitsEl.children.length % 5) - 2) * 18;
+    const dy = -(stacked % 4) * 20;
     // (the reticle readouts' type and the HUD's palette: style.css's tokens)
     Object.assign(e.style, {
-      position: 'absolute', left: `calc(50% + ${dx}px)`, top: '44%', transform: 'translate(-50%, 0)', pointerEvents: 'none',
+      position: 'absolute', left: at ? `${at.x + dx}px` : `calc(50% + ${dx}px)`, top: at ? `${at.y + dy}px` : `calc(44% + ${dy}px)`, transform: 'translate(-50%, 0)', pointerEvents: 'none',
       color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '500', fontSize: killed ? '20px' : '16px',
       lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: 'var(--shadow)',
       transition: 'transform 0.9s ease-out, opacity 0.9s ease-in',
