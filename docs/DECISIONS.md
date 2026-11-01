@@ -1102,3 +1102,33 @@ Format: task id, question → choice → why.
   test). Open: combat keeps join-time skills until P1.E06.T05; the join path's owned skills untested (P1.E06.T05's join
   test); an in-session zone handoff (P1.E04.T04) must carry the current owned nodes; the client never uses the
   oxygen or sodium cartridge items, and its refills change only the client's copy (P1.E06.T06).
+- **P1.E07.T09** Pilot I–II (`@astra/shared/data/skills/pilot.ts`, `ships/stats.ts`, `ships/environment.ts`, server
+  `combat/zone.ts`, `sim/movement/authority.ts`, `zones/*`, `gateway/ws.ts`, client `Ship.js`, `Game.js`, `Menus.js`,
+  ARCHITECTURE §7, §19, §20) → Throttle Tuning ×1.1 and Photon Thrusters ×1.25 multiply (×1.375, 825 m/s on the
+  Lark); Shield and Hull 125 are ×1.25 of each hull's own (as under P1.E02.T07). Soft Landing: the server refuses a
+  ship coming to rest faster than `landingSpeedMax × FLIGHT_TOLERANCE.factor` (rule `landing_speed`), judging the
+  larger of the reported speed and the step's displacement, only for steps over 0.02 s; the client gates the start of
+  a landing. The platings divide damage in the shared `hazardDamagePerS`, which only the client ticks, so hazard hull
+  damage stays the client's until P1.E06.T07. Shield Recharge is deleted with no replacement: the dock refill restores
+  shields and the server heals nothing; the trade terminal only sells now (follow-up for P1.E13.T03). One live
+  re-tune path, replacing P1.E07.T10's `reskill`: one gateway subscription on every skills notification
+  (`SkillService.flight` → `ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune` + `ZoneCombat.retuned`);
+  on a `LoadoutError` the ship keeps its numbers and a warning is logged. The join carries `SkillService.flight` (ship
+  and owned nodes). `SkillService.shipSlots` is a narrow read for the toggles' hold check, and `context()` reads it,
+  not the other way round (the merge's stack overflow). The SHOP list and `applyUpgrade` deleted. Client: `Game.onSkills`
+  is the only listener and calls `ship.setSkills`, which keeps each pool's fraction like the server; the dock refill and
+  `shipDestroyed` read `stats.shieldMax`/`hullMax`. Open: the HUD and cockpit bars still divide by 100 (folded into
+  P1.E04.T06); a hull swap carries each pool's fraction, and the live re-tune's hull argument is tested only on the
+  Lark (both folded into P1.E12.T05).
+- **P1.E06.T05** Combat follows the build (`combat/zone.ts`, `zones/*`, `gateway/ws.ts`, tests; delivered on P1.E07.T09's
+  branch) → the done line's `Zone.reskill` is `Zone.retune`. `ZoneCombat.retuned` swaps the profile's ship and skills
+  and recomputes the suit, hull and shield maxima and the damage mods on every skills change, each pool keeping its
+  fraction: a pool at 0 stays 0 and the player stays down, a refund never kills, refund then rebuy gains nothing
+  (replacing T09's "damage taken stays" and the floor of 1); a pool whose old maximum was 0 starts full. Vitals are
+  rewritten in place, no longer cached for good; a player never hurt gets full vitals at the current maxima when first
+  hit. Hollowed is not a combat mod (its flag is aggro and nothing reads it yet), so the damage-mod tests use Grey
+  Blood; whoever wires Hollowed reads the live owned nodes. Over the wire, a mid-fight respec of the plating takes the
+  hull maximum 125 → 100 and the next hit lands on the new maximum; Dense Bones and Grey Blood are unit-tested on
+  `retuned`. The join test with Sprint Stride owned is P1.E07.T10's `exosuit.int.test.ts` on `flight`, plus two Pilot
+  join tests (four nodes; a stored Swift hull). A mid-fight respec is not blocked: the fraction rule makes it neither a
+  heal nor a wound.
