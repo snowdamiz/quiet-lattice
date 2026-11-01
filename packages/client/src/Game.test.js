@@ -617,6 +617,7 @@ describe('Game: where the Edge stands (P2.E22.T02)', () => {
     const g = fake({
       inventory: new Inventory(),
       hud: { toast: vi.fn(), social: { attach: vi.fn() } },
+      remotes: { attach: vi.fn() },
       menus: { setConnection: vi.fn(), showMessage: vi.fn() },
       overlay: null,
       onWelcome: vi.fn(),
