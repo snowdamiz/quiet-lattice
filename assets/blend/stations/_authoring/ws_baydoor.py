@@ -109,11 +109,11 @@ def leaves():
             y = 0.3 + (4 - k) * PITCH
             if side == "L":
                 x0 = -65.0 + k * (W - LAP)
-                open_x = -(x0 + 65.0) - W + 0.2 - (4 - k) * 0.3
+                open_x = -(x0 + 65.0) - W - 0.3 - (4 - k) * 0.3
                 lead = x0 + W
             else:
                 x0 = 65.0 - W - k * (W - LAP)
-                open_x = (65.0 - (x0 + W)) + W - 0.2 + (4 - k) * 0.3
+                open_x = (65.0 - (x0 + W)) + W + 0.3 + (4 - k) * 0.3
                 lead = x0
             out.append((side, k, x0, y, open_x, lead, (k + 1) if side == "L" else (10 - k)))
     return out

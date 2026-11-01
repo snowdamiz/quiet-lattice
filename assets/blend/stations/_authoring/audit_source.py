@@ -39,6 +39,8 @@ for name in ("waystation", "scrapyard"):
             assert leaf["open_x"] == collider["open_x"]
             assert leaf["open_seconds"] == collider["open_seconds"]
             xs = [v.co.x + leaf["open_x"] for v in leaf.data.vertices]
+            assert max(xs) <= -65 if leaf["leaf"].startswith("L") else min(xs) >= 65
+            assert min(xs) >= -80 and max(xs) <= 80
             evidence.append({"leaf": leaf["leaf"], "open_x": leaf["open_x"], "open_x_bounds": [min(xs), max(xs)], "collider": collider.name})
         report["door"] = {
             "class": bpy.data.collections["ws_baydoor"]["asset_class"],
