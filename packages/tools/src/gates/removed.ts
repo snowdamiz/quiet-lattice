@@ -55,7 +55,8 @@ export const RULES: Rule[] = [
   },
   { what: 'demo multitool model', task: 'P1.E05.T03', file: 'packages/client/public/models/multitool.glb' },
   // the server holds the nodes and what the beam breaks (P1.E13.T01); the client hides what it says is gone
-  { what: "the flora's own mined sets", task: 'P1.E13.T06', file: `${CLIENT}/gameplay/Flora.js`, pattern: /\bmined(ByPlanet)?\b/ },
+  { what: "the flora's own mined sets", task: 'P1.E13.T06', file: `${CLIENT}/gameplay/Flora.js`, pattern: /\bminedByPlanet\b|\bthis\.mined\b/ },
+  { what: "the flora species' own yield table", task: 'P1.E13.T06', file: `${CLIENT}/gameplay/Flora.js`, pattern: /\byield:\s*(\[|t\.yield)/ },
   { what: "the beam's local resource grants", task: 'P1.E13.T06', file: `${CLIENT}/entities/Multitool.js`, pattern: /\binventory\.add\(/ },
 ];
 

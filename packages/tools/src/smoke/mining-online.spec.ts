@@ -3,11 +3,12 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { enterPicked, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 
-// Resource nodes from the server's state (P1.E13.T06), between two clients as players run them (online.ts: a scratch
-// database, the server on a clock the spec steps, Vite). Two pilots are put on foot on their home world a few metres from
-// one resource node and hold their beams on it. Each draws the node from the shared scatter, sends its hits as requests,
-// and shows it gone once the server says so: both see it vanish, a client never asks for it while it is gone, and both see
-// it back once it has grown back. The server's clock and the pages' are the spec's to step (as in movement-online.spec.ts),
+// Resource nodes from the server's state (P1.E13.T06), between three clients as players run them (online.ts: a scratch
+// database, the server on a clock the spec steps, Vite). Three pilots are put on foot on their home world a few metres from
+// one resource node; two hold their beams on it and the third only watches. Each draws the node from the shared scatter
+// and shows it gone once the server says so: the miners send their hits as requests and see it vanish, a client never asks
+// for it while it is gone, and the watcher, which never sent a hit and so is told nothing by any answer or share, sees it
+// vanish from the server's `nodes` state alone. All three see it back once it has grown back. The server's clock and the pages' are the spec's to step (as in movement-online.spec.ts),
 // so the beam's seconds and the node's minutes pass exactly as meant.
 
 let online: Online;
@@ -221,13 +222,17 @@ async function aim(page: Page, node: Found, beam: boolean): Promise<void> {
   );
 }
 
-test('two clients mine one node: both see it vanish, neither asks for it while it is gone, both see it grow back', async ({ browser }) => {
+test('two clients mine one node and a third watches: all see it vanish, none asks for it while it is gone, all see it grow back', async ({ browser }) => {
   test.setTimeout(900_000);
   const errors: string[] = [];
   const a = await pilot(browser, errors);
   log('pilot a in');
   const b = await pilot(browser, errors);
   log('pilot b in');
+  const c = await pilot(browser, errors);
+  log('pilot c in');
+  const miners = [a, b];
+  const all = [a, b, c];
 
   // a node on the home world, found in the first pilot's scatter
   let node: Found | null = null;
@@ -243,14 +248,16 @@ test('two clients mine one node: both see it vanish, neither asks for it while i
 
   await stand(a, await groundBeside(a, found.pos, 6));
   await stand(b, await groundBeside(a, found.pos, -6));
-  log('both beside the node');
+  await stand(c, await groundBeside(a, found.pos, 12));
+  log('all beside the node');
   const sees = `[...window.game.flora.instancesNear(new (window.game.cam.pos.constructor)(...${JSON.stringify(found.pos)}), 3, (sp) => sp.node)].some((i) => window.game.flora.mineTarget(i).node === ${JSON.stringify(found.id)})`;
   await until(a, sees, 60_000);
   await until(b, sees, 60_000);
-  log('both see the node');
+  await until(c, sees, 60_000);
+  log('all see the node');
 
   // what each page is told of the node, and every hit it sends for it
-  for (const p of [a, b]) {
+  for (const p of all) {
     await p.evaluate((id) => {
       const w = window as unknown as Window & { __told: { seq: number; result: string }[]; __sentFor: number[] };
       const net = window.game.net;
@@ -269,54 +276,59 @@ test('two clients mine one node: both see it vanish, neither asks for it while i
   log('listeners set');
   await freeze(a);
   await freeze(b);
-  await play([a, b], 500);
+  await freeze(c);
+  await play(all, 500);
   log('frozen, played 500 ms');
   expect(await a.evaluate(gone)).toBe(false);
 
   // both hold the beam on it
   await aim(a, found, true);
   await aim(b, found, true);
-  const vanished = await playUntil([a, b], gone, 20_000);
+  const vanished = await playUntil(all, gone, 20_000);
   log('vanished', vanished);
-  expect(vanished, `the node never went in both pages (${found.type}, ${found.hp} hp)`).toBe(true);
-  for (const p of [a, b]) {
+  expect(vanished, `the node never went in all pages (${found.type}, ${found.hp} hp)`).toBe(true);
+  for (const p of miners) {
     await aim(p, found, false);
     await p.evaluate(() => window.dev.button(0, false));
   }
-  await play([a, b], 300);
-  for (const p of [a, b]) {
+  await play(all, 300);
+  for (const p of all) {
     expect(await p.evaluate(sees), 'drawn while the server says it is gone').toBe(false);
     expect(await p.evaluate(gone)).toBe(true);
   }
   // both beams were on it, and the server told of its breaking once as an answer to a hit
-  const sent = await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
+  const sent = await Promise.all(miners.map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
   expect(sent[0]).toBeGreaterThan(0);
   expect(sent[1]).toBeGreaterThan(0);
-  const told = await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as Window & { __told: { seq: number; result: string }[] }).__told)));
+  const told = await Promise.all(all.map((p) => p.evaluate(() => (window as unknown as Window & { __told: { seq: number; result: string }[] }).__told)));
   expect(told.flat().filter((m) => m.result === 'depleted' && m.seq > 0)).toHaveLength(1);
+  // (the watcher sent no hit, so it dealt no damage and got neither an answer nor a share: it learned of the break from
+  // the `nodes` state alone)
+  expect(told[2]).toEqual([]);
+  expect(await c.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor)).toEqual([]);
   log('told', JSON.stringify(told));
 
   // holding the beam where it stood asks the server for nothing
-  const sentBefore = await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
-  for (const p of [a, b]) await aim(p, found, true);
-  await play([a, b], 2000);
-  for (const p of [a, b]) await p.evaluate(() => window.dev.button(0, false));
-  const sentAfter = await Promise.all([a, b].map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
+  const sentBefore = await Promise.all(miners.map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
+  for (const p of miners) await aim(p, found, true);
+  await play(all, 2000);
+  for (const p of miners) await p.evaluate(() => window.dev.button(0, false));
+  const sentAfter = await Promise.all(miners.map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
   expect(sentAfter).toEqual(sentBefore);
-  for (const p of [a, b]) expect(await p.evaluate(sees)).toBe(false);
+  for (const p of all) expect(await p.evaluate(sees)).toBe(false);
   // (nor does the client ask by name)
-  for (const p of [a, b]) {
+  for (const p of all) {
     const asked = await p.evaluate((id) => window.game.net.mining.beam(1, window.game.flora.frameId, { node: id }, null, window.game.time), found.id);
     expect(asked).toBe(false);
   }
 
   // it grows back (a formation takes the longest, eight minutes), the same node, in both pages
   log('holding the beam on the gone node asked for nothing');
-  await stall([a, b], 490_000);
-  await play([a, b], 200);
-  const back = await playUntil([a, b], `!(${gone})`, 20_000);
-  expect(back, 'the node never grew back in both pages').toBe(true);
-  for (const p of [a, b]) expect(await p.evaluate(sees)).toBe(true);
+  await stall(all, 490_000);
+  await play(all, 200);
+  const back = await playUntil(all, `!(${gone})`, 20_000);
+  expect(back, 'the node never grew back in all pages').toBe(true);
+  for (const p of all) expect(await p.evaluate(sees)).toBe(true);
 
   expect(errors).toEqual([]);
 });

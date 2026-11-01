@@ -3,13 +3,18 @@
 // the server says players did to them (`nodes` state, a cell at a time, for the cells round the player) and sends the
 // beam's `mine` hits. A node the server says is gone is hidden and cannot be mined; one the beam breaks goes when the
 // server's answer says so, never before. The common flora (trees, rocks: each client's own scatter) has no shared state:
-// what the client hides is the plants the server answered it broke, as many as the server remembers.
+// what the client hides is the plants the server answered it broke, as many as the server remembers (one list across all
+// worlds: a plant's ref carries its world's frame, so the server's list cannot take one world's plant for another's).
 
 /** The beam's hits go to the server about this often while it stays on a target, s. The server pays a hit the beam time it
  * measured itself (at most 0.5 s), so a slower client loses time and a faster one gains none. */
 export const HIT_INTERVAL_S = 0.25;
-/** How many broken plants the client keeps hidden: the server refuses a plant it saw broken only among its last 256. */
+/** How many broken plants the client keeps hidden, across all worlds: the server refuses a plant it saw broken only among
+ * its last 256 for the character. */
 export const FLORA_REMEMBERED = 256;
+/** The steps the server shows a node's damage to other players in (its SHOWN_STEPS): the exact hp of an answer is rounded
+ * the same way, so the node's size does not jump between the two. */
+const SHOWN_STEPS = 10;
 /** A hit unanswered this long is forgotten (the gateway drops an over-budget message without a reply), ms. */
 const PENDING_MS = 10_000;
 
@@ -18,8 +23,8 @@ export class Mining {
     this.net = net;
     /** frame id → cell id → { gone: Set of `<type>_<k>`, hurt: Map of `<type>_<k>` → fraction left } */
     this.frames = new Map();
-    /** frame id → the keys of the plants of the client's own flora the server answered it broke, oldest first */
-    this.broken = new Map();
+    /** the refs of the plants of the client's own flora the server answered it broke, on any world, oldest first */
+    this.broken = new Set();
     this.seq = 0;
     /** Bumped whenever what is hidden or hurt changes, so the flora knows to redraw. */
     this.rev = 0;
@@ -77,9 +82,9 @@ export class Mining {
     return this.cell(frame, cell)?.hurt.get(sub) ?? 1;
   }
 
-  /** The keys of the plants of the client's own flora hidden on `frame`. */
-  floraGone(frame) {
-    return this.broken.get(frame);
+  /** Whether the plant of the client's own flora with this ref (its world's frame in it) is hidden. */
+  floraGone(ref) {
+    return this.broken.has(ref);
   }
 
   /** Splits a node id (`<face>_<i>_<j>_<type>_<k>`) into its cell and the node within it. */
@@ -103,12 +108,10 @@ export class Mining {
     c.hurt.delete(sub);
   }
 
-  breakFlora(frame, ref) {
-    let keys = this.broken.get(frame);
-    if (!keys) this.broken.set(frame, (keys = new Set()));
-    keys.delete(ref);
-    keys.add(ref);
-    if (keys.size > FLORA_REMEMBERED) keys.delete(keys.values().next().value);
+  breakFlora(ref) {
+    this.broken.delete(ref);
+    this.broken.add(ref);
+    if (this.broken.size > FLORA_REMEMBERED) this.broken.delete(this.broken.values().next().value);
   }
 
   /** The server's answer to a hit, or its word that another miner's share of a node is ours (`seq` 0). */
@@ -120,8 +123,8 @@ export class Mining {
     if (m.node !== undefined) {
       const [cell, sub] = Mining.split(m.node);
       if (m.result === 'depleted' || (m.result === 'refused' && reason === 'harvested')) this.breakNode(m.frame, m.node);
-      else if (m.result === 'hit') this.touch(m.frame, cell).hurt.set(sub, m.hp);
-    } else if (m.result === 'depleted' || (m.result === 'refused' && reason === 'harvested')) this.breakFlora(m.frame, m.flora);
+      else if (m.result === 'hit') this.touch(m.frame, cell).hurt.set(sub, Math.ceil(m.hp * SHOWN_STEPS) / SHOWN_STEPS);
+    } else if (m.result === 'depleted' || (m.result === 'refused' && reason === 'harvested')) this.breakFlora(m.flora);
     this.rev++;
     for (const fn of [...this.listeners]) fn({ ...m, ctx: p?.ctx });
   }
@@ -138,7 +141,7 @@ export class Mining {
     if (target.node !== undefined) {
       const [cell, sub] = Mining.split(target.node);
       if (this.gone(frame, cell, sub)) return false;
-    } else if (this.floraGone(frame)?.has(target.flora.ref)) return false;
+    } else if (this.floraGone(target.flora.ref)) return false;
     this.clock += dt;
     if (this.clock < HIT_INTERVAL_S) return false;
     // (what a frame went over is kept, so the rate holds; a stall's backlog is not sent as a burst)

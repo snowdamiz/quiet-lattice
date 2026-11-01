@@ -2,7 +2,8 @@
 // state, and the client hides nothing of its own. The cells are made by hand; the scatter itself has golden tests in shared.
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { Mining } from '../net/mining.js';
+import { createPlanetParams, FLORA_HARVEST } from '@astra/shared/world';
+import { FLORA_REMEMBERED, Mining } from '../net/mining.js';
 import { Flora } from './Flora.js';
 
 const FRAME = '1:1';
@@ -145,9 +146,9 @@ describe('the plants of the flora', () => {
     flora.rebuild();
     expect(rockIds(flora)).toEqual([7, 8]);
     expect(drawn(flora)[1]).toBe(2);
-    expect(flora.mineTarget(rock)).toEqual({ flora: { kind: 'rock', ref: rock.key, at: [6, 1000, 0] } });
+    expect(flora.mineTarget(rock)).toEqual({ flora: { kind: 'rock', ref: `${FRAME}.${rock.key}`, at: [6, 1000, 0] } });
     net.mining.beam(1, FRAME, flora.mineTarget(rock), rock, 1);
-    net.push({ t: 'mine', seq: 1, frame: FRAME, flora: rock.key, result: 'depleted', item: 'ferrite', count: 6, added: 6 });
+    net.push({ t: 'mine', seq: 1, frame: FRAME, flora: `${FRAME}.${rock.key}`, result: 'depleted', item: 'ferrite', count: 6, added: 6 });
     flora.broke(rock);
     flora.rebuild();
     expect(rockIds(flora)).toEqual([8]);
@@ -164,13 +165,55 @@ describe('the plants of the flora', () => {
     expect(flora.serverState()).toBeNull();
   });
 
-  it('come back with the next session, as the server forgets them', () => {
+  it('come back with the next session, though the server goes on refusing them for an hour', () => {
     const { flora, net } = build();
     const rock = near(flora).find((i) => i.sp.harvest && i.id === 7);
-    net.push({ t: 'mine', seq: 1, frame: FRAME, flora: rock.key, result: 'depleted', item: 'ferrite', count: 6, added: 6 });
+    net.push({ t: 'mine', seq: 1, frame: FRAME, flora: flora.floraRef(rock.key), result: 'depleted', item: 'ferrite', count: 6, added: 6 });
     expect(rockIds(flora)).toEqual([8]);
     net.push({ t: 'welcome' });
     expect(rockIds(flora)).toEqual([7, 8]);
+  });
+
+  it('are named with their world, so the same key on another world is another plant', () => {
+    const { flora, net } = build();
+    const rock = near(flora).find((i) => i.sp.harvest && i.id === 7);
+    net.push({ t: 'mine', seq: 1, frame: FRAME, flora: flora.floraRef(rock.key), result: 'depleted', item: 'ferrite', count: 6, added: 6 });
+    expect(rockIds(flora)).toEqual([8]);
+    flora.frameId = '1:2';
+    expect(rockIds(flora)).toEqual([7, 8]);
+    expect(flora.mineTarget(rock).flora.ref).toBe(`1:2.${rock.key}`);
+    net.mining.beam(1, '1:2', flora.mineTarget(rock), rock, 1);
+    expect(net.sent.at(-1).flora.ref).toBe(`1:2.${rock.key}`);
+    flora.frameId = FRAME;
+    expect(rockIds(flora)).toEqual([8]);
+  });
+
+  it('are let go of together across worlds when the server\'s one list of broken plants is full', () => {
+    const { flora, net, mining } = build();
+    const rock = near(flora).find((i) => i.sp.harvest && i.id === 7);
+    const first = flora.floraRef(rock.key);
+    net.push({ t: 'mine', seq: 1, frame: FRAME, flora: first, result: 'depleted', item: 'ferrite', count: 6, added: 6 });
+    for (let i = 0; i < FLORA_REMEMBERED - 1; i++) {
+      net.push({ t: 'mine', seq: i + 2, frame: i % 2 ? FRAME : '1:2', flora: `${i % 2 ? FRAME : '1:2'}.other_${i}`, result: 'depleted', item: 'carbon', count: 1, added: 1 });
+    }
+    expect(mining.broken.size).toBe(FLORA_REMEMBERED);
+    expect(rockIds(flora)).toEqual([8]);
+    net.push({ t: 'mine', seq: 999, frame: '1:2', flora: '1:2.last', result: 'depleted', item: 'carbon', count: 1, added: 1 });
+    expect(mining.broken.size).toBe(FLORA_REMEMBERED);
+    expect(rockIds(flora)).toEqual([7, 8]);
+  });
+
+  it('wear is kept per world, and dropped when the player leaves for another', () => {
+    const { flora } = build();
+    const rock = near(flora).find((i) => i.sp.harvest && i.id === 7);
+    flora.wear(rock, 0.5);
+    expect([...flora.damage.keys()]).toEqual([`${FRAME}.${rock.key}`]);
+    flora.frameId = '1:2';
+    expect(flora.left(null, { key: '2_10_11' }, 1, rock.sp, 7)).toBe(1);
+    flora.frameId = FRAME;
+    flora.planet = { sampler: null };
+    flora.setPlanet({ sampler: null });
+    expect(flora.damage.size).toBe(0);
   });
 });
 
@@ -182,5 +225,20 @@ describe('clearing ground for a landed ship', () => {
     expect(nodeIds(flora)).toEqual([3, 4]);
     expect(cell.data[1].data.length).toBe(8);
     expect(cell.data[1].ids.length).toBe(1);
+  });
+});
+
+describe('the species of a world', () => {
+  it('take what a plant is worth from the shared table, and carry no yield of their own', () => {
+    const flora = new Flora({ system: { seed: 1, planets: [] }, station: {}, pool: { cancel() {} } });
+    flora.tier = 0;
+    flora.buildSpecies({ params: createPlanetParams(77, 'lush', 6000) });
+    const plants = flora.species.filter((sp) => sp.harvest);
+    expect(plants.length).toBeGreaterThan(2);
+    for (const sp of plants) {
+      expect(sp.hp, sp.name).toBe(FLORA_HARVEST[sp.harvest].hp);
+      expect(sp.res, sp.name).toBe(FLORA_HARVEST[sp.harvest].resource);
+    }
+    for (const sp of flora.species) expect(sp.yield, sp.name).toBeUndefined();
   });
 });

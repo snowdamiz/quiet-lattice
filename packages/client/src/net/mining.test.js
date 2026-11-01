@@ -92,7 +92,7 @@ describe('the nodes the server says are gone', () => {
     socket.push({ t: 'mine', seq: 1, frame: FRAME, flora: 'f1', result: 'depleted', item: 'carbon', count: 5, added: 5 });
     net.emit('welcome', WELCOME, false);
     expect(mining.cell(FRAME, '2_10_11')).toBeUndefined();
-    expect(mining.floraGone(FRAME)).toBeUndefined();
+    expect(mining.broken.size).toBe(0);
   });
 
   it('counts a change of what is drawn, so the flora redraws', () => {
@@ -159,13 +159,13 @@ describe('asking the server to mine', () => {
     expect(hits().length).toBe(120);
     expect(mining.gone(FRAME, '2_10_11', 'copper_3')).toBe(false);
     expect(mining.cell(FRAME, '2_10_11')).toBeUndefined();
-    expect(mining.floraGone(FRAME)).toBeUndefined();
+    expect(mining.broken.size).toBe(0);
   });
 
   it('does not hide a plant because it asked for hits on it either', () => {
     const { mining } = joined();
     beam(mining, 30, { flora: { kind: 'bush', ref: 'k1', at: [0, 0, 0] } });
-    expect(mining.floraGone(FRAME)).toBeUndefined();
+    expect(mining.broken.size).toBe(0);
   });
 });
 
@@ -211,11 +211,11 @@ describe("the server's answers", () => {
     const { mining, socket } = joined();
     mining.beam(1, FRAME, { flora: { kind: 'rock', ref: 'r1', at: [0, 0, 0] } }, null, 5);
     socket.push({ t: 'mine', seq: 1, frame: FRAME, flora: 'r1', result: 'hit', hp: 0.5 });
-    expect(mining.floraGone(FRAME)).toBeUndefined();
+    expect(mining.broken.size).toBe(0);
     socket.push({ t: 'mine', seq: 1, frame: FRAME, flora: 'r1', result: 'depleted', item: 'ferrite', count: 7, added: 7 });
     socket.push({ t: 'mine', seq: 2, frame: FRAME, flora: 'r2', result: 'refused', reason: 'harvested' });
     socket.push({ t: 'mine', seq: 3, frame: FRAME, flora: 'r3', result: 'refused', reason: 'range' });
-    expect([...mining.floraGone(FRAME)]).toEqual(['r1', 'r2']);
+    expect([...mining.broken]).toEqual(['r1', 'r2']);
   });
 
   it('never asks for a plant it hid', () => {
@@ -230,10 +230,32 @@ describe("the server's answers", () => {
     for (let i = 0; i < FLORA_REMEMBERED + 5; i++) {
       socket.push({ t: 'mine', seq: i + 1, frame: FRAME, flora: `p${i}`, result: 'depleted', item: 'carbon', count: 1, added: 1 });
     }
-    const gone = mining.floraGone(FRAME);
-    expect(gone.size).toBe(FLORA_REMEMBERED);
-    expect(gone.has('p0')).toBe(false);
-    expect(gone.has(`p${FLORA_REMEMBERED + 4}`)).toBe(true);
+    expect(mining.broken.size).toBe(FLORA_REMEMBERED);
+    expect(mining.floraGone('p0')).toBe(false);
+    expect(mining.floraGone(`p${FLORA_REMEMBERED + 4}`)).toBe(true);
+  });
+
+  it('keeps one list of them for all worlds, so the 257th break lets the oldest go whichever world it was on', () => {
+    const { mining, socket } = joined();
+    const broke = (seq, frame, ref) => socket.push({ t: 'mine', seq, frame, flora: ref, result: 'depleted', item: 'carbon', count: 1, added: 1 });
+    broke(1, '424242:2', '424242:2.k0');
+    for (let i = 1; i < FLORA_REMEMBERED; i++) broke(i + 1, i % 2 ? FRAME : '424242:2', `${i % 2 ? FRAME : '424242:2'}.k${i}`);
+    expect(mining.broken.size).toBe(FLORA_REMEMBERED);
+    expect(mining.floraGone('424242:2.k0')).toBe(true);
+    broke(999, FRAME, `${FRAME}.k0`);
+    expect(mining.broken.size).toBe(FLORA_REMEMBERED);
+    expect(mining.floraGone('424242:2.k0')).toBe(false);
+    expect(mining.floraGone(`${FRAME}.k0`)).toBe(true);
+  });
+
+  it('rounds the hp of an answer up to the tenth the server pushes, so a node does not jump between the two', () => {
+    const { mining, socket } = joined();
+    mining.beam(1, FRAME, { node: NODE }, null, 5);
+    socket.push({ t: 'mine', seq: 1, frame: FRAME, node: NODE, result: 'hit', hp: 0.62 });
+    const answered = mining.left(FRAME, '2_10_11', 'copper_3');
+    expect(answered).toBe(0.7);
+    socket.push(nodes([{ cell: '2_10_11', gone: [], hurt: [['copper_3', 0.7]] }]));
+    expect(mining.left(FRAME, '2_10_11', 'copper_3')).toBe(answered);
   });
 
   it('forgets a hit that was never answered', () => {

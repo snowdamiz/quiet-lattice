@@ -25,6 +25,18 @@ describe('mining messages', () => {
 
   it('round-trips a hit on a node and on flora, and refuses malformed ones', () => {
     for (const m of [hit, flora] satisfies ClientMessage[]) expect(decodeClientMessage(encodeClientMessage(m))).toEqual(m);
+  });
+
+  it('takes a flora ref that names its world: the frame, a dot and the client\'s instance key, at the longest it can be', () => {
+    const ref = '4294967295:999.5_999999_999999_n99_4294967295';
+    expect(ref.length).toBeLessThanOrEqual(48);
+    const m = { ...flora, flora: { ...tree, ref } };
+    expect(decodeClientMessage(encodeClientMessage(m))).toEqual(m);
+    const answer = { t: 'mine', seq: 2, frame: '424242:3', flora: ref, result: 'refused', reason: 'harvested' } as const satisfies ServerMessage;
+    expect(decodeServerMessage(encodeServerMessage(answer))).toEqual(answer);
+  });
+
+  it('refuses malformed hits', () => {
     for (const bad of [
       { ...hit, seq: 0 },
       { ...hit, frame: '424242:station' },

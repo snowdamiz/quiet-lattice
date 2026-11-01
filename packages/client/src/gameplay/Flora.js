@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import {
   sphereToCube, cubeToSphere, Random, hashInts, mulberry32, archetype, FOOTPRINT, NODE_TYPE_IDS, nodeType, planetNodeLayers,
-  nodeCellLevel, nodeCellMeters,
+  nodeCellLevel, nodeCellMeters, FLORA_HARVEST,
 } from '@astra/shared/world';
 import { frameIdOfFrame } from '../net/pose.js';
 import {
@@ -124,6 +124,7 @@ export class Flora {
     this.group = new THREE.Group();
     this.group.name = 'flora';
     this.planet = null;
+    this.frameId = null;
     this.clearSpots = [];
     this.species = [];
     this.cellsFar = new Map();
@@ -167,6 +168,8 @@ export class Flora {
     this.species = [];
     this.meshRoot = null;
     this.planet = planet;
+    this.frameId = null;
+    this.damage.clear();
     if (!planet || !planet.sampler) return;
     // (the tier the planet's drawn ground was planned at: the system's, the same the server plans with)
     this.tier = planet.ground?.tier ?? 0;
@@ -242,8 +245,11 @@ export class Flora {
       const opts = { wind: def.wind ?? 1, glow: def.glow ?? 1, side: def.side ?? THREE.DoubleSide, aoHeight: Math.max(0.3, model.height * (def.rock ? 0.5 : 0.3)), hideR: def.hideR ?? 0, rough: !!def.rough };
       const near = { geo: model.geo, mesh: makeMesh(model.geo, makeMaterial(nearU, opts), !!def.shadow), capacity: 16 };
       const far = low === model ? null : { geo: low.geo, mesh: makeMesh(low.geo, makeMaterial(farU, opts), false), capacity: 16 };
+      // (a plant of the flora is worth what the shared table says; the server pays it)
+      const harvest = FLORA_HARVEST[def.harvest];
       this.species.push({
         ...def,
+        ...(harvest && { res: harvest.resource, hp: harvest.hp }),
         index: this.species.length,
         geo: model.geo,
         lods: far ? [near, far] : [near],
@@ -275,7 +281,7 @@ export class Flora {
         for (let v = 0; v < 2; v++) {
           const cv = { ...c, pick: pick + v };
           add({
-            name: kind, label: kind === 'crystal' ? 'Crystal Growth' : 'Tree', res: kind === 'crystal' ? 'ferrite' : 'carbon', yield: [12, 25], hp: 3, harvest: kind === 'crystal' ? 'crystal_tree' : 'tree',
+            name: kind, label: kind === 'crystal' ? 'Crystal Growth' : 'Tree', harvest: kind === 'crystal' ? 'crystal_tree' : 'tree',
             build: (r, q) => TREE_BUILDERS[kind](r, cv, q), radius: 330, nearDist: 70, shadow: true, wind: kind === 'crystal' ? 0 : 1,
             spec: spec({ density: 0.0055 * floraDensity * (0.6 + 0.4 * nTrees) * 0.5, moist: 0.55 + i * 0.1, clump: 260, clumpT: -0.15, region: true, sMin: 0.6, sMax: 1.7, tempMin: -0.2, zone, zoneScale: 1100, tilt: kind === 'palm' ? 0.3 : kind === 'crystal' ? 0.15 : 0.08, ...band }),
             collide: true,
@@ -290,7 +296,7 @@ export class Flora {
       for (let v = 0; v < 2; v++) {
         const gcv = { ...gc, pick: gpick + v };
         add({
-          name: 'giant', label: 'Giant Growth', res: 'carbon', yield: [30, 60], hp: 6, harvest: 'giant',
+          name: 'giant', label: 'Giant Growth', harvest: 'giant',
           build: (r, q) => TREE_BUILDERS[giant](r, gcv, q), radius: 420, shadow: true, wind: 0.3, nearDist: 160,
           spec: spec({ density: 0.00045 * floraDensity * 0.5, moist: 0.5, moistK: 0.3, clump: 420, clumpT: 0.1, sMin: 2.2, sMax: 4.6, tempMin: -0.3, slope: 0.85 }),
           collide: true,
@@ -298,12 +304,12 @@ export class Flora {
       }
       // bushes & ferns
       add({
-        name: 'bush', label: 'Shrub', res: 'carbon', yield: [4, 9], hp: 1, harvest: 'bush',
+        name: 'bush', label: 'Shrub', harvest: 'bush',
         build: (r, q) => makeBush(r, { leaf: leafB, accent: floraCols[2 % floraCols.length] }, q), radius: 200, nearDist: 60, shadow: true, hideR: 1.0,
         spec: spec({ density: 0.012 * floraDensity, moist: 0.5, moistK: 0.4, clump: 120, clumpT: -0.3, slope: 0.7 }),
       });
       add({
-        name: 'fern', label: 'Plant', res: 'carbon', yield: [3, 7], hp: 1, harvest: 'fern',
+        name: 'fern', label: 'Plant', harvest: 'fern',
         build: (r, q) => makeFern(r, { leaf: leafA }, q), radius: 140, nearDist: 50,
         spec: spec({ density: 0.02 * floraDensity, moist: 0.6, clump: 60, clumpT: -0.2, sMin: 0.7, sMax: 1.5 }),
       });
@@ -313,7 +319,7 @@ export class Flora {
     else {
       // barren worlds still get crystal formations
       add({
-        name: 'crystal', label: 'Crystal Growth', res: 'ferrite', yield: [10, 20], hp: 2, harvest: 'crystal',
+        name: 'crystal', label: 'Crystal Growth', harvest: 'crystal',
         build: (r, q) => TREE_BUILDERS.crystal(r, { leaf: floraCols[0], trunk, accent: floraCols[0] }, q), radius: 450, shadow: true, wind: 0, lod: false,
         spec: spec({ density: 0.0015, moistK: 0.1, slope: 0.6, clump: 300, clumpT: 0, minH: -1e9 }),
         collide: true,
@@ -321,14 +327,14 @@ export class Flora {
     }
     // rocks
     add({
-      name: 'boulder', label: 'Boulder', res: 'ferrite', yield: [15, 30], hp: 3, harvest: 'boulder',
+      name: 'boulder', label: 'Boulder', harvest: 'boulder',
       build: (r, q) => makeRock(r, rockCol, true, q), radius: 420, shadow: true, wind: 0, side: THREE.FrontSide,
       // rocks gather in outcrops and scree fields instead of an even sprinkle
       spec: spec({ density: 0.0034, moistK: 0, slope: 0.55, clump: 110, clumpT: 0.2, sMin: 1.2, sMax: 3.8, align: 0.7, sink: 0.6, minH: -1e9 }),
       collide: true, rock: true,
     });
     add({
-      name: 'rock', label: 'Rock', res: 'ferrite', yield: [5, 10], hp: 1, harvest: 'rock',
+      name: 'rock', label: 'Rock', harvest: 'rock',
       build: (r, q) => makeRock(r, new THREE.Color(rockCol).multiplyScalar(1.15).getHex(), false, q), radius: 180, wind: 0, side: THREE.FrontSide, nearDist: 40, shadow: true,
       spec: spec({ density: 0.012, moistK: 0, slope: 0.5, clump: 70, clumpT: 0.1, sMin: 0.25, sMax: 0.8, align: 0.9, sink: 0.1, minH: -1e9 }),
       rock: true,
@@ -341,7 +347,7 @@ export class Flora {
       const t = nodeType(layer.type);
       const look = NODE_LOOKS[t.id];
       add({
-        name: t.id, label: t.label, res: t.resource, yield: t.yield, hp: t.hp, node: t.id, deposit: t.kind !== 'plant',
+        name: t.id, label: t.label, res: t.resource, node: t.id, deposit: t.kind !== 'plant',
         build: look.build, radius: look.radius, glow: look.glow, wind: look.wind ?? 0, shadow: !!look.shadow, nearDist: look.nearDist, rough: look.rough,
         seed: hashInts(p.seed, 0x40de, NODE_TYPE_IDS.indexOf(t.id)), spec: { node: layer }, collide: !!look.collide,
       });
@@ -702,7 +708,13 @@ export class Flora {
   serverState() {
     const mining = this.game.net?.mining;
     if (!mining || this.frameId === null) return null;
-    return { mining, plants: mining.floraGone(this.frameId) };
+    return { mining, plants: mining.broken };
+  }
+
+  /** What the server is told a plant of the flora is, and what its answers call it: the instance key with its world's
+   * frame in front (the server keeps one list of broken plants for all worlds, and a key repeats from world to world). */
+  floraRef(key) {
+    return `${this.frameId}.${key}`;
   }
 
   // How much of an instance is left to draw, 0 to 1, or -1 when it is not drawn at all: a node the server says is gone, a
@@ -715,9 +727,9 @@ export class Flora {
       return touched.gone.has(sub) ? -1 : touched.hurt.get(sub) ?? 1;
     }
     if (!server?.plants?.size && !this.damage.size) return 1;
-    const key = this.instanceKey(cell, si, id);
-    if (server?.plants?.has(key)) return -1;
-    const hp = this.damage.get(key);
+    const ref = this.floraRef(this.instanceKey(cell, si, id));
+    if (server?.plants?.has(ref)) return -1;
+    const hp = this.damage.get(ref);
     return hp === undefined ? 1 : hp / sp.hp;
   }
 
@@ -726,7 +738,7 @@ export class Flora {
   mineTarget(inst) {
     const sp = inst.sp;
     if (sp.node) return { node: `${inst.cell.key}_${sp.node}_${inst.id}` };
-    return { flora: { kind: sp.harvest, ref: inst.key, at: [inst.pos.x, inst.pos.y, inst.pos.z] } };
+    return { flora: { kind: sp.harvest, ref: this.floraRef(inst.key), at: [inst.pos.x, inst.pos.y, inst.pos.z] } };
   }
 
   /** The beam is on a plant: it wears down to a sliver for the look of it, and goes only when the server says it broke
@@ -735,13 +747,14 @@ export class Flora {
     this.dirty = true;
     this.rebuildTimer = Math.min(this.rebuildTimer, 0.06);
     if (inst.sp.node) return;
-    this.damage.set(inst.key, Math.max(0, (this.damage.get(inst.key) ?? inst.sp.hp) - power));
+    const ref = this.floraRef(inst.key);
+    this.damage.set(ref, Math.max(0, (this.damage.get(ref) ?? inst.sp.hp) - power));
   }
 
   /** The server says the beam broke `inst`: its pieces fly (the server's state hides it). */
   broke(inst) {
     const sp = inst.sp;
-    this.damage.delete(inst.key);
+    this.damage.delete(this.floraRef(inst.key));
     this.dirty = true;
     this.rebuildTimer = 0;
     const cattr = sp.geo.attributes.color;

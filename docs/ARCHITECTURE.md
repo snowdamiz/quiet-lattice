@@ -1385,12 +1385,16 @@ requests and starts its timer.
   hits. The flora keeps drawing every node from the shared scatter and leaves out those the state says are gone (they are
   not reachable by the beam and do not hold anyone up), drawing the hurt ones as hurt as the server says. While the beam
   stays on a node or a plant the multitool asks for a hit every 0.25 s (`mine {node}` by the node's id, `mine {flora: {kind,
-  ref, at}}` with the flora's own instance key as `ref`); nothing is hidden, broken or granted by sending one. A node goes
+  ref, at}}` with the flora's own instance key as `ref`, the world's frame and a `.` in front of it: the server's one list of
+  broken plants spans all worlds, and a key repeats from world to world); nothing is hidden, broken or granted by sending one. A node goes
   when an answer says it `depleted` (or `harvested`, a hit lost to another miner) and returns when the state stops listing
   it; the inventory is the server's own push and a pickup shows when the answer carries a share. A plant is worn down for
-  the look of it (never past a sliver) and gone when its answer says it broke: the client hides as many broken plants as the
-  server remembers refusing (256), per session. Ground cleared for a landed ship or a site is left out of the cell's own
-  instances when the cell is made, not marked mined. Offline (the dev sandbox) the beam wears things down and nothing is
+  the look of it (never past a sliver) and gone when its answer says it broke: the client keeps one list of the last 256
+  broken plants across all worlds, the oldest let go first, as the server does for the character. They differ only in
+  when each forgets: the client at a reconnect (so a plant broken earlier shows again, and the server's first refusal of
+  it hides it), the server after an hour with no hits. A hurt node shows the server's hp rounded up to a tenth, from a hit
+  answer and from the pushed state alike. Ground cleared for a landed ship or a site is left out of the cell's own
+  instances when the cell is made or the ship lands on it, not marked mined. Offline (the dev sandbox) the beam wears things down and nothing is
   mined.
 
 ## 19. Meters (`packages/server/src/meters`, `@astra/shared/meters`)
