@@ -22,7 +22,7 @@ import { Cities } from './gameplay/Cities.js';
 import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { AUTO_QUESTS, QuestBook, atInfo, getQuest } from '@astra/shared/quests';
-import { bondLine, codexLine } from '@astra/shared/codex';
+import { bondLine, codexLine, speciesKey } from '@astra/shared/codex';
 import { Asteroids } from './universe/Asteroids.js';
 import { Inventory } from './gameplay/Inventory.js';
 import { HUD } from './ui/HUD.js';
@@ -381,6 +381,7 @@ export class Game {
       // (each session numbers its quest and analysis requests from 1)
       this.questSeq = 0;
       this.analyzeSeq = 0;
+      this.analyzed = new Set();
       this.onWelcome(m, first);
     });
     net.on('quests', (m) => this.onQuests(m));
@@ -823,8 +824,12 @@ export class Game {
       if (!prompt && tool && !(pc && pc.t < tool.t)) prompt = `<kbd>LMB</kbd>Mine ${tool.label}`;
       // Analysis is the server's (P1.E08.T04): it checks the creature, range and sight, and answers with the codex entry (onAnalyze)
       if (!prompt && pc) {
-        prompt = `<kbd>E</kbd>Analyze ${pc.sp.name}`;
-        if (inp.hit('KeyE')) this.analyze(pc.id);
+        // (a species the server has said is in the codex is no longer offered: the prompt only says so)
+        if (pc.r && this.analyzed?.has(speciesKey(frameIdOfFrame(this.system, this.station, pc.r.frame), pc.r.species))) prompt = `${pc.sp.name} · in your codex`;
+        else {
+          prompt = `<kbd>E</kbd>Analyze ${pc.sp.name}`;
+          if (inp.hit('KeyE')) this.analyze(pc.id);
+        }
       }
       if (inp.hit('KeyC')) this.scan();
     }
@@ -1019,9 +1024,12 @@ export class Game {
   onAnalyze(m) {
     const s = m.species;
     const name = s && (this.net?.discoveries.displayName('species', s.key, s.name) ?? s.name);
+    if (s) (this.analyzed ??= new Set()).add(s.key);
     if (m.result === 'new') {
       this.audio.play('discovery');
-      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
+      // (the codex line and what Bond can do with it are the banner's third line; the XP is a reward toast, as a kill's is)
+      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [], `${codexLine(s)} · ${bondLine(s)}`);
+      this.hud.toast(`+${m.xp} XP`, 'good', { repeat: true });
     } else if (m.result === 'known') this.hud.toast(`${name} · in your codex`);
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }

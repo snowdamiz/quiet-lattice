@@ -8,7 +8,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { Body } from '../universe/Body.js';
 import { framePoseAt } from '../remote/frames.js';
 import { RemoteEntities } from '../remote/RemoteEntities.js';
+import * as combat from '@astra/shared/combat';
 import { FALL_S, Fauna } from './Fauna.js';
+
+vi.mock('@astra/shared/combat', async (original) => {
+  const real = await original();
+  return { ...real, creatureSphere: vi.fn(real.creatureSphere) };
+});
 
 const SEED = 7;
 const Q = [0, 0, 0, 1];
@@ -50,8 +56,8 @@ const at = (x, h = 0) => [x, GROUND + h, 0];
 const mob = (id, species, extra = {}) => ({ id, kind: 'mob', frame: frameId, pos: at(id), quat: Q, vel: [0, 0, 0], mode: 'idle', species, level: 2, hp: 1, ...extra });
 
 /** Plays the entities `at(t)` gives into the layer at the zone's 20 Hz, each snapshot arriving 30 ms late, and runs frames
- * at 60 Hz to `to`. */
-function play(game, remotes, entities, to, from = 100) {
+ * at 60 Hz to `to`, calling `each(now)` after each frame. */
+function play(game, remotes, entities, to, from = 100, each = null) {
   const due = [];
   // (the offline store takes ticks in order, whichever play they belong to)
   let tick = remotes.offline?.tick ?? 0;
@@ -61,10 +67,11 @@ function play(game, remotes, entities, to, from = 100) {
     while (i < due.length && due[i].arrival <= now) remotes.feed(due[i].snap, due[i++].arrival);
     game.place(now);
     remotes.update(DT);
+    each?.(now);
   }
 }
 
-const meshOf = (fauna, planet, species) => fauna.worlds.get(planet).drawn.get(species);
+const meshOf = (fauna, planet, species) => fauna.worlds.get(planet)?.drawn.get(species);
 /** The translation of instance `k` of a species mesh, camera-relative. */
 const instanceAt = (d, k) => new THREE.Vector3().setFromMatrixPosition(d.mesh.getMatrixAt(k, new THREE.Matrix4()));
 
@@ -157,6 +164,41 @@ describe('Fauna: the server’s herds, drawn', () => {
     expect(FALL_S).toBeLessThan(1);
   });
 
+  it('drops a flyer the server calls dead from where it flew to the ground, turned over', () => {
+    const { game, planet, remotes, fauna } = world();
+    game.place(100);
+    game.camWorld.copy(planet.localToWorld(new THREE.Vector3(...at(0, 30)), new THREE.Vector3()));
+    const flyer = SPECIES.findIndex((s) => s.kind === 'flyer');
+    expect(flyer).toBeGreaterThanOrEqual(0);
+    const height = (k) => {
+      // (the creature's height over the ground, along the world's up at the pole)
+      const want = remotes.get(1).world.clone().sub(game.camWorld);
+      return instanceAt(meshOf(fauna, planet, flyer), k).y - want.y;
+    };
+    play(game, remotes, () => [mob(1, flyer, { pos: at(0, 20), mode: 'fly' })], 101);
+    expect(height(0)).toBeCloseTo(0, 3);
+    play(game, remotes, () => [mob(1, flyer, { pos: at(0, 20), mode: 'dead', hp: 0 })], 103, 101.05);
+    // (it fell 4.9·t²: a second on, it has dropped to the ground it flew over, never through it)
+    const fell = height(0);
+    expect(fell).toBeLessThan(-10);
+    expect(fell).toBeGreaterThanOrEqual(-20.001);
+  });
+
+  it('lays a creature first seen already dead on its side at once, without playing its fall', () => {
+    const { game, planet, remotes, fauna } = world();
+    game.place(100);
+    game.camWorld.copy(planet.localToWorld(new THREE.Vector3(...at(0, 30)), new THREE.Vector3()));
+    const walker = SPECIES.findIndex((s) => s.kind !== 'flyer');
+    const rolls = [];
+    play(game, remotes, () => [mob(1, walker, { mode: 'dead', hp: 0 })], 101, 100, () => {
+      const d = meshOf(fauna, planet, walker);
+      if (d?.mesh.count) rolls.push(new THREE.Vector3(0, 1, 0).applyMatrix4(new THREE.Matrix4().extractRotation(d.mesh.getMatrixAt(0, new THREE.Matrix4()))).angleTo(new THREE.Vector3(0, 1, 0)));
+    });
+    expect(rolls.length).toBeGreaterThan(5);
+    // (from the first frame it is drawn, it is down)
+    for (const roll of rolls) expect(roll).toBeGreaterThan(Math.PI / 2 - 0.05);
+  });
+
   it('keeps no herd of its own: with no snapshots about, a camera on a world with fauna draws nothing', () => {
     const { game, planet, remotes, fauna } = world();
     game.place(100);
@@ -195,6 +237,88 @@ describe('Fauna: the server’s herds, drawn', () => {
     const player = { state: { frame: planet, pos: new THREE.Vector3(...at(0.1, 0)) } };
     fauna.collidePlayer(player);
     expect(player.state.pos.distanceTo(remotes.get(1).pos)).toBeGreaterThan(sp.size * 0.5);
+  });
+
+  it('keeps the creatures already written when a species outgrows its room partway through a frame', () => {
+    const { game, planet, remotes, fauna } = world();
+    game.place(100);
+    game.camWorld.copy(planet.localToWorld(new THREE.Vector3(...at(0, 50)), new THREE.Vector3()));
+    const herd = Array.from({ length: 40 }, (_, i) => mob(i + 1, 0, { pos: at(i * 3) }));
+    let checked = 0;
+    let room = 0;
+    play(game, remotes, () => herd, 100.6, 100, () => {
+      const d = meshOf(fauna, planet, 0);
+      // (the frame the herd was first drawn in is the frame its species' room doubled: read it before the next frame rewrites it)
+      if (!d || checked || d.mesh.count < 40) return;
+      room = d.max;
+      for (let k = 0; k < 40; k++) {
+        const r = remotes.get(k + 1);
+        expect(instanceAt(d, k).distanceTo(r.world.clone().sub(game.camWorld)), `instance ${k}`).toBeLessThan(1e-3);
+        expect(d.seed.array[k], `seed ${k}`).toBeCloseTo(r.vis.seed, 5);
+        expect(d.phase.array[k], `phase ${k}`).toBeCloseTo(r.vis.phase, 5);
+      }
+      checked++;
+    });
+    expect(checked).toBe(1);
+    expect(room).toBeGreaterThan(32);
+    // the room it left is let go, not left behind in the group
+    expect(fauna.group.children.filter((c) => c.isInstancedMesh)).toHaveLength(1);
+  });
+
+  it('turns a creature toward the heading the server gives, never faster than 270°/s, and keeps its heading once it is dead', () => {
+    const { game, planet, remotes, fauna } = world();
+    game.place(100);
+    game.camWorld.copy(planet.localToWorld(new THREE.Vector3(...at(0, 30)), new THREE.Vector3()));
+    const walker = SPECIES.findIndex((s) => s.kind !== 'flyer');
+    const yaw = (a) => [0, Math.sin(a / 2), 0, Math.cos(a / 2)];
+    const heading = () => remotes.get(1)?.vis.heading.clone();
+    const rates = [];
+    let last = null;
+    const track = () => {
+      const h = heading();
+      if (h && last) rates.push(h.angleTo(last) / DT);
+      last = h;
+    };
+    // facing one way; at 101 the server has it facing a quarter turn round
+    play(game, remotes, (t) => [mob(1, walker, { quat: t < 101 ? Q : yaw(Math.PI / 2) })], 101.4, 100, track);
+    expect(Math.max(...rates)).toBeLessThanOrEqual(((270 * Math.PI) / 180) * 1.001);
+    // (a quarter turn at the cap takes a third of a second, and is not done a frame after the server's word)
+    expect(heading().angleTo(remotes.get(1).worldQuat)).toBeGreaterThan(0.05);
+    play(game, remotes, () => [mob(1, walker, { quat: yaw(Math.PI / 2) })], 103, 101.45, track);
+    expect(heading().angleTo(remotes.get(1).worldQuat)).toBeLessThan(0.01);
+
+    // a creature that goes down while the server swings its heading round keeps the heading the player last saw
+    const b = world();
+    b.game.place(100);
+    b.game.camWorld.copy(b.planet.localToWorld(new THREE.Vector3(...at(0, 30)), new THREE.Vector3()));
+    let seen = null;
+    let started = null;
+    const after = [];
+    play(b.game, b.remotes, (t) => [mob(1, walker, t < 101 ? { quat: Q } : { quat: yaw(Math.PI / 2), mode: 'dead', hp: 0 })], 102, 100, () => {
+      const r = b.remotes.get(1);
+      if (!r) return;
+      started ??= r.worldQuat.clone();
+      if (r.pose.mode !== 'dead') seen = r.vis.heading.clone();
+      else after.push(r.vis.heading.clone());
+    });
+    expect(after.length).toBeGreaterThan(30);
+    for (const h of after) expect(h.angleTo(seen), 'heading once dead').toBe(0);
+    // (not swung round to the server's)
+    expect(seen.angleTo(started)).toBeLessThan(0.5);
+  });
+
+  it('passes over a creature plainly off the ray without making its sphere', () => {
+    const { game, planet, remotes, fauna } = world();
+    game.place(100);
+    const walker = SPECIES.findIndex((s) => s.kind !== 'flyer');
+    const herd = [mob(1, walker, { pos: at(0, 0) }), ...Array.from({ length: 10 }, (_, i) => mob(i + 2, walker, { pos: at(10 + i * 5, 60) }))];
+    play(game, remotes, () => herd, 101);
+    const eye = new THREE.Vector3(...at(-20, 0.5));
+    vi.mocked(combat.creatureSphere).mockClear();
+    const hit = fauna.pick(planet, eye, new THREE.Vector3(1, 0, 0), 70);
+    expect(hit).toMatchObject({ id: 1 });
+    // (the one in the ray's way only: the ten 60 m over it were never tested)
+    expect(vi.mocked(combat.creatureSphere)).toHaveBeenCalledTimes(1);
   });
 
   it('grows its instances past their first capacity as the herds grow', () => {

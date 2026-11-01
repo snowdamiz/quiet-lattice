@@ -6,7 +6,7 @@
 // per-vertex limb ids + pivots and per-instance gait phase, the gait read off how fast the creature is drawn moving.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { creatureSphere } from '@astra/shared/combat';
+import { HIT_SLACK_M, creatureSphere } from '@astra/shared/combat';
 import { FAUNA_MAX_TIER, Random, faunaSpecies } from '@astra/shared/world';
 import { libraryMesh, libraryVariants, recolor } from './modelLibrary.js';
 
@@ -346,6 +346,11 @@ function creatureMaterial(time, { leg = 1, plan = 0 } = {}) {
 
 /** How long a creature takes to go down once the server calls it dead, s (the corpse stays about 3 s). */
 export const FALL_S = 0.45;
+/** A fallen creature lies as it settled this long after the server called it dead, s: past the fall and a flyer's drop. */
+const LIES_AFTER_S = 1e3;
+/** How a creature's drawn heading follows the server's: a time constant, s, and the fastest it turns, rad/s (270°/s). */
+const TURN_TAU_S = 0.15;
+const TURN_MAX = (270 * Math.PI) / 180;
 /** Capacity an instanced species starts with; it doubles when a world's herds outgrow it. */
 const START_CAPACITY = 32;
 /** A creature calls out when the player on foot is this close, m. */
@@ -377,7 +382,6 @@ class Drawn {
     const model = libraryCreature(sp.kind, sp.bodyPlan, rng, sp.colors, proc) || proc;
     if (model === proc) model.legLen = hipHeight(proc.geo) || proc.legLen;
     this.model = model;
-    this.geo = model.geo;
     this.mat = creatureMaterial(time, { leg: model.legLen || 1, plan: sp.kind === 'flyer' ? 2 : sp.kind === 'biped' ? 1 : 0 });
     this.max = 0;
     this.count = 0;
@@ -385,29 +389,42 @@ class Drawn {
     this.grow(START_CAPACITY);
   }
 
-  /** Room for `n` instances (the attributes and mesh made afresh, twice as big as asked, when there is not). */
+  /** Room for `n` instances: the mesh and the per-instance attributes made afresh, twice as big as asked, when there is not,
+   * what is written in them carried over (a species can outgrow its room mid-frame, with its first creatures already set). */
   grow(n) {
     if (n <= this.max) return;
     const max = Math.max(n, this.max * 2);
     const old = this.mesh;
-    const mesh = new THREE.InstancedMesh(this.geo, this.mat, max);
+    // (the per-instance attributes ride on a geometry of their own that shares the body's buffers, so letting the one they
+    // replace go frees their GPU buffers)
+    const body = this.model.geo;
+    const geo = new THREE.BufferGeometry();
+    geo.setIndex(body.index);
+    for (const name of Object.keys(body.attributes)) geo.setAttribute(name, body.attributes[name]);
+    const mesh = new THREE.InstancedMesh(geo, this.mat, max);
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    this.phase = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
-    this.gait = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
-    this.seed = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
-    for (const a of [this.phase, this.gait, this.seed]) a.setUsage(THREE.DynamicDrawUsage);
-    this.geo.setAttribute('aPhase', this.phase);
-    this.geo.setAttribute('aGait', this.gait);
-    this.geo.setAttribute('aSeed', this.seed);
+    const attribute = (name, was) => {
+      const a = new THREE.InstancedBufferAttribute(new Float32Array(max), 1);
+      a.setUsage(THREE.DynamicDrawUsage);
+      if (was) a.array.set(was.array);
+      geo.setAttribute(name, a);
+      return a;
+    };
+    this.phase = attribute('aPhase', this.phase);
+    this.gait = attribute('aGait', this.gait);
+    this.seed = attribute('aSeed', this.seed);
     mesh.count = 0;
     mesh.frustumCulled = false;
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     if (old) {
+      mesh.instanceMatrix.array.set(old.instanceMatrix.array);
       old.parent?.add(mesh);
       old.parent?.remove(old);
       old.dispose();
+      old.geometry.dispose();
     }
+    this.geo = geo;
     this.mesh = mesh;
     this.max = max;
   }
@@ -416,6 +433,7 @@ class Drawn {
     this.mesh.parent?.remove(this.mesh);
     this.mesh.dispose();
     this.geo.dispose();
+    this.model.geo.dispose();
     this.mat.dispose();
   }
 }
@@ -489,10 +507,15 @@ export class Fauna {
       const d = this.drawnOf(r);
       const sp = d.sp;
       this.shown.push(r);
-      const vis = (r.vis ??= { phase: ((r.id * 0.6180339) % 1) * 6.28, speed: 0, seed: (r.id * 0.7548777) % 1, deadAt: null, callT: 3 + ((r.id * 0.41) % 1) * 10, mode: null });
+      const vis = (r.vis ??= { phase: ((r.id * 0.6180339) % 1) * 6.28, speed: 0, seed: (r.id * 0.7548777) % 1, deadAt: null, callT: 3 + ((r.id * 0.41) % 1) * 10, mode: null, heading: new THREE.Quaternion().copy(r.worldQuat), seen: false });
       const dead = r.pose.mode === 'dead';
-      if (dead && vis.deadAt === null) vis.deadAt = now;
+      // (one first seen already dead lies as it fell: the fall is not played for a creature the player never saw stand)
+      if (dead && vis.deadAt === null) vis.deadAt = vis.seen ? now : now - LIES_AFTER_S;
       else if (!dead) vis.deadAt = null;
+      vis.seen = true;
+      // it turns toward the heading the server gives, not onto it (a jump in the server's shows as a swing), and a creature
+      // that has gone down keeps the heading the player last saw, so the fall starts from that pose
+      if (!dead) this.turn(vis.heading, r.worldQuat, dt);
       // how fast it is drawn moving in its frame: the gait follows (a held pose, past the newest sample, is standing)
       const moving = !dead && (r.status === 'interpolate' || r.status === 'extrapolate');
       vis.speed = THREE.MathUtils.damp(vis.speed, moving ? r.pose.vel.length() : 0, 8, dt);
@@ -511,7 +534,7 @@ export class Fauna {
       this.voice(r, vis, sp, player, dt);
       const rel = _rel.copy(r.world).sub(camWorld);
       if (inView && rel.lengthSq() > 2500 && !inView.intersectsSphere(_sphere.set(rel, sp.size * 2.5 + 2))) continue;
-      _q.copy(r.worldQuat);
+      _q.copy(vis.heading);
       if (vis.deadAt !== null) this.fall(r, vis, d, now, rel);
       _s.setScalar(sp.size);
       _m.compose(rel, _q, _s);
@@ -532,6 +555,14 @@ export class Fauna {
         d.seed.needsUpdate = true;
       }
     }
+  }
+
+  /** Turns `heading` toward `want` (both unit quaternions): an exponential approach with TURN_TAU_S, never faster than TURN_MAX. */
+  turn(heading, want, dt) {
+    const angle = heading.angleTo(want);
+    if (angle < 1e-5) return;
+    const step = Math.min(angle * (1 - Math.exp(-dt / TURN_TAU_S)), TURN_MAX * dt);
+    heading.rotateTowards(want, step);
   }
 
   // A creature the server has called dead goes down: it rolls onto its side about its middle over FALL_S and settles on
@@ -622,6 +653,12 @@ export class Fauna {
     for (const r of this.shown) {
       if (r.frame !== frame || r.pose.mode === 'dead') continue;
       const sp = this.speciesOf(r);
+      // (this runs every frame: a creature plainly off the ray is passed over before its sphere is made, which allocates; the
+      // sphere's centre is at most half its size from the creature's position and its radius at most 0.6 of it, and the slack)
+      const reach = sp.size * 1.1 + HIT_SLACK_M;
+      const near = _ray.copy(r.pos).sub(origin);
+      const along = near.dot(dir);
+      if (along < -reach || along > maxDist + reach || near.lengthSq() - along * along > reach * reach) continue;
       const s = creatureSphere({ pos: [r.pos.x, r.pos.y, r.pos.z], scale: 1, species: { size: sp.size, kind: sp.kind } });
       const oc = _ray.set(s.pos[0], s.pos[1], s.pos[2]).sub(origin);
       const t = oc.dot(dir);

@@ -62,6 +62,15 @@ describe('gate:removed', () => {
     expect(runGate(root, rules).unknown).toHaveLength(2);
   });
 
+  it('stops a herd spawner in any client file once P1.E08.T09 is done, not only in Fauna.js', () => {
+    const plan = '- [x] **P1.E08.T09 client fauna**';
+    const rule = RULES.filter((r) => r.task === 'P1.E08.T09');
+    const at = 'packages/client/src/entities/Herds.js';
+    expect(runGate(repo(plan, { [at]: 'class Herds { spawnHerd(w) {} }' }), rule).failures).toEqual([expect.stringContaining(at)]);
+    expect(runGate(repo(plan, { [at]: 'class Herds { render(w) {} }' }), rule).failures).toEqual([]);
+    expect(runGate(repo('- [~] **P1.E08.T09 client fauna**', { [at]: 'spawnHerd(w)' }), rule).failures).toEqual([]);
+  });
+
   it('every shipped rule names a real plan task', () => {
     const plan = planStatuses(readFileSync(new URL('../../../../docs/IMPLEMENTATION_PLAN.md', import.meta.url), 'utf8'));
     for (const r of RULES) expect(plan.has(r.task), r.task).toBe(true);
