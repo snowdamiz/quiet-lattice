@@ -197,11 +197,6 @@ export class ZoneManager {
     return this.byViewer.get(viewer)?.zone;
   }
 
-  /** The skill nodes the viewer's character owns changed: its zone holds its walker and ship to the new build's speeds. */
-  reskill(viewer: ZoneViewer, skills: readonly string[]): void {
-    this.byViewer.get(viewer)?.zone.reskill(viewer, skills);
-  }
-
   /** The zone hosting galaxy system `systemIndex`, loaded and woken. */
   open(systemIndex: number): Zone {
     const id = systemZoneId(systemIndex);
@@ -281,6 +276,11 @@ export class ZoneManager {
     const left = slot.zone.leave(viewer, how);
     if (slot.zone.sessionCount === 0) slot.emptySince ??= this.mono();
     return left;
+  }
+
+  /** Holds the session's player to the ship and nodes it has now (Zone.retune). False when it is in no zone. */
+  retune(viewer: ZoneViewer, change: { ship: ShipLoadout | null; skills: readonly string[] }): boolean {
+    return this.byViewer.get(viewer)?.zone.retune(viewer, change) ?? false;
   }
 
   input(viewer: ZoneViewer, msg: Extract<ClientMessage, { t: 'input' }>): InputResult {

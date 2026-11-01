@@ -661,10 +661,10 @@ describe('cheats are refused', () => {
     h.send(pose(STATION, [-22, 0, -22]), 'foot');
     expect(run(h, -40, 14)).toBeGreaterThan(0);
     const before = h.refusals.length;
-    h.a.reskill(h.id, ['sprint_stride']);
+    h.a.retune(h.id, { ship: LARK, skills: ['sprint_stride'] });
     h.send(pose(STATION, [-22, 0, -40]), 'foot', { dt: 3 });
     expect(run(h, -40, 14)).toBe(before);
-    h.a.reskill(h.id, []);
+    h.a.retune(h.id, { ship: LARK, skills: [] });
     h.send(pose(STATION, [-22, 0, -40]), 'foot', { dt: 3 });
     expect(run(h, -40, 14)).toBeGreaterThan(before);
   });
