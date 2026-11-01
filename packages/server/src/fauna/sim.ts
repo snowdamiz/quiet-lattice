@@ -32,7 +32,7 @@
 // combat/zone.ts) reads a creature (`creature`, `creaturesIn`), adds threat with `hurt` and takes a dead one out of its
 // herd with `kill`, then despawns its corpse after the death beat; setTier follows the Edge (the zone manager calls it).
 import { performance } from 'node:perf_hooks';
-import { addThreat } from '@astra/shared/combat';
+import { addThreat, harmonicReset } from '@astra/shared/combat';
 import { PACK_RULES } from '@astra/shared/data';
 import { isNight } from '@astra/shared/meters';
 import type { EntityField } from '@astra/shared/protocol';
@@ -792,6 +792,8 @@ export class FaunaSim {
   private readonly bodies = new Map<string, { body: BodySpec; params: PlanetParams }>();
   private readonly worlds = new Map<number, WorldFauna>();
   private readonly allowances = new Map<number, Allowance>();
+  /** players under Veil: the world time it ends, by entity */
+  private readonly veiled = new Map<number, number>();
   /** dens with something out or a timer running (the rest are as new), by body × DEN_KEY + den index: kept while the
    * zone runs, beyond their cells' and worlds' lives */
   private readonly denStates = new Map<number, DenState>();
@@ -832,8 +834,16 @@ export class FaunaSim {
       let list = byBody.get(world.body.index);
       if (!list) byBody.set(world.body.index, (list = []));
       const { phases } = this.zone;
-      list.push({ id, pos: [f.pos[0], f.pos[1], f.pos[2]], onFoot: f.mode === 'foot', hidden: phases.hiddenFromShared(id), phase: phases.phaseOf(id) });
+      list.push({
+        id,
+        pos: [f.pos[0], f.pos[1], f.pos[2]],
+        onFoot: f.mode === 'foot',
+        hidden: phases.hiddenFromShared(id),
+        veiled: (this.veiled.get(id) ?? 0) > time,
+        phase: phases.phaseOf(id),
+      });
     }
+    for (const [id, until] of this.veiled) if (until <= time) this.veiled.delete(id);
     for (const index of byBody.keys()) if (!this.worlds.has(index)) this.world(index);
     for (const [index, w] of this.worlds) {
       w.step(dt, time, byBody.get(index) ?? []);
@@ -988,6 +998,40 @@ export class FaunaSim {
       return true;
     }
     return false;
+  }
+
+  /** Pulse: the creature stands still and strikes nothing for `durationS` from now (a later stun extends it, never shortens
+   * it). False when it is not a living creature here. */
+  stun(creature: number, durationS: number): boolean {
+    const c = this.find(creature);
+    if (!c) return false;
+    c.stunUntil = Math.max(c.stunUntil, (this.lastTime ?? 0) + durationS);
+    c.speed = 0;
+    return true;
+  }
+
+  /** Harmonic: the creature forgets its threat and is passive for `durationS` from now (any damage breaks it). False when it
+   * is not a living creature here. The caller has checked its resistances. */
+  calm(creature: number, durationS: number): boolean {
+    const c = this.find(creature);
+    if (!c) return false;
+    c.threat = harmonicReset(c.threat, this.lastTime ?? 0, durationS);
+    c.target = null;
+    return true;
+  }
+
+  /** Veil: no creature notices the player on this entity for `durationS` from now (a later veil extends it). */
+  veil(player: number, durationS: number): void {
+    this.veiled.set(player, Math.max(this.veiled.get(player) ?? 0, (this.lastTime ?? 0) + durationS));
+  }
+
+  /** The living creature on an entity, in whichever world keeps it. */
+  private find(id: number): Creature | undefined {
+    for (const w of this.worlds.values()) {
+      const c = w.creatures.get(id);
+      if (c) return c;
+    }
+    return undefined;
   }
 
   /** A living creature as combat reads it (P1.E06.T02): its world, species, herd level, size and where it is; null for an
