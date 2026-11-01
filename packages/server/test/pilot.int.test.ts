@@ -1,5 +1,5 @@
 // The Pilot branch's Tier I–II nodes over the wire (P1.E07.T09), against the dockerised Postgres and Redis, with movement
-// authority on: a node a character buys in flight changes what the server holds its ship to at once, without a rejoin. A
+// authority on, on a server whose clock only the pilot steps (test/pilot.ts): a node a character buys in flight changes what the server holds its ship to at once, without a rejoin. A
 // client flying faster than its ship may is snapped back; the same flight, after the node is bought over the socket, is not.
 // The ship's shield and hull follow the nodes in the zone's combat.
 import { STATION_LAYOUT } from '@astra/shared/data';
@@ -12,8 +12,8 @@ import { runMigrations } from '../src/db/migrate.ts';
 import { characters } from '../src/db/schema.ts';
 import type { RunningServer } from '../src/server.ts';
 import { MOVEMENT } from '../src/sim/movement/index.ts';
-import { newAccount, newCharacter, startTestServer, waitFor, type TestSocket } from './helpers.ts';
-import { Pilot } from './pilot.ts';
+import { newAccount, newCharacter, startTestServer, uniqueShard, type TestSocket } from './helpers.ts';
+import { ManualClock, Pilot } from './pilot.ts';
 
 type Vec3 = [number, number, number];
 type SkillsState = Extract<ServerMessage, { t: 'skills' }>;
@@ -21,11 +21,12 @@ type SkillsState = Extract<ServerMessage, { t: 'skills' }>;
 const config = parseConfig(process.env);
 let server: RunningServer;
 let database: Database;
+const clock = new ManualClock();
 
 beforeAll(async () => {
   await runMigrations(config.DATABASE_URL);
   database = createDatabase(config.DATABASE_URL, { max: 2 });
-  server = await startTestServer();
+  server = await startTestServer({}, { shard: uniqueShard(), clock: { monoNow: clock.now } });
 });
 
 afterAll(async () => {
@@ -46,7 +47,7 @@ async function pilotOfLevel(level: number): Promise<Pilot> {
   const acct = await newAccount(server);
   const character = await newCharacter(server, acct.token, { people: 'thalune' });
   await database.db.update(characters).set({ level }).where(eq(characters.id, character.id));
-  return Pilot.join(server, 'thalune', { character: { token: acct.token, accountId: acct.accountId, id: character.id } });
+  return Pilot.join(server, 'thalune', { clock, character: { token: acct.token, accountId: acct.accountId, id: character.id } });
 }
 
 describe('the Pilot nodes over the wire', () => {
@@ -62,13 +63,14 @@ describe('the Pilot nodes over the wire', () => {
     await p.fly([[x, y, z], [x, 14, z], [x, 14, 40], out], [10, 40, 60]);
     const run = async (from: Vec3) => p.fly([from, [from[0], from[1], from[2] + 1800]], [780]);
     await run(out);
-    await waitFor(() => p.corrections.length > 0, 5000, 'a correction for speeding');
+    await p.settled();
+    expect(p.corrections.length).toBeGreaterThan(0);
     const first = p.corrections.length;
     expect(zone.movement!.recent.filter((r) => r.entity === p.entityId).map((r) => r.rule)).toContain('speed');
 
     // it takes the correction, then buys Throttle Tuning, Photon Thrusters, Shield Capacitor and Hull Plating on the socket
     const back = p.corrections.at(-1)!.pose;
-    await new Promise((r) => setTimeout(r, MOVEMENT.correction.graceS * 1000));
+    await p.idle(MOVEMENT.correction.graceS * 1000);
     let seq = 0;
     for (const node of ['throttle_tuning', 'photon_thrusters', 'shield_capacitor', 'hull_plating']) {
       expect(server.ws.skills.unlock(id, node, { kind: 'dev' }).ok, node).toBe(true);
@@ -81,6 +83,7 @@ describe('the Pilot nodes over the wire', () => {
     p.last = back;
     await run(back.pos as Vec3);
     await p.hold('ship', 300);
+    await p.settled();
     expect(p.corrections.length).toBe(first);
     expect(zone.entity(p.entityId)!.unvalidated).toBe(false);
     p.close();
