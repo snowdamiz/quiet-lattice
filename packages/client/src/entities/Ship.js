@@ -1225,6 +1225,9 @@ export class Ship {
   }
 
   exitPulse() {
+    // (the drive's stretch is reported up to here: movement authority judges what follows on the engines from the last
+    // pose it had on the drive, and the frames since that input went at the drive's speed)
+    this.game.net?.sendInput();
     this.mode = 'flying';
     this.speed = Math.min(this.pulse.speed, PULSE_DRIVE.exitSpeedMax);
     const fwd = _v.set(0, 0, -1).applyQuaternion(this.state.quat);

@@ -600,7 +600,8 @@ export class Game {
     _v1.copy(drawn.pos);
     _v2.copy(drawn.vel);
     _q1.copy(drawn.quat);
-    if (this.prediction.take(m.seq, m.pose, m.mode, st, this.time)) {
+    // (off the pulse drive the server still holds it on, the ship stays on its engines at its own speed)
+    if (this.prediction.take(m.seq, m.pose, m.mode, st, this.time, m.mode === 'pulse' && now !== 'pulse')) {
       if (!mover.blend.take(_v1, _q1, _v2, st)) this.cam.frame = undefined;
     } else {
       const frame = frameOfId(this.system, this.station, m.pose.frame);

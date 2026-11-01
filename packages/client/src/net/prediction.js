@@ -108,11 +108,12 @@ export class Prediction {
   /**
    * Rewinds a mover to where the server holds it, `pose` (a wire pose) in `mode` as of input `seq`, and replays what the
    * client did since: `state` (the mover's FrameState, in the frame it is in now, at world time `now`) keeps its motion in
-   * the frame, or, where the server refused the mode the client sent, takes the server's velocity carried on from there.
-   * A ship's turning since, in its own axes, is replayed onto the server's orientation; a walker faces its own heading.
-   * False when there is nothing to rewind from (an input no longer kept, a frame not of this system).
+   * the frame, or, where the server refused the mode the client sent, is carried on from the server's pose at the server's
+   * velocity, or at its own with `own` (the mover keeps a mode of its own: off the pulse drive the server still holds it
+   * on). A ship's turning since, in its own axes, is replayed onto the server's orientation; a walker faces its own
+   * heading. False when there is nothing to rewind from (an input no longer kept, a frame not of this system).
    */
-  take(seq, pose, mode, state, now) {
+  take(seq, pose, mode, state, now, own = false) {
     const r = this.at(seq);
     const frame = this.resolve(pose.frame);
     if (!r || frame === undefined) return false;
@@ -120,8 +121,8 @@ export class Prediction {
     const server = reframeAt(wireInto(_server, pose), frame, state.frame, r.time);
     const sent = reframeAt(copyInto(_sent, r), r.frame, state.frame, r.time);
     if (mode !== r.mode) {
-      state.pos.copy(server.pos).addScaledVector(server.vel, Math.max(0, now - r.time));
-      state.vel.copy(server.vel);
+      if (!own) state.vel.copy(server.vel);
+      state.pos.copy(server.pos).addScaledVector(state.vel, Math.max(0, now - r.time));
     } else {
       state.pos.add(server.pos).sub(sent.pos);
       state.vel.add(server.vel).sub(sent.vel);

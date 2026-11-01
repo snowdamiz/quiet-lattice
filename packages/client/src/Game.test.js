@@ -294,6 +294,15 @@ describe('Game: rewinding to a correction (P1.E04.T03)', () => {
     expect(ship.drawnState().pos.z).toBeCloseTo(-700);
   });
 
+  it('keeps a ship that left the pulse drive on its engines, at its own speed, where the server still holds it on the drive', () => {
+    const { g, ship, state } = flying([0, 0, -900], [0, 0, -400]);
+    g.prediction.record(sent([0, 0, -800], [0, 0, -400]));
+    g.onCorrection(correction([0, 0, -700], [0, 0, -9000], 'pulse'));
+    expect(ship.mode).toBe('flying');
+    expect(state.vel.toArray()).toEqual([0, 0, -400]);
+    expect(state.pos.z).toBeCloseTo(-800);
+  });
+
   it('shows a correction further than a blend can explain as the jump it is, the chase camera put back behind', () => {
     const { g, ship, state } = flying([0, 0, -525], [0, 0, -100]);
     g.prediction.record(sent([0, 0, -500], [0, 0, -100]));
