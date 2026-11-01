@@ -47,6 +47,7 @@ import { Buttons, type ClientMessage, type Pose } from '@astra/shared/protocol';
 import {
   AIR,
   allowanceAfterChange,
+  FLIGHT_TOLERANCE,
   flightCaps,
   PULSE_DRIVE,
   SHIP_GEAR_HEIGHT,
@@ -335,9 +336,10 @@ interface Hold {
 }
 
 class Mover {
-  ship: ShipStats;
-  walker: WalkerStats;
-  walkerCaps: WalkerCaps;
+  profile!: MoverProfile;
+  ship!: ShipStats;
+  walker!: WalkerStats;
+  walkerCaps!: WalkerCaps;
   readonly clock: ClientClock;
   last!: Sample;
   /** the current window segment, oldest first; seg[0] is the previous segment's last pose when `boundary` is set */
@@ -369,21 +371,21 @@ class Mover {
   /** A mover joining at server world time `joined`. */
   constructor(
     readonly id: number,
-    public profile: MoverProfile,
+    profile: MoverProfile,
     joined: number,
   ) {
-    this.ship = shipStats(profile.ship, { skills: profile.skills });
-    this.walker = walkerStats({ skills: profile.skills, people: profile.people });
-    this.walkerCaps = walkerCaps(this.walker);
+    this.retune(profile);
     this.clock = new ClientClock(joined);
   }
 
-  /** The build changed under it (a node bought or respecced): the speeds it is held to follow. */
-  reskill(skills: readonly string[]): void {
-    this.profile = { ...this.profile, skills };
-    this.ship = shipStats(this.profile.ship, { skills });
-    this.walker = walkerStats({ skills, people: this.profile.people });
-    this.walkerCaps = walkerCaps(this.walker);
+  /** Takes the numbers of a profile: the ship's and the walker's, from the hull, modules and nodes it names. */
+  retune(profile: MoverProfile): void {
+    const ship = shipStats(profile.ship, { skills: profile.skills });
+    const walker = walkerStats({ skills: profile.skills, people: profile.people });
+    this.profile = profile;
+    this.ship = ship;
+    this.walker = walker;
+    this.walkerCaps = walkerCaps(walker);
   }
 }
 
@@ -539,10 +541,13 @@ export class MovementAuthority {
     if (pad !== null) this.holdPad(id, pad);
   }
 
-  /** Holds mover `id` to the speeds of the skill nodes `skills` (its owner bought or respecced a node: Sprint Stride, Long Jump,
-   * Photon Thrusters), from its next input. */
-  reskill(id: number, skills: readonly string[]): void {
-    this.movers.get(id)?.reskill(skills);
+  /**
+   * Holds mover `id` to the numbers of the ship and nodes it has now (a node bought or refunded, a hull swapped): its next
+   * input is judged on them. Throws a LoadoutError, holding it to what it had, for a ship that cannot fly.
+   */
+  retune(id: number, change: Pick<MoverProfile, 'ship' | 'skills'>): void {
+    const m = this.movers.get(id);
+    if (m) m.retune({ ...m.profile, ...change });
   }
 
   /**
@@ -1077,7 +1082,7 @@ export class MovementAuthority {
       case 'rest':
         return s.mode === 'docked'
           ? this.dockedLegality(m, L, s, fail)
-          : this.landedLegality(s, body, groundR, landH, ground?.ocean ?? false, near && !ground, fail);
+          : (this.landedLegality(s, body, groundR, landH, ground?.ocean ?? false, near && !ground, fail) ?? this.landingSpeed(m, L, s, near && !ground, fail));
       default:
         return null;
     }
@@ -1099,6 +1104,20 @@ export class MovementAuthority {
     if (gear < -L.belowM || gear > L.aboveM) return fail('landed', gear, gear < 0 ? -L.belowM : L.aboveM, 'm', 'gear off the ground');
     if (ocean && landH < 0.5 - L.waterM) return fail('landed', landH, 0.5 - L.waterM, 'm', 'on water');
     return null;
+  }
+
+  /**
+   * A ship coming to rest on a world is no faster than its hull lets it land (`ShipStats.landingSpeedMax`: 160, Soft Landing
+   * 220), under FLIGHT_TOLERANCE: by the speed it reports, and by how far it moved since the last pose it was flying at. The
+   * landing begins on the client (its autopilot brakes from there), so this is what the server sees of it.
+   */
+  private landingSpeed(m: Mover, L: Sample, s: Sample, pending: boolean, fail: FailFn): Violation | null {
+    if (pending || L.cls === 'rest' || L.cls === 'foot') return null;
+    const dt = s.t - L.t;
+    const moved = L.key === s.key && !s.resync && dt > MOVEMENT.landed.speedMinDtS ? dist(L.pos, s.pos) / dt : 0;
+    const speed = Math.max(len(L.vel), moved);
+    const allowed = m.ship.landingSpeedMax * FLIGHT_TOLERANCE.factor;
+    return speed > allowed ? fail('landing_speed', speed, allowed, 'm/s', 'too fast to land') : null;
   }
 
   private dockedLegality(m: Mover, L: Sample, s: Sample, fail: FailFn): Violation | null {

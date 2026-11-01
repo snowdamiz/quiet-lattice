@@ -531,6 +531,26 @@ describe('a toggle', () => {
     expect(told).toEqual(['c1']);
   });
 
+  it('settles the old connection’s toggle before a new connection’s cast: the cast is a new cast, never the old toggle going off', () => {
+    slot(['lance']);
+    svc = service({}, [lance]);
+    expect(cast('lance', 0).result).toBe('cast');
+    // the character reconnects (a second socket, the first not yet noticed gone) and presses the same key before any step
+    w.zone.leave(viewer);
+    const second = new Viewer(2, 'c1');
+    w.player = w.zone.join(second, { kind: 'player', frame: w.frame, pos: w.at(0, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    const press = svc.cast(second, { t: 'cast', seq: 1, time: now, node: 'lance', slot: 0, frame: w.frame, aim: [0, 0, -1] });
+    expect(press.result).toBe('cast');
+    expect(ended).toEqual(['lance']);
+    expect(told).toEqual(['c1']);
+    expect(endings[0]).toBe(casts[0]!.ctx);
+    expect(casts).toHaveLength(2);
+    expect(casts[1]!.ctx.caster).toBe(w.player);
+    expect(svc.state('c1').on).toEqual(['lance']);
+    expect(svc.cast(second, { t: 'cast', seq: 2, time: now, node: 'lance', slot: 0, frame: w.frame, aim: [0, 0, -1] }).result).toBe('ended');
+    expect(ended).toEqual(['lance', 'lance']);
+  });
+
   it('is ended by the cast of the same character’s new connection before that cast is looked at, not mistaken for the toggle going off', () => {
     slot(['lance']);
     svc = service({}, [lance]);

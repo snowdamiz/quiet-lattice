@@ -175,13 +175,13 @@ interface PlayerVitals {
   readonly kind: 'player';
   readonly characterId: string | null;
   suit: number;
-  readonly suitMax: number;
+  suitMax: number;
   hull: number;
-  readonly hullMax: number;
+  hullMax: number;
   shield: number;
-  readonly shieldMax: number;
+  shieldMax: number;
   /** its own modifiers (Grey Blood's damage taken) */
-  readonly mods: readonly StatMod[];
+  mods: readonly StatMod[];
   down: DownedReport['cause'] | null;
   /** the hp and shield fractions last put on its entity */
   shown: { hp: number; shield: number | null } | null;
@@ -229,6 +229,30 @@ export class ZoneCombat {
   /** A player entered: whose it is and what it flies, for its health. */
   joined(entity: number, profile: CombatProfile): void {
     this.profiles.set(entity, { characterId: profile.characterId, ship: profile.ship, skills: [...profile.skills] });
+  }
+
+  /**
+   * A player's ship or nodes changed (a node bought or refunded, a respec, a hull swapped): its capacities are worked out
+   * again and each pool keeps its fraction, so a plate bought mid-flight is no repair, a plate refunded is no wound, and a
+   * refund then a rebuy gains nothing. A pool at 0 stays at 0: a downed player stays down.
+   */
+  retuned(entity: number, change: { ship: ShipLoadout | null; skills: readonly string[] }): void {
+    const p = this.profiles.get(entity);
+    if (!p) return;
+    this.profiles.set(entity, { ...p, ship: change.ship ?? p.ship, skills: [...change.skills] });
+    const v = this.vitals.get(entity);
+    if (v?.kind !== 'player') return;
+    const next = this.playerVitals(entity);
+    // (a pool that had no capacity, a ship that failed to load, starts full)
+    const keep = (now: number, was: number, max: number) => (was > 0 ? (now / was) * max : max);
+    v.suit = keep(v.suit, v.suitMax, next.suitMax);
+    v.hull = keep(v.hull, v.hullMax, next.hullMax);
+    v.shield = keep(v.shield, v.shieldMax, next.shieldMax);
+    v.suitMax = next.suitMax;
+    v.hullMax = next.hullMax;
+    v.shieldMax = next.shieldMax;
+    v.mods = next.mods;
+    if (this.zone.entity(entity)) this.show(entity, v);
   }
 
   /** An entity left the zone (despawned): its health and corpse go with it. */

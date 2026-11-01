@@ -11,7 +11,7 @@ import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
-import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
+import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, hazardDamagePerS, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
 import { canEngagePulse, meterEnvironment, meterProfile, meterRates, stepMeters } from '@astra/shared/meters';
 import { fireIntent } from '../net/combat.js';
 
@@ -77,7 +77,7 @@ export class Ship {
     this.gear = 1;
     this.boosting = false;
     this.thrust = 0;
-    // what the ship is, and the Pilot nodes it flies with (the demo shop's upgrades, until the skill web lands)
+    // what the ship is, and the nodes its pilot owns (the server's `skills` view, `setSkills`)
     this.loadout = LOADOUT;
     this.skills = new Set();
     this.refreshStats();
@@ -589,6 +589,17 @@ export class Ship {
     // the flight model's hard limit, a little over the boost cap the server holds the ship to
     this.vmax = flightCaps(this.stats, 'boost').max * CLIENT_SPEED_HEADROOM;
     this.gun = this.stats.hardpoints.find((h) => h.weapon === 'pulse_lasers');
+  }
+
+  // The nodes the pilot owns, as the server's skills view lists them. The set is kept (the inventory's layout reads it), and
+  // each pool keeps its fraction, as the server's does (ZoneCombat.retuned).
+  setSkills(nodes) {
+    const had = this.stats;
+    this.skills.clear();
+    for (const n of nodes) this.skills.add(n);
+    this.refreshStats();
+    this.shield = had.shieldMax > 0 ? (this.shield / had.shieldMax) * this.stats.shieldMax : this.stats.shieldMax;
+    this.hull = had.hullMax > 0 ? (this.hull / had.hullMax) * this.stats.hullMax : this.stats.hullMax;
   }
 
   get chargeMax() {
@@ -1357,7 +1368,7 @@ export class Ship {
     if (depth <= 0) return;
     // how much of each kind of hostile sky the hull takes (Thermal Plating and the like divide it)
     const taken = this.stats.hazardDamage[hz.kind] ?? 1;
-    let dmg = hz.dps * Math.pow(depth, hz.curve || 1.3) * dt * taken;
+    let dmg = hazardDamagePerS(hz, depth, this.stats) * dt;
     const t = g.time;
     if (hz.kind === 'heat') {
       this.hazardHeat = depth * (0.75 + 0.15 * Math.sin(t * 17));
