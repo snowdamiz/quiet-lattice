@@ -188,7 +188,9 @@ describe('the scan under the build', () => {
 describe('the build from the server', () => {
   it('is the bought nodes of each skill view, and the people of the character that entered', () => {
     const g = onFrozenWorld({ night: false });
+    g.ship = { setSkills: vi.fn() };
     g.onSkills({ state: { bought: ['sprint_stride', 'cartridge_recycler'] } });
+    expect(g.ship.setSkills).toHaveBeenLastCalledWith(['sprint_stride', 'cartridge_recycler']);
     expect(g.player.walker.sprint).toBe(11.5);
     expect(g.suitMods.some((m) => m.stat === 'suit.cartridge_restore')).toBe(true);
     g.onSkills({ state: { bought: [] } });

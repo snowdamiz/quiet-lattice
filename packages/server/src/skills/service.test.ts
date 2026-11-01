@@ -49,10 +49,20 @@ describe('skill service', () => {
     ships.set(ID, null);
     expect(skills.view(ID).shipSlots).toBe(0);
     expect(skills.shipSlots(ID)).toBe(0);
-    expect(() => skills.shipSlots('nobody')).toThrow();
+    expect(() => skills.shipSlots('nobody')).toThrow(SkillsNotHeldError);
     // standing comes from its hook
     skills.hooks.meets = (_, r) => r.faction === 'reaches';
     expect(skills.view(ID).met).toEqual([{ kind: 'faction_rank', faction: 'reaches', rank: 'deckhand' }]);
+  });
+
+  it('says what flies and what it flies with, as bought', () => {
+    const { skills, own, ships } = world();
+    expect(skills.flight(ID)).toEqual({ ship: ships.get(ID), skills: [] });
+    own('throttle_tuning', 'hull_plating');
+    expect(skills.flight(ID)).toEqual({ ship: ships.get(ID), skills: ['throttle_tuning', 'hull_plating'] });
+    ships.set(ID, null);
+    expect(skills.flight(ID).ship).toBeNull();
+    expect(() => skills.flight('nobody')).toThrow(SkillsNotHeldError);
   });
 
   it('adds a people’s node a saved state lacks, refuses an invalid one, and refuses characters it does not hold', () => {

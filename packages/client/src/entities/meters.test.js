@@ -316,3 +316,54 @@ describe('heat on the client', () => {
     expect(mt.recoverAt).toBe(0.2);
   });
 });
+
+describe('the nodes the ship flies with', () => {
+  it('are the server’s owned nodes: its speed, shield, hull and landing follow them, each pool keeps its fraction, and the set is kept', () => {
+    const { g } = game();
+    const owned = g.ship.skills;
+    expect(g.ship.stats).toMatchObject({ shieldMax: 100, hullMax: 100, landingSpeedMax: 160 });
+    g.ship.shield = 40;
+    g.ship.hull = 70;
+    g.ship.setSkills(['photon_thrusters', 'shield_capacitor', 'hull_plating', 'soft_landing']);
+    expect(g.ship.skills).toBe(owned);
+    expect(g.ship.stats).toMatchObject({ shieldMax: 125, hullMax: 125, landingSpeedMax: 220 });
+    expect(g.ship.stats.speed.space).toBe(750);
+    expect(g.ship.shield).toBe(50);
+    expect(g.ship.hull).toBe(87.5);
+    g.ship.setSkills(['photon_thrusters']);
+    expect(g.ship.skills.has('hull_plating')).toBe(false);
+    expect(g.ship.stats).toMatchObject({ shieldMax: 100, hullMax: 100, landingSpeedMax: 160 });
+    expect(g.ship.shield).toBe(40);
+    expect(g.ship.hull).toBe(70);
+
+    // a hull at 0 stays at 0, a refund then a rebuy heals nothing
+    g.ship.hull = 0;
+    g.ship.setSkills(['hull_plating']);
+    expect(g.ship.hull).toBe(0);
+    g.ship.hull = 10;
+    g.ship.setSkills([]);
+    g.ship.setSkills(['hull_plating']);
+    expect(g.ship.hull).toBeCloseTo(10, 9);
+  });
+});
+
+describe('the hazard tick on the client', () => {
+  const sky = { kind: 'heat', dps: 9, ceiling: 1000, curve: 1 };
+  /** The hull a ship has left after a second of the deepest heat, with `nodes`. */
+  function hullAfter(nodes) {
+    const { g } = game();
+    g.ship.setSkills(nodes);
+    g.ship.state.frame = { params: { hazard: sky }, isGas: false, kind: 'planet' };
+    g.ship.altitude = 0;
+    g.ship.shield = 0;
+    g.ship.updateHazard(1);
+    return g.ship.hull;
+  }
+
+  it('takes a hostile sky’s damage through the plating: a third with Thermal Plating, the same sky', () => {
+    const bare = 100 - hullAfter([]);
+    expect(bare).toBeGreaterThan(0);
+    expect(100 - hullAfter(['thermal_plating'])).toBeCloseTo(bare / 3, 9);
+    expect(100 - hullAfter(['pressure_hull'])).toBeCloseTo(bare, 9);
+  });
+});
