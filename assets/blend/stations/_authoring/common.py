@@ -185,6 +185,7 @@ def compact_materials():
 
 
 def reaches_materials():
-    for n in ("SY_Scrap", "SY_Rock", "SY_Grate"):
+    for n in ("SY_Scrap", "SY_Rock", "SY_Grate", "SY_Regolith"):
         sheet_material(n, emit_strength=5.0)
-    flat_material("NavReaches", (0.03, 0.01, 0.0), 0.5, emit=lin("#FF6A3D"), strength=8.0)
+    flat_material("NavReaches", (0.03, 0.01, 0.0), 0.5, emit=lin("#FF6A3D"), strength=3.0)
+    flat_material("SY_Glass", lin("#252036"), 0.18, emit=lin("#B9A6FF"), strength=0.06)

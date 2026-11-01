@@ -155,6 +155,7 @@ def refuel_post(lod):
 def build(sc, root):
     for name, fn, col in (("ws_cargopod", cargo_pod, ((-1.75, -1.0, 0.0), (1.9, 1.0, 1.95))), ("ws_refuelpost", refuel_post, ((-0.45, -0.5, 0.0), (0.45, 0.85, 1.86)))):
         asset = K.new_collection(name, root)
+        asset["asset_class"] = "prop"
         for lod in range(4):
             c = K.new_collection(f"{name}_LOD{lod}", asset)
             m = fn(lod)

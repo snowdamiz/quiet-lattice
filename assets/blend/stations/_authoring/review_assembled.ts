@@ -8,7 +8,7 @@
 //                                  from=bounds, m metres beyond the bounding sphere: an assembly's centre is inside it)
 //     az=<deg>,el=<deg>,dist=<radii>  an orbit (clear=1 raises the elevation in 2° steps until the ground is out of the way)
 //     eye=x/y/z,target=x/y/z       an explicit camera in the asset's Blender axes (Z up), metres
-//   plus wire=1 for the wireframe pass and fov=<deg> for the camera's vertical field of view.
+//   plus wire=1 for wireframe, perf=1 for a paired performance readout, and fov=<deg> for vertical field of view.
 //
 // A --glb is copied to packages/client/public/models/stations/_review_<pid>.glb for the run and deleted after it, so
 // neither the validator nor an export ever sees it. Writes <out>/<name>.png per shot and <out>/shots.json.
@@ -124,6 +124,7 @@ try {
       const calls = E.renderer.info.render.calls;
       r.wireframe(false);
       const st = r.stats();
+      const perf = s.perf === '1' ? await r.perf({ pairs: 120 }) : null;
       const res = {
         name: s.name,
         shot: s,
@@ -135,6 +136,7 @@ try {
         calls,
         triangles: st.triangles,
         meshes: st.meshes,
+        perf,
         png,
       };
       r.__cam = null;

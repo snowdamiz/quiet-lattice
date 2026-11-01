@@ -64,25 +64,23 @@ def build_lod(lod):
                 ca, sa = math.cos(a), math.sin(a)
                 for j, (rad, ax) in enumerate(pts):
                     lap = (0.12 * (1 - j / (len(pts) - 1))) if lod <= 1 else 0.0
-                    rr = RR + rad
-                    grid[a_i, j] = (ca * rr, ax, sa * rr)
+                    tangent = pts[-1] - pts[0]
+                    outward = np.array([-tangent[1], tangent[0]])
+                    outward /= np.linalg.norm(outward)
+                    rr = RR + rad + outward[0] * lap
+                    grid[a_i, j] = (ca * rr, ax + outward[1] * lap, sa * rr)
             ctr = lambda q: np.array([q[0], 0.0, q[2]]) / max(1e-6, math.hypot(q[0], q[2])) * RR
             K.patch(m, grid, "WS_Shell", key, smooth=True, u_off=s * 1.9 + i * 0.7, away=ctr)
-        # crystal window band on both faces of the vault (the decks look out along the axle)
-        if lod <= 2:
-            for side in (-1, 1):
-                ax = side * 7.2 * SCALE
-                wa = np.linspace(a0 + 0.04, a1 - 0.04, steps + 1)
-                g = np.zeros((len(wa), 2, 3))
-                for k, a in enumerate(wa):
-                    g[k, 0] = (math.cos(a) * (RR - 2.2), ax + side * 1.45, math.sin(a) * (RR - 2.2))
-                    g[k, 1] = (math.cos(a) * (RR + 2.6), ax + side * 0.95, math.sin(a) * (RR + 2.6))
-                K.patch(m, g, "WS_LitGlass", None, toward=lambda q, side=side: q + np.array([0, side * 5.0, 0]))
+        # Faceted crystal lights in dark sockets; each vault keeps the same apertures at LOD2.
+        for side in (-1, 1):
+            for k in range(4):
+                a = a0 + (a1 - a0) * (k + 0.5) / 4
+                K.crystal_insert(m, (math.cos(a) * RR, side * 11.65, math.sin(a) * RR), (0, side, 0), (-math.sin(a), 0, math.cos(a)), 9.0, 3.0, lod, seed=s * 4 + k)
         # the joint frame: a lattice rib hoop around the section at each gap, standing proud
         a = s * 2 * math.pi / nseg
         hoop = [np.array([math.cos(a) * (RR + p[0] * 1.12), p[1] * 1.12, math.sin(a) * (RR + p[0] * 1.12)]) for p in sec]
         K.tube(m, hoop, 0, 0, "WS_Shell", "rib", smooth=True, up=(-math.sin(a), 0, math.cos(a)), profile=[(-2.2, -0.5), (2.2, -0.5), (1.9, 1.1), (-1.9, 1.1), (-2.2, -0.5)])
-        if lod <= 1:
+        if lod <= 2:
             # radiators off the outboard shell at the joints
             for side in (-1, 1):
                 xf = Matrix.Translation((math.cos(a) * (RR + 7.4), side * 4.5, math.sin(a) * (RR + 7.4))) @ Matrix.Rotation(-a, 4, "Y")
@@ -111,16 +109,16 @@ def build_lod(lod):
             p0 = np.array([ca * r0, 0, sa * r0]) + off
             p1 = np.array([ca * r1, 0, sa * r1]) + off
             rails.append((p0, p1))
-            K.tube(m, [p0, p1], 0, 0, "WS_Metal", "lattice", smooth=False, up=(0, 1, 0), profile=[(-0.45, -0.45), (0.45, -0.45), (0.45, 0.45), (-0.45, 0.45), (-0.45, -0.45)])
+            K.member(m, p0, p1, 0.45, "WS_Metal", "lattice", lod, bow=0.018, bow_dir=(0, 1, 0))
         K.tube(m, [np.array([ca * r0, 0, sa * r0]), np.array([ca * r1, 0, sa * r1])], 1.5, 12 if lod == 0 else 6, "WS_Shell", "plate_band", up=(0, 1, 0))
-        if lod <= 1:
-            nb = 12 if lod == 0 else 6
+        if lod <= 2:
+            nb = 8
             for j in range(nb):
                 t0, t1 = j / nb, (j + 1) / nb
                 for q in range(3):
                     a0p = rails[q][0] + (rails[q][1] - rails[q][0]) * t0
                     b0p = rails[(q + 1) % 3][0] + (rails[(q + 1) % 3][1] - rails[(q + 1) % 3][0]) * t1
-                    K.beam(m, a0p, b0p, 0.3, 0.3, "WS_Metal", "lattice", up=(0, 1, 0))
+                    K.member(m, a0p, b0p, 0.2, "WS_Metal", "lattice", lod, bow_dir=(0, 1, 0), seg=1 if lod == 0 else None)
     # nav lights on the rim at the spokes
     if lod <= 2:
         for k in range(8):

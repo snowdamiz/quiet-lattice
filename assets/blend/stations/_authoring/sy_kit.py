@@ -60,6 +60,43 @@ def mouth_theta(phi, inner=False):
     return t * (1.35 if inner else 1.0)
 
 
+def rock_patch(m, grid, inner=False):
+    # Each face projects on its dominant plane: the rim and pole do not pinch into UV rings.
+    # Broad material regions describe dust hollows and exhaust soot at the cavity throat.
+    for i in range(len(grid) - 1):
+        for j in range(len(grid[0]) - 1):
+            pts = [grid[i,j], grid[i+1,j], grid[i+1,j+1], grid[i,j+1]]
+            c = np.mean(pts, axis=0)
+            normal = np.cross(pts[1]-pts[0], pts[3]-pts[0])
+            axes = [k for k in range(3) if k != int(np.argmax(np.abs(normal)))]
+            dust = (c[2] < -18 and c[1] > -35) or (inner and c[1] < -30) or (c[0] > 28 and c[1] > 10 and c[2] < 14)
+            mat = "SY_Regolith" if dust else "SY_Rock"
+            uv = [(q[axes[0]] / 18, q[axes[1]] / 18) for q in pts]
+            m.add(pts, uv, mat, True, toward=(0,0,0) if inner else None, away=None if inner else (0,0,0))
+
+
+def rail(m, a, b, lod):
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    n = max(1, math.ceil(np.linalg.norm(b-a)/2.5))
+    for t in np.linspace(0,1,n+1):
+        p = a + (b-a)*t
+        K.tube(m, [p, p+[0,0,1.05]], 0.065, 6 if lod == 0 else 4, "SY_Scrap", "girder")
+    for z in (0.48,1.05):
+        K.tube(m, [a+[0,0,z], b+[0,0,z]], 0.05, 6 if lod == 0 else 4, "SY_Scrap", "girder")
+
+
+def hull_panel(m, width, y0, y1, z, lod, shift=(0,0,0)):
+    # A piece of a Thalune hull, with radiating ribs retained under the Reaches paint.
+    h = K.Mesh()
+    prof = [(x, z + 1.25*(1-(x/width)**2)) for x in np.linspace(-width,width,9 if lod == 0 else 5)]
+    K.lapped_rows(h, prof, y0,y1,"SY_Scrap",lambda i: "hull" if i%3 else "oxide",row=1.0,lap=0.09,lod=lod,seed=42,seg_m=0.65,edge_mat=("SY_Scrap","girder"),away=(0,(y0+y1)/2,z-3))
+    for k in range(-2,3):
+        x = width*k/2.5
+        pts = [(x*(0.35+0.65*t), y1+(y0-y1)*t, z+1.25*(1-(x*(0.35+0.65*t)/width)**2)+0.13) for t in np.linspace(0,1,8 if lod==0 else 4)]
+        K.tube(h,pts,0.11,6 if lod==0 else 4,"SY_Scrap","girder")
+    m.extend(h, Matrix.Translation(shift))
+
+
 def shell(m, lod, inner):
     nu = (72, 44, 22, 14)[lod] if not inner else (56, 36, 18, 10)[lod]
     nv = (40, 24, 12, 7)[lod] if not inner else (30, 20, 10, 6)[lod]
@@ -72,16 +109,13 @@ def shell(m, lod, inner):
             d = _dir(t, p)
             g[i, j] = d * radius(d, inner)
     g[-1] = g[0]
-    if inner:
-        K.patch(m, g, "SY_Rock", None, smooth=True, toward=(0, 0, 0), tile_m=22.0)
-    else:
-        K.patch(m, g, "SY_Rock", None, smooth=True, away=(0, 0, 0), tile_m=22.0)
+    rock_patch(m, g, inner)
     # close the back pole
     cap = g[:-1, -1]
     c = cap.mean(0)
     for i in range(len(cap)):
         a, b = cap[i], cap[(i + 1) % len(cap)]
-        m.add([a, b, c], [(0, 0), (0.3, 0), (0.15, 0.3)], "SY_Rock", True, away=None if inner else (0, 0, 0), toward=(0, 0, 0) if inner else None)
+        m.add([a, b, c], [(q[0]/18, q[2]/18) for q in (a,b,c)], "SY_Rock", True, away=None if inner else (0, 0, 0), toward=(0, 0, 0) if inner else None)
     return g
 
 
@@ -102,7 +136,7 @@ def tunnel(m, lod):
             q = q + (ax - q) * 0.12 * math.sin(t * math.pi) * (1 + 0.4 * math.sin(p * 5 + 1.3))
             g[i, j] = q
     g[-1] = g[0]
-    K.patch(m, g, "SY_Rock", None, smooth=True, toward=lambda c: np.array([0, c[1], 0]), tile_m=22.0)
+    rock_patch(m, g, True)
     return g
 
 
@@ -144,14 +178,23 @@ def rock_lod(lod):
     shell(m, lod, True)
     tunnel(m, lod)
     patch_plates(m, lod)
-    if lod <= 1:
-        # an antenna mast and a lamp on the crown, welded from salvage
-        top = _dir(math.pi / 2, math.pi / 2)
-        base = top * radius(top)
-        K.beam(m, base - top * 2, base + top * 22, 0.8, 0.8, "SY_Scrap", "girder", up=(1, 0, 0))
-        for k in range(3):
-            K.beam(m, base + top * (6 + k * 5), base + top * (6 + k * 5) + np.array([5.0 - k, 0, 0]), 0.3, 0.3, "SY_Scrap", "girder", up=(0, 1, 0))
-        K.revolve(m, [(0.0, 0.0), (0.6, 0.4), (0.6, 0.9)], 8, "NavReaches", None, center=tuple(base + top * 22.5), axis="z", away=tuple(base))
+    if lod <= 2:
+        for theta, phi, height in ((1.15,1.4,22),(0.8,2.7,15),(1.9,0.7,18)):
+            d = _dir(theta,phi)
+            base = d * radius(d)
+            for dx in (-0.7,0.7):
+                K.member(m, base + [dx,0,-2], base+[dx,0,height], 0.22,"SY_Scrap","girder",lod, bow=0.012)
+            for z in (5,10,15):
+                if z < height:
+                    K.member(m, base+[-0.7,0,z],base+[0.7,0,z+4],0.12,"SY_Scrap","girder",lod)
+            K.beam(m,base+[-4,0,height-3],base+[4,0,height-3],0.3,0.3,"SY_Scrap","patch",up=(0,1,0))
+            K.revolve(m,[(0,0),(0.45,0.3),(0.45,0.8)],8 if lod==0 else 6,"NavReaches",None,center=base+[0,0,height],axis="z")
+        # The visible approach frame is socketed into the actual rim, not floating outside it.
+        for phi in np.linspace(0,2*math.pi,9)[:-1]:
+            d = _dir(mouth_theta(phi),phi); base = d * radius(d)
+            tip = base + [0,-11,0]
+            K.member(m, base,tip,0.55,"SY_Scrap","girder",lod, bow_dir=(math.cos(phi),0,math.sin(phi)))
+            K.revolve(m,[(0,0),(0.55,0.25),(0.55,0.6)],8 if lod==0 else 6,"NavReaches",None,center=tip,axis="y")
     return m
 
 
@@ -160,7 +203,8 @@ def mouth_lod(lod):
     m = K.Mesh()
     r = 25.0
     n = 8
-    pts = [np.array([math.cos(a) * r, 0.0, math.sin(a) * r]) for a in np.linspace(0, 2 * math.pi, n + 1) + math.pi / 8]
+    pts = [np.array([math.cos(a) * r * (1 + 0.07*math.sin(k*2.1)), 0.0, math.sin(a) * r * (1 + 0.07*math.sin(k*2.1))]) for k,a in enumerate(np.linspace(0, 2 * math.pi, n + 1) + math.pi / 8)]
+    pts[-1] = pts[0].copy()
     for i in range(n):
         a, b = pts[i], pts[i + 1]
         if lod == 3:
@@ -172,12 +216,12 @@ def mouth_lod(lod):
         K.beam(m, a + out * 1.0, b + out * 1.0, 0.3, 2.4, "SY_Scrap", "girder", up=(0, 1, 0))
         K.beam(m, a - out * 1.0, b - out * 1.0, 0.3, 2.4, "SY_Scrap", "girder", up=(0, 1, 0))
         K.beam(m, a, b, 2.0, 0.35, "SY_Scrap", "plate" if i % 3 else "oxide", up=(0, 1, 0))
-        if lod <= 1:
+        if lod <= 2:
             # struts into the rock, splayed
             for s in (-1, 1):
                 p0 = a + (b - a) * (0.3 if s < 0 else 0.7)
                 p1 = p0 + (p0 / np.linalg.norm(p0)) * 7.0 + np.array([0, -3.0 + s * 1.5, 0])
-                K.beam(m, p0, p1, 0.6, 0.6, "SY_Scrap", "girder", up=(0, 1, 0))
+                K.member(m, p0, p1, 0.35, "SY_Scrap", "girder", lod, bow_dir=(0,1,0))
             # gussets welded across each corner, a cable run along the inside flange
             if lod == 0:
                 c_ = a / np.linalg.norm(a)
@@ -189,6 +233,16 @@ def mouth_lod(lod):
                     K.box(m, (-0.8, -1.25, -0.8), (0.8, 1.25, 0.8), "SY_Scrap", ["patch", "oxide", "plate"][(i + int(t * 4)) % 3], xf=Matrix.Translation(Vector(p_ + out * 1.25)) @ Matrix.Rotation(-math.atan2(d[2], d[0]), 4, "Y"))
             # floodlights at the nodes
             K.box(m, (-0.9, -1.6, -0.6), (0.9, -0.2, 0.6), "SY_Scrap", "lamp", xf=Matrix.Translation(Vector(a * 0.95)) @ Matrix.Rotation(-math.atan2(a[2], a[0]), 4, "Y"))
+    if lod <= 1:
+        for i,a in enumerate(pts[:-1]):
+            # Visible beads and corner bolts at the field-welded joints.
+            for j in range(12 if lod == 0 else 6):
+                p = a + [-1.2+j*0.2,-1.28,0.1*math.sin(j)]
+                K.revolve(m,[(0.09,0),(0.12,0.04),(0,0.08)],6,"SY_Scrap","girder",center=p,axis="y")
+        # One damaged bay is plated over with a ribbed salvaged shell.
+        panel = K.Mesh()
+        hull_panel(panel,6,-2,2,0,lod)
+        m.extend(panel,Matrix.Translation((19,-1,6)) @ Matrix.Rotation(math.pi/2,4,"X"))
     if lod <= 2:
         # the lintel: a hazard band across the top of the gate, mismatched patch plates hung below it
         K.box(m, (-14.0, -1.2, r * 0.86), (14.0, 0.6, r * 0.86 + 2.2), "SY_Scrap", "hazard")
@@ -201,12 +255,12 @@ def mouth_lod(lod):
     return m
 
 
-def dock_lod(lod):
+def dock_lod(lod, large=False):
     """A 26 m landing pad on a girder cantilever, anchored to the cavity wall at y = 0, the pad toward -Y."""
     m = K.Mesh()
-    cy = -17.0
-    R = 12.5
-    seg = (24, 16, 8, 8)[lod]
+    R = 18.0 if large else 12.5
+    cy = -R - 4.5
+    seg = (48, 28, 16, 8)[lod]
     ang = np.linspace(0, 2 * math.pi, seg + 1)[:-1] + math.pi / seg
     top = [(math.cos(a) * R, cy + math.sin(a) * R, 0.0) for a in ang]
     bot = [(math.cos(a) * R, cy + math.sin(a) * R, -1.2) for a in ang]
@@ -227,9 +281,9 @@ def dock_lod(lod):
         for k in range(seg):
             k2 = (k + 1) % seg
             K.patch(m, [[ring_i[k], ring_o[k]], [ring_i[k2], ring_o[k2]]], "SY_Scrap", "patch", toward=lambda c: c + np.array([0, 0, 1.0]))
-        if lod <= 1:
-            for k in range(0, seg, 3):
-                p = np.array(ring_o[k]) + np.array([0, 0, 0.05])
+        if lod <= 2:
+            for a in np.linspace(0,2*math.pi,9)[:-1]:
+                p = np.array([math.cos(a)*(R-0.5),cy+math.sin(a)*(R-0.5),0.10])
                 K.revolve(m, [(0.0, 0.25), (0.25, 0.15), (0.3, 0.0)], 6, "NavReaches", None, center=tuple(p), axis="z", away=tuple(p - [0, 0, 1]))
     # cantilever: two deep girders back to the anchor plate, braced
     for x in (-5.0, 5.0):
@@ -246,7 +300,7 @@ def dock_lod(lod):
         K.tube(m, ring, 0.14, 6, "SY_Scrap", "girder")
         for x in (-2.5, 2.5):
             K.revolve(m, [(0.7, 0.0), (0.7, 0.5)], 12, "SY_Scrap", "patch", center=(x, -1.4, 0.7), axis="x", away=(x, -1.4, 0.7))
-        for x in np.arange(-11.0, 11.1, 2.2):
+        for x in np.arange(-7.0, 7.1, 2.0):
             K.box(m, (x - 0.5, -cy * 0 - 0.75, -12.0), (x + 0.5, -0.6, -11.6), "SY_Scrap", "girder")
     if lod <= 1:
         for z in (-12.0, -6.0, 0.0):
@@ -255,7 +309,30 @@ def dock_lod(lod):
         # a walkway from the pad's edge to a hatch in the anchor plate
         K.box(m, (-1.2, cy + R - 1.5, -0.3), (1.2, -0.6, 0.0), "SY_Scrap", "plate", keys={"+z": "plate"})
         K.box(m, (-1.0, -0.65, 0.0), (1.0, -0.6, 2.6), "SY_Scrap", "hazard")
+    if lod <= 2:
+        # Actual curved lattice supports join the cantilever, with a burn ring on the working pad.
+        for x in (-5.0,5.0):
+            for k in range(6):
+                y = cy + k*(-cy)/6
+                K.member(m,(x,y,-1.3),(x,y-cy/6,-5.5),0.22,"SY_Scrap","girder",lod,bow_dir=(1,0,0))
+                K.member(m,(x,y,-5.5),(x,y-cy/6,-1.3),0.22,"SY_Scrap","girder",lod,bow_dir=(1,0,0))
+            K.chord(m,[(x,cy,-5.5),(x,0,-5.5)],0.35,"SY_Scrap","girder",lod)
+        for k in range(seg):
+            a,b=ang[k],ang[(k+1)%seg]
+            K.patch(m, [[(math.cos(a)*R*.25,cy+math.sin(a)*R*.25,.07),(math.cos(a)*R*.82,cy+math.sin(a)*R*.82,.07)],[(math.cos(b)*R*.25,cy+math.sin(b)*R*.25,.07),(math.cos(b)*R*.82,cy+math.sin(b)*R*.82,.07)]],"SY_Scrap","burn",toward=lambda c:c+[0,0,1])
+        panel=K.Mesh(); hull_panel(panel,8,-7,7,0,lod)
+        m.extend(panel,Matrix.Translation((0,-0.8,-6)) @ Matrix.Rotation(math.pi/2,4,"X"))
+        for x in (-7.8,7.8):
+            K.beam(m,(x,-.7,-14),(x,-.7,2),.5,.5,"SY_Scrap","girder",bevel=.1)
+        K.box(m,(R-2,cy-1.2,-.2),(R,cy+1.2,0),"SY_Scrap","walk")
     return m
+
+
+def cover_layout():
+    rng = np.random.default_rng(4)
+    for k in range(7):
+        x=-12+k*3.6+rng.uniform(-.5,.5); y=-11+rng.uniform(-1,1.5); a=rng.uniform(-.4,.4)
+        yield k,Matrix.Translation((x,y,0)) @ Matrix.Rotation(a,4,"Z")
 
 
 def deck_lod(lod):
@@ -271,7 +348,7 @@ def deck_lod(lod):
         K.box(m, (4.0, -6.0, 0.0), (10.0, -3.5, 2.6), "SY_Scrap", "oxide")
         return m
     # walkway strip of worn patch plates across the deck (where the crews walk)
-    K.box(m, (-X + 0.5, -8.0, 0.0), (X - 0.5, -6.6, 0.04), "SY_Scrap", "plate", skip=("-z",))
+    K.box(m, (-X + 0.5, -8.0, 0.0), (X - 0.5, -6.6, 0.04), "SY_Scrap", "walk", skip=("-z",))
     # container hold: a salvaged container with a hatch (3.0 x 2.0 m service size)
     K.box(m, (3.0, -6.2, 0.0), (12.0, -3.2, 2.9), "SY_Scrap", "oxide", keys={"+z": "plate", "-y": "oxide"})
     if lod <= 1:
@@ -279,14 +356,7 @@ def deck_lod(lod):
             K.box(m, (x, -6.28, 0.1), (x + 0.25, -6.2, 2.8), "SY_Scrap", "oxide")
         K.box(m, (6.4, -6.35, 0.0), (8.6, -6.25, 3.0), "SY_Scrap", "hazard")
     # cover: angled welded plates and crates across the deck
-    rng = np.random.default_rng(4)
-    for k in range(7 if lod == 0 else (5 if lod == 1 else 3)):
-        x = -12.0 + k * 3.6 + rng.uniform(-0.5, 0.5)
-        y = -11.0 + rng.uniform(-1.0, 1.5)
-        if x > 2.0 and y > -7.0:
-            continue
-        a = rng.uniform(-0.4, 0.4)
-        xf = Matrix.Translation((x, y, 0.0)) @ Matrix.Rotation(a, 4, "Z")
+    for k,xf in cover_layout():
         if k % 2:
             K.box(m, (-1.4, -0.12, 0.0), (1.4, 0.12, 1.25), "SY_Scrap", ["patch", "plate", "oxide"][k % 3], xf=xf)
             if lod <= 1:
@@ -310,11 +380,50 @@ def deck_lod(lod):
         for x in (-13.0, -4.0, 5.0):
             K.revolve(m, [(0.22, 0.0), (0.18, 0.5), (0.26, 0.6), (0.0, 0.65)], 8, "SY_Scrap", "girder", center=(x, Y0 + 0.8, 0.0), axis="z", away=(x, Y0 + 0.8, -1))
     # deck lamps under the hold's eave
-    if lod <= 1:
+    if lod <= 2:
         K.box(m, (3.5, -6.6, 2.5), (11.5, -6.3, 2.7), "SY_Scrap", "lamp")
     # anchor beams into the rock
     for x in (-10.0, 0.0, 10.0):
         K.beam(m, np.array([x, Y1 - 1.0, -1.0]), np.array([x, Y1 + 0.5, -8.0]), 0.6, 0.6, "SY_Scrap", "girder", up=(1, 0, 0))
+    if lod <= 2:
+        hull_panel(m,4.6,-6.4,-3.0,2.8,lod,shift=(7.5,0,0))
+        K.crystal_insert(m,(10,-6.4,1.6),(0,-1,0),(1,0,0),2.3,1.1,lod,seed=7,mats=("SY_Scrap","girder","SY_Glass","SY_Glass"))
+        K.tube(m,[(9.1,-6.94,1.6),(9.8,-6.95,1.8),(10.2,-6.94,1.2),(10.7,-6.95,1.4)],.025,4,"SY_Scrap","girder")
+        for y in (-12,-7,-2):
+            K.chord(m,[(-15,y,-.6),(0,y,-1.8),(15,y,-.6)],.3,"SY_Scrap","girder",lod,nodes=(0,1,2))
+            for x in range(-15,15,5):
+                K.member(m,(x,y,-.6),(x+2.5,y,-4.5),.24,"SY_Scrap","girder",lod)
+                K.member(m,(x+2.5,y,-4.5),(x+5,y,-.6),.24,"SY_Scrap","girder",lod)
+        for x in (-15,15):
+            rail(m,(x,-14,0),(x,-8.3,0),lod)
+            rail(m,(x,-5.7,0),(x,0,0),lod)
+        for k,xf in cover_layout():
+            if lod <= 1:
+                for x in (-.6,.6):
+                    for z in (.12,.95):
+                        bolt=K.Mesh();K.revolve(bolt,[(.09,0),(.09,.06),(0,.08)],8,"SY_Scrap","girder",center=(x,-.72 if not k%2 else -.14,z),axis="y")
+                        m.extend(bolt,xf)
+        if lod == 0:
+            for x in np.arange(3.15,12,.3):
+                K.tube(m,[(x,-6.36,.15),(x,-6.36,2.7)],.055,6,"SY_Scrap","oxide")
+            for x in (3,12):
+                for y in (-6.2,-3.2):
+                    for z in (.1,2.65):
+                        K.box(m,(x-.16,y-.16,z),(x+.16,y+.16,z+.25),"SY_Scrap","girder")
+    return m
+
+
+def gangway_lod(lod):
+    m=K.Mesh()
+    K.box(m,(-1.2,-12,-.24),(1.2,0,0),"SY_Scrap","walk")
+    if lod == 3:
+        return m
+    for x in (-1.16,1.16):
+        rail(m,(x,-12,0),(x,0,0),lod)
+        K.chord(m,[(x,0,-.2),(x,-6,-1.2),(x,-12,-.2)],.14,"SY_Scrap","girder",lod,nodes=(0,1,2))
+        for y in range(-12,0,2):
+            K.member(m,(x,y,-.24),(x,y+1,-1),.09,"SY_Scrap","girder",lod)
+            K.member(m,(x,y+1,-1),(x,y+2,-.24),.09,"SY_Scrap","girder",lod)
     return m
 
 
@@ -322,15 +431,16 @@ SOCKETS = {
     # (name, theta from the mouth, phi round it, inset) on the cavity wall, +Y pointing into the cavity
     "Socket_Dock_1": (1.30, math.pi + 0.25, 0.0),
     "Socket_Dock_2": (1.90, 0.15, 0.0),
-    "Socket_Dock_3": (2.40, math.pi - 0.40, 0.0),
+    "Socket_DockL_1": (2.40, math.pi - 0.40, 0.0),
     "Socket_Deck_1": (1.60, -0.45, 0.0),
     "Socket_Deck_2": (2.05, math.pi + 0.55, 0.0),
 }
 
 
 def build(sc, root):
-    for name, fn, cls in (("sy_rock", rock_lod, "building"), ("sy_mouth", mouth_lod, "kit"), ("sy_dock", dock_lod, "kit"), ("sy_deck", deck_lod, "kit")):
+    for name, fn, cls in (("sy_rock", rock_lod, "building"), ("sy_mouth", mouth_lod, "kit"), ("sy_dock", dock_lod, "kit"), ("sy_deck", deck_lod, "kit"), ("sy_dock_l", lambda lod: dock_lod(lod,True), "kit"), ("sy_gangway",gangway_lod,"kit")):
         asset = K.new_collection(name, root)
+        asset["asset_class"] = cls
         for lod in range(4):
             c = K.new_collection(f"{name}_LOD{lod}", asset)
             m = fn(lod)
@@ -360,12 +470,20 @@ def build(sc, root):
             mid = np.mean([_dir(MOUTH * 1.1, p) * radius(_dir(MOUTH * 1.1, p)) for p in np.linspace(0, 2 * math.pi, 16)], 0)
             K.empty(asset, "Socket_Mouth", (0.0, float(mid[1]), 0.0), rot=(0, 0, math.pi), size=8.0, props={"interface": "mouth"})
             for nm, (t, p, _) in SOCKETS.items():
-                d = _dir(t, p)
-                pos = d * radius(d, True) * 0.97
-                # level: +Y runs horizontally into the cavity, Z stays up, so docks and decks sit flat
-                inward = Vector((-d[0], -d[1], 0.0)).normalized()
-                q = inward.to_track_quat("Y", "Z")
-                o = K.empty(asset, nm, tuple(pos), rot=tuple(q.to_euler()), size=4.0, props={"interface": "anchor"})
+                if nm.startswith("Socket_Deck"):
+                    continue
+                d = _dir(t,p); pos = d*radius(d,True)*.97
+                inward=Vector((-d[0],-d[1],0)).normalized(); q=inward.to_track_quat("Y","Z")
+                props={"interface":"anchor"}
+                target={"Socket_Dock_1":"Deck_1","Socket_DockL_1":"Deck_2"}.get(nm)
+                if target:
+                    props["gangway"]=target
+                o=K.empty(asset,nm,tuple(pos),rot=tuple(q.to_euler()),size=4,props=props)
+                if target:
+                    r=18 if "DockL" in nm else 12.5; cy=-r-4.5
+                    dock=Matrix.Translation(pos) @ q.to_matrix().to_4x4() @ Matrix.Rotation(math.pi,4,"Z")
+                    deck=dock @ Matrix.Translation((r+27,cy+7,0)) @ Matrix.Rotation(math.pi,4,"Z")
+                    K.empty(asset,"Socket_"+target,tuple(deck.translation),rot=tuple(deck.to_euler()),size=4,props={"interface":"anchor"})
             K.empty(asset, "BAY_Mouth", (0.0, -R0 - 40.0, 0.0), size=8.0, props={"approach": True})
             K.empty(asset, "Light_Cavity", (0.0, 0.0, 0.0), size=3.0, props={"color": "#FF8A5C", "intensity": 1.6, "distance": 110.0})
         elif name == "sy_mouth":
@@ -375,14 +493,33 @@ def build(sc, root):
                 K.collider(asset, f"COL_Gate_{k + 1}", (-1.3, -1.3, -10.2), (1.3, 1.3, 10.2), xf=xf)
             K.empty(asset, "Socket_GateMount", (0, 0, 0), size=6.0, props={"interface": "mouth"})
             K.empty(asset, "Light_Gate", (0.0, -3.0, 21.0), size=2.0, props={"color": "#FF6A3D", "intensity": 2.0, "distance": 60.0})
-        elif name == "sy_dock":
-            K.collider(asset, "COL_Pad", (-12.5, -29.5, -1.2), (12.5, -4.5, 0.0))
+        elif name in ("sy_dock","sy_dock_l"):
+            r = 18.0 if name == "sy_dock_l" else 12.5
+            cy = -r-4.5
+            n=16; verts=[(math.cos(a)*r,cy+math.sin(a)*r,z) for z in (-1.2,0) for a in np.linspace(0,2*math.pi,n,endpoint=False)+math.pi/n]
+            faces=[tuple(range(n-1,-1,-1)),tuple(range(n,n*2))]+[(i,(i+1)%n,(i+1)%n+n,i+n) for i in range(n)]
+            K.collider_mesh(asset,"COL_Pad",verts,faces)
+            K.collider(asset,"COL_Walk",(-1.2,cy+r-1.5,-.3),(1.2,-.6,0))
+            K.empty(asset,"Socket_Gangway",(r,cy,0),rot=(0,0,-math.pi/2),props={"interface":"walkway"})
             K.collider(asset, "COL_Cantilever", (-6.0, -6.0, -3.0), (6.0, 0.0, 0.0))
             K.collider(asset, "COL_Anchor", (-8.0, -0.6, -14.0), (8.0, 0.0, 2.0))
-            K.empty(asset, "BAY_Dock", (0.0, -17.0, 0.0), size=4.0, props={"radius": 11.0})
+            K.empty(asset, "BAY_Dock", (0.0, cy, 0.0), size=4.0, props={"radius": r, "tier": 2 if r==18 else 1})
             K.empty(asset, "Socket_DockAnchor", (0, 0, 0), size=3.0, props={"interface": "anchor"})
             K.empty(asset, "Interact_Hatch", (0.0, -1.0, 1.4), size=0.3)
+        elif name == "sy_gangway":
+            K.collider(asset,"COL_Walk",(-1.2,-12,-.24),(1.2,0,0))
+            for x in (-1.16,1.16):
+                K.collider(asset,f"COL_Rail_{'L' if x<0 else 'R'}",(x-.08,-12,0),(x+.08,0,1.1))
+            K.empty(asset,"Socket_DockEnd",(0,0,0),props={"interface":"walkway"})
+            K.empty(asset,"Socket_DeckEnd",(0,-12,0),rot=(0,0,math.pi),props={"interface":"walkway"})
         else:
+            for k,xf in cover_layout():
+                mn,mx=((-1.4,-.12,0),(1.4,.12,1.25)) if k%2 else ((-.7,-.7,0),(.7,.7,1.1))
+                K.collider(asset,f"COL_Cover_{k}",mn,mx,xf=xf)
+            for x in (-15,15):
+                for j,(y0,y1) in enumerate(((-14,-8.3),(-5.7,0))):
+                    K.collider(asset,f"COL_EndRail_{'L' if x<0 else 'R'}{j}",(x-.08,y0,0),(x+.08,y1,1.1))
+            K.empty(asset,"Socket_Gangway",(-15,-7,0),rot=(0,0,math.pi/2),props={"interface":"walkway"})
             K.collider(asset, "COL_Deck", (-15.0, -14.0, -1.0), (15.0, 0.0, 0.0))
             K.collider(asset, "COL_Hold", (3.0, -6.2, 0.0), (12.0, -3.2, 2.9))
             K.collider(asset, "COL_Rail", (-15.0, -14.0, 0.0), (15.0, -13.8, 1.1))

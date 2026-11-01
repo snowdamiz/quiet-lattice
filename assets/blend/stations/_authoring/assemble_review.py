@@ -241,6 +241,21 @@ for lod in range(4):
             c.parent = node
             c.matrix_parent_inverse = I
 
+# Keep each module's lights, gameplay markers and collider volumes in the review assembly.
+# The review scene reads these names and extras for lighting, overlays and paired performance.
+for asset, mw, label in placed:
+    for o in bpy.data.collections[asset].objects:
+        name = base(o.name)
+        if not name.startswith(("COL_", "Light_", "Interact", "Socket_", "BAY_")):
+            continue
+        prefix, _, suffix = name.partition("_")
+        c = o.copy()
+        c.name = f"{prefix}_{label}_{suffix}"
+        sc.collection.objects.link(c)
+        c.parent = root
+        M = mw @ Matrix.Translation((o.get("open_x", 0.0) * door_open, 0, 0))
+        c.matrix_world = M @ o.matrix_world
+
 if figures:
     bip_mat = common.flat_material("REF_BipedPaint", (0.9, 0.35, 0.05), 0.6)
     tmpc = bpy.data.collections.new("tmp_fig")
@@ -288,7 +303,7 @@ bpy.ops.export_scene.gltf(
     export_format="GLB",
     use_selection=True,
     export_yup=True,
-    export_extras=False,
+    export_extras=True,
     export_normals=True,
     export_vertex_color="ACTIVE",
     export_materials="EXPORT",

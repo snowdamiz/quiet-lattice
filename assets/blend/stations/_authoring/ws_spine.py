@@ -57,18 +57,16 @@ def build_lod(lod):
     rr = R + 1.1
     ys = np.arange(y0 + 1.0, y1, 8.0)
     for k, a in enumerate(angs):
-        if lod == 2 and k % 2:
-            continue
         for ya, yb in ((y0 + 0.5, mid - 10.5), (mid + 10.5, y1 - 0.5)):
             p0 = np.array([math.cos(a) * rr, ya, math.sin(a) * rr])
             p1 = np.array([math.cos(a) * rr, yb, math.sin(a) * rr])
-            K.tube(m, [p0, p1], 0, 0, "WS_Metal", "lattice", smooth=False, up=(math.cos(a), 0, math.sin(a)), profile=sq)
+            K.member(m, p0, p1, 0.3, "WS_Metal", "lattice", lod, bow_dir=(math.cos(a), 0, math.sin(a)))
     for j, y in enumerate(ys):
         if abs(y - mid) < 10.5:
             continue
         ring = [np.array([math.cos(a) * rr, y, math.sin(a) * rr]) for a in angs + [angs[0]]]
-        K.tube(m, ring, 0, 0, "WS_Metal", "lattice", smooth=False, up=(0, 1, 0), profile=sq)
-        if lod <= 1 and j < len(ys) - 1:
+        K.chord(m, ring, 0.3, "WS_Metal", "lattice", lod, nodes=range(7), up=(0, 1, 0))
+        if lod <= 2 and j < len(ys) - 1:
             for k in range(6):
                 a, b = angs[k], angs[(k + 1) % 6]
                 y2 = ys[j + 1]
@@ -76,15 +74,15 @@ def build_lod(lod):
                     continue
                 pa = np.array([math.cos(a) * rr, y, math.sin(a) * rr])
                 pb = np.array([math.cos(b) * rr, y2, math.sin(b) * rr])
-                K.beam(m, pa, pb, 0.3, 0.3, "WS_Metal", "lattice", up=(0, 1, 0))
+                K.member(m, pa, pb, 0.17, "WS_Metal", "lattice", lod, bow_dir=(0, 1, 0))
     # crystal window strips along the shoulders, lit from the corridor inside
     if lod <= 2:
         for s in (-1, 1):
             for yy in (y0 + 3.0, mid + 11.0):
                 a = math.pi / 2 + s * 0.55
                 p = lambda t, h: np.array([math.cos(a + h) * (R * 1.06 + 0.15), yy + t, math.sin(a + h) * (R * 1.06 + 0.15)])
-                K.patch(m, [[p(0, -0.12), p(0, 0.12)], [p(8.0, -0.12), p(8.0, 0.12)]], "WS_LitGlass", None, away=lambda q: np.array([0.0, q[1], 0.0]))
-                K.tube(m, [p(-0.3, -0.16), p(8.3, -0.16), p(8.3, 0.16), p(-0.3, 0.16), p(-0.3, -0.16)], 0, 0, "WS_Metal", "trim", smooth=False, up=(math.cos(a), 0, math.sin(a)), profile=[(-0.12, -0.12), (0.12, -0.12), (0.12, 0.12), (-0.12, 0.12), (-0.12, -0.12)])
+                for k in range(3):
+                    K.crystal_insert(m, p(1.2 + k * 2.8, 0), (math.cos(a), 0, math.sin(a)), (0, 1, 0), 2.4, 1.7, lod, seed=k + int(yy))
     # a conduit run and radiator vanes along the belly
     if lod <= 1:
         for s in (-1, 1):

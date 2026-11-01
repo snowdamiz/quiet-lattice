@@ -121,6 +121,7 @@ def leaves():
 
 def build(sc, root):
     asset = K.new_collection("ws_baydoor", root)
+    asset["asset_class"] = "building"
     for lod in range(4):
         c = K.new_collection(f"ws_baydoor_LOD{lod}", asset)
         tot = 0

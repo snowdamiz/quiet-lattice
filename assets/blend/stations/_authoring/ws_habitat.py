@@ -35,30 +35,33 @@ def build_lod(lod):
         # rows lap toward the base; the lower edge stands proud
         lap = 0.14 if lod <= 1 else 0.0
         seg = [(r + lap * (1 - k / (len(seg) - 1)), y) for k, (r, y) in enumerate(seg)]
-        if i in win_rows and lod <= 2:
-            key = None
-            K.revolve(m, seg, n, "WS_LitGlass", None, axis="y", away=lambda q: np.array([0.0, q[1], 0.0]), smooth=False)
-            continue
         f = i / nrow
         key = "accent" if f < 0.12 else ("plate_band" if i == 1 else "plate")
         K.revolve(m, seg, n, "WS_Shell", key, axis="y", away=lambda q: np.array([0.0, q[1], 0.0]), u_off=i * 1.3)
+    # Individual crystal inserts sit in socket collars rather than a continuous glass ribbon.
+    for row, y in enumerate((6.0, 12.0, 18.0)):
+        r = float(np.interp(y, prof[:, 1], prof[:, 0]))
+        for k in range(12):
+            a = (k + 0.5) * math.pi / 6
+            nrm = (math.cos(a), 0, math.sin(a))
+            K.crystal_insert(m, (nrm[0] * (r + 0.05), y, nrm[2] * (r + 0.05)), nrm, (-math.sin(a), 0, math.cos(a)), 3.1, 1.4, lod, seed=row * 12 + k)
     # ribs radiating from the cap's tip down to the collar: the scallop
     if lod <= 2:
-        nr = (16, 12, 8)[lod]
+        nr = 16
         for k in range(nr):
             a = 2 * math.pi * k / nr
             pts = [np.array([math.cos(a) * (r + 0.35), y, math.sin(a) * (r + 0.35)]) for r, y in K.resample(prof, 1.5 if lod == 0 else 3.0)]
             pts = pts[:-1]
             K.tube(m, pts, 0, 0, "WS_Shell", "rib", smooth=True, up=(math.cos(a), 0, math.sin(a)), profile=[(-0.55, -0.1), (-0.42, 0.3), (0.0, 0.5), (0.42, 0.3), (0.55, -0.1)])
     # a lattice girdle at the widest point with antenna mast and radiators
-    if lod <= 1:
+    if lod <= 2:
         sq = [(-0.25, -0.25), (0.25, -0.25), (0.25, 0.25), (-0.25, 0.25), (-0.25, -0.25)]
         for y in (8.0, 15.0):
             ring = [np.array([math.cos(a) * 11.9, y, math.sin(a) * 11.9]) for a in np.linspace(0, 2 * math.pi, 25)]
-            K.tube(m, ring, 0, 0, "WS_Metal", "lattice", smooth=False, up=(0, 1, 0), profile=sq)
+            K.chord(m, ring, 0.25, "WS_Metal", "lattice", lod, nodes=range(0,25,2), up=(0, 1, 0), sub=0)
         for k in range(12):
             a0, a1 = 2 * math.pi * k / 12, 2 * math.pi * (k + 1) / 12
-            K.beam(m, np.array([math.cos(a0) * 11.9, 8.0, math.sin(a0) * 11.9]), np.array([math.cos(a1) * 11.9, 15.0, math.sin(a1) * 11.9]), 0.25, 0.25, "WS_Metal", "lattice", up=(0, 1, 0))
+            K.member(m, (math.cos(a0) * 11.9, 8.0, math.sin(a0) * 11.9), (math.cos(a1) * 11.9, 15.0, math.sin(a1) * 11.9), 0.18, "WS_Metal", "lattice", lod, bow_dir=(math.cos(a0), 0, math.sin(a0)))
         K.tube(m, [(0, 29.6, 0), (0, 36.0, 0)], 0.18, 6, "WS_Metal", "trim")
         for s in (-1, 1):
             for k, dz in enumerate((-2.4, 0.0, 2.4)):
@@ -85,7 +88,8 @@ def build(sc, root):
         m = build_lod(lod)
         print(f"ws_habitat LOD{lod}: {m.tris():,} tris, {len(m.mats)} materials")
         m.build(f"ws_habitat_L{lod}", c)
-    K.collider(asset, "COL_Habitat", (-11.4, -P.COLLAR_DEPTH, -11.4), (11.4, 30.2, 11.4))
+    for k, (y0, y1, r) in enumerate(((-P.COLLAR_DEPTH, 17, 11.4), (17, 25, 9.5), (25, 30, 5.8))):
+        K.collider(asset, f"COL_Habitat_{k}", (-r, y0, -r), (r, y1, r))
     K.empty(asset, "Socket_Base", (0, -P.COLLAR_DEPTH, 0), rot=P.socket_rotation((0, -1, 0)), size=4.0, props={"interface": "collar"})
     for i, y in enumerate((6.0, 12.0, 18.0)):
         K.empty(asset, f"Light_Window_{i + 1}", (0, y, 0), size=1.0, props={"color": "#FFF3DE", "intensity": 0.6, "distance": 26.0})

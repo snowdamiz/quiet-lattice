@@ -3,7 +3,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import paint as P
 
-out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tex")
+out = os.environ.get("STATION_TEXTURE_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "tex"))
 os.makedirs(out, exist_ok=True)
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 which = argv or ["shell", "metal", "deck", "decal"]
