@@ -532,6 +532,20 @@ describe('common flora', () => {
     expect(s.hit(a, deposit.id).hp).toBe(1);
   });
 
+  it('tells a plant from the same key on another world when the ref carries the frame', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const rock = world.onGround(norm(deposit.stand), 4, 3);
+    const breakRock = (ref: string) => {
+      let r;
+      while ((r = s.flora(a, 'rock', ref, rock)).result === 'hit') s.clock.t += 0.25;
+      return r;
+    };
+    expect(breakRock('1:1.2_3_4_f2_5').result).toBe('depleted');
+    expect(s.flora(a, 'rock', '1:1.2_3_4_f2_5', rock).reason).toBe('harvested');
+    expect(s.flora(a, 'rock', '1:2.2_3_4_f2_5', rock).result).toBe('hit');
+  });
+
   it('a patch of ground gives a character at most FLORA_HP_PER_PATCH hp of flora an hour, however it names it', () => {
     const s = setup();
     const a = s.player(deposit.stand);
