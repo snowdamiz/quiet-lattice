@@ -173,6 +173,29 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     expect(s.pos.y).toBe(4);
   });
 
+  it('takes the server’s velocity for an input at or before the fence where the mode it was sent in is refused', () => {
+    const p = new Prediction(inertial());
+    for (let seq = 5; seq <= 9; seq++) p.record(sent(seq, 10 + (seq - 5) * 0.05, [500 + (seq - 5) * 1000, 0, 0], { vel: [20000, 0, 0], mode: 'pulse' }));
+    p.corrected(9);
+    const s = state(null, [5500, 0, 0], [20000, 0, 0]);
+    p.take(9, { frame: null, pos: [100, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, 'ship', s, 10.2);
+    expect(s.vel.toArray()).toEqual([0, 0, 0]);
+    expect(s.pos.toArray()).toEqual([100, 0, 0]);
+    // (the mover's own velocity where it keeps a mode of its own)
+    const own = state(null, [5500, 0, 0], [400, 0, 0]);
+    p.take(9, { frame: null, pos: [100, 0, 0], quat: [0, 0, 0, 1], vel: [20000, 0, 0] }, 'pulse', own, 10.2, true);
+    expect(own.vel.toArray()).toEqual([400, 0, 0]);
+  });
+
+  it('takes the server’s velocity where the correction drops the drive, whatever mode the input was sent in', () => {
+    const p = new Prediction(inertial());
+    p.record(sent(5, 10, [500, 0, 0], { vel: [100, 0, 0] }));
+    const s = state(null, [20000, 0, 0], [20000, 0, 0]);
+    p.take(5, { frame: null, pos: [500, 0, 0], quat: [0, 0, 0, 1], vel: [100, 0, 0] }, 'ship', s, 10.25, false, true);
+    expect(s.vel.toArray()).toEqual([100, 0, 0]);
+    expect(s.pos.x).toBeCloseTo(525);
+  });
+
   it('rewinds a mover now in another frame, with the frames as they stood at the corrected input', () => {
     const { planet, station, resolve, place } = world();
     const p = new Prediction(resolve);

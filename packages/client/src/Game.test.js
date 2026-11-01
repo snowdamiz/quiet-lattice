@@ -327,6 +327,31 @@ describe('Game: rewinding to a correction (P1.E04.T03)', () => {
     expect(state.pos.z).toBeCloseTo(-2000 - 100 * 0.05);
   });
 
+  it('puts a teleport just after a correction for a refused mode where the server put the character, at rest', () => {
+    const { g, ship, state } = flying([0, 0, -5500], [0, 0, -20000], 'pulse');
+    for (let seq = 5; seq <= 9; seq++) {
+      const time = 10 + (seq - 5) * 0.05;
+      g.prediction.record({ seq, time, mode: 'pulse', pose: { frame: null, pos: [0, 0, -500 - 20000 * (time - 10)], quat: Q, vel: [0, 0, -20000] } });
+    }
+    g.onCorrection(correction([4, 0, -500], [0, 0, -20000], 'pulse'));
+    g.time = 10.45;
+    g.onCorrection({ t: 'correction', seq: 9, mode: 'ship', pose: { frame: null, pos: [100, 0, -2000], quat: Q, vel: [0, 0, 0] } });
+    expect(ship.mode).toBe('flying');
+    expect(state.pos.toArray()).toEqual([100, 0, -2000]);
+    expect(state.vel.toArray()).toEqual([0, 0, 0]);
+    expect(ship.speed).toBe(0);
+  });
+
+  it('takes the server’s velocity from a correction that drops the drive for an input sent before engaging it', () => {
+    const { g, ship, state } = flying([0, 0, -5500], [0, 0, -20000], 'pulse');
+    g.prediction.record(sent([0, 0, -500], [0, 0, -100]));
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    expect(ship.mode).toBe('flying');
+    expect(state.vel.toArray()).toEqual([0, 0, -100]);
+    expect(state.pos.toArray()).toEqual([4, 0, -525]);
+    expect(ship.speed).toBeCloseTo(100);
+  });
+
   it('counts a correction only once it is taken', () => {
     const { g } = flying([0, 0, -525], [0, 0, -110]);
     g.onCorrection({ t: 'correction', seq: 5, mode: 'ship', pose: { frame: '2:station', pos: [0, 0, 0], quat: Q, vel: [0, 0, 0] } });
