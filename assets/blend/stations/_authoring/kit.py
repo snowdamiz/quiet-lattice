@@ -14,6 +14,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TEX = os.path.join(HERE, "tex")
 U_PER_M = 1.0 / 8.0
 INSET = 0.004
+# metres per u repeat by material where a sheet is not 2048 px at 256 px/m
+TILE_M = {"WS_Prop": 4.0}
+
+
+def upm(mat):
+    return 1.0 / TILE_M.get(mat, 8.0)
 
 STRIPS = {}
 for fn in os.listdir(TEX) if os.path.isdir(TEX) else []:
@@ -117,7 +123,7 @@ def patch(m, grid, mat, key=None, smooth=False, u_off=0.0, flip=False, t_range=(
     v_metres, in metres from the strip bottom; or uv_fn(point) -> (u, v) for planar maps)."""
     g = np.asarray(grid, np.float64)
     nu, nv = g.shape[:2]
-    us = np.stack([_cum(g[:, j]) for j in range(nv)], 1) * (U_PER_M if key is not None or v_metres is not None else 1.0 / tile_m) + u_off
+    us = np.stack([_cum(g[:, j]) for j in range(nv)], 1) * (upm(mat) if key is not None or v_metres is not None else 1.0 / tile_m) + u_off
     vs = np.stack([_cum(g[i]) for i in range(nu)], 0)
     sv = strip_v(mat, key) if key else (0.0, 1.0)
     if key is None and v_metres is None:
@@ -227,7 +233,7 @@ def tube(m, path, radius, sides, mat, key, smooth=True, up=(0, 0, 1), caps=False
             pts = list(ring) if sgn > 0 else list(ring)[::-1]
             c = ring.mean(0)
             sv = strip_v(mat, key)
-            uvs = [((p - c)[0] * U_PER_M * 0.5 + 0.5 * U_PER_M, sv[0] + (sv[1] - sv[0]) * 0.5) for p in pts]
+            uvs = [((p - c)[0] * upm(mat) * 0.5 + 0.5 * upm(mat), sv[0] + (sv[1] - sv[0]) * 0.5) for p in pts]
             m.add(pts, uvs, mat, False, away=path[1] if end == 0 else path[-2])
 
 
@@ -274,7 +280,7 @@ def resample(pts, step):
     return np.stack([np.interp(s, c, pts[:, k]) for k in range(pts.shape[1])], 1)
 
 
-def lapped_rows(m, prof, y0, y1, mat, keys, row=2.0, lap=0.14, lod=0, ny=1, flip=False, u_jitter=True, seed=0, x_of=None, away=None, toward=None, axis="y"):
+def lapped_rows(m, prof, y0, y1, mat, keys, row=2.0, lap=0.14, lod=0, ny=1, flip=False, u_jitter=True, seed=0, x_of=None, away=None, toward=None, axis="y", seg_m=1.2, edge_mat=("WS_Shell", "lip")):
     """A shell of lapped plate rows: `prof` is the section (x, z) from the eave up to the crown, extruded along y.
     Each row's lower edge stands proud by `lap` (a shingle), mapped to one plate strip; keys cycle per row index via
     keys(i) -> strip key. LOD2+ drops the lap steps but keeps the same strips, so the read does not pop."""
@@ -300,7 +306,7 @@ def lapped_rows(m, prof, y0, y1, mat, keys, row=2.0, lap=0.14, lod=0, ny=1, flip
     ys = np.linspace(y0, y1, ny + 1)
     for i in range(nrow):
         sa, sb = edges[i], edges[i + 1]
-        k = max(2, int(math.ceil((sb - sa) / 1.2)) + 1) if lod <= 1 else 2
+        k = max(2, int(math.ceil((sb - sa) / seg_m)) + 1) if lod <= 1 else 2
         ss = np.linspace(sa, sb, k)
         sec = []
         for j, s in enumerate(ss):
@@ -322,7 +328,7 @@ def lapped_rows(m, prof, y0, y1, mat, keys, row=2.0, lap=0.14, lod=0, ny=1, flip
             for a, y in enumerate(ys):
                 eg[a, 0] = (p0[0], y, p0[1]) if axis == "y" else (y, p0[0], p0[1])
                 eg[a, 1] = (p1[0], y, p1[1]) if axis == "y" else (y, p1[0], p1[1])
-            patch(m, eg, "WS_Shell", "lip", smooth=False, flip=flip, u_off=uo, t_range=(0.0, 0.15), away=away, toward=toward)
+            patch(m, eg, edge_mat[0], edge_mat[1], smooth=False, flip=flip, u_off=uo, t_range=(0.0, 0.15), away=away, toward=toward)
     return nrow
 
 
@@ -373,3 +379,137 @@ def new_collection(name, parent):
     c = bpy.data.collections.new(name)
     parent.children.link(c)
     return c
+
+
+def _orth(v, d):
+    v = np.asarray(v, np.float64) - np.dot(v, d) * d
+    n = np.linalg.norm(v)
+    if n < 1e-6:
+        v = np.cross(d, [0.0, 0.0, 1.0] if abs(d[2]) < 0.9 else [1.0, 0.0, 0.0])
+        n = np.linalg.norm(v)
+    return v / n
+
+
+MEMBER_T = {0: (0.0, 0.07, 0.2, 0.5, 0.8, 0.93, 1.0), 1: (0.0, 0.14, 0.5, 0.86, 1.0), 2: (0.0, 0.5, 1.0)}
+MEMBER_SIDES = {0: 6, 1: 5, 2: 4}
+
+
+def member(m, a, b, r, mat, key, lod=0, bow=0.04, bow_dir=(0, 0, 1), fillet=1.9, ends=(True, True), u_off=0.0, sides=None, seg=None):
+    """An Ulgani lattice member (art bible 2.3): a round section from a to b bowed by `bow` x its length toward
+    `bow_dir`, its ends flaring to `fillet` x the radius where it fuses into the member it meets, like grown bone.
+    LOD2 keeps the member as a four-sided spindle so the lattice simplifies instead of vanishing; LOD3 drops it."""
+    if lod >= 3:
+        return
+    a, b = np.asarray(a, np.float64), np.asarray(b, np.float64)
+    d = b - a
+    L = float(np.linalg.norm(d))
+    if L < 1e-6:
+        return
+    d /= L
+    bd = _orth(bow_dir, d)
+    ts = MEMBER_T[min(lod if seg is None else seg, 2)]
+    path = np.array([a + d * L * t + bd * bow * L * 4 * t * (1 - t) for t in ts])
+    flare = lambda t: max(((1 - smooth_t(t / 0.2)) if ends[0] else 0.0), ((1 - smooth_t((1 - t) / 0.2)) if ends[1] else 0.0))
+    radii = [r * (1 + (fillet - 1) * flare(t) ** 2) for t in ts]
+    sides = sides or MEMBER_SIDES[min(lod, 2)]
+    T, N, B = frames(path, up=tuple(bd))
+    ang = np.linspace(0, 2 * np.pi, sides + 1) + np.pi / sides
+    grid = np.zeros((len(path), sides + 1, 3))
+    for i, p in enumerate(path):
+        for j, q in enumerate(ang):
+            grid[i, j] = p + (N[i] * math.cos(q) + B[i] * math.sin(q)) * radii[i]
+    mids = [(path[i] + path[i + 1]) / 2 for i in range(len(path) - 1)]
+    patch(m, grid, mat, key, smooth=True, u_off=u_off, away_rows=mids)
+
+
+def smooth_t(x):
+    x = min(1.0, max(0.0, x))
+    return x * x * (3 - 2 * x)
+
+
+def chord(m, pts, r, mat, key, lod=0, nodes=(), node_scale=1.45, up=(0, 0, 1), sides=None, sub=None):
+    """A continuous lattice chord through `pts` with fused swellings at the indices in `nodes` (where webs grow in)."""
+    if lod >= 3:
+        return
+    pts = np.asarray(pts, np.float64)
+    sides = sides or MEMBER_SIDES[min(lod, 2)]
+    sub = sub if sub is not None else (2 if lod == 0 else 1)
+    path, radii = [], []
+    for i in range(len(pts)):
+        if i:
+            for f in np.arange(1, sub + 1) / (sub + 1):
+                path.append(pts[i - 1] + (pts[i] - pts[i - 1]) * f)
+                radii.append(r)
+        path.append(pts[i])
+        radii.append(r * (node_scale if i in nodes and lod <= 1 else 1.0))
+    path = np.array(path)
+    T, N, B = frames(path, up)
+    ang = np.linspace(0, 2 * np.pi, sides + 1) + np.pi / sides
+    grid = np.zeros((len(path), sides + 1, 3))
+    for i, p in enumerate(path):
+        for j, q in enumerate(ang):
+            grid[i, j] = p + (N[i] * math.cos(q) + B[i] * math.sin(q)) * radii[i]
+    mids = [(path[i] + path[i + 1]) / 2 for i in range(len(path) - 1)]
+    patch(m, grid, mat, key, smooth=True, away_rows=mids)
+
+
+def crystal_insert(m, c, n, t, L, W, lod=0, lit=True, collar=0.22, seed=0, mats=("WS_Metal", "machine", "WS_LitGlass", "WS_Glass")):
+    """An Ixari window (art bible 2.2): a faceted crystal grown into a dark socket collar set in the skin. `c` sits on the
+    skin, `n` is its outward normal, `t` the crystal's long axis; L x W is the opening. Facets alternate lit and dark
+    glazing so the crystal reads faceted at any distance; growth shows as a terrace part-way up."""
+    c, n = np.asarray(c, np.float64), np.asarray(n, np.float64)
+    n /= np.linalg.norm(n)
+    t = _orth(t, n)
+    s = np.cross(n, t)
+    k = W * 0.45
+
+    def outline(sc, h, lean=0.0):
+        uv = [(L / 2, 0.0), (L / 2 - k, W / 2), (-L / 2 + k, W / 2), (-L / 2, 0.0), (-L / 2 + k, -W / 2), (L / 2 - k, -W / 2)]
+        return [c + t * (u * sc + lean) + s * (v * sc) + n * h for u, v in uv]
+
+    cw = W * collar
+    lip = W * 0.12
+    out0 = outline(1 + 2 * cw / W, -0.08)
+    out1 = outline(1 + 2 * cw / W, lip)
+    in1 = outline(1.0, lip)
+    in0 = outline(1.0, 0.0)
+    rings = [out0, out1, in1, in0] if lod <= 1 else [out1, in1]
+    for r0, r1 in zip(rings, rings[1:]):
+        for q in range(6):
+            q2 = (q + 1) % 6
+            m.add([r0[q], r0[q2], r1[q2], r1[q]], [(0.0, 0.0), (0.1, 0.0), (0.1, 0.1), (0.0, 0.1)], mats[0], False, toward=lambda p: p + n)
+    sv = strip_v(mats[0], mats[1])
+    for f in m.uvs[-6 * (len(rings) - 1):]:
+        for i, (u, v) in enumerate(f):
+            f[i] = (u + seed * 0.37, sv[0] + (sv[1] - sv[0]) * (0.2 + v * 6))
+    rng = np.random.default_rng(seed)
+    lean = (rng.random() - 0.5) * W * 0.25
+    base = outline(0.97, 0.0)
+    if lod <= 1:
+        terrace = outline(0.82, W * 0.24, lean * 0.5)
+        step = outline(0.74, W * 0.27, lean * 0.5)
+        top = outline(0.5, W * 0.42, lean)
+        stack = [base, terrace, step, top]
+    else:
+        top = outline(0.55, W * 0.36, lean)
+        stack = [base, top]
+    for lvl, (r0, r1) in enumerate(zip(stack, stack[1:])):
+        for q in range(6):
+            q2 = (q + 1) % 6
+            mat = mats[2] if lit and (q + lvl) % 2 == 0 else mats[3]
+            m.add([r0[q], r0[q2], r1[q2], r1[q]], [(0, 0), (1, 0), (1, 1), (0, 1)], mat, False, toward=lambda p: p + n)
+    m.add(stack[-1], [(0, 0)] * 6, mats[2] if lit else mats[3], False, toward=lambda p: p + n)
+
+
+def decal(m, c, n, t, w, h, cell, lift=0.02, mat="WS_Decal", flip=False):
+    """A decal quad `w` x `h` m centred on `c`, facing `n`, its u along `t`, showing atlas cell (u0, v0, u1, v1)."""
+    c, n = np.asarray(c, np.float64), np.asarray(n, np.float64)
+    n /= np.linalg.norm(n)
+    t = _orth(t, n)
+    s = np.cross(n, t)
+    c = c + n * lift
+    u0, v0, u1, v1 = cell
+    if flip:
+        u0, u1 = u1, u0
+    pts = [c - t * w / 2 - s * h / 2, c + t * w / 2 - s * h / 2, c + t * w / 2 + s * h / 2, c - t * w / 2 + s * h / 2]
+    m.add(pts, [(u0, v0), (u1, v0), (u1, v1), (u0, v1)], mat, False, toward=lambda p: p + n)

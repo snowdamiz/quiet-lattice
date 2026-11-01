@@ -174,6 +174,8 @@ def compact_materials():
     for n in ("WS_Shell", "WS_Metal", "WS_Deck", "WS_Floor"):
         sheet_material(n)
     sheet_material("WS_Decal", alpha=True)
+    # the props' 1k sheet; its lens is a thin indicator line, so it glows at a fraction of the kit's lamps
+    sheet_material("WS_Prop", emit_strength=2.5)
     # Ixari crystal glazing: dark, glossy, a faint lilac cast; lit from within at night
     flat_material("WS_Glass", lin("#10131c"), 0.06, 0.0, emit=lin("#B9A6FF"), strength=0.03)
     flat_material("WS_LitGlass", lin("#141822"), 0.06, 0.0, emit=lin("#E8ECFF"), strength=0.22)
