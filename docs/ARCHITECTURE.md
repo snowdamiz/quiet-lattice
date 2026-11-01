@@ -1480,8 +1480,10 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   and temperament at its herd's level; the apex takes the Pack Alpha's row), taken when it is first hurt. A player has
   its suit's (`playerMaxHealth` of the nodes it owns: 100, Second Skin 150) and its ship's shield and hull
   (`shipStats` of the ship it flies and the nodes it owns: Shield Capacitor and Hull Plating make them 125, §28); those
-  are what it entered with until its nodes or hull change, when `CombatZone.retuned` works the capacities out again and
-  keeps the damage already taken (a plate bought in flight repairs nothing, one refunded wounds nothing); a hit takes the suit when the server believes it on foot, else the shield
+  are what it entered with until its nodes or hull change (a join carries `SkillService.flight`), when `ZoneCombat.retuned`
+  works the capacities and the damage mods out again and each pool keeps its fraction (a plate bought in flight repairs
+  nothing, one refunded wounds nothing and never kills, a pool at 0 stays at 0 and the player stays down, a refund then a
+  rebuy gains nothing); a hit takes the suit when the server believes it on foot, else the shield
   and then the hull. On the wire, an entity's `hp` is the fraction left of the pool in use (and aboard, `shield`), patched
   as it changes and as a player's mode changes which pool is shown. Nothing heals yet and health is not saved: the
   Recall (P1.E06.T03) and creature attacks (P1.E08.T02) decide recovery.
