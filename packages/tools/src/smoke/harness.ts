@@ -1,0 +1,88 @@
+// `test` for every smoke spec: Playwright's, plus a guard against a page that stops answering. When a renderer is
+// stuck (a stalled GPU, a spinning script) Playwright fails the test on its timeout but then waits on the browser to
+// close the page, which a stuck renderer never does: one run sat 16 minutes in that wait, 90 times its test timeout.
+// The guard gives the contexts `closeGraceMs` to close once the test is over, then kills the browser's process tree, so
+// the test ends at its own timeout plus that grace and the failed test's worker starts over with a fresh browser.
+import { execFileSync } from 'node:child_process';
+import { expect, test as base, type Browser } from '@playwright/test';
+
+export { expect };
+
+async function browserPid(browser: Browser): Promise<number | null> {
+  if (browser.browserType().name() !== 'chromium') return null;
+  const cdp = await browser.newBrowserCDPSession();
+  try {
+    const { processInfo } = await cdp.send('SystemInfo.getProcessInfo');
+    const pid = processInfo.find((p) => p.type === 'browser')?.id;
+    if (pid === undefined) throw new Error('The smoke hang guard could not find Chromium’s process');
+    return pid;
+  } finally {
+    await cdp.detach();
+  }
+}
+
+function processTree(root: number): number[] {
+  const rows = execFileSync('ps', ['-Ao', 'pid=,ppid='], { encoding: 'utf8', timeout: 1000 })
+    .split('\n')
+    .map((l) => l.trim().split(/\s+/).map(Number))
+    .filter((r) => r.length === 2 && r.every(Number.isInteger));
+  const tree = [root];
+  for (let i = 0; i < tree.length; i++) for (const [pid, ppid] of rows) if (ppid === tree[i]) tree.push(pid);
+  return tree;
+}
+
+export function killProcessTree(pid: number): void {
+  if (process.platform === 'win32') {
+    execFileSync('taskkill', ['/pid', String(pid), '/T', '/F'], { timeout: 5000 });
+    return;
+  }
+  const tree = processTree(pid).reverse();
+  for (const p of tree) {
+    try {
+      process.kill(p, 'SIGKILL');
+    } catch {
+      // gone already
+    }
+  }
+}
+
+export const test = base.extend<{ closeGraceMs: number; hangGuard: void }>({
+  closeGraceMs: [15_000, { option: true }],
+  hangGuard: [
+    // Teardown runs before the built-in context fixture. The running guard also covers afterEach hooks that call a stuck page.
+    async ({ browser, context: _context, closeGraceMs }, use, info) => {
+      const pid = await browserPid(browser);
+      if (pid === null) return use();
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      let killed = false;
+      const arm = () => {
+        timer ??= setTimeout(() => {
+          killed = true;
+          console.warn(`hang guard: the page did not close in time; killing the browser (pid ${pid})`);
+          killProcessTree(pid);
+        }, closeGraceMs);
+      };
+      const started = Date.now();
+      const watch = setInterval(() => {
+        // Read timeout each time: individual specs can change it with test.setTimeout or test.slow.
+        if (info.status !== 'passed' || (info.timeout > 0 && Date.now() - started >= info.timeout)) arm();
+      }, 100);
+      const clear = () => {
+        clearInterval(watch);
+        clearTimeout(timer);
+      };
+      browser.once('disconnected', clear);
+      try {
+        await use();
+        arm();
+        // Include manually created contexts from multi-client specs; none may outlive the test and its guard.
+        await Promise.all(browser.contexts().map((context) => context.close()));
+        if (killed) throw new Error('The smoke hang guard killed an unresponsive browser');
+      } finally {
+        clear();
+        browser.off('disconnected', clear);
+      }
+    },
+    { auto: true },
+  ],
+});

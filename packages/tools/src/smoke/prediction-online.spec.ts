@@ -10,7 +10,8 @@
 // too large to blend, shown as the jump it is; the server refusing an engage the client mispredicted, the ship rewound to
 // where the server holds it and carried on at its velocity, blended. Needs `pnpm db:up`.
 import { randomBytes, randomInt } from 'node:crypto';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './harness.ts';
 import { enterPicked, signUp, type Pilot } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 

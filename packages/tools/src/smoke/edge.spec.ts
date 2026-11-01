@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './harness.ts';
 import { darkAt, edgeAt, seasonOpening } from '@astra/shared/seasons';
 import { EDGE_WALL_LY_PER_LY, EDGE_X, galaxyTiers, wallX } from '@astra/shared/world';
 

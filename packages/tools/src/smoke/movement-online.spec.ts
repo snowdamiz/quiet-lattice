@@ -9,7 +9,8 @@
 // page's frames, and waits until the server has handled the input they sent, so the server sees exactly the gaps and times
 // the client meant. A stall or a pause is a jump of both clocks with no frames and no inputs.
 import { randomBytes, randomInt } from 'node:crypto';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './harness.ts';
 import { enterPicked, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 

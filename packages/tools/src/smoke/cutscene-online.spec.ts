@@ -1,5 +1,6 @@
 import { randomBytes, randomInt } from 'node:crypto';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './harness.ts';
 import { enterPicked, signUp } from './account.ts';
 import { startOnline, type Online } from './online.ts';
 
