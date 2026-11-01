@@ -891,6 +891,178 @@ async function openRemotes(
   await page.waitForTimeout(1200);
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/** What the fauna-combat screens reach of the page. */
+interface FaunaPage {
+  game: any;
+  dev: any;
+  step(n: number): Promise<void>;
+  __feed: any;
+  __herd: {
+    t0: number;
+    me: number;
+    aim(id: number, frames?: number): Promise<void>;
+    hit(id: number, amount: number, killed?: boolean): void;
+    stepTo(u: number): Promise<void>;
+  };
+  __clip: { frame(dt: number): void; t: number };
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+/** The herd's stream (replay.js `herdTicks`): creature 601 is killed this many seconds in, 603 in the clip. */
+const HERD_KILLS = { 601: 9, 603: 23.6 };
+/** Where in the stream (s) each still and the clip start; the clip's scripted fight runs from the last. */
+const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.35, flash: 9.7, analysis: 10.2, clip: 22 };
+
+/**
+ * On foot on the home world with the server's herd ahead, played into the remote layer as a recorded snapshot stream
+ * (offline and hermetic, replay.js `herd`), and the HUD's combat feed (net/combat.js, which the server's `event` messages
+ * fill) in the page's hands: `__herd.hit` is the server saying a hit landed. `night` stands the walker on the night side.
+ * Creature 601 is the one in the sights. Stops with the herd settled in view, 2.4 s into the stream.
+ */
+async function openHerd(page: Page, night: boolean): Promise<void> {
+  await standingByShip(page);
+  await parkLoop(page);
+  await page.evaluate(
+    async ({ night, kills, at }) => {
+      const w = window as unknown as FaunaPage;
+      const g = w.game;
+      if (night) {
+        // the night side, on dry land clear of the sea: round the ring of directions 150° from the sun
+        const planet = g.player.state.frame;
+        const V = g.player.state.pos.constructor;
+        const toSun = new V().copy(g.system.star.position).sub(planet.position).normalize().applyQuaternion(planet.quaternionInv);
+        const axis = new V(0, 1, 0).cross(toSun).normalize();
+        const up = toSun.clone().applyAxisAngle(axis, (150 * Math.PI) / 180);
+        for (let k = 0; k < 72; k++) {
+          const h = planet.heightAt(up);
+          if (h > 15 && h < planet.params.mountainHeight * 0.3) break;
+          up.applyAxisAngle(toSun, (5 * Math.PI) / 180);
+        }
+        const heading = new V().crossVectors(up, toSun).normalize();
+        g.player.spawn(planet, up.clone().multiplyScalar(planet.groundRadius(up) + 0.5), heading);
+        g.cam.frame = undefined;
+        // (the ground streams in from the workers, a few frames at a time)
+        for (let i = 0; i < 30; i++) {
+          await w.step(6);
+          await new Promise((r) => setTimeout(r, 120));
+        }
+      }
+      g.hud.clearBanners();
+      const base = '/src';
+      const { CombatFeed } = await import(/* @vite-ignore */ `${base}/net/combat.js`);
+      const replay = await import(/* @vite-ignore */ `${base}/remote/replay.js`);
+      const me = 1;
+      // (the server's events reach the HUD through the feed; the page plays the server)
+      const feed = (w.__feed = new CombatFeed({ on() {}, entityId: me, now: () => performance.now() }));
+      const updateHits = g.hud.updateHits.bind(g.hud);
+      g.hud.updateHits = () => updateHits(feed);
+      const t0 = g.time;
+      replay.play(g, 'herd', { seconds: 40, kills });
+      w.__herd = {
+        t0,
+        me,
+        // steps the game to `u` s into the stream
+        async stepTo(u: number) {
+          const frames = Math.round((t0 + u - g.time) * 60);
+          if (frames > 0) await w.step(frames);
+        },
+        // turns the walker to look at creature `id` (the middle of its body)
+        async aim(id: number, frames = 24) {
+          for (let i = 0; i < frames; i++) {
+            const r = g.remotes.get(id);
+            const sp = g.fauna.speciesOf(r);
+            const mid = r.pos.clone().addScaledVector(r.pos.clone().normalize(), sp.size * 0.55);
+            w.dev.footAim(mid, 0.6);
+            await w.step(1);
+          }
+        },
+        hit(id: number, amount: number, killed = false) {
+          feed.event({ kind: 'combat', source: me, target: id, amount, killed, hp: killed ? 0 : 0.5 });
+        },
+      };
+      // the stream's buffers fill and the herd walks into view
+      await w.__herd.stepTo(at.base - 0.6);
+      await w.__herd.aim(601);
+      await w.__herd.stepTo(at.base);
+    },
+    { night, kills: HERD_KILLS, at: HERD_AT },
+  );
+  await page.waitForTimeout(600);
+}
+
+/** Holds every animation of the HUD where it is `ms` into it (the numbers' rise, the flash, a banner), for a still. */
+async function holdHud(page: Page, ms: { number?: number; flash?: number; banner?: number }): Promise<void> {
+  await page.evaluate((ms) => {
+    for (const a of document.getAnimations()) {
+      const el = (a.effect as KeyframeEffect | null)?.target as Element | null;
+      if (!el) continue;
+      const at = el.closest('.hit-number') ? ms.number : el.closest('.flash') ? ms.flash : el.closest('.banner') ? ms.banner : undefined;
+      if (at === undefined) continue;
+      a.pause();
+      a.currentTime = at;
+    }
+  }, ms);
+}
+
+/** Clears the HUD of what the last still left: numbers, toasts, the flash. */
+async function clearHud(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as FaunaPage;
+    const h = w.game.hud;
+    h.hitsEl.replaceChildren();
+    h.toasts.replaceChildren();
+    h.flashEl.className = 'flash';
+    w.game.hud.clearBanners();
+  });
+}
+
+/** The hits of a fight: stacked numbers over two creatures, from the server's `combat` events. */
+async function fightHits(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const w = window as unknown as FaunaPage;
+    for (const [id, amount] of [
+      [601, 14],
+      [601, 22],
+      [601, 17],
+      [602, 31],
+      [601, 9],
+    ] as const) {
+      w.__herd.hit(id, amount);
+      await w.step(2);
+    }
+  });
+}
+
+/** The scripted events of the fight clip, fired from the clip's own frames (`__clip.frame`, so they fall on the frames
+ * they name whatever the machine's speed): 603, the one in the sights, takes hits, 602 lunges at the walker (a blow
+ * taken: the flash), and the last hit kills 603 (gold, its XP and loot toasts), the walker aimed at it throughout. */
+async function fightClip(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as FaunaPage;
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    const script: [number, () => void][] = [
+      [0.15, () => w.__herd.hit(603, 12)],
+      [0.3, () => w.__herd.hit(603, 18)],
+      [0.36, () => w.__herd.hit(603, 9)],
+      [0.55, () => w.__herd.hit(602, 21)],
+      [0.85, () => w.__feed.event({ kind: 'combat', source: 602, target: w.__herd.me, amount: 11, killed: false, hp: 0.9 })],
+      [1.1, () => w.__herd.hit(603, 15)],
+      [1.45, () => w.__herd.hit(603, 24)],
+      [1.6, () => w.__herd.hit(603, 31, true)],
+      [1.75, () => w.__feed.event({ kind: 'xp', amount: 30, level: 1 })],
+      [1.8, () => w.__feed.event({ kind: 'loot', item: 'units', count: 7 })],
+      [3.0, () => w.__feed.event({ kind: 'loot', item: 'units', count: 7 })],
+    ];
+    let next = 0;
+    clip.frame = (dt: number) => {
+      while (next < script.length && script[next]![0] <= clip.t + 1e-9) script[next++]![1]();
+      frame(dt);
+    };
+  });
+}
+
 /**
  * A dev overlay over the remote-ships screens, drawn after every frame: for each other pilot, how the local ship's sensors
  * read it (its distance against its reach, the sensor range × its signature, and what raised or lowered the signature:
@@ -1664,6 +1836,94 @@ function eventBannerQueuedScreen(): ScreenDef {
   };
 }
 
+/** The fauna-combat stills (after the base one, in stream order: the game moves on between them). */
+function faunaStills(): Record<string, (page: Page) => Promise<void>> {
+  return {
+    async numbers(page) {
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.numbers);
+      await fightHits(page);
+      await holdHud(page, { number: 380 });
+    },
+    async kill(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.kill);
+      await page.evaluate(async () => {
+        const w = window as unknown as FaunaPage;
+        w.__herd.hit(601, 19);
+        await w.step(2);
+        w.__herd.hit(601, 26, true);
+        w.__feed.event({ kind: 'xp', amount: 30, level: 1 });
+        w.__feed.event({ kind: 'loot', item: 'units', count: 7 });
+        await w.step(2);
+      });
+      await holdHud(page, { number: 420 });
+    },
+    async flash(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.flash);
+      await page.evaluate(async () => {
+        const w = window as unknown as FaunaPage;
+        w.__feed.event({ kind: 'combat', source: 602, target: w.__herd.me, amount: 11, killed: false, hp: 0.9 });
+        await w.step(2);
+      });
+      await holdHud(page, { flash: 120 });
+    },
+    async analysis(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.analysis);
+      await page.evaluate(async () => {
+        const w = window as unknown as FaunaPage;
+        await w.__herd.aim(605, 30);
+        // the server's answer to an `analyze` of the creature in the crosshair: the codex entry of its species
+        const r = w.game.remotes.get(605);
+        const sp = w.game.fauna.speciesOf(r);
+        const threat: Record<string, number> = { docile: 1, skittish: 1, territorial: 2, predator: 3, ambusher: 3, apex: 5 };
+        w.game.onAnalyze({
+          t: 'analyze',
+          seq: 1,
+          target: 605,
+          result: 'new',
+          xp: 300,
+          species: {
+            key: `1:2/${sp.index}`,
+            world: '1:2',
+            index: sp.index,
+            name: sp.name,
+            temperament: sp.temperament,
+            threat: threat[sp.temperament],
+            bodyPlan: sp.bodyPlan,
+            bond: null,
+            at: 1000,
+          },
+        });
+        await w.step(4);
+      });
+      // (the banner fades in over its first 700 ms; held there)
+      await holdHud(page, { banner: 1800 });
+      await page.waitForTimeout(200);
+    },
+    // the clip's first frame: the herd as the fight starts, the walker aimed at the creature that will die
+    async start(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => {
+        const w = window as unknown as FaunaPage;
+        await w.__herd.stepTo(at - 1);
+        await w.__herd.aim(603, 40);
+        await w.__herd.stepTo(at);
+      }, HERD_AT.clip);
+      await page.waitForTimeout(300);
+    },
+  };
+}
+
+/** Readies the fight clip, after the stills (the clip's own frames are the game's only steps from here): the HUD cleared, the
+ * probe of the HUD's cost in and the fight's events scripted on the clip's frames. */
+async function prepareFightClip(page: Page): Promise<void> {
+  await clearHud(page);
+  await uiCostProbe(page, 'hud');
+  await fightClip(page);
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
@@ -2288,6 +2548,35 @@ export const SCREENS: Record<string, ScreenDef> = {
     hudClock: true,
     clipSeconds: 2,
     open: (page) => openRemotes(page, 'bay', 1.0, 'pads'),
+  },
+  // The combat HUD and the analysis on the server's creatures, drawn (P1.E08.T09; ARCHITECTURE §9, §20, §22): on foot on the home
+  // world in daylight with the server's herd ahead (a recorded snapshot stream played into the remote layer, offline), the
+  // HUD fed by the combat events the server would send. The stills: the herd with the analysis prompt on the creature in the
+  // crosshair; `numbers` stacked damage numbers over two creatures; `kill` the killing blow in gold with a toast for its XP
+  // and one for its loot, the creature down; `flash` a blow taken; `analysis` the codex banner for a drawn creature. The
+  // clip is a fight from 22 s into the stream, the HUD's per-frame cost in readout.txt.
+  'fauna-combat': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 3.4,
+    readout: hudCostReadout,
+    open: (page) => openHerd(page, false),
+    stills: faunaStills(),
+    async motion(page) {
+      await prepareFightClip(page);
+    },
+  },
+  // the same fight on the night side of the world: the numbers and toasts over dark ground
+  'fauna-combat-night': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 3.4,
+    readout: hudCostReadout,
+    open: (page) => openHerd(page, true),
+    stills: faunaStills(),
+    async motion(page) {
+      await prepareFightClip(page);
+    },
   },
   // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
   // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the

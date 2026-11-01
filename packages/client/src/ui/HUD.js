@@ -729,11 +729,10 @@ export class HUD {
       position: 'absolute', left: at ? `${at.x + dx}px` : `calc(50% + ${dx}px)`, top: at ? `${at.y + dy}px` : `calc(44% + ${dy}px)`, transform: 'translate(-50%, 0)', pointerEvents: 'none',
       color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '500', fontSize: killed ? '20px' : '16px',
       lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: 'var(--shadow)',
-      transition: 'transform 0.9s ease-out, opacity 0.9s ease-in',
     });
-    void e.offsetWidth;
-    e.style.transform = 'translate(-50%, -42px)';
-    e.style.opacity = '0';
+    // (rising and fading on the compositor: nothing forces a layout as each number is added)
+    e.animate({ transform: ['translate(-50%, 0)', 'translate(-50%, -42px)'] }, { duration: 900, easing: 'ease-out', fill: 'forwards' });
+    e.animate({ opacity: [1, 0] }, { duration: 900, easing: 'ease-in', fill: 'forwards' });
     this.later(() => e.remove(), 1000);
     while (this.hitsEl.children.length > 12) this.hitsEl.firstChild.remove();
   }

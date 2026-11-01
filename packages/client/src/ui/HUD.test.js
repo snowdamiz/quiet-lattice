@@ -3,7 +3,8 @@
 // eases onto its value over ARC_EASE_MS, fast then settling, in its new colours at once; a cast's cost eases on or off
 // whatever its size, its chunk of the fill drawn bright while it does; frame-to-frame changes tween; and the regen sheen
 // waits for the fill to be drawn. (On stand-ins for the gauge's SVG elements: the client's tests run without a DOM.)
-import { describe, expect, it } from 'vitest';
+import * as THREE from 'three';
+import { afterEach, describe, expect, it } from 'vitest';
 import { ARC_EASE_MS, countdown, HUD } from './HUD.js';
 
 /** One gauge as HUD.arc and HUD.sheen reach it: the root, its `<g class="gauge">`, the fill and the sheen paths. */
@@ -204,5 +205,49 @@ describe('the ability bar’s countdown', () => {
     expect(countdown(9.86)).toBe('9.9');
     expect(countdown(4)).toBe('4.0');
     expect(countdown(0.01)).toBe('0.1');
+  });
+});
+
+describe('where a hit number rises', () => {
+  const was = globalThis.window;
+  afterEach(() => {
+    globalThis.window = was;
+  });
+
+  /** A HUD over a camera at the origin looking down −z at 1920×1080, and the creatures `records` (id → record). */
+  function sighted(records) {
+    globalThis.window = { innerWidth: 1920, innerHeight: 1080 };
+    const camera = new THREE.PerspectiveCamera(70, 16 / 9, 0.1, 1e5);
+    camera.updateProjectionMatrix();
+    const h = Object.create(HUD.prototype);
+    h.game = {
+      engine: { camera },
+      camWorld: new THREE.Vector3(),
+      camWorldQuatInv: new THREE.Quaternion(),
+      remotes: { get: (id) => records[id] },
+      fauna: { speciesOf: (r) => r.sp },
+    };
+    return h;
+  }
+  const creature = (x, y, z, extra = {}) => ({ drawn: true, world: new THREE.Vector3(x, y, z), frame: null, sp: { size: 2, kind: 'quad' }, ...extra });
+
+  it('over the head of the creature the hit landed on, as it is drawn', () => {
+    const h = sighted({ 7: creature(0, 0, -20), 8: creature(10, 0, -20) });
+    const at = h.hitAnchor(7);
+    // (a walker's feet are at the middle of the view; its head is 2.5 m over them: above the middle)
+    expect(at.x).toBeCloseTo(960, 0);
+    expect(at.y).toBeLessThan(540 - 40);
+    expect(at.y).toBeGreaterThan(0);
+    // the one to its right is right of it
+    expect(h.hitAnchor(8).x).toBeGreaterThan(960);
+  });
+
+  it('nowhere for a creature that is not drawn, behind the camera or off the screen: the number then rises off the reticle', () => {
+    const h = sighted({
+      1: creature(0, 0, -20, { drawn: false }),
+      2: creature(0, 0, 20),
+      3: creature(400, 0, -20),
+    });
+    for (const id of [1, 2, 3, 99]) expect(h.hitAnchor(id), `creature ${id}`).toBeNull();
   });
 });
