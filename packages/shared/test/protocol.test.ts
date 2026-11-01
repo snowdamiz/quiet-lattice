@@ -192,7 +192,7 @@ const serverSamples: ServerMessage[] = [
   ...events.map((event) => ({ t: 'event' as const, event })),
   { t: 'inventory', seq: 3, inventory },
   { t: 'skills', seq: 4, skills },
-  { t: 'meters', meters: { heat: 62.5, heatMax: 125, overheated: false, charge: 40.25, chargeMax: 100, at: 3600.5 } },
+  { t: 'meters', meters: { heat: 62.5, heatMax: 125, overheated: false, charge: 40.25, chargeMax: 100, lifeSupport: 71.5, hazard: 100, at: 3600.5 } },
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
   { t: 'cutscene', op: 'play', id: 'test', phase: 4 },

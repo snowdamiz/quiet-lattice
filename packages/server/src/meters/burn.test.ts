@@ -40,7 +40,7 @@ function rig(charge: number) {
   const viewer = new Viewer(1);
   const meters = new MeterService({ ships: { get: () => LARK }, skills: { owned: () => [] }, zones: { zoneOf: () => zone } });
   zone.step(T0);
-  meters.open(ID, { heat: 0, overheated: false, charge, at: T0 });
+  meters.open(ID, { heat: 0, overheated: false, charge, lifeSupport: 100, hazard: 100, at: T0 });
   zone.join(viewer, { kind: 'player', frame: zone.stationFrame, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'docked' });
   // (as the gateway does once the zone has joined it)
   meters.locate(ID, viewer, T0);
