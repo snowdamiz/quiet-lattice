@@ -622,7 +622,7 @@ export class Game {
   checkPrediction() {
     const net = this.net;
     const e = net && (this.mode === 'ship' || this.mode === 'foot') ? net.store.entities.get(net.entityId) : undefined;
-    const unheard = e && this.prediction.check(net.store.ack, e, net.store.time);
+    const unheard = e && this.prediction.check(net.store.ack, e);
     if (unheard) this.onCorrection(unheard);
   }
 

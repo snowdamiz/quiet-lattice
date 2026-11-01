@@ -91,24 +91,18 @@ describe('Prediction: each snapshot against what was sent', () => {
     expect(p.check(5, { frame: null, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'ship' }, 1)).not.toBeNull();
   });
 
-  it('takes a pose the server re-expressed into another frame at its tick for the one sent, at the tick’s time', () => {
+  it('does not compare a pose the server re-expressed into another frame at a sphere’s edge', () => {
     const { planet, station, resolve, place } = world();
     const p = new Prediction(resolve);
     const t = 2000;
-    const tick = t + 0.04;
-    p.record(sent(1, t, [0, 0, -5000], { vel: [0, 0, -400], frame: `${SEED}:station` }));
-    // the zone's tick: its world position then, in the planet's frame (both frames as they stand at the tick)
-    place(tick);
-    const s = state(station, [0, 0, -5000], [0, 0, -400]);
-    reframeAt(s, station, planet, tick);
+    p.record(sent(1, t, [0, 0, -4490], { vel: [0, 0, -400], frame: `${SEED}:station` }));
+    // the zone's tick, a tick the client cannot name: its world position then, in the planet's frame
+    place(t + 0.1);
+    const s = state(station, [0, 0, -4490], [0, 0, -400]);
+    reframeAt(s, station, planet, t + 0.1);
     const e = { frame: `${SEED}:0`, pos: s.pos.toArray(), quat: s.quat.toArray(), vel: s.vel.toArray(), mode: 'ship' };
-    // (the frames move apart there at hundreds of m/s: re-expressed at the input's own time it is metres off)
-    place(t + 1);
-    expect(p.check(1, e, tick)).toBeNull();
-    expect(p.stats.error).toBeLessThan(1e-3);
-    const wrong = new Prediction(resolve);
-    wrong.record(sent(1, t, [0, 0, -5000], { vel: [0, 0, -400], frame: `${SEED}:station` }));
-    expect(wrong.check(1, e, t)).not.toBeNull();
+    expect(p.check(1, e)).toBeNull();
+    expect(p.stats.compared).toBe(0);
   });
 });
 
@@ -200,7 +194,15 @@ describe('Blend: what a correction moves on screen', () => {
     const drawn = [new THREE.Vector3(-500 * DT, 0, 0), new THREE.Vector3(), ...run(b, s, 1)];
     // each frame's drawn step differs from the last by no more than easing off the 100 m/s does: no frame shows the 3 m
     let worst = 0;
-    for (let i = 2; i < drawn.length; i++) worst = Math.max(worst, drawn[i].clone().sub(drawn[i - 1]).sub(drawn[i - 1].clone().sub(drawn[i - 2])).length());
+    for (let i = 2; i < drawn.length; i++)
+      worst = Math.max(
+        worst,
+        drawn[i]
+          .clone()
+          .sub(drawn[i - 1])
+          .sub(drawn[i - 1].clone().sub(drawn[i - 2]))
+          .length(),
+      );
     expect(worst).toBeLessThan(0.5);
     expect(b.offset.length()).toBeLessThan(0.05);
     // (mostly gone in four time constants)

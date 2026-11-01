@@ -193,9 +193,12 @@ async function tap(page: Page, key: string) {
 }
 
 /**
- * The server's pose for the player's entity, each snapshot, against what the client sent for the input it says it handled
- * (re-expressed into the frame the client sent it in, both frames at the tick's time, as the zone re-expresses): the
- * largest distance, how many were judged, the worst, and how many inputs went out in each mode and frame.
+ * The server's pose for the player's entity, each snapshot, against what the client sent for the input it says it handled:
+ * the largest distance, how many were judged, the worst, and how many inputs went out in each mode and frame. A pose the
+ * server holds in another frame than the client sent it in was re-expressed by the zone at the edge of a sphere, at the
+ * tick that applied it (or a later one, its pose standing still as the frames moved): it is judged re-expressed back with
+ * both frames as they stood at the first tick that showed it so, and kept apart (`edge`), with how fast the two frames
+ * move apart there (a tick off, a twentieth of that).
  */
 async function judge(page: Page) {
   return page.evaluate(async () => {
@@ -203,12 +206,13 @@ async function judge(page: Page) {
     const g = w.game;
     const framesUrl = '/src/remote/frames.js';
     const poseUrl = '/src/net/pose.js';
-    const { reframeAt } = await import(/* @vite-ignore */ framesUrl);
+    const { framesApartAt, reframeAt } = await import(/* @vite-ignore */ framesUrl);
     const { frameOfId } = await import(/* @vite-ignore */ poseUrl);
     const v = g.ship.state.pos;
-    let max = 0;
-    let judged = 0;
-    let worst = null;
+    const same = { max: 0, judged: 0, worst: null as unknown };
+    const edge = { max: 0, judged: 0, apart: 0, worst: null as unknown };
+    const first = new Map<string, number>();
+    for (const s of w.__snaps) if (!first.has(`${s.ack}|${s.frame}`)) first.set(`${s.ack}|${s.frame}`, s.time);
     for (const s of w.__snaps) {
       if (s.ack <= s.fence) continue;
       const sent = w.__inputs.get(s.ack);
@@ -216,14 +220,18 @@ async function judge(page: Page) {
       const to = sent && frameOfId(g.system, g.station, sent.frame);
       if (!sent || from === undefined || to === undefined) continue;
       const server = { pos: v.clone().fromArray(s.pos), quat: g.ship.state.quat.clone(), vel: v.clone() };
-      reframeAt(server, from, to, s.time);
+      const at = from === to ? s.time : first.get(`${s.ack}|${s.frame}`);
+      reframeAt(server, from, to, at);
       const d = server.pos.distanceTo(v.clone().fromArray(sent.pos));
-      judged++;
-      if (d > max) [max, worst] = [d, { ack: s.ack, d, mode: s.mode, sentMode: sent.mode, frame: s.frame, sentFrame: sent.frame }];
+      const b = from === to ? same : edge;
+      b.judged++;
+      if (b === edge)
+        edge.apart = Math.max(edge.apart, framesApartAt(from, to, (to ? to.localToWorld(server.pos.clone(), v.clone()) : server.pos.clone()) as unknown));
+      if (d > b.max) [b.max, b.worst] = [d, { ack: s.ack, d, mode: s.mode, sentMode: sent.mode, frame: s.frame, sentFrame: sent.frame }];
     }
     const sentIn: Record<string, number> = {};
     for (const i of w.__inputs.values()) sentIn[`${i.mode}@${i.frame}`] = (sentIn[`${i.mode}@${i.frame}`] ?? 0) + 1;
-    return { max, judged, worst, sentIn, link: { ...g.netLink.stats }, rtt: Math.min(...g.net.clock.samples.map((x: { rtt: number }) => x.rtt)) };
+    return { ...same, edge, sentIn, link: { ...g.netLink.stats }, rtt: Math.min(...g.net.clock.samples.map((x: { rtt: number }) => x.rtt)) };
   });
 }
 
@@ -265,6 +273,7 @@ async function teleport(page: Page, frame: string, pos: number[], mode: string) 
 
 function expectAgreed(j: Awaited<ReturnType<typeof judge>>, when: string) {
   expect(j.max, `${when}: the worst ${JSON.stringify(j.worst)}`).toBeLessThan(BUDGET_M);
+  expect(j.edge.max, `${when}: at a sphere's edge, the worst ${JSON.stringify(j.edge.worst)}`).toBeLessThan(BUDGET_M + j.edge.apart / 20);
   // (and the network was as bad as it says)
   expect(j.rtt, when).toBeGreaterThanOrEqual(2 * LAG_MS - 1);
   expect(j.link.lostOut, when).toBeGreaterThan(0);

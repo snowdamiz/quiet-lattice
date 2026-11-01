@@ -6,7 +6,10 @@
 // predicted (the pulse drive on a Charge it holds empty), the server's velocity carried on from there. Each snapshot says
 // where the server holds the entity as of the last input it handled (`ack`): one further than MATCH_M from what the client
 // sent then is a correction the client never heard (lost on the way), and is taken the same way. Inputs the client sent
-// before it took a correction are the old trajectory, which the server refuses quietly: they are not compared.
+// before it took a correction are the old trajectory, which the server refuses quietly: they are not compared; nor is a
+// pose the server holds in another frame than the client sent it in. That is the edge of a sphere, where the zone
+// re-expresses a pose at a tick of its own (ARCHITECTURE §4), which a repeated or lost snapshot leaves the client unable
+// to name: a tick off, the frames there move a few metres apart.
 //
 // The rewind moves the mover at once, so its next input fits the server's pose. What that moves on screen is taken up by
 // a `Blend`: an offset (and a turn) the drawn ship and both cameras carry, dying away critically damped, unless it is
@@ -79,17 +82,14 @@ export class Prediction {
 
   /**
    * A snapshot's account of the player's entity (`entity`: its frame id, pose and mode) as of input `seq`, the snapshot's
-   * `ack`, at world time `at`, the tick's (the server re-expresses a pose into another frame with both frames as they stand
-   * at the tick): how far it is from what the client sent then. Returns the correction it shows the client did not hear
-   * (`{seq, pose, mode}`: the pose further than MATCH_M off, or the pulse drive refused), else null.
+   * `ack`: how far it is from what the client sent then, in the same frame. Returns the correction it shows the client did
+   * not hear (`{seq, pose, mode}`: the pose further than MATCH_M off, or the pulse drive refused), else null.
    */
-  check(seq, entity, at) {
+  check(seq, entity) {
     if (seq <= this.fence) return null;
     const r = this.at(seq);
-    const frame = this.resolve(entity.frame);
-    if (!r || frame === undefined) return null;
-    const server = reframeAt(wireInto(_server, entity), frame, r.frame, at);
-    const error = server.pos.distanceTo(r.pos);
+    if (!r || this.resolve(entity.frame) !== r.frame) return null;
+    const error = wireInto(_server, entity).pos.distanceTo(r.pos);
     const s = this.stats;
     s.error = error;
     s.maxError = Math.max(s.maxError, error);
