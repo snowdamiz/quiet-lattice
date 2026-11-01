@@ -385,12 +385,17 @@ export class Structures {
     this.planet = null;
     this.sites = [];
     this.visited = new Set();
+    // site ids the player knows, kept across the planet's unloads (as `visited` is): the sites only load near the ground
+    this.knownIds = new Set();
     this.time = 0;
   }
 
   setPlanet(planet) {
     if (planet === this.planet) return;
-    for (const s of this.sites) if (s.built) this.unbuild(s);
+    for (const s of this.sites) {
+      if (s.built) this.unbuild(s);
+      if (s.known) this.knownIds.add(s.id);
+    }
     this.sites = [];
     this.planet = planet;
     if (!planet || !planet.sampler) return;
@@ -401,7 +406,7 @@ export class Structures {
         // wrecks dig in
         pos: x.dir.clone().multiplyScalar(planet.radius + x.base - (x.type === 'crash' ? 0.3 : 0)),
         quat: x.quat, quatInv: x.quat.clone().invert(),
-        known: false, built: null, seed: x.seed,
+        known: this.knownIds.has(`${planet.name}#${i}`), built: null, seed: x.seed,
       });
     });
   }
@@ -445,6 +450,7 @@ export class Structures {
     if (!this.planet) return;
     this.time += dt;
     const sunLocal = this.planet.dirToLocal(_v.copy(g.system.star.position).sub(this.planet.position).normalize(), new THREE.Vector3());
+    this.showBeacons();
     for (const s of this.sites) {
       const d = s.pos.distanceTo(camLocal);
       if (!s.built && d < 2200) this.build(s);
@@ -553,6 +559,25 @@ export class Structures {
       n++;
     }
     return { count: n, nearest };
+  }
+
+  /** Long Ear (DESIGN 9.4): its owner has the planet's Signal Beacons on the map from the start. */
+  showBeacons() {
+    if (!this.game.beaconsOnMap) return;
+    for (const s of this.sites) if (s.type === 'beacon') s.known = true;
+  }
+
+  /** Reveals every site of `planet`, loaded or not (Deep Sweep from orbit); how many were still hidden. */
+  revealAll(planet) {
+    for (const s of this.sites) if (s.known) this.knownIds.add(s.id);
+    let n = 0;
+    for (let i = 0; i < planet.sites.length; i++) {
+      const id = `${planet.name}#${i}`;
+      if (!this.knownIds.has(id)) n++;
+      this.knownIds.add(id);
+    }
+    if (planet === this.planet) for (const s of this.sites) s.known = true;
+    return n;
   }
 
   markers(camLocal) {

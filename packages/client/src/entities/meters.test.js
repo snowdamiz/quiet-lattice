@@ -153,6 +153,7 @@ describe('the server’s meters on the client', () => {
         for (const fn of handlers.get(type) ?? []) fn(m);
       },
       serverTime: () => serverNow,
+      mining: { on: () => () => {} },
       count: (type) => (handlers.get(type) ?? []).length,
     };
   }
@@ -193,7 +194,7 @@ describe('the HUD’s arcs follow the meters', () => {
     const mt = Object.create(Multitool.prototype);
     Object.assign(mt, { game: g, meter: { heat: 0, overheated: false, charge: 0 }, heatRate: 0, firing: false });
     const handlers = [];
-    const net = { on: (type, fn) => (handlers.push([type, fn]), () => {}), serverTime: () => T0 };
+    const net = { on: (type, fn) => (handlers.push([type, fn]), () => {}), serverTime: () => T0, mining: { on: () => () => {} } };
     g.net = net;
     mt.watchServer();
     g.ship.watchServer();

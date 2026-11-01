@@ -66,4 +66,14 @@ describe('gate:removed', () => {
     const plan = planStatuses(readFileSync(new URL('../../../../docs/IMPLEMENTATION_PLAN.md', import.meta.url), 'utf8'));
     for (const r of RULES) expect(plan.has(r.task), r.task).toBe(true);
   });
+
+  it("catches the flora's demo yield table and mined sets but not a comment that says mined", () => {
+    const flora = RULES.filter((r) => r.task === 'P1.E13.T06' && r.file?.endsWith('Flora.js'));
+    expect(flora).toHaveLength(2);
+    const left = (text: string) => runGate(repo('- [x] **P1.E13.T06 a**', { 'packages/client/src/gameplay/Flora.js': text }), flora).failures;
+    expect(left("add({ name: 'rock', res: 'ferrite', yield: [5, 10], hp: 1 });")).toHaveLength(1);
+    expect(left('add({ name: t.id, yield: t.yield });')).toHaveLength(1);
+    expect(left('this.mined.add(key);')).toHaveLength(1);
+    expect(left('// nothing mined here\nif (!this.broken.size) yield { a: 1 };')).toEqual([]);
+  });
 });

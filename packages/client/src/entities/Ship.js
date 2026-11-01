@@ -97,6 +97,8 @@ export class Ship {
     this.chargeRegen = 0;
     this.launchFuel = 100;
     this.pulse = { spool: 0, speed: 0, active: false };
+    // (a Jammer's hold on the pulse drive, game time)
+    this.jammedUntil = 0;
     this.altitude = Infinity;
     this.seaAltitude = Infinity;
     this.atmoDensity = 0;
@@ -1137,7 +1139,18 @@ export class Ship {
   }
 
   // ---------- pulse drive ----------
+  /** A Jammer has the pulse drive (the server refuses it until then): out of it now, and no engaging for `seconds`. */
+  jam(seconds) {
+    this.jammedUntil = this.game.time + seconds;
+    if (this.mode === 'pulse') this.exitPulse();
+    this.game.hud?.toast('Pulse drive jammed', 'warn');
+  }
+
   tryPulse() {
+    if (this.jammedUntil > this.game.time) {
+      this.game.hud?.toast('Pulse drive jammed', 'warn');
+      return;
+    }
     if (this.atmoDensity > 0.001 || (this.altitude < 2000 && this.state.frame?.sampler)) {
       this.game.hud?.toast('Pulse drive unavailable inside atmosphere', 'warn');
       return;

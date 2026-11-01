@@ -208,6 +208,8 @@ export interface ZoneOptions {
   combat?: () => CombatHooks | null;
 }
 
+const NO_ENTITIES: ReadonlySet<number> = new Set();
+
 export class Zone {
   readonly id: string;
   readonly systemIndex: number;
@@ -357,6 +359,11 @@ export class Zone {
       e.changed.add(k);
     }
     this.touch(e);
+  }
+
+  /** The entities in a party (the party service's tag on their entities), none for a party nobody in this zone belongs to. */
+  partyMembers(party: string): ReadonlySet<number> {
+    return this.parties.get(party) ?? NO_ENTITIES;
   }
 
   /** Puts the entity in its party (members see each other wherever they are, phases permitting), or in none. */
