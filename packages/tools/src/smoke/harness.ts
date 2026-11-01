@@ -11,12 +11,8 @@ export { expect };
 async function browserPid(browser: Browser): Promise<number | null> {
   if (browser.browserType().name() !== 'chromium') return null;
   const cdp = await browser.newBrowserCDPSession();
-  try {
-    const { processInfo } = await cdp.send('SystemInfo.getProcessInfo');
-    return processInfo.find((p) => p.type === 'browser')?.id ?? null;
-  } finally {
-    await cdp.detach().catch(() => {});
-  }
+  const { processInfo } = await cdp.send('SystemInfo.getProcessInfo');
+  return processInfo.find((p) => p.type === 'browser')?.id ?? null;
 }
 
 function processTree(root: number): number[] {
