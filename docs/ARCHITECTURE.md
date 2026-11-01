@@ -853,17 +853,19 @@ one line.
 from 300 through 700 (the baseline), then a straight line out to 10 ly at 1,000 and in to 10 ly at 0, so the Edge stands
 within 20 ly of its default at the most. `tiers` is `galaxyTiers(edgeX)` (the fringe moves light year for light year with
 it, so at seed 424242 it runs from 1 system at 10 ly out to 10 at 10 ly in, 6 at the baseline) and `dark` is `darkAt(count,
-opening)`: the systems the season opened dark, until the Count climbs back to 700 and they relight. Every change of the
+opening)`: the systems the season opened dark, and below 300 the ones the Count itself pushed Edge-ward (on the fringe at
+`edgeAt(count, opening)` but not at `edgeAt(300, opening)`, DESIGN 16.3 "Low"), the Count's own relit as it climbs and all of
+them at 700. Every change of the
 Count, and a season's roll (the opening changes as the Count returns to 500), recomputes the three together in `commit()`,
 so subscribers hear one change that moves the Edge, the tier map (`flipped`) and the dark set at once, the zone manager
 re-tiers the zones it holds from it, and the mirror carries all of them. Nothing of it is saved: a restart works it out again
 from the saved Count and opening, so a roll played on boot and a roll played live end on the same Edge and nothing moves it
 twice. `world.update({count})` is the only lever (dev tooling and tests); there is no way to set the Edge on its own.
-Not yet: a dark station's Hive build and raid (DESIGN 16.3), and dark systems from a Count under 300 (only a season's
-opening darkens a station), which are for the station and Hive tasks to read `world.isDark(system)` and `state().dark`.
+Not yet: a dark station's Hive build and raid (DESIGN 16.3), which are for the station and Hive tasks to read
+`world.isDark(system)` and `state().dark`.
 
-The client draws the Edge from the same message (`game.world`, kept from the `world` message; the Edge's `edgeX` and,
-for the map's tooltip, the Count). The Edge the tiers follow moves tens of light years in a cluster 110 ly across; the wall
+The client draws the Edge from the same message, `net.world` (one copy: `game.edge` reads its `edgeX`, `game.stationDark(id)`
+its `dark` (protocol 21; the client never works the set out itself), the map's tooltip its Count). The Edge the tiers follow moves tens of light years in a cluster 110 ly across; the wall
 the map and the sky draw stands 3.1 million ly out and would not visibly move by that, so it moves `EDGE_WALL_LY_PER_LY`
 (20,000) light years for each (`wallX(edge)`, `edgeX(y, z, edge)` in `@astra/shared/world`; the wall stays beyond the
 farthest galaxy at the most the Count and an opening move it, 20 ly, 400,000 ly of wall). `EdgeOfSpace.update(…, edge)` slides

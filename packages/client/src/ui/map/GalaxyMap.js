@@ -223,7 +223,8 @@ export class GalaxyMap {
     scene.add(this.darkMarks);
     this.darkHuskMat = new THREE.MeshBasicMaterial({ color: 0x050508, transparent: true, depthTest: false, depthWrite: false });
     this.darkRingMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0x9fe8da).multiplyScalar(2.2), transparent: true, opacity: 0.5, depthTest: false, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
-    this.darkHuskGeo = new THREE.CircleGeometry(1, 24);
+    this.darkHuskGeo = new THREE.CircleGeometry(1, 32);
+    this.darkRingGeo = new THREE.RingGeometry(1, 1.1, 64);
     this.darkIds = null;
 
     const RN = 96;
@@ -516,10 +517,10 @@ export class GalaxyMap {
       const s = this.game.galaxy.systems[id];
       if (!s) continue;
       const husk = new THREE.Mesh(this.darkHuskGeo, this.darkHuskMat);
-      husk.userData.size = 1.1;
+      husk.userData.size = 1.7;
       husk.renderOrder = 5;
-      const ring = new THREE.Mesh(this.hereRing.geometry, this.darkRingMat);
-      ring.userData.size = 2.1;
+      const ring = new THREE.Mesh(this.darkRingGeo, this.darkRingMat);
+      ring.userData.size = 2.6;
       ring.renderOrder = 6;
       for (const m of [husk, ring]) {
         m.position.set(s.x, s.y, s.z);

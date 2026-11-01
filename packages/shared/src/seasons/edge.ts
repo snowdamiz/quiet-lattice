@@ -32,7 +32,11 @@ export function edgeAt(count: number, opening: Pick<SeasonOpening, 'edgeShiftLy'
 
 /** The systems on the Edge-ward fringe (Tier 5 by the Edge alone, never a home system) with the Edge at `edge`. */
 function fringeAt(edge: number): Set<number> {
-  return new Set(galaxyTiers(edge).filter((s) => s.edgeWard && s.tier !== 0).map((s) => s.id));
+  return new Set(
+    galaxyTiers(edge)
+      .filter((s) => s.edgeWard && s.tier !== 0)
+      .map((s) => s.id),
+  );
 }
 
 /** The systems whose stations are dark with the Count at `count` in a season that opened with `opening` (DESIGN 16.3):

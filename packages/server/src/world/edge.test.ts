@@ -1,7 +1,16 @@
 // The Edge following the Count in the world service (DESIGN 16.3, P2.E22.T02) against an in-memory shard, the clocks run by
 // hand: the published Edge, tier map and dark stations are functions of the Count and the season's opening, a season's roll
 // moves them once and a restart finds them where they were; zones read the new tiers.
-import { BROKEN_BELOW, darkAt, darkSystems, edgeAt, SEASON_DAY_S, SEASON_EDGE_SHIFT_LY, SMALL_SEASON_LENGTH_S, type SeasonOpening } from '@astra/shared/seasons';
+import {
+  BROKEN_BELOW,
+  darkAt,
+  darkSystems,
+  edgeAt,
+  SEASON_DAY_S,
+  SEASON_EDGE_SHIFT_LY,
+  SMALL_SEASON_LENGTH_S,
+  type SeasonOpening,
+} from '@astra/shared/seasons';
 import { EDGE_X, galaxyTiers } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { MemoryShard } from '../../test/memoryShard.ts';
@@ -213,7 +222,7 @@ describe('the Edge following the Count', () => {
     await again.close();
   });
 
-  it('adds the Count-pushed stations to a Broken season\'s own, and the roll that ends the season keeps them dark only while the Count is low', async () => {
+  it("adds the Count-pushed stations to a Broken season's own, and the roll that ends the season keeps them dark only while the Count is low", async () => {
     const s = shard(100, { season: 6 });
     const world = await s.open();
     s.hours(18);

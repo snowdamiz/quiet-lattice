@@ -1671,7 +1671,7 @@ function eventBannerQueuedScreen(): ScreenDef {
 
 interface EdgeWindow {
   game: {
-    net: { world: unknown } | null;
+    net: unknown;
     galaxy: { systems: { id: number; x: number; y: number; z: number }[]; here: { x: number; y: number; z: number } };
     menus: { openMap(): void; setMapTab(tab: string): void; mapView: EdgeMapView };
     universe: { leave(): void; anchor: { set(x: number, y: number, z: number): void } };
@@ -1713,12 +1713,16 @@ function worldAtCount(count: number, from: Opening = null) {
 }
 
 /** Hands the page the `world` message the server would send. The game reads it from its connection (`net.world`), and the
- * offline sandbox has none, so a bare one stands in. */
+ * offline sandbox has none, so the client's own Net, never connected, stands in. */
 async function handWorld(page: Page, world: unknown): Promise<void> {
-  await page.evaluate((world) => {
+  await page.evaluate(async (world) => {
     const g = (window as unknown as EdgeWindow).game;
-    g.net ??= { world: null };
-    g.net.world = world;
+    if (!g.net) {
+      const module = '/src/net/Net.js';
+      const { Net } = await import(/* @vite-ignore */ module);
+      g.net = new Net({ url: 'ws://offline.invalid/', token: '', characterId: '' });
+    }
+    (g.net as { world: unknown }).world = world;
   }, world);
 }
 
@@ -1776,7 +1780,13 @@ async function openDarkMap(page: Page, count: number): Promise<void> {
 async function selectOnMap(page: Page, pick: { system: number } | { edge: true } | null): Promise<void> {
   await page.evaluate((pick) => {
     const v = (window as unknown as EdgeWindow).game.menus.mapView;
-    v.select(pick === null ? null : 'system' in pick ? v.items.find((it) => it.kind === 'system' && it.sys?.id === pick.system) : v.items.find((it) => it.kind === 'edge'));
+    v.select(
+      pick === null
+        ? null
+        : 'system' in pick
+          ? v.items.find((it) => it.kind === 'system' && it.sys?.id === pick.system)
+          : v.items.find((it) => it.kind === 'edge'),
+    );
   }, pick);
   await settle(page, 12);
 }
@@ -1813,20 +1823,21 @@ async function sweepCount(page: Page, frames: number, from: Opening = null, dese
   });
   await handWorld(page, worlds[0]);
   if (deselect) await selectOnMap(page, null);
-  await settle(page, 30);
-  await page.evaluate(
-    (worlds) => {
-      const w = window as unknown as EdgeWindow;
-      const frame = w.__clip.frame.bind(w.__clip);
-      let i = 0;
-      w.__clip.frame = (dt) => {
-        w.game.net ??= { world: null };
-        w.game.net.world = worlds[Math.min(i++, worlds.length - 1)];
-        frame(dt);
-      };
-    },
-    worlds,
-  );
+  // (the clip's frame loop has taken over `step` by now, so its own frames draw it: the sky takes a face a frame, and the clip
+  // must not start on the picture before)
+  await page.evaluate(() => {
+    const w = window as unknown as EdgeWindow & { game: { sky: { face: number; edgeAt: number; drawnEdge: number } } };
+    for (let i = 0; i < 90 && (i < 12 || w.game.sky.face >= 0 || w.game.sky.edgeAt !== w.game.sky.drawnEdge); i++) w.__clip.frame(1 / 60);
+  });
+  await page.evaluate((worlds) => {
+    const w = window as unknown as EdgeWindow;
+    const frame = w.__clip.frame.bind(w.__clip);
+    let i = 0;
+    w.__clip.frame = (dt) => {
+      (w.game.net as { world: unknown }).world = worlds[Math.min(i++, worlds.length - 1)];
+      frame(dt);
+    };
+  }, worlds);
 }
 
 export const SCREENS: Record<string, ScreenDef> = {

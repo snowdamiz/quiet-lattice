@@ -80,7 +80,12 @@ describe('the Count moving the Edge', () => {
   });
 
   describe('below the Broken threshold (DESIGN 16.3 "Low": Edge-ward systems flip to Tier 5; their Waystations go dark)', () => {
-    const tier5 = (edge: number) => new Set(galaxyTiers(edge).filter((t) => t.edgeWard && t.tier === 5).map((t) => t.id));
+    const tier5 = (edge: number) =>
+      new Set(
+        galaxyTiers(edge)
+          .filter((t) => t.edgeWard && t.tier === 5)
+          .map((t) => t.id),
+      );
     const pushedBy = (count: number, opening: Pick<SeasonOpening, 'edgeShiftLy'>) => {
       const held = tier5(edgeAt(BROKEN_BELOW, opening));
       return [...tier5(edgeAt(count, opening))].filter((id) => !held.has(id)).sort((a, b) => a - b);

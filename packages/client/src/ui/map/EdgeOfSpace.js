@@ -60,7 +60,7 @@ const membraneFrag = /* glsl */ `
   // seen from inside the sky the wall wears the art bible's Edge (§4): opal white, pale blue and pale peach, weighted by the
   // iridescence's three phases, in place of its raw cosine hues (violet and mint)
   vec3 pale(vec3 w) {
-    return (vec3(0.96, 0.93, 0.97) * w.x + vec3(0.81, 0.91, 0.97) * w.y + vec3(0.97, 0.89, 0.82) * w.z) / (w.x + w.y + w.z + 1e-3);
+    return (vec3(0.96, 0.93, 0.97) * w.x + vec3(0.81, 0.91, 0.97) * w.y + vec3(0.97, 0.89, 0.82) * w.z * 1.4) / (w.x + w.y + w.z * 1.4 + 1e-3);
   }
   float fbm3(vec3 p) {
     float s = 0.0;
@@ -103,7 +103,7 @@ const membraneFrag = /* glsl */ `
         vec3 irid = 0.5 + 0.5 * cos(6.2831853 * (phase + vec3(0.0, 0.33, 0.67)));
         irid = mix(irid, pale(irid), uSky);
         vec3 deep = mix(vec3(0.18, 0.04, 0.42), vec3(0.02, 0.22, 0.5), smoothstep(-0.4, 0.5, f));
-        deep = mix(deep, mix(vec3(0.13, 0.11, 0.2), vec3(0.08, 0.14, 0.22), smoothstep(-0.4, 0.5, f)), uSky);
+        deep = mix(deep, mix(vec3(0.14, 0.12, 0.17), vec3(0.1, 0.14, 0.19), smoothstep(-0.4, 0.5, f)), uSky);
         // mostly dark, deep-violet film; the light lives in the filaments and the iridescent folds
         vec3 film = deep * 0.4 + irid * (0.07 + 0.85 * fil) * smoothstep(-0.2, 0.7, f + 0.2) + vec3(1.0, 0.94, 1.0) * fil * 0.55;
         // quantum foam: brief pinpricks of light across the film
@@ -123,7 +123,7 @@ const membraneFrag = /* glsl */ `
       vec3 irid = 0.5 + 0.5 * cos(6.2831853 * (phase + vec3(0.0, 0.33, 0.67)));
       irid = mix(irid, pale(irid), uSky);
       vec3 deep = mix(vec3(0.18, 0.04, 0.42), vec3(0.02, 0.22, 0.5), smoothstep(-0.4, 0.5, f));
-      deep = mix(deep, mix(vec3(0.13, 0.11, 0.2), vec3(0.08, 0.14, 0.22), smoothstep(-0.4, 0.5, f)), uSky);
+      deep = mix(deep, mix(vec3(0.14, 0.12, 0.17), vec3(0.1, 0.14, 0.19), smoothstep(-0.4, 0.5, f)), uSky);
       col = mix(deep, irid, 0.4) * smoothstep(0.0, 0.7, f) * 0.6;
     }
     // the cap fades out at its rim

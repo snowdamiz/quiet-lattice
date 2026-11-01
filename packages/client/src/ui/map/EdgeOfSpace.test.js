@@ -129,7 +129,7 @@ describe('the galaxy map', () => {
     const m = Object.assign(map(), {
       game: { net: { world }, galaxy: { systems } },
       darkMarks: new THREE.Group(),
-      hereRing: { geometry: new THREE.RingGeometry(1, 1.07, 8) },
+      darkRingGeo: new THREE.RingGeometry(1, 1.1, 8),
       darkHuskMat: new THREE.MeshBasicMaterial(),
       darkRingMat: new THREE.MeshBasicMaterial(),
       darkHuskGeo: new THREE.CircleGeometry(1, 8),
