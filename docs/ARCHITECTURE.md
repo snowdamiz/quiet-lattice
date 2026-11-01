@@ -2088,9 +2088,10 @@ effects; this runtime casts them all.
   (`now` is the cast's); `owns(node)`, the caster's web now (an augment, a passive); `pose()`, the caster's eye and look now,
   in the cast's frame, for an effect that runs on after its cast (a held beam): the entity's pose raised to the eye, the look
   the client last sent with its input (`aim`, the eye's quaternion, which the client sends on foot) or the cast's own aim without
-  one, null once the entity has left play or its frame; `sight(to)`, whether the drawn ground leaves a line from that eye
+  one, null once the entity has left play or its frame or is down (a delayed effect such as Echo, or a held Lance, stops for a downed caster); `sight(to)`, whether the drawn ground leaves a line from that eye
   (`'busy'` while the ground is still being planned, false once the caster is gone) and `groundReady()`, whether the ground is
-  planned (an area cast refuses `busy` until it is); `canHarm(target)`, `damage`'s rule for an effect that marks and deals no
+  planned (an area cast refuses `busy` until it is); `onWorld()`, whether the caster's frame is a world with a surface (not deep
+  space, the station's frame or a gas giant: it reads the body's type alone and plans no ground); `canHarm(target)`, `damage`'s rule for an effect that marks and deals no
   blow;
   `meters.beamTime()` (the seconds the beam has fired in all as the meters judged it, §19: a difference of two readings is what
   the beam did, however its client timed its inputs) and `meters.dumpHeat()` (Vent: all the heat out, how much, null in the
@@ -2129,13 +2130,19 @@ effects; this runtime casts them all.
   creatures: a `weak` resistance to the node, so ×2; no other creature is its target), in sight, through `ctx.damage`, and
   6 hp on each of the 12 nearest standing mineral deposits and formations in sight (`ResourceService.burst`, credited to the
   caster as mining: what breaks pays out and reaches the quest engine as mined ones do; plants are the client's flora and
-  are never touched); nothing in the server has a shield for it to break yet. Veil (20 heat, 30 s) keeps the caster out of
+  are never touched; it is refused `busy` before payment while either the cast's ground or the resource service's
+  (`ctx.deposits.ready()`, `ResourceService.burstReady`) is still being planned, and each node it breaks is told to the caster
+  as a `mine {seq: 0, result: 'depleted'}` reply, as for other contributors: the client shows the collected toast once P1.E13.T06
+  reads `mine` replies); nothing in the server has a shield for it to break yet. Veil (20 heat, 30 s) keeps the caster out of
   every creature's notice for 15 s (`FaunaSim.veil` → `Actor.veiled`, which `noticed` reads, in a phase too: the threat of a
   creature already after it is dropped as it stops being noticed). It does not hide the caster from players or their
   snapshots: DESIGN's players "see a shimmer", which is the cast event, naming the caster only to sessions whose phase shows
   it; a status that withholds a ship (Silent Running, Cloak) will do it in the zone's `visibleTo`, beside the phase rule, so
-  a hidden entity is simply not in the interest set and no event names it. Deep Sweep (ship, 10 Charge, 30 s) tells the
-  casting session the world it sweeps (the cast event's `frame`: its client reveals every site of that planet) and leaves a
+  a hidden entity is simply not in the interest set and no event names it. Deep Sweep (ship, 10 Charge, 30 s) is refused `target`
+  before payment unless the caster is over a world with sites (`ctx.onWorld()`), tells the casting session the world it
+  sweeps (the cast event's `frame`: its client reveals every site of that planet from orbit, loaded or not: `Structures` keeps
+  the known site ids per planet across its unloads, as it does the visited ones, and seeds a planet's sites from them when it
+  loads) and leaves a
   `deep_sweep` status for 15 s on the ship whose power is the radar range (5 km), which the pirates' system (P1.E08.T05)
   reads. Jammer (ship, 20 Charge, 20 s) is an `entity` cast on a player within 2 km that is on the pulse drive and that the
   caster may harm (so refused `target` until PvP, P2.E17.T01, supplies the rule: `CastServiceOptions.mayHarm`):
@@ -2143,7 +2150,10 @@ effects; this runtime casts them all.
   it, drops out of the drive (`Ship.jam`). Pirates are not zone entities yet, so "pirate pursuit" has nothing to cancel.
   New context capabilities (general): `resistance(target)`, `control.stun/calm` (a creature seen, not immune; never a
   player), `conceal(durationS)`, `party(radiusM)`, `share(entities)`, `deposits.burst(radiusM, hp, max)` and
-  `ships.pulsing/jam`. Long Ear, Choir and Echo are not cast: the client's scan and Pulse's effect read them.
+  `ships.pulsing/jam`. Long Ear, Choir and Echo are not cast: the client's scan and Pulse's effect read them. Long Ear's beacons on the map are the
+  client's too: `beaconsOnMap(skills)` (`@astra/shared/exosuit`) reads the node's flag, and a planet's Signal Beacon sites are
+  then known at once and draw as the HUD's site markers (within 9 km of the surface and 12 km of the camera; no planet map
+  exists yet); beacons already shown stay after a respec until the planet's sites reload.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
