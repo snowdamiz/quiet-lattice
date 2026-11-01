@@ -1935,8 +1935,10 @@ effects; this runtime casts them all.
 - **The book** (`book.ts`): each ability paired with its effect, the server's code for it, `{check?, cast, end?}`.
   `abilityBook()` refuses to build (the server does not start) an ability without an effect or the reverse, one filed
   under another node, a node that is always on, an `entity` ability that takes no kind, or a cooldown casts cannot run.
-  This build's book is empty: no branch has landed its abilities yet, so every slotted node is refused `unknown`. Tests
-  and the integration test cast a fixture book (`test/abilityFixture.ts`) over real nodes, never shipped.
+  This build's book holds the branches that have landed (Thermal I–II so far, P1.E07.T05; every other slotted node is
+  refused `unknown`); each branch adds its abilities from `@astra/shared/abilities/<branch>.ts` and its effects from
+  `abilities/<branch>.ts`, one line apiece in `ABILITIES` and `EFFECTS`. Tests and the integration test cast a fixture book
+  (`test/abilityFixture.ts`) over real nodes, never shipped.
 - **A cast** (`CastService.cast`, `service.ts`) is checked cheapest first, nothing paid or started until all pass: its
   `seq`; the character in play; its rate (6 at once, 3 a second); its stamp (within 3 s); the bar the mode movement
   authority believes casts from (§7); not down (§20); the slot one of the bar's working ones (six on the ground, the flown
@@ -1959,7 +1961,33 @@ effects; this runtime casts them all.
   base)`, a hit through the zone's one damage path (§20) as the node's ability, with the caster's node modifiers and
   augments, and only where `mayHarm` allows (null otherwise): never a player until PvP defines it (P2.E17.T01), nothing
   in a safe zone, caster or target (the Waystation's sphere, its frame; a capital's, P1.E10.T02, joins it there); and
-  `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play.
+  `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play. Past the cast, as
+  the branches need them (Thermal I–II, P1.E07.T05; general, so the other branches reuse them): `time()`, the world clock now
+  (`now` is the cast's); `owns(node)`, the caster's web now (an augment, a passive); `pose()`, the caster's eye and look now,
+  in the cast's frame, for an effect that runs on after its cast (a held beam): the entity's pose raised to the eye, the look
+  the client last sent with its input (`aim`, the eye's quaternion, which the client sends on foot) or the cast's own aim without
+  one, null once the entity has left play or its frame; `sight(to)`, whether the drawn ground leaves a line from that eye
+  (false while it is still being planned); `canHarm(target)`, `mayHarm` for an effect that marks and deals no blow;
+  `meters.beamTime()` (the seconds the beam has fired in all as the meters judged it, §19: a difference of two readings is what
+  the beam did, however its client timed its inputs) and `meters.dumpHeat()` (Vent: all the heat out, how much, null in the
+  lockout); and `status`, the caster's marks on targets (`Statuses`, `abilities/statuses.ts`): `apply(target, id, durationS,
+  power)` (true when this caster's was not running, so its effect starts the ticks; a running one is made to last to the later
+  end at the greater power), `get` (also for a second after its end, so the ticking effect deals the last of the interval),
+  `active` (anyone's, for Cauterize and Brand) and `remove`. Statuses are kept per zone and caster and pruned a second after
+  their end.
+- **Thermal I–II** (`@astra/shared/abilities/thermal.ts`, `abilities/thermal.ts`; DESIGN 9.3). Lance is a toggle on the
+  multitool beam: the heat is the beam's own 32 a second (the meters', §19), and while it is on every 0.25 s the effect
+  deals `12 ×` the beam seconds the meters judged since the last tick to the nearest creature on the look ray within 30 m and
+  in sight (resistances apply: crystal creatures resist Thermal); with Chain the nearest other creature within 8 m of the
+  first's centre takes half of it. Flare bursts 18 on every creature in its 60° cone to 12 m (in sight) and ignites it; Sear
+  (an `entity` cast on a creature within 30 m, refused `target` if it may not be harmed) ignites with no blow of its own;
+  Vent dumps all the heat and deals `0.6 ×` the heat dumped to every creature within 10 m. A burn is a `burning` status
+  dealing 6 a second for 4 s (Flare) or 5 for 8 s (Sear) in 0.5 s ticks through `ctx.damage`, stopping on death or when the
+  target may no longer be harmed; a second ignition by the same caster makes it last to the later end at the greater power
+  and never doubles its ticks. Tempered Core, Focused Lasers, Hot Hands and Ablative Plating are not cast: the meters'
+  profile (§19), `shipStats` (the base gun's range and damage, §20, and `reentryDamage` and `hazardDamage`), and the mining
+  service (§18) read their nodes. The server's ship has no re-entry or hazard damage yet (the client still computes it); when
+  it does, it multiplies by `shipStats(...).reentryDamage` and `hazardDamage[kind]`.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
