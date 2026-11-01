@@ -223,9 +223,9 @@ export class ZoneCombat {
   }
 
   /**
-   * A player's ship or nodes changed (a node bought or refunded, a hull swapped): its capacities are worked out again, and
-   * the damage it has taken stays as it is, so a plate bought mid-flight is not a repair and a plate refunded is not a wound.
-   * A downed player stays down.
+   * A player's ship or nodes changed (a node bought or refunded, a respec, a hull swapped): its capacities are worked out
+   * again and each pool keeps its fraction, so a plate bought mid-flight is no repair, a plate refunded is no wound, and a
+   * refund then a rebuy gains nothing. A pool at 0 stays at 0: a downed player stays down.
    */
   retuned(entity: number, change: { ship: ShipLoadout | null; skills: readonly string[] }): void {
     const p = this.profiles.get(entity);
@@ -234,10 +234,11 @@ export class ZoneCombat {
     const v = this.vitals.get(entity);
     if (v?.kind !== 'player') return;
     const next = this.playerVitals(entity);
-    // (what is missing stays missing: a plate bought and refunded repairs nothing, and a ship never goes down by a refund)
-    v.suit = Math.max(1, next.suitMax - (v.suitMax - v.suit));
-    v.hull = Math.max(1, next.hullMax - (v.hullMax - v.hull));
-    v.shield = Math.max(0, next.shieldMax - (v.shieldMax - v.shield));
+    // (a pool that had no capacity, a ship that failed to load, starts full)
+    const keep = (now: number, was: number, max: number) => (was > 0 ? (now / was) * max : max);
+    v.suit = keep(v.suit, v.suitMax, next.suitMax);
+    v.hull = keep(v.hull, v.hullMax, next.hullMax);
+    v.shield = keep(v.shield, v.shieldMax, next.shieldMax);
     v.suitMax = next.suitMax;
     v.hullMax = next.hullMax;
     v.shieldMax = next.shieldMax;

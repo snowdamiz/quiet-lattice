@@ -158,21 +158,48 @@ describe('Shield Capacitor and Hull Plating: a ship’s shield and hull', () => 
     expect(plated.health()).toMatchObject({ shield: 0, hull: 25, down: null });
   });
 
-  it('a plate bought in flight adds its capacity and none of the damage taken is repaired; one refunded takes the capacity back', () => {
+  it('a plate bought in flight scales what the pool has left by the new maximum; one refunded scales it back', () => {
     const a = aboard([]);
     a.hit(150);
     expect(a.health()).toMatchObject({ shield: 0, hull: 50 });
     a.zone.retune(a.viewer, { ship: LARK, skills: ['shield_capacitor', 'hull_plating'] });
-    expect(a.health()).toMatchObject({ shield: 25, shieldMax: 125, hull: 75, hullMax: 125 });
+    expect(a.health()).toMatchObject({ shield: 0, shieldMax: 125, hullMax: 125 });
+    expect(a.health().hull).toBeCloseTo(62.5, 9);
     a.zone.retune(a.viewer, { ship: LARK, skills: [] });
     expect(a.health()).toMatchObject({ shield: 0, shieldMax: 100, hull: 50, hullMax: 100 });
   });
 
-  it('a downed ship stays down when its nodes change', () => {
-    const a = aboard([]);
+  it('a downed ship stays at hull 0 and down through any re-tune, an unchanged one included', () => {
+    const a = aboard(['hull_plating']);
     a.hit(500);
+    expect(a.health()).toMatchObject({ hull: 0, down: 'ship' });
+    for (const skills of [['hull_plating'], [], ['hull_plating', 'shield_capacitor']]) {
+      a.zone.retune(a.viewer, { ship: LARK, skills });
+      expect(a.health(), skills.join()).toMatchObject({ hull: 0, shield: 0, down: 'ship' });
+      expect(a.zone.entity(a.entity)!.fields.hp).toBe(0);
+    }
+  });
+
+  it('refund then rebuy heals nothing: the hull at 10/125 is 8/100 then 10/125 again, and a refund never kills', () => {
+    const a = aboard(['hull_plating']);
+    a.hit(100 + 115);
+    expect(a.health()).toMatchObject({ shield: 0 });
+    expect(a.health().hull).toBeCloseTo(10, 9);
+    a.zone.retune(a.viewer, { ship: LARK, skills: [] });
+    expect(a.health().hull).toBeCloseTo(8, 9);
+    expect(a.health().down).toBeNull();
     a.zone.retune(a.viewer, { ship: LARK, skills: ['hull_plating'] });
-    expect(a.health()).toMatchObject({ down: 'ship' });
+    expect(a.health().hull).toBeCloseTo(10, 9);
+    expect(a.health()).toMatchObject({ hullMax: 125, down: null });
+  });
+
+  it('an unchanged re-tune of a hurt ship changes nothing', () => {
+    const a = aboard(['hull_plating', 'shield_capacitor']);
+    a.hit(140);
+    const before = a.health();
+    a.zone.retune(a.viewer, { ship: LARK, skills: ['hull_plating', 'shield_capacitor'] });
+    expect(a.health().shield).toBeCloseTo(before.shield, 9);
+    expect(a.health().hull).toBeCloseTo(before.hull, 9);
   });
 
   it('scales with the hull: 125% of what the hull has', () => {
