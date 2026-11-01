@@ -2,12 +2,16 @@
 // with fauna: Pull (and Pull Many), Slam, Well, and the ship forms Tractor Beam and Inertial Brake, each with the numbers of
 // DESIGN 9.2 and the branch's chosen ones (`GRAVITIC_NUMBERS`).
 import { GRAVITIC_NUMBERS as N, slamRadius } from '@astra/shared/abilities';
+import { WALKER } from '@astra/shared/data';
 import { getSkillNode, SENTINEL_RESISTANCES } from '@astra/shared/data';
 import { decodeServerMessage, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
 import { emptySkillState, type SkillState } from '@astra/shared/skills';
 import type { FaunaSpecies, NodeGround } from '@astra/shared/world';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CreatureInfo } from '../fauna/sim.ts';
+import { planHere } from '../fauna/terrain.ts';
+import { MovementAuthority } from '../sim/movement/authority.ts';
+import { LARK } from '../sim/movement/testing.ts';
 import { faunaWorld, type FaunaWorld } from '../../test/faunaWorld.ts';
 import type { NodeGroundSource } from '../resources/ground.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
@@ -474,9 +478,68 @@ describe('Slam', () => {
 
   it('is refused busy while the ground under the caster is being planned', () => {
     height = null;
-    const ready = vi.spyOn(grounds, 'ground').mockReturnValue(undefined);
+    const ready = vi.spyOn(grounds, 'ground').mockReturnValue(null);
     expect(cast('slam', 0)).toMatchObject({ result: 'refused', reason: 'busy' });
     ready.mockRestore();
+  });
+});
+
+describe('Slam with the movement authority', () => {
+  /** An honest walker's climb on its jetpack, the cast at the top of it, and the fall: the authority is fed the poses, the cast
+   * service reads its fall. */
+  it('knocks creatures down round the landing, by the height of the fall the authority saw, with no correction on the way', () => {
+    own(['slam']);
+    const authority = new MovementAuthority({ zone: w.zone.id, system: w.zone.system, grounds: planHere, tier: () => 0 });
+    Object.defineProperty(w.zone, 'movement', { value: authority, configurable: true });
+    const feet = w.onGround(w.at(0, 0));
+    const up = ((): Vec3 => {
+      const l = Math.hypot(...feet);
+      return [feet[0] / l, feet[1] / l, feet[2] / l];
+    })();
+    authority.add(w.player, { frame: w.frame, pos: feet, quat: [0, 0, 0, 1], vel: [0, 0, 0] }, 'foot', { ship: LARK }, w.time);
+    const gravity = w.body.gravity;
+    const inRange = creatureAt(8);
+    const outRange = creatureAt(40);
+    const corrections: unknown[] = [];
+    let height = 0;
+    let vUp = WALKER.jumpSpeed;
+    let airTime = 0;
+    let slammed = false;
+    let seqIn = 0;
+    let peak = 0;
+    for (let i = 0; i < 400; i++) {
+      airTime += 0.05;
+      vUp -= gravity * 0.05;
+      // the jetpack climbs for a second, then the slam cuts it
+      if (!slammed && airTime > WALKER.jet.afterS && airTime < 1.1) vUp = Math.min(vUp + (gravity + WALKER.jet.thrust) * 0.05, WALKER.jet.climbMax);
+      height += vUp * 0.05;
+      peak = Math.max(peak, height);
+      const landed = height <= 0;
+      if (landed) {
+        height = 0;
+        vUp = 0;
+      }
+      const pos: Vec3 = [feet[0] + up[0] * height, feet[1] + up[1] * height, feet[2] + up[2] * height];
+      w.zone.patch(w.player, { pos });
+      w.run(0.05);
+      now += 0.05;
+      const verdict = authority.check(w.player, { t: 'input', seq: ++seqIn, time: w.time, mode: 'foot', pose: { frame: w.frame, pos, quat: [0, 0, 0, 1], vel: [up[0] * vUp, up[1] * vUp, up[2] * vUp] }, buttons: 0 }, w.time);
+      if (!verdict.ok) corrections.push(verdict);
+      svc.step(now);
+      if (!slammed && airTime > 1.1) {
+        slammed = true;
+        expect(cast('slam', 0)).toMatchObject({ result: 'cast' });
+      }
+      if (landed && slammed) break;
+    }
+    pass(0.2);
+    expect(corrections).toEqual([]);
+    expect(peak).toBeGreaterThan(N.slam.minHeightM + 3);
+    const radius = slamRadius(peak);
+    expect(radius).toBeGreaterThan(8);
+    expect(radius).toBeLessThan(18);
+    expect(inRange.info().downUntil).toBeGreaterThan(0);
+    expect(outRange.info().downUntil).toBe(0);
   });
 });
 
