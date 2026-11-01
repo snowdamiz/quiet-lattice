@@ -176,3 +176,5 @@ The owner resumed the implementation plan in Codex. Runtime: native Codex subage
 - P1.E11.T01 continuation: source/export checkpoint `1c2e38fb0` validates both revised station families and GLBs. Existing visual captures are stale; fresh evidence and independent grades remain pending.
 
 - Dispatched P1.E04.T04 to a managed worktree at `/Users/andreyyurlov/.codex/worktrees/p1-e04-t04-zone-handoff/space`, branch `codex/task/P1-E04-T04`, based on merged main `8f4cf72a0`. This is the next dependency-ready client task while Gravitic awaits its asteroid authority dependency.
+
+- P1.E04.T04 scope clarified after source inspection: handoff also owns movement/combat transfer and client inertial-origin resolution, because a fresh leave/join would reset live authority and health. Protocol version 24 is reserved for this task. Managed worktree dependency install passed frozen-lockfile and supply-chain checks; no dependency versions were changed.
