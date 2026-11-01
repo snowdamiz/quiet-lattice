@@ -148,6 +148,7 @@ describe('the suit on a frozen world', () => {
   it('Cartridge Recycler: the predicted refill restores 60, not 40, and spends nothing here: the server takes the 10 sodium', () => {
     for (const [skills, restored] of [[[], 40], [['cartridge_recycler'], 60]]) {
       const g = onFrozenWorld({ night: false, skills });
+      g.net = {};
       g.inventory.add('sodium', 50);
       g.player.hazard = 20;
       g.updateSurvival(1e-6);
@@ -162,6 +163,15 @@ describe('the suit on a frozen world', () => {
     g.player.lifeSupport = 10;
     g.updateSurvival(1e-6);
     expect(g.player.lifeSupport).toBeCloseTo(70, 3);
+  });
+
+  it('offline in the dev sandbox, with no server to spend it, takes the 10 units itself', () => {
+    const g = onFrozenWorld({ night: false });
+    g.inventory.add('sodium', 50);
+    g.player.hazard = 20;
+    g.updateSurvival(1e-6);
+    expect(g.player.hazard).toBeCloseTo(60, 3);
+    expect(g.inventory.has('sodium', 40) && !g.inventory.has('sodium', 41)).toBe(true);
   });
 
   it('predicts no refill with nothing in the pack to refill from', () => {

@@ -163,6 +163,8 @@ interface Entry {
   mode: MoveMode | null;
   env: MeterEnvironment;
   conditions: ReadonlySet<string>;
+  /** `conditions` with `out_of_combat` (made once per place, for the suit's modifiers) */
+  restingConditions: ReadonlySet<string>;
   /** `env` is where the character's entity is (set as it enters its zone, then by every input); until then the drive's
    * burn takes it to be near a body, so no stretch is flown free */
   placed: boolean;
@@ -260,6 +262,7 @@ export class MeterService {
       mode: null,
       env: NOWHERE,
       conditions: meterConditions(NOWHERE),
+      restingConditions: new Set(['out_of_combat']),
       placed: false,
       creditOffset: 0,
       profile,
@@ -545,8 +548,7 @@ export class MeterService {
 
   /** The conditions the suit's modifiers are judged by: where the character is, and whether it is out of combat. */
   private suitConditions(characterId: string, e: Entry): ReadonlySet<string> {
-    if (this.inCombat?.(characterId)) return e.conditions;
-    return new Set([...e.conditions, 'out_of_combat']);
+    return this.inCombat?.(characterId) ? e.conditions : e.restingConditions;
   }
 
   /** One refill of `meter`: a crafted cartridge if the character holds one, else SUIT.cartridge.units of the raw resource.
@@ -610,6 +612,7 @@ export class MeterService {
     const m = mode ?? (entity?.fields.mode as MoveMode | undefined);
     e.env = zone && entity ? this.environment(zone, entity.fields.frame, entity.fields.pos, m === 'foot') : NOWHERE;
     e.conditions = meterConditions(e.env);
+    e.restingConditions = new Set([...e.conditions, 'out_of_combat']);
     e.placed = true;
     e.viewer = viewer;
     const people = entity?.fields.people as PeopleId | undefined;

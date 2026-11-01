@@ -1109,7 +1109,7 @@ export class Game {
   }
 
   // The suit over `dt` seconds on the shared rules. A refill is predicted (the line crossed with the pack holding raw
-  // oxygen or sodium, or a cartridge) but spends nothing here: the server takes it from the inventory it holds.
+  // oxygen or sodium, or a cartridge) but spends nothing here online: the server takes it from the inventory it holds.
   stepSuitState(p, env, place, dt, refills) {
     const mods = this.suitMods;
     const profile = { mods, restore: cartridgeRestore(mods) };
@@ -1129,6 +1129,8 @@ export class Game {
       if (!step.refill) break;
       const crafted = this.inventory.has(stock[step.refill][1], 1);
       const gain = crafted ? cartridgeItemRestore(stock[step.refill][1], mods) : profile.restore;
+      // (offline, in the dev sandbox, there is no server to spend it)
+      if (!this.net) this.inventory.take(crafted ? stock[step.refill][1] : stock[step.refill][0], crafted ? 1 : SUIT.cartridge.units);
       p[step.refill] = Math.min(100, p[step.refill] + gain);
       refillable[step.refill] = false;
     }
