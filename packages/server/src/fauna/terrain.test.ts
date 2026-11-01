@@ -184,11 +184,11 @@ describe('the ground planner, when things go wrong', () => {
   );
   let next = 0;
   /** A planner whose workers misbehave as `mode` says (test/plannerWorkers.ts), and what it warned. */
-  const planner = (mode: PlannerWorkerMode, opts: { timeoutMs?: number; retryMs?: number } = {}) => {
-    const warnings: { msg: string; obj: Record<string, unknown>; at: number }[] = [];
+  const planner = (mode: PlannerWorkerMode, opts: { timeoutMs?: number; retryMs?: number; now?: () => number } = {}) => {
+    const warnings: { msg: string; obj: Record<string, unknown> }[] = [];
     const starts = new Int32Array(new SharedArrayBuffer(4));
     const p = new GroundPlanner({
-      log: { warn: (obj, msg) => warnings.push({ msg, obj: obj as Record<string, unknown>, at: performance.now() }) },
+      log: { warn: (obj, msg) => warnings.push({ msg, obj: obj as Record<string, unknown> }) },
       script: new URL('../../test/plannerWorkers.ts', import.meta.url),
       workerData: { mode, starts },
       ...opts,
@@ -268,19 +268,25 @@ describe('the ground planner, when things go wrong', () => {
   });
 
   it('backs off a world whose plan throws, doubling the wait, and warns once each time', async () => {
-    const { p, warnings, world } = planner('throw', { retryMs: 300 });
+    // the back-off runs on a clock the test steps, so how long the worker thread takes to start and answer (seconds when the
+    // machine is loaded) decides nothing; what it checks is that no plan is sent a millisecond before the wait is over
+    let clock = 1000;
+    const { p, warnings, world } = planner('throw', { retryMs: 300, now: () => clock });
     try {
-      // asked every 20 ms, as a waiting world asks every tick, until three plans have failed: the worker thread's own
-      // time stretches under load, so this waits for the warnings rather than a fixed span, and checks each retry came
-      // no sooner than the wait the warning before it announced (the backoff starts when that warning is logged)
-      const deadline = Date.now() + 30_000;
-      while (warnings.length < 3 && Date.now() < deadline) {
+      let wait = 150;
+      for (let failure = 1; failure <= 3; failure++) {
+        wait *= 2;
         expect(p.ground(world)).toBeNull();
-        await new Promise((r) => setTimeout(r, 20));
+        expect(p.planning).toBe(1);
+        expect(await until(() => warnings.length === failure)).toBe(true);
+        expect(p.planning).toBe(0);
+        expect(warnings[failure - 1]!.obj.retryInS).toBe(wait / 1000);
+        clock += wait - 1;
+        for (let i = 0; i < 5; i++) expect(p.ground(world)).toBeNull();
+        expect(p.planning).toBe(0);
+        clock += 1;
       }
-      const waits = warnings.map((w) => Number(w.obj.retryInS));
-      expect(waits.slice(0, 3)).toEqual([0.3, 0.6, 1.2]);
-      for (let i = 1; i < 3; i++) expect(warnings[i]!.at - warnings[i - 1]!.at).toBeGreaterThanOrEqual(waits[i - 1]! * 1000);
+      expect(warnings.map((w) => w.obj.retryInS)).toEqual([0.3, 0.6, 1.2]);
       expect(warnings.every((w) => w.msg === 'ground planning failed; the world keeps no herds until it is tried again')).toBe(true);
     } finally {
       await p.close();
