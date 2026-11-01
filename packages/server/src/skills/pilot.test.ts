@@ -69,7 +69,11 @@ describe('Soft Landing: the speed a ship may come to rest at', () => {
   const g = groundOf(D, D.home)!;
   const up: Vec3 = [0, 0, -1];
   const ground = HOME_R + heightAt(g, up);
-  const at = (alt: number): Vec3 => [up[0] * (ground + SHIP_GEAR_HEIGHT + alt), up[1] * (ground + SHIP_GEAR_HEIGHT + alt), up[2] * (ground + SHIP_GEAR_HEIGHT + alt)];
+  const at = (alt: number): Vec3 => [
+    up[0] * (ground + SHIP_GEAR_HEIGHT + alt),
+    up[1] * (ground + SHIP_GEAR_HEIGHT + alt),
+    up[2] * (ground + SHIP_GEAR_HEIGHT + alt),
+  ];
 
   /** A ship dropping straight onto dry ground at `v` m/s, then at rest on its gear; the rules the server corrected it by. */
   function lands(v: number, skills: string[] = []): string[] {
