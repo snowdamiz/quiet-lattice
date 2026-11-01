@@ -16,6 +16,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as prettier from 'prettier';
 import { Galaxy, TerrainSampler, cosmos, describeGalaxySystem, layoutCity, streetPlan, surfaceAttribs, type PlanetParams } from '@astra/shared/world';
+import { cos, sin } from '../../../shared/src/math/det.ts';
 import { asJson, digestArrays, digestString } from '../../../shared/test/digest.ts';
 import { planSurface } from '../../../shared/test/surface.ts';
 
@@ -30,7 +31,7 @@ function sampleDirections(n = 20): [number, number, number][] {
   for (let i = 0; i < n; i++) {
     const y = 1 - ((i + 0.5) * 2) / n;
     const r = Math.sqrt(1 - y * y);
-    out.push([Math.cos(i * golden) * r, y, Math.sin(i * golden) * r]);
+    out.push([cos(i * golden) * r, y, sin(i * golden) * r]); // det's, not Math's: Math.sin/cos differ by platform
   }
   return out;
 }
