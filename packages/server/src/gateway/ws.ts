@@ -388,7 +388,18 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const unsubscribeEvents = combat.subscribe((news) => events.combat(news));
 
   // casts of slotted actives: checked against the zone's belief and the skill web, paid from the meters
-  const casts = new CastService({ zones: deps.zones, skills, meters, now: () => deps.clock.now(), book: deps.abilities, log });
+  const casts = new CastService({
+    zones: deps.zones,
+    skills,
+    meters,
+    deposits: {
+      burst: (zone, characterId, frame, pos, radiusM, hp, max) => resources.burst(zone, characterId, frame, pos, radiusM, hp, max),
+      ready: (zone, frame) => resources.burstReady(zone, frame),
+    },
+    now: () => deps.clock.now(),
+    book: deps.abilities,
+    log,
+  });
   casts.start();
   // a toggle whose node left its bar ends at once; a toggle the server ended reaches the bar of the session holding it
   const unsubscribeSkillCasts = skills.subscribe((characterId) => casts.skillsChanged(characterId));

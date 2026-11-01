@@ -425,6 +425,64 @@ export class ResourceService {
     return { ...base, result: 'depleted', item: type.resource, ...mine };
   }
 
+  /** Whether `burst` can run in `frame` now: its world's ground is planned (or it has none to plan). */
+  burstReady(zone: ResourceZone, frame: string): boolean {
+    const world = this.worldOf(zone, frame);
+    return !world || this.grounds.ground(world.params, this.tierOf(zone)) !== null;
+  }
+
+  /**
+   * An ability breaks mineral nodes (Shatter, DESIGN 9.4): `hp` of damage on each deposit and formation (never a plant)
+   * whose standing node lies within `radiusM` of `pos` (planet-local, the caster's eye) and in sight over the ground,
+   * the `max` nearest, as the character's own work: the nodes it breaks are paid out as mined ones are (shared by damage,
+   * with its yield modifiers, to every listener). Plants are the client's flora and are not touched. Null while the world's
+   * ground is still being planned; otherwise how many it hurt and how many broke.
+   */
+  burst(
+    zone: ResourceZone,
+    characterId: string,
+    frame: string,
+    pos: Readonly<Vec3>,
+    radiusM: number,
+    hp: number,
+    max: number,
+  ): { hurt: number; broken: number } | null {
+    const world = this.worldOf(zone, frame);
+    if (!world) return { hurt: 0, broken: 0 };
+    const tier = this.tierOf(zone);
+    const ground = this.grounds.ground(world.params, tier);
+    if (!ground) return null;
+    const now = this.now();
+    const layers = this.layersOf(world, tier);
+    const r = Math.hypot(pos[0], pos[1], pos[2]);
+    if (!(r > 0)) return { hurt: 0, broken: 0 };
+    const near: { node: ResourceNode; cell: NodeCell; d: number }[] = [];
+    for (const cell of nodeCellsNear(pos[0] / r, pos[1] / r, pos[2] / r, radiusM + world.cellM, world.R, world.level)) {
+      for (const node of this.scatter(world, tier, layers.list, ground, cell)) {
+        if (nodeType(node.type).kind === 'plant') continue;
+        const d = Math.hypot(node.x - pos[0], node.y - pos[1], node.z - pos[2]);
+        if (d > radiusM || this.store.get(world.frame, cell, `${node.type}_${node.k}`)?.respawnAt != null) continue;
+        near.push({ node, cell, d });
+      }
+    }
+    near.sort((a, b) => a.d - b.d);
+    const out = { hurt: 0, broken: 0 };
+    const base = { t: 'mine' as const, seq: 0, frame };
+    for (const { node, cell } of near) {
+      if (out.hurt >= max) break;
+      const type = nodeType(node.type);
+      const up = type.place.sink + 0.5;
+      if (this.reach(ground, pos, [node.x + node.nx * up, node.y + node.ny * up, node.z + node.nz * up]) === 'los') continue;
+      const n = this.store.touch(world.frame, world.params, cell, type, node.k, now);
+      out.hurt++;
+      if (!this.store.damage(n, characterId, hp, now)) continue;
+      out.broken++;
+      // (the breaker's own reply, as a mined node's: the caster's client toasts what it collected once P1.E13.T06 reads `mine` replies)
+      this.tell(zone, characterId, this.harvest(zone, world, n, characterId, now, { ...base, node: n.id }));
+    }
+    return out;
+  }
+
   private hitFlora(
     world: World,
     tier: Tier,

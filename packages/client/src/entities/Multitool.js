@@ -1,4 +1,8 @@
-// First-person mining tool: viewmodel, beam, heat and resource extraction.
+// First-person mining tool: viewmodel, beam, heat and mining.
+//
+// Mining is the server's (ARCHITECTURE §18): while the beam stays on a node or a plant the tool asks for a hit about every
+// quarter second (net/mining.js) and the server decides what the beam did, what it broke and what it gave. The tool wears a
+// plant down as it holds on it, and breaks it, and plays its sound and pickup, when the server's answer says so.
 //
 // Heat (DESIGN 9.1) runs on the shared rules (`@astra/shared/meters`) the server decides it by: the beam heats at 32/s
 // against 8/s of cooling, idle the meter sheds 20/s, the world where the walker stands scales the cooling, and at the top
@@ -174,6 +178,23 @@ export class Multitool {
     this.unwatchMeters?.();
     this.meterNet = net;
     this.unwatchMeters = net ? net.on('meters', ({ meters }) => this.reconcile(meters, net.serverTime() ?? meters.at)) : null;
+    this.unwatchMining?.();
+    this.unwatchMining = net ? net.mining.on((m) => this.mined(m)) : null;
+  }
+
+  /** The server's word on a hit (or on a share of a node another player broke): what the beam broke flies apart, and what
+   * the character was given is shown. The inventory itself is the server's own state. */
+  mined(m) {
+    const g = this.game;
+    if (m.result !== 'depleted') return;
+    if (m.ctx) {
+      g.flora.broke(m.ctx);
+      g.audio.play('break');
+    }
+    if (m.count > 0) {
+      g.hud.collected(m.item, m.count, m.added);
+      g.audio.play('pickup');
+    }
   }
 
   update(dt, input, active) {
@@ -206,17 +227,11 @@ export class Multitool {
           }
         }
       }
-      if (wantFire) {
-        if (this.target) {
-          const res = g.flora.hit(this.target, this.power * dt);
-          if (res && res.res) {
-            g.hud.collected(res.res, res.amount, g.inventory.add(res.res, res.amount));
-            g.audio.play('break');
-            g.audio.play('pickup');
-          }
-        }
-      }
-    }
+      if (wantFire && this.target) {
+        g.flora.wear(this.target, this.power * dt);
+        if (g.flora.frameId) g.net?.mining.beam(dt, g.flora.frameId, g.flora.mineTarget(this.target), this.target, g.time);
+      } else g.net?.mining.idle();
+    } else g.net?.mining.idle();
     this.firing = wantFire && g.mode === 'foot';
 
     // beam visual (world space relative to camera)

@@ -480,6 +480,27 @@ describe('cheats are refused', () => {
     expect(inSpace().send(pose(null, OPEN), 'pulse').ok).toBe(true);
   });
 
+  it('a Jammer holds the pulse drive: engaging or cruising on is refused `pulse_jammed` until the lockout ends, the ship’s own modes never (P1.E07.T06)', () => {
+    const h = new Harness(D, { pose: pose(null, OPEN), mode: 'ship' });
+    expect(h.a.pulsing(h.id)).toBe(false);
+    expect(h.a.jam(999, h.now + 5)).toBe(false);
+    expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);
+    expect(h.a.pulsing(h.id)).toBe(true);
+    expect(h.a.jam(h.id, h.now + 5)).toBe(true);
+    const r = refusal(h.send(pose(null, OPEN), 'pulse'));
+    expect(r.violation).toMatchObject({ rule: 'pulse_jammed', detail: 'jammed' });
+    expect(h.lines.find((l) => l.msg === 'movement corrected')?.obj).toMatchObject({ rule: 'pulse_jammed' });
+    h.now += MOVEMENT.correction.graceS;
+    expect(h.send(pose(null, OPEN), 'ship').ok).toBe(true);
+    expect(h.a.pulsing(h.id)).toBe(false);
+    // still jammed: engaging is refused too
+    expect(refusal(h.send(pose(null, OPEN), 'pulse', { dt: MOVEMENT.correction.graceS + 0.1 })).violation).toMatchObject({ rule: 'pulse_jammed' });
+    // a shorter jam never shortens a longer one
+    h.a.jam(h.id, h.now + 1);
+    h.now += 6;
+    expect(h.send(pose(null, OPEN), 'pulse').ok).toBe(true);
+  });
+
   it('reports each accepted input’s credited flight to the meters once, a correction’s rewind not paid for twice', () => {
     // (the pose a correction rewinds to is re-timed to the refused input's credited time, so the stretch after it starts
     // where the last one paid ended)

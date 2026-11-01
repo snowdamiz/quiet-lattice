@@ -1025,21 +1025,15 @@ export class Review {
       if (this.active && this.aids) this.drawAids();
     };
     // plants in the asset's footprint or between it and the camera are left out of the flora's instances (only while
-    // reviewing: the keys are put back after each rebuild, so nothing is mined for real)
+    // reviewing: the keys are handed to each rebuild and dropped after it)
     const f = g.flora;
     const rebuild = f.rebuild.bind(f);
     f.rebuild = () => {
-      const added = [];
-      if (this.active && this.frame && f.planet === this.frame) {
-        for (const key of this.floraInView()) {
-          if (f.mined.has(key)) continue;
-          f.mined.add(key);
-          added.push(key);
-        }
-      }
+      const hidden = this.active && this.frame && f.planet === this.frame ? new Set(this.floraInView()) : null;
+      f.reviewHidden = hidden;
       rebuild();
-      for (const key of added) f.mined.delete(key);
-      this.floraHidden = added.length;
+      f.reviewHidden = null;
+      this.floraHidden = hidden?.size ?? 0;
     };
   }
 

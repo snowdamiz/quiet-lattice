@@ -25,7 +25,7 @@
 // change to the character's skills and before the character's next cast, and the gateway is told (`subscribe`) so the
 // player's bar is too; `state` never reports one that no longer holds. Effects harm only what `mayHarm` allows.
 import { barOfMode, castCost, cooldownOf, reachOf } from '@astra/shared/abilities';
-import { creatureSphere, modsOfNodes } from '@astra/shared/combat';
+import { creatureSphere, modsOfNodes, type ResistanceResult } from '@astra/shared/combat';
 import { getSkillNode } from '@astra/shared/data';
 import type { HeatDump } from '@astra/shared/meters';
 import { encodeServerMessage, type CastRefusal, type ClientMessage, type FrameId, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
@@ -66,7 +66,7 @@ export const CASTER_IDLE_S = 600;
 /** A zone, as casts use it. */
 export type CastZone = Pick<
   Zone,
-  'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'viewers' | 'sees' | 'combat' | 'fauna' | 'phases' | 'stationFrame'
+  'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'viewers' | 'sees' | 'combat' | 'fauna' | 'phases' | 'stationFrame' | 'partyMembers' | 'movement'
 >;
 
 /** Where the service finds a session's zone and a zone's tier (the ZoneManager). */
@@ -86,6 +86,22 @@ export interface CastServiceOptions {
     beamTime(characterId: string, now: number): number;
     dumpHeat(characterId: string, now: number): HeatDump;
   };
+  /** what an ability does to the ground's resources (Shatter): the resource service's `burst`. Without it nothing is hurt. */
+  deposits?: {
+    burst(
+      zone: CastZone,
+      characterId: string,
+      frame: string,
+      pos: Readonly<Vec3>,
+      radiusM: number,
+      hp: number,
+      max: number,
+    ): { hurt: number; broken: number } | null;
+    /** Whether `burst` has the world's ground to work on (see `CastContext.deposits.ready`). */
+    ready(zone: CastZone, frame: string): boolean;
+  };
+  /** whether a cast's caster may harm `target` (`mayHarm`: no player until PvP, P2.E17.T01, which supplies its rule here) */
+  mayHarm?: typeof mayHarm;
   /** world time, s (the server clock) */
   now: () => number;
   /** the abilities cast and their effects (this build's by default) */
@@ -125,6 +141,9 @@ export class CastService {
   private readonly now: () => number;
   private readonly book: AbilityBook;
   private readonly grounds: NodeGroundSource;
+  private readonly deposits: CastServiceOptions['deposits'];
+  private readonly mayHarm: typeof mayHarm;
+  private readonly shares = new WeakMap<CastContext, Set<number>>();
   private readonly log?: ZoneLog;
   private readonly lastSeq = new WeakMap<ZoneViewer, number>();
   private readonly casters = new Map<string, { bucket: TokenBucket; seen: number }>();
@@ -145,6 +164,8 @@ export class CastService {
     this.now = opts.now;
     this.book = opts.book ?? abilityBook();
     this.grounds = opts.grounds ?? nodeGrounds;
+    this.deposits = opts.deposits;
+    this.mayHarm = opts.mayHarm ?? mayHarm;
     this.log = opts.log;
     this.statuses = new Statuses(opts.now);
   }
@@ -290,8 +311,16 @@ export class CastService {
     const aim: Vec3 = [msg.aim[0] / al, msg.aim[1] / al, msg.aim[2] / al];
     // (the phase rule holds for as long as an effect runs on, as for a burn's ticks: a creature the caster can no longer see is
     // not harmed)
-    const harmable = (target: number): boolean => mayHarm(zone, self, target) && zone.phases.canSee(self, target);
-    return {
+    const harmable = (target: number): boolean => this.mayHarm(zone, self, target) && zone.phases.canSee(self, target);
+    const shared = new Set<number>();
+    const resistance = (target: number): ResistanceResult | null =>
+      zone.phases.canSee(self, target) ? zone.combat.resistanceOf(target, { node: msg.node }) : null;
+    // (a creature the caster sees and that does not shrug the node off)
+    const steerable = (target: number): boolean => {
+      const r = resistance(target);
+      return r !== null && !r.immune;
+    };
+    const ctx: CastContext = {
       characterId,
       caster: self,
       node: getSkillNode(msg.node),
@@ -320,6 +349,10 @@ export class CastService {
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
       pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
+      onWorld: () => {
+        const body = this.bodyOf(zone, frame);
+        return body !== undefined && body.type !== 'gas';
+      },
       groundReady: () => this.groundOf(zone, frame) !== 'busy',
       sight: (to) => {
         const eye = this.poseOf(zone, self, frame, bar, origin, aim)?.origin;
@@ -339,14 +372,54 @@ export class CastService {
         active: (target, id) => this.statuses.active(zone.id, target, id),
         remove: (target, id) => this.statuses.remove(zone.id, characterId, target, id),
       },
+      resistance,
+      control: {
+        stun: (creature, durationS) => steerable(creature) && !!zone.fauna?.stun(creature, durationS),
+        calm: (creature, durationS) => steerable(creature) && !!zone.fauna?.calm(creature, durationS),
+      },
+      conceal: (durationS) => zone.fauna?.veil(self, durationS),
+      party: (radiusM) => this.partyOf(zone, self, frame, radiusM),
+      share: (entities) => {
+        for (const e of entities) shared.add(e);
+      },
+      deposits: {
+        burst: (radiusM, hp, max) => {
+          const at = zone.entity(self)?.fields;
+          if (!at || frame === null || at.frame !== frame || !this.deposits) return { hurt: 0, broken: 0 };
+          return this.deposits.burst(zone, characterId, frame, at.pos as Vec3, radiusM, hp, max) ?? 'busy';
+        },
+        ready: () => frame === null || !this.deposits || this.deposits.ready(zone, frame),
+      },
+      ships: {
+        pulsing: (target) => zone.movement?.pulsing(target) ?? false,
+        jam: (target, durationS) => zone.movement?.jam(target, this.now() + durationS) ?? false,
+      },
     };
+    this.shares.set(ctx, shared);
+    return ctx;
+  }
+
+  /** The caster's party members within `radiusM` on foot and up on its world (see `CastContext.party`). */
+  private partyOf(zone: CastZone, self: number, frame: FrameId, radiusM: number): { id: number; pos: Readonly<Vec3> }[] {
+    const me = zone.entity(self);
+    const out: { id: number; pos: Readonly<Vec3> }[] = [];
+    if (!me || me.party === null) return out;
+    for (const id of zone.partyMembers(me.party)) {
+      const m = id === self ? undefined : zone.entity(id);
+      if (!m || m.fields.kind !== 'player' || m.fields.mode !== 'foot' || m.fields.frame !== frame || zone.combat.isDown(id) || !zone.phases.canSee(self, id))
+        continue;
+      const p = m.fields.pos;
+      if (Math.hypot(p[0] - me.fields.pos[0], p[1] - me.fields.pos[1], p[2] - me.fields.pos[2]) <= radiusM) out.push({ id, pos: [p[0], p[1], p[2]] });
+    }
+    return out;
   }
 
   /** The caster's eye and look now (see `CastContext.pose`): its entity's pose lifted to the eye on foot, its look the one the
-   * client last sent with its input (the cast's own `aim` without one); null once the entity is gone from play or the frame. */
+   * client last sent with its input (the cast's own `aim` without one); null once the entity is gone from play or the frame,
+   * or is down. */
   private poseOf(zone: CastZone, self: number, frame: FrameId, bar: Bar, origin: Readonly<Vec3>, aim: Readonly<Vec3>): { origin: Vec3; aim: Vec3 } | null {
     const e = zone.entity(self);
-    if (!e || e.fields.frame !== frame) return null;
+    if (!e || e.fields.frame !== frame || zone.combat.isDown(self)) return null;
     const look = e.input?.aim;
     return {
       origin: bar === 'ground' ? lift(e.fields.pos, EYE_M) : [e.fields.pos[0], e.fields.pos[1], e.fields.pos[2]],
@@ -392,12 +465,17 @@ export class CastService {
     return ground === null ? true : ground === 'busy' ? 'busy' : clearSight(ground.sampler, from, to);
   }
 
+  /** The body `frame` names; undefined for deep space and the station's frame. */
+  private bodyOf(zone: CastZone, frame: string | null) {
+    if (frame === null) return undefined;
+    const key = frameKeyOf(zone.system, frame);
+    return typeof key === 'number' ? zone.system.bodies[key] : undefined;
+  }
+
   /** The drawn ground of the world `frame` names, null where there is none to be in the way (space, a gas giant), 'busy'
    * while it is still being planned. */
   private groundOf(zone: CastZone, frame: string | null) {
-    if (frame === null) return null;
-    const key = frameKeyOf(zone.system, frame);
-    const body = typeof key === 'number' ? zone.system.bodies[key] : undefined;
+    const body = this.bodyOf(zone, frame);
     if (!body || body.type === 'gas') return null;
     return this.grounds.ground(body.params as PlanetParams, this.zones.tier(zone.id) ?? tierOfGalaxySystem(zone.systemIndex)) ?? 'busy';
   }
@@ -468,12 +546,14 @@ export class CastService {
   private announce(zone: CastZone, ctx: CastContext, phase: CastEvent['phase']): void {
     const at = this.now();
     const texts = new Map<number, string | null>();
-    const text = (caster: boolean, target: boolean): string | null => {
-      const k = (caster ? 1 : 0) | (target ? 2 : 0);
+    const shares = this.shares.get(ctx);
+    const text = (caster: boolean, target: boolean, shared: boolean): string | null => {
+      const k = (caster ? 1 : 0) | (target ? 2 : 0) | (shared ? 4 : 0);
       if (!texts.has(k)) {
         const event: CastEvent = { kind: 'cast', node: ctx.node.id, phase, at, frame: ctx.frame, aim: [...ctx.aim] };
         if (caster) event.caster = ctx.caster;
         if (target) event.target = ctx.target!;
+        if (shared) event.shared = true;
         try {
           texts.set(k, encodeServerMessage({ t: 'event', event }));
         } catch (err) {
@@ -486,11 +566,12 @@ export class CastService {
     const target = ctx.target;
     for (const [viewer, own] of zone.viewers()) {
       if (!viewer.sendText) continue;
+      const shared = phase === 'cast' && own !== ctx.caster && !!shares?.has(own);
       if (own !== ctx.caster && !zone.sees(viewer, ctx.caster) && (target === null || !zone.sees(viewer, target))) continue;
       const caster = zone.phases.canSee(own, ctx.caster);
       const named = target !== null && zone.phases.canSee(own, target);
       if (!caster && !named) continue;
-      const t = text(caster, named);
+      const t = text(caster, named, shared);
       if (t !== null) viewer.sendText(t);
     }
   }

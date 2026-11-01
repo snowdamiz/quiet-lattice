@@ -141,6 +141,7 @@ const events: GameEvent[] = [
   { kind: 'rank', faction: 'compact', rank: 'hand', from: null },
   { kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } },
   { kind: 'cast', caster: 5, node: 'pull', phase: 'cast', at: 3600.5, frame: '424242:3', aim: [0, 0, -1], target: 9 },
+  { kind: 'cast', caster: 5, node: 'pulse', phase: 'cast', at: 3600.5, frame: '424242:3', aim: [0, 0, -1], shared: true },
 ];
 
 /** A beacon as the shard lists it. */
@@ -298,10 +299,11 @@ describe('protocol: version', () => {
   // (P1.E13.T01); 9: reserved for meters, which merged as 15 (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid
   // beacons (P1.E15.T02); 12: analysis and the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation
   // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01); 17: world events (P2.E21.T01); 18: seasons
-  // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03); 21: the Edge's world message (P2.E22.T02); 22: the suit's meters (P1.E06.T06). A branch that changes a message bumps the
+  // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03); 21: the Edge's world message (P2.E22.T02); 22: shared
+  // casts (P1.E07.T06); 23: the suit's meters (P1.E06.T06). A branch that changes a message bumps the
   // version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 22, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(22);
+  it('is version 23, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(23);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

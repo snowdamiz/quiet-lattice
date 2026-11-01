@@ -365,6 +365,8 @@ class Mover {
   timeless = false;
   /** inputs let through while a world's ground is planned */
   hold: Hold | null = null;
+  /** Jammer: no pulse drive until this server time */
+  jammedUntil = -Infinity;
 
   /** A mover joining at server world time `joined`. */
   constructor(
@@ -499,6 +501,20 @@ export class MovementAuthority {
   freePad(): number | null {
     const i = this.pads.findIndex((holders) => holders.size === 0);
     return i < 0 ? null : i;
+  }
+
+  /** Jammer (DESIGN 9.4): the ship may not engage or cruise on the pulse drive until server world time `until`. Its next pulse
+   * input is refused (`pulse_jammed`) and corrected back to its last pose, which is out of the drive. A later jam extends. */
+  jam(id: number, until: number): boolean {
+    const m = this.movers.get(id);
+    if (!m) return false;
+    m.jammedUntil = Math.max(m.jammedUntil, until);
+    return true;
+  }
+
+  /** Whether the mover is on the pulse drive as the server last accepted it. */
+  pulsing(id: number): boolean {
+    return this.movers.get(id)?.last.cls === 'pulse';
   }
 
   /** Where a mover on foot left its ship, if it did. */
@@ -1045,6 +1061,7 @@ export class MovementAuthority {
     switch (s.cls) {
       case 'pulse': {
         const engaging = L.cls !== 'pulse';
+        if (m.jammedUntil > s.r) return fail('pulse_jammed', 0, 0, 's', 'jammed');
         // Charge, as the character's meters have it now (the gateway ran them to this input's arrival before the zone)
         const id = m.profile.characterId;
         if (this.meters && id !== undefined && !this.meters.allowsMode(id, 'pulse', s.r, engaging ? 0 : MOVEMENT.pulse.chargeGraceS, s.t)) {

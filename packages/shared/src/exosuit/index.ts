@@ -70,3 +70,9 @@ export function scanRanges(mods: readonly StatMod[]): { depositM: number; siteM:
     siteM: applyStatMods(SUIT.scan.siteM, 'scan.site_range', mods),
   };
 }
+
+/** Whether the owned nodes put Signal Beacons on the map (Long Ear's `beacons_on_map`, DESIGN 9.4). */
+export function beaconsOnMap(skills: Iterable<string>): boolean {
+  for (const id of skills) if (getSkillNode(id).flags.includes('beacons_on_map')) return true;
+  return false;
+}
