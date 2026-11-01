@@ -109,6 +109,8 @@ export const MOVEMENT = {
     aboveM: 8,
     /** Not over open water: the ground under a landed ship is at least the client's 0.5 m over the sea, less this. */
     waterM: 1.5,
+    /** Its speed is judged over the step from its last pose only when the step is longer than this, s (a shorter one is noise). */
+    speedMinDtS: 0.02,
   },
   docked: {
     /** On a pad: its gear within this of the pad's top, below or above. */
@@ -167,6 +169,8 @@ export type MovementRule =
   | 'pulse_charge'
   /** landed off the ground, on water or not on a world */
   | 'landed'
+  /** coming to rest faster than the ship may land (Soft Landing raises it) */
+  | 'landing_speed'
   /** docked off a pad or outside a Waystation */
   | 'docked'
   /** docked on a pad another ship holds */

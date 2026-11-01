@@ -75,7 +75,7 @@ export interface CastZones {
 export interface CastServiceOptions {
   zones: CastZones;
   /** each character's place on the skill web: its bars and owned nodes (`get`) and the hull's working ship slots (`view`) */
-  skills: { get(characterId: string): SkillState | null; view(characterId: string): { shipSlots: number } };
+  skills: { get(characterId: string): SkillState | null; shipSlots(characterId: string): number };
   /** heat and Charge: what a cast pays */
   meters: {
     addHeat(characterId: string, amount: number, now: number): { ok: boolean };
@@ -205,7 +205,7 @@ export class CastService {
     const bar = barOfMode(me.fields.mode);
     if (!bar) return refuse('mode');
     if (zone.combat.isDown(self)) return refuse('down');
-    if (msg.slot >= (bar === 'ground' ? GROUND_SLOTS : this.skills.view(characterId).shipSlots)) return refuse('slot');
+    if (msg.slot >= (bar === 'ground' ? GROUND_SLOTS : this.skills.shipSlots(characterId))) return refuse('slot');
     if (!skills.bought.includes(msg.node)) return refuse('not_owned');
     if (skills.slots[bar][msg.slot] !== msg.node) return refuse('not_slotted');
     const entry = this.book.get(msg.node);
@@ -365,7 +365,7 @@ export class CastService {
     if (!e || barOfMode(e.fields.mode) !== ctx.bar || zone.combat.isDown(ctx.caster)) return false;
     const skills = this.skills.get(characterId);
     if (!skills?.bought.includes(node)) return false;
-    const working = ctx.bar === 'ground' ? GROUND_SLOTS : this.skills.view(characterId).shipSlots;
+    const working = ctx.bar === 'ground' ? GROUND_SLOTS : this.skills.shipSlots(characterId);
     return skills.slots[ctx.bar].slice(0, working).includes(node);
   }
 

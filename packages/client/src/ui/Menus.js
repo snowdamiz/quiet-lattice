@@ -447,7 +447,7 @@ export class Menus {
       rows += `<div class="res-row ${n ? '' : 'empty'}">${resourceIcon(id)}<span>${r.name}</span><span class="num">${n}</span><span class="price">${r.price}u</span>
         <button class="btn ghost small" data-sell="${id}" ${n ? '' : 'disabled'}>Sell</button></div>`;
     }
-    this.trade.innerHTML = `<div class="panel frame">
+    this.trade.innerHTML = `<div class="panel frame" style="width:min(560px,94vw)">
       <div class="panel-head">
         <div><div class="label">${this.tradeLabel || 'Trade terminal'}</div><h2>${this.tradePlace || g.station.name}</h2></div>
         <div class="balance"><b class="u">${inv.units.toLocaleString()}</b><button class="close-x" data-close>✕</button></div>

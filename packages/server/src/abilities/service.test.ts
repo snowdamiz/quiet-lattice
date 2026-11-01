@@ -93,7 +93,7 @@ function service(opts: Partial<CastServiceOptions> = {}, abilities: readonly Abi
   );
   const svc = new CastService({
     zones: { zoneOf: (v) => (w.zone.has(v) ? w.zone : undefined), tier: () => 0 },
-    skills: { get: (id) => (id === 'c1' ? skills : null), view: () => ({ shipSlots }) },
+    skills: { get: (id) => (id === 'c1' ? skills : null), shipSlots: () => shipSlots },
     meters: {
       addHeat: (_id, amount) => {
         if (meter.overheated) return { ok: false };

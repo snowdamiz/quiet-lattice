@@ -166,13 +166,13 @@ interface PlayerVitals {
   readonly kind: 'player';
   readonly characterId: string | null;
   suit: number;
-  readonly suitMax: number;
+  suitMax: number;
   hull: number;
-  readonly hullMax: number;
+  hullMax: number;
   shield: number;
-  readonly shieldMax: number;
+  shieldMax: number;
   /** its own modifiers (Grey Blood's damage taken) */
-  readonly mods: readonly StatMod[];
+  mods: readonly StatMod[];
   down: DownedReport['cause'] | null;
   /** the hp and shield fractions last put on its entity */
   shown: { hp: number; shield: number | null } | null;
@@ -220,6 +220,28 @@ export class ZoneCombat {
   /** A player entered: whose it is and what it flies, for its health. */
   joined(entity: number, profile: CombatProfile): void {
     this.profiles.set(entity, { characterId: profile.characterId, ship: profile.ship, skills: [...profile.skills] });
+  }
+
+  /**
+   * A player's ship or nodes changed (a node bought or refunded, a hull swapped): its capacities are worked out again. What a
+   * capacity gained is gained in health too, so a plate bought mid-flight is not a free repair of the damage already taken;
+   * one lost takes its health down to the new capacity. A downed player stays down.
+   */
+  retuned(entity: number, change: { ship: ShipLoadout | null; skills: readonly string[] }): void {
+    const p = this.profiles.get(entity);
+    if (!p) return;
+    this.profiles.set(entity, { ...p, ship: change.ship ?? p.ship, skills: [...change.skills] });
+    const v = this.vitals.get(entity);
+    if (v?.kind !== 'player') return;
+    const next = this.playerVitals(entity);
+    v.suit = Math.min(next.suitMax, v.suit + Math.max(0, next.suitMax - v.suitMax));
+    v.hull = Math.min(next.hullMax, v.hull + Math.max(0, next.hullMax - v.hullMax));
+    v.shield = Math.min(next.shieldMax, v.shield + Math.max(0, next.shieldMax - v.shieldMax));
+    v.suitMax = next.suitMax;
+    v.hullMax = next.hullMax;
+    v.shieldMax = next.shieldMax;
+    v.mods = next.mods;
+    if (this.zone.entity(entity)) this.show(entity, v);
   }
 
   /** An entity left the zone (despawned): its health and corpse go with it. */

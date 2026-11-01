@@ -11,7 +11,7 @@ import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
-import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
+import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, hazardDamagePerS, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
 import { canEngagePulse, meterEnvironment, meterProfile, meterRates, stepMeters } from '@astra/shared/meters';
 import { fireIntent } from '../net/combat.js';
 
@@ -1355,7 +1355,7 @@ export class Ship {
     if (depth <= 0) return;
     // how much of each kind of hostile sky the hull takes (Thermal Plating and the like divide it)
     const taken = this.stats.hazardDamage[hz.kind] ?? 1;
-    let dmg = hz.dps * Math.pow(depth, hz.curve || 1.3) * dt * taken;
+    let dmg = hazardDamagePerS(hz, depth, this.stats) * dt;
     const t = g.time;
     if (hz.kind === 'heat') {
       this.hazardHeat = depth * (0.75 + 0.15 * Math.sin(t * 17));
