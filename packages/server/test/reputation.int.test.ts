@@ -209,7 +209,10 @@ describe('reputation over the wire', () => {
     expect(edited).toMatchObject({ ok: true, changed: [QUESTS] });
     expect((await row(character.id)).state.reputation).toBeUndefined();
     // (each owed entry pushes its own view, so wait for the last one, not the first entry's)
-    const settled = (v: ReputationView) => rep(v, 'belost').rep === 30 && rep(v, 'compact').rep === 240;
+    const settled = (v: ReputationView) =>
+      rep(v, 'belost').rep === 30 &&
+      rep(v, 'compact').rep === 240 &&
+      v.titles.some((title) => 'quest' in title && title.quest === 'forty_names' && title.title === 'Unlisted');
     const expected = { belost: 30, compact: 240 };
 
     // joined: settled, a rank reached on the way (Hand), the client told
