@@ -2,7 +2,8 @@
 // grader always gets its 16:9 and 21:9 captures and a 60 fps clip the same way.
 import type { Page } from '@playwright/test';
 import { EVENTS } from '@astra/shared/events';
-import { GALAXY_SEED, Galaxy, homeSystems } from '@astra/shared/world';
+import { edgeAt, seasonOpening } from '@astra/shared/seasons';
+import { EDGE_X, GALAXY_SEED, Galaxy, galaxyTiers, homeSystems } from '@astra/shared/world';
 
 export interface ScreenDef {
   /** dev scenario hash to open the client with */
@@ -1508,6 +1509,113 @@ function eventBannerQueuedScreen(): ScreenDef {
   };
 }
 
+// ---------- the Edge following the Count (P2.E22.T02) ----------
+// The offline sandbox has no world service, so the capture hands the game the `world` message the server would send for a
+// Count, built by the same functions the server uses (edgeAt, galaxyTiers), and the map and the sky draw the Edge from it.
+
+interface EdgeWindow {
+  game: {
+    world: unknown;
+    menus: { openMap(): void; setMapTab(tab: string): void; mapView: EdgeMapView };
+    universe: { leave(): void; anchor: { set(x: number, y: number, z: number): void } };
+    ship: { state: { frame: unknown; pos: { set(x: number, y: number, z: number): void }; quat: { set(x: number, y: number, z: number, w: number): void } } };
+    cam: { frame: unknown };
+    hud: { clearBanners(): void };
+    sky: { reset(): void };
+  };
+  dev: { boot(): Promise<void> };
+  __clip: { frame(dt: number): void };
+}
+interface EdgeMapView {
+  fly: unknown;
+  camera: { position: { set(x: number, y: number, z: number): void } };
+  controls: { target: { set(x: number, y: number, z: number): void } };
+}
+
+/** The `world` message for the Count at `count` in the season whose opening is `from` (null: the baseline). */
+function worldAtCount(count: number, from: 'fed' | 'held' | 'broken' | null = null) {
+  const opening = seasonOpening(from, 5);
+  const edgeX = edgeAt(count, opening);
+  return {
+    t: 'world',
+    season: 5,
+    seasonStart: 0,
+    seasonEnd: 4_838_400,
+    opening,
+    count,
+    edgeX,
+    tiers: galaxyTiers(edgeX).map((t) => t.tier),
+    serverTime: 1000,
+  };
+}
+
+/** Hands the page a `world` message for the Count and lets the map and the sky draw it. */
+async function setCount(page: Page, count: number): Promise<void> {
+  await page.evaluate((world) => ((window as unknown as EdgeWindow).game.world = world), worldAtCount(count));
+  await settle(page, 12);
+}
+
+/** The galaxy map, its camera 1.8 million ly out from the wall's baseline looking at it from inside the cluster's side, so a
+ * wall that moves a few hundred thousand ly is seen to move. */
+async function openEdgeMap(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await page.evaluate(
+    ({ world, at }) => {
+      const w = window as unknown as EdgeWindow;
+      w.game.world = world;
+      w.game.menus.openMap();
+      w.game.menus.setMapTab('galaxy');
+      const v = w.game.menus.mapView;
+      v.fly = null;
+      const d = Math.hypot(-1, 0.22, 0.38);
+      v.controls.target.set(at - 1e4, 0, 0);
+      v.camera.position.set(at - 1e4 - (1.8e6 * 1) / d, (1.8e6 * 0.22) / d, (1.8e6 * 0.38) / d);
+    },
+    { world: worldAtCount(count), at: EDGE_X },
+  );
+  await settle(page, 60);
+}
+
+/** The sky from deep space 1.2 million ly short of the wall's baseline, the ship nose to +X, the Waystation's system left
+ * far behind. */
+async function openEdgeSky(page: Page, count: number): Promise<void> {
+  await page.evaluate(() => (window as unknown as EdgeWindow).dev.boot());
+  await page.evaluate(
+    ({ world, at }) => {
+      const w = window as unknown as EdgeWindow;
+      w.game.world = world;
+      const g = w.game;
+      g.ship.state.frame = null;
+      g.ship.state.pos.set(0, 0, 0);
+      g.ship.state.quat.set(0, -Math.SQRT1_2, 0, Math.SQRT1_2);
+      g.cam.frame = undefined;
+      g.universe.leave();
+      g.universe.anchor.set(at - 1.2e6, 0, 0);
+      g.sky.reset();
+      g.hud.clearBanners();
+    },
+    { world: worldAtCount(count), at: EDGE_X },
+  );
+  await settle(page, 90);
+}
+
+/** The frames of a clip, each handing the page the world for the Count a frame later (0 to 1000, and there and back). */
+async function sweepCount(page: Page, frames: number): Promise<void> {
+  const worlds = Array.from({ length: frames }, (_, i) => {
+    const t = i / (frames - 1);
+    return worldAtCount(Math.round(1000 * (t < 0.5 ? t * 2 : 2 - t * 2)));
+  });
+  await page.evaluate((worlds) => {
+    const w = window as unknown as EdgeWindow;
+    const frame = w.__clip.frame.bind(w.__clip);
+    let i = 0;
+    w.__clip.frame = (dt) => {
+      w.game.world = worlds[Math.min(i++, worlds.length - 1)];
+      frame(dt);
+    };
+  }, worlds);
+}
+
 export const SCREENS: Record<string, ScreenDef> = {
   title: {
     // the menu's sunrise runs 3 s after a 0.6 s delay (style.css .title-screen)
@@ -2358,6 +2466,38 @@ export const SCREENS: Record<string, ScreenDef> = {
           w.game.hud.later(() => (list.scrollTop = end - y), 1700 + k * (1000 / 60) - 0.5);
         });
       });
+    },
+  },
+  // The Edge following the Count (P2.E22.T02): the galaxy map and the sky in deep space with the Count at its lowest (the Edge
+  // 10 ly in, the wall drawn 200,000 ly nearer), at the middle (the baseline) and at its highest (10 ly out). The still is the
+  // lowest; `count-500` and `count-1000` are the others; the clip sweeps the Count from 0 up to 1000 and back, the wall
+  // sliding with it.
+  'edge-map': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    async open(page) {
+      await openEdgeMap(page, 0);
+    },
+    stills: {
+      'count-500': (page) => setCount(page, 500),
+      'count-1000': (page) => setCount(page, 1000),
+    },
+    async motion(page) {
+      await sweepCount(page, 180);
+    },
+  },
+  'edge-sky': {
+    clipSeconds: 3,
+    sheetFrames: [0, 30, 60, 90, 120, 150, 179],
+    async open(page) {
+      await openEdgeSky(page, 0);
+    },
+    stills: {
+      'count-500': (page) => setCount(page, 500),
+      'count-1000': (page) => setCount(page, 1000),
+    },
+    async motion(page) {
+      await sweepCount(page, 180);
     },
   },
 };
