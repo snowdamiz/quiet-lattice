@@ -160,12 +160,14 @@ async function freeze(page: Page) {
     };
   });
   await play(page, 100);
-  await page.evaluate(() => {
-    const w = window as W;
-    w.__sample = w.game.net.clock.samples.at(-1);
-    w.game.net.ping();
-  });
-  for (let i = 0; i < 20; i++) {
+  // (a ping or its pong may be among the 2% lost: another goes after a while)
+  for (let i = 0; i < 60; i++) {
+    if (i % 10 === 0)
+      await page.evaluate(() => {
+        const w = window as W;
+        w.__sample ??= w.game.net.clock.samples.at(-1);
+        w.game.net.ping();
+      });
     await play(page, STEP_MS);
     if (await page.evaluate(() => (window as W).game.net.clock.samples.at(-1) !== (window as W).__sample)) return;
   }
@@ -354,6 +356,7 @@ test('on an empty Charge in its world’s shadow: the engage refused by the clie
     g.net.on('meters', (m: { meters: { charge: number } }) => w.__meters.push(m.meters.charge));
     w.__corr = [];
     w.__heard = 0;
+    w.__frames = [];
     w.__hold = false;
   }, at.out);
   await until(page, 'window.game.net.store.ack > 0 && window.__meters.length > 0 && window.game.ship.charge === 0', 30_000);
@@ -366,6 +369,8 @@ test('on an empty Charge in its world’s shadow: the engage refused by the clie
   const here = await page.evaluate(() => (window as W).game.ship.state.pos.toArray() as number[]);
   await page.evaluate(() => (window as W).game.netLink.dropNext('correction'));
   await teleport(page, at.body, [here[0]! + 3, here[1]!, here[2]!], 'ship');
+  // (a tick goes out first: the inputs on their way from 3 m back fit the pose, and once they land the server holds them)
+  await page.waitForTimeout(200);
   await play(page, 1500);
   expect(await state(page)).toMatchObject({ corrections: 1, unheard: 1 });
   const small = (await drawnAt(page, 1))!;
@@ -459,11 +464,12 @@ test('on foot in the hangar: walking, sprinting and jumping within 0.5 m, a smal
   expect(small.after).toBeLessThan(0.25 * small.jump);
   expect(small.apartAfter).toBeLessThan(0.05);
 
-  await teleport(page, 'station', [0, here[1]!, 0], 'foot');
+  // 40 m across the hangar's floor
+  await teleport(page, 'station', [here[0]! - 40 * Math.sign(here[0]!), here[1]!, here[2]!], 'foot');
   await play(page, 1500);
   const large = (await drawnAt(page, 2))!;
   console.log('large', JSON.stringify(large));
-  expect(large.jump).toBeGreaterThan(20);
+  expect(large.jump).toBeGreaterThan(35);
   expect(large.apart).toBeLessThan(1e-6);
   await play(page, 1500);
   const j = await judge(page);
