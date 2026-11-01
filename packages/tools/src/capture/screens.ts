@@ -1894,6 +1894,8 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
         const r = w.game.remotes.get(605);
         const sp = w.game.fauna.speciesOf(r);
         const threat: Record<string, number> = { docile: 1, skittish: 1, territorial: 2, predator: 3, ambusher: 3, apex: 5 };
+        // (the codex's own key for it: the world's frame id and the species' index, which the prompt reads to say it is known)
+        const world = `${w.game.system.seed}:${w.game.system.planets.indexOf(r.frame)}`;
         w.game.onAnalyze({
           t: 'analyze',
           seq: 1,
@@ -1901,8 +1903,8 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
           result: 'new',
           xp: 300,
           species: {
-            key: `1:2/${sp.index}`,
-            world: '1:2',
+            key: `${world}/${sp.index}`,
+            world,
             index: sp.index,
             name: sp.name,
             temperament: sp.temperament,
