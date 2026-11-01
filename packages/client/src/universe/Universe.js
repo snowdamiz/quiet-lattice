@@ -184,7 +184,7 @@ export class Universe {
   clearance() {
     const g = this.game;
     const here = this.hereLy(_v2);
-    let d = cosmosClearance(here) * LY;
+    let d = cosmosClearance(here, g.edge) * LY;
     for (const s of g.galaxy.systems) {
       if (!this.deep && s === g.system.info) continue;
       d = Math.min(d, Math.max(0, g.galaxy.distance(s, here) * LY - ENTER * 0.5));

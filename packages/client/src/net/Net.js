@@ -3,7 +3,8 @@
 // decoding zone snapshots onto their baselines into the entity store and acknowledging them, the server clock from
 // ping/pong, and the player's input at 20 Hz. Gameplay reads remote state from `store`, never from the socket. Shots go
 // to the server as `fire` intents (`fire`), and what they did comes back as events, kept by `combat` for the HUD. The
-// character's reputation is kept by `reputation` as the server sends it.
+// character's reputation is kept by `reputation` as the server sends it, and the resource nodes the server
+// says are gone by `mining`, which also sends the beam's hits.
 //
 // States: idle → connecting → joining (hello and join sent) → joined (welcome received) → closed; from joined a dropped
 // connection goes to reconnecting and back to connecting after a backoff. A refusal another try would only repeat (and a
@@ -14,6 +15,7 @@ import { Beacons } from './beacons.js';
 import { ClockSync } from './clock.js';
 import { CombatFeed } from './combat.js';
 import { Discoveries } from './discoveries.js';
+import { Mining } from './mining.js';
 import { Reputation } from './reputation.js';
 import { SnapshotStore } from './snapshots.js';
 import { WorldEvents } from './worldEvents.js';
@@ -95,6 +97,8 @@ export class Net {
     this.worldEvents = new WorldEvents(this);
     /** The character's standing, ranks and titles as the server last sent them, and their news (reputation.js, §24). */
     this.reputation = new Reputation(this);
+    /** Resource nodes as the server holds them, and the beam's mining hits (mining.js, §18). */
+    this.mining = new Mining(this);
   }
 
   get joined() {
@@ -102,7 +106,8 @@ export class Net {
   }
 
   /** Listens for a server message type ('welcome', 'world', 'awards', 'inventory', 'pong', 'refused', 'correction', 'zone', 'event'),
-   * a decoded 'snapshot', or the connection's 'state', 'lost' and 'closed'. Returns the unsubscribe. */
+   * a decoded 'snapshot', each 'input' as it goes out, or the connection's 'state', 'lost' and 'closed'. Returns the
+   * unsubscribe. */
   on(type, fn) {
     let list = this.handlers.get(type);
     if (!list) this.handlers.set(type, (list = []));
@@ -361,6 +366,7 @@ export class Net {
     this.inputSeq = msg.seq;
     this.lastInput = msg;
     this.lastInputAt = t;
+    this.emit('input', msg);
     return true;
   }
 }

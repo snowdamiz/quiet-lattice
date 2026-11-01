@@ -14,6 +14,10 @@
 // - Ambushers lie still until a player is within 8 m.
 // - The apex holds a 200 m territory, charging whoever enters it; its pack follows it and joins its attacks.
 //
+// Abilities steer them from outside (Resonance, P1.E07.T06): a stunned creature stands still and strikes nothing until its
+// stun ends; a calmed one (Harmonic: its threat table's `calmUntil`) neither hunts nor flees until its calm ends or it is
+// hurt; a veiled player is not noticed by anyone (`Actor.veiled`).
+//
 // Attacks are only an approach and an attack phase here (0 → 1 over ATTACK_S, repeated while in reach); their damage
 // and their animations are P1.E08.T02. Server-only arithmetic (Math is fine: nothing here is compared with a client).
 import { addThreat, currentTarget, dropThreat, emptyThreat, threatOf, type ThreatTable } from '@astra/shared/combat';
@@ -102,11 +106,13 @@ export interface Actor {
   pos: Vec3;
   onFoot: boolean;
   hidden: boolean;
+  /** under Veil (DESIGN 9.4): read as mindless by every creature, even those of a phase it is a member of */
+  veiled: boolean;
   phase: number | null;
 }
 
 /** Whether herds take notice of a player: as prey, intruder or threat, or someone to flee or keep clear of. */
-export const noticed = (p: Actor) => p.onFoot && !p.hidden;
+export const noticed = (p: Actor) => p.onFoot && !p.hidden && !p.veiled;
 
 export interface Herd {
   readonly id: number;
@@ -149,6 +155,8 @@ export interface Creature {
   preyRestUntil: number;
   /** a pack leader on the stalk line: when it stops waiting for its flanker (world time; 0 when not waiting) */
   holdUntil: number;
+  /** Pulse: it stands still and strikes nothing until this world time */
+  stunUntil: number;
 }
 
 /** What a creature sees of its world on a tick. */
@@ -240,6 +248,7 @@ export function newCreature(init: {
     attack: null,
     preyRestUntil: 0,
     holdUntil: 0,
+    stunUntil: 0,
   };
 }
 
@@ -608,7 +617,7 @@ export function herdTick(h: Herd, ctx: Ctx): void {
     }
     h.intrusion.delete(p.id);
     for (const m of h.members) {
-      if (m.state === 'charge' || m.state === 'attack') continue;
+      if (m.state === 'charge' || m.state === 'attack' || calmed(m, ctx.now)) continue;
       m.threat = addThreat(m.threat, p.id, AI.triggerThreat, ctx.now);
       m.state = 'charge';
     }
@@ -616,9 +625,46 @@ export function herdTick(h: Herd, ctx: Ctx): void {
   for (const id of h.intrusion.keys()) if (!ctx.players.has(id)) h.intrusion.delete(id);
 }
 
+/** Whether Pulse holds it still now. */
+export const stunned = (c: Creature, now: number): boolean => now < c.stunUntil;
+/** Whether Harmonic holds it passive now (its threat table's calm, which any damage breaks). */
+export const calmed = (c: Creature, now: number): boolean => c.threat.calmUntil !== null && now < c.threat.calmUntil;
+
+/** A stunned creature stands where it is: whatever it was doing stops, an attack in progress with it. */
+function stand(c: Creature) {
+  c.attack = null;
+  c.holdUntil = 0;
+  c.state = isFlyer(c) ? 'fly' : c.species.temperament === 'ambusher' && c.state === 'lurk' ? 'lurk' : 'idle';
+}
+
+/** A calmed creature does nothing but graze about its home: it forgets its hunt and its fear. An ambusher keeps lying in
+ * wait, a pack follows its leader and a flyer flies on. */
+function calm(c: Creature, ctx: Ctx) {
+  c.target = null;
+  c.attack = null;
+  c.holdUntil = 0;
+  if (isFlyer(c)) {
+    c.state = 'fly';
+    return;
+  }
+  if (c.state === 'lurk' || c.state === 'follow') return;
+  if (c.state === 'return') {
+    if (groundDistance(c.herd.home, c.pos) < 8) c.state = 'idle';
+    return;
+  }
+  if (HUNTING.has(c.state)) {
+    c.state = 'return';
+    return;
+  }
+  if (c.state === 'flee' || c.state === 'alert') c.state = 'idle';
+  graze(c, ctx);
+}
+
 /** One creature's decision this tick. */
 export function think(c: Creature, ctx: Ctx): void {
   c.timer -= ctx.dt;
+  if (stunned(c, ctx.now)) return stand(c);
+  if (calmed(c, ctx.now)) return calm(c, ctx);
   const sp = c.species;
   // an apex's pack follows it; should the apex fall, the pack hunts on its own
   if (c.herd.apex)
@@ -724,6 +770,10 @@ function circleTo(c: Creature, at: Readonly<Vec3>): Vec3 {
 
 /** Moves a creature one tick along its heading and onto the ground (walkers) or at its height above it (flyers). */
 export function move(c: Creature, ctx: Ctx): void {
+  if (stunned(c, ctx.now)) {
+    c.speed = 0;
+    return;
+  }
   const { dt, ground } = ctx;
   const up = norm(c.pos);
   const g = goal(c, ctx);

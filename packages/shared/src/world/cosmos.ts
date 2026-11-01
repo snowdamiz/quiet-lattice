@@ -251,9 +251,10 @@ function farShell(rng: Rng): FarShell {
   return { count: N, dir, col };
 }
 
-/** Light years from p to the nearest thing worth slowing for out here: another galaxy, or the edge. */
-export function cosmosClearance(p: Vector3): number {
-  let d = edgeX(p.y, p.z) - p.x;
+/** Light years from p to the nearest thing worth slowing for out here: another galaxy, or the edge (with the Edge at
+ * `edge`, as the world service publishes it). */
+export function cosmosClearance(p: Vector3, edge: number = EDGE_X): number {
+  let d = edgeX(p.y, p.z, edge) - p.x;
   for (const g of cosmos().galaxies) d = Math.min(d, Math.max(0, g.position.distanceTo(p) - g.size * 0.6));
   return d;
 }

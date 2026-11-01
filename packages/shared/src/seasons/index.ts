@@ -3,3 +3,4 @@
 // seasons with these rules; the client reads them to show what the server sent.
 export * from './schema.ts';
 export * from './rules.ts';
+export * from './edge.ts';

@@ -113,6 +113,7 @@ const WORLD = {
   count: 500,
   edgeX: 50,
   tiers: [0, 1],
+  dark: [],
   serverTime: 1000,
 };
 

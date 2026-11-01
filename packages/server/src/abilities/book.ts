@@ -3,10 +3,12 @@
 // an ability without its effect, or an effect without its ability, stops the server from starting.
 import { ABILITIES, cooldownOf, type Ability } from '@astra/shared/abilities';
 import { getSkillNode, type SkillNode } from '@astra/shared/data';
+import type { ResistanceResult } from '@astra/shared/combat';
 import type { CastRefusal, FrameId } from '@astra/shared/protocol';
 import type { Bar } from '@astra/shared/skills';
 import type { CreatureTarget } from '../combat/targets.ts';
 import type { DamageOutcome } from '../combat/zone.ts';
+import { RESONANCE_EFFECTS } from './resonance.ts';
 import { THERMAL_EFFECTS } from './thermal.ts';
 
 type Vec3 = [number, number, number];
@@ -40,9 +42,12 @@ export interface CastContext {
   time(): number;
   /** Whether the caster owns `node` now (an augment's effect, a passive's: Chain on Lance). */
   owns(node: string): boolean;
-  /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame
-   * (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
+  /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame or
+   * is down (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
   pose(): { origin: Readonly<Vec3>; aim: Readonly<Vec3> } | null;
+  /** Whether the caster's frame is a world with a surface: not deep space, the station's frame or a gas giant (an ability that
+   * works on a world's sites or ground is refused anywhere else, before it is paid for). */
+  onWorld(): boolean;
   /** Whether the ground that sight reads over the caster's world is planned (always, off a world's surface); an area cast
    * refuses `busy` while it is not. */
   groundReady(): boolean;
@@ -57,6 +62,42 @@ export interface CastContext {
     beamTime(): number;
     /** Vent: all the heat gone, and how much; null in the lockout. */
     dumpHeat(): number | null;
+  };
+  /** How the creature on `target` takes this node (its resistances to the node, its weapons' branch): crystal creatures are weak
+   * to Shatter, the stone-touched immune to Harmonic. Null for anything that is not a living creature the caster can see. */
+  resistance(target: number): ResistanceResult | null;
+  /** What an ability does to how creatures act. Each is refused (false) for a creature the caster cannot see or that is
+   * immune to this node (its resistances), and never touches a player. The sim's clock runs the duration. */
+  readonly control: {
+    /** Pulse: it stands still and strikes nothing for `durationS`. */
+    stun(creature: number, durationS: number): boolean;
+    /** Harmonic: it forgets its hunt and its fear and is passive for `durationS`, or until it is hurt. */
+    calm(creature: number, durationS: number): boolean;
+  };
+  /** Veil: for `durationS` no creature notices the caster. Other players still see it (the cast event, for the shimmer). */
+  conceal(durationS: number): void;
+  /** The caster's party members on foot, up and in play on its world within `radiusM` of it, with where they stand in the
+   * cast's frame (the caster itself is not among them). */
+  party(radiusM: number): { id: number; pos: Readonly<Vec3> }[];
+  /** Tells these entities' sessions that the cast is theirs too (a party's shared Pulse): the cast event they are sent carries
+   * `shared`, so their client plays the effect as its own player's. Only those who would see the cast are sent it. */
+  share(entities: readonly number[]): void;
+  /** What an ability does to the ground's resources. */
+  readonly deposits: {
+    /** Shatter: `hp` of damage on each of the `max` nearest standing mineral nodes (never plants) within `radiusM` of the
+     * caster and in sight, credited to it as mining; what breaks pays out as mined. 'busy' while the ground is planned. */
+    burst(radiusM: number, hp: number, max: number): { hurt: number; broken: number } | 'busy';
+    /** Whether `burst` can run now: false while the resource service is still planning the caster's world's ground (true where
+     * the frame has none). An area cast checks it before it is paid for, for the resource service plans its own ground. */
+    ready(): boolean;
+  };
+  /** What an ability does to ships. */
+  readonly ships: {
+    /** Whether the ship on `target` is on the pulse drive as the server last accepted it. */
+    pulsing(target: number): boolean;
+    /** Jammer: the ship on `target` may not engage or cruise on the pulse drive for `durationS`. False if it is not a ship in
+     * the movement authority's care. */
+    jam(target: number, durationS: number): boolean;
   };
   /** What an ability leaves on a target for a while, per caster (`Statuses`). */
   readonly status: {
@@ -85,7 +126,7 @@ export interface AbilityEffect {
 }
 
 /** The server's effects, by node. Each branch's task adds its own list here, from its own file (thermal.ts). */
-export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([...THERMAL_EFFECTS]);
+export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([...THERMAL_EFFECTS, ...RESONANCE_EFFECTS]);
 
 export interface BookEntry {
   readonly ability: Ability;

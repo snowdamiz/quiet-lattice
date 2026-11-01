@@ -532,6 +532,20 @@ describe('common flora', () => {
     expect(s.hit(a, deposit.id).hp).toBe(1);
   });
 
+  it('tells a plant from the same key on another world when the ref carries the frame', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const rock = world.onGround(norm(deposit.stand), 4, 3);
+    const breakRock = (ref: string) => {
+      let r;
+      while ((r = s.flora(a, 'rock', ref, rock)).result === 'hit') s.clock.t += 0.25;
+      return r;
+    };
+    expect(breakRock('1:1.2_3_4_f2_5').result).toBe('depleted');
+    expect(s.flora(a, 'rock', '1:1.2_3_4_f2_5', rock).reason).toBe('harvested');
+    expect(s.flora(a, 'rock', '1:2.2_3_4_f2_5', rock).result).toBe('hit');
+  });
+
   it('a patch of ground gives a character at most FLORA_HP_PER_PATCH hp of flora an hour, however it names it', () => {
     const s = setup();
     const a = s.player(deposit.stand);
@@ -787,5 +801,97 @@ describe('splitByDamage', () => {
       const total = 3 + (n % 40);
       expect([...splitByDamage(total, parts).values()].reduce((x, y) => x + y, 0)).toBe(total);
     }
+  });
+});
+
+describe('an ability’s burst (Shatter, P1.E07.T06)', () => {
+  const plant = () => world.findNode({ want: (t) => nodeType(t).kind === 'plant' });
+  const burst = (s: ReturnType<typeof setup>, v: Viewer, at: Readonly<Vec3>, radius: number, hp: number, max = 12) =>
+    s.service.burst(s.zone, v.characterId, world.frame, at, radius, hp, max);
+
+  it('hurts the deposits in reach for the caster, as its own mining: damage credited, the node shared with other miners', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const type = nodeType(deposit.node.type);
+    const out = burst(s, a, deposit.stand, 15, 2);
+    expect(out!.hurt).toBeGreaterThanOrEqual(1);
+    expect(out!.broken).toBe(0);
+    const state = s.service.nodeState(world.frame, deposit.id)!;
+    expect(state.hp).toBeCloseTo(type.hp - 2, 9);
+    expect(state.by.get(a.characterId)).toBe(2);
+  });
+
+  it('breaks a deposit it takes the last of, paying its yield into the caster’s inventory and to every listener, once', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const type = nodeType(deposit.node.type);
+    const events: MinedEvent[] = [];
+    s.service.subscribe((e) => events.push(e));
+    const out = burst(s, a, deposit.stand, 15, type.hp);
+    expect(out!.broken).toBeGreaterThanOrEqual(1);
+    expect(events.find((e) => e.node === deposit.id)).toMatchObject({ characterId: a.characterId, broke: true, resource: type.resource });
+    expect(s.held(a, type.resource)).toBeGreaterThanOrEqual(type.yield[0]);
+    expect(s.service.nodeState(world.frame, deposit.id)!.respawnAt).not.toBeNull();
+    const again = burst(s, a, deposit.stand, 15, type.hp);
+    expect(events.filter((e) => e.node === deposit.id)).toHaveLength(1);
+    expect(again!.hurt).toBeLessThanOrEqual(out!.hurt - 1);
+  });
+
+  it('tells the caster what each break gave it, as a mined node’s reply: the collected toast', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const type = nodeType(deposit.node.type);
+    a.got.length = 0;
+    const out = burst(s, a, deposit.stand, 15, type.hp);
+    const told = a.got.filter((m) => m.t === 'mine');
+    expect(told).toHaveLength(out!.broken);
+    expect(told.find((m) => m.node === deposit.id)).toMatchObject({ t: 'mine', seq: 0, frame: world.frame, result: 'depleted', item: type.resource });
+    expect(s.held(a, type.resource)).toBe(told.reduce((n, m) => n + (m.t === 'mine' && m.item === type.resource ? (m.added ?? 0) : 0), 0));
+  });
+
+  it('works on no plant, however near', () => {
+    const s = setup();
+    const spot = plant();
+    const a = s.player(spot.stand);
+    burst(s, a, spot.stand, 15, 100);
+    expect(s.service.nodeState(world.frame, spot.id)).toBeUndefined();
+  });
+
+  it('reaches no node past its radius, or behind the ground', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    burst(s, a, deposit.stand, 1, 100);
+    expect(s.service.nodeState(world.frame, deposit.id)).toBeUndefined();
+    const hidden = world.findNode({ want: (t) => nodeType(t).kind !== 'plant', blocked: true });
+    const b = s.player(hidden.stand);
+    burst(s, b, hidden.stand, 30, 100);
+    expect(s.service.nodeState(world.frame, hidden.id)).toBeUndefined();
+  });
+
+  it('works on the nearest `max` only', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const all = burst(s, a, deposit.stand, 40, 0.5, 100)!.hurt;
+    const s2 = setup();
+    const b = s2.player(deposit.stand);
+    const some = burst(s2, b, deposit.stand, 40, 0.5, 1)!;
+    expect(some.hurt).toBe(1);
+    expect(all).toBeGreaterThanOrEqual(1);
+    expect(s2.service.nodeState(world.frame, deposit.id)?.by.get(b.characterId)).toBe(0.5);
+  });
+
+  it('is null while the world’s ground is being planned, and touches nothing', () => {
+    const s = setup({ grounds: { ground: () => null } });
+    const a = s.player(deposit.stand);
+    expect(burst(s, a, deposit.stand, 15, 5)).toBeNull();
+    expect(s.service.nodeState(world.frame, deposit.id)).toBeUndefined();
+  });
+
+  it('says it is ready exactly when that ground is planned, and for a frame with none', () => {
+    const ready = setup();
+    expect(ready.service.burstReady(ready.zone, world.frame)).toBe(true);
+    const planning = setup({ grounds: { ground: () => null } });
+    expect(planning.service.burstReady(planning.zone, world.frame)).toBe(false);
+    expect(planning.service.burstReady(planning.zone, 'nowhere')).toBe(true);
   });
 });

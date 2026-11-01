@@ -245,6 +245,8 @@ test('plays the test cutscene end to end, and skips it', async ({ page }) => {
       serverTime: () => null,
       update: () => {},
       sendInput: () => false,
+      // (and the mining layer's: the beam's calls and the flora's reads, with nothing held)
+      mining: { rev: 0, on: () => () => {}, idle: () => {}, cell: () => undefined, floraGone: () => undefined },
       send: (m: unknown) => (sent.push(m), true),
       on: (type: string, fn: (m: unknown) => void) => {
         handlers.set(type, [...(handlers.get(type) ?? []), fn]);
