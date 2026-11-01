@@ -174,6 +174,13 @@ export class SkillService {
     return this.entry(characterId).state.bought;
   }
 
+  /** Ship actives the hull it flies can slot (`view`'s `shipSlots` without the rest of the view). */
+  shipSlots(characterId: string): number {
+    this.entry(characterId);
+    const ship = this.ships.get(characterId) ?? null;
+    return ship ? getHull(ship.hull).abilitySlots : 0;
+  }
+
   /** Its points: one per level, plus those granted, less those spent. */
   points(characterId: string): SkillPoints {
     return pointsOf(this.entry(characterId).state, this.level(characterId));
@@ -368,10 +375,9 @@ export class SkillService {
   }
 
   private context(characterId: string): SkillContext {
-    const ship = this.ships.get(characterId) ?? null;
     return {
       level: this.level(characterId),
-      shipSlots: ship ? getHull(ship.hull).abilitySlots : 0,
+      shipSlots: this.shipSlots(characterId),
       meets: (req) => this.hooks.meets(characterId, req),
       maxTier: this.maxTier,
     };
