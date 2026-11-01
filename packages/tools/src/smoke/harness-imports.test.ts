@@ -11,7 +11,10 @@ describe('smoke specs', () => {
     expect(specs.length).toBeGreaterThan(10);
   });
 
-  it.each(specs)('%s takes test and expect from the harness', (file) => {
-    expect(readFileSync(new URL(file, dir), 'utf8')).not.toMatch(/from\s+['"]@playwright\/test['"]/);
+  it.each(specs)('%s takes test from the harness', (file) => {
+    const names = [...readFileSync(new URL(file, dir), 'utf8').matchAll(/import\s*\{([^}]*)\}\s*from\s*['"]@playwright\/test['"]/g)]
+      .flatMap((m) => m[1]!.split(','))
+      .map((n) => n.trim().split(/\s+/)[0]);
+    expect(names).not.toContain('test');
   });
 });

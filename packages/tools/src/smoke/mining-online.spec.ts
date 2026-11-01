@@ -1,6 +1,7 @@
 import { randomBytes, randomInt } from 'node:crypto';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
 import { enterPicked, signUp } from './account.ts';
+import { expect, test } from './harness.ts';
 import { startOnline, type Online } from './online.ts';
 
 // Resource nodes from the server's state (P1.E13.T06), between three clients as players run them (online.ts: a scratch
