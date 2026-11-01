@@ -703,7 +703,9 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   refused) is a correction the client never heard (lost on the way), taken the same way. The inputs sent before a
   correction was taken are the old trajectory, which the server refuses quietly, and are not compared; nor is a pose the
   server holds in another frame than it was sent in, re-expressed at the edge of a sphere at a tick a repeated or lost
-  snapshot leaves the client unable to name. The rewind moves the mover at once, so its next input fits the server's pose;
+  snapshot leaves the client unable to name. A correction for an input of that old trajectory (a repeat, one the server
+  held back past its grace, an operator's teleport just after one) is never re-based on what that input sent, or its
+  offset would be applied twice: the server's pose is carried on at the mover's own velocity from that input's time. The rewind moves the mover at once, so its next input fits the server's pose;
   the drawn ship, the chase camera and the walker's eye carry the difference as a `Blend` (an offset, its rate and a turn,
   in the frame's axes) that leaves from where and as fast as the mover was drawn and dies away critically damped with a
   time constant of 0.125 s, the chase camera's own follow, unless it is more than 10 m and half a second of the mover's
