@@ -18,7 +18,17 @@ describe('the exo-suit data', () => {
   });
 
   it('files the nine Tier I–II nodes as always-on passives of the branch with the numbers DESIGN 9.8 gives', () => {
-    const nodes = ['cartridge_recycler', 'long_jump', 'efficient_jetpack', 'hazard_weave', 'cold_blood', 'heat_shroud', 'optical_drill', 'scanner_lens', 'sprint_stride'];
+    const nodes = [
+      'cartridge_recycler',
+      'long_jump',
+      'efficient_jetpack',
+      'hazard_weave',
+      'cold_blood',
+      'heat_shroud',
+      'optical_drill',
+      'scanner_lens',
+      'sprint_stride',
+    ];
     expect(nodes.map((id) => [getSkillNode(id).branch, getSkillNode(id).tier, getSkillNode(id).slot])).toEqual(
       nodes.map((_, i) => ['exosuit', i < 3 ? 1 : 2, null]),
     );

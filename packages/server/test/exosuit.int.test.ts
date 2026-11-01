@@ -28,12 +28,15 @@ afterAll(async () => {
   await database?.close();
 });
 
-type Vec3 = [number, number, number];
-
 /** A pilot at level 15 (the Tier II gate), on the hangar floor on foot. */
 async function onFoot(): Promise<Pilot> {
   const p = await Pilot.join(server, 'ixari', {
-    before: (id) => database.db.update(characters).set({ level: 15 }).where(eq(characters.id, id)).then(() => undefined),
+    before: (id) =>
+      database.db
+        .update(characters)
+        .set({ level: 15 })
+        .where(eq(characters.id, id))
+        .then(() => undefined),
   });
   const frame = p.welcome.pose.frame;
   p.send({ frame, pos: [-22, 0, -22], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, 'foot');
@@ -59,8 +62,7 @@ describe('Sprint Stride over the wire', () => {
     const p = await onFoot();
     const id = p.characterId;
     // 14 m/s is past the plain sprint's cap with its tolerance (12.95) and under Sprint Stride's (14.65)
-    const hangar = STATION_LAYOUT.hangar;
-    expect(hangar.z1).toBeGreaterThan(40);
+    expect(STATION_LAYOUT.hangar.z1).toBeGreaterThan(40);
     await sprint(p, 14, -40);
     await waitFor(() => p.corrections.length > 0, 5000, 'the plain walker corrected');
 
