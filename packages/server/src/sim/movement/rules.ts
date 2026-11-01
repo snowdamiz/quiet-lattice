@@ -165,6 +165,8 @@ export type MovementRule =
   | 'pulse_altitude'
   /** the pulse drive with Charge empty (the character's meters, P1.E07.T02): engaging, or cruising on past the drop-out */
   | 'pulse_charge'
+  /** the pulse drive while a Jammer holds it (P1.E07.T06) */
+  | 'pulse_jammed'
   /** landed off the ground, on water or not on a world */
   | 'landed'
   /** docked off a pad or outside a Waystation */
