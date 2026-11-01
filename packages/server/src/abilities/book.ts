@@ -8,6 +8,7 @@ import type { CastRefusal, FrameId } from '@astra/shared/protocol';
 import type { Bar } from '@astra/shared/skills';
 import type { CreatureTarget } from '../combat/targets.ts';
 import type { DamageOutcome } from '../combat/zone.ts';
+import { GRAVITIC_EFFECTS } from './gravitic.ts';
 import { RESONANCE_EFFECTS } from './resonance.ts';
 import { THERMAL_EFFECTS } from './thermal.ts';
 
@@ -45,6 +46,13 @@ export interface CastContext {
   /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame or
    * is down (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
   pose(): { origin: Readonly<Vec3>; aim: Readonly<Vec3> } | null;
+  /** Where the caster is now in the cast's frame (its feet on foot, its ship's centre aboard), or null once it is gone from play
+   * or the frame, or down. */
+  position(): Readonly<Vec3> | null;
+  /** The players of the caster's world that it can see, other than itself, up and in its frame, with their hit spheres (a
+   * walker's chest, a ship's collision sphere); with `reach`, only those that may lie within it of `at` (the cast's `origin`
+   * unless given), as `creatures` culls. */
+  players(reach?: number, at?: Readonly<Vec3>): CreatureTarget[];
   /** Whether the caster's frame is a world with a surface: not deep space, the station's frame or a gas giant (an ability that
    * works on a world's sites or ground is refused anywhere else, before it is paid for). */
   onWorld(): boolean;
@@ -66,9 +74,21 @@ export interface CastContext {
   /** How the creature on `target` takes this node (its resistances to the node, its weapons' branch): crystal creatures are weak
    * to Shatter, the stone-touched immune to Harmonic. Null for anything that is not a living creature the caster can see. */
   resistance(target: number): ResistanceResult | null;
-  /** What an ability does to how creatures act. Each is refused (false) for a creature the caster cannot see or that is
-   * immune to this node (its resistances), and never touches a player. The sim's clock runs the duration. */
+  /** What an ability does to how creatures act. Each is refused (false) for a creature the caster cannot see, that is not in the
+   * caster's frame or that is immune to this node (its resistances), and never touches a player. The sim's clock runs the
+   * duration. */
   readonly control: {
+    /** Pull: the creature is carried to the ground under `to` (a position in the cast's frame) over `durationS`, doing
+     * nothing meanwhile. It counts as a blow of `threat` against the caster (a hostile creature turns on it, a grazer bolts);
+     * none when `threat` is not given. */
+    pull(creature: number, to: Readonly<Vec3>, durationS: number, threat?: number): boolean;
+    /** Slam: the creature lies where it is and strikes nothing for `durationS`. Refused for a flyer, which is not on the
+     * ground to fall. */
+    knockdown(creature: number, durationS: number): boolean;
+    /** Well: for `durationS`, every creature within `radiusM` of `center` (in the cast's frame) keeps only the share `keep` of
+     * its speed (creatures walking in are caught, those leaving are free; those immune to this node are not slowed). False
+     * where the caster's frame has no creatures. */
+    slowField(center: Readonly<Vec3>, radiusM: number, keep: number, durationS: number): boolean;
     /** Pulse: it stands still and strikes nothing for `durationS`. */
     stun(creature: number, durationS: number): boolean;
     /** Harmonic: it forgets its hunt and its fear and is passive for `durationS`, or until it is hurt. */
@@ -98,6 +118,16 @@ export interface CastContext {
     /** Jammer: the ship on `target` may not engage or cruise on the pulse drive for `durationS`. False if it is not a ship in
      * the movement authority's care. */
     jam(target: number, durationS: number): boolean;
+    /** Tractor Beam: the ship on `target` is held where it is for `durationS`: its inputs may not stray from the pose it was
+     * held at. False if it is not a ship in the movement authority's care. */
+    hold(target: number, durationS: number): boolean;
+  };
+  /** What an ability reads of the caster's own movement, as the movement authority last accepted it. */
+  readonly movement: {
+    /** A walker's height over the ground: `aboveM` its feet over the ground under them (0: standing) and `peakM` the highest it
+     * has been over it since it last stood (the fall it is in). Null for anything not a walker, or while the ground under it is
+     * being planned. */
+    fall(): { aboveM: number; peakM: number } | null;
   };
   /** What an ability leaves on a target for a while, per caster (`Statuses`). */
   readonly status: {
@@ -126,7 +156,7 @@ export interface AbilityEffect {
 }
 
 /** The server's effects, by node. Each branch's task adds its own list here, from its own file (thermal.ts). */
-export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([...THERMAL_EFFECTS, ...RESONANCE_EFFECTS]);
+export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([...GRAVITIC_EFFECTS, ...THERMAL_EFFECTS, ...RESONANCE_EFFECTS]);
 
 export interface BookEntry {
   readonly ability: Ability;

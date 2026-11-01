@@ -103,6 +103,9 @@ export const MOVEMENT = {
      * none: the drive needs Charge to engage. */
     chargeGraceS: 1,
   },
+  /** Tractor Beam: a held ship's inputs stay within this of the pose it was held at, m: the distance a ship at the engines' top
+   * speed covers in the time its stop takes to reach the server (the cast event to the client and its input back). */
+  held: { reachM: 150 },
   landed: {
     /** A landed ship rests on its gear over dry ground: its gear this much into the ground or this much above it. */
     belowM: 2,
@@ -169,6 +172,8 @@ export type MovementRule =
   | 'pulse_charge'
   /** the pulse drive while a Jammer holds it (P1.E07.T06) */
   | 'pulse_jammed'
+  /** a ship held by a Tractor Beam (P1.E07.T04) strayed from where it was held */
+  | 'held'
   /** landed off the ground, on water or not on a world */
   | 'landed'
   /** coming to rest faster than the ship may land (Soft Landing raises it) */

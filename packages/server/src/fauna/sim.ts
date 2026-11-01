@@ -52,7 +52,7 @@ import {
 } from '@astra/shared/world';
 import type { InterestClass } from '../zones/interest.ts';
 import type { EntityFields, EntityInit, ZoneEntity } from '../zones/zone.ts';
-import { groundDistance, herdTick, move, newCreature, orientation, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
+import { carry, groundDistance, herdTick, move, newCreature, orientation, settle, think, velocity, type Actor, type Creature, type Ctx, type Herd } from './ai.ts';
 import type { Vec3 } from './cells.ts';
 import {
   APEX_RESPAWN_S,
@@ -157,6 +157,10 @@ export interface CreatureInfo {
   /** world time Pulse lets it move again (0: never stunned), and Harmonic lets it hunt or flee again (null: not calmed) */
   stunUntil: number;
   calmUntil: number | null;
+  /** world time Slam lets it up (0: never knocked down), the share of its speed Well lets it keep, and whether it is being pulled */
+  downUntil: number;
+  slow: number;
+  pulled: boolean;
 }
 
 /** A living creature as combat reads it (FaunaSim.creature). */
@@ -223,6 +227,16 @@ interface Cell {
 }
 
 const newCell = (key: number, now: number, dist: number): Cell => ({ key, state: 'loading', since: now, dist, herds: [], nightHerd: null, nightDone: false });
+
+/** A Well in force (see FaunaSim.slowField). */
+interface SlowField {
+  readonly frame: string;
+  readonly center: Vec3;
+  readonly radiusM: number;
+  readonly keep: number;
+  readonly until: number;
+  readonly affects: (creature: number) => boolean;
+}
 
 /** What was last sent of a creature. */
 interface Sent {
@@ -340,8 +354,11 @@ class WorldFauna {
       for (const h of world.herds) {
         herdTick(h, ctx);
         for (const m of h.members) {
-          think(m, ctx);
-          move(m, ctx);
+          m.slow = this.sim.slowOf(this.frame, m, now);
+          if (!carry(m, ctx)) {
+            think(m, ctx);
+            move(m, ctx);
+          }
           this.sync(m);
         }
       }
@@ -775,6 +792,9 @@ class WorldFauna {
       attack: m.attack,
       stunUntil: m.stunUntil,
       calmUntil: m.threat.calmUntil,
+      downUntil: m.downUntil,
+      slow: m.slow,
+      pulled: m.pull !== null,
     };
   }
 
@@ -808,6 +828,8 @@ export class FaunaSim {
   private readonly allowances = new Map<number, Allowance>();
   /** players under Veil: the world time it ends, by entity */
   private readonly veiled = new Map<number, number>();
+  /** Wells in force: a bubble of a world's frame that slows the creatures in it (`slowField`) */
+  private slowFields: SlowField[] = [];
   /** dens with something out or a timer running (the rest are as new), by body × DEN_KEY + den index: kept while the
    * zone runs, beyond their cells' and worlds' lives */
   private readonly denStates = new Map<number, DenState>();
@@ -858,6 +880,7 @@ export class FaunaSim {
       });
     }
     for (const [id, until] of this.veiled) if (until <= time) this.veiled.delete(id);
+    if (this.slowFields.length) this.slowFields = this.slowFields.filter((f) => f.until > time);
     for (const index of byBody.keys()) if (!this.worlds.has(index)) this.world(index);
     for (const [index, w] of this.worlds) {
       w.step(dt, time, byBody.get(index) ?? []);
@@ -1032,6 +1055,50 @@ export class FaunaSim {
     c.threat = harmonicReset(c.threat, this.lastTime ?? 0, durationS);
     c.target = null;
     return true;
+  }
+
+  /**
+   * Pull: the creature is carried to the ground under `to` (a position in its world's frame, or any direction from its
+   * centre) over `durationS` from now, doing nothing meanwhile; a flyer comes down to head height. A later pull replaces an
+   * earlier. False when it is not a living creature here.
+   */
+  pull(creature: number, to: Readonly<Vec3>, durationS: number): boolean {
+    const c = this.find(creature);
+    if (!c) return false;
+    const now = this.lastTime ?? 0;
+    c.pull = { from: norm(c.pos), to: norm(to), start: now, end: now + Math.max(durationS, 1e-3) };
+    c.speed = 0;
+    return true;
+  }
+
+  /** Slam: the creature lies where it is and strikes nothing for `durationS` from now (a later knockdown extends it, never
+   * shortens it). False when it is not a living walker here: a flyer is not on the ground to be knocked down. */
+  knockdown(creature: number, durationS: number): boolean {
+    const c = this.find(creature);
+    if (!c || c.species.kind === 'flyer') return false;
+    c.downUntil = Math.max(c.downUntil, (this.lastTime ?? 0) + durationS);
+    c.attack = null;
+    c.speed = 0;
+    return true;
+  }
+
+  /**
+   * Well: for `durationS` from now every creature of the world `frame` names within `radiusM` of `center` (its frame's
+   * position) that `affects` accepts keeps only the share `keep` of its speed. Creatures walking in are caught too, and one
+   * leaving is free; where bubbles overlap the slowest holds.
+   */
+  slowField(frame: string, center: Readonly<Vec3>, radiusM: number, keep: number, durationS: number, affects: (creature: number) => boolean = () => true): void {
+    this.slowFields.push({ frame, center: [center[0], center[1], center[2]], radiusM, keep, until: (this.lastTime ?? 0) + durationS, affects });
+  }
+
+  /** The share of its speed a creature of the world `frame` names keeps at world time `now` (1: all of it). */
+  slowOf(frame: string, c: Pick<Creature, 'id' | 'pos'>, now: number): number {
+    let keep = 1;
+    for (const f of this.slowFields) {
+      if (f.frame !== frame || f.until <= now || f.keep >= keep) continue;
+      if (Math.hypot(c.pos[0] - f.center[0], c.pos[1] - f.center[1], c.pos[2] - f.center[2]) <= f.radiusM && f.affects(c.id)) keep = f.keep;
+    }
+    return keep;
   }
 
   /** Veil: no creature notices the player on this entity for `durationS` from now (a later veil extends it). */

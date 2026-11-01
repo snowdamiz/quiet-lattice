@@ -367,6 +367,8 @@ class Mover {
   hold: Hold | null = null;
   /** Jammer: no pulse drive until this server time */
   jammedUntil = -Infinity;
+  /** Tractor Beam: held to the pose it was held at (a ship may stray no further) until this server time */
+  held: { until: number; at: Sample } | null = null;
 
   /** A mover joining at server world time `joined`. */
   constructor(
@@ -510,6 +512,28 @@ export class MovementAuthority {
     if (!m) return false;
     m.jammedUntil = Math.max(m.jammedUntil, until);
     return true;
+  }
+
+  /** Tractor Beam (DESIGN 9.2): the ship is held where it is until server world time `until`, `now` being the time of the cast.
+   * Its inputs may stray no further than `MOVEMENT.held.reachM` from the pose it was last accepted at (`held`); a later hold
+   * extends the first. False if it is not a ship in this authority's care. */
+  hold(id: number, until: number, now: number): boolean {
+    const m = this.movers.get(id);
+    if (!m || !isShip(m.last.cls)) return false;
+    m.held = m.held && m.held.until > now ? { until: Math.max(until, m.held.until), at: m.held.at } : { until, at: m.last };
+    return true;
+  }
+
+  /**
+   * How high a walker is over the ground, as the server last accepted it: `aboveM` its feet over the ground under them (0:
+   * standing) and `peakM` the highest it has been over it since it last stood on something (the fall it is in). Null for
+   * anything that is not a walker, or while the ground under it is still being planned.
+   */
+  fall(id: number): { aboveM: number; peakM: number } | null {
+    const L = this.movers.get(id)?.last;
+    if (!L || L.cls !== 'foot' || !Number.isFinite(L.ground)) return null;
+    const above = L.h - L.ground;
+    return { aboveM: above <= MOVEMENT.terrain.standM ? 0 : above, peakM: Math.max(0, L.peak - L.ground) };
   }
 
   /** Whether the mover is on the pulse drive as the server last accepted it. */
@@ -1056,6 +1080,12 @@ export class MovementAuthority {
       const reach = WALKER.boardRangeM + MOVEMENT.foot.boardSlackM + m.walkerCaps.across * walked;
       const walker = dist(L.pos, p.pos);
       if (walker > reach) return fail('board_range', walker, reach, 'm', 'walker to ship');
+    }
+
+    const hold = m.held;
+    if (hold && hold.until > s.r && isShip(s.cls) && hold.at.key === key) {
+      const strayed = dist(hold.at.pos, pos);
+      if (strayed > MOVEMENT.held.reachM) return fail('held', strayed, MOVEMENT.held.reachM, 'm', 'held by a tractor beam');
     }
 
     switch (s.cls) {

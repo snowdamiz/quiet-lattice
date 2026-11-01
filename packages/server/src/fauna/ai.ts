@@ -16,7 +16,10 @@
 //
 // Abilities steer them from outside (Resonance, P1.E07.T06): a stunned creature stands still and strikes nothing until its
 // stun ends; a calmed one (Harmonic: its threat table's `calmUntil`) neither hunts nor flees until its calm ends or it is
-// hurt; a veiled player is not noticed by anyone (`Actor.veiled`).
+// hurt; a veiled player is not noticed by anyone (`Actor.veiled`). Gravitic steers them too (P1.E07.T04): a pulled creature is
+// carried to a point over a short time and does nothing meanwhile (`carry`); a knocked-down one lies where it fell (`down`) and
+// strikes nothing until it ends; a slowed one moves at a share of its speed (`Creature.slow`, set by the sim from the fields
+// it stands in).
 //
 // Attacks are only an approach and an attack phase here (0 → 1 over ATTACK_S, repeated while in reach); their damage
 // and their animations are P1.E08.T02. Server-only arithmetic (Math is fine: nothing here is compared with a client).
@@ -28,7 +31,7 @@ import type { Ground } from './terrain.ts';
 
 /** A creature's behaviour, as its `mode` on the wire. */
 export type CreatureState =
-  'idle' | 'wander' | 'flee' | 'fly' | 'alert' | 'charge' | 'return' | 'stalk' | 'rush' | 'attack' | 'feint' | 'lurk' | 'circle' | 'dive' | 'climb' | 'follow';
+  'idle' | 'wander' | 'flee' | 'fly' | 'alert' | 'charge' | 'return' | 'stalk' | 'rush' | 'attack' | 'feint' | 'lurk' | 'circle' | 'dive' | 'climb' | 'follow' | 'down';
 
 /** States in which a creature is going for a target. */
 const HUNTING: ReadonlySet<CreatureState> = new Set(['charge', 'stalk', 'rush', 'attack', 'feint', 'circle', 'dive', 'climb']);
@@ -87,6 +90,8 @@ export const AI = {
   brake: 8,
   /** divers: circle radius over the prey, m; descent and climb rates, m/s; lowest circling height, m */
   diveCircleM: 18,
+  /** a flyer pulled to the ground is held at this height, m */
+  carriedAltM: 2,
   descendPerS: 5,
   climbPerS: 8,
   circleLowM: 8,
@@ -157,6 +162,21 @@ export interface Creature {
   holdUntil: number;
   /** Pulse: it stands still and strikes nothing until this world time */
   stunUntil: number;
+  /** Slam: it lies where it fell and strikes nothing until this world time (0: never knocked down) */
+  downUntil: number;
+  /** Pull: it is being carried to a point (null: it is not) */
+  pull: Pull | null;
+  /** Well: the share of its speed it keeps (1: none lost), set by the sim from the fields it stands in each tick */
+  slow: number;
+}
+
+/** A creature carried across its world: the unit directions from the world's centre that it starts and lands under, and the
+ * world times each begins. */
+export interface Pull {
+  readonly from: Readonly<Vec3>;
+  readonly to: Readonly<Vec3>;
+  readonly start: number;
+  readonly end: number;
 }
 
 /** What a creature sees of its world on a tick. */
@@ -249,6 +269,9 @@ export function newCreature(init: {
     preyRestUntil: 0,
     holdUntil: 0,
     stunUntil: 0,
+    downUntil: 0,
+    pull: null,
+    slow: 1,
   };
 }
 
@@ -630,11 +653,49 @@ export const stunned = (c: Creature, now: number): boolean => now < c.stunUntil;
 /** Whether Harmonic holds it passive now (its threat table's calm, which any damage breaks). */
 export const calmed = (c: Creature, now: number): boolean => c.threat.calmUntil !== null && now < c.threat.calmUntil;
 
+/** Whether Slam holds it on the ground now. */
+export const knockedDown = (c: Creature, now: number): boolean => now < c.downUntil;
+
+/** The state a creature rests in when nothing else is steering it. */
+const resting = (c: Creature): CreatureState => (isFlyer(c) ? 'fly' : c.species.temperament === 'ambusher' && c.state === 'lurk' ? 'lurk' : 'idle');
+
+/** A knocked-down creature lies where it fell; whatever it was doing stops, an attack in progress with it. */
+function lieDown(c: Creature) {
+  c.attack = null;
+  c.holdUntil = 0;
+  c.state = 'down';
+}
+
+/**
+ * A pulled creature's tick (Pull): carried from where it was to the point it lands at, on the ground there (a flyer comes down
+ * to head height on the way), doing nothing meanwhile; it stands where the pull ends. True while it is being carried, so
+ * that its decision and its walk are skipped.
+ */
+export function carry(c: Creature, ctx: Ctx): boolean {
+  const p = c.pull;
+  if (!p) return false;
+  c.speed = 0;
+  c.attack = null;
+  c.holdUntil = 0;
+  const f = Math.min(1, Math.max(0, (ctx.now - p.start) / (p.end - p.start)));
+  const t = f * f * (3 - 2 * f);
+  const dir = norm([p.from[0] + (p.to[0] - p.from[0]) * t, p.from[1] + (p.to[1] - p.from[1]) * t, p.from[2] + (p.to[2] - p.from[2]) * t]);
+  const flyer = isFlyer(c);
+  if (flyer) c.alt += (AI.carriedAltM - c.alt) * t;
+  const h = ctx.ground.height(dir);
+  c.pos = scaleV(dir, ctx.ground.radius + (ctx.ground.ocean ? Math.max(h, flyer ? 0 : 0.3) : h) + (flyer ? c.alt : 0));
+  if (f >= 1) {
+    c.pull = null;
+    c.state = resting(c);
+  }
+  return true;
+}
+
 /** A stunned creature stands where it is: whatever it was doing stops, an attack in progress with it. */
 function stand(c: Creature) {
   c.attack = null;
   c.holdUntil = 0;
-  c.state = isFlyer(c) ? 'fly' : c.species.temperament === 'ambusher' && c.state === 'lurk' ? 'lurk' : 'idle';
+  c.state = resting(c);
 }
 
 /** A calmed creature does nothing but graze about its home: it forgets its hunt and its fear. An ambusher keeps lying in
@@ -663,6 +724,8 @@ function calm(c: Creature, ctx: Ctx) {
 /** One creature's decision this tick. */
 export function think(c: Creature, ctx: Ctx): void {
   c.timer -= ctx.dt;
+  if (knockedDown(c, ctx.now)) return lieDown(c);
+  if (c.state === 'down') c.state = resting(c);
   if (stunned(c, ctx.now)) return stand(c);
   if (calmed(c, ctx.now)) return calm(c, ctx);
   const sp = c.species;
@@ -749,6 +812,7 @@ function goal(c: Creature, ctx: Ctx): { to: Vec3 | null; speed: number } {
       return { to: followPoint(c), speed: Math.min(sp.run, c.herd.members[0]!.speed + 1.5) };
     case 'idle':
     case 'lurk':
+    case 'down':
       return { to: null, speed: 0 };
   }
 }
@@ -770,7 +834,7 @@ function circleTo(c: Creature, at: Readonly<Vec3>): Vec3 {
 
 /** Moves a creature one tick along its heading and onto the ground (walkers) or at its height above it (flyers). */
 export function move(c: Creature, ctx: Ctx): void {
-  if (stunned(c, ctx.now)) {
+  if (stunned(c, ctx.now) || knockedDown(c, ctx.now)) {
     c.speed = 0;
     return;
   }
@@ -792,7 +856,7 @@ export function move(c: Creature, ctx: Ctx): void {
   }
   if (c.speed === 0 && !flyer) return;
 
-  const step = c.speed * dt;
+  const step = c.speed * c.slow * dt;
   let next: Vec3 = [c.pos[0] + c.heading[0] * step, c.pos[1] + c.heading[1] * step, c.pos[2] + c.heading[2] * step];
   const dir = norm(next);
   const h = ground.height(dir);
@@ -863,12 +927,14 @@ function basisQuat(x: Readonly<Vec3>, y: Readonly<Vec3>, z: Readonly<Vec3>): [nu
 
 /** A creature's velocity in the world's frame, m/s. */
 export function velocity(c: Creature): Vec3 {
-  return scaleV(c.heading, c.speed);
+  return scaleV(c.heading, c.speed * c.slow);
 }
 
 /** Calms a creature where it stands (its cell went to sleep): no target, no attack, standing still. */
 export function settle(c: Creature): void {
   c.speed = 0;
+  c.pull = null;
+  c.slow = 1;
   c.target = null;
   c.attack = null;
   c.threat = emptyThreat<number>();

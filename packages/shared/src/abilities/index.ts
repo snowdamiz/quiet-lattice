@@ -4,9 +4,11 @@
 // client reads it to know what to send. A branch's task adds its abilities here as data and their effects on the server.
 import { getSkillNode, SKILL_NODES, type SkillNode } from '../data/index.ts';
 import { GROUND_SLOTS, SHIP_SLOTS, type Bar } from '../skills/index.ts';
+import { GRAVITIC_ABILITIES } from './gravitic.ts';
 import { RESONANCE_ABILITIES } from './resonance.ts';
 import { THERMAL_ABILITIES } from './thermal.ts';
 
+export * from './gravitic.ts';
 export * from './resonance.ts';
 export * from './thermal.ts';
 
@@ -29,13 +31,16 @@ export interface Ability {
   readonly on?: readonly AbilityTargetKind[];
   /** `entity` casts: the reach from the caster to the target's hit sphere, m; the node's `rangeM` unless given. */
   readonly rangeM?: number;
+  /** `entity` casts: the cast may name no entity (Tractor Beam, which draws rocks and loot with no ship to hold); one it
+   * names is checked as for any entity cast. */
+  readonly optional?: boolean;
   /** On with one cast (paid, and its cooldown starts) and off with the next (free); off too when its caster leaves the
    * bar's mode, goes down or leaves play (Lance on the beam). */
   readonly toggle?: boolean;
 }
 
 /** The abilities this build casts, by node. Each branch's task adds its own list here (P1.E07.T04–T10). */
-export const ABILITIES: ReadonlyMap<string, Ability> = new Map<string, Ability>([...THERMAL_ABILITIES, ...RESONANCE_ABILITIES].map((a) => [a.node, a]));
+export const ABILITIES: ReadonlyMap<string, Ability> = new Map<string, Ability>([...GRAVITIC_ABILITIES, ...THERMAL_ABILITIES, ...RESONANCE_ABILITIES].map((a) => [a.node, a]));
 
 /** Seconds a slotted active's cooldown lasts, and the node whose clock it runs on (a shared cooldown is the other node's:
  * Crush's is Well's); null for a node with none. Once-a-world and once-a-day cooldowns (Attune, Unremembered: Tier III and

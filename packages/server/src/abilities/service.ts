@@ -33,7 +33,7 @@ import { GROUND_SLOTS, type Bar, type SkillState } from '@astra/shared/skills';
 import { frameKeyOf, tierOfGalaxySystem, type PlanetParams, type Tier } from '@astra/shared/world';
 import { clearSight } from '../combat/sight.ts';
 import { noseOf } from '../combat/gun.ts';
-import { creatureTargets } from '../combat/targets.ts';
+import { creatureTargets, type CreatureTarget } from '../combat/targets.ts';
 import { TokenBucket } from '../gateway/rateLimit.ts';
 import { nodeGrounds, type NodeGroundSource } from '../resources/ground.ts';
 import { EYE_M } from '../resources/service.ts';
@@ -249,7 +249,7 @@ export class CastService {
     const readyAt = cd ? this.cooldowns.get(characterId)?.get(cd.key) : undefined;
     if (readyAt !== undefined && readyAt > now) return refuse('cooldown', readyAt);
 
-    if (entry.ability.target === 'entity') {
+    if (entry.ability.target === 'entity' && !(entry.ability.optional && msg.target === undefined)) {
       const why = this.reach(zone, self, me, ctx, msg.target);
       if (why) return refuse(why);
     }
@@ -320,6 +320,8 @@ export class CastService {
       const r = resistance(target);
       return r !== null && !r.immune;
     };
+    // (and one of this world's: a creature of another has nothing in the caster's frame to be moved in)
+    const here = (target: number): boolean => steerable(target) && zone.fauna?.creature(target)?.frame === frame;
     const ctx: CastContext = {
       characterId,
       caster: self,
@@ -349,6 +351,11 @@ export class CastService {
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
       pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
+      position: () => {
+        const e = zone.entity(self);
+        return !e || e.fields.frame !== frame || zone.combat.isDown(self) ? null : [e.fields.pos[0], e.fields.pos[1], e.fields.pos[2]];
+      },
+      players: (reach, at) => this.playersOf(zone, self, frame, reach === undefined ? undefined : { at: at ?? origin, reach }),
       onWorld: () => {
         const body = this.bodyOf(zone, frame);
         return body !== undefined && body.type !== 'gas';
@@ -376,6 +383,17 @@ export class CastService {
       control: {
         stun: (creature, durationS) => steerable(creature) && !!zone.fauna?.stun(creature, durationS),
         calm: (creature, durationS) => steerable(creature) && !!zone.fauna?.calm(creature, durationS),
+        pull: (creature, to, durationS, threat) => {
+          if (!here(creature) || !zone.fauna?.pull(creature, to, durationS)) return false;
+          if (threat) zone.fauna.hurt(creature, self, threat);
+          return true;
+        },
+        knockdown: (creature, durationS) => here(creature) && !!zone.fauna?.knockdown(creature, durationS),
+        slowField: (center, radiusM, keep, durationS) => {
+          if (!zone.fauna || frame === null) return false;
+          zone.fauna.slowField(frame, center, radiusM, keep, durationS, here);
+          return true;
+        },
       },
       conceal: (durationS) => zone.fauna?.veil(self, durationS),
       party: (radiusM) => this.partyOf(zone, self, frame, radiusM),
@@ -393,10 +411,29 @@ export class CastService {
       ships: {
         pulsing: (target) => zone.movement?.pulsing(target) ?? false,
         jam: (target, durationS) => zone.movement?.jam(target, this.now() + durationS) ?? false,
+        hold: (target, durationS) => zone.movement?.hold(target, this.now() + durationS, this.now()) ?? false,
       },
+      movement: { fall: () => zone.movement?.fall(self) ?? null },
     };
     this.shares.set(ctx, shared);
     return ctx;
+  }
+
+  /** The players the caster can see (see `CastContext.players`). */
+  private playersOf(zone: CastZone, self: number, frame: FrameId, near?: { at: Readonly<Vec3>; reach: number }): CreatureTarget[] {
+    const out: CreatureTarget[] = [];
+    for (const [, id] of zone.viewers()) {
+      const t = id === self ? undefined : zone.entity(id);
+      if (!t || t.fields.kind !== 'player' || t.fields.frame !== frame || !zone.phases.canSee(self, id)) continue;
+      const sphere = this.playerSphere(zone, id, t);
+      if (!sphere) continue;
+      if (near) {
+        const r = near.reach + sphere.radius;
+        if (Math.abs(sphere.pos[0] - near.at[0]) > r || Math.abs(sphere.pos[1] - near.at[1]) > r || Math.abs(sphere.pos[2] - near.at[2]) > r) continue;
+      }
+      out.push({ id, pos: sphere.pos, radius: sphere.radius });
+    }
+    return out;
   }
 
   /** The caster's party members within `radiusM` on foot and up on its world (see `CastContext.party`). */
