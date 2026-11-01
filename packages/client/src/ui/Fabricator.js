@@ -8,8 +8,8 @@
 //
 // It is the inventory's sibling: the same plate, head, column titles, item tags, resource icons and detail line, and like
 // the dev teleporter an overlay of its own that Menus.closeAll (Esc) closes.
-import { craftableCount, inTableOrder, makesAt, materialsOf, outputOf, recipeById, CRAFT_MAX, STATION_MAX_TIER } from '@astra/shared/crafting';
-import { getHull, getItem, recipeOfItem } from '@astra/shared/data';
+import { craftableCount, inTableOrder, makesAt, materialsOf, maxTierOf, outputOf, recipeById, CRAFT_MAX } from '@astra/shared/crafting';
+import { FABRICATORS, getHull, getItem, recipeOfItem } from '@astra/shared/data';
 import { countOf, itemInfo, totals } from '@astra/shared/inventory';
 import { tierOf } from '@astra/shared/world';
 import { resourceIcon } from '../gameplay/Inventory.js';
@@ -35,6 +35,13 @@ const SWAP_MS = 120;
 const LINE_MS = 140;
 // the "Recipes to learn" heading, gone before the learned row sets off from under it
 const HEAD_MS = 70;
+
+// what a place's fabricator makes, as its screen says it (the tier band, or the line a band-less one makes)
+const LINES = { sanctuary: 'catalysts', scrapyard: 'Void recipes' };
+function fabricatorLabel(at) {
+  const top = maxTierOf(at);
+  return `${FABRICATORS.find((f) => f.id === at).name} · ${top === null ? LINES[at] : `Tier 0–${top} recipes`}`;
+}
 
 function nameOf(id) {
   return itemInfo(id)?.name ?? id;
@@ -64,8 +71,8 @@ export class FabricatorPanel {
     this.name = 'fabricator';
     const menus = game.menus;
     this.el = el('div', 'overlay panel-screen fab-screen', menus.root);
-    /** 'station' (a Waystation's) or 'ship' (the ship's own) */
-    this.at = 'station';
+    /** the fabricator open: a place's ('waystation', 'capital', 'sanctuary', 'scrapyard') or 'ship' (the ship's own) */
+    this.at = 'waystation';
     this.selected = null;
     this.qty = 1;
     /** the line under the columns: { text, tone: 'good' | 'refused' } or null for the hint */
@@ -83,7 +90,7 @@ export class FabricatorPanel {
     return this.game.overlay === this.name;
   }
 
-  /** Opens fabricator `at`: 'station' (the Waystation's) or 'ship' (the ship's own). */
+  /** Opens fabricator `at`: a place's ('waystation' is the only one with a terminal yet) or 'ship' (the ship's own). */
   open(at) {
     const g = this.game;
     if (g.overlay || (g.mode !== 'ship' && g.mode !== 'foot')) return;
@@ -184,7 +191,7 @@ export class FabricatorPanel {
     this.enter = false;
     const { here, elsewhere, learnable } = this.rows();
     const ship = this.at === 'ship';
-    const label = ship ? 'Ship fabricator · ammo and cartridges' : `Waystation fabricator · Tier 0–${STATION_MAX_TIER} recipes`;
+    const label = ship ? 'Ship fabricator · ammo and cartridges' : fabricatorLabel(this.at);
     const title = ship ? (g.inventory.hull ? getHull(g.inventory.hull).name : 'Your ship') : g.station.name;
     const row = (r, off) => {
       const n = craftableCount(st, r);

@@ -906,3 +906,121 @@ Format: task id, question → choice → why.
   per damage in groups of 2–5; `worldEvents.js` builds item names with `replace`, not the resource table; a footprint
   scrim instead of the full-width band for every banner; P1.E07.T03 reconciles the `fire` canSee filter with its
   shared `creatureTargets` when it lands.
+- **P2.E29.T04** Name filter: digit and ligature stand-ins (shared `discovery`, `data/names.ts`) → 6 and 9 read as g
+  beside the other digit look-alikes; æ and œ are read both long (ae, oe) and short (a, o) by running the blocked and
+  reserved checks once per reading, all ligatures one way at a time (no listed word has two ligature slots); a letter is
+  accepted only if every reading of it is a–z, so the accepted set stays derived from the skeleton; reserved words are
+  checked over every run of neighbouring words joined, so "Ad min" and "Ad-min Rock" are refused (single letters can
+  join into a reserved word, e.g. "G M"; moderators rename the rare real case). → closes P2.E29.T01's second review.
+  Open (P2.E29.T05): blocked words split by a separator inside a longer name; the digit reading also makes "9M" read as
+  the reserved "gm"; v-for-u and ph-for-f stand-ins.
+- **P2.E22.T03** Seasons (shared `seasons`, server `seasons/*`, world service, count store, migration 0005, protocol 18,
+  ARCHITECTURE §27) → season 1 starts at the shard's first boot with the default eight weeks, ending on the meter midnight
+  after (it can run up to a day longer); every later season starts and ends on meter midnights, the first at or after
+  start + length, with the Count at 500. The bucket is read after the last day's drift and the midnight burn (that day's
+  roll belongs to the old season; the new season's first burn is at 04:48): Fed 700 and up, Held 300–699, Broken under
+  300. Length: four weeks if the mean daily actives of the 30 meter days before the start is under 100, else eight; a
+  daily active is an account that joined a character that meter day, counted once (a session spanning midnight is not
+  counted again; days the server was down count as zero); nothing recorded logins before, hence the `daily_actives`
+  table. The next map is only the Edge shift and the dark systems: Fed recedes the Edge 10 ly, Broken advances it 10 ly
+  and darkens 2–3 Edge-ward Tier-5 systems at the advanced Edge by `hashInts(galaxy seed, season)`, Held and the first
+  season keep the baseline; openings do not add up (each comes from the previous season only); the opening is data on
+  the shard row until P2.E22.T02 moves `edgeX`, and DESIGN 16.4's other bucket effects are left to their own systems,
+  which read `opening.from`. Winners are accounts whose own season lean, read like a day's lean, lands in the season's
+  bucket (Held's include accounts that fed and broke equally), with at least one full vote of weight; awards are per
+  account, carried by every character of it including later ones: the title (Seedbearer, Keeper of the Middle,
+  Anchorbreaker), earned once in the reputation through `earnTitle`, and the glyph `season_<n>_<bucket>` (the
+  philosophy's word in Cartographer signs ringed by the season numeral, worn on suit and hull; the art is the client's).
+  Awards live in `season_awards` and a `seasonAwards` component saved with the reputation (`writtenWith`). The season's
+  end, awards, chronicle and the shard row move land in one insert-if-absent transaction; a vote is stamped with the
+  clock reading the meter ran to; a join that read awards just before a season's end was written still receives that
+  award. A chronicle (meter path, bucket, winning philosophy, darkened systems, next opening, at most 64 finds) exists
+  only for a finished season, served at `GET /seasons/:season/chronicle` to any signed-in account. Migration 0005 is
+  chained after 0004 with a later journal time, so databases already at 0004 receive it. → DESIGN 16.4, server-held.
+  Open: no shard lease (two processes on one shard both write the season's end; P3.E37); a shard first booted over
+  eight weeks ago rolls its missed seasons with no meter play (dev databases only); `writeSeasonEnd` loads a season's
+  votes into memory (a SQL GROUP BY later); daily actives count joins, not presence; one save writing two season ends
+  gives a racing join only the later; `daily_actives` is never pruned; the chronicle's first finds wait for P2.E22.T05.
+- **P1.E15.T04** Chat and party UI motion follow-ups (client `ui/social/{motion,SocialUI}.js`, `style.css` social rules,
+  capture `screens.ts`, `capture.ts`) → the beacon thumb and edge fades blinked because the motion helper forgot where an
+  ease had landed, so each redraw re-eased from 0: it now keeps each value's rest point and writes nothing at rest; the
+  beacon list redraws only when its rows' text, the own beacon or a refusal changes; the thumb fades only when the list
+  starts or stops overflowing, checked every frame a move runs. A cleared badge keeps its face whole and gives up its
+  room through a negative margin while its opacity eases to zero over the same frames. The redraw runs in stages (front,
+  log, list, party, invites) under a 0.4 ms frame budget, a stage over it waiting a frame, so no frame passes 1 ms. Caps
+  tags and buttons use `--sc-caps` (0.88), meta lines `--sc-meta` (0.74). The party count appears after "Not in a party"
+  has gone. `.social-chat` and `.social-side` carry `contain: layout style`. Captures time `SocialUI.update` per captured
+  frame into `readout.txt`, listing frames over 1 ms. → closes P1.E15.T03's fifth grade. Open: the stage guard's "first
+  stage always runs" rests on `spent > 0`, which a finer timer (a cross-origin-isolated page) would break; the list
+  scrolls in whole pixels; the edge fades mask the scrollbar's end; the badge trims 1–3 px in its last frames.
+- **P2.E20.T01** Fabricator tiers and recipe items (shared `crafting`, `crafting/places.ts`, `data/recipes.ts`, server
+  `crafting/*`, combat kill path, protocol 19, ARCHITECTURE §23, DESIGN 15.7) → `craft {at}` names the fabricator class:
+  `waystation` (was `station`), `capital`, `sanctuary`, `scrapyard`, `ship`. `makesAt` gates each recipe by its
+  `fabricators` list and the class's top tier: the Waystation up to Tier 2 whatever the system's tier, a capital its own
+  line up to Tier 3 (no catalysts, no Scrapyard recipes), sanctuaries and the Scrapyard by line; no fabricator builds a
+  hull (the Husk is learnable, made in P3.E36.T02). A terminal is data: every zone has its Waystation's, and capitals
+  (`capital:<city>`), sanctuaries (`sanctuary:<name>`) and the Scrapyard register theirs with `crafting.places.register`
+  when those places exist; until then they are refused `place`. Docked use works within a place's `dockedReachM` (the
+  Waystation's 130 m reaches every pad; null means no docking). Every recipe source ends in a `recipe_<id>` item that
+  `learn` teaches for good: vendors and vaults call `CraftingService.award`, chains are quest `items`, and each listed
+  boss recipe rolls at 0.25 for each fighter who did damage (a duplicate stays a spare; no room means lost); no source
+  hands out recipe items in this build (no vendor, vault, chain or spawning boss yet). The `recipes` component is v2
+  `{table, known}` with `RECIPE_TABLE_VERSION` 1 and a fingerprint test that fails when the recipe ids change without a
+  version rise: a character saved under a newer table keeps every recipe (one warning) and the newer version is written
+  back; a recipe the same-version table lacks is dropped; a v1 row reads as table 0; clients get only this table's
+  recipes; a rollback to the P1.E13.T05 build refuses this build's characters rather than dropping recipes. DESIGN 15.7
+  now says the Phase 1 consumables are known from the start. → DESIGN 15.7, server-held. Open: place registration
+  compares `where` by identity and has no unregister; `award` does not check the recipe's `learnedFrom`; a boss recipe
+  drop with no room has no owed path.
+- **P2.E29.T05** Name filter: split blocked words (shared `discovery`, `data/names.ts`) → blocked words are checked over
+  every run of neighbouring words joined, as reserved words are ("Sh it Rock", "Co ck Rock", "Na zi Moon" refused);
+  the blocked lists also read v as u and `p+h+` as f, and a name is checked as written, with repeats run together, and
+  with runs of three or more cut to two ("Niggger", "Asss", "Phhuck" refused), the list entries never shrunk so "Pis"
+  and "Assen" pass. Reserved words read the digits 0 1 3 4 5 7 8 as letters in the word-run check but not 6 and 9, so
+  catalog names like "Outpost 9M" and "Kepler 9 M" are not read as the reserved "gm"; the whole-name reserved check
+  reads every digit, so "Ed9e" and "Ul9ani" stay reserved (a narrower departure from the task line, which asked for no
+  digit reading on reserved lists; keeping the rest keeps "Th3 C0unt" and "Adm1n" reserved). A sweep test over about
+  330 real place names, the 927 names the generator makes for seed 424242 and the 12 reserved names refuses nothing it
+  should pass; "Twatt" (repeats run together) and "John o' Groats" (two separators) stay refused, and single letters
+  can join into a blocked word ("Se X"); moderators rename the rare real case. → closes P2.E29.T04's review.
+- **P1.E07.T03** Ability runtime (server `abilities/*`, `combat/targets.ts`, combat zone events, gateway,
+  `@astra/shared/abilities`, protocol 20, client `net/abilities.js`, HUD, ARCHITECTURE §28) → a cast names node and slot
+  (so `not_owned` and `not_slotted` are told apart and a stale bar refuses). The server checks, cheapest first: seq,
+  rate (a burst of 6, then 3 a second), the clock stamp (±3 s), the believed mode picking the bar (foot for the ground
+  bar's 6 slots, flying for the hull's working ship slots, keys 1–5 per DESIGN 9.1; landed, docked and the pulse drive
+  cast nothing), not down, a working slot, ownership, the slot holding the node, an ability for it, its cooldown (shared
+  cooldowns run on the other node's clock), the aim's frame, then for an entity target the phase (a hidden target is
+  `unseen`, the same as none), its kind, alive, on the caster's world, in reach from the eye (1.6 m up on foot, the
+  ship's centre in flight) to its hit sphere plus 2 m, and line of sight; then the effect's own check; then the cost
+  (heat through `meters.addHeat`, refused only in the lockout, so a chunk reaching 100 overheats; Charge only if all of
+  it is there). Cooldowns live in memory per character for the server's run. Lance-like costs are toggles: on pays and
+  starts the cooldown, off is free and comes before the cooldown check; a toggle holds only while its caster's entity is
+  in play, in the bar's mode and up and its node owned and slotted on that bar, ends with the context that turned it on,
+  and the session is told whenever the server ends one. Effects get `creatures`, `damage` (the zone's one damage path,
+  with the caster's mods) and `after()` timers that outlive a handoff and going down and drop when the last connection
+  closes; an effect that throws leaves the cast paid and answered `cast`; no channels yet (none in Tier I–II).
+  `mayHarm` refuses players until P2.E17.T01 and anything in a safe zone (today the Waystation's frame, caster or target).
+  A cast or combat event names only the ids the viewer's phase shows. One hit sphere (`creatureSphere`: 0.6 × size ×
+  scale + 1 m) serves shots, casts and analysis, so analysis reach changes (heavy walkers lose up to about 1.4 m, small
+  creatures and flyers gain up to about 0.9 m, no longer matching the client's 0.9 × size aim pick); player cast
+  spheres are 1.5 m round a point 0.9 m up on foot and `MOVEMENT.shipRadiusM` in a ship; one `creatureTargets` with the
+  phase check serves gunfire and casts, so the base gun skips creatures its shooter's phase hides (a change to
+  P1.E06.T02). The shipped ability book is empty ("CANNOT CAST YET"); the test ability lives in tests only; the server
+  refuses to start if the book and data disagree. Wire bounds: 41 cooldowns, 11 toggles. The client picks the nearest
+  living accepted entity within 8° and reach + 3 m. HUD: a ring per slot (warm on foot, warm white in flight, lilac
+  only on the Charge arc and its cost chunk), countdowns in tenths under 10 s, names 12 px hidden at rest, a refused
+  cast's reason over its slot, a 200 ms ready beat, and every meter jump over 8% and every cast's cost eased over 250 ms
+  (reversing P1.E07.T02's land-at-once rule). `SocialUI.update` runs first in the HUD frame. → DESIGN 9.1's runtime;
+  the seven branches add data and effects. Open: phase-spawned creatures have no hit sphere for shots, casts or
+  analysis; VFX are the branches' and P1.E07.T14's; the client's pick skips the player's own entity (Regrow on self,
+  P1.E07.T07); `settle()` at the start of a cast is untested; `holds()` rebuilds the skill view every step for ship
+  toggles; the cost eases run about 185–200 ms and the flight ready beat about 70 ms.
+- **P2.E22.T05** First finds in the season chronicle (server `discovery/chronicle.ts`, `seasons/store.ts`, count store,
+  shard, `server.ts`, ARCHITECTURE §25 and §27) → a chronicle names the finds a finder named during the season
+  (`namedAt` in [start, end), by naming time, not find time), earliest first, as kind, name, the finder's character
+  name (kept after the character is deleted) and the time; only the finder's own names count (renamed, cleared and
+  never-named finds are out); "notable" is the earliest 64; the hook reads in the season-end transaction; a find failing
+  its schema is dropped with a warning instead of failing the meter's save, and the query reads 128 rows so a bad one
+  does not displace a good one; a later moderator rename does not change a written chronicle. → DESIGN 16.4's "who named
+  what". Open: no index for the query (32 ms at 200,000 finds, once per season end); a naming that commits just after
+  the chronicle's save is in neither season.

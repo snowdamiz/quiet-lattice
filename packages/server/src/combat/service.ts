@@ -9,7 +9,8 @@
 //   (stamped within FIRE_STALE_S of the server's); the mode the server believes (flying a ship, `ship`); the player not
 //   down; the frame (its pose's); the aim (within AIM_CONE_DEG of its believed nose). Then the ray: from its believed
 //   position carried on along its velocity to the shot's time (LEAD_MAX_S at most), along the aim, as far as the gun
-//   reaches, against the living creatures of its frame's world (`rayHits`, the shared ray test, on their hit spheres);
+//   reaches, against the living creatures of its frame's world that its phase lets the player see (`creatureTargets`:
+//   `rayHits`, the shared ray test, on their shared hit spheres);
 //   the first it meets must be in sight over the drawn ground (sight.ts) from the believed position itself: along the
 //   stretch the origin was carried, which the ship has not been seen to cross, and on from there to the hit, so no carry
 //   puts a shot past ground in the way. It takes the gun's damage through the zone's one damage path. Players are not
@@ -20,7 +21,7 @@
 //   share is told to the character's session as `xp` and `loot` events; every one who hurt it hears `kill {tags,
 //   entity}` for its quests.
 // - In combat: a character that dealt or took damage within IN_COMBAT_S (skills swap slots only out of it).
-import { killLoot, levelForXp, modsOfNodes, rayHits } from '@astra/shared/combat';
+import { killLoot, levelForXp, modsOfNodes, rayHits, recipeDrops } from '@astra/shared/combat';
 import type { StatMod } from '@astra/shared/data';
 import type { ClientMessage, GameEvent, ServerMessage } from '@astra/shared/protocol';
 import type { QuestWorldEvent } from '@astra/shared/quests';
@@ -32,8 +33,9 @@ import type { Progress } from '../persistence/components.ts';
 import { nodeGrounds, type NodeGroundSource } from '../resources/ground.ts';
 import { splitByDamage } from '../resources/service.ts';
 import type { Zone, ZoneLog, ZoneViewer } from '../zones/zone.ts';
-import { aimWithin, baseGun, creatureSphere, LEAD_MAX_S, type Gun } from './gun.ts';
+import { aimWithin, baseGun, LEAD_MAX_S, type Gun } from './gun.ts';
 import { clearSight } from './sight.ts';
+import { creatureTargets } from './targets.ts';
 import type { CombatHooks, DownedReport, HitReport, KillReport } from './zone.ts';
 
 type FireRequest = Extract<ClientMessage, { t: 'fire' }>;
@@ -51,10 +53,7 @@ export const IN_COMBAT_S = 6;
 export const SHOOTER_IDLE_S = 60;
 
 /** A zone, as the service uses it. */
-export type CombatServiceZone = Pick<Zone, 'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'viewers' | 'patch' | 'combat' | 'fauna'> & {
-  /** what a shooter may see (another phase's creatures are no target of its), when the zone has phases */
-  readonly phases?: { canSee(viewer: number, id: number): boolean };
-};
+export type CombatServiceZone = Pick<Zone, 'id' | 'systemIndex' | 'system' | 'entityOf' | 'entity' | 'viewers' | 'patch' | 'combat' | 'fauna' | 'phases'>;
 
 /** Where the service finds zones and their tiers (the ZoneManager). */
 export interface CombatZones {
@@ -213,18 +212,8 @@ export class CombatService {
     const origin: Vec3 = [f.pos[0] + f.vel[0] * lead, f.pos[1] + f.vel[1] * lead, f.pos[2] + f.vel[2] * lead];
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);
     const dir: Vec3 = [msg.aim[0] / al, msg.aim[1] / al, msg.aim[2] / al];
-    const targets: { id: number; pos: Vec3; radius: number }[] = [];
-    if (f.frame !== null && zone.fauna) {
-      for (const c of zone.fauna.creaturesIn(f.frame)) {
-        // (another phase's creature, an event instance's, is not there for this shooter)
-        if (zone.phases && !zone.phases.canSee(entityId, c.id)) continue;
-        const s = creatureSphere(c);
-        // (a coarse cull first: only those that could be within the gun's reach)
-        if (Math.abs(s.pos[0] - origin[0]) > gun.rangeM + s.radius || Math.abs(s.pos[1] - origin[1]) > gun.rangeM + s.radius) continue;
-        if (Math.abs(s.pos[2] - origin[2]) > gun.rangeM + s.radius) continue;
-        targets.push({ id: c.id, pos: s.pos, radius: s.radius });
-      }
-    }
+    // (those within the gun's reach that its phase lets the player see)
+    const targets = f.frame !== null ? creatureTargets(zone, entityId, f.frame, { at: origin, reach: gun.rangeM }) : [];
     const hit = targets.length ? rayHits(origin, dir, gun.rangeM, targets)[0] : undefined;
     if (!hit) {
       this.counts.misses++;
@@ -348,6 +337,11 @@ export class CombatService {
         for (const { item, shares } of items) {
           const n = this.grant(characterId, item, shares.get(characterId) ?? 0);
           if (n > 0) events.push({ kind: 'loot', item, count: n, from: r.entity });
+        }
+        // a boss's recipes: each fighter rolls its own (DESIGN 15.7), and the items are theirs to learn (no boss spawns yet, so
+        // nothing reaches here until one does)
+        for (const item of recipeDrops(r.ref, () => this.rng.next())) {
+          if (this.grant(characterId, item, 1) > 0) events.push({ kind: 'loot', item, count: 1, from: r.entity });
         }
         if (at && events.length) this.tell(at.viewer, events);
         try {

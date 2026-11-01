@@ -2,6 +2,7 @@
 // zone snapshots are binary (see snapshot.ts). Every message is a zod schema so both ends validate what they receive.
 // Client → server schemas are the trust boundary: every string has a length cap and every number a finite range.
 import { z } from 'zod';
+import { COOLDOWNS_MAX, TOGGLES_MAX } from '../abilities/index.ts';
 import { codexSpeciesSchema } from '../codex/index.ts';
 import { craftOpSchema, craftRefusalSchema, KNOWN_MAX, recipeIdSchema } from '../crafting/index.ts';
 import { discoveryKeyOk, discoveryKeySchema, discoveryKindSchema, NAME_REFUSALS } from '../discovery/index.ts';
@@ -11,10 +12,11 @@ import { meterViewSchema } from '../meters/schema.ts';
 import { questErrorCodeSchema, questIdSchema, questOpSchema, questViewSchema } from '../quests/schema.ts';
 import { factionIdSchema } from '../data/index.ts';
 import { rankIdSchema, reputationViewSchema, titleViewSchema } from '../reputation/index.ts';
+import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '../seasons/schema.ts';
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 17;
+export const PROTOCOL_VERSION = 20;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -33,6 +35,9 @@ export const PROTOCOL_VERSION = 17;
 // 15: meters: heat and Charge state (P1.E07.T02)
 // 16: first finders: name requests and their answers, a system's finds and their names (P2.E29.T01)
 // 17: world events: event news to the system (announced, started, ended), a participant's status (its instance, level, contribution) and rewards (P2.E21.T01)
+// 18: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
+// 19: fabricators: a craft names its fabricator as waystation, capital, sanctuary, scrapyard or ship (was station or ship) (P2.E20.T01)
+// 20: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -173,10 +178,22 @@ export const Input = z.object({
   buttons: z.number().int().min(0).max(255),
   aim: Quat.optional(),
 });
-export const Cast = z.object({
+/** A skill node's id: the skill web's (`@astra/shared/data`), id-shaped, at most 48 characters. */
+export const NodeRef = z.string().regex(/^[a-z][a-z0-9_]{0,47}$/);
+/**
+ * Casting a slotted active (ARCHITECTURE §28, DESIGN 9.1): `node` the one the player sees in `slot` (0–5, keys 1–6) of the
+ * bar its mode casts from (the ground bar on foot, the ship's in flight), `aim` where it looks in `frame` (its pose's),
+ * `target` the entity it names when the ability names one, and `time` the world time it was cast, which the server never
+ * trusts beyond refusing one stamped seconds away. The server checks it all against what it believes and answers with
+ * `cast` state. `seq` numbers the session's casts from 1, increasing. Strict: no client says what a cast did.
+ */
+export const Cast = z.strictObject({
   t: z.literal('cast'),
-  seq: z.number().int().nonnegative(),
+  seq: z.number().int().min(1).max(0xffffffff),
+  time: z.number().min(0).max(1e12),
+  node: NodeRef,
   slot: z.number().int().min(0).max(5),
+  frame: FrameId,
   aim: Direction,
   target: EntityId.optional(),
 });
@@ -410,9 +427,17 @@ export const Correction = z.object({ t: z.literal('correction'), seq: z.number()
 /** Zone handoff (P1.E04.T04): the client now belongs to another zone, at this pose. */
 export const ZoneChange = z.object({ t: z.literal('zone'), zone: ZoneRef, pose: Pose });
 export const Pong = z.object({ t: z.literal('pong'), id: z.number().int().nonnegative(), clientTime: z.number(), serverTime: z.number() });
+/**
+ * The world service's state (ARCHITECTURE §3, §11, §27): sent after `welcome` and whenever it changes. `season` is the
+ * season's number, `seasonStart` and `seasonEnd` (protocol 18) the world times it began and ends at, `opening` the map it
+ * opened with (how the season before ended, the Edge's shift and the systems dark this season, DESIGN 16.4).
+ */
 export const WorldState = z.object({
   t: z.literal('world'),
-  season: z.number().int().nonnegative(),
+  season: seasonNumberSchema,
+  seasonStart: z.number().min(0),
+  seasonEnd: z.number().min(0),
+  opening: seasonOpeningSchema,
   count: z.number().min(0).max(1000),
   edgeX: z.number(),
   /** tier (0–5) per galaxy system index */
@@ -491,7 +516,35 @@ export const RankEvent = z.object({
 });
 /** A title earned (protocol 14): a rank's, the first time it is reached, or a quest's. */
 export const TitleEvent = z.object({ kind: z.literal('title'), title: titleViewSchema });
-export const GameEvent = z.discriminatedUnion('kind', [CombatEvent, QuestEvent, ChatEvent, LootEvent, XpEvent, NoticeEvent, PartyEvent, RankEvent, TitleEvent]);
+/**
+ * A cast the server carried out (protocol 20, ARCHITECTURE §28), to every session whose interest holds its caster or its
+ * target, for its effect to be drawn: `caster` cast `node` at world time `at`, from where it stood in `frame` along `aim`
+ * (its unit direction there), at `target` when it named one; `end` when a toggle went off. Each session is named only the
+ * entities its phase lets it see (no `caster`, or no `target`, otherwise). What it did to anyone arrives as `combat` events
+ * and state, never here.
+ */
+export const CastEvent = z.object({
+  kind: z.literal('cast'),
+  caster: EntityId.optional(),
+  node: NodeRef,
+  phase: z.enum(['cast', 'end']),
+  at: z.number().min(0),
+  frame: FrameId,
+  aim: Direction,
+  target: EntityId.optional(),
+});
+export const GameEvent = z.discriminatedUnion('kind', [
+  CombatEvent,
+  QuestEvent,
+  ChatEvent,
+  LootEvent,
+  XpEvent,
+  NoticeEvent,
+  PartyEvent,
+  RankEvent,
+  TitleEvent,
+  CastEvent,
+]);
 export const EventMessage = z.object({ t: z.literal('event'), event: GameEvent });
 
 /** One member as its party sees it: cheap on purpose (a party frame needs no more). */
@@ -949,6 +1002,72 @@ export const EventReward = z.object({
  * after `recipes` on join and whenever the server changes it (after the `rank` and `title` events of that change). */
 export const ReputationState = z.object({ t: z.literal('reputation'), reputation: reputationViewSchema });
 
+/** The character's season titles and glyphs (protocol 18, DESIGN 16.4), oldest season first: sent after `reputation` on join
+ * and again whenever a season ends with the character's account among its winning philosophy's players. */
+export const AwardsState = z.object({ t: z.literal('awards'), awards: seasonAwardListSchema });
+/**
+ * Why a cast did nothing (ARCHITECTURE §28), cheapest check first: `stale_seq` (its number is not above the last), `rate`
+ * (casting too fast), `stale` (stamped too far from the server's clock), `zone` (the player is in no zone), `mode` (no bar
+ * casts in the mode the server believes: landed, docked, on the pulse drive), `down` (the player is down), `slot` (no such
+ * working slot: past the hull's ability slots), `not_owned` (the node is not the character's), `not_slotted` (the node is
+ * not in that slot of the bar the mode casts from), `unknown` (no ability casts that node yet), `cooldown` (cooling down:
+ * `readyAt`), `frame` (aimed in another frame than its pose's), `target` (it names no target, or one of a kind it does
+ * not take), `unseen` (no entity it can see by that id: none, or its phase hides it), `dead` (the target is dead or down),
+ * `range` (too far), `busy` (the world's ground is still being planned: try again), `los` (the ground is in the way),
+ * `heat` (the multitool is overheated), `charge` (not enough Charge).
+ */
+export const CastRefusal = z.enum([
+  'stale_seq',
+  'rate',
+  'stale',
+  'zone',
+  'mode',
+  'down',
+  'slot',
+  'not_owned',
+  'not_slotted',
+  'unknown',
+  'cooldown',
+  'frame',
+  'target',
+  'unseen',
+  'dead',
+  'range',
+  'busy',
+  'los',
+  'heat',
+  'charge',
+]);
+export type CastRefusal = z.infer<typeof CastRefusal>;
+/**
+ * A cast's answer: `cast` (carried out: its cost paid, its cooldown running until `readyAt`, the state sent first), `ended`
+ * (a toggle turned off), or `refused` with `reason` (and `readyAt` when it is cooling down), nothing changed. It names the
+ * node and slot asked for. The fields differ from the request's, so one `cast` type serves both directions (encodeMessage).
+ */
+export const CastState = z
+  .object({
+    t: z.literal('cast'),
+    seq: z.number().int().min(1).max(0xffffffff),
+    node: NodeRef,
+    slot: z.number().int().min(0).max(5),
+    result: z.enum(['cast', 'ended', 'refused']),
+    reason: CastRefusal.optional(),
+    readyAt: z.number().min(0).optional(),
+  })
+  .refine((m) => (m.result === 'refused') === (m.reason !== undefined), 'a refusal, and only a refusal, says why')
+  .refine((m) => m.reason !== 'cooldown' || m.readyAt !== undefined, 'a cooldown says when it ends');
+/**
+ * The character's cooldowns and toggles as the server holds them (ARCHITECTURE §28): every node cooling down with the world
+ * time it is ready again (a shared cooldown under the node whose clock it runs on), and the toggles that are on. Sent after
+ * `meters` on join, whenever a cast changes them (before its answer) and whenever the server ends a toggle. The client
+ * shows them and never decides them.
+ */
+export const AbilitiesState = z.object({
+  t: z.literal('abilities'),
+  cooldowns: z.array(z.object({ node: NodeRef, readyAt: z.number().min(0) })).max(COOLDOWNS_MAX),
+  on: z.array(NodeRef).max(TOGGLES_MAX),
+});
+
 export const ServerMessage = z.discriminatedUnion('t', [
   Welcome,
   Refused,
@@ -978,6 +1097,9 @@ export const ServerMessage = z.discriminatedUnion('t', [
   EventStatus,
   EventReward,
   ReputationState,
+  AwardsState,
+  CastState,
+  AbilitiesState,
 ]);
 export type ServerMessage = z.infer<typeof ServerMessage>;
 export type GameEvent = z.infer<typeof GameEvent>;

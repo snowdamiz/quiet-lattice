@@ -14,7 +14,7 @@ import {
   type ServerMessage,
 } from './index.ts';
 
-const make = { t: 'craft', seq: 1, op: { op: 'make', recipe: 'warp_cell', count: 2, at: 'station' } } as const satisfies ClientMessage;
+const make = { t: 'craft', seq: 1, op: { op: 'make', recipe: 'warp_cell', count: 2, at: 'waystation' } } as const satisfies ClientMessage;
 const learn = { t: 'craft', seq: 2, op: { op: 'learn', recipe: 'torpedo' } } as const satisfies ClientMessage;
 
 describe('crafting messages', () => {
@@ -23,7 +23,11 @@ describe('crafting messages', () => {
   });
 
   it('round-trips make and learn requests, and refuses malformed ones', () => {
-    for (const m of [make, learn, { ...make, op: { ...make.op, at: 'ship', count: CRAFT_MAX } }] satisfies ClientMessage[])
+    for (const m of [
+      make,
+      learn,
+      ...(['capital', 'sanctuary', 'scrapyard', 'ship'] as const).map((at) => ({ ...make, op: { ...make.op, at, count: CRAFT_MAX } })),
+    ] satisfies ClientMessage[])
       expect(decodeClientMessage(encodeClientMessage(m))).toEqual(m);
     for (const bad of [
       { ...make, seq: 0 },
@@ -31,7 +35,8 @@ describe('crafting messages', () => {
       { ...make, op: { ...make.op, count: 0 } },
       { ...make, op: { ...make.op, count: CRAFT_MAX + 1 } },
       { ...make, op: { ...make.op, count: 1.5 } },
-      { ...make, op: { ...make.op, at: 'capital' } },
+      { ...make, op: { ...make.op, at: 'station' } },
+      { ...make, op: { ...make.op, at: 'harbour' } },
       { ...make, op: { ...make.op, recipe: 'Warp Cell' } },
       { ...make, op: { ...make.op, recipe: 'x'.repeat(49) } },
       { ...make, op: { ...make.op, recipe: '' } },

@@ -4,11 +4,12 @@
 // known and earns nothing; a creature out of range, behind a hill or asked about from a ship is refused. The codex and
 // the XP are written to the character's row as it leaves, and survive a server restart: the species is known on rejoin.
 import { SPECIES_XP, speciesKey } from '@astra/shared/codex';
+import { creatureSphere } from '@astra/shared/combat';
 import { PROTOCOL_VERSION, type ServerMessage } from '@astra/shared/protocol';
 import { faunaSpecies, frameId, type FaunaSpecies, type PlanetParams } from '@astra/shared/world';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { ANALYZE_RANGE_M, hitRadius } from '../src/codex/analysis.ts';
+import { ANALYZE_RANGE_M } from '../src/codex/analysis.ts';
 import { parseConfig } from '../src/config.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
 import { characters } from '../src/db/schema.ts';
@@ -55,7 +56,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /** What a codex stores of a species the protocol carried. */
 const stored = (s: NonNullable<Answer['species']>) => ({ temperament: s.temperament, threat: s.threat, bodyPlan: s.bodyPlan, bond: s.bond, at: s.at });
 const eyeOf = (stand: Readonly<Vec3>) => lift(stand, EYE_M);
-const middleOf = (feet: Readonly<Vec3>) => lift(feet, hitRadius(walker) * 0.8);
+const middleOf = (feet: Readonly<Vec3>) => creatureSphere({ pos: feet, scale: 1, species: walker }).pos;
 const sight = (stand: Readonly<Vec3>, feet: Readonly<Vec3>) =>
   lineOfSight({ R: g.radius, height: (x, y, z) => g.sample([x, y, z]) }, eyeOf(stand), middleOf(feet));
 

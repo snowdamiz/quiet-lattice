@@ -4,14 +4,16 @@
 // the ship and the owned nodes), where the character is (system, pose, frame and movement mode, read from its zone
 // entity, and on foot, where it left its ship; a saved pose movement authority would not accept is not restored), its
 // codex (the species it has analyzed, P1.E08.T04, src/codex), the recipes it knows (P1.E13.T05, src/crafting), its
-// reputation (standing by faction and titles, P2.E18.T01, src/reputation), its codex plates (its first finds, P2.E29.T01,
-// src/discovery) and its quests (held by the quest runtime, P1.E09.T01); see ARCHITECTURE §8.
+// reputation (standing by faction and titles, P2.E18.T01, src/reputation), the titles and glyphs its seasons awarded
+// (P2.E22.T03, src/seasons), its codex plates (its first finds, P2.E29.T01, src/discovery) and its quests (held by the
+// quest runtime, P1.E09.T01); see ARCHITECTURE §8.
 //
 // Ships and progress have no service of their own yet, so the two small holders here keep each character's live value
 // until the tasks that own them (P1.E12 ship swaps and fitting, combat XP) replace them with theirs.
 import { applyLayout, inventorySchema, layoutFor, startingInventory, type Inventory } from '@astra/shared/inventory';
 import { MoveMode, Pose } from '@astra/shared/protocol';
 import { emptyQuestLog, migrateQuestLogV1, questLogProblem, questLogSchema, type QuestLog, type QuestLogV1 } from '@astra/shared/quests';
+import type { RecipeTableView } from '@astra/shared/crafting';
 import { shipLoadoutSchema, shipStats, type ShipLoadout } from '@astra/shared/ships';
 import type { StoredSkills } from '@astra/shared/skills';
 import { tierOfGalaxySystem } from '@astra/shared/world';
@@ -26,6 +28,8 @@ import { METERS, metersComponent } from '../meters/component.ts';
 import { MeterService } from '../meters/service.ts';
 import { REPUTATION, reputationComponent } from '../reputation/component.ts';
 import { ReputationService } from '../reputation/service.ts';
+import { SeasonAwards } from '../seasons/awards.ts';
+import { SEASON_AWARDS, seasonAwardsComponent } from '../seasons/component.ts';
 import { padPose, planGround, poseProblem as movementProblem } from '../sim/movement/index.ts';
 import { SKILLS, skillsComponent } from '../skills/component.ts';
 import { SkillService } from '../skills/service.ts';
@@ -38,7 +42,7 @@ import { INPUT_LIMITS } from '../zones/zone.ts';
 import { ComponentRegistry, type CharacterComponent, type LoadContext, type PersistenceLog } from './registry.ts';
 
 export const PROGRESS = 'progress';
-export { CODEX, PLATES, RECIPES, REPUTATION, SKILLS };
+export { CODEX, PLATES, RECIPES, REPUTATION, SEASON_AWARDS, SKILLS };
 export const SHIP = 'ship';
 export const INVENTORY = 'inventory';
 export { METERS };
@@ -337,9 +341,14 @@ export interface CoreComponentDeps {
   codex?: CodexService;
   /** Every character's recipes; when none is given, the registry makes its own (the gateway finds it: `recipeBookIn`). */
   recipes?: RecipeBook;
+  /** the recipe table the recipes component reconciles with: a build's own unless a test gives a rolled-back one */
+  recipeTable?: RecipeTableView;
   /** Every character's reputation; when none is given, the registry makes its own, with no Count to read for the
    * underdog's bonus (the gateway and the quest runtime find it: `reputationServiceIn`). */
   reputation?: ReputationService;
+  /** Every character's season awards; when none is given, the registry makes its own (the gateway finds it:
+   * `seasonAwardsIn`). */
+  awards?: SeasonAwards;
   /** Every character's codex plates; when none is given, the registry makes its own (the gateway finds it: `plateBookIn`). */
   plates?: PlateBook;
   /** the quest runtime; without one (tests of the other components), no quests component */
@@ -349,8 +358,8 @@ export interface CoreComponentDeps {
 
 /** A registry holding the components in load order: the skills read the level; the ship and the inventory read the owned
  * nodes; the inventory reads the ship; the meters read the ship and the owned nodes; the codex, the recipes, the
- * reputation and the plates read nothing; the quests come last (owed reputation is settled into the reputation once the
- * character is in play, QuestRuntime.joined). */
+ * reputation, the season awards and the plates read nothing; the quests come last (owed reputation is settled into the
+ * reputation once the character is in play, QuestRuntime.joined). */
 export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
   const skills = deps.skills ?? new SkillService({ inventory: deps.inventory, ships: deps.ships, progress: deps.progress });
   const meters = deps.meters ?? new MeterService({ ships: deps.ships, skills, zones: deps.zones });
@@ -363,9 +372,16 @@ export function coreRegistry(deps: CoreComponentDeps): ComponentRegistry {
     .register(metersComponent(meters, { log: deps.log }))
     .register(poseComponent(deps.zones, deps.clock, deps.movement ?? true))
     .register(codexComponent(codex, { log: deps.log }))
-    .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log }))
+    .register(recipesComponent(deps.recipes ?? new RecipeBook(), { log: deps.log, table: deps.recipeTable }))
     // (written with the quest log, whose owed reputation is settled into it: both in one save, or neither, §24)
     .register(reputationComponent(deps.reputation ?? new ReputationService({ log: deps.log }), { log: deps.log, writtenWith: deps.quests ? [QUESTS] : [] }))
+    // (written with the reputation, which holds the titles its awards earn: both in one save, or neither, §27)
+    .register(
+      seasonAwardsComponent(deps.awards ?? new SeasonAwards((err) => deps.log?.error({ err }, 'season award listener failed')), {
+        log: deps.log,
+        writtenWith: [REPUTATION],
+      }),
+    )
     // (written with the progress, whose XP a plate records as paid: both in one save, or neither, §25)
     .register(platesComponent(deps.plates ?? new PlateBook(), { log: deps.log, writtenWith: [PROGRESS] }));
   return deps.quests ? registry.register(questsComponent(deps.quests)) : registry;

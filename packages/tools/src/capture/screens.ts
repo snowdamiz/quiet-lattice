@@ -18,6 +18,13 @@ export interface ScreenDef {
   sheetFrames?: readonly number[];
   /** Extra 16:9 stills, taken after the main one and before the clip: `16x9-<name>.png` after `pose` drives the page. */
   stills16x9?: Record<string, (page: Page) => Promise<void>>;
+  /** Extra stills taken at both aspects, after `stills16x9`: `16x9-<name>.png` and `21x9-<name>.png`. */
+  stills?: Record<string, (page: Page) => Promise<void>>;
+  /** The aspect the clip is taken at. Default 16:9. */
+  clipAspect?: '16x9' | '21x9';
+  /** Regions of the page (CSS selectors, padded by `pad` px) whose clip frames go on 4x sheets of their own,
+   * `crops-<name>.png`, each frame of `sheetFrames` cropped from a lossless capture. */
+  crops?: readonly { name: string; selector: string; pad?: number }[];
   /** Draw scrollbars (headless Chromium hides them by default), for screens whose scroll affordance is being judged. */
   showScrollbars?: boolean;
   /** How long the clip runs (s; 60 frames a second): long enough for the whole motion. Default 1. */
@@ -25,6 +32,9 @@ export interface ScreenDef {
   /** Run the HUD's clock and timers (game.hud.now / later / cancel) on the clip's clock, so toasts and fades last as long
    * in the clip as in play. */
   hudClock?: boolean;
+  /** Text written to `readout.txt` beside the clip sheet (its first line printed under the sheet), read once the last frame
+   * is in (the cost of the UI the clip shows, say). */
+  readout?(page: Page): Promise<string>;
   /** Console errors the screen causes on purpose (the browser reports a refused request, say), not counted against it. */
   expectedErrors?: RegExp[];
 }
@@ -177,6 +187,74 @@ async function hastenHeat(page: Page, k: number): Promise<void> {
     const step = mt.stepHeat.bind(mt);
     mt.stepHeat = (dt, held) => step(dt * k, held);
   }, k);
+}
+
+/** The client's ability model and clocks as a capture drives them: no server, so the screen says what one would. */
+interface AbilityWindow {
+  game: MeterGame & {
+    time: number;
+    abilities: {
+      skills(view: unknown): void;
+      state(m: unknown): void;
+      answer(m: unknown): void;
+      pending: Map<number, { bar: string; slot: number; node: string; at: number }>;
+      now(): number;
+    };
+    hud: { later(fn: () => void, ms: number): number };
+  };
+}
+
+/** The bars as the server's skills view would hold them, the ship bar working `shipSlots` slots. */
+async function slotAbilities(page: Page, ground: (string | null)[], ship: (string | null)[], shipSlots: number): Promise<void> {
+  await page.evaluate(
+    ({ ground, ship, shipSlots }) => {
+      // (no named functions in here: the page has no helper for their names)
+      const slots = { ground: [...ground, ...Array(6 - ground.length).fill(null)], ship: [...ship, ...Array(5 - ship.length).fill(null)] };
+      (window as unknown as AbilityWindow).game.abilities.skills({ state: { slots }, shipSlots });
+    },
+    { ground, ship, shipSlots },
+  );
+}
+
+/** The server's cooldowns: each node ready again `left` seconds from the game's world time now; `on` the toggles on. */
+async function coolingDown(page: Page, left: Record<string, number>, on: string[] = []): Promise<void> {
+  await page.evaluate(
+    ({ left, on }) => {
+      const g = (window as unknown as AbilityWindow).game;
+      g.abilities.state({ t: 'abilities', cooldowns: Object.entries(left).map(([node, s]) => ({ node, readyAt: g.time + s })), on });
+    },
+    { left, on },
+  );
+}
+
+/**
+ * A key press's round trip as a server would answer it, on the HUD's clock from now: the cast sent at `at` ms, answered
+ * `rtt` ms later, carried out (its cooldown running `cooldownS` from then, the meter paid `pay`: heat on the ground bar,
+ * Charge on the ship's) or refused for `refused`.
+ */
+async function castRoundTrip(
+  page: Page,
+  c: { bar: 'ground' | 'ship'; slot: number; node: string; at: number; rtt?: number; cooldownS?: number; pay?: number; refused?: string; seq: number },
+): Promise<void> {
+  await page.evaluate((c) => {
+    const g = (window as unknown as AbilityWindow).game;
+    const a = g.abilities;
+    g.hud.later(() => {
+      a.pending.set(c.seq, { bar: c.bar, slot: c.slot, node: c.node, at: a.now() });
+      g.hud.later(() => {
+        if (c.refused) {
+          const readyAt = (a as unknown as { cooldowns: Map<string, number> }).cooldowns.get(c.node);
+          a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'refused', reason: c.refused, readyAt });
+          return;
+        }
+        const cooldowns = [...(a as unknown as { cooldowns: Map<string, number> }).cooldowns].map(([node, readyAt]) => ({ node, readyAt }));
+        a.state({ t: 'abilities', cooldowns: [...cooldowns.filter((x) => x.node !== c.node), { node: c.node, readyAt: g.time + c.cooldownS! }], on: [] });
+        a.answer({ t: 'cast', seq: c.seq, node: c.node, slot: c.slot, result: 'cast', readyAt: g.time + c.cooldownS! });
+        if (c.bar === 'ground') g.multitool.meter = { ...g.multitool.meter, heat: g.multitool.meter.heat + (c.pay ?? 0) };
+        else g.ship.charge -= c.pay ?? 0;
+      }, c.rtt ?? 60);
+    }, c.at);
+  }, c);
 }
 
 /**
@@ -529,7 +607,7 @@ async function scrollPodsToEnd(page: Page): Promise<void> {
 interface FabricatorPage {
   game: {
     inventory: InventoryApi;
-    fabricator: { open(at: 'station' | 'ship'): void };
+    fabricator: { open(at: 'waystation' | 'ship'): void };
     station: { pads: { x: number; z: number }[] };
     ship: { state: { pos: { clone(): { set(x: number, y: number, z: number): unknown } } } };
     player: { spawn(frame: unknown, at: unknown, heading: unknown): void };
@@ -557,7 +635,7 @@ const FAB_SUIT: [string, number][] = [
 ];
 
 /** Lays the haul out in the suit (the Lark's pod holding a little more), then opens fabricator `at`. */
-async function stockAndOpen(page: Page, at: 'station' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
+async function stockAndOpen(page: Page, at: 'waystation' | 'ship', suit: [string, number][], pod: [string, number][]): Promise<void> {
   await page.evaluate(
     ({ at, suit, pod }) => {
       const g = (window as unknown as FabricatorPage).game;
@@ -607,7 +685,7 @@ async function stationFabricator(page: Page): Promise<void> {
     g.cam.frame = undefined;
   });
   await settle(page, 120);
-  await stockAndOpen(page, 'station', FAB_SUIT, [
+  await stockAndOpen(page, 'waystation', FAB_SUIT, [
     ['tritium', 380],
     ['carbon', 240],
   ]);
@@ -758,6 +836,93 @@ async function playCutsceneTo(page: Page, id: string, t: number): Promise<void> 
  * server would: chat comes back as the player's line, an invite to someone online is sent, accepting joins the
  * inviter's party, an answer to a beacon is refused (`answerCode`). `window.__social` drives it.
  */
+/** Times one UI's own work in each frame of the clip that follows (the chat and party UI's moves and redraws, or the whole
+ * HUD's update): every update between one captured frame and the next adds to that frame's figure, so the readout and the
+ * clip count the same frames. */
+async function uiCostProbe(page: Page, of: 'social' | 'hud'): Promise<void> {
+  await page.evaluate((of) => {
+    type Ui = { update(arg?: unknown): void };
+    const w = window as unknown as { __social: { social: Ui }; game: { hud: Ui }; __clip: { frame(dt: number): void }; __uiCost: number[] };
+    const ui = of === 'social' ? w.__social.social : w.game.hud;
+    const update = ui.update.bind(ui);
+    let spent = 0;
+    ui.update = (arg?: unknown) => {
+      const t = performance.now();
+      update(arg);
+      spent += performance.now() - t;
+    };
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    w.__uiCost = [];
+    clip.frame = (dt: number) => {
+      spent = 0;
+      frame(dt);
+      w.__uiCost.push(spent);
+    };
+  }, of);
+}
+
+/** What the UI's cost over the clip is held to (ms). */
+const UI_BUDGET_MS = 1;
+
+/** The probed UI's per-frame cost over the clip (`uiCostProbe`), as the readout under its sheet: the mean, the 95th
+ * percentile and the worst frame, against the 16.7 ms a frame at 60 fps has, and the index of every frame over the 1 ms
+ * budget. */
+const uiCostReadout =
+  (label: string) =>
+  async (page: Page): Promise<string> => {
+    const ms = await page.evaluate(() => (window as unknown as { __uiCost: number[] }).__uiCost);
+    const sorted = [...ms].sort((a, b) => a - b);
+    const mean = ms.reduce((a, b) => a + b, 0) / Math.max(1, ms.length);
+    const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))] ?? 0;
+    const over = ms.flatMap((v, i) => (v > UI_BUDGET_MS ? [`${String(i).padStart(3, '0')} (${v.toFixed(3)} ms)`] : []));
+    return [
+      `${label} frame cost over ${ms.length} frames: mean ${mean.toFixed(3)} ms, p95 ${at(0.95).toFixed(3)} ms, worst ${(sorted.at(-1) ?? 0).toFixed(3)} ms (of 16.7 ms)`,
+      `frames over ${UI_BUDGET_MS} ms: ${over.length ? over.join(', ') : 'none'}`,
+    ].join('\n');
+  };
+const socialCostReadout = uiCostReadout('social UI');
+const hudCostReadout = uiCostReadout('HUD');
+
+/** Watches the beacon list over the clip that follows, frame by frame: its rows being built or taken out, its text being
+ * rewritten (an age moving on) and its scrollbar and edge fades being written. */
+async function socialRestWatch(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { __clip: { frame(dt: number): void }; __uiCost: number[]; __rest: { rows: number[]; text: number[]; bar: number[] } };
+    const scroller = document.querySelector('.sc-beacons') as HTMLElement;
+    const watched = { rows: [] as number[], text: [] as number[], bar: [] as number[] };
+    w.__rest = watched;
+    const obs = new MutationObserver(() => {});
+    obs.observe(scroller, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class'] });
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    let i = 0;
+    clip.frame = (dt: number) => {
+      frame(dt);
+      const seen = { rows: false, text: false, bar: false };
+      for (const r of obs.takeRecords()) {
+        const t = r.target as HTMLElement;
+        if (t === scroller && r.type === 'attributes' && r.attributeName === 'style') seen.bar = true;
+        else if (r.type === 'childList' && t.classList.contains('sb-meta')) seen.text = true;
+        else if (r.type === 'childList' || (r.type === 'attributes' && t.closest('.sb-list'))) seen.rows = true;
+      }
+      for (const k of ['rows', 'text', 'bar'] as const) if (seen[k]) watched[k].push(i);
+      i++;
+    };
+  });
+}
+
+/** The cost readout and what the list did at rest: which frames rebuilt a row, rewrote an age or wrote a scrollbar or edge
+ * property. */
+async function socialRestReadout(page: Page): Promise<string> {
+  const rest = await page.evaluate(() => (window as unknown as { __rest: { rows: number[]; text: number[]; bar: number[] } }).__rest);
+  const list = (v: number[]) => (v.length ? `${v.length} (frames ${v.map((n) => String(n).padStart(3, '0')).join(', ')})` : 'none');
+  return [
+    await socialCostReadout(page),
+    `beacon list at rest: rows rebuilt or restyled on ${list(rest.rows)}; age text rewritten on ${list(rest.text)}; scrollbar or edge property written on ${list(rest.bar)}`,
+  ].join('\n');
+}
+
 export const SOCIAL_STAGE = String.raw`
 import { Net } from '/src/net/Net.js';
 
@@ -1634,6 +1799,121 @@ export const SCREENS: Record<string, ScreenDef> = {
       await page.evaluate(() => (document.querySelector('.toasts') as HTMLElement).replaceChildren());
     },
   },
+  // The ability bar on foot (P1.E07.T03), under the prompt: six ground slots, keys 1–6, each a ring with its key and the
+  // node's name (Pulse, Pull, Flare, Well, Regrow, Veil); Well cooling with 13 of its 20 s left and Regrow 4 of 10, their
+  // rings drawn back in heat's warm with the seconds left in them; heat at 35 on the crosshair's left arc.
+  // `*-refused.png` (both aspects): Well pressed again while it cools, refused by the server: its ring edged in danger red
+  // and COOLING DOWN on a plate over it. `*-rest.png`: nothing on the bar moved for 4 s, so it rests at 55% with its names
+  // hidden. The clip (the bar waking from rest as it starts): key 1 pressed 0.2 s in, the server's answer 60 ms later,
+  // Pulse's ring flaring and its cooldown starting (6 s), Pulse's 10 heat easing onto the arc over 250 ms with the new
+  // chunk drawn bright; key 1 again 2.2 s in, refused, the red edge and the plate over slot 1 for 1.6 s; Regrow ready
+  // about 4 s in and Pulse about 6.3 s in, each ring brightening for a beat as it comes back. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost; `crops-*.png` are 4x crops of the crosshair and slot 1.
+  'hud-abilities': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 6.8,
+    readout: hudCostReadout,
+    sheetFrames: [0, 12, 14, 16, 18, 20, 22, 26, 30, 34, 60, 120, 132, 136, 150, 200, 240, 246, 252, 300, 376, 382, 388, 407],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await settle(page, 2);
+    },
+    stills: {
+      async refused(page) {
+        await castRoundTrip(page, { bar: 'ground', slot: 3, node: 'well', at: 0, rtt: 0, refused: 'cooldown', seq: 1 });
+        await settle(page, 2);
+      },
+      async rest(page) {
+        await coolingDown(page, {});
+        await settle(page, 2);
+        await page.waitForTimeout(4500);
+        await settle(page, 2);
+      },
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await heatAt(page, 35, false, false);
+      await coolingDown(page, { well: 13, regrow: 4 });
+      await page.evaluate(() => {
+        const a = (window as unknown as AbilityWindow).game.abilities as unknown as { refusal: unknown };
+        a.refusal = null;
+      });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 200, cooldownS: 6, pay: 10, seq: 2 });
+      await castRoundTrip(page, { bar: 'ground', slot: 0, node: 'pulse', at: 2200, refused: 'cooldown', seq: 3 });
+    },
+  },
+  // A cast's cost on foot at 21:9 (P1.E07.T03, the grader's round-2 request): heat at 20, the same six ground slots, all
+  // ready. The clip, at 21:9: key 3 pressed 0.2 s in, the server's answer 60 ms later, Flare's ring flaring and its 12 s
+  // cooldown starting, its 30 heat easing onto the crosshair's left arc over 250 ms (20 to 50) with the new chunk drawn
+  // bright; key 3 again 1.4 s in, refused while it cools: the red edge and COOLING DOWN on a plate over slot 3, gone 1.6 s
+  // later. `crops-reticle.png` and `crops-slot.png` are 4x crops of the crosshair and slot 3; the sheet's title (and
+  // readout.txt) is the HUD's per-frame cost.
+  'hud-abilities-cost': {
+    hash: '#foot',
+    hudClock: true,
+    clipAspect: '21x9',
+    readout: hudCostReadout,
+    clipSeconds: 3.4,
+    sheetFrames: [0, 12, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 36, 48, 84, 88, 89, 90, 92, 96, 110, 150, 180, 203],
+    crops: [
+      { name: 'reticle', selector: '.crosshair', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(3)', pad: 30 },
+    ],
+    async open(page) {
+      await standingByShip(page);
+      await parkLoop(page);
+      await slotAbilities(page, ['pulse', 'pull', 'flare', 'well', 'regrow', 'veil'], [], 2);
+      await heatAt(page, 20, false, false);
+      await coolingDown(page, {});
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await heatAt(page, 20, false, false);
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 200, cooldownS: 12, pay: 30, seq: 1 });
+      await castRoundTrip(page, { bar: 'ground', slot: 2, node: 'flare', at: 1400, refused: 'cooldown', seq: 2 });
+    },
+  },
+  // The ability bar in flight (P1.E07.T03): a Wayfarer's four ship slots, keys 1–4 (Tractor Beam, Deep Sweep, Repair
+  // Drones, Inertial Brake), Deep Sweep cooling with 21 of its 30 s left and Inertial Brake 6 of 15, their rings drawn back
+  // in the flight deck's warm white with the seconds left in it (lilac is Charge's alone: only the reticle's right arc
+  // and a cast's chunk of it wear it); Charge at 72 on that arc. The clip: key 1 pressed 0.2 s in, the server's answer,
+  // the ring flaring and Tractor Beam's 12 s cooldown starting, its 15 Charge coming off the arc over 250 ms with the cost
+  // drawn bright as it drains; Inertial Brake ready 1.2 s in, its ring brightening for a beat. The sheet's title (and
+  // readout.txt) is the HUD's per-frame cost; `crops-*.png` are 4x crops of the reticle and slot 1.
+  'hud-abilities-flight': {
+    hudClock: true,
+    clipSeconds: 2,
+    readout: hudCostReadout,
+    sheetFrames: [0, 6, 12, 14, 16, 17, 18, 19, 20, 22, 24, 26, 28, 31, 34, 40, 60, 72, 76, 80, 90, 119],
+    crops: [
+      { name: 'reticle', selector: '.ship-reticle', pad: 24 },
+      { name: 'slot', selector: '.ab-row .ab-slot:nth-child(1)', pad: 30 },
+    ],
+    async open(page) {
+      await page.evaluate(() => (window as unknown as { dev: { boot(): Promise<void> } }).dev.boot());
+      await settle(page, 60);
+      await shipOffHome(page, 1, 72);
+      await settle(page, 90);
+      await slotAbilities(page, [], ['tractor_beam', 'deep_sweep', 'repair_drones', 'inertial_brake'], 4);
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 6 });
+      await settle(page, 2);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'hud');
+      await coolingDown(page, { deep_sweep: 21, inertial_brake: 1.2 });
+      await castRoundTrip(page, { bar: 'ship', slot: 0, node: 'tractor_beam', at: 200, cooldownS: 12, pay: 15, seq: 1 });
+    },
+  },
   // On foot on the home world, mining a plant or rock a few metres off with the beam held, its impact glare behind the
   // crosshair: the heat arc (left of the dot) at 40 of 100, 40% of it lit, warm
   // (P1.E07.T02). `16x9-overheat.png`: the lockout at the top, the arc danger red with a tick where the lockout ends and
@@ -1947,15 +2227,18 @@ export const SCREENS: Record<string, ScreenDef> = {
   'party-invite': {
     hudClock: true,
     clipSeconds: 3.5,
+    readout: socialCostReadout,
     sheetFrames: [0, 6, 12, 18, 24, 30, 36, 60, 84, 90, 96, 102, 108, 114, 120, 144, 150, 156, 162, 180, 209],
     async open(page) {
       await stageSocial(page, 'limb');
-      await onStage(page, "s.chatScene(); s.news('invite', 'Kestrel Vane'); s.age(8000)", 60);
+      // (the feed's lines are long gone, so the still is not taken as one fades)
+      await onStage(page, "s.chatScene(); s.news('invite', 'Kestrel Vane'); s.age(8000); for (const l of s.social.model.lines) l.at -= 30000", 60);
     },
     stills16x9: {
       open: (page) => onStage(page, "s.open('shard')"),
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       // (closed, and drawn closed, before the first frame)
       await page.evaluate(() => {
         const s = (window as unknown as SocialWindow).__social;
@@ -1979,6 +2262,7 @@ export const SCREENS: Record<string, ScreenDef> = {
   beacons: {
     hudClock: true,
     clipSeconds: 1.5,
+    readout: socialCostReadout,
     showScrollbars: true,
     async open(page) {
       await stageSocial(page, 'limb');
@@ -1993,6 +2277,7 @@ export const SCREENS: Record<string, ScreenDef> = {
         ),
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const s = w.__social;
@@ -2007,11 +2292,13 @@ export const SCREENS: Record<string, ScreenDef> = {
   'social-tabs': {
     hudClock: true,
     clipSeconds: 5.2,
+    readout: socialCostReadout,
     async open(page) {
       await stageSocial(page, 'limb');
       await onStage(page, "s.partyScene(); s.chatScene(); s.beaconsScene(); s.open('shard')", 60);
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       await page.evaluate(() => {
         const hud = (window as unknown as SocialWindow).game.hud;
         const order = ['system', 'party', 'beacons', 'party', 'system', 'shard'];
@@ -2019,30 +2306,52 @@ export const SCREENS: Record<string, ScreenDef> = {
       });
     },
   },
+  // beacons-many held still: scrolled to the middle of the list (both edge fades on) with the panel open and the beacons'
+  // ages moving on, beside a party frame of the player leading, one member offline (OFFLINE, LEAD and KICK on show). The
+  // list must not redraw, blink or move while it stands
+  'beacons-rest': {
+    hudClock: true,
+    clipSeconds: 2,
+    readout: socialRestReadout,
+    showScrollbars: true,
+    async open(page) {
+      await stageSocial(page, 'limb');
+      await onStage(
+        page,
+        "s.chatScene(); s.manyBeaconsScene(); s.setParty('Tess Arlo', [s.member('Kestrel Vane'), s.member('Tess Arlo'), s.member('Bo Tran', 2), s.member('Ilse Marr', 0, s.here, false)]); s.open('beacons'); s.social.model.answer(15)",
+        60,
+      );
+      await onStage(page, "const l = document.querySelector('.sc-beacons'); l.scrollTop = Math.round((l.scrollHeight - l.clientHeight) / 2)", 60);
+    },
+    async motion(page) {
+      await uiCostProbe(page, 'social');
+      await socialRestWatch(page);
+    },
+  },
   // a list longer than the panel: eight calls for aid, one answer refused (too far) in view; the list fades at its foot
   // over its scrollbar. The clip scrolls it to its end and back, eased (the list's own scroll, as a wheel would)
   'beacons-many': {
     hudClock: true,
     clipSeconds: 3,
+    readout: socialCostReadout,
     showScrollbars: true,
     async open(page) {
       await stageSocial(page, 'limb');
       await onStage(page, "s.chatScene(); s.manyBeaconsScene(); s.open('beacons'); s.social.model.answer(15)", 60);
     },
     async motion(page) {
+      await uiCostProbe(page, 'social');
       await page.evaluate(() => {
         const w = window as unknown as SocialWindow;
         const list = document.querySelector('.sc-beacons') as HTMLElement;
         const end = Math.round(list.scrollHeight - list.clientHeight);
-        // down over a second from 0.3 s, a pause, and back up over a second: eased in and out, a whole pixel a frame and
-        // at least one until it lands (a fractional scroll offset is rounded, which held a frame here and there), each
-        // step due half a millisecond before its frame so none slips into the next
-        const ys: number[] = [0];
-        for (let k = 1; k <= 60; k++) {
+        // down over a second from 0.3 s, a pause, and back up over a second, eased in and out. A scroll offset is a whole
+        // pixel, so the ends of the ease move a pixel every few frames (under a pixel a frame on average) rather than
+        // one a frame; each step is due half a millisecond before its frame so none slips into the next
+        const ys: number[] = [];
+        for (let k = 0; k <= 60; k++) {
           const t = k / 60;
-          const y = Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2));
-          const last = ys[k - 1]!;
-          ys.push(last >= end ? end : Math.min(end, Math.max(y, last + 1)));
+          ys.push(Math.round(end * (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)));
         }
         ys.forEach((y, k) => {
           w.game.hud.later(() => (list.scrollTop = y), 300 + k * (1000 / 60) - 0.5);

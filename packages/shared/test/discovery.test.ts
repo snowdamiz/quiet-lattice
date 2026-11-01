@@ -9,6 +9,7 @@ import {
   emptyPlates,
   hasPlate,
   nameSkeleton,
+  nameSkeletons,
   parseSiteKey,
   PLATES_MAX,
   platesSchema,
@@ -107,6 +108,82 @@ describe('the moderation filter', () => {
     expect(reason('Łódź')).toBeNull();
     expect(reason('Ħalcyon')).toBeNull();
     expect(nameSkeleton('Þor Æther Œuvre Ssß')).toBe('thoraetheroeuvressss');
+  });
+
+  it('reads 9 and 6 as g, and æ and œ as either spelling', () => {
+    for (const name of ['Ni99er', 'Ni99a', 'Fa99ot', 'Ni66er', 'Fæggøt', 'Fæggot', 'Ræpist']) {
+      expect(reason(name), name).toBe('blocked');
+      expect(reason(name.toUpperCase()), name.toUpperCase()).toBe('blocked');
+    }
+    expect(reason('Kepler 9')).toBeNull();
+    expect(reason('Site 66')).toBeNull();
+    expect(reason('Aether')).toBeNull();
+    expect(reason('Æther')).toBeNull();
+    expect(reason('Œuvre')).toBeNull();
+    expect(nameSkeletons('Fæggøt')).toEqual(['faeggot', 'faggot']);
+    expect(nameSkeletons('Straße')).toEqual(['strasse']);
+  });
+
+  it('refuses a reserved word split by separators', () => {
+    for (const name of ['Ad min', 'Ad-min Rock', 'Rock Ad min', "Ad'min", 'AD MIN', 'Mo derator', 'Staf f Rock', 'Syst em', 'Ad m1n']) {
+      expect(reason(name), name).toBe('reserved');
+    }
+    expect(reason('Ad min', { reserved: false })).toBeNull();
+    expect(reason('Admiral Rock')).toBeNull();
+    expect(reason('Ad Hoc')).toBeNull();
+  });
+
+  it('refuses a blocked word split by separators inside a longer name', () => {
+    for (const name of [
+      'Sh it Rock',
+      'Sh-it Moon',
+      'Co ck Rock',
+      'Cu nt Hill',
+      'Ra pe Rock',
+      'Na zi Moon',
+      'Se x Rock',
+      "Sh'it Rock",
+      'Big Sh1 t',
+      'Rock Ni ce Cu nt',
+    ]) {
+      expect(reason(name), name).toBe('blocked');
+    }
+    for (const name of ['Scunthorpe', 'Penistone', 'Sussex', 'Middlesex', 'Essex', 'Assisi', 'Se Xtant Rock']) {
+      expect(reason(name), name).toBeNull();
+    }
+  });
+
+  it('reads digits as letters for the blocked lists only', () => {
+    for (const name of ['Outpost 9M', 'Planet 6 M', 'Kepler 9 M', 'Cloud 9', 'Route 66', 'Area 69', 'Kepler 9', 'Site 66'])
+      expect(reason(name), name).toBeNull();
+    for (const name of ['Th3 C0unt', 'Ad m1n', 'D3v Rock', 'St4ff']) expect(reason(name), name).toBe('reserved');
+    expect(reason('Ni99er')).toBe('blocked');
+    expect(reason('S 3 x')).toBe('blocked');
+  });
+
+  it('refuses v for u and ph for f in blocked words', () => {
+    for (const name of ['Cvnt', 'Phuck', 'Fvck', 'Phvck', 'Phæggot', 'Phaggot', 'Slvt', 'Cv nt Hill', 'Ph uck Rock', 'Phuuck', 'Cvm']) {
+      expect(reason(name), name).toBe('blocked');
+    }
+    for (const name of ['Vega', 'Phoenix', 'Philadelphia', 'Alpha', 'Vulcan', 'Pharos', 'Devon', 'Phobos']) expect(reason(name), name).toBeNull();
+  });
+
+  it('refuses a third letter of a doubled one in a blocked word', () => {
+    for (const name of ['Niggger', 'Nigggger', 'Fagggot', 'Phagggot', 'Faggggot Rock', 'Ni ggg er', 'Asss', 'Asssss', 'Pisss', 'Pissss Moon']) {
+      expect(reason(name), name).toBe('blocked');
+    }
+    for (const name of ['As Rock', 'Pis', 'Pis Moon', 'Assen', 'Kassel', 'Passau', 'Essen', 'Vvardenfell', 'Ivvy', 'Pivvo'])
+      expect(reason(name), name).toBeNull();
+  });
+
+  it('refuses a doubled h in ph for f', () => {
+    for (const name of ['Phhuck', 'Phhag', 'Phhaggot', 'Pphuck', 'Phhhuuuck', 'Phhhagggot']) expect(reason(name), name).toBe('blocked');
+  });
+
+  it('reads 6 and 9 as g in a reserved name, but not in its words', () => {
+    for (const name of ['Ed9e', 'Ed6e', 'The Ed9e', 'Pa55a9e', 'Carto9rapher', 'Ul9ani']) expect(reason(name), name).toBe('reserved');
+    for (const name of ['Outpost 9M', 'Planet 6 M', 'Kepler 9 M']) expect(reason(name), name).toBeNull();
+    expect(reason('Ed9e', { reserved: false })).toBeNull();
   });
 
   it('refuses a letter it cannot read, so the letters it takes are the letters it reads', () => {
