@@ -28,6 +28,7 @@ import {
   type EntityState,
   type Pose,
   type Snapshot,
+  type WorldEventView,
 } from '../src/protocol/index.ts';
 // (its source, for the version history under PROTOCOL_VERSION: read through Vite's ?raw import, without Node types)
 import MESSAGES_SOURCE from '../src/protocol/messages.ts?raw';
@@ -68,7 +69,7 @@ const clientSamples: ClientMessage[] = [
   { t: 'hello', version: PROTOCOL_VERSION, token: 'jwt' },
   { t: 'join', characterId: 'c1' },
   { t: 'input', seq: 7, time: 12.5, mode: 'ship', pose, buttons: 3, aim: [0, 0, 0, 1] },
-  { t: 'cast', seq: 8, slot: 2, aim: [0, 0, -1], target: 12 },
+  { t: 'cast', seq: 8, time: 3600.5, node: 'pull', slot: 2, frame: '424242:3', aim: [0, 0, -1], target: 12 },
   { t: 'interact', target: 'terminal:3' },
   { t: 'chat', channel: 'system', text: 'hello' },
   { t: 'party', op: { op: 'invite', name: "Ana Vel'ka" } },
@@ -82,7 +83,8 @@ const clientSamples: ClientMessage[] = [
   { t: 'fire', seq: 4, time: 3600.75, frame: '424242:2', aim: [0, -0.6, -0.8] },
   { t: 'beacon', op: { op: 'answer', id: 3 } },
   { t: 'analyze', seq: 1, time: 3600.5, target: 12 },
-  { t: 'craft', seq: 2, op: { op: 'make', recipe: 'warp_cell', count: 3, at: 'station' } },
+  { t: 'craft', seq: 2, op: { op: 'make', recipe: 'warp_cell', count: 3, at: 'waystation' } },
+  { t: 'name', kind: 'site', key: '424242:3#17', name: "Vel'ka's Rest" },
 ];
 
 /** A character's quest state as the server sends it. */
@@ -138,6 +140,7 @@ const events: GameEvent[] = [
   { kind: 'party', what: 'invite', name: 'Ana' },
   { kind: 'rank', faction: 'compact', rank: 'hand', from: null },
   { kind: 'title', title: { title: 'Hand', faction: 'compact', rank: 'hand' } },
+  { kind: 'cast', caster: 5, node: 'pull', phase: 'cast', at: 3600.5, frame: '424242:3', aim: [0, 0, -1], target: 9 },
 ];
 
 /** A beacon as the shard lists it. */
@@ -156,13 +159,36 @@ const beacon = {
   until: 4200,
 } satisfies BeaconView;
 
+/** An event as its system hears of it. */
+const worldEvent = {
+  id: 7,
+  event: 'hollow_tide',
+  name: 'Hollow tide',
+  system: 812,
+  frame: '424242:3',
+  center: [1200, 6.4e6, -300],
+  radius: 600,
+  starts: 3600,
+  ends: 4800,
+} satisfies WorldEventView;
+
 const serverSamples: ServerMessage[] = [
   { t: 'welcome', accountId: 'a1', character, entityId: 5, serverTime: 3600.25, zone: { id: 'sys:0', systemSeed: 424242 }, pose, mode: 'docked' },
   { t: 'refused', code: 'version', reason: 'reload the page' },
   { t: 'correction', seq: 7, pose, mode: 'ship' },
   { t: 'zone', zone: { id: 'sys:1', systemSeed: 77 }, pose: { ...pose, frame: null } },
   { t: 'pong', id: 1, clientTime: 1000.5, serverTime: 3600.3 },
-  { t: 'world', season: 1, count: 500, edgeX: 2.5e6, tiers: [0, 0, 0, 1, 2], serverTime: 3600 },
+  {
+    t: 'world',
+    season: 2,
+    seasonStart: 4_838_400,
+    seasonEnd: 7_257_600,
+    opening: { from: 'broken', edgeShiftLy: -10, dark: [33, 44, 57] },
+    count: 500,
+    edgeX: 2.5e6,
+    tiers: [0, 0, 0, 1, 2],
+    serverTime: 3600,
+  },
   ...events.map((event) => ({ t: 'event' as const, event })),
   { t: 'inventory', seq: 3, inventory },
   { t: 'skills', seq: 4, skills },
@@ -196,6 +222,45 @@ const serverSamples: ServerMessage[] = [
   },
   { t: 'craft', seq: 2, op: 'make', recipe: 'flak_ammo', result: 'made', item: 'flak_ammo', count: 150 },
   { t: 'recipes', known: ['warp_cell', 'pulse_fuel_cell', 'torpedo'] },
+  { t: 'world_event', op: 'ended', event: worldEvent, outcome: 'completed' },
+  {
+    t: 'event_status',
+    id: 7,
+    phase: 3,
+    level: 12,
+    players: 12,
+    wave: 2,
+    waves: 5,
+    enemies: 9,
+    damage: 412.5,
+    objective: 0,
+    presence: 96.25,
+    share: 0.125,
+  },
+  {
+    t: 'event_reward',
+    id: 7,
+    outcome: 'completed',
+    share: 0.5,
+    xp: 4500,
+    level: 41,
+    units: 750,
+    items: [{ item: 'count_residue', count: 2 }],
+    rep: [{ faction: 'chorus', amount: 12 }],
+  },
+  {
+    t: 'discoveries',
+    system: 59,
+    reset: true,
+    entries: [
+      { kind: 'body', key: '424242:3', finder: "Ana Vel'ka", at: 3600.5, name: 'Halcyon' },
+      { kind: 'species', key: '424242:3/4', finder: 'Bo Tran', at: 3700, until: 4300 },
+      { kind: 'site', key: '424242:3#17', finder: 'Bo Tran', at: 3800 },
+    ],
+  },
+  { t: 'named', kind: 'site', key: '424242:3#17', result: 'refused', reason: 'lapsed' },
+  { t: 'cast', seq: 8, node: 'pull', slot: 2, result: 'refused', reason: 'cooldown', readyAt: 3610.5 },
+  { t: 'abilities', cooldowns: [{ node: 'pull', readyAt: 3610.5 }], on: ['lance'] },
   {
     t: 'reputation',
     reputation: {
@@ -208,6 +273,13 @@ const serverSamples: ServerMessage[] = [
         { title: 'Unlisted', quest: 'forty_names' },
       ],
     },
+  },
+  {
+    t: 'awards',
+    awards: [
+      { season: 1, bucket: 'fed', title: 'Seedbearer', glyph: 'season_1_fed' },
+      { season: 3, bucket: 'held', title: 'Keeper of the Middle', glyph: 'season_3_held' },
+    ],
   },
 ];
 
@@ -224,10 +296,11 @@ describe('protocol: version', () => {
   // attack field (P1.E08.T01); 5: the skill web (P1.E07.T01); 6: cutscenes (P1.E09.T04); 7: quests (P1.E09.T01); 8: mining
   // (P1.E13.T01); 9: reserved for meters, which merged as 15 (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid
   // beacons (P1.E15.T02); 12: analysis and the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation
-  // (P2.E18.T01); 15: meters (P1.E07.T02). A branch that changes a message bumps the version, adds its line to the history
-  // under PROTOCOL_VERSION and updates this.
-  it('is version 15, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(15);
+  // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01); 17: world events (P2.E21.T01); 18: seasons
+  // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03). A branch that changes a message bumps the
+  // version, adds its line to the history under PROTOCOL_VERSION and updates this.
+  it('is version 20, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(20);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);
@@ -350,8 +423,12 @@ describe('protocol: control messages', () => {
     const bad = [
       'not json',
       '{"t":"teleport","to":"anywhere"}',
-      '{"t":"cast","seq":1,"slot":9,"aim":[0,0,1]}',
-      '{"t":"cast","seq":1,"slot":1,"aim":[0,0,0]}',
+      '{"t":"cast","seq":1,"time":1,"node":"pull","slot":9,"frame":null,"aim":[0,0,1]}',
+      '{"t":"cast","seq":1,"time":1,"node":"pull","slot":1,"frame":null,"aim":[0,0,0]}',
+      '{"t":"cast","seq":0,"time":1,"node":"pull","slot":1,"frame":null,"aim":[0,0,1]}',
+      '{"t":"cast","seq":1,"time":1,"node":"Pull!","slot":1,"frame":null,"aim":[0,0,1]}',
+      '{"t":"cast","seq":1,"time":1,"node":"pull","slot":1,"frame":null,"aim":[0,0,1],"damage":1000}',
+      '{"t":"cast","seq":1,"slot":1,"aim":[0,0,1]}',
       '{"t":"interact","target":""}',
       '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":"../etc","pos":[0,0,0],"quat":[0,0,0,1],"vel":[0,0,0]},"buttons":0}',
       '{"t":"input","seq":1,"time":0,"mode":"ship","pose":{"frame":null,"pos":[0,0,0],"quat":[0,0,0,0],"vel":[0,0,0]},"buttons":0}',
@@ -399,7 +476,43 @@ describe('protocol: control messages', () => {
       '{"t":"skills","seq":1,"op":{"op":"unlock","node":"pull","via":"trainer"}}',
     ];
     for (const b of bad) expect(decodeClientMessage(b), b.slice(0, 80)).toBeNull();
-    expect(decodeServerMessage('{"t":"world","season":1,"count":5000,"edgeX":0,"tiers":[],"serverTime":0}')).toBeNull();
+    const world = {
+      t: 'world',
+      season: 1,
+      seasonStart: 0,
+      seasonEnd: 2_419_200,
+      opening: { from: null, edgeShiftLy: 0, dark: [] },
+      count: 500,
+      edgeX: 0,
+      tiers: [],
+      serverTime: 0,
+    };
+    expect(decodeServerMessage(JSON.stringify(world))).toEqual(world);
+    for (const bad of [
+      { count: 5000 },
+      { season: 0 },
+      { seasonStart: undefined },
+      { opening: { from: 'lost', edgeShiftLy: 0, dark: [] } },
+      { opening: { from: 'broken', edgeShiftLy: -10, dark: [3, 3] } },
+      { opening: { from: 'broken', edgeShiftLy: -10, dark: [1, 2, 3, 4] } },
+      { opening: { from: null, edgeShiftLy: 0, dark: [], extra: 1 } },
+    ]) {
+      expect(decodeServerMessage(JSON.stringify({ ...world, ...bad })), JSON.stringify(bad)).toBeNull();
+    }
+    // season awards: one a season, oldest first, a known bucket, a glyph id that names its season and bucket
+    const award = { season: 2, bucket: 'broken', title: 'Anchorbreaker', glyph: 'season_2_broken' };
+    expect(decodeServerMessage(JSON.stringify({ t: 'awards', awards: [award] }))).toEqual({ t: 'awards', awards: [award] });
+    for (const awards of [
+      [award, award],
+      [award, { ...award, season: 1, glyph: 'season_1_broken' }],
+      [{ ...award, bucket: 'lost' }],
+      [{ ...award, glyph: 'season_0_broken' }],
+      [{ ...award, title: 'x'.repeat(49) }],
+      [{ ...award, title: 'Anchor\u202ebreaker' }],
+      [{ ...award, worn: true }],
+    ]) {
+      expect(decodeServerMessage(JSON.stringify({ t: 'awards', awards })), JSON.stringify(awards)).toBeNull();
+    }
     // party state: two to PARTY_MAX members, a leader among them, coarse health, a system index
     const member = { name: 'Ana', online: true, system: 0, health: 10 };
     for (const party of [

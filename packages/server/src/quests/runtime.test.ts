@@ -9,6 +9,8 @@
 // included; and reputation and titles go to their hooks with their quest (settled from owed on join, once), and rank
 // prerequisites read the rank hook (P2.E18.T01).
 import { totalXpFor } from '@astra/shared/combat';
+import { learn, STARTING_RECIPES } from '@astra/shared/crafting';
+import { recipeItemId } from '@astra/shared/data';
 import { countOf } from '@astra/shared/inventory';
 import {
   BELOST_SYSTEM,
@@ -362,6 +364,23 @@ describe('quest runtime', () => {
       w.runtime.request(p.id, 2 * i + 2, { op: 'abandon', quest: 'farm' });
     }
     expect(w.inventory.get(p.id)!.units - before).toBe(100);
+  });
+
+  it('a chain’s reward can be a recipe item (DESIGN 15.7: recipes rewarded by chains), which the character then holds to learn', () => {
+    const w = world([
+      quest('faction_job', [{ id: 'a', type: 'interact', text: 'x', target: 'npc:a' }], {
+        rewards: { items: [{ item: recipeItemId('beam_lance'), count: 1 }] },
+      }),
+    ]);
+    const p = w.join();
+    w.runtime.offer(p.id, 'faction_job');
+    w.runtime.request(p.id, 1, { op: 'accept', quest: 'faction_job' });
+    w.runtime.event(p.id, { type: 'interact', target: 'npc:a' });
+    expect(p.book().done.faction_job).toMatchObject({ n: 1 });
+    const inv = w.inventory.get(p.id)!;
+    expect(countOf(inv, 'recipe_beam_lance')).toBe(1);
+    const lesson = learn(inv, { known: [...STARTING_RECIPES] }, 'beam_lance');
+    expect(lesson.ok && lesson.known.known).toContain('beam_lance');
   });
 
   it('grants XP by levels’ worth at the quest’s tier, levelling the character, its entity and the skill view, and holds items that do not fit as owed', () => {

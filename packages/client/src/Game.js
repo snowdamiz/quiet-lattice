@@ -34,11 +34,13 @@ import { collectResources, disposeTree } from './core/dispose.js';
 import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
+import { Abilities, CAST_KEYS, castBar, castIntent, playAbilityFx } from './net/abilities.js';
 import { Crafting } from './net/crafting.js';
 import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
 import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
+import { RemoteEntities } from './remote/RemoteEntities.js';
 
 const _v1 = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -46,6 +48,7 @@ const _v3 = new THREE.Vector3();
 const _v4 = new THREE.Vector3();
 const _v5 = new THREE.Vector3();
 const _v6 = new THREE.Vector3();
+const _viewer = new THREE.Vector3();
 const _q1 = new THREE.Quaternion();
 const _c1 = new THREE.Color();
 const _m4 = new THREE.Matrix4();
@@ -109,6 +112,9 @@ export class Game {
     this.timeBase = 0;
     // the connection to the server, once a character is picked (enterWorld); none on the title or in the dev sandbox
     this.net = null;
+    // the action bars and their cooldowns as the server says, the casts keys 1–6 send, and the effects of those seen
+    this.abilities = new Abilities({ now: () => this.hud.now() });
+    this.abilities.listen((e) => playAbilityFx(this, e));
     this.camWorld = new THREE.Vector3();
     this.camWorldQuat = new THREE.Quaternion();
     this.camWorldQuatInv = new THREE.Quaternion();
@@ -142,6 +148,9 @@ export class Game {
     this.cities = new Cities(this);
     this.asteroids = new Asteroids(this);
     this.engine.scene.add(this.asteroids.group);
+    // other players and the server's ships, from the zone's snapshots (src/remote/)
+    this.remotes = new RemoteEntities(this);
+    this.engine.scene.add(this.remotes.group);
 
     this.weather = new Weather(this);
     this.objectives = new ObjectiveLine(this);
@@ -357,8 +366,12 @@ export class Game {
     old?.close();
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id }));
     net.input = () => this.inputSample();
+    this.remotes.attach(net);
+    // (a world event's banner names the world it is on)
+    net.worldEvents.worldName = (frame) => frameOfId(this.system, this.station, frame)?.name ?? null;
     this.inventory.send = (m) => net.send(m);
     this.crafting?.link(net);
+    this.abilities.link(net);
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
@@ -396,6 +409,7 @@ export class Game {
     if (net.everJoined) return this.leaveWorld(reason);
     this.net = null;
     this.inventory.send = null;
+    this.abilities.link(null);
     this.hud.social.attach(null);
     onFail?.(reason, refusal?.code ?? null);
   }
@@ -733,6 +747,14 @@ export class Game {
   }
 
   // ---------- gameplay interactions ----------
+  // Keys 1–6 cast the ground bar's actives on foot and 1–5 the ship bar's in flight, as many as the hull has slots
+  // (DESIGN 9.1); LMB stays the multitool's beam and the ship's guns. The server decides every cast (net/abilities.js).
+  castKeys() {
+    const bar = this.net?.joined ? castBar(this) : null;
+    if (!bar) return;
+    for (let i = 0; i < this.abilities.count(bar); i++) if (this.input.hit(CAST_KEYS[i])) this.abilities.cast(bar, i, castIntent(this, bar));
+  }
+
   handleInteractions() {
     const inp = this.input;
     const ship = this.ship;
@@ -766,7 +788,7 @@ export class Game {
           if (p.state.pos.distanceTo(t.pos) < 3.2) {
             prompt = `<kbd>E</kbd>${t.label}`;
             // (the fabricator terminal opens the Waystation's fabricator; the others the trade panel)
-            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('station') : this.menus.openTrade(t.label);
+            if (inp.hit('KeyE')) t.fabricator ? this.fabricator.open('waystation') : this.menus.openTrade(t.label);
           }
         }
       }
@@ -811,6 +833,7 @@ export class Game {
       }
       if (inp.hit('KeyC')) this.scan();
     }
+    this.castKeys();
     if (inp.hit('KeyM')) this.menus.openMap();
     if (inp.hit('KeyI')) this.menus.openInventory();
     if (inp.hit('KeyK')) this.openFabricator();
@@ -837,7 +860,7 @@ export class Game {
   openFabricator() {
     const ship = this.ship;
     let at = null;
-    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'station' : 'ship';
+    if (this.mode === 'ship') at = ship.mode === 'landed' && ship.state.frame === this.station ? 'waystation' : 'ship';
     else if (this.mode === 'foot' && ship.state.frame === this.player.state.frame && this.player.state.pos.distanceTo(ship.state.pos) < 12) at = 'ship';
     if (at) return this.fabricator.open(at);
     this.hud.toast("No fabricator here: board the ship, or use a Waystation's terminal", 'warn');
@@ -997,13 +1020,15 @@ export class Game {
   }
 
   // The server's answer to an analysis: a first one shows the species as the codex now holds it and the XP it earned, a
-  // known one says so, a refused one says why.
+  // known one says so, a refused one says why. The species goes by the name its first finder gave it, if it has one
+  // (DESIGN 14.5; net.discoveries), else by its procedural name.
   onAnalyze(m) {
     const s = m.species;
+    const name = s && (this.net?.discoveries.displayName('species', s.key, s.name) ?? s.name);
     if (m.result === 'new') {
       this.audio.play('discovery');
-      this.hud.showBanner(s.name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
-    } else if (m.result === 'known') this.hud.toast(`${s.name} · in your codex`);
+      this.hud.showBanner(name.toUpperCase(), 'New Species Analyzed', [codexLine(s), bondLine(s), `+${m.xp} XP`]);
+    } else if (m.result === 'known') this.hud.toast(`${name} · in your codex`);
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
@@ -1100,8 +1125,6 @@ export class Game {
       else if (f.isGas) lines.push('Warning: not landable');
       this.hud.showBanner(f.name.toUpperCase(), `${p.label}${f.kind === 'moon' ? ' Moon' : ' Planet'}`, lines);
       this.audio.play('discovery');
-      const reward = 250 + Math.floor(Math.random() * 400);
-      this.inventory.units += reward;
     }
   }
 
@@ -1158,6 +1181,12 @@ export class Game {
         for (const t of f.terminals) add('station', t.label, f.localToWorld(_v3.copy(t.pos).add(new THREE.Vector3(0, 2, 0)), new THREE.Vector3()));
       }
     }
+    // other pilots' ships, picked up by the same rule as any ship (src/remote/), each marked on its bounds on screen, its
+    // range the sensors' (from the ship, or the pilot on foot), not the camera's
+    const viewer = (this.mode === 'foot' ? this.player.state : this.ship.state).worldPosition(_viewer);
+    this.remotes.markers(viewer, sensorRange('ship', this.ship.stats.scanRange), (name, world, box, quat, id) =>
+      add('player', name, world, { box, quat, id, dist: world.distanceTo(viewer) }),
+    );
     return out;
   }
 
@@ -1248,6 +1277,7 @@ export class Game {
     this.pirates.syncVisual();
     this.ship.syncVisual(this.camWorld);
     this.ship.group.visible = true;
+    this.remotes.update(dt);
     this.flora.update(dt, current);
     this.fauna.update(dt, current);
     this.structures.update(dt, current);

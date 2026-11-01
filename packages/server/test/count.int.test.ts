@@ -71,7 +71,7 @@ describe('the Count meter', () => {
 
     // day 11, 01:00: day 10's five burns take 500 to 495, then its all-Feed lean drifts it 25 toward 850
     hours(24);
-    expect(first.advance()).toEqual({ days: 1, burns: 5 });
+    expect(first.advance()).toEqual({ days: 1, burns: 5, seasons: 0 });
     expect(first.state().count).toBe(520);
     await first.flush();
     expect(await shardRow(shard)).toMatchObject({ count: 520, countDay: 10, burnStep: 55 });
@@ -97,7 +97,7 @@ describe('the Count meter', () => {
 
     // day 12, 05:00: four burns to 515, day 11's drift of 25 toward 383 to 490, and the 04:48 burn to 489
     hours(24);
-    expect(second.advance()).toEqual({ days: 1, burns: 5 });
+    expect(second.advance()).toEqual({ days: 1, burns: 5, seasons: 0 });
     expect(second.state().count).toBe(489);
     await second.flush();
     expect(await shardRow(shard)).toMatchObject({ count: 489, countDay: 11, burnStep: 61 });

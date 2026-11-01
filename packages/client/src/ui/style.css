@@ -275,6 +275,223 @@ body {
   stroke-dashoffset: 0.07;
   opacity: 0;
 }
+/* a cast's cost while it eases on (heat) or off (Charge): its part of the fill drawn brighter in the gauge's own colour */
+.gauge .chunk {
+  stroke-dasharray: 0 2;
+  opacity: 0;
+}
+.crosshair .gauge .chunk {
+  stroke-width: 7;
+}
+.ship-reticle .gauge .chunk {
+  stroke-width: 2.7;
+}
+.gauge .k-heat {
+  stroke: #ffdfae;
+}
+.gauge.hot .k-heat {
+  stroke: #ffc98a;
+}
+.gauge .k-charge {
+  stroke: #e6d9ff;
+}
+
+/* ---------- the ability bar (keys 1–6 on foot, 1–5 in flight) ----------
+   A ring a slot in the arcs' language: a near-black halo, an opaque track, and the bar's colour (heat's warm on foot,
+   the flight deck's warm white in flight: lilac is Charge's alone, art bible §4) drawn round it from the top, full when
+   the slot is ready and drawn back up as its cooldown runs out, the seconds left in its colour in place of the key. 34 px rings in 80 px slots (the longest names, INERTIAL
+   BRAKE and REPAIR DRONES, fit under them), so the bar sits under the prompt at 720p too. */
+.abilities {
+  --ab: var(--warm);
+  /* a slot's width and the gap between slots (the refusal plate is placed by them) */
+  --ab-w: 80px;
+  --ab-gap: 4px;
+  /* the flare's and the ready beat's brightness at their start: brighter warm, never clipped to white */
+  --ab-flare: 1.4;
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.4s ease-in;
+}
+.abilities[data-bar='ship'] {
+  --ab: var(--text);
+  /* (warm white has no headroom: any more and it clips to white) */
+  --ab-flare: 1.08;
+}
+.abilities.on {
+  opacity: 1;
+  transition: opacity 0.15s ease-out;
+}
+/* nothing on it moved for a while: out of the way, still readable */
+.abilities.on.rest {
+  opacity: 0.55;
+  transition: opacity 0.8s ease-in-out;
+}
+.ab-row {
+  display: flex;
+  gap: var(--ab-gap);
+}
+.ab-slot {
+  position: relative;
+  width: var(--ab-w);
+  height: 48px;
+}
+.ab-slot svg {
+  position: absolute;
+  left: 23px;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+.ab-slot circle {
+  fill: none;
+}
+.ab-slot .halo {
+  stroke: var(--ink);
+  stroke-opacity: 0.92;
+  stroke-width: 7.5;
+  /* (a near-opaque disc inside the ring: the key and the seconds hold over sunlit ground) */
+  fill: var(--ink);
+  fill-opacity: 0.74;
+}
+.ab-slot .track {
+  stroke: #3b3e44;
+  stroke-width: 3;
+  transition: stroke 0.3s ease-out;
+}
+.ab-slot .sweep {
+  stroke: var(--ab);
+  stroke-width: 3;
+  stroke-linecap: butt;
+  stroke-dasharray: 1 2;
+  /* (the server's clock moves it every frame: a short linear catch-up, as the gauges' fills) */
+  transition: stroke-dashoffset 0.15s linear, stroke 0.3s ease-out, stroke-width 0.2s ease-out;
+}
+.ab-slot.cooling .sweep {
+  stroke-opacity: 0.8;
+}
+.ab-slot.empty .sweep {
+  stroke-opacity: 0;
+}
+.ab-slot.empty {
+  opacity: 0.4;
+}
+/* a toggle that is on: the ring thickens in its colour, the key in it too */
+.ab-slot.lit .sweep {
+  stroke-width: 4.5;
+}
+.ab-slot.lit .ab-key {
+  color: var(--ab);
+}
+/* refused: the track edged in danger red while the reason shows */
+.ab-slot.refused .track {
+  stroke: var(--danger);
+}
+.ab-slot.refused .sweep {
+  stroke-opacity: 0.35;
+}
+/* the server took the cast: the ring flares and settles, its brightness on the same ease-out as its size (the HUD's
+   cubic) */
+.ab-slot.cast svg {
+  animation: abCast 0.36s cubic-bezier(0.33, 1, 0.68, 1);
+}
+@keyframes abCast {
+  from {
+    transform: rotate(-90deg) scale(1.22);
+    filter: brightness(var(--ab-flare));
+  }
+}
+/* its cooldown ran out: the ring and its key brighten for a beat */
+.ab-slot.ready svg,
+.ab-slot.ready .ab-key {
+  animation: abReady 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.ab-slot.ready svg {
+  animation-name: abReadyRing;
+}
+@keyframes abReadyRing {
+  from {
+    transform: rotate(-90deg) scale(1.1);
+    filter: brightness(var(--ab-flare));
+  }
+}
+@keyframes abReady {
+  from {
+    filter: brightness(var(--ab-flare));
+  }
+}
+.ab-key {
+  position: absolute;
+  left: 23px;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-cond);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  transition: color 0.3s ease-out;
+}
+/* (the seconds left, in the bar's colour: a timer, never read as a key) */
+.ab-slot.cooling .ab-key {
+  color: var(--ab);
+  font-size: 15px;
+}
+.ab-name {
+  position: absolute;
+  left: 50%;
+  top: 37px;
+  transform: translateX(-50%);
+  font-family: var(--font-cond);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(233, 231, 226, 0.78);
+  transition: opacity 0.25s ease-out;
+}
+/* at rest the rings alone: the names come back as the bar wakes */
+.abilities.rest .ab-name {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+/* why the server refused a cast: the lockout word's plate, over the refused slot's ring (HUD.updateAbilities sets its
+   index, --why-i) */
+.ab-why {
+  position: absolute;
+  left: calc(var(--why-i, 0) * (var(--ab-w) + var(--ab-gap)) + var(--ab-w) / 2);
+  bottom: calc(100% + 4px);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  padding: 5px calc(8px - 0.22em) 5px 8px;
+  color: #ff8a80;
+  background: rgba(6, 8, 11, 0.82);
+  border-left: 2px solid var(--danger);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.25s ease-out, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ab-why.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 /* ---------- ship reticle ---------- */
 .ship-reticle {
@@ -682,7 +899,7 @@ body {
   opacity: 0;
 }
 .banner.show {
-  animation: banner 7s ease-in-out forwards;
+  animation: banner var(--banner-ms) ease-in-out forwards;
 }
 .banner .b-sub {
   font-family: var(--font-cond);
@@ -921,6 +1138,59 @@ body {
 }
 .marker.poi .icon {
   border-color: #c7a6ff;
+}
+/* another pilot's ship: a small teal diamond over its canopy, its name in the condensed face and the range under it */
+/* other pilots: warm white inside a sharp 2 px dark ring (4.5:1 and more over any sky, ground or hull), at sizes the
+   condensed face holds solid; HUD.js places the mark over the ship and the label beside the mark, and fades both in and
+   out (FADE_MS) */
+.marker.player {
+  transition: opacity 0.15s linear;
+}
+.marker.player.out {
+  opacity: 0;
+}
+.marker.player .icon {
+  width: 6px;
+  height: 6px;
+  margin: -3px;
+  border-width: 1px;
+  border-color: var(--accent2);
+  box-shadow:
+    0 0 0 1px #0b0c0e,
+    inset 0 0 0 1px #0b0c0e;
+}
+.marker.player .lbl {
+  left: 8px;
+  top: -9px;
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #e9e7e2;
+  transition: opacity 0.15s linear;
+  text-shadow:
+    1px 0 0 #0b0c0e,
+    -1px 0 0 #0b0c0e,
+    0 1px 0 #0b0c0e,
+    0 -1px 0 #0b0c0e,
+    1px 1px 0 #0b0c0e,
+    -1px -1px 0 #0b0c0e,
+    1px -1px 0 #0b0c0e,
+    -1px 1px 0 #0b0c0e,
+    2px 0 0 #0b0c0e,
+    -2px 0 0 #0b0c0e,
+    0 2px 0 #0b0c0e,
+    0 -2px 0 #0b0c0e;
+}
+.marker.player .lbl.out {
+  opacity: 0;
+}
+.marker.player .lbl small {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 15px;
+  color: #e9e7e2;
 }
 .marker.resource .icon {
   width: 6px;
@@ -3730,12 +4000,14 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .r-mode, .location, .bar label {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.25);
 }
-/* the flight readouts (speed, altitude, Charge), unplated, are outlined: a solid 2 px near-black ring under every glyph
-   (unblurred shadows a pixel and two out, all round), softened past it, so figures, labels and rates hold 4.5:1 on any
-   ground, a bright world's limb or a sunlit sky */
+/* the flight readouts (speed, altitude, Charge) and the ability bar's keys and names, unplated, are outlined: a solid 2 px
+   near-black ring under every glyph (unblurred shadows a pixel and two out, all round), softened past it, so figures,
+   labels and rates hold 4.5:1 on any ground, a bright world's limb or a sunlit sky */
 .r-speed,
 .r-alt,
-.r-chg {
+.r-chg,
+.ab-key,
+.ab-name {
   --ring: #0b0c0e;
   text-shadow:
     2px 0 0 var(--ring),
@@ -3829,21 +4101,13 @@ input[type='range'].range:hover::-webkit-slider-thumb {
     color-mix(in srgb, var(--ink) 45%, transparent) 265px,
     transparent 330px
   );
+  transition: opacity var(--banner-out-ms) ease-in-out;
 }
+/* a transition and not a keyframed run, so a banner that follows another leaves it lit (ui/banners.js lets it go as the
+   last one's text starts to fade out) */
 .hud-band.show {
-  animation: hudBand 7s ease-in-out forwards;
-}
-@keyframes hudBand {
-  0% {
-    opacity: 0;
-  }
-  10%,
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  opacity: 1;
+  transition-duration: var(--banner-in-ms);
 }
 
 /* ---------- dev teleporter (F2, dev builds only) ---------- */
@@ -4113,6 +4377,12 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   --sc-plate: rgb(from var(--plate) r g b);
   --sc-plate-2: rgb(from var(--plate-2) r g b);
   --sc-refused: color-mix(in srgb, var(--danger) 45%, var(--text));
+  /* (the 9.5 px mono caps tags, whose thin strokes measure a notch under the colour they are set in: lifted from --dim) */
+  --sc-caps: rgba(233, 231, 226, 0.88);
+  /* (the beacon rows' small meta lines: --dim's 0.64 leaves their thin strokes near 5:1, so they are held a notch above it) */
+  --sc-meta: rgba(233, 231, 226, 0.74);
+  /* (a read of the page's layout in here, which the panels' moves make, lays out these boxes and not the page round them) */
+  contain: layout style;
 }
 .social-chat .sizing,
 .social-side .sizing {
@@ -4428,7 +4698,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
 }
 /* muted, or told to slow down: the hint says so in the refusals' colour, with their mark */
 .sc-hint.warn {
@@ -4490,7 +4760,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   grid-column: 1;
   font-size: 13px;
   line-height: 17px;
-  color: var(--dim);
+  color: var(--sc-meta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4570,7 +4840,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   line-height: 15px;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
-  color: var(--dim);
+  color: var(--sc-meta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4694,7 +4964,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
   white-space: nowrap;
 }
 .sp-act {
@@ -4704,7 +4974,7 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--sc-caps);
   background: transparent;
   border: 1px solid var(--line-2);
   cursor: pointer;

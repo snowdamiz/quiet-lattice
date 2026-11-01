@@ -1,18 +1,22 @@
 // A shard's row in Postgres (`shards`, docs/ARCHITECTURE.md §3): its epoch, the latest world time its server saved, its
-// season (DESIGN 16.4) and its Count (DESIGN 16.1, §11). The row is created the first time a server boots the shard and
-// only read after that, so the epoch and the season survive restarts; the saved time is only ever raised. The Count
-// meter's votes and rolls are kept beside it (count/store.ts).
+// season (DESIGN 16.4, §27: number, start, length, the mean daily actives the length was chosen from, the map it opened
+// with) and its Count (DESIGN 16.1, §11). The row is created the first time a server boots the shard; after that the
+// meter's saves move its Count and season on, so the epoch and the season survive restarts; the saved time is only ever
+// raised. The Count meter's votes and rolls, the daily actives and the seasons' chronicles are kept beside it
+// (count/store.ts, seasons/store.ts).
+import { SEASON_LENGTH_S, seasonOpening, seasonOpeningSchema, type SeasonOpening } from '@astra/shared/seasons';
 import { eq, sql } from 'drizzle-orm';
 import { COUNT_START } from '../count/meter.ts';
 import { pgCountStore, type CountStore } from '../count/store.ts';
 import type { Db } from '../db/client.ts';
 import { shards } from '../db/schema.ts';
+import type { FindsLog, FirstFinds } from '../seasons/store.ts';
 import { DEFAULT_SHARD_EPOCH_MS } from './clock.ts';
 
 /** The one shard of Phase 1 (one shard per region comes with P3.E37). */
 export const DEFAULT_SHARD_ID = 'main';
-/** A season's default length (DESIGN 16.4): eight weeks, in seconds. */
-export const SEASON_LENGTH_S = 8 * 7 * 86_400;
+/** A season's default length (DESIGN 16.4): eight weeks, in seconds. The first season takes it. */
+export { SEASON_LENGTH_S };
 
 export interface ShardRecord {
   id: string;
@@ -25,6 +29,10 @@ export interface ShardRecord {
   seasonStart: number;
   /** The season's length (s). */
   seasonLength: number;
+  /** The mean daily actives the season's length was chosen from; null for the first season (the default length). */
+  seasonActives: number | null;
+  /** The map the season opened with (DESIGN 16.4). */
+  seasonOpening: SeasonOpening;
   /** The Count, in whole measures. */
   count: number;
   /** The last meter day rolled into the Count; null until the meter first runs. */
@@ -52,11 +60,24 @@ function worldTimeAt(wallMs: number, epochMs: number): number {
 /** A first boot's record for shard `id`. */
 export function newShardRecord(id: string, epochMs: number, wallMs: number): ShardRecord {
   const now = worldTimeAt(wallMs, epochMs);
-  return { id, epochMs, lastTime: now, season: 1, seasonStart: now, seasonLength: SEASON_LENGTH_S, count: COUNT_START, countDay: null, burnStep: null };
+  return {
+    id,
+    epochMs,
+    lastTime: now,
+    season: 1,
+    seasonStart: now,
+    seasonLength: SEASON_LENGTH_S,
+    seasonActives: null,
+    seasonOpening: seasonOpening(null, 1),
+    count: COUNT_START,
+    countDay: null,
+    burnStep: null,
+  };
 }
 
-/** Shard `id`'s row in Postgres. `epochMs` and `wallNow` only shape the row a first boot creates. */
-export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallNow?: () => number } = {}): ShardStore {
+/** Shard `id`'s row in Postgres. `epochMs` and `wallNow` only shape the row a first boot creates; `firstFinds` names a
+ * season's notable first finds in its chronicle (§25, §27) and `log` hears the ones it drops. */
+export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallNow?: () => number; firstFinds?: FirstFinds; log?: FindsLog } = {}): ShardStore {
   return {
     id,
     async load() {
@@ -82,6 +103,8 @@ export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallN
         season: row.season,
         seasonStart: row.seasonStart,
         seasonLength: row.seasonLength,
+        seasonActives: row.seasonActives,
+        seasonOpening: seasonOpeningSchema.parse(row.seasonOpening),
         count: row.count,
         countDay: row.countDay,
         burnStep: row.burnStep,
@@ -94,6 +117,6 @@ export function pgShardStore(db: Db, id: string, opts: { epochMs?: number; wallN
         .set({ lastTime: sql`greatest(${shards.lastTime}, ${time}::double precision)` })
         .where(eq(shards.id, id));
     },
-    count: pgCountStore(db, id),
+    count: pgCountStore(db, id, { firstFinds: opts.firstFinds, log: opts.log }),
   };
 }

@@ -16,8 +16,8 @@ function el(tag, cls, parent, html) {
 }
 
 const KEYS = [
-  ['Starship', [['Steer', ['Mouse']], ['Throttle up · down', ['W', 'S']], ['Roll · strafe when hovering', ['A', 'D']], ['Thrusters up · down', ['Space', 'C']], ['Boost', ['Shift']], ['Pulse drive', ['J']], ['Land · take off', ['E']], ['Exit ship', ['F']], ['Lasers', ['LMB']], ['Camera view', ['V']], ['Look back', ['B']]]],
-  ['On foot', [['Move', ['W', 'A', 'S', 'D']], ['Sprint', ['Shift']], ['Jump · jetpack', ['Space']], ['Mining beam', ['LMB']], ['Scanner pulse', ['C']], ['Interact · analyze', ['E']], ['Board ship', ['F']]]],
+  ['Starship', [['Steer', ['Mouse']], ['Throttle up · down', ['W', 'S']], ['Roll · strafe when hovering', ['A', 'D']], ['Thrusters up · down', ['Space', 'C']], ['Boost', ['Shift']], ['Pulse drive', ['J']], ['Land · take off', ['E']], ['Exit ship', ['F']], ['Lasers', ['LMB']], ['Ship abilities', ['1–5']], ['Camera view', ['V']], ['Look back', ['B']]]],
+  ['On foot', [['Move', ['W', 'A', 'S', 'D']], ['Sprint', ['Shift']], ['Jump · jetpack', ['Space']], ['Mining beam', ['LMB']], ['Abilities', ['1–6']], ['Scanner pulse', ['C']], ['Interact · analyze', ['E']], ['Board ship', ['F']]]],
   ['General', [['Inventory', ['I']], ['Navigation map', ['M']], ['Chat · a command', ['Enter', '/']], ['Next chat tab', ['Tab']], ['Controls', ['H']], ['Release mouse', ['Esc']], ['Debug stats', ['`']]]],
 ];
 

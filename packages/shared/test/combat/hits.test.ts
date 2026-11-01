@@ -1,6 +1,6 @@
 // Hit shapes (DESIGN 12.1, 9): rays, cones and spheres against hit radii, nearest first.
 import { describe, expect, it } from 'vitest';
-import { coneHits, hitTest, rayHits, shapeOfNode, sphereHits } from '../../src/combat/index.ts';
+import { coneHits, creatureSphere, HIT_SLACK_M, hitTest, rayHits, shapeOfNode, sphereHits } from '../../src/combat/index.ts';
 import type { HitTarget, V3 } from '../../src/combat/index.ts';
 
 const O: V3 = [0, 0, 0];
@@ -187,5 +187,19 @@ describe('hitTest', () => {
   it('needs an aim for rays and cones', () => {
     expect(() => hitTest({ kind: 'ray', range: 30 }, { origin: O }, [])).toThrow(RangeError);
     expect(() => hitTest({ kind: 'cone', halfAngleDeg: 30, range: 12 }, { origin: O, dir: [0, 0, 0] }, [])).toThrow(RangeError);
+  });
+});
+
+describe("a creature's hit sphere", () => {
+  it("puts a walker's round its body and a flyer's on it, sized by the animal, with slack", () => {
+    const pos: V3 = [0, 1000, 0];
+    const walker = creatureSphere({ pos, scale: 1, species: { size: 2, kind: 'quad' } });
+    expect(walker.radius).toBeCloseTo(2 * 0.6 + HIT_SLACK_M, 9);
+    expect(walker.pos[1]).toBeCloseTo(1001, 9);
+    const big = creatureSphere({ pos, scale: 1.5, species: { size: 2, kind: 'quad' } });
+    expect(big.radius).toBeCloseTo(3 * 0.6 + HIT_SLACK_M, 9);
+    expect(big.pos[1]).toBeCloseTo(1001.5, 9);
+    const flyer = creatureSphere({ pos, scale: 1, species: { size: 2, kind: 'flyer' } });
+    expect(flyer.pos).toEqual(pos);
   });
 });

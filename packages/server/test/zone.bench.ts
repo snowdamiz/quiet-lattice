@@ -41,19 +41,33 @@
 // as they thin out. Each tick's cost is the zone's step (its combat's corpses and events included) plus the shots that
 // arrived for it, each resolved by the combat service (its own share is reported as combatCpu*).
 //
+// The event trial (P2.E21.T01): 15 sessions on foot at a world event's place on a world of the home system at a Tier 3
+// system's fauna, so its instancing puts 12 in one instance and 3 in another, each fighting its own waves (the Hollow
+// tide's shape, scaled to each instance's players: the 12's waves are larger and their creatures tougher), every player
+// hitting an enemy of its own instance at the base gun's rate through the zone's damage path. Each tick's cost is the
+// zone's step plus the hits and, every SWEEP_MS, the event service's sweep (placement, presence, waves, statuses; its
+// own share and the hits' are reported as eventCpu*); an occurrence whose waves are all cleared is followed by another.
+//
 // The gate is the main thread's CPU time per tick: the tick's own cost, which preemption by other processes on a shared
 // machine does not inflate (and in the station trial, the tick with its 25 players' input checks). Wall time per tick is
-// printed beside it for information, with the load average.
+// printed beside it for information, with the load average. Even CPU time stretches on a machine running far more
+// processes than it has cores (cache and memory contention, SMT siblings), so a budget is judged only when the 1-minute
+// load average, read before and after the trial, is at most MAX_LOAD_PER_CPU times the CPU count; above it the budget
+// checks are reported as skipped, with the load, and do not fail the run. A bug that is not about the budget (honest
+// inputs corrected, a missing entity) still fails at any load.
 import { cpus, loadavg } from 'node:os';
 import { STATION_LAYOUT } from '@astra/shared/data';
+import { getEvent } from '@astra/shared/events';
 import { encodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
 import { frameId, frameIdOf, nodeCellsNear, nodeKey, scatterNodes, Random, systemPoses, type PlanetParams, type Tier } from '@astra/shared/world';
 import type { Vec3 as Dir } from '../src/fauna/cells.ts';
 import { tangents } from '../src/fauna/herds.ts';
 import { MAX_CREATURES } from '../src/fauna/sim.ts';
 import { nextTime } from '../src/fauna/sky.ts';
-import { densOf, Ground, groundOf, groundPlanner, planPads } from '../src/fauna/terrain.ts';
+import { densOf, Ground, groundOf, groundPlanner, planHere, planPads } from '../src/fauna/terrain.ts';
 import { CombatService } from '../src/combat/service.ts';
+import { along as alongGround } from '../src/events/place.ts';
+import { EventService, SWEEP_MS as EVENT_SWEEP_MS } from '../src/events/service.ts';
 import { InventoryService } from '../src/inventory/service.ts';
 import { CharacterProgress } from '../src/persistence/components.ts';
 import { nodeGroundsHere } from '../src/resources/ground.ts';
@@ -71,6 +85,10 @@ const SESSIONS = 25;
 const WARMUP_TICKS = 300;
 const TICKS = 2000;
 const BUDGET_P95_MS = 10;
+/** Budgets are judged only while the 1-minute load average is at most this many times the CPU count (BENCH_MAX_LOAD
+ * sets the load itself, to judge on a loaded machine anyway). */
+const MAX_LOAD_PER_CPU = 2;
+const MAX_LOAD = Number(process.env.BENCH_MAX_LOAD) || MAX_LOAD_PER_CPU * cpus().length;
 /** One input's check, where it is dearest, may cost this much CPU (its median over batches; its p95 is printed): 200
  * players' inputs a tick then take at most half the tick's budget. */
 const CHECK_BUDGET_US = 25;
@@ -803,9 +821,144 @@ async function combatTrial(): Promise<TrialResult> {
   };
 }
 
+/** 15 sessions on foot in one world event at Tier 3: an instance of 12 and one of 3, each fighting its own waves. */
+async function eventTrial(): Promise<TrialResult> {
+  const rng = new Random(20261027);
+  const system = describeZoneSystem(0);
+  // (the zone's combat calls the combat service's hooks; the event service hears its hits)
+  const made: { combat: CombatService | null } = { combat: null };
+  const zone = new Zone({ id: 'bench-event', systemIndex: 0, system, fauna: { tier: 3, grounds: planHere }, combat: () => made.combat?.hooks ?? null });
+  let now = 2.3e7;
+  const zones = {
+    zones: [zone],
+    zone: (id: string) => (id === zone.id ? zone : undefined),
+    zoneOf: (v: ZoneViewer) => (zone.has(v) ? zone : undefined),
+    tier: () => 3 as const,
+  };
+  const inventory = new InventoryService();
+  const progress = new CharacterProgress();
+  const combat = (made.combat = new CombatService({ zones, inventory, progress, now: () => now, grounds: nodeGroundsHere, seed: 13 }));
+  const events = new EventService({ zones, now: () => now, inventory, progress });
+  combat.subscribe((news) => events.combat(news));
+  // the Hollow tide's shape, in this system, with waves enough to last the trial (another begins if one is cleared)
+  const tide = getEvent('hollow_tide')!;
+  let runs = 0;
+  const begin = () =>
+    events.run(
+      {
+        ...tide,
+        name: `Hollow tide ${++runs}`,
+        tiers: [0, 5],
+        waves: { count: 20, size: 3, firstS: 1, gapS: 2 },
+        schedule: { ...tide.schedule, durationS: 3000, everyS: 3600 },
+      },
+      zone.id,
+    );
+  begin();
+  events.sweep(now);
+  const place = events.list()[0]!.place!;
+  const ground = groundOf(system.bodies[place.body]!.params as PlanetParams, 3);
+  const onGround = (east: number, north: number): Vec3 => {
+    const d = alongGround(place.dir, east, north, place.worldRadius);
+    const r = ground.radius + Math.max(0, ground.sample(d));
+    return [d[0] * r, d[1] * r, d[2] * r];
+  };
+  const PLAYERS = 15;
+  const SPREAD = place.radius * 0.4;
+  const sinks: MinerSink[] = [];
+  const walkers: { sink: MinerSink; entity: number; east: number; north: number; heading: number; seq: number; shot: number }[] = [];
+  for (let i = 0; i < PLAYERS; i++) {
+    const sink = new MinerSink(i + 1, `raider-${i}`);
+    sinks.push(sink);
+    inventory.open(sink.characterId);
+    progress.set(sink.characterId, { level: 25, xp: 0, homeSystem: 0 });
+    const east = rng.float(-SPREAD, SPREAD);
+    const north = rng.float(-SPREAD, SPREAD);
+    const entity = zone.join(sink, {
+      kind: 'player',
+      frame: place.frame,
+      pos: onGround(east, north),
+      quat: [0, 0, 0, 1],
+      vel: [0, 0, 0],
+      mode: 'foot',
+      name: `Raider ${i}`,
+      people: 'thalune',
+      level: 25,
+    });
+    walkers.push({ sink, entity, east, north, heading: rng.float(0, Math.PI * 2), seq: 0, shot: 0 });
+  }
+  const step = (time: number) => {
+    for (const w of walkers) {
+      if (rng.next() < 0.01) w.heading += rng.float(-1.5, 1.5);
+      if (Math.abs(w.east) > SPREAD || Math.abs(w.north) > SPREAD) w.heading = Math.atan2(-w.north, -w.east);
+      w.east += Math.cos(w.heading) * 3 * DT;
+      w.north += Math.sin(w.heading) * 3 * DT;
+      zone.input(w.sink, {
+        t: 'input',
+        seq: ++w.seq,
+        time,
+        mode: 'foot',
+        pose: { frame: place.frame, pos: onGround(w.east, w.north), quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+        buttons: 0,
+      });
+    }
+  };
+  /** the event service's own CPU per tick (its sweep every SWEEP_MS, and the hits it hears), and the players' hits */
+  const own: number[] = [];
+  let hits = 0;
+  const r = await measure(zone, sinks, rng, step, {
+    during: (time, tick) => {
+      const cpu0 = process.threadCpuUsage();
+      now = time;
+      if (tick % Math.round(EVENT_SWEEP_MS / 1000 / DT) === 0) {
+        if (!events.list().length) begin();
+        events.sweep(time);
+      }
+      // each player hits an enemy of its own instance at a gun's cooldown, phased over the players
+      const mobsOf = new Map<number, number[]>();
+      for (const inst of events.list()[0]?.instances ?? []) mobsOf.set(inst.phase, inst.mobs);
+      for (const [i, w] of walkers.entries()) {
+        if (time < w.shot) continue;
+        w.shot = time + 0.12 + (i % 3) * 1e-3;
+        const mobs = mobsOf.get(zone.phases.phaseOf(w.entity) ?? -1);
+        if (!mobs?.length) continue;
+        if (zone.combat.applyDamage(w.entity, mobs[i % mobs.length]!, { base: 11, kind: 'weapon', what: 'pulse_lasers' })) hits++;
+      }
+      const cpu = process.threadCpuUsage(cpu0);
+      if (tick >= WARMUP_TICKS) own.push((cpu.user + cpu.system) / 1000);
+    },
+  });
+  const occ = events.list()[0];
+  return {
+    ...r,
+    extra: {
+      instances: occ?.instances.length ?? 0,
+      playersInLargest: Math.max(0, ...(occ?.instances ?? []).map((i) => i.players)),
+      playersInSmallest: Math.min(PLAYERS, ...(occ?.instances ?? []).map((i) => i.players)),
+      levelOfLargest: Math.max(0, ...(occ?.instances ?? []).map((i) => i.level)),
+      wavesCleared: (occ?.instances ?? []).reduce((n, i) => n + i.cleared, 0),
+      occurrences: runs,
+      hits,
+      kills: combat.stats().kills,
+      creatures: zone.fauna!.creatureCount,
+      avgControlBytesPerSessionTick: Math.round(sinks.reduce((s, x) => s + x.textBytes, 0) / (sinks.length * (r.ticks + WARMUP_TICKS))),
+      eventCpuP50Ms: round(percentile(Float64Array.from(own), 50)),
+      eventCpuP95Ms: round(percentile(Float64Array.from(own), 95)),
+      eventCpuMaxMs: round(percentile(Float64Array.from(own), 100)),
+    },
+  };
+}
+
 function round(x: number): number {
   return Math.round(x * 1000) / 1000;
 }
+
+const load1m = () => loadavg()[0]!;
+/** Why a budget cannot be judged at the 1-minute load average `load`, or null when it can. */
+const overloaded = (load: number): string | null =>
+  load > MAX_LOAD
+    ? `load average ${round(load)} is over ${MAX_LOAD}, the most budgets are judged at (${MAX_LOAD_PER_CPU}x the ${cpus().length} CPUs unless BENCH_MAX_LOAD says otherwise)`
+    : null;
 
 let failed = false;
 /** `pnpm --filter @astra/server bench -- <words>` runs only the trials whose names hold them. */
@@ -819,9 +972,12 @@ for (const [name, run] of [
   ['nightfall: 25 players round a den at Tier 3', nightfallTrial(3)],
   ['mining: 25 players mining shared nodes', miningTrial],
   ['combat: 25 players in ships firing at herds', combatTrial],
+  ['event: 15 players in one event', eventTrial],
 ] as const) {
   if (only.length && !only.some((w) => name.includes(w))) continue;
+  const loadBefore = load1m();
   const r = await run();
+  const load = Math.max(loadBefore, load1m());
   const cpuP95 = percentile(r.cpu, 95);
   // with movement authority: the tick with its players' input checks
   const withInputsP95 = r.inputs
@@ -839,31 +995,42 @@ for (const [name, run] of [
       corrections: r.corrections ?? 0,
     };
   report(name, r, cpuP95);
+  const skipped = overloaded(load);
   const failures: string[] = [];
-  if (cpuP95 >= BUDGET_P95_MS) failures.push(`tick CPU p95 ${round(cpuP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
-  if (withInputsP95 !== null && withInputsP95 >= BUDGET_P95_MS)
+  if (!skipped && cpuP95 >= BUDGET_P95_MS) failures.push(`tick CPU p95 ${round(cpuP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
+  if (!skipped && withInputsP95 !== null && withInputsP95 >= BUDGET_P95_MS)
     failures.push(`tick CPU p95 with its input checks ${round(withInputsP95)} ms is over the ${BUDGET_P95_MS} ms budget`);
   if (r.corrections) failures.push(`${r.corrections} honest inputs were corrected, the first: ${JSON.stringify(r.corrected)}`);
   if (failures.length) {
     for (const f of failures) console.error(`FAIL (${name}): ${f}`);
     failed = true;
+  } else if (skipped) {
+    console.log(`SKIP (${name}): budget not judged, ${skipped}; tick CPU p95 ${round(cpuP95)} ms (budget ${BUDGET_P95_MS} ms)`);
   } else {
     const inputs = withInputsP95 === null ? '' : ` (${round(withInputsP95)} ms with its input checks)`;
-    console.log(`PASS (${name}): tick CPU p95 ${round(cpuP95)} ms${inputs} < ${BUDGET_P95_MS} ms at ${r.avgEntities} entities and ${r.sessions} sessions`);
+    console.log(
+      `PASS (${name}): tick CPU p95 ${round(cpuP95)} ms${inputs} < ${BUDGET_P95_MS} ms at ${r.avgEntities} entities and ${r.sessions} sessions, load ${round(load)}`,
+    );
   }
 }
 
 // one input check where it is dearest
+const checkLoadBefore = load1m();
 const checks = checkCost();
+const checkLoad = Math.max(checkLoadBefore, load1m());
 const dearest = Math.max(...Object.values(checks).map((c) => c.p50));
 const corrected = Object.values(checks).reduce((n, c) => n + c.corrections, 0);
 console.log(JSON.stringify({ trial: 'input check cost, µs', ...checks }, null, 2));
-if (dearest >= CHECK_BUDGET_US || corrected > 0) {
-  if (dearest >= CHECK_BUDGET_US) console.error(`FAIL (input checks): an input check's CPU median ${dearest} µs is over ${CHECK_BUDGET_US} µs`);
+const checkSkipped = overloaded(checkLoad);
+if ((!checkSkipped && dearest >= CHECK_BUDGET_US) || corrected > 0) {
+  if (!checkSkipped && dearest >= CHECK_BUDGET_US)
+    console.error(`FAIL (input checks): an input check's CPU median ${dearest} µs is over ${CHECK_BUDGET_US} µs`);
   if (corrected > 0) console.error(`FAIL (input checks): ${corrected} honest inputs were corrected`);
   failed = true;
+} else if (checkSkipped) {
+  console.log(`SKIP (input checks): budget not judged, ${checkSkipped}; an input check ${dearest} µs at its dearest (median), budget ${CHECK_BUDGET_US} µs`);
 } else {
-  console.log(`PASS (input checks): an input check ${dearest} µs at its dearest (median) < ${CHECK_BUDGET_US} µs`);
+  console.log(`PASS (input checks): an input check ${dearest} µs at its dearest (median) < ${CHECK_BUDGET_US} µs, load ${round(checkLoad)}`);
 }
 await groundPlanner.close();
 if (failed) process.exit(1);
@@ -886,7 +1053,7 @@ function report(name: string, r: TrialResult, cpuP95: number): void {
         avgInterest: r.avgInterest,
         avgSnapshotBytes: r.avgSnapshotBytes,
         ...r.extra,
-        load1m: round(loadavg()[0]!),
+        load1m: round(load1m()),
         cpus: cpus().length,
         node: process.version,
       },

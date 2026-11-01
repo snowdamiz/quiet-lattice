@@ -2,7 +2,8 @@
 // database is only connected to, to create and later drop the scratch one), the server on a free port against it and the
 // docker Redis (on a logical database of its own, so its world mirror never overwrites a dev server's), and a Vite dev
 // server for the client whose proxies point at that server (ASTRA_SERVER, read by packages/client/vite.config.js).
-// `pnpm db:up` must be running. stop() takes it all down and drops the scratch database.
+// The server's admin channel (ARCHITECTURE §16) is open on a free loopback port with a secret made per run, for
+// `admin(command)`. `pnpm db:up` must be running. stop() takes it all down and drops the scratch database.
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { createServer } from 'node:net';
@@ -24,9 +25,13 @@ export interface Online {
   serverUrl: string;
   /** What the server has printed (warnings and errors), for a failure's report. */
   serverOutput(): string;
+  /** With `stepped`: the server's clock. It runs on real time until `freeze`d, then moves only by `advance`. */
+  clock?: { freeze(): Promise<void>; advance(ms: number): Promise<void> };
   /** Stops the server gracefully (it saves everyone in play), waits `downMs`, and starts it again on the same port and
    * database: a restart as players live through it. */
   restartServer(downMs?: number): Promise<void>;
+  /** Runs an admin command (`{cmd: 'teleport', …}`, the server's admin/commands.ts) over the server's admin channel. */
+  admin(command: Record<string, unknown>): Promise<{ ok: boolean; result?: unknown; error?: string; message?: string }>;
   stop(): Promise<void>;
 }
 
@@ -76,7 +81,8 @@ async function healthy(url: string, server: ChildProcess, output: () => string, 
   throw new Error(`the server did not become healthy within ${timeoutMs / 1000} s:\n${output()}`);
 }
 
-export async function startOnline(): Promise<Online> {
+/** `stepped`: the server's clock is the spec's to step (packages/server/test/steppedServer.ts), for specs that judge timing. */
+export async function startOnline(opts: { stepped?: boolean } = {}): Promise<Online> {
   const name = `astra_smoke_${Date.now().toString(36)}_${randomBytes(3).toString('hex')}`;
   if (!SCRATCH.test(name)) throw new Error(`not a scratch database name: ${name}`);
   adminSql(`CREATE DATABASE "${name}"`);
@@ -84,14 +90,27 @@ export async function startOnline(): Promise<Online> {
   let server: ChildProcess | null = null;
   let vite: { close(): Promise<void> } | null = null;
   let out = '';
+  const adminPort = await freePort();
+  const adminSecret = randomBytes(16).toString('hex');
   // (with the dev login on, which the dev scenarios' `?dev` signs in through: P1.E04.T05)
-  const env = { ...process.env, DATABASE_URL: dbUrl, REDIS_URL, HOST: '127.0.0.1', LOG_LEVEL: 'warn', NODE_ENV: 'development', ASTRA_DEV_LOGIN: '1' };
+  const env = {
+    ...process.env,
+    DATABASE_URL: dbUrl,
+    REDIS_URL,
+    HOST: '127.0.0.1',
+    LOG_LEVEL: 'warn',
+    NODE_ENV: 'development',
+    ASTRA_DEV_LOGIN: '1',
+    ASTRA_ADMIN_PORT: String(adminPort),
+    ASTRA_ADMIN_SECRET: adminSecret,
+  };
   let port = 0;
+  let clockPort = 0;
 
   const launchServer = async () => {
-    const s = spawn(process.execPath, ['--import', 'tsx', 'src/index.ts'], {
+    const s = spawn(process.execPath, ['--import', 'tsx', opts.stepped ? 'test/steppedServer.ts' : 'src/index.ts'], {
       cwd: SERVER_DIR,
-      env: { ...env, PORT: String(port) },
+      env: { ...env, PORT: String(port), STEPPED_CLOCK_PORT: String(clockPort) },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     server = s;
@@ -119,6 +138,7 @@ export async function startOnline(): Promise<Online> {
     if (migrated.status !== 0) throw new Error(`db:migrate failed: ${migrated.stderr || migrated.stdout}`);
 
     port = await freePort();
+    clockPort = opts.stepped ? await freePort() : 0;
     await launchServer();
     const serverUrl = `http://127.0.0.1:${port}`;
 
@@ -144,7 +164,20 @@ export async function startOnline(): Promise<Online> {
       await new Promise((r) => setTimeout(r, downMs));
       await launchServer();
     };
-    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, restartServer, stop };
+    const admin = async (command: Record<string, unknown>) => {
+      const res = await fetch(`http://127.0.0.1:${adminPort}/admin/command`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${adminSecret}`, 'x-astra-operator': 'smoke' },
+        body: JSON.stringify({ command }),
+      });
+      return (await res.json()) as { ok: boolean; result?: unknown; error?: string; message?: string };
+    };
+    const control = async (path: string) => {
+      const r = await fetch(`http://127.0.0.1:${clockPort}${path}`);
+      if (!r.ok) throw new Error(`the server's clock control answered ${r.status}`);
+    };
+    const clock = opts.stepped ? { freeze: () => control('/freeze'), advance: (ms: number) => control(`/advance?ms=${ms}`) } : undefined;
+    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, clock, restartServer, admin, stop };
   } catch (err) {
     await stop();
     throw err;
