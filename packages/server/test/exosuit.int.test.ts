@@ -84,7 +84,6 @@ describe('Sprint Stride over the wire', () => {
     p.close();
   });
 
-
   it('lifts the speed a walker is held to the moment the node is bought', { timeout: 60_000 }, async () => {
     const p = await onFoot();
     const id = p.characterId;
