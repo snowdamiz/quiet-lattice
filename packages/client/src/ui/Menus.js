@@ -34,8 +34,6 @@ function menuHTML(items) {
 
 const SHOP = [
   { id: 'shield', icon: 'SHD', name: 'Shield Recharge', desc: 'Restore the starship’s shields to full.', price: 200 },
-  { id: 'beam', icon: 'DRL', name: 'Optical Drill', desc: 'The mining beam extracts half as much again.', price: 4500, once: true },
-  { id: 'jet', icon: 'JET', name: 'Efficient Jetpack', desc: 'Jetpack fuel lasts twice as long.', price: 3500, once: true },
   { id: 'thrust', icon: 'THR', name: 'Photon Thrusters', desc: 'A quarter more top speed for the starship.', price: 6000, once: true },
   // for hostile skies
   { id: 'thermal', icon: 'THM', name: 'Thermal Plating', desc: 'The hull holds out three times longer in searing heat and cryogenic cold.', price: 6500, once: true },
@@ -506,8 +504,6 @@ export class Menus {
     if (g.inventory.units < it.price) return g.audio.play('error');
     g.inventory.units -= it.price;
     if (id === 'shield') g.ship.shield = 100;
-    if (id === 'beam') g.multitool.upgrade();
-    if (id === 'jet') g.player.jetEfficiency = 2;
     applyUpgrade(g, id);
     if (it.once) this.bought.add(id);
     g.audio.play('sell');

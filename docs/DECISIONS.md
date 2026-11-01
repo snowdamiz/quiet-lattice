@@ -1081,3 +1081,24 @@ Format: task id, question → choice → why.
   re-entry half has no consumer until P1.E06.T07). `SkillService.shipSlots` gives the runtime's hold check a narrow
   read, and `settle()` at a cast's start has its race test. → DESIGN 9.3, server-held. Open: no client visuals
   (P1.E07.T14); no wire event for a burn; Flare does not interrupt bite swarms yet (P1.E08.T02).
+- **P1.E07.T10** Exo-suit I–II (shared `exosuit/*`, `data/suit.ts`; server movement authority, zones, gateway; client
+  Game.js survival, Player.js, Menus.js, Multitool.js) → all nine passives at DESIGN 9.8's numbers, the demo's suit
+  numbers moved into a shared `SUIT` table (`suitMods`, `hazardDrainPerS`, `cartridgeRestore`, `scanRanges`). Life
+  support and hazard protection stay on the client as in the demo, only their numbers moved: a departure from 0.3 until
+  P1.E06.T06 (Suit meters on the server) lands; the server holds Sprint Stride's cap and Optical Drill's yield. "Night"
+  for Cold Blood and the ×1.4 hazard drain is the star below the horizon (`isNight`, from sunset, not the dusk band),
+  replacing `Game.isDark` (daylight < 0.3); "day" for Heat Shroud is the star above the horizon at the walker. Cold
+  Blood and Heat Shroud zero the whole on-foot drain on their worlds, the world's ship hazard included; Hazard Weave's
+  ×0.6 applies after the ×1.4, to every source including mist. Cartridge Recycler adds 20 to both refills (40 → 60);
+  the trigger (below 25) and cost (10 units) are unchanged. Optical Drill raises yield only (×1.5, ×2.25 with Hot
+  Hands). Scanner Lens raises only the site range (3 km → 6 km); deposits stay 180 m. Efficient Jetpack doubles the
+  tank's seconds, regen unchanged, client-only feel (the server does not model the tank); Long Jump leaves the server's
+  walker caps alone (the jet's 14 m/s climb covers a 7 m/s jump). The Ulgani's no-drain on toxic and corrosive worlds
+  and the Thalune's swim speed now reach the client; Sprint Stride also raises Thalune swim. Movement authority
+  re-reads the owned nodes at join and on every skills change (`Zone.reskill`), effective from the next input; the 1 s
+  speed window is judged at the current cap (a buy allows ~2 m retroactively). The demo shop's Optical Drill and
+  Efficient Jetpack rows and `Multitool.upgrade()` deleted; `SHOP` and `applyUpgrade` left for P1.E07.T09. Merge of
+  main: the Hot Hands and Optical Drill tests both kept (different skills; the combined ×2.25 case sits in the skill-web
+  test). Open: combat keeps join-time skills until P1.E06.T05; the join path's owned skills untested (P1.E06.T05's join
+  test); an in-session zone handoff (P1.E04.T04) must carry the current owned nodes; the client never uses the
+  oxygen or sodium cartridge items, and its refills change only the client's copy (P1.E06.T06).
