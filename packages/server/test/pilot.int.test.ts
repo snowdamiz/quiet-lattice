@@ -5,7 +5,7 @@
 // them from its first input, and a respec in a fight takes the plating off at once.
 import { STATION_LAYOUT } from '@astra/shared/data';
 import type { ServerMessage } from '@astra/shared/protocol';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { parseConfig } from '../src/config.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
@@ -153,6 +153,28 @@ describe('the Pilot nodes over the wire', () => {
     expect(after.hull).toBeCloseTo(80, 9);
     expect(hit(70)).toMatchObject({ killed: false });
     expect(zone.combat.playerHealth(p.entityId)!.hull).toBeCloseTo(10, 9);
+    p.close();
+  });
+
+  it('give the hull the character flies the shield and hull it joins with', { timeout: 60_000 }, async () => {
+    const first = await pilotOfLevel(16);
+    const id = first.characterId;
+    for (const node of ['throttle_tuning', 'photon_thrusters', 'shield_capacitor', 'hull_plating']) {
+      expect(server.ws.skills.unlock(id, node, { kind: 'dev' }).ok, node).toBe(true);
+      expect(server.ws.skills.buy(id, node), node).toMatchObject({ ok: true });
+    }
+    first.close();
+    await waitFor(() => server.zones.zone(first.welcome.zone.id)!.entity(first.entityId) === undefined, 5000, 'the first session gone');
+    // (saved on leave: it is the stored hull that changes, as a hull swap will)
+    const swift = { hull: 'swift', modules: {}, cargoPods: 0, livery: 0 };
+    await database.db
+      .update(characters)
+      .set({ state: sql`jsonb_set(${characters.state}, '{ship,data}', ${JSON.stringify(swift)}::jsonb)` })
+      .where(eq(characters.id, id));
+
+    const p = await Pilot.join(server, 'thalune', { clock, as: first });
+    const zone = server.zones.zone(p.welcome.zone.id)!;
+    expect(zone.combat.playerHealth(p.entityId)).toMatchObject({ shieldMax: 112.5, hullMax: 87.5 });
     p.close();
   });
 });
