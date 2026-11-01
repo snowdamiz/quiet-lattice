@@ -1060,3 +1060,24 @@ Format: task id, question → choice → why.
   is never dropped. → DESIGN 10.1, 19.2. Merged after a fifth visual REVISE (4.14) under the owner's rule; the open
   notes are P1.E04.T06. Open: a 57 px mark jump as a mark comes out from behind the compass; no scene yet puts a mark
   near the ability bar, so that keep-out is untested in captures.
+- **P1.E07.T05** Thermal I–II (shared and server `abilities/thermal.ts`, `abilities/statuses.ts`, CastContext, meters
+  `beamTime`/`dumpHeat`, `ShipStats.reentryDamage`, client input `aim`, ARCHITECTURE §28) → DESIGN 9.3 gives no damage
+  numbers, so: Lance (a toggle on the multitool beam, no heat beyond the beam's 32/s) deals 12 per second of the
+  meters' beam time every 0.25 s to the nearest creature on the look ray within 30 m and in sight, culled round the
+  eye now (reach 30 + 2 + 8 for Chain); it follows the last on-foot `input.aim` unvalidated, which gains accuracy only
+  (the gun's precedent: damage is bounded by beam time, range, sight and one target; P2.E17.T01's turn-rate rule must
+  also bound the on-foot look once Lance reaches players). Chain gives half of each tick to the nearest other creature
+  within 8 m of the first's centre, no sight check on the arc. Flare bursts 18 on every creature in its 60° 12 m cone
+  and in sight and burns 6/s for 4 s; Sear is a mob-only entity cast at 30 m, refused `target` before payment if the
+  creature may not be harmed, burning 5/s for 8 s with no blow; Vent deals 0.6 per heat dumped (60 at 100, 75 with
+  Tempered Core) within 10 m and in sight, refused in the lockout; Flare and Vent are refused `busy` while the ground
+  plans. Burns are a per-caster status ticking every 0.5 s: a re-ignition extends to the later end at the greater
+  power and never stacks; a generation token keeps one loop per status; a refused tick, death or the phase rule ends a
+  burn for good; burns continue while the caster is down and are dropped with its statuses when it leaves play. Damage
+  reads the caster's nodes live and requires the phase rule. New context capabilities, general for every branch:
+  `time`, `owns`, `pose`, `sight` ('busy' while planning), `groundReady`, `canHarm`, `creatures(reach, at)`,
+  `meters.beamTime`/`dumpHeat`, and `status` apply/get/active/remove/dropCaster. Passives: Tempered Core (capacity
+  125), Focused Lasers (×1.3, 2200 m), Hot Hands (×1.5 yield, faster breaking), Ablative Plating (heat hazard ÷3; its
+  re-entry half has no consumer until P1.E06.T07). `SkillService.shipSlots` gives the runtime's hold check a narrow
+  read, and `settle()` at a cast's start has its race test. → DESIGN 9.3, server-held. Open: no client visuals
+  (P1.E07.T14); no wire event for a burn; Flare does not interrupt bite swarms yet (P1.E08.T02).
