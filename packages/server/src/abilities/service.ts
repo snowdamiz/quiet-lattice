@@ -293,6 +293,7 @@ export class CastService {
     owned: readonly string[],
   ): CastContext {
     const f = me.fields;
+    const frame = f.frame;
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);
     const origin: Vec3 = bar === 'ground' ? lift(f.pos, EYE_M) : [f.pos[0], f.pos[1], f.pos[2]];
     const aim: Vec3 = [msg.aim[0] / al, msg.aim[1] / al, msg.aim[2] / al];
@@ -303,7 +304,7 @@ export class CastService {
       ability: entry.ability,
       bar,
       now,
-      frame: f.frame,
+      frame,
       origin,
       aim,
       target: entry.ability.target === 'entity' ? (msg.target ?? null) : null,
@@ -322,8 +323,11 @@ export class CastService {
       after: (delayS, fn) => this.after(characterId, delayS, fn),
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
-      pose: () => this.poseOf(zone, self, f.frame, bar, origin, aim),
-      sight: (to) => this.inSight(zone, f.frame, this.poseOf(zone, self, f.frame, bar, origin, aim)?.origin ?? origin, to) === true,
+      pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
+      sight: (to) => {
+        const eye = this.poseOf(zone, self, frame, bar, origin, aim)?.origin;
+        return eye !== undefined && this.inSight(zone, frame, eye, to) === true;
+      },
       canHarm: (target) => mayHarm(zone, self, target),
       meters: {
         beamTime: () => this.meters.beamTime(characterId, this.now()),
