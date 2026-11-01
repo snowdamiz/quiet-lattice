@@ -1038,3 +1038,25 @@ Format: task id, question → choice → why.
   machine. Open: a SKIP exits 0 like a PASS; the stall spec carries on silently when its ack deadline runs out;
   smoke's `online.ts` hard-codes Redis index 7 (harmless while nothing reads Redis); the persistence and events timing
   flakes are not covered yet.
+- **P1.E04.T02** Remote entities (client `remote/*`: `RemoteEntities`, `RemoteShips`, `buffer`, `clock`, `frames`,
+  `markers`, `replay`; HUD pilot markers, `Game.js`, ARCHITECTURE §9) → followed kinds: players and `ship` entities,
+  never the player's own; creatures, NPCs, props, loot and pods wait for their tasks; players on foot are hidden with no
+  stand-in until P1.E05.T04. Render time is world time less the trip (least lag of the last 40 snapshots) and 100 ms,
+  never going back, easing 0.9–1.1×, jumping forward only. Pose times: a moving entity's samples are retimed from its
+  motion, at most 0.15 s after or 0.1 s before the tick's time. Between and past samples: cubic Hermite where positions
+  and velocities agree, else lines; extrapolation along velocity for 250 ms, then hold. A sample 1 km or 0.3 s of speed
+  off, or a change between on foot and not, is a cut. Frame changes re-express held samples with both frames at their
+  own times, the leftover an offset decaying critically damped over 0.2 s (over 2 km or 1.2 s of speed it shows as a
+  jump; a teleport into a frame is a cut). Disconnected ships hold their last pose. A hull draws with its own model or
+  one of its tier only (only the Lark has one), so a hull with neither is neither drawn nor marked. Every hull draws
+  livery 0 until snapshots carry livery. Three LODs by length on screen (240/60 px, 15% hysteresis); the coarsest is one
+  welded two-sided shell (the Lark's 3.2%) with averaged livery colour, no plating, glow, lights, exhaust or shadow, gear
+  legs only. Engines and gear follow each ship's motion as the local ship's do; lights full within 40 m, 15% by 150 m,
+  under the bloom threshold, dropped at the coarsest LOD. Pilot marks come from client-side sensor detection (range ×
+  the hull's signature, doubled boosting or pulsing, halved in cover, held at 1.05× for 0.5 s), so once Cloak, Silent
+  Running or Veil land the server must withhold hidden ships from snapshots; ranges are measured from your own ship. A
+  name hides above 1,200 px/s of mark travel and returns after 150 ms of room. A mark on the keep-out (the fixed HUD,
+  the social panels through `social.covers()`, and the ability bar when it is up) slides round it at up to 600 px/s and
+  is never dropped. → DESIGN 10.1, 19.2. Merged after a fifth visual REVISE (4.14) under the owner's rule; the open
+  notes are P1.E04.T06. Open: a 57 px mark jump as a mark comes out from behind the compass; no scene yet puts a mark
+  near the ability bar, so that keep-out is untested in captures.
