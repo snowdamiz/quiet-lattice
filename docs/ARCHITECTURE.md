@@ -2241,6 +2241,39 @@ effects; this runtime casts them all.
   client's too: `beaconsOnMap(skills)` (`@astra/shared/exosuit`) reads the node's flag, and a planet's Signal Beacon sites are
   then known at once and draw as the HUD's site markers (within 9 km of the surface and 12 km of the camera; no planet map
   exists yet); beacons already shown stay after a respec until the planet's sites reload.
+- **Gravitic I–II** (`@astra/shared/abilities/gravitic.ts`, `abilities/gravitic.ts`; DESIGN 9.2; P1.E07.T04). Pull (15 heat, 10 s) is an
+  `entity` cast on a creature within 25 m, in sight: it and, with Pull Many, the nearest others the caster could have named
+  (3 in all) are carried to the ground 2.5 m from the caster's feet, on the side they came from, over 0.35 s
+  (`FaunaSim.pull`, `ai.carry`: the creature does nothing while it is carried, a flyer comes down to head height, and it goes on
+  from where it lands). It counts as a blow of threat 2 against the caster, so a hostile creature turns on it and a grazer bolts.
+  A player is no target until PvP (P2.E17.T01): the ability names mobs only, so one is refused `target`; a loot pod has no entity
+  in the world yet (the server's drops go straight to the inventory), so there is nothing to pull. Well (30 heat, 20 s) is a
+  `self` cast: a 12 m bubble where the caster stands, in force for 8 s (`FaunaSim.slowField`), in which every creature that is not
+  immune to Gravitic keeps 40% of its speed (`Creature.slow`, set each tick from the fields it stands in and applied to its walk
+  and its reported velocity); creatures walking in are caught and those leaving are free. It slows no player until PvP. Slam (25
+  heat, 14 s) is a `self` cast from the air: the walker must be 3 m over the ground (`movement.fall()`, the movement authority's
+  last accepted pose: `MovementAuthority.fall` gives `aboveM` over the ground and `peakM`, the highest since it last stood), and the
+  effect watches the fall every 50 ms (up to 8 s): where the caster lands every walking creature within the radius is knocked
+  down for 3 s (`FaunaSim.knockdown`, mode `down`: it lies still and strikes nothing), the radius 6 m growing linearly to 18 m
+  as the fall's peak goes from 3 m to 20 m (`slamRadius`). The fall is gravity's, because movement authority judges a walker by
+  what a fall allows (`walkerFall`); the cast event cuts the client's jetpack (`Player.slam`) so that it lands. Flyers and creatures
+  immune to Gravitic (sentinels) are not knocked down. Tractor Beam (ship, 15 Charge, 12 s) is an optional `entity` cast: with no
+  target it draws rocks, debris and loot to the hull, which is the client's (the asteroid field is its own, and the server holds no
+  debris or loot entity: `Asteroids.tractor` draws the nearest 6 rocks in a 50° cone to 500 m, at 200 m/s, to 30 m off the hull);
+  aimed at a player's ship it holds it 3 s (`MovementAuthority.hold`: its inputs may stray no further than 150 m from the pose it
+  was held at, rule `held`; its client stops its thrusters, `Ship.hold`) when the caster may harm it, which no player is until PvP,
+  so such a cast is refused `target` before it is paid for. Inertial Brake (ship, 20 Charge, 15 s) is the client's own movement:
+  the cast event makes its ship stop dead and stop turning (`Ship.brake`), and the server keeps a `storm_immune` status for 6 s on
+  its ship for the hazard tick (P1.E12.T03) to read; the client skips the storm's gusts for those 6 s (the lightning still
+  strikes). Movement authority takes the stop as it takes any slowing (tested: an honest client at full speed that stops and
+  turns draws no correction). Dense Bones is a health modifier combat reads (`player.health_max` ×1.2, re-tuned on a mid-session
+  buy, §20); its knockback resistance has no consumer, because nothing in the server knocks a player back. Heavy Footing is the
+  client's: fall damage and the landing's shake exist only in `Player.update` (the server has no fall damage), and `landingOf`
+  (`@astra/shared/abilities`) takes both away for an owner (the thud's sound stays). Mass Sense is the scan's: for an owner the
+  client's scan (`Game.revealScan`) lists the heavy creatures (body plan `quad_heavy`) the server's snapshots hold within the scan's
+  deposit range among its markers, whether or not the ground lies between; the deposits it marks were never hidden by the ground.
+  New context capabilities (general): `position()`, `players(reach?, at?)`, `control.pull/knockdown/slowField`, `ships.hold` and
+  `movement.fall()`. An `Ability` may be `optional` (an `entity` cast that may name nothing).
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
@@ -2295,7 +2328,7 @@ effects; this runtime casts them all.
 - **The Exo-suit's Tier I–II (P1.E07.T10)** are all passives: nothing in the book, no new `CastContext`. A passive changes the
   system its stat names, through the stat modifiers on its node (`@astra/shared/data`), read by whoever owns that system.
   The walker (`walkerStats`, §7): Sprint Stride's sprint 11.5 m/s, Long Jump's jump 7, Efficient Jetpack's tank twice as long;
-  movement authority holds a walker to its caps and learns the build at the join (`skills.owned`) and again on every change to
+  movement authority holds a walker to its caps and learns the build at the join (`skills.flight`) and again on every change to
   it (`ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune`, from the gateway's one skill subscription): Sprint Stride bought
   mid-session is allowed from the next input. The client's `Player` takes the same numbers (`setBuild`, from the `skills`
   view's bought nodes). Mining (§18): Optical Drill is a `mining.yield` ×1.5 that stacks with Hot Hands (breaking speed is
