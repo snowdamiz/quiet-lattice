@@ -1514,8 +1514,10 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   build's +20), else 10 raw oxygen or sodium (restoring 40, 60 with Cartridge Recycler); with neither the meter drains on.
   Health is combat's (§20): while a meter is at zero and not recovering the service takes 4/s from the character's suit
   vitals, and gives 1.5/s back on a world while both hold, through `ZoneCombat.suitHealth` (no resistance, no combat
-  event, not in combat); health at 0 puts the character down (`downed`, cause `suit`, no source: what the Recall reads,
-  P1.E06.T03). `sweep(now)` (the gateway calls it every 0.5 s) brings every character on foot up to date, so a client that
+  event, not in combat); health at 0 is a hazard death: `downed` is reported (cause `suit`, no source: what the Recall
+  reads, P1.E06.T03) and, as a stopgap until the Recall replaces it, the character is revived in place at once (health 60%
+  of its suit's, both meters 60, `down` cleared, the rest of that stretch dropped), as the client's SUIT FAILURE does; the
+  server does not move it. `sweep(now)` (the gateway calls it every 0.5 s) brings every character on foot up to date, so a client that
   sends nothing still drains, starves and dies on the server's clock. Second Skin's floor holds only out of combat
   (`meters.inCombat`, the combat service's).
 - **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, lifeSupport, hazard,
@@ -1583,7 +1585,8 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   stays a corpse (`hp` 0, mode `dead`, no `attack`) for DEATH_BEAT_S (3 s) and is then despawned, and the hooks hear
   `killed` with the damage by character and the killing blow's. A player at 0 is down (`down: 'suit' | 'ship'`): it takes
   no more damage, fires no more, its event says `killed`, and the hooks hear `downed` (the Recall, P1.E06.T03, acts on
-  it; until then it stays down for its session).
+  it; until then a player the suit's hazard death put down is revived in place at once, `suitHealth`'s stopgap, §19; one a
+  hit put down stays down for its session).
 - **Events.** Each hit queues a `combat` event; hits of one source on one target by the same thing in a tick are summed
   into one. After each tick's snapshots (the interest sets just worked out) each session is sent those whose target or
   source its interest holds (`Zone.sees`), its own entity's first, at most 32 a tick; a tick queues at most 512. A

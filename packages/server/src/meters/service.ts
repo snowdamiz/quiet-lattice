@@ -68,6 +68,7 @@ import {
 } from '@astra/shared/meters';
 import type { ShipLoadout } from '@astra/shared/ships';
 import { frameKeyOf, systemPoses, type SystemPoses } from '@astra/shared/world';
+import { SUIT_REVIVE } from '../combat/zone.ts';
 import type { InventoryService } from '../inventory/service.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import type { Zone, ZoneViewer } from '../zones/zone.ts';
@@ -202,8 +203,7 @@ interface Entry {
   people: PeopleId | undefined;
   /** The session viewer the character's entity is looked up by (set as it enters its zone), for health through combat. */
   viewer: ZoneViewer | undefined;
-  /** The suit as last pushed, and whether health was being lost then. */
-  suitPushed: SuitState | null;
+  /** Whether health was being lost at the last advance. */
   starved: boolean;
   /** Not yet in the world since it was opened: the time it was away runs heat (it cools) but never Charge, which regenerates
    * only in play (the Listener's anywhere included). Its first input ends it. */
@@ -254,7 +254,6 @@ export class MeterService {
       suitProfile: suitProfile({ skills: owned }),
       people: undefined,
       viewer: undefined,
-      suitPushed: null,
       starved: false,
       at: saved.at,
       activity: IDLE,
@@ -536,7 +535,14 @@ export class MeterService {
       const step = stepSuit(e.suit, e.suitProfile, e.env, place, left, conditions, refillable);
       e.suit = step.state;
       left -= step.elapsed;
-      for (const span of step.spans) this.health(e, spanHealth(span), spent + (dt - left));
+      let died = false;
+      for (const span of step.spans) died = this.health(e, spanHealth(span), spent + (dt - left)) || died;
+      if (died) {
+        // the stopgap revive of `ZoneCombat.suitHealth`: the rest of the stretch is dropped with the meters that ran it
+        e.suit = { lifeSupport: SUIT_MAX * SUIT_REVIVE, hazard: SUIT_MAX * SUIT_REVIVE };
+        e.starved = false;
+        return;
+      }
       if (!step.refill) break;
       if (!this.refill(characterId, e, step.refill, now)) refillable[step.refill] = false;
     }
@@ -569,11 +575,12 @@ export class MeterService {
     return true;
   }
 
-  /** Health the suit cost or gave, through combat's vitals of the character's entity (a hazard death is combat's down). */
-  private health(e: Entry, delta: number, at: number): void {
+  /** Health the suit cost or gave, through combat's vitals of the character's entity (a hazard death is combat's down).
+   * True when it was a hazard death. */
+  private health(e: Entry, delta: number, at: number): boolean {
     const zone = e.viewer ? this.zones?.zoneOf(e.viewer) : undefined;
     const id = e.viewer ? zone?.entityOf(e.viewer) : undefined;
-    if (zone && id !== undefined) zone.combat.suitHealth(id, delta, at);
+    return zone && id !== undefined ? zone.combat.suitHealth(id, delta, at) : false;
   }
 
   /** The pulse drive's burn for `seconds` of flight ending at `at` (near bodies only: where the meters last had the
@@ -611,8 +618,11 @@ export class MeterService {
     const entity = id === undefined ? undefined : zone!.entity(id);
     const m = mode ?? (entity?.fields.mode as MoveMode | undefined);
     e.env = zone && entity ? this.environment(zone, entity.fields.frame, entity.fields.pos, m === 'foot') : NOWHERE;
-    e.conditions = meterConditions(e.env);
-    e.restingConditions = new Set([...e.conditions, 'out_of_combat']);
+    const conditions = meterConditions(e.env);
+    if (!sameSet(conditions, e.conditions)) {
+      e.conditions = conditions;
+      e.restingConditions = new Set([...conditions, 'out_of_combat']);
+    }
     e.placed = true;
     e.viewer = viewer;
     const people = entity?.fields.people as PeopleId | undefined;
@@ -670,6 +680,12 @@ export class MeterService {
     if (!e) throw new MetersNotHeldError(characterId);
     return e;
   }
+}
+
+function sameSet(a: ReadonlySet<string>, b: ReadonlySet<string>): boolean {
+  if (a.size !== b.size) return false;
+  for (const c of a) if (!b.has(c)) return false;
+  return true;
 }
 
 const round3 = (v: number) => Math.round(v * 1000) / 1000;

@@ -106,6 +106,9 @@ export interface HitReport {
   at: number;
 }
 
+/** The fraction of its suit's health a player on foot is revived at after a hazard death (the stopgap in `suitHealth`). */
+export const SUIT_REVIVE = 0.6;
+
 /** A player gone down (its suit's health at 0 on foot, its ship's hull aboard): what the Recall (P1.E06.T03) acts on. */
 export interface DownedReport {
   zone: string;
@@ -305,24 +308,33 @@ export class ZoneCombat {
    * comes back while both hold. `delta` is the health lost (negative) or regained, straight from the meters: no resistance,
    * no damage-taken modifier, no combat event, and it does not put the player in combat. Health at 0 puts it down (`suit`,
    * no source), as a hit would. Nothing for a player not on foot, already down, or an entity that is not a player's.
+   *
+   * Returns whether the player went down. STOPGAP until P1.E06.T03's Recall: nothing clears `down` yet, so a suit death is
+   * reported (`downed`, for the Recall to hook into) and the player is revived at once, in place, at `SUIT_REVIVE` of its
+   * health, as the client's own SUIT FAILURE does. The caller sets its meters to the same fraction.
    */
-  suitHealth(entity: number, delta: number, now = this.zone.time): void {
-    if (!(delta !== 0) || !Number.isFinite(delta) || !this.onFoot(entity)) return;
+  suitHealth(entity: number, delta: number, now = this.zone.time): boolean {
+    if (!(delta !== 0) || !Number.isFinite(delta) || !this.onFoot(entity)) return false;
     const v = this.vitalsOf(entity);
-    if (v?.kind !== 'player' || v.down !== null) return;
+    if (v?.kind !== 'player' || v.down !== null) return false;
     if (delta > 0) {
-      if (v.suit >= v.suitMax) return;
+      if (v.suit >= v.suitMax) return false;
       v.suit = Math.min(v.suitMax, v.suit + delta);
       this.show(entity, v);
-      return;
+      return false;
     }
     v.suit = Math.max(0, v.suit + delta);
-    if (v.suit <= v.suitMax * 1e-9) {
-      v.suit = 0;
-      v.down = 'suit';
+    if (v.suit > v.suitMax * 1e-9) {
+      this.show(entity, v);
+      return false;
     }
+    v.suit = 0;
+    v.down = 'suit';
+    this.goDown(entity, v, null, now, this.opts.hooks?.() ?? null);
+    v.down = null;
+    v.suit = v.suitMax * SUIT_REVIVE;
     this.show(entity, v);
-    if (v.down !== null) this.goDown(entity, v, null, now, this.opts.hooks?.() ?? null);
+    return true;
   }
 
   /** Whether a player is down (its health at 0, waiting for the Recall). */

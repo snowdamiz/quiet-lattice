@@ -320,8 +320,10 @@ describe('the build', () => {
     expect(t.view()).toMatchObject({ lifeSupport: 20, hazard: 20 });
     expect(t.health().suit).toBe(t.health().suitMax);
     t.combatOn(true);
-    t.wait(600);
-    expect(t.view()).toMatchObject({ lifeSupport: 0, hazard: 0 });
+    // (hazard protection is out after 33 s; life support has 6 left of its 20)
+    t.wait(40);
+    expect(t.view().hazard).toBe(0);
+    expect(t.view().lifeSupport).toBeCloseTo(20 - 40 * 0.35, 3);
   });
 });
 
@@ -371,7 +373,7 @@ describe('refills spend the character’s real inventory', () => {
   });
 
   it('refills as many times as a long stretch needs, each taking 10', () => {
-    const t = rig({ type: 'frozen', stock: { sodium: 100 }, saved: { hazard: 30 } });
+    const t = rig({ type: 'frozen', stock: { sodium: 100, oxygen: 100 }, saved: { hazard: 30 } });
     t.stand(false, 600);
     // 600 s at 0.6 = 360 lost, 5 from the start and 40 a refill: 9 refills (with 5 left over to the next line)
     expect(t.held('sodium')).toBe(100 - 90);
@@ -478,12 +480,14 @@ describe('suit health in combat’s vitals', () => {
     expect(t.health().suit).toBe(70);
     c.suitHealth(t.entityId, 500);
     expect(t.health().suit).toBe(100);
-    c.suitHealth(t.entityId, -1000);
-    expect(t.health()).toMatchObject({ suit: 0, down: 'suit' });
-    c.suitHealth(t.entityId, 50);
-    expect(t.health().suit).toBe(0);
+    expect(c.suitHealth(t.entityId, -1000)).toBe(true);
     expect(t.downed).toHaveLength(1);
-    c.suitHealth(999, -10);
+    // the stopgap revive: reported down once, and up again at 60% (P1.E06.T03's Recall replaces it)
+    expect(t.health()).toMatchObject({ suit: 60, down: null });
+    expect(c.suitHealth(t.entityId, -10)).toBe(false);
+    expect(t.health().suit).toBe(50);
+    expect(t.downed).toHaveLength(1);
+    expect(c.suitHealth(999, -10)).toBe(false);
   });
 });
 
@@ -492,25 +496,43 @@ describe('a hazard death is decided by the server', () => {
     const t = rig({ type: 'frozen', saved: { hazard: 6 } });
     const at = t.home(false);
     t.send('foot', at.frame, at.pos);
-    for (let s = 0; s < 40; s++) {
+    const start = t.now;
+    for (let s = 0; s < 40 && !t.downed.length; s++) {
       t.wait(1);
       t.meters.sweep(t.now);
     }
     // 10 s to zero, 25 s to lose 100 health at 4/s
     expect(t.downed).toHaveLength(1);
     expect(t.downed[0]).toMatchObject({ cause: 'suit', characterId: ID, source: null, entity: t.entityId });
-    expect(t.downed[0]!.at).toBeCloseTo(t.now - 40 + 35, 0);
-    expect(t.health()).toMatchObject({ suit: 0, down: 'suit' });
-    expect(t.zone.combat.isDown(t.entityId)).toBe(true);
-    expect(t.zone.entity(t.entityId)!.fields.hp).toBe(0);
+    expect(t.downed[0]!.at).toBeCloseTo(start + 35, 0);
+    // the stopgap revive (P1.E06.T03's Recall replaces it): up in place at 60% health and 60/60 meters
+    expect(t.health()).toMatchObject({ suit: 60, down: null });
+    expect(t.zone.combat.isDown(t.entityId)).toBe(false);
+    expect(t.zone.entity(t.entityId)!.fields.hp).toBeCloseTo(0.6, 6);
+    expect(t.view()).toMatchObject({ lifeSupport: 60, hazard: 60 });
   });
 
-  it('is decided once, and by a single long stretch as by many short ones', () => {
+  it('drops the rest of the stretch it died in, and can die again only once the meters run down again', () => {
     const t = rig({ type: 'frozen', saved: { hazard: 0 } });
     t.stand(false, 0);
     t.wait(500);
     t.meters.sweep(t.now);
+    expect(t.downed).toHaveLength(1);
+    expect(t.view()).toMatchObject({ lifeSupport: 60, hazard: 60 });
+    expect(t.health().suit).toBe(60);
+    t.wait(5);
+    t.meters.sweep(t.now);
+    expect(t.downed).toHaveLength(1);
+    expect(t.health().suit).toBeCloseTo(67.5, 6);
     t.wait(500);
+    t.meters.sweep(t.now);
+    expect(t.downed).toHaveLength(2);
+  });
+
+  it('is decided once by a single long stretch, as by the many short ones that make it', () => {
+    const t = rig({ type: 'frozen', saved: { hazard: 0 } });
+    t.stand(false, 0);
+    t.wait(30);
     t.meters.sweep(t.now);
     expect(t.downed).toHaveLength(1);
   });

@@ -165,6 +165,11 @@ describe('the suit’s modifiers', () => {
     expect(hazardDrainMult(ulgani, at({ world: 'frozen' }))).toBe(1);
   });
 
+  it('come from a symbiotic node too: Thick Hide drains hazard protection 30% slower, and stacks with Hazard Weave', () => {
+    expect(hazardDrainPerS(1, false, mods('thick_hide'), at({}))).toBeCloseTo(SUIT.hazardDrainPerS * 0.7, 12);
+    expect(hazardDrainMult(mods('thick_hide', 'hazard_weave'), at({}))).toBeCloseTo(0.42, 12);
+  });
+
   it('leave out another branch’s modifiers and unknown nodes throw', () => {
     expect(suitMods({ skills: ['dense_bones', 'photon_thrusters'] }).filter((m) => m.stat.startsWith('suit.') || m.stat.startsWith('scan.'))).toEqual([]);
     expect(() => suitMods({ skills: ['sprint_strid'] })).toThrow(/Unknown skill node/);

@@ -312,21 +312,29 @@ describe('health and the hazard death', () => {
     await rig.stop();
   }, 60_000);
 
-  it('a hazard death is decided by the server, the client sending nothing, and told to combat’s listeners once', async () => {
+  it('a hazard death is decided by the server, the client sending nothing, told to combat’s listeners once, and the player revived in place', async () => {
     const rig = await start();
     const w = await character(rig);
     const news: unknown[] = [];
     rig.server.ws.combat.subscribe((n) => news.push(n));
+    const downed = () => news.filter((n) => (n as { kind: string }).kind === 'downed');
     rig.server.ws.meters.open(w.id, { heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 6, at: rig.clock() });
     await w.stand(FROZEN);
     // 10 s to zero, then 25 s of 4/s: the client, sending nothing, is no part of it
     for (let i = 0; i < 4; i++) await w.wait(10);
-    expect(w.health()).toMatchObject({ suit: 0, down: 'suit' });
-    expect(w.zone.combat.isDown(w.entity)).toBe(true);
-    expect(news.filter((n) => (n as { kind: string }).kind === 'downed')).toHaveLength(1);
-    expect(news.find((n) => (n as { kind: string }).kind === 'downed')).toMatchObject({ report: { cause: 'suit', characterId: w.id, source: null } });
+    expect(downed()).toHaveLength(1);
+    expect(downed()[0]).toMatchObject({ report: { cause: 'suit', characterId: w.id, source: null } });
+    // the stopgap P1.E06.T03's Recall replaces: up where it stands at 60% health and 60/60 meters, not down for the session
+    expect(w.health()).toMatchObject({ suit: w.health().suitMax * 0.6, down: null });
+    expect(w.zone.combat.isDown(w.entity)).toBe(false);
+    expect(w.view()).toMatchObject({ lifeSupport: 60, hazard: 60 });
     await w.wait(30);
-    expect(news.filter((n) => (n as { kind: string }).kind === 'downed')).toHaveLength(1);
+    expect(downed()).toHaveLength(1);
+    expect(w.health().down).toBeNull();
+    // (a cast is judged on its merits again: this one owns nothing, and is refused for that, not for being down)
+    w.s.send({ t: 'cast', seq: 1, time: rig.clock(), node: 'pulse', slot: 0, frame: `${systemSeed(HOME)}:${FROZEN}`, aim: [0, 0, -1] });
+    const cast = await w.s.next('cast');
+    expect(cast).toMatchObject({ seq: 1, result: 'refused', reason: 'not_owned' });
     w.s.close();
     await rig.stop();
   }, 60_000);
@@ -347,13 +355,15 @@ describe('health and the hazard death', () => {
 });
 
 describe('the gateway keeps the suit on the server’s clock', () => {
-  it('sweeps on its own: a silent client drains, starves and is put down with no one calling the service', async () => {
+  it('sweeps on its own: a silent client drains, starves and dies with no one calling the service', async () => {
     const rig = await start();
     const w = await character(rig);
+    const news: unknown[] = [];
+    rig.server.ws.combat.subscribe((n) => news.push(n));
     rig.server.ws.meters.open(w.id, { heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 6, at: rig.clock() });
     await w.stand(FROZEN);
     rig.advance(45);
-    await waitFor(() => w.health().down === 'suit', 5000, 'the hazard death');
+    await waitFor(() => news.some((n) => (n as { kind: string }).kind === 'downed'), 5000, 'the hazard death');
     const pushed = await metersWhere(w, (m) => m.hazard === 0);
     expect(pushed.lifeSupport).toBeLessThan(100);
     w.s.close();

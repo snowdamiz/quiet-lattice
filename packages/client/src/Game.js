@@ -962,7 +962,6 @@ export class Game {
     const face = f.sampler ? ship.state.pos.clone().addScaledVector(fwd, 3).sub(feet) : fwd;
     this.player.spawn(f, feet, face);
     ship.setCockpit(false);
-    this.player.lifeSupport = Math.max(this.player.lifeSupport, 30);
     this.mode = 'foot';
     this.audio.play('ui');
   }
