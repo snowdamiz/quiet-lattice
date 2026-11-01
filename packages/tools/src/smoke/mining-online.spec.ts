@@ -70,7 +70,11 @@ async function pilot(browser: Browser, errors: string[]): Promise<Page> {
 async function stand(page: Page, pose: string): Promise<void> {
   const [characterId, system, frame] = await page.evaluate(() => {
     const g = window.game;
-    return [g.net.characterId as string, g.galaxy.systems.findIndex((s: { seed: number }) => s.seed === g.net.zone.systemSeed) as number, `${g.system.seed}:${g.system.planets.indexOf(g.system.homePlanet)}`];
+    return [
+      g.net.characterId as string,
+      g.galaxy.systems.findIndex((s: { seed: number }) => s.seed === g.net.zone.systemSeed) as number,
+      `${g.system.seed}:${g.system.planets.indexOf(g.system.homePlanet)}`,
+    ];
   });
   await page.evaluate(() => {
     const w = window as unknown as Window & { __corrected: number };
@@ -115,7 +119,10 @@ async function groundBeside(page: Page, pos: number[], along: number): Promise<s
       if (side.lengthSq() < 1e-6) side.set(1, 0, 0);
       side.normalize();
       const dir = n.clone().addScaledVector(side, along).normalize();
-      return dir.multiplyScalar(g.system.homePlanet.groundRadius(dir) + 0.3).toArray().join(',');
+      return dir
+        .multiplyScalar(g.system.homePlanet.groundRadius(dir) + 0.3)
+        .toArray()
+        .join(',');
     },
     { pos, along },
   );
@@ -200,9 +207,7 @@ async function aim(page: Page, node: Found, beam: boolean): Promise<void> {
       const p = g.player;
       const V = g.cam.pos.constructor;
       const inst = [...g.flora.instancesNear(new V(...node.pos), 3, (sp: { node?: string }) => sp.node)].find((i) => g.flora.mineTarget(i).node === node.id);
-      const target = inst
-        ? inst.pos.clone().addScaledVector(inst.up, inst.sp.height * inst.scale * 0.35)
-        : new V(...node.pos);
+      const target = inst ? inst.pos.clone().addScaledVector(inst.up, inst.sp.height * inst.scale * 0.35) : new V(...node.pos);
       const up = p.state.pos.clone().normalize();
       const to = target.sub(p.state.pos.clone().addScaledVector(up, 1.7));
       const heading = to.clone().addScaledVector(up, -to.dot(up)).normalize();
