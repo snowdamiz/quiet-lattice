@@ -15,5 +15,18 @@ describe('smokeArgs', () => {
   it('passes a path through as is, and flags after it', () => {
     expect(smokeArgs(['src/smoke/boot.spec.ts', '--reporter=dot'])).toEqual(['test', 'src/smoke/boot.spec.ts', '--reporter=dot']);
     expect(smokeArgs(['boot.spec.ts'])).toEqual(['test', 'boot.spec.ts']);
+    expect(smokeArgs(['boot.spec.ts:4'])).toEqual(['test', 'boot.spec.ts:4']);
+  });
+
+  it('preserves flag values without turning them into file selectors', () => {
+    expect(smokeArgs(['--', 'boot', '--grep', 'renders', '--timeout', '120000'])).toEqual([
+      'test',
+      'src/smoke/boot.spec.ts',
+      '--grep',
+      'renders',
+      '--timeout',
+      '120000',
+    ]);
+    expect(smokeArgs(['--grep', 'renders'])).toEqual(['test', 'smoke', '--grep', 'renders']);
   });
 });
