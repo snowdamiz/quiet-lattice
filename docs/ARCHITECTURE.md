@@ -703,9 +703,9 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 - **Remote entities** (`src/remote/`, P1.E04.T02). `RemoteEntities` follows Net's snapshots (`attach(net)`; it starts
   over at every welcome and zone change, where entity ids start over): players and `ship` entities, never the player's
   own. The server sends no NPC ships yet (pirates come with P1.E08.T05, traffic and convoys with P2.E25.T06); `ship`
-  entities are followed and drawn already (a cutscene's ship actors are such). Creatures are P1.E08.T09's; npcs
-  (walkers) and props wait for the body rig (P1.E05.T04) and a prop catalog, loot and pods for P1.E08.T04 and
-  P1.E06.T03; none of them is followed. Each entity keeps a `PoseBuffer` (1.6 s): each tick's pose, in the entity's frame
+  entities are followed and drawn already (a cutscene's ship actors are such). Creatures (`mob` entities with a `species`)
+  are followed the same way and drawn by `Fauna` (below); npcs (walkers) and props wait for the body rig (P1.E05.T04) and a
+  prop catalog, loot and pods for P1.E06.T03; none of them is followed. Each entity keeps a `PoseBuffer` (1.6 s): each tick's pose, in the entity's frame
   resolved to the client's own frame object (a frame of another system is not shown, and holds no samples). An entity
   the snapshots stop naming is let go when the render time reaches the first tick without it, in whatever frame or
   system it was.
@@ -772,6 +772,25 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     lights and plating its own (`aShip`, per instance); only the instances drawn are uploaded, and nothing is allocated
     per frame. A ship landed on the world whose flora is streamed clears the plants under it, as the player's does.
     Measured costs: `assets/renders/ui/remote-ships-crowd/perf.json`.
+  - **Creatures** (`gameplay/Fauna.js`, P1.E08.T09). The client has no herd of its own: every creature on screen is a `mob`
+    entity the server sent, kept in the same pose buffers (render time, interpolation, frame changes and blends as above)
+    and shown when its `species` is an index into its world's shared `faunaSpecies(params, FAUNA_MAX_TIER)` list (a world
+    with none, or an index past it, is followed but not drawn). The species' colours, size, speeds and `shape` seed build
+    its body (the library variant of its body plan, or the procedural stand-in until P1.E14.T07), so every client draws
+    the same animal; one InstancedMesh per species per world, camera-relative like the ships (position from the placed
+    world position, orientation `frame × pose`), capacity doubling as herds grow. The gait is read off how fast the
+    creature is drawn moving (a smoothed speed against the species' walk pace; a flyer flaps always) and the stride phase
+    integrated from it, so legs do not slide; a creature whose mode is `dead` rolls onto its side over 0.45 s (a flyer
+    drops to the ground first) and stays until the snapshots stop naming it (3 s). The server sends no per-animal scale:
+    creatures are drawn at their species' size, and the shared hit sphere (`creatureSphere`, scale 1) is what the
+    crosshair pick (`Fauna.pick`, in the camera's own frame, so the ray and the creatures never disagree by a frame's
+    motion), ability targets (`Fauna.targets`, which `pickTarget` reads instead of the snapshot store for creatures) and
+    the player's push-out (`collidePlayer`) use. A phase-owned creature shows only to its phase because the server sends
+    it to no one else. The HUD's damage numbers rise over the creature a hit landed on (`HUD.hitAnchor`, the reticle when
+    it is not on screen); analysis is aimed at a drawn creature and asked of the server (`Game.analyze`). With no server
+    (the offline sandbox) there is no fauna; the dev scenarios through the dev server (`?dev#foot`) have it.
+    `replay.js` has a `herd` scene (creatures ahead of the walker, one lunging, one killed) for `pnpm capture -- --ui
+    fauna-combat` (and `-night`); `smoke/fauna-online.spec.ts` has two clients draw one server herd.
   - **Markers.** `markers(here, range, add)` gives the HUD a `player` marker for each other pilot's ship the local ship's
     sensors pick up (the ship's sensor range × the hull's signature, DESIGN 10.1, doubled on the pulse drive or
     boosting, halved in cover; once picked up, kept to 1.05 × that reach and for 0.5 s past it, so a ship at the edge of
