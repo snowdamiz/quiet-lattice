@@ -398,6 +398,10 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   casts.start();
   // a toggle whose node left its bar ends at once; a toggle the server ended reaches the bar of the session holding it
   const unsubscribeSkillCasts = skills.subscribe((characterId) => casts.skillsChanged(characterId));
+  // movement authority holds the walker and the ship to the build's speeds: Sprint Stride bought mid-session is allowed at once
+  const unsubscribeSkillSpeeds = skills.subscribe((characterId) => {
+    for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) deps.zones.reskill(c.s, skills.owned(characterId));
+  });
   const unsubscribeCasts = casts.subscribe((characterId) => {
     for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send(casts.state(characterId));
   });
@@ -719,7 +723,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (given?.length) log.info({ character: row.id, seasons: given.map((a) => a.season) }, 'season awards given on join');
       const at = loaded.get<PoseState>(POSE);
       const progress = loaded.get<Progress>(PROGRESS);
-      const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem }, at);
+      const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem, skills: skills.owned(row.id) }, at);
       if (joined.fellBack) log.warn({ character: row.id, saved: at, reason: joined.fellBack }, 'saved pose unusable; docked at the home Waystation');
       s.entityId = joined.entityId;
       s.zoneId = joined.zone.id;
@@ -784,6 +788,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       casts.stop();
       unsubscribeCasts();
       unsubscribeSkillCasts();
+      unsubscribeSkillSpeeds();
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
       if (!deps.resources) await resources.close();

@@ -485,6 +485,22 @@ describe('Hot Hands', () => {
   });
 });
 
+describe('Optical Drill', () => {
+  it('yields half as much again from a deposit, and does not break it any faster (that is Hot Hands)', () => {
+    const owned = new Map<string, string[]>();
+    const s = setup({ skills: { owned: (id) => owned.get(id) ?? [] } });
+    const a = s.player(deposit.stand);
+    owned.set(a.characterId, ['optical_drill']);
+    const type = nodeType(deposit.node.type);
+    expect(s.hit(a, deposit.id).hp).toBeCloseTo(1 - (0.25 * MULTITOOL_POWER) / type.hp, 9);
+    let r;
+    while ((r = s.hit(a, deposit.id)).result === 'hit') s.clock.t += 0.25;
+    expect(r.count).toBeGreaterThanOrEqual(Math.round(type.yield[0] * 1.5));
+    expect(r.count).toBeLessThanOrEqual(Math.round(type.yield[1] * 1.5));
+    expect(s.held(a, type.resource)).toBe(r.count);
+  });
+});
+
 describe('common flora', () => {
   it('breaks on the same beam time, gives its yield once per plant, and must be a kind the world grows, on its ground, in reach', () => {
     const s = setup();

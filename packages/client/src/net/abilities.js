@@ -66,8 +66,6 @@ export class Abilities {
     this.bars = { ground: Array(BAR_SLOTS.ground).fill(null), ship: Array(BAR_SLOTS.ship).fill(null) };
     /** the ship bar's working slots (the flown hull's ability slots) */
     this.shipSlots = 0;
-    /** the nodes the character owns (Long Ear's range, Echo and Choir are read from them) */
-    this.owned = new Set();
     /** node (the clock it runs on) → world time it is ready again */
     this.cooldowns = new Map();
     this.on = new Set();
@@ -105,7 +103,6 @@ export class Abilities {
   skills(view) {
     this.bars = { ground: [...view.state.slots.ground], ship: [...view.state.slots.ship] };
     this.shipSlots = view.shipSlots;
-    this.owned = new Set(view.state.bought);
   }
 
   state(m) {

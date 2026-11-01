@@ -414,6 +414,12 @@ export class Zone {
     return this.views.has(viewer);
   }
 
+  /** The session's character bought or respecced a node: movement authority holds it to the new build's speeds. */
+  reskill(viewer: ZoneViewer, skills: readonly string[]): void {
+    const entity = this.views.get(viewer)?.entityId;
+    if (entity !== undefined) this.movement?.reskill(entity, skills);
+  }
+
   /** The session's own entity id. */
   entityOf(viewer: ZoneViewer): number | undefined {
     return this.views.get(viewer)?.entityId;

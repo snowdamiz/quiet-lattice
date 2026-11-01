@@ -24,8 +24,8 @@ function fakeNet() {
   return net;
 }
 
-const view = (ground, ship = [], shipSlots = 2, bought = []) => ({
-  state: { bought, slots: { ground: [...ground, ...Array(6 - ground.length).fill(null)], ship: [...ship, ...Array(5 - ship.length).fill(null)] } },
+const view = (ground, ship = [], shipSlots = 2) => ({
+  state: { slots: { ground: [...ground, ...Array(6 - ground.length).fill(null)], ship: [...ship, ...Array(5 - ship.length).fill(null)] } },
   shipSlots,
 });
 const intent = { time: 1000, frame: '1:2', aim: [0, 0, -1] };
@@ -40,15 +40,6 @@ function setup() {
 }
 
 describe('the client’s abilities', () => {
-  it('knows the nodes the character owns, as the skills view last said (Long Ear’s range reads them)', () => {
-    const { net, a } = setup();
-    expect([...a.owned]).toEqual([]);
-    net.emit('skills', { skills: view(['pulse'], [], 2, ['pulse', 'long_ear']) });
-    expect([...a.owned].sort()).toEqual(['long_ear', 'pulse']);
-    net.emit('welcome', {});
-    expect(a.owned.size).toBe(0);
-  });
-
   it('casts what the server says is in a slot, numbered from 1, and nothing from an empty slot or past the hull’s', () => {
     const { net, a } = setup();
     expect(a.cast('ground', 0, intent)).toEqual({ t: 'cast', seq: 1, time: 1000, node: 'pulse', slot: 0, frame: '1:2', aim: [0, 0, -1] });

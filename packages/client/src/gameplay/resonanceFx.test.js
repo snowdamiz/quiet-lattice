@@ -1,6 +1,7 @@
 // Resonance's client hooks (P1.E07.T06): the cast events the server sends make the client do its own part and nothing it would
 // have to decide: the scan's reveal, the sites below, dropping out of a jammed pulse drive.
-import { RESONANCE_NUMBERS, scanRanges } from '@astra/shared/abilities';
+import { RESONANCE_NUMBERS } from '@astra/shared/abilities';
+import { scanRanges, suitMods } from '@astra/shared/exosuit';
 import { describe, expect, it, vi } from 'vitest';
 import { playAbilityFx } from '../net/abilities.js';
 import './resonanceFx.js';
@@ -49,9 +50,9 @@ describe('Jammer', () => {
 });
 
 describe('Long Ear', () => {
-  it('doubles the scan’s reach: deposits 360 m and sites 6 km, from 180 m and 3 km', () => {
-    expect(scanRanges([])).toEqual({ depositM: 180, siteM: 3000 });
-    expect(scanRanges(['long_ear'])).toEqual({ depositM: 360, siteM: 6000 });
-    expect(scanRanges(['pulse', 'choir'])).toEqual({ depositM: 180, siteM: 3000 });
+  it('doubles the scan’s reach through the suit’s modifiers: deposits 360 m and sites 6 km, from 180 m and 3 km', () => {
+    expect(scanRanges(suitMods({ skills: [] }))).toEqual({ depositM: 180, siteM: 3000 });
+    expect(scanRanges(suitMods({ skills: ['long_ear'] }))).toEqual({ depositM: 360, siteM: 6000 });
+    expect(scanRanges(suitMods({ skills: ['pulse', 'choir'] }))).toEqual({ depositM: 180, siteM: 3000 });
   });
 });
