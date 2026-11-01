@@ -855,17 +855,19 @@ within 20 ly of its default at the most. `tiers` is `galaxyTiers(edgeX)` (the fr
 it, so at seed 424242 it runs from 1 system at 10 ly out to 10 at 10 ly in, 6 at the baseline) and `dark` is `darkAt(count,
 opening)`: the systems the season opened dark, and below 300 the ones the Count itself pushed Edge-ward (on the fringe at
 `edgeAt(count, opening)` but not at `edgeAt(300, opening)`, DESIGN 16.3 "Low"), the Count's own relit as it climbs and all of
-them at 700. Every change of the
-Count, and a season's roll (the opening changes as the Count returns to 500), recomputes the three together in `commit()`,
-so subscribers hear one change that moves the Edge, the tier map (`flipped`) and the dark set at once, the zone manager
-re-tiers the zones it holds from it, and the mirror carries all of them. Nothing of it is saved: a restart works it out again
-from the saved Count and opening, so a roll played on boot and a roll played live end on the same Edge and nothing moves it
-twice. `world.update({count})` is the only lever (dev tooling and tests); there is no way to set the Edge on its own.
+them at 700. A Chorus sanctuary (a B- or E-class star, DESIGN 11 "any tier, safe") never goes dark, in either set: `darkAt`
+leaves it out (`isSanctuary` in `@astra/shared/world`, by the shared galaxy's star class), though its tier still flips, and a
+Broken opening's `darkSystems` never draws one. Every change of the Count, and a season's roll (the opening changes as the
+Count returns to 500), recomputes the three together in `commit()`, so subscribers hear one change that moves the Edge,
+the tier map (`flipped`) and the dark set at once, the zone manager re-tiers the zones it holds from it, and the mirror
+carries all of them. Nothing of it is saved: a restart works it out again from the saved Count and opening, so a roll
+played on boot and a roll played live end on the same Edge and nothing moves it twice. `world.update({count})` is the only
+lever (dev tooling and tests); there is no way to set the Edge on its own.
 Not yet: a dark station's Hive build and raid (DESIGN 16.3), which are for the station and Hive tasks to read
 `world.isDark(system)` and `state().dark`.
 
 The client draws the Edge from the same message, `net.world` (one copy: `game.edge` reads its `edgeX`, `game.stationDark(id)`
-its `dark` (protocol 21; the client never works the set out itself), the map's tooltip its Count). The Edge the tiers follow moves tens of light years in a cluster 110 ly across; the wall
+its `dark` (protocol 21; the client never works the set out itself), the map's tooltip its Count, and its shift from the default, "Advanced 20 ly" or "Receded 10 ly"). The Edge the tiers follow moves tens of light years in a cluster 110 ly across; the wall
 the map and the sky draw stands 3.1 million ly out and would not visibly move by that, so it moves `EDGE_WALL_LY_PER_LY`
 (20,000) light years for each (`wallX(edge)`, `edgeX(y, z, edge)` in `@astra/shared/world`; the wall stays beyond the
 farthest galaxy at the most the Count and an opening move it, 20 ly, 400,000 ly of wall). `EdgeOfSpace.update(…, edge)` slides

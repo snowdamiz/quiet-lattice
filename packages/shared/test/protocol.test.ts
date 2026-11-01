@@ -298,7 +298,7 @@ describe('protocol: version', () => {
   // (P1.E13.T01); 9: reserved for meters, which merged as 15 (P1.E07.T02); 10: combat (P1.E06.T02); 11: call-for-aid
   // beacons (P1.E15.T02); 12: analysis and the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation
   // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01); 17: world events (P2.E21.T01); 18: seasons
-  // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03). A branch that changes a message bumps the
+  // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03); 21: the Edge's world message (P2.E22.T02). A branch that changes a message bumps the
   // version, adds its line to the history under PROTOCOL_VERSION and updates this.
   it('is version 21, and the history under the constant names each version up to it exactly once', () => {
     expect(PROTOCOL_VERSION).toBe(21);

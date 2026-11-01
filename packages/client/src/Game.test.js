@@ -602,12 +602,13 @@ describe('the cast keys', () => {
 });
 
 describe('Game: where the Edge stands (P2.E22.T02)', () => {
+  // (the opening's own dark systems, 2, are not the ones dark now: the station query reads `dark`, which the server keeps current)
   const WORLD = (count, edgeX, dark = []) => ({
     t: 'world',
     season: 3,
     seasonStart: 0,
     seasonEnd: 4_838_400,
-    opening: { from: 'broken', edgeShiftLy: -10, dark },
+    opening: { from: 'broken', edgeShiftLy: -10, dark: [2] },
     count,
     edgeX,
     tiers: [0, 1],
@@ -649,10 +650,12 @@ describe('Game: where the Edge stands (P2.E22.T02)', () => {
     expect(g.edge).toBe(EDGE_X - 10);
     expect(g.stationDark(1)).toBe(true);
     expect(g.stationDark(0)).toBe(false);
+    expect(g.stationDark(2)).toBe(false);
     // the Count climbs to Fed: the Edge recedes and the dark stations relight
     socket.push(WORLD(900, EDGE_X + 6));
     expect(g.edge).toBe(EDGE_X + 6);
     expect(g.stationDark(1)).toBe(false);
+    expect(g.stationDark(2)).toBe(false);
   });
 
   it('reads the dark stations from the server and keeps the night flag its own', () => {
