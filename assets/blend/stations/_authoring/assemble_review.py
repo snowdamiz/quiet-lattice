@@ -9,9 +9,7 @@ review scene (#review:stations/<file>), and optionally rendered in Blender at LO
 Mating rule (kitsheet.py's): a module's socket joins another's when they coincide with +Y opposed, Z kept up; `place`
 sockets keep their orientation. --cut deletes everything on the +n side of the plane through p (Blender axes). Every join
 is printed with its gap, and so is every pair of sockets of different placed modules left within 2 m of each other."""
-import json
 import math
-import struct
 import os
 import sys
 import tempfile
@@ -24,6 +22,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", "packages", "tools", "blender")))
 import common  # noqa: E402
+from artlib import glb  # noqa: E402
 
 argv = sys.argv[sys.argv.index("--") + 1 :]
 src, out = argv[0], argv[1]
@@ -316,12 +315,34 @@ bpy.ops.export_scene.gltf(
     export_materials="EXPORT",
     export_animations=False,
 )
-with open(out, "rb") as exported:
-    data = exported.read()
-chunk_bytes = struct.unpack_from("<I", data, 12)[0]
-manifest = json.loads(data[20:20 + chunk_bytes])
+manifest, binary = glb.read(out)
 if not manifest.get("meshes"):
     raise RuntimeError("assembled review export contains no meshes")
+# Generic review hides Light_* markers. Add actual review-only punctual emitters beside them,
+# using the same authored values that the station builder reads, so paired perf includes lighting.
+light_specs = []
+for marker_index, marker in enumerate(list(manifest["nodes"])):
+    if not marker.get("name", "").startswith("Light_"):
+        continue
+    values = marker["extras"]
+    color = values["color"]
+    linear = common.lin(color) if isinstance(color, str) else color
+    emitter = {key: marker[key] for key in ("translation", "rotation", "scale", "matrix") if key in marker}
+    emitter["name"] = "ReviewLamp_" + marker["name"][len("Light_"):]
+    emitter["extensions"] = {"KHR_lights_punctual": {"light": len(light_specs)}}
+    light_specs.append({"type": "point", "color": list(linear), "intensity": float(values["intensity"]), "range": float(values["distance"])})
+    for parent in manifest["nodes"]:
+        if marker_index in parent.get("children", []):
+            parent["children"].append(len(manifest["nodes"]))
+            break
+    manifest["nodes"].append(emitter)
+if light_specs:
+    manifest.setdefault("extensions", {})["KHR_lights_punctual"] = {"lights": light_specs}
+    used = manifest.setdefault("extensionsUsed", [])
+    if "KHR_lights_punctual" not in used:
+        used.append("KHR_lights_punctual")
+    glb.write(out, manifest, binary)
+print(f"REVIEW LIGHTS: {len(light_specs)} live point lights from authored markers")
 tris = [sum(len(p.vertices) - 2 for c in n.children if c.type == "MESH" for p in c.data.polygons) for n in lod_nodes]
 print(f"ASSEMBLED {kit_name}: {len(placed)} modules, {len(figures)} bipeds, {len(larks)} Larks; tris per LOD {tris}; wrote {out} ({os.path.getsize(out) / 1e6:.1f} MB)")
 

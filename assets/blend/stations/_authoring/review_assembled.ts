@@ -136,6 +136,7 @@ try {
         calls,
         triangles: st.triangles,
         meshes: st.meshes,
+        pointLights: r.content.getObjectsByProperty('isPointLight', true).filter((o: { visible: boolean }) => o.visible).length,
         perf,
         png,
       };
