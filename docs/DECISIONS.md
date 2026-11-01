@@ -1194,3 +1194,5 @@ Format: task id, question → choice → why.
   - **Downed casters →** `pose()` and `sight()` are null/false for a downed caster, so any effect reading them after its cast stops for it (Echo, a held Lance).
   - **Jammer before PvP →** a Jammer cast is refused `target` for any player until P2.E17.T01. Protocol 22 adds `shared` on `CastEvent` (renumbered from 21 at landing, after P2.E22.T02 took 21).
   - **Test-only fixtures →** no live creature carries crystal or stone-touched resistances yet. Shatter's creature burst and Harmonic's immunity are exercised only through fixtures.
+
+- **P1.E01.T05 (2026-11-01 continuation)** → preserve the owner’s fast-CI choice recorded in merged [PR #1](https://github.com/snowdamiz/quiet-lattice/pull/1): GitHub runs typecheck, lint, unit/golden tests and the removed-code gate, fetching only runtime LFS assets. Integration, smoke and art validation remain local task gates. The old no-remote blocker is stale; push run [41244220276](https://github.com/snowdamiz/quiet-lattice/actions/runs/41244220276) passed at `cb1fec4f`. The plan is reconciled to that accepted scope rather than restoring the removed expensive jobs.
