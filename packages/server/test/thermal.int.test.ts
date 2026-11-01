@@ -206,10 +206,13 @@ describe('Thermal over the wire', () => {
         await sleep(50);
       }
       bot.input(stand, { look: [0, 0, -1] });
+      // Sample the heating at the acknowledged beam boundary, before the idle cooldown below.
+      bot.sock.send({ t: 'ping', id: 1, clientTime: 0 });
+      await bot.sock.next('pong');
+      expect(heat(c.id)).toBeGreaterThan(20);
       await sleep(600);
       const beamS = server.ws.meters.beamTime(c.id, server.world.clock.now()) - beam0;
       expect(beamS).toBeGreaterThan(1.2);
-      expect(heat(c.id)).toBeGreaterThan(20);
       const dealt = lost(bot.zone, first);
       expect(dealt).toBeGreaterThan(N.lance.dps * 0.5);
       expect(dealt).toBeLessThanOrEqual(N.lance.dps * beamS + 1e-6);

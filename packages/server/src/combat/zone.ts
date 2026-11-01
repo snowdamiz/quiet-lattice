@@ -259,6 +259,16 @@ export class ZoneCombat {
     if (this.zone.entity(entity)) this.show(entity, v);
   }
 
+  /** A zone boundary carries the same health and current equipment, with no free repair. */
+  transfer(entity: number, target: ZoneCombat, nextEntity: number): void {
+    const profile = this.profiles.get(entity);
+    if (profile) target.profiles.set(nextEntity, profile);
+    const vitals = this.vitals.get(entity);
+    if (vitals) target.vitals.set(nextEntity, vitals);
+    this.profiles.delete(entity);
+    this.vitals.delete(entity);
+  }
+
   /** An entity left the zone (despawned): its health and corpse go with it. */
   removed(entity: number): void {
     this.vitals.delete(entity);

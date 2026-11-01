@@ -14,6 +14,13 @@ const _to = pose();
 /** Writes into `out` the pose at world time `t` of `frame`, one of the client's bodies (a planet, a moon, the star) or its
  * Waystation, without moving the body itself. */
 export function framePoseAt(frame, t, out, depth = 0) {
+  if (frame.kind === 'inertial') {
+    out.position.copy(frame.position);
+    out.quaternion.copy(frame.quaternion);
+    out.velocity.copy(frame.velocity);
+    out.angularVelocity.copy(frame.angularVelocity);
+    return out;
+  }
   const parent = frame.parent ? framePoseAt(frame.parent, t, PARENTS[depth], depth + 1) : null;
   return frame.kind === 'station' ? stationPoseInto(frame, t, parent, out) : bodyPoseInto(frame, t, parent, out);
 }

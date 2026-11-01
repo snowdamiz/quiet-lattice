@@ -370,7 +370,7 @@ class Mover {
 
   /** A mover joining at server world time `joined`. */
   constructor(
-    readonly id: number,
+    public id: number,
     profile: MoverProfile,
     joined: number,
   ) {
@@ -558,6 +558,43 @@ export class MovementAuthority {
   graceFrom(id: number, now: number): void {
     const m = this.movers.get(id);
     if (m) m.graceUntil = now + MOVEMENT.correction.graceS;
+  }
+
+  /** The map permits a jump only while flying outside atmosphere. */
+  canWarp(id: number): boolean {
+    const m = this.movers.get(id);
+    if (!m || (m.last.mode !== 'ship' && m.last.mode !== 'pulse')) return false;
+    const s = m.last;
+    const poses = this.world.posesAt(s.p);
+    const frame = this.world.framePose(s.key, poses);
+    return this.world.airAt(s.key, s.pos, this.world.toWorld(frame, s.pos), poses) < 0.001;
+  }
+
+  /** Move the live authority, including its clock, violations, loadout and jams. Flight only
+   * translates inertial samples; a paid warp starts a new trajectory on the same session clock. */
+  transfer(id: number, target: MovementAuthority, nextId: number, pose: Pose, mode: MoveMode, now: number, warp: boolean): void {
+    const m = this.movers.get(id);
+    if (!m) throw new Error('handoff has no movement authority');
+    if (warp) {
+      m.last = target.sample(m, null, m.last.seq, { pose, mode, buttons: 0 }, m.last.t, now, now);
+      m.seg = [m.last];
+      m.boundary = null;
+      m.change = null;
+      m.switches = [];
+      m.hold = null;
+    } else {
+      const shift = pose.pos.map((v, i) => v - m.last.pos[i]!);
+      // A boundary is in inertial space; old samples on a planet cannot span systems.
+      m.seg = m.seg.filter((s) => s.key === null);
+      for (const s of new Set([m.last, ...m.seg])) {
+        s.pos = [s.pos[0] + shift[0]!, s.pos[1] + shift[1]!, s.pos[2] + shift[2]!];
+      }
+    }
+    m.parked = null;
+    this.movers.delete(id);
+    this.releasePad(id);
+    m.id = nextId;
+    target.movers.set(nextId, m);
   }
 
   /** Stops holding a mover (its pad, if it held one, is free again); returns its profile, to `add` it again elsewhere (an

@@ -17,7 +17,7 @@ import * as THREE from 'three';
 import { detectionDistance, effectiveSignature, movementSignals, shipStats } from '@astra/shared/ships';
 import { coverAtObjects } from '@astra/shared/world';
 import { SnapshotStore } from '../net/snapshots.js';
-import { frameOfId } from '../net/pose.js';
+import { networkFrameOf } from '../net/pose.js';
 import { PoseBuffer } from './buffer.js';
 import { framesApartAt } from './frames.js';
 import { PlaybackClock } from './clock.js';
@@ -256,7 +256,7 @@ export class RemoteEntities {
   }
 
   addSample(r, e, time) {
-    const frame = this.system ? frameOfId(this.system, this.game.station, e.frame) : undefined;
+    const frame = this.system ? networkFrameOf(this.game, e.frame) : undefined;
     // (a frame of no system this client has: it is not in the zone's system, warped away or between the stars)
     if (frame === undefined) {
       r.buf.clear();

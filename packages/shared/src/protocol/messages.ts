@@ -16,7 +16,7 @@ import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 23;
+export const PROTOCOL_VERSION = 24;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -41,6 +41,7 @@ export const PROTOCOL_VERSION = 23;
 // 21: the world message names the systems whose stations are dark (P2.E22.T02)
 // 22: a cast event may be `shared`: a party member within Choir's range plays the caster's Pulse as its own (P1.E07.T06)
 // 23: meters: the suit's life support and hazard protection in the meters state (P1.E06.T06)
+// 24: zone handoff identities and sequence fences, input/ack origins, authoritative warp requests (P1.E04.T04)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -174,6 +175,7 @@ export const Join = z.object({ t: z.literal('join'), characterId: Id });
  * `time`. */
 export const Input = z.object({
   t: z.literal('input'),
+  zone: Id.optional(),
   seq: z.number().int().nonnegative(),
   time: z.number().min(0).max(1e12),
   mode: MoveMode,
@@ -225,7 +227,8 @@ export const PartyOp = z.discriminatedUnion('op', [
 ]);
 export const PartyRequest = z.object({ t: z.literal('party'), op: PartyOp });
 export type PartyOp = z.infer<typeof PartyOp>;
-export const Ack = z.object({ t: z.literal('ack'), tick: z.number().int().nonnegative() });
+export const Warp = z.object({ t: z.literal('warp'), seq: z.number().int().min(1).max(0xffffffff), system: z.number().int().min(0).max(1023) });
+export const Ack = z.object({ t: z.literal('ack'), zone: Id.optional(), tick: z.number().int().nonnegative() });
 export const Ping = z.object({ t: z.literal('ping'), id: z.number().int().nonnegative(), clientTime: z.number().min(0).max(1e15) });
 /** Inventory request (ARCHITECTURE §7): move, split, merge, transfer or compact stacks. The client applies the same shared op
  * to predict and the server answers with `inventory` state. `seq` numbers the session's requests from 1, increasing. */
@@ -393,6 +396,7 @@ export const ClientMessage = z.discriminatedUnion('t', [
   Input,
   Cast,
   Interact,
+  Warp,
   ChatSend,
   PartyRequest,
   Ack,
@@ -428,10 +432,19 @@ export const Refused = z.object({ t: z.literal('refused'), code: RefusedCode, re
 /** The authoritative pose for the input `seq`; the client rewinds to it and replays later inputs. */
 export const Correction = z.object({ t: z.literal('correction'), seq: z.number().int().nonnegative(), pose: Pose, mode: MoveMode });
 /** Zone handoff (P1.E04.T04): the client now belongs to another zone, at this pose. */
-export const ZoneChange = z.object({ t: z.literal('zone'), zone: ZoneRef, pose: Pose });
+export const ZoneChange = z.object({
+  t: z.literal('zone'),
+  zone: ZoneRef,
+  entityId: EntityId,
+  pose: Pose,
+  mode: MoveMode,
+  seq: z.number().int().nonnegative(),
+  reason: z.enum(['flight', 'warp']),
+});
+export const WarpRefused = z.object({ t: z.literal('warp'), seq: z.number().int().min(1), reason: z.enum(['stale_seq', 'target', 'mode', 'fuel']) });
 export const Pong = z.object({ t: z.literal('pong'), id: z.number().int().nonnegative(), clientTime: z.number(), serverTime: z.number() });
 /**
- * The world service's state (ARCHITECTURE §3, §11, §27): sent after `welcome` and whenever it changes. `season` is the
+ * The world service's state (ARCHITECTURE §3, §11, §27): sent before `welcome` and whenever it changes. `season` is the
  * season's number, `seasonStart` and `seasonEnd` (protocol 18) the world times it began and ends at, `opening` the map it
  * opened with (how the season before ended, the Edge's shift and the systems dark this season, DESIGN 16.4).
  */
@@ -1081,6 +1094,7 @@ export const ServerMessage = z.discriminatedUnion('t', [
   Refused,
   Correction,
   ZoneChange,
+  WarpRefused,
   Pong,
   WorldState,
   EventMessage,

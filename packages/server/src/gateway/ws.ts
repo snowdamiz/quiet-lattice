@@ -2,9 +2,8 @@
 // The first message must be `hello` with the protocol version and a session token, within HELLO_TIMEOUT_MS; then
 // `join {characterId}` puts one of the account's characters in play, within JOIN_TIMEOUT_MS: persistence loads its saved
 // state (§8) and its player entity enters the world where it was saved (or docked at its home Waystation when that pose
-// is unusable, or for a new character), and `welcome` names the zone, the entity and that pose, followed at once by
-// `world` (the world service's state, sent again to every joined session whenever it changes), the character's
-// `inventory`, its `skills` and its `meters`. From then on `input` and `ack` go to the zone, which sends the session a
+// is unusable, or for a new character). `world` precedes `welcome` so the first scene uses current tiers, and is sent
+// again whenever it changes. `welcome` names the zone, entity and pose, followed by inventory, skills and meters. From then on `input` and `ack` go to the zone, which sends the session a
 // binary snapshot every tick (an input movement authority refuses is answered with `correction`, and a client corrected
 // too often is kicked), and closing the socket saves the character and takes the entity out; each input passes the meter
 // service first (heat and Charge run on inputs; movement authority refuses the pulse drive with Charge empty, and the
@@ -93,7 +92,7 @@ import { SocialService } from '../social/service.ts';
 import type { ServerClock } from '../world/clock.ts';
 import type { WorldSource } from '../world/service.ts';
 import { DEFAULT_SHARD_ID } from '../world/shard.ts';
-import type { ZoneManager } from '../zones/manager.ts';
+import type { Joined, ZoneManager } from '../zones/manager.ts';
 import { clientKey, TokenBucket } from './rateLimit.ts';
 
 export const WS_PATH = '/ws';
@@ -586,7 +585,11 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         // the meters run to now first (movement authority asks them about the pulse drive), then the zone judges and applies
         meters.claim(s.characterId!, msg, now);
         const r = deps.zones.input(s, msg);
-        if (r === 'ok') meters.input(s.characterId!, s, msg, now);
+        if (r === 'ok') {
+          meters.input(s.characterId!, s, msg, now);
+          const joined = deps.zones.follow(s);
+          if (joined) handedOff(s, joined, 'flight');
+        }
         // 'unknown': the session's entity was taken out of its zone (onViewerRemoved), which is no fault of the client's
         if (r === 'stale' || r === 'frame') invalid(s, `input ${r}`);
         // refused by movement authority (which logged it): the correction, and the end of a client corrected too often
@@ -596,10 +599,29 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         }
         return;
       }
+      case 'warp': {
+        if (s.state !== 'joined') return invalid(s, 'warp before join');
+        if (msg.seq <= (warpSequences.get(s) ?? 0)) {
+          s.send({ t: 'warp', seq: msg.seq, reason: 'stale_seq' });
+          return;
+        }
+        warpSequences.set(s, msg.seq);
+        const target = deps.zones.warpTarget(s, msg.system);
+        if (typeof target === 'string') {
+          s.send({ t: 'warp', seq: msg.seq, reason: target });
+          return;
+        }
+        if (!inventory.consume(s.characterId!, 'warp_cell', 1).ok) {
+          s.send({ t: 'warp', seq: msg.seq, reason: 'fuel' });
+          return;
+        }
+        handedOff(s, deps.zones.warp(s, target), 'warp');
+        return;
+      }
       case 'ack':
         // An ack of a tick the zone no longer holds (or never sent) changes nothing; it is not worth a strike.
         if (s.state !== 'joined') return invalid(s, 'ack before join');
-        deps.zones.ack(s, msg.tick);
+        if (!msg.zone || msg.zone === s.zoneId) deps.zones.ack(s, msg.tick);
         return;
       case 'chat':
         if (s.state !== 'joined') return invalid(s, 'chat before join');
@@ -671,6 +693,26 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
         return;
     }
+  }
+
+  const warpSequences = new WeakMap<Session, number>();
+
+  function handedOff(s: Session, joined: Joined & { seq: number }, reason: 'flight' | 'warp'): void {
+    s.entityId = joined.entityId;
+    s.zoneId = joined.zone.id;
+    s.send({
+      t: 'zone',
+      zone: { id: joined.zone.id, systemSeed: joined.zone.system.seed },
+      entityId: joined.entityId,
+      pose: joined.pose,
+      mode: joined.mode,
+      seq: joined.seq,
+      reason,
+    });
+    social.moved(s);
+    cutscenes.forget(s);
+    meters.locate(s.characterId!, s, deps.clock.now());
+    persistence.saveNow(s.characterId!, 'handoff');
   }
 
   async function onHello(c: Conn, msg: Extract<ClientMessage, { t: 'hello' }>): Promise<void> {
@@ -746,6 +788,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.state = 'joined';
       // the meters learn where it entered: movement authority credits its first input with the time since, flown there
       meters.locate(row.id, s, deps.clock.now());
+      s.send(deps.world.message());
       s.send({
         t: 'welcome',
         accountId: s.accountId!,
@@ -756,7 +799,6 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         pose: joined.pose,
         mode: joined.mode,
       });
-      s.send(deps.world.message());
       // the inventory persistence loaded (its layout re-derived from the ship), request numbering from 0
       s.send({ t: 'inventory', ...inventory.state(row.id) });
       s.send({ t: 'skills', ...skills.state(row.id) });

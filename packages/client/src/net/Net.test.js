@@ -528,3 +528,32 @@ describe('SnapshotStore', () => {
     expect(s.ticks.get(2).get(4).mode).toBe('docked');
   });
 });
+
+
+describe('zone handoff', () => {
+  it('resets entity snapshots at a handoff without resetting session request or input sequences', () => {
+    const { net, socket } = joined();
+    net.inputSeq = 37;
+    net.fireSeq = 9;
+    net.warpSeq = 2;
+    net.store.entities.set(99, { id: 99 });
+    let observed;
+    net.on('zone', () => { observed = [net.zone.id, net.entityId, net.store.entities.size]; });
+    socket().push({ t: 'zone', zone: { id: 'deep:1', systemSeed: 77 }, entityId: 8, seq: 36, pose: welcome().pose, mode: 'ship', reason: 'flight' });
+    expect(observed).toEqual(['deep:1', 8, 0]);
+    expect([net.inputSeq, net.fireSeq, net.warpSeq]).toEqual([37, 9, 2]);
+    net.close();
+  });
+
+  it('makes world tiers available before the first welcome listener builds a system', () => {
+    const h = harness();
+    h.net.connect();
+    h.socket().open();
+    let tiers;
+    h.net.on('welcome', () => { tiers = h.net.world.tiers; });
+    h.socket().push(WORLD);
+    h.socket().push(welcome());
+    expect(tiers).toEqual(WORLD.tiers);
+    h.net.close();
+  });
+});
