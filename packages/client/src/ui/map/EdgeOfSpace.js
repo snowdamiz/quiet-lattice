@@ -2,10 +2,12 @@
 // churning light closes off one side of the galaxy map; haze layers stand in front of it for depth,
 // shafts of light pour back from it into the galaxy, stars near it are red-shifted and drawn out
 // into streaks, sparks fall towards it, and the space-time grid bends and reddens as it meets it.
-// Beyond it there is nothing at all. (The universe expands into it, but for now the front is still.)
+// Beyond it there is nothing at all. (The universe expands into it, but for now the front is still.) The Count moves it:
+// the whole wall slides along +X as the world service moves the Edge (P2.E22.T02, update()'s `edge`).
 import * as THREE from 'three';
-// (where the membrane stands, EDGE_X, and how it bows back towards the galaxy, EDGE_CURVE_R, are the world's)
-import { EDGE_X, EDGE_CURVE_R as CURVE_R, edgeX } from '@astra/shared/world';
+// (where the membrane stands, EDGE_X by default and wallX(edge) once the Count has moved it, and how it bows back towards
+// the galaxy, EDGE_CURVE_R, are the world's)
+import { EDGE_X, EDGE_CURVE_R as CURVE_R, edgeX, wallX } from '@astra/shared/world';
 import { mapNoiseGLSL } from './mapCommon.js';
 
 // the edge's own random stream (its streaks and sparks), shared by the map and the sky in flight
@@ -15,23 +17,26 @@ const K = 1e4;
 const SPAN = 1300 * K;
 
 // The nearest way out from a galactic position: the direction to the membrane (into `out`), and the
-// distance in ly returned. (The cap is, near enough, part of a sphere CURVE_R across.)
-export function edgeBearing(p, out = new THREE.Vector3()) {
-  out.set(p.x - (EDGE_X - CURVE_R), p.y, p.z);
+// distance in ly returned. (The cap is, near enough, part of a sphere CURVE_R across.) `edge` is the Edge the server
+// publishes (`world.edgeX`).
+export function edgeBearing(p, out = new THREE.Vector3(), edge = EDGE_X) {
+  out.set(p.x - (wallX(edge) - CURVE_R), p.y, p.z);
   const r = out.length();
   out.divideScalar(r);
   return CURVE_R - r;
 }
 
+// (shared by every part: how far the wall stands from where its geometry was laid out, EDGE_X, along +X)
 const membraneVert = /* glsl */ `
   uniform float uOffset;
+  uniform float uShift;
   varying vec3 vW;
   varying vec3 vN;
   varying vec3 vV;
   void main() {
     vec3 p = position;
     // plane in yz, bent into a cap facing the galaxy
-    float x = ${EDGE_X.toFixed(1)} - (p.y * p.y + p.z * p.z) / ${(2 * CURVE_R).toFixed(1)} - uOffset;
+    float x = ${EDGE_X.toFixed(1)} + uShift - (p.y * p.y + p.z * p.z) / ${(2 * CURVE_R).toFixed(1)} - uOffset;
     vec3 w = vec3(x, p.y, p.z);
     vN = normalize(vec3(-1.0, -p.y / ${CURVE_R.toFixed(1)}, -p.z / ${CURVE_R.toFixed(1)}));
     vW = w;
@@ -47,10 +52,22 @@ const membraneFrag = /* glsl */ `
   uniform float uLayer;
   uniform float uSeed;
   uniform float uReveal;
+  uniform float uSky;
   varying vec3 vW;
   varying vec3 vN;
   varying vec3 vV;
   ${mapNoiseGLSL}
+  // seen from inside the sky the wall wears the art bible's Edge (§4): opal white, pale blue and pale peach, weighted by the
+  // iridescence's three phases, in place of its raw cosine hues (violet and mint)
+  const vec3 OPAL = vec3(0.96, 0.93, 0.97);
+  // one colour or the other in a fringe, not their mean: the opal's play of pale blue and pale peach
+  vec3 play(vec3 w) {
+    vec3 k = w * w * w;
+    return (OPAL * k.x * 0.6 + vec3(0.81, 0.91, 0.97) * k.y + vec3(0.97, 0.89, 0.82) * k.z) / (k.x * 0.6 + k.y + k.z + 1e-3);
+  }
+  vec3 pale(vec3 w) {
+    return (OPAL * w.x + vec3(0.81, 0.91, 0.97) * w.y + vec3(0.97, 0.89, 0.82) * w.z) / (w.x + w.y + w.z + 1e-3);
+  }
   float fbm3(vec3 p) {
     float s = 0.0;
     float a = 0.5;
@@ -75,9 +92,12 @@ const membraneFrag = /* glsl */ `
       // from far off: one soft, luminous wall, its folds only hinted at, opalescent toward its rim
       float ff = fbm(p * 1.4 + q * 1.3 + vec3(0.0, 0.0, t * 0.006));
       vec3 hue = 0.5 + 0.5 * cos(6.2831853 * (ff * 0.55 + fres * 0.5 + vec3(0.0, 0.33, 0.67)));
-      vec3 far = (vec3(0.07, 0.04, 0.17) + hue * vec3(0.08, 0.07, 0.11)) * (0.35 + 0.65 * smoothstep(-0.4, 0.7, ff)) * (0.7 + 1.2 * fres);
+      hue = mix(hue, pale(hue) * 0.8, uSky);
+      // (the sky's far wall is a neutral dusk, not violet, so it stays an opal's whatever the Count has done to its distance)
+      vec3 far = (mix(vec3(0.07, 0.04, 0.17), vec3(0.085, 0.08, 0.095), uSky) + hue * vec3(0.08, 0.07, 0.11)) * (0.35 + 0.65 * smoothstep(-0.4, 0.7, ff)) * (0.7 + 1.2 * fres);
       col = far;
-      float closeUp = smoothstep(0.25, 0.8, uReveal);
+      // (seen from inside the sky the film comes up sooner: a wall a few hundred thousand light years further out is no less opal)
+      float closeUp = smoothstep(mix(0.25, 0.05, uSky), mix(0.8, 0.45, uSky), uReveal);
       // (the full film only once it is near enough to show: it is the costly part)
       if (closeUp > 0.0) {
         // the membrane itself: doubly domain-warped flow (a cosmic web caught in a soap film)
@@ -89,9 +109,16 @@ const membraneFrag = /* glsl */ `
         // thin-film iridescence: hue runs with the flow and with the viewing angle
         float phase = f * 1.25 + length(rr.xy) * 0.9 + fres * 0.6 + t * 0.008;
         vec3 irid = 0.5 + 0.5 * cos(6.2831853 * (phase + vec3(0.0, 0.33, 0.67)));
+        irid = mix(irid, pale(irid), uSky);
         vec3 deep = mix(vec3(0.18, 0.04, 0.42), vec3(0.02, 0.22, 0.5), smoothstep(-0.4, 0.5, f));
+        deep = mix(deep, mix(vec3(0.14, 0.12, 0.17), vec3(0.1, 0.14, 0.19), smoothstep(-0.4, 0.5, f)), uSky);
         // mostly dark, deep-violet film; the light lives in the filaments and the iridescent folds
         vec3 film = deep * 0.4 + irid * (0.07 + 0.85 * fil) * smoothstep(-0.2, 0.7, f + 0.2) + vec3(1.0, 0.94, 1.0) * fil * 0.55;
+        // the sky's wisps: opal at their crests, and the opal's colour play (pale blue, pale peach) in the fringes round them
+        // (the sky's own grade warms what it draws, so the crests are drawn a little cool)
+        float halo = pow(max(rid, 0.0), 7.0) * smoothstep(-0.2, 0.7, f + 0.2) * (1.0 - fil);
+        vec3 wisp = deep * 0.4 + play(irid) * halo * 1.1 + OPAL * vec3(0.97, 0.97, 1.3) * fil * 1.7;
+        film = mix(film, wisp, uSky);
         // quantum foam: brief pinpricks of light across the film
         vec3 cs = vW * ${(0.11 / 1e4).toExponential(4)};
         vec3 cell = floor(cs);
@@ -107,14 +134,16 @@ const membraneFrag = /* glsl */ `
       float f = fbm3(p * 0.8 + 3.0 * q);
       float phase = f * 1.25 + length(q.xy) * 0.9 + fres * 0.6 + t * 0.008;
       vec3 irid = 0.5 + 0.5 * cos(6.2831853 * (phase + vec3(0.0, 0.33, 0.67)));
+      irid = mix(irid, pale(irid), uSky);
       vec3 deep = mix(vec3(0.18, 0.04, 0.42), vec3(0.02, 0.22, 0.5), smoothstep(-0.4, 0.5, f));
+      deep = mix(deep, mix(vec3(0.14, 0.12, 0.17), vec3(0.1, 0.14, 0.19), smoothstep(-0.4, 0.5, f)), uSky);
       col = mix(deep, irid, 0.4) * smoothstep(0.0, 0.7, f) * 0.6;
     }
     // the cap fades out at its rim
     float r = length(vW.yz);
     float rim = 1.0 - smoothstep(${(SPAN * 0.32).toFixed(1)}, ${(SPAN * 0.5).toFixed(1)}, r);
     // from deep inside the galaxy the wall is only a far glow; it comes up as the view closes in
-    float reveal = uLayer < 0.5 ? mix(0.22, 1.0, uReveal) : uReveal;
+    float reveal = uLayer < 0.5 ? mix(mix(0.22, 0.8, uSky), 1.0, uReveal) : uReveal;
     gl_FragColor = vec4(col * rim * uIntensity * reveal, 1.0);
   }`;
 
@@ -123,12 +152,13 @@ const shaftVert = /* glsl */ `
   attribute float aT;
   attribute float aSeed;
   uniform float uTime;
+  uniform float uShift;
   varying float vT;
   varying float vSeed;
   void main() {
     vT = aT;
     vSeed = aSeed;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position + vec3(uShift, 0.0, 0.0), 1.0);
   }`;
 const shaftFrag = /* glsl */ `
   uniform float uTime;
@@ -148,10 +178,11 @@ const streakVert = /* glsl */ `
   attribute float aT;
   attribute float aLen;
   uniform float uProj;
+  uniform float uShift;
   varying vec3 vColor;
   varying float vT;
   void main() {
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vec4 mv = modelViewMatrix * vec4(position + vec3(uShift, 0.0, 0.0), 1.0);
     // a streak only reads as one when it is long on screen; far off, the short ones are left out
     vColor = aColor * smoothstep(14.0, 90.0, aLen * uProj / max(-mv.z, 1.0));
     vT = aT;
@@ -172,12 +203,13 @@ const sparkVert = /* glsl */ `
   uniform float uTime;
   uniform float uPixelRatio;
   uniform float uReveal;
+  uniform float uShift;
   varying float vA;
   varying vec3 vColor;
   void main() {
     float life = fract(uTime * (0.03 + aSeed.w * 0.05) + aSeed.x);
     float d = ${(170 * 1e4).toFixed(1)} * (1.0 - life * life);
-    vec3 p = vec3(${EDGE_X.toFixed(1)} - d - (aSeed.y * aSeed.y + aSeed.z * aSeed.z) / ${(2 * CURVE_R).toFixed(1)}, aSeed.y, aSeed.z);
+    vec3 p = vec3(${EDGE_X.toFixed(1)} + uShift - d - (aSeed.y * aSeed.y + aSeed.z * aSeed.z) / ${(2 * CURVE_R).toFixed(1)}, aSeed.y, aSeed.z);
     vA = smoothstep(0.0, 0.15, life) * smoothstep(1.0, 0.85, life) * uReveal;
     vColor = mix(vec3(0.7, 0.85, 1.6), vec3(1.6, 0.6, 1.2), life);
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
@@ -192,13 +224,16 @@ const sparkFrag = /* glsl */ `
     gl_FragColor = vec4(vColor * vA * exp(-r * r * 6.0) * 1.6, 1.0);
   }`;
 
-export function buildEdge(rng = Math.random) {
+// `sky`: the wall as the sky seen in flight draws it, in the art bible's pale Edge colours; the map keeps its own
+export function buildEdge(rng = Math.random, { sky = false } = {}) {
   const group = new THREE.Group();
   group.name = 'edgeOfSpace';
   const mats = [];
   // shared by every part: how close the view has come (0 from the far side of the universe, 1 up against it)
   const uReveal = { value: 1 };
   const uProj = { value: 800 };
+  const uShift = { value: 0 };
+  const uSky = { value: sky ? 1 : 0 };
   const add = (o) => {
     // (placed by their shaders: the geometry's own bounds say nothing about where they are)
     o.frustumCulled = false;
@@ -214,7 +249,7 @@ export function buildEdge(rng = Math.random) {
     new THREE.Mesh(
       plane,
       new THREE.ShaderMaterial({
-        uniforms: { uTime: { value: 0 }, uOffset: { value: offset }, uIntensity: { value: intensity }, uLayer: { value: kind }, uSeed: { value: seed }, uReveal },
+        uniforms: { uTime: { value: 0 }, uOffset: { value: offset }, uIntensity: { value: intensity }, uLayer: { value: kind }, uSeed: { value: seed }, uReveal, uShift, uSky },
         vertexShader: membraneVert,
         fragmentShader: membraneFrag,
         transparent: true,
@@ -250,7 +285,7 @@ export function buildEdge(rng = Math.random) {
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('aT', new THREE.BufferAttribute(t, 1));
     geo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
-    add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uTime: { value: 0 }, uReveal }, vertexShader: shaftVert, fragmentShader: shaftFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
+    add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uTime: { value: 0 }, uReveal, uShift }, vertexShader: shaftVert, fragmentShader: shaftFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
   }
 
   // red-shifted, stretched stars
@@ -283,7 +318,7 @@ export function buildEdge(rng = Math.random) {
     geo.setAttribute('aLen', new THREE.BufferAttribute(lens, 1));
     geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
     geo.setAttribute('aT', new THREE.BufferAttribute(t, 1));
-    group.add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uReveal, uProj }, vertexShader: streakVert, fragmentShader: streakFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
+    group.add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uReveal, uProj, uShift }, vertexShader: streakVert, fragmentShader: streakFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
   }
 
   // sparks
@@ -298,7 +333,7 @@ export function buildEdge(rng = Math.random) {
       new THREE.Points(
         geo,
         new THREE.ShaderMaterial({
-          uniforms: { uTime: { value: 0 }, uPixelRatio: { value: 1 }, uReveal },
+          uniforms: { uTime: { value: 0 }, uPixelRatio: { value: 1 }, uReveal, uShift },
           vertexShader: sparkVert,
           fragmentShader: sparkFrag,
           transparent: true,
@@ -312,7 +347,9 @@ export function buildEdge(rng = Math.random) {
 
   return {
     group,
-    update(time, pixelRatio, reveal = 1, proj = 800) {
+    // `edge`: where the world service says the Edge stands (`world.edgeX`); the wall is drawn at wallX(edge)
+    update(time, pixelRatio, reveal = 1, proj = 800, edge = EDGE_X) {
+      uShift.value = wallX(edge) - EDGE_X;
       uReveal.value = reveal;
       uProj.value = proj;
       for (const m of mats) {

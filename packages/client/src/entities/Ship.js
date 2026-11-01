@@ -14,6 +14,7 @@ import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../rend
 import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, hazardDamagePerS, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
 import { canEngagePulse, meterEnvironment, meterProfile, meterRates, stepMeters } from '@astra/shared/meters';
 import { fireIntent } from '../net/combat.js';
+import { Blend } from '../net/prediction.js';
 
 const _v = new THREE.Vector3();
 const _v2 = new THREE.Vector3();
@@ -66,6 +67,9 @@ export class Ship {
   constructor(game) {
     this.game = game;
     this.state = new FrameState();
+    // the ship as drawn and as the chase camera follows it: its state, with a correction's blend while one runs
+    this.blend = new Blend();
+    this.drawn = new FrameState();
     this.group = new THREE.Group();
     this.group.name = 'ship';
     this.mode = 'flying'; // flying | landing | landed | takeoff | docking | pulse
@@ -1232,10 +1236,21 @@ export class Ship {
   }
 
   exitPulse() {
+    // (the drive's stretch is reported up to here: movement authority judges what follows on the engines from the last
+    // pose it had on the drive, and the frames since that input went at the drive's speed)
+    this.game.net?.sendInput();
     this.mode = 'flying';
     this.speed = Math.min(this.pulse.speed, PULSE_DRIVE.exitSpeedMax);
     const fwd = _v.set(0, 0, -1).applyQuaternion(this.state.quat);
     this.state.vel.copy(fwd).multiplyScalar(this.speed);
+    this.game.audio?.play('pulseExit');
+  }
+
+  // The server refused the pulse drive (ARCHITECTURE §7: a Charge it holds empty): back on the engines at the velocity its
+  // correction carries on with.
+  refusePulse() {
+    this.mode = 'flying';
+    this.pulse.spool = 0;
     this.game.audio?.play('pulseExit');
   }
 
@@ -1463,8 +1478,12 @@ export class Ship {
     }
   }
 
+  drawnState() {
+    return this.blend.apply(this.state, this.drawn);
+  }
+
   updateCamera(dt, input, out) {
-    const s = this.state;
+    const s = this.drawnState();
     let snap = false;
     if (out.frame !== s.frame) {
       // velocities are per frame: no acceleration to read across the change
@@ -1588,7 +1607,7 @@ export class Ship {
       return false;
     };
     if (!blocked(cam)) return;
-    const from = _v5.copy(this.state.pos);
+    const from = _v5.copy(this.drawn.pos);
     from.y += 1.5;
     let clear = 0;
     for (let i = 1; i <= 24; i++) {
@@ -1623,9 +1642,9 @@ export class Ship {
   }
 
   syncVisual(camWorld) {
-    const wp = this.state.worldPosition(_v);
-    this.group.position.copy(wp).sub(camWorld);
-    this.state.worldQuaternion(this.group.quaternion);
+    const s = this.drawnState();
+    this.group.position.copy(s.worldPosition(_v)).sub(camWorld);
+    s.worldQuaternion(this.group.quaternion);
     // the hull glows on the faces leading into the flow
     if (this.heatU && this.flowLocal) this.heatU.uHeatDir.value.copy(this.flowLocal).negate().applyQuaternion(this.group.quaternion);
     // landing light at low altitude

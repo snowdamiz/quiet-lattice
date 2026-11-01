@@ -119,6 +119,7 @@ async function setup() {
         count: 500,
         edgeX: 0,
         tiers: [],
+        dark: [],
         serverTime: clock.now(),
       }),
       subscribe: () => () => {},

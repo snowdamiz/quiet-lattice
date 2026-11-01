@@ -4,16 +4,33 @@
 import * as THREE from 'three';
 import { encodeServerMessage } from '@astra/shared/protocol';
 import { QuestBook } from '@astra/shared/quests';
+import { EDGE_X } from '@astra/shared/world';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Game } from './Game.js';
 import { Inventory } from './gameplay/Inventory.js';
 import { Abilities } from './net/abilities.js';
-import { walkerQuat } from './net/pose.js';
+import { frameOfId, walkerQuat } from './net/pose.js';
+import { Blend, Prediction } from './net/prediction.js';
 import { FrameState } from './universe/Body.js';
 
-/** A Game object with no constructor run: just `parts`. */
+/** A Game object with no constructor run: just `parts` (and what it predicted, in the frames of its system). */
 function fake(parts = {}) {
-  return Object.assign(Object.create(Game.prototype), { time: 0, timeBase: 0, net: null, abilities: new Abilities(), ...parts });
+  const g = Object.assign(Object.create(Game.prototype), { time: 0, timeBase: 0, net: null, abilities: new Abilities(), cam: {}, ...parts });
+  g.prediction ??= new Prediction((id) => frameOfId(g.system, g.station, id));
+  return g;
+}
+
+/** A ship or a walker at `state`, drawn with the blend a correction leaves. */
+function mover(state, parts = {}) {
+  return {
+    state,
+    blend: new Blend(),
+    drawn: new FrameState(),
+    drawnState() {
+      return this.blend.apply(this.state, this.drawn);
+    },
+    ...parts,
+  };
 }
 
 /** sessionStorage and localStorage as the browser keeps them. */
@@ -209,7 +226,7 @@ describe('Game: a correction', () => {
     const state = new FrameState();
     state.frame = station;
     state.pos.set(30, 2.4, 22);
-    const g = fake({ mode: 'ship', system, station, ship: { state, speed: 0 } });
+    const g = fake({ mode: 'ship', system, station, ship: mover(state, { speed: 0, mode: 'flying' }) });
     const yaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.4);
     g.onCorrection({ t: 'correction', seq: 3, mode: 'ship', pose: inPlanetFrame(new THREE.Vector3(30, 12.4, 22), yaw, new THREE.Vector3(0, 0, -5)) });
     expect(state.frame).toBe(station);
@@ -220,28 +237,187 @@ describe('Game: a correction', () => {
     expect(g.ship.speed).toBeCloseTo(5 * Math.cos(0.4), 9);
   });
 
-  it("turns a walker to the heading the server's pose faces", () => {
+  it('moves a walker and leaves it looking where its player looks', () => {
     const state = new FrameState();
     state.frame = station;
     const heading = new THREE.Vector3(0, 0, -1);
     const up = new THREE.Vector3(0, 1, 0);
-    const g = fake({ mode: 'foot', system, station, player: { state, heading, up: (out) => out.set(0, 1, 0) } });
+    const g = fake({ mode: 'foot', system, station, player: mover(state, { heading, up: (out) => out.set(0, 1, 0) }) });
     const facing = new THREE.Vector3(1, 0, 0);
     g.onCorrection({ t: 'correction', seq: 9, mode: 'foot', pose: inPlanetFrame(new THREE.Vector3(4, 0, 6), walkerQuat(up, facing), new THREE.Vector3()) });
     expect(state.frame).toBe(station);
     expect(state.pos.distanceTo(new THREE.Vector3(4, 0, 6))).toBeLessThan(1e-6);
-    expect(heading.distanceTo(facing)).toBeLessThan(1e-9);
+    expect(heading.toArray()).toEqual([0, 0, -1]);
   });
 
   it('ignores one in a frame this system does not have, and one on the title', () => {
     const state = new FrameState();
     state.frame = station;
     state.pos.set(30, 2.4, 22);
-    const g = fake({ mode: 'ship', system, station, ship: { state, speed: 0 } });
+    const g = fake({ mode: 'ship', system, station, ship: mover(state, { speed: 0, mode: 'flying' }) });
     g.onCorrection({ t: 'correction', seq: 3, mode: 'ship', pose: { ...POSE, frame: '2:station', pos: [0, 0, 0] } });
     g.mode = 'title';
     g.onCorrection({ t: 'correction', seq: 4, mode: 'ship', pose: { ...POSE, pos: [0, 0, 0] } });
     expect(state.pos.toArray()).toEqual([30, 2.4, 22]);
+  });
+});
+
+describe('Game: rewinding to a correction (P1.E04.T03)', () => {
+  const system = { seed: 1, planets: [] };
+  const station = { kind: 'station' };
+  const Q = [0, 0, 0, 1];
+  /** A ship flying along −z at `vel`, 0.25 s after it sent input 5 at world time 10; nine inputs sent so far. */
+  function flying(pos, vel, mode = 'flying') {
+    const state = new FrameState();
+    state.pos.fromArray(pos);
+    state.vel.fromArray(vel);
+    const ship = mover(state, {
+      speed: 0,
+      mode,
+      refusePulse: vi.fn(function () {
+        this.mode = 'flying';
+      }),
+    });
+    return { g: fake({ mode: 'ship', system, station, ship, time: 10.25, net: { inputSeq: 9 }, cam: { frame: null } }), ship, state };
+  }
+  const sent = (pos, vel, mode = 'ship') => ({ seq: 5, time: 10, mode, pose: { frame: null, pos, quat: Q, vel } });
+  const correction = (pos, vel, mode = 'ship') => ({ t: 'correction', seq: 5, mode, pose: { frame: null, pos, quat: Q, vel } });
+
+  it('replays the motion since the corrected input from the server’s pose, the ship drawn on from where it was', () => {
+    const { g, ship, state } = flying([0, 0, -525], [0, 0, -110]);
+    g.prediction.record(sent([0, 0, -500], [0, 0, -100]));
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    expect(state.pos.toArray()).toEqual([4, 0, -525]);
+    expect(ship.speed).toBeCloseTo(110);
+    expect(ship.drawnState().pos.toArray()).toEqual([0, 0, -525]);
+    expect(g.cam.frame).toBeNull();
+    // the inputs sent before it was taken are the old trajectory
+    expect(g.prediction.fence).toBe(9);
+  });
+
+  /** Inputs 5 to `last`, 0.05 s apart from world time 10, at `vel` along −z from z = −500. */
+  const record = (g, last, vel = 100) => {
+    for (let seq = 5; seq <= last; seq++) {
+      const time = 10 + (seq - 5) * 0.05;
+      g.prediction.record({ seq, time, mode: 'ship', pose: { frame: null, pos: [0, 0, -500 - vel * (time - 10)], quat: Q, vel: [0, 0, -vel] } });
+    }
+  };
+
+  it('ends a correction heard twice where one leaves it', () => {
+    const { g, state } = flying([0, 0, -525], [0, 0, -100]);
+    record(g, 9);
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    expect(state.pos.toArray()).toEqual([4, 0, -525]);
+    expect(state.vel.toArray()).toEqual([0, 0, -100]);
+    expect(g.prediction.stats.corrections).toBe(2);
+  });
+
+  it('carries the server’s pose on from a later input of the dropped trajectory, not the offset again', () => {
+    const { g, state } = flying([0, 0, -525], [0, 0, -100]);
+    record(g, 9);
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    g.onCorrection({ t: 'correction', seq: 8, mode: 'ship', pose: { frame: null, pos: [4, 0, -515], quat: Q, vel: [0, 0, -100] } });
+    expect(state.pos.toArray()).toEqual([4, 0, -525]);
+  });
+
+  it('puts an operator’s teleport just after a correction where the server put the character', () => {
+    const { g, state } = flying([0, 0, -525], [0, 0, -100]);
+    record(g, 9);
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    g.onCorrection({ t: 'correction', seq: 9, mode: 'ship', pose: { frame: null, pos: [100, 5000, -2000], quat: Q, vel: [0, 0, 0] } });
+    expect(state.pos.x).toBe(100);
+    expect(state.pos.y).toBe(5000);
+    expect(state.pos.z).toBeCloseTo(-2000 - 100 * 0.05);
+  });
+
+  it('puts a teleport just after a correction for a refused mode where the server put the character, at rest', () => {
+    const { g, ship, state } = flying([0, 0, -5500], [0, 0, -20000], 'pulse');
+    for (let seq = 5; seq <= 9; seq++) {
+      const time = 10 + (seq - 5) * 0.05;
+      g.prediction.record({ seq, time, mode: 'pulse', pose: { frame: null, pos: [0, 0, -500 - 20000 * (time - 10)], quat: Q, vel: [0, 0, -20000] } });
+    }
+    g.onCorrection(correction([4, 0, -500], [0, 0, -20000], 'pulse'));
+    g.time = 10.45;
+    g.onCorrection({ t: 'correction', seq: 9, mode: 'ship', pose: { frame: null, pos: [100, 0, -2000], quat: Q, vel: [0, 0, 0] } });
+    expect(ship.mode).toBe('flying');
+    expect(state.pos.toArray()).toEqual([100, 0, -2000]);
+    expect(state.vel.toArray()).toEqual([0, 0, 0]);
+    expect(ship.speed).toBe(0);
+  });
+
+  it('takes the server’s velocity from a correction that drops the drive for an input sent before engaging it', () => {
+    const { g, ship, state } = flying([0, 0, -5500], [0, 0, -20000], 'pulse');
+    g.prediction.record(sent([0, 0, -500], [0, 0, -100]));
+    g.onCorrection(correction([4, 0, -500], [0, 0, -100]));
+    expect(ship.mode).toBe('flying');
+    expect(state.vel.toArray()).toEqual([0, 0, -100]);
+    expect(state.pos.toArray()).toEqual([4, 0, -525]);
+    expect(ship.speed).toBeCloseTo(100);
+  });
+
+  it('counts a correction only once it is taken', () => {
+    const { g } = flying([0, 0, -525], [0, 0, -110]);
+    g.onCorrection({ t: 'correction', seq: 5, mode: 'ship', pose: { frame: '2:station', pos: [0, 0, 0], quat: Q, vel: [0, 0, 0] } });
+    expect(g.prediction.stats.corrections).toBe(0);
+    expect(g.prediction.fence).toBe(0);
+  });
+
+  it('drops a refused pulse drive and carries the server’s pose on at its velocity', () => {
+    const { g, ship, state } = flying([0, 0, -700], [0, 0, -900], 'pulse');
+    g.prediction.record(sent([0, 0, -520], [0, 0, -400], 'pulse'));
+    g.onCorrection(correction([0, 0, -500], [0, 0, -400]));
+    expect(ship.refusePulse).toHaveBeenCalledOnce();
+    expect(ship.mode).toBe('flying');
+    expect(state.pos.z).toBeCloseTo(-600);
+    expect(ship.speed).toBeCloseTo(400);
+    // (100 m, under half a second of its speed: blended)
+    expect(ship.drawnState().pos.z).toBeCloseTo(-700);
+  });
+
+  it('keeps a ship that left the pulse drive on its engines, at its own speed, where the server still holds it on the drive', () => {
+    const { g, ship, state } = flying([0, 0, -900], [0, 0, -400]);
+    g.prediction.record(sent([0, 0, -800], [0, 0, -400]));
+    g.onCorrection(correction([0, 0, -700], [0, 0, -9000], 'pulse'));
+    expect(ship.mode).toBe('flying');
+    expect(state.vel.toArray()).toEqual([0, 0, -400]);
+    expect(state.pos.z).toBeCloseTo(-800);
+  });
+
+  it('shows a correction further than a blend can explain as the jump it is, the chase camera put back behind', () => {
+    const { g, ship, state } = flying([0, 0, -525], [0, 0, -100]);
+    g.prediction.record(sent([0, 0, -500], [0, 0, -100]));
+    g.onCorrection(correction([0, 5000, -500], [0, 0, -100]));
+    expect(state.pos.y).toBe(5000);
+    expect(ship.drawnState().pos.toArray()).toEqual(state.pos.toArray());
+    expect(g.cam.frame).toBeUndefined();
+  });
+
+  it('places the character as a welcome does where the server holds it in a mode it cannot take in its stride', () => {
+    const { g } = flying([0, 0, -525], [0, 0, -100]);
+    g.placeFromServer = vi.fn();
+    g.onCorrection(correction([0, 0, 0], [0, 0, 0], 'docked'));
+    expect(g.placeFromServer).toHaveBeenCalledWith(expect.objectContaining({ pos: [0, 0, 0] }), 'docked');
+    const walker = fake({ mode: 'foot', system, station, player: mover(new FrameState()), placeFromServer: vi.fn() });
+    walker.onCorrection(correction([0, 0, 0], [0, 0, 0], 'ship'));
+    expect(walker.placeFromServer).toHaveBeenCalledOnce();
+  });
+
+  it('takes a correction it never heard from the snapshot that shows it, and nothing from one that agrees', () => {
+    const { g, state } = flying([0, 0, -525], [0, 0, -100]);
+    g.prediction.record(sent([0, 0, -500], [0, 0, -100]));
+    const entity = { frame: null, pos: [0, 0, -500], quat: Q, vel: [0, 0, -100], mode: 'ship' };
+    g.net = { inputSeq: 9, entityId: 7, store: { ack: 5, time: 10.1, entities: new Map([[7, entity]]) } };
+    g.checkPrediction();
+    expect(state.pos.toArray()).toEqual([0, 0, -525]);
+    expect(g.prediction.stats).toMatchObject({ error: 0, compared: 1, corrections: 0 });
+    entity.pos = [0, 3, -500];
+    g.checkPrediction();
+    expect(state.pos.toArray()).toEqual([0, 3, -525]);
+    expect(g.prediction.stats).toMatchObject({ corrections: 1, unheard: 1 });
+    // (and once taken, what was sent before it is not compared again)
+    g.checkPrediction();
+    expect(g.prediction.stats.corrections).toBe(1);
   });
 });
 
@@ -600,6 +776,86 @@ describe('the cast keys', () => {
     expect(keyed('ship', 'flying', ['Digit5'], 5)).toEqual([['ship', 4]]);
     expect(keyed('ship', 'landed', ['Digit1'])).toEqual([]);
     expect(keyed('ship', 'pulse', ['Digit1'])).toEqual([]);
+  });
+});
+
+describe('Game: where the Edge stands (P2.E22.T02)', () => {
+  // (the opening's own dark systems, 2, are not the ones dark now: the station query reads `dark`, which the server keeps current)
+  const WORLD = (count, edgeX, dark = []) => ({
+    t: 'world',
+    season: 3,
+    seasonStart: 0,
+    seasonEnd: 4_838_400,
+    opening: { from: 'broken', edgeShiftLy: -10, dark: [2] },
+    count,
+    edgeX,
+    tiers: [0, 1],
+    dark,
+    serverTime: 1000,
+  });
+
+  beforeEach(() => {
+    FakeSocket.all = [];
+    vi.stubGlobal('WebSocket', FakeSocket);
+    vi.stubGlobal('location', { protocol: 'http:', host: 'play.test', reload: vi.fn() });
+    vi.stubGlobal('window', { sessionStorage: memoryStorage(), localStorage: memoryStorage() });
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  function online() {
+    const g = fake({
+      inventory: new Inventory(),
+      player: { setBuild: vi.fn() },
+      hud: { toast: vi.fn(), social: { attach: vi.fn() } },
+      remotes: { attach: vi.fn() },
+      menus: { setConnection: vi.fn(), showMessage: vi.fn() },
+      overlay: null,
+      onWelcome: vi.fn(),
+    });
+    g.enterWorld({ token: 'tok' }, { id: 'c1' }, vi.fn());
+    const socket = FakeSocket.all.at(-1);
+    socket.open();
+    return { g, socket };
+  }
+
+  it('stands at its default out of the world, and follows each world message the server sends', () => {
+    expect(fake().edge).toBe(EDGE_X);
+    expect(fake().stationDark(1)).toBe(false);
+    const { g, socket } = online();
+    expect(g.edge).toBe(EDGE_X);
+    socket.push(WORLD(500, EDGE_X - 10, [1]));
+    expect(g.edge).toBe(EDGE_X - 10);
+    expect(g.stationDark(1)).toBe(true);
+    expect(g.stationDark(0)).toBe(false);
+    expect(g.stationDark(2)).toBe(false);
+    // the Count climbs to Fed: the Edge recedes and the dark stations relight
+    socket.push(WORLD(900, EDGE_X + 6));
+    expect(g.edge).toBe(EDGE_X + 6);
+    expect(g.stationDark(1)).toBe(false);
+    expect(g.stationDark(2)).toBe(false);
+  });
+
+  it('reads the dark stations from the server and keeps the night flag its own', () => {
+    const { g, socket } = online();
+    socket.push(WORLD(100, EDGE_X - 10, [1]));
+    // (every frame updateLighting sets the boolean `isDark`: it is the night, not the stations)
+    for (const night of [true, false]) {
+      g.isDark = night;
+      expect(g.stationDark(1)).toBe(true);
+      expect(g.stationDark(0)).toBe(false);
+    }
+    expect(g).not.toHaveProperty('world');
+  });
+
+  it('forgets the Edge when the connection is let go', () => {
+    const { g, socket } = online();
+    socket.push(WORLD(500, EDGE_X - 10));
+    expect(g.edge).toBe(EDGE_X - 10);
+    socket.refuse('auth', 'Sign in again.');
+    expect(g.edge).toBe(EDGE_X);
+    expect(g.net).toBeNull();
+    expect(g.stationDark(1)).toBe(false);
   });
 });
 

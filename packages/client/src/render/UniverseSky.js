@@ -8,7 +8,7 @@
 //   placed and lit by their true distance, so they wheel past and brighten as you fly among them.
 import * as THREE from 'three';
 import { SIMPLEX3 } from './glsl.js';
-import { LY, GALAXY, cosmos, edgeX, mulberry32 } from '@astra/shared/world';
+import { LY, EDGE_X, GALAXY, cosmos, edgeX, mulberry32 } from '@astra/shared/world';
 import { buildEdge, EDGE_SEED } from '../ui/map/EdgeOfSpace.js';
 import { worldPointVert, worldPointFrag, discVert, discFrag, nebFrag } from '../ui/map/mapCommon.js';
 
@@ -178,6 +178,10 @@ export class UniverseSky {
     this.renderEye = new THREE.Vector3();
     this.lastEye = new THREE.Vector3(1e9, 0, 0);
     this.lastReveal = -1;
+    // where the world service says the Edge stands (the sky is redrawn when it moves)
+    this.edgeAt = EDGE_X;
+    this.drawnEdge = EDGE_X;
+    this.drawnTime = 0;
     this.face = -1;
     this.needsFull = true;
     this.mats = [];
@@ -298,25 +302,26 @@ export class UniverseSky {
       m.renderOrder = n.dark ? 1 : 0;
       content.add(m);
     }
-    this.edge = buildEdge(mulberry32(EDGE_SEED));
+    this.edge = buildEdge(mulberry32(EDGE_SEED), { sky: true });
     content.add(this.edge.group);
   }
 
   // how close the edge has come: 0 from the far side of the universe, 1 against it
   revealAt(eye) {
-    return 1 - THREE.MathUtils.smoothstep(edgeX(eye.y, eye.z) - eye.x, 4e5, 2.6e6);
+    return 1 - THREE.MathUtils.smoothstep(edgeX(eye.y, eye.z, this.edgeAt) - eye.x, 4e5, 2.6e6);
   }
 
   // how far the ship may move before the nearest far thing visibly shifts (ly)
   tolerance(eye) {
     const c = cosmos();
-    let near = Math.min(2000, edgeX(eye.y, eye.z) - eye.x);
+    let near = Math.min(2000, edgeX(eye.y, eye.z, this.edgeAt) - eye.x);
     for (const n of c.nebulae) near = Math.min(near, Math.max(5, n.position.distanceTo(eye) - n.scale * 0.5));
     for (const g of c.galaxies) near = Math.min(near, Math.max(50, g.position.distanceTo(eye) - g.size * 0.5));
     return near * 0.0008;
   }
 
-  setEye(eye) {
+  // `time`: what the membrane's churn is drawn at (now, unless the redraw is only for a moved Edge, which holds it)
+  setEye(eye, time = this.time || 0) {
     this.content.position.copy(eye).negate();
     this.bandMat.uniforms.uCore.value.copy(GALAXY.center).sub(eye).normalize();
     const inside = 1 - THREE.MathUtils.smoothstep(eye.length(), 1500, 5000);
@@ -324,8 +329,10 @@ export class UniverseSky {
     this.galaxyMat.uniforms.uGain.value = 1 - inside;
     this.discMat.uniforms.uAlpha.value = THREE.MathUtils.smoothstep(eye.distanceTo(GALAXY.center), 4.5e4, 1.6e5) * 0.5;
     const reveal = this.revealAt(eye);
-    this.edge.update(this.time || 0, 1, reveal, FACE / 2);
+    this.edge.update(time, 1, reveal, FACE / 2, this.edgeAt);
     this.lastReveal = reveal;
+    this.drawnEdge = this.edgeAt;
+    this.drawnTime = time;
     this.scene.updateMatrixWorld(true);
   }
 
@@ -399,7 +406,8 @@ export class UniverseSky {
 
   // eye: the camera's galactic position (ly). visited: the built system's star, with its real
   // position relative to the camera (m), so its point hands over to the star itself up close.
-  update(eye, { time, pixelRatio, vis, visited, starRel }) {
+  update(eye, { time, pixelRatio, vis, visited, starRel, edge = EDGE_X }) {
+    this.edgeAt = edge;
     this.time = time;
     // near layer
     if (eye.distanceTo(this.fieldOrigin) > 50) {
@@ -462,10 +470,15 @@ export class UniverseSky {
     }
     if (this.face < 0) {
       const moved = eye.distanceTo(this.lastEye) > this.tolerance(eye);
-      if (moved || Math.abs(this.revealAt(eye) - this.lastReveal) > 0.03) {
+      // (a moved Edge changes how near the wall is, and so the reveal, by itself)
+      const edgeMoved = this.edgeAt !== this.drawnEdge;
+      const redraw = moved || (!edgeMoved && Math.abs(this.revealAt(eye) - this.lastReveal) > 0.03);
+      // A moved Edge alone redraws a face a frame like any move, with the churn held where the last draw had it: drawn at
+      // the time now it would re-roll the whole wall in the one frame the new image swaps in.
+      if (redraw || edgeMoved) {
         this.face = 0;
         this.renderEye.copy(eye);
-        this.setEye(eye);
+        this.setEye(eye, redraw ? this.time : this.drawnTime);
       }
     }
     if (this.face >= 0) {

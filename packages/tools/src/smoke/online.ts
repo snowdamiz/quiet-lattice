@@ -25,11 +25,14 @@ export interface Online {
   serverUrl: string;
   /** What the server has printed (warnings and errors), for a failure's report. */
   serverOutput(): string;
-  /** With `stepped`: the server's clock. It runs on real time until `freeze`d, then moves only by `advance`. */
-  clock?: { freeze(): Promise<void>; advance(ms: number): Promise<void> };
+  /** With `stepped`: the server's clock. It runs on real time until `freeze`d, then moves only by `advance`, until `thaw`
+   * lets it run on with real time from there. */
+  clock?: { freeze(): Promise<void>; advance(ms: number): Promise<void>; thaw(): Promise<void> };
   /** Stops the server gracefully (it saves everyone in play), waits `downMs`, and starts it again on the same port and
    * database: a restart as players live through it. */
   restartServer(downMs?: number): Promise<void>;
+  /** Runs one SQL statement against the scratch database (to stage a character's stored state before it enters). */
+  sql(statement: string): void;
   /** Runs an admin command (`{cmd: 'teleport', …}`, the server's admin/commands.ts) over the server's admin channel. */
   admin(command: Record<string, unknown>): Promise<{ ok: boolean; result?: unknown; error?: string; message?: string }>;
   stop(): Promise<void>;
@@ -46,8 +49,9 @@ async function freePort(): Promise<number> {
   });
 }
 
-/** Runs one statement against the docker Postgres with the server's own driver (resolved from packages/server). */
-function adminSql(statement: string): void {
+/** Runs one statement against the docker Postgres (the `astra` database, or `url`) with the server's own driver (resolved
+ * from packages/server). */
+function adminSql(statement: string, url = ADMIN_URL): void {
   const script = [
     "import postgres from 'postgres';",
     'const sql = postgres(process.env.ADMIN_URL, { max: 1, onnotice: () => {} });',
@@ -55,7 +59,7 @@ function adminSql(statement: string): void {
   ].join('\n');
   const r = spawnSync(process.execPath, ['--input-type=module', '-e', script], {
     cwd: SERVER_DIR,
-    env: { ...process.env, ADMIN_URL, STATEMENT: statement },
+    env: { ...process.env, ADMIN_URL: url, STATEMENT: statement },
     encoding: 'utf8',
   });
   if (r.status !== 0) throw new Error(`${statement} failed (is \`pnpm db:up\` running?): ${r.stderr || r.stdout}`);
@@ -176,8 +180,11 @@ export async function startOnline(opts: { stepped?: boolean } = {}): Promise<Onl
       const r = await fetch(`http://127.0.0.1:${clockPort}${path}`);
       if (!r.ok) throw new Error(`the server's clock control answered ${r.status}`);
     };
-    const clock = opts.stepped ? { freeze: () => control('/freeze'), advance: (ms: number) => control(`/advance?ms=${ms}`) } : undefined;
-    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, clock, restartServer, admin, stop };
+    const clock = opts.stepped
+      ? { freeze: () => control('/freeze'), advance: (ms: number) => control(`/advance?ms=${ms}`), thaw: () => control('/thaw') }
+      : undefined;
+    const sql = (statement: string) => adminSql(statement, dbUrl);
+    return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, clock, restartServer, sql, admin, stop };
   } catch (err) {
     await stop();
     throw err;

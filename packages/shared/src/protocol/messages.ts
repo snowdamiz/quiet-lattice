@@ -16,7 +16,7 @@ import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 21;
+export const PROTOCOL_VERSION = 22;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -38,7 +38,8 @@ export const PROTOCOL_VERSION = 21;
 // 18: seasons: the world's season start and end and the map it opened with; a character's season titles and glyphs (P2.E22.T03)
 // 19: fabricators: a craft names its fabricator as waystation, capital, sanctuary, scrapyard or ship (was station or ship) (P2.E20.T01)
 // 20: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
-// 21: meters: the suit's life support and hazard protection in the meters state (P1.E06.T06)
+// 21: the world message names the systems whose stations are dark (P2.E22.T02)
+// 22: meters: the suit's life support and hazard protection in the meters state (P1.E06.T06)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -443,6 +444,8 @@ export const WorldState = z.object({
   edgeX: z.number(),
   /** tier (0–5) per galaxy system index */
   tiers: z.array(z.number().int().min(0).max(5)).max(1024),
+  /** (protocol 21) the galaxy systems whose Waystations are dark now, ascending: the opening's and the ones a low Count pushed Edge-ward */
+  dark: z.array(z.number().int().min(0).max(1023)).max(1024),
   serverTime: z.number(),
 });
 
