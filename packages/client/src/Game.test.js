@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { encodeServerMessage } from '@astra/shared/protocol';
 import { QuestBook } from '@astra/shared/quests';
+import { EDGE_X } from '@astra/shared/world';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Game } from './Game.js';
 import { Inventory } from './gameplay/Inventory.js';
@@ -600,6 +601,86 @@ describe('the cast keys', () => {
     expect(keyed('ship', 'flying', ['Digit5'], 5)).toEqual([['ship', 4]]);
     expect(keyed('ship', 'landed', ['Digit1'])).toEqual([]);
     expect(keyed('ship', 'pulse', ['Digit1'])).toEqual([]);
+  });
+});
+
+describe('Game: where the Edge stands (P2.E22.T02)', () => {
+  // (the opening's own dark systems, 2, are not the ones dark now: the station query reads `dark`, which the server keeps current)
+  const WORLD = (count, edgeX, dark = []) => ({
+    t: 'world',
+    season: 3,
+    seasonStart: 0,
+    seasonEnd: 4_838_400,
+    opening: { from: 'broken', edgeShiftLy: -10, dark: [2] },
+    count,
+    edgeX,
+    tiers: [0, 1],
+    dark,
+    serverTime: 1000,
+  });
+
+  beforeEach(() => {
+    FakeSocket.all = [];
+    vi.stubGlobal('WebSocket', FakeSocket);
+    vi.stubGlobal('location', { protocol: 'http:', host: 'play.test', reload: vi.fn() });
+    vi.stubGlobal('window', { sessionStorage: memoryStorage(), localStorage: memoryStorage() });
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  function online() {
+    const g = fake({
+      inventory: new Inventory(),
+      player: { setBuild: vi.fn() },
+      hud: { toast: vi.fn(), social: { attach: vi.fn() } },
+      remotes: { attach: vi.fn() },
+      menus: { setConnection: vi.fn(), showMessage: vi.fn() },
+      overlay: null,
+      onWelcome: vi.fn(),
+    });
+    g.enterWorld({ token: 'tok' }, { id: 'c1' }, vi.fn());
+    const socket = FakeSocket.all.at(-1);
+    socket.open();
+    return { g, socket };
+  }
+
+  it('stands at its default out of the world, and follows each world message the server sends', () => {
+    expect(fake().edge).toBe(EDGE_X);
+    expect(fake().stationDark(1)).toBe(false);
+    const { g, socket } = online();
+    expect(g.edge).toBe(EDGE_X);
+    socket.push(WORLD(500, EDGE_X - 10, [1]));
+    expect(g.edge).toBe(EDGE_X - 10);
+    expect(g.stationDark(1)).toBe(true);
+    expect(g.stationDark(0)).toBe(false);
+    expect(g.stationDark(2)).toBe(false);
+    // the Count climbs to Fed: the Edge recedes and the dark stations relight
+    socket.push(WORLD(900, EDGE_X + 6));
+    expect(g.edge).toBe(EDGE_X + 6);
+    expect(g.stationDark(1)).toBe(false);
+    expect(g.stationDark(2)).toBe(false);
+  });
+
+  it('reads the dark stations from the server and keeps the night flag its own', () => {
+    const { g, socket } = online();
+    socket.push(WORLD(100, EDGE_X - 10, [1]));
+    // (every frame updateLighting sets the boolean `isDark`: it is the night, not the stations)
+    for (const night of [true, false]) {
+      g.isDark = night;
+      expect(g.stationDark(1)).toBe(true);
+      expect(g.stationDark(0)).toBe(false);
+    }
+    expect(g).not.toHaveProperty('world');
+  });
+
+  it('forgets the Edge when the connection is let go', () => {
+    const { g, socket } = online();
+    socket.push(WORLD(500, EDGE_X - 10));
+    expect(g.edge).toBe(EDGE_X - 10);
+    socket.refuse('auth', 'Sign in again.');
+    expect(g.edge).toBe(EDGE_X);
+    expect(g.net).toBeNull();
+    expect(g.stationDark(1)).toBe(false);
   });
 });
 

@@ -31,7 +31,7 @@ zones/              Zone (one star system), ZoneManager, spatial hash, interest 
 phases/             PhaseManager (one per zone): private layers at shared places, their caps and visibility rule
 social/             SocialService: chat channels, parties and invites, and their limits (§13); call-for-aid beacons (§21)
 cutscenes/          CutsceneService: cutscenes played in story phases, their catalog and actors (§15)
-world/              WorldService: server clock, season, Count, Edge position, tier map
+world/              WorldService: server clock, season, Count, Edge position (a function of the Count), tier map, dark stations
 count/              the Count meter (§11): lean, target, drift, burn and underdog arithmetic; the day ledger; its store
 seasons/            seasons (§27): a season's end and winners, the daily actives tally, season awards and their component,
                     the chronicle and awards in SQL, SeasonService (the gateway's and HTTP's view)
@@ -854,6 +854,34 @@ steady lean the Count is back on the target at each day's end, having burned 5 b
 in 0–1,000. `runMeter` plays both clocks forward in time order; the service runs it every second and before every
 counted action, publishes the new Count as one ordinary world change (`world` to clients, the Redis mirror) and logs
 one line.
+
+**The Edge follows the Count** (DESIGN 16.3, P2.E22.T02). `WorldState.edgeX` is not stored: it is `edgeAt(count, opening)`
+(`@astra/shared/seasons`, `seasons/edge.ts`), EDGE_X plus the season's opening shift (§27) plus `countShiftLy(count)`: none
+from 300 through 700 (the baseline), then a straight line out to 10 ly at 1,000 and in to 10 ly at 0, so the Edge stands
+within 20 ly of its default at the most. `tiers` is `galaxyTiers(edgeX)` (the fringe moves light year for light year with
+it, so at seed 424242 it runs from 1 system at 10 ly out to 10 at 10 ly in, 6 at the baseline) and `dark` is `darkAt(count,
+opening)`: the systems the season opened dark, and below 300 the ones the Count itself pushed Edge-ward (on the fringe at
+`edgeAt(count, opening)` but not at `edgeAt(300, opening)`, DESIGN 16.3 "Low"), the Count's own relit as it climbs and all of
+them at 700. A Chorus sanctuary (a B- or E-class star, DESIGN 11 "any tier, safe") never goes dark, in either set: `darkAt`
+leaves it out (`isSanctuary` in `@astra/shared/world`, by the shared galaxy's star class), though its tier still flips, and a
+Broken opening's `darkSystems` never draws one. Every change of the Count, and a season's roll (the opening changes as the
+Count returns to 500), recomputes the three together in `commit()`, so subscribers hear one change that moves the Edge,
+the tier map (`flipped`) and the dark set at once, the zone manager re-tiers the zones it holds from it, and the mirror
+carries all of them. Nothing of it is saved: a restart works it out again from the saved Count and opening, so a roll
+played on boot and a roll played live end on the same Edge and nothing moves it twice. `world.update({count})` is the only
+lever (dev tooling and tests); there is no way to set the Edge on its own.
+Not yet: a dark station's Hive build and raid (DESIGN 16.3), which are for the station and Hive tasks to read
+`world.isDark(system)` and `state().dark`.
+
+The client draws the Edge from the same message, `net.world` (one copy: `game.edge` reads its `edgeX`, `game.stationDark(id)`
+its `dark` (protocol 21; the client never works the set out itself), the map's tooltip its Count, and its shift from the default, "Advanced 20 ly" or "Receded 10 ly"). The Edge the tiers follow moves tens of light years in a cluster 110 ly across; the wall
+the map and the sky draw stands 3.1 million ly out and would not visibly move by that, so it moves `EDGE_WALL_LY_PER_LY`
+(20,000) light years for each (`wallX(edge)`, `edgeX(y, z, edge)` in `@astra/shared/world`; the wall stays beyond the
+farthest galaxy at the most the Count and an opening move it, 20 ly, 400,000 ly of wall). `EdgeOfSpace.update(…, edge)` slides
+every part of the wall with one uniform; `GalaxyMap` moves the selectable Edge, its label anchors and its lens with it;
+`UniverseSky` redraws the whole sky when the Edge moves; `Universe.clearance` and the edge compass measure to it. Until
+P1.E04.T04 lands the client does not rebuild a system whose tier changed (its dens and node layers follow the tier of the
+Edge it was built at), but the map, the sky, the compass and the tier a client reads from `world.tiers` follow it at once.
 
 Persistence: the shard's row holds `count`, `count_day` (the last day rolled) and `burn_step` (the last burn tick
 applied); votes go to `count_votes`, rolls to `count_days`. The service gathers new votes, rolls and the meter's position
@@ -2007,9 +2035,8 @@ its title and glyph, and what its chronicle says. The world service rolls them o
   424242 the Edge-ward fringe goes from 6 systems to 1); after Broken it advances as far (10 systems Edge-ward) and 2–3 of
   the Edge-ward fringe systems at that Edge start dark (`darkSystems`: drawn by `hashInts(galaxy seed, season)`, the same
   every run); after Held, and for the first season, the baseline. Each map comes from the one season before it, never
-  added up. It is data on the shard's row and in `world.opening`: the Edge following the meter (P2.E22.T02) is to apply
-  `edgeShiftLy` to `edgeX` and flag the `dark` systems' stations, reading `state().opening` and hearing the roll through
-  `subscribe` (a change with `season`).
+  added up. It is data on the shard's row and in `world.opening`: the world service applies `edgeShiftLy` to `edgeX` and flags
+  the `dark` systems' stations (§11, P2.E22.T02), so the roll is one change that moves the Edge, the tier map and the dark set.
 - **The winners** (`seasonWinners`): the accounts whose own counted actions in the season (its stored votes cast in
   [start, end)), read as the meter reads a day's (their lean, and the target it pulls toward), land in the season's
   bucket, with at least one full vote's weight (`TITLE_MIN_WEIGHT`; a monolith touch is a tenth). So the Fed season's
@@ -2047,8 +2074,8 @@ its title and glyph, and what its chronicle says. The world service rolls them o
   socket request: a chronicle is a document, which grows with P2.E22.T04's per-account measures, and fetching one spends
   nothing of a socket's message budget. The client fetches it with `seasonChronicle(token, season)` (`net/api.js`; Vite
   proxies `/seasons`).
-- **Not here**: the Reckoning in a season's final week (P3.E34.T03), the Edge moving with the meter and dark stations
-  drawn (P2.E22.T02), where players see it (P2.E22.T04), drift content per season (P3.E35.T01).
+- **Not here**: the Reckoning in a season's final week (P3.E34.T03), the dark stations' Hive build and raids (§11 says what
+  the world service flags), where players see it (P2.E22.T04), drift content per season (P3.E35.T01).
 ## 28. Abilities (`packages/server/src/abilities`, `@astra/shared/abilities`)
 
 DESIGN 9.1's actives, cast by the server (P1.E07.T03). A key press is an intent; the server decides whether the cast

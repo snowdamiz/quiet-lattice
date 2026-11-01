@@ -19,7 +19,7 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
+import { EDGE_X, streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { SUIT, footHazard } from '@astra/shared/data';
 import { cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
@@ -1329,6 +1329,17 @@ export class Game {
     }
   }
 
+  // where the world service says the Edge stands (`world.edgeX`: the Count moves it); the default before the first
+  // `world` message
+  get edge() {
+    return this.net?.world?.edgeX ?? EDGE_X;
+  }
+
+  // whether the server says galaxy system `id`'s Waystation is dark (`world.dark`). (Not `isDark`: that is the night.)
+  stationDark(id) {
+    return !!this.net?.world?.dark.includes(id);
+  }
+
   // the sky from the camera's true galactic position
   updateSky() {
     const eye = this.universe.toLy(this.camWorld, _v4);
@@ -1339,6 +1350,7 @@ export class Game {
       vis: this.engine.atmoPass.uniforms.uStarVis.value,
       visited: this.system.info,
       starRel: this.universe.deep ? null : _v5.copy(sun.position).sub(this.camWorld),
+      edge: this.edge,
     });
     this.engine.scene.background = this.sky.texture;
     // (the image light follows the sky, but at most every few seconds: it costs a few ms)

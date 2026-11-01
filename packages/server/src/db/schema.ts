@@ -84,7 +84,7 @@ export const shards = pgTable(
      * which took the default length. */
     seasonActives: doublePrecision('season_actives'),
     /** The map the season opened with (DESIGN 16.4, §27): how the season before ended, the Edge's shift (ly) and the
-     * systems dark this season; the baseline for the first. P2.E22.T02 applies it. */
+     * systems dark this season; the baseline for the first. The Edge follows it with the Count (world/service.ts). */
     seasonOpening: jsonb('season_opening').$type<SeasonOpening>().notNull().default({ from: null, edgeShiftLy: 0, dark: [] }),
   },
   (t) => [
