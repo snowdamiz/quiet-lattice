@@ -136,7 +136,16 @@ async function join(token: string, characterId: string) {
       await sleep(lastCast + 1000 / CAST_PER_S - Date.now());
       lastCast = Date.now();
       const s = ++castSeq;
-      sock.send({ t: 'cast', seq: s, time: time(), node, slot, frame: FRAME, aim: extra.aim ?? [0, 0, -1], ...(extra.target === undefined ? {} : { target: extra.target }) });
+      sock.send({
+        t: 'cast',
+        seq: s,
+        time: time(),
+        node,
+        slot,
+        frame: FRAME,
+        aim: extra.aim ?? [0, 0, -1],
+        ...(extra.target === undefined ? {} : { target: extra.target }),
+      });
       for (;;) {
         const m = await sock.next('cast');
         if (m.seq === s) return m;
@@ -167,79 +176,87 @@ const eye = (pos: Vec3): Vec3 => {
 };
 
 describe('Thermal over the wire', () => {
-  it('Lance: toggled on, the beam hurts what the eye follows by the beam time the meters judged, with Chain arcing half to a second', { timeout: 40_000 }, async () => {
-    const c = await character();
-    const bot = await join(c.token, c.id);
-    own(c.id, ['lance', 'chain']);
-    expect((await bot.slot(0, 'lance')).error).toBeUndefined();
-    const stand = at(0);
-    await bot.stand(stand);
-    while (!nodeGrounds.ground(params, 0)) await sleep(100);
-    const first = creature(bot.zone, at(12));
-    const second = creature(bot.zone, at(12, 5));
-    const far = creature(bot.zone, at(12, -40));
-    const node = getSkillNode('lance');
-    expect(node.cost).toEqual({ heatPerS: 32 });
+  it(
+    'Lance: toggled on, the beam hurts what the eye follows by the beam time the meters judged, with Chain arcing half to a second',
+    { timeout: 40_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['lance', 'chain']);
+      expect((await bot.slot(0, 'lance')).error).toBeUndefined();
+      const stand = at(0);
+      await bot.stand(stand);
+      while (!nodeGrounds.ground(params, 0)) await sleep(100);
+      const first = creature(bot.zone, at(12));
+      const second = creature(bot.zone, at(12, 5));
+      const far = creature(bot.zone, at(12, -40));
+      const node = getSkillNode('lance');
+      expect(node.cost).toEqual({ heatPerS: 32 });
 
-    const answer = await bot.cast('lance', 0);
-    expect(answer).toMatchObject({ result: 'cast', node: 'lance' });
-    expect(answer.readyAt).toBeUndefined();
-    expect(bot.on()).toEqual(['lance']);
-    const beam0 = server.ws.meters.beamTime(c.id, server.world.clock.now());
-    // the beam held for 1.4 s, the eye following the first creature
-    for (let i = 0; i < 28; i++) {
-      bot.input(stand, { beam: true, look: unit(centre(bot.zone, first).map((x, k) => x - eye(stand)[k]!)) });
-      await sleep(50);
-    }
-    bot.input(stand, { look: [0, 0, -1] });
-    await sleep(600);
-    const beamS = server.ws.meters.beamTime(c.id, server.world.clock.now()) - beam0;
-    expect(beamS).toBeGreaterThan(1.2);
-    expect(heat(c.id)).toBeGreaterThan(20);
-    const dealt = lost(bot.zone, first);
-    expect(dealt).toBeGreaterThan(N.lance.dps * 0.5);
-    expect(dealt).toBeLessThanOrEqual(N.lance.dps * beamS + 1e-6);
-    expect(bot.hits(first, 'lance').length).toBeGreaterThan(0);
-    expect(lost(bot.zone, far)).toBe(0);
-    // Chain: a share of what the first took, never more than half of it
-    expect(lost(bot.zone, second)).toBeGreaterThan(0);
-    expect(lost(bot.zone, second)).toBeLessThanOrEqual(dealt * N.lance.chainShare + 1e-6);
-    // the next cast turns it off, free
-    expect(await bot.cast('lance', 0)).toMatchObject({ result: 'ended' });
-    expect(bot.on()).toEqual([]);
-    const after = lost(bot.zone, first);
-    bot.input(stand, { beam: true, look: [0, 0, -1] });
-    await sleep(600);
-    expect(lost(bot.zone, first)).toBe(after);
-    bot.sock.close();
-  });
+      const answer = await bot.cast('lance', 0);
+      expect(answer).toMatchObject({ result: 'cast', node: 'lance' });
+      expect(answer.readyAt).toBeUndefined();
+      expect(bot.on()).toEqual(['lance']);
+      const beam0 = server.ws.meters.beamTime(c.id, server.world.clock.now());
+      // the beam held for 1.4 s, the eye following the first creature
+      for (let i = 0; i < 28; i++) {
+        bot.input(stand, { beam: true, look: unit(centre(bot.zone, first).map((x, k) => x - eye(stand)[k]!)) });
+        await sleep(50);
+      }
+      bot.input(stand, { look: [0, 0, -1] });
+      await sleep(600);
+      const beamS = server.ws.meters.beamTime(c.id, server.world.clock.now()) - beam0;
+      expect(beamS).toBeGreaterThan(1.2);
+      expect(heat(c.id)).toBeGreaterThan(20);
+      const dealt = lost(bot.zone, first);
+      expect(dealt).toBeGreaterThan(N.lance.dps * 0.5);
+      expect(dealt).toBeLessThanOrEqual(N.lance.dps * beamS + 1e-6);
+      expect(bot.hits(first, 'lance').length).toBeGreaterThan(0);
+      expect(lost(bot.zone, far)).toBe(0);
+      // Chain: a share of what the first took, never more than half of it
+      expect(lost(bot.zone, second)).toBeGreaterThan(0);
+      expect(lost(bot.zone, second)).toBeLessThanOrEqual(dealt * N.lance.chainShare + 1e-6);
+      // the next cast turns it off, free
+      expect(await bot.cast('lance', 0)).toMatchObject({ result: 'ended' });
+      expect(bot.on()).toEqual([]);
+      const after = lost(bot.zone, first);
+      bot.input(stand, { beam: true, look: [0, 0, -1] });
+      await sleep(600);
+      expect(lost(bot.zone, first)).toBe(after);
+      bot.sock.close();
+    },
+  );
 
-  it('Flare: bursts the 60° cone for 18 and ignites for 4 s, 24 more in ticks; the creature behind and the one past 12 m are spared', { timeout: 40_000 }, async () => {
-    const c = await character();
-    const bot = await join(c.token, c.id);
-    own(c.id, ['lance', 'flare']);
-    expect((await bot.slot(1, 'flare')).error).toBeUndefined();
-    const stand = at(0);
-    await bot.stand(stand);
-    while (!nodeGrounds.ground(params, 0)) await sleep(100);
-    const inCone = creature(bot.zone, at(8));
-    const behind = creature(bot.zone, at(-8));
-    const beyond = creature(bot.zone, at(30));
-    const aim = unit(centre(bot.zone, inCone).map((x, k) => x - eye(stand)[k]!));
-    const h0 = heat(c.id);
-    const answer = await bot.cast('flare', 1, { aim });
-    expect(answer).toMatchObject({ result: 'cast', node: 'flare' });
-    expect(answer.readyAt! - bot.time()).toBeCloseTo(cooldownOf(getSkillNode('flare'))!.seconds, 0);
-    expect(heat(c.id) - h0).toBeGreaterThan(30 - 2);
-    await waitFor(() => bot.hits(inCone, 'flare').length > 0, 5000, 'the burst');
-    expect(health(bot.zone, inCone).max - health(bot.zone, inCone).hp).toBeGreaterThanOrEqual(N.flare.burst - 1e-6);
-    await sleep(5000);
-    expect(lost(bot.zone, inCone)).toBeCloseTo(N.flare.burst + N.flare.burnDps * 4, 6);
-    expect(bot.hits(inCone, 'flare').length).toBeGreaterThan(2);
-    expect(lost(bot.zone, behind)).toBe(0);
-    expect(lost(bot.zone, beyond)).toBe(0);
-    bot.sock.close();
-  });
+  it(
+    'Flare: bursts the 60° cone for 18 and ignites for 4 s, 24 more in ticks; the creature behind and the one past 12 m are spared',
+    { timeout: 40_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['lance', 'flare']);
+      expect((await bot.slot(1, 'flare')).error).toBeUndefined();
+      const stand = at(0);
+      await bot.stand(stand);
+      while (!nodeGrounds.ground(params, 0)) await sleep(100);
+      const inCone = creature(bot.zone, at(8));
+      const behind = creature(bot.zone, at(-8));
+      const beyond = creature(bot.zone, at(30));
+      const aim = unit(centre(bot.zone, inCone).map((x, k) => x - eye(stand)[k]!));
+      const h0 = heat(c.id);
+      const answer = await bot.cast('flare', 1, { aim });
+      expect(answer).toMatchObject({ result: 'cast', node: 'flare' });
+      expect(answer.readyAt! - bot.time()).toBeCloseTo(cooldownOf(getSkillNode('flare'))!.seconds, 0);
+      expect(heat(c.id) - h0).toBeGreaterThan(30 - 2);
+      await waitFor(() => bot.hits(inCone, 'flare').length > 0, 5000, 'the burst');
+      expect(health(bot.zone, inCone).max - health(bot.zone, inCone).hp).toBeGreaterThanOrEqual(N.flare.burst - 1e-6);
+      await sleep(5000);
+      expect(lost(bot.zone, inCone)).toBeCloseTo(N.flare.burst + N.flare.burnDps * 4, 6);
+      expect(bot.hits(inCone, 'flare').length).toBeGreaterThan(2);
+      expect(lost(bot.zone, behind)).toBe(0);
+      expect(lost(bot.zone, beyond)).toBe(0);
+      bot.sock.close();
+    },
+  );
 
   it('Sear: marks one creature in reach to burn 8 s for 5 a second, with no blow of its own', { timeout: 40_000 }, async () => {
     const c = await character();

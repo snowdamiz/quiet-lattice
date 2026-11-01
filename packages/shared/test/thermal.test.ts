@@ -64,7 +64,12 @@ describe('Hot Hands', () => {
 
 describe('Vent’s dump', () => {
   it('takes all the heat and says how much, and is refused in the lockout', () => {
-    expect(dumpHeat({ heat: 73, overheated: false, charge: 5 })).toEqual({ ok: true, state: { heat: 0, overheated: false, charge: 5 }, events: [], dumped: 73 });
+    expect(dumpHeat({ heat: 73, overheated: false, charge: 5 })).toEqual({
+      ok: true,
+      state: { heat: 0, overheated: false, charge: 5 },
+      events: [],
+      dumped: 73,
+    });
     expect(dumpHeat({ heat: 100, overheated: true, charge: 5 })).toEqual({ ok: false, error: 'overheated' });
   });
 });

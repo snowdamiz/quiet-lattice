@@ -351,7 +351,10 @@ export class CastService {
     const e = zone.entity(self);
     if (!e || e.fields.frame !== frame) return null;
     const look = e.input?.aim;
-    return { origin: bar === 'ground' ? lift(e.fields.pos, EYE_M) : [e.fields.pos[0], e.fields.pos[1], e.fields.pos[2]], aim: look ? noseOf(look) : [aim[0], aim[1], aim[2]] };
+    return {
+      origin: bar === 'ground' ? lift(e.fields.pos, EYE_M) : [e.fields.pos[0], e.fields.pos[1], e.fields.pos[2]],
+      aim: look ? noseOf(look) : [aim[0], aim[1], aim[2]],
+    };
   }
 
   /** Why an `entity` cast's target is out of its reach, or null: seen, of a kind it takes, alive, on the caster's world,

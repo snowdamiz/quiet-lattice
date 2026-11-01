@@ -49,7 +49,12 @@ let inputSeq: number;
 /** Owns these nodes, the actives slotted in the order given. */
 function own(nodes: string[]): void {
   const slotted = nodes.filter((n) => getSkillNode(n).slot === 'ground');
-  skills = { ...emptySkillState(), unlocked: nodes, bought: nodes, slots: { ground: slotted.concat(Array(6 - slotted.length).fill(null)), ship: Array(5).fill(null) } };
+  skills = {
+    ...emptySkillState(),
+    unlocked: nodes,
+    bought: nodes,
+    slots: { ground: slotted.concat(Array(6 - slotted.length).fill(null)), ship: Array(5).fill(null) },
+  };
 }
 
 function cast(node: string, slotIndex: number, extra: { target?: number; aim?: Vec3 } = {}): Answer {
@@ -175,7 +180,15 @@ describe('Lance', () => {
       const l = Math.hypot(...q);
       return [q[0]! / l, q[1]! / l, q[2]! / l, q[3]! / l];
     };
-    w.zone.input(viewer, { t: 'input', seq: ++inputSeq, time: now, mode: 'foot', pose: { frame: f.frame, pos: [...f.pos], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, buttons: 1, aim: look(aimAt(toward.pos())) });
+    w.zone.input(viewer, {
+      t: 'input',
+      seq: ++inputSeq,
+      time: now,
+      mode: 'foot',
+      pose: { frame: f.frame, pos: [...f.pos], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+      buttons: 1,
+      aim: look(aimAt(toward.pos())),
+    });
     fire(1);
     expect(away.lost()).toBe(0);
     expect(toward.lost()).toBeCloseTo(N.lance.dps, 6);

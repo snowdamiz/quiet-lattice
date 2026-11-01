@@ -588,7 +588,15 @@ describe('what an effect is given beyond the cast', () => {
     // a quarter turn about +y turns −z to −x
     const h = Math.SQRT1_2;
     const input = (aim: [number, number, number, number] | undefined) =>
-      w.zone.input(viewer, { t: 'input', seq: ++inputSeq, time: now, mode: 'foot', pose: { frame: f.frame, pos: [...f.pos], quat: [0, 0, 0, 1], vel: [0, 0, 0] }, buttons: 0, ...(aim ? { aim } : {}) });
+      w.zone.input(viewer, {
+        t: 'input',
+        seq: ++inputSeq,
+        time: now,
+        mode: 'foot',
+        pose: { frame: f.frame, pos: [...f.pos], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+        buttons: 0,
+        ...(aim ? { aim } : {}),
+      });
     expect(input([0, h, 0, h])).toBe('ok');
     const look = ctx.pose()!.aim;
     expect(look[0]).toBeCloseTo(-1, 6);
