@@ -1518,23 +1518,30 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is
   made again whenever the ship or the owned nodes change.
 - **The suit's meters** (P1.E06.T06, DESIGN 9.8): life support and hazard protection, each 0 to 100, are the service's too,
-  run by `stepSuit` (`@astra/shared/meters`) from the same timestamps, with the numbers in `SUIT` and the build's
+  run by `stepSuppliedSuit` (`@astra/shared/meters`) from the same timestamps and rates as the client's `stepSuit`, with the
+  numbers in `SUIT` and the build's
   modifiers from `@astra/shared/exosuit` (`suitMods` of the owned nodes and the people's perk: Second Lung, Hazard Weave,
   Cold Blood, Heat Shroud, Deep Diver, Cartridge Recycler, Second Skin's floor of 20, the Ulgani). They run only while the
-  server believes the character is on foot (`mode` `foot`, placed by its first input; nothing while it is away): on a world
+  server believes the character is on foot (`mode` `foot`, from authoritative `locate` on join, before any client input;
+  the actual offline interval before placement is inactive): on a world
   life support drains 0.35/s and hazard protection by `MeterEnvironment.footHazard` (the world's own and its ship hazard's foot
   strength, or a mild world's mist at the altitude; ×1.4 where the star is below the horizon; the build's multiples) or
   regains 2/s where nothing is hard; inside a station both refill (5/s, 10/s); aboard a ship they are topped up and do not
-  move. Where a draining meter reaches 25, `stepSuit` stops there and the service refills it from the character's real
+  move. Where a draining meter crosses 25, the service refills it from the character's real
   inventory (`SuitSupplies`, the inventory service's): a crafted cartridge first (one item, restoring 60, or 80 with
   Cartridge Recycler), else 10 raw oxygen or sodium (restoring 40, or 60 with Cartridge Recycler); with neither the meter
-  drains on. Refills cap at 100; surplus restoration is lost.
+  drains on. Refills cap at 100; surplus restoration is lost. Automatic refills are counted arithmetically through
+  each meter's crafted, raw and exhausted supply regimes, so elapsed time and large stacks do not increase the work.
+  The totals are spent in one inventory transaction and one push; shared inventory operation quantity limits split
+  only oversized totals, into at most three chunks per supply type. Exact boundaries allow floating-point roundoff
+  consistently in both shared step functions, so subdividing a step cannot charge an extra refill.
   Health is combat's (§20): while a meter is at zero and not recovering the service takes 4/s from the character's suit
   vitals, and gives 1.5/s back on a world while both hold, through `ZoneCombat.suitHealth` (no resistance, no combat
   event, not in combat); health at 0 is a hazard death: `downed` is reported (cause `suit`, no source: what the Recall
   reads, P1.E06.T03) and, as a stopgap until the Recall replaces it, the character is revived in place at once (health 60%
   of its suit's, both meters 60, `down` cleared). Recovery is at the advance's endpoint: the remaining elapsed interval is
-  discarded to avoid retroactive repeated deaths or refill costs in one delayed sweep; the next advance resumes normally.
+  discarded only after combat confirms a death, to avoid retroactive repeated deaths in one delayed sweep. The plan
+  limits supply costs to the actual death time and reports that time; the next advance resumes normally.
   Neither server nor client moves or boards the character on this interim recovery. `sweep(now)` (the gateway calls it
   every 0.5 s) advances each character on foot and refreshes its environment and conditions from its authoritative pose
   and the zone's current body poses for the next interval. A client sending nothing still drains, starves and dies, and
@@ -1544,7 +1551,7 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   at}` (a save from before the suit's two has them full). A character
   back from away has its heat cooled for the time it was gone (idle, nowhere in particular) and its Charge as it left it:
   Charge regenerates only in play, from the first input after it joins (the Listener's anywhere-flag included), and the
-  suit's two are as it left them and move only in play. Nothing
+  suit's two are as it left them and move from authoritative placement, without waiting for its first input. Nothing
   here is earned, so an unreadable value gives the default (cool, Charge full, suit full), logged.
 - **The client** predicts with the same rules (the suit's two in `Game.updateSurvival`, which takes the shared `stepSuit`,
   predicts a refill from what the pack holds without spending it, and takes the server's `lifeSupport` and `hazard` from

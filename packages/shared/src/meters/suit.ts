@@ -1,5 +1,5 @@
 // The exo-suit's two meters on foot (DESIGN 9.8): life support and hazard protection, each 0 to 100, as pure functions both ends
-// run. The server decides them (the meter service runs `stepSuit` from timestamps, as it runs heat); the client predicts with the
+// run. The server batches refills with `stepSuppliedSuit` from timestamps; the client predicts with `stepSuit` and the
 // same rules. The numbers are `SUIT` (`@astra/shared/data`) and the modifiers the owned nodes' and the people's perk's
 // (`@astra/shared/exosuit`).
 //
@@ -10,7 +10,7 @@
 // draining meter reaches the refill line and says which, so a refill is made at the moment the line was crossed.
 import { SUIT } from '../data/suit.ts';
 import type { StatMod } from '../data/modifiers.ts';
-import { cartridgeRestore, hazardDrainPerS, lifeSupportDrainPerS, suitFloors, suitMods, type ExosuitInputs } from '../exosuit/index.ts';
+import { cartridgeItemRestore, cartridgeRestore, hazardDrainPerS, lifeSupportDrainPerS, suitFloors, suitMods, type ExosuitInputs } from '../exosuit/index.ts';
 import type { MeterEnvironment } from './environment.ts';
 
 export const SUIT_MAX = 100;
@@ -88,6 +88,15 @@ function clamp(v: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, v));
 }
 
+/** Ignore roundoff at an exact refill boundary; subdividing an interval must not spend an extra cartridge. */
+function before(a: number, b: number): boolean {
+  return b - a > Number.EPSILON * Math.max(1, Math.abs(a), Math.abs(b)) * 8;
+}
+
+function crossedCycles(cycles: number): number {
+  return Math.max(0, Math.ceil(cycles - Number.EPSILON * Math.max(1, Math.abs(cycles)) * 8));
+}
+
 /**
  * The suit `dt` seconds on, in `env` (its `place`) throughout. Exact: each meter moves at its constant rate, held to its floor
  * (0, or Second Skin's 20 out of combat) and 100, and the stretch is told as the seconds health was lost or regained in order.
@@ -112,13 +121,13 @@ export function stepSuit(
   const line = SUIT.cartridge.below;
   const canRefill = (m: SuitMeter) => place === 'world' && refillable[m] && rates[m] < 0;
   // (a draining meter already below the line is refilled before anything else moves)
-  for (const m of METERS) if (canRefill(m) && v[m] < line) return { state: v, elapsed: 0, spans: [], refill: m };
+  for (const m of METERS) if (canRefill(m) && before(v[m], line)) return { state: v, elapsed: 0, spans: [], refill: m };
   let stop = t;
   let refill: SuitMeter | null = null;
   for (const m of METERS) {
     if (!canRefill(m)) continue;
-    const at = (v[m] - line) / -rates[m];
-    if (at < stop) {
+    const at = Math.max(0, (v[m] - line) / -rates[m]);
+    if (before(at, stop)) {
       stop = at;
       refill = m;
     }
@@ -145,4 +154,88 @@ export function stepSuit(
 /** The health a span costs (negative) or gives, out of `SUIT`'s rates. */
 export function spanHealth(span: SuitSpan): number {
   return span.starved ? -SUIT.healthLostPerS * span.s : SUIT.healthRegainPerS * span.s;
+}
+
+/** Available refill counts (raw counts are bundles of SUIT.cartridge.units, not individual resource units). */
+export type SuitStock = Record<SuitMeter, { cartridges: number; raw: number }>;
+
+export function emptySuitStock(): SuitStock {
+  return { lifeSupport: { cartridges: 0, raw: 0 }, hazard: { cartridges: 0, raw: 0 } };
+}
+
+export interface SuppliedSuitStep extends Omit<SuitStep, 'refill'> {
+  used: SuitStock;
+}
+
+/**
+ * The same constant-rate interval as stepSuit, with automatic refills included. Each meter crosses at most two supply
+ * regimes (crafted, then raw), counting identical refill cycles arithmetically; work does not grow with stock or elapsed
+ * time. The caller spends `used` atomically and applies the health spans. It can run this again up to a lethal span's
+ * actual death time before spending, so supplies after death are never charged.
+ */
+export function stepSuppliedSuit(
+  s: SuitState,
+  p: SuitProfile,
+  env: MeterEnvironment,
+  place: SuitPlace,
+  dt: number,
+  conditions: ReadonlySet<string>,
+  stock: SuitStock,
+): SuppliedSuitStep {
+  const used = emptySuitStock();
+  const t = Math.max(0, dt);
+  if (place !== 'world' || !(t > 0)) {
+    const step = stepSuit(s, p, env, place, t, conditions);
+    return { state: step.state, elapsed: t, spans: step.spans, used };
+  }
+  const rates = suitRates(p, env, place, conditions);
+  const floors = suitFloors(p.mods, conditions);
+  const state = fullSuit();
+  let starvedFrom = t;
+  for (const meter of METERS) {
+    const floor = clamp(floors[meter], 0, SUIT_MAX);
+    let value = clamp(s[meter], floor, SUIT_MAX);
+    const rate = rates[meter];
+    let left = t;
+    let elapsed = 0;
+    if (rate < 0 && floor < SUIT.cartridge.below) {
+      const cartridge = meter === 'lifeSupport' ? 'oxygen_cartridge' : 'sodium_cartridge';
+      const supplies = [
+        { kind: 'cartridges', count: stock[meter].cartridges, restore: cartridgeItemRestore(cartridge, p.mods) },
+        { kind: 'raw', count: stock[meter].raw, restore: p.restore },
+      ] as const;
+      for (const supply of supplies) {
+        if (supply.count <= 0) continue;
+        const toLine = Math.max(0, (value - SUIT.cartridge.below) / -rate);
+        if (!before(toLine, left)) break;
+        left -= toLine;
+        elapsed += toLine;
+        value = Math.min(value, SUIT.cartridge.below);
+        const first = Math.min(SUIT_MAX, value + supply.restore);
+        const firstCycle = (first - SUIT.cartridge.below) / -rate;
+        const cycle = Math.min(supply.restore, SUIT_MAX - SUIT.cartridge.below) / -rate;
+        const count = Math.min(supply.count, 1 + crossedCycles((left - firstCycle) / cycle));
+        used[meter][supply.kind] = count;
+        const untilEmpty = firstCycle + (count - 1) * cycle;
+        if (!before(untilEmpty, left)) {
+          const afterLast = count === 1 ? left : left - firstCycle - (count - 2) * cycle;
+          value = (count === 1 ? first : SUIT.cartridge.below + cycle * -rate) + rate * afterLast;
+          left = 0;
+          break;
+        }
+        left -= untilEmpty;
+        elapsed += untilEmpty;
+        value = SUIT.cartridge.below;
+      }
+    }
+    if (floor <= 0 && left > 0) {
+      if (value <= 0 && rate <= 0) starvedFrom = Math.min(starvedFrom, elapsed);
+      else if (rate < 0) starvedFrom = Math.min(starvedFrom, elapsed + value / -rate);
+    }
+    state[meter] = clamp(value + rate * left, floor, SUIT_MAX);
+  }
+  const spans: SuitSpan[] = [];
+  if (starvedFrom > 0) spans.push({ starved: false, s: starvedFrom });
+  if (starvedFrom < t) spans.push({ starved: true, s: t - starvedFrom });
+  return { state, elapsed: t, spans, used };
 }

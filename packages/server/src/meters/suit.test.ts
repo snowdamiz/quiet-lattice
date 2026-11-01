@@ -5,7 +5,7 @@
 // from the server's clock, with or without the client sending inputs.
 import { SUIT } from '@astra/shared/data';
 import type { Hazard } from '@astra/shared/data';
-import { countOf } from '@astra/shared/inventory';
+import { countOf, MAX_PODS, MAX_POD_STACKS, MAX_STACK, MAX_SUIT_STACKS } from '@astra/shared/inventory';
 import type { ClientMessage } from '@astra/shared/protocol';
 import type { MeterNotice } from './service.ts';
 import { meterEnvironment, type MeterView } from '@astra/shared/meters';
@@ -278,11 +278,30 @@ describe('life support and hazard protection drain from the place the server bel
     expect(t.view().hazard).toBeCloseTo(64, 3);
   });
 
-  it('stands still for a character that entered on foot until its first input', () => {
+  it('drains and decides death after restoring on foot even if the client never sends its first input', () => {
+    const t = rig({ type: 'frozen', joinOnFoot: true, saved: { hazard: 30 } });
+    const pos = [...t.zone.entity(t.entityId)!.fields.pos];
+    t.wait(500);
+    t.sweep();
+    expect(t.downed).toHaveLength(1);
+    expect(t.health()).toMatchObject({ suit: 60, down: null });
+    expect(t.view()).toMatchObject({ lifeSupport: 60, hazard: 60, at: t.now });
+    expect(t.zone.entity(t.entityId)!.fields).toMatchObject({ mode: 'foot', pos });
+  });
+
+  it('does not drain the offline interval before a restored walker is authoritatively placed', () => {
     const t = rig({ type: 'frozen', joinOnFoot: true, saved: { lifeSupport: 80, hazard: 70 } });
-    t.wait(100);
+    const saved = t.meters.close(ID)!;
+    t.meters.open(ID, saved);
+    t.wait(500);
     t.sweep();
     expect(t.view()).toMatchObject({ lifeSupport: 80, hazard: 70 });
+    expect(t.downed).toHaveLength(0);
+    t.meters.locate(ID, t.viewer, t.now);
+    t.wait(10);
+    t.sweep();
+    expect(t.view().hazard).toBeLessThan(70);
+    expect(t.view().lifeSupport).toBeCloseTo(76.5, 3);
   });
 
   it('runs on the server’s clock whether or not inputs come, and the same however they are spread', () => {
@@ -421,6 +440,48 @@ describe('refills spend the character’s real inventory', () => {
     expect(t.view().hazard).toBeCloseTo(30 + 9 * 40 - 360, 3);
   });
 
+  it.each([500, 4e11])('accounts for an entire %s-second interval after more than 32 refills, including exhaustion and death', (seconds) => {
+    const t = rig({ hazard: { kind: 'heat', dps: 5 }, stock: { sodium: 320, oxygen: 100 }, saved: { hazard: 30 } });
+    t.stand(false, seconds);
+    expect(t.held('sodium')).toBe(0);
+    expect(t.held('oxygen')).toBe(90);
+    expect(t.downed).toHaveLength(1);
+    expect(t.downed[0]!.at).toBeCloseTo(t.now - seconds + (30 + 32 * 40) / 5.4 + 100 / 4, 3);
+    expect(t.health()).toMatchObject({ suit: 60, down: null });
+    expect(t.view()).toMatchObject({ lifeSupport: 60, hazard: 60, at: t.now });
+  });
+
+  it('spends all refills needed beyond 32 when the character stays supplied', () => {
+    const t = rig({ hazard: { kind: 'heat', dps: 5 }, stock: { sodium: 1000, oxygen: 1000 }, saved: { hazard: 30 } });
+    t.stand(false, 500);
+    expect(t.held('sodium')).toBe(320);
+    expect(t.held('oxygen')).toBe(970);
+    expect(t.view()).toMatchObject({ hazard: 50, lifeSupport: 45, at: t.now });
+    expect(t.health().suit).toBe(100);
+    expect(t.downed).toHaveLength(0);
+  });
+
+  it('batches the schema-maximum cartridge stock into one inventory transaction without truncating elapsed time', () => {
+    const t = rig({ type: 'frozen', owned: ['second_skin'] });
+    const stack = () => ({ item: 'sodium_cartridge', count: MAX_STACK });
+    t.inventory.close(ID);
+    t.inventory.open(ID, {
+      saved: {
+        stackMax: MAX_STACK,
+        units: 0,
+        suit: Array.from({ length: MAX_SUIT_STACKS }, stack),
+        pods: Array.from({ length: MAX_PODS }, () => Array.from({ length: MAX_POD_STACKS }, stack)),
+      },
+    });
+    const changes: number[] = [];
+    t.inventory.subscribe((_, reply) => changes.push(countOf(reply.inventory, 'sodium_cartridge')));
+    t.stand(false, 4e11);
+    expect(t.held('sodium_cartridge')).toBe(0);
+    expect(changes).toEqual([0]);
+    expect(t.view()).toMatchObject({ lifeSupport: 20, hazard: 20, at: t.now });
+    expect(t.downed).toHaveLength(0);
+  });
+
   it('refills nothing without enough: fewer than 10 raw units, or none', () => {
     const t = rig({ type: 'frozen', stock: { sodium: 9 }, saved: { hazard: 30 } });
     t.stand(false, 20);
@@ -488,6 +549,18 @@ describe('health through combat’s suit vitals', () => {
     t.sweep();
     expect(t.health().suit).toBeGreaterThan(70);
     expect(t.view().hazard).toBeGreaterThan(30);
+  });
+
+  it('spends no supplies scheduled after the actual death of an already injured walker', () => {
+    const t = rig({ type: 'frozen', saved: { lifeSupport: 30, hazard: 0 }, stock: { oxygen: 100 } });
+    t.stand(false, 0);
+    t.zone.combat.suitHealth(t.entityId, -80);
+    t.wait(500);
+    t.sweep();
+    expect(t.downed).toHaveLength(1);
+    expect(t.downed[0]!.at).toBeCloseTo(t.now - 500 + 5, 6);
+    expect(t.held('oxygen')).toBe(100); // its first refill would be at 5 / 0.35 seconds, after death
+    expect(t.view()).toMatchObject({ lifeSupport: 60, hazard: 60, at: t.now });
   });
 
   it('is neither lost nor regained in a station or aboard', () => {

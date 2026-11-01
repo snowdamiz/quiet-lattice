@@ -12,12 +12,16 @@ import {
   meterEnvironment,
   spanHealth,
   stepSuit,
+  stepSuppliedSuit,
+  emptySuitStock,
   suitPlaceOf,
   suitProfile,
   suitRates,
   suitStarved,
   type MeterEnvironment,
   type SuitState,
+  type SuitStock,
+  type SuitProfile,
 } from '../src/meters/index.ts';
 import { describeSystem, systemPoses } from '../src/world/index.ts';
 
@@ -254,5 +258,63 @@ describe('how hard the place is on the suit, from the system', () => {
     expect(at(mist.line + mist.band + 50)).toBeCloseTo(mist.rate, 12);
     expect(at(mist.line + mist.band / 2)).toBeGreaterThan(0);
     expect(at(mist.line + mist.band / 2)).toBeLessThan(mist.rate);
+  });
+});
+
+describe('batched automatic refills', () => {
+  function sequential(state: SuitState, profile: SuitProfile, e: MeterEnvironment, dt: number, stock: SuitStock) {
+    const used = emptySuitStock();
+    const conditions = new Set([...meterConditions(e), 'out_of_combat']);
+    const seconds = { protected: 0, starved: 0 };
+    state = stepSuit(state, profile, e, suitPlaceOf(e, true), 0, conditions).state;
+    let left = dt;
+    for (let steps = 0; left > 0; steps++) {
+      if (steps > 30) throw new Error('Small comparison fixture exceeded its available supplies');
+      const available = (m: keyof SuitState) => stock[m].cartridges > used[m].cartridges || stock[m].raw > used[m].raw;
+      const step = stepSuit(state, profile, e, suitPlaceOf(e, true), left, conditions, { lifeSupport: available('lifeSupport'), hazard: available('hazard') });
+      state = step.state;
+      left -= step.elapsed;
+      for (const span of step.spans) seconds[span.starved ? 'starved' : 'protected'] += span.s;
+      if (!step.refill) break;
+      const m = step.refill;
+      const crafted = stock[m].cartridges > used[m].cartridges;
+      used[m][crafted ? 'cartridges' : 'raw']++;
+      const restore = crafted ? cartridgeItemRestore(m === 'lifeSupport' ? 'oxygen_cartridge' : 'sodium_cartridge', profile.mods) : profile.restore;
+      state = { ...state, [m]: Math.min(100, state[m] + restore) };
+    }
+    return { state, used, seconds };
+  }
+
+  it('matches sequential steps across thresholds, crafted/raw exhaustion, zero, floors, immunity and recovery', () => {
+    const places = [
+      env({ world: 'frozen', time: 'day', footHazard: 1 }),
+      env({ world: 'inferno', time: 'night', footHazard: 9 }),
+      env({ world: 'frozen', time: 'night', footHazard: 1 }),
+      env({ world: 'lush', time: 'day' }),
+      env(),
+    ];
+    for (const skills of [[], ['cartridge_recycler'], ['second_skin'], ['cold_blood']]) {
+      const profile = suitProfile({ skills });
+      for (const e of places) {
+        const conditions = new Set([...meterConditions(e), 'out_of_combat']);
+        for (const initial of [0, 20, 25, 30, 100]) {
+          const state = { lifeSupport: initial, hazard: initial };
+          for (const stock of [emptySuitStock(), { lifeSupport: { cartridges: 1, raw: 2 }, hazard: { cartridges: 2, raw: 3 } }]) {
+            for (const dt of [0, 1e-7, 1, 5 / 0.6, 5 / 0.6 + 1e-7, 65 / 0.6, 65 / 0.6 + 1e-7, 125 / 0.6, 125 / 0.6 + 1e-7, 600]) {
+              const expected = sequential(state, profile, e, dt, stock);
+              const actual = stepSuppliedSuit(state, profile, e, suitPlaceOf(e, true), dt, conditions, stock);
+              const label = JSON.stringify({ skills, world: e.world, time: e.time, initial, dt, stock });
+              expect(actual.state.lifeSupport, label).toBeCloseTo(expected.state.lifeSupport, 6);
+              expect(actual.state.hazard, label).toBeCloseTo(expected.state.hazard, 6);
+              expect(actual.used, label).toEqual(expected.used);
+              for (const starved of [false, true]) {
+                const seconds = actual.spans.filter((s) => s.starved === starved).reduce((sum, s) => sum + s.s, 0);
+                expect(seconds, label).toBeCloseTo(expected.seconds[starved ? 'starved' : 'protected'], 6);
+              }
+            }
+          }
+        }
+      }
+    }
   });
 });

@@ -15,9 +15,10 @@
 // `claim` tells the session why.
 //
 // The exo-suit's two meters (P1.E06.T06, DESIGN 9.8) run the same way: life support and hazard protection are advanced to the
-// server's time from the character's last place (on foot on a world, inside a station, or aboard), by the shared `stepSuit`.
+// server's time from the character's last place (on foot on a world, inside a station, or aboard), by shared `stepSuppliedSuit`.
 // On a world they drain by the place, the night and the build; a draining meter that reaches the refill line (25) is refilled
-// from the character's real inventory (a crafted cartridge, else 10 units of raw oxygen or sodium); health is lost at zero
+// from the character's real inventory (a crafted cartridge, else 10 units of raw oxygen or sodium), batched atomically for
+// long intervals without skipping elapsed time; health is lost at zero
 // and regained while both hold, straight into combat's suit vitals, which put the character down at 0 (the Recall, P1.E06.T03,
 // acts on that). `sweep` brings every character on foot up to date a few times a second, so a client that sends nothing
 // still drains, starves and dies on the server's clock. Aboard a ship the suit is topped up and does not move.
@@ -29,15 +30,15 @@
 // character's meters on join, stores `get()` (the meters as of the last time they were advanced, with that time) and closes
 // them once it has left. Listeners (the gateway) hear the meters to push: after an overheat, a recovery, Charge running
 // out, a refused pulse, a server-side change, and every METER_PUSH_S while either meter moves.
-import { cartridgeItemRestore } from '@astra/shared/exosuit';
 import { Buttons, type ClientMessage } from '@astra/shared/protocol';
 import { SUIT, type PeopleId } from '@astra/shared/data';
-import { countOf } from '@astra/shared/inventory';
+import { countOf, MAX_ADD, takeItem } from '@astra/shared/inventory';
 import {
   NOWHERE,
   fullSuit,
   spanHealth,
-  stepSuit,
+  stepSuppliedSuit,
+  emptySuitStock,
   suitPlaceOf,
   suitProfile,
   suitStarved,
@@ -62,14 +63,15 @@ import {
   type MeterSave,
   type MeterState,
   type MeterView,
-  type SuitMeter,
+  type SuitStock,
+  type SuppliedSuitStep,
   type SuitProfile,
   type SuitState,
 } from '@astra/shared/meters';
 import type { ShipLoadout } from '@astra/shared/ships';
 import { frameKeyOf, systemPoses, type SystemPoses } from '@astra/shared/world';
 import { SUIT_REVIVE } from '../combat/zone.ts';
-import type { InventoryService } from '../inventory/service.ts';
+import { InventoryNotHeldError, type InventoryService } from '../inventory/service.ts';
 import type { ZoneManager } from '../zones/manager.ts';
 import type { Zone, ZoneViewer } from '../zones/zone.ts';
 
@@ -83,8 +85,6 @@ export const METER_PUSH_S = 0.5;
 export const SUIT_PUSH_DELTA = 2;
 /** `sweep` should be called at least this often (s). */
 export const SUIT_SWEEP_S = 0.5;
-/** The most refills one advance may make (a long stretch away from the server's clock; each restores 40 or more). */
-const MAX_REFILLS = 32;
 
 /** What a refill is made of: a crafted cartridge item first, else raw units of the resource. */
 const REFILL = {
@@ -94,24 +94,45 @@ const REFILL = {
 
 /** What a refill is made of: the character's real inventory, spent on the server. */
 export interface SuitSupplies {
-  count(characterId: string, item: string): number;
-  /** Takes exactly `count` of `item`; false (and nothing taken) when the character holds fewer or is not in play. */
-  take(characterId: string, item: string, count: number): boolean;
+  /** Plans against the inventory held now and spends all resulting supplies atomically. Missing inventory gives no stock. */
+  use(characterId: string, plan: (stock: SuitStock) => SuppliedSuitStep): SuppliedSuitStep;
 }
 
-/** The supplies of an inventory service. */
-export function inventorySupplies(inventory: Pick<InventoryService, 'get' | 'consume'>): SuitSupplies {
+/** The supplies of an inventory service: one transaction and one push regardless of the number of automatic refills. */
+export function inventorySupplies(inventory: Pick<InventoryService, 'transact'>): SuitSupplies {
   return {
-    count: (characterId, item) => {
-      const inv = inventory.get(characterId);
-      return inv ? countOf(inv, item) : 0;
-    },
-    take: (characterId, item, count) => {
+    use: (characterId, plan) => {
+      let step: SuppliedSuitStep | undefined;
       try {
-        return inventory.consume(characterId, item, count).ok;
-      } catch {
-        return false;
+        const result = inventory.transact(characterId, (inv) => {
+          const stock = emptySuitStock();
+          for (const meter of ['lifeSupport', 'hazard'] as const) {
+            const r = REFILL[meter];
+            stock[meter] = { cartridges: countOf(inv, r.cartridge), raw: Math.floor(countOf(inv, r.raw) / SUIT.cartridge.units) };
+          }
+          step = plan(stock);
+          let next = inv;
+          for (const meter of ['lifeSupport', 'hazard'] as const) {
+            const r = REFILL[meter];
+            for (const [item, count] of [
+              [r.cartridge, step.used[meter].cartridges],
+              [r.raw, step.used[meter].raw * SUIT.cartridge.units],
+            ] as const) {
+              // The maximum schema inventory can exceed one operation's MAX_ADD, but fits in three such chunks.
+              for (let left = count; left > 0; left -= MAX_ADD) {
+                const taken = takeItem(next, item, Math.min(left, MAX_ADD));
+                if (!taken.ok) return taken;
+                next = taken.inv;
+              }
+            }
+          }
+          return { ok: true, inv: next };
+        });
+        if (result.ok && step) return step;
+      } catch (err) {
+        if (!(err instanceof InventoryNotHeldError)) throw err;
       }
+      return plan(emptySuitStock());
     },
   };
 }
@@ -351,7 +372,8 @@ export class MeterService {
   /**
    * Where the character's entity is as it enters its zone (the gateway, right after the zone's join): the meters' place and
    * the mode the server believes, so the first stretch movement authority credits (from the join to the first input) burns
-   * where it was flown.
+   * where it was flown. Suit time starts with this authoritative placement, even if its client never sends an input;
+   * advancing before placement keeps the actual offline interval inactive. Charge still waits for the first input.
    */
   locate(characterId: string, viewer: ZoneViewer, now: number): void {
     const e = this.entry(characterId);
@@ -495,7 +517,7 @@ export class MeterService {
     const busyTo = Math.min(now, Math.max(e.at, e.activeUntil));
     if (busyTo > e.at) this.run(e, e.activity, busyTo - e.at);
     if (now > busyTo) this.run(e, IDLE, now - busyTo);
-    if (now > e.at) this.runSuit(characterId, e, now - e.at, now);
+    if (now > e.at) this.runSuit(characterId, e, now - e.at);
     e.at = now;
   }
 
@@ -517,37 +539,55 @@ export class MeterService {
    */
   sweep(now: number): void {
     for (const [characterId, e] of this.entries) {
-      if (e.away || !e.placed || e.mode !== 'foot') continue;
+      if (!e.placed || e.mode !== 'foot') continue;
       this.advance(characterId, e, now);
       if (e.viewer) e.mode = this.place(e, e.viewer) ?? e.mode;
       this.maybePush(characterId, e, now);
     }
   }
 
-  /** Runs the suit `dt` seconds from `e.at` on foot where the character was last placed (nothing while away or aboard), taking
-   * refills from its inventory where a draining meter reaches the line and its health through combat. */
-  private runSuit(characterId: string, e: Entry, dt: number, now: number): void {
-    if (e.away || !e.placed || e.mode !== 'foot') return;
+  /** Runs the full interval after authoritative placement, including all refills, in bounded supply regimes. */
+  private runSuit(characterId: string, e: Entry, dt: number): void {
+    if (!e.placed || e.mode !== 'foot') return;
     const place = suitPlaceOf(e.env, true);
     const conditions = this.suitConditions(characterId, e);
-    const refillable: Record<SuitMeter, boolean> = { lifeSupport: place === 'world', hazard: place === 'world' };
-    let left = dt;
-    const spent = e.at;
-    for (let guard = 0; left > 0 && guard < MAX_REFILLS; guard++) {
-      const step = stepSuit(e.suit, e.suitProfile, e.env, place, left, conditions, refillable);
-      e.suit = step.state;
-      left -= step.elapsed;
-      let died = false;
-      for (const span of step.spans) died = this.health(e, spanHealth(span), spent + (dt - left)) || died;
-      if (died) {
-        // Recovery is at this advance's endpoint until Recall owns it: no retroactive repeated deaths or refill costs
-        // during a delayed sweep. Future advances resume normally from the server's recovered suit.
+    const zone = e.viewer ? this.zones?.zoneOf(e.viewer) : undefined;
+    const id = e.viewer ? zone?.entityOf(e.viewer) : undefined;
+    const health = id === undefined ? null : zone?.combat.playerHealth(id);
+    const plan = (stock: SuitStock): SuppliedSuitStep => {
+      const step = stepSuppliedSuit(e.suit, e.suitProfile, e.env, place, dt, conditions, stock);
+      const starving = step.spans.find((span) => span.starved);
+      if (starving && health?.down === null) {
+        const protectedS = step.spans.find((span) => !span.starved)?.s ?? 0;
+        const hp = Math.min(health.suitMax, health.suit + protectedS * SUIT.healthRegainPerS);
+        const untilDeath = protectedS + hp / SUIT.healthLostPerS;
+        if (untilDeath <= dt) {
+          const end = stepSuppliedSuit(e.suit, e.suitProfile, e.env, place, untilDeath, conditions, stock);
+          const spans: SuppliedSuitStep['spans'] = protectedS > 0 ? [{ starved: false, s: protectedS }] : [];
+          // Subtracting two very large timestamps can round a lethal span short. Spend exactly the remaining health.
+          spans.push({ starved: true, s: hp / SUIT.healthLostPerS });
+          return { ...end, spans };
+        }
+      }
+      return step;
+    };
+    const step = this.supplies ? this.supplies.use(characterId, plan) : plan(emptySuitStock());
+    e.suit = step.state;
+    for (const meter of ['lifeSupport', 'hazard'] as const) {
+      if (step.used[meter].cartridges + step.used[meter].raw <= 0) continue;
+      e.events.push('suit_refilled');
+      e.notice = { text: REFILL[meter].text, tone: 'good' };
+    }
+    let at = e.at;
+    for (const span of step.spans) {
+      at += span.s;
+      if (this.health(e, spanHealth(span), at)) {
+        // Recovery is at this advance's endpoint until Recall owns it. Only a confirmed death discards the remainder;
+        // the batched plan spends no supplies after the death itself.
         e.suit = { lifeSupport: SUIT_MAX * SUIT_REVIVE, hazard: SUIT_MAX * SUIT_REVIVE };
         e.starved = false;
         return;
       }
-      if (!step.refill) break;
-      if (!this.refill(characterId, e, step.refill, now)) refillable[step.refill] = false;
     }
     const rates = suitRates(e.suitProfile, e.env, place, conditions);
     const starved = place === 'world' && suitStarved(e.suit, rates);
@@ -558,24 +598,6 @@ export class MeterService {
   /** The conditions the suit's modifiers are judged by: where the character is, and whether it is out of combat. */
   private suitConditions(characterId: string, e: Entry): ReadonlySet<string> {
     return this.inCombat?.(characterId) ? e.conditions : e.restingConditions;
-  }
-
-  /** One refill of `meter`: a crafted cartridge if the character holds one, else SUIT.cartridge.units of the raw resource.
-   * False when it holds neither. */
-  private refill(characterId: string, e: Entry, meter: SuitMeter, now: number): boolean {
-    const r = REFILL[meter];
-    const supplies = this.supplies;
-    if (!supplies) return false;
-    let restore: number;
-    if (supplies.count(characterId, r.cartridge) >= 1 && supplies.take(characterId, r.cartridge, 1)) {
-      restore = cartridgeItemRestore(r.cartridge, e.suitProfile.mods);
-    } else if (supplies.count(characterId, r.raw) >= SUIT.cartridge.units && supplies.take(characterId, r.raw, SUIT.cartridge.units)) {
-      restore = e.suitProfile.restore;
-    } else return false;
-    e.suit = { ...e.suit, [meter]: Math.min(SUIT_MAX, e.suit[meter] + restore) };
-    e.events.push('suit_refilled');
-    e.notice = { text: r.text, tone: 'good' };
-    return true;
   }
 
   /** Health the suit cost or gave, through combat's vitals of the character's entity (a hazard death is combat's down).
