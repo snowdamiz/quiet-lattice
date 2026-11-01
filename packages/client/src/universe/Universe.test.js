@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import { describe, expect, it, vi } from 'vitest';
 import { Galaxy, GALAXY_SEED } from '@astra/shared/world';
+import { STATION_LAYOUT } from '@astra/shared/data';
 import { Game } from '../Game.js';
+import { Traffic } from '../entities/Traffic.js';
 import { Universe } from './Universe.js';
 
 const state = (frame) => ({ frame, pos: new THREE.Vector3(1, 2, 3), vel: new THREE.Vector3(4, 5, 6) });
@@ -20,6 +22,43 @@ describe('world tiers', () => {
     expect(out.system.planets).toEqual([]);
     build.return();
     out.system.star.root.traverse((node) => { node.geometry?.dispose(); });
+  });
+
+  it.each(['ship', 'foot'])('keeps the player pad reserved before real traffic attaches during a tier rebuild in %s mode', (mode) => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0);
+    try {
+      const info = { seed: 1, x: 0, y: 0, z: 0 };
+      const system = (tier) => {
+        const star = { root: new THREE.Group(), position: new THREE.Vector3() };
+        return { info, tier, star, bodies: [star], update: () => {} };
+      };
+      const station = () => ({ seed: 1, root: new THREE.Group(), pads: STATION_LAYOUT.pads.map((p) => ({ ...p, occupied: null })), update: () => {} });
+      const old = station();
+      const game = {
+        mode, time: 0, galaxy: { systems: [info] }, system: system(0), station: old,
+        ship: { model: new THREE.Group(), state: state(old), dockPad: old.pads[0], blend: { clear: () => {} } },
+        player: { state: state(old), blend: { clear: () => {} } }, cam: state(old),
+        engine: { scene: new THREE.Scene() }, prediction: { reset: () => {} },
+        flora: { reset: () => {} }, fauna: { setPlanet: () => {} }, structures: { setPlanet: () => {} }, cities: { setPlanet: () => {} },
+        asteroids: { group: new THREE.Group(), configure: () => {} }, audio: { setMood: () => {} },
+        loadSystem: Game.prototype.loadSystem, disposeSystem: Game.prototype.disposeSystem,
+        *buildSystem() { yield; return { system: system(2), station: station() }; },
+      };
+      old.pads[0].occupied = game.ship;
+      game.universe = new Universe(game);
+      game.traffic = new Traffic(game);
+      game.universe.applyWorld({ tiers: [2] });
+      const reserved = game.station.pads[0];
+      expect(game.traffic.ships).toHaveLength(5);
+      expect(game.traffic.ships.filter((s) => s.state === 'parked')).toHaveLength(2);
+      expect(game.ship.dockPad).toBe(reserved);
+      expect(game.traffic.ships.some((s) => s.pad === reserved)).toBe(false);
+      expect(reserved.occupied).toBe(game.ship);
+      for (const s of game.traffic.ships) game.traffic.startDeparture(s, true);
+      expect(reserved.occupied).toBe(game.ship);
+    } finally {
+      random.mockRestore();
+    }
   });
 
   it('rebuilds a changed tier and drops stale preparation without moving the ship, walker or camera', () => {
@@ -45,7 +84,7 @@ describe('world tiers', () => {
     universe.applyWorld({ tiers: [2] });
     expect(universe.prep).toBeNull();
     expect(game.disposeSystem).toHaveBeenCalledOnce();
-    expect(game.loadSystem).toHaveBeenCalledWith(info, { seamless: true });
+    expect(game.loadSystem).toHaveBeenCalledWith(info, { seamless: true, reservedPad: -1 });
     expect(game.ship.state.frame).toBe(game.station);
     expect(game.player.state.frame).toBe(game.system.bodies[1]);
     expect(game.cam.frame).toBe(game.system.bodies[1]);

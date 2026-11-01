@@ -936,7 +936,8 @@ every part of the wall with one uniform; `GalaxyMap` moves the selectable Edge, 
 `UniverseSky` redraws the whole sky when the Edge moves; `Universe.clearance` and the edge compass measure to it.
 `Universe` reads `world.tiers` before the first playable system build. When its current system's tier changes, it
 rebuilds the same system's den pads and node layers without a loading screen, retains local poses in equivalent new
-frames, and drops any prepared system whose tier is stale. The map, sky and compass follow the same message.
+frames, reserves the player's dock pad before NPC traffic attaches, and drops any prepared system whose tier is stale.
+The map, sky and compass follow the same message.
 
 Persistence: the shard's row holds `count`, `count_day` (the last day rolled) and `burn_step` (the last burn tick
 applied); votes go to `count_votes`, rolls to `count_days`. The service gathers new votes, rolls and the meter's position

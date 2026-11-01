@@ -283,7 +283,7 @@ export class Game {
 
   // swaps in a system: built here and now, or handed over ready (flown into from deep space,
   // `seamless`: the camera has not jumped, so the sky need not be redrawn)
-  loadSystem(sysInfo, { built = null, seamless = false } = {}) {
+  loadSystem(sysInfo, { built = null, seamless = false, reservedPad = -1 } = {}) {
     // (readied during the approach, if it was)
     if (!built) built = this.universe.takePrep(sysInfo);
     if (!built) {
@@ -300,6 +300,8 @@ export class Game {
     this.cities.setPlanet(null);
     this.system = built.system;
     this.station = built.station;
+    // A tier rebuild carries the player's reservation before NPC traffic can choose free pads.
+    if (reservedPad >= 0) this.station.pads[reservedPad].occupied = this.ship;
     this.universe.reset(sysInfo);
     for (const b of this.system.bodies) this.engine.scene.add(b.root);
     this.engine.scene.add(this.station.root);

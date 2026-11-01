@@ -6,7 +6,7 @@
 // due by then. `stats` says how many input `seq`s went onto the wire and the newest `ack` a snapshot brought back over it
 // (as it arrived, before it is held), so a spec stepping both clocks can wait for the server to have handled every input
 // sent; `dropNext(type)` loses the next server message of that type.
-import { decodeSnapshot } from '@astra/shared/protocol';
+import { decodeClientMessage, decodeSnapshot } from '@astra/shared/protocol';
 
 const OPEN = 1;
 
@@ -79,8 +79,8 @@ export function linkConditioner({ latencyMs = 100, loss = 0.02, seed = 1, now = 
         const { data } = this.out.shift();
         if (this.ws.readyState !== OPEN) continue;
         this.ws.send(data);
-        const seq = /^\{"t":"input","seq":(\d+)/.exec(data)?.[1];
-        if (seq) stats.released = Math.max(stats.released, Number(seq));
+        const msg = typeof data === 'string' ? decodeClientMessage(data) : null;
+        if (msg?.t === 'input') stats.released = Math.max(stats.released, msg.seq);
       }
       while (this.in.length && this.in[0].at <= t) {
         const m = this.in.shift();

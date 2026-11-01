@@ -67,12 +67,11 @@ export class Universe {
     const anchor = this.anchor.clone();
     const deep = this.deep;
     const dormant = this.dormant;
-    g.loadSystem(g.system.info, { seamless: true });
+    g.loadSystem(g.system.info, { seamless: true, reservedPad: occupied });
     const next = [...g.system.bodies, g.station];
     owners.forEach((owner, i) => { if (frames[i] >= 0) owner.frame = next[frames[i]]; });
     if (target >= 0) g.navTarget = next[target];
     if (pad >= 0) g.ship.dockPad = g.station.pads[pad];
-    if (occupied >= 0) g.station.pads[occupied].occupied = g.ship;
     this.anchor.copy(anchor);
     this.deep = deep;
     this.setDormant(dormant);
