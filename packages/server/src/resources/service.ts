@@ -477,7 +477,7 @@ export class ResourceService {
       out.hurt++;
       if (!this.store.damage(n, characterId, hp, now)) continue;
       out.broken++;
-      // (the breaker's own reply, as a mined node's: the caster's client toasts what it collected)
+      // (the breaker's own reply, as a mined node's: the caster's client toasts what it collected once P1.E13.T06 reads `mine` replies)
       this.tell(zone, characterId, this.harvest(zone, world, n, characterId, now, { ...base, node: n.id }));
     }
     return out;

@@ -505,6 +505,25 @@ describe('Deep Sweep', () => {
     expect(meter.charge).toBe(90);
   });
 
+  it('is refused over a gas giant, which has no sites', () => {
+    // (system 0 has no gas giant: the world's body is one for this cast)
+    const body = w.zone.system.bodies[w.body.index] as { type: string };
+    const type = body.type;
+    body.type = 'gas';
+    try {
+      expect(cast('deep_sweep', 0)).toMatchObject({ result: 'refused', reason: 'target' });
+      expect(meter.charge).toBe(100);
+    } finally {
+      body.type = type;
+    }
+  });
+
+  it('does not start planning the ground of the world it checks', () => {
+    const planned = vi.spyOn(grounds, 'ground');
+    expect(cast('deep_sweep', 0)).toMatchObject({ result: 'cast' });
+    expect(planned).not.toHaveBeenCalled();
+  });
+
   it('is cast on the ship bar only, and is refused short of Charge', () => {
     w.zone.patch(w.player, { mode: 'foot' });
     expect(cast('deep_sweep', 0)).toMatchObject({ result: 'refused', reason: 'not_slotted' });

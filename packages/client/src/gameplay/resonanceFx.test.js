@@ -2,6 +2,7 @@
 // have to decide: the scan's reveal, the sites below, dropping out of a jammed pulse drive.
 import { RESONANCE_NUMBERS } from '@astra/shared/abilities';
 import { scanRanges, suitMods } from '@astra/shared/exosuit';
+import { frameIdOf } from '@astra/shared/world';
 import { describe, expect, it, vi } from 'vitest';
 import * as THREE from 'three';
 import { Game } from '../Game.js';
@@ -38,6 +39,79 @@ describe('Deep Sweep', () => {
     expect(g.revealSites).toHaveBeenCalledWith('f:1');
     playAbilityFx(g, event('deep_sweep', { caster: 3 }));
     expect(g.revealSites).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Deep Sweep from orbit', () => {
+  // a world whose sites only load within 9 km of its surface, swept from above that
+  const RADIUS = 100000;
+  const planet = {
+    name: 'Vesta',
+    sampler: {},
+    radius: RADIUS,
+    position: new THREE.Vector3(),
+    worldToLocal: (v, out) => out.copy(v),
+    dirToLocal: (v, out) => out.copy(v),
+    sites: [0, 1, 2].map((i) => ({ type: 'outpost', dir: new THREE.Vector3(Math.sin(i), Math.cos(i), 0).normalize(), base: 0, quat: new THREE.Quaternion(), seed: i })),
+  };
+  const setup = () => {
+    const game = Object.assign(Object.create(Game.prototype), {
+      system: { seed: 5, planets: [planet], star: { position: new THREE.Vector3(1, 0, 0) } },
+      station: {},
+      camWorld: new THREE.Vector3(),
+      mode: 'foot',
+      audio: { play: vi.fn() },
+      hud: { toast: vi.fn() },
+    });
+    game.structures = new Structures(game);
+    const flyTo = (altitudeM) => {
+      game.camWorld.set(0, RADIUS + altitudeM, 0);
+      game.structures.update(1 / 60, planet);
+    };
+    return { game, flyTo, frame: frameIdOf(5, 0) };
+  };
+
+  it('reveals the sites that are not loaded yet, and they are all known once the player descends', () => {
+    const { game, flyTo, frame } = setup();
+    flyTo(20000);
+    expect(game.structures.sites).toEqual([]);
+    game.revealSites(frame);
+    expect(game.hud.toast).toHaveBeenCalledWith('3 sites revealed', 'good');
+    flyTo(5000);
+    expect(game.structures.sites).toHaveLength(3);
+    expect(game.structures.sites.map((s) => s.known)).toEqual([true, true, true]);
+  });
+
+  it('keeps what it revealed when the player rises out of the 9 km band and comes back', () => {
+    const { game, flyTo, frame } = setup();
+    flyTo(5000);
+    game.revealSites(frame);
+    flyTo(20000);
+    flyTo(5000);
+    expect(game.structures.sites.map((s) => s.known)).toEqual([true, true, true]);
+    game.revealSites(frame);
+    expect(game.hud.toast).toHaveBeenLastCalledWith('No new sites below', 'info');
+  });
+
+  it('keeps a site the player found on the way down after they rise out of the band', () => {
+    const { game, flyTo } = setup();
+    game.mode = 'ship';
+    game.ship = { altitude: 2000 };
+    flyTo(5000);
+    expect(game.structures.sites.map((s) => s.known)).toEqual([true, false, false]);
+    flyTo(20000);
+    game.mode = 'foot';
+    flyTo(5000);
+    expect(game.structures.sites.map((s) => s.known)).toEqual([true, false, false]);
+  });
+
+  it('names no other world: a frame that is not a world with sites reveals nothing', () => {
+    const { game, flyTo } = setup();
+    flyTo(5000);
+    game.revealSites(frameIdOf(5, 'station'));
+    game.revealSites(null);
+    expect(game.hud.toast).not.toHaveBeenCalled();
+    expect(game.structures.sites.map((s) => s.known)).toEqual([false, false, false]);
   });
 });
 

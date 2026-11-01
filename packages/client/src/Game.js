@@ -1082,8 +1082,9 @@ export class Game {
 
   /** Deep Sweep (DESIGN 9.4): every site of the world the cast named, from orbit. */
   revealSites(frame) {
-    if (frameIdOfFrame(this.system, this.station, this.structures.planet) !== frame) return;
-    const n = this.structures.revealAll();
+    const planet = frameOfId(this.system, this.station, frame);
+    if (!planet?.sites) return;
+    const n = this.structures.revealAll(planet);
     this.audio.play('scan');
     this.hud.toast(n ? `${n} sites revealed` : 'No new sites below', n ? 'good' : 'info');
   }

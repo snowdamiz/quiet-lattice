@@ -349,7 +349,10 @@ export class CastService {
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
       pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
-      onWorld: () => this.groundOf(zone, frame) !== null,
+      onWorld: () => {
+        const body = this.bodyOf(zone, frame);
+        return body !== undefined && body.type !== 'gas';
+      },
       groundReady: () => this.groundOf(zone, frame) !== 'busy',
       sight: (to) => {
         const eye = this.poseOf(zone, self, frame, bar, origin, aim)?.origin;
@@ -412,7 +415,8 @@ export class CastService {
   }
 
   /** The caster's eye and look now (see `CastContext.pose`): its entity's pose lifted to the eye on foot, its look the one the
-   * client last sent with its input (the cast's own `aim` without one); null once the entity is gone from play or the frame. */
+   * client last sent with its input (the cast's own `aim` without one); null once the entity is gone from play or the frame,
+   * or is down. */
   private poseOf(zone: CastZone, self: number, frame: FrameId, bar: Bar, origin: Readonly<Vec3>, aim: Readonly<Vec3>): { origin: Vec3; aim: Vec3 } | null {
     const e = zone.entity(self);
     if (!e || e.fields.frame !== frame || zone.combat.isDown(self)) return null;
@@ -461,12 +465,17 @@ export class CastService {
     return ground === null ? true : ground === 'busy' ? 'busy' : clearSight(ground.sampler, from, to);
   }
 
+  /** The body `frame` names; undefined for deep space and the station's frame. */
+  private bodyOf(zone: CastZone, frame: string | null) {
+    if (frame === null) return undefined;
+    const key = frameKeyOf(zone.system, frame);
+    return typeof key === 'number' ? zone.system.bodies[key] : undefined;
+  }
+
   /** The drawn ground of the world `frame` names, null where there is none to be in the way (space, a gas giant), 'busy'
    * while it is still being planned. */
   private groundOf(zone: CastZone, frame: string | null) {
-    if (frame === null) return null;
-    const key = frameKeyOf(zone.system, frame);
-    const body = typeof key === 'number' ? zone.system.bodies[key] : undefined;
+    const body = this.bodyOf(zone, frame);
     if (!body || body.type === 'gas') return null;
     return this.grounds.ground(body.params as PlanetParams, this.zones.tier(zone.id) ?? tierOfGalaxySystem(zone.systemIndex)) ?? 'busy';
   }
