@@ -5,12 +5,13 @@
 // find whose window has lapsed keeps its procedural name; and after a restart, rejoining players see the names, and
 // nothing is paid twice. Under it all, claims racing on the store itself have one winner, whichever process makes them.
 import { SPECIES_XP, speciesKey } from '@astra/shared/codex';
+import { creatureSphere } from '@astra/shared/combat';
 import { FIRST_FINDER_XP, NAME_WINDOW_S, siteKey } from '@astra/shared/discovery';
 import { PROTOCOL_VERSION, type ClientMessage, type ServerMessage } from '@astra/shared/protocol';
 import { faunaSpecies, frameId, type FaunaSpecies, type PlanetParams } from '@astra/shared/world';
 import { and, eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { ANALYZE_RANGE_M, hitRadius } from '../src/codex/analysis.ts';
+import { ANALYZE_RANGE_M } from '../src/codex/analysis.ts';
 import { parseConfig } from '../src/config.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
 import { characters, discoveries } from '../src/db/schema.ts';
@@ -72,7 +73,7 @@ const SITE_AT = onGround([clear[0]!, clear[1]!, clear[2]!]);
 
 /** A creature's spot and a stand some 30 m off on dry land in sight of it, both well clear of the sites. */
 function spotAndStand(): { feet: Vec3; stand: Vec3 } {
-  const middleOf = (feet: Readonly<Vec3>) => lift(feet, hitRadius(walker) * 0.8);
+  const middleOf = (feet: Readonly<Vec3>): Vec3 => creatureSphere({ pos: feet, scale: 1, species: walker }).pos;
   const sight = (stand: Readonly<Vec3>, feet: Readonly<Vec3>) =>
     lineOfSight({ R: g.radius, height: (x, y, z) => g.sample([x, y, z]) }, lift(stand, EYE_M), middleOf(feet));
   for (let i = 0; i < 8000; i++) {

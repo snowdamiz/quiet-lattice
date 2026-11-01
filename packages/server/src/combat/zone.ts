@@ -19,7 +19,8 @@
 //   fires no more, and the hooks hear of it (the Recall, P1.E06.T03, acts on it).
 // - Events. Each hit queues a `combat` event (several by one source on one target in a tick are summed into one); after
 //   each tick's snapshots, every session whose interest holds its target or its source is sent it, its own entity's
-//   first, at most EVENTS_PER_SESSION a tick; a tick queues at most EVENTS_PER_TICK.
+//   first, at most EVENTS_PER_SESSION a tick; a tick queues at most EVENTS_PER_TICK. A session is never named an entity its
+//   phase hides: a hit on one is not sent to it, and a hit by one is sent without its source.
 import { computeDamage, mobStats, modsOfNodes, playerMaxHealth, type DamageSource, type MobRef } from '@astra/shared/combat';
 import type { Resistance, StatMod } from '@astra/shared/data';
 import { encodeServerMessage, type EntityField, type GameEvent } from '@astra/shared/protocol';
@@ -140,6 +141,8 @@ export interface CombatZone {
   viewers(): IterableIterator<[ZoneViewer, number]>;
   /** whether the session's interest set held the entity at the last tick */
   sees(viewer: ZoneViewer, id: number): boolean;
+  /** whether the session whose entity is `viewer` may see entity `id`, phases considered */
+  readonly phases: { canSee(viewer: number, id: number): boolean };
 }
 
 interface CreatureVitals {
@@ -353,24 +356,28 @@ export class ZoneCombat {
     if (!this.queue.size) return;
     const events = [...this.queue.values()];
     this.queue.clear();
-    const texts: (string | null | undefined)[] = new Array(events.length);
-    const text = (i: number) => {
-      if (texts[i] === undefined) {
+    // (each event's text as is, and without its source for a session whose phase hides that)
+    const texts: (string | null | undefined)[] = new Array(events.length * 2);
+    const text = (i: number, anonymous: boolean) => {
+      const k = i * 2 + (anonymous ? 1 : 0);
+      if (texts[k] === undefined) {
         try {
-          texts[i] = encodeServerMessage({ t: 'event', event: events[i]! });
+          texts[k] = encodeServerMessage({ t: 'event', event: anonymous ? { ...events[i]!, source: null } : events[i]! });
         } catch (err) {
           // (a server bug: the event is dropped rather than the rest)
           this.opts.log?.warn({ zone: this.zone.id, event: events[i], err: String(err) }, 'combat event not sent');
-          texts[i] = null;
+          texts[k] = null;
         }
       }
-      return texts[i];
+      return texts[k];
     };
     for (const [viewer, own] of this.zone.viewers()) {
       if (!viewer.sendText) continue;
       let sent = 0;
       const send = (i: number) => {
-        const t = text(i);
+        const e = events[i]!;
+        if (!this.zone.phases.canSee(own, e.target)) return;
+        const t = text(i, e.source !== null && !this.zone.phases.canSee(own, e.source));
         if (t === null) return;
         if (sent >= EVENTS_PER_SESSION) {
           this.counts.eventsDropped++;

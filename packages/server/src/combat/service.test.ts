@@ -1,7 +1,7 @@
 // The combat service (P1.E06.T02) on a real zone of system 0 with its fauna and a hand-driven clock: shots of the base gun
 // resolved from the pose the zone believes and checked cheapest first (rate, clock, mode, frame, aim), the ray against the
 // creatures within the gun's range, line of sight over the ground, and a kill's XP and loot shared by damage and told.
-import { killLoot, killXp, recipeDrops, RECIPE_DROPS, totalXpFor } from '@astra/shared/combat';
+import { creatureSphere, killLoot, killXp, recipeDrops, RECIPE_DROPS, totalXpFor } from '@astra/shared/combat';
 import { getBoss, getWeapon, recipeItemId } from '@astra/shared/data';
 import { countOf } from '@astra/shared/inventory';
 import type { ServerMessage } from '@astra/shared/protocol';
@@ -17,7 +17,7 @@ import { CharacterProgress } from '../persistence/components.ts';
 import { nodeGroundsHere, type NodeGroundSource } from '../resources/ground.ts';
 import { splitByDamage } from '../resources/service.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
-import { creatureSphere, LEAD_MAX_S } from './gun.ts';
+import { LEAD_MAX_S } from './gun.ts';
 import { CombatService, FIRE_BURST, IN_COMBAT_S, killTags, type CombatServiceOptions } from './service.ts';
 
 type Vec3 = [number, number, number];
@@ -127,6 +127,22 @@ describe('a shot', () => {
     expect(s.w.zone.combat.creatureHealth(c.id)!.hp).toBeCloseTo(max - GUN.damage!, 9);
     expect(s.w.zone.entity(c.id)!.fields.hp).toBeCloseTo((max - GUN.damage!) / max, 9);
     expect(s.service.stats()).toMatchObject({ shots: 1, hits: 1 });
+  });
+
+  it('passes through a creature its phase hides from the player', () => {
+    const s = setup();
+    const near = s.creature(docile(s.w.species), 30);
+    const a = s.pilot('a', s.over(near.at(), 60), near.at());
+    // (a phase's own creature in the fauna's place: the phase rule says what this player may see)
+    const phases = s.w.zone.phases;
+    const sees = phases.canSee.bind(phases);
+    phases.canSee = (viewer, id) => id !== near.id && sees(viewer, id);
+    expect(a.fire(near.at())).toEqual({ t: 'fire', seq: 1, result: 'miss' });
+    const { hp, max } = s.w.zone.combat.creatureHealth(near.id)!;
+    expect(hp).toBe(max);
+    phases.canSee = sees;
+    s.w.time += 1;
+    expect(a.fire(near.at())).toMatchObject({ result: 'hit', target: near.id });
   });
 
   it('is refused, cheapest first, out of turn, out of a zone, with no gun, too stale, out of a ship, in another frame, or aimed off the nose', () => {

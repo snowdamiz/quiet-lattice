@@ -26,7 +26,10 @@
 // registry loads into), where the player is and what it holds, and answers it; a joining character is sent the recipes it
 // knows after its meters, and again whenever it learns one, before the answer (§23). A joining character is sent its
 // reputation (standing, ranks and titles by faction) after its recipes, and whenever the server changes it, after that
-// change's rank and title events (§24); no client message changes it.
+// change's rank and title events (§24); no client message changes it. Casts of slotted actives go to the cast service
+// (abilities/), which checks each against what the zone believes, pays it from the meters, runs its effect and sends the
+// cast to whoever sees it; a joining character is sent its cooldowns and toggles after its meters, and again before the
+// answer to every cast carried out (§28).
 // First finds go to the discovery service (discovery/), which hears of every analysis made, looks for landings and site
 // visits among the characters in play, pays and tells their finders, answers name requests, and sends a joining
 // character its system's finds (§25).
@@ -62,6 +65,8 @@ import { CharacterLoadError } from '../persistence/registry.ts';
 import { doneEndsQuestStep } from '../quests/cutscenes.ts';
 import type { QuestRuntime } from '../quests/runtime.ts';
 import type { CharacterPersistence } from '../persistence/service.ts';
+import { CastService } from '../abilities/service.ts';
+import type { AbilityBook } from '../abilities/book.ts';
 import { AnalysisService } from '../codex/analysis.ts';
 import { codexServiceIn } from '../codex/component.ts';
 import type { CodexService } from '../codex/service.ts';
@@ -192,6 +197,8 @@ export interface WsGatewayDeps {
   events?: EventService;
   /** Every character's reputation in play; when none is given, the one persistence's registry loads into. */
   reputation?: ReputationService;
+  /** The abilities casts may cast and their effects (this build's when none is given; tests cast fixtures). */
+  abilities?: AbilityBook;
   /** Daily actives, an account's season awards and each season's end; without it (tests of the gateway alone) a join
    * counts nobody active and reads no awards. */
   seasons?: SeasonGateway;
@@ -221,6 +228,7 @@ export interface WsGateway {
   readonly discovery: DiscoveryService | null;
   readonly events: EventService;
   readonly reputation: ReputationService;
+  readonly casts: CastService;
   stats(): WsStats;
   /** Refuses new upgrades, closes every session with 1001 and waits (briefly) for the sockets to go. */
   close(): Promise<void>;
@@ -377,6 +385,15 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   if (!deps.events) events.start();
   const unsubscribeEvents = combat.subscribe((news) => events.combat(news));
 
+  // casts of slotted actives: checked against the zone's belief and the skill web, paid from the meters
+  const casts = new CastService({ zones: deps.zones, skills, meters, now: () => deps.clock.now(), book: deps.abilities, log });
+  casts.start();
+  // a toggle whose node left its bar ends at once; a toggle the server ended reaches the bar of the session holding it
+  const unsubscribeSkillCasts = skills.subscribe((characterId) => casts.skillsChanged(characterId));
+  const unsubscribeCasts = casts.subscribe((characterId) => {
+    for (const c of conns) if (c.s.state === 'joined' && c.s.characterId === characterId) c.s.send(casts.state(characterId));
+  });
+
   function rejectUpgrade(socket: Duplex, status: string): void {
     socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
   }
@@ -456,6 +473,9 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       deps.zones.leave(s, 'disconnected');
       cutscenes.forget(s);
       social.left(s);
+      // (unless the character came back on another connection meanwhile: its effects' timers carry on there, and its
+      // toggles, cast by the entity that just left, end on the next step)
+      if (s.characterId && registry.holding(s.characterId) === s) casts.left(s.characterId);
       discovery?.left(s);
       conns.delete(c);
       registry.remove(s);
@@ -601,6 +621,14 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         s.send(r);
         return;
       }
+      case 'cast': {
+        if (s.state !== 'joined') return invalid(s, 'cast before join');
+        const r = casts.cast(s, msg);
+        // (the cooldowns and toggles first, so the answer lands on the state it changed)
+        if (r.result !== 'refused') s.send(casts.state(s.characterId!));
+        s.send(r);
+        return;
+      }
       case 'name':
         if (s.state !== 'joined') return invalid(s, 'name before join');
         if (!discovery) return invalid(s, 'no discovery service');
@@ -611,7 +639,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
         );
         return;
       default:
-        // cast and interact belong to later tasks; before join they are out of place.
+        // interact belongs to a later task; before join it is out of place.
         if (s.state !== 'joined') invalid(s, `${msg.t} before join`);
         return;
     }
@@ -706,6 +734,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       s.send({ t: 'skills', ...skills.state(row.id) });
       // (and again on its first input: by then the client is in the world and hears it)
       s.send({ t: 'meters', meters: meters.view(row.id, deps.clock.now()) });
+      s.send(casts.state(row.id));
       const known = crafting.recipes(row.id);
       if (known) s.send(known);
       const standing = reputation.view(row.id);
@@ -739,10 +768,14 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     discovery,
     events,
     reputation,
+    casts,
     stats: () => ({ sessions: registry.size, invalidMessages: invalidTotal, rateLimitedMessages: rateLimitedTotal }),
     async close() {
       closing = true;
       clearInterval(heartbeat);
+      casts.stop();
+      unsubscribeCasts();
+      unsubscribeSkillCasts();
       if (!deps.social) social.stop();
       if (!deps.cutscenes) cutscenes.stopSweeping();
       if (!deps.resources) await resources.close();

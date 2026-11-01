@@ -74,9 +74,9 @@ function watchErrors(page: Page): string[] {
 }
 
 /** Lays captures out on one sheet with a label under each, drawn in the page's own 2D canvas. */
-async function contactSheet(page: Page, items: { label: string; src: string }[], cols: number, cellW: number, title = ''): Promise<Buffer> {
+async function contactSheet(page: Page, items: { label: string; src: string }[], cols: number, cellW: number, title = '', pixelated = false): Promise<Buffer> {
   const url = await page.evaluate(
-    async ({ items, cols, cellW, title }) => {
+    async ({ items, cols, cellW, title, pixelated }) => {
       const imgs = await Promise.all(
         items.map(
           (it) =>
@@ -94,6 +94,8 @@ async function contactSheet(page: Page, items: { label: string; src: string }[],
       c.width = cols * cellW;
       c.height = head + rows * (cellH + 28);
       const g = c.getContext('2d')!;
+      // (an enlarged crop shows the pixels as drawn, not smoothed)
+      g.imageSmoothingEnabled = !pixelated;
       g.fillStyle = '#0b0c0f';
       g.fillRect(0, 0, c.width, c.height);
       g.fillStyle = '#e9e7e2';
@@ -108,7 +110,7 @@ async function contactSheet(page: Page, items: { label: string; src: string }[],
       });
       return c.toDataURL('image/png');
     },
-    { items, cols, cellW, title },
+    { items, cols, cellW, title, pixelated },
   );
   return dataUrlToBuffer(url);
 }
@@ -338,13 +340,13 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
       const still = join(outDir, `${tag}.png`);
       await page.screenshot({ path: still });
       written.push(still);
-      for (const [name, pose] of tag === '16x9' ? Object.entries(def.stills16x9 ?? {}) : []) {
+      for (const [name, pose] of [...(tag === '16x9' ? Object.entries(def.stills16x9 ?? {}) : []), ...Object.entries(def.stills ?? {})]) {
         await pose(page);
         const extra = join(outDir, `${tag}-${name}.png`);
         await page.screenshot({ path: extra });
         written.push(extra);
       }
-      if (tag === '16x9') written.push(...(await captureClip(page, def, outDir)));
+      if (tag === (def.clipAspect ?? '16x9')) written.push(...(await captureClip(page, def, outDir)));
       errors.push(...pageErrors.filter((e) => !def.expectedErrors?.some((r) => r.test(e))).map((e) => `${tag}: ${e}`));
       await page.close();
     }
@@ -400,15 +402,34 @@ async function captureClip(page: Page, def: (typeof SCREENS)[string], outDir: st
   await cdp.send('Animation.enable');
   await cdp.send('Animation.setPlaybackRate', { playbackRate: RATE });
   if (def.motion) await def.motion(page);
+  const crops = await page.evaluate(
+    (crops) =>
+      crops.map((c) => {
+        const r = document.querySelector(c.selector)!.getBoundingClientRect();
+        const pad = c.pad ?? 8;
+        const x = Math.floor(r.left - pad);
+        const y = Math.floor(r.top - pad);
+        return { name: c.name, clip: { x, y, width: Math.ceil(r.right + pad) - x, height: Math.ceil(r.bottom + pad) - y } };
+      }),
+    def.crops ?? [],
+  );
   const t0 = Date.now();
   const sheet: { label: string; src: string }[] = [];
+  const cropSheets = crops.map(() => [] as { label: string; src: string }[]);
   const every = Math.max(1, Math.round(frames / 20));
   const onSheet = (i: number) => (def.sheetFrames ? def.sheetFrames.includes(i) : i % every === 0);
   for (let i = 0; i < frames; i++) {
     await page.evaluate(() => (window as unknown as { __clip: { frame(dt: number): void } }).__clip.frame(1 / 60));
     const p = join(outDir, '_frames', `${String(i).padStart(3, '0')}.jpg`);
     const buf = await page.screenshot({ path: p, type: 'jpeg', quality: 85 });
-    if (onSheet(i)) sheet.push({ label: `frame ${i} (${(i / 60).toFixed(2)} s)`, src: `data:image/jpeg;base64,${buf.toString('base64')}` });
+    const label = `frame ${i} (${(i / 60).toFixed(2)} s)`;
+    if (onSheet(i)) {
+      sheet.push({ label, src: `data:image/jpeg;base64,${buf.toString('base64')}` });
+      for (const [k, c] of crops.entries()) {
+        const png = await page.screenshot({ clip: c.clip, type: 'png' });
+        cropSheets[k]!.push({ label, src: `data:image/png;base64,${png.toString('base64')}` });
+      }
+    }
     const due = t0 + ((i + 1) * 1000) / 60 / RATE;
     const wait = due - Date.now();
     if (wait > 0) await new Promise((r) => setTimeout(r, wait));
@@ -418,7 +439,13 @@ async function captureClip(page: Page, def: (typeof SCREENS)[string], outDir: st
   const readout = (await def.readout?.(page)) ?? '';
   if (readout) writeFileSync(join(outDir, 'readout.txt'), readout + '\n');
   writeFileSync(sp, await contactSheet(page, sheet, 5, 480, readout.split('\n')[0]));
-  return [sp, join(outDir, '_frames')];
+  const written: string[] = [];
+  for (const [k, c] of crops.entries()) {
+    const cp = join(outDir, `crops-${c.name}.png`);
+    writeFileSync(cp, await contactSheet(page, cropSheets[k]!, Math.max(1, Math.floor(2400 / (c.clip.width * 4))), c.clip.width * 4, `${c.name}, 4x`, true));
+    written.push(cp);
+  }
+  return [sp, ...written, join(outDir, '_frames')];
 }
 
 function usage(): never {
