@@ -12,7 +12,7 @@ import { and, asc, eq, gt } from 'drizzle-orm';
 import type { Db } from '../db/client.ts';
 import { countDays, countVotes, shards } from '../db/schema.ts';
 import type { SeasonEnd, SeasonPosition } from '../seasons/rules.ts';
-import { insertActives, readActives, writeSeasonEnd, type FirstFinds, type SeasonAwarded, type StoredActive } from '../seasons/store.ts';
+import { insertActives, readActives, writeSeasonEnd, type FindsLog, type FirstFinds, type SeasonAwarded, type StoredActive } from '../seasons/store.ts';
 import type { CountVote, MeterPosition, RolledDay } from './meter.ts';
 
 /** A vote as stored: the meter day it counts for and the world time (s) it was cast. */
@@ -62,8 +62,8 @@ export interface CountStore {
 /** Rows per INSERT: at 6 parameters a vote and 9 a roll, far under Postgres's 65,535. */
 const VOTE_CHUNK = 1000;
 
-/** Shard `shardId`'s meter in Postgres. `firstFinds` names a season's notable first finds in its chronicle (P2.E29.T01). */
-export function pgCountStore(db: Db, shardId: string, opts: { firstFinds?: FirstFinds } = {}): CountStore {
+/** Shard `shardId`'s meter in Postgres. `firstFinds` names a season's notable first finds in its chronicle (§25, §27); `log` hears the ones it drops. */
+export function pgCountStore(db: Db, shardId: string, opts: { firstFinds?: FirstFinds; log?: FindsLog } = {}): CountStore {
   return {
     actives: (from, today) => readActives(db, shardId, from, today),
     async votesAfter(day) {
@@ -96,7 +96,7 @@ export function pgCountStore(db: Db, shardId: string, opts: { firstFinds?: First
         }
         await insertActives(tx, shardId, actives);
         const awarded: SeasonAwarded[] = [];
-        for (const e of seasons) awarded.push(await writeSeasonEnd(tx, shardId, e, opts.firstFinds));
+        for (const e of seasons) awarded.push(await writeSeasonEnd(tx, shardId, e, opts.firstFinds, opts.log));
         if (position || season) {
           await tx
             .update(shards)

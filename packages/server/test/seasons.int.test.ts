@@ -24,7 +24,8 @@ import { parseConfig } from '../src/config.ts';
 import { DAY_S, dayOf } from '../src/count/meter.ts';
 import { createDatabase, type Database } from '../src/db/client.ts';
 import { runMigrations } from '../src/db/migrate.ts';
-import { characters, countDays, countVotes, dailyActives, seasonAwards, seasonChronicles, shards } from '../src/db/schema.ts';
+import { characters, countDays, countVotes, dailyActives, discoveries, seasonAwards, seasonChronicles, shards } from '../src/db/schema.ts';
+import { seasonFinds } from '../src/discovery/chronicle.ts';
 import { readChronicle, writeSeasonEnd } from '../src/seasons/store.ts';
 import { DEFAULT_SHARD_EPOCH_MS } from '../src/world/clock.ts';
 import { worldKey, WorldService, type SeasonEnded, type WorldMirrorRecord } from '../src/world/service.ts';
@@ -404,5 +405,90 @@ describe('seasons', () => {
     const finds = Array.from({ length: CHRONICLE_FINDS_MAX + 1 }, (_, i) => ({ kind: 'species', name: `Find ${i}`, by: null, at: start + i }));
     await database.db.transaction((tx) => writeSeasonEnd(tx, shard, ended, async () => finds));
     expect((await readChronicle(database.db, shard, 1))!.finds).toEqual(finds.slice(0, CHRONICLE_FINDS_MAX));
+  });
+
+  // A find as the discoveries table holds one, named at world time `namedAt`.
+  const findRow = (shardId: string, key: string, over: Partial<typeof discoveries.$inferInsert>): typeof discoveries.$inferInsert => ({
+    shardId,
+    kind: 'species',
+    key,
+    systemSeed: 1,
+    finderId: null,
+    finderName: 'Ada Vale',
+    at: 0,
+    name: null,
+    nameState: 'open',
+    nameUntil: 600,
+    ...over,
+  });
+
+  it("names the season's finds in its chronicle, served over HTTP: those a finder named while it ran, and only those", async () => {
+    const shard = uniqueShard();
+    const end = (dayOf((Date.now() - DEFAULT_SHARD_EPOCH_MS) / 1000) + 30) * DAY_S;
+    const start = end - SMALL_SEASON_LENGTH_S;
+    await database.db.insert(shards).values({
+      id: shard,
+      epoch: new Date(DEFAULT_SHARD_EPOCH_MS),
+      lastTime: end - 15,
+      season: 1,
+      seasonStart: start,
+      seasonLength: SMALL_SEASON_LENGTH_S,
+    });
+    const named = (key: string, name: string, namedAt: number, over: Partial<typeof discoveries.$inferInsert> = {}) =>
+      findRow(shard, key, { name, nameState: 'named', namedAt, namedBy: 'finder', at: namedAt - 60, ...over });
+    await database.db
+      .insert(discoveries)
+      .values([
+        named('late', 'Second Light', end - 100, { kind: 'body', finderName: 'Bo Tern' }),
+        named('early', 'Glasswort', start + 50),
+        named('before', 'Last Year', start - 1),
+        named('after', 'Next Year', end),
+        named('moderated', 'Renamed By Staff', start + 70, { nameState: 'renamed', namedBy: 'admin:ops' }),
+        findRow(shard, 'cleared', { nameState: 'cleared', namedAt: start + 80, namedBy: 'admin:ops' }),
+        findRow(shard, 'unnamed', { at: start + 90 }),
+      ]);
+    const server = await startTestServer({}, { shard });
+    try {
+      const account = await newAccount(server);
+      await waitFor(() => server.world.state().season === 2, 30_000, 'season 2');
+      let res = await api<SeasonChronicle>(server, 'GET', '/seasons/1/chronicle', { token: account.token });
+      for (let i = 0; res.status !== 200 && i < 100; i++) {
+        await new Promise((r) => setTimeout(r, 50));
+        res = await api<SeasonChronicle>(server, 'GET', '/seasons/1/chronicle', { token: account.token });
+      }
+      expect(res.status).toBe(200);
+      expect(seasonChronicleSchema.parse(res.body)).toEqual(res.body);
+      expect(res.body.finds).toEqual([
+        { kind: 'species', name: 'Glasswort', by: 'Ada Vale', at: start + 50 },
+        { kind: 'body', name: 'Second Light', by: 'Bo Tern', at: end - 100 },
+      ]);
+    } finally {
+      await server.close();
+    }
+  }, 60_000);
+
+  it('drops a find the chronicle cannot hold, with a log, and still ends the season', async () => {
+    const shard = uniqueShard();
+    const start = 20 * DAY_S;
+    await database.db
+      .insert(shards)
+      .values({ id: shard, epoch: new Date(DEFAULT_SHARD_EPOCH_MS), season: 1, seasonStart: start, seasonLength: SMALL_SEASON_LENGTH_S });
+    const position = { season: 1, start, length: SMALL_SEASON_LENGTH_S, actives: null, opening: seasonOpening(null, 1) };
+    const next = { season: 2, start: start + SMALL_SEASON_LENGTH_S, length: SMALL_SEASON_LENGTH_S, actives: 0, opening: seasonOpening('held', 2) };
+    const ended = { ...position, end: next.start, count: 500, bucket: 'held' as const, next };
+    const named = (key: string, name: string, finderName: string, namedAt: number) =>
+      findRow(shard, key, { name, finderName, nameState: 'named', namedAt, namedBy: 'finder' });
+    await database.db
+      .insert(discoveries)
+      .values([named('a', 'Glasswort', 'Ada Vale', start + 1), named('b', 'Quill', 'x'.repeat(65), start + 2), named('c', 'Wren', 'Bo Tern', start + 3)]);
+    const warnings: { obj: object; msg: string }[] = [];
+    await database.db.transaction((tx) => writeSeasonEnd(tx, shard, ended, seasonFinds, { warn: (obj, msg) => warnings.push({ obj, msg }) }));
+    expect((await readChronicle(database.db, shard, 1))!.finds).toEqual([
+      { kind: 'species', name: 'Glasswort', by: 'Ada Vale', at: start + 1 },
+      { kind: 'species', name: 'Wren', by: 'Bo Tern', at: start + 3 },
+    ]);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]!.msg).toMatch(/dropped a first find/);
+    expect(warnings[0]!.obj).toMatchObject({ shard, season: 1, find: { name: 'Quill' } });
   });
 });

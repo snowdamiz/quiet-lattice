@@ -23,6 +23,7 @@ import { RateLimiter } from './gateway/rateLimit.ts';
 import { attachWsGateway, WS_PATH, type WsGateway } from './gateway/ws.ts';
 import { InventoryService } from './inventory/service.ts';
 import { CutsceneService } from './cutscenes/service.ts';
+import { seasonFinds } from './discovery/chronicle.ts';
 import { CharacterProgress, coreRegistry, ShipLoadouts } from './persistence/components.ts';
 import { CharacterPersistence, type PersistenceOptions } from './persistence/service.ts';
 import { pgCharacterStore } from './persistence/store.ts';
@@ -132,7 +133,11 @@ export async function startServer(opts: StartOptions = {}): Promise<RunningServe
 
   let world: WorldService;
   try {
-    world = await WorldService.open({ store: pgShardStore(database.db, opts.shard ?? DEFAULT_SHARD_ID), mirror: redis.redis, log });
+    world = await WorldService.open({
+      store: pgShardStore(database.db, opts.shard ?? DEFAULT_SHARD_ID, { firstFinds: seasonFinds, log }),
+      mirror: redis.redis,
+      log,
+    });
   } catch (err) {
     await Promise.allSettled([database.close(), redis.close()]);
     await app.close();
