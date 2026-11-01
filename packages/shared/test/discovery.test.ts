@@ -133,6 +133,41 @@ describe('the moderation filter', () => {
     expect(reason('Ad Hoc')).toBeNull();
   });
 
+  it('refuses a blocked word split by separators inside a longer name', () => {
+    for (const name of [
+      'Sh it Rock',
+      'Sh-it Moon',
+      'Co ck Rock',
+      'Cu nt Hill',
+      'Ra pe Rock',
+      'Na zi Moon',
+      'Se x Rock',
+      "Sh'it Rock",
+      'Big Sh1 t',
+      'Rock Ni ce Cu nt',
+    ]) {
+      expect(reason(name), name).toBe('blocked');
+    }
+    for (const name of ['Scunthorpe', 'Penistone', 'Sussex', 'Middlesex', 'Essex', 'Assisi', 'Se Xtant Rock']) {
+      expect(reason(name), name).toBeNull();
+    }
+  });
+
+  it('reads digits as letters for the blocked lists only', () => {
+    for (const name of ['Outpost 9M', 'Planet 6 M', 'Kepler 9 M', 'Cloud 9', 'Route 66', 'Area 69', 'Kepler 9', 'Site 66'])
+      expect(reason(name), name).toBeNull();
+    for (const name of ['Th3 C0unt', 'Ad m1n', 'D3v Rock', 'St4ff']) expect(reason(name), name).toBe('reserved');
+    expect(reason('Ni99er')).toBe('blocked');
+    expect(reason('S 9 ex')).toBe('blocked');
+  });
+
+  it('refuses v for u and ph for f in blocked words', () => {
+    for (const name of ['Cvnt', 'Phuck', 'Fvck', 'Phvck', 'Phæggot', 'Phaggot', 'Slvt', 'Cv nt Hill', 'Ph uck Rock', 'Phuuck', 'Cvm']) {
+      expect(reason(name), name).toBe('blocked');
+    }
+    for (const name of ['Vega', 'Phoenix', 'Philadelphia', 'Alpha', 'Vulcan', 'Pharos', 'Devon', 'Phobos']) expect(reason(name), name).toBeNull();
+  });
+
   it('refuses a letter it cannot read, so the letters it takes are the letters it reads', () => {
     for (const name of ['Halǆcyon', 'Halɛcyon', 'Halŋcyon', 'Halǝcyon']) expect(reason(name), name).toBe('characters');
     for (let c = 0xc0; c <= 0x24f; c++) {
