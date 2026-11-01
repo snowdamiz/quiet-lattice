@@ -7,12 +7,13 @@ import { getSkillNode } from '@astra/shared/data';
 import { decodeServerMessage, type ServerMessage } from '@astra/shared/protocol';
 import { emptySkillState, type SkillState } from '@astra/shared/skills';
 import type { FaunaSpecies, NodeGround } from '@astra/shared/world';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { faunaWorld, type FaunaWorld } from '../../test/faunaWorld.ts';
 import type { NodeGroundSource } from '../resources/ground.ts';
 import type { ZoneViewer } from '../zones/zone.ts';
 import { abilityBook } from './book.ts';
 import { CastService } from './service.ts';
+import type { Statuses } from './statuses.ts';
 
 type Vec3 = [number, number, number];
 type Answer = Extract<ServerMessage, { t: 'cast' }>;
@@ -86,6 +87,25 @@ const eye = (): Vec3 => {
   return [p[0] + (p[0] / l) * 1.6, p[1] + (p[1] / l) * 1.6, p[2] + (p[2] / l) * 1.6];
 };
 const aimAt = (to: Readonly<Vec3>): Vec3 => unit([to[0] - eye()[0], to[1] - eye()[1], to[2] - eye()[2]]);
+
+/** The player's input now, the eye turned along the direction to `to` (the shortest turn from −z). */
+function lookAt(to: Readonly<Vec3>): void {
+  const f = w.zone.entity(w.player)!.fields;
+  const dir = aimAt(to);
+  const from: Vec3 = [0, 0, -1];
+  const c: Vec3 = [from[1] * dir[2] - from[2] * dir[1], from[2] * dir[0] - from[0] * dir[2], from[0] * dir[1] - from[1] * dir[0]];
+  const q = [c[0], c[1], c[2], 1 + from[0] * dir[0] + from[1] * dir[1] + from[2] * dir[2]];
+  const l = Math.hypot(...q);
+  w.zone.input(viewer, {
+    t: 'input',
+    seq: ++inputSeq,
+    time: now,
+    mode: 'foot',
+    pose: { frame: f.frame, pos: [...f.pos], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+    buttons: 1,
+    aim: [q[0]! / l, q[1]! / l, q[2]! / l, q[3]! / l],
+  });
+}
 
 /** The beam fires for `seconds` in 0.25 s steps, the server stepping its timers each. */
 function fire(seconds: number): void {
@@ -171,24 +191,7 @@ describe('Lance', () => {
     const away = creatureAt(15);
     const toward = creatureAt(-15);
     cast('lance', 0, { aim: aimAt(away.pos()) });
-    const f = w.zone.entity(w.player)!.fields;
-    const look = (dir: Vec3): [number, number, number, number] => {
-      // the shortest turn from −z to dir
-      const from: Vec3 = [0, 0, -1];
-      const c: Vec3 = [from[1] * dir[2] - from[2] * dir[1], from[2] * dir[0] - from[0] * dir[2], from[0] * dir[1] - from[1] * dir[0]];
-      const q = [c[0], c[1], c[2], 1 + from[0] * dir[0] + from[1] * dir[1] + from[2] * dir[2]];
-      const l = Math.hypot(...q);
-      return [q[0]! / l, q[1]! / l, q[2]! / l, q[3]! / l];
-    };
-    w.zone.input(viewer, {
-      t: 'input',
-      seq: ++inputSeq,
-      time: now,
-      mode: 'foot',
-      pose: { frame: f.frame, pos: [...f.pos], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
-      buttons: 1,
-      aim: look(aimAt(toward.pos())),
-    });
+    lookAt(toward.pos());
     fire(1);
     expect(away.lost()).toBe(0);
     expect(toward.lost()).toBeCloseTo(N.lance.dps, 6);
@@ -256,6 +259,52 @@ describe('Lance', () => {
     w.zone.patch(c.id, { frame: w.zone.stationFrame });
     fire(1);
     expect(c.lost()).toBe(0);
+  });
+
+  it('keeps hitting what is ahead of the eye after its caster has walked away from where the toggle went on', () => {
+    const c = creatureAt(55);
+    cast('lance', 0, { aim: aimAt(c.pos()) });
+    w.zone.patch(w.player, { pos: w.at(45, 0) });
+    lookAt(c.pos());
+    fire(1);
+    expect(c.lost()).toBeCloseTo(N.lance.dps, 6);
+  });
+
+  it('arcs with Chain to a second creature its full reach past a first at the far end of the beam', () => {
+    own(['lance', 'chain']);
+    const first = creatureAt(28);
+    const second = creatureAt(35);
+    cast('lance', 0, { aim: aimAt(first.pos()) });
+    fire(1);
+    expect(first.lost()).toBeCloseTo(N.lance.dps, 6);
+    expect(second.lost()).toBeCloseTo(N.lance.dps * N.lance.chainShare, 6);
+  });
+
+  it('hurts nothing behind the ground, the nearest creature on the line included, and hurts it again when the line clears', () => {
+    const near = creatureAt(10);
+    const far = creatureAt(20);
+    cast('lance', 0, { aim: aimAt(near.pos()) });
+    grounds = ground(1e12);
+    fire(1);
+    expect(near.lost()).toBe(0);
+    expect(far.lost()).toBe(0);
+    grounds = ground(-1e12);
+    fire(1);
+    expect(near.lost()).toBeCloseTo(N.lance.dps, 6);
+    expect(far.lost()).toBe(0);
+  });
+
+  it('reads the nodes its caster owns now, not those it owned when the toggle went on', () => {
+    own(['lance', 'tempered_core']);
+    const c = creatureAt(15);
+    const applied = vi.spyOn(w.zone.combat, 'applyDamage');
+    const modded = () => (applied.mock.calls.at(-1)![2].attackerMods ?? []).some((m) => m.stat === 'heat.capacity');
+    cast('lance', 0, { aim: aimAt(c.pos()) });
+    fire(0.5);
+    expect(modded()).toBe(true);
+    own(['lance']);
+    fire(0.5);
+    expect(modded()).toBe(false);
   });
 });
 
@@ -337,6 +386,66 @@ describe('Flare', () => {
     cast('flare', 0, { aim: aimAt(c.pos()) });
     wait(5);
     expect(c.lost()).toBeCloseTo(2 * (N.flare.burst + N.flare.burnDps * 4), 6);
+  });
+});
+
+describe('burns', () => {
+  beforeEach(() => own(['flare', 'sear']));
+  const statuses = () => (svc as unknown as { statuses: Statuses }).statuses;
+  const burning = (id: number) => statuses().active(w.zone.id, id, 'burning');
+
+  it('stops for good when its damage is refused: a target that comes back out of a safe zone is not alight again', () => {
+    const c = creatureAt(10);
+    cast('sear', 1, { target: c.id });
+    wait(1);
+    const burned = c.lost();
+    expect(burned).toBeCloseTo(N.sear.burnDps, 6);
+    w.zone.patch(c.id, { frame: w.zone.stationFrame });
+    wait(1);
+    expect(burning(c.id)).toBe(false);
+    w.zone.patch(c.id, { frame: w.frame });
+    wait(8);
+    expect(c.lost()).toBeCloseTo(burned, 6);
+  });
+
+  it('stops when its target leaves the caster’s phase view, as when it leaves the safe zone', () => {
+    const c = creatureAt(10);
+    cast('sear', 1, { target: c.id });
+    wait(1);
+    const burned = c.lost();
+    const other = new Viewer(2, 'c2');
+    w.zone.join(other, { kind: 'player', frame: w.frame, pos: w.at(5, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    const phase = w.zone.phases.phaseFor(other, 'story', { key: 'test:theirs', frame: w.frame, center: w.at(10, 0), radius: 100 });
+    w.zone.phases.adopt(phase.id, c.id);
+    expect(w.zone.phases.canSee(w.player, c.id)).toBe(false);
+    wait(8);
+    expect(c.lost()).toBeCloseTo(burned, 6);
+    expect(burning(c.id)).toBe(false);
+  });
+
+  it('runs one tick loop to a status, however it was put there: a burn removed and lit again does not tick twice', () => {
+    const c = creatureAt(10);
+    cast('flare', 0, { aim: aimAt(c.pos()) });
+    wait(1);
+    const flared = c.lost();
+    expect(flared).toBeCloseTo(N.flare.burst + N.flare.burnDps, 6);
+    statuses().remove(w.zone.id, 'c1', c.id, 'burning');
+    cast('sear', 1, { target: c.id });
+    wait(10);
+    expect(c.lost()).toBeCloseTo(flared + N.sear.burnDps * 8, 6);
+  });
+
+  it('ends with its caster’s leaving play: a Flare after the return burns its whole time, none of the lost Sear’s left over', () => {
+    const c = creatureAt(10);
+    cast('sear', 1, { target: c.id });
+    wait(2);
+    svc.left('c1');
+    wait(3);
+    expect(c.lost()).toBeCloseTo(N.sear.burnDps * 2, 6);
+    expect(burning(c.id)).toBe(false);
+    cast('flare', 0, { aim: aimAt(c.pos()) });
+    wait(6);
+    expect(c.lost()).toBeCloseTo(N.sear.burnDps * 2 + N.flare.burst + N.flare.burnDps * 4, 6);
   });
 });
 

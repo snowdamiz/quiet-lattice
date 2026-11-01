@@ -282,16 +282,7 @@ export class CastService {
 
   // ---------- internals ----------
 
-  private context(
-    characterId: string,
-    zone: CastZone,
-    self: number,
-    me: ZoneEntity,
-    bar: Bar,
-    entry: BookEntry,
-    msg: CastRequest,
-    now: number,
-  ): CastContext {
+  private context(characterId: string, zone: CastZone, self: number, me: ZoneEntity, bar: Bar, entry: BookEntry, msg: CastRequest, now: number): CastContext {
     const f = me.fields;
     const frame = f.frame;
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);

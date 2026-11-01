@@ -5,6 +5,7 @@
 import { THERMAL_NUMBERS as N, cooldownOf } from '@astra/shared/abilities';
 import { getSkillNode } from '@astra/shared/data';
 import { Buttons, PROTOCOL_VERSION, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
+import { creatureSphere } from '@astra/shared/combat';
 import { faunaSpecies, frameId, type FaunaSpecies, type PlanetParams } from '@astra/shared/world';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -20,6 +21,7 @@ import { homeSystemOf } from '../src/world/home.ts';
 import { describeZoneSystem } from '../src/zones/system.ts';
 import type { Zone } from '../src/zones/zone.ts';
 import { CAST_PER_S } from '../src/abilities/service.ts';
+import { clearSight } from '../src/combat/sight.ts';
 import { along, openGround } from './faunaWorld.ts';
 import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
 
@@ -223,6 +225,82 @@ describe('Thermal over the wire', () => {
       bot.input(stand, { beam: true, look: [0, 0, -1] });
       await sleep(600);
       expect(lost(bot.zone, first)).toBe(after);
+      bot.sock.close();
+    },
+  );
+
+  it(
+    'Lance: hurts nothing behind a hill, the first creature on the look within 30 m though it is, and the same creature in the clear',
+    { timeout: 60_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['lance']);
+      expect((await bot.slot(0, 'lance')).error).toBeUndefined();
+      let ground = nodeGrounds.ground(params, 0);
+      while (!ground) {
+        await sleep(100);
+        ground = nodeGrounds.ground(params, 0);
+      }
+      const lift = (p: Vec3, by: number): Vec3 => {
+        const l = Math.hypot(...p);
+        return [p[0] + (p[0] / l) * by, p[1] + (p[1] / l) * by, p[2] + (p[2] / l) * by];
+      };
+      // a creature spot with a stand 14–26 m from it behind a rise, whichever way the creature drifts (its hit sphere up to 2 m up
+      // still hidden), and another in the open: the world's real ground, searched from a spread of directions
+      const onGround = (d: Vec3, east: number, north: number): Vec3 => {
+        const [tt, bb] = tangents(d);
+        const p = along(d, tt, bb, east, north, g.radius);
+        const r = g.radius + g.sample(p);
+        return [p[0] * r, p[1] * r, p[2] * r];
+      };
+      const dry = (p: Vec3): boolean => g.sample(unit(p)) > 3;
+      const around: [number, number][] = [-2, 0, 2].flatMap((x) => [-2, 0, 2].map((y): [number, number] => [x, y]));
+      let found: { feet: Vec3; hidden: Vec3; open: Vec3 } | null = null;
+      const N_DIRS = 4000;
+      for (let i = 0; i < N_DIRS && !found; i++) {
+        const y = 1 - (2 * (i + 0.5)) / N_DIRS;
+        const ang = i * 2.399963229728653;
+        const rr = Math.sqrt(1 - y * y);
+        const d: Vec3 = [Math.cos(ang) * rr, y, Math.sin(ang) * rr];
+        const feet = onGround(d, 0, 0);
+        if (!dry(feet)) continue;
+        let hidden: Vec3 | null = null;
+        let open: Vec3 | null = null;
+        for (let k = 0; k < 8 && !(hidden && open); k++) {
+          for (const dist of [14, 18, 22, 26]) {
+            const stand = onGround(d, dist * Math.cos((k / 8) * Math.PI * 2), dist * Math.sin((k / 8) * Math.PI * 2));
+            if (!dry(stand) || Math.hypot(stand[0] - feet[0], stand[1] - feet[1], stand[2] - feet[2]) > 26) continue;
+            const from = lift(stand, 1.6);
+            if (!clearSight(ground.sampler, from, lift(feet, 2))) {
+              if (around.every(([x, z]) => !clearSight(ground.sampler, from, lift(onGround(d, x, z), 2)))) hidden ??= stand;
+            } else if (clearSight(ground.sampler, from, lift(feet, 0.5))) open ??= stand;
+          }
+        }
+        if (hidden && open) found = { feet, hidden, open };
+      }
+      expect(found, 'a spot of this world with a rise between two points 14–26 m apart').not.toBeNull();
+      const { feet, hidden, open } = found!;
+      const id = creature(bot.zone, feet);
+      const sphere = () => creatureSphere(bot.zone.fauna!.creature(id)!).pos as Vec3;
+      const aimFrom = (stand: Vec3) => unit(sphere().map((x, k) => x - eye(stand)[k]!));
+      const hold = async (stand: Vec3, seconds: number) => {
+        for (let i = 0; i < seconds * 20; i++) {
+          bot.input(stand, { beam: true, look: aimFrom(stand) });
+          await sleep(50);
+        }
+        bot.input(stand, { look: aimFrom(stand) });
+        await sleep(400);
+      };
+      await bot.stand(hidden);
+      expect(clearSight(ground.sampler, eye(hidden), sphere()), 'the rise is in the way').toBe(false);
+      expect(await bot.cast('lance', 0)).toMatchObject({ result: 'cast' });
+      await hold(hidden, 1.4);
+      expect(lost(bot.zone, id)).toBe(0);
+      // the same creature from the open stand: the beam finds it
+      await bot.stand(open);
+      await hold(open, 1.4);
+      expect(lost(bot.zone, id)).toBeGreaterThan(N.lance.dps * 0.5);
       bot.sock.close();
     },
   );

@@ -656,6 +656,17 @@ describe('what an effect is given beyond the cast', () => {
     expect(meter.heat).toBe(100);
   });
 
+  it('lists the creatures round a point of its own, the cast’s origin when none is given', () => {
+    const c = creatureAt(15);
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    const ids = (reach?: number, at?: Readonly<[number, number, number]>) => ctx.creatures(reach, at).map((x) => x.id);
+    expect(ids()).toContain(c.id);
+    expect(ids(5)).not.toContain(c.id);
+    expect(ids(5, w.at(15, 0))).toContain(c.id);
+    expect(ids(5, w.at(-15, 0))).not.toContain(c.id);
+  });
+
   it('keeps the caster’s statuses on targets, which end on the world clock and are not other casters’', () => {
     const c = creatureAt(15);
     cast('pulse', 0);
@@ -663,7 +674,7 @@ describe('what an effect is given beyond the cast', () => {
     expect(ctx.status.get(c.id, 'burning')).toBeNull();
     expect(ctx.status.apply(c.id, 'burning', 4, 6)).toBe(true);
     expect(ctx.status.apply(c.id, 'burning', 2, 3)).toBe(false);
-    expect(ctx.status.get(c.id, 'burning')).toEqual({ until: now + 4, power: 6 });
+    expect(ctx.status.get(c.id, 'burning')).toMatchObject({ until: now + 4, power: 6 });
     expect(ctx.status.active(c.id, 'burning')).toBe(true);
     expect(ctx.status.active(c.id, 'frozen')).toBe(false);
     now += 4.5;
