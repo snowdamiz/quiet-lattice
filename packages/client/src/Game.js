@@ -1138,8 +1138,9 @@ export class Game {
    * that has the node. The scan reads the snapshots, not the view, so the terrain hides nothing from it. */
   heavyCreatures(rangeM) {
     const frame = this.player.state.frame;
+    if (!massSense(this.build.skills) || !this.net || !frame?.params) return [];
     const id = frameIdOfFrame(this.system, this.station, frame);
-    if (!massSense(this.build.skills) || !this.net || !frame?.params || !id) return [];
+    if (!id) return [];
     const species = faunaSpecies(frame.params, frame.ground?.tier ?? 0);
     return heavyCreatures(this.net.store.entities, species, id, this.player.state.pos.toArray(), rangeM).map((c) => ({
       label: c.name,
