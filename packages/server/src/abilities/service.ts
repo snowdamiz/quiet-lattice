@@ -97,6 +97,8 @@ export interface CastServiceOptions {
       hp: number,
       max: number,
     ): { hurt: number; broken: number } | null;
+    /** Whether `burst` has the world's ground to work on (see `CastContext.deposits.ready`). */
+    ready(zone: CastZone, frame: string): boolean;
   };
   /** whether a cast's caster may harm `target` (`mayHarm`: no player until PvP, P2.E17.T01, which supplies its rule here) */
   mayHarm?: typeof mayHarm;
@@ -347,6 +349,7 @@ export class CastService {
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
       pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
+      onWorld: () => this.groundOf(zone, frame) !== null,
       groundReady: () => this.groundOf(zone, frame) !== 'busy',
       sight: (to) => {
         const eye = this.poseOf(zone, self, frame, bar, origin, aim)?.origin;
@@ -382,6 +385,7 @@ export class CastService {
           if (!at || frame === null || at.frame !== frame || !this.deposits) return { hurt: 0, broken: 0 };
           return this.deposits.burst(zone, characterId, frame, at.pos as Vec3, radiusM, hp, max) ?? 'busy';
         },
+        ready: () => frame === null || !this.deposits || this.deposits.ready(zone, frame),
       },
       ships: {
         pulsing: (target) => zone.movement?.pulsing(target) ?? false,
@@ -411,7 +415,7 @@ export class CastService {
    * client last sent with its input (the cast's own `aim` without one); null once the entity is gone from play or the frame. */
   private poseOf(zone: CastZone, self: number, frame: FrameId, bar: Bar, origin: Readonly<Vec3>, aim: Readonly<Vec3>): { origin: Vec3; aim: Vec3 } | null {
     const e = zone.entity(self);
-    if (!e || e.fields.frame !== frame) return null;
+    if (!e || e.fields.frame !== frame || zone.combat.isDown(self)) return null;
     const look = e.input?.aim;
     return {
       origin: bar === 'ground' ? lift(e.fields.pos, EYE_M) : [e.fields.pos[0], e.fields.pos[1], e.fields.pos[2]],

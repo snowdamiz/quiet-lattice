@@ -390,7 +390,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     zones: deps.zones,
     skills,
     meters,
-    deposits: { burst: (zone, characterId, frame, pos, radiusM, hp, max) => resources.burst(zone, characterId, frame, pos, radiusM, hp, max) },
+    deposits: { burst: (zone, characterId, frame, pos, radiusM, hp, max) => resources.burst(zone, characterId, frame, pos, radiusM, hp, max), ready: (zone, frame) => resources.burstReady(zone, frame) },
     now: () => deps.clock.now(),
     book: deps.abilities,
     log,

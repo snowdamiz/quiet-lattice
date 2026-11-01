@@ -425,6 +425,12 @@ export class ResourceService {
     return { ...base, result: 'depleted', item: type.resource, ...mine };
   }
 
+  /** Whether `burst` can run in `frame` now: its world's ground is planned (or it has none to plan). */
+  burstReady(zone: ResourceZone, frame: string): boolean {
+    const world = this.worldOf(zone, frame);
+    return !world || this.grounds.ground(world.params, this.tierOf(zone)) !== null;
+  }
+
   /**
    * An ability breaks mineral nodes (Shatter, DESIGN 9.4): `hp` of damage on each deposit and formation (never a plant)
    * whose standing node lies within `radiusM` of `pos` (planet-local, the caster's eye) and in sight over the ground,
@@ -471,7 +477,8 @@ export class ResourceService {
       out.hurt++;
       if (!this.store.damage(n, characterId, hp, now)) continue;
       out.broken++;
-      this.harvest(zone, world, n, characterId, now, { ...base, node: n.id });
+      // (the breaker's own reply, as a mined node's: the caster's client toasts what it collected)
+      this.tell(zone, characterId, this.harvest(zone, world, n, characterId, now, { ...base, node: n.id }));
     }
     return out;
   }

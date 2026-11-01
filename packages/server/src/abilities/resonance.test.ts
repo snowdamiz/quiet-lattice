@@ -48,6 +48,7 @@ let svc: CastService;
 let grounds: NodeGroundSource;
 let burst: ReturnType<typeof vi.fn<(...args: unknown[]) => { hurt: number; broken: number }>>;
 let harm: boolean;
+let depositsReady: boolean;
 
 /** Owns these nodes, the actives slotted on their bars in the order given. */
 function own(nodes: string[]): void {
@@ -124,6 +125,7 @@ function setup(want: (s: readonly FaunaSpecies[]) => boolean, tier: 0 | 3 = 0): 
   skills = emptySkillState();
   burst = vi.fn<(...args: unknown[]) => { hurt: number; broken: number }>(() => ({ hurt: 0, broken: 0 }));
   harm = false;
+  depositsReady = true;
   svc = new CastService({
     zones: { zoneOf: (v) => (w.zone.has(v) ? w.zone : undefined), tier: () => tier },
     skills: { get: (id) => (id === 'c1' ? skills : null), shipSlots: () => 2 },
@@ -142,7 +144,7 @@ function setup(want: (s: readonly FaunaSpecies[]) => boolean, tier: 0 | 3 = 0): 
       beamTime: () => 0,
       dumpHeat: () => ({ ok: false, error: 'overheated' }),
     },
-    deposits: { burst: (...args: unknown[]) => burst(...args) },
+    deposits: { burst: (...args: unknown[]) => burst(...args), ready: () => depositsReady },
     // (players are harmable only while a test stands for PvP)
     mayHarm: (zone, caster, target) => (harm && zone.entity(target)?.fields.kind === 'player') || mayHarm(zone, caster, target),
     now: () => now,
@@ -211,13 +213,55 @@ describe('Pulse', () => {
       expect(viewer.casts().filter((e) => e.shared)).toHaveLength(0);
     });
 
-    it('does not reach a party member more than 50 m away, down, or on another world', () => {
+    it('does not reach a party member more than 50 m away', () => {
       w.zone.setParty(w.player, 'party');
       const far = joinPlayer(60, 'party');
       const near = creatureAt(60, 5);
       cast('pulse', 0);
       expect(near.info().stunUntil).toBe(0);
       expect(far.viewer.casts().filter((e) => e.shared)).toHaveLength(0);
+    });
+
+    describe('does not reach a party member within 50 m who is', () => {
+      let ally: { viewer: Viewer; id: number };
+      let around: ReturnType<typeof creatureAt>;
+      beforeEach(() => {
+        w.zone.setParty(w.player, 'party');
+        ally = joinPlayer(30, 'party');
+        around = creatureAt(30, 5);
+      });
+      const unshared = () => {
+        cast('pulse', 0);
+        expect(around.info().stunUntil).toBe(0);
+        expect(ally.viewer.casts().filter((e) => e.shared)).toHaveLength(0);
+      };
+
+      it('down', () => {
+        w.zone.combat.applyDamage(null, ally.id, { base: 1e6, kind: 'hazard' });
+        expect(w.zone.combat.isDown(ally.id)).toBe(true);
+        unshared();
+      });
+
+      it('on another world', () => {
+        w.zone.patch(ally.id, { frame: w.zone.stationFrame });
+        unshared();
+      });
+
+      it('aboard a ship', () => {
+        w.zone.patch(ally.id, { mode: 'ship' });
+        unshared();
+      });
+
+      it('in a phase the caster cannot see', () => {
+        vi.spyOn(w.zone.phases, 'canSee').mockImplementation((viewerId, id) => !(viewerId === w.player && id === ally.id));
+        unshared();
+      });
+
+      it('and does reach the same member once none of that holds', () => {
+        cast('pulse', 0);
+        expect(around.info().stunUntil).toBeGreaterThan(0);
+        expect(ally.viewer.casts().filter((e) => e.shared)).toHaveLength(1);
+      });
     });
   });
 
@@ -254,6 +298,17 @@ describe('Pulse', () => {
       pass(1);
       const first = c.info().stunUntil;
       svc.left('c1');
+      pass(2);
+      expect(c.info().stunUntil).toBe(first);
+    });
+
+    it('does not repeat when the caster is down by then', () => {
+      const c = creatureAt(5);
+      cast('pulse', 0);
+      pass(1);
+      const first = c.info().stunUntil;
+      w.zone.combat.applyDamage(null, w.player, { base: 1e6, kind: 'hazard' });
+      expect(w.zone.combat.isDown(w.player)).toBe(true);
       pass(2);
       expect(c.info().stunUntil).toBe(first);
     });
@@ -361,6 +416,15 @@ describe('Shatter', () => {
     expect(meter.heat).toBe(0);
   });
 
+  it('is refused busy while the resource service is still planning its ground, paying nothing, though the cast’s own is ready', () => {
+    depositsReady = false;
+    expect(cast('shatter', 0)).toMatchObject({ result: 'refused', reason: 'busy' });
+    expect(meter.heat).toBe(0);
+    expect(burst).not.toHaveBeenCalled();
+    depositsReady = true;
+    expect(cast('shatter', 0)).toMatchObject({ result: 'cast' });
+  });
+
   it('breaks nothing for a creature that is not weak to it, whatever else resists', () => {
     const sentinel = creatureAt(8);
     resist(sentinel.id, SENTINEL_RESISTANCES);
@@ -428,6 +492,17 @@ describe('Deep Sweep', () => {
     expect(cast('deep_sweep', 0)).toMatchObject({ result: 'cast', readyAt: now + 30 });
     expect(meter.charge).toBe(90);
     expect(meter.heat).toBe(0);
+  });
+
+  it('is refused where there is no world below to sweep (deep space, the station), before it is paid for', () => {
+    for (const frame of [null, w.zone.stationFrame]) {
+      w.zone.patch(w.player, { frame });
+      expect(cast('deep_sweep', 0)).toMatchObject({ result: 'refused', reason: 'target' });
+      expect(meter.charge).toBe(100);
+    }
+    w.zone.patch(w.player, { frame: w.frame });
+    expect(cast('deep_sweep', 0)).toMatchObject({ result: 'cast' });
+    expect(meter.charge).toBe(90);
   });
 
   it('is cast on the ship bar only, and is refused short of Charge', () => {

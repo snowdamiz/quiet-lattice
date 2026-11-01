@@ -64,7 +64,8 @@ export const RESONANCE_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<str
     // A burst that only crystal creatures (weak to it) and mineral deposits answer; the rest of the wild is untouched.
     'shatter',
     {
-      check: groundPlanned,
+      // (two grounds: the cast's, for the line of sight to a creature, and the resource service's, for the deposits)
+      check: (ctx) => groundPlanned(ctx) ?? (ctx.deposits.ready() ? null : 'busy'),
       cast(ctx) {
         const r = N.shatter.radiusM;
         for (const h of hitTest({ kind: 'sphere', radius: r }, { origin: ctx.origin }, ctx.creatures(r))) {
@@ -88,6 +89,8 @@ export const RESONANCE_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<str
     // (P1.E08.T05) to read.
     'deep_sweep',
     {
+      // (refused before it is paid for where there is no world below to sweep: deep space, the station, a gas giant)
+      check: (ctx) => (ctx.onWorld() ? null : 'target'),
       cast(ctx) {
         ctx.status.apply(ctx.caster, DEEP_SWEEP, N.deepSweep.radarS, ctx.node.params.radarRangeM);
       },

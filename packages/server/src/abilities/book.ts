@@ -42,9 +42,12 @@ export interface CastContext {
   time(): number;
   /** Whether the caster owns `node` now (an augment's effect, a passive's: Chain on Lance). */
   owns(node: string): boolean;
-  /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame
-   * (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
+  /** Where the caster's eye is and where it looks now, in the cast's frame, or null once it is gone from play or the frame or
+   * is down (an effect that runs past its cast: the beam follows the look the client last sent, the cast's own aim without one). */
   pose(): { origin: Readonly<Vec3>; aim: Readonly<Vec3> } | null;
+  /** Whether the caster's frame is a world with a surface: not deep space, the station's frame or a gas giant (an ability that
+   * works on a world's sites or ground is refused anywhere else, before it is paid for). */
+  onWorld(): boolean;
   /** Whether the ground that sight reads over the caster's world is planned (always, off a world's surface); an area cast
    * refuses `busy` while it is not. */
   groundReady(): boolean;
@@ -84,6 +87,9 @@ export interface CastContext {
     /** Shatter: `hp` of damage on each of the `max` nearest standing mineral nodes (never plants) within `radiusM` of the
      * caster and in sight, credited to it as mining; what breaks pays out as mined. 'busy' while the ground is planned. */
     burst(radiusM: number, hp: number, max: number): { hurt: number; broken: number } | 'busy';
+    /** Whether `burst` can run now: false while the resource service is still planning the caster's world's ground (true where
+     * the frame has none). An area cast checks it before it is paid for, for the resource service plans its own ground. */
+    ready(): boolean;
   };
   /** What an ability does to ships. */
   readonly ships: {

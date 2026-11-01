@@ -823,6 +823,18 @@ describe('an ability’s burst (Shatter, P1.E07.T06)', () => {
     expect(again!.hurt).toBeLessThanOrEqual(out!.hurt - 1);
   });
 
+  it('tells the caster what each break gave it, as a mined node’s reply: the collected toast', () => {
+    const s = setup();
+    const a = s.player(deposit.stand);
+    const type = nodeType(deposit.node.type);
+    a.got.length = 0;
+    const out = burst(s, a, deposit.stand, 15, type.hp);
+    const told = a.got.filter((m) => m.t === 'mine');
+    expect(told).toHaveLength(out!.broken);
+    expect(told.find((m) => m.node === deposit.id)).toMatchObject({ t: 'mine', seq: 0, frame: world.frame, result: 'depleted', item: type.resource });
+    expect(s.held(a, type.resource)).toBe(told.reduce((n, m) => n + (m.t === 'mine' && m.item === type.resource ? (m.added ?? 0) : 0), 0));
+  });
+
   it('works on no plant, however near', () => {
     const s = setup();
     const spot = plant();
@@ -859,5 +871,13 @@ describe('an ability’s burst (Shatter, P1.E07.T06)', () => {
     const a = s.player(deposit.stand);
     expect(burst(s, a, deposit.stand, 15, 5)).toBeNull();
     expect(s.service.nodeState(world.frame, deposit.id)).toBeUndefined();
+  });
+
+  it('says it is ready exactly when that ground is planned, and for a frame with none', () => {
+    const ready = setup();
+    expect(ready.service.burstReady(ready.zone, world.frame)).toBe(true);
+    const planning = setup({ grounds: { ground: () => null } });
+    expect(planning.service.burstReady(planning.zone, world.frame)).toBe(false);
+    expect(planning.service.burstReady(planning.zone, 'nowhere')).toBe(true);
   });
 });
