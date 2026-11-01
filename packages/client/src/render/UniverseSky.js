@@ -8,7 +8,7 @@
 //   placed and lit by their true distance, so they wheel past and brighten as you fly among them.
 import * as THREE from 'three';
 import { SIMPLEX3 } from './glsl.js';
-import { LY, GALAXY, cosmos, edgeX, mulberry32 } from '@astra/shared/world';
+import { LY, EDGE_X, GALAXY, cosmos, edgeX, mulberry32 } from '@astra/shared/world';
 import { buildEdge, EDGE_SEED } from '../ui/map/EdgeOfSpace.js';
 import { worldPointVert, worldPointFrag, discVert, discFrag, nebFrag } from '../ui/map/mapCommon.js';
 
@@ -178,6 +178,8 @@ export class UniverseSky {
     this.renderEye = new THREE.Vector3();
     this.lastEye = new THREE.Vector3(1e9, 0, 0);
     this.lastReveal = -1;
+    // where the world service says the Edge stands (the sky is redrawn when it moves)
+    this.edgeAt = EDGE_X;
     this.face = -1;
     this.needsFull = true;
     this.mats = [];
@@ -304,13 +306,13 @@ export class UniverseSky {
 
   // how close the edge has come: 0 from the far side of the universe, 1 against it
   revealAt(eye) {
-    return 1 - THREE.MathUtils.smoothstep(edgeX(eye.y, eye.z) - eye.x, 4e5, 2.6e6);
+    return 1 - THREE.MathUtils.smoothstep(edgeX(eye.y, eye.z, this.edgeAt) - eye.x, 4e5, 2.6e6);
   }
 
   // how far the ship may move before the nearest far thing visibly shifts (ly)
   tolerance(eye) {
     const c = cosmos();
-    let near = Math.min(2000, edgeX(eye.y, eye.z) - eye.x);
+    let near = Math.min(2000, edgeX(eye.y, eye.z, this.edgeAt) - eye.x);
     for (const n of c.nebulae) near = Math.min(near, Math.max(5, n.position.distanceTo(eye) - n.scale * 0.5));
     for (const g of c.galaxies) near = Math.min(near, Math.max(50, g.position.distanceTo(eye) - g.size * 0.5));
     return near * 0.0008;
@@ -324,7 +326,7 @@ export class UniverseSky {
     this.galaxyMat.uniforms.uGain.value = 1 - inside;
     this.discMat.uniforms.uAlpha.value = THREE.MathUtils.smoothstep(eye.distanceTo(GALAXY.center), 4.5e4, 1.6e5) * 0.5;
     const reveal = this.revealAt(eye);
-    this.edge.update(this.time || 0, 1, reveal, FACE / 2);
+    this.edge.update(this.time || 0, 1, reveal, FACE / 2, this.edgeAt);
     this.lastReveal = reveal;
     this.scene.updateMatrixWorld(true);
   }
@@ -399,7 +401,11 @@ export class UniverseSky {
 
   // eye: the camera's galactic position (ly). visited: the built system's star, with its real
   // position relative to the camera (m), so its point hands over to the star itself up close.
-  update(eye, { time, pixelRatio, vis, visited, starRel }) {
+  update(eye, { time, pixelRatio, vis, visited, starRel, edge = EDGE_X }) {
+    if (edge !== this.edgeAt) {
+      this.edgeAt = edge;
+      this.needsFull = true;
+    }
     this.time = time;
     // near layer
     if (eye.distanceTo(this.fieldOrigin) > 50) {

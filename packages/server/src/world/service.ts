@@ -650,10 +650,7 @@ export class WorldService implements WorldSource {
    * of the Count and the season's opening), subscribers hear the change and the mirror is rewritten. `ended` is the season
    * that ended in it, for subscribers.
    */
-  private commit(
-    patch: Partial<Pick<WorldState, 'count' | 'season' | 'seasonStart' | 'seasonLength' | 'opening'>>,
-    ended?: SeasonEnd,
-  ): WorldChange | null {
+  private commit(patch: Partial<Pick<WorldState, 'count' | 'season' | 'seasonStart' | 'seasonLength' | 'opening'>>, ended?: SeasonEnd): WorldChange | null {
     const previous = this.current;
     const next = { ...previous, ...patch };
     const { count } = next;
@@ -666,7 +663,15 @@ export class WorldService implements WorldSource {
       if (to !== from) flipped.push({ system, from, to });
     });
     const opening = next.opening === previous.opening ? previous.opening : structuredClone(next.opening);
-    this.current = frozen({ ...next, revision: previous.revision + 1, seasonEnd: seasonEndOf(next.seasonStart, next.seasonLength), opening, edgeX, tiers, dark });
+    this.current = frozen({
+      ...next,
+      revision: previous.revision + 1,
+      seasonEnd: seasonEndOf(next.seasonStart, next.seasonLength),
+      opening,
+      edgeX,
+      tiers,
+      dark,
+    });
     this.body = toBody(this.current);
     const change: WorldChange = { state: this.current, previous, flipped, ...(ended ? { season: ended } : {}) };
     this.log?.info(

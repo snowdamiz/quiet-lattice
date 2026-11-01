@@ -18,7 +18,7 @@ const COUNT_TOP = 1000;
  */
 export function countShiftLy(count: number): number {
   if (!Number.isFinite(count)) throw new RangeError(`the Count is a number of measures, not ${count}`);
-  if (count > FED_FROM) return (Math.min(count, COUNT_TOP) - FED_FROM) / (COUNT_TOP - FED_FROM) * COUNT_EDGE_SHIFT_LY;
+  if (count > FED_FROM) return ((Math.min(count, COUNT_TOP) - FED_FROM) / (COUNT_TOP - FED_FROM)) * COUNT_EDGE_SHIFT_LY;
   if (count < BROKEN_BELOW) return -((BROKEN_BELOW - Math.max(count, 0)) / BROKEN_BELOW) * COUNT_EDGE_SHIFT_LY;
   return 0;
 }

@@ -1,14 +1,7 @@
 // The Edge following the Count in the world service (DESIGN 16.3, P2.E22.T02) against an in-memory shard, the clocks run by
 // hand: the published Edge, tier map and dark stations are functions of the Count and the season's opening, a season's roll
 // moves them once and a restart finds them where they were; zones read the new tiers.
-import {
-  darkSystems,
-  edgeAt,
-  SEASON_DAY_S,
-  SEASON_EDGE_SHIFT_LY,
-  SMALL_SEASON_LENGTH_S,
-  type SeasonOpening,
-} from '@astra/shared/seasons';
+import { darkSystems, edgeAt, SEASON_DAY_S, SEASON_EDGE_SHIFT_LY, SMALL_SEASON_LENGTH_S, type SeasonOpening } from '@astra/shared/seasons';
 import { EDGE_X, galaxyTiers } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { MemoryShard } from '../../test/memoryShard.ts';
@@ -83,7 +76,7 @@ describe('the Edge following the Count', () => {
     await world.close();
   });
 
-  it('moves the Edge with the burn and the day\'s drift of the meter itself', async () => {
+  it("moves the Edge with the burn and the day's drift of the meter itself", async () => {
     // a Count of 703 burns below 700 and the Edge, receding 1 ly at 703, comes back to the baseline
     const s = shard(703);
     const world = await s.open();
@@ -99,7 +92,7 @@ describe('the Edge following the Count', () => {
     await world.close();
   });
 
-  it('moves the Edge once at a Fed season\'s roll, applies the opening, and finds it there after a restart', async () => {
+  it("moves the Edge once at a Fed season's roll, applies the opening, and finds it there after a restart", async () => {
     const s = shard(800);
     const world = await s.open();
     const changes: WorldChange[] = [];
@@ -123,7 +116,9 @@ describe('the Edge following the Count', () => {
     expect(after.edgeX).toBe(EDGE_X + SEASON_EDGE_SHIFT_LY);
     expect(after.tiers).toEqual(tiersAt(EDGE_X + SEASON_EDGE_SHIFT_LY));
     // the roll's own tier flips are the whole difference between the two tier maps, and a receding Edge only lowers tiers
-    const expected = tiersAt(EDGE_X + SEASON_EDGE_SHIFT_LY).flatMap((to, system) => (to === before.tiers[system] ? [] : [{ system, from: before.tiers[system]!, to }]));
+    const expected = tiersAt(EDGE_X + SEASON_EDGE_SHIFT_LY).flatMap((to, system) =>
+      to === before.tiers[system] ? [] : [{ system, from: before.tiers[system]!, to }],
+    );
     expect(rolls[0]!.flipped).toEqual(expected);
     expect(expected.length).toBeGreaterThan(0);
     expect(expected.every((f) => f.to < f.from)).toBe(true);
@@ -177,7 +172,7 @@ describe('the Edge following the Count', () => {
     await again.close();
   });
 
-  it('plays a season\'s roll that passed while the server was down once, on boot, and keeps the Edge after it', async () => {
+  it("plays a season's roll that passed while the server was down once, on boot, and keeps the Edge after it", async () => {
     const s = shard(900);
     const first = await s.open();
     expect(first.state().edgeX).toBe(edgeAt(900, BASELINE));

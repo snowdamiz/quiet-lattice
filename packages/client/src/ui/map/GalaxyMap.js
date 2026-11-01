@@ -5,7 +5,7 @@
 // is the edge of space.
 import * as THREE from 'three';
 import { mapNoiseGLSL, starPointVert, starPointFrag, starfieldPoints, worldPointVert, worldPointFrag, discVert, discFrag, nebFrag } from './mapCommon.js';
-import { EDGE_X, edgeX, mulberry32, cosmos, GALAXY, fmtLy } from '@astra/shared/world';
+import { EDGE_X, edgeX, wallX, mulberry32, cosmos, GALAXY, fmtLy } from '@astra/shared/world';
 import { buildEdge, EDGE_SEED } from './EdgeOfSpace.js';
 
 const _v = new THREE.Vector3();
@@ -198,9 +198,10 @@ export class GalaxyMap {
       labelVisible: (v) => this.edgeItem.inView && (this.camDist > 1.5e5 || v.selected === this.edgeItem),
     };
     this.items.push(this.galaxyItem, this.edgeItem);
-    // points across the wall, to pin its label on whichever part is in view
+    // points across the wall, to pin its label on whichever part is in view (set by applyEdge)
+    this.edgeAt = null;
     this.edgeAnchors = [];
-    for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) this.edgeAnchors.push(new THREE.Vector3(edgeX(i * 1e6, j * 1e6) - 2e4, i * 1e6, j * 1e6));
+    this.applyEdge(g.edge);
 
     // markers: you are here, visited, selection, route
     const ringGeo = new THREE.RingGeometry(1, 1.07, 96);
@@ -440,9 +441,10 @@ export class GalaxyMap {
     // from inside the galaxy the edge is a far, dim glow; its light show comes up once the view
     // pulls out past the neighbouring galaxies, or closes on it
     const cam = v.camera.position;
-    this.edgeDist = edgeX(cam.y, cam.z) - cam.x;
+    this.applyEdge(g.edge);
+    this.edgeDist = edgeX(cam.y, cam.z, this.edgeAt) - cam.x;
     const reveal = Math.max(THREE.MathUtils.smoothstep(this.camDist, 2e5, 1.5e6), 1 - THREE.MathUtils.smoothstep(this.edgeDist, 4e5, 2.6e6));
-    this.edge.update(time, pr, reveal, proj);
+    this.edge.update(time, pr, reveal, proj, this.edgeAt);
     this.placeEdgeLabel();
     this.bandMat.uniforms.uAlpha.value = 0.9 * (1 - THREE.MathUtils.smoothstep(cam.length(), 1500, 5000));
     for (const m of this.pointMats) m.uniforms.uProj.value = proj;
@@ -488,6 +490,20 @@ export class GalaxyMap {
     }
   }
 
+  // The wall stands where the world service says the Edge is (`game.edge`, the Count moves it): the selectable Edge
+  // and the points its label is pinned to follow it.
+  applyEdge(edge) {
+    if (edge === this.edgeAt) return;
+    this.edgeAt = edge;
+    const it = this.edgeItem;
+    const wall = wallX(edge);
+    it.position.set(wall - 1e4, 0, 0);
+    it.labelPosition.set(wall - 3e5, 1.6e6, 0);
+    it.focusTarget.set(wall - 1e4, 0, 0);
+    this.edgeAnchors.length = 0;
+    for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) this.edgeAnchors.push(new THREE.Vector3(edgeX(i * 1e6, j * 1e6, edge) - 2e4, i * 1e6, j * 1e6));
+  }
+
   // the wall is too big to label at one point: pin the label to the part of it nearest the
   // upper right of the screen, and pick it there
   placeEdgeLabel() {
@@ -513,10 +529,10 @@ export class GalaxyMap {
 
   // closer to the edge, the lens bends and fringes, pulled out toward it
   grade(u, camera) {
-    const ex = edgeX(camera.position.y, camera.position.z);
+    const ex = edgeX(camera.position.y, camera.position.z, this.edgeAt);
     const d = ex - camera.position.x;
     u.uWarp.value = 1 - THREE.MathUtils.smoothstep(d, 2e5, 2.2e6);
-    _v.set(EDGE_X, 0, 0).project(camera);
+    _v.set(wallX(this.edgeAt), 0, 0).project(camera);
     const dir = new THREE.Vector2(_v.x * camera.aspect, _v.y);
     if (_v.z > 1) dir.multiplyScalar(-1);
     if (dir.lengthSq() < 1e-4) dir.set(1, 0);
@@ -541,7 +557,10 @@ export class GalaxyMap {
     const cur = g.galaxy.current;
     const h = g.galaxy.here;
     if (it.kind === 'edge') {
-      return { title: 'The Edge', kind: 'End of the universe', stats: [['Distance', fmtLy(edgeX(h.y, h.z) - h.x)], ['Expansion', '0.0000 c']] };
+      const count = g.net?.world?.count;
+      const stats = [['Distance', fmtLy(edgeX(h.y, h.z, this.edgeAt) - h.x)], ['Expansion', '0.0000 c']];
+      if (count !== undefined) stats.push(['Count', `${count} / 1000`]);
+      return { title: 'The Edge', kind: 'End of the universe', stats };
     }
     if (it.kind === 'galaxy') {
       return { title: GALAXY.name, kind: 'Spiral galaxy · home', stats: [['Across', fmtLy(GALAXY.radius * 2)], ['To the core', fmtLy(GALAXY.center.length())]] };
@@ -552,7 +571,7 @@ export class GalaxyMap {
     return {
       title: s.name,
       kind: here ? 'You are here' : `Class ${s.cls} star${s.visited ? ' · visited' : ''}`,
-      stats: here ? [] : [['Distance', fmtLy(d)], ['Warp cells', String(g.inventory.warpCells)]],
+      stats: [...(here ? [] : [['Distance', fmtLy(d)], ['Warp cells', String(g.inventory.warpCells)]]), ...(g.isDark(s.id) ? [['Waystation', 'Dark']] : [])],
       warp: !here,
       course: !here,
     };

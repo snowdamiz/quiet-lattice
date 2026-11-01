@@ -148,7 +148,9 @@ describe('WorldService', () => {
     unsubscribeB(); // twice is harmless
     const second = world.update({ count: 20 })!;
     // (a Count of 20 holds the Edge a little less far in than 0 does, so the outermost system steps back down)
-    expect(second.flipped).toEqual(galaxyTiers(edgeAt(20, { edgeShiftLy: 0 })).flatMap((t, i) => (t.tier === after[i]!.tier ? [] : [{ system: i, from: after[i]!.tier, to: t.tier }])));
+    expect(second.flipped).toEqual(
+      galaxyTiers(edgeAt(20, { edgeShiftLy: 0 })).flatMap((t, i) => (t.tier === after[i]!.tier ? [] : [{ system: i, from: after[i]!.tier, to: t.tier }])),
+    );
     expect(second.flipped.every((f) => f.to < f.from)).toBe(true);
     expect(second.state).toMatchObject({ revision: 3, count: 20, edgeX: edgeAt(20, { edgeShiftLy: 0 }) });
     expect(a).toEqual([change, second]);

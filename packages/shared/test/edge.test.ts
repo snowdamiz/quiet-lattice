@@ -88,7 +88,7 @@ describe('the wall the map and the sky draw', () => {
     expect(edgeX(3e5, -2e5, EDGE_X - 10) - edgeX(3e5, -2e5)).toBe(-10 * EDGE_WALL_LY_PER_LY);
   });
 
-  it('stays beyond the farthest galaxy and visibly apart at the meter\'s ends', () => {
+  it("stays beyond the farthest galaxy and visibly apart at the meter's ends", () => {
     const farthestGalaxy = EDGE_X * 0.8;
     const most = SEASON_EDGE_SHIFT_LY + COUNT_EDGE_SHIFT_LY;
     expect(wallX(EDGE_X - most)).toBeGreaterThan(farthestGalaxy * 1.05);

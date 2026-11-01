@@ -2,10 +2,12 @@
 // churning light closes off one side of the galaxy map; haze layers stand in front of it for depth,
 // shafts of light pour back from it into the galaxy, stars near it are red-shifted and drawn out
 // into streaks, sparks fall towards it, and the space-time grid bends and reddens as it meets it.
-// Beyond it there is nothing at all. (The universe expands into it, but for now the front is still.)
+// Beyond it there is nothing at all. (The universe expands into it, but for now the front is still.) The Count moves it:
+// the whole wall slides along +X as the world service moves the Edge (P2.E22.T02, update()'s `edge`).
 import * as THREE from 'three';
-// (where the membrane stands, EDGE_X, and how it bows back towards the galaxy, EDGE_CURVE_R, are the world's)
-import { EDGE_X, EDGE_CURVE_R as CURVE_R, edgeX } from '@astra/shared/world';
+// (where the membrane stands, EDGE_X by default and wallX(edge) once the Count has moved it, and how it bows back towards
+// the galaxy, EDGE_CURVE_R, are the world's)
+import { EDGE_X, EDGE_CURVE_R as CURVE_R, edgeX, wallX } from '@astra/shared/world';
 import { mapNoiseGLSL } from './mapCommon.js';
 
 // the edge's own random stream (its streaks and sparks), shared by the map and the sky in flight
@@ -15,23 +17,26 @@ const K = 1e4;
 const SPAN = 1300 * K;
 
 // The nearest way out from a galactic position: the direction to the membrane (into `out`), and the
-// distance in ly returned. (The cap is, near enough, part of a sphere CURVE_R across.)
-export function edgeBearing(p, out = new THREE.Vector3()) {
-  out.set(p.x - (EDGE_X - CURVE_R), p.y, p.z);
+// distance in ly returned. (The cap is, near enough, part of a sphere CURVE_R across.) `edge` is the Edge the server
+// publishes (`world.edgeX`).
+export function edgeBearing(p, out = new THREE.Vector3(), edge = EDGE_X) {
+  out.set(p.x - (wallX(edge) - CURVE_R), p.y, p.z);
   const r = out.length();
   out.divideScalar(r);
   return CURVE_R - r;
 }
 
+// (shared by every part: how far the wall stands from where its geometry was laid out, EDGE_X, along +X)
 const membraneVert = /* glsl */ `
   uniform float uOffset;
+  uniform float uShift;
   varying vec3 vW;
   varying vec3 vN;
   varying vec3 vV;
   void main() {
     vec3 p = position;
     // plane in yz, bent into a cap facing the galaxy
-    float x = ${EDGE_X.toFixed(1)} - (p.y * p.y + p.z * p.z) / ${(2 * CURVE_R).toFixed(1)} - uOffset;
+    float x = ${EDGE_X.toFixed(1)} + uShift - (p.y * p.y + p.z * p.z) / ${(2 * CURVE_R).toFixed(1)} - uOffset;
     vec3 w = vec3(x, p.y, p.z);
     vN = normalize(vec3(-1.0, -p.y / ${CURVE_R.toFixed(1)}, -p.z / ${CURVE_R.toFixed(1)}));
     vW = w;
@@ -123,12 +128,13 @@ const shaftVert = /* glsl */ `
   attribute float aT;
   attribute float aSeed;
   uniform float uTime;
+  uniform float uShift;
   varying float vT;
   varying float vSeed;
   void main() {
     vT = aT;
     vSeed = aSeed;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position + vec3(uShift, 0.0, 0.0), 1.0);
   }`;
 const shaftFrag = /* glsl */ `
   uniform float uTime;
@@ -148,10 +154,11 @@ const streakVert = /* glsl */ `
   attribute float aT;
   attribute float aLen;
   uniform float uProj;
+  uniform float uShift;
   varying vec3 vColor;
   varying float vT;
   void main() {
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vec4 mv = modelViewMatrix * vec4(position + vec3(uShift, 0.0, 0.0), 1.0);
     // a streak only reads as one when it is long on screen; far off, the short ones are left out
     vColor = aColor * smoothstep(14.0, 90.0, aLen * uProj / max(-mv.z, 1.0));
     vT = aT;
@@ -172,12 +179,13 @@ const sparkVert = /* glsl */ `
   uniform float uTime;
   uniform float uPixelRatio;
   uniform float uReveal;
+  uniform float uShift;
   varying float vA;
   varying vec3 vColor;
   void main() {
     float life = fract(uTime * (0.03 + aSeed.w * 0.05) + aSeed.x);
     float d = ${(170 * 1e4).toFixed(1)} * (1.0 - life * life);
-    vec3 p = vec3(${EDGE_X.toFixed(1)} - d - (aSeed.y * aSeed.y + aSeed.z * aSeed.z) / ${(2 * CURVE_R).toFixed(1)}, aSeed.y, aSeed.z);
+    vec3 p = vec3(${EDGE_X.toFixed(1)} + uShift - d - (aSeed.y * aSeed.y + aSeed.z * aSeed.z) / ${(2 * CURVE_R).toFixed(1)}, aSeed.y, aSeed.z);
     vA = smoothstep(0.0, 0.15, life) * smoothstep(1.0, 0.85, life) * uReveal;
     vColor = mix(vec3(0.7, 0.85, 1.6), vec3(1.6, 0.6, 1.2), life);
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
@@ -199,6 +207,7 @@ export function buildEdge(rng = Math.random) {
   // shared by every part: how close the view has come (0 from the far side of the universe, 1 up against it)
   const uReveal = { value: 1 };
   const uProj = { value: 800 };
+  const uShift = { value: 0 };
   const add = (o) => {
     // (placed by their shaders: the geometry's own bounds say nothing about where they are)
     o.frustumCulled = false;
@@ -214,7 +223,7 @@ export function buildEdge(rng = Math.random) {
     new THREE.Mesh(
       plane,
       new THREE.ShaderMaterial({
-        uniforms: { uTime: { value: 0 }, uOffset: { value: offset }, uIntensity: { value: intensity }, uLayer: { value: kind }, uSeed: { value: seed }, uReveal },
+        uniforms: { uTime: { value: 0 }, uOffset: { value: offset }, uIntensity: { value: intensity }, uLayer: { value: kind }, uSeed: { value: seed }, uReveal, uShift },
         vertexShader: membraneVert,
         fragmentShader: membraneFrag,
         transparent: true,
@@ -250,7 +259,7 @@ export function buildEdge(rng = Math.random) {
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('aT', new THREE.BufferAttribute(t, 1));
     geo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
-    add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uTime: { value: 0 }, uReveal }, vertexShader: shaftVert, fragmentShader: shaftFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
+    add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uTime: { value: 0 }, uReveal, uShift }, vertexShader: shaftVert, fragmentShader: shaftFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
   }
 
   // red-shifted, stretched stars
@@ -283,7 +292,7 @@ export function buildEdge(rng = Math.random) {
     geo.setAttribute('aLen', new THREE.BufferAttribute(lens, 1));
     geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
     geo.setAttribute('aT', new THREE.BufferAttribute(t, 1));
-    group.add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uReveal, uProj }, vertexShader: streakVert, fragmentShader: streakFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
+    group.add(new THREE.LineSegments(geo, new THREE.ShaderMaterial({ uniforms: { uReveal, uProj, uShift }, vertexShader: streakVert, fragmentShader: streakFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
   }
 
   // sparks
@@ -298,7 +307,7 @@ export function buildEdge(rng = Math.random) {
       new THREE.Points(
         geo,
         new THREE.ShaderMaterial({
-          uniforms: { uTime: { value: 0 }, uPixelRatio: { value: 1 }, uReveal },
+          uniforms: { uTime: { value: 0 }, uPixelRatio: { value: 1 }, uReveal, uShift },
           vertexShader: sparkVert,
           fragmentShader: sparkFrag,
           transparent: true,
@@ -312,7 +321,9 @@ export function buildEdge(rng = Math.random) {
 
   return {
     group,
-    update(time, pixelRatio, reveal = 1, proj = 800) {
+    // `edge`: where the world service says the Edge stands (`world.edgeX`); the wall is drawn at wallX(edge)
+    update(time, pixelRatio, reveal = 1, proj = 800, edge = EDGE_X) {
+      uShift.value = wallX(edge) - EDGE_X;
       uReveal.value = reveal;
       uProj.value = proj;
       for (const m of mats) {
