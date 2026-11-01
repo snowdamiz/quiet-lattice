@@ -131,7 +131,7 @@ async function freeze(page: Page): Promise<void> {
   await online.clock!.freeze();
   log('server clock frozen');
   await page.evaluate(async () => {
-    const w = window as unknown as Stepped & { game: { net: { ping(): void; clock: { samples: unknown[] } } } };
+    const w = window as unknown as Stepped & { game: { net: { ping(): void; on(type: string, fn: () => void): () => void } } };
     let t = performance.now();
     performance.now = () => t;
     w.__advance = (ms) => {
@@ -149,9 +149,14 @@ async function freeze(page: Page): Promise<void> {
       const deadline = Date.now() + 120_000;
       while (g.net?.state === 'joined' && g.net.store.ack < g.net.inputSeq && Date.now() < deadline) await new Promise((r) => setTimeout(r, 4));
     };
-    const have = w.game.net.clock.samples.length;
-    w.game.net.ping();
-    while (w.game.net.clock.samples.length === have) await new Promise((r) => setTimeout(r, 4));
+    // (a sample whose round trip is nothing wins the clock's estimate; its samples are kept eight at a time, so wait for the pong)
+    await new Promise<void>((resolve) => {
+      const off = w.game.net.on('pong', () => {
+        off();
+        resolve();
+      });
+      w.game.net.ping();
+    });
   });
   log('page frozen');
 }
