@@ -180,6 +180,8 @@ export class UniverseSky {
     this.lastReveal = -1;
     // where the world service says the Edge stands (the sky is redrawn when it moves)
     this.edgeAt = EDGE_X;
+    this.drawnEdge = EDGE_X;
+    this.drawnTime = 0;
     this.face = -1;
     this.needsFull = true;
     this.mats = [];
@@ -300,7 +302,7 @@ export class UniverseSky {
       m.renderOrder = n.dark ? 1 : 0;
       content.add(m);
     }
-    this.edge = buildEdge(mulberry32(EDGE_SEED));
+    this.edge = buildEdge(mulberry32(EDGE_SEED), { sky: true });
     content.add(this.edge.group);
   }
 
@@ -318,7 +320,8 @@ export class UniverseSky {
     return near * 0.0008;
   }
 
-  setEye(eye) {
+  // `time`: what the membrane's churn is drawn at (now, unless the redraw is only for a moved Edge, which holds it)
+  setEye(eye, time = this.time || 0) {
     this.content.position.copy(eye).negate();
     this.bandMat.uniforms.uCore.value.copy(GALAXY.center).sub(eye).normalize();
     const inside = 1 - THREE.MathUtils.smoothstep(eye.length(), 1500, 5000);
@@ -326,8 +329,10 @@ export class UniverseSky {
     this.galaxyMat.uniforms.uGain.value = 1 - inside;
     this.discMat.uniforms.uAlpha.value = THREE.MathUtils.smoothstep(eye.distanceTo(GALAXY.center), 4.5e4, 1.6e5) * 0.5;
     const reveal = this.revealAt(eye);
-    this.edge.update(this.time || 0, 1, reveal, FACE / 2, this.edgeAt);
+    this.edge.update(time, 1, reveal, FACE / 2, this.edgeAt);
     this.lastReveal = reveal;
+    this.drawnEdge = this.edgeAt;
+    this.drawnTime = time;
     this.scene.updateMatrixWorld(true);
   }
 
@@ -402,10 +407,7 @@ export class UniverseSky {
   // eye: the camera's galactic position (ly). visited: the built system's star, with its real
   // position relative to the camera (m), so its point hands over to the star itself up close.
   update(eye, { time, pixelRatio, vis, visited, starRel, edge = EDGE_X }) {
-    if (edge !== this.edgeAt) {
-      this.edgeAt = edge;
-      this.needsFull = true;
-    }
+    this.edgeAt = edge;
     this.time = time;
     // near layer
     if (eye.distanceTo(this.fieldOrigin) > 50) {
@@ -468,10 +470,15 @@ export class UniverseSky {
     }
     if (this.face < 0) {
       const moved = eye.distanceTo(this.lastEye) > this.tolerance(eye);
-      if (moved || Math.abs(this.revealAt(eye) - this.lastReveal) > 0.03) {
+      // (a moved Edge changes how near the wall is, and so the reveal, by itself)
+      const edgeMoved = this.edgeAt !== this.drawnEdge;
+      const redraw = moved || (!edgeMoved && Math.abs(this.revealAt(eye) - this.lastReveal) > 0.03);
+      // A moved Edge alone redraws a face a frame like any move, with the churn held where the last draw had it: drawn at
+      // the time now it would re-roll the whole wall in the one frame the new image swaps in.
+      if (redraw || edgeMoved) {
         this.face = 0;
         this.renderEye.copy(eye);
-        this.setEye(eye);
+        this.setEye(eye, redraw ? this.time : this.drawnTime);
       }
     }
     if (this.face >= 0) {

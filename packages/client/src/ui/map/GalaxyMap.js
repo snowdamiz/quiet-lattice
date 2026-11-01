@@ -9,6 +9,8 @@ import { EDGE_X, edgeX, wallX, mulberry32, cosmos, GALAXY, fmtLy } from '@astra/
 import { buildEdge, EDGE_SEED } from './EdgeOfSpace.js';
 
 const _v = new THREE.Vector3();
+const NO_DARK = Object.freeze([]);
+const EDGE_LABEL_TAU = 0.1;
 
 export { fmtLy };
 
@@ -201,6 +203,7 @@ export class GalaxyMap {
     // points across the wall, to pin its label on whichever part is in view (set by applyEdge)
     this.edgeAt = null;
     this.edgeAnchors = [];
+    this.labelAt = new THREE.Vector3();
     this.applyEdge(g.edge);
 
     // markers: you are here, visited, selection, route
@@ -215,6 +218,13 @@ export class GalaxyMap {
     this.visited = new THREE.Group();
     scene.add(this.visited);
     this.visitedMat = ringMat(0.8, 0.85, 1.2, 0.55);
+    // dark Waystations (DESIGN 16.5): the star filled with a husk and ringed in the Hollow's seam-light
+    this.darkMarks = new THREE.Group();
+    scene.add(this.darkMarks);
+    this.darkHuskMat = new THREE.MeshBasicMaterial({ color: 0x050508, transparent: true, depthTest: false, depthWrite: false });
+    this.darkRingMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0x9fe8da).multiplyScalar(2.2), transparent: true, opacity: 0.5, depthTest: false, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+    this.darkHuskGeo = new THREE.CircleGeometry(1, 24);
+    this.darkIds = null;
 
     const RN = 96;
     const rt = new Float32Array(RN);
@@ -442,10 +452,11 @@ export class GalaxyMap {
     // pulls out past the neighbouring galaxies, or closes on it
     const cam = v.camera.position;
     this.applyEdge(g.edge);
+    this.syncDark();
     this.edgeDist = edgeX(cam.y, cam.z, this.edgeAt) - cam.x;
     const reveal = Math.max(THREE.MathUtils.smoothstep(this.camDist, 2e5, 1.5e6), 1 - THREE.MathUtils.smoothstep(this.edgeDist, 4e5, 2.6e6));
     this.edge.update(time, pr, reveal, proj, this.edgeAt);
-    this.placeEdgeLabel();
+    this.placeEdgeLabel(dt);
     this.bandMat.uniforms.uAlpha.value = 0.9 * (1 - THREE.MathUtils.smoothstep(cam.length(), 1500, 5000));
     for (const m of this.pointMats) m.uniforms.uProj.value = proj;
     this.sysMat.uniforms.uPixelRatio.value = pr;
@@ -467,6 +478,10 @@ export class GalaxyMap {
     this.herePulse.scale.setScalar((2.4 + pulse * 9) * k);
     this.herePulse.material.opacity = (1 - pulse) * 0.8;
     for (const m of this.visited.children) m.quaternion.copy(q);
+    for (const m of this.darkMarks.children) {
+      m.quaternion.copy(q);
+      m.scale.setScalar(m.userData.size * k);
+    }
 
     const sel = v.selected;
     this.selRing.visible = !!sel && sel.kind === 'system' && (sel.sys !== cur || g.universe.deep);
@@ -490,6 +505,30 @@ export class GalaxyMap {
     }
   }
 
+  // A mark on each system whose Waystation the server says is dark (`world.dark`), so the loss reads at cluster zoom without
+  // selecting the star; rebuilt when the set changes, gone once the Count relights them.
+  syncDark() {
+    const dark = this.game.net?.world?.dark ?? NO_DARK;
+    if (dark === this.darkIds) return;
+    this.darkIds = dark;
+    this.darkMarks.clear();
+    for (const id of dark) {
+      const s = this.game.galaxy.systems[id];
+      if (!s) continue;
+      const husk = new THREE.Mesh(this.darkHuskGeo, this.darkHuskMat);
+      husk.userData.size = 1.1;
+      husk.renderOrder = 5;
+      const ring = new THREE.Mesh(this.hereRing.geometry, this.darkRingMat);
+      ring.userData.size = 2.1;
+      ring.renderOrder = 6;
+      for (const m of [husk, ring]) {
+        m.position.set(s.x, s.y, s.z);
+        m.frustumCulled = false;
+        this.darkMarks.add(m);
+      }
+    }
+  }
+
   // The wall stands where the world service says the Edge is (`game.edge`, the Count moves it): the selectable Edge
   // and the points its label is pinned to follow it.
   applyEdge(edge) {
@@ -506,7 +545,7 @@ export class GalaxyMap {
 
   // the wall is too big to label at one point: pin the label to the part of it nearest the
   // upper right of the screen, and pick it there
-  placeEdgeLabel() {
+  placeEdgeLabel(dt) {
     const cam = this.view.camera;
     let best = null;
     let bd = 1e9;
@@ -520,10 +559,14 @@ export class GalaxyMap {
       }
     }
     const it = this.edgeItem;
+    const was = it.inView;
     it.inView = !!best;
     if (best) {
-      it.position.copy(best);
-      it.labelPosition.copy(best);
+      // (it glides to a new anchor rather than hopping: ease-out over about 0.3 s, a time constant of 0.1)
+      if (was) this.labelAt.lerp(best, 1 - Math.exp(-dt / EDGE_LABEL_TAU));
+      else this.labelAt.copy(best);
+      it.position.copy(this.labelAt);
+      it.labelPosition.copy(this.labelAt);
     }
   }
 
@@ -557,7 +600,7 @@ export class GalaxyMap {
     const cur = g.galaxy.current;
     const h = g.galaxy.here;
     if (it.kind === 'edge') {
-      const count = g.world?.count;
+      const count = g.net?.world?.count;
       const stats = [['Distance', fmtLy(edgeX(h.y, h.z, this.edgeAt) - h.x)], ['Expansion', '0.0000 c']];
       if (count !== undefined) stats.push(['Count', `${count} / 1000`]);
       return { title: 'The Edge', kind: 'End of the universe', stats };
@@ -571,7 +614,7 @@ export class GalaxyMap {
     return {
       title: s.name,
       kind: here ? 'You are here' : `Class ${s.cls} star${s.visited ? ' · visited' : ''}`,
-      stats: [...(here ? [] : [['Distance', fmtLy(d)], ['Warp cells', String(g.inventory.warpCells)]]), ...(g.isDark(s.id) ? [['Waystation', 'Dark']] : [])],
+      stats: [...(here ? [] : [['Distance', fmtLy(d)], ['Warp cells', String(g.inventory.warpCells)]]), ...(g.stationDark(s.id) ? [['Waystation', 'Dark']] : [])],
       warp: !here,
       course: !here,
     };

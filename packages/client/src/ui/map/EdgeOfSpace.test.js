@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { EDGE_WALL_LY_PER_LY, EDGE_X, mulberry32 } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { buildEdge, EDGE_SEED, edgeBearing } from './EdgeOfSpace.js';
+import { Game } from '../../Game.js';
 import { GalaxyMap } from './GalaxyMap.js';
 
 const shifts = (edge) => {
@@ -69,5 +70,85 @@ describe('the galaxy map', () => {
     const anchors = m.edgeAnchors;
     m.applyEdge(EDGE_X - 10);
     expect(m.edgeAnchors).toBe(anchors);
+  });
+
+  // the game's per-frame `isDark` (the night, set by updateLighting) once replaced a method of the same name here
+  it.each([true, false])('describes a system after frames have run (night %s), and says its Waystation is dark', (night) => {
+    const sys = { id: 7, name: 'Vael', cls: 'K', visited: false };
+    const world = { dark: [7] };
+    const m = Object.assign(Object.create(GalaxyMap.prototype), {
+      game: Object.assign(Object.create(Game.prototype), {
+        isDark: night,
+        net: { world },
+        galaxy: { current: { id: 0 }, here: { x: 0, y: 0, z: 0 }, distance: () => 12 },
+        universe: { deep: false },
+        inventory: { warpCells: 3 },
+      }),
+    });
+    const stats = m.describe({ kind: 'system', sys }).stats;
+    expect(stats).toContainEqual(['Waystation', 'Dark']);
+    world.dark = [];
+    expect(m.describe({ kind: 'system', sys }).stats.map(([k]) => k)).not.toContain('Waystation');
+  });
+
+  it('glides the Edge label to a new anchor over about 0.3 s instead of hopping', () => {
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1e9);
+    camera.position.set(0, 0, 10);
+    camera.updateMatrixWorld();
+    const [a, b] = [new THREE.Vector3(1.5, 1.2, 0), new THREE.Vector3(3, 2.4, 0)];
+    const m = Object.assign(map(), { view: { camera }, edgeAnchors: [a], labelAt: new THREE.Vector3() });
+    m.placeEdgeLabel(1 / 60);
+    expect(m.edgeItem.labelPosition.distanceTo(a)).toBe(0);
+    // (the nearer anchor to the upper right of the screen changes)
+    m.edgeAnchors = [b];
+    m.placeEdgeLabel(1 / 60);
+    let left = m.edgeItem.labelPosition.distanceTo(b);
+    expect(left).toBeGreaterThan(0.6 * a.distanceTo(b));
+    expect(left).toBeLessThan(a.distanceTo(b));
+    for (let i = 0; i < 18; i++) {
+      m.placeEdgeLabel(1 / 60);
+      const now = m.edgeItem.labelPosition.distanceTo(b);
+      expect(now).toBeLessThan(left);
+      left = now;
+    }
+    // (0.3 s on: 95% of the way)
+    expect(left).toBeLessThan(0.06 * a.distanceTo(b));
+    expect(m.edgeItem.position.distanceTo(m.edgeItem.labelPosition)).toBe(0);
+    // out of view and back in, it starts at the anchor
+    m.edgeAnchors = [];
+    m.placeEdgeLabel(1 / 60);
+    expect(m.edgeItem.inView).toBe(false);
+    m.edgeAnchors = [a];
+    m.placeEdgeLabel(1 / 60);
+    expect(m.edgeItem.labelPosition.distanceTo(a)).toBe(0);
+  });
+
+  it('marks each dark system on the map, and only while the server says it is dark', () => {
+    const systems = [0, 1, 2, 3].map((id) => ({ id, x: id * 10, y: 0, z: 0 }));
+    const world = { dark: [1, 3] };
+    const m = Object.assign(map(), {
+      game: { net: { world }, galaxy: { systems } },
+      darkMarks: new THREE.Group(),
+      hereRing: { geometry: new THREE.RingGeometry(1, 1.07, 8) },
+      darkHuskMat: new THREE.MeshBasicMaterial(),
+      darkRingMat: new THREE.MeshBasicMaterial(),
+      darkHuskGeo: new THREE.CircleGeometry(1, 8),
+      darkIds: null,
+    });
+    m.syncDark();
+    const stars = m.darkMarks.children.map((c) => c.position.x);
+    expect(stars.sort()).toEqual([10, 10, 30, 30]);
+    const marks = [...m.darkMarks.children];
+    m.syncDark();
+    expect(m.darkMarks.children).toEqual(marks);
+    // the Count climbs to Fed: the server says none is dark, and the marks are gone
+    world.dark = [];
+    expect(m.darkMarks.children).toHaveLength(4);
+    m.game.net.world = { dark: [] };
+    m.syncDark();
+    expect(m.darkMarks.children).toHaveLength(0);
+    m.game.net = null;
+    m.syncDark();
+    expect(m.darkMarks.children).toHaveLength(0);
   });
 });

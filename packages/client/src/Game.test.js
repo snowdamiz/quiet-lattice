@@ -601,6 +601,7 @@ describe('Game: where the Edge stands (P2.E22.T02)', () => {
     count,
     edgeX,
     tiers: [0, 1],
+    dark,
     serverTime: 1000,
   });
 
@@ -630,17 +631,29 @@ describe('Game: where the Edge stands (P2.E22.T02)', () => {
 
   it('stands at its default out of the world, and follows each world message the server sends', () => {
     expect(fake().edge).toBe(EDGE_X);
-    expect(fake().isDark(1)).toBe(false);
+    expect(fake().stationDark(1)).toBe(false);
     const { g, socket } = online();
     expect(g.edge).toBe(EDGE_X);
     socket.push(WORLD(500, EDGE_X - 10, [1]));
     expect(g.edge).toBe(EDGE_X - 10);
-    expect(g.isDark(1)).toBe(true);
-    expect(g.isDark(0)).toBe(false);
+    expect(g.stationDark(1)).toBe(true);
+    expect(g.stationDark(0)).toBe(false);
     // the Count climbs to Fed: the Edge recedes and the dark stations relight
-    socket.push(WORLD(900, EDGE_X + 6, [1]));
+    socket.push(WORLD(900, EDGE_X + 6));
     expect(g.edge).toBe(EDGE_X + 6);
-    expect(g.isDark(1)).toBe(false);
+    expect(g.stationDark(1)).toBe(false);
+  });
+
+  it('reads the dark stations from the server and keeps the night flag its own', () => {
+    const { g, socket } = online();
+    socket.push(WORLD(100, EDGE_X - 10, [1]));
+    // (every frame updateLighting sets the boolean `isDark`: it is the night, not the stations)
+    for (const night of [true, false]) {
+      g.isDark = night;
+      expect(g.stationDark(1)).toBe(true);
+      expect(g.stationDark(0)).toBe(false);
+    }
+    expect(g).not.toHaveProperty('world');
   });
 
   it('forgets the Edge when the connection is let go', () => {
@@ -649,6 +662,7 @@ describe('Game: where the Edge stands (P2.E22.T02)', () => {
     expect(g.edge).toBe(EDGE_X - 10);
     socket.refuse('auth', 'Sign in again.');
     expect(g.edge).toBe(EDGE_X);
-    expect(g.world).toBeNull();
+    expect(g.net).toBeNull();
+    expect(g.stationDark(1)).toBe(false);
   });
 });

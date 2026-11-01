@@ -52,10 +52,16 @@ const membraneFrag = /* glsl */ `
   uniform float uLayer;
   uniform float uSeed;
   uniform float uReveal;
+  uniform float uSky;
   varying vec3 vW;
   varying vec3 vN;
   varying vec3 vV;
   ${mapNoiseGLSL}
+  // seen from inside the sky the wall wears the art bible's Edge (§4): opal white, pale blue and pale peach, weighted by the
+  // iridescence's three phases, in place of its raw cosine hues (violet and mint)
+  vec3 pale(vec3 w) {
+    return (vec3(0.96, 0.93, 0.97) * w.x + vec3(0.81, 0.91, 0.97) * w.y + vec3(0.97, 0.89, 0.82) * w.z) / (w.x + w.y + w.z + 1e-3);
+  }
   float fbm3(vec3 p) {
     float s = 0.0;
     float a = 0.5;
@@ -80,6 +86,7 @@ const membraneFrag = /* glsl */ `
       // from far off: one soft, luminous wall, its folds only hinted at, opalescent toward its rim
       float ff = fbm(p * 1.4 + q * 1.3 + vec3(0.0, 0.0, t * 0.006));
       vec3 hue = 0.5 + 0.5 * cos(6.2831853 * (ff * 0.55 + fres * 0.5 + vec3(0.0, 0.33, 0.67)));
+      hue = mix(hue, pale(hue) * 0.8, uSky);
       vec3 far = (vec3(0.07, 0.04, 0.17) + hue * vec3(0.08, 0.07, 0.11)) * (0.35 + 0.65 * smoothstep(-0.4, 0.7, ff)) * (0.7 + 1.2 * fres);
       col = far;
       float closeUp = smoothstep(0.25, 0.8, uReveal);
@@ -94,7 +101,9 @@ const membraneFrag = /* glsl */ `
         // thin-film iridescence: hue runs with the flow and with the viewing angle
         float phase = f * 1.25 + length(rr.xy) * 0.9 + fres * 0.6 + t * 0.008;
         vec3 irid = 0.5 + 0.5 * cos(6.2831853 * (phase + vec3(0.0, 0.33, 0.67)));
+        irid = mix(irid, pale(irid), uSky);
         vec3 deep = mix(vec3(0.18, 0.04, 0.42), vec3(0.02, 0.22, 0.5), smoothstep(-0.4, 0.5, f));
+        deep = mix(deep, mix(vec3(0.13, 0.11, 0.2), vec3(0.08, 0.14, 0.22), smoothstep(-0.4, 0.5, f)), uSky);
         // mostly dark, deep-violet film; the light lives in the filaments and the iridescent folds
         vec3 film = deep * 0.4 + irid * (0.07 + 0.85 * fil) * smoothstep(-0.2, 0.7, f + 0.2) + vec3(1.0, 0.94, 1.0) * fil * 0.55;
         // quantum foam: brief pinpricks of light across the film
@@ -112,7 +121,9 @@ const membraneFrag = /* glsl */ `
       float f = fbm3(p * 0.8 + 3.0 * q);
       float phase = f * 1.25 + length(q.xy) * 0.9 + fres * 0.6 + t * 0.008;
       vec3 irid = 0.5 + 0.5 * cos(6.2831853 * (phase + vec3(0.0, 0.33, 0.67)));
+      irid = mix(irid, pale(irid), uSky);
       vec3 deep = mix(vec3(0.18, 0.04, 0.42), vec3(0.02, 0.22, 0.5), smoothstep(-0.4, 0.5, f));
+      deep = mix(deep, mix(vec3(0.13, 0.11, 0.2), vec3(0.08, 0.14, 0.22), smoothstep(-0.4, 0.5, f)), uSky);
       col = mix(deep, irid, 0.4) * smoothstep(0.0, 0.7, f) * 0.6;
     }
     // the cap fades out at its rim
@@ -200,7 +211,8 @@ const sparkFrag = /* glsl */ `
     gl_FragColor = vec4(vColor * vA * exp(-r * r * 6.0) * 1.6, 1.0);
   }`;
 
-export function buildEdge(rng = Math.random) {
+// `sky`: the wall as the sky seen in flight draws it, in the art bible's pale Edge colours; the map keeps its own
+export function buildEdge(rng = Math.random, { sky = false } = {}) {
   const group = new THREE.Group();
   group.name = 'edgeOfSpace';
   const mats = [];
@@ -208,6 +220,7 @@ export function buildEdge(rng = Math.random) {
   const uReveal = { value: 1 };
   const uProj = { value: 800 };
   const uShift = { value: 0 };
+  const uSky = { value: sky ? 1 : 0 };
   const add = (o) => {
     // (placed by their shaders: the geometry's own bounds say nothing about where they are)
     o.frustumCulled = false;
@@ -223,7 +236,7 @@ export function buildEdge(rng = Math.random) {
     new THREE.Mesh(
       plane,
       new THREE.ShaderMaterial({
-        uniforms: { uTime: { value: 0 }, uOffset: { value: offset }, uIntensity: { value: intensity }, uLayer: { value: kind }, uSeed: { value: seed }, uReveal, uShift },
+        uniforms: { uTime: { value: 0 }, uOffset: { value: offset }, uIntensity: { value: intensity }, uLayer: { value: kind }, uSeed: { value: seed }, uReveal, uShift, uSky },
         vertexShader: membraneVert,
         fragmentShader: membraneFrag,
         transparent: true,

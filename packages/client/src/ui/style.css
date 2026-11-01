@@ -3937,12 +3937,17 @@ input[type='range'].range:hover::-webkit-slider-thumb {
   font-size: 20px;
   letter-spacing: 0.3em;
   color: #fff;
-  text-shadow: 0 0 24px rgba(160, 120, 255, 0.9), 0 0 4px rgba(0, 0, 0, 0.8);
+  /* on the wall's brightest part (opal white) the letters need a plate of their own, as the sky's EDGE readout has */
+  padding: 8px 14px 8px 18px;
+  background: rgba(11, 11, 16, 0.94);
+  border-left: 2px solid rgba(190, 160, 255, 0.85);
+  box-shadow: 0 0 22px rgba(11, 11, 16, 0.75);
+  text-shadow: none;
 }
 .map-label.edge small {
   font-size: 10px;
   letter-spacing: 0.24em;
-  color: rgba(233, 231, 226, 0.7);
+  color: rgba(233, 231, 226, 0.86);
 }
 .map-label.big {
   font-family: var(--font-display);
@@ -4063,6 +4068,10 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 }
 .ec-read small {
   color: var(--dim);
+}
+/* (the caption over the brightest walls: --dim on the plate came to 4.4:1) */
+.ec-read .ec-dist small {
+  color: var(--accent-hi);
 }
 .location .body::before,
 .ec-read::before {

@@ -714,5 +714,6 @@ function toBody(s: WorldState): Omit<WorldMessage, 'serverTime'> {
     count: s.count,
     edgeX: s.edgeX,
     tiers: [...s.tiers],
+    dark: [...s.dark],
   };
 }
