@@ -452,9 +452,7 @@ export class GalaxyMap {
     const gal = g.galaxy;
     this.neighbors = new Set(gal.neighbors(10).map((n) => n.s));
     this.items.forEach((it) => {
-      if (it.kind !== 'system') return;
-      const s = it.sys;
-      this.classLabel(it);
+      if (it.kind === 'system') this.classLabel(it);
     });
     this.visited.clear();
     for (const s of gal.systems) {
