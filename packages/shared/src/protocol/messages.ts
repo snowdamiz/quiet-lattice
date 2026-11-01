@@ -16,7 +16,7 @@ import { seasonAwardListSchema, seasonNumberSchema, seasonOpeningSchema } from '
 import { skillErrorCodeSchema, skillOpSchema, skillViewSchema } from '../skills/index.ts';
 
 /** Bumped whenever a message changes shape; the server refuses a client that speaks another version. */
-export const PROTOCOL_VERSION = 21;
+export const PROTOCOL_VERSION = 22;
 // History. A branch that changes a message takes the next number and adds its line here (protocol.test.ts checks it):
 // 1: the first protocol (P1.E02.T08)
 // 2: inventory requests and state (P1.E06.T04)
@@ -39,6 +39,7 @@ export const PROTOCOL_VERSION = 21;
 // 19: fabricators: a craft names its fabricator as waystation, capital, sanctuary, scrapyard or ship (was station or ship) (P2.E20.T01)
 // 20: abilities: casts name their node, frame and time and are answered; cooldowns and toggles as state; cast events (P1.E07.T03)
 // 21: the world message names the systems whose stations are dark (P2.E22.T02)
+// 22: a cast event may be `shared`: a party member within Choir's range plays the caster's Pulse as its own (P1.E07.T06)
 
 /** Generous bounds that still keep NaN, Infinity and absurd magnitudes out (positions are metres in a body's frame or a
  * system's inertial frame; interstellar cruise runs far faster than light). */
@@ -535,6 +536,9 @@ export const CastEvent = z.object({
   frame: FrameId,
   aim: Direction,
   target: EntityId.optional(),
+  /** (protocol 22) The cast is this session's own too: its caster shares it (Choir's party, within 50 m), so the client plays its
+   * effect as its own player's. */
+  shared: z.literal(true).optional(),
 });
 export const GameEvent = z.discriminatedUnion('kind', [
   CombatEvent,

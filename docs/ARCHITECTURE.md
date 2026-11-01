@@ -254,7 +254,7 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   `awards {awards}` is the character's season titles and glyphs (`{season, bucket, title, glyph}`, one a season, oldest
   first, at most 256), sent after `reputation` on join and again whenever a season's end gives the character one. No
   client message touches either.
-- **Abilities** (protocol 20, §28): a client sends `cast {seq, time, node, slot, frame, aim, target?}` for a key press, a
+- **Abilities** (protocol 20, 22 adds `shared` to the `cast` event, §28): a client sends `cast {seq, time, node, slot, frame, aim, target?}` for a key press, a
   strict shape (no client says what a cast did): `node` the one it sees in `slot` (0–5) of the bar its mode casts from,
   `aim` a direction in `frame` (its pose's), `target` an entity id when the ability names one, `time` checked only for
   staleness; node ids are the skill web's (lower-case, 48 characters). The server answers each with `cast {seq, node,
@@ -2141,7 +2141,7 @@ effects; this runtime casts them all.
 - **The book** (`book.ts`): each ability paired with its effect, the server's code for it, `{check?, cast, end?}`.
   `abilityBook()` refuses to build (the server does not start) an ability without an effect or the reverse, one filed
   under another node, a node that is always on, an `entity` ability that takes no kind, or a cooldown casts cannot run.
-  This build's book holds the branches that have landed (Thermal I–II so far, P1.E07.T05; every other slotted node is
+  This build's book holds the branches that have landed (Thermal I–II and Resonance I–II so far, P1.E07.T05 and T06; every other slotted node is
   refused `unknown`); each branch adds its abilities from `@astra/shared/abilities/<branch>.ts` and its effects from
   `abilities/<branch>.ts`, one line apiece in `ABILITIES` and `EFFECTS`. Tests and the integration test cast a fixture book
   (`test/abilityFixture.ts`) over real nodes, never shipped.
@@ -2175,9 +2175,10 @@ effects; this runtime casts them all.
   (`now` is the cast's); `owns(node)`, the caster's web now (an augment, a passive); `pose()`, the caster's eye and look now,
   in the cast's frame, for an effect that runs on after its cast (a held beam): the entity's pose raised to the eye, the look
   the client last sent with its input (`aim`, the eye's quaternion, which the client sends on foot) or the cast's own aim without
-  one, null once the entity has left play or its frame; `sight(to)`, whether the drawn ground leaves a line from that eye
+  one, null once the entity has left play or its frame or is down (a delayed effect such as Echo, or a held Lance, stops for a downed caster); `sight(to)`, whether the drawn ground leaves a line from that eye
   (`'busy'` while the ground is still being planned, false once the caster is gone) and `groundReady()`, whether the ground is
-  planned (an area cast refuses `busy` until it is); `canHarm(target)`, `damage`'s rule for an effect that marks and deals no
+  planned (an area cast refuses `busy` until it is); `onWorld()`, whether the caster's frame is a world with a surface (not deep
+  space, the station's frame or a gas giant: it reads the body's type alone and plans no ground); `canHarm(target)`, `damage`'s rule for an effect that marks and deals no
   blow;
   `meters.beamTime()` (the seconds the beam has fired in all as the meters judged it, §19: a difference of two readings is what
   the beam did, however its client timed its inputs) and `meters.dumpHeat()` (Vent: all the heat out, how much, null in the
@@ -2202,6 +2203,44 @@ effects; this runtime casts them all.
   service (§18) read their nodes. The server's ship has no hazard damage yet (the client computes it), and no re-entry damage
   exists on either side (Ablative Plating's re-entry half has no consumer until one is planned); when they do, they multiply
   by `hazardDamage[kind]` and `shipStats(...).reentryDamage`.
+- **Resonance I–II** (`@astra/shared/abilities/resonance.ts`, `abilities/resonance.ts`; DESIGN 9.4). Pulse (10 heat, 6 s) stuns
+  every creature within 15 m for 2 s (`FaunaSim.stun`: a stunned creature stands still, strikes nothing and drops an attack
+  in progress); with Choir the caster's party members on foot within 50 m of it share it: the stun goes off round each
+  of them too (`ctx.party`) and their sessions are sent the cast event with `shared: true` (`ctx.share`), which makes their
+  client run the scan's reveal as its own; with Echo the whole Pulse sounds again 2 s later round where the caster and its
+  party stand then. The scan's reveal (deposits and sites) is the client's: it knows the world's scatter and sites, so the
+  server only decides what the scan costs and who is stunned; Long Ear's doubled ranges (`scan.deposit_range`,
+  `scan.site_range`) reach the scan through the suit's modifiers (`scanRanges(suitMods)`, `@astra/shared/exosuit`). Harmonic (20 heat, 20 s) calms every creature within 30 m for 20 s
+  (`FaunaSim.calm`, the shared aggro model's `harmonicReset`: its threat is forgotten, it neither hunts nor flees, grazes about
+  its home, and any damage breaks it); a creature whose resistances make it immune to the node (the stone-touched) is
+  skipped by `ctx.control`. Shatter (25 heat, 10 s) bursts 45 on every creature within 15 m that is weak to it (crystal
+  creatures: a `weak` resistance to the node, so ×2; no other creature is its target), in sight, through `ctx.damage`, and
+  6 hp on each of the 12 nearest standing mineral deposits and formations in sight (`ResourceService.burst`, credited to the
+  caster as mining: what breaks pays out and reaches the quest engine as mined ones do; plants are the client's flora and
+  are never touched; it is refused `busy` before payment while either the cast's ground or the resource service's
+  (`ctx.deposits.ready()`, `ResourceService.burstReady`) is still being planned, and each node it breaks is told to the caster
+  as a `mine {seq: 0, result: 'depleted'}` reply, as for other contributors: the client shows the collected toast once P1.E13.T06
+  reads `mine` replies); nothing in the server has a shield for it to break yet. Veil (20 heat, 30 s) keeps the caster out of
+  every creature's notice for 15 s (`FaunaSim.veil` → `Actor.veiled`, which `noticed` reads, in a phase too: the threat of a
+  creature already after it is dropped as it stops being noticed). It does not hide the caster from players or their
+  snapshots: DESIGN's players "see a shimmer", which is the cast event, naming the caster only to sessions whose phase shows
+  it; a status that withholds a ship (Silent Running, Cloak) will do it in the zone's `visibleTo`, beside the phase rule, so
+  a hidden entity is simply not in the interest set and no event names it. Deep Sweep (ship, 10 Charge, 30 s) is refused `target`
+  before payment unless the caster is over a world with sites (`ctx.onWorld()`), tells the casting session the world it
+  sweeps (the cast event's `frame`: its client reveals every site of that planet from orbit, loaded or not: `Structures` keeps
+  the known site ids per planet across its unloads, as it does the visited ones, and seeds a planet's sites from them when it
+  loads) and leaves a
+  `deep_sweep` status for 15 s on the ship whose power is the radar range (5 km), which the pirates' system (P1.E08.T05)
+  reads. Jammer (ship, 20 Charge, 20 s) is an `entity` cast on a player within 2 km that is on the pulse drive and that the
+  caster may harm (so refused `target` until PvP, P2.E17.T01, supplies the rule: `CastServiceOptions.mayHarm`):
+  `MovementAuthority.jam` refuses its pulse inputs (`pulse_jammed`) for 6 s and its client, told by the cast event naming
+  it, drops out of the drive (`Ship.jam`). Pirates are not zone entities yet, so "pirate pursuit" has nothing to cancel.
+  New context capabilities (general): `resistance(target)`, `control.stun/calm` (a creature seen, not immune; never a
+  player), `conceal(durationS)`, `party(radiusM)`, `share(entities)`, `deposits.burst(radiusM, hp, max)` and
+  `ships.pulsing/jam`. Long Ear, Choir and Echo are not cast: the client's scan and Pulse's effect read them. Long Ear's beacons on the map are the
+  client's too: `beaconsOnMap(skills)` (`@astra/shared/exosuit`) reads the node's flag, and a planet's Signal Beacon sites are
+  then known at once and draw as the HUD's site markers (within 9 km of the surface and 12 km of the camera; no planet map
+  exists yet); beacons already shown stay after a respec until the planet's sites reload.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
@@ -2222,7 +2261,8 @@ effects; this runtime casts them all.
   for an `entity` ability, the nearest living entity of a kind it takes within 8° of the aim and its reach. LMB stays the
   multitool's beam and the ship's guns. A `cast` event plays the effect a branch registered for its node
   (`registerAbilityFx(node, {cast, end?})`); none is registered until the branches' tasks and their art (P1.E07.T14)
-  land. The HUD's bar (`HUD.updateAbilities`) shows the working slots of the bar the mode casts from under the prompt,
+  land (Pulse, Deep Sweep and Jammer register theirs in `gameplay/resonanceFx.js`: the scan's reveal, the sites below and dropping out
+  of the jammed drive, with no drawing). The HUD's bar (`HUD.updateAbilities`) shows the working slots of the bar the mode casts from under the prompt,
   while a node is slotted there: a ring a slot, in the arcs' language (a near-black halo and disc, an opaque track), drawn
   full in the bar's colour (heat's warm on foot, the flight deck's warm white in flight: lilac is Charge's alone) when
   ready, drawn back up as the server's cooldown runs out with the seconds left in place of the key (whole from ten,

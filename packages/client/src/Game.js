@@ -22,7 +22,7 @@ import { Cities } from './gameplay/Cities.js';
 import { EDGE_X, streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, mistHazard, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { SUIT, footHazard } from '@astra/shared/data';
-import { cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
+import { beaconsOnMap, cartridgeRestore, hazardDrainPerS, scanRanges, suitMods } from '@astra/shared/exosuit';
 import { meterConditions } from '@astra/shared/meters';
 import { AUTO_QUESTS, QuestBook, atInfo, getQuest } from '@astra/shared/quests';
 import { bondLine, codexLine } from '@astra/shared/codex';
@@ -38,6 +38,7 @@ import { CameraDirector } from './cutscene/CameraDirector.js';
 import { CutscenePlayer } from './cutscene/CutscenePlayer.js';
 import { Net } from './net/Net.js';
 import { Abilities, CAST_KEYS, castBar, castIntent, playAbilityFx } from './net/abilities.js';
+import './gameplay/resonanceFx.js';
 import { Crafting } from './net/crafting.js';
 import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
@@ -119,6 +120,7 @@ export class Game {
     // what the character owns and its people, as the server's skill view says: the exo-suit's walker, suit and scan follow it
     this.build = { skills: [], people: undefined };
     this.suitMods = suitMods(this.build);
+    this.beaconsOnMap = false;
     // the action bars and their cooldowns as the server says, the casts keys 1–6 send, and the effects of those seen
     this.abilities = new Abilities({ now: () => this.hud.now() });
     this.abilities.listen((e) => playAbilityFx(this, e));
@@ -370,6 +372,7 @@ export class Game {
   applyBuild() {
     this.player.setBuild(this.build);
     this.suitMods = suitMods(this.build);
+    this.beaconsOnMap = beaconsOnMap(this.build.skills);
   }
 
   // (the ship flies with the nodes the server says the pilot owns too: the Pilot branch's passives, DESIGN 9.7)
@@ -1105,9 +1108,15 @@ export class Game {
     else this.hud.toast(ANALYZE_REFUSED[m.reason] ?? ANALYZE_REFUSED.other, 'warn');
   }
 
+  // The scan on C, today's: deposits and sites within the character's scan range (Long Ear's doubles it). Online, the Pulse
+  // (DESIGN 9.4, a slotted active) is the same reveal with the server's stun beside it: its cast event runs `revealScan`.
   scan() {
     if (this.scanCooldown > this.time) return;
     this.scanCooldown = this.time + SUIT.scan.cooldownS;
+    this.revealScan();
+  }
+
+  revealScan() {
     this.hud.scanPulse();
     this.audio.play('scan');
     const range = scanRanges(this.suitMods);
@@ -1119,6 +1128,15 @@ export class Game {
       const km = nearest.d < 1000 ? `${nearest.d.toFixed(0)} m` : `${(nearest.d / 1000).toFixed(1)} km`;
       setTimeout(() => this.hud.toast(`${nearest.s.label} · ${km}`, 'good'), 900);
     }
+  }
+
+  /** Deep Sweep (DESIGN 9.4): every site of the world the cast named, from orbit. */
+  revealSites(frame) {
+    const planet = frameOfId(this.system, this.station, frame);
+    if (!planet?.sites) return;
+    const n = this.structures.revealAll(planet);
+    this.audio.play('scan');
+    this.hud.toast(n ? `${n} sites revealed` : 'No new sites below', n ? 'good' : 'info');
   }
 
   onShipFire(ship) {

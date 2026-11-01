@@ -21,7 +21,16 @@
 //   each tick's snapshots, every session whose interest holds its target or its source is sent it, its own entity's
 //   first, at most EVENTS_PER_SESSION a tick; a tick queues at most EVENTS_PER_TICK. A session is never named an entity its
 //   phase hides: a hit on one is not sent to it, and a hit by one is sent without its source.
-import { computeDamage, mobStats, modsOfNodes, playerMaxHealth, type DamageSource, type MobRef } from '@astra/shared/combat';
+import {
+  computeDamage,
+  mobStats,
+  modsOfNodes,
+  playerMaxHealth,
+  resistanceTo,
+  type DamageSource,
+  type MobRef,
+  type ResistanceResult,
+} from '@astra/shared/combat';
 import type { Resistance, StatMod } from '@astra/shared/data';
 import { encodeServerMessage, type EntityField, type GameEvent } from '@astra/shared/protocol';
 import { shipStats, type ShipLoadout } from '@astra/shared/ships';
@@ -289,6 +298,13 @@ export class ZoneCombat {
   creatureHealth(entity: number): { hp: number; max: number; dead: boolean } | null {
     const v = this.vitalsOf(entity);
     return v?.kind === 'creature' ? { hp: v.hp, max: v.max, dead: v.dead } : null;
+  }
+
+  /** How the creature on `entity` takes a source (its resistances to a node, a weapon or a branch: crystal creatures are weak
+   * to Shatter, the stone-touched immune to Harmonic), or null for an entity that is not a living creature. */
+  resistanceOf(entity: number, source: DamageSource): ResistanceResult | null {
+    const v = this.vitalsOf(entity);
+    return v?.kind === 'creature' && !v.dead ? resistanceTo(v.resistances, source) : null;
   }
 
   /** A player's health (full until first hurt), or null for an entity that is not a player's. */
