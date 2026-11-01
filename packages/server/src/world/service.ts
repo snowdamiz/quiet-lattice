@@ -6,13 +6,18 @@
 // counted action, plays the meter forward on the shard clock: a measure burns every 17,280 s, and at each day's end the
 // day's lean drifts the Count toward its target. The votes, the rolls and how far the meter has run are saved in one
 // batch per write (retried until it lands), so the Count and the open day's ledger survive a restart, and the burns and
-// days that passed while the server was down are played on boot. The Edge stands at EDGE_X and the tiers are
-// galaxyTiers(edgeX); update() is the lever the Edge following the Count (P2.E22.T02) and dev tooling pull.
+// days that passed while the server was down are played on boot.
+//
+// The Edge follows the Count (DESIGN 16.3, P2.E22.T02): edgeX is a function of the Count and of the map the season opened
+// with (edgeAt: the opening's shift and the Count's), the tiers are galaxyTiers(edgeX) and the dark stations are the
+// systems the season opened dark until the Count relights them (darkAt). Nothing of them is saved: they are worked out
+// again from the Count and the opening on boot, so a restart finds the Edge where it left it, and a change (a burn, a
+// day's drift, a season's roll) moves the published Edge, the tier map and the dark set together, once.
 //
 // Seasons (DESIGN 16.4, ARCHITECTURE §27) roll on the same clock: the meter is played to the season's end (the first meter
 // midnight at or after its start plus its length), the Count's bucket there decides how it ended, and the next season
 // starts at that midnight with the Count back at 500, the length the last month's daily actives choose and the map the
-// bucket leaves (`opening`: the Edge's shift and the systems dark, data the Edge following the meter, P2.E22.T02, applies;
+// bucket leaves (`opening`: the Edge's shift and the systems dark, which the Edge applies, above;
 // subscribers hear the roll as a change carrying the ended season). The season's end is saved with the meter (its
 // winners' awards and its chronicle, seasons/store.ts) and, once written, told to onSeasonEnded() listeners, who give its
 // title and glyph to the characters in play. markActive() counts each account that enters the world once a meter day,
@@ -22,8 +27,8 @@
 // clock sync point, for the processes P3.E37 will split off (ARCHITECTURE §1). The clock's epoch and floor come from the
 // shard's row (shard.ts), and the latest world time is saved back every SAVE_EVERY_MS and on close.
 import type { ServerMessage } from '@astra/shared/protocol';
-import { ACTIVES_WINDOW_DAYS, seasonEndOf, type SeasonOpening } from '@astra/shared/seasons';
-import { EDGE_X, galaxyTiers, type Tier } from '@astra/shared/world';
+import { ACTIVES_WINDOW_DAYS, darkAt, edgeAt, seasonEndOf, type SeasonOpening } from '@astra/shared/seasons';
+import { galaxyTiers, type Tier } from '@astra/shared/world';
 import { DayLedger } from '../count/ledger.ts';
 import {
   burnStepOf,
@@ -73,10 +78,12 @@ export interface WorldState {
   readonly opening: SeasonOpening;
   /** The Count, 0–1,000 measures. */
   readonly count: number;
-  /** x (ly) of the Edge's wall on the X axis (EDGE_X by default). */
+  /** x (ly) of the Edge's wall on the X axis: edgeAt(count, opening), EDGE_X at the baseline. */
   readonly edgeX: number;
   /** Tier of each galaxy system, by index: galaxyTiers(edgeX). */
   readonly tiers: readonly Tier[];
+  /** The systems whose stations are dark (the Hive variant, DESIGN 16.3), ascending: darkAt(count, opening). */
+  readonly dark: readonly number[];
 }
 
 /** A system whose tier changed. */
@@ -135,6 +142,8 @@ export interface WorldSource {
   state(): WorldState;
   /** The tier of galaxy system `systemIndex` now. */
   tierOf(systemIndex: number): Tier;
+  /** Whether galaxy system `systemIndex`'s station is dark now. */
+  isDark(systemIndex: number): boolean;
   /** The `world` message for a client, its serverTime read now. */
   message(): WorldMessage;
   /** Calls `listener` after every change until the returned function is called. */
@@ -189,8 +198,17 @@ export function tierMap(edgeX: number): Tier[] {
   return galaxyTiers(edgeX).map((s) => s.tier);
 }
 
-function frozen(state: Omit<WorldState, 'tiers'> & { tiers: Tier[] }): WorldState {
+/** The Edge, the tier map and the dark systems for a Count in a season that opened with `opening`. */
+function placement(count: number, opening: SeasonOpening): { edgeX: number; tiers: Tier[]; dark: readonly number[] } {
+  const edgeX = edgeAt(count, opening);
+  return { edgeX, tiers: tierMap(edgeX), dark: darkAt(count, opening) };
+}
+
+type Initial = Omit<WorldState, 'edgeX' | 'tiers' | 'dark'>;
+
+function frozen(state: Omit<WorldState, 'tiers' | 'dark'> & { tiers: Tier[]; dark: readonly number[] }): WorldState {
   Object.freeze(state.tiers);
+  Object.freeze(state.dark);
   Object.freeze(state.opening.dark);
   Object.freeze(state.opening);
   return Object.freeze(state);
@@ -258,16 +276,15 @@ export class WorldService implements WorldSource {
     const today = dayOf(clock.now());
     const read = count ? await count.actives(Math.min(dayOf(seasonEnd), today) - ACTIVES_WINDOW_DAYS, today) : { counts: [], today: [] };
     const actives = new DailyActives(today, read);
-    const initial = {
+    const opening = structuredClone(record.seasonOpening);
+    const initial: Initial = {
       revision: 1,
       season: record.season,
       seasonStart: record.seasonStart,
       seasonLength: record.seasonLength,
       seasonEnd,
-      opening: structuredClone(record.seasonOpening),
+      opening,
       count: record.count,
-      edgeX: EDGE_X,
-      tiers: tierMap(EDGE_X),
     };
     const world = new WorldService(opts, clock, record.epochMs, initial, rolledThrough, burnStep, votes, actives, record.seasonActives);
     if (firstRun) {
@@ -298,7 +315,7 @@ export class WorldService implements WorldSource {
     opts: WorldServiceOptions,
     clock: ServerClock,
     epochMs: number,
-    initial: Omit<WorldState, 'tiers'> & { tiers: Tier[] },
+    initial: Initial,
     rolledThrough: number,
     burnStep: number,
     votes: readonly StoredVote[],
@@ -314,7 +331,7 @@ export class WorldService implements WorldSource {
     this.rollCheckMs = opts.rollCheckMs ?? ROLL_CHECK_MS;
     this.clock = clock;
     this.epochMs = epochMs;
-    this.current = frozen(initial);
+    this.current = frozen({ ...initial, ...placement(initial.count, initial.opening) });
     this.body = toBody(this.current);
     for (const v of votes) {
       const day = this.unrolled.get(v.day);
@@ -337,6 +354,11 @@ export class WorldService implements WorldSource {
     return tier;
   }
 
+  isDark(systemIndex: number): boolean {
+    if (!Number.isInteger(systemIndex) || this.current.tiers[systemIndex] === undefined) throw new RangeError(`the galaxy has no system ${systemIndex}`);
+    return this.current.dark.includes(systemIndex);
+  }
+
   message(): WorldMessage {
     return { ...this.body, serverTime: this.clock.now() };
   }
@@ -356,19 +378,17 @@ export class WorldService implements WorldSource {
   }
 
   /**
-   * Moves the Count and/or The Edge; the tiers follow the Edge. Every subscriber hears the change, the mirror is
-   * rewritten and a new Count is saved to the shard. Returns the change, or null when nothing changed. Throws RangeError
-   * for a Count that is not a whole number of measures in 0–1,000 or an Edge that is not a finite x.
+   * Sets the Count (dev tooling and tests); the Edge, the tiers and the dark stations follow it. Every subscriber hears the
+   * change, the mirror is rewritten and the new Count is saved to the shard. Returns the change, or null when nothing
+   * changed. Throws RangeError for a Count that is not a whole number of measures in 0–1,000.
    */
-  update(patch: { count?: number; edgeX?: number }): WorldChange | null {
-    const count = patch.count ?? this.current.count;
-    const edgeX = patch.edgeX ?? this.current.edgeX;
+  update(patch: { count: number }): WorldChange | null {
+    const { count } = patch;
     if (!(Number.isInteger(count) && count >= COUNT_MIN && count <= COUNT_MAX)) {
       throw new RangeError(`the Count is a whole number of measures in ${COUNT_MIN}–${COUNT_MAX}, not ${count}`);
     }
-    if (!Number.isFinite(edgeX)) throw new RangeError(`the Edge must stand at a finite x (ly), not ${edgeX}`);
-    const change = this.commit({ count, edgeX });
-    if (change && change.state.count !== change.previous.count) {
+    const change = this.commit({ count });
+    if (change) {
       this.positionMoved = true;
       this.saveMeterSoon();
     }
@@ -626,30 +646,31 @@ export class WorldService implements WorldSource {
   }
 
   /**
-   * Applies a change of the Count, the Edge or the season: the tiers follow the Edge, subscribers hear the change and the
-   * mirror is rewritten. `ended` is the season that ended in it, for subscribers.
+   * Applies a change of the Count or the season: the Edge, the tiers and the dark stations follow (the Edge is a function
+   * of the Count and the season's opening), subscribers hear the change and the mirror is rewritten. `ended` is the season
+   * that ended in it, for subscribers.
    */
   private commit(
-    patch: Partial<Pick<WorldState, 'count' | 'edgeX' | 'season' | 'seasonStart' | 'seasonLength' | 'opening'>>,
+    patch: Partial<Pick<WorldState, 'count' | 'season' | 'seasonStart' | 'seasonLength' | 'opening'>>,
     ended?: SeasonEnd,
   ): WorldChange | null {
     const previous = this.current;
     const next = { ...previous, ...patch };
-    const { count, edgeX } = next;
-    if (!ended && count === previous.count && edgeX === previous.edgeX) return null;
+    const { count } = next;
+    if (!ended && count === previous.count) return null;
 
-    const tiers = edgeX === previous.edgeX ? [...previous.tiers] : tierMap(edgeX);
+    const { edgeX, tiers, dark } = placement(count, next.opening);
     const flipped: TierFlip[] = [];
     tiers.forEach((to, system) => {
       const from = previous.tiers[system]!;
       if (to !== from) flipped.push({ system, from, to });
     });
     const opening = next.opening === previous.opening ? previous.opening : structuredClone(next.opening);
-    this.current = frozen({ ...next, revision: previous.revision + 1, seasonEnd: seasonEndOf(next.seasonStart, next.seasonLength), opening, tiers });
+    this.current = frozen({ ...next, revision: previous.revision + 1, seasonEnd: seasonEndOf(next.seasonStart, next.seasonLength), opening, edgeX, tiers, dark });
     this.body = toBody(this.current);
     const change: WorldChange = { state: this.current, previous, flipped, ...(ended ? { season: ended } : {}) };
     this.log?.info(
-      { shard: this.shardId, revision: this.current.revision, season: this.current.season, count, edgeX, flipped: flipped.length },
+      { shard: this.shardId, revision: this.current.revision, season: this.current.season, count, edgeX, flipped: flipped.length, dark: dark.length },
       'world changed',
     );
     this.mirrorNow();
