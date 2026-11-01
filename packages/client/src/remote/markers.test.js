@@ -1,0 +1,270 @@
+// Where other pilots' markers go (P1.E04.T02): over the ship's bounds on screen, nudged off the keep-out rather than
+// dropped, the label a fixed few px beside the mark, on the side it had while that has room, else right, left or
+// above (off other ships if it can be), else none; room to spare, here and where the mark is headed, to take a side.
+import { SocialUI } from '../ui/social/SocialUI.js';
+import * as THREE from 'three';
+import { describe, expect, it } from 'vitest';
+import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, hullCorners, labelBox, makeRoom, makeSlide, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
+
+const W = 1920;
+const H = 1080;
+const camera = new THREE.PerspectiveCamera(60, W / H, 0.5, 1e7);
+const identity = new THREE.Quaternion();
+const box = new THREE.Box3(new THREE.Vector3(-6, -2, -7), new THREE.Vector3(6, 2, 7));
+const out = () => ({ x0: 0, y0: 0, x1: 0, y1: 0 });
+const room = (keepOut = [], taken = [], more = {}) => Object.assign(makeRoom(), { keepOut, taken, W, H }, more);
+
+describe('pilot markers', () => {
+  it("project the ship's box onto the screen: centred straight ahead, larger nearer, none behind the camera", () => {
+    const far = screenBounds(box, identity, new THREE.Vector3(0, 0, -400), identity, camera.projectionMatrix, W, H, out());
+    expect((far.x0 + far.x1) / 2).toBeCloseTo(W / 2, 6);
+    expect((far.y0 + far.y1) / 2).toBeCloseTo(H / 2, 0);
+    const near = screenBounds(box, identity, new THREE.Vector3(0, 0, -40), identity, camera.projectionMatrix, W, H, out());
+    expect(near.x1 - near.x0).toBeGreaterThan((far.x1 - far.x0) * 8);
+    // turned a quarter round, its 14 m length lies across the screen
+    const turned = screenBounds(box, new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2), new THREE.Vector3(0, 0, -400), identity, camera.projectionMatrix, W, H, out());
+    expect(turned.x1 - turned.x0).toBeGreaterThan(far.x1 - far.x0);
+    expect(screenBounds(box, identity, new THREE.Vector3(0, 0, 400), identity, camera.projectionMatrix, W, H, out())).toBeNull();
+  });
+
+  it(`sit ${MARK_GAP} px over the middle of the top of the ship's bounds, drawn in to its middle as it fills the screen`, () => {
+    expect(markOf({ x0: 100, y0: 300, x1: 200, y1: 340 }, { x: 0, y: 0 }, 150, 320, W, H)).toEqual({ x: 150, y: 300 - MARK_GAP });
+    // bounds half the screen tall and more (a ship passing close by): on its middle, and on the screen
+    expect(markOf({ x0: 100, y0: -900, x1: 1500, y1: 700 }, { x: 0, y: 0 }, 700, 300, W, H)).toEqual({ x: 700, y: 300 });
+    const half = markOf({ x0: 800, y0: 300, x1: 1000, y1: 300 + H * 0.375 }, { x: 0, y: 0 }, 900, 500, W, H);
+    expect(half.y).toBeCloseTo((300 - MARK_GAP + 500) / 2, 6);
+    expect(markOf({ x0: -400, y0: -50, x1: -200, y1: 10 }, { x: 0, y: 0 }, -300, -20, W, H)).toEqual({ x: MARK_R + 2, y: MARK_R + 2 });
+  });
+
+  it('are nudged off the keep-out, never dropped: straight out from its middle, so they slide round it', () => {
+    const r = MARK_R + 2;
+    const box = [900, 500, 1000, 560];
+    const clearOf = (m, boxes) => !hits(m.x - MARK_R, m.y - MARK_R, m.x + MARK_R, m.y + MARK_R, boxes);
+    // a mark just under the top of a readout's box: out through the top
+    const mark = { x: 960, y: 505 };
+    expect(nudge(mark, box, W, H)).toBe(1);
+    expect(mark.y).toBe(500 - r - 1);
+    expect(clearOf(mark, box)).toBe(true);
+    // one crossing it moves round it a few px a step, never on it
+    let last = null;
+    for (let x = 880; x <= 1020; x++) {
+      const m = { x, y: 520 };
+      nudge(m, box, W, H);
+      expect(clearOf(m, box)).toBe(true);
+      if (last) expect(Math.hypot(m.x - last.x, m.y - last.y)).toBeLessThan(5);
+      last = m;
+    }
+    // two boxes side by side: out of both, as one
+    const two = { x: 995, y: 530 };
+    nudge(two, [900, 500, 1000, 560, 1000, 500, 1100, 560], W, H);
+    expect(clearOf(two, [900, 500, 1000, 560, 1000, 500, 1100, 560])).toBe(true);
+    // clear already: where it was
+    const clear = { x: 100, y: 100 };
+    expect(nudge(clear, box, W, H)).toBe(0);
+    expect(clear).toEqual({ x: 100, y: 100 });
+  });
+
+  it('slide round the keep-out no faster than they are let, however fast straight out from its middle runs', () => {
+    // a ship passing behind a readout near its middle height: straight out runs round the edge several px a step
+    const box = [900, 500, 1000, 560];
+    const clearOf = (m) => !hits(m.x - MARK_R, m.y - MARK_R, m.x + MARK_R, m.y + MARK_R, box);
+    let fastest = 0;
+    let last = null;
+    for (let x = 890; x <= 1010; x += 4) {
+      const m = { x, y: 527 };
+      nudge(m, box, W, H);
+      if (last) fastest = Math.max(fastest, Math.hypot(m.x - last.x, m.y - last.y));
+      last = m;
+    }
+    expect(fastest).toBeGreaterThan(40);
+    // with a slide of 12 px a step: never more round the edge, never on the box, and where it is once past it
+    const slide = makeSlide();
+    last = null;
+    let m;
+    for (let x = 890; x <= 1040; x += 4) {
+      slide.max = 12;
+      m = { x, y: 527 };
+      nudge(m, box, W, H, 0, slide);
+      expect(clearOf(m)).toBe(true);
+      // (round a corner the step cuts across it)
+      if (last) expect(Math.hypot(m.x - last.x, m.y - last.y)).toBeLessThanOrEqual(12 + 4 + 1e-6);
+      last = m;
+    }
+    expect(m).toEqual({ x: 1038, y: 527 });
+    // the box moving under a mark on its edge: the mark keeps to the edge near where it was, not where straight out goes
+    const held = makeSlide();
+    const on = { x: 950, y: 500 - MARK_R - 3 };
+    nudge(on, box, W, H, 0, held);
+    held.max = 12;
+    const moved = { x: 950, y: 505 };
+    nudge(moved, [930, 470, 1030, 560], W, H, 0, held);
+    expect(Math.hypot(moved.x - on.x, moved.y - on.y)).toBeLessThan(40);
+  });
+
+  it('are nudged the least way out where straight out leaves the screen, the way they went last first', () => {
+    const r = MARK_R + 2;
+    // a box at the top of the screen (the compass): straight out would leave it
+    const top = [900, 0, 1000, 60];
+    const m = { x: 960, y: 20 };
+    expect(nudge(m, top, W, H)).toBe(3);
+    expect(m).toEqual({ x: 960, y: 60 + r + 1 });
+    const kept = { x: 960, y: 20 };
+    expect(nudge(kept, top, W, H, 5)).toBe(5);
+    expect(kept).toEqual({ x: 1000 + r + 1, y: 20 });
+  });
+
+  it(`put the label ${LABEL_GAP} px right of the mark, its bottom over the ship's bounds, whatever the ship's size`, () => {
+    const at = out();
+    // a mark over a ship 400 px wide: the label still sits by the mark, not past the bounds
+    expect(placeLabel(960, 500, 80, LABEL_H, room([], [], { ships: [800, 506, 1200, 600] }), at)).toBe('right');
+    expect(at.x0).toBe(960 + MARK_R + LABEL_GAP);
+    expect(at.y1).toBeLessThanOrEqual(500 + MARK_GAP);
+    // (its own mark, the entries from 0 to 4 of `taken`, does not count)
+    expect(placeLabel(960, 500, 80, LABEL_H, room([], [954, 494, 966, 506], { takenFrom: 0, takenTo: 4 }), at)).toBe('right');
+  });
+
+  it('keep the side the label had while it has room, else take the next with room, else none', () => {
+    const at = out();
+    // free on every side: the side it had
+    expect(placeLabel(960, 500, 80, LABEL_H, room(), at, 'left')).toBe('left');
+    expect(placeLabel(960, 500, 80, LABEL_H, room(), at, 'above')).toBe('above');
+    const right = labelBox('right', 960, 500, 80, LABEL_H, out());
+    const left = labelBox('left', 960, 500, 80, LABEL_H, out());
+    // (the lower half of each side's box taken: the label above is clear of both)
+    const rightBox = [right.x0, (right.y0 + right.y1) / 2, right.x1, right.y1];
+    const leftBox = [left.x0, (left.y0 + left.y1) / 2, left.x1, left.y1];
+    expect(fits('right', 960, 500, 80, LABEL_H, room(rightBox), at)).toBe(false);
+    expect(placeLabel(960, 500, 80, LABEL_H, room(rightBox), at, 'right')).toBe('left');
+    expect(at.x1).toBe(960 - MARK_R - LABEL_GAP);
+    expect(placeLabel(960, 500, 80, LABEL_H, room(rightBox, leftBox), at)).toBe('above');
+    expect(at.y1).toBe(500 - MARK_R - LABEL_GAP);
+    expect((at.x0 + at.x1) / 2).toBe(960);
+    const above = labelBox('above', 960, 500, 80, LABEL_H, out());
+    expect(placeLabel(960, 500, 80, LABEL_H, room([...rightBox, above.x0, above.y0, above.x1, above.y1], leftBox), at)).toBeNull();
+    // and the screen's edges
+    expect(placeLabel(W - 20, 500, 80, LABEL_H, room(), at)).toBe('left');
+    expect(placeLabel(20, 500, 80, LABEL_H, room(), at)).toBe('right');
+  });
+
+  it('keep a new label off other ships when they can, and over one when that is the only room', () => {
+    const at = out();
+    const right = labelBox('right', 960, 500, 80, LABEL_H, out());
+    const ship = [right.x0 + 10, right.y0 + 10, right.x0 + 40, right.y0 + 20];
+    expect(placeLabel(960, 500, 80, LABEL_H, room([], [], { ships: ship }), at)).toBe('left');
+    // (its own ship does not count)
+    expect(placeLabel(960, 500, 80, LABEL_H, room([], [], { ships: ship, shipFrom: 0, shipTo: 4 }), at)).toBe('right');
+    // the side it had stays, over a ship or not
+    expect(placeLabel(960, 500, 80, LABEL_H, room([], [], { ships: ship }), at, 'right')).toBe('right');
+    // no side off ships: the first with room
+    const left = labelBox('left', 960, 500, 80, LABEL_H, out());
+    const above = labelBox('above', 960, 500, 80, LABEL_H, out());
+    const ships = [...ship, left.x0, left.y0, left.x0 + 5, left.y0 + 5, above.x0, above.y0, above.x0 + 5, above.y0 + 5];
+    expect(placeLabel(960, 500, 80, LABEL_H, room([], [], { ships }), at)).toBe('right');
+  });
+
+  it(`want ${ROOM_MARGIN} px to spare round a label to take a side, here and where its mark is headed`, () => {
+    const at = out();
+    const right = labelBox('right', 960, 500, 80, LABEL_H, out());
+    // a readout 3 px past the label's right edge: room to stay, not to take the side
+    const near = [right.x1 + 3, right.y0, right.x1 + 50, right.y1];
+    expect(fits('right', 960, 500, 80, LABEL_H, room(near), at)).toBe(true);
+    expect(fits('right', 960, 500, 80, LABEL_H, room(near), at, ROOM_MARGIN)).toBe(false);
+    expect(placeLabel(960, 500, 80, LABEL_H, room(near), at, null, ROOM_MARGIN)).toBe('left');
+    // a mark headed right onto a readout 40 px off: not that side
+    const ahead = [right.x1 + 40, right.y0, right.x1 + 90, right.y1];
+    expect(fits('right', 960, 500, 80, LABEL_H, room(ahead), at, ROOM_MARGIN)).toBe(true);
+    expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at, ROOM_MARGIN)).toBe(false);
+    // one shown goes as soon as where its mark is headed has no room (so it has faded before it gets there), and needs
+    // none to spare
+    expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at)).toBe(false);
+    expect(fits('right', 960, 500, 80, LABEL_H, room(near), at)).toBe(true);
+    expect(fits('right', 960, 500, 80, LABEL_H, room(ahead, [], { aheadX: 60 }), at, 0, false, false)).toBe(true);
+    // all the way there: headed across a narrow readout to its far side, it does not fit
+    const narrow = [right.x1 + 20, right.y0, right.x1 + 30, right.y1];
+    expect(fits('right', 960, 500, 80, LABEL_H, room(narrow, [], { aheadX: 200 }), at)).toBe(false);
+  });
+
+  it("keep off the social panels' boxes where the HUD has them: the mark nudged off, the name on another side", () => {
+    // (the party frame as a DOMRect, an invite card as x0..y1, the chat panel as x, y, width, height)
+    const social = {
+      covers: () => [
+        { left: 20, top: 200, right: 300, bottom: 420, width: 280, height: 220 },
+        { x0: 20, y0: 430, x1: 300, y1: 480 },
+        { x: 20, y: 700, width: 600, height: 300 },
+      ],
+    };
+    const keepOut = addCovers([1, 2, 3, 4], social, 4);
+    expect(keepOut).toEqual([1, 2, 3, 4, 16, 196, 304, 424, 16, 426, 304, 484, 16, 696, 624, 1004]);
+    // a mark falling on the party frame's right edge is nudged off it, never dropped
+    const mark = { x: 296, y: 300 };
+    expect(nudge(mark, keepOut, W, H)).toBeGreaterThan(0);
+    expect(hits(mark.x - MARK_R, mark.y - MARK_R, mark.x + MARK_R, mark.y + MARK_R, keepOut)).toBe(false);
+    // a name that would run onto the chat panel takes the side away from it
+    const at = out();
+    expect(placeLabel(560, 690, 80, LABEL_H, room(keepOut), at)).not.toBeNull();
+    expect(hits(at.x0, at.y0, at.x1, at.y1, keepOut)).toBe(false);
+    // none where the HUD has no panels, or its covers() answers otherwise (a point test)
+    expect(addCovers([], undefined)).toEqual([]);
+    expect(addCovers([], {})).toEqual([]);
+    expect(addCovers([], { covers: () => false })).toEqual([]);
+    expect(addCovers([], { covers: () => [null, { left: 5, top: 5, right: 5, bottom: 9 }] })).toEqual([]);
+  });
+
+  it("nudge off the boxes the real SocialUI.covers() gives with no arguments (the party frame, an invite card, the chat panel)", () => {
+    const rect = (left, top, width, height) => ({ x: left, y: top, left, top, width, height, right: left + width, bottom: top + height });
+    const ui = Object.create(SocialUI.prototype);
+    ui.keepOut = [rect(26, 112, 256, 198), rect(26, 318, 256, 100), rect(26, 574, 440, 388)];
+    const keepOut = addCovers([], ui, 4);
+    expect(keepOut).toHaveLength(12);
+    for (const mark of [
+      { x: 150, y: 200 },
+      { x: 280, y: 360 },
+      { x: 200, y: 700 },
+    ]) {
+      expect(hits(mark.x - MARK_R, mark.y - MARK_R, mark.x + MARK_R, mark.y + MARK_R, keepOut)).toBe(true);
+      expect(nudge(mark, keepOut, W, H)).toBeGreaterThan(0);
+      expect(hits(mark.x - MARK_R, mark.y - MARK_R, mark.x + MARK_R, mark.y + MARK_R, keepOut)).toBe(false);
+    }
+    // no panel showing: nothing added
+    ui.keepOut = [];
+    expect(addCovers([], ui, 4)).toEqual([]);
+  });
+
+  it("outline the local ship by its convex hull's corners only, in its own space", () => {
+    // a ship turned and moved, its hull a finely divided box (hundreds of vertices) with a sphere inside: a few points, all
+    // on the box's edges (in its own space), its 8 corners among them, none of the sphere's
+    const model = new THREE.Group();
+    model.position.set(100, -20, 5);
+    model.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.7);
+    model.add(new THREE.Mesh(new THREE.BoxGeometry(12, 4, 14, 8, 4, 8)), new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 8)));
+    const corners = hullCorners(model);
+    const n = corners.length / 3;
+    expect(n).toBeGreaterThanOrEqual(8);
+    expect(n).toBeLessThan(30);
+    const at = (x, y, z) => [...Array(n).keys()].some((i) => Math.hypot(corners[3 * i] - x, corners[3 * i + 1] - y, corners[3 * i + 2] - z) < 1e-4);
+    for (let k = 0; k < 8; k++) expect(at(k & 1 ? 6 : -6, k & 2 ? 2 : -2, k & 4 ? 7 : -7)).toBe(true);
+    for (let i = 0; i < n; i++) {
+      const out = [Math.abs(corners[3 * i]) / 6, Math.abs(corners[3 * i + 1]) / 2, Math.abs(corners[3 * i + 2]) / 7].filter((v) => v > 1 - 1e-4);
+      expect(out.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("keep off the local ship's outline, slice by slice, not its box", () => {
+    // a diamond's corners and some points inside it
+    const xy = new Float64Array([100, 0, 200, 100, 100, 200, 0, 100, 100, 100, 120, 90, 60, 140]);
+    const bands = outlineBands(xy, 7, 4, 2, []);
+    expect(bands).toEqual([48, -2, 152, 52, -2, 48, 202, 102, -2, 98, 202, 152, 48, 148, 152, 202]);
+    // every point in some slice; the box's corners in none
+    for (let i = 0; i < 7; i++) expect(hits(xy[2 * i], xy[2 * i + 1], xy[2 * i] + 0.1, xy[2 * i + 1] + 0.1, bands)).toBe(true);
+    expect(hits(0, 0, 10, 10, bands)).toBe(false);
+    expect(hits(190, 190, 200, 200, bands)).toBe(false);
+    // (too few points for an outline: none)
+    expect(outlineBands(xy, 2, 4, 2, [])).toEqual([]);
+  });
+
+  it('tell overlapping boxes from touching ones', () => {
+    expect(hits(0, 0, 10, 10, [10, 0, 20, 10])).toBe(false);
+    expect(hits(0, 0, 10, 10, [9, 0, 20, 10])).toBe(true);
+    expect(hits(0, 0, 10, 10, [9, 0, 20, 10], 0, 4)).toBe(false);
+  });
+});

@@ -1,6 +1,6 @@
 // The cast service (P1.E07.T03, ARCHITECTURE §28) over a real zone with fauna: every check a cast passes, the cooldowns
 // and toggles it starts, the effects' timers, and who is told of it.
-import type { Ability } from '@astra/shared/abilities';
+import { ABILITIES as SHIPPED, type Ability } from '@astra/shared/abilities';
 import { creatureSphere } from '@astra/shared/combat';
 import { decodeServerMessage, type CastRefusal, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
 import { emptySkillState, type SkillState } from '@astra/shared/skills';
@@ -66,7 +66,7 @@ let w: FaunaWorld;
 let viewer: Viewer;
 let skills: SkillState;
 let shipSlots: number;
-let meter: { heat: number; overheated: boolean; charge: number };
+let meter: { heat: number; overheated: boolean; charge: number; beamS: number };
 let casts: { node: string; ctx: CastContext }[];
 let ended: string[];
 /** what each toggle that went off was ended with */
@@ -75,6 +75,7 @@ let endings: CastContext[];
 let told: string[];
 let now: number;
 let seq: number;
+let inputSeq: number;
 let svc: CastService;
 let grounds: NodeGroundSource;
 
@@ -105,6 +106,13 @@ function service(opts: Partial<CastServiceOptions> = {}, abilities: readonly Abi
         if (meter.charge < amount) return { ok: false };
         meter.charge -= amount;
         return { ok: true };
+      },
+      beamTime: () => meter.beamS,
+      dumpHeat: () => {
+        if (meter.overheated) return { ok: false, error: 'overheated' };
+        const dumped = meter.heat;
+        meter.heat = 0;
+        return { ok: true, state: { heat: 0, overheated: false, charge: meter.charge }, events: [], dumped };
       },
     },
     now: () => now,
@@ -162,13 +170,14 @@ beforeEach(() => {
   w.player = w.zone.join(viewer, { kind: 'player', frame: w.frame, pos: w.at(0, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
   w.run(0.1);
   shipSlots = 2;
-  meter = { heat: 0, overheated: false, charge: 100 };
+  meter = { heat: 0, overheated: false, charge: 100, beamS: 0 };
   casts = [];
   ended = [];
   endings = [];
   told = [];
   now = 1000;
   seq = 0;
+  inputSeq = 0;
   grounds = OPEN;
   slot(['pulse', 'pull', 'flare', 'regrow', 'well', 'crush'], ['tractor_beam', 'deep_sweep']);
   svc = service();
@@ -542,6 +551,27 @@ describe('a toggle', () => {
     expect(ended).toEqual(['lance', 'lance']);
   });
 
+  it('is ended by the cast of the same character’s new connection before that cast is looked at, not mistaken for the toggle going off', () => {
+    slot(['lance']);
+    svc = service({}, [lance]);
+    expect(cast('lance', 0).result).toBe('cast');
+    const first = casts[0]!.ctx;
+    // the old connection's entity is still in play when the new one's cast arrives: neither is the toggle's caster for it
+    const second = new Viewer(2, 'c1');
+    const entity = w.zone.join(second, { kind: 'player', frame: w.frame, pos: w.at(0, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    w.zone.leave(viewer);
+    w.run(0.1);
+    expect(entity).not.toBe(first.caster);
+    const answer = svc.cast(second, { t: 'cast', seq: 1, time: now, node: 'lance', slot: 0, frame: w.frame, aim: [0, 0, -1] });
+    expect(answer.result).toBe('cast');
+    expect(ended).toEqual(['lance']);
+    expect(endings[0]).toBe(first);
+    expect(told).toEqual(['c1']);
+    expect(casts).toHaveLength(2);
+    expect(casts[1]!.ctx.caster).toBe(entity);
+    expect(svc.state('c1').on).toEqual(['lance']);
+  });
+
   it('ends when its character leaves play, and says so', () => {
     slot(['lance']);
     svc = service({}, [lance]);
@@ -551,6 +581,130 @@ describe('a toggle', () => {
     expect(endings[0]).toBe(casts[0]!.ctx);
     expect(told).toEqual(['c1']);
     expect(svc.state('c1').on).toEqual([]);
+  });
+});
+
+describe('what an effect is given beyond the cast', () => {
+  it('reads the world time now, not the cast’s, and what the caster owns now', () => {
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    expect(ctx.time()).toBe(now);
+    now += 7;
+    expect(ctx.time()).toBe(now);
+    expect(ctx.now).toBe(now - 7);
+    expect(ctx.owns('pulse')).toBe(true);
+    expect(ctx.owns('slam')).toBe(false);
+    skills = { ...skills, bought: skills.bought.filter((n) => n !== 'pulse') };
+    expect(ctx.owns('pulse')).toBe(false);
+  });
+
+  it('gives the eye and look now: the entity’s pose raised to the eye, the look it last sent with its input, the cast’s own aim without one', () => {
+    cast('pulse', 0, { aim: [0, 0, -2] });
+    const ctx = casts[0]!.ctx;
+    const eye = lift(w.zone.entity(w.player)!.fields.pos as Vec3, EYE_M);
+    ctx.pose()!.origin.forEach((x, i) => expect(x).toBeCloseTo(eye[i]!, 6));
+    expect(ctx.pose()!.aim).toEqual([0, 0, -1]);
+    const f = w.zone.entity(w.player)!.fields;
+    // a quarter turn about +y turns −z to −x
+    const h = Math.SQRT1_2;
+    const input = (aim: [number, number, number, number] | undefined) =>
+      w.zone.input(viewer, {
+        t: 'input',
+        seq: ++inputSeq,
+        time: now,
+        mode: 'foot',
+        pose: { frame: f.frame, pos: [...f.pos], quat: [0, 0, 0, 1], vel: [0, 0, 0] },
+        buttons: 0,
+        ...(aim ? { aim } : {}),
+      });
+    expect(input([0, h, 0, h])).toBe('ok');
+    const look = ctx.pose()!.aim;
+    expect(look[0]).toBeCloseTo(-1, 6);
+    expect(look[1]).toBeCloseTo(0, 6);
+    expect(look[2]).toBeCloseTo(0, 6);
+    expect(input(undefined)).toBe('ok');
+    expect(ctx.pose()!.aim).toEqual([0, 0, -1]);
+  });
+
+  it('has no pose once its caster is gone or in another frame', () => {
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    w.zone.patch(w.player, { frame: w.zone.stationFrame });
+    expect(ctx.pose()).toBeNull();
+    w.zone.patch(w.player, { frame: w.frame });
+    expect(ctx.pose()).not.toBeNull();
+    w.zone.leave(viewer);
+    expect(ctx.pose()).toBeNull();
+    expect(ctx.sight([0, 0, 0])).toBe(false);
+  });
+
+  it('says whether the ground leaves a line from the eye: open ground yes, a wall no, a world not planned yet busy', () => {
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    const c = creatureAt(15);
+    expect(ctx.sight(c.sphere().pos)).toBe(true);
+    grounds = WALL;
+    expect(ctx.sight(c.sphere().pos)).toBe(false);
+    grounds = PLANNING;
+    expect(ctx.sight(c.sphere().pos)).toBe('busy');
+  });
+
+  it('says whether the caster may harm a target, as damage does', () => {
+    const c = creatureAt(15);
+    const other = new Viewer(2, 'c2');
+    const theirs = w.zone.join(other, { kind: 'player', frame: w.frame, pos: w.at(5, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    expect(ctx.canHarm(c.id)).toBe(true);
+    expect(ctx.canHarm(theirs)).toBe(false);
+    expect(ctx.canHarm(999_999)).toBe(false);
+    w.zone.patch(c.id, { frame: w.zone.stationFrame });
+    expect(ctx.canHarm(c.id)).toBe(false);
+  });
+
+  it('reads the beam time the meters judged and dumps the heat, refused in the lockout', () => {
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    meter.beamS = 2.5;
+    expect(ctx.meters.beamTime()).toBe(2.5);
+    meter.heat = 42;
+    expect(ctx.meters.dumpHeat()).toBe(42);
+    expect(meter.heat).toBe(0);
+    meter.overheated = true;
+    meter.heat = 100;
+    expect(ctx.meters.dumpHeat()).toBeNull();
+    expect(meter.heat).toBe(100);
+  });
+
+  it('lists the creatures round a point of its own, the cast’s origin when none is given', () => {
+    const c = creatureAt(15);
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    const ids = (reach?: number, at?: Readonly<[number, number, number]>) => ctx.creatures(reach, at).map((x) => x.id);
+    expect(ids()).toContain(c.id);
+    expect(ids(5)).not.toContain(c.id);
+    expect(ids(5, w.at(15, 0))).toContain(c.id);
+    expect(ids(5, w.at(-15, 0))).not.toContain(c.id);
+  });
+
+  it('keeps the caster’s statuses on targets, which end on the world clock and are not other casters’', () => {
+    const c = creatureAt(15);
+    cast('pulse', 0);
+    const ctx = casts[0]!.ctx;
+    expect(ctx.status.get(c.id, 'burning')).toBeNull();
+    expect(ctx.status.apply(c.id, 'burning', 4, 6)).toBe(true);
+    expect(ctx.status.apply(c.id, 'burning', 2, 3)).toBe(false);
+    expect(ctx.status.get(c.id, 'burning')).toMatchObject({ until: now + 4, power: 6 });
+    expect(ctx.status.active(c.id, 'burning')).toBe(true);
+    expect(ctx.status.active(c.id, 'frozen')).toBe(false);
+    now += 4.5;
+    expect(ctx.status.active(c.id, 'burning')).toBe(false);
+    expect(ctx.status.get(c.id, 'burning')).not.toBeNull();
+    now += 1;
+    expect(ctx.status.get(c.id, 'burning')).toBeNull();
+    expect(ctx.status.apply(c.id, 'burning', 4)).toBe(true);
+    ctx.status.remove(c.id, 'burning');
+    expect(ctx.status.active(c.id, 'burning')).toBe(false);
   });
 });
 
@@ -633,7 +787,7 @@ describe('the book', () => {
     expect(() => abilityBook(new Map([['pull', { node: 'pull', target: 'entity' }]]), new Map([['pull', effect]]))).toThrow(/no kind/);
   });
 
-  it('ships no ability yet: each branch adds its own', () => {
-    expect(abilityBook().size).toBe(0);
+  it("ships the branches' abilities, each with its effect", () => {
+    expect(abilityBook().size).toBe(SHIPPED.size);
   });
 });

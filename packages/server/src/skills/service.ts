@@ -380,10 +380,9 @@ export class SkillService {
   }
 
   private context(characterId: string): SkillContext {
-    const ship = this.ships.get(characterId) ?? null;
     return {
       level: this.level(characterId),
-      shipSlots: ship ? getHull(ship.hull).abilitySlots : 0,
+      shipSlots: this.shipSlots(characterId),
       meets: (req) => this.hooks.meets(characterId, req),
       maxTier: this.maxTier,
     };

@@ -4,10 +4,36 @@ import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { castBar } from '../net/abilities.js';
 import { EdgeCompass } from './EdgeCompass.js';
+import { LABEL_GAP, LABEL_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fits, hullCorners, labelWidth, makeRoom, makeSlide, markOf, nudge, outlineBands, placeLabel, screenBounds } from '../remote/markers.js';
 import { SocialUI } from './social/SocialUI.js';
 import { BANNER_FADE_IN, BANNER_FADE_OUT, BANNER_MS, BannerQueue } from './banners.js';
 
 const _v = new THREE.Vector3();
+
+// Other pilots' markers are placed by src/remote/markers.js: the mark over the ship's bounds on screen, the label beside
+// the mark, both clear of the keep-out (the fixed HUD, the local ship) and of each other.
+const _bounds = { x0: 0, y0: 0, x1: 0, y1: 0 };
+const _mark = { x: 0, y: 0 };
+const _label = { x0: 0, y0: 0, x1: 0, y1: 0 };
+const _m4 = new THREE.Matrix4();
+const namedFirst = (a, b) => b.shown - a.shown;
+/** The slices the local ship's outline on screen is kept out in. */
+const OUTLINE_BANDS = 8;
+
+/** How long (ms) a pilot's mark or name takes to fade in or out (style.css's transition), and how long a name gone stays
+ * gone at least: until its side has had room that long, or had none that long before it takes another. */
+const FADE_MS = 150;
+const ROOM_MS = 150;
+/** Px from the screen's edges a pilot's ship must be in from to be marked, and may drift out to once it is. */
+const VIEW_IN = 40;
+const VIEW_OUT = 24;
+/** Px/s past which a pilot's mark crosses the screen too fast for its name to be read: one gone stays gone. */
+const NAME_SPEED = 1200;
+/** How fast (px/s) a mark nudged off the keep-out may slide round it: this, or twice as fast as its ship crosses the
+ * screen, whichever is more. */
+const SLIDE_SPEED = 600;
+/** How long (ms) a mark's speed across the screen is averaged over, for its name to look ahead by. */
+const VELOCITY_MS = 80;
 
 function el(tag, cls, parent, html) {
   const e = document.createElement(tag);
@@ -35,6 +61,10 @@ function fmtSpeed(v) {
   if (c < 1e6) return `${(c / 1000).toFixed(c < 1e4 ? 1 : 0)}K<small>C</small>`;
   return `${(c / 1e6).toFixed(1)}M<small>C</small>`;
 }
+
+// (labels go in as markup with their range; a pilot's name is the player's own, so every label is escaped)
+const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ESC[c]);
 
 function setText(e, html) {
   if (e._html !== html) {
@@ -197,6 +227,37 @@ export class HUD {
     this.speedLines = el('canvas', 'speedlines', root);
     this.scanRing = el('div', 'scan-ring', root);
     this.markerPool = [];
+    /** the fixed HUD markers keep clear of (left, top, right, bottom per box, a few px round each), read now and then */
+    this.avoidEls = [
+      this.reticle.querySelector('b'),
+      this.reticle.querySelector('svg'),
+      this.rSpeed,
+      this.rAlt,
+      this.rMode,
+      this.crosshair.querySelector('b'),
+      // (the compass's readouts run wider than its own box)
+      ...this.edgeCompass.el.querySelectorAll('.ec-ball, .ec-hdg, .ec-dist'),
+      this.location,
+      this.vitals,
+      this.hzWarn,
+      this.inventory,
+      this.prompt,
+      this.toasts,
+      this.abilitiesEl,
+    ].filter(Boolean);
+    this.avoid = [];
+    this.avoidAt = -Infinity;
+    /** the keep-out this frame: the fixed HUD's boxes and the local ship's bounds on screen */
+    this.keepOut = [];
+    /** this frame's marks and labels, which a pilot's label keeps clear of too */
+    this.taken = [];
+    /** other pilots' markers by their entity id: {e, lbl, x, y, side, shown, nudged, ...}, kept while they fade out */
+    this.pilots = new Map();
+    this.pilotsNow = [];
+    this.pilotsSeen = new Set();
+    this.pilotsShown = [];
+    /** where pilots' labels are placed this frame (markers.js's makeRoom) */
+    this.room = makeRoom();
     this.lastToast = '';
     this.inventoryKey = '';
     this.visible = true;
@@ -380,8 +441,8 @@ export class HUD {
   update(dt) {
     const g = this.game;
     if (!this.visible) return;
-    // (first: the chat and party UI reads the page's layout before it writes, which holds only before the rest of the HUD
-    // has written this frame)
+    // (first: both read the page's layout, which holds only before the rest of the HUD has written this frame)
+    this.readAvoid();
     this.social.update();
     const mode = g.mode;
     const ship = g.ship;
@@ -530,6 +591,19 @@ export class HUD {
     this.underwater.style.opacity = g.player && mode === 'foot' && g.player.headUnderwater ? 1 : 0;
   }
 
+  // Where the fixed HUD stands, every quarter second, read before this frame writes anything (so no layout is forced).
+  readAvoid() {
+    const now = this.now();
+    if (now - this.avoidAt < 250) return;
+    this.avoidAt = now;
+    const out = this.avoid;
+    out.length = 0;
+    for (const e of this.avoidEls) {
+      const r = e.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0 && getComputedStyle(e).opacity !== '0') out.push(r.left - 4, r.top - 4, r.right + 4, r.bottom + 4);
+    }
+  }
+
   // The bar the player casts from (ARCHITECTURE §28), under the prompt: a ring a working slot with its key in it and the
   // node's name under it. A cooldown is the ring drawn back to full in the bar's colour (heat's warm on foot, the flight
   // deck's warm white in flight) as the server's clock runs out, the seconds left in that colour in place of the key
@@ -634,6 +708,38 @@ export class HUD {
     while (this.hitsEl.children.length > 12) this.hitsEl.firstChild.remove();
   }
 
+  // The local ship's outline on screen into `keepOut`, as OUTLINE_BANDS boxes close round it (markers.js's outlineBands):
+  // the corners of its convex hull (worked out once, in its own space), projected. None when it is not drawn, or not all
+  // in front of the camera.
+  localShipOutline(W, H, keepOut) {
+    const g = this.game;
+    const model = g.ship?.model;
+    if (!model || !model.visible || g.mode !== 'ship') return;
+    if (this.shipHullOf !== model) {
+      this.shipHullOf = model;
+      this.shipHull = hullCorners(model);
+      const n = this.shipHull.length / 3;
+      this.shipXY = new Float64Array(2 * n);
+      this.shipOrder = new Int32Array(n);
+      this.shipPoly = new Int32Array(2 * n + 1);
+    }
+    const cam = g.engine.camera;
+    const e = _m4.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse).multiply(model.matrixWorld).elements;
+    const pts = this.shipHull;
+    const xy = this.shipXY;
+    const n = pts.length / 3;
+    for (let i = 0; i < n; i++) {
+      const x = pts[3 * i];
+      const y = pts[3 * i + 1];
+      const z = pts[3 * i + 2];
+      const w = e[3] * x + e[7] * y + e[11] * z + e[15];
+      if (w < 0.01) return;
+      xy[2 * i] = ((e[0] * x + e[4] * y + e[8] * z + e[12]) / w) * 0.5 * W + W / 2;
+      xy[2 * i + 1] = (-((e[1] * x + e[5] * y + e[9] * z + e[13]) / w) * 0.5 + 0.5) * H;
+    }
+    outlineBands(xy, n, OUTLINE_BANDS, 4, keepOut, this.shipOrder, this.shipPoly);
+  }
+
   updateMarkers() {
     const g = this.game;
     const cam = g.engine.camera;
@@ -641,11 +747,26 @@ export class HUD {
     const H = window.innerHeight;
     // none while the camera swings round to look back past the ship: it is a view, not a heading
     const markers = g.mode === 'ship' && (g.ship.lookBack || 0) > 0.03 ? [] : g.getMarkers();
+    const keepOut = this.keepOut;
+    keepOut.length = 0;
+    for (const v of this.avoid) keepOut.push(v);
+    // (and the social panels, where the HUD has them)
+    addCovers(keepOut, this.social, 4);
+    this.localShipOutline(W, H, keepOut);
+    const taken = this.taken;
+    taken.length = 0;
+    const pilots = this.pilotsNow;
+    pilots.length = 0;
     let i = 0;
     for (const m of markers) {
+      if (m.kind === 'player') {
+        pilots.push(m);
+        continue;
+      }
       let e = this.markerPool[i];
       if (!e) {
         e = el('div', 'marker', this.markersEl, '<div class="icon"></div><div class="lbl"></div>');
+        e._lblEl = e.querySelector('.lbl');
         this.markerPool.push(e);
       }
       i++;
@@ -682,24 +803,258 @@ export class HUD {
         e.style.display = 'none';
         continue;
       }
+      e._sx = sx;
+      e._sy = sy;
+      e._off = off;
       e.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)`;
       e.className = `marker ${m.kind} ${off ? 'off' : ''} ${m.target ? 'targeted' : ''}`;
-      let eta = '';
-      // (none for stars: the drive's speed keeps pace with the distance, so a straight division lies)
-      if (m.target && m.kind !== 'system' && g.mode === 'ship' && Math.abs(g.ship.speed) > 50) {
-        const secs = m.dist / Math.abs(g.ship.speed);
-        eta = secs < 3600 ? ` · ETA ${secs < 90 ? secs.toFixed(0) + 's' : (secs / 60).toFixed(0) + 'm'}` : '';
-      }
-      // names only for the marker you are looking at (or have targeted); others just show range
-      const near = !off && Math.hypot(sx - W / 2, sy - H / 2) < Math.min(W, H) * 0.12;
-      const lbl = m.target || near ? `${m.label}<small>${fmtDist(m.dist)}${eta}</small>` : `<small>${fmtDist(m.dist)}</small>`;
-      if (e._lbl !== lbl) {
-        e.querySelector('.lbl').innerHTML = lbl;
-        e._lbl = lbl;
-      }
       e.style.display = '';
+      taken.push(sx - 6, sy - 6, sx + 6, sy + 6);
+      const range = fmtDist(m.dist);
+      const html = this.otherLabel(e, m, range, W, H);
+      this.setLabel(e, html);
+      if (html) taken.push(sx + 8, sy - 9, sx + 10 + labelWidth(m.label ?? '', range), sy + LABEL_H - 9);
     }
-    for (; i < this.markerPool.length; i++) this.markerPool[i].style.display = 'none';
+    for (let k = i; k < this.markerPool.length; k++) this.markerPool[k].style.display = 'none';
+    this.updatePilots(pilots, keepOut, taken, W, H);
+  }
+
+  // Other pilots' markers, nearest first, each its own element (by the pilot's entity id) so it fades in and out over
+  // FADE_MS: every pilot picked up and in view has its mark, nudged off the keep-out, never dropped for it. The names shown
+  // last frame are placed first, so one coming back never knocks one off: a name stays on its side while that has room,
+  // and once gone stays gone ROOM_MS at least, coming back when its side has had room (with ROOM_MARGIN to spare, here and
+  // where its mark is headed) that long, or taking another side when its own has had none that long, and only while its
+  // mark moves slowly enough to read it by (NAME_SPEED).
+  updatePilots(list, keepOut, taken, W, H) {
+    const g = this.game;
+    const cam = g.engine.camera;
+    const now = this.now();
+    const seen = this.pilotsSeen;
+    seen.clear();
+    const shown = this.pilotsShown;
+    shown.length = 0;
+    const room = this.room;
+    room.keepOut = keepOut;
+    room.taken = taken;
+    room.ships.length = 0;
+    room.W = W;
+    room.H = H;
+    for (const m of list) {
+      _v.copy(m.rel).applyQuaternion(g.camWorldQuatInv);
+      if (_v.z > 0) continue;
+      _v.applyMatrix4(cam.projectionMatrix);
+      const cx = (_v.x * 0.5 + 0.5) * W;
+      const cy = (-_v.y * 0.5 + 0.5) * H;
+      let p = this.pilots.get(m.id);
+      // (one off screen has none: a crowd of them would line the edges)
+      const edge = p && !p.goneAt ? VIEW_OUT : VIEW_IN;
+      if (cx < edge || cx > W - edge || cy < edge || cy > H - edge) continue;
+      let b = m.box ? screenBounds(m.box, m.quat, m.rel, g.camWorldQuatInv, cam.projectionMatrix, W, H, _bounds) : null;
+      // (a ship so near that its box reaches behind the camera: marked over its middle)
+      if (!b) {
+        b = _bounds;
+        b.x0 = b.x1 = cx;
+        b.y0 = b.y1 = cy;
+      }
+      if (!p) {
+        const e = el('div', 'marker player out', this.markersEl, '<div class="icon"></div><div class="lbl out"></div>');
+        e.dataset.id = String(m.id);
+        p = {
+          e,
+          lbl: e.querySelector('.lbl'),
+          frames: 0,
+          nudged: 0,
+          slide: makeSlide(),
+          side: null,
+          shown: false,
+          why: null,
+          goneAt: 0,
+          hiddenAt: now,
+          clearSince: null,
+          blockedSince: null,
+          fadeUntil: 0,
+          box: { x0: 0, y0: 0, x1: 0, y1: 0 },
+          boxX: 0,
+          boxY: 0,
+          held: false,
+          at: now,
+          vx: 0,
+          vy: 0,
+          tx: 0,
+          ty: 0,
+        };
+        this.pilots.set(m.id, p);
+        // (laid out once hidden, so it fades in)
+        void e.offsetWidth;
+      }
+      markOf(b, _mark, cx, cy, W, H);
+      const dt = now - p.at;
+      // (sliding round the keep-out no faster than SLIDE_SPEED, or twice its ship)
+      const live = p.frames > 0 && !p.goneAt;
+      p.slide.was &&= live;
+      p.slide.max = Math.max((SLIDE_SPEED * dt) / 1000, 2 * Math.hypot(_mark.x - p.tx, _mark.y - p.ty));
+      p.tx = _mark.x;
+      p.ty = _mark.y;
+      p.nudged = nudge(_mark, keepOut, W, H, p.nudged, p.slide);
+      // (how fast its mark crosses the screen, px/ms, which its name looks ahead by: over the last VELOCITY_MS or so)
+      if (live && dt > 0) {
+        const k = p.frames > 1 ? 1 - Math.exp(-dt / VELOCITY_MS) : 1;
+        p.vx += ((_mark.x - p.x) / dt - p.vx) * k;
+        p.vy += ((_mark.y - p.y) / dt - p.vy) * k;
+      }
+      p.at = now;
+      p.frames++;
+      p.x = _mark.x;
+      p.y = _mark.y;
+      p.m = m;
+      p.goneAt = 0;
+      p.e.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`;
+      p.e.classList.remove('out');
+      p.takenFrom = taken.length;
+      taken.push(p.x - 6, p.y - 6, p.x + 6, p.y + 6);
+      p.takenTo = taken.length;
+      p.shipFrom = room.ships.length;
+      room.ships.push(b.x0, b.y0, b.x1, b.y1);
+      p.shipTo = room.ships.length;
+      seen.add(m.id);
+      shown.push(p);
+    }
+    // those gone (out of pickup, of view, of the snapshots) fade out, then go
+    for (const [id, p] of this.pilots) {
+      if (seen.has(id)) continue;
+      if (!p.goneAt) {
+        p.goneAt = now;
+        p.e.classList.add('out');
+        // (its name fades where it was)
+        if (p.shown) p.fadeUntil = now + FADE_MS;
+      } else if (now - p.goneAt > FADE_MS + 50) {
+        p.e.remove();
+        this.pilots.delete(id);
+      }
+    }
+    // (a name fading out fades where it was, its mark going on without it, and keeps its room while it does: none comes in
+    // over one)
+    for (const p of this.pilots.values()) {
+      if (p.fadeUntil <= now || p.shown) continue;
+      if (!p.goneAt) this.holdLabel(p);
+      taken.push(p.box.x0, p.box.y0, p.box.x1, p.box.y1);
+    }
+    // (the names shown first, nearest first among them: the sort keeps the order)
+    shown.sort(namedFirst);
+    for (const p of shown) this.placePilotLabel(p, room, now);
+  }
+
+  // Where pilot `p`'s name goes this frame, if anywhere (see updatePilots). One shown stays while its side has room here
+  // and where its mark is headed in FADE_MS (so it has faded by the time it would run into what is there); one gone comes
+  // back (or a new one shows) only with ROOM_MARGIN to spare here and twice as far ahead, so it is not gone again at once.
+  placePilotLabel(p, room, now) {
+    const m = p.m;
+    const range = fmtDist(m.dist);
+    const w = labelWidth(m.label ?? '', range);
+    room.takenFrom = p.takenFrom;
+    room.takenTo = p.takenTo;
+    room.shipFrom = p.shipFrom;
+    room.shipTo = p.shipTo;
+    const lead = p.shown ? FADE_MS : 2 * ROOM_MS;
+    room.aheadX = p.vx * lead;
+    room.aheadY = p.vy * lead;
+    let side = null;
+    const steady = Math.hypot(p.vx, p.vy) * 1000 <= NAME_SPEED;
+    if (p.shown) {
+      if (fits(p.side, p.x, p.y, w, LABEL_H, room, _label)) side = p.side;
+      else {
+        // (what it ran into, for the dev captures; it keeps its room while it fades)
+        p.why = blockedBy(p.side, p.x, p.y, w, LABEL_H, room) ?? 'what it is headed for';
+        p.hiddenAt = now;
+        p.clearSince = null;
+        p.blockedSince = now;
+        p.fadeUntil = now + FADE_MS;
+        this.holdLabel(p);
+        room.taken.push(p.box.x0, p.box.y0, p.box.x1, p.box.y1);
+      }
+    } else if (p.frames <= 2) {
+      // (a new pilot's name comes with its mark's second frame, once how fast the mark moves is known)
+      if (p.frames === 2 && steady) side = placeLabel(p.x, p.y, w, LABEL_H, room, _label, null, ROOM_MARGIN);
+      if (p.frames === 2 && !side) {
+        p.hiddenAt = now;
+        p.why = steady ? 'no room' : 'too fast to read';
+      }
+    } else {
+      const roomy = p.side && fits(p.side, p.x, p.y, w, LABEL_H, room, _label, ROOM_MARGIN);
+      if (roomy) {
+        p.blockedSince = null;
+        p.clearSince ??= now;
+      } else {
+        p.clearSince = null;
+        p.blockedSince ??= now;
+      }
+      if (steady && now - p.hiddenAt >= ROOM_MS) {
+        if (roomy && now - p.clearSince >= ROOM_MS) side = p.side;
+        else if (!roomy && now - p.blockedSince >= ROOM_MS) side = placeLabel(p.x, p.y, w, LABEL_H, room, _label, null, ROOM_MARGIN);
+      }
+    }
+    if (side && side !== p.side) {
+      p.side = side;
+      p.blockedSince = null;
+    }
+    if (side) p.why = null;
+    p.shown = !!side;
+    p.lbl.classList.toggle('out', !side);
+    if (!side) return;
+    room.taken.push(_label.x0, _label.y0, _label.x1, _label.y1);
+    Object.assign(p.box, _label);
+    p.boxX = p.x;
+    p.boxY = p.y;
+    if (p.held) {
+      p.held = false;
+      p.lbl.style.translate = '';
+    }
+    this.setPilotLabel(p, `${esc(m.label)}<small>${range}</small>`, side, _label.y0 - p.y);
+  }
+
+  // Keeps pilot `p`'s name where it last stood (its mark moving on), while it fades out.
+  holdLabel(p) {
+    p.held = true;
+    p.lbl.style.translate = `${(p.boxX - p.x).toFixed(1)}px ${(p.boxY - p.y).toFixed(1)}px`;
+  }
+
+  // A pilot's name and range, and which side of its mark they sit and how far above the mark their top is.
+  setPilotLabel(p, html, side, top) {
+    if (p._html !== html) {
+      p.lbl.innerHTML = html;
+      p._html = html;
+    }
+    const place = `${side}:${top.toFixed(0)}`;
+    if (p._place === place) return;
+    p._place = place;
+    const s = p.lbl.style;
+    const gap = `${MARK_R + LABEL_GAP}px`;
+    s.left = side === 'right' ? gap : side === 'left' ? 'auto' : '0';
+    s.right = side === 'left' ? gap : '';
+    s.top = `${top.toFixed(0)}px`;
+    s.textAlign = side === 'left' ? 'right' : side === 'above' ? 'center' : '';
+    s.transform = side === 'above' ? 'translateX(-50%)' : '';
+  }
+
+  // The label of a marker other than a pilot's: its name only when you look at it (or have targeted it), else its range.
+  otherLabel(e, m, range, W, H) {
+    const g = this.game;
+    let eta = '';
+    // (none for stars: the drive's speed keeps pace with the distance, so a straight division lies)
+    if (m.target && m.kind !== 'system' && g.mode === 'ship' && Math.abs(g.ship.speed) > 50) {
+      const secs = m.dist / Math.abs(g.ship.speed);
+      eta = secs < 3600 ? ` · ETA ${secs < 90 ? secs.toFixed(0) + 's' : (secs / 60).toFixed(0) + 'm'}` : '';
+    }
+    const near = !e._off && Math.hypot(e._sx - W / 2, e._sy - H / 2) < Math.min(W, H) * 0.12;
+    return m.target || near ? `${esc(m.label)}<small>${range}${eta}</small>` : `<small>${range}</small>`;
+  }
+
+  // The label of a marker other than a pilot's.
+  setLabel(e, html) {
+    if (e._lbl !== html) {
+      e._lblEl.innerHTML = html;
+      e._lbl = html;
+    }
   }
 
   updateSpeedLines(dt) {

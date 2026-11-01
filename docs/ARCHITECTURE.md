@@ -707,8 +707,126 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   server holds the character (movement authority refuses a client that puts itself elsewhere), `#foot` and `#dock`
   getting out of a docked or landed ship; the dev CLI's `teleport` puts it anywhere else. `#review` and `#cutscene`
   stay offline.
-- **Remote entities** (P1.E04.T02) render from the store with 100 ms interpolation delay and up to 250 ms extrapolation,
-  frame-aware (interpolate in the entity's frame; on a frame change, re-express the buffered poses).
+- **Remote entities** (`src/remote/`, P1.E04.T02). `RemoteEntities` follows Net's snapshots (`attach(net)`; it starts
+  over at every welcome and zone change, where entity ids start over): players and `ship` entities, never the player's
+  own. The server sends no NPC ships yet (pirates come with P1.E08.T05, traffic and convoys with P2.E25.T06); `ship`
+  entities are followed and drawn already (a cutscene's ship actors are such). Creatures are P1.E08.T09's; npcs
+  (walkers) and props wait for the body rig (P1.E05.T04) and a prop catalog, loot and pods for P1.E08.T04 and
+  P1.E06.T03; none of them is followed. Each entity keeps a `PoseBuffer` (1.6 s): each tick's pose, in the entity's frame
+  resolved to the client's own frame object (a frame of another system is not shown, and holds no samples). An entity
+  the snapshots stop naming is let go when the render time reaches the first tick without it, in whatever frame or
+  system it was.
+  - **Time.** The render time (`PlaybackClock`) is world time less the trip (the least lag of the last 40 snapshots,
+    timed on Net's estimate of the server's clock) and 100 ms: on world time because the bodies stand there, so a pose is
+    always placed through frames the trip and the delay ahead of it, however world time lies against the server's. It
+    never goes back, eases at 0.9–1.1 times world time, and jumps only forward (the first snapshots, a stall).
+  - **Pose times.** A snapshot labels the last pose each client reported with the tick's time, so two reports landing in
+    one tick (or none) leave a moving entity's samples bunched: a tick's travel off, 14 km at the pulse drive's 280 km/s.
+    Each sample of an entity moving faster than 5 m/s is given its own time from its motion (how much further it went
+    than the labels' spacing says, at its velocities and its pace: a client whose frames run long, their steps clamped,
+    covers less than its velocity says, measured over the last ten seconds or so), each estimate carrying 95% of the one
+    before so errors never pile up; interpolation runs on these times. An estimate is at most 0.15 s after its tick's
+    time and 0.1 s before it: a client that stalls moves less than its velocity says, and by its motion alone its next
+    pose would be put ever earlier, drawn ahead of where it was.
+  - **Between and past samples.** A cubic Hermite on positions and velocities where they agree, else straight lines;
+    orientations slerped. Past the newest sample, along its velocity for up to 250 ms, then held. A moving entity's pose
+    sent again (its client's report missed the tick) is skipped. A sample no velocity explains (further off than 1 km or
+    0.3 s of its speed, `jumpLimit`) or a change between on foot and not is a cut: never interpolated across, shown as
+    the jump it is when it is due.
+  - **Frames.** A pose is placed through its frame as the frame stands at world time (`frame.localToWorld`), so an entity
+    on a moon stays on the moon as drawn. A sample in another frame re-expresses the held ones into it, each with both
+    frames as they stood at its own time (`remote/frames.js`: a body's pose at any time by the shared kinematics, then
+    `setFrameInto`), and moves them to meet the new sample (its client placed itself in the new frame with its own
+    clock, which a hitch can leave up to a second off the server's); a sample further off than its speed and that clock
+    (1.2 s of how fast the frames move apart there) explain is a teleport into the frame: a cut, nothing moved. Whatever
+    changes the drawn pose as a sample arrives
+    (a frame change, the frames having moved apart over the delay; a late sample after extrapolating) is taken up by an
+    offset in the frame's axes that starts from where and as fast as the entity was drawn and dies away critically
+    damped (time constant 0.2 s). One larger than 2 km or 1.2 s of the entity's speed, or at a frame change of how fast
+    the two frames move apart there (`snapLimit`; at the home systems' sphere edges a planet's frame and the system's
+    part at up to ~5 km/s, a moon's and its planet's at up to ~6 km/s, orbit and spin together), is shown as a jump.
+  - **Drawn** (`RemoteShips`): players flying, landed, docked or on the pulse drive as their ship, and `ship` entities,
+    by hull (a snapshot that names none is the Lark); players on foot are hidden, with no stand-in, until P1.E05.T04. A
+    hull draws with its own model or one of its tier's (IMPLEMENTATION_PLAN 0.3): only the Lark has one until
+    P1.E12.T02/T03, so the test cutscene's Mule tug is not drawn. Each hull's kit is made from its own model and livery
+    data (`HULL_SOURCES`: a Ship of its own, loaded as the world is entered, never the player's ship): its surfaces merged
+    into one geometry for the hull and one per gear leg (the cockpit interior left out), each surface's material written
+    on its vertices (colour, roughness, metalness, plated or not, its glow; a two-sided surface's back a surface of its
+    own), so one material per level draws every surface (`hullMaterial`, the standard material reading them; the plated
+    surfaces reflect the environment at 0.45, as the local ship's do). Three levels, picked per ship by its length on
+    screen (240 and 60 px: the model within ~50 m, the coarsest past ~190 m for a Lark at 1080p; a finer level only 15%
+    past its threshold, a ship back in view picked afresh): the model; its meshoptimizer simplification (the unlit
+    surfaces together, borders locked, specks pruned; the lights kept whole); and, for a ship 30-60 px long, one shell
+    (`shell`): the unlit fronts welded where they meet (1 cm) and simplified as one to 3.5% (`simplifySloppy`), so the
+    small parts merge into the whole instead of each keeping a triangle or two that flicker from frame to frame; its
+    normals smooth (creased past 60°), each vertex the surfaces' colour, roughness and metalness averaged by area over a
+    metre round it (the livery's broad patches, a few pixels at that size, not its stripes), no plating, no glow, no
+    lights (under a pixel there they only twinkle), drawn two-sided (the simplification keeps no winding); the gear legs
+    the same, to a quarter: the Lark's 61.6k / 30.4k / 1.9k triangles (3.2%; DESIGN 19.2 wants the last level under 5%).
+    The hull has no textures, so there are no mips to bias. A model with its own LOD chain (`<variant>_LOD<n>` nodes, art
+    bible 8; P1.E12.T02's hulls) draws its LOD1 and its last instead; the kit logs which. The plating fades per ship with
+    its length on screen (full past 240 px, none by 60) and the smaller levels are satin (least roughness 0.6, 0.9), so a
+    small ship reads as one solid silhouette in its livery and catches no single-pixel glints
+    (`assets/renders/ui/remote-ships-crowd/coarse-4x-before-after.png`: 12 frames of two coarse Larks at 4x, round 3's
+    clustered level above, the shell below); the coarsest is never brighter than 1 before tone mapping (the bloom's
+    threshold is 1.2), casts no shadow, trails no exhaust and draws its gear legs only down (a landed ship still stands
+    on them). Each ship's lights (its
+    strobe, nav and sensor lights, its exhaust's glow) shine in full within 40 m and dim with distance to 15% by 150 m,
+    under the bloom's threshold even at the strobe's flash; the strobe flashes as the local ship's (0.4 to 6 every 1.6 s)
+    on each ship's own beat, ramped up and down over three frames. Draw calls: the hull and the legs per level in use, the
+    shadows of the two finer levels, the exhausts (the crowd's 24 Larks: 17 more than none, against 105 more with a draw
+    per surface), each ship culled against the view (but within 100 m, for its shadow); its gear, engine glow, strobe,
+    lights and plating its own (`aShip`, per instance); only the instances drawn are uploaded, and nothing is allocated
+    per frame. A ship landed on the world whose flora is streamed clears the plants under it, as the player's does.
+    Measured costs: `assets/renders/ui/remote-ships-crowd/perf.json`.
+  - **Markers.** `markers(here, range, add)` gives the HUD a `player` marker for each other pilot's ship the local ship's
+    sensors pick up (the ship's sensor range × the hull's signature, DESIGN 10.1, doubled on the pulse drive or
+    boosting, halved in cover; once picked up, kept to 1.05 × that reach and for 0.5 s past it, so a ship at the edge of
+    it, or easing off its boost, is not marked and unmarked frame by frame; a hidden one, signature 0, goes at once),
+    nearest first, with the box the ship fills, how it is turned and its id; its range is the sensors' (from the ship,
+    not the camera); none on foot. Each pilot's `sense` records the reading (distance, reach, signature and what moved
+    it, detected). The HUD (`updatePilots`) places them by `remote/markers.js`. Every pilot picked up and in view (its
+    centre 40 px in from the screen's edges to be marked, 24 once it is) has a mark, 6 px over the top of the ship's
+    bounds on screen (the box's corners projected), drawn in to the ship's middle as its bounds pass a quarter of the
+    screen's height (there by half: one passing close by keeps a mark on it), never dropped for the HUD: a mark on the
+    keep-out moves straight out from the middle of what it falls on (that box and those touching it, as one) to its edge,
+    sliding round that edge no faster than 600 px/s or twice its ship (straight out runs fast round it for a ship passing
+    near the middle), and where that leaves the screen the least way out, the way it went last first; a mark whose place
+    moves further than that in a frame (leaving the keep-out, say) glides there. The name and range, 13 and 11 px
+    #E9E7E2 type in a sharp 2 px #0B0C0E ring (15.8:1 whatever lies behind), sit 8 px from the mark (right of it, else
+    left, else above, each over the top of the ship's bounds), clear of the keep-out, of every mark and of the labels
+    placed before, and off other pilots' ships when a side allows. A name shown stays on its side while that has room
+    all the way to where its mark is headed in 150 ms (so it has faded by the time it would run into anything); one gone
+    stays gone 150 ms at least, and comes back on its side once that has had room for 150 ms (6 px to spare, all the way
+    to where its mark is headed in 300 ms), or takes another side once its own has had none that long, and only while
+    its mark crosses the screen under 1200 px/s; the names shown last frame are placed first, so one coming back never
+    knocks one off. With no room the name goes and the mark stays. Marks and names fade in and out over 150 ms (each
+    pilot's marker its own element, by its id); a name fading out fades where it last stood, its mark going on without
+    it, and keeps its room while it does. The keep-out: the reticle and its speed, altitude and mode readouts, the
+    compass and its heading and EDGE readouts, the location line, the vitals, prompts, toasts and the ability bar when it is up
+    (their boxes read every quarter second before the frame writes), the social panels where the HUD has them (`hud.social.covers()`,
+    P1.E15.T03), and the local ship's outline, projected each frame (its convex hull's corners, worked out once, in 8
+    horizontal slices: close round its wings and engines, not its box). `packages/tools/src/smoke/remote-markers.spec.ts`
+    steps every frame of each remote-ships capture's clip on the HUD's clock and fails on a pilot picked up and in view
+    without a mark; any mark or label on the fixed HUD or on the local ship (any of its vertices on screen, worked out
+    apart from the HUD); a label on another mark or label, or more than a few px from its mark; a name in its first 50 ms
+    of fading out on the HUD, the local ship or another name; a mark or name back or gone, or a name moved to another
+    side, within 150 ms of its last change; or a mark jumping across the screen (more than 3× its ship and 48 px in a
+    frame).
+  - **Dev.** `remote/replay.js` plays recorded snapshot streams (the zone's encoding, a 60 ms trip with 40 ms of jitter)
+    through the same path offline: `pnpm capture -- --ui remote-ships` (a flypast), `remote-ships-crowd` (24 in view,
+    each on its own heading and speed, one flying out of sensor range), `remote-ships-crowd-sensors` (the crowd with a
+    dev overlay: under each pilot in view, and in a table of them all, its distance against its reach, its signature
+    and what moved it, whether the sensors pick it up, and what the HUD made of its mark and name: nudged, or its name
+    dropped and what took its room), `remote-ships-pads` (Larks docked on the
+    Waystation's pads, gear down, others passing the mouth), `remote-ships-surface` (one landed, others flying past low
+    in the world's turning frame) and `remote-ships-bay` (a bay phase full: 24 Larks docked round the player's pad, the
+    hangar's three other pads and 21 berths on its floor). `packages/tools/src/smoke/remote-online.spec.ts` flies two
+    clients against a local server (placed out past the Waystation by the admin channel's teleport, which re-seats them
+    for movement authority; neither is corrected after), one out of the Waystation's sphere into its world's frame, and
+    judges each drawn ship against what the server sent of it (the ticks' poses and times, which do not drift with a
+    busy page's estimate of the server's clock): on its path within a metre, from SKEW_LEAD_S ahead of the ticks to
+    SKEW_S behind them.
 
 ## 10. Tests
 
@@ -716,7 +834,8 @@ Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; in
 the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
 `packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
 database is disposable. The online smoke specs (`packages/tools/src/smoke/online.spec.ts`, part of `pnpm smoke`, needing
-`pnpm db:up`) run the server against a scratch database they create and drop, and a client through Vite's proxies.
+`pnpm db:up`) run the server against a scratch database they create and drop, and a client through Vite's proxies; the
+server's admin channel (§16) is open on a free port with a secret made per run, for `admin(command)`.
 
 ## 11. The Count meter (`packages/server/src/count`)
 
@@ -1946,8 +2065,10 @@ effects; this runtime casts them all.
 - **The book** (`book.ts`): each ability paired with its effect, the server's code for it, `{check?, cast, end?}`.
   `abilityBook()` refuses to build (the server does not start) an ability without an effect or the reverse, one filed
   under another node, a node that is always on, an `entity` ability that takes no kind, or a cooldown casts cannot run.
-  This build's book is empty: no branch has landed its abilities yet, so every slotted node is refused `unknown`. Tests
-  and the integration test cast a fixture book (`test/abilityFixture.ts`) over real nodes, never shipped.
+  This build's book holds the branches that have landed (Thermal I–II so far, P1.E07.T05; every other slotted node is
+  refused `unknown`); each branch adds its abilities from `@astra/shared/abilities/<branch>.ts` and its effects from
+  `abilities/<branch>.ts`, one line apiece in `ABILITIES` and `EFFECTS`. Tests and the integration test cast a fixture book
+  (`test/abilityFixture.ts`) over real nodes, never shipped.
 - **A cast** (`CastService.cast`, `service.ts`) is checked cheapest first, nothing paid or started until all pass: its
   `seq`; the character in play; its rate (6 at once, 3 a second); its stamp (within 3 s); the bar the mode movement
   authority believes casts from (§7); not down (§20); the slot one of the bar's working ones (six on the ground, the flown
@@ -1965,12 +2086,46 @@ effects; this runtime casts them all.
   `target`, otherwise); combat's events keep the same rule (§20: a hit on an entity a session's phase hides is not sent
   to it, a hit by one is sent without its `source`).
 - **What an effect gets** (`CastContext`): the caster's character and entity, the node, the ability, the bar, the world
-  time, the frame, origin and unit aim, the checked target; `creatures(reach?)`, the creatures of its world it can see with
-  their hit spheres (`creatureTargets`, combat's, for areas and cones with `hitTest`, `@astra/shared/combat`); `damage(target,
-  base)`, a hit through the zone's one damage path (§20) as the node's ability, with the caster's node modifiers and
-  augments, and only where `mayHarm` allows (null otherwise): never a player until PvP defines it (P2.E17.T01), nothing
-  in a safe zone, caster or target (the Waystation's sphere, its frame; a capital's, P1.E10.T02, joins it there); and
-  `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play.
+  time, the frame, origin and unit aim, the checked target; `creatures(reach?, at?)`, the creatures of its world it can see with
+  their hit spheres, with `reach` only those that may lie within it of `at` (the cast's origin unless given: an effect that runs on
+  after its cast culls round where its caster is now; `creatureTargets`, combat's, for areas and cones with `hitTest`,
+  `@astra/shared/combat`); `damage(target, base)`, a hit through the zone's one damage path (§20) as the node's ability, with
+  the modifiers and augments of the nodes the caster owns at that moment (so a refunded node stops counting in a toggle still
+  on), and only where `mayHarm` allows and the caster's phase still lets it see the target (null otherwise): never a player
+  until PvP defines it (P2.E17.T01), nothing in a safe zone, caster or target (the Waystation's sphere, its frame; a capital's,
+  P1.E10.T02, joins it there); and
+  `after(s, fn)`, a timer of its own (a burn's ticks, a slow's end), dropped if the caster leaves play. Past the cast, as
+  the branches need them (Thermal I–II, P1.E07.T05; general, so the other branches reuse them): `time()`, the world clock now
+  (`now` is the cast's); `owns(node)`, the caster's web now (an augment, a passive); `pose()`, the caster's eye and look now,
+  in the cast's frame, for an effect that runs on after its cast (a held beam): the entity's pose raised to the eye, the look
+  the client last sent with its input (`aim`, the eye's quaternion, which the client sends on foot) or the cast's own aim without
+  one, null once the entity has left play or its frame; `sight(to)`, whether the drawn ground leaves a line from that eye
+  (`'busy'` while the ground is still being planned, false once the caster is gone) and `groundReady()`, whether the ground is
+  planned (an area cast refuses `busy` until it is); `canHarm(target)`, `damage`'s rule for an effect that marks and deals no
+  blow;
+  `meters.beamTime()` (the seconds the beam has fired in all as the meters judged it, §19: a difference of two readings is what
+  the beam did, however its client timed its inputs) and `meters.dumpHeat()` (Vent: all the heat out, how much, null in the
+  lockout); and `status`, the caster's marks on targets (`Statuses`, `abilities/statuses.ts`): `apply(target, id, durationS,
+  power)` (true when this caster's was not running, so its effect starts the ticks; a running one is made to last to the later
+  end at the greater power), `get` (also for a second after its end, so the ticking effect deals the last of the interval),
+  `active` (anyone's, for Cauterize and Brand) and `remove`. Each carries a `gen`, new when it begins (none running, or
+  removed, or ended a second ago) and kept when a later application extends it: the effect ticking it ends when it reads
+  another, so one status never has two tick loops. Statuses are kept per zone and caster, pruned a second after their end, and
+  all a caster's are dropped when it leaves play (`left`, with its timers).
+- **Thermal I–II** (`@astra/shared/abilities/thermal.ts`, `abilities/thermal.ts`; DESIGN 9.3). Lance is a toggle on the
+  multitool beam: the heat is the beam's own 32 a second (the meters', §19), and while it is on every 0.25 s the effect
+  deals `12 ×` the beam seconds the meters judged since the last tick to the nearest creature on the look ray within 30 m and
+  in sight (resistances apply: crystal creatures resist Thermal); with Chain the nearest other creature within 8 m of the
+  first's centre takes half of it. Flare bursts 18 on every creature in its 60° cone to 12 m (in sight) and ignites it; Sear
+  (an `entity` cast on a creature within 30 m, refused `target` if it may not be harmed) ignites with no blow of its own;
+  Vent dumps all the heat and deals `0.6 ×` the heat dumped to every creature within 10 m. A burn is a `burning` status
+  dealing 6 a second for 4 s (Flare) or 5 for 8 s (Sear) in 0.5 s ticks through `ctx.damage`, stopping on death or, for good,
+  when a tick is refused (the target in a safe zone or out of the caster's phase view: it is not alight again on coming out); a second ignition by the same caster makes it last to the later end at the greater power
+  and never doubles its ticks. Tempered Core, Focused Lasers, Hot Hands and Ablative Plating are not cast: the meters'
+  profile (§19), `shipStats` (the base gun's range and damage, §20, and `reentryDamage` and `hazardDamage`), and the mining
+  service (§18) read their nodes. The server's ship has no hazard damage yet (the client computes it), and no re-entry damage
+  exists on either side (Ablative Plating's re-entry half has no consumer until one is planned); when they do, they multiply
+  by `hazardDamage[kind]` and `shipStats(...).reentryDamage`.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
@@ -2020,3 +2175,19 @@ effects; this runtime casts them all.
   slots come from `SkillService.shipSlots(id)` (the flown hull's `abilitySlots`) and not from rebuilding the whole view
   (`view`, which also asks standing and points). A cast settles the character's old toggles before it is looked at, so a
   press from a character's new connection is a new cast, never the first connection's toggle going off.
+
+- **The Exo-suit's Tier I–II (P1.E07.T10)** are all passives: nothing in the book, no new `CastContext`. A passive changes the
+  system its stat names, through the stat modifiers on its node (`@astra/shared/data`), read by whoever owns that system.
+  The walker (`walkerStats`, §7): Sprint Stride's sprint 11.5 m/s, Long Jump's jump 7, Efficient Jetpack's tank twice as long;
+  movement authority holds a walker to its caps and learns the build at the join (`skills.owned`) and again on every change to
+  it (`ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune`, from the gateway's one skill subscription): Sprint Stride bought
+  mid-session is allowed from the next input. The client's `Player` takes the same numbers (`setBuild`, from the `skills`
+  view's bought nodes). Mining (§18): Optical Drill is a `mining.yield` ×1.5 that stacks with Hot Hands (breaking speed is
+  Hot Hands'). The suit and the scan (`@astra/shared/exosuit`, numbers `SUIT`): life support and hazard protection are still
+  the client's (the demo's `Game.updateSurvival`; no server meter holds them yet), but every number is shared. Hazard drain is
+  `strength × (1.4 in the dark) × 0.6 × mult`, the strength `footHazard` (the world's own or its ship hazard's foot strength,
+  a mild world's mist alone), the mult Hazard Weave's 0.6, Cold Blood's 0 at night on a frozen world and Heat Shroud's 0 by
+  day on a desert or volcanic one (the people's perk joins them: Ulgani 0 on toxic and corrosive worlds), conditions from
+  `meterConditions` (§19), so night is the one rule the meters and fauna use. A refill from the pack (below 25, 10 raw units)
+  restores `cartridgeRestore` (40, Cartridge Recycler 60); the scan reaches `scanRanges` (180 m for deposits, 3 km for sites,
+  Scanner Lens 6 km). The demo shop's Optical Drill and Efficient Jetpack rows are gone.

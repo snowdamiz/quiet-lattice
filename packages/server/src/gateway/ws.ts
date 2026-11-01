@@ -723,7 +723,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       if (given?.length) log.info({ character: row.id, seasons: given.map((a) => a.season) }, 'season awards given on join');
       const at = loaded.get<PoseState>(POSE);
       const progress = loaded.get<Progress>(PROGRESS);
-      const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem }, at);
+      const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem, ...skills.flight(row.id) }, at);
       if (joined.fellBack) log.warn({ character: row.id, saved: at, reason: joined.fellBack }, 'saved pose unusable; docked at the home Waystation');
       s.entityId = joined.entityId;
       s.zoneId = joined.zone.id;

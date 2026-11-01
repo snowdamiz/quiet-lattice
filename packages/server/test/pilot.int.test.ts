@@ -44,10 +44,12 @@ async function ask(s: TestSocket, seq: number, op: Record<string, unknown>): Pro
 }
 
 async function pilotOfLevel(level: number): Promise<Pilot> {
-  const acct = await newAccount(server);
-  const character = await newCharacter(server, acct.token, { people: 'thalune' });
-  await database.db.update(characters).set({ level }).where(eq(characters.id, character.id));
-  return Pilot.join(server, 'thalune', { clock, character: { token: acct.token, accountId: acct.accountId, id: character.id } });
+  return Pilot.join(server, 'thalune', {
+    clock,
+    before: async (id) => {
+      await database.db.update(characters).set({ level }).where(eq(characters.id, id));
+    },
+  });
 }
 
 describe('the Pilot nodes over the wire', () => {
