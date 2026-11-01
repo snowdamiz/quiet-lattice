@@ -194,7 +194,7 @@ const serverSamples: ServerMessage[] = [
   ...events.map((event) => ({ t: 'event' as const, event })),
   { t: 'inventory', seq: 3, inventory },
   { t: 'skills', seq: 4, skills },
-  { t: 'meters', meters: { heat: 62.5, heatMax: 125, overheated: false, charge: 40.25, chargeMax: 100, at: 3600.5 } },
+  { t: 'meters', meters: { heat: 62.5, heatMax: 125, overheated: false, charge: 40.25, chargeMax: 100, lifeSupport: 71.5, hazard: 100, at: 3600.5 } },
   { t: 'party', party: partyView },
   { t: 'denied', of: 'chat', code: 'rate', retryS: 2 },
   { t: 'cutscene', op: 'play', id: 'test', phase: 4 },
@@ -300,10 +300,10 @@ describe('protocol: version', () => {
   // beacons (P1.E15.T02); 12: analysis and the codex (P1.E08.T04); 13: crafting (P1.E13.T05); 14: reputation
   // (P2.E18.T01); 15: meters (P1.E07.T02); 16: first finders (P2.E29.T01); 17: world events (P2.E21.T01); 18: seasons
   // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03); 21: the Edge's world message (P2.E22.T02); 22: shared
-  // casts (P1.E07.T06). A branch that changes a message bumps the
+  // casts (P1.E07.T06); 23: the suit's meters (P1.E06.T06). A branch that changes a message bumps the
   // version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 22, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(22);
+  it('is version 23, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(23);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

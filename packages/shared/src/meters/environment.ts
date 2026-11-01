@@ -8,7 +8,9 @@
 import { hypot3 } from '../math/det.ts';
 import { PULSE_DRIVE } from '../ships/flight.ts';
 import { CONDITIONS, type Condition } from '../data/modifiers.ts';
+import { footHazard } from '../data/suit.ts';
 import type { Hazard, WorldType } from '../data/common.ts';
+import { mistHazard } from '../world/planetgen.ts';
 import type { SystemDescription } from '../world/system.ts';
 
 /** A position as plain [x, y, z] or a three.js Vector3. */
@@ -52,6 +54,9 @@ export interface MeterEnvironment {
   nearStar: boolean;
   /** Where the pulse drive burns Charge (PULSE_BURN_REACH). */
   nearBodies: boolean;
+  /** How hard the place is on a suit on foot (`footHazard`: the world's own and its ship hazard's foot strength, or a mild
+   * world's mist at the altitude); 0 off a world or not on foot. */
+  footHazard: number;
 }
 
 /** Where the character is: the frame it is in (a body's index in the description, the Waystation, or the inertial frame),
@@ -76,6 +81,7 @@ export const NOWHERE: Readonly<MeterEnvironment> = Object.freeze({
   deepSpace: false,
   nearStar: false,
   nearBodies: false,
+  footHazard: 0,
 });
 
 /**
@@ -115,6 +121,7 @@ export function meterEnvironment(d: EnvSystem, bodies: readonly BodyAt[], place:
   let hazards: Hazard[] = [];
   let time: MeterEnvironment['time'] = null;
   let underwater = false;
+  let foot = 0;
   let nearest = r - d.star.radius;
   for (let i = 0; i < d.bodies.length; i++) {
     const b = d.bodies[i]!;
@@ -135,6 +142,10 @@ export function meterEnvironment(d: EnvSystem, bodies: readonly BodyAt[], place:
       const p = b.params;
       const water = p.type !== 'gas' && p.hasOcean && p.water.emissive === 0;
       underwater = !!place.foot && water && b.radius - dist > UNDERWATER_DEPTH;
+      if (place.foot) {
+        const mist = 'mist' in p && p.mist ? mistHazard(p.mist, dist - b.radius).foot : null;
+        foot = footHazard(b.type, p.hazard ?? null, mist);
+      }
     }
     // Under a body's surface (a valley below its radius) the body itself hides the star at night; above it, a body in front
     // of the point and nearer than the star hides it when the line to the star passes within its radius.
@@ -154,6 +165,7 @@ export function meterEnvironment(d: EnvSystem, bodies: readonly BodyAt[], place:
     deepSpace,
     nearStar: r < d.star.radius * NEAR_STAR_RADII,
     nearBodies: !deepSpace && nearest < PULSE_BURN_REACH,
+    footHazard: foot,
   };
 }
 

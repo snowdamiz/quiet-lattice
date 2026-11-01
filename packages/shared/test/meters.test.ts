@@ -370,7 +370,12 @@ describe('as JSON', () => {
     expect(meterSaveSchema.safeParse({ heat: 40, overheated: false, charge: 77.5, at: 1234.5 }).success).toBe(true);
     expect(meterSaveSchema.safeParse({ heat: -1, overheated: false, charge: 0, at: 0 }).success).toBe(false);
     expect(meterSaveSchema.safeParse({ heat: 1, overheated: false, charge: 0, at: 0, extra: 1 }).success).toBe(false);
-    expect(meterViewSchema.safeParse({ heat: 130, heatMax: 125, overheated: true, charge: 0, chargeMax: 100, at: 1 }).success).toBe(false);
-    expect(meterViewSchema.safeParse({ heat: 125, heatMax: 125, overheated: true, charge: 0, chargeMax: 0, at: 1 }).success).toBe(true);
+    // (a save from before the suit's meters has them full)
+    expect(meterSaveSchema.parse({ heat: 40, overheated: false, charge: 77.5, at: 1234.5 })).toMatchObject({ lifeSupport: 100, hazard: 100 });
+    expect(meterSaveSchema.safeParse({ heat: 1, overheated: false, charge: 0, at: 0, lifeSupport: 101 }).success).toBe(false);
+    const suit = { lifeSupport: 60, hazard: 100 };
+    expect(meterViewSchema.safeParse({ heat: 130, heatMax: 125, overheated: true, charge: 0, chargeMax: 100, ...suit, at: 1 }).success).toBe(false);
+    expect(meterViewSchema.safeParse({ heat: 125, heatMax: 125, overheated: true, charge: 0, chargeMax: 0, ...suit, at: 1 }).success).toBe(true);
+    expect(meterViewSchema.safeParse({ heat: 125, heatMax: 125, overheated: true, charge: 0, chargeMax: 0, at: 1 }).success).toBe(false);
   });
 });

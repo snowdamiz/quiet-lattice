@@ -5,7 +5,8 @@
 //   Pack Alpha's row), taken when it is first hurt. A player has its suit's health (`playerMaxHealth` of the nodes it
 //   entered with: 100, Second Skin 150) on foot, and its ship's shield and hull (`shipStats`) aboard; which one a hit
 //   takes is the mode the server believes. Health goes on the wire as the entity's `hp` (the pool in use, a fraction) and,
-//   aboard, `shield`. Nothing heals here yet (the Recall, P1.E06.T03, and creature attacks, P1.E08.T02, decide that).
+//   aboard, `shield`. The suit's own meters cost a player on foot health at zero and give it back (`suitHealth`, P1.E06.T06);
+//   nothing else heals here yet (the Recall, P1.E06.T03, and creature attacks, P1.E08.T02, decide that).
 // - One damage path, `applyDamage(source, target, packet)`: the shared pipeline (`computeDamage`: resistances, the
 //   attacker's power, augments, what the target takes), level-scaled only when the source is a creature (DECISIONS
 //   P1.E06.T01), then health, threat (fauna's `hurt`, so a creature turns on whoever hurts it most, and grazers bolt), the
@@ -113,6 +114,9 @@ export interface HitReport {
   killed: boolean;
   at: number;
 }
+
+/** The fraction of its suit's health a player on foot is revived at after a hazard death (the stopgap in `suitHealth`). */
+export const SUIT_REVIVE = 0.6;
 
 /** A player gone down (its suit's health at 0 on foot, its ship's hull aboard): what the Recall (P1.E06.T03) acts on. */
 export interface DownedReport {
@@ -313,6 +317,41 @@ export class ZoneCombat {
     if (v?.kind !== 'player') return null;
     const { suit, suitMax, hull, hullMax, shield, shieldMax, down } = v;
     return { suit, suitMax, hull, hullMax, shield, shieldMax, down };
+  }
+
+  /**
+   * The suit's own doing to a player's health on foot (P1.E06.T06): life support or hazard protection at zero costs it, and it
+   * comes back while both hold. `delta` is the health lost (negative) or regained, straight from the meters: no resistance,
+   * no damage-taken modifier, no combat event, and it does not put the player in combat. Health at 0 puts it down (`suit`,
+   * no source), as a hit would. Nothing for a player not on foot, already down, or an entity that is not a player's.
+   *
+   * Returns whether the player went down. STOPGAP until P1.E06.T03's Recall: nothing clears `down` yet, so a suit death is
+   * reported (`downed`, for the Recall to hook into) and the player is revived at once, in place, at `SUIT_REVIVE` of its
+   * health. The caller sets its meters to the same fraction. The online client follows the server's snapshots and does
+   * not board or move the character from predicted health.
+   */
+  suitHealth(entity: number, delta: number, now = this.zone.time): boolean {
+    if (!(delta !== 0) || !Number.isFinite(delta) || !this.onFoot(entity)) return false;
+    const v = this.vitalsOf(entity);
+    if (v?.kind !== 'player' || v.down !== null) return false;
+    if (delta > 0) {
+      if (v.suit >= v.suitMax) return false;
+      v.suit = Math.min(v.suitMax, v.suit + delta);
+      this.show(entity, v);
+      return false;
+    }
+    v.suit = Math.max(0, v.suit + delta);
+    if (v.suit > v.suitMax * 1e-9) {
+      this.show(entity, v);
+      return false;
+    }
+    v.suit = 0;
+    v.down = 'suit';
+    this.goDown(entity, v, null, now, this.opts.hooks?.() ?? null);
+    v.down = null;
+    v.suit = v.suitMax * SUIT_REVIVE;
+    this.show(entity, v);
+    return true;
   }
 
   /** Whether a player is down (its health at 0, waiting for the Recall). */

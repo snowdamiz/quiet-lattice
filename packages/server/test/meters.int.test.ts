@@ -213,7 +213,7 @@ describe('heat and Charge over the socket', () => {
     // Charge run out (the meters as a character joins with them empty: no regeneration before the zone takes an input
     // again), everything sent before handled first
     await handled(p.sock);
-    server.ws.meters.open(id, { heat: 0, overheated: false, charge: 0, at: clock() });
+    server.ws.meters.open(id, { heat: 0, overheated: false, charge: 0, lifeSupport: 100, hazard: 100, at: clock() });
     expect(server.ws.meters.allowsMode(id, 'pulse', clock())).toBe(false);
     // the drive engaged where the ship is: corrected back to the ship it was, the rule logged, and the pilot told why
     const at = p.last;
@@ -244,7 +244,7 @@ describe('heat and Charge over the socket', () => {
     // on the drive with Charge run out long ago as far as the meters know (as a character comes back on it with an empty
     // meter): cruising on is past the drop-out's grace, and corrected too
     await handled(p.sock);
-    server.ws.meters.open(id, { heat: 0, overheated: false, charge: 0, at: clock() });
+    server.ws.meters.open(id, { heat: 0, overheated: false, charge: 0, lifeSupport: 100, hazard: 100, at: clock() });
     const cruising = p.last;
     p.send({ ...cruising, pos: [cruising.pos[0], cruising.pos[1], cruising.pos[2] + 40] }, 'pulse');
     await waitFor(() => p.corrections.length === 2, 5000, 'the second correction');

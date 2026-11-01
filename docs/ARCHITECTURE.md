@@ -41,7 +41,7 @@ combat/             each zone's health, damage path, deaths and combat events; C
 persistence/        character state: the component registry, Phase 1's components, the save queue and its store (§8)
 skills/             SkillService: each character's place on the skill web, its requests, and its persistence component (§14)
 abilities/          CastService: casts of slotted actives checked, paid, cooled down, run and replicated; the book of effects (§28)
-meters/             MeterService: each character's heat and Charge, judged from its inputs, and its persistence component (§19)
+meters/             MeterService: each character's heat, Charge and suit meters, judged from its inputs, and its persistence component (§19)
 quests/             QuestRuntime: every character in play's quests, moved by world events, rewards, quest phases (§17)
 codex/              AnalysisService and CodexService: analyses checked, each character's codex and its component (§22)
 crafting/           CraftingService and RecipeBook: fabricator requests checked, each character's recipes and its component (§23)
@@ -180,9 +180,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   do; it sends the view after `inventory` on join (`seq` 0) and pushes it whenever server-side calls change it. The client
   predicts with the same shared rules (`applySkillOp(state, contextOf(view), op)`), replays its unanswered requests on top
   and starts over on the view sent after join. Points, fragments and world unlocks are never requests.
-- **Meters** (`@astra/shared/meters`, protocol 15): `meters {meters}` carries `{heat, heatMax, overheated, charge,
-  chargeMax, at}`, the values at world time `at` (§19). Sent after `skills` on join and again on the first input, then pushed: at once when the lockout
-  starts or ends, Charge runs out or a server-side call changes them, and at most every 0.5 s while either moves. There is
+- **Meters** (`@astra/shared/meters`, protocol 15; the suit's two, 23): `meters {meters}` carries `{heat, heatMax,
+  overheated, charge, chargeMax, lifeSupport, hazard, at}`, the values at world time `at` (§19). Sent after `skills` on join and again on the first input, then pushed: at once when the lockout
+  starts or ends, Charge runs out, a suit refill is made, a suit meter reaches zero or a server-side call changes them, and at most every 0.5 s while heat or Charge moves (the suit's two when either has moved by 2). There is
   no request: the beam is the input's `beam` button, the pulse drive its `mode`.
 - **Cutscenes** (protocol 6, §15): the client sends `cutscene {op: 'request', id}` to play one where its player is and
   `cutscene {op: 'done', id, skipped?, reason?}` when it ends (`skipped` and `reason` only on done; protocol 7's
@@ -1517,11 +1517,48 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   in: the seconds the beam fired since the last were taken, at most `max`; `addHeat`,
   `spendCharge` and `refillCharge` are for abilities (P1.E07.T03) and the Waystation. The profile (capacities, modifiers) is
   made again whenever the ship or the owned nodes change.
-- **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, at}`. A character
+- **The suit's meters** (P1.E06.T06, DESIGN 9.8): life support and hazard protection, each 0 to 100, are the service's too,
+  run by `stepSuppliedSuit` (`@astra/shared/meters`) from the same timestamps and rates as the client's `stepSuit`, with the
+  numbers in `SUIT` and the build's
+  modifiers from `@astra/shared/exosuit` (`suitMods` of the owned nodes and the people's perk: Second Lung, Hazard Weave,
+  Cold Blood, Heat Shroud, Deep Diver, Cartridge Recycler, Second Skin's floor of 20, the Ulgani). They run only while the
+  server believes the character is on foot (`mode` `foot`, from authoritative `locate` on join, before any client input;
+  the actual offline interval before placement is inactive): on a world
+  life support drains 0.35/s and hazard protection by `MeterEnvironment.footHazard` (the world's own and its ship hazard's foot
+  strength, or a mild world's mist at the altitude; ×1.4 where the star is below the horizon; the build's multiples) or
+  regains 2/s where nothing is hard; inside a station both refill (5/s, 10/s); aboard a ship they are topped up and do not
+  move. Where a draining meter crosses 25, the service refills it from the character's real
+  inventory (`SuitSupplies`, the inventory service's): a crafted cartridge first (one item, restoring 60, or 80 with
+  Cartridge Recycler), else 10 raw oxygen or sodium (restoring 40, or 60 with Cartridge Recycler); with neither the meter
+  drains on. Refills cap at 100; surplus restoration is lost. Automatic refills are counted arithmetically through
+  each meter's crafted, raw and exhausted supply regimes, so elapsed time and large stacks do not increase the work.
+  The totals are spent in one inventory transaction and one push; shared inventory operation quantity limits split
+  only oversized totals, into at most three chunks per supply type. Exact boundaries allow floating-point roundoff
+  consistently in both shared step functions, so subdividing a step cannot charge an extra refill.
+  Health is combat's (§20): while a meter is at zero and not recovering the service takes 4/s from the character's suit
+  vitals, and gives 1.5/s back on a world while both hold, through `ZoneCombat.suitHealth` (no resistance, no combat
+  event, not in combat); health at 0 is a hazard death: `downed` is reported (cause `suit`, no source: what the Recall
+  reads, P1.E06.T03) and, as a stopgap until the Recall replaces it, the character is revived in place at once (health 60%
+  of its suit's, both meters 60, `down` cleared). Recovery is at the advance's endpoint: the remaining elapsed interval is
+  discarded only after combat confirms a death, to avoid retroactive repeated deaths in one delayed sweep. The plan
+  limits supply costs to the actual death time and reports that time; the next advance resumes normally.
+  Neither server nor client moves or boards the character on this interim recovery. `sweep(now)` (the gateway calls it
+  every 0.5 s) advances each character on foot and refreshes its environment and conditions from its authoritative pose
+  and the zone's current body poses for the next interval. A client sending nothing still drains, starves and dies, and
+  day/night multipliers and immunities change within one sweep. Second Skin's floor holds only out of combat
+  (`meters.inCombat`, the combat service's).
+- **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, lifeSupport, hazard,
+  at}` (a save from before the suit's two has them full). A character
   back from away has its heat cooled for the time it was gone (idle, nowhere in particular) and its Charge as it left it:
-  Charge regenerates only in play, from the first input after it joins (the Listener's anywhere-flag included). Nothing
-  here is earned, so an unreadable value gives the default (cool, Charge full), logged.
-- **The client** predicts with the same rules: the multitool steps heat each frame (`Multitool.tickMeter`), the ship its
+  Charge regenerates only in play, from the first input after it joins (the Listener's anywhere-flag included), and the
+  suit's two are as it left them and move from authoritative placement, without waiting for its first input. Nothing
+  here is earned, so an unreadable value gives the default (cool, Charge full, suit full), logged.
+- **The client** predicts with the same rules (the suit's two in `Game.updateSurvival`, which takes the shared `stepSuit`,
+  predicts a refill from what the pack holds without spending it, and takes the server's `lifeSupport` and `hazard` from
+  every `meters` state, run on to now). Online health prediction only affects the HUD: each on-foot snapshot's `hp`
+  reconciles the suit-health percentage, including the server's interim recovery; an aboard snapshot's hull `hp` does not.
+  Predicted zero health cannot invoke local death, reset the suit, board or move the character. The multitool steps heat
+  each frame (`Multitool.tickMeter`), the ship its
   Charge (`Ship.updateCharge`), both reading the character's place from the client's own bodies
   (`characterMeterEnvironment`: the walker on foot, else the ship) and the build from `Ship.meterProfile`. The input's
   `beam` bit is the button held (`multitool.held`), never the prediction of whether it fires: the server decides the
@@ -1578,7 +1615,8 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   stays a corpse (`hp` 0, mode `dead`, no `attack`) for DEATH_BEAT_S (3 s) and is then despawned, and the hooks hear
   `killed` with the damage by character and the killing blow's. A player at 0 is down (`down: 'suit' | 'ship'`): it takes
   no more damage, fires no more, its event says `killed`, and the hooks hear `downed` (the Recall, P1.E06.T03, acts on
-  it; until then it stays down for its session).
+  it; until then a player the suit's hazard death put down is revived in place at once, `suitHealth`'s stopgap, §19; one a
+  hit put down stays down for its session).
 - **Events.** Each hit queues a `combat` event; hits of one source on one target by the same thing in a tick are summed
   into one. After each tick's snapshots (the interest sets just worked out) each session is sent those whose target or
   source its interest holds (`Zone.sees`), its own entity's first, at most 32 a tick; a tick queues at most 512. A
@@ -1805,9 +1843,9 @@ gate is recipes and materials, not a skill tree.
   list, the 300-unit pulse fuel refill among it, went with P1.E07.T09 (§28): the trade terminal only buys, and a crafted
   pulse fuel cell cannot be used yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
   once Heat and Charge are the server's, through P1.E07.T02's `refillCharge`, a seam that task adds and that is not on
-  main yet (called with that amount as a cell is used up through `InventoryService.consume`); cartridges restore 60 once
-  the suit's life support and hazard protection are the server's (today the client's `Game.updateSurvival` refills them
-  from raw oxygen and sodium, 40 a time); flak ammo stacks until the Flak Cannon fires on the server (P1.E12.T04,
+  main yet (called with that amount as a cell is used up through `InventoryService.consume`); oxygen and sodium
+  cartridges restore the server's suit meters automatically (§19), 60 each or 80 with Cartridge Recycler; flak ammo
+  stacks until the Flak Cannon fires on the server (P1.E12.T04,
   P2.E24.T04). Salvage (a module broken down into a third of its materials, `salvageYield`) waits for modules in the
   inventory (P1.E12.T04, P2.E20).
 - **The client** (`net/crafting.js`, `ui/Fabricator.js`). `game.crafting` keeps the recipes the server says the
@@ -2299,8 +2337,8 @@ effects; this runtime casts them all.
   it (`ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune`, from the gateway's one skill subscription): Sprint Stride bought
   mid-session is allowed from the next input. The client's `Player` takes the same numbers (`setBuild`, from the `skills`
   view's bought nodes). Mining (§18): Optical Drill is a `mining.yield` ×1.5 that stacks with Hot Hands (breaking speed is
-  Hot Hands'). The suit and the scan (`@astra/shared/exosuit`, numbers `SUIT`): life support and hazard protection are still
-  the client's (the demo's `Game.updateSurvival`; no server meter holds them yet), but every number is shared. Hazard drain is
+  Hot Hands'). The suit and the scan (`@astra/shared/exosuit`, numbers `SUIT`): life support and hazard protection are
+  server meters (§19); `Game.updateSurvival` predicts them with the shared rules. Hazard drain is
   `strength × (1.4 in the dark) × 0.6 × mult`, the strength `footHazard` (the world's own or its ship hazard's foot strength,
   a mild world's mist alone), the mult Hazard Weave's 0.6, Cold Blood's 0 at night on a frozen world and Heat Shroud's 0 by
   day on a desert or volcanic one (the people's perk joins them: Ulgani 0 on toxic and corrosive worlds), conditions from

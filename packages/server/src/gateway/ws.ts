@@ -59,7 +59,7 @@ import type { Db } from '../db/client.ts';
 import type { CharacterRow } from '../db/schema.ts';
 import { DEFAULT_LOADOUT, type InventoryService } from '../inventory/service.ts';
 import { meterServiceIn } from '../meters/component.ts';
-import type { MeterService } from '../meters/service.ts';
+import { SUIT_SWEEP_S, type MeterService } from '../meters/service.ts';
 import { groundForRestore, POSE, PROGRESS, type CharacterProgress, type PoseState, type Progress } from '../persistence/components.ts';
 import { CharacterLoadError } from '../persistence/registry.ts';
 import { doneEndsQuestStep } from '../quests/cutscenes.ts';
@@ -321,6 +321,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   deps.zones.combat = combat.hooks;
   const skillHooks = skills.hooks;
   skills.hooks = { ...skillHooks, inCombat: (characterId) => combat.inCombat(characterId) };
+  // (Second Skin's floor holds only out of combat)
+  meters.inCombat = (characterId) => combat.inCombat(characterId);
   const codex = deps.codex ?? needCodex(persistence);
   const analysis = deps.analysis ?? new AnalysisService({ zones: deps.zones, codex, now: () => deps.clock.now(), log });
   // each analysis made, first or not, counts for the character's quests' `analyze` steps (one species once each)
@@ -452,6 +454,9 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     }
   }, HEARTBEAT_MS);
   heartbeat.unref();
+  // (a character on foot drains, starves and may die on the server's clock even when its client sends nothing)
+  const suitSweep = setInterval(() => meters.sweep(deps.clock.now()), SUIT_SWEEP_S * 1000);
+  suitSweep.unref();
 
   wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     const now = performance.now();
@@ -796,6 +801,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
     async close() {
       closing = true;
       clearInterval(heartbeat);
+      clearInterval(suitSweep);
       casts.stop();
       unsubscribeCasts();
       unsubscribeSkillCasts();

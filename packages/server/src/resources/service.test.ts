@@ -131,7 +131,7 @@ function setup(opts: Partial<ResourceServiceOptions> = {}) {
 
 /** The beam button as `v`'s client sends it: an input on foot at the clock's time, held or not, opening its meters first. */
 function beamButton(meters: MeterService, v: Viewer, clock: { t: number }) {
-  meters.open(v.characterId, { heat: 0, overheated: false, charge: 0, at: clock.t });
+  meters.open(v.characterId, { heat: 0, overheated: false, charge: 0, lifeSupport: 100, hazard: 100, at: clock.t });
   let seq = 0;
   return (held: boolean) => {
     const pose = { frame: world.frame, pos: [0, 0, 0] as Vec3, quat: [0, 0, 0, 1] as [number, number, number, number], vel: [0, 0, 0] as Vec3 };

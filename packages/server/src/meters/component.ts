@@ -1,9 +1,10 @@
 // The meters' persistence component (ARCHITECTURE §8, §19): heat and Charge as the meter service holds them, stored as the
 // `meters` entry of a character's `state` with the world time they stood at. It loads after the ship and the skills, whose
 // hull and owned nodes set the capacities. On join heat goes on cooling from the time it was saved (a character that left
-// overheated comes back cooled, as it would have been) and Charge is as the ship left it: it regenerates only in play.
+// overheated comes back cooled, as it would have been) and Charge is as the ship left it: it regenerates only in play. The
+// suit's life support and hazard protection (P1.E06.T06) are as the character left them and move only in play, too.
 // Nothing here is earned progress, so a value that cannot be read gives the default (cool, Charge full), logged.
-import { freshMeters, meterProfile, meterSaveSchema, type MeterSave } from '@astra/shared/meters';
+import { freshMeters, fullSuit, meterProfile, meterSaveSchema, type MeterSave } from '@astra/shared/meters';
 import type { ShipLoadout } from '@astra/shared/ships';
 import type { SkillState } from '@astra/shared/skills';
 import type { CharacterComponent, ComponentRegistry, PersistenceLog } from '../persistence/registry.ts';
@@ -29,7 +30,7 @@ export function metersComponent(meters: MeterService, opts: { log?: PersistenceL
     // a new character, or one saved before the meters were: cool, its ship's Charge full
     default: (ctx) => {
       const profile = meterProfile({ ship: ctx.get<ShipLoadout | null>(SHIP), skills: ctx.get<SkillState>(SKILLS).bought });
-      return { ...freshMeters(profile), at: 0 };
+      return { ...freshMeters(profile), ...fullSuit(), at: 0 };
     },
     load: (saved, ctx) => {
       const id = ctx.character.id;

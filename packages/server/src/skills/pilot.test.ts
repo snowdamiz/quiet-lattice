@@ -106,7 +106,7 @@ describe('Reserve Tank: the pulse drive burns Charge 25% slower', () => {
   /** Charge left after `seconds` of the pulse drive near bodies (a character whose place is not known is charged as near one). */
   function chargeAfter(seconds: number, owned: string[]): number {
     const meters = new MeterService({ ships: { get: () => LARK }, skills: { owned: () => owned }, zones: { zoneOf: () => undefined } });
-    meters.open('c1', { heat: 0, overheated: false, charge: 100, at: NOW });
+    meters.open('c1', { heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 100, at: NOW });
     meters.flown('c1', 'pulse', seconds, NOW, NOW);
     return meters.view('c1', NOW).charge;
   }

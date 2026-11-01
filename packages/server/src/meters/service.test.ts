@@ -37,7 +37,7 @@ function setup(opts: { owned?: string[]; ship?: ShipLoadout | null; saved?: Part
   });
   let now = 2.3e7;
   zone.step(now);
-  meters.open(ID, { heat: 0, overheated: false, charge: 100, at: now, ...opts.saved });
+  meters.open(ID, { heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 100, at: now, ...opts.saved });
   const entityId = zone.join(viewer, { kind: 'player', frame: zone.stationFrame, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'docked' });
   let seq = 0;
   const input = (mode: Input['mode'], frame: string | null, pos: Vec3, buttons = 0): Input => ({
@@ -367,8 +367,8 @@ describe('builds, server-side changes and saves', () => {
     expect(t.meters.view(ID, t.now)).toMatchObject({ heat: 50, overheated: true, charge: 33 });
     t.wait(10);
     expect(t.meters.view(ID, t.now)).toMatchObject({ heat: 0, overheated: false, charge: 33 });
-    expect(t.meters.get(ID)).toEqual({ heat: 0, overheated: false, charge: 33, at: t.now });
-    expect(t.meters.close(ID)).toEqual({ heat: 0, overheated: false, charge: 33, at: t.now });
+    expect(t.meters.get(ID)).toEqual({ heat: 0, overheated: false, charge: 33, lifeSupport: 100, hazard: 100, at: t.now });
+    expect(t.meters.close(ID)).toEqual({ heat: 0, overheated: false, charge: 33, lifeSupport: 100, hazard: 100, at: t.now });
     expect(() => t.meters.view(ID, t.now)).toThrow(MetersNotHeldError);
   });
 
