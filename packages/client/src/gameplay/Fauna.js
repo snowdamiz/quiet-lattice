@@ -611,19 +611,19 @@ export class Fauna {
   }
 
   /**
-   * The creature along a ray (`origin`, unit `dir`, in world coordinates), nearest first, within `maxDist`: the one the
-   * crosshair is on. It is tested as the server tests shots, casts and analyses (the shared `creatureSphere`, round the body
-   * at its species' size). A corpse is not picked. `{ id, sp, r, t }` (its zone entity id, species data, record and distance),
-   * or null.
+   * The creature along a ray (`origin`, unit `dir`, in the coordinates of `frame`, the camera's own), nearest first, within
+   * `maxDist`: the one the crosshair is on. Creatures are read where they are drawn in that frame, so the ray and they
+   * never disagree by how far the frame moved between one's placing and the other's. It is tested as the server tests
+   * shots, casts and analyses (the shared `creatureSphere`, round the body at its species' size). A corpse is not picked.
+   * `{ id, sp, r, t }` (its zone entity id, species data, record and distance), or null.
    */
-  pick(origin, dir, maxDist) {
+  pick(frame, origin, dir, maxDist) {
     let best = null;
     for (const r of this.shown) {
-      if (r.pose.mode === 'dead') continue;
+      if (r.frame !== frame || r.pose.mode === 'dead') continue;
       const sp = this.speciesOf(r);
       const s = creatureSphere({ pos: [r.pos.x, r.pos.y, r.pos.z], scale: 1, species: { size: sp.size, kind: sp.kind } });
-      const center = r.frame.localToWorld(_ray.set(s.pos[0], s.pos[1], s.pos[2]), _ray);
-      const oc = center.sub(origin);
+      const oc = _ray.set(s.pos[0], s.pos[1], s.pos[2]).sub(origin);
       const t = oc.dot(dir);
       if (t < 0 || t > maxDist) continue;
       if (oc.lengthSq() - t * t < s.radius * s.radius && (!best || t < best.t)) best = { id: r.id, sp, r, t };

@@ -527,8 +527,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
       structures: { nearestInteract: () => null },
       fauna: { pick: vi.fn(() => pick) },
       multitool: { target: null, firing: false },
-      camWorld: new THREE.Vector3(1, 2, 3),
-      camWorldQuat: new THREE.Quaternion(),
+      cam: { frame: world, pos: new THREE.Vector3(1, 2, 3), quat: new THREE.Quaternion() },
       inventory: new Inventory(),
       hud: { showBanner: vi.fn() },
       audio: { play: vi.fn() },
@@ -542,7 +541,7 @@ describe('Game: analysis (P1.E08.T04)', () => {
     const units = g.inventory.units;
     g.handleInteractions();
     expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
-    expect(g.fauna.pick).toHaveBeenCalledWith(g.camWorld, expect.objectContaining({ x: 0, y: 0, z: -1 }), 70);
+    expect(g.fauna.pick).toHaveBeenCalledWith(g.cam.frame, g.cam.pos, expect.objectContaining({ x: 0, y: 0, z: -1 }), 70);
     expect(net.send).toHaveBeenCalledTimes(1);
     expect(net.send.mock.calls[0][0]).toMatchObject({ t: 'analyze', target: 42 });
     // the server's answer pays and writes the codex (onAnalyze); nothing is shown or paid here

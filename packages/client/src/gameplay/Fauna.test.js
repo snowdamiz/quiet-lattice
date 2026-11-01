@@ -149,9 +149,6 @@ describe('Fauna: the server’s herds, drawn', () => {
     play(game, remotes, alive, 101);
     const up = (k) => new THREE.Vector3(0, 1, 0).applyMatrix4(new THREE.Matrix4().extractRotation(meshOf(fauna, planet, walker).mesh.getMatrixAt(k, new THREE.Matrix4()))).normalize();
     const standing = up(0);
-    const d = meshOf(fauna, planet, walker);
-    const m = new THREE.Matrix4();
-    d.mesh.getMatrixAt(0, m);
     const lying = (t) => [mob(1, walker, { mode: 'dead', hp: 0 })];
     play(game, remotes, lying, 103, 101.05);
     // its up is turned a quarter over about its forward axis by the end of the fall
@@ -183,14 +180,16 @@ describe('Fauna: the server’s herds, drawn', () => {
     const walker = SPECIES.findIndex((s) => s.kind !== 'flyer');
     const sp = SPECIES[walker];
     play(game, remotes, () => [mob(1, walker, { pos: at(0) }), mob(2, walker, { pos: at(30), mode: 'dead', hp: 0 })], 101);
-    const eye = planet.localToWorld(new THREE.Vector3(...at(-20, 0.5 * sp.size)), new THREE.Vector3());
-    const dir = planet.dirToWorld(new THREE.Vector3(1, 0, 0), new THREE.Vector3());
-    const hit = fauna.pick(eye, dir, 70);
+    // (in the world's own coordinates, where the camera is: the ray and the creatures never disagree by a frame's motion)
+    const eye = new THREE.Vector3(...at(-20, 0.5 * sp.size));
+    const dir = new THREE.Vector3(1, 0, 0);
+    const hit = fauna.pick(planet, eye, dir, 70);
     expect(hit).toMatchObject({ id: 1, sp: SPECIES[walker] });
     expect(hit.t).toBeGreaterThan(15);
     expect(hit.t).toBeLessThan(25);
-    // (not past its reach, nor the corpse behind it)
-    expect(fauna.pick(eye, dir, 10)).toBeNull();
+    // (not past its reach, nor the corpse behind it, nor from another frame)
+    expect(fauna.pick(planet, eye, dir, 10)).toBeNull();
+    expect(fauna.pick(game.station, eye, dir, 70)).toBeNull();
     expect(fauna.targets(planet).map((c) => c.id)).toEqual([1]);
     // a walker on foot beside it is pushed out of its body
     const player = { state: { frame: planet, pos: new THREE.Vector3(...at(0.1, 0)) } };

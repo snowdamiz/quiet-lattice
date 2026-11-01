@@ -727,8 +727,9 @@ export class HUD {
     // (the reticle readouts' type and the HUD's palette: style.css's tokens)
     Object.assign(e.style, {
       position: 'absolute', left: at ? `${at.x + dx}px` : `calc(50% + ${dx}px)`, top: at ? `${at.y + dy}px` : `calc(44% + ${dy}px)`, transform: 'translate(-50%, 0)', pointerEvents: 'none',
-      color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '500', fontSize: killed ? '20px' : '16px',
-      lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: 'var(--shadow)',
+      color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '600', fontSize: killed ? '26px' : '19px',
+      // (a dark halo, not only the drop shadow: a number over bright sky or sand keeps 4.5:1)
+      lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: '0 0 2px #0b0c0f, 0 0 5px #0b0c0f, 0 1px 3px rgba(0, 0, 0, 0.9)',
     });
     // (rising and fading on the compositor: nothing forces a layout as each number is added)
     e.animate({ transform: ['translate(-50%, 0)', 'translate(-50%, -42px)'] }, { duration: 900, easing: 'ease-out', fill: 'forwards' });

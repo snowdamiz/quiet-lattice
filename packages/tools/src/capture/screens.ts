@@ -912,7 +912,7 @@ interface FaunaPage {
 /** The herd's stream (replay.js `herdTicks`): creature 601 is killed this many seconds in, 603 in the clip. */
 const HERD_KILLS = { 601: 9, 603: 23.6 };
 /** Where in the stream (s) each still and the clip start; the clip's scripted fight runs from the last. */
-const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.35, flash: 9.7, analysis: 10.2, clip: 22 };
+const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.5, flash: 9.7, analysis: 10.2, clip: 22 };
 
 /**
  * On foot on the home world with the server's herd ahead, played into the remote layer as a recorded snapshot stream
@@ -921,6 +921,8 @@ const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.35, flash: 9.7, analysis: 10.
  * Creature 601 is the one in the sights. Stops with the herd settled in view, 2.4 s into the stream.
  */
 async function openHerd(page: Page, night: boolean): Promise<void> {
+  // (tsx names the callbacks' functions with esbuild's __name helper, which the page lacks)
+  await page.evaluate('window.__name ??= (f) => f');
   await standingByShip(page);
   await parkLoop(page);
   await page.evaluate(
@@ -981,8 +983,18 @@ async function openHerd(page: Page, night: boolean): Promise<void> {
           feed.event({ kind: 'combat', source: me, target: id, amount, killed, hp: killed ? 0 : 0.5 });
         },
       };
-      // the stream's buffers fill and the herd walks into view
-      await w.__herd.stepTo(at.base - 0.6);
+      // the stream's buffers fill and the herd walks into view; the meadow is cleared where they stand and between, so they read
+      await w.__herd.stepTo(at.base - 1.2);
+      for (const r of g.remotes.list) {
+        if (r.kind !== 'mob') continue;
+        g.flora.clearAround(r.pos.clone(), 9, 8);
+        const from = g.player.state.pos;
+        for (const k of [0.25, 0.5, 0.75]) g.flora.clearAround(from.clone().lerp(r.pos, k), 5, 4);
+      }
+      for (let i = 0; i < 6; i++) {
+        await w.step(10);
+        await new Promise((r) => setTimeout(r, 120));
+      }
       await w.__herd.aim(601);
       await w.__herd.stepTo(at.base);
     },
@@ -1857,6 +1869,8 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
         await w.step(2);
       });
       await holdHud(page, { number: 420 });
+      // (the toasts slide in over 250 ms of the page's own time)
+      await page.waitForTimeout(450);
     },
     async flash(page) {
       await clearHud(page);

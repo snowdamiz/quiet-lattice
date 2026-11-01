@@ -816,7 +816,7 @@ export class Game {
       // whichever is nearer along the aim ray gets the prompt: a creature in front of a
       // tree can be analyzed, a rock in front of a creature can be mined
       let pc = null;
-      if (!prompt) pc = this.fauna.pick(this.camWorld, _aim.set(0, 0, -1).applyQuaternion(this.camWorldQuat), 70);
+      if (!prompt) pc = this.fauna.pick(this.cam.frame, this.cam.pos, _aim.set(0, 0, -1).applyQuaternion(this.cam.quat), 70);
       const tool = this.multitool.target;
       if (!prompt && tool && !(pc && pc.t < tool.t)) prompt = `<kbd>LMB</kbd>Mine ${tool.label}`;
       // Analysis is the server's (P1.E08.T04): it checks the creature, range and sight, and answers with the codex entry (onAnalyze)

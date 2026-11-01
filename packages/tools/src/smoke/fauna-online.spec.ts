@@ -160,8 +160,8 @@ test('two clients draw the same herd from the server’s snapshots, and analyzin
         (x: { world: { distanceTo(v: unknown): number } }, y: { world: { distanceTo(v: unknown): number } }) =>
           x.world.distanceTo(g.camWorld) - y.world.distanceTo(g.camWorld),
       )[0];
-    const dir = r.world.clone().sub(g.camWorld).normalize();
-    const hit = g.fauna.pick(g.camWorld, dir, 70);
+    const dir = r.pos.clone().sub(g.cam.pos).normalize();
+    const hit = g.fauna.pick(g.cam.frame, g.cam.pos, dir, 70);
     (window as unknown as { __answers: unknown[] }).__answers = [];
     g.net.on('analyze', (m: unknown) => (window as unknown as { __answers: unknown[] }).__answers.push(m));
     g.net.on('refused', (m: unknown) => (window as unknown as { __answers: unknown[] }).__answers.push(m));

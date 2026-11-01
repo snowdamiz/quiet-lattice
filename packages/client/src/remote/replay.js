@@ -311,7 +311,8 @@ export function herdTicks(game, { t0 = game.time, seconds = 30, kills = { 601: 9
   const frame = frameIdOfFrame(game.system, game.station, planet);
   const species = faunaSpecies(planet.params, FAUNA_MAX_TIER);
   const walkers = species.filter((s) => s.kind !== 'flyer');
-  const calm = walkers.filter((s) => s.temperament === 'docile' || s.temperament === 'skittish');
+  // (the biggest first: they read best from 15 m)
+  const calm = walkers.filter((s) => s.temperament === 'docile' || s.temperament === 'skittish').sort((x, y) => y.size - x.size);
   const hostile = walkers.find((s) => s.temperament === 'territorial' || s.temperament === 'predator') ?? walkers[walkers.length - 1];
   const flyer = species.find((s) => s.kind === 'flyer') ?? walkers[0];
   const foot = game.player.state.pos.clone();
