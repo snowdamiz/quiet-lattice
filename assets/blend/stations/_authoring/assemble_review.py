@@ -9,7 +9,9 @@ review scene (#review:stations/<file>), and optionally rendered in Blender at LO
 Mating rule (kitsheet.py's): a module's socket joins another's when they coincide with +Y opposed, Z kept up; `place`
 sockets keep their orientation. --cut deletes everything on the +n side of the plane through p (Blender axes). Every join
 is printed with its gap, and so is every pair of sockets of different placed modules left within 2 m of each other."""
+import json
 import math
+import struct
 import os
 import sys
 import tempfile
@@ -167,6 +169,10 @@ def layout_scrapyard():
 
 
 (layout_waystation if kit_name == "waystation" else layout_scrapyard)()
+if "--figures" not in argv:
+    figures.clear()
+if not lark_glb:
+    larks.clear()
 
 # every pair of sockets on different placed modules that ended up within 2 m: the joins the layout made, and any it
 # implies (a gangway's far end meeting a deck)
@@ -293,6 +299,7 @@ if lark_glb and larks:
     for o in imported:
         bpy.data.objects.remove(o)
 
+bpy.context.view_layer.update()
 keep = [root] + list(root.children_recursive)
 for o in bpy.context.view_layer.objects:
     o.select_set(o in keep)
@@ -309,6 +316,12 @@ bpy.ops.export_scene.gltf(
     export_materials="EXPORT",
     export_animations=False,
 )
+with open(out, "rb") as exported:
+    data = exported.read()
+chunk_bytes = struct.unpack_from("<I", data, 12)[0]
+manifest = json.loads(data[20:20 + chunk_bytes])
+if not manifest.get("meshes"):
+    raise RuntimeError("assembled review export contains no meshes")
 tris = [sum(len(p.vertices) - 2 for c in n.children if c.type == "MESH" for p in c.data.polygons) for n in lod_nodes]
 print(f"ASSEMBLED {kit_name}: {len(placed)} modules, {len(figures)} bipeds, {len(larks)} Larks; tris per LOD {tris}; wrote {out} ({os.path.getsize(out) / 1e6:.1f} MB)")
 
