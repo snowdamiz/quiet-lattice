@@ -99,6 +99,7 @@ describe('Game: where a closed connection sends the player', () => {
       overlay: null,
       onWelcome: vi.fn(),
       player: { setBuild: vi.fn() },
+      ship: { setSkills: vi.fn() },
       remotes: { attach: vi.fn() },
     });
     session.setItem('astra-session', JSON.stringify({ token: 'tok', accountId: 'a1', username: 'pilot' }));
@@ -161,6 +162,8 @@ describe('Game: where a closed connection sends the player', () => {
     net.emit('skills', { skills: { state: { bought: ['sprint_stride'], slots: { ground: [], ship: [] } }, shipSlots: 0 } });
     expect(g.build).toEqual({ skills: ['sprint_stride'], people: 'ulgani' });
     expect(g.player.setBuild).toHaveBeenLastCalledWith(g.build);
+    // (and the ship flies with the same nodes)
+    expect(g.ship.setSkills).toHaveBeenLastCalledWith(['sprint_stride']);
   });
 
   it('ignores the closing of a connection it has replaced', () => {
@@ -625,5 +628,35 @@ describe('the cast keys', () => {
     expect(keyed('ship', 'flying', ['Digit5'], 5)).toEqual([['ship', 4]]);
     expect(keyed('ship', 'landed', ['Digit1'])).toEqual([]);
     expect(keyed('ship', 'pulse', ['Digit1'])).toEqual([]);
+  });
+});
+
+describe('Game: a ship with plating refills and is rebuilt to its own capacities', () => {
+  const game = () =>
+    fake({
+      ship: { shield: 90, hull: 12, stats: { shieldMax: 125, hullMax: 125 }, wind: new THREE.Vector3() },
+      station: { name: 'Anchor' },
+      inventory: { units: 100 },
+      pirates: { clear: vi.fn() },
+      hud: { toast: vi.fn(), showBanner: vi.fn(), flash: vi.fn() },
+      audio: { play: vi.fn() },
+      save: vi.fn(),
+      lightning: vi.fn(),
+      placeShipNearStation: vi.fn(),
+    });
+
+  it('docking tops the shield up to the ship’s maximum, not to 100', () => {
+    const g = game();
+    g.onDocked();
+    expect(g.ship.shield).toBe(125);
+    g.ship.shield = 110;
+    g.onDocked();
+    expect(g.ship.shield).toBe(125);
+  });
+
+  it('a destroyed ship comes back with its full shield and hull', () => {
+    const g = game();
+    g.shipDestroyed(null);
+    expect(g.ship).toMatchObject({ shield: 125, hull: 125 });
   });
 });

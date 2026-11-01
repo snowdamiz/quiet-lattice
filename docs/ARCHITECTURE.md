@@ -469,11 +469,18 @@ before applying it.
   `pulse_charge`), out of the air, clear of what is ahead (`PULSE_DRIVE.engageClearM` to engage, `dropOutM` while
   cruising, `pulseClearance` computed by the server from the pose) and, engaging over a world, 2 km over its ground. Each
   accepted input is reported to the meters (`flown`) with the client time credited to it since the last valid pose (none
-  for a clock stepped forward), which the pulse drive burns Charge for. `landed` only on a world's dry ground; `docked`
+  for a clock stepped forward), which the pulse drive burns Charge for. `landed` only on a world's dry ground, and coming
+  to rest no faster than the hull may land (`ShipStats.landingSpeedMax`: 160, Soft Landing 220, under `FLIGHT_TOLERANCE`'s
+  factor; by the speed it reports and the speed it moved over the step from its last pose; refused as `landing_speed`; the
+  landing itself begins on the client, whose autopilot brakes from there, so this is all of it the server sees); `docked`
   only on a Waystation pad no other ship holds (a joining ship docks on a free pad, or waits in the hangar's mouth in mode `ship` when all four are held); `foot` only on
   a world's ground or in a hangar, and only out of a landed or docked ship, which it can board again only from beside it.
   In mode `ship` the `boost` button bit raises the caps to the boost cap, and air thicker than `AIR.flightModelFrom` to
   the `atmo` cap: a client must send the bit while it boosts.
+- *The numbers follow the pilot.* A mover's ship and walker stats are made from the ship and nodes it entered with and made
+  again by `MovementAuthority.retune` when they change (`Zone.retune`, which also re-tunes combat, §20; the gateway calls it
+  for every session of a character on a change to its skills): the next input is judged on them, with no rejoin. A node
+  refunded in flight lowers the allowance at once.
 - *The move* from the last valid pose: no further than its allowance covers in the time since (at most a second of it,
   whatever silence came before: the client moves its ship a clamped 66 ms frame at a time), plus a tenth of a second's
   worth and 25 m (anti-teleport); and not through the ground, nor a flying ship's centre through the hangar's
@@ -1055,7 +1062,9 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
   is) and `units` change nothing. Server-side calls: `grantPoints`, `setPoints` (the CLI's "set skill points": never below what levels give less
   what is spent), `grantFragments` (P1.E07.T11 decides the count: Listener, Uncounted), `unlock(id, node, source)`,
   `buy`, `respec`, and `refresh` when the level or the hull changes. `owned(id)` is what `shipStats`, movement authority's
-  profile, abilities and meters read; `subscribe` hears every change (`request` or `server`), and the gateway pushes the
+  profile, abilities and meters read; `shipSlots(id)` the flown hull's working ship slots (what the ability service asks every
+  step), and `flight(id)` the ship and the owned nodes together (what the gateway re-tunes movement and combat to, §28);
+  `subscribe` hears every change (`request` or `server`), and the gateway pushes the
   `server` ones.
 - **Wiring**: `coreRegistry` makes the service over the same inventory, ship and progress holders unless one is given, and
   registers its component after `progress` and before `ship`; the gateway takes the one in persistence's registry
@@ -1488,8 +1497,12 @@ is worth. Clients fire their tracers at once for feel and are told what happened
 
 - **Health** is each zone's (`zone.combat`, `ZoneCombat`). A creature's is its mob stats' (`mobStats` of its body plan
   and temperament at its herd's level; the apex takes the Pack Alpha's row), taken when it is first hurt. A player has
-  its suit's (`playerMaxHealth` of the nodes it entered with: 100, Second Skin 150) and its ship's shield and hull
-  (`shipStats` of the ship it entered with); a hit takes the suit when the server believes it on foot, else the shield
+  its suit's (`playerMaxHealth` of the nodes it owns: 100, Second Skin 150) and its ship's shield and hull
+  (`shipStats` of the ship it flies and the nodes it owns: Shield Capacitor and Hull Plating make them 125, §28); those
+  are what it entered with until its nodes or hull change (a join carries `SkillService.flight`), when `ZoneCombat.retuned`
+  works the capacities and the damage mods out again and each pool keeps its fraction (a plate bought in flight repairs
+  nothing, one refunded wounds nothing and never kills, a pool at 0 stays at 0 and the player stays down, a refund then a
+  rebuy gains nothing); a hit takes the suit when the server believes it on foot, else the shield
   and then the hull. On the wire, an entity's `hp` is the fraction left of the pool in use (and aboard, `shield`), patched
   as it changes and as a player's mode changes which pool is shown. Nothing heals yet and health is not saved: the
   Recall (P1.E06.T03) and creature attacks (P1.E08.T02) decide recovery.
@@ -1733,8 +1746,8 @@ gate is recipes and materials, not a skill tree.
   client's until zone handoff, P1.E04.T04). The fabricator replaces the trade panel's 1,800-unit warp cell (DESIGN
   15.7), which is gone (`pnpm gate:removed` holds it to this task): until the client mines through the server
   (P1.E13.T06), online players get warp cells only from the starting kit and crash sites. The rest of the demo's `SHOP`
-  list, the 300-unit pulse fuel refill among it, goes with P1.E07.T09, since a crafted pulse fuel cell cannot be used
-  yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
+  list, the 300-unit pulse fuel refill among it, went with P1.E07.T09 (§28): the trade terminal only buys, and a crafted
+  pulse fuel cell cannot be used yet. What a consumable restores is `refillOf(item)` (shared, from the item table): a pulse fuel cell refills Charge
   once Heat and Charge are the server's, through P1.E07.T02's `refillCharge`, a seam that task adds and that is not on
   main yet (called with that amount as a cell is used up through `InventoryService.consume`); cartridges restore 60 once
   the suit's life support and hazard protection are the server's (today the client's `Game.updateSurvival` refills them
@@ -2164,12 +2177,31 @@ effects; this runtime casts them all.
   once nothing on it has moved for 4 s. The client never decides a cooldown. Its gauge arcs (§19) ease a jump and a
   cast's cost over 250 ms (ease-out, on the HUD's clock, following the value as it moves meanwhile), the cost's chunk
   drawn bright, and land at once only on their first draw and as they turn on.
+- **The Pilot branch's Tier I–II** (P1.E07.T09, DESIGN 9.7) are nine passives, so the book gains nothing: a passive is never
+  cast, it changes a number a system reads. Each is data (`@astra/shared/data/skills/pilot.ts`, a `mods` list) and
+  `shipStats` applies it for every consumer: Throttle Tuning ×1.1 and Photon Thrusters ×1.25 on `ship.speed_max`
+  (they multiply: 600 → 825 m/s for the Lark), which movement authority's flight caps judge each input by (§7); Soft Landing
+  sets `ship.landing_speed_max` to 220 (160 without), which the authority holds a ship coming to rest to; Reserve Tank ×0.75
+  on `ship.pulse_fuel_burn`, which the meters burn the drive by (§19: 0.35/s, 0.2625/s); Shield Capacitor and Hull Plating
+  ×1.25 on `ship.shield_max` and `ship.hull_max` (125 on the Lark, 125% of the hull's own on any other), which the zone's
+  combat gives the ship (§20); Thermal Plating, Pressure Hull and Hazard Coating ×⅓ on `ship.hazard_damage_<kind>` (heat and
+  cryo; pressure; acid, radiation and storm), which `hazardDamagePerS` (`@astra/shared/ships`) applies to a hostile sky's
+  damage, the one rule the client's `Ship.updateHazard` takes its hull damage by. The server has no hazard tick of its own
+  yet: the ship's hull is the client's in the sky until the Recall and the client ship system make it the server's
+  (P1.E06.T03, P1.E12.T03); the plating is the number that tick will read. A node bought or refunded changes all of these in
+  play, not at the next join: the gateway re-tunes the character's session (`SkillService.flight` is the ship and nodes
+  owned; `Zone.retune`, §7, §20) and the meters re-profile themselves (§19). The client's ship takes its nodes from the
+  server's `skills` view (`Ship.setSkills`), which is how the demo's shop upgrades (`SHOP`, `applyUpgrade`) became the web.
+- **Two narrow reads.** The toggles' hold check runs every 50 ms for each character with one on, so the ship bar's working
+  slots come from `SkillService.shipSlots(id)` (the flown hull's `abilitySlots`) and not from rebuilding the whole view
+  (`view`, which also asks standing and points). A cast settles the character's old toggles before it is looked at, so a
+  press from a character's new connection is a new cast, never the first connection's toggle going off.
 
 - **The Exo-suit's Tier I–II (P1.E07.T10)** are all passives: nothing in the book, no new `CastContext`. A passive changes the
   system its stat names, through the stat modifiers on its node (`@astra/shared/data`), read by whoever owns that system.
   The walker (`walkerStats`, §7): Sprint Stride's sprint 11.5 m/s, Long Jump's jump 7, Efficient Jetpack's tank twice as long;
   movement authority holds a walker to its caps and learns the build at the join (`skills.owned`) and again on every change to
-  it (`ZoneManager.reskill` → `MovementAuthority.reskill`, from the gateway's skill subscription): Sprint Stride bought
+  it (`ZoneManager.retune` → `Zone.retune` → `MovementAuthority.retune`, from the gateway's one skill subscription): Sprint Stride bought
   mid-session is allowed from the next input. The client's `Player` takes the same numbers (`setBuild`, from the `skills`
   view's bought nodes). Mining (§18): Optical Drill is a `mining.yield` ×1.5 that stacks with Hot Hands (breaking speed is
   Hot Hands'). The suit and the scan (`@astra/shared/exosuit`, numbers `SUIT`): life support and hazard protection are still

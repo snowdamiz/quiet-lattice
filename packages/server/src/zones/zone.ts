@@ -48,6 +48,7 @@ import {
 } from '@astra/shared/world';
 import { ZoneCombat, type CombatHooks } from '../combat/zone.ts';
 import { FaunaSim, type FaunaOptions, type FaunaStats } from '../fauna/sim.ts';
+import type { ShipLoadout } from '@astra/shared/ships';
 import { hangarWaitPose, MovementAuthority, padPose, type MoverMeters, type MoverProfile, type MovementRefusal } from '../sim/movement/index.ts';
 import { PhaseManager } from '../phases/manager.ts';
 import { diffAgainstSent, SnapshotHistory, type EntityDiff } from './delta.ts';
@@ -393,6 +394,18 @@ export class Zone {
     return entityId;
   }
 
+  /**
+   * Holds the session's player to the ship and nodes it has now (a node bought or refunded, a hull swapped): its movement is
+   * judged on their numbers and its health capacities follow (CombatZone.retuned). False when the session is not here.
+   */
+  retune(viewer: ZoneViewer, change: { ship: ShipLoadout | null; skills: readonly string[] }): boolean {
+    const v = this.views.get(viewer);
+    if (!v) return false;
+    if (this.movement && change.ship) this.movement.retune(v.entityId, { ship: change.ship, skills: change.skills });
+    this.combat.retuned(v.entityId, change);
+    return true;
+  }
+
   /** Removes the session and its entity. False when it was not here. */
   leave(viewer: ZoneViewer, how: ZoneLeave = 'left'): boolean {
     const v = this.views.get(viewer);
@@ -405,12 +418,6 @@ export class Zone {
 
   has(viewer: ZoneViewer): boolean {
     return this.views.has(viewer);
-  }
-
-  /** The session's character bought or respecced a node: movement authority holds it to the new build's speeds. */
-  reskill(viewer: ZoneViewer, skills: readonly string[]): void {
-    const entity = this.views.get(viewer)?.entityId;
-    if (entity !== undefined) this.movement?.reskill(entity, skills);
   }
 
   /** The session's own entity id. */
