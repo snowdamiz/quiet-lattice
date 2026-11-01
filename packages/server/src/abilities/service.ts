@@ -87,7 +87,17 @@ export interface CastServiceOptions {
     dumpHeat(characterId: string, now: number): HeatDump;
   };
   /** what an ability does to the ground's resources (Shatter): the resource service's `burst`. Without it nothing is hurt. */
-  deposits?: { burst(zone: CastZone, characterId: string, frame: string, pos: Readonly<Vec3>, radiusM: number, hp: number, max: number): { hurt: number; broken: number } | null };
+  deposits?: {
+    burst(
+      zone: CastZone,
+      characterId: string,
+      frame: string,
+      pos: Readonly<Vec3>,
+      radiusM: number,
+      hp: number,
+      max: number,
+    ): { hurt: number; broken: number } | null;
+  };
   /** whether a cast's caster may harm `target` (`mayHarm`: no player until PvP, P2.E17.T01, which supplies its rule here) */
   mayHarm?: typeof mayHarm;
   /** world time, s (the server clock) */
@@ -301,7 +311,8 @@ export class CastService {
     // not harmed)
     const harmable = (target: number): boolean => this.mayHarm(zone, self, target) && zone.phases.canSee(self, target);
     const shared = new Set<number>();
-    const resistance = (target: number): ResistanceResult | null => (zone.phases.canSee(self, target) ? zone.combat.resistanceOf(target, { node: msg.node }) : null);
+    const resistance = (target: number): ResistanceResult | null =>
+      zone.phases.canSee(self, target) ? zone.combat.resistanceOf(target, { node: msg.node }) : null;
     // (a creature the caster sees and that does not shrug the node off)
     const steerable = (target: number): boolean => {
       const r = resistance(target);
@@ -388,7 +399,8 @@ export class CastService {
     if (!me || me.party === null) return out;
     for (const id of zone.partyMembers(me.party)) {
       const m = id === self ? undefined : zone.entity(id);
-      if (!m || m.fields.kind !== 'player' || m.fields.mode !== 'foot' || m.fields.frame !== frame || zone.combat.isDown(id) || !zone.phases.canSee(self, id)) continue;
+      if (!m || m.fields.kind !== 'player' || m.fields.mode !== 'foot' || m.fields.frame !== frame || zone.combat.isDown(id) || !zone.phases.canSee(self, id))
+        continue;
       const p = m.fields.pos;
       if (Math.hypot(p[0] - me.fields.pos[0], p[1] - me.fields.pos[1], p[2] - me.fields.pos[2]) <= radiusM) out.push({ id, pos: [p[0], p[1], p[2]] });
     }

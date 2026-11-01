@@ -44,10 +44,6 @@ const at = (east: number, north = 0): Vec3 => {
   return [d[0] * r, d[1] * r, d[2] * r];
 };
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, Math.max(0, ms)));
-const unit = (v: readonly number[]): Vec3 => {
-  const l = Math.hypot(v[0]!, v[1]!, v[2]!);
-  return [v[0]! / l, v[1]! / l, v[2]! / l];
-};
 /** The shortest turn taking −z to `dir`, as the client's eye quaternion. */
 function lookQuat(dir: Vec3): [number, number, number, number] {
   // (−z) × dir = (0·dz − (−1)·dy, (−1)·dx − 0·dz, 0) = (dy, −dx, 0); w = 1 + (−z)·dir = 1 − dz
@@ -167,67 +163,67 @@ const lost = (zone: Zone, id: number) => health(zone, id).max - health(zone, id)
 const heat = (id: string) => server.ws.meters.view(id, server.world.clock.now()).heat;
 /** The heat the cast left, at the moment it was cast (the answer says when it is ready again): heat cools while the test reads it. */
 const heatCast = (id: string, answer: Answer, cooldownS: number) => server.ws.meters.view(id, answer.readyAt! - cooldownS).heat;
-const centre = (zone: Zone, id: number): Vec3 => {
-  const p = zone.entity(id)!.fields.pos as Vec3;
-  const l = Math.hypot(...p);
-  return [p[0] + (p[0] / l) * 0.5, p[1] + (p[1] / l) * 0.5, p[2] + (p[2] / l) * 0.5];
-};
-const eye = (pos: Vec3): Vec3 => {
-  const l = Math.hypot(...pos);
-  return [pos[0] + (pos[0] / l) * 1.6, pos[1] + (pos[1] / l) * 1.6, pos[2] + (pos[2] / l) * 1.6];
-};
-
 
 const info = (zone: Zone, id: number) => zone.fauna!.creatures().find((c) => c.id === id)!;
 
 describe('Resonance over the wire', () => {
-  it('Pulse: 10 heat, a 6 s cooldown; every creature within 15 m stands still for 2 s, those farther are not, and Echo sounds it again', { timeout: 40_000 }, async () => {
-    const c = await character();
-    const bot = await join(c.token, c.id);
-    own(c.id, ['pulse', 'echo']);
-    expect((await bot.slot(0, 'pulse')).error).toBeUndefined();
-    const stand = at(0);
-    await bot.stand(stand);
-    while (!nodeGrounds.ground(params, 0)) await sleep(100);
-    const near = creature(bot.zone, at(9));
-    const far = creature(bot.zone, at(30));
-    const later = creature(bot.zone, at(60));
-    const h0 = heat(c.id);
-    const answer = await bot.cast('pulse', 0);
-    expect(answer).toMatchObject({ result: 'cast', node: 'pulse' });
-    expect(answer.readyAt! - bot.time()).toBeCloseTo(cooldownOf(getSkillNode('pulse'))!.seconds, 0);
-    expect(heatCast(c.id, answer, 6) - h0).toBeGreaterThan(10 - 2);
-    expect(info(bot.zone, near).stunUntil).toBeGreaterThan(0);
-    expect(info(bot.zone, far).stunUntil).toBe(0);
-    expect(bot.casts('pulse')).toMatchObject([{ caster: bot.entity, phase: 'cast' }]);
-    // Echo: it sounds again 2 s later round where the caster is then
-    bot.input(at(58));
-    await waitFor(() => info(bot.zone, later).stunUntil > 0, 6000, 'the echo');
-    bot.sock.close();
-  });
+  it(
+    'Pulse: 10 heat, a 6 s cooldown; every creature within 15 m stands still for 2 s, those farther are not, and Echo sounds it again',
+    { timeout: 40_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['pulse', 'echo']);
+      expect((await bot.slot(0, 'pulse')).error).toBeUndefined();
+      const stand = at(0);
+      await bot.stand(stand);
+      while (!nodeGrounds.ground(params, 0)) await sleep(100);
+      const near = creature(bot.zone, at(9));
+      const far = creature(bot.zone, at(30));
+      const later = creature(bot.zone, at(60));
+      const h0 = heat(c.id);
+      const answer = await bot.cast('pulse', 0);
+      expect(answer).toMatchObject({ result: 'cast', node: 'pulse' });
+      expect(answer.readyAt! - bot.time()).toBeCloseTo(cooldownOf(getSkillNode('pulse'))!.seconds, 0);
+      expect(heatCast(c.id, answer, 6) - h0).toBeGreaterThan(10 - 2);
+      expect(info(bot.zone, near).stunUntil).toBeGreaterThan(0);
+      expect(info(bot.zone, far).stunUntil).toBe(0);
+      expect(bot.casts('pulse')).toMatchObject([{ caster: bot.entity, phase: 'cast' }]);
+      // Echo: it sounds again 2 s later round where the caster is then
+      bot.input(at(58));
+      await waitFor(() => info(bot.zone, later).stunUntil > 0, 6000, 'the echo');
+      bot.sock.close();
+    },
+  );
 
-  it('Harmonic: 20 heat, a 20 s cooldown; creatures within 30 m are calm for 20 s and the stone-touched, immune to it, are not', { timeout: 40_000 }, async () => {
-    const c = await character();
-    const bot = await join(c.token, c.id);
-    own(c.id, ['pulse', 'harmonic']);
-    expect((await bot.slot(0, 'harmonic')).error).toBeUndefined();
-    await bot.stand(at(0));
-    while (!nodeGrounds.ground(params, 0)) await sleep(100);
-    const calm = creature(bot.zone, at(25));
-    const stone = creature(bot.zone, at(20, 8));
-    const far = creature(bot.zone, at(40));
-    bot.zone.combat.creatureHealth(stone);
-    (bot.zone.combat as unknown as { vitalsOf(id: number): { resistances: unknown } }).vitalsOf(stone).resistances = [{ kind: 'node', id: 'harmonic', effect: 'immune' }];
-    const h0 = heat(c.id);
-    const answer = await bot.cast('harmonic', 0);
-    expect(answer).toMatchObject({ result: 'cast', node: 'harmonic' });
-    expect(answer.readyAt! - bot.time()).toBeCloseTo(20, 0);
-    expect(heatCast(c.id, answer, 20) - h0).toBeGreaterThan(20 - 2);
-    expect(info(bot.zone, calm).calmUntil).not.toBeNull();
-    expect(info(bot.zone, stone).calmUntil).toBeNull();
-    expect(info(bot.zone, far).calmUntil).toBeNull();
-    bot.sock.close();
-  });
+  it(
+    'Harmonic: 20 heat, a 20 s cooldown; creatures within 30 m are calm for 20 s and the stone-touched, immune to it, are not',
+    { timeout: 40_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['pulse', 'harmonic']);
+      expect((await bot.slot(0, 'harmonic')).error).toBeUndefined();
+      await bot.stand(at(0));
+      while (!nodeGrounds.ground(params, 0)) await sleep(100);
+      const calm = creature(bot.zone, at(25));
+      const stone = creature(bot.zone, at(20, 8));
+      const far = creature(bot.zone, at(40));
+      bot.zone.combat.creatureHealth(stone);
+      (bot.zone.combat as unknown as { vitalsOf(id: number): { resistances: unknown } }).vitalsOf(stone).resistances = [
+        { kind: 'node', id: 'harmonic', effect: 'immune' },
+      ];
+      const h0 = heat(c.id);
+      const answer = await bot.cast('harmonic', 0);
+      expect(answer).toMatchObject({ result: 'cast', node: 'harmonic' });
+      expect(answer.readyAt! - bot.time()).toBeCloseTo(20, 0);
+      expect(heatCast(c.id, answer, 20) - h0).toBeGreaterThan(20 - 2);
+      expect(info(bot.zone, calm).calmUntil).not.toBeNull();
+      expect(info(bot.zone, stone).calmUntil).toBeNull();
+      expect(info(bot.zone, far).calmUntil).toBeNull();
+      bot.sock.close();
+    },
+  );
 
   it('Shatter: 25 heat, a 10 s cooldown; a crystal creature in reach takes the burst twice over, the others none', { timeout: 40_000 }, async () => {
     const c = await character();
@@ -268,26 +264,30 @@ describe('Resonance over the wire', () => {
     bot.sock.close();
   });
 
-  it('Deep Sweep: 10 charge on the ship bar, a 30 s cooldown, the world it sweeps named to its caster; Jammer is refused for a player (no PvP yet)', { timeout: 40_000 }, async () => {
-    const c = await character();
-    const bot = await join(c.token, c.id);
-    own(c.id, ['deep_sweep', 'jammer']);
-    expect((await bot.slot(0, 'deep_sweep', 'ship')).error).toBeUndefined();
-    expect((await bot.slot(1, 'jammer', 'ship')).error).toBeUndefined();
-    const up = at(0).map((x) => x * 1.002) as Vec3;
-    await bot.stand(up, 'ship');
-    const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
-    const answer = await bot.cast('deep_sweep', 0);
-    expect(answer).toMatchObject({ result: 'cast', node: 'deep_sweep' });
-    expect(answer.readyAt! - bot.time()).toBeCloseTo(30, 0);
-    expect(charge0 - server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeGreaterThan(10 - 2);
-    expect(bot.casts('deep_sweep')).toMatchObject([{ caster: bot.entity, frame: FRAME }]);
-    const other = await character();
-    const rival = await join(other.token, other.id);
-    await rival.stand(up.map((x) => x * 1.0001) as Vec3, 'ship');
-    expect(await bot.cast('jammer', 1, { target: rival.entity })).toMatchObject({ result: 'refused', reason: 'target' });
-    expect(N.jammer.lockoutS).toBeGreaterThan(0);
-    bot.sock.close();
-    rival.sock.close();
-  });
+  it(
+    'Deep Sweep: 10 charge on the ship bar, a 30 s cooldown, the world it sweeps named to its caster; Jammer is refused for a player (no PvP yet)',
+    { timeout: 40_000 },
+    async () => {
+      const c = await character();
+      const bot = await join(c.token, c.id);
+      own(c.id, ['deep_sweep', 'jammer']);
+      expect((await bot.slot(0, 'deep_sweep', 'ship')).error).toBeUndefined();
+      expect((await bot.slot(1, 'jammer', 'ship')).error).toBeUndefined();
+      const up = at(0).map((x) => x * 1.002) as Vec3;
+      await bot.stand(up, 'ship');
+      const charge0 = server.ws.meters.view(c.id, server.world.clock.now()).charge;
+      const answer = await bot.cast('deep_sweep', 0);
+      expect(answer).toMatchObject({ result: 'cast', node: 'deep_sweep' });
+      expect(answer.readyAt! - bot.time()).toBeCloseTo(30, 0);
+      expect(charge0 - server.ws.meters.view(c.id, server.world.clock.now()).charge).toBeGreaterThan(10 - 2);
+      expect(bot.casts('deep_sweep')).toMatchObject([{ caster: bot.entity, frame: FRAME }]);
+      const other = await character();
+      const rival = await join(other.token, other.id);
+      await rival.stand(up.map((x) => x * 1.0001) as Vec3, 'ship');
+      expect(await bot.cast('jammer', 1, { target: rival.entity })).toMatchObject({ result: 'refused', reason: 'target' });
+      expect(N.jammer.lockoutS).toBeGreaterThan(0);
+      bot.sock.close();
+      rival.sock.close();
+    },
+  );
 });

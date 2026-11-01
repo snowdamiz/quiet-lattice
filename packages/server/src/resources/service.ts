@@ -432,7 +432,15 @@ export class ResourceService {
    * with its yield modifiers, to every listener). Plants are the client's flora and are not touched. Null while the world's
    * ground is still being planned; otherwise how many it hurt and how many broke.
    */
-  burst(zone: ResourceZone, characterId: string, frame: string, pos: Readonly<Vec3>, radiusM: number, hp: number, max: number): { hurt: number; broken: number } | null {
+  burst(
+    zone: ResourceZone,
+    characterId: string,
+    frame: string,
+    pos: Readonly<Vec3>,
+    radiusM: number,
+    hp: number,
+    max: number,
+  ): { hurt: number; broken: number } | null {
     const world = this.worldOf(zone, frame);
     if (!world) return { hurt: 0, broken: 0 };
     const tier = this.tierOf(zone);

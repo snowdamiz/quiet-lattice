@@ -2,9 +2,7 @@
 // with fauna: Pulse (with Choir and Echo), Harmonic, Shatter, Veil, and the ship forms Deep Sweep and Jammer, each with the
 // numbers of DESIGN 9.4 and the branch's chosen ones (`RESONANCE_NUMBERS`).
 import { RESONANCE_NUMBERS as N } from '@astra/shared/abilities';
-import { CRYSTAL_RESISTANCES, HOLLOW_RESISTANCES, SENTINEL_RESISTANCES } from '@astra/shared/data';
-import { getSkillNode } from '@astra/shared/data';
-import { creatureSphere } from '@astra/shared/combat';
+import { CRYSTAL_RESISTANCES, getSkillNode, HOLLOW_RESISTANCES, SENTINEL_RESISTANCES } from '@astra/shared/data';
 import { decodeServerMessage, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
 import { emptySkillState, type SkillState } from '@astra/shared/skills';
 import type { FaunaSpecies, NodeGround } from '@astra/shared/world';
@@ -99,7 +97,15 @@ function resist(id: number, resistances: readonly unknown[]): void {
 /** A second player on foot `east` metres from the first, in `party`. */
 function joinPlayer(east: number, party: string | null, character = 'c2', north = 0): { viewer: Viewer; id: number } {
   const v = new Viewer(2, character);
-  const id = w.zone.join(v, { kind: 'player', frame: w.frame, pos: w.at(east, north), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot', ...(party ? { party } : {}) });
+  const id = w.zone.join(v, {
+    kind: 'player',
+    frame: w.frame,
+    pos: w.at(east, north),
+    quat: [0, 0, 0, 1],
+    vel: [0, 0, 0],
+    mode: 'foot',
+    ...(party ? { party } : {}),
+  });
   w.run(0.1);
   return { viewer: v, id };
 }
@@ -376,7 +382,11 @@ describe('Veil', () => {
     const sp = w.species.find((x) => x.temperament === 'territorial')!;
     const ids = w.spawn({ body: w.body.index, species: sp.index, at: w.at(14, 0), count: 2 }).creatures;
     const states = new Set<string>();
-    const watch = () => w.zone.fauna!.creatures().filter((c) => ids.includes(c.id)).forEach((c) => states.add(c.state));
+    const watch = () =>
+      w.zone
+        .fauna!.creatures()
+        .filter((c) => ids.includes(c.id))
+        .forEach((c) => states.add(c.state));
     expect(cast('veil', 0)).toMatchObject({ result: 'cast' });
     for (let i = 0; i < 60; i++) {
       pass(0.25);

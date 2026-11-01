@@ -55,7 +55,8 @@ export const RESONANCE_EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<str
     {
       cast(ctx) {
         const { radiusM, durationS } = ctx.node.params;
-        for (const h of hitTest({ kind: 'sphere', radius: radiusM! }, { origin: ctx.origin }, ctx.creatures(radiusM!))) ctx.control.calm(h.target.id, durationS!);
+        for (const h of hitTest({ kind: 'sphere', radius: radiusM! }, { origin: ctx.origin }, ctx.creatures(radiusM!)))
+          ctx.control.calm(h.target.id, durationS!);
       },
     },
   ],
