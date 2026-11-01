@@ -175,8 +175,14 @@ def compact_materials():
         sheet_material(n)
     sheet_material("WS_Decal", alpha=True)
     # Ixari crystal glazing: dark, glossy, a faint lilac cast; lit from within at night
-    flat_material("WS_Glass", lin("#141a26"), 0.06, 0.0, emit=lin("#B9A6FF"), strength=0.12)
-    flat_material("WS_LitGlass", lin("#1a1d24"), 0.08, 0.0, emit=lin("#FFF3DE"), strength=0.45)
+    flat_material("WS_Glass", lin("#10131c"), 0.06, 0.0, emit=lin("#B9A6FF"), strength=0.03)
+    flat_material("WS_LitGlass", lin("#141822"), 0.06, 0.0, emit=lin("#E8ECFF"), strength=0.22)
     flat_material("NavWhite", (0.02, 0.02, 0.02), 0.5, emit=(1, 1, 1), strength=8.0)
     flat_material("NavRed", (0.02, 0.0, 0.0), 0.5, emit=(1, 0.05, 0.03), strength=8.0)
     flat_material("NavGreen", (0.0, 0.02, 0.0), 0.5, emit=(0.05, 1, 0.2), strength=8.0)
+
+
+def reaches_materials():
+    for n in ("SY_Scrap", "SY_Rock", "SY_Grate"):
+        sheet_material(n, emit_strength=5.0)
+    flat_material("NavReaches", (0.03, 0.01, 0.0), 0.5, emit=lin("#FF6A3D"), strength=8.0)

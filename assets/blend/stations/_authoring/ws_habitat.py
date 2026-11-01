@@ -61,10 +61,20 @@ def build_lod(lod):
             K.beam(m, np.array([math.cos(a0) * 11.9, 8.0, math.sin(a0) * 11.9]), np.array([math.cos(a1) * 11.9, 15.0, math.sin(a1) * 11.9]), 0.25, 0.25, "WS_Metal", "lattice", up=(0, 1, 0))
         K.tube(m, [(0, 29.6, 0), (0, 36.0, 0)], 0.18, 6, "WS_Metal", "trim")
         for s in (-1, 1):
-            K.box(m, (s * 12.0 - 0.15, 9.0, -3.0), (s * 12.0 + 0.15 + s * 4.0, 14.0, 3.0), "WS_Metal", "radiator")
+            for k, dz in enumerate((-2.4, 0.0, 2.4)):
+                x0, x1 = s * 12.2, s * (12.2 + 6.0 - abs(dz) * 0.6)
+                K.box(m, (min(x0, x1), 9.0, dz - 0.09), (max(x0, x1), 14.0, dz + 0.09), "WS_Metal", "radiator", keys={"+y": "trim", "-y": "trim"})
+            K.beam(m, np.array([s * 11.6, 11.5, -3.0]), np.array([s * 11.6, 11.5, 3.0]), 0.5, 0.5, "WS_Metal", "lattice", up=(1, 0, 0))
     K.revolve(m, [(0.0, 36.6), (0.3, 36.2), (0.3, 35.9)], 8, "NavRed", None, axis="y", away=(0, 30, 0))
     col = P.collar_mesh(lod)
     P.place(m, col, (0, 0, 0), (0, -1, 0))
+    # the hatch inside the collar (the habitat is sealed until a corridor mates)
+    hz = (24, 16, 8)[min(lod, 2)]
+    K.revolve(m, [(6.25, 0.6), (5.6, 0.75), (0.0, 0.75)], hz, "WS_Metal", "machine", axis="y", away=(0, 3.0, 0))
+    if lod <= 1:
+        for k in range(6):
+            a = k * math.pi / 3
+            K.beam(m, np.array([math.cos(a) * 0.8, 0.7, math.sin(a) * 0.8]), np.array([math.cos(a) * 5.4, 0.7, math.sin(a) * 5.4]), 0.35, 0.12, "WS_Shell", "signal" if k % 2 else "lip", up=(0, -1, 0))
     return m
 
 

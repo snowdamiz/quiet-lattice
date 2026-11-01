@@ -1,0 +1,178 @@
+"""Kit sheet: the Waystation assembled socket to socket from waystation.blend's LOD0 collections, with 1.85 m bipeds and
+the Lark for scale. -- <waystation.blend> <lark.glb> <out_prefix> [scrapyard.blend]
+Mating rule: a module's socket joins another's when they coincide with +Y opposed (Z kept up); `place` sockets keep
+their orientation. Prints every join and the gap between mated faces."""
+import math
+import os
+import sys
+
+import bpy
+from mathutils import Matrix, Vector
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", "packages", "tools", "blender")))
+import common  # noqa: E402
+
+argv = sys.argv[sys.argv.index("--") + 1 :]
+ws_blend, lark_glb, out = argv[0], argv[1], argv[2]
+sy_blend = argv[3] if len(argv) > 3 else None
+
+bpy.ops.wm.open_mainfile(filepath=ws_blend, load_ui=False)
+sc = bpy.context.scene
+for c in list(sc.collection.children):
+    sc.collection.children.unlink(c)
+kit = bpy.data.collections.new("KitSheet")
+sc.collection.children.link(kit)
+ROT = Matrix.Rotation(math.pi, 4, "Z")
+
+
+def sock(asset, name):
+    coll = bpy.data.collections[asset]
+    o = next(o for o in coll.objects if o.name.split(".")[0] == name)
+    return o.matrix_world.copy()
+
+
+def put(asset, mw, label=None):
+    e = bpy.data.objects.new(label or asset, None)
+    e.instance_type = "COLLECTION"
+    e.instance_collection = bpy.data.collections[f"{asset}_LOD0"]
+    e.matrix_world = mw
+    kit.objects.link(e)
+    return mw
+
+
+def mate(a_mw, a_asset, a_sock, b_asset, b_sock, label=None):
+    sa = sock(a_asset, a_sock)
+    sb = sock(b_asset, b_sock)
+    mw = a_mw @ sa @ ROT @ sb.inverted()
+    # gap: distance between the two sockets' world positions after the join (0 when they meet face to face)
+    gap = ((a_mw @ sa).translation - (mw @ sb).translation).length
+    print(f"JOIN {a_asset}.{a_sock} <- {b_asset}.{b_sock}  gap {gap:.4f} m")
+    return put(b_asset, mw, label)
+
+
+def place(a_mw, a_asset, a_sock, b_asset, b_sock, label=None):
+    sa = sock(a_asset, a_sock)
+    sb = sock(b_asset, b_sock)
+    mw = a_mw @ sa @ sb.inverted()
+    print(f"PLACE {a_asset}.{a_sock} <- {b_asset}.{b_sock}")
+    return put(b_asset, mw, label)
+
+
+I = Matrix.Identity(4)
+hangar = put("ws_hangar", I)
+door = mate(hangar, "ws_hangar", "Socket_BayDoor", "ws_baydoor", "Socket_Mount")
+deck = mate(hangar, "ws_hangar", "Socket_TradeDeck", "ws_tradedeck", "Socket_Mount")
+fab = place(deck, "ws_tradedeck", "Socket_Fabricator", "ws_fabricator", "Socket_Floor")
+spine1 = mate(hangar, "ws_hangar", "Socket_Spine", "ws_spine", "Socket_Aft", "spine1")
+hab1 = mate(spine1, "ws_spine", "Socket_Port", "ws_habitat", "Socket_Base", "hab1")
+hab2 = mate(spine1, "ws_spine", "Socket_Starboard", "ws_habitat", "Socket_Base", "hab2")
+ring = mate(spine1, "ws_spine", "Socket_Fore", "ws_ring", "Socket_Aft", "ring")
+spine2 = mate(ring, "ws_ring", "Socket_Fore", "ws_spine", "Socket_Aft", "spine2")
+hab3 = mate(spine2, "ws_spine", "Socket_Fore", "ws_habitat", "Socket_Base", "hab3")
+hab4 = mate(spine2, "ws_spine", "Socket_Port", "ws_habitat", "Socket_Base", "hab4")
+# the bay door half open: its leaves slide by open_x (shown at 60%)
+for o in bpy.data.collections["ws_baydoor_LOD0"].objects:
+    pass
+
+# props on the hangar floor and the deck
+pads = [o for o in bpy.data.collections["ws_hangar"].objects if o.name.startswith("BAY_Pad_")]
+padpos = {o.name: o.matrix_world.translation.copy() for o in pads}
+for i, (pn, dx, dy) in enumerate((("BAY_Pad_17", 13.5, -3.0), ("BAY_Pad_18", -13.5, 2.0), ("BAY_Pad_12", 13.2, 4.0))):
+    p = padpos[pn]
+    put("ws_refuelpost", Matrix.Translation((p.x + dx, p.y + dy, 0.0)), f"refuel{i}")
+for i, (x, y, a) in enumerate(((58.0, 70.0, 0.2), (58.0, 66.4, 0.0), (54.6, 70.4, 1.4), (-58.0, 64.0, 0.1), (20.0, 74.5, 1.57))):
+    z = 7.0 if y > 68 else 0.0
+    put("ws_cargopod", Matrix.Translation((x, y, z)) @ Matrix.Rotation(a, 4, "Z"), f"pod{i}")
+
+# bipeds: at the fabricator's use point, on the deck, on the stairs' foot, beside pads
+bip_mat = common.flat_material("REF_BipedPaint", (0.9, 0.35, 0.05), 0.6)
+bip_src = common.biped(kit, "biped_src")
+bip_src.data.materials.append(bip_mat)
+bip_src.hide_render = True
+fab_use = (deck @ Matrix.Translation((-30.0, -11.2, 7.0))).translation
+spots = [(fab_use, math.pi), (Vector((30.0, 78.8, 7.0)), math.pi), (Vector((2.5, 66.0, 0.0)), 0.0), (Vector((-25.0, 18.0, 0.45)), 0.4), (Vector((-0.8, 79.0, 7.0)), 0.0), (Vector((14.0, -36.0, 0.0)), 0.0), (Vector((-61.8, 30.0, 7.0)), 1.57)]
+for i, (p, a) in enumerate(spots):
+    b = bip_src.copy()
+    b.hide_render = False
+    b.matrix_world = Matrix.Translation(p) @ Matrix.Rotation(a, 4, "Z")
+    kit.objects.link(b)
+
+# the Lark: on pad 13 (the middle), and one more on approach outside the mouth
+sys.path.insert(0, os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", "packages", "tools", "blender")))
+from artlib import ktx  # noqa: E402
+import tempfile  # noqa: E402
+
+tmp = tempfile.mkdtemp(prefix="kitsheet-")
+dec = os.path.join(tmp, "lark.glb")
+ktx.decoded_copy(lark_glb, dec)
+before = set(bpy.data.objects)
+bpy.ops.import_scene.gltf(filepath=dec)
+lark_objs = [o for o in bpy.data.objects if o not in before]
+keep_lod = [o for o in lark_objs if "LOD0" in o.name or any(p and "LOD0" in p.name for p in [o.parent, o.parent.parent if o.parent else None])]
+lark_root = [o for o in lark_objs if o.parent is None]
+for o in lark_objs:
+    nm = o.name
+    hide = any(t in nm for t in ("LOD1", "LOD2", "LOD3", "COL_", "damaged", "husked"))
+    par = o.parent
+    while par is not None:
+        if any(t in par.name for t in ("LOD1", "LOD2", "LOD3", "damaged", "husked")):
+            hide = True
+        par = par.parent
+    o.hide_render = hide
+lark_coll = bpy.data.collections.new("LarkRef")
+for o in lark_objs:
+    for c in list(o.users_collection):
+        c.objects.unlink(o)
+    lark_coll.objects.link(o)
+p13 = padpos["BAY_Pad_13"]
+for i, mw in enumerate((Matrix.Translation((p13.x, p13.y, 0.45 + 1.95)) @ Matrix.Rotation(math.pi, 4, "Z"), Matrix.Translation((18.0, -150.0, 26.0)) @ Matrix.Rotation(math.pi + 0.15, 4, "Z") @ Matrix.Rotation(-0.06, 4, "X"))):
+    e = bpy.data.objects.new(f"lark{i}", None)
+    e.instance_type = "COLLECTION"
+    e.instance_collection = lark_coll
+    e.matrix_world = mw
+    kit.objects.link(e)
+
+# render: EEVEE, a dark sky with a key sun and a cool fill
+try:
+    sc.render.engine = "BLENDER_EEVEE"
+except TypeError:
+    sc.render.engine = "BLENDER_EEVEE_NEXT"
+sc.render.resolution_x, sc.render.resolution_y = 1600, 900
+w = bpy.data.worlds.new("w")
+sc.world = w
+w.use_nodes = True
+bg = w.node_tree.nodes["Background"]
+bg.inputs[0].default_value = (0.02, 0.025, 0.035, 1)
+bg.inputs[1].default_value = 1.0
+for nm, e, rot in (("key", 4.5, (50, 0, 35)), ("fill", 0.9, (115, 0, 210)), ("rim", 1.2, (80, 0, 140))):
+    L = bpy.data.objects.new(nm, bpy.data.lights.new(nm, "SUN"))
+    L.data.energy = e
+    L.rotation_euler = tuple(math.radians(v) for v in rot)
+    sc.collection.objects.link(L)
+inner = bpy.data.objects.new("hall", bpy.data.lights.new("hall", "AREA"))
+inner.data.energy = 3.5e6
+inner.data.size = 100
+inner.location = (0, 15, 40)
+sc.collection.objects.link(inner)
+cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
+sc.collection.objects.link(cam)
+sc.camera = cam
+cam.data.clip_end = 6000
+views = {
+    "exterior": ((-330.0, -260.0, 170.0), (0.0, 110.0, 10.0), 32),
+    "approach": ((90.0, -230.0, 30.0), (-5.0, 0.0, 22.0), 28),
+    "hangar": ((-58.0, -52.0, 14.0), (10.0, 70.0, 4.0), 22),
+    "fabricator": ((-26.5, 66.0, 9.6), (-30.0, 80.0, 7.6), 30),
+}
+paths = []
+for k, (pos, tgt, lens) in views.items():
+    cam.location = pos
+    cam.data.lens = lens
+    cam.rotation_euler = (Vector(tgt) - Vector(pos)).to_track_quat("-Z", "Y").to_euler()
+    p = f"{out}_{k}.png"
+    sc.render.filepath = p
+    bpy.ops.render.render(write_still=True)
+    paths.append(p)
+print("KITSHEET", paths)

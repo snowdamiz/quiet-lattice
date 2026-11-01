@@ -7,7 +7,7 @@ out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tex")
 os.makedirs(out, exist_ok=True)
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 which = argv or ["shell", "metal", "deck", "decal"]
-makers = {"floor": P.compact_floor, "shell": P.compact_shell, "metal": P.compact_metal, "deck": P.compact_deck, "decal": P.compact_decal}
+makers = {"scrap": P.reaches_scrap, "rock": P.reaches_rock, "grate": P.reaches_grate, "floor": P.compact_floor, "shell": P.compact_shell, "metal": P.compact_metal, "deck": P.compact_deck, "decal": P.compact_decal}
 for k in which:
     t = time.time()
     s = makers[k]()

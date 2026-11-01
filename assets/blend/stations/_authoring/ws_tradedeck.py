@@ -108,9 +108,12 @@ def build_lod(lod):
         K.box(m, (x - 1.0, -1.2, Z), (x + 1.0, -0.5, Z + 0.02), "WS_Shell", "lip", skip=("-z",))
     # decals: the Compact mark over the Quartermaster, chevrons at the stair head
     z = Z + 0.025
-    m.add([(-1.8, -D + 1.0, z), (1.8, -D + 1.0, z), (1.8, -D + 4.6, z), (-1.8, -D + 4.6, z)], [(0.25, 0.25), (0.5, 0.25), (0.5, 0.5), (0.25, 0.5)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
+    m.add([(-1.8, -D + 4.6, z), (1.8, -D + 4.6, z), (1.8, -D + 1.0, z), (-1.8, -D + 1.0, z)], [(0.25, 0.25), (0.5, 0.25), (0.5, 0.5), (0.25, 0.5)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
     y = -0.06
     m.add([(-3.0, y, Z + 5.4), (3.0, y, Z + 5.4), (3.0, y, Z + 11.4), (-3.0, y, Z + 11.4)][::-1], [(0.0, 0.25), (0.25, 0.25), (0.25, 0.5), (0.0, 0.5)][::-1], "WS_Decal", toward=lambda c: c + np.array([0, -1.0, 0]))
+    # a slab of the mark on the deck before each counter, worn where boots stop
+    for x in (30.0, 45.0, -30.0):
+        m.add([(x - 1.2, -12.6, z), (x + 1.2, -12.6, z), (x + 1.2, -11.0, z), (x - 1.2, -11.0, z)], [(0.5, 0.25), (1.0, 0.25), (1.0, 0.375), (0.5, 0.375)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
     return m
 
 

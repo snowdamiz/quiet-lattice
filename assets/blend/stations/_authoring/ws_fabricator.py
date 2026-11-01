@@ -46,11 +46,18 @@ def build_lod(lod):
     hood = catmull(prof, (6, 3, 1, 1)[lod])
     K.lapped_rows(m, hood, -0.7, 1.0, "WS_Shell", lambda i: "accent" if i in (0, 5) else "plate", row=0.35 if lod <= 1 else 1.0, lap=0.03 if lod <= 1 else 0.0, lod=min(lod, 2), seed=41, ny=4 if lod == 0 else 1, away=(0, 0.15, 1.5))
     K.patch(m, [[(p[0], 1.0, p[1] - 0.02) for p in hood], [(p[0] * 0.6, 1.0, 2.1) for p in hood]], "WS_Metal", "machine", toward=(0, 5, 2.3))
-    K.patch(m, [[(p[0], -0.7, p[1]) for p in hood], [(p[0] * 0.6, -0.7, 2.1) for p in hood]], "WS_Shell", "signal", toward=(0, -5, 2.3))
+    K.patch(m, [[(p[0], -0.7, p[1]) for p in hood], [(p[0] * 0.6, -0.7, 2.1) for p in hood]], "WS_Shell", "accent", toward=(0, -5, 2.3))
+    K.tube(m, [np.array([p[0], -0.72, p[1] + 0.02]) for p in hood], 0, 0, "WS_Shell", "signal", smooth=True, up=(0, -1, 0), profile=[(-0.03, -0.03), (0.03, -0.03), (0.03, 0.03), (-0.03, 0.03), (-0.03, -0.03)])
     if lod <= 1:
-        for k in range(5):
-            x = -0.8 + k * 0.4
-            K.beam(m, np.array([x * 0.3, 1.0, 2.95]), np.array([x, -0.72, float(np.interp(x, prof[:, 0], prof[:, 1])) + 0.06]), 0.08, 0.06, "WS_Shell", "rib", up=(0, 0, 1))
+        # ribs radiating from a hinge at the back of the hood, lying on its rows (the scallop)
+        hz = lambda x: float(np.interp(x, hood[:, 0], hood[:, 1]))
+        for k in range(7):
+            x = -0.84 + k * 0.28
+            pts = []
+            for t in np.linspace(0.0, 1.0, 8 if lod == 0 else 4):
+                px = x * (0.25 + 0.75 * t)
+                pts.append(np.array([px, 0.95 - 1.62 * t, hz(px) + 0.05]))
+            K.tube(m, pts, 0, 0, "WS_Shell", "rib", smooth=True, up=(0, 0, 1), profile=[(-0.05, -0.02), (-0.035, 0.03), (0.0, 0.045), (0.035, 0.03), (0.05, -0.02)])
     # two pillars carry the hood: lattice members fused at the base
     for x in (-0.95, 0.95):
         K.beam(m, np.array([x, 0.85, 0.22]), np.array([x, 0.85, 2.3]), 0.18, 0.18, "WS_Metal", "lattice", up=(1, 0, 0))

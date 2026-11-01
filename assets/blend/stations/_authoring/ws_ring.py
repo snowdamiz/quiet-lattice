@@ -9,19 +9,21 @@ import kit as K
 import ws_parts as P
 
 RR = 70.0  # ring radius to the section's centre
+SCALE = 1.45  # the section: 21 m along the axle, 14 m deep
 HUB_L = 16.0
 
 
 def ring_section(lod):
     """Section in (radial, axial) offsets: a broad dorsal shell outboard, a flat belly inboard (the floor's side)."""
     pts = [(-4.0, -7.0), (-4.5, -3.0), (-4.5, 3.0), (-4.0, 7.0), (-1.0, 8.2), (2.6, 7.4), (4.6, 4.2), (5.2, 0.0), (4.6, -4.2), (2.6, -7.4), (-1.0, -8.2), (-4.0, -7.0)]
+    pts = [(a * SCALE, b * SCALE) for a, b in pts]
     from ws_hangar import catmull
     return catmull(pts, (4, 3, 2, 1)[lod])
 
 
 def lod3():
     m = K.Mesh()
-    sec = np.array([(-4.5, -7.5), (-4.5, 7.5), (2.6, 7.4), (5.2, 0.0), (2.6, -7.4), (-4.5, -7.5)])
+    sec = np.array([(-4.5, -7.5), (-4.5, 7.5), (2.6, 7.4), (5.2, 0.0), (2.6, -7.4), (-4.5, -7.5)]) * SCALE
     angs = np.linspace(0, 2 * math.pi, 17)
     grid = np.zeros((len(angs), len(sec), 3))
     for i, a in enumerate(angs):
@@ -33,7 +35,7 @@ def lod3():
     for k in range(4):
         a = k * math.pi / 2 + math.pi / 4
         ca, sa = math.cos(a), math.sin(a)
-        K.tube(m, [np.array([ca * 10.4, 0, sa * 10.4]), np.array([ca * (RR - 4.4), 0, sa * (RR - 4.4)])], 1.4, 3, "WS_Metal", "lattice", smooth=False, up=(0, 1, 0))
+        K.tube(m, [np.array([ca * 10.4, 0, sa * 10.4]), np.array([ca * (RR - 6.4), 0, sa * (RR - 6.4)])], 2.6, 3, "WS_Metal", "lattice", smooth=False, up=(0, 1, 0))
     return m
 
 
@@ -69,22 +71,23 @@ def build_lod(lod):
         # crystal window band on both faces of the vault (the decks look out along the axle)
         if lod <= 2:
             for side in (-1, 1):
-                ax = side * 7.2
+                ax = side * 7.2 * SCALE
                 wa = np.linspace(a0 + 0.04, a1 - 0.04, steps + 1)
                 g = np.zeros((len(wa), 2, 3))
                 for k, a in enumerate(wa):
-                    g[k, 0] = (math.cos(a) * (RR - 1.4), ax + side * 0.95, math.sin(a) * (RR - 1.4))
-                    g[k, 1] = (math.cos(a) * (RR + 1.6), ax + side * 0.62, math.sin(a) * (RR + 1.6))
+                    g[k, 0] = (math.cos(a) * (RR - 2.2), ax + side * 1.45, math.sin(a) * (RR - 2.2))
+                    g[k, 1] = (math.cos(a) * (RR + 2.6), ax + side * 0.95, math.sin(a) * (RR + 2.6))
                 K.patch(m, g, "WS_LitGlass", None, toward=lambda q, side=side: q + np.array([0, side * 5.0, 0]))
         # the joint frame: a lattice rib hoop around the section at each gap, standing proud
         a = s * 2 * math.pi / nseg
         hoop = [np.array([math.cos(a) * (RR + p[0] * 1.12), p[1] * 1.12, math.sin(a) * (RR + p[0] * 1.12)]) for p in sec]
-        K.tube(m, hoop, 0, 0, "WS_Shell", "rib", smooth=True, up=(-math.sin(a), 0, math.cos(a)), profile=[(-1.4, -0.4), (1.4, -0.4), (1.2, 0.5), (-1.2, 0.5), (-1.4, -0.4)])
+        K.tube(m, hoop, 0, 0, "WS_Shell", "rib", smooth=True, up=(-math.sin(a), 0, math.cos(a)), profile=[(-2.2, -0.5), (2.2, -0.5), (1.9, 1.1), (-1.9, 1.1), (-2.2, -0.5)])
         if lod <= 1:
             # radiators off the outboard shell at the joints
             for side in (-1, 1):
-                xf = Matrix.Translation((math.cos(a) * (RR + 5.4), side * 3.0, math.sin(a) * (RR + 5.4))) @ Matrix.Rotation(-a, 4, "Y")
-                K.box(m, (0.0, -0.15, -3.5), (5.5, 0.15, 3.5), "WS_Metal", "radiator", xf=xf)
+                xf = Matrix.Translation((math.cos(a) * (RR + 7.4), side * 4.5, math.sin(a) * (RR + 7.4))) @ Matrix.Rotation(-a, 4, "Y")
+                K.box(m, (0.0, -0.2, -5.0), (9.0, 0.2, 5.0), "WS_Metal", "radiator", keys={"+x": "trim", "-x": "trim", "+z": "trim", "-z": "trim"}, xf=xf)
+                K.box(m, (-0.4, -0.35, -5.2), (9.2, 0.35, -4.8), "WS_Shell", "signal", xf=xf)
     # hub: a lapped drum with the standard collars fore and aft
     hub = [(9.4, -HUB_L / 2 + P.COLLAR_DEPTH), (10.6, -3.0), (10.6, 3.0), (9.4, HUB_L / 2 - P.COLLAR_DEPTH)]
     hn = (36, 24, 12, 8)[lod]
@@ -97,19 +100,19 @@ def build_lod(lod):
     for k in range(4):
         a = k * math.pi / 2 + math.pi / 4
         ca, sa = math.cos(a), math.sin(a)
-        r0, r1 = 10.4, RR - 4.4
+        r0, r1 = 10.4, RR - 6.4
         if lod == 3:
             K.beam(m, np.array([ca * r0, 0, sa * r0]), np.array([ca * r1, 0, sa * r1]), 2.4, 2.4, "WS_Metal", "lattice", up=(0, 1, 0))
             continue
-        tri = [(0.0, 1.6), (-1.4, -0.8), (1.4, -0.8)]
+        tri = [(0.0, 3.0), (-2.6, -1.5), (2.6, -1.5)]
         rails = []
         for (ox, oy) in tri:
             off = np.array([-sa * ox, oy, ca * ox])
             p0 = np.array([ca * r0, 0, sa * r0]) + off
             p1 = np.array([ca * r1, 0, sa * r1]) + off
             rails.append((p0, p1))
-            K.tube(m, [p0, p1], 0, 0, "WS_Metal", "lattice", smooth=False, up=(0, 1, 0), profile=[(-0.3, -0.3), (0.3, -0.3), (0.3, 0.3), (-0.3, 0.3), (-0.3, -0.3)])
-        K.tube(m, [np.array([ca * r0, 0, sa * r0]), np.array([ca * r1, 0, sa * r1])], 0.85, 10 if lod == 0 else 6, "WS_Shell", "plate_band", up=(0, 1, 0))
+            K.tube(m, [p0, p1], 0, 0, "WS_Metal", "lattice", smooth=False, up=(0, 1, 0), profile=[(-0.45, -0.45), (0.45, -0.45), (0.45, 0.45), (-0.45, 0.45), (-0.45, -0.45)])
+        K.tube(m, [np.array([ca * r0, 0, sa * r0]), np.array([ca * r1, 0, sa * r1])], 1.5, 12 if lod == 0 else 6, "WS_Shell", "plate_band", up=(0, 1, 0))
         if lod <= 1:
             nb = 12 if lod == 0 else 6
             for j in range(nb):
@@ -117,12 +120,12 @@ def build_lod(lod):
                 for q in range(3):
                     a0p = rails[q][0] + (rails[q][1] - rails[q][0]) * t0
                     b0p = rails[(q + 1) % 3][0] + (rails[(q + 1) % 3][1] - rails[(q + 1) % 3][0]) * t1
-                    K.beam(m, a0p, b0p, 0.2, 0.2, "WS_Metal", "lattice", up=(0, 1, 0))
+                    K.beam(m, a0p, b0p, 0.3, 0.3, "WS_Metal", "lattice", up=(0, 1, 0))
     # nav lights on the rim at the spokes
     if lod <= 2:
         for k in range(8):
             a = k * math.pi / 4
-            p = (math.cos(a) * (RR + 5.4), 0.0, math.sin(a) * (RR + 5.4))
+            p = (math.cos(a) * (RR + 5.2 * SCALE + 0.1), 0.0, math.sin(a) * (RR + 5.2 * SCALE + 0.1))
             K.revolve(m, [(0.0, 0.0), (0.4, 0.3), (0.4, 0.6)], 8, "NavRed" if k % 2 else "NavWhite", None, center=p, axis="y", away=(0, 0, 0))
     return m
 
@@ -140,11 +143,11 @@ def build(sc, root):
     for k in range(16):
         a = (k + 0.5) * 2 * math.pi / 16
         xf = Matrix.Translation((math.cos(a) * RR, 0, math.sin(a) * RR)) @ Matrix.Rotation(-a, 4, "Y")
-        K.collider(asset, f"COL_Rim_{k + 1:02d}", (-4.6, -8.3, -14.0), (5.3, 8.3, 14.0), xf=xf)
+        K.collider(asset, f"COL_Rim_{k + 1:02d}", (-6.7, -12.0, -14.2), (7.7, 12.0, 14.2), xf=xf)
     for k in range(4):
         a = k * math.pi / 2 + math.pi / 4
         xf = Matrix.Translation((math.cos(a) * (RR / 2 + 3.0), 0, math.sin(a) * (RR / 2 + 3.0))) @ Matrix.Rotation(-a, 4, "Y")
-        K.collider(asset, f"COL_Spoke_{k + 1}", (-RR / 2 + 7.0, -1.8, -1.8), (RR / 2 - 7.4, 1.8, 1.8), xf=xf)
+        K.collider(asset, f"COL_Spoke_{k + 1}", (-RR / 2 + 7.0, -3.2, -3.2), (RR / 2 - 9.4, 3.2, 3.2), xf=xf)
     K.empty(asset, "Socket_Aft", (0, -HUB_L / 2, 0), rot=P.socket_rotation((0, -1, 0)), size=4.0, props={"interface": "collar"})
     K.empty(asset, "Socket_Fore", (0, HUB_L / 2, 0), size=4.0, props={"interface": "collar"})
     return asset

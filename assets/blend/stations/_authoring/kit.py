@@ -120,7 +120,9 @@ def patch(m, grid, mat, key=None, smooth=False, u_off=0.0, flip=False, t_range=(
     us = np.stack([_cum(g[:, j]) for j in range(nv)], 1) * U_PER_M + u_off
     vs = np.stack([_cum(g[i]) for i in range(nu)], 0)
     sv = strip_v(mat, key) if key else (0.0, 1.0)
-    if v_metres is not None:
+    if key is None and v_metres is None:
+        vs = vs * U_PER_M  # a tileable material: metres in both directions
+    elif v_metres is not None:
         span = (sv[1] - sv[0])
         vs = sv[0] + np.clip(vs / v_metres, 0, 1) * span
     else:

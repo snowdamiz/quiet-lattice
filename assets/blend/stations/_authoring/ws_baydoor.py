@@ -14,16 +14,18 @@ LAP = 0.4
 
 def leaf(m, x0, y, lod, flip_side):
     x1 = x0 + W
-    rows = (14, 7, 3, 1)[lod]
+    rows = 14  # the same rows at every LOD, so the blue base and the band never move; LOD2+ only drop the laps
     if lod == 3:
-        K.patch(m, [[(x0, y, 0), (x0, y, H)], [(x1, y, 0), (x1, y, H)]], "WS_Shell", "plate", toward=lambda c: c + np.array([0, -5.0, 0]))
+        zb = H / rows
+        K.patch(m, [[(x0, y, 0), (x0, y, zb)], [(x1, y, 0), (x1, y, zb)]], "WS_Shell", "accent", toward=lambda c: c + np.array([0, -5.0, 0]))
+        K.patch(m, [[(x0, y, zb), (x0, y, H)], [(x1, y, zb), (x1, y, H)]], "WS_Shell", "plate", toward=lambda c: c + np.array([0, -5.0, 0]))
         K.patch(m, [[(x0, y + 0.45, 0), (x0, y + 0.45, H)], [(x1, y + 0.45, 0), (x1, y + 0.45, H)]], "WS_Metal", "machine", toward=lambda c: c + np.array([0, 5.0, 0]))
         return
     zs = np.linspace(0.0, H, rows + 1)
     for i in range(rows):
         z0, z1 = zs[i], zs[i + 1]
         lap = 0.18 if lod <= 1 else 0.0
-        key = "accent" if i == 0 else ("plate_band" if i == rows // 2 else "plate")
+        key = "accent" if i == 0 else ("plate_band" if i == 7 else "plate")
         grid = [[(x0, y - lap, z0), (x0, y, z1)], [(x1, y - lap, z0), (x1, y, z1)]]
         K.patch(m, grid, "WS_Shell", key, u_off=x0 * 0.13 + i * 1.7, toward=lambda c: c + np.array([0, -5.0, 0]))
         if lod <= 1:

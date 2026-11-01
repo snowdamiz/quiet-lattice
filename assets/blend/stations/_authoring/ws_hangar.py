@@ -7,7 +7,7 @@ at Socket_Spine.
 import math
 
 import numpy as np
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 import kit as K
 
@@ -73,12 +73,13 @@ def build_shell(m, lod):
         prof[:, 0] *= sgn
         nrow = int(round(K._cum(prof)[-1] / 2.0))
 
-        # large zones: the underside and the lower bulge in deep blue, a white body with one blue band, white roof
+        # large zones: the belly and the lower flank in deep blue up to the frame's knee, one banded row, a white
+        # upper flank and roof
         def key(i, nrow=nrow):
             f = i / nrow
-            if f < 0.24:
+            if f < 0.455:
                 return "accent"
-            if 0.40 < f < 0.44:
+            if f < 0.48:
                 return "plate_band"
             return "plate"
 
@@ -409,35 +410,104 @@ def build_exterior_frame(m, lod):
                 for k in range(len(inner) - 1):
                     a, b = (inner[k], outer[k + 1]) if k % 2 == 0 else (outer[k], inner[k + 1])
                     K.beam(m, a, b, 0.42, 0.42, "WS_Metal", "lattice", up=(0, 1, 0))
-    # crystal windows between the frames: long leaning hexagonal prisms half sunk in the shell, lit from within
+    # crystal windows between the frames: clusters of leaning hexagonal prisms grown out of the shell, lit from within
     if lod <= 2:
         rng = np.random.default_rng(5)
-        hx = lambda z: float(np.interp(z, half[np.argmax(half[:, 0]):, 1][::-1] * 0 + half[np.argmax(half[:, 0]):, 1], half[np.argmax(half[:, 0]):, 0])) if False else None
         for y in np.arange(Y_MOUTH + 15.0, Y_BACK - 1, 15.0):
             for sgn in (1, -1):
-                L = 11.0 + rng.random() * 1.0
-                zc = 30.0 + rng.random() * 1.2
-                xs = 76.0
-                r = 2.1 + rng.random() * 0.3
-                tilt = 0.25 + rng.random() * 0.1
-                ax = np.array([np.cos(-tilt) * sgn, 0, np.sin(-tilt)])
-                up = np.array([-np.sin(-tilt) * sgn, 0, np.cos(-tilt)])
-                c = np.array([xs * sgn, y, zc])
-                angs = [0, 1, 2, 3, 4, 5]
-                ringpts = lambda yy, sc: [c + np.array([0, yy, 0]) + (ax * np.cos(a * np.pi / 3 + 0.2) * 0.75 + up * np.sin(a * np.pi / 3 + 0.2)) * r * sc for a in angs]
-                ends = (-L / 2, L / 2)
-                ra, rb = ringpts(ends[0], 1.0), ringpts(ends[1], 1.0)
-                tip_a, tip_b = c + np.array([0, ends[0] - 1.6, 0]) + ax * 0.6, c + np.array([0, ends[1] + 1.4, 0]) + ax * 0.5
-                for q in range(6):
-                    q2 = (q + 1) % 6
-                    K.patch(m, [[ra[q], ra[q2]], [rb[q], rb[q2]]], "WS_LitGlass" if q in (0, 5) else "WS_Glass", None, away=c)
-                    K.patch(m, [[ra[q], ra[q2]], [tip_a, tip_a]], "WS_Glass", None, away=c)
-                    K.patch(m, [[rb[q], rb[q2]], [tip_b, tip_b]], "WS_Glass", None, away=c)
-                # the socket collar where crystal meets the shell (dark, sooted)
-                for yy in ends:
-                    ring = ringpts(yy, 1.12)
-                    ring = ring + [ring[0]]
-                    K.tube(m, ring, 0, 0, "WS_Metal", "machine", smooth=False, up=(0, 1, 0), profile=[(-0.3, -0.25), (0.3, -0.25), (0.3, 0.25), (-0.3, 0.25), (-0.3, -0.25)])
+                for q, (L, r, dz, dy) in enumerate(((12.5, 3.0, 0.0, 0.0), (8.5, 2.2, -4.2, 1.8), (6.0, 1.7, 3.6, -2.2))):
+                    if lod == 2 and q:
+                        continue
+                    L *= 0.9 + rng.random() * 0.2
+                    zc = 29.0 + dz + rng.random() * 0.8
+                    xs = 77.2 - abs(dz) * 0.15
+                    tilt = 0.32 + rng.random() * 0.12
+                    crystal(m, np.array([xs * sgn, y + dy, zc]), sgn, L, r, tilt, rng, lod)
+
+
+def crystal(m, c, sgn, L, r, tilt, rng, lod):
+    """A hexagonal prism lying along y, leaning out of the shell, pointed at both ends, seated in a sooted collar."""
+    ax = np.array([np.cos(-tilt) * sgn, 0, np.sin(-tilt)])
+    up = np.array([-np.sin(-tilt) * sgn, 0, np.cos(-tilt)])
+    c = c + ax * r * 0.45
+    ring = lambda yy, sc: [c + np.array([0, yy, 0]) + (ax * np.cos(a * np.pi / 3 + 0.2) * 0.8 + up * np.sin(a * np.pi / 3 + 0.2)) * r * sc for a in range(6)]
+    ends = (-L / 2, L / 2)
+    ra, rb = ring(ends[0], 1.0), ring(ends[1], 1.0)
+    tip_a = c + np.array([0, ends[0] - r * 0.9, 0]) + ax * r * 0.25
+    tip_b = c + np.array([0, ends[1] + r * 0.7, 0]) + ax * r * 0.2
+    for q in range(6):
+        q2 = (q + 1) % 6
+        lit = q in (0, 5)
+        K.patch(m, [[ra[q], ra[q2]], [rb[q], rb[q2]]], "WS_LitGlass" if lit else "WS_Glass", None, away=c)
+        K.patch(m, [[ra[q], ra[q2]], [tip_a, tip_a]], "WS_Glass", None, away=c)
+        K.patch(m, [[rb[q], rb[q2]], [tip_b, tip_b]], "WS_Glass", None, away=c)
+    # growth terraces: a stepped collar part-way along each prism, and the socket collar at the shell
+    if lod <= 1:
+        for yy in (ends[0] + L * 0.3,):
+            rr = ring(yy, 1.08)
+            K.tube(m, rr + [rr[0]], 0, 0, "WS_Metal", "machine", smooth=False, up=(0, 1, 0), profile=[(-0.16, -0.12), (0.16, -0.12), (0.16, 0.12), (-0.16, 0.12), (-0.16, -0.12)])
+    base = [c - ax * r * 0.55 + np.array([0, yy, 0]) for yy in np.linspace(ends[0] - 0.4, ends[1] + 0.4, 2)]
+    K.beam(m, base[0], base[1], r * 1.5, 0.8, "WS_Metal", "machine", up=tuple(ax))
+
+
+def build_wings(m, lod):
+    """Radiator wings off the aft eaves: a lattice spar carrying three fin panels canted up, the hangar's read at range."""
+    tilt = math.radians(9)
+    for sgn in (1, -1):
+        root = np.array([71.0 * sgn, 62.0, 44.0])
+        rot = Matrix.Rotation(0 if sgn > 0 else math.pi, 4, "Z") @ Matrix.Rotation(-tilt, 4, "Y")
+        if lod == 3:
+            K.box(m, (4.0, -17.0, -0.25), (38.0, 17.0, 0.25), "WS_Metal", "radiator", xf=Matrix.Translation(tuple(root)) @ rot)
+            continue
+        for k, dy in enumerate((-11.5, 0.0, 11.5)):
+            xf = Matrix.Translation(tuple(root + np.array([0, dy, 0]))) @ rot
+            K.box(m, (5.0, -5.0, -0.22), (38.0, 5.0, 0.22), "WS_Metal", "radiator", keys={"+x": "trim", "-x": "trim", "+y": "trim", "-y": "trim"}, xf=xf)
+            K.box(m, (4.0, -5.4, -0.35), (38.6, -5.0, 0.35), "WS_Shell", "signal" if k == 1 else "lip", xf=xf)
+            K.box(m, (4.0, 5.0, -0.35), (38.6, 5.4, 0.35), "WS_Shell", "lip", xf=xf)
+            K.box(m, (38.0, -5.4, -0.45), (39.0, 5.4, 0.45), "WS_Shell", "accent", xf=xf)
+            if lod <= 1:
+                for t in (0.0, 0.33, 0.66, 1.0):
+                    p0 = xf @ Vector((5.0 + 33.0 * t, -5.0, -0.45))
+                    p1 = xf @ Vector((5.0 + 33.0 * t, 5.0, -0.45))
+                    K.beam(m, np.array(p0), np.array(p1), 0.4, 0.4, "WS_Metal", "lattice", up=(0, 0, 1))
+        # the spar: from the eave's frame out under the panels, braced back to the flank
+        xf = Matrix.Translation(tuple(root)) @ rot
+        s0, s1 = np.array(xf @ Vector((0.0, -18.0, -1.2))), np.array(xf @ Vector((0.0, 18.0, -1.2)))
+        K.beam(m, s0, s1, 1.2, 1.2, "WS_Metal", "lattice", up=(1, 0, 0))
+        for y in (-11.5, 0.0, 11.5):
+            p0 = np.array(xf @ Vector((0.0, y, -1.2)))
+            p1 = np.array(xf @ Vector((22.0, y, -0.8)))
+            K.beam(m, p0, p1, 0.8, 0.8, "WS_Metal", "lattice", up=(0, 0, 1))
+            if lod <= 1:
+                K.beam(m, np.array([75.0 * sgn, 62.0 + y, 30.0]), p1 + np.array([0, 0, -0.4]), 0.5, 0.5, "WS_Metal", "lattice", up=(0, 1, 0))
+
+
+def build_mast(m, lod):
+    """The beacon mast on the hinge of the roof's fan: a three-chord lattice with nav lights, 34 m tall."""
+    base = np.array([0.0, Y_REAR - 10.0, roof_z(0) + 0.5])
+    H = 34.0
+    if lod == 3:
+        K.tube(m, [base, base + [0, 0, H]], 0.8, 3, "WS_Metal", "lattice", smooth=False)
+        return
+    chords = []
+    for k in range(3):
+        a = k * 2 * math.pi / 3
+        p0 = base + np.array([math.cos(a) * 2.2, math.sin(a) * 2.2, 0.0])
+        p1 = base + np.array([math.cos(a) * 0.7, math.sin(a) * 0.7, H])
+        chords.append((p0, p1))
+        K.beam(m, p0, p1, 0.35, 0.35, "WS_Metal", "lattice", up=(math.cos(a), math.sin(a), 0))
+    if lod <= 1:
+        n = 10
+        for j in range(n):
+            for k in range(3):
+                a0, a1 = chords[k]
+                b0, b1 = chords[(k + 1) % 3]
+                pa = a0 + (a1 - a0) * j / n
+                pb = b0 + (b1 - b0) * (j + 1) / n
+                K.beam(m, pa, pb, 0.16, 0.16, "WS_Metal", "lattice", up=(0, 0, 1))
+    K.revolve(m, [(1.6, 0.0), (1.6, 0.6), (1.0, 1.0)], 12, "WS_Shell", "signal", center=tuple(base + [0, 0, H * 0.55]), axis="z", away=tuple(base + [0, 0, H * 0.55 - 3]))
+    K.revolve(m, [(0.0, 1.4), (0.6, 0.9), (0.6, 0.0)], 10, "NavWhite", None, center=tuple(base + [0, 0, H]), axis="z", away=tuple(base + [0, 0, H - 3]))
+    K.revolve(m, [(0.0, 0.5), (0.45, 0.3), (0.45, 0.0)], 8, "NavRed", None, center=tuple(base + [0, 0, H * 0.55 + 1.0]), axis="z", away=tuple(base + [0, 0, H * 0.55 - 3]))
 
 
 def build_keel(m, lod):
@@ -463,6 +533,51 @@ def build_nav(m, lod):
     K.revolve(m, [(0.0, 0.8), (0.6, 0.4), (0.6, 0.0)], 10, "NavWhite", None, center=(0.0, Y_REAR - 6.0, roof_z(0) + 0.6), axis="z", away=(0.0, Y_REAR - 6.0, roof_z(0) - 2))
 
 
+def build_interior_detail(m, lod):
+    """Service doors (3.0 x 2.0 m) at floor and gantry level, conduits along the walls, drain grates at the wall foot,
+    the Compact mark at the mouth's aisle, lit signs over the doors."""
+    for sgn in (1, -1):
+        x = IN_X * sgn
+        xin = x - 0.02 * sgn
+        for y in (-30.0, 0.0, 30.0, 60.0) if lod == 0 else (-30.0, 30.0):
+            for z in (0.0, 7.0):
+                if z == 7.0 and y > 66:
+                    continue
+                f = lambda a, b, c_: (xin - a * sgn, b, c_)
+                # frame: two jambs and a signal-orange header, the leaf, a worn threshold
+                K.box(m, (min(x, x - 0.5 * sgn), y - 1.6, z), (max(x, x - 0.5 * sgn), y - 1.0, z + 3.4), "WS_Shell", "lip")
+                K.box(m, (min(x, x - 0.5 * sgn), y + 1.0, z), (max(x, x - 0.5 * sgn), y + 1.6, z + 3.4), "WS_Shell", "lip")
+                K.box(m, (min(x, x - 0.5 * sgn), y - 1.6, z + 3.0), (max(x, x - 0.5 * sgn), y + 1.6, z + 3.5), "WS_Shell", "signal")
+                K.box(m, (min(x, x - 0.12 * sgn), y - 1.0, z), (max(x, x - 0.12 * sgn), y + 1.0, z + 3.0), "WS_Metal", "machine")
+                K.box(m, (min(x, x - 1.2 * sgn), y - 1.0, z), (max(x, x - 1.2 * sgn), y + 1.0, z + 0.03), "WS_Shell", "lip", skip=("-z",))
+                K.box(m, (min(x, x - 0.15 * sgn), y - 0.8, z + 3.6), (max(x, x - 0.15 * sgn), y + 0.8, z + 3.85), "WS_Metal", "light")
+        # conduits along the wall above the gantry, with brackets every 5 m
+        for z, r in ((10.6, 0.32), (11.4, 0.22)):
+            K.tube(m, [(x - 0.6 * sgn, Y_MOUTH + 2, z), (x - 0.6 * sgn, Y_BACK - 1, z)], r, 8 if lod == 0 else 5, "WS_Metal", "pipe", u_off=z)
+        if lod == 0:
+            for y in np.arange(Y_MOUTH + 5, Y_BACK, 5.0):
+                K.box(m, (min(x, x - 1.0 * sgn), y - 0.1, 10.1), (max(x, x - 1.0 * sgn), y + 0.1, 11.8), "WS_Metal", "trim")
+        # drain grate at the wall foot (wash-down water and spilled coolant run here)
+        K.box(m, (min(x - 0.5 * sgn, x - 1.0 * sgn), Y_MOUTH + 2, -0.01), (max(x - 0.5 * sgn, x - 1.0 * sgn), Y_BACK - 1, 0.015), "WS_Deck", "track", skip=("-z",))
+    # the Compact mark on the floor of the centre aisle near the mouth, and chevrons leading in
+    z = 0.035
+    m.add([(-5.0, -46.0, z), (5.0, -46.0, z), (5.0, -36.0, z), (-5.0, -36.0, z)], [(0.0, 0.25), (0.25, 0.25), (0.25, 0.5), (0.0, 0.5)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
+    for y in (-56.0, -52.0):
+        m.add([(-1.4, y, z), (1.4, y, z), (1.4, y + 2.8, z), (-1.4, y + 2.8, z)], [(0.25, 0.25), (0.5, 0.25), (0.5, 0.5), (0.25, 0.5)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
+    # oil and skid marks off the pads toward the aisles (where tugs turn)
+    rng = np.random.default_rng(12)
+    for i, (px, py) in enumerate(pad_centres()):
+        if i % 3:
+            continue
+        dx = rng.uniform(-4, 4)
+        y0 = py - PAD_R - 0.5
+        m.add([(px - 6 + dx, y0 - 3.0, z), (px + 6 + dx, y0 - 3.0, z), (px + 6 + dx, y0, z), (px - 6 + dx, y0, z)], [(0.5, 0.0), (1.0, 0.0), (1.0, 0.25), (0.5, 0.25)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
+        m.add([(px - 2 + dx, py - 6.0, PAD_TOP + 0.03), (px + 2 + dx, py - 6.0, PAD_TOP + 0.03), (px + 2 + dx, py - 2.0, PAD_TOP + 0.03), (px - 2 + dx, py - 2.0, PAD_TOP + 0.03)], [(0.25, 0.0), (0.5, 0.0), (0.5, 0.25), (0.25, 0.25)], "WS_Decal", toward=lambda c: c + np.array([0, 0, 1.0]))
+    # cable trays between the trusses, under the ceiling
+    for x in (-30.0, 30.0):
+        K.box(m, (x - 0.6, Y_MOUTH + 1, IN_Z + 1.2), (x + 0.6, Y_BACK - 1, IN_Z + 1.5), "WS_Metal", "machine")
+
+
 def build_lod(lod):
     m = K.Mesh()
     build_shell(m, lod)
@@ -475,6 +590,10 @@ def build_lod(lod):
     if lod <= 2:
         build_gantries(m, lod)
     build_exterior_frame(m, lod)
+    build_wings(m, lod)
+    build_mast(m, lod)
+    if lod <= 1:
+        build_interior_detail(m, lod)
     build_keel(m, lod)
     build_nav(m, lod)
     return m

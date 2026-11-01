@@ -231,14 +231,44 @@ def plate_row(st, body, *, lap_top=0.05, seam_every=4.0, seam_off=0.0, band=None
     return h
 
 
+def stencil(st, text, u0, v0, size, colour, alpha=0.85):
+    """Paints stencil numerals (3 x 5 cells, gaps between cells like a cut stencil) at (u0, v0) metres, `size` tall."""
+    cw = size / 5.0
+    for k, ch in enumerate(text):
+        g = DIGITS.get(ch)
+        if g is None:
+            continue
+        for r in range(5):
+            for c in range(3):
+                if g[r][c] != "1":
+                    continue
+                x0 = u0 + (k * 4 + c) * cw
+                y1 = v0 + size - r * cw
+                m = (st.u > x0 + cw * 0.12) & (st.u < x0 + cw * 0.88) & (st.v > y1 - cw * 0.88) & (st.v < y1 - cw * 0.12)
+                if m.any():
+                    a = m.astype(np.float32) * alpha
+                    base = st.s.base[st.sl]
+                    st.s.base[st.sl] = base * (1 - a[..., None]) + colour * a[..., None]
+                    st.s.rough[st.sl] = st.s.rough[st.sl] * (1 - a) + 0.5 * a
+
+
 def compact_shell():
     s = Sheet("WS_Shell", 11)
-    # A: white plate row, 2 m
-    plate_row(s.strip("plate", 0, 512), WHITE)
+    # A: white plate row, 2 m, with panel numbers stencilled where the riggers read them
+    st = s.strip("plate", 0, 512)
+    plate_row(st, WHITE)
+    for k, (u0, txt) in enumerate(((0.35, "14"), (2.6, "07"), (4.3, "22"), (6.5, "31"))):
+        stencil(st, txt, u0, 0.32 + (k % 2) * 0.55, 0.22, BLUE * 0.9)
     # B: white plate row with the Compact blue band, 2 m
-    plate_row(s.strip("plate_band", 512, 1024), WHITE, band=(0.35, 0.80, BLUE), seam_off=0.7)
+    st = s.strip("plate_band", 512, 1024)
+    plate_row(st, WHITE, band=(0.35, 0.80, BLUE), seam_off=0.7)
+    for k, u0 in enumerate((1.1, 5.2)):
+        stencil(st, "0" + str(3 + k * 5), u0, 0.95, 0.3, BLUE * 0.9)
     # C: deep blue accent row, 2 m
-    plate_row(s.strip("accent", 1024, 1536), BLUE, seam_off=1.3, tone=0.06)
+    st = s.strip("accent", 1024, 1536)
+    plate_row(st, BLUE, seam_off=1.3, tone=0.06)
+    for k, u0 in enumerate((0.6, 3.9, 6.2)):
+        stencil(st, str(11 + k * 9), u0, 0.4 + (k % 2) * 0.6, 0.24, WHITE * 0.85, alpha=0.7)
     # D: rib cap, 1 m (v across the rib, u along it): crown wears where the shell is handled during maintenance
     st = s.strip("rib", 1536, 1792)
     v = st.v
@@ -566,4 +596,133 @@ def compact_floor():
     base = mix(base, col(METAL * 1.1, v.shape), tieb.astype(np.float32))
     st.set(base=base, rough=0.58 + cav * 0.12 + tone * 0.5 - tieb * 0.25, metal=0.45 + tieb * 0.5, height=h)
     s.finish(normal_strength=5.0)
+    return s
+
+
+# ---------------------------------------------------------------------------------------------- the Free Reaches sheets
+OXIDE = srgb("#8E2F23")
+GUNMETAL = srgb("#3A3D42")
+PATCH = srgb("#D8B23A")
+RUST = srgb("#6b3a22")
+
+
+def reaches_scrap():
+    """Salvage plate trim sheet: rows of mismatched plates welded together, rust bleeding from welds and bolts."""
+    s = Sheet("SY_Scrap", 61)
+
+    def scrap_row(st, colours, plate_w=(1.2, 3.2), seed=0, weld=True):
+        v, u = st.v, st.u
+        rng = np.random.default_rng(seed)
+        edges = [0.0]
+        while edges[-1] < 8.0:
+            edges.append(edges[-1] + rng.uniform(*plate_w))
+        edges[-1] = 8.0
+        idx = np.searchsorted(np.array(edges), u[0], side="right") - 1
+        cols = np.array([colours[rng.integers(len(colours))] for _ in edges], np.float32)
+        lift = rng.uniform(-0.08, 0.08, len(edges)).astype(np.float32)
+        base = cols[idx][None, :, :] * np.ones((st.h, 1, 1), np.float32)
+        h = np.zeros_like(v) + lift[idx][None, :]
+        seam = np.min(np.abs(u[..., None] - np.array(edges)[None, None, :]), axis=-1)
+        seam = np.minimum(seam, np.minimum(v, st.H - v))
+        bead = (1 - smooth(0.0, 0.03, seam)) * (0.5 + 0.5 * st.noise(400, 2, aspect=0.05)) if weld else 0
+        h = h + bead * 0.35 - (1 - smooth(0.0, 0.006, seam)) * 0.4
+        boltu = np.array(edges)
+        bd = np.min(np.abs(u[..., None] - (boltu[None, None, :] + 0.12)), axis=-1)
+        bolts = np.clip(1 - (np.sqrt(bd ** 2 + (dist_to_grid(v - 0.15, 0.5)) ** 2) / 0.025) ** 2, 0, 1)
+        h += bolts * 0.3
+        # rust: bleeds down from welds and bolts, pools at the lower edge of each plate
+        src = np.clip(blur(bead + bolts * 2, 6) * 2, 0, 1)
+        streak = src.copy()
+        for k in range(1, 40):
+            streak[:-k] = np.maximum(streak[:-k], src[k:] * (1 - k / 40) * 0.8)
+        n = st.noise(30, 4, aspect=0.4)
+        rust = np.clip(streak * (0.5 + n) + smooth(0.6, 0.85, st.noise(12, 5)) * 0.35, 0, 1)
+        chips = chip_mask(st, seam, 0.04, cells=70)
+        base = mix(base, col(METAL * 0.75, v.shape), chips)
+        base = mix(base, col(RUST, v.shape), rust * 0.75)
+        cav = np.clip((blur(h, 5) - h) * 8, 0, 1)
+        base = mix(base, col(GRIME * 0.7, v.shape), cav * 0.6)
+        base = base * (1 + (st.noise(6, 3) - 0.5)[..., None] * 0.12)
+        st.set(base=base, rough=0.55 + rust * 0.25 - chips * 0.15 + n * 0.08, metal=0.55 - rust * 0.45 + chips * 0.4, height=h)
+
+    scrap_row(s.strip("plate", 0, 512), [GUNMETAL, GUNMETAL * 1.15, OXIDE, GUNMETAL * 0.85], seed=1)
+    scrap_row(s.strip("oxide", 512, 1024), [OXIDE, OXIDE * 0.8, OXIDE * 1.1, GUNMETAL], seed=2)
+    scrap_row(s.strip("patch", 1024, 1536), [PATCH * 0.9, GUNMETAL, OXIDE, PATCH * 0.7, GUNMETAL * 1.2], plate_w=(0.6, 1.8), seed=3)
+    # girder flange, 1 m: gunmetal with a weld line down the middle and rust at both edges
+    st = s.strip("girder", 1536, 1792)
+    v, u = st.v, st.u
+    mid = np.abs(v - st.H / 2)
+    h = -(1 - smooth(0.0, 0.03, np.minimum(v, st.H - v))) * 0.3 + (1 - smooth(0.0, 0.025, mid)) * 0.3
+    holes = np.sqrt(dist_to_grid(u, 0.6) ** 2 + (mid - 0.3) ** 2) < 0.07
+    h -= holes.astype(np.float32) * 0.8
+    edge = np.minimum(v, st.H - v)
+    rust = np.clip((1 - smooth(0.0, 0.25, edge)) * (0.4 + st.noise(40, 4)), 0, 1)
+    base = mix(col(GUNMETAL * 1.1, v.shape), col(RUST, v.shape), rust * 0.7)
+    base = mix(base, col(GRIME * 0.4, v.shape), holes.astype(np.float32))
+    st.set(base=base, rough=0.5 + rust * 0.3, metal=0.7 - rust * 0.5, height=h)
+    # hazard, 0.5 m: patch-yellow and black, scraped
+    st = s.strip("hazard", 1792, 1920)
+    v, u = st.v, st.u
+    stripe = np.mod(u + v, 0.5) < 0.25
+    body = np.where(stripe[..., None], PATCH, srgb("#1c1c1c")).astype(np.float32)
+    wear = smooth(0.55, 0.8, st.noise(80, 4, aspect=0.3))
+    base = mix(body, col(METAL * 0.7, v.shape), wear * 0.8)
+    st.set(base=base, rough=0.55 - wear * 0.1, metal=wear * 0.8, height=-wear * 0.05)
+    # lamp housing, 0.5 m: cage bars over a red-orange lens (emissive only in the lens)
+    st = s.strip("lamp", 1920, 2048)
+    v, u = st.v, st.u
+    lens = (np.abs(v - st.H / 2) < 0.1) & (dist_to_grid(u, 1.0) > 0.15)
+    bars = (dist_to_grid(u, 0.12) < 0.012) & lens
+    h = np.where(lens, 0.2, 0.0) + bars * 0.4
+    base = np.where(lens[..., None], srgb("#FF6A3D") * 0.7, GUNMETAL).astype(np.float32)
+    base = np.where(bars[..., None], GUNMETAL * 0.6, base).astype(np.float32)
+    emit = np.where((lens & ~bars)[..., None], srgb("#FF6A3D"), np.float32(0)).astype(np.float32) * np.ones((1, 1, 3), np.float32)
+    st.set(base=base, rough=np.where(lens, 0.2, 0.5), metal=np.where(lens, 0.0, 0.7), height=h, emit=emit)
+    s.finish()
+    return s
+
+
+def reaches_rock():
+    """Tileable asteroid rock, 8 x 8 m: fractured basaltic faces, regolith dust in the cracks, no lone noise."""
+    s = Sheet("SY_Rock", 71)
+    st = Strip(s, 0, N)
+    v, u = st.v, st.u
+    big = st.noise(3, 5, 0.55)
+    # fracture network: ridged noise lines
+    f1 = 1 - np.abs(st.noise(6, 3) * 2 - 1)
+    f2 = 1 - np.abs(st.noise(14, 3) * 2 - 1)
+    cracks = smooth(0.86, 0.97, f1) + smooth(0.9, 0.98, f2) * 0.6
+    h = big * 0.9 + st.noise(40, 4) * 0.12 - cracks * 0.5
+    # terraced facets: quantise the large shape so faces read as fractured planes
+    h = h * 0.6 + np.floor(big * 6) / 6 * 0.4 - cracks * 0.3
+    cav = np.clip((blur(h, 10) - h) * 4, 0, 1)
+    dust = np.clip(cav * 1.4 + (1 - big) * 0.2, 0, 1)
+    rock = srgb("#4a4644") * (0.85 + 0.3 * big[..., None])
+    base = mix(rock.astype(np.float32), col(srgb("#7a7067"), v.shape), dust * 0.6)
+    base = mix(base, col(srgb("#2b2826"), v.shape), cracks.clip(0, 1) * 0.6)
+    st.set(base=base, rough=0.82 + dust * 0.1, metal=0.0, height=h)
+    s.finish(normal_strength=10.0, cavity=0.7)
+    return s
+
+
+def reaches_grate():
+    """Tileable deck grating, 8 x 8 m: bar grating on staggered 2 x 1 m panels of mismatched salvage; the walking wear
+    sits on the deck's walkway strips, not in this tile."""
+    s = Sheet("SY_Grate", 83)
+    st = Strip(s, 0, N)
+    v, u = st.v, st.u
+    row = np.floor(v / 1.0)
+    uu = u + (row % 2) * 1.0
+    panel = np.minimum(dist_to_grid(uu, 2.0), dist_to_grid(v, 1.0))
+    bars = dist_to_grid(uu, 0.04) < 0.008
+    cross = dist_to_grid(v, 0.2) < 0.006
+    h = np.where(bars | cross, 0.0, -1.0) - (1 - smooth(0.0, 0.02, panel)) * 0.2
+    pid = (np.floor(uu / 2.0) * 5 + row * 3) % 7
+    tint = mix(col(GUNMETAL * 1.2, v.shape), col(OXIDE * 0.9, v.shape), (pid == 3).astype(np.float32))
+    tint = mix(tint, col(PATCH * 0.8, v.shape), (pid == 5).astype(np.float32))
+    base = np.where((bars | cross)[..., None], tint, srgb("#0d0d0e")).astype(np.float32)
+    rust = smooth(0.6, 0.85, st.noise(10, 5)) * (bars | cross)
+    base = mix(base, col(RUST, v.shape), rust * 0.6)
+    st.set(base=base, rough=np.where(bars | cross, 0.5 + rust * 0.3, 0.9), metal=np.where(bars | cross, 0.7 - rust * 0.5, 0.0), height=h)
+    s.finish(normal_strength=4.0, cavity=0.6)
     return s
