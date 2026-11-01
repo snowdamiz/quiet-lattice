@@ -197,6 +197,11 @@ export class ZoneManager {
     return this.byViewer.get(viewer)?.zone;
   }
 
+  /** The skill nodes the viewer's character owns changed: its zone holds its walker and ship to the new build's speeds. */
+  reskill(viewer: ZoneViewer, skills: readonly string[]): void {
+    this.byViewer.get(viewer)?.zone.reskill(viewer, skills);
+  }
+
   /** The zone hosting galaxy system `systemIndex`, loaded and woken. */
   open(systemIndex: number): Zone {
     const id = systemZoneId(systemIndex);

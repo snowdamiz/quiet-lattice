@@ -335,9 +335,9 @@ interface Hold {
 }
 
 class Mover {
-  readonly ship: ShipStats;
-  readonly walker: WalkerStats;
-  readonly walkerCaps: WalkerCaps;
+  ship: ShipStats;
+  walker: WalkerStats;
+  walkerCaps: WalkerCaps;
   readonly clock: ClientClock;
   last!: Sample;
   /** the current window segment, oldest first; seg[0] is the previous segment's last pose when `boundary` is set */
@@ -367,13 +367,21 @@ class Mover {
   /** A mover joining at server world time `joined`. */
   constructor(
     readonly id: number,
-    readonly profile: MoverProfile,
+    public profile: MoverProfile,
     joined: number,
   ) {
     this.ship = shipStats(profile.ship, { skills: profile.skills });
     this.walker = walkerStats({ skills: profile.skills, people: profile.people });
     this.walkerCaps = walkerCaps(this.walker);
     this.clock = new ClientClock(joined);
+  }
+
+  /** The build changed under it (a node bought or respecced): the speeds it is held to follow. */
+  reskill(skills: readonly string[]): void {
+    this.profile = { ...this.profile, skills };
+    this.ship = shipStats(this.profile.ship, { skills });
+    this.walker = walkerStats({ skills, people: this.profile.people });
+    this.walkerCaps = walkerCaps(this.walker);
   }
 }
 
@@ -513,6 +521,12 @@ export class MovementAuthority {
     this.movers.set(id, m);
     const pad = first.cls === 'foot' ? (m.parked?.pad ?? null) : first.pad;
     if (pad !== null) this.holdPad(id, pad);
+  }
+
+  /** Holds mover `id` to the speeds of the skill nodes `skills` (its owner bought or respecced a node: Sprint Stride, Long Jump,
+   * Photon Thrusters), from its next input. */
+  reskill(id: number, skills: readonly string[]): void {
+    this.movers.get(id)?.reskill(skills);
   }
 
   /**

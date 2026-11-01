@@ -362,6 +362,11 @@ export class Game {
     this.suitMods = suitMods(this.build);
   }
 
+  onSkills(view) {
+    this.build = { ...this.build, skills: view.state.bought };
+    this.applyBuild();
+  }
+
   // ---------- online: the server holds the character (DESIGN 17, docs/ARCHITECTURE.md §5, §9) ----------
 
   // Enters the world as one of the account's characters: Net signs in on the socket and joins, the welcome says where
@@ -381,10 +386,7 @@ export class Game {
     this.abilities.link(net);
     this.build = { skills: [], people: character.people };
     this.applyBuild();
-    net.on('skills', (m) => {
-      this.build = { ...this.build, skills: m.skills.state.bought };
-      this.applyBuild();
-    });
+    net.on('skills', (m) => this.onSkills(m.skills));
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
