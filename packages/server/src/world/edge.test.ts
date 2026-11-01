@@ -11,7 +11,7 @@ import {
   SMALL_SEASON_LENGTH_S,
   type SeasonOpening,
 } from '@astra/shared/seasons';
-import { EDGE_X, galaxyTiers } from '@astra/shared/world';
+import { EDGE_X, galaxyTiers, isSanctuary } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { MemoryShard } from '../../test/memoryShard.ts';
 import { DAY_S } from '../count/meter.ts';
@@ -190,7 +190,7 @@ describe('the Edge following the Count', () => {
 
     world.update({ count: 0 });
     const dark = darkAt(0, BASELINE);
-    expect(dark.length).toBeGreaterThanOrEqual(2);
+    expect(dark.length).toBeGreaterThanOrEqual(1);
     expect(world.state().dark).toEqual(dark);
     expect(world.message().dark).toEqual(dark);
     // (the same systems the Count flipped to Tier 5: Edge-ward at 10 ly in and not at the baseline)
@@ -202,11 +202,9 @@ describe('the Edge following the Count', () => {
     }
     expect(heard.at(-1)?.flipped.map((f) => f.system)).toEqual(expect.arrayContaining([...dark]));
 
-    // half way back up they are fewer, and above the threshold they are all relit
-    world.update({ count: 150 });
-    const half = world.state().dark;
-    expect(half.length).toBeLessThan(dark.length);
-    for (const id of half) expect(dark).toContain(id);
+    // just below the threshold the fringe is still in, and at it they are all relit
+    world.update({ count: BROKEN_BELOW - 1 });
+    expect(world.state().dark).toEqual(darkAt(BROKEN_BELOW - 1, BASELINE));
     world.update({ count: BROKEN_BELOW });
     expect(world.state().dark).toEqual([]);
     for (const id of dark) expect(world.isDark(id)).toBe(false);
@@ -234,8 +232,35 @@ describe('the Edge following the Count', () => {
     expect(low).toEqual(darkAt(0, world.state().opening));
     expect(low.length).toBeGreaterThan(opened.length);
     for (const id of opened) expect(low).toContain(id);
+    world.update({ count: 250 });
+    const half = world.state().dark;
+    expect(half).toEqual(darkAt(250, world.state().opening));
+    expect(half.length).toBeLessThan(low.length);
+    expect(half.length).toBeGreaterThanOrEqual(opened.length);
     world.update({ count: 500 });
     expect(world.state().dark).toEqual(opened);
+    await world.close();
+  });
+
+  it('keeps a Chorus sanctuary (a B- or E-class star) lit, whether the season or the Count would darken it, while its tier still flips', async () => {
+    const fringe = galaxyTiers(EDGE_X - SEASON_EDGE_SHIFT_LY).filter((t) => t.edgeWard && t.tier === 5);
+    const sanctuary = fringe.find((t) => isSanctuary(t.id))!.id;
+    const ordinary = fringe.find((t) => !isSanctuary(t.id))!.id;
+    const opening: SeasonOpening = { from: 'broken', edgeShiftLy: -SEASON_EDGE_SHIFT_LY, dark: [ordinary, sanctuary].sort((a, b) => a - b) };
+    const s = shard(500, { seasonOpening: opening });
+    const world = await s.open();
+    expect(world.state().dark).toEqual([ordinary]);
+    expect(world.message().dark).toEqual([ordinary]);
+    expect(world.isDark(ordinary)).toBe(true);
+    expect(world.isDark(sanctuary)).toBe(false);
+    expect(world.tierOf(sanctuary)).toBe(5);
+
+    world.update({ count: 0 });
+    const low = world.state().dark;
+    expect(low).toContain(ordinary);
+    expect(low.some((id) => isSanctuary(id))).toBe(false);
+    expect(world.message().dark.some((id) => isSanctuary(id))).toBe(false);
+    for (let system = 0; system < world.state().tiers.length; system++) if (isSanctuary(system)) expect(world.isDark(system)).toBe(false);
     await world.close();
   });
 

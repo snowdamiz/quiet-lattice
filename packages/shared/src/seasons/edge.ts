@@ -2,7 +2,7 @@
 // of the meter and of the map the season opened with (`opening`, rules.ts). The tiers are tierOf(system, edge) with the
 // Edge this gives. Pure: the world service applies it, and a client can work out the same from a `world` message.
 import { EDGE_X } from '../world/edge.ts';
-import { galaxyTiers } from '../world/tiers.ts';
+import { galaxyTiers, isSanctuary } from '../world/tiers.ts';
 import { BROKEN_BELOW, FED_FROM, type SeasonOpening } from './schema.ts';
 
 /** The most the Count alone moves the Edge, in light years, at 1,000 (out) or 0 (in): the same as a season's opening
@@ -43,12 +43,14 @@ function fringeAt(edge: number): Set<number> {
  * the ones the season opened dark, and below BROKEN_BELOW the systems the Count itself has pushed Edge-ward (the Low row:
  * "Edge-ward systems flip to Tier 5; their Waystations go dark"), those on the fringe at edgeAt(count, opening) but not at
  * edgeAt(BROKEN_BELOW, opening), the Edge the middle of the meter leaves. All of them relight as the Count climbs (at
- * FED_FROM, "dark stations relight"; the Count's own as the fringe goes back out). Ascending. */
+ * FED_FROM, "dark stations relight"; the Count's own as the fringe goes back out). A Chorus sanctuary (a B- or E-class star,
+ * "any tier, safe", DESIGN 11) never goes dark, though its tier still flips. Ascending. */
 export function darkAt(count: number, opening: Pick<SeasonOpening, 'dark' | 'edgeShiftLy'>): readonly number[] {
   if (!Number.isFinite(count)) throw new RangeError(`the Count is a number of measures, not ${count}`);
   if (count >= FED_FROM) return [];
-  if (count >= BROKEN_BELOW) return opening.dark;
+  const open = opening.dark.filter((id) => !isSanctuary(id));
+  if (count >= BROKEN_BELOW) return open;
   const held = fringeAt(edgeAt(BROKEN_BELOW, opening));
-  const pushed = [...fringeAt(edgeAt(count, opening))].filter((id) => !held.has(id));
-  return [...new Set([...opening.dark, ...pushed])].sort((a, b) => a - b);
+  const pushed = [...fringeAt(edgeAt(count, opening))].filter((id) => !held.has(id) && !isSanctuary(id));
+  return [...new Set([...open, ...pushed])].sort((a, b) => a - b);
 }

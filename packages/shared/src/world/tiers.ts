@@ -127,6 +127,13 @@ export function tierOfGalaxySystem(id: number, edge: number = EDGE_X, galaxySeed
   return tierOf(systemOf(id, galaxySeed), edge);
 }
 
+/** Whether system `id` of the galaxy generated from `galaxySeed` (the game's by default) is a Chorus sanctuary: a B- or
+ * E-class star, "any tier, safe" (DESIGN 11). */
+export function isSanctuary(id: number, galaxySeed: number = GALAXY_SEED): boolean {
+  const { cls } = systemOf(id, galaxySeed);
+  return cls === 'B' || cls === 'E';
+}
+
 /** Every system of a galaxy (the game's by default) with its distances and tier, with The Edge at `edge`, by id. */
 export function galaxyTiers(edge: number = EDGE_X, galaxySeed: number = GALAXY_SEED): SystemTier[] {
   return galaxyOf(galaxySeed).systems.map((s) => ({
