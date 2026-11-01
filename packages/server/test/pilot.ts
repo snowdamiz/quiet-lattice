@@ -60,10 +60,14 @@ export class Pilot {
     this.last = welcome.pose;
   }
 
-  /** Signs a new account up, makes a character of `people` and joins with it. */
-  static async join(server: RunningServer, people: PeopleId = 'thalune', opts: { stamps?: boolean } = {}): Promise<Pilot> {
-    const acct = await newAccount(server);
-    const characterId = (await newCharacter(server, acct.token, { people })).id;
+  /** Signs a new account up, makes a character of `people` and joins with it (or joins with `opts.character`, one made already). */
+  static async join(
+    server: RunningServer,
+    people: PeopleId = 'thalune',
+    opts: { stamps?: boolean; character?: { token: string; accountId: string; id: string } } = {},
+  ): Promise<Pilot> {
+    const acct = opts.character ?? (await newAccount(server));
+    const characterId = opts.character?.id ?? (await newCharacter(server, acct.token, { people })).id;
     const sock = await TestSocket.open(server.wsUrl);
     const client = new SnapshotClient();
     const errors: unknown[] = [];
