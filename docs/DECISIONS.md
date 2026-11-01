@@ -972,3 +972,14 @@ Format: task id, question → choice → why.
   now says the Phase 1 consumables are known from the start. → DESIGN 15.7, server-held. Open: place registration
   compares `where` by identity and has no unregister; `award` does not check the recipe's `learnedFrom`; a boss recipe
   drop with no room has no owed path.
+- **P2.E29.T05** Name filter: split blocked words (shared `discovery`, `data/names.ts`) → blocked words are checked over
+  every run of neighbouring words joined, as reserved words are ("Sh it Rock", "Co ck Rock", "Na zi Moon" refused);
+  the blocked lists also read v as u and `p+h+` as f, and a name is checked as written, with repeats run together, and
+  with runs of three or more cut to two ("Niggger", "Asss", "Phhuck" refused), the list entries never shrunk so "Pis"
+  and "Assen" pass. Reserved words read the digits 0 1 3 4 5 7 8 as letters in the word-run check but not 6 and 9, so
+  catalog names like "Outpost 9M" and "Kepler 9 M" are not read as the reserved "gm"; the whole-name reserved check
+  reads every digit, so "Ed9e" and "Ul9ani" stay reserved (a narrower departure from the task line, which asked for no
+  digit reading on reserved lists; keeping the rest keeps "Th3 C0unt" and "Adm1n" reserved). A sweep test over about
+  330 real place names, the 927 names the generator makes for seed 424242 and the 12 reserved names refuses nothing it
+  should pass; "Twatt" (repeats run together) and "John o' Groats" (two separators) stay refused, and single letters
+  can join into a blocked word ("Se X"); moderators rename the rare real case. → closes P2.E29.T04's review.
