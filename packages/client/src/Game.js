@@ -568,6 +568,8 @@ export class Game {
         up: !foot && inp.down('Space'),
         down: !foot && inp.down('KeyC'),
       }),
+      // (where the eye looks, which a held beam follows on the server: Lance; the walker's own quaternion has no pitch)
+      ...(foot ? { aim: this.player.camQuat.toArray() } : {}),
     };
   }
 
