@@ -154,6 +154,9 @@ export interface CreatureInfo {
   pos: Vec3;
   target: number | null;
   attack: number | null;
+  /** world time Pulse lets it move again (0: never stunned), and Harmonic lets it hunt or flee again (null: not calmed) */
+  stunUntil: number;
+  calmUntil: number | null;
 }
 
 /** A living creature as combat reads it (FaunaSim.creature). */
@@ -761,7 +764,18 @@ class WorldFauna {
   }
 
   info(m: Creature): CreatureInfo {
-    return { id: m.id, body: this.body.index, herd: m.herd.id, species: m.species, state: m.state, pos: [...m.pos], target: m.target, attack: m.attack };
+    return {
+      id: m.id,
+      body: this.body.index,
+      herd: m.herd.id,
+      species: m.species,
+      state: m.state,
+      pos: [...m.pos],
+      target: m.target,
+      attack: m.attack,
+      stunUntil: m.stunUntil,
+      calmUntil: m.threat.calmUntil,
+    };
   }
 
   cellInfo(): CellInfo[] {
