@@ -401,7 +401,8 @@ export class BotClient {
       this.joined.pose = settleFrame(this.system, systemPoses(this.system, this.time), pose);
     };
     try {
-      await this.wait(options.durationMs);
+      const end = performance.now() + options.durationMs;
+      await this.until(() => this.revision !== revision || performance.now() >= end, options.durationMs + this.timeoutMs);
       await this.settled();
       if (revision !== this.revision) throw new BotRefusal('fly', 'authoritative correction');
     } finally {

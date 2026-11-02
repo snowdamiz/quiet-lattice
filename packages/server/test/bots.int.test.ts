@@ -1,5 +1,6 @@
 // The shipped headless client drives real protocol requests with movement authority enabled throughout. Admin
 // placements set up a legal surface/combat fixture; every action after placement is judged by the normal services.
+import { performance } from 'node:perf_hooks';
 import { creatureSphere } from '@astra/shared/combat';
 import { WALKER } from '@astra/shared/data';
 import type { Pose, Vec3 } from '@astra/shared/protocol';
@@ -211,5 +212,85 @@ describe('the shipped headless bot against real authorities', () => {
     outcome('lost correction/silent stream', bot, { mode: bot.mode, healthy: bot.healthy });
     session.sendBinary = sendBinary;
     await bot.close();
+  });
+
+  it('refuses a corrected timed flight promptly so its caller can replan', async () => {
+    const bot = await join();
+    const durationMs = 4000;
+    const startedAt = performance.now();
+    let correctedAt: number | undefined;
+    const unsubscribe = bot.onMessage((message) => {
+      if (message.t === 'correction') correctedAt ??= performance.now();
+    });
+    const flight = bot.flyFor({ direction: [0, -1, 0], speed: 1000, durationMs }).then(
+      () => ({ kind: 'completed', at: performance.now() }) satisfies { kind: 'completed'; at: number },
+      (error: unknown) => ({ kind: 'refused', error, at: performance.now() }) satisfies { kind: 'refused'; error: unknown; at: number },
+    );
+    let deadline: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await waitFor(() => correctedAt !== undefined, 5000, 'the server corrected the illegal flight');
+      const first = await Promise.race([
+        flight,
+        new Promise<{ kind: 'still waiting' }>((resolve) => {
+          deadline = setTimeout(() => resolve({ kind: 'still waiting' }), durationMs / 4);
+        }),
+      ]);
+      if (deadline) clearTimeout(deadline);
+      const result = await flight;
+      outcome('corrected timed flight', bot, {
+        first: first.kind,
+        result: result.kind,
+        requestedMs: durationMs,
+        correctionAfterMs: correctedAt === undefined ? null : correctedAt - startedAt,
+        settledAfterMs: result.at - startedAt,
+      });
+      expect(first.kind).toBe('refused');
+      if (result.kind !== 'refused') throw new Error('the illegal flight completed');
+      expect(result.error).toBeInstanceOf(BotRefusal);
+
+      const corrections = bot.stats.corrections;
+      await bot.fly({ frame: bot.pose.frame, pos: [bot.pose.pos[0], 14, bot.pose.pos[2]] }, 5);
+      expect(bot.mode).toBe('ship');
+      expect(bot.stats.corrections).toBe(corrections);
+      outcome('replanned after timed flight refusal', bot, { mode: bot.mode, pose: bot.pose });
+    } finally {
+      if (deadline) clearTimeout(deadline);
+      unsubscribe();
+      await bot.close();
+      await flight;
+    }
+  });
+
+  it('keeps an accepted timed flight running for its requested duration', async () => {
+    const bot = await join();
+    try {
+      const durationMs = 300;
+      const startedAt = performance.now();
+      await bot.flyFor({ direction: [0, 1, 0], speed: 1, durationMs });
+      const elapsedMs = performance.now() - startedAt;
+      expect(elapsedMs).toBeGreaterThanOrEqual(durationMs);
+      expect(bot.stats.corrections).toBe(0);
+      expect(bot.pose.vel).toEqual([0, 0, 0]);
+      await bot.settled();
+      outcome('completed timed flight', bot, { requestedMs: durationMs, elapsedMs });
+    } finally {
+      await bot.close();
+    }
+  });
+
+  it('settles a pending timed flight when its client closes', async () => {
+    const bot = await join();
+    const flight = bot.flyFor({ direction: [0, 1, 0], speed: 1, durationMs: 60_000 }).then(
+      () => undefined,
+      (error: unknown) => error,
+    );
+    await bot.settled();
+    await bot.close();
+    expect(await flight).toMatchObject({ message: 'bot is closed' });
+    const inputs = bot.stats.inputs;
+    await new Promise<void>((resolve) => setTimeout(resolve, 100));
+    expect(bot.stats.inputs).toBe(inputs);
+    await waitFor(() => server.ws.registry.holding(bot.welcome.character.id) === undefined, 5000, 'closed bot session released');
+    outcome('closed pending timed flight', bot, { healthy: bot.healthy, mode: bot.mode });
   });
 });
