@@ -868,3 +868,29 @@ ARTIFACTS:
 - Inspected all 129 PNGs at native resolution: all nine modules’ turntables/material sheets, both family sheets, three lighting cases at LOD0/2, both wireframes, overlays and distance views; current-source scale/cutaway/uncut-control, ring and whole-kit distance supplements.
 - Read immutable DESIGN 19.2/19.3, art bible, rubric, source/export metadata, capture provenance, actual/requested camera fields, point-light records and performance context. Supplied source/export validators pass; canonical GLB’s 36 LOD triangle counts agree with the export report.
 - Standard ring night/distance and hangar distance coverage gaps remain recorded. Supplements provide additional visual evidence under distinct placement and camera conditions; they do not replace standard placement or performance evidence. Runtime door animation and continuous LOD transitions remain unverified by this static packet.
+
+## P1.E11.T01 Scrapyard — third submission (2026-11-02)
+
+Fresh grader `/root/scrapyard_third_grade_sol`, `gpt-6.1-sol`, `xhigh`, no transcript inheritance. Artifact checkpoint `789a383ce96ac6510c63e63e31637c8bb479ef1c`. Complete verdict follows verbatim; this is the third component grade and does not invoke the fifth-grade disposition.
+
+VERDICT: REVISE
+
+TASK: P1.E11.T01 — Scrapyard component only, third submission.
+
+SCORES: design 4, silhouette 4, proportion 4, materials 3, detail 3, topology 4, consistency 5, fitness 4, placeholder 3, performance 3 **(mean 3.7)**
+
+NOTES:
+- **materials:** The asteroid reads as nearly uniform grey-beige stone under studio, noon, and space lighting. Thin angular cracks and broad bands provide little separation between exposed rock, dusty deposits, and worked cavity surfaces. Author distinct colour, roughness, and normal treatment around fractures, sheltered recesses, and excavated areas; preserve that separation under all three lights.
+- **detail:** Large stretches of the exterior and cavity remain smooth, with a few shallow depressions and widely spaced cracks. Add a coherent hierarchy of fractured faces, ledges, broken edges, and localized debris around the entrance and inhabited cavity. The current close and scale-detail views expose insufficient detail for this large environment asset.
+- **placeholder:** The dominant asteroid still resembles an elongated rounded primitive with an axial tunnel. Give the outer mass and excavated opening a more specific, asymmetric geological structure, and integrate the collar’s anchors into those fractures so it reads as a reclaimed asteroid rather than a hollow shell with an attached ring.
+- **performance:** Geometry, LOD, compression, and texture-budget validation pass, but qualified evidence that the review scene holds 60 fps is absent. Supply the coordinated, qualified frame-cadence and independent paired measurements required by P1.E14.T13. This score reflects an evidence gap; the raw deltas and nominal reliability flags do **not** establish an asset-caused regression.
+
+ARTIFACTS:
+- Frozen checkout: `/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01`, HEAD `789a383ce96ac6510c63e63e31637c8bb479ef1c`.
+- Entry [manifest.json](/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/renders/stations/review_round3/scrapyard/manifest.json), SHA-256 `b3f19bcdfa9b229aaa0c7503c70accc44293f96e3b0adb4db414f42c0719dfb0`; [inventory.json](/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/renders/stations/review_round3/scrapyard/inventory.json), SHA-256 `02a489b42fb5bbf88379e75fe7aba78e2e8d92f89ba91d190de7e8a45945ea32`. All **140 entries** match recorded hashes and sizes. All **87 PNGs** were inspected: 13 studio/material/family sheets, 66 standard module images, and eight supplemental/assembled/cutaway images.
+- Canonical source SHA-256 `e9354909ea92b046da886af3b3aba1632b42b827e2ad5ffcc1fac253eb00be03`; canonical export SHA-256 `6ccd4ab7f358485480be201d8348020b5d1b4bea602f35ac010ef8a5cb7fa3e5`. Packet copies match the original canonical paths. Grading used the inventory-bound DESIGN 19.2/19.3 extract, art bible, rubric, validation reports, source/export metadata, camera metadata, and review-copy audit.
+- Supplied validation reports: source PASS with ten duplicate-name warnings; export PASS with zero warnings. Six modules have four decreasing LODs and LOD3 below 5%. These reports were inspected; validation was not rerun.
+- **Coverage limits:** Standard asteroid night views are substantially terrain-occluded; its standard 100 m view is inside the surface. The lifted night pair and bounds-aware distance image provide separate visual evidence. Night metadata records a 500 m altitude adjustment, orbit 35°/25° at 1.6 radii, and null actual range. The distance supplement records **265.5207203565617 m centre range**, labelled 100 m beyond bounds. Neither substitutes for standard placement or performance evidence.
+- **Camera limits:** Cutaway requests specify explicit eye/target coordinates and 40°/50° FOV. Reported metadata instead retains orbit 35°/16°/1.7 with null range and approximately **70° noon / 64° space FOV**. The requested and reported camera fields are not treated as equivalent.
+- **Assembly provenance:** Current-source review copies include four actual point lights, nine 1.85 m bipeds and one Lark per LOD. The cut removes `x>0` and caps **only the rock**; the mouth remains uncut. The cut plane was reconstructed from retained geometry; original literal CLI arguments are unavailable. Uncut exterior views occlude the internal references, while the scale-detail image remains too distant for a strong human-scale reachability check.
+- Static LOD pairs support the topology score, but continuous automatic transitions were not captured. Runtime door animation and player traversal remain unverified. All performance readouts remain explicitly unqualified; supplements contain no performance calls.
