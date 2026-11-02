@@ -9,12 +9,13 @@ import shutil
 import subprocess
 import sys
 
-from run_round4_browser_proof import executable_path, RUN
+from run_round4_browser_proof import executable_path, RUN, PRIVATE_TMP_POLICY
 
 ROOT = Path(__file__).resolve().parents[4]
 HERE = Path(__file__).parent
 BASE = ROOT / 'assets/renders/stations/round4'
-OUT = BASE / 'browser_proof_ready02'
+OUT = BASE / 'browser_proof_ready03'
+PRIOR = BASE / 'browser_proof_ready02'
 
 
 def binding(path):
@@ -48,15 +49,18 @@ for old in old_class.body:
         new = next(v for v in new_class.body if isinstance(v, ast.FunctionDef) and v.name == old.name)
         assert ast.dump(old, include_attributes=False) == ast.dump(new, include_attributes=False)
 review2_preservation = BASE / 'browser_proof_ready01/review2_preservation.json'
+assert binding(HERE / 'round4_job_boundary.py')['sha256'] == '3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c'
+launcher = json.loads((OUT / 'launcher_cpu01/result.json').read_text())
+assert launcher['all_owned_resources_drained'] and launcher['browser_GPU_native_capture_performed'] is False
 for record in json.loads(review2_preservation.read_text())['files']:
     assert binding(ROOT / record['path'])['sha256'] == record['sha256']
 assert not RUN.exists()
 assert not (OUT / 'parent_gpu_proof_grant.json').exists()
 assert not (OUT / 'consumed_proof_grants').exists()
-test_log = OUT / 'proof_controls19.log'
-assert 'Ran 19 tests' in test_log.read_text() and test_log.read_text().rstrip().endswith('OK')
+test_log = OUT / 'cpu_controls22.log'
+assert 'Ran 22 tests' in test_log.read_text() and test_log.read_text().rstrip().endswith('OK')
 for name, count in (('archive_controls_final9.log', 9), ('relevant_controls23.log', 23)):
-    content = (OUT / name).read_text()
+    content = (PRIOR / name).read_text()
     assert f'Ran {count} tests' in content and content.rstrip().endswith('OK')
 
 pnpm = Path(shutil.which('pnpm')).resolve()
@@ -80,8 +84,7 @@ toolchain = [pnpm, embedded_node, Path(shutil.which('node')).resolve(), Path(sys
 toolchain += sorted((ROOT / 'node_modules/.pnpm').glob('@esbuild+darwin-arm64@*/node_modules/@esbuild/darwin-arm64/bin/esbuild'))
 process_binaries = {str(p.resolve()): binding(p)['sha256'] for p in code_candidates + toolchain if p != pnpm}
 names = ('run_round4_browser_proof.py', 'round4_browser_probe.mjs', 'resolve_round4_browser_cpu.cjs',
-         'test_round4_browser_proof.py', 'prepare_round4_browser_proof.py', 'round4_job_boundary.py',
-         'test_round4_profile_archive.py')
+         'test_round4_browser_proof.py', 'prepare_round4_browser_proof.py', 'prove_round4_short_tmp_cpu.py')
 sources = [binding(HERE / name) for name in names]
 freeze = OUT / 'frozen_sources'
 freeze.mkdir(exist_ok=False)
@@ -100,7 +103,10 @@ for name, value in json.loads(original.read_text())['input_sha256'].items():
 
 history_paths = [accepted_file, BASE / 'controller_revise01/actual_browser_boundary_proposal.json',
                  BASE / 'controller_revise01/freeze02/inventory.json', BASE / 'stage1_artifact_recovery.json',
-                 BASE / 'browser_proof_ready01/readiness.json', BASE / 'browser_proof_ready01/inventory.json']
+                 BASE / 'browser_proof_ready01/readiness.json', BASE / 'browser_proof_ready01/inventory.json',
+                 PRIOR / 'readiness.json', PRIOR / 'inventory.json',
+                 BASE / 'browser_proof_execution02/failed_attempt_inventory.json',
+                 BASE / 'browser_proof_execution02/diagnosis.json', BASE / 'actual_browser_proof02/result.json']
 history = [binding(p) for p in history_paths]
 ready = {'task': 'P1.E11.T01', 'status': 'CPU_READY_FOR_NARROW_INDEPENDENT_PROOF_RUNNER_REVIEW',
          'GPU_GATE': 'CLOSED; separate explicit parent grant required after review',
@@ -116,7 +122,8 @@ ready = {'task': 'P1.E11.T01', 'status': 'CPU_READY_FOR_NARROW_INDEPENDENT_PROOF
          'work': 'One about:blank page at1920x1080, one1x1 WebGL2 clear/finish; no assets/screenshots/performance',
          'launch_call': 'chromium.launch({ args })', 'launch_settings_unchanged': True,
          'resolver_argv': resolver_argv, 'resolver': resolver,
-         'process_binary_sha256': process_binaries, 'temporary_root': str((RUN / 'private_profiles').resolve()),
+         'process_binary_sha256': process_binaries, 'private_tmp_policy': PRIVATE_TMP_POLICY,
+         'private_tmp_path': 'Created uniquely at runtime; canonical mode0700 path/UID/dev/inode and socket byte bound are persisted before launch',
          'input_sha256': inputs, 'prior_accepted_eight_source_bindings': accepted['sources'],
          'current_prior_source_bindings': current_prior,
          'archive_API_delta': {'optional_keywords': ['profile_namespace', 'profile_prefixes'],
@@ -137,9 +144,11 @@ ready = {'task': 'P1.E11.T01', 'status': 'CPU_READY_FOR_NARROW_INDEPENDENT_PROOF
          'future_grant_fields': ['authorization_id', 'purpose=ASSET_FREE_CHROMIUM_BOUNDARY_PROOF_ONLY', 'authorized_head', 'readiness_sha256', 'runner_sha256'],
          'required_environment': 'STATION_BROWSER_PROOF_GRANT=<new parent authorization_id>',
          'history_bindings_not_recopied': history, 'full_review2_preservation': binding(review2_preservation),
-         'new_CPU_tests': {'count': 19, 'log': binding(test_log), 'scope': 'parsing/gating/negative mocks, syntax and dry resolver; no Job/browser launch'},
-         'focused_archive_controls': {'count': 9, 'log': binding(OUT / 'archive_controls_final9.log')},
-         'relevant_previous_controls': {'count': 23, 'log': binding(OUT / 'relevant_controls23.log'), 'rerun_once_for_authorized_archive_API_change': True},
+         'new_CPU_tests': {'count': 22, 'log': binding(test_log), 'scope': 'proof parsing/gating/negative mocks and namespace/cache filesystem controls; no browser launch'},
+         'prior_focused_archive_controls': {'count': 9, 'log': binding(PRIOR / 'archive_controls_final9.log'), 'rerun_this_unit': False},
+         'prior_relevant_controls': {'count': 23, 'log': binding(PRIOR / 'relevant_controls23.log'), 'rerun_this_unit': False},
+         'actual_pnpm_tsx_CPU_launcher_proof': binding(OUT / 'launcher_cpu01/result.json'),
+         'short_tmp_correction': 'Preserve exact remaining nonprofile temporary entries with namespace provenance after terminal drain, then remove only that caller-created root; no profile reclassification/global cleanup',
          'new_sources': sources}
 write(OUT / 'readiness.json', ready)
 write(OUT / 'proposal.json', {key: ready[key] for key in ('status', 'GPU_GATE', 'argv', 'runner_command', 'capture_seconds',
@@ -149,5 +158,5 @@ write(OUT / 'inventory.json', {'utc': datetime.datetime.now(datetime.timezone.ut
 for p in OUT.rglob('*'):
     if p.is_file(): p.chmod(0o444)
 print(json.dumps({'readiness': binding(OUT / 'readiness.json'), 'inventory': binding(OUT / 'inventory.json'),
-                  'selected_browser': resolver['selectedExecutable'], 'authorized_archive_API_changes': 1,
+                  'selected_browser': resolver['selectedExecutable'], 'accepted_archive_API_changes_this_unit': 0,
                   'other_accepted_source_changes': 0}, indent=2))

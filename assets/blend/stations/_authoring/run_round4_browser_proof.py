@@ -7,18 +7,22 @@ import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import time
+import tempfile
 
-from round4_job_boundary import StationJob, deadline, identity, coalition, LIBPROC, write
+from round4_job_boundary import StationJob, deadline, identity, coalition, LIBPROC, write, kernel_tasks, SUPPORTED_PROFILE_PREFIXES
 
 ROOT = Path(__file__).resolve().parents[4]
-BASE = ROOT / 'assets/renders/stations/round4/browser_proof_ready02'
+BASE = ROOT / 'assets/renders/stations/round4/browser_proof_ready03'
 READY = BASE / 'readiness.json'
 GRANT = BASE / 'parent_gpu_proof_grant.json'
-RUN = ROOT / 'assets/renders/stations/round4/actual_browser_proof02'
+RUN = ROOT / 'assets/renders/stations/round4/actual_browser_proof03'
 CAPTURE_SECONDS = CLEANUP_SECONDS = 30
+PRIVATE_TMP_POLICY = {'parent': '/private/tmp', 'prefix': 'sbr-', 'unix_socket_capacity': 104,
+                      'worst_case_tsx_pid': '2147483647'}
 
 
 def sha(path):
@@ -27,6 +31,61 @@ def sha(path):
 
 def utc():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def tmp_admission(path):
+    path = Path(path)
+    info = path.lstat()
+    assert path.is_absolute() and path == path.resolve() and not path.is_symlink()
+    assert stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid() and stat.S_IMODE(info.st_mode) == 0o700
+    return {'path': str(path), 'uid': info.st_uid, 'mode': '0o700', 'stamp': [info.st_dev, info.st_ino],
+            'ownership': 'Fresh directory created by this caller, exclusively inherited as TMPDIR by its one owned job'}
+
+
+def create_private_tmp(record_path):
+    policy = PRIVATE_TMP_POLICY
+    path = Path(tempfile.mkdtemp(prefix=policy['prefix'], dir=policy['parent'])).resolve()
+    admission = tmp_admission(path)
+    socket = path / f"tsx-{os.getuid()}" / (policy['worst_case_tsx_pid'] + '.pipe')
+    admission.update(worst_case_tsx_socket=str(socket), socket_path_bytes=len(os.fsencode(socket)),
+                     unix_socket_capacity=policy['unix_socket_capacity'])
+    write(record_path, admission)  # Persist provenance before any job receives TMPDIR.
+    if admission['socket_path_bytes'] >= policy['unix_socket_capacity']:
+        path.rmdir()
+        raise ValueError('Private TMPDIR exceeds actual tsx IPC pathname capacity')
+    return path, admission
+
+
+def _tmp_tree(path):
+    records = []
+    for child in sorted(path.rglob('*')):
+        info = child.lstat()
+        assert not child.is_symlink() and info.st_uid == os.getuid(), 'Unsafe temporary namespace entry'
+        kind = 'directory' if stat.S_ISDIR(info.st_mode) else 'file' if stat.S_ISREG(info.st_mode) else 'unsupported'
+        assert kind != 'unsupported', 'Unsupported temporary namespace entry retained; no deletion'
+        record = {'path': str(child.relative_to(path)), 'kind': kind, 'mode': stat.S_IMODE(info.st_mode)}
+        if kind == 'file': record.update(bytes=info.st_size, sha256=sha(child))
+        records.append(record)
+    return records
+
+
+def preserve_private_tmp(path, admission, destination, *, job=None, no_process_launched=False):
+    if job is not None:
+        assert job.state['drained'] and kernel_tasks(job.coalition_id)['live'] == 0, 'Terminal owned job required'
+    else:
+        assert no_process_launched, 'No temporary namespace cleanup without terminal provenance'
+    path = Path(path)
+    current = tmp_admission(path)
+    assert current['path'] == admission['path'] and current['stamp'] == admission['stamp'], 'Namespace identity changed'
+    assert not any(any(p.name.startswith(prefix) for prefix in SUPPORTED_PROFILE_PREFIXES) for p in path.iterdir()), 'Unarchived browser profile is not a cache'
+    before = _tmp_tree(path)
+    shutil.copytree(path, destination, symlinks=True)
+    assert _tmp_tree(Path(destination)) == before and _tmp_tree(path) == before, 'Temporary namespace copy differs'
+    assert tmp_admission(path)['stamp'] == admission['stamp']
+    shutil.rmtree(path)  # Exact caller-created namespace only, after verified terminal drain.
+    return {'admission': admission, 'nonprofile_entries': before, 'archive': str(destination),
+            'all_bytes_preserved': True, 'namespace_removed': not path.exists(),
+            'browser_profile_reclassification': False, 'global_cleanup': False}
 
 
 def parse_launch(log, expected_binary, temporary_root):
@@ -179,6 +238,7 @@ def preflight(grant_path=GRANT, readiness_path=READY, runtime_output=RUN):
     assert str(Path(sys.executable).resolve()) == ready['python_executable'], 'Python interpreter drift'
     assert ready['runtime_output'] == str(runtime_output) and not Path(runtime_output).exists()
     assert ready['capture_seconds'] == ready['cleanup_seconds'] == 30
+    assert ready['private_tmp_policy'] == PRIVATE_TMP_POLICY
     current = json.loads(subprocess.check_output(ready['resolver_argv'], cwd=ROOT, text=True, timeout=5))
     assert current == ready['resolver'] and current['spawnCalls'] == []
     assert current['validatedHeadless'] is True and current['selectedRegistryName'] == 'chromium-headless-shell'
@@ -205,12 +265,11 @@ def execute(job_factory=StationJob):
               'external_native_XPC_service_ownership': 'UNQUALIFIED', 'actual_station_capture_enabled': False}
     job = observer = None
     job_initialised = False
-    private_profiles = (out / 'private_profiles').resolve()
+    private_tmp = tmp_record = None
     try:
         with deadline(CAPTURE_SECONDS):
             started = time.monotonic()
-            assert str(private_profiles) == ready['temporary_root']
-            private_profiles.mkdir(mode=0o700)
+            private_tmp, tmp_record = create_private_tmp(out / 'private_tmp_admission.json')
             admission = attempt / 'admission.json'
             write(admission, {'authorization_id': grant['authorization_id'], 'payload_sha256': ready['payload_sha256'],
                               'probe_output': str(out / 'probe')})
@@ -218,7 +277,7 @@ def execute(job_factory=StationJob):
             # accepted constructor creates no processes; its owned scratch can be retained.
             job = job_factory.__new__(job_factory)
             job_factory.__init__(job, out / 'owned_job', ready['argv'], ROOT, capture_seconds=30,
-                env={'PATH': os.environ['PATH'], 'DEBUG': 'pw:browser', 'SMOKE_GL': 'metal', 'TMPDIR': str(private_profiles) + os.sep,
+                env={'PATH': os.environ['PATH'], 'DEBUG': 'pw:browser', 'SMOKE_GL': 'metal', 'TMPDIR': str(private_tmp) + os.sep,
                      'STATION_BROWSER_PROOF_ADMISSION': str(admission),
                      'STATION_BROWSER_PROOF_GRANT': grant['authorization_id']})
             job_initialised = True
@@ -226,7 +285,7 @@ def execute(job_factory=StationJob):
                              authorization_id=grant['authorization_id'])
             job.save()
             job.start()
-            observer = BrowserReceipts(job, out / 'probe', ready['resolver'], ready['process_binary_sha256'], ready['temporary_root'])
+            observer = BrowserReceipts(job, out / 'probe', ready['resolver'], ready['process_binary_sha256'], str(private_tmp))
             outcome = job.wait(max(.001, CAPTURE_SECONDS - (time.monotonic() - started)), observer.observe)
             exits = job.status().get('exits', {})
             result.update(capture_outcome=outcome, capture_exit=exits.get('capture', 'UNKNOWN'),
@@ -260,11 +319,11 @@ def execute(job_factory=StationJob):
                         result['retained_profile_binding_failure'] = str(profile_binding_error)
                         result['owned_job_bootout_exit'] = stopped.returncode
                         raise RuntimeError('Cohort drained; profile binding unproved, raw scratch retained')
-                    job.archive(profile_namespace=private_profiles, profile_prefixes=('playwright_chromiumdev_profile-',))
+                    job.archive(profile_namespace=private_tmp, profile_prefixes=('playwright_chromiumdev_profile-',))
                     profile_release = json.loads((job.out / 'profile_release.json').read_text())
                     assert profile_release['all_absent']
                     assert len(profile_release['owned_logged_profiles']) == 1 or result['primary_failure'], 'Profile identity missing'
-                    private_profiles.rmdir()  # Unexpected remaining data holds teardown; no broad namespace deletion.
+                    result['private_tmp_release'] = preserve_private_tmp(private_tmp, tmp_record, out / 'preserved_private_tmp', job=job)
                     result.update(teardown_status='DRAINED_AND_ARCHIVED', profile_release=profile_release,
                                   private_profile_namespace_removed=True)
                 elif job is not None and job_initialised:
@@ -282,9 +341,12 @@ def execute(job_factory=StationJob):
                         shutil.copytree(scratch, out / 'partial_constructor_scratch')
                         shutil.rmtree(scratch)
                     result['teardown_status'] = 'NO_PROCESS_LAUNCH_CONSTRUCTOR_SCRATCH_PRESERVED'
-                    private_profiles.rmdir()
+                    if private_tmp:
+                        result['private_tmp_release'] = preserve_private_tmp(private_tmp, tmp_record, out / 'preserved_private_tmp', no_process_launched=True)
                 else:
                     result['teardown_status'] = 'NO_JOB_CREATED'
+                    if private_tmp:
+                        result['private_tmp_release'] = preserve_private_tmp(private_tmp, tmp_record, out / 'preserved_private_tmp', no_process_launched=True)
         except BaseException as error:
             result['teardown_status'] = 'UNPROVED'
             result['teardown_failure'] = {'type': type(error).__name__, 'message': str(error)}

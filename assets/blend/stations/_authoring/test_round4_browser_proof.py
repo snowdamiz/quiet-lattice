@@ -26,6 +26,15 @@ class ProofControls(unittest.TestCase):
         self.profile = self.out / 'playwright_chromiumdev_profile-mock'
         self.log = f'pw:browser <launching> {self.binary} --use-angle=metal --user-data-dir={self.profile}\npw:browser <launched> pid=9001\n'
 
+    def tearDown(self):
+        # Mock execution failures intentionally retain their exact admitted directory.
+        # No process was launched in those controls; preserve and remove that fixture only.
+        for admission_file in self.out.rglob('private_tmp_admission.json'):
+            admission = json.loads(admission_file.read_text()); path = Path(admission['path'])
+            if path.exists():
+                receipt = proof.preserve_private_tmp(path, admission, admission_file.parent / 'CPU_fixture_tmp_recovery', no_process_launched=True)
+                proof.write(admission_file.parent / 'CPU_fixture_tmp_recovery.json', receipt)
+
     def test_launch_profile_binary_and_positive_pid_parsing(self):
         value = proof.parse_launch(self.log, self.binary, self.out)
         self.assertEqual(value['pid'], 9001)
@@ -145,6 +154,7 @@ class ProofControls(unittest.TestCase):
                  'input_sha256': {str(file): proof.sha(file)}, 'resolver_argv': ['CPU-MOCK-RESOLVER'], 'resolver': resolver,
                  'pnpm_executable': str(Path(shutil.which('pnpm')).resolve())}
         ready['python_executable'] = str(Path(sys.executable).resolve())
+        ready['private_tmp_policy'] = proof.PRIVATE_TMP_POLICY
         readiness = self.out / 'ready.json'; proof.write(readiness, ready)
         grant = {'authorization_id': 'CPU-MOCK-ONLY', 'purpose': 'ASSET_FREE_CHROMIUM_BOUNDARY_PROOF_ONLY',
                  'readiness_sha256': proof.sha(readiness), 'runner_sha256': proof.sha(proof.__file__), 'authorized_head': 'CPU-MOCK-HEAD'}
@@ -195,6 +205,7 @@ class ProofControls(unittest.TestCase):
             def status(self): return {'exits': {'capture': exit_code, 'caffeinate': 0}}
             def drain(self, *_):
                 type(self).drained += 1
+                self.state['drained'] = True
                 return {'exits': {'capture': exit_code, 'caffeinate': 0}, 'drained': True, 'clean': True}
             def archive(self, **_kwargs):
                 type(self).archived += 1
@@ -209,7 +220,8 @@ class ProofControls(unittest.TestCase):
         grant = {'authorization_id': 'CPU-MOCK-ONLY'}
         ready = {'payload_sha256': 'mock', 'argv': [], 'resolver': {}, 'process_binary_sha256': {}, 'temporary_root': str(self.out / 'execution/private_profiles')}
         patches = patch.multiple(proof, BASE=self.out / 'claims', RUN=self.out / 'execution',
-                                 preflight=lambda: (grant, ready), BrowserReceipts=FakeObserver)
+                                 preflight=lambda: (grant, ready), BrowserReceipts=FakeObserver,
+                                 kernel_tasks=lambda _: {'live': 0})
         return FakeJob, patches
 
     def test_primary_failure_retained_when_archive_also_fails(self):
@@ -276,6 +288,42 @@ class ProofControls(unittest.TestCase):
         self.assertIn('Date.now() + 5000', source)
         self.assertIn("{ flag: 'wx' }", source)
         subprocess.run(['node', '--check', str(Path(proof.__file__).with_name('round4_browser_probe.mjs'))], check=True, timeout=3)
+
+    def test_short_namespace_admission_bounds_actual_tsx_socket_shape(self):
+        path, admission = proof.create_private_tmp(self.out / 'private_tmp_admission.json')
+        self.assertEqual(path.parent, Path('/private/tmp'))
+        self.assertTrue(path.name.startswith('sbr-'))
+        self.assertEqual(path.stat().st_mode & 0o777, 0o700)
+        self.assertLess(admission['socket_path_bytes'], admission['unix_socket_capacity'])
+
+    def test_nonprofile_cache_bytes_preserved_only_after_terminal_job(self):
+        path, admission = proof.create_private_tmp(self.out / 'private_tmp_admission.json')
+        cache = path / 'node-compile-cache'; cache.mkdir(); (cache / 'data').write_bytes(b'CPU cache\x00bytes')
+        (path / f'tsx-{os.getuid()}').mkdir()
+        class MockJob: state = {'drained': False}; coalition_id = 999991
+        job = MockJob()
+        with self.assertRaises(AssertionError): proof.preserve_private_tmp(path, admission, self.out / 'backup', job=job)
+        job.state['drained'] = True
+        with patch.object(proof, 'kernel_tasks', lambda _: {'live': 1}):
+            with self.assertRaises(AssertionError): proof.preserve_private_tmp(path, admission, self.out / 'backup', job=job)
+        with patch.object(proof, 'kernel_tasks', lambda _: {'live': 0}):
+            result = proof.preserve_private_tmp(path, admission, self.out / 'backup', job=job)
+        self.assertEqual((self.out / 'backup/node-compile-cache/data').read_bytes(), b'CPU cache\x00bytes')
+        self.assertFalse(path.exists())
+        self.assertTrue(result['all_bytes_preserved'])
+        self.assertFalse(result['browser_profile_reclassification'] or result['global_cleanup'])
+
+    def test_cache_archive_rejects_profile_symlink_and_changed_identity(self):
+        path, admission = proof.create_private_tmp(self.out / 'private_tmp_admission.json')
+        profile = path / 'playwright_chromiumdev_profile-unhandled'; profile.mkdir()
+        with self.assertRaises(AssertionError): proof.preserve_private_tmp(path, admission, self.out / 'backup', no_process_launched=True)
+        self.assertTrue(profile.exists()); profile.rmdir()
+        outside = self.out / 'outside'; outside.write_text('untouched')
+        link = path / 'symlink'; link.symlink_to(outside)
+        with self.assertRaises(AssertionError): proof.preserve_private_tmp(path, admission, self.out / 'backup', no_process_launched=True)
+        self.assertEqual(outside.read_text(), 'untouched'); link.unlink()
+        with self.assertRaises(AssertionError): proof.preserve_private_tmp(path, {**admission, 'stamp': [0, 0]}, self.out / 'backup', no_process_launched=True)
+        self.assertTrue(path.exists())
 
 
 if __name__ == '__main__': unittest.main()
