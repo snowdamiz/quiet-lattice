@@ -359,6 +359,7 @@ export class Zone {
       e.changed.add(k);
     }
     this.touch(e);
+    if (e.fields.kind === 'player' && (set.frame !== undefined || set.pos !== undefined || set.mode !== undefined)) this.combat.moved(id, null);
   }
 
   /** The entities in a party (the party service's tag on their entities), none for a party nobody in this zone belongs to. */
@@ -499,6 +500,7 @@ export class Zone {
         Object.assign(f, { frame: pose.frame, pos: [...pose.pos], quat: [...pose.quat], vel: [...pose.vel], mode });
         for (const k of INPUT_FIELDS) e.changed.add(k);
         this.touch(e);
+        this.combat.moved(e.id, null);
       }
       return verdict;
     }
@@ -511,6 +513,7 @@ export class Zone {
     e.unvalidated = !verdict;
     e.input = { seq: msg.seq, time: msg.time, buttons: msg.buttons, aim: msg.aim && normalised(msg.aim) };
     this.touch(e);
+    if (verdict) this.combat.moved(e.id, verdict.motion);
     return 'ok';
   }
 

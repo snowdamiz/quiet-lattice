@@ -132,7 +132,16 @@ export interface MovementRefusal {
   kick: boolean;
 }
 
-export type MovementVerdict = { ok: true; mode: MoveMode; vel: Vec3 } | MovementRefusal;
+/** Motion proven by successive accepted poses in the destination frame, over authority-credited time. It never reads
+ * the velocity the client reported. Null on a first sample, a reset, or while the terrain still makes a pose provisional. */
+export interface MeasuredMotion {
+  seconds: number;
+  vel: Vec3;
+  /** The preceding ship mode. Walker positions never supply ship motion, including when boarding. */
+  fromMode: Exclude<MoveMode, 'foot'>;
+}
+
+export type MovementVerdict = { ok: true; mode: MoveMode; vel: Vec3; motion: MeasuredMotion | null } | MovementRefusal;
 
 /** A correction, as the authority keeps it for the dev tools and tests (the log has the same). */
 export interface ViolationRecord extends Violation {
@@ -371,6 +380,8 @@ class Mover {
   readonly corrections: number[] = [];
   /** no input from its client yet: the pose it joined at is on the server's clock until the first one */
   fresh = true;
+  /** A join, handoff or correction needs a fresh pair before its motion can cost re-entry damage. */
+  motionReady = false;
   /** its client has sent an input with no time (logged once) */
   timeless = false;
   /** inputs let through while a world's ground is planned */
@@ -601,6 +612,7 @@ export class MovementAuthority {
       }
     }
     m.parked = null;
+    m.motionReady = false;
     this.movers.delete(id);
     this.releasePad(id);
     m.id = nextId;
@@ -674,14 +686,23 @@ export class MovementAuthority {
     const judged = this.judge(m, L, s);
     if (judged) return this.refuse(m, msg.seq, judged.violation, judged.rewind, credit, now);
     this.holdIfSkipped(m, { seq: msg.seq, msg, credit, r: now });
+    let motion: MeasuredMotion | null = null;
+    const seconds = s.t - L.t;
+    if (m.motionReady && !m.hold && !s.resync && s.mode !== 'foot' && L.mode !== 'foot' && seconds > 0) {
+      // As in the authority's speed check, the old frame carries its pose until the crossing's validated world time.
+      // Re-expressing it there removes a frame switch's apparent jump without adding the body's orbit or spin as speed.
+      const from = this.inFrame(L, s.key, s.p).pos;
+      motion = { seconds, vel: [(s.pos[0] - from[0]) / seconds, (s.pos[1] - from[1]) / seconds, (s.pos[2] - from[2]) / seconds], fromMode: L.mode };
+    }
     m.graceUntil = -Infinity;
     this.accept(m, L, s);
+    m.motionReady = !m.hold;
     // the meters' account of it: the time credited since the last valid pose (none for a clock stepped forward), flown in its
     // mode, which the pulse drive pays Charge for; so a client pays for the flight accepted however it bunches its inputs,
     // each second once (a correction's pose is re-timed to the refused input's credited time, and that never runs back)
     const character = m.profile.characterId;
     if (this.meters && character !== undefined) this.meters.flown(character, s.mode, s.resync ? 0 : Math.max(0, s.t - L.t), now, s.t);
-    return { ok: true, mode: s.mode, vel: s.vel };
+    return { ok: true, mode: s.mode, vel: s.vel, motion };
   }
 
   // ---------- holding for the ground ----------
@@ -1342,6 +1363,7 @@ export class MovementAuthority {
     if (m.seg.length === 0) m.boundary = null;
     m.seg.push(to);
     m.last = to;
+    m.motionReady = false;
     if (to.cls === 'rest') m.parked = to;
     m.graceUntil = now + MOVEMENT.correction.graceS;
     const K = MOVEMENT.kick;

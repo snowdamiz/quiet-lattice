@@ -6,7 +6,8 @@
 //   entered with: 100, Second Skin 150) on foot, and its ship's shield and hull (`shipStats`) aboard; which one a hit
 //   takes is the mode the server believes. Health goes on the wire as the entity's `hp` (the pool in use, a fraction) and,
 //   aboard, `shield`. The suit's own meters cost a player on foot health at zero and give it back (`suitHealth`, P1.E06.T06);
-//   nothing else heals here yet (the Recall, P1.E06.T03, and creature attacks, P1.E08.T02, decide that).
+//   station crews repair a docked ship and refill its shield on arrival (P1.E06.T07). Hostile skies and measured re-entry
+//   cost shield, then hull. The Recall (P1.E06.T03) owns recovery after a ship loss.
 // - One damage path, `applyDamage(source, target, packet)`: the shared pipeline (`computeDamage`: resistances, the
 //   attacker's power, augments, what the target takes), level-scaled only when the source is a creature (DECISIONS
 //   P1.E06.T01), then health, threat (fauna's `hurt`, so a creature turns on whoever hurts it most, and grazers bolt), the
@@ -34,11 +35,14 @@ import {
 } from '@astra/shared/combat';
 import type { Resistance, StatMod } from '@astra/shared/data';
 import { encodeServerMessage, type EntityField, type GameEvent } from '@astra/shared/protocol';
-import { shipStats, type ShipLoadout } from '@astra/shared/ships';
-import type { FaunaSpecies } from '@astra/shared/world';
+import { DOCK_HULL_REPAIR_PER_S, hazardDamagePerS, reentryDamagePerS, shipStats, type ShipLoadout, type ShipStats } from '@astra/shared/ships';
+import { tierOfGalaxySystem, type FaunaSpecies, type SystemDescription } from '@astra/shared/world';
 import type { CombatCreature } from '../fauna/sim.ts';
+import { groundPlanner, type GroundSource } from '../fauna/terrain.ts';
 import { DEFAULT_LOADOUT } from '../inventory/service.ts';
 import type { EntityFields, ZoneEntity, ZoneLog, ZoneViewer } from '../zones/zone.ts';
+import type { MeasuredMotion } from '../sim/movement/authority.ts';
+import { shipAtPad, shipExposure, shipReentry } from './environment.ts';
 
 /** How long a dead creature's corpse stays before it is despawned, s. */
 export const DEATH_BEAT_S = 3;
@@ -57,6 +61,8 @@ export interface DamagePacket {
   /** Base damage per hit: a weapon's or node's number, a creature attack's base (scaled here by the creature's level). */
   base: number;
   kind: DamageKind;
+  /** An already-earned ship hazard still hits the ship if its pilot has disembarked before the tick. */
+  pool?: 'ship';
   /** What dealt it, by id (the weapon, node or attack), for the event. */
   what?: string;
   /** What dealt it, for the target's resistances (a node, a weapon, a branch, augments). */
@@ -143,7 +149,10 @@ export interface CombatHooks {
 export interface CombatZone {
   readonly id: string;
   readonly time: number;
+  readonly system: SystemDescription;
+  readonly systemIndex: number;
   readonly fauna: {
+    readonly tier: number;
     creature(id: number): CombatCreature | null;
     hurt(creature: number, attacker: number, amount: number): boolean;
     kill(id: number): boolean;
@@ -184,6 +193,11 @@ interface PlayerVitals {
   hullMax: number;
   shield: number;
   shieldMax: number;
+  ship: ShipStats | null;
+  /** The server clock and storm countdown; preserved through a retune, with no elapsed time charged across a transfer. */
+  hazards: { at: number | null; strike: number; serviced: boolean; resting: boolean };
+  /** Earned by each validated motion interval, including bunched inputs; applied by the next tick, even after a transfer. */
+  reentry: number;
   /** its own modifiers (Grey Blood's damage taken) */
   mods: readonly StatMod[];
   down: DownedReport['cause'] | null;
@@ -227,7 +241,7 @@ export class ZoneCombat {
 
   constructor(
     private readonly zone: CombatZone,
-    private readonly opts: { hooks?: () => CombatHooks | null; log?: ZoneLog } = {},
+    private readonly opts: { hooks?: () => CombatHooks | null; log?: ZoneLog; grounds?: GroundSource; random?: () => number } = {},
   ) {}
 
   /** A player entered: whose it is and what it flies, for its health. */
@@ -255,6 +269,7 @@ export class ZoneCombat {
     v.suitMax = next.suitMax;
     v.hullMax = next.hullMax;
     v.shieldMax = next.shieldMax;
+    v.ship = next.ship;
     v.mods = next.mods;
     if (this.zone.entity(entity)) this.show(entity, v);
   }
@@ -264,7 +279,13 @@ export class ZoneCombat {
     const profile = this.profiles.get(entity);
     if (profile) target.profiles.set(nextEntity, profile);
     const vitals = this.vitals.get(entity);
-    if (vitals) target.vitals.set(nextEntity, vitals);
+    if (vitals) {
+      if (vitals.kind === 'player') {
+        vitals.hazards.at = null;
+        vitals.hazards.resting = false;
+      }
+      target.vitals.set(nextEntity, vitals);
+    }
     this.profiles.delete(entity);
     this.vitals.delete(entity);
   }
@@ -374,6 +395,19 @@ export class ZoneCombat {
     return { ...this.counts, corpses: this.corpses.length };
   }
 
+  /** Every accepted pose records pad departure, including bunched inputs. Unknown motion suspends service; only a
+   * measured interval at rest establishes it again. Disembarking keeps the latch and never measures the ship from a walker.
+   * Re-entry still counts only flying-to-flying intervals, accumulated without losing bunched inputs. */
+  moved(entity: number, motion: MeasuredMotion | null): void {
+    const fields = this.zone.entity(entity)?.fields;
+    const v = this.vitalsOf(entity);
+    if (!fields || v?.kind !== 'player') return;
+    if (fields.mode !== 'foot' && !shipAtPad(this.zone.system, fields)) v.hazards.serviced = false;
+    v.hazards.resting = fields.mode !== 'foot' && motion !== null && Math.hypot(...motion.vel) <= 1;
+    if (v.down !== null || !v.ship || motion?.fromMode !== 'ship') return;
+    v.reentry += reentryDamagePerS(shipReentry(this.zone.system, fields, motion.vel), v.ship) * motion.seconds;
+  }
+
   /**
    * The one way damage is dealt (see the header): `source` the attacker's entity (null for none), `target` the one hit.
    * Null when the target is no combatant (not a creature or player, dead, down, gone); otherwise what it took.
@@ -411,7 +445,7 @@ export class ZoneCombat {
       this.zone.patch(target, { hp });
     } else {
       dealt = amount;
-      hp = this.takePlayer(v, target, amount);
+      hp = this.takePlayer(v, target, amount, packet.pool);
       killed = v.down !== null;
     }
     this.counts.hits++;
@@ -430,14 +464,19 @@ export class ZoneCombat {
     return { amount, hp, killed };
   }
 
-  /** Despawns the corpses whose beat is over, and keeps players' health on their entities as their mode changes (the hp
-   * shown is the pool in use). The zone calls this each tick, after its fauna. */
+  /** Applies ship hazards from the accepted pose on the server clock, despawns corpses, and keeps the pool in use on the
+   * entity. The zone calls this each tick after its fauna, before snapshots. Silent clients still take sky damage. */
   step(time: number): void {
     while (this.corpses.length && this.corpses[0]!.until <= time) {
       const { id } = this.corpses.shift()!;
       this.zone.despawn(id);
     }
-    for (const [id, v] of this.vitals) if (v.kind === 'player') this.show(id, v);
+    for (const id of this.profiles.keys()) {
+      const v = this.vitalsOf(id);
+      if (v?.kind !== 'player') continue;
+      this.shipHazards(id, v, time);
+      this.show(id, v);
+    }
   }
 
   /** Sends this tick's events to the sessions that see them (see the header). The zone calls this after its snapshots. */
@@ -542,8 +581,10 @@ export class ZoneCombat {
     const suitMax = playerMaxHealth(skills);
     let hullMax = 0;
     let shieldMax = 0;
+    let ship: ShipStats | null = null;
     try {
       const s = shipStats(p.ship ?? DEFAULT_LOADOUT.ship!, { skills });
+      ship = s;
       hullMax = s.hullMax;
       shieldMax = s.shieldMax;
     } catch (err) {
@@ -559,15 +600,57 @@ export class ZoneCombat {
       hullMax,
       shield: shieldMax,
       shieldMax,
+      ship,
+      hazards: { at: null, strike: 3, serviced: false, resting: false },
+      reentry: 0,
       mods,
       down: null,
       shown: null,
     };
   }
 
+  private shipHazards(id: number, v: PlayerVitals, time: number): void {
+    const clock = v.hazards;
+    const dt = clock.at === null ? 0 : Math.max(0, time - clock.at);
+    clock.at = Math.max(clock.at ?? time, time);
+    const reentry = v.reentry;
+    v.reentry = 0;
+    if (v.down !== null || !v.ship) return;
+    if (reentry > 0) this.applyDamage(null, id, { base: reentry, kind: 'hazard', what: 'reentry', pool: 'ship' }, time);
+    if (dt <= 0 || v.down !== null) return;
+    const fields = this.zone.entity(id)?.fields;
+    if (!fields) return;
+    const exposure = shipExposure(
+      this.zone.system,
+      fields,
+      this.opts.grounds ?? groundPlanner,
+      this.zone.fauna?.tier ?? tierOfGalaxySystem(this.zone.systemIndex),
+    );
+    if (!exposure.atPad && fields.mode !== 'foot') clock.serviced = false;
+    if (exposure.docked && clock.resting) {
+      v.hull = Math.min(v.hullMax, v.hull + DOCK_HULL_REPAIR_PER_S * dt);
+      if (!clock.serviced) v.shield = v.shieldMax;
+      clock.serviced = true;
+      return;
+    }
+    const sky = exposure.sky;
+    if (sky && sky.depth > 0) {
+      this.applyDamage(null, id, { base: hazardDamagePerS(sky.hazard, sky.depth, v.ship) * dt, kind: 'hazard', what: sky.hazard.kind }, time);
+      if (sky.hazard.kind === 'storm' && fields.mode !== 'landed' && v.down === null) {
+        const random = this.opts.random ?? Math.random;
+        clock.strike -= dt * (0.4 + sky.depth);
+        while (clock.strike <= 0) {
+          clock.strike += 2 + random() * 6;
+          this.applyDamage(null, id, { base: (5 + random() * 9) * v.ship.hazardDamage.storm, kind: 'hazard', what: 'storm' }, time);
+          if (v.down !== null) break;
+        }
+      }
+    }
+  }
+
   /** A hit on a player: its suit on foot; aboard, its shield then its hull. Returns the pool's fraction left. */
-  private takePlayer(v: PlayerVitals, id: number, amount: number): number {
-    if (this.onFoot(id)) {
+  private takePlayer(v: PlayerVitals, id: number, amount: number, pool?: 'ship'): number {
+    if (pool !== 'ship' && this.onFoot(id)) {
       v.suit = Math.max(0, v.suit - amount);
       if (v.suit <= v.suitMax * 1e-9) {
         v.suit = 0;

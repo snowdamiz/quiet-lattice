@@ -1579,6 +1579,7 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   and the zone's current body poses for the next interval. A client sending nothing still drains, starves and dies, and
   day/night multipliers and immunities change within one sweep. Second Skin's floor holds only out of combat
   (`meters.inCombat`, the combat service's).
+  Ship sky and re-entry damage belong to combat's shield and hull, not the suit's hazard-protection meter (§20, P1.E06.T07).
 - **Persistence**: the `meters` component (`v` 1, after `inventory`) stores `{heat, overheated, charge, lifeSupport, hazard,
   at}` (a save from before the suit's two has them full). A character
   back from away has its heat cooled for the time it was gone (idle, nowhere in particular) and its Charge as it left it:
@@ -1630,8 +1631,45 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   nothing, one refunded wounds nothing and never kills, a pool at 0 stays at 0 and the player stays down, a refund then a
   rebuy gains nothing); a hit takes the suit when the server believes it on foot, else the shield
   and then the hull. On the wire, an entity's `hp` is the fraction left of the pool in use (and aboard, `shield`), patched
-  as it changes and as a player's mode changes which pool is shown. Nothing heals yet and health is not saved: the
-  Recall (P1.E06.T03) and creature attacks (P1.E08.T02) decide recovery.
+  as it changes and as a player's mode changes which pool is shown. Suit meters restore health (§19), and station crews
+  repair a docked ship below. Health is not saved. The Recall (P1.E06.T03) owns recovery after a ship loss.
+- **Ship hazards** (P1.E06.T07) run in `ZoneCombat.step` before snapshots. `combat/environment.ts` reads the accepted
+  pose's frame and generated body. A rocky world's altitude is above its exact planned ground, or the sea over it, minus
+  `SHIP_GEAR_HEIGHT` (1.95 m). A gas giant's altitude is above its cloud-deck radius. `hazardDepth` and
+  `hazardDamagePerS` in `@astra/shared/ships` give the continuous rate, including the ship's plating. It hits shield
+  first, then hull, through `applyDamage`, with source null and the hazard kind as `what`. A silent client still takes
+  damage where its accepted pose stands. A character on foot takes no ship sky damage.
+  Ground is read from the existing worker planner. A pending or failed plan skips that tick's ground-dependent sky
+  damage, without guessing altitude or replaying the skipped interval later. Gas exposure needs no plan. The planner's
+  timeout, retry and backoff rules remain those in §6.2. This bounded wait also leaves movement authority's terrain
+  hold and refusal rules unchanged (§7).
+  Flying through a storm also advances the existing lightning countdown by `dt × (0.4 + depth)`, initially 3.
+  Each strike adds 5–14 damage, multiplied by the ship's storm plating, then adds 2–8 to the countdown. A landed ship
+  takes the continuous storm rate without extra strikes. The client retains wind, lightning, audio and their prediction.
+  Re-entry uses `reentryIntensity`, the existing unsmoothed plasma effect's air-density, speed and descent thresholds.
+  `reentryDamagePerS` multiplies it by the provisional `REENTRY_DAMAGE_PER_S` (20 at full intensity) and the ship's
+  `reentryDamage`. Slow flight, ascent, vacuum, gas giants and modes other than flying produce none. DESIGN 9.3 specifies
+  Ablative Plating's divisor, but no base rate; 20 is the task's provisional tuning.
+  Its motion comes from movement authority's `MeasuredMotion`, never the velocity a client reports. Each accepted
+  interval uses displacement over credited time, with the old pose re-expressed in the destination frame at the validated
+  crossing time as in movement's speed check. First inputs after joins, teleports, handoffs or corrections, clock
+  resyncs, and provisional terrain poses supply no motion. Observations cover all non-foot ship modes and include
+  `fromMode`. Re-entry still requires flying at both ends of an interval. `Zone.input` forwards every accepted pose and
+  its observation, including null, to `ZoneCombat.moved`, which accumulates damage for the next tick. Bunched inputs lose no intervals. Already-earned
+  damage survives a transfer or disembarking and still hits the ship. Silence adds no re-entry damage because the server
+  does not advance the pose between inputs. Sky damage continues on server time.
+  Dock service requires a station frame, accepted `docked` mode, gear within movement's pad-height tolerance, a position
+  inside a pad's radius, and authority-measured speed no greater than 1 m/s. Reported or clamped velocity supplies no
+  evidence of rest. A first or unknown observation, resync, correction, server placement, or handoff suspends service
+  until a fresh measured stationary interval. Known rest continues to permit service while the accepted pose stays
+  silent; observed motion does not become rest through silence. Walker samples never prove ship rest, including boarding.
+  Crews repair hull at `DOCK_HULL_REPAIR_PER_S` (20) and refill
+  shield once on arrival. A service latch remains set across mode toggles and disembarking, until the ship physically
+  leaves pad reach. Every accepted non-foot pose records that departure, so an exit and slow return between two ticks
+  still rearm arrival service. An out-of-place `docked` claim repairs nothing. A downed ship receives no service.
+  Each aboard snapshot reconciles the client's shield and hull fractions in `Ship.reconcileHealth`. `Ship.updateHazard`
+  predicts both sky and re-entry damage; predicted zero hull cannot invoke the demo rebuild, tax or teleport. A real zero
+  hull reports one `downed` hook with cause `ship`. The Recall and its visuals remain P1.E06.T03.
 - **One damage path**, `zone.combat.applyDamage(source, target, packet)`: `source` the attacker's entity (or null),
   `packet` the server's description of the hit (`base`, `kind` (`weapon`, `ability`, `attack`, `hazard`), `what` dealt
   it, its `DamageSource` for resistances, the attacker's modifiers, effects on the target). It runs the shared pipeline
@@ -2272,9 +2310,9 @@ effects; this runtime casts them all.
   when a tick is refused (the target in a safe zone or out of the caster's phase view: it is not alight again on coming out); a second ignition by the same caster makes it last to the later end at the greater power
   and never doubles its ticks. Tempered Core, Focused Lasers, Hot Hands and Ablative Plating are not cast: the meters'
   profile (§19), `shipStats` (the base gun's range and damage, §20, and `reentryDamage` and `hazardDamage`), and the mining
-  service (§18) read their nodes. The server's ship has no hazard damage yet (the client computes it), and no re-entry damage
-  exists on either side (Ablative Plating's re-entry half has no consumer until one is planned); when they do, they multiply
-  by `hazardDamage[kind]` and `shipStats(...).reentryDamage`.
+  service (§18) read their nodes. Combat's server hazard tick (§20, P1.E06.T07) consumes `hazardDamage[kind]` for hostile
+  skies and `reentryDamage` for re-entry. Ablative Plating divides each by three; its heat reduction stacks with Pilot's
+  Thermal Plating, while only Ablative Plating reduces re-entry.
 - **Resonance I–II** (`@astra/shared/abilities/resonance.ts`, `abilities/resonance.ts`; DESIGN 9.4). Pulse (10 heat, 6 s) stuns
   every creature within 15 m for 2 s (`FaunaSim.stun`: a stunned creature stands still, strikes nothing and drops an attack
   in progress); with Choir the caster's party members on foot within 50 m of it share it: the stun goes off round each
@@ -2353,9 +2391,8 @@ effects; this runtime casts them all.
   ×1.25 on `ship.shield_max` and `ship.hull_max` (125 on the Lark, 125% of the hull's own on any other), which the zone's
   combat gives the ship (§20); Thermal Plating, Pressure Hull and Hazard Coating ×⅓ on `ship.hazard_damage_<kind>` (heat and
   cryo; pressure; acid, radiation and storm), which `hazardDamagePerS` (`@astra/shared/ships`) applies to a hostile sky's
-  damage, the one rule the client's `Ship.updateHazard` takes its hull damage by. The server has no hazard tick of its own
-  yet: the ship's hull is the client's in the sky until the Recall and the client ship system make it the server's
-  (P1.E06.T03, P1.E12.T03); the plating is the number that tick will read. A node bought or refunded changes all of these in
+  damage. The server's combat tick owns the damage (§20, P1.E06.T07), and `Ship.updateHazard` predicts it with that shared
+  rule. A node bought or refunded changes all of these in
   play, not at the next join: the gateway re-tunes the character's session (`SkillService.flight` is the ship and nodes
   owned; `Zone.retune`, §7, §20) and the meters re-profile themselves (§19). The client's ship takes its nodes from the
   server's `skills` view (`Ship.setSkills`), which is how the demo's shop upgrades (`SHOP`, `applyUpgrade`) became the web.
