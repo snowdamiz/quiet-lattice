@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { gameLook } from '@astra/shared/art';
-import { abba, applyGameLook, assetCost, blockDiffs, collectLods, countKinds, helperKind, orbitOffset, pairedDiffs, parseSpec, pickLod, placeLabels, showLod, spread } from './review.js';
+import { abba, applyGameLook, assetCost, blockDiffs, collectLods, countKinds, helperKind, meshBox, orbitOffset, pairedDiffs, parseSpec, pickLod, placeLabels, showLod, spread, summarize, wireOver } from './review.js';
 
 // A node tree in the export layout (art bible 8), as GLTFLoader builds it: three.js names sanitised, Blender's names
 // kept in userData.name.
@@ -221,7 +221,110 @@ describe('review: the far view', () => {
   });
 });
 
+describe('review: framing bounds', () => {
+  it('frames a quantized skinned body by its posed vertices, not its normalised attributes', () => {
+    // a 2 m body as glTF-Transform quantizes a skinned mesh: positions normalised to [-1, 1], the dequantizing scale and
+    // offset folded into the inverse bind matrix (GLTFLoader binds with the mesh's own matrix, keeping those inverses)
+    const geometry = new THREE.BoxGeometry(2, 2, 2);
+    const n = geometry.getAttribute('position').count;
+    geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(new Uint16Array(n * 4), 4));
+    geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(new Float32Array(n * 4).map((_, i) => (i % 4 === 0 ? 1 : 0)), 4));
+    const body = new THREE.SkinnedMesh(geometry, new THREE.MeshBasicMaterial());
+    const pelvis = new THREE.Bone();
+    pelvis.position.set(0, 0.95, 0);
+    const root = new THREE.Group().add(pelvis, body);
+    root.updateMatrixWorld(true);
+    const dequantize = new THREE.Matrix4().compose(new THREE.Vector3(0, 1, 0), new THREE.Quaternion(), new THREE.Vector3(0.3, 1, 0.15));
+    body.bind(new THREE.Skeleton([pelvis], [pelvis.matrixWorld.clone().invert().multiply(dequantize)]), body.matrixWorld);
+    root.updateMatrixWorld(true);
+
+    expect(body.geometry.boundingBox).toBeNull();
+    const box = meshBox(body);
+    expect(box.min.toArray().map((x) => +x.toFixed(6))).toEqual([-0.3, 0, -0.15]);
+    expect(box.max.toArray().map((x) => +x.toFixed(6))).toEqual([0.3, 2, 0.15]);
+    expect(meshBox(mesh('Crate_LOD0')).getSize(new THREE.Vector3()).toArray()).toEqual([1, 1, 1]);
+  });
+});
+
+describe('review: the wireframe pass', () => {
+  /** World positions the GPU draws for `o`: a skinned mesh's posed vertices, else its geometry's own. */
+  function drawnPoints(o) {
+    const n = o.geometry.getAttribute('position').count;
+    if (o.isSkinnedMesh) o.skeleton.update();
+    const at = (i) => (o.isSkinnedMesh ? o.getVertexPosition(i, new THREE.Vector3()) : new THREE.Vector3().fromBufferAttribute(o.geometry.getAttribute('position'), i));
+    const keys = Array.from({ length: n }, (_, i) => at(i).applyMatrix4(o.matrixWorld).toArray().map((x) => x.toFixed(4)).join(','));
+    return [...new Set(keys)].sort();
+  }
+
+  it('draws the edges of a quantized skinned body on its posed vertices, under the same skeleton and transform', () => {
+    // a 2 m two-bone body quantized as in 'framing bounds', bound at the origin, then its upper bone bent 90° and the
+    // asset set down elsewhere
+    const geometry = new THREE.BoxGeometry(2, 2, 2, 1, 2, 1);
+    const pos = geometry.getAttribute('position');
+    const n = pos.count;
+    const index = new Uint16Array(n * 4);
+    const weight = new Float32Array(n * 4);
+    for (let i = 0; i < n; i++) {
+      index[i * 4] = pos.getY(i) > 0 ? 1 : 0;
+      weight[i * 4] = 1;
+    }
+    geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(index, 4));
+    geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(weight, 4));
+    const body = new THREE.SkinnedMesh(geometry, new THREE.MeshBasicMaterial());
+    const hips = new THREE.Bone();
+    hips.position.set(0, 0.95, 0);
+    const chest = new THREE.Bone();
+    chest.position.set(0, 0.5, 0);
+    hips.add(chest);
+    const content = new THREE.Group().add(hips, body);
+    content.updateMatrixWorld(true);
+    const dequantize = new THREE.Matrix4().compose(new THREE.Vector3(0, 1, 0), new THREE.Quaternion(), new THREE.Vector3(0.3, 1, 0.15));
+    body.bind(new THREE.Skeleton([hips, chest], [hips, chest].map((b) => b.matrixWorld.clone().invert().multiply(dequantize))), body.matrixWorld);
+    chest.rotation.z = Math.PI / 2;
+    content.position.set(40, -3, 7);
+    content.rotation.y = 0.6;
+    content.updateMatrixWorld(true);
+
+    const wire = new THREE.Group();
+    content.add(wire);
+    const local = new THREE.Matrix4().copy(content.matrixWorld).invert().multiply(body.matrixWorld);
+    const edges = wireOver(body, local, new THREE.LineBasicMaterial(), new THREE.MeshBasicMaterial({ wireframe: true }));
+    wire.add(edges);
+    content.updateMatrixWorld(true);
+
+    const posed = drawnPoints(body);
+    expect(posed).toHaveLength(12);
+    expect(drawnPoints(edges)).toEqual(posed);
+    expect(edges.skeleton).toBe(body.skeleton);
+    expect(edges.geometry).toBe(body.geometry);
+  });
+
+  it('draws an unskinned mesh as line segments over its own triangles', () => {
+    const crate = mesh('Crate_LOD0');
+    crate.position.set(2, 0, 0);
+    const content = new THREE.Group().add(crate);
+    content.updateMatrixWorld(true);
+    const edges = wireOver(crate, crate.matrix, new THREE.LineBasicMaterial(), new THREE.MeshBasicMaterial({ wireframe: true }));
+    content.add(edges);
+    content.updateMatrixWorld(true);
+    expect(edges.isLineSegments).toBe(true);
+    expect(drawnPoints(edges)).toEqual(drawnPoints(crate));
+  });
+});
+
 describe('review: paired perf', () => {
+  it('retains missing timing and work counts instead of treating an incomplete run as a budget pass', () => {
+    const result = summarize(
+      [
+        { cpu: 2, gpu: 25, calls: 12, tris: 100 },
+        { cpu: 3, gpu: null, calls: 12, tris: 100 },
+        { cpu: NaN, gpu: Infinity, calls: null, tris: null },
+      ],
+      1,
+    );
+    expect(result).toMatchObject({ frames: 3, cpuMsMedian: 3, gpuMsMedian: 25, gpuSamples: 1, missingCpu: 1, missingGpu: 2, missingWork: 1, disjoint: 1 });
+    expect(summarize([], 0)).toMatchObject({ frames: 0, cpuMsMedian: null, gpuMsMedian: null, gpuSamples: 0 });
+  });
   // A deterministic stand-in for a loaded machine: the frame's base cost wanders by up to 30 ms between frames, in
   // slow swells and sudden spikes; the asset adds `cost` ms in the frames it is shown, plus a little jitter.
   function frames(pairs, cost, { seed = 7, lost = 0 } = {}) {

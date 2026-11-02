@@ -244,9 +244,12 @@ export function assetCost(frames, { ciMs = PERF_CI_MS } = {}) {
 }
 
 /** The old readout's per-run summary of frame records (one state): medians and 95th percentiles. */
-function summarize(frames, disjoint) {
+export function summarize(frames, disjoint) {
   const q = (key, p) => {
-    const s = frames.map((f) => f[key]).filter((x) => x != null).sort((a, b) => a - b);
+    const s = frames
+      .map((f) => f[key])
+      .filter(Number.isFinite)
+      .sort((a, b) => a - b);
     return s.length ? +s[Math.min(s.length - 1, Math.floor(p * s.length))].toFixed(3) : null;
   };
   return {
@@ -254,7 +257,11 @@ function summarize(frames, disjoint) {
     cpuMsP95: q('cpu', 0.95),
     gpuMsMedian: q('gpu', 0.5),
     gpuMsP95: q('gpu', 0.95),
-    gpuSamples: frames.filter((f) => f.gpu != null).length,
+    gpuSamples: frames.filter((f) => Number.isFinite(f.gpu)).length,
+    frames: frames.length,
+    missingCpu: frames.filter((f) => !Number.isFinite(f.cpu)).length,
+    missingGpu: frames.filter((f) => !Number.isFinite(f.gpu)).length,
+    missingWork: frames.filter((f) => !Number.isFinite(f.calls) || !Number.isFinite(f.tris)).length,
     disjoint,
     drawCalls: q('calls', 0.5),
     triangles: q('tris', 0.5),
@@ -268,6 +275,39 @@ export function orbitOffset(orbit, size) {
   const el = THREE.MathUtils.degToRad(orbit.elevation + (orbit.range ? (orbit.lift ?? 0) : 0));
   const d = orbit.range ?? size * orbit.distance;
   return new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(d);
+}
+
+/** A mesh's bounds in its own space. A skinned mesh's are its posed vertices': its geometry can sit in a space only the
+ * skin undoes (KHR_mesh_quantization folds the dequantizing transform into the inverse bind matrices). */
+export function meshBox(o) {
+  if (o.isSkinnedMesh) {
+    o.computeBoundingBox();
+    return o.boundingBox;
+  }
+  if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+  return o.geometry.boundingBox;
+}
+
+/**
+ * The edges the wireframe pass draws over mesh `o`, placed by `local` (o's matrix in the space they are added to).
+ * A skinned mesh's edges are a second skinned mesh on its own geometry, skeleton, bind matrix and shape-key weights,
+ * so they sit on the posed body: its raw positions can be in a space only the skin undoes (meshBox).
+ */
+export function wireOver(o, local, line, skinnedLine) {
+  let w;
+  if (o.isSkinnedMesh) {
+    w = new THREE.SkinnedMesh(o.geometry, skinnedLine);
+    w.bindMode = o.bindMode;
+    w.bind(o.skeleton, o.bindMatrix);
+    w.morphTargetInfluences = o.morphTargetInfluences;
+    w.morphTargetDictionary = o.morphTargetDictionary;
+    w.frustumCulled = o.frustumCulled;
+  } else {
+    w = new THREE.LineSegments(new THREE.WireframeGeometry(o.geometry), line);
+  }
+  w.matrixAutoUpdate = false;
+  w.matrix.copy(local);
+  return w;
 }
 
 // ---------------------------------------------------------------------------------------------- the game's look
@@ -579,7 +619,8 @@ export class Review {
   wireframe(on) {
     if (this.wire) {
       this.wire.parent?.remove(this.wire);
-      this.wire.traverse((o) => o.geometry?.dispose());
+      // (a skinned mesh's edges share its geometry)
+      this.wire.traverse((o) => o.isLineSegments && o.geometry.dispose());
       this.wire = null;
       for (const [mesh, mat] of this.shaded ?? []) mesh.material = mat;
       this.shaded = null;
@@ -589,16 +630,14 @@ export class Review {
     this.shaded = new Map();
     const clay = new THREE.MeshStandardMaterial({ color: 0x9a9a96, roughness: 0.85, metalness: 0, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
     const line = new THREE.LineBasicMaterial({ color: 0x15181c });
+    const skinnedLine = new THREE.MeshBasicMaterial({ color: 0x15181c, wireframe: true });
     this.content.updateMatrixWorld(true);
     const inv = new THREE.Matrix4().copy(this.content.matrixWorld).invert();
     this.content.traverseVisible((o) => {
       if (!o.isMesh || this.isAid(o)) return;
       this.shaded.set(o, o.material);
       o.material = clay;
-      const lines = new THREE.LineSegments(new THREE.WireframeGeometry(o.geometry), line);
-      lines.matrixAutoUpdate = false;
-      lines.matrix.copy(inv).multiply(o.matrixWorld);
-      this.wire.add(lines);
+      this.wire.add(wireOver(o, _m.copy(inv).multiply(o.matrixWorld), line, skinnedLine));
     });
     this.content.add(this.wire);
   }
@@ -788,8 +827,7 @@ export class Review {
     const inv = new THREE.Matrix4().copy(this.root.matrixWorld).invert();
     this.content.traverseVisible((o) => {
       if (!o.isMesh || this.isAid(o)) return;
-      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
-      box.union(_box.copy(o.geometry.boundingBox).applyMatrix4(_m.multiplyMatrices(inv, o.matrixWorld)));
+      box.union(_box.copy(meshBox(o)).applyMatrix4(_m.multiplyMatrices(inv, o.matrixWorld)));
     });
     return box.isEmpty() ? box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 1)) : box;
   }
@@ -1159,6 +1197,30 @@ export class Review {
     return this._timer;
   }
 
+  device() {
+    const gl = this.game.engine.renderer.getContext();
+    const debug = gl.getExtension('WEBGL_debug_renderer_info');
+    return {
+      vendor: gl.getParameter(debug ? debug.UNMASKED_VENDOR_WEBGL : gl.VENDOR),
+      renderer: gl.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : gl.RENDERER),
+      version: gl.getParameter(gl.VERSION),
+      shadingLanguage: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+      context: gl.getContextAttributes(),
+      contextLost: gl.isContextLost(),
+    };
+  }
+
+  glErrors() {
+    const gl = this.game.engine.renderer.getContext();
+    const errors = [];
+    for (let i = 0; i < 32; i++) {
+      const error = gl.getError();
+      if (error === gl.NO_ERROR) break;
+      errors.push(error);
+    }
+    return errors;
+  }
+
   /** Waits on the GPU for the frame just drawn (a 1×1 read of the default framebuffer). */
   sync() {
     const r = this.game.engine.renderer;
@@ -1213,54 +1275,70 @@ export class Review {
       if (!ext) return;
       if (gl.getParameter(ext.GPU_DISJOINT_EXT)) {
         disjoint++;
-        for (const p of pending.splice(0)) gl.deleteQuery(p.q);
+        for (const p of pending.splice(0)) {
+          p.rec.gpuStatus = 'disjoint';
+          gl.deleteQuery(p.q);
+        }
         return;
       }
       while (pending.length && gl.getQueryParameter(pending[0].q, gl.QUERY_RESULT_AVAILABLE)) {
         const p = pending.shift();
         p.rec.gpu = gl.getQueryParameter(p.q, gl.QUERY_RESULT) / 1e6;
+        p.rec.gpuStatus = 'timer';
         gl.deleteQuery(p.q);
       }
     };
     const order = abba(pairs);
-    for (let i = 0; i < order.length; i++) {
-      const rec = { shown: order[i], cpu: null, gpu: null, calls: null, tris: null };
-      this.root.visible = rec.shown;
-      this.sync();
-      let q = null;
-      if (ext) {
-        q = gl.createQuery();
-        gl.beginQuery(ext.TIME_ELAPSED_EXT, q);
-      }
-      const t0 = performance.now();
-      this.frameOnce(1 / 60);
-      const t1 = performance.now();
-      if (ext) {
-        gl.endQuery(ext.TIME_ELAPSED_EXT);
-        // (waited out here, so the frame's commands are submitted on their own: otherwise the frame before each yield
-        // shares a submission with the page's present and reads about 1 ms slow, always on the same side of a pair)
+    try {
+      for (let i = 0; i < order.length; i++) {
+        const rec = { shown: order[i], cpu: null, gpu: null, calls: null, tris: null, gpuStatus: 'pending' };
+        out.push(rec);
+        this.root.visible = rec.shown;
         this.sync();
-        pending.push({ q, rec });
-      } else {
-        this.sync();
-        rec.gpu = performance.now() - t0;
+        let q = null;
+        if (ext) {
+          q = gl.createQuery();
+          if (q) gl.beginQuery(ext.TIME_ELAPSED_EXT, q);
+          else rec.gpuStatus = 'unavailable';
+        }
+        const t0 = performance.now();
+        try {
+          this.frameOnce(1 / 60);
+          rec.cpu = performance.now() - t0;
+        } finally {
+          if (ext && q) {
+            gl.endQuery(ext.TIME_ELAPSED_EXT);
+            pending.push({ q, rec });
+          }
+        }
+        if (ext && q) {
+          // (waited out here, so the frame's commands are submitted on their own: otherwise the frame before each yield
+          // shares a submission with the page's present and reads about 1 ms slow, always on the same side of a pair)
+          this.sync();
+        } else if (!ext) {
+          this.sync();
+          rec.gpu = performance.now() - t0;
+          rec.gpuStatus = 'sync';
+        }
+        rec.calls = r.info.render.calls;
+        rec.tris = r.info.render.triangles;
+        // (query results only arrive between tasks)
+        if (i % 4 === 3) {
+          await yieldTask();
+          collect();
+        }
       }
-      rec.cpu = t1 - t0;
-      rec.calls = r.info.render.calls;
-      rec.tris = r.info.render.triangles;
-      out.push(rec);
-      // (query results only arrive between tasks)
-      if (i % 4 === 3) {
-        await yieldTask();
+      for (let k = 0; k < 200 && pending.length; k++) {
+        await new Promise((res) => setTimeout(res, 5));
         collect();
       }
+    } finally {
+      this.root.visible = true;
+      for (const p of pending) {
+        p.rec.gpuStatus = 'timeout';
+        gl.deleteQuery(p.q);
+      }
     }
-    this.root.visible = true;
-    for (let k = 0; k < 200 && pending.length; k++) {
-      await new Promise((res) => setTimeout(res, 5));
-      collect();
-    }
-    for (const p of pending) gl.deleteQuery(p.q);
     return disjoint;
   }
 
@@ -1275,14 +1353,23 @@ export class Review {
    */
   perf({ frames, pairs = frames ?? 120, maxPairs = 720, ciMs = PERF_CI_MS, budgetMs = 1000 / 60, steady = 30, maxWarmup = 600 } = {}) {
     return this.serial(async () => {
-      const warm = await this.warmUp(budgetMs, steady, maxWarmup);
+      const startedAt = new Date().toISOString();
+      const errorsBefore = this.glErrors();
       const recs = [];
       let disjoint = 0;
+      let warm = null;
+      let failure = null;
       let cost;
-      do {
-        disjoint += await this.sampleInterleaved(Math.min(pairs, maxPairs - recs.length / 2), recs);
+      try {
+        warm = await this.warmUp(budgetMs, steady, maxWarmup);
+        do {
+          disjoint += await this.sampleInterleaved(Math.min(pairs, maxPairs - recs.length / 2), recs);
+          cost = assetCost(recs, { ciMs });
+        } while (!cost.reliable && recs.length / 2 < maxPairs);
+      } catch (error) {
+        failure = String(error);
         cost = assetCost(recs, { ciMs });
-      } while (!cost.reliable && recs.length / 2 < maxPairs);
+      }
       const shown = summarize(
         recs.filter((f) => f.shown),
         disjoint,
@@ -1295,18 +1382,137 @@ export class Review {
       const timer = !!this.gpuTimer();
       const r = this.game.engine.renderer;
       this.lastPerf = {
+        startedAt,
+        finishedAt: new Date().toISOString(),
+        device: this.device(),
+        glErrors: { before: errorsBefore, after: this.glErrors() },
         case: this.case,
         lod: this.lodLevel,
         viewport: [r.domElement.width, r.domElement.height],
-        gpuTiming: timer ? 'EXT_disjoint_timer_query_webgl2 (GPU time of the frame)' : 'readPixels sync (no timer queries here: CPU+GPU wall time of the frame, the frame waited out with a 1x1 pixel read)',
+        gpuTiming: timer
+          ? 'EXT_disjoint_timer_query_webgl2 (GPU time of the frame)'
+          : 'readPixels sync (no timer queries here: CPU+GPU wall time of the frame, the frame waited out with a 1x1 pixel read)',
         budgetMs: +budgetMs.toFixed(2),
         settle: { ...warm, steady },
         scene: shown,
         withoutAsset: hidden,
         asset: { ...cost, ciTargetMs: ciMs, unpaired: { cpuMs: d('cpuMsMedian'), gpuMs: d('gpuMsMedian') } },
         stats: this.stats(),
+        samples: recs,
+        failure,
       };
+      if (failure) throw new Error(failure);
       return this.lastPerf;
+    });
+  }
+
+  /** Diagnostic-only per-stage queries. Never mix these instrumented timings with perf() budget runs. Every pass
+   * still runs normally; atmosphere detail replaces its outer query to avoid nested TIME_ELAPSED queries. */
+  profile({ frames = 60, detail = 'passes' } = {}) {
+    return this.serial(async () => {
+      const E = this.game.engine;
+      const r = E.renderer;
+      const gl = r.getContext();
+      const ext = this.gpuTimer();
+      if (!ext) throw new Error('GPU stage profiling requires EXT_disjoint_timer_query_webgl2');
+      const warm = await this.warmUp(1000 / 60, 30, 600);
+      const samples = [];
+      const pending = [];
+      const restore = [];
+      let frame = 0;
+      let disjoint = 0;
+      let failure = null;
+      const errors = this.glErrors();
+      const watch = (owner, name) => {
+        const render = owner.render;
+        restore.push(() => (owner.render = render));
+        owner.render = function (...args) {
+          const q = gl.createQuery();
+          const rec = {
+            frame,
+            stage: name,
+            shown: frame % 4 === 0 || frame % 4 === 3,
+            cpu: null,
+            gpu: null,
+            calls: null,
+            tris: null,
+            gpuStatus: q ? 'pending' : 'unavailable',
+          };
+          samples.push(rec);
+          const calls = r.info.render.calls;
+          const tris = r.info.render.triangles;
+          if (q) gl.beginQuery(ext.TIME_ELAPSED_EXT, q);
+          const start = performance.now();
+          try {
+            return render.apply(this, args);
+          } finally {
+            rec.cpu = performance.now() - start;
+            rec.calls = r.info.render.calls - calls;
+            rec.tris = r.info.render.triangles - tris;
+            if (q) {
+              gl.endQuery(ext.TIME_ELAPSED_EXT);
+              pending.push({ q, rec });
+            }
+          }
+        };
+      };
+      const collect = () => {
+        if (gl.getParameter(ext.GPU_DISJOINT_EXT)) {
+          disjoint++;
+          for (const p of pending.splice(0)) {
+            p.rec.gpuStatus = 'disjoint';
+            gl.deleteQuery(p.q);
+          }
+        }
+        while (pending.length && gl.getQueryParameter(pending[0].q, gl.QUERY_RESULT_AVAILABLE)) {
+          const p = pending.shift();
+          p.rec.gpu = gl.getQueryParameter(p.q, gl.QUERY_RESULT) / 1e6;
+          p.rec.gpuStatus = 'timer';
+          gl.deleteQuery(p.q);
+        }
+      };
+      try {
+        for (const name of ['renderPass', 'atmoPass', 'fxPass', 'viewPass', 'bloomPass', 'gradePass']) {
+          if (name === 'atmoPass' && detail === 'atmosphere') {
+            for (const part of ['marchQuad', 'resolveQuad', 'fsQuad']) watch(E.atmoPass[part], `atmoPass.${part}`);
+          } else watch(E[name], name);
+        }
+        for (; frame < frames; frame++) {
+          this.root.visible = frame % 4 === 0 || frame % 4 === 3;
+          this.sync();
+          this.frameOnce(1 / 60);
+          this.sync();
+          await yieldTask();
+          collect();
+        }
+        for (let i = 0; i < 200 && pending.length; i++) {
+          await new Promise((resolve) => setTimeout(resolve, 5));
+          collect();
+        }
+      } catch (error) {
+        failure = String(error);
+      } finally {
+        for (const reset of restore) reset();
+        this.root.visible = true;
+        for (const p of pending) {
+          p.rec.gpuStatus = 'timeout';
+          gl.deleteQuery(p.q);
+        }
+      }
+      this.lastProfile = {
+        diagnosticOnly: true,
+        detail,
+        case: this.case,
+        device: this.device(),
+        viewport: [r.domElement.width, r.domElement.height],
+        warm,
+        samples,
+        disjoint,
+        glErrors: [...errors, ...this.glErrors()],
+        failure,
+      };
+      if (failure) throw new Error(failure);
+      return this.lastProfile;
     });
   }
 

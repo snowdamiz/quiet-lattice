@@ -48,12 +48,12 @@ async function freePort(): Promise<number> {
 
 /** A Vite dev server for the client on a free port, with the file watcher and HMR off: a capture must never reload
  * because someone saved a file mid-run. */
-export async function startVite(): Promise<{ url: string; stop(): Promise<void> }> {
+export async function startVite(root = ROOT): Promise<{ url: string; stop(): Promise<void> }> {
   const { createServer } = await import('vite');
   const port = await freePort();
   const server = await createServer({
-    root: join(ROOT, 'packages/client'),
-    configFile: join(ROOT, 'packages/client/vite.config.js'),
+    root: join(root, 'packages/client'),
+    configFile: join(root, 'packages/client/vite.config.js'),
     logLevel: 'error',
     server: { port, strictPort: true, host: '127.0.0.1', hmr: false, watch: null },
   });
@@ -131,9 +131,13 @@ interface ReviewApi {
   capture(): string;
   captureOverlay(): Promise<string>;
   lastOverlay: unknown;
+  lastPerf: unknown;
+  lastProfile: unknown;
   far(meters: number, opts?: { lod?: number }): Promise<unknown>;
   near(): Promise<void>;
   perf(opts?: { pairs?: number }): Promise<unknown>;
+  profile(opts?: { frames?: number; detail?: 'passes' | 'atmosphere' }): Promise<unknown>;
+  step(n?: number): Promise<void>;
   stats(): unknown;
   spot: Record<string, unknown> | null;
   settled: unknown;
@@ -154,9 +158,15 @@ export interface ReviewOptions {
 }
 
 /** Waits for `#review:<spec>` to settle its first case. */
-async function openReview(browser: Browser, url: string, spec: string): Promise<{ page: Page; errors: string[] }> {
+export async function openReview(
+  browser: Browser,
+  url: string,
+  spec: string,
+  asset?: { url: string; body: Buffer },
+): Promise<{ page: Page; errors: string[] }> {
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   const errors = watchErrors(page);
+  if (asset) await page.route(`**${asset.url}`, (route) => route.fulfill({ body: asset.body, contentType: 'model/gltf-binary' }));
   // no live frame loop: frames advance only when the capture asks; and the page's Math.random seeded, so what the game
   // scatters at random (weather streaks, drifting spores, particles) lands the same way every run
   await page.addInitScript(() => {
