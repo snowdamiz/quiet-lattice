@@ -97,6 +97,7 @@ function fixture() {
       retainStep: (...args) => {
         steps.push(args);
       },
+      validateStep: () => {},
       retainSample: (index: number, workClass: WorkClass, value: unknown) => {
         samples.push({ index, workClass, value });
       },
@@ -313,6 +314,69 @@ describe('owned browser trace lifecycle, CPU providers only', () => {
     expect(f.steps[0]).toEqual([0, 'prepare', 'drained-empty', `${prefix}-s00-prepare`, raw]);
     expect(f.commands).toEqual([]);
   });
+  it('retains a payload returned while cancellation settles, without validating or issuing another step', async () => {
+    const f = fixture(),
+      controller = new AbortController();
+    f.options.signal = controller.signal;
+    const raw = { failure: null, value: { partial: true, proof: { matches: false } }, markers: [] };
+    let validated = 0;
+    f.options.sink.validateStep = () => {
+      validated++;
+    };
+    f.options.probe.call = async (action, cls) => {
+      f.calls.push(`${action}:${cls}`);
+      setTimeout(() => controller.abort(new Error('PRIMARY CANCELLATION')), 1);
+      await delay(8);
+      return raw;
+    };
+    const log = await failure(f);
+    expect(log.failure).toContain('PRIMARY CANCELLATION');
+    expect(f.steps).toHaveLength(1);
+    expect(f.steps[0]).toEqual([0, 'prepare', 'drained-empty', `${prefix}-s00-prepare`, raw]);
+    expect(validated).toBe(0);
+    expect(f.calls).toEqual(['prepare:drained-empty']);
+    expect(log.preparation).toEqual([]);
+    const terminal = JSON.stringify(log);
+    await delay(5);
+    expect(JSON.stringify(log)).toBe(terminal);
+    expect(f.steps).toHaveLength(1);
+  });
+  it('keeps cancellation primary and a returned-payload persistence failure as a separate settlement error', async () => {
+    const f = fixture(),
+      controller = new AbortController();
+    f.options.signal = controller.signal;
+    f.options.probe.call = async () => {
+      setTimeout(() => controller.abort(new Error('PRIMARY CANCEL')), 1);
+      await delay(8);
+      return { partial: true };
+    };
+    f.options.sink.retainStep = () => {
+      throw new Error('RAW PERSISTENCE FAILED');
+    };
+    f.options.sink.validateStep = () => {
+      throw new Error('VALIDATION MUST NOT RUN');
+    };
+    const log = await failure(f);
+    expect(log.failure).toContain('PRIMARY CANCEL');
+    expect(log.cleanupErrors.join()).toContain('RAW PERSISTENCE FAILED');
+    expect(log.cleanupErrors.join()).not.toContain('VALIDATION MUST NOT RUN');
+    expect(f.commands).toEqual([]);
+  });
+  it('full lifecycle does not observe invalid phase/reversed/split-thread marker windows', async () => {
+    const f = fixture();
+    f.setCommand((c) =>
+      c.method === 'IO.read'
+        ? Promise.resolve({
+            data: JSON.stringify({ traceEvents: f.events().map((e, i) => ({ ...e, ph: 'invalid-schema', ts: 1000000 - e.ts, tid: (i % 2) + 1 })) }),
+            eof: true,
+          })
+        : undefined,
+    );
+    const log = await failure(f);
+    expect(log.status).toBe('inconclusive');
+    expect(log.markerCoverage.status).toBe('missing-or-ambiguous');
+    expect(log.controls).toHaveLength(12);
+  });
   it('missing marker coverage is inconclusive, not successful timing evidence', async () => {
     const f = fixture();
     f.setCommand((c) => (c.method === 'IO.read' ? Promise.resolve({ data: '{"traceEvents":[]}', eof: true }) : undefined));
@@ -322,16 +386,52 @@ describe('owned browser trace lifecycle, CPU providers only', () => {
   });
 });
 describe('marker identity and observed schema', () => {
-  const expected = [{ name: `${prefix}-s00-run-start`, monotonicMs: 1 }];
+  const expected = [
+    { name: `${prefix}-s00-run-start`, monotonicMs: 1 },
+    { name: `${prefix}-s00-run-end`, monotonicMs: 2 },
+  ];
   const event = { name: expected[0].name, cat: 'blink.user_timing', ts: 1000, pid: 12, tid: 1, ph: 'R' };
+  const end = { ...event, name: expected[1].name, ts: 2000 };
   const check = (rows: unknown[]) => markerCoverage(Buffer.from(JSON.stringify({ traceEvents: rows })), expected, [12]);
   it('accepts exactly one observed marker in the verified renderer', () => {
-    expect(check([event]).status).toBe('observed');
+    expect(check([event, end]).status).toBe('observed');
   });
   it.each([{ pid: 99 }, { ts: -1 }, { tid: 0 }, { cat: 'gpu' }, { name: event.name + '-wrong' }, { ph: '' }])('rejects wrong identity/schema %j', (change) => {
-    expect(check([{ ...event, ...change }]).status).toBe('missing-or-ambiguous');
+    expect(check([{ ...event, ...change }, end]).status).toBe('missing-or-ambiguous');
   });
   it('does not ignore an ambiguous duplicate', () => {
-    expect(check([event, { ...event, cat: 'other' }]).status).toBe('missing-or-ambiguous');
+    expect(check([event, { ...event, cat: 'other' }, end]).status).toBe('missing-or-ambiguous');
+  });
+  it.each(['I', 'R', 'n'])('accepts only R, leaving the unvalidated %s variants inconclusive', (ph) => {
+    expect(
+      check([
+        { ...event, ph },
+        { ...end, ph },
+      ]).status,
+    ).toBe(ph === 'R' ? 'observed' : 'missing-or-ambiguous');
+  });
+  it.each([
+    [{ ...event, ph: 'not-a-phase' }, end],
+    [event, { ...end, ts: 500 }],
+    [event, { ...end, tid: 2 }],
+    [event, { ...end, pid: 13 }],
+    [{ ...event, dur: 1 }, end],
+  ])('does not accept invalid point/pair schema %j', (...rows) => {
+    expect(markerCoverage(Buffer.from(JSON.stringify({ traceEvents: rows })), expected, [12, 13]).status).toBe('missing-or-ambiguous');
+  });
+  it('requires one renderer/thread and nonoverlapping sequential prepare/control windows', () => {
+    const next = [
+      { name: `${prefix}-s01-prepare-start`, monotonicMs: 3 },
+      { name: `${prefix}-s01-prepare-end`, monotonicMs: 4 },
+    ];
+    const later = [
+      { ...event, name: next[0].name, ts: 3000 },
+      { ...end, name: next[1].name, ts: 4000 },
+    ];
+    const inspect = (rows: unknown[]) => markerCoverage(Buffer.from(JSON.stringify({ traceEvents: rows })), [...expected, ...next], [12, 13]);
+    expect(inspect([event, end, ...later]).status).toBe('observed');
+    expect(inspect([event, end, { ...later[0], ts: 1500 }, later[1]]).status).toBe('missing-or-ambiguous');
+    expect(inspect([event, end, ...later.map((v) => ({ ...v, tid: 2 }))]).status).toBe('missing-or-ambiguous');
+    expect(inspect([event, end, ...later.map((v) => ({ ...v, pid: 13 }))]).status).toBe('missing-or-ambiguous');
   });
 });

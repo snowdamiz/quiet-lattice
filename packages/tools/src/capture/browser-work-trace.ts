@@ -53,7 +53,9 @@ export interface ProbePort {
 export interface TraceSink {
   append(bytes: Buffer): void;
   read(): Buffer;
+  /** Persistence only. Also runs for a value returned while cancellation is settling. */
   retainStep(index: number, action: 'prepare' | 'run', workClass: WorkClass, id: string, value: unknown): void;
+  validateStep(index: number, action: 'prepare' | 'run', workClass: WorkClass, id: string, value: unknown): void;
   retainSample(index: number, workClass: WorkClass, value: unknown): void;
 }
 interface Marker {
@@ -136,33 +138,83 @@ function chunk(value: unknown) {
   if (bytes.length > traceLimits.chunkBytes) throw new Error('Trace chunk decoded size overflow');
   return { bytes, eof: value.eof };
 }
+interface PointMark {
+  name: string;
+  cat: string;
+  ph: 'R';
+  ts: number;
+  pid: number;
+  tid: number;
+}
+function isPointMark(value: unknown, rendererPids: readonly number[]): value is PointMark {
+  return (
+    isRecord(value) &&
+    typeof value.name === 'string' &&
+    typeof value.cat === 'string' &&
+    value.cat.split(',').includes('blink.user_timing') &&
+    value.ph === 'R' &&
+    (value.dur === undefined || value.dur === 0) &&
+    (value.tdur === undefined || value.tdur === 0) &&
+    typeof value.ts === 'number' &&
+    Number.isFinite(value.ts) &&
+    value.ts >= 0 &&
+    typeof value.pid === 'number' &&
+    Number.isSafeInteger(value.pid) &&
+    value.pid > 1 &&
+    rendererPids.includes(value.pid) &&
+    typeof value.tid === 'number' &&
+    Number.isSafeInteger(value.tid) &&
+    value.tid > 0
+  );
+}
 export function markerCoverage(bytes: Buffer, expected: Marker[], rendererPids: readonly number[]) {
   const parsed: unknown = JSON.parse(bytes.toString('utf8'));
   if (!isRecord(parsed) || !Array.isArray(parsed.traceEvents) || parsed.traceEvents.length > traceLimits.events)
     throw new Error('Trace event schema/count unavailable');
   const names = new Set(expected.map((m) => m.name));
   const events = parsed.traceEvents.filter((event) => isRecord(event) && typeof event.name === 'string' && names.has(event.name));
-  // No guessed duration, Metal mapping or cross-clock conversion. Retain the observed marker schema only.
-  const valid = expected.every((m) => {
+  // Only the documented R point-mark representation. Other PerformanceMark forms
+  // require their own phase-specific validation and remain inconclusive here.
+  const selected: PointMark[] = [];
+  let valid = expected.length > 0 && expected.length % 2 === 0 && names.size === expected.length;
+  for (const m of expected) {
     const matches = events.filter((e) => isRecord(e) && e.name === m.name);
     const e = matches[0];
-    return (
-      matches.length === 1 &&
-      isRecord(e) &&
-      typeof e.cat === 'string' &&
-      e.cat.split(',').includes('blink.user_timing') &&
-      typeof e.ts === 'number' &&
-      Number.isFinite(e.ts) &&
-      e.ts >= 0 &&
-      typeof e.pid === 'number' &&
-      rendererPids.includes(e.pid) &&
-      typeof e.tid === 'number' &&
-      Number.isInteger(e.tid) &&
-      e.tid > 0 &&
-      typeof e.ph === 'string' &&
-      e.ph.length > 0
-    );
-  });
+    if (matches.length !== 1 || !isPointMark(e, rendererPids)) valid = false;
+    else selected.push(e);
+  }
+  const first = selected[0];
+  if (!first || selected.length !== expected.length) valid = false;
+  else {
+    let previousTraceEnd = -Infinity,
+      previousPageEnd = -Infinity;
+    const prefix = /^(bwt-[a-f0-9]{32})-/.exec(expected[0].name)?.[1];
+    if (!prefix) valid = false;
+    for (let i = 0; i + 1 < expected.length; i += 2) {
+      const start = expected[i],
+        end = expected[i + 1],
+        a = selected[i],
+        b = selected[i + 1];
+      if (
+        !new RegExp(`^${prefix}-s\\d{2}-(prepare|run)-start$`).test(start.name) ||
+        end.name !== start.name.replace(/-start$/, '-end') ||
+        !Number.isFinite(start.monotonicMs) ||
+        !Number.isFinite(end.monotonicMs) ||
+        start.monotonicMs < 0 ||
+        start.monotonicMs > end.monotonicMs ||
+        start.monotonicMs < previousPageEnd ||
+        a.pid !== first.pid ||
+        b.pid !== first.pid ||
+        a.tid !== first.tid ||
+        b.tid !== first.tid ||
+        a.ts > b.ts ||
+        a.ts < previousTraceEnd
+      )
+        valid = false;
+      previousTraceEnd = b.ts;
+      previousPageEnd = end.monotonicMs;
+    }
+  }
   return {
     status: valid ? 'observed' : 'missing-or-ambiguous',
     events: events.map((e) => (isRecord(e) ? { name: e.name, cat: e.cat, ph: e.ph, pid: e.pid, tid: e.tid, ts: e.ts } : null)),
@@ -305,15 +357,26 @@ export async function runBrowserWorkTrace(options: {
           log.cleanupErrors.push(`Probe cancellation: ${String(cleanup)}`);
         }
       } else await disconnect();
-      await task.catch(() => {});
+      await task.catch((settlement) => {
+        if (settlement !== error) log.cleanupErrors.push(`${label} settlement: ${String(settlement)}`);
+      });
       throw error;
     }
   };
   const send = (command: TraceCommand, cleanup = false, ms = limits.protocolMs) => own(() => options.trace.send(command), ms, command.method, !cleanup);
   const call = async (action: 'prepare' | 'run', workClass: WorkClass, index: number) => {
     const id = `${options.prefix}-s${String(index).padStart(2, '0')}-${action}`;
-    const raw = await own(() => options.probe.call(action, workClass, id), action === 'prepare' ? limits.prepareMs : limits.controlMs, `probe ${action}`);
-    options.sink.retainStep(index, action, workClass, id, raw);
+    const raw = await own(
+      async () => {
+        const returned = await options.probe.call(action, workClass, id);
+        options.sink.retainStep(index, action, workClass, id, returned);
+        return returned;
+      },
+      action === 'prepare' ? limits.prepareMs : limits.controlMs,
+      `probe ${action}`,
+    );
+    controller.signal.throwIfAborted();
+    options.sink.validateStep(index, action, workClass, id, raw);
     const result = reply(raw, id);
     if (action === 'prepare') log.preparation.push({ index, workClass, insideTrace: log.trace.started, reply: result });
     else log.controls.push({ index, workClass, reply: result });

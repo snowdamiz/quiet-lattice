@@ -268,6 +268,18 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
           },
           probe: {
             call: async (action, workClass, id) => {
+              if (session?.errors.length) {
+                retainBrowserStep(admission.out, id, {
+                  action,
+                  workClass,
+                  id,
+                  response: null,
+                  notIssued: true,
+                  pageErrors: pageErrors(),
+                  at: new Date().toISOString(),
+                });
+                throw new Error(`Review page errors before issuance: ${session.errors.slice(0, 128).join('; ')}`);
+              }
               check();
               try {
                 const response = await page.evaluate(browserProbePageCall, { action, workClass, id });
@@ -292,7 +304,9 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
             read: () => readFileSync(join(admission.out, 'browser-trace.json')),
             retainStep: (index, action, workClass, id, raw) => {
               // Keep returned predicates and accumulated errors before any schema/readiness/work assertion.
-              retainBrowserStep(admission.out, id, { index, action, workClass, response: raw, at: new Date().toISOString() });
+              retainBrowserStep(admission.out, id, { index, action, workClass, response: raw, pageErrors: pageErrors(), at: new Date().toISOString() });
+            },
+            validateStep: (_index, action, workClass, _id, raw) => {
               if (isRecord(raw) && raw.failure === null) {
                 if (action === 'prepare') validatePreparation(raw.value, workClass);
                 else validateControl(raw.value, workClass);
