@@ -1,9 +1,13 @@
 """Read-only station source audit before and after the third submission edits."""
+import hashlib
 import json
 from pathlib import Path
 import sys
 
 import bpy
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "packages/tools/blender"))
+from artlib.materials import MaterialInfo
 
 args = sys.argv[sys.argv.index("--") + 1:]
 output, *sources = args
@@ -20,7 +24,10 @@ for source in sources:
     materials = []
     for mat in bpy.data.materials:
         nodes = list(mat.node_tree.nodes) if mat.use_nodes else []
+        info = MaterialInfo(mat)
         materials.append({"name": mat.name,
+                          "procedural_channels_requiring_bake": [name for name, channel in info.channels.items()
+                                                                 if channel.kind == "procedural"],
                           "emission": [{"strength": n.inputs["Emission Strength"].default_value,
                                         "color": list(n.inputs["Emission Color"].default_value),
                                         "linked_color": n.inputs["Emission Color"].is_linked}
@@ -28,6 +35,7 @@ for source in sources:
                           "images": [{"name": n.image.name, "size": list(n.image.size),
                                       "packed": bool(n.image.packed_file), "color_space": n.image.colorspace_settings.name}
                                      for n in nodes if n.type == "TEX_IMAGE" and n.image]})
-    reports.append({"source": source, "objects": objects, "materials": materials})
+    reports.append({"source": source, "sha256": hashlib.sha256(Path(source).read_bytes()).hexdigest(),
+                    "objects": objects, "materials": materials})
 Path(output).write_text(json.dumps(reports, indent=2) + "\n")
 print("AUDITED", output)
