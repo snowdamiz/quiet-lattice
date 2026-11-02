@@ -103,6 +103,9 @@ const _fwd = new THREE.Vector3();
 const _size = new THREE.Vector2();
 const _frustum = new THREE.Frustum();
 const _sphere = new THREE.Sphere();
+const _coverRay = new THREE.Raycaster();
+const _coverMesh = new THREE.Mesh(undefined, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+const _coverHits = [];
 
 /** The hull whose model draws `hull`: its own, else one of its tier's, else null (it is not drawn). */
 export function modelledHull(hull, sources = HULL_SOURCES) {
@@ -196,6 +199,35 @@ export class RemoteShips {
    * kit is made, or for a hull not drawn. */
   boxOf(hull) {
     return this.kit(hull)?.box ?? null;
+  }
+
+  /** Whether a camera ray hits this ship's drawn hull before `far` metres. Uses its actual LOD and folded gear,
+   * excluding exhausts: a marker through empty space inside a hull's screen box is not occluded. */
+  covers(r, direction, far) {
+    if (!r.drawn) return false;
+    const kit = this.kits.get(this.modelOf(r.hull));
+    if (!kit) return false;
+    _coverRay.ray.origin.set(0, 0, 0);
+    _coverRay.ray.direction.copy(direction);
+    _coverRay.far = far;
+    _t.compose(_v.copy(r.world).sub(this.game.camWorld), r.worldQuat, ONE);
+    const vis = r.vis;
+    const lod = Math.min(vis.lod, kit.levels - 1);
+    for (const p of kit.pieces) {
+      if (p.gear >= 0 && lod === LEVELS - 1 && vis.gear < 0.5) continue;
+      _coverMesh.geometry = p.levels[lod].geometry;
+      _coverMesh.matrixWorld.copy(_t);
+      if (p.gear >= 0) {
+        const g = kit.gears[p.gear];
+        _q.setFromEuler(_e.set((1 - vis.gear) * -1.35, g.rot.y, g.rot.z, g.rot.order));
+        _g.compose(g.pos, _q, _s.setScalar(0.35 + 0.65 * vis.gear));
+        _coverMesh.matrixWorld.multiply(g.pre).multiply(_g);
+      }
+      _coverHits.length = 0;
+      _coverMesh.raycast(_coverRay, _coverHits);
+      if (_coverHits.length) return true;
+    }
+    return false;
   }
 
   /** Draws `list` (RemoteEntities' records) this frame: each one shown, in view or near, through its hull's kit. */

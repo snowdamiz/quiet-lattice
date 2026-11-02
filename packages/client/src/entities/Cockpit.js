@@ -136,7 +136,7 @@ export class Cockpit {
         g.fillStyle = col;
         g.fillRect(14, y + 8, 228 * Math.max(0, Math.min(1, v)), 14);
       };
-      bar('SHIELDS', ship.shield / 100, 30, cyan);
+      bar('SHIELDS', ship.shield / ship.stats.shieldMax, 30, cyan);
       bar('CHARGE', ship.chargeMax > 0 ? ship.charge / ship.chargeMax : 0, 80, '#c7a6ff');
       g.fillStyle = amber;
       g.font = "600 16px 'Barlow Condensed', sans-serif";

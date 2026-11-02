@@ -5,7 +5,8 @@ import { decodeSnapshot } from '@astra/shared/protocol';
 import { describe, expect, it, vi } from 'vitest';
 import { Body } from '../universe/Body.js';
 import { RemoteEntities } from './RemoteEntities.js';
-import { SnapshotReplay, TICK_S, encodeStream, flypastTicks } from './replay.js';
+import { SnapshotReplay, TICK_S, crowdSensorsTicks, encodeStream, flypastTicks } from './replay.js';
+import { shipStats } from '@astra/shared/ships';
 
 const Q = [0, 0, 0, 1];
 
@@ -105,5 +106,36 @@ describe('flypastTicks', () => {
         expect(rel.length()).toBeLessThan(1200);
       }
     }
+  });
+});
+
+describe('crowdSensorsTicks', () => {
+  it('plays a real withheld pilot and an edge-boosting pilot through wire decoding, interpolation and sensor authority', () => {
+    const st = station();
+    const stats = shipStats({ hull: 'lark', modules: {}, cargoPods: 0, livery: 0 });
+    const ship = { stats, state: { frame: st, pos: new THREE.Vector3(), quat: new THREE.Quaternion() } };
+    const game = { time: 100, ship, system: { seed: 7, planets: [] }, station: st, camWorld: new THREE.Vector3() };
+    const remotes = new RemoteEntities(game, { view: { group: new THREE.Group(), draws: () => true, update() {} } });
+    const ticks = crowdSensorsTicks(game, { seconds: 5 });
+    expect(ticks.every((t) => t.entities.length === 24 && t.entities.every((e) => e.kind === 'player'))).toBe(true);
+    remotes.replay = new SnapshotReplay(encodeStream(ticks));
+    let readings = 0;
+    for (let now = 100; now < 104.9; now += 1 / 60) {
+      game.time = now;
+      st.parent.parent.update(now); st.parent.update(now); st.update(now);
+      remotes.update(1 / 60);
+      if (now < 101.2) continue;
+      const here = ship.state.pos.clone().applyQuaternion(st.quaternion).add(st.position);
+      remotes.markers(here, 4000, () => {});
+      const withheld = remotes.get(223);
+      const boosting = remotes.get(224);
+      expect(withheld.sense).toMatchObject({ detected: false, boosting: false, reach: 4000 });
+      expect(withheld.sense.distance).toBeGreaterThan(4000);
+      expect(boosting.sense).toMatchObject({ detected: true, boosting: true, reach: 8000 });
+      expect(boosting.sense.distance).toBeGreaterThan(7600);
+      expect(boosting.sense.distance).toBeLessThan(8000);
+      readings++;
+    }
+    expect(readings).toBeGreaterThan(200);
   });
 });

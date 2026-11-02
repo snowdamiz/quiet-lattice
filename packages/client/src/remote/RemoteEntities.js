@@ -40,6 +40,8 @@ export const snapLimit = (speed, apart = 0) => Math.max(SNAP_M, SNAP_S * Math.ma
 /** The box a ship fills (its own space, m) for its marker while its hull's model is not yet loaded: about a Lark's. */
 const DEFAULT_BOX = new THREE.Box3(new THREE.Vector3(-6, -2, -7), new THREE.Vector3(6, 2, 7));
 const nearer = (a, b) => a.markerDist - b.markerDist;
+const _markRay = new THREE.Vector3();
+const _camQuat = new THREE.Quaternion();
 /** A pilot once picked up stays marked out to this many times its reach (and is picked up again only within it), and
  * for PICKUP_HOLD_S after it last was (a ship easing off its boost does not drop out and back as its speed wavers). */
 export const PICKUP_KEEP = 1.05;
@@ -173,6 +175,20 @@ export class RemoteEntities {
     }
     seen.sort(nearer);
     for (const r of seen) add(r.name ?? 'Pilot', r.world, this.view.boxOf?.(r.hull) ?? DEFAULT_BOX, r.worldQuat, r.id);
+  }
+
+  /** Whether a pilot's on-screen diamond lies on another drawn ship in front of it, on the actual rendered hull. */
+  occludesMarker(id, x, y, W, H) {
+    const target = this.get(id);
+    if (!target) return false;
+    const g = this.game;
+    _markRay.set((x / W) * 2 - 1, 1 - (y / H) * 2, 0.5)
+      .applyMatrix4(g.engine.camera.projectionMatrixInverse)
+      .normalize()
+      .applyQuaternion(_camQuat.copy(g.camWorldQuatInv).invert());
+    const far = target.world.distanceTo(g.camWorld);
+    for (const r of this.list) if (r.id !== id && this.view.covers(r, _markRay, far)) return true;
+    return false;
   }
 
   /** How a ship's sensors at `here`, of range `range`, read pilot `r` (its `sense`: distance, reach, signature and what

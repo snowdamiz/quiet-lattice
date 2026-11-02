@@ -4,6 +4,8 @@
 // what the capture shows went through the same decoding, store, buffers and clock as a live session.
 import * as THREE from 'three';
 import { decodeSnapshot, diffEntity, encodeSnapshot } from '@astra/shared/protocol';
+import { getHull } from '@astra/shared/data';
+import { sensorRange } from '@astra/shared/ships';
 import { frameIdOfFrame } from '../net/pose.js';
 
 /** The zone's tick. */
@@ -195,7 +197,7 @@ export function crowdTicks(game, { count = 24, t0 = game.time, seconds = 30 } = 
       const a = turn * u;
       return out
         .copy(centre)
-        .addScaledVector(dir, R * Math.sin(Math.abs(a)))
+        .addScaledVector(dir, R * Math.sin(Math.abs(turn) * u))
         .addScaledVector(across, Math.sign(turn) * R * (1 - Math.cos(a)))
         .add(basis(0, climb * u, 0));
     };
@@ -203,6 +205,30 @@ export function crowdTicks(game, { count = 24, t0 = game.time, seconds = 30 } = 
   return ticksOf(t0, seconds, (t) =>
     flights.map((path, i) => ({ id: 201 + i, kind: 'player', frame, mode: 'ship', ...pilot(i), ...flown(path, t, upAt, (hash(i * 7 + 7) - 0.5) * 0.6) })),
   );
+}
+
+/** The crowd's sensor evidence: one pilot coasting beyond normal reach, and one actually boosting at 98% of its
+ * doubled reach. Both are real Larks in the recorded stream; NPC ship evidence waits for P1.E08.T05. */
+export function crowdSensorsTicks(game, { t0 = game.time, seconds = 30 } = {}) {
+  const s = game.ship.state;
+  const hull = getHull('lark');
+  const reach = sensorRange('ship', game.ship.stats.scanRange) * hull.signature.base;
+  const radius = reach * 2 * 0.98;
+  const rate = hull.speed.space * 1.2 / radius;
+  const basis = (x, y, z) => new THREE.Vector3(x, y, z).applyQuaternion(s.quat);
+  const upAt = (p, out) => out.copy(basis(0, 1, 0));
+  const paths = [
+    (t, out) => out.copy(s.pos).add(basis(-reach * 0.15 + 80 * (t - t0), 0, -reach * 1.12)),
+    (t, out) => {
+      const a = 0.12 + rate * (t - t0 - 1.2);
+      return out.copy(s.pos).add(basis(radius * Math.sin(a), radius * 0.015, -radius * Math.cos(a)));
+    },
+  ];
+  const frame = frameIdOfFrame(game.system, game.station, s.frame);
+  return crowdTicks(game, { t0, seconds }).map(({ time, entities }) => ({
+    time,
+    entities: entities.slice(0, -2).concat(paths.map((path, i) => ({ id: 223 + i, kind: 'player', frame, mode: 'ship', ...pilot(22 + i), ...flown(path, time, upAt) }))),
+  }));
 }
 
 /**
@@ -299,7 +325,7 @@ export function bayTicks(game, { t0 = game.time, seconds = 30 } = {}) {
   return ticksOf(t0, seconds, () => docked.map((d, i) => ({ id: 501 + i, kind: 'player', frame, ...pilot(i), ...d })));
 }
 
-export const SCENES = { flypast: flypastTicks, crowd: crowdTicks, pads: padsTicks, surface: surfaceTicks, bay: bayTicks };
+export const SCENES = { flypast: flypastTicks, crowd: crowdTicks, crowdSensors: crowdSensorsTicks, pads: padsTicks, surface: surfaceTicks, bay: bayTicks };
 
 /** Starts scene `name` (SCENES). */
 export const play = (game, name, opts = {}) => playTicks(game, SCENES[name](game, opts), opts);

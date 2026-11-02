@@ -155,6 +155,8 @@ for (const scene of SCENES)
         // marks and names: none back and forth faster than their fade (a name's first showing, and a name going with its
         // mark, aside); no mark jumping across the screen faster than its ship moves
         const fading: { lbl: Element; name: string }[] = [];
+        const named = [...document.querySelectorAll('.marker.player:not(.out) .lbl:not(.out)')].filter((lbl) => lbl.firstChild?.nodeType === Node.TEXT_NODE);
+        if (named.length > 9) issues.push({ frame: f, what: `${named.length} pilot names shown, above nearest eight plus crosshair budget` });
         for (const m of document.querySelectorAll('.marker.player')) {
           const id = Number((m as HTMLElement).dataset.id);
           const lbl = m.querySelector('.lbl')!;

@@ -1144,7 +1144,7 @@ body {
    condensed face holds solid; HUD.js places the mark over the ship and the label beside the mark, and fades both in and
    out (FADE_MS) */
 .marker.player {
-  transition: opacity 0.15s linear;
+  opacity: 0;
 }
 .marker.player.out {
   opacity: 0;
@@ -1154,7 +1154,7 @@ body {
   height: 6px;
   margin: -3px;
   border-width: 1px;
-  border-color: var(--accent2);
+  border-color: #8fd3c8;
   box-shadow:
     0 0 0 1px #0b0c0e,
     inset 0 0 0 1px #0b0c0e;
@@ -1168,7 +1168,7 @@ body {
   line-height: 15px;
   letter-spacing: 0.04em;
   color: #e9e7e2;
-  transition: opacity 0.15s linear;
+  opacity: 0;
   text-shadow:
     1px 0 0 #0b0c0e,
     -1px 0 0 #0b0c0e,
@@ -1190,7 +1190,7 @@ body {
   font-size: 11px;
   font-weight: 600;
   line-height: 15px;
-  color: #e9e7e2;
+  color: inherit;
 }
 .marker.resource .icon {
   width: 6px;

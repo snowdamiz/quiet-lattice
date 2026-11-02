@@ -818,7 +818,15 @@ async function stageCutscene(page: Page, id: string): Promise<void> {
 interface RemotePage {
   game: {
     traffic: { station: unknown; ships: { obj: { visible: boolean } }[] };
-    ship: { speed: number; state: { pos: any; quat: any } };
+    ship: {
+      speed: number;
+      state: { pos: any; quat: any };
+      stats: { shieldMax: number; hullMax: number };
+      shield: number;
+      hull: number;
+      setSkills(skills: string[]): void;
+      setCockpit(on: boolean): void;
+    };
     station: unknown;
     system: { homePlanet: unknown };
     hud: { clearBanners(): void };
@@ -845,7 +853,7 @@ interface RemotePage {
  */
 async function openRemotes(
   page: Page,
-  scene: 'flypast' | 'crowd' | 'pads' | 'surface' | 'bay',
+  scene: 'flypast' | 'crowd' | 'crowdSensors' | 'pads' | 'surface' | 'bay',
   seconds: number,
   stage: 'space' | 'pads' | 'surface' = 'space',
 ): Promise<void> {
@@ -890,6 +898,21 @@ async function openRemotes(
   );
   // (the HUD's transitions run on real time)
   await page.waitForTimeout(1200);
+}
+
+/** The actual Pilot capacities, with both pools at a fraction of their maxima, outside or inside the cockpit. */
+async function remotePools(page: Page, fraction: number, cockpit = false): Promise<void> {
+  await page.evaluate(
+    ({ fraction, cockpit }) => {
+      const { ship } = (window as unknown as RemotePage).game;
+      ship.setSkills(['shield_capacitor', 'hull_plating']);
+      ship.shield = ship.stats.shieldMax * fraction;
+      ship.hull = ship.stats.hullMax * fraction;
+      ship.setCockpit(cockpit);
+    },
+    { fraction, cockpit },
+  );
+  await settle(page, 120);
 }
 
 /**
@@ -947,7 +970,11 @@ async function sensorsOverlay(page: Page): Promise<void> {
               : inView
                 ? 'no mark, at the edge'
                 : 'no mark, out of view';
-        const name = !marked ? '' : p.shown ? `name ${p.side}` : `name dropped${p.why ? ` (${p.why})` : ''}`;
+        const name = !marked
+          ? ''
+          : p.shown
+            ? `${p.named ? 'name' : 'range only'} ${p.side}${p.why ? ` (${p.why})` : ''}`
+            : `label dropped${p.why ? ` (${p.why})` : ''}`;
         rows.push(
           `${(r.name ?? 'Pilot').padEnd(14)} ${km(s?.distance ?? 0).padStart(7)} / ${km(s?.reach ?? 0).padStart(6)}  sig ${(s?.signature ?? 0).toFixed(2)} ${flags.padEnd(9)} ${(s?.detected ? 'DETECTED' : 'not detected').padEnd(12)} ${mark}${name ? `, ${name}` : ''}`,
         );
@@ -2431,23 +2458,37 @@ export const SCREENS: Record<string, ScreenDef> = {
     open: (page) => openRemotes(page, 'flypast', 1.2),
   },
   // the Phase 1 budget's 24 remote players in view at once, each about its own business (heading, speed, turn and climb),
-  // a hundred metres to a few kilometres out, each marked with its name and range; one draws away past the 4 km a ship's
-  // sensors pick a Lark up at, and its marker drops during the clip (one kit of instanced meshes draws them all, the far
+  // a hundred metres to a few kilometres out, each marked with range, the nearest eight and crosshair pilot named; one
+  // draws away past the 4 km a ship's sensors pick a Lark up at, and its marker drops during the clip (one kit draws them all, the far
   // ones simplified)
   'remote-ships-crowd': {
     hudClock: true,
     clipSeconds: 2,
     open: (page) => openRemotes(page, 'crowd', 1.2),
   },
-  // the crowd with the sensors' and the HUD's reading of each pilot over it (sensorsOverlay, a dev overlay): which pilots
-  // the local ship's sensors pick up, and what became of each one's mark and name
+  // The crowd with the sensors' and HUD's readings: one pilot beyond normal reach, one genuinely boosting at its
+  // doubled edge. NPC ships are deferred to P1.E08.T05; no fabricated NPC is added to this scene.
   'remote-ships-crowd-sensors': {
     hudClock: true,
     clipSeconds: 2,
     open: async (page) => {
-      await openRemotes(page, 'crowd', 1.2);
+      await openRemotes(page, 'crowdSensors', 1.2);
       await sensorsOverlay(page);
     },
+  },
+  'remote-ships-pools': {
+    hudClock: true,
+    clipSeconds: 2.5,
+    async open(page) {
+      await openRemotes(page, 'flypast', 1.2);
+      await remotePools(page, 0.8);
+    },
+    stills: {
+      'full-125': (page) => remotePools(page, 1),
+      'half-125': (page) => remotePools(page, 0.5),
+      'cockpit-half-125': (page) => remotePools(page, 0.5, true),
+    },
+    motion: (page) => remotePools(page, 0.8),
   },
   // the Waystation's hangar from the player's docked ship: two other pilots' Larks docked on the pads beside it, gear
   // down, and two more flying past outside the mouth one after the other, throttles opening (their exhausts lengthen)

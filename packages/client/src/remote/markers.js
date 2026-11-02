@@ -18,6 +18,45 @@ export const MARK_R = 3;
 export const LABEL_GAP = 8;
 /** A label's height (px): its name (13 px) over its range (11 px), as style.css sets them. */
 export const LABEL_H = 30;
+export const RANGE_H = 15;
+export const PILOT_NAMES = 8;
+export const FADE_MS = 150;
+
+/** From visible pilots in sensor-distance order, name the nearest eight plus the crosshair pilot (deduplicated). */
+export function selectNames(pilots, W, H) {
+  let crosshair = null;
+  let closest = Infinity;
+  for (let i = 0; i < pilots.length; i++) {
+    const p = pilots[i];
+    p.named = i < PILOT_NAMES;
+    const d = (p.cx - W / 2) ** 2 + (p.cy - H / 2) ** 2;
+    if (d < closest) {
+      closest = d;
+      crosshair = p;
+    }
+  }
+  if (crosshair) crosshair.named = true;
+}
+
+/** Warm-white ink blended against its opaque halo, full through 500 m and 70% from 1 km. */
+export function pilotInk(distance) {
+  const a = 1 - 0.3 * Math.min(1, Math.max(0, (distance - 500) / 500));
+  return `rgb(${Math.round(11 + (233 - 11) * a)}, ${Math.round(12 + (231 - 12) * a)}, ${Math.round(14 + (226 - 14) * a)})`;
+}
+
+export const makeFade = () => ({ target: false, from: 0, at: 0, value: 0 });
+
+/** A complete, reversible 150 ms ease on the HUD clock, including the last frame down to zero. */
+export function fadeTo(fade, target, now) {
+  const t = Math.min(1, Math.max(0, (now - fade.at) / FADE_MS));
+  fade.value = fade.from + (Number(fade.target) - fade.from) * t * t * (3 - 2 * t);
+  if (fade.target !== target) {
+    fade.from = fade.value;
+    fade.target = target;
+    fade.at = now;
+  }
+  return fade.value;
+}
 /** Px a box keeps from the screen's edges. */
 const EDGE = 4;
 /** The label's sides, in the order a new one tries them. */

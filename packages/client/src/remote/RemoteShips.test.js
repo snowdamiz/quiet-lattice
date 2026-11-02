@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { COARSE_MAX, COARSE_RATIO, LIGHTS_FAR, LIGHTS_NEAR, LOD_PX, PANEL_STRENGTH, PLATED_ENV, ROUGH_MIN, RemoteShips, hullMaterial, lightsAt, lodFor, modelledHull, painted, plating, strobeAt } from './RemoteShips.js';
+import { RemoteEntities } from './RemoteEntities.js';
 
 /** A loaded ship as Ship.load leaves one: the model (a rounded hull, a wing, an engine glow, the cockpit interior, a gear
  * leg on its pivot) in the ship's group beside its own effects and cockpit screens; `paint` its hull colour. `lods` adds
@@ -206,6 +207,37 @@ describe('remote ships’ lights and plating', () => {
 });
 
 describe('RemoteShips', () => {
+  it('occludes only a farther pilot at the diamond ray, through the real remote-layer query', async () => {
+    const game = scene();
+    game.camWorldQuatInv = new THREE.Quaternion();
+    const ships = await ready(game);
+    const near = remote(game, 1, 100);
+    const far = remote(game, 2, 500);
+    near.world.x = far.world.x = game.camWorld.x;
+    ships.update([near, far], 1 / 60);
+    const remotes = new RemoteEntities(game, { view: ships });
+    remotes.list.push(near, far);
+    remotes.byId.set(1, near); remotes.byId.set(2, far);
+    expect(remotes.occludesMarker(2, 960, 540, 1920, 1080)).toBe(true);
+    expect(remotes.occludesMarker(1, 960, 540, 1920, 1080)).toBe(false);
+    const empty = new THREE.Vector3(5, 0.8, -100).project(game.engine.camera);
+    expect(remotes.occludesMarker(2, (empty.x * 0.5 + 0.5) * 1920, (-empty.y * 0.5 + 0.5) * 1080, 1920, 1080)).toBe(false);
+  });
+
+  it('tests a mark ray against the drawn hull triangles, not empty corners of its bounds, and only before the far pilot', async () => {
+    const game = scene();
+    const ships = await ready(game);
+    const r = remote(game, 0, 100);
+    ships.update([r], 1 / 60);
+    const toward = (x, y) => new THREE.Vector3(x, y, -100).normalize();
+    expect(ships.covers(r, toward(0, 0), 500)).toBe(true);
+    // This point lies within the hull's 12 x 2 m box, between its narrow body and wing.
+    expect(ships.covers(r, toward(5, 0.8), 500)).toBe(false);
+    expect(ships.covers(r, toward(0, 0), 50)).toBe(false);
+    r.drawn = false;
+    expect(ships.covers(r, toward(0, 0), 500)).toBe(false);
+  });
+
   it("makes one kit per hull from that hull's own model, not the player's ship: the hull's surfaces merged, each leg apart", async () => {
     const game = scene();
     const ships = await ready(game);

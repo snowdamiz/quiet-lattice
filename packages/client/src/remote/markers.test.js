@@ -4,7 +4,7 @@
 import { SocialUI } from '../ui/social/SocialUI.js';
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
-import { LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fits, hits, hullCorners, labelBox, makeRoom, makeSlide, markOf, nudge, outlineBands, placeLabel, screenBounds } from './markers.js';
+import { FADE_MS, LABEL_GAP, LABEL_H, MARK_GAP, MARK_R, ROOM_MARGIN, addCovers, fadeTo, fits, hits, hullCorners, labelBox, makeFade, makeRoom, makeSlide, markOf, nudge, outlineBands, pilotInk, placeLabel, screenBounds } from './markers.js';
 
 const W = 1920;
 const H = 1080;
@@ -15,6 +15,29 @@ const out = () => ({ x0: 0, y0: 0, x1: 0, y1: 0 });
 const room = (keepOut = [], taken = [], more = {}) => Object.assign(makeRoom(), { keepOut, taken, W, H }, more);
 
 describe('pilot markers', () => {
+  it('keeps even its 70% distance ink above 4.5:1 against the opaque halo', () => {
+    const luminance = (rgb) => rgb.reduce((sum, v, i) => {
+      const c = v / 255;
+      return sum + (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4) * [0.2126, 0.7152, 0.0722][i];
+    }, 0);
+    const ink = pilotInk(10000).match(/\d+/g).map(Number);
+    expect((luminance(ink) + 0.05) / (luminance([11, 12, 14]) + 0.05)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('finishes a fade at exactly 150 ms and reverses it continuously from the opacity already drawn', () => {
+    const f = makeFade();
+    expect(fadeTo(f, true, 1000)).toBe(0);
+    expect(fadeTo(f, true, 1000 + FADE_MS)).toBe(1);
+    expect(fadeTo(f, false, 1200)).toBe(1);
+    const halfway = fadeTo(f, false, 1275);
+    expect(halfway).toBeCloseTo(0.5, 9);
+    expect(fadeTo(f, true, 1275)).toBe(halfway);
+    expect(fadeTo(f, true, 1425)).toBe(1);
+    fadeTo(f, false, 1500);
+    expect(fadeTo(f, false, 1649)).toBeGreaterThan(0);
+    expect(fadeTo(f, false, 1650)).toBe(0);
+  });
+
   it("project the ship's box onto the screen: centred straight ahead, larger nearer, none behind the camera", () => {
     const far = screenBounds(box, identity, new THREE.Vector3(0, 0, -400), identity, camera.projectionMatrix, W, H, out());
     expect((far.x0 + far.x1) / 2).toBeCloseTo(W / 2, 6);
