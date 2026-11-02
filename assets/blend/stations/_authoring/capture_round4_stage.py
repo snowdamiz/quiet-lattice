@@ -1,8 +1,8 @@
-"""Single-use sequential station plan. CPU candidate; actual execution boundary unqualified.
+"""Single-use sequential station plan with a separately granted remaining-eight caller.
 
 No stage ID entry remains. An attempt consumes its grant atomically before any stage,
 cannot resume or skip, and permanently holds on the first unsuccessful result or crash.
-The actual-browser boundary qualification is still absent; no capture is authorized.
+No capture runs without its exact newly issued parent grant and reviewed readiness.
 """
 import hashlib
 import json
@@ -63,25 +63,10 @@ def run_plan(ready, consumption_root, authorization_id, run_stage):
 
 def main():
     assert len(sys.argv) == 1, 'Single sequential entry only; no stage IDs, retries or skips'
-    assert GRANT_FILE.is_file(), 'No new GPU grant. The previous nine-stage grant is revoked.'
-    # CPU executable-stub proofs cannot qualify actual native/browser inheritance.
-    assert BOUNDARY_PROOF.is_file(), 'Actual Chromium/native execution boundary remains unqualified'
-    assert READY.is_file(), 'Remaining plan is held pending actual execution-boundary qualification'
-    grant = json.loads(GRANT_FILE.read_text())
-    assert grant['authorization_id'] == os.environ.get('STATION_ROUND4_GPU_GRANT')
-    assert grant['readiness_sha256'] == sha(READY)
-    assert grant['controller_sha256'] == sha(__file__)
-    assert grant['boundary_proof_sha256'] == sha(BOUNDARY_PROOF)
-    assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip() == grant['authorized_head']
-    assert subprocess.check_output(['git', 'branch', '--show-current'], cwd=ROOT, text=True).strip() == 'task/P1-E11-T01'
-    assert not (BASE / 'PARENT_HOLD_GPU').exists()
-    proof = json.loads(BOUNDARY_PROOF.read_text())
-    assert proof['status'] == 'PASS_ACTUAL_EXECUTION_BOUNDARY'
-    assert proof['actual_chromium_native_family_observed'] is True
-    # This phase deliberately freezes no actual capture callable. Native boundary proof
-    # must establish the exact resource observer and cleanup contract for fresh review.
-    raise RuntimeError('CPU candidate only: actual capture binding requires a subsequent reviewed freeze')
+    from run_round4_remaining8 import execute
+    state = execute()  # Separate reviewed readiness + new parent grant required.
+    return 0 if state['status'] == 'ALL_EIGHT_SUCCEEDED' else 1
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())
