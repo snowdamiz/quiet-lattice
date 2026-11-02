@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+from contextlib import closing
 from dataclasses import asdict, dataclass
 from fractions import Fraction
 import hashlib
@@ -324,7 +325,7 @@ def qualify(artifact: Path, pid: int) -> dict:
     }
     issue_path = artifact / "native.trace/Trace1.run/RunIssues.storedata"
     try:
-        with sqlite3.connect(issue_path.resolve().as_uri() + "?mode=ro", uri=True) as database:
+        with closing(sqlite3.connect(issue_path.resolve().as_uri() + "?mode=ro", uri=True)) as database:
             database.row_factory = sqlite3.Row
             issues["total_rows"] = database.execute("SELECT count(*) FROM ZISSUE").fetchone()[0]
             issues["time_mapping_rows"] = [dict(row) for row in database.execute(
