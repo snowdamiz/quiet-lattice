@@ -20,6 +20,7 @@
     "db:migrate": "pnpm --filter @astra/server db:migrate",
     "test": "vitest run",
     "smoke": "pnpm --filter @astra/tools smoke",
+    "bots": "pnpm --filter @astra/tools bots",
     "gate:removed": "tsx packages/tools/src/gates/removed.ts",
     "test:int": "vitest run --config vitest.int.config.ts",
     "capture": "tsx packages/tools/src/capture/capture.ts",

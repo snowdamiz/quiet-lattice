@@ -891,11 +891,42 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
 ## 10. Tests
 
 Unit tests (`*.test.ts`) next to the code or in the package's `test/` folder; integration tests (`*.int.test.ts`) start a real server on a random port against
-the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`) and drive it with scripted clients from
-`packages/tools/src/bots`. Each integration test creates its own accounts with unique names and cleans nothing up; the
+the dockerised Postgres and Redis (`pnpm db:up && pnpm test:int`). `packages/server/test/bots.int.test.ts` drives the shipped
+headless clients in `packages/tools/src/bots`; older integration suites also use `packages/server/test` socket/pilot helpers.
+Each integration test creates its own accounts with unique names and cleans nothing up; the
 database is disposable. The online smoke specs (`packages/tools/src/smoke/online.spec.ts`, part of `pnpm smoke`, needing
 `pnpm db:up`) run the server against a scratch database they create and drop, and a client through Vite's proxies; the
 server's admin channel (§16) is open on a free port with a secret made per run, for `admin(command)`.
+
+The bot framework (`packages/tools/src/bots/index.ts`) exports `registerBot`, `BotClient`, `runScript` and `patrol`.
+`registerBot` uses the ordinary registration and character endpoints. `BotClient` uses Node's WebSocket implementation
+and protocol 24, sends server-time-stamped inputs at 20 Hz, applies binary deltas against their named baselines (64 ticks
+kept), and acknowledges them with their zone identity. A zone handoff replaces its entity identity and pose, clears the
+delta cache and keeps the input sequence beyond the handoff fence. Frame changes use shared `settleFrame`; `flyFor`
+turns the velocity into the new frame without adding the frame's velocity. Clock samples come from welcome and pongs.
+
+`fly` and `walk` follow bounded waypoints; `flyFor` follows a bounded straight course. `land` and `dock` ask for the mode
+at the current pose, so a script first flies to a legal landing or pad position. `disembark(feet)` and `board(shipPose)`
+send the ordinary exit/boarding poses for movement authority to check. A movement action completes only after a snapshot
+acknowledges its final input. Corrections replace the prediction and stop the action with `BotRefusal`; acknowledged poses
+are also compared with the sent input at its pose time (0.5 m), so a lost correction cannot leave the bot on a rejected
+trajectory. The bot stops the route so its caller can replan after a correction.
+
+`mine` holds the beam button for a bounded interval and returns the server's hit/depletion answer. `fight` aims the ship's
+nose, waits for its input acknowledgement and returns the gun's hit/miss/blocked answer. `acceptQuest` accepts an actual
+server offer and returns its quest state. Refused mining, shooting, quest and warp requests reject with the server's reason;
+there are no local damage, loot or inventory grants. `onMessage` exposes server events for assertions, and `latest` holds
+one message per type. Actions in `runScript` run sequentially; callers must await one movement action before starting another.
+
+With a server running, `pnpm bots -- --count 10` creates ten ordinary characters and patrols through the Waystation's open
+hangar mouth for ten minutes after launch. `--duration <seconds>` bounds a shorter diagnostic, `--url <http(s) URL>` (or
+`ASTRA_BOT_URL`) selects the server, and `--system <galaxy index>` requests an authoritative paid warp before patrolling
+there. It emits JSON start, join, pass/failure and cleanup records with each client's input, snapshot and correction counts.
+Any refusal, bad packet, lost connection, timeout or patrol correction fails the run; sockets and timers close on success,
+failure or interruption. The CLI requires an existing server and writes ordinary accounts to its database. For disposable
+verification, run that server against a unique scratch Postgres database and an owned Redis instance; never flush shared
+data. The ten-client patrol verifies sustained protocol traffic; the bot integration separately verifies accepted flight,
+landing, walking, mining, combat, docking and quest acceptance with movement authority enabled.
 
 ## 11. The Count meter (`packages/server/src/count`)
 
