@@ -2,7 +2,17 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { NativeTraceError, ownedDescendants, ownedGpuPid, processRows, recordedCommand, withNativeTrace, type CommandRecord } from './native-trace.ts';
+import {
+  discoverNativeCli,
+  NativeDiscoveryError,
+  NativeTraceError,
+  ownedDescendants,
+  ownedGpuPid,
+  processRows,
+  recordedCommand,
+  withNativeTrace,
+  type CommandRecord,
+} from './native-trace.ts';
 
 const folders: string[] = [];
 const jobs: ReturnType<typeof recordedCommand>[] = [];
@@ -192,5 +202,99 @@ describe('GPU PID ownership', () => {
     { processes: [{ id: 100, type: 'GPU' }] },
   ])('rejects missing, ambiguous or unrelated target (%j)', ({ processes }) => {
     expect(() => ownedGpuPid(processes, rows, 100)).toThrow();
+  });
+});
+
+describe('finite read-only CLI discovery', () => {
+  function discoveryFixture(kind: string) {
+    const out = mkdtempSync(join(tmpdir(), 'native-discovery-cpu-'));
+    folders.push(out);
+    const helper = join(out, 'discovery.mjs');
+    writeFileSync(
+      helper,
+      `
+      import {spawn} from 'node:child_process';
+      import {appendFileSync,existsSync,readFileSync} from 'node:fs';
+      const [out,kind,...args]=process.argv.slice(2);
+      if(existsSync(out+'/descendant')) {
+        const pid=Number(readFileSync(out+'/descendant','utf8'));
+        try {process.kill(pid,0);process.exit(73);} catch(e){if(e.code!=='ESRCH')throw e;}
+      }
+      appendFileSync(out+'/calls',JSON.stringify({pid:process.pid,args})+'\\n');
+      if(args[0]==='version' && ['hung-descendant','exited-descendant','failed-descendant'].includes(kind)) {
+        const c=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{stdio:'ignore'});c.unref();
+        appendFileSync(out+'/descendant',String(c.pid));console.log(JSON.stringify({descendant:c.pid}));
+        if(kind==='hung-descendant')setInterval(()=>{},1000);
+        else process.exit(kind==='failed-descendant'?7:0);
+      } else if(kind==='version-failed'&&args[0]==='version' || kind==='later-failed'&&args.join(' ')==='help export')process.exit(7);
+      else console.log('CPU-only discovery '+args.join(' '));
+    `,
+    );
+    return { out, executable: { file: process.execPath, prefix: [helper, out, kind] } };
+  }
+
+  async function assertDrained(commands: CommandRecord[]) {
+    const rows = await processRows();
+    expect(commands.every((c) => c.finishedAt && c.survivors.length === 0)).toBe(true);
+    expect(rows.filter((row) => commands.some((c) => c.pid === row.pid || c.group === row.pgid))).toEqual([]);
+  }
+
+  it('runs all four fixed commands sequentially and drains each successful helper group', async () => {
+    const f = discoveryFixture('normal');
+    const result = await discoverNativeCli(f.executable, 1000);
+    expect(result.commands.map((c) => c.args.slice(f.executable.prefix.length))).toEqual([
+      ['version'],
+      ['help', 'record'],
+      ['help', 'export'],
+      ['record', '--template', 'Metal System Trace', '--show-recording-options'],
+    ]);
+    expect(result.failure).toBeNull();
+    await assertDrained(result.commands);
+  });
+
+  it.each(['version-failed', 'later-failed', 'failed-descendant'])(
+    'never starts a later command after failure and drains every started group (%s)',
+    async (kind) => {
+      const f = discoveryFixture(kind);
+      let error: unknown;
+      try {
+        await discoverNativeCli(f.executable, 1000);
+      } catch (caught) {
+        error = caught;
+      }
+      expect(error).toBeInstanceOf(NativeDiscoveryError);
+      const evidence = (error as NativeDiscoveryError).evidence;
+      expect(evidence.commands).toHaveLength(kind === 'later-failed' ? 3 : 1);
+      expect(evidence.commands.at(-1)?.code).toBe(7);
+      await assertDrained(evidence.commands);
+    },
+  );
+
+  it('times out a hung helper and its real descendant before rejecting', async () => {
+    const f = discoveryFixture('hung-descendant');
+    const start = Date.now();
+    let error: unknown;
+    try {
+      await discoverNativeCli(f.executable, 1000);
+    } catch (caught) {
+      error = caught;
+    }
+    expect(error).toBeInstanceOf(NativeDiscoveryError);
+    const evidence = (error as NativeDiscoveryError).evidence;
+    expect(evidence.failure).toContain('exceeded 1000ms');
+    expect(evidence.commands).toHaveLength(1);
+    expect(evidence.commands[0].stdout).toContain('descendant');
+    expect(evidence.commands[0].signals.length).toBeGreaterThan(0);
+    expect(Date.now() - start).toBeLessThan(10_000);
+    await assertDrained(evidence.commands);
+  });
+
+  it('drains a descendant left by a zero-exit helper before the next helper can start', async () => {
+    const f = discoveryFixture('exited-descendant');
+    const result = await discoverNativeCli(f.executable, 1000);
+    expect(result.commands).toHaveLength(4);
+    expect(result.commands[0].signals.length).toBeGreaterThan(0);
+    expect(result.commands.every((c) => c.code === 0)).toBe(true);
+    await assertDrained(result.commands);
   });
 });

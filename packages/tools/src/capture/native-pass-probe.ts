@@ -11,6 +11,8 @@ import { FROZEN_SOURCES } from './benchmark-runs.ts';
 import { timerBoundaryArgs, timerBoundaryAsset } from './timer-boundaries.ts';
 import {
   bounded,
+  discoverNativeCli,
+  NativeDiscoveryError,
   NativeTraceError,
   ownedDescendants,
   ownedGpuPid,
@@ -129,13 +131,7 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
     return hostJob;
   };
   try {
-    const [version, recordHelp, exportHelp, optionsHelp] = await Promise.all([
-      exec('xcrun', ['xctrace', 'version']),
-      exec('xcrun', ['xctrace', 'help', 'record']),
-      exec('xcrun', ['xctrace', 'help', 'export']),
-      exec('xcrun', ['xctrace', 'record', '--template', 'Metal System Trace', '--show-recording-options']),
-    ]);
-    save('installed-cli.json', { version, recordHelp, exportHelp, optionsHelp, noRecordingInDiscovery: true });
+    save('installed-cli.json', await discoverNativeCli());
     await observe();
     timer = setInterval(() => {
       void observe().catch((e) => errors.push(`Host collector: ${String(e)}`));
@@ -231,6 +227,7 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
     }
   } catch (error) {
     errors.push(String(error));
+    if (error instanceof NativeDiscoveryError) save('installed-cli.json', error.evidence);
     if (error instanceof NativeTraceError) {
       native = error.evidence;
       save('native.json', native);

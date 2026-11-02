@@ -166,6 +166,63 @@ interface Executable {
   file: string;
   prefix: string[];
 }
+
+export interface NativeDiscoveryLog {
+  noRecordingInDiscovery: true;
+  deadlineMs: number;
+  startedAt: string;
+  finishedAt: string | null;
+  commands: CommandRecord[];
+  failure: string | null;
+}
+
+export class NativeDiscoveryError extends Error {
+  constructor(
+    message: string,
+    readonly evidence: NativeDiscoveryLog,
+  ) {
+    super(message);
+  }
+}
+
+/** One finite helper at a time. Its entire owned group drains before another helper or caller can proceed. */
+export async function discoverNativeCli(executable: Executable = { file: 'xcrun', prefix: ['xctrace'] }, deadlineMs = 10_000): Promise<NativeDiscoveryLog> {
+  if (!Number.isInteger(deadlineMs) || deadlineMs < 1 || deadlineMs > 10_000) throw new Error('Discovery deadline must be1..10000ms');
+  const log: NativeDiscoveryLog = {
+    noRecordingInDiscovery: true,
+    deadlineMs,
+    startedAt: new Date().toISOString(),
+    finishedAt: null,
+    commands: [],
+    failure: null,
+  };
+  try {
+    for (const args of [['version'], ['help', 'record'], ['help', 'export'], ['record', '--template', 'Metal System Trace', '--show-recording-options']]) {
+      const job = recordedCommand(executable.file, [...executable.prefix, ...args], log.commands);
+      try {
+        const result = await bounded(job.done, deadlineMs, `Native discovery ${args.join(' ')}`);
+        if (result.code !== 0 || result.error || result.truncated)
+          throw new Error(`Native discovery failed: code=${result.code}, signal=${result.signal}, error=${result.error}`);
+      } catch (error) {
+        log.failure = String(error);
+      } finally {
+        try {
+          await job.stop();
+        } catch (error) {
+          log.failure = `${log.failure ?? ''}; discovery cleanup: ${String(error)}`;
+        }
+      }
+      if (log.failure) break;
+    }
+  } catch (error) {
+    log.failure = String(error);
+  } finally {
+    log.finishedAt = new Date().toISOString();
+  }
+  if (log.failure) throw new NativeDiscoveryError(log.failure, log);
+  return log;
+}
+
 interface NativePlatform {
   xctrace: Executable;
   notifyutil: Executable;
