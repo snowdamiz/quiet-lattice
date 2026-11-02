@@ -942,3 +942,14 @@ ARTIFACTS:
 - Reviewed all ten variant studio/material sets, master grid, families, close-ups, hands/feet, morphs, native FV/MBP comparisons, both bend sheets, complete engine sheets covering all specified lights/LODs/wireframes/overlays/distances, and color/grayscale lineups; checked relevant native engine images at full capture resolution.
 - Read only DESIGN §5/§19.2, the art bible, rubric §0.10.2/input rules §0.10.3 and factual artifact metadata/provenance.
 - Both bound validators report **5/5 PASS, zero warnings**. Read-only GLB inspection confirms one shared 70-joint index set, 27 named morph targets, required compression extensions and sixteen 4096² maps. No files changed.
+
+
+## P1.E11.T01 — Waystation fourth independent visual grade (2026-11-02)
+
+VERDICT: REVISE
+TASK: P1.E11.T01 — Waystation
+SCORES: design 4, silhouette 5, proportion 4, materials 4, detail 4, topology 4, consistency 5, fitness 4, placeholder 5, performance 3 (mean 4.2)
+NOTES:
+- performance: Supply qualified three-light review measurements with actual renderer telemetry, stable attributable asset timings, and demonstrated 60 fps. The supplied unqualified readouts do not establish a performance pass.
+
+Artifact-only grader index: `/private/tmp/station-fourth-artifact-only-jyslgamo/waystation.json`, SHA256 `8f6fac190d96e67e1809321bd625754c1f7dc63d4b0bfee4560d7acd956ca0b2`. Detailed inspection record: `/private/tmp/waystation-visual4-sol-ig08srq9/viewing-record.md`; integrity and actual viewing are recorded separately. No additional capture was requested. Current source/export hashes remain `84fd86e0d68730e8a18edc061c965a6ef26aa99d35b0aae5d4098316a4327c68` / `aabf38551d7a5ea0e34e980bd496ef53943dae3de91fa5a37cd11824bd729e81`.
