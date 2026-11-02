@@ -845,3 +845,26 @@ NOTES:
 - placeholder: The seven plain rectangular cover blocks on sy_deck read as blockout. Develop them into recognizable salvage or cargo barriers with shaped construction, attachments, and distinct wear.
 - performance: qualification is unresolved separately from visual defects; retain standard1080p three-light/five-pair/device/load/warm-up/error/sample requirements with T13. No60fps or asset-regression claim from current data.
 ````
+
+## P1.E11.T01 Waystation — third submission (2026-11-02)
+
+Fresh grader `/root/waystation_third_grade_sol`, `gpt-6.1-sol`, `xhigh`, no transcript inheritance. Artifact checkpoint `789a383ce96ac6510c63e63e31637c8bb479ef1c`. Complete verdict follows verbatim; this is the third component grade and does not invoke the fifth-grade disposition.
+
+VERDICT: REVISE
+
+TASK: P1.E11.T01 — Waystation component — third submission.
+
+SCORES: design 4; silhouette 4; proportion 5; materials 4; detail 4; topology 4; consistency 5; fitness 4; placeholder 3; performance 3. **Mean: 4.00/5.**
+
+NOTES:
+
+- **Placeholder — appearance:** In `assets/renders/stations/round3/engine/attempt01/standard/waystation/ws_fabricator/open-space_lod0.png`, the principal working area remains a featureless opaque rectangular block beneath the finished hood and braces. The blank control strip reinforces the unfinished appearance. Replace this central stand-in with a visibly designed fabrication chamber, work surface and tooling, and give its controls purposeful detail.
+- **Performance — shared measurement gap:** The nine standard `ws_*/perf.json` files and `review_round3/waystation/metadata/capture_context.json` do not establish qualified, repeatable whole-scene 60 fps. Complete the shared P1.E14.T13 measurement qualification and supply independent repeated runs plus representative whole-scene frame cadence with this kit. Nominal timing flags and small paired deltas do not establish an asset-caused regression; none is asserted here.
+
+ARTIFACTS:
+
+- Entry: `assets/renders/stations/review_round3/waystation/manifest.json`, SHA256 `c832f7b50f947c659753756afcfbc45975ab1aeea3b3c737dc16ce8ec546339a`.
+- Independently verified **all 192 inventory-bound files’ SHA256 hashes and byte sizes**, including **129 PNGs**, with no mismatches. Verified reference, source, export and validator bindings. Canonical source SHA256: `83532327ba2ce3c72a597ceb41ef2b0d3add7f5352c139bc771a38bb34c4747f`; export: `c74e09c52d670005273197f0b66c8226a36dccbd2acecba081f1616ef3a6e038`.
+- Inspected all 129 PNGs at native resolution: all nine modules’ turntables/material sheets, both family sheets, three lighting cases at LOD0/2, both wireframes, overlays and distance views; current-source scale/cutaway/uncut-control, ring and whole-kit distance supplements.
+- Read immutable DESIGN 19.2/19.3, art bible, rubric, source/export metadata, capture provenance, actual/requested camera fields, point-light records and performance context. Supplied source/export validators pass; canonical GLB’s 36 LOD triangle counts agree with the export report.
+- Standard ring night/distance and hangar distance coverage gaps remain recorded. Supplements provide additional visual evidence under distinct placement and camera conditions; they do not replace standard placement or performance evidence. Runtime door animation and continuous LOD transitions remain unverified by this static packet.
