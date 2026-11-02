@@ -506,7 +506,7 @@ Before the first art task is graded, the orchestrator runs the grader on the dem
 ---
 
 ## Appendix A: task count
-Phase 1: 129 tasks (18 art). Phase 2: 73 tasks (12 art). Phase 3: 29 tasks (5 art). Total 231. Count task headers regardless of status; the loop should recount rather than trust this line.
+Phase 1: 130 tasks (18 art). Phase 2: 73 tasks (12 art). Phase 3: 29 tasks (5 art). Total 232. Count task headers regardless of status; the loop should recount rather than trust this line.
 
 ## Appendix B: the first batches the orchestrator will dispatch
 These are logical batches; split them into smaller dispatches when the session's concurrency limit requires it (0.9.3).
