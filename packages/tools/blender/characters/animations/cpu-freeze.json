@@ -1,0 +1,59 @@
+{
+  "task": "P1.E05.T02",
+  "unit": "CPU authoring/export/validation freeze",
+  "createdUtc": "2026-11-02T21:51:30.033486+00:00",
+  "state": "CPU verified; independent code review, scheduled GPU capture and visual grade pending",
+  "artifacts": [
+    {
+      "path": "assets/blend/characters/animations/shared_motion.blend",
+      "bytes": 4588876,
+      "sha256": "36cd27d53ef6e10bc141bae1de2759519c625881c7c79d4f0b7607d78fb7b846"
+    },
+    {
+      "path": "packages/client/public/models/characters/animations/manifest.json",
+      "bytes": 15976,
+      "sha256": "077548e21921e41143e3d8d321e6ff72d72e48867048e01d847a3067eb7f3d63"
+    },
+    {
+      "path": "packages/client/public/models/characters/animations/shared_motion.glb",
+      "bytes": 2636416,
+      "sha256": "e7a88b2ad39104344e4c3612f2cd9015597389084bb67540777bf6301e926117"
+    },
+    {
+      "path": "packages/client/public/models/characters/animations/source-bind.json",
+      "bytes": 29601,
+      "sha256": "23f5567bd769ce1555ad60b1b650595619d421dd659395b697045973c989dbf8"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/cpu-proof.json",
+      "bytes": 82195,
+      "sha256": "8c84e23e8a618b7783cd10df3a2c8f835beab9ba36494233634e94c6e58c0d5a"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/source-validation.json",
+      "bytes": 709,
+      "sha256": "1424444189ed6b240a907356e32f441d876204559460554ef227282ed24bdf3a"
+    }
+  ],
+  "verification": {
+    "focusedVitestTestsPassed": 28,
+    "clipPeoplePairs": 126,
+    "gaitPeopleContactCases": 21,
+    "loopClips": 16,
+    "byteIdenticalSavedActionReexport": true,
+    "frozenBodySourcesAndExportsUnchanged": true,
+    "scopedEslint": "PASS",
+    "diffCheck": "PASS",
+    "maxStanceHeightResidualM": {
+      "thalune": 0.0009019560335155608,
+      "ixari": 0.00660269316337142,
+      "ulgani": 0.004652993262805716
+    }
+  },
+  "limits": [
+    "CPU-only; no renders, bake, browser, GPU, game, service or native launch",
+    "No visual, material, performance or integrated playback acceptance",
+    "No task-plan/progress/decisions edits; no runtime or package wiring changes",
+    "At most two Blender threads; all owned Blender calls exited and were reaped"
+  ]
+}
