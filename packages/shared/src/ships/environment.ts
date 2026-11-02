@@ -106,3 +106,26 @@ export function hazardDepth(hazard: Pick<Hazard, 'ceiling'>, altitudeM: number):
 export function hazardDamagePerS(hazard: Pick<Hazard, 'kind' | 'dps' | 'curve'>, depth: number, stats: Pick<ShipStats, 'hazardDamage'>): number {
   return hazard.dps * Math.pow(depth, hazard.curve || 1.3) * (stats.hazardDamage[hazard.kind] ?? 1);
 }
+
+/** Provisional re-entry tuning (P1.E06.T07): damage/s at full intensity. DESIGN 9.3 specifies the plating, not this rate. */
+export const REENTRY_DAMAGE_PER_S = 20;
+/** The station crews' existing hull repair rate while docked, hull/s. */
+export const DOCK_HULL_REPAIR_PER_S = 20;
+
+function smoothstep(value: number, from: number, to: number): number {
+  const k = Math.min(1, Math.max(0, (value - from) / (to - from)));
+  return k * k * (3 - 2 * k);
+}
+
+/** The existing plasma effect's unsmoothed intensity: descending fast through air, 0–1. `sink` is the inward radial
+ * velocity divided by speed (1 straight down, −1 straight up). Flying mode and a rocky world are the caller's checks. */
+export function reentryIntensity(density: number, speed: number, sink: number): number {
+  const heat = Math.sqrt(Math.max(0, density)) * (speed / 1000) ** 3;
+  return smoothstep(heat, 0.06, 0.45) * smoothstep(speed, 650, 1100) * smoothstep(sink, -0.2, 0.15);
+}
+
+/** The damage/s of re-entry, shield first as for a hostile sky. Ablative Plating divides this by three independently of
+ * heat-hazard plating; Pilot's Thermal Plating alone does not protect against re-entry. */
+export function reentryDamagePerS(intensity: number, stats: Pick<ShipStats, 'reentryDamage'>): number {
+  return REENTRY_DAMAGE_PER_S * intensity * stats.reentryDamage;
+}

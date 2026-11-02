@@ -11,7 +11,7 @@ import { FrameState } from '../universe/Body.js';
 import { applyPanelDetail } from '../render/panelMaterial.js';
 import { Cockpit, EYE } from './Cockpit.js';
 import { jetMaterial, makeJet, glowMaterial, makeGlow, ReentryFx } from '../render/ShipFx.js';
-import { CLIENT_SPEED_HEADROOM, PULSE_DRIVE, flightCaps, hazardDamagePerS, pulseSpeedLimit, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
+import { CLIENT_SPEED_HEADROOM, DOCK_HULL_REPAIR_PER_S, PULSE_DRIVE, flightCaps, hazardDamagePerS, hazardDepth, pulseSpeedLimit, reentryDamagePerS, reentryIntensity, shipLoadoutSchema, shipStats } from '@astra/shared/ships';
 import { canEngagePulse, meterEnvironment, meterProfile, meterRates, stepMeters } from '@astra/shared/meters';
 import { fireIntent } from '../net/combat.js';
 import { Blend } from '../net/prediction.js';
@@ -660,8 +660,19 @@ export class Ship {
     const net = this.game.net ?? null;
     if (net === this.meterNet) return;
     this.unwatchMeters?.();
+    this.unwatchHealth?.();
     this.meterNet = net;
     this.unwatchMeters = net ? net.on('meters', ({ meters }) => this.reconcileCharge(meters, net.serverTime() ?? meters.at)) : null;
+    this.unwatchHealth = net ? net.on('snapshot', () => this.reconcileHealth(net.store.entities.get(net.entityId))) : null;
+    if (net) this.reconcileHealth(net.store?.entities.get(net.entityId));
+  }
+
+  // The aboard entity's hp and shield are fractions of this hull's capacities. A foot snapshot describes suit health.
+  // A predicted loss never invokes the old rebuild/tax/teleport: combat's downed hook owns a real loss (Recall, E06.T03).
+  reconcileHealth(entity) {
+    if (!entity || entity.mode === 'foot') return;
+    if (entity.hp !== undefined) this.hull = entity.hp * this.stats.hullMax;
+    if (entity.shield !== undefined) this.shield = entity.shield * this.stats.shieldMax;
   }
 
   update(dt, input, piloting) {
@@ -757,10 +768,9 @@ export class Ship {
       const vs = st.vel.length();
       const up = this.upVector(_v4);
       const sink = up && vs > 1 ? -st.vel.dot(up) / vs : 0;
-      const heat = Math.sqrt(Math.max(0, this.atmoDensity)) * (vs / 1000) ** 3;
       const want =
         this.mode === 'flying' && st.frame?.sampler
-          ? THREE.MathUtils.smoothstep(heat, 0.06, 0.45) * THREE.MathUtils.smoothstep(vs, 650, 1100) * THREE.MathUtils.smoothstep(sink, -0.2, 0.15)
+          ? reentryIntensity(this.atmoDensity, vs, sink)
           : 0;
       this.reentryPower = THREE.MathUtils.damp(this.reentryPower || 0, want, want > (this.reentryPower || 0) ? 3 : 3.5, dt);
       // the air's direction past the ship, in ship space
@@ -1376,14 +1386,21 @@ export class Ship {
     this.hazardHeat = 0;
     this.wind.multiplyScalar(Math.exp(-dt * 0.5));
     // the station's crews patch the hull while you are docked
-    if (this.mode === 'landed' && f?.kind === 'station') this.hull = Math.min(this.stats.hullMax, this.hull + dt * 20);
-    if (!hz || g.mode !== 'ship' || this.mode === 'landed' && f.kind === 'station') return;
+    if (this.mode === 'landed' && f?.kind === 'station') this.hull = Math.min(this.stats.hullMax, this.hull + dt * DOCK_HULL_REPAIR_PER_S);
+    if (g.mode !== 'ship' || this.mode === 'landed' && f?.kind === 'station') return;
+    if (this.mode === 'flying' && f?.sampler) {
+      const speed = this.state.vel.length();
+      const up = this.upVector(_v4);
+      const sink = speed > 1 ? -this.state.vel.dot(up) / speed : 0;
+      this.hazardDamage(reentryDamagePerS(reentryIntensity(this.atmoDensity, speed, sink), this.stats) * dt);
+    }
+    if (!hz) return;
     const alt = f.isGas ? this.seaAltitude : this.altitude;
     if (!isFinite(alt)) return;
     this.hazard = hz;
     // within sight of the danger: warn before it bites
     this.hazardNear = 1 - THREE.MathUtils.smoothstep(alt, hz.ceiling, hz.ceiling * 1.8);
-    const depth = THREE.MathUtils.clamp(1 - alt / hz.ceiling, 0, 1);
+    const depth = hazardDepth(hz, alt);
     this.hazardLevel = depth;
     if (depth <= 0) return;
     // how much of each kind of hostile sky the hull takes (Thermal Plating and the like divide it)
@@ -1426,7 +1443,7 @@ export class Ship {
     this.shield -= fromShield;
     this.hull = Math.max(0, this.hull - (amount - fromShield));
     this.lastHazardHit = this.game.time;
-    if (this.hull <= 0) this.game.shipDestroyed(this.hazard);
+    if (this.hull <= 0 && !this.game.net) this.game.shipDestroyed(this.hazard);
   }
 
   damage(amount) {

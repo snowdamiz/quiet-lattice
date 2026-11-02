@@ -511,6 +511,7 @@ export class Zone {
     e.unvalidated = !verdict;
     e.input = { seq: msg.seq, time: msg.time, buttons: msg.buttons, aim: msg.aim && normalised(msg.aim) };
     this.touch(e);
+    if (verdict?.motion) this.combat.moved(e.id, verdict.motion);
     return 'ok';
   }
 
