@@ -6,6 +6,12 @@ import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type BrowserServer } from '@playwright/test';
 import { glArgs, openReview } from './capture.ts';
 import { startOwnedVite } from './native-vite.ts';
+import {
+  nativeWorkClassBudget,
+  nativeWorkClassOuterDeadlineMs,
+  nativeWorkClassTerminalEnvelopeMs,
+  withNativeWorkClassDeadline,
+} from './native-work-class-budget.ts';
 import { FROZEN_SOURCES } from './benchmark-runs.ts';
 import { timerBoundaryArgs, timerBoundaryAsset } from './timer-boundaries.ts';
 import {
@@ -27,15 +33,29 @@ const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const digest = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 const record = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
-export function nativePassArgs(args: string[]) {
+type NativePassOptions = ReturnType<typeof timerBoundaryArgs> &
+  ({ protocol: 'pass-queries' | 'off-off' } | { protocol: 'work-class'; workClass: 'drained-empty' | 'fence-only' | 'frame-only' | 'frame-plus-PNG' });
+
+export function nativePassArgs(args: string[]): NativePassOptions {
   const rest = [...args];
   const index = rest.indexOf('--protocol');
   const protocol = index < 0 ? 'pass-queries' : rest[index + 1];
-  if (protocol !== 'pass-queries' && protocol !== 'off-off') throw new Error('Native protocol must be pass-queries or off-off');
+  if (protocol !== 'pass-queries' && protocol !== 'off-off' && protocol !== 'work-class')
+    throw new Error('Native protocol must be pass-queries, off-off or work-class');
   if (index >= 0) rest.splice(index, 2);
   if (rest.includes('--protocol')) throw new Error('Native protocol must be specified once');
+  const classIndex = rest.indexOf('--work-class');
+  const workClass = classIndex < 0 ? undefined : rest[classIndex + 1];
+  if (classIndex >= 0) rest.splice(classIndex, 2);
+  if (rest.includes('--work-class')) throw new Error('Native work-class must be specified once');
   const options = timerBoundaryArgs(rest);
   nativeScope(options);
+  if (protocol === 'work-class') {
+    if (workClass !== 'drained-empty' && workClass !== 'fence-only' && workClass !== 'frame-only' && workClass !== 'frame-plus-PNG')
+      throw new Error('Native work-class requires drained-empty, fence-only, frame-only or frame-plus-PNG');
+    return { ...options, protocol, workClass };
+  }
+  if (classIndex >= 0) throw new Error('--work-class requires --protocol work-class');
   return { ...options, protocol };
 }
 
@@ -67,6 +87,20 @@ export function saveNativeOutputs(value: unknown, out: string) {
   return value;
 }
 
+/** Enforce structural output absence before any image persistence;never synthesize equality. */
+export function assertNativeWorkClassResult(value: unknown, workClass: string) {
+  if (!record(value) || value.workClass !== workClass || !Array.isArray(value.samples) || value.samples.length !== 1)
+    throw new Error('Missing or mismatched work-class control result');
+  const sample = value.samples[0];
+  const frames = workClass.startsWith('frame-') ? 1 : 0;
+  const png = workClass === 'frame-plus-PNG' ? 1 : 0;
+  if (!record(sample) || !record(sample.operations) || sample.operations.frames !== frames || sample.operations.png !== png || sample.operations.queries !== 0)
+    throw new Error('Work-class operation counts differ from the exact control');
+  if (!png && ['png', 'output', 'readbackStarted', 'readbackFinished'].some((key) => key in sample))
+    throw new Error('PNG/readback must be structurally absent from this work class');
+  if (png && typeof sample.png !== 'string') throw new Error('Immediate work-class PNG is missing');
+}
+
 export async function nativeSourceState(root: string, commands: CommandRecord[]) {
   const head = await runOwnedHelper('git', ['rev-parse', 'HEAD'], commands, { cwd: root, deadlineMs: 5000 });
   const status = await runOwnedHelper('git', ['status', '--short'], commands, { cwd: root, deadlineMs: 5000 });
@@ -74,6 +108,12 @@ export async function nativeSourceState(root: string, commands: CommandRecord[])
 }
 
 export async function captureNativePass(options: ReturnType<typeof nativePassArgs>) {
+  return options.protocol === 'work-class'
+    ? withNativeWorkClassDeadline((signal) => captureNativePassAttempt(options, signal))
+    : captureNativePassAttempt(options);
+}
+
+async function captureNativePassAttempt(options: ReturnType<typeof nativePassArgs>, outerSignal?: AbortSignal) {
   nativeScope(options);
   if (existsSync(options.out)) throw new Error('EEXIST: diagnostic output must be a new directory');
   const body = timerBoundaryAsset(options);
@@ -84,6 +124,9 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
     ...new Set([
       ...FROZEN_SOURCES,
       'packages/client/src/dev/native-pass-probe.js',
+      ...(options.protocol === 'work-class'
+        ? ['packages/client/src/dev/native-work-class-probe.js', 'packages/tools/src/capture/native-work-class-budget.ts']
+        : []),
       'packages/client/src/dev/gpu-completion.js',
       'packages/client/src/dev/dependent-output.js',
       'packages/tools/src/capture/native-pass-probe.ts',
@@ -152,24 +195,39 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
     return hostJob;
   };
   try {
+    outerSignal?.throwIfAborted();
     save('installed-cli.json', await discoverNativeCli());
+    outerSignal?.throwIfAborted();
     const sourceState = await nativeSourceState(ROOT, helpers);
+    outerSignal?.throwIfAborted();
     await observe();
     timer = setInterval(() => {
       void observe().catch((e) => errors.push(`Host collector: ${String(e)}`));
     }, 1000);
+    outerSignal?.throwIfAborted();
     phase = 'server-startup';
     vite = await startOwnedVite(ROOT, helpers);
+    outerSignal?.throwIfAborted();
     const { args, gl } = glArgs();
     browserServer = await chromium.launchServer({ args, timeout: 30_000 });
+    outerSignal?.throwIfAborted();
     browserPid = browserServer.process().pid;
     if (!browserPid) throw new Error('Owned browser PID unavailable');
     browser = await chromium.connect(browserServer.wsEndpoint(), { timeout: 30_000 });
-    const cdp = await bounded(browser.newBrowserCDPSession(), 10_000, 'browser CDP session');
+    outerSignal?.throwIfAborted();
+    const cdp = await bounded(browser.newBrowserCDPSession(), 10_000, 'browser CDP session', outerSignal);
     try {
-      const browserVersion = await bounded(cdp.send('Browser.getVersion'), 10_000, 'browser version');
+      outerSignal?.throwIfAborted();
+      const browserVersion = await bounded(cdp.send('Browser.getVersion'), 10_000, 'browser version', outerSignal);
+      outerSignal?.throwIfAborted();
       phase = 'loading';
-      session = await bounded(openReview(browser, vite.url, options.spec, { url: '/models/characters/thalune.glb', body }), 240_000, 'review load');
+      session = await bounded(
+        openReview(browser, vite.url, options.spec, { url: '/models/characters/thalune.glb', body }),
+        240_000,
+        'review load',
+        outerSignal,
+      );
+      outerSignal?.throwIfAborted();
       await bounded(
         session.page.evaluate(async () => {
           await window.review.light('noon-lush');
@@ -178,20 +236,27 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
         }),
         120_000,
         'review light',
+        outerSignal,
       );
+      outerSignal?.throwIfAborted();
       phase = 'preparing';
       save(
         'prepared.json',
         await bounded(
-          options.protocol === 'off-off'
-            ? session.page.evaluate(() => window.review.nativePassProbe('prepare-off-off'))
-            : session.page.evaluate(() => window.review.nativePassProbe('prepare')),
+          options.protocol === 'work-class'
+            ? session.page.evaluate((workClass) => window.review.nativeWorkClassProbe('prepare', workClass), options.workClass)
+            : options.protocol === 'off-off'
+              ? session.page.evaluate(() => window.review.nativePassProbe('prepare-off-off'))
+              : session.page.evaluate(() => window.review.nativePassProbe('prepare')),
           90_000,
           'native probe preparation',
+          outerSignal,
         ),
       );
-      const processes = await bounded(cdp.send('SystemInfo.getProcessInfo'), 10_000, 'GPU process identity');
-      const rows = await processRows(helpers);
+      outerSignal?.throwIfAborted();
+      const processes = await bounded(cdp.send('SystemInfo.getProcessInfo'), 10_000, 'GPU process identity', outerSignal);
+      outerSignal?.throwIfAborted();
+      const rows = await processRows(helpers, outerSignal);
       const gpuPid = ownedGpuPid(processes.processInfo, rows, browserPid);
       const reviewSession = session;
       const clockCorrelations: unknown[] = [];
@@ -224,17 +289,28 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
         ...sourceState,
         logicalCores: cpus().length,
         cpu: cpus()[0]?.model,
-        pairs: options.protocol === 'off-off' ? 1 : 5,
-        maxControlFrames: options.protocol === 'off-off' ? 2 : 10,
+        pairs: options.protocol === 'work-class' ? 0 : options.protocol === 'off-off' ? 1 : 5,
+        maxControlFrames: options.protocol === 'work-class' ? (options.workClass.startsWith('frame-') ? 1 : 0) : options.protocol === 'off-off' ? 2 : 10,
+        ...(options.protocol === 'work-class'
+          ? {
+              queries: 0,
+              maxPngReadbacks: options.workClass === 'frame-plus-PNG' ? 1 : 0,
+              aggregateWaitBudget: nativeWorkClassBudget,
+              outerDeadlineMs: nativeWorkClassOuterDeadlineMs,
+              terminalEnvelopeMs: nativeWorkClassTerminalEnvelopeMs,
+            }
+          : {}),
         trace: 'Attach only to this verified owned GPU PID; no global collection, privacy/settings mutation or automatic trace-evidence qualification.',
       });
       console.log(JSON.stringify({ phase: 'native-startup', at: new Date().toISOString(), runnerPid: process.pid, browserPid, gpuPid }));
       verify();
+      outerSignal?.throwIfAborted();
       phase = 'native';
       const captured = await withNativeTrace(
         gpuPid,
         options.out,
-        async (signal) => {
+        async (nativeSignal) => {
+          const signal = outerSignal ? AbortSignal.any([nativeSignal, outerSignal]) : nativeSignal;
           signal.throwIfAborted();
           const before = await bounded(cdp.send('SystemInfo.getProcessInfo'), 5000, 'GPU identity before controls', signal);
           signal.throwIfAborted();
@@ -244,9 +320,11 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
           await correlateClocks(signal);
           signal.throwIfAborted();
           const result = await bounded(
-            options.protocol === 'off-off'
-              ? reviewSession.page.evaluate(() => window.review.nativePassProbe('run-off-off'))
-              : reviewSession.page.evaluate(() => window.review.nativePassProbe('run')),
+            options.protocol === 'work-class'
+              ? reviewSession.page.evaluate((workClass) => window.review.nativeWorkClassProbe('run', workClass), options.workClass)
+              : options.protocol === 'off-off'
+                ? reviewSession.page.evaluate(() => window.review.nativePassProbe('run-off-off'))
+                : reviewSession.page.evaluate(() => window.review.nativePassProbe('run')),
             10_000,
             'native page controls',
             signal,
@@ -272,12 +350,16 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
           const cleanupErrors: string[] = [];
           try {
             await bounded(
-              reviewSession.page.evaluate(() => window.review.nativePassProbe('cancel')),
+              options.protocol === 'work-class'
+                ? reviewSession.page.evaluate(() => window.review.nativeWorkClassProbe('cancel'))
+                : reviewSession.page.evaluate(() => window.review.nativePassProbe('cancel')),
               5000,
               'native probe cancellation',
             );
             cancelledPartial = await bounded(
-              reviewSession.page.evaluate(() => window.review.lastNativePassProbe),
+              options.protocol === 'work-class'
+                ? reviewSession.page.evaluate(() => window.review.lastNativeWorkClassProbe)
+                : reviewSession.page.evaluate(() => window.review.lastNativePassProbe),
               5000,
               'native partial report',
             );
@@ -299,6 +381,7 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
         },
       );
       native = captured.evidence;
+      if (options.protocol === 'work-class') assertNativeWorkClassResult(captured.result, options.workClass);
       save('controls.json', saveNativeOutputs(captured.result, options.out));
       verify();
     } finally {
@@ -318,14 +401,18 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
     if (session) {
       if (!controlsCancelled)
         await bounded(
-          session.page.evaluate(() => window.review.nativePassProbe('cancel')),
+          options.protocol === 'work-class'
+            ? session.page.evaluate(() => window.review.nativeWorkClassProbe('cancel'))
+            : session.page.evaluate(() => window.review.nativePassProbe('cancel')),
           5000,
           'native probe cancellation',
         ).catch((e) => errors.push(`Cancel: ${String(e)}`));
       const partial = controlsCancelled
         ? cancelledPartial
         : await bounded(
-            session.page.evaluate(() => window.review.lastNativePassProbe),
+            options.protocol === 'work-class'
+              ? session.page.evaluate(() => window.review.lastNativeWorkClassProbe)
+              : session.page.evaluate(() => window.review.lastNativePassProbe),
             5000,
             'native partial report',
           ).catch(() => null);
@@ -378,6 +465,7 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
     } catch (error) {
       errors.push(String(error));
     }
+    if (outerSignal?.aborted) errors.push(String(outerSignal.reason));
     save('status.json', {
       diagnosticOnly: true,
       at: new Date().toISOString(),

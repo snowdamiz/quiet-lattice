@@ -19,6 +19,7 @@ import { gameLook } from '@astra/shared/art';
 import { nodeReviewModel } from '../gameplay/Flora.js';
 import { timerBoundaries } from './timer-boundaries.js';
 import { nativePassProbe } from './native-pass-probe.js';
+import { nativeWorkClassProbe } from './native-work-class-probe.js';
 
 /** `node/<resource>`: a procedural resource node (P1.E13.T02), built by the flora in place of a .glb, its near and far
  * models as LOD0 and LOD1. Anything else: null, and the asset loads from public/models. */
@@ -1423,6 +1424,10 @@ export class Review {
 
   nativePassProbe(action) {
     return nativePassProbe(this, action);
+  }
+
+  nativeWorkClassProbe(action, workClass) {
+    return nativeWorkClassProbe(this, action, workClass);
   }
 
   /** Diagnostic-only per-stage queries. Never mix these instrumented timings with perf() budget runs. Every pass

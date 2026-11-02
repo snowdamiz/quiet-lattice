@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { captureNativePass, nativePassArgs, saveNativeOutputs } from './native-pass-probe.ts';
+import { assertNativeWorkClassResult, captureNativePass, nativePassArgs, saveNativeOutputs } from './native-pass-probe.ts';
 
 const dirs: string[] = [];
 const SHA = 'dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27';
@@ -44,6 +44,41 @@ describe('bounded native diagnostic CLI boundary', () => {
     expect(nativePassArgs([...args, '--protocol', 'off-off']).protocol).toBe('off-off');
     for (const flags of [['--protocol'], ['--protocol', 'all'], ['--protocol', 'off-off', '--protocol', 'off-off']])
       expect(() => nativePassArgs([...args, ...flags])).toThrow('protocol');
+  });
+
+  it('requires one exact class only with the separate work-class protocol', () => {
+    const { args } = fixture();
+    for (const workClass of ['drained-empty', 'fence-only', 'frame-only', 'frame-plus-PNG'])
+      expect(nativePassArgs([...args, '--protocol', 'work-class', '--work-class', workClass])).toMatchObject({ protocol: 'work-class', workClass });
+    for (const flags of [
+      ['--protocol', 'work-class'],
+      ['--protocol', 'work-class', '--work-class', 'all'],
+      ['--work-class', 'frame-only'],
+      ['--protocol', 'off-off', '--work-class', 'frame-only'],
+      ['--protocol', 'work-class', '--work-class', 'frame-only', '--work-class', 'frame-only'],
+    ])
+      expect(() => nativePassArgs([...args, ...flags])).toThrow('work-class');
+  });
+
+  it('persists no image file for controls with structurally absent PNG', () => {
+    const f = fixture();
+    mkdirSync(f.out);
+    const raw = { workClass: 'frame-only', samples: [{ operations: { frames: 1, png: 0, queries: 0 } }] };
+    expect(saveNativeOutputs(raw, f.out)).toBe(raw);
+    expect(raw.samples[0]).not.toHaveProperty('png');
+    expect(() => readFileSync(join(f.out, 'frame-1.png'))).toThrow();
+  });
+
+  it('enforces zero image fields and exact control counts before persisting a frame-only result', () => {
+    const good = { workClass: 'frame-only', samples: [{ operations: { frames: 1, png: 0, queries: 0 } }] };
+    expect(() => assertNativeWorkClassResult(good, 'frame-only')).not.toThrow();
+    for (const key of ['png', 'output', 'readbackStarted', 'readbackFinished'])
+      expect(() => assertNativeWorkClassResult({ ...good, samples: [{ ...good.samples[0], [key]: null }] }, 'frame-only')).toThrow('structurally absent');
+    expect(() => assertNativeWorkClassResult({ ...good, samples: [{ operations: { frames: 2, png: 0, queries: 0 } }] }, 'frame-only')).toThrow('counts');
+    expect(() => assertNativeWorkClassResult(good, 'drained-empty')).toThrow('mismatched');
+    expect(() =>
+      assertNativeWorkClassResult({ workClass: 'frame-plus-PNG', samples: [{ operations: { frames: 1, png: 1, queries: 0 } }] }, 'frame-plus-PNG'),
+    ).toThrow('missing');
   });
 
   it('rejects changed asset bytes and existing reports before launching any browser or native recorder', async () => {
