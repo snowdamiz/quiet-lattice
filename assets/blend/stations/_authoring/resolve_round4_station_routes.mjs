@@ -58,7 +58,9 @@ export function collect(config) {
   };
   const tools = path.join(root, 'packages/tools/package.json'), capture = path.join(root, 'packages/tools/src/capture/capture.ts');
   const tsx = add(path.join(root, 'package.json'), 'tsx/cli');
-  add(path.join(root, 'package.json'), 'tsx'); add(tsx, 'esbuild');
+  add(path.join(root, 'package.json'), 'tsx');
+  const esbuild = add(tsx, 'esbuild');
+  add(esbuild, '@esbuild/darwin-arm64/bin/esbuild', ['require']);
   const test = add(tools, '@playwright/test'); add(capture, '@playwright/test');
   const playwrightTest = add(test, 'playwright/test');
   const playwright = add(playwrightTest, 'playwright');

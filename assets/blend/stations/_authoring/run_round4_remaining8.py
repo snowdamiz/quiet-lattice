@@ -16,7 +16,7 @@ from run_round4_browser_proof import (create_private_tmp, preserve_private_tmp, 
 
 ROOT = Path(__file__).resolve().parents[4]
 BASE = ROOT / 'assets/renders/stations/round4'
-FREEZE = BASE / 'station_remaining8_ready02'
+FREEZE = BASE / 'station_remaining8_ready03'
 READY = FREEZE / 'readiness.json'
 GRANT = FREEZE / 'parent_gpu_grant.json'
 CAPTURE_SECONDS, CLEANUP_SECONDS = 600, 60
