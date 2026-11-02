@@ -122,7 +122,7 @@ export class Prediction {
    * Replay poses track corrections separately from the immutable sent inputs. An input at or before the fence is thus
    * re-based from the trajectory the mover is following now: its acceleration since is preserved, and an earlier offset
    * is never applied twice. Refusing a mode replaces that stretch with the allowed velocity; later corrections replay
-   * the motion the mover made after that replacement.
+   * the motion the mover made after that replacement. With `own`, those corrections preserve the engine velocity too.
    */
   take(seq, pose, mode, state, now, own = false, drops = false) {
     const r = this.at(seq);
@@ -140,7 +140,7 @@ export class Prediction {
         target.vel.copy(velocity);
       } else {
         target.pos.add(server.pos).sub(sent.pos);
-        target.vel.add(server.vel).sub(sent.vel);
+        if (!own) target.vel.add(server.vel).sub(sent.vel);
       }
       if (turn) target.quat.premultiply(_q.copy(sent.quat).invert()).premultiply(server.quat).normalize();
     };
@@ -151,7 +151,8 @@ export class Prediction {
       reframeAt(sample.replay, sample.replay.frame, state.frame, sample.time);
       sample.replay.frame = state.frame;
       replay(sample.replay, sample.time);
-      if (refused && !own) sample.replay.mode = mode;
+      // This mode refusal has already rebased the stretch, including when the mover kept its engines.
+      if (refused) sample.replay.mode = mode;
     }
     replay(state, now);
     return true;

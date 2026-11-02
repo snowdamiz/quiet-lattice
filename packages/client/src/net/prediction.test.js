@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { Body, FrameState } from '../universe/Body.js';
 import { framePoseAt, reframeAt } from '../remote/frames.js';
 import { BLEND_S, Blend, HISTORY, MATCH_M, Prediction, SNAP_M, SNAP_S, snapLimit } from './prediction.js';
-import { Harness, pose as wirePose } from '../../../server/src/sim/movement/testing.ts';
+import { BOOST, Harness, pose as wirePose } from '../../../server/src/sim/movement/testing.ts';
 import { describeZoneSystem } from '../../../server/src/zones/system.ts';
 
 const SEED = 7;
@@ -256,6 +256,42 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     const traveled = x(2.7) - x(1.1);
     expect(s.pos.distanceTo(new THREE.Vector3(late.correction.pose.pos[0] + traveled, 2e9, 0))).toBeLessThan(MATCH_M);
     expect(p.at(23).pos.y).toBe(2e9 + 3000);
+  });
+
+  it('replays engine-owned acceleration after authority’s pulse correction returns beyond its grace', () => {
+    const p = new Prediction(inertial());
+    const h = new Harness(describeZoneSystem(0), { pose: wirePose(null, [500, 2e9, 0], [20000, 0, 0]), mode: 'pulse' }, {}, { now: 10 });
+    const inputs = [];
+    for (let i = 0; i <= 32; i++) {
+      const msg = { t: 'input', buttons: BOOST, ...sent(i + 1, 10 + i * 0.05, [500 + 400 * i * 0.05, 2e9 + 3000, 0], { vel: [400, 0, 0] }) };
+      inputs.push(msg);
+      p.record(msg);
+    }
+    const first = h.a.check(h.id, inputs[0], 10.8);
+    expect(first).toMatchObject({ ok: false, correction: { seq: 1, mode: 'pulse' } });
+    expect(h.a.check(h.id, inputs[9], 11.25)).toMatchObject({ ok: false, correction: null });
+    const late = h.a.check(h.id, inputs[22], 11.9);
+    expect(late).toMatchObject({ ok: false, correction: { seq: 23, mode: 'pulse' } });
+
+    const s = state(null, [1140, 2e9 + 3000, 0], [400, 0, 0]);
+    p.take(first.correction.seq, first.correction.pose, first.correction.mode, s, 11.6, true);
+    p.corrected(33);
+    expect(s.pos.toArray()).toEqual([1140, 2e9, 0]);
+    expect(s.vel.toArray()).toEqual([400, 0, 0]);
+    // The engines accelerate for 1.1 s after the first correction; seq 23 predates its receipt by 0.5 s.
+    s.pos.x += 400 * 1.1 + 0.5 * 160 * 1.1 ** 2;
+    s.vel.x += 160 * 1.1;
+    const expected = new THREE.Vector3(late.correction.pose.pos[0] + 400 * 1.6 + 0.5 * 160 * 1.1 ** 2, 2e9, 0);
+    expect(expected.x).toBeCloseTo(1236.8, 9);
+    expect(late.correction.seq).toBeLessThan(p.fence);
+    for (let repeat = 0; repeat < 2; repeat++) {
+      p.take(late.correction.seq, late.correction.pose, late.correction.mode, s, 12.7, true);
+      expect(s.vel.toArray()).toEqual([576, 0, 0]);
+      expect(s.pos.distanceTo(expected)).toBeLessThan(MATCH_M);
+    }
+    expect(p.at(23).mode).toBe('ship');
+    expect(p.at(23).pos.toArray()).toEqual(inputs[22].pose.pos);
+    expect(p.at(23).vel.toArray()).toEqual([400, 0, 0]);
   });
 
   it('takes the server’s velocity for an input at or before the fence where the mode it was sent in is refused', () => {
