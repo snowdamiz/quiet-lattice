@@ -210,6 +210,27 @@ def join_buffers(
     return result
 
 
+def join_lifecycles(
+    encodings: tuple[NativeRow, ...], submissions: tuple[NativeRow, ...]
+) -> list[dict]:
+    result = []
+    for row in submissions:
+        matches = [
+            other.ordinal for other in encodings
+            if row.buffer_id is not None and other.kind == "Encoding"
+            and (other.pid, other.buffer_id, other.start_ns, other.duration_ns)
+            == (row.pid, row.buffer_id, row.start_ns, row.duration_ns)
+        ]
+        status = "missing-id" if row.buffer_id is None else "unmatched"
+        if matches:
+            status = "matched" if len(matches) == 1 else "ambiguous"
+        result.append({
+            "submission_ordinal": row.ordinal, "buffer_id": row.buffer_id,
+            "status": status, "encoding_ordinals": matches,
+        })
+    return result
+
+
 def read_time_info(path: Path) -> dict:
     doc = Document(path)
     names, types, rows = doc.table("time-info")
@@ -340,6 +361,7 @@ def qualify(artifact: Path, pid: int) -> dict:
             },
         })
     joins = join_buffers(tables[SCHEMAS[1]].rows, tables[SCHEMAS[2]].rows)
+    lifecycles = join_lifecycles(tables[SCHEMAS[0]].rows, tables[SCHEMAS[1]].rows)
     return {
         "kind": "retained-native-evidence-qualification", "owned_pid": pid,
         "primary_control_status": "FAILED: stationary-output-mismatch with both queries off",
@@ -350,10 +372,12 @@ def qualify(artifact: Path, pid: int) -> dict:
         "toc_sha256": toc.sha256, "time_info": time_info,
         "tables": {schema: asdict(table) for schema, table in tables.items()},
         "buffer_joins": joins, "join_counts": dict(Counter(item["status"] for item in joins)),
+        "shared_lifecycle_joins": lifecycles,
+        "shared_lifecycle_counts": dict(Counter(item["status"] for item in lifecycles)),
         "candidate_windows": windows,
         "qualification": "PARTIAL/INCONCLUSIVE; native encoding/submission/GPU evidence exists,not a budget or exclusive-cost verdict",
         "clock_limit": "Epoch-based page overlap is a candidate only; floor quantization<1ns does not bound clock calibration/drift. No native marker ties a JS frame/readback to a native record. Absolute and continuous ticks are different domains; no Node/page mapping is assumed.",
-        "interval_limit": "Creation/start+duration,Encoding,CommandBufferSubmission and GPU Active records are distinct. A submission record's Creation column is not a GPU execution timestamp or proven commit instant. Nested/channel/buffer intervals may overlap; no exclusive-duration sum is produced.",
+        "interval_limit": "Creation,Encoding,CommandBufferSubmission and GPU Active records have different meanings. Installed Metal3 rules emit the same creation-to-commit span as Encoding and Submission; exact row joins retain that shared lifetime. Creation is not commit or GPU execution. Executing branch and frame/readback mapping remain unproven. Nested/channel/buffer intervals may overlap; no exclusive-duration sum is produced.",
         "coverage_limit": "Missing,invalid,ambiguous or unmatched references/IDs remain explicit. Same PID+buffer ID is a relation,not full frame/readback attribution. SINGLE is not isolation proof; excluded event contents are never emitted.",
     }
 

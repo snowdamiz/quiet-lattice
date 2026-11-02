@@ -1,5 +1,6 @@
 import json
 import contextlib
+from dataclasses import replace
 import io
 from pathlib import Path
 import tempfile
@@ -161,6 +162,19 @@ class NativeEvidenceTests(unittest.TestCase):
         joins = evidence.join_buffers((native(),), (native(buffer=None), native(buffer="18"), native()))
         self.assertEqual([j["status"] for j in joins], ["missing-id", "unmatched", "matched"])
 
+    def test_shared_lifetime_requires_matching_process_buffer_start_and_duration(self):
+        encoding = replace(native(), kind="Encoding")
+        variants = [replace(encoding, pid=483), replace(encoding, buffer_id="18"), replace(encoding, start_ns=11), replace(encoding, duration_ns=6)]
+        for variant in variants:
+            with self.subTest(variant=variant):
+                self.assertEqual(evidence.join_lifecycles((variant,), (native(),))[0]["status"], "unmatched")
+        self.assertEqual(evidence.join_lifecycles((encoding,), (native(),))[0]["status"], "matched")
+
+    def test_duplicate_or_missing_encoding_relation_stays_inconclusive(self):
+        encoding = replace(native(), kind="Encoding")
+        self.assertEqual(evidence.join_lifecycles((encoding, replace(encoding, ordinal=3)), (native(),))[0]["status"], "ambiguous")
+        self.assertEqual(evidence.join_lifecycles((), (native(buffer=None),))[0]["status"], "missing-id")
+
     def test_overlap_is_half_open_and_keeps_nested_intervals_separate(self):
         self.assertFalse(evidence.overlaps(native(start=0, duration=10), 10, 20))
         self.assertFalse(evidence.overlaps(native(start=20, duration=10), 10, 20))
@@ -229,6 +243,7 @@ class RetainedArtifactTests(unittest.TestCase):
         self.assertEqual(self.report["join_counts"], {"unmatched": 2, "matched": 148})
         self.assertEqual(len({j["buffer_id"] for j in self.report["buffer_joins"] if j["status"] == "unmatched"}), 1)
         self.assertTrue(all(not t["invalid_rows"] for t in self.report["tables"].values()))
+        self.assertEqual(self.report["shared_lifecycle_counts"], {"matched": 32})
 
     def test_real_clock_and_window_classification_never_become_a_budget(self):
         self.assertFalse(self.report["time_info"]["calibrated_to_page"])
