@@ -25,13 +25,41 @@ function stage() {
     t: 1000, now: () => h.t, pilots: new Map(), pilotsSeen: new Set(), pilotsShown: [], room: makeRoom(), markersEl: element(),
     game: { engine: { camera: new THREE.PerspectiveCamera(60, 16 / 9, 0.5, 1e7) }, camWorldQuatInv: new THREE.Quaternion() },
   });
-  const frame = (list, keepOut = [], ms = 1000 / 60) => { h.t += ms; h.updatePilots(list, keepOut, [], 1920, 1080); };
+  const frame = (list, keepOut = [], ms = 1000 / 60, taken = []) => { h.t += ms; h.updatePilots(list, keepOut, taken, 1920, 1080); };
   return { h, frame };
 }
 
 const marker = (id, x, y = 0, dist = 500) => ({ id, label: `Pilot ${id}`, dist, rel: new THREE.Vector3(x, y, -500), quat: new THREE.Quaternion() });
 
 describe('pilot marker polish through HUD.updatePilots', () => {
+  for (const departed of [false, true])
+    it(`counts a ${departed ? 'departing' : 'still in-view'} pilot's nonzero fading name before admitting its crosshair replacement`, () => {
+      const { h, frame } = stage();
+      const list = Array.from({ length: 12 }, (_, i) => marker(i + 1, (i % 6 - 2.5) * 140, i < 6 ? 130 : -130, 100 + i * 100));
+      list[11].rel.set(0, 0, -500);
+      list[8].rel.set(-30, 0, -500);
+      frame(list); frame(list); frame(list, [], 200);
+      const p = h.pilots.get(12);
+      const b = { ...p.box };
+      frame(list, [], 1000 / 60, [b.x0, b.y0, b.x1, b.y1]);
+      expect(p.shown).toBe(false);
+      const blocked = { box: { ...p.box }, x: p.x };
+      if (departed) list.pop();
+      else list[11].rel.set(40, 0, -500);
+      frame(list, [], 100);
+      const visibleNames = () => [...h.pilots.values()].filter((q) => q.lbl.innerHTML.startsWith('Pilot') && Number(q.lbl.style.opacity) * Number(q.e.style.opacity) > 0).map((q) => q.m.id);
+      expect(visibleNames()).toHaveLength(9);
+      expect(visibleNames()).toContain(12);
+      expect(visibleNames()).not.toContain(9);
+      expect(Number(p.lbl.style.opacity)).toBeGreaterThan(0);
+      if (!departed) expect(p.box.x0 - blocked.box.x0).toBeCloseTo(p.x - blocked.x, 6);
+      frame(list, [], 50);
+      if (departed) frame(list, [], 100);
+      expect(Number(p.lbl.style.opacity)).toBe(0);
+      expect(visibleNames()).toHaveLength(9);
+      expect(visibleNames()).toContain(9);
+    });
+
   it('names the nearest eight and one crosshair pilot, deduplicating a crosshair pilot already among the eight', () => {
     const { h, frame } = stage();
     const list = Array.from({ length: 12 }, (_, i) => marker(i + 1, (i % 6 - 2.5) * 140, i < 6 ? 130 : -130, 100 + i * 100));

@@ -827,10 +827,12 @@ interface RemotePage {
       hazard: Hazard | null;
       hazardNear: number;
       hazardLevel: number;
+      lastHit?: number;
       setSkills(skills: string[]): void;
       setCockpit(on: boolean): void;
     };
     station: unknown;
+    time: number;
     system: { homePlanet: unknown; planets: { params?: { hazard?: Hazard | null } }[] };
     hud: { clearBanners(): void; update(dt: number): void };
     remotes: { view: { prepare(hull: string): Promise<unknown> } };
@@ -907,8 +909,11 @@ async function openRemotes(
 async function remotePools(page: Page, fraction: number, cockpit = false): Promise<void> {
   await page.evaluate(
     ({ fraction, cockpit }) => {
-      const { ship } = (window as unknown as RemotePage).game;
+      const g = (window as unknown as RemotePage).game;
+      const { ship } = g;
       ship.setSkills(['shield_capacitor', 'hull_plating']);
+      // Keep these offline presentation values inside the real six-second post-hit regen delay while settling and recording.
+      ship.lastHit = g.time;
       ship.shield = ship.stats.shieldMax * fraction;
       ship.hull = ship.stats.hullMax * fraction;
       ship.setCockpit(cockpit);

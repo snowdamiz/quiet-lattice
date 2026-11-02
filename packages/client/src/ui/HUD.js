@@ -4,7 +4,7 @@ import { RESOURCES, resourceIcon } from '../gameplay/Inventory.js';
 import { LY, fmtLy } from '@astra/shared/world';
 import { castBar } from '../net/abilities.js';
 import { EdgeCompass } from './EdgeCompass.js';
-import { FADE_MS, LABEL_GAP, LABEL_H, RANGE_H, MARK_R, ROOM_MARGIN, addCovers, blockedBy, fadeTo, fits, hullCorners, labelWidth, makeFade, makeRoom, makeSlide, markOf, nudge, outlineBands, pilotInk, placeLabel, screenBounds, selectNames } from '../remote/markers.js';
+import { FADE_MS, LABEL_GAP, LABEL_H, RANGE_H, MARK_R, PILOT_NAMES, ROOM_MARGIN, addCovers, blockedBy, fadeTo, fits, hullCorners, labelWidth, makeFade, makeRoom, makeSlide, markOf, nudge, outlineBands, pilotInk, placeLabel, screenBounds, selectNames } from '../remote/markers.js';
 import { SocialUI } from './social/SocialUI.js';
 import { BANNER_FADE_IN, BANNER_FADE_OUT, BANNER_MS, BannerQueue } from './banners.js';
 
@@ -867,6 +867,7 @@ export class HUD {
           slide: makeSlide(),
           side: null,
           shown: false,
+          labelNamed: false,
           why: null,
           goneAt: 0,
           hiddenAt: now,
@@ -940,6 +941,19 @@ export class HUD {
         p.e.remove();
         this.pilots.delete(id);
       }
+    }
+    // Existing text keeps its slot while either label or marker fades. New names wait for that text to reach zero.
+    let names = 0;
+    for (const p of this.pilots.values()) {
+      const mark = fadeTo(p.markFade, !p.goneAt, now);
+      const label = fadeTo(p.labelFade, p.shown && !p.goneAt, now);
+      p.holdsName = p.labelNamed && ((p.shown && !p.goneAt) || mark * label > 0);
+      if (p.holdsName) names++;
+    }
+    for (const p of shown) {
+      if (!p.named || p.holdsName) continue;
+      if (names < PILOT_NAMES + 1) names++;
+      else p.named = false;
     }
     // A fading label follows its diamond and reserves its moving box until it reaches zero.
     for (const p of this.pilots.values()) {
@@ -1019,6 +1033,7 @@ export class HUD {
     Object.assign(p.box, _label);
     p.boxX = p.x;
     p.boxY = p.y;
+    p.labelNamed = p.named;
     this.setPilotLabel(p, `${p.named ? esc(m.label) : ''}<small>${range}</small>`, side, _label.y0 - p.y);
   }
 
