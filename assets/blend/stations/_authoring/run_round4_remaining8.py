@@ -16,10 +16,12 @@ from run_round4_browser_proof import (create_private_tmp, preserve_private_tmp, 
 
 ROOT = Path(__file__).resolve().parents[4]
 BASE = ROOT / 'assets/renders/stations/round4'
-FREEZE = BASE / 'station_remaining8_ready03'
+FREEZE = BASE / 'station_remaining8_ready04'
 READY = FREEZE / 'readiness.json'
 GRANT = FREEZE / 'parent_gpu_grant.json'
 CAPTURE_SECONDS, CLEANUP_SECONDS = 600, 60
+VTENCODER = '/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService'
+ENCODER_REQUIREMENT = 'identifier "com.apple.coremedia.videoencoder" and anchor apple'
 
 
 def sha(path):
@@ -37,7 +39,37 @@ def utc():
 def original_stages():
     original = BASE / 'capture_readiness.json'
     assert sha(original) == 'd1dc9907f657cf9a707a2b5ee2cc477fa15831cf3ba378bebb51b05b6ac973fa'
-    return [s for s in json.loads(original.read_text())['stages'] if s['id'] != 'standard-waystation-ws_fabricator']
+    stages = [s for s in json.loads(original.read_text())['stages'] if s['id'] != 'standard-waystation-ws_fabricator']
+    for stage in stages:
+        stage['out_path'] = stage['out_path'].replace('/engine/attempt01/', '/engine/attempt02/')
+        stage['argv'] = [arg.replace('/engine/attempt01/', '/engine/attempt02/') for arg in stage['argv']]
+    return stages
+
+
+def encoder_binding():
+    path = Path(VTENCODER)
+    assert path.resolve(strict=True) == path, 'Apple encoder path must be canonical'
+    verify_argv = ['/usr/bin/codesign', '--verify', '--strict', '-R', '=' + ENCODER_REQUIREMENT, str(path)]
+    verify = subprocess.run(verify_argv, capture_output=True, text=True, timeout=5)
+    assert verify.returncode == 0, f'Apple encoder signature verification failed: {verify.stderr}'
+    display_argv = ['/usr/bin/codesign', '-d', '--verbose=4', '-r-', str(path)]
+    display = subprocess.run(display_argv, capture_output=True, text=True, timeout=5)
+    assert display.returncode == 0, f'Apple encoder signature display failed: {display.stderr}'
+    metadata = display.stdout + display.stderr
+    fields = dict(line.split('=', 1) for line in metadata.splitlines() if '=' in line)
+    assert fields['Identifier'] == 'com.apple.coremedia.videoencoder'
+    assert fields['Platform identifier'].isdigit() and int(fields['Platform identifier']) > 0
+    assert f'designated => {ENCODER_REQUIREMENT}' in metadata.splitlines()
+    assert fields['CDHash']
+    return {'canonical_path': str(path), 'sha256': sha(path), 'codesign_sha256': sha('/usr/bin/codesign'),
+            'requirement': ENCODER_REQUIREMENT, 'identifier': fields['Identifier'],
+            'platform_identifier': fields['Platform identifier'], 'cdhash': fields['CDHash'],
+            'verify': {'argv': verify_argv, 'exit': verify.returncode, 'stdout': verify.stdout, 'stderr': verify.stderr},
+            'display': {'argv': display_argv, 'exit': display.returncode, 'stdout': display.stdout, 'stderr': display.stderr}}
+
+
+def verify_encoder_binding(ready):
+    assert encoder_binding() == ready['apple_encoder_binding'], 'Apple encoder binding changed'
 
 
 def validate_plan(ready):
@@ -70,6 +102,10 @@ def preflight(*, check_outputs=True):
     # Actual logical resolution is re-queried, including ancestor links and entry bytes,
     # at initial admission and again by require_stage_admission before every stage.
     verify_routes(ready)
+    verify_encoder_binding(ready)
+    encoder = ready['apple_encoder_binding']
+    assert ready['process_binary_sha256'][VTENCODER] == ready['input_sha256'][VTENCODER] == encoder['sha256']
+    assert ready['input_sha256']['/usr/bin/codesign'] == encoder['codesign_sha256']
     proof = json.loads(Path(ready['qualification']['path']).read_text())
     assert proof['status'] == 'PASS_OBSERVED_CHROMIUM_EXECUTION_BOUNDARY' and proof['accepted_by_parent'] is True
     assert proof['external_native_XPC_ownership'] == 'UNQUALIFIED'
@@ -131,15 +167,20 @@ class StageReceipts:
             binary = executable_path(row['pid'])
             after = identity(row['pid'])
             if after is None: continue
-            assert after['birth'] == row['birth'] and coalition(row['pid'])[0] == self.job.coalition_id
-            assert binary in self.ready['process_binary_sha256'], f'Unbound owned executable: {binary}'
+            observed_coalition = coalition(row['pid'])
+            assert after['birth'] == row['birth'] and observed_coalition[0] == self.job.coalition_id
             command = commands.get(row['pid'])
-            if command is None: continue
-            kind = re.search(r'(?:^|\s)--type=([^\s]+)', command)
-            role = 'browser' if launch and row['pid'] == launch['pid'] else kind[1] if kind else 'owned-launch-helper'
-            self.processes[(row['pid'], tuple(row['birth']))] = {
-                'kernel': after, 'coalition': coalition(row['pid']), 'binary': binary,
-                'prelaunch_sha256': self.ready['process_binary_sha256'][binary], 'role': role}
+            kind = re.search(r'(?:^|\s)--type=([^\s]+)', command) if command else None
+            role = ('apple-video-encoder-xpc' if binary == VTENCODER else
+                    'browser' if launch and row['pid'] == launch['pid'] else kind[1] if kind else
+                    'owned-launch-helper' if command else 'unclassified-owned-executable')
+            record = {'kernel': after, 'coalition': observed_coalition, 'binary': binary,
+                      'role': role, 'command_observed': command is not None, 'admitted': False}
+            self.processes[(row['pid'], tuple(row['birth']))] = record
+            write(self.job.out / 'observed_execution.json', self.receipt())
+            assert binary in self.ready['process_binary_sha256'], f'Unbound owned executable: {binary}'
+            record.update(admitted=True, prelaunch_sha256=self.ready['process_binary_sha256'][binary])
+            write(self.job.out / 'observed_execution.json', self.receipt())
         write(self.job.out / 'observed_execution.json', self.receipt())
 
     def receipt(self):
