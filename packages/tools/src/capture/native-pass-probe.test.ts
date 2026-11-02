@@ -38,6 +38,14 @@ describe('bounded native diagnostic CLI boundary', () => {
     expect(() => nativePassArgs([...f.args, '--template', 'System Trace'])).toThrow();
   });
 
+  it('opts into only the two-frame off/off protocol and preserves the default pass-query protocol', () => {
+    const { args } = fixture();
+    expect(nativePassArgs(args).protocol).toBe('pass-queries');
+    expect(nativePassArgs([...args, '--protocol', 'off-off']).protocol).toBe('off-off');
+    for (const flags of [['--protocol'], ['--protocol', 'all'], ['--protocol', 'off-off', '--protocol', 'off-off']])
+      expect(() => nativePassArgs([...args, ...flags])).toThrow('protocol');
+  });
+
   it('rejects changed asset bytes and existing reports before launching any browser or native recorder', async () => {
     const f = fixture();
     const options = nativePassArgs(f.args);

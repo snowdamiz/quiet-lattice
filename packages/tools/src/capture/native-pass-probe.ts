@@ -28,9 +28,15 @@ const digest = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex
 const record = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
 export function nativePassArgs(args: string[]) {
-  const options = timerBoundaryArgs(args);
+  const rest = [...args];
+  const index = rest.indexOf('--protocol');
+  const protocol = index < 0 ? 'pass-queries' : rest[index + 1];
+  if (protocol !== 'pass-queries' && protocol !== 'off-off') throw new Error('Native protocol must be pass-queries or off-off');
+  if (index >= 0) rest.splice(index, 2);
+  if (rest.includes('--protocol')) throw new Error('Native protocol must be specified once');
+  const options = timerBoundaryArgs(rest);
   nativeScope(options);
-  return options;
+  return { ...options, protocol };
 }
 
 function nativeScope(options: ReturnType<typeof timerBoundaryArgs>) {
@@ -176,7 +182,9 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
       save(
         'prepared.json',
         await bounded(
-          session.page.evaluate(() => window.review.nativePassProbe('prepare')),
+          options.protocol === 'off-off'
+            ? session.page.evaluate(() => window.review.nativePassProbe('prepare-off-off'))
+            : session.page.evaluate(() => window.review.nativePassProbe('prepare')),
           90_000,
           'native probe preparation',
         ),
@@ -215,8 +223,8 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
         ...sourceState,
         logicalCores: cpus().length,
         cpu: cpus()[0]?.model,
-        pairs: 5,
-        maxControlFrames: 10,
+        pairs: options.protocol === 'off-off' ? 1 : 5,
+        maxControlFrames: options.protocol === 'off-off' ? 2 : 10,
         trace: 'Attach only to this verified owned GPU PID; no global collection, privacy/settings mutation or automatic trace-evidence qualification.',
       });
       console.log(JSON.stringify({ phase: 'native-startup', at: new Date().toISOString(), runnerPid: process.pid, browserPid, gpuPid }));
@@ -235,7 +243,9 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
           await correlateClocks(signal);
           signal.throwIfAborted();
           const result = await bounded(
-            reviewSession.page.evaluate(() => window.review.nativePassProbe('run')),
+            options.protocol === 'off-off'
+              ? reviewSession.page.evaluate(() => window.review.nativePassProbe('run-off-off'))
+              : reviewSession.page.evaluate(() => window.review.nativePassProbe('run')),
             10_000,
             'native page controls',
             signal,

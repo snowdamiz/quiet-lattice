@@ -140,7 +140,7 @@ interface ReviewApi {
   perf(opts?: { pairs?: number }): Promise<unknown>;
   profile(opts?: { frames?: number; detail?: 'passes' | 'atmosphere' }): Promise<unknown>;
   timerBoundaries(opts?: { blocks?: number }): Promise<unknown>;
-  nativePassProbe(action: 'prepare' | 'run' | 'cancel'): Promise<unknown>;
+  nativePassProbe(action: 'prepare' | 'run' | 'prepare-off-off' | 'run-off-off' | 'cancel'): Promise<unknown>;
   step(n?: number): Promise<void>;
   stats(): unknown;
   spot: Record<string, unknown> | null;

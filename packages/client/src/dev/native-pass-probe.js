@@ -11,6 +11,15 @@ const clocks = (review) => {
     flora: g.flora?.uniforms?.uTime?.value ?? null, weather: g.weather?.uniforms?.uTime?.value ?? null,
     grade: g.engine.gradePass.uniforms?.uTime?.value ?? null, atmosphere: g.engine.atmoPass.uniforms?.uTime?.value ?? null };
 };
+// Actual public AtmospherePass constructor/updateHistory/render fields; observations never reset state.
+const temporal = (review) => {
+  const a = review.game.engine.atmoPass;
+  const jitter = a.uniforms?.uJitter?.value;
+  return { frameIdx: a.frameIdx ?? null, histIdx: a.histIdx ?? null, histValid: a.histValid ?? null, prevKey: a.prevKey ?? null,
+    marchPlanet: a.uniforms?.uMarchPlanet?.value ?? null, jitter: jitter ? [jitter.x, jitter.y] : null,
+    historyValidUniform: a.resolveUniforms?.uHistValid?.value ?? null, blend: a.resolveUniforms?.uBlend?.value ?? null,
+    historySizes: a.hist?.map((t) => [t.width, t.height]) ?? null };
+};
 
 function checkScene(review) {
   const canvas = review.game.engine.renderer.domElement;
@@ -19,9 +28,10 @@ function checkScene(review) {
     throw new Error('Native pass probe requires the shown pinned 1920x1080 noon-lush LOD0 review with live rendering off');
 }
 
-async function prepare(review) {
+async function prepare(review, offOff) {
   const report = review.lastNativePassProbe = {
-    diagnosticOnly: true, kind: 'native-pass-query-controls', contractVersion: 1,
+    diagnosticOnly: true, kind: offOff ? 'native-temporal-off-off-controls' : 'native-pass-query-controls', contractVersion: 1,
+    protocol: offOff ? 'off-off' : 'pass-queries',
     preparedAt: null, startedAt: null, finishedAt: null, timeOriginMs: performance.timeOrigin,
     case: review.case, lod: review.lodLevel, viewport: null, device: null, warm: null,
     preflight: { completions: [], passes: [], proof: null, disposed: false, clocks: null },
@@ -30,6 +40,8 @@ async function prepare(review) {
     premise: 'Query brackets may alter command-buffer structure/work, or durations may sum overlapping lifetimes. Wall differences alone cannot identify a real no-query hotspot.',
     outputLimit: 'Same-task PNG readback is outside frame/query brackets and can force completion or add encoder work. It is identical in both conditions, timed separately, and not unprofiled rendering.',
     traceVerdict: 'unobserved: native lifecycle events, ownership, frame/readback mapping and actual encoder work require independent trace inspection',
+    comparisonLimit: offOff ? 'Two queries-off frames only. Output difference refutes stationary output without query brackets; equality alone proves no query causality.'
+      : 'Five alternating off/pass-query pairs; temporal state is observed without resetting or disabling it.',
   };
   let fixture = null;
   try {
@@ -85,9 +97,9 @@ async function collect(gl, ext, queries) {
   }
 }
 
-async function run(review) {
+async function run(review, offOff) {
   const report = review.lastNativePassProbe;
-  if (!report?.preparedAt || report.startedAt || report.failure || !report.preflight.disposed)
+  if (!report?.preparedAt || report.startedAt || report.failure || !report.preflight.disposed || report.protocol !== (offOff ? 'off-off' : 'pass-queries'))
     throw new Error('Prepare a fresh native pass probe before running it');
   const renderer = review.game.engine.renderer;
   const gl = renderer.getContext();
@@ -95,13 +107,14 @@ async function run(review) {
   report.startedAt = now();
   try {
     checkScene(review);
-    for (let pair = 1; pair <= 5; pair++) {
-      const order = pair % 2 ? ['off', 'passes'] : ['passes', 'off'];
+    for (let pair = 1; pair <= (offOff ? 1 : 5); pair++) {
+      const order = offOff ? ['off', 'off'] : pair % 2 ? ['off', 'passes'] : ['passes', 'off'];
       for (const mode of order) {
         if (report.cancelled) { report.failureKind = 'cancelled'; throw new Error('Native pass probe cancelled'); }
         checkScene(review);
         const sample = { pair, mode, started: stamp(), frameStarted: null, frameFinished: null,
           readbackStarted: null, readbackFinished: null, finished: null, clocksBefore: clocks(review), clocksAfter: null,
+          temporalBefore: temporal(review), temporalAfter: null,
           frameCompleted: false, calls: null, triangles: null, png: null, queries: [], completions: [], failure: null };
         report.samples.push(sample);
         const queries = [];
@@ -152,6 +165,7 @@ async function run(review) {
           sample.readbackFinished = stamp();
           if (!sample.png.startsWith('data:image/png;base64,') || sample.png.length <= 22) throw new Error('Native scene output is not a PNG');
           sample.clocksAfter = clocks(review);
+          sample.temporalAfter = temporal(review);
           await gpuCompletion(gl, 'after-native-frame-and-readback', sample.completions);
           await collect(gl, ext, queries);
           if (sample.queries.some((q) => q.status !== 'timer')) { report.failureKind = 'query-unobserved'; throw new Error('Native pass query result missing, disjoint or invalid'); }
@@ -172,7 +186,11 @@ async function run(review) {
       const match = { pair, calls: a.calls === b.calls, triangles: a.triangles === b.triangles, png: a.png === b.png };
       report.pairMatches.push(match);
       if (!match.calls || !match.triangles) { report.failureKind = 'work-count-mismatch'; throw new Error('Rendered work counts differ within the native pair'); }
-      if (!match.png) { report.failureKind = 'scene-output-mismatch'; throw new Error('Scene output differs within the native pair; legitimate animation/easing and query effects remain distinct possibilities'); }
+      if (!match.png) {
+        report.failureKind = offOff ? 'stationary-output-mismatch' : 'scene-output-mismatch';
+        throw new Error(offOff ? 'Queries-off scene output differs; stationary-output premise failed without query brackets'
+          : 'Scene output differs within the native pair; legitimate animation/easing and query effects remain distinct possibilities');
+      }
     }
   } catch (error) {
     report.failure = String(error);
@@ -191,10 +209,11 @@ async function run(review) {
 
 /** Only preparation/execution for an external native trace. No timing validity or budget classification. */
 export function nativePassProbe(review, action) {
-  if (!['prepare', 'run', 'cancel'].includes(action)) throw new Error('Native pass probe action must be prepare, run or cancel');
+  if (!['prepare', 'run', 'prepare-off-off', 'run-off-off', 'cancel'].includes(action)) throw new Error('Native pass probe action must select prepare/run, prepare-off-off/run-off-off, or cancel');
   if (action === 'cancel') {
     if (review.lastNativePassProbe) review.lastNativePassProbe.cancelled = true;
     return Promise.resolve({ cancelled: true });
   }
-  return review.serial(() => action === 'prepare' ? prepare(review) : run(review));
+  const offOff = action.endsWith('off-off');
+  return review.serial(() => action.startsWith('prepare') ? prepare(review, offOff) : run(review, offOff));
 }

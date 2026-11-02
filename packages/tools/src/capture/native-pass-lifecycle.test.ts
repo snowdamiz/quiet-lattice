@@ -14,6 +14,8 @@ const state = vi.hoisted(() => ({
   controlHelperStarted: false,
   pageClosed: false,
   runCalls: 0,
+  runAction: '',
+  prepareAction: '',
   lateCalls: 0,
   gpuPid: 0,
   stopGpu: async () => {},
@@ -35,7 +37,11 @@ vi.mock('./capture.ts', () => ({
     page: {
       evaluate: async (callback: () => unknown) => {
         const text = callback.toString();
-        if (/nativePassProbe\(['"]run['"]\)/.test(text)) {
+        const prepare = /nativePassProbe\(['"](prepare(?:-off-off)?)['"]\)/.exec(text);
+        if (prepare) state.prepareAction = prepare[1];
+        const run = /nativePassProbe\(['"](run(?:-off-off)?)['"]\)/.exec(text);
+        if (run) {
+          state.runAction = run[1];
           state.runCalls++;
           if (state.mode === 'page-failure') return new Promise((resolve, reject) => (state.pendingPage = { resolve, reject }));
           state.lateCalls++;
@@ -128,26 +134,32 @@ afterEach(async () => {
 });
 
 describe('full native capture callback ownership (CPU synthetic browser/trace, real helper descendants)', () => {
-  it.each(['helper-failure', 'helper-timeout', 'page-failure'])(
-    'settles %s before returning terminal artifacts and never launches later control work',
-    async (mode) => {
-      const folder = mkdtempSync(join(tmpdir(), 'native-control-lifecycle-'));
-      dirs.push(folder);
-      Object.assign(state, {
-        out: folder,
-        script: join(folder, 'synthetic.mjs'),
-        mode,
-        identityCalls: 0,
-        controlEntered: false,
-        controlHelperStarted: false,
-        pageClosed: false,
-        runCalls: 0,
-        lateCalls: 0,
-        pendingPage: undefined,
-      });
-      writeFileSync(
-        state.script,
-        `
+  const cases = [
+    { mode: 'helper-failure', protocol: 'pass-queries' },
+    { mode: 'helper-timeout', protocol: 'pass-queries' },
+    { mode: 'page-failure', protocol: 'pass-queries' },
+    { mode: 'page-failure', protocol: 'off-off' },
+  ];
+  it.each(cases)('settles $mode/$protocol before returning terminal artifacts and never launches later control work', async ({ mode, protocol }) => {
+    const folder = mkdtempSync(join(tmpdir(), 'native-control-lifecycle-'));
+    dirs.push(folder);
+    Object.assign(state, {
+      out: folder,
+      script: join(folder, 'synthetic.mjs'),
+      mode,
+      identityCalls: 0,
+      controlEntered: false,
+      controlHelperStarted: false,
+      pageClosed: false,
+      runCalls: 0,
+      runAction: '',
+      prepareAction: '',
+      lateCalls: 0,
+      pendingPage: undefined,
+    });
+    writeFileSync(
+      state.script,
+      `
       import {existsSync,writeFileSync,appendFileSync} from 'node:fs';
       import {spawn} from 'node:child_process';
       const [out,mode,...args]=process.argv.slice(2), wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -166,63 +178,70 @@ describe('full native capture callback ownership (CPU synthetic browser/trace, r
         else {await wait(20);process.exit(7);}
       } else process.exit(19);
     `,
-      );
-      const gpu = recordedCommand(process.execPath, ['-e', 'setInterval(()=>{},1000)'], []);
-      gpuJobs.push(gpu);
-      state.gpuPid = gpu.record.pid!;
-      state.stopGpu = gpu.stop;
-      const asset = join(folder, 'virtual-asset');
-      writeFileSync(asset, 'CPU virtual asset');
-      const out = join(folder, 'output');
-      const result = await captureNativePass(
-        nativePassArgs([
-          '--review',
-          'characters/thalune:thalune/thalune_suit2',
-          '--asset-file',
-          asset,
-          '--asset-sha256',
-          'dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27',
-          '--out',
-          out,
-        ]),
-      );
-      const saved: CommandRecord[] = JSON.parse(readFileSync(join(out, 'helpers.json'), 'utf8'));
-      const native = JSON.parse(readFileSync(join(out, 'native.json'), 'utf8'));
-      const status = JSON.parse(readFileSync(join(out, 'status.json'), 'utf8'));
-      const control = saved.find((c) => c.args.includes('control-helper'));
-      for (const c of saved) if (c.group) helperGroups.add(c.group);
-      const rows = await realTrace.processRows();
-      const live = rows.filter((r) => helperGroups.has(r.pgid));
-      const evidence = {
-        mode,
-        result,
-        status,
-        native,
-        helpers: saved.map(({ stdout, stderr, ...c }) => c),
-        liveAtReturn: live,
-        runCalls: state.runCalls,
-        lateCalls: state.lateCalls,
-        pageClosed: state.pageClosed,
-      };
-      if (process.env.NATIVE_CONTROL_EVIDENCE) {
-        const previous = existsSync(process.env.NATIVE_CONTROL_EVIDENCE) ? JSON.parse(readFileSync(process.env.NATIVE_CONTROL_EVIDENCE, 'utf8')) : [];
-        writeFileSync(process.env.NATIVE_CONTROL_EVIDENCE, JSON.stringify([...previous, evidence], null, 2) + '\n');
-      }
-      expect(result.errors.join('\n')).toContain(mode === 'helper-timeout' ? 'frame controls exceeded' : 'recording ended');
-      expect(saved.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
-      expect(live).toEqual([]);
-      expect(native.controlsSettledAt).toEqual(expect.any(String));
-      expect(native.controlFailure).toEqual(expect.any(String));
-      expect(status.at >= native.controlsSettledAt).toBe(true);
-      if (mode !== 'page-failure') {
-        expect(control).toBeDefined();
-        expect(control?.failure).toContain('abort');
-        expect(state.runCalls).toBe(0);
-      } else {
-        expect(state.runCalls).toBe(1);
-        expect(state.pageClosed).toBe(true);
-      }
-      expect(state.lateCalls).toBe(0);
-    },
-  );
+    );
+    const gpu = recordedCommand(process.execPath, ['-e', 'setInterval(()=>{},1000)'], []);
+    gpuJobs.push(gpu);
+    state.gpuPid = gpu.record.pid!;
+    state.stopGpu = gpu.stop;
+    const asset = join(folder, 'virtual-asset');
+    writeFileSync(asset, 'CPU virtual asset');
+    const out = join(folder, 'output');
+    const result = await captureNativePass(
+      nativePassArgs([
+        '--review',
+        'characters/thalune:thalune/thalune_suit2',
+        '--asset-file',
+        asset,
+        '--asset-sha256',
+        'dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27',
+        '--out',
+        out,
+        ...(protocol === 'off-off' ? ['--protocol', 'off-off'] : []),
+      ]),
+    );
+    const saved: CommandRecord[] = JSON.parse(readFileSync(join(out, 'helpers.json'), 'utf8'));
+    const native = JSON.parse(readFileSync(join(out, 'native.json'), 'utf8'));
+    const status = JSON.parse(readFileSync(join(out, 'status.json'), 'utf8'));
+    const context = JSON.parse(readFileSync(join(out, 'context.json'), 'utf8'));
+    const control = saved.find((c) => c.args.includes('control-helper'));
+    for (const c of saved) if (c.group) helperGroups.add(c.group);
+    const rows = await realTrace.processRows();
+    const live = rows.filter((r) => helperGroups.has(r.pgid));
+    const evidence = {
+      mode,
+      protocol,
+      result,
+      status,
+      native,
+      helpers: saved.map(({ stdout, stderr, ...c }) => c),
+      liveAtReturn: live,
+      runCalls: state.runCalls,
+      lateCalls: state.lateCalls,
+      pageClosed: state.pageClosed,
+      prepareAction: state.prepareAction,
+      runAction: state.runAction,
+    };
+    if (process.env.NATIVE_CONTROL_EVIDENCE) {
+      const previous = existsSync(process.env.NATIVE_CONTROL_EVIDENCE) ? JSON.parse(readFileSync(process.env.NATIVE_CONTROL_EVIDENCE, 'utf8')) : [];
+      writeFileSync(process.env.NATIVE_CONTROL_EVIDENCE, JSON.stringify([...previous, evidence], null, 2) + '\n');
+    }
+    expect(result.errors.join('\n')).toContain(mode === 'helper-timeout' ? 'frame controls exceeded' : 'recording ended');
+    expect(saved.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
+    expect(live).toEqual([]);
+    expect(native.controlsSettledAt).toEqual(expect.any(String));
+    expect(native.controlFailure).toEqual(expect.any(String));
+    expect(context).toMatchObject({ protocol, pairs: protocol === 'off-off' ? 1 : 5, maxControlFrames: protocol === 'off-off' ? 2 : 10 });
+    expect(state.prepareAction).toBe(protocol === 'off-off' ? 'prepare-off-off' : 'prepare');
+    expect(status.at >= native.controlsSettledAt).toBe(true);
+    if (mode !== 'page-failure') {
+      expect(control).toBeDefined();
+      expect(control?.failure).toContain('abort');
+      expect(state.runCalls).toBe(0);
+    } else {
+      expect(state.runCalls).toBe(1);
+      expect(state.runAction).toBe(protocol === 'off-off' ? 'run-off-off' : 'run');
+      expect(state.pageClosed).toBe(true);
+    }
+    expect(state.lateCalls).toBe(0);
+  });
 });

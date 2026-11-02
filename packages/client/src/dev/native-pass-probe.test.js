@@ -46,7 +46,10 @@ function fixture(options = {}) {
     if (stage === state.failStage) throw new Error('Synthetic pass draw failure');
   } });
   engine.gradePass.uniforms = { uTime: { value: 42 } };
-  engine.atmoPass.uniforms = { uTime: { value: 42 } };
+  engine.atmoPass.uniforms = { uTime: { value: 42 }, uMarchPlanet: { value: 0 }, uJitter: { value: { x: 0, y: 0 } } };
+  Object.assign(engine.atmoPass, { frameIdx: 7, histIdx: 0, histValid: true, prevKey: 'unchanged-history-key',
+    hist: [{ width: 960, height: 540 }, { width: 960, height: 540 }],
+    resolveUniforms: { uHistValid: { value: 1 }, uBlend: { value: 0.15 } } });
   const originals = STAGES.map((s) => engine[s].render);
   const review = Object.assign(Object.create(Review.prototype), {
     queue: Promise.resolve(), busy: 0, root: { visible: true }, case: 'noon-lush', lodLevel: 0, clock: 42, liveOn: false,
@@ -58,6 +61,9 @@ function fixture(options = {}) {
       // A legitimate dt-driven state change is recorded; it is never reset by this diagnostic.
       this.game.time += dt;
       for (const stage of STAGES) engine[stage].render();
+      engine.atmoPass.frameIdx++;
+      engine.atmoPass.histIdx = 1 - engine.atmoPass.histIdx;
+      engine.atmoPass.uniforms.uJitter.value.x = engine.atmoPass.frameIdx / 16;
       if (state.workMismatch && state.frames % 2 === 0) renderer.info.render.calls++;
     },
   });
@@ -96,6 +102,44 @@ describe('single-scene native pass-query controls', () => {
     expect(result.traceVerdict).toContain('unobserved');
     expect(result).not.toHaveProperty('budgetObservation'); expect(result).not.toHaveProperty('timingValid');
     restored();
+  });
+
+  it.each([false, true])('observes two unchanged queries-off frames and temporal progression without forcing output equality (mismatch=%s)', async (mismatch) => {
+    const { review, state, restored } = fixture({ mismatch });
+    const prepared = await action(review, 'prepare-off-off');
+    expect(prepared).toMatchObject({ protocol: 'off-off', kind: 'native-temporal-off-off-controls' });
+    if (mismatch) await expect(action(review, 'run-off-off')).rejects.toThrow('stationary-output premise failed without query brackets');
+    else await action(review, 'run-off-off');
+    const report = review.lastNativePassProbe;
+    expect(state.frames).toBe(2); expect(state.images).toBe(2); expect(state.queries).toEqual([]);
+    expect(report.samples.map((s) => s.mode)).toEqual(['off', 'off']);
+    expect(report.samples.map((s) => [s.temporalBefore.frameIdx, s.temporalAfter.frameIdx])).toEqual([[7, 8], [8, 9]]);
+    expect(report.samples.map((s) => [s.temporalBefore.histIdx, s.temporalAfter.histIdx])).toEqual([[0, 1], [1, 0]]);
+    for (const sample of report.samples) {
+      expect(sample.temporalBefore).toMatchObject({ histValid: true, prevKey: 'unchanged-history-key', marchPlanet: 0,
+        historyValidUniform: 1, blend: 0.15, historySizes: [[960, 540], [960, 540]] });
+      expect(sample.temporalAfter.jitter).not.toEqual(sample.temporalBefore.jitter);
+      expect(sample).toMatchObject({ frameCompleted: true, calls: 6, triangles: 12, queries: [] });
+      expect(sample.completions.map((c) => c.label)).toEqual(['before-native-frame', 'after-native-frame-and-readback']);
+      expect(sample.readbackStarted.monotonicMs).toBeGreaterThanOrEqual(sample.frameFinished.monotonicMs);
+    }
+    expect(report.pairMatches).toEqual([{ pair: 1, calls: true, triangles: true, png: !mismatch }]);
+    expect(report.failureKind).toBe(mismatch ? 'stationary-output-mismatch' : null);
+    expect(report.comparisonLimit).toContain('equality alone proves no query causality');
+    expect(review.game.engine.atmoPass.frameIdx).toBe(9); expect(review.game.engine.atmoPass.histIdx).toBe(0);
+    restored();
+    if (env.NATIVE_OFF_OFF_EVIDENCE) appendFileSync(env.NATIVE_OFF_OFF_EVIDENCE, JSON.stringify({
+      scope: 'CPU actual prepare-off-off/run-off-off with synthetic renderer/GL; no browser/GPU/native recording',
+      mismatch, report, frames: state.frames, readbacks: state.images, queries: state.queries.length,
+      syncs: state.syncs.length, deletedSyncs: state.deletedSyncs.length, wrappersRestored: true,
+    }) + '\n');
+  });
+
+  it('does not mix the separately prepared off/off and default protocols', async () => {
+    const { review, state, restored } = fixture();
+    await action(review, 'prepare-off-off'); await expect(action(review, 'run')).rejects.toThrow('Prepare');
+    await action(review, 'prepare'); await expect(action(review, 'run-off-off')).rejects.toThrow('Prepare');
+    expect(state.frames).toBe(0); restored();
   });
 
   it('separates scene-output mismatch from missing native evidence without disabling animation or submitting more frames', async () => {

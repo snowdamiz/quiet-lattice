@@ -323,6 +323,13 @@ export interface NativeTraceLog {
   controlsCancelledAt: string | null;
   controlFailure: string | null;
   controlCleanupErrors: string[];
+  recorderFinalization: {
+    startedAt: string | null;
+    finishedAt: string | null;
+    status: 'not-started' | 'waiting' | 'finalized' | 'failed';
+    failure: string | null;
+  };
+  tocExport: { startedAt: string | null; finishedAt: string | null; status: 'not-attempted' | 'waiting' | 'exported' | 'failed'; failure: string | null };
   failure: string | null;
   commands: CommandRecord[];
   evidence: 'uninspected';
@@ -361,6 +368,8 @@ export async function withNativeTrace<T>(
     controlsCancelledAt: null,
     controlFailure: null,
     controlCleanupErrors: [],
+    recorderFinalization: { startedAt: null, finishedAt: null, status: 'not-started', failure: null },
+    tocExport: { startedAt: null, finishedAt: null, status: 'not-attempted', failure: null },
     failure: null,
     commands: [],
     evidence: 'uninspected',
@@ -372,14 +381,51 @@ export async function withNativeTrace<T>(
     observe(log);
     return job;
   };
+  const finalizeRecorder = async (recorder: ReturnType<typeof recordedCommand>) => {
+    // Control failure cancels submissions promptly, but does not apply the generic 3s stop grace to a recorder save.
+    // Its unchanged 15s time limit can finish naturally within this finite recorder-specific wait before escalation.
+    log.recorderFinalization.startedAt = new Date().toISOString();
+    log.recorderFinalization.status = 'waiting';
+    try {
+      const recorded = await bounded(recorder.done, platform.finishMs, 'native recorder finalization');
+      if (recorded.code !== 0 || recorded.error || recorded.truncated) throw new Error('Native recording failed; retain its raw status');
+      await recorder.stop();
+      if (!existsSync(log.trace) || !statSync(log.trace).isDirectory()) throw new Error('Native trace bundle missing');
+      log.recorderFinalization.status = 'finalized';
+    } catch (error) {
+      log.recorderFinalization.status = 'failed';
+      log.recorderFinalization.failure = String(error);
+      log.failure ??= String(error);
+    } finally {
+      log.recorderFinalization.finishedAt = new Date().toISOString();
+    }
+    if (log.recorderFinalization.status === 'finalized') {
+      log.tocExport.startedAt = new Date().toISOString();
+      log.tocExport.status = 'waiting';
+      try {
+        const exported = start(platform.xctrace, ['export', '--input', log.trace, '--toc', '--output', log.toc]);
+        const status = await bounded(exported.done, platform.exportMs, 'native TOC export');
+        if (status.code !== 0 || status.error || status.truncated) throw new Error('Native TOC export failed');
+        if (!existsSync(log.toc) || statSync(log.toc).size === 0) throw new Error('Native nonempty TOC output missing');
+        log.tocExport.status = 'exported';
+      } catch (error) {
+        log.tocExport.status = 'failed';
+        log.tocExport.failure = String(error);
+        log.failure ??= String(error);
+      } finally {
+        log.tocExport.finishedAt = new Date().toISOString();
+      }
+    }
+  };
   let result: T | undefined;
   const controls = new AbortController();
   let controlTask: Promise<void> | undefined;
+  let trace: ReturnType<typeof recordedCommand> | undefined;
   try {
     const notification = start(platform.notifyutil, ['-v', '-1', log.notification]);
     // A missed registration is a failed startup, never permission to submit frames without notification.
     await wait(platform.registrationMs);
-    const trace = start(platform.xctrace, [
+    trace = start(platform.xctrace, [
       'record',
       '--template',
       'Metal System Trace',
@@ -424,14 +470,6 @@ export async function withNativeTrace<T>(
     result = await bounded(Promise.race([workResult, earlyExit]), platform.controlMs, 'native frame controls');
     log.controlsFinishedAt = new Date().toISOString();
     observe(log);
-    const recorded = await bounded(trace.done, platform.finishMs, 'native trace finish');
-    if (recorded.code !== 0 || recorded.error || recorded.truncated) throw new Error('Native recording failed; retain its raw status');
-    await trace.stop();
-    const exported = start(platform.xctrace, ['export', '--input', log.trace, '--toc', '--output', log.toc]);
-    const exportedStatus = await bounded(exported.done, platform.exportMs, 'native TOC export');
-    if (exportedStatus.code !== 0 || exportedStatus.error || exportedStatus.truncated) throw new Error('Native TOC export failed');
-    if (!existsSync(log.trace) || !statSync(log.trace).isDirectory() || !existsSync(log.toc) || statSync(log.toc).size === 0)
-      throw new Error('Native trace bundle or nonempty TOC output missing');
   } catch (error) {
     log.failure = String(error);
   } finally {
@@ -448,6 +486,7 @@ export async function withNativeTrace<T>(
       // This is deliberately not another losing race: no callback may resume after terminal artifacts are written.
       await controlTask;
     }
+    if (trace) await finalizeRecorder(trace);
     for (const job of jobs.reverse()) {
       try {
         await job.stop();

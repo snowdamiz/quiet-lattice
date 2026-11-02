@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -13,6 +13,7 @@ import {
   runOwnedHelper,
   withNativeTrace,
   type CommandRecord,
+  type NativeTraceLog,
 } from './native-trace.ts';
 
 const folders: string[] = [];
@@ -37,8 +38,11 @@ function fixture(kind = 'normal') {
       if(kind==='no-notification') {setInterval(()=>{},1000); await new Promise(()=>{});}
       writeFileSync(folder+'/notification','posted');
       console.log('CPU synthetic native start');
-      await wait(250);
+      if(kind==='slow-finalization')process.on('SIGINT',()=>console.log('Stopping recording...'));
+      if(kind==='hung-finalization'){setInterval(()=>{},1000);await new Promise(()=>{});}
+      await wait(kind==='slow-finalization'?3600:250);
       mkdirSync(args[args.indexOf('--output')+1]);
+      console.log('CPU trace finalized');
     }else if(args[0]==='export'){
       if(kind==='export-failed') process.exit(9);
       if(kind==='no-toc') process.exit(0);
@@ -117,7 +121,7 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
     }
   });
 
-  it('keeps an actual frame/output failure separate from a successful notification and interrupts only owned commands', async () => {
+  it('keeps an actual frame/output failure separate from a successful notification and finalizes only owned commands', async () => {
     const f = fixture();
     await expect(
       withNativeTrace(
@@ -130,6 +134,91 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
       ),
     ).rejects.toMatchObject({
       evidence: { notifiedAt: expect.any(String), controlsFinishedAt: null, failure: expect.stringContaining('scene-output-mismatch') },
+    });
+  });
+
+  it('lets a slow recorder finalize and exports retained TOC even when controls failed', async () => {
+    const f = fixture('slow-finalization');
+    f.platform.finishMs = 6000;
+    let evidence: NativeTraceLog | undefined;
+    try {
+      await withNativeTrace(
+        process.pid,
+        f.out,
+        async () => {
+          throw new Error('stationary-output-failed');
+        },
+        f.platform,
+      );
+    } catch (error) {
+      expect(error).toBeInstanceOf(NativeTraceError);
+      evidence = (error as NativeTraceError).evidence;
+    }
+    if (process.env.NATIVE_FINALIZATION_EVIDENCE)
+      appendFileSync(
+        process.env.NATIVE_FINALIZATION_EVIDENCE,
+        JSON.stringify({
+          scope: 'CPU synthetic recorder,real production trace/helper lifecycle; no browser/GPU/native recording',
+          evidence,
+          traceExists: existsSync(f.out + '/native.trace'),
+          tocExists: existsSync(f.out + '/native-toc.xml'),
+        }) + '\n',
+      );
+    expect(evidence).toMatchObject({
+      failure: expect.stringContaining('stationary-output-failed'),
+      controlsFinishedAt: null,
+      recorderFinalization: { status: 'finalized', failure: null },
+      tocExport: { status: 'exported', failure: null },
+    });
+    expect(evidence?.commands[1]).toMatchObject({ code: 0, signals: [], groupState: 'absent' });
+    expect(readFileSync(f.out + '/native-toc.xml', 'utf8')).toContain('CPU-only');
+    expect(evidence?.commands.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
+  });
+
+  it('bounds recorder finalization and retains the primary control error before terminal escalation', async () => {
+    const f = fixture('hung-finalization');
+    f.platform.finishMs = 50;
+    let failure: NativeTraceLog | undefined;
+    try {
+      await withNativeTrace(
+        process.pid,
+        f.out,
+        async () => {
+          throw new Error('primary-control-failed');
+        },
+        f.platform,
+      );
+    } catch (error) {
+      expect(error).toBeInstanceOf(NativeTraceError);
+      failure = (error as NativeTraceError).evidence;
+    }
+    expect(failure).toMatchObject({
+      failure: expect.stringContaining('primary-control-failed'),
+      recorderFinalization: { status: 'failed', failure: expect.stringContaining('finalization exceeded 50') },
+      tocExport: { status: 'not-attempted' },
+    });
+    expect(failure?.commands.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
+    const rows = await processRows();
+    expect(rows.filter((row) => failure?.commands.some((c) => c.pid === row.pid || c.group === row.pgid))).toEqual([]);
+  });
+
+  it.each(['export-failed', 'no-toc'])('retains primary failed controls separately from finalized-trace export failure (%s)', async (kind) => {
+    const f = fixture(kind);
+    await expect(
+      withNativeTrace(
+        process.pid,
+        f.out,
+        async () => {
+          throw new Error('primary-control-failed');
+        },
+        f.platform,
+      ),
+    ).rejects.toMatchObject({
+      evidence: {
+        failure: expect.stringContaining('primary-control-failed'),
+        recorderFinalization: { status: 'finalized' },
+        tocExport: { status: 'failed', failure: expect.stringContaining('TOC') },
+      },
     });
   });
 
@@ -163,9 +252,9 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
     ).rejects.toMatchObject({
       evidence: {
         failure: expect.stringContaining('frame controls exceeded'),
-        commands: expect.arrayContaining([
-          expect.objectContaining({ signals: expect.arrayContaining([expect.objectContaining({ signal: 'SIGINT' })]), groupState: 'absent' }),
-        ]),
+        recorderFinalization: { status: 'finalized' },
+        tocExport: { status: 'exported' },
+        commands: expect.arrayContaining([expect.objectContaining({ code: 0, signals: [], groupState: 'absent' })]),
       },
     });
   });
