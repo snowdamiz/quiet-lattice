@@ -178,7 +178,8 @@ describe('the Count meter', () => {
       epoch: new Date(DEFAULT_SHARD_EPOCH_MS),
       lastTime: (day + 1) * DAY_S - 5,
       season: 1,
-      seasonStart: 0,
+      // This exercises a daily roll, independently of when the wall calendar would end a season anchored at zero.
+      seasonStart: day * DAY_S,
       seasonLength: SEASON_LENGTH_S,
     });
     const server = await startTestServer({}, { shard });
