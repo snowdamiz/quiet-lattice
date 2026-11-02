@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import stat
 import subprocess
 import sys
@@ -16,10 +17,10 @@ import tempfile
 from round4_job_boundary import StationJob, deadline, identity, coalition, LIBPROC, write, kernel_tasks, SUPPORTED_PROFILE_PREFIXES
 
 ROOT = Path(__file__).resolve().parents[4]
-BASE = ROOT / 'assets/renders/stations/round4/browser_proof_ready03'
+BASE = ROOT / 'assets/renders/stations/round4/browser_proof_ready04'
 READY = BASE / 'readiness.json'
 GRANT = BASE / 'parent_gpu_proof_grant.json'
-RUN = ROOT / 'assets/renders/stations/round4/actual_browser_proof03'
+RUN = ROOT / 'assets/renders/stations/round4/actual_browser_proof04'
 CAPTURE_SECONDS = CLEANUP_SECONDS = 30
 PRIVATE_TMP_POLICY = {'parent': '/private/tmp', 'prefix': 'sbr-', 'unix_socket_capacity': 104,
                       'worst_case_tsx_pid': '2147483647'}
@@ -44,16 +45,44 @@ def tmp_admission(path):
 
 def create_private_tmp(record_path):
     policy = PRIVATE_TMP_POLICY
-    path = Path(tempfile.mkdtemp(prefix=policy['prefix'], dir=policy['parent'])).resolve()
-    admission = tmp_admission(path)
-    socket = path / f"tsx-{os.getuid()}" / (policy['worst_case_tsx_pid'] + '.pipe')
-    admission.update(worst_case_tsx_socket=str(socket), socket_path_bytes=len(os.fsencode(socket)),
-                     unix_socket_capacity=policy['unix_socket_capacity'])
-    write(record_path, admission)  # Persist provenance before any job receives TMPDIR.
-    if admission['socket_path_bytes'] >= policy['unix_socket_capacity']:
-        path.rmdir()
-        raise ValueError('Private TMPDIR exceeds actual tsx IPC pathname capacity')
-    return path, admission
+    allocated = owner = None
+    try:
+        previous = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGALRM, signal.SIGINT})
+        try:
+            allocated = tempfile.mkdtemp(prefix=policy['prefix'], dir=policy['parent'])
+            info = os.lstat(allocated)
+            owner = {'path': allocated, 'uid': info.st_uid, 'mode': stat.S_IMODE(info.st_mode),
+                     'stamp': [info.st_dev, info.st_ino]}
+        finally:
+            # Only allocation/identity bookkeeping is protected. Pending cancellation
+            # reaches the outer cleanup before any receipt write or archive work.
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous)
+        path = Path(allocated).resolve()
+        admission = tmp_admission(path)
+        assert admission['stamp'] == owner['stamp']
+        socket = path / f"tsx-{os.getuid()}" / (policy['worst_case_tsx_pid'] + '.pipe')
+        admission.update(worst_case_tsx_socket=str(socket), socket_path_bytes=len(os.fsencode(socket)),
+                         unix_socket_capacity=policy['unix_socket_capacity'])
+        write(record_path, admission)
+        if admission['socket_path_bytes'] >= policy['unix_socket_capacity']:
+            raise ValueError('Private TMPDIR exceeds actual tsx IPC pathname capacity')
+        return path, admission
+    except BaseException as primary:
+        if allocated is not None:
+            allocation = {'path': allocated, 'identity_at_allocation': owner, 'released': False}
+            try:
+                current = os.lstat(allocated)
+                assert owner and [current.st_dev, current.st_ino] == owner['stamp']
+                assert current.st_uid == os.getuid() and stat.S_ISDIR(current.st_mode)
+                Path(allocated).rmdir()  # Exact owned empty root only; never recursive rollback.
+                allocation['released'] = True
+            except FileNotFoundError as cleanup:
+                allocation['path_absent'] = True
+                allocation['cleanup_failure'] = {'type': type(cleanup).__name__, 'message': str(cleanup)}
+            except BaseException as cleanup:
+                allocation['cleanup_failure'] = {'type': type(cleanup).__name__, 'message': str(cleanup)}
+            primary.private_tmp_allocation = allocation
+        raise
 
 
 def _tmp_tree(path):
@@ -294,6 +323,8 @@ def execute(job_factory=StationJob):
             assert observer.released and observer.receipt, 'Required current kernel/backend receipts absent'
     except BaseException as error:
         result['primary_failure'] = {'type': type(error).__name__, 'message': str(error)}
+        if getattr(error, 'private_tmp_allocation', None):
+            result['private_tmp_allocation_failure'] = error.private_tmp_allocation
     finally:
         try:
             with deadline(CLEANUP_SECONDS):
@@ -344,7 +375,11 @@ def execute(job_factory=StationJob):
                     if private_tmp:
                         result['private_tmp_release'] = preserve_private_tmp(private_tmp, tmp_record, out / 'preserved_private_tmp', no_process_launched=True)
                 else:
-                    result['teardown_status'] = 'NO_JOB_CREATED'
+                    allocation = result.get('private_tmp_allocation_failure')
+                    result['teardown_status'] = 'UNPROVED' if allocation and not allocation['released'] else 'NO_JOB_CREATED'
+                    if allocation and not allocation['released']:
+                        result['retained_private_tmp'] = allocation
+                        result['teardown_failure'] = allocation.get('cleanup_failure')
                     if private_tmp:
                         result['private_tmp_release'] = preserve_private_tmp(private_tmp, tmp_record, out / 'preserved_private_tmp', no_process_launched=True)
         except BaseException as error:
