@@ -133,6 +133,14 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
     dropped: Math.max(0, (session?.errors.length ?? 0) - 128),
     truncatedMessages: session?.errors.filter((e) => e.length > 4096).length ?? 0,
   });
+  // A failure receipt is secondary to the already observed page/protocol failure.
+  const retainFailureStep = (id: string, value: unknown) => {
+    try {
+      retainBrowserStep(admission.out, id, value);
+    } catch (error) {
+      cleanupErrors.push(`Failure receipt ${id}: ${String(error)}`);
+    }
+  };
   let timer: ReturnType<typeof setInterval> | undefined;
   let stage = 'startup';
   let closing: Promise<void> | undefined;
@@ -269,7 +277,8 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
           probe: {
             call: async (action, workClass, id) => {
               if (session?.errors.length) {
-                retainBrowserStep(admission.out, id, {
+                const error = new Error(`Review page errors before issuance: ${session.errors.slice(0, 128).join('; ')}`);
+                retainFailureStep(id, {
                   action,
                   workClass,
                   id,
@@ -278,14 +287,14 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
                   pageErrors: pageErrors(),
                   at: new Date().toISOString(),
                 });
-                throw new Error(`Review page errors before issuance: ${session.errors.slice(0, 128).join('; ')}`);
+                throw error;
               }
               check();
               try {
                 const response = await page.evaluate(browserProbePageCall, { action, workClass, id });
                 return { ...response, pageErrors: pageErrors() };
               } catch (error) {
-                retainBrowserStep(admission.out, id, {
+                retainFailureStep(id, {
                   action,
                   workClass,
                   id,

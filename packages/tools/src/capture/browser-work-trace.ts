@@ -138,33 +138,41 @@ function chunk(value: unknown) {
   if (bytes.length > traceLimits.chunkBytes) throw new Error('Trace chunk decoded size overflow');
   return { bytes, eof: value.eof };
 }
-interface PointMark {
+interface PointFields {
   name: string;
   cat: string;
-  ph: 'R';
   ts: number;
   pid: number;
   tid: number;
 }
+type PointMark = PointFields & ({ ph: 'R' } | { ph: 'I'; s: 't'; tts?: number });
 function isPointMark(value: unknown, rendererPids: readonly number[]): value is PointMark {
+  if (
+    !isRecord(value) ||
+    typeof value.name !== 'string' ||
+    typeof value.cat !== 'string' ||
+    !value.cat.split(',').includes('blink.user_timing') ||
+    typeof value.ts !== 'number' ||
+    !Number.isFinite(value.ts) ||
+    value.ts < 0 ||
+    typeof value.pid !== 'number' ||
+    !Number.isSafeInteger(value.pid) ||
+    value.pid <= 1 ||
+    !rendererPids.includes(value.pid) ||
+    typeof value.tid !== 'number' ||
+    !Number.isSafeInteger(value.tid) ||
+    value.tid <= 0
+  )
+    return false;
+  if (value.ph === 'R') return (value.dur === undefined || value.dur === 0) && (value.tdur === undefined || value.tdur === 0);
+  // Perfetto's synchronous thread-instant exporter emits I/s=t, optional tts,
+  // and no duration or async identity/clock qualifiers. Unknown forms stay inconclusive.
   return (
-    isRecord(value) &&
-    typeof value.name === 'string' &&
-    typeof value.cat === 'string' &&
-    value.cat.split(',').includes('blink.user_timing') &&
-    value.ph === 'R' &&
-    (value.dur === undefined || value.dur === 0) &&
-    (value.tdur === undefined || value.tdur === 0) &&
-    typeof value.ts === 'number' &&
-    Number.isFinite(value.ts) &&
-    value.ts >= 0 &&
-    typeof value.pid === 'number' &&
-    Number.isSafeInteger(value.pid) &&
-    value.pid > 1 &&
-    rendererPids.includes(value.pid) &&
-    typeof value.tid === 'number' &&
-    Number.isSafeInteger(value.tid) &&
-    value.tid > 0
+    value.ph === 'I' &&
+    value.s === 't' &&
+    value.cat === 'blink.user_timing' &&
+    !['dur', 'tdur', 'id', 'id2', 'bind_id', 'use_async_tts'].some((key) => Object.hasOwn(value, key)) &&
+    (!Object.hasOwn(value, 'tts') || (typeof value.tts === 'number' && Number.isFinite(value.tts) && value.tts >= 0))
   );
 }
 export function markerCoverage(bytes: Buffer, expected: Marker[], rendererPids: readonly number[]) {
@@ -173,8 +181,8 @@ export function markerCoverage(bytes: Buffer, expected: Marker[], rendererPids: 
     throw new Error('Trace event schema/count unavailable');
   const names = new Set(expected.map((m) => m.name));
   const events = parsed.traceEvents.filter((event) => isRecord(event) && typeof event.name === 'string' && names.has(event.name));
-  // Only the documented R point-mark representation. Other PerformanceMark forms
-  // require their own phase-specific validation and remain inconclusive here.
+  // Accept only the reviewed R point form or the observed, validated I/thread form.
+  // Neither phase establishes native execution identity or a calibrated cross-clock relation.
   const selected: PointMark[] = [];
   let valid = expected.length > 0 && expected.length % 2 === 0 && names.size === expected.length;
   for (const m of expected) {
@@ -217,7 +225,7 @@ export function markerCoverage(bytes: Buffer, expected: Marker[], rendererPids: 
   }
   return {
     status: valid ? 'observed' : 'missing-or-ambiguous',
-    events: events.map((e) => (isRecord(e) ? { name: e.name, cat: e.cat, ph: e.ph, pid: e.pid, tid: e.tid, ts: e.ts } : null)),
+    events: events.map((e) => (isRecord(e) ? { name: e.name, cat: e.cat, ph: e.ph, s: e.s, pid: e.pid, tid: e.tid, ts: e.ts, tts: e.tts } : null)),
   } satisfies BrowserWorkLog['markerCoverage'];
 }
 export class BrowserWorkError extends Error {

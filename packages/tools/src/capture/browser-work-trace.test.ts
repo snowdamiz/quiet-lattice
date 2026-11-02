@@ -377,6 +377,26 @@ describe('owned browser trace lifecycle, CPU providers only', () => {
     expect(log.markerCoverage.status).toBe('missing-or-ambiguous');
     expect(log.controls).toHaveLength(12);
   });
+  it.each([false, true])('settles a full I/thread trace with contradictory qualifier=%s', async (invalid) => {
+    const f = fixture();
+    f.setCommand((c) =>
+      c.method === 'IO.read'
+        ? Promise.resolve({
+            data: JSON.stringify({
+              traceEvents: f.events().map((e, i) => ({ ...e, ph: 'I', s: 't', tts: e.ts, ...(invalid && i === 0 ? { use_async_tts: false } : {}) })),
+            }),
+            eof: true,
+          })
+        : undefined,
+    );
+    const log = invalid ? await failure(f) : await runBrowserWorkTrace(f.options);
+    expect(log.status).toBe(invalid ? 'inconclusive' : 'observed');
+    expect(log.markerCoverage.status).toBe(invalid ? 'missing-or-ambiguous' : 'observed');
+    expect(log.controls).toHaveLength(12);
+    expect(log.markers).toHaveLength(46);
+    expect(log.trace.streamClosed).toBe(true);
+    expect(f.state()).toMatchObject({ live: false, listeners: 0 });
+  });
   it('missing marker coverage is inconclusive, not successful timing evidence', async () => {
     const f = fixture();
     f.setCommand((c) => (c.method === 'IO.read' ? Promise.resolve({ data: '{"traceEvents":[]}', eof: true }) : undefined));
@@ -402,14 +422,69 @@ describe('marker identity and observed schema', () => {
   it('does not ignore an ambiguous duplicate', () => {
     expect(check([event, { ...event, cat: 'other' }, end]).status).toBe('missing-or-ambiguous');
   });
-  it.each(['I', 'R', 'n'])('accepts only R, leaving the unvalidated %s variants inconclusive', (ph) => {
+  it.each(['R', 'I'])('accepts the validated %s point representation', (ph) => {
+    const fields = ph === 'I' ? { ph, s: 't' } : { ph };
     expect(
       check([
-        { ...event, ph },
-        { ...end, ph },
+        { ...event, ...fields },
+        { ...end, ...fields },
       ]).status,
-    ).toBe(ph === 'R' ? 'observed' : 'missing-or-ambiguous');
+    ).toBe('observed');
   });
+  it('accepts the concrete saved Chrome156 I/thread shape, including its optional thread timestamp', () => {
+    // Fields from marker task trace e89ab33e…; names alone are rebound to this diagnostic.
+    const fields = { cat: 'blink.user_timing', ph: 'I', s: 't', pid: 60246, tid: 118016466 };
+    const rows = [
+      { ...fields, name: expected[0].name, ts: 1634879846733, tts: 1826241 },
+      { ...fields, name: expected[1].name, ts: 1634879848511, tts: 1828010 },
+    ];
+    expect(markerCoverage(Buffer.from(JSON.stringify({ traceEvents: rows })), expected, [60246]).status).toBe('observed');
+  });
+  it.each(['n', 'i', 'X', 'B', 'E', 'unknown'])('leaves unsupported phase %s inconclusive', (ph) => {
+    expect(
+      check([
+        { ...event, ph, s: 't' },
+        { ...end, ph, s: 't' },
+      ]).status,
+    ).toBe('missing-or-ambiguous');
+  });
+  it.each([undefined, null, 'p', 'g', 'T', 0, {}])('refuses unsupported I scope %j', (scope) => {
+    expect(
+      check([
+        { ...event, ph: 'I', s: scope },
+        { ...end, ph: 'I', s: 't' },
+      ]).status,
+    ).toBe('missing-or-ambiguous');
+  });
+  it.each(['dur', 'tdur', 'id', 'id2', 'bind_id', 'use_async_tts'])('refuses every presence of I qualifier %s', (key) => {
+    for (const value of [0, false, null, 'bad', 123, {}, []]) {
+      expect(
+        check([
+          { ...event, ph: 'I', s: 't', [key]: value },
+          { ...end, ph: 'I', s: 't' },
+        ]).status,
+      ).toBe('missing-or-ambiguous');
+    }
+  });
+  it.each([null, false, '1', -1, Infinity, {}])('refuses malformed I thread timestamp %j', (tts) => {
+    expect(
+      check([
+        { ...event, ph: 'I', s: 't', tts },
+        { ...end, ph: 'I', s: 't' },
+      ]).status,
+    ).toBe('missing-or-ambiguous');
+  });
+  it.each([{ cat: 'blink.user_timing,other' }, { pid: 99 }, { pid: 1 }, { pid: 12.5 }, { tid: 0 }, { tid: 1.5 }, { ts: -1 }, { ts: null }, { ts: '1000' }])(
+    'refuses I identity/category/time %j',
+    (fields) => {
+      expect(
+        check([
+          { ...event, ph: 'I', s: 't', ...fields },
+          { ...end, ph: 'I', s: 't' },
+        ]).status,
+      ).toBe('missing-or-ambiguous');
+    },
+  );
   it.each([
     [{ ...event, ph: 'not-a-phase' }, end],
     [event, { ...end, ts: 500 }],
