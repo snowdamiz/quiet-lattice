@@ -97,7 +97,11 @@ interface Found {
 
 /** The sturdiest resource node within reach of the pilot's scatter, once the flora has put its cells down. */
 async function nodeNear(page: Page): Promise<Found | null> {
-  await until(page, 'window.game.flora.planet && window.game.pool.pending() === 0', 60_000);
+  await until(
+    page,
+    'window.game.flora.planet === window.game.player.state.frame && !window.game.director.pose && !window.game.director.blend && window.game.pool.pending() === 0',
+    60_000,
+  );
   return page.evaluate(() => {
     const g = window.game;
     const f = g.flora;
@@ -146,14 +150,16 @@ async function freeze(page: Page): Promise<void> {
     w.__advance = (ms) => {
       t += ms;
     };
-    // (the game's own loop stops here; a page that is not in front is not given animation frames to wait for, so
-    // `__step` runs the game's frames itself)
+    // As in dev.record, only the spec can run a game frame from here. Replacing rAF alone leaves one queued callback
+    // that a background page could run after the beams start; waiting for it would depend on browser scheduling too.
+    const g = window.game;
+    const frame = g.frame.bind(g);
+    g.frame = () => {};
     w.requestAnimationFrame = () => 0;
     w.__step = async (ms, frames) => {
-      const g = window.game;
       for (let i = 0; i < frames; i++) {
         t += ms / frames;
-        g.frame(Math.min(0.066, ms / frames / 1000));
+        frame(Math.min(0.066, ms / frames / 1000));
       }
       const deadline = Date.now() + 120_000;
       while (g.net?.state === 'joined' && g.net.store.ack < g.net.inputSeq && Date.now() < deadline) await new Promise((r) => setTimeout(r, 4));
@@ -278,11 +284,38 @@ test('two clients mine one node and a third watches: all see it vanish, none ask
   await freeze(a);
   await freeze(b);
   await freeze(c);
-  await play(all, 500);
-  log('frozen, played 500 ms');
-  expect(await a.evaluate(gone)).toBe(false);
+  // Teleports, ground collisions and the disembark camera glide can finish on different frames under rendering load.
+  // Finish them with both beams off; seeing the node in the scatter alone does not mean the camera can aim at it yet.
+  const settled = await playUntil(
+    all,
+    'window.game.player.grounded && window.game.player.state.vel.length() < 0.01 && !window.game.player.blend.on && !window.game.director.pose && !window.game.director.blend && window.game.pool.pending() === 0',
+    10_000,
+  );
+  expect(settled, 'all pilots settled on the ground with their cameras and scatter ready').toBe(true);
+  for (const p of all) expect(await p.evaluate(gone)).toBe(false);
+  for (const p of miners) await aim(p, found, false);
+  await play(all, 100);
+  const aimed = await Promise.all(
+    miners.map((p) =>
+      p.evaluate(() => {
+        const g = window.game;
+        return {
+          target: g.multitool.target ? g.flora.mineTarget(g.multitool.target) : null,
+          camera: g.cam.pos.toArray(),
+          feet: g.player.state.pos.toArray(),
+          grounded: g.player.grounded,
+          correcting: g.player.blend.on,
+        };
+      }),
+    ),
+  );
+  log('miners aimed', JSON.stringify(aimed));
+  expect(
+    aimed.map((p) => p.target),
+    `both actual beam raycasts must reach the selected node: ${JSON.stringify(aimed)}`,
+  ).toEqual([{ node: found.id }, { node: found.id }]);
 
-  // both hold the beam on it
+  // Both cameras are ready before either beam can wear the node down.
   await aim(a, found, true);
   await aim(b, found, true);
   const vanished = await playUntil(all, gone, 20_000);
@@ -299,15 +332,21 @@ test('two clients mine one node and a third watches: all see it vanish, none ask
   }
   // both beams were on it, and the server told of its breaking once as an answer to a hit
   const sent = await Promise.all(miners.map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
-  expect(sent[0]).toBeGreaterThan(0);
-  expect(sent[1]).toBeGreaterThan(0);
   const told = await Promise.all(all.map((p) => p.evaluate(() => (window as unknown as Window & { __told: { seq: number; result: string }[] }).__told)));
+  log('contributions', JSON.stringify({ sent, told }));
+  expect(sent[0], 'miner a must contribute mining requests').toBeGreaterThan(0);
+  expect(sent[1], 'miner b must contribute mining requests').toBeGreaterThan(0);
+  for (const [i, answers] of told.slice(0, miners.length).entries()) {
+    expect(
+      answers.filter((m) => m.result === 'hit' && m.seq > 0),
+      `miner ${i === 0 ? 'a' : 'b'} must contribute accepted hits before depletion`,
+    ).not.toHaveLength(0);
+  }
   expect(told.flat().filter((m) => m.result === 'depleted' && m.seq > 0)).toHaveLength(1);
   // (the watcher sent no hit, so it dealt no damage and got neither an answer nor a share: it learned of the break from
   // the `nodes` state alone)
   expect(told[2]).toEqual([]);
   expect(await c.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor)).toEqual([]);
-  log('told', JSON.stringify(told));
 
   // holding the beam where it stood asks the server for nothing
   const sentBefore = await Promise.all(miners.map((p) => p.evaluate(() => (window as unknown as Window & { __sentFor: number[] }).__sentFor.length)));
