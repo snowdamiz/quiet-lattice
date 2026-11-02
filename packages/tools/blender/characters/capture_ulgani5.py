@@ -20,11 +20,60 @@ identity={'source_sha256':ready['source_sha256'],'export_sha256':ready['export_s
 cache_path=validation/'ulgani-review5-browser-cache.json';cache=json.loads(cache_path.read_text()) if cache_path.exists() else {'identity':identity,'completed':{}}
 assert cache['identity']==identity
 
-def processes():
+observer_events=[]
+def processes(observer_command=None, observer_timeout=2):
+ # This exact helper appears in its own snapshot. Exclude its PID only after
+ # communicate() has completed and reaped it; all other process rows stay live data.
+ command=observer_command or ['ps','-axo','pid=,ppid=,pgid=,lstart=,comm=']
+ event={'started_utc':utc(),'command':command}
+ observer=subprocess.Popen(command,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+ event.update(pid=observer.pid,pgid=observer.pid)
+ def group_members():
+  # Signal permission is not process-group liveness on Darwin. A bounded
+  # secondary ps probe is reaped first; it is in our controller group, not
+  # this dedicated observer group, so it cannot count itself as a member.
+  probe=subprocess.Popen(['ps','-axo','pid=,pgid=,stat='],text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  try:output,error=probe.communicate(timeout=1)
+  except subprocess.TimeoutExpired:
+   probe.kill();probe.communicate(timeout=1);raise
+  event.setdefault('group_probes',[]).append({'pid':probe.pid,'exit_code':probe.returncode,'reaped':True})
+  if probe.returncode:raise subprocess.CalledProcessError(probe.returncode,probe.args,output,error)
+  return [{'pid':int(a[0]),'state':a[2]} for line in output.splitlines() if len(a:=line.split())==3 and int(a[1])==observer.pid]
+ def group_exists():return bool(group_members())
+ def drain_helper():
+  for sig in (signal.SIGTERM,signal.SIGKILL):
+   members=group_members()
+   if not members:break
+   if all(x['state'].startswith('Z') for x in members):continue
+   try:os.killpg(observer.pid,sig)
+   except ProcessLookupError:pass
+   except PermissionError:
+    remaining=group_members()
+    if any(not x['state'].startswith('Z') for x in remaining):raise
+   try:observer.communicate(timeout=.2)
+   except subprocess.TimeoutExpired:pass
+  observer.communicate(timeout=1)
+  deadline=time.monotonic()+2
+  while group_exists() and time.monotonic()<deadline:time.sleep(.02)
+  assert not group_exists(),'Observation helper group survived its bounded cleanup'
+ try:
+  output,error=observer.communicate(timeout=observer_timeout)
+  if observer.returncode!=0:
+   drain_helper();raise subprocess.CalledProcessError(observer.returncode,command,output,error)
+  if group_exists():
+   drain_helper();raise RuntimeError('Observation helper exited but left a live child')
+ except BaseException as exc:
+  try:drain_helper()
+  finally:
+   event.update(completed_utc=utc(),exit_code=observer.returncode,reaped=observer.returncode is not None,group_absent=not group_exists(),error=repr(exc));observer_events.append(event)
+  raise
  rows={}
- for line in subprocess.check_output(['ps','-axo','pid=,ppid=,pgid=,lstart=,comm='],text=True).splitlines():
+ for line in output.splitlines():
   a=line.strip().split(None,8)
   if len(a)==9:rows[int(a[0])]={'pid':int(a[0]),'ppid':int(a[1]),'pgid':int(a[2]),'fingerprint':' '.join(a[3:8]),'executable':a[8]}
+ contained_self=observer.pid in rows
+ rows.pop(observer.pid,None)
+ event.update(completed_utc=utc(),exit_code=observer.returncode,reaped=True,group_absent=True,self_row_present=contained_self,excluded_reaped_observer_pid=observer.pid);observer_events.append(event)
  return rows
 
 def png_size(path):
@@ -61,7 +110,7 @@ assert not jobdir.exists();gate=base/f'gpu-review-release-ulgani5-{args.variant}
 outdir=root/'assets/renders/review/characters/ulgani-review5'/args.attempt;target=outdir/'ulgani'/args.variant;assert not target.exists();jobdir.mkdir(parents=True);gate.rename(jobdir/'consumed-gate.json');log=jobdir/'capture.log';log.write_text('');written=jobdir/'written.json';command=['pnpm','exec','tsx','packages/tools/src/capture/ulgani5-review.ts','--variant',args.variant,'--out-dir',str(outdir.relative_to(root)),'--written',str(written)]
 report={'identity':identity,'preparation_sha256':sha(prep_path),'variant':args.variant,'attempt':args.attempt,'started_utc':utc(),'controller_pid':os.getpid(),'controller_pgid':os.getpgrp(),'command':command,'outdir':str(target.relative_to(root)),'log':str(log.relative_to(root)),'gate':authorization,'processes':[],'profiles':[],'cleanup':[],'status':'starting'}
 known={os.getpid():processes()[os.getpid()]};profiles=set();children=[]
-def save():report['processes']=list(known.values());report['profiles']=sorted(profiles);report_path.write_text(json.dumps(report,indent=2)+'\n')
+def save():report['processes']=list(known.values());report['profiles']=sorted(profiles);report['observer_lifecycles']=observer_events.copy();report_path.write_text(json.dumps(report,indent=2)+'\n')
 def observe():
  rows=processes();owned={pid for pid,item in known.items() if pid in rows and rows[pid]['fingerprint']==item['fingerprint']}
  while True:
@@ -85,8 +134,13 @@ def cleanup():
    rows=observe();members=[x for x in rows.values() if x['pgid']==group]
    if not members:continue
    assert all(x['pid'] in known and x['fingerprint']==known[x['pid']]['fingerprint'] for x in members),'Group contains unowned/reused process;manual drain required'
-   os.killpg(group,sig);report['cleanup'].append({'utc':utc(),'pgid':group,'signal':sig.name})
+   try:os.killpg(group,sig)
+   except ProcessLookupError:continue
+   report['cleanup'].append({'utc':utc(),'pgid':group,'signal':sig.name})
   time.sleep(.5)
+  # poll() reaps only our completed direct Popen children before escalation.
+  # A still-running descendant remains in the fresh identity/group check.
+  for child in children:child.poll()
  for child in children:
   try:child.wait(timeout=5)
   except subprocess.TimeoutExpired:raise RuntimeError('Owned child did not drain')
