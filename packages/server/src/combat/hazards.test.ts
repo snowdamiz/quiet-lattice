@@ -115,7 +115,7 @@ describe('the server ship hazard tick', () => {
   it('keeps already-earned re-entry through a handoff and disembarking, and applies it to the ship once', () => {
     const source = rig();
     const target = rig();
-    source.combat.moved(source.id, { seconds: 0.1, vel: [0, -1400, 0] });
+    source.combat.moved(source.id, { seconds: 0.1, vel: [0, -1400, 0], fromMode: 'ship' });
     source.zone.patch(source.id, { mode: 'foot' });
     target.zone.patch(target.id, { mode: 'foot' });
     source.combat.transfer(source.id, target.combat, target.id);
@@ -128,22 +128,29 @@ describe('the server ship hazard tick', () => {
 
   it('repairs 20 hull/s and refills shields once at a real pad; neither a forged dock location nor mode toggles buy service', () => {
     const w = rig();
+    const observed = () => w.combat.moved(w.id, { seconds: 1, vel: [0, 0, 0], fromMode: 'docked' });
     w.combat.applyDamage(null, w.id, { base: 150, kind: 'attack' });
     w.zone.patch(w.id, { frame: w.zone.stationFrame, mode: 'docked', pos: [0, STATION_LAYOUT.padTop + SHIP_GEAR_HEIGHT, 0] });
+    observed();
     w.step(101);
     expect(w.health()).toMatchObject({ hull: 50, shield: 0 });
     w.zone.patch(w.id, padPose(w.zone.stationFrame, 0));
+    observed();
     w.step(102);
     expect(w.health()).toMatchObject({ hull: 70, shield: 100 });
     w.combat.applyDamage(null, w.id, { base: 50, kind: 'attack' });
     w.zone.patch(w.id, { mode: 'ship' });
+    observed();
     w.step(103);
     w.zone.patch(w.id, { mode: 'docked' });
+    observed();
     w.step(104);
     expect(w.health()).toMatchObject({ hull: 90, shield: 50 });
     w.zone.patch(w.id, { mode: 'ship', pos: [0, 14, 30] });
+    observed();
     w.step(105);
     w.zone.patch(w.id, { ...padPose(w.zone.stationFrame, 0), mode: 'docked' });
+    observed();
     w.step(106);
     expect(w.health()).toMatchObject({ hull: 100, shield: 100 });
   });

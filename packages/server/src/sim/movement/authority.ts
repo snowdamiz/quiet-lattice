@@ -137,6 +137,8 @@ export interface MovementRefusal {
 export interface MeasuredMotion {
   seconds: number;
   vel: Vec3;
+  /** The preceding ship mode. Walker positions never supply ship motion, including when boarding. */
+  fromMode: Exclude<MoveMode, 'foot'>;
 }
 
 export type MovementVerdict = { ok: true; mode: MoveMode; vel: Vec3; motion: MeasuredMotion | null } | MovementRefusal;
@@ -686,11 +688,11 @@ export class MovementAuthority {
     this.holdIfSkipped(m, { seq: msg.seq, msg, credit, r: now });
     let motion: MeasuredMotion | null = null;
     const seconds = s.t - L.t;
-    if (m.motionReady && !m.hold && !s.resync && s.mode === 'ship' && L.mode === 'ship' && seconds > 0) {
+    if (m.motionReady && !m.hold && !s.resync && s.mode !== 'foot' && L.mode !== 'foot' && seconds > 0) {
       // As in the authority's speed check, the old frame carries its pose until the crossing's validated world time.
       // Re-expressing it there removes a frame switch's apparent jump without adding the body's orbit or spin as speed.
       const from = this.inFrame(L, s.key, s.p).pos;
-      motion = { seconds, vel: [(s.pos[0] - from[0]) / seconds, (s.pos[1] - from[1]) / seconds, (s.pos[2] - from[2]) / seconds] };
+      motion = { seconds, vel: [(s.pos[0] - from[0]) / seconds, (s.pos[1] - from[1]) / seconds, (s.pos[2] - from[2]) / seconds], fromMode: L.mode };
     }
     m.graceUntil = -Infinity;
     this.accept(m, L, s);

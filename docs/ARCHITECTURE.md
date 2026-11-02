@@ -1653,14 +1653,20 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   Its motion comes from movement authority's `MeasuredMotion`, never the velocity a client reports. Each accepted
   interval uses displacement over credited time, with the old pose re-expressed in the destination frame at the validated
   crossing time as in movement's speed check. First inputs after joins, teleports, handoffs or corrections, clock
-  resyncs, and provisional terrain poses supply no motion. `Zone.input` forwards every accepted observation to
-  `ZoneCombat.moved`, which accumulates its damage for the next tick. Bunched inputs lose no intervals. Already-earned
+  resyncs, and provisional terrain poses supply no motion. Observations cover all non-foot ship modes and include
+  `fromMode`. Re-entry still requires flying at both ends of an interval. `Zone.input` forwards every accepted pose and
+  its observation, including null, to `ZoneCombat.moved`, which accumulates damage for the next tick. Bunched inputs lose no intervals. Already-earned
   damage survives a transfer or disembarking and still hits the ship. Silence adds no re-entry damage because the server
   does not advance the pose between inputs. Sky damage continues on server time.
   Dock service requires a station frame, accepted `docked` mode, gear within movement's pad-height tolerance, a position
-  inside a pad's radius, and speed no greater than 1 m/s. Crews repair hull at `DOCK_HULL_REPAIR_PER_S` (20) and refill
+  inside a pad's radius, and authority-measured speed no greater than 1 m/s. Reported or clamped velocity supplies no
+  evidence of rest. A first or unknown observation, resync, correction, server placement, or handoff suspends service
+  until a fresh measured stationary interval. Known rest continues to permit service while the accepted pose stays
+  silent; observed motion does not become rest through silence. Walker samples never prove ship rest, including boarding.
+  Crews repair hull at `DOCK_HULL_REPAIR_PER_S` (20) and refill
   shield once on arrival. A service latch remains set across mode toggles and disembarking, until the ship physically
-  leaves pad reach. An out-of-place `docked` claim repairs nothing. A downed ship receives no service.
+  leaves pad reach. Every accepted non-foot pose records that departure, so an exit and slow return between two ticks
+  still rearm arrival service. An out-of-place `docked` claim repairs nothing. A downed ship receives no service.
   Each aboard snapshot reconciles the client's shield and hull fractions in `Ship.reconcileHealth`. `Ship.updateHazard`
   predicts both sky and re-entry damage; predicted zero hull cannot invoke the demo rebuild, tax or teleport. A real zero
   hull reports one `downed` hook with cause `ship`. The Recall and its visuals remain P1.E06.T03.

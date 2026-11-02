@@ -14,17 +14,24 @@ export interface ShipExposure {
   atPad: boolean;
 }
 
+/** Pad reach from the accepted ship pose, independent of mode or reported velocity. Also read for every input, so a
+ * departure and return between ticks can rearm arrival service. A walker's position is not its parked ship's position. */
+export function shipAtPad(system: SystemDescription, fields: Pick<EntityInit, 'frame' | 'pos'>): boolean {
+  if (frameKeyOf(system, fields.frame) !== 'station') return false;
+  const gear = fields.pos[1] - STATION_LAYOUT.padTop - SHIP_GEAR_HEIGHT;
+  return (
+    gear >= -MOVEMENT.docked.belowM &&
+    gear <= MOVEMENT.docked.aboveM &&
+    STATION_LAYOUT.pads.some((pad) => Math.hypot(fields.pos[0] - pad.x, fields.pos[2] - pad.z) <= STATION_LAYOUT.padRadius)
+  );
+}
+
 /** Both altitude conventions match Ship.computeEnvironment: over terrain/sea minus gear height on rocky worlds, over
  * the cloud deck's radius on gas giants. Mode and frame have already passed movement authority. */
 export function shipExposure(system: SystemDescription, fields: EntityInit, grounds: GroundSource, tier: number): ShipExposure {
   const key = frameKeyOf(system, fields.frame);
-  const gear = fields.pos[1] - STATION_LAYOUT.padTop - SHIP_GEAR_HEIGHT;
-  const atPad =
-    key === 'station' &&
-    gear >= -MOVEMENT.docked.belowM &&
-    gear <= MOVEMENT.docked.aboveM &&
-    STATION_LAYOUT.pads.some((pad) => Math.hypot(fields.pos[0] - pad.x, fields.pos[2] - pad.z) <= STATION_LAYOUT.padRadius);
-  const docked = atPad && fields.mode === 'docked' && Math.hypot(...fields.vel) <= 1;
+  const atPad = shipAtPad(system, fields);
+  const docked = atPad && fields.mode === 'docked';
   const out: ShipExposure = { sky: null, docked, atPad };
   if (fields.mode === 'foot' || typeof key !== 'number') return out;
   const body = system.bodies[key]!;

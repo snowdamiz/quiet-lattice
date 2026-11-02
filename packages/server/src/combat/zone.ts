@@ -42,7 +42,7 @@ import { groundPlanner, type GroundSource } from '../fauna/terrain.ts';
 import { DEFAULT_LOADOUT } from '../inventory/service.ts';
 import type { EntityFields, ZoneEntity, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import type { MeasuredMotion } from '../sim/movement/authority.ts';
-import { shipExposure, shipReentry } from './environment.ts';
+import { shipAtPad, shipExposure, shipReentry } from './environment.ts';
 
 /** How long a dead creature's corpse stays before it is despawned, s. */
 export const DEATH_BEAT_S = 3;
@@ -195,7 +195,7 @@ interface PlayerVitals {
   shieldMax: number;
   ship: ShipStats | null;
   /** The server clock and storm countdown; preserved through a retune, with no elapsed time charged across a transfer. */
-  hazards: { at: number | null; strike: number; serviced: boolean };
+  hazards: { at: number | null; strike: number; serviced: boolean; resting: boolean };
   /** Earned by each validated motion interval, including bunched inputs; applied by the next tick, even after a transfer. */
   reentry: number;
   /** its own modifiers (Grey Blood's damage taken) */
@@ -280,7 +280,10 @@ export class ZoneCombat {
     if (profile) target.profiles.set(nextEntity, profile);
     const vitals = this.vitals.get(entity);
     if (vitals) {
-      if (vitals.kind === 'player') vitals.hazards.at = null;
+      if (vitals.kind === 'player') {
+        vitals.hazards.at = null;
+        vitals.hazards.resting = false;
+      }
       target.vitals.set(nextEntity, vitals);
     }
     this.profiles.delete(entity);
@@ -392,12 +395,16 @@ export class ZoneCombat {
     return { ...this.counts, corpses: this.corpses.length };
   }
 
-  /** Movement authority's observation after an accepted input. Accumulating every interval keeps a burst of inputs from
-   * losing damage between ticks. A join, teleport, handoff or correction supplies no discontinuous motion. */
-  moved(entity: number, motion: MeasuredMotion): void {
+  /** Every accepted pose records pad departure, including bunched inputs. Unknown motion suspends service; only a
+   * measured interval at rest establishes it again. Disembarking keeps the latch and never measures the ship from a walker.
+   * Re-entry still counts only flying-to-flying intervals, accumulated without losing bunched inputs. */
+  moved(entity: number, motion: MeasuredMotion | null): void {
     const fields = this.zone.entity(entity)?.fields;
     const v = this.vitalsOf(entity);
-    if (!fields || v?.kind !== 'player' || v.down !== null || !v.ship) return;
+    if (!fields || v?.kind !== 'player') return;
+    if (fields.mode !== 'foot' && !shipAtPad(this.zone.system, fields)) v.hazards.serviced = false;
+    v.hazards.resting = fields.mode !== 'foot' && motion !== null && Math.hypot(...motion.vel) <= 1;
+    if (v.down !== null || !v.ship || motion?.fromMode !== 'ship') return;
     v.reentry += reentryDamagePerS(shipReentry(this.zone.system, fields, motion.vel), v.ship) * motion.seconds;
   }
 
@@ -594,7 +601,7 @@ export class ZoneCombat {
       shield: shieldMax,
       shieldMax,
       ship,
-      hazards: { at: null, strike: 3, serviced: false },
+      hazards: { at: null, strike: 3, serviced: false, resting: false },
       reentry: 0,
       mods,
       down: null,
@@ -620,7 +627,7 @@ export class ZoneCombat {
       this.zone.fauna?.tier ?? tierOfGalaxySystem(this.zone.systemIndex),
     );
     if (!exposure.atPad && fields.mode !== 'foot') clock.serviced = false;
-    if (exposure.docked) {
+    if (exposure.docked && clock.resting) {
       v.hull = Math.min(v.hullMax, v.hull + DOCK_HULL_REPAIR_PER_S * dt);
       if (!clock.serviced) v.shield = v.shieldMax;
       clock.serviced = true;
