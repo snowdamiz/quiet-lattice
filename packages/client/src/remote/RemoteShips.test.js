@@ -207,6 +207,33 @@ describe('remote ships’ lights and plating', () => {
 });
 
 describe('RemoteShips', () => {
+  it('matches the rendered material through a hull: back-facing fine LODs stay clear, the double-sided coarsest occludes', async () => {
+    const game = scene(loadedShip(0xffffff, { lods: [1, 2] }));
+    const ships = await ready(game);
+    const r = remote(game, 0, 0);
+    ships.update([r], 1 / 60);
+    const kit = ships.kits.get('lark');
+    const direction = new THREE.Vector3(0, 0, -1);
+    const ray = new THREE.Raycaster(new THREE.Vector3(), direction, 0, 500);
+    for (const lod of [0, 1, 2]) {
+      r.vis.lod = lod;
+      kit.begin();
+      kit.add(new THREE.Vector3(), r.worldQuat, r.vis, 0);
+      kit.end();
+      ships.group.updateMatrixWorld(true);
+      const rendered = kit.pieces.flatMap((p) => ray.intersectObject(p.levels[lod].mesh, false));
+      expect(rendered.length > 0, `rendered LOD ${lod} from inside the hull`).toBe(lod === 2);
+      expect(ships.covers(r, direction, 500), `occlusion at LOD ${lod}`).toBe(rendered.length > 0);
+    }
+    // A material-side change on a rendered fine LOD is authoritative too.
+    r.vis.lod = 0;
+    kit.materials[0].side = THREE.BackSide;
+    kit.begin(); kit.add(new THREE.Vector3(), r.worldQuat, r.vis, 0); kit.end();
+    const rendered = kit.pieces.flatMap((p) => ray.intersectObject(p.levels[0].mesh, false));
+    expect(rendered.length).toBeGreaterThan(0);
+    expect(ships.covers(r, direction, 500)).toBe(true);
+  });
+
   it('occludes only a farther pilot at the diamond ray, through the real remote-layer query', async () => {
     const game = scene();
     game.camWorldQuatInv = new THREE.Quaternion();

@@ -104,7 +104,7 @@ const _size = new THREE.Vector2();
 const _frustum = new THREE.Frustum();
 const _sphere = new THREE.Sphere();
 const _coverRay = new THREE.Raycaster();
-const _coverMesh = new THREE.Mesh(undefined, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+const _coverMesh = new THREE.Mesh();
 const _coverHits = [];
 
 /** The hull whose model draws `hull`: its own, else one of its tier's, else null (it is not drawn). */
@@ -216,6 +216,7 @@ export class RemoteShips {
     for (const p of kit.pieces) {
       if (p.gear >= 0 && lod === LEVELS - 1 && vis.gear < 0.5) continue;
       _coverMesh.geometry = p.levels[lod].geometry;
+      _coverMesh.material = p.levels[lod].mesh.material;
       _coverMesh.matrixWorld.copy(_t);
       if (p.gear >= 0) {
         const g = kit.gears[p.gear];
