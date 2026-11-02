@@ -12,8 +12,8 @@ export interface ProcessRow {
 }
 
 /** ps comm excludes arguments. Only owned descendants are retained by the caller. */
-export async function processRows(records: CommandRecord[] = []): Promise<ProcessRow[]> {
-  const { stdout } = await runOwnedHelper('ps', ['-axo', 'pid,ppid,pgid,comm'], records, { deadlineMs: 1000 });
+export async function processRows(records: CommandRecord[] = [], signal?: AbortSignal): Promise<ProcessRow[]> {
+  const { stdout } = await runOwnedHelper('ps', ['-axo', 'pid,ppid,pgid,comm'], records, { deadlineMs: 1000, signal });
   return stdout
     .split('\n')
     .slice(1)
@@ -67,16 +67,26 @@ export interface CommandRecord {
   cleanupErrors: string[];
 }
 
-export async function bounded<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+export async function bounded<T>(promise: Promise<T>, ms: number, label: string, signal?: AbortSignal): Promise<T> {
+  signal?.throwIfAborted();
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let removeAbortListener = () => {};
   try {
     return await Promise.race([
       promise,
+      new Promise<never>((_, reject) => {
+        if (!signal) return;
+        const abort = () => reject(signal.reason);
+        signal.addEventListener('abort', abort, { once: true });
+        removeAbortListener = () => signal.removeEventListener('abort', abort);
+        if (signal.aborted) abort();
+      }),
       new Promise<never>((_, reject) => {
         timer = setTimeout(() => reject(new Error(`${label} exceeded ${ms}ms`)), ms);
       }),
     ]);
   } finally {
+    removeAbortListener();
     if (timer) clearTimeout(timer);
   }
 }
@@ -207,13 +217,14 @@ export async function runOwnedHelper(
   file: string,
   args: string[],
   records: CommandRecord[] = [],
-  options: { deadlineMs: number; cwd?: string } = { deadlineMs: 5000 },
+  options: { deadlineMs: number; cwd?: string; signal?: AbortSignal } = { deadlineMs: 5000 },
 ): Promise<CommandRecord> {
   if (!Number.isInteger(options.deadlineMs) || options.deadlineMs < 1 || options.deadlineMs > 60_000) throw new Error('Helper deadline must be 1..60000ms');
+  options.signal?.throwIfAborted();
   const job = recordedCommand(file, args, records, { cwd: options.cwd });
   job.record.deadlineMs = options.deadlineMs;
   try {
-    const result = await bounded(job.done, options.deadlineMs, `Helper ${file}`);
+    const result = await bounded(job.done, options.deadlineMs, `Helper ${file}`, options.signal);
     if (result.code !== 0 || result.error || result.truncated)
       throw new Error(`Helper ${file} failed: code=${result.code}, signal=${result.signal}, error=${result.error}`);
   } catch (error) {
@@ -308,6 +319,10 @@ export interface NativeTraceLog {
   toc: string;
   notifiedAt: string | null;
   controlsFinishedAt: string | null;
+  controlsSettledAt: string | null;
+  controlsCancelledAt: string | null;
+  controlFailure: string | null;
+  controlCleanupErrors: string[];
   failure: string | null;
   commands: CommandRecord[];
   evidence: 'uninspected';
@@ -322,13 +337,16 @@ export class NativeTraceError extends Error {
   }
 }
 
-/** A successful recording/TOC never grants native-event coverage, attribution or a timing verdict. */
+/** The callback must honor its signal at launch boundaries. cancelWork interrupts pending provider operations;
+ * the callback and its owned helpers must settle before this scope returns, even after recorder loss/timeout.
+ * A successful recording/TOC never grants native-event coverage, attribution or a timing verdict. */
 export async function withNativeTrace<T>(
   gpuPid: number,
   out: string,
-  work: () => Promise<T>,
+  work: (signal: AbortSignal) => Promise<T>,
   platform: NativePlatform = PLATFORM,
   observe: (log: NativeTraceLog) => void = () => {},
+  cancelWork: () => Promise<void> = async () => {},
 ): Promise<{ result: T; evidence: NativeTraceLog }> {
   if (!Number.isSafeInteger(gpuPid) || gpuPid <= 1) throw new Error('Native trace requires a verified owned GPU PID');
   const log: NativeTraceLog = {
@@ -339,6 +357,10 @@ export async function withNativeTrace<T>(
     toc: join(out, 'native-toc.xml'),
     notifiedAt: null,
     controlsFinishedAt: null,
+    controlsSettledAt: null,
+    controlsCancelledAt: null,
+    controlFailure: null,
+    controlCleanupErrors: [],
     failure: null,
     commands: [],
     evidence: 'uninspected',
@@ -351,6 +373,8 @@ export async function withNativeTrace<T>(
     return job;
   };
   let result: T | undefined;
+  const controls = new AbortController();
+  let controlTask: Promise<void> | undefined;
   try {
     const notification = start(platform.notifyutil, ['-v', '-1', log.notification]);
     // A missed registration is a failed startup, never permission to submit frames without notification.
@@ -383,7 +407,21 @@ export async function withNativeTrace<T>(
     );
     log.notifiedAt = new Date().toISOString();
     observe(log);
-    result = await bounded(Promise.race([work(), earlyExit]), platform.controlMs, 'native frame controls');
+    // Observe both outcomes immediately; retaining this task is ownership, not merely consuming a losing rejection.
+    const workResult = Promise.resolve().then(() => {
+      controls.signal.throwIfAborted();
+      return work(controls.signal);
+    });
+    controlTask = workResult.then(
+      () => {
+        log.controlsSettledAt = new Date().toISOString();
+      },
+      (error) => {
+        log.controlFailure = String(error);
+        log.controlsSettledAt = new Date().toISOString();
+      },
+    );
+    result = await bounded(Promise.race([workResult, earlyExit]), platform.controlMs, 'native frame controls');
     log.controlsFinishedAt = new Date().toISOString();
     observe(log);
     const recorded = await bounded(trace.done, platform.finishMs, 'native trace finish');
@@ -397,6 +435,19 @@ export async function withNativeTrace<T>(
   } catch (error) {
     log.failure = String(error);
   } finally {
+    if (controlTask) {
+      if (log.failure) {
+        log.controlsCancelledAt = new Date().toISOString();
+        controls.abort(new Error(`Native controls aborted: ${log.failure}`));
+        try {
+          await cancelWork();
+        } catch (error) {
+          log.controlCleanupErrors.push(String(error));
+        }
+      }
+      // This is deliberately not another losing race: no callback may resume after terminal artifacts are written.
+      await controlTask;
+    }
     for (const job of jobs.reverse()) {
       try {
         await job.stop();

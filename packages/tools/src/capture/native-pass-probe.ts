@@ -100,6 +100,8 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
   let vite: Awaited<ReturnType<typeof startOwnedVite>> | undefined;
   let session: Awaited<ReturnType<typeof openReview>> | undefined;
   let native: NativeTraceLog | undefined;
+  let controlsCancelled = false;
+  let cancelledPartial: unknown = null;
   let browserPid: number | undefined;
   let phase = 'preflight';
   let timer: ReturnType<typeof setInterval> | undefined;
@@ -184,9 +186,16 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
       const gpuPid = ownedGpuPid(processes.processInfo, rows, browserPid);
       const reviewSession = session;
       const clockCorrelations: unknown[] = [];
-      const correlateClocks = async () => {
+      const correlateClocks = async (signal: AbortSignal) => {
+        signal.throwIfAborted();
         const before = { wallMs: Date.now(), monotonicNs: process.hrtime.bigint().toString() };
-        const page = await reviewSession.page.evaluate(() => ({ wallMs: Date.now(), monotonicMs: performance.now(), timeOriginMs: performance.timeOrigin }));
+        const page = await bounded(
+          reviewSession.page.evaluate(() => ({ wallMs: Date.now(), monotonicMs: performance.now(), timeOriginMs: performance.timeOrigin })),
+          5000,
+          'control clock correlation',
+          signal,
+        );
+        signal.throwIfAborted();
         const after = { wallMs: Date.now(), monotonicNs: process.hrtime.bigint().toString() };
         clockCorrelations.push({ before, page, after });
         save('clock-correlations.json', clockCorrelations);
@@ -216,20 +225,66 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
       const captured = await withNativeTrace(
         gpuPid,
         options.out,
-        async () => {
-          const before = await bounded(cdp.send('SystemInfo.getProcessInfo'), 5000, 'GPU identity before controls');
-          if (ownedGpuPid(before.processInfo, await processRows(helpers), browserPid!) !== gpuPid) throw new Error('Owned GPU process changed before controls');
-          await correlateClocks();
-          const result = await reviewSession.page.evaluate(() => window.review.nativePassProbe('run'));
-          await correlateClocks();
-          const after = await bounded(cdp.send('SystemInfo.getProcessInfo'), 5000, 'GPU identity after controls');
-          if (ownedGpuPid(after.processInfo, await processRows(helpers), browserPid!) !== gpuPid) throw new Error('Owned GPU process changed during controls');
+        async (signal) => {
+          signal.throwIfAborted();
+          const before = await bounded(cdp.send('SystemInfo.getProcessInfo'), 5000, 'GPU identity before controls', signal);
+          signal.throwIfAborted();
+          const beforeRows = await processRows(helpers, signal);
+          signal.throwIfAborted();
+          if (ownedGpuPid(before.processInfo, beforeRows, browserPid!) !== gpuPid) throw new Error('Owned GPU process changed before controls');
+          await correlateClocks(signal);
+          signal.throwIfAborted();
+          const result = await bounded(
+            reviewSession.page.evaluate(() => window.review.nativePassProbe('run')),
+            10_000,
+            'native page controls',
+            signal,
+          );
+          signal.throwIfAborted();
+          await correlateClocks(signal);
+          signal.throwIfAborted();
+          const after = await bounded(cdp.send('SystemInfo.getProcessInfo'), 5000, 'GPU identity after controls', signal);
+          signal.throwIfAborted();
+          const afterRows = await processRows(helpers, signal);
+          signal.throwIfAborted();
+          if (ownedGpuPid(after.processInfo, afterRows, browserPid!) !== gpuPid) throw new Error('Owned GPU process changed during controls');
           return result;
         },
         undefined,
         (evidence) => {
           native = evidence;
           save('native.json', native);
+        },
+        async () => {
+          controlsCancelled = true;
+          // Cleanup operations may run after cancellation; further frame/clock/identity work may not.
+          const cleanupErrors: string[] = [];
+          try {
+            await bounded(
+              reviewSession.page.evaluate(() => window.review.nativePassProbe('cancel')),
+              5000,
+              'native probe cancellation',
+            );
+            cancelledPartial = await bounded(
+              reviewSession.page.evaluate(() => window.review.lastNativePassProbe),
+              5000,
+              'native partial report',
+            );
+          } catch (error) {
+            cleanupErrors.push(String(error));
+          }
+          try {
+            // Closing the owned page interrupts a pending evaluate, allowing the callback itself to settle.
+            await bounded(reviewSession.page.close({ runBeforeUnload: false }), 5000, 'cancelled native page close');
+          } catch (error) {
+            cleanupErrors.push(String(error));
+            try {
+              await bounded(browserServer!.kill(), 10_000, 'cancelled owned browser kill');
+            } catch (killError) {
+              cleanupErrors.push(String(killError));
+            }
+          }
+          if (cleanupErrors.length) throw new Error(`Native control cancellation cleanup failed: ${cleanupErrors.join('; ')}`);
         },
       );
       native = captured.evidence;
@@ -250,16 +305,19 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
       save('native.json', native);
     }
     if (session) {
-      await bounded(
-        session.page.evaluate(() => window.review.nativePassProbe('cancel')),
-        5000,
-        'native probe cancellation',
-      ).catch((e) => errors.push(`Cancel: ${String(e)}`));
-      const partial = await bounded(
-        session.page.evaluate(() => window.review.lastNativePassProbe),
-        5000,
-        'native partial report',
-      ).catch(() => null);
+      if (!controlsCancelled)
+        await bounded(
+          session.page.evaluate(() => window.review.nativePassProbe('cancel')),
+          5000,
+          'native probe cancellation',
+        ).catch((e) => errors.push(`Cancel: ${String(e)}`));
+      const partial = controlsCancelled
+        ? cancelledPartial
+        : await bounded(
+            session.page.evaluate(() => window.review.lastNativePassProbe),
+            5000,
+            'native partial report',
+          ).catch(() => null);
       try {
         save('controls-failed.json', { error: String(error), partial: saveNativeOutputs(partial, options.out) });
       } catch (e) {

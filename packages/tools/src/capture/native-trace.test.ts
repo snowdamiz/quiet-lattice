@@ -10,6 +10,7 @@ import {
   ownedGpuPid,
   processRows,
   recordedCommand,
+  runOwnedHelper,
   withNativeTrace,
   type CommandRecord,
 } from './native-trace.ts';
@@ -149,7 +150,17 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
   it('bounds a stalled frame callback and drains the recording before rejecting', async () => {
     const f = fixture();
     f.platform.controlMs = 30;
-    await expect(withNativeTrace(process.pid, f.out, () => new Promise(() => {}), f.platform)).rejects.toMatchObject({
+    await expect(
+      withNativeTrace(
+        process.pid,
+        f.out,
+        (signal) =>
+          new Promise((_, reject) => {
+            signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+          }),
+        f.platform,
+      ),
+    ).rejects.toMatchObject({
       evidence: {
         failure: expect.stringContaining('frame controls exceeded'),
         commands: expect.arrayContaining([
@@ -157,6 +168,44 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
         ]),
       },
     });
+  });
+
+  it('keeps the primary timeout, losing callback failure and cancellation cleanup failure separately', async () => {
+    const f = fixture();
+    f.platform.controlMs = 30;
+    await expect(
+      withNativeTrace(
+        process.pid,
+        f.out,
+        (signal) =>
+          new Promise((_, reject) => {
+            signal.addEventListener('abort', () => reject(new Error('callback-cancelled')), { once: true });
+          }),
+        f.platform,
+        () => {},
+        async () => {
+          throw new Error('provider-close-failed');
+        },
+      ),
+    ).rejects.toMatchObject({
+      evidence: {
+        failure: expect.stringContaining('frame controls exceeded'),
+        controlFailure: expect.stringContaining('callback-cancelled'),
+        controlCleanupErrors: [expect.stringContaining('provider-close-failed')],
+        controlsCancelledAt: expect.any(String),
+        controlsSettledAt: expect.any(String),
+      },
+    });
+  });
+
+  it('does not launch any helper after cancellation was already observed', async () => {
+    const controller = new AbortController();
+    controller.abort(new Error('already-aborted'));
+    const records: CommandRecord[] = [];
+    await expect(
+      runOwnedHelper(process.execPath, ['-e', 'throw Error("must not run")'], records, { deadlineMs: 1000, signal: controller.signal }),
+    ).rejects.toThrow('already-aborted');
+    expect(records).toEqual([]);
   });
 
   it('drains a child that outlives its command but remains in the owned detached group', async () => {
