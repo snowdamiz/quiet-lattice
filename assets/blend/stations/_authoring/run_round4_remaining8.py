@@ -16,7 +16,7 @@ from run_round4_browser_proof import (create_private_tmp, preserve_private_tmp, 
 
 ROOT = Path(__file__).resolve().parents[4]
 BASE = ROOT / 'assets/renders/stations/round4'
-FREEZE = BASE / 'station_remaining8_ready01'
+FREEZE = BASE / 'station_remaining8_ready02'
 READY = FREEZE / 'readiness.json'
 GRANT = FREEZE / 'parent_gpu_grant.json'
 CAPTURE_SECONDS, CLEANUP_SECONDS = 600, 60
@@ -67,6 +67,9 @@ def preflight(*, check_outputs=True):
     assert os.environ.get('PATH') == ready['launch_path'], 'Pinned launcher PATH changed'
     resolver = json.loads(subprocess.check_output(ready['resolver_argv'], cwd=ROOT, text=True, timeout=5))
     assert resolver == ready['resolver'] and resolver['spawnCalls'] == []
+    # Actual logical resolution is re-queried, including ancestor links and entry bytes,
+    # at initial admission and again by require_stage_admission before every stage.
+    verify_routes(ready)
     proof = json.loads(Path(ready['qualification']['path']).read_text())
     assert proof['status'] == 'PASS_OBSERVED_CHROMIUM_EXECUTION_BOUNDARY' and proof['accepted_by_parent'] is True
     assert proof['external_native_XPC_ownership'] == 'UNQUALIFIED'
@@ -75,6 +78,11 @@ def preflight(*, check_outputs=True):
     else:
         assert ready['stages'] == original_stages()
     return grant, ready
+
+
+def verify_routes(ready):
+    completed = subprocess.run(ready['route_verify_argv'], cwd=ROOT, capture_output=True, text=True, timeout=10)
+    assert completed.returncode == 0, f'Logical dependency route check failed: {completed.stderr}'
 
 
 def require_stage_admission(stage, out, ready):
