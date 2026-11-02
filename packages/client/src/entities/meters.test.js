@@ -87,6 +87,28 @@ function towardHome(d, t, frac) {
 }
 
 describe('Charge on the client', () => {
+  it('keeps online Charge at its authoritative value before the first input, then predicts normally', () => {
+    const { g } = game();
+    g.ship.state.pos.copy(towardHome(g.system.description, T0, 0.9));
+    g.net = { inputSeq: 0 };
+    expect(characterMeterEnvironment(g)).toMatchObject({ sunlight: true, habitableBand: true });
+    g.ship.reconcileCharge({ charge: 0, at: T0 }, T0 + 0.5);
+    expect(g.ship.charge).toBe(0);
+    for (let i = 0; i < 60; i++) {
+      g.advance(1 / 60);
+      g.ship.updateCharge(1 / 60);
+    }
+    expect(g.ship.charge).toBe(0);
+    expect(g.ship.chargeRate).toBe(0);
+    expect(g.ship.chargeRegen).toBe(0);
+    g.net.inputSeq = 1;
+    g.advance(1);
+    g.ship.updateCharge(1);
+    expect(g.ship.charge).toBeCloseTo(2, 6);
+    expect(g.ship.chargeRate).toBe(2);
+    expect(g.ship.chargeRegen).toBe(2);
+  });
+
   it('regenerates in the sunlit band frame by frame as the server does input by input', () => {
     const { g } = game();
     const d = g.system.description;

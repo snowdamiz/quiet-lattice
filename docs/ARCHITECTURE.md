@@ -1590,7 +1590,9 @@ rules are `@astra/shared/meters`, pure functions both ends run.
   `beam` bit is the button held (`multitool.held`), never the prediction of whether it fires: the server decides the
   lockout, so a prediction a little ahead of it cannot stop it short of overheating. Both listen for `meters` on the
   game's `Net` (whichever connection it holds) and take the server's values, run on to the present at the client's
-  estimate of server time (`multitool.reconcile`, `ship.reconcileCharge`); a lockout the client predicted is kept against
+  estimate of server time (`multitool.reconcile`, `ship.reconcileCharge`). The ship subscribes when `Game.enterWorld`
+  creates Net, before the first welcome/meters can arrive. Online Charge prediction and its displayed rates wait for
+  the first sent input, matching the server's pre-input hold; offline prediction is unchanged. A lockout the client predicted is kept against
   a view the server made before it can have seen the inputs sent then (within the Net clock's round trip and 0.1 s of the
   predicted overheat). The state sent after join reaches a client still on its way into the world, so the server counts
   it as unsent and pushes the meters again on the session's first input. The HUD shows heat on the crosshair's left arc

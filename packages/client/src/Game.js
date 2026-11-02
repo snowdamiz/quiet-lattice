@@ -395,6 +395,7 @@ export class Game {
     // (dev builds: through a bad network, when `?lag` asked for one)
     const link = this.netLink ? { WebSocket: this.netLink.WebSocket } : {};
     const net = (this.net = new Net({ url: gameSocketUrl(), token: session.token, characterId: character.id, ...link }));
+    this.ship.watchServer();
     net.input = () => this.inputSample();
     this.remotes.attach(net);
     // (a world event's banner names the world it is on)
