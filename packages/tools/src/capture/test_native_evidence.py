@@ -1,6 +1,7 @@
 import json
 import contextlib
 from dataclasses import replace
+import hashlib
 import io
 from pathlib import Path
 import tempfile
@@ -147,6 +148,64 @@ class NativeEvidenceTests(unittest.TestCase):
             self.read()
         export(self.path, [cells()], '<pid id="a">1</pid><pid id="b">2</pid>')
         with patch.object(evidence, "MAX_IDS", 1), self.assertRaisesRegex(evidence.EvidenceError, "id limit"):
+            self.read()
+
+    def test_supplied_review_utf16_entity_case_is_rejected(self):
+        fixture = Path(__file__).resolve().parents[4] / "assets/renders/review/performance/p1-e14-t13/native-encoding-correction-01/review/entity-utf-16.xml"
+        with self.assertRaisesRegex(evidence.EvidenceError, "UTF-8"):
+            evidence.read_owned(fixture, SCHEMA, 95679)
+
+    def test_encoded_entity_declarations_cannot_expand_into_ownership(self):
+        export(self.path, [cells()])
+        body = self.path.read_text().replace("<pid>95679</pid>", "<pid>&owned;</pid>")
+        declaration = '<!DOCTYPE trace-query-result [<!ENTITY owned "95679">]>'
+        for codec in ["utf-8", "utf-16", "utf-16-le", "utf-16-be", "utf-32", "utf-32-le", "utf-32-be"]:
+            with self.subTest(codec=codec):
+                self.path.write_bytes((declaration + body).encode(codec))
+                with self.assertRaises(evidence.EvidenceError):
+                    self.read()
+
+    def test_plain_utf16_and_utf32_are_outside_supported_input_contract(self):
+        export(self.path, [cells()])
+        body = self.path.read_text()
+        for codec in ["utf-16", "utf-16-le", "utf-16-be", "utf-32", "utf-32-le", "utf-32-be"]:
+            with self.subTest(codec=codec):
+                self.path.write_bytes(body.encode(codec))
+                with self.assertRaises(evidence.EvidenceError):
+                    self.read()
+
+    def test_declared_encoding_must_be_utf8_even_for_ascii_bytes(self):
+        export(self.path, [cells()])
+        body = self.path.read_text()
+        for name in ["UTF-16", "UTF-32", "ISO-8859-1", "ASCII", "UTF-7", "UTF8"]:
+            with self.subTest(name=name):
+                self.path.write_bytes((f'<?xml version="1.0" encoding="{name}"?>' + body).encode("utf-8"))
+                with self.assertRaisesRegex(evidence.EvidenceError, "encoding declaration"):
+                    self.read()
+
+    def test_utf8_unicode_predefined_entities_and_optional_single_bom_pass(self):
+        columns = CORE + [("event-label", "formatted-label")]
+        export(self.path, [cells() + '<formatted-label fmt="Crème 🌌 &amp; Ω"/>'], columns=columns)
+        body = self.path.read_text()
+        for header in ["", '<?xml version="1.0" encoding="UTF-8"?>', "<?xml version='1.0' encoding='uTf-8'?>"]:
+            for bom in [b"", b"\xef\xbb\xbf"]:
+                with self.subTest(header=header, bom=bool(bom)):
+                    raw = bom + (header + body).encode("utf-8")
+                    self.path.write_bytes(raw)
+                    table = self.read()
+                    self.assertEqual(table.rows[0].label, "Crème 🌌 & Ω")
+                    self.assertEqual(table.sha256, hashlib.sha256(raw).hexdigest())
+
+    def test_nul_invalid_utf8_double_bom_and_malformed_xml_reject(self):
+        export(self.path, [cells()])
+        body = self.path.read_bytes()
+        for raw in [b"\0" + body, body.replace(b"<pid>", b"<pid>\0"), b"\xff" + body, b"\xef\xbb\xbf\xef\xbb\xbf" + body]:
+            with self.subTest(raw_kind=raw[:8]):
+                self.path.write_bytes(raw)
+                with self.assertRaises(evidence.EvidenceError):
+                    self.read()
+        self.path.write_bytes(b"<trace-query-result>")
+        with self.assertRaises(ET.ParseError):
             self.read()
 
     def test_buffer_id_join_also_requires_actual_pid(self):

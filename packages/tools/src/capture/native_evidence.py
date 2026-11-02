@@ -42,10 +42,21 @@ class Document:
             raw = source.read(MAX_BYTES + 1)
         if len(raw) > MAX_BYTES:
             raise EvidenceError("XML byte limit exceeded")
-        if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
+        try:
+            text = raw.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            raise EvidenceError("Only UTF-8 XML is supported") from None
+        if "\0" in text or text.startswith("\ufeff"):
+            raise EvidenceError("UTF-8 XML permits no NUL and at most one leading BOM")
+        declaration = re.match(r"\A<\?xml\s+.*?\?>", text, re.DOTALL)
+        if declaration:
+            encoding = re.search(r"\bencoding\s*=\s*(['\"])(.*?)\1", declaration[0], re.IGNORECASE)
+            if encoding and encoding[2].lower() != "utf-8":
+                raise EvidenceError("Only a UTF-8 XML encoding declaration is supported")
+        if re.search(r"<!DOCTYPE|<!ENTITY", text, re.IGNORECASE):
             raise EvidenceError("XML declarations with entities are unsupported")
         self.sha256 = hashlib.sha256(raw).hexdigest()
-        self.root = ET.fromstring(raw)
+        self.root = ET.fromstring(text)
         self.ids = {}
         for element in self.root.iter():
             key = element.get("id")
