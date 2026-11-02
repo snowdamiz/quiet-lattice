@@ -144,19 +144,29 @@ describe('the pulse drive’s burn under movement authority', () => {
     expect(Math.abs(bunched.cutAt! - steady.cutAt!)).toBeLessThan(0.051);
   });
 
-  it('pays for every second of flight accepted, once, in bunches from the first input after joining (corrections and all)', () => {
-    // the reviewer's schedule: bunches from the very start, some refused and corrected back by the authority
+  it('pays for every second of flight accepted, once, in bunches from the first input after joining', () => {
+    // The reviewer's schedule, bunches from the very start: only 50 ms credited to the first input, with unclaimed
+    // arrival time available to the later advancing stamps. This honest backlog no longer needs corrections.
     for (const bunchS of [2, 3, 4]) {
       const r = rig(50);
       cruise(r, { seconds: 12, bunchS, steadyS: 0 });
-      expect(r.refused, `${bunchS} s bunches`).toBeGreaterThan(0);
+      expect(r.refused, `${bunchS} s bunches`).toBe(0);
       const paid = r.burned() / BURN;
       // at least the flight accepted on the drive, as the server believes it, at V...
       expect(paid, `${bunchS} s bunches`).toBeGreaterThanOrEqual(r.accepted / V - 0.003);
-      // ...and no more than the 12 s it was on the drive, with what the authority credits beyond real time: its bank and
-      // lead, and a late first input's lag (its join pose is put that far before its first input on the client's clock)
-      expect(paid, `${bunchS} s bunches`).toBeLessThan(12 + MOVEMENT.time.bankS + MOVEMENT.time.aheadS + (bunchS - 0.05) + 0.003);
+      // The initial arrival gap is not extra flight or an extra burn: the backlog pays exactly its 12 s, once.
+      expect(paid, `${bunchS} s bunches`).toBeCloseTo(12, 2);
     }
+  });
+
+  it('refuses flight charged to an initial arrival delay instead of the stamped interval', () => {
+    const r = rig(50);
+    // Beyond even the pulse cap for the stamped 50 ms, but within the old four-second arrival window.
+    r.send(pose(null, [10000000, OPEN[1], OPEN[2]], [V, 0, 0], noseTo([1, 0, 0])), T0 + 0.05, T0 + 4);
+    expect(r.refused).toBe(1);
+    expect(r.accepted).toBe(0);
+    expect(r.h.corrections).toHaveLength(1);
+    expect(r.h.corrections[0]).toMatchObject({ violation: { rule: 'teleport' } });
   });
 
   it('pays for the gap when a pilot rejoins on the drive and sends its first input late', () => {

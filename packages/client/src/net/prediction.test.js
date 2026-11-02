@@ -6,6 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { Body, FrameState } from '../universe/Body.js';
 import { framePoseAt, reframeAt } from '../remote/frames.js';
 import { BLEND_S, Blend, HISTORY, MATCH_M, Prediction, SNAP_M, SNAP_S, snapLimit } from './prediction.js';
+import { Harness, pose as wirePose } from '../../../server/src/sim/movement/testing.ts';
+import { describeZoneSystem } from '../../../server/src/zones/system.ts';
 
 const SEED = 7;
 const DT = 1 / 60;
@@ -91,18 +93,24 @@ describe('Prediction: each snapshot against what was sent', () => {
     expect(p.check(5, { frame: null, pos: [0, 0, 0], quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'ship' }, 1)).not.toBeNull();
   });
 
-  it('does not compare a pose the server re-expressed into another frame at a sphere’s edge', () => {
+  it('compares a correction in another frame at the input time, including one lost at a sphere’s edge', () => {
     const { planet, station, resolve, place } = world();
     const p = new Prediction(resolve);
     const t = 2000;
     p.record(sent(1, t, [0, 0, -4490], { vel: [0, 0, -400], frame: `${SEED}:station` }));
-    // the zone's tick, a tick the client cannot name: its world position then, in the planet's frame
-    place(t + 0.1);
     const s = state(station, [0, 0, -4490], [0, 0, -400]);
-    reframeAt(s, station, planet, t + 0.1);
+    reframeAt(s, station, planet, t);
     const e = { frame: `${SEED}:0`, pos: s.pos.toArray(), quat: s.quat.toArray(), vel: s.vel.toArray(), mode: 'ship' };
-    expect(p.check(1, e)).toBeNull();
-    expect(p.stats.compared).toBe(0);
+    // Repeated snapshots can arrive at any later tick; the input still names the pose's frame time.
+    for (const lag of [0.1, 0.15, 0.3]) {
+      place(t + lag);
+      expect(p.check(1, e)).toBeNull();
+    }
+    expect(p.stats.compared).toBe(3);
+    expect(p.stats.maxError).toBeLessThan(1e-6);
+    const corrected = { ...e, pos: [e.pos[0] + 3, e.pos[1], e.pos[2]] };
+    expect(p.check(1, corrected)).toMatchObject({ seq: 1, mode: 'ship', pose: { pos: corrected.pos } });
+    expect(p.stats.unheard).toBe(1);
   });
 });
 
@@ -125,6 +133,27 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     p.take(5, { frame: null, pos: [500, 0, 0], quat: [0, 0, 0, 1], vel: [400, 0, 0] }, 'ship', s, 10.25);
     expect(s.pos.x).toBeCloseTo(600);
     expect(s.vel.toArray()).toEqual([400, 0, 0]);
+  });
+
+  it('replays acceleration after a pulse refusal when another old pulse input is corrected', () => {
+    const p = new Prediction(inertial());
+    p.record(sent(1, 10, [520, 0, 0], { vel: [400, 0, 0], mode: 'pulse' }));
+    p.record(sent(2, 10.1, [570, 0, 0], { vel: [600, 0, 0], mode: 'pulse' }));
+    p.record(sent(3, 10.2, [640, 0, 0], { vel: [800, 0, 0], mode: 'pulse' }));
+    const s = state(null, [700, 0, 0], [900, 0, 0]);
+    const pose = { frame: null, pos: [500, 0, 0], quat: [0, 0, 0, 1], vel: [400, 0, 0] };
+    p.take(1, pose, 'ship', s, 10.25);
+    p.corrected(3);
+    expect(s.pos.x).toBeCloseTo(600);
+    // 0.4 s on the engines at 20 m/s² after the first correction was received.
+    s.pos.x += 400 * 0.4 + 0.5 * 20 * 0.4 ** 2;
+    s.vel.x += 20 * 0.4;
+    const expected = s.pos.clone();
+    p.take(3, { ...pose, pos: [580, 0, 0] }, 'ship', s, 10.65);
+    expect(s.pos.distanceTo(expected)).toBeLessThan(1e-9);
+    expect(s.vel.x).toBe(408);
+    expect(p.at(3).mode).toBe('pulse');
+    expect(p.at(3).pos.x).toBe(640);
   });
 
   it('replays a ship’s turning since onto the server’s orientation, and leaves a walker’s alone', () => {
@@ -153,7 +182,7 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     expect(s.quat.angleTo(serverQ.clone().multiply(turn))).toBeLessThan(1e-6);
   });
 
-  it('carries the server’s pose on at the mover’s velocity for an input at or before the fence, and keeps its turn', () => {
+  it('replays retained motion for an input at or before the fence without applying an offset twice', () => {
     const p = new Prediction(inertial());
     for (let seq = 5; seq <= 11; seq++) p.record(sent(seq, 10 + (seq - 5) * 0.05, [500 + (seq - 5) * 5, 0, 0], { vel: [100, 0, 0] }));
     const s = state(null, [525, 0, 0], [100, 0, 0]);
@@ -171,6 +200,62 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     p.record(sent(12, 10.35, [535, 0, 0], { vel: [100, 0, 0] }));
     p.take(12, { ...pose, pos: [535, 1, 0] }, 'ship', s, 10.4);
     expect(s.pos.y).toBe(4);
+  });
+
+  it.each([20, 160])('replays %s m/s² acceleration after a second correction at or before the fence', (accel) => {
+    const p = new Prediction(inertial());
+    const x = (dt) => 500 + 100 * dt + 0.5 * accel * dt * dt;
+    const v = (dt) => 100 + accel * dt;
+    for (let i = 0; i <= 32; i++) p.record(sent(i + 1, 10 + i * 0.05, [x(i * 0.05), 0, 0], { vel: [v(i * 0.05), 0, 0] }));
+    const s = state(null, [x(1.6), 0, 0], [v(1.6), 0, 0]);
+    const correction = { frame: null, pos: [500, 3, 0], quat: [0, 0, 0, 1], vel: [100, 0, 0] };
+    p.take(1, correction, 'ship', s, 11.6);
+    p.corrected(33);
+    expect(s.pos.distanceTo(new THREE.Vector3(x(1.6), 3, 0))).toBeLessThan(1e-9);
+    // The same correction is idempotent, even while accelerating.
+    p.take(1, correction, 'ship', s, 11.6);
+    expect(s.pos.distanceTo(new THREE.Vector3(x(1.6), 3, 0))).toBeLessThan(1e-9);
+    // An old-trajectory input held beyond the server's 1 s grace answers after another 300 ms.
+    s.pos.x = x(1.9);
+    s.vel.x = v(1.9);
+    p.record(sent(34, 11.9, s.pos.toArray(), { vel: s.vel.toArray() }));
+    p.take(7, { ...correction, pos: [x(0.3) - 2, 3, 0], vel: [v(0.3), 0, 0] }, 'ship', s, 11.9);
+    expect(s.pos.distanceTo(new THREE.Vector3(x(1.9) - 2, 3, 0))).toBeLessThan(1e-9);
+    expect(s.vel.x).toBeCloseTo(v(1.9), 9);
+    // Snapshot checks retain exactly what was sent before reconciliation.
+    expect(p.at(7).pos.toArray()).toEqual([x(0.3), 0, 0]);
+    expect(p.at(34).pos.toArray()).toEqual([x(1.9), 3, 0]);
+  });
+
+  it.each([20, 160])('replays %s m/s² after authority’s actual 1 s grace expires on an old input', (accel) => {
+    const p = new Prediction(inertial());
+    const x = (dt) => 500 + 100 * dt + 0.5 * accel * dt * dt;
+    const v = (dt) => 100 + accel * dt;
+    const h = new Harness(describeZoneSystem(0), { pose: wirePose(null, [500, 2e9, 0], [100, 0, 0]), mode: 'ship' }, {}, { now: 10 });
+    const inputs = [];
+    for (let i = 0; i <= 32; i++) {
+      const msg = { t: 'input', buttons: 0, ...sent(i + 1, 10 + i * 0.05, [x(i * 0.05), 2e9 + 3000, 0], { vel: [v(i * 0.05), 0, 0] }) };
+      inputs.push(msg);
+      p.record(msg);
+    }
+    const first = h.a.check(h.id, inputs[0], 10.8);
+    expect(first.ok).toBe(false);
+    expect(first.correction).not.toBeNull();
+    expect(h.a.check(h.id, inputs[9], 11.25)).toMatchObject({ ok: false, correction: null });
+    const late = h.a.check(h.id, inputs[22], 11.9);
+    expect(late.ok).toBe(false);
+    expect(late.correction.seq).toBe(23);
+    const s = state(null, [x(1.6), 2e9 + 3000, 0], [v(1.6), 0, 0]);
+    p.take(first.correction.seq, first.correction.pose, 'ship', s, 11.6);
+    p.corrected(33);
+    // The first correction did not change x or velocity; another 1.1 s of the same acceleration follows.
+    s.pos.x = x(2.7);
+    s.vel.x = v(2.7);
+    expect(late.correction.seq).toBeLessThan(p.fence);
+    p.take(late.correction.seq, late.correction.pose, 'ship', s, 12.7);
+    const traveled = x(2.7) - x(1.1);
+    expect(s.pos.distanceTo(new THREE.Vector3(late.correction.pose.pos[0] + traveled, 2e9, 0))).toBeLessThan(MATCH_M);
+    expect(p.at(23).pos.y).toBe(2e9 + 3000);
   });
 
   it('takes the server’s velocity for an input at or before the fence where the mode it was sent in is refused', () => {
@@ -213,6 +298,11 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     const dx = new THREE.Vector3(2, 0, 0);
     reframeAt({ pos: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: dx }, station, planet, t);
     expect(s.pos.clone().sub(before).distanceTo(dx)).toBeLessThan(1e-3);
+    // Repeating that correction preserves the motion of both frames since the input too.
+    const corrected = s.pos.clone();
+    p.corrected(1);
+    p.take(1, { frame: `${SEED}:station`, pos: [2, 0, -4400], quat: [0, 0, 0, 1], vel: [0, 0, -400] }, 'ship', s, t + 0.2);
+    expect(s.pos.distanceTo(corrected)).toBeLessThan(1e-6);
   });
 
   it('has nothing to rewind from for an input no longer kept or a frame of another system', () => {
