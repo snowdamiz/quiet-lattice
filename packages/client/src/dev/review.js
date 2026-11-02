@@ -17,6 +17,7 @@ import { maskColors, textureMemory } from '../gameplay/modelLibrary.js';
 import { GLOW as FLORA_GLOW } from '../gameplay/floraModels.js';
 import { gameLook } from '@astra/shared/art';
 import { nodeReviewModel } from '../gameplay/Flora.js';
+import { timerBoundaries } from './timer-boundaries.js';
 
 /** `node/<resource>`: a procedural resource node (P1.E13.T02), built by the flora in place of a .glb, its near and far
  * models as LOD0 and LOD1. Anything else: null, and the asset loads from public/models. */
@@ -1413,6 +1414,10 @@ export class Review {
       if (failure) throw new Error(failure);
       return this.lastPerf;
     });
+  }
+
+  timerBoundaries(opts) {
+    return timerBoundaries(this, opts);
   }
 
   /** Diagnostic-only per-stage queries. Never mix these instrumented timings with perf() budget runs. Every pass

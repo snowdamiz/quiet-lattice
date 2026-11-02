@@ -133,10 +133,12 @@ interface ReviewApi {
   lastOverlay: unknown;
   lastPerf: unknown;
   lastProfile: unknown;
+  lastTimerBoundaries: unknown;
   far(meters: number, opts?: { lod?: number }): Promise<unknown>;
   near(): Promise<void>;
   perf(opts?: { pairs?: number }): Promise<unknown>;
   profile(opts?: { frames?: number; detail?: 'passes' | 'atmosphere' }): Promise<unknown>;
+  timerBoundaries(opts?: { blocks?: number }): Promise<unknown>;
   step(n?: number): Promise<void>;
   stats(): unknown;
   spot: Record<string, unknown> | null;
