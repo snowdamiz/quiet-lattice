@@ -953,3 +953,16 @@ NOTES:
 - performance: Supply qualified three-light review measurements with actual renderer telemetry, stable attributable asset timings, and demonstrated 60 fps. The supplied unqualified readouts do not establish a performance pass.
 
 Artifact-only grader index: `/private/tmp/station-fourth-artifact-only-jyslgamo/waystation.json`, SHA256 `8f6fac190d96e67e1809321bd625754c1f7dc63d4b0bfee4560d7acd956ca0b2`. Detailed inspection record: `/private/tmp/waystation-visual4-sol-ig08srq9/viewing-record.md`; integrity and actual viewing are recorded separately. No additional capture was requested. Current source/export hashes remain `84fd86e0d68730e8a18edc061c965a6ef26aa99d35b0aae5d4098316a4327c68` / `aabf38551d7a5ea0e34e980bd496ef53943dae3de91fa5a37cd11824bd729e81`.
+
+
+## P1.E11.T01 — Scrapyard fourth independent visual grade (2026-11-02)
+
+VERDICT: REVISE
+TASK: P1.E11.T01 — Scrapyard
+SCORES: design 4, silhouette 4, proportion 4, materials 3, detail 4, topology 4, consistency 5, fitness 4, placeholder 3, performance 3 (mean 3.8)
+NOTES:
+- materials: Replace the rock’s regular pale crosshatching with irregular fractures and mineral variation; remove stretching over curved surfaces.
+- placeholder: Break the smooth capsule mass and evenly stepped cavity rim with asymmetric rock planes, varied chunks and uneven excavation cuts.
+- performance: Supply qualified paired timing under all three lights, with actual renderer telemetry and demonstrated 60 fps; current timing is explicitly unqualified.
+
+Artifact-only index: `/private/tmp/station-fourth-artifact-only-jyslgamo/scrapyard.json`, SHA256 `0a78e9f2b25737762088eee372b115c2ef3cc7c7f5c869b8bd92fb1c70b155c4`. Detailed record: `/private/tmp/scrapyard-visual4-sol-inspection/evidence.md`. The grader directly viewed 44 supplied images and two private inspection crops; six full engine sheets cover all modules. All 106 linked hashes match, and 88 PNGs pass separate CPU integrity/decode checks. No additional capture was requested. Current source/export hashes remain `f4a8c86c06314aa8ce6a5c9f21973e41860c94252de1aeabad86fc8a15164be9` / `00610b536701916229540c74be1935848716703fea7f4575c6d8c2d8c125ead2`.
