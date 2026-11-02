@@ -4,7 +4,13 @@ import { Ship } from './Ship.js';
 import { Cockpit } from './Cockpit.js';
 import { HUD } from '../ui/HUD.js';
 
-const element = () => ({ style: {}, dataset: {}, innerHTML: '', classList: { toggle() {} } });
+const element = () => {
+  const classes = new Set();
+  return {
+    style: {}, dataset: {}, innerHTML: '',
+    classList: { toggle: (name, on) => on ? classes.add(name) : classes.delete(name), contains: (name) => classes.has(name) },
+  };
+};
 
 function display(ship) {
   const h = Object.create(HUD.prototype);
@@ -58,5 +64,45 @@ describe('ship pool displays use the real ship capacities', () => {
         expect(drawn.cockpitShield).toBeCloseTo(fraction, 9);
         expect(drawn.hull).toContain(`width:${(fraction * 100).toFixed(1)}%`);
       }
+    });
+
+  for (const skills of [[], ['shield_capacitor', 'hull_plating']])
+    it(`shows hostile-sky hull percentages and the 35% alarm boundary for ${skills.length ? '125-point plated' : '100-point base'} pools`, () => {
+      const ship = new Ship(null);
+      ship.setSkills(skills);
+      Object.assign(ship, { hazard: { label: 'Hostile sky' }, hazardNear: 1, hazardLevel: 1 });
+      const d = display(ship);
+      const play = vi.fn();
+      Object.assign(d.h.game, { time: 10, audio: { play } });
+      ship.hull = ship.stats.hullMax * 0.81201;
+      d.draw();
+      expect(d.h.hzWarn.innerHTML).toContain('Hull 82%');
+      expect(d.h.hzWarn.classList.contains('critical')).toBe(false);
+      ship.shield = 0;
+      ship.hull = ship.stats.hullMax * 0.35;
+      d.draw();
+      expect(d.h.hzWarn.innerHTML).toContain('Hull 35%');
+      expect(d.h.hzWarn.classList.contains('critical')).toBe(false);
+      expect(play).not.toHaveBeenCalled();
+      ship.hull = ship.stats.hullMax * 0.349;
+      ship.shield = 1;
+      d.draw();
+      expect(d.h.hzWarn.classList.contains('critical')).toBe(true);
+      expect(play).not.toHaveBeenCalled();
+      ship.shield = 0;
+      d.draw();
+      expect(play.mock.calls).toEqual([['alarm']]);
+      d.h.game.time = 11.6;
+      d.draw();
+      expect(play).toHaveBeenCalledTimes(1);
+      d.h.game.time = 11.6001;
+      d.draw();
+      expect(play.mock.calls).toEqual([['alarm'], ['alarm']]);
+      ship.hazardLevel = 0;
+      d.h.game.time = 20;
+      d.draw();
+      expect(d.h.hzWarn.innerHTML).not.toContain('Hull');
+      expect(d.h.hzWarn.classList.contains('critical')).toBe(false);
+      expect(play).toHaveBeenCalledTimes(2);
     });
 });

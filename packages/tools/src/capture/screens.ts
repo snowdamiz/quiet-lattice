@@ -3,7 +3,7 @@
 import type { Page } from '@playwright/test';
 import { EVENTS } from '@astra/shared/events';
 import { darkAt, edgeAt, seasonOpening } from '@astra/shared/seasons';
-import { EDGE_X, GALAXY_SEED, Galaxy, galaxyTiers, homeSystems } from '@astra/shared/world';
+import { EDGE_X, GALAXY_SEED, Galaxy, galaxyTiers, homeSystems, type Hazard } from '@astra/shared/world';
 
 export interface ScreenDef {
   /** dev scenario hash to open the client with */
@@ -824,12 +824,15 @@ interface RemotePage {
       stats: { shieldMax: number; hullMax: number };
       shield: number;
       hull: number;
+      hazard: Hazard | null;
+      hazardNear: number;
+      hazardLevel: number;
       setSkills(skills: string[]): void;
       setCockpit(on: boolean): void;
     };
     station: unknown;
-    system: { homePlanet: unknown };
-    hud: { clearBanners(): void };
+    system: { homePlanet: unknown; planets: { params?: { hazard?: Hazard | null } }[] };
+    hud: { clearBanners(): void; update(dt: number): void };
     remotes: { view: { prepare(hull: string): Promise<unknown> } };
     hints?: Record<string, boolean>;
     cam: { frame: unknown };
@@ -913,6 +916,21 @@ async function remotePools(page: Page, fraction: number, cockpit = false): Promi
     { fraction, cockpit },
   );
   await settle(page, 120);
+}
+
+/** Inspect the HUD warning with a real hazard from this system, without running damage or adding a scene. */
+async function remotePoolHazard(page: Page, fraction: number): Promise<void> {
+  await remotePools(page, fraction);
+  await page.evaluate(() => {
+    const g = (window as unknown as RemotePage).game;
+    const hazard = g.system.planets.find((p) => p.params?.hazard)?.params?.hazard;
+    if (!hazard) throw new Error('The pools capture needs a real ship hazard in its system');
+    g.ship.hazard = hazard;
+    g.ship.hazardNear = 1;
+    g.ship.hazardLevel = 1;
+    g.ship.shield = 0;
+    g.hud.update(0);
+  });
 }
 
 /**
@@ -2487,6 +2505,8 @@ export const SCREENS: Record<string, ScreenDef> = {
       'full-125': (page) => remotePools(page, 1),
       'half-125': (page) => remotePools(page, 0.5),
       'cockpit-half-125': (page) => remotePools(page, 0.5, true),
+      'hazard-35-125': (page) => remotePoolHazard(page, 0.35),
+      'hazard-critical-125': (page) => remotePoolHazard(page, 0.349),
     },
     motion: (page) => remotePools(page, 0.8),
   },

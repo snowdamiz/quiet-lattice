@@ -514,10 +514,11 @@ export class HUD {
     if (mode === 'ship' && ship.hazard && ship.hazardNear > 0) {
       const h = ship.hazard;
       const biting = ship.hazardLevel > 0;
-      hz = biting ? `<b>⚠ ${h.label}</b><span>Hull ${Math.ceil(ship.hull)}%</span>` : `<b>${h.label}</b><span>below ${Math.round(h.ceiling / 1000)} km</span>`;
+      const hull = ship.hull / ship.stats.hullMax;
+      hz = biting ? `<b>⚠ ${h.label}</b><span>Hull ${Math.ceil(100 * hull)}%</span>` : `<b>${h.label}</b><span>below ${Math.round(h.ceiling / 1000)} km</span>`;
       this.hzWarn.classList.toggle('biting', biting);
-      this.hzWarn.classList.toggle('critical', biting && ship.hull < 35);
-      if (biting && ship.shield <= 0 && ship.hull < 35 && (!this._alarmT || g.time - this._alarmT > 1.6)) {
+      this.hzWarn.classList.toggle('critical', biting && hull < 0.35);
+      if (biting && ship.shield <= 0 && hull < 0.35 && (!this._alarmT || g.time - this._alarmT > 1.6)) {
         this._alarmT = g.time;
         g.audio.play('alarm');
       }
