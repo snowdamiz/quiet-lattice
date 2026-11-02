@@ -270,6 +270,39 @@ export function orbitOffset(orbit, size) {
   return new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(d);
 }
 
+/** A mesh's bounds in its own space. A skinned mesh's are its posed vertices': its geometry can sit in a space only the
+ * skin undoes (KHR_mesh_quantization folds the dequantizing transform into the inverse bind matrices). */
+export function meshBox(o) {
+  if (o.isSkinnedMesh) {
+    o.computeBoundingBox();
+    return o.boundingBox;
+  }
+  if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+  return o.geometry.boundingBox;
+}
+
+/**
+ * The edges the wireframe pass draws over mesh `o`, placed by `local` (o's matrix in the space they are added to).
+ * A skinned mesh's edges are a second skinned mesh on its own geometry, skeleton, bind matrix and shape-key weights,
+ * so they sit on the posed body: its raw positions can be in a space only the skin undoes (meshBox).
+ */
+export function wireOver(o, local, line, skinnedLine) {
+  let w;
+  if (o.isSkinnedMesh) {
+    w = new THREE.SkinnedMesh(o.geometry, skinnedLine);
+    w.bindMode = o.bindMode;
+    w.bind(o.skeleton, o.bindMatrix);
+    w.morphTargetInfluences = o.morphTargetInfluences;
+    w.morphTargetDictionary = o.morphTargetDictionary;
+    w.frustumCulled = o.frustumCulled;
+  } else {
+    w = new THREE.LineSegments(new THREE.WireframeGeometry(o.geometry), line);
+  }
+  w.matrixAutoUpdate = false;
+  w.matrix.copy(local);
+  return w;
+}
+
 // ---------------------------------------------------------------------------------------------- the game's look
 
 // Creatures and flora carry a colour-region mask in their vertex colours that the game fills with a species' or a
@@ -579,7 +612,8 @@ export class Review {
   wireframe(on) {
     if (this.wire) {
       this.wire.parent?.remove(this.wire);
-      this.wire.traverse((o) => o.geometry?.dispose());
+      // (a skinned mesh's edges share its geometry)
+      this.wire.traverse((o) => o.isLineSegments && o.geometry.dispose());
       this.wire = null;
       for (const [mesh, mat] of this.shaded ?? []) mesh.material = mat;
       this.shaded = null;
@@ -589,16 +623,14 @@ export class Review {
     this.shaded = new Map();
     const clay = new THREE.MeshStandardMaterial({ color: 0x9a9a96, roughness: 0.85, metalness: 0, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
     const line = new THREE.LineBasicMaterial({ color: 0x15181c });
+    const skinnedLine = new THREE.MeshBasicMaterial({ color: 0x15181c, wireframe: true });
     this.content.updateMatrixWorld(true);
     const inv = new THREE.Matrix4().copy(this.content.matrixWorld).invert();
     this.content.traverseVisible((o) => {
       if (!o.isMesh || this.isAid(o)) return;
       this.shaded.set(o, o.material);
       o.material = clay;
-      const lines = new THREE.LineSegments(new THREE.WireframeGeometry(o.geometry), line);
-      lines.matrixAutoUpdate = false;
-      lines.matrix.copy(inv).multiply(o.matrixWorld);
-      this.wire.add(lines);
+      this.wire.add(wireOver(o, _m.copy(inv).multiply(o.matrixWorld), line, skinnedLine));
     });
     this.content.add(this.wire);
   }
@@ -788,8 +820,7 @@ export class Review {
     const inv = new THREE.Matrix4().copy(this.root.matrixWorld).invert();
     this.content.traverseVisible((o) => {
       if (!o.isMesh || this.isAid(o)) return;
-      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
-      box.union(_box.copy(o.geometry.boundingBox).applyMatrix4(_m.multiplyMatrices(inv, o.matrixWorld)));
+      box.union(_box.copy(meshBox(o)).applyMatrix4(_m.multiplyMatrices(inv, o.matrixWorld)));
     });
     return box.isEmpty() ? box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 1)) : box;
   }
