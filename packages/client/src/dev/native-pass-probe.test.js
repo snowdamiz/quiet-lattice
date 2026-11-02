@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { appendFileSync } from 'node:fs';
+import { env } from 'node:process';
 import { Review } from './review.js';
 import { timerRenderer } from '../../test/timer-renderer.js';
 
@@ -19,7 +21,15 @@ function fixture(options = {}) {
     deleteQuery(query) { expect(state.active).toBeNull(); state.deleted.push(query); },
     fenceSync() { expect(state.active).toBeNull(); const s = { polls: 0 }; state.syncs.push(s); return s; },
     flush() { expect(state.active).toBeNull(); },
-    clientWaitSync(sync) { if (state.syncs.indexOf(sync) + 1 === state.failSync) return 10; return ++sync.polls === 1 ? 9 : 8; },
+    clientWaitSync(sync) {
+      const index = state.syncs.indexOf(sync) + 1;
+      if (index === state.failSync) return 10;
+      if (index === state.cancelAtSync && sync.polls === 0) setTimeout(() => {
+        state.countsAtCancel = { frames: state.frames, images: state.images };
+        void review.nativePassProbe('cancel');
+      }, 0);
+      return ++sync.polls === 1 ? 9 : 8;
+    },
     deleteSync(sync) { state.deletedSyncs.push(sync); },
   };
   const fake = timerRenderer(() => {}, { corruptReadback: !!state.badDependent });
@@ -115,6 +125,32 @@ describe('single-scene native pass-query controls', () => {
     await action(review, 'prepare'); await expect(action(review, 'run')).rejects.toThrow('cancelled');
     expect(state.frames).toBe(1); expect(review.lastNativePassProbe.failureKind).toBe('cancelled'); restored();
   });
+
+  it.each([{ cancelAtSync: 3, mode: 'off', completed: 0 }, { cancelAtSync: 5, mode: 'passes', completed: 1 }])(
+    'submits no frame, brackets or readback when cancelled during the pending pre-frame completion ($mode)', async ({ cancelAtSync, mode, completed }) => {
+      const { review, state, restored } = fixture({ cancelAtSync });
+      await action(review, 'prepare');
+      await expect(action(review, 'run')).rejects.toThrow('cancelled');
+      const report = review.lastNativePassProbe;
+      expect(state.countsAtCancel).toEqual({ frames: completed, images: completed });
+      expect({ frames: state.frames, images: state.images }).toEqual(state.countsAtCancel);
+      expect(report).toMatchObject({ cancelled: true, failureKind: 'cancelled', finishedAt: expect.any(String) });
+      const partial = report.samples.at(-1);
+      expect(partial).toMatchObject({ mode, frameStarted: null, frameFinished: null, frameCompleted: false,
+        readbackStarted: null, readbackFinished: null, png: null, queries: [], failure: expect.stringContaining('cancelled'), finished: expect.any(Object) });
+      expect(partial.completions).toHaveLength(1);
+      expect(partial.completions[0]).toMatchObject({ status: 'signaled', finishedAt: expect.any(String), deletedAt: expect.any(String) });
+      expect(partial.completions[0].polls.map((p) => p.status)).toEqual(['timeout-expired', 'condition-satisfied']);
+      expect(state.queries).toHaveLength(0);
+      restored();
+      if (env.NATIVE_FENCE_EVIDENCE) appendFileSync(env.NATIVE_FENCE_EVIDENCE, JSON.stringify({
+        scope: 'CPU actual prepare/run/cancel and gpuCompletion; synthetic renderer/GL; no browser/GPU/native recording',
+        mode, completed, countsAtCancel: state.countsAtCancel, frames: state.frames, readbacks: state.images,
+        report, deletedSyncs: state.deletedSyncs.length, syncs: state.syncs.length,
+        deletedQueries: state.deleted.length, queries: state.queries.length, wrappersRestored: true,
+      }) + '\n');
+    },
+  );
 
   it.each([{ unstable: true }, { badDependent: true }, { externalQuery: true }, { contextLost: true }])('rejects unproven preflight before controls (%j)', async (options) => {
     const { review, state, restored } = fixture(options);

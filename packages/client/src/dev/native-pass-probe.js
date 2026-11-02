@@ -108,6 +108,7 @@ async function run(review) {
         const restore = [];
         try {
           await gpuCompletion(gl, 'before-native-frame', sample.completions);
+          if (report.cancelled) { report.failureKind = 'cancelled'; throw new Error('Native pass probe cancelled'); }
           if (gl.getQuery(ext.TIME_ELAPSED_EXT, gl.CURRENT_QUERY)) throw new Error('External query before native frame');
           if (mode === 'passes') for (const stage of STAGES) {
             const owner = review.game.engine[stage];
