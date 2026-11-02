@@ -18,6 +18,7 @@ import { GLOW as FLORA_GLOW } from '../gameplay/floraModels.js';
 import { gameLook } from '@astra/shared/art';
 import { nodeReviewModel } from '../gameplay/Flora.js';
 import { timerBoundaries } from './timer-boundaries.js';
+import { nativePassProbe } from './native-pass-probe.js';
 
 /** `node/<resource>`: a procedural resource node (P1.E13.T02), built by the flora in place of a .glb, its near and far
  * models as LOD0 and LOD1. Anything else: null, and the asset loads from public/models. */
@@ -1418,6 +1419,10 @@ export class Review {
 
   timerBoundaries(opts) {
     return timerBoundaries(this, opts);
+  }
+
+  nativePassProbe(action) {
+    return nativePassProbe(this, action);
   }
 
   /** Diagnostic-only per-stage queries. Never mix these instrumented timings with perf() budget runs. Every pass
