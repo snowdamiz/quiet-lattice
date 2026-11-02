@@ -16,14 +16,14 @@ Every `.blend` source carries a collection `REF` (excluded from export, hidden i
 | Reference | Size | Use |
 |---|---|---|
 | `REF_Grid` | 1 m grid, 20 × 20 m, on the ground plane, origin at the asset's origin | proportion checks in every view |
-| `REF_Biped` | 1.85 m standing biped, neutral A-pose, feet at the origin | the shared skeleton's rest height; doors, seats, railings, controls |
+| `REF_Biped` | 1.85 m standing biped, neutral A-pose, feet at the origin | the reference rig's rest height; doors, seats, railings, controls |
 
 Fixed dimensions that the engine and other assets depend on:
 
 | Thing | Dimension |
 |---|---|
 | Biped eye height | 1.70 m (first-person camera) |
-| The three peoples | Thalune 1.80 m, Ixari 1.95 m to the crown of the crystal, Ulgani 1.75 m to the crest base; all on the shared 1.85 m skeleton, scaled ±6% per people |
+| The three peoples | Thalune 1.80 m, Ixari 1.95 m to the crown of the crystal, Ulgani 1.75 m to the crest base; one shared named bone hierarchy and joint axes, with species-specific bind-pose proportions against the 1.85 m reference |
 | Doorways | at least 2.4 m tall × 1.4 m wide; station and city service doors 3.0 × 2.0 m |
 | Corridors | 3.0 m wide, 3.2 m clear height |
 | Seats | 0.45 m seat height, 0.5 m deep; cockpit seat reference point at 1.2 m above the cockpit floor |
@@ -39,6 +39,8 @@ Fixed dimensions that the engine and other assets depend on:
 
 Units are metres, +Z up in Blender (the glTF exporter converts to +Y up). Apply all transforms before export; origins sit
 where the asset touches the ground (buildings, props, bodies) or at the centre of mass (hulls, flyers, effects).
+
+Shared character clips identify their source bind-pose profile. Reuse preserves each target's rest proportions: local translation keys are rebased as target bind translation plus the key's offset from source bind translation; rotation and scale keys likewise preserve their source-bind-relative change. Copying absolute local translations between peoples is invalid. The compatibility gate must preserve the neutral pose and demonstrate the same intended motion on all three actual exports, rejecting unsupported channels or interpolation rather than silently misapplying them. E05.T02 supplies the animation set, and E05.T04 must consume this contract when loading it; these requirements are not evidence of integrated animation playback in T01.
 
 ## 2. The three design languages
 
