@@ -1410,68 +1410,82 @@ export class Review {
    * still runs normally; atmosphere detail replaces its outer query to avoid nested TIME_ELAPSED queries. */
   profile({ frames = 60, detail = 'passes' } = {}) {
     return this.serial(async () => {
-      const E = this.game.engine;
-      const r = E.renderer;
-      const gl = r.getContext();
-      const ext = this.gpuTimer();
-      if (!ext) throw new Error('GPU stage profiling requires EXT_disjoint_timer_query_webgl2');
-      const warm = await this.warmUp(1000 / 60, 30, 600);
-      const samples = [];
+      const report = this.lastProfile = {
+        diagnosticOnly: true,
+        startedAt: new Date().toISOString(),
+        finishedAt: null,
+        detail,
+        case: this.case,
+        device: null,
+        viewport: null,
+        warm: null,
+        samples: [],
+        disjoint: 0,
+        glErrors: [],
+        failure: null,
+      };
       const pending = [];
       const restore = [];
+      let gl = null;
       let frame = 0;
-      let disjoint = 0;
-      let failure = null;
-      const errors = this.glErrors();
-      const watch = (owner, name) => {
-        const render = owner.render;
-        restore.push(() => (owner.render = render));
-        owner.render = function (...args) {
-          const q = gl.createQuery();
-          const rec = {
-            frame,
-            stage: name,
-            shown: frame % 4 === 0 || frame % 4 === 3,
-            cpu: null,
-            gpu: null,
-            calls: null,
-            tris: null,
-            gpuStatus: q ? 'pending' : 'unavailable',
+      try {
+        const E = this.game.engine;
+        const r = E.renderer;
+        gl = r.getContext();
+        report.device = this.device();
+        report.viewport = [r.domElement.width, r.domElement.height];
+        report.glErrors.push(...this.glErrors());
+        const ext = this.gpuTimer();
+        if (!ext) throw new Error('GPU stage profiling requires EXT_disjoint_timer_query_webgl2');
+        report.warm = await this.warmUp(1000 / 60, 30, 600);
+        const watch = (owner, name) => {
+          const render = owner.render;
+          restore.push(() => (owner.render = render));
+          owner.render = function (...args) {
+            const q = gl.createQuery();
+            const rec = {
+              frame,
+              stage: name,
+              shown: frame % 4 === 0 || frame % 4 === 3,
+              cpu: null,
+              gpu: null,
+              calls: null,
+              tris: null,
+              gpuStatus: q ? 'pending' : 'unavailable',
+            };
+            report.samples.push(rec);
+            const calls = r.info.render.calls;
+            const tris = r.info.render.triangles;
+            if (q) gl.beginQuery(ext.TIME_ELAPSED_EXT, q);
+            const start = performance.now();
+            try {
+              return render.apply(this, args);
+            } finally {
+              rec.cpu = performance.now() - start;
+              rec.calls = r.info.render.calls - calls;
+              rec.tris = r.info.render.triangles - tris;
+              if (q) {
+                gl.endQuery(ext.TIME_ELAPSED_EXT);
+                pending.push({ q, rec });
+              }
+            }
           };
-          samples.push(rec);
-          const calls = r.info.render.calls;
-          const tris = r.info.render.triangles;
-          if (q) gl.beginQuery(ext.TIME_ELAPSED_EXT, q);
-          const start = performance.now();
-          try {
-            return render.apply(this, args);
-          } finally {
-            rec.cpu = performance.now() - start;
-            rec.calls = r.info.render.calls - calls;
-            rec.tris = r.info.render.triangles - tris;
-            if (q) {
-              gl.endQuery(ext.TIME_ELAPSED_EXT);
-              pending.push({ q, rec });
+        };
+        const collect = () => {
+          if (gl.getParameter(ext.GPU_DISJOINT_EXT)) {
+            report.disjoint++;
+            for (const p of pending.splice(0)) {
+              p.rec.gpuStatus = 'disjoint';
+              gl.deleteQuery(p.q);
             }
           }
-        };
-      };
-      const collect = () => {
-        if (gl.getParameter(ext.GPU_DISJOINT_EXT)) {
-          disjoint++;
-          for (const p of pending.splice(0)) {
-            p.rec.gpuStatus = 'disjoint';
+          while (pending.length && gl.getQueryParameter(pending[0].q, gl.QUERY_RESULT_AVAILABLE)) {
+            const p = pending.shift();
+            p.rec.gpu = gl.getQueryParameter(p.q, gl.QUERY_RESULT) / 1e6;
+            p.rec.gpuStatus = 'timer';
             gl.deleteQuery(p.q);
           }
-        }
-        while (pending.length && gl.getQueryParameter(pending[0].q, gl.QUERY_RESULT_AVAILABLE)) {
-          const p = pending.shift();
-          p.rec.gpu = gl.getQueryParameter(p.q, gl.QUERY_RESULT) / 1e6;
-          p.rec.gpuStatus = 'timer';
-          gl.deleteQuery(p.q);
-        }
-      };
-      try {
+        };
         for (const name of ['renderPass', 'atmoPass', 'fxPass', 'viewPass', 'bloomPass', 'gradePass']) {
           if (name === 'atmoPass' && detail === 'atmosphere') {
             for (const part of ['marchQuad', 'resolveQuad', 'fsQuad']) watch(E.atmoPass[part], `atmoPass.${part}`);
@@ -1490,7 +1504,7 @@ export class Review {
           collect();
         }
       } catch (error) {
-        failure = String(error);
+        report.failure = String(error);
       } finally {
         for (const reset of restore) reset();
         this.root.visible = true;
@@ -1498,21 +1512,11 @@ export class Review {
           p.rec.gpuStatus = 'timeout';
           gl.deleteQuery(p.q);
         }
+        if (gl) report.glErrors.push(...this.glErrors());
+        report.finishedAt = new Date().toISOString();
       }
-      this.lastProfile = {
-        diagnosticOnly: true,
-        detail,
-        case: this.case,
-        device: this.device(),
-        viewport: [r.domElement.width, r.domElement.height],
-        warm,
-        samples,
-        disjoint,
-        glErrors: [...errors, ...this.glErrors()],
-        failure,
-      };
-      if (failure) throw new Error(failure);
-      return this.lastProfile;
+      if (report.failure) throw new Error(report.failure);
+      return report;
     });
   }
 

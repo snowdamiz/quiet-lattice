@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs, promisify } from 'node:util';
 import { chromium, type Browser } from '@playwright/test';
 import { glArgs, openReview, startVite } from './capture.ts';
+import { FROZEN_SOURCES, freezeInstrumentation, runComparisons } from './benchmark-runs.ts';
 
 const command = promisify(execFile);
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -46,14 +47,8 @@ const roots = values['compare-root']
       { label: 'candidate', root: ROOT },
     ]
   : [{ label: 'current', root: ROOT }];
-const sources = [
-  'packages/client/src/dev/review.js',
-  'packages/client/src/core/Engine.js',
-  'packages/client/src/render/AtmospherePass.js',
-  'packages/tools/src/capture/capture.ts',
-  'packages/tools/src/capture/benchmark.ts',
-  'pnpm-lock.yaml',
-];
+const sources = [...FROZEN_SOURCES, 'packages/client/src/core/Engine.js', 'packages/client/src/render/AtmospherePass.js'];
+const frozen = freezeInstrumentation(roots.map(({ root }) => root));
 const hostSamples: unknown[] = [];
 let phase = 'startup';
 let sampling = false;
@@ -107,6 +102,7 @@ try {
     gl,
     browser: browser.version(),
     args,
+    frozenInstrumentation: frozen.trees,
     machine: { platform: platform(), release: release(), logicalCores: cpus().length, cpu: cpus()[0]?.model, memoryBytes: totalmem() },
     sourceTrees: await Promise.all(
       roots.map(async ({ label, root }) => ({
@@ -141,6 +137,7 @@ try {
     sessions.push({ label, ...review });
   }
   for (const light of LIGHTS) {
+    frozen.verify();
     for (const session of sessions) {
       phase = `${session.label}:${light}:settling`;
       await session.page.evaluate(async (light) => {
@@ -159,6 +156,7 @@ try {
         save(`${light}-cpu-profile.json`, await cdp.send('Profiler.stop'));
         await cdp.detach();
         for (const detail of ['passes', 'atmosphere'] as const) {
+          frozen.verify();
           phase = `${session.label}:${light}:${detail}`;
           const name = `${light}-${detail}.json`;
           try {
@@ -172,28 +170,28 @@ try {
         }
       }
     } else {
-      for (let run = 0; run < 5; run++) {
-        const order = run % 2 === 0 ? sessions : [...sessions].reverse();
-        for (const session of order) {
-          phase = `${session.label}:${light}:run-${run + 1}`;
-          const name = `${session.label}-${light}-${run + 1}.json`;
-          try {
-            save(name, await session.page.evaluate(() => window.review.perf({ pairs: 120 })));
-            completed.push(name);
-          } catch (error) {
-            const partial = await session.page.evaluate(() => window.review.lastPerf).catch(() => null);
-            save(name, { failed: true, error: String(error), pageErrors: session.errors, partial });
-            throw error;
-          }
-          save('status.json', { phase, completed, errors, pageErrors: sessions.map(({ label, errors }) => ({ label, errors })) });
+      await runComparisons(sessions, async ({ session, run }) => {
+        frozen.verify();
+        phase = `${session.label}:${light}:run-${run}`;
+        const name = `${session.label}-${light}-${run}.json`;
+        try {
+          save(name, await session.page.evaluate(() => window.review.perf({ pairs: 120 })));
+          completed.push(name);
+        } catch (error) {
+          const partial = await session.page.evaluate(() => window.review.lastPerf).catch(() => null);
+          save(name, { failed: true, error: String(error), pageErrors: session.errors, partial });
+          throw error;
         }
-      }
+        save('status.json', { phase, completed, errors, pageErrors: sessions.map(({ label, errors }) => ({ label, errors })) });
+        frozen.verify();
+      });
     }
     for (const session of sessions) {
       const shot = await session.page.evaluate(() => window.review.capture());
       writeFileSync(join(out, `${session.label}-${light}.png`), Buffer.from(shot.slice(shot.indexOf(',') + 1), 'base64'));
     }
   }
+  frozen.verify();
   for (const session of sessions) errors.push(...session.errors.map((error) => `${session.label}: ${error}`));
   if (errors.length) throw new Error(`${errors.length} captured page errors`);
 } catch (error) {
