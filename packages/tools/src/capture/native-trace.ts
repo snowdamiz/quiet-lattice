@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { recorderObserver, type RecorderObserver } from './native-recorder-observer.ts';
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 export interface ProcessRow {
@@ -92,8 +93,8 @@ export async function bounded<T>(promise: Promise<T>, ms: number, label: string,
 }
 
 /** Own detached command group; no shell, global signal or privacy-setting mutation. */
-export function recordedCommand(file: string, args: string[], records: CommandRecord[], options: { cwd?: string } = {}) {
-  const child = spawn(file, args, { detached: true, stdio: ['ignore', 'pipe', 'pipe'], ...options });
+export function recordedCommand(file: string, args: string[], records: CommandRecord[], options: { cwd?: string; recorder?: RecorderObserver } = {}) {
+  const child = spawn(file, args, { detached: true, stdio: ['ignore', 'pipe', 'pipe'], cwd: options.cwd });
   const record: CommandRecord = {
     file,
     args,
@@ -120,10 +121,12 @@ export function recordedCommand(file: string, args: string[], records: CommandRe
       const text = record[key] + chunk.toString();
       record.truncated ||= text.length > 1024 * 1024;
       record[key] = text.slice(0, 1024 * 1024);
+      options.recorder?.output(key, chunk);
     });
   child.on('error', (error) => {
     record.error = String(error);
   });
+  if (options.recorder) child.once('exit', (code, signal) => options.recorder?.exited(code, signal));
   const done = new Promise<CommandRecord>((resolve) =>
     child.once('close', (code, signal) => {
       record.finishedAt = new Date().toISOString();
@@ -199,6 +202,12 @@ export function recordedCommand(file: string, args: string[], records: CommandRe
   return {
     record,
     done,
+    requestInterrupt: () => {
+      // A request is separate from stop/drain. Never signal after an observed root exit.
+      if (!record.group || record.finishedAt || child.exitCode !== null || child.signalCode !== null) return false;
+      signalGroup('SIGINT');
+      return true;
+    },
     stop: () => (stopping ??= stop()),
   };
 }
@@ -323,6 +332,7 @@ export interface NativeTraceLog {
   controlsCancelledAt: string | null;
   controlFailure: string | null;
   controlCleanupErrors: string[];
+  recorderObservation: RecorderObserver['log'];
   recorderFinalization: {
     startedAt: string | null;
     finishedAt: string | null;
@@ -356,6 +366,7 @@ export async function withNativeTrace<T>(
   cancelWork: () => Promise<void> = async () => {},
 ): Promise<{ result: T; evidence: NativeTraceLog }> {
   if (!Number.isSafeInteger(gpuPid) || gpuPid <= 1) throw new Error('Native trace requires a verified owned GPU PID');
+  const observation = recorderObserver(join(out, 'native.trace'));
   const log: NativeTraceLog = {
     diagnosticOnly: true,
     targetPid: gpuPid,
@@ -368,6 +379,7 @@ export async function withNativeTrace<T>(
     controlsCancelledAt: null,
     controlFailure: null,
     controlCleanupErrors: [],
+    recorderObservation: observation.log,
     recorderFinalization: { startedAt: null, finishedAt: null, status: 'not-started', failure: null },
     tocExport: { startedAt: null, finishedAt: null, status: 'not-attempted', failure: null },
     failure: null,
@@ -375,18 +387,24 @@ export async function withNativeTrace<T>(
     evidence: 'uninspected',
   };
   const jobs: ReturnType<typeof recordedCommand>[] = [];
-  const start = (exe: Executable, args: string[]) => {
-    const job = recordedCommand(exe.file, [...exe.prefix, ...args], log.commands);
+  const start = (exe: Executable, args: string[], observation?: RecorderObserver) => {
+    const job = recordedCommand(exe.file, [...exe.prefix, ...args], log.commands, { recorder: observation });
     jobs.push(job);
     observe(log);
     return job;
   };
   const finalizeRecorder = async (recorder: ReturnType<typeof recordedCommand>) => {
-    // Control failure cancels submissions promptly, but does not apply the generic 3s stop grace to a recorder save.
-    // Its unchanged 15s time limit can finish naturally within this finite recorder-specific wait before escalation.
+    // Control work is settled/drained before this point. Request graceful stop now;
+    // the unchanged 25s bound measures the following save wait, not continued collection toward the15s cap.
     log.recorderFinalization.startedAt = new Date().toISOString();
     log.recorderFinalization.status = 'waiting';
     try {
+      try {
+        observation.stopRequested(recorder.requestInterrupt(), null);
+      } catch (error) {
+        observation.stopRequested(false, String(error));
+        throw error;
+      }
       const recorded = await bounded(recorder.done, platform.finishMs, 'native recorder finalization');
       if (recorded.code !== 0 || recorded.error || recorded.truncated) throw new Error('Native recording failed; retain its raw status');
       await recorder.stop();
@@ -425,19 +443,24 @@ export async function withNativeTrace<T>(
     const notification = start(platform.notifyutil, ['-v', '-1', log.notification]);
     // A missed registration is a failed startup, never permission to submit frames without notification.
     await wait(platform.registrationMs);
-    trace = start(platform.xctrace, [
-      'record',
-      '--template',
-      'Metal System Trace',
-      '--attach',
-      String(gpuPid),
-      '--time-limit',
-      '15s',
-      '--output',
-      log.trace,
-      '--notify-tracing-started',
-      log.notification,
-    ]);
+    trace = start(
+      platform.xctrace,
+      [
+        'record',
+        '--template',
+        'Metal System Trace',
+        '--attach',
+        String(gpuPid),
+        '--time-limit',
+        '15s',
+        '--output',
+        log.trace,
+        '--notify-tracing-started',
+        log.notification,
+      ],
+      observation,
+    );
+    observation.start();
     const earlyExit = trace.done.then((r) => {
       throw new Error(`Native recording ended before controls completed: code=${r.code}, signal=${r.signal}, error=${r.error}`);
     });
@@ -494,6 +517,8 @@ export async function withNativeTrace<T>(
         log.failure = `${log.failure ?? ''}; cleanup: ${String(error)}`;
       }
     }
+    observation.stop();
+    if (observation.log.incomplete) log.failure ??= 'Native recorder observations incomplete; retain limits/errors';
     observe(log);
   }
   if (log.failure) throw new NativeTraceError(log.failure, log);

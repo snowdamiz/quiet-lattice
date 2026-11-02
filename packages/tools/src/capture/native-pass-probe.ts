@@ -88,6 +88,7 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
       'packages/client/src/dev/dependent-output.js',
       'packages/tools/src/capture/native-pass-probe.ts',
       'packages/tools/src/capture/native-trace.ts',
+      'packages/tools/src/capture/native-recorder-observer.ts',
       'packages/tools/src/capture/native-vite.ts',
       'packages/tools/src/capture/native-vite-child.ts',
       'packages/client/src/core/Engine.js',

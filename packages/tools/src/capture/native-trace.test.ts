@@ -1,7 +1,8 @@
-import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { recorderObserver } from './native-recorder-observer.ts';
 import {
   discoverNativeCli,
   NativeDiscoveryError,
@@ -36,12 +37,24 @@ function fixture(kind = 'normal') {
       if(kind==='early-exit') process.exit(7);
       while(!existsSync(folder+'/watching')) await wait(5);
       if(kind==='no-notification') {setInterval(()=>{},1000); await new Promise(()=>{});}
+      if(!['interrupt-save','hung-finalization'].includes(kind))process.on('SIGINT',()=>console.log('CPU graceful stop requested'));
+      if(kind==='hung-finalization')process.on('SIGINT',()=>console.log('CPU stalled save stop request'));
+      if(kind==='interrupt-save') {
+        let saving=false;
+        process.on('SIGINT',()=>{
+          if(saving)return;saving=true;
+          if(!existsSync(folder+'/control-drained')||!existsSync(folder+'/provider-drained'))process.exit(42);
+          console.log('Stopping recording...');console.error('CPU save started');
+          setTimeout(()=>{mkdirSync(args[args.indexOf('--output')+1]);console.log('CPU save complete');process.exit(0);},3600);
+        });
+      }
       writeFileSync(folder+'/notification','posted');
       console.log('CPU synthetic native start');
+      if(kind==='interrupt-save'){setInterval(()=>{},1000);await new Promise(()=>{});}
       if(kind==='slow-finalization')process.on('SIGINT',()=>console.log('Stopping recording...'));
       if(kind==='hung-finalization'){setInterval(()=>{},1000);await new Promise(()=>{});}
       await wait(kind==='slow-finalization'?3600:250);
-      mkdirSync(args[args.indexOf('--output')+1]);
+      mkdirSync(args[args.indexOf('--output')+1],{recursive:true});
       console.log('CPU trace finalized');
     }else if(args[0]==='export'){
       if(kind==='export-failed') process.exit(9);
@@ -170,9 +183,136 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
       recorderFinalization: { status: 'finalized', failure: null },
       tocExport: { status: 'exported', failure: null },
     });
-    expect(evidence?.commands[1]).toMatchObject({ code: 0, signals: [], groupState: 'absent' });
+    expect(evidence?.commands[1]).toMatchObject({ code: 0, signals: [{ at: expect.any(String), signal: 'SIGINT' }], groupState: 'absent' });
     expect(readFileSync(f.out + '/native-toc.xml', 'utf8')).toContain('CPU-only');
     expect(evidence?.commands.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
+  });
+
+  it.each(['failure', 'cancelled'])('requests graceful stop after %s control/provider drain and gives the slow save its own existing bound', async (kind) => {
+    const f = fixture('interrupt-save');
+    f.platform.finishMs = 5000;
+    f.platform.controlMs = 300;
+    const helperRecords: CommandRecord[] = [];
+    let evidence: NativeTraceLog | undefined;
+    try {
+      await withNativeTrace(
+        process.pid,
+        f.out,
+        async (signal) => {
+          if (kind === 'cancelled') {
+            try {
+              await runOwnedHelper(
+                process.execPath,
+                [
+                  '-e',
+                  `const{spawn}=require('node:child_process');const c=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{stdio:'ignore'});console.log(c.pid);setInterval(()=>{},1000);`,
+                ],
+                helperRecords,
+                { deadlineMs: 2000, signal },
+              );
+            } finally {
+              writeFileSync(f.out + '/control-drained', 'done');
+            }
+          } else writeFileSync(f.out + '/control-drained', 'done');
+          throw new Error('primary-control-failed');
+        },
+        f.platform,
+        () => {},
+        async () => {
+          await new Promise((resolve) => setTimeout(resolve, 40));
+          writeFileSync(f.out + '/provider-drained', 'done');
+        },
+      );
+    } catch (error) {
+      expect(error).toBeInstanceOf(NativeTraceError);
+      evidence = (error as NativeTraceError).evidence;
+    }
+    if (process.env.NATIVE_STOP_SAVE_EVIDENCE)
+      appendFileSync(
+        process.env.NATIVE_STOP_SAVE_EVIDENCE,
+        JSON.stringify({
+          scope: 'CPU actual lifecycle with owned synthetic SIGINT-save recorder; no browser/GPU/native recording',
+          evidence,
+          helperRecords,
+          traceExists: existsSync(f.out + '/native.trace'),
+          tocExists: existsSync(f.out + '/native-toc.xml'),
+        }) + '\n',
+      );
+    expect(evidence).toMatchObject({
+      failure: expect.stringContaining(kind === 'failure' ? 'primary-control-failed' : 'frame controls exceeded'),
+      recorderFinalization: { status: 'finalized' },
+      tocExport: { status: 'exported' },
+    });
+    expect(evidence?.commands[1]).toMatchObject({ code: 0, signals: [{ at: expect.any(String), signal: 'SIGINT' }], groupState: 'absent' });
+    expect(existsSync(f.out + '/native-toc.xml')).toBe(true);
+    expect(evidence?.recorderObservation.requestedStop?.requested).toBe(true);
+    const requested = evidence?.recorderObservation.requestedStop;
+    if (!requested || !evidence?.controlsSettledAt) throw new Error('Expected terminal callback and requested-stop evidence');
+    expect(requested.at >= evidence.controlsSettledAt).toBe(true);
+    expect(evidence?.recorderObservation.output.map((e) => e.text).join('')).toContain('CPU save started');
+    expect(evidence?.recorderObservation.exit?.code).toBe(0);
+    expect(evidence?.recorderObservation.stoppedAt).toEqual(expect.any(String));
+    if (kind === 'cancelled') {
+      expect(helperRecords).toHaveLength(1);
+      expect(Number(helperRecords[0].stdout.trim())).toBeGreaterThan(1);
+      expect(helperRecords[0]).toMatchObject({ finishedAt: expect.any(String), groupState: 'absent' });
+      const finished = helperRecords[0].finishedAt;
+      if (!finished) throw new Error('Expected helper close before recorder stop');
+      expect(requested.at >= finished).toBe(true);
+    }
+    const frozen = JSON.stringify(evidence);
+    await new Promise((resolve) => setTimeout(resolve, 1050));
+    expect(JSON.stringify(evidence)).toBe(frozen);
+  });
+
+  it('does not request an interrupt after observed root exit even while a descendant holds its pipe', async () => {
+    const f = fixture();
+    const observation = recorderObserver(f.out + '/unused.trace');
+    observation.start();
+    const records: CommandRecord[] = [];
+    const job = recordedCommand(
+      process.execPath,
+      ['-e', `const{spawn}=require('node:child_process');spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{stdio:['ignore',1,2]});process.exit(0);`],
+      records,
+      { recorder: observation },
+    );
+    jobs.push(job);
+    for (let i = 0; i < 100 && !observation.log.exit; i++) await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(observation.log.exit?.code).toBe(0);
+    expect(job.record.finishedAt).toBeNull();
+    expect(job.requestInterrupt()).toBe(false);
+    expect(job.record.signals).toEqual([]);
+    await job.stop();
+    observation.stop();
+    expect(job.record.groupState).toBe('absent');
+  });
+
+  it.skipIf(process.platform === 'win32' || process.getuid?.() === 0)('retains observer errors without replacing a primary control failure', async () => {
+    const f = fixture();
+    const blocked = f.out + '/native.trace/blocked';
+    mkdirSync(blocked, { recursive: true });
+    chmodSync(blocked, 0);
+    try {
+      await expect(
+        withNativeTrace(
+          process.pid,
+          f.out,
+          async () => {
+            throw new Error('primary-control-failed');
+          },
+          f.platform,
+        ),
+      ).rejects.toMatchObject({
+        evidence: {
+          failure: expect.stringContaining('primary-control-failed'),
+          recorderObservation: { incomplete: true, stoppedAt: expect.any(String) },
+          recorderFinalization: { status: 'finalized' },
+          tocExport: { status: 'exported' },
+        },
+      });
+    } finally {
+      chmodSync(blocked, 0o700);
+    }
   });
 
   it('bounds recorder finalization and retains the primary control error before terminal escalation', async () => {
