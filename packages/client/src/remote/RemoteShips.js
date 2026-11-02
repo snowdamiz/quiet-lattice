@@ -201,15 +201,21 @@ export class RemoteShips {
     return this.kit(hull)?.box ?? null;
   }
 
-  /** Whether a camera ray hits this ship's drawn hull before `far` metres. Uses its actual LOD and folded gear,
+  /** Whether a camera ray hits this ship's drawn hull within the camera clip interval and before `far` metres. Uses its actual LOD and folded gear,
    * excluding exhausts: a marker through empty space inside a hull's screen box is not occluded. */
   covers(r, direction, far) {
     if (!r.drawn) return false;
     const kit = this.kits.get(this.modelOf(r.hull));
     if (!kit) return false;
+    const camera = this.game.engine.camera;
+    const k = -_p.copy(direction).transformDirection(camera.matrixWorldInverse).z;
+    if (k <= 0) return false;
     _coverRay.ray.origin.set(0, 0, 0);
     _coverRay.ray.direction.copy(direction);
-    _coverRay.far = far;
+    // Clip planes bound camera depth; the corresponding ray distances grow off-axis.
+    _coverRay.near = camera.near / k;
+    _coverRay.far = Math.min(far, camera.far / k);
+    if (_coverRay.near > _coverRay.far) return false;
     _t.compose(_v.copy(r.world).sub(this.game.camWorld), r.worldQuat, ONE);
     const vis = r.vis;
     const lod = Math.min(vis.lod, kit.levels - 1);

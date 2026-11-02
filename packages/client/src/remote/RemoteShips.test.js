@@ -207,6 +207,40 @@ describe('remote ships’ lights and plating', () => {
 });
 
 describe('RemoteShips', () => {
+  for (const pitch of [0, -Math.PI / 2])
+    it(`restricts occlusion to camera depth and target range with camera pitch ${pitch}`, () => {
+      // Short far-plane controls prove interval semantics, not a live Engine far-plane failure (its far is 1e9).
+      const camera = new THREE.PerspectiveCamera(70, 16 / 9, 0.05, 10);
+      camera.quaternion.setFromEuler(new THREE.Euler(pitch, 0, 0));
+      camera.updateMatrixWorld(true);
+      const game = { camWorld: new THREE.Vector3(), camWorldQuatInv: camera.quaternion.clone().invert(), engine: { camera } };
+      const ships = new RemoteShips(game, { dress: () => {}, log: () => {} });
+      const geometry = new THREE.PlaneGeometry(100, 100);
+      const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ side: THREE.FrontSide }));
+      ships.kits.set('lark', { levels: 1, pieces: [{ gear: -1, levels: [{ geometry, mesh }] }] });
+      const r = { id: 1, drawn: true, hull: 'lark', world: new THREE.Vector3(), worldQuat: camera.quaternion.clone(), vis: { lod: 0, gear: 0 } };
+      const remotes = new RemoteEntities(game, { view: ships });
+      remotes.list.push(r);
+      for (const c of [
+        { name: 'near clipped centre', angle: 0, depth: 0.045, target: 8, expected: false },
+        { name: 'off-axis hit beyond raw near but before camera near', angle: 35, depth: 0.045, target: 8, expected: false },
+        { name: 'off-axis visible hit just beyond near', angle: 35, depth: 0.055, target: 8, expected: true },
+        { name: 'before target range', angle: 35, depth: 4, target: 8, expected: true },
+        { name: 'beyond target range', angle: 35, depth: 8, target: 8, expected: false },
+        { name: 'beyond camera far centre', angle: 0, depth: 11, target: 20, expected: false },
+        { name: 'visible inside far despite radial distance beyond raw far', angle: 35, depth: 9.5, target: 20, expected: true },
+        { name: 'beyond camera far off-axis', angle: 35, depth: 10.5, target: 20, expected: false },
+      ]) {
+        const angle = THREE.MathUtils.degToRad(c.angle);
+        const direction = new THREE.Vector3(Math.sin(angle), 0, -Math.cos(angle)).applyQuaternion(camera.quaternion);
+        const target = { id: 2, world: direction.clone().multiplyScalar(c.target) };
+        remotes.byId.set(2, target);
+        r.world.set(0, 0, -c.depth).applyQuaternion(camera.quaternion);
+        const projected = target.world.clone().project(camera);
+        expect(remotes.occludesMarker(2, (projected.x * 0.5 + 0.5) * 1920, (-projected.y * 0.5 + 0.5) * 1080, 1920, 1080), c.name).toBe(c.expected);
+      }
+    });
+
   it('matches the rendered material through a hull: back-facing fine LODs stay clear, the double-sided coarsest occludes', async () => {
     const game = scene(loadedShip(0xffffff, { lods: [1, 2] }));
     const ships = await ready(game);
