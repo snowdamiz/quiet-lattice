@@ -31,8 +31,13 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/source-validation.json",
-      "bytes": 709,
-      "sha256": "1424444189ed6b240a907356e32f441d876204559460554ef227282ed24bdf3a"
+      "bytes": 871,
+      "sha256": "8e76d7cdc02b716973846662167980c7dea12f9091e5a2a7407843a9faa3f6a5"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/component-validation.json",
+      "bytes": 2069,
+      "sha256": "304771cab1b4c51157ee74fadb201955d34bcfc94dc1cea228d9d5f3c834cd32"
     }
   ],
   "verification": {
@@ -55,5 +60,21 @@
     "No visual, material, performance or integrated playback acceptance",
     "No task-plan/progress/decisions edits; no runtime or package wiring changes",
     "At most two Blender threads; all owned Blender calls exited and were reaped"
+  ],
+  "revisions": [
+    {
+      "utc": "2026-11-02T22:06:16.863158+00:00",
+      "reviewedCandidate": "238738c4f627b9387ef5c591c77f4b1ebbd4c77b",
+      "finding": "P2 invalid FCurve component index silently ignored during export",
+      "correction": "Check allowed indices, duplicate channels and the exact full authored source component set at the actual export boundary",
+      "exporterSha256": "dcde8054ac69e996f337c6b565aff1b7ea81bc4a9c892a5b47ed08bac8969bd1",
+      "actualExportNegativeControlsPassed": 10,
+      "invalidExportsWroteFiles": false,
+      "validReexportByteIdentical": true,
+      "focusedActualLibraryTestsPassed": 7,
+      "sourceLibraryManifestsAndBodiesUnchanged": true,
+      "negativeIndexObservation": "Blender 5.2 clamps -1 assignments to 0; the resulting duplicate component is rejected. Production bounds also reject negative values directly.",
+      "limits": "CPU only, at most two Blender threads; code re-review and scheduled visual gates pending"
+    }
   ]
 }

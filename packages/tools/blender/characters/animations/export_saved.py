@@ -12,6 +12,7 @@ import math
 import re
 import struct
 import sys
+import tempfile
 
 import bpy
 from mathutils import Matrix, Quaternion
@@ -52,6 +53,12 @@ def validate(rig, profile):
     assert len(bpy.data.actions)==42
     fps=bpy.context.scene.render.fps
     assert fps==60
+    # This saved source is fully keyed, even though exported/shared clips may
+    # omit unchanged bones/properties. Count alone cannot prove component coverage.
+    expected_channels={(f'pose.bones["{bone.name}"].{prop}',index)
+        for bone in rig.data.bones
+        for prop,width in [('location',3),('rotation_quaternion',4)]
+        for index in range(width)}
     inventory=[]
     for action in sorted(bpy.data.actions,key=lambda a:a.name):
         meta=json.loads(action['motion_metadata'])
@@ -59,20 +66,23 @@ def validate(rig, profile):
         assert list(action.frame_range)==[0,round(meta['duration']*fps)]
         assert meta['duration']>0 and len(json.loads(action['authored_pose_events']))>=3
         fcurves=curves(action)
-        assert len(fcurves)==69*7
         channels=set()
         for fc in fcurves:
             match=re.fullmatch(r'pose\.bones\["([A-Za-z_][A-Za-z0-9_]*)"\]\.(location|rotation_quaternion)',fc.data_path)
-            assert match and match[1] in names,fc.data_path
-            assert (fc.data_path,fc.array_index) not in channels
+            assert match and match[1] in rig.data.bones,fc.data_path
+            width=3 if match[2]=='location' else 4
+            assert 0<=fc.array_index<width,f'invalid component index: {fc.data_path}[{fc.array_index}]'
+            assert (fc.data_path,fc.array_index) not in channels,f'duplicate channel: {fc.data_path}[{fc.array_index}]'
             channels.add((fc.data_path,fc.array_index))
             assert len(fc.keyframe_points)==round(meta['duration']*fps)+1
             assert all(k.interpolation=='LINEAR' and all(math.isfinite(x) for x in k.co) for k in fc.keyframe_points)
+        assert channels==expected_channels,f'incomplete authored channel coverage: {action.name}'
         inventory.append(meta)
     return inventory
 
 
-def export(rig, profile, inventory):
+def export(rig, profile, inventory, destination=DEST):
+    assert validate(rig,profile)==inventory,'Saved action inventory changed before export'
     binary=bytearray()
     gltf={'asset':{'version':'2.0','generator':'Astra saved-action animation exporter'},'nodes':[],
           'scenes':[{'nodes':[]}],'scene':0,'animations':[],'bufferViews':[],'accessors':[],'buffers':[{}]}
@@ -147,9 +157,71 @@ def export(rig, profile, inventory):
     binary+=b'\0'*((-len(binary))%4)
     total=12+8+len(encoded)+8+len(binary)
     result=struct.pack('<III',0x46546c67,2,total)+struct.pack('<II',len(encoded),0x4e4f534a)+encoded+struct.pack('<II',len(binary),0x004e4942)+binary
-    path=DEST/'shared_motion.glb'
+    path=destination/'shared_motion.glb'
     path.write_bytes(result)
     return path
+
+
+def selftest(profile, inventory):
+    """Corrupt RAM copies, then exercise the actual export boundary privately."""
+    protected=[SOURCE,*DEST.glob('*')]
+    hashes={path:sha(path) for path in protected if path.is_file()}
+    controls=[]
+    observations=[]
+
+    def curve(action,prop):
+        path=f'pose.bones["head"].{prop}'
+        return next(fc for fc in curves(action) if fc.data_path==path and fc.array_index==1)
+
+    def missing(action,prop):
+        fc=curve(action,prop)
+        bag=next(bag for layer in action.layers for strip in layer.strips for bag in strip.channelbags if fc in list(bag.fcurves))
+        bag.fcurves.remove(fc)
+
+    def index_change(action,prop,index):
+        fc=curve(action,prop)
+        fc.array_index=index
+        return {'property':prop,'requestedIndex':index,'storedIndex':fc.array_index}
+
+    cases=[
+        ('object channel rejected',lambda a:setattr(curve(a,'location'),'data_path','location'),'location'),
+        ('unknown source identity rejected',lambda a:a.__setitem__('source_profile_id','unknown-source'),'')]
+    for prop in ('location','rotation_quaternion'):
+        for index in ((3,-1) if prop=='location' else (9,-1)):
+            # Blender clamps negative assignments to zero. The actual export
+            # must still reject that resulting duplicate/missing component.
+            message=('invalid component index','duplicate channel') if index<0 else ('invalid component index',)
+            cases.append((f'{prop} index {index} assignment rejected',lambda a,p=prop,i=index:index_change(a,p,i),message))
+        cases.append((f'missing {prop} component rejected',lambda a,p=prop:missing(a,p),'incomplete authored channel coverage'))
+        cases.append((f'duplicate {prop} component rejected',lambda a,p=prop:setattr(curve(a,p),'array_index',0),'duplicate channel'))
+    with tempfile.TemporaryDirectory(prefix='astra-animation-export-controls-') as temporary:
+        for number,(label,mutate,message) in enumerate(cases):
+            bpy.ops.wm.open_mainfile(filepath=str(SOURCE))
+            bpy.context.scene.render.threads_mode='FIXED'
+            bpy.context.scene.render.threads=2
+            rig=bpy.data.objects['RIG_shared_motion']
+            assert validate(rig,profile)==inventory
+            observed=mutate(bpy.data.actions['idle_alert'])
+            destination=Path(temporary)/str(number)
+            destination.mkdir()
+            try:
+                export(rig,profile,inventory,destination)
+            except AssertionError as exc:
+                messages=(message,) if isinstance(message,str) else message
+                assert any(m in str(exc) for m in messages),(label,str(exc))
+                controls.append(label)
+                if observed is not None:
+                    observations.append({**observed,'rejection':str(exc)})
+            else:
+                raise RuntimeError(f'Export accepted invalid saved source: {label}')
+            assert not list(destination.iterdir()),f'Invalid export wrote output: {label}'
+            assert all(sha(path)==digest for path,digest in hashes.items()),'Control changed a protected artifact'
+            print('EXPORT_NEGATIVE_CONTROL_PASS',label,flush=True)
+    bpy.ops.wm.open_mainfile(filepath=str(SOURCE))
+    bpy.context.scene.render.threads_mode='FIXED'
+    bpy.context.scene.render.threads=2
+    assert validate(bpy.data.objects['RIG_shared_motion'],profile)==inventory
+    return controls,observations
 
 
 def main():
@@ -166,32 +238,9 @@ def main():
     rig=bpy.data.objects['RIG_shared_motion']
     inventory=validate(rig,binding['profile'])
     controls=[]
+    observations=[]
     if args.selftest:
-        action=bpy.data.actions[0]
-        fc=curves(action)[0]
-        original=fc.data_path
-        try:
-            fc.data_path='location'
-            try:
-                validate(rig,binding['profile'])
-            except AssertionError:
-                controls.append('object channel rejected')
-            else:
-                raise RuntimeError('Validator accepted an unsupported object channel')
-        finally:
-            fc.data_path=original
-        original=action['source_profile_id']
-        try:
-            action['source_profile_id']='unknown-source'
-            try:
-                validate(rig,binding['profile'])
-            except AssertionError:
-                controls.append('unknown source identity rejected')
-            else:
-                raise RuntimeError('Validator accepted an unknown source identity')
-        finally:
-            action['source_profile_id']=original
-        assert validate(rig,binding['profile'])==inventory
+        controls,observations=selftest(binding['profile'],inventory)
     if not args.validate_only and not args.selftest:
         output=export(rig,binding['profile'],inventory)
         manifest={'schema':1,'library':'shared_motion.glb','librarySha256':sha(output),
@@ -208,8 +257,13 @@ def main():
         'source':str(SOURCE.relative_to(ROOT)),'sourceSha256':before,'sourceProfileId':binding['profile']['id'],
         'savedActions':len(inventory),'authoredBones':69,'canonicalProfileBones':70,'fps':60,
         'restHierarchyAndAxesMatchCanonicalProfile':True,'onlySupportedFiniteBoneCurves':True,
+        'authoredChannelCoverage':'69 bones × location[0:3] and rotation_quaternion[0:4]; exported clips may omit unchanged tracks',
+        'exportBoundaryRejectsInvalidComponentsBeforeWriting':bool(controls),
+        'componentControlObservations':observations,
         'sourceUnchanged':True,'negativeControls':controls,'rendered':False,'baked':False}
     Path(__file__).with_name('source-validation.json').write_text(json.dumps(report,indent=2)+'\n')
+    if args.selftest:
+        Path(__file__).with_name('component-validation.json').write_text(json.dumps(report,indent=2)+'\n')
     print('ANIMATION_SOURCE_VALIDATION_PASS',len(inventory),'saved actions; no render/bake/source mutation',flush=True)
 
 

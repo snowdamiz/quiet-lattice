@@ -22,7 +22,18 @@ validates all named actions, source identity, supported channels, finite keys,
 timings, reference objects and canonical bind axes, evaluates those saved curves
 and writes the animation-only GLB and manifest. It has no render, mesh generation,
 material bake or LOD generation stage. `--validate-only` validates the source;
-`--selftest` adds reversible RAM-only negative controls without saving/exporting.
+`--selftest` adds reversible RAM-only negative controls without saving the source
+or writing export artifacts.
+Those controls call the actual export boundary with a private output directory
+and require rejection before any file is written. They cover invalid component
+indices, missing/duplicate location and quaternion components, object channels
+and source identity. Blender clamps a negative FCurve index assignment to zero;
+the receipt records that clamp and rejection of the resulting duplicate.
+`component-validation.json` retains that export-boundary control receipt when a
+later valid export refreshes `source-validation.json`.
+The saved source format requires all 69 bones' complete location (0–2) and
+quaternion (0–3) components. The shared clip contract still permits partial bone
+or property animation, and exported clips omit unchanged tracks.
 Use this animation-specific validator: the generic model validator requires
 mesh/material/LOD collections that an animation-only asset intentionally lacks.
 
