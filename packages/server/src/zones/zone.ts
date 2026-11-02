@@ -4,9 +4,10 @@
 // sends it a snapshot: a delta against the state it last acknowledged, or a full one when there is none (delta.ts).
 //
 // Entities keep their pose as it travels on the wire (§4): a frame id, a position, quaternion and velocity in that
-// frame. Their world position comes from the frame's pose at the tick's time. Movement authority's movers retain the
-// frame it validated at their input's time, so snapshots remain comparable at moving sphere edges. Other entities are
-// re-expressed each tick in the frame they then belong in (shared selectFrame and setFrame), and snapshots carry that id. An entity's wire state is rebuilt once per tick when it
+// frame. Their world position comes from the frame's pose at the tick's time. Each tick, an entity is re-expressed in
+// the frame it then belongs in (shared selectFrame, the rule the client's Game.chooseFrame follows, and setFrame), so a
+// ship leaving a planet's sphere of influence goes over to the inertial frame and one entering the Waystation's to the
+// Waystation's, and snapshots carry its current frame id. An entity's wire state is rebuilt once per tick when it
 // changed, sanitising only the fields that changed (sanitizeEntity checks each field on its own, so the rest stay as
 // they were sanitised before), then encoded per session with `sanitized: true`. A wire state is never mutated
 // afterwards: snapshot histories share it.
@@ -680,9 +681,9 @@ export class Zone {
   }
 
   /**
-   * Records the entity's world position at this tick's time. Movement authority owns its movers' frames; other entities
-   * are re-expressed by the client's rule (selectFrame, then setFrame: velocity turned, never boosted). Returns the world
-   * position, or null when it is not finite.
+   * Re-expresses the entity in the frame it belongs in at this tick's time, by the client's rule (selectFrame, then
+   * setFrame: the same world position and orientation, the velocity turned and never boosted), and records its world
+   * position. Returns that position, or null when it is not finite.
    */
   private settle(e: Entity): Vec3 | null {
     const f = e.fields;
@@ -690,9 +691,6 @@ export class Zone {
     const from = f.frame === null ? null : this.frames.get(f.frame)!;
     const w = (e.world = localToWorld(from, f.pos));
     if (!(Number.isFinite(w[0]) && Number.isFinite(w[1]) && Number.isFinite(w[2]))) return null;
-    // Movement authority already selected this pose's frame at the input's time. Re-selecting at a later tick would
-    // make its snapshot incomparable with that input at a moving sphere edge, and make a repeated pose drift.
-    if (this.movement?.has(e.id)) return w;
     const to = selectFrame(this.frameSet, from, (frame) => frameDistance(frame, w));
     if (to === from) return w;
     const local = setFrame(f, from, to);

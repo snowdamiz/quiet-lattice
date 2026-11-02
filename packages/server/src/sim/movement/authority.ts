@@ -251,11 +251,6 @@ export class ClientClock {
     if (Number.isNaN(this.t)) {
       // the first input: its own time (no later than `aheadS` past its arrival), or its arrival
       this.t = usable ? Math.min(raw, now + T.aheadS) : now;
-      // Bootstrap a clock behind ours with one input's allowance, never with all the time spent in transit. The rest
-      // remains claimable by later advancing stamps, so a first backlog pays for its flight once, as any backlog does.
-      const elapsed = firstElapsed(this.t, now, gap, usable);
-      const unbanked = gap - elapsed - this.bank;
-      if (usable && unbanked > 0) this.debt.push([unbanked, now]);
     } else if (!usable) {
       this.t += gap;
     } else {
@@ -309,11 +304,6 @@ export class ClientClock {
     const p = !usable || stale ? now : Math.max(this.t, Math.min(now, now - T.behindS - this.owed));
     return { t: this.t, p, timeless: !usable, resync, stale, gap };
   }
-}
-
-/** The first pose's stamped time since join, with one input's allowance for an initially skewed or absent clock. */
-function firstElapsed(t: number, now: number, gap: number, usable: boolean): number {
-  return Math.min(gap, Math.max(MOVEMENT.time.perInputS, usable ? t - (now - gap) : 0));
 }
 
 /** Where a mover stood before the inputs a hold let through (see MOVEMENT.ground). */
@@ -652,9 +642,9 @@ export class MovementAuthority {
     if (!m) throw new Error(`entity ${id} is not a mover in zone ${this.zone}`);
     const credit = m.clock.credit(msg.time, now);
     if (m.fresh) {
-      // Put the join pose on the client's clock using only the first input's bounded credit, not its arrival gap.
+      // the pose it joined at, on the client's clock: as long before its first input as the server measured
       m.fresh = false;
-      for (const x of m.seg) x.t = credit.t - firstElapsed(credit.t, now, credit.gap, !credit.timeless);
+      for (const x of m.seg) x.t = credit.t - credit.gap;
     }
     if (credit.timeless && !m.timeless) {
       m.timeless = true;

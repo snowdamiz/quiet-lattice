@@ -3,13 +3,13 @@
 // refuses it with a `correction`: the last pose the server can vouch for, as of the refused input's time. `Prediction`
 // keeps what the client sent, and on a correction rewinds the mover to the server's pose at that input and replays what
 // the client did since: its own motion, re-based on the server's pose, or, where the server refused the mode the client
-// predicted (the pulse drive on a Charge it holds empty), the server's velocity carried on from there. An engine-owned
-// mover keeps its observed motion even while the server still reports pulse. Each snapshot says
+// predicted (the pulse drive on a Charge it holds empty), the server's velocity carried on from there. Each snapshot says
 // where the server holds the entity as of the last input it handled (`ack`): one further than MATCH_M from what the client
 // sent then is a correction the client never heard (lost on the way), and is taken the same way. Inputs the client sent
-// before it took a correction are the old trajectory, which the server refuses quietly: they are not compared. The zone
-// preserves the frame movement authority validated at the input's time, including at moving sphere edges. A correction
-// in another frame is compared with both frames placed at that input's time, independent of its snapshot's tick.
+// before it took a correction are the old trajectory, which the server refuses quietly: they are not compared; nor is a
+// pose the server holds in another frame than the client sent it in. That is the edge of a sphere, where the zone
+// re-expresses a pose at a tick of its own (ARCHITECTURE §4), which a repeated or lost snapshot leaves the client unable
+// to name: a tick off, the frames there move a few metres apart.
 //
 // The rewind moves the mover at once, so its next input fits the server's pose. What that moves on screen is taken up by
 // a `Blend`: an offset (and a turn) the drawn ship and both cameras carry, dying away critically damped, unless it is
@@ -62,7 +62,7 @@ export class Prediction {
   record(msg) {
     const frame = this.resolve(msg.pose.frame);
     if (frame === undefined) return;
-    const r = this.sent.length >= HISTORY ? this.sent.shift() : { ...poseObjects(), replay: { ...poseObjects() } };
+    const r = this.sent.length >= HISTORY ? this.sent.shift() : { ...poseObjects() };
     r.seq = msg.seq;
     r.time = msg.time;
     r.frame = frame;
@@ -70,10 +70,6 @@ export class Prediction {
     r.quat.fromArray(msg.pose.quat);
     r.vel.fromArray(msg.pose.vel);
     r.mode = msg.mode;
-    // The wire report stays immutable for snapshot checks; replay follows every correction already taken.
-    copyInto(r.replay, r);
-    r.replay.frame = frame;
-    r.replay.mode = msg.mode;
     this.sent.push(r);
   }
 
@@ -92,9 +88,8 @@ export class Prediction {
   check(seq, entity) {
     if (seq <= this.fence) return null;
     const r = this.at(seq);
-    const frame = this.resolve(entity.frame);
-    if (!r || frame === undefined) return null;
-    const error = reframeAt(wireInto(_server, entity), frame, r.frame, r.time).pos.distanceTo(r.pos);
+    if (!r || this.resolve(entity.frame) !== r.frame) return null;
+    const error = wireInto(_server, entity).pos.distanceTo(r.pos);
     const s = this.stats;
     s.error = error;
     s.maxError = Math.max(s.maxError, error);
@@ -114,48 +109,36 @@ export class Prediction {
    * Rewinds a mover to where the server holds it, `pose` (a wire pose) in `mode` as of input `seq`, and replays what the
    * client did since: `state` (the mover's FrameState, in the frame it is in now, at world time `now`) keeps its motion in
    * the frame, or, where the server refused the mode the client sent, is carried on from the server's pose at the server's
-   * velocity. With `own`, the mover keeps its observed engine motion and velocity even while the server still holds it
-   * on the pulse drive. `drops` is a correction that takes the mover off the pulse drive: it is carried on at the server's velocity
+   * velocity, or at its own with `own` (the mover keeps a mode of its own: off the pulse drive the server still holds it
+   * on). `drops` is a correction that takes the mover off the pulse drive: it is carried on at the server's velocity
    * whatever mode that input was sent in, not at the drive's speed. A ship's turning since, in its own axes, is replayed
    * onto the server's orientation; a walker faces its own heading. False when there is nothing to rewind from (an input no
    * longer kept, a frame not of this system).
    *
-   * Replay poses track corrections separately from the immutable sent inputs. An input at or before the fence is thus
-   * re-based from the trajectory the mover is following now: its acceleration since is preserved, and an earlier offset
-   * is never applied twice. Refusing a mode replaces that stretch with the allowed velocity; later corrections replay
-   * the motion the mover made after that replacement. With `own`, no mode replacement is needed: the replay samples
-   * already describe the engines, including acceleration before this correction arrived.
+   * An input at or before the fence is of the old trajectory, which the mover has already left by taking a correction: its
+   * pose is not one to re-base on (the offset would be applied twice), so the server's pose is carried on at the mover's own
+   * velocity, and its orientation kept; the server's velocity where the mode is refused, as above.
    */
   take(seq, pose, mode, state, now, own = false, drops = false) {
     const r = this.at(seq);
     const frame = this.resolve(pose.frame);
     if (!r || frame === undefined) return false;
-    // Both as they stood at that input's time, in the frame the mover is in now.
+    // both as they stood at that input's time, in the frame the mover is in now
     const server = reframeAt(wireInto(_server, pose), frame, state.frame, r.time);
-    const sent = reframeAt(copyInto(_sent, r.replay), r.replay.frame, state.frame, r.time);
-    const refused = !own && (mode !== r.replay.mode || drops);
-    const turn = seq > this.fence && mode !== 'foot';
-    const replay = (target, at) => {
-      if (refused) {
-        target.pos.copy(server.pos).addScaledVector(server.vel, Math.max(0, at - r.time));
-        target.vel.copy(server.vel);
-      } else {
-        target.pos.add(server.pos).sub(sent.pos);
-        if (!own) target.vel.add(server.vel).sub(sent.vel);
-      }
-      if (turn) target.quat.premultiply(_q.copy(sent.quat).invert()).premultiply(server.quat).normalize();
-    };
-    // Keep only the existing bounded history. Each retained sample receives the same rewind as the live mover, so a
-    // delayed correction can replay the actual displacement since its input instead of extrapolating today's speed.
-    for (const sample of this.sent) {
-      if (sample.seq < seq) continue;
-      reframeAt(sample.replay, sample.replay.frame, state.frame, sample.time);
-      sample.replay.frame = state.frame;
-      replay(sample.replay, sample.time);
-      // This mode refusal has already replaced the stretch with the allowed velocity.
-      if (refused) sample.replay.mode = mode;
+    const refused = mode !== r.mode || drops;
+    if (refused && !own) state.vel.copy(server.vel);
+    if (seq <= this.fence) {
+      state.pos.copy(server.pos).addScaledVector(state.vel, Math.max(0, now - r.time));
+      return true;
     }
-    replay(state, now);
+    const sent = reframeAt(copyInto(_sent, r), r.frame, state.frame, r.time);
+    if (refused) {
+      state.pos.copy(server.pos).addScaledVector(state.vel, Math.max(0, now - r.time));
+    } else {
+      state.pos.add(server.pos).sub(sent.pos);
+      state.vel.add(server.vel).sub(sent.vel);
+    }
+    if (mode !== 'foot') state.quat.premultiply(_q.copy(sent.quat).invert()).premultiply(server.quat).normalize();
     return true;
   }
 }
