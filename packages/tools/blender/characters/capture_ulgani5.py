@@ -111,7 +111,7 @@ outdir=root/'assets/renders/review/characters/ulgani-review5'/args.attempt;targe
 report={'identity':identity,'preparation_sha256':sha(prep_path),'variant':args.variant,'attempt':args.attempt,'started_utc':utc(),'controller_pid':os.getpid(),'controller_pgid':os.getpgrp(),'command':command,'outdir':str(target.relative_to(root)),'log':str(log.relative_to(root)),'gate':authorization,'processes':[],'profiles':[],'cleanup':[],'status':'starting'}
 known={os.getpid():processes()[os.getpid()]};profiles=set();children=[]
 def save():report['processes']=list(known.values());report['profiles']=sorted(profiles);report['observer_lifecycles']=observer_events.copy();report_path.write_text(json.dumps(report,indent=2)+'\n')
-def observe():
+def observe(persist=True):
  rows=processes();owned={pid for pid,item in known.items() if pid in rows and rows[pid]['fingerprint']==item['fingerprint']}
  while True:
   found={pid for pid,item in rows.items() if item['ppid'] in owned}
@@ -125,34 +125,108 @@ def observe():
   for name in re.findall(r'--user-data-dir=([^\s]+)',commands):
    path=Path(name)
    if path.name.startswith('playwright_chromiumdev_profile-'):profiles.add(str(path))
- save();return rows
+ if persist:save()
+ return rows
+
+def wait_for_capture_children(wait_children,timeout=5):
+ # A sampler timeout must not skip waiting/reaping the assertion or any peer.
+ for child in wait_children:
+  event={'pid':child.pid,'started_utc':utc()}
+  try:event['exit_code']=child.wait(timeout=timeout)
+  except Exception as exc:event['error']=repr(exc)
+  event['completed_utc']=utc();report.setdefault('child_waits',[]).append(event)
+ save()
 
 def cleanup():
- rows=observe();groups={item['pgid'] for pid,item in known.items() if pid!=os.getpid() and pid in rows and rows[pid]['fingerprint']==item['fingerprint']};groups.discard(os.getpgrp())
+ run={'started_utc':utc()};report.setdefault('cleanup_runs',[]).append(run)
+ report['owned_cleanup_settled']=False;errors=[];deadline=time.monotonic()+12
+ def error(stage,exc,**detail):
+  event={'utc':utc(),'stage':stage,'error':repr(exc),**detail};errors.append(event);report.setdefault('cleanup_errors',[]).append(event)
+ def reap():
+  changed=False
+  for child in children:
+   previous=child.returncode
+   try:child.poll()
+   except Exception as exc:error('poll',exc,pid=child.pid)
+   changed|=previous is None and child.returncode is not None
+  return changed
+ def snapshot():
+  reap()
+  try:rows=observe(persist=False)
+  except Exception as exc:error('observe',exc);return None
+  # A telemetry write error must not discard a valid fresh ownership snapshot.
+  try:save()
+  except Exception as exc:error('save',exc)
+  return rows
+ def members(rows,group):return [item for item in rows.values() if item['pgid']==group]
+ def verified(items):return all(item['pid'] in known and item['fingerprint']==known[item['pid']]['fingerprint'] for item in items)
+ def groups():return {item['pgid'] for pid,item in known.items() if pid!=os.getpid()}
+ # Reap BEFORE selecting signal candidates, including exited caffeinate children.
+ # A fresh snapshot still has to prove every member of every signaled group.
+ reap();snapshot()
  for sig in (signal.SIGTERM,signal.SIGKILL):
-  for group in groups:
-   rows=observe();members=[x for x in rows.values() if x['pgid']==group]
-   if not members:continue
-   assert all(x['pid'] in known and x['fingerprint']==known[x['pid']]['fingerprint'] for x in members),'Group contains unowned/reused process;manual drain required'
-   try:os.killpg(group,sig)
-   except ProcessLookupError:continue
-   report['cleanup'].append({'utc':utc(),'pgid':group,'signal':sig.name})
-  time.sleep(.5)
-  # poll() reaps only our completed direct Popen children before escalation.
-  # A still-running descendant remains in the fresh identity/group check.
-  for child in children:child.poll()
+  for group in sorted(groups()):
+   if not isinstance(group,int) or group<=1 or group==os.getpgrp():
+    error('group-guard',RuntimeError('Refuse zero/system/controller process group'),pgid=group);continue
+   if time.monotonic()>deadline:
+    error('deadline',TimeoutError('Owned cleanup deadline exceeded'),pgid=group);continue
+   for attempt in range(2):
+    rows=snapshot()
+    if rows is None:break
+    current=members(rows,group)
+    if not current:break
+    if not verified(current):
+     error('ownership',RuntimeError('Group contains unowned/reused process;manual drain required'),pgid=group);break
+    if reap():continue # The snapshot preceded a direct-child reap; refresh it.
+    try:os.killpg(group,sig)
+    except (ProcessLookupError,PermissionError) as exc:
+     # Exit can race even the final snapshot. EPERM is resolved ONLY by a
+     # reap plus positive fresh proof of group absence, never by errno alone.
+     reap();fresh=snapshot()
+     if fresh is not None and not members(fresh,group):
+      report.setdefault('cleanup_races',[]).append({'utc':utc(),'pgid':group,'signal':sig.name,'error':repr(exc),'fresh_group_absent':True})
+     else:error('signal',exc,pgid=group,signal=sig.name)
+     break
+    except Exception as exc:error('signal',exc,pgid=group,signal=sig.name);break
+    else:
+     report['cleanup'].append({'utc':utc(),'pgid':group,'signal':sig.name});break
+  time.sleep(.5);reap()
+ # Independently settle every direct Popen, even if an earlier one times out.
+ wait_deadline=min(deadline,time.monotonic()+2)
  for child in children:
-  try:child.wait(timeout=5)
-  except subprocess.TimeoutExpired:raise RuntimeError('Owned child did not drain')
- rows=observe()
- assert all(pid==os.getpid() or pid not in rows or rows[pid]['fingerprint']!=item['fingerprint'] for pid,item in known.items()),'Owned process survived cleanup'
- for name in profiles:
-  path=Path(name)
-  if path.exists():
-   recovery=jobdir/'profile-recovery';recovery.mkdir(exist_ok=True);shutil.move(str(path),str(recovery/path.name));report['cleanup'].append({'utc':utc(),'preserved_profile':name})
- assert not any(Path(name).exists() for name in profiles)
+  try:child.wait(timeout=max(0,wait_deadline-time.monotonic()))
+  except Exception as exc:error('wait',exc,pid=child.pid)
+ reap();rows=snapshot();end=min(deadline,time.monotonic()+2)
+ while rows is not None and any(members(rows,group) for group in groups()) and time.monotonic()<end:
+  time.sleep(.02);rows=snapshot()
+ surviving=[] if rows is None else [item for item in rows.values() if item['pgid'] in groups()]
+ settled=rows is not None and not surviving and all(child.returncode is not None for child in children)
+ if not settled:error('survivors',RuntimeError('Owned process/group settlement incomplete'),survivors=surviving)
+ # Never move a profile while a potentially owning process remains live.
+ if settled:
+  for name in profiles:
+   try:
+    path=Path(name)
+    if path.exists():
+     recovery=jobdir/'profile-recovery';recovery.mkdir(exist_ok=True);shutil.move(str(path),str(recovery/path.name));report['cleanup'].append({'utc':utc(),'preserved_profile':name})
+   except Exception as exc:error('profile',exc,path=name);settled=False
+  if any(Path(name).exists() for name in profiles):settled=False
  report['child_exit_codes']=[{'pid':child.pid,'exit_code':child.returncode} for child in children]
- report['children_and_profiles_drained_utc']=utc();save()
+ report['owned_cleanup_settled']=settled
+ if settled:report['children_and_profiles_drained_utc']=utc()
+ run.update(completed_utc=utc(),settled=settled,error_count=len(errors));save()
+ if errors or not settled:raise RuntimeError('Owned cleanup reported errors;see cleanup_errors and owned_cleanup_settled')
+
+def finish_failed_capture(exc,code):
+ report.update(status='FAILED_CLEANUP_PENDING',terminal=False,error=repr(exc),exit_code=code,failed_utc=utc())
+ try:save()
+ except Exception as save_error:report.setdefault('cleanup_errors',[]).append({'utc':utc(),'stage':'failure-save','error':repr(save_error)})
+ try:cleanup()
+ except Exception as drain:report['drain_error']=repr(drain)
+ settled=report.get('owned_cleanup_settled',False)
+ report.update(status='FAILED_PRESERVED_NO_AUTOMATIC_RETRY' if settled else 'FAILED_CLEANUP_INCOMPLETE_MANUAL_DRAIN_REQUIRED',terminal=settled,cleanup_finished_utc=utc())
+ save()
+ with log.open('a') as output:output.write(('ULGANI5_GPU_END failure ' if settled else 'ULGANI5_FAILURE_CLEANUP_INCOMPLETE ')+utc()+'\n')
 
 save();code=1
 try:
@@ -168,8 +242,7 @@ try:
     report['timeout_utc']=utc();code=124;save();raise TimeoutError('Single-variant480second bound exceeded;no automatic retry')
    time.sleep(.5)
   code=node.returncode;report.update(exit_code=code,cli_end_utc=utc());output.write('ULGANI5_GPU_END '+report['cli_end_utc']+'\n');output.flush()
-  try:sampler.wait(timeout=5);assertion.wait(timeout=5)
-  except subprocess.TimeoutExpired:pass
+  wait_for_capture_children((sampler,assertion))
  cleanup();assert code==0,'Capture failed;partial outputs preserved;no retry'
  files=json.loads(written.read_text())['files'];assert len(files)==13 and len(set(files))==13
  artifacts=[]
@@ -182,9 +255,6 @@ try:
  assert sha(root/'assets/blend/characters/ulgani.blend')==identity['source_sha256'] and sha(root/'packages/client/public/models/characters/ulgani.glb')==identity['export_sha256']
  report.update(artifacts=artifacts,status='CAPTURED_CHILDREN_DRAINED_CONTROLLER_EXIT_PENDING',completed_utc=utc(),timing_limit='Raw one-session observations only;retain every unreliable flag/error;no qualified60fps,budget,regression or pair-level attribution claim');save();print('ULGANI5_VARIANT_END',args.variant,report['completed_utc'],'run --finalize after controller exit',flush=True)
 except BaseException as exc:
- report.update(status='FAILED_PRESERVED_NO_AUTOMATIC_RETRY',error=repr(exc),exit_code=code,failed_utc=utc());save()
- try:
-  with log.open('a') as f:f.write('ULGANI5_GPU_END failure '+utc()+'\n')
-  cleanup()
- except BaseException as drain:report['drain_error']=repr(drain);save()
+ try:finish_failed_capture(exc,code)
+ except Exception as finalization_error:print('Capture failure cleanup/report error: '+repr(finalization_error),file=sys.stderr,flush=True)
  raise
