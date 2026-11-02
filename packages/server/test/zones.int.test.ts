@@ -1,15 +1,15 @@
 // Zones over the wire, against the dockerised Postgres and Redis: players who join enter their home system's zone and
 // receive binary snapshots every tick, which they apply onto their acknowledged baselines and acknowledge; they see each
-// other, see each other move after `input` (in the frame the zone re-expresses them in), and see each other go. Their inputs
+// other, see each other move after `input` in the frame movement authority accepted, and see each other go. Their inputs
 // are honest: movement authority (P1.E03.T04, movement.int.test.ts) corrects any other kind.
 import { STATION_LAYOUT } from '@astra/shared/data';
-import { FrameId, PROTOCOL_VERSION, type PeopleId } from '@astra/shared/protocol';
-import { FRAME_HYSTERESIS, frameIdOf, localToWorld, systemPoses, type Quat, type Vec3 } from '@astra/shared/world';
+import { FrameId, PROTOCOL_VERSION, type PeopleId, type Pose } from '@astra/shared/protocol';
+import { FRAME_HYSTERESIS, chooseFrame, dirToWorld, frameIdOf, localToWorld, systemPoses, type Vec3 } from '@astra/shared/world';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RunningServer } from '../src/server.ts';
 import { homeSystemOf, systemSeed } from '../src/world/home.ts';
-import { newAccount, newCharacter, startTestServer, TestSocket, waitFor } from './helpers.ts';
-import { noseTo, Pilot } from './pilot.ts';
+import { newAccount, newCharacter, startTestServer, TestSocket, uniqueShard, waitFor } from './helpers.ts';
+import { ManualClock, noseTo, Pilot } from './pilot.ts';
 import { SnapshotClient } from './snapshotClient.ts';
 
 let server: RunningServer;
@@ -190,36 +190,73 @@ describe('zones over the wire', () => {
     s.close();
   });
 
-  it('shows a player who flies out of the Waystation’s sphere of influence in its world’s frame, where it flew to', async () => {
-    const a = await Pilot.join(server);
-    const b = await player('thalune');
-    const d = server.zones.zone(a.welcome.zone.id)!.system;
-    const station = frameIdOf(d.seed, 'station');
-    const home = frameIdOf(d.seed, d.home);
-    await waitFor(() => b.client.latest.get(a.entityId)?.frame === station, 5000, 'b to see a at the Waystation');
-    // off its pad, out of the hangar's mouth and away, boosting, to just inside the Waystation's sphere and its 5%…
-    const edge = d.station.soi * FRAME_HYSTERESIS;
-    const dir: Vec3 = [0, 0.17 / Math.hypot(0.17, 1), 1 / Math.hypot(0.17, 1)];
-    const at = (r: number): Vec3 => [dir[0] * r, dir[1] * r, dir[2] * r];
-    const [x, y, z] = a.welcome.pose.pos;
-    await a.fly([[x, y, z], [x, 14, z], [x, 14, 40], [0, 30, 120], at(edge - 1)], [10, 40, 60, 1500], 'ship', 2);
-    // …and one input half a metre past it: still the Waystation's frame by the client's clock, beyond it by the tick's
-    const sent = { frame: station, pos: at(edge + 0.5), quat: noseTo(dir) as Quat, vel: [dir[0] * 30, dir[1] * 30, dir[2] * 30] as Vec3 };
-    a.send(sent, 'ship');
-    await waitFor(() => b.client.latest.get(a.entityId)?.frame === home, 5000, 'b to see a in the home world’s frame');
-    expect(FrameId.safeParse(home).success).toBe(true);
-    // at the tick it changed frame it was where it flew to, to the centimetre
-    const snap = b.client.snapshots.find((s) => s.entities.some((e) => e.id === a.entityId && e.frame === home))!;
-    const seen = b.client.states.get(snap.tick)!.get(a.entityId)!;
-    const poses = systemPoses(d, snap.time);
-    const flown = localToWorld(poses.station, sent.pos);
-    const shown = localToWorld(poses.bodies[d.home]!, seen.pos!);
-    expect(Math.hypot(shown[0] - flown[0], shown[1] - flown[1], shown[2] - flown[2])).toBeLessThan(0.01);
-    expect(Math.hypot(...seen.vel!)).toBeCloseTo(30, 9);
-    expect(a.corrections).toEqual([]);
-    expect(a.errors).toEqual([]);
-    expect(b.errors).toEqual([]);
-    a.sock.close();
-    b.sock.close();
+  it('keeps an accepted Waystation-edge pose until the client changes frame, then shows the flight in its world’s frame', async () => {
+    const clock = new ManualClock();
+    const flight = await startTestServer({}, { shard: uniqueShard(), clock: { monoNow: clock.now } });
+    const pilots: Pilot[] = [];
+    try {
+      const a = await Pilot.join(flight, 'thalune', { clock });
+      pilots.push(a);
+      const b = await Pilot.join(flight, 'thalune', { clock });
+      pilots.push(b);
+      const zone = flight.zones.zone(a.welcome.zone.id)!;
+      const d = zone.system;
+      const station = frameIdOf(d.seed, 'station');
+      const home = frameIdOf(d.seed, d.home);
+      await waitFor(() => b.client.latest.get(a.entityId)?.frame === station, 5000, 'b to see a at the Waystation');
+      // Match the observer to a tick acknowledging a's input, optionally after an earlier accepted input's time.
+      const observed = async (seq: number, after = -Infinity) => {
+        await waitFor(() => a.client.snapshots.some((s) => s.ack === seq && s.time > after), 5000, 'a’s input ack on the requested tick');
+        const snap = a.client.snapshots.find((s) => s.ack === seq && s.time > after)!;
+        await waitFor(() => b.client.states.has(snap.tick), 5000, 'b to receive the same tick as a’s input ack');
+        return b.client.states.get(snap.tick)!.get(a.entityId)!;
+      };
+      // Off its pad, out of the hangar and away, boosting, to just inside the station's 5% hysteresis.
+      const edge = d.station.soi * FRAME_HYSTERESIS;
+      const dir: Vec3 = [0, 0.17 / Math.hypot(0.17, 1), 1 / Math.hypot(0.17, 1)];
+      const at = (r: number): Vec3 => [dir[0] * r, dir[1] * r, dir[2] * r];
+      const [x, y, z] = a.welcome.pose.pos;
+      await a.fly([[x, y, z], [x, 14, z], [x, 14, 40], [0, 30, 120], at(edge - 1)], [10, 40, 60, 1500], 'ship', 2);
+      await a.idle(50);
+      // The last flight step crosses the line after frame selection, within authority's existing 1 m edge allowance.
+      const sent: Pose = { frame: station, pos: at(edge + 0.5), quat: noseTo(dir), vel: [dir[0] * 30, dir[1] * 30, dir[2] * 30] };
+      const inputTime = a.time;
+      const seq = a.send(sent, 'ship');
+      const first = await observed(seq);
+      await a.idle(100);
+      const repeated = await observed(seq, inputTime);
+      for (const seen of [first, repeated]) {
+        expect(seen).toMatchObject({ frame: station, pos: sent.pos, vel: sent.vel, mode: 'ship' });
+        sent.quat.forEach((q, i) => expect(seen.quat![i]).toBeCloseTo(q, 12));
+      }
+      expect(zone.entity(a.entityId)!.input).toMatchObject({ seq, time: inputTime });
+      const later = systemPoses(d, a.time);
+      expect(chooseFrame(d, later, localToWorld(later.station, sent.pos), 'station')).toBe(d.home);
+      // Ticks retain the accepted pose even though a fresh frame selection would leave the station. The next real input
+      // uses the shared client rule, re-expressing position and rotating velocity without adding the station's velocity.
+      expect(await a.flyOn(d, dir, 30, 50)).toBe(home);
+      const transitionTime = a.time;
+      const seen = await observed(a.seq);
+      expect(FrameId.safeParse(home).success).toBe(true);
+      expect(seen).toMatchObject({ frame: home, pos: a.last.pos, vel: a.last.vel, mode: 'ship' });
+      a.last.quat.forEach((q, i) => expect(seen.quat![i]).toBeCloseTo(q, 12));
+      const poses = systemPoses(d, transitionTime);
+      const flown = localToWorld(poses.station, at(edge + 0.5 + 30 * 0.05));
+      const shown = localToWorld(poses.bodies[d.home]!, seen.pos!);
+      expect(Math.hypot(shown[0] - flown[0], shown[1] - flown[1], shown[2] - flown[2])).toBeLessThan(0.01);
+      const flownVel = dirToWorld(poses.station, sent.vel);
+      const shownVel = dirToWorld(poses.bodies[d.home]!, seen.vel!);
+      expect(Math.hypot(shownVel[0] - flownVel[0], shownVel[1] - flownVel[1], shownVel[2] - flownVel[2])).toBeLessThan(1e-9);
+      expect(Math.hypot(...seen.vel!)).toBeCloseTo(30, 9);
+      expect(zone.entity(a.entityId)!.input).toMatchObject({ seq: a.seq, time: transitionTime });
+      expect(a.corrections).toEqual([]);
+      expect(b.corrections).toEqual([]);
+      expect(zone.movement!.corrections).toBe(0);
+      expect(a.errors).toEqual([]);
+      expect(b.errors).toEqual([]);
+    } finally {
+      for (const p of pilots) p.close();
+      await flight.close();
+    }
   });
 });
