@@ -16,6 +16,7 @@ import json
 import math
 from pathlib import Path
 import runpy
+import shutil
 import sys
 import time
 
@@ -66,6 +67,8 @@ parser.add_argument('textures', type=Path)
 parser.add_argument('release', type=Path)
 parser.add_argument('report', type=Path)
 parser.add_argument('--inspect-only', action='store_true')
+parser.add_argument('--reuse-completed-textures', type=Path)
+parser.add_argument('--prior-recovery-report', type=Path)
 args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 checkpoint = Path(bpy.data.filepath).resolve()
 authoring, output, textures, release, report = (getattr(args, name).resolve()
@@ -157,6 +160,87 @@ evidence = {'prepared_utc': utc(), 'checkpoint': str(checkpoint), 'checkpoint_sh
             'mesh_hashes_unchanged': before, 'landmarks': landmarks, 'suit_coverage': coverage,
             'resume_boundary': 'Original build.main body from bake.cycles(sc, 16) onward',
             'authored_texture_size': [4096, 4096], 'ao_bake_size': [2048, 2048], 'ao_storage_size': [4096, 4096]}
+# A killed bake may leave complete texture sets. Reuse them only when their
+# exact source checkpoint, geometry, UVs, weights and authoring library match.
+assert bool(args.reuse_completed_textures) == bool(args.prior_recovery_report)
+if args.reuse_completed_textures:
+    cache = args.reuse_completed_textures.resolve()
+    prior_path = args.prior_recovery_report.resolve()
+    prior = json.loads(prior_path.read_text())
+    assert prior['checkpoint_sha256'] == evidence['checkpoint_sha256']
+    assert prior['mesh_hashes_unchanged'] == before, 'Cached maps do not match checkpoint meshes or UVs'
+    assert prior['authoring_scripts'] == evidence['authoring_scripts'], 'Cached maps used another authoring library'
+    assert prior['landmarks'] == landmarks and prior['suit_coverage'] == coverage
+    assert cache != textures and not textures.exists(), 'Keep the old completed maps unchanged'
+    baked_after = datetime.datetime.fromisoformat(prior['gpu_begin_utc']).timestamp()
+    cached = {}
+    for group, channels in (('Skin', ('base', 'orm', 'normal')),
+                            ('Eye', ('base', 'orm', 'normal')),
+                            ('Frond', ('base', 'orm', 'normal', 'emissive'))):
+        for channel in channels:
+            name = f'UL_{group}_{channel}'
+            path = cache / (name + '.jpg')
+            assert path.stat().st_mtime >= baked_after, 'Map predates the checkpoint bake'
+            image = bpy.data.images.load(str(path), check_existing=False)
+            assert tuple(image.size) == (4096, 4096) and image.has_data, path
+            values = np.empty(len(image.pixels), np.float32)
+            image.pixels.foreach_get(values)
+            assert np.isfinite(values).all() and np.ptp(values.reshape(-1, 4)[:, :3]) > 0, path
+            del values
+            bpy.data.images.remove(image)
+            cached[name] = {'source': str(path), 'sha256': sha(path), 'bytes': path.stat().st_size,
+                            'decoded_size': [4096, 4096], 'finite_nonconstant_pixels': True}
+    textures.mkdir(parents=True)
+    for name, item in cached.items():
+        destination = textures / (name + '.jpg')
+        shutil.copy2(item['source'], destination)
+        assert sha(destination) == item['sha256']
+        item['copy'] = str(destination)
+    evidence['reused_completed_maps'] = cached
+    evidence['prior_recovery_report'] = {'path': str(prior_path), 'sha256': sha(prior_path)}
+    evidence['cache_source_invariants_pass'] = True
+
+    def cached_material(group, objects, engine_name, auth):
+        images = {}
+        for channel in ('base', 'orm', 'normal', 'emissive'):
+            name = f'UL_{group}_{channel}'
+            if name not in cached:
+                continue
+            item = cached[name]
+            path = Path(item['copy'])
+            assert sha(path) == item['sha256'] and sha(Path(item['source'])) == item['sha256']
+            image = bpy.data.images.load(str(path), check_existing=False)
+            image.name = name
+            image.colorspace_settings.name = 'sRGB' if channel in ('base', 'emissive') else 'Non-Color'
+            image.pack()
+            images[channel] = image
+        principled = next(n for n in auth.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+        material = session['bake'].final_material(
+            f'UL_{group}', images['base'], images['orm'], images['normal'],
+            emissive=images.get('emissive'),
+            emissive_strength=principled.inputs['Emission Strength'].default_value,
+            engine_name=engine_name, metallic_from_orm=False)
+        for obj in objects:
+            obj.data.materials.clear()
+            obj.data.materials.append(material)
+        print('REUSED_COMPLETED_BAKE', group, len(images), flush=True)
+        return material
+
+    def reuse_skin(body, heads, auth, res, hi=None):
+        assert res == 4096
+        return cached_material('Skin', [body] + heads, 'Skin', auth)
+
+    def reuse_eyes(eyeobs, auth, res):
+        assert res == 4096
+        return cached_material('Eye', [obj for obj, _ in eyeobs], 'Eye', auth)
+
+    def reuse_bio(objects, groups, auth, res):
+        assert res == 4096
+        return cached_material('Frond', objects, 'Bio', auth)
+
+    session.update(bake_skin=reuse_skin, bake_eyes=reuse_eyes, bake_bio=reuse_bio)
+    print('CACHED_BAKE_INVARIANTS_VERIFIED', len(cached), flush=True)
+
 report.parent.mkdir(parents=True, exist_ok=True)
 report.write_text(json.dumps(evidence, indent=2) + '\n')
 print('CHECKPOINT_RECOVERY_VERIFIED', report, flush=True)
