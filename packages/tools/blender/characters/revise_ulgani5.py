@@ -366,6 +366,12 @@ for number in range(1, 7):
         users = [o for o in bpy.data.objects if o.type == 'MESH' and o.data == target.data]
         base = subset_copy(target, False)
         caps = subset_copy(high, True)
+        if not len(caps.data.vertices):
+            bpy.data.objects.remove(caps)
+            bpy.data.objects.remove(base)
+            report['lod_caps'].append({'head': number, 'lod': level, 'users_updated': 0, 'protected_cap_fan_triangles': 0, 'restored': False, 'reason': 'No authored gpart4 cap/fan surface. Head2 uses filament stalks and gpart3 nodules;this operation does not restore its terminal clusters.'})
+            checkpoint_report(f'head{number} LOD{level}:no gpart4 surface;no empty temporary retained')
+            continue
         if level == 3:
             dissolve_caps(caps, 20)
             # Keep cap outlines while removing coplanar interiors, within the
