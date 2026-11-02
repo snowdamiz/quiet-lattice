@@ -91,6 +91,8 @@ async function enterNew(page: Page, seed: number, { stage, hold = false }: { sta
       w.__heard = 0;
       w.__frames = [];
       w.__closed = null;
+      w.__meters = [];
+      net.on('meters', (m: { meters: { charge: number } }) => w.__meters.push(m.meters.charge));
       net.on('input', (m: any) => w.__inputs.set(m.seq, { time: m.time, frame: m.pose.frame, pos: [...m.pose.pos], mode: m.mode }));
       net.on('snapshot', () => {
         const e = net.store.entities.get(net.entityId);
@@ -365,11 +367,11 @@ test('on an empty Charge in its world’s shadow: the engage refused by the clie
     s.vel.set(0, 0, 0);
     g.ship.speed = 0;
     g.cam.frame = undefined;
-    w.__meters = [];
-    g.net.on('meters', (m: { meters: { charge: number } }) => w.__meters.push(m.meters.charge));
     w.__corr = [];
     w.__heard = 0;
     w.__frames = [];
+    // The initial authoritative meter must survive startup; the later resting update may be lost.
+    g.netLink.dropNext('meters');
     w.__hold = false;
   }, at.out);
   await until(page, 'window.game.net.store.ack > 0 && window.__meters.length > 0 && window.game.ship.charge === 0', 30_000);

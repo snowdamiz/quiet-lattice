@@ -7,6 +7,7 @@ import { QuestBook } from '@astra/shared/quests';
 import { EDGE_X } from '@astra/shared/world';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Game } from './Game.js';
+import { Ship } from './entities/Ship.js';
 import { Inventory } from './gameplay/Inventory.js';
 import { Abilities } from './net/abilities.js';
 import { frameOfId, walkerQuat } from './net/pose.js';
@@ -16,6 +17,8 @@ import { FrameState } from './universe/Body.js';
 /** A Game object with no constructor run: just `parts` (and what it predicted, in the frames of its system). */
 function fake(parts = {}) {
   const g = Object.assign(Object.create(Game.prototype), { time: 0, timeBase: 0, net: null, abilities: new Abilities(), cam: {}, ...parts });
+  g.ship ??= {};
+  g.ship.watchServer ??= vi.fn();
   g.universe = { tierOf: () => g.system?.tier, networkFrame: () => null, applyWorld: vi.fn(), ...g.universe };
   g.prediction ??= new Prediction((id) => frameOfId(g.system, g.station, id));
   return g;
@@ -120,12 +123,30 @@ describe('Game: where a closed connection sends the player', () => {
       ship: { setSkills: vi.fn() },
       remotes: { attach: vi.fn() },
     });
+    g.ship = new Ship(g);
+    vi.spyOn(g.ship, 'setSkills');
     session.setItem('astra-session', JSON.stringify({ token: 'tok', accountId: 'a1', username: 'pilot' }));
     g.enterWorld({ token: 'tok' }, character, onFail);
     const socket = FakeSocket.all.at(-1);
     socket.open();
     return { g, onFail, socket, net: g.net };
   }
+
+  it('takes the initial authoritative Charge before any ship frame, and changes its listener with the connection', () => {
+    const { g, socket, net } = entering();
+    const meters = { heat: 0, heatMax: 100, overheated: false, charge: 0, chargeMax: 100, lifeSupport: 100, hazard: 100, at: 1001 };
+    socket.push(WELCOME);
+    socket.push({ t: 'meters', meters });
+    expect(g.ship.charge).toBe(0);
+    g.enterWorld({ token: 'tok' }, { id: 'c2' }, vi.fn());
+    const next = FakeSocket.all.at(-1);
+    next.open();
+    next.push(WELCOME);
+    next.push({ t: 'meters', meters: { ...meters, charge: 35 } });
+    expect(g.ship.charge).toBe(35);
+    net.emit('meters', { meters });
+    expect(g.ship.charge).toBe(35);
+  });
 
   it('before the welcome: the sign-in hears why, and the game lets the connection go', () => {
     const { g, onFail, socket, net } = entering();

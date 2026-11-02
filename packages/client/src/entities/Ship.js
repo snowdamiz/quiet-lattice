@@ -612,6 +612,11 @@ export class Ship {
 
   // Charge over this frame: regenerating or not where the character is, burning on the pulse drive near bodies
   updateCharge(dt) {
+    // The server holds saved Charge until the first input; prediction starts with it.
+    if (this.game.net?.inputSeq === 0) {
+      this.chargeRate = this.chargeRegen = 0;
+      return;
+    }
     const env = characterMeterEnvironment(this.game);
     const act = { beam: false, pulse: this.mode === 'pulse' };
     const meter = { heat: 0, overheated: false, charge: this.charge };
