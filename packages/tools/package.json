@@ -7,6 +7,7 @@
     "build": "tsc -p .",
     "typecheck": "tsc -p .",
     "smoke": "tsx src/smoke/run.ts",
+    "bots": "tsx src/bots/cli.ts",
     "e2e": "playwright test e2e"
   },
   "dependencies": {
