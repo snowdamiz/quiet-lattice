@@ -1265,7 +1265,7 @@ export class Review {
    * with a pixel read where the extension is missing; null for a frame the timer lost), and the frame's draw calls and
    * triangles. Returns the number of disjoint timer events (each loses the frames then in flight).
    */
-  async sampleInterleaved(pairs, out) {
+  async sampleInterleaved(pairs, out, samplingWindows = []) {
     const r = this.game.engine.renderer;
     const gl = r.getContext();
     const ext = this.gpuTimer();
@@ -1289,6 +1289,10 @@ export class Review {
       }
     };
     const order = abba(pairs);
+    // Wall-clock coverage for host observations, outside every frame's CPU/GPU timer. Warm-up, result draining and
+    // summary calculation are not sampling. Each adaptive batch owns its own interval and raw-frame range.
+    const window = { startedAt: new Date().toISOString(), finishedAt: null, firstSample: out.length, sampleCount: 0 };
+    samplingWindows.push(window);
     try {
       for (let i = 0; i < order.length; i++) {
         const rec = { shown: order[i], cpu: null, gpu: null, calls: null, tris: null, gpuStatus: 'pending' };
@@ -1328,11 +1332,14 @@ export class Review {
           collect();
         }
       }
+      window.finishedAt = new Date().toISOString();
       for (let k = 0; k < 200 && pending.length; k++) {
         await new Promise((res) => setTimeout(res, 5));
         collect();
       }
     } finally {
+      window.finishedAt ??= new Date().toISOString();
+      window.sampleCount = out.length - window.firstSample;
       this.root.visible = true;
       for (const p of pending) {
         p.rec.gpuStatus = 'timeout';
@@ -1356,6 +1363,7 @@ export class Review {
       const startedAt = new Date().toISOString();
       const errorsBefore = this.glErrors();
       const recs = [];
+      const samplingWindows = [];
       let disjoint = 0;
       let warm = null;
       let failure = null;
@@ -1363,7 +1371,7 @@ export class Review {
       try {
         warm = await this.warmUp(budgetMs, steady, maxWarmup);
         do {
-          disjoint += await this.sampleInterleaved(Math.min(pairs, maxPairs - recs.length / 2), recs);
+          disjoint += await this.sampleInterleaved(Math.min(pairs, maxPairs - recs.length / 2), recs, samplingWindows);
           cost = assetCost(recs, { ciMs });
         } while (!cost.reliable && recs.length / 2 < maxPairs);
       } catch (error) {
@@ -1399,6 +1407,7 @@ export class Review {
         asset: { ...cost, ciTargetMs: ciMs, unpaired: { cpuMs: d('cpuMsMedian'), gpuMs: d('gpuMsMedian') } },
         stats: this.stats(),
         samples: recs,
+        samplingWindows,
         failure,
       };
       if (failure) throw new Error(failure);

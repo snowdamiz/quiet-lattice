@@ -180,6 +180,34 @@ export function inspectRun(value: unknown, expectedCase: string) {
   const startedAt = timestamp(field(value, 'startedAt'));
   const finishedAt = timestamp(field(value, 'finishedAt'));
   if (finishedAt < startedAt) issues.push('Run finished before it started');
+  let samplingWindows: { startedAt: number; finishedAt: number; firstSample: number; sampleCount: number }[];
+  try {
+    samplingWindows = list(field(value, 'samplingWindows')).map((window) => ({
+      startedAt: timestamp(field(window, 'startedAt')),
+      finishedAt: timestamp(field(window, 'finishedAt')),
+      firstSample: number(field(window, 'firstSample')),
+      sampleCount: number(field(window, 'sampleCount')),
+    }));
+    let nextSample = 0;
+    let previousEnd = startedAt;
+    for (const window of samplingWindows) {
+      if (
+        window.startedAt < previousEnd ||
+        window.finishedAt <= window.startedAt ||
+        window.finishedAt > finishedAt ||
+        window.firstSample !== nextSample ||
+        !Number.isInteger(window.sampleCount) ||
+        window.sampleCount <= 0
+      )
+        throw new Error('Sampling windows do not describe ordered measured-frame ranges inside the attempt');
+      nextSample += window.sampleCount;
+      previousEnd = window.finishedAt;
+    }
+    if (!samplingWindows.length || nextSample !== samples.length) throw new Error('Sampling windows do not cover all raw frames');
+  } catch (error) {
+    issues.push(`Invalid sampling boundaries: ${String(error)}`);
+    samplingWindows = [];
+  }
   if (field(value, 'case') !== expectedCase) issues.push('Lighting case differs from the expected case');
   if (JSON.stringify(field(value, 'viewport')) !== '[1920,1080]' || field(value, 'lod') !== 0) issues.push('Not the standard 1080p LOD0 measurement');
   if (!text(field(value, 'gpuTiming')).startsWith('EXT_disjoint_timer_query_webgl2')) issues.push('GPU timings are not timer-query measurements');
@@ -205,6 +233,7 @@ export function inspectRun(value: unknown, expectedCase: string) {
     issues,
     startedAt,
     finishedAt,
+    samplingWindows,
     scene,
     hidden,
     disjoint,
@@ -249,6 +278,22 @@ export function benchmarkReport(directory: string) {
             captureFailure: null,
           };
         }
+      }).map((run, i) => {
+        const hostObservationIndices = loadEvidence.observations
+          .filter(
+            (observation) =>
+              observation.usable &&
+              observation.phase === `${label}:${light}:run-${i + 1}` &&
+              run.result?.samplingWindows.some(
+                (window) => observation.atMs !== null && observation.atMs >= window.startedAt && observation.atMs < window.finishedAt,
+              ),
+          )
+          .map((observation) => observation.index);
+        return {
+          ...run,
+          hostObservationIndices,
+          hostEvidenceIssue: hostObservationIndices.length ? null : "No usable competing-load observation during this run's measured sampling",
+        };
       });
       const range = (side: 'scene' | 'hidden', metric: 'cpuMsMedian' | 'cpuMsP95' | 'gpuMsMedian' | 'gpuMsP95' | 'drawCalls' | 'triangles') =>
         runRange(runs.map((run) => run.result?.[side][metric] ?? null));
@@ -260,19 +305,7 @@ export function benchmarkReport(directory: string) {
         drawCalls: range(side, 'drawCalls'),
         triangles: range(side, 'triangles'),
       });
-      const hostObservations = loadEvidence.observations.filter(
-        (observation) =>
-          observation.usable &&
-          runs.some(
-            (run, i) =>
-              observation.phase === `${label}:${light}:run-${i + 1}` &&
-              run.result &&
-              observation.atMs !== null &&
-              observation.atMs >= run.result.startedAt &&
-              observation.atMs <= run.result.finishedAt,
-          ),
-      );
-      const issues = hostObservations.length ? [] : ["No usable competing-load observation overlaps this lighting case's measured runs"];
+      const issues = runs.flatMap((run) => (run.hostEvidenceIssue ? [`${run.file}: ${run.hostEvidenceIssue}`] : []));
       const invalid = globalIssues.length > 0 || issues.length > 0 || runs.some((run) => !run.result || run.result.issues.length > 0);
       const budgetObservation = (side: 'scene' | 'hidden') => {
         const exceeds = runs.some((run) => (run.result?.[side].cpuMsP95 ?? Infinity) > BUDGET || (run.result?.[side].gpuMsP95 ?? Infinity) > BUDGET);
@@ -282,7 +315,7 @@ export function benchmarkReport(directory: string) {
         label,
         light,
         issues,
-        hostObservationIndices: hostObservations.map((observation) => observation.index),
+        hostObservationIndices: runs.flatMap((run) => run.hostObservationIndices),
         shownBudgetObservation: budgetObservation('scene'),
         hiddenBudgetObservation: budgetObservation('hidden'),
         scene: summary('scene'),

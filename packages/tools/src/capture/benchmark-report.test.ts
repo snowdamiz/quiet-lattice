@@ -8,6 +8,7 @@ function run(light = 'noon-lush', shownGpu = 12) {
   return {
     startedAt: '2026-11-02T01:00:00.000Z',
     finishedAt: '2026-11-02T01:00:10.000Z',
+    samplingWindows: [{ startedAt: '2026-11-02T01:00:02.000Z', finishedAt: '2026-11-02T01:00:08.000Z', firstSample: 0, sampleCount: 240 }],
     case: light,
     lod: 0,
     viewport: [1920, 1080],
@@ -48,7 +49,7 @@ describe('review benchmark: aggregation', () => {
     save('status.json', { errors: [], pageErrors: [{ label: 'current', errors: [] }] });
     save(
       'host-samples.json',
-      ['noon-lush', 'night-exotic', 'open-space'].map((light) => hostSample(`current:${light}:run-1`)),
+      ['noon-lush', 'night-exotic', 'open-space'].flatMap((light) => Array.from({ length: 5 }, (_, i) => hostSample(`current:${light}:run-${i + 1}`))),
     );
     for (const light of ['noon-lush', 'night-exotic', 'open-space']) {
       for (let i = 1; i <= 5; i++) save(`current-${light}-${i}.json`, run(light, gpu));
@@ -169,12 +170,15 @@ describe('review benchmark: aggregation', () => {
     save('host-samples.json', [hostSample('current:noon-lush:run-1', { at: '2026-11-02T00:59:59.000Z' })]);
     const report = benchmarkReport(root);
     expect(report.groups.every((group) => group.shownBudgetObservation === 'inconclusive')).toBe(true);
-    expect(report.groups[0].issues).toContain("No usable competing-load observation overlaps this lighting case's measured runs");
+    expect(report.groups[0].runs[0].hostEvidenceIssue).toBe("No usable competing-load observation during this run's measured sampling");
   });
 
   it("does not apply one lighting case's load sample to an unobserved case", () => {
     const { root, save } = directory();
-    save('host-samples.json', [hostSample('current:noon-lush:run-1')]);
+    save(
+      'host-samples.json',
+      Array.from({ length: 5 }, (_, i) => hostSample(`current:noon-lush:run-${i + 1}`)),
+    );
     expect(benchmarkReport(root).groups.map((group) => group.shownBudgetObservation)).toEqual(['within', 'inconclusive', 'inconclusive']);
   });
 
@@ -187,6 +191,45 @@ describe('review benchmark: aggregation', () => {
     }
     expect(benchmarkReport(root).groups[0]).toMatchObject({ shownBudgetObservation: 'within', hiddenBudgetObservation: 'exceeds' });
   });
+
+  it('keeps legacy raw results but refuses to infer sampling boundaries from attempt timestamps', () => {
+    const { root, save } = directory();
+    const { samplingWindows: _windows, ...legacy } = run();
+    save('current-noon-lush-1.json', legacy);
+    const group = benchmarkReport(root).groups[0];
+    expect(group.shownBudgetObservation).toBe('inconclusive');
+    expect(group.scene.gpuMsP95.n).toBe(5);
+    expect(group.runs[0].result?.issues).toEqual(expect.arrayContaining([expect.stringContaining('Invalid sampling boundaries:')]));
+    expect(group.runs[0].hostObservationIndices).toEqual([]);
+  });
+
+  it.each([
+    [],
+    [{ ...run().samplingWindows[0], sampleCount: 239 }],
+    [{ ...run().samplingWindows[0], firstSample: 1 }],
+    [{ ...run().samplingWindows[0], finishedAt: '2026-11-02T01:00:01.000Z' }],
+    [{ ...run().samplingWindows[0], finishedAt: '2026-11-02T01:00:11.000Z' }],
+    [run().samplingWindows[0], run().samplingWindows[0]],
+  ])('rejects absent, inconsistent or overlapping sampling-window evidence (%j)', (...samplingWindows) => {
+    const result = inspectRun({ ...run(), samplingWindows }, 'noon-lush');
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringContaining('Invalid sampling boundaries:')]));
+    expect(result.samplingWindows).toEqual([]);
+    expect(result.scene.frames).toBe(120);
+  });
+
+  it.each(['2026-11-02T01:00:01.000Z', '2026-11-02T01:00:08.000Z', '2026-11-02T01:00:09.000Z'])(
+    'excludes warm-up, the sampling end boundary and post-sampling observations (%s)',
+    (at) => {
+      const { root, save } = directory();
+      save(
+        'host-samples.json',
+        Array.from({ length: 5 }, (_, i) => hostSample(`current:noon-lush:run-${i + 1}`, { at })),
+      );
+      const group = benchmarkReport(root).groups[0];
+      expect(group.shownBudgetObservation).toBe('inconclusive');
+      expect(group.hostObservationIndices).toEqual([]);
+    },
+  );
 
   it('rejects profiling sessions as a source of budget evidence', () => {
     const { root, save } = directory();
