@@ -88,9 +88,10 @@ Which frame an entity belongs in is one rule, `selectFrame` in `@astra/shared/wo
 else the planet or moon with the smallest sphere that holds it; else the inertial frame. An entity stays in its frame until
 it is 5% beyond that frame's sphere (`FRAME_HYSTERESIS`), unless a smaller sphere inside it holds the entity (the
 Waystation's in its world's, a moon's in its planet's). Every tick a zone takes each entity's world position at the tick's
-time, picks its frame by this rule and, when it changed, re-expresses its pose with `setFrame` (velocity turned, never
-boosted), so its next snapshot carries the new frame id. A client sending its pose in the frame it picked by the same rule
-is never re-expressed but at the edge of a sphere, where its clock and the tick's differ. `frames.ts` also converts between
+time. For an entity held by movement authority, it preserves the frame and local pose the authority validated at the
+input's time: the snapshot's `ack` identifies that report, and a later tick never re-expresses it at a moving sphere edge
+(P1.E04.T07). Corrections likewise stay in the authority's frame. Other entities pick their frame by the shared rule each
+tick and, when it changed, re-express their pose with `setFrame` (velocity turned, never boosted). `frames.ts` also converts between
 wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `reframe`, `settleFrame`, `localPoseInto`/
 `framedPose` for the client's `FrameState`).
 
@@ -453,7 +454,10 @@ before applying it.
   (`MOVEMENT.time`), which keep the time credited between two inputs from running ahead of the real time that passed by
   more than a small fixed slack:
   - an input is credited with the time its client says passed since the one before, never less than none (a clock
-    stepped back costs that one input's time);
+    stepped back costs that one input's time). A fresh mover's first input uses its stamped elapsed time since join,
+    capped by real time; one input's existing 0.05 s allowance bootstraps an initially negative clock skew or an absent
+    stamp. Its arrival delay is not credited as movement. Unclaimed arrival time beyond the clock's bank remains owed
+    to later advancing stamps, so a first backlog still pays Charge for each second of accepted flight once;
   - and no more than its arrival gap, plus 0.05 s out of a 0.5 s bank that only real time no input claimed refills, plus
     0.05 s of what is owed: the real time its running clock left unclaimed in the last 10 s, as its inputs fell behind
     (a latency rise, a stall). So jitter of up to half a second cancels outright, a backlog drains however it arrives,
@@ -725,20 +729,22 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   and sends the pose it predicts, keeping what each input said (the last 64, about 3 s). A `correction` (or an operator's
   teleport) holds the mover at a pose as of input `seq`: the client rewinds there and replays what it did since, its
   motion in the frame re-based on the server's pose; where the server refused the mode the client sent (the pulse drive
-  on a Charge it holds empty), it is carried on from the server's pose at the server's velocity, or at its own when the
-  ship has left the drive the server still holds it on. A ship's turning since is replayed onto the server's orientation;
+  on a Charge it holds empty), it is carried on from the server's pose at the server's velocity. When the ship has left
+  the drive the server still holds it on, it keeps its observed engine motion and velocity, including acceleration
+  before the correction arrived. A ship's turning since is replayed onto the server's orientation;
   a walker keeps looking where its player looks. A mode it cannot take in its stride (set down, aboard as it got out, out
   as it boarded), and a correction to an input no longer kept, place it as a welcome does. All of it is re-expressed into
   the frame the client is in (DECISIONS P1.E03.T03: never adopt the server's frame). Each snapshot's account of the entity
   as of its `ack` is compared with what the client sent then, in the same frame: further than 0.5 m (or the pulse drive
   refused) is a correction the client never heard (lost on the way), taken the same way. The inputs sent before a
-  correction was taken are the old trajectory, which the server refuses quietly, and are not compared; nor is a pose the
-  server holds in another frame than it was sent in, re-expressed at the edge of a sphere at a tick a repeated or lost
-  snapshot leaves the client unable to name. A correction for an input of that old trajectory (a repeat, one the server
-  held back past its grace, an operator's teleport just after one) is never re-based on what that input sent, or its
-  offset would be applied twice: the server's pose is carried on at the mover's own velocity from that input's time, or
-  at the server's where the correction refuses the mode that input was sent in or takes the ship off the pulse drive,
-  and the orientation is kept. The rewind moves the mover at once, so its next input fits the server's pose; the drawn
+  correction was taken are the old trajectory, which the server refuses quietly, and are not compared. Authority-owned
+  poses retain their validated frame (§4), so moving sphere edges use the same 0.5 m bound. A correction snapshot in
+  another frame is compared with both frames at the acknowledged input's time; lost or repeated snapshots do not change
+  that time. Beside each immutable sent input, the bounded history keeps a replay pose updated by every correction.
+  A correction for an old-trajectory input (a repeat, one held beyond the server's grace, an operator's teleport just
+  after one) re-bases the actual motion since that updated pose, preserving acceleration without applying an earlier
+  offset twice. A refused mode replaces the affected replay stretch with the allowed velocity; later corrections can
+  replay acceleration after that replacement. The rewind moves the mover at once, so its next input fits the server's pose; the drawn
   ship, the chase camera and the walker's eye carry the difference as a `Blend` (an offset, its rate and a turn, in the
   frame's axes) that leaves from where and as fast as the mover was drawn and dies away critically damped with a time
   constant of 0.125 s, the chase camera's own follow, unless it is more than 10 m and half a second of the mover's
