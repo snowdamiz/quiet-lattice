@@ -10,6 +10,22 @@ import argparse, ast, datetime, hashlib, json, os, sys
 import bpy
 import numpy as np
 
+def assert_neutral_morphs():
+    """Reference-key values do not contribute to relative-key deformation."""
+    references = []
+    for obj in bpy.data.objects:
+        if obj.type != 'MESH' or not obj.data.shape_keys:
+            continue
+        keys = obj.data.shape_keys
+        assert keys.use_relative, f'{obj.name}: absolute shape keys require a separate neutral-pose check'
+        assert not obj.show_only_shape_key, f'{obj.name}: shape-key solo display is not a neutral bake pose'
+        active = [(key.name, key.value) for key in keys.key_blocks
+                  if key != keys.reference_key and abs(key.value) >= 1e-7]
+        assert not active, f'{obj.name}: bake requires neutral non-reference morphs;found {active}'
+        references.append({'object': obj.name, 'key': keys.reference_key.name,
+                           'value': keys.reference_key.value, 'excluded_reference': True})
+    return references
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', type=Path, required=True)
 parser.add_argument('--expected-input-sha256', required=True)
@@ -40,9 +56,7 @@ scene.render.threads = 2
 assert scene.get('review5_material_bake_pending')
 for group in groups:
     assert bpy.data.materials[f'UL_{group}'].get('review5_bake_pending'), f'{group} already completed;do not rebake it'
-for obj in bpy.data.objects:
-    if obj.type == 'MESH' and obj.data.shape_keys:
-        assert all(abs(key.value) < 1e-7 for key in obj.data.shape_keys.key_blocks), 'Bake requires the saved neutral morph pose'
+neutral_morph_references = assert_neutral_morphs()
 block = bpy.data.texts['authoring/lib/bake.py'].as_string()
 namespace = {'__name__': 'ulgani5_saved_bake_library'}
 exec(compile(block, 'saved-source/authoring/lib/bake.py', 'exec'), namespace)
@@ -60,6 +74,7 @@ textures.mkdir(parents=True)
 output.parent.mkdir(parents=True, exist_ok=True)
 report_path.parent.mkdir(parents=True, exist_ok=True)
 report = {'started_utc': utc(), 'pid': os.getpid(), 'pgid': os.getpgrp(), 'source': str(source), 'source_sha256': sha(source), 'source_validation_sha256': sha(args.source_validation), 'saved_bake_library_sha256': hashlib.sha256(block.encode()).hexdigest(), 'groups': groups, 'scope': 'Existing saved fifth geometry and authored material masks only;no authoring/LOD/export/render/browser stage.', 'threads': 2, 'resolution': {'base': 4096, 'roughness': 4096, 'normal': 4096, 'ao': 2048, 'packed_orm': 4096}, 'samples': {'base_emit': 1, 'roughness_emit': 1, 'normal': 4, 'ao': 32}, 'ao_floor_inherited_from_fourth': {'Skin': .6, 'SuitA': .4, 'SuitB': .4}, 'jpeg_quality': {'base_orm': 92, 'normal': 95}, 'reused_eye_frond_packed_image_sha256': protected_images, 'steps': [], 'status': 'baking'}
+report['neutral_morph_references'] = neutral_morph_references
 save_report = lambda: report_path.write_text(json.dumps(report, indent=2) + '\n')
 save_report()
 bake.cycles(scene, samples=16, gpu=True)
