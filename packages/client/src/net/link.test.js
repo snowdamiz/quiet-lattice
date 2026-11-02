@@ -3,6 +3,7 @@
 import { encodeClientMessage, encodeServerMessage, encodeSnapshot } from '@astra/shared/protocol';
 import { describe, expect, it } from 'vitest';
 import { linkConditioner } from './link.js';
+import { Net } from './Net.js';
 
 function fakeSocketClass() {
   const made = [];
@@ -66,6 +67,27 @@ describe('linkConditioner', () => {
     expect(got).toEqual([]);
     at(250);
     expect(got).toEqual([pong(1), pong(2), 'closed']);
+  });
+
+  it('counts actual zone-tagged Net inputs and reordered fields only once they reach the wire', () => {
+    const { ws, wire, at, link } = setup();
+    const net = new Net({ url: 'ws://test', token: 'tok', characterId: 'c1' });
+    net.ws = ws;
+    net.state = 'joined';
+    net.zone = { id: 'sys:0', systemSeed: 1 };
+    net.input = () => ({ mode: 'ship', pose, buttons: 0, time: 1 });
+    expect(net.sendInput(0)).toBe(true);
+    expect(link.stats.released).toBe(0);
+    at(100);
+    expect(JSON.parse(wire.sent[0])).toMatchObject({ t: 'input', zone: 'sys:0', seq: 1 });
+    expect(link.stats.released).toBe(1);
+    const { t, ...rest } = net.lastInput;
+    ws.send(JSON.stringify({ ...rest, seq: 2, t }));
+    at(200);
+    expect(link.stats.released).toBe(2);
+    const snap = encodeSnapshot({ tick: 1, time: 1, ack: 2, full: true, entities: [], removed: [] });
+    wire.onmessage({ data: snap });
+    expect(link.stats.answered).toBe(link.stats.released);
   });
 
   it('counts the newest input a snapshot answers as it comes over the wire, before it is held', () => {

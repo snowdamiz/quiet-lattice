@@ -60,6 +60,7 @@ type Vec3 = [number, number, number];
 type Quat = [number, number, number, number];
 export type EntityKind = NonNullable<EntityState['kind']>;
 type InputMessage = Extract<ClientMessage, { t: 'input' }>;
+type MoveMode = InputMessage['mode'];
 
 /** An entity's wire fields: everything an EntityState carries but its id and `clear`. */
 export type EntityFields = Omit<EntityState, 'id' | 'clear'>;
@@ -94,10 +95,10 @@ interface ZoneFrame extends Frame {
 
 /**
  * In a zone without movement authority (tests and tools that drive raw poses) a client's pose is taken as sent, clamped
- * only to magnitudes no honest client reaches: 1e11 m from its frame's origin (a thousand times a system's reach; deep
- * space is another zone, P1.E04.T04) and 1e9 m/s, and the entity is marked unvalidated.
+ * to the protocol's interstellar bounds (1e18 m and 1e16 m/s), and the entity is marked unvalidated. Real sessions
+ * must also pass movement authority before any pose is applied.
  */
-export const INPUT_LIMITS = { maxDistance: 1e11, maxSpeed: 1e9 } as const;
+export const INPUT_LIMITS = { maxDistance: 1e18, maxSpeed: 1e16 } as const;
 
 /** Where a zone sends a session's snapshots: the gateway's Session, or a stand-in in tests and the bench. */
 export interface ZoneViewer {
@@ -413,6 +414,21 @@ export class Zone {
     return true;
   }
 
+  /** Transfer a live viewer; request numbering and authority survive, snapshots start fresh. */
+  transfer(viewer: ZoneViewer, target: Zone, pose: Pose, mode: MoveMode, now: number, warp = false): number {
+    const v = this.views.get(viewer);
+    if (!v || target.views.has(viewer)) throw new Error('invalid zone handoff');
+    const e = this.mustGet(v.entityId);
+    const entityId = target.spawn({ ...e.fields, kind: 'player', ...pose, mode, party: e.party });
+    target.mustGet(entityId).input = e.input && structuredClone(e.input);
+    if (this.movement && target.movement) this.movement.transfer(e.id, target.movement, entityId, pose, mode, now, warp);
+    this.combat.transfer(e.id, target.combat, entityId);
+    target.views.set(viewer, { ...v, entityId, history: new SnapshotHistory(), interest: [] });
+    this.views.delete(viewer);
+    this.despawn(e.id);
+    return entityId;
+  }
+
   /** Removes the session and its entity. False when it was not here. */
   leave(viewer: ZoneViewer, how: ZoneLeave = 'left'): boolean {
     const v = this.views.get(viewer);
@@ -446,6 +462,10 @@ export class Zone {
   sees(viewer: ZoneViewer, id: number): boolean {
     const v = this.views.get(viewer);
     return !!v && sortedHas(v.interest, id);
+  }
+
+  inputSeqOf(viewer: ZoneViewer): number {
+    return this.views.get(viewer)?.lastInputSeq ?? 0;
   }
 
   /** The session's snapshot history (what it holds per tick sent, and what it acknowledged). */

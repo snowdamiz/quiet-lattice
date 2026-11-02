@@ -1,5 +1,5 @@
 // The world service against the dockerised Postgres and Redis: the shard's row is created on first boot and its clock
-// carries on across restarts; the state is mirrored to Redis; a client that joins is sent `world` right after
+// carries on across restarts; the state is mirrored to Redis; a client that joins is sent `world` right before
 // `welcome`, and again when the world changes. Each test runs a shard of its own, so changing it touches nothing else.
 import { PROTOCOL_VERSION, WorldState as WorldMessageSchema } from '@astra/shared/protocol';
 import { darkAt } from '@astra/shared/seasons';
@@ -113,7 +113,7 @@ describe('world service', () => {
     }
   });
 
-  it('sends a joining client `world` right after `welcome`, and again whenever the world changes', async () => {
+  it('sends a joining client `world` right before `welcome`, and again whenever the world changes', async () => {
     const server = await startTestServer({}, { shard: uniqueShard() });
     try {
       const acct = await newAccount(server);
@@ -122,13 +122,13 @@ describe('world service', () => {
       s.send({ t: 'hello', version: PROTOCOL_VERSION, token: acct.token });
       s.send({ t: 'join', characterId: character.id });
       await waitFor(() => s.received.some((m) => m.t === 'quests'), 5000, 'quests');
-      // `world` comes right after `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `meters`
+      // `world` comes right before `welcome`; the character's `inventory` (P1.E06.T04), `skills` (P1.E07.T01), `meters`
       // (P1.E07.T02), `abilities` (P1.E07.T03), `recipes` (P1.E13.T05), `reputation` (P2.E18.T01), season `awards`
       // (P2.E22.T03), `party` (P1.E15.T01) and quest state (P1.E09.T01) follow, the last after the news that a new character
       // is given First Jobs
       expect(s.received.map((m) => m.t)).toEqual([
-        'welcome',
         'world',
+        'welcome',
         'inventory',
         'skills',
         'meters',
@@ -141,14 +141,14 @@ describe('world service', () => {
         'event',
         'quests',
       ]);
-      const [welcome, world] = s.received.splice(0) as [
-        Extract<(typeof s.received)[number], { t: 'welcome' }>,
+      const [world, welcome] = s.received.splice(0) as [
         Extract<(typeof s.received)[number], { t: 'world' }>,
+        Extract<(typeof s.received)[number], { t: 'welcome' }>,
       ];
       expect(WorldMessageSchema.parse(world)).toEqual(world);
       expect(world).toMatchObject({ season: 1, count: 500, edgeX: EDGE_X, tiers: galaxyTiers(EDGE_X).map((t) => t.tier), dark: [] });
       expect(world).toMatchObject({ seasonStart: server.world.state().seasonStart, seasonEnd: server.world.state().seasonEnd, opening: { from: null } });
-      expect(world.serverTime).toBeGreaterThanOrEqual(welcome.serverTime);
+      expect(welcome.serverTime).toBeGreaterThanOrEqual(world.serverTime);
 
       // a socket that has signed in but joined no character is not told
       const other = await newAccount(server);

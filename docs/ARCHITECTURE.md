@@ -139,9 +139,9 @@ wire poses and the kinematics' shapes (`frameKeyOf`/`frameIdOf`, `framePose`, `r
   backlog of a stall. Chat, invites, raising beacons, mining hits, shots, analyses, fabricator and name requests have
   smaller limits of their own (§13, §18, §20, §21, §22, §23, §25).
 - **Server → client:** `welcome {accountId, character, entityId, serverTime, zone, pose, mode}`, `refused {code, reason}`,
-  `correction {seq, pose, mode}`, `zone {zone, pose}` (handoff), `event {event}` with kinds `combat`, `quest`, `chat`,
+  `correction {seq, pose, mode}`, `zone {zone, entityId, pose, mode, seq, reason}` (handoff, protocol 24), `event {event}` with kinds `combat`, `quest`, `chat`,
   `loot`, `xp` (§20), `cast` (§28), `notice` (toasts), `party` (party news), `rank` and `title` (§24), `world {season, seasonStart,
-  seasonEnd, opening, count, edgeX, tiers, serverTime}` (sent right after `welcome` and to every joined session whenever
+  seasonEnd, opening, count, edgeX, tiers, serverTime}` (sent immediately before `welcome` and to every joined session whenever
   the world service's state changes; `tiers` is each galaxy system's tier by index; protocol 18's `seasonStart`,
   `seasonEnd` and `opening` are the season's world times and the map it opened with, §27), `pong`, `inventory {seq,
   inventory, error?}`, `skills {seq, skills, error?}` (§14), `meters {meters}` (§19), `party {party}` (the
@@ -279,7 +279,31 @@ budget is 10 ms p95 at 200 entities), and every ASTRA_METRICS_S (10 s) the manag
 and skipped since the last report, zones loaded and awake, sessions) and each awake zone (`zone metrics`, with its zone
 id: tick p50/p95/max over the last 400 ticks, entities, sessions, overruns, its fauna's worlds, creatures and cells) at
 info, as the server's other logs are: pino JSON lines that carry a `zone` id wherever a zone is concerned. Entities in deep space between systems belong to a deep-space zone keyed by the
-nearest system (P1.E04.T04).
+nearest system (`deep:<index>`, P1.E04.T04). Its inertial coordinates remain metres from that nearest
+star; the browser independently rebases its draw origin and uses a translating inertial frame for input, corrections
+and remote interpolation. Deep zones have no fauna. Their saved pose uses the existing system index and inertial
+position; a saved inertial pose beyond LEAVE restores into the deep zone on rejoin. The zone and persistence bounds
+now match the existing wire bounds, 1e18 m and 1e16 m/s: the former 1e11 m cap truncated an interstellar cruise.
+Movement authority still checks each flight against elapsed time, ship caps, frames and drive clearance.
+
+After an input passes movement authority, the manager follows its position: outside LEAVE (6e9 m), a system hands
+its player to the nearest system's deep zone; inside ENTER (4.5e9 m), that deep zone hands it to the star system.
+Crossing the nearest-star boundary moves it between deep zones. A transfer moves the live movement authority
+(clock, input fence, correction history, current ship and nodes, jams) and combat pools into exactly one new entity,
+removes the old entity, refreshes the party's route, and captures persistence with reason `handoff`. It does not
+reload a character or reset inventory, skill, ability or meter state. Snapshot baselines and remote entity buffers
+start afresh at `zone`, while session request numbers keep increasing. Inputs and acks carry their source zone id;
+in-flight inputs from the immediately previous flight origin are translated before validation, while old warp inputs
+and acknowledgements for another zone are ignored.
+
+Warp sends `warp {seq, system}`. The gateway checks a real destination other than the current system and the same
+flying/outside-atmosphere eligibility as the map, then consumes one `warp_cell` from the authoritative inventory.
+There is no ship-data range limit in the current map or hull definitions, so handoff adds none. A successful paid
+jump gives the client the server-selected approach above the destination Waystation; it retains the existing warp
+tunnel and swaps scenes at its midpoint. The legacy station-relative approach (0, 6000, 14000) lies outside its
+4500 m sphere, so `settleFrame` re-expresses the same physical pose in the proper world/inertial frame at transfer
+time; the first post-warp input follows the same frame-selection and speed rules as ordinary flight. A refused request returns `warp {seq, reason}` and changes no location.
+Replayed warp request numbers cannot spend another cell.
 
 The radius is the class of the entity seen, not of the viewer: a ship, or a player in any mode but `foot` (docked and
 landed players sit in their ships), is a ship; a player on foot, an NPC or a prop is a walker; a mob is a mob; loot and
@@ -674,8 +698,8 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   (`Game.inputSample`): the predicted pose of the ship or, on foot, of the walker (its quaternion built from its
   heading), in the frame the client picked; the mode (`foot`; `pulse`; set down on a Waystation pad `docked`, elsewhere
   `landed`; anything else a ship does `ship`: flying, taking off, landing, the docking autopilot); and the buttons (`boost`
-  while boosting, which movement authority reads). There is no input while the client is outside its zone's system or
-  between the stars, until zone handoff (P1.E04.T04).
+  while boosting, which movement authority reads). Between the stars, inertial input is transformed from the floating
+  draw origin to the zone origin. Only the warp animation holds input until the destination scene is installed.
 - **Time.** `ClockSync` (`clock.js`) estimates the server's clock from `welcome` and a `ping` every 2 s: the offset of the
   shortest round trip of the last eight. World time (`game.time`, §3) starts at it on the first welcome, before any input;
   from then it never goes back (`Game.advanceClock`), because movement authority judges each input at the time it
@@ -909,9 +933,11 @@ the map and the sky draw stands 3.1 million ly out and would not visibly move by
 (20,000) light years for each (`wallX(edge)`, `edgeX(y, z, edge)` in `@astra/shared/world`; the wall stays beyond the
 farthest galaxy at the most the Count and an opening move it, 20 ly, 400,000 ly of wall). `EdgeOfSpace.update(…, edge)` slides
 every part of the wall with one uniform; `GalaxyMap` moves the selectable Edge, its label anchors and its lens with it;
-`UniverseSky` redraws the whole sky when the Edge moves; `Universe.clearance` and the edge compass measure to it. Until
-P1.E04.T04 lands the client does not rebuild a system whose tier changed (its dens and node layers follow the tier of the
-Edge it was built at), but the map, the sky, the compass and the tier a client reads from `world.tiers` follow it at once.
+`UniverseSky` redraws the whole sky when the Edge moves; `Universe.clearance` and the edge compass measure to it.
+`Universe` reads `world.tiers` before the first playable system build. When its current system's tier changes, it
+rebuilds the same system's den pads and node layers without a loading screen, retains local poses in equivalent new
+frames, reserves the player's dock pad before NPC traffic attaches, and drops any prepared system whose tier is stale.
+The map, sky and compass follow the same message.
 
 Persistence: the shard's row holds `count`, `count_day` (the last day rolled) and `burn_step` (the last burn tick
 applied); votes go to `count_votes`, rolls to `count_days`. The service gathers new votes, rolls and the meter's position
@@ -1253,8 +1279,8 @@ as Bearer tokens).
   character held by the save of its leave is waited for (up to 3 s) rather than refused. `mute` and the world commands
   need the running server. `set-quest-step` goes through the quest runtime's `QuestAdmin` (§17, `quests/admin.ts`): in
   play `setStep` moves the quest (pushed `quests`), out of play `setStepStored` moves it in the stored log.
-- **Teleporting a character in play to another system** (until zone handoff, P1.E04.T04, replaces it with a real
-  handoff): the client cannot follow a `zone` message yet, so the server takes the character out of play and saves it at
+- **Operator teleport to another system** keeps its existing save-and-reconnect path, separate from flight and paid
+  warp handoff (§6): the server takes the character out of play and saves it at
   the new placement through the same edit as one out of play (`persistence.edit(…, {leaving: session})`: its leave is
   captured and written, then the pose, its joins held throughout), takes its entity out of its zone, stops handling the
   session's messages (its inputs in the old system's frames are no strikes) and closes the socket without a refusal
@@ -1835,8 +1861,8 @@ gate is recipes and materials, not a skill tree.
   applies the result as one change (`InventoryService.transact`, pushed once as `inventory` state). Short of a material
   it is `materials`; when the output does not fit even in the room the materials leave, `no_room`; either way nothing is
   used up. Crafts made are logged at debug, lessons at info.
-- **Using what is made.** Warp cells are what the client's warp spends (`Inventory.warpCells`; the warp itself stays the
-  client's until zone handoff, P1.E04.T04). The fabricator replaces the trade panel's 1,800-unit warp cell (DESIGN
+- **Using what is made.** The gateway consumes one authoritative warp cell for each accepted warp (§6);
+  `Inventory.warpCells` displays the server inventory. The fabricator replaces the trade panel's 1,800-unit warp cell (DESIGN
   15.7), which is gone (`pnpm gate:removed` holds it to this task): the client mines through the server now
   (P1.E13.T06), so the beam's carbon and ferrite reach the fabricator; before it, online players got warp cells only from
   the starting kit and crash sites. The rest of the demo's `SHOP`

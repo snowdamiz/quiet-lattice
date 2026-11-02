@@ -58,3 +58,9 @@ export function buttonsOf(b) {
   for (const k of Object.keys(Buttons)) if (b[k]) m |= Buttons[k];
   return m;
 }
+
+/** The zone's inertial origin can differ from the client's floating draw origin. */
+export function networkFrameOf(game, id) {
+  if (id === null && game.net?.zone) return game.universe.networkFrame();
+  return frameOfId(game.system, game.station, id);
+}

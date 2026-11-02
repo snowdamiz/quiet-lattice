@@ -68,6 +68,7 @@ const skills: SkillView = {
 const clientSamples: ClientMessage[] = [
   { t: 'hello', version: PROTOCOL_VERSION, token: 'jwt' },
   { t: 'join', characterId: 'c1' },
+  { t: 'warp', seq: 1, system: 2 },
   { t: 'input', seq: 7, time: 12.5, mode: 'ship', pose, buttons: 3, aim: [0, 0, 0, 1] },
   { t: 'cast', seq: 8, time: 3600.5, node: 'pull', slot: 2, frame: '424242:3', aim: [0, 0, -1], target: 12 },
   { t: 'interact', target: 'terminal:3' },
@@ -176,8 +177,9 @@ const worldEvent = {
 const serverSamples: ServerMessage[] = [
   { t: 'welcome', accountId: 'a1', character, entityId: 5, serverTime: 3600.25, zone: { id: 'sys:0', systemSeed: 424242 }, pose, mode: 'docked' },
   { t: 'refused', code: 'version', reason: 'reload the page' },
+  { t: 'warp', seq: 2, reason: 'fuel' },
   { t: 'correction', seq: 7, pose, mode: 'ship' },
-  { t: 'zone', zone: { id: 'sys:1', systemSeed: 77 }, pose: { ...pose, frame: null } },
+  { t: 'zone', zone: { id: 'sys:1', systemSeed: 77 }, entityId: 3, pose: { ...pose, frame: null }, mode: 'ship', seq: 42, reason: 'flight' },
   { t: 'pong', id: 1, clientTime: 1000.5, serverTime: 3600.3 },
   {
     t: 'world',
@@ -302,8 +304,8 @@ describe('protocol: version', () => {
   // (P2.E22.T03); 19: fabricators (P2.E20.T01); 20: abilities (P1.E07.T03); 21: the Edge's world message (P2.E22.T02); 22: shared
   // casts (P1.E07.T06); 23: the suit's meters (P1.E06.T06). A branch that changes a message bumps the
   // version, adds its line to the history under PROTOCOL_VERSION and updates this.
-  it('is version 23, and the history under the constant names each version up to it exactly once', () => {
-    expect(PROTOCOL_VERSION).toBe(23);
+  it('is version 24, and the history under the constant names each version up to it exactly once', () => {
+    expect(PROTOCOL_VERSION).toBe(24);
     const source = MESSAGES_SOURCE;
     const history = [...source.matchAll(/^\/\/ (\d+): .+$/gm)].map((m) => ({ v: Number(m[1]), line: m[0] }));
     for (const { v, line } of history) expect(line, `history line for ${v}`).toMatch(/\(P\d\.E\d{2}\.T\d{2}\)$/);

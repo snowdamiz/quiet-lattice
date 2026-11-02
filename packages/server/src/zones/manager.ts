@@ -22,7 +22,7 @@
 import { performance } from 'node:perf_hooks';
 import type { ClientMessage, PeopleId, Pose, ServerMessage } from '@astra/shared/protocol';
 import type { ShipLoadout } from '@astra/shared/ships';
-import { tierOfGalaxySystem, type SystemDescription, type Tier } from '@astra/shared/world';
+import { Galaxy, GALAXY_SEED, LY, settleFrame, systemPoses, tierOfGalaxySystem, type SystemDescription, type Tier } from '@astra/shared/world';
 import { DEFAULT_LOADOUT } from '../inventory/service.ts';
 import type { CombatHooks } from '../combat/zone.ts';
 import type { MoverMeters } from '../sim/movement/index.ts';
@@ -31,6 +31,10 @@ import { systemZoneId } from '../world/home.ts';
 import type { TierFlip, WorldSource } from '../world/service.ts';
 import { describeZoneSystem } from './system.ts';
 import { Zone, type InputResult, type ZoneLeave, type ZoneLog, type ZoneMetrics, type ZoneViewer } from './zone.ts';
+
+const LEAVE = 6e9;
+const ENTER = 4.5e9;
+const galaxy = new Galaxy(GALAXY_SEED);
 
 type MoveMode = Extract<ServerMessage, { t: 'welcome' }>['mode'];
 
@@ -148,6 +152,7 @@ export class ZoneManager {
   private metricsSkipped = 0;
   private readonly slots = new Map<string, Slot>();
   private readonly byViewer = new Map<ZoneViewer, Slot>();
+  private readonly previous = new WeakMap<ZoneViewer, Zone>();
   private timer: NodeJS.Timeout | undefined;
   private nextAt: number;
   private lastTime = -Infinity;
@@ -198,8 +203,8 @@ export class ZoneManager {
   }
 
   /** The zone hosting galaxy system `systemIndex`, loaded and woken. */
-  open(systemIndex: number): Zone {
-    const id = systemZoneId(systemIndex);
+  open(systemIndex: number, deep = false): Zone {
+    const id = deep ? `deep:${systemIndex}` : systemZoneId(systemIndex);
     let slot = this.slots.get(id);
     if (!slot) {
       const tier = this.world ? this.world.tierOf(systemIndex) : tierOfGalaxySystem(systemIndex);
@@ -211,7 +216,7 @@ export class ZoneManager {
         onViewerRemoved: (viewer) => this.removed(viewer, zone),
         movement: this.movement,
         meters: this.moverMeters,
-        fauna: { tier },
+        fauna: deep ? false : { tier },
         combat: () => this.combat,
       });
       slot = { zone, tier, asleep: false, emptySince: null, overruns: 0, overrunsLogged: 0, lastOverrunLog: -Infinity };
@@ -235,7 +240,7 @@ export class ZoneManager {
     let fellBack: string | undefined;
     if (at) {
       try {
-        const zone = this.open(at.system);
+        const zone = this.open(at.system, at.pose.frame === null && Math.hypot(...at.pose.pos) > LEAVE);
         if (zone.hasFrame(at.pose.frame)) return this.enter(viewer, character, zone, at.pose, at.mode, at.parked);
         fellBack = `frame ${at.pose.frame} is not in system ${at.system}`;
       } catch (err) {
@@ -273,6 +278,7 @@ export class ZoneManager {
     const slot = this.byViewer.get(viewer);
     if (!slot) return false;
     this.byViewer.delete(viewer);
+    this.previous.delete(viewer);
     const left = slot.zone.leave(viewer, how);
     if (slot.zone.sessionCount === 0) slot.emptySince ??= this.mono();
     return left;
@@ -284,7 +290,68 @@ export class ZoneManager {
   }
 
   input(viewer: ZoneViewer, msg: Extract<ClientMessage, { t: 'input' }>): InputResult {
-    return this.byViewer.get(viewer)?.zone.input(viewer, msg, this.clock.now()) ?? 'unknown';
+    const zone = this.zoneOf(viewer);
+    if (!zone) return 'unknown';
+    if (msg.zone && msg.zone !== zone.id) {
+      const old = this.previous.get(viewer);
+      if (!old || old.id !== msg.zone || msg.pose.frame !== null) return 'unknown';
+      msg = { ...msg, pose: this.translate(msg.pose, old.systemIndex, zone.systemIndex) };
+    }
+    return zone.input(viewer, msg, this.clock.now());
+  }
+
+  /** A validated flight crosses system boundaries, never a client-supplied destination. */
+  follow(viewer: ZoneViewer): (Joined & { seq: number }) | null {
+    const zone = this.zoneOf(viewer);
+    const id = zone?.entityOf(viewer);
+    const entity = id === undefined ? undefined : zone?.entity(id);
+    if (!zone || !entity || entity.fields.frame !== null) return null;
+    const f = entity.fields;
+    if (!f.pos || !f.quat || !f.vel || (f.mode !== 'ship' && f.mode !== 'pulse')) return null;
+    if (!zone.id.startsWith('deep:') && Math.hypot(...f.pos) <= LEAVE) return null;
+    const origin = galaxy.systems[zone.systemIndex]!;
+    const near = galaxy.nearest({ x: origin.x + f.pos[0] / LY, y: origin.y + f.pos[1] / LY, z: origin.z + f.pos[2] / LY });
+    if (!near.s) return null;
+    const target = this.open(near.s.id, near.d * LY >= ENTER);
+    if (zone === target) return null;
+    const pose = this.translate({ frame: null, pos: f.pos, quat: f.quat, vel: f.vel }, zone.systemIndex, target.systemIndex);
+    return this.transfer(viewer, zone, target, pose, f.mode, false);
+  }
+
+  /** Server-selected arrival, paid by the gateway before committing this transfer. */
+  warpTarget(viewer: ZoneViewer, system: number): { zone: Zone; pose: Pose } | 'target' | 'mode' {
+    const source = this.zoneOf(viewer);
+    const id = source?.entityOf(viewer);
+    if (!galaxy.systems[system] || !source || system === source.systemIndex) return 'target';
+    if (id === undefined || !source.movement?.canWarp(id)) return 'mode';
+    const zone = this.open(system);
+    // The existing warp view looks from (0, 6000, 14000) toward (0, -9000, 0).
+    const pitch = Math.atan2(15000, 14000) / 2;
+    const pose: Pose = { frame: zone.stationFrame, pos: [0, 6000, 14000], quat: [-Math.sin(pitch), 0, 0, Math.cos(pitch)], vel: [0, 0, 0] };
+    return { zone, pose: settleFrame(zone.system, systemPoses(zone.system, this.clock.now()), pose) };
+  }
+
+  warp(viewer: ZoneViewer, target: { zone: Zone; pose: Pose }): Joined & { seq: number } {
+    const source = this.zoneOf(viewer);
+    if (!source) throw new Error('warp without a zone');
+    return this.transfer(viewer, source, target.zone, target.pose, 'ship', true);
+  }
+
+  private translate(pose: Pose, from: number, to: number): Pose {
+    const a = galaxy.systems[from]!;
+    const b = galaxy.systems[to]!;
+    return { ...pose, pos: [pose.pos[0] + (a.x - b.x) * LY, pose.pos[1] + (a.y - b.y) * LY, pose.pos[2] + (a.z - b.z) * LY] };
+  }
+
+  private transfer(viewer: ZoneViewer, source: Zone, target: Zone, pose: Pose, mode: MoveMode, warp: boolean): Joined & { seq: number } {
+    const seq = source.inputSeqOf(viewer);
+    const entityId = source.transfer(viewer, target, pose, mode, this.clock.now(), warp);
+    this.byViewer.set(viewer, this.slots.get(target.id)!);
+    if (warp) this.previous.delete(viewer);
+    else this.previous.set(viewer, source);
+    if (source.sessionCount === 0) this.slots.get(source.id)!.emptySince ??= this.mono();
+    this.log?.info({ session: viewer.id, from: source.id, to: target.id, entityId, warp }, 'zone handoff');
+    return { zone: target, entityId, pose, mode, seq };
   }
 
   ack(viewer: ZoneViewer, tick: number): boolean {

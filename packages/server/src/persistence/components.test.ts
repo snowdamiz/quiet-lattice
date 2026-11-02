@@ -215,8 +215,8 @@ describe('character components', () => {
     expect(poseProblem(ok, 1000)).toBeNull();
     expect(poseProblem({ ...ok, system: 1000 }, 1000)).toMatch(/no system/);
     expect(poseProblem({ ...ok, pose: { ...ok.pose, frame: stationFrame(HOME === 0 ? 1 : 0) } }, 1000)).toMatch(/not in system/);
-    expect(poseProblem({ ...ok, pose: { ...ok.pose, pos: [2e11, 0, 0] } }, 1000)).toMatch(/position/);
-    expect(poseProblem({ ...ok, pose: { ...ok.pose, vel: [0, 2e9, 0] } }, 1000)).toMatch(/velocity/);
+    expect(poseProblem({ ...ok, pose: { ...ok.pose, pos: [2e18, 0, 0] } }, 1000)).toMatch(/position/);
+    expect(poseProblem({ ...ok, pose: { ...ok.pose, vel: [0, 2e16, 0] } }, 1000)).toMatch(/velocity/);
     expect(poseProblem({ ...ok, mode: 'ship', pose: { ...ok.pose, frame: null, pos: [1e9, 0, 0] } }, 1000)).toBeNull();
     // and where movement authority would not accept it (P1.E03.T04)
     expect(poseProblem({ ...ok, pose: { ...ok.pose, pos: [0, 2.4, 0] } }, 1000)).toMatch(/^docked/);

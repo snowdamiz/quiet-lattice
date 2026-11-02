@@ -66,8 +66,11 @@ export class SolarSystem {
     }
   }
 
-  update(t) {
-    for (const b of this.bodies) b.update(t);
+  update(t, origin = null) {
+    for (const b of this.bodies) {
+      b.update(t);
+      if (b === this.star && origin) b.position.copy(origin);
+    }
   }
 
   nearestPlanet(world) {

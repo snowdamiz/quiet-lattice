@@ -88,6 +88,7 @@ export class Net {
     this.stats = { dropped: 0, unsendable: 0, rejectedTicks: 0, unappliedTicks: 0 };
     /** shots sent this session (numbered from 1), and what the server says they and others' did (ARCHITECTURE §20) */
     this.fireSeq = 0;
+    this.warpSeq = 0;
     this.combat = new CombatFeed(this);
     /** The call-for-aid beacons (beacons.js): the shard's list while watching, the character's own, and the requests. */
     this.beacons = new Beacons(this);
@@ -216,6 +217,13 @@ export class Net {
     switch (m.t) {
       case 'welcome':
         return this.welcomed(m);
+      case 'zone':
+        this.zone = m.zone;
+        this.entityId = m.entityId;
+        this.store.reset();
+        this.cancelAck();
+        this.lastAckAt = -Infinity;
+        break;
       case 'inventory': {
         // the state sent right after welcome starts the session's requests over (Inventory.reset)
         const first = this.inventoryAfterWelcome;
@@ -251,6 +259,7 @@ export class Net {
     this.store.reset();
     this.inputSeq = 0;
     this.fireSeq = 0;
+    this.warpSeq = 0;
     this.lastInput = null;
     this.lastInputAt = -Infinity;
     this.cancelAck();
@@ -296,7 +305,7 @@ export class Net {
       }, wait);
       return;
     }
-    if (this.raw({ t: 'ack', tick: this.ackDue })) this.lastAckAt = t;
+    if (this.raw({ t: 'ack', tick: this.ackDue, zone: this.zone?.id })) this.lastAckAt = t;
     this.ackDue = null;
   }
 
@@ -361,7 +370,7 @@ export class Net {
     const sample = this.input();
     if (!sample) return false;
     const time = Math.max(this.lastInput?.time ?? 0, sample.time ?? this.clock.now(t) ?? 0);
-    const msg = { t: 'input', seq: this.inputSeq + 1, ...sample, time };
+    const msg = { t: 'input', zone: this.zone?.id, seq: this.inputSeq + 1, ...sample, time };
     if (!this.raw(msg)) return false;
     this.inputSeq = msg.seq;
     this.lastInput = msg;

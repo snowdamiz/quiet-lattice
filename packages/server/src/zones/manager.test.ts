@@ -2,11 +2,12 @@
 // catches up a little and skips the rest; overruns are logged; tick metrics are logged per zone at an interval; inputs
 // and acks reach the right zone; each zone's tier follows the world service.
 import { edgeAt } from '@astra/shared/seasons';
-import { EDGE_X, galaxyTiers, tierOfGalaxySystem } from '@astra/shared/world';
+import { Galaxy, GALAXY_SEED, LY, EDGE_X, galaxyTiers, tierOfGalaxySystem } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
 import { systemSeed } from '../world/home.ts';
 import { WorldService } from '../world/service.ts';
 import { newShardRecord } from '../world/shard.ts';
+import { DEFAULT_LOADOUT } from '../inventory/service.ts';
 import { padPose } from '../sim/movement/index.ts';
 import { ZoneManager, type ZoneCharacter, type ZoneManagerOptions } from './manager.ts';
 import { INPUT_LIMITS, type ZoneViewer } from './zone.ts';
@@ -236,7 +237,7 @@ describe('ZoneManager', () => {
       buttons: 3,
     });
 
-    expect(zones.input(s, input(1, { pos: [1e15, 0, 0], vel: [0, -1e12, 0], quat: [0, 0, 0, 1.005] }))).toBe('ok');
+    expect(zones.input(s, input(1, { pos: [1e21, 0, 0], vel: [0, -1e19, 0], quat: [0, 0, 0, 1.005] }))).toBe('ok');
     const e = zone.entity(entityId)!;
     expect(e.fields.pos).toEqual([INPUT_LIMITS.maxDistance, 0, 0]);
     expect(e.fields.vel).toEqual([0, -INPUT_LIMITS.maxSpeed, 0]);
@@ -379,5 +380,75 @@ describe('ZoneManager', () => {
     expect(ticks).toBeLessThanOrEqual(Math.floor(elapsed / 20));
     await new Promise((r) => setTimeout(r, 60));
     expect(zone.tick).toBe(ticks);
+  });
+});
+
+describe('live zone handoff', () => {
+  it('crosses LEAVE on validated flight, preserves live equipment and health, and retains the input fence', () => {
+    const { zones, advance } = setup();
+    const viewer = new Sink(71);
+    const pose = {
+      frame: null,
+      pos: [6e9 - 1, 0, 0],
+      quat: [0, -Math.SQRT1_2, 0, Math.SQRT1_2],
+      vel: [100, 0, 0],
+    } satisfies import('@astra/shared/protocol').Pose;
+    const first = zones.join(viewer, character(0), { system: 0, pose, mode: 'ship' });
+    const ship = { ...DEFAULT_LOADOUT.ship!, hull: 'swift' } satisfies import('@astra/shared/ships').ShipLoadout;
+    zones.retune(viewer, { ship, skills: ['second_skin'] });
+    first.zone.combat.applyDamage(null, first.entityId, { base: 120, kind: 'attack' });
+    const health = first.zone.combat.playerHealth(first.entityId)!;
+    expect(health.hull).toBeLessThan(health.hullMax);
+    advance(50);
+    const input = {
+      t: 'input',
+      seq: 1,
+      time: 5e6 + 0.05,
+      zone: first.zone.id,
+      mode: 'ship',
+      pose: { ...pose, pos: [6e9 + 4, 0, 0] },
+      buttons: 0,
+    } satisfies import('@astra/shared/protocol').ClientMessage;
+    expect(zones.input(viewer, input)).toBe('ok');
+    const next = zones.follow(viewer)!;
+    expect(next.zone.id).toBe('deep:0');
+    expect(first.zone.has(viewer)).toBe(false);
+    expect(first.zone.entity(first.entityId)).toBeUndefined();
+    expect(next.zone.combat.profileOf(next.entityId)).toMatchObject({ ship, skills: ['second_skin'] });
+    expect(next.zone.combat.playerHealth(next.entityId)).toEqual(health);
+    expect(zones.input(viewer, input)).toBe('stale');
+    advance(50);
+    expect(zones.input(viewer, { ...input, seq: 2, time: input.time + 0.05, pose: { ...pose, pos: [6e9 + 9, 0, 0] } })).toBe('ok');
+    expect(zones.follow(viewer)).toBeNull();
+    expect(zones.zones.reduce((n, z) => n + z.sessionCount, 0)).toBe(1);
+    // A fabricated interstellar leap still goes through movement authority.
+    advance(50);
+    expect(zones.input(viewer, { ...input, seq: 3, time: input.time + 0.1, pose: { ...pose, pos: [1e16, 0, 0] } })).toMatchObject({ ok: false });
+    expect(zones.follow(viewer)).toBeNull();
+    const at = { system: next.zone.systemIndex, pose: next.pose, mode: next.mode };
+    zones.leave(viewer);
+    expect(zones.join(viewer, character(0), at).zone.id).toBe('deep:0');
+  });
+
+  it('enters another system from deep space and carries the new coordinate origin into following inputs', () => {
+    const { zones, advance } = setup();
+    const viewer = new Sink(72);
+    const galaxy = new Galaxy(GALAXY_SEED);
+    const to = galaxy.systems[1]!;
+    const pose = {
+      frame: null,
+      pos: [to.x * LY - 4.5e9 + 500, to.y * LY, to.z * LY],
+      quat: [0, -Math.SQRT1_2, 0, Math.SQRT1_2],
+      vel: [100, 0, 0],
+    } satisfies import('@astra/shared/protocol').Pose;
+    zones.join(viewer, character(0), { system: 0, pose, mode: 'ship' });
+    advance(50);
+    expect(zones.input(viewer, { t: 'input', seq: 1, time: 5e6 + 0.05, mode: 'ship', pose, buttons: 0 })).toBe('ok');
+    const next = zones.follow(viewer)!;
+    expect(next.zone.id).toBe('sys:1');
+    expect(Math.abs(next.pose.pos[0] + 4.5e9 - 500)).toBeLessThan(128);
+    advance(50);
+    expect(zones.input(viewer, { t: 'input', seq: 2, time: 5e6 + 0.1, zone: next.zone.id, mode: 'ship', pose: next.pose, buttons: 0 })).toBe('ok');
+    expect(zones.zones.reduce((n, z) => n + z.sessionCount, 0)).toBe(1);
   });
 });

@@ -71,7 +71,7 @@ describe('teleport placements', () => {
     expect(invalid(() => resolvePlacement({ system: SYSTEM, frame: 'station', pose: '1,2' }))).toMatch(/x,y,z/);
     expect(invalid(() => resolvePlacement({ system: SYSTEM, frame: 'station', pose: 'hover' }))).toMatch(/x,y,z/);
     // beyond what a join accepts
-    expect(invalid(() => resolvePlacement({ system: SYSTEM, frame: 'inertial', pose: '1e12,0,0' }))).toMatch(/out of range/);
+    expect(invalid(() => resolvePlacement({ system: SYSTEM, frame: 'inertial', pose: '2e18,0,0' }))).toMatch(/out of range/);
   });
 
   it('refuses frames the system does not have', () => {

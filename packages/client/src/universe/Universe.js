@@ -6,7 +6,8 @@
 // edge leaves it dormant (hidden and not updated, ready if the ship turns back); flying into
 // another builds that one in its place as the ship crosses into it.
 import * as THREE from 'three';
-import { LY, cosmosClearance } from '@astra/shared/world';
+import { Body } from './Body.js';
+import { LY, cosmosClearance, tierOf } from '@astra/shared/world';
 
 // metres from a star: past LEAVE its system goes dormant; inside ENTER a system is built or woken
 // (both beyond the camera's far plane, so neither is ever seen to happen)
@@ -31,6 +32,54 @@ export class Universe {
     this.dormant = false;
     // the system being readied ahead of arrival: { sys, it, out, built }
     this.prep = null;
+    this.tiers = null;
+  }
+
+  // Snapshot coordinates stay relative to their zone's star while the draw origin follows
+  // the ship. Buffered remote poses and prediction share this translating inertial frame.
+  networkFrame() {
+    const seed = this.game.net?.zone?.systemSeed;
+    if (seed === undefined) return null;
+    const sys = this.game.galaxy.systems.find((s) => s.seed === seed);
+    if (!sys) return null;
+    if (this.networkOrigin?.seed !== seed) this.networkOrigin = Object.assign(new Body({ kind: 'inertial' }), { seed });
+    this.sysWorld(sys, this.networkOrigin.position);
+    return this.networkOrigin;
+  }
+
+  tierOf(sys) {
+    return this.tiers?.[this.game.galaxy.systems.indexOf(sys)] ?? tierOf(sys);
+  }
+
+  applyWorld(world) {
+    this.tiers = world.tiers;
+    if (this.prep?.out.system && this.prep.out.system.tier !== this.tierOf(this.prep.sys)) this.dropPrep();
+    const g = this.game;
+    if (g.mode === 'title' || !g.system || g.system.tier === this.tierOf(g.system.info)) return;
+    // A tier changes the ground's den pads and resource layers. Rebuild the same system while
+    // keeping every local pose in the equivalent new frame, including a ship left beside a walker.
+    const old = [...g.system.bodies, g.station];
+    const owners = [g.ship.state, g.player.state, g.cam];
+    const frames = owners.map((owner) => old.indexOf(owner.frame));
+    const target = old.indexOf(g.navTarget);
+    const pad = g.station.pads.indexOf(g.ship.dockPad);
+    const occupied = g.station.pads.findIndex((p) => p.occupied === g.ship);
+    const anchor = this.anchor.clone();
+    const deep = this.deep;
+    const dormant = this.dormant;
+    g.loadSystem(g.system.info, { seamless: true, reservedPad: occupied });
+    const next = [...g.system.bodies, g.station];
+    owners.forEach((owner, i) => { if (frames[i] >= 0) owner.frame = next[frames[i]]; });
+    if (target >= 0) g.navTarget = next[target];
+    if (pad >= 0) g.ship.dockPad = g.station.pads[pad];
+    this.anchor.copy(anchor);
+    this.deep = deep;
+    this.setDormant(dormant);
+    this.sysWorld(g.system.info, g.system.star.position);
+    g.ship.blend.clear();
+    g.player.blend.clear();
+    g.prediction.reset();
+    this.networkFrame();
   }
 
   // world point (m) -> galactic position (ly), and back
@@ -51,6 +100,7 @@ export class Universe {
     this.anchor.set(sys.x, sys.y, sys.z);
     this.deep = false;
     this.setDormant(false);
+    this.networkFrame();
   }
 
   // galactic position of the ship (or of whoever is about: on foot, the ship is close by)
@@ -93,6 +143,7 @@ export class Universe {
     g.ship.state.pos.sub(shift);
     if (!g.cam.frame) g.cam.pos.sub(shift);
     this.sysWorld(g.system.info, g.system.star.position);
+    this.networkFrame();
   }
 
   // start building the system ahead (dropping one readied for somewhere the ship turned from)

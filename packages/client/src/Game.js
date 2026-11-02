@@ -19,7 +19,7 @@ import { Flora } from './gameplay/Flora.js';
 import { Fauna } from './gameplay/Fauna.js';
 import { Structures } from './gameplay/Structures.js';
 import { Cities } from './gameplay/Cities.js';
-import { EDGE_X, streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, selectFrame, tierOf, framedPose, localPoseInto } from '@astra/shared/world';
+import { EDGE_X, streetPlan, cityFrame, cityPoint, Galaxy, GALAXY_SEED, LY, describeGalaxySystem, selectFrame, framedPose, localPoseInto } from '@astra/shared/world';
 import { detects, sensorRange } from '@astra/shared/ships';
 import { SUIT } from '@astra/shared/data';
 import { beaconsOnMap, cartridgeItemRestore, cartridgeRestore, scanRanges, suitMods } from '@astra/shared/exosuit';
@@ -42,7 +42,7 @@ import './gameplay/resonanceFx.js';
 import { Crafting } from './net/crafting.js';
 import { FabricatorPanel } from './ui/Fabricator.js';
 import { gameSocketUrl } from './net/api.js';
-import { buttonsOf, frameIdOfFrame, frameOfId, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
+import { buttonsOf, frameIdOfFrame, frameOfId, networkFrameOf, headingOf, moveModeOf, walkerQuat } from './net/pose.js';
 import { clearSession, setNotice } from './net/session.js';
 import { Prediction } from './net/prediction.js';
 import { RemoteEntities } from './remote/RemoteEntities.js';
@@ -161,7 +161,7 @@ export class Game {
     this.remotes = new RemoteEntities(this);
     this.engine.scene.add(this.remotes.group);
     // what the player's inputs said, to rewind to and replay from when the server corrects one (P1.E04.T03)
-    this.prediction = new Prediction((id) => frameOfId(this.system, this.station, id));
+    this.prediction = new Prediction((id) => networkFrameOf(this, id));
     // the bad network the connection runs through (dev builds' `?lag`, net/link.js), or none
     this.netLink = null;
 
@@ -232,9 +232,7 @@ export class Game {
   // `out` holds whatever is built so far, so an abandoned one can be freed.
   *buildSystem(sysInfo, out = {}) {
     // (described as the server describes it: the three peoples' home systems round their home worlds and capitals)
-    // (at its tier with The Edge where it stands by default, until the client reads the world service's tier map,
-    // P1.E04.T02)
-    const system = (out.system = new SolarSystem(describeGalaxySystem(sysInfo), this.pool, { staged: true, tier: tierOf(sysInfo) }));
+    const system = (out.system = new SolarSystem(describeGalaxySystem(sysInfo), this.pool, { staged: true, tier: this.universe.tierOf(sysInfo) }));
     system.info = sysInfo;
     yield;
     while (!system.step()) yield;
@@ -285,7 +283,7 @@ export class Game {
 
   // swaps in a system: built here and now, or handed over ready (flown into from deep space,
   // `seamless`: the camera has not jumped, so the sky need not be redrawn)
-  loadSystem(sysInfo, { built = null, seamless = false } = {}) {
+  loadSystem(sysInfo, { built = null, seamless = false, reservedPad = -1 } = {}) {
     // (readied during the approach, if it was)
     if (!built) built = this.universe.takePrep(sysInfo);
     if (!built) {
@@ -302,6 +300,8 @@ export class Game {
     this.cities.setPlanet(null);
     this.system = built.system;
     this.station = built.station;
+    // A tier rebuild carries the player's reservation before NPC traffic can choose free pads.
+    if (reservedPad >= 0) this.station.pads[reservedPad].occupied = this.ship;
     this.universe.reset(sysInfo);
     for (const b of this.system.bodies) this.engine.scene.add(b.root);
     this.engine.scene.add(this.station.root);
@@ -405,6 +405,7 @@ export class Game {
     this.build = { skills: [], people: character.people };
     this.applyBuild();
     net.on('skills', (m) => this.onSkills(m.skills));
+    net.on('world', (m) => this.universe.applyWorld(m));
     // chat, the party and the call-for-aid beacons (P1.E15.T03)
     this.hud.social.attach(net);
     net.on('welcome', (m, first) => {
@@ -413,6 +414,11 @@ export class Game {
       this.analyzeSeq = 0;
       this.prediction.reset();
       this.onWelcome(m, first);
+    });
+    net.on('zone', (m) => this.onZone(m));
+    net.on('warp', (m) => {
+      this.warping = false;
+      this.hud.toast(m.reason === 'fuel' ? 'No warp cells' : 'Warp unavailable here', 'warn');
     });
     net.on('input', (m) => this.prediction.record(m));
     net.on('snapshot', () => this.checkPrediction());
@@ -452,6 +458,8 @@ export class Game {
   }
 
   onWelcome(m, first) {
+    this.warping = false;
+    this.warpTransition = null;
     // the world clock starts at the server's on the first join, before any input; after it, it is only ever slewed
     if (first) this.setWorldTime(this.net.serverTime());
     const sys = this.galaxy.systems.find((s) => s.seed === m.zone.systemSeed);
@@ -465,9 +473,32 @@ export class Game {
     // (on the first join nothing was visited yet: the galaxy marks system 0, wherever the character's home is)
     if (first) for (const s of this.galaxy.systems) s.visited = false;
     this.enterZoneSystem(sys);
+    if (m.zone.id.startsWith('deep:')) { this.universe.deep = true; this.universe.setDormant(true); }
     this.placeFromServer(m.pose, m.mode);
     if (first) this.startGame();
     else this.hud.toast('Reconnected', 'good');
+  }
+
+  onZone(m) {
+    this.prediction.reset();
+    this.cutscenes?.stop();
+    this.director?.stop();
+    this.universe.networkFrame();
+    if (m.reason !== 'warp') return;
+    this.warping = true;
+    const transition = (this.warpTransition = {});
+    const sys = this.galaxy.systems.find((s) => s.seed === m.zone.systemSeed);
+    this.menus.showWarp(() => {
+      if (this.warpTransition !== transition || !this.net?.joined || this.net.zone.id !== m.zone.id) return;
+      this.warping = false;
+      this.warpTransition = null;
+      this.enterZoneSystem(sys);
+      this.placeFromServer(m.pose, m.mode);
+      this.audio.play('warpArrive');
+      this.hud.flash('warp');
+      this.hud.showBanner(this.system.name.toUpperCase(), 'Star System');
+      this.audio.play('discovery');
+    });
   }
 
   // The zone's star system becomes the current one: built when it is another, brought back from between the stars when the
@@ -475,7 +506,7 @@ export class Game {
   enterZoneSystem(sys) {
     if (!sys) return;
     this.galaxy.setCurrent(sys);
-    if (sys !== this.system.info) {
+    if (sys !== this.system.info || this.system.tier !== this.universe.tierOf(sys)) {
       this.discovered.clear();
       this.navTarget = null;
       this.loadSystem(sys);
@@ -503,6 +534,10 @@ export class Game {
       console.warn(`welcome: frame ${pose.frame} is not one of ${this.system.name}'s; starting by its Waystation`);
       this.placeShipNearStation();
       return;
+    }
+    if (pose.frame === null && this.net?.zone) {
+      const origin = this.universe.networkFrame();
+      if (origin) pose = { ...pose, pos: new THREE.Vector3().fromArray(pose.pos).add(origin.position).toArray() };
     }
     const at = new THREE.Vector3().fromArray(pose.pos);
     const quat = new THREE.Quaternion().fromArray(pose.quat);
@@ -573,15 +608,19 @@ export class Game {
   }
 
   // The input Net sends at 20 Hz: the pose the client predicts (the walker's on foot, else the ship's) in the frame it is
-  // in, its mode and the buttons held. None while out of the zone's system (warped or flown to another star, until zone
-  // handoff, P1.E04.T04) or out between the stars.
+  // in, its mode and the buttons held. Inertial positions are expressed against the server zone's star, even while
+  // the draw origin follows the ship between systems. Warp holds input until the arrival scene is ready.
   inputSample() {
-    if ((this.mode !== 'ship' && this.mode !== 'foot') || this.universe.deep || this.system.seed !== this.net?.zone?.systemSeed) return null;
+    if ((this.mode !== 'ship' && this.mode !== 'foot') || this.warping || !this.net?.zone) return null;
     const foot = this.mode === 'foot';
     const st = foot ? this.player.state : this.ship.state;
     const frame = frameIdOfFrame(this.system, this.station, st.frame);
-    if (frame === undefined) return null;
+    if (frame === undefined || (frame !== null && this.system.seed !== this.net.zone.systemSeed)) return null;
     const pose = framedPose(frame, st);
+    if (frame === null) {
+      const origin = this.universe.networkFrame();
+      if (origin) pose.pos = st.pos.clone().sub(origin.position).toArray();
+    }
     // (stamped with the clock the bodies were placed with, which is the one the frame was picked by)
     const time = this.time;
     // (a walker's own quaternion is not kept: it faces its heading)
@@ -615,7 +654,7 @@ export class Game {
   // server holding it set down, aboard as it got out or out as it boarded) places it as a welcome does; a correction to an
   // input no longer kept is taken as it comes.
   onCorrection(m) {
-    if (this.mode !== 'ship' && this.mode !== 'foot') return;
+    if ((this.mode !== 'ship' && this.mode !== 'foot') || this.warping) return;
     const foot = this.mode === 'foot';
     const ship = this.ship;
     const mover = foot ? this.player : ship;
@@ -636,7 +675,7 @@ export class Game {
     if (this.prediction.take(m.seq, m.pose, m.mode, st, this.time, own, now === 'pulse' && m.mode !== 'pulse')) {
       if (!mover.blend.take(_v1, _q1, _v2, st)) this.cam.frame = undefined;
     } else {
-      const frame = frameOfId(this.system, this.station, m.pose.frame);
+      const frame = networkFrameOf(this, m.pose.frame);
       if (frame === undefined) return;
       const keep = st.frame;
       st.frame = frame;
@@ -655,6 +694,7 @@ export class Game {
   // never heard (lost on the way) shows there, and is taken as if it had come. On foot its hp is the server's suit health,
   // expressed as a fraction; the local HUD keeps it as a percentage. Aboard, hp is hull and must not replace suit health.
   checkPrediction() {
+    if (this.warping) return;
     const net = this.net;
     const e = net && (this.mode === 'ship' || this.mode === 'foot') ? net.store.entities.get(net.entityId) : undefined;
     const unheard = e && this.prediction.check(net.store.ack, e);
@@ -728,6 +768,7 @@ export class Game {
   // The frame the entity belongs in, by the rule the server's zones use (shared selectFrame): the station inside its
   // sphere of influence, else the innermost planet or moon, staying in the current frame until 5% beyond its sphere.
   chooseFrame(state) {
+    if (this.universe.deep) return null;
     const wp = state.worldPosition(_v1);
     return selectFrame({ bodies: this.system.planets, station: this.station }, state.frame ?? null, (f) => f.distanceTo(wp));
   }
@@ -739,7 +780,7 @@ export class Game {
     inp.enabled = playing && inp.locked;
     this.advanceClock(dt);
     this.universe.update();
-    this.system.update(this.time);
+    this.system.update(this.time, this.universe.deep ? this.universe.sysWorld(this.system.info, _v6) : null);
     this.station.update(this.time);
 
     if (this.mode === 'title') {
@@ -1806,32 +1847,13 @@ export class Game {
       this.audio.play('error');
       return false;
     }
-    this.inventory.warpCells--;
+    if (!this.net?.joined) return false;
+    const seq = ++this.net.warpSeq;
+    if (!this.net.send({ t: 'warp', seq, system: sys.id })) return false;
     this.warping = true;
     this.menus.selectedSystem = null;
     this.menus.closeAll();
-    this.mode = 'ship';
     this.audio.play('warp');
-    this.menus.showWarp(() => {
-      this.warping = false;
-      this.galaxy.setCurrent(sys);
-      this.discovered.clear();
-      this.navTarget = null;
-      this.loadSystem(sys);
-      this.placeShipNearStation();
-      // arrive high above the station looking down past it at the planet
-      this.ship.state.pos.set(0, 6000, 14000);
-      _m4.lookAt(this.ship.state.pos, new THREE.Vector3(0, -9000, 0), new THREE.Vector3(0, 1, 0));
-      this.ship.state.quat.setFromRotationMatrix(_m4);
-      this.ship.speed = 300;
-      this.audio.play('warpArrive');
-      this.hud.flash('warp');
-      this.save();
-      setTimeout(() => {
-        this.hud.showBanner(this.system.name.toUpperCase(), 'Star System');
-        this.audio.play('discovery');
-      }, 800);
-    });
     return true;
   }
 

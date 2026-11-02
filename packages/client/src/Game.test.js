@@ -16,6 +16,7 @@ import { FrameState } from './universe/Body.js';
 /** A Game object with no constructor run: just `parts` (and what it predicted, in the frames of its system). */
 function fake(parts = {}) {
   const g = Object.assign(Object.create(Game.prototype), { time: 0, timeBase: 0, net: null, abilities: new Abilities(), cam: {}, ...parts });
+  g.universe = { tierOf: () => g.system?.tier, networkFrame: () => null, applyWorld: vi.fn(), ...g.universe };
   g.prediction ??= new Prediction((id) => frameOfId(g.system, g.station, id));
   return g;
 }
@@ -586,6 +587,20 @@ describe('Game: where a welcome places the character', () => {
     expect(g.loadSystem).toHaveBeenCalledWith(g.galaxy.systems[1]);
     expect(g.placeFromServer).toHaveBeenCalledWith(m.pose, 'docked');
     expect(g.startGame).not.toHaveBeenCalled();
+  });
+
+  it('a reconnect cancels an unfinished warp animation and its stale arrival callback', () => {
+    const g = world();
+    const m = { ...WELCOME, reason: 'warp', zone: { id: 'sys:1', systemSeed: 2 } };
+    const arrivals = [];
+    g.net = { ...g.net, joined: true, zone: m.zone };
+    g.menus = { showWarp: (fn) => arrivals.push(fn) };
+    g.onZone(m);
+    expect(g.warping).toBe(true);
+    g.onWelcome(m, false);
+    expect(g.warping).toBe(false);
+    arrivals[0]();
+    expect(g.placeFromServer).toHaveBeenCalledOnce();
   });
 
   it('a reconnect with a pose in none of the client’s frames is placed from the server', () => {
