@@ -13,6 +13,7 @@ import plistlib
 import re
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import tempfile
@@ -110,6 +111,76 @@ def coalition_members(coalition_id):
                     assert info['uid'] == os.getuid()
                     found.append({**info, 'coalition': latest})
     return found
+
+
+SUPPORTED_PROFILE_PREFIXES = ('playwright_chromiumdev_profile-', 'playwright_firefoxdev_profile-',
+                              'playwright_webkitdev_profile-')
+
+
+def _archive_profile_paths(log, declared, namespace, prefixes):
+    """Prevalidate the complete archive set; this function performs no mutation."""
+    private = namespace is not None
+    prefixes = tuple(dict.fromkeys(SUPPORTED_PROFILE_PREFIXES[:1] if prefixes is None else prefixes))
+    if not prefixes or not set(prefixes) <= set(SUPPORTED_PROFILE_PREFIXES):
+        raise UnsafeCaptureGroup('Only exact installed engine profile prefixes are supported')
+    if not private and prefixes != SUPPORTED_PROFILE_PREFIXES[:1]:
+        raise UnsafeCaptureGroup('Additional engines require an explicit private profile namespace')
+    original_root = Path(namespace) if private else Path(tempfile.gettempdir())
+    root = original_root.resolve(strict=True)
+    if private:
+        info = original_root.lstat()
+        if (not original_root.is_absolute() or original_root != root or original_root.is_symlink()
+                or not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) != 0o700):
+            raise UnsafeCaptureGroup('Profile namespace must be canonical, caller-owned and mode0700')
+    roots = {str(root), str(original_root.absolute())}
+    observed = set()
+    for match in re.finditer(r'(?:^|\s)(?:--user-data-dir=|--profile(?:=|\s+)|-profile\s+)', log):
+        tail = log[match.end():].lstrip()
+        known_root = next((r for r in roots if tail.startswith(r + '/')), None)
+        if known_root:
+            suffix = tail[len(known_root) + 1:]
+            leaf = re.match(r'[^\s\'"/]+', suffix)
+            if not leaf or (len(suffix) > len(leaf[0]) and suffix[len(leaf[0])] == '/'):
+                raise UnsafeCaptureGroup('Profile path is not a direct namespace child')
+            name = known_root + '/' + leaf[0]
+        elif tail.startswith(('"', "'")):
+            end = tail.find(tail[0], 1)
+            if end < 0: raise UnsafeCaptureGroup('Unterminated profile path')
+            name = tail[1:end]
+        else:
+            name = tail.split(None, 1)[0] if tail else ''
+        observed.add(name)
+    namespace_owned = {str(p) for p in root.iterdir() if any(p.name.startswith(s) for s in prefixes)} if private else set()
+    named = set(declared) | observed
+    records = {}
+    for name in sorted(named | namespace_owned):
+        path = Path(name)
+        allowed = any(re.fullmatch(re.escape(prefix) + r'[A-Za-z0-9_-]+', path.name) for prefix in prefixes)
+        if not path.is_absolute() or str(path.parent) not in roots or not allowed or path.is_symlink():
+            raise UnsafeCaptureGroup(f'Unowned or unsafe profile path: {name}')
+        resolved = path.resolve(strict=False)
+        if resolved.parent != root:
+            raise UnsafeCaptureGroup(f'Profile namespace escape: {name}')
+        stamp = None
+        if path.exists():
+            info = path.lstat()
+            if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid():
+                raise UnsafeCaptureGroup(f'Profile UID/type refused: {name}')
+            for directory, dirs, files in os.walk(path, followlinks=False):
+                for leaf in dirs + files:
+                    child = Path(directory) / leaf
+                    if child.is_symlink() or child.lstat().st_uid != os.getuid() or not child.resolve().is_relative_to(resolved):
+                        raise UnsafeCaptureGroup(f'Profile descendant UID/symlink/escape refused: {child}')
+            stamp = [info.st_dev, info.st_ino]
+        record = records.setdefault(str(resolved), {'path': str(resolved), 'stamp': stamp,
+            'log_observed': False, 'caller_declared': False, 'namespace_owned': False})
+        record['log_observed'] |= name in observed
+        record['caller_declared'] |= name in set(declared)
+        record['namespace_owned'] |= name in namespace_owned
+    return {'namespace': str(root), 'private_namespace_admitted': private, 'prefixes': list(prefixes),
+            'owned_logged_profiles': sorted(named), 'log_observed_profiles': sorted(observed),
+            'caller_declared_profiles': sorted(set(declared)), 'namespace_owned_profiles': sorted(namespace_owned),
+            'all_owned_profiles': sorted(records), 'profile_receipts': list(records.values())}
 
 
 class StationJob:
@@ -286,34 +357,42 @@ class StationJob:
         self.save()
         return self.state
 
-    def archive(self):
+    def archive(self, *, profile_namespace=None, profile_prefixes=None):
         assert self.state['drained'], 'Do not remove proof or job while resources remain'
+        source_log = self.scratch / 'capture_stdout.txt'
+        if not source_log.exists(): source_log = self.out / 'capture_stdout.txt'
+        log = source_log.read_text() if source_log.exists() else ''
+        receipt = _archive_profile_paths(log, self.state.get('profiles', []), profile_namespace, profile_prefixes)
+        for record in receipt['profile_receipts']:
+            if record['stamp'] is not None and (self.out / ('preserved_' + Path(record['path']).name)).exists():
+                raise UnsafeCaptureGroup('Profile backup already exists; no overwrite')
         result = subprocess.run(['/bin/launchctl', 'bootout', self.target], capture_output=True, text=True, timeout=3)
         check = subprocess.run(['/bin/launchctl', 'print', self.target], capture_output=True, text=True, timeout=3)
         assert check.returncode != 0, 'Owned job registration remains'
         write(self.out / 'unload.json', {'bootout_exit': result.returncode, 'stderr': result.stderr, 'registration_absent': True})
-        for path in self.scratch.iterdir():
+        for path in self.scratch.iterdir() if self.scratch.exists() else []:
             if path.is_file():
                 (self.out / path.name).write_bytes(path.read_bytes())
                 path.unlink()
             elif path.name == '__pycache__':
                 shutil.copytree(path, self.out / path.name)
                 shutil.rmtree(path)
-        self.scratch.rmdir()
+        if self.scratch.exists(): self.scratch.rmdir()
         self.registered = False
-        # Only profiles named by this exact owned launcher's log, after its whole coalition is absent.
-        log = self.out / 'capture_stdout.txt'
-        profiles = set(self.state.get('profiles', []))
-        if log.exists():
-            profiles.update(re.findall(r'--user-data-dir=([^\s\'\"]+)', log.read_text()))
-        profiles = sorted(profiles)
-        for name in profiles:
-            path = Path(name)
-            assert path.name.startswith('playwright_chromiumdev_profile-')
-            if path.exists():
-                shutil.copytree(path, self.out / ('preserved_' + path.name))
+        for record in receipt['profile_receipts']:
+            path = Path(record['path'])
+            if record['stamp'] is not None:
+                info = path.lstat()
+                if path.is_symlink() or [info.st_dev, info.st_ino] != record['stamp'] or info.st_uid != os.getuid():
+                    raise UnsafeCaptureGroup('Profile identity changed after prevalidation')
+                shutil.copytree(path, self.out / ('preserved_' + path.name), symlinks=True)
+                info = path.lstat()
+                if path.is_symlink() or [info.st_dev, info.st_ino] != record['stamp']:
+                    raise UnsafeCaptureGroup('Profile identity changed before removal')
                 shutil.rmtree(path)
-        write(self.out / 'profile_release.json', {'owned_logged_profiles': profiles, 'all_absent': all(not Path(p).exists() for p in profiles)})
+        receipt['legacy_owned_logged_profiles_includes_caller_declared'] = True
+        receipt['all_absent'] = all(not Path(p).exists() and not Path(p).is_symlink() for p in receipt['all_owned_profiles'])
+        write(self.out / 'profile_release.json', receipt)
 
 
 def worker(request_file):
