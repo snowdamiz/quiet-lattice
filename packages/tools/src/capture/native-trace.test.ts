@@ -90,7 +90,7 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
     expect(args).not.toContain('--all-processes');
     expect(args).not.toContain('--no-prompt');
     expect(readFileSync(saved.evidence.toc, 'utf8')).toContain('CPU-only');
-    expect(saved.evidence.commands.every((c) => c.finishedAt && c.survivors.length === 0)).toBe(true);
+    expect(saved.evidence.commands.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
   });
 
   it.each(['early-exit', 'no-notification', 'wrong-notification'])('never submits frames after an unobserved/failed start (%s)', async (kind) => {
@@ -112,7 +112,7 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
       const log = (error as NativeTraceError).evidence;
       expect(log.failure).toEqual(expect.any(String));
       expect(log.notifiedAt).toBeNull();
-      expect(log.commands.every((c) => c.finishedAt && c.survivors.length === 0)).toBe(true);
+      expect(log.commands.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
     }
   });
 
@@ -153,7 +153,7 @@ describe('owned native trace orchestration (CPU-only child controls)', () => {
       evidence: {
         failure: expect.stringContaining('frame controls exceeded'),
         commands: expect.arrayContaining([
-          expect.objectContaining({ signals: expect.arrayContaining([expect.objectContaining({ signal: 'SIGINT' })]), survivors: [] }),
+          expect.objectContaining({ signals: expect.arrayContaining([expect.objectContaining({ signal: 'SIGINT' })]), groupState: 'absent' }),
         ]),
       },
     });
@@ -235,7 +235,7 @@ describe('finite read-only CLI discovery', () => {
 
   async function assertDrained(commands: CommandRecord[]) {
     const rows = await processRows();
-    expect(commands.every((c) => c.finishedAt && c.survivors.length === 0)).toBe(true);
+    expect(commands.every((c) => c.finishedAt && c.groupState === 'absent')).toBe(true);
     expect(rows.filter((row) => commands.some((c) => c.pid === row.pid || c.group === row.pgid))).toEqual([]);
   }
 

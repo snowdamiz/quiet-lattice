@@ -1,12 +1,11 @@
 import { createHash } from 'node:crypto';
-import { execFile } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { cpus, loadavg, platform } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
 import { chromium, type Browser, type BrowserServer } from '@playwright/test';
-import { glArgs, openReview, startVite } from './capture.ts';
+import { glArgs, openReview } from './capture.ts';
+import { startOwnedVite } from './native-vite.ts';
 import { FROZEN_SOURCES } from './benchmark-runs.ts';
 import { timerBoundaryArgs, timerBoundaryAsset } from './timer-boundaries.ts';
 import {
@@ -17,13 +16,14 @@ import {
   ownedDescendants,
   ownedGpuPid,
   processRows,
+  runOwnedHelper,
   withNativeTrace,
   type NativeTraceLog,
   type ProcessRow,
+  type CommandRecord,
 } from './native-trace.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
-const exec = promisify(execFile);
 const digest = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 const record = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -61,6 +61,12 @@ export function saveNativeOutputs(value: unknown, out: string) {
   return value;
 }
 
+export async function nativeSourceState(root: string, commands: CommandRecord[]) {
+  const head = await runOwnedHelper('git', ['rev-parse', 'HEAD'], commands, { cwd: root, deadlineMs: 5000 });
+  const status = await runOwnedHelper('git', ['status', '--short'], commands, { cwd: root, deadlineMs: 5000 });
+  return { sourceHead: head.stdout.trim(), sourceStatus: status.stdout };
+}
+
 export async function captureNativePass(options: ReturnType<typeof nativePassArgs>) {
   nativeScope(options);
   if (existsSync(options.out)) throw new Error('EEXIST: diagnostic output must be a new directory');
@@ -76,6 +82,8 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
       'packages/client/src/dev/dependent-output.js',
       'packages/tools/src/capture/native-pass-probe.ts',
       'packages/tools/src/capture/native-trace.ts',
+      'packages/tools/src/capture/native-vite.ts',
+      'packages/tools/src/capture/native-vite-child.ts',
       'packages/client/src/core/Engine.js',
       'packages/client/src/render/AtmospherePass.js',
       'packages/client/src/Game.js',
@@ -89,7 +97,7 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
   };
   let browserServer: BrowserServer | undefined;
   let browser: Browser | undefined;
-  let vite: Awaited<ReturnType<typeof startVite>> | undefined;
+  let vite: Awaited<ReturnType<typeof startOwnedVite>> | undefined;
   let session: Awaited<ReturnType<typeof openReview>> | undefined;
   let native: NativeTraceLog | undefined;
   let browserPid: number | undefined;
@@ -99,20 +107,23 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
   const host: unknown[] = [];
   const observed = new Map<number, ProcessRow>();
   const errors: string[] = [];
+  const helpers: CommandRecord[] = [];
   const observe = () => {
     if (hostJob) return hostJob;
     const at = new Date().toISOString();
     const sampledPhase = phase;
     hostJob = (async () => {
       const [rows, cpu, gpu] = await Promise.allSettled([
-        processRows(),
-        exec('ps', ['-axo', 'pid,ppid,pgid,pcpu,pmem,etime,comm', '-r']),
-        exec('ioreg', ['-r', '-c', 'IOAccelerator', '-d', '1', '-l']),
+        processRows(helpers),
+        runOwnedHelper('ps', ['-axo', 'pid,ppid,pgid,pcpu,pmem,etime,comm', '-r'], helpers, { deadlineMs: 1000 }),
+        runOwnedHelper('ioreg', ['-r', '-c', 'IOAccelerator', '-d', '1', '-l'], helpers, { deadlineMs: 1000 }),
       ]);
       if (rows.status === 'fulfilled') {
         for (const root of [process.pid, browserPid, ...(native?.commands.map((c) => c.pid) ?? [])])
           if (root) for (const row of ownedDescendants(rows.value, root)) observed.set(row.pid, row);
       }
+      const collectorErrors = [rows, cpu, gpu].flatMap((r) => (r.status === 'rejected' ? [String(r.reason)] : []));
+      errors.push(...collectorErrors.map((e) => `Host collector: ${e}`));
       host.push({
         at,
         hostMonotonicNs: process.hrtime.bigint().toString(),
@@ -121,9 +132,10 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
         owned: [...observed.values()],
         cpuTop20WithoutArguments: cpu.status === 'fulfilled' ? cpu.value.stdout.split('\n').slice(0, 21) : String(cpu.reason),
         aggregateGpu: gpu.status === 'fulfilled' ? gpu.value.stdout.split('\n').filter((l) => /PerformanceStatistics|"model"/.test(l)) : String(gpu.reason),
-        collectorErrors: [rows, cpu, gpu].flatMap((r) => (r.status === 'rejected' ? [String(r.reason)] : [])),
+        collectorErrors,
       });
       save('host.json', host);
+      save('helpers.json', helpers);
       if (native) save('native.json', native);
     })().finally(() => {
       hostJob = undefined;
@@ -132,20 +144,22 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
   };
   try {
     save('installed-cli.json', await discoverNativeCli());
+    const sourceState = await nativeSourceState(ROOT, helpers);
     await observe();
     timer = setInterval(() => {
       void observe().catch((e) => errors.push(`Host collector: ${String(e)}`));
     }, 1000);
+    phase = 'server-startup';
+    vite = await startOwnedVite(ROOT, helpers);
     const { args, gl } = glArgs();
-    browserServer = await chromium.launchServer({ args });
+    browserServer = await chromium.launchServer({ args, timeout: 30_000 });
     browserPid = browserServer.process().pid;
     if (!browserPid) throw new Error('Owned browser PID unavailable');
-    browser = await chromium.connect(browserServer.wsEndpoint());
-    const cdp = await browser.newBrowserCDPSession();
+    browser = await chromium.connect(browserServer.wsEndpoint(), { timeout: 30_000 });
+    const cdp = await bounded(browser.newBrowserCDPSession(), 10_000, 'browser CDP session');
     try {
-      const browserVersion = await cdp.send('Browser.getVersion');
+      const browserVersion = await bounded(cdp.send('Browser.getVersion'), 10_000, 'browser version');
       phase = 'loading';
-      vite = await startVite(ROOT);
       session = await bounded(openReview(browser, vite.url, options.spec, { url: '/models/characters/thalune.glb', body }), 240_000, 'review load');
       await bounded(
         session.page.evaluate(async () => {
@@ -165,8 +179,8 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
           'native probe preparation',
         ),
       );
-      const processes = await cdp.send('SystemInfo.getProcessInfo');
-      const rows = await processRows();
+      const processes = await bounded(cdp.send('SystemInfo.getProcessInfo'), 10_000, 'GPU process identity');
+      const rows = await processRows(helpers);
       const gpuPid = ownedGpuPid(processes.processInfo, rows, browserPid);
       const reviewSession = session;
       const clockCorrelations: unknown[] = [];
@@ -189,8 +203,7 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
         gpuPid,
         owned: ownedDescendants(rows, browserPid),
         viteUrl: vite.url,
-        sourceHead: (await exec('git', ['rev-parse', 'HEAD'], { cwd: ROOT })).stdout.trim(),
-        sourceStatus: (await exec('git', ['status', '--short'], { cwd: ROOT })).stdout,
+        ...sourceState,
         logicalCores: cpus().length,
         cpu: cpus()[0]?.model,
         pairs: 5,
@@ -204,13 +217,13 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
         gpuPid,
         options.out,
         async () => {
-          const before = await cdp.send('SystemInfo.getProcessInfo');
-          if (ownedGpuPid(before.processInfo, await processRows(), browserPid!) !== gpuPid) throw new Error('Owned GPU process changed before controls');
+          const before = await bounded(cdp.send('SystemInfo.getProcessInfo'), 5000, 'GPU identity before controls');
+          if (ownedGpuPid(before.processInfo, await processRows(helpers), browserPid!) !== gpuPid) throw new Error('Owned GPU process changed before controls');
           await correlateClocks();
           const result = await reviewSession.page.evaluate(() => window.review.nativePassProbe('run'));
           await correlateClocks();
-          const after = await cdp.send('SystemInfo.getProcessInfo');
-          if (ownedGpuPid(after.processInfo, await processRows(), browserPid!) !== gpuPid) throw new Error('Owned GPU process changed during controls');
+          const after = await bounded(cdp.send('SystemInfo.getProcessInfo'), 5000, 'GPU identity after controls');
+          if (ownedGpuPid(after.processInfo, await processRows(helpers), browserPid!) !== gpuPid) throw new Error('Owned GPU process changed during controls');
           return result;
         },
         undefined,
@@ -223,7 +236,11 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
       save('controls.json', saveNativeOutputs(captured.result, options.out));
       verify();
     } finally {
-      await cdp.detach();
+      try {
+        await bounded(cdp.detach(), 5000, 'browser CDP detach');
+      } catch (error) {
+        errors.push(`Browser CDP detach: ${String(error)}`);
+      }
     }
   } catch (error) {
     errors.push(String(error));
@@ -274,8 +291,18 @@ export async function captureNativePass(options: ReturnType<typeof nativePassArg
     } catch (error) {
       errors.push(`Vite: ${String(error)}`);
     }
-    if (hostJob) await hostJob;
-    await observe();
+    if (hostJob)
+      try {
+        await hostJob;
+      } catch (error) {
+        errors.push(`Host collector drain: ${String(error)}`);
+      }
+    try {
+      await observe();
+    } catch (error) {
+      errors.push(`Final host collector: ${String(error)}`);
+    }
+    save('helpers.json', helpers);
     if (session) errors.push(...session.errors);
     try {
       verify();

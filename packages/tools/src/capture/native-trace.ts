@@ -1,10 +1,7 @@
-import { spawn, execFile } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { promisify } from 'node:util';
-
-const exec = promisify(execFile);
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 export interface ProcessRow {
@@ -15,8 +12,8 @@ export interface ProcessRow {
 }
 
 /** ps comm excludes arguments. Only owned descendants are retained by the caller. */
-export async function processRows(): Promise<ProcessRow[]> {
-  const { stdout } = await exec('ps', ['-axo', 'pid,ppid,pgid,comm'], { timeout: 5000 });
+export async function processRows(records: CommandRecord[] = []): Promise<ProcessRow[]> {
+  const { stdout } = await runOwnedHelper('ps', ['-axo', 'pid,ppid,pgid,comm'], records, { deadlineMs: 1000 });
   return stdout
     .split('\n')
     .slice(1)
@@ -63,7 +60,11 @@ export interface CommandRecord {
   error: string | null;
   truncated: boolean;
   signals: { at: string; signal: NodeJS.Signals }[];
-  survivors: ProcessRow[];
+  deadlineMs: number | null;
+  failure: string | null;
+  groupState: 'not-created' | 'unknown' | 'present' | 'absent';
+  groupObservations: { at: string; exists: boolean | null; error: string | null }[];
+  cleanupErrors: string[];
 }
 
 export async function bounded<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
@@ -81,8 +82,8 @@ export async function bounded<T>(promise: Promise<T>, ms: number, label: string)
 }
 
 /** Own detached command group; no shell, global signal or privacy-setting mutation. */
-export function recordedCommand(file: string, args: string[], records: CommandRecord[]) {
-  const child = spawn(file, args, { detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
+export function recordedCommand(file: string, args: string[], records: CommandRecord[], options: { cwd?: string } = {}) {
+  const child = spawn(file, args, { detached: true, stdio: ['ignore', 'pipe', 'pipe'], ...options });
   const record: CommandRecord = {
     file,
     args,
@@ -97,7 +98,11 @@ export function recordedCommand(file: string, args: string[], records: CommandRe
     error: null,
     truncated: false,
     signals: [],
-    survivors: [],
+    deadlineMs: null,
+    failure: null,
+    groupState: child.pid ? 'unknown' : 'not-created',
+    groupObservations: [],
+    cleanupErrors: [],
   };
   records.push(record);
   for (const key of ['stdout', 'stderr'] as const)
@@ -126,40 +131,102 @@ export function recordedCommand(file: string, args: string[], records: CommandRe
       if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
     }
   };
+  const groupExists = () => {
+    if (!record.group) return false;
+    let exists: boolean | null = true;
+    let error: string | null = null;
+    try {
+      process.kill(-record.group, 0);
+    } catch (cause) {
+      if ((cause as NodeJS.ErrnoException).code === 'ESRCH') exists = false;
+      else {
+        exists = null;
+        error = String(cause);
+      }
+    }
+    record.groupState = exists === false ? 'absent' : exists === true ? 'present' : 'unknown';
+    record.groupObservations.push({ at: new Date().toISOString(), exists, error });
+    return exists;
+  };
+  let stopping: Promise<void> | undefined;
+  const stop = async () => {
+    if (!record.group) {
+      await bounded(done, 2000, 'unstarted command close');
+      return;
+    }
+    // Ownership is already established by detached spawn. Never gate this drain on an external ps.
+    for (const [signal, ms] of [
+      ['SIGINT', 3000],
+      ['SIGTERM', 2000],
+      ['SIGKILL', 2000],
+    ] as const) {
+      if (groupExists() === false && record.finishedAt) return;
+      try {
+        signalGroup(signal);
+      } catch (error) {
+        record.cleanupErrors.push(String(error));
+      }
+      const until = performance.now() + ms;
+      do {
+        if (groupExists() === false && record.finishedAt) return;
+        await wait(20);
+      } while (performance.now() < until);
+    }
+    // Do not leave inherited pipe handles keeping the runner alive after failed cleanup.
+    child.stdout?.destroy();
+    child.stderr?.destroy();
+    try {
+      await bounded(done, 2000, 'command close after group drain');
+    } catch (error) {
+      record.cleanupErrors.push(String(error));
+    }
+    if (groupExists() !== false || !record.finishedAt) {
+      const error = 'Owned helper group/close did not drain; see direct group observations and cleanup errors';
+      record.cleanupErrors.push(error);
+      throw new Error(error);
+    }
+  };
   return {
     record,
     done,
-    async stop() {
-      if (!record.finishedAt) {
-        signalGroup('SIGINT');
-        try {
-          await bounded(done, 3000, 'command interrupt');
-        } catch {
-          signalGroup('SIGTERM');
-          try {
-            await bounded(done, 2000, 'command termination');
-          } catch {
-            signalGroup('SIGKILL');
-            await bounded(done, 2000, 'command kill');
-          }
-        }
-      }
-      if (record.group) {
-        record.survivors = (await processRows()).filter((r) => r.pgid === record.group);
-        if (record.survivors.length) {
-          signalGroup('SIGTERM');
-          await wait(100);
-          record.survivors = (await processRows()).filter((r) => r.pgid === record.group);
-          if (record.survivors.length) {
-            signalGroup('SIGKILL');
-            await wait(100);
-          }
-          record.survivors = (await processRows()).filter((r) => r.pgid === record.group);
-          if (record.survivors.length) throw new Error('Owned native command group did not drain');
-        }
-      }
-    },
+    stop: () => (stopping ??= stop()),
   };
+}
+
+export class OwnedHelperError extends Error {
+  constructor(
+    message: string,
+    readonly command: CommandRecord,
+  ) {
+    super(message);
+  }
+}
+
+/** Every finite observational/provenance helper shares the same wait, raw status and unconditional owned-group drain. */
+export async function runOwnedHelper(
+  file: string,
+  args: string[],
+  records: CommandRecord[] = [],
+  options: { deadlineMs: number; cwd?: string } = { deadlineMs: 5000 },
+): Promise<CommandRecord> {
+  if (!Number.isInteger(options.deadlineMs) || options.deadlineMs < 1 || options.deadlineMs > 60_000) throw new Error('Helper deadline must be 1..60000ms');
+  const job = recordedCommand(file, args, records, { cwd: options.cwd });
+  job.record.deadlineMs = options.deadlineMs;
+  try {
+    const result = await bounded(job.done, options.deadlineMs, `Helper ${file}`);
+    if (result.code !== 0 || result.error || result.truncated)
+      throw new Error(`Helper ${file} failed: code=${result.code}, signal=${result.signal}, error=${result.error}`);
+  } catch (error) {
+    job.record.failure = String(error);
+  } finally {
+    try {
+      await job.stop();
+    } catch (error) {
+      job.record.failure = `${job.record.failure ?? ''}; cleanup: ${String(error)}`;
+    }
+  }
+  if (job.record.failure) throw new OwnedHelperError(job.record.failure, job.record);
+  return job.record;
 }
 
 interface Executable {
@@ -198,19 +265,10 @@ export async function discoverNativeCli(executable: Executable = { file: 'xcrun'
   };
   try {
     for (const args of [['version'], ['help', 'record'], ['help', 'export'], ['record', '--template', 'Metal System Trace', '--show-recording-options']]) {
-      const job = recordedCommand(executable.file, [...executable.prefix, ...args], log.commands);
       try {
-        const result = await bounded(job.done, deadlineMs, `Native discovery ${args.join(' ')}`);
-        if (result.code !== 0 || result.error || result.truncated)
-          throw new Error(`Native discovery failed: code=${result.code}, signal=${result.signal}, error=${result.error}`);
+        await runOwnedHelper(executable.file, [...executable.prefix, ...args], log.commands, { deadlineMs });
       } catch (error) {
         log.failure = String(error);
-      } finally {
-        try {
-          await job.stop();
-        } catch (error) {
-          log.failure = `${log.failure ?? ''}; discovery cleanup: ${String(error)}`;
-        }
       }
       if (log.failure) break;
     }
