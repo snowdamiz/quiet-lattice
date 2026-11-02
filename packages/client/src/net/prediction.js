@@ -3,7 +3,8 @@
 // refuses it with a `correction`: the last pose the server can vouch for, as of the refused input's time. `Prediction`
 // keeps what the client sent, and on a correction rewinds the mover to the server's pose at that input and replays what
 // the client did since: its own motion, re-based on the server's pose, or, where the server refused the mode the client
-// predicted (the pulse drive on a Charge it holds empty), the server's velocity carried on from there. Each snapshot says
+// predicted (the pulse drive on a Charge it holds empty), the server's velocity carried on from there. An engine-owned
+// mover keeps its observed motion even while the server still reports pulse. Each snapshot says
 // where the server holds the entity as of the last input it handled (`ack`): one further than MATCH_M from what the client
 // sent then is a correction the client never heard (lost on the way), and is taken the same way. Inputs the client sent
 // before it took a correction are the old trajectory, which the server refuses quietly: they are not compared. The zone
@@ -113,8 +114,8 @@ export class Prediction {
    * Rewinds a mover to where the server holds it, `pose` (a wire pose) in `mode` as of input `seq`, and replays what the
    * client did since: `state` (the mover's FrameState, in the frame it is in now, at world time `now`) keeps its motion in
    * the frame, or, where the server refused the mode the client sent, is carried on from the server's pose at the server's
-   * velocity, or at its own with `own` (the mover keeps a mode of its own: off the pulse drive the server still holds it
-   * on). `drops` is a correction that takes the mover off the pulse drive: it is carried on at the server's velocity
+   * velocity. With `own`, the mover keeps its observed engine motion and velocity even while the server still holds it
+   * on the pulse drive. `drops` is a correction that takes the mover off the pulse drive: it is carried on at the server's velocity
    * whatever mode that input was sent in, not at the drive's speed. A ship's turning since, in its own axes, is replayed
    * onto the server's orientation; a walker faces its own heading. False when there is nothing to rewind from (an input no
    * longer kept, a frame not of this system).
@@ -122,7 +123,8 @@ export class Prediction {
    * Replay poses track corrections separately from the immutable sent inputs. An input at or before the fence is thus
    * re-based from the trajectory the mover is following now: its acceleration since is preserved, and an earlier offset
    * is never applied twice. Refusing a mode replaces that stretch with the allowed velocity; later corrections replay
-   * the motion the mover made after that replacement. With `own`, those corrections preserve the engine velocity too.
+   * the motion the mover made after that replacement. With `own`, no mode replacement is needed: the replay samples
+   * already describe the engines, including acceleration before this correction arrived.
    */
   take(seq, pose, mode, state, now, own = false, drops = false) {
     const r = this.at(seq);
@@ -131,13 +133,12 @@ export class Prediction {
     // Both as they stood at that input's time, in the frame the mover is in now.
     const server = reframeAt(wireInto(_server, pose), frame, state.frame, r.time);
     const sent = reframeAt(copyInto(_sent, r.replay), r.replay.frame, state.frame, r.time);
-    const refused = mode !== r.replay.mode || drops;
-    const velocity = own ? state.vel : server.vel;
+    const refused = !own && (mode !== r.replay.mode || drops);
     const turn = seq > this.fence && mode !== 'foot';
     const replay = (target, at) => {
       if (refused) {
-        target.pos.copy(server.pos).addScaledVector(velocity, Math.max(0, at - r.time));
-        target.vel.copy(velocity);
+        target.pos.copy(server.pos).addScaledVector(server.vel, Math.max(0, at - r.time));
+        target.vel.copy(server.vel);
       } else {
         target.pos.add(server.pos).sub(sent.pos);
         if (!own) target.vel.add(server.vel).sub(sent.vel);
@@ -151,7 +152,7 @@ export class Prediction {
       reframeAt(sample.replay, sample.replay.frame, state.frame, sample.time);
       sample.replay.frame = state.frame;
       replay(sample.replay, sample.time);
-      // This mode refusal has already rebased the stretch, including when the mover kept its engines.
+      // This mode refusal has already replaced the stretch with the allowed velocity.
       if (refused) sample.replay.mode = mode;
     }
     replay(state, now);

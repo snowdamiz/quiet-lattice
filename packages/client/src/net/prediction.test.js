@@ -294,6 +294,29 @@ describe('Prediction: rewinding to a correction and replaying', () => {
     expect(p.at(23).vel.toArray()).toEqual([400, 0, 0]);
   });
 
+  it.each([20, 160])('keeps %s m/s² engine acceleration before the first delayed pulse correction too', (accel) => {
+    const p = new Prediction(inertial());
+    const x = (dt) => 500 + 100 * dt + 0.5 * accel * dt * dt;
+    const v = (dt) => 100 + accel * dt;
+    for (let i = 0; i <= 32; i++) p.record(sent(i + 1, 10 + i * 0.05, [x(i * 0.05), 0, 0], { vel: [v(i * 0.05), 0, 0] }));
+    const s = state(null, [x(1.6), 0, 0], [v(1.6), 0, 0]);
+    const correction = { frame: null, pos: [500, 3, 0], quat: [0, 0, 0, 1], vel: [20000, 0, 0] };
+    p.take(1, correction, 'pulse', s, 11.6, true);
+    p.corrected(33);
+    expect(s.pos.distanceTo(new THREE.Vector3(x(1.6), 3, 0))).toBeLessThan(MATCH_M);
+    expect(s.vel.x).toBeCloseTo(v(1.6), 9);
+    // A later correction answers an old engine input while the server still reports pulse.
+    const expected = new THREE.Vector3(500 + x(1.6) - x(0.5), 3, 0);
+    for (let repeat = 0; repeat < 2; repeat++) {
+      p.take(11, correction, 'pulse', s, 11.6, true);
+      expect(s.pos.distanceTo(expected)).toBeLessThan(MATCH_M);
+      expect(s.vel.x).toBeCloseTo(v(1.6), 9);
+    }
+    expect(p.at(11).pos.toArray()).toEqual([x(0.5), 0, 0]);
+    expect(p.at(11).vel.toArray()).toEqual([v(0.5), 0, 0]);
+    expect(p.at(11).mode).toBe('ship');
+  });
+
   it('takes the server’s velocity for an input at or before the fence where the mode it was sent in is refused', () => {
     const p = new Prediction(inertial());
     for (let seq = 5; seq <= 9; seq++) p.record(sent(seq, 10 + (seq - 5) * 0.05, [500 + (seq - 5) * 1000, 0, 0], { vel: [20000, 0, 0], mode: 'pulse' }));

@@ -729,8 +729,9 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
   and sends the pose it predicts, keeping what each input said (the last 64, about 3 s). A `correction` (or an operator's
   teleport) holds the mover at a pose as of input `seq`: the client rewinds there and replays what it did since, its
   motion in the frame re-based on the server's pose; where the server refused the mode the client sent (the pulse drive
-  on a Charge it holds empty), it is carried on from the server's pose at the server's velocity, or at its own when the
-  ship has left the drive the server still holds it on. A ship's turning since is replayed onto the server's orientation;
+  on a Charge it holds empty), it is carried on from the server's pose at the server's velocity. When the ship has left
+  the drive the server still holds it on, it keeps its observed engine motion and velocity, including acceleration
+  before the correction arrived. A ship's turning since is replayed onto the server's orientation;
   a walker keeps looking where its player looks. A mode it cannot take in its stride (set down, aboard as it got out, out
   as it boarded), and a correction to an input no longer kept, place it as a welcome does. All of it is re-expressed into
   the frame the client is in (DECISIONS P1.E03.T03: never adopt the server's frame). Each snapshot's account of the entity
