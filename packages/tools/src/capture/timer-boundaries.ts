@@ -47,6 +47,8 @@ export async function captureTimerBoundaries(options: ReturnType<typeof timerBou
   const paths = [
     ...FROZEN_SOURCES,
     'packages/client/src/dev/timer-boundaries.js',
+    'packages/client/src/dev/gpu-completion.js',
+    'packages/client/src/dev/dependent-output.js',
     'packages/tools/src/capture/timer-boundaries.ts',
     'packages/client/src/core/Engine.js',
     'packages/client/src/render/AtmospherePass.js',
@@ -103,14 +105,26 @@ export async function captureTimerBoundaries(options: ReturnType<typeof timerBou
     }, 1000);
     const { args, gl } = glArgs();
     browser = await chromium.launch({ args });
+    let browserVersion: unknown;
+    try {
+      const cdp = await browser.newBrowserCDPSession();
+      try {
+        browserVersion = await cdp.send('Browser.getVersion');
+      } finally {
+        await cdp.detach();
+      }
+    } catch (error) {
+      browserVersion = { error: String(error), limit: 'Exact Chromium/ANGLE revision remains unpinned' };
+    }
     save('context.json', {
       diagnosticOnly: true,
       kind: 'timer-boundary-controls',
-      contractVersion: 1,
+      contractVersion: 2,
       ...options,
       assetBytes: body.length,
       viewport: [1920, 1080],
       browser: browser.version(),
+      browserVersion,
       gl,
       args,
       sourceHead: (await command('git', ['rev-parse', 'HEAD'], { cwd: ROOT })).stdout.trim(),
@@ -120,12 +134,15 @@ export async function captureTimerBoundaries(options: ReturnType<typeof timerBou
       cpu: cpus()[0]?.model,
       blocks: 5,
       maxControlFrames: 35,
+      maxQueryControls: 35,
+      maxDependentControlPasses: 25,
+      dependentWarmupPasses: 4,
       maxWarmupFrames: 600,
       hostIntervalMs: 1000,
       method:
         'Separate diagnostic only. One-second host observation differs from the five-second budget runner. Snapshot overhead can overlap particular controls and is not assumed equal; raw timestamps retain that uncertainty. No budget or renderer-speedup inference.',
       premise:
-        'Non-nested timer brackets exclude rendered work submitted before query begin. Test queued and explicitly drained empty queries against idle empty and isolated one/four real-frame positive controls.',
+        'Timer-query durations may not be trustworthy exclusive elapsed time on this executing backend. Observe WebGLSync completion and GPU-dependent readback before interpreting recorded query/monotonic wall intervals; changing fences alone does not validate timing.',
     });
     phase = 'loading';
     server = await startVite(ROOT);
