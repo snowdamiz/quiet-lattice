@@ -6,6 +6,8 @@ import { benchmarkReport, inspectRun, runRange } from './benchmark-report.ts';
 
 function run(light = 'noon-lush', shownGpu = 12) {
   return {
+    startedAt: '2026-11-02T01:00:00.000Z',
+    finishedAt: '2026-11-02T01:00:10.000Z',
     case: light,
     lod: 0,
     viewport: [1920, 1080],
@@ -23,6 +25,19 @@ function run(light = 'noon-lush', shownGpu = 12) {
   };
 }
 
+// Producer-shaped CPU test evidence; these counters are never measured performance claims.
+function hostSample(phase = 'current:noon-lush:run-1', overrides: object = {}) {
+  return {
+    at: '2026-11-02T01:00:05.000Z',
+    phase,
+    load: [1, 1, 1],
+    freeMemoryBytes: 1024,
+    processes: '  PID PPID %CPU %MEM ELAPSED COMM\n  123 1 2.0 0.1 00:05 /synthetic/fixture\n',
+    gpu: ['"PerformanceStatistics" = {"Device Utilization %"=10,"Renderer Utilization %"=8,"Tiler Utilization %"=5}'],
+    ...overrides,
+  };
+}
+
 describe('review benchmark: aggregation', () => {
   const folders: string[] = [];
   function directory(gpu = 12) {
@@ -31,7 +46,10 @@ describe('review benchmark: aggregation', () => {
     const save = (name: string, value: unknown) => writeFileSync(join(root, name), JSON.stringify(value));
     save('context.json', { mode: 'measure', sourceTrees: [{ label: 'current' }], assetSha256: 'fixture' });
     save('status.json', { errors: [], pageErrors: [{ label: 'current', errors: [] }] });
-    save('host-samples.json', [{ phase: 'synthetic fixture' }]);
+    save(
+      'host-samples.json',
+      ['noon-lush', 'night-exotic', 'open-space'].map((light) => hostSample(`current:${light}:run-1`)),
+    );
     for (const light of ['noon-lush', 'night-exotic', 'open-space']) {
       for (let i = 1; i <= 5; i++) save(`current-${light}-${i}.json`, run(light, gpu));
     }
@@ -59,7 +77,7 @@ describe('review benchmark: aggregation', () => {
     const report = benchmarkReport(root);
     expect(report.groups).toHaveLength(3);
     for (const group of report.groups) {
-      expect(group.budgetObservation).toBe('exceeds');
+      expect(group.shownBudgetObservation).toBe('exceeds');
       expect(group.scene.gpuMsP95).toMatchObject({ n: 5, median: 25, min: 25, max: 25 });
       expect(group.hidden.gpuMsP95.median).toBe(10);
       expect(group.pairedAssetGpuMs.median).toBe(0.05);
@@ -70,7 +88,7 @@ describe('review benchmark: aggregation', () => {
     const { root, save } = directory();
     save('current-noon-lush-5.json', run('noon-lush', 16));
     const report = benchmarkReport(root);
-    expect(report.groups[0]).toMatchObject({ budgetObservation: 'within', scene: { gpuMsP95: { n: 5, median: 12, min: 12, max: 16 } } });
+    expect(report.groups[0]).toMatchObject({ shownBudgetObservation: 'within', scene: { gpuMsP95: { n: 5, median: 12, min: 12, max: 16 } } });
     expect(report.taskVerdict).toContain('Pending separate limiter evidence');
   });
 
@@ -80,10 +98,12 @@ describe('review benchmark: aggregation', () => {
     const failureBefore = readFileSync(join(root, 'current-noon-lush-2.json'));
     rmSync(join(root, 'current-noon-lush-4.json'));
     const group = benchmarkReport(root).groups[0];
-    expect(group.budgetObservation).toBe('inconclusive');
+    expect(group.shownBudgetObservation).toBe('inconclusive');
     expect(group.scene.gpuMsP95).toMatchObject({ n: 3, missing: 2 });
     expect(group.runs).toHaveLength(5);
     expect(group.runs[1].sha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(group.runs[1].readError).toBeNull();
+    expect(group.runs[1].captureFailure).toEqual({ failed: true, error: 'Capture interrupted', partial: { samples: [] } });
     expect(group.runs[3].sha256).toBeNull();
     expect(readFileSync(join(root, 'current-noon-lush-2.json'))).toEqual(failureBefore);
   });
@@ -94,7 +114,78 @@ describe('review benchmark: aggregation', () => {
     save('host-samples.json', []);
     const report = benchmarkReport(root);
     expect(report.globalIssues).toHaveLength(2);
-    expect(report.groups.every((group) => group.budgetObservation === 'inconclusive')).toBe(true);
+    expect(report.groups.every((group) => group.shownBudgetObservation === 'inconclusive')).toBe(true);
+  });
+
+  it('retains a startup collector failure and cannot mistake a nonempty error file for load evidence', () => {
+    const { root, save } = directory();
+    const failed = { at: '2026-11-02T01:00:00.000Z', phase: 'startup', load: [1, 1, 1], error: 'Unable to sample competing processes' };
+    save('host-samples.json', [failed]);
+    const report = benchmarkReport(root);
+    expect(report.globalIssues).toContain('Competing-load collection failed in 1 observations');
+    expect(report.hostEvidence.observations[0].issues).toContain('Collector error: Unable to sample competing processes');
+    expect(report.hostEvidence.observations[0].failedObservation).toEqual(failed);
+    expect(report.groups.every((group) => group.shownBudgetObservation === 'inconclusive')).toBe(true);
+  });
+
+  it('requires observations during measurement, not just successful startup/finished snapshots', () => {
+    const { root, save } = directory();
+    save('host-samples.json', [hostSample('startup'), hostSample('finished')]);
+    const report = benchmarkReport(root);
+    expect(report.globalIssues).toContain('No usable measurement-period competing-load observations');
+    expect(report.hostEvidence.observations.every((observation) => observation.issues.length === 0)).toBe(true);
+    expect(report.groups.every((group) => group.shownBudgetObservation === 'inconclusive')).toBe(true);
+  });
+
+  it.each([
+    { processes: 'Error: Command failed: ps' },
+    { gpu: 'Error: Command failed: ioreg' },
+    { gpu: [] },
+    { gpu: ['"model" = "Apple M5 Pro"'] },
+    { gpu: ['IOAccelerator counters unavailable on this platform'] },
+  ])('retains failed or empty process/GPU observations: %j', (failure) => {
+    const { root, save } = directory();
+    const failed = hostSample('current:noon-lush:run-1', failure);
+    save('host-samples.json', [failed, hostSample('current:night-exotic:run-1')]);
+    const report = benchmarkReport(root);
+    expect(report.hostEvidence.observations[0].failedObservation).toEqual(failed);
+    expect(report.hostEvidence.observations[0].usable).toBe(false);
+    expect(report.hostEvidence.observations[0].issues.length).toBeGreaterThan(0);
+    expect(report.globalIssues).toContain('Competing-load collection failed in 1 observations');
+    expect(report.groups.every((group) => group.shownBudgetObservation === 'inconclusive')).toBe(true);
+  });
+
+  it.each(['missing', 'malformed'])('reports %s load evidence as inconclusive without dropping the run data', (state) => {
+    const { root } = directory();
+    if (state === 'missing') rmSync(join(root, 'host-samples.json'));
+    else writeFileSync(join(root, 'host-samples.json'), 'not JSON');
+    const report = benchmarkReport(root);
+    expect(report.hostEvidence.readError).toEqual(expect.any(String));
+    expect(report.groups.every((group) => group.shownBudgetObservation === 'inconclusive' && group.scene.gpuMsP95.n === 5)).toBe(true);
+  });
+
+  it('checks both the run phase and timestamp before treating a load sample as measurement-period evidence', () => {
+    const { root, save } = directory();
+    save('host-samples.json', [hostSample('current:noon-lush:run-1', { at: '2026-11-02T00:59:59.000Z' })]);
+    const report = benchmarkReport(root);
+    expect(report.groups.every((group) => group.shownBudgetObservation === 'inconclusive')).toBe(true);
+    expect(report.groups[0].issues).toContain("No usable competing-load observation overlaps this lighting case's measured runs");
+  });
+
+  it("does not apply one lighting case's load sample to an unobserved case", () => {
+    const { root, save } = directory();
+    save('host-samples.json', [hostSample('current:noon-lush:run-1')]);
+    expect(benchmarkReport(root).groups.map((group) => group.shownBudgetObservation)).toEqual(['within', 'inconclusive', 'inconclusive']);
+  });
+
+  it('states shown and hidden budget observations separately', () => {
+    const { root, save } = directory();
+    for (let i = 1; i <= 5; i++) {
+      const fixture = run();
+      for (const sample of fixture.samples) if (!sample.shown) sample.gpu = 30;
+      save(`current-noon-lush-${i}.json`, fixture);
+    }
+    expect(benchmarkReport(root).groups[0]).toMatchObject({ shownBudgetObservation: 'within', hiddenBudgetObservation: 'exceeds' });
   });
 
   it('rejects profiling sessions as a source of budget evidence', () => {
