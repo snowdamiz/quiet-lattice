@@ -479,3 +479,369 @@ every Count, sanctuaries exempt (Duntha unmarked), the Shift row, credits on a p
 changes style in one frame while its ring eases out; the pale-blue and peach fringe play does not survive the sky's
 grade; Venmirix and Tervelost's rings still interlock; the map's worst frame 2.6 ms; edge-dark's clip opens on a fading
 selection. Artifacts: `assets/renders/ui/{edge-map,edge-sky,edge-dark}/`.
+
+
+## 2026-11-02: retained component verdicts
+
+These entries preserve previously issued verdicts retained outside this central log, with their original text and source hashes. They add no new grades. Historical performance scores reflect their original evidence; current shared timing qualification remains P1.E14.T13. Thalune and Ixari retain their fifth REVISE dispositions with follow-ups P1.E05.T07/T08. Ulgani awaits its fifth grade, and both station kits await their third. Whole-task code review and merged verification remain required.
+
+### Thalune — round 4
+
+Source: [p1e05t01_r4_thalune.md](/Users/andreyyurlov/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e05t01_r4_thalune.md). SHA256: `c6af4e321d0571fcbb7d240c4d0305cbde61b90345c69348c6b27dc35de9adaa`.
+
+````text
+VERDICT: REVISE
+TASK: P1.E05.T01 (Thalune), round 4 at 7337fc20
+SCORES: design 3, silhouette 3, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 3, placeholder 3, performance 4 (mean 3.3)
+NOTES:
+- **design:** the hands are still not webbed, and DESIGN 5 names webbed hands as a Thalune trait. In the palm and back-of-hand panels of thalune_hands_feet.png, the web is a small coral sliver at the finger roots, about a sixth of the finger length. The fingers stand apart from the knuckle down. Build each web as one continuous opaque skin surface between each pair of fingers. Its free edge should be a shallow concave arc that reaches the middle knuckle (about two-thirds of the finger length) and thins toward the edge, in skin colour with a faint coral rim. Keep the webs through LOD2.
+  - The eyes are now set back correctly, but they are not "dark". In the Basis cell of thalune_blendshapes.png the irises are a speckled mid teal-green. Darken them to shelf blue #1F4E5F or deeper with a near-black pupil, so the eye reads as a large dark eye at 2–5 m.
+- **silhouette:** at 100 m the Thalune is still a teal T-pose about 15 px tall, told apart from the Ixari and Ulgani only by colour. Suited, it is a blue stick. This shows in lineup_far_lod2.png, thalune_lineup_far_lod2.png and far_lod2.png for all ten variants. The new dorsal fin and the head crests are smaller than a pixel at that range. Give the body an outline that reads at the scale of the whole figure:
+  - Widen the neck frills into a collar about 35–40 cm across from the front, wider than the head, so it breaks the neck-to-shoulder line.
+  - Broaden and flatten the head at the jaw.
+  - Make the webbed hands and feet visibly paddle-like.
+  - To check, render far_lod2 for the three peoples in greyscale side by side. They must still be told apart.
+- **materials:** the noon belly is fixed: pale ground, coloured cells, no black blots. Three problems remain:
+  - **Skin gloss:** the skin is still mirror-glossy. In noon-lush_lod0 for head1, head4 and head6 the whole body reflects the sky and reads as wet latex, with a smeared teal streak down the right side of the torso and both legs. Raise skin roughness to 0.5–0.55 outside a small wet-sheen zone, or lower specular to about 0.35.
+  - **Suit wear:** the only wear on the suits is still the shin salt speckle. Add scuffs and polish at the knees and elbows of SuitA and SuitB, verdigris on suit4's collar fastening, and a salt tide-line at the cuffs (art bible 2.1).
+  - **Nacre glow:** the suit2 and suit3 shell plates render unlit at night (night-exotic_lod0). Add the LIB_Nacre low inner glow: #FFE7C2 emissive at about 0.05–0.1.
+- **detail:** the Cycles turntables now show kneecaps, clavicles, a sternum line and faint knuckles. In engine (open-space_lod0, noon-lush_lod0) the limbs still read as smooth tubes. The elbow point, wrist tendons, ankle bones and calf carry no visible form. Deepen the baked normals or add geometry there until they read at 3–5 m in the review scene.
+  - **Suits:** still no stitching, weave or padding (suit1 turntable: smooth cloth with one seam line). Bake stitch rows along the seams, a fine weave normal, and quilted padding under the shoulder plates.
+  - **Gills:** the throat still has painted vertical lines on every head (thalune_heads_closeup.png). Cut 3–4 gill slits as geometry behind the jaw.
+- **topology:** three defects remain.
+  - **Brow and upper lid:** this mass self-intersects on every face. It has a hard planar cut at the inner end and a crumpled, jagged top edge, visible in the Basis cell of thalune_blendshapes.png and the head1, head3, head4 and head6 profiles in thalune_heads_closeup.png. Rebuild each brow and lid as one closed, smooth surface.
+  - **Small shards:**
+    - a torn nail on the outer finger in "back of the hand"
+    - a dark jagged crease at the thumb root and a dark band across the thumb in "palm"
+    - tiny shard spikes at the toe tips and between the toes in "toes from the front"
+    - dark seam lines at the head1 and head4 fan roots
+    - a dark pit in head3's neck in profile
+  - **Density:** in thalune_bendtest_head1.png the head still renders almost solid while the torso shows an open grid. Move density from the head into the hands and feet.
+- **fitness:** blink_L/R now close an opaque lid, but the closed lid bulges and folds under the brow. Make the closed lid a smooth curve that meets the lower lid line.
+  - blinkUpper_L/R still show no change from Basis, and browDown_L/R show no visible travel. Give browDown 4–6 mm of downward and inward travel at the inner brow, and make blinkUpper visibly lower the upper lid.
+  - Bottom-left view of thalune_bendtest_head1.png: in the crouch the head still drops face-down onto the chest. Spread the neck weights over both neck bones and the upper spine.
+- **placeholder:** the fins are still flat cards with hard roots. Head6's crest is a straight flat sheet stuck into the back of the skull, and the head1, head3 and head4 fans meet the neck on a straight vertical line. The claimed skin fold does not show at close-up scale. Grow each fin from a visible skin fold 1–1.5 cm high, thicker at the root, and give the leading ray some thickness and curl.
+  - **Heels:** each heel is a near-spherical ball wider than the ankle (turntable and bend-test back views). Reshape it into a heel pad.
+  - **Calf and forearm fins:** these render as thin dark slits that read as cuts (head1 turntable back view, thalune_bendtest_head1.png back views). Give them thickness and a root fold, or remove them.
+- **minor proportion:** heights of 1.80–1.87 m match the art bible's 1.80 m. The neck is still long against narrow shoulders, and the palms are rectangular mitts. Taper the palm toward the wrist.
+- **minor consistency:** the family hangs together. At full-body scale (thalune_heads_family.png), head1 and head4 still read as the same skull with side fans. Give head4 a distinct outline, such as swept-back fans or broad cheek frills.
+- **minor performance:**
+  - **Measured:** LOD0 is 91–139k tris with 4 LODs and LOD3 at 3.4%, in 5–6 draws. Open-space GPU cost is 0.49–0.80 ms unsuited and 0.61–1.39 ms suited, and the open-space scene frame is 3.3–7.0 ms. Textures are 139/181 MB shown (213/277 MB at 8 bits a texel), under the 512 MB hero cap.
+  - **Re-measure:** run noon and night on an idle GPU with the standard readout (600 warm-up frames, up to 720 pairs) to confirm those scenes hold 60 fps with the body. Also re-measure the open-space readings for head3, suit3 and suit4, which the tool marks unreliable.
+  - **Still open:** mip streaming for remote bodies is still not addressed.
+
+ROUND-3 NOTES:
+- design, hands not webbed: not fixed (the webs are slivers at the finger roots).
+- design, eyes the biggest form, push about 1 cm back: fixed (brow and cheek now make the profile).
+- silhouette, 100 m read by colour only: not fixed.
+- silhouette, dorsal ridge 6–10 cm: fixed (it stands off the back in the side views, but it does not read at 100 m).
+- silhouette, head3 occipital lobe and head5 brow nubs: fixed (head3's hood reads in the family sheet; head5's nubs are still faint at full-body scale).
+- materials, noon belly and black cells: fixed (the skin is still too glossy).
+- materials, suit wear at knees and elbows, suit4 verdigris: not fixed.
+- materials minor, nacre night glow: not fixed.
+- detail, landmarks at knees, elbows, wrists, ankles, calves: not fixed (kneecaps and clavicles now show; elbows, wrists, ankles and calves do not read in engine).
+- detail, knuckles: not fixed (faint bumps only).
+- detail, stitching, weave and padding: not fixed.
+- detail, gill slits as geometry: not fixed.
+- topology, crumpled and torn toes: fixed (separate digits on a connected forefoot; tiny tip shards remain).
+- topology, jagged creases over the brows: not fixed.
+- topology, head3 fan-root gap and head1 fan seam: not fixed (straight roots; seam lines at head1 and head4).
+- topology, head density against hands and feet: not fixed.
+- topology, head sinking toward the shoulder in the bend test: not fixed.
+- topology minor, stray line from the crown: fixed.
+- fitness, opaque blink: not fixed (the lid is now opaque but bulges and folds under the brow).
+- fitness, blinkUpper with no change: not fixed.
+- fitness, browDown travel: not fixed.
+- placeholder, fins as flat cards with hard roots: not fixed.
+- placeholder, cells in a single file down the sternum: fixed (scattered, mixed sizes).
+- placeholder, dark blot on the palm: fixed.
+- minor performance, mip streaming: not addressed.
+- minor proportion, long neck: not fixed.
+
+ARTIFACTS: all under /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/
+- characters/thalune_turntable.png
+- characters/thalune_thalune_thalune_{head1..head6,suit1..suit4}_turntable.png
+- characters/thalune_heads_family.png, characters/thalune_suits_family.png (.txt)
+- characters/thalune_materials.png, characters/thalune_thalune_thalune_suit2_materials.png
+- characters/thalune_heads_closeup.png
+- characters/thalune_blendshapes.png (.txt)
+- characters/thalune_hands_feet.png
+- characters/thalune_bendtest_head1.png, characters/thalune_bendtest_suit3.png
+- review/characters/thalune/thalune/thalune_<variant>/{noon-lush,night-exotic,open-space}_lod{0,2}.png, wireframe_lod{0,2}.png, overlay.png, far_lod2.png, far200_lod2.png, perf.json, sheet.png (all ten variants)
+- review/characters/lineup_far_lod2.png, review/characters/thalune_lineup_far_lod2.png
+- characters/validate/characters__thalune.blend.json, characters/validate/characters__thalune.glb.json
+````
+
+### Thalune — round 5
+
+Source: [p1e05t01_r5_thalune.md](/Users/andreyyurlov/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e05t01_r5_thalune.md). SHA256: `42e0a7f0ff875eb8f90442f9d494d92f38c15379039d2df4e6a1521314d8874a`.
+
+````text
+VERDICT: REVISE
+TASK: P1.E05.T01 (Thalune component), round 5 at 6b55969daea518ce03017540371a0fed1f42dd5f
+SCORES: design 4, silhouette 3, proportion 4, materials 3, detail 3, topology 2, consistency 5, fitness 3, placeholder 3, performance 3 (mean 3.3)
+
+Fresh native reviewer: /root/thalune_visual_review5. Artifact paths below are relative to /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41.
+
+NOTES:
+- silhouette: Preserve a stronger gill-frill/head outline in LOD2. At 100 m, assets/renders/review/characters/thalune_lineup_far_lod2_grayscale.png reads as thin generic bipeds; the amphibious silhouette largely disappears, including in the enlarged crops.
+- materials: Separate pearl-shell and fabric roughness and add localized polishing along shell edges. The plates in assets/renders/review/characters/thalune/thalune/thalune_suit3/noon-lush_lod0.png read as matte white plastic rather than nacre; shin mottling supplies most visible wear.
+- detail: Add shaped garment seams, joint gussets and padding to the suit bodies. In assets/renders/characters/thalune_suits_family.png, especially suit4, the torso and limbs remain largely uninterrupted blue forms beneath shell ornaments.
+- topology: Repair the visible triangular creases and surface discontinuities around brows, finger joints and toe ends, then verify the repaired surfaces across LODs. These are conspicuous in assets/renders/characters/thalune_heads_closeup.png and thalune_hands_feet.png, despite passing structural validators.
+- fitness: Refine dialogue morphs so vis_MBP visibly closes the mouth and vis_FV produces a distinct articulation. The assets/renders/characters/thalune_blendshapes.png sheet retains the dark mouth slit for vis_MBP, while vis_FV remains nearly indistinguishable from Basis.
+- placeholder: Sculpt continuous palm-to-digit transitions, rounded digit pads and integrated webbing. The hands/feet closeups still read as block palms and blunt tubular digits rather than finished hero anatomy.
+- performance: Resolve or isolate the review-scene bottleneck and recapture evidence meeting the 16.67 ms frame budget. Suit2's perf.json records noon GPU median 27.837 ms, versus 27.364 ms with the asset hidden; its paired asset estimate is flagged unreliable. Geometry and texture budgets pass, but this loaded development session does not establish 60 fps or an attributable character performance regression.
+
+ARTIFACTS: reviewer verified every listed hash in assets/renders/characters/validate/thalune-review5-inventory.json (179 files), read source/export validation and performance/generation context, and inspected component turntables, family/detail sheets, both bend tests, all ten review sheets, and distance lineups.
+
+Orchestrator disposition: fifth REVISE preserved as REVISE. Remaining appearance/playability notes filed as P1.E05.T07; shared scene performance evidence as P1.E14.T13 under plan 0.1. Whole P1.E05.T01 remains unmerged pending the other components and remaining gates.
+````
+
+### Ixari — round 4
+
+Source: [p1e05t01_r4_ixari.md](/Users/andreyyurlov/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e05t01_r4_ixari.md). SHA256: `a8f7a653ca8c612e79e838b2e1156ebefe0d0de94a2d9ee66f3a7929db314f9c`.
+
+````text
+VERDICT: REVISE
+TASK: P1.E05.T01 (Ixari component), round 4 at 6be95980aadbbd69544c141cf3b2b2e5e586e5bb
+SCORES: design 4, silhouette 3, proportion 5, materials 3, detail 3, topology 3, consistency 5, fitness 4, placeholder 3, performance 3 (mean 3.6)
+
+Fresh native reviewer: /root/ixari_visual_review4. Artifact paths below are relative to /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41.
+
+NOTES:
+- silhouette: At LOD2/100 m, the crystal crown and forearm growths disappear into a generic slender biped outline. Strengthen grouped crystal masses and preserve their silhouette through LOD2. Evidence: assets/renders/review/characters/ixari_lineup_far_lod2_grayscale.png.
+- materials: Suit crystals read as nearly uniform white patches, with little separation between facets, cloudy cores and luminous seams. Reduce broad-face emission and strengthen localized growth-line light, clouding and edge wear across all three lighting cases. Evidence: assets/renders/review/characters/ixari/ixari/ixari_suit3/open-space_lod0.png.
+- detail: The four suits largely read as smooth unitards decorated with crystal clusters; broad knee patches do not convincingly describe padding or garment construction. Add shaped joint padding, seam relief and articulated garment transitions at knees, elbows and cuffs. Evidence: assets/renders/characters/ixari_suits_family.png.
+- topology: Finger joints and toe roots show crumpled shading and dark slit-like discontinuities; several brow and mouth transitions also pinch. Clean those junctions and normals, then verify their shaded appearance through the LODs and deformation poses. Evidence: assets/renders/characters/ixari_hands_feet.png and ixari_heads_closeup.png.
+- placeholder: The broad slab-like palms and blunt, nearly constant-width toes retain a primitive construction appearance. Sculpt palm-to-digit transitions, differentiated joint volumes, tapered digits and intentional fingertip/toe pads while preserving the long-jointed Ixari anatomy. Evidence: assets/renders/characters/ixari_hands_feet.png.
+- performance: Geometry and texture budgets pass, but recorded full-scene GPU medians are 27.7–28.3 ms at noon and 23.4–24.5 ms at night, above 16.67 ms. Profile the full review scene and repeat all three cases under documented stable host conditions. The supplied session had host contention and no independent limiter profile; these results do not establish that Ixari caused the excess. Paired asset costs establish neither 60 fps nor whole-game performance. Evidence: assets/renders/review/characters/ixari/ixari/ixari_head1/perf.json and assets/renders/characters/validate/ixari-review4-performance-context.json.
+
+ARTIFACTS: reviewer verified all hashes in the 179-file inventory, source/export validation, ten-variant review sheets, family sheets, turntable/material evidence, facial blendshape sheet and head1/suit3 bend tests.
+
+Orchestrator disposition: same character worker receives the notes for one fifth revision/grade; source edits stay Ixari-specific while Ulgani's recovery process is waiting. Shared review-scene performance investigation belongs to P1.E14.T13. The whole character task remains unmerged.
+````
+
+### Ixari — round 5
+
+Source: [ixari-review5-parent-relayed-verdict.md](/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ixari-review5-parent-relayed-verdict.md). SHA256: `660b0f70555c7e21ff4ad854a554bd91e9ee90e7e06dd6aa93f839e59018b8f8`.
+
+````text
+# Ixari fifth visual review — parent-relayed verdict
+
+TASK: P1.E05.T01
+SPECIES: Ixari
+REVISION: 5
+REVIEWER: ixari_fifth_grade_sol
+MODEL: gpt-6.1-sol
+REASONING_EFFORT: xhigh
+FORK_TURNS: none
+ARTIFACT_HEAD: 0e625c1928a05ac90126320417f2d6efaacee926
+PROVENANCE: Preserved verbatim from the parent agent's relay on 2026-11-02; this worker did not perform or reconstruct the independent grade.
+GRADER_MANIFEST: assets/renders/characters/validate/ixari-review5-grader-packet.json
+GRADER_MANIFEST_SHA256: 5fb19c7f7b927beeac0296942d345d7b72be99924d4a831b8d59ef46ce807ef6
+
+## Verbatim verdict and notes
+
+VERDICT: REVISE. SCORES: design4, silhouette3, proportion4, materials3, detail3, topology3, consistency4, fitness3, placeholder2, performance3 (mean3.2).
+- silhouette: In ixari_lineup_far_lod2.png and its grayscale counterpart, the crown and forearm crystals collapse into a thin biped outline at100m. Preserve a broader, offset crystal mass at LOD2 so the biological identifier survives that distance.
+- materials: In ixari_heads_closeup.png and suit3’s open-space_lod0.png, crystals read as opaque lavender prisms with clean colour bands. Add localized internal clouding, chipped edges and stronger crystal-versus-skin roughness separation; keep emission concentrated along growth fractures.
+- detail: ixari_suits_family.png shows four close-fitting suits distinguished mainly by scattered hexagonal plates. Shape garment seams, joint gussets and padding around elbows, knees and waist so the suits have construction detail at character-view distance.
+- topology: ixari_heads_closeup.png, especially heads1 and6, shows puckered brow shading and dotted discontinuities along the lip rim. Clean those surface transitions and verify the corrected shading through facial morphs and lower LODs.
+- fitness: In ixari_blendshapes.png, vis_FV reads chiefly as a narrow horizontal mouth seam. Give it a legible lip-contact pose distinct from vis_MBP, then demonstrate the transition at dialogue size.
+- placeholder: ixari_hands_feet.png still shows slab-like palms, tubular fingers and swollen feet ending in simple prongs. Finish palm-to-digit transitions, thumb roots, knuckles and toe pads while preserving the long jointed-finger design.
+- performance: Geometry, four-LOD and compressed-texture evidence meets the numerical asset budgets, but60fps remains unsupported. ixari-review5-performance-context.json explicitly leaves pass/query attribution unresolved; head1 noon reports27.835ms shown and27.600ms hidden under those limitations. Resolve attribution and provide five qualified paired runs per lighting case with host-load context. These observations do not establish an Ixari performance regression or explain the appearance findings above.
+
+Grader verified all179 hashes and bindings, viewed all six heads/four suits turntables/material/review sheets with three lighting cases, LOD0/2, wireframes, overlays, distance, family/detail/morph/hands/bends and both lineups, validators and raw perf/context.
+
+## Parent disposition
+
+The parent filed appearance/playability follow-up P1.E05.T08 at main f2f7681b6 under the owner's fifth-grade rule. Performance remains assigned to P1.E14.T13. Ixari fifth source, export and completed artifacts are frozen; no sixth revision is authorized. Whole P1.E05.T01 remains incomplete while Ulgani and shared final gates remain open.
+````
+
+### Ulgani — round 4
+
+Source: [ulgani-review4-parent-relayed-verdict.md](/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ulgani-review4-parent-relayed-verdict.md). SHA256: `1c249fe63abbe63ca79271a4f0b2ed91b70faf34ca66fe6e1b4291954343477c`.
+
+````text
+# Ulgani fourth visual review — parent-relayed verdict
+
+TASK: P1.E05.T01 — Ulgani fourth grade
+ARTIFACT_HEAD: 10ae8f49b949c9b63ffc6111d6fead4205f43c9c
+GRADER_MANIFEST: assets/renders/characters/validate/ulgani-review4-grader-packet.json
+GRADER_MANIFEST_SHA256: 2d77bc6c26d2dd69047e0a244add567e91a36617ebf2b3ad31ece61b4f09e20d
+PROVENANCE: Preserved from the parent's fresh independent fourth-grade relay on 2026-11-02. The parent supplied the original note spacing in a follow-up. This worker did not perform or reconstruct the independent grade. A reviewer instance identifier was not provided in the relay.
+
+VERDICT: REVISE
+SCORES: design 4, silhouette 3, proportion 4, materials 3, detail 3, topology 2, consistency 4, fitness 3, placeholder 3, performance 3 (mean 3.2)
+
+NOTES (verbatim):
+
+- silhouette: The 100 m grayscale lineups retain a pale biped, but the finer crest branches and terminal clusters lose their fungal read. Preserve broader, connected frond/cap masses in LOD2, particularly for heads 2–6, and verify recognition at native capture size.
+- materials: Skin reads as largely uniform ivory, while suit membranes and lattice members share similar amber response. Separate their roughness and colour treatment; add localized amber-to-grey chitin weathering, darker fused joints and visibly paler membrane repairs.
+- detail: The torso and limbs remain smooth beside the densely detailed crest. Add authored medium-scale breathing-slit rims, membrane tension folds and attachment-edge thickness that remain visible in the supplied gameplay framing.
+- topology: The detail sheets show jagged surface breaks around finger joints, thumb roots, toes and the jawline of heads 3 and 6. Repair these joins and shading. Preserve terminal crest shapes across LODs: head 4’s rounded caps visibly become diamonds at LOD2, and head 3 loses substantial terminal mass.
+- fitness: `vis_FV` reads as another narrow mouth slit, with weak distinction from `vis_MBP`. Shape a clear lip-contact articulation and verify that the two poses remain distinguishable at dialogue-bar size.
+- placeholder: The feet retain rectangular, flat-ended toe extrusions, and the hands have abrupt palm-to-digit transitions. Finish rounded pads, toe roots, thumb bases and knuckle forms so these close-up areas no longer read as blockout.
+- performance: Geometry, four-LOD counts and texture budgets pass validation, but qualified 60 fps evidence is absent. The packet explicitly leaves timing attribution unresolved and supplies one session rather than five independent qualified runs. Complete the shared T13 qualification with baseline attribution and repeated standard-scene captures; the nominal reliable flags establish neither an asset regression nor a scene-budget pass.
+
+GRADER COVERAGE (parent relay): Verified all 179 required and 12 supporting artifacts, source/export/inventory/packet bindings and inspected all ten visual sets, morphs, deformations and lineups.
+
+DISPOSITION: The parent authorized the fifth Ulgani saved-source revision and artifact cycle. No fifth verdict exists. Thalune and Ixari remain frozen after their fifth REVISE; no sixth peer revision is authorized. Shared performance qualification remains P1.E14.T13. No renderer/exposure changes or capture downgrade may substitute for appearance/playability fixes. Whole P1.E05.T01 remains incomplete.
+````
+
+### Waystation — round 1
+
+Source: [p1e11t01_grade1_waystation.md](/Users/andreyyurlov/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e11t01_grade1_waystation.md). SHA256: `fad475628a133b7e2efa2bbf511d5d52a9e77d10aaea0010101d99f885628cc1`.
+
+````text
+VERDICT: REVISE
+TASK: P1.E11.T01 Waystation
+SCORES: design 3, silhouette 4, proportion 5, materials 3, detail 3, topology 4, consistency 4, fitness 4, placeholder 3, performance 5 (mean 3.8)
+NOTES (REVISE only, one per failing criterion):
+- design: The kit has the Compact palette and the shell motif: the hangar roof ribs fan out from a hinge line (waystation_ws_hangar_turntable.png) and the habitat dome is scalloped. It has no Ulgani lattice and no Ixari crystal (art bible 2.4). Every frame member is a straight steel truss or box section: the hangar's interior roof trusses (stations_kit_hangar.png), the ws_spine cage (waystation_ws_spine_turntable.png), the ws_ring spokes and the ws_habitat straps. Every window is a flat blue glass band or panel.
+  - Rebuild those members as triangulated, lightly curved members with fused fillets at the joints.
+  - Replace the window bands on ws_ring, ws_spine and ws_habitat with faceted crystal inserts set in dark socket collars.
+  - Give the ws_ring torus and the ws_baydoor leaves real overlapping shingle plates along their ribs, so they stop reading as a generic wheel and a generic panel wall.
+- materials:
+  - ws_refuelpost's emissive strip blooms over the whole post in noon, night and open space (review/stations/waystation/ws_refuelpost/sheet.png). Cut its emissive to about a fifth, or make it a thin indicator line.
+  - The kit is spotless. Add hand-painted wear where use goes: grime at the mouth lip and gantry rails, scuffing on the trade-deck stair and floor, wear around hatch rims on ws_spine and ws_habitat, and edge chips on the cargo pod.
+  - Break the visible repeats:
+    - The stencil numbers repeat panel to panel on the hangar walls (07/31/14/22 and 20/29/11 in stations_kit_fabricator.png).
+    - All 24 pads carry the same scorch smudge (stations_kit_hangar.png). Vary it per pad with rotated or swapped decals.
+  - ws_baydoor in open space at LOD0 renders as a flat, toneless white sheet. Give it value variation from the trim sheet and from wear.
+- detail:
+  - ws_baydoor is 1,400 triangles for a 130 × 42.6 m door and reads as a flat painted wall (waystation_ws_baydoor_turntable.png). Model leaf frames and ribs, top and bottom track rails, guide rollers and leaf edges with depth.
+  - ws_tradedeck is a 129 m bare slab at 3,748 triangles (waystation_ws_tradedeck_turntable.png). Build visible counters where COL_Counter_30 and COL_Counter_45 already sit, a Quartermaster plinth at Interact_Quartermaster (x 0), a board screen at Interact_Board, and light fixtures and deck dressing.
+  - The hangar's inner walls are 42 m flat planes with painted panel lines, where the exterior has structural ribs (stations_kit_hangar.png). Bring the ribs, recessed panels and pipe runs through to the interior.
+- placeholder:
+  - Three props sit under the prop floor because their asset_class property makes them kit pieces: ws_cargopod (960 triangles), ws_refuelpost (784) and ws_fabricator (1,586). The prop class floor is 2k–10k, and DESIGN 19.3 lists these as props. Reclassify them as props and build them to that budget.
+  - The pod's cylinder and straps are visibly faceted at walking distance (waystation_ws_cargopod_turntable.png). The refuel post's hose is a flat ribbon bent into an "R" (waystation_ws_refuelpost_turntable.png). The fabricator is stacked boxes and a prism under a canopy of loosely overlapping planks (waystation_ws_fabricator_turntable.png).
+  - Give all three rounded, purpose-built forms: a real hose and reel, latches and handles, and a canopy of lapped plates that follow its ribs.
+
+Minor notes (passing criteria):
+- topology: Several LOD2s drop their main secondary forms: ws_habitat loses its cage straps and solar wings, ws_ring loses its eight rim fins, and ws_cargopod becomes a hexagonal prism (the review sheets). Confirm the switch distances put these drops below a few pixels. Raise the segment count on cylinders a player stands next to (pod straps, refuel post base).
+- fitness:
+  - ws_baydoor has two static colliders, COL_BayDoor_L and COL_BayDoor_R, beside ten leaves that slide by open_x up to 65 m. When the door opens, the colliders no longer match the leaves. Parent a COL to each leaf, or document that the engine disables them on open.
+  - ws_habitat's single box collider overhangs its tapered dome. Two or three boxes would fit it better.
+  - The socket joins all measure 0.0000 m (stations_kit.txt). The 24 BAY_Pad markers and the pad colliders line up.
+- consistency: Once the design note is done, ws_baydoor, ws_tradedeck and ws_ring should share the hangar's and habitat's lapped-rib motif.
+- performance:
+  - The assembled station is about 117k triangles at LOD0 and about 71 draws.
+  - GPU texture memory is 37.3 MB per kit piece and 85.3 MB for the hangar and trade deck, all within the 128 MB class limit.
+  - Re-measure the hangar's 1.76–1.88 ms GPU delta, and the assembled station in one scene, on an idle machine. The current readings were taken under load and are marked unreliable.
+- capture request (round 2):
+  - Recapture ws_cargopod's in-engine review from the current domed-cap model. The current captures predate that change.
+  - Add one capture: the assembled Waystation in-engine at LOD2 from 200 m, under noon-lush and open-space. The 100 m far views of the hangar and ring sit on their roofs.
+
+ARTIFACTS: assets/renders/stations_kit_exterior.png, assets/renders/stations_kit_spine.png, assets/renders/stations_kit_approach.png, assets/renders/stations_kit_hangar.png, assets/renders/stations_kit_fabricator.png, assets/renders/stations_kit.txt, assets/renders/waystation_family.png, assets/renders/waystation_family_2.png, assets/renders/waystation_ws_{hangar,baydoor,tradedeck,fabricator,spine,ring,habitat,cargopod,refuelpost}_turntable.png, assets/renders/waystation_ws_{hangar,tradedeck}_materials.png, assets/renders/waystation_ws_*_materials.txt, assets/renders/review/stations/waystation/{ws_hangar,ws_baydoor,ws_tradedeck,ws_fabricator,ws_spine,ws_ring,ws_habitat,ws_cargopod,ws_refuelpost}/sheet.png and perf.json, assets/renders/review/stations/waystation/ws_hangar/noon-lush_lod0.png, assets/renders/validate/stations__waystation.glb.json, assets/renders/validate/stations__waystation.blend.json
+````
+
+### Waystation — round 2
+
+Source: [waystation_grade2_sol.md](/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/renders/stations/waystation_grade2_sol.md). SHA256: `883c5d8166f8fe955a16dd3f561524d1697182d6c6f6e3ec1bef0aed33500874`.
+
+````text
+Parent-relayed verdict. Model: gpt-6.1-sol. Reasoning: xhigh. Fork: none. Recorded by parent in main fb3caea60. This file preserves the relayed second-round verdict; it is not a new grade.
+
+VERDICT: REVISE
+TASK: P1.E11.T01
+KIT: Waystation
+ROUND: 2
+SCORES: design 4, silhouette 4, proportion 5, materials 3, detail 4, topology 4, consistency 5, fitness 4, placeholder 4, performance 3 (mean 4.0)
+
+NOTES:
+- materials: In grader-scale-supplement-round2/uncut/controls_eye_8p7m_uncut.png, both terminal faces collapse into featureless white glare. Pad lights also obscure their housings and adjacent rim surfaces in cutaway/door_eye_1p7m.png. Reduce authored emissive output under the existing exposure until these surfaces retain contrast; verify with the same uncut controls view.
+- performance: timing remains unqualified; qualified unchanged-scene frame-cadence evidence is required after shared timing controls are resolved. Raw deltas do not establish a Waystation regression. This part remains coordinated with T13; do not alter the scene/exposure to claim it fixed.
+````
+
+### Scrapyard — round 1
+
+Source: [p1e11t01_grade1_scrapyard.md](/Users/andreyyurlov/.local/state/t3-pstack/orchestrate/astra-nullius/verdicts/p1e11t01_grade1_scrapyard.md). SHA256: `980ca82c6d270327e319318e87afce01ccf76878d8c96a952f9648ca73de0702`.
+
+````text
+VERDICT: REVISE
+TASK: P1.E11.T01 Scrapyard (sy_rock, sy_mouth, sy_dock, sy_deck and the assembled kit)
+SCORES: design 3, silhouette 3, proportion 3, materials 2, detail 2, topology 3, consistency 4, fitness 3, placeholder 2, performance 5 (mean 3.0)
+
+NOTES (REVISE only, one per failing criterion):
+- **design:** sy_deck, sy_dock and sy_mouth read as generic industrial sci-fi: a slab with hazard stripes, a round pad on a flat plate, and a regular octagon with evenly spaced boxes (scrapyard_family.png). The Reaches palette and the mismatched patch panels are there, but per art bible 2.4 a faction's structures are built from the three peoples' languages, with livery as paint only. None of those forms appear.
+  - Build the pieces from recognisable salvage:
+    - a lapped Thalune/Compact hull section as sy_dock's anchor plate and as sy_deck's hold
+    - triangulated Ulgani lattice members as sy_deck's under-truss and legs
+    - a cracked, salvaged Ixari crystal pane on the hold
+  - Make sy_mouth irregular: unequal girder lengths, one bay closed with a hull plate, visible weld beads at the corner nodes.
+- **silhouette:** From outside, sy_rock is a smooth egg with a hole and one mast (stations_kit_scrapyard_mouth.png, sy_rock/open-space_lod2.png). Nothing says "pirate base" at a distance.
+  - Add exterior structure built to survive LOD2: a lit scaffold frame around the mouth, two or three sensor masts, clusters of hull-plate patches, and approach beacons leading to the mouth.
+  - Keep sy_mouth's 16 radial struts in LOD2. They vanish there (sy_mouth/sheet.png), and they are what makes the ring read as a gate.
+- **proportion:** sy_dock's pad is 25 m across, the Tier 0–1 size. The Scrapyard is a Tier 2 dungeon, and the pirate wing's Bulwark (Tier 2 gunship, 24–28 m) retreats there (DESIGN 486, 593). The art bible requires 36 m pads for Tier 2–3 gunships. Add a 36 m dock variant with its own Socket_Dock on the cavity wall and a BAY_Dock radius to match.
+- **materials:** SY_Rock is one uniform marbled noise at a single scale over the whole 240 m asteroid (sy_rock/open-space_lod0.png, the sheet's 100 m tile, scrapyard_sy_rock_materials.png). That is the demo's known failure. It also stretches into streaks along the mouth rim and into concentric rings on the cavity's end wall (stations_kit_scrapyard_cavity.png).
+  - SY_Rock needs:
+    - large-scale variation in albedo and roughness: darker regolith in hollows, lighter fractured faces
+    - fracture or strata normals
+    - engine scorch and soot around the mouth and below each dock
+    - re-unwrapped or triplanar UVs on the mouth rim and the end cap
+  - SY_Scrap reads new: the hazard stripes on sy_deck and sy_dock are pristine. Add wear where use goes: a scuffed walkway strip, a burn ring on the pad, rust runs below welds and bolts, chipped hazard paint on edges.
+- **detail:** LOD0 counts are sy_deck 840, sy_dock 1,184 and sy_mouth 1,296 triangles, the floor of the 0.5–15k kit budget, for pieces the player fights across on foot. sy_deck/noon-lush_lod0.png shows a flat slab, plain box crates and an unbevelled container.
+  - Bring each module to roughly 4–10k triangles:
+    - bevelled plate edges
+    - a modelled grate frame with support beams under the deck
+    - container corrugation and corner castings
+    - weld seams and bolt heads on the cover plates
+    - cable runs
+    - a real truss under the dock pad
+- **topology:** sy_rock LOD0 shows flat triangular shards around the mouth (sy_rock/wireframe_lod0.png, open-space_lod0.png); sculpt or smooth that break. The LOD2 swaps drop visible features:
+  - sy_mouth loses all its struts and floodlights.
+  - sy_dock loses its 8 landing lamps. They are emissive, so the swap visibly pops in night-exotic and open-space (sy_dock/sheet.png).
+  - sy_deck drops 4 of its 7 cover pieces.
+
+  Simplify these parts through LOD2 instead of removing them.
+- **fitness:**
+  - **Dock collider:** sy_dock's COL_Pad is a 25 × 25 m box under a 25 m disc (sy_dock/overlay.png), so at the diagonals players stand on air about 5 m past the rim. Use a 12–16-sided prism.
+  - **Deck colliders and rails:** sy_deck has colliders only for the floor, the hold and the front rail (sy_deck/overlay.png). The cover plates and crates the deck exists for have none. The two 14 m ends are open 11 m drops with no rail. Add a COL_ box per cover piece, and rails or connection sockets at both ends.
+  - **No dock-to-deck route:** no module joins a dock to a deck. The kit has no catwalk, stair or ladder, so chapter 11's "dock → deck fight" has no walkable path. Add a gangway or stair module whose sockets span a dock's hatch to a deck.
+- **placeholder:** Every piece reads as a procedural primitive:
+  - sy_deck is a slab on three square legs with boxes on top.
+  - sy_dock is a disc cantilevered off a flat rectangle. The anchor bars at its base extend past the plate's ±8 m edges and float in mid-air (the dashes beside the plate in scrapyard_sy_dock_turntable.png and stations_kit_scrapyard_cavity.png).
+  - sy_rock is a displaced ellipsoid with round craters.
+
+  The detail and design fixes cover most of this. In addition, sink sy_dock's anchor bars into a rock-anchor collar.
+- **minor, consistency (4):** The four modules share SY_Scrap and SY_Grate, the hazard language and the palette, and the rock's patch plates tie it to the rest. In the swatch, NavReaches reads pale salmon rather than the Reaches engine red-orange #FF6A3D; check the emissive colour. The red plates are close to oxide red #8E2F23 in-engine but read brighter in the turntables.
+- **minor, performance (5):** LOD0 is 12,312 / 1,296 / 1,184 / 840 triangles with 2–3 draws per module. Texture memory is 21–37 MB per module, under the 128 MB budget, from one shared 34.7 MB kit set. The assembled base is about 19k triangles. The GPU readings are unreliable; re-measure on an idle machine at 1080p:
+  - the paired cost of the assembled Scrapyard (rock, gate, 3 docks, 2 decks, Light_* on) in open-space
+  - whether the review scene holds 60 fps
+- **minor, capture defect:** sy_rock's night-exotic captures at LOD0 and LOD2 show terrain spires instead of the rock, so its material cannot be judged under that light. Re-shoot both with the camera clear.
+- **capture request (my one):** an assembled cutaway of sy_rock sectioned along the mouth axis, LOD0, noon-lush, showing:
+  - where sy_mouth's struts meet the rock wall
+  - all three sy_dock and both sy_deck on the cavity wall
+  - the Lark on a dock and bipeds on a deck
+
+  The current cavity view shows only one dock and one deck, and not where the gate meets the rock.
+
+ARTIFACTS:
+- Kit and family: assets/renders/scrapyard_family.png, scrapyard_family.txt, stations_kit_scrapyard_mouth.png, stations_kit_scrapyard_cavity.png, stations_kit.txt
+- Turntables and material sheets (+ .txt): assets/renders/scrapyard_sy_{rock,mouth,dock,deck}_turntable.png, scrapyard_sy_{rock,mouth,dock,deck}_materials.png
+- In-engine review: assets/renders/review/stations/scrapyard/sy_{rock,mouth,dock,deck}/{sheet,noon-lush_lod0,noon-lush_lod2,night-exotic_lod0,night-exotic_lod2,open-space_lod0,open-space_lod2,wireframe_lod0,wireframe_lod2,overlay,far_lod2}.png, perf.json
+- Validation: assets/renders/validate/stations__scrapyard.blend.json, stations__scrapyard.glb.json
+````
+
+### Scrapyard — round 2
+
+Source: [scrapyard_grade2_sol.md](/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/renders/stations/scrapyard_grade2_sol.md). SHA256: `5e74d7d9d12761b650e74b381be2f2f5849a599f8bafa3c51b0ac45c5c6a31ac`.
+
+````text
+Parent-relayed verdict. Model: gpt-6.1-sol. Reasoning: xhigh. Fork: none. Recorded by parent in main fb3caea60. This file preserves the relayed second-round verdict; it is not a new grade.
+
+VERDICT: REVISE
+TASK: P1.E11.T01
+KIT: Scrapyard
+ROUND: 2
+SCORES: design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 4, fitness 4, placeholder 3, performance 3 (mean 3.4)
+
+NOTES:
+- design: The sy_deck container and dock bulkheads read as generic industrial equipment. Incorporate recognizable salvaged shell, lattice, and crystal-derived parts beneath the Reaches patchwork livery.
+- materials: sy_rock has an all-over contour-noise pattern and abrupt boundaries against broad smooth patches. Replace these with varied geological texturing and deliberate rock-to-regolith transitions.
+- detail: The asteroid mouth and cavity read as smooth, scalloped shell surfaces. Add substantial fractured rock faces, excavation cuts, and localized debris around the entrance and interior.
+- topology: The LOD0/2 pairs visibly flatten asteroid crater relief and angularize the dock rims. Preserve those major forms in LOD2 and demonstrate the transitions at their intended distances.
+- placeholder: The seven plain rectangular cover blocks on sy_deck read as blockout. Develop them into recognizable salvage or cargo barriers with shaped construction, attachments, and distinct wear.
+- performance: qualification is unresolved separately from visual defects; retain standard1080p three-light/five-pair/device/load/warm-up/error/sample requirements with T13. No60fps or asset-regression claim from current data.
+````
