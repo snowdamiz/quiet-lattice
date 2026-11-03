@@ -907,6 +907,10 @@ interface FaunaPage {
     stepTo(u: number): Promise<void>;
   };
   __clip: { frame(dt: number): void; t: number };
+  __hitTurn: {
+    events: { frame: number; target: number; amount: number; visible: boolean; consumed: boolean }[];
+    frames: { frame: number; ms: number; targetVisible: boolean; values: string[] }[];
+  };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -1935,33 +1939,10 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
       await holdHud(page, { banner: 1800 });
       await page.waitForTimeout(200);
     },
-    // hits on creatures behind the walker, which are not on the screen: their numbers rise from the reticle, in one column
+    // Real combat events on creatures behind the walker are consumed without unrelated numbers over the scenery.
     async offscreen(page) {
-      // (the numbers must be showing when they are held: a slow page can let them go before it gets here, so the hits are raised again)
-      for (let attempt = 0; ; attempt++) {
-        await clearHud(page);
-        await page.evaluate(async (at) => {
-          const w = window as unknown as FaunaPage;
-          await w.__herd.stepTo(at);
-          // turned away from the herd: the point opposite creature 602, through the walker
-          const from = w.game.player.state.pos;
-          const away = from.clone().multiplyScalar(2).sub(w.game.remotes.get(602).pos);
-          for (let i = 0; i < 30; i++) {
-            w.dev.footAim(away, 0.6);
-            await w.step(1);
-          }
-          for (const [id, amount] of [
-            [602, 17],
-            [603, 23],
-            [602, 9],
-          ] as const) {
-            w.__herd.hit(id, amount);
-            await w.step(2);
-          }
-        }, HERD_AT.offscreen);
-        if ((await holdHud(page, { number: 380 })) >= 3) break;
-        if (attempt >= 5) throw new Error('the off-screen damage numbers were gone before they could be held');
-      }
+      await clearHud(page);
+      await page.evaluate(faunaOffscreenHits, HERD_AT.offscreen);
     },
     // the clip's first frame: the herd as the fight starts, the walker aimed at the creature that will die
     async start(page) {
@@ -1973,6 +1954,118 @@ function faunaStills(): Record<string, (page: Page) => Promise<void>> {
         await w.__herd.stepTo(at);
       }, HERD_AT.clip);
       await page.waitForTimeout(300);
+    },
+  };
+}
+
+/** Runs in the page; exported so the fixture's event and suppression checks can also run without a browser. */
+export async function faunaOffscreenHits(at: number): Promise<void> {
+  const w = window as unknown as FaunaPage;
+  await w.__herd.stepTo(at);
+  const from = w.game.player.state.pos;
+  const away = from.clone().multiplyScalar(2).sub(w.game.remotes.get(602).pos);
+  for (let i = 0; i < 30; i++) {
+    w.dev.footAim(away, 0.6);
+    await w.step(1);
+  }
+  if (w.__feed.dealt.length) throw new Error('offscreen fixture started with unconsumed hits');
+  const hits = [
+    { target: 602, amount: 17 },
+    { target: 603, amount: 23 },
+    { target: 602, amount: 9 },
+  ];
+  for (const { target, amount } of hits) {
+    if (w.game.hud.hitAnchor(target)) throw new Error(`offscreen target ${target} is still visible`);
+    w.__herd.hit(target, amount);
+  }
+  if (w.__feed.dealt.length !== hits.length || hits.some((hit, i) => w.__feed.dealt[i].target !== hit.target || w.__feed.dealt[i].amount !== hit.amount)) {
+    throw new Error('offscreen fixture did not enqueue its combat events');
+  }
+  await w.step(1);
+  if (w.__feed.dealt.length) throw new Error('offscreen combat events were not consumed');
+  if (w.game.hud.hitsEl.children.length) throw new Error('offscreen hits raised damage numbers without a visible target');
+}
+
+/** A 72-frame turn, using the capture's clock and actual combat feed. No held or cloned damage numbers. Runs in the page. */
+export function faunaTurnMotion(): void {
+  const w = window as unknown as FaunaPage;
+  const g = w.game;
+  const clip = w.__clip;
+  const frame = clip.frame.bind(clip);
+  const start = clip.t;
+  const trace: FaunaPage['__hitTurn'] = (w.__hitTurn = { events: [], frames: [] });
+  let index = 0;
+  clip.frame = (dt: number) => {
+    const i = index++;
+    const r = g.remotes.get(602);
+    const from = g.player.state.pos;
+    if (i >= 12 && i < 30) {
+      // A 120° turn leaves the target outside both viewports while its numbers are still alive.
+      const away = r.pos
+        .clone()
+        .sub(from)
+        .applyAxisAngle(from.clone().normalize(), (2 * Math.PI) / 3)
+        .add(from);
+      w.dev.footAim(away, 0.6);
+    } else if (i >= 32 && i < 52) {
+      const sp = g.fauna.speciesOf(r);
+      w.dev.footAim(r.pos.clone().addScaledVector(from.clone().normalize(), sp.size * 0.55), 0.6);
+    }
+    const hits = i === 0 ? [17] : i === 4 ? [23] : i === 8 ? [9] : i === 30 ? [17, 23, 9] : i === 54 ? [11] : [];
+    const queued: FaunaPage['__hitTurn']['events'] = [];
+    for (const amount of hits) {
+      const visible = !!g.hud.hitAnchor(602);
+      if (visible !== (i !== 30)) throw new Error(`turn fixture hit at frame ${i} has the wrong target visibility`);
+      w.__herd.hit(602, amount);
+      const event = w.__feed.dealt.at(-1);
+      if (!event || event.target !== 602 || event.amount !== amount) throw new Error(`turn fixture combat event missing at frame ${i}`);
+      const receipt = { frame: i, target: 602, amount, visible, consumed: false };
+      trace.events.push(receipt);
+      queued.push(receipt);
+    }
+    frame(dt);
+    const targetVisible = !!g.hud.hitAnchor(602);
+    const values = Array.from(document.querySelectorAll<HTMLElement>('.hit-number'), (e) => e.textContent ?? '');
+    trace.frames.push({ frame: i, ms: (clip.t - start) * 1000, targetVisible, values });
+    for (const receipt of queued) receipt.consumed = w.__feed.dealt.length === 0;
+    if (queued.some((e) => !e.consumed)) throw new Error(`turn fixture combat events not consumed at frame ${i}`);
+    if (!targetVisible && values.length) throw new Error(`live damage numbers survived their target leaving view at frame ${i}`);
+    if (i === 10 && values.length !== 3) throw new Error('turn fixture did not show three live numbers before turning');
+    if (i === 52 && (!targetVisible || values.length)) throw new Error('turn fixture did not return to a visible target with old numbers expired');
+  };
+}
+
+function faunaTurnScreen(night: boolean, clipAspect: '16x9' | '21x9'): ScreenDef {
+  const stills = faunaStills();
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 1.2,
+    clipAspect,
+    sheetFrames: [0, 4, 8, 10, 12, 16, 20, 24, 28, 30, 32, 40, 48, 52, 54, 60, 71],
+    open: (page) => openHerd(page, night),
+    stills: {
+      kill: stills.kill,
+      offscreen: stills.offscreen,
+      async start(page) {
+        await clearHud(page);
+        await page.evaluate(async () => {
+          const w = window as unknown as FaunaPage;
+          await w.__herd.aim(602, 30);
+        });
+      },
+    },
+    async motion(page) {
+      await clearHud(page);
+      await page.evaluate(faunaTurnMotion);
+    },
+    async readout(page) {
+      const trace = await page.evaluate(() => (window as unknown as FaunaPage).__hitTurn);
+      if (trace.frames.length !== 72 || trace.events.length !== 7 || trace.events.some((e) => !e.consumed))
+        throw new Error('turn fixture did not complete its 72 frames and seven combat events');
+      const lost = trace.frames.find((f) => !f.targetVisible);
+      if (!lost || lost.ms >= 900) throw new Error('turn fixture did not lose its target while the first number was alive');
+      return `Hit-target turn: 72 frames, seven consumed combat events; target first out of view at frame ${lost.frame} (${lost.ms.toFixed(1)} ms)\n${JSON.stringify(trace)}`;
     },
   };
 }
@@ -2797,7 +2890,7 @@ export const SCREENS: Record<string, ScreenDef> = {
   // HUD fed by the combat events the server would send. The stills: the herd with the analysis prompt on the creature in the
   // crosshair; `numbers` stacked damage numbers over two creatures; `kill` the killing blow in gold with a toast for its XP
   // and one for its loot, the creature down; `flash` a blow taken; `analysis` the codex banner (three lines) for a drawn creature;
-  // `offscreen` hits on creatures behind the walker, their numbers rising from the reticle. The
+  // `offscreen` consumed hits on creatures behind the walker, with no unanchored numbers. The
   // clip is a fight from 22 s into the stream, the HUD's per-frame cost in readout.txt.
   'fauna-combat': {
     hash: '#foot',
@@ -2822,6 +2915,11 @@ export const SCREENS: Record<string, ScreenDef> = {
       await prepareFightClip(page);
     },
   },
+  // Fresh namespaces for the hit-target revision: both lights and both clip aspects, retaining the old combat packet.
+  'fauna-hit-turn-day-16x9': faunaTurnScreen(false, '16x9'),
+  'fauna-hit-turn-day-21x9': faunaTurnScreen(false, '21x9'),
+  'fauna-hit-turn-night-16x9': faunaTurnScreen(true, '16x9'),
+  'fauna-hit-turn-night-21x9': faunaTurnScreen(true, '21x9'),
   // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
   // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the
   // clip of a warp cell crafted; `fabricator-learn` the same, and the clip of the torpedo recipe learned;

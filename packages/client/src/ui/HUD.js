@@ -219,7 +219,7 @@ export class HUD {
     this.inventory = el('div', 'inventory', this.layer);
     this.prompt = el('div', 'prompt', this.layer);
     this.toasts = el('div', 'toasts', this.layer);
-    // the server's word on the player's shots: damage numbers off the reticle
+    // the server's word on the player's shots: damage numbers over the hit creature
     this.hitsEl = el('div', 'hits', this.layer);
     // the bar the player casts from, keys 1–6 on foot and 1–5 in flight, with its cooldowns (ARCHITECTURE §28)
     this.abilitiesEl = el('div', 'abilities', this.layer, '<div class="ab-row"></div><div class="ab-why"></div>');
@@ -695,9 +695,10 @@ export class HUD {
     this.abilitiesEl.classList.toggle('rest', now - (this._abBusyAt ?? 0) > BAR_REST_MS);
   }
 
-  // What the server says the player's shots did and the blows it took (ARCHITECTURE §20): a number rising off the reticle
+  // What the server says the player's shots did and the blows it took (ARCHITECTURE §20): a number rising over the creature
   // for each hit (gold for a kill), a flash for a blow taken, and a kill's XP and loot as toasts.
   updateHits(feed) {
+    this.updateHitNumbers();
     if (!feed) return;
     const { dealt, taken, gained } = feed.take();
     for (const h of dealt) this.hitNumber(h.amount, h.killed, h.target);
@@ -721,7 +722,7 @@ export class HUD {
   }
 
   // Where a hit on creature `id` shows: over its head, on screen. Null when it is not drawn this frame (out of view, behind the
-  // camera, or not a creature the client draws), and the number then rises off the reticle.
+  // camera, or not a creature the client draws).
   hitAnchor(id) {
     const g = this.game;
     const r = g.remotes?.get(id);
@@ -739,22 +740,41 @@ export class HUD {
     return x > 0 && x < window.innerWidth && y > 0 && y < window.innerHeight ? { x, y } : null;
   }
 
-  // A hit's damage rising: over the creature it landed on (the reticle when that is not on screen), gold and larger for a
+  // Keep live numbers over their hit targets as the view moves; once a target is lost, its numbers expire with it.
+  updateHitNumbers() {
+    const now = this.now();
+    this.hitLive = (this.hitLive ?? []).filter((h) => {
+      if (!h.el.isConnected) return false;
+      const at = now - h.at < HIT_MS && this.hitAnchor(h.target);
+      if (!at) {
+        h.el.remove();
+        return false;
+      }
+      const x = at.x + h.dx;
+      const top = at.y + h.dy;
+      if (x !== h.x) h.el.style.left = `${(h.x = x)}px`;
+      if (top !== h.top) h.el.style.top = `${(h.top = top)}px`;
+      return true;
+    });
+  }
+
+  // A hit's damage rising: over the visible creature it landed on, gold and larger for a
   // kill. A new number starts a full line above the top of every live one it could touch, whichever creature that one is
   // for (where it is by now, having risen): it rises faster than the older ones, so it never closes on them, and none
   // sits on another.
   hitNumber(amount, killed, target) {
+    this.updateHitNumbers();
+    const at = this.hitAnchor(target);
+    if (!at) return;
     const e = el('div', 'hit-number', this.hitsEl);
     e.textContent = String(amount > 0 ? Math.max(1, Math.round(amount)) : 0);
     const now = this.now();
-    const at = this.hitAnchor(target) ?? { x: window.innerWidth / 2, y: window.innerHeight * 0.44 };
     const px = killed ? HIT_KILL_PX : HIT_PX;
     // (a little sideways in turn, so the column reads as separate hits)
     const dx = ((this.hitsEl.children.length % 3) - 1) * 8;
     const x = at.x + dx;
     const half = (e.textContent.length * px * HIT_GLYPH_EM) / 2;
-    const live = (this.hitLive ??= []).filter((h) => now - h.at < HIT_MS && h.el.isConnected);
-    this.hitLive = live;
+    const live = this.hitLive;
     let top = at.y;
     for (const h of live) {
       if (Math.abs(x - h.x) >= half + h.half) continue;
@@ -763,7 +783,7 @@ export class HUD {
       if (nowTop >= at.y + px) continue;
       top = Math.min(top, nowTop - px - HIT_GAP_PX);
     }
-    live.push({ el: e, at: now, top, x, half });
+    live.push({ el: e, at: now, top, x, half, target, dx, dy: top - at.y });
     // (the reticle readouts' type and the HUD's palette: style.css's tokens)
     Object.assign(e.style, {
       position: 'absolute', left: `${at.x + dx}px`, top: `${top}px`, transform: 'translate(-50%, 0)', pointerEvents: 'none',

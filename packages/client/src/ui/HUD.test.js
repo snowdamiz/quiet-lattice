@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ARC_EASE_MS, countdown, HUD } from './HUD.js';
+import { CombatFeed } from '../net/combat.js';
 
 /** One gauge as HUD.arc and HUD.sheen reach it: the root, its `<g class="gauge">`, the fill and the sheen paths. */
 function gauge(name = 'charge') {
@@ -242,7 +243,7 @@ describe('where a hit number rises', () => {
     expect(h.hitAnchor(8).x).toBeGreaterThan(960);
   });
 
-  it('nowhere for a creature that is not drawn, behind the camera or off the screen: the number then rises off the reticle', () => {
+  it('nowhere for a creature that is not drawn, behind the camera or off the screen', () => {
     const h = sighted({
       1: creature(0, 0, -20, { drawn: false }),
       2: creature(0, 0, 20),
@@ -292,15 +293,16 @@ describe('the numbers a hit raises', () => {
   }
 
   /** A HUD over a 1920×1080 view with creatures `records` (id → record) drawn, its clock `h.t` in ms. */
-  function rising(records = {}) {
-    globalThis.window = { innerWidth: 1920, innerHeight: 1080 };
+  function rising(records = {}, width = 1920) {
+    globalThis.window = { innerWidth: width, innerHeight: 1080 };
     globalThis.document = { createElement: fakeEl };
-    const camera = new THREE.PerspectiveCamera(70, 16 / 9, 0.1, 1e5);
+    const camera = new THREE.PerspectiveCamera(70, width / 1080, 0.1, 1e5);
     camera.updateProjectionMatrix();
     const h = Object.create(HUD.prototype);
     h.t = 0;
     h.now = () => h.t;
-    h.later = () => 0;
+    h.timers = [];
+    h.later = (fn, ms) => h.timers.push({ fn, at: h.t + ms });
     h.hitsEl = fakeEl();
     h.game = {
       engine: { camera },
@@ -370,30 +372,116 @@ describe('the numbers a hit raises', () => {
     expect(Number.parseFloat(h.hitsEl.children.at(-1).style.top)).toBeCloseTo(Number.parseFloat(a.style.top), 3);
   });
 
-  it('raises a number over the creature it hit, and off the reticle for one that is not on the screen, all of those in one column', () => {
-    const h = rising({ 7: creature(10, 0, -20), 9: creature(0, 0, 20), 10: creature(400, 0, -20) });
+  it.each([1920, 2520])('raises a number over the creature it hit and suppresses hits without a visible target at %i×1080', (width) => {
+    const h = rising({ 7: creature(10, 0, -20), 8: { ...creature(0, 0, -20), drawn: false }, 9: creature(0, 0, 20), 10: creature(400, 0, -20) }, width);
     h.hitNumber(10, false, 7);
     const over = h.hitsEl.children[0];
     const at = h.hitAnchor(7);
-    expect(Number.parseFloat(over.style.left)).toBeGreaterThan(960 + 100);
+    expect(Number.parseFloat(over.style.left)).toBeGreaterThan(width / 2 + 100);
     expect(Math.abs(Number.parseFloat(over.style.left) - at.x)).toBeLessThanOrEqual(8);
     expect(Number.parseFloat(over.style.top)).toBeCloseTo(at.y, 3);
-    // behind the camera, off the screen, or not drawn at all: the reticle, one column between them
-    h.hitNumber(11, false, 9);
-    h.hitNumber(12, false, 10);
-    h.hitNumber(13, false, 99);
-    const off = h.hitsEl.children.slice(1);
-    for (const e of off) expect(Math.abs(Number.parseFloat(e.style.left) - 960)).toBeLessThanOrEqual(8);
-    expect(Number.parseFloat(off[0].style.top)).toBeCloseTo(1080 * 0.44, 3);
-    const tops = off.map((e) => Number.parseFloat(e.style.top));
-    expect(tops[1]).toBeLessThanOrEqual(tops[0] - 23);
-    expect(tops[2]).toBeLessThanOrEqual(tops[1] - 23);
+    // All of these are real combat events, consumed even though none has a visible target.
+    const feed = new CombatFeed({ on() {}, entityId: 1, now: () => h.t });
+    for (const target of [8, 9, 10, 99]) feed.event({ kind: 'combat', source: 1, target, amount: 11, killed: false });
+    h.updateHits(feed);
+    expect(feed.take().dealt).toEqual([]);
+    expect(h.hitsEl.children).toEqual([over]);
+  });
+
+  it.each([1920, 2520])('follows a visible target during a turn, then expires live numbers before they can sit over unrelated scenery at %i×1080', (width) => {
+    const r = creature(0, 0, -20);
+    const h = rising({ 7: r }, width);
+    h.hitNumber(17, false, 7);
+    h.t = 60;
+    h.hitNumber(23, false, 7);
+    const numbers = [...h.hitsEl.children];
+    const before = numbers.map((e) => ({ x: Number.parseFloat(e.style.left), y: Number.parseFloat(e.style.top) }));
+    const anchor = h.hitAnchor(7);
+    h.t = 150;
+    h.game.camWorldQuatInv.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 12);
+    h.updateHits();
+    const turned = h.hitAnchor(7);
+    expect(Math.abs(turned.x - anchor.x)).toBeGreaterThan(100);
+    expect(h.hitsEl.children).toEqual(numbers);
+    numbers.forEach((e, i) => {
+      expect(Number.parseFloat(e.style.left) - before[i].x).toBeCloseTo(turned.x - anchor.x, 3);
+      expect(Number.parseFloat(e.style.top) - before[i].y).toBeCloseTo(turned.y - anchor.y, 3);
+      expect(e.animations).toHaveLength(1);
+    });
+    h.game.camWorldQuatInv.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+    h.t = 250;
+    h.updateHits();
+    expect(h.hitsEl.children).toEqual([]);
+    expect(h.hitLive).toEqual([]);
+    // Turning back before the original 900 ms lifetime does not resurrect expired values.
+    h.game.camWorldQuatInv.identity();
+    h.t = 350;
+    h.updateHits();
+    expect(h.hitsEl.children).toEqual([]);
+  });
+
+  it.each(['offscreen', 'not drawn', 'removed'])('expires a number when its target becomes %s', (reason) => {
+    const r = creature(0, 0, -20);
+    const records = { 7: r };
+    const h = rising(records);
+    h.hitNumber(11, false, 7);
+    h.t = 100;
+    if (reason === 'offscreen') r.world.x = 400;
+    else if (reason === 'not drawn') r.drawn = false;
+    else delete records[7];
+    h.updateHits();
+    expect(h.hitsEl.children).toEqual([]);
+    expect(h.hitLive).toEqual([]);
+  });
+
+  it('keeps a visible killing blow on a drawn corpse, while a suppressed kill still pays its rewards and a blow still flashes', () => {
+    const r = { ...creature(0, 0, -20), pose: { mode: 'dead' }, hp: 0 };
+    const h = rising({ 7: r });
+    h.toast = vi.fn();
+    h.flash = vi.fn();
+    const feed = new CombatFeed({ on() {}, entityId: 1, now: () => h.t });
+    feed.event({ kind: 'combat', source: 1, target: 7, amount: 26, killed: true });
+    feed.event({ kind: 'combat', source: 1, target: 99, amount: 31, killed: true });
+    feed.event({ kind: 'combat', source: 99, target: 1, amount: 11, killed: false });
+    feed.event({ kind: 'xp', amount: 30, level: 1 });
+    feed.event({ kind: 'loot', item: 'units', count: 7 });
+    h.updateHits(feed);
+    expect(h.hitsEl.children).toHaveLength(1);
+    const kill = h.hitsEl.children[0];
+    expect(kill.textContent).toBe('26');
+    expect(kill.style.color).toBe('var(--accent-hi)');
+    expect(sizeOf(kill)).toBe(26);
+    h.t = 400;
+    h.updateHits(feed);
+    expect(h.hitsEl.children).toEqual([kill]);
+    expect(h.flash).toHaveBeenCalledWith('damage');
+    expect(h.toast.mock.calls).toEqual([
+      ['+30 XP', 'good', { repeat: true }],
+      ['+7 units', 'good', { repeat: true }],
+    ]);
+  });
+
+  it('drains expired and detached numbers, bounds a burst, and keeps an old removal timer from touching a newer number', () => {
+    const r = creature(0, 0, -20);
+    const h = rising({ 7: r });
+    for (let i = 0; i < 20; i++) h.hitNumber(11, false, 7);
+    expect(h.hitsEl.children).toHaveLength(12);
+    h.hitsEl.children[0].remove();
+    h.updateHits();
+    expect(h.hitLive).toHaveLength(11);
+    h.t = 900;
+    h.updateHits();
+    expect(h.hitsEl.children).toEqual([]);
+    expect(h.hitLive).toEqual([]);
+    h.hitNumber(12, false, 7);
+    const newer = h.hitsEl.children[0];
+    for (const timer of h.timers.filter((t) => t.at === 1000)) timer.fn();
+    expect(h.hitsEl.children).toEqual([newer]);
   });
 
   it('stacks a number against any live one it would touch, whichever creature or lane that one is for', () => {
-    // (a creature just above the crosshair, 30 m ahead, hit in the same frame as one that is off screen: they share no lane
-    // but sit 8 px apart sideways)
-    const h = rising({ 7: creature(0, 0, -30), 8: creature(400, 0, -20) });
+    // (two visible creatures just above the crosshair, hit in the same frame: they share no lane but their numbers touch)
+    const h = rising({ 7: creature(0, 0, -30), 8: creature(0.2, 0, -30) });
     const anchor = h.hitAnchor(7);
     expect(anchor.y).toBeGreaterThan(1080 * 0.44 - 20);
     expect(anchor.y).toBeLessThan(1080 * 0.44 + 20);
@@ -435,8 +523,8 @@ describe('the numbers a hit raises', () => {
   });
 
   it('pops in over about a tenth of a second, scaled up and fading in, then rises and fades out', () => {
-    const h = rising({});
-    h.hitNumber(15, false, 99);
+    const h = rising({ 7: creature(0, 0, -20) });
+    h.hitNumber(15, false, 7);
     const { frames, options } = h.hitsEl.children[0].animations[0];
     expect(options.duration).toBe(900);
     expect(frames[0]).toMatchObject({ offset: 0, opacity: 0 });
