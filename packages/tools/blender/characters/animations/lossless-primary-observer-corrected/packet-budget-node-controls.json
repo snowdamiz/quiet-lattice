@@ -1,0 +1,36 @@
+{
+  "status": "PASS_ACTUAL_ENTRY_AND_PACKET_WRITER_PURE_CONTROLS",
+  "controls": [
+    {
+      "control": "exact byte boundary and+1 before write",
+      "pass": true
+    },
+    {
+      "control": "actual writer overflow preserves first reserved failure",
+      "pass": true
+    },
+    {
+      "control": "atomic replacement checks old plus temporary peak",
+      "pass": true
+    },
+    {
+      "control": "file-count boundary leaves media and both reserved records",
+      "pass": true
+    },
+    {
+      "control": "entry overflow refuses frame dispatch and preserves primary",
+      "pass": true
+    },
+    {
+      "control": "aggregate overflow after first ACK stops next frame; full observation and primary retained",
+      "pass": true
+    },
+    {
+      "control": "normal-budget persistence pressure keeps original encoder primary",
+      "pass": true
+    }
+  ],
+  "nativeCalls": [],
+  "fixtureRoot": "/private/tmp/t02-packet-node-controls-CLHheC",
+  "sparseBoundaryFilesPreserved": true
+}

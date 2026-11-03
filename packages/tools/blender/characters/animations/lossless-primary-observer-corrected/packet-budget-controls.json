@@ -1,0 +1,44 @@
+{
+  "status": "PASS_ACTUAL_PACKET_WRITER_AND_INSPECTOR_PURE_CONTROLS",
+  "nativeCalls": [],
+  "controls": [
+    {
+      "control": "exact normal-byte boundary accepted",
+      "pass": true
+    },
+    {
+      "control": "normal byte boundary+1 refuses before file creation",
+      "pass": true
+    },
+    {
+      "control": "replacement counts old bytes plus new temporary",
+      "pass": true
+    },
+    {
+      "control": "file boundary preserves media+two reserved slots",
+      "pass": true
+    },
+    {
+      "control": "file count overflow before write",
+      "pass": true
+    },
+    {
+      "control": "full normal budget retains first failure and bounded terminal summary with cleanup reference",
+      "pass": true
+    },
+    {
+      "control": "reserved record byte overflow refuses before write",
+      "pass": true
+    },
+    {
+      "control": "independent primary inspector refuses aggregate overflow",
+      "pass": true
+    },
+    {
+      "control": "oversized terminal keeps exact primary in private summary and bounded packet reference",
+      "pass": true
+    }
+  ],
+  "fixtureRoot": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-packet-budget-control-jmzn3zgu",
+  "sparseBoundaryFilesPreserved": true
+}

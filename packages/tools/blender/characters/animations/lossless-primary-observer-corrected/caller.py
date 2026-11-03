@@ -55,6 +55,8 @@ def tree_index(directory,exclude,allow_profile_links=False):
 def verify_structure(ready):
     if ready.get('purpose')=='CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES':
         assert ready['runtimeAuthorization'] is False and ready['primaryArtifactSchema']=='t02-lossless-rgb-primary/v1'
+        assert ready['packetRoot']==str(HERE/'packet') and ready['captureOutput']==str(HERE/'packet/capture')
+        assert ready['packetBudget']=={'metadataBytes':33554432,'fileCount':256,'reservedFailureBytes':131072,'reservedTerminalBytes':131072,'packetByteOvershoot':0,'atomicTemporaryBytesCounted':True}
         assert ready['viewport']==[1920,1080] and ready['captureSeconds']==120 and ready['cleanupSeconds']==20
         assert ready['limits']=={'maxImageBytes':12582912,'maxObservationBytes':262144}
         assert len(ready['stages'])==1 and len(ready['stages'][0]['work'])==132 and len(ready['sourceFrames'])==132
@@ -174,6 +176,12 @@ def consume(ready,grant_path):
 def inspect_primary_capture(stage,directory,ready,validation_directory,release_receipt):
     import importlib.util,math
     directory=Path(directory);validation_directory=Path(validation_directory)
+    sys.path.insert(0,str(HERE));import packet_budget
+    packet_root=Path(ready['packetRoot']);assert directory==packet_root/'capture' and validation_directory==packet_root/'validation'
+    whole_packet=packet_budget.inspect(packet_root)
+    assert not (packet_root/'failure.json').exists(),'Reserved first failure holds primary packet'
+    expected_validation={name+suffix for name in ['probe','rgb','rgba'] for suffix in ['.stdout','.stderr','-command.json']}|{'validation.json'}
+    assert {str(p.relative_to(validation_directory)) for p in validation_directory.rglob('*') if p.is_file()}==expected_validation
     spec=importlib.util.spec_from_file_location('rgb_primary_inspector',HERE/'rgb-primary.py');worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
     assert release_receipt['primaryFailure'] is None and release_receipt['cleanupFailure'] is None
     assert release_receipt['terminal']['registrationAbsent'] and release_receipt['terminal']['scratchAndTmpAbsent']
@@ -185,6 +193,8 @@ def inspect_primary_capture(stage,directory,ready,validation_directory,release_r
     assert index['files']==tree_index(directory,{'artifact-index.json'}),'Final primary index stale'
     expected={'entry-state.json','entry-result.json','sequence-index.json','frame-map.json','primary.mp4','encoder-config.json','encoder-command.json','encoder-result.json'}|{f"observations/{w['ordinal']:04}.json" for w in stage['work']}
     assert {x['path'] for x in index['files']}==expected
+    allowed_packet={'capture/'+name for name in expected|{'artifact-index.json'}}|{'validation/'+name for name in expected_validation}|{'integration-result.json'}
+    assert set(whole_packet['paths'])<=allowed_packet,'Unlisted aggregate packet file'
     assert not list((directory/'images').glob('*')),'Primary motion retained unexpected PNG'
     sequence=json.loads((directory/'sequence-index.json').read_text());mapping=json.loads((directory/'frame-map.json').read_text());rows=mapping['frames']
     assert sequence['primaryArtifactSchema']==mapping['schema']==worker.SCHEMA

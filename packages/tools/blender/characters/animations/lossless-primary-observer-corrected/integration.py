@@ -1,6 +1,7 @@
 """One bounded CPU fixture: existing PNG replay and independent streaming validation."""
 import hashlib,importlib.util,json,os,shutil,subprocess,sys,time
 from pathlib import Path
+import packet_budget as budget
 sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent
 
@@ -60,7 +61,19 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     if errors:
         result['status']='HOLD'
         if result['primaryFailure'] is None:result['primaryFailure']={'type':'TerminalAuditFailure','message':'Terminal resource release unproved; see terminalAuditFailures'}
-    save(proof/'result.json',result);save(packet/'integration-result.json',result)
+    # Full native observations remain in their exact private receipts; packet stores bounded references.
+    refs=[{'path':j['path'],'sha256':sha(j['path'])} for j in jobs]
+    result['jobs']=refs
+    encoded=(json.dumps(result,indent=2)+'\n').encode()
+    if len(encoded)>budget.RECORD_BYTES:
+        result['status']='HOLD'
+        result['terminalPersistenceFailure']={'type':'ReservedTerminalRecordOverflow','bytes':len(encoded),'limit':budget.RECORD_BYTES}
+        if result['primaryFailure'] is None:result['primaryFailure']={'type':'ReservedTerminalRecordOverflow','message':'Complete terminal summary retained in the private proof'}
+        save(proof/'result.json',result)
+        packet_summary={'status':'HOLD','nativeJobs':len(jobs),'terminalReleaseProved':result['terminalReleaseProved'],'completeTerminalSummary':{'path':str(proof/'result.json'),'sha256':sha(proof/'result.json'),'bytes':(proof/'result.json').stat().st_size},'primaryFailureReference':'/primaryFailure','terminalPersistenceFailure':result['terminalPersistenceFailure']}
+    else:
+        save(proof/'result.json',result);packet_summary=result
+    budget.write_json(packet,packet/'integration-result.json',packet_summary,reserved=True)
     return result
 
 def main():
@@ -110,10 +123,12 @@ def main():
                     assert cache['all_bytes_preserved'] and cache['namespace_removed'] and not private.exists() and not job.scratch.exists()
                     assert all(identity(int(pid)) is None or identity(int(pid))['birth']!=old['birth'] for pid,old in job.known.items())
                     registration=subprocess.run(['/bin/launchctl','print',job.target],capture_output=True,text=True,timeout=3);assert registration.returncode!=0
+                    receipt['archiveBytesObservedAfterRelease']=sum(p.stat().st_size for p in out.rglob('*') if p.is_file())+sum(p.stat().st_size for p in (Path(ready['nativeRawDirectory'])/('validator' if name=='validator' else '')).glob('*') if p.is_file())
+                    if receipt['archiveBytesObservedAfterRelease']>1024**3 and receipt['primaryFailure'] is None:receipt['primaryFailure']={'type':'ArchiveAcceptanceCeilingExceeded','message':'All bytes preserved; combined private archive size is an observed acceptance cap, not a hard quota'}
                     receipt['terminal']={'coalition':job.coalition_id,'kernel':kernel_tasks(job.coalition_id),'exactBirthsAbsent':len(job.known),'registrationAbsent':True,'scratchAndTmpAbsent':True,'privateTmpCacheRelease':cache}
             except BaseException as e:receipt['cleanupFailure']={'type':type(e).__name__,'message':str(e)}
         receipt['pipelineSeconds']=time.monotonic()-t;persist();jobs.append({'path':str(out/'receipt.json'),'sha256':sha(out/'receipt.json'),**receipt})
-        assert receipt['primaryFailure'] is None and receipt['cleanupFailure'] is None,receipt
+        assert receipt['primaryFailure'] is None and receipt['cleanupFailure'] is None,'Owned CPU fixture refused; complete receipt at '+str(out/'receipt.json')
         return receipt
     result={'status':'HOLD','primaryFailure':None,'jobs':jobs,'runtimeAuthorization':False}
     try:
@@ -125,7 +140,7 @@ def main():
             assert row['rgbSha256']==source['rgbSha256'] and row['rgbaSha256']==source['rgbaSha256']
             original=load(source['observationPath']);original.pop('dataUrl');assert load(cap/row['observation'])==original,'Incomplete non-image observation'
         validation=packet/'validation'
-        config={**ready['rgbPrimary'],'schema':ready['primaryArtifactSchema'],'video':str(cap/'primary.mp4'),'frameMap':str(cap/'frame-map.json'),'helperDirectory':ready['helperDirectory'],'output':str(validation)}
+        config={**ready['rgbPrimary'],'schema':ready['primaryArtifactSchema'],'video':str(cap/'primary.mp4'),'frameMap':str(cap/'frame-map.json'),'helperDirectory':ready['helperDirectory'],'output':str(validation),'packetRoot':str(packet),'nativeRawDirectory':ready['nativeRawDirectory']+'/validator'}
         save(proof/'validate-config.json',config)
         validator=owned('validator',[ready['rgbPrimary']['python'],str(HERE/'rgb-primary.py'),'validate-primary',str(proof/'validate-config.json')])
         result['inspection']=caller.inspect_capture(ready['stages'][0],cap,ready,validation,validator)

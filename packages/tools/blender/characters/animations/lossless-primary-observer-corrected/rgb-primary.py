@@ -2,6 +2,7 @@
 import argparse,hashlib,io,json,os,resource,struct,subprocess,sys
 from pathlib import Path
 from PIL import Image
+import packet_budget as budget
 sys.dont_write_bytecode=True
 SCHEMA='t02-lossless-rgb-primary/v1'
 PIXELS=1920*1080
@@ -91,15 +92,18 @@ def validate(config):
     from round4_job_boundary import deadline
     resource.setrlimit(resource.RLIMIT_FSIZE,(REPORT_LIMIT,REPORT_LIMIT))
     rows=json.loads(Path(config['frameMap']).read_text())['frames'];assert 1<=len(rows)<=132
-    out=Path(config['output']);out.mkdir(exist_ok=False);commands=[]
+    out=Path(config['output']);out.mkdir(exist_ok=False);raw_out=Path(config['nativeRawDirectory']);raw_out.mkdir(exist_ok=False);commands=[]
     def native(name,argv,seconds):
-        raw=out/(name+'.stdout');err=out/(name+'.stderr');commands.append({'argv':argv,'stdout':str(raw),'stderr':str(err),'deadlineSeconds':seconds})
-        save(out/(name+'-command.json'),commands[-1])
+        raw=raw_out/(name+'.stdout');err=raw_out/(name+'.stderr');commands.append({'argv':argv,'stdout':str(raw),'stderr':str(err),'deadlineSeconds':seconds})
+        save(raw_out/(name+'-command.json'),commands[-1])
         with raw.open('xb') as stdout,err.open('xb') as stderr,deadline(seconds):
             child=subprocess.Popen(argv,stdout=stdout,stderr=stderr)
             code=child.wait();assert code==0,f'{name} exit {code}'
         assert raw.stat().st_size<=REPORT_LIMIT and err.stat().st_size<=REPORT_LIMIT
-        return raw
+        budget.write_bytes(config['packetRoot'],out/(name+'.stdout'),raw.read_bytes())
+        budget.write_bytes(config['packetRoot'],out/(name+'.stderr'),err.read_bytes())
+        budget.write_json(config['packetRoot'],out/(name+'-command.json'),commands[-1])
+        return out/(name+'.stdout')
     try:
         meta=native('probe',[config['ffprobe'],'-v','error','-threads','1','-select_streams','v:0','-show_streams','-show_packets','-of','json',config['video']],30)
         check_probe(json.loads(meta.read_text()),len(rows))
@@ -108,11 +112,14 @@ def validate(config):
         for kind,pix in [('rgb','rgb24'),('rgba','rgba')]:
             report=native(kind,[*base,'-pix_fmt',pix,'-threads','1','-f','framehash','-hash','sha256','pipe:1'],120)
             parse_framehash(report.read_text(),rows,kind)
-        save(out/'validation.json',{'schema':SCHEMA,'accepted':True,'frames':len(rows),'everyRgbAndRgbaHash':True,'ordered60Hz':True,
+        budget.write_json(config['packetRoot'],out/'validation.json',{'schema':SCHEMA,'accepted':True,'frames':len(rows),'everyRgbAndRgbaHash':True,'ordered60Hz':True,
             'rawRgbSpoolBytes':0,'videoSha256':digest(Path(config['video']).read_bytes()),'frameMapSha256':digest(Path(config['frameMap']).read_bytes()),
             'commands':commands})
     except BaseException as e:
-        save(out/'validation.json',{'schema':SCHEMA,'accepted':False,'primaryFailure':{'type':type(e).__name__,'message':str(e)},'commands':commands});raise
+        problem={'schema':SCHEMA,'accepted':False,'primaryFailure':{'type':type(e).__name__,'message':str(e)},'commands':commands}
+        save(raw_out/'validation-failure.json',problem)
+        budget.first_failure(config['packetRoot'],{'schema':SCHEMA,'phase':'validator','primaryFailure':problem['primaryFailure'],'completeNativeEvidence':str(raw_out)})
+        raise
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('mode',choices=['encode-png-stdio','validate-primary']);p.add_argument('config',type=Path);a=p.parse_args()

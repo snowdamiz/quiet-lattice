@@ -1,37 +1,87 @@
 {
-  "schema": "t02-observer-correction-review-freeze/v1",
-  "status": "SOURCE_REVIEW_ONLY_NO_NEW_NATIVE_JOB",
-  "sourceParentCommit": "f7d644dbb307f650d181faad629d6189f24029b7",
+  "schema": "t02-lossless-primary-corrected-source-review/v2",
+  "status": "SOURCE_ONLY_ALL_NATIVE_ADMISSION_DISABLED",
+  "recordedUtc": "2026-11-03T05:24:28.082561+00:00",
+  "sourceParentCommit": "5eb06673a7345d1f88d65652e306b67b1229b1e1",
   "candidate": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected",
-  "readinessSha256": "68fa7967273d494c0ac97d2d75188b659192834b7450edd1564a0c738636cdf7",
-  "candidateIndexSha256": "db43592b8147d2826cad91c1101042b32c085a1f2488849669425b95c98014d7",
+  "readinessSha256": "1b40154a29bdf09e91a695d69d81dcb37b9274284dafd7749bb529bcf6bab5c4",
+  "candidateIndexSha256": "fb0c657e8eab08a6255a278897ec5ddfd783ba8b6886f6a413bfd1dfdb10664b",
   "disabledGrantSha256": "70e0d8d9c5cee7d81dc38230fac82fe27efd289cbd7785d9278324460aedc080",
-  "observerControlsSha256": "17f2cda4f2ac68d5cb66b15e9fc17a3358792032dbcaa645ee11c84ee4aec195",
-  "pureControls": {
-    "newObserverAndSummary": 15,
-    "newNativeCalls": 0,
-    "unchangedEntryWorkerControlsReused": 19
+  "controls": {
+    "total": 50,
+    "nativeCalls": 0,
+    "reports": {
+      "pure-node-controls.json": {
+        "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/pure-node-controls.json",
+        "sha256": "0def8a80482692d778b66ac2b73b320e73e2fd81107ed22e041d491d9371b314",
+        "controls": 9
+      },
+      "pure-python-controls.json": {
+        "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/pure-python-controls.json",
+        "sha256": "6d4d71907e2dffd6b9685a748053fde0cd497acd958d8c50551e93e363340a21",
+        "controls": 10
+      },
+      "observer-controls.json": {
+        "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.json",
+        "sha256": "a499676687aaf8822bdecb2159b44290d435efdb2cf6a33d12e007c3fbe7c01f",
+        "controls": 15
+      },
+      "packet-budget-controls.json": {
+        "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.json",
+        "sha256": "f253b39e478cc61e509bf55f95f60d929393bc8e04b48089f06a9337ecd0e450",
+        "controls": 9
+      },
+      "packet-budget-node-controls.json": {
+        "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-node-controls.json",
+        "sha256": "c3849ca1244626ad8b92180b93580b2db0101b410810d790674ab24cfbac07db",
+        "controls": 7
+      }
+    }
   },
-  "unchangedSourceFilesComparedToFailedCommit": [
-    {
-      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/entry.mjs",
-      "sha256": "cf275a7c13e2b5af3eb59d3a2171050176c45cbaaa303f8544ccd13117bea406"
-    },
+  "sourcePaths": [
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
-      "sha256": "4db7f8f9f922a7bfdc80c086ce8ec5e3089517947f04fd5ab26dbad651c8a66d"
+      "sha256": "2dddeb8d37f423c4f2934184ce3cb4931eb49045d5b92b527bb31d4d7bb213b6"
     },
     {
-      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
-      "sha256": "b1af1f572a42b9188fbbf74d915348ebf154a6ed6e19383dfd61f5ed5da676e2"
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.mjs",
+      "sha256": "dde5900a7e249393a70f00e62b6a01340ff5392f006cad6571144b52cf198618"
     },
     {
-      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-sink.mjs",
-      "sha256": "1c4738f842473987f4cacb3c98cb2f896f5650b93c033b020621cb31d4c17ef8"
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
+      "sha256": "69a2c0f0dd1162a2e4f5093d1077fa654879814f7409fe119af7cd203988526d"
     },
     {
-      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/replay-fixture.mjs",
-      "sha256": "cd2dfde84fcef2280f4fdd919448fbafb2741879d637b935f48a6d02ad261866"
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/entry.mjs",
+      "sha256": "1b4b20973d25782cfe82641af7249bb5c54dee4be89718dc8838c5ae66d67e72"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
+      "sha256": "434ca3c30c161adbcf12727a8d766305829d0d2d7aa905f70c758ba4c1112b36"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "sha256": "89302b98fe70a5f58b1d7087d254e952cbee66be2a9dcced1a3354e9e5ac8133"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
+      "sha256": "21429195b74c6324de6142a81d767292d7bb94b037f35eecdcf86fbadf9faa40"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
+      "sha256": "a43f6ad4bf8ed4e77aa0d0e3238770211cb35289ee082b0fe8c72bad6ae9bf4d"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-node-controls.mjs",
+      "sha256": "9f66fb4596e72711fd250a11887e9b91fb1ff258637b9d3e9f094e80ca984910"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget.mjs",
+      "sha256": "d39b28a5fd0458ea89308f217ce99df8d9f1144f49ccffb203cd30dc78b76f06"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
+      "sha256": "05b596bd2ce6f25e850b6b4b340165ab6ab16eec5c84d856592572550adef14a"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/page-api.mjs",
@@ -42,53 +92,81 @@
       "sha256": "45a07d10626da845261f336d6202ef460e53ff6cfe4e58f5a5ef45cfdab72f2a"
     },
     {
-      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.mjs",
-      "sha256": "f8804d915b2ba0877f22cf50dae0873f6942d8f24ba13ef65d0fe698697a3554"
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/replay-fixture.mjs",
+      "sha256": "cd2dfde84fcef2280f4fdd919448fbafb2741879d637b935f48a6d02ad261866"
     },
     {
-      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
-      "sha256": "2fb147ec5cd964d685930847eea823a58205124eabf3e75b88140b67f070c3e5"
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/resolve-browser.cjs",
+      "sha256": "f1d2b272fcf61c9e6ad302e65168b754d88963c4c48c4e67bd19a3da622c676a"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/resolve-routes.mjs",
       "sha256": "bb4b5b6f40b3ed876c2516495a8b939382783f70b3ff23943d3502bc136592b6"
     },
     {
-      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/resolve-browser.cjs",
-      "sha256": "f1d2b272fcf61c9e6ad302e65168b754d88963c4c48c4e67bd19a3da622c676a"
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
+      "sha256": "b78848d343c923073ead7292aa3673860b728b901774fc2cc0748cba91126eb3"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-sink.mjs",
+      "sha256": "ac84da408c45946fd4230d46ec0e1d509bc8316b6b6052575d9bbe8e34607f76"
     }
   ],
-  "changedOrNewSourcePaths": [
-    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
-    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
-    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py"
+  "preservedUnchangedPagePlaybackReplayResolvers": [
+    "page-api.mjs",
+    "playback.mjs",
+    "replay-fixture.mjs",
+    "resolve-routes.mjs",
+    "resolve-browser.cjs"
   ],
-  "failedAttempt": {
-    "directory": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-candidate",
-    "commit": "f7d644dbb307f650d181faad629d6189f24029b7",
-    "manifestSha256": "98f3870e586a0770f228561a87f89fc851fd06f9a4fbc2b0f95d735671b0d7d6",
-    "allIndexedHistoricalBytesVerifiedUnchanged": true,
-    "recoverySha256": "4dff39681a745392b1c25f70fd1c77873374f8cd81c01b77ba8f6ad2924b0089"
+  "packetEnforcement": {
+    "contract": {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/PACKET_STORAGE_CONTRACT.md",
+      "sha256": "cd5eee79eaa544ee246b597ad0d1e25d602263b796982950b612e123cd74410b"
+    },
+    "metadataBytes": 33554432,
+    "files": 256,
+    "failureReserve": 131072,
+    "terminalReserve": 131072,
+    "packetByteOvershoot": 0,
+    "privateArchive": "Observed acceptance ceiling; no hard shared-helper/cache quota or fixed overshoot claim"
   },
-  "futureOutput": {
-    "capture": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet/capture",
-    "privateProof": "/private/tmp/t02-primary-integration-observer-corrected-5d3eb12a",
-    "bothAbsent": true,
-    "nativeAuthorization": false,
-    "browserAuthorization": false
+  "failedAttempt": {
+    "commit": "f7d644dbb307f650d181faad629d6189f24029b7",
+    "directory": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-candidate",
+    "manifestSha256": "98f3870e586a0770f228561a87f89fc851fd06f9a4fbc2b0f95d735671b0d7d6",
+    "allHistoricalIndexedBytesUnchanged": true,
+    "initialReceiptSha256": "402202b776db2e47484b07cd0571badfc9c60739ca1da1cfdd47455917255426",
+    "initialBoundarySha256": "34d804317f4dc35e2fb15853b2f2def295d0aa9e8924de1e820060603a73c372",
+    "separateRecoverySha256": "4dff39681a745392b1c25f70fd1c77873374f8cd81c01b77ba8f6ad2924b0089"
+  },
+  "resourceState": {
+    "newNativeJobs": 0,
+    "newValidatorOrRetry": false,
+    "priorCohort": 438559,
+    "priorKernelCurrent": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "priorExactBirthsAbsent": 5,
+    "futurePacketAndProofBothAbsent": true
   },
   "prospectiveAccounting": {
     "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/prospective-accounting.json",
-    "sha256": "1eda10d5bd76378787b05d7816e63114eb67671b2b7ba463cd8510577b67fe29",
-    "nativeAdmissionClaim": false,
-    "aggregateMetadataGateStillNeedsWholeIntegrationReview": true
+    "sha256": "ee1a12525f2d8eb574efb043e26a128758e86ed9e678cc92dce01aae39282788",
+    "nativeAdmissionClaim": false
   },
-  "currentFreeBytes": 19703783424,
+  "currentFreeBytes": 10422112256,
   "files": [
     {
+      "path": "PACKET_STORAGE_CONTRACT.md",
+      "bytes": 4204,
+      "sha256": "cd5eee79eaa544ee246b597ad0d1e25d602263b796982950b612e123cd74410b"
+    },
+    {
       "path": "README.md",
-      "bytes": 3925,
-      "sha256": "1379a3357e4796496ea8fa2ff61883c9b37f9e4e281c711729e6bc026859b7b0"
+      "bytes": 3355,
+      "sha256": "e3dc8a36e3711152ef0cc6dc7ceeabd3d09bf1ccae0ceeaaccfcf1021ba3845b"
     },
     {
       "path": "baseline.json",
@@ -97,23 +175,23 @@
     },
     {
       "path": "caller.py",
-      "bytes": 32907,
-      "sha256": "4db7f8f9f922a7bfdc80c086ce8ec5e3089517947f04fd5ab26dbad651c8a66d"
+      "bytes": 34082,
+      "sha256": "2dddeb8d37f423c4f2934184ce3cb4931eb49045d5b92b527bb31d4d7bb213b6"
     },
     {
       "path": "candidate-index.json",
-      "bytes": 3574,
-      "sha256": "db43592b8147d2826cad91c1101042b32c085a1f2488849669425b95c98014d7"
+      "bytes": 4693,
+      "sha256": "fb0c657e8eab08a6255a278897ec5ddfd783ba8b6886f6a413bfd1dfdb10664b"
     },
     {
       "path": "controls.mjs",
-      "bytes": 4294,
-      "sha256": "f8804d915b2ba0877f22cf50dae0873f6942d8f24ba13ef65d0fe698697a3554"
+      "bytes": 4578,
+      "sha256": "dde5900a7e249393a70f00e62b6a01340ff5392f006cad6571144b52cf198618"
     },
     {
       "path": "controls.py",
-      "bytes": 2917,
-      "sha256": "2fb147ec5cd964d685930847eea823a58205124eabf3e75b88140b67f070c3e5"
+      "bytes": 2949,
+      "sha256": "69a2c0f0dd1162a2e4f5093d1077fa654879814f7409fe119af7cd203988526d"
     },
     {
       "path": "cpu-preflight.stderr",
@@ -123,7 +201,7 @@
     {
       "path": "cpu-preflight.stdout",
       "bytes": 174,
-      "sha256": "2edd9a9e4ac906e83db2c06eb03b346d0eb9979a1595dbd30178836d4d1f9160"
+      "sha256": "0d262698a3b34dff234267cc99aad174813242bc11e08dc802680f46a125bf52"
     },
     {
       "path": "disabled-grant.json",
@@ -132,28 +210,58 @@
     },
     {
       "path": "entry.mjs",
-      "bytes": 21946,
-      "sha256": "cf275a7c13e2b5af3eb59d3a2171050176c45cbaaa303f8544ccd13117bea406"
+      "bytes": 22535,
+      "sha256": "1b4b20973d25782cfe82641af7249bb5c54dee4be89718dc8838c5ae66d67e72"
     },
     {
       "path": "freeze.py",
-      "bytes": 6131,
-      "sha256": "4ee7f513675bef0a6c52686b395edcc1c1303a1effc315c46e79c4df4b067c41"
+      "bytes": 6446,
+      "sha256": "434ca3c30c161adbcf12727a8d766305829d0d2d7aa905f70c758ba4c1112b36"
     },
     {
       "path": "integration.py",
-      "bytes": 12302,
-      "sha256": "536ffb5dc56bc82738135b9c0395f9ec5787fb5fd84081d46c1620c9acbf5513"
+      "bytes": 14173,
+      "sha256": "89302b98fe70a5f58b1d7087d254e952cbee66be2a9dcced1a3354e9e5ac8133"
     },
     {
       "path": "observer-controls.json",
       "bytes": 37669,
-      "sha256": "17f2cda4f2ac68d5cb66b15e9fc17a3358792032dbcaa645ee11c84ee4aec195"
+      "sha256": "a499676687aaf8822bdecb2159b44290d435efdb2cf6a33d12e007c3fbe7c01f"
     },
     {
       "path": "observer-controls.py",
-      "bytes": 6216,
-      "sha256": "4c8d08e90c9073183a4088410d1e3c6727d9521d6a083638c88f0b7299c5f7cd"
+      "bytes": 6376,
+      "sha256": "21429195b74c6324de6142a81d767292d7bb94b037f35eecdcf86fbadf9faa40"
+    },
+    {
+      "path": "packet-budget-controls.json",
+      "bytes": 1231,
+      "sha256": "f253b39e478cc61e509bf55f95f60d929393bc8e04b48089f06a9337ecd0e450"
+    },
+    {
+      "path": "packet-budget-controls.py",
+      "bytes": 5254,
+      "sha256": "a43f6ad4bf8ed4e77aa0d0e3238770211cb35289ee082b0fe8c72bad6ae9bf4d"
+    },
+    {
+      "path": "packet-budget-node-controls.json",
+      "bytes": 999,
+      "sha256": "c3849ca1244626ad8b92180b93580b2db0101b410810d790674ab24cfbac07db"
+    },
+    {
+      "path": "packet-budget-node-controls.mjs",
+      "bytes": 5737,
+      "sha256": "9f66fb4596e72711fd250a11887e9b91fb1ff258637b9d3e9f094e80ca984910"
+    },
+    {
+      "path": "packet-budget.mjs",
+      "bytes": 2812,
+      "sha256": "d39b28a5fd0458ea89308f217ce99df8d9f1144f49ccffb203cd30dc78b76f06"
+    },
+    {
+      "path": "packet_budget.py",
+      "bytes": 3545,
+      "sha256": "05b596bd2ce6f25e850b6b4b340165ab6ab16eec5c84d856592572550adef14a"
     },
     {
       "path": "page-api.mjs",
@@ -167,18 +275,18 @@
     },
     {
       "path": "prospective-accounting.json",
-      "bytes": 2918,
-      "sha256": "1eda10d5bd76378787b05d7816e63114eb67671b2b7ba463cd8510577b67fe29"
+      "bytes": 4939,
+      "sha256": "ee1a12525f2d8eb574efb043e26a128758e86ed9e678cc92dce01aae39282788"
     },
     {
       "path": "pure-control-history.json",
-      "bytes": 602,
-      "sha256": "593bc33ca9b5459f69db5e35e65f8ce255d7c57704a08368a44cc6e96af7c7cf"
+      "bytes": 1176,
+      "sha256": "eddcde0f3637413420bfac002861f130f6b7405f23050b1577246cec2547fd52"
     },
     {
       "path": "pure-node-controls.json",
       "bytes": 942,
-      "sha256": "5f2be6aaaf07b1644c98007e65d2a286608956b696ab7fd772f59ecde08982c1"
+      "sha256": "0def8a80482692d778b66ac2b73b320e73e2fd81107ed22e041d491d9371b314"
     },
     {
       "path": "pure-python-controls.json",
@@ -187,8 +295,8 @@
     },
     {
       "path": "readiness.json",
-      "bytes": 249920,
-      "sha256": "68fa7967273d494c0ac97d2d75188b659192834b7450edd1564a0c738636cdf7"
+      "bytes": 251611,
+      "sha256": "1b40154a29bdf09e91a695d69d81dcb37b9274284dafd7749bb529bcf6bab5c4"
     },
     {
       "path": "replay-fixture.mjs",
@@ -207,13 +315,13 @@
     },
     {
       "path": "rgb-primary.py",
-      "bytes": 8096,
-      "sha256": "b1af1f572a42b9188fbbf74d915348ebf154a6ed6e19383dfd61f5ed5da676e2"
+      "bytes": 8739,
+      "sha256": "b78848d343c923073ead7292aa3673860b728b901774fc2cc0748cba91126eb3"
     },
     {
       "path": "rgb-sink.mjs",
-      "bytes": 3640,
-      "sha256": "1c4738f842473987f4cacb3c98cb2f896f5650b93c033b020621cb31d4c17ef8"
+      "bytes": 4061,
+      "sha256": "ac84da408c45946fd4230d46ec0e1d509bc8316b6b6052575d9bbe8e34607f76"
     }
   ]
 }

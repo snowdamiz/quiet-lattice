@@ -11,5 +11,11 @@
     "artifacts": "/private/tmp/t02-primary-pure-controls-d3OqXG",
     "correction": "convert URL to filesystem path in the control runner",
     "nativeJobs": 0
+  },
+  "metadataHarnessMigration": {
+    "node": "The source EPIPE control passed through the new packet/capture directory, but its retained-observation assertion still used the old path; assertion corrected.",
+    "python": "The rerun attempted exclusive creation of its already committed proof JSON; the control runner now replaces its current report while prior commit5eb06673a preserves the earlier report. Worker evidence uses exclusive writes unchanged.",
+    "nativeCalls": 0,
+    "scope": "Pure control harness corrections; original failed native attempt unchanged"
   }
 }

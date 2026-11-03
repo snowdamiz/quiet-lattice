@@ -1,7 +1,7 @@
 {
-  "status": "PROPOSPECTIVE_ONLY_NO_NATIVE_ADMISSION",
-  "snapshotUtcEpoch": 1793682050.0347059,
-  "currentFreeBytes": 20715839488,
+  "status": "PROSPECTIVE_ONLY_PACKET_ENFORCEMENT_NATIVE_DISABLED",
+  "snapshotUtcEpoch": 1793683258.946229,
+  "currentFreeBytes": 10421411840,
   "sourceReviewOnly": true,
   "priorFailedAttempt": {
     "commit": "f7d644dbb307f650d181faad629d6189f24029b7",
@@ -46,14 +46,51 @@
     "noOutputCopyStaging": true,
     "noAdditionalExistingPngCopies": true,
     "noCompressionOrDeletion": true,
-    "unresolvedBeforeAnyNativeGrant": [
-      "The fixed132-source inputs are pinned and the failed output is measured, but the whole integration still needs independent review of the32MiB aggregate metadata/framehash contract. Entry has a32MiB subdirectory budget while validator outputs have per-file caps; the final expanded job summary is not yet covered by one aggregate packet gate. This observer-only correction does not change that unrelated format/budget behavior. No new native admission or fit claim follows from the nominal envelope.",
-      "Archive/cache/source/memory enforcement and all primary acceptance controls remain subject to whole-integration source review."
-    ]
+    "beforeAnyNativeGrant": [
+      "Fresh independent whole-integration source review, current disk admission and a separately issued native authorization are still required. No native retry/validator was run in this correction.",
+      "Private combined helper/cache/archive growth remains an observed acceptance ceiling, not a hard aggregate quota; no fixed maximum overshoot is claimed for shared-helper/cache writes. Review this distinction before admitting native work."
+    ],
+    "enforcement": {
+      "aggregatePacketMetadataBytes": 33554432,
+      "aggregatePacketFiles": 256,
+      "reservedFailureBytes": 131072,
+      "reservedTerminalBytes": 131072,
+      "normalMetadataBytes": 33292288,
+      "atomicOldPlusTemporaryCountedBeforeWrite": true,
+      "packetMetadataByteOvershoot": 0,
+      "packetFileCountOvershoot": 0,
+      "soleNormalPacketWriterByPhase": [
+        "Node producer",
+        "Python validator after producer release",
+        "parent terminal record after audit"
+      ],
+      "nativePrivateStreams": {
+        "encodedVideoOsFileCap": 536870912,
+        "encoderRawCombinedStreamOsFileCap": 536870912,
+        "validatorStdoutStderrEachOsFileCap": 2097152,
+        "validatorNativeOutputFiles": 6,
+        "validatorRawOutputsMaximumBytes": 12582912,
+        "packetCopies": "Counted within the32MiB aggregate packet budget; private originals remain inside retained archive allowance"
+      },
+      "observedAtCleanup": [
+        "Combined1GiB private archive acceptance ceiling",
+        "StationJob helper/controller/profile/cache bytes",
+        "Current free-space floor; not a reservation"
+      ],
+      "outsidePacketStaging": "Atomic controller receipt old+temporary bytes and Git/LFS clean staging remain within the separate1GiB staging allowance; no full-media staging copy is created.",
+      "scopeLimit": "No hard whole-volume or combined shared-helper/cache quota is implemented or claimed; no fixed overshoot bound is claimed for that observed private archive. No source acceptance of a new native unit follows from these nominal totals.",
+      "filesystemAllocation": "Packet limits count logical file bytes. Allocation rounding, directories/inodes and filesystem bookkeeping are charged to the4GiB safety allowance; no whole-volume physical quota is claimed."
+    }
   },
   "wholeLibraryLedger": {
     "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-feasibility/storage-accounting.json",
     "sha256": "2c5665c31c3189d1822560534c0220f2ab7a33010854068ce08964ad5b85519b",
     "meaning": "No whole-library fit claim. Current free bytes are a snapshot, not a reservation."
-  }
+  },
+  "pureControlArtifactsAlreadyInFreeSnapshot": {
+    "newNativeJobs": 0,
+    "sparseBoundaryFiles": "Preserved; logical-length boundary fixtures use sparse files and are outside primary packets. Existing bytes already reflected in current df, no second incremental charge.",
+    "newProspectivePureTestAllocation": 0
+  },
+  "snapshotUtc": "2026-11-03T05:24:26.635959+00:00"
 }

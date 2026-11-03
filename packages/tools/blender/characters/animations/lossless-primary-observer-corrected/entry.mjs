@@ -1,3 +1,4 @@
+import {beforeWrite,writeBytes as packetWriteBytes,firstFailure,FILE_COUNT} from './packet-budget.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -103,8 +104,7 @@ export function persistMotionObservation(output,work,raw,ready) {
   const encoded=Buffer.from(JSON.stringify(metadata,null,2)+'\n');
   const observation='observations/'+String(work.ordinal).padStart(4,'0')+'.json';
   if(encoded.length>ready.limits.maxObservationBytes)throw Error('Complete non-image observation byte ceiling');
-  checkMetadataBudget(output,ready.rgbPrimary.maxMetadataBytes-6*1024**2,encoded.length);
-  fs.writeFileSync(path.join(output,observation),encoded,{flag:'wx'});
+  packetWriteBytes(ready.packetRoot,path.join(output,observation),encoded);
   validateObservation(raw,work,ready);
   if(typeof dataUrl!=='string'||!dataUrl.startsWith(PNG_PREFIX))throw Error('Motion PNG data URL refused');
   const png=Buffer.from(dataUrl.slice(PNG_PREFIX.length),'base64');
@@ -121,7 +121,7 @@ export function checkMetadataBudget(output,limit,additional=0,replace=null) {
 export async function runEntryStage({ready,stage,output,runtime,writer=writeJson,sinkFactory=null}) {
   if(fs.existsSync(output))throw Error('Capture output already exists; no retry');
   fs.mkdirSync(output);fs.mkdirSync(path.join(output,'images'));fs.mkdirSync(path.join(output,'observations'));
-  if(stage.kind==='motion'&&ready.primaryArtifactSchema===PRIMARY_SCHEMA){const baseWriter=writer;writer=(file,value)=>{const bytes=Buffer.byteLength(JSON.stringify(value,null,2)+'\n');checkMetadataBudget(output,ready.rgbPrimary.maxMetadataBytes-6*1024**2,bytes,file);baseWriter(file,value);};}
+  if(stage.kind==='motion'&&ready.primaryArtifactSchema===PRIMARY_SCHEMA){const baseWriter=writer;writer=(file,value)=>{const bytes=Buffer.byteLength(JSON.stringify(value,null,2)+'\n');beforeWrite(ready.packetRoot,file,bytes,{atomic:true});baseWriter(file,value);};}
   const state={stage:stage.id,scope:'T02_PILOT_VISUAL_SEQUENCE_ONLY',status:'ACTIVE',accepted:false,
     primaryFailure:null,cleanupFailures:[],persistenceFailures:[],observations:[],completed:[],cleanup:[]};
   const persist=()=>{
@@ -129,10 +129,11 @@ export async function runEntryStage({ready,stage,output,runtime,writer=writeJson
     catch(error){
       const record=failure(error);state.persistenceFailures.push(record);
       if(state.primaryFailure===null)state.primaryFailure=record;
+      if(ready.primaryArtifactSchema===PRIMARY_SCHEMA){try{firstFailure(ready.packetRoot,{schema:PRIMARY_SCHEMA,phase:'entry-persistence',primaryFailure:state.primaryFailure});}catch(secondary){state.persistenceFailures.push(failure(secondary));}}
       return false;
     }
   };
-  const primary=error=>{if(state.primaryFailure===null)state.primaryFailure=failure(error);persist();};
+  const primary=error=>{if(state.primaryFailure===null)state.primaryFailure=failure(error);if(ready.primaryArtifactSchema===PRIMARY_SCHEMA){try{firstFailure(ready.packetRoot,{schema:PRIMARY_SCHEMA,phase:'entry',primaryFailure:state.primaryFailure});}catch(secondary){state.persistenceFailures.push(failure(secondary));}}persist();};
   let resources=null,sink=null,sinkFinalized=false;
   const primaryMotion=stage.kind==='motion'&&ready.primaryArtifactSchema===PRIMARY_SCHEMA;
   const frames=[];
@@ -151,6 +152,7 @@ export async function runEntryStage({ready,stage,output,runtime,writer=writeJson
       /SwiftShader|llvmpipe/i.test(backend.unmaskedRenderer??'')||JSON.stringify(backend.canvas)!==JSON.stringify(ready.viewport))throw Error('Actual backend/viewport refused');
     if(primaryMotion){const factory=sinkFactory??(await import('./rgb-sink.mjs')).createRgbSink;sink=factory(ready,stage,output);}
     for(const work of stage.work) {
+      if(primaryMotion){const map=path.join(output,'frame-map.json'),mapBytes=fs.existsSync(map)?fs.statSync(map).size:0;beforeWrite(ready.packetRoot,path.join(output,'next-frame-reservation'),2*ready.limits.maxObservationBytes+mapBytes+8192+1024**2,{fileLimit:FILE_COUNT-3});}
       const returned=await resources.frame(work);
       const metadata=returned===undefined?{returnedType:'undefined'}:returned&&typeof returned==='object'?{...returned,dataUrl:typeof returned.dataUrl==='string'?
         {returnedStringBytes:Buffer.byteLength(returned.dataUrl),sha256:sha(Buffer.from(returned.dataUrl))}:returned.dataUrl}:returned;
@@ -166,7 +168,6 @@ export async function runEntryStage({ready,stage,output,runtime,writer=writeJson
         const row={...work,...ack,primaryVideo:'primary.mp4',mediaPts:frames.length*1000,mediaTimeBase:'1/60000',
           observation:saved.observation,observationSha256:saved.observationSha256,poseSha256:saved.poseSha256,poseCanonicalJson:saved.poseCanonicalJson};
         frames.push(row);writer(path.join(output,'frame-map.json'),{schema:PRIMARY_SCHEMA,frames});
-        checkMetadataBudget(output,ready.rgbPrimary.maxMetadataBytes);
         record={workId:work.id,observation:saved.observation,mediaFrameOrdinal:row.mediaFrameOrdinal,rgbSha256:row.rgbSha256};
       } else record=persistReturned(output,work,returned,ready);
       state.observations.push(record);state.completed.push(work.id);persist();
@@ -200,7 +201,6 @@ export async function runEntryStage({ready,stage,output,runtime,writer=writeJson
         work:stage.work.filter(w=>state.completed.includes(w.id)).map(w=>({...w,
           ...(primaryMotion?{primaryVideo:'primary.mp4',mediaFrameOrdinal:frames.findIndex(r=>r.id===w.id)}:{image:'images/'+String(w.ordinal).padStart(4,'0')+'.png'}),
           observation:'observations/'+String(w.ordinal).padStart(4,'0')+'.json'}))});
-      if(primaryMotion)checkMetadataBudget(output,ready.rgbPrimary.maxMetadataBytes);
     } catch(error) {
       const record=failure(error);state.persistenceFailures.push(record);state.primaryFailure??=record;state.accepted=false;state.status='HOLD';
       try{writer(path.join(output,'entry-result.json'),state);}catch(secondary){state.persistenceFailures.push(failure(secondary));}

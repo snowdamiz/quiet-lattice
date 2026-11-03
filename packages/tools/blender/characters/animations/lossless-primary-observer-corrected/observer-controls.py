@@ -57,12 +57,13 @@ for existing_primary in [True,False]:
     d=root/str(existing_primary);d.mkdir();proof=d/'proof';proof.mkdir();packet=d/'packet';packet.mkdir()
     primary={'type':'OriginalFailure','message':'preserve first failure'} if existing_primary else None
     cleanup={'cleanupFailure':{'type':'OriginalCleanup','message':'preserve cleanup'}}
-    result={'status':'PASS','primaryFailure':copy.deepcopy(primary),'jobs':[cleanup]}
+    receipt=d/'original-job.json';receipt.write_text(json.dumps(cleanup));job={'path':str(receipt),'sha256':unit.sha(receipt)}
+    result={'status':'PASS','primaryFailure':copy.deepcopy(primary),'jobs':[job]}
     def audit_failed(handle):raise AssertionError('fixture terminal audit failure')
-    unit.persist_terminal_summary(result,[object()],audit_failed,[cleanup],proof,packet,time.monotonic())
+    unit.persist_terminal_summary(result,[object()],audit_failed,[job],proof,packet,time.monotonic())
     stored=json.loads((proof/'result.json').read_text());assert stored==json.loads((packet/'integration-result.json').read_text())
     assert stored['terminalReleaseProved'] is False
-    assert stored['status']=='HOLD' and stored['jobs']==[cleanup] and stored['terminalAuditFailures'][0]['message']=='fixture terminal audit failure'
+    assert stored['status']=='HOLD' and stored['jobs']==[job] and json.loads(receipt.read_text())==cleanup and stored['terminalAuditFailures'][0]['message']=='fixture terminal audit failure'
     assert stored['primaryFailure']==primary if existing_primary else stored['primaryFailure']['type']=='TerminalAuditFailure'
     results.append({'control':'summary persisted on audit failure, existingPrimary='+str(existing_primary),'pass':True,'path':str(proof/'result.json')})
 ready=json.loads((HERE/'readiness.json').read_text())

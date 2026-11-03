@@ -27,5 +27,5 @@ changed=lines.copy();parts=changed[data[0]].split(',');parts[2]=' 7';changed[dat
 changed=lines.copy();changed[data[0]]=changed[data[0]][:-64]+'0'*64;rejected('altered decoded hash',lambda:w.parse_framehash('\n'.join(changed),rows,'rgb'))
 probe=json.loads(Path('/private/tmp/t02-lossless-rgb-sample-132-717fs7_b/probe/native-output.log').read_text());w.check_probe(probe,132);probe['packets'][1]['pts']=77;rejected('bad container PTS',lambda:w.check_probe(probe,132))
 assert not calls
-w.save(HERE/'pure-python-controls.json',{'status':'PASS_IN_PROCESS_NATIVE_LAUNCH_REFUSED','nativeCalls':calls,'controls':controls})
+(HERE/'pure-python-controls.json').write_text(json.dumps({'status':'PASS_IN_PROCESS_NATIVE_LAUNCH_REFUSED','nativeCalls':calls,'controls':controls},indent=2)+'\n')
 print(json.dumps({'status':'PASS','controls':len(controls),'nativeCalls':0}))

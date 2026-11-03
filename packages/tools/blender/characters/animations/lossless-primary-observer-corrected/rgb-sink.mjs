@@ -1,3 +1,4 @@
+import {writeJson as packetWriteJson,writeBytes as packetWriteBytes} from './packet-budget.mjs';
 import fs from 'node:fs';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
@@ -11,8 +12,8 @@ export function validateAck(ack,work,index,png){
 }
 export function createRgbSink(ready,stage,output){
   const config={schema:SCHEMA,frameCount:stage.work.length,video:output+'/primary.mp4',rawLog:ready.nativeRawDirectory+'/encoder.raw.log',
-    command:output+'/encoder-command.json',result:output+'/encoder-result.json',ffmpeg:ready.rgbPrimary.ffmpeg};
-  writeJson(output+'/encoder-config.json',config);
+    command:ready.nativeRawDirectory+'/encoder-command.json',result:ready.nativeRawDirectory+'/encoder-result.json',ffmpeg:ready.rgbPrimary.ffmpeg};
+  packetWriteJson(ready.packetRoot,output+'/encoder-config.json',config);
   const stderr=fs.openSync(ready.nativeRawDirectory+'/worker.stderr','wx');
   const raw=fs.openSync(ready.nativeRawDirectory+'/worker.stdout','wx');
   const child=spawn(ready.rgbPrimary.python,[ready.rgbPrimary.worker,'encode-png-stdio',output+'/encoder-config.json'],
@@ -41,7 +42,7 @@ export function createRgbSink(ready,stage,output){
       const value=await ack;validateAck(value,work,index,png);index++;return value;
       }finally{busy=false;}
     },
-    async finish(){child.stdin.end();try{await close;if(primary)throw primary;const result=JSON.parse(fs.readFileSync(config.result));if(result.accepted!==true||result.frames!==index)throw Error('Encoder finalization refused');return result;}finally{closeRaw();}},
+    async finish(){child.stdin.end();try{await close;if(primary)throw primary;const result=JSON.parse(fs.readFileSync(config.result));if(result.accepted!==true||result.frames!==index)throw Error('Encoder finalization refused');for(const [source,name] of [[config.command,'encoder-command.json'],[config.result,'encoder-result.json']]){if(fs.statSync(source).size>2*1024**2)throw Error('Encoder report byte ceiling');packetWriteBytes(ready.packetRoot,output+'/'+name,fs.readFileSync(source));}return result;}finally{closeRaw();}},
     async abort(){child.stdin.end();try{await close;}finally{closeRaw();}},
   };
 }
