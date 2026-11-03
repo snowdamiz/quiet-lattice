@@ -17,6 +17,8 @@ export const browserWorkPlan: readonly WorkClass[] = [
   'frame-plus-PNG',
 ];
 export const traceLimits = Object.freeze({ bufferKiB: 32768, streamBytes: 64 * 1024 * 1024, chunkBytes: 512 * 1024, reads: 1024, events: 250000 });
+export const categoryReplyBytes = 1024 * 1024;
+export const browserTraceCategories = ['blink.user_timing', 'devtools.timeline', 'toplevel', 'v8.execute'] as const;
 export type TraceCommand =
   | { method: 'Tracing.getCategories' | 'Tracing.end' }
   | {
@@ -71,6 +73,16 @@ interface Terminal {
   dataLossOccurred: boolean;
   stream: string | null;
 }
+interface CPUContextCoverage {
+  status: 'uninspected' | 'inconclusive' | 'supported-context-observed';
+  attribution: 'INCONCLUSIVE';
+  reason: string;
+  supportedEvents: number;
+  unsupportedEvents: number;
+  unknownNamedEvents: number;
+  ambiguousWindowEvents: number;
+  frameWindows: { index: number; workClass: WorkClass; startUs: number; endUs: number; supportedEvents: number }[];
+}
 export interface BrowserWorkLog {
   diagnosticOnly: true;
   status: 'pending' | 'failed' | 'inconclusive' | 'observed';
@@ -81,6 +93,8 @@ export interface BrowserWorkLog {
   controls: { index: number; workClass: WorkClass; reply: unknown }[];
   markers: Marker[];
   categories: string[];
+  categoryDiscovery: { status: 'unrequested' } | { status: 'listed'; returned: string[]; unreportedSelectors: string[]; listingIsEmissionProof: false };
+  cpuContext: CPUContextCoverage;
   trace: {
     started: boolean;
     endRequested: boolean;
@@ -228,6 +242,89 @@ export function markerCoverage(bytes: Buffer, expected: Marker[], rendererPids: 
     events: events.map((e) => (isRecord(e) ? { name: e.name, cat: e.cat, ph: e.ph, s: e.s, pid: e.pid, tid: e.tid, ts: e.ts, tts: e.tts } : null)),
   } satisfies BrowserWorkLog['markerCoverage'];
 }
+/** A recognized context subset, never a complete CPU cost, hotspot or native work identity. */
+export function cpuContextCoverage(bytes: Buffer, coverage: BrowserWorkLog['markerCoverage'], prefix: string): CPUContextCoverage {
+  const result: CPUContextCoverage = {
+    status: 'inconclusive',
+    attribution: 'INCONCLUSIVE',
+    reason: 'Supported timeline identity/schema/context missing or ambiguous for frame windows',
+    supportedEvents: 0,
+    unsupportedEvents: 0,
+    unknownNamedEvents: 0,
+    ambiguousWindowEvents: 0,
+    frameWindows: [],
+  };
+  if (coverage.status !== 'observed') return result;
+  const points = coverage.events.filter(isRecord),
+    first = points[0];
+  if (!first || typeof first.pid !== 'number' || typeof first.tid !== 'number') return result;
+  for (const [index, workClass] of browserWorkPlan.entries()) {
+    if (workClass !== 'frame-only' && workClass !== 'frame-plus-PNG') continue;
+    const id = `${prefix}-s${String(index).padStart(2, '0')}-run`;
+    const a = points.find((p) => p.name === `${id}-start`),
+      b = points.find((p) => p.name === `${id}-end`);
+    if (!a || !b || typeof a.ts !== 'number' || typeof b.ts !== 'number') return result;
+    result.frameWindows.push({ index, workClass, startUs: a.ts, endUs: b.ts, supportedEvents: 0 });
+  }
+  const parsed: unknown = JSON.parse(bytes.toString('utf8'));
+  if (!isRecord(parsed) || !Array.isArray(parsed.traceEvents) || parsed.traceEvents.length > traceLimits.events)
+    throw new Error('CPU context trace schema/count unavailable');
+  // Observed Chrome156 devtools.timeline X names on a pinned owned-renderer trace;
+  // complete-event fields also follow the pinned Perfetto exporter. Other forms are not guessed.
+  const supportedNames = new Set(['FunctionCall', 'Layout', 'Paint', 'PrePaint', 'UpdateLayoutTree']);
+  for (const event of parsed.traceEvents) {
+    if (
+      !isRecord(event) ||
+      event.pid !== first.pid ||
+      event.tid !== first.tid ||
+      typeof event.cat !== 'string' ||
+      !event.cat.split(',').includes('devtools.timeline')
+    )
+      continue;
+    if (typeof event.name !== 'string' || !supportedNames.has(event.name)) {
+      result.unknownNamedEvents++;
+      continue;
+    }
+    if (
+      event.ph !== 'X' ||
+      typeof event.ts !== 'number' ||
+      !Number.isFinite(event.ts) ||
+      event.ts < 0 ||
+      typeof event.dur !== 'number' ||
+      !Number.isFinite(event.dur) ||
+      event.dur < 0 ||
+      !Number.isFinite(event.ts + event.dur) ||
+      ['id', 'id2', 'bind_id', 'use_async_tts'].some((key) => Object.hasOwn(event, key)) ||
+      ['tts', 'tdur'].some((key) => Object.hasOwn(event, key) && (typeof event[key] !== 'number' || !Number.isFinite(event[key]) || event[key] < 0))
+    ) {
+      result.unsupportedEvents++;
+      continue;
+    }
+    const start = event.ts,
+      duration = event.dur,
+      end = start + duration;
+    const windows = result.frameWindows.filter((w) => (duration === 0 ? start >= w.startUs && start <= w.endUs : start < w.endUs && end > w.startUs));
+    if (windows.length > 1) {
+      result.ambiguousWindowEvents++;
+      continue;
+    }
+    if (windows.length === 1) {
+      windows[0].supportedEvents++;
+      result.supportedEvents++;
+    }
+  }
+  if (
+    result.frameWindows.length === 10 &&
+    result.frameWindows.every((w) => w.supportedEvents > 0) &&
+    result.unsupportedEvents === 0 &&
+    result.ambiguousWindowEvents === 0
+  ) {
+    result.status = 'supported-context-observed';
+    result.reason = 'Recognized context overlaps each frame window; completeness, causal attribution and exclusive costs remain unqualified';
+  }
+  return result;
+}
+
 export class BrowserWorkError extends Error {
   constructor(readonly evidence: BrowserWorkLog) {
     super(evidence.failure ?? 'Browser diagnostic inconclusive');
@@ -269,6 +366,17 @@ export async function runBrowserWorkTrace(options: {
     controls: [],
     markers: [],
     categories: [],
+    categoryDiscovery: { status: 'unrequested' },
+    cpuContext: {
+      status: 'uninspected',
+      attribution: 'INCONCLUSIVE',
+      reason: 'No retained trace inspected',
+      supportedEvents: 0,
+      unsupportedEvents: 0,
+      unknownNamedEvents: 0,
+      ambiguousWindowEvents: 0,
+      frameWindows: [],
+    },
     trace: {
       started: false,
       endRequested: false,
@@ -412,8 +520,10 @@ export async function runBrowserWorkTrace(options: {
         eof = part.eof;
       }
       log.trace.milestones.eofAt = new Date().toISOString();
-      log.markerCoverage = markerCoverage(options.sink.read(), log.markers, options.rendererPids);
-      if (log.markerCoverage.status !== 'observed') log.status = 'inconclusive';
+      const retained = options.sink.read();
+      log.markerCoverage = markerCoverage(retained, log.markers, options.rendererPids);
+      log.cpuContext = cpuContextCoverage(retained, log.markerCoverage, options.prefix);
+      if (log.markerCoverage.status !== 'observed' || log.cpuContext.status !== 'supported-context-observed') log.status = 'inconclusive';
     } catch (error) {
       abort(error);
     }
@@ -431,12 +541,23 @@ export async function runBrowserWorkTrace(options: {
   try {
     await call('prepare', browserWorkPlan[0], 0);
     const categories = await send({ method: 'Tracing.getCategories' });
-    if (!isRecord(categories) || !Array.isArray(categories.categories) || !categories.categories.every((v) => typeof v === 'string'))
-      throw new Error('Missing supported trace categories');
-    const supported = categories.categories;
-    log.categories = ['blink.user_timing', 'devtools.timeline', 'toplevel', 'v8.execute'].filter((name) => supported.includes(name));
-    if (!log.categories.includes('blink.user_timing') || !log.categories.includes('devtools.timeline'))
-      throw new Error('Required browser trace categories unavailable');
+    if (!isRecord(categories) || !Array.isArray(categories.categories) || categories.categories.length > 8192)
+      throw new Error('Invalid supported trace category listing');
+    const returned: string[] = [];
+    let categoryBytes = 0;
+    for (const value of categories.categories) {
+      if (typeof value !== 'string' || Buffer.byteLength(value) > 1024) throw new Error('Invalid trace category name');
+      categoryBytes += Buffer.byteLength(value);
+      if (categoryBytes > categoryReplyBytes) throw new Error('Trace category listing byte overflow');
+      returned.push(value);
+    }
+    log.categories = [...browserTraceCategories];
+    log.categoryDiscovery = {
+      status: 'listed',
+      returned: [...returned],
+      unreportedSelectors: log.categories.filter((name) => !returned.includes(name)),
+      listingIsEmissionProof: false,
+    };
     log.phase = 'tracing';
     // Set before awaiting start, so cleanup ends a trace whose start reply was lost.
     log.trace.started = true;

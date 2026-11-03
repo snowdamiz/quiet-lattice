@@ -11,7 +11,7 @@ import { startOwnedVite } from './native-vite.ts';
 import { bounded, type CommandRecord } from './native-trace.ts';
 import { withNativeWorkClassDeadline } from './native-work-class-budget.ts';
 import { saveNativeOutputs } from './native-pass-probe.ts';
-import { BrowserWorkError, isRecord, runBrowserWorkTrace, type WorkClass } from './browser-work-trace.ts';
+import { BrowserWorkError, categoryReplyBytes, isRecord, runBrowserWorkTrace, type WorkClass } from './browser-work-trace.ts';
 import { validateControl, validatePreparation } from './browser-work-report.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -61,6 +61,48 @@ export function retainBrowserLaunch(out: string, prefix: string, child: ReturnTy
   linkSync(path + '.writing', path);
   unlinkSync(path + '.writing');
   return value;
+}
+
+/** Retain the returned CDP JSON value, not an inferred category capability or wire packet. */
+export async function observeBrowserCategories(options: { out: string; send: () => Promise<unknown>; pageErrors: () => unknown; cleanupErrors: string[] }) {
+  const requested = { at: new Date().toISOString(), monotonicNs: process.hrtime.bigint().toString() };
+  const retain = (response: unknown, protocolFailure: string | null) => {
+    const observation = {
+      method: 'Tracing.getCategories',
+      requested,
+      received: { at: new Date().toISOString(), monotonicNs: process.hrtime.bigint().toString() },
+      representation: 'Complete returned CDP JSON value, not wire bytes',
+      response,
+      protocolFailure,
+      pageErrors: options.pageErrors(),
+    };
+    const bytes = Buffer.from(JSON.stringify(observation, null, 2) + '\n');
+    const path = join(options.out, 'protocol-categories.json');
+    if (bytes.length > categoryReplyBytes) {
+      writeFileSync(path + '.prefix', bytes.subarray(0, categoryReplyBytes), { flag: 'wx' });
+      writeFileSync(path + '.overflow.json', JSON.stringify({ bytes: bytes.length, sha256: sha(bytes), retainedBytes: categoryReplyBytes, complete: false }), {
+        flag: 'wx',
+      });
+      throw new Error('Category protocol receipt byte overflow; prefix/hash retained');
+    }
+    writeFileSync(path + '.writing', bytes, { flag: 'wx', mode: 0o600 });
+    linkSync(path + '.writing', path);
+    unlinkSync(path + '.writing');
+  };
+  let response: unknown;
+  try {
+    response = await options.send();
+  } catch (error) {
+    try {
+      retain(null, String(error));
+    } catch (persistence) {
+      options.cleanupErrors.push(`Category failure receipt: ${String(persistence)}`);
+    }
+    throw error;
+  }
+  // Deliberately inside the owned send promise: even a returned value during cancellation is retained.
+  retain(response, null);
+  return response;
 }
 
 /** Runs in the page. Marks bracket the unchanged accepted operation, not a guessed native execution interval. */
@@ -290,7 +332,12 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
           rendererPids,
           signal,
           trace: {
-            send: (command) => ('params' in command ? cdp.send(command.method, command.params) : cdp.send(command.method)),
+            send: (command) =>
+              command.method === 'Tracing.getCategories'
+                ? observeBrowserCategories({ out: admission.out, send: () => cdp.send('Tracing.getCategories'), pageErrors, cleanupErrors })
+                : 'params' in command
+                  ? cdp.send(command.method, command.params)
+                  : cdp.send(command.method),
             on: (event, fn) => {
               if (event === 'close') cdp.on('close', fn);
               else cdp.on(event, fn);

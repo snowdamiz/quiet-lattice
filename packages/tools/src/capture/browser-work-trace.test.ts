@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BrowserWorkError,
   browserWorkPlan,
+  browserTraceCategories,
   markerCoverage,
   runBrowserWorkTrace,
   traceLimits,
@@ -29,7 +30,12 @@ function fixture() {
   let rejectPending: (error: Error) => void = () => {};
   let onCall: ((action: string, workClass: WorkClass, id: string) => Promise<void>) | undefined;
   let onCommand: ((command: TraceCommand) => Promise<unknown> | undefined) | undefined;
-  const events = () => markers.map((m) => ({ name: m.name, cat: 'blink.user_timing', ts: m.monotonicMs * 1000, pid: 12, tid: 1, ph: 'R' }));
+  const events = () => [
+    ...markers.map((m) => ({ name: m.name, cat: 'blink.user_timing', ts: m.monotonicMs * 1000, pid: 12, tid: 1, ph: 'R' })),
+    ...markers
+      .filter((m) => /-s(0[2-9]|1[01])-run-start$/.test(m.name))
+      .map((m) => ({ name: 'FunctionCall', cat: 'devtools.timeline', ts: m.monotonicMs * 1000 + 100, dur: 100, pid: 12, tid: 1, ph: 'X' })),
+  ];
   const trace: TracePort = {
     on: (event, fn) => {
       emitter.on(event, fn);
@@ -153,6 +159,63 @@ describe('owned browser trace lifecycle, CPU providers only', () => {
     });
     expect(f.state()).toMatchObject({ live: false, listeners: 0 });
   });
+  it.each([{ categories: [] }, { categories: ['unrelated.category'] }, { categories: [...browserTraceCategories] }])(
+    'requests explicit reviewed selectors for valid enumeration %j',
+    async ({ categories }) => {
+      const f = fixture();
+      f.setCommand((c) =>
+        c.method === 'Tracing.getCategories' ? Promise.resolve({ categories, extraRawField: 'provider receipt retains this too' }) : undefined,
+      );
+      const log = await runBrowserWorkTrace(f.options);
+      expect(log.status).toBe('observed');
+      expect(log.categories).toEqual(browserTraceCategories);
+      expect(log.categoryDiscovery).toMatchObject({ status: 'listed', returned: categories, listingIsEmissionProof: false });
+      expect(f.commands.find((c) => c.method === 'Tracing.start')).toMatchObject({ params: { traceConfig: { includedCategories: browserTraceCategories } } });
+      expect(log.cpuContext).toMatchObject({ status: 'supported-context-observed', attribution: 'INCONCLUSIVE', supportedEvents: 10 });
+    },
+  );
+  it.each([null, {}, { categories: null }, { categories: [1] }, { categories: ['x'.repeat(1025)] }])(
+    'retains failure/no subsequent work for malformed listing %j',
+    async (raw) => {
+      const f = fixture();
+      f.setCommand((c) => (c.method === 'Tracing.getCategories' ? Promise.resolve(raw) : undefined));
+      const log = await failure(f);
+      expect(log.status).toBe('failed');
+      expect(f.calls).toEqual(['prepare:drained-empty']);
+      expect(f.commands.map((c) => c.method)).toEqual(['Tracing.getCategories']);
+    },
+  );
+  it.each(['absent', 'wrong-pid', 'wrong-tid', 'unknown-name', 'unknown-phase', 'bad-duration', 'async', 'one-broad-event', 'one-frame-missing'])(
+    'keeps unsupported CPU context %s inconclusive without abandoning its stream',
+    async (mode) => {
+      const f = fixture();
+      f.setCommand((c) => {
+        if (c.method !== 'IO.read') return;
+        const rows = f.events();
+        const points = rows.filter((e) => e.cat === 'blink.user_timing');
+        const cpu = rows.filter((e) => e.cat === 'devtools.timeline');
+        let changed: unknown[] = cpu;
+        if (mode === 'absent') changed = [];
+        if (mode === 'wrong-pid') changed = cpu.map((e) => ({ ...e, pid: 99 }));
+        if (mode === 'wrong-tid') changed = cpu.map((e) => ({ ...e, tid: 2 }));
+        if (mode === 'unknown-name') changed = cpu.map((e) => ({ ...e, name: 'UnvalidatedCPUEvent' }));
+        if (mode === 'unknown-phase') changed = cpu.map((e) => ({ ...e, ph: 'B' }));
+        if (mode === 'bad-duration') changed = cpu.map((e) => ({ ...e, dur: -1 }));
+        if (mode === 'async') changed = cpu.map((e) => ({ ...e, use_async_tts: false }));
+        if (mode === 'one-broad-event') changed = [{ ...cpu[0], ts: 0, dur: 10000000 }];
+        if (mode === 'one-frame-missing') changed = cpu.slice(1);
+        return Promise.resolve({ data: JSON.stringify({ traceEvents: [...points, ...changed] }), eof: true });
+      });
+      const log = await failure(f);
+      expect(log.status).toBe('inconclusive');
+      expect(log.markerCoverage.status).toBe('observed');
+      expect(log.cpuContext.status).toBe('inconclusive');
+      expect(log.cpuContext.attribution).toBe('INCONCLUSIVE');
+      expect(log.controls).toHaveLength(12);
+      expect(log.trace.streamClosed).toBe(true);
+      expect(f.state()).toMatchObject({ live: false, listeners: 0 });
+    },
+  );
   it('cancels and settles an in-flight callback before returning on early trace completion', async () => {
     const f = fixture();
     f.setCall(async (action) => {
@@ -383,7 +446,11 @@ describe('owned browser trace lifecycle, CPU providers only', () => {
       c.method === 'IO.read'
         ? Promise.resolve({
             data: JSON.stringify({
-              traceEvents: f.events().map((e, i) => ({ ...e, ph: 'I', s: 't', tts: e.ts, ...(invalid && i === 0 ? { use_async_tts: false } : {}) })),
+              traceEvents: f
+                .events()
+                .map((e, i) =>
+                  e.cat === 'blink.user_timing' ? { ...e, ph: 'I', s: 't', tts: e.ts, ...(invalid && i === 0 ? { use_async_tts: false } : {}) } : e,
+                ),
             }),
             eof: true,
           })
