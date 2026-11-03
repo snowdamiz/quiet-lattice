@@ -13,6 +13,9 @@ import { withNativeWorkClassDeadline } from './native-work-class-budget.ts';
 import { saveNativeOutputs } from './native-pass-probe.ts';
 import { BrowserWorkError, categoryReplyBytes, isRecord, runBrowserWorkTrace, type WorkClass } from './browser-work-trace.ts';
 import { validateControl, validatePreparation } from './browser-work-report.ts';
+import { cloudModeForId, validateCloudMarch } from './cloud-march-report.ts';
+import { cloudMarchPageCall, cancelCloudMarchPage } from './cloud-march-page.ts';
+import type { BrowserDiagnosticProtocol } from './browser-work-trace.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 export const frozenThalune = Object.freeze({
@@ -212,7 +215,12 @@ function ids(value: unknown) {
     return { id: p.id, type: p.type };
   });
 }
-export async function captureBrowserWork(admission: ReturnType<typeof browserWorkAdmission>, outerSignal: AbortSignal) {
+export async function captureBrowserWork(
+  admission: ReturnType<typeof browserWorkAdmission>,
+  outerSignal: AbortSignal,
+  protocol: BrowserDiagnosticProtocol = 'frame-output',
+) {
+  if (protocol !== 'frame-output' && protocol !== 'cloud-march-reuse') throw new Error('Unknown fixed browser diagnostic protocol');
   if (platform() !== 'darwin' || glArgs().gl !== 'metal') throw new Error('This frozen diagnostic requires macOS/Metal');
   writeFileSync(admission.admissionPath + '.claimed', admission.prefix, { flag: 'wx' });
   mkdirSync(admission.out);
@@ -265,6 +273,7 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
     retainBrowserCheckpoint(admission.out, name, {
       diagnosticOnly: true,
       checkpoint: name,
+      protocol,
       finalAcceptance: 'NOT_EVALUATED',
       at: new Date().toISOString(),
       monotonicNs: process.hrtime.bigint().toString(),
@@ -311,7 +320,10 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
   const cancelPage = async () => {
     if (!session || session.page.isClosed()) return;
     // Closing the realm also interrupts a preparation whose unchanged warm-up is still in flight.
-    const cancelled = session.page.evaluate(() => window.review.nativeWorkClassProbe('cancel'));
+    const cancelled =
+      protocol === 'cloud-march-reuse'
+        ? session.page.evaluate(cancelCloudMarchPage)
+        : session.page.evaluate(() => window.review.nativeWorkClassProbe('cancel'));
     void cancelled.catch(() => {});
     const closed = session.page.close({ runBeforeUnload: false });
     try {
@@ -398,11 +410,22 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
       stage = 'browser-diagnostic';
       const page = session?.page;
       if (!page) throw new Error('Review session missing');
-      save('context.json', { browserVersion, browserPid, processes, rendererPids, viteUrl: vite?.url, args, frozenThalune, inputSha256: admission.inputs });
+      save('context.json', {
+        protocol,
+        browserVersion,
+        browserPid,
+        processes,
+        rendererPids,
+        viteUrl: vite?.url,
+        args,
+        frozenThalune,
+        inputSha256: admission.inputs,
+      });
       writeFileSync(join(admission.out, 'browser-trace.json'), '', { flag: 'wx' });
       let traceFailure: { error: unknown } | null = null;
       try {
         evidence = await runBrowserWorkTrace({
+          protocol,
           prefix: admission.prefix,
           rendererPids,
           signal,
@@ -440,7 +463,10 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
               }
               check();
               try {
-                const response = await page.evaluate(browserProbePageCall, { action, workClass, id });
+                const response =
+                  protocol === 'cloud-march-reuse'
+                    ? await page.evaluate(cloudMarchPageCall, { action, mode: cloudModeForId(id), id })
+                    : await page.evaluate(browserProbePageCall, { action, workClass, id });
                 return { ...response, pageErrors: pageErrors() };
               } catch (error) {
                 retainFailureStep(id, {
@@ -466,17 +492,21 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
             },
             validateStep: (_index, action, workClass, _id, raw) => {
               if (isRecord(raw) && raw.failure === null) {
-                if (action === 'prepare') validatePreparation(raw.value, workClass);
+                if (protocol === 'cloud-march-reuse') validateCloudMarch(raw.value, action, cloudModeForId(_id), workClass);
+                else if (action === 'prepare') validatePreparation(raw.value, workClass);
                 else validateControl(raw.value, workClass);
               }
               if (session?.errors.length) throw new Error(`Review page errors: ${session.errors.slice(0, 128).join('; ')}`);
             },
             retainSample: (index, workClass, value) => {
-              const counted = validateControl(value, workClass);
+              const counted =
+                protocol === 'cloud-march-reuse'
+                  ? validateCloudMarch(value, 'run', cloudModeForId(`${admission.prefix}-s${String(index).padStart(2, '0')}-run`), workClass)
+                  : validateControl(value, workClass);
               counts.push({ index, workClass, ...counted });
               const dir = join(admission.out, `control-${String(index).padStart(2, '0')}`);
               mkdirSync(dir);
-              saveNativeOutputs(value, dir);
+              saveNativeOutputs(protocol === 'cloud-march-reuse' && isRecord(value) ? value.native : value, dir);
               writeFileSync(join(dir, 'report.json'), JSON.stringify(value, null, 2) + '\n', { flag: 'wx' });
             },
           },
@@ -529,6 +559,7 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
     save('counts.json', counts);
     save('result.json', {
       diagnosticOnly: true,
+      protocol,
       status: failure || cleanupErrors.length ? 'FAILED' : 'OBSERVED',
       failure,
       cleanupErrors,

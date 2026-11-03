@@ -20,6 +20,7 @@ import { nodeReviewModel } from '../gameplay/Flora.js';
 import { timerBoundaries } from './timer-boundaries.js';
 import { nativePassProbe } from './native-pass-probe.js';
 import { nativeWorkClassProbe } from './native-work-class-probe.js';
+import { cloudMarchProbe } from './cloud-march-probe.js';
 
 /** `node/<resource>`: a procedural resource node (P1.E13.T02), built by the flora in place of a .glb, its near and far
  * models as LOD0 and LOD1. Anything else: null, and the asset loads from public/models. */
@@ -1428,6 +1429,10 @@ export class Review {
 
   nativeWorkClassProbe(action, workClass) {
     return nativeWorkClassProbe(this, action, workClass);
+  }
+
+  cloudMarchProbe(action, mode) {
+    return cloudMarchProbe(this, action, mode);
   }
 
   /** Diagnostic-only per-stage queries. Never mix these instrumented timings with perf() budget runs. Every pass

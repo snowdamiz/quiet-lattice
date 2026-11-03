@@ -16,6 +16,35 @@ export const browserWorkPlan: readonly WorkClass[] = [
   'frame-only',
   'frame-plus-PNG',
 ];
+export type BrowserDiagnosticProtocol = 'frame-output' | 'cloud-march-reuse';
+export const cloudMarchModes = [
+  'drained-empty',
+  'fence-only',
+  'reference',
+  'reuse',
+  'reuse',
+  'reference',
+  'reference',
+  'reuse',
+  'reuse',
+  'reference',
+  'reference',
+  'reuse',
+] as const;
+export type CloudMarchMode = (typeof cloudMarchModes)[number];
+const cloudMarchWorkPlan: readonly WorkClass[] = cloudMarchModes.map((mode) => (mode === 'reference' || mode === 'reuse' ? 'frame-only' : mode));
+function protocolPlan(protocol: BrowserDiagnosticProtocol): readonly WorkClass[] {
+  switch (protocol) {
+    case 'frame-output':
+      return browserWorkPlan;
+    case 'cloud-march-reuse':
+      return cloudMarchWorkPlan;
+    default: {
+      const unexpected: never = protocol;
+      throw new Error(`Unknown browser diagnostic protocol: ${unexpected}`);
+    }
+  }
+}
 export const traceLimits = Object.freeze({ bufferKiB: 32768, streamBytes: 64 * 1024 * 1024, chunkBytes: 512 * 1024, reads: 1024, events: 250000 });
 export const categoryReplyBytes = 1024 * 1024;
 export const browserTraceCategories = ['blink.user_timing', 'devtools.timeline', 'toplevel', 'v8.execute'] as const;
@@ -85,6 +114,7 @@ interface CPUContextCoverage {
 }
 export interface BrowserWorkLog {
   diagnosticOnly: true;
+  protocol: BrowserDiagnosticProtocol;
   status: 'pending' | 'failed' | 'inconclusive' | 'observed';
   failure: string | null;
   cleanupErrors: string[];
@@ -243,7 +273,12 @@ export function markerCoverage(bytes: Buffer, expected: Marker[], rendererPids: 
   } satisfies BrowserWorkLog['markerCoverage'];
 }
 /** A recognized context subset, never a complete CPU cost, hotspot or native work identity. */
-export function cpuContextCoverage(bytes: Buffer, coverage: BrowserWorkLog['markerCoverage'], prefix: string): CPUContextCoverage {
+export function cpuContextCoverage(
+  bytes: Buffer,
+  coverage: BrowserWorkLog['markerCoverage'],
+  prefix: string,
+  protocol: BrowserDiagnosticProtocol = 'frame-output',
+): CPUContextCoverage {
   const result: CPUContextCoverage = {
     status: 'inconclusive',
     attribution: 'INCONCLUSIVE',
@@ -258,7 +293,7 @@ export function cpuContextCoverage(bytes: Buffer, coverage: BrowserWorkLog['mark
   const points = coverage.events.filter(isRecord),
     first = points[0];
   if (!first || typeof first.pid !== 'number' || typeof first.tid !== 'number') return result;
-  for (const [index, workClass] of browserWorkPlan.entries()) {
+  for (const [index, workClass] of protocolPlan(protocol).entries()) {
     if (workClass !== 'frame-only' && workClass !== 'frame-plus-PNG') continue;
     const id = `${prefix}-s${String(index).padStart(2, '0')}-run`;
     const a = points.find((p) => p.name === `${id}-start`),
@@ -339,8 +374,11 @@ export async function runBrowserWorkTrace(options: {
   prefix: string;
   rendererPids: readonly number[];
   signal?: AbortSignal;
+  protocol?: BrowserDiagnosticProtocol;
   limits?: { prepareMs: number; controlMs: number; protocolMs: number; flushMs: number; streamBytes?: number; streamMs?: number };
 }): Promise<BrowserWorkLog> {
+  const protocol = options.protocol ?? 'frame-output';
+  const plan = protocolPlan(protocol);
   if (!/^bwt-[a-f0-9]{32}$/.test(options.prefix)) throw new Error('Invalid unique browser marker prefix');
   if (!options.rendererPids.length || !options.rendererPids.every((v) => Number.isSafeInteger(v) && v > 1)) throw new Error('Verified renderer PIDs required');
   const limits = options.limits ?? { prepareMs: 90000, controlMs: 10000, protocolMs: 5000, flushMs: 10000 };
@@ -358,6 +396,7 @@ export async function runBrowserWorkTrace(options: {
     throw new Error('Invalid browser diagnostic limits');
   const log: BrowserWorkLog = {
     diagnosticOnly: true,
+    protocol,
     status: 'pending',
     failure: null,
     cleanupErrors: [],
@@ -522,7 +561,7 @@ export async function runBrowserWorkTrace(options: {
       log.trace.milestones.eofAt = new Date().toISOString();
       const retained = options.sink.read();
       log.markerCoverage = markerCoverage(retained, log.markers, options.rendererPids);
-      log.cpuContext = cpuContextCoverage(retained, log.markerCoverage, options.prefix);
+      log.cpuContext = cpuContextCoverage(retained, log.markerCoverage, options.prefix, protocol);
       if (log.markerCoverage.status !== 'observed' || log.cpuContext.status !== 'supported-context-observed') log.status = 'inconclusive';
     } catch (error) {
       abort(error);
@@ -539,7 +578,7 @@ export async function runBrowserWorkTrace(options: {
     }
   };
   try {
-    await call('prepare', browserWorkPlan[0], 0);
+    await call('prepare', plan[0], 0);
     const categories = await send({ method: 'Tracing.getCategories' });
     if (!isRecord(categories) || !Array.isArray(categories.categories)) throw new Error('Invalid supported trace category listing');
     const returned: string[] = [];
@@ -578,7 +617,7 @@ export async function runBrowserWorkTrace(options: {
       },
     });
     log.trace.milestones.startAcknowledgedAt = new Date().toISOString();
-    for (const [index, workClass] of browserWorkPlan.entries()) {
+    for (const [index, workClass] of plan.entries()) {
       controller.signal.throwIfAborted();
       if (index > 0) {
         log.phase = 'preparing-inside-trace';
