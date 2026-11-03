@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/private/tmp/t02-primary-integration-release-accounting-72a9b614-operator-admission/launcher.py", line 36, in <module>
+    require(Path(binding['path']).stat().st_size==binding['bytes'] and sha(binding['path'])==binding['sha256'],'Binding changed: '+binding['path'])
+                                                  ~~~~~~~^^^^^^^^^
+KeyError: 'bytes'

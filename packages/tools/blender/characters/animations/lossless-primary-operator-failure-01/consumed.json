@@ -1,0 +1,31 @@
+{
+  "authorizationId": "root-20261103-t02-primary-release-accounting-01",
+  "grantSha256": "98e262674f2bcf80fbbb04000201b057213acc4729edf0b98bb405c1d18cb03a",
+  "utc": "2026-11-03T17:31:26.626496+00:00",
+  "status": "PREFLIGHT_FAILED_NO_RETRY",
+  "primaryFailure": {
+    "type": "KeyError",
+    "message": "'bytes'",
+    "location": "launcher.py:36",
+    "cause": "Launcher assumed byte-count field on historical hash-only readiness bindings"
+  },
+  "launcherSha256": "92eb98e5f9f9fb08ca696b6cb589d933bbb9bffd0fd34d4aaa3d6e8c46db17b1",
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "25aa34fbd78dc9ece37fe2d43480bd0efc1755dbce1c8bfba59b12567cbe9f9e",
+  "consumedBeforeActivation": false,
+  "activationAttempted": false,
+  "integrationExecAttempted": false,
+  "newOwnedJobs": 0,
+  "newCodecOrBrowserProcesses": 0,
+  "operatorExit": 1,
+  "outerIdentity": "UNKNOWN_NOT_RECORDED_BEFORE_PREFLIGHT_FAILURE",
+  "disabledReadinessUnchanged": true,
+  "currentReadySha256": "2da704aba2b983718056e576492ca32be612db1d149a30cc35ec68b2f217ce69",
+  "packetAbsent": true,
+  "proofAbsent": true,
+  "restorationNeeded": false,
+  "terminalReleaseProved": null,
+  "releaseMeaning": "No integration or owned-job allocation occurred; no vacuous native release proof is claimed",
+  "retryAuthorized": false,
+  "consumptionMeaning": "Failure bookkeeping spends this single grant after launcher refusal; no activation or native retry is authorized"
+}
