@@ -1,0 +1,2105 @@
+{
+  "grader": "sole fresh visual-only Sol grader",
+  "task": "P1.E08.T09",
+  "requested_grader_configuration": "Sol 6.1 extra-high (parent assignment)",
+  "frozen_worktree": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09",
+  "frozen_branch": "task/P1-E08-T09",
+  "frozen_head": "da01f7c6c7e4e8c91e73bda643f4c6e2cd1547da",
+  "initial_git_status_short": "",
+  "review_date": "2026-11-02",
+  "original_artifact_manifest": {
+    "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/original-artifact-manifest.json",
+    "sha256": "73882cdd647f5053c462d0aca0f8e59341a4489e60691ad35e99e08e588080fc",
+    "files": 440,
+    "end_rehash_changed_files": []
+  },
+  "input_text_read": [
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/docs/DESIGN.md",
+      "sha256": "e94bce86730d2707336cd616e55b47ac790ba7ad25ce98b73e776405c87d192e",
+      "read_ranges": [
+        [
+          423,
+          462
+        ]
+      ],
+      "excerpts": [
+        {
+          "lines": [
+            423,
+            462
+          ],
+          "text": "| Tier | Band | Level | Planet mobs | Space mobs | Set piece |\n|---|---|---|---|---|---|\n| 0 | three home systems | 1\u20135 | docile fauna | none | tutorial, capitals |\n| 1 | 6\u201318 ly | 5\u201310 | skittish predators, outpost drones | pirate scouts | first raid |\n| 2 | 18\u201330 ly | 10\u201320 | pack hunters, pirate crews on foot | pirate wings, Hollow drifters | crash-site mystery |\n| 3 | 30\u201345 ly | 20\u201330 | corrupted fauna, monolith sentinels | Hollow swarms, convoys | hostile-world dungeons |\n| 4 | 45\u201360 ly | 30\u201340 | crystal/irradiated horrors | Hollow husks, dreadnought | the Wardens |\n| 5 | 60+ ly / Edge-ward | 40\u201350 | the Patient's brood | Hollow hives | The Edge |\n\n**PvP.** On everywhere. **Safe zones**: a radius around each capital city (planet-side, a few km) and a sphere around every Waystation. Lawful tiers (0\u20132) put a bounty on killers, redeemable at Compact boards. Faction war zones open in Act III around the anchors.\n\nB/E-class stars are Chorus sanctuaries (any tier, safe). Gas giant depths and crushing worlds are raid zones.\n\n## 12. Mobs\n\n### 12.1 Combat model (what mobs need from the engine)\n- **Health and level.** Every mob has a level (1\u201350) and a threat rating (1\u20135 stars, shown after analysis). Health = base \u00d7 (1 + 0.12 \u00d7 level); damage likewise. Players have 100 health today; Second Skin raises it to 150.\n- **Hits.** Ground abilities resolve as rays, cones or spheres against mob hit radii (the fauna picker already does sphere picks along the aim ray). Ship weapons use the existing hitscan against ship/asteroid spheres.\n- **Aggro.** Each mob has a sense radius (sight) and a mind radius (the Hollow's). Threat goes to whoever has hurt it most in the last few seconds (damage that fades quickly, so the current attacker takes over but one chip hit does not), modified by Veil (\u2212), Harmonic (reset), Bond companions (+taunt).\n- **Resistances by branch.** Crystal creatures resist Thermal, break to Shatter. The Hollow ignore Symbiotic poison except Rot, and flee Nullsong. Sentinels and Wardens shrug Gravitic pulls (they are heavy) and are weak to Dissonance. Pirates are people: no resistances, they use the skill web too.\n- **Death and drops.** Units, resources, **Count residue** (crafting material from stone-touched and Hollow), ship parts (space), codex entries. Fragments come only from monoliths, never from kills.\n- **Animation.** Fauna attacks are new states in the existing vertex-shader rig (lunge, charge, bite, dive) driven by gait and a per-instance attack phase. Hollow ships are existing hulls with a husked material (dark, glyph-lit seams, missing panels). Sentinels, Wardens and crews are new Blender models; crews use the skinned biped rig.\n\n### 12.2 Planet fauna: temperaments\nThe species generator gains a **temperament** axis beside skittish/docile, and worlds at Tier 1+ roll at least one hostile species (two at Tier 3+).\n| Temperament | Behaviour | Body plans | Appears |\n|---|---|---|---|\n| Docile | today's herds: idle, wander, graze | all | everywhere |\n| Skittish | today's: flee at 14 m + size \u00d7 3 | all | everywhere |\n| Territorial | charges if you stay within 20 m of the herd for 5 s; returns to the herd afterwards | quad_heavy, quad_grazer | Tier 1+ |\n| Predator | hunts: stalks to 30 m, then rushes; hunts other herds too (the grazers flee it, which tells you it is near) | biped (stalker), quad_small (pack), flyer (diver) | Tier 1+ |\n| Ambusher | lies still beside deposits and sites until you are within 8 m | quad_small, biped | Tier 2+ |\n| Apex | one per world, spawns at night near the landmark grove; territorial over 200 m, pack follows it | quad_heavy | Tier 2+ world boss |\n\n**Attacks by body plan.** quad_heavy: charge (knockdown, 25 dmg), stomp. quad_small: bite swarm (3\u20135 animals, 6 dmg each, interrupted by Flare). biped: leap (closes 12 m, 18 dmg), claw combo. flyer: dive (20 dmg, telegraphed by circling lower), screech (summons the flock). quad_grazer: kick when cornered (12 dmg).\n**Pack AI.** Predators spawn in 2\u20134; one flanks while one feints; they break off at 30% health and return at night. Harmonic calms a pack for 20 s; Chorus Call turns it.\n**Spawning.** Reuses today's herd spawner (70\u2013230 m from the camera, despawn at 420 m), which spawns predators as well as herds, with dens: a new small site type (burrow, nest, roost) planned with the planet like the other sites, about one predator den per 80 km\u00b2 of land per hostile species, where packs are anchored and respawn, the apex keeps its lair, and ambushers wait beside sites. Night doubles predator spawns on living worlds.\n\n### 12.3 Stone-touched (the Count's reach)\nOn worlds with many fed stones (Tier 3+, and any world during a Hollow tide), herds within 500 m of a monolith turn **stone-touched**: glyph-lit hides (the creature rig's glow channel), crystal growths, no fear, drawn to the stone and to anything with a mind. They attack players, pirates and docile herds alike. A stone-touched herd mother leads them (see bosses). Killing them drops Count residue; Harmonic does not calm them, Veil hides you from them, Nullsong breaks the stone's hold for 30 s and they scatter."
+        }
+      ]
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/docs/art-bible.md",
+      "sha256": "8349af52a0318b508a789725c3d9418b0bcfcd26c610a4ea4f4553f230be25f6",
+      "read_ranges": [
+        [
+          133,
+          181
+        ]
+      ],
+      "excerpts": [
+        {
+          "lines": [
+            133,
+            181
+          ],
+          "text": "## 4. Palettes\n\nColours are given as base colour (linear workflow, authored in sRGB). Every asset's palette comes from one row of this\ntable plus neutrals; anything else needs a note in the asset's review.\n\n| Owner | Primary | Secondary | Accent | Emissive |\n|---|---|---|---|---|\n| Thalune (livery sea-green / pearl) | sea-green `#2E8F84` | pearl `#EDE6D6` | shelf blue `#1F4E5F`, coral `#E07A5F` (small) | nacre warm `#FFE7C2` (low) |\n| Ixari (livery violet / slate) | slate `#3B4252` | violet `#7A4FD0` | crystal lilac `#B9A6FF` | crystal `#B9A6FF`, biolume cyan `#64E3FF` |\n| Ulgani (livery amber / ivory) | ivory `#F2EAD3` | amber `#D9962B` | chitin brown `#5B4636` | spore green `#C7F06A`, lake `#59F2C1` |\n| Waystation Compact | deep blue `#22406A` | station white `#F4F4F0` | signal orange `#F28C28` | nav white `#FFFFFF` |\n| Free Reaches | oxide red `#8E2F23` | gunmetal `#3A3D42` | patch yellow `#D8B23A` | engine red-orange `#FF6A3D` |\n| Chorus of the Count | indigo `#2B2A5C` | parchment `#E9DFC7` | chant gold `#E8C66A` | glyph light (section 3.4) |\n| The Hollow | husk black `#121416` | rust `#5A3B2E` | bone `#CFC6B3` | seam light `#9FE8DA` at 40\u201360%, flickering |\n| Cartographers / monoliths | basalt `#2A2C30` | weathered basalt `#4A4D52` | none | glyph light core `#D8F6FF`, halo `#7FD8FF` |\n| The Edge (sky) | opal white `#F5EEF8` | pale blue `#CFE8F7` | pale peach `#F7E3D0` | the wall is emissive at sky level |\n\nSkin and body palettes (character creation, DESIGN 5.1): Thalune colour cells shift between teal `#3FA79A`, amber\n`#E3A04B` and dusk violet `#6A4C93` over a pale green ground; Ixari slate skin `#2F3440`\u2013`#4A5263` with crystal patterns in\nthe people's lilac-to-cyan range; Ulgani pale porous skin `#E8E1CF`\u2013`#CFC4A8` with spore-frond colours amber, ivory, lake\ngreen or spore green.\n\n**HUD and UI** keep the flight-deck palette in `packages/client/src/ui/style.css`: warm white type `#E9E7E2` on near-black\nplates, one amber accent `#F0A24A`, teal secondary `#8FD3C8`, danger `#FF5A4F`. Lore UI (dialogue busts, the journal's lore\nlines, Count readouts) adds the glyph light and the speaker's people palette.\n\n**Resource pips** are the first documented exception to that palette (P1.E06.T04). Each resource wears a small pip in\ninventory slots, pickup toasts and trade rows: a shape by where it comes from and a muted hue of its own. The rule: a pip\nsays which resource this is and nothing else. It never marks a state (full, selected, at risk, low, refused); states keep\nthe flight-deck colours, amber for focus and cargo at risk, danger red for danger. Pip hues stay muted and clear of danger\nred and the amber accent. The values live in `PIPS` in `packages/client/src/gameplay/Inventory.js`.\n\n| Shape | Family | Resources (hue) |\n|---|---|---|\n| dot | plants | carbon `#93B07E`, sodium `#CFD18A`, oxygen `#9DC4E6` |\n| diamond | rock, deposits, asteroids | ferrite `#B7B2A9`, di-hydrogen `#B39CDB`, tritium `#C8E4EC`, copper `#86B39A`, cobalt `#7E9FD4`, gold `#DED0A0`, iridium `#C5CAD3` |\n| hexagon | crystals and salts of hostile worlds | frostglass `#B6E0E8`, acidsalt `#B5C77A`, cinderglass `#B497A8`, stormquartz `#9E9BD0`, gamma crystal `#A9D49A`, murkpearl `#8FA9A6` |\n| square | what the Count, the Hollow and the Cartographers leave | Count residue `#D8F6FF`, husk alloy `#CFC6B3`, glyphstone `#7FD8FF` |\n\nItems that are not resources wear a three-letter kind tag (CON, AMO, CAT, MOD, COS, CMP) in warm white on a hairline\nborder, not a pip. P1.E13.T02's resource icons replace the pips' shapes, keeping the hues and the rule.\n\n**Charge lilac** is the HUD's second documented exception (P1.E07.T02): the ship's Charge meter (the reticle's right arc,\nits readout under the altitude, the cockpit's CHARGE bar) is lilac `#C7A6FF` for the arc, `#D4BCFF` for the figure and\n`#F1EAFF` for the regen sheen. The palette has no free colour for it: teal is the shield's arc on the same reticle (and the\njetpack's on foot), amber is focus and heat, warm white is plain type, danger red is danger; a second teal arc beside the\nshield's would read as one meter. Lilac is the pulse drive's colour since the demo, so Charge reads as what the drive\nburns. The rule matches the pips': lilac says \"Charge\" and nothing else; its states keep the flight-deck colours (danger\nred when low or empty). It never marks focus, and only Charge (and the scanner's points of interest, the demo's other"
+        }
+      ]
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/readout.txt",
+      "sha256": "c7804cdbf5c4200788158e538ff43345fd3081a5aa8e5c0f04d0139e0c1aafa8",
+      "text": "HUD frame cost over 204 frames: mean 0.158 ms, p95 0.300 ms, worst 0.400 ms (of 16.7 ms)\nframes over 1 ms: none\n"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/readout.txt",
+      "sha256": "edd8764396a8b92927d8c3dfe95b807159b822ab127efb23554db18a1ec387ce",
+      "text": "HUD frame cost over 204 frames: mean 0.225 ms, p95 0.400 ms, worst 0.500 ms (of 16.7 ms)\nframes over 1 ms: none\n"
+    }
+  ],
+  "views": [
+    {
+      "order": 1,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/clip-sheet.png",
+      "sha256": "90ed5e75fbbb56cb66a507583b75d40184fc38f01a4d74bad1dc09582f23a405",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 2,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/clip-sheet.png",
+      "sha256": "9fa86ce088ef605947cc14d00350cfac6adb865acca9a0e6e5a1a2ca974edadc",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 3,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/16x9-numbers.png",
+      "sha256": "039959143e26780a89831d0bacd41b9fad6b289a5e39d4c7e3aba6aafdb2f8bb",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 4,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/21x9-kill.png",
+      "sha256": "e72a325e041602808846d3669ab8c2ff9a42a0d383cabc893fccb7b15e2113c3",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 5,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/16x9-start.png",
+      "sha256": "00e80d898c8014b6229c4beb836d9a2c6ec3d37c57f8f0bfd0616e40a3a97c26",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 6,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/21x9-start.png",
+      "sha256": "4a6a3ad53df9d0288694254bba3b0a8ecbc6a935613a4ff83844137cfca34c72",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 7,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/16x9-offscreen.png",
+      "sha256": "3b17e4f6d795675bcce5c88a9d67f9d55e26563e25e98e095460bb0833d8ac2d",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 8,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/21x9-offscreen.png",
+      "sha256": "2bd5bc041f2e65a5b460de1b43963c281a96ebc4cbc09659af7a1aa6135be2a5",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 9,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/16x9-flash.png",
+      "sha256": "de16fd56049a0232074091d2cc717b913755b253e8acee400c987edb9b9990cf",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 10,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/21x9-flash.png",
+      "sha256": "51c9b036966932af7327c5ee30d8bed42d8f764c01f6f5d0252cbdce4dc67565",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 11,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/16x9-analysis.png",
+      "sha256": "30ee8178dade2baec517758d255f6fc5a04bb58f11cc15bacc3070a61b28d65b",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 12,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/21x9-analysis.png",
+      "sha256": "7159ad44e1b461180695d79a72dd5f70180af76cc9e483787297069a1ec7af1e",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 13,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/16x9.png",
+      "sha256": "12a13725e7e06da26f0666f170a28e128ba6bd4191c7d4920493cff350f15ce7",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 14,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/21x9.png",
+      "sha256": "5c77bc322aed6d964db604158cda68fa7f27c0b9584875a496300fe357058e57",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 15,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/16x9-kill.png",
+      "sha256": "c8d44ca105b73ae8057ef34ca1ada71ec100769a12315131ac21174214b07041",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 16,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/21x9-numbers.png",
+      "sha256": "604eab0bc98c0db47034bc374f4e200ea8c496063d4486e20a08e4cf98d44b05",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 17,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/16x9.png",
+      "sha256": "4d273406ca2bf948f6ccda542760af15cab9f2762652b06a8e71bdacd775b93c",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 18,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/21x9.png",
+      "sha256": "c284e5fef3ee0747bdd58388ff408e77876567096dad8d74dc1365f120171996",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 19,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/16x9-start.png",
+      "sha256": "8f25d9c1a1a19987e46a67328caf0335213d9bd924e774088ed28afe54aeb1d0",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 20,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/21x9-start.png",
+      "sha256": "d2c48e98134a93f39df6c6f3c8b29e063b674468d2e6e74edeed2c8a514959fd",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 21,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/16x9-numbers.png",
+      "sha256": "d8edeabe5db7c3b32f104180cdf3c5fc256162c0cbeeca0312759412e6a65e4f",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 22,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/21x9-numbers.png",
+      "sha256": "b4e85f76f9a3ba1cf9d4d243eddb83545ab06a8ad052e58491ec1d21fd7e98e7",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 23,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/16x9-offscreen.png",
+      "sha256": "360e76cfb8255a4706afb8d915d46bb3ce552aeed50c6ea798ecadc8d92e31c6",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 24,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/21x9-offscreen.png",
+      "sha256": "91c401825a18f4e80a09d343c1cd4b436a08dd16f685417e4840115c358641cb",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 25,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/16x9-flash.png",
+      "sha256": "9d392928acc98a42cbf7d38975c7dfc2904000935e37f5ad3b34b7d3d4465cc6",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 26,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/21x9-flash.png",
+      "sha256": "850aa3fbaec4556ee340c3d15294ad7e41a306ace04aa6fd92b799d9cb2a9716",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 27,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/16x9-kill.png",
+      "sha256": "11d876b8bda3b4c720bf9788c99ffa05ec064dc73517c5603e9121c750f3f1a2",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 28,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/21x9-kill.png",
+      "sha256": "8980cee483ca2a6ef0ff4022d641cff082253e417ac6318a54a248dd62056316",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 29,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/16x9-analysis.png",
+      "sha256": "78f3678bf1db4fb10082f5e1ae6c7b01bc657f4682d7dbc8139ac1ee8b101db7",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 30,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/21x9-analysis.png",
+      "sha256": "9119245661e86e8555f3160cfc4396fd4dd2011b0d52fdf1b00b6c16626dcd02",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original image; static visual inspection, no playback"
+    },
+    {
+      "order": 31,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-ordered-focal-000-034.png",
+      "sha256": "e444ed19d38f880f15747240960f79b4c0aee5bdf22b5226810301e109c67314",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/000.jpg",
+          "sha256": "6334eabbd36db4ffce977ac65ac73722176810f6a2de1384efee50bde8f24178"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/001.jpg",
+          "sha256": "6479cc5da5dfa3f7845a6d97750584655bbd4c04bf29b2ffe1be602713b5fe59"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/002.jpg",
+          "sha256": "210fb32ff2c458fe2f6098597c23337dff00adb782d30b829e440113605b6162"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/003.jpg",
+          "sha256": "276c2f41daa8ab3b3afbe0021d46e50364dc0aae6fe3d0630142fa584a2f0040"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/004.jpg",
+          "sha256": "0d1d7430eda2499e8766600fcda000472b91e7a20652dd7397949a5ecab3132e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/005.jpg",
+          "sha256": "c60a8020fb713a3d6508b610e008c1dbca104b8cb01d59bca4118732300ca245"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/006.jpg",
+          "sha256": "dcc1d5671129c6385dcfd295e8017f5ac1ac0944f3f68a1dd05163757d913151"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/007.jpg",
+          "sha256": "825114ffa308ba199298e176a1d67f58086a10a6a2872684b0964d31b17b3a3f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/008.jpg",
+          "sha256": "66956bbac7bef0bed03643a81c8785244cde91bcb665a8f62c7129fe4f256f1f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/009.jpg",
+          "sha256": "e103416fffaae0cc240636de46ca5c6f0c40768a9a13ca02f3f34e59c47a2313"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/010.jpg",
+          "sha256": "ca5ad4bb374baae4f11b3086faf2ac2948b6d549bb676dac978e23f1b24fbe05"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/011.jpg",
+          "sha256": "8573a5dae9c397cbdaf9a145cfef3d42fc8b0bab60d95ede814a05aefe13780b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/012.jpg",
+          "sha256": "4e9989ca80362a70213f2ce67b6667dc0fbc029168f875b20985d5e3c67fdec7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/013.jpg",
+          "sha256": "d7ea3183e267323ba782e8617a5c30be9426aea768759f34264e71dbaa10a204"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/014.jpg",
+          "sha256": "2484cff1cb12fb178c1be32128a04d388369b9f4040ab026f49a40e79b395926"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/015.jpg",
+          "sha256": "1b184182dd36dbaf81d9fa51ebbbe664f98bf9bccb8ec349c98c5c156a58f788"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/016.jpg",
+          "sha256": "33e54be66b019b24fcc42084db8883808de9929740202e2d14a7f48fa339e27f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/017.jpg",
+          "sha256": "eeeeb4c2b6f31d245dcfd63ac03fd586494146f5d3e175a433e06e4ded723b3d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/018.jpg",
+          "sha256": "c257e7ad66fdf9b5b6f0b9c156f1b56122608b8de0b3b2ee9aac13882242c2cc"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/019.jpg",
+          "sha256": "8be00b6c002d3c84feee095809fb987a2ced4761c6dac3e49e669014c6765742"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/020.jpg",
+          "sha256": "0a9a809b1019717417a0edbe7d3780e4b3e41f08b94d69455a2355c3f63771dd"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/021.jpg",
+          "sha256": "6c9f90420009178e861bfe6d6caa616be3e0d400169d571bd97828e3b8cc6d37"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/022.jpg",
+          "sha256": "8ab550a2534d4a47266dc6163d72a0987e05187a422961cca4df9264b5ada590"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/023.jpg",
+          "sha256": "967f564e659868e84fe70c883f8e28529f7ffadf672c9d4cd03fe5706264ef9a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/024.jpg",
+          "sha256": "2082653328f692c151cdcf53b3e76b2c04a26b5acec2318fd4939fcdbab945ab"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/025.jpg",
+          "sha256": "bf83126e03fd3f96d9f17606da1e9722fbe3f76da99f9e80a26d79fca15c61b1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/026.jpg",
+          "sha256": "6447f49c7be2cd95da32e620d38fa249326a010534be22fa70b127bd21d17bba"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/027.jpg",
+          "sha256": "63d14026d4cc1c743b44abce7cb4872aaf41a6082056bf13877f912af7104c25"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/028.jpg",
+          "sha256": "78f7db87dabf06b46a2015e84be43bb8d9c4ec0fb7c17921a0aeccf1a81028ad"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/029.jpg",
+          "sha256": "33be0f799a8c3e2456ebd331ad8d4a7532af9b30960a9e337ee3b4e015546495"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/030.jpg",
+          "sha256": "2003d4ac98d2ba11e2f40b5f71b48e6160c2f0865c689974e71bb9085a7cf885"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/031.jpg",
+          "sha256": "43faab55a4ec5a8fc893dcc3a5061bd27e8399cf39795ee7a12ad63b1839b00a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/032.jpg",
+          "sha256": "91a7356eb7906d258b66d0046627380ffb01e42e1e580b78a7fad5342056dee2"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/033.jpg",
+          "sha256": "db2e3e715c0004a37bce33c75ff3371a041633fbd81615bf8bf2cd985a60e486"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/034.jpg",
+          "sha256": "0def1a2651b4d9ad60ae9aa7c80f5a50b5776f99460815d49a4aca06b6a247c8"
+        }
+      ]
+    },
+    {
+      "order": 32,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-ordered-focal-035-069.png",
+      "sha256": "523f0be8ec542e6d2e5cd38cd2e45db8660975611ff6cd2a0c3a2dc811c35cfe",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/035.jpg",
+          "sha256": "c4d8421e2f609a5645ffb7c2269fc1acb97335d315c29263a8949ecdcd84e2fe"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/036.jpg",
+          "sha256": "ec0f3e4d9c15e943d1e616be3bab0a228e3d89459f060877c70474e4a63d88ed"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/037.jpg",
+          "sha256": "48fc05f781b4035ce7cab12ac0a4c4a6795ae8aaaa2f1df0da877298ef9c158a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/038.jpg",
+          "sha256": "15566c42b080219894055a565a3fb38620b361bec9a8055c1614f6e6ddf4191a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/039.jpg",
+          "sha256": "c16d168af2a73da814271ad3fa9370c47c3f37491dee29409f9440c3d7a3675a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/040.jpg",
+          "sha256": "90c3716c128f73f94071ffc8b1d296b9b9890ea24be1cc4b05128302fae019b1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/041.jpg",
+          "sha256": "ea26ef5ff2af25930aa5b561fa4fb244065ec6c192febe66d0791e27ac9ae17a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/042.jpg",
+          "sha256": "a53729256941f52929a9d7871f5dcaa0a69a081835de8a8131815d0bc3f0816e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/043.jpg",
+          "sha256": "f14843aa4cc15e37842cc45e07c466025403965a9d398f82ca886f3b4fc74929"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/044.jpg",
+          "sha256": "07e74aa25a93034f41e4bb1664f4c67808afd9d2bbdd292065d49b77dd9a9bbb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/045.jpg",
+          "sha256": "ee5844e5d724b0e9d35c4ecf6b74c5fe1b1343d04ff24544b064a226420fd8b4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/046.jpg",
+          "sha256": "6875fa9dc76334a23fa917e02b0efda9ecd4615853a040f41bba6bad201f64f9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/047.jpg",
+          "sha256": "3cd3977e03d112ba99a0f0694bf4a4f31f2797fd17c287e1058052bf6e2d60eb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/048.jpg",
+          "sha256": "1cb400db579ac46227ba6d00de44abfff9a0fbd61906f693e76edbc2970f9ac5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/049.jpg",
+          "sha256": "4663b13f2d938df641145ef2b1ef473ffd8b6666cd22941c68975328cbfcc5e9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/050.jpg",
+          "sha256": "6903af90b72c5e76a80f1b5198b89ec6c0d8b8fcc0e94e200c53096f56667890"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/051.jpg",
+          "sha256": "0560bf6f6aefbfdaa2f11652196669079da838d6603380e8c275b201d97ce642"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/052.jpg",
+          "sha256": "d70886c94a1d3c3f0f7c5d2655969896880667127c1e46e752e244de74afa916"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/053.jpg",
+          "sha256": "6ad228e1311e1343e870a111889431aebc099b2b936c8b902067361d2dceeaf1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/054.jpg",
+          "sha256": "635efc8de85af6d839d4bd5d9f7821c769d12a49445b965cbed4db8ed6adfceb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/055.jpg",
+          "sha256": "0bd0c6d40b8fa1beaa96afce6ae6fd6bf868863df74a9e1dbc64c61f0b6d55a3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/056.jpg",
+          "sha256": "2565c13d8ea329225829dbb465a7f7d7440a7a98cbf0aa392aaed686dc536ac0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/057.jpg",
+          "sha256": "5518d3f4a5215fbef6a68399ab5be67dc456275371cf0481daae0bcef7e0f17a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/058.jpg",
+          "sha256": "568dfec036ab6816807a472d21d70406b8f01e169fd3f0d3a97dc095f947596e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/059.jpg",
+          "sha256": "483475d2466b2e1d754c81501c8cb8819d97f07168b8be05af5245ee6211cc3e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/060.jpg",
+          "sha256": "7d4c04acab37e6e3e6a290558d8bf06fefd4e77c763d8aae7e4a843f3262d2d9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/061.jpg",
+          "sha256": "b344d078ab2ef9d6a53511ab19565b501ac8a719b06ddc9906ca87e55b9c913c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/062.jpg",
+          "sha256": "11bce1c1423ce469fa2e01f3a4a08fcb452af3405b87cb502897215377ae4dd3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/063.jpg",
+          "sha256": "7871d5014558e42b1d73cd7a8fd371a20ab61e73593536ef114e15422cc9f432"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/064.jpg",
+          "sha256": "f5cc3a439466b48fae0bd044d112c1d76c2ee19de775b1ed4c1ee6338b1aa3c9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/065.jpg",
+          "sha256": "201da440098d9cf200e558ad77cca3cfdabf57be00f574363d332696ce334f57"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/066.jpg",
+          "sha256": "b2797201bda7535fff3fd55ca5c6abe06f83139ee1f34c23cd5ad48db0409f80"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/067.jpg",
+          "sha256": "55b8c059ef5fa94b62f6a32d44f17c257ff28d4dbb6519a8d5c2edbf457400a9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/068.jpg",
+          "sha256": "a9c7fd5b16d5ad12bf5eabc85279d58190bc8342b71bd38e7f0b1fa1de000b18"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/069.jpg",
+          "sha256": "1b88dc88f7ee166f03513b7df1f1c3b522379a113f1876cca38a58e72a96bcf8"
+        }
+      ]
+    },
+    {
+      "order": 33,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-ordered-focal-070-104.png",
+      "sha256": "3c57673296bbc03c5fe4351f837e8eae1f0f6f85c82b93bffdc660911c6f39d3",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/070.jpg",
+          "sha256": "bb1918570eb36e4cff4a58e25bdd27b4dc924ac09a36882ed7043d23b21b8d9c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/071.jpg",
+          "sha256": "1233bffe05feb6fa361cc415a022adef774657c944692bec2988a13702f45559"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/072.jpg",
+          "sha256": "363817cb96650250dd5529473371ad36e1b52913b2bb6238f0161f67d3fdb65b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/073.jpg",
+          "sha256": "73b09804fd81d683e547da211090d0a5acd5b72c21c580bd0a85350d3cf68c89"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/074.jpg",
+          "sha256": "ab82e2490336a2657482bea7daf7fe7ceecc0d179220f4db56ef0e8ef30b23c1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/075.jpg",
+          "sha256": "3ca8f334e84230e9d570d1e7066a4c1c61b64b7126aae1533006e2c72e76fb64"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/076.jpg",
+          "sha256": "7343cc535c0d22e42e9e4227e2588fc7288bbc0ade9edfc867d0e515900daf4e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/077.jpg",
+          "sha256": "d394a941a9364ff8975ddb980162d66bfff3ae07e579ee98b35f20d4bb18858e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/078.jpg",
+          "sha256": "06004c855cdbbe91c68f5cbdc463f75f485b8c8504669eedbcc5172a7c14ee32"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/079.jpg",
+          "sha256": "268178630514519acabf532cd429090a3b60ff473011d1cf1e3d668863dbada7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/080.jpg",
+          "sha256": "ef1f3bf3800e5c879b16d54b8c1c9a7930b09087a1ed35032d7c002526e1dcff"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/081.jpg",
+          "sha256": "1f1abe4e9288f1b878a8165902a48fa8f22570d0dd187f82dc43f29bb3eacb38"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/082.jpg",
+          "sha256": "39f3418fafc64aebf1790ad3c3ab629f80c221852e9f908e1d3157c6431ec901"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/083.jpg",
+          "sha256": "1695b5ba9a8f1ea2bc79e826b7a1dc04a58b4fcd9d0ebe29e3aace9e8d86184f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/084.jpg",
+          "sha256": "31e020801f6d93123f23bd8248efcbd025f59febec6f84dd9d1632527b1754be"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/085.jpg",
+          "sha256": "cc581447c51e767bfe679e56297c05ec45c50b2446147dcab34d7d2f2c0583f0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/086.jpg",
+          "sha256": "0c6540d4b7dfdf38dfca9310acbb9c34140b59dd9507d67343d74871b046ae4c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/087.jpg",
+          "sha256": "cc60ad19328ca11c3b3ebce15734384f3fb2c6e91a29a1d8c2aa38161a8477a4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/088.jpg",
+          "sha256": "c8c8208cda8d60453655f838f9e6c459e913df6c001dab92bf7581c3cc5dd731"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/089.jpg",
+          "sha256": "53b9a96f8e5c6f3a349127e652400663ef91a1b95387febf9b56ee5de76eab2e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/090.jpg",
+          "sha256": "b19459c2bc69ad4b8d80c3bf9fcbbd6e3acf0c9e0eccf510420a4bf598f51dd4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/091.jpg",
+          "sha256": "ced9a5ff4f82cb58da5c5d1ce31151d209855fdd59b88cd2e2dff3d7e126fae5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/092.jpg",
+          "sha256": "207b434f4cd6ede4f5f54151024a6ca53d699169c2832ac1dc4797cc904b2305"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/093.jpg",
+          "sha256": "c1371d3d957ad2c2e18727a58ae97e737b05921833828a8586b30b70f01bc8ae"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/094.jpg",
+          "sha256": "3068c61f039cf0cef33a296a6f65ce203516c4ecd8ccd79f9c43b00ed504d4e3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/095.jpg",
+          "sha256": "6eabe62907ec340bb62337655cea473fb182c8739bf9bdf8db3ad7bf6d0ee24f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/096.jpg",
+          "sha256": "4ebab9744c708017f1b014808b902e29c41c93fe193b7b1e76eb40217facabb2"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/097.jpg",
+          "sha256": "5f6180f31d01486cff0812d834d6cba2178e0a1f4eb7e54aefc1774a50b22baa"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/098.jpg",
+          "sha256": "edbb62bc4b74e1c39d06897a5987cf81ab8583bdb8d6ae2c7e7d84f829a3048e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/099.jpg",
+          "sha256": "bbf4d289da7dfc4b7b0aeb869c5700e039828201389196c1aecfd9e3c9e9202a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/100.jpg",
+          "sha256": "e1e060d45ba7d71308e1aee41436ebd27d2eb1efeb7ac0653a85060d27465113"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/101.jpg",
+          "sha256": "ea9624849e7baa854842b7fbd9875d89da1086c16a7606959ea203bae33dd9d0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/102.jpg",
+          "sha256": "cd3df51e94e76772196127e26b8932e437ae6f7362cb23671e74f7c50b987e61"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/103.jpg",
+          "sha256": "28f47c06ec48d9c074af5bf159d7a52a9f578da4e34c969323241c961305ab9c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/104.jpg",
+          "sha256": "b24573394a8d804ec6cb41230e8cfbd4f625a96214bfe72b7347022d31f3f685"
+        }
+      ]
+    },
+    {
+      "order": 34,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-ordered-focal-105-139.png",
+      "sha256": "a8aafc18e001dba4d0531604dc592096c78de27135a59dcb89fe1509bfa451d2",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/105.jpg",
+          "sha256": "006926bb3765bc5070f33b95bf213e535bfbfaa436e0d345e58b99c590448893"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/106.jpg",
+          "sha256": "26e70ab3b8cf0c2c637a2d922f5b6565dadd8a0b3d25cfa2469c0d84cc9741fb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/107.jpg",
+          "sha256": "27394ca142f682d9c5591102f0ff314e62ff5720723933ce5c9135416e466f74"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/108.jpg",
+          "sha256": "55b0dffad8164593af5b4987f7096e83fe197059ac43c96e72f1d8744367725c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/109.jpg",
+          "sha256": "27f2f435d8b8c4e99a0d0e8e62990f3c8db7ed1144c878060fe21370f6621e26"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/110.jpg",
+          "sha256": "d84612bdec1943e1906a96d01648c72d6b6e3b9d3b743ba896b73527108e64f4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/111.jpg",
+          "sha256": "c32ce445baad0d89f33107b38495b03b6533ea35feab84e59f599e38944f7c29"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/112.jpg",
+          "sha256": "8cc5d8953e87f52f4e5d0b92f590db426448f7e086c77a05d7e20700cf6fdfc3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/113.jpg",
+          "sha256": "d07d5de22048b9fcea77951a04acffa2ccc5bd665e9b6899ec8051022f97164d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/114.jpg",
+          "sha256": "6d564ab57a597ec792d3d9dc6ff5630c2ef81af51422068db87179a4777f21bb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/115.jpg",
+          "sha256": "d7baa322169ec11ada7fce634dcc3e9bab551ddfa5654cfb9c413a91a2e472bf"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/116.jpg",
+          "sha256": "edf11057379134403587e210925da20fbce3c7ed654159e86255c9de8eafef5f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/117.jpg",
+          "sha256": "26b28b7763deb1cd481d03bb74dc9055d07757a4cff2e4694edd69bcc72b49da"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/118.jpg",
+          "sha256": "5069fbb95e76d68d736e092dd49128425d8c490911584e3f87cb611b1f157a87"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/119.jpg",
+          "sha256": "20c6f1f81b16e65eca4d73fea8d34d27aa446c16c360a0deff4c189c89325e61"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/120.jpg",
+          "sha256": "2c0d08f6cb3546093b9379cf21d488fd5eefa1fc1bb30d6603e5daa8a715b462"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/121.jpg",
+          "sha256": "a12efe904b6f3a702bbe8d4392aa14e8cdc2a280fb6023e222964f51a6da5616"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/122.jpg",
+          "sha256": "aa9b5b25958dee62fa46ad6919859813898cf59b4fdfe8ca331fb0132c1927e4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/123.jpg",
+          "sha256": "5afef9a54bd1de5b367731ee213a5f6571383ec4378e85c28bc7921b3f3ab7ff"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/124.jpg",
+          "sha256": "7542bcdb9684128dec1458bf1bca8fdbc5c2a49a039327d2ca63c3cc4d7aa3fc"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/125.jpg",
+          "sha256": "5d16d14aee97e3c94122cf9f5c57355d6d035b3850d4461a83531f472cb1c34a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/126.jpg",
+          "sha256": "6a2e91b6ae0e5c39b5da051f4852453e7a5aeab34e37445f7effcfc1aff72315"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/127.jpg",
+          "sha256": "c223b1e25c30b199f7df20e4ba62e4872a447fed7e13dee2ba43e652268e6ee3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/128.jpg",
+          "sha256": "26e7f73a895b4754b01447c764ea83caf1fc1ad77195e8f5c7ad6a3402e46c08"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/129.jpg",
+          "sha256": "91609300eb04d1f1660c22e55db75843c1241d67b824e0cb6983e77d3ab2b7f3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/130.jpg",
+          "sha256": "c2cd388e9a267e47fe4cf0e964e27af4fcf3fa866123800666b20b847b7e1685"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/131.jpg",
+          "sha256": "9658c02ee5f6495a92bf4ac4e69ddc260eac787ae4afaa98f269c7d52e87aaad"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/132.jpg",
+          "sha256": "7edc72b8f428f3eaac7cd00627e9af350d602cd5b3d849f2088ecbb264414e0a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/133.jpg",
+          "sha256": "ac1816f095ab3d289a87f7ecfa6b68927c8ad6ac32936edf03ff79d0698d4a94"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/134.jpg",
+          "sha256": "91591bb4ccdc13348a036d323edc7f5c8d9296165c33c9b2d57e7b6074d8f877"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/135.jpg",
+          "sha256": "4b5925192d3da54cd679b74b717f5336f5414d2db41ebf8da6d17dfe418554be"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/136.jpg",
+          "sha256": "dbbefa72c2c74a8a90b5a64f8002cff45f40932394d7c8d9dc5bff5c0a67eda4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/137.jpg",
+          "sha256": "ee056422adf4ba92a65fe015990960ecabb3822af4b66743fd68ee001008ed01"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/138.jpg",
+          "sha256": "33b53c47e3f70ab18be79e84307fdc871f94bbfc8c2d7c0c6517327dc6bd583f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/139.jpg",
+          "sha256": "2d5665a530f46fa3c32c7f53732e94a61861e669175e293c698290d9f15820f5"
+        }
+      ]
+    },
+    {
+      "order": 35,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-ordered-focal-140-174.png",
+      "sha256": "c35f212fa6de3a24287349f8e4239a419ffe03f0bed064fd143fce0b151d78bd",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/140.jpg",
+          "sha256": "1c920b7076aa272276a97c96c6762ef8a6f67b7d8c3e097c06dd201465196ffc"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/141.jpg",
+          "sha256": "af292f28ba9b36d05b2d25c6eb8398ce192876c108c48982bdcf5cf15f780b30"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/142.jpg",
+          "sha256": "44b64d7d8509ef744510133afe03e0f8bce547cf5d87c943fb8810343469d564"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/143.jpg",
+          "sha256": "16dab83de6fcac43051a6b74a72e9d5d59935592a4ca8fcb110d529a35633ee3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/144.jpg",
+          "sha256": "575bf5695db402c0ab99a557ffecfe720f5a4e1eadfdd52ffc14a4a44622feee"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/145.jpg",
+          "sha256": "528d563ee9ec353ea7a8a302d577d8c4ef993615daa90fca192385863ad9504e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/146.jpg",
+          "sha256": "01c781001b97e528bf3984c6ab174df239a8648dff9f092ca8f424efc1fc13bc"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/147.jpg",
+          "sha256": "dcfb6901e9ab40940c571d711f6942c18339ef6c7f0bc7716323d555d4b1f8b7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/148.jpg",
+          "sha256": "7d0e56df7f695bb8381beee9378b83f8a9c4701a0201c308725261b5b84d86b5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/149.jpg",
+          "sha256": "556406788f5a3cf3a14cf6104906307061032baf477f7514d714e833cfcc5122"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/150.jpg",
+          "sha256": "1c9fed906415df63f825ba64a819f4f013249cf5135726916891fa785c3e960c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/151.jpg",
+          "sha256": "eb007a54905ff0c4eafa28ad9667d08d476dcca295ccb2e8702aa0b392f94617"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/152.jpg",
+          "sha256": "0ff3155f83fbd24d3184035c8c5b35d85182bb480198a5d8d70d9e52d9a9616d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/153.jpg",
+          "sha256": "f11f4ad1f90c92b85902fe31dee6622e7d980b22c1f59f4cce63078620ef944a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/154.jpg",
+          "sha256": "2a9618fd43fe3c764a1898637e3c33addbf5f8076dac64a75f1f067d59bcfdd9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/155.jpg",
+          "sha256": "c7dcbe3c1ef50bc573edad252a5b4da7fca8cd14e7eba5d201956b4fd0ae779a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/156.jpg",
+          "sha256": "a4929f5aa5e708828153c1d6977a89e9862b8afa2a8f49cd73a4b4d8f9690aea"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/157.jpg",
+          "sha256": "444d82fbe913e822599d8efb5eddd45a4a9fc8895f32efa4d61f6981a2fa6d1d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/158.jpg",
+          "sha256": "8ef3653ba49ac7fa9ef897beadf7d40dd643b6f62a426454a7364322d062af95"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/159.jpg",
+          "sha256": "f44f4ebd71ab3874b4e393be23b5ff5b9a0a70e322ce2edeffffdb882a1b19f1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/160.jpg",
+          "sha256": "8b7c9196f1f363184976982d4407e23eab4a908b3d7309676630cadc763e9768"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/161.jpg",
+          "sha256": "0c4a43638bd8dc7119a92afd2a6cf00db7daa13ee0953ae99dd8b1bf819ab5a8"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/162.jpg",
+          "sha256": "3d3ce2c45add1c0491d2793125fe5a0194da52ea7404998f526e64f6235fed48"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/163.jpg",
+          "sha256": "996194e8e74269824a04c783bff4d18e32e77c4a6e9606fe365ddacf18ae421c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/164.jpg",
+          "sha256": "39861f1d90951fd0d07931ce74773bff9620881c3fcc03925578057bff14e39c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/165.jpg",
+          "sha256": "cc3c6d8cc3272aa282dd31ac513c49b76d7afb92d286a09a185692fc051e5005"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/166.jpg",
+          "sha256": "e72af2f6f9469ad90834f4cb6b4a11cd4d9f69791b9a291f6f2261ccc8fc251e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/167.jpg",
+          "sha256": "3c50868839e11670ce3266ed471438f88dfb5908f693ec1a2cf5f739889b6028"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/168.jpg",
+          "sha256": "60d9286f62ab59c1782d9b7ce20ce358a408d254ea7e2dd7b54ab1b349413ef5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/169.jpg",
+          "sha256": "24d525df0772a249a47220a1e1966fd64c669366c8269bb425a931c2786bf4cc"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/170.jpg",
+          "sha256": "3b4407b079f398a5ac279b442036136879f8c9354ffdd4145736f4da4f8bb598"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/171.jpg",
+          "sha256": "e62bd4d9e490412167d675ff94c493c23d4738aed029b8e61243b4d93a33765a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/172.jpg",
+          "sha256": "00be831b83173ec61e0ba4e8a7bbbc8fe3a3e7f1f50bff42ad72be12b4151712"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/173.jpg",
+          "sha256": "0fbb9865e31c437fbd193733616ae2f9c0bac8b5b175e91c08dfb63b5cc91cb6"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/174.jpg",
+          "sha256": "ba5808e2135259a78c0d80cce233566b20af9f2b610ccc622224ac5c7bc9ae1d"
+        }
+      ]
+    },
+    {
+      "order": 36,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-ordered-focal-175-203.png",
+      "sha256": "0a0fceb260fb3ce3e0b0116a332227c3798ad4c1562522eb3d8d700c56e355c4",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/175.jpg",
+          "sha256": "cbe86d514c0cc940df9b65693877566780f1618a7dbba6b89d7ccdc5cbef2f7b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/176.jpg",
+          "sha256": "d4daff56c9ef5d6782bc10def0eb4ca30d3cd551375346bb029da3b4619e36c9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/177.jpg",
+          "sha256": "bb5fafc4183a4345507eb05247e5021b365fdc24f1a71008df09d7a2e595bcab"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/178.jpg",
+          "sha256": "adbc94ef97fdda0cd9e0e59a0034171a7141ed6e6a1c64c9acec205db9a07ba4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/179.jpg",
+          "sha256": "32ad250532e498a6c28263db00224ec88dd090bf0d7eb0a6f88db8f1ea47fd5b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/180.jpg",
+          "sha256": "5242ffc635e1fa52eaa47d262d85334d9dcd41a8d5f15905f1764c0fe85e2f75"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/181.jpg",
+          "sha256": "031c31d108f6ade71b70d64437f309b699ce41c06cf4f7acd3c9b3e0454b06d5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/182.jpg",
+          "sha256": "6d04b80e4d0a7394e24de6ce3505f56d0064970e191a7c9c6ad5668c74364fcb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/183.jpg",
+          "sha256": "4f1be66c367540c1c2ea9ff051e0d80de5c66d0786d2ebc43e809ef58de048b4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/184.jpg",
+          "sha256": "734ee6b9da219757ff3f0ac24cd6011674519ed1602f1fdb2d2eb59cb1af5221"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/185.jpg",
+          "sha256": "df5824452f639a765867c6d77dc50d6540d7994943f18e3730f3599d48aee90a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/186.jpg",
+          "sha256": "a20c6273957a2917c6acf90e4009885efad0cd6d9b38e4baa4fc6437fc1a88f7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/187.jpg",
+          "sha256": "ee8433d2d108536e28085a199889fff6e965b6875658ee6f2bf62598e025ebe1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/188.jpg",
+          "sha256": "55a04ec9c1800a9315f1243b406e60e64856f37b7a8bcf60c304d983edb2993f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/189.jpg",
+          "sha256": "a04a0fdc9a2d0cbf7b32132cba3213397fd92c23e08e6b27d13b26b86a1871ea"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/190.jpg",
+          "sha256": "3cbef1db271b8e0e422e42cc8db276c8975fc01185e8e346b0d6565074981384"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/191.jpg",
+          "sha256": "230376efb3a2e13f7d8621a779c76379f9b47298110dcf2662d5dc7b9c7c2e55"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/192.jpg",
+          "sha256": "b9f1174bf6910fe116bdfb7e1de90eed48c17518029f4d5873c1a0dca658af70"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/193.jpg",
+          "sha256": "b9196a6b082bea9314571caa70ce84b8719914d1be5fa1a4f644b53e2cc63243"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/194.jpg",
+          "sha256": "694fba266d964252a9e9625578b6c9393d4f1006de17655d6dca86477aeb2a48"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/195.jpg",
+          "sha256": "b9499d7f7871053560c1f475fbb3145d5c68f810ef011ed51d67b62fcfe22304"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/196.jpg",
+          "sha256": "304b2315ef456dae2e84f9fc320727c087460aec24f3609366cfdc3029fd3f23"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/197.jpg",
+          "sha256": "48fbdc52a4b87c7a383bdd47cf58f566b22bd6280c15fded927eeb5878305657"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/198.jpg",
+          "sha256": "bff2cd76d2d07cbb4dc355d85f747a32c086be61f6c471e00bf3312e4fab8b78"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/199.jpg",
+          "sha256": "71b6d4fb302ccd9b8015abe9bd810167b49ac73733acbe24fd856ceed8f61ece"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/200.jpg",
+          "sha256": "4eab0dba843883a880f6df17b5e6de17f7e46f290baa97f7c7e1d17cf0d907df"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/201.jpg",
+          "sha256": "b25883936020ed5d3a2dabb03d29e1236da9c588d2e5483111a584a48c0a2a63"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/202.jpg",
+          "sha256": "e20207c2185352fd3b84b80fcb9a0f6cb9c5f641b456fd67b0c712472b2acf65"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/203.jpg",
+          "sha256": "9afb715d703a472f66e9f4a05e45984d2cbebb982038031b8f9589b3dfcd8923"
+        }
+      ]
+    },
+    {
+      "order": 37,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-night-ordered-focal-000-034.png",
+      "sha256": "edc388f86b9b06558b2c945581a738c35043052c32b53dc3b699393228e3c358",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/000.jpg",
+          "sha256": "cf04c135dbfc580eceaafb2bfdd632cb6274ce8fa8ef45759a95161ff6d158bd"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/001.jpg",
+          "sha256": "0fbb9819c1e8f3914e198058de55492041f1a713cf0cd49fdb5b7bac7c2fe829"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/002.jpg",
+          "sha256": "ee3313d1918f86b2883e6cd436d9c04fa591546927e47a4b8fb3a4867c004b60"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/003.jpg",
+          "sha256": "8c6326d2ad5ace48b044968ff458bac43264ae34cca235dca9f69a728a2e5738"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/004.jpg",
+          "sha256": "88883125952b34f9f0ebf6b06572f3ac7c2b89435d0731357e3fe9db36a97853"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/005.jpg",
+          "sha256": "30a0e9bb869d341fcb6f1f7fedc99580c4140838e831c828839b849088665c06"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/006.jpg",
+          "sha256": "03fbded0f41aa5b6e7adc9d962ce42343c69269e67c147cf7f17ad3a06e00f1b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/007.jpg",
+          "sha256": "c4d2e71ec77f6bdbd586b4dcea2c627acfc18434dd410225239439f38a770eaf"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/008.jpg",
+          "sha256": "30221c8f19c0ad159c52d1af1cde179365993565b45f481a5d1ec57a0160517d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/009.jpg",
+          "sha256": "ef67b9d339382a543314577aff95a35e8406df0dac16973d3c85902421b6f566"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/010.jpg",
+          "sha256": "7c23ebdcbdfc0ebd402b9438ae1867680f13f30d52ce47a1ce1f2d109cd586e9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/011.jpg",
+          "sha256": "771ebc8c07915a241bdd21eb7578f465656b09850dadd56e381314b78a342752"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/012.jpg",
+          "sha256": "49fdb0b3816c55a6dccc9552fdf98dc2ef9e7920788481d24ed03c2581239e5a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/013.jpg",
+          "sha256": "2216d67ec1190f8192dc5bac83d8037bd0eb4d131e9e36d8c4e155d7ec2b82db"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/014.jpg",
+          "sha256": "c884e40267ea21116ec5c00d9760fbcc3e5732c6070fa37fc7b16ff679a2e2bb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/015.jpg",
+          "sha256": "7e67a83dc66d60f010bda5e9a488e3a5a7bccb28abcac3fd1e23d45f132fe2bc"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/016.jpg",
+          "sha256": "a7c335c4aed3bc2e6f539bea98b9cff099a04c1873591c89c56291cb2f29902d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/017.jpg",
+          "sha256": "6254c2f03f3e9d7e89c42b4d70c5bc522b4603bd2843dc219811e1e87a0148ec"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/018.jpg",
+          "sha256": "b5d1b394b42f0b2451e690e910b62657e599adf8e158cfe2170b4f9133a5cd2b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/019.jpg",
+          "sha256": "a2efc082ec8a82b3a7e967a30d88838f17527872a101218dc727568ae064641e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/020.jpg",
+          "sha256": "e5f051e7a6feba16912c9a0a0a5505e0b2ac636b45e440798221266f4b11eb4a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/021.jpg",
+          "sha256": "0b9668a1c8aff3bed2e6d1c30bb775310f1d123312374a4f6447346e88a60265"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/022.jpg",
+          "sha256": "ec417a4a1df70a1ba68bce632f367ca3b4bb4fece9d9d1085ec48fd40a2a81f0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/023.jpg",
+          "sha256": "6746ccda993cc47205514bf5020b59223300f68d528ae4b1f23eed8c82c2ff1e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/024.jpg",
+          "sha256": "b272d4a6f0aea094d8a96fccd16f1e46a0964e02828856b91501c149659c88f0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/025.jpg",
+          "sha256": "5034b9079d0a5abb2f1fc7735ba309010a7780ef16e156aadc7b0c82c25172d3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/026.jpg",
+          "sha256": "b2ff5e1b73a7f3eb35e7292439479c2d511acd4e698e6703ee1bf9f53b1000ba"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/027.jpg",
+          "sha256": "35b574592036160130cab3ff7eff4a126694021c816978aaf8c0557140f4c3e7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/028.jpg",
+          "sha256": "ac801caeaabec64e2935143e3420a8f9b795ca33c8563adecc10ef6bc29f357c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/029.jpg",
+          "sha256": "df82a69ce6d6660d5d08e3d549eeb07c623e7a93afaec71d50afbd265daf117e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/030.jpg",
+          "sha256": "6c70416d648b61ef2dff7abaaa2c3c888f047baaf9f92bf9f92ea86e25d13bae"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/031.jpg",
+          "sha256": "99e0fc22770b32794e25a625948464c45c69e4701f0536ee812e16a3ccdaa6fe"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/032.jpg",
+          "sha256": "415a9403f6e3038d6df158bbd2f62ee33be03f976088bccab27b9c7a416fcfd7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/033.jpg",
+          "sha256": "a12725f8b1cba6cfe63b0a91f9c316cacd289a9d9e66e6f1cc067f9f7d715be5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/034.jpg",
+          "sha256": "e1b25ea4b48794fbb326b9b4cd0623800c10224fb0dc7fff09c863732103324f"
+        }
+      ]
+    },
+    {
+      "order": 38,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-night-ordered-focal-035-069.png",
+      "sha256": "921e978664b2b0c2b4b1594b36bbaaf4643fee181723b276c8a60d5aa6977ae6",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/035.jpg",
+          "sha256": "30a3a8d47b40dcb0b83df7a1b457e8bcd3f4d421ac1a31cd21c1923a64ee685f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/036.jpg",
+          "sha256": "487ddbc35c786601f77d6493bc4a52ca59d918c64793d150efc00fd789844214"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/037.jpg",
+          "sha256": "f9cda0c9d704ae30f128f5f232c554fc3b5e7eee3edfd4f36ea21e664974af34"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/038.jpg",
+          "sha256": "e4e14d7525697fc45c8b86f6ae4768e755b25a110d377058ff93dac66d48f4c3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/039.jpg",
+          "sha256": "84af292e957d5400b0204bd21c87cc1920bd4b09cb8a8a70b68f3049bf2b3bf5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/040.jpg",
+          "sha256": "5301d2636a571b89c05648b3eedc45afca93024cd65f5ab2a71e1adf31e4fb74"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/041.jpg",
+          "sha256": "79522eb6511c52a96dc837237331a29d841bfa2850321ea7782bda972cf0f7bf"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/042.jpg",
+          "sha256": "6f05ae69927872487275d33f57113694389b598cd794dfbc0311a32cbc6ec90d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/043.jpg",
+          "sha256": "fc57c2b8f5bd46ffb12f2c5755d0f78efda9b2e552fdb9f9e54f0fbd87081173"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/044.jpg",
+          "sha256": "edf5d5e2d17e98766cc9d4d2af5468709efb2c3000a4ba635c9d29449fcdbdca"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/045.jpg",
+          "sha256": "879e19e57c489c4e7d39c749f51393cc3cc292b97dd9e2130bad99bc512112e4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/046.jpg",
+          "sha256": "ca684092f158adce55b90aee079149b64e9f00ff0d9fbc92eb7622f34e538c27"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/047.jpg",
+          "sha256": "4002be886a69cdfa32bc86dfee4dddbfa916816ae8a4f732d3cfc820a673af2b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/048.jpg",
+          "sha256": "13753fc56fefbcef7ed104af96a6621b17f508320dd14a1061dfdf1d7ce2f6b3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/049.jpg",
+          "sha256": "80fbb1fdca9f5e74b955099202fb50f1dcbf9df04013d882aa87cdf04ac2a3e7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/050.jpg",
+          "sha256": "19058b62f5b830c6cf90cb6065ac3ee5283b80e5d15e1e09cf733b4acfa909a5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/051.jpg",
+          "sha256": "690e7e16c79f8b51322404973ee8973863eff283742f6e53b12d154dd001b3ec"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/052.jpg",
+          "sha256": "24e583b35b803e893cf484b0ba080718f32f821a277ab89a75a5c08e8672c2e7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/053.jpg",
+          "sha256": "2863d45fca8f18068576ed2841c1ad3978c9f6ffef365990e2af9c53062b0742"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/054.jpg",
+          "sha256": "b27814d2233905be1ff2b87950804f15bb862989b78efca914282f247e31dde3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/055.jpg",
+          "sha256": "893b4b759413488878808a5908d0287ea7f192ef69832361028927de3521e81f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/056.jpg",
+          "sha256": "e9b38d0247f9b1053b24f27800724efe552609f5071114c0e4a48ac7c1fb0c95"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/057.jpg",
+          "sha256": "cca762d3b8ba14729d40b136fef33a946a36c983fdae78314244b82471562938"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/058.jpg",
+          "sha256": "b6b70620b8173423ac040a2070d069907985f61f80dfcbefe5e287954dc21709"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/059.jpg",
+          "sha256": "e82d85f3b4a6b988cd319b0b1d7a1e534342828569c66bedc90de3b006b4f6f2"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/060.jpg",
+          "sha256": "e484b32d57fa0665d3318d7c8c757f3b25ec3cec7e94ebc4d4a88d487d2a06a2"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/061.jpg",
+          "sha256": "6f808b8cf217de063c35c91d287f07497113309f92efe866ca70f1146a30de2b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/062.jpg",
+          "sha256": "bcf876807400c0af664c55f207438c06aafe296a5af63c8112ee7e73dbe2df82"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/063.jpg",
+          "sha256": "827ebb115ff78986994ad37ae36ab91eb2652dfbbc2a91dec6f9e227dd0b17f3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/064.jpg",
+          "sha256": "bd72344561f3c90a340f8e198cc185b7188c183e11cc6af94c90678029f2c0b6"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/065.jpg",
+          "sha256": "22579580a367ff75e837a363c3194d426bae889addd700ebc5e2ce56f9fdc0b1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/066.jpg",
+          "sha256": "4076a23dc81b6c0a0a2d68956d4df920d9e1a28bfbe736303bff0640694e8339"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/067.jpg",
+          "sha256": "82520489c85bd062c2ca365a26a7b9507c646169d828a1ea9cd7dcbd254f7d08"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/068.jpg",
+          "sha256": "880b481f91661e69664e56edd6fcd5d7064189f10f1a432cc264af0d4a81818b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/069.jpg",
+          "sha256": "6588e20de6cb1f258d8125a8575bc5e788cdf3120814e208b35ffd3dabaa9e27"
+        }
+      ]
+    },
+    {
+      "order": 39,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-night-ordered-focal-070-104.png",
+      "sha256": "ac60f41e735f5d6bef56f6c80db086286dac7e84bea914e2fe1e00c1d06970a4",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/070.jpg",
+          "sha256": "180c4d94bf6204388f5ae7e1d9464cc9a08affae1c0ded89496ed3b3b1e2a94e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/071.jpg",
+          "sha256": "da2381a12272f385c2d6320edbbf4ecbd0aa074a310939d2bbb0b35a589c9334"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/072.jpg",
+          "sha256": "1ecc268cb17b20f51d6004dff80650bd8e32101542517d8de980d5882444e40f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/073.jpg",
+          "sha256": "edbce7d4fa5fdb71688d703833acdc69175bfc90049979d8a861414973de7188"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/074.jpg",
+          "sha256": "9378069167ba12ffd45fc23372a96334239e7acd7c1cc07a33951a9ab512322d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/075.jpg",
+          "sha256": "5da27b9ad0626a3803a5ab5e97309990efd5ac43cc272738af74e370a0610583"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/076.jpg",
+          "sha256": "62e66fa551c5f346497750a6bc2d19a54b7bd4a5af4e7d062c73cfbefd9ebcda"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/077.jpg",
+          "sha256": "84535819a963b8fa440be00b590c74a3c42d32a5bccd2bb1509ce704688d7270"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/078.jpg",
+          "sha256": "e6d857a9d2f830021b513dc10bc943c3b9b1ff632568413a2f3aef72cd3cfb4f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/079.jpg",
+          "sha256": "6594a2836f03e343ee1288f6b1f67ab975e6697226d6105918302f0285fe3a48"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/080.jpg",
+          "sha256": "cbb8a89148b4d0223370c65a2b0dd6e7e453920158cac25c9be8a8e0e1f01255"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/081.jpg",
+          "sha256": "f418833f942bb2f86fd438d53eceadaf83c089351a93473cff748314c7c2c496"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/082.jpg",
+          "sha256": "1f9de14de95d655e85ca9c07eb26ca824bb737b746c228b81769964edcd3b3e0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/083.jpg",
+          "sha256": "51458d749637695c8be3f5707da44504ba6f9ce222f71b8471d0b4bac7348c64"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/084.jpg",
+          "sha256": "05fc4fa68464ab229d91be84e095975f887bfa41e2a5bd7965b3845570b9340c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/085.jpg",
+          "sha256": "565ba932aefbed32df88db6134e47022398290865ba872758fd5de6aca3c8e84"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/086.jpg",
+          "sha256": "fcf6302b72a4876270b71f94cdcc38a46480e992fa75fc829ce22a67f4dfb7a6"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/087.jpg",
+          "sha256": "a2363c93d9da5bac6d0e5ac9d14c35023ef07c23415f8fe1330af6048ee6b9e8"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/088.jpg",
+          "sha256": "19289bb1c0836c71c59612c0d97a86b0264f32fe981f82059a3e1bf14c61ccb4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/089.jpg",
+          "sha256": "73cdc2f22bea87790eb2db98ea2b1bdf0f48fe556ffaa5aa9e92aca2b2ae2820"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/090.jpg",
+          "sha256": "27fb4b7135cb3f88b842e207a64cd935f7e5a178eee13e487a96fcf257d7d5aa"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/091.jpg",
+          "sha256": "03ceda6dc99956116043d4b77d81196b4dbd4b05978f0e718a5ef60ec2eab0d3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/092.jpg",
+          "sha256": "e38532cbbf974f87a34729b9d420cf50cbd56ae4ee17cf8bdfbfc2ac11576cf8"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/093.jpg",
+          "sha256": "3154456eadd80d7fe43e71c804ad3593bb2ad4d205431ecf614f6ca5d0938ac4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/094.jpg",
+          "sha256": "a2a762853354813d55cc2956f770f93da1df61bd2967d0e8739542cc8bb496ce"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/095.jpg",
+          "sha256": "c52b3ed0fd1ad699d87fb0e33a9fdd78957923d6c9dd8d23a1a758ccaa8e1b48"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/096.jpg",
+          "sha256": "1ecab034e229ea072cb69b4d6df3e196678df1508c9627fb75088bad36135647"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/097.jpg",
+          "sha256": "d2c4678499106f9e2863882e1321d98bdf32c41531c6bb732d578cbbd1a557fe"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/098.jpg",
+          "sha256": "3ca2e8ec6b39794eeb70dc258008a15e86c2b1a5a16667d8b8229bf2714f6e33"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/099.jpg",
+          "sha256": "fc7772dad03424ac619171de2413c2703674a90a7f1be2bee9b3a854def248c9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/100.jpg",
+          "sha256": "71611aad2a87ece73e11c140ec08f568d7d5d6f10546710b9428e89e26367c36"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/101.jpg",
+          "sha256": "871efbc03048a80e6e9898f7b25398dba49ccfc5a9a17958235376ff16abe6e7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/102.jpg",
+          "sha256": "5927879e414aff0990f294b646bc604eb3e810d054fc8e883ee66d98c6835562"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/103.jpg",
+          "sha256": "bdb2b84f747cb9d9cba75ec51e97a3addf15936c6bd42e7fcf70e04cb6a1101e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/104.jpg",
+          "sha256": "7402f29778ea48aa7013726654eb471d124729335de7d803d40ec36f6ea4c6ba"
+        }
+      ]
+    },
+    {
+      "order": 40,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-night-ordered-focal-105-139.png",
+      "sha256": "3a1ce2c0a449034ab81c34c8bd36d23741c76f3b6056a263e1dac3ee3481411d",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/105.jpg",
+          "sha256": "e05c355c68b4a882ce940a7c6c7885f9e2819dba12069171ab8a34f766de8047"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/106.jpg",
+          "sha256": "f8f83515ae611b01de4b315ea1cdbfcc6e666f6cf355a98ad27e769ef6c0af6d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/107.jpg",
+          "sha256": "bcffbaec839d7f74ea152dbf22034a12aa61cafda0ec4a4a0aca10b617973993"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/108.jpg",
+          "sha256": "7330512749b23ce7bf0b3dfbff972962401e6c1d80ca7f213123e6dd06bb05fb"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/109.jpg",
+          "sha256": "7c91fc76b6cac4fa07fb4685ebc0c7c731738a09f15b93b86b7af5e5adbad5b3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/110.jpg",
+          "sha256": "bf6f665e557b25674cda3496adfa74f90e5d9695b810fd7fa9a3d1c30b3c4025"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/111.jpg",
+          "sha256": "2b8434dab43c0df52e7aed345fd481338d9a5ac03c88797d9ba9b27a8350c7ec"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/112.jpg",
+          "sha256": "78436451da015d55f5986f734b04712db6ce2df3776f5a85b90e82a8c4c78318"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/113.jpg",
+          "sha256": "414cad21fe90b8b72360ce8dbcf03e2d6c2640c01bdabe7abc519f662d8e445c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/114.jpg",
+          "sha256": "cf0aa7eb368ad92253c952625422394cc192b79f4dde7948a940591a80fb53a4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/115.jpg",
+          "sha256": "ccbd1487b757d690faecc72e63926c1fa0cbb00eb0d1d6678be73fe13b228849"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/116.jpg",
+          "sha256": "7ab52d92bac74bb3667fee33b22a16eb1ad1d072f2e30961c117654ce8609e51"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/117.jpg",
+          "sha256": "eac82f1b13c4c23e7f304e0378be4932e1a89be11c78698659c9aa28f83fc13f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/118.jpg",
+          "sha256": "e0589b70e9ed6ed1a4b1848c809a23b69a9abfbbba982d296da40f22ac7d3162"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/119.jpg",
+          "sha256": "66d4dfd68504d379a9cd420f153562e0760b87be907ee94945b6a440e0de4ca1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/120.jpg",
+          "sha256": "587fda671198b02e19f7f1a6f153030b767e7bda1fa9b4d810781780632990c9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/121.jpg",
+          "sha256": "205110210d790ce0a62b4a1d3f94bed3cc1cb2853b56770ae45bb2003755220c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/122.jpg",
+          "sha256": "7d2f7fc841174324f4eb6ad09cfed9bcb86ffdb3e40da48c7aa19ca2eeb08bf2"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/123.jpg",
+          "sha256": "a6a6c7e9c2322d4a7ff5636c5d0bdcd8498120ca9dcdb1a9003e07bccf336986"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/124.jpg",
+          "sha256": "93763a0e18c6dca1169405607458faffaff0def2e8a2f0c70e40f2c8bcdee6f3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/125.jpg",
+          "sha256": "50e44477f28a137988475e09011308ece1ebf228d804e1f3894a18ac795e5bc4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/126.jpg",
+          "sha256": "a3fa3edb280b651531d249987047571c9c6581aa686ea90e190ae4411e22944e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/127.jpg",
+          "sha256": "abd5f6517d47a2274a250e055c6cb83379605e99b5d31c336533585739111165"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/128.jpg",
+          "sha256": "518729cd04d69bd7356b4d670895fb525ab9082553de87fc14a3180aafbb767b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/129.jpg",
+          "sha256": "d12789e0d59859f0a67ffc7a690d8355c1dafc760d51eeeffc876288721aa95e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/130.jpg",
+          "sha256": "d117acf598da4cd60fb68b8356ed83c6105226a03b8bea3f74dfc01caf5be1f0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/131.jpg",
+          "sha256": "1ed00c79783cc7b013dca67378aef9e622cb1ab96df1128e8f13036b6b37a0c5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/132.jpg",
+          "sha256": "dc2f2e9f25b0eb162bf46b546e21f82ec9eb997767f1b9b196c1725802fc1145"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/133.jpg",
+          "sha256": "7668b7f99892742d492c4d7a04475cbc1be120365e6205d45b5b62973c451b73"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/134.jpg",
+          "sha256": "d01698d535a5101298f338ba0d4f32c6e2e5f6f22823b9fa0256fb5bfdf4397b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/135.jpg",
+          "sha256": "1e14e19bfff2c9ff1991042c8455dc6c859c7c397797c1b3d9aa1a6aaf8d0028"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/136.jpg",
+          "sha256": "09e0973959ae46fdc4cbf2565f6466a3f8f2addef7dd0dda981ec277a5cf8ce7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/137.jpg",
+          "sha256": "f68785f65ef93b0e3e4683be726d98033ad1084cdc6f2d5d44bd96292978c13e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/138.jpg",
+          "sha256": "d33103a77a5c44427a01df312d26d54d347aa47ea62a00f3ded98e5742e44350"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/139.jpg",
+          "sha256": "6a54ef4b03675b668a0a287abb817aacec74619ada1879ff302a12888cfc10db"
+        }
+      ]
+    },
+    {
+      "order": 41,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-night-ordered-focal-140-174.png",
+      "sha256": "497a7e13cdddedf8648616e32d751a18493a10ab321ff96b45c40cd8e5bf744d",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/140.jpg",
+          "sha256": "0e074f129cbd47585eecce7a5745e010635467a529877acdaf3499048eeba103"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/141.jpg",
+          "sha256": "e8356087124f42b50ee545a45040ed9a9f8739348d06fcabf6aea3d6551e8a8f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/142.jpg",
+          "sha256": "2930ff44507e2376790175483c4ea82c89f22bba2a79c0b2179bb78542fbe62a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/143.jpg",
+          "sha256": "ec12c562d95f04085bebdcf3510c4fbf66c53c83c26e993b0d948646add697a8"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/144.jpg",
+          "sha256": "196292a9179801af0524cf21a2e34b17fb0799fab44027dbbfffc7df5b6724ca"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/145.jpg",
+          "sha256": "b56661840afa302e1cf2813b5e4735fb0b798a056eecf6bd0d7a4aa93d336ccd"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/146.jpg",
+          "sha256": "de67ba7940e916cfd8bda20fef0ac8f58716def7f1f336525a245b36628743a4"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/147.jpg",
+          "sha256": "3f3598631882481d9fdbf6fdbffa3478443669336264ffba0ac23e53c24e9c90"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/148.jpg",
+          "sha256": "d89fa6a9d2058c8767ffb4a0f186cabe598e648950d3485f3d967225d6b2270b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/149.jpg",
+          "sha256": "aa07950b99da067de6a1abbbeb53fca83e34bc83425fd4965b6791b9c23b2e01"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/150.jpg",
+          "sha256": "34bc57b2dbccf8f311a271c38baff4f10c9ed7a70801c29c2245cf6df0802ff6"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/151.jpg",
+          "sha256": "5bb52cfeb09e4ab729a76d5774e3b35c8f994c4337308a0dbdb10cb5bd84c5b6"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/152.jpg",
+          "sha256": "961e7230f7596ccfa8e1bfe915998fd5fd6293a180057143abd818c87c9b260d"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/153.jpg",
+          "sha256": "e7b151775a578661097cc6ce50400666572093ad7c835d8c7aef973fb27f46b0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/154.jpg",
+          "sha256": "07ed028ed1057523db01fdf759501a30e21118327d2da8f7e2852476d97d2426"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/155.jpg",
+          "sha256": "281f9aa134a08e2cba1ae6d67a73c8045a6bbb83956082e29c29219763fa2a20"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/156.jpg",
+          "sha256": "6fe3b1c91c3d6166857cfbfa18d1c1cdfe6ae20cdef0ec8deacba19146103130"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/157.jpg",
+          "sha256": "174d63e4d861bcc1af4b82305d23bef072ad7b723b3e6579a6c44cae60cc5fa1"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/158.jpg",
+          "sha256": "a90b46e08dc8ce53d0cbce1459c9acbdbd21a4253f7ebde4782ecff238945d3e"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/159.jpg",
+          "sha256": "5b8c3a66387576023cf697c94b9d689e78dcd4978ad4b40d4835eccd87c0952c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/160.jpg",
+          "sha256": "1f3f488db152e87f8de85422461cbaa22f9e8ee96ed1fca543c0cec08df8ec9f"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/161.jpg",
+          "sha256": "f6a047738a297eac3f68b781feef4a60830401210cbd568a50f955e150ae5ad3"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/162.jpg",
+          "sha256": "2be8ba076c6dd105ae7d6157727e4d9ce3eaac858373ce747a61f51a6bcf7753"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/163.jpg",
+          "sha256": "fb21fe6e5350367094dab6f9ec8502ce99938b5f1b9bb273b69ebdb22885bc22"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/164.jpg",
+          "sha256": "d312d03822a645ba205e1a9609c6c1e05c16953b60e8b676b95647aab3200701"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/165.jpg",
+          "sha256": "119fcacde443b4decd23ab5e433b7c47da6760c9c7a75351eb0b21a527ff14a9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/166.jpg",
+          "sha256": "9d666f4fb5e9a26684b729a359585df1885584dc59670c5e608ca6002ead5eca"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/167.jpg",
+          "sha256": "38c9dc18b959b0f17cc695a95dd580ef1d5a01b36ef317227f6079f083223912"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/168.jpg",
+          "sha256": "5e84a8ba139e90792ee7246a5b7a8a31d8d32ed6542a82fae7c505a035b01f13"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/169.jpg",
+          "sha256": "4ecdf056cbf96a9decd1c1351cc8111aca3d475db540699dacda210145ffbcdf"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/170.jpg",
+          "sha256": "b55387d14cfa2a85aff57fc6319e3fd4ed3bd55ad0ba8fe0b7b654f4f2c2bbff"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/171.jpg",
+          "sha256": "bf413235d1ef9ec387bfa9e720f8f475a3363b77e0003324b74a02fc362990d8"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/172.jpg",
+          "sha256": "58fd024d9367eae8a56986c945d4212012c87362a16050ea4bb1207846e2ad41"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/173.jpg",
+          "sha256": "073765a218a0c2d4e73d91ed9703293b8da2d9251f51e3ec5bae5bc6687d15c7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/174.jpg",
+          "sha256": "800dc87dc482e3a8ae79202c7808dd0d6e55a97e5fe31a7435f20bde040f36aa"
+        }
+      ]
+    },
+    {
+      "order": 42,
+      "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/fauna-combat-night-ordered-focal-175-203.png",
+      "sha256": "f13129ec8b0fb6a75b3987233407a96bde624d60ed6b42f8b0a95850e3255416",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "derived ascending-index contact sheet; focal crop only, reduced to 50% in each axis; not full original frame or playback",
+      "source_frames": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/175.jpg",
+          "sha256": "b71f5c64a01dacb4228cd56a3dc4a2d4680b15aba6e389b607aea8f781c3c336"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/176.jpg",
+          "sha256": "f445bbf08c4f56fe2e85b1c8c2d1190ff881288240b65d2a689fe7a84a8b6f98"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/177.jpg",
+          "sha256": "e299ceb5cf447e17f1227d22ef463da387c9d3169ad72befee67f19f9641af19"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/178.jpg",
+          "sha256": "fd1c1b03519b1072303817c9101b467231ac248814b05979192f069d39e4d682"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/179.jpg",
+          "sha256": "b1f285c86fadb345f8285ce6b9baa853b8728c2eb431ba524e6cc365d043b91c"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/180.jpg",
+          "sha256": "96269e8b897733036d5b772cc3c01b6d869a471ab563ecc30023353571eed52b"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/181.jpg",
+          "sha256": "19ddbc15b0fa09cb874dd53707a807eade7e490f82a93453b30a06bc75173861"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/182.jpg",
+          "sha256": "5ef45ddc629c262e7e9bb8e51cda8868bbed91be7dc1bed7f89cfea7c0c156c0"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/183.jpg",
+          "sha256": "50ec2dd9656f9399aadc58d1cf41f7a1ef5f956ff9fe488a74f8924ce4149cfc"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/184.jpg",
+          "sha256": "5fc08160e656c250cd7f184868db7777a6f1126ffe6e9c6297ec462e32735268"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/185.jpg",
+          "sha256": "d2cae63b03c479434fbdb8b193406ad59795b7db53525155e6813e6a69c23338"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/186.jpg",
+          "sha256": "d58b2564f60a99edd84588142ebffcd1727f66529bc8c3c64ec9ddbf7ae9a2ea"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/187.jpg",
+          "sha256": "fa9ec8064d79975f935ea5293837e42e32e9aa35998c16332e61dea6a10debf6"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/188.jpg",
+          "sha256": "ec96c66d4849c9ae000b00832a53db62d50b874dda4d84c7137dad725a9f9017"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/189.jpg",
+          "sha256": "2879429cbfb08e8a94f992e10c840179f65dd20a8f6ed1244bfd5b0e22a6d7a7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/190.jpg",
+          "sha256": "9593956f2e8d1ed5f7536b30e546f8c2e6f3b87ad962a1e961229b2560985dda"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/191.jpg",
+          "sha256": "568d459864c671b7c40584c7b75885ba455132d06a9aea8029311a027ac7ec63"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/192.jpg",
+          "sha256": "4967a009bb85c16c040490cfcb6af24ba2cd271572221fc48b9bd5fea5e583e8"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/193.jpg",
+          "sha256": "5d3fb6970f90d97405a3bbf6c2a18c594c8ab6b0fed8ebb6023f5ee9c4e89df7"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/194.jpg",
+          "sha256": "7badc6271e047d99e9f10b319b74a28c2e1007de22a9b4deeba252fe9b5afd49"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/195.jpg",
+          "sha256": "56ab368cfb7df01292ef85a8c9f03717b3c6e5937ef525c91790dd32505319f9"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/196.jpg",
+          "sha256": "8f6d869cc538882003d2842d1cb79efed8c34e384b5a770e04b8165e61af2047"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/197.jpg",
+          "sha256": "349095f1511c2d3940656157a82d4bd19404e3e45027c44edf668ff823840129"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/198.jpg",
+          "sha256": "b007f229c101c8388b30bb37d2941c7387abc710d8eda352381b8021a8ac7640"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/199.jpg",
+          "sha256": "db02176fbedf96c2f7c303048ab12527fbb545dbf8dad53bfc4e832eaf05703a"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/200.jpg",
+          "sha256": "43ac0f35ab8fba0d2d3d657961e7247dab27648a7253914ccbd4ab5ae9609a86"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/201.jpg",
+          "sha256": "ed8d3229198a18ace92ec8ef28b6eb265da558651c5cccdd3ff1b3a42aa0a862"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/202.jpg",
+          "sha256": "0c792260a4615dd3d7946caa3a2453740cd982785dd7b95de721402252da89c5"
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/203.jpg",
+          "sha256": "74987389161c430754b0f54d83edde4328b178961972f180434fbade25588d8b"
+        }
+      ]
+    },
+    {
+      "order": 43,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/055.jpg",
+      "sha256": "0bd0c6d40b8fa1beaa96afce6ae6fd6bf868863df74a9e1dbc64c61f0b6d55a3",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    },
+    {
+      "order": 44,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/080.jpg",
+      "sha256": "ef1f3bf3800e5c879b16d54b8c1c9a7930b09087a1ed35032d7c002526e1dcff",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    },
+    {
+      "order": 45,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/124.jpg",
+      "sha256": "7542bcdb9684128dec1458bf1bca8fdbc5c2a49a039327d2ca63c3cc4d7aa3fc",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    },
+    {
+      "order": 46,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat/_frames/203.jpg",
+      "sha256": "9afb715d703a472f66e9f4a05e45984d2cbebb982038031b8f9589b3dfcd8923",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    },
+    {
+      "order": 47,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/055.jpg",
+      "sha256": "893b4b759413488878808a5908d0287ea7f192ef69832361028927de3521e81f",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    },
+    {
+      "order": 48,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/080.jpg",
+      "sha256": "cbb8a89148b4d0223370c65a2b0dd6e7e453920158cac25c9be8a8e0e1f01255",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    },
+    {
+      "order": 49,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/124.jpg",
+      "sha256": "93763a0e18c6dca1169405607458faffaff0def2e8a2f0c70e40f2c8bcdee6f3",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    },
+    {
+      "order": 50,
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-combat-night/_frames/203.jpg",
+      "sha256": "74987389161c430754b0f54d83edde4328b178961972f180434fbade25588d8b",
+      "method": "tools.view_image detail=original",
+      "content_viewed": "complete original JPEG at native size; static visual inspection, no playback"
+    }
+  ],
+  "derived_provenance": {
+    "path": "/tmp/fauna-visual-sol-20261102-da01f7c6c/derived-provenance.json",
+    "sha256": "15af936cfa8c44d6c8c706427b938f3766cf9003f0ab41049ded4ed914d4adbd"
+  },
+  "coverage": {
+    "full_original_pngs_viewed": 30,
+    "full_original_jpegs_viewed": 8,
+    "derived_sheets_viewed": 12,
+    "ordered_original_jpegs_viewed_through_focal_crop_sheets": 408,
+    "frame_indices_per_sequence": "000\u2013203 inclusive, every index, no skipped indices",
+    "full_original_clip_sheet_samples_per_sequence": "0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200; source sheet labels, no timing verified",
+    "native_jpegs_viewed_per_sequence": [
+      "055",
+      "080",
+      "124",
+      "203"
+    ]
+  },
+  "excluded_material": "No implementation source, worker chat, previous verdict, or source rationale was read. Only supplied task/rubric, specified design/art sections, frozen artifact files and Git identity/cleanliness metadata were used. A parent follow-up reiterated causal and duration evidence limits; it supplied no implementation explanation.",
+  "limits": [
+    "No live application or browser was run; no new gameplay render, GPU work, Blender/Vite/capture/codec/recorder, installation or deletion occurred.",
+    "No playback or fresh timing was performed. Derived sheets are CPU bitmap crops/resizes of saved JPEGs, with labels; no original was modified.",
+    "All-frame focal sheets exclude much of the screen including outer vignette/toast regions and the large rightmost creature; original full-scene clip sheets and eight native full JPEGs complement that view, but full-screen every-frame inspection was not performed.",
+    "Neither supplied ordered sequence depicts the offscreen camera turn. The four offscreen stills establish ambiguous damage-number placement but not duration, ownership, or cause.",
+    "Analysis banner timing is represented by stills, not established by the saved combat sequences.",
+    "Provided readouts report HUD samples only and do not establish current host/backend, whole UI/rendering cost, real-time cadence or 60fps.",
+    "Legibility and palette were visually inspected; this is not a formal WCAG contrast conformance audit.",
+    "Visual artifacts cannot establish replicated authority, interpolation across clients/reference frames, AI/spawner deletion, dev-server behavior, headless client consistency or gate:removed. Those remain independent engineering/QA qualifications."
+  ],
+  "additional_capture_requested": false,
+  "preservation": "All 440 originals were rehashed against the pre-inspection manifest with zero changes. All created material is inside this fresh private directory."
+}
