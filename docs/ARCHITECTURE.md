@@ -1633,9 +1633,9 @@ is worth. Clients fire their tracers at once for feel and are told what happened
 - **In combat** is having dealt or taken damage within 6 s: the skill service's `inCombat` (slots swap only out of it).
 - **The client** (`net/combat.js`): `Ship.fireLasers` fires its tracers and sends `fire` (`fireIntent`: the nose's
   direction in the frame of the ship's pose, at the game's world time); `Net.combat` keeps the events that concern the
-  player, and the HUD shows a number off the reticle for each of its hits (gold for a kill), a flash for a blow taken and
-  a kill's XP and units as toasts. Until the client renders the server's herds (P1.E08.T09) its own local creatures are
-  not the ones the server's shots hit; their health bars, hit flashes and deaths come with that task.
+  player. The HUD anchors damage numbers to visible replicated creatures, with gold for a kill, a flash for a blow taken
+  and XP/loot toasts. A live number retains its original remote record and expires when that record or its visible
+  anchor is lost. Fauna draws the server's herds from snapshots, including their confirmed death poses.
 - **Bench.** The combat trial (25 ships flying low over a Tier 3 world's herds, each firing every cooldown at the
   creature nearest it, herds put down as they thin) keeps the whole tick, its shots included, under the 10 ms p95.
 - **Not here.** Pirates' fights move to the server in P1.E08.T05 (the client's local pirate combat and asteroid hits are
@@ -1756,9 +1756,9 @@ paid units on the client, is gone (DESIGN 20.2–20.3).
   plates are P2.E29.T01's (§25: every analysis made is the discovery service's too, and a first find earns through the
   codex's XP grant, `CodexService.grantXp`); the codex UI, and a `codex` state message to feed it, P2.E29.T03's.
 - **The client** (`Game.analyze(target)`, `Game.onAnalyze`) sends the request and shows the answer: a first analysis's
-  banner (the codex line, Bond, the XP), a known one's toast, a refusal's reason. Until the client draws the server's
-  creatures (P1.E08.T09) it has no server creature to aim at: online, its own demo herds show their names but cannot be
-  analyzed; the dev sandbox still analyzes its own herds for its quest book, and pays nothing for it.
+  banner (the codex line, Bond, the XP), a known one's toast, a refusal's reason. The crosshair picks a drawn replicated
+  creature. Analysis requires a joined server session. Offline dev scenarios replay herds, and visual capture fixtures
+  supply recorded analysis replies without granting authoritative progress.
 
 ## 23. Fabricators (`packages/server/src/crafting`, `@astra/shared/crafting`)
 
