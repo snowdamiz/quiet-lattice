@@ -998,3 +998,131 @@ Artifact roots:
 Exact image/frame paths, verified bindings, scope of timing recomputation and honest inspection limits: `/tmp/p1-e04-t06-visual1-sol-final/VIEWING-RECORD.md`. Prior record preserved at `/tmp/p1-e04-t06-visual1-sol/HOLD.md` and included verbatim in the combined viewing record.
 
 Images support visual state and authored animation judgments. They do not independently prove exact source alpha values, exhaustive WCAG-AA pixel contrast, nearest-eight selection under every input, fading-box reservation under every overlap, ship.stats source binding, fractional35% alarm behavior, alarm audio/cadence, live online multiplayer or target-device performance. The supplied diagnostic sensor overlays were treated as instrumentation, not product clutter.
+
+
+## P1.E11.T01 — Scrapyard fifth independent grade (2026-11-03 UTC)
+
+VERDICT: REVISE
+TASK: P1.E11.T01 (Scrapyard component only)
+SCORES: design 4, silhouette 4, proportion 4, materials 3, detail 3, topology 4, consistency 4, fitness 3, placeholder 3, performance 3 (mean 3.5)
+NOTES (REVISE only, one per failing criterion):
+- materials: sy_rock's broad grey walls and tan regolith islands read as flat fills in the noon and open-space captures. Paint larger geological colour/roughness variation, dark deposits inside fractures, and dust accumulation along excavation ledges; preserve the hardware's localized edge wear and avoid uniform noise.
+- detail: the asteroid's exterior and excavated cavity are dominated by broad smooth bands with isolated angular bumps. Add authored mid-scale fracture lips, broken strata and excavation ledges that read from the assembled approach distance, with smaller debris concentrated where those breaks shed material.
+- fitness: qualification gap, not a demonstrated asset regression: the overlays show collider and interaction markers, but the supplied assemblies are review-only and the static captures do not establish reachability or collision behavior. Supply a canonical runtime capture with a 1.85 m actor traversing dock, gangway and deck and reaching the hatch/hold interaction points, with aligned collider overlays.
+- placeholder: sy_rock retains a nearly constant-diameter cylindrical body and a broad circular rear cap in the turntable. Reshape the side and rear contour into asymmetric connected rock masses, with a few large fractures or undercuts that visibly break that regular envelope while preserving the hollow entrance.
+- performance: qualification gap, not a measured regression: canonical validation passes the recorded budgets, but all indexed timings are explicitly UNQUALIFIED_E14_T13. Provide a qualified review-scene 60 fps readout on a recorded actual backend, with paired shown/hidden asset-cost measurements for the canonical Scrapyard assembly.
+ARTIFACTS: assets/renders/stations/round5/capture_candidate_20261102_a1/runtime_execution01/scrapyard_fifth_grade/scrapyard_fifth_grade_index.json; assets/renders/stations/round5/capture_candidate_20261102_a1/runtime_execution01/scrapyard_fifth_grade/GRADING-READOUT.md; assets/renders/stations/round5/capture_candidate_20261102_a1/products/static/scrapyard_sy_rock_turntable.png; assets/renders/stations/round5/capture_candidate_20261102_a1/products/static/scrapyard_sy_rock_materials.png; assets/renders/stations/round5/capture_candidate_20261102_a1/products/static/scrapyard_family.png; assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/{noon-lush_lod0,noon-lush_lod2,night-exotic_lod0,night-exotic_lod2,open-space_lod0,open-space_lod2,wireframe_lod0,wireframe_lod2,overlay,far_lod2}.png; assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/supplements/scrapyard/sy_rock/night/{night-exotic_lod0_lifted,night-exotic_lod2_lifted}.png; assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/supplements/scrapyard/sy_rock/distance/noon-lush_lod2_100m_from_bounds.png; assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/followon/scrapyard/assembled/open-space_lod0.png; assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/followon/scrapyard/cutaway/{noon-lush_lod0_docks_close,noon-lush_lod0_docks_cutaway,noon-lush_lod0_scale_detail,open-space_lod0_docks_cutaway}.png; assets/renders/stations/round3/static/scrapyard_{sy_deck,sy_dock,sy_dock_l,sy_gangway,sy_mouth}_{turntable,materials}.png; assets/renders/stations/round3/engine/attempt01/standard/scrapyard/{sy_deck,sy_dock,sy_dock_l,sy_gangway,sy_mouth}/sheet.png; assets/renders/stations/round5/syrock_20261102_a1/canonical_validation/{stations__scrapyard.blend,stations__scrapyard.glb}.json
+
+Verbatim verdict SHA256: `3b06ab4f52b0ab630aec3a3adffd71186c1818314211bf7cfd3bec73ce64b65a`. This is the fifth Scrapyard component disposition; it does not regrade Waystation or waive whole-task merge verification.
+
+### Independent viewing record
+
+# Private viewing record — Scrapyard fifth grade
+
+Artifact base: /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01
+Index SHA256: 69c7d193a6af2c8db058b9b876e4f10405b57b84f08b20c4bdebaaffc1b20fee
+Readout SHA256: 276570f174c1bcc3bbd9e3995fbd0b186c6af6e38737b58d87bf36a1ea353650
+
+## Independence and resource scope
+Only task/spec/rubric, indexed artifact metadata, indexed validation and indexed images inspected. No worker reasoning, reports, implementation source, ROOT-EVIDENCE.md, reproduction scripts, browser, Blender, rendering or runtime launched. Current canonical source/export bytes were hashed only, not semantically inspected. No additional capture requested. Inspection and hashing were sequential CPU-only work.
+
+## Binding verification
+125 unique current/reference/validation/proof/artifact path+SHA256+byte-length bindings matched, including canonical source/export, 35 new products, 80 inherited files, four references, two canonical validations and two module proof files. Original whole-export metadata remains historical and was not matched against the new canonical GLB. Both proof records show all five inherited Scrapyard modules unchanged from round3 through round4 to round5. No independent reproduction of normalized geometry fingerprints was attempted. The bound art bible differs from current main only in character skeleton wording and an added character animation contract, which do not alter this station grade.
+Pillow was unavailable in the selected Python environment, so the optional independent decoded-RGBA hash check did not run. File-byte SHA256/length bindings all passed; every image claimed as viewed below was decoded by the view_image tool.
+
+## Images actually viewed
+36 image files viewed (21 current, 15 inherited). This list does not claim standalone viewing of the individual inherited sheet subpanel source files.
+
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/static/scrapyard_sy_rock_turntable.png
+  Coverage/limit: Studio angles/material swatches/family comparison; high-detail display resized from original.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/static/scrapyard_sy_rock_materials.png
+  Coverage/limit: Studio angles/material swatches/family comparison; high-detail display resized from original.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/static/scrapyard_family.png
+  Coverage/limit: Studio angles/material swatches/family comparison; high-detail display resized from original.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/noon-lush_lod0.png
+  Coverage/limit: Full 1920x1080 image inspected.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/noon-lush_lod2.png
+  Coverage/limit: Full 1920x1080 image inspected.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/open-space_lod0.png
+  Coverage/limit: Full 1920x1080 image inspected.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/open-space_lod2.png
+  Coverage/limit: Full 1920x1080 image inspected.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/night-exotic_lod0.png
+  Coverage/limit: Full 1920x1080 image inspected. Asset largely occluded by terrain; not usable to judge its night surface.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/night-exotic_lod2.png
+  Coverage/limit: Full 1920x1080 image inspected. Asset largely occluded by terrain; not usable to judge its night surface.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/wireframe_lod0.png
+  Coverage/limit: Full 1920x1080 image inspected.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/wireframe_lod2.png
+  Coverage/limit: Full 1920x1080 image inspected.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/overlay.png
+  Coverage/limit: Full 1920x1080 image inspected. Dense overlapping collider volumes obscure individual boundary accuracy; static only.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/standard/scrapyard/sy_rock/far_lod2.png
+  Coverage/limit: Full 1920x1080 image inspected. Camera is too close/cropped for full silhouette; used only as a rock surface close-up.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/supplements/scrapyard/sy_rock/night/night-exotic_lod0_lifted.png
+  Coverage/limit: Full 1920x1080; lifted night geometry is visible but very dark. Distance metadata records range 248.701 m, LOD2; filename/request is not an independently proven camera equivalence.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/supplements/scrapyard/sy_rock/night/night-exotic_lod2_lifted.png
+  Coverage/limit: Full 1920x1080; lifted night geometry is visible but very dark. Distance metadata records range 248.701 m, LOD2; filename/request is not an independently proven camera equivalence.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/supplements/scrapyard/sy_rock/distance/noon-lush_lod2_100m_from_bounds.png
+  Coverage/limit: Full 1920x1080; lifted night geometry is visible but very dark. Distance metadata records range 248.701 m, LOD2; filename/request is not an independently proven camera equivalence.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/followon/scrapyard/assembled/open-space_lod0.png
+  Coverage/limit: Full 1920x1080; uncut review assembly shows mouth; interior modules occluded by rock.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/followon/scrapyard/cutaway/noon-lush_lod0_docks_close.png
+  Coverage/limit: Full 1920x1080; review-only cutaway. Lark visible; bipeds too small for a precise body-to-control comparison. Does not prove canonical runtime integration or traversal. Requested camera and actual orbit/FOV are not asserted equivalent.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/followon/scrapyard/cutaway/noon-lush_lod0_docks_cutaway.png
+  Coverage/limit: Full 1920x1080; review-only cutaway. Lark visible; bipeds too small for a precise body-to-control comparison. Does not prove canonical runtime integration or traversal. Requested camera and actual orbit/FOV are not asserted equivalent.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/followon/scrapyard/cutaway/noon-lush_lod0_scale_detail.png
+  Coverage/limit: Full 1920x1080; review-only cutaway. Lark visible; bipeds too small for a precise body-to-control comparison. Does not prove canonical runtime integration or traversal. Requested camera and actual orbit/FOV are not asserted equivalent.
+- assets/renders/stations/round5/capture_candidate_20261102_a1/products/engine/followon/scrapyard/cutaway/open-space_lod0_docks_cutaway.png
+  Coverage/limit: Full 1920x1080; review-only cutaway. Lark visible; bipeds too small for a precise body-to-control comparison. Does not prove canonical runtime integration or traversal. Requested camera and actual orbit/FOV are not asserted equivalent.
+- assets/renders/stations/round3/static/scrapyard_sy_deck_turntable.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/static/scrapyard_sy_deck_materials.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/engine/attempt01/standard/scrapyard/sy_deck/sheet.png
+  Coverage/limit: Viewed at original image detail: noon/night/open-space LOD0+LOD2, static wireframes, overlay and far subpanels. Each subpanel is smaller than its standalone source; no continuous motion/transition claim.
+- assets/renders/stations/round3/static/scrapyard_sy_dock_turntable.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/static/scrapyard_sy_dock_materials.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/engine/attempt01/standard/scrapyard/sy_dock/sheet.png
+  Coverage/limit: Viewed at original image detail: noon/night/open-space LOD0+LOD2, static wireframes, overlay and far subpanels. Each subpanel is smaller than its standalone source; no continuous motion/transition claim.
+- assets/renders/stations/round3/static/scrapyard_sy_dock_l_turntable.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/static/scrapyard_sy_dock_l_materials.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/engine/attempt01/standard/scrapyard/sy_dock_l/sheet.png
+  Coverage/limit: Viewed at original image detail: noon/night/open-space LOD0+LOD2, static wireframes, overlay and far subpanels. Each subpanel is smaller than its standalone source; no continuous motion/transition claim.
+- assets/renders/stations/round3/static/scrapyard_sy_gangway_turntable.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/static/scrapyard_sy_gangway_materials.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/engine/attempt01/standard/scrapyard/sy_gangway/sheet.png
+  Coverage/limit: Viewed at original image detail: noon/night/open-space LOD0+LOD2, static wireframes, overlay and far subpanels. Each subpanel is smaller than its standalone source; no continuous motion/transition claim.
+- assets/renders/stations/round3/static/scrapyard_sy_mouth_turntable.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/static/scrapyard_sy_mouth_materials.png
+  Coverage/limit: Inherited exact unchanged module evidence; turntable displayed resized to 2048x768; swatches show material response, not a close-up of every authored part.
+- assets/renders/stations/round3/engine/attempt01/standard/scrapyard/sy_mouth/sheet.png
+  Coverage/limit: Viewed at original image detail: noon/night/open-space LOD0+LOD2, static wireframes, overlay and far subpanels. Each subpanel is smaller than its standalone source; no continuous motion/transition claim.
+
+## Indexed PNG files not separately viewed
+- Current standard sy_rock/sheet.png (its individual source images were viewed).
+- Current static scrapyard_sy_rock_family_header.png (family and turntable were viewed).
+- Individual inherited standard PNGs beyond sheet.png were hashed but not separately viewed.
+
+## Score evidence and limits
+- Design 4: oxide-red/gunmetal/yellow patches, repaired roof/plate work, exposed trusses and warm signal lights make Reaches ownership readable.
+- Silhouette 4: mouth and hollow shell are identifiable at the indexed LOD2 approach framing; pad/deck/gangway roles remain recognizable in inherited far subpanels. This does not excuse the rock primitive tell.
+- Proportion 4: validation records 1 m grid and 1.85 m biped; 24 m and 36 m pad classes appear compatible with the review Lark. Exact actor/control reach was not visible.
+- Materials 3: hardware roughness/edge wear and dark cavities behave plausibly in three lighting cases; rock remains weak in large-scale colour/roughness variation and regolith reads as flat tan islands.
+- Detail 3: hardware has structural bracing/railings/plate patches; rock mantle/cavity show broad strips and isolated angular protrusions rather than coherent mid-scale strata/excavation.
+- Topology 4: supplied wireframes and LOD0/LOD2 stills show coherent retained envelope, canonical validation passes all four LOD budgets; continuous swaps, LOD1/3 visual quality and hidden surfaces not proven. No dynamic no-pop claim.
+- Consistency 4: five metal modules visibly match; rock material family remains coherent with itself.
+- Fitness 3: overlays establish authored collider/marker placement only; no canonical actor traversal, interaction reach or collision integration proof. Evidence gap, not a demonstrated regression or a demand to remodel without a failing run.
+- Placeholder 3: main rock retains near-cylindrical constant section with large rounded rear cap and broad smooth rings, visible from multiple studio views and in engine.
+- Performance 3: canonical validation PASS budgets: rock LOD0 15,578, LOD3 497 (3.2%); other modules within declared kit budgets; recorded texture memory maximum 85.3 MB for rock. Every current/inherited timing explicitly UNQUALIFIED_E14_T13; no FPS inferred. Standard actual backend UNKNOWN; supplements record ANGLE Metal Apple M5 Pro but do not provide performance samples.
+
+Mean 35/10 = 3.5. Verdict REVISE. Waystation not graded; no task-status changes made.
+
+Viewing record SHA256: `7191c30dec1bf6e9a254b0b3fe588dfaafafd1a2caeb146655dbb21a401bb060`.
