@@ -913,7 +913,7 @@ export class HUD {
       p.cy = cy;
       p.goneAt = 0;
       p.e.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`;
-      p.e.classList.remove('out');
+      p.e.classList.toggle('out', false);
       p.takenFrom = taken.length;
       taken.push(p.x - 6, p.y - 6, p.x + 6, p.y + 6);
       p.takenTo = taken.length;
