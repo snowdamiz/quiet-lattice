@@ -824,9 +824,11 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     crosshair pick (`Fauna.pick`, in the camera's own frame, so the ray and the creatures never disagree by a frame's
     motion), ability targets (`Fauna.targets`, which `pickTarget` reads instead of the snapshot store for creatures) and
     the player's push-out (`collidePlayer`) use. A phase-owned creature shows only to its phase because the server sends
-    it to no one else. The HUD's damage numbers rise over the creature a hit landed on (`HUD.hitAnchor`, the reticle when
-    it is not on screen); analysis is aimed at a drawn creature and asked of the server (`Game.analyze`). With no server
-    (the offline sandbox) there is no fauna; the dev scenarios through the dev server (`?dev#foot`) have it.
+    it to no one else. `Fauna.hitAnchor` publishes a presentation anchor at the displayed pose, including corpse fall.
+    `HUD.hitAnchor` projects a copy so damage numbers follow the visible target. Hits without a visible anchor produce
+    no numbers. A live number expires permanently when its target leaves view. Analysis is aimed at a drawn creature
+    and asked of the server (`Game.analyze`). With no server (the offline sandbox) there is no fauna; the dev scenarios
+    through the dev server (`?dev#foot`) have it.
     `replay.js` has a `herd` scene (creatures ahead of the walker, one lunging, one killed) for `pnpm capture -- --ui
     fauna-combat` (and `-night`); `smoke/fauna-online.spec.ts` has two clients draw one server herd.
   - **Markers.** `markers(here, range, add)` gives the HUD a `player` marker for each other pilot's ship the local ship's

@@ -226,11 +226,11 @@ describe('where a hit number rises', () => {
       camWorld: new THREE.Vector3(),
       camWorldQuatInv: new THREE.Quaternion(),
       remotes: { get: (id) => records[id] },
-      fauna: { speciesOf: (r) => r.sp },
+      fauna: { hitAnchor: (r) => r.drawn ? r.anchor : null },
     };
     return h;
   }
-  const creature = (x, y, z, extra = {}) => ({ drawn: true, world: new THREE.Vector3(x, y, z), frame: null, sp: { size: 2, kind: 'quad' }, ...extra });
+  const creature = (x, y, z, extra = {}) => ({ drawn: true, anchor: new THREE.Vector3(x, y + 2.5, z), ...extra });
 
   it('over the head of the creature the hit landed on, as it is drawn', () => {
     const h = sighted({ 7: creature(0, 0, -20), 8: creature(10, 0, -20) });
@@ -309,11 +309,11 @@ describe('the numbers a hit raises', () => {
       camWorld: new THREE.Vector3(),
       camWorldQuatInv: new THREE.Quaternion(),
       remotes: { get: (id) => records[id] },
-      fauna: { speciesOf: (r) => r.sp },
+      fauna: { hitAnchor: (r) => r.drawn ? r.anchor : null },
     };
     return h;
   }
-  const creature = (x, y, z) => ({ drawn: true, world: new THREE.Vector3(x, y, z), frame: null, sp: { size: 2, kind: 'quad' } });
+  const creature = (x, y, z) => ({ drawn: true, anchor: new THREE.Vector3(x, y + 2.5, z) });
 
   /** Where the number `e` is, px from the top of the view, `ms` after it was raised, read off the keyframes the browser runs. */
   function topAt(e, ms) {
@@ -426,7 +426,7 @@ describe('the numbers a hit raises', () => {
     const h = rising(records);
     h.hitNumber(11, false, 7);
     h.t = 100;
-    if (reason === 'offscreen') r.world.x = 400;
+    if (reason === 'offscreen') r.anchor.x = 400;
     else if (reason === 'not drawn') r.drawn = false;
     else delete records[7];
     h.updateHits();

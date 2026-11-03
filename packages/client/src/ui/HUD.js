@@ -9,7 +9,6 @@ import { SocialUI } from './social/SocialUI.js';
 import { BANNER_FADE_IN, BANNER_FADE_OUT, BANNER_MS, BannerQueue } from './banners.js';
 
 const _v = new THREE.Vector3();
-const _up = new THREE.Vector3();
 
 // Other pilots' markers are placed by src/remote/markers.js: the mark over the ship's bounds on screen, the label beside
 // the mark, both clear of the keep-out (the fixed HUD, the local ship) and of each other.
@@ -721,18 +720,15 @@ export class HUD {
     }
   }
 
-  // Where a hit on creature `id` shows: over its head, on screen. Null when it is not drawn this frame (out of view, behind the
-  // camera, or not a creature the client draws).
+  // Fauna publishes the billboard point on the creature as drawn, including a corpse's fall. Project a copy of it;
+  // nowhere when it is not drawn this frame, behind the camera or off screen.
   hitAnchor(id) {
     const g = this.game;
     const r = g.remotes?.get(id);
-    const sp = r?.drawn && g.fauna.speciesOf(r);
-    if (!sp) return null;
+    const at = r && g.fauna.hitAnchor(r);
+    if (!at) return null;
     const cam = g.engine.camera;
-    _v.copy(r.world).sub(g.camWorld);
-    // (over the head of a walker, the body of a flyer: straight up from its feet along its world's up)
-    const up = r.frame ? _up.copy(r.world).sub(r.frame.position).normalize() : _up.set(0, 1, 0);
-    _v.addScaledVector(up, sp.size * (sp.kind === 'flyer' ? 0.5 : 1.25)).applyQuaternion(g.camWorldQuatInv);
+    _v.copy(at).sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
     if (_v.z >= 0) return null;
     _v.applyMatrix4(cam.projectionMatrix);
     const x = (_v.x * 0.5 + 0.5) * window.innerWidth;

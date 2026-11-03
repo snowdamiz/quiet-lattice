@@ -452,6 +452,7 @@ export class Fauna {
 
   /** Lets every species go: the system changed or the zone started over. */
   reset() {
+    for (const r of this.shown) r.drawn = false;
     for (const w of this.worlds.values()) for (const d of w.drawn.values()) d.dispose();
     this.worlds.clear();
     this.shown.length = 0;
@@ -470,6 +471,11 @@ export class Fauna {
   /** The species creature `r` is (shared data), or undefined when its world has no such species. */
   speciesOf(r) {
     return r.frame && r.species !== null ? this.world(r.frame).list[r.species] : undefined;
+  }
+
+  /** The HUD's world-space billboard point on the displayed creature, including its fall; none unless drawn this frame. */
+  hitAnchor(r) {
+    return r.drawn ? r.vis?.hitAnchor ?? null : null;
   }
 
   /** Whether the record `r` (RemoteEntities') is a creature that can be drawn. */
@@ -494,6 +500,7 @@ export class Fauna {
     const g = this.game;
     this.time.value += dt;
     const now = this.time.value;
+    for (const r of this.shown) r.drawn = false;
     this.shown.length = 0;
     for (const w of this.worlds.values()) for (const d of w.drawn.values()) d.count = 0;
     const cam = g.engine?.camera;
@@ -541,6 +548,8 @@ export class Fauna {
       if (d.count === d.max) d.grow(d.count + 1);
       const k = d.count++;
       d.mesh.setMatrixAt(k, _m);
+      const up = _up.copy(r.world).sub(r.frame.position).normalize();
+      (vis.hitAnchor ??= new THREE.Vector3()).copy(rel).add(camWorld).addScaledVector(up, sp.size * (sp.kind === 'flyer' ? 0.5 : 1.25));
       d.phase.array[k] = vis.phase;
       d.gait.array[k] = gait;
       d.seed.array[k] = vis.seed;

@@ -4,12 +4,14 @@
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { FAUNA_MAX_TIER, createPlanetParams, faunaSpecies } from '@astra/shared/world';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Body } from '../universe/Body.js';
 import { framePoseAt } from '../remote/frames.js';
 import { RemoteEntities } from '../remote/RemoteEntities.js';
 import * as combat from '@astra/shared/combat';
 import { FALL_S, Fauna } from './Fauna.js';
+import { HUD } from '../ui/HUD.js';
+import { CombatFeed } from '../net/combat.js';
 
 vi.mock('@astra/shared/combat', async (original) => {
   const real = await original();
@@ -332,5 +334,134 @@ describe('Fauna: the server’s herds, drawn', () => {
     expect(d.phase.array.length).toBe(d.max);
     // (one mesh in the group, not the first one left behind)
     expect(fauna.group.children.filter((c) => c.isInstancedMesh)).toHaveLength(1);
+  });
+});
+
+describe('Fauna’s displayed hit anchor', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  function stage(width = 1920) {
+    const planet = new Body({ name: 'planet', kind: 'planet', radius: GROUND });
+    planet.params = PARAMS;
+    planet.surfaceRadius = () => GROUND;
+    const sp = SPECIES.find((s) => s.kind === 'flyer');
+    const camera = new THREE.PerspectiveCamera(70, width / 1080, 0.1, 1e5);
+    camera.updateMatrixWorld();
+    const records = new Map();
+    const game = {
+      mode: 'title', engine: { camera },
+      camWorld: new THREE.Vector3(0, GROUND + 18, 20), camWorldQuatInv: new THREE.Quaternion(),
+      audio: { creature() {} }, remotes: { get: (id) => records.get(id) },
+    };
+    const fauna = (game.fauna = new Fauna(game));
+    const r = {
+      id: 7, kind: 'mob', frame: planet, species: sp.index, shown: true,
+      world: new THREE.Vector3(...at(0, 20)), worldQuat: new THREE.Quaternion(),
+      pos: new THREE.Vector3(...at(0, 20)), status: 'hold', hp: 1,
+      pose: { mode: 'fly', vel: new THREE.Vector3() },
+    };
+    records.set(r.id, r);
+    const element = () => ({
+      children: [], style: {}, isConnected: true,
+      appendChild(e) { e.parent = this; this.children.push(e); },
+      remove() { this.isConnected = false; if (this.parent) this.parent.children = this.parent.children.filter((e) => e !== this); },
+      animate() {},
+    });
+    vi.stubGlobal('window', { innerWidth: width, innerHeight: 1080 });
+    vi.stubGlobal('document', { createElement: element });
+    const h = Object.create(HUD.prototype);
+    Object.assign(h, { game, hitsEl: element(), t: 0, now: () => h.t, later: () => 0, toast: vi.fn() });
+    const feed = new CombatFeed({ on() {}, entityId: 1, now: () => h.t });
+    // Read the actual displayed transform, without reproducing any fall-motion formula.
+    const projected = (record = r) => {
+      const p = instanceAt(meshOf(fauna, record.frame, record.species), 0);
+      const up = record.world.clone().sub(record.frame.position).normalize();
+      p.addScaledVector(up, sp.size * 0.5).applyQuaternion(game.camWorldQuatInv).applyMatrix4(camera.projectionMatrix);
+      return { x: (p.x * 0.5 + 0.5) * width, y: (-p.y * 0.5 + 0.5) * 1080 };
+    };
+    return { game, fauna, planet, r, sp, h, feed, projected };
+  }
+
+  it.each([1920, 2520])('keeps a live killing blow on the actual falling flyer instance at %i×1080, with rewards and offscreen expiry', (width) => {
+    const { game, fauna, planet, r, sp, h, feed, projected } = stage(width);
+    fauna.update([r], DT);
+    expect(h.hitAnchor(r.id).y).toBeCloseTo(projected().y, 3);
+    const serverPos = r.pos.clone();
+    const serverWorld = r.world.clone();
+    r.pose.mode = 'dead';
+    r.hp = 0;
+    fauna.update([r], DT);
+    const before = instanceAt(meshOf(fauna, planet, sp.index), 0);
+    feed.event({ kind: 'combat', source: 1, target: r.id, amount: 26, killed: true, hp: 0 });
+    feed.event({ kind: 'xp', amount: 30, level: 1 });
+    feed.event({ kind: 'loot', item: 'units', count: 7 });
+    h.updateHits(feed);
+    const number = h.hitsEl.children[0];
+    for (let i = 0; i < 42; i++) fauna.update([r], DT);
+    h.t = 700;
+    h.updateHits(feed);
+    expect(instanceAt(meshOf(fauna, planet, sp.index), 0).y).toBeLessThan(before.y - 2);
+    expect(h.hitAnchor(r.id).y).toBeCloseTo(projected().y, 3);
+    expect(Number.parseFloat(number.style.top)).toBeCloseTo(projected().y, 3);
+    expect(h.hitsEl.children).toEqual([number]);
+    expect(number.textContent).toBe('26');
+    expect(number.style.color).toBe('var(--accent-hi)');
+    expect(number.style.fontSize).toBe('26px');
+    expect(h.toast.mock.calls).toEqual([
+      ['+30 XP', 'good', { repeat: true }],
+      ['+7 units', 'good', { repeat: true }],
+    ]);
+    expect(r.pos.equals(serverPos)).toBe(true);
+    expect(r.world.equals(serverWorld)).toBe(true);
+    const published = fauna.hitAnchor(r).clone();
+    h.hitAnchor(r.id);
+    h.hitAnchor(r.id);
+    expect(fauna.hitAnchor(r).equals(published)).toBe(true);
+    game.camWorldQuatInv.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+    h.t = 750;
+    h.updateHits(feed);
+    expect(h.hitsEl.children).toEqual([]);
+    game.camWorldQuatInv.identity();
+    h.t = 800;
+    h.updateHits(feed);
+    expect(h.hitsEl.children).toEqual([]);
+    fauna.reset();
+  });
+
+  it('invalidates anchors when a record leaves, is culled, is replaced or reset, and republishes through its current frame', () => {
+    const { game, fauna, r, h, projected } = stage();
+    fauna.update([r], DT);
+    expect(fauna.hitAnchor(r)).not.toBeNull();
+    fauna.update([], DT);
+    expect(fauna.hitAnchor(r)).toBeNull();
+    fauna.update([r], DT);
+    r.shown = false;
+    fauna.update([r], DT);
+    expect(fauna.hitAnchor(r)).toBeNull();
+    r.shown = true;
+    r.world.x = 400;
+    fauna.update([r], DT);
+    expect(fauna.hitAnchor(r)).toBeNull();
+    r.world.x = 0;
+    const replacement = { ...r, vis: null };
+    fauna.update([replacement], DT);
+    expect(fauna.hitAnchor(r)).toBeNull();
+    expect(fauna.hitAnchor(replacement)).not.toBeNull();
+    const frame = new Body({ name: 'other planet', kind: 'planet', radius: GROUND });
+    frame.params = PARAMS;
+    frame.surfaceRadius = () => GROUND;
+    frame.position.set(5000, -5000, 9000);
+    frame.quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), 0.6);
+    replacement.frame = frame;
+    frame.localToWorld(replacement.pos, replacement.world);
+    frame.localToWorld(new THREE.Vector3(0, GROUND + 18, 20), game.camWorld);
+    game.camWorldQuatInv.copy(frame.quaternion).invert();
+    game.remotes.get = () => replacement;
+    fauna.update([replacement], DT);
+    expect(h.hitAnchor(replacement.id).x).toBeCloseTo(projected(replacement).x, 3);
+    expect(h.hitAnchor(replacement.id).y).toBeCloseTo(projected(replacement).y, 3);
+    fauna.reset();
+    expect(fauna.hitAnchor(replacement)).toBeNull();
+    expect(h.hitAnchor(replacement.id)).toBeNull();
   });
 });

@@ -50,7 +50,7 @@ function stage(width = 1920) {
   const records = new Map(
     [602, 603].map((id) => {
       const pos = new Vector3(id === 602 ? 0 : 2, 1000, -20);
-      return [id, { drawn: true, pos, world: pos, frame: null, sp: { size: 2, kind: 'quad' } }] as const;
+      return [id, { drawn: true, pos, world: pos, anchor: pos.clone().add(new Vector3(0, 2.5, 0)), frame: null, sp: { size: 2, kind: 'quad' } }] as const;
     }),
   );
   const camera = new PerspectiveCamera(70, width / 1080, 0.1, 1e5);
@@ -62,7 +62,10 @@ function stage(width = 1920) {
     camWorld: new Vector3(0, 1001.7, 0),
     camWorldQuatInv: new Quaternion(),
     remotes: { get: (id: number) => records.get(id) },
-    fauna: { speciesOf: (r: { sp: { size: number; kind: string } }) => r.sp },
+    fauna: {
+      speciesOf: (r: { sp: { size: number; kind: string } }) => r.sp,
+      hitAnchor: (r: { drawn: boolean; anchor: unknown }) => (r.drawn ? r.anchor : null),
+    },
   };
   h.game = game;
   const clip = {
