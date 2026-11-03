@@ -36,11 +36,63 @@ def binding(path):
     return {'path': str(p), 'realpath': str(p.resolve(strict=True)), 'sha256': caller.sha(p), 'bytes': p.stat().st_size}
 
 
+def python_runtime_probe():
+    """Discover this pinned launcher's actual kernel executable in one short CPU child."""
+    for name, expected in PINS.items():
+        caller.require(caller.sha(HELPERS / name) == expected, 'Accepted helper pin changed: ' + name)
+    launcher = str(Path(sys.executable).resolve())
+    program = '''import os, sys
+if not __debug__ or sys.flags.optimize != 0 or os.environ.get('PYTHONOPTIMIZE', '') not in ('', '0'):
+    raise SystemExit('Optimized Python self probe refused')
+sys.dont_write_bytecode = True
+import hashlib, json
+from pathlib import Path
+helpers = Path(sys.argv[1])
+for name, expected in json.loads(sys.argv[2]).items():
+    if hashlib.sha256((helpers / name).read_bytes()).hexdigest() != expected:
+        raise SystemExit('Accepted helper pin changed before self probe import')
+sys.path.insert(0, str(helpers))
+from round4_job_boundary import identity
+from run_round4_browser_proof import executable_path
+pid = os.getpid()
+before = identity(pid)
+actual = executable_path(pid)
+after = identity(pid)
+if not before or not after or before['birth'] != after['birth'] or before['uid'] != os.getuid() or after['uid'] != os.getuid():
+    raise SystemExit('Python self identity changed')
+def file(path):
+    p = Path(path)
+    return {'path': str(p), 'realpath': str(p.resolve(strict=True)), 'sha256': hashlib.sha256(p.read_bytes()).hexdigest(), 'bytes': p.stat().st_size}
+print(json.dumps({'scope': 'CPU_SELF_PROCESS_ONLY_NOT_CAPTURE', 'pid': pid, 'uid': os.getuid(), 'identityBefore': before, 'identityAfter': after,
+                  'launcher': file(str(Path(sys.executable).resolve())), 'kernelExecutable': file(actual)}))
+'''
+    argv = [launcher, '-I', '-B', '-c', program, str(HELPERS), json.dumps(PINS, sort_keys=True)]
+    result = subprocess.run(argv, cwd=ROOT, capture_output=True, text=True, timeout=10,
+                            env={'PATH': os.environ['PATH'], 'PYTHONOPTIMIZE': '0', 'PYTHONDONTWRITEBYTECODE': '1'})
+    caller.require(result.returncode == 0, 'Pinned Python self probe failed: ' + result.stderr)
+    observed = json.loads(result.stdout)
+    caller.require(observed['launcher'] == binding(launcher) and observed['uid'] == os.getuid(), 'Pinned Python self probe launcher/UID mismatch')
+    caller.require(observed['kernelExecutable'] == binding(observed['kernelExecutable']['path']), 'Actual Python executable binding changed')
+    return {'argv': argv, 'exit': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr,
+            'observation': observed, 'processExitedAndReaped': True, 'nativeCaptureStarted': False}
+
+
+def validate_python_runtime_bindings(ready):
+    """The freeze must cover both the published launcher and self-observed executable."""
+    observed = ready['pythonRuntimeProbe']['observation']
+    caller.require(observed['launcher']['path'] == ready['python'], 'Python launcher selection changed')
+    for kind in ('launcher', 'kernelExecutable'):
+        expected = observed[kind]
+        caller.require(ready['process_binary_sha256'].get(expected['path']) == expected['sha256'], 'Python ' + kind + ' missing/drifted in native process bindings')
+        caller.require(expected in ready['bindings'], 'Python ' + kind + ' missing/drifted in immutable file bindings')
+
+
 def make_ready():
     caller.optimization_guard()
     for name, expected in PINS.items():
         caller.require(caller.sha(HELPERS / name) == expected, 'Accepted helper pin changed: ' + name)
     caller.require(caller.sha(PRODUCT_REVIEW) == PRODUCT_REVIEW_SHA, 'Prior product source review drifted')
+    python_probe = python_runtime_probe()
     node = str(Path(subprocess.check_output(['/usr/bin/which', 'node'], text=True).strip()).resolve())
     script = """import{createRequire}from'node:module';import{dirname}from'node:path';
 const r=createRequire(process.cwd()+'/packages/tools/package.json'),t=r.resolve('@playwright/test'),p=createRequire(t).resolve('playwright'),c=createRequire(p).resolve('playwright-core');
@@ -53,7 +105,7 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
     cache = Path.home() / 'Library/Caches/ms-playwright'
     browser_root = cache / ('chromium_headless_shell-' + revision) / 'chrome-headless-shell-mac-arm64'
     browser = browser_root / 'chrome-headless-shell'
-    native = [Path(sys.executable).resolve(), Path(node), Path('/usr/bin/caffeinate'), browser]
+    native = [Path(sys.executable).resolve(), Path(python_probe['observation']['kernelExecutable']['path']), Path(node), Path('/usr/bin/caffeinate'), browser]
     esbuild_binary = ROOT / 'node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild'
     caller.require(esbuild_binary.is_file(), 'Exact tsx esbuild native route missing')
     native += [esbuild_binary]
@@ -91,13 +143,14 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
                            'output': str(ROOT / 'assets/renders/ui' / ('fauna-packet-' + name + '-' + nonce)),
                            'evidence': '/private/tmp/fhp-' + nonce, 'consumption': '/private/tmp/fhc-' + nonce + '.json'}
     per_unit = output_cap * 3 + metadata_cap + snapshot_cap + sum(reserves.values())
-    return {
+    ready = {
         'runtimeEnabled': False, 'phase': 'CPU_CANDIDATE_PENDING_INDEPENDENT_CALLER_FIXTURE_REVIEW',
         'root': str(ROOT), 'uid': os.getuid(), 'python': str(Path(sys.executable).resolve()), 'pythonVersion': sys.version,
         'node': node, 'path': os.environ['PATH'], 'git': '/usr/bin/git', **routes,
         'stationDirectory': str(HELPERS), 'acceptedHelperCommit': 'ca7d91e378e9d2f3f0ce8f0651475dcb843875d9',
         'browserCache': str(cache), 'resolver': {'selectedExecutable': {'path': str(browser), 'sha256': caller.sha(browser)}},
         'process_binary_sha256': {str(p): caller.sha(p) for p in native},
+        'pythonRuntimeProbe': python_probe,
         'bindings': [binding(p) for p in sorted(set(files))],
         'dependencies': caller.tree_binding(ROOT / 'node_modules/.pnpm', workspace_links),
         'decoderPython': str(DECODER_PYTHON.resolve()), 'decoderSite': str(DECODER_SITE),
@@ -126,6 +179,8 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
         'noVideoRequested': True, 'ffmpegOrHardwareEncoderAllowed': False,
         'externalSystemXpcOwnership': 'UNQUALIFIED; no explicit encoder/recorder route in captureUi',
     }
+    validate_python_runtime_bindings(ready)
+    return ready
 
 
 if __name__ == '__main__':

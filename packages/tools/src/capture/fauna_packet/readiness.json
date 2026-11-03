@@ -2390,10 +2390,10 @@
       "sha256": "b56c75d9d1431259ed9c2c072a2c73c377eedccb03905a12e60a85a02aa0f815"
     },
     {
-      "bytes": 10745,
+      "bytes": 14229,
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/packages/tools/src/capture/fauna_packet/freeze.py",
       "realpath": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/packages/tools/src/capture/fauna_packet/freeze.py",
-      "sha256": "32ecc15a56f6deb704f34bf9fa6c51343af2c3c38e2ed52d7c204ac851dcf3bd"
+      "sha256": "6de5b4889e58e1d446bdc3c451aecd0988b5f8da3bae48a69eeb10c1a8ccb9e7"
     },
     {
       "bytes": 12762,
@@ -2508,6 +2508,12 @@
       "path": "/bin/ps",
       "realpath": "/bin/ps",
       "sha256": "a06fe087161557f1f8c030672eaedcd90bc6a8e92b8f2d44e07cffedc3349205"
+    },
+    {
+      "bytes": 33568,
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22"
     },
     {
       "bytes": 34640,
@@ -4836,6 +4842,7 @@
     "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node": "06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b",
     "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384",
     "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634",
+    "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22",
     "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a",
     "/usr/bin/caffeinate": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
   },
@@ -4850,6 +4857,61 @@
     "packages/tools/src/capture/screens.ts": "46016a0cd9f8ffee50ec393e5cd76b9062d7689430d78610737c3e85deb170a3"
   },
   "python": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "pythonRuntimeProbe": {
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "-I",
+      "-B",
+      "-c",
+      "import os, sys\nif not __debug__ or sys.flags.optimize != 0 or os.environ.get('PYTHONOPTIMIZE', '') not in ('', '0'):\n    raise SystemExit('Optimized Python self probe refused')\nsys.dont_write_bytecode = True\nimport hashlib, json\nfrom pathlib import Path\nhelpers = Path(sys.argv[1])\nfor name, expected in json.loads(sys.argv[2]).items():\n    if hashlib.sha256((helpers / name).read_bytes()).hexdigest() != expected:\n        raise SystemExit('Accepted helper pin changed before self probe import')\nsys.path.insert(0, str(helpers))\nfrom round4_job_boundary import identity\nfrom run_round4_browser_proof import executable_path\npid = os.getpid()\nbefore = identity(pid)\nactual = executable_path(pid)\nafter = identity(pid)\nif not before or not after or before['birth'] != after['birth'] or before['uid'] != os.getuid() or after['uid'] != os.getuid():\n    raise SystemExit('Python self identity changed')\ndef file(path):\n    p = Path(path)\n    return {'path': str(p), 'realpath': str(p.resolve(strict=True)), 'sha256': hashlib.sha256(p.read_bytes()).hexdigest(), 'bytes': p.stat().st_size}\nprint(json.dumps({'scope': 'CPU_SELF_PROCESS_ONLY_NOT_CAPTURE', 'pid': pid, 'uid': os.getuid(), 'identityBefore': before, 'identityAfter': after,\n                  'launcher': file(str(Path(sys.executable).resolve())), 'kernelExecutable': file(actual)}))\n",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring",
+      "{\"round4_capture_children.py\": \"e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07\", \"round4_job_boundary.py\": \"3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c\", \"run_round4_browser_proof.py\": \"f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab\", \"run_round4_remaining8.py\": \"4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8\"}"
+    ],
+    "exit": 0,
+    "nativeCaptureStarted": false,
+    "observation": {
+      "identityAfter": {
+        "birth": [
+          1793728538,
+          595075
+        ],
+        "pgid": 86193,
+        "pid": 86210,
+        "ppid": 86193,
+        "status": 2,
+        "uid": 501
+      },
+      "identityBefore": {
+        "birth": [
+          1793728538,
+          595075
+        ],
+        "pgid": 86193,
+        "pid": 86210,
+        "ppid": 86193,
+        "status": 2,
+        "uid": 501
+      },
+      "kernelExecutable": {
+        "bytes": 33568,
+        "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22"
+      },
+      "launcher": {
+        "bytes": 34640,
+        "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "sha256": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a"
+      },
+      "pid": 86210,
+      "scope": "CPU_SELF_PROCESS_ONLY_NOT_CAPTURE",
+      "uid": 501
+    },
+    "processExitedAndReaped": true,
+    "stderr": "",
+    "stdout": "{\"scope\": \"CPU_SELF_PROCESS_ONLY_NOT_CAPTURE\", \"pid\": 86210, \"uid\": 501, \"identityBefore\": {\"pid\": 86210, \"ppid\": 86193, \"pgid\": 86193, \"birth\": [1793728538, 595075], \"status\": 2, \"uid\": 501}, \"identityAfter\": {\"pid\": 86210, \"ppid\": 86193, \"pgid\": 86193, \"birth\": [1793728538, 595075], \"status\": 2, \"uid\": 501}, \"launcher\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"sha256\": \"e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a\", \"bytes\": 34640}, \"kernelExecutable\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"sha256\": \"b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22\", \"bytes\": 33568}}\n"
+  },
   "pythonVersion": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
   "resolver": {
     "selectedExecutable": {
@@ -4859,7 +4921,7 @@
   },
   "reviewedCoreHead": "2f36cdb2d6bdd1f40428b6b48c2c27fddbdcfcae",
   "root": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09",
-  "runtimeEnabled": true,
+  "runtimeEnabled": false,
   "scope": {
     "framesPerUnit": 72,
     "liveServerQualified": false,
@@ -4881,11 +4943,11 @@
   "units": {
     "fauna-hit-turn-day-16x9": {
       "aspect": "16x9",
-      "attemptId": "713979ae3bcd4be3aa62c118c22499af",
-      "consumption": "/private/tmp/fhc-713979ae3bcd4be3aa62c118c22499af.json",
-      "evidence": "/private/tmp/fhp-713979ae3bcd4be3aa62c118c22499af",
+      "attemptId": "6a9ecdfc703b46739c313b9b45226c71",
+      "consumption": "/private/tmp/fhc-6a9ecdfc703b46739c313b9b45226c71.json",
+      "evidence": "/private/tmp/fhp-6a9ecdfc703b46739c313b9b45226c71",
       "light": "day",
-      "output": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-713979ae3bcd4be3aa62c118c22499af",
+      "output": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e08t09/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-6a9ecdfc703b46739c313b9b45226c71",
       "screen": "fauna-hit-turn-day-16x9"
     },
     "fauna-hit-turn-day-21x9": {
