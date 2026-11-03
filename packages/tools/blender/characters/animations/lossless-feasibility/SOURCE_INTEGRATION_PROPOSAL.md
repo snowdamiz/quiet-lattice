@@ -1,6 +1,6 @@
 # Smallest lossless primary integration
 
-This is a source proposal, not implementation or runtime authorization. The format proof is accepted. The corrected ledger is `storage-accounting.json`, SHA-256 `f3ee51b03394d17a82a52f1338e5d3d8d60374120d85262b3468cfc4c5585909`, committed as `4c22f5db4e959b903302ce5f145af143c34a3591`. Reuse that ledger, including all retained copies, integration-test outputs, archives, staging, and main hydration. Do not revive the withdrawn single-copy fit claim.
+This is a source proposal, not implementation or runtime authorization. The format proof is accepted. The corrected ledger is `storage-accounting.json`, SHA-256 `2c5665c31c3189d1822560534c0220f2ab7a33010854068ce08964ad5b85519b`. It includes the one upfront integration fixture in the full-scope ledger as well as the first small unit. Reuse that ledger, including all retained copies, integration-test outputs, archives, staging, and main hydration. Do not revive the withdrawn single-copy fit claim.
 
 ## Files and scope
 
