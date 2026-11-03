@@ -1,0 +1,67 @@
+{
+  "status": "CONDITIONAL_PROPOSAL_ONLY_NO_CAPTURE_OR_STREAMING_IMPLEMENTATION",
+  "scope": {
+    "reuseClips": [
+      "walk_forward",
+      "cast_resonance"
+    ],
+    "remainingClips": 40,
+    "remainingMotionReels": 240,
+    "remainingMotionFrames": 46656,
+    "remainingPngStills": 960
+  },
+  "primaryMotion": {
+    "codec": "libx264rgb lossless CRF0, RGB24 input, High4:4:4Predictive/gbrp full-range GBR decode",
+    "container": "MP4, timebase1/60000,60Hz samples,GOP60,no Bframes",
+    "perReelHardByteCap": "8MiB +160KiB per declared frame",
+    "alpha": "RGB or all-alpha255 RGBA only; reject nonopaque before encode; transparent future inputs need a separately proved alpha-preserving strategy",
+    "pixelContract": "Record source RGB/RGBA pixel hashes and ordered work/time/profile identities; independently software-decode and compare all frames before acceptance."
+  },
+  "budgetBytes": {
+    "losslessMotion": 9657384960,
+    "pngStills": 8053063680,
+    "observations": 6241124352,
+    "allAncillaryAndPreservedCaches": 2147483648,
+    "contactSheets": 536870912,
+    "boundedStaging": 1073741824,
+    "freeSafety": 4294967296
+  },
+  "aggregateHardBudgetBytes": 32004636672,
+  "diskSnapshot": {
+    "utc": "2026-11-03T03:44:08.187039+00:00",
+    "freeBytes": 33530982400
+  },
+  "headroomAfterBudgetBytes": 1526345728,
+  "observedEstimateOnly": {
+    "motionBytesAtOneSampleMean": 8301432803,
+    "pngStillsBytesAtPilotMean": 3554549700,
+    "meaning": "One132-frame Thalune walk sample. Not a compression guarantee, throughput benchmark, or full-library completion promise."
+  },
+  "requiredIntegrationChanges": [
+    "Create new reviewed readiness/caller scope; existing pilot grant and implementation do not authorize this format",
+    "Use the unchanged StationJob ownership boundary; pin software ffmpeg/ffprobe plus helpers; bound capture/encode/decode/cleanup separately with first-failure stop",
+    "Stream future motion into lossless encoding with bounded backpressure; keep source pixel hashes/work mapping and selected keyframe PNGs. No persist-all-PNG motion design or deletion of current data",
+    "Verify alpha on every source frame; no chroma conversion, lossy primary, frame dropping, sample-rate change or silent fallback",
+    "Validate full frame count/order/timebase and every decoded RGB/RGBA pixel hash. Tested framehash output permits bounded decoder validation without raw RGB files",
+    "Enforce proposed hard byte caps for reels, stills, observations, all preserved caches/ancillary data, contact sheets and staging; stop and retain partial evidence on overflow",
+    "Use count/rate/indexed-reel identities and explicit new primary artifact acceptance; keep necessary light/LOD/wire stills as PNG",
+    "Review compatibility and software decode/seek contract; browser/QuickTime/hardware decoder playback is untested. Any lossy viewing copy must be separate and labeled",
+    "Reserve and recheck current free disk before each separately granted bounded unit. Do not grant the full library from this single-sample estimate"
+  ],
+  "capMeaning": "These are proposed enforced ceilings, not proven natural codec maxima. They fit the snapshot only if every unit meets all ceilings. Overflow must HOLD without changing losslessness or deleting prior evidence. New ceilings and streaming/memory/backpressure behavior require independent review and a bounded integration proof before capture.",
+  "resourceBounds": {
+    "provedNativePerCommandCaptureSeconds": 120,
+    "provedCleanupSeconds": 20,
+    "provedCodecDecoderThreads": 1,
+    "provedCodecEncoderThreads": 1,
+    "provedMaxFrames": 132,
+    "provedEncoderFileBytes": 536870912,
+    "provedDecodedFileBytes": 821145600,
+    "futureQueueProposal": "At most2 source RGB frames; queue payload12,441,600bytes, plus validated PNG/source buffers and codec state. Total memory bound not qualified by this proof."
+  },
+  "doNotChange": [
+    "All existing PNGs/cache/candidates/source bytes",
+    "Observed joint-cap/gap art concern and its unproved cause",
+    "Actual sampled60Hz evidence must not be described as realtime60FPS"
+  ]
+}
