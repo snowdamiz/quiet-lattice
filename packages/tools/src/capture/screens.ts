@@ -911,6 +911,8 @@ interface FaunaPage {
     events: { frame: number; target: number; amount: number; visible: boolean; consumed: boolean }[];
     frames: { frame: number; ms: number; targetVisible: boolean; values: string[] }[];
   };
+  __flyerKill: FlyerKillReceipt;
+  __restoreFaunaHudClock?: () => void;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -925,7 +927,7 @@ const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.5, flash: 9.7, analysis: 10.2
  * fill) in the page's hands: `__herd.hit` is the server saying a hit landed. `night` stands the walker on the night side.
  * Creature 601 is the one in the sights. Stops with the herd settled in view, 2.4 s into the stream.
  */
-async function openHerd(page: Page, night: boolean): Promise<void> {
+async function openHerd(page: Page, night: boolean, flyerKill = false): Promise<void> {
   // (tsx names the callbacks' functions with esbuild's __name helper, which the page lacks)
   await page.evaluate('window.__name ??= (f) => f');
   await standingByShip(page);
@@ -1005,7 +1007,7 @@ async function openHerd(page: Page, night: boolean): Promise<void> {
       await w.__herd.aim(601);
       await w.__herd.stepTo(at.base);
     },
-    { night, kills: HERD_KILLS, at: HERD_AT },
+    { night, kills: flyerKill ? { ...HERD_KILLS, 606: 9 } : HERD_KILLS, at: HERD_AT },
   );
   await page.waitForTimeout(600);
 }
@@ -2035,6 +2037,121 @@ export function faunaTurnMotion(): void {
   };
 }
 
+export interface FlyerKillReceipt {
+  offlineReplay: true;
+  target: number;
+  speciesKind: string;
+  beforeMode: string;
+  mode: string;
+  sourcePosition: number[];
+  sourcePositionAfter: number[];
+  instanceMatrix: number[];
+  cameraWorld: number[];
+  cameraInverseQuaternion: number[];
+  projectionMatrix: number[];
+  worldUp: number[];
+  size: number;
+  publishedAnchor: number[];
+  projectedAnchor: { x: number; y: number };
+  number: { value: string; left: number; top: number; fontSize: string; color: string; ageMs: number; sameRecord: boolean };
+  fallAgeMs: number;
+  viewport: number[];
+}
+
+/** Only the new turn packet: an offline replay death, with an actual live number held on the fallen flyer instance. */
+export async function faunaFlyerKillPose(): Promise<void> {
+  const w = window as unknown as FaunaPage;
+  const g = w.game;
+  const h = g.hud;
+  await w.__herd.stepTo(8);
+  await w.__herd.aim(606, 24);
+  const r = g.remotes.get(606);
+  const sp = g.fauna.speciesOf(r);
+  const beforeMode = r.pose.mode;
+  if (sp.kind !== 'flyer' || beforeMode === 'dead' || !h.hitAnchor(r)) throw new Error('kill fixture did not start on a visible living flyer');
+  await w.__herd.stepTo(9);
+  for (let i = 0; i < 24 && r.pose.mode !== 'dead'; i++) await w.step(1);
+  if (r.pose.mode !== 'dead' || !(r.vis.deadAt >= 0)) throw new Error('kill fixture did not receive the replay flyer death');
+  const sourcePosition = r.pos.toArray();
+  const old = { now: h.now, later: h.later, cancel: h.cancel };
+  const base = h.now();
+  const started = g.time;
+  let timerId = 0;
+  const timers = new Map<number, { fn: () => void; at: number }>();
+  h.now = () => base + (g.time - started) * 1000;
+  h.later = (fn: () => void, ms: number) => {
+    const id = ++timerId;
+    timers.set(id, { fn, at: h.now() + ms });
+    return id;
+  };
+  h.cancel = (id: number) => timers.delete(id);
+  w.__restoreFaunaHudClock = () => {
+    const now = h.now();
+    Object.assign(h, old);
+    for (const timer of timers.values()) old.later(timer.fn, Math.max(0, timer.at - now));
+    timers.clear();
+  };
+  w.__herd.hit(606, 26, true);
+  w.__feed.event({ kind: 'xp', amount: 30, level: 1 });
+  w.__feed.event({ kind: 'loot', item: 'units', count: 7 });
+  if (w.__feed.dealt.length !== 1 || w.__feed.dealt[0].target !== 606 || !w.__feed.dealt[0].killed) throw new Error('flyer killing-blow event missing');
+  await w.step(1);
+  await w.step(42);
+  if (w.__feed.dealt.length) throw new Error('flyer killing-blow event was not consumed');
+  const number = document.querySelector<HTMLElement>('.hit-number');
+  const live = h.hitLive.find((x: { target: unknown; el: HTMLElement }) => x.target === r && x.el === number);
+  if (!number || !live || number.textContent !== '26' || h.hitsEl.children.length !== 1)
+    throw new Error('flyer killing-blow number is not live on its original record');
+  const d = g.fauna.worlds.get(r.frame).drawn.get(r.species);
+  if (d.mesh.count !== 1) throw new Error('flyer fixture requires its one actual species instance');
+  const matrix = g.engine.camera.projectionMatrix.clone();
+  d.mesh.getMatrixAt(0, matrix);
+  const actual = r.world.clone().setFromMatrixPosition(matrix).add(g.camWorld);
+  const up = r.world.clone().sub(r.frame.position).normalize();
+  if (r.world.clone().sub(actual).dot(up) < 2) throw new Error('flyer fixture did not show its actual instance falling');
+  const point = actual.addScaledVector(up, sp.size * 0.5);
+  const p = point.clone().sub(g.camWorld).applyQuaternion(g.camWorldQuatInv).applyMatrix4(g.engine.camera.projectionMatrix);
+  const projectedAnchor = { x: (p.x * 0.5 + 0.5) * window.innerWidth, y: (-p.y * 0.5 + 0.5) * window.innerHeight };
+  const anchor = h.hitAnchor(r);
+  const ageMs = h.now() - live.at;
+  if (!anchor || Math.hypot(anchor.x - projectedAnchor.x, anchor.y - projectedAnchor.y) > 0.05 || Math.abs(ageMs - 700) > 0.1)
+    throw new Error('flyer number did not follow the actual fallen instance near 700 ms');
+  const animations = number.getAnimations();
+  if (!animations.length) throw new Error('flyer number animation missing');
+  for (const a of animations) {
+    a.pause();
+    a.currentTime = ageMs;
+  }
+  w.__flyerKill = {
+    offlineReplay: true,
+    target: r.id,
+    speciesKind: sp.kind,
+    beforeMode,
+    mode: r.pose.mode,
+    sourcePosition,
+    sourcePositionAfter: r.pos.toArray(),
+    instanceMatrix: matrix.toArray(),
+    cameraWorld: g.camWorld.toArray(),
+    cameraInverseQuaternion: g.camWorldQuatInv.toArray(),
+    projectionMatrix: g.engine.camera.projectionMatrix.toArray(),
+    worldUp: up.toArray(),
+    size: sp.size,
+    publishedAnchor: g.fauna.hitAnchor(r).toArray(),
+    projectedAnchor,
+    number: {
+      value: number.textContent,
+      left: Number.parseFloat(number.style.left),
+      top: Number.parseFloat(number.style.top),
+      fontSize: number.style.fontSize,
+      color: number.style.color,
+      ageMs,
+      sameRecord: live.target === r,
+    },
+    fallAgeMs: (g.fauna.time.value - r.vis.deadAt) * 1000,
+    viewport: [window.innerWidth, window.innerHeight],
+  };
+}
+
 function faunaTurnScreen(night: boolean, clipAspect: '16x9' | '21x9'): ScreenDef {
   const stills = faunaStills();
   return {
@@ -2043,10 +2160,20 @@ function faunaTurnScreen(night: boolean, clipAspect: '16x9' | '21x9'): ScreenDef
     clipSeconds: 1.2,
     clipAspect,
     sheetFrames: [0, 4, 8, 10, 12, 16, 20, 24, 28, 30, 32, 40, 48, 52, 54, 60, 71],
-    open: (page) => openHerd(page, night),
+    open: (page) => openHerd(page, night, true),
     stills: {
-      kill: stills.kill,
-      offscreen: stills.offscreen,
+      async kill(page) {
+        await clearHud(page);
+        await page.evaluate(faunaFlyerKillPose);
+      },
+      async offscreen(page) {
+        await page.evaluate(() => {
+          const w = window as unknown as FaunaPage;
+          w.__restoreFaunaHudClock?.();
+          delete w.__restoreFaunaHudClock;
+        });
+        await stills.offscreen(page);
+      },
       async start(page) {
         await clearHud(page);
         await page.evaluate(async () => {

@@ -12,6 +12,8 @@ import * as combat from '@astra/shared/combat';
 import { FALL_S, Fauna } from './Fauna.js';
 import { HUD } from '../ui/HUD.js';
 import { CombatFeed } from '../net/combat.js';
+import { play as replayHerd } from '../remote/replay.js';
+import { faunaFlyerKillPose } from '../../../tools/src/capture/screens.ts';
 
 vi.mock('@astra/shared/combat', async (original) => {
   const real = await original();
@@ -366,11 +368,13 @@ describe('Fauna’s displayed hit anchor', () => {
       appendChild(e) { e.parent = this; this.children.push(e); },
       remove() { this.isConnected = false; if (this.parent) this.parent.children = this.parent.children.filter((e) => e !== this); },
       animate() {},
+      getAnimations() { return [{ pause() {}, currentTime: 0 }]; },
     });
     vi.stubGlobal('window', { innerWidth: width, innerHeight: 1080 });
-    vi.stubGlobal('document', { createElement: element });
+    vi.stubGlobal('document', { createElement: element, querySelector: () => h.hitsEl.children[0] });
     const h = Object.create(HUD.prototype);
     Object.assign(h, { game, hitsEl: element(), t: 0, now: () => h.t, later: () => 0, toast: vi.fn() });
+    game.hud = h;
     const feed = new CombatFeed({ on() {}, entityId: 1, now: () => h.t });
     // Read the actual displayed transform, without reproducing any fall-motion formula.
     const projected = (record = r) => {
@@ -521,6 +525,61 @@ describe('Fauna’s displayed hit anchor', () => {
     expect(Number.parseFloat(fresh.style.left)).toBeGreaterThan(startX + 1);
     expect(initial.entities[0].pos).toEqual(at(0, 20));
     expect(remotes.offline.entities.get(7).pos).toEqual(at(10, 20));
+    fauna.reset();
+  });
+
+  it.each([1920, 2520])('the new flyer still consumes a replay death and actual CombatFeed kill on the falling instance at %i×1080', async (width) => {
+    const { game, fauna, planet, h, feed } = stage(width);
+    game.time = 0;
+    game.system = { seed: SEED, planets: [planet] };
+    game.station = new Body({ kind: 'station' });
+    game.player = { state: { frame: planet, pos: new THREE.Vector3(...at(0, 0.5)) }, heading: new THREE.Vector3(0, 0, -1) };
+    const remotes = (game.remotes = new RemoteEntities(game, { view: { group: new THREE.Group(), draws: () => false, update() {} }, fauna }));
+    replayHerd(game, 'herd', { seconds: 40, kills: { 601: 9, 603: 23.6, 606: 9 } });
+    const event = vi.spyOn(feed, 'event');
+    const step = async (n) => {
+      for (let i = 0; i < n; i++) {
+        game.time += DT;
+        remotes.update(DT);
+        h.updateHits(feed);
+      }
+    };
+    const herd = {
+      async stepTo(at) { await step(Math.max(0, Math.round((at - game.time) * 60))); },
+      async aim(id, frames) {
+        for (let i = 0; i < frames; i++) {
+          const r = remotes.get(id);
+          const mid = r.pos.clone().addScaledVector(r.pos.clone().normalize(), fauna.speciesOf(r).size * 0.55);
+          game.engine.camera.lookAt(mid.sub(game.camWorld));
+          game.engine.camera.updateMatrixWorld();
+          game.camWorldQuatInv.copy(game.engine.camera.quaternion).invert();
+          await step(1);
+        }
+      },
+      hit(target, amount, killed) { feed.event({ kind: 'combat', source: 1, target, amount, killed, hp: killed ? 0 : 0.5 }); },
+    };
+    Object.assign(window, { game, __feed: feed, __herd: herd, step });
+    await herd.stepTo(2.4);
+    await faunaFlyerKillPose();
+    const receipt = window.__flyerKill;
+    expect(receipt).toMatchObject({ offlineReplay: true, target: 606, speciesKind: 'flyer', beforeMode: 'fly', mode: 'dead', viewport: [width, 1080] });
+    expect(receipt.number).toMatchObject({ value: '26', fontSize: '26px', color: 'var(--accent-hi)', sameRecord: true });
+    expect(receipt.number.ageMs).toBeCloseTo(700, 6);
+    expect(receipt.fallAgeMs).toBeGreaterThanOrEqual(700);
+    expect(receipt.fallAgeMs).toBeLessThan(750);
+    expect(receipt.sourcePositionAfter).toEqual(receipt.sourcePosition);
+    expect(receipt.number.left).toBeCloseTo(receipt.projectedAnchor.x, 3);
+    expect(receipt.number.top).toBeCloseTo(receipt.projectedAnchor.y, 3);
+    expect(event.mock.calls.map(([e]) => e)).toEqual([
+      { kind: 'combat', source: 1, target: 606, amount: 26, killed: true, hp: 0 },
+      { kind: 'xp', amount: 30, level: 1 },
+      { kind: 'loot', item: 'units', count: 7 },
+    ]);
+    const wire = remotes.offline.entities.get(606);
+    expect(wire).toMatchObject({ mode: 'dead', hp: 0 });
+    expect(new THREE.Vector3(...wire.pos).distanceTo(new THREE.Vector3(...receipt.sourcePosition))).toBeLessThan(1e-8);
+    expect(feed.dealt).toEqual([]);
+    window.__restoreFaunaHudClock();
     fauna.reset();
   });
 });
