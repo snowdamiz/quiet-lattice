@@ -14,6 +14,7 @@ if str(HERE) in sys.path:
     sys.path.remove(str(HERE))  # inspect.py is an executable inspector, never the stdlib inspect module.
 import subprocess
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -136,6 +137,107 @@ class CallerControls(unittest.TestCase):
                 else:
                     self.assertIn('archive', calls)
                     self.assertIsNotNone(result['primaryFailure'])
+
+
+class CacheSnapshotControls(unittest.TestCase):
+    def test_regular_source_growth_after_inventory_never_exceeds_admitted_copy_bytes(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
+            base = Path(temp)
+            cache, evidence = base / 'cache', base / 'evidence'
+            cache.mkdir(); evidence.mkdir()
+            source = cache / 'mutable-cache.bin'
+            source.write_bytes(b'a' * 1024)
+            original_inventory = caller.inventory
+            grown = False
+            def inventory_then_grow(root):
+                nonlocal grown
+                before = original_inventory(root)
+                if Path(root) == cache and not grown:
+                    source.write_bytes(b'a' * 16384)
+                    grown = True
+                return before
+            with patch.object(caller, 'inventory', side_effect=inventory_then_grow):
+                with self.assertRaisesRegex(caller.Refused, 'Generated cache changed during snapshot'):
+                    caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
+            copied = evidence / 'cache-before-0/mutable-cache.bin'
+            self.assertLessEqual(copied.stat().st_size, 4096)
+            self.assertEqual(copied.read_bytes(), b'a' * 1024)
+            self.assertEqual(source.read_bytes(), b'a' * 16384)
+            self.assertFalse((evidence / 'cache-before.json').exists())
+
+    def test_multiple_caches_and_files_copy_at_the_exact_aggregate_boundary(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
+            base = Path(temp)
+            caches, evidence = [base / 'cache0', base / 'cache1'], base / 'evidence'
+            for directory in [*caches, evidence]:
+                directory.mkdir()
+            (caches[0] / 'a').write_bytes(b'a' * 7)
+            (caches[0] / 'b').write_bytes(b'b' * 5)
+            (caches[1] / 'c').write_bytes(b'c' * 4)
+            (caches[1] / 'empty').write_bytes(b'')
+            original = [caller.inventory(root) for root in caches]
+            rows = caller.snapshot_caches({'generatedCaches': list(map(str, caches)), 'budget': {'cacheSnapshotCapBytes': 16}}, evidence)
+            self.assertEqual([row['files'] for row in rows], original)
+            self.assertEqual([caller.inventory(root) for root in caches], original)
+            copied = [caller.inventory(evidence / ('cache-before-' + str(i))) for i in range(2)]
+            self.assertEqual(copied, original)
+            self.assertEqual(sum(row['bytes'] for files in copied for row in files), 16)
+            self.assertEqual(json.loads((evidence / 'cache-before.json').read_text()), rows)
+
+    def test_overremaining_file_refuses_before_writing_and_retains_prior_copies(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
+            base = Path(temp)
+            caches, evidence = [base / 'cache0', base / 'cache1'], base / 'evidence'
+            for directory in [*caches, evidence]:
+                directory.mkdir()
+            (caches[0] / 'a').write_bytes(b'a' * 7)
+            (caches[0] / 'b').write_bytes(b'b' * 5)
+            (caches[1] / 'overremaining').write_bytes(b'c' * 4)
+            original = [caller.inventory(root) for root in caches]
+            with self.assertRaisesRegex(caller.Refused, 'exceeds controlled cap'):
+                caller.snapshot_caches({'generatedCaches': list(map(str, caches)), 'budget': {'cacheSnapshotCapBytes': 15}}, evidence)
+            self.assertEqual(caller.inventory(evidence / 'cache-before-0'), original[0])
+            self.assertFalse((evidence / 'cache-before-1/overremaining').exists())
+            self.assertEqual([caller.inventory(root) for root in caches], original)
+            self.assertFalse((evidence / 'cache-before.json').exists())
+
+    def test_shrink_and_same_size_mutation_retain_failed_copy_without_success_receipt(self):
+        for changed in (b'a' * 1024, b'b' * 4096):
+            with self.subTest(changedBytes=len(changed)), tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
+                base = Path(temp)
+                cache, evidence = base / 'cache', base / 'evidence'
+                cache.mkdir(); evidence.mkdir()
+                source = cache / 'mutable-cache.bin'
+                source.write_bytes(b'a' * 4096)
+                original_inventory = caller.inventory
+                changed_once = False
+                def inventory_then_change(root):
+                    nonlocal changed_once
+                    before = original_inventory(root)
+                    if Path(root) == cache and not changed_once:
+                        source.write_bytes(changed)
+                        changed_once = True
+                    return before
+                with patch.object(caller, 'inventory', side_effect=inventory_then_change):
+                    with self.assertRaisesRegex(caller.Refused, 'Generated cache changed during snapshot'):
+                        caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
+                self.assertEqual((evidence / 'cache-before-0/mutable-cache.bin').read_bytes(), changed)
+                self.assertEqual(source.read_bytes(), changed)
+                self.assertFalse((evidence / 'cache-before.json').exists())
+
+    def test_snapshot_deadline_interrupts_inventory_and_restores_alarm(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
+            base = Path(temp)
+            cache, evidence = base / 'cache', base / 'evidence'
+            cache.mkdir(); evidence.mkdir()
+            (cache / 'source').write_bytes(b'preserve')
+            previous = caller.signal.getsignal(caller.signal.SIGALRM)
+            with patch.object(caller, 'CACHE_SNAPSHOT_SECONDS', 0.01), patch.object(caller, 'inventory', side_effect=lambda root: time.sleep(1)):
+                with self.assertRaisesRegex(caller.Refused, 'snapshot deadline expired'):
+                    caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
+            self.assertEqual(caller.signal.getsignal(caller.signal.SIGALRM), previous)
+            self.assertEqual((cache / 'source').read_bytes(), b'preserve')
+            self.assertFalse((evidence / 'cache-before.json').exists())
 
 
 def synthetic_turn():

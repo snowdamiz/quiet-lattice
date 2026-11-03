@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 import re
 import shutil
+import signal
 import stat
 import subprocess
 import time
@@ -23,6 +24,7 @@ if str(HERE) in sys.path:
     sys.path.remove(str(HERE))
 READY = HERE / 'readiness.json'
 _receipt_bytes = 0
+CACHE_SNAPSHOT_SECONDS = 30
 
 
 class Refused(RuntimeError):
@@ -193,22 +195,44 @@ def snapshot_caches(ready, evidence):
     maximum = ready['budget']['cacheSnapshotCapBytes']
     consumed = 0
     rows = []
-    for i, root in enumerate(ready['generatedCaches']):
-        source = Path(root)
-        before = inventory(source)
-        destination = evidence / ('cache-before-' + str(i))
-        destination.mkdir(mode=0o700)
-        for row in before:
-            consumed += row['bytes']
-            require(consumed <= maximum, 'Pre-existing generated cache snapshot exceeds controlled cap')
-            target = destination / row['path']
-            target.parent.mkdir(parents=True, exist_ok=True)
-            with (source / row['path']).open('rb') as src, target.open('xb') as dst:
-                shutil.copyfileobj(src, dst, 1024 * 1024)
-        require(inventory(source) == before == inventory(destination), 'Generated cache changed during snapshot')
-        rows.append({'source': root, 'snapshot': str(destination), 'files': before})
-    persist(evidence / 'cache-before.json', rows)
-    return rows
+    previous = signal.getsignal(signal.SIGALRM)
+    timer = signal.getitimer(signal.ITIMER_REAL)
+    started = time.monotonic()
+    def expired(*_):
+        raise Refused('Generated cache snapshot deadline expired; copied bytes retained')
+    signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, CACHE_SNAPSHOT_SECONDS)
+    try:
+        for i, root in enumerate(ready['generatedCaches']):
+            source = Path(root)
+            before = inventory(source)
+            destination = evidence / ('cache-before-' + str(i))
+            destination.mkdir(mode=0o700)
+            for row in before:
+                require(row['bytes'] <= maximum - consumed, 'Pre-existing generated cache snapshot exceeds controlled cap')
+                target = destination / row['path']
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with (source / row['path']).open('rb') as src, target.open('xb') as dst:
+                    copied = 0
+                    while copied < row['bytes']:
+                        remaining = min(row['bytes'] - copied, maximum - consumed, 1024 * 1024)
+                        require(remaining > 0, 'Generated cache snapshot exhausted controlled cap')
+                        chunk = src.read(remaining)
+                        require(0 < len(chunk) <= remaining, 'Generated cache changed during snapshot')
+                        written = dst.write(chunk)
+                        copied += written
+                        consumed += written
+                        require(written == len(chunk), 'Generated cache snapshot write incomplete; copied bytes retained')
+                    require(src.read(1) == b'', 'Generated cache changed during snapshot')
+            require(inventory(source) == before == inventory(destination), 'Generated cache changed during snapshot')
+            rows.append({'source': root, 'snapshot': str(destination), 'files': before})
+        persist(evidence / 'cache-before.json', rows)
+        return rows
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
+        if timer[0]:
+            signal.setitimer(signal.ITIMER_REAL, max(0.000001, timer[0] - (time.monotonic() - started)), timer[1])
 
 
 def observed_bytes(root):

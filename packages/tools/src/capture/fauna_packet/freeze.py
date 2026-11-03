@@ -110,6 +110,7 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
         'units': units,
         'budget': {'imagePerFileCapBytes': image_cap, 'imageCount': 81, 'readoutCapBytes': 16384,
                    'newOutputCapBytes': output_cap, 'controlledMetadataCapBytes': metadata_cap, 'cacheSnapshotCapBytes': snapshot_cap,
+                   'cacheSnapshotDeadlineSeconds': caller.CACHE_SNAPSHOT_SECONDS,
                    'outputCopyStagingBytes': 0, 'controlledImageTemporaryDiskBytes': 0,
                    'futureLfsAdditionalBytes': output_cap, 'futureMainHydrationAdditionalBytes': output_cap,
                    'nativeReservesAndObservedThresholds': reserves, 'safetyReserveBytes': reserves['safetyReserveBytes'],
