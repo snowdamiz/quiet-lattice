@@ -63,6 +63,54 @@ export function retainBrowserLaunch(out: string, prefix: string, child: ReturnTy
   return value;
 }
 
+/** Terminal evidence snapshots are separate from the final capture/cleanup verdict. */
+export function retainBrowserCheckpoint(out: string, name: 'before-browser-teardown' | 'returned-trace-evidence', value: unknown) {
+  const bytes = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  const path = join(out, `${name}.json`);
+  const cap = 64 * 1024 * 1024;
+  if (bytes.length > cap) {
+    writeFileSync(path + '.prefix', bytes.subarray(0, cap), { flag: 'wx' });
+    writeFileSync(path + '.overflow.json', JSON.stringify({ bytes: bytes.length, sha256: sha(bytes), retainedBytes: cap, complete: false }), { flag: 'wx' });
+    throw new Error('Browser checkpoint byte overflow; prefix/hash retained');
+  }
+  writeFileSync(path + '.writing', bytes, { flag: 'wx', mode: 0o600 });
+  linkSync(path + '.writing', path);
+  unlinkSync(path + '.writing');
+}
+
+function observeBrowserExit(out: string, child: ReturnType<BrowserServer['process']>, cleanupErrors: string[]) {
+  const path = join(out, 'browser-child-events.jsonl');
+  writeFileSync(path, '', { flag: 'wx', mode: 0o600 });
+  let events = 0;
+  const record = (kind: string, value: unknown) => {
+    if (++events > 8) {
+      if (events === 9) cleanupErrors.push('Public browser child observation count overflow');
+      return;
+    }
+    try {
+      appendFileSync(
+        path,
+        JSON.stringify({ kind, pid: child.pid ?? null, at: new Date().toISOString(), monotonicNs: process.hrtime.bigint().toString(), value }) + '\n',
+      );
+    } catch (error) {
+      cleanupErrors.push(`Public browser child observation: ${String(error)}`);
+    }
+  };
+  const exited = (code: number | null, signal: string | null) => record('exit', { code, signal });
+  const closed = (code: number | null, signal: string | null) => record('close', { code, signal });
+  const error = (value: Error) => record('error', String(value).slice(0, 4096));
+  child.on('exit', exited);
+  child.on('close', closed);
+  child.on('error', error);
+  record('observation-started', { exitCode: child.exitCode, signalCode: child.signalCode });
+  return () => {
+    child.off('exit', exited);
+    child.off('close', closed);
+    child.off('error', error);
+    record('observation-ended', { exitCode: child.exitCode, signalCode: child.signalCode });
+  };
+}
+
 /** Retain the returned CDP JSON value, not an inferred category capability or wire packet. */
 export async function observeBrowserCategories(options: { out: string; send: () => Promise<unknown>; pageErrors: () => unknown; cleanupErrors: string[] }) {
   const requested = { at: new Date().toISOString(), monotonicNs: process.hrtime.bigint().toString() };
@@ -195,6 +243,8 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
   let session: Awaited<ReturnType<typeof openReview>> | undefined;
   let failure: string | null = null;
   let evidence: unknown = null;
+  let traceSettlement: 'not-returned' | 'returned' | 'error-returned' | 'error-without-evidence' = 'not-returned';
+  let stopChildObservation: (() => void) | undefined;
   const pageErrors = () => ({
     total: session?.errors.length ?? 0,
     retained: session?.errors.slice(0, 128).map((e) => e.slice(0, 4096)) ?? [],
@@ -211,9 +261,32 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
   };
   let timer: ReturnType<typeof setInterval> | undefined;
   let stage = 'startup';
+  const checkpoint = (name: 'before-browser-teardown' | 'returned-trace-evidence') =>
+    retainBrowserCheckpoint(admission.out, name, {
+      diagnosticOnly: true,
+      checkpoint: name,
+      finalAcceptance: 'NOT_EVALUATED',
+      at: new Date().toISOString(),
+      monotonicNs: process.hrtime.bigint().toString(),
+      traceSettlement,
+      evidence,
+      failure,
+      cleanupErrors: [...cleanupErrors],
+      errors: [...errors],
+      pageErrors: pageErrors(),
+      counts: [...counts],
+      host: [...host],
+      scope: 'Only already returned or known facts; not a final cleanup, loss, completeness or performance verdict',
+    });
   let closing: Promise<void> | undefined;
   const closeBrowser = () =>
     (closing ??= (async () => {
+      try {
+        checkpoint('before-browser-teardown');
+      } catch (error) {
+        // The collector may still owe its primary protocol/timeout error. Never replace it.
+        cleanupErrors.push(`Before browser teardown checkpoint: ${String(error)}`);
+      }
       if (browser) {
         const close = browser.close({ reason: 'T13 diagnostic terminal cleanup' });
         try {
@@ -274,6 +347,7 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
     browserServer = await chromium.launchServer({ args, timeout: 30000 });
     signal.throwIfAborted();
     retainBrowserLaunch(admission.out, admission.prefix, browserServer.process());
+    stopChildObservation = observeBrowserExit(admission.out, browserServer.process(), cleanupErrors);
     browser = await chromium.connect(browserServer.wsEndpoint(), { timeout: 30000 });
     signal.throwIfAborted();
     const cdp = await phase(browser.newBrowserCDPSession(), 10000, 'browser CDP');
@@ -319,15 +393,16 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
       })(),
       10000,
       'kernel receipts',
-    )
-      .then(async (rendererPids) => {
-        check();
-        stage = 'browser-diagnostic';
-        const page = session?.page;
-        if (!page) throw new Error('Review session missing');
-        save('context.json', { browserVersion, browserPid, processes, rendererPids, viteUrl: vite?.url, args, frozenThalune, inputSha256: admission.inputs });
-        writeFileSync(join(admission.out, 'browser-trace.json'), '', { flag: 'wx' });
-        const result = await runBrowserWorkTrace({
+    ).then(async (rendererPids) => {
+      check();
+      stage = 'browser-diagnostic';
+      const page = session?.page;
+      if (!page) throw new Error('Review session missing');
+      save('context.json', { browserVersion, browserPid, processes, rendererPids, viteUrl: vite?.url, args, frozenThalune, inputSha256: admission.inputs });
+      writeFileSync(join(admission.out, 'browser-trace.json'), '', { flag: 'wx' });
+      let traceFailure: { error: unknown } | null = null;
+      try {
+        evidence = await runBrowserWorkTrace({
           prefix: admission.prefix,
           rendererPids,
           signal,
@@ -406,11 +481,23 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
             },
           },
         });
-        return result;
-      })
-      .then((value) => {
-        evidence = value;
-      });
+        traceSettlement = 'returned';
+      } catch (error) {
+        failure = String(error);
+        if (error instanceof BrowserWorkError) {
+          evidence = error.evidence;
+          traceSettlement = 'error-returned';
+        } else traceSettlement = 'error-without-evidence';
+        traceFailure = { error };
+      }
+      try {
+        checkpoint('returned-trace-evidence');
+      } catch (error) {
+        if (traceFailure === null) throw error;
+        cleanupErrors.push(`Returned trace evidence checkpoint: ${String(error)}`);
+      }
+      if (traceFailure !== null) throw traceFailure.error;
+    });
     check();
     if (errors.length) throw new Error(errors.join('; '));
   } catch (error) {
@@ -435,6 +522,7 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
       cleanupErrors.push(`Vite teardown: ${String(error)}`);
     }
     await Promise.allSettled([...pending]);
+    stopChildObservation?.();
     if (signal.aborted) failure ??= String(signal.reason);
     save('helpers.json', helpers);
     save('host.json', host);
