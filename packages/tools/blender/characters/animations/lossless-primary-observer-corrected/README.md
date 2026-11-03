@@ -1,0 +1,19 @@
+# Observer correction for the CPU lossless-primary candidate
+
+This is a disabled source-review candidate. No native fixture, validator, browser, capture, or render is authorized or started by this correction. The first integration fixture failed and remains preserved at commit `f7d644dbb307f650d181faad629d6189f24029b7`, sibling `lossless-primary-candidate`, manifest SHA `98f3870e586a0770f228561a87f89fc851fd06f9a4fbc2b0f95d735671b0d7d6`. That commit contains its exact source, index, MP4, full observations, failed receipt, clean:false boundary, and separate release recovery. No payload was copied into this fresh candidate.
+
+## Exact source delta
+
+`integration.py` changes its own observer and terminal summary. Actual executable admission is keyed by PID, exact birth, and UID. The observer records the actual identity after a failed executable-path read. A previously admitted birth that is now absent keeps its historical path/hash. A live same-birth path error, replacement/UID change, unknown departing birth, and unsupported live executable refuse the unit. A previously admitted zombie is explicitly awaiting reap; unchanged StationJob still has to prove release. Terminal audit failures are retained in a written HOLD summary and cannot print a successful release.
+
+`observer-controls.py` exercises those actual functions with in-process dependency fixtures and refuses subprocess creation. Fifteen controls pass, including preserving primary/cleanup evidence when the final audit raises. The original19entry/worker controls are reused because their source files are byte-identical. `freeze.py` changes only fresh source/output bindings, explicit disabled native authorization, and prospective accounting references. The future output path is new and absent.
+
+`entry.mjs`, `caller.py` (including `inspect_capture`), `rgb-primary.py`, `rgb-sink.mjs`, `replay-fixture.mjs`, the original control scripts, page API, playback, and module resolvers remain byte-identical to the failed-source commit. Canonical StationJob, its child helper, and the private-TMP helper remain exact accepted bytes. No application, scene, body, animation, or authored asset is changed.
+
+## Contract and review
+
+Review the whole integration under `t02-lossless-rgb-primary/v1`: complete non-image observations, one source frame in flight, verified opaque alpha, source PNG provenance with `sourcePngRetained:false`, lossless RGB MP4/frame ordinal/pixel hashes, and independent streaming RGB plus reconstructed RGBA validation without a raw reel spool. Stills retain PNG behavior. Historical PNGs remain preserved. First-attempt MP4 byte identity to an earlier validated file does not qualify that failed attempt or establish its unobserved child exit/finalization.
+
+The corrected whole-library ledger is referenced by hash in `prospective-accounting.json`. Existing failed data is already charged in current free space. A hypothetical same132-frame unit would use2new jobs,3cumulative against the original4-job ceiling, and a nominal10,317,987,840-byte incremental envelope through3copy allowances, remaining archive slots, staging, Git, and safety. Later main hydration remains a separate fourth-copy admission. This is not a grant or a fit claim: the whole integration still needs an aggregate metadata/framehash/expanded-summary budget review before any further native admission. This narrow observer correction preserves that other code unchanged.
+
+Run pure observer controls with the pinned bundled Python: `PYTHONDONTWRITEBYTECODE=1 <readiness.rgbPrimary.python> observer-controls.py`. Run read-only preflight with the exact `readiness.pathEnvironment`: `<readiness.rgbPrimary.python> caller.py --preflight`. `integration.py` explicitly refuses this disabled candidate before any allocation or launch. No performance or real-time60FPS claim is made. The observed joint-cap/gap concern remains for art review, with no cause assigned.

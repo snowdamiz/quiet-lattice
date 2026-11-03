@@ -1,0 +1,42 @@
+{
+  "status": "PASS_IN_PROCESS_NO_NATIVE_CHILDREN",
+  "root": "/private/tmp/t02-primary-pure-controls-5lGUQ2",
+  "controls": [
+    {
+      "control": "complete unknown non-image observation",
+      "pass": true
+    },
+    {
+      "control": "prospective aggregate byte limit",
+      "pass": true
+    },
+    {
+      "control": "bad ACK workId",
+      "pass": true
+    },
+    {
+      "control": "bad ACK mediaFrameOrdinal",
+      "pass": true
+    },
+    {
+      "control": "bad ACK sourcePngSha256",
+      "pass": true
+    },
+    {
+      "control": "bad ACK alphaPolicy",
+      "pass": true
+    },
+    {
+      "control": "encoder EPIPE stops next dispatch; observation and primary/cleanup retained",
+      "pass": true
+    },
+    {
+      "control": "persistence failure prevents first encoder write and next frame",
+      "pass": true
+    },
+    {
+      "control": "one in-flight source frame under blocked ACK",
+      "pass": true
+    }
+  ]
+}

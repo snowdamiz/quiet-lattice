@@ -1,0 +1,59 @@
+{
+  "status": "PROPOSPECTIVE_ONLY_NO_NATIVE_ADMISSION",
+  "snapshotUtcEpoch": 1793682050.0347059,
+  "currentFreeBytes": 20715839488,
+  "sourceReviewOnly": true,
+  "priorFailedAttempt": {
+    "commit": "f7d644dbb307f650d181faad629d6189f24029b7",
+    "manifestSha256": "98f3870e586a0770f228561a87f89fc851fd06f9a4fbc2b0f95d735671b0d7d6",
+    "worktreeBytes": 36533053,
+    "privateArchiveBytes": 170629,
+    "ownedJobSlotsUsed": 1,
+    "currentFreeAlreadyIncludesAllPriorRetainedData": true,
+    "incrementalChargeForThoseExistingBytes": 0,
+    "rawRgbSpoolBytes": 0
+  },
+  "prospectiveSame132FrameUnit": {
+    "nativeAuthorization": false,
+    "newJobs": [
+      "producer",
+      "validator"
+    ],
+    "newJobCount": 2,
+    "cumulativeOwnedJobsIncludingFailedAttempt": 3,
+    "originalOwnedFixtureJobCeiling": 4,
+    "oneUnusedOriginalJobSlotReserved": true,
+    "packetPerCopyCeilingBytes": 570425344,
+    "packetPerCopyBreakdown": {
+      "encodedVideo": 536870912,
+      "completeMetadataAndFramehash": 33554432
+    },
+    "copyCeiling": 3,
+    "copies": [
+      "new task-worktree packet",
+      "shared Git/LFS object",
+      "reserved private/review retained copy; not materialized"
+    ],
+    "packetCopiesBytes": 1711276032,
+    "newJobArchiveCeilingsBytes": 2147483648,
+    "unusedOriginalArchiveSlotReserveBytes": 1073741824,
+    "allIncrementalArchiveReservationBytes": 3221225472,
+    "stagingBytes": 1073741824,
+    "gitSourcePointerReserveBytes": 16777216,
+    "freeSafetyBytes": 4294967296,
+    "incrementalNominalEnvelopeBytes": 10317987840,
+    "mainHydration": "Fourth-copy case excluded here; future-unit/merge admission must recheck its separate retained-copy ledger. No copy is made now.",
+    "noOutputCopyStaging": true,
+    "noAdditionalExistingPngCopies": true,
+    "noCompressionOrDeletion": true,
+    "unresolvedBeforeAnyNativeGrant": [
+      "The fixed132-source inputs are pinned and the failed output is measured, but the whole integration still needs independent review of the32MiB aggregate metadata/framehash contract. Entry has a32MiB subdirectory budget while validator outputs have per-file caps; the final expanded job summary is not yet covered by one aggregate packet gate. This observer-only correction does not change that unrelated format/budget behavior. No new native admission or fit claim follows from the nominal envelope.",
+      "Archive/cache/source/memory enforcement and all primary acceptance controls remain subject to whole-integration source review."
+    ]
+  },
+  "wholeLibraryLedger": {
+    "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-feasibility/storage-accounting.json",
+    "sha256": "2c5665c31c3189d1822560534c0220f2ab7a33010854068ce08964ad5b85519b",
+    "meaning": "No whole-library fit claim. Current free bytes are a snapshot, not a reservation."
+  }
+}
