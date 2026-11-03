@@ -320,6 +320,27 @@ export function cpuContextCoverage(
       result.unknownNamedEvents++;
       continue;
     }
+    // The pinned thread-instant schema bounds this point without inventing a duration.
+    // It supplies no positive context, including at a closed control-window boundary.
+    const point = event.ts;
+    if (
+      event.ph === 'I' &&
+      event.s === 't' &&
+      event.cat === 'devtools.timeline' &&
+      typeof point === 'number' &&
+      Number.isFinite(point) &&
+      point >= 0 &&
+      typeof event.pid === 'number' &&
+      Number.isSafeInteger(event.pid) &&
+      event.pid > 1 &&
+      typeof event.tid === 'number' &&
+      Number.isSafeInteger(event.tid) &&
+      event.tid > 0 &&
+      Object.keys(event).every((key) => ['name', 'cat', 'ph', 's', 'pid', 'tid', 'ts', 'tts', 'args'].includes(key)) &&
+      (!Object.hasOwn(event, 'tts') || (typeof event.tts === 'number' && Number.isFinite(event.tts) && event.tts >= 0)) &&
+      result.frameWindows.every((window) => point < window.startUs || point > window.endUs)
+    )
+      continue;
     if (
       event.ph !== 'X' ||
       typeof event.ts !== 'number' ||
