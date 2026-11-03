@@ -1,0 +1,28 @@
+2026-11-02 23:50:47 -0500 
+Assertion status system-wide:
+   BackgroundTask                 0
+   ApplePushServiceTask           0
+   UserIsActive                   1
+   PreventUserIdleDisplaySleep    1
+   SoftwareUpdateTask             0
+   PreventSystemSleep             0
+   PreventSystemSleepSecurityIndicator 0
+   ExternalMedia                  0
+   InternalPreventDisplaySleep    1
+   PreventUserIdleSystemSleep     1
+   NetworkClientActive            0
+Listed by owning process:
+   pid 83928(Brave Browser): [0x0019303e0001a30c] 00:08:19 NoIdleSleepAssertion named: "WebRTC has active PeerConnections"  
+   pid 877(sharingd): [0x0019319d0001a39a] 00:02:28 PreventUserIdleSystemSleep named: "Handoff"  
+   pid 28693(Acid (Beta)): [0x0018eaad00058ad3] 05:42:16 NoDisplaySleepAssertion named: "Capturing"  
+   pid 427(powerd): [0x001903e5000193c8] 03:17:32 PreventUserIdleSystemSleep named: "Powerd - Prevent sleep while display is on"  
+   pid 427(powerd): [0x00192e120010858b] 00:00:40 InternalPreventDisplaySleep named: "com.apple.powermanagement.delayDisplayOff"  
+	Timeout will fire in 259 secs Action=TimeoutActionTurnOff
+   pid 622(coreaudiod): [0x001932150001a3b7] 00:00:28 PreventUserIdleSystemSleep named: "com.apple.audio.iOSSimulatorAudioDevice-66031-52.context.preventuseridlesleep"  
+	Created for PID: 66031. 
+	Resources: audio-out BuiltInSpeakerDevice 
+   pid 483(WindowServer): [0x00187c1800098f76] 00:00:40 UserIsActive named: "com.apple.iohideventsystem.queue.tickle serviceID:100001003 service:AppleMultitouchDevice product:Apple Internal Keyboard / Trackpad eventType:17"  
+	Timeout will fire in 559 secs Action=TimeoutActionRelease
+   pid 33678(Claude): [0x001931bb0001a39e] 00:01:58 NoIdleSleepAssertion named: "Electron"  
+Kernel Assertions: 0x100=MAGICWAKE
+   id=591  level=255 0x100=MAGICWAKE creat=  mod= description=en0 owner=IOSkywalkNetworkBSDClient

@@ -1,0 +1,15 @@
+{
+  "initialNodeControlFailure": {
+    "assertion": "cleanupFailures.some(x=>x.name===closeBrowser)",
+    "actualInheritedRecordName": "Error",
+    "correction": "assert the preserved secondary cleanup message; no cleanup behavior changed",
+    "artifacts": "/private/tmp/t02-primary-pure-controls-Pm4zZg",
+    "nativeJobs": 0
+  },
+  "secondNodeControlFailure": {
+    "assertion": "proof write used URL object with a path-only writer",
+    "artifacts": "/private/tmp/t02-primary-pure-controls-d3OqXG",
+    "correction": "convert URL to filesystem path in the control runner",
+    "nativeJobs": 0
+  }
+}

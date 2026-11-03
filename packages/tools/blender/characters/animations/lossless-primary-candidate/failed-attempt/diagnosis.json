@@ -1,0 +1,92 @@
+{
+  "status": "FAILED_NATIVE_FIXTURE_PRESERVED_NO_RETRY",
+  "cpuOnly": true,
+  "candidate": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-candidate",
+  "readinessSha256": "72f4f4fb2628512dd2c3d13f31b12a2a4340f62e408aa1ed3dfd90be3a4eeb6c",
+  "candidateIndexSha256": "1933596f575bdbaa34d33d51c03b1d04e7bf0302c8a145d0508acc8c7d5519c9",
+  "sourceBindingsUnchanged": true,
+  "failedOperation": {
+    "caller": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-candidate/integration.py:40",
+    "operation": "executable_path(row[pid]) in observer after job.members() snapshot",
+    "helper": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/run_round4_browser_proof.py:161",
+    "errno": 3,
+    "type": "ProcessLookupError",
+    "message": "Owned PID86441 executable path unavailable",
+    "coreOutcome": "observer_failed",
+    "coreClean": false
+  },
+  "priorChildAdmission": {
+    "pid": 86441,
+    "birth": [
+      1793681353,
+      807800
+    ],
+    "uid": 501,
+    "coalition": 438559,
+    "executable": "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg",
+    "sha256": "1ede5c7fd4e97d832ec69c97c78231875de7d69c55423158f5f4a4d923227dd5",
+    "evidence": "/private/tmp/t02-primary-integration-4cebc721/producer/receipt.json"
+  },
+  "retainedFacts": {
+    "completeNonImageObservations": 132,
+    "exactOriginalNonImageFieldsVerified": true,
+    "entryCompletedWorkIds": 132,
+    "frameMapRows": 132,
+    "workerAckLines": 132,
+    "lastMediaOrdinal": 131,
+    "entryAccepted": false,
+    "entryStatePrimary": null,
+    "entryResultExists": false,
+    "encoderResultExists": false,
+    "encoderExitCodeObserved": null,
+    "encoderMuxFinalizationAcknowledged": false,
+    "validatorLaunched": false,
+    "newPrimaryAccepted": false,
+    "rawRgbSpoolBytes": 0
+  },
+  "video": {
+    "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-candidate/packet/capture/primary.mp4",
+    "bytes": 23486564,
+    "sha256": "a3fc5f21eabb4167428b7f886e7e9d65db24af17d54d304f9e1978193952f8b8",
+    "byteIdenticalToPreviouslyValidated132FrameFeasibility": true,
+    "qualification": "Static byte identity is reuse of earlier media evidence; it does not repair this failed producer receipt or establish its child exit/finalization."
+  },
+  "failureEvidence": {
+    "/private/tmp/t02-primary-integration-4cebc721/producer/receipt.json": "402202b776db2e47484b07cd0571badfc9c60739ca1da1cfdd47455917255426",
+    "/private/tmp/t02-primary-integration-4cebc721/producer/owned-job/boundary.json": "34d804317f4dc35e2fb15853b2f2def295d0aa9e8924de1e820060603a73c372",
+    "/private/tmp/t02-primary-integration-4cebc721/initial-failure-index.json": "77f1865557a3278c61746818d66a34839c76a99637d748aa79162b1784a18966",
+    "/private/tmp/t02-primary-integration-4cebc721/recovery-release.json": "4dff39681a745392b1c25f70fd1c77873374f8cd81c01b77ba8f6ad2924b0089",
+    "/private/tmp/t02-primary-integration-4cebc721/native-raw/encoder.raw.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/private/tmp/t02-primary-integration-4cebc721/native-raw/worker.stdout": "5b8689bd49ae260c411487968d01a01ce0c3349bb87f6f67a11e275196472a54",
+    "/private/tmp/t02-primary-integration-4cebc721/native-raw/worker.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "narrowCpuCorrectionProposal": {
+    "changeOnlyFreshCandidate": true,
+    "sharedCoreChanges": false,
+    "design": [
+      "Key observed executable admission by PID plus exact birth and UID, retaining its already observed path/hash.",
+      "Snapshot current identity before and after executable_path. On a path-read ProcessLookupError, query identity again.",
+      "For a previously admitted exact birth, a now-absent identity is an observed departure; record it and let unchanged StationJob prove drain/reap. A zombie is recorded as awaiting reap, never absent.",
+      "Same live birth with unavailable executable path, any UID/cohort mismatch, an unadmitted disappearing child, or unsupported live executable remains a failure. A replacement birth never inherits old admission.",
+      "Preserve the original observer failure and clean:false. Make terminal report writing preserve an audit failure as its own field instead of losing the summary to a final assertion."
+    ],
+    "pureControlsBeforeAnyNewNativeGrant": [
+      "previously admitted child disappears during path read",
+      "same live birth still has path read failure",
+      "replacement birth cannot inherit admission",
+      "unadmitted child disappearance refuses",
+      "same-birth unsupported executable refuses",
+      "terminal audit failure still preserves primary and cleanup summary"
+    ],
+    "noRuntimeRetryProposedWithoutSeparateParentDecision": true
+  },
+  "terminalRecovery": {
+    "path": "/private/tmp/t02-primary-integration-4cebc721/recovery-release.json",
+    "sha256": "4dff39681a745392b1c25f70fd1c77873374f8cd81c01b77ba8f6ad2924b0089",
+    "oneOwnedNativeJobOnly": true,
+    "nativeJobsRemaining": 0,
+    "newValidatorOrRetry": false
+  },
+  "freeBytesNow": 15908589568,
+  "recordedUtcEpoch": 1793681538.736009
+}

@@ -1,0 +1,156 @@
+{
+  "name": "producer",
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-candidate/replay-fixture.mjs",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-candidate/readiness.json"
+  ],
+  "captureSeconds": 120,
+  "cleanupSeconds": 20,
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "Owned CPU fixture failed"
+  },
+  "cleanupFailure": {
+    "type": "AssertionError",
+    "message": ""
+  },
+  "scope": "CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES",
+  "outcome": "observer_failed",
+  "actualExecutables": {
+    "86150": {
+      "identity": {
+        "pid": 86150,
+        "ppid": 86130,
+        "pgid": 86150,
+        "birth": [
+          1793681348,
+          712776
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "executable": "/usr/bin/caffeinate",
+      "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+    },
+    "86149": {
+      "identity": {
+        "pid": 86149,
+        "ppid": 86130,
+        "pgid": 86149,
+        "birth": [
+          1793681348,
+          697632
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "sha256": "06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b"
+    },
+    "86130": {
+      "identity": {
+        "pid": 86130,
+        "ppid": 1,
+        "pgid": 86130,
+        "birth": [
+          1793681348,
+          104105
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sha256": "d90bce0f5ac3aa40e2ee5900ad243bad0b2205ce17408278f088b34aed737840"
+    },
+    "86395": {
+      "identity": {
+        "pid": 86395,
+        "ppid": 86149,
+        "pgid": 86149,
+        "birth": [
+          1793681353,
+          382614
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sha256": "d90bce0f5ac3aa40e2ee5900ad243bad0b2205ce17408278f088b34aed737840"
+    },
+    "86441": {
+      "identity": {
+        "pid": 86441,
+        "ppid": 86395,
+        "pgid": 86149,
+        "birth": [
+          1793681353,
+          807800
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "executable": "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg",
+      "sha256": "1ede5c7fd4e97d832ec69c97c78231875de7d69c55423158f5f4a4d923227dd5"
+    }
+  },
+  "exits": {},
+  "drain": {
+    "scope": "CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES",
+    "exits": {
+      "capture": -15,
+      "caffeinate": -15
+    },
+    "errors": [
+      "ProcessLookupError: [Errno 3] Owned PID86441 executable path unavailable"
+    ],
+    "signals": [
+      {
+        "pid": 86395,
+        "birth": [
+          1793681353,
+          382614
+        ],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 86150,
+        "birth": [
+          1793681348,
+          712776
+        ],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 86149,
+        "birth": [
+          1793681348,
+          697632
+        ],
+        "signal": "SIGTERM"
+      }
+    ],
+    "drained": true,
+    "clean": false,
+    "readiness_sha256": "72f4f4fb2628512dd2c3d13f31b12a2a4340f62e408aa1ed3dfd90be3a4eeb6c",
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "started": 2,
+      "exited": 1,
+      "live": 1
+    },
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "started": 9,
+      "exited": 8,
+      "live": 1
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "remaining": [],
+    "elapsed_cleanup_seconds": 0.07245216704905033
+  },
+  "pipelineSeconds": 26.524199082981795
+}

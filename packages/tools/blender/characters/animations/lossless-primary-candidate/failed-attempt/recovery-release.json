@@ -1,0 +1,106 @@
+{
+  "initialReceiptSha256": "402202b776db2e47484b07cd0571badfc9c60739ca1da1cfdd47455917255426",
+  "initialFailureIndexSha256": "77f1865557a3278c61746818d66a34839c76a99637d748aa79162b1784a18966",
+  "recoveryOnly": true,
+  "primaryFailure": null,
+  "cacheRelease": {
+    "admission": {
+      "path": "/private/tmp/sbr-7tjug4s1",
+      "uid": 501,
+      "mode": "0o700",
+      "stamp": [
+        16777233,
+        262268407
+      ],
+      "ownership": "Fresh directory created by this caller, exclusively inherited as TMPDIR by its one owned job",
+      "worst_case_tsx_socket": "/private/tmp/sbr-7tjug4s1/tsx-501/2147483647.pipe",
+      "socket_path_bytes": 49,
+      "unix_socket_capacity": 104
+    },
+    "nonprofile_entries": [],
+    "archive": "/private/tmp/t02-primary-integration-4cebc721/producer/owned-job/preserved-private-tmp",
+    "all_bytes_preserved": true,
+    "namespace_removed": true,
+    "browser_profile_reclassification": false,
+    "global_cleanup": false
+  },
+  "terminal": {
+    "coalition": 438559,
+    "kernel": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "members": [],
+    "births": [
+      {
+        "pid": 86130,
+        "recordedBirth": [
+          1793681348,
+          104105
+        ],
+        "current": null
+      },
+      {
+        "pid": 86150,
+        "recordedBirth": [
+          1793681348,
+          712776
+        ],
+        "current": null
+      },
+      {
+        "pid": 86149,
+        "recordedBirth": [
+          1793681348,
+          697632
+        ],
+        "current": null
+      },
+      {
+        "pid": 86395,
+        "recordedBirth": [
+          1793681353,
+          382614
+        ],
+        "current": null
+      },
+      {
+        "pid": 86441,
+        "recordedBirth": [
+          1793681353,
+          807800
+        ],
+        "current": null
+      }
+    ],
+    "groups": [
+      86130,
+      86149,
+      86150
+    ],
+    "groupRows": [],
+    "controllerAbsent": true,
+    "registrationExit": 113,
+    "scratchAbsent": true,
+    "privateTmpAbsent": true,
+    "profileRelease": {
+      "namespace": "/private/tmp/sbr-7tjug4s1",
+      "private_namespace_admitted": true,
+      "prefixes": [
+        "playwright_chromiumdev_profile-"
+      ],
+      "owned_logged_profiles": [],
+      "log_observed_profiles": [],
+      "caller_declared_profiles": [],
+      "namespace_owned_profiles": [],
+      "all_owned_profiles": [],
+      "profile_receipts": [],
+      "legacy_owned_logged_profiles_includes_caller_declared": true,
+      "all_absent": true
+    },
+    "ownedPortProcessesAbsent": true,
+    "ownedAssertionsAbsent": true
+  },
+  "initialReceiptUnchanged": true,
+  "boundaryUnchanged": true
+}

@@ -1,0 +1,148 @@
+{
+  "scope": "CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES",
+  "exits": {
+    "capture": -15,
+    "caffeinate": -15
+  },
+  "errors": [
+    "ProcessLookupError: [Errno 3] Owned PID86441 executable path unavailable"
+  ],
+  "signals": [
+    {
+      "pid": 86395,
+      "birth": [
+        1793681353,
+        382614
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 86150,
+      "birth": [
+        1793681348,
+        712776
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 86149,
+      "birth": [
+        1793681348,
+        697632
+      ],
+      "signal": "SIGTERM"
+    }
+  ],
+  "drained": true,
+  "clean": false,
+  "readiness_sha256": "72f4f4fb2628512dd2c3d13f31b12a2a4340f62e408aa1ed3dfd90be3a4eeb6c",
+  "kernel_before_launch": {
+    "coalition_absent": false,
+    "started": 2,
+    "exited": 1,
+    "live": 1
+  },
+  "kernel_before_root_release": {
+    "coalition_absent": false,
+    "started": 9,
+    "exited": 8,
+    "live": 1
+  },
+  "kernel_terminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "remaining": [],
+  "elapsed_cleanup_seconds": 0.07245216704905033,
+  "target": "gui/501/local.stations.round4.a3fdc69b03dd4355b45936d82a015bda",
+  "scratch": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-gqken1ya",
+  "root": {
+    "pid": 86130,
+    "ppid": 1,
+    "pgid": 86130,
+    "birth": [
+      1793681348,
+      104105
+    ],
+    "status": 2,
+    "uid": 501
+  },
+  "coalition_id": 438559,
+  "identities": {
+    "86130": {
+      "pid": 86130,
+      "ppid": 1,
+      "pgid": 86130,
+      "birth": [
+        1793681348,
+        104105
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        438559,
+        438560
+      ]
+    },
+    "86150": {
+      "pid": 86150,
+      "ppid": 86130,
+      "pgid": 86150,
+      "birth": [
+        1793681348,
+        712776
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        438559,
+        438560
+      ]
+    },
+    "86149": {
+      "pid": 86149,
+      "ppid": 86130,
+      "pgid": 86149,
+      "birth": [
+        1793681348,
+        697632
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        438559,
+        438560
+      ]
+    },
+    "86395": {
+      "pid": 86395,
+      "ppid": 86149,
+      "pgid": 86149,
+      "birth": [
+        1793681353,
+        382614
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        438559,
+        438560
+      ]
+    },
+    "86441": {
+      "pid": 86441,
+      "ppid": 86395,
+      "pgid": 86149,
+      "birth": [
+        1793681353,
+        807800
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        438559,
+        438560
+      ]
+    }
+  }
+}
