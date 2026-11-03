@@ -1,6 +1,6 @@
 // Candidate-only browser diagnostic. Never calls the native recorder or standard perf/capture entry points.
 import { createHash } from 'node:crypto';
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { cpus, loadavg, platform } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -35,6 +35,32 @@ export function retainBrowserStep(out: string, id: string, value: unknown) {
     throw new Error('Raw step receipt byte overflow; prefix/hash retained');
   }
   writeFileSync(join(directory, `${id}.json`), bytes, { flag: 'wx' });
+}
+
+/** Public ChildProcess facts only; ownership remains the caller's current-kernel observation. */
+export function retainBrowserLaunch(out: string, prefix: string, child: ReturnType<BrowserServer['process']>) {
+  const value = {
+    kind: 'T13_BROWSER_LAUNCH_CHILD_PROCESS_V1',
+    provenance: 'BrowserServer.process() ChildProcess',
+    prefix,
+    pid: child.pid ?? null,
+    spawnfile: child.spawnfile,
+    spawnargs: [...child.spawnargs],
+    at: new Date().toISOString(),
+    monotonicNs: process.hrtime.bigint().toString(),
+  };
+  const bytes = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  const path = join(out, 'browser-launch.json');
+  if (bytes.length > 65536) {
+    writeFileSync(path + '.prefix', bytes.subarray(0, 65536), { flag: 'wx' });
+    writeFileSync(path + '.overflow.json', JSON.stringify({ bytes: bytes.length, sha256: sha(bytes), retainedBytes: 65536 }), { flag: 'wx' });
+    throw new Error('Browser launch receipt byte overflow; prefix/hash retained');
+  }
+  // Publish the complete receipt atomically and exclusively; observers never parse an in-flight write.
+  writeFileSync(path + '.writing', bytes, { flag: 'wx', mode: 0o600 });
+  linkSync(path + '.writing', path);
+  unlinkSync(path + '.writing');
+  return value;
 }
 
 /** Runs in the page. Marks bracket the unchanged accepted operation, not a guessed native execution interval. */
@@ -205,6 +231,7 @@ export async function captureBrowserWork(admission: ReturnType<typeof browserWor
     const { args } = glArgs();
     browserServer = await chromium.launchServer({ args, timeout: 30000 });
     signal.throwIfAborted();
+    retainBrowserLaunch(admission.out, admission.prefix, browserServer.process());
     browser = await chromium.connect(browserServer.wsEndpoint(), { timeout: 30000 });
     signal.throwIfAborted();
     const cdp = await phase(browser.newBrowserCDPSession(), 10000, 'browser CDP');
