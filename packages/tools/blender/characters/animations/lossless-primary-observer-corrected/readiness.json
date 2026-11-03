@@ -2060,7 +2060,7 @@
   "purpose": "CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES",
   "runtimeAuthorization": false,
   "nativeFixtureAuthorization": false,
-  "prospectiveAttemptId": "cpu-metadata-corrected-31b86a04",
+  "prospectiveAttemptId": "cpu-assertions-required-e5e3d059",
   "primaryArtifactSchema": "t02-lossless-rgb-primary/v1",
   "sourcePilot": "/private/tmp/t02-pilot-run-2a7d0f8d9da8467bb108e3b3cd7e416f",
   "sourcePilotFinalIndexSha256": "e8862a34f35e36ce80f2eaafdecfece325bc810b156ef9442d1722020797096f",
@@ -6716,8 +6716,8 @@
   },
   "packetRoot": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet",
   "captureOutput": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet/capture",
-  "cpuProofRoot": "/private/tmp/t02-primary-integration-metadata-corrected-31b86a04",
-  "nativeRawDirectory": "/private/tmp/t02-primary-integration-metadata-corrected-31b86a04/native-raw",
+  "cpuProofRoot": "/private/tmp/t02-primary-integration-assertions-required-e5e3d059",
+  "nativeRawDirectory": "/private/tmp/t02-primary-integration-assertions-required-e5e3d059/native-raw",
   "rgbPrimary": {
     "python": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
     "worker": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
@@ -6756,9 +6756,14 @@
   },
   "bindings": [
     {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/assertion_guard.py",
+      "bytes": 329,
+      "sha256": "a2a29fc3d672bcd56bd55fa718f055ed029ad8d158e3882c43358f84f2c8cd21"
+    },
+    {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
-      "bytes": 34082,
-      "sha256": "2dddeb8d37f423c4f2934184ce3cb4931eb49045d5b92b527bb31d4d7bb213b6"
+      "bytes": 34170,
+      "sha256": "6d2090ebf097fbcc4ebe95587aaa96186c9d8a42c0a4b330d3445e7c7f0fed0b"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.mjs",
@@ -6767,8 +6772,8 @@
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
-      "bytes": 2949,
-      "sha256": "69a2c0f0dd1162a2e4f5093d1077fa654879814f7409fe119af7cd203988526d"
+      "bytes": 3037,
+      "sha256": "d6a9daa552d321462a40f958edd7002066ed72f2f1a09a0a94b7d89b864b2fd4"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/entry.mjs",
@@ -6777,23 +6782,28 @@
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
-      "bytes": 6446,
-      "sha256": "434ca3c30c161adbcf12727a8d766305829d0d2d7aa905f70c758ba4c1112b36"
+      "bytes": 6571,
+      "sha256": "117046dcb4510116fcb190e3adca7652508d84ff02f1ebed398bb98000f2399c"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
-      "bytes": 14173,
-      "sha256": "89302b98fe70a5f58b1d7087d254e952cbee66be2a9dcced1a3354e9e5ac8133"
+      "bytes": 14261,
+      "sha256": "71396dcdbe6358c4336c35ea0062992ff96cd9364d7b533a395929ce1e79047b"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
-      "bytes": 6376,
-      "sha256": "21429195b74c6324de6142a81d767292d7bb94b037f35eecdcf86fbadf9faa40"
+      "bytes": 6464,
+      "sha256": "67700684f995b3c8ec1dd39abf5959fe999ce12106c1ed4f3f8279a95ec2733b"
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/optimization-controls.py",
+      "bytes": 8068,
+      "sha256": "54e1d8d6796aac44bc11fdda6a4744ad57b835ca71bd6bdf0d379ff7f68477ec"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
-      "bytes": 5254,
-      "sha256": "a43f6ad4bf8ed4e77aa0d0e3238770211cb35289ee082b0fe8c72bad6ae9bf4d"
+      "bytes": 5342,
+      "sha256": "8eda461633c7b3a115e55c37db98afa8ecf67c70959dcf8815489b193aea8841"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-node-controls.mjs",
@@ -6807,8 +6817,8 @@
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
-      "bytes": 3545,
-      "sha256": "05b596bd2ce6f25e850b6b4b340165ab6ab16eec5c84d856592572550adef14a"
+      "bytes": 3662,
+      "sha256": "63415da20bd2fe85e7b058c3e13f0a7b096fa852582dfb8c1a161788fcdcade4"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/page-api.mjs",
@@ -6837,8 +6847,8 @@
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
-      "bytes": 8739,
-      "sha256": "b78848d343c923073ead7292aa3673860b728b901774fc2cc0748cba91126eb3"
+      "bytes": 8827,
+      "sha256": "704af4191176e2940cda32f7278833daece914719720a609b60a8458f7c0cc09"
     },
     {
       "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-sink.mjs",

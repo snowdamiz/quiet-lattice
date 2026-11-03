@@ -1,9 +1,12 @@
 """Synchronous pixel-primary data worker; StationJob alone owns process lifecycle."""
+import sys
+sys.dont_write_bytecode=True
+from assertion_guard import require_assertions
+require_assertions(__debug__)
 import argparse,hashlib,io,json,os,resource,struct,subprocess,sys
 from pathlib import Path
 from PIL import Image
 import packet_budget as budget
-sys.dont_write_bytecode=True
 SCHEMA='t02-lossless-rgb-primary/v1'
 PIXELS=1920*1080
 PNG_LIMIT=12*1024**2

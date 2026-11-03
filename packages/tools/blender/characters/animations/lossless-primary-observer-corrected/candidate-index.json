@@ -3,9 +3,14 @@
   "runtimeAuthorization": false,
   "files": [
     {
+      "path": "assertion_guard.py",
+      "sha256": "a2a29fc3d672bcd56bd55fa718f055ed029ad8d158e3882c43358f84f2c8cd21",
+      "bytes": 329
+    },
+    {
       "path": "caller.py",
-      "sha256": "2dddeb8d37f423c4f2934184ce3cb4931eb49045d5b92b527bb31d4d7bb213b6",
-      "bytes": 34082
+      "sha256": "6d2090ebf097fbcc4ebe95587aaa96186c9d8a42c0a4b330d3445e7c7f0fed0b",
+      "bytes": 34170
     },
     {
       "path": "controls.mjs",
@@ -14,8 +19,8 @@
     },
     {
       "path": "controls.py",
-      "sha256": "69a2c0f0dd1162a2e4f5093d1077fa654879814f7409fe119af7cd203988526d",
-      "bytes": 2949
+      "sha256": "d6a9daa552d321462a40f958edd7002066ed72f2f1a09a0a94b7d89b864b2fd4",
+      "bytes": 3037
     },
     {
       "path": "entry.mjs",
@@ -24,23 +29,28 @@
     },
     {
       "path": "freeze.py",
-      "sha256": "434ca3c30c161adbcf12727a8d766305829d0d2d7aa905f70c758ba4c1112b36",
-      "bytes": 6446
+      "sha256": "117046dcb4510116fcb190e3adca7652508d84ff02f1ebed398bb98000f2399c",
+      "bytes": 6571
     },
     {
       "path": "integration.py",
-      "sha256": "89302b98fe70a5f58b1d7087d254e952cbee66be2a9dcced1a3354e9e5ac8133",
-      "bytes": 14173
+      "sha256": "71396dcdbe6358c4336c35ea0062992ff96cd9364d7b533a395929ce1e79047b",
+      "bytes": 14261
     },
     {
       "path": "observer-controls.py",
-      "sha256": "21429195b74c6324de6142a81d767292d7bb94b037f35eecdcf86fbadf9faa40",
-      "bytes": 6376
+      "sha256": "67700684f995b3c8ec1dd39abf5959fe999ce12106c1ed4f3f8279a95ec2733b",
+      "bytes": 6464
+    },
+    {
+      "path": "optimization-controls.py",
+      "sha256": "54e1d8d6796aac44bc11fdda6a4744ad57b835ca71bd6bdf0d379ff7f68477ec",
+      "bytes": 8068
     },
     {
       "path": "packet-budget-controls.py",
-      "sha256": "a43f6ad4bf8ed4e77aa0d0e3238770211cb35289ee082b0fe8c72bad6ae9bf4d",
-      "bytes": 5254
+      "sha256": "8eda461633c7b3a115e55c37db98afa8ecf67c70959dcf8815489b193aea8841",
+      "bytes": 5342
     },
     {
       "path": "packet-budget-node-controls.mjs",
@@ -54,8 +64,8 @@
     },
     {
       "path": "packet_budget.py",
-      "sha256": "05b596bd2ce6f25e850b6b4b340165ab6ab16eec5c84d856592572550adef14a",
-      "bytes": 3545
+      "sha256": "63415da20bd2fe85e7b058c3e13f0a7b096fa852582dfb8c1a161788fcdcade4",
+      "bytes": 3662
     },
     {
       "path": "page-api.mjs",
@@ -84,8 +94,8 @@
     },
     {
       "path": "rgb-primary.py",
-      "sha256": "b78848d343c923073ead7292aa3673860b728b901774fc2cc0748cba91126eb3",
-      "bytes": 8739
+      "sha256": "704af4191176e2940cda32f7278833daece914719720a609b60a8458f7c0cc09",
+      "bytes": 8827
     },
     {
       "path": "rgb-sink.mjs",
@@ -94,8 +104,8 @@
     },
     {
       "path": "readiness.json",
-      "sha256": "1b40154a29bdf09e91a695d69d81dcb37b9274284dafd7749bb529bcf6bab5c4",
-      "bytes": 251611
+      "sha256": "24ac57de2c69be152ebb3cb2c94b265bc2d93bb8943e1ab3dc7e2ee63f2cc89c",
+      "bytes": 252251
     },
     {
       "path": "disabled-grant.json",
@@ -134,8 +144,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "e3dc8a36e3711152ef0cc6dc7ceeabd3d09bf1ccae0ceeaaccfcf1021ba3845b",
-      "bytes": 3355
+      "sha256": "9b87514dcacb1e767ec83def4b4276e87efc93b1eac813d0e2fabd4ed4ff7c76",
+      "bytes": 4095
     },
     {
       "path": "packet-budget-controls.json",
@@ -151,6 +161,11 @@
       "path": "PACKET_STORAGE_CONTRACT.md",
       "sha256": "cd5eee79eaa544ee246b597ad0d1e25d602263b796982950b612e123cd74410b",
       "bytes": 4204
+    },
+    {
+      "path": "optimization-controls.json",
+      "sha256": "686bcba7cd2bbf701a9ac9ee445c33033328ea6aa6a0f1fa52d4a25fedb02db2",
+      "bytes": 38240
     }
   ]
 }

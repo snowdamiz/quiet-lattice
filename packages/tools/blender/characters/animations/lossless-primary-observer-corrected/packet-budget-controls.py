@@ -1,7 +1,10 @@
 """Finite in-process packet budget controls; no native process is allowed."""
+import sys
+sys.dont_write_bytecode=True
+from assertion_guard import require_assertions
+require_assertions(__debug__)
 import importlib.util,json,subprocess,sys,tempfile,time
 from pathlib import Path
-sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent
 calls=[]
 def refuse(*a,**k):calls.append(str(a));raise AssertionError('Native launch refused')

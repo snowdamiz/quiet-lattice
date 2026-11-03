@@ -1,8 +1,11 @@
 """One bounded CPU fixture: existing PNG replay and independent streaming validation."""
+import sys
+sys.dont_write_bytecode=True
+from assertion_guard import require_assertions
+require_assertions(__debug__)
 import hashlib,importlib.util,json,os,shutil,subprocess,sys,time
 from pathlib import Path
 import packet_budget as budget
-sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()

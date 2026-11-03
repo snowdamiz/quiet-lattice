@@ -1,4 +1,8 @@
 """Thin one-use T02 pilot caller. The accepted StationJob alone owns lifecycle."""
+import sys
+sys.dont_write_bytecode=True
+from assertion_guard import require_assertions
+require_assertions(__debug__)
 import argparse
 import datetime
 import hashlib
@@ -14,7 +18,6 @@ import time
 import struct
 import zlib
 
-sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent
 READY=HERE/'readiness.json'
 

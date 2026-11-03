@@ -1,7 +1,10 @@
 """Pure controls over the actual candidate observer and terminal-summary functions."""
+import sys
+sys.dont_write_bytecode=True
+from assertion_guard import require_assertions
+require_assertions(__debug__)
 import copy,errno,importlib.util,json,subprocess,sys,tempfile,time
 from pathlib import Path
-sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent
 native_calls=[]
 def refuse(*args,**kwargs):native_calls.append(str(args));raise AssertionError('Native process refused in pure controls')

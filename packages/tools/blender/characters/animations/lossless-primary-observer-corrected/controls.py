@@ -1,8 +1,11 @@
 """In-process worker controls. subprocess.Popen is refused before importing tested worker."""
+import sys
+sys.dont_write_bytecode=True
+from assertion_guard import require_assertions
+require_assertions(__debug__)
 import hashlib,importlib.util,io,json,subprocess,sys
 from pathlib import Path
 from PIL import Image
-sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent
 calls=[]
 def refuse(*a,**k):calls.append(str(a));raise AssertionError('Native launch refused by pure controls')

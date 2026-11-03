@@ -1,4 +1,8 @@
 """Finite packet write checks; no service, quota state, or process ownership."""
+import sys
+sys.dont_write_bytecode=True
+from assertion_guard import require_assertions
+require_assertions(__debug__)
 import json,os
 from pathlib import Path
 METADATA_BYTES=32*1024**2
