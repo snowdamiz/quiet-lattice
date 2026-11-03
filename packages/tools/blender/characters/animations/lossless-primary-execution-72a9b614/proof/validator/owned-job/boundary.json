@@ -1,0 +1,136 @@
+{
+  "scope": "CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES",
+  "exits": {
+    "capture": 0,
+    "caffeinate": 0
+  },
+  "errors": [],
+  "signals": [],
+  "drained": true,
+  "clean": true,
+  "readiness_sha256": "841d0e12a99886dc0c20e870d3e1d3cd512c9f80f846291be31d0873f77a8314",
+  "kernel_before_launch": {
+    "coalition_absent": false,
+    "started": 2,
+    "exited": 1,
+    "live": 1
+  },
+  "kernel_before_root_release": {
+    "coalition_absent": false,
+    "started": 12,
+    "exited": 11,
+    "live": 1
+  },
+  "kernel_terminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "remaining": [],
+  "elapsed_cleanup_seconds": 0.029899584129452705,
+  "target": "gui/501/local.stations.round4.45c88d3684bb41dfbb91e835adef1065",
+  "scratch": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-ous41520",
+  "root": {
+    "pid": 84612,
+    "ppid": 1,
+    "pgid": 84612,
+    "birth": [
+      1793727385,
+      172557
+    ],
+    "status": 2,
+    "uid": 501
+  },
+  "coalition_id": 448053,
+  "identities": {
+    "84612": {
+      "pid": 84612,
+      "ppid": 1,
+      "pgid": 84612,
+      "birth": [
+        1793727385,
+        172557
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        448053,
+        448054
+      ]
+    },
+    "84614": {
+      "pid": 84614,
+      "ppid": 84612,
+      "pgid": 84614,
+      "birth": [
+        1793727385,
+        278769
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        448053,
+        448054
+      ]
+    },
+    "84613": {
+      "pid": 84613,
+      "ppid": 84612,
+      "pgid": 84613,
+      "birth": [
+        1793727385,
+        275375
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        448053,
+        448054
+      ]
+    },
+    "84625": {
+      "pid": 84625,
+      "ppid": 84613,
+      "pgid": 84613,
+      "birth": [
+        1793727385,
+        387120
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        448053,
+        448054
+      ]
+    },
+    "84639": {
+      "pid": 84639,
+      "ppid": 84613,
+      "pgid": 84613,
+      "birth": [
+        1793727385,
+        658105
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        448053,
+        448054
+      ]
+    },
+    "84809": {
+      "pid": 84809,
+      "ppid": 84613,
+      "pgid": 84613,
+      "birth": [
+        1793727388,
+        305446
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        448053,
+        448054
+      ]
+    }
+  }
+}

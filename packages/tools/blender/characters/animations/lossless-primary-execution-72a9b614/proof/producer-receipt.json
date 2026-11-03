@@ -1,0 +1,258 @@
+{
+  "name": "producer",
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/replay-fixture.mjs",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/readiness.json"
+  ],
+  "captureSeconds": 120,
+  "cleanupSeconds": 20,
+  "primaryFailure": null,
+  "cleanupFailure": null,
+  "scope": "CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES",
+  "phase": "wait",
+  "privateTmp": {
+    "path": "/private/tmp/sbr-4ppqje6g",
+    "admission": {
+      "path": "/private/tmp/sbr-4ppqje6g",
+      "uid": 501,
+      "mode": "0o700",
+      "stamp": [
+        16777233,
+        297502685
+      ],
+      "ownership": "Fresh directory created by this caller, exclusively inherited as TMPDIR by its one owned job",
+      "worst_case_tsx_socket": "/private/tmp/sbr-4ppqje6g/tsx-501/2147483647.pipe",
+      "socket_path_bytes": 49,
+      "unix_socket_capacity": 104
+    }
+  },
+  "actualExecutables": {
+    "81176:1793727347:771095:501": {
+      "identity": {
+        "pid": 81176,
+        "ppid": 81173,
+        "pgid": 81176,
+        "birth": [
+          1793727347,
+          771095
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "memberIdentity": {
+        "pid": 81176,
+        "ppid": 81173,
+        "pgid": 81176,
+        "birth": [
+          1793727347,
+          771095
+        ],
+        "status": 2,
+        "uid": 501,
+        "coalition": [
+          448051,
+          448052
+        ]
+      },
+      "executable": "/usr/bin/caffeinate",
+      "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+    },
+    "81175:1793727347:765297:501": {
+      "identity": {
+        "pid": 81175,
+        "ppid": 81173,
+        "pgid": 81175,
+        "birth": [
+          1793727347,
+          765297
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "memberIdentity": {
+        "pid": 81175,
+        "ppid": 81173,
+        "pgid": 81175,
+        "birth": [
+          1793727347,
+          765297
+        ],
+        "status": 2,
+        "uid": 501,
+        "coalition": [
+          448051,
+          448052
+        ]
+      },
+      "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "sha256": "06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b"
+    },
+    "81173:1793727347:681858:501": {
+      "identity": {
+        "pid": 81173,
+        "ppid": 1,
+        "pgid": 81173,
+        "birth": [
+          1793727347,
+          681858
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "memberIdentity": {
+        "pid": 81173,
+        "ppid": 1,
+        "pgid": 81173,
+        "birth": [
+          1793727347,
+          681858
+        ],
+        "status": 2,
+        "uid": 501,
+        "coalition": [
+          448051,
+          448052
+        ]
+      },
+      "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sha256": "d90bce0f5ac3aa40e2ee5900ad243bad0b2205ce17408278f088b34aed737840"
+    },
+    "81177:1793727347:880394:501": {
+      "identity": {
+        "pid": 81177,
+        "ppid": 81175,
+        "pgid": 81175,
+        "birth": [
+          1793727347,
+          880394
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "memberIdentity": {
+        "pid": 81177,
+        "ppid": 81175,
+        "pgid": 81175,
+        "birth": [
+          1793727347,
+          880394
+        ],
+        "status": 2,
+        "uid": 501,
+        "coalition": [
+          448051,
+          448052
+        ]
+      },
+      "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sha256": "d90bce0f5ac3aa40e2ee5900ad243bad0b2205ce17408278f088b34aed737840"
+    },
+    "81180:1793727348:54088:501": {
+      "identity": {
+        "pid": 81180,
+        "ppid": 81177,
+        "pgid": 81175,
+        "birth": [
+          1793727348,
+          54088
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "memberIdentity": {
+        "pid": 81180,
+        "ppid": 81177,
+        "pgid": 81175,
+        "birth": [
+          1793727348,
+          54088
+        ],
+        "status": 2,
+        "uid": 501,
+        "coalition": [
+          448051,
+          448052
+        ]
+      },
+      "executable": "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg",
+      "sha256": "1ede5c7fd4e97d832ec69c97c78231875de7d69c55423158f5f4a4d923227dd5"
+    }
+  },
+  "observerEvents": [],
+  "outcome": "completed",
+  "exits": {
+    "capture": 0,
+    "caffeinate": 0
+  },
+  "ownedAllocation": {
+    "out": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/producer/owned-job",
+    "scratch": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-zbk3smy1",
+    "target": "gui/501/local.stations.round4.697a865d71e44314aa1ce62ceb41e854",
+    "coalition_id": 448051,
+    "registered": true
+  },
+  "drain": {
+    "scope": "CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES",
+    "exits": {
+      "capture": 0,
+      "caffeinate": 0
+    },
+    "errors": [],
+    "signals": [],
+    "drained": true,
+    "clean": true,
+    "readiness_sha256": "841d0e12a99886dc0c20e870d3e1d3cd512c9f80f846291be31d0873f77a8314",
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "started": 2,
+      "exited": 1,
+      "live": 1
+    },
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "started": 9,
+      "exited": 8,
+      "live": 1
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "remaining": [],
+    "elapsed_cleanup_seconds": 0.03396483394317329
+  },
+  "archiveBytesObservedAfterRelease": 102876,
+  "terminal": {
+    "coalition": 448051,
+    "kernel": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "exactBirthsAbsent": 5,
+    "registrationAbsent": true,
+    "scratchAndTmpAbsent": true,
+    "privateTmpCacheRelease": {
+      "admission": {
+        "path": "/private/tmp/sbr-4ppqje6g",
+        "uid": 501,
+        "mode": "0o700",
+        "stamp": [
+          16777233,
+          297502685
+        ],
+        "ownership": "Fresh directory created by this caller, exclusively inherited as TMPDIR by its one owned job",
+        "worst_case_tsx_socket": "/private/tmp/sbr-4ppqje6g/tsx-501/2147483647.pipe",
+        "socket_path_bytes": 49,
+        "unix_socket_capacity": 104
+      },
+      "nonprofile_entries": [],
+      "archive": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/producer/owned-job/preserved-private-tmp",
+      "all_bytes_preserved": true,
+      "namespace_removed": true,
+      "browser_profile_reclassification": false,
+      "global_cleanup": false
+    }
+  },
+  "pipelineSeconds": 37.38358224998228
+}

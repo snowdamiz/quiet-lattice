@@ -1,0 +1,276 @@
+{
+  "status": "PASS_CPU_EXISTING_132_PRIMARY_INTEGRATION",
+  "primaryFailure": null,
+  "jobs": [
+    {
+      "path": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/producer-receipt.json",
+      "sha256": "1b1df003aedbb58688341ab42459c8e9a9143d7d1d8b55b8e85318859e484b64"
+    },
+    {
+      "path": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/validator-receipt.json",
+      "sha256": "61fb3b31e562adab9a3b5dafe8121d85243683806cdda5337c6391bff024a185"
+    }
+  ],
+  "runtimeAuthorization": false,
+  "inspection": {
+    "accepted": true,
+    "schema": "t02-lossless-rgb-primary/v1",
+    "frames": 132,
+    "images": 0,
+    "observations": 132,
+    "videoBytes": 23486564,
+    "indexSha256": "6dce865be1b192a7b84bfa393df2ec978e42ebd759077abc4fe1eebb63f5ac03",
+    "validationSha256": "b9acd77fc2c8efabb60a9685711050532608f7dfa8a2d3634377af4e59f110bf"
+  },
+  "completeOriginalNonImageObservations": true,
+  "sourcePngRgbRgbaIdentities": true,
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/producer-receipt.json",
+      "coalition": 448051,
+      "kernel": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 81173,
+          "recorded": {
+            "pid": 81173,
+            "ppid": 1,
+            "pgid": 81173,
+            "birth": [
+              1793727347,
+              681858
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 81176,
+          "recorded": {
+            "pid": 81176,
+            "ppid": 81173,
+            "pgid": 81176,
+            "birth": [
+              1793727347,
+              771095
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 81175,
+          "recorded": {
+            "pid": 81175,
+            "ppid": 81173,
+            "pgid": 81175,
+            "birth": [
+              1793727347,
+              765297
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 81177,
+          "recorded": {
+            "pid": 81177,
+            "ppid": 81175,
+            "pgid": 81175,
+            "birth": [
+              1793727347,
+              880394
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 81180,
+          "recorded": {
+            "pid": 81180,
+            "ppid": 81177,
+            "pgid": 81175,
+            "birth": [
+              1793727348,
+              54088
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        }
+      ],
+      "target": "gui/501/local.stations.round4.697a865d71e44314aa1ce62ceb41e854",
+      "registrationExit": 113,
+      "scratchAbsent": true,
+      "privateTmpAbsent": true,
+      "releaseProved": true
+    },
+    {
+      "attemptPath": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/validator-receipt.json",
+      "coalition": 448053,
+      "kernel": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 84612,
+          "recorded": {
+            "pid": 84612,
+            "ppid": 1,
+            "pgid": 84612,
+            "birth": [
+              1793727385,
+              172557
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 84614,
+          "recorded": {
+            "pid": 84614,
+            "ppid": 84612,
+            "pgid": 84614,
+            "birth": [
+              1793727385,
+              278769
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 84613,
+          "recorded": {
+            "pid": 84613,
+            "ppid": 84612,
+            "pgid": 84613,
+            "birth": [
+              1793727385,
+              275375
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 84625,
+          "recorded": {
+            "pid": 84625,
+            "ppid": 84613,
+            "pgid": 84613,
+            "birth": [
+              1793727385,
+              387120
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 84639,
+          "recorded": {
+            "pid": 84639,
+            "ppid": 84613,
+            "pgid": 84613,
+            "birth": [
+              1793727385,
+              658105
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 84809,
+          "recorded": {
+            "pid": 84809,
+            "ppid": 84613,
+            "pgid": 84613,
+            "birth": [
+              1793727388,
+              305446
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        }
+      ],
+      "target": "gui/501/local.stations.round4.45c88d3684bb41dfbb91e835adef1065",
+      "registrationExit": 113,
+      "scratchAbsent": true,
+      "privateTmpAbsent": true,
+      "releaseProved": true
+    }
+  ],
+  "terminalAuditFailures": [],
+  "nativeJobs": 2,
+  "pipelineSeconds": 44.076473416993394,
+  "outputBytes": 36298989,
+  "freeBytesAfter": 84821762048,
+  "terminalReleaseProved": true
+}

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffprobe",
+    "-v",
+    "error",
+    "-threads",
+    "1",
+    "-select_streams",
+    "v:0",
+    "-show_streams",
+    "-show_packets",
+    "-of",
+    "json",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet/capture/primary.mp4"
+  ],
+  "stdout": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/native-raw/validator/probe.stdout",
+  "stderr": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/native-raw/validator/probe.stderr",
+  "deadlineSeconds": 30
+}

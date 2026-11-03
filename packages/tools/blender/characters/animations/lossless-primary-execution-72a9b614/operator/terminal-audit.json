@@ -1,0 +1,469 @@
+{
+  "status": "PASS_DIRECT_TERMINAL_AND_132_FRAME_PACKET_AUDIT",
+  "utc": "2026-11-03T17:37:46.720121+00:00",
+  "authorizationId": "root-20261103-t02-primary-release-accounting-02",
+  "outer": {
+    "recorded": {
+      "pid": 81139,
+      "ppid": 17818,
+      "pgid": 81139,
+      "birth": [
+        1793727346,
+        95433
+      ],
+      "status": 2,
+      "uid": 501
+    },
+    "current": null
+  },
+  "jobs": [
+    {
+      "name": "producer",
+      "coalition": 448051,
+      "kernel": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "members": [],
+      "births": [
+        {
+          "recorded": {
+            "pid": 81173,
+            "ppid": 1,
+            "pgid": 81173,
+            "birth": [
+              1793727347,
+              681858
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 81176,
+            "ppid": 81173,
+            "pgid": 81176,
+            "birth": [
+              1793727347,
+              771095
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 81175,
+            "ppid": 81173,
+            "pgid": 81175,
+            "birth": [
+              1793727347,
+              765297
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 81177,
+            "ppid": 81175,
+            "pgid": 81175,
+            "birth": [
+              1793727347,
+              880394
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 81180,
+            "ppid": 81177,
+            "pgid": 81175,
+            "birth": [
+              1793727348,
+              54088
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448051,
+              448052
+            ]
+          },
+          "current": null
+        }
+      ],
+      "target": "gui/501/local.stations.round4.697a865d71e44314aa1ce62ceb41e854",
+      "registrationExit": 113,
+      "registrationStdout": "",
+      "registrationStderr": "Bad request.\nCould not find service \"local.stations.round4.697a865d71e44314aa1ce62ceb41e854\" in domain for user gui: 501\n",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true,
+      "cacheArchive": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/producer/owned-job/preserved-private-tmp",
+      "cacheEntriesVerified": 0,
+      "captureAndCaffeinateExits": {
+        "capture": 0,
+        "caffeinate": 0
+      },
+      "signals": [],
+      "errors": []
+    },
+    {
+      "name": "validator",
+      "coalition": 448053,
+      "kernel": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "members": [],
+      "births": [
+        {
+          "recorded": {
+            "pid": 84612,
+            "ppid": 1,
+            "pgid": 84612,
+            "birth": [
+              1793727385,
+              172557
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 84614,
+            "ppid": 84612,
+            "pgid": 84614,
+            "birth": [
+              1793727385,
+              278769
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 84613,
+            "ppid": 84612,
+            "pgid": 84613,
+            "birth": [
+              1793727385,
+              275375
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 84625,
+            "ppid": 84613,
+            "pgid": 84613,
+            "birth": [
+              1793727385,
+              387120
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 84639,
+            "ppid": 84613,
+            "pgid": 84613,
+            "birth": [
+              1793727385,
+              658105
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        },
+        {
+          "recorded": {
+            "pid": 84809,
+            "ppid": 84613,
+            "pgid": 84613,
+            "birth": [
+              1793727388,
+              305446
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              448053,
+              448054
+            ]
+          },
+          "current": null
+        }
+      ],
+      "target": "gui/501/local.stations.round4.45c88d3684bb41dfbb91e835adef1065",
+      "registrationExit": 113,
+      "registrationStdout": "",
+      "registrationStderr": "Bad request.\nCould not find service \"local.stations.round4.45c88d3684bb41dfbb91e835adef1065\" in domain for user gui: 501\n",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true,
+      "cacheArchive": "/private/tmp/t02-primary-integration-release-accounting-72a9b614/validator/owned-job/preserved-private-tmp",
+      "cacheEntriesVerified": 0,
+      "captureAndCaffeinateExits": {
+        "capture": 0,
+        "caffeinate": 0
+      },
+      "signals": [],
+      "errors": []
+    }
+  ],
+  "birthCount": 12,
+  "groupIds": [
+    81139,
+    81173,
+    81175,
+    81176,
+    84612,
+    84613,
+    84614
+  ],
+  "groupMembers": [],
+  "newOwnedJobs": 2,
+  "cumulativeOwnedJobs": 3,
+  "originalCeiling": 4,
+  "inspection": {
+    "accepted": true,
+    "schema": "t02-lossless-rgb-primary/v1",
+    "frames": 132,
+    "images": 0,
+    "observations": 132,
+    "videoBytes": 23486564,
+    "indexSha256": "6dce865be1b192a7b84bfa393df2ec978e42ebd759077abc4fe1eebb63f5ac03",
+    "validationSha256": "b9acd77fc2c8efabb60a9685711050532608f7dfa8a2d3634377af4e59f110bf"
+  },
+  "packetInventory": {
+    "normalBytes": 12812425,
+    "reservedBytes": 6604,
+    "files": 152,
+    "reservedFiles": 1,
+    "paths": [
+      "integration-result.json",
+      "capture/frame-map.json",
+      "capture/encoder-command.json",
+      "capture/sequence-index.json",
+      "capture/primary.mp4",
+      "capture/entry-result.json",
+      "capture/artifact-index.json",
+      "capture/encoder-config.json",
+      "capture/entry-state.json",
+      "capture/encoder-result.json",
+      "validation/rgb-command.json",
+      "validation/rgba.stderr",
+      "validation/rgba.stdout",
+      "validation/rgb.stderr",
+      "validation/probe-command.json",
+      "validation/validation.json",
+      "validation/rgba-command.json",
+      "validation/probe.stdout",
+      "validation/probe.stderr",
+      "validation/rgb.stdout",
+      "capture/observations/0048.json",
+      "capture/observations/0025.json",
+      "capture/observations/0072.json",
+      "capture/observations/0137.json",
+      "capture/observations/0064.json",
+      "capture/observations/0121.json",
+      "capture/observations/0033.json",
+      "capture/observations/0101.json",
+      "capture/observations/0044.json",
+      "capture/observations/0140.json",
+      "capture/observations/0117.json",
+      "capture/observations/0052.json",
+      "capture/observations/0029.json",
+      "capture/observations/0091.json",
+      "capture/observations/0068.json",
+      "capture/observations/0087.json",
+      "capture/observations/0069.json",
+      "capture/observations/0086.json",
+      "capture/observations/0090.json",
+      "capture/observations/0028.json",
+      "capture/observations/0116.json",
+      "capture/observations/0053.json",
+      "capture/observations/0141.json",
+      "capture/observations/0100.json",
+      "capture/observations/0045.json",
+      "capture/observations/0032.json",
+      "capture/observations/0065.json",
+      "capture/observations/0120.json",
+      "capture/observations/0073.json",
+      "capture/observations/0136.json",
+      "capture/observations/0024.json",
+      "capture/observations/0049.json",
+      "capture/observations/0107.json",
+      "capture/observations/0042.json",
+      "capture/observations/0015.json",
+      "capture/observations/0146.json",
+      "capture/observations/0111.json",
+      "capture/observations/0054.json",
+      "capture/observations/0078.json",
+      "capture/observations/0097.json",
+      "capture/observations/0081.json",
+      "capture/observations/0039.json",
+      "capture/observations/0019.json",
+      "capture/observations/0058.json",
+      "capture/observations/0023.json",
+      "capture/observations/0074.json",
+      "capture/observations/0131.json",
+      "capture/observations/0062.json",
+      "capture/observations/0127.json",
+      "capture/observations/0035.json",
+      "capture/observations/0034.json",
+      "capture/observations/0063.json",
+      "capture/observations/0126.json",
+      "capture/observations/0075.json",
+      "capture/observations/0130.json",
+      "capture/observations/0022.json",
+      "capture/observations/0059.json",
+      "capture/observations/0018.json",
+      "capture/observations/0038.json",
+      "capture/observations/0080.json",
+      "capture/observations/0079.json",
+      "capture/observations/0096.json",
+      "capture/observations/0110.json",
+      "capture/observations/0055.json",
+      "capture/observations/0106.json",
+      "capture/observations/0043.json",
+      "capture/observations/0129.json",
+      "capture/observations/0083.json",
+      "capture/observations/0095.json",
+      "capture/observations/0056.json",
+      "capture/observations/0113.json",
+      "capture/observations/0144.json",
+      "capture/observations/0017.json",
+      "capture/observations/0040.json",
+      "capture/observations/0105.json",
+      "capture/observations/0037.json",
+      "capture/observations/0125.json",
+      "capture/observations/0060.json",
+      "capture/observations/0133.json",
+      "capture/observations/0099.json",
+      "capture/observations/0076.json",
+      "capture/observations/0021.json",
+      "capture/observations/0109.json",
+      "capture/observations/0108.json",
+      "capture/observations/0020.json",
+      "capture/observations/0132.json",
+      "capture/observations/0098.json",
+      "capture/observations/0077.json",
+      "capture/observations/0124.json",
+      "capture/observations/0061.json",
+      "capture/observations/0036.json",
+      "capture/observations/0041.json",
+      "capture/observations/0104.json",
+      "capture/observations/0016.json",
+      "capture/observations/0145.json",
+      "capture/observations/0057.json",
+      "capture/observations/0112.json",
+      "capture/observations/0094.json",
+      "capture/observations/0128.json",
+      "capture/observations/0082.json",
+      "capture/observations/0031.json",
+      "capture/observations/0089.json",
+      "capture/observations/0123.json",
+      "capture/observations/0066.json",
+      "capture/observations/0135.json",
+      "capture/observations/0070.json",
+      "capture/observations/0027.json",
+      "capture/observations/0119.json",
+      "capture/observations/0085.json",
+      "capture/observations/0093.json",
+      "capture/observations/0139.json",
+      "capture/observations/0050.json",
+      "capture/observations/0115.json",
+      "capture/observations/0142.json",
+      "capture/observations/0046.json",
+      "capture/observations/0103.json",
+      "capture/observations/0047.json",
+      "capture/observations/0102.json",
+      "capture/observations/0143.json",
+      "capture/observations/0051.json",
+      "capture/observations/0114.json",
+      "capture/observations/0092.json",
+      "capture/observations/0138.json",
+      "capture/observations/0084.json",
+      "capture/observations/0118.json",
+      "capture/observations/0026.json",
+      "capture/observations/0134.json",
+      "capture/observations/0071.json",
+      "capture/observations/0088.json",
+      "capture/observations/0122.json",
+      "capture/observations/0067.json",
+      "capture/observations/0030.json"
+    ]
+  },
+  "packetLogicalBytes": 36305593,
+  "sourceObservationsComparedComplete": 132,
+  "encoderAcks": 132,
+  "frameMapRows": 132,
+  "rgbAndRgbaFrames": 132,
+  "probeTimebase": "1/60000",
+  "rawRgbSpoolBytes": 0,
+  "resultSha256": "fa1759fb58f6d76bf73697a37dd0b8ac3e265230ef984ceb9b23ffbf9448743c",
+  "packetResultSha256": "fa1759fb58f6d76bf73697a37dd0b8ac3e265230ef984ceb9b23ffbf9448743c",
+  "mediaSha256": "a3fc5f21eabb4167428b7f886e7e9d65db24af17d54d304f9e1978193952f8b8",
+  "mediaBytes": 23486564,
+  "authorizedReadySha256": "841d0e12a99886dc0c20e870d3e1d3cd512c9f80f846291be31d0873f77a8314",
+  "operatorStdoutSha256": "671cfb2e7f645e919121e3e555ef7a25a5bcd8ebb051b227e9da6db450ba6631",
+  "operatorStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "freeBytesAfter": 85369692160,
+  "performanceQualified": false
+}

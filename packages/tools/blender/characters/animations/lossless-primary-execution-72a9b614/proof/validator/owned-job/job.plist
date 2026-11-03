@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ExitTimeOut</key>
+	<integer>1</integer>
+	<key>KeepAlive</key>
+	<false/>
+	<key>Label</key>
+	<string>local.stations.round4.45c88d3684bb41dfbb91e835adef1065</string>
+	<key>LaunchOnlyOnce</key>
+	<true/>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12</string>
+		<string>/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-ous41520/round4_job_boundary.py</string>
+		<string>--worker</string>
+		<string>/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-ous41520/request.json</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-ous41520/stderr.txt</string>
+	<key>StandardOutPath</key>
+	<string>/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-ous41520/stdout.txt</string>
+</dict>
+</plist>
