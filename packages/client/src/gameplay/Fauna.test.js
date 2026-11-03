@@ -385,7 +385,7 @@ describe('Fauna’s displayed hit anchor', () => {
   it.each([1920, 2520])('keeps a live killing blow on the actual falling flyer instance at %i×1080, with rewards and offscreen expiry', (width) => {
     const { game, fauna, planet, r, sp, h, feed, projected } = stage(width);
     fauna.update([r], DT);
-    expect(h.hitAnchor(r.id).y).toBeCloseTo(projected().y, 3);
+    expect(h.hitAnchor(r).y).toBeCloseTo(projected().y, 3);
     const serverPos = r.pos.clone();
     const serverWorld = r.world.clone();
     r.pose.mode = 'dead';
@@ -401,7 +401,7 @@ describe('Fauna’s displayed hit anchor', () => {
     h.t = 700;
     h.updateHits(feed);
     expect(instanceAt(meshOf(fauna, planet, sp.index), 0).y).toBeLessThan(before.y - 2);
-    expect(h.hitAnchor(r.id).y).toBeCloseTo(projected().y, 3);
+    expect(h.hitAnchor(r).y).toBeCloseTo(projected().y, 3);
     expect(Number.parseFloat(number.style.top)).toBeCloseTo(projected().y, 3);
     expect(h.hitsEl.children).toEqual([number]);
     expect(number.textContent).toBe('26');
@@ -414,8 +414,8 @@ describe('Fauna’s displayed hit anchor', () => {
     expect(r.pos.equals(serverPos)).toBe(true);
     expect(r.world.equals(serverWorld)).toBe(true);
     const published = fauna.hitAnchor(r).clone();
-    h.hitAnchor(r.id);
-    h.hitAnchor(r.id);
+    h.hitAnchor(r);
+    h.hitAnchor(r);
     expect(fauna.hitAnchor(r).equals(published)).toBe(true);
     game.camWorldQuatInv.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
     h.t = 750;
@@ -458,10 +458,69 @@ describe('Fauna’s displayed hit anchor', () => {
     game.camWorldQuatInv.copy(frame.quaternion).invert();
     game.remotes.get = () => replacement;
     fauna.update([replacement], DT);
-    expect(h.hitAnchor(replacement.id).x).toBeCloseTo(projected(replacement).x, 3);
-    expect(h.hitAnchor(replacement.id).y).toBeCloseTo(projected(replacement).y, 3);
+    expect(h.hitAnchor(replacement).x).toBeCloseTo(projected(replacement).x, 3);
+    expect(h.hitAnchor(replacement).y).toBeCloseTo(projected(replacement).y, 3);
     fauna.reset();
     expect(fauna.hitAnchor(replacement)).toBeNull();
-    expect(h.hitAnchor(replacement.id)).toBeNull();
+    expect(h.hitAnchor(replacement)).toBeNull();
+  });
+
+  it.each(['session reset', 'record replacement'])('expires old feedback across a %s and same-ID redraw before the next HUD update', (change) => {
+    const { game, fauna, planet, sp, h, feed, projected } = stage();
+    game.system = { seed: SEED, planets: [planet] };
+    game.station = new Body({ kind: 'station' });
+    game.time = 100;
+    const remotes = (game.remotes = new RemoteEntities(game, {
+      view: { group: new THREE.Group(), draws: () => false, update() {} }, fauna,
+    }));
+    const snapshot = (tick, time, x) => ({ tick, time, ack: 0, full: true, removed: [], entities: [mob(7, sp.index, { pos: at(x, 20), mode: 'fly' })] });
+    const initial = snapshot(1, 100, 0);
+    expect(remotes.feed(initial, 100)).toBe(true);
+    remotes.update(DT);
+    const previous = remotes.get(7);
+    feed.event({ kind: 'combat', source: 1, target: 7, amount: 17, killed: false, hp: 1 });
+    h.updateHits(feed);
+    const oldNumber = h.hitsEl.children[0];
+    expect(oldNumber.textContent).toBe('17');
+    expect(Number.parseFloat(oldNumber.style.left)).toBeCloseTo(projected(previous).x, 3);
+    if (change === 'session reset') {
+      remotes.reset();
+      fauna.reset();
+    } else remotes.remove(0);
+    // Reset/removal and the new instance's draw both happen before any HUD update observes the gap.
+    game.time = 100.05;
+    expect(remotes.feed(snapshot(change === 'session reset' ? 1 : 2, 100.05, 8), 100.05)).toBe(true);
+    remotes.update(DT);
+    const current = remotes.get(7);
+    expect(current).not.toBe(previous);
+    expect(fauna.hitAnchor(previous)).toBeNull();
+    expect(fauna.hitAnchor(current)).not.toBeNull();
+    expect(projected(current).x).toBeGreaterThan(Number.parseFloat(oldNumber.style.left) + 300);
+    h.t = 50;
+    h.updateHits(feed);
+    expect(h.hitsEl.children).toEqual([]);
+    expect(oldNumber.isConnected).toBe(false);
+    expect(h.hitLive).toEqual([]);
+    feed.event({ kind: 'combat', source: 1, target: 7, amount: 23, killed: false, hp: 1 });
+    h.updateHits(feed);
+    const fresh = h.hitsEl.children[0];
+    expect(fresh).not.toBe(oldNumber);
+    expect(fresh.textContent).toBe('23');
+    expect(Number.parseFloat(fresh.style.left)).toBeCloseTo(projected(current).x, 3);
+    const startX = Number.parseFloat(fresh.style.left);
+    expect(remotes.feed(snapshot(3, 100.1, 10), 100.1)).toBe(true);
+    for (let i = 1; i <= 20; i++) {
+      game.time = 100.1 + i * DT;
+      remotes.update(DT);
+      h.t = 50 + i * DT * 1000;
+      h.updateHits(feed);
+      expect(remotes.get(7)).toBe(current);
+      expect(h.hitsEl.children).toEqual([fresh]);
+      expect(Number.parseFloat(fresh.style.left)).toBeCloseTo(projected(current).x, 3);
+    }
+    expect(Number.parseFloat(fresh.style.left)).toBeGreaterThan(startX + 1);
+    expect(initial.entities[0].pos).toEqual(at(0, 20));
+    expect(remotes.offline.entities.get(7).pos).toEqual(at(10, 20));
+    fauna.reset();
   });
 });

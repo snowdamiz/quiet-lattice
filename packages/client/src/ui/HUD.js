@@ -722,10 +722,10 @@ export class HUD {
 
   // Fauna publishes the billboard point on the creature as drawn, including a corpse's fall. Project a copy of it;
   // nowhere when it is not drawn this frame, behind the camera or off screen.
-  hitAnchor(id) {
+  hitAnchor(target) {
     const g = this.game;
-    const r = g.remotes?.get(id);
-    const at = r && g.fauna.hitAnchor(r);
+    if (!target || g.remotes?.get(target.id) !== target) return null;
+    const at = g.fauna.hitAnchor(target);
     if (!at) return null;
     const cam = g.engine.camera;
     _v.copy(at).sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
@@ -758,8 +758,9 @@ export class HUD {
   // kill. A new number starts a full line above the top of every live one it could touch, whichever creature that one is
   // for (where it is by now, having risen): it rises faster than the older ones, so it never closes on them, and none
   // sits on another.
-  hitNumber(amount, killed, target) {
+  hitNumber(amount, killed, targetId) {
     this.updateHitNumbers();
+    const target = this.game.remotes?.get(targetId);
     const at = this.hitAnchor(target);
     if (!at) return;
     const e = el('div', 'hit-number', this.hitsEl);

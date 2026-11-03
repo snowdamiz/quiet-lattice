@@ -218,6 +218,7 @@ describe('where a hit number rises', () => {
   /** A HUD over a camera at the origin looking down −z at 1920×1080, and the creatures `records` (id → record). */
   function sighted(records) {
     globalThis.window = { innerWidth: 1920, innerHeight: 1080 };
+    for (const [id, r] of Object.entries(records)) r.id = Number(id);
     const camera = new THREE.PerspectiveCamera(70, 16 / 9, 0.1, 1e5);
     camera.updateProjectionMatrix();
     const h = Object.create(HUD.prototype);
@@ -234,13 +235,13 @@ describe('where a hit number rises', () => {
 
   it('over the head of the creature the hit landed on, as it is drawn', () => {
     const h = sighted({ 7: creature(0, 0, -20), 8: creature(10, 0, -20) });
-    const at = h.hitAnchor(7);
+    const at = h.hitAnchor(h.game.remotes.get(7));
     // (a walker's feet are at the middle of the view; its head is 2.5 m over them: above the middle)
     expect(at.x).toBeCloseTo(960, 0);
     expect(at.y).toBeLessThan(540 - 40);
     expect(at.y).toBeGreaterThan(0);
     // the one to its right is right of it
-    expect(h.hitAnchor(8).x).toBeGreaterThan(960);
+    expect(h.hitAnchor(h.game.remotes.get(8)).x).toBeGreaterThan(960);
   });
 
   it('nowhere for a creature that is not drawn, behind the camera or off the screen', () => {
@@ -249,7 +250,7 @@ describe('where a hit number rises', () => {
       2: creature(0, 0, 20),
       3: creature(400, 0, -20),
     });
-    for (const id of [1, 2, 3, 99]) expect(h.hitAnchor(id), `creature ${id}`).toBeNull();
+    for (const id of [1, 2, 3, 99]) expect(h.hitAnchor(h.game.remotes.get(id)), `creature ${id}`).toBeNull();
   });
 });
 
@@ -295,6 +296,7 @@ describe('the numbers a hit raises', () => {
   /** A HUD over a 1920×1080 view with creatures `records` (id → record) drawn, its clock `h.t` in ms. */
   function rising(records = {}, width = 1920) {
     globalThis.window = { innerWidth: width, innerHeight: 1080 };
+    for (const [id, r] of Object.entries(records)) r.id = Number(id);
     globalThis.document = { createElement: fakeEl };
     const camera = new THREE.PerspectiveCamera(70, width / 1080, 0.1, 1e5);
     camera.updateProjectionMatrix();
@@ -376,7 +378,7 @@ describe('the numbers a hit raises', () => {
     const h = rising({ 7: creature(10, 0, -20), 8: { ...creature(0, 0, -20), drawn: false }, 9: creature(0, 0, 20), 10: creature(400, 0, -20) }, width);
     h.hitNumber(10, false, 7);
     const over = h.hitsEl.children[0];
-    const at = h.hitAnchor(7);
+    const at = h.hitAnchor(h.game.remotes.get(7));
     expect(Number.parseFloat(over.style.left)).toBeGreaterThan(width / 2 + 100);
     expect(Math.abs(Number.parseFloat(over.style.left) - at.x)).toBeLessThanOrEqual(8);
     expect(Number.parseFloat(over.style.top)).toBeCloseTo(at.y, 3);
@@ -396,11 +398,11 @@ describe('the numbers a hit raises', () => {
     h.hitNumber(23, false, 7);
     const numbers = [...h.hitsEl.children];
     const before = numbers.map((e) => ({ x: Number.parseFloat(e.style.left), y: Number.parseFloat(e.style.top) }));
-    const anchor = h.hitAnchor(7);
+    const anchor = h.hitAnchor(h.game.remotes.get(7));
     h.t = 150;
     h.game.camWorldQuatInv.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 12);
     h.updateHits();
-    const turned = h.hitAnchor(7);
+    const turned = h.hitAnchor(h.game.remotes.get(7));
     expect(Math.abs(turned.x - anchor.x)).toBeGreaterThan(100);
     expect(h.hitsEl.children).toEqual(numbers);
     numbers.forEach((e, i) => {
@@ -482,7 +484,7 @@ describe('the numbers a hit raises', () => {
   it('stacks a number against any live one it would touch, whichever creature or lane that one is for', () => {
     // (two visible creatures just above the crosshair, hit in the same frame: they share no lane but their numbers touch)
     const h = rising({ 7: creature(0, 0, -30), 8: creature(0.2, 0, -30) });
-    const anchor = h.hitAnchor(7);
+    const anchor = h.hitAnchor(h.game.remotes.get(7));
     expect(anchor.y).toBeGreaterThan(1080 * 0.44 - 20);
     expect(anchor.y).toBeLessThan(1080 * 0.44 + 20);
     h.hitNumber(15, false, 7);
@@ -518,8 +520,8 @@ describe('the numbers a hit raises', () => {
     low.hitNumber(15, false, 7);
     low.hitNumber(11, false, 8);
     const [c, d] = low.hitsEl.children;
-    expect(Number.parseFloat(d.style.top)).toBeCloseTo(low.hitAnchor(8).y, 3);
-    expect(Number.parseFloat(c.style.top)).toBeCloseTo(low.hitAnchor(7).y, 3);
+    expect(Number.parseFloat(d.style.top)).toBeCloseTo(low.hitAnchor(low.game.remotes.get(8)).y, 3);
+    expect(Number.parseFloat(c.style.top)).toBeCloseTo(low.hitAnchor(low.game.remotes.get(7)).y, 3);
   });
 
   it('pops in over about a tenth of a second, scaled up and fading in, then rises and fades out', () => {

@@ -50,7 +50,7 @@ function stage(width = 1920) {
   const records = new Map(
     [602, 603].map((id) => {
       const pos = new Vector3(id === 602 ? 0 : 2, 1000, -20);
-      return [id, { drawn: true, pos, world: pos, anchor: pos.clone().add(new Vector3(0, 2.5, 0)), frame: null, sp: { size: 2, kind: 'quad' } }] as const;
+      return [id, { id, drawn: true, pos, world: pos, anchor: pos.clone().add(new Vector3(0, 2.5, 0)), frame: null, sp: { size: 2, kind: 'quad' } }] as const;
     }),
   );
   const camera = new PerspectiveCamera(70, width / 1080, 0.1, 1e5);
@@ -150,7 +150,7 @@ describe('fauna hit-feedback capture fixtures without capture', () => {
       faunaTurnMotion();
       for (let i = 0; i < 72; i++) {
         clip.frame(1 / 60);
-        seen.push({ visible: !!h.hitAnchor(602), values: h.hitsEl.children.map((e: Element) => e.textContent), ms: clip.t * 1000 });
+        seen.push({ visible: !!h.hitAnchor(h.game.remotes.get(602)), values: h.hitsEl.children.map((e: Element) => e.textContent), ms: clip.t * 1000 });
       }
       expect(seen[10].values).toEqual(['17', '23', '9']);
       const lost = seen.find((f) => !f.visible);

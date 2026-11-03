@@ -825,7 +825,8 @@ the world over the WebSocket. Nothing of the game is kept in the browser (P1.E04
     motion), ability targets (`Fauna.targets`, which `pickTarget` reads instead of the snapshot store for creatures) and
     the player's push-out (`collidePlayer`) use. A phase-owned creature shows only to its phase because the server sends
     it to no one else. `Fauna.hitAnchor` publishes a presentation anchor at the displayed pose, including corpse fall.
-    `HUD.hitAnchor` projects a copy so damage numbers follow the visible target. Hits without a visible anchor produce
+    `HUD.hitAnchor` projects a copy for the original remote record. Live numbers expire if that record is replaced,
+    even when a new entity reuses its ID before the next HUD update. Hits without a visible anchor produce
     no numbers. A live number expires permanently when its target leaves view. Analysis is aimed at a drawn creature
     and asked of the server (`Game.analyze`). With no server (the offline sandbox) there is no fauna; the dev scenarios
     through the dev server (`?dev#foot`) have it.

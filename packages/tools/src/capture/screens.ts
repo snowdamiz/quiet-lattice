@@ -1975,7 +1975,7 @@ export async function faunaOffscreenHits(at: number): Promise<void> {
     { target: 602, amount: 9 },
   ];
   for (const { target, amount } of hits) {
-    if (w.game.hud.hitAnchor(target)) throw new Error(`offscreen target ${target} is still visible`);
+    if (w.game.hud.hitAnchor(w.game.remotes.get(target))) throw new Error(`offscreen target ${target} is still visible`);
     w.__herd.hit(target, amount);
   }
   if (w.__feed.dealt.length !== hits.length || hits.some((hit, i) => w.__feed.dealt[i].target !== hit.target || w.__feed.dealt[i].amount !== hit.amount)) {
@@ -2014,7 +2014,7 @@ export function faunaTurnMotion(): void {
     const hits = i === 0 ? [17] : i === 4 ? [23] : i === 8 ? [9] : i === 30 ? [17, 23, 9] : i === 54 ? [11] : [];
     const queued: FaunaPage['__hitTurn']['events'] = [];
     for (const amount of hits) {
-      const visible = !!g.hud.hitAnchor(602);
+      const visible = !!g.hud.hitAnchor(g.remotes.get(602));
       if (visible !== (i !== 30)) throw new Error(`turn fixture hit at frame ${i} has the wrong target visibility`);
       w.__herd.hit(602, amount);
       const event = w.__feed.dealt.at(-1);
@@ -2024,7 +2024,7 @@ export function faunaTurnMotion(): void {
       queued.push(receipt);
     }
     frame(dt);
-    const targetVisible = !!g.hud.hitAnchor(602);
+    const targetVisible = !!g.hud.hitAnchor(g.remotes.get(602));
     const values = Array.from(document.querySelectorAll<HTMLElement>('.hit-number'), (e) => e.textContent ?? '');
     trace.frames.push({ frame: i, ms: (clip.t - start) * 1000, targetVisible, values });
     for (const receipt of queued) receipt.consumed = w.__feed.dealt.length === 0;
