@@ -140,25 +140,115 @@ def require_stage_admission(stage, out, ready):
 
 class StageReceipts:
     """Observe only current kernel-owned members; never use sampled ancestry as authority."""
-    def __init__(self, job, ready, private_tmp):
+    def __init__(self, job, ready, private_tmp, *, structured_launch_receipt=None):
         self.job, self.ready, self.private_tmp = job, ready, private_tmp
         self.processes = {}
         self.launch = None
         self.next_observation = 0
+        self.structured_path = Path(structured_launch_receipt) if structured_launch_receipt is not None else None
+        self.structured_fact = None
+        self.structured_data = {'provenance': 'BrowserServer.process() ChildProcess', 'state': 'waiting-for-receipt',
+                                'raw': None, 'failure': None, 'persistence_errors': [], 'admitted_ever': False, 'current_member': False}
+        if self.structured_path is not None:
+            assert self.structured_path == job.out.parent / 'capture/browser-launch.json', 'Not the explicit fresh job receipt path'
+            assert self.structured_path.parent.resolve() == self.structured_path.parent and not self.structured_path.parent.is_symlink()
+
+    def _structured_save(self):
+        write(self.job.out / 'structured_launch_observation.json', self.structured_data)
+
+    def _structured_claim(self):
+        path = self.structured_path
+        if not path.exists() and not path.is_symlink():
+            assert self.structured_data['raw'] is None, 'Published structured receipt disappeared'
+            self._structured_save()
+            return None
+        assert not path.is_symlink(), 'Structured receipt symlink refused'
+        with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), 'rb') as stream:
+            assert os.fstat(stream.fileno()).st_mode & 0o170000 == 0o100000, 'Structured receipt is not a regular file'
+            raw = stream.read(65537)
+        digest = hashlib.sha256(raw).hexdigest()
+        prior = self.structured_data['raw']
+        if prior is not None:
+            if digest != prior['sha256']:
+                self.structured_data['changed_raw'] = {'sha256': digest, 'prefix_utf8': raw[:65536].decode('utf8', 'replace'), 'bytes_read': len(raw)}
+                raise AssertionError('Published structured receipt changed')
+            return self.structured_fact
+        self.structured_data['raw'] = {'sha256': digest, 'prefix_utf8': raw[:65536].decode('utf8', 'replace'),
+                                       'bytes_read': len(raw), 'complete': len(raw) <= 65536}
+        self.structured_data['state'] = 'raw-retained'
+        self._structured_save()  # Raw facts are durable before any schema/claim assertion.
+        assert len(raw) <= 65536, 'Structured receipt byte cap exceeded'
+        def no_duplicates(pairs):
+            result = {}
+            for key, value in pairs:
+                assert key not in result, 'Duplicate structured receipt key'
+                result[key] = value
+            return result
+        value = json.loads(raw.decode('utf8'), object_pairs_hook=no_duplicates)
+        assert isinstance(value, dict) and set(value) == {'kind', 'provenance', 'prefix', 'pid', 'spawnfile', 'spawnargs', 'at', 'monotonicNs'}, 'Structured receipt schema refused'
+        assert value['kind'] == 'T13_BROWSER_LAUNCH_CHILD_PROCESS_V1' and value['provenance'] == 'BrowserServer.process() ChildProcess', 'Structured kind/provenance mismatch'
+        assert isinstance(value['prefix'], str) and re.fullmatch(r'bwt-[a-f0-9]{32}', value['prefix']) and value['prefix'] == self.ready['prefix'], 'Structured runtime prefix mismatch'
+        assert type(value['pid']) is int and 1 < value['pid'] <= 9007199254740991, 'Structured PID invalid'
+        assert isinstance(value['at'], str) and len(value['at']) <= 40 and datetime.datetime.fromisoformat(value['at'].replace('Z', '+00:00')).utcoffset() == datetime.timedelta(0), 'Structured wall timestamp invalid'
+        assert isinstance(value['monotonicNs'], str) and re.fullmatch(r'[0-9]{1,24}', value['monotonicNs']), 'Structured monotonic timestamp invalid'
+        args = value['spawnargs']
+        assert isinstance(args, list) and 1 <= len(args) <= 128 and all(isinstance(arg, str) and '\x00' not in arg and len(arg.encode('utf8')) <= 8192 for arg in args), 'Structured argv schema/count/argument bound invalid'
+        assert sum(len(arg.encode('utf8')) for arg in args) <= 32768, 'Structured argv byte cap exceeded'
+        expected = self.ready['resolver']['selectedExecutable']['path']
+        assert value['spawnfile'] == expected and args[0] == expected, 'Structured executable claim differs from frozen selection'
+        assert str(Path(expected).resolve(strict=True)) == expected, 'Frozen executable path not canonical'
+        expected_hash = self.ready['process_binary_sha256'][expected]
+        assert sha(expected) == expected_hash, 'Structured executable hash differs'
+        profile_args = [arg for arg in args if arg.startswith('--user-data-dir')]
+        assert len(profile_args) == 1 and profile_args[0].startswith('--user-data-dir='), 'Exactly one profile selector required'
+        profile = Path(profile_args[0].split('=', 1)[1])
+        assert profile.is_absolute() and profile.parent == Path(self.private_tmp), 'Profile is not a direct child of private TMP'
+        assert str(profile.resolve(strict=True)) == str(profile) and not profile.is_symlink() and profile.is_dir(), 'Profile path not canonical directory'
+        assert profile.name.startswith('playwright_chromiumdev_profile-'), 'Profile prefix invalid'
+        assert [arg for arg in args if arg.startswith('--use-angle')] == ['--use-angle=metal'], 'Exactly one Metal selector required'
+        self.structured_fact = {'pid': value['pid'], 'binary': expected, 'profile': str(profile), 'angle_metal_requested': True,
+                                'provenance': value['provenance']}
+        self.structured_data.update(state='claims-validated-not-owned', claim=self.structured_fact)
+        self._structured_save()
+        return self.structured_fact
 
     def observe(self):
+        if self.structured_path is not None and self.structured_data['failure'] is not None:
+            raise RuntimeError('Structured launch observation is terminally rejected')
         if time.monotonic() < self.next_observation:
             return
         self.next_observation = time.monotonic() + .25
+        try:
+            self._observe()
+        except BaseException as error:
+            if self.structured_path is not None:
+                self.launch = None
+                self.structured_data.update(state='rejected', current_member=False, failure=failure(error))
+                try:
+                    self._structured_save()
+                except BaseException as persistence:
+                    self.structured_data['persistence_errors'].append(failure(persistence))
+            raise  # A failed rejection receipt never replaces the original observation failure.
+
+    def _observe(self):
+        claim = self._structured_claim() if self.structured_path is not None else None
         log = self.job.scratch / 'capture_stdout.txt'
-        launch = parse_launch(log.read_text() if log.exists() else '',
+        legacy = parse_launch(log.read_text() if log.exists() else '',
                               self.ready['resolver']['selectedExecutable']['path'], self.private_tmp)
-        if launch:
+        launch = legacy if self.structured_path is None else None
+        if self.structured_path is not None:
+            self.structured_data['debug_launch'] = legacy
+            if claim and legacy:
+                assert all(claim[key] == legacy[key] for key in ('binary', 'profile', 'angle_metal_requested')), 'Launch source contradiction'
+                assert legacy['pid'] is None or legacy['pid'] == claim['pid'], 'Launch PID contradiction'
+            self._structured_save()
+        elif launch:
             self.launch = launch
             self.job.state['profiles'] = [launch['profile']]
             self.job.save()
         rows = self.job.members()
         commands = current_commands(rows) if rows else {}
+        joined = False
         for row in rows:
             current = identity(row['pid'])
             if current is None: continue
@@ -169,6 +259,11 @@ class StageReceipts:
             if after is None: continue
             observed_coalition = coalition(row['pid'])
             assert after['birth'] == row['birth'] and observed_coalition[0] == self.job.coalition_id
+            if claim and row['pid'] == claim['pid']:
+                assert after['uid'] == os.getuid() and binary == claim['binary'] and sha(binary) == self.ready['process_binary_sha256'][binary], 'Current browser identity/executable mismatch'
+                profile = Path(claim['profile'])
+                assert profile.is_dir() and not profile.is_symlink() and str(profile.resolve(strict=True)) == str(profile), 'Current profile path changed'
+                launch = claim
             command = commands.get(row['pid'])
             kind = re.search(r'(?:^|\s)--type=([^\s]+)', command) if command else None
             role = ('apple-video-encoder-xpc' if binary == VTENCODER else
@@ -180,19 +275,34 @@ class StageReceipts:
             write(self.job.out / 'observed_execution.json', self.receipt())
             assert binary in self.ready['process_binary_sha256'], f'Unbound owned executable: {binary}'
             record.update(admitted=True, prelaunch_sha256=self.ready['process_binary_sha256'][binary])
+            if claim and row['pid'] == claim['pid']:
+                joined = True
+                self.launch = launch
+                self.job.state['profiles'] = [launch['profile']]
+                self.job.save()
+                self.structured_data.update(state='admitted-current-kernel-member', admitted_ever=True, current_member=True, current_identity=after,
+                                            current_coalition=observed_coalition, executable_sha256=sha(binary))
+                self._structured_save()
             write(self.job.out / 'observed_execution.json', self.receipt())
+        if self.structured_path is not None and not joined:
+            self.structured_data['current_member'] = False
+            self.structured_data['state'] = ('observed-member-no-longer-current' if self.structured_data['admitted_ever'] else
+                                              'waiting-for-current-owned-member' if claim else 'waiting-for-receipt')
+            self._structured_save()
         write(self.job.out / 'observed_execution.json', self.receipt())
 
     def receipt(self):
         return {'utc': utc(), 'scope': 'OBSERVED_STATION_CHROMIUM_COHORT', 'launch': self.launch,
                 'processes': list(self.processes.values()),
-                'all_ever_lived_processes_observed': False, 'external_native_XPC_ownership': 'UNQUALIFIED'}
+                'all_ever_lived_processes_observed': False, 'external_native_XPC_ownership': 'UNQUALIFIED',
+                **({'structured_launch': self.structured_data} if self.structured_path is not None else {})}
 
     def require_browser(self):
+        if self.structured_path is not None:
+            assert self.structured_data['admitted_ever'] and self.structured_data['failure'] is None, 'Structured launch was never admitted or was rejected'
         assert self.launch and self.launch['angle_metal_requested'], 'Missing actual browser/profile/Metal-request receipt'
         roles = {r['role'] for r in self.processes.values()}
         assert {'browser', 'gpu-process', 'renderer', 'utility'} <= roles, f'Missing observed browser roles: {roles}'
-
 
 def terminal_audit(job, private_tmp, profiles):
     """Read-only audit; an unresolved exact review-copy path is retained, never globally deleted."""
