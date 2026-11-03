@@ -1,0 +1,289 @@
+{
+  "status": "FULL_SCOPE_NOT_FEASIBLE_BOUNDED_UNIT_PROPOSAL_ONLY",
+  "utc": "2026-11-03T04:17:45.454877+00:00",
+  "supersedesSingleCopyProposalBytes": 32004636672,
+  "diskSnapshot": {
+    "utc": "2026-11-03T04:17:45.454877+00:00",
+    "path": "/private/tmp",
+    "sameDataVolumePaths": [
+      "/private/tmp",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+      "/System/Volumes/Data"
+    ],
+    "deviceIds": {
+      "/private/tmp": 16777233,
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41": 16777233,
+      "/System/Volumes/Data": 16777233
+    },
+    "freeBytes": 24584187904,
+    "alternateMountedDataVolumeAssumed": false,
+    "snapshotIsNotReservation": true,
+    "requireFreshPerUnitRecheck": true
+  },
+  "existingData": {
+    "pilotIndexedBytes": 10631697585,
+    "pilotFinalIndexBytes": 1111392,
+    "incrementalChargeBytes": 0,
+    "meaning": "Existing pilot, failed attempt, lossless feasibility outputs/raw RGB spools, current working tree and current LFS objects are already reflected in freeBytes. Preserve them; do not subtract them again."
+  },
+  "observedDuplication": {
+    "sampleWorkingTreeBytes": 23486564,
+    "sampleSharedLfsObjectBytes": 23486564,
+    "sameFilesystemDistinctRetainedCopies": true,
+    "currentCopiesAlreadyInFreeDisk": true
+  },
+  "copyPolicy": {
+    "futurePacketDestination": "assets/renders/review/characters/<new-unit> (all packet files are LFS under current .gitattributes)",
+    "packetIncludes": "Lossless primary media, PNG stills, every complete raw observation, all indices/hash manifests/receipts, contact sheets and selected integration-test evidence",
+    "privateArchives": "Preserve owned-job cache/profile/raw-log archives separately in the private unit namespace, indexed by exact paths/hashes. They are not silently deleted and are not duplicated into the Git packet in these cases. If copied into the packet, their bytes also acquire the packet copy multiplier.",
+    "sharedMainHydration": "Main and the task worktree share one LFS object database but retain two working-tree copies after merge hydration. Add a packet copy for main.",
+    "independentClone": "An independent local clone retains another LFS object database and working-tree copy. Git metadata reserve also applies to the second database.",
+    "avoidableDuplication": "A reviewed future capture could write new primary output directly into a new task-worktree packet namespace, avoiding a separate private-primary copy. This is not implemented or authorized and does not move/delete any existing packet.",
+    "deduplicationCredit": 0,
+    "gitRepackLimit": "Git reserves cover only bounded new source/pointer/tree/commit data and their temporary packing. An unscoped automatic GC/repack of the existing repository is not included and must be excluded from a unit window or separately budgeted.",
+    "gitReserveConditions": "Reserve includes bounded new source/code, pointers/trees/commits, both existing worktree-index increments and index-lock/temporary pack files. Future packet tracked-file counts must be bounded. No unscoped GC/repack of the existing repository is assumed.",
+    "independentCloneBaseline": "Independent-clone figures count incremental copies of this future packet only. Hydrating any other existing repository/LFS contents into a new clone has an additional, currently unqualified baseline and cannot be admitted from these figures."
+  },
+  "contracts": {
+    "observationBytesPerFrame": 262144,
+    "pngStillBytesPerImage": 12582912,
+    "preserve": "Complete existing observation fields and original bytes; no dropping/abbreviating poses, identities, errors or unknown metadata. No quality, rate or order change.",
+    "motionByteQuota": "8MiB+160KiB per declared frame is only a proposed enforced lossless quota, not a proven natural codec maximum or a full-completion promise."
+  },
+  "transientAndSafetyBytes": {
+    "nativeEncodingAndMuxStaging": 536870912,
+    "lfsCleanAndHydrationStaging": 536870912,
+    "persistentRawRgbDecoderSpool": 0,
+    "freeSafety": 4294967296
+  },
+  "fullRemaining": {
+    "remainingClips": 40,
+    "motionReels": 240,
+    "motionFrames": 46656,
+    "pngStills": 960,
+    "rawObservationCount": 47616,
+    "layout": "120 clip-by-people units, each with2 LOD motion captures,1 still capture and2 post-release validator jobs",
+    "captureJobs": 360,
+    "validationJobs": 240,
+    "packetBudgetBytesPerCopy": {
+      "losslessMotion": 9657384960,
+      "pngStills": 12079595520,
+      "rawObservations": 12482248704,
+      "captureIndicesAndAncillary": 24159191040,
+      "validationIndicesAndManifests": 4026531840,
+      "globalIndicesAndFreezes": 268435456,
+      "contactSheets": 1006632960
+    },
+    "packetBytesPerCopy": 63680020480,
+    "privateArchiveCacheBudgetBytes": 644245094400,
+    "archiveMeaning": "Keep the accepted1GiB owned-archive allowance for each of600 proposed jobs. Actual archives may be much smaller; no unreviewed global2GiB cache cap is assumed. New validator job details and bounds still need review.",
+    "copyCases": [
+      {
+        "layout": "directTaskWorktreeAndSharedLfs",
+        "packetCopyCount": 2,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": false,
+        "packetBytesPerCopy": 63680020480,
+        "allPacketCopiesBytes": 127360040960,
+        "privateArchiveCacheBytes": 644245094400,
+        "gitPointerTreeCommitAndCodeReserveBytes": 134217728,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 777108062208,
+        "fitsCurrentSnapshot": false,
+        "snapshotHeadroomBytes": -752523874304
+      },
+      {
+        "layout": "directTaskWorktreeSharedLfsAndMainHydration",
+        "packetCopyCount": 3,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": false,
+        "packetBytesPerCopy": 63680020480,
+        "allPacketCopiesBytes": 191040061440,
+        "privateArchiveCacheBytes": 644245094400,
+        "gitPointerTreeCommitAndCodeReserveBytes": 134217728,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 840788082688,
+        "fitsCurrentSnapshot": false,
+        "snapshotHeadroomBytes": -816203894784
+      },
+      {
+        "layout": "retainedPrivateOriginalTaskWorktreeAndSharedLfs",
+        "packetCopyCount": 3,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": true,
+        "packetBytesPerCopy": 63680020480,
+        "allPacketCopiesBytes": 191040061440,
+        "privateArchiveCacheBytes": 644245094400,
+        "gitPointerTreeCommitAndCodeReserveBytes": 134217728,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 840788082688,
+        "fitsCurrentSnapshot": false,
+        "snapshotHeadroomBytes": -816203894784
+      },
+      {
+        "layout": "retainedPrivateOriginalTaskWorktreeSharedLfsAndMainHydration",
+        "packetCopyCount": 4,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": true,
+        "packetBytesPerCopy": 63680020480,
+        "allPacketCopiesBytes": 254720081920,
+        "privateArchiveCacheBytes": 644245094400,
+        "gitPointerTreeCommitAndCodeReserveBytes": 134217728,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 904468103168,
+        "fitsCurrentSnapshot": false,
+        "snapshotHeadroomBytes": -879883915264
+      },
+      {
+        "layout": "retainedPrivateOriginalTaskWorktreeFirstLfsAndIndependentCloneWorktreeLfs",
+        "packetCopyCount": 5,
+        "gitObjectDatabases": 2,
+        "persistentPrivatePrimaryCopy": true,
+        "packetBytesPerCopy": 63680020480,
+        "allPacketCopiesBytes": 318400102400,
+        "privateArchiveCacheBytes": 644245094400,
+        "gitPointerTreeCommitAndCodeReserveBytes": 268435456,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 968282341376,
+        "fitsCurrentSnapshot": false,
+        "snapshotHeadroomBytes": -943698153472,
+        "packetOnlyBudgetFitsSnapshot": false,
+        "additionalCloneBaselineRequired": true
+      }
+    ],
+    "feasibleOnCurrentDisk": false,
+    "conclusion": "Even one media-plus-complete-observation copy exceeds current free disk before indices, archives or any Git/LFS copy. Lossless motion feasibility does not establish whole-packet or whole-library fit."
+  },
+  "smallUnit": {
+    "status": "PROPOSAL_ONLY_REQUIRES_FORMAT_IMPLEMENTATION_REVIEW_AND_SEPARATE_GRANT",
+    "clip": "run_forward",
+    "people": "thalune",
+    "lods": [
+      0,
+      2
+    ],
+    "motionFrames": 378,
+    "pngStills": 8,
+    "rawObservations": 386,
+    "captureJobs": 3,
+    "validationJobs": 2,
+    "newIntegrationFixtureJobs": 4,
+    "archiveJobs": 9,
+    "newIntegrationFixture": "One new output using at most132 existing pilot frames, with512MiB encoded-file ceiling and32MiB complete hash/metadata allowance. Original pilot PNG inputs are read in place, not copied. Existing feasibility files are not charged again.",
+    "packetBudgetBytesPerCopy": {
+      "losslessMotion": 78708736,
+      "pngStills": 100663296,
+      "rawObservations": 101187584,
+      "captureIndicesAndAncillary": 201326592,
+      "validationIndicesAndManifests": 33554432,
+      "globalIndicesAndFreezes": 16777216,
+      "contactSheets": 8388608,
+      "newIntegrationFixtureVideo": 536870912,
+      "newIntegrationFixtureHashMetadata": 33554432
+    },
+    "packetBytesPerCopy": 1111031808,
+    "privateArchiveCacheBudgetBytes": 9663676416,
+    "copyCases": [
+      {
+        "layout": "directTaskWorktreeAndSharedLfs",
+        "packetCopyCount": 2,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": false,
+        "packetBytesPerCopy": 1111031808,
+        "allPacketCopiesBytes": 2222063616,
+        "privateArchiveCacheBytes": 9663676416,
+        "gitPointerTreeCommitAndCodeReserveBytes": 16777216,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 17271226368,
+        "fitsCurrentSnapshot": true,
+        "snapshotHeadroomBytes": 7312961536
+      },
+      {
+        "layout": "directTaskWorktreeSharedLfsAndMainHydration",
+        "packetCopyCount": 3,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": false,
+        "packetBytesPerCopy": 1111031808,
+        "allPacketCopiesBytes": 3333095424,
+        "privateArchiveCacheBytes": 9663676416,
+        "gitPointerTreeCommitAndCodeReserveBytes": 16777216,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 18382258176,
+        "fitsCurrentSnapshot": true,
+        "snapshotHeadroomBytes": 6201929728
+      },
+      {
+        "layout": "retainedPrivateOriginalTaskWorktreeAndSharedLfs",
+        "packetCopyCount": 3,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": true,
+        "packetBytesPerCopy": 1111031808,
+        "allPacketCopiesBytes": 3333095424,
+        "privateArchiveCacheBytes": 9663676416,
+        "gitPointerTreeCommitAndCodeReserveBytes": 16777216,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 18382258176,
+        "fitsCurrentSnapshot": true,
+        "snapshotHeadroomBytes": 6201929728
+      },
+      {
+        "layout": "retainedPrivateOriginalTaskWorktreeSharedLfsAndMainHydration",
+        "packetCopyCount": 4,
+        "gitObjectDatabases": 1,
+        "persistentPrivatePrimaryCopy": true,
+        "packetBytesPerCopy": 1111031808,
+        "allPacketCopiesBytes": 4444127232,
+        "privateArchiveCacheBytes": 9663676416,
+        "gitPointerTreeCommitAndCodeReserveBytes": 16777216,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 19493289984,
+        "fitsCurrentSnapshot": true,
+        "snapshotHeadroomBytes": 5090897920
+      },
+      {
+        "layout": "retainedPrivateOriginalTaskWorktreeFirstLfsAndIndependentCloneWorktreeLfs",
+        "packetCopyCount": 5,
+        "gitObjectDatabases": 2,
+        "persistentPrivatePrimaryCopy": true,
+        "packetBytesPerCopy": 1111031808,
+        "allPacketCopiesBytes": 5555159040,
+        "privateArchiveCacheBytes": 9663676416,
+        "gitPointerTreeCommitAndCodeReserveBytes": 33554432,
+        "transientAndSafetyBytes": 5368709120,
+        "maximumIncrementalDiskBytes": 20621099008,
+        "fitsCurrentSnapshot": false,
+        "snapshotHeadroomBytes": 3963088896,
+        "packetOnlyBudgetFitsSnapshot": true,
+        "additionalCloneBaselineRequired": true
+      }
+    ],
+    "recommendedConservativeCase": "retainedPrivateOriginalTaskWorktreeSharedLfsAndMainHydration",
+    "maximumIncrementalDiskBytes": 19493289984,
+    "partialProgressOnly": "Admission of this one unit does not promise retention of all remaining units. Preserve every accepted or failed unit and recompute free disk before the next one.",
+    "snapshotHeadroomBytes": 5090897920,
+    "futureRawRgbSpoolBytes": 0,
+    "testInputCopiesBytes": 0,
+    "validationFixtureNote": "The existing feasibility raw RGB files stay preserved in baseline used space. New integration tests read existing PNG/observation inputs in place and use framehash validation; no new full raw RGB spool is allowed. The512MiB+32MiB fixture allowance is incremental new encoded output and complete test hashes/metadata, not a second charge for old inputs."
+  },
+  "decoderPolicy": {
+    "persistentRawRgbSpoolBytes": 0,
+    "verification": "Use software decoder framehash output and compare ordered RGB/RGBA hashes and exact count/timebase against the captured source manifest. Stream hash calculation; do not persist a full raw RGB reel. Current raw feasibility proof files remain preserved and already occupy baseline disk."
+  },
+  "losslessObservationCompressionProposal": {
+    "status": "PROPOSAL_ONLY_NOT_IMPLEMENTED_OR_MEASURED",
+    "format": "Per-reel tar+gzip (or a separately reviewed equivalent), with exact original observation JSON bytes as archive members, plus an index of original work ID/path/byte length/SHA256.",
+    "proofBeforeCredit": "A bounded CPU-only test on existing observations must decompress every member and prove byte equality, exact count/order and all unknown fields. Bound archive input/output/memory, reject duplicate/unsafe paths, and preserve all current JSON files.",
+    "retentionCondition": "Savings require a reviewed future contract with the compressed archive as the authoritative complete observation store. Keeping raw JSON plus a compressed copy does not save storage. No current raw observation may be deleted.",
+    "compressionRatioUsedInThisAccounting": null,
+    "storageCreditBytes": 0
+  },
+  "unresolvedLimits": [
+    "Streaming encoder, alpha gating, memory/backpressure and decoder admission are not implemented",
+    "No natural whole-library lossless video maximum is proved; quota overflow must HOLD without quality degradation",
+    "Index and Git metadata reserves require bounded file counts and no unscoped repository repack",
+    "Any archive-retention-cap reduction or metadata compression needs a separate measured/reviewed contract",
+    "Current free disk changes during T13; these are timestamped snapshots, not reservations",
+    "If preserving original PNG data-URL byte recoverability remains mandatory, pixel-lossless video alone cannot replace those PNG bytes; the image representation contract must be explicit"
+  ],
+  "noNewRuntimeOrCompression": true
+}

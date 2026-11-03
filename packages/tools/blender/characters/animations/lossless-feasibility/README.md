@@ -47,10 +47,32 @@ These are one-run observations, not a throughput benchmark. No limiter, repeatab
 
 The marker precedent used the same installed FFmpeg binaries but encoded a lossy `libx264` CRF18/yuv420p viewing copy from JPEGs. Its quality claim is not reused here. [evidence.json](evidence.json) records the actual binary hashes, codec observations, commands, helper pins, private proof paths, timings, and limits.
 
-## Proposed full-library format
+## Corrected storage accounting
 
-[full-library-strategy.json](full-library-strategy.json) proposes lossless primary motion, necessary PNG stills, compact contact sheets, and all existing observation identities. It reuses the pilot's walk/cast coverage. The remaining scope is 40 clips, 240 reels, 46,656 motion frames, and 960 stills.
+The earlier 32,004,636,672-byte fit claim is withdrawn. It counted future artifacts once and did not include working-tree/LFS duplication or later hydration into main. The bounded pixel proof remains unchanged.
 
-The proposed enforced budget is 32,004,636,672 bytes, including a 4 GiB free-space reserve and 1 GiB staging allowance. It uses a per-reel video ceiling of 8 MiB plus 160 KiB per declared frame, an 8 MiB PNG-still ceiling, a 128 KiB observation ceiling, and aggregate caps for preserved caches and other artifacts. At the recorded 33,530,982,400-byte free-space snapshot, that leaves 1,526,345,728 bytes beyond the entire budget. Current disk must be rechecked before any admission.
+[storage-accounting.json](storage-accounting.json) is the authoritative corrected ledger. It preserves the accepted 256 KiB allowance for each complete observation and 12 MiB for each PNG still. No metadata fields, poses, frame order, or sample rate are dropped. The old 128 KiB observation and 8 MiB still assumptions are not used for admission.
 
-These are proposed hard ceilings, not codec guarantees. Overflow must stop the unit and retain failure evidence, with no quality degradation or deletion. The new ceilings, alpha handling, bounded backpressure, memory contract, lossless artifact admission, decoder verification, and encoder ownership need implementation and independent review before a separately granted integration unit. No streaming capture, new supervisor, full-library grant, or additional rendering is authorized by this feasibility result.
+The remaining scope is 40 clips, 240 reels, 46,656 motion frames, and 960 stills. Its proposed encoded-motion quota plus the accepted still and raw-observation allowances already total 34.219 GB for one copy, before indexes or archives. The complete conservative packet allowance is 63.680 GB per retained copy after explicit index/ancillary, validator-manifest, freeze, and contact-sheet bounds. Whole-scope retention does not fit current disk.
+
+Current repository attributes make every file under the proposed `assets/renders` packet path an LFS artifact. The task working tree and shared LFS store retain two packet copies. Main hydration adds a third working-tree copy while sharing the same LFS store. Keeping a separate private primary output adds another copy. An independent clone adds both its own working tree and LFS store. No deduplication, compression, or APFS clone credit is assumed. Git pointer/tree/commit data and bounded temporary packing have separate reserves.
+
+The strict full ledger also retains 600 proposed owned-job archives at the existing 1 GiB per-job allowance. Those private cache/profile/raw-log archives are indexed and preserved but are not copied into the Git packet in the ledger. Copying them into a portable packet requires multiplying their bytes too. The full private-original/task-worktree/LFS/main case is 904.468 GB. This is a conservative quota ceiling, not an observed size prediction. It is not an admission request.
+
+The existing 10.632 GB pilot, prior failed attempt, current feasibility files, raw RGB proof files, and current working-tree/LFS objects are already included in used disk. Their incremental charge is zero. They are preserved and are not subtracted from free space again.
+
+## One bounded partial unit
+
+A proposed next source-integration unit is `run_forward` for Thalune at LOD0 and LOD2. It contains 378 motion frames, 8 stills, and 386 complete observations. Three capture jobs and two post-release validation jobs retain their full archive allowances. One new bounded integration fixture uses at most 132 existing pilot frames, with a 512 MiB encoded-output ceiling, 32 MiB of complete test hashes/metadata, and four owned native jobs. Existing test PNG/observation inputs are read in place. Future framehash validation has zero persistent full-reel RGB spooling.
+
+Including retained private primary output, task working-tree copy, shared LFS copy, later main hydration, all nine job archives, Git/source metadata, separate native/LFS staging, and 4 GiB of free-space safety, that unit requires at most 19,493,289,984 incremental bytes under the declared ceilings. This permits only a separately reviewed partial unit if a fresh per-unit disk check passes. It does not promise retention or completion of the whole remaining library.
+
+Capturing new future primary output directly into a new task-worktree namespace could avoid the separate private-primary copy. That topology requires review and is not implemented. It does not move or delete any existing packet. A separate storage decision is needed before full-library accumulation.
+
+The timestamped free-byte snapshot, same-volume identities, all copy cases, index/cache/staging categories, and unresolved limits are in the ledger. There is no assumed alternate mounted data volume. Current free disk changes during other tasks, so it is a snapshot rather than a reservation. Unscoped Git GC/repack is excluded from the bounded reserve and must be separately budgeted if needed.
+
+## Lossless observation compression proposal
+
+A per-reel tar+gzip archive could retain every original observation JSON byte, with an index of original work IDs, paths, byte lengths, and SHA-256 values. This is proposed only. It has not been implemented or measured. Before any storage credit, a bounded CPU proof must recover every member byte-for-byte, preserve count/order and unknown fields, reject unsafe/duplicate paths, and bound decompression. Keeping the raw JSON and an additional compressed copy does not save storage. A future compressed-primary contract would need explicit review. Current observation files remain untouched.
+
+No video ratio is applied to observation metadata, stills, indexes, caches, Git objects, or the entire packet. No compression credit appears in this corrected budget. The new primary image representation, alpha handling, backpressure, memory limits, native ownership, validation and new output scope still require implementation and independent review before any separately authorized capture.
