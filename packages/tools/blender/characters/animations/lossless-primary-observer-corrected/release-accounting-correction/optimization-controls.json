@@ -1,0 +1,1377 @@
+{
+  "candidateFilesUnchangedBeforeReport": true,
+  "directOptimizedCasesUnsetExternalBytecodeSuppression": true,
+  "status": "PASS_PINNED_PYTHON_OPTIMIZATION_ADMISSION",
+  "cases": 66,
+  "rows": [
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/rgb-primary.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/freeze.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/controls.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/observer-controls.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet-budget-controls.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/packet_budget.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/optimization-controls.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/optimization-controls.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/optimization-controls.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/optimization-controls.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/optimization-controls.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/optimization-controls.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/release-controls.py",
+      "case": "direct-env-1",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/release-controls.py",
+      "case": "instrumented-env-1",
+      "passed": true,
+      "optimize": 1,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/release-controls.py",
+      "case": "compiled-optimized-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/release-controls.py",
+      "case": "direct-env-2",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/release-controls.py",
+      "case": "instrumented-env-2",
+      "passed": true,
+      "optimize": 2,
+      "compiledLevel": -1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/release-controls.py",
+      "case": "compiled-optimized-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/assertion_guard.py",
+      "case": "guard-compiled-1",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/assertion_guard.py",
+      "case": "guard-compiled-2",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 2,
+      "outcome": {
+        "type": "SystemExit",
+        "message": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused"
+      },
+      "imports": [
+        "sys"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "normal-disabled",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 0,
+      "outcome": {
+        "type": "AssertionError",
+        "message": "CPU-only source candidate; browser execution disabled"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys",
+        "argparse",
+        "_io",
+        "_io",
+        "os",
+        "re",
+        "sys",
+        "warnings",
+        "_io",
+        "sys",
+        "_warnings",
+        "gettext",
+        "_io",
+        "operator",
+        "os",
+        "re",
+        "sys",
+        "datetime",
+        "_io",
+        "_datetime",
+        "_datetime",
+        "hashlib",
+        "_io",
+        "_hashlib",
+        "_hashlib",
+        "_hashlib",
+        "_blake2",
+        "importlib",
+        "_io",
+        "_imp",
+        "sys",
+        "_frozen_importlib",
+        "_frozen_importlib_external",
+        "warnings",
+        "_bootstrap",
+        "json",
+        "os",
+        "pathlib",
+        "_io",
+        "fnmatch",
+        "_io",
+        "os",
+        "posixpath",
+        "re",
+        "functools",
+        "functools",
+        "io",
+        "ntpath",
+        "os",
+        "sys",
+        "stat",
+        "genericpath",
+        "genericpath",
+        "_winapi",
+        "nt",
+        "nt",
+        "nt",
+        "nt",
+        "nt",
+        "nt",
+        "os",
+        "posixpath",
+        "re",
+        "sys",
+        "warnings",
+        "_collections_abc",
+        "errno",
+        "stat",
+        "urllib.parse",
+        "_io",
+        "_io",
+        "collections",
+        "functools",
+        "math",
+        "re",
+        "types",
+        "warnings",
+        "ipaddress",
+        "_io",
+        "functools",
+        "shutil",
+        "_io",
+        "os",
+        "sys",
+        "stat",
+        "fnmatch",
+        "collections",
+        "errno",
+        "warnings",
+        "zlib",
+        "bz2",
+        "_io",
+        "builtins",
+        "io",
+        "os",
+        "_compression",
+        "_io",
+        "io",
+        "sys",
+        "_bz2",
+        "lzma",
+        "_io",
+        "builtins",
+        "io",
+        "os",
+        "_lzma",
+        "_lzma",
+        "_compression",
+        "posix",
+        "stat",
+        "subprocess",
+        "_io",
+        "builtins",
+        "errno",
+        "io",
+        "locale",
+        "_io",
+        "sys",
+        "encodings",
+        "encodings.aliases",
+        "re",
+        "_collections_abc",
+        "builtins",
+        "functools",
+        "_locale",
+        "_locale",
+        "os",
+        "time",
+        "signal",
+        "_io",
+        "_signal",
+        "_signal",
+        "enum",
+        "sys",
+        "threading",
+        "_io",
+        "os",
+        "sys",
+        "_thread",
+        "functools",
+        "time",
+        "_weakrefset",
+        "_io",
+        "_weakref",
+        "types",
+        "itertools",
+        "_collections",
+        "_thread",
+        "_thread",
+        "_thread",
+        "warnings",
+        "contextlib",
+        "_io",
+        "abc",
+        "os",
+        "sys",
+        "_collections_abc",
+        "collections",
+        "functools",
+        "types",
+        "time",
+        "types",
+        "fcntl",
+        "msvcrt",
+        "_posixsubprocess",
+        "select",
+        "selectors",
+        "_io",
+        "abc",
+        "collections",
+        "collections.abc",
+        "_io",
+        "_collections_abc",
+        "_collections_abc",
+        "_collections_abc",
+        "math",
+        "select",
+        "sys",
+        "posix",
+        "sys",
+        "time",
+        "struct",
+        "_io",
+        "_struct",
+        "_struct",
+        "_struct",
+        "zlib"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "normal-disabled",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 0,
+      "outcome": {
+        "type": "AssertionError",
+        "message": "Disabled review candidate; no new native fixture authorized"
+      },
+      "imports": [
+        "sys",
+        "assertion_guard",
+        "_io",
+        "_io",
+        "sys",
+        "hashlib",
+        "_io",
+        "_hashlib",
+        "_hashlib",
+        "_hashlib",
+        "_blake2",
+        "importlib.util",
+        "_io",
+        "_imp",
+        "sys",
+        "_frozen_importlib",
+        "_frozen_importlib_external",
+        "warnings",
+        "_io",
+        "sys",
+        "_warnings",
+        "_bootstrap",
+        "_abc",
+        "_io",
+        "",
+        "abc",
+        "_bootstrap",
+        "_bootstrap",
+        "_bootstrap",
+        "_bootstrap",
+        "_bootstrap_external",
+        "_bootstrap_external",
+        "_bootstrap_external",
+        "_bootstrap_external",
+        "_bootstrap_external",
+        "_bootstrap_external",
+        "_imp",
+        "sys",
+        "types",
+        "json",
+        "os",
+        "shutil",
+        "_io",
+        "os",
+        "sys",
+        "stat",
+        "fnmatch",
+        "_io",
+        "os",
+        "posixpath",
+        "re",
+        "functools",
+        "collections",
+        "errno",
+        "warnings",
+        "zlib",
+        "bz2",
+        "_io",
+        "builtins",
+        "io",
+        "os",
+        "_compression",
+        "_io",
+        "io",
+        "sys",
+        "_bz2",
+        "lzma",
+        "_io",
+        "builtins",
+        "io",
+        "os",
+        "_lzma",
+        "_lzma",
+        "_compression",
+        "posix",
+        "subprocess",
+        "_io",
+        "builtins",
+        "errno",
+        "io",
+        "locale",
+        "_io",
+        "sys",
+        "encodings",
+        "encodings.aliases",
+        "re",
+        "_collections_abc",
+        "builtins",
+        "functools",
+        "_locale",
+        "_locale",
+        "os",
+        "time",
+        "signal",
+        "_io",
+        "_signal",
+        "_signal",
+        "enum",
+        "sys",
+        "threading",
+        "_io",
+        "os",
+        "sys",
+        "_thread",
+        "functools",
+        "time",
+        "_weakrefset",
+        "_io",
+        "_weakref",
+        "types",
+        "itertools",
+        "_collections",
+        "_thread",
+        "_thread",
+        "_thread",
+        "warnings",
+        "contextlib",
+        "_io",
+        "abc",
+        "os",
+        "sys",
+        "_collections_abc",
+        "collections",
+        "functools",
+        "types",
+        "time",
+        "types",
+        "fcntl",
+        "msvcrt",
+        "_posixsubprocess",
+        "select",
+        "selectors",
+        "_io",
+        "abc",
+        "collections",
+        "collections.abc",
+        "_io",
+        "_collections_abc",
+        "_collections_abc",
+        "_collections_abc",
+        "math",
+        "select",
+        "sys",
+        "posix",
+        "sys",
+        "time",
+        "pathlib",
+        "_io",
+        "fnmatch",
+        "functools",
+        "io",
+        "ntpath",
+        "os",
+        "sys",
+        "stat",
+        "genericpath",
+        "genericpath",
+        "_winapi",
+        "nt",
+        "nt",
+        "nt",
+        "nt",
+        "nt",
+        "nt",
+        "os",
+        "posixpath",
+        "re",
+        "sys",
+        "warnings",
+        "_collections_abc",
+        "errno",
+        "stat",
+        "urllib.parse",
+        "_io",
+        "_io",
+        "collections",
+        "functools",
+        "math",
+        "re",
+        "types",
+        "warnings",
+        "ipaddress",
+        "_io",
+        "functools",
+        "packet_budget",
+        "_io",
+        "_io",
+        "sys",
+        "assertion_guard",
+        "json",
+        "os",
+        "pathlib"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/caller.py",
+      "case": "actual-f6-pre-fix-negative-control",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "RuntimeError",
+        "message": "UNEXPECTED_IMPORT:argparse"
+      },
+      "imports": [
+        "argparse"
+      ],
+      "activity": []
+    },
+    {
+      "target": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/integration.py",
+      "case": "actual-f6-pre-fix-negative-control",
+      "passed": true,
+      "optimize": 0,
+      "compiledLevel": 1,
+      "outcome": {
+        "type": "RuntimeError",
+        "message": "UNEXPECTED_IMPORT:hashlib"
+      },
+      "imports": [
+        "hashlib"
+      ],
+      "activity": []
+    }
+  ],
+  "rawProcessEvidence": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-assertion-guard-controls-rt1xz3uh",
+  "processCount": 66,
+  "stationJobs": 0,
+  "encoderDecoderBrowserLaunches": 0,
+  "futureNamespacesAbsent": true,
+  "sourceSha256": {
+    "caller.py": "6d2090ebf097fbcc4ebe95587aaa96186c9d8a42c0a4b330d3445e7c7f0fed0b",
+    "integration.py": "3e8c7169eb97b0721ac1cdf224699bc1344a5bcf25d788efe9db71323e9c6c8c",
+    "rgb-primary.py": "aee39066652410ef5cd9e638e473d1f4475578b7da7c7b496bae411b22579562",
+    "freeze.py": "5da78bf587daeb8372e3971a1961639c65c5fa00c7c98829a6712111f29d9716",
+    "controls.py": "d6a9daa552d321462a40f958edd7002066ed72f2f1a09a0a94b7d89b864b2fd4",
+    "observer-controls.py": "67700684f995b3c8ec1dd39abf5959fe999ce12106c1ed4f3f8279a95ec2733b",
+    "packet-budget-controls.py": "8eda461633c7b3a115e55c37db98afa8ecf67c70959dcf8815489b193aea8841",
+    "packet_budget.py": "63415da20bd2fe85e7b058c3e13f0a7b096fa852582dfb8c1a161788fcdcade4",
+    "optimization-controls.py": "02bf51606a733fd7c933d519b49a47e1fb0745554a1448da1715d42d3d7adcf5",
+    "release-controls.py": "0dda7d94c367edf5d15f009bac2ca66a967bbace9a056f9bf1d27291af814ad7",
+    "assertion_guard.py": "a2a29fc3d672bcd56bd55fa718f055ed029ad8d158e3882c43358f84f2c8cd21"
+  }
+}

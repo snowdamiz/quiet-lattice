@@ -1,0 +1,1395 @@
+{
+  "status": "PASS_ACTUAL_CANDIDATE_IN_PROCESS_CONTROLS",
+  "controls": [
+    {
+      "control": "previously admitted child departed during executable-path read",
+      "pass": true,
+      "refusal": null,
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": null,
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "departed"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {
+            "48123:100:200:501": {
+              "identity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "executable": "/fixture/bound-software-tool",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": null,
+              "priorActualAdmission": {
+                "identity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "memberIdentity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "executable": "/fixture/bound-software-tool",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "departed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "same live birth with path failure remains fatal",
+      "pass": true,
+      "refusal": "Live same-birth executable-path failure",
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "live_path_error_refused"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {
+            "48123:100:200:501": {
+              "identity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "executable": "/fixture/bound-software-tool",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "priorActualAdmission": {
+                "identity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "memberIdentity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "executable": "/fixture/bound-software-tool",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "live_path_error_refused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "replacement birth cannot inherit admitted PID",
+      "pass": true,
+      "refusal": "Replacement birth/UID cannot inherit admission",
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              201
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "replacement_or_uid_change_refused"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {
+            "48123:100:200:501": {
+              "identity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "executable": "/fixture/bound-software-tool",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  201
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "priorActualAdmission": {
+                "identity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "memberIdentity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "executable": "/fixture/bound-software-tool",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "replacement_or_uid_change_refused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "unadmitted departed child cannot inherit admission",
+      "pass": true,
+      "refusal": "Unadmitted child cannot inherit executable admission",
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": null,
+          "priorActualAdmission": null,
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "unadmitted_departure_refused"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {},
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": null,
+              "priorActualAdmission": null,
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "unadmitted_departure_refused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "unsupported live executable refused",
+      "pass": true,
+      "refusal": "Unbound CPU executable: /fixture/unsupported",
+      "events": [],
+      "persistedSnapshots": []
+    },
+    {
+      "control": "changed UID cannot inherit admission",
+      "pass": true,
+      "refusal": "Replacement birth/UID cannot inherit admission",
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 502,
+            "status": 2,
+            "pgid": 48123
+          },
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "replacement_or_uid_change_refused"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {
+            "48123:100:200:501": {
+              "identity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "executable": "/fixture/bound-software-tool",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 502,
+                "status": 2,
+                "pgid": 48123
+              },
+              "priorActualAdmission": {
+                "identity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "memberIdentity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "executable": "/fixture/bound-software-tool",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "replacement_or_uid_change_refused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "admitted zombie remains awaiting reap",
+      "pass": true,
+      "refusal": null,
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 5,
+            "pgid": 48123
+          },
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "awaiting_reap"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {
+            "48123:100:200:501": {
+              "identity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "executable": "/fixture/bound-software-tool",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 5,
+                "pgid": 48123
+              },
+              "priorActualAdmission": {
+                "identity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "memberIdentity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "executable": "/fixture/bound-software-tool",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "awaiting_reap"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "unadmitted zombie refuses",
+      "pass": true,
+      "refusal": "Unadmitted child cannot inherit executable admission",
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 5,
+            "pgid": 48123
+          },
+          "priorActualAdmission": null,
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "unadmitted_zombie_refused"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {},
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 5,
+                "pgid": 48123
+              },
+              "priorActualAdmission": null,
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "unadmitted_zombie_refused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "different member birth cannot use old PID admission",
+      "pass": true,
+      "refusal": "Unadmitted child cannot inherit executable admission",
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              201
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              201
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": null,
+          "priorActualAdmission": null,
+          "pathReadError": {
+            "type": "ProcessLookupError",
+            "message": "[Errno 3] fixture child path unavailable",
+            "errno": 3
+          },
+          "returnedPath": null,
+          "status": "unadmitted_departure_refused"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {
+            "48123:100:200:501": {
+              "identity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "executable": "/fixture/bound-software-tool",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  201
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  201
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": null,
+              "priorActualAdmission": null,
+              "pathReadError": {
+                "type": "ProcessLookupError",
+                "message": "[Errno 3] fixture child path unavailable",
+                "errno": 3
+              },
+              "returnedPath": null,
+              "status": "unadmitted_departure_refused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "replacement after successful path read still refuses",
+      "pass": true,
+      "refusal": "Replacement birth/UID cannot inherit admission",
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "postReadIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              201
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": null,
+          "returnedPath": "/fixture/bound-software-tool",
+          "status": "replacement_or_uid_change_refused"
+        }
+      ],
+      "persistedSnapshots": [
+        {
+          "admissions": {
+            "48123:100:200:501": {
+              "identity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "executable": "/fixture/bound-software-tool",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          "events": [
+            {
+              "pid": 48123,
+              "memberIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "beforeIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  200
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "postReadIdentity": {
+                "pid": 48123,
+                "birth": [
+                  100,
+                  201
+                ],
+                "uid": 501,
+                "status": 2,
+                "pgid": 48123
+              },
+              "priorActualAdmission": {
+                "identity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "memberIdentity": {
+                  "pid": 48123,
+                  "birth": [
+                    100,
+                    200
+                  ],
+                  "uid": 501,
+                  "status": 2,
+                  "pgid": 48123
+                },
+                "executable": "/fixture/bound-software-tool",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "pathReadError": null,
+              "returnedPath": "/fixture/bound-software-tool",
+              "status": "replacement_or_uid_change_refused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "control": "prior admitted departed before path read",
+      "pass": true,
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": null,
+          "postReadIdentity": null,
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": null,
+          "returnedPath": null,
+          "status": "departed"
+        }
+      ]
+    },
+    {
+      "control": "prior admitted awaiting_reap before path read",
+      "pass": true,
+      "events": [
+        {
+          "pid": 48123,
+          "memberIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 2,
+            "pgid": 48123
+          },
+          "beforeIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 5,
+            "pgid": 48123
+          },
+          "postReadIdentity": {
+            "pid": 48123,
+            "birth": [
+              100,
+              200
+            ],
+            "uid": 501,
+            "status": 5,
+            "pgid": 48123
+          },
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "memberIdentity": {
+              "pid": 48123,
+              "birth": [
+                100,
+                200
+              ],
+              "uid": 501,
+              "status": 2,
+              "pgid": 48123
+            },
+            "executable": "/fixture/bound-software-tool",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "pathReadError": null,
+          "returnedPath": null,
+          "status": "awaiting_reap"
+        }
+      ]
+    },
+    {
+      "control": "summary persisted on audit failure, existingPrimary=True",
+      "pass": true,
+      "path": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-observer-summary-control-fgbd2__i/True/proof/result.json"
+    },
+    {
+      "control": "summary persisted on audit failure, existingPrimary=False",
+      "pass": true,
+      "path": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-observer-summary-control-fgbd2__i/False/proof/result.json"
+    },
+    {
+      "control": "disabled actual main refuses before allocation or native launch",
+      "pass": true
+    }
+  ],
+  "nativeCalls": [],
+  "summaryFixtureRoot": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-observer-summary-control-fgbd2__i"
+}

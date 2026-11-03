@@ -69,7 +69,7 @@ def encode(config,source=sys.stdin.buffer,ack=sys.stdout):
         raise
 
 def parse_framehash(text,rows,kind):
-    assert '#tb 0: 1/60' in text,'Framehash timebase refused'
+    assert [line for line in text.splitlines() if line.startswith('#tb')]==['#tb 0: 1/60'],'Framehash timebase refused'
     lines=[x for x in text.splitlines() if x and not x.startswith('#')]
     assert len(lines)==len(rows),'Decoded frame count refused'
     expected_size=PIXELS*(3 if kind=='rgb' else 4)

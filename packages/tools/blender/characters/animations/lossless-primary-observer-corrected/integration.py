@@ -58,14 +58,22 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     for handle in handles:
         try:audits.append(audit_one(handle))
         except BaseException as error:errors.append({'type':type(error).__name__,'message':str(error)})
+    refs=[];paths=[j['path'] for j in jobs]
+    for path in paths:
+        try:
+            receipt=load(path);refs.append({'path':path,'sha256':sha(path)})
+            assert receipt.get('cleanupFailure') is None,'Attempt cleanup remains unproved: '+path
+        except BaseException as error:errors.append({'type':type(error).__name__,'message':str(error),'attemptPath':path})
+    accounted=bool(jobs) and len(jobs)==len(handles)==len(audits) and len(set(paths))==len(paths)
+    accounted=accounted and all(isinstance(x,dict) and x.get('releaseProved') is True and x['kernel']['live']==0 and x['kernel']['coalition_absent'] is True for x in audits) and [x.get('attemptPath') for x in audits]==paths
+    if not accounted:errors.append({'type':'TerminalAttemptAccountingFailure','message':'Every allocation attempt requires its own positive terminal audit','attempts':len(jobs),'handles':len(handles),'audits':len(audits)})
     result.update(terminalAudit=audits,terminalAuditFailures=errors,nativeJobs=len(jobs),pipelineSeconds=time.monotonic()-started,
         outputBytes=sum(p.stat().st_size for p in packet.rglob('*') if p.is_file()),freeBytesAfter=shutil.disk_usage(HERE).free)
-    result['terminalReleaseProved']=not errors and len(audits)==len(handles) and all(x['kernel']['live']==0 and x['kernel']['coalition_absent'] for x in audits)
+    result['terminalReleaseProved']=not errors and accounted
     if errors:
         result['status']='HOLD'
         if result['primaryFailure'] is None:result['primaryFailure']={'type':'TerminalAuditFailure','message':'Terminal resource release unproved; see terminalAuditFailures'}
     # Full native observations remain in their exact private receipts; packet stores bounded references.
-    refs=[{'path':j['path'],'sha256':sha(j['path'])} for j in jobs]
     result['jobs']=refs
     encoded=(json.dumps(result,indent=2)+'\n').encode()
     if len(encoded)>budget.RECORD_BYTES:
@@ -98,15 +106,22 @@ def main():
     jobs=[];handles=[];started=time.monotonic()
     def owned(name,argv):
         assert len(jobs)<ready['fixtureDiskAdmission']['newAttemptMaxNativeJobs'] and shutil.disk_usage(HERE).free>=4*1024**3,'Safety floor before next owned job'
-        out=proof/name;out.mkdir();job=private=admission=None;t=time.monotonic()
+        out=proof/name;job=private=admission=None;t=time.monotonic();receipt_path=proof/(name+'-receipt.json')
         receipt={'name':name,'argv':argv,'captureSeconds':120,'cleanupSeconds':20,'primaryFailure':None,'cleanupFailure':None,'scope':ready['purpose']}
-        def persist():save(out/'receipt.json',receipt)
+        handle={'job':None,'private':None,'path':str(receipt_path)};record={'path':str(receipt_path)}
+        handles.append(handle);jobs.append(record) # Register before any allocation, constructor or start can fail.
+        def persist():save(receipt_path,receipt)
         try:
+            persist()
             with deadline(120):
+                out.mkdir();receipt['phase']='private_tmp_allocation';persist()
                 private,admission=create_private_tmp(out/'private-tmp-admission.json')
-                job=StationJob.__new__(StationJob);StationJob.__init__(job,out/'owned-job',argv,ready['root'],capture_seconds=120,
+                handle['private']=private;receipt['privateTmp']={'path':str(private),'admission':admission};receipt['phase']='constructor';persist()
+                job=StationJob.__new__(StationJob);handle['job']=job
+                StationJob.__init__(job,out/'owned-job',argv,ready['root'],capture_seconds=120,
                     env={'PATH':ready['pathEnvironment'],'TMPDIR':str(private)+'/', 'PYTHONDONTWRITEBYTECODE':'1'})
-                job.state.update(scope=ready['purpose'],readiness_sha256=sha(HERE/'readiness.json'));job.save();job.start();handles.append((job,private))
+                job.state.update(scope=ready['purpose'],readiness_sha256=sha(HERE/'readiness.json'));job.save();receipt['phase']='start';persist();job.start()
+                receipt['phase']='wait';persist()
                 actual={};events=[]
                 receipt['actualExecutables']=actual;receipt['observerEvents']=events
                 def observe():
@@ -114,11 +129,16 @@ def main():
                 receipt['outcome']=job.wait(max(.001,120-(time.monotonic()-t)),observe)
                 receipt['actualExecutables']=actual;receipt['exits']=dict(job.state['exits']);persist()
                 assert receipt['outcome']=='completed' and job.state['exits'].get('capture')==0,'Owned CPU fixture failed'
-        except BaseException as e:receipt['primaryFailure']={'type':type(e).__name__,'message':str(e)};persist()
+        except BaseException as e:
+            receipt['primaryFailure']={'type':type(e).__name__,'message':str(e)}
+            if hasattr(e,'private_tmp_allocation'):receipt['privateTmpAllocation']=e.private_tmp_allocation
+            persist()
         finally:
+            if job is not None:
+                receipt['ownedAllocation']={key:str(value) if isinstance(value,Path) else value for key in ['out','scratch','target','coalition_id','registered'] if (value:=getattr(job,key,None)) is not None}
             try:
                 with deadline(20):
-                    assert job is not None and job.coalition_id
+                    assert job is not None and getattr(job,'coalition_id',None),'No durable owned boundary; retain allocation and scratch for recovery'
                     drain=job.drain(20);receipt['drain']=drain
                     assert drain['drained'] and drain['clean'] and kernel_tasks(job.coalition_id)['live']==0 and not coalition_members(job.coalition_id)
                     job.archive(profile_namespace=private,profile_prefixes=('playwright_chromiumdev_profile-',))
@@ -130,8 +150,8 @@ def main():
                     if receipt['archiveBytesObservedAfterRelease']>1024**3 and receipt['primaryFailure'] is None:receipt['primaryFailure']={'type':'ArchiveAcceptanceCeilingExceeded','message':'All bytes preserved; combined private archive size is an observed acceptance cap, not a hard quota'}
                     receipt['terminal']={'coalition':job.coalition_id,'kernel':kernel_tasks(job.coalition_id),'exactBirthsAbsent':len(job.known),'registrationAbsent':True,'scratchAndTmpAbsent':True,'privateTmpCacheRelease':cache}
             except BaseException as e:receipt['cleanupFailure']={'type':type(e).__name__,'message':str(e)}
-        receipt['pipelineSeconds']=time.monotonic()-t;persist();jobs.append({'path':str(out/'receipt.json'),'sha256':sha(out/'receipt.json'),**receipt})
-        assert receipt['primaryFailure'] is None and receipt['cleanupFailure'] is None,'Owned CPU fixture refused; complete receipt at '+str(out/'receipt.json')
+        receipt['pipelineSeconds']=time.monotonic()-t;persist();record.update(sha256=sha(receipt_path),**receipt)
+        assert receipt['primaryFailure'] is None and receipt['cleanupFailure'] is None,'Owned CPU fixture refused; complete receipt at '+str(receipt_path)
         return receipt
     result={'status':'HOLD','primaryFailure':None,'jobs':jobs,'runtimeAuthorization':False}
     try:
@@ -152,13 +172,15 @@ def main():
     finally:
         # Fresh terminal facts after all owned jobs; keep failures, outputs and caches intact.
         def audit_one(handle):
-            job,private=handle
+            job=handle['job'];private=handle['private']
+            assert job is not None and getattr(job,'coalition_id',None) and private is not None,'Attempt has no auditable durable boundary; retain all allocations'
             kernel=kernel_tasks(job.coalition_id);members=coalition_members(job.coalition_id)
             births=[{'pid':int(pid),'recorded':old,'current':identity(int(pid))} for pid,old in job.known.items()]
             registration=subprocess.run(['/bin/launchctl','print',job.target],capture_output=True,text=True,timeout=3)
-            item={'coalition':job.coalition_id,'kernel':kernel,'members':members,'births':births,'target':job.target,'registrationExit':registration.returncode,'scratchAbsent':not job.scratch.exists(),'privateTmpAbsent':not private.exists()}
+            item={'attemptPath':handle['path'],'coalition':job.coalition_id,'kernel':kernel,'members':members,'births':births,'target':job.target,'registrationExit':registration.returncode,'scratchAbsent':not job.scratch.exists(),'privateTmpAbsent':not private.exists()}
             assert kernel['live']==0 and kernel['coalition_absent'] and not members and registration.returncode!=0 and item['scratchAbsent'] and item['privateTmpAbsent']
             assert all(b['current'] is None or b['current']['birth']!=b['recorded']['birth'] for b in births)
+            item['releaseProved']=True
             return item
         persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
         audit=result['terminalAudit']

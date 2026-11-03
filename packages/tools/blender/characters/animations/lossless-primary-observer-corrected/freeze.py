@@ -3,7 +3,7 @@ import sys
 sys.dont_write_bytecode=True
 from assertion_guard import require_assertions
 require_assertions(__debug__)
-import hashlib,json,os,shutil,sys
+import datetime,hashlib,json,os,shutil,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[6]
@@ -30,11 +30,11 @@ def main():
         sources.append({'work':w,'pngPath':str(image),'pngBytes':row['pngBytes'],'pngSha256':row['pngSha256'],'observationPath':str(obs),'observationSha256':sha(obs),'rgbSha256':row['rgbSha256'],'rgbaSha256':row['rgbaSha256']})
     assert len(sources)==132 and [x['work']['ordinal'] for x in sources]==list(range(15,147))
     ready={k:old[k] for k in ['root','node','pathEnvironment','viewport','manifest','binding','peopleHashes','clipDurations']}
-    ready.update(purpose='CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES',runtimeAuthorization=False,nativeFixtureAuthorization=False,prospectiveAttemptId='cpu-assertions-required-e5e3d059',primaryArtifactSchema='t02-lossless-rgb-primary/v1',
+    ready.update(purpose='CPU_LOSSLESS_PRIMARY_132_EXISTING_FRAMES',runtimeAuthorization=False,nativeFixtureAuthorization=False,prospectiveAttemptId='cpu-release-accounting-72a9b614',primaryArtifactSchema='t02-lossless-rgb-primary/v1',
         sourcePilot=str(PILOT),sourcePilotFinalIndexSha256=sha(PILOT/'final-index.json'),sourceFrames=sources,
         historicalBackend=json.loads((capture/'entry-result.json').read_text())['backend'],
         stages=[{'id':'cpu-existing-thalune-walk-132','kind':'motion','people':'thalune','lod':0,'work':[r['work'] for r in sources]}],
-        packetBudget={'metadataBytes':33554432,'fileCount':256,'reservedFailureBytes':131072,'reservedTerminalBytes':131072,'packetByteOvershoot':0,'atomicTemporaryBytesCounted':True},packetRoot=str(HERE/'packet'),captureOutput=str(HERE/'packet/capture'),cpuProofRoot='/private/tmp/t02-primary-integration-assertions-required-e5e3d059',nativeRawDirectory='/private/tmp/t02-primary-integration-assertions-required-e5e3d059/native-raw',
+        packetBudget={'metadataBytes':33554432,'fileCount':256,'reservedFailureBytes':131072,'reservedTerminalBytes':131072,'packetByteOvershoot':0,'atomicTemporaryBytesCounted':True},packetRoot=str(HERE/'packet'),captureOutput=str(HERE/'packet/capture'),cpuProofRoot='/private/tmp/t02-primary-integration-release-accounting-72a9b614',nativeRawDirectory='/private/tmp/t02-primary-integration-release-accounting-72a9b614/native-raw',
         rgbPrimary={'python':str(PYTHON),'worker':str(HERE/'rgb-primary.py'),'ffmpeg':'/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg','ffprobe':'/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffprobe','maxMetadataBytes':32*1024**2},
         helperDirectory=str(SUPPORT),limits={'maxImageBytes':12*1024**2,'maxObservationBytes':256*1024},captureSeconds=120,cleanupSeconds=20,
         fixtureDiskAdmission={'packetPerCopy':570425344,'retainedCopyCeiling':3,'copyNames':['task-worktree packet','shared Git/LFS object','reserved private/review copy allowance; not materialized'],'mainHydration':'Fourth-copy case excluded from fixture admission; future-unit/merge recheck required','archives':3221225472,'newAttemptMaxNativeJobs':2,'remainingOriginalArchiveSlotReserve':1,'priorFailedOwnedJobs':1,'staging':1073741824,'git':16777216,'safety':4294967296,'totalRequiredBytes':10317987840},
@@ -52,6 +52,23 @@ def main():
     ready['pillowVersion']=PIL.__version__
     save(HERE/'readiness.json',ready)
     save(HERE/'disabled-grant.json',{'authorized':False,'browser':False,'rendering':False,'newCapture':False,'nativeCpuFixture':False,'purpose':'Independent source review only; a new native fixture is not authorized'})
-    save(HERE/'candidate-index.json',{'phase':'FROZEN_CPU_SOURCE_REVIEW_CANDIDATE','runtimeAuthorization':False,'files':[{'path':p.name,'sha256':sha(p),'bytes':p.stat().st_size} for p in [*source_files(),HERE/'readiness.json',HERE/'disabled-grant.json',HERE/'baseline.json',HERE/'pure-node-controls.json',HERE/'pure-python-controls.json',HERE/'pure-control-history.json',HERE/'observer-controls.json',HERE/'prospective-accounting.json',HERE/'README.md',HERE/'packet-budget-controls.json',HERE/'packet-budget-node-controls.json',HERE/'PACKET_STORAGE_CONTRACT.md',HERE/'optimization-controls.json']]})
+    evidence=sorted(p for p in (HERE/'release-accounting-correction').iterdir() if p.is_file())
+    files=[*source_files(),HERE/'readiness.json',HERE/'disabled-grant.json',HERE/'baseline.json',HERE/'pure-node-controls.json',HERE/'pure-python-controls.json',HERE/'pure-control-history.json',HERE/'observer-controls.json',HERE/'prospective-accounting.json',HERE/'README.md',HERE/'packet-budget-controls.json',HERE/'packet-budget-node-controls.json',HERE/'PACKET_STORAGE_CONTRACT.md',HERE/'optimization-controls.json',*evidence]
+    entries=[{'path':str(p.relative_to(HERE)),'sha256':sha(p),'bytes':p.stat().st_size} for p in files]
+    save(HERE/'candidate-index.json',{'phase':'FROZEN_CPU_SOURCE_REVIEW_CANDIDATE','runtimeAuthorization':False,'files':entries})
+    prior=load_freeze_history()
+    save(HERE/'REVIEW_FREEZE.json',{'schema':'t02-lossless-primary-corrected-source-review/v4','status':'SOURCE_REVIEW_ONLY_ALLOCATION_ATTEMPTS_AUDITED_RUNTIME_CLOSED',
+        'recordedUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'candidate':str(HERE),'sourceParentCommit':'e2df4ecfaaff6f5530f79273c5614f8955e4190a',
+        'readinessSha256':sha(HERE/'readiness.json'),'candidateIndexSha256':sha(HERE/'candidate-index.json'),'disabledGrantSha256':sha(HERE/'disabled-grant.json'),
+        'sourcePaths':[{'path':str(p),'sha256':sha(p)} for p in source_files()],
+        'reviewScope':['Whole existing integration and packet/observer scope remains subject to fresh independent review','Caller-local accounting before allocation, partial constructor/start failure, positive audit per attempt and separate cleanup failures','Exact framehash timebase declaration; no newly demonstrated decoded-media timing failure','Assertion guard before task imports, including new pure controls; no native grant'],
+        'preservedHistory':prior,'correctionEvidence':[entry for entry in entries if entry['path'].startswith('release-accounting-correction/')],
+        'packetContract':{'path':str(HERE/'PACKET_STORAGE_CONTRACT.md'),'sha256':sha(HERE/'PACKET_STORAGE_CONTRACT.md')},
+        'prospectiveAccounting':{'path':str(HERE/'prospective-accounting.json'),'sha256':sha(HERE/'prospective-accounting.json'),'admissionClaim':False},
+        'resourceState':{'newNativeJobs':0,'newValidatorOrRetry':False,'bothFutureNamespacesAbsent':not Path(ready['packetRoot']).exists() and not Path(ready['cpuProofRoot']).exists(),'nativeAuthorization':False,'browserAuthorization':False},
+        'currentFreeBytes':shutil.disk_usage(HERE).free,'files':entries})
     print(json.dumps({'readySha256':sha(HERE/'readiness.json'),'indexSha256':sha(HERE/'candidate-index.json'),'browserGrant':False,'sourceFrames':len(sources)}))
+def load_freeze_history():
+    return {'failedAttemptCommit':'f7d644dbb307f650d181faad629d6189f24029b7','observerCommit':'5eb06673a7345d1f88d65652e306b67b1229b1e1','aggregateCommit':'f6fbef82de592829da7d5b217e08caf9f8feb026','assertionGuardCommit':'e2df4ecfaaff6f5530f79273c5614f8955e4190a',
+        'previousFreezeSha256':'2da63271b33c2ff03481a041acc0d3a0248ca22465ea7f0ef9ca1a501f52fbbf','failedManifestSha256':'98f3870e586a0770f228561a87f89fc851fd06f9a4fbc2b0f95d735671b0d7d6','separateRecoverySha256':'4dff39681a745392b1c25f70fd1c77873374f8cd81c01b77ba8f6ad2924b0089','meaning':'Prior failed runtime and prior frozen source/reports remain immutable in Git; this freeze grants no execution'}
 if __name__=='__main__':main()

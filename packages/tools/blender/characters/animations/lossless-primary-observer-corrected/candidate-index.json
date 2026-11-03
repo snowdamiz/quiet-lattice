@@ -29,13 +29,13 @@
     },
     {
       "path": "freeze.py",
-      "sha256": "117046dcb4510116fcb190e3adca7652508d84ff02f1ebed398bb98000f2399c",
-      "bytes": 6571
+      "sha256": "5da78bf587daeb8372e3971a1961639c65c5fa00c7c98829a6712111f29d9716",
+      "bytes": 9219
     },
     {
       "path": "integration.py",
-      "sha256": "71396dcdbe6358c4336c35ea0062992ff96cd9364d7b533a395929ce1e79047b",
-      "bytes": 14261
+      "sha256": "3e8c7169eb97b0721ac1cdf224699bc1344a5bcf25d788efe9db71323e9c6c8c",
+      "bytes": 16273
     },
     {
       "path": "observer-controls.py",
@@ -44,8 +44,8 @@
     },
     {
       "path": "optimization-controls.py",
-      "sha256": "54e1d8d6796aac44bc11fdda6a4744ad57b835ca71bd6bdf0d379ff7f68477ec",
-      "bytes": 8068
+      "sha256": "02bf51606a733fd7c933d519b49a47e1fb0745554a1448da1715d42d3d7adcf5",
+      "bytes": 8122
     },
     {
       "path": "packet-budget-controls.py",
@@ -78,6 +78,11 @@
       "bytes": 4938
     },
     {
+      "path": "release-controls.py",
+      "sha256": "0dda7d94c367edf5d15f009bac2ca66a967bbace9a056f9bf1d27291af814ad7",
+      "bytes": 16047
+    },
+    {
       "path": "replay-fixture.mjs",
       "sha256": "cd2dfde84fcef2280f4fdd919448fbafb2741879d637b935f48a6d02ad261866",
       "bytes": 1424
@@ -94,8 +99,8 @@
     },
     {
       "path": "rgb-primary.py",
-      "sha256": "704af4191176e2940cda32f7278833daece914719720a609b60a8458f7c0cc09",
-      "bytes": 8827
+      "sha256": "aee39066652410ef5cd9e638e473d1f4475578b7da7c7b496bae411b22579562",
+      "bytes": 8885
     },
     {
       "path": "rgb-sink.mjs",
@@ -104,8 +109,8 @@
     },
     {
       "path": "readiness.json",
-      "sha256": "24ac57de2c69be152ebb3cb2c94b265bc2d93bb8943e1ab3dc7e2ee63f2cc89c",
-      "bytes": 252251
+      "sha256": "2da704aba2b983718056e576492ca32be612db1d149a30cc35ec68b2f217ce69",
+      "bytes": 252566
     },
     {
       "path": "disabled-grant.json",
@@ -139,13 +144,13 @@
     },
     {
       "path": "prospective-accounting.json",
-      "sha256": "ee1a12525f2d8eb574efb043e26a128758e86ed9e678cc92dce01aae39282788",
-      "bytes": 4939
+      "sha256": "d3bda4f51226a31ce37ade1bb9298f542f1e437ea4d8fdd39c4bdd2d47434336",
+      "bytes": 5895
     },
     {
       "path": "README.md",
-      "sha256": "9b87514dcacb1e767ec83def4b4276e87efc93b1eac813d0e2fabd4ed4ff7c76",
-      "bytes": 4095
+      "sha256": "84d60adf24b06735993fc964532d2396396f3a92449b050d730630367e01e2eb",
+      "bytes": 5488
     },
     {
       "path": "packet-budget-controls.json",
@@ -166,6 +171,51 @@
       "path": "optimization-controls.json",
       "sha256": "686bcba7cd2bbf701a9ac9ee445c33033328ea6aa6a0f1fa52d4a25fedb02db2",
       "bytes": 38240
+    },
+    {
+      "path": "release-accounting-correction/cpu-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "release-accounting-correction/cpu-preflight.stdout",
+      "sha256": "e3d8436c88624e23bf7d872cb279ef098eb7459adbeb36360b988d7998b08e0d",
+      "bytes": 175
+    },
+    {
+      "path": "release-accounting-correction/observer-controls.json",
+      "sha256": "52ff6889f7e225180971fc21483bd6870cac1e5277276feae7231a5f2ef7ed72",
+      "bytes": 37669
+    },
+    {
+      "path": "release-accounting-correction/optimization-controls.json",
+      "sha256": "4288a2bb25e8de253f01b19e431f29859095f36fd443b6e0b216937ee61da5bc",
+      "bytes": 41331
+    },
+    {
+      "path": "release-accounting-correction/packet-budget-controls.json",
+      "sha256": "5c3289307fad5497ace6ebf3edba869af6e61ea8b164e2ffc479096772289847",
+      "bytes": 1231
+    },
+    {
+      "path": "release-accounting-correction/preservation.json",
+      "sha256": "d0cc7a1a0432ca989fa45ef580f4d370d7aac7c77643f59cfaed2b6308b8dd3f",
+      "bytes": 1770
+    },
+    {
+      "path": "release-accounting-correction/pure-python-controls.json",
+      "sha256": "6d4d71907e2dffd6b9685a748053fde0cd497acd958d8c50551e93e363340a21",
+      "bytes": 864
+    },
+    {
+      "path": "release-accounting-correction/release-controls.json",
+      "sha256": "675cc7070de16e218a44b6b94cde02c48d748201bcd95b7a4c099b891ee4e94a",
+      "bytes": 11498
+    },
+    {
+      "path": "release-accounting-correction/report.md",
+      "sha256": "d1a36610cc6ad14635ec7b0db6a99190ef4371fbd3f78c0315e3d744e805bf52",
+      "bytes": 5526
     }
   ]
 }

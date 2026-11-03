@@ -7,7 +7,7 @@ import hashlib,json,os,subprocess,sys,tempfile
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 PYTHON='/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3'
-TARGETS=['caller.py','integration.py','rgb-primary.py','freeze.py','controls.py','observer-controls.py','packet-budget-controls.py','packet_budget.py','optimization-controls.py']
+TARGETS=['caller.py','integration.py','rgb-primary.py','freeze.py','controls.py','observer-controls.py','packet-budget-controls.py','packet_budget.py','optimization-controls.py','release-controls.py']
 BOOTSTRAP=r'''
 import sys,json,builtins
 source=sys.argv[1];target=sys.argv[2];level=int(sys.argv[3]);mode=sys.argv[4]
@@ -91,6 +91,6 @@ def main():
     after_files={str(p):sha(p) for p in HERE.rglob('*') if p.is_file() and p.name!='optimization-controls.json'}
     require(after_files==before_files,'A control changed or allocated a candidate input/cache before its report')
     report={'candidateFilesUnchangedBeforeReport':True,'directOptimizedCasesUnsetExternalBytecodeSuppression':True,'status':'PASS_PINNED_PYTHON_OPTIMIZATION_ADMISSION','cases':len(rows),'rows':rows,'rawProcessEvidence':str(root),'processCount':sequence,'stationJobs':0,'encoderDecoderBrowserLaunches':0,'futureNamespacesAbsent':True,'sourceSha256':{n:sha(HERE/n) for n in [*TARGETS,'assertion_guard.py']}}
-    (HERE/'optimization-controls.json').write_text(json.dumps(report,indent=2)+'\n')
+    (HERE/'release-accounting-correction'/'optimization-controls.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'status':'PASS','cases':len(rows),'shortInterpreterProcesses':sequence,'rawEvidence':str(root),'runtimeActivity':0}))
 if __name__=='__main__':main()

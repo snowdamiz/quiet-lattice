@@ -1,7 +1,7 @@
 {
   "status": "PROSPECTIVE_ONLY_PACKET_ENFORCEMENT_NATIVE_DISABLED",
-  "snapshotUtcEpoch": 1793683258.946229,
-  "currentFreeBytes": 10421411840,
+  "snapshotUtcEpoch": 1793725464.765467,
+  "currentFreeBytes": 101702270976,
   "sourceReviewOnly": true,
   "priorFailedAttempt": {
     "commit": "f7d644dbb307f650d181faad629d6189f24029b7",
@@ -90,7 +90,21 @@
   "pureControlArtifactsAlreadyInFreeSnapshot": {
     "newNativeJobs": 0,
     "sparseBoundaryFiles": "Preserved; logical-length boundary fixtures use sparse files and are outside primary packets. Existing bytes already reflected in current df, no second incremental charge.",
-    "newProspectivePureTestAllocation": 0
+    "newProspectivePureTestAllocation": 0,
+    "correctionFixtures": "All retained small pure fault/summary/repro fixtures and short-interpreter evidence are reflected in this snapshot. No PNG/media payload copies were made."
   },
-  "snapshotUtc": "2026-11-03T05:24:26.635959+00:00"
+  "snapshotUtc": "2026-11-03T17:04:24.765467+00:00",
+  "sourceCorrection": {
+    "baseCommit": "e2df4ecfaaff6f5530f79273c5614f8955e4190a",
+    "priorFreezeSha256": "2da63271b33c2ff03481a041acc0d3a0248ca22465ea7f0ef9ca1a501f52fbbf",
+    "independentReviewSha256": "aa4b58d5219b4151ca769afdd337fc44be5ef1244da51e146fb8c162e1ba0833",
+    "releaseControls": {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/animations/lossless-primary-observer-corrected/release-accounting-correction/release-controls.json",
+      "sha256": "675cc7070de16e218a44b6b94cde02c48d748201bcd95b7a4c099b891ee4e94a",
+      "pureCases": 30
+    },
+    "newNativeJobs": 0,
+    "newNativeIntegrationPass": false,
+    "freshWholeSourceReviewAndRootGrantRequired": true
+  }
 }

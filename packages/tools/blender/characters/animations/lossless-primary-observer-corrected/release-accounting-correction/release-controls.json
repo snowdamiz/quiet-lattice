@@ -1,0 +1,305 @@
+{
+  "status": "PASS_PURE_ALLOCATION_RELEASE_AND_FRAMEHASH_CONTROLS",
+  "controls": [
+    {
+      "control": "out-allocation",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "FileExistsError",
+        "message": "[Errno 17] File exists: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/out-allocation/proof/producer'"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "No durable owned boundary; retain allocation and scratch for recovery"
+      },
+      "trace": [],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/out-allocation/packet/integration-result.json"
+    },
+    {
+      "control": "private-before",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected private TMP allocation failure"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "No durable owned boundary; retain allocation and scratch for recovery"
+      },
+      "trace": [],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/private-before/packet/integration-result.json"
+    },
+    {
+      "control": "private-after",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected private TMP admission failure"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "No durable owned boundary; retain allocation and scratch for recovery"
+      },
+      "trace": [],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/private-after/packet/integration-result.json"
+    },
+    {
+      "control": "new",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected object allocation failure"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "No durable owned boundary; retain allocation and scratch for recovery"
+      },
+      "trace": [],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/new/packet/integration-result.json"
+    },
+    {
+      "control": "constructor-early",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected constructor failure before scratch"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "No durable owned boundary; retain allocation and scratch for recovery"
+      },
+      "trace": [],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/constructor-early/packet/integration-result.json"
+    },
+    {
+      "control": "constructor-scratch",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected constructor failure after scratch"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "No durable owned boundary; retain allocation and scratch for recovery"
+      },
+      "trace": [],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/constructor-scratch/packet/integration-result.json"
+    },
+    {
+      "control": "bootstrap",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected bootstrap failure"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "No durable owned boundary; retain allocation and scratch for recovery"
+      },
+      "trace": [
+        "bootstrap"
+      ],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/bootstrap/packet/integration-result.json"
+    },
+    {
+      "control": "pre-go",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected durable-boundary save failure before go"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "trace": [
+        "bootstrap",
+        "drain"
+      ],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/pre-go/packet/integration-result.json"
+    },
+    {
+      "control": "post-go",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected status receipt read failure after durable coalition/go"
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": ""
+      },
+      "trace": [
+        "bootstrap",
+        "post-go-status",
+        "drain"
+      ],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/post-go/packet/integration-result.json"
+    },
+    {
+      "control": "post-go-clean",
+      "pass": true,
+      "terminalReleaseProved": true,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected status receipt read failure after durable coalition/go"
+      },
+      "cleanupFailure": null,
+      "trace": [
+        "bootstrap",
+        "post-go-status",
+        "drain"
+      ],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/post-go-clean/packet/integration-result.json"
+    },
+    {
+      "control": "wait",
+      "pass": true,
+      "terminalReleaseProved": true,
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "injected wait failure"
+      },
+      "cleanupFailure": null,
+      "trace": [
+        "bootstrap",
+        "post-go-status",
+        "drain"
+      ],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/wait/packet/integration-result.json"
+    },
+    {
+      "control": "healthy",
+      "pass": true,
+      "terminalReleaseProved": true,
+      "primaryFailure": null,
+      "cleanupFailure": null,
+      "trace": [
+        "bootstrap",
+        "post-go-status",
+        "drain"
+      ],
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/healthy/packet/integration-result.json"
+    },
+    {
+      "control": "missing-handle",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/missing-handle/packet/integration-result.json"
+    },
+    {
+      "control": "zero-attempts",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/zero-attempts/packet/integration-result.json"
+    },
+    {
+      "control": "audit-failure",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/audit-failure/packet/integration-result.json"
+    },
+    {
+      "control": "unresolved-cleanup-with-positive-audit",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/unresolved-cleanup-with-positive-audit/packet/integration-result.json"
+    },
+    {
+      "control": "wrong-audit-attempt",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/wrong-audit-attempt/packet/integration-result.json"
+    },
+    {
+      "control": "missing-positive-evidence",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/missing-positive-evidence/packet/integration-result.json"
+    },
+    {
+      "control": "live-kernel-with-positive-flag",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/live-kernel-with-positive-flag/packet/integration-result.json"
+    },
+    {
+      "control": "present-coalition-with-positive-flag",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/present-coalition-with-positive-flag/packet/integration-result.json"
+    },
+    {
+      "control": "duplicate-attempt",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/duplicate-attempt/packet/integration-result.json"
+    },
+    {
+      "control": "missing-receipt",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/missing-receipt/packet/integration-result.json"
+    },
+    {
+      "control": "bounded-overflow-summary",
+      "pass": true,
+      "terminalReleaseProved": true,
+      "summary": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/bounded-overflow-summary/packet/integration-result.json"
+    },
+    {
+      "control": "original-independent-repro-before",
+      "pass": true,
+      "terminalReleaseProved": true,
+      "evidence": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/original-repro-before/vacuous-release-result.json"
+    },
+    {
+      "control": "original-independent-repro-after",
+      "pass": true,
+      "terminalReleaseProved": false,
+      "evidence": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt/original-repro-after/vacuous-release-result.json"
+    },
+    {
+      "control": "existing-valid-132-framehash",
+      "pass": true
+    },
+    {
+      "control": "reject-header-'#tb 0: 1/60000'",
+      "pass": true
+    },
+    {
+      "control": "reject-header-'#tb 0: 1/60suffix'",
+      "pass": true
+    },
+    {
+      "control": "reject-header-'#tb 0: 1/60\\n#tb 0: 1/60000'",
+      "pass": true
+    },
+    {
+      "control": "reject-header-'#tb 0: 1/60\\n#tb 0: 1/60'",
+      "pass": true
+    }
+  ],
+  "count": 30,
+  "nativeCalls": [],
+  "fixtureRoot": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-release-accounting-controls-3qp7urjt",
+  "sourceSha256": {
+    "integration.py": "3e8c7169eb97b0721ac1cdf224699bc1344a5bcf25d788efe9db71323e9c6c8c",
+    "rgb-primary.py": "aee39066652410ef5cd9e638e473d1f4475578b7da7c7b496bae411b22579562",
+    "release-controls.py": "0dda7d94c367edf5d15f009bac2ca66a967bbace9a056f9bf1d27291af814ad7"
+  },
+  "baselineCommit": "e2df4ecfaaff6f5530f79273c5614f8955e4190a",
+  "originalReproSha256": "79c8183fffaaee27e13c3ba0bbee7a06c1122e009c1531f5022ab987efeb4ab4",
+  "reviewSha256": "aa4b58d5219b4151ca769afdd337fc44be5ef1244da51e146fb8c162e1ba0833",
+  "helperSha256": "3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c",
+  "noNativeIntegrationClaim": true
+}
