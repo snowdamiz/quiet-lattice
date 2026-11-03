@@ -541,16 +541,13 @@ export async function runBrowserWorkTrace(options: {
   try {
     await call('prepare', browserWorkPlan[0], 0);
     const categories = await send({ method: 'Tracing.getCategories' });
-    if (!isRecord(categories) || !Array.isArray(categories.categories) || categories.categories.length > 8192)
-      throw new Error('Invalid supported trace category listing');
+    if (!isRecord(categories) || !Array.isArray(categories.categories)) throw new Error('Invalid supported trace category listing');
     const returned: string[] = [];
-    let categoryBytes = 0;
     for (const value of categories.categories) {
-      if (typeof value !== 'string' || Buffer.byteLength(value) > 1024) throw new Error('Invalid trace category name');
-      categoryBytes += Buffer.byteLength(value);
-      if (categoryBytes > categoryReplyBytes) throw new Error('Trace category listing byte overflow');
+      if (typeof value !== 'string') throw new Error('Invalid trace category name');
       returned.push(value);
     }
+    if (Buffer.byteLength(JSON.stringify(returned)) > categoryReplyBytes) throw new Error('Trace category listing byte overflow');
     log.categories = [...browserTraceCategories];
     log.categoryDiscovery = {
       status: 'listed',

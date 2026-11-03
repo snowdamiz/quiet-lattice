@@ -159,7 +159,7 @@ describe('owned browser trace lifecycle, CPU providers only', () => {
     });
     expect(f.state()).toMatchObject({ live: false, listeners: 0 });
   });
-  it.each([{ categories: [] }, { categories: ['unrelated.category'] }, { categories: [...browserTraceCategories] }])(
+  it.each([{ categories: [] }, { categories: ['unrelated.category', 'x'.repeat(1025)] }, { categories: [...browserTraceCategories] }])(
     'requests explicit reviewed selectors for valid enumeration %j',
     async ({ categories }) => {
       const f = fixture();
@@ -174,17 +174,24 @@ describe('owned browser trace lifecycle, CPU providers only', () => {
       expect(log.cpuContext).toMatchObject({ status: 'supported-context-observed', attribution: 'INCONCLUSIVE', supportedEvents: 10 });
     },
   );
-  it.each([null, {}, { categories: null }, { categories: [1] }, { categories: ['x'.repeat(1025)] }])(
-    'retains failure/no subsequent work for malformed listing %j',
-    async (raw) => {
-      const f = fixture();
-      f.setCommand((c) => (c.method === 'Tracing.getCategories' ? Promise.resolve(raw) : undefined));
-      const log = await failure(f);
-      expect(log.status).toBe('failed');
-      expect(f.calls).toEqual(['prepare:drained-empty']);
-      expect(f.commands.map((c) => c.method)).toEqual(['Tracing.getCategories']);
-    },
-  );
+  it.each(['null', 'missing', 'wrong-array', 'wrong-element', 'overflow'])('retains failure/no subsequent work for malformed listing %s', async (mode) => {
+    const raw =
+      mode === 'null'
+        ? null
+        : mode === 'missing'
+          ? {}
+          : mode === 'wrong-array'
+            ? { categories: null }
+            : mode === 'wrong-element'
+              ? { categories: [1] }
+              : { categories: ['x'.repeat(1024 * 1024)] };
+    const f = fixture();
+    f.setCommand((c) => (c.method === 'Tracing.getCategories' ? Promise.resolve(raw) : undefined));
+    const log = await failure(f);
+    expect(log.status).toBe('failed');
+    expect(f.calls).toEqual(['prepare:drained-empty']);
+    expect(f.commands.map((c) => c.method)).toEqual(['Tracing.getCategories']);
+  });
   it.each(['absent', 'wrong-pid', 'wrong-tid', 'unknown-name', 'unknown-phase', 'bad-duration', 'async', 'one-broad-event', 'one-frame-missing'])(
     'keeps unsupported CPU context %s inconclusive without abandoning its stream',
     async (mode) => {
