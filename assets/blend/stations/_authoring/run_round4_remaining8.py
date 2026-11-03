@@ -156,6 +156,62 @@ class StageReceipts:
     def _structured_save(self):
         write(self.job.out / 'structured_launch_observation.json', self.structured_data)
 
+    def _profile_observation(self, profile):
+        observed = {'utc': utc(), 'path': str(profile), 'errors': []}
+        for name, read in [('is_dir', profile.is_dir), ('is_symlink', profile.is_symlink),
+                           ('resolve', lambda: str(profile.resolve(strict=True))),
+                           ('lstat', profile.lstat), ('stat', profile.stat)]:
+            try:
+                value = read()
+                observed[name] = ({'device': value.st_dev, 'inode': value.st_ino, 'mode': value.st_mode,
+                                   'uid': value.st_uid} if name in ('stat', 'lstat') else value)
+            except (OSError, RuntimeError) as error:
+                observed[name] = None
+                observed['errors'].append({'operation': name, **failure(error)})
+        return observed
+
+    def _profile_safe(self, observed):
+        return (not observed['errors'] and observed['is_dir'] is True and observed['is_symlink'] is False
+                and observed['resolve'] == observed['path'] and observed['stat'] == observed['lstat']
+                and observed['lstat']['uid'] == os.getuid())
+
+    def _current_profile(self, claim, row):
+        observed = self._profile_observation(Path(claim['profile']))
+        self.structured_data['latest_profile_observation'] = observed
+        # Filesystem state is not atomic with the earlier process read. Recheck the
+        # exact original member after the predicate; history never admits a new member.
+        reads = {}
+        try:
+            reads['identity'] = identity(row['pid'])
+            reads['coalition'] = coalition(row['pid'])
+            reads['identity_recheck'] = identity(row['pid'])
+        except BaseException as error:
+            reads['failure'] = failure(error)
+            observed['post_predicate'] = reads
+            raise
+        observed['post_predicate'] = reads
+        for current in (reads['identity'], reads['identity_recheck']):
+            if current is not None:
+                assert current['birth'] == row['birth'] and current['uid'] == os.getuid(), 'Post-profile browser identity changed'
+        ids = reads['coalition']
+        assert ids is None or ids[0] == self.job.coalition_id, 'Post-profile browser cohort changed'
+        ended = reads['identity_recheck'] is None
+        if ended:
+            prior = self.structured_data.get('current_identity')
+            assert (self.structured_data['admitted_ever'] and prior and prior['pid'] == row['pid']
+                    and prior['birth'] == row['birth']
+                    and self.structured_data['current_coalition'][0] == self.job.coalition_id), 'Browser ended before first admission'
+            observed['outcome'] = 'previously-admitted-original-member-ended'
+            self.structured_data['current_member'] = False
+            self._structured_save()
+            return False
+        assert reads['identity'] is not None and ids is not None, 'Post-profile browser observations inconsistent'
+        same = observed['lstat'] == self.structured_data['initial_profile_observation']['lstat']
+        observed['outcome'] = 'current-safe-original-profile' if self._profile_safe(observed) and same else 'current-profile-refused'
+        assert self._profile_safe(observed) and same, 'Current profile path changed'
+        self._structured_save()
+        return True
+
     def _structured_claim(self):
         path = self.structured_path
         if not path.exists() and not path.is_symlink():
@@ -203,7 +259,9 @@ class StageReceipts:
         assert len(profile_args) == 1 and profile_args[0].startswith('--user-data-dir='), 'Exactly one profile selector required'
         profile = Path(profile_args[0].split('=', 1)[1])
         assert profile.is_absolute() and profile.parent == Path(self.private_tmp), 'Profile is not a direct child of private TMP'
-        assert str(profile.resolve(strict=True)) == str(profile) and not profile.is_symlink() and profile.is_dir(), 'Profile path not canonical directory'
+        observed_profile = self._profile_observation(profile)
+        self.structured_data['initial_profile_observation'] = observed_profile
+        assert self._profile_safe(observed_profile), 'Profile path not canonical directory'
         assert profile.name.startswith('playwright_chromiumdev_profile-'), 'Profile prefix invalid'
         assert [arg for arg in args if arg.startswith('--use-angle')] == ['--use-angle=metal'], 'Exactly one Metal selector required'
         self.structured_fact = {'pid': value['pid'], 'binary': expected, 'profile': str(profile), 'angle_metal_requested': True,
@@ -261,8 +319,8 @@ class StageReceipts:
             assert after['birth'] == row['birth'] and observed_coalition[0] == self.job.coalition_id
             if claim and row['pid'] == claim['pid']:
                 assert after['uid'] == os.getuid() and binary == claim['binary'] and sha(binary) == self.ready['process_binary_sha256'][binary], 'Current browser identity/executable mismatch'
-                profile = Path(claim['profile'])
-                assert profile.is_dir() and not profile.is_symlink() and str(profile.resolve(strict=True)) == str(profile), 'Current profile path changed'
+                if not self._current_profile(claim, row):
+                    continue
                 launch = claim
             command = commands.get(row['pid'])
             kind = re.search(r'(?:^|\s)--type=([^\s]+)', command) if command else None
