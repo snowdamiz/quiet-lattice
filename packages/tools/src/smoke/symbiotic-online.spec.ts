@@ -38,6 +38,17 @@ async function until(page: Page, predicate: string, timeout = 30_000) {
   );
 }
 
+async function acquireInput(page: Page) {
+  await page.bringToFront();
+  await until(
+    page,
+    'document.hasFocus() && window.game.net?.joined && (window.game.mode === "ship" || window.game.mode === "foot") && !window.game.overlay',
+    10_000,
+  );
+  if (!(await page.evaluate(() => window.game.input.locked))) await page.locator('.pause-menu.show [data-act="resume"]').click({ timeout: 10_000 });
+  await until(page, 'document.hasFocus() && window.game.input.locked && window.game.input.enabled && !document.querySelector(".pause-menu.show")', 10_000);
+}
+
 async function walker(browser: Browser, errors: string[], fragment: boolean) {
   const name = `bond${randomBytes(5).toString('hex')}`;
   const response = await fetch(`${online.serverUrl}/auth/dev`, {
@@ -332,6 +343,7 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
       const landed = EntityState.parse(await page.evaluate(() => window.game.net.store.entities.get(window.game.net.entityId)));
       expect(landed).toMatchObject({ kind: 'player', frame: arena.frame, mode: 'landed' });
       // Real F interaction leaves this client's server-owned landed ship; no foot teleport or parked-pose injection.
+      await acquireInput(page);
       await page.keyboard.down('KeyF');
       try {
         await until(page, 'window.game.mode === "foot"', 10_000);
@@ -382,7 +394,7 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
 
     const initialOwner: number[] = await a.page.evaluate(() => window.game.net.store.entities.get(window.game.net.entityId).pos);
     await aim(a.page, companion);
-    await a.page.bringToFront();
+    await acquireInput(a.page);
     await a.page.keyboard.down('KeyS');
     try {
       await until(

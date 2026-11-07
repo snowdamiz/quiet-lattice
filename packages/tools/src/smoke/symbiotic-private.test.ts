@@ -1,8 +1,18 @@
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
 import type { EntityState } from '@astra/shared/protocol';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
-import { createSourceFile, isFunctionDeclaration, ScriptTarget, transpileModule } from 'typescript';
+import {
+  createSourceFile,
+  isClassDeclaration,
+  isConstructorDeclaration,
+  isFunctionDeclaration,
+  isMethodDeclaration,
+  ScriptTarget,
+  transpileModule,
+} from 'typescript';
 import { AdminCommand } from '../../../server/src/admin/commands.ts';
 import { resolvePlacement } from '../../../server/src/admin/place.ts';
 import { planHere } from '../../../server/src/fauna/terrain.ts';
@@ -440,5 +450,287 @@ describe('live arena setup respects owned ship authority', () => {
   it('does not hide a refused admin placement', async () => {
     const reply = { ok: false, error: 'invalid', message: 'pose: board_range: on foot with no ship of its own here' };
     await expect(fixturePlace(async () => reply)('owner', { system: 31, body: 7 }, 'docked', 'station')).rejects.toThrow('board_range');
+  });
+});
+
+// Real Input/UI callbacks and the Game input consumer, with only DOM/Playwright/render services replaced by CPU ports.
+// This proves source ordering and refusal behavior, not native user activation, focus, or pointer-lock acceptance.
+const clientFile = (path: string) =>
+  createSourceFile(path, readFileSync(new URL(`../../../client/src/${path}`, import.meta.url), 'utf8'), ScriptTarget.Latest, true);
+function method(path: string, name: string) {
+  const source = clientFile(path);
+  const cls = source.statements.filter(isClassDeclaration).find((c) => c.name?.text === path.split('/').at(-1)?.replace('.js', ''));
+  const member = cls?.members.find((m) => isMethodDeclaration(m) && m.name.getText(source) === name);
+  if (!member || !isMethodDeclaration(member) || !member.body) throw new Error(`Missing real method ${path}:${name}`);
+  return { source, member, text: member.getText(source) };
+}
+const inputFile = clientFile('core/Input.js');
+const InputClass = new Function(inputFile.text.replace('export class Input', 'class Input') + ';return Input;')();
+const threeUrl = pathToFileURL(
+  createRequire(new URL('../../../client/package.json', import.meta.url))
+    .resolve('three')
+    .replace(/three\.cjs$/, 'three.module.js'),
+).href;
+const three = await import(/* @vite-ignore */ threeUrl);
+const gameMethods = new Function('_v1', '_v2', '_aim', `return {${['exitShip', 'handleInteractions'].map((n) => method('Game.js', n).text).join(',')}}`)(
+  new three.Vector3(),
+  new three.Vector3(),
+  new three.Vector3(),
+);
+const playerMethods = new Function('_v', `return {${['spawn', 'up'].map((n) => method('entities/Player.js', n).text).join(',')}}`)(new three.Vector3());
+const frameMethod = method('Game.js', 'frame');
+const inputGate = new Function(
+  frameMethod.member
+    .body!.statements.slice(0, 3)
+    .map((s) => s.getText(frameMethod.source))
+    .join('\n'),
+);
+const menusFile = clientFile('ui/Menus.js');
+const menuHTML = menusFile.statements.find((s) => isFunctionDeclaration(s) && s.name?.text === 'menuHTML');
+if (!menuHTML) throw new Error('Missing real menuHTML');
+const menuMethods = new Function(
+  `${menuHTML.getText(menusFile)};return {${['buildPause', 'updatePauseHint'].map((n) => method('ui/Menus.js', n).text).join(',')}}`,
+)();
+
+class UiElement extends EventTarget {
+  innerHTML = '';
+  className = '';
+  readonly classes = new Set<string>();
+  readonly classList = {
+    contains: (name: string) => this.classes.has(name),
+    toggle: (name: string, show: boolean) => (show ? this.classes.add(name) : this.classes.delete(name)),
+  };
+  private readonly children = new Map<string, UiElement>();
+  querySelector(selector: string): UiElement {
+    const attribute = selector.slice(1, -1);
+    if (!this.innerHTML.includes(attribute)) throw new Error(`UI does not contain ${selector}`);
+    let child = this.children.get(selector);
+    if (!child) {
+      child = new UiElement();
+      this.children.set(selector, child);
+    }
+    return child;
+  }
+}
+
+function inputClients() {
+  let active: ReturnType<typeof client> | undefined;
+  function client(name: string) {
+    const calls: string[] = [];
+    const win = new EventTarget();
+    const doc = Object.assign(new EventTarget(), {
+      pointerLockElement: null as object | null,
+      hasFocus: () => active === result,
+      querySelector: (selector: string) => {
+        if (selector !== '.pause-menu.show') throw new Error(`Unexpected query ${selector}`);
+        return pause.classList.contains('show') ? pause : null;
+      },
+    });
+    const pause = new UiElement();
+    const behavior = { grant: true, focus: true, clickError: false, freezeMode: false };
+    let gesture = false;
+    const canvas = {
+      requestPointerLock() {
+        calls.push('requestPointerLock');
+        expect(gesture).toBe(true);
+        expect(doc.hasFocus()).toBe(true);
+        if (behavior.grant) {
+          doc.pointerLockElement = canvas;
+          doc.dispatchEvent(new Event('pointerlockchange'));
+        }
+        return Promise.resolve();
+      },
+    };
+    vi.stubGlobal('window', win);
+    vi.stubGlobal('document', doc);
+    const input = new InputClass(canvas);
+    const frame = { kind: 'station', terminals: [] };
+    const state = () => ({ frame, pos: new three.Vector3(0, 1.95, 0), vel: new three.Vector3(), quat: new three.Quaternion() });
+    const player = { ...playerMethods, state: state(), heading: new three.Vector3(0, 0, -1), blend: { clear() {} } };
+    const game = {
+      ...gameMethods,
+      mode: 'ship',
+      overlay: null as string | null,
+      input,
+      player,
+      net: { joined: true },
+      ship: { mode: 'landed', state: state(), setCockpit() {} },
+      director: { startPoseBlend() {} },
+      audio: { play() {} },
+      cam: { pos: new three.Vector3(), quat: new three.Quaternion() },
+      castKeys() {},
+      cities: { planet: null },
+      structures: { nearestInteract: () => null },
+      fauna: { pick: () => null },
+      multitool: { target: null },
+      frame() {
+        inputGate.call(game);
+        if (!behavior.freezeMode) gameMethods.handleInteractions.call(game);
+        menuMethods.updatePauseHint.call(menus);
+        input.endFrame();
+      },
+    };
+    const menus = { ...menuMethods, game, pauseHint: pause, sheetsHTML: () => '', bindSheets() {}, bindSettings() {}, refreshPause() {} };
+    menuMethods.buildPause.call(menus);
+    menuMethods.updatePauseHint.call(menus);
+    // The selector's root class comes from the actual UI constructor, not a duplicate assumed selector.
+    const cls = menusFile.statements.find(isClassDeclaration);
+    const constructor = cls?.members.find(isConstructorDeclaration);
+    const root = constructor?.body?.statements.find((s) => s.getText(menusFile).includes('this.pauseHint = el('));
+    if (!root) throw new Error('Missing pause element creation');
+    new Function('el', root.getText(menusFile)).call(menus, (_tag: string, classes: string) => {
+      pause.className = classes;
+      return pause;
+    });
+    Object.assign(win, { game });
+    const activate = () => {
+      vi.stubGlobal('window', win);
+      vi.stubGlobal('document', doc);
+    };
+    const page = {
+      async bringToFront() {
+        calls.push('front');
+        if (active && active !== result) active.blur();
+        if (behavior.focus) active = result;
+        activate();
+      },
+      async evaluate(fn: () => unknown) {
+        activate();
+        return fn();
+      },
+      locator(selector: string) {
+        return {
+          async click() {
+            calls.push('resume');
+            if (behavior.clickError) throw new Error('Resume click refused');
+            const [root, button] = selector.split(' ');
+            for (const cls of root!.split('.').filter(Boolean)) expect([...pause.className.split(' '), ...pause.classes]).toContain(cls);
+            gesture = true;
+            try {
+              pause.querySelector(button!).dispatchEvent(new Event('click'));
+            } finally {
+              gesture = false;
+            }
+          },
+        };
+      },
+      keyboard: {
+        async down(code: string) {
+          activate();
+          calls.push(`down:${code}:${input.enabled}`);
+          win.dispatchEvent(Object.assign(new Event('keydown'), { code, repeat: false }));
+        },
+        async up(code: string) {
+          activate();
+          calls.push(`up:${code}`);
+          win.dispatchEvent(Object.assign(new Event('keyup'), { code }));
+        },
+      },
+      async waitForFunction(fn: (source: string) => unknown, source: string) {
+        activate();
+        if (source.startsWith('Math.hypot(')) {
+          // The authoritative follow predicate is retained. This CPU port proves admitted held input and
+          // deliberately refuses to invent a server movement result, exercising the real finally key-up.
+          expect(input.down('KeyS')).toBe(true);
+          throw new Error('CPU port has no authoritative follow snapshot');
+        }
+        for (let i = 0; i < 4; i++) if (fn(source)) return;
+        throw new Error('CPU bounded wait: predicate never became true');
+      },
+    };
+    const result = {
+      name,
+      calls,
+      behavior,
+      game,
+      input,
+      page,
+      blur() {
+        win.dispatchEvent(new Event('blur'));
+        doc.pointerLockElement = null;
+        doc.dispatchEvent(new Event('pointerlockchange'));
+        menuMethods.updatePauseHint.call(menus);
+      },
+    };
+    return result;
+  }
+  return { client };
+}
+
+function inputBlock(key: 'KeyF' | 'KeyS') {
+  const down = spec.indexOf(`await ${key === 'KeyF' ? 'page' : 'a.page'}.keyboard.down('${key}')`);
+  const begin = key === 'KeyF' ? spec.lastIndexOf('      // Real F interaction', down) : spec.lastIndexOf('\n', spec.lastIndexOf('\n', down) - 1);
+  const end = spec.indexOf(key === 'KeyF' ? '\n      await until(' : '\n    for (const page of pages)', down);
+  if (down < 0 || begin < 0 || end < 0) throw new Error(`Missing actual ${key} block`);
+  const source = createSourceFile('spec.ts', spec, ScriptTarget.Latest, true);
+  const declarations = source.statements
+    .filter((s) => isFunctionDeclaration(s) && ['until', 'acquireInput'].includes(s.name?.text ?? ''))
+    .map((s) => s.getText(source))
+    .join('\n');
+  const code = transpileModule(`${declarations}\nreturn (async()=>{${spec.slice(begin, end)}})();`, {
+    compilerOptions: { target: ScriptTarget.ES2022 },
+  }).outputText;
+  return new Function('page', 'a', 'initialOwner', code);
+}
+const runF = (client: ReturnType<ReturnType<typeof inputClients>['client']>) => inputBlock('KeyF')(client.page);
+
+describe('real UI admission before fixture keyboard input', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  it.each(['owner', 'observer'])('resumes initially unlocked %s through the actual UI before F', async (role) => {
+    const c = inputClients().client(role);
+    expect(c.input.locked).toBe(false);
+    await runF(c);
+    expect(c.game.mode).toBe('foot');
+    expect(c.calls).toEqual(['front', 'resume', 'requestPointerLock', 'down:KeyF:true', 'up:KeyF']);
+    expect(c.input.keys.size).toBe(0);
+  });
+  it('still rejects a failed gesture without sending F', async () => {
+    const c = inputClients().client('owner');
+    c.behavior.clickError = true;
+    await expect(runF(c)).rejects.toThrow('Resume click refused');
+    expect(c.calls.some((s) => s.startsWith('down:'))).toBe(false);
+    expect(c.game.mode).toBe('ship');
+  });
+  it('still rejects missing focus or a lock event without sending F', async () => {
+    for (const failure of ['focus', 'grant'] as const) {
+      const c = inputClients().client('owner');
+      c.behavior[failure] = false;
+      await expect(runF(c)).rejects.toThrow('predicate never became true');
+      expect(c.calls.some((s) => s.startsWith('down:'))).toBe(false);
+      expect(c.game.mode).toBe('ship');
+    }
+  });
+  it('releases F and rejects if admitted input never reaches foot', async () => {
+    const c = inputClients().client('owner');
+    c.behavior.freezeMode = true;
+    await expect(runF(c)).rejects.toThrow('predicate never became true');
+    expect(c.calls.at(-1)).toBe('up:KeyF');
+    expect(c.input.keys.size).toBe(0);
+  });
+  it('reacquires owner input after observer F, sends S, and still rejects missing server movement', async () => {
+    const clients = inputClients();
+    const owner = clients.client('owner'),
+      observer = clients.client('observer');
+    await runF(owner);
+    await runF(observer);
+    expect(owner.input.locked).toBe(false);
+    expect(observer.input.locked).toBe(true);
+    owner.calls.length = 0;
+    await expect(inputBlock('KeyS')(undefined, owner, [0, 0, 0])).rejects.toThrow('no authoritative follow snapshot');
+    expect(owner.calls).toEqual(['front', 'resume', 'requestPointerLock', 'down:KeyS:true', 'up:KeyS']);
+    expect(owner.input.keys.size).toBe(0);
+    expect(observer.input.locked).toBe(false);
+  });
+  it('rejects failed owner reacquisition before sending S', async () => {
+    const clients = inputClients();
+    const owner = clients.client('owner'),
+      observer = clients.client('observer');
+    await runF(owner);
+    await runF(observer);
+    owner.calls.length = 0;
+    owner.behavior.grant = false;
+    await expect(inputBlock('KeyS')(undefined, owner, [0, 0, 0])).rejects.toThrow('predicate never became true');
+    expect(owner.calls).toEqual(['front', 'resume', 'requestPointerLock']);
+    expect(owner.input.keys.size).toBe(0);
   });
 });
