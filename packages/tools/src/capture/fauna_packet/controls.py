@@ -36,14 +36,14 @@ inspector = module('fauna_cpu_inspector', 'inspect.py')
 class CallerControls(unittest.TestCase):
     def test_actual_helper_refusals_preserve_raw_unknown_fields_through_receipt_failure(self):
         helpers_dir = HERE.parents[4] / 'assets/blend/stations/_authoring'
-        for phase in ('archive', 'terminal'):
+        for phase in ('archive', 'terminal', 'combined-write', 'all-sinks'):
             with self.subTest(phase=phase), tempfile.TemporaryDirectory(prefix='fauna-cpu-release-') as tempdir:
                 base = Path(tempdir).resolve(); evidence = base / 'evidence'; evidence.mkdir()
                 private = base / 'private'; private.mkdir(mode=0o700)
                 calls = []
                 def command(argv, **kwargs):
                     calls.append(argv[1])
-                    return SimpleNamespace(args=argv, returncode=1 if argv[1] == 'bootout' else 0,
+                    return SimpleNamespace(args=argv, returncode=1 if argv[1] == 'bootout' or phase in ('combined-write', 'all-sinks') else 0,
                                            stdout='RAW_STDOUT', stderr='RAW_STDERR', futureField={'unknown': [7, 'preserve']})
                 kernel = lambda _: {'live': 0, 'futureKernel': {'raw': 'preserve'}}
                 namespace = {'Path': Path, 'ROOT': base, 'SUPPORTED_PROFILE_PREFIXES': ('playwright_chromiumdev_profile-',),
@@ -67,7 +67,7 @@ class CallerControls(unittest.TestCase):
                         self.coalition_id = 7; self.known = {}; self.target = 'CPU_ONLY_NO_LAUNCH'
                         self.state = {'drained': True, 'clean': True, 'exits': {'capture': 1, 'caffeinate': 0}, 'futureState': {'raw': 'keep'}}
                     def start(self): calls.append('fake-start')
-                    def wait(self, *a): return 'completed'
+                    def wait(self, *a): calls.append('fake-capture'); return 'completed'
                     def drain(self, *a): return self.state.copy()
                     def members(self): return []
                     def archive(self, **kw):
@@ -82,33 +82,57 @@ class CallerControls(unittest.TestCase):
                 support = SimpleNamespace(StageReceipts=lambda *a: SimpleNamespace(observe=lambda: None, require_browser=lambda: None), terminal_audit=namespace['terminal_audit'])
                 helpers = {'round4_job_boundary': core, 'run_round4_browser_proof': temp, 'run_round4_remaining8': support}
                 ready = {'generatedCaches': [], 'stationDirectory': str(helpers_dir), 'uid': os.getuid(), 'node': 'NEVER_EXECUTED', 'path': 'CPU_ONLY', 'browserCache': 'CPU_ONLY', 'root': str(base)}
-                original_persist, original_read = caller.persist, caller.read_json
+                original_persist, original_read, original_run = caller.persist, caller.read_json, caller.run_unit
+                returned_results, write_attempts = [], []
+                def run(*a):
+                    result = original_run(*a)
+                    returned_results.append(result)
+                    return result
                 def persist(p, value):
-                    if Path(p).name.startswith('release-') or Path(p).name == 'result.json': raise OSError('ENOSPC_SECONDARY')
+                    name = Path(p).name
+                    write_attempts.append(name)
+                    if phase == 'all-sinks' and 'fake-capture' in calls: raise OSError('ENOSPC_' + name)
+                    if phase == 'combined-write' and name in ('returned-tmp-release.json', 'terminal-audit.json', 'result.json'): raise OSError('ENOSPC_' + name)
+                    if phase in ('archive', 'terminal') and (name.startswith('release-') or name == 'result.json'): raise OSError('ENOSPC_SECONDARY')
                     return original_persist(p, value)
                 stderr, stdout = io.StringIO(), io.StringIO()
+                class FailedSink:
+                    def write(self, _): raise OSError('STDERR_UNAVAILABLE')
                 before_path = list(sys.path)
                 try:
-                    with patch.object(sys, 'argv', ['caller', '--execute', 'fauna-hit-turn-day-16x9', '--grant', 'CPU_ONLY']), patch.object(caller, 'read_json', side_effect=lambda p, *a: ready if p == caller.READY else original_read(p, *a)), patch.object(caller, 'consume', return_value=({'evidence': str(evidence), 'consumption': 'NEVER_USED'}, {'unit': 'fauna-hit-turn-day-16x9'})) as consume, patch.object(caller, 'snapshot_caches'), patch.object(caller.importlib, 'import_module', side_effect=lambda n: helpers[n]), patch.object(caller, 'observed_thresholds', return_value={}), patch.object(caller, 'persist', side_effect=persist), patch.object(caller.subprocess, 'run', side_effect=AssertionError('No decoder/later dispatch')), redirect_stderr(stderr), redirect_stdout(stdout):
+                    with patch.object(sys, 'argv', ['caller', '--execute', 'fauna-hit-turn-day-16x9', '--grant', 'CPU_ONLY']), patch.object(caller, 'read_json', side_effect=lambda p, *a: ready if p == caller.READY else original_read(p, *a)), patch.object(caller, 'consume', return_value=({'evidence': str(evidence), 'consumption': 'NEVER_USED'}, {'unit': 'fauna-hit-turn-day-16x9'})) as consume, patch.object(caller, 'run_unit', side_effect=run), patch.object(caller, 'snapshot_caches'), patch.object(caller.importlib, 'import_module', side_effect=lambda n: helpers[n]), patch.object(caller, 'observed_thresholds', return_value={}), patch.object(caller, 'persist', side_effect=persist), patch.object(caller.subprocess, 'run', side_effect=AssertionError('No decoder/later dispatch')), redirect_stderr(FailedSink() if phase == 'all-sinks' else stderr), redirect_stdout(FailedSink() if phase == 'all-sinks' else stdout):
                         self.assertEqual(caller.main(), 1)
                     self.assertEqual(consume.call_count, 1)
                 finally:
                     sys.path[:] = before_path
-                result = json.loads(stdout.getvalue())
+                result = returned_results[0]
                 self.assertFalse(result['accepted'])
                 self.assertEqual(result['primaryFailure']['message'], 'Capture returned failure')
-                self.assertEqual(result['cleanupFailures'][0]['type'], 'AssertionError')
+                if phase in ('archive', 'terminal'):
+                    self.assertEqual(result['cleanupFailures'][0]['type'], 'AssertionError')
                 self.assertTrue(result['persistenceFailures'])
-                attempt = result['raw']['releaseAttempts'][phase]
-                self.assertIn('assert check.returncode != 0', attempt['failure']['predicate'])
+                if phase in ('archive', 'terminal'):
+                    attempt = result['raw']['releaseAttempts'][phase]
+                    self.assertIn('assert check.returncode != 0', attempt['failure']['predicate'])
                 data = json.dumps(result)
                 for marker in ('RAW_STDOUT', 'RAW_STDERR', 'futureField', 'futureKernel', 'futureState', 'preserve'):
                     self.assertIn(marker, data)
-                    self.assertIn(marker, stderr.getvalue())
+                    if phase != 'all-sinks': self.assertIn(marker, stderr.getvalue())
                 self.assertEqual(calls.count('fake-start'), 1)
                 if phase == 'archive':
                     self.assertTrue(private.exists())
                     self.assertEqual((base / 'scratch/capture_stdout.txt').read_text(), 'PARTIAL_CAPTURE_LOG')
+                if phase == 'combined-write':
+                    self.assertIn('failed-result.json', write_attempts)
+                    fallback = (evidence / 'failed-result.json').read_text()
+                    for marker in ('Capture returned failure', 'ENOSPC_returned-tmp-release.json', 'ENOSPC_terminal-audit.json', 'ENOSPC_result.json', 'RAW_STDOUT', 'futureKernel', 'futureRelease'):
+                        self.assertIn(marker, fallback)
+                    self.assertEqual(result['publication']['completeReceipt'], 'failed-result.json')
+                if phase == 'all-sinks':
+                    self.assertIn('failed-result.json', write_attempts)
+                    self.assertEqual(result['publication']['status'], 'UNABLE_TO_PERSIST_COMPLETE_RESULT')
+                    self.assertIsNone(result['publication']['completeReceipt'])
+                    self.assertTrue(any(row['message'] == 'STDERR_UNAVAILABLE' for row in result['persistenceFailures']))
 
     def test_per_unit_budget_uses_219_images_for_broad_and_81_for_correction(self):
         freeze = module('fauna_cpu_freeze', 'freeze.py')

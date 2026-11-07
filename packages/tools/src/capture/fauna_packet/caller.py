@@ -471,13 +471,22 @@ def run_unit(ready, spec, record):
     except BaseException as error:
         if result['primaryFailure'] is None:
             result['primaryFailure'] = failure(error)
-    try:
-        persist(evidence / 'result.json', result)
-    except BaseException as error:
-        result['accepted'] = False
-        result['persistenceFailures'].append(failure(error))
+    result['publication'] = {'status': 'WRITE_ATTEMPTED', 'completeReceipt': None}
+    for name in ('result.json', 'failed-result.json'):
         try:
-            print(json.dumps(result), file=sys.stderr)
+            persist(evidence / name, result)
+            result['publication'].update(status='COMPLETE_RESULT_WRITTEN', completeReceipt=name)
+            break
+        except BaseException as error:
+            result['accepted'] = False
+            result['persistenceFailures'].append({'receipt': name, **failure(error)})
+    if result['publication']['completeReceipt'] is None:
+        result['publication']['status'] = 'UNABLE_TO_PERSIST_COMPLETE_RESULT'
+    if not result['accepted']:
+        try:
+            fallback = json.dumps(result)
+            require(len(fallback.encode()) <= 1024 * 1024, 'Stderr result exceeds 1 MiB; complete result retained in memory')
+            print(fallback, file=sys.stderr)
         except BaseException as fallback_error:
             result['persistenceFailures'].append({'receipt': 'stderr', **failure(fallback_error)})
     return result
@@ -497,7 +506,6 @@ def main():
     require(args.grant is not None and not args.check, 'Separate one-use root grant required')
     spec, record = consume(ready, args.execute, args.grant)
     result = run_unit(ready, spec, record)
-    print(json.dumps(result, indent=2))
     return 0 if result['accepted'] else 1
 
 
