@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "--experimental-transform-types",
+    "--import",
+    "/tmp/space-e08t08-independent-c2-iimrHP/imports-fixed.mjs",
+    "--input-type=module",
+    "-e",
+    "import('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/client/src/dev/review.js').then(m=>console.log('actual Review imported',m.parseSpec('creatures/quad_heavy')))"
+  ],
+  "cwd": "/private/tmp/space-e08t08-independent-c2-iimrHP",
+  "start": 1794050806.71062,
+  "end": 1794050806.970123,
+  "exit": 0,
+  "log": "import-transformed.log"
+}

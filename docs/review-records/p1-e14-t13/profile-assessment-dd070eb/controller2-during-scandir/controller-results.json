@@ -1,0 +1,358 @@
+[
+  {
+    "fault": "positive",
+    "candidate": true,
+    "failure": null,
+    "secondary": [],
+    "settlement": "DRAINED_ARCHIVED_AUDITED",
+    "observedOracle": [],
+    "nativePortCalls": [
+      [
+        "/bin/ps",
+        "-ww",
+        "-p",
+        "624240,624241,624242,624243,624244,624245",
+        "-o",
+        "pid=,command="
+      ],
+      [
+        "/bin/launchctl",
+        "bootout",
+        "gui/501/local.stations.round4.a65bcc6e93ce467fa06428da8faa7cd0"
+      ],
+      [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.a65bcc6e93ce467fa06428da8faa7cd0"
+      ],
+      [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.a65bcc6e93ce467fa06428da8faa7cd0"
+      ]
+    ],
+    "terminalTimers": [
+      [
+        27.999988,
+        0.0
+      ]
+    ],
+    "rawBootstrapRetained": false,
+    "rawObserverRetained": false,
+    "beforeDrain": {
+      "complete": true,
+      "allocated": [
+        {
+          "path": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/out",
+          "device": 16777232,
+          "inode": 490055908,
+          "uid": 501
+        },
+        {
+          "path": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/fallback",
+          "device": 16777232,
+          "inode": 490055909,
+          "uid": 501
+        }
+      ],
+      "job": {
+        "scope": "CPU_CANDIDATE_BOUNDARY",
+        "exits": {
+          "capture": 0,
+          "caffeinate": 0
+        },
+        "errors": [],
+        "signals": [],
+        "drained": false,
+        "clean": false,
+        "profiles": [
+          "/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture"
+        ]
+      },
+      "scratch": "/private/tmp/sbr-w0vs6wrz/stations-round4-owned-bmzzethy",
+      "privateTmp": "/private/tmp/sbr-w0vs6wrz",
+      "observer": {
+        "utc": "2026-11-07T11:29:22.268023+00:00",
+        "scope": "OBSERVED_STATION_CHROMIUM_COHORT",
+        "launch": {
+          "pid": 624241,
+          "binary": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary",
+          "profile": "/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture",
+          "angle_metal_requested": true,
+          "provenance": "BrowserServer.process() ChildProcess"
+        },
+        "processes": [
+          {
+            "kernel": {
+              "pid": 624240,
+              "uid": 501,
+              "birth": [
+                1,
+                0
+              ],
+              "status": 2,
+              "pgid": 624240
+            },
+            "coalition": [
+              123,
+              0
+            ],
+            "binary": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary",
+            "role": "owned-launch-helper",
+            "command_observed": true,
+            "admitted": true,
+            "prelaunch_sha256": "31113aebbce1f1cfe4fad64221afbbd928559ba4724b36748be7bd782b354df4"
+          },
+          {
+            "kernel": {
+              "pid": 624241,
+              "uid": 501,
+              "birth": [
+                1,
+                1
+              ],
+              "status": 2,
+              "pgid": 624241
+            },
+            "coalition": [
+              123,
+              0
+            ],
+            "binary": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary",
+            "role": "browser",
+            "command_observed": true,
+            "admitted": true,
+            "prelaunch_sha256": "31113aebbce1f1cfe4fad64221afbbd928559ba4724b36748be7bd782b354df4"
+          },
+          {
+            "kernel": {
+              "pid": 624242,
+              "uid": 501,
+              "birth": [
+                1,
+                2
+              ],
+              "status": 2,
+              "pgid": 624242
+            },
+            "coalition": [
+              123,
+              0
+            ],
+            "binary": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary",
+            "role": "gpu-process",
+            "command_observed": true,
+            "admitted": true,
+            "prelaunch_sha256": "31113aebbce1f1cfe4fad64221afbbd928559ba4724b36748be7bd782b354df4"
+          },
+          {
+            "kernel": {
+              "pid": 624243,
+              "uid": 501,
+              "birth": [
+                1,
+                3
+              ],
+              "status": 2,
+              "pgid": 624243
+            },
+            "coalition": [
+              123,
+              0
+            ],
+            "binary": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary",
+            "role": "renderer",
+            "command_observed": true,
+            "admitted": true,
+            "prelaunch_sha256": "31113aebbce1f1cfe4fad64221afbbd928559ba4724b36748be7bd782b354df4"
+          },
+          {
+            "kernel": {
+              "pid": 624244,
+              "uid": 501,
+              "birth": [
+                1,
+                4
+              ],
+              "status": 2,
+              "pgid": 624244
+            },
+            "coalition": [
+              123,
+              0
+            ],
+            "binary": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary",
+            "role": "utility",
+            "command_observed": true,
+            "admitted": true,
+            "prelaunch_sha256": "31113aebbce1f1cfe4fad64221afbbd928559ba4724b36748be7bd782b354df4"
+          },
+          {
+            "kernel": {
+              "pid": 624245,
+              "uid": 501,
+              "birth": [
+                1,
+                5
+              ],
+              "status": 2,
+              "pgid": 624245
+            },
+            "coalition": [
+              123,
+              0
+            ],
+            "binary": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+            "role": "owned-launch-helper",
+            "command_observed": true,
+            "admitted": true,
+            "prelaunch_sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22"
+          }
+        ],
+        "all_ever_lived_processes_observed": false,
+        "external_native_XPC_ownership": "UNQUALIFIED",
+        "structured_launch": {
+          "provenance": "BrowserServer.process() ChildProcess",
+          "state": "admitted-current-kernel-member",
+          "raw": {
+            "sha256": "b69ade5a3050f1fe7baa71e2c154ead6af40eaa04c75318727af229d9821d458",
+            "prefix_utf8": "{\n  \"at\": \"2026-11-07T00:00:00Z\",\n  \"kind\": \"T13_BROWSER_LAUNCH_CHILD_PROCESS_V1\",\n  \"monotonicNs\": \"1\",\n  \"pid\": 624241,\n  \"prefix\": \"bwt-22222222222222222222222222222222\",\n  \"provenance\": \"BrowserServer.process() ChildProcess\",\n  \"spawnargs\": [\n    \"/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary\",\n    \"--use-angle=metal\",\n    \"--user-data-dir=/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture\"\n  ],\n  \"spawnfile\": \"/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary\"\n}\n",
+            "bytes_read": 612,
+            "complete": true
+          },
+          "failure": null,
+          "persistence_errors": [],
+          "admitted_ever": true,
+          "current_member": true,
+          "initial_profile_observation": {
+            "utc": "2026-11-07T11:29:22.241233+00:00",
+            "path": "/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture",
+            "errors": [],
+            "is_dir": true,
+            "is_symlink": false,
+            "resolve": "/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture",
+            "lstat": {
+              "device": 16777232,
+              "inode": 490055926,
+              "mode": 16877,
+              "uid": 501
+            },
+            "stat": {
+              "device": 16777232,
+              "inode": 490055926,
+              "mode": 16877,
+              "uid": 501
+            }
+          },
+          "claim": {
+            "pid": 624241,
+            "binary": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/inert-binary",
+            "profile": "/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture",
+            "angle_metal_requested": true,
+            "provenance": "BrowserServer.process() ChildProcess"
+          },
+          "debug_launch": null,
+          "latest_profile_observation": {
+            "utc": "2026-11-07T11:29:22.242305+00:00",
+            "path": "/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture",
+            "errors": [],
+            "is_dir": true,
+            "is_symlink": false,
+            "resolve": "/private/tmp/sbr-w0vs6wrz/playwright_chromiumdev_profile-fixture",
+            "lstat": {
+              "device": 16777232,
+              "inode": 490055926,
+              "mode": 16877,
+              "uid": 501
+            },
+            "stat": {
+              "device": 16777232,
+              "inode": 490055926,
+              "mode": 16877,
+              "uid": 501
+            },
+            "post_predicate": {
+              "identity": {
+                "pid": 624241,
+                "uid": 501,
+                "birth": [
+                  1,
+                  1
+                ],
+                "status": 2,
+                "pgid": 624241
+              },
+              "coalition": [
+                123,
+                0
+              ],
+              "identity_recheck": {
+                "pid": 624241,
+                "uid": 501,
+                "birth": [
+                  1,
+                  1
+                ],
+                "status": 2,
+                "pgid": 624241
+              }
+            },
+            "outcome": "current-safe-original-profile"
+          },
+          "current_identity": {
+            "pid": 624241,
+            "uid": 501,
+            "birth": [
+              1,
+              1
+            ],
+            "status": 2,
+            "pgid": 624241
+          },
+          "current_coalition": [
+            123,
+            0
+          ],
+          "executable_sha256": "31113aebbce1f1cfe4fad64221afbbd928559ba4724b36748be7bd782b354df4"
+        }
+      },
+      "retainedReads": [
+        {
+          "path": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/out/capture/browser-launch.json",
+          "raw_base64": "ewogICJhdCI6ICIyMDI2LTExLTA3VDAwOjAwOjAwWiIsCiAgImtpbmQiOiAiVDEzX0JST1dTRVJfTEFVTkNIX0NISUxEX1BST0NFU1NfVjEiLAogICJtb25vdG9uaWNOcyI6ICIxIiwKICAicGlkIjogNjI0MjQxLAogICJwcmVmaXgiOiAiYnd0LTIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyIiwKICAicHJvdmVuYW5jZSI6ICJCcm93c2VyU2VydmVyLnByb2Nlc3MoKSBDaGlsZFByb2Nlc3MiLAogICJzcGF3bmFyZ3MiOiBbCiAgICAiL3ByaXZhdGUvdG1wL3AxLWUxNC10MTMtcHJvZmlsZS1kZWxldGUtaHpraXEwc3YvY29udHJvbGxlcjItZHVyaW5nLXNjYW5kaXIvY29udHJvbGxlci12Mi1wb3NpdGl2ZS9pbmVydC1iaW5hcnkiLAogICAgIi0tdXNlLWFuZ2xlPW1ldGFsIiwKICAgICItLXVzZXItZGF0YS1kaXI9L3ByaXZhdGUvdG1wL3Nici13MHZzNndyei9wbGF5d3JpZ2h0X2Nocm9taXVtZGV2X3Byb2ZpbGUtZml4dHVyZSIKICBdLAogICJzcGF3bmZpbGUiOiAiL3ByaXZhdGUvdG1wL3AxLWUxNC10MTMtcHJvZmlsZS1kZWxldGUtaHpraXEwc3YvY29udHJvbGxlcjItZHVyaW5nLXNjYW5kaXIvY29udHJvbGxlci12Mi1wb3NpdGl2ZS9pbmVydC1iaW5hcnkiCn0K",
+          "sha256": "b69ade5a3050f1fe7baa71e2c154ead6af40eaa04c75318727af229d9821d458",
+          "descriptor": {
+            "path": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/controller2-during-scandir/controller-v2-positive/out/capture/browser-launch.json",
+            "bytes_read": 612,
+            "complete": true,
+            "before": [
+              16777232,
+              490055931,
+              33152,
+              501,
+              612,
+              1794050962237120200,
+              1794050962237497450
+            ],
+            "opened": [
+              16777232,
+              490055931,
+              33152,
+              501,
+              612,
+              1794050962237120200,
+              1794050962237497450
+            ]
+          }
+        }
+      ]
+    },
+    "retainedReadControl": {
+      "openedDescriptors": [],
+      "payloadReadCounts": [],
+      "ancestorSwapped": false
+    },
+    "preDrainTimers": [],
+    "ownedCPUChildren": []
+  }
+]

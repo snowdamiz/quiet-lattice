@@ -1,0 +1,32 @@
+keys ['accepted', 'admission', 'checksPassed', 'durable', 'errors', 'jobs', 'metadataAttempts', 'publication', 'raw', 'release']
+errors [
+  {
+    "args": [
+      2,
+      "No such file or directory"
+    ],
+    "attributes": {
+      "errno": 2,
+      "filename": "/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary",
+      "filename2": null,
+      "strerror": "No such file or directory"
+    },
+    "message": "[Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'",
+    "operation": "writers",
+    "phase": "capture-observer",
+    "type": "FileNotFoundError"
+  },
+  {
+    "attributes": {
+      "clean": false,
+      "errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'"
+      ]
+    },
+    "message": "Helper work/cleanup is not clean; resource release cannot accept capture",
+    "phase": "cleanup-work-status",
+    "type": "HelperWorkFailure"
+  }
+]
+raw keys ['cacheOwnerChecks', 'cacheSnapshot', 'cleanup', 'decodeSkipped', 'executionPartial', 'lastCaptureObservation', 'lastWriterObservation', 'profileReleaseSnapshot', 'releaseAudit', 'start', 'tmpAdmission', 'wait', 'writerObservationFailures']
+original metadata roots [('/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb', 144, 13260472), ('/private/tmp/space-effects-parent-pilot-r2-1of62im8', 12, 272670)]

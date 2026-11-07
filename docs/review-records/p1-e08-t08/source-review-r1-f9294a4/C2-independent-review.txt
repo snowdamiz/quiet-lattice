@@ -1,0 +1,300 @@
+VERDICT: REVISE (independent SOURCE/CPU C.2; no native, visual, or whole-task acceptance)
+TASK: P1.E08.T08 (art) Creatures at the new bar
+STATUS: BLOCKED on F1 and F2 below.
+SUMMARY: The pinned candidate satisfies the inspected inventory and the bounded decoded geometry/Review contracts, subject to the specified source-receipt and texture limits. The known COLOR_0 exact-float discrepancy is independently confirmed. A separate, freshly reproduced supervisor cancellation defect permits overlapping work after the single-lane supervisor exits. No candidate, dependency, original report, asset history, plan, or Git history was changed. No prior independent findings were supplied.
+
+PINNED REVIEW SCOPE
+Candidate: /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13
+Branch: task/P1-E08-T08-creatures
+HEAD: f9294a466d6223f695f102dc1a13ed526f155e67
+Tree: 5cea052761a4c037d28c2d09bd7d731885f09fda
+Base: 5731dc4c92954dd995c4a8ed5975bdbd2f7fdb45
+Scope: full base..HEAD, 412 changed paths, restricted to the seven blends, seven GLBs, task-local e08t08 tooling/evidence, and creature/construct preview history.
+Task block: docs/IMPLEMENTATION_PLAN.md:280, five body plans rebuilt (two variants each), attack poses, hand-weighted limbs, predator variants, outpost drone, Overseer; verify validate and review scene. E14.T02 dependency is checked at line 340.
+Read: IMPLEMENTATION_PLAN 0.3, 0.4, 0.9.5, 0.10 and Appendix C; DESIGN 12.2, 12.5, 13 Overseer, 19.1-19.4; art bible scale, Compact language, glyph restriction, palettes/materials, budgets/LODs/export/markers; full supplied C1 and author C2. The explicit CPU-only brief controls this review. Review does not authorize merging.
+
+FINDINGS
+
+F1 [P2, SOURCE ACCEPTANCE BLOCKER, KNOWN GAP CONFIRMED]
+Preserve the creature RGBA mask before the exporter converts it to UINT16.
+Locations: packages/tools/blender/e08t08/consumer.test.js:25,75 (current bounded-precision test contract); packages/client/public/models/creatures/{quad_heavy,quad_grazer,quad_small,biped,flyer}.glb (all 34 creature variants / 136 LOD selections).
+Shared owner: packages/tools/blender/artlib/export.py:294; packages/tools/blender/artlib/checks.py:167; packages/tools/src/art/meshopt.ts:109.
+Pinned backend cause: /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py:1323 and primitive_attributes.py:184.
+Rule: art-bible.md:293-294, families.json:262 (and its geometry comment at 67), supplied brief line 55 require exact floats for the creature mask. No waiver or specification edit is made here.
+Reachability: ordinary stock creature export selects the active RGBA color layer. The pinned Blender path chooses BYTE_COLOR for four channels, irrespective of the author's FLOAT_COLOR creation, and primitive_attributes rounds/clips it to normalized UINT16. The non-quantizing meshopt branch retains that existing stream. Stock validation checks mask weight sums and imported material use; it does not enforce a Float32 COLOR_0 accessor or exact source-value preservation. Thus ordinary export/validate can be green despite violating the invariant. The author C2 discloses the gap; the silent gap is in the stock export/validation contract, not a concealment by the author.
+Evidence: all five GLBs have COLOR_0 = componentType 5123, normalized=true, VEC4. _LIMB and _GLOW are 5126/SCALAR, _PIVOT is 5126/VEC3, none normalized. Actual GLTFLoader with the client Engine's bundled MeshoptDecoder reads all seven compressed GLBs. With normalized BufferAttribute getters and each mesh's matrixWorld applied, 9,520 retained source samples match geometry and rig values; 5,699 sampled mask channels differ from their source samples. Maximum absolute error by RGBA channel: 7.641431877258853e-6, 7.4585215162903395e-6, 7.617590019382003e-6, 7.653352806280544e-6. These are <= 0.5/65535 + 1e-7, but they are nonzero. The largest measured linear RGB difference through actual maskColors against the retained source sample is 4.857778549194336e-6. Stock applyGameLook and recolor execute successfully; this is behavioral compatibility, not exact-float compliance, visual equivalence, or a universal error proof over all source vertices.
+Repro: decode-direct.receipt.json records the complete command, exit 0. strict-color.receipt.json records the exact-format assertion command, exit 1, identifying all five creature files. Outputs: decoded-result-direct.json, strict-color.log. The red exact-format assertion is expected and retained.
+Concrete narrow remedy (P1.E14.T12 exporter owner, not this asset author): preserve source RGBA Float32 data before the backend's uint16 conversion, scoped to mask-bearing creatures under the exact-float family contract; emit COLOR_0 FLOAT/VEC4 with normalized absent/false, retaining AO alpha. Use an owner-maintained exporter adapter or pinned backend correction in the shared export path, then let the existing meshopt-only path compress it. A cast of the already-rounded UINT16 stream to Float32 cannot restore the lost values; dropping alpha also fails the AO contract. Add an owner-level source-to-actual-GLTFLoader regression with a non-grid RGBA mask, asserting Float32 format and value preservation, and fail stock validation on an incompatible accessor for the exact-float family. Re-export the affected five files only under a new explicit export capacity grant; keep constructs and other families' formats unchanged.
+Evidence for a possible future scoped contract correction, without approving it: these five pinned exports, the measured sample error bound, and current getter-based maskColors normalization show compatibility with this consumer and dun look. That supports considering a specifically documented normalized-UINT16 RGBA exception for COLOR_0, preserving Float32 _limb/_pivot/_glow and forbidding integer raw-array reads. It does not support changing all unquantized attributes, accepting other color types, dropping AO, or claiming unseen palettes/native images equivalent. The present spec remains binding; no correction is adopted by this review.
+
+F2 [P2, SOURCE/TOOLING BLOCKER, NEW]
+Keep child ownership and the lane until cancellation cleanup has settled.
+Location: packages/tools/blender/e08t08/stage.py:66-98, especially start_new_session at 67-68 and the unguarded polling/wait/receipt sequence. Promotion implication: finalize.py:17-30 enumerates completed JSON records only.
+Rule: the task's bounded CPU lane, terminal/cleanup receipts, failure preservation, and reachable lifecycle ownership requirements; README.md:43-47 promises one admitted lane and owned-descendant accounting.
+Reachability: a caller cancels or terminates stage.py while its command is running. The child was placed in its own session. The supervisor has no SIGTERM handler and no encompassing cleanup/finally around the child. Supervisor termination neither forwards the signal nor writes terminal JSON; closing its lock permits another invocation to enter. Ordinary exception/interrupt paths share the unguarded ownership gap. This can leave a Blender/codec workload active while a second stage starts; the fresh reproduction used only inert Python work.
+Fresh actual-code reproduction: copied stage.py byte-for-byte into an exclusive scratch tree (SHA256 65f142c9dda0c6fd89fe5bbd8479690745c12c96aed8dc001f96ed746b2e97cb). Started it with a Python child that writes its own PID and sleeps; sent SIGTERM only to the supervisor after observing that child. Supervisor exit was -15. The child remained alive with PPID 1 in its separate process group. No interrupted.json existed. A second stock stage acquired the lane and exited 0 while the first child was still alive. Reproducer exit 0 means these defect assertions succeeded. The reviewer then terminated that uniquely identified child and verified no remaining process. No Blender, codec, server, browser, or native process was used.
+Repro: stage-interrupt.receipt.json records /opt/homebrew/bin/python3 stage-interrupt.py, exit 0; stage-interrupt-result.json records the actual wrapper/child identities, post-exit ps evidence, missing receipt, second stage acceptance and settled cleanup. Fixture stage.py is unchanged; its nested second-stage JSON/log are retained under lifecycle-root/.
+Concrete remedy: acquire durable ownership before dispatch; handle SIGTERM/SIGINT and exceptions through one cleanup path; terminate/reap the actual child and known descendants, escalate only owned live processes, and keep admission closed until cleanup is proven. Emit a terminal interrupted/failed receipt from finally. Register starts so finalization cannot omit an admitted run just because its terminal JSON is missing; interrupted or uncertain runs must block promotion. Add real-process cancellation/exception controls that assert the second lane is unavailable until all owned work is terminal. This review does not run a fix or infer that the historical successful stages actually leaked.
+
+ADVISORY / EVIDENCE QUALIFICATIONS
+The retained “23 malformed decoded consumer controls” are mostly custom checkRig/checkMarkers/checkInventory assertion rejections after scene mutation (consumer.test.js:202-218,232-234); they are not 23 GLTFLoader/Review rejection routes. The fresh test removes LOD3 in each of seven decoded scenes and calls stock showLod: it chooses LOD2, as designed, instead of rejecting. Five further fresh controls remove color normalization on decoded geometry and run actual maskColors; the resulting values diverge by >1. Those 12 controls demonstrate real consumer behavior, without relabeling a helper exception as a production rejection. This is a coverage correction, not a request to change Review's fallback.
+The last retained source-contract invocation omitted --python-exit-code and --factory-startup. Its retained log does contain the final seven-file/38-variant completion result, and its source hashes match the current files, so this review does not infer a hidden failure. Future source checks should use the strict launcher form from C1; standalone OS exit 0 is insufficient if Blender can swallow a Python script failure.
+
+FRESH COVERAGE
+- All seven current GLBs loaded with actual GLTFLoader and the same bundled MeshoptDecoder imported by Engine.js; serial single Node process, no test pool, no renderer. Node pinned to v22.23.3; CPU environment limits in run.py. No package manager or implicit install.
+- Inventory derived from the actual BODY_PLANS and predator TEMPERAMENTS: ten herd rest keys, three predator rest keys and their attack variants (34 creatures), one drone and three Overseer phases. Roles stalker/pack/diver match DESIGN. No heavyweight/grazer predator, apex/boss/horror/stone-touched expansion. Legacy creatures.glb and runtime adoption remain untouched; T07 owns adoption/generator removal.
+- 38 selectable variants, 152 LODs, 998,717 decoded render vertices. Actual parseSpec/collectLods/showLod select precisely the requested render meshes and hide helpers. LOD0 15k-40k; successive LODs decline; LOD3 <5%; longest side 0.2-80m. Measured source-bound boxes, walker shoulder envelopes, biped heights, flyer spans, drone 1.5-3m and Overseer 23-25m checks pass. Fresh world-transform application matters: 24,058 drone and 74,787 Overseer render vertices differ from raw attribute coordinates.
+- Creature attribute types/counts, limb integer range, per-limb retained posed joints, binary/sparse glow, normalized mask range/sums, rest knee/ankle bands and soles pass. No skin/morph animation is imported. Attack intent is inspected in authoring source and variant selection; no gait/attack animation or visual readability is accepted.
+- Construct meshes carry no color mask or _limb/_pivot/_glow, require mesh quantization and retain authored materials. Creature masks take the actual dun game look (roughness .65, metalness .05); actual recolor world boxes and maskColors outputs are checked.
+- Exported COL/Muzzle names and world positions/bounds match retained source markers; boxes are 12 triangles. No forbidden Door/Interact/Socket/HP/Mount/Spin markers. Shared Overseer root helpers are inspected as the documented author interpretation; phase physics and visual collider fitness remain unqualified.
+- KTX2 image MIME/header size 2048x2048 and 12 mip levels inspected during GLTFLoader texture metadata substitution; meshopt/Basis required-extension declarations and construct quantization checked. Pixel decode, material appearance and texture memory results are retained stock evidence only.
+- 412 changed path bytes and 82 protected code/config hashes identical before/after. All 14 deliverables, 27 protected asset files (459,184,497 bytes), and all 79 PNG history images independently bind to the pinned Git/LFS object content. Existing other-family tree IDs are unchanged. Candidate status remains clean. Dependency metadata for 17,259 root entries, 46 client entries and 14 tools entries matches exactly before/after; imported module SHA256 pins are included.
+
+REUSED COVERAGE, NOT FRESH EXECUTION
+All fourteen validate-final JSONs report PASS, zero errors/warnings; their four terminal command receipts have exit 0, no reported remaining processes and no stop reason. Those receipts' complete before/after source and export hash maps bind to the current fourteen files. Current source-contract.json and consumer-contract.json also bind to these exact sources/exports. Reused Blender source data covers saved LODs, references/library paths, meshes, samples, materials and the four source assertion controls. POINT source masks are corroborated by the retained source audit; FLOAT_COLOR is explicit in author.py:115. The reviewer did not freshly reopen the binary .blend to verify its type or internal layout.
+Eight retained terminal stages were inspected. The historical export-constructs-01 receipt predates the five creature LOD attribute repairs and lacks an afterExports map. It is reused for its construct-source identities and recorded completion only, not as a current all-family export-hash proof. The later four validators, current consumer artifact and fresh decode provide current GLB binding. The old creature identities are retained as nonSubjectHistoricalDrift in evidence-audit.json. Source/codec/native previews and resource samples were not rerun; sampled historical cleanup/RSS is not an unsampled peak or cancellation-proof guarantee.
+All originals and failed author attempts remain unchanged. No new art density, placeholder, topology shading, material wear, native performance, gameplay/gait, or visual quality verdict follows from stock validation.
+
+VERIFY / EXACT COMMANDS AND EXITS
+All complete fresh commands, times, cwd and exits are in *.receipt.json in this directory. Key invocations from the fresh scratch directory:
+1. /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --experimental-transform-types --import ./imports-direct.mjs ./decode-direct.mjs => 0 (actual decoder + stock consumer checks).
+2. /opt/homebrew/bin/python3 ./strict-color.py => 1 (expected exact-float contract failure).
+3. /opt/homebrew/bin/python3 ./stage-interrupt.py => 0 (defect reproduced; inner supervisor -15; second lane 0; owned child cleanup confirmed).
+4. /opt/homebrew/bin/python3 ./evidence-audit-final.py => 0 (retained proof/hash audit; missing family model directories are explicitly absent at base, not ignored failures).
+5. /opt/homebrew/bin/python3 ./git-object-audit.py => 0 (120 deliverable/protected/PNG files match Git/LFS content).
+6. /opt/homebrew/bin/python3 ./inventory.py after => 0 (exact before/after equality).
+For reproduction, create another exclusive directory and copy the review scripts there; run.py deliberately requires unique run names and stage-interrupt.py requires a fresh fixture directory. Do not run the candidate consumer.test.js or its configured cache/report paths in place: they write into the candidate.
+Failed reviewer attempts are preserved: import-probe.log (recursive hook; shell pipeline's final cat returned 0, so the failing Node exit was not independently captured); import-fixed.log/receipt (1, strip-only TypeScript parameter property unsupported); import-transformed receipt (0); evidence-audit log/receipt (1, overbroad comparison against pre-repair non-subject creature hashes); evidence-audit-scoped log/receipt (1, historical receipt lacked afterExports). The final scoped audit retains these limitations rather than synthesizing missing evidence. Initial implicit node resolved v26.12.1; all qualification runs use the absolute v22.23.3 executable. No failed run was discarded or converted into a pass.
+
+DECISIONS
+No spec waiver, no fix, no stock exporter fork, no new art, no native/visual acceptance. Both findings remain open. The small measured color error supports only the stated consumer compatibility, not exact-float qualification. A source-unit REVISE is independent of the later native/visual gates.
+FILES CHANGED: none in candidate, dependencies, original reports, shared assets or history. New review artifacts exist only in this exclusively created /tmp directory.
+OUT OF SCOPE FOUND: exporter-owner F1 remedy; native Review/turntables/frame budgets/blind grading remain pending; T02 animation and T06 construct behavior/T07 adoption remain outside this review.
+LIMITS: no pnpm/install/hydration, Blender invocation, bake/render/codec/export, browser/GPU/native, server/DB, full suite, children/subagents, PR, push, merge, or screenshot cleanup. Existing 79 PNGs were hashed and preserved, not graded. Heavy capacity was not granted. Source Blender checks and texture transcodes were therefore NOT RUN freshly; retained proof is labeled as such.
+ARTIFACTS: before.json, after.json, decoded-result-direct.json, strict-color.log, stage-interrupt-result.json, evidence-audit.json, git-object-audit.json, imports-used-direct.json, all commands/logs/receipts and unchanged lifecycle fixture; SHA256SUMS seals this C2 and those evidence files.
+
+EXACT ASSET SHA256 PINS (freshly verified)
+879d9ac53ed14da1005b179adc5617c4f7ba2873bb00828c0f644e0a2df00e6c  assets/blend/creatures/quad_heavy.blend
+2a76d8d75d722167dbc8f7e654bd8b102e0d597943c82afab7d3c638719e0f04  packages/client/public/models/creatures/quad_heavy.glb
+0600f84627e042e7a2e80c5a6ce7837bddb52cd6c6a0ee89134b3dbde8f2e619  assets/blend/creatures/quad_grazer.blend
+c4662bc612a5db3d0d7a296f3f34fce87387d0114ac1396d885c8895b9c0f026  packages/client/public/models/creatures/quad_grazer.glb
+e265bee1b997cede003f58d89b8e7f9c9cffc540e8c1eaafab5b78f250b0966d  assets/blend/creatures/quad_small.blend
+06a1a3442303b35ef65837b5e698674787f8ac47385c665c2fd15bb5cc619ffb  packages/client/public/models/creatures/quad_small.glb
+bc486b2d4084e25e4d42ddb6b71ba51cbf42df7d6923db73d64108643081022e  assets/blend/creatures/biped.blend
+7a6bd58cb7cad053c090660d15daf024911799a0d09b1186cb8e2070210525ad  packages/client/public/models/creatures/biped.glb
+efa3752ff7bb7f19dd7e58474ca65d52ccb17a74f232fc60f52df10c9b087f84  assets/blend/creatures/flyer.blend
+41f8e4ba6091eefc01013ef1e9f98890eb72d9a7937368409b294390bdc73450  packages/client/public/models/creatures/flyer.glb
+15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7  assets/blend/constructs/outpost_drone.blend
+aac406aeb15e230b5f2122b8ee154bfc9657208cebf38689ed67bba3670437d5  packages/client/public/models/constructs/outpost_drone.glb
+78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3  assets/blend/constructs/outpost_overseer.blend
+9dc1a40d72875cc42eb966fb35cc6eae4cf4cfd0229abbc37086acab3b7a89c8  packages/client/public/models/constructs/outpost_overseer.glb
+
+EXACT PROTECTED CODE/CONFIG AND ASSET SHA256 PINS
+33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c  assets/blend/_library.blend
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/bosses/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/characters/.gitkeep
+9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c  assets/blend/characters/ixari.blend
+d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b  assets/blend/characters/thalune.blend
+06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b  assets/blend/characters/ulgani.blend
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/cities/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/constructs/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/cosmetics/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/creatures/.gitkeep
+c7a7416c507e41e82a364c22cceeed68968d811da473d2091b4d8ff2e9bab4be  assets/blend/cutscenes/test_cutscene.blend
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/effects/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/flora/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/hulls/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/npcs/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/props/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/sites/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/stations/.gitkeep
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  assets/blend/weapons/.gitkeep
+4015dd458950a8f603bb307548a93d5b0cd762f8815b8d35f69247c2c4d9a222  blender/build_creatures.py
+1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b  packages/client/public/models/characters/ixari.glb
+dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27  packages/client/public/models/characters/thalune.glb
+9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682  packages/client/public/models/characters/ulgani.glb
+4065f277d602a1ef0e5e79ecb597258c313b710a32cc89256c0b17d9d8f09b2b  packages/client/public/models/creatures.glb
+d2b9e9e31c37b09ca38f9caaf20733b26f26e7d9d54cb3160af5a12f41d583d9  packages/client/public/models/flora.glb
+8fd6e66339d5a22bbb3b2eead8e0844132139353c588019ae24f10d332e1062d  packages/client/public/models/multitool.glb
+1dbeff57e5f7a28cc1f925b93a11dc45e40974617d4bad65689e45e517d77493  packages/client/public/models/ship.glb
+01a32e5bc0f2502756faaa60d89d247c946f1a0e76ff1ab8d50f924519ef3990  packages/client/public/models/structures.glb
+d69741f7ae8161968e78d69d49d47e43e6f6d32d573c18be47dcfc27f31f46b1  packages/client/src/Game.js
+4203df1c5817a9cf7db852976149e3481d4d0b84adf77c826f42b7d9309a2033  packages/client/src/dev/review.js
+3c269065a54c640947514a4dd35c115bef5a2f86fb133b4e08ae16e643a37714  packages/client/src/gameplay/Fauna.js
+913a3baa028f66df947f6b85d2b2d3b78e21fcd416d5d11024a8e12504faa7cd  packages/client/src/gameplay/modelLibrary.js
+cee5f39b6d0452baa79bfc003d41d3270343a9021a456aa79bb2642e8f7ca7da  packages/server/src/abilities/book.ts
+9a989ce7aa85ca4e8a5037eacc530dc8467e5525b998f32758a7bf6d1ccdd57d  packages/server/src/abilities/eligibility.test.ts
+e1f07d29828277eb609b9b5122a3eb56c4ed66f9d47d734beec20216efa39006  packages/server/src/abilities/index.ts
+75909d3d811d683d6d0b01265f551ab217970fcc016e59c3519bfc09f533eac6  packages/server/src/abilities/resonance.test.ts
+de69a3f2e7088b4c278e33e79c27b04b847f7f3657ea3b7465b998b07becd3dd  packages/server/src/abilities/resonance.ts
+352dabdfd0a801af7832d71066a5c29f977e26171c74727ea6cde04c51e0d825  packages/server/src/abilities/service.test.ts
+72d652b0850460b6d1f3186d63177685f3fb37a584b6d2e0cc578c800ae9db59  packages/server/src/abilities/service.ts
+489d6f7342d5eefd1a944e140606110ee87e6bbaf086b48669ae45a47c886a31  packages/server/src/abilities/statuses.test.ts
+0a5a7bb0d909fdf3f4679e3ab721bee0e431e11cab94cc2f1ba03b2bc1585f0c  packages/server/src/abilities/statuses.ts
+ee82fcea7c59efa811a5e3721b59aebb0d08cb9ce5863c5fd67de6c3c95fb9ae  packages/server/src/abilities/thermal.test.ts
+62daad3660c0b6306ffb6013ec66d30c2e9d8f2c880128cd7800e994cb3a79f8  packages/server/src/abilities/thermal.ts
+88229bb5d836c493b82a1ddc572a8e4708ab2e0b3b1f96d38760b5e4ece776d6  packages/server/src/fauna/ai.test.ts
+f118c291d1c484f51b0d9e6cff3993e95d7939bf9cad5cc6c5b9e04f64218c12  packages/server/src/fauna/ai.ts
+3995ca767f2090c820b331f3c82a14e8c31003840d91c76e04529c75c38bd573  packages/server/src/fauna/cells.test.ts
+8c996d1cd502a52819e8da0d8793f049dfbd54b3e4d325a60d3462f5456be8b9  packages/server/src/fauna/cells.ts
+699e0f2b619a816c8e9387731484cf5f796f0415d70182b577d07c431ac05331  packages/server/src/fauna/control.test.ts
+a8770bdec05aad12a1a98d807c3877fa8a4c3e79bb6285998883db84109a4050  packages/server/src/fauna/dens.test.ts
+23895c3112501b4c149202e7d7bbb2629ae9dc536feffe3807ea90ccb9967ff6  packages/server/src/fauna/dens.ts
+bd1bf034b2b0fc2817ae9f6b88941a22bcfb19e688b27228f3126158c7a71154  packages/server/src/fauna/herds.test.ts
+ba0d2284229d971d0af738f466807c23b88ebea2f075c7b0e468de8ff17ef480  packages/server/src/fauna/herds.ts
+52920831d67ce1bd3405d7e7d76a9fa4888eceed8932628971652340e4bc0e58  packages/server/src/fauna/index.ts
+5ec638856529607e09f9be4e9c7ce58d3fe930e85feb0e0b7bd8cc242092bcfc  packages/server/src/fauna/planner.worker.ts
+c6a4ed370d95880de9a54b61c25f2ca86cdba4f9ccf27d09dbab49e9c42b391b  packages/server/src/fauna/sim.test.ts
+9999fd286b93f7c4dcf072115949a0dabfbb883751b8444a3e0397b25cb87a96  packages/server/src/fauna/sim.ts
+35243b2ea2c67126822beab18c720ae963027d189c4333b12de925f186c9d21b  packages/server/src/fauna/sky.test.ts
+882ac2ffc92e32add894b84a659f15d65df537baf37a43de6146c8c193c8bb6a  packages/server/src/fauna/sky.ts
+0edb672ed3d9f8bcf8ff577017030bef05b206d819f433b54107b606adae30a5  packages/server/src/fauna/terrain.test.ts
+5b031ca598807d815790ebe548e207b63048fc14a39100b8e8e1e40266fe1f7b  packages/server/src/fauna/terrain.ts
+943b20ac9292d4b3d799d3767b641b38cfb33566f87d351faec784994d1f7001  packages/tools/blender/artlib/__init__.py
+be51b0ad697d5e74c5b8431a3f74f8d8b944cf607e04cf4d78529591f9939ebb  packages/tools/blender/artlib/bake.py
+c5801c626e1a13d413b0c77d1600395bdb3a2878744e31fa0358413b2ebd4056  packages/tools/blender/artlib/checks.py
+b4d3a806230c3f775d23df1e27a8dd172e3301b432bef5c275b3a00342f7cf96  packages/tools/blender/artlib/core.py
+a776e5cf1882da493ae7ece35dbb2bd1cd917e24f47d5805036f2cf5d292335c  packages/tools/blender/artlib/export.py
+5cd19c63200d57cb16879bcd370c3379ba5074af9b73b5b1f8e014f13bbba474  packages/tools/blender/artlib/glb.py
+3290174555ee9d82b64e2ad4764857a4f227093563e42ca9725a833f17c1a7d4  packages/tools/blender/artlib/ktx.py
+775d8c0cdb196959afe5075b6237ed8cee4b909d2decb4e3a6c39cce86505c5a  packages/tools/blender/artlib/lods.py
+893ffc7721507defa275061284ed817140e0dc2fb74eef6e5d8b8883ebe90ed2  packages/tools/blender/artlib/materials.py
+b77fa372b1151ff3f1d17c5a9349134f0d42f5d75d477dd5183b2a0ff01093a1  packages/tools/blender/artlib/meshopt.py
+50859f77b81f0b4d1bfdf878b10141fa2c045db90b4908c6994734ef544a1ca7  packages/tools/blender/artlib/report.py
+3282a19ec21d9b8f5fe177ceba35f36667bf99ee57c9a109f3a7a37f27826619  packages/tools/blender/artlib/rules.py
+6472e0bcea961260b49d0ef3697029d61ed6349ccb6c9c9af55f17b26e97dde3  packages/tools/blender/artlib/scene.py
+012f142570b95a3eccaf92fb241df0b6512946061433ee4d4f3a48bbd9f840b4  packages/tools/blender/export_bosses.py
+0f19d71909d5c6c18b5403874fdacc1025246c9d870d454fa3400e5d28304639  packages/tools/blender/export_characters.py
+b14f2ee68f0ab1910864ce6c41619b27d09ebeb2469808f037ccf96ee87c2f56  packages/tools/blender/export_cities.py
+50012a3d2a8d96663e9559b544f7a86484a5d966c379d91a4b5eb92e1ef3d9e7  packages/tools/blender/export_constructs.py
+a19391cbe398cc606eb21dff6050a20d4f7c7032efa9082be6e56f75099945cf  packages/tools/blender/export_cosmetics.py
+a5fc2871fce9db537c921c669060a91e803848602ca209ec9ca962eca16ce2e3  packages/tools/blender/export_creatures.py
+ea1c09e67ce714b9999f6c5137a19c0205522790fc8158453ed49ee237852b93  packages/tools/blender/export_cutscene.py
+18581e501f0bf3d508028d6631ef4d2cb680a83b8aa90603d24b27d5056d90ae  packages/tools/blender/export_effects.py
+be11bdc435447ed8461f3ca6f6449963665fb6582997eb084ed071891d8393e2  packages/tools/blender/export_flora.py
+9efe68bd1c73d56c6c81049451b45fd6a947280cd326f9281728d81c1dcec200  packages/tools/blender/export_hulls.py
+440868959890b23fec531ce47cc4d4759ce84c8dfc06d8a34113159aefc1ac31  packages/tools/blender/export_npcs.py
+229dbc2223c254e3d6ad4ff31360a25983d4bd2bedd3de77930ff29f1902f906  packages/tools/blender/export_props.py
+3e9e68fd7ef40bcb18c9a3e751d10561e98d76dd420700466e868adef987056d  packages/tools/blender/export_sites.py
+5efe9386392895756b744bfb3d43a78ae3d815575843ea3fc556f9a028a58350  packages/tools/blender/export_stations.py
+ecd2770f8740a6e5aeef675304fdbf337840a83c2fc10b701c0aeaf806eb3b20  packages/tools/blender/export_weapons.py
+2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d  packages/tools/blender/families.json
+d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704  packages/tools/blender/validate.py
+2e4e146ad59637dd01a6f858be7a0182077de32c8b0bf4422080f934eb21f787  packages/tools/src/art/cli.ts
+9d4878b7095001f3f36641f7b224a141280835402433986c04c133e4d68039a0  packages/tools/src/art/fixtures.ts
+5fb318084ce73040494eb4d5beb3a6c2ba8399e82b79c4f4370f9e34985f4926  packages/tools/src/art/glyph-sheet.ts
+305a01dd0e5a3e054ebaeaf9f623181202a0b7a7d3f57d18e90d358653e5bbe6  packages/tools/src/art/ktx.test.ts
+0b98c5bca81e8841e4535f6af6a9cda3a23325abf0d2cdb64341938ccd622b43  packages/tools/src/art/ktx.ts
+249e2e2602c6cb8c97befda8942d4f40519d400a60e9b716c22807ed36886b52  packages/tools/src/art/meshopt.test.ts
+a8bef234967d7c86f4c4e30d271e6a9e96599c394fb8319d86b0de6be1efa7e4  packages/tools/src/art/meshopt.ts
+0fc06ce82b3f048924b14fd91d650b2a8452db2aa2ff8d4551e0f9982c90c7e9  packages/tools/src/art/targets.test.ts
+ca8eaff85e4a2a605aa23639f34c8e87f38667d605d1cbaefa6625daa1503ea4  packages/tools/src/art/targets.ts
+ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18  packages/tools/src/capture/capture.lifecycle.test.ts
+42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d  packages/tools/src/capture/capture.ts
+8efef27406eeec993402f9b1323ca1f3aada62731db5d05b9c95d2e089fa91d9  packages/tools/src/capture/classes.test.ts
+3aac3f7be1fa76bd8fe8138e189b86acf25c2b725f37a1d572fcf2a4f8aba4ff  packages/tools/src/capture/classes.ts
+0a851b2a810fe1104d9591e710b120791283e0f4d29c1ae89473fb876cc8b090  packages/tools/src/capture/playthrough-run.ts
+1cd9f45432e4045cd3ec35e3373defab66bb997d614005de60828e9b8317c42d  packages/tools/src/capture/screens.ts
+b020cb5563c2a35b1de3dd59892d2cd76360ac6b025e4dc2136d0ed50ab6bac5  packages/tools/src/capture/turntable.ts
+120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f  pnpm-lock.yaml
+
+UNCHANGED OTHER-FAMILY TREES
+d564d0bc3dd917926892c55e3706cc116d5b165e  assets/blend/bosses
+a34887e2d0144268b838736330033846c62f04ca  assets/blend/characters
+d564d0bc3dd917926892c55e3706cc116d5b165e  assets/blend/cities
+d564d0bc3dd917926892c55e3706cc116d5b165e  assets/blend/flora
+d564d0bc3dd917926892c55e3706cc116d5b165e  assets/blend/hulls
+d564d0bc3dd917926892c55e3706cc116d5b165e  assets/blend/props
+d564d0bc3dd917926892c55e3706cc116d5b165e  assets/blend/sites
+d564d0bc3dd917926892c55e3706cc116d5b165e  assets/blend/stations
+522f0250773d63ca3a9ef8ae79a52bf1c184fffa  packages/client/public/models/characters
+
+PNG HISTORY SHA256 PINS (all 79 preserved)
+54f497fcc78d8f3a9c02b0eecf0eb641af89dc3dbeefa1341f9ea4b02b6c5dba  assets/renders/constructs/e08t08/outpost_drone-r01.png
+6a449ed478b6100b2313b4d17310cfb50dd8f8d6ea9020f706860afe8fcede48  assets/renders/constructs/e08t08/outpost_drone-sheet-r01.png
+92c896b105fc1897411401511c402892ff656d6e744a6674aa9b6953a2ed8340  assets/renders/constructs/e08t08/outpost_overseer-r01.png
+adf1d1840d93039bee61811fa04fde9c29577a1f4dc6d53e910cfbf6d4224de4  assets/renders/constructs/e08t08/outpost_overseer-r02.png
+5e7df6a4c9678e6bb010d68376233c77e14703f93c92d578c2652dcdad92524d  assets/renders/constructs/e08t08/outpost_overseer-sheet-r01.png
+95997f189b4f17bea33947ea8e3091710edf3ab20e2f7c42d06e6e5d73e4a1a4  assets/renders/constructs/e08t08/outpost_overseer-sheet-r02.png
+c4f09a9b2f641b06bc76b18705ef77123dcfd0948e43df71cfea124389233a6e  assets/renders/constructs/e08t08/outpost_overseer_core-r01.png
+05f204640314b4ac63670de95bb5a33d653784b38bae0a850ab52d2d0f9c6966  assets/renders/constructs/e08t08/outpost_overseer_core-r02.png
+0295841f09be33c2f48fa5ad55bb82f2ddb209e81077d0416d00e5ca7918bc74  assets/renders/constructs/e08t08/outpost_overseer_dome-r01.png
+9a3524a8abe09b592f10ed1ebc54df917f47f2d72f48e70dc550b487689f1fd5  assets/renders/constructs/e08t08/outpost_overseer_dome-r02.png
+1eb394748e5483d4c8af1ed86f55dbd62f43c12c36360a50996824899699cce8  assets/renders/creatures/e08t08/biped-sheet-r01.png
+39280806a927bb79e20b10d719eaad9857420dce973f07cd87751ff8d97c466b  assets/renders/creatures/e08t08/biped_0-r01.png
+2cdcb2f6bbb773a49bf950c73b92fef0e0897ae8b1701fcc7746c0753661245b  assets/renders/creatures/e08t08/biped_0_claw_combo-r01.png
+1c2ebca0dbb9b67fa122668592c16db10a3854c79b5b830f38ea6d64b54e3b52  assets/renders/creatures/e08t08/biped_0_leap-r01.png
+5ffda11d170b700ab032bf73dc050b65948d44740bf669b9381c81f9d2c68055  assets/renders/creatures/e08t08/biped_1-r01.png
+d6a656583bb42e4ace898eed539a0dd7d65b4299cd0b3fdfc33ff3c3a650f44d  assets/renders/creatures/e08t08/biped_1_claw_combo-r01.png
+75475afe7beca0e16720ba7e77da53f4677d57980bbfa94d4b3fd3b25a9c4e4e  assets/renders/creatures/e08t08/biped_1_leap-r01.png
+d51732929f7002d441f5677241ca4789cadf3c6b60ad4ee35d0e28f3b804b834  assets/renders/creatures/e08t08/biped_predator-r01.png
+66b38d730821e74a4f90890def9d369e206ead22acec19c4f2476e747852e78a  assets/renders/creatures/e08t08/biped_predator_claw_combo-r01.png
+cdb5b6bc56268967b913ab322db94a2dabde1a96bcabb2a66ed2bdeeafc7511a  assets/renders/creatures/e08t08/biped_predator_leap-r01.png
+f8e0a1bc0714825dcef44acbc7836f19ae313dc95128bb1c9a3559e54fd7e998  assets/renders/creatures/e08t08/flyer-sheet-r01.png
+01e7e56b2326691521d3660e85a0abb3e85a90a26a65d11186b2b8df7a33ea51  assets/renders/creatures/e08t08/flyer-sheet-r02.png
+86e196c47937c241f5e70be05797ed5d8189a89281349e21997d32d0444426e8  assets/renders/creatures/e08t08/flyer_0-r01.png
+897a275c16e2cfae915b31ab318c112277a14ae29a0ec3231c026b3886878098  assets/renders/creatures/e08t08/flyer_0-r02.png
+d92e20fac9d220e17a11fa8ca2a625d63e98d6f6b2eec67e01aa9c670b598402  assets/renders/creatures/e08t08/flyer_0_dive-r01.png
+e5672aa2b33f3dbd03de38b11dc762ef676caaf9ea806da62a7b6b8d28472199  assets/renders/creatures/e08t08/flyer_0_dive-r02.png
+2162e77b8cec5f4465d5d0277050e28f2522cc31c600f95096040c2ca36a1f8e  assets/renders/creatures/e08t08/flyer_0_screech-r01.png
+65d8ca8155346f402f6f3d75f6987528c8a179919cde9c07f2b415143414bc87  assets/renders/creatures/e08t08/flyer_0_screech-r02.png
+3130399999fa135c2baafdf03226737b2503e30f435efe259d25352cc455eeac  assets/renders/creatures/e08t08/flyer_1-r01.png
+3d66063fd0d6ee96f6b05ee6d31c79f21b8a5b7c521fc0893385d8be2e612aa6  assets/renders/creatures/e08t08/flyer_1-r02.png
+1840856560582c5a765ca2dd76f9ba4c7ad72d97ae2d5f7ce0fe5eb2740ba93b  assets/renders/creatures/e08t08/flyer_1_dive-r01.png
+65380f8d6cf885344e20039cb130d3428ca3b5a92eb65832bef8bf55c75418bc  assets/renders/creatures/e08t08/flyer_1_dive-r02.png
+e081d7b428c6351df6c68151f7bf3162343def218bea0676e59cfd385daf2a84  assets/renders/creatures/e08t08/flyer_1_screech-r01.png
+10c0c00445ed1e104d4a9a2fbcaff9b346e834afea12a0e4dca4ea028d975110  assets/renders/creatures/e08t08/flyer_1_screech-r02.png
+56850f1553c724488753c04bad0be9708be015785983836f00b693369097611e  assets/renders/creatures/e08t08/flyer_predator-r01.png
+7c4858d725e4dc6142115cc67a197b1f848d0ad62c3f5db74ad4a615fc8f59a6  assets/renders/creatures/e08t08/flyer_predator-r02.png
+940cd9dd385f8659e7f9bb3568730d857c67f22615c14b62e5e5bbebb06b6ee7  assets/renders/creatures/e08t08/flyer_predator_dive-r01.png
+c80004732a4b1273c98d49d340f030339e471e68198ceebf8577b80d3fb107b0  assets/renders/creatures/e08t08/flyer_predator_dive-r02.png
+e8e96ee20a438339c573e5162953a86eeb72a9830dddc4f13ab96c4eadb8a039  assets/renders/creatures/e08t08/flyer_predator_screech-r01.png
+b6ad87f9b3096c5d48514a4b4e15234d1125b68dc9ae57822c417c146e4dee09  assets/renders/creatures/e08t08/flyer_predator_screech-r02.png
+9570cb29c41ed2c979608ffbfd0d143c0979263c74c1cad66bb8c17a33126c6f  assets/renders/creatures/e08t08/quad_grazer-sheet-r01.png
+6b0896ec06a13af7f9db47609b72c5f99d6be49a4efef4cb06c119956c8c7d99  assets/renders/creatures/e08t08/quad_grazer_0-r01.png
+86d441c3478c27d0983b8490b9a4981e3e40b6867a24d11848fcdc52180ad9d5  assets/renders/creatures/e08t08/quad_grazer_0_kick-r01.png
+d95fa65cf803403c05bae6a33268d7f881bd6f2a792fca74fff9ef47cc8a0604  assets/renders/creatures/e08t08/quad_grazer_1-r01.png
+35f106dc9f57125cfa7277e7693c49bb9806cd5c39998359d0c8c308ec3ddb1b  assets/renders/creatures/e08t08/quad_grazer_1_kick-r01.png
+7ea34370a920170750d9a893eff7649d5afa636429b31ae449b04e7721c19c05  assets/renders/creatures/e08t08/quad_heavy-sheet-r02.png
+912000798e7a56923eba6c7ce6349999f94174b81e45b626f373dd8a70309e47  assets/renders/creatures/e08t08/quad_heavy-sheet-r03.png
+e0c9f703b8ca6605de3a65d620d1b4ecd65ade40d79c695d6b11d3d8d94702ce  assets/renders/creatures/e08t08/quad_heavy_0-r01.png
+5a4893b12d935246e7a207af40fe5a2e1941e5958dc54c836a8e91626162b48f  assets/renders/creatures/e08t08/quad_heavy_0-r02.png
+c3bdb215680d976d20b4cd8ab7a171b1145483a412872caa4c2f2c39802417a1  assets/renders/creatures/e08t08/quad_heavy_0-r03.png
+c1220916338c00a00b68bfb390120657994bd512cf3355de5b9e1ff16aa3fb48  assets/renders/creatures/e08t08/quad_heavy_0_charge-r01.png
+7673fcf25b4fceb59bb8c60a0e4f6208fd8dbb4690f9d2575b9dd2b1a9f963c7  assets/renders/creatures/e08t08/quad_heavy_0_charge-r02.png
+5e700a7a02952fc5158184615dfb8e88c1cd187ebb5c47add4ff375b9b86bf77  assets/renders/creatures/e08t08/quad_heavy_0_charge-r03.png
+4b84a9ff8be2c617be88d389e7f233baf81de8527755cb97e436bedb5464241b  assets/renders/creatures/e08t08/quad_heavy_0_stomp-r01.png
+305692333fe737a035fe6f4ed3487a90f1a38c123eb3396f82a2b4cf2eebbc6a  assets/renders/creatures/e08t08/quad_heavy_0_stomp-r02.png
+889f33f81eb2b7803898e22ec0d0491a22d87622ec0958d12dd64827834401c0  assets/renders/creatures/e08t08/quad_heavy_0_stomp-r03.png
+bda02680c3a9c8f242efd7600a200d32d95f919391bb36d87da157e803de9c14  assets/renders/creatures/e08t08/quad_heavy_1-r01.png
+f84cf64a1f2fa4e0f64e01871e29a692de542151edcbe1c400aa98137bf3519a  assets/renders/creatures/e08t08/quad_heavy_1-r02.png
+ca0a29b8abb53bf2573065e15a08983c581c3f6f5784787cf60109c49fdc07f8  assets/renders/creatures/e08t08/quad_heavy_1-r03.png
+4385604d3786467f56c37ba56d3a54430827698a93a7a15be70a1d1f19f83afb  assets/renders/creatures/e08t08/quad_heavy_1_charge-r01.png
+b376f366eee67c3eba2eb2e5abe8fc2aef331070d912ade875eae02dbb788746  assets/renders/creatures/e08t08/quad_heavy_1_charge-r02.png
+5b990255b740860968bc71aa64ee7c7e24c92ce999c7487b54ae753ad67778fa  assets/renders/creatures/e08t08/quad_heavy_1_charge-r03.png
+d3ef2df54b7e22b5138ae66fc92152387f5c33da8c445157bb0e9b9914350633  assets/renders/creatures/e08t08/quad_heavy_1_stomp-r01.png
+7f021e8aa2d0416fb3f628c186a7bce0ee7bb3b3f187ddb461e8e49919c604dd  assets/renders/creatures/e08t08/quad_heavy_1_stomp-r02.png
+91f949f8905adfe310a1bf0b9479e80034fe4c25868a5bd52ad111eec21dbdbf  assets/renders/creatures/e08t08/quad_heavy_1_stomp-r03.png
+cd9a28a050e2f863b00cc777510fb365ae50587e0995ebae2d1594c7715e1e12  assets/renders/creatures/e08t08/quad_small-sheet-r01.png
+0f9adb208fc7ef7ccb3c685a1a624be0189862381d2c0a3650bc421f2e5cd11d  assets/renders/creatures/e08t08/quad_small-sheet-r02.png
+55a48aa262080d0d1e3605df40f25f690303eae5715455a67eba75837ec74c4e  assets/renders/creatures/e08t08/quad_small_0-r01.png
+57bddb78463198e631388316e508783b1a94237855aa0ab8e46306648b858daf  assets/renders/creatures/e08t08/quad_small_0-r02.png
+42df777451593049f4824e18cbe8dc37a7673038fc300b7dc01c83ea88d3e469  assets/renders/creatures/e08t08/quad_small_0_bite_swarm-r01.png
+1caabf3e4bd412169b2db51a77f67dd2ddc45721dc8226d0494740a9a1d569bf  assets/renders/creatures/e08t08/quad_small_0_bite_swarm-r02.png
+0ee4d1348e709ce0f76dc2d73e44106e320e65fba8c2d8c8488ed0d0f0bb18f6  assets/renders/creatures/e08t08/quad_small_1-r01.png
+93b1e37c2162bc696509439cf998be7c2a48f2e80825f6947783b379c73ab5ec  assets/renders/creatures/e08t08/quad_small_1-r02.png
+3f92da3c47431d2f8feac1faef90d88f76df6686e531908c3282a53ca5592c11  assets/renders/creatures/e08t08/quad_small_1_bite_swarm-r01.png
+23cdcfab8c20df3ef8a33d9eaa29bae1efc959129a6ec3b35cd37390f4d39caa  assets/renders/creatures/e08t08/quad_small_1_bite_swarm-r02.png
+3d28f4d2176dae87d1f4f8e369d9b8771cc59f96c0986f8e1e59f94d801c9e39  assets/renders/creatures/e08t08/quad_small_predator-r01.png
+e4880e669f78fb03c9fe8ff000747f1410249835d398378acf765c5db4742869  assets/renders/creatures/e08t08/quad_small_predator-r02.png
+77fa44dcc0ebaa9437b590c7422672b04f5dbf26e4ce5d3890679b6acd544bb7  assets/renders/creatures/e08t08/quad_small_predator_bite_swarm-r01.png
+7630967860acad6e6f629c20f510a076b54072f6b1d698b9f3500601eb4f3e01  assets/renders/creatures/e08t08/quad_small_predator_bite_swarm-r02.png
+
+EVIDENCE FILE HASHES
+3d35c8b1fa452d123db87116dc2de2ee122b4683c0826a6a92b4cddec8cc6fa6  before.json
+3d35c8b1fa452d123db87116dc2de2ee122b4683c0826a6a92b4cddec8cc6fa6  after.json
+c6b3ea1e5cd919765288bdd6015b70ca364e24613f779a6b56560853a8c15ad8  decoded-result-direct.json
+74076694b9eced90a8dd35cb39b62ca395449b33b326096bb18a56a490df1ee9  evidence-audit.json
+4be3d4ca75c041031c7b0157251e8ebca388c4094312bafd306d4719e2e425db  git-object-audit.json
+a7988aac3a635a684e00c1201e9d91ba8b6458e2a28fe041ad2663089153cf23  stage-interrupt-result.json
+56442168ae4f38ead8492cf3e979c14a97eda31c97ed328050c1413c97cf477e  imports-used-direct.json

@@ -1,0 +1,57 @@
+[
+  {
+    "mode": "before-stat",
+    "failure": "Incomplete ledger: [Errno 2] No such file or directory: 'Shared Dictionary'",
+    "sampleComplete": null
+  },
+  {
+    "mode": "after-stat",
+    "failure": "Incomplete ledger: [Errno 2] No such file or directory: 'Shared Dictionary'",
+    "sampleComplete": null
+  },
+  {
+    "mode": "after-open",
+    "failure": "Incomplete ledger: Enumerated directory replaced",
+    "sampleComplete": null
+  },
+  {
+    "mode": "before-scandir",
+    "failure": "Incomplete ledger: Directory changed during inventory",
+    "sampleComplete": null
+  },
+  {
+    "mode": "during-scandir",
+    "failure": "Incomplete ledger: [Errno 2] No such file or directory: 'entry'",
+    "sampleComplete": null
+  },
+  {
+    "mode": "after-scandir",
+    "failure": "Incomplete ledger: [Errno 2] No such file or directory: 'entry'",
+    "sampleComplete": null
+  },
+  {
+    "mode": "before-final-fstat",
+    "failure": "Incomplete ledger: Directory changed during inventory",
+    "sampleComplete": null
+  },
+  {
+    "mode": "rename-held",
+    "failure": "Incomplete ledger: Directory changed during inventory",
+    "sampleComplete": null
+  },
+  {
+    "mode": "delete-profile-held",
+    "failure": "Incomplete ledger: Directory changed during inventory",
+    "sampleComplete": null
+  },
+  {
+    "mode": "delete-private-root",
+    "failure": "Incomplete ledger: Directory changed during inventory",
+    "sampleComplete": null
+  },
+  {
+    "mode": "unknown-eio",
+    "failure": "Incomplete ledger: [Errno 5] CONTROL_UNKNOWN_ENUMERATION",
+    "sampleComplete": null
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "stageSHA256": "65f142c9dda0c6fd89fe5bbd8479690745c12c96aed8dc001f96ed746b2e97cb",
+  "wrapperPID": 70099,
+  "childPID": 70100,
+  "beforeSignal": "70100 70099 70100 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/private/tmp/space-e08t08-independent-c2-iimrHP/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)",
+  "wrapperExit": -15,
+  "childAfterWrapperExit": "70100     1 70100 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/private/tmp/space-e08t08-independent-c2-iimrHP/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)",
+  "terminalReceiptExists": false,
+  "secondStageCommand": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/private/tmp/space-e08t08-independent-c2-iimrHP/lifecycle-root/packages/tools/blender/e08t08/stage.py",
+    "next_lane",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "pass"
+  ],
+  "secondStageExit": 0,
+  "originalChildDuringSecondStage": "70100     1 70100 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/private/tmp/space-e08t08-independent-c2-iimrHP/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)",
+  "cleanupRemainingChild": ""
+}
+REPRODUCED: wrapper cancellation releases lane with live child and no terminal receipt; reviewer cleaned child

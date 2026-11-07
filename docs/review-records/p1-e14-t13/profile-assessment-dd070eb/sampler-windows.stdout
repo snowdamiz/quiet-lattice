@@ -1,0 +1,57 @@
+[
+  {
+    "mode": "before-stat",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "after-stat",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "after-open",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "before-scandir",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "during-scandir",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "after-scandir",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "before-final-fstat",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "rename-held",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "delete-profile-held",
+    "failure": null,
+    "sampleComplete": true
+  },
+  {
+    "mode": "delete-private-root",
+    "failure": "Incomplete live sample: [Errno 2] No such file or directory: 'private-tmp'",
+    "sampleComplete": null
+  },
+  {
+    "mode": "unknown-eio",
+    "failure": "Incomplete live sample: [Errno 5] CONTROL_UNKNOWN_ENUMERATION",
+    "sampleComplete": null
+  }
+]

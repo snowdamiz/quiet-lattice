@@ -1,0 +1,2292 @@
+[
+  {
+    "mode": "before-stat",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039967,
+            16877,
+            501,
+            96,
+            1794050832601662708,
+            1794050832601662708
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039967,
+            16877,
+            501,
+            96,
+            1794050832601662708,
+            1794050832601662708
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039968,
+            16877,
+            501,
+            96,
+            1794050832601699458,
+            1794050832601699458
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039968,
+            16877,
+            501,
+            96,
+            1794050832601699458,
+            1794050832601699458
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "observation": "vanished",
+          "operation": "stat-enumerated-child",
+          "failure": {
+            "type": "FileNotFoundError",
+            "message": "[Errno 2] No such file or directory: 'Shared Dictionary'",
+            "args": [
+              2,
+              "No such file or directory"
+            ],
+            "attributes": {},
+            "facts": null,
+            "allocation": null,
+            "cause": null,
+            "context": null,
+            "rawComplete": true
+          }
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490039966,
+            16877,
+            501,
+            96,
+            1794050832601618000,
+            1794050832601618000
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039967,
+            16877,
+            501,
+            96,
+            1794050832601662708,
+            1794050832601662708
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039968,
+            16877,
+            501,
+            96,
+            1794050832601699458,
+            1794050832601699458
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        }
+      ],
+      "count": 3,
+      "bytes": 0,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.154462791,
+      "finishedMonotonic": 283439.155202625,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": []
+  },
+  {
+    "mode": "after-stat",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039976,
+            16877,
+            501,
+            96,
+            1794050832603107543,
+            1794050832603107543
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039976,
+            16877,
+            501,
+            96,
+            1794050832603107543,
+            1794050832603107543
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039977,
+            16877,
+            501,
+            96,
+            1794050832603145626,
+            1794050832603145626
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039977,
+            16877,
+            501,
+            96,
+            1794050832603145626,
+            1794050832603145626
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490039978,
+            16877,
+            501,
+            128,
+            1794050832603297460,
+            1794050832603297460
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "vanished",
+          "operation": "open-enumerated-directory",
+          "failure": {
+            "type": "FileNotFoundError",
+            "message": "[Errno 2] No such file or directory: 'Shared Dictionary'",
+            "args": [
+              2,
+              "No such file or directory"
+            ],
+            "attributes": {},
+            "facts": null,
+            "allocation": null,
+            "cause": null,
+            "context": null,
+            "rawComplete": true
+          }
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490039975,
+            16877,
+            501,
+            96,
+            1794050832603073001,
+            1794050832603073001
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039976,
+            16877,
+            501,
+            96,
+            1794050832603107543,
+            1794050832603107543
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039977,
+            16877,
+            501,
+            96,
+            1794050832603145626,
+            1794050832603145626
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        }
+      ],
+      "count": 3,
+      "bytes": 0,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.155798333,
+      "finishedMonotonic": 283439.156496458,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": []
+  },
+  {
+    "mode": "after-open",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039983,
+            16877,
+            501,
+            96,
+            1794050832604408169,
+            1794050832604408169
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039983,
+            16877,
+            501,
+            96,
+            1794050832604408169,
+            1794050832604408169
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039984,
+            16877,
+            501,
+            96,
+            1794050832604445794,
+            1794050832604445794
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039984,
+            16877,
+            501,
+            96,
+            1794050832604445794,
+            1794050832604445794
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490039985,
+            16877,
+            501,
+            128,
+            1794050832604593252,
+            1794050832604593252
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039985,
+            16877,
+            501,
+            64,
+            1794050832605089128,
+            1794050832605089128
+          ]
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490039982,
+            16877,
+            501,
+            96,
+            1794050832604369419,
+            1794050832604369419
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039983,
+            16877,
+            501,
+            96,
+            1794050832604408169,
+            1794050832604408169
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039984,
+            16877,
+            501,
+            96,
+            1794050832604445794,
+            1794050832604445794
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490039985,
+            16877,
+            501,
+            64,
+            1794050832605089128,
+            1794050832605089128
+          ],
+          "names": []
+        }
+      ],
+      "count": 3,
+      "bytes": 0,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.157045666,
+      "finishedMonotonic": 283439.157599166,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490039985,
+          16877,
+          501,
+          128,
+          1794050832604593252,
+          1794050832604593252
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490039985,
+          16877,
+          501,
+          64,
+          1794050832605089128,
+          1794050832605089128
+        ],
+        "nlink": 2
+      },
+      {
+        "fstat": [
+          16777232,
+          490039985,
+          16877,
+          501,
+          64,
+          1794050832605089128,
+          1794050832605089128
+        ],
+        "nlink": 2
+      },
+      {
+        "fstat": [
+          16777232,
+          490039985,
+          16877,
+          501,
+          64,
+          1794050832605089128,
+          1794050832605089128
+        ],
+        "nlink": 2
+      }
+    ]
+  },
+  {
+    "mode": "before-scandir",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039990,
+            16877,
+            501,
+            96,
+            1794050832605600503,
+            1794050832605600503
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039990,
+            16877,
+            501,
+            96,
+            1794050832605600503,
+            1794050832605600503
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039991,
+            16877,
+            501,
+            96,
+            1794050832605644170,
+            1794050832605644170
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039991,
+            16877,
+            501,
+            96,
+            1794050832605644170,
+            1794050832605644170
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490039992,
+            16877,
+            501,
+            128,
+            1794050832605823420,
+            1794050832605823420
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039992,
+            16877,
+            501,
+            128,
+            1794050832605823420,
+            1794050832605823420
+          ]
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490039989,
+            16877,
+            501,
+            96,
+            1794050832605557920,
+            1794050832605557920
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039990,
+            16877,
+            501,
+            96,
+            1794050832605600503,
+            1794050832605600503
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039991,
+            16877,
+            501,
+            96,
+            1794050832605644170,
+            1794050832605644170
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490039992,
+            16877,
+            501,
+            128,
+            1794050832605823420,
+            1794050832605823420
+          ],
+          "names": []
+        }
+      ],
+      "count": 3,
+      "bytes": 0,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.1582875,
+      "finishedMonotonic": 283439.158980458,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490039992,
+          16877,
+          501,
+          128,
+          1794050832605823420,
+          1794050832605823420
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490039992,
+          16877,
+          501,
+          128,
+          1794050832605823420,
+          1794050832605823420
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490039992,
+          16877,
+          501,
+          128,
+          1794050832605823420,
+          1794050832605823420
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490039992,
+          16877,
+          501,
+          64,
+          1794050832606437171,
+          1794050832606437171
+        ],
+        "nlink": 2
+      }
+    ]
+  },
+  {
+    "mode": "during-scandir",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039998,
+            16877,
+            501,
+            96,
+            1794050832606904129,
+            1794050832606904129
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039998,
+            16877,
+            501,
+            96,
+            1794050832606904129,
+            1794050832606904129
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039999,
+            16877,
+            501,
+            96,
+            1794050832606950171,
+            1794050832606950171
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490039999,
+            16877,
+            501,
+            96,
+            1794050832606950171,
+            1794050832606950171
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040000,
+            16877,
+            501,
+            128,
+            1794050832607097546,
+            1794050832607097546
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040000,
+            16877,
+            501,
+            128,
+            1794050832607097546,
+            1794050832607097546
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/entry",
+          "observation": "vanished",
+          "operation": "stat-enumerated-child",
+          "failure": {
+            "type": "FileNotFoundError",
+            "message": "[Errno 2] No such file or directory: 'entry'",
+            "args": [
+              2,
+              "No such file or directory"
+            ],
+            "attributes": {},
+            "facts": null,
+            "allocation": null,
+            "cause": null,
+            "context": null,
+            "rawComplete": true
+          }
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/second",
+          "observation": "vanished",
+          "operation": "stat-enumerated-child",
+          "failure": {
+            "type": "FileNotFoundError",
+            "message": "[Errno 2] No such file or directory: 'second'",
+            "args": [
+              2,
+              "No such file or directory"
+            ],
+            "attributes": {},
+            "facts": null,
+            "allocation": null,
+            "cause": null,
+            "context": null,
+            "rawComplete": true
+          }
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490039997,
+            16877,
+            501,
+            96,
+            1794050832606852588,
+            1794050832606852588
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490039998,
+            16877,
+            501,
+            96,
+            1794050832606904129,
+            1794050832606904129
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490039999,
+            16877,
+            501,
+            96,
+            1794050832606950171,
+            1794050832606950171
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040000,
+            16877,
+            501,
+            128,
+            1794050832607097546,
+            1794050832607097546
+          ],
+          "names": [
+            "entry",
+            "second"
+          ]
+        }
+      ],
+      "count": 5,
+      "bytes": 0,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.159544416,
+      "finishedMonotonic": 283439.160109458,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490040000,
+          16877,
+          501,
+          128,
+          1794050832607097546,
+          1794050832607097546
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490040000,
+          16877,
+          501,
+          128,
+          1794050832607097546,
+          1794050832607097546
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040000,
+          16877,
+          501,
+          128,
+          1794050832607097546,
+          1794050832607097546
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040000,
+          16877,
+          501,
+          64,
+          1794050832607606255,
+          1794050832607606255
+        ],
+        "nlink": 2
+      }
+    ]
+  },
+  {
+    "mode": "after-scandir",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040005,
+            16877,
+            501,
+            96,
+            1794050832608095005,
+            1794050832608095005
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040005,
+            16877,
+            501,
+            96,
+            1794050832608095005,
+            1794050832608095005
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040006,
+            16877,
+            501,
+            96,
+            1794050832608140172,
+            1794050832608140172
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040006,
+            16877,
+            501,
+            96,
+            1794050832608140172,
+            1794050832608140172
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040007,
+            16877,
+            501,
+            128,
+            1794050832608306922,
+            1794050832608306922
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040007,
+            16877,
+            501,
+            128,
+            1794050832608306922,
+            1794050832608306922
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/entry",
+          "observation": "vanished",
+          "operation": "stat-enumerated-child",
+          "failure": {
+            "type": "FileNotFoundError",
+            "message": "[Errno 2] No such file or directory: 'entry'",
+            "args": [
+              2,
+              "No such file or directory"
+            ],
+            "attributes": {},
+            "facts": null,
+            "allocation": null,
+            "cause": null,
+            "context": null,
+            "rawComplete": true
+          }
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/second",
+          "observation": "vanished",
+          "operation": "stat-enumerated-child",
+          "failure": {
+            "type": "FileNotFoundError",
+            "message": "[Errno 2] No such file or directory: 'second'",
+            "args": [
+              2,
+              "No such file or directory"
+            ],
+            "attributes": {},
+            "facts": null,
+            "allocation": null,
+            "cause": null,
+            "context": null,
+            "rawComplete": true
+          }
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490040004,
+            16877,
+            501,
+            96,
+            1794050832608014255,
+            1794050832608014255
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040005,
+            16877,
+            501,
+            96,
+            1794050832608095005,
+            1794050832608095005
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040006,
+            16877,
+            501,
+            96,
+            1794050832608140172,
+            1794050832608140172
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040007,
+            16877,
+            501,
+            128,
+            1794050832608306922,
+            1794050832608306922
+          ],
+          "names": [
+            "entry",
+            "second"
+          ]
+        }
+      ],
+      "count": 5,
+      "bytes": 0,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.160802,
+      "finishedMonotonic": 283439.161653916,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490040007,
+          16877,
+          501,
+          128,
+          1794050832608306922,
+          1794050832608306922
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490040007,
+          16877,
+          501,
+          128,
+          1794050832608306922,
+          1794050832608306922
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040007,
+          16877,
+          501,
+          128,
+          1794050832608306922,
+          1794050832608306922
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040007,
+          16877,
+          501,
+          64,
+          1794050832609122298,
+          1794050832609122298
+        ],
+        "nlink": 2
+      }
+    ]
+  },
+  {
+    "mode": "before-final-fstat",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040012,
+            16877,
+            501,
+            96,
+            1794050832609602757,
+            1794050832609602757
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040012,
+            16877,
+            501,
+            96,
+            1794050832609602757,
+            1794050832609602757
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040013,
+            16877,
+            501,
+            96,
+            1794050832609648590,
+            1794050832609648590
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040013,
+            16877,
+            501,
+            96,
+            1794050832609648590,
+            1794050832609648590
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040014,
+            16877,
+            501,
+            128,
+            1794050832609840674,
+            1794050832609840674
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040014,
+            16877,
+            501,
+            128,
+            1794050832609840674,
+            1794050832609840674
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/entry",
+          "stamp": [
+            16777232,
+            490040015,
+            33188,
+            501,
+            17,
+            1794050832609751299,
+            1794050832609751299
+          ],
+          "kind": "file",
+          "bytes": 17,
+          "observation": "sampled"
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/second",
+          "stamp": [
+            16777232,
+            490040016,
+            33188,
+            501,
+            7,
+            1794050832609879174,
+            1794050832609879174
+          ],
+          "kind": "file",
+          "bytes": 7,
+          "observation": "sampled"
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490040011,
+            16877,
+            501,
+            96,
+            1794050832609556465,
+            1794050832609556465
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040012,
+            16877,
+            501,
+            96,
+            1794050832609602757,
+            1794050832609602757
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040013,
+            16877,
+            501,
+            96,
+            1794050832609648590,
+            1794050832609648590
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040014,
+            16877,
+            501,
+            128,
+            1794050832609840674,
+            1794050832609840674
+          ],
+          "names": [
+            "entry",
+            "second"
+          ]
+        }
+      ],
+      "count": 5,
+      "bytes": 24,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.162290541,
+      "finishedMonotonic": 283439.162986875,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490040014,
+          16877,
+          501,
+          128,
+          1794050832609840674,
+          1794050832609840674
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490040014,
+          16877,
+          501,
+          128,
+          1794050832609840674,
+          1794050832609840674
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040014,
+          16877,
+          501,
+          128,
+          1794050832609840674,
+          1794050832609840674
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040014,
+          16877,
+          501,
+          64,
+          1794050832610406091,
+          1794050832610406091
+        ],
+        "nlink": 2
+      }
+    ]
+  },
+  {
+    "mode": "rename-held",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040021,
+            16877,
+            501,
+            96,
+            1794050832610973091,
+            1794050832610973091
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040021,
+            16877,
+            501,
+            96,
+            1794050832610973091,
+            1794050832610973091
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040022,
+            16877,
+            501,
+            96,
+            1794050832611048550,
+            1794050832611048550
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040022,
+            16877,
+            501,
+            96,
+            1794050832611048550,
+            1794050832611048550
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040023,
+            16877,
+            501,
+            128,
+            1794050832611173841,
+            1794050832611173841
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040023,
+            16877,
+            501,
+            128,
+            1794050832611173841,
+            1794050832611173841
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/entry",
+          "stamp": [
+            16777232,
+            490040024,
+            33188,
+            501,
+            17,
+            1794050832611135258,
+            1794050832611135258
+          ],
+          "kind": "file",
+          "bytes": 17,
+          "observation": "sampled"
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary/second",
+          "stamp": [
+            16777232,
+            490040025,
+            33188,
+            501,
+            7,
+            1794050832611201883,
+            1794050832611201883
+          ],
+          "kind": "file",
+          "bytes": 7,
+          "observation": "sampled"
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490040020,
+            16877,
+            501,
+            96,
+            1794050832610930258,
+            1794050832610930258
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040021,
+            16877,
+            501,
+            96,
+            1794050832610973091,
+            1794050832610973091
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040022,
+            16877,
+            501,
+            96,
+            1794050832611048550,
+            1794050832611048550
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040023,
+            16877,
+            501,
+            128,
+            1794050832611173841,
+            1794050832611173841
+          ],
+          "names": [
+            "entry",
+            "second"
+          ]
+        }
+      ],
+      "count": 5,
+      "bytes": 24,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.163627291,
+      "finishedMonotonic": 283439.164081333,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490040023,
+          16877,
+          501,
+          128,
+          1794050832611173841,
+          1794050832611173841
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490040023,
+          16877,
+          501,
+          128,
+          1794050832611173841,
+          1794050832611173841
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040023,
+          16877,
+          501,
+          128,
+          1794050832611173841,
+          1794050832611173841
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040023,
+          16877,
+          501,
+          128,
+          1794050832611173841,
+          1794050832611637092
+        ],
+        "nlink": 4
+      }
+    ]
+  },
+  {
+    "mode": "delete-profile-held",
+    "sample": {
+      "kind": "T13_LIVE_RESOURCE_SAMPLE_V1",
+      "files": [
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040028,
+            16877,
+            501,
+            96,
+            1794050832611943009,
+            1794050832611943009
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040028,
+            16877,
+            501,
+            96,
+            1794050832611943009,
+            1794050832611943009
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040029,
+            16877,
+            501,
+            96,
+            1794050832611981509,
+            1794050832611981509
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040029,
+            16877,
+            501,
+            96,
+            1794050832611981509,
+            1794050832611981509
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040030,
+            16877,
+            501,
+            128,
+            1794050832612351176,
+            1794050832612351176
+          ],
+          "kind": "directory",
+          "bytes": 0,
+          "observation": "sampled",
+          "openedStamp": [
+            16777232,
+            490040030,
+            16877,
+            501,
+            128,
+            1794050832612351176,
+            1794050832612351176
+          ]
+        }
+      ],
+      "directories": [
+        {
+          "path": "",
+          "stamp": [
+            16777232,
+            490040027,
+            16877,
+            501,
+            96,
+            1794050832611909425,
+            1794050832611909425
+          ],
+          "names": [
+            "playwright_chromiumdev_profile-fixture"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture",
+          "stamp": [
+            16777232,
+            490040028,
+            16877,
+            501,
+            96,
+            1794050832611943009,
+            1794050832611943009
+          ],
+          "names": [
+            "Default"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default",
+          "stamp": [
+            16777232,
+            490040029,
+            16877,
+            501,
+            96,
+            1794050832611981509,
+            1794050832611981509
+          ],
+          "names": [
+            "Shared Dictionary"
+          ]
+        },
+        {
+          "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+          "stamp": [
+            16777232,
+            490040030,
+            16877,
+            501,
+            128,
+            1794050832612351176,
+            1794050832612351176
+          ],
+          "names": []
+        }
+      ],
+      "count": 3,
+      "bytes": 0,
+      "complete": false,
+      "sampleComplete": true,
+      "liveObservationOnly": true,
+      "quotaGuaranteed": false,
+      "contentBytesRead": 0,
+      "startedMonotonic": 283439.164830791,
+      "finishedMonotonic": 283439.1655885,
+      "scope": "Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof."
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490040030,
+          16877,
+          501,
+          128,
+          1794050832612351176,
+          1794050832612351176
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490040030,
+          16877,
+          501,
+          128,
+          1794050832612351176,
+          1794050832612351176
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040030,
+          16877,
+          501,
+          128,
+          1794050832612351176,
+          1794050832612351176
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040030,
+          16877,
+          501,
+          64,
+          1794050832612995093,
+          1794050832612995093
+        ],
+        "nlink": 2
+      }
+    ]
+  },
+  {
+    "mode": "delete-private-root",
+    "failure": {
+      "type": "Refused",
+      "message": "Incomplete live sample: [Errno 2] No such file or directory: 'private-tmp'",
+      "args": [
+        "Incomplete live sample: [Errno 2] No such file or directory: 'private-tmp'"
+      ],
+      "attributes": {},
+      "facts": {
+        "root": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/sampler-windows/delete-private-root/private-tmp",
+        "files": [
+          {
+            "path": "playwright_chromiumdev_profile-fixture",
+            "stamp": [
+              16777232,
+              490040035,
+              16877,
+              501,
+              96,
+              1794050832613519218,
+              1794050832613519218
+            ],
+            "kind": "directory",
+            "bytes": 0,
+            "observation": "sampled",
+            "openedStamp": [
+              16777232,
+              490040035,
+              16877,
+              501,
+              96,
+              1794050832613519218,
+              1794050832613519218
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default",
+            "stamp": [
+              16777232,
+              490040036,
+              16877,
+              501,
+              96,
+              1794050832613569302,
+              1794050832613569302
+            ],
+            "kind": "directory",
+            "bytes": 0,
+            "observation": "sampled",
+            "openedStamp": [
+              16777232,
+              490040036,
+              16877,
+              501,
+              96,
+              1794050832613569302,
+              1794050832613569302
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+            "stamp": [
+              16777232,
+              490040037,
+              16877,
+              501,
+              128,
+              1794050832613716260,
+              1794050832613716260
+            ],
+            "kind": "directory",
+            "bytes": 0,
+            "observation": "sampled",
+            "openedStamp": [
+              16777232,
+              490040037,
+              16877,
+              501,
+              128,
+              1794050832613716260,
+              1794050832613716260
+            ]
+          }
+        ],
+        "directories": [
+          {
+            "path": "",
+            "stamp": [
+              16777232,
+              490040034,
+              16877,
+              501,
+              96,
+              1794050832613468802,
+              1794050832613468802
+            ],
+            "names": [
+              "playwright_chromiumdev_profile-fixture"
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture",
+            "stamp": [
+              16777232,
+              490040035,
+              16877,
+              501,
+              96,
+              1794050832613519218,
+              1794050832613519218
+            ],
+            "names": [
+              "Default"
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default",
+            "stamp": [
+              16777232,
+              490040036,
+              16877,
+              501,
+              96,
+              1794050832613569302,
+              1794050832613569302
+            ],
+            "names": [
+              "Shared Dictionary"
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+            "stamp": [
+              16777232,
+              490040037,
+              16877,
+              501,
+              128,
+              1794050832613716260,
+              1794050832613716260
+            ],
+            "names": []
+          }
+        ],
+        "count": 3,
+        "bytes": 0,
+        "complete": false,
+        "sampleComplete": false,
+        "liveObservationOnly": true,
+        "contentBytesRead": 0,
+        "original": {
+          "type": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'private-tmp'",
+          "args": [
+            2,
+            "No such file or directory"
+          ],
+          "attributes": {},
+          "facts": null,
+          "allocation": null,
+          "cause": null,
+          "context": null,
+          "rawComplete": true
+        }
+      },
+      "allocation": null,
+      "cause": {
+        "type": "FileNotFoundError",
+        "message": "[Errno 2] No such file or directory: 'private-tmp'",
+        "args": [
+          2,
+          "No such file or directory"
+        ],
+        "attributes": {},
+        "facts": null,
+        "allocation": null,
+        "cause": null,
+        "context": null
+      },
+      "context": {
+        "reference": "already observed",
+        "type": "FileNotFoundError"
+      },
+      "rawComplete": true
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490040037,
+          16877,
+          501,
+          128,
+          1794050832613716260,
+          1794050832613716260
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490040037,
+          16877,
+          501,
+          128,
+          1794050832613716260,
+          1794050832613716260
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040037,
+          16877,
+          501,
+          128,
+          1794050832613716260,
+          1794050832613716260
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040037,
+          16877,
+          501,
+          64,
+          1794050832614141177,
+          1794050832614141177
+        ],
+        "nlink": 2
+      }
+    ]
+  },
+  {
+    "mode": "unknown-eio",
+    "failure": {
+      "type": "Refused",
+      "message": "Incomplete live sample: [Errno 5] CONTROL_UNKNOWN_ENUMERATION",
+      "args": [
+        "Incomplete live sample: [Errno 5] CONTROL_UNKNOWN_ENUMERATION"
+      ],
+      "attributes": {},
+      "facts": {
+        "root": "/private/tmp/p1-e14-t13-profile-delete-hzkiq0sv/sampler-windows/unknown-eio/private-tmp",
+        "files": [
+          {
+            "path": "playwright_chromiumdev_profile-fixture",
+            "stamp": [
+              16777232,
+              490040042,
+              16877,
+              501,
+              96,
+              1794050832614677053,
+              1794050832614677053
+            ],
+            "kind": "directory",
+            "bytes": 0,
+            "observation": "sampled",
+            "openedStamp": [
+              16777232,
+              490040042,
+              16877,
+              501,
+              96,
+              1794050832614677053,
+              1794050832614677053
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default",
+            "stamp": [
+              16777232,
+              490040043,
+              16877,
+              501,
+              96,
+              1794050832614715678,
+              1794050832614715678
+            ],
+            "kind": "directory",
+            "bytes": 0,
+            "observation": "sampled",
+            "openedStamp": [
+              16777232,
+              490040043,
+              16877,
+              501,
+              96,
+              1794050832614715678,
+              1794050832614715678
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+            "stamp": [
+              16777232,
+              490040044,
+              16877,
+              501,
+              128,
+              1794050832614913595,
+              1794050832614913595
+            ],
+            "kind": "directory",
+            "bytes": 0,
+            "observation": "sampled",
+            "openedStamp": [
+              16777232,
+              490040044,
+              16877,
+              501,
+              128,
+              1794050832614913595,
+              1794050832614913595
+            ]
+          }
+        ],
+        "directories": [
+          {
+            "path": "",
+            "stamp": [
+              16777232,
+              490040041,
+              16877,
+              501,
+              96,
+              1794050832614634428,
+              1794050832614634428
+            ],
+            "names": [
+              "playwright_chromiumdev_profile-fixture"
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture",
+            "stamp": [
+              16777232,
+              490040042,
+              16877,
+              501,
+              96,
+              1794050832614677053,
+              1794050832614677053
+            ],
+            "names": [
+              "Default"
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default",
+            "stamp": [
+              16777232,
+              490040043,
+              16877,
+              501,
+              96,
+              1794050832614715678,
+              1794050832614715678
+            ],
+            "names": [
+              "Shared Dictionary"
+            ]
+          },
+          {
+            "path": "playwright_chromiumdev_profile-fixture/Default/Shared Dictionary",
+            "stamp": [
+              16777232,
+              490040044,
+              16877,
+              501,
+              128,
+              1794050832614913595,
+              1794050832614913595
+            ],
+            "names": []
+          }
+        ],
+        "count": 3,
+        "bytes": 0,
+        "complete": false,
+        "sampleComplete": false,
+        "liveObservationOnly": true,
+        "contentBytesRead": 0,
+        "original": {
+          "type": "OSError",
+          "message": "[Errno 5] CONTROL_UNKNOWN_ENUMERATION",
+          "args": [
+            5,
+            "CONTROL_UNKNOWN_ENUMERATION"
+          ],
+          "attributes": {
+            "unknown": {
+              "type": "bytes",
+              "base64": "cmF3/w==",
+              "bytes": 4
+            }
+          },
+          "facts": null,
+          "allocation": null,
+          "cause": null,
+          "context": null,
+          "rawComplete": true
+        }
+      },
+      "allocation": null,
+      "cause": {
+        "type": "OSError",
+        "message": "[Errno 5] CONTROL_UNKNOWN_ENUMERATION",
+        "args": [
+          5,
+          "CONTROL_UNKNOWN_ENUMERATION"
+        ],
+        "attributes": {
+          "unknown": {
+            "type": "bytes",
+            "base64": "cmF3/w==",
+            "bytes": 4
+          }
+        },
+        "facts": null,
+        "allocation": null,
+        "cause": null,
+        "context": null
+      },
+      "context": {
+        "reference": "already observed",
+        "type": "OSError"
+      },
+      "rawComplete": true
+    },
+    "descriptorObservations": [
+      {
+        "opened": [
+          16777232,
+          490040044,
+          16877,
+          501,
+          128,
+          1794050832614913595,
+          1794050832614913595
+        ]
+      },
+      {
+        "fstat": [
+          16777232,
+          490040044,
+          16877,
+          501,
+          128,
+          1794050832614913595,
+          1794050832614913595
+        ],
+        "nlink": 4
+      },
+      {
+        "fstat": [
+          16777232,
+          490040044,
+          16877,
+          501,
+          128,
+          1794050832614913595,
+          1794050832614913595
+        ],
+        "nlink": 4
+      }
+    ]
+  }
+]

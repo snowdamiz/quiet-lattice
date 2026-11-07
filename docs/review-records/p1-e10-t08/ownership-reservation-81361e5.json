@@ -1,0 +1,105 @@
+{
+  "at": "2026-11-07T11:39:48.694225+00:00",
+  "parentBase": "81361e51a3625760bdbdc7e03d7ea3ee2ba412c7",
+  "formerOwners": {
+    "ixariFix1": {
+      "taskId": "node:delegated-task:command%3Amcp%3Acfc50a67-05e8-4877-b273-786964653f3c%3Athread-send%3Ap1-e10-t06-fix-r1-2d23ecb-glyph-report",
+      "status": "completed",
+      "hasPendingChildRuns": false
+    },
+    "ixariReview2": {
+      "taskId": "node:delegated-task:command%3Amcp%3Acfc50a67-05e8-4877-b273-786964653f3c%3Adelegate-task%3Ap1-e10-t06-source-review-r2-ec2857d",
+      "status": "completed",
+      "hasPendingChildRuns": false
+    },
+    "ulganiDensityFix": {
+      "taskId": "node:delegated-task:command%3Amcp%3Acfc50a67-05e8-4877-b273-786964653f3c%3Athread-send%3Aulgani-density-correction-a8a4e14",
+      "status": "completed",
+      "hasPendingChildRuns": false
+    },
+    "ulganiReview1": {
+      "taskId": "node:delegated-task:command%3Amcp%3Acfc50a67-05e8-4877-b273-786964653f3c%3Adelegate-task%3Ap1-e10-t07-ulgani-source-review-r1-7d738a0",
+      "status": "completed",
+      "hasPendingChildRuns": false
+    },
+    "cityReview2": {
+      "taskId": "node:delegated-task:command%3Amcp%3A329d01f8-9f74-43da-a701-c846c5a9970c%3Adelegate-task%3Ap1-e10-t05-advisory-review-r2-83eec91",
+      "status": "completed",
+      "hasPendingChildRuns": false
+    }
+  },
+  "inputs": [
+    {
+      "name": "thalune",
+      "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e",
+      "head": "83eec91beca01e454794017ce95a0e744eb395ab",
+      "tree": "38da70cc3e65d0025485b79e1b50773185395a67",
+      "clean": true,
+      "files": [
+        {
+          "path": "assets/blend/cities/thalune_anchor.blend",
+          "bytes": 6248687,
+          "sha256": "7739c6429bcc93d7b9f8738002a3e6cd6431d65c9d19d32dd99e24f3fda5198a",
+          "gitBlob": "3c415eb9c650e629a251980469de206945b10fb0"
+        },
+        {
+          "path": "packages/client/public/models/cities/thalune_anchor.glb",
+          "bytes": 1187080,
+          "sha256": "71ad323fde521208e0cb9096b49a275e2c2d2f30f8ad572a8f72f5c557a3b7c3",
+          "gitBlob": "616d7035bb1e09247d4273facff867bbb2eabe15"
+        }
+      ]
+    },
+    {
+      "name": "ixari",
+      "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+      "head": "ec2857d0cf112d77c54b2b10ad871248b4c38340",
+      "tree": "b7401a8afbff113bd27daf1e11090e1bd3f9c199",
+      "clean": true,
+      "files": [
+        {
+          "path": "assets/blend/cities/ixari_anchor.blend",
+          "bytes": 7675535,
+          "sha256": "d72c741e6cce0ac4591c561889e07b4a060a6a952b19dded0f512357ac5bc77a",
+          "gitBlob": "88989561af8e55907517a1c204ab5c3cc1ed888d"
+        },
+        {
+          "path": "packages/client/public/models/cities/ixari_anchor.glb",
+          "bytes": 3323312,
+          "sha256": "5df8fb4a90efbb68b476ce481bfd569e74d0b61eb1706d05fc5dde3b8c2db35b",
+          "gitBlob": "657f3ff71b4727f8444bbd0ee295b4203e5da7a8"
+        }
+      ]
+    },
+    {
+      "name": "ulgani",
+      "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+      "head": "7d738a0f6eb1b71275bed05da3bb31a2bbc52b0a",
+      "tree": "b640970455006ca21ee41c9fc57b8b923dae9aef",
+      "clean": true,
+      "files": [
+        {
+          "path": "assets/blend/cities/ulgani_anchor.blend",
+          "bytes": 31161651,
+          "sha256": "f2248ffc0e2c562cc7a9b5ae41778954e53a5f885c75817f0bd3e381e0edce37",
+          "gitBlob": "f1424b3d6988ff7f3b7168c28df02b93cfb0cbb8"
+        },
+        {
+          "path": "packages/client/public/models/cities/ulgani_anchor.glb",
+          "bytes": 12220848,
+          "sha256": "7cdf23f63429e7c2545d082665f747cc50d3fd3c329fe344a98d6787b93ad5d8",
+          "gitBlob": "5fa49f6faa7cb5c04a9ee3cd7e95876a8108cb8a"
+        }
+      ]
+    }
+  ],
+  "decision": "Reserve the Ixari and Ulgani anchor source/export pairs exclusively for the next P1.E10.T08 author; Sarelun remains read-only. Old city worktrees and evidence remain frozen. No author or heavy capacity is dispatched by this record. Lark retains heavy CPU ownership.",
+  "futureModifiedPaths": [
+    "assets/blend/cities/ixari_anchor.blend",
+    "packages/client/public/models/cities/ixari_anchor.glb",
+    "assets/blend/cities/ulgani_anchor.blend",
+    "packages/client/public/models/cities/ulgani_anchor.glb"
+  ],
+  "heavyCapacityAdmitted": false,
+  "newAuthorDispatched": false
+}
