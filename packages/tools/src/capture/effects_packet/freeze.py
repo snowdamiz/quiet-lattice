@@ -23,6 +23,10 @@ def make_ready():
     recovery = read_json(HERE / 'recovery.json')
     for row in recovery['files']:
         require(sha(ROOT / row['path']) == row['sha256'], 'Recovered helper changed')
+    shared_capture = read_json(HERE / 'shared_capture.json')
+    for row in shared_capture['files']:
+        require(sha(ROOT / row['path']) == row['sha256'], 'Reviewed shared capture source changed')
+    require(sha(shared_capture['review']['path']) == shared_capture['review']['sha256'], 'Shared capture review changed')
     python = str(Path(sys.executable).resolve())
     # Self introspection only. Bind the Homebrew launcher AND macOS Python.app kernel route.
     libproc = ctypes.CDLL('/usr/lib/libproc.dylib')
@@ -52,7 +56,8 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
     files = {ROOT / p for p in tracked if '/effects_packet/' not in p}
     files.update(ROOT / p for p in asset_paths)
     files.update(ROOT / r['path'] for r in recovery['files'])
-    files.update(p for p in HERE.iterdir() if p.suffix in ('.py', '.mjs') or p.name in ('recovery.json', 'README.md'))
+    files.update(p for p in HERE.iterdir() if p.suffix in ('.py', '.mjs') or p.name in ('recovery.json', 'shared_capture.json', 'README.md'))
+    files.add(Path(shared_capture['review']['path']))
     files.update(processes)
     files.update(Path(p) for p in ('/usr/bin/git', '/bin/launchctl', '/bin/ps', '/usr/sbin/lsof', '/usr/bin/pmset'))
     files.update(Path(p) for k, p in routes.items() if k != 'nodeVersion')
@@ -101,8 +106,7 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
         'generatedCaches': caches, 'initialCacheBytes': initial,
         'cacheReadPolicy': {'entryCap': cache_io.ENTRY_CAP, 'allAncestorsNoFollow': True,
                             'reads': 'Copy, source verification, destination verification: admitted descriptor size plus one byte each.'},
-        'pendingSharedCaptureLifecycle': {'task': 'P1.E14.T15', 'finding': 'R2-2', 'status': 'PENDING_REVIEWED_ADOPTION',
-                                          'capture': file_binding(ROOT / 'packages/tools/src/capture/capture.ts')},
+        'sharedCaptureLifecycle': shared_capture,
         'cacheOwnerPolicy': {'secondsPerCheck': cache_owners.OWNER_SECONDS, 'commandOutputCap': cache_owners.COMMAND_CAP,
                              'checkOutputCap': cache_owners.CHECK_CAP, 'phases': ['before-consumption-and-snapshot', 'immediately-before-launch'],
                              'scope': 'Exact cache opens and task-local Node/Vite cwd/argv; any owner or uncertainty refuses; observations are not a lock.'},
@@ -113,7 +117,7 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
                   'grant': '/private/tmp/egg-' + nonce + '.json'},
         'budget': ledger(), 'deadlines': {'capture': 600, 'cleanup': 60, 'decode': 45, 'cacheCopy': 30},
         'remainingPrerequisites': ['Both source runtime flags and readiness remain false; enabling changes needs a new source review and freeze.',
-                                  'Adopt reviewed P1.E14.T15 shared capture lifecycle fix and verify actual default-loader reproduction; R2-2 remains open.',
+                                  'Fresh combined independent R3 caller review after the exact reviewed T15 adoption and task-local fixes.',
                                   'Parent independent caller review tied to exact clean head/tree and exact readiness bytes.',
                                   'Parent scheduled native slot after fauna and explicit one-use grant; no grant is created here.',
                                   'Parent observed OS exit zero plus exact terminal result and consumption hashes.',

@@ -67,6 +67,7 @@ export function outputPlan() {
 }
 
 export function raw(value, seen = new Set()) {
+  if (value === undefined) return { type: 'undefined' };
   if (Buffer.isBuffer(value)) return { type: 'Buffer', base64: value.toString('base64') };
   if (value && typeof value === 'object') {
     if (seen.has(value)) return { circular: true };

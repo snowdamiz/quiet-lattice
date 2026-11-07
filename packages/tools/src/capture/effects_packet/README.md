@@ -9,9 +9,10 @@ and from native or visual acceptance.
 
 The only proposed call is the existing exported
 `captureReview('effects/gravitic', { asset: 'gravitic_pull', outDir })`.
-The existing Review resolver finds the authored root. No common capture, Review,
-Engine, screens, probe, trace, gameplay, exporter, library, source asset or texture
-was changed. Four absent Station helpers were recovered byte for byte in their
+The existing Review resolver finds the authored root. Shared capture lifecycle
+and its test come from the exact reviewed T15 adoption recorded below. Review,
+Engine, screens, probe, trace, gameplay, exporter, library, source assets and
+textures retain their original bytes. Four absent Station helpers were recovered byte for byte in their
 own commit; `recovery.json` gives original commit, blob IDs, hashes and sizes.
 
 ## Source-only checks
@@ -23,6 +24,7 @@ python3 -B packages/tools/src/capture/effects_packet/controls.py
 python3 -B packages/tools/src/capture/effects_packet/boundary_controls.py
 python3 -B packages/tools/src/capture/effects_packet/revision_controls.py
 node packages/tools/src/capture/effects_packet/controls.mjs
+node packages/tools/src/capture/effects_packet/capture_controls.mjs
 node node_modules/eslint/bin/eslint.js packages/tools/src/capture/effects_packet/*.mjs
 node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/capture/effects_packet/*.mjs packages/tools/src/capture/effects_packet/*.json
 python3 -B packages/tools/src/capture/effects_packet/check_ready.py
@@ -196,13 +198,17 @@ refuses unsupported leftover TMP entries instead of deleting them speculatively.
 
 ## Remaining gates and inventory
 
-R2-2 remains open: the current shared `capture.ts` cleanup can replace a page
-failure and skip a later cleanup. P1.E14.T15 owns the common lifecycle correction
-in a separate worktree. This checkpoint adds no task-local browser/Vite method
-interception. Adopt the parent's reviewed T15 commit, verify the original
-consumer reproduction through the default loader (including standard cause/errors),
-and refresh bindings before claiming this finding closed. A disabled binding
-audit is not acceptance of the still-pending shared lifecycle.
+The reviewed P1.E14.T15 commit `38b6c4b58db43146df20cd760808d1461d7a667b`
+was adopted separately; `shared_capture.json` pins its two unchanged files,
+review and adoption commit. The original R2-2 reproduction now retains the
+work error and both cleanup errors through the default loader and actual
+capture consumer, using standard `AggregateError.errors` and `cause`. No
+task-local browser/Vite method interception was added. Packet serialization
+explicitly tags `undefined` so JSON cannot drop that cause or turn an error
+array element into null. Thirteen inert actual-entry controls cover original
+cleanup failures, partial startup, failed publication and raw/falsy causes.
+Fresh combined independent R3 review is still required; a disabled binding
+audit is not caller or native acceptance.
 
 Parent review and a fresh exact one-use grant are still required; fauna remains
 first in the GPU queue. No native launch or visual acceptance occurred here.
