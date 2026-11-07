@@ -1,4 +1,66 @@
-# P1.E07.T14 enabled source checkpoint
+# P1.E07.T14 failed native pilot correction — disabled source candidate
+
+The parent-run pilot at `6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8` FAILED.
+Authorization `effects-b61233fdf3564205bd01d9566f306430` is permanently spent.
+The caller exited 1 at 2026-11-07T08:31:00.446083Z, with zero stdout/stderr,
+terminal receipts or images. The observed owned Apple encoder executable was
+unbound. That failure is not promoted to a capture or visual PASS.
+
+The failure audit and exclusive recovery copies are retained under
+`/private/tmp/p1-e07-t14-native-failure-3pevk0mk`. The original evidence, grant,
+consumption, empty output, parent observations and scratch remain unchanged.
+Only `/private/tmp/sbr-fbnx3i_z` was removed after complete before/copy/source
+hash comparisons and fresh scoped no-owner/registration observations. Its bytes
+are retained in `recovered/private-tmp`; original scratch remains available.
+
+The CPU reproduction uses the actual helper start/wait/drain, StageReceipts and
+adapter bodies with inert kernel/launch ports and one harmless Python child.
+With the retained 1,214-PID inventory it records 12,299 probe calls. The old
+result is 2,781,868 pretty JSON bytes and 1,129,913 compact bytes: every 1 MiB
+terminal/fallback/stderr serialization refuses, leaving only in-memory errors.
+The original discarded in-memory result cannot be recovered; this is a reachable
+reproduction of the silent-exit mechanism, not a claim to have recovered it.
+
+Large terminal records now retain the complete JSON in exclusive, hash-bound
+512 KiB payload parts. Each encoded JSON part stays below 1 MiB. Every attempted
+part, envelope and fallback copy is charged inside the existing Python 32 MiB
+allowance; 64 KiB of that allowance is reserved for a small failure notification.
+No packet or admission cap increases. All-sink failure still has no durable
+claim: complete facts and primary/secondary errors remain in memory. A small
+stderr summary explicitly says it is incomplete evidence and never accepts work.
+`evidence.capture_snapshot` verifies and reconstructs parts from capped single
+snapshots. Parent acceptance uses it and still requires the actual parent-observed
+OS exit zero plus exact outer result/consumption hashes; a complete-looking
+receipt after a late write failure never accepts the run.
+
+Cleanup distinguishes work failure from resource release. A repeated observation
+refusal is retained and prevents acceptance while the unchanged helper performs
+ownership-checked termination. Deadlines still unwind. A drained failed job may
+archive through the existing helper ports; a fresh task-local release audit
+checks kernel live0, known births, namespace/profile absence and exact registration
+absence without rewriting the helper's `clean` or `errors`. No decoder runs for
+a failed capture. Unknown or failed release observations retain partials.
+
+Only the actually observed canonical Apple VTEncoderXPCService executable is
+added to the freeze, including its file hash and strict Apple designated-signature
+verification. The existing StageReceipts current UID/birth/coalition/executable
+checks remain unchanged; no name-based ownership, broad allowlist or external
+XPC ownership guarantee is introduced. The four helpers, 64 assets and shared
+T15 capture files are unchanged.
+
+Both runtime flags and fresh readiness are disabled pending correction review.
+Fresh identities are prospective and absent; no new grant or native run is
+created here. Parent already has native authority and will schedule the next
+one-root attempt only after correction/activation review and a distinct grant.
+The remaining 58 roots, motion/playback and visual grading remain pending.
+
+## Retained activation checkpoint documentation
+
+The following records the prior enabled checkpoint and its earlier disabled
+history. The failed run and new disabled state above supersede its pending-run
+statements. Earlier source reviews do not review this correction.
+
+### P1.E07.T14 enabled source checkpoint
 
 The two runtime flags and the freshly rebound readiness are now enabled. This
 checkpoint awaits an independent activation review tied to its final clean

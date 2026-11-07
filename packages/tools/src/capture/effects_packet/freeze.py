@@ -14,6 +14,7 @@ import uuid
 import zlib
 import cache_owners
 import cache_io
+import apple_encoder
 
 from bindings import file_binding, git, tree_binding
 from contract import ASSET, ASSET_HEAD, FILE, HERE, ROOT, ledger, plan, read_json, require, sha
@@ -48,7 +49,8 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
     browser_root = Path.home() / 'Library/Caches/ms-playwright' / ('chromium_headless_shell-' + revision) / 'chrome-headless-shell-mac-arm64'
     browser = browser_root / 'chrome-headless-shell'
     require(browser.is_file(), 'Installed browser missing; no network fetch authorized')
-    processes = [Path(python), Path(actual), Path(node), browser, Path(routes['esbuildBinary']), Path('/usr/bin/caffeinate')]
+    encoder = apple_encoder.binding()
+    processes = [Path(python), Path(actual), Path(node), browser, Path(routes['esbuildBinary']), Path('/usr/bin/caffeinate'), Path(encoder['executable']['path'])]
     tracked = git(ROOT, 'ls-files', 'packages/client/src', 'packages/shared/src', 'packages/tools/src/capture').splitlines()
     asset_paths = git(ROOT, 'diff', '--name-only', '634c51d2378748c6a514af2a792ee4500b912643', ASSET_HEAD).splitlines()
     require(len(asset_paths) == 64, 'Reviewed 64-file source unit changed')
@@ -56,9 +58,10 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
     files = {ROOT / p for p in tracked if '/effects_packet/' not in p}
     files.update(ROOT / p for p in asset_paths)
     files.update(ROOT / r['path'] for r in recovery['files'])
-    files.update(p for p in HERE.iterdir() if p.suffix in ('.py', '.mjs') or p.name in ('recovery.json', 'shared_capture.json', 'README.md'))
+    files.update(p for p in HERE.iterdir() if p.suffix in ('.py', '.mjs') or p.name in ('recovery.json', 'shared_capture.json', 'native_failure_fixture.json', 'README.md'))
     files.add(Path(shared_capture['review']['path']))
     files.update(processes)
+    files.add(Path(encoder['codesign']['path']))
     files.update(Path(p) for p in ('/usr/bin/git', '/bin/launchctl', '/bin/ps', '/usr/sbin/lsof', '/usr/bin/pmset'))
     files.update(Path(p) for k, p in routes.items() if k != 'nodeVersion')
     files.update(browser_root.glob('*.dylib'))
@@ -96,6 +99,7 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
         'pythonRuntime': {'launcher': file_binding(python), 'kernelExecutable': file_binding(actual),
                           'probe': {'scope': 'CURRENT_CPU_SELF_PROCESS_ONLY', 'pid': os.getpid(), 'uid': os.getuid(), 'nativeCaptureStarted': False}},
         'process_binary_sha256': {str(p): sha(p) for p in processes},
+        'appleEncoder': encoder,
         'resolver': {'selectedExecutable': {'path': str(browser), 'sha256': sha(browser)}},
         'bindings': [file_binding(p) for p in sorted(files)],
         'dependencyTrees': [tree_binding(p) for p in dependency_roots],
@@ -116,10 +120,10 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
                   'evidence': '/private/tmp/egp-' + nonce, 'consumption': '/private/tmp/egc-' + nonce + '.json',
                   'grant': '/private/tmp/egg-' + nonce + '.json'},
         'budget': ledger(), 'deadlines': {'capture': 600, 'cleanup': 60, 'decode': 45, 'cacheCopy': 30},
-        'remainingPrerequisites': ['Both source runtime flags and readiness remain false; enabling changes needs a new source review and freeze.',
-                                  'Fresh combined independent R3 caller review after the exact reviewed T15 adoption and task-local fixes.',
+        'remainingPrerequisites': ['Both runtime flags remain false after the spent failed native pilot; fresh correction review required.',
+                                  'Failed authorization effects-b61233fdf3564205bd01d9566f306430 is permanently spent; never retry it.',
                                   'Parent independent caller review tied to exact clean head/tree and exact readiness bytes.',
-                                  'Parent scheduled native slot after fauna and explicit one-use grant; no grant is created here.',
+                                  'Parent schedules a fresh one-root slot only after correction/activation review and a distinct one-use grant; native authority already exists.',
                                   'Parent observed OS exit zero plus exact terminal result and consumption hashes.',
                                   'Native Metal/backend performance and blind visual acceptance remain unqualified.'],
         'systemLibraryBoundary': 'macOS system libraries in the OS dyld cache are platform dependencies, not standalone file byte pins; Python framework, decoder extension and loaded stdlib files are pinned.',

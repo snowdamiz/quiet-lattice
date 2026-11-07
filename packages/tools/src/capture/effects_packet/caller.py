@@ -10,9 +10,9 @@ import shutil
 import time
 from contract import CAPTURE_SECONDS, CLEANUP_SECONDS, DECODE_SECONDS, HERE, require, snapshot
 from bindings import admit, verify
-from evidence import Receipts, failure, publish, raw, ownership, reject_unconsumed
+from evidence import Receipts, failure, publish, raw, ownership, reject_unconsumed, write_capture_record, capture_snapshot
 
-RUNTIME_ENABLED = True
+RUNTIME_ENABLED = False
 
 
 class ObservationUnwind(BaseException):
@@ -152,7 +152,7 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
     else:
         result['raw']['decodeSkipped'] = 'No complete error-free capture with positive release'
     try:
-        sink.write(evidence / 'terminal.json', {'release': result['release'], 'jobs': result['jobs'], 'raw': result['raw'], 'errors': result['errors']})
+        write_capture_record(sink, evidence / 'terminal.json', {'release': result['release'], 'jobs': result['jobs'], 'raw': result['raw'], 'errors': result['errors']})
     except BaseException as error:
         result['errors'].append({'phase': 'terminal-write', **failure(error)})
     result['checksPassed'] = not result['errors'] and result.get('inspection', {}).get('valid') is True
@@ -162,7 +162,7 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
 def parent_acceptance(result_path, consumption_path, *, observed_os_exit, result_sha256, consumption_sha256):
     """Parent supplies its OS exit observation and exact hashes; a file alone never accepts."""
     require(type(observed_os_exit) is int and observed_os_exit == 0, 'Parent-observed OS exit zero required')
-    result, consumed = snapshot(result_path), snapshot(consumption_path)
+    result, consumed = capture_snapshot(result_path), snapshot(consumption_path)
     require(result['sha256'] == result_sha256 and consumed['sha256'] == consumption_sha256, 'Parent receipt hashes changed')
     r, c = result['value'], consumed['value']
     require(r.get('checksPassed') is True and r.get('accepted') is False and r.get('errors') == [] and r.get('publication') == 'AWAITING_PARENT_OS_EXIT_AND_HASHES', 'No successful terminal checks')

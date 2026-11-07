@@ -83,7 +83,7 @@ def ledger():
         ('capture_outputs', OUTPUT_CAP, '11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root'),
         ('future_lfs_copy', OUTPUT_CAP, 'Reserved for later Git LFS adoption; this pilot performs no git add or LFS write'),
         ('future_main_hydration', OUTPUT_CAP, 'Reserved for later parent hydration; this pilot makes no main-worktree copy'),
-        ('controlled_metadata', 64 * MIB, 'Node and Python each reserve attempted receipt bytes before writing, 32 MiB each'),
+        ('controlled_metadata', 64 * MIB, '32 MiB each for Node and Python, all attempted writes/copies charged; Python terminal JSON parts stay inside its allowance with 64 KiB reserved for failure stderr'),
         ('cache_snapshot', CACHE_CAP, 'One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained'),
         ('profile_work_and_archive', 2 * 1024 ** 3, 'StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive'),
         ('private_tmp_work_and_archive', 1024 ** 3, 'preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles'),

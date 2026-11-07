@@ -1,4 +1,47 @@
 {
+  "appleEncoder": {
+    "codesign": {
+      "bytes": 973408,
+      "path": "/usr/bin/codesign",
+      "realpath": "/usr/bin/codesign",
+      "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+    },
+    "executable": {
+      "bytes": 167280,
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "realpath": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5"
+    },
+    "observations": [
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "--verify",
+          "--strict",
+          "-R",
+          "=identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+          "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "-d",
+          "--verbose=4",
+          "-r-",
+          "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+        ],
+        "exit": 0,
+        "stderr": "Executable=/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService\nIdentifier=com.apple.coremedia.videoencoder\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=441 flags=0x0(none) hashes=3+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9\nCandidateCDHashFull sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nHash choices=sha256\nCMSDigest=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=1a44901103cc99a0b15b19f81156f25748c3a0d9\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 8, 2026 at 7:25:11\u202fPM\nInfo.plist entries=22\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n",
+        "stdout": "designated => identifier \"com.apple.coremedia.videoencoder\" and anchor apple\n"
+      }
+    ],
+    "requirement": "identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+    "scope": "Exact kernel-owned executable only; no external XPC ownership inferred."
+  },
   "asset": {
     "assetClass": "effect",
     "boundsBlender": [
@@ -90,6 +133,12 @@
     "packages/tools/blender/effects/run.py"
   ],
   "bindings": [
+    {
+      "bytes": 167280,
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "realpath": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5"
+    },
     {
       "bytes": 112925600,
       "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
@@ -2221,10 +2270,16 @@
       "sha256": "3aac3f7be1fa76bd8fe8138e189b86acf25c2b725f37a1d572fcf2a4f8aba4ff"
     },
     {
-      "bytes": 16739,
+      "bytes": 20697,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
-      "sha256": "e6aa18c3d4fe7023a4457ece1257347a8a6a711ebbb8c347e81f34a564c39709"
+      "sha256": "bf9331903cff079d39d5e5383bd47b2717c17b656a287b586f3ae8fbffeca27a"
+    },
+    {
+      "bytes": 2138,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/apple_encoder.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/apple_encoder.py",
+      "sha256": "7851ab278463935b178c8b609aa3c085adbcf644e95590813245135405b57775"
     },
     {
       "bytes": 5950,
@@ -2251,10 +2306,10 @@
       "sha256": "a7b39f5b1dcfdef5675a0d55720f91f1539010615de2ce8c8fd20adfbb963893"
     },
     {
-      "bytes": 11165,
+      "bytes": 11230,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py",
-      "sha256": "661536db0f312a45a48b8096643c2974a7cb556feec37123fd526864343785d9"
+      "sha256": "a9bf2f89aeeeb9becb00be5db64c6b21d082726d2947807e9a45fe4845bd1fe9"
     },
     {
       "bytes": 8642,
@@ -2269,10 +2324,10 @@
       "sha256": "279cc55e5fc91aaaf026280ed3b4494f80361a87112090fc3389d4cc542b055a"
     },
     {
-      "bytes": 4768,
+      "bytes": 4850,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/contract.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/contract.py",
-      "sha256": "226d14dfa8375a2ac0fef7ede3ab9a97e73a02ef70b5e00a87d8d28e120f14f2"
+      "sha256": "1302fcd6716bef92381e84424f54948b62fdd91e6771d19031fa11fd71de7970"
     },
     {
       "bytes": 9887,
@@ -2287,22 +2342,22 @@
       "sha256": "f5ddf043a3f491453988dae98f7aecb52ab8bbe26391afdfac8f2ad896440e65"
     },
     {
-      "bytes": 11388,
+      "bytes": 11389,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs",
-      "sha256": "24f8fe0a632f5fd53c70b864f78baafa4075204bfa86f316383fa1a86825ee54"
+      "sha256": "3ac916bd46430339c1a7ace366ebe442a95e7292d43476e77776cd50ad35e96f"
     },
     {
-      "bytes": 4819,
+      "bytes": 9237,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/evidence.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/evidence.py",
-      "sha256": "0f877f5e5ab82451d90aeeba09b6f928d24832a905aeac3369b0ecdcce6bdf28"
+      "sha256": "c77b7b48a9b80e94264e02f31e0fe7818df485b50e786829ad14af48bd7fc1d8"
     },
     {
-      "bytes": 10569,
+      "bytes": 10815,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py",
-      "sha256": "d72faab179b91db9c8844858a3422eff52ea790dc8121908e28f8806c85d38b6"
+      "sha256": "a1ebd9de84834adb9b7c1c6756526b1983374c7cd87b8685742fff06838eec1d"
     },
     {
       "bytes": 8618,
@@ -2311,10 +2366,22 @@
       "sha256": "2a88d2a4115d9f4d7002f44770f3283c3260bd2cce6acdce2b0f66f0c65ec2a6"
     },
     {
-      "bytes": 13336,
+      "bytes": 19487,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_failure_controls.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_failure_controls.py",
+      "sha256": "d64b09c5e202e290c570e236d1eb686c0c66c916018cba6a6ba327cf892b3144"
+    },
+    {
+      "bytes": 23145,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_failure_fixture.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_failure_fixture.json",
+      "sha256": "5720ac4d65139f3220a97a2f4ddb8002083f6d3f3fd7ea115074a15d82cf53ae"
+    },
+    {
+      "bytes": 16187,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_ports.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_ports.py",
-      "sha256": "091d57ef8160199f1ea3dc3b91a84d85c8130b65ca63c39ba5b73c95b05e877c"
+      "sha256": "6489aedd95770d50379108a34abcc8e97ef4d2473ef99cde66a7476dba994cea"
     },
     {
       "bytes": 1154,
@@ -2533,18 +2600,6 @@
       "sha256": "7fa4af83422024a19e64a80937f6c8094244c3397372a495b348dfbe44a5dd72"
     },
     {
-      "bytes": 22939,
-      "path": "/private/tmp/p1-e07-t14-r3-independent-mrcerv14/REPORT.md",
-      "realpath": "/private/tmp/p1-e07-t14-r3-independent-mrcerv14/REPORT.md",
-      "sha256": "d2384e36c860e19089b5ab93e3068f09c5a23f422a1604689220648b8fe151a8"
-    },
-    {
-      "bytes": 2045,
-      "path": "/private/tmp/p1-e07-t14-r3-independent-mrcerv14/seal.json",
-      "realpath": "/private/tmp/p1-e07-t14-r3-independent-mrcerv14/seal.json",
-      "sha256": "dd68c29d07dabf9acfd8355a698f64f77f4332dfd0ee7a22c09897d2c6cfbdb9"
-    },
-    {
       "bytes": 33553,
       "path": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/REPORT.txt",
       "realpath": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/REPORT.txt",
@@ -2555,6 +2610,12 @@
       "path": "/usr/bin/caffeinate",
       "realpath": "/usr/bin/caffeinate",
       "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+    },
+    {
+      "bytes": 973408,
+      "path": "/usr/bin/codesign",
+      "realpath": "/usr/bin/codesign",
+      "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
     },
     {
       "bytes": 200560,
@@ -2599,7 +2660,7 @@
       },
       {
         "bytes": 67108864,
-        "semantics": "Node and Python each reserve attempted receipt bytes before writing, 32 MiB each",
+        "semantics": "32 MiB each for Node and Python, all attempted writes/copies charged; Python terminal JSON parts stay inside its allowance with 64 KiB reserved for failure stderr",
         "writer": "controlled_metadata"
       },
       {
@@ -2713,25 +2774,25 @@
   "esbuildBinary": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
   "externalSystemXpcOwnership": "UNQUALIFIED; no recorder/encoder requested",
   "freezePredecessor": {
-    "head": "587989af34fab480703f282084d20e2a27bbee48",
+    "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
     "informativeOnly": true,
-    "tree": "4d87ff72f0a72dbbcbbfde0fcc4ba3ede41d89c5"
+    "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482"
   },
   "generatedCaches": [
     "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules/.vite",
     "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules/.vite-temp"
   ],
-  "initialCacheBytes": 0,
+  "initialCacheBytes": 8099054,
   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
   "nodeVersion": "v22.23.3",
   "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
-  "phase": "ENABLED_PENDING_INDEPENDENT_ACTIVATION_REVIEW_AND_PARENT_ONE_USE_GRANT",
+  "phase": "SOURCE_ONLY_PENDING_PARENT_CALLER_REVIEW_AND_ONE_USE_GRANT",
   "pilot": {
     "asset": "gravitic_pull",
-    "attemptId": "b61233fdf3564205bd01d9566f306430",
-    "authorizationId": "effects-b61233fdf3564205bd01d9566f306430",
-    "consumption": "/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json",
-    "evidence": "/private/tmp/egp-b61233fdf3564205bd01d9566f306430",
+    "attemptId": "a3e0beee56da47bf8a678ab6188dad79",
+    "authorizationId": "effects-a3e0beee56da47bf8a678ab6188dad79",
+    "consumption": "/private/tmp/egc-a3e0beee56da47bf8a678ab6188dad79.json",
+    "evidence": "/private/tmp/egp-a3e0beee56da47bf8a678ab6188dad79",
     "file": "effects/gravitic",
     "files": [
       "gravitic_pull/noon-lush_lod0.png",
@@ -2748,12 +2809,13 @@
       "gravitic_pull/sheet.png"
     ],
     "gl": "metal",
-    "grant": "/private/tmp/egg-b61233fdf3564205bd01d9566f306430.json",
-    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430",
+    "grant": "/private/tmp/egg-a3e0beee56da47bf8a678ab6188dad79.json",
+    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a3e0beee56da47bf8a678ab6188dad79",
     "viewport": [1920, 1080]
   },
   "playwright": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js",
   "process_binary_sha256": {
+    "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5",
     "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node": "68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b",
     "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384",
     "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634",
@@ -2777,18 +2839,18 @@
     },
     "probe": {
       "nativeCaptureStarted": false,
-      "pid": 1780,
+      "pid": 76091,
       "scope": "CURRENT_CPU_SELF_PROCESS_ONLY",
       "uid": 501
     }
   },
   "remainingPrerequisites": [
-    "Enabled checkpoint requires a fresh independent activation review bound to its exact final clean HEAD/tree and readiness bytes; disabled R3 PASS is retained separately.",
-    "Parent schedules this single pilot after T15 full smoke releases the GPU; fauna technical correction does not block this ready independent work.",
-    "Parent issues one-use grant after activation review, serialized slot release, fresh owner observations and current 5402312704-byte admission; no grant is created here.",
-    "Parent already has required native runtime authority; no further human permission request is needed.",
-    "Parent must observe actual OS exit zero and verify exact terminal result and consumption hashes.",
-    "Actual native Metal capture, performance and independent blind visual grading remain pending; no remaining58 or motion/playback work is admitted."
+    "Both runtime flags remain false after the spent failed native pilot; fresh correction review required.",
+    "Failed authorization effects-b61233fdf3564205bd01d9566f306430 is permanently spent; never retry it.",
+    "Parent independent caller review tied to exact clean head/tree and exact readiness bytes.",
+    "Parent schedules a fresh one-root slot only after correction/activation review and a distinct one-use grant; native authority already exists.",
+    "Parent observed OS exit zero plus exact terminal result and consumption hashes.",
+    "Native Metal/backend performance and blind visual acceptance remain unqualified."
   ],
   "resolver": {
     "selectedExecutable": {
@@ -2803,7 +2865,7 @@
     "sha256": "e13035ddafb81ccbfcaa184db62aca8af9fd248a0239a0c03a032b265c8ae9a7"
   },
   "root": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects",
-  "runtimeEnabled": true,
+  "runtimeEnabled": false,
   "scope": "Only gravitic_pull; static 12-file pilot, requested LOD2 selects only authored LOD0; no motion/atlas/21:9/alpha-overlap/batch.",
   "sharedCaptureLifecycle": {
     "adoptedCommit": "18add9e19f65260d4201be1b23344ead827dd32e",

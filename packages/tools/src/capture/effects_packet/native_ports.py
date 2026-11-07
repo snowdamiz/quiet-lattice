@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import signal
 import stat
+import subprocess
 import sys
 import time
 from types import SimpleNamespace
@@ -232,8 +233,20 @@ class NativePorts:
         records = self.result['raw'].setdefault('cleanup', [])
         # Constructor/start failure without a proved cohort is retained, never guessed away.
         require(getattr(job, 'root', None) and getattr(job, 'coalition_id', None), 'No proved cohort for attempted job; retain all partials')
-        observe_call(records, 'drain', job.drain, seconds=45, observer=observer.observe if observer else lambda: None, owner=job)
-        require(job.state.get('clean') is True and job.state.get('drained') is True and job.state.get('kernel_terminal', {}).get('live') == 0, 'Positive capture cohort release missing')
+        def cleanup_observation():
+            if observer is not None:
+                try:
+                    observer.observe()
+                except Exception as error:
+                    # Work/observation refusal must not prevent ownership-checked termination.
+                    # Retain it as failure; this path can release resources but never accept work.
+                    self.result.setdefault('errors', []).append({'phase': 'cleanup-observer', **failure(error)})
+        observe_call(records, 'drain', job.drain, seconds=45, observer=cleanup_observation, owner=job)
+        if job.state.get('clean') is not True:
+            self.result.setdefault('errors', []).append({'phase': 'cleanup-work-status', 'type': 'HelperWorkFailure',
+                                          'message': 'Helper work/cleanup is not clean; resource release cannot accept capture',
+                                          'attributes': {'clean': job.state.get('clean'), 'errors': raw(job.state.get('errors'))}})
+        require(job.state.get('drained') is True and job.state.get('kernel_terminal', {}).get('live') == 0 and job.state.get('remaining') == [], 'Positive capture cohort release missing')
         self.budgets(job, for_archive=True)
         observe_call(records, 'archive', job.archive, profile_namespace=self.tmp, profile_prefixes=('playwright_chromiumdev_profile-',), owner=job)
         profile = __import__('contract').snapshot(job.out / 'profile_release.json')
@@ -241,9 +254,39 @@ class NativePorts:
         require(profile['value'].get('all_absent') is True, 'Profile release missing')
         tmp = observe_call(records, 'private-tmp', self.browser.preserve_private_tmp, self.tmp, self.admission, job.out / 'preserved_private_tmp', owner=job, job=job, **{'no_process_launched': False})
         require(tmp.get('namespace_removed') is True and tmp.get('all_bytes_preserved') is True, 'TMP release incomplete')
-        audit = observe_call(records, 'terminal', self.stages.terminal_audit, job, str(self.tmp), profile['value']['all_owned_profiles'], owner=job)
+        audit = self.release_audit(job, profile['value']['all_owned_profiles'])
         require(audit.get('kernel_terminal', {}).get('live') == 0 and audit.get('registration_absent') is True and audit.get('namespace_absent') is True and audit.get('owned_listeners_absent_via_no_live_owned_task') is True, 'Terminal release facts missing')
-        return {'released': True, 'terminal': audit, 'tmp': tmp, 'profiles': profile}
+        return {'released': True, 'captureClean': job.state.get('clean'), 'terminal': audit, 'tmp': tmp, 'profiles': profile}
+
+    def release_audit(self, job, profiles):
+        """Release is independent of work success; never rewrite the helper's clean/errors state."""
+        audit = {'probes': [], 'captureClean': job.state.get('clean')}
+        self.result['raw']['releaseAudit'] = audit
+        def read(name, action):
+            item = {'probe': name, 'returned': None}
+            audit['probes'].append(item)
+            try:
+                value = action()
+                item['returned'] = raw(value)
+                return value
+            except BaseException as error:
+                item['failure'] = failure(error)
+                raise
+        require(job.state.get('drained') is True, 'Drain not proved')
+        audit['kernel_terminal'] = read('kernel_tasks', lambda: self.boundary.kernel_tasks(job.coalition_id))
+        require(audit['kernel_terminal'].get('live') == 0 and not read('members', job.members), 'Owned cohort still live')
+        for pid, old in job.known.items():
+            current = read('identity:' + str(pid), lambda pid=pid: self.boundary.identity(int(pid)))
+            require(current is None or current['birth'] != old['birth'], 'Known owned birth remains')
+        paths = [job.scratch, self.tmp, *profiles]
+        for path in paths:
+            require(not read('exists:' + str(path), lambda path=path: os.path.lexists(path)), 'Owned namespace remains')
+        registration = read('registration', lambda: subprocess.run(['/bin/launchctl', 'print', job.target], capture_output=True, text=True, timeout=3))
+        require(registration.returncode == 113 and 'Could not find service' in registration.stderr, 'Registration absence unproved')
+        # Atomic cohort live0 plus absence of every known birth proves no owned listeners/assertions.
+        audit.update(registration_absent=True, scratch_absent=True, namespace_absent=True,
+                     profiles_absent=profiles, owned_listeners_absent_via_no_live_owned_task=True)
+        return audit
 
     def no_job_cleanup(self, evidence):
         if self.tmp is None:

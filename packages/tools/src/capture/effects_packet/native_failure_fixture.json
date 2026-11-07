@@ -1,0 +1,424 @@
+{
+  "provenance": "Retained failed native pilot b61233fdf3564205bd01d9566f306430; all process queries/signals in replay are inert except one dedicated harmless Python child. Original PID numbers are never signalled.",
+  "boundary": {
+    "scope": "CPU_CANDIDATE_BOUNDARY",
+    "exits": {
+      "capture": 143,
+      "caffeinate": -15
+    },
+    "errors": [
+      "AssertionError: Unbound owned executable: /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+    ],
+    "signals": [
+      {
+        "pid": 91794,
+        "birth": [1794040260, 209486],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91761,
+        "birth": [1794040259, 824417],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91176,
+        "birth": [1794040258, 611888],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91175,
+        "birth": [1794040258, 582734],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91174,
+        "birth": [1794040258, 579282],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91173,
+        "birth": [1794040258, 524927],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91167,
+        "birth": [1794040257, 844911],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91116,
+        "birth": [1794040257, 70437],
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 91115,
+        "birth": [1794040257, 66381],
+        "signal": "SIGTERM"
+      }
+    ],
+    "drained": true,
+    "clean": false,
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "started": 3,
+      "exited": 2,
+      "live": 1
+    },
+    "profiles": ["/private/tmp/sbr-fbnx3i_z/playwright_chromiumdev_profile-pVLJXu"],
+    "incomplete_scan_receipts": [
+      {
+        "kernel": {
+          "coalition_absent": false,
+          "started": 16,
+          "exited": 13,
+          "live": 3
+        },
+        "pinned_root_live": true
+      }
+    ],
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "started": 16,
+      "exited": 15,
+      "live": 1
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "remaining": [],
+    "elapsed_cleanup_seconds": 0.0717701250105165,
+    "target": "gui/501/local.stations.round4.51bbf452a38148ceb1329cac4d5cb181",
+    "scratch": "/tmp/stations-round4-owned-iy1s1opo",
+    "root": {
+      "pid": 91110,
+      "ppid": 1,
+      "pgid": 91110,
+      "birth": [1794040256, 933980],
+      "status": 2,
+      "uid": 501
+    },
+    "coalition_id": 41959,
+    "identities": {
+      "91110": {
+        "pid": 91110,
+        "ppid": 1,
+        "pgid": 91110,
+        "birth": [1794040256, 933980],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91116": {
+        "pid": 91116,
+        "ppid": 91110,
+        "pgid": 91116,
+        "birth": [1794040257, 70437],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91115": {
+        "pid": 91115,
+        "ppid": 91110,
+        "pgid": 91115,
+        "birth": [1794040257, 66381],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91167": {
+        "pid": 91167,
+        "ppid": 91115,
+        "pgid": 91115,
+        "birth": [1794040257, 844911],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91173": {
+        "pid": 91173,
+        "ppid": 91115,
+        "pgid": 91173,
+        "birth": [1794040258, 524927],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91175": {
+        "pid": 91175,
+        "ppid": 91173,
+        "pgid": 91173,
+        "birth": [1794040258, 582734],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91174": {
+        "pid": 91174,
+        "ppid": 91173,
+        "pgid": 91173,
+        "birth": [1794040258, 579282],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91176": {
+        "pid": 91176,
+        "ppid": 91173,
+        "pgid": 91173,
+        "birth": [1794040258, 611888],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91761": {
+        "pid": 91761,
+        "ppid": 91173,
+        "pgid": 91173,
+        "birth": [1794040259, 824417],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      },
+      "91794": {
+        "pid": 91794,
+        "ppid": 1,
+        "pgid": 91794,
+        "birth": [1794040260, 209486],
+        "status": 2,
+        "uid": 501,
+        "coalition": [41959, 41960]
+      }
+    }
+  },
+  "observed": {
+    "utc": "2026-11-07T08:31:00.298682+00:00",
+    "scope": "OBSERVED_STATION_CHROMIUM_COHORT",
+    "launch": {
+      "pid": 91173,
+      "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "profile": "/private/tmp/sbr-fbnx3i_z/playwright_chromiumdev_profile-pVLJXu",
+      "angle_metal_requested": true
+    },
+    "processes": [
+      {
+        "kernel": {
+          "pid": 91116,
+          "ppid": 91110,
+          "pgid": 91116,
+          "birth": [1794040257, 70437],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/usr/bin/caffeinate",
+        "role": "owned-launch-helper",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+      },
+      {
+        "kernel": {
+          "pid": 91115,
+          "ppid": 91110,
+          "pgid": 91115,
+          "birth": [1794040257, 66381],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "role": "owned-launch-helper",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b"
+      },
+      {
+        "kernel": {
+          "pid": 91110,
+          "ppid": 1,
+          "pgid": 91110,
+          "birth": [1794040256, 933980],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "role": "owned-launch-helper",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22"
+      },
+      {
+        "kernel": {
+          "pid": 91167,
+          "ppid": 91115,
+          "pgid": 91115,
+          "birth": [1794040257, 844911],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+        "role": "owned-launch-helper",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384"
+      },
+      {
+        "kernel": {
+          "pid": 91176,
+          "ppid": 91173,
+          "pgid": 91173,
+          "birth": [1794040258, 611888],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+        "role": "renderer",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+      },
+      {
+        "kernel": {
+          "pid": 91175,
+          "ppid": 91173,
+          "pgid": 91173,
+          "birth": [1794040258, 582734],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+        "role": "utility",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+      },
+      {
+        "kernel": {
+          "pid": 91174,
+          "ppid": 91173,
+          "pgid": 91173,
+          "birth": [1794040258, 579282],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+        "role": "gpu-process",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+      },
+      {
+        "kernel": {
+          "pid": 91173,
+          "ppid": 91115,
+          "pgid": 91173,
+          "birth": [1794040258, 524927],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+        "role": "browser",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+      },
+      {
+        "kernel": {
+          "pid": 91761,
+          "ppid": 91173,
+          "pgid": 91173,
+          "birth": [1794040259, 824417],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+        "role": "utility",
+        "command_observed": true,
+        "admitted": true,
+        "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+      },
+      {
+        "kernel": {
+          "pid": 91794,
+          "ppid": 1,
+          "pgid": 91794,
+          "birth": [1794040260, 209486],
+          "status": 2,
+          "uid": 501
+        },
+        "coalition": [41959, 41960],
+        "binary": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+        "role": "apple-video-encoder-xpc",
+        "command_observed": true,
+        "admitted": false
+      }
+    ],
+    "all_ever_lived_processes_observed": false,
+    "external_native_XPC_ownership": "UNQUALIFIED"
+  },
+  "pidInventory": [
+    1, 209, 335, 338, 340, 341, 345, 349, 351, 352, 354, 356, 360, 362, 365, 367, 368, 372, 374, 375, 376, 377, 378, 379, 380, 381, 382, 384, 387, 388, 391,
+    394, 395, 396, 398, 400, 401, 403, 404, 406, 407, 408, 410, 411, 413, 414, 429, 455, 461, 469, 470, 478, 479, 486, 493, 494, 495, 498, 501, 503, 504, 505,
+    509, 511, 512, 518, 520, 528, 529, 532, 533, 539, 540, 543, 549, 562, 564, 565, 570, 577, 588, 607, 608, 609, 610, 611, 622, 627, 629, 631, 635, 651, 652,
+    654, 656, 662, 663, 665, 667, 669, 670, 672, 673, 674, 679, 681, 682, 683, 684, 686, 688, 689, 690, 691, 693, 694, 695, 698, 704, 706, 708, 711, 712, 716,
+    717, 720, 721, 723, 728, 730, 735, 737, 744, 745, 746, 748, 749, 750, 751, 759, 763, 764, 767, 771, 772, 773, 774, 775, 776, 777, 778, 782, 783, 787, 789,
+    798, 810, 840, 841, 845, 846, 850, 852, 856, 861, 908, 910, 913, 914, 1216, 1242, 1249, 1381, 1382, 1672, 1794, 1899, 1908, 1927, 1928, 1929, 1930, 1932,
+    1966, 1995, 1999, 2100, 2101, 2106, 2108, 2109, 2112, 2115, 2116, 2119, 2297, 2360, 2494, 2503, 2512, 2604, 2656, 2672, 2673, 2690, 2777, 2781, 2813, 2815,
+    2849, 2860, 2863, 2864, 2868, 2870, 2874, 2875, 2876, 2877, 2878, 2879, 2880, 2881, 2883, 2895, 2896, 2936, 2937, 2938, 2939, 2940, 2941, 2943, 2945, 2946,
+    2951, 2952, 2953, 2954, 2956, 2958, 2973, 2974, 3101, 3857, 3858, 3859, 3860, 3918, 3921, 4181, 4182, 4469, 5118, 5745, 5784, 5785, 5800, 5802, 6001, 6004,
+    6090, 6243, 6254, 6741, 7209, 7438, 7465, 7822, 7830, 7917, 7923, 7951, 8046, 8048, 8051, 8052, 8055, 9072, 9101, 9103, 9119, 9233, 9798, 9799, 9800, 10808,
+    10875, 11051, 11053, 11105, 12212, 12223, 12249, 12401, 12404, 12614, 12615, 13133, 13254, 13736, 13765, 13777, 13901, 13979, 13980, 14048, 14049, 14101,
+    14102, 14108, 14139, 14604, 14606, 14630, 15017, 15144, 15255, 15314, 15315, 15446, 15447, 15866, 15938, 15940, 16016, 16085, 16184, 16270, 16271, 16798,
+    16896, 17529, 17530, 17788, 17798, 17835, 18028, 18029, 18093, 18103, 19725, 19797, 19985, 20200, 20201, 20634, 20814, 21112, 21113, 21190, 21191, 21256,
+    21263, 21447, 21448, 21538, 21877, 21878, 21991, 22179, 22244, 23055, 23056, 23057, 23216, 23339, 23393, 23394, 23412, 23416, 23572, 23601, 23714, 23725,
+    23726, 23728, 23729, 23731, 23732, 23749, 24080, 24597, 24613, 24614, 24625, 24631, 24790, 24829, 24885, 24910, 25122, 25124, 25170, 25171, 25221, 25229,
+    25329, 25646, 25647, 25797, 26010, 26098, 26099, 26137, 26141, 26142, 26143, 26144, 26163, 26164, 26165, 26167, 26168, 26170, 26171, 26172, 26173, 26174,
+    26175, 26176, 26177, 26178, 26179, 26180, 26182, 26183, 26184, 26186, 26187, 26189, 26191, 26192, 26193, 26194, 26195, 26198, 26199, 26201, 26204, 26205,
+    26220, 26226, 26243, 26244, 26245, 26246, 26247, 26248, 26250, 26251, 26252, 26255, 26258, 26260, 26262, 26263, 26268, 26272, 26276, 26277, 26280, 26285,
+    26286, 26287, 26292, 26293, 26294, 26295, 26296, 26298, 26302, 26304, 26305, 26306, 26307, 26309, 26310, 26311, 26313, 26314, 26316, 26317, 26321, 26323,
+    26324, 26325, 26329, 26338, 26344, 26373, 26376, 26384, 26389, 26391, 26399, 26402, 26414, 26420, 26429, 26438, 26452, 26457, 26462, 26464, 26469, 26472,
+    26473, 26490, 26499, 26509, 26535, 26545, 26552, 26611, 26843, 26855, 26896, 26914, 26954, 27508, 27551, 27553, 27560, 27564, 27565, 27566, 27573, 27580,
+    27581, 27584, 27585, 27588, 27591, 27592, 27624, 27637, 27646, 27653, 27663, 27726, 27753, 27851, 27883, 27926, 27941, 27960, 27965, 27974, 27975, 27977,
+    27982, 27992, 27994, 27995, 27996, 27998, 28004, 28005, 28010, 28012, 28014, 28021, 28033, 28035, 28037, 28039, 28066, 28091, 28102, 28111, 28114, 28116,
+    28117, 28122, 28158, 28190, 28200, 28265, 28266, 28272, 28278, 28394, 28395, 28422, 28439, 28476, 28477, 28497, 28540, 28642, 28662, 28721, 28797, 28807,
+    28877, 28895, 28907, 28950, 28992, 29012, 29051, 29052, 29058, 29075, 29378, 29518, 29560, 29697, 29703, 29737, 29739, 29757, 29761, 29781, 29782, 29783,
+    29808, 29810, 29811, 29862, 29866, 29886, 29888, 29901, 29907, 29912, 29923, 29940, 29941, 29945, 29982, 29984, 30283, 30402, 30722, 30723, 30744, 30745,
+    30746, 30748, 30749, 30750, 31261, 31264, 31265, 31359, 31465, 31499, 31686, 31688, 32099, 32369, 32729, 32811, 32984, 33073, 33327, 33336, 33350, 33351,
+    33352, 33382, 33383, 33385, 33390, 33439, 33512, 33582, 33835, 34485, 34486, 34644, 34877, 34927, 34928, 36752, 37433, 37434, 37456, 37588, 37766, 37907,
+    37913, 37937, 38441, 38443, 38514, 38517, 38518, 38521, 38523, 38526, 38527, 38556, 38706, 38817, 38949, 38951, 38974, 38976, 38977, 39158, 39163, 39164,
+    39190, 39250, 39252, 39279, 39280, 39363, 39493, 39496, 39517, 39519, 39627, 39639, 39707, 39710, 39714, 39715, 39821, 39844, 39891, 39902, 40048, 40052,
+    40075, 40076, 40153, 40433, 40437, 40438, 40439, 40440, 40491, 40492, 40512, 40518, 40865, 41231, 41375, 41386, 41387, 41391, 41392, 41405, 41406, 41415,
+    41418, 41420, 41458, 42308, 42309, 42389, 42516, 43442, 43563, 43825, 44058, 44758, 44759, 44773, 44927, 44928, 44953, 45398, 45484, 45748, 46256, 46292,
+    46368, 46496, 46505, 46583, 46626, 46713, 47047, 47126, 47167, 47168, 47230, 47408, 47410, 47495, 47655, 47668, 47671, 47672, 47693, 48769, 48850, 48851,
+    49819, 49859, 49888, 49889, 49895, 49911, 50519, 50836, 51270, 51477, 51875, 51888, 51889, 51895, 51901, 51921, 51948, 52101, 52271, 52440, 52465, 52557,
+    52656, 52885, 52896, 52900, 52943, 52954, 53006, 53011, 53026, 53044, 53045, 53046, 53103, 53106, 53107, 53132, 53170, 53440, 54142, 54215, 54262, 54478,
+    54479, 54556, 54557, 54617, 54639, 54640, 54644, 54808, 54833, 54973, 54992, 54993, 55015, 55100, 55157, 55298, 56168, 56170, 56447, 56499, 57314, 57383,
+    57416, 57418, 57441, 57450, 58023, 58300, 58309, 59398, 60620, 60621, 62080, 62081, 62095, 62562, 62659, 62660, 62715, 62743, 62766, 62768, 62769, 62771,
+    62776, 62779, 62781, 63208, 63210, 63273, 63284, 63362, 63394, 63724, 63725, 63793, 63794, 63798, 63801, 63871, 63961, 63962, 64144, 64199, 64284, 64291,
+    64642, 65271, 65582, 65638, 65754, 65836, 65837, 65863, 65869, 65900, 65907, 66220, 66238, 66239, 66243, 66247, 66253, 66649, 67221, 67222, 67223, 67224,
+    67225, 67227, 67228, 67229, 67230, 67231, 67233, 67234, 67235, 67239, 67240, 67242, 67244, 67245, 67249, 67250, 67252, 67254, 67256, 67257, 67258, 67261,
+    67262, 67264, 67265, 67266, 67270, 67271, 67272, 67273, 67274, 67275, 67276, 67280, 67282, 67283, 67284, 67289, 67292, 67298, 67320, 67380, 67394, 67395,
+    67402, 67407, 67428, 67463, 67495, 67530, 67545, 67559, 67587, 67595, 67603, 67625, 67627, 67763, 67765, 67771, 67781, 67783, 67784, 67785, 67786, 67788,
+    67792, 67793, 67795, 67799, 67800, 67808, 67811, 67814, 67818, 67837, 67855, 67857, 67867, 69376, 69569, 69812, 70186, 70187, 70819, 71143, 71763, 71860,
+    71861, 71862, 71864, 71867, 71933, 71969, 71970, 72085, 72086, 72087, 72089, 72090, 72096, 72101, 72749, 72750, 72756, 72803, 73049, 73449, 73450, 73451,
+    73453, 73495, 73798, 73937, 73938, 73998, 74073, 74125, 74164, 74239, 74241, 74254, 74384, 74978, 74979, 74993, 74995, 75095, 75104, 75105, 75119, 75123,
+    75160, 75163, 75178, 75292, 75297, 75298, 75307, 75388, 75391, 75396, 75400, 75401, 75402, 75420, 75425, 75457, 75459, 75461, 75470, 75471, 75472, 75481,
+    75729, 75735, 75858, 75871, 75950, 76606, 77104, 78980, 78981, 79050, 79051, 79149, 79153, 79158, 79163, 79164, 79224, 79226, 79227, 80253, 80382, 80383,
+    80591, 80684, 81485, 81498, 81504, 81517, 81683, 81715, 81753, 81989, 82022, 82024, 82026, 82045, 82068, 82134, 82172, 82198, 82487, 82553, 83376, 84041,
+    84042, 84286, 84287, 84927, 84938, 85047, 86420, 86421, 87344, 87903, 88153, 88154, 88860, 89149, 89155, 89166, 89167, 90308, 90345, 90350, 90362, 90434,
+    90458, 90759, 90824, 90875, 90881, 90899, 90919, 90920, 91514, 91955, 91956, 91957, 92124, 92125, 92534, 92591, 92684, 93176, 93189, 93393, 93573, 93603,
+    93608, 93616, 93617, 93621, 93622, 93625, 93641, 93645, 93649, 93656, 93672, 93687, 93703, 93704, 93951, 95179, 95274, 96469, 96669, 97064, 97179, 97238,
+    97265, 97289, 97290, 97291, 97351, 97387, 97388, 97396, 97662, 97663, 98128, 98712, 98790, 98924, 98984, 99020, 99021, 99028, 977, 980, 981, 984, 989,
+    82200, 25131
+  ],
+  "captureLog": "2026-11-07T08:30:58.524Z pw:browser <launching> /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --use-angle=metal --enable-gpu --ignore-gpu-blocklist --user-data-dir=/private/tmp/sbr-fbnx3i_z/playwright_chromiumdev_profile-pVLJXu --remote-debugging-pipe --no-startup-window\n2026-11-07T08:30:58.526Z pw:browser <launched> pid=91173\n2026-11-07T08:30:58.620Z pw:browser [pid=91173][err] [1107/033058.619614:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n2026-11-07T08:30:58.620Z pw:browser [pid=91173][err] [1107/033058.619891:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n2026-11-07T08:30:58.671Z pw:browser [pid=91173][err] [1107/033058.670703:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n2026-11-07T08:30:58.671Z pw:browser [pid=91173][err] [1107/033058.670766:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n2026-11-07T08:30:58.878Z pw:browser [pid=91173][err] [1107/033058.861764:INFO:CONSOLE:946] \"[vite] connecting...\", source: http://127.0.0.1:58808/@vite/client (946)\n2026-11-07T08:30:58.896Z pw:browser [pid=91173][err] [1107/033058.888840:INFO:CONSOLE:1055] \"[vite] connected.\", source: http://127.0.0.1:58808/@vite/client (1055)\n2026-11-07T08:30:59.508Z pw:browser [pid=91173][err] [1107/033059.508451:INFO:CONSOLE:1748] \"THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.\", source: http://127.0.0.1:58808/node_modules/.vite/deps/three.module-Cp08ibyj.js?v=7712f2d3 (1748)\n2026-11-07T08:30:59.862Z pw:browser [pid=91173][err] [1107/033059.862382:ERROR:sandbox/mac/system_services.cc:31] SetApplicationIsDaemon: Error Domain=NSOSStatusErrorDomain Code=-50 \"paramErr: error in user parameter list\" (-50)\n2026-11-07T08:31:00.309Z pw:browser [pid=91173] <gracefully close start>\n2026-11-07T08:31:00.311Z pw:browser [pid=91173] <kill>\n2026-11-07T08:31:00.311Z pw:browser [pid=91173] <will force kill>\n2026-11-07T08:31:00.311Z pw:browser [pid=91173] starting temporary directories cleanup\n2026-11-07T08:31:00.314Z pw:browser [pid=91173] finished temporary directories cleanup\n"
+}
