@@ -1,0 +1,26 @@
+Screenshot cleanup is stopped. Nothing is still running, and the partial replacements already on disk were left in place.
+
+**900 of 8,778** allowlisted frames were replaced with their committed Git LFS pointer bytes. The last completed path was `assets/renders/ui/arrival/_frames/119.jpg`. The ledger has 900 `replaced` rows and no skips, open files, missing objects, or errors. No temporary files were left behind. The other 7,878 allowlisted frames were not changed.
+
+| | |
+|---|---|
+| HEAD | `83b145e9d6dc845aa6c7706ada69019fc813b202` |
+| Branch | `t3/P1-E05-T02-source-library-87bfd7e9` |
+| HEAD tree and `git write-tree` | `b0138bcc7243b04062b414571e0ad543a1c24bfe` |
+| `git ls-files --stage` | Unchanged (`dfc83d1833624d3b7fd8e852efb39106d2bc0e10cbcd8a9bf8a796ded581002e`) |
+| `git diff` / `git diff --cached` | Empty |
+| `git status --porcelain` | **900** lines, ` M` |
+| Index lock / worktree lock | Absent |
+
+Those 900 status lines are the stat cache still describing the old hydrated sizes. The index blobs and the tree match HEAD. The index was not refreshed after the stop.
+
+The dated archive ref `refs/archive/development-screenshots/2026-11-07-t3-87bfd7e9-head` points at the same HEAD. It was not moved or removed.
+
+Partial proof:
+
+- Dry run: `/tmp/space-screenshot-dehydrate-87bfd7e9/` (`dry-run.json`, `index-before.bin`, `stage-before.txt`)
+- Partial write: `/tmp/space-screenshot-dehydrate-87bfd7e9-write-1/ledger.jsonl` and `lsof-before-write.json`
+
+This stop was a user cancellation. No further replacement, dehydration, deletion, archive scan, or batch is authorized.
+
+Parent settlement after stop: verified the exact committed pointer bytes for all 900 completed paths, tested same-blob index refresh on a copy, then applied those unchanged stage tuples to the real index. No further image replacements. Final status clean; HEAD/tree/full stage tuples unchanged. See library-stop-index-proof.json. No future screenshot cleanup is scheduled.

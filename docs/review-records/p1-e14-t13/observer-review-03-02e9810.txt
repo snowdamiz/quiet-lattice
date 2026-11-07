@@ -1,0 +1,170 @@
+# P1.E14.T13 trace-observer protocol — independent SOURCE/CPU R3
+
+Verdict: **PASS**
+
+No blocking defect remains in the three-file delta or in its interaction with `dispatchBrowserDiagnostic`. R1 items 1–5, the late-reply cutoff, N1, and N2 are fixed. Two pre-existing `Array.every` hole skips outside that delta are advisory. This review does not authorize native execution, a 16.67 ms qualification, exclusive GPU attribution, or a merge.
+
+## Pins
+
+| Pin | Value |
+| --- | --- |
+| Checkout | `/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8` |
+| Branch | `codex/task/P1-E14-T13-trace-observer` |
+| HEAD | `02e981096574ca7e486958023075d0e52c45062f` |
+| Tree | `6ab14d7ee5f702a45ae479f58837033320a14b89` |
+| Revision base | `5d29f46f4bc3a29e027bcca192fbff3d61259176` |
+| Parent of base | `07a3220bb` (disabled discriminator); recovery commit `293a87dff`; original base `2f54def2a` |
+| Porcelain before and after | empty |
+| `git diff --name-only 5d29f46..HEAD` | `trace-observer-report.ts`, `trace-observer.test.ts`, `trace-observer.ts` only |
+
+Reviewed read-only. No checkout, historical evidence directory, or worker directory was edited. Fresh scripts live under `/tmp/p1-e14-t13-r3-review.k7m3/`.
+
+Node `v22.23.3` at `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node` (PATH prepend). pnpm `12.15.0` resolved the same Node. The default shell Node is v26 and was not used for these commands.
+
+## What this revision changes
+
+`02e981096` (“validate indexed observer evidence and mixed gaps”) on `5d29f46`.
+
+- `hasEveryIndex` (`trace-observer-report.ts:52–55`) requires `Object.hasOwn` for every index `0 .. length-1`. `Array.every` / `forEach` / `map` skip holes; `hasEveryIndex` does not.
+- Preparation inventory (`trace-observer-report.ts:255–260`) refuses a sparse or inherited `preflight.passes` array before incrementing `dependentPasses`, and increments only after each present record validates. The returned count is what the control carries.
+- Temporal arrays (`trace-observer-report.ts:228–237`) require own indexes on `jitter`, `historySizes`, and each history dimension.
+- `summarizeObserver` (`trace-observer-report.ts:386–398`) sets `gapThresholdMs = max(onRange, offRange) + 5`. Mixed signs (`min < 0 && max > 0`) force `similar` false and select `inconclusive` before the reproducible-gap and similarity branches. A zero gap cannot make `min > threshold`. `budgetQualified` stays `false` (`:418`).
+- The disabled proposal repeats that rule and states that settled port promises are not physical process settlement (`trace-observer.ts:19–22`). Historical `cloud03` remains `FAILED` / `accepted: false` (`:36`).
+
+`dispatchBrowserDiagnostic` (`browser-work-probe.ts:623–640`) is unchanged this revision. Observer protocol calls `runTraceObserver`, then `retainReport(structuredClone(packet))`. `ObserverError` retains a clone of `error.evidence`. `runTraceObserver` (`browser-work-trace.ts:856`) adds preparation totals only after `validateObserverPreparation` returns, adds control fences only after `validateObserverControl` returns, sets `hasFailed` and breaks the plan on failure (`:1222`), and builds `summary` only when `!hasFailed` (`:1228–1234`). The returned value is a `structuredClone` taken after `acceptingEvidence = false` (`:1261–1268`). `ports-settled` is assigned only when the in-process `pending` set is empty (`:1250–1252`). The comment at `:1264–1266` leaves physical settlement to a future process controller, which this unit does not construct.
+
+Unchanged this revision, and matching the revision base: `browser-work-report.ts` (old length-based preparation count), `Engine.js`, `AtmospherePass.js`, and the pre-observer bodies of `browser-work-trace.ts` and `browser-work-probe.ts`. `browser-work-report.ts` does not exist at original base `2f54def2a`; it matches the recovery commit and the recorded recovery sha.
+
+## Prior items
+
+| Item | Disposition | Executed evidence |
+| --- | --- | --- |
+| R1-1 empty cancellation/rejection message observed as success | FIXED | `empty-message-cancellation-fails`: `status` `failed`, `failure` `""`, prepare retained. |
+| R1-2 contradictory raw counter/status/history shapes accepted | FIXED | Direct validators throw on holes, explicit `undefined`/`null`, and inherited indexes for passes, polls, proof points, actual bytes, viewport, jitter, history, history dimensions, and samples. Dispatcher reproductions below. Prior redirected suite: 64 cases, `unexpected: []`. |
+| R1-3 history parity reset between preparations | FIXED | Covered by the redirected 64-case suite (`history-odd-reset`, `frame-reset` among them). `unexpected: []`. This delta does not touch that comparison. |
+| R1-4 `max(range, 5)` contradicted the selected range+5 rule | FIXED | `gapThresholdMs = within + 5` at `trace-observer-report.ts:392`. Gaps of 6 ms with both arms spanning 4 ms stay `inconclusive` at threshold 9, in `summarizeObserver` and through `dispatchBrowserDiagnostic`. Gaps equal to the threshold stay inconclusive. `9.01` and `-9.01` select `observer-cost-issue`. |
+| R1-5 returned host evidence discarded on cancellation | FIXED | `host-fact-retained-and-detached`: `status` `failed`, load `1` before mutation and `1` after the raw value was changed to `99`. Settlement kind `ports-settled` (JS promises only). |
+| Late mutable reply after cutoff (`5d29f46`) | FIXED | `late-prepare-detached`: settlement `ports-unsettled`, `pendingCallbacks` 3, `requiresController` true, `finishedMs` null, `status` `failed`. After the held prepare resolved, packet JSON, retained report, report sink, and chunk map were unchanged. |
+| R2 N1 sparse `preflight.passes = Array(4)` counted 48 passes; sparse jitter/history also passed | FIXED | See N1 repro. |
+| R2 N2 gaps `[1,-1,1,-1,1]`, on `[31,29,31,29,31]`, off `[30,30,30,30,30]`, empty fence 8 ms selected `targeted-workload-next` | FIXED | See N2 repro. |
+
+## N1 — own indexes, executed through the dispatcher
+
+`structuredClone` preserves holes and drops inherited indexes (harness `clone`: hole keys `["0","3"]` stay holes; `clonedHasOwn1` false; `clonedIsNullAtHole` false; an inherited index is readable with `hasOwn` false, and the clone’s keys are `["1","2","3"]`). Refusal therefore cannot depend on the clone filling holes.
+
+Direct `validateObserverPreparation` / `validateObserverControl`, with no clone in front:
+
+- Inherited pass index is readable and still throws `Missing preflight passes`.
+- All-holes, middle hole, explicit `undefined`, and explicit `null` passes throw `Missing preflight passes`.
+- Sparse jitter, sparse history, a hole in a history dimension, and an inherited jitter index throw `Malformed temporal observations`.
+- Poll, proof-point, actual-byte, viewport, and sample holes throw.
+
+`dispatchBrowserDiagnostic` with real sparse arrays:
+
+| Case | Result |
+| --- | --- |
+| `passes = Array(4)` on the first prepare | `resolved` false, `status` `failed`, `summary` null, `failure` `Error: Missing preflight passes`, `steps` 1, `calls` `['prepare']`, `dependentPasses` 0, `preflightFences` 0, `controlFences` 0, `presentPassKeys` 0, `passLength` 4 |
+| middle pass deleted | same refusal; `presentPassKeys` 3, `passLength` 4; no `run` issued |
+| inherited substitute at pass index 0 | same refusal; `presentPassKeys` 3; no `run` issued |
+| `jitter = Array(2)` on plan index 2 `run` | `failure` `Error: Malformed temporal observations`, `steps` 3, `summary` null, `dependentPasses` 12, `preflightFences` 9, `controlFences` 4, `calls` `['prepare','run','prepare','run','prepare','run']` |
+| `historySizes = Array(2)` at the same step | same stop |
+| inherited history-dimension index at the same step | same stop |
+
+Plan index 2 is the third step (0-based). Two valid prepare/run pairs complete first (12 passes, 4 control fences). The damaged run is issued and refused, and `hasFailed` prevents every later step. The bad run’s fences are not counted. A clean observed packet is the other side of the same accounting: `dependentPasses` 48, `preflightFences` 36, `controlFences` 24, and each of the 12 steps carries own-key count 4, length 4, fences 3, syncs 2. Carried passes sum to 48. `budgetQualified` is false and the decision on that recorded load is `observer-cost-issue`, which is the fixture’s large same-sign gap, not a budget qualification.
+
+The harness recorded `dispatch-sparse-jitter`, `dispatch-sparse-history`, and `dispatch-inherited-history-dimension` as failures because it expected `calls == ['prepare','run']`. That expectation assumed the fault landed on the first run. The mutate hook uses `index === 2`. The product stopped at the first malformed run and did not continue. Those three rows are oracle mismatches, not regressions. A throw from a script that assumes the promise always resolves is also not, by itself, evidence of a regression.
+
+## N2 and the threshold matrix
+
+Through `dispatchBrowserDiagnostic`, the R2 vector (gaps `1,-1,1,-1,1`, on `31/29/31/29/31`, off all `30`, empty fences `8`):
+
+- differences median `1`, min `-1`, max `1`
+- `withinArmRangeMs` 2, `gapThresholdMs` 7
+- `mixedSigns` true, `similar` false, `reproducibleGap` false, `unstable` false, `longEmptyFence` false
+- `decision` `inconclusive`, `budgetQualified` false
+
+`summarizeObserver` on the same numbers matches. A larger stable mixed-sign band (`min -4`, `max 4`, within 4) is also `inconclusive` with `similar` false. Mixed signs are selected before similarity (`trace-observer-report.ts:395–398`).
+
+Other executed combinations, empty fence 8 ms unless noted:
+
+| Vector | Decision | Why |
+| --- | --- | --- |
+| gaps all 6, both ranges 4 (on 36..40, off 30..34), also through the dispatcher | `inconclusive` | threshold 9; `similar` false; `reproducibleGap` false; stable |
+| gaps all 9, ranges 4 | `inconclusive` | equal to range+5 does not exceed it |
+| gaps all 9.01 and all -9.01, ranges 4 | `observer-cost-issue` | strict same sign, magnitude above the threshold, stable, short fence |
+| all zeros, range 0, short fence | `targeted-workload-next` | zero is neutral similarity; it does not meet the strict threshold |
+| gaps 0 and 1, within 1 | `targeted-workload-next` | still inside `max(within, 5)` |
+| gaps all 5, range 0 | `targeted-workload-next` | `abs(gap) <= max(within, 5)` and `min > 5` is false |
+| gaps all 5.001, range 0 | `observer-cost-issue` | exceeds 5 |
+| fence envelope exactly 20 with large same-sign gaps | `observer-cost-issue` | `longEmptyFence` is `envelope > 20` |
+| fence 20.01 with the same gaps | `inconclusive` | `longEmptyFence` true while `reproducibleGap` stays true |
+| on `[50,50,50,50,58]` | `inconclusive` | unstable; `reproducibleGap` true does not override it |
+| on `[50,50,50,50,57.5]` | `observer-cost-issue` | `50 * 0.15 === 7.5` on this Node (`greater` false); within 7.5, threshold 12.5, unstable false |
+| all-zero gaps with an unstable arm, or with a long empty fence | `inconclusive` | precedence holds; `similar` can remain true |
+
+Stable zero that sits outside the similarity band, run separately (`zero-outside-band.json`): on `[30,34,34,34,34]`, off `[30,30,30,30,28]`, fence 8. differences min `0` max `6`, within `4`, threshold `9`, `unstable` false, `mixedSigns` false, `similar` false, `reproducibleGap` false, `budgetQualified` false, decision `inconclusive`. The zero blocks observer cost, and the 6 ms gap blocks similarity.
+
+The harness row `rule-zero-blocks-strict` used on `[30,40,40,40,40]` against a flat 30 ms arm. That arm’s range is 10, which is greater than `max(5, 0.15 * 40) = 6`, so the product correctly returned `inconclusive` with `unstable` true and `similar` true (`abs(gap) <= within`). The row is an oracle mismatch. It is not a threshold bug.
+
+`criteria.similar` is a criterion flag. Instability and a long empty fence leave it true while `decision` is `inconclusive` (`rule-zero-but-unstable`, `rule-zero-but-long-fence`). Consumers of the packet use `decision`. This is advisory, not a false success of the decision.
+
+## Advisory, outside the delta
+
+`browser-work-trace.ts:1033` uses `receipt.categories.categories.every(...)`. `Array.every` skips holes. The harness replaced `Tracing.getCategories` with `Array(3)` on an otherwise valid run: `advisory-sparse-categories` returned `status` `observed`, `failure` null, `resolved` true, `steps` 12. That does not change dependent-pass inventory, the cost decision, or `budgetQualified`. Marker coverage does not come from that array. `h.errors`, page errors, and `glErrors` before/after fail closed on `length > 0`.
+
+`browser-work-trace.ts:861` (and the older protocol admission at `:420`) uses the same `rendererPids.every` hole skip. This run did not replay a sparse pid array. A sparse pid list is not an input to pass inventory or to `summarizeObserver`.
+
+Neither site is in the three-file delta. Neither is a 0.9.5 mandatory revise: they do not create client-side authority, leave a demo as the product, regress the recorded budget (`budgetQualified` stays false), or introduce an unlogged spec interpretation. The stricter threshold is the logged 2026-11-07 parent decision.
+
+## Protected recovery and disabled entry
+
+`protected.json` (the corrected checker; `protected.log` is an earlier script that died because `browser-work-report.ts` is absent at `2f54def2a`):
+
+- 32 manifest files, all unchanged since `5d29f46`, all current bytes equal HEAD.
+- Recovery-commit bytes match the recorded sha for every exact-file row, including `browser-work-probe.ts` and `browser-work-trace.ts`.
+- Current bytes of those two files differ from the pre-observer recorded sha because observer code was appended after the recovery commit. Their old bodies, after stripping the observer imports and sections, match recovery commit `293a87dff`. The checker’s `allCurrentMatchRecorded: false` is that expected difference. It is not a recovery regression.
+- `Engine.js` and `AtmospherePass.js` equal original base `2f54def2a`, revision base, and HEAD.
+- `browser-work-report.ts` equals revision base, HEAD, and the recovery commit, and matches its recorded sha.
+- Standard Review source matches the original base after the known native-work-class probe import and `device()` block are stripped. `review.js` prior sha matches `2f54def2a`.
+- `recovery.json` itself is unchanged since the revision base.
+
+Disabled CLI, Node 22.23.3:
+
+- `--proposal` wrote `proposal.json`: kind `T13_TRACE_OBSERVER_DISABLED_PROPOSAL_V1`, readiness `disabled`, `runtimeAuthorized` false, `binding` null, `grant` null, historical `cloud03` `FAILED` / `accepted` false, decision rule contains `max(onRange, offRange) + 5ms` and mixed-sign precedence, `sourcePortLimits` says settled port promises do not prove physical process settlement. Exit 0. Stderr is only the `NO_COLOR`/`FORCE_COLOR` Node warning.
+- `--run` wrote `Error: Trace observer readiness disabled; only --proposal is supported` and exited 1 (`trace-observer.ts:41`, `exitCode` at `:49`). That path does not import Playwright. A CJS chromium launch counter in the harness stayed at 0; that counter may not wrap the ESM Playwright instance, so the counter is not the proof. The proof is the entry’s static imports and the refusal before any browser call.
+
+## Commands and exits
+
+All under Node v22.23.3 unless noted. No browser, native helper, GPU, Blender, service, database, grant, hydration, push, PR, or merge.
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `pnpm exec vitest run` on `browser-work-*`, `cloud-march-*`, `trace-observer*`, and the client native-work-class / dependent-output / gpu-completion / review tests, `--maxWorkers=2 --no-cache` | 0 | 15 files, 490 tests passed. Start 01:00:50, duration 6.98s. Log: `vitest.log`. The footer says “Isolate 15 workers spawned”; that is one isolate per file over the run. `--maxWorkers=2` was passed. The footer does not show 15 concurrent workers. |
+| Redirected prior `independent.mts` (output dir changed only; historical source hash left as recorded) | 0 | `prior/independent.log`: `cases` 64, `unexpected` `[]`. Script sets exit code 1 only when a case mismatches. |
+| Fresh `independent.mts` through `dispatchBrowserDiagnostic` | 1 | 46 notes. The four listed failures are the oracle mismatches named above (`dispatch-sparse-jitter`, `dispatch-sparse-history`, `dispatch-inherited-history-dimension`, `rule-zero-blocks-strict`). Product behavior in those rows is the refusal and the unstable classification documented here. `acquisition` 0. |
+| `tsx` `summarizeObserver` zero-outside-band vector | 0 | `zero-outside-band.json`: decision `inconclusive`, similar false, unstable false, min 0, max 6, threshold 9. |
+| `tsc -p packages/tools --noEmit --incremental false` | 0 | `tsc-tools.log` contains only the Node color warning. |
+| `tsc -p packages/client --noEmit --incremental false` | 0 | `tsc-client.log` contains only the Node color warning. |
+| eslint, prettier | not run | Not claimed. |
+
+`50 * 0.15` on this Node is exactly `7.5` (`independent-results.json` `fp.equal` true, `greater` false).
+
+## Limits
+
+- The protocol compares trace-on and trace-off unchanged reference frames under a recorded controlled load. An `observer-cost-issue` or `targeted-workload-next` label is a completion-envelope classification.
+- `budgetQualified` is hard-coded false. The summary limit string disclaims exclusive GPU attribution, complete CPU coverage, output equality, and a 16.67 ms budget verdict (`trace-observer-report.ts:419`).
+- Original cloud03 remains `FAILED` / `accepted: false`. Readiness is `disabled`. Binding and grant are null. No native binding or process controller is present.
+- `ports-settled` means the JS `pending` set is empty. It is not physical process settlement (`trace-observer.ts:21–22`, `browser-work-trace.ts:1250–1266`).
+- 0.9.5 mandatory revise conditions are not met: no new client-side authority, the suite covers the boundary (490 tests, plus this dispatcher replay), the disabled entry refuses `--run`, the budget flag stays false, and the threshold matches the logged parent decision.
+- No performance acceptance and no merge recommendation.
+
+## Cleanliness
+
+After the commands above, in `/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8`:
+
+- HEAD `02e981096574ca7e486958023075d0e52c45062f`
+- tree `6ab14d7ee5f702a45ae479f58837033320a14b89`
+- `git status --porcelain` empty
+- diff vs `5d29f46` still the three observer files only
+
+Artifacts: `/tmp/p1-e14-t13-r3-review.k7m3/` (`report.md`, `review.json`, `independent-results.json`, `independent.log`, `independent.mts`, `prior/`, `protected.json`, `vitest.log`, `proposal.json`, `run.err`, `zero-outside-band.json`, `tsc-tools.log`, `tsc-client.log`).
