@@ -34,11 +34,31 @@ when its minimum budget no longer fits; cleanup proceeds to escalation.
    inputs, normal cleanup and durable dispatch ownership. A publication manifest
    hashes every required receipt. All manifest/file/directory syncs, status
    output and ownership release must succeed before publication can commit.
-4. The last commit operation unlinks `.publication-open`. No required I/O follows
+4. The single-threaded runner blocks SIGINT and SIGTERM across its final decision,
+   gate removal and `committed` assignment. Its pending-signal snapshot is the
+   cancellation cutoff: a previously delivered or already pending request refuses
+   publication. After that snapshot, new signals are deferred until the transition
+   finishes; they cannot change `reason` between the decision and unlink. This is
+   admission to a short commit transaction, not a promise to cancel until the
+   physical unlink. There is no producer work or evidence serialization inside
+   an admitted transition.
+
+   The last commit operation unlinks `.publication-open`. No required I/O follows
    it. An interruption before that operation leaves refusal evidence. A crash
    that rolls back this unlink can only restore refusal; the input documents
    were already synced. The commit describes completed producer work and a
    completed evidence transaction, not a prediction based on PID disappearance.
+   Once the outcome is recorded in memory, the runner restores its prior signal
+   mask. Deferred requests after a successful commit are late notifications, not
+   cancellations of provisional work. If unlink fails, they are cancellations of
+   a refused attempt. `SWIFT_SIGNAL` diagnostics retain the signal number,
+   observation (pending or delivered), phase and committed flag. Logging is
+   diagnostic, not a new post-commit durability prerequisite. Standard signals
+   can coalesce while blocked; the log does not claim a count of every signal sent.
+   Refused runs also save `cancellation.json` when finalization reaches that step;
+   failed writes/unlink retain raw traceback/diagnostics and the refusal file.
+   Earlier provisional receipts remain unchanged. A SIGKILL before unlink refuses;
+   a kill after the commit cannot revoke already published evidence.
 5. `promote.py` requires protocol v2, absence of the refusal marker, exact
    publication bindings, real successful producer/supervisor outcomes, empty
    group/reaped-child proof, source identities and matching stock/identity GLB
@@ -55,3 +75,11 @@ Evidence under `88-observation-publication/` records exact f4fd0ea RED cases, al
 bounded implementation attempts, final real producer/consumer tests, original
 failure tails, and independent protection/process-empty checks. These results do
 not qualify density, native behavior, scene performance or a visual grade.
+
+`89-cancellation-commit/` adds the exact 2bd0ae57 race reproduction and real
+SIGINT/SIGTERM probes before the critical section, pending at its decision,
+inside it, after unlink and after mask restoration. The exact held-unlink probe
+now defers delivery and reports a late request after success; it does not claim
+to reject that request. Probes before admission refuse and preserve cancellation
+facts. Real promotion checks both provisional and completed states, along with
+retained I/O-failure, producer-exit-23, observation-failure and ownership controls.

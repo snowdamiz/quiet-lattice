@@ -82,18 +82,33 @@ def main():
     temp_alias = job = receipt = None
     reason = None
     committed = False
+    signal_events = []
+    cancellation_signals = {signal.SIGTERM, signal.SIGINT}
+    publication_phase = 'open'
     owner_ready = False
     publication = None
     group_empty = True
     code = 1
     started = time.monotonic()
 
-    def cancel(sig, frame):
+    def record_signal(sig, observation):
         nonlocal reason
+        event = {'signal': int(sig), 'observation': observation,
+                 'publicationPhase': publication_phase, 'committed': committed}
+        signal_events.append(event)
         if not committed:
             reason = reason or f'cancelled signal {sig}'
+        # Diagnostic only: a late request cannot undo completed publication.
+        # Keep it visible without making logging a new post-commit prerequisite.
+        try:
+            os.write(2, ('SWIFT_SIGNAL ' + json.dumps(event) + '\n').encode())
+        except OSError:
+            pass
 
-    for sig in (signal.SIGTERM, signal.SIGINT):
+    def cancel(sig, frame):
+        record_signal(sig, 'delivered')
+
+    for sig in cancellation_signals:
         signal.signal(sig, cancel)
     try:
         durable_json(LOCK / 'owner.json', {'pid': os.getpid(), 'cwd': str(ROOT), 'label': a.label})
@@ -191,12 +206,25 @@ def main():
             LOCK.rmdir()
         else:
             print('CLEANUP UNPROVEN: LOCK RETAINED', file=sys.stderr)
-        if receipt and code == 0 and not reason and group_empty:
-            # Commit point: every required file/dir sync and fallible operation above
-            # has finished. No required write follows this atomic gate removal.
-            # Crash rollback can restore the gate (a refusal), never unsync its inputs.
-            publication.unlink()
-            committed = True
+        if receipt and code == 0 and group_empty:
+            # This single-threaded runner defers delivery across the decision and
+            # gate removal. Include signals already pending when the decision starts.
+            previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, cancellation_signals)
+            try:
+                publication_phase = 'deciding'
+                pending = signal.sigpending() & cancellation_signals
+                for sig in sorted(pending):
+                    record_signal(sig, 'pending-at-decision')
+                if not reason:
+                    # All required I/O precedes this commit. A rollback restores refusal.
+                    publication.unlink()
+                    committed = True
+            finally:
+                publication_phase = 'committed' if committed else 'refused'
+                signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+        if job is not None and signal_events and not committed:
+            # Never rewrite the provisional receipt to conceal a late cancellation.
+            durable_json(job / 'cancellation.json', {'reason': reason, 'signals': signal_events})
     return 0 if committed else code if not reason and group_empty and code != 0 else 1
 
 
