@@ -1,0 +1,388 @@
+POST-COMMIT PROVENANCE
+HEAD: f9c2cef85002b8b859dfd393647a77c15f565e78
+TREE: 88d911dc73c15a5dee28b9fc73b4e7d690560d5c
+REVISION BASE: df2d05b1cc263c04599ab67334187dd807ebe186
+BRANCH: task/P1-E14-T05
+WORKTREE: CLEAN
+OWNERSHIP: 310 paths, all in task scope
+MANIFEST SHA256: 5d1c1e5902162a3d227b0926b7dcb2029a40a0c68e755b441548de1f4a288098
+All 480 manifest entries verified against both current bytes and committed blob/LFS OIDs. All 294 task LFS objects verified locally after the final commit; no network fetch.
+
+TASK: P1.E14.T05 (art), R1 SOURCE/CPU REVISE6.
+STATUS: R1-R5 implemented and locally verified. R6/shared stock integration PENDING; whole art acceptance FAIL/PENDING. No GPU or native visual/performance acceptance.
+SUMMARY: Corrected repeat-signal cancellation and process-group cleanup, lane/log ownership, absent/unreadable source handling, immutable attempt history, and current source/export qualification. Existing 3 saved sources and 3 exports are byte-for-byte unchanged: 31 distinct variants, 124 LOD meshes, 13 kinds, all 21 legacy non-tree base names. The original 78 demo meshes were not counted as 78 unique assets. No art geometry, palette, scale, variant, mapping, or runtime decision changed in this revision.
+
+PROVENANCE:
+Cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f
+Branch verified before edits and before commit: task/P1-E14-T05
+Original task base: f7f1347d1ba36b702000471d462dd7e9475dbb8d (tree 5cca39d788ed51aca8ebed574dc3c3756e9e7517)
+Revision base: df2d05b1cc263c04599ab67334187dd807ebe186 (tree 4f806e4b131d8330289e678fef9c26655b9ace9c)
+Final commit head/tree are reported in the post-commit handoff; embedding a commit's own hash in its contents would be circular.
+
+FILES:
+  packages/client/test/floraAssets.test.js
+  packages/tools/blender/flora/audit_saved.py
+  packages/tools/blender/flora/export_saved.py
+  packages/tools/blender/flora/material_trace.py
+  packages/tools/blender/flora/run_cpu.py
+  packages/tools/blender/flora/validate_exports.py
+  packages/tools/blender/flora/export_transaction.py
+  packages/tools/blender/flora/material_controls.py
+  packages/tools/blender/flora/receipts.py
+  packages/tools/blender/flora/source_audit.py
+  packages/tools/blender/flora/test_revision.py
+  packages/tools/blender/flora/test_revision_cpu.py
+
+Evidence: assets/renders/flora/t05/revision6 only. Original 157 evidence files and original source/export assets unchanged; 14 shared pipeline/rules files unchanged. Source/export hash inventory below and unchanged-and-cleanup.json. sha256_manifest.json closes all old/new task evidence, logs, receipts, manifests, archives and task code; its own digest is returned in the handoff.
+
+VERIFY:
+Original RED: copied the original reviewer repros into fresh scratch, reran them before edits, and retained original-code snapshots, original reports, observations and commands in red/. The 132 original reviewer evidence files rehashed unchanged. R1 SIGTERM and second SIGINT left children alive with a released lock; R2 contender log shrank 172 to 0 bytes; R3 missing input returned success, pointer/corrupt retained stale output; R4 overwrote prior receipts/rejected bytes; R5 wrong real collection and input-swap races passed; R6 disabled VALUE output and inactive black named Color layer passed full validation under the local tracer.
+Runner GREEN: copied original five-mode runner repro now records no living child after exit, terminal EXIT receipts, and contender exit 73 preserving all 172 incumbent log bytes. Reusing a completed log is rejected. New real process tests also exercise TERM-resistant child and grandchild, mixed repeated signals, timeout, lock-held cleanup, and a leader exiting before its descendant. All 8 unittest methods pass (including many table-driven cases); the final exact command was:
+  T05_TEST_EVIDENCE=/tmp/t05-revise6-unit-fifth-cases python3 -B packages/tools/blender/flora/test_revision.py
+  exit 0; 8 tests in 11.846s. Retained log unit-final-preflight.log and verified unit-final-cases.tar.gz.
+Real assets GREEN: real-regressions/results.json records 9 cases. Matching source/GLB pairs pass all 130 real loader/consumer tests including exact FLOAT COLOR_0, vertex associations, triangle associations, roots, variants and recolouring. Each of the 3 real GLBs substituted at another source's filename is rejected before library combination. Actual source and GLB replacement after validation is rejected by before/after hashes. Missing, LFS-pointer and corrupt copies exercise all 3 actual source identities; no runtime output remains, and all prior GLBs remain in per-attempt history. Original 6 hashes unchanged.
+Source audit GREEN: all 3 actual sources PASS; 124 LOD meshes checked, five full malformed-source controls plus missing float carriers rejected; the real Blender UNORM16 baseline and lossless FLOAT adapter remain covered. No source saved.
+R6 EXPECTED RED: stock full validator rejects the valid stone baseline, so material-stock is FAIL (exit 1). The historical local route passes its baseline but wrongly passes disabled VALUE output and inactive black named mask, so material-legacy is FAIL (exit 1). Both routes also run full-validator partial factor, linked factor, missing image and wrong-mask negatives. The stock rejection of every graph does not count as a positive qualification. All 3 actual GLBs still fail stock only for base colour (procedural); matching content remains PASS. No whole PASS is published; current receipt consumer refuses stock FAIL.
+Static GREEN: Python compile, scoped Ruff check/format, JS ESLint/Prettier, client typecheck and git diff --check all exit 0. Exact commands, exits and tails are in final-commands.json and static-commands.json and repeated below.
+Development failures retained: first test mutation wrote identical bytes (fixed the negative fixture); Darwin dead-group EPERM surfaced in second/third runs (fixed group inspection); third harness observed a partially written PID file (fixed readiness and emergency cleanup). Its owned orphan fixture group 81299 was matched by its exact child.py path and killed; final audit found no remaining owned workloads. These failures were not overwritten; see development-failures, including its complete archived cases and cleanup.json.
+
+DECISIONS:
+R1: signal handlers record only the first cancellation and never raise during cleanup. TERM, bounded escalation to KILL, direct-child reap, descendant liveness inspection and terminal receipt happen under lane ownership. If OS cleanup cannot be proven, a blocked-lane marker prevents subsequent work. The lock FD is also inherited by the direct child. SIGKILL cannot be caught; no claim otherwise.
+R2: acquire the lane before creating directories/touching the requested log. Logs open exclusively; contenders and retries cannot truncate prior output.
+R3/R4: fixed complete 3-source contract; snapshot/preflight every source. Preserve prior runtime files before discovery, use exclusive UUID attempt directories for reports/rejected bytes, stage the full batch and publish only a complete successful export. A failed attempt leaves no owned runtime outputs. Source-audit and validation reports use the same immutable history policy. Existing historical fixed-name reports are retained as historical evidence, never read as current qualification.
+R5: validation reads immutable byte snapshots of both sides, freshly audits source geometry and masks, checks per-file root/variant/mesh sets through the actual production loader before combining libraries, compares triangle/mask associations, then rehashes both originals and snapshots. Every receipt binds run ID, tool hashes, source and export hashes, full source/export reports, consumer tests/log and before/after observations through an evidence closure. Current state changes to RUNNING before checks and FAIL on any failure. Receipt consumption rechecks identities, report statuses, closed hashes, live input hashes and the current selector; prior PASS history cannot qualify a current failed attempt.
+No authoring/generation import in export/validation. The float-mask transport adapter is preserved. Source files remain the truth; no shared artlib/families changes.
+Historical material_trace.py is now test-only and no production wrapper installs it. Parent must remove it and the material_controls.py --legacy route after integrating the reviewed shared fix, then rerun fresh source/export/consumer qualification. No competing local material-recognition fix was added.
+
+OUT OF SCOPE / PENDING:
+Parent's candidate 515ba1f00810a50b499970b5468ef7bf0af84c32 in t3-e0969873 was reported under active independent review, not released as review PASS. Its report was read; no shared files/candidate changes integrated. R6 and stock acceptance are necessary and NOT waived. Parent owns shared pin integration, independent final review, native GPU capture/grade, T07 whole-library loader integration/fallback retirement, and merging. No push, PR, merge, browser, GPU, native capture, service/DB, grant, network asset fetch, orchestration-doc or other-worktree edit.
+Existing T07 limits remain: current runtime still loads mixed legacy flora.glb; resource deposits are selected from a colour-only pool; generic plants lack a dedicated scatter builder; runtime recolour drops imported UV/PBR and Review game-look replaces materials; live scatter mostly exposes only LOD0/1. The standalone exports remain real loader-consumable named-root assets. No whole intended-look or 60-FPS claim.
+
+ARTIFACTS / NEXT GPU INVENTORY:
+No new PNGs. Existing 46 compact images retained; full task evidence remains below 512 MiB. Malformed pointer fixture directory is losslessly archived as real-regressions/export-pointer-evidence.tar.gz so its intentionally missing all-zero LFS OID is not staged as a real LFS dependency. archive-inventory.json verifies every member before removal of the expanded copy. Expand into a fresh scratch directory to inspect it; never overwrite old evidence. Other archives preserve full process test fixtures/reports.
+Existing exact native inventory: assets/renders/flora/t05/next_gpu_inventory.json
+  SHA256 e074b0dbf6212f3bd900964b1788f11d35b541009a49926a8c52659a766fc836
+All 31 exact source/export/root/variant/review-spec/LOD mappings remain unchanged. Parent schedules only after reviewed source/shared integration: noon-lush, night-exotic, open-space; LOD0 and LOD2; beauty, wireframe and marker/collider overlays; 100m far view; 0/45/90/135/180/225/270/315-degree turntables; material closeups; native GPU timings and paired empty/asset scene costs, draw calls and memory. Proposed 31 contact sheets, no frame sequences. Not launched.
+
+SOURCE / EXPORT SHA256:
+436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15  assets/blend/flora/non_tree_stone.blend
+5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456  assets/blend/flora/non_tree_foliage.blend
+03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9  assets/blend/flora/non_tree_resources.blend
+a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9  packages/client/public/models/flora/non_tree_stone.glb
+925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d  packages/client/public/models/flora/non_tree_foliage.glb
+7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725  packages/client/public/models/flora/non_tree_resources.glb
+
+EXACT FINAL COMMANDS / EXITS / FAILURE TAILS:
+
+{
+  "case": "source-audit",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+    "--timeout",
+    "240",
+    "--log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/logs/source-audit.log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/audit_saved.py",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/source-audit"
+  ],
+  "exit": 0,
+  "expected_exit": 0,
+  "elapsed_seconds": 3.64,
+  "log": "assets/renders/flora/t05/revision6/logs/source-audit.log",
+  "log_sha256": "78d36c9dccc4b3b353dfa2bc309626914113d645249515747ffdb24b3263cf7d",
+  "tail": [
+    "INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib",
+    "INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib",
+    "00:40:11 | INFO: Starting glTF 2.0 export",
+    "00:40:11 | INFO: Extracting primitive: bush_0",
+    "00:40:11 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.",
+    "00:40:11 | INFO: Primitives created: 1",
+    "00:40:11 | INFO: Finished glTF 2.0 export in 0.029224157333374023 s",
+    "",
+    "00:40:11 | INFO: Starting glTF 2.0 export",
+    "00:40:11 | INFO: Extracting primitive: bush_0",
+    "00:40:11 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.",
+    "00:40:11 | INFO: Primitives created: 1",
+    "00:40:11 | INFO: Finished glTF 2.0 export in 0.005814075469970703 s",
+    "",
+    "SOURCE_AUDIT_PASS 20261107T054009Z-e7c9e6a47a0a48fd800172a6d5a69536",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit",
+    "",
+    "EXIT 0"
+  ]
+}
+
+{
+  "case": "material-stock",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+    "--timeout",
+    "240",
+    "--log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/logs/material-stock.log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/material_controls.py",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/material-stock"
+  ],
+  "exit": 1,
+  "expected_exit": 1,
+  "elapsed_seconds": 4.49,
+  "log": "assets/renders/flora/t05/revision6/logs/material-stock.log",
+  "log_sha256": "73265d27e0a0dc2afd812a3faac48b95fd92baffe87f100153deeff37a10f3a5",
+  "tail": [
+    "00:40:16 | INFO: Blender create Mesh node rock_0",
+    "00:40:16 | INFO: Blender create Mesh node rock_0",
+    "00:40:16 | INFO: Blender create Mesh node rock_0",
+    "00:40:16 | INFO: Blender create Mesh node rock_1",
+    "00:40:16 | INFO: Blender create Mesh node rock_1",
+    "00:40:16 | INFO: Blender create Mesh node rock_1",
+    "00:40:16 | INFO: Blender create Mesh node rock_1",
+    "00:40:16 | INFO: Blender create Mesh node rock_2",
+    "00:40:16 | INFO: Blender create Mesh node rock_2",
+    "00:40:16 | INFO: Blender create Mesh node rock_2",
+    "00:40:16 | INFO: Blender create Mesh node rock_2",
+    "00:40:16 | INFO: Blender create Mesh node rock_3",
+    "00:40:16 | INFO: Blender create Mesh node rock_3",
+    "00:40:16 | INFO: Blender create Mesh node rock_3",
+    "00:40:16 | INFO: Blender create Mesh node rock_3",
+    "00:40:16 | INFO: glTF import finished in 0.07s",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "MATERIAL_CONTROLS FAIL [{'case': 'baseline', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'disabled_value_output', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'inactive_named_black_mask', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'partial_factor', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'linked_factor', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'missing_image', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'wrong_mask', 'status': 'FAIL', 'target_material_rejected': True}]",
+    "",
+    "EXIT 1"
+  ]
+}
+
+{
+  "case": "material-legacy",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+    "--timeout",
+    "240",
+    "--log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/logs/material-legacy.log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/material_controls.py",
+    "--legacy",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/material-legacy"
+  ],
+  "exit": 1,
+  "expected_exit": 1,
+  "elapsed_seconds": 4.47,
+  "log": "assets/renders/flora/t05/revision6/logs/material-legacy.log",
+  "log_sha256": "5ecb7741aea08c50f4ab29ad20c37a1a40dfa59e7858140525d2b2873eaa40ab",
+  "tail": [
+    "00:40:20 | INFO: Blender create Mesh node rock_0",
+    "00:40:20 | INFO: Blender create Mesh node rock_0",
+    "00:40:20 | INFO: Blender create Mesh node rock_0",
+    "00:40:20 | INFO: Blender create Mesh node rock_1",
+    "00:40:20 | INFO: Blender create Mesh node rock_1",
+    "00:40:20 | INFO: Blender create Mesh node rock_1",
+    "00:40:20 | INFO: Blender create Mesh node rock_1",
+    "00:40:20 | INFO: Blender create Mesh node rock_2",
+    "00:40:20 | INFO: Blender create Mesh node rock_2",
+    "00:40:20 | INFO: Blender create Mesh node rock_2",
+    "00:40:20 | INFO: Blender create Mesh node rock_2",
+    "00:40:20 | INFO: Blender create Mesh node rock_3",
+    "00:40:20 | INFO: Blender create Mesh node rock_3",
+    "00:40:20 | INFO: Blender create Mesh node rock_3",
+    "00:40:20 | INFO: Blender create Mesh node rock_3",
+    "00:40:20 | INFO: glTF import finished in 0.07s",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "MATERIAL_CONTROLS FAIL [{'case': 'baseline', 'status': 'PASS', 'target_material_rejected': False}, {'case': 'disabled_value_output', 'status': 'PASS', 'target_material_rejected': False}, {'case': 'inactive_named_black_mask', 'status': 'PASS', 'target_material_rejected': False}, {'case': 'partial_factor', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'linked_factor', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'missing_image', 'status': 'FAIL', 'target_material_rejected': True}, {'case': 'wrong_mask', 'status': 'FAIL', 'target_material_rejected': True}]",
+    "",
+    "EXIT 1"
+  ]
+}
+
+{
+  "case": "real-regressions",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+    "--timeout",
+    "900",
+    "--log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/logs/real-regressions.log",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/test_revision_cpu.py",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/real-regressions"
+  ],
+  "exit": 0,
+  "expected_exit": 0,
+  "elapsed_seconds": 33.72,
+  "log": "assets/renders/flora/t05/revision6/logs/real-regressions.log",
+  "log_sha256": "925a16d77cd0729dca9e92f52dcfe0b814cf325aff10d4e7bee6b1234935c0ed",
+  "tail": [
+    "00:40:51 | INFO: Blender create Mesh node rock_1",
+    "00:40:51 | INFO: Blender create Mesh node rock_1",
+    "00:40:51 | INFO: Blender create Mesh node rock_2",
+    "00:40:51 | INFO: Blender create Mesh node rock_2",
+    "00:40:51 | INFO: Blender create Mesh node rock_2",
+    "00:40:51 | INFO: Blender create Mesh node rock_2",
+    "00:40:51 | INFO: Blender create Mesh node rock_3",
+    "00:40:51 | INFO: Blender create Mesh node rock_3",
+    "00:40:51 | INFO: Blender create Mesh node rock_3",
+    "00:40:51 | INFO: Blender create Mesh node rock_3",
+    "00:40:51 | INFO: glTF import finished in 0.07s",
+    "00:32.459  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/real-regressions/export-corrupt/evidence/attempts/20261107T054053Z-657b528e8e5e435d9ba3541604a53ef8/inputs/sources/flora/non_tree_foliage.blend\"",
+    "00:32.683  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/real-regressions/export-corrupt/evidence/attempts/20261107T054053Z-657b528e8e5e435d9ba3541604a53ef8/inputs/sources/flora/non_tree_resources.blend\"",
+    "Error: File format is not supported in file \"/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision6/real-regressions/export-corrupt/evidence/attempts/20261107T054053Z-657b528e8e5e435d9ba3541604a53ef8/inputs/sources/flora/non_tree_stone.blend\"",
+    "REAL_REGRESSIONS_PASS 9 STOCK FAIL",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit",
+    "",
+    "EXIT 0"
+  ]
+}
+
+{
+  "name": "python-compile",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-m",
+    "py_compile",
+    "packages/tools/blender/flora/run_cpu.py",
+    "packages/tools/blender/flora/export_saved.py",
+    "packages/tools/blender/flora/validate_exports.py",
+    "packages/tools/blender/flora/audit_saved.py",
+    "packages/tools/blender/flora/material_trace.py",
+    "packages/tools/blender/flora/source_audit.py",
+    "packages/tools/blender/flora/receipts.py",
+    "packages/tools/blender/flora/export_transaction.py",
+    "packages/tools/blender/flora/test_revision.py",
+    "packages/tools/blender/flora/test_revision_cpu.py",
+    "packages/tools/blender/flora/material_controls.py"
+  ],
+  "exit": 0,
+  "log": "assets/renders/flora/t05/revision6/logs/python-compile.log",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tail": []
+}
+
+{
+  "name": "ruff",
+  "command": [
+    "uvx",
+    "--offline",
+    "ruff",
+    "check",
+    "packages/tools/blender/flora/run_cpu.py",
+    "packages/tools/blender/flora/export_saved.py",
+    "packages/tools/blender/flora/validate_exports.py",
+    "packages/tools/blender/flora/audit_saved.py",
+    "packages/tools/blender/flora/material_trace.py",
+    "packages/tools/blender/flora/source_audit.py",
+    "packages/tools/blender/flora/receipts.py",
+    "packages/tools/blender/flora/export_transaction.py",
+    "packages/tools/blender/flora/test_revision.py",
+    "packages/tools/blender/flora/test_revision_cpu.py",
+    "packages/tools/blender/flora/material_controls.py"
+  ],
+  "exit": 0,
+  "log": "assets/renders/flora/t05/revision6/logs/ruff.log",
+  "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+  "tail": [
+    "All checks passed!"
+  ]
+}
+
+{
+  "name": "ruff-format",
+  "command": [
+    "uvx",
+    "--offline",
+    "ruff",
+    "format",
+    "--check",
+    "packages/tools/blender/flora/run_cpu.py",
+    "packages/tools/blender/flora/export_saved.py",
+    "packages/tools/blender/flora/validate_exports.py",
+    "packages/tools/blender/flora/audit_saved.py",
+    "packages/tools/blender/flora/material_trace.py",
+    "packages/tools/blender/flora/source_audit.py",
+    "packages/tools/blender/flora/receipts.py",
+    "packages/tools/blender/flora/export_transaction.py",
+    "packages/tools/blender/flora/test_revision.py",
+    "packages/tools/blender/flora/test_revision_cpu.py",
+    "packages/tools/blender/flora/material_controls.py"
+  ],
+  "exit": 0,
+  "log": "assets/renders/flora/t05/revision6/logs/ruff-format.log",
+  "sha256": "75b7030be9d7de96bf4e76e79b1f03f14af8899d169fd8d79564d59167d1ab80",
+  "tail": [
+    "11 files already formatted"
+  ]
+}
+
+{
+  "name": "eslint",
+  "command": [
+    "pnpm",
+    "exec",
+    "eslint",
+    "packages/client/test/floraAssets.test.js"
+  ],
+  "exit": 0,
+  "log": "assets/renders/flora/t05/revision6/logs/eslint.log",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tail": []
+}
+
+{
+  "name": "prettier",
+  "command": [
+    "pnpm",
+    "exec",
+    "prettier",
+    "--check",
+    "packages/client/test/floraAssets.test.js"
+  ],
+  "exit": 0,
+  "log": "assets/renders/flora/t05/revision6/logs/prettier.log",
+  "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+  "tail": [
+    "Checking formatting...",
+    "All matched files use Prettier code style!"
+  ]
+}
+
+{
+  "name": "client-typecheck",
+  "command": [
+    "pnpm",
+    "--filter",
+    "@astra/client",
+    "typecheck"
+  ],
+  "exit": 0,
+  "log": "assets/renders/flora/t05/revision6/logs/client-typecheck.log",
+  "sha256": "859f05647a92fcb79f6a57008bd6478a9bea618f6933c12cb2bb76a0a7f2bb7f",
+  "tail": [
+    "$ tsc -p ."
+  ]
+}
+
+{
+  "name": "diff-check",
+  "command": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "exit": 0,
+  "log": "assets/renders/flora/t05/revision6/logs/diff-check.log",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tail": []
+}

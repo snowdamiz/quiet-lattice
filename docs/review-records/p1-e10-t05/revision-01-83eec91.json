@@ -1,0 +1,736 @@
+{
+  "TASK": "P1.E10.T05 \u2014 source/evidence advisory correction",
+  "STATUS": "BLOCKED",
+  "statusReason": "All four CPU advisories resolved. Fresh independent review of this amended pin and whole-kit blind/native/runtime visual gates remain with parent. The historical source PASS does not approve this revision.",
+  "SUMMARY": "Preserved all seven blends, seven GLBs and historical packet bytes. Certified the actual Hinge Court clearance, separated measured source/export LOD counts, decoded and enforced bronze roughness floor, and corrected separate preview batch accounting. No new art direction or rendering.",
+  "BASE": "634c51d2378748c6a514af2a792ee4500b912643",
+  "revisionBase": "5208f10ce367d3fb179fe19458ab263423ef5432",
+  "revisionBaseTree": "0b00cb2bbc67bd7bddf4c8373507334490a2b949",
+  "branch": "task/P1-E10-T05-thalune-sarelun",
+  "finalPin": {
+    "head": "83eec91beca01e454794017ce95a0e744eb395ab",
+    "tree": "38da70cc3e65d0025485b79e1b50773185395a67",
+    "clean": true
+  },
+  "FILES CHANGED": [
+    {
+      "path": "assets/blend/cities/thalune/authoring/audit.py",
+      "sha256": "c37a3af69ab4906ce6bad33f112ea048205fba6653dc176c59c9c7d139924725"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/clearance.py",
+      "sha256": "1fbc6eaa39f8a0e4fcb08e34d7e0c81759e3acdfac48365d4dec352bd3a1bb80"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/decode_exports.mjs",
+      "sha256": "6521c11399df72802bc0b3c7d38bb68c1c31db502cddf19272635eee9b8aa95b"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/probe_advisories.py",
+      "sha256": "1d94bede1718c0da9d974e8b2e497354d1f84a80d82b0c6bfafa3e83445795ce"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/reconcile_advisories.py",
+      "sha256": "df1e5e60b6522920fcedc14b292609bb86c070f2743eba09cd5fb4dc0dd3e86d"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/run_lane.py",
+      "sha256": "2705e7deb5ac1d222fdd41ed8de5b9e984344a3b780eb936fa9c11ea474401b8"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/test_advisory_boundaries.py",
+      "sha256": "a9fe3862a7f4e37f84a67297b9720160e7920a86c46dff968541c1d532e76a67"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/test_lane_limits.py",
+      "sha256": "961d219d02cd7be71317ed91bea2a0f6cbee9cddd199c4f8b2836aeb7b00b54e"
+    },
+    {
+      "path": "assets/blend/cities/thalune/authoring/verify_revision.py",
+      "sha256": "d81447f6cfb09de6f2e5b0aba7d887c1c89f27e121e20fd60c39131c6c75b57b"
+    },
+    {
+      "path": "assets/blend/cities/thalune/manifest.json",
+      "sha256": "b0a8f4cbbad3a66bf53d8abb4b57392d7a7f322e2de1f2d62258c005fb0591f5"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/APPENDIX-C2.json",
+      "sha256": "88c0447271a5b16ed6200204721a81df8668895d6b0e22b7f73936e9031ea0ed"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/SHA256SUMS",
+      "sha256": "a8903b37a069bb32a714c6a426a174e3057ddf23bb500a228a25dffd40493423"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/baseline.json",
+      "sha256": "210fe16939611e27a8c64d2874bfa7152e9354b27ff7922abc6c4ff616639608"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/clearance-boundaries-process.json",
+      "sha256": "b8fb7a1f8969c78cc792622bd4a757be135eb3e80a897e90555051ab52cf6e14"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/clearance-boundaries-process.txt",
+      "sha256": "94d5064d9bc35b5bcc4540b2383be4b664c177a09286d4f6223a3d04eb9a9c7e"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/clearance-boundaries.json",
+      "sha256": "25986e4a5009320a126358cc10d098a29efd54c6e5aae95a06fdfa65d4cc6e8a"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-boundary-red-process.json",
+      "sha256": "e6dabed3f4af056264e4f8fc67a48f4ee7b8865cc3612ba8118196d67d3eab71"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-boundary-red-process.txt",
+      "sha256": "c0a0658802bee77d321aecc6230b98198955d80e81ac4fda0d121e5c3db85383"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-boundary-red.json",
+      "sha256": "419ff1b4e84052e0a497b95494996f449f1c717b8cacd336aaea3caeda4d3ced"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-final-process.json",
+      "sha256": "122b5ba9cd4ee27e1f326bc43106e1675e5e310e0c830063d31c71179bb319f8"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-final-process.txt",
+      "sha256": "01100c7a09b6dcd37674a6e62e7a1c21c8834eb4decac8abe375f8cd695dd8c5"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-final.json",
+      "sha256": "21d47f3a43954df93b509e7d4acde10d5bd02bc190b833a0813c0d54d2fcfc79"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-red-process.json",
+      "sha256": "799cd3ebdaa31d94f10723b91a3290df512290859fe178efb09b67a2fa64b1e4"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-red-process.txt",
+      "sha256": "2831a33ba4682eb40b76f292888ebb03557d4d5941f1a739668650c0c3337a4c"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-red.json",
+      "sha256": "db1feb0bca642db7d0147067efe51b94a6edd6ae5bd6c1f95a349f558604c905"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-process.json",
+      "sha256": "e416e377438bc1bba8ab9befa68c54cd5cd603b5018ccb4bde0082b01fc58aa3"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-process.txt",
+      "sha256": "c777b59df25adb3a3485ff9965ceb93259d0c290f7f8bcffa810650b83e9bdd7"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-stock/thalune_anchor.json",
+      "sha256": "06be02a9ac0c12adb620e88733b427466fba4c4b8ae532bfe059394efb527dcc"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-stock/thalune_civic.json",
+      "sha256": "d6de0b660057c08421fdb967e1b67658ba9501e8e80c34aacd42418730a6b864"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-stock/thalune_low.json",
+      "sha256": "cbda11cbce269d1de30a1eed23341f4a0c8c355b073bf337cfeaf543f5110a43"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-stock/thalune_mid.json",
+      "sha256": "fbd4677ccca1cb041916fbde134cb6c2857fac6de1fa09f6eb28bf51e36f77c0"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-stock/thalune_props.json",
+      "sha256": "1aef7e183ad77f5c5401f21a596fbc2ad68699f02d4e2d038e66aa921e37942b"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-stock/thalune_tall.json",
+      "sha256": "dbf7999ed306f766e505af45af94a106b45c21b8c6afb4f5e75eb4df6ade8589"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-stock/thalune_waterfront.json",
+      "sha256": "47fd2832ee809af1f0cad43368a144a64bce7ef8c20b55e9f19c73de640063f9"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit.json",
+      "sha256": "4a2b8b2fd049a712e4f07dcaaed57de3d7563f8942c9ef277637ec3c0b9256de"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-process.json",
+      "sha256": "dcc6914d5f827a916f3ced469f59680c004a034195156a96f89b0cc7f334a7e5"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-process.txt",
+      "sha256": "26667d07b597e1399d1a4fe537acfad63a8a9a3f4e3677ffff83a9d585f0e215"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-process.json",
+      "sha256": "c9406a6676379b635d376e7af38a7a4d53c4004030ab082cca9b003b96d3698d"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-process.txt",
+      "sha256": "7a4970a5396b4798d04c8ca08266d8350e025f9595c8d38faaf81084815d3e97"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-stock/thalune_anchor.json",
+      "sha256": "22338a2a2a73ac2fc2e9e0ab968637d52ae1cb4a571d011df55a2c5d73700513"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-stock/thalune_civic.json",
+      "sha256": "9c54c3fc8b64ba35b7dfb0d02c4800b01802708cb8821b6c749566f768191692"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-stock/thalune_low.json",
+      "sha256": "6c6a67169e5b0961b4b31a540d97585137c94b14422be0231da3a3c7a89d1aef"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-stock/thalune_mid.json",
+      "sha256": "0092a282ffefb3d58e10c303a4ecb5e490f2787a342bb86dbb5c7d6bb49c31e8"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-stock/thalune_props.json",
+      "sha256": "d0f4fe74a42567259140d6e672020bf58b1ea9dbf52c4c07a569f016e45fff8b"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-stock/thalune_tall.json",
+      "sha256": "8ee0cf65dce53b82a1789ffed3364acfd4e423ab4771c0f02547067ea23276e6"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-stock/thalune_waterfront.json",
+      "sha256": "ff768fb078975be7dc1e68ffbdda3edd16688df214e10479cf40f18a3e24e73f"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2.json",
+      "sha256": "cab98bebfb24f1d7c893653c3194e3dc11d826c2619f441491ad510f606ebfd4"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-stock/thalune_civic.json",
+      "sha256": "95048e428b433b0f9364c40d14258649006199a3465b80e0475d007e8ab20a9f"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-stock/thalune_low.json",
+      "sha256": "3b7684d4e5cc18f878caac1c035844d18f371f33d6bc1d79d39ac1c3bbc0a97f"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-stock/thalune_mid.json",
+      "sha256": "7eaddc2631b1128b760e1b6ce13c430e62fec990954cb13f4e85aa4cd3ceaca9"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-stock/thalune_tall.json",
+      "sha256": "1086782bfa59a10453448d0c51c73bf1d31a4dea5041bba82d5f1e231c8e4d81"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-stock/thalune_waterfront.json",
+      "sha256": "315b558d4a7527973e197c1197c55e04a4f8b184100d7f45f84c6083156885ca"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-verification.json",
+      "sha256": "05248eef1e913c767ac46ad36b9fc25772187425d8a1549917d4306df952a53a"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/finalization.json",
+      "sha256": "4c1cbe5dacaaf3b1d57799045eb1af49cce915d859d64960068f8060999b04ec"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/deadline.json",
+      "sha256": "e046779fed52906adc41e5be549d1e81bdab509994a0af5230c2a1d9d4d8da88"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/deadline.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/output.json",
+      "sha256": "21c1dfa87837681c395ccbe31b5027b659bb542939b6c956328d6ad69cd65054"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/output.txt",
+      "sha256": "b239badb6ea81198e936d66513f63d32cfa847f7859bde1f46a3e09db4c890f3"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/rss.json",
+      "sha256": "811455155a5a4c64ba420ac9a8c6fac49112c50d77f4f8d948e5e0e59a69ef1f"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/rss.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/tests.json",
+      "sha256": "d1807a6edcd4678c6c2fad500d0533224c54b2a8e8b4e59dc789eea6b9b676ba"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/metadata-amendment.json",
+      "sha256": "2ed2f24d867a9e8217ff74b4a4077f44c9733a90e9a65d84cb665297f2893dfd"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/reconcile-process.json",
+      "sha256": "9930e1fc7a2348e97e565317678da54a64a0c5ce1558e941508c32f4fe8be572"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/reconcile-process.txt",
+      "sha256": "6f028fc1d2aa46ba258839ed355ddf029dfb1d4c51f35e38a4d63b5e8357925a"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/source-probe-red-process.json",
+      "sha256": "10d543952241b7b2127f204e756b2f87c4cd8e68ac3df32d52367675fae5d077"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/source-probe-red-process.txt",
+      "sha256": "7fad38bb9511c0575164a3c79d8c2e95fd4c699ae3b5b21a47b1cc574da69a65"
+    },
+    {
+      "path": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/source-probe-red.json",
+      "sha256": "ac4647fe2c9bca6e1fcbdf239945f924d09f8168a4f4bc726903a124847ab494"
+    }
+  ],
+  "VERIFY": {
+    "result": "PASS for local CPU contracts",
+    "evidence": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-verification.json",
+    "evidenceSha256": "05248eef1e913c767ac46ad36b9fc25772187425d8a1549917d4306df952a53a",
+    "stockCallsPassed": 14,
+    "sourceAuditRows": 1494,
+    "exportAuditRows": 1532,
+    "rowMeaning": "Seven actual stock validations per mode plus kit predicates; not thousands of independent stock runs.",
+    "clearanceAssertions": 18,
+    "decodedBoundaryAssertions": 27,
+    "laneGuardTests": 4,
+    "protectedHashesMatched": 158,
+    "assetFilesChanged": 0,
+    "newPreviewImages": 0,
+    "commandsAndExits": [
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/clearance-boundaries-process.json",
+        "receiptSha256": "b8fb7a1f8969c78cc792622bd4a757be135eb3e80a897e90555051ab52cf6e14",
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "-t",
+          "2",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "assets/blend/cities/thalune/authoring/test_advisory_boundaries.py",
+          "--",
+          "assets/blend/cities/thalune/revisions/source-advisories-5208f10/clearance-boundaries.json"
+        ],
+        "childExit": 0,
+        "wrapperExit": 0,
+        "deadlineSeconds": 90,
+        "peakProcessTreeRssKiB": 477904,
+        "failureLast20Lines": [],
+        "logSha256": "94d5064d9bc35b5bcc4540b2383be4b664c177a09286d4f6223a3d04eb9a9c7e"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-boundary-red-process.json",
+        "receiptSha256": "e6dabed3f4af056264e4f8fc67a48f4ee7b8865cc3612ba8118196d67d3eab71",
+        "command": [
+          "/bin/zsh",
+          "-c",
+          "cd packages/tools && node --input-type=module < ../../assets/blend/cities/thalune/authoring/decode_exports.mjs"
+        ],
+        "childExit": 1,
+        "wrapperExit": 1,
+        "deadlineSeconds": 180,
+        "peakProcessTreeRssKiB": 483472,
+        "failureLast20Lines": [
+          "{\"pass\":false,\"files\":7,\"failures\":[\"thalune_mid_2: export counts 57578,17273,5757,2009 != 57578,17273,5757,2014\",\"thalune_tall_2: export counts 57577,17272,5757,2004 != 57577,17272,5757,2014\"]}"
+        ],
+        "logSha256": "c0a0658802bee77d321aecc6230b98198955d80e81ac4fda0d121e5c3db85383"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-final-process.json",
+        "receiptSha256": "122b5ba9cd4ee27e1f326bc43106e1675e5e310e0c830063d31c71179bb319f8",
+        "command": [
+          "/bin/zsh",
+          "-c",
+          "cd packages/tools && node --input-type=module < ../../assets/blend/cities/thalune/authoring/decode_exports.mjs"
+        ],
+        "childExit": 0,
+        "wrapperExit": 0,
+        "deadlineSeconds": 180,
+        "peakProcessTreeRssKiB": 393248,
+        "failureLast20Lines": [],
+        "logSha256": "01100c7a09b6dcd37674a6e62e7a1c21c8834eb4decac8abe375f8cd695dd8c5"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/decoded-red-process.json",
+        "receiptSha256": "799cd3ebdaa31d94f10723b91a3290df512290859fe178efb09b67a2fa64b1e4",
+        "command": [
+          "/bin/zsh",
+          "-c",
+          "cd packages/tools && node --input-type=module < ../../assets/blend/cities/thalune/authoring/decode_exports.mjs"
+        ],
+        "childExit": 1,
+        "wrapperExit": 1,
+        "deadlineSeconds": 180,
+        "peakProcessTreeRssKiB": 456800,
+        "failureLast20Lines": [
+          "{\"pass\":false,\"files\":7,\"failures\":[\"thalune_mid_2: export counts 57578,17273,5757,2009 != 57578,17273,5757,2014\",\"thalune_tall_2: export counts 57577,17272,5757,2004 != 57577,17272,5757,2014\",\"packages/client/public/models/cities/thalune_anchor.glb: bronze surface/texel coverage missing\"]}"
+        ],
+        "logSha256": "2831a33ba4682eb40b76f292888ebb03557d4d5941f1a739668650c0c3337a4c"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit-process.json",
+        "receiptSha256": "e416e377438bc1bba8ab9befa68c54cd5cd603b5018ccb4bde0082b01fc58aa3",
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "-t",
+          "2",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "assets/blend/cities/thalune/authoring/audit.py",
+          "--",
+          "--exports",
+          "--report",
+          "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit.json"
+        ],
+        "childExit": 0,
+        "wrapperExit": 0,
+        "deadlineSeconds": 240,
+        "peakProcessTreeRssKiB": 1371024,
+        "failureLast20Lines": [],
+        "logSha256": "c777b59df25adb3a3485ff9965ceb93259d0c290f7f8bcffa810650b83e9bdd7"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-process.json",
+        "receiptSha256": "dcc6914d5f827a916f3ced469f59680c004a034195156a96f89b0cc7f334a7e5",
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "-t",
+          "2",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "assets/blend/cities/thalune/authoring/audit.py",
+          "--",
+          "--report",
+          "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit.json"
+        ],
+        "childExit": 1,
+        "wrapperExit": 1,
+        "deadlineSeconds": 240,
+        "peakProcessTreeRssKiB": 756864,
+        "failureLast20Lines": [
+          "00:03.590  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_civic.blend\"",
+          "00:05.383  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_waterfront.blend\"",
+          "Traceback (most recent call last):",
+          "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/authoring/audit.py\", line 164, in <module>",
+          "    raise SystemExit(main())",
+          "                     ~~~~^^",
+          "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/authoring/audit.py\", line 145, in main",
+          "    point = door[\"entry\"]",
+          "            ~~~~^^^^^^^^^",
+          "KeyError: 'entry'",
+          "PASS  assets/blend/cities/thalune_low.blend",
+          "PASS  assets/blend/cities/thalune_mid.blend",
+          "PASS  assets/blend/cities/thalune_tall.blend",
+          "PASS  assets/blend/cities/thalune_civic.blend",
+          "PASS  assets/blend/cities/thalune_waterfront.blend",
+          "",
+          "Error: script failed, file: 'assets/blend/cities/thalune/authoring/audit.py', exiting.",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ],
+        "logSha256": "26667d07b597e1399d1a4fe537acfad63a8a9a3f4e3677ffff83a9d585f0e215"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2-process.json",
+        "receiptSha256": "c9406a6676379b635d376e7af38a7a4d53c4004030ab082cca9b003b96d3698d",
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "-t",
+          "2",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "assets/blend/cities/thalune/authoring/audit.py",
+          "--",
+          "--report",
+          "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-source-audit-r2.json"
+        ],
+        "childExit": 0,
+        "wrapperExit": 0,
+        "deadlineSeconds": 240,
+        "peakProcessTreeRssKiB": 1353408,
+        "failureLast20Lines": [],
+        "logSha256": "7a4970a5396b4798d04c8ca08266d8350e025f9595c8d38faaf81084815d3e97"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/deadline.json",
+        "receiptSha256": "e046779fed52906adc41e5be549d1e81bdab509994a0af5230c2a1d9d4d8da88",
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-c",
+          "import subprocess,sys,time; subprocess.Popen([sys.executable,'-c','import time; time.sleep(20)']); time.sleep(20)"
+        ],
+        "childExit": -15,
+        "wrapperExit": 124,
+        "deadlineSeconds": 0.5,
+        "peakProcessTreeRssKiB": 30560,
+        "failureLast20Lines": [],
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/output.json",
+        "receiptSha256": "21c1dfa87837681c395ccbe31b5027b659bb542939b6c956328d6ad69cd65054",
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-c",
+          "import time; print('x'*8192,flush=True); time.sleep(20)"
+        ],
+        "childExit": -15,
+        "wrapperExit": 124,
+        "deadlineSeconds": 5,
+        "peakProcessTreeRssKiB": 128,
+        "failureLast20Lines": [
+          "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        ],
+        "logSha256": "b239badb6ea81198e936d66513f63d32cfa847f7859bde1f46a3e09db4c890f3"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/lane-tests/rss.json",
+        "receiptSha256": "811455155a5a4c64ba420ac9a8c6fac49112c50d77f4f8d948e5e0e59a69ef1f",
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-c",
+          "import time; data=bytearray(2000000); time.sleep(20)"
+        ],
+        "childExit": -15,
+        "wrapperExit": 124,
+        "deadlineSeconds": 5,
+        "peakProcessTreeRssKiB": 512,
+        "failureLast20Lines": [],
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/reconcile-process.json",
+        "receiptSha256": "9930e1fc7a2348e97e565317678da54a64a0c5ce1558e941508c32f4fe8be572",
+        "command": [
+          "python3",
+          "assets/blend/cities/thalune/authoring/reconcile_advisories.py"
+        ],
+        "childExit": 0,
+        "wrapperExit": 0,
+        "deadlineSeconds": 30,
+        "peakProcessTreeRssKiB": 5664,
+        "failureLast20Lines": [],
+        "logSha256": "6f028fc1d2aa46ba258839ed355ddf029dfb1d4c51f35e38a4d63b5e8357925a"
+      },
+      {
+        "receipt": "assets/blend/cities/thalune/revisions/source-advisories-5208f10/source-probe-red-process.json",
+        "receiptSha256": "10d543952241b7b2127f204e756b2f87c4cd8e68ac3df32d52367675fae5d077",
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "-t",
+          "2",
+          "--factory-startup",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "assets/blend/cities/thalune/authoring/probe_advisories.py",
+          "--",
+          "assets/blend/cities/thalune/revisions/source-advisories-5208f10/source-probe-red.json"
+        ],
+        "childExit": 0,
+        "wrapperExit": 0,
+        "deadlineSeconds": 240,
+        "peakProcessTreeRssKiB": 1353920,
+        "failureLast20Lines": [],
+        "logSha256": "7fad38bb9511c0575164a3c79d8c2e95fd4c699ae3b5b21a47b1cc574da69a65"
+      }
+    ],
+    "static": [
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/audit.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/author_kit.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/clearance.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/fit_bridge_rails.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/ktx_cpu.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/preview.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/probe_advisories.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/reconcile_advisories.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/run_lane.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/studio.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/test_advisory_boundaries.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/test_lane_limits.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/test_negative_validation.py",
+        "exit": 0
+      },
+      {
+        "pythonCompile": "assets/blend/cities/thalune/authoring/verify_revision.py",
+        "exit": 0
+      },
+      {
+        "command": [
+          "node",
+          "--check",
+          "assets/blend/cities/thalune/authoring/decode_exports.mjs"
+        ],
+        "exit": 0
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit": 0
+      }
+    ],
+    "historicalTestsNotRerun": "Original five negative validation mutations and twelve compression Vitest tests remain historical; new tests target these advisories and actual final artifacts."
+  },
+  "DECISIONS": [
+    "Door declaration versus unchanged geometry \u2192 certify 3.189 m, rounded down from source 3.189999461 and compressed export 3.189597845 m; full endpoint probes reject sub-centimetre violations. Both exceed the 2.4 m minimum and 3 m service-door target.",
+    "LOD catalog ambiguity \u2192 schema 2 sourceLodTriangles and exportLodTriangles. Saved mid_2/tall_2 LOD3 are 2014/2014; decoded export LOD3 are 2009/2004. Other LOD counts agree.",
+    "Potential bronze roughness underflow \u2192 independently decode all 84 mip levels and the full bronze UV band, including margins. Actual source floor 0.239215702; export floor 0.243137255 for six files, 0.231372549 in the unused anchor bronze lane. No authoring, saved-source or export change warranted. Validator rejects 50/255, accepts 51/255 at factor 1, rejects a below-floor material factor.",
+    "Trace lossy-codec metallic values outside bronze \u2192 separate diagnostic records roughness 0.168627451 at metallic 2/255; this is outside the bronze band. The complete bronze band is tested independently of the metallic >=0.5 diagnostic threshold.",
+    "Preview accounting \u2192 r1 seven PNGs 10,774,824 bytes; r2 one PNG 1,417,497 bytes; 12,192,321 retained PNG bytes total. Historical receipts and image bytes unchanged.",
+    "Historical evidence \u2192 audit reads current manifest and writes exclusive new receipts. Initial revision decoder overrequired bronze usage on the anchor; corrected to validate the unused band without demanding a surface. Initial door audit treated a stair record as an entry and raised KeyError; corrected entry filtering. Both failed runs retained."
+  ],
+  "OUT OF SCOPE FOUND": {
+    "E10.T01": "Existing renderer/planner scaling, variant selection, actual collision consumers, canals/tides/terrain remain unchanged.",
+    "parentGates": [
+      "fresh independent code review",
+      "blind visual grade of full artifact set",
+      "in-engine three-light LOD0/LOD2/wire review",
+      "live walker collision",
+      "GPU appearance and performance",
+      "merged smoke"
+    ]
+  },
+  "ARTIFACTS": {
+    "manifest": "assets/blend/cities/thalune/manifest.json",
+    "manifestSha256": "b0a8f4cbbad3a66bf53d8abb4b57392d7a7f322e2de1f2d62258c005fb0591f5",
+    "revisionReceipts": "assets/blend/cities/thalune/revisions/source-advisories-5208f10",
+    "previewBatches": {
+      "r1": {
+        "pngCount": 7,
+        "bytes": 10774824,
+        "files": [
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.png",
+            "bytes": 269835,
+            "sha256": "489e0345dcd715773988f1451aef3f295022f530943b4f184102110309564a94"
+          },
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/civic.png",
+            "bytes": 2469519,
+            "sha256": "1d631c0739d0b1bb675296c977c145caead191aa3a95696b717d2d51cb2bb2bc"
+          },
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.png",
+            "bytes": 1693904,
+            "sha256": "cc65d30481f79c898a426b66619a9827a8811e0fae60d14a9727146d940f7cc3"
+          },
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/mid.png",
+            "bytes": 1100773,
+            "sha256": "9d9e6e8b2f9a33940345e24200a57078651bc68a71334d43586e9cf8161cb536"
+          },
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.png",
+            "bytes": 1418329,
+            "sha256": "426e872a73830b5431b6a51d10530588c28c2de976d5694d8ba2ebf5cb236994"
+          },
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/tall.png",
+            "bytes": 876860,
+            "sha256": "da94af3b76126b295ef131280bd0e5748ac32904399170139a57f3464b3fdf87"
+          },
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/waterfront.png",
+            "bytes": 2945604,
+            "sha256": "f22a25358b1ee0b5c217d0105464e103f6a2a4dc34ddb5ad858f00bdac0e2f20"
+          }
+        ]
+      },
+      "r2": {
+        "pngCount": 1,
+        "bytes": 1417497,
+        "files": [
+          {
+            "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r2/props.png",
+            "bytes": 1417497,
+            "sha256": "137fb24b21f278b26a306627fc6f7d19f141a424e35a907a75d4bda6b7212a63"
+          }
+        ]
+      }
+    },
+    "plannedNativeInventory": {
+      "path": "assets/blend/cities/thalune/receipts/final-capture-inventory.json",
+      "sha256": "0643f2bdbf4d2586636dd3eae2ff36bfa279cb74f7751a1cf9dbea04f2c04732",
+      "images": 342,
+      "turntableSheets": 38,
+      "materialSheets": 38,
+      "threeLightingByTwoLodCaptures": 228,
+      "wireframes": 38,
+      "authorization": "NOT AUTHORIZED BY THIS CPU CORRECTION; parent schedules and grants separately"
+    }
+  },
+  "resources": {
+    "backend": "CPU only",
+    "blenderProcessesAtOnceInLane": 1,
+    "blenderThreads": 2,
+    "rssLimitKiB": 6291456,
+    "outputLimitBytes": 16777216,
+    "peakMeasuredProcessTreeRssKiB": 1371024,
+    "allOwnedProcessGroupsReaped": true,
+    "nativeGpuBrowserServerDbRuns": 0
+  },
+  "delivery": "Same branch; no push, PR, merge, orchestration edits or shared library/exporter/runtime edits.",
+  "HEAD": "83eec91beca01e454794017ce95a0e744eb395ab",
+  "TREE": "38da70cc3e65d0025485b79e1b50773185395a67",
+  "postCommitChecks": {
+    "gitStatusPorcelain": "",
+    "checksumEntriesMatched": 208,
+    "LfsHydratedPointersMatched": 30,
+    "scopedChangedFiles": 67,
+    "gitDiffCheckExit": 0
+  },
+  "checksumFileSha256": "a8903b37a069bb32a714c6a426a174e3057ddf23bb500a228a25dffd40493423"
+}
