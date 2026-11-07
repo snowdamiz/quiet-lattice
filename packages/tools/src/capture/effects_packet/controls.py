@@ -88,6 +88,7 @@ class Fixture:
         self.paths = {'evidence': '/private/tmp/egp-' + nonce, 'consumption': '/private/tmp/egc-' + nonce + '.json', 'grant': '/private/tmp/egg-' + nonce + '.json'}
         self.source = {'head': 'a' * 40, 'tree': 'b' * 40, 'clean': True}
         self.ready = {'runtimeEnabled': True, 'root': str(root), 'uid': os.getuid(), 'assetSourcePaths': [],
+                      'generatedCaches': [str(root / 'cache'), str(root / 'cache-temp')],
                       'budget': ledger(), 'asset': {'material': 'LIB_FX_Gravitic', 'triangles': 576},
                       'pilot': {**self.paths, 'file': FILE, 'asset': ASSET, 'gl': 'metal', 'viewport': [1920, 1080], 'files': plan(),
                                 'authorizationId': nonce, 'attemptId': nonce, 'output': str(root / 'assets/renders' / nonce)}}
@@ -142,6 +143,7 @@ class Fixture:
                 fixture.calls.append('initialize')
                 if fixture.fault == 'constructor': raise RuntimeError('partial constructor')
             def observer(self, job): return Observer()
+            def start(self, job): return observe_call(result['raw'].setdefault('start', []), 'start', job.start, owner=job)
             def budgets(self, job): pass
             def cleanup(self, job, observer):
                 fixture.calls.append('release')
@@ -153,6 +155,7 @@ class Fixture:
         return Ports()
 
     def run(self, **kw):
+        kw.setdefault('stderr', lambda _: None)
         with patch.object(bindings, 'ROOT', self.root):
             return caller.execute(self.ready_path, enabled=True, authorization=self.ready['pilot']['authorizationId'],
                                   verify_source=lambda _: self.source, ports_factory=self.ports, **kw)

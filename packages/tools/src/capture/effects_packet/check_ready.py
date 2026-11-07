@@ -5,6 +5,7 @@ import json
 import struct
 from pathlib import Path
 from bindings import verify
+from cache_owners import check_cache_owners
 from contract import HERE, ledger, plan, require, snapshot
 import caller
 
@@ -16,6 +17,8 @@ def check():
     require('export const RUNTIME_ENABLED = false;' in (HERE / 'entry.mjs').read_text(), 'Node entry must remain disabled')
     require(r['pilot']['files'] == plan() and r['budget'] == ledger(), 'Pilot/ledger drift')
     current = verify(r)
+    cache_owners = []
+    check_cache_owners(r, cache_owners, 'disabled-readiness-audit')
     manifest = snapshot(Path(r['root']) / 'assets/blend/effects/manifest.json')['value']
     asset = next(a for a in manifest['assets'] if a['id'] == r['pilot']['asset'])
     require(asset == r['asset'], 'Manifest mapping changed')
@@ -34,7 +37,8 @@ def check():
     return {'status': 'PASS_SOURCE_ONLY_DISABLED', 'source': current, 'readinessSha256': snap['sha256'],
             'bindings': len(r['bindings']), 'dependencyTrees': r['dependencyTrees'],
             'runtimeEnabled': False, 'realGrantCreated': False, 'nativeCaptureStarted': False,
-            'assetHead': r['assetHead'], 'budget': r['budget']['admissionBytes'], 'outputCap': r['budget']['outputCapBytes']}
+            'assetHead': r['assetHead'], 'budget': r['budget']['admissionBytes'], 'outputCap': r['budget']['outputCapBytes'],
+            'cacheOwnerChecks': cache_owners}
 
 
 if __name__ == '__main__':

@@ -30,6 +30,27 @@ def failure(error):
     return {'type': type(error).__name__, 'message': str(error), 'args': raw(error.args), 'attributes': raw(fields)}
 
 
+def ownership(job):
+    """Available in-memory ownership, including future fields; no filesystem probes or release inference."""
+    attributes = vars(job)
+    required = ('out', 'scratch', 'target', 'root', 'coalition_id', 'known', 'registered', 'state')
+    return {'attributes': raw(attributes), 'missing': [key for key in required if key not in attributes],
+            'registrationAndRelease': 'UNPROVED_BY_THIS_ATTRIBUTE_SNAPSHOT'}
+
+
+def reject_unconsumed(result, sink, stderr):
+    """Admission refusal allocates no evidence/output/consumption; all failed sink facts stay in memory."""
+    result.update(accepted=False, checksPassed=False, durable=False, publication='REFUSED_BEFORE_CONSUMPTION')
+    try:
+        data = (json.dumps(raw(result), sort_keys=True, allow_nan=False) + '\n').encode()
+        require(len(data) <= MIB and sink.charged + len(data) <= METADATA_PER_PROCESS, 'Admission stderr metadata cap')
+        sink.charged += len(data)
+        stderr(data)
+    except BaseException as error:
+        result['errors'].append({'phase': 'admission-stderr-write', **failure(error)})
+    return result
+
+
 class Receipts:
     def __init__(self, writer=None):
         self.charged = 0

@@ -12,6 +12,7 @@ import subprocess
 import sysconfig
 import uuid
 import zlib
+import cache_owners
 
 from bindings import file_binding, git, tree_binding
 from contract import ASSET, ASSET_HEAD, FILE, HERE, ROOT, ledger, plan, read_json, require, sha
@@ -97,6 +98,9 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
         'retainedAssetSourceReview': file_binding(review),
         'freezePredecessor': {'head': git(ROOT, 'rev-parse', 'HEAD'), 'tree': git(ROOT, 'rev-parse', 'HEAD^{tree}'), 'informativeOnly': True},
         'generatedCaches': caches, 'initialCacheBytes': initial,
+        'cacheOwnerPolicy': {'secondsPerCheck': cache_owners.OWNER_SECONDS, 'commandOutputCap': cache_owners.COMMAND_CAP,
+                             'checkOutputCap': cache_owners.CHECK_CAP, 'phases': ['before-consumption-and-snapshot', 'immediately-before-launch'],
+                             'scope': 'Exact cache opens and task-local Node/Vite cwd/argv; any owner or uncertainty refuses; observations are not a lock.'},
         'pilot': {'file': FILE, 'asset': ASSET, 'gl': 'metal', 'viewport': [1920, 1080], 'files': plan(),
                   'attemptId': nonce, 'authorizationId': 'effects-' + nonce,
                   'output': str(ROOT / 'assets/renders' / ('effects-pilot-' + nonce)),

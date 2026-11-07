@@ -10,7 +10,7 @@ import shutil
 import time
 from contract import CAPTURE_SECONDS, CLEANUP_SECONDS, DECODE_SECONDS, HERE, require, snapshot
 from bindings import admit, verify
-from evidence import Receipts, failure, publish, raw
+from evidence import Receipts, failure, publish, raw, ownership, reject_unconsumed
 
 RUNTIME_ENABLED = False
 
@@ -21,7 +21,7 @@ def native(ready, result):
 
 
 def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, authorization=None,
-            verify_source=verify, ports_factory=native, sink=None, stderr=None):
+            verify_source=verify, ports_factory=native, sink=None, stderr=None, cache_guard=None):
     if not enabled:
         return {'accepted': False, 'state': 'DISABLED', 'nativeImports': 0, 'launches': 0, 'allocations': 0}
     require(__debug__ and not sys.flags.optimize, 'Optimized Python refused')
@@ -35,6 +35,15 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
     grant_snap = snapshot(p['grant'])
     current = verify_source(r)
     result['admission'] = admit(ready_snap, grant_snap, current, authorization or os.environ.get('EFFECTS_AUTHORIZATION'))
+    if cache_guard is None:
+        from cache_owners import check_cache_owners
+        cache_guard = check_cache_owners
+    result['raw']['cacheOwnerChecks'] = []
+    try:
+        cache_guard(r, result['raw']['cacheOwnerChecks'], 'before-consumption-and-snapshot')
+    except BaseException as error:
+        result['errors'].append({'phase': 'cache-owner-admission', **failure(error)})
+        return reject_unconsumed(result, sink, stderr)
     # Source/bindings, fresh paths and exact grant all pass before the one-use identity is consumed.
     require(shutil.disk_usage(Path(p['output']).parent).free >= r['budget']['admissionBytes'], 'Insufficient admission reserve')
     consumption = {'state': 'CONSUMED', 'accepted': False, 'authorizationId': p['authorizationId'],
@@ -59,7 +68,8 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
             tmp, admission = ports.allocate_tmp(evidence)
             result['raw']['tmpAdmission'] = raw(admission)
             job = ports.job_object()
-            attempted = {'kind': 'StationJob', 'attempted': True, 'initialized': False, 'started': False}
+            attempted = {'kind': 'StationJob', 'attempted': True, 'initialized': False, 'started': False,
+                         'startAttempted': False, 'ownershipAtAttempt': ownership(job)}
             result['jobs'].append(attempted)  # Register BEFORE constructor or start can fail.
             ports.initialize(job, evidence, ready_path)
             attempted['initialized'] = True
@@ -67,8 +77,10 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
             require(verify_source(r) == current, 'Source changed before launch')
             sink.write(evidence / 'prelaunch-source.json', current)
             observer = ports.observer(job)
+            cache_guard(r, result['raw']['cacheOwnerChecks'], 'immediately-before-launch')
             require(capture_end - time.monotonic() >= 9, 'Insufficient time for bounded StationJob bootstrap and handshake')
-            job.start()
+            attempted['startAttempted'] = True
+            ports.start(job)
             attempted['started'] = True
             def observe():
                 observer.observe()
@@ -84,6 +96,7 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
     finally:
         if job is not None:
             result['jobs'][-1]['stateBeforeCleanup'] = raw(getattr(job, 'state', {}))
+            result['jobs'][-1]['ownershipBeforeCleanup'] = ownership(job)
             if observer is not None:
                 try:
                     result['raw']['executionPartial'] = raw(observer.receipt())
@@ -100,6 +113,7 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
                 result['errors'].append({'phase': 'cleanup', **failure(error)})
         if job is not None:
             result['jobs'][-1]['stateAfterCleanup'] = raw(getattr(job, 'state', {}))
+            result['jobs'][-1]['ownershipAfterCleanup'] = ownership(job)
     # No image decoder before positive native cohort, profile, namespace and registration release.
     if not result['errors'] and result['release'] and result['release'].get('released') is True:
         try:

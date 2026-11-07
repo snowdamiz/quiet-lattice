@@ -11,7 +11,7 @@ import time
 from types import SimpleNamespace
 
 from contract import CACHE_CAP, CACHE_SECONDS, MIB, ROOT, require, sha
-from evidence import failure, raw
+from evidence import failure, raw, ownership
 
 
 class PhaseExpired(BaseException):
@@ -54,6 +54,8 @@ def tree_bytes(path):
 
 
 def snapshot_caches(ready, destination, observations):
+    def stable(info):
+        return {key: getattr(info, key) for key in ('st_dev', 'st_ino', 'st_mode', 'st_uid', 'st_gid', 'st_size', 'st_mtime_ns', 'st_ctime_ns')}
     charged = 0
     with phase(CACHE_SECONDS):
         for index, name in enumerate(ready['generatedCaches']):
@@ -76,7 +78,8 @@ def snapshot_caches(ready, destination, observations):
                 before = p.stat()
                 require(p.is_file() and charged + before.st_size <= CACHE_CAP, 'Cache snapshot file cap')
                 charged += before.st_size  # Include partial attempts; no retry.
-                item = {'path': str(p), 'bytes': before.st_size, 'complete': False}
+                item = {'path': str(p), 'bytes': before.st_size, 'complete': False,
+                        'before': stable(before), 'accessedBeforeNs': before.st_atime_ns}
                 row['files'].append(item)
                 with p.open('rb') as src, q.open('xb') as dst:
                     remaining = before.st_size
@@ -86,7 +89,9 @@ def snapshot_caches(ready, destination, observations):
                         dst.write(block)
                         remaining -= len(block)
                     require(not src.read(1), 'Cache grew')
-                require(p.stat() == before and sha(p) == sha(q), 'Cache snapshot drift')
+                after = p.stat()
+                item.update(after=stable(after), accessedAfterNs=after.st_atime_ns)
+                require(stable(after) == stable(before) and sha(p) == sha(q), 'Cache snapshot drift')
                 item.update(complete=True, sha256=sha(q))
             row['complete'] = True
     return charged
@@ -95,7 +100,8 @@ def snapshot_caches(ready, destination, observations):
 def observe_call(records, name, function, *args, owner=None, **kwargs):
     """Intercept existing read/ownership ports before assertions erase partial observations."""
     job = owner
-    row = {'call': name, 'observations': [], 'returned': None, 'failure': None}
+    row = {'call': name, 'observations': [], 'returned': None, 'failure': None,
+           'ownershipBefore': ownership(job) if job is not None else None}
     records.append(row)
     namespace, replaced = function.__globals__, {}
     def wrap(label, original):
@@ -110,8 +116,9 @@ def observe_call(records, name, function, *args, owner=None, **kwargs):
                 item['failure'] = failure(error)
                 raise
         return observed
-    old_members = job.__dict__.get('members') if job else None
-    had_members = job and 'members' in job.__dict__
+    old_members = job.__dict__.get('members') if job is not None else None
+    had_members = job is not None and 'members' in job.__dict__
+    wrapped_members = job is not None and hasattr(job, 'members')
     try:
         for key in ('kernel_tasks', 'identity', 'coalition', 'executable_path', 'current_commands', 'parse_launch', '_archive_profile_paths', '_tmp_tree', 'tmp_admission'):
             if key in namespace:
@@ -120,8 +127,8 @@ def observe_call(records, name, function, *args, owner=None, **kwargs):
         if 'subprocess' in namespace:
             original = namespace['subprocess']
             replaced['subprocess'] = original
-            namespace['subprocess'] = SimpleNamespace(**{**vars(original), **{k: wrap('subprocess.' + k, getattr(original, k)) for k in ('run', 'check_output')}})
-        if job:
+            namespace['subprocess'] = SimpleNamespace(**{**vars(original), **{k: wrap('subprocess.' + k, getattr(original, k)) for k in ('run', 'check_output') if hasattr(original, k)}})
+        if wrapped_members:
             job.members = wrap('members', job.members)
         result = function(*args, **kwargs)
         row['returned'] = raw(result)
@@ -132,13 +139,15 @@ def observe_call(records, name, function, *args, owner=None, **kwargs):
     finally:
         # No I/O in this finally: BaseException (including SIGALRM) immediately unwinds its phase.
         namespace.update(replaced)
-        if job:
-            row['jobState'] = raw(getattr(job, 'state', {}))
-            row['known'] = raw(getattr(job, 'known', {}))
+        if wrapped_members:
             if had_members:
                 job.members = old_members
             else:
                 del job.members
+        if job is not None:
+            row['jobState'] = raw(getattr(job, 'state', {}))
+            row['known'] = raw(getattr(job, 'known', {}))
+            row['ownershipAfter'] = ownership(job)
 
 
 class NativePorts:
@@ -171,6 +180,9 @@ class NativePorts:
                'PYTHONOPTIMIZE': '0', 'PYTHONDONTWRITEBYTECODE': '1', 'SMOKE_GL': 'metal', 'DEBUG': 'pw:browser',
                'EFFECTS_AUTHORIZATION': p['authorizationId'], 'EFFECTS_READY_SHA256': self.result['admission']['ready']['sha256']}
         self.boundary.StationJob.__init__(job, evidence / 'job', [r['node'], str(ROOT / 'packages/tools/src/capture/effects_packet/entry.mjs'), str(ready_path)], ROOT, capture_seconds=600, env=env)
+
+    def start(self, job):
+        return observe_call(self.result['raw'].setdefault('start', []), 'start', job.start, owner=job)
 
     def observer(self, job):
         stage = self.stages.StageReceipts(job, self.ready, str(self.tmp))

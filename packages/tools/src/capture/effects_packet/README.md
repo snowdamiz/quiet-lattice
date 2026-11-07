@@ -20,6 +20,7 @@ Run from this checkout with its installed tools; no fetch or hydration:
 
 ```sh
 python3 -B packages/tools/src/capture/effects_packet/controls.py
+python3 -B packages/tools/src/capture/effects_packet/boundary_controls.py
 node packages/tools/src/capture/effects_packet/controls.mjs
 node node_modules/eslint/bin/eslint.js packages/tools/src/capture/effects_packet/*.mjs
 node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/capture/effects_packet/*.mjs packages/tools/src/capture/effects_packet/*.json
@@ -71,6 +72,31 @@ kernel ownership ports. Probe return values, unknown fields, partial exceptions,
 primary and secondary errors are retained; wrappers restore the helper ports
 without I/O when unwinding a deadline. Constructor/start failures without a proved
 cohort retain their exact partials instead of guessing cleanup ownership.
+
+The caller snapshots the complete available job instance before construction and
+before/after cleanup, including fields outside `state` and unknown fields. Missing
+ownership attributes are explicit. A `registered: false` attribute is never used
+as proof that a bootstrap did not register. The actual `start()` subprocess and
+ownership producers are observed before the helper's receipt I/O; exit, stdout,
+stderr and unknown CompletedProcess fields survive receipt failure, SIGALRM and
+combined publication failures. Observation ports are restored without I/O during
+unwind. There is exactly one attempted start and no relaunch.
+
+Before consumption (and thus the cache snapshot), and again immediately before
+launch, a read-only owner guard queries the exact generated cache directories and
+current-user Node/Vite cwd/argv routes for this task. Any open cache owner, related
+Node/Vite process, malformed/partial observation or uncertainty refuses. The
+guard uses capped `ps`/`lsof` output (256 KiB per command, 384 KiB per check), a
+10-second deadline, at most 64 Node candidates, and a bounded 0.5-second reap for
+its own read-only probe child on interruption. No competing process is signalled.
+Executable names are enumerated before requesting only Node/Vite arguments;
+unrelated programs' argument bodies are not queried. Disappearing Node candidates
+need a fresh exact-PID absence observation. These are point-in-time observations,
+not a host lock or OS quota. Refusal before consumption creates no output/evidence
+root and preserves observations in memory even if bounded stderr also fails.
+The cache copy compares identity, permissions, size, modification/change time and
+content hashes. It records access time separately because the copy's own read
+can update it without changing the cache content.
 
 Capture has a 600-second outer phase. Nested wait receives remaining time; start
 requires enough time for its existing 3-second bootstrap and 5-second handshake.
