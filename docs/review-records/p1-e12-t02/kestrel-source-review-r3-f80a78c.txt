@@ -1,0 +1,126 @@
+VERDICT: PASS
+SCOPE: independent SOURCE/CPU review of Kestrel R3, P1.E12.T02
+VISUAL: UNQUALIFIED. This source PASS is not a visual grade. LOD2 faceting, materials, silhouette, NavWhite, navigation animation, and the 100 m / 200 m reads were not graded. The 39 CPU preview PNGs are not native visual evidence and were not blind-graded.
+
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118
+Branch: task/P1-E12-T02-kestrel-r3
+HEAD: f80a78c02ffe0ba158691fedc9a57ced2d56a885
+Tree: 8fecccea75d2d682890bb3d0fbd91f8fc7689ae4
+Merge-base with parent: e397f3d8db6717aac59b068aa5941af5999b0c06
+Content commit: c46e864028b32cea22622f5b1ffc19a95f99120e (HEAD's parent is the handoff-only commit; name-only diff is packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt)
+Recovery commit: 9571dce6466063984967189d6363c989255b3b9c
+Canonical commit: 75ea700462c17d63a69b570e2ca710c5eb1e055d
+Review mode: read-only. No source, docs, asset, commit, push, PR, merge, screenshot cleanup, GPU, render, bake, browser, native capture, service, or bulk LFS.
+
+PINNED BYTES (before and after the Blender session, and again after the later in-memory probes)
+source assets/blend/hulls/kestrel.blend
+  sha256 18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65
+  bytes 78976965
+export packages/client/public/models/hulls/kestrel.glb
+  sha256 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb
+  bytes 20931568
+recovery LFS object ea45999c7d204b5d04ee6bfa8789c69c8f0e25cb686f8efaeaa86d95301f51dc
+  bytes 32699293, sha256 matches the object name
+packet-seal.json sha256 5bbd23ae990b0c585bdf77cd1a8290c6f3031bf3c0cbcc0c21dd5141b360e090
+  213 packet files + 23 tool files rehashed, 0 mismatches, 0 present-but-unsealed (seal excludes itself), 0 sealed-but-missing
+  seal excludes HANDOFF-C2.txt
+  retention: 39 images, encoded 67408889, decoded RGBA 250374400, limits 48 images and 536870912 bytes
+protected diff vs merge-base: empty
+out-of-scope diff vs merge-base: empty
+git status --porcelain=v1 --untracked-files=all: empty before the review work and empty after it
+
+0.9.5
+None of the five mandatory REVISE conditions is present.
+- No client-authority change over a server-authority item. Protected and out-of-scope diffs are empty.
+- Lane and compressed-asset tests exist and were rerun here (6 and 8, both OK). Additional in-memory boundaries were exercised against copies.
+- HANDOFF-C2.txt line 59 logs that the gameplay Ship/Cockpit route still loads the legacy ship asset and that runtime adoption is parent-flow work. No demo generator was this task's replacement.
+- Not a perf-tagged budget regression. Each variant's static GPU estimate is 67108944 bytes, under the 512 MB ceiling. LOD0 export triangles sit inside 60–150k, and LOD3 is under 5% of LOD0.
+- Spec choices that this task made are logged in HANDOFF-C2.txt. The lower-LOD float UV skirt below is an observed compressor result, not a logged contrary interpretation.
+
+CHECKED ON THE BYTES
+Stock source gate and stock export gate both PASS inside one Blender 5.2.3 LTS process group.
+  pgid 41459, deadline 840s, exit 0, timed_out false, group_alive false.
+  Log: /tmp/kr3r/logs/blender-runner.txt and /tmp/kr3r/logs/blender.log
+  Result: /tmp/kr3r/blender-result.json
+  Source warnings: 995, all "object name carries Blender's duplicate suffix; give it a real name". Source fails: 0. Export warns: 0. Export fails: 0.
+  TMPDIR=/tmp/kr3r/t. PYTHONDONTWRITEBYTECODE=1. Thread env 2. ART_KTX_JOBS=1. KTX pinned to the existing 4.4.2 binary. PATH was Node 22.23.3 plus /usr/bin:/bin:/usr/sbin:/sbin. No pnpm, no art:validate.
+  artlib/ktx.py still sizes its transcode pool with max(2, jobs()), so this run's decode side used 2 workers even with ART_KTX_JOBS=1. Shared file, not patched.
+
+Nine variants, four LODs, 12 static render primitives at every LOD of every variant.
+Source triangles (qualify_source, before the compressor drops degenerates), all nine lengths 14.940000057220459 m:
+  kestrel / compact / working: 146409 / 43913 / 14629 / 7226
+  damaged family: 146291 / 43878 / 14618 / 7197
+  husked family: 146473 / 43932 / 14636 / 7265
+Export triangles (compressed GLB):
+  kestrel family: 146408 / 43912 / 14496 / 6963
+  The LOD0 delta of 1 and the larger LOD2/LOD3 deltas are the degenerate drops. Source and export counts were kept separate.
+LOD3/LOD0 on the export is 6963/146408 = 0.0476, under 0.05. Hero LOD0 is inside 60000–150000.
+
+13 KTX2 images, each 4096 square, 13 mips, fullChain true. Image 0 normal is UASTC, Zstandard, sRGB false, 2998203 bytes. Colour images are ETC1S BasisLZ sRGB true. ORM images are ETC1S sRGB false. extensionsRequired is KHR_texture_basisu, EXT_meshopt_compression, KHR_mesh_quantization. No PNG fallback on the texture route.
+Per-variant image sets match the sealed map (base ulgani 0/1/11, compact 0/1/2, working 0/1/12, and the damaged/husked sets in independent.json). Unique 13-image GPU sum at 8 bpp with mips: 290805424. Per variant: 67108944.
+13 canonical marker world matrices present: Canopy, GearFront, GearLeft, GearRight, CockpitInterior, ScreenLeft, ScreenCenter, ScreenRight, CockpitStick, CockpitThrottle, HP_S_1, HP_S_2, HP_M_1.
+Export hardpoints match the swizzled contract: HP_S_1 (-1.5, -0.62, 0.9), HP_S_2 (1.5, -0.62, 0.9), HP_M_1 (0, -0.86, -2.75).
+Colliders: 148, largest 284 triangles. The source gate's ceiling is 512; the measured max is 284.
+Boarding probe rerun after the final blend was loaded: 261 body rays, 0 hits, matching the sealed probe. Coverage fractions match the seal (Body 0.9964724092005327, CanopyGlass/Frame and side gears 1.0, GearFront 0.9996649355000837).
+Lattice recomputed on the final blend, not on the intermediate source-finish receipt: Accent vertices outside the cabin box, round(co, 5), expected subset of the final Body. retainedOutsideCabin 38954, missingFromFinal 0, extraNotClaimed 13685, final Body vertices 55562. The extras are the new cabin/jamb vertices. source-finish.json still names the intermediate blend hash; the live check used the final bytes.
+
+Channel dump of the loaded final (Hull, Accent, Dark, Trim, Glass) uses packed 4096 color/ORM/normal. The blend also packs Kestrel_R3_AuthoredRelief_4096. That name is absent from the 13 exported KTX2 images and from those five channel dumps.
+
+Worker lane tests, rerun: 6 OK, 9.525s, exit 0. /tmp/kr3r/logs/lane.txt
+  failed export removes only the known stale glb and qualification.json
+  deadline 124 reaps a SIGTERM-ignoring descendant
+  source mutation invalidates the export
+  missing executable removes stale output
+  injected quarantine record keeps the lane closed until the group is dead (this does not prove the production EPERM write path)
+  SIGTERM 143, contended lock 75, then reacquire
+Worker compressed-asset tests, rerun: 8 OK, 0.185s, exit 0. Printed GLB hash matches the pin. /tmp/kr3r/logs/export-tests.txt
+  They reject a missing LOD, a missing hardpoint, a dropped EXT_meshopt_compression, a 1024 hero map, a stripped LOD2 normal, a short mip chain, and a 13th primitive.
+
+Further boundaries, in memory only, shipped hash unchanged after each:
+- Removing KHR_mesh_quantization from extensionsRequired raises "required compression extensions missing".
+- Popping the only Hull/EngineGlow primitive fails the material contract. That case does not reach the primitive-count assert.
+- Cloning GearRight_Assembly under kestrel_LOD0, dropping its single Trim primitive, and leaving Trim on the other meshes produces primitive counts [11, 12, 12, 12]. asset_contract.inventory accepts it. Required materials are still all present. File sha256 stayed 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb. Evidence: /tmp/kr3r/prim11.json
+  The contract is `0 < count <= 12` (asset_contract.py:83). The shipped file is 12 everywhere. The upper bound is tested. An exact-12 floor is not.
+- Negative source cases reproduced: moved HP_S_1, missing kestrel_LOD2, Hull normal swapped to a packed 1k image. A real export.main on an empty factory blend returned exit 1, removed the stale kestrel.glb, and kept foreign.glb. Source hash unchanged. finish_source.main was not called.
+
+TEXCOORD QUANTIZATION (decoded, then classified)
+Direct Node v22.23.3, import of meshoptimizer 1.3.0 meshopt_decoder.mjs by absolute path, cwd /tmp/kr3r. No pnpm. Decode exit 0. /tmp/kr3r/uv-range.json
+Component census of render TEXCOORD_0:
+- LOD0, every material including Body Accent (124254 vertices, accessor 173, shared by the nine LOD0 variants) and the three gear Trims: componentType 5123, normalized. A decoded Hull sample stays inside [0, 1].
+- LOD1–LOD3 also keep a smaller Accent, plus Hull, Dark, Glass, EngineGlow, NavWhite, and the side-gear Trims, as normalized ushort.
+- 54 render references are float32 (5126), unnormalized, meshopt mode ATTRIBUTES, filter NONE. They are the large Body Accent primitive and GearFront-sized Trim at LOD1–LOD3 only:
+  Accent LOD1 counts 49486 / 49449 / 49658, LOD2 21495 / 21481 / 21560, LOD3 12966 / 12897 / 12962
+  Trim LOD1 4343, LOD2 2003, LOD3 275, nine variant references each
+Positions on the file are normalized int16 (5122). Normals are normalized int8 (5120).
+Every one of the 54 float references has at least one sample outside [0, 1]. None is entirely inside. The excursion is a skirt, not a tiled unwrap. Body Accent LOD1 accessor 48: min (-1.381e-5, 6.08e-6), max (0.99951171875, 1.00000727), 3 of 49486 samples outside. The largest V overshoot in the groups is about 4.39e-5 (Accent LOD2/LOD3). One 14-bit step is 1/16384 ≈ 6.1e-5, so the skirt is smaller than one texel step at the family's computed texcoord width.
+gltf-transform functions 4.5.1 getQuantizationSettings skips a TEXCOORD when any component is < 0 or > 1 (installed dist/index.js around the TEXCOORD branch). That is why these lower-LOD attributes stayed float while LOD0 quantized. families.json geometry sets quantize true, level high, positionBits 14, and omits texcoordBits. artlib/meshopt.py settings() fills texcoordBits as min(16, max(12, log2(texture)+2)), which is 14 for the 4096 hero class. The TypeScript MESHOPT_DEFAULTS texcoordBits of 12 is the fallback when the key is absent; this Python path includes the key. Compression was not re-run.
+
+ADVISORY (do not block)
+1. Lower-LOD float UVs. Location: kestrel.glb TEXCOORD_0 on the LOD1–LOD3 large Accent and the 4343/2003/275 Trim primitives; mechanism in the shared quantizer. LOD0 hero Accent is quantized. A local clamp of those lower-LOD samples into [0, 1] would let the unchanged quantizer run. Shared exporter/core was out of scope and was not edited. Stock meshopt.inspect and asset_contract do not read accessor component types, so the worker suite does not see this.
+2. Primitive-count floor. asset_contract.py:83 accepts 11 when required materials remain. Shipped counts are 12. The worker test rejects 13 only.
+3. Injected quarantine JSON does not prove the production EPERM write. ownedGroupReapedBeforeUnlock can be true when proc is None. No ETC1S-normal adverse case is in the suite.
+4. 995 duplicate-suffix warnings on the source gate.
+5. Stock KTX transcode pool stays at 2 when ART_KTX_JOBS=1 (ktx.py jobs pool uses max(2, jobs())).
+6. Kestrel_R3_AuthoredRelief_4096 is packed in the blend and is not one of the 13 exported images.
+7. NavWhite live MaterialInfo on Kestrel_NavSpore is the unscaled constant (0.57, 0.78, 0.19), emitting true. The handoff's 0.00006 figure is the scaled dormant product from finish_signals.py. 36 Blink_NavSpore objects = 9 variants × 4 LODs. Runtime nav animation is unqualified.
+8. export-LOD2-kestrel.json is a close ortho (camera about [14, 16, 11], ortho scale 21 m, Cycles CPU, 32 samples, threads 2). It is not the 100 m / 200 m silhouette check. Faceting stays a handoff limit. No visual score is assigned.
+
+DEPENDENCY HARNESS
+No pnpm, no pnpm exec, no tsx launch, no art:validate, no install. Scratch Node and Python used a direct binary and local /tmp scripts. Imports of meshoptimizer were by absolute path under the pnpm store, read-only.
+After the successful decode and the in-memory inventory:
+  node_modules/.bin/vitest mtime 1794025511.817879 size 4378, not a symlink, shebang shell, text contains 5.0.5 and does not contain 5.1.0
+  node_modules/vitest/package.json mtime 1793023248.834390 size 5737 version 5.0.5
+  node_modules/.cache/ktx-software-4.4.2/bin/ktx mtime 1793102880.559854 size 2041776
+Those three match the pre-review stats. find -newer on .bin, vitest, .cache, and the meshoptimizer@1.3.0 package after the decode returned no paths. No ignored-state write was observed. Nothing was repaired. The separate Vitest 5.1.0 launcher incident belongs to worktree t3-27d13e0f and is not a Kestrel finding.
+
+COMMANDS AND EXITS
+- Blender /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1, one process group, exit 0. Runner /tmp/kr3r/run_blender.py.
+- Lane unittest: exit 0, 6 tests, 9.525s.
+- Export-contract unittest: exit 0, 8 tests, 0.185s.
+- /tmp/kr3r/independent.py: exit 0. Summary /tmp/kr3r/logs/independent.stdout, full /tmp/kr3r/independent.json.
+- /tmp/kr3r/decode-uv.mjs via /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node: exit 0. An earlier decoder in the previous turn indexed EXT_meshopt_compression.bufferView, threw TypeError on byteOffset, and wrote no UV range. The corrected decoder reads the bufferView extension (count, byteStride, mode, filter) and completed.
+- /tmp/kr3r/prim11.py via /usr/bin/python3: exit 0.
+- git status count 0, HEAD and tree unchanged, /tmp/astra-kestrel-round3-cpu.lock present and empty (0 bytes). No kestrel/decode process left from this review.
+
+CLEAN STATE
+Tracked tree clean. Source and export hashes unchanged. Packet seal rehash clean. Lock empty. No repo file was written. Screenshot cleanup stayed stopped. Other hull Blender jobs were not signalled.

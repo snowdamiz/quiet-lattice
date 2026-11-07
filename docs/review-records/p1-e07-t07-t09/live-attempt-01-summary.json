@@ -1,0 +1,98 @@
+{
+  "status": "COULD NOT RUN",
+  "boundary": "Corepack launcher before pnpm/Playwright/test discovery",
+  "actualOSExit": 1,
+  "testInvocationsAttempted": 1,
+  "testBodiesExecuted": 0,
+  "testPasses": 0,
+  "testFailures": 0,
+  "skipCount": null,
+  "noSkipGate": "NOT ESTABLISHED: Playwright never started",
+  "timedOut": false,
+  "noAutomaticRetry": true,
+  "head": "c115e93786890160fcc0592aeb3bc15934343fd3",
+  "tree": "9bd3faef187925791573d86c4673922df099c5f6",
+  "sourceHead": "55f357cf01da755b07ed0e9a3b074cd6d0dfb7f4",
+  "sourceTree": "589c20a836ed318c563d714f2f8905fa049769a0",
+  "sourceAndDependencyHashesUnchanged": true,
+  "node": "22.23.3",
+  "pnpm": "12.15.0 cached version verified outside isolated cache; attempted run stopped in Corepack",
+  "browserLaunches": 0,
+  "renderedClients": 0,
+  "pngArtifacts": [],
+  "expectedPngLabels": [
+    "bond-owner",
+    "bond-observer",
+    "follow-owner",
+    "follow-observer",
+    "combat-owner",
+    "combat-observer",
+    "disconnect-owner",
+    "disconnect-observer"
+  ],
+  "symbioticEvidenceJson": null,
+  "playwrightReporterJson": null,
+  "serverLog": null,
+  "reasonArtifactsAbsent": "No Playwright/server/browser/test started",
+  "failure": "! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-12.15.0.tgz\nNetwork access disabled by the environment; can't reach https://registry.npmjs.org/pnpm/-/pnpm-12.15.0.tgz\n",
+  "wallSeconds": 0.56,
+  "drainSeconds": 0.2,
+  "gpuReleased": true,
+  "cleanup": {
+    "utc": "2026-11-07T07:11:05.643857+00:00",
+    "actualExit": 1,
+    "remainingOwnedProcesses": [],
+    "routePidsAbsent": [
+      92215,
+      92303,
+      94265
+    ],
+    "remainingOwnedListeners": [],
+    "applicationSqlSessions": 0,
+    "applicationRedis8Clients": 0,
+    "databaseDropped": "astra_symbiotic_smoke_20261107_070646_2f0be248",
+    "databaseAbsent": true,
+    "redisDb": 8,
+    "explicitKeysDeleted": [
+      "qa:owner:20261107_070646_2f0be248"
+    ],
+    "redisSizeAfter": 0,
+    "markerRemoved": true,
+    "browserProfilesCreated": [],
+    "ownedProfilesRemaining": [],
+    "tempFilesRemoved": 217,
+    "tmpEmpty": true,
+    "containers": [
+      {
+        "name": "space-t16-pg-20261106",
+        "id": "66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb",
+        "status": "running",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53055"
+            }
+          ]
+        }
+      },
+      {
+        "name": "space-t16-redis-20261106",
+        "id": "d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4",
+        "status": "running",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53058"
+            }
+          ]
+        }
+      }
+    ],
+    "gpuReleased": true,
+    "archiveScreenshotsRemoved": false
+  }
+}

@@ -1,0 +1,170 @@
+VERDICT: REVISE — seven reproduced P2 findings.
+TASK: P1.E05.T03 — first independent SOURCE/CPU review of capture preparation.
+
+Reviewed checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8
+Branch: task/P1-E05-T03
+HEAD: 826337c81d17081bc6856506956df4a7d57c8f86
+Tree: f8a4074cde50ae56ba633cb1f91ae774505f8bae
+Reviewed-source base: 05909e4f74d1c6acf64a5be110f3e44af18b7bc5
+Separate helper recovery: c0191922b8e682660bf25b5de785143b9ab72c2e
+Required helper source: ca7d91e378e9d2f3f0ce8f0651475dcb843875d9
+Evidence: /tmp/p1-e05-t03-independent-Omf2XX
+Independent decoder subreview: /tmp/p1-e05-t03-cpu-review-CubSpO/REPORT.md
+
+This is a caller review, not another body review. The historical source R3 PASS is not extended to this new caller. Both execution gates remain false. Native binding/ownership, live capture, visuals and whole-task completion are unobserved. Those future scheduled gates are not the reason for REVISE; the concrete source/CPU failures below are.
+
+Read plan 0.3/0.4/0.9.5 and T03/T04, relevant DESIGN 19/20 and art-bible viewmodel/material rules, source R3 and revision context, the new packet, actual captureReview/offline #foot/Multitool/Engine call paths, recovered helper constructor/start/wait/drain/archive/StageReceipts/terminal bodies, and supplied cross-lane reports. Prior-lane reports supplied attack descriptions; no defect was assumed from them. One fresh child reviewer received only the pinned decoder/inventory brief, not the worker transcript, used one CPU worker, and did not delegate further. The parent used at most one simultaneous CPU workload; the combined workload never exceeded two workers.
+
+FINDINGS
+
+R1 — P2: StageReceipts receives the wrong readiness schema.
+Location: packages/tools/src/capture/viewmodel_packet/native.py:108,118-123; producer bindings.py:128-132. Consumer: assets/blend/stations/_authoring/run_round4_remaining8.py:295.
+
+native.capture passes ready['bindings'] directly into the retained StageReceipts constructor. Its _observe method unconditionally accesses self.ready['resolver']['selectedExecutable']['path']. The new bindings contain browserBinary/browser_binary, but no resolver. On the first observation during a nontrivial capture, this raises KeyError('resolver'); the actual StationJob.wait catches it and returns observer_failed. If capture exits before an observation, require_browser still cannot qualify an unobserved browser. Thus even a healthy future launch cannot complete this adapter as written.
+
+Repro: lifecycle.py, adapter-missing-resolver, executes actual native.capture, actual StationJob constructor/wait and actual StageReceipts observation. Only native start/status/drain/identity ports are inert. Result: wait=observer_failed, jobState.state.errors contains KeyError: 'resolver', released=false. The positive shape control invokes the same actual StageReceipts.observe with the resolver shape it expects and gets its observation receipt. No launchctl/browser/service command executes.
+
+Correction: translate the new pinned bindings into the retained helper's actual schema in the task-local adapter, or explicitly pass its required resolver route. Preserve immutable helpers. Add an adapter integration test reaching the real StageReceipts.observe/require_browser consumer with inert kernel/command ports. A test replacing the entire capture function cannot establish this interface.
+
+Evidence: adapter-missing-resolver.json, lifecycle-results.json, lifecycle.log. Script exit 0 means successful defect reproduction.
+
+R2 — P2: original resource/observer failures are lost before helper normalization or a failed helper receipt.
+Location: native.py:109-128, especially job.wait at 120 and primary assignment at 127; retained round4_job_boundary.py:286-303.
+
+The observe callback does not save its exception. StationJob.wait catches ordinary exceptions, reduces them to a type/message string in state.errors, and performs save() before returning observer_failed. The adapter then assigns a generic ValueError as primary. If save fails, its OSError becomes primary instead. Original structured attributes and byte observations from an error not already caught by a wrapped subprocess port are lost. This is separate from preserving the raw returns of subprocess.run, which the candidate does correctly.
+
+Repro: resource-errors.py executes actual native.capture -> native.size/require -> retained StationJob.wait. An inert start places an actual symlink in the owned scratch; the real size guard rejects it. The producer exception has an attached unknown byte observation to test preservation. Without a receipt failure, primary becomes 'Capture did not complete: observer_failed'. With the subsequent real helper boundary.json writer failing, primary becomes POST_OBSERVER_RECEIPT_FAILURE. The original error's unknown field is absent in both complete returned records. Additional lifecycle.py observer-original-error injects a TimeoutExpired at the observer boundary and demonstrates loss of partial stdout/stderr/unknown attributes. Release remains false; there is no decoder dispatch or false success.
+
+Correction: retain the first callback failure and its complete raw facts before rethrowing into the unchanged helper. Promote that saved cause before any fallible post-wait observation/receipt; retain normalization, save and cleanup failures as secondary. Add actual callback/helper cases, including combined original failure plus receipt error and deadline unwind.
+
+Evidence: resource-original-False.json, resource-original-True.json, resource-errors-results.json, observer-original-error.json. Both commands exit 0 as defect-reproduction harnesses.
+
+R3 — P2: a standard-capture navigation failure is replaced by browser-close failure.
+Location: entry.mjs:204-223,63 and production call at 240; unchanged capture.ts:172-174,298-300.
+
+The entry's firstCaptureFailure instrumentation covers output writes and page.evaluate, but not page.goto/waitForFunction and other fallible standard-review operations. In actual captureReview, a goto failure enters its finally; a browser.close failure replaces that exception before execute can record it. firstCaptureFailure remains unset, so the complete primary is the cleanup exception and the original navigation error and its attached raw facts disappear. This is a remaining real-helper crossing, not the already-covered execute() test with a directly thrown capture error.
+
+Repro: entry-adverse-v2.mjs uses actual entry.execute -> productionCapture -> original captureReview/openReview. Node's built-in TypeScript stripper removes types in memory only; capture.ts source and runtime control flow are unchanged. Module hooks supply inert Playwright/Vite/net ports and forbid all child-process APIs. page.goto throws PRIMARY_PAGE_GOTO with raw bytes and an unknown field. With normal close, the actual result retains that primary. With browser.close also throwing SECONDARY_BROWSER_CLOSE, the full returned/durable entry result contains only the close error as primary and no PRIMARY_PAGE_GOTO. No network listener, server, browser, GPU or process is launched.
+
+Correction: observe errors at all fallible existing review operations before the common finally can mask them, or use a task-local adapter that preserves the first operation error across those cleanup crossings. Keep the common capture helper unchanged unless its scope is explicitly reopened. Add this actual productionCapture/captureReview combined-failure control.
+
+Evidence: entry-adverse-v2.mjs, entry-adverse-v2-results.json, entry-adverse-v2.log; exit 0.
+
+R4 — P2: cache growth after the preliminary scan is hashed beyond the 64 MiB input budget.
+Location: caller.py:145-148, through bindings.py:28-31,35-52.
+
+snapshot_caches measures path sizes and checks the aggregate 64 MiB ceiling, then re-enumerates and hashes through general tree_binding/file_binding. That content read permits 512 MiB per file and has no cache-specific remaining aggregate budget. A file grown after the preliminary size sample is therefore fully read beyond the promised cache bound before the later copying snapshot refuses it. The 30-second timer remains active; this is not an unbounded FIFO claim or a claim of accepted capture.
+
+Repro: cache-boundaries.py starts with a real one-byte cache file, then expands it to a sparse 67,108,865-byte file immediately before the actual first tree_binding. The real snapshot stream returns all 67,108,865 bytes before refusal at the later copy cap. The copy allocation ledger still says attemptedBytes=0. This is the prior-lane budget-before-hash class reproduced at this caller's actual consumer boundary, not inferred from the old caller. Static over-cap inputs are correctly rejected before hashing by the supplied control. Actual regular-to-FIFO replacement here is also safely refused and its descriptor closed.
+
+Correction: use the cache remaining byte budget for every descriptor-authenticated content read, including the before/after digest passes, and reconcile the same bounded inventory used for copying. Retain the time bound, no-follow/nonblocking checks and original cache. Add growth/replacement between initial stat and hash, not just a preexisting oversized file.
+
+Evidence: cache-results.json, case growth-before-first-hash; cache-boundaries.log, exit 0.
+
+R5 — P2: the CPU oracle accepts a fully lowered settled/neutral/fire pose.
+Location: inspect_packet.py:288-293.
+
+The decoder requires raise=0 for gap/underwater/reset, and raise≈1 only for the explicitly named raise-0.4 image. It never requires a settled raise for switch-settled, neutral, sway, fire or overheat. Actual-CLI mutations that change only raise to 0 in switch-settled, neutral and fire each exit 0/PASS with authenticated manifests. The producer's 24 updates after a switch and settling before ordinary poses imply raise=1. Actual Multitool.update lowers the tool 0.32 m and rotates it 0.7 rad at zero; these receipts report a contrary endpoint while passing the intended pose gate.
+
+Correction: require the settled raise value for each corresponding named pose; preserve zero for the explicitly hidden/reset poses. Test against the real inspector CLI.
+
+Evidence: decoder subreview cases/settled-raise-zero, cases/neutral-unraised, cases/fire-unraised and adverse-summary.json. Real PNG decoding executes; the fixtures are synthetic, not images from native capture.
+
+R6 — P2: the 0.4-second raise claim passes with no elapsed-time advance.
+Location: inspect_packet.py:268-270,292-293.
+
+The monotonic sequence check allows equal elapsed time at dt=0; the timed raise check trusts the independent raiseSeconds=0.4 field. The actual-CLI case raise-point-four-zero-elapsed changes the raise-0.4 frame to dt=0, the previous raise-0 frame's exact elapsed value, and frame+1, while keeping raise=1/raiseSeconds=0.4. It exits 0/PASS. This certifies a timed endpoint whose own clock facts contradict it.
+
+Correction: reconcile the claimed duration with elapsed/frame progress and the last-step dt. Require at least the necessary duration/updates, not exactly 0.4 between saved images: the producer also settles/cools before the later reset. Preserve the actual 24×1/60 update semantics.
+
+Evidence: decoder subreview cases/raise-point-four-zero-elapsed/ with retained command, manifest, readout, stdout and exit.
+
+R7 — P2: valid-CRC PNG containers with incomplete IDAT streams pass the decoder.
+Location: inspect_packet.py:179-205, especially Pillow load at 202-205.
+
+Container CRC checks and Pillow.load do not establish complete compressed-stream consumption for the pinned decoder. Removing the last four Adler bytes from the concatenated IDAT stream, recomputing the chunk CRC and manifest, and retaining IEND still exits 0/PASS. Independent stdlib zlib reports eof=false after producing 6,221,880 scanline bytes. Related real-CLI cases also accept trailing compressed-stream data, duplicate IHDR and an unknown critical chunk. This is malformed-byte acceptance, not a demonstrated resource escape.
+
+Correction: require complete bounded zlib stream consumption and strict critical-chunk ordering/uniqueness, or use a decoder enforcing those properties. Bound decompression by the expected dimensions. Add checksum-truncated and trailing-stream cases beyond the existing malformed signature/CRC/deflate tests.
+
+Evidence: decoder subreview cases/zlib-missing-adler, zlib-missing-adler-zlib.json, related case directories and adverse.py. The extra-byte truncation, invalid Adler, APNG, bytes after IEND and wrong-dimension controls correctly refuse.
+
+POSITIVE BOUNDARIES AND CROSS-LANE DISPOSITION
+
+- Supplied tests: Python caller 13/13, recovered-helper 4/4, pinned inspector 19/19 = 36/36; Node 17/17 using direct Node 22.23.3 with concurrency=1; existing focused runtime 8 files/110 tests on Vitest 5.0.5, maxWorkers=1/no file parallelism/no test-result cache. All exit 0. The focused pnpm invocation's ignored-state write is explicitly recorded below.
+- Fresh seven actual Python processes run the real main/admit/run_unit/persist/Git flow in one temporary Git repository at an unchanged HEAD. Counts are 12,12,12,19,21,21,4 = 101. OS exits are 0,0,0,0,0,0,0. Capture and decoder ports are inert, outputs are labelled small text fixtures, and receipts stay accepted:false. Prior result/consumption hashes come from the completed processes.
+- Five additional real process outcomes: success, exception after result bytes land, exception after main returns, unproved release, all disk/stderr sinks failed. Exits are 0,1,1,1,1. Only actual exit-0 success admits a successor. In the post-write/post-return cases, a checksPassed:true disk record never substitutes for OS completion. All-sinks retains primary partial bytes and unknown fields in memory, with three separate persistence failures.
+- Supplied actual grant/result/consumption pre-open FIFO replacements refuse with O_NONBLOCK|O_NOFOLLOW and closed descriptors. Hash/parse/semantics use one authenticated snapshot; swapping failed result bytes for success after the authenticated read does not admit. Cap+1 growth reads, preexisting oversize, symlink and clean-worktree/predecessor mutations are covered. No claim that these establish a universal filesystem-race proof.
+- E07 constructor partial ownership: NONRECURRENCE in the fresh actual-constructor probe. Request write fails before first boundary.json save; native.jobState retains scratch, out, target, root/coalition uncertainty, known and registered. The exact scratch remains recoverable. No helper launch follows.
+- E07 bootstrap output loss: NONRECURRENCE. Actual start body obtains inert CompletedProcess exit 0 and separately 17, with distinct raw stdout/stderr and unknown byte fields; the following bootstrap.json write fails. observed_helpers retains all producer facts in both cases. Release remains unproved; no native bootstrap occurs.
+- E07 competing cache owner: NONRECURRENCE for a preexisting owner. A real harmless Python child holds a fresh cache file O_RDWR; actual cache_owners via bindings.verify refuses it while alive. It is then released through stdin and observed exiting 0. Binding discovery alone is stubbed for this scratch route; no real repository cache is touched.
+- E08 raw archive results/unknown facts: supplied actual archive-body failure preserves both raw run outcomes before its assertion. Actual cleanup receipt failure stays recorded while mandatory drain may proceed. A real short SIGALRM during the actual archive bootout port escapes, no print/archive/TMP/terminal/decoder call follows, wrappers restore and timer is zero. These limited controls do not certify all real native ownership behavior.
+- E08 final-write/same-HEAD authority: the process cases above preserve provisional receipts and require real observed exit. E08 FIFO/snapshot failures did not recur in the executed controls. E08 decoder-journal lessons exposed the independent pose/time defects R5/R6 instead of being assumed fixed by stock positives.
+- T02 resource-primary masking: R2 reproduces this class here at the actual callback/helper boundary. T02 cache-before-budget: R4 reproduces a new growth schedule here; static over-limit and FIFO cases are safe.
+
+SOURCE PATH, INVENTORY, MATERIALS AND ACCOUNTING
+
+Standard units call the original captureReview API for fp_thalune/fp_ixari/fp_ulgani. The page instrumentation is installed after actual select and before capture. Requested LOD2 and selected LOD0 are separate facts and image captions; the standard wireframe material facts use Review's original shaded-material map. Capture order agrees with inventory: three lighting pairs, wireframe pair, overlay and 100 m far, then sheet/readout. The one-authored-LOD viewmodel contract remains intact; Grip overlay remains explicitly unsupported.
+
+The first-person fixture uses the existing startVite/Chromium launcher and real #foot offline scenario, checks game.net is absent and mode/camera transition settled, preserves the original Multitool.update and Engine.render identities, and supplies explicit mouse/held/underwater input. It does not assign bones, mixer clips, meter values or view transforms. The original update drives sway, raising, heat, overheat and visibility. The synchronous still task renders the real pass, reads view/world/beam projections and camera facts, and calls canvas.toDataURL in that same task. Two aspects are 1920×1080 and 2520×1080. Transitions prove incoming model attachment/visibility, then hold the actual target GLB route, record the hidden loader gap and release/load/settle. This is source tracing only; no browser or visual behavior was observed.
+
+The decoder subreview independently read all three actual local GLBs: used materials are Skin/VM_<people>_Tool/Bio for Thalune and Ixari, Skin/VM_ulgani_Tool for Ulgani, with no Bio. Required KTX2 images have 2048×2048/12 levels, nonempty bounded level payloads, and valid declared texture/buffer-view routes. Skin's combined metallic/roughness supplies both runtime slots; Tool/Bio also require emission. Material names/slots and LOD checks are independently enforced by the decoder; missing Tool emission and extra Ulgani Bio refuse. No texture codec or new export was run.
+
+Exact inventory: seven units, 101 files = 94 PNGs + seven readouts. Three review units are 12 files/11 PNG each; view-thalune 19/18; view-ixari and view-ulgani 21/20; return-thalune 4/3. Every PNG cap is 16,777,216 bytes. Three full view readouts are 32,768 bytes; others 16,384. Full-precision multi-frame material observations can exceed 16 KiB: the fresh valid view-Ixari synthetic readout alone is 17,293 bytes. This justifies the larger class of readout allowance without changing PNG count. Standard sheets are 1920×2876, full view sheets 1920×1518, return sheet 1920×342.
+
+Recalculated output/admission bytes:
+  each review:   184,565,760 / 5,402,312,704
+  view-thalune:  302,022,656 / 5,754,683,392
+  view-ixari:    335,577,088 / 5,855,346,688
+  view-ulgani:   335,577,088 / 5,855,346,688
+  return:         50,348,032 / 4,999,659,520
+
+Admission = 3*outputCap + 4,848,615,424. The three copies actually have distinct code paths: original output, decode-copy, verified-copy; release=true is required before either copy/decoder. The third copy is made only after successful decoding and each is manifest-checked. Final original bytes must still match. The extra 16 KiB for full-view readouts costs 49,152 bytes across three copies.
+
+Fixed reserve: metadata 64 MiB, cache snapshot 64 MiB, profile working+archive 2 GiB, private TMP working+archive 1 GiB, helper logs working+archive 128 MiB, cache growth 256 MiB, filesystem 16 MiB, safety 1 GiB. The actual adapter observes 1 GiB profiles, 512 MiB nonprofile TMP, and 64 MiB scratch logs before archive; the retained helpers copy before deleting the source, so paired allowances are necessary. Helper writes count failed/repeated attempts toward 16 MiB, Node receipts toward 8 MiB, caller writes toward 40 MiB minus 64 KiB; individual caller result snapshots allow 20 MiB. Copy attempts are charged before writes. Failed originals/partial allocations remain evidence. These observed stop thresholds are not OS quotas and do not prove peak live native footprint. The cache hashing problem R4 remains despite correct declared reserve arithmetic.
+
+READ-ONLY EXCEPTION AND DEPENDENCY HAZARD DISCLOSURE
+
+Tracked source/assets/helpers/history never changed. The initial focused command used pnpm exec in the actual target checkout (not a symlinked scratch node_modules). Its log explicitly reports Vitest 5.0.5 and 110 passes. Despite --no-cache it created one ignored file:
+  node_modules/.vitest-cache/2b6ca69062975caed4a6a8ff34a30b50fedc6b16
+  8,213 bytes, SHA256 26c323b7233677c8c7db372481e045ef135c064c31093462b9f6e1ecc9859237
+
+This is an accidental ignored-state write by the reviewer, not an implementation defect and not an untouched-all-files claim. The first exact binding check consequently exited 1. Investigation found exactly this post-baseline file, matching the whole 8,213-byte/one-file binding delta and its time of creation during Vitest. Before the user's subsequent dependency-hazard message, I moved only this identified test-produced file into the fresh evidence directory as vitest-generated-cache. No foreign launcher, dependency or cache was repaired. The frozen entire dependency tree and ignored-inventory hashes then matched again; bindings-restored.log contains an empty diff. The original mismatch is retained in bindings-diff.log, readiness-check.stderr and test-cache-restoration.json.
+
+After the user warned about verifyDepsBeforeRun, I read the exact supplied T05 report excerpt and dependency-harness-note.json. All remaining executions used direct pinned binaries/local files, not pnpm exec or an installation route. There was no 5.1.0 upgrade in the observed T03 run; the final exact tree/hash comparison supports that narrow statement. The T05 foreign worktree was only read, never repaired. This exception is included deliberately rather than hiding it behind clean git status.
+
+PROVENANCE AND EVIDENCE LIMITS
+
+before.json and after.json record SHA256/length for all 12,966 tracked working files, plus exact branch/HEAD/tree/status. The final comparison requires equality. The protected audit freshly matches six accepted bodies, six viewmodel assets, six previews, 745 accepted review files and 59 retained revision/runtime files. The source diff outside the new packet and four recovered helpers is empty. Both Git recovery references match every current helper byte. No tracked target/parent edit, commit, branch switch, push, PR, merge or Trunk comment occurred. The ignored test-cache exception is documented above. Synthetic temporary Git fixtures contain their own initial commits only to exercise the real clean-HEAD gate.
+
+Helper SHA256s:
+  round4_job_boundary.py     3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c
+  round4_capture_children.py e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07
+  run_round4_browser_proof.py f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab
+  run_round4_remaining8.py    4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8
+
+Actual GLB SHA256s:
+  Thalune b4859735bd2f203bd30ca41705a156858cc362dd6de1000d308bd1e12b53e76f
+  Ixari   78f90acfc0087b63e97c3ae50cb7c1f5e045e447e12975b6ec21a0dd5f038abc
+  Ulgani  8319097e97e3ccf2f9fdcbbe114742ea45f1f24eb8ba98420f12678d3511e954
+
+The decoder used pinned Python 3.10.22/Pillow 12.0.0. Lifecycle/process controls use Python 3.14.8 with -B; Node controls use Node 22.23.3. The frozen future native entry still binds Node 26.12.1; CPU Node22 results do not certify that future native environment. The final read-only caller --check uses its exact frozen Python/PATH; no runtime grant is supplied.
+
+No GPU, browser, real native job, launchctl/service/DB, Blender, render, codec, bulk LFS or screenshot cleanup was performed. Actual helper constructors/archive bodies executed only with harmless scratch filesystem and inert native ports. Partial scratch identities from independent controls are retained and indexed by JSON. The one live cache-owner child was observed exiting 0. Native archive/process-cohort ownership and external XPC behavior remain unqualified. CPU synthetic image decoding and source projection math are not visual acceptance.
+
+The five mandatory 0.9.5 categories do not add a separate finding: no new client authority, no untested new system, no demo replacement issue, no demonstrated perf-tagged product regression, and no new unlogged product/spec interpretation. The seven findings violate this new packet's explicit execution/evidence/decoder contracts. No style issue blocks, and no unrun future visual/native test is used as a blocker.
+
+COMMANDS AND REPLAY
+
+commands.jsonl records parent verification argv, cwd, environment, exit, elapsed time and log SHA256. process-results.json additionally records actual child exits/argv and successor outcomes. The initial readiness command/exit is readiness-check-command.json; the final command/exit is final-check.json. Decoder commands and case exits are retained under its report directory. The supplied inspector suite, audit and 28 fresh CLI controls all ran serially; nine adverse inputs refuse, four baselines pass, and fifteen additional inputs pass, including the documented malformed-PNG/state cases supporting R5-R7. Other permissive fields are documented in the child report as coverage limits rather than additional blockers.
+
+Fresh parent scripts: lifecycle.py (seven cases); resource-errors.py (two); cache-boundaries.py (three); process-boundaries.py (seven-process chain plus five outcomes); entry-adverse-v2.mjs (two). Their top-level exit 0 means the documented assertions completed, including reproduced defects. It is not a candidate PASS. No failed product gate was converted to a pass.
+
+For independent replay, copy scripts to a fresh /tmp directory and replace their explicit evidence-root constants before execution; never overwrite retained results. All packet/helper imports remain pinned to the reviewed checkout. The decoder adverse.py reconstructs each mutation before running its CLI; its saved unit directories are restored to baselines afterward, so replay the recipe rather than blindly executing a case's command against the restored shared output. Retain direct executable paths and do not use package-manager exec through linked node_modules.
+
+Read-only discovery mistakes (wrong checkout for one readiness lookup, guessed unbundled Playwright filename, root package resolver lacking @playwright/test, and an absent uppercase ART_BIBLE filename) produced harmless lookup errors and were corrected; none changed source or ran a product/native gate. The child retained its initial metadata-audit assumption failure and corrected it for meshopt's declared fallback buffer. The initial readiness failure was caused by the disclosed test-generated cache and is retained, not discarded.
+
+REVIEW-HARNESS CORRECTION
+The first entry-adverse.mjs reused an inert browser object across two cases. The second case reached the prior wrapper's duplicate-page refusal before goto, so it was not counted as a navigation-error reproduction. That script/log/results remain intact. entry-adverse-v2.mjs supplies a fresh page port for each case and asserts exactly one actual-openReview-goto trace in each. Both corrected cases exit 0 with the primary/secondary outcomes reported in R3. This changed only the scratch harness, not candidate code.
+
+FINAL CHECK RESULTS
+All 12,966 tracked files, branch, HEAD and tree match before.json exactly; final target Git status is empty. Final read-only readiness check exits 0; all 29 unique prospective paths remain absent. Protected diff check exits 0. Readiness SHA256: 9125fe8f8b3f84e193195b253d67fe9b7dafc3848fbf045798cf51a786dae5c8. Reviewed binary diff SHA256: d7d5d678bf271a48f6344ed4e1f7887280de35d9a6d8b660416ee78c26a3b3f2. Parent checkout was also clean at its final observation; no parent writes were performed.

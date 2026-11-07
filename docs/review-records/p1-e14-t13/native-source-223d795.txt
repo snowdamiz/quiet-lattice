@@ -1,0 +1,72 @@
+TASK: P1.E14.T13 — disabled concrete native observer source prerequisite
+STATUS: DONE (this bounded implementation/CPU source unit only; independent review and native execution remain with parent)
+SUMMARY: Implemented a task-local source freezer, exact local path binding, Node worker and thin Python controller for the unchanged trace-on/off protocol. It reuses the existing dispatcher, ordinary Playwright/openReview/GL launcher and the accepted StationJob/StageReceipts/physical drain/archive/TMP/terminal bodies. Runtime readiness is false. No native capture, browser, GPU, service, DB, grant issuance, hydration, screenshot cleanup, push, PR or merge occurred. No independent review or runtime qualification is claimed by this worker.
+
+PROVENANCE:
+- Branch/worktree: `codex/task/P1-E14-T13-trace-observer` at `/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8`; final Git status empty.
+- Source unit base: `02e981096574ca7e486958023075d0e52c45062f`, tree `6ab14d7ee5f702a45ae479f58837033320a14b89` (the independently reviewed R3 PASS pin).
+- Separate recovery: `732a502a7ce5da3acdf1de147671b326bf3d499a`, tree `866a0faa27a4e8891b7cd21a774c52a707ada0c1`. Exactly four previously absent helpers copied byte-for-byte from `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9`; no changed shared helper overwritten. `recovery.json` gives Git blobs and SHA-256 values.
+- Implementation head: `223d795ee34d66521837694ece2d6990d3d5bc90`; tree `407a5a20b9490f8a8075bc12586e93aa1b3e3891`.
+- Original retained branch remains `7fb34e4eeeb320cb591982d524a80abe1842dfc8`. Original parent/recovery history and all prior reports are retained. Cloud03 remains FAILED, accepted:false; offline reclassification is not fresh performance.
+- All changed-file hashes: `source-hashes.json`; protected file hashes: `verification-3/protected-files.json`; old algorithm/standard Review proof: `verification-3/protected-algorithm-proof.json`. Engine, Atmosphere, Review, browser-work-probe and trace-observer-report are unchanged from R3. No orchestration docs or production renderer/animation/fauna/playback files changed.
+
+FILES CHANGED:
+- `assets/blend/stations/_authoring/round4_capture_children.py`
+- `assets/blend/stations/_authoring/round4_job_boundary.py`
+- `assets/blend/stations/_authoring/run_round4_browser_proof.py`
+- `assets/blend/stations/_authoring/run_round4_remaining8.py`
+- `packages/tools/src/capture/browser-work-trace.ts`
+- `packages/tools/src/capture/trace-observer.test.ts`
+- `packages/tools/src/capture/trace-observer.ts`
+- `packages/tools/src/capture/trace_observer_packet/README.md`
+- `packages/tools/src/capture/trace_observer_packet/adapter.ts`
+- `packages/tools/src/capture/trace_observer_packet/controls.py`
+- `packages/tools/src/capture/trace_observer_packet/discover.py`
+- `packages/tools/src/capture/trace_observer_packet/evidence.test.ts`
+- `packages/tools/src/capture/trace_observer_packet/evidence.ts`
+- `packages/tools/src/capture/trace_observer_packet/freeze.py`
+- `packages/tools/src/capture/trace_observer_packet/launch.py`
+- `packages/tools/src/capture/trace_observer_packet/local-binding.json`
+- `packages/tools/src/capture/trace_observer_packet/metadata.py`
+- `packages/tools/src/capture/trace_observer_packet/recovery.json`
+- `packages/tools/src/capture/trace_observer_packet/worker.ts`
+
+VERIFY:
+- Exact commands, cwd, Node PATH, exits and logs: `commands.txt` and `verification-complete/commands.json`. Node is 22.23.3; no more than two Vitest workers.
+- 519 focused tests in 16 files passed (original supplied 490 plus 29 new adapter/admission/evidence controls). 64 independent prior cases replayed with zero unexpected results. The independent fixture's positive category reply was updated from [] to the four now-required real names; assertions/faults unchanged, output paths redirected. Originals and hash delta: `prior64/changes.json`.
+- 16 Python control groups passed, including real FIFO replacement at grant/result/consumption boundaries, actual descriptor closure, cap/replacement/growth/hash mismatch, interrupted read preserving partial raw and original deadline plus close failure, actual temp-Git clean/same-head sequencing and tamper/staged/symlink refusal, archive-copy integrity, retained helper bodies under inert native ports, physical kernel-count failure distinct from JS completion, partial allocation and a real ordinary owned Python child reaped using a stdin barrier. These are CPU controls, not native-browser proof.
+- Both tools/client TypeScript checks, scoped ESLint, Prettier, Python compile(), Git diff checks passed. No Python formatter was installed or claimed; Python was compiled and exercised by CPU tests.
+- Corrected advisory RED before production fix: 7 failed/5 passed at the actual dispatcher (`advisory-red-corrected.log`); final GREEN includes all 12 advisory cases. Initial it.each array-spreading harness falsely passed; it was corrected before production edits, with both logs retained.
+- New adapter late-cutoff/receipt RED: two real failures (a late host triggered new device work; receipt error array mutated). GREEN: two passed (`adapter-late-*.log`). The old R3 detached dispatcher behavior remains intact; new adapter also cuts off subsequent operations and snapshots its own result/receipts.
+- Full real source freeze initially exposed an absent workspace-link target manifest. A temp-Git regression reproduced it; manifest inclusion fixed it (`workspace-link-*.log`, `freeze-222644aba.log`). Static tracing of unchanged Game.start/startGame/Multitool demonstrated required bootstrap GLBs/audio; a freezer regression reproduced omitted copied resources and now passes (`bootstrap-closure-*.log`). Only existing payloads copied; no source assets hydrated or edited.
+- All development failure tails (last 20 lines each) preserved in `failure-tails.md`. Earlier test-fixture bytes/text mismatch and lint failure are recorded, not hidden.
+- Final complete frozen bundle verified at `/private/tmp/p1-e14-t13-native-source.577yaoka/frozen-223d795ee/readiness.json`; SHA-256 `d197d95d2e4bd3db63ebe657e138705fb503b4b25456b8037c4432830c1953d6`; runtimeAuthorized:false. 508 source/resource records, 47456032 bytes; 13222 dependency records, 243636268 regular bytes; 544 bound binary/bundle records. All source/dependency copies rehashed and complete inventories checked against the same clean HEAD. Failed/interim frozen directories are retained.
+- Frozen Python launcher refuses disabled readiness with OS exit 2 before grant/native imports/resources. Frozen Node worker refuses unowned execution with OS exit 1. Dedicated old entry --proposal exits 0 and --run exits 1. Prospective output/fallback/consumption/grant and separately enabled readiness paths are absent (`NEXT_LAUNCH.json`).
+
+DECISIONS:
+- R3 advisory PASS versus new fix → preserve the old PASS pin; close sparse category/PID admission in this new source unit. Dense own entries, exact required trace categories, finite integer real PID domain and uniqueness are checked through the actual dispatcher. No old protocol body or decision threshold changed.
+- Same metadata snapshot → lstat then O_RDONLY|O_NONBLOCK|O_NOFOLLOW, fstat regular/type/owner/dev/ino/stamps/size, cap+1 read, hash/parse/validate those same bytes. No FIFO open wait and no unbounded EOF hash before metadata admission. The Python grant reader rejects duplicate keys/nonfinite JSON. Unknown original records and partial read facts remain attached to failure.
+- Physical settlement → retain dispatcher detached failed/pending facts separately; actual controller observes direct OS exits, current birth/UID/coalition membership and kernel live count, drains known descendants, proves registration/profile/private TMP removal, verified archive copies and terminal audit. No capture after failed release, no general scheduler/retry. All controller receipts have accepted:false; candidate:true is provisional and requires parent-observed actual launcher OS exit 0 plus result/output hashes. No disk flag admits a successor.
+- Disk/stream failures → raw bytes are retained before writes, exclusive publication never overwrites prior evidence, original and close failures survive, and a bounded fallback is attempted. All-sink failure retains memory/raw fallback facts without a durable-proof claim. Failed/spent state remains spent. Partial allocation retains exact paths/unknown facts.
+- Frozen dependencies → copy into external source bundle, do not point Vite caches into another checkout. Source/dependency/file ledgers and actual capacity checks bound admission; runtime namespace/log/profile/output ceilings are sampled observations, not invented OS quotas.
+- Device/load → explicit Metal/Apple M5 Pro expectation derives from read-only local hardware discovery only. Runtime must observe actual GL device/backend and full host/load before and after every step. Parent must reserve the GPU slot and quiesce our heavy CPU jobs; external contenders remain unknown-not-excluded. Core expectation 15; three load ceilings [7.5,10,15]. Ordinary startup resources/framework/render work stay unchanged.
+- Outcome → retain strict every-pair abs(gap)>max(onRange,offRange)+5ms, same-sign requirement, mixed-sign precedence to inconclusive, zeros neutral only for stable similarity, empty fences >20ms or incomplete/unstable controls inconclusive. No result qualifies 16.67ms.
+
+OUT OF SCOPE FOUND:
+- P1.E14.T13 still needs the parent's fresh independent native-source review, explicit enabled readiness and one-use grant/capacity/load reservation, then the exact diagnostic runtime. Native process/device behavior has not run here. Later attribution/optimization and repeated standard performance qualification remain separate. No concrete source blocker is being handed back.
+- External contenders remain unexcluded; ordinary framework external font requests remain unchanged and are subject to normal page-error observations. No font/renderer/authoring optimization was introduced.
+
+ARTIFACTS:
+- This report and evidence root: `/private/tmp/p1-e14-t13-native-source.577yaoka`.
+- `NEXT_LAUNCH.sh` (syntax checked only), `NEXT_LAUNCH.json`, `commands.txt`, `verification-complete/`, `source-hashes.json`, `delivery.json`, `frozen-verification.json`, `failure-tails.md`.
+- Prior review preserved: `/tmp/p1-e14-t13-r3-review.k7m3/{report.md,review.json}`; assessment preserved: `/tmp/p1-e14-t13-continuation.hdSDIM/`. FIFO crosslane report consulted read-only: `/private/tmp/p1-e08-t09-r5-independent-xDKoJp/REPORT.md`.
+- Zero new PNGs or timer queries. No native evidence is represented as collected.
+
+NEXT_LAUNCH (parent only after independent review):
+1. Use exactly head/tree above in the same clean worktree. `NEXT_LAUNCH.json` binds every path and budget; a changed head/path/binary/dependency requires a new freeze/review/binding, not edits to old evidence. The supplied readiness stays false.
+2. Parent creates a separate enabled readiness at `/private/tmp/t13-observer-enabled-readiness-7b836b7a.json` from the verified frozen metadata and authenticates its exact bounded snapshot. No enabled file or grant exists now. The root runtimeAuthorized flag is the authorization gate; nested local-binding is a disabled source path description, not authority.
+3. Parent establishes its GPU reservation and quiesces our heavy CPU jobs, then writes one purpose-scoped grant at `/private/tmp/t13-observer-grant-7b836b7a.json` with the exact fields listed in `NEXT_LAUNCH.json`, including enabled readiness hash, head/tree/plan/output/consumption and expiry <=1 hour. The launcher rechecks expiry at consumption and worker admission. Failed/partial claims cannot be reused.
+4. Execute `NEXT_LAUNCH.sh <enabled-readiness-sha256> <fresh-grant-sha256>` from the parent-owned runtime session. It execs pinned Python `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14`; observed kernel must equal `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python`. Node `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node`; browser `/Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`. Full helper/git/lsof/browser bundle/executable hashes are in disabled binding/source inventory, with no decoder job.
+5. Parent must observe actual OS exit 0 and then hash/authenticate bounded result/output snapshots and semantic physical terminal facts. Disk candidate:true is insufficient. Nonzero, uncertain or incomplete terminal facts stop the attempt and require inspection; no successor is scheduled by this source.
+
+Budgets: 12 full preparations, <=7200 warm-ups, 10 measured frames, 48 dependent passes, 36 preflight fences, 24 control fences, 0 PNG/timer queries, <=6 on segments; aggregate <=64 MiB /250000 events/1024 trace reads. Capture/drain/terminal: 1009100/306100/1315200ms. Metadata cap16MiB; evidence memory/primary-fallback ledger128MiB/1200 entries; source256MiB/6000 records; dependencies512MiB/30000; each output/profile512MiB/20000; logs256MiB; frozen runtime namespace768MiB/40000. Runtime output `/private/tmp/t13-observer-native-7b836b7a`, fallback `/private/tmp/t13-observer-fallback-7b836b7a`, consumption `/private/tmp/t13-observer-consumed-7b836b7a`. Admission freshly requires >=8GiB available. Last observed available bytes: 66554916864 at epoch 1794034947.743509; this is an observation, not reservation or quota.

@@ -1,0 +1,374 @@
+{
+  "base": "bd44b70d9c6712f4216a0027f4c56ca7079b7e9e",
+  "sourceHead": "55f357cf01da755b07ed0e9a3b074cd6d0dfb7f4",
+  "sourceTree": "589c20a836ed318c563d714f2f8905fa049769a0",
+  "branch": "t3/P1-E07-T07-T09-live-qa",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+  "acidBinding": {
+    "attached": true,
+    "worktreePath": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "branchMetadata": "t3/p1-e07-t07-t09-live-qa",
+    "note": "Git branch renamed with current t3 prefix and requested capitalization; Acid metadata retains original case. No rebinding API exposed."
+  },
+  "integrationHead": "74360adf8cfb8e0d5ee7c7e0dbee07de02808904",
+  "integrationTree": "1412b00e663b1d7f996a8073cdede83ca53cbce0",
+  "integrationPatches": [
+    {
+      "reviewed": "be2d4704b8d5ba837a2da28ac106cdfaf81b38c9",
+      "integrated": "99b8bd9e8067c4c6f0d619a5afebf2d45e6ec7af",
+      "reviewedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151",
+      "integratedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151"
+    },
+    {
+      "reviewed": "c0b9c9ba966302b3e7b960129e1c8307e35b7667",
+      "integrated": "20984163e9af0e2586a5be2add6e41e28727c1b0",
+      "reviewedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b",
+      "integratedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b"
+    },
+    {
+      "reviewed": "52da4eff0d2f354cb18198232a7c8a37c9529a41",
+      "integrated": "1189e1c5d33a1bbf3f4ecf741158ba396835ab1d",
+      "reviewedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a",
+      "integratedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a"
+    },
+    {
+      "reviewed": "bf09bc72543ed74b7dc7386415471d26a36a4b6d",
+      "integrated": "079ee3795e213a308b1e43244500fa4bdf4cc81f",
+      "reviewedPatchId": "9900bb683d95590d018b572060e6f99728521657",
+      "integratedPatchId": "9900bb683d95590d018b572060e6f99728521657"
+    },
+    {
+      "reviewed": "d688579adf31c2a8ee9836495ba6b32708b99ccd",
+      "integrated": "74360adf8cfb8e0d5ee7c7e0dbee07de02808904",
+      "reviewedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28",
+      "integratedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28"
+    }
+  ],
+  "cumulativeT07PatchId": "086880307379fb409d59983981d5fc9b50ff5568",
+  "combinedT07PatchId": "086880307379fb409d59983981d5fc9b50ff5568",
+  "perFileParity": {
+    "T07": {
+      "docs/ARCHITECTURE.md": {
+        "reviewedBlob": "1750f01d372e803765f64134743f292bfaef8002",
+        "combinedBlob": "db72a4273c3859a7063a1622871e16e197ecbf65"
+      },
+      "docs/DESIGN.md": {
+        "reviewedBlob": "fa1a4fb6c67f1efd72e1b711948d4382f9fa6e77",
+        "combinedBlob": "fa1a4fb6c67f1efd72e1b711948d4382f9fa6e77"
+      },
+      "packages/server/src/abilities/book.ts": {
+        "reviewedBlob": "2cbe1ad9d882da6d5023a3837a58a468eb7badfa",
+        "combinedBlob": "2cbe1ad9d882da6d5023a3837a58a468eb7badfa"
+      },
+      "packages/server/src/abilities/resonance.test.ts": {
+        "reviewedBlob": "d0a5bd6bde6eaf0ad5b7c468828fc4a4aed935ef",
+        "combinedBlob": "d0a5bd6bde6eaf0ad5b7c468828fc4a4aed935ef"
+      },
+      "packages/server/src/abilities/retirement.test.ts": {
+        "reviewedBlob": "fbd1a6bfd62c6cf4aa7675b76d86ae616e2d57b4",
+        "combinedBlob": "fbd1a6bfd62c6cf4aa7675b76d86ae616e2d57b4"
+      },
+      "packages/server/src/abilities/service.test.ts": {
+        "reviewedBlob": "7f723a2ae3c5b5fb315499f23cd026dfe8c90926",
+        "combinedBlob": "7f723a2ae3c5b5fb315499f23cd026dfe8c90926"
+      },
+      "packages/server/src/abilities/service.ts": {
+        "reviewedBlob": "c5ab5b0e7120105fb0a4ed48586ff9c8054a7082",
+        "combinedBlob": "c5ab5b0e7120105fb0a4ed48586ff9c8054a7082"
+      },
+      "packages/server/src/abilities/statuses.ts": {
+        "reviewedBlob": "6fd2c50e06f64e19cdc4116f717c006c39c7f568",
+        "combinedBlob": "6fd2c50e06f64e19cdc4116f717c006c39c7f568"
+      },
+      "packages/server/src/abilities/symbiotic.test.ts": {
+        "reviewedBlob": "a1db9ca3bcf7122d61d83f7e0c973785a6ccd024",
+        "combinedBlob": "a1db9ca3bcf7122d61d83f7e0c973785a6ccd024"
+      },
+      "packages/server/src/abilities/symbiotic.ts": {
+        "reviewedBlob": "f9f6b361105a93be96629f58b195b68ef33c3fe0",
+        "combinedBlob": "f9f6b361105a93be96629f58b195b68ef33c3fe0"
+      },
+      "packages/server/src/abilities/thermal.test.ts": {
+        "reviewedBlob": "afddacad1f6753b467d039590716f4cc449abe21",
+        "combinedBlob": "afddacad1f6753b467d039590716f4cc449abe21"
+      },
+      "packages/server/src/abilities/thermal.ts": {
+        "reviewedBlob": "276f6b1b5bd07b974a97633a905d638b0607ed9a",
+        "combinedBlob": "276f6b1b5bd07b974a97633a905d638b0607ed9a"
+      },
+      "packages/server/src/combat/zone.ts": {
+        "reviewedBlob": "2912d5d947e42f2a4a6a8ea04b006d1c86613051",
+        "combinedBlob": "2912d5d947e42f2a4a6a8ea04b006d1c86613051"
+      },
+      "packages/server/src/events/service.test.ts": {
+        "reviewedBlob": "09dd5b86e1c4a3432c2adb1ea0faaf37e368f922",
+        "combinedBlob": "09dd5b86e1c4a3432c2adb1ea0faaf37e368f922"
+      },
+      "packages/server/src/events/service.ts": {
+        "reviewedBlob": "65f1f545b44dbf604d1ad3b217965821a66b424c",
+        "combinedBlob": "65f1f545b44dbf604d1ad3b217965821a66b424c"
+      },
+      "packages/server/src/fauna/ai.ts": {
+        "reviewedBlob": "688ee63a8b8e1e28f88018cb64ce2afc5f45933b",
+        "combinedBlob": "688ee63a8b8e1e28f88018cb64ce2afc5f45933b"
+      },
+      "packages/server/src/fauna/sim.ts": {
+        "reviewedBlob": "f86ca789e3ac16532c8afb78547a951a523664ad",
+        "combinedBlob": "f86ca789e3ac16532c8afb78547a951a523664ad"
+      },
+      "packages/server/src/fauna/symbiotic.ts": {
+        "reviewedBlob": "2f75653add237c20609178d8716504572d4b9339",
+        "combinedBlob": "2f75653add237c20609178d8716504572d4b9339"
+      },
+      "packages/server/src/gateway/ws.ts": {
+        "reviewedBlob": "75b5f605d6885baf2f567a489a609329edf0772f",
+        "combinedBlob": "75b5f605d6885baf2f567a489a609329edf0772f"
+      },
+      "packages/server/src/meters/suit.test.ts": {
+        "reviewedBlob": "5bf252d62f8c20fbe03782b6637ea96e2f0f707e",
+        "combinedBlob": "5bf252d62f8c20fbe03782b6637ea96e2f0f707e"
+      },
+      "packages/server/src/phases/manager.ts": {
+        "reviewedBlob": "2d386d8645c90dd9fb6ed1364fdf0e9d7a9067c0",
+        "combinedBlob": "2d386d8645c90dd9fb6ed1364fdf0e9d7a9067c0"
+      },
+      "packages/server/src/zones/manager.test.ts": {
+        "reviewedBlob": "c07ac1a28f00de13de833671c1647229cde4a5f3",
+        "combinedBlob": "c07ac1a28f00de13de833671c1647229cde4a5f3"
+      },
+      "packages/server/src/zones/manager.ts": {
+        "reviewedBlob": "a26db1b4044ae052496e583e824b8ae982337aed",
+        "combinedBlob": "a26db1b4044ae052496e583e824b8ae982337aed"
+      },
+      "packages/server/src/zones/regen.test.ts": {
+        "reviewedBlob": "b6037c54f704b3b7a2241acbc6509839a40dd61a",
+        "combinedBlob": "b6037c54f704b3b7a2241acbc6509839a40dd61a"
+      },
+      "packages/server/src/zones/wake.test.ts": {
+        "reviewedBlob": "10f03923c5c0c3d205cdf74c60ac40394073a37c",
+        "combinedBlob": "10f03923c5c0c3d205cdf74c60ac40394073a37c"
+      },
+      "packages/server/src/zones/zone.ts": {
+        "reviewedBlob": "ed00736267f2e1803849989902b21178d3c48487",
+        "combinedBlob": "ed00736267f2e1803849989902b21178d3c48487"
+      },
+      "packages/server/test/pilot.ts": {
+        "reviewedBlob": "a00853be53b6eabdd945d88f588293b1628c1d4d",
+        "combinedBlob": "a00853be53b6eabdd945d88f588293b1628c1d4d"
+      },
+      "packages/server/test/symbiotic.int.test.ts": {
+        "reviewedBlob": "d2a170d5d259bc52fa9637a08fc42768410067c6",
+        "combinedBlob": "d2a170d5d259bc52fa9637a08fc42768410067c6"
+      },
+      "packages/shared/src/abilities/index.ts": {
+        "reviewedBlob": "984e9708be93898c9907bde86dc4e851730bf2e3",
+        "combinedBlob": "984e9708be93898c9907bde86dc4e851730bf2e3"
+      },
+      "packages/shared/src/abilities/symbiotic.ts": {
+        "reviewedBlob": "940d1e6e88b28a1a3da48cce6b79e28355b6423c",
+        "combinedBlob": "940d1e6e88b28a1a3da48cce6b79e28355b6423c"
+      },
+      "packages/shared/src/data/skills/symbiotic.ts": {
+        "reviewedBlob": "dee8a4167944d535c569482382d6076f8a9f3193",
+        "combinedBlob": "dee8a4167944d535c569482382d6076f8a9f3193"
+      },
+      "packages/shared/src/ships/stats.ts": {
+        "reviewedBlob": "d573cf00241d22ebe120c417109ea9b16cc8c4e3",
+        "combinedBlob": "d573cf00241d22ebe120c417109ea9b16cc8c4e3"
+      }
+    },
+    "T09": {
+      "docs/ARCHITECTURE.md": {
+        "reviewedBlob": "ddede65790e9c84925b4b61a2398826681124156",
+        "combinedBlob": "db72a4273c3859a7063a1622871e16e197ecbf65"
+      },
+      "packages/client/src/Game.js": {
+        "reviewedBlob": "f0dacdfb6745be09bbfa2eb8ce092430b997b5a2",
+        "combinedBlob": "f0dacdfb6745be09bbfa2eb8ce092430b997b5a2"
+      },
+      "packages/client/src/Game.test.js": {
+        "reviewedBlob": "51c947fc63800fbb0b04206c9c03eba73b888556",
+        "combinedBlob": "51c947fc63800fbb0b04206c9c03eba73b888556"
+      },
+      "packages/client/src/dev/playthrough.js": {
+        "reviewedBlob": "964479aa7ddaa599a6c9b3ccf7af6612ae1da396",
+        "combinedBlob": "964479aa7ddaa599a6c9b3ccf7af6612ae1da396"
+      },
+      "packages/client/src/dev/review.js": {
+        "reviewedBlob": "8b5ccb2b1b02adcc25c3ca5e5f4fb71bb8567f9d",
+        "combinedBlob": "8b5ccb2b1b02adcc25c3ca5e5f4fb71bb8567f9d"
+      },
+      "packages/client/src/dev/take.js": {
+        "reviewedBlob": "eb2b5a5f1558137df57a19794d57f897fc1acad4",
+        "combinedBlob": "eb2b5a5f1558137df57a19794d57f897fc1acad4"
+      },
+      "packages/client/src/gameplay/Fauna.js": {
+        "reviewedBlob": "e08a6274038c5afab73bbb1b9fef460e4c5a82e5",
+        "combinedBlob": "e08a6274038c5afab73bbb1b9fef460e4c5a82e5"
+      },
+      "packages/client/src/gameplay/Fauna.test.js": {
+        "reviewedBlob": "05e13ce623896a5f2ea10ad07c0d06c028694eaa",
+        "combinedBlob": "05e13ce623896a5f2ea10ad07c0d06c028694eaa"
+      },
+      "packages/client/src/net/abilities.js": {
+        "reviewedBlob": "90f6ed17f2885d193331ff3ef8ee728ff5681bb5",
+        "combinedBlob": "90f6ed17f2885d193331ff3ef8ee728ff5681bb5"
+      },
+      "packages/client/src/net/abilities.test.js": {
+        "reviewedBlob": "c49d687d2f37e2400df41b71ddc36161579e94d6",
+        "combinedBlob": "c49d687d2f37e2400df41b71ddc36161579e94d6"
+      },
+      "packages/client/src/remote/RemoteEntities.js": {
+        "reviewedBlob": "f88e41069540022d1e8fdfa4aead0606557d8de0",
+        "combinedBlob": "f88e41069540022d1e8fdfa4aead0606557d8de0"
+      },
+      "packages/client/src/remote/RemoteEntities.test.js": {
+        "reviewedBlob": "34f78d0e612a1a352482dbff31184d551c276c37",
+        "combinedBlob": "34f78d0e612a1a352482dbff31184d551c276c37"
+      },
+      "packages/client/src/remote/RemoteShips.js": {
+        "reviewedBlob": "f3ce9cb36cf45421fb5993eefb352e7f1aba6421",
+        "combinedBlob": "f3ce9cb36cf45421fb5993eefb352e7f1aba6421"
+      },
+      "packages/client/src/remote/RemoteShips.test.js": {
+        "reviewedBlob": "4dcae71ab25fefba1a495147554722da6ace7f63",
+        "combinedBlob": "4dcae71ab25fefba1a495147554722da6ace7f63"
+      },
+      "packages/client/src/remote/replay.js": {
+        "reviewedBlob": "36bf465ad93b284926ea2281fc9d3b38db2eec75",
+        "combinedBlob": "36bf465ad93b284926ea2281fc9d3b38db2eec75"
+      },
+      "packages/client/src/ui/HUD.js": {
+        "reviewedBlob": "1d8a20c26a98420fec0de18901e558a535d96607",
+        "combinedBlob": "1d8a20c26a98420fec0de18901e558a535d96607"
+      },
+      "packages/client/src/ui/HUD.test.js": {
+        "reviewedBlob": "3347f941d21f17f7e68a8d4976d5337b4f8bb0e4",
+        "combinedBlob": "3347f941d21f17f7e68a8d4976d5337b4f8bb0e4"
+      },
+      "packages/client/src/ui/style.css": {
+        "reviewedBlob": "fb7c106c674278af133c9a91681b00d13b7387b6",
+        "combinedBlob": "fb7c106c674278af133c9a91681b00d13b7387b6"
+      },
+      "packages/client/src/universe/Universe.test.js": {
+        "reviewedBlob": "2d818f390ef087f0563220058d3b2fcc700462d1",
+        "combinedBlob": "2d818f390ef087f0563220058d3b2fcc700462d1"
+      },
+      "packages/tools/src/capture/screens.test.ts": {
+        "reviewedBlob": "c28ea23974ed1be43ecbcba2da3fe76120c4ab37",
+        "combinedBlob": "c28ea23974ed1be43ecbcba2da3fe76120c4ab37"
+      },
+      "packages/tools/src/capture/screens.ts": {
+        "reviewedBlob": "42cb996338dc630e320ae7e8975f175fea6fa618",
+        "combinedBlob": "42cb996338dc630e320ae7e8975f175fea6fa618"
+      },
+      "packages/tools/src/gates/removed.test.ts": {
+        "reviewedBlob": "045f9f106da8b3f118243fed6978286e650eec85",
+        "combinedBlob": "045f9f106da8b3f118243fed6978286e650eec85"
+      },
+      "packages/tools/src/gates/removed.ts": {
+        "reviewedBlob": "9639556690a847385ac6273d63b4d8b3dae80088",
+        "combinedBlob": "9639556690a847385ac6273d63b4d8b3dae80088"
+      },
+      "packages/tools/src/smoke/fauna-online.spec.ts": {
+        "reviewedBlob": "d13e819e84f11ab547b47b5a7426fc6feb845636",
+        "combinedBlob": "d13e819e84f11ab547b47b5a7426fc6feb845636"
+      }
+    }
+  },
+  "protected": {
+    "docs/IMPLEMENTATION_PLAN.md": {
+      "parent": "1ca913f0df6ef614a984b5de8781efc88ac1e3a1",
+      "combined": "1ca913f0df6ef614a984b5de8781efc88ac1e3a1"
+    },
+    "docs/PROGRESS.md": {
+      "parent": "c7e6b14b17ac8a9203eb58347d4f0075cdbd48f7",
+      "combined": "c7e6b14b17ac8a9203eb58347d4f0075cdbd48f7"
+    },
+    "docs/DECISIONS.md": {
+      "parent": "83e40a48971117f2432fb2abe41ad7f6f8171670",
+      "combined": "83e40a48971117f2432fb2abe41ad7f6f8171670"
+    },
+    "packages/shared/src/exosuit": {
+      "parent": "79a0be9c0369da5271703ad1105eb8f2e9506662",
+      "combined": "79a0be9c0369da5271703ad1105eb8f2e9506662"
+    },
+    "packages/shared/src/skills": {
+      "parent": "af5017b78aeabd5368daa3907f188d38491a8bce",
+      "combined": "af5017b78aeabd5368daa3907f188d38491a8bce"
+    },
+    "packages/server/test/gatewayPersistence.test.ts": {
+      "parent": "248c4fffc4f426834fca3e83a7d69bc2379c0995",
+      "combined": "248c4fffc4f426834fca3e83a7d69bc2379c0995"
+    },
+    "packages/server/test/helpers.ts": {
+      "parent": "aac3bb9825ed2123770c2e14cc7e880e072018e6",
+      "combined": "aac3bb9825ed2123770c2e14cc7e880e072018e6"
+    },
+    "packages/server/src/persistence": {
+      "parent": "43222c5370f3ae1b0ca359b9104dba190fba7747",
+      "combined": "43222c5370f3ae1b0ca359b9104dba190fba7747"
+    },
+    "packages/server/src/skills": {
+      "parent": "8f624842495713517e4b95152670e1e4768271b7",
+      "combined": "8f624842495713517e4b95152670e1e4768271b7"
+    },
+    "packages/server/src/reputation": {
+      "parent": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2",
+      "combined": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2"
+    },
+    "packages/server/src/abilities/eligibility.test.ts": {
+      "parent": "6f36f19d1429cb8c40ee0c4a2b35c66e0d585b39",
+      "combined": "6f36f19d1429cb8c40ee0c4a2b35c66e0d585b39"
+    },
+    "packages/client/src/core/Engine.js": {
+      "parent": "60a5f814df184642b88d3a1366618aa57d6b4ba9",
+      "combined": "60a5f814df184642b88d3a1366618aa57d6b4ba9"
+    },
+    "packages/client/src/gameplay/modelLibrary.js": {
+      "parent": "385a7f97014afe0072baefe0234d592d7b70b5b9",
+      "combined": "385a7f97014afe0072baefe0234d592d7b70b5b9"
+    },
+    "packages/client/src/render": {
+      "parent": "006eba39102137053d1e14f2a4df412f200391d0",
+      "combined": "006eba39102137053d1e14f2a4df412f200391d0"
+    },
+    "packages/tools/src/art": {
+      "parent": "3450d02662eb45c9f48be5de33eb3a0bf00b7742",
+      "combined": "3450d02662eb45c9f48be5de33eb3a0bf00b7742"
+    },
+    "assets": {
+      "parent": "b9780f893547190dd896e2735e406f73e9c4ed6b",
+      "combined": "b9780f893547190dd896e2735e406f73e9c4ed6b"
+    },
+    "blender": {
+      "parent": "af124f3e13df0e47bb44a77df96adf2c74e6bc15",
+      "combined": "af124f3e13df0e47bb44a77df96adf2c74e6bc15"
+    },
+    "packages/client/public": {
+      "parent": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1",
+      "combined": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1"
+    },
+    "package.json": {
+      "parent": "c865f10af15c363e52a00d52ec9bf895c4ff1ea9",
+      "combined": "c865f10af15c363e52a00d52ec9bf895c4ff1ea9"
+    },
+    "pnpm-lock.yaml": {
+      "parent": "fa850c2e93a386a217a116f9c1d7f5d2bafffcd6",
+      "combined": "fa850c2e93a386a217a116f9c1d7f5d2bafffcd6"
+    }
+  },
+  "qaFiles": [
+    "packages/tools/playwright.config.ts",
+    "packages/tools/src/smoke/online.ts",
+    "packages/tools/src/smoke/symbiotic-online.spec.ts",
+    "packages/tools/src/smoke/symbiotic-private.test.ts",
+    "packages/tools/src/smoke/symbiotic-private.ts",
+    "packages/tools/src/smoke/symbiotic.config.ts"
+  ],
+  "manualConflictResolutions": [],
+  "automaticMerges": [
+    "docs/ARCHITECTURE.md when applying d688579ad"
+  ],
+  "newQaPatchId": "a2a0e982e28d713238b28fbb7e9745129e57f7ff"
+}

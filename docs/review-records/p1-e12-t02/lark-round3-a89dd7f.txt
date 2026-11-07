@@ -1,0 +1,428 @@
+TASK: P1.E12.T02 — Lark round3 CPU/source implementation unit
+
+STATUS: DONE (authorized CPU/source unit only; full four-hull task and visual acceptance remain with parent)
+
+SUMMARY: Recovered only the canonical Lark source/export in a separate commit, then revised the saved source while preserving its grown-shell silhouette. Added localized contact/leading/maintenance wear, LOD0-derived 4096 PBR atlases shared by every LOD, colocated damage scorch/deformation, a fitted seat/controls/ingress route, continuous boarding rails, and keyed hardpoint sockets. Rigid skins consolidate gear and cockpit assemblies while retaining semantic joints. The compressed GLB includes three indexed liveries, all three states and four LODs. Source and actual compressed-export validation passed. No engine, gameplay, frame-time, GPU or independent visual-grade claim is made.
+
+TASK (verbatim): P1.E12.T02(art)Lark,Swift,Kestrel,Mule · deps:E14.T02 · done:fourhullswithgear,canopy,cockpitinterior,hardpointmounts,damagestate,huskedvariant,threeliverieseach;Larkrebuildstoday'sshipatnewbar · verify:validate;review.
+
+PROVENANCE: app-created checkout `/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470`; branch `task/P1-E12-T02-lark-r3`; clean starting parent `0c4396a9194a5f7c99352f630ea7e66514b61115`; separate recovery commit `94d0ee14b0d285baf1ce17d7dfa29b0f096a1703`. Content donor `75ea700462c17d63a69b570e2ca710c5eb1e055d`, equal canonical pointers at retained cleanup `d584a1d386a1a5cd76911b314a7f9c5293aa23a3`; last source `955d75c2588c02cf3b5cecddf6b850bd7e7647ce`. Both recovered bytes were SHA-256/size checked against already-local LFS objects before copying. No fetch or old-branch restoration. Exact canonical and revised pointer text/OIDs/sizes are in [asset-manifest.json](asset-manifest.json). The revision commit containing this report supplies the final Git tree provenance.
+
+FILES CHANGED:
+
+* `assets/blend/hulls/lark.blend`
+* `packages/client/public/models/hulls/lark.glb`
+* `packages/tools/blender/hulls/lark-round3/` — authoring, CPU lane supervisor, baking, previews, serialization adapter and audits.
+* `assets/renders/hulls/lark-round3-current/` — only fresh worker evidence, receipts and this report.
+
+[ownership-final-check.json](ownership-final-check.json) verifies protected exporters/artlib/families/runtime/capture/docs against the parent. Other hulls, shared library and historical reviews are unchanged.
+
+ASSET MANIFEST:
+
+| Asset | SHA-256 / LFS object OID | Bytes | Git pointer blob |
+|---|---|---:|---|
+| `assets/blend/hulls/lark.blend` | `bc08c784ef37413cd3b51c593c4109a340a8d99edc15f5da30e3dcfaba04ff75` | 65357176 | `2fc5889392ae78e5bc82a0133e304102d206bd4e` |
+| `packages/client/public/models/hulls/lark.glb` | `7f11e2bd2818045c1a861d4e959f2a985828bdcc9b60d44ed2fda8ff41300bad` | 25633924 | `75fe03416acc0abab03d3b27400c559891266dcd` |
+
+| State | LOD0 | LOD1 | LOD2 | LOD3 | Draws LOD0/1/2/3 | Length m |
+|---|---:|---:|---:|---:|---|---:|
+| lark | 107054 | 32229 | 10572 | 2909 | 12 / 12 / 12 / 11 | 12.3796 |
+| lark_damaged | 111862 | 33679 | 10782 | 2784 | 12 / 12 / 12 / 10 | 12.3796 |
+| lark_husked | 117702 | 35422 | 10648 | 2995 | 12 / 12 / 12 / 10 | 12.4313 |
+
+All LOD3 counts are below 5% of their heroes. The saved reference is 1.8500 m. Hardpoint proximity, 7143 collider samples, actual joint displacement, impact texels/deformation, source image hashes and compressed KTX2 inventories are in [contract-audit.json](contract-audit.json). Draw counts are asset primitives with all parts visible, not whole-frame measurements.
+
+VERIFY:
+
+Configured Blender lane: `-b -t 2`, CPU Cycles, thread environment 2, one Blender, 1800 s wall limit, 16000 MiB process-tree RSS limit, 16 MiB log limit and image bounds. Final export/audit serialize both encoding and decoding with one codec. Resumed commands use pinned Node22.23.3, fresh short private TMPDIRs and a separate bounded process-group watchdog. One failed resumed attempt exposed a stock two-decoder minimum and an aggregate-RSS shadowing bug; its RSS/codec qualification is explicitly invalidated in export-failure-analysis.json. Those controls are corrected and measured on final runs. Existing compression dependencies were read only; stock exporter/artlib source stayed unchanged. The source is saved before export and the exporter does not call authoring scripts. [commands.json](commands.json) holds exact argv/cwd/head/input hashes/exit/before-and-after assets. [resource-inventory.json](resource-inventory.json) records measured bounds and telemetry gaps.
+
+| Receipt | Exit | Termination / result |
+|---|---:|---|
+| [20261107T051955741321Z-canonical-inspect.json](20261107T051955741321Z-canonical-inspect.json) | 0 | completed |
+| [20261107T052033384360Z-before-preview.json](20261107T052033384360Z-before-preview.json) | 0 | completed |
+| [20261107T052404230234Z-author.json](20261107T052404230234Z-author.json) | 0 | completed |
+| [20261107T052513776088Z-bake-base.json](20261107T052513776088Z-bake-base.json) | -15 | interrupted:15 |
+| [20261107T052541909824Z-bake-base-fixed.json](20261107T052541909824Z-bake-base-fixed.json) | 0 | completed |
+| [20261107T052904868784Z-bake-damaged.json](20261107T052904868784Z-bake-damaged.json) | 0 | completed |
+| [20261107T053027221590Z-bake-husk.json](20261107T053027221590Z-bake-husk.json) | 0 | completed |
+| [20261107T053240539738Z-finish-source.json](20261107T053240539738Z-finish-source.json) | 1 | failed; see log tail below |
+| [20261107T053334725929Z-finish-source-fixed.json](20261107T053334725929Z-finish-source-fixed.json) | -15 | interrupted:15 |
+| [20261107T053602220744Z-finish-source-mask-fixed.json](20261107T053602220744Z-finish-source-mask-fixed.json) | 0 | completed |
+| [20261107T053928063577Z-source-validate.json](20261107T053928063577Z-source-validate.json) | 0 | completed |
+| [20261107T053949194749Z-after-preview.json](20261107T053949194749Z-after-preview.json) | 0 | completed |
+| [20261107T054032718983Z-author-transform-fixed.json](20261107T054032718983Z-author-transform-fixed.json) | 0 | completed |
+| [20261107T054054571735Z-geometry-check.json](20261107T054054571735Z-geometry-check.json) | 0 | completed |
+| [20261107T054153571995Z-inspect-fit.json](20261107T054153571995Z-inspect-fit.json) | 1 | failed; see log tail below |
+| [20261107T054200505108Z-inspect-fit-fixed.json](20261107T054200505108Z-inspect-fit-fixed.json) | 0 | completed |
+| [20261107T054251974141Z-inspect-visibility.json](20261107T054251974141Z-inspect-visibility.json) | 0 | completed |
+| [20261107T054325406551Z-interior-diagnostic.json](20261107T054325406551Z-interior-diagnostic.json) | 0 | completed |
+| [20261107T054405237050Z-inspect-collections.json](20261107T054405237050Z-inspect-collections.json) | 0 | completed |
+| [20261107T054451502027Z-interior-clay.json](20261107T054451502027Z-interior-clay.json) | 0 | completed |
+| [20261107T054533741905Z-interior-debug.json](20261107T054533741905Z-interior-debug.json) | 0 | completed |
+| [20261107T054600712720Z-interior-debug-snapshot.json](20261107T054600712720Z-interior-debug-snapshot.json) | 0 | completed |
+| [20261107T054625340788Z-final-bake-lark.json](20261107T054625340788Z-final-bake-lark.json) | 0 | completed |
+| [20261107T054744550433Z-final-bake-lark_damaged.json](20261107T054744550433Z-final-bake-lark_damaged.json) | 0 | completed |
+| [20261107T054845937846Z-final-bake-lark_husked.json](20261107T054845937846Z-final-bake-lark_husked.json) | 0 | completed |
+| [20261107T055010944383Z-boarding-fit.json](20261107T055010944383Z-boarding-fit.json) | 0 | completed |
+| [20261107T055133572459Z-final-finish-source.json](20261107T055133572459Z-final-finish-source.json) | 0 | completed |
+| [20261107T055706817050Z-final-access-bake.json](20261107T055706817050Z-final-access-bake.json) | 0 | completed |
+| [20261107T055958600411Z-source-contract.json](20261107T055958600411Z-source-contract.json) | 0 | completed |
+| [20261107T060042657421Z-final-preview.json](20261107T060042657421Z-final-preview.json) | 0 | completed |
+| [20261107T060414564014Z-access-rail-topology.json](20261107T060414564014Z-access-rail-topology.json) | 1 | failed; see log tail below |
+| [20261107T060459719729Z-qualified-access-bake.json](20261107T060459719729Z-qualified-access-bake.json) | -15 | interrupted:15 |
+| [20261107T060532602426Z-access-rail-topology-fixed.json](20261107T060532602426Z-access-rail-topology-fixed.json) | 0 | completed |
+| [20261107T060600094884Z-rail-check.json](20261107T060600094884Z-rail-check.json) | 0 | completed |
+| [20261107T060850259866Z-qualified-access-bake-v2.json](20261107T060850259866Z-qualified-access-bake-v2.json) | 0 | completed |
+| [20261107T061050683682Z-qualified-source-contract.json](20261107T061050683682Z-qualified-source-contract.json) | 0 | completed |
+| [20261107T061122403567Z-qualified-preview.json](20261107T061122403567Z-qualified-preview.json) | 0 | completed |
+| [20261107T061331076303Z-export.json](20261107T061331076303Z-export.json) | 1 | Intentional interrupt to inspect source mesh repairs; supervisor then raised EPERM on already-terminated process-group signaling |
+| [20261107T061518393196Z-inspect-mesh-repairs.json](20261107T061518393196Z-inspect-mesh-repairs.json) | 1 | failed; see log tail below |
+| [20261107T061615599856Z-repair-lower-lod-duplicates.json](20261107T061615599856Z-repair-lower-lod-duplicates.json) | 0 | completed |
+| [20261107T061653807513Z-export-clean-source.json](20261107T061653807513Z-export-clean-source.json) | None | User interrupted supervisor; orphan export subsequently failed in meshopt tsx IPC listen, child returned exporter failure (0 of 1 exported); shell exit telemetry unavailable |
+| [20261107T064353277769Z-export-node22-shorttmp.json](20261107T064353277769Z-export-node22-shorttmp.json) | 1 | failed; see log tail below |
+| [20261107T065116266907Z-signal-serialization-fix.json](20261107T065116266907Z-signal-serialization-fix.json) | 0 | completed |
+| [20261107T065209752263Z-export-qualified-codec1.json](20261107T065209752263Z-export-qualified-codec1.json) | 1 | failed; see log tail below |
+| [20261107T065751606298Z-signal-effective-factor-fix.json](20261107T065751606298Z-signal-effective-factor-fix.json) | 1 | failed; see log tail below |
+| [20261107T065828297742Z-signal-effective-factor-verified.json](20261107T065828297742Z-signal-effective-factor-verified.json) | 0 | completed |
+| [20261107T065906687028Z-export-qualified-codec1-final.json](20261107T065906687028Z-export-qualified-codec1-final.json) | 0 | completed |
+| [20261107T070314487858Z-final-contract.json](20261107T070314487858Z-final-contract.json) | 0 | completed |
+
+Final source/export stock checks: PASS. Focused negative controls: 1024 hero texture — REJECTED, independently textured lower LOD — REJECTED, thirteenth material draw — REJECTED, hardpoint detached from socket — REJECTED, disconnected gear skin — REJECTED, stock validator: missing LOD3 — REJECTED, stock validator: engine emission removed — REJECTED, stock export validator: meshopt not required — REJECTED.
+
+Additional checks: owned Python files parse; `git diff --check` and final allowed-path/LFS-pointer/clean-tree checks are recorded by the finishing shell commands. No tests or standard capture result is inferred from a CPU render.
+
+DECISIONS:
+
+* How to reduce draws without losing gear/control semantics → one rigid skin for three gear hinges, one for cockpit shell/stick/throttle per LOD → each vertex belongs to one joint; actual pose evaluation checks its part moves and other parts stay fixed. Canopy frame and glass remain separate.
+* How to retain Thalune material character without global wear noise → localized surface fields at the leading rim, intake/maintenance lips and port ingress/contact zones → bake real LOD0 albedo/normal/AO/roughness/metallic to shared 4K atlases. Interior seating, consoles and switches use the same atlas.
+* How to make the boarding route credible → exterior steep ladder plus bent upper rails and sill handholds → retain the open-canopy route and stow it with port gear. REF_Biped, Interact, BoardingFoot/BoardingSill and PilotSeat are source markers; collision and gameplay traversal are parent-engine review items.
+* Three or five liveries → three distinct source-authored packed palettes (Thalune, Compact, Working), serialized as KHR_materials_variants with per-primitive mappings on all base-state LODs → no additional simultaneous draws. The adapter only serializes saved images/material mappings; it does not generate art during export.
+* Exporter mesh-validation warnings → inspect before continuing → duplicate faces existed only in decimated LOD1–3. Saved removal preserves every vertex, surviving face material/UV, all LOD0 surfaces and every packed image. [mesh-data-repair.json](mesh-data-repair.json) binds pre/post source hashes and exact LOD0/map equivalence. Reused qualified eight-view previews precede this lower-LOD-only repair; no new images were captured after resumption. Final lower-LOD appearance remains a parent capture item.
+* Failed diagnostic previews → retain receipts and selected failure images → pre-interruption removal of superseded worker previews is hash-inventoried; no old grader evidence was altered. All files/screenshots present at resumption are preserved. Transform-update, live-iterator visibility and rail topology issues were corrected before the qualified packet.
+* Long tsx IPC path failure → reproduce with both Node versions and both path lengths → Node26 + 120-byte path fails EINVAL, Node26 + short path passes; Node22 passes both. Pin Node22.23.3 and a fresh short private TMPDIR, without changing shared exporter/meshopt code. See tsx-ipc-root-cause-probes.json and tsx-ipc-root-cause.json.
+* Husk signals disappearing after compression → reproduce glTF-Transform default-value elision → normalize only four saved husk emission strengths so their effective RGB times strength peaks at 1e-4 (0.01 percent of unit radiance). Geometry/transforms/UVs and every packed map are hash-identical; base/damaged materials untouched. See signal-export-correction.json and signal-export-correction-v2.json, including actual-material serialization red/green. The retained husk view predates this tiny signal-floor correction and is not final engine proof.
+
+OUT OF SCOPE FOUND: P1.E12.T02 remains parent-owned for standard engine captures, all-state/all-LOD visual review, family consistency, independent grade, actual gear/canopy/control behavior and performance. Current Review does not expose a KHR_materials_variants selector; parent needs explicit embedded mapping selection for the livery capture matrix. Existing Ship runtime loading/integration is unchanged. No sibling source, historical grader packet, shared exporter/library, runtime capture code, browser/native/GPU service, grant, DB, PR, push or merge was touched.
+
+ARTIFACTS:
+
+* [asset-manifest.json](asset-manifest.json): canonical/revised Git pointers, asset bytes, source/KTX2 maps, livery indices, LOD mappings, tools and evidence hashes.
+* [contract-audit.json](contract-audit.json), [audit-blend.json](audit-blend.json), [audit-glb.json](audit-glb.json): actual source/export positives and focused negative controls.
+* [cpu-images-viewed.json](cpu-images-viewed.json): every preview, exact source/hash provenance, whether it was actually viewed, interpretation and superseded status.
+* `qualified-*.png`: reused eight-view CPU work packet. The original exact source hash and final LOD0/map equivalence are explicit; this is not a standard GPU capture. Turntable, clearer socket underside and livery views remain in the parent capture inventory.
+* [gpu-handoff-final-inventory.json](gpu-handoff-final-inventory.json): complete next parent-only GPU matrix including boarding, hardpoints, overlays, articulation, liveries, distance/LOD changes and paired timing runs.
+
+CPU IMAGES ACTUALLY VIEWED:
+
+| Image | Retained | Interpretation |
+|---|---|---|
+| [before-front.png](before-front.png) | True | Canonical-body reference only; live visibility iterator skipped some assemblies, so it is not a complete baseline view. |
+| before-aft.png | False | Canonical-body reference only; live visibility iterator skipped some assemblies, so it is not a complete baseline view. |
+| before-cockpit.png | False | Canonical-body reference only; live visibility iterator skipped some assemblies, so it is not a complete baseline view. |
+| [after-front.png](after-front.png) | True | Rejected early authoring stage: unupdated primitive transforms produced block-like additions. Canonical source was restored and authoring corrected. |
+| after-damaged.png | False | Rejected early authoring stage: unupdated primitive transforms produced block-like additions. Canonical source was restored and authoring corrected. |
+| after-husked.png | False | Rejected early authoring stage: unupdated primitive transforms produced block-like additions. Canonical source was restored and authoring corrected. |
+| geometry-check-front.png | False | Corrected primitive proportions; still affected by preview visibility iterator, so not final assembly evidence. |
+| geometry-check-cockpit.png | False | Corrected primitive proportions; still affected by preview visibility iterator, so not final assembly evidence. |
+| geometry-check-boarding.png | False | Corrected primitive proportions; still affected by preview visibility iterator, so not final assembly evidence. |
+| interior-diagnostic-isolated.png | False | Blank interior diagnostic exposed the live-iterator visibility error; snapshot iteration corrected before qualified previews. |
+| interior-clay-isolated.png | False | Blank interior diagnostic exposed the live-iterator visibility error; snapshot iteration corrected before qualified previews. |
+| final-front.png | False | Overall shell outline retained; later boarding rail repair and final bake supersede this stage. |
+| final-cockpit.png | False | Detailed seat/consoles and open canopy visible; source later received boarding rail repair and final bake. |
+| [final-boarding.png](final-boarding.png) | True | Revealed floating rungs/straight long rails after nonlinear posing; repaired rail topology before qualified previews. |
+| [rail-check-boarding.png](rail-check-boarding.png) | True | Continuity repair connects the bent rails to rungs; later qualified boarding includes final normal/AO bake. |
+| [qualified-front.png](qualified-front.png) | True | Grown-shell outline and pearl/sea-green regions remain readable; retain silhouette. |
+| [qualified-aft.png](qualified-aft.png) | True | Rear shell ribs, twin nacelles and trailing outline remain readable; no whole-frame performance inference. |
+| [qualified-damaged.png](qualified-damaged.png) | True | Impact darkening, displaced/missing shell plates and cracked canopy distinguish damage from base; parent lighting grade pending. |
+| [qualified-husked.png](qualified-husked.png) | True | Dark corroded broken shell remains recognizable; faint glyph/seam emission and dead lamps need parent night/space views. This view predates the four husk lamp emission-floor correction (effective RGB times strength now peaks at 1e-4); final engine appearance is unqualified. |
+| [qualified-cockpit.png](qualified-cockpit.png) | True | Seat ribs, harness, console switches, stick/throttle and handholds are visible. This angle sees the dashboard back; runtime instrument faces still need pilot view. |
+| [qualified-boarding.png](qualified-boarding.png) | True | Bent continuous rails meet the rungs and route toward the open canopy; collision/clearance and 1.85m overlay remain parent checks. |
+| [qualified-hardpoint.png](qualified-hardpoint.png) | True | Mount saddle/conduit and jaws visible; socket interior underlit, so this view does not fully qualify underside detail. |
+| [qualified-wear.png](qualified-wear.png) | True | Contact and intake/edge wear is localized; broad pearl panels remain restrained. Final material/readability judgment remains parent-owned. |
+
+FAILED / INTERRUPTED COMMANDS — exact argv and last 20 log lines:
+
+`20261107T052513776088Z-bake-base.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/bake_source.py -- lark`; exit `-15`; reason `interrupted:15`.
+
+```text
+00:00.467  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE lark baseColor 12.1
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE lark ORM 13.3
+```
+
+`20261107T053240539738Z-finish-source.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/finish_source.py`; exit `1`; reason `None`.
+
+```text
+00:00.357  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/hulls/lark-round3/finish_source.py", line 52, in <module>
+    bmesh.ops.delete(bm,geom=result['geom_interior']+result['geom_unused'],context='VERTS')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: geom: found the same (BMVert/BMEdge/BMFace) used multiple times
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+
+Error: script failed, file: 'packages/tools/blender/hulls/lark-round3/finish_source.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+```
+
+`20261107T053334725929Z-finish-source-fixed.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/finish_source.py`; exit `-15`; reason `interrupted:15`.
+
+```text
+00:00.392  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+```
+
+`20261107T054153571995Z-inspect-fit.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/inspect_geometry.py`; exit `1`; reason `None`.
+
+```text
+00:00.321  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/hulls/lark-round3/inspect_geometry.py", line 8, in <module>
+    print(n,'MIN',[min(v[i] for v in pts) for i in range(3)],'MAX',[max(v[i] for v in pts) for i in range(3)],'hide',o.hide_render,'parent',o.parent.name)
+                                                                                                                                            ^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'name'
+
+Error: script failed, file: 'packages/tools/blender/hulls/lark-round3/inspect_geometry.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+```
+
+`20261107T060414564014Z-access-rail-topology.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/fix_access_rails.py`; exit `1`; reason `None`.
+
+```text
+00:00.892  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/hulls/lark-round3/fix_access_rails.py", line 22, in <module>
+    o=next(o for o in c.objects if o.type=='MESH' and o.name.startswith('LandingMechanismMesh'));bm=bmesh.new();bm.from_mesh(o.data);remaining=set(bm.verts);components=[]
+StopIteration
+
+Error: script failed, file: 'packages/tools/blender/hulls/lark-round3/fix_access_rails.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+```
+
+`20261107T060459719729Z-qualified-access-bake.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/rebake_access.py`; exit `-15`; reason `interrupted:15`.
+
+```text
+00:01.006  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+FINAL ACCESS BAKE lark normal
+```
+
+`20261107T061331076303Z-export.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/export_source.py`; exit `1`; reason `Intentional interrupt to inspect source mesh repairs; supervisor then raised EPERM on already-terminated process-group signaling`.
+
+```text
+01:13:41 | WARNING: Mesh GearFront_leg.002 is not valid, and may be exported wrongly
+01:13:41 | INFO: Extracting primitive: GearFront_leg.002
+01:13:41 | INFO: Primitives created: 1
+01:13:41 | INFO: Extracting primitive: Lens_Strobes.003
+01:13:41 | INFO: Primitives created: 1
+01:13:41 | WARNING: Mesh Body.003 is not valid, and may be exported wrongly
+01:13:41 | INFO: Extracting primitive: Body.003
+01:13:41 | INFO: Primitives created: 6
+01:13:41 | WARNING: Mesh CanopyFrame.003 is not valid, and may be exported wrongly
+01:13:41 | INFO: Extracting primitive: CanopyFrame.003
+01:13:41 | INFO: Primitives created: 1
+01:13:41 | INFO: Extracting primitive: CanopyGlass.003
+01:13:41 | INFO: Primitives created: 1
+01:13:41 | WARNING: Mesh CockpitInteriorMesh.003 is not valid, and may be exported wrongly
+01:13:41 | INFO: Extracting primitive: CockpitInteriorMesh.003
+01:13:41 | INFO: Primitives created: 1
+01:13:41 | WARNING: Mesh GearFront_leg.003 is not valid, and may be exported wrongly
+01:13:41 | INFO: Extracting primitive: GearFront_leg.003
+01:13:41 | INFO: Primitives created: 1
+01:13:41 | INFO: Finished glTF 2.0 export in 3.703462839126587 s
+PermissionError: [Errno 1] Operation not permitted at os.killpg(proc.pid, signal.SIGTERM), then same at SIGKILL in finally
+```
+
+`20261107T061518393196Z-inspect-mesh-repairs.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/validate_mesh_data.py`; exit `1`; reason `None`.
+
+```text
+00:02.571  geom.mesh        | ERROR Face 89 is a duplicate of 14
+00:02.571  geom.mesh        | ERROR Face 9 is a duplicate of 7
+00:02.571  geom.mesh        | ERROR Face 90 is a duplicate of 15
+00:02.571  geom.mesh        | ERROR Face 91 is a duplicate of 16
+00:02.571  geom.mesh        | ERROR Face 93 is a duplicate of 64
+00:02.571  geom.mesh        | ERROR Face 94 is a duplicate of 18
+00:02.571  geom.mesh        | ERROR Face 95 is a duplicate of 19
+00:02.571  geom.mesh        | ERROR Face 96 is a duplicate of 20
+00:02.571  geom.mesh        | ERROR Face 98 is a duplicate of 65
+MESH REPAIR {"mesh": "GearFront_leg_husk.003", "before": {"surface_sha256": "c493db7982e6c6066b1343404646d1aa63bca007a03c744f21212af46011348b", "vertices": 409, "edges": 429, "polygons": 178, "loops": 550, "attributes": ["plate", "ds", "dt", "pid", "UVMap", ".select_vert", ".select_edge", "sharp_edge", ".select_poly", "sharp_face", ".uv_select_vert", ".uv_select_edge", ".uv_select_face", "position", ".edge_verts", ".corner_vert", ".corner_edge"]}, "after": {"surface_sha256": "2e4131b6419e1f7daf4e7ad00ba25889daffabc4b079369f95da0b9522142f97", "vertices": 409, "edges": 429, "polygons": 95, "loops": 293, "attributes": ["plate", "ds", "dt", "pid", "UVMap", ".select_vert", ".select_edge", "sharp_edge", ".select_poly", "sharp_face", ".uv_select_vert", ".uv_select_edge", ".uv_select_face", "position", ".edge_verts", ".corner_vert", ".corner_edge"]}}
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/hulls/lark-round3/validate_mesh_data.py", line 24, in <module>
+    assert all(r['before']['surface_sha256']==r['after']['surface_sha256'] for r in records),'Surface changed: inspect before saving/rebaking'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Surface changed: inspect before saving/rebaking
+
+Error: script failed, file: 'packages/tools/blender/hulls/lark-round3/validate_mesh_data.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+```
+
+`20261107T061653807513Z-export-clean-source.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/export_source.py`; exit `None`; reason `User interrupted supervisor; orphan export subsequently failed in meshopt tsx IPC listen, child returned exporter failure (0 of 1 exported); shell exit telemetry unavailable`.
+
+```text
+01:16:59 | INFO: Extracting primitive: GearFront_leg.003
+01:16:59 | INFO: Primitives created: 1
+01:16:59 | INFO: Finished glTF 2.0 export in 2.0816807746887207 s
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/artlib/export.py", line 75, in main
+    ok = export_one(rules, family, src, out, args)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/artlib/export.py", line 128, in export_one
+    meshopt.compress(raw, tmp, meshopt.settings(rules, family))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/artlib/meshopt.py", line 60, in compress
+    raise MeshoptError(f"meshopt.ts failed ({p.returncode}): " + " | ".join(tail))
+artlib.meshopt.MeshoptError: meshopt.ts failed (1):   syscall: 'listen', |   address: '/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/renders/hulls/lark-round3-current/.scratch/tsx-501/19063.pipe', |   port: -1 | } |  | Node.js v26.12.1
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+  80.2 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 17 texture(s) to KTX2 (5 UASTC, 12 ETC1S): 80.0 -> 47.1 MB of buffers
+  exporting lark.blend crashed
+  removed the stale packages/client/public/models/hulls/lark.glb
+
+export hulls: 0 of 1 source(s) exported
+```
+
+`20261107T064353277769Z-export-node22-shorttmp.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/export_source.py`; exit `1`; reason `None`.
+
+```text
+        ok    ... 1 more
+  PASS  LODs
+        ok    lark/lark_damaged: 111,862 > 33,679 > 10,782 > 2,784 triangles; LOD3 2.5% of LOD0
+        ok    lark/lark_husked: 117,702 > 35,422 > 10,648 > 2,995 triangles; LOD3 2.5% of LOD0
+        ok    lark: 107,054 > 32,229 > 10,572 > 2,909 triangles; LOD3 2.7% of LOD0
+  FAIL  materials  (4 failed, 0 warnings)
+        fail  EngineGlow: signal material emits nothing: the engine scales its glow but takes the colour from the model
+        fail  NavGreen: signal material emits nothing: the engine scales its glow but takes the colour from the model
+        fail  NavRed: signal material emits nothing: the engine scales its glow but takes the colour from the model
+        fail  NavWhite: signal material emits nothing: the engine scales its glow but takes the colour from the model
+  PASS  scale references
+        ok    source: assets/blend/hulls/lark.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    lark/lark_damaged: longest side 13.52 m within 6-80 m
+        ok    lark/lark_husked: longest side 13.52 m within 6-80 m
+        ok    ... 1 more
+RESULT: FAIL (4 of 5 checks passed)
+  report: assets/renders/hulls/lark-round3-current/export-attempts/20261107T064353277769Z-export-node22-shorttmp/hulls__lark.glb.json
+  the export of lark.blend failed validation: nothing written to the models (inspect assets/renders/hulls/lark-round3-current/export-attempts/20261107T064353277769Z-export-node22-shorttmp/hulls__lark.glb.rejected.glb)
+
+export hulls: 0 of 1 source(s) exported
+```
+
+`20261107T065209752263Z-export-qualified-codec1.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/export_source.py`; exit `1`; reason `None`.
+
+```text
+        ok    lark: LOD0 107,054 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 1 more
+  PASS  LODs
+        ok    lark/lark_damaged: 111,862 > 33,679 > 10,782 > 2,784 triangles; LOD3 2.5% of LOD0
+        ok    lark/lark_husked: 117,702 > 35,422 > 10,648 > 2,995 triangles; LOD3 2.5% of LOD0
+        ok    lark: 107,054 > 32,229 > 10,572 > 2,909 triangles; LOD3 2.7% of LOD0
+  FAIL  materials  (3 failed, 0 warnings)
+        fail  NavGreen: signal material emits nothing: the engine scales its glow but takes the colour from the model
+        fail  NavRed: signal material emits nothing: the engine scales its glow but takes the colour from the model
+        fail  NavWhite: signal material emits nothing: the engine scales its glow but takes the colour from the model
+  PASS  scale references
+        ok    source: assets/blend/hulls/lark.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    lark/lark_damaged: longest side 13.52 m within 6-80 m
+        ok    lark/lark_husked: longest side 13.52 m within 6-80 m
+        ok    ... 1 more
+RESULT: FAIL (4 of 5 checks passed)
+  report: assets/renders/hulls/lark-round3-current/export-attempts/20261107T065209752263Z-export-qualified-codec1/hulls__lark.glb.json
+  the export of lark.blend failed validation: nothing written to the models (inspect assets/renders/hulls/lark-round3-current/export-attempts/20261107T065209752263Z-export-qualified-codec1/hulls__lark.glb.rejected.glb)
+
+export hulls: 0 of 1 source(s) exported
+```
+
+`20261107T065751606298Z-signal-effective-factor-fix.json`
+
+Command: `/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/signal_export_fix.py`; exit `1`; reason `None`.
+
+```text
+00:00.802  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/hulls/lark-round3/signal_export_fix.py", line 33, in <module>
+    if semantic.startswith('Nav'):assert max(factor)<.000001,(mat.name,factor)
+                                         ^^^^^^^^^^^^^^^^^^^
+AssertionError: ('LarkHusk_DeadNavRed', [3.999999809544536e-06, 9.26134618817454e-08, 5.480833213154595e-08])
+
+Error: script failed, file: 'packages/tools/blender/hulls/lark-round3/signal_export_fix.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+```
+
+Command: `Initial four-way tsx IPC probe; argv repeated exactly in tsx-ipc-root-cause-probes.json`; exit `1`.
+
+```text
+AssertionError at assert all(long tmpdir probes fail)
+```
+
+Removed assumed outcome; recorded all four observed results. Node22 long path passes.
+
+Command: `python3 ast.parse each owned .py before starting resumed export`; exit `1`.
+
+```text
+File packages/tools/blender/hulls/lark-round3/package_evidence.py, line 76
+* `assets/blend/hulls/lark.blend`'
+SyntaxError: unterminated string literal (detected at line 76)
+```
+
+Fixed four report-template opening quotes; no asset changes. Final syntax check repeats.
+
+Command: `Pinned Node22 createRequire from /Users/andreyyurlov/Documents/dev/space/package.json for @gltf-transform/core`; exit `1`.
+
+```text
+Error: Cannot find module @gltf-transform/core
+code: MODULE_NOT_FOUND
+```
+
+Resolved existing dependency from packages/tools/package.json; exact serialization probe in export-failure-analysis.json.
+
+[tsx-ipc-root-cause-probes.json](tsx-ipc-root-cause-probes.json) records exact Node/tsx argv, versions, TMPDIRs, outputs and exits for the four transport probes. [export-failure-analysis.json](export-failure-analysis.json) records the emission serialization probe and the invalidated resource measurements.
+

@@ -1,0 +1,141 @@
+TASK: P1.E07.T14 — disabled single effects pilot, independent review R1/R2/R3 correction
+
+STATUS: DONE for the authorized source correction. Fresh parent independent R2 review and serialized native slot remain pending. No native or visual acceptance is claimed.
+
+SUMMARY: Reproduced the three P2 defects from the full independent report in disposable copies before edits. Retained partial constructor ownership and actual bootstrap producer outcomes; added bounded exact-cache/task-local Node/Vite owner observations before consumption/snapshot and immediately before launch. All 35 existing controls plus 12 new boundary controls pass. Both CLIs and readiness remain disabled. All 64 reviewed asset files and four recovered helpers are byte-identical.
+
+Exact provenance:
+- worktree: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`
+- branch: `task/P1-E07-T14-effects`
+- base: `2a3a01c7638b167d47901c57509c5d2bc07f8096`
+- baseTree: `835d46e35ef996980323d9a5d8697ae823ced12c`
+- head: `4ec25fcef7d7cedada964bbef986c30459eedcc0`
+- tree: `0e20b55d8ac055f34a1f4d26964c3c0220848a03`
+- assetHead: `2643aca9d8b85a45498d85eb637d20260ebf06d1`
+- assetTree: `6038b7d94b0208f3173d2449df5d7578fb4c2aa0`
+- recoveryCommit: `22506166571d4045eeb4902b1f278bdcafa2ad19`
+- recoveryTree: `b8f644aca4dff7e4c85e3b4beecfbd6742c857f8`
+- readinessSha256: `82ac7e08020f098d1d25261f874184ef85faa4296b6443688e6671134527bbd2`
+- patchSha256: `520083ee0ea81c259cbdca2e4fa8f0f361c532aa6f03395e44fee59849929c4e`
+- protectedManifestSha256: `a04aab0f27bf7dc09310065e1e4777f3ed9ab6ce2f93f86109b7a3f03b5ebf7a`
+- Git status: clean, including all untracked files.
+- Readiness audit: PASS_SOURCE_ONLY_DISABLED at this exact committed head; 406 file bindings, six dependency trees; Node/Python dependency hashes agree.
+
+FILES CHANGED:
+- `packages/tools/src/capture/effects_packet/README.md`
+- `packages/tools/src/capture/effects_packet/boundary_controls.py`
+- `packages/tools/src/capture/effects_packet/cache_owners.py`
+- `packages/tools/src/capture/effects_packet/caller.py`
+- `packages/tools/src/capture/effects_packet/check_ready.py`
+- `packages/tools/src/capture/effects_packet/controls.py`
+- `packages/tools/src/capture/effects_packet/evidence.py`
+- `packages/tools/src/capture/effects_packet/freeze.py`
+- `packages/tools/src/capture/effects_packet/native_ports.py`
+- `packages/tools/src/capture/effects_packet/readiness.json`
+
+VERIFY:
+- Original review: `/private/tmp/p1-e07-t14-independent-e60r9lcb/REPORT.md`, read in full. Its reproductions and report are retained byte-identically under `originals/`. `routing.json` records the only RED transformation: redirect checkout W to a disposable byte copy; reproduction bodies/assertions remain unchanged.
+- RED: `red/independent.py.log` records R1 constructor-partial-ownership and R2 bootstrap-producer-receipt-failure as REPRODUCED_DEFECT (42 cases total). `red/process-boundaries.py.log` records accepted=true while the real harmless O_RDWR holder remained alive, reproducing R3. Exit 0 means the defect reproduction succeeded, not candidate PASS.
+- GREEN: existing Python controls 26/26, existing Node controls 9/9, new boundary controls 12/12. `green/boundary-controls-final.log` names each test. Actual frozen StationJob constructor/save/start bodies are AST-extracted unchanged with inert native ports; no native helper module or real StationJob launch occurs.
+- R1 GREEN: actual constructor failure before first helper save, ENOSPC without filename, plus real SIGALRM and combined terminal/fallback/stderr failure. Full available instance attributes, scratch/target/root/cohort/known/registered, unknown bytes and missing fields survive before and after cleanup. No release is inferred.
+- R2 GREEN: actual bootstrap CompletedProcess exit17 and exit0, receipt failure, unknown producer attributes, raw stdout/stderr bytes including NUL/non-UTF8, real SIGALRM and all-sink failure. Producer is observed once before helper write; original subprocess/member ports and timers are restored without I/O during unwind. Successful bootstrap plus receipt failure stays registration-uncertain; no relaunch.
+- R3 GREEN: actual harmless O_RDWR cache holder refused before consumption; second holder created after actual cache snapshot refused immediately before launch with consumed identity preserved; harmless stdin-waiting Node with task cwd refused even when caches absent; unrelated owner does not block this task. Probe cap/deadline controls reap only their own harmless read-only child and retain partial data. Unknown observation plus failed stderr returns all evidence in memory without allocation.
+- Preserved safe review matrix: 40/40, including actual regular-to-FIFO swaps at grant/result/consumption admission, capped single-snapshot hash+parse semantics, byte-read guards, unknown cleanup observations, real archive/terminal SIGALRM, all-sink publication failure, malformed complete PNG/perf/material/texture/LOD, and exact budget edges. Old R1/R2 defect assertions are replaced by GREEN actual-helper tests, not silently asserted successful. `green/adaptations.json` lists all harness differences.
+- Original five inert process publication cases retain OS exits 0,1,1,1,1. Only observed exit0 succeeds. Additional exact metadata limit, exclusive consume race and disabled import trace pass. Files/cached flags cannot override parent-observed process outcome.
+- Static compile, scoped eslint/prettier, committed diff check, both actual disabled CLIs (exit78/78), clean source, final protected hashes and exact-head readiness pass. No native helper/capture import or allocation on either disabled entry.
+- Tests ran serially, with at most one harmless holder/control child. Read-only ps/lsof probes are serial, bounded and reaped; no native/GPU/browser/DB/Blender/codec/service work, network fetch, hydration, cleanup of existing screenshots, real grant, push, PR or merge occurred.
+
+Exact commands and exits (`commands.json` also records log paths and durations):
+- RED / independent.py: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-revise-wlkvnufv/red/independent.py`
+- RED / process-boundaries.py: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-revise-wlkvnufv/red/process-boundaries.py`
+- RED / additional.py: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-revise-wlkvnufv/red/additional.py`
+- GREEN / existing-python: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/controls.py`
+- GREEN / new-boundary-controls: exit 1; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/boundary_controls.py`
+- GREEN / existing-python-final: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/controls.py`
+- GREEN / boundary-controls-final: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/boundary_controls.py`
+- GREEN / existing-node: exit 0; `node packages/tools/src/capture/effects_packet/controls.mjs`
+- GREEN / retained-safe-matrix: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-revise-wlkvnufv/green/retained-safe-matrix.py`
+- GREEN / process-boundaries-green: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-revise-wlkvnufv/green/process-boundaries-green.py`
+- GREEN / additional: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-revise-wlkvnufv/green/additional.py`
+- FINAL / freeze: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py`
+- FINAL / format-readiness: exit 0; `node node_modules/prettier/bin/prettier.cjs --write /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json`
+- FINAL / eslint: exit 0; `node node_modules/eslint/bin/eslint.js /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs`
+- FINAL / prettier: exit 0; `node node_modules/prettier/bin/prettier.cjs --check /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/recovery.json`
+- FINAL / source-compile: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'from pathlib import Path; p=list(Path('"'"'packages/tools/src/capture/effects_packet'"'"').glob('"'"'*.py'"'"')); [compile(f.read_text(),str(f),'"'"'exec'"'"') for f in p]; print('"'"'PASS'"'"',len(p),'"'"'Python sources, no bytecode'"'"')'`
+- FINAL / disabled-caller: exit 78; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py`
+- FINAL / disabled-node: exit 78; `node /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs`
+- FINAL / diff-check: exit 0; `git diff --check`
+- COMMITTED / readiness-exact-head: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/check_ready.py`
+- COMMITTED / committed-diff-check: exit 0; `git diff 2a3a01c7638b167d47901c57509c5d2bc07f8096 HEAD --check`
+- COMMITTED / clean-source-status: exit 0; `git status --porcelain --untracked-files=all`
+- COMMITTED / dependency-parity: exit 0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --input-type=module -e 'import fs from '"'"'node:fs'"'"'; import assert from '"'"'node:assert/strict'"'"'; import { treeBinding } from '"'"'./packages/tools/src/capture/effects_packet/entry.mjs'"'"'; const r=JSON.parse(fs.readFileSync('"'"'packages/tools/src/capture/effects_packet/readiness.json'"'"','"'"'utf8'"'"')); for(const expected of r.dependencyTrees) { assert.deepEqual(treeBinding(expected.path),expected); } console.log('"'"'PASS six dependency tree bindings; disabled entry import only'"'"');'`
+- COMMITTED / commit: exit 0; `git commit -m 'P1.E07.T14: preserve pilot ownership and refuse cache owners'`
+- COMMITTED / finalize-provenance: exit 0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-revise-wlkvnufv/finalize_evidence.py`
+
+Iteration failures retained:
+- Earlier broad argv census exceeded the bounded output cap on unrelated large process arguments. Fixed by comm-only census, querying only bounded Node/Vite candidates. macOS real/effective UID ambiguity corrected with ruid.
+- lsof can return exit1 with positive owner rows. Those rows are now retained before refusal; missing/partial/malformed observations still refuse. Earlier logs `boundary-first.log` through `boundary-fourth.log` are retained.
+- The actual snapshot exposed an access-time-only drift refusal: reading the source updates atime. Task-local adapter now compares dev/inode/mode/uid/gid/size/mtime/ctime and content hashes, records atime separately. Real old-atime file regression passes. The earlier failed `green/new-boundary-controls.log` exit1 remains in commands.json; final suite passes.
+- A read-only evidence listing used a missing name key for RED command records and exited1; corrected to optional name/argv lookup. No source or verification result was affected.
+
+DECISIONS:
+- Full available ownership snapshots explicitly distinguish missing fields from null/false, and never imply registration or release. Existing StageReceipts/StationJob ports remain the sole native owner model.
+- Observe actual bootstrap subprocess result before the frozen helper persists it. Restore interception ports in memory during deadline unwind. Never retry a launch after receipt failure.
+- Cache guard has 10s per check, 256KiB per command, 384KiB total and at most64 Node candidates. It preserves partial bytes/errors, bounds owned probe termination/reap to0.5s, refuses live or uncertain owners, and never signals a competing process. This is a point-in-time guard, not a host lock or OS quota.
+- Failed pre-consumption guard creates no proposed output/evidence/consumption path. Its stderr attempt is bounded and charged; all-sinks failure still returns raw observations and primary/secondary errors in memory without a durable claim.
+- The small atime correction was necessary to exercise the real cache-copy boundary. Only the task-local adapter changed; frozen helpers and ordinary captureReview remain unchanged.
+- Existing O_NONBLOCK/O_NOFOLLOW bounded metadata snapshot contract, full PNG validation, release-before-decoder, parent exit+hash acceptance, one-use identity preservation and no-successor rule remain intact.
+- Refreshed unused readiness pins new source/dependency bytes and a new absent identity. Both runtime flags remain false; no real grant was written. Parent already owns runtime authority; next gates are fresh independent R2 correctness review and serialized scheduling, not a new human permission question.
+
+OUT OF SCOPE FOUND:
+- Native ownership, native Metal/backend performance, first actual capture, parent observed OS exit0 plus exact terminal/consumption hashes and independent blind visual grading remain unqualified. Fauna remains first in the GPU queue.
+- All59 authored roots still await applicable native/static views; this pilot proposes only gravitic_pull. The32 proposed motion records still require abilities/Recall playback. No59-root batch, new motion/atlas/alpha-overlap/21:9 generator or gameplay work.
+- No changes to common capture/Review/Engine/screens/probe/trace, helpers, asset models/textures/sources, shared libraries/families/exporter, dependencies or orchestration docs. No nested reviewer was launched.
+
+ARTIFACTS:
+- This report: `/private/tmp/p1-e07-t14-revise-wlkvnufv/APPENDIX-C2.md`
+- Exact source/runtime/asset pins: `/private/tmp/p1-e07-t14-revise-wlkvnufv/pins-final.json`; frozen-file hashes/blob IDs: `/private/tmp/p1-e07-t14-revise-wlkvnufv/protected-final.json`; exact revision patch: `/private/tmp/p1-e07-t14-revise-wlkvnufv/source.patch`.
+- All commands, raw logs, original/RED/GREEN harnesses and retained failed fixtures: `/private/tmp/p1-e07-t14-revise-wlkvnufv`. `evidence-hashes.json` fingerprints the retained evidence tree.
+- Actual clean-head readiness and raw read-only cache-owner observations: `/private/tmp/p1-e07-t14-revise-wlkvnufv/readiness-exact-head.json`.
+- Frozen full asset mapping: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/manifest.json`; retained source PASS: `/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/review-records/p1-e07-t14/source-review-01-2643aca.txt`.
+- Helper original-commit/blob/SHA provenance: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/recovery.json`; no new recovery commit was necessary.
+- Remaining GPU inventory: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/gpu-inventory.json`; previous CPU-only iteration previews: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/` (unchanged, not visual acceptance).
+- New native captures/previews: none. No real identity created or consumed.
+
+Pilot binding and unused paths:
+- Existing captureReview("effects/gravitic", {asset:"gravitic_pull", outDir}); standard Metal/native proposal,1920x1080 views and1920x2876 labelled sheet. RequestedLOD2 selects actualLOD0, with shown=0/lods=[0]. Actual filament material LIB_FX_Gravitic,576 triangles,one primitive; compressed texture presence checked, no GPU transcode/upload claim.
+- grant: `/private/tmp/egg-d8f1eddca17b42bbafa758fac0bc37f5.json` — absent.
+- consumption: `/private/tmp/egc-d8f1eddca17b42bbafa758fac0bc37f5.json` — absent.
+- evidence: `/private/tmp/egp-d8f1eddca17b42bbafa758fac0bc37f5` — absent.
+- output: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-d8f1eddca17b42bbafa758fac0bc37f5` — absent.
+
+Exact output filenames (all still absent):
+- `gravitic_pull/noon-lush_lod0.png`
+- `gravitic_pull/noon-lush_lod2.png`
+- `gravitic_pull/wireframe_lod0.png`
+- `gravitic_pull/wireframe_lod2.png`
+- `gravitic_pull/overlay.png`
+- `gravitic_pull/far_lod2.png`
+- `gravitic_pull/night-exotic_lod0.png`
+- `gravitic_pull/night-exotic_lod2.png`
+- `gravitic_pull/open-space_lod0.png`
+- `gravitic_pull/open-space_lod2.png`
+- `gravitic_pull/perf.json`
+- `gravitic_pull/sheet.png`
+
+Exact unchanged budget ledger:
+- capture_outputs: 184,565,760 bytes — 11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root.
+- future_lfs_copy: 184,565,760 bytes — Reserved for later Git LFS adoption; this pilot performs no git add or LFS write.
+- future_main_hydration: 184,565,760 bytes — Reserved for later parent hydration; this pilot makes no main-worktree copy.
+- controlled_metadata: 67,108,864 bytes — Node and Python each reserve attempted receipt bytes before writing, 32 MiB each.
+- cache_snapshot: 67,108,864 bytes — One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained.
+- profile_work_and_archive: 2,147,483,648 bytes — StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive.
+- private_tmp_work_and_archive: 1,073,741,824 bytes — preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles.
+- helper_logs_work_and_archive: 134,217,728 bytes — StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job.
+- generated_cache_growth: 268,435,456 bytes — Observed additional Vite cache growth; original cache bytes already reduce free space.
+- filesystem_metadata: 16,777,216 bytes — Directory and filesystem overhead reserve.
+- safety: 1,073,741,824 bytes — Fresh disk safety reserve, checked at admission and while observing.
+- Output cap: 184,565,760 bytes; admission proposal: 5,402,312,704 bytes. Eleven16MiB PNG allowances plus16KiB perf; three reserved copies total; no image staging/archive copy.
+- Capture600s; cleanup60s with drain45s inside; CPU decoder45s after positive release; cache copy64MiB/30s. Native observed thresholds may overshoot between samples and are not OS quotas.
+
+Readiness: PASS_SOURCE_ONLY_DISABLED. Authorized correction is complete; parent independent R2/native/visual gates remain separate.

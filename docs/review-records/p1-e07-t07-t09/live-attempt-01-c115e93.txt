@@ -1,0 +1,56 @@
+P1.E07.T07 / P1.E08.T09 FOCUSED LIVE METAL QA
+STATUS: COULD NOT RUN. GPU RELEASED.
+
+Result and concrete failure boundary
+The single authorized command exited 1 in Corepack before pnpm or Playwright/test discovery. Test bodies executed: 0. No passing/failed test assertion was recorded; skip count and required no-skip gate are NOT ESTABLISHED. No browser, game server, rendered client, gameplay assertion, screenshot, combat evidence or FPS measurement ran. No retry was made.
+Actual outer OS exit: 1. Timed out: false. Wall including drain: 0.56 s. Owned drain: 0.20 s. No signals required.
+
+Failure tail (complete test.log):
+! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-12.15.0.tgz
+Network access disabled by the environment; can't reach https://registry.npmjs.org/pnpm/-/pnpm-12.15.0.tgz
+
+This is a QA harness setup error, not evidence of a product failure. The harness set XDG_CACHE_HOME to its fresh private cache. Corepack derives its own package-manager cache from XDG_CACHE_HOME unless COREPACK_HOME is pinned. The installed pnpm12.15.0 was verified in the original cache, but absent in this new cache. COREPACK_ENABLE_NETWORK=0 correctly prevented a package download; no dependency installation/update occurred. The earlier pnpm --version check was outside the final isolated environment and failed to catch this.
+
+Provenance
+Read-only checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Branch: t3/P1-E07-T07-T09-live-qa
+HEAD: c115e93786890160fcc0592aeb3bc15934343fd3
+Tree: 9bd3faef187925791573d86c4673922df099c5f6
+Source commit: 55f357cf01da755b07ed0e9a3b074cd6d0dfb7f4
+Source tree: 589c20a836ed318c563d714f2f8905fa049769a0
+The four required handoff files were read and copied unchanged under retained/. Source manifest matched before/after. All 4,126 tracked files and 12,422 installed dependency files were SHA256-identical before/after; git status was clean and HEAD/tree/branch unchanged. Protected runtime/config/assets are included. Generated dependency cache metadata directories are explicitly excluded from the installed-code hash inventory by snapshot.py. No source/docs/config/assertion edits, commits, pushes, PRs, merge operations or archive screenshot cleanup occurred.
+Pinned Node executable: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node, actual v22.23.3. Node binary hash is retained in before-source.json and after-source.json. pnpm12.15.0's installed package identity is retained in corepack-root-cause.json; the test command did not reach pnpm.
+
+Exact attempted command and environment
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+pnpm --filter @astra/tools exec playwright test --config src/smoke/symbiotic.config.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=420000 --trace=off --reporter=list,json --output /private/tmp/space-symbiotic-live-20261107_070646_2f0be248/results
+The complete changed environment and cleared inherited routing variable names are in execution-env.json. It includes DATABASE_URL=postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_070646_2f0be248, REDIS_URL=redis://127.0.0.1:53058/8, SYMBIOTIC_QA_CLAIM=20261107_070646_2f0be248, CI=1, SMOKE_GL=metal, DEBUG=pw:browser, guard NODE_OPTIONS, fresh TMPDIR/TMP/TEMP/XDG_CACHE_HOME/NODE_COMPILE_CACHE, COREPACK_ENABLE_NETWORK=0, COREPACK_ENABLE_AUTO_PIN=0, offline/frozen dependency settings and PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1.
+Configured bounds: workers1 / retries0 / repeat1 / maxfailure1 / global420s / outer450s / owned drain20s. Dedicated symbiotic.config.ts, trace off and video off. No full smoke or art/Blender job. These were requested/configured bounds, not exercised test-duration results.
+
+Private fixture and routes
+Fresh claim: 20261107_070646_2f0be248
+Fresh database: astra_symbiotic_smoke_20261107_070646_2f0be248
+Redis marker: qa:owner:20261107_070646_2f0be248
+Existing PG space-t16-pg-20261106 ID66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb, loopback127.0.0.1:53055->5432.
+Existing Redis space-t16-redis-20261106 IDd06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4, loopback127.0.0.1:53058->6379, selectedDB8.
+Identities, running/healthy state and exact loopback bindings were freshly verified before claim, before launch and after cleanup. Before claim Redis8 was empty and had no application clients; database did not exist. Redis claim used the exact future-qa atomic empty-DB/SET-NX schema, then only the new exact SQL namespace was created through the explicit private admin route. Actual SQL database/user/server-port and fresh public schema were checked. No unknown fixture was reused.
+Four actual pre-import proofs (three OS Node processes, one additional worker thread) recorded StartupMessage database=astra_symbiotic_smoke_20261107_070646_2f0be248 and user=astra, plus current_database/current_user/server_port5432; Redis wire SELECT8, CLIENT INFO db8 and matching marker. The launcher inherited these routes. The preflight config import also matched the effective private URLs. Default port/SQL-database/Redis0/7/FLUSH refusal controls ran without opening those wrong sockets or sending those commands. All Redis metadata/key probes used explicit privateDB8; no global keyspace query/modification, FLUSH, Redis0/7 application-key access or shared-service restart occurred.
+
+Instrumentation provenance and limits
+The read-only Symbiotic QA3 route-guard/run/process-watch/claim/cleanup and T14 guard/run/launch/cleanup references were copied with SHA256 provenance in harness-provenance.json. The adapted guard inspected SQL startup and Redis RESP writes, checked ioredis route options and prohibited dangerous commands. These are Node instrumentation checks, not an OS-level network sandbox. Native browsers do not inherit JavaScript socket hooks; no browser/native networking proof exists in this failed attempt.
+The new supervisor tracks PID+birth+argv+parent/group, native spawn records and private browser profile paths, with exact-identity signals and bounded drain. It was exercised only for the Corepack launcher. Browser descendant ownership/drain and application runtime route completeness remain unqualified.
+The Vite wrapper changes only ephemeral cacheDir and configLoader='native' for the unchanged JS config. Its import was checked, but actual createServer was not reached. Playwright compilation/profile cache routing was not exercised.
+Preflight created one esbuild native compiler child (PID92286), recorded by spawn argv; its absence was checked in preflight-native-drain.json. It was not signalled. Its contemporaneous birth identity was not captured, and is not claimed as a qualified native ownership test. The guard rejected two optional tsx IPC attempts within the fresh TMPDIR; both preflight commands still exited0. Those events are preserved rather than omitted.
+A further static harness issue was identified after the stop: fixture.json c.out uses /tmp while Python resolves this root to /private/tmp. The child environment check uses c.out literally; an explicit child env would fail its NODE_OPTIONS substring check. Normalize both paths before another authorized attempt. No assertion/source workaround or rerun was made.
+
+Required next harness correction, for parent review
+Pin the existing frozen Corepack cache explicitly (or copy/hash the already installed pnpm distribution into the private root), keep network installs disabled, and verify Node/pnpm versions under the final exact environment before the one test command. Normalize /tmp versus /private/tmp in fixture/guard paths and qualify native child guards/cache routing. Preserve this failed attempt. A new run requires a new claim and the parent's correction; this task does not retry.
+
+Verified cleanup and release
+Before DROP/DEL: launcher exit was observed; owned processes/listeners absent; all recorded Node/preflight compiler PIDs absent; no SQL sessions in the fresh namespace; no Redis8 application clients; fresh schema still empty; only the exact matching claim marker remained. Only the fresh database was dropped, without FORCE. One atomic Redis Lua operation rechecked marker identity and full keyset equality, then DEL'd only the explicit proven-owned marker. Final fresh database absent, Redis8 size0, marker absent, no application clients, no owned process/listener/profile, both exact containers running/healthy. Fresh disposable cache contents were hashed into disposable-temp-manifest.json and removed under the exclusive0700 QA root. Captures/reports/receipts and all prior artifacts were preserved. GPU reservation is RELEASED.
+
+Artifacts and independent inspection
+QA root: /private/tmp/space-symbiotic-live-20261107_070646_2f0be248
+Main machine-readable result: summary.json. Exact execution/env/result: execution.json, execution-env.json, result.json. Full failure output: test.log and failure-tail.txt. Route evidence: process-routes.jsonl, route-summary.json, live-routes.jsonl and *-commands.jsonl. Ownership: owned-process-identities.json, process-observations.json, preflight-native-drain.json. Cleanup: cleanup.json, owned-redis-keys.json, disposable-temp-manifest.json. Source: before-source.json, after-source.json; reference harnesses/handoff: retained/ and harness-provenance.json. SHA256SUMS hashes the final retained packet.
+Eight requested pixel labels: bond-owner, bond-observer, follow-owner, follow-observer, combat-owner, combat-observer, disconnect-owner, disconnect-observer.
+Actual pixel paths: NONE (0 PNG). Gameplay symbiotic-evidence JSON: NONE. Playwright reporter JSON: NONE. Application server log: NONE. Absence is explained by the pre-discovery failure; no fabricated artifact or replacement screenshot was made. Independent source review and blind pixel/CPU acceptance remain separate parent gates. No live gameplay PASS, visual grade, no-skip pass or FPS claim is made.

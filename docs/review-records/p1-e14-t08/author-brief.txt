@@ -1,0 +1,170 @@
+# P1.E14.T08 author brief (CPU source unit)
+
+Art task. The done-line is the authored sources and the stock exports the review scene already loads. Gameplay adoption is P1.E14.T07, after every Phase 1 art task is `[x]`. This unit does not edit loaders, and it does not run capture or a blind grade. Do not start until the parent admits a fresh CPU budget. This brief does not admit one.
+
+Pinned plan line:
+
+`- [ ] **P1.E14.T08 (art) Props** · deps: T02 · done: cargo and loot pods, terminals, market stalls, ammo, catalyst vials, beacons rebuilt, outposts rebuilt (3), crash-site debris kit. → [R]`
+
+Deps: P1.E14.T02 is `[x]`. No retained props branch, blend, or glb exists. `assets/blend/props/` and `assets/blend/sites/` on the parent are `.gitkeep` only. Author from the parent, in a new worktree. Do not base the worktree on `task/P1-E14-T10-dens`.
+
+## What this unit ships
+
+Twelve source files, twelve compressed glbs, stock validation of each source and each export. Hand-authored geometry. `generate_3d` and library imports are blockout only. Export may decimate missing LODs; it must not generate the LOD0 mesh.
+
+| File stem | Family | Asset root | Variants (collection names) | Class |
+|---|---|---|---|---|
+| `cargo_pod` | props | `cargo_pod` | `cargo_pod` sealed | prop |
+| `loot_pod` | props | `loot_pod` | `loot_pod` open, dropped | prop |
+| `terminal` | props | `terminal` | `terminal` Compact paint; `terminal_reaches` Reaches paint | prop |
+| `market_stall` | props | `market_stall` | `market_stall` Compact paint; `market_stall_reaches` Reaches paint | prop |
+| `ammo` | props | `ammo` | `ammo_flak`, `ammo_torpedo` | prop |
+| `catalyst_vial` | props | `catalyst_vial` | `catalyst_vial_frostglass`, `catalyst_vial_stormquartz`, `catalyst_vial_gamma`, `catalyst_vial_acidsalt` | prop |
+| `crash_debris` | props | `crash_debris` | `crash_debris_plate`, `crash_debris_shard`, `crash_debris_rim`, `crash_debris_scorch` | prop |
+| `outpost_0` | sites | `outpost_0` | `outpost_0` | building |
+| `outpost_1` | sites | `outpost_1` | `outpost_1` | building |
+| `outpost_2` | sites | `outpost_2` | `outpost_2` | building |
+| `beacon_0` | sites | `beacon_0` | `beacon_0` | building |
+| `beacon_1` | sites | `beacon_1` | `beacon_1` | building |
+
+Variant ids must be the asset name or `<asset>_<suffix>` (`artlib/checks.py`). One `.blend` per stem. The stock exporter writes one glb per stem: `packages/client/public/models/<family>/<stem>.glb`.
+
+Counts come from the task and the tables, not from extra variants:
+
+- Outposts are three because the task says `(3)` and DESIGN 19.3 says `outposts (3)`. The generator only builds `outpost_0` and `outpost_1`. `outpost_2` is the required third.
+- Beacons are the two generator roots `beacon_0` and `beacon_1`. DESIGN 19.3 says `beacons (2)`.
+- Ammo variants are the two ammo item ids in `packages/shared/src/data/items.ts`: `flak_ammo`, `torpedo`.
+- Catalyst variants are the four catalyst item ids in that file: `frostglass_catalyst`, `stormquartz_catalyst`, `gamma_catalyst`, `acidsalt_catalyst`.
+- Terminal and stall each have two paints because art bible 2.4 makes faction difference paint, and the done-line uses the plural. Compact is deep blue `#22406A`, station white `#F4F4F0`, signal orange `#F28C28`. Reaches is oxide red `#8E2F23`, gunmetal `#3A3D42`, patch yellow `#D8B23A`.
+- Cargo and loot are two props because DESIGN 10.1 drops the ship's cargo pod as a lootable pod. Sealed pod and open dropped pod.
+
+## Readable sources
+
+`assets/blend/props/<stem>.blend`
+
+`assets/blend/sites/outpost_0.blend`, `outpost_1.blend`, `outpost_2.blend`, `beacon_0.blend`, `beacon_1.blend`
+
+Layout inside each file (art bible 8, `artlib/scene.py`):
+
+- Scene units metric, scale 1.0. One Blender unit is one metre. +Z up. Apply transforms. Origin where the piece meets the ground.
+- Top-level `REF`, hidden from export: `REF_Grid` (1 m, 20×20 m) and `REF_Biped` (1.85 m, feet at the origin).
+- One top-level collection named the asset. Inside it, `<variant>_LOD0` through `<variant>_LOD3`.
+- Markers sit beside the LODs. Shared markers live on the asset. A marker that belongs to one variant lives in that variant's collection.
+- Collections starting with `_` are ignored work.
+
+LOD0 is hand-authored. LOD3 is under 5% of that variant's LOD0 triangle count, and each LOD is lighter than the one before. If a lower LOD collection is absent, stock export decimates at ratios 1.0, 0.3, 0.1, 0.035. Those ratios satisfy the 5% rule. A hand-made LOD that is heavier than the one above it fails.
+
+Materials are PBR for class `prop` and class `building`: base colour, roughness, metallic, normal, occlusion, and an emissive map. Link `assets/blend/_library.blend`. Do not edit it. The exporter bakes a linked library material into the asset. Glass, if used, is named `Glass` or `LIB_Glass` (constant colour and roughness; the glass profile does not require maps).
+
+Textures: props 1024 px, `gpuTextureMB` 32 per variant. Sites (building) 2048 px, `gpuTextureMB` 128 per variant. Shipped maps are KTX2 through the stock exporter (normal maps UASTC, colour and ORM ETC1S) plus meshopt. Do not pass `--no-compress` into `packages/client/public/models`.
+
+Names match `^[A-Za-z][A-Za-z0-9_-]*$`.
+
+## Per-asset contract
+
+**Prop class** (`families.json`): LOD0 2,000–10,000 triangles, longest side 0.05–6.00 m inclusive, 4 LODs, 1k maps. The props family does not require markers. These props still carry them, because the review overlay draws them and T07 will look them up by the same names:
+
+- `COL_*` meshes, simple boxes, under 512 triangles each (over 512 warns).
+- `Interact` or `Interact_*` empty at the use point, around knee to chest height on anything a person operates.
+- Pods: `Interact` at the hatch. Stalls: `Interact` at the counter. Terminals: `Interact` in front of the panel. Ammo and vials: `Interact` on the carry handle. Debris: one `Interact` on each piece so a future salvage trace has a point; it does not make the piece a site.
+
+Do not name a pod hatch or a stall flap `Door*`. The global reference rule fails any `Door*` mesh under 2.4 m tall and 1.4 m wide.
+
+**`cargo_pod`.** Sealed ship cargo pod, Compact paint, longest side about 1.6–2.5 m (the crash-site box in `buildCrash` is 1.6×1.4×1.6 m). Hatch closed. A walk-in 6 m container is the outpost dressing in the generator (`container()`, 4.2–5.6 m) and is not this prop. Stay at or under 6.00 m including latches. Detail the shell, seams, and closed hatch enough to clear 2,000 triangles without a subdivided box.
+
+**`loot_pod`.** The same family of pod, hatch open, cargo frame visible, dropped. Reaches or weathered Compact paint is enough difference. Own mesh, own file, so the review can load it alone.
+
+**`terminal`.** Field terminal a person can stand at. Panel centre near 1.4–1.5 m (eye height is 1.70 m). Two variants, same massing, Compact paint and Reaches paint. This is not `prop_thalune_terminal`, `prop_ixari_terminal`, or a Waystation fabricator module.
+
+**`market_stall`.** Counter stall, awning, longest side under 6 m, counter about 0.9–1.1 m. Two paints, same massing. This is not `prop_thalune_stall` or `prop_ixari_stall`. People-language stalls stay in the city kits.
+
+**`ammo`.** Carry containers for the two ammo items, not the Flak Cannon or Torpedo Rack meshes (those are weapon modules, another task). `ammo_flak`: a fragment-round can about 0.3–0.6 m. `ammo_torpedo`: one torpedo in a handling cradle, longest side under 2 m. A bare cartridge smaller than 0.05 m fails the prop size floor, and a smooth bullet padded to 2,000 triangles fails the placeholder rubric.
+
+**`catalyst_vial`.** Four Chorus vials, one mesh family, four material variants. Chorus palette: indigo `#2B2A5C`, parchment `#E9DFC7`, chant gold `#E8C66A`. About 0.2–0.35 m including the cap. Etch the catalyst's material character (frost, storm fracture, gamma clouding, acid bloom) in the glass and the liquid. Do not use glyph-light cyan.
+
+**`crash_debris`.** The kit that replaces the procedural crash dressing in `buildCrash`: scatter boxes, a torus rim about 18 m across, and a small cargo box. The ship wreck stays the hull model. Do not author a Lark, Swift, Kestrel, or Mule, and do not author one crash site per hull.
+
+- `crash_debris_plate` and `crash_debris_shard`: torn hull plate and a smaller shard, Compact and Reaches paint as worn metal, each under 3 m.
+- `crash_debris_rim`: one scorched rim segment. The generator's full ring is about 18 m and cannot be one prop. A segment's longest side stays ≤ 6.00 m.
+- `crash_debris_scorch`: one ground-scar slab, longest side ≤ 6.00 m.
+
+The four pieces share an origin at the ground contact so a later placement can instance them. They are not parented into one 18 m assembly.
+
+**Sites, building class:** LOD0 8,000–60,000 triangles, longest side 1–250 m, 4 LODs, 2k maps. Every variant requires at least one `COL_*` mesh and one `Interact` empty (`families.json` sites `requiredMarkers`). `Light_*` empties, when present, must have custom properties `color`, `intensity`, and `distance`. `Blink` and `Blink_*` must be empties with a child mesh (the lens). `Spin` is for monoliths; do not add it here.
+
+**`outpost_0`.** Rebuild of the generator's dome shelter. Compact architecture from art bible 2.4: a lapped Thalune-style shell over an Ulgani-style lattice frame, with Ixari crystal windows. Abandoned in a hurry (DESIGN chapter 10), not a clean prefab and not generic geodesic sci-fi. Landing pad 24 m across (art bible 1, Tier 0–1). Steps 0.18 m rise and 0.30 m going, or a ramp, from the ground onto the pad. The calibration failure was a ~12–14 m pad on a ~2 m plinth with no steps. Service door mesh named `Door*` at least 2.4×1.4 m, and a person can walk to `Interact` in front of the terminal. `COL_*` covers the shelter and the pad edge, not the whole 24 m as one solid. Longest side stays inside 1–250 m; a 24 m pad plus a short approach is inside that.
+
+**`outpost_1`.** Rebuild of the generator's prefab module deck. Same Compact language, same 24 m pad, same door and `Interact` contract, a different silhouette (modules on a deck, not a dome).
+
+**`outpost_2`.** The third outpost. No generator twin. Same pad, door, collider, and `Interact` contract, third silhouette (a different massing of the same Compact parts). Not a monolith, not a drone, not a station module.
+
+**`beacon_0`.** Rebuild of the square-platform mast. The generator puts `Light_1` at z = 18.2 m, so the mast is a building, not a prop. Keep a tall signal mast on a ground platform with steps. `Blink` at the lamp with a child lens mesh. Lamp material named `Lamp` (sites profile `signal`: it must emit and does not need PBR maps). Emission is Compact signal orange `#F28C28`. `Interact` at the ground console. `COL_*` on the mast and the platform.
+
+**`beacon_1`.** Rebuild of the hexagonal-base spire. The generator's core runs to z = 9.2 m and continues as a spire, so it is also a building. Different silhouette from `beacon_0`. Same `Blink`, `Lamp`, `Interact`, and `COL_*` contract.
+
+Glyph light is core `#D8F6FF` and halo `#7FD8FF`, and art bible 3.4 reserves it for the monolith network. These outposts, beacons, pods, stalls, terminals, ammo, vials, and debris do not use it. Monoliths and anchor stones are P1.E10.T08.
+
+## Review consumer (later capture, not this unit)
+
+`packages/client/src/dev/review.js` `parseSpec` loads `/models/<family>/<file>.glb` for `#review:<family>/<file>[:<asset>[/<variant>]]`. Roots are `<asset>/<variant>/<variant>_LOD<n>`, with `COL_*` and marker empties beside the LODs. No gameplay loader is involved.
+
+When a capture is separately admitted, the stock command is:
+
+`pnpm capture -- --review <family>/<stem> [--asset <asset>] [--variant <variant>]`
+
+That writes `assets/renders/review/<family>/<stem>/` (or `<asset>/<variant>/` when a file holds more than one): noon-lush, night-exotic, and open-space, at LOD0 and LOD2, wireframe at both, `overlay.png`, `far_lod2.png` at 100 m, and a paired perf readout. Turntables are `pnpm turntable -- <file.glb> [out_dir] --family`. The grader's input is plan 0.10.3. PASS is every rubric score at least 4 and a mean of at least 4.5.
+
+`--review node/<resource>` is the flora resource-node path. Do not use it for these meshes.
+
+## Stock commands for this CPU unit
+
+Export and validate only the twelve stems. `--only` is a comma-separated stem list (`artlib/export.py`).
+
+```
+pnpm art:export -- props --only cargo_pod,loot_pod,terminal,market_stall,ammo,catalyst_vial,crash_debris --report-dir packages/tools/blender/t08/reports
+pnpm art:export -- sites --only outpost_0,outpost_1,outpost_2,beacon_0,beacon_1 --report-dir packages/tools/blender/t08/reports
+pnpm art:validate -- assets/blend/props/cargo_pod.blend assets/blend/props/loot_pod.blend assets/blend/props/terminal.blend assets/blend/props/market_stall.blend assets/blend/props/ammo.blend assets/blend/props/catalyst_vial.blend assets/blend/props/crash_debris.blend
+pnpm art:validate -- assets/blend/sites/outpost_0.blend assets/blend/sites/outpost_1.blend assets/blend/sites/outpost_2.blend assets/blend/sites/beacon_0.blend assets/blend/sites/beacon_1.blend
+pnpm art:validate -- packages/client/public/models/props/cargo_pod.glb packages/client/public/models/props/loot_pod.glb packages/client/public/models/props/terminal.glb packages/client/public/models/props/market_stall.glb packages/client/public/models/props/ammo.glb packages/client/public/models/props/catalyst_vial.glb packages/client/public/models/props/crash_debris.glb
+pnpm art:validate -- packages/client/public/models/sites/outpost_0.glb packages/client/public/models/sites/outpost_1.glb packages/client/public/models/sites/outpost_2.glb packages/client/public/models/sites/beacon_0.glb packages/client/public/models/sites/beacon_1.glb
+```
+
+`pnpm art:export -- sites` without `--only` exports every `assets/blend/sites/*.blend` in that worktree. On a parent-based worktree that set is these five files. It becomes the den exports too if den blends are copied in. Do not copy them.
+
+`--report-dir` keeps JSON reports out of the shared gitignored `packages/tools/blender/reports` directory.
+
+Task-local helpers, if any, live only in `packages/tools/blender/t08/`. They may invoke `export_props.py` and `export_sites.py`. They may not fork the exporter.
+
+## Paths this unit does not write
+
+- `packages/client/src/gameplay/Structures.js`, `modelLibrary.js`, `packages/client/src/universe/Planet.js`, `packages/shared/src/world/ground.ts`, and every `den_*` file under `assets/blend/sites/` and `packages/client/public/models/sites/`. Dens already load seven den glbs through the structures startup slot. T08 adds sibling site files only.
+- `assets/blend/cities/**`, `packages/client/public/models/cities/**`, including `thalune_props`, `ixari_props`, `ulgani_props`, and `anchor_sarelun` / `ulgani_anchor`.
+- `assets/blend/stations/**`, hulls, characters, flora, creatures, effects, `assets/blend/_library.blend`.
+- `packages/tools/blender/artlib/**`, `families.json`, `export_*.py`, `validate.py`, `packages/client/src/dev/review.js`, `packages/tools/src/capture/**`.
+- `blender/build_structures.py` and the other generators. T07 deletes `buildOutpost`, `buildMonolith`, `buildBeacon`, `buildCrash`, and `build_*.py` once every Phase 1 art task is `[x]`. Until then the procedural fallback and `structures.glb` stay.
+
+Legacy roots this task rebuilds under new files: `outpost_0`, `outpost_1`, `beacon_0`, `beacon_1`. Legacy roots it leaves alone: `monolith_0`, `monolith_1`.
+
+## Schema facts the author has to satisfy
+
+These are validator and bible limits. They do not need a `families.json` edit.
+
+1. Props and sites are different classes. Prop longest side is 0.05–6.00 m and LOD0 is 2,000–10,000 triangles. Building longest side is 1–250 m and LOD0 is 8,000–60,000 triangles. The 24 m pad and both beacon masts (18.2 m lamp, 9.2 m core plus spire) fail as props. A vial, ammo can, stall, pod, or debris segment fails as a building on the 8,000-triangle floor, and anything under 1 m also fails the building size floor. `asset_class` can override a variant's class, and this inventory does not use that override. Each file stays in the family whose default class matches the piece.
+2. The prop triangle floor is 2,000 per variant. A smooth vial or a single round will miss it, or will hit it by subdivision and then fail the placeholder rubric. Author the carry object described above.
+3. The generator crater is one ring about 18 m across. One mesh of that ring fails the prop maximum. The kit ships rim and scorch segments at or under 6.00 m. Do not widen the prop class.
+4. `Door*` anywhere in the file must be at least 2.4×1.4 m. Outpost doors use that name. Pod hatches, stall flaps, and beacon console lids do not.
+5. A material named `Lamp*` on a sites asset uses the signal profile: it must emit, and it does not take PBR maps. Painted surfaces stay on PBR names (`Hull`, `Accent`, `Trim`, `Dark`, or library names that are not `Lamp*`).
+6. A `COL_*` mesh over 512 triangles warns. Keep colliders as boxes.
+7. `Light_*` without `color`, `intensity`, and `distance` fails when the empty exists. `Blink` without a child mesh fails.
+8. Size is measured on LOD0 render meshes only (`checks.py` `_size`). Marker empties do not count. A latch or lens that pushes the longest side past 6.00 m on a prop fails. The test is inclusive (`lo <= val <= hi`).
+
+## Later T07 adoption (out of scope here)
+
+T07 removes the generators and the procedural fallbacks and makes a missing library asset throw. The names above are the adoption keys:
+
+- Sites: `outpost_0`, `outpost_1`, `outpost_2`, `beacon_0`, `beacon_1`, each a root in its own `/models/sites/<stem>.glb`, with `COL_*`, `Interact`, and the beacon `Blink` / `Light_*` extras the current structure reader already understands.
+- Props: `/models/props/cargo_pod.glb`, `loot_pod.glb`, `terminal.glb`, `market_stall.glb`, `ammo.glb`, `catalyst_vial.glb`, `crash_debris.glb`.
+- The crash wreck remains a hull clone. The debris kit is instanced around it. The open loot pod is `loot_pod`, not a box in `buildCrash`.
+- City `prop_*` pieces and den `den_*` pieces stay on their own tasks.
+
+No capture, no grade, no loader edit, and no merge in this unit.
