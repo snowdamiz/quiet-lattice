@@ -1,0 +1,113 @@
+VERDICT: PASS
+
+TASK: P1.E05.T03 — fresh independent SOURCE/CPU R3
+
+No new substantiated blocking finding. All four R1 findings and the R2 fresh cross-pair finding are FIXED in the independently replayed cases. This is a source/CPU verdict only; it does not complete T03 or authorize a merge.
+
+Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8`
+Branch: `task/P1-E05-T03`
+HEAD: `05909e4f74d1c6acf64a5be110f3e44af18b7bc5`
+Tree: `d2c83396117cb098b7b911cd54b900ea0d517509`
+Revision parent: `326b3532de05474afe632275bb178bc6c5fbd3c9`
+Original task base: `45c172a102f1944ff00be0b6e5006eef13fd793b`
+Fresh evidence: `/tmp/p1-e05-t03-r3.drfidkvh`
+
+Branch, HEAD, tree, parent and clean status match the requested pins. The before/after audit independently hashes all **12,916 tracked working files**; every hash and byte length is unchanged. Both diffs are retained as `revision.diff` and `full-task.diff`. `git diff --check` against the original base exits 0.
+
+**Prior findings, with current evidence**
+
+1. **R1 P2, missing Basis resources published as a mapless success — FIXED.** The current 110-test focused suite includes the actual production Multitool → Engine GLTFLoader → Meshopt/KTX2/Basis path with the two Basis responses failing as HTTP 503. Its assertions require no attached model, a retained load error, one warning toast, and exactly-once owned scene disposal. The suite also passes individual material failures, subsequent valid recovery, stale incomplete completion, and shared-loader ownership. The independent `consumer_oracle.mjs` additionally supplies a real Thalune GLB with only the Tool normal slot removed: publication is rejected with `Viewmodel material VM_thalune_Tool is missing complete normalMap`. No mock loader success or material stripping is used in this oracle.
+
+2. **R1 P2, runner unlocks while interrupted child survives — FIXED.** `independent_runner.py` uses exact current runner bytes relocated to fresh scratch and harmless Python children named Blender. File barriers prove the child is alive and TERM has been observed before testing the lock. SIGINT/SIGTERM, repeated signals during cleanup, TERM-resistant children, deadline and forced wrapper death were replayed. The lock remains held and replacement entry fails while the child is alive; exits are 130/143/124 for interruption/deadline. The forced-wrapper-kill control returns -9; the child-held lock and retained unclean marker prevent unsafe replacement, including after harness-owned child cleanup. Unrelated witness processes survive. The 14-test pipeline suite also covers natural exit and surviving descendants. `independent-runner.json` retains codes/timing/barrier results.
+
+3. **R1 P2, validation or codec exception leaves an old runtime destination — FIXED.** In the one actual Blender process, a scratch saved Thalune source with Muzzle removed returns 1 and removes its previous scratch destination. A separate injected exception at `export_one` after actual source loading also returns 1 and removes the destination. Each current receipt is FAIL, inventory rejects it, prior reports/receipt/inventory and the original export survive in unique history. Peer and production assets remain unchanged. All failing post-export matrix cases additionally preserve the old destination and the differing failed delivery separately. The unreadable-source retention case is covered by the current pipeline suite. No production codec was run: the exception was injected at its owned call boundary.
+
+4. **R1 P2, substituted export accepted with old PASS — FIXED.** The real inventory entry point, copied byte-for-byte to isolated layouts, accepts matching current inputs and rejects nine-byte corruption, another real export, another real source, a prior PASS report, another people receipt and a missing receipt. Each rejection archives the prior inventory and leaves no current inventory. Evidence: `inventory-review.json`, individual `inventory-*` scratch trees, and six passing production inventory tests.
+
+5. **R2 P2, fresh real Thalune source + real Ixari export can receive a new PASS — FIXED.** The independent harness feeds the exact real Ixari bytes to the Thalune destination, retaining the real Thalune source. In both validate-only and post-export modes, the wrapper returns 1; the export report fails with `viewmodel export contract: expected asset fp_thalune`; the new receipt is FAIL; inventory rejects; the invalid current destination and current inventory are absent. The same result holds for all six cross-pairs in each mode. All three matching pairs in each mode pass wrapper → fresh receipt → actual inventory. The production consumer independently accepts the three matching pairs and rejects the six cross-pairs with `Viewmodel has an unexpected material`, after actually decoding their complete maps. The exact original fresh cross-pair failure is closed, independently of any self-produced hash manifest.
+
+**Actual validation and production compatibility evidence**
+
+The single Blender 5.2.3 LTS process ran **48 cases** in 344.529 seconds through a byte-identical scratch runner, with a 600-second deadline, `-b --factory-startup -t 2`, thread environment limits of two, and one KTX job. It exited 0 and its owned process group is absent. The harness records 10 successful wrapper results and 38 expected or exploratory failure results; outer exit 0 means the harness completed and checked receipt/history/inventory consistency, not that every supplied asset passed.
+
+- **18 real-pair cases:** each mode has 3 accepts and 6 rejects. Inputs are existing assets, never regenerated. The validate-only case substitutes the destination before invocation; post-export patches only `export_one` to deliver those existing bytes. Actual saved-source validation, generic decoded-GLB checks, new contract checks, receipt publication, quarantine and inventory execute normally. This proves the common final delivery boundary; it does not qualify fresh Blender export/compression execution.
+- **22 rejecting contract cases:** through both modes, removal of the Tool normal slot; Muzzle reparented to the left hand; a right index joint reparented to the hand; a skin joint replaced by Muzzle; missing WEIGHTS_0; wrong axes-profile identity; an external image; changed embedded KTX width; shortened mip count; truncated embedded KTX bytes; and removal of inverse-bind references. These inspect or decode real content, not just labels. The missing inverse-bind case is caught by the existing evaluated geometry scale gate (2.58 m versus the 1.5 m maximum), before the new checker. Do not infer that the new checker alone validates inverse-bind matrix contents.
+- **2 successful full-wrapper positive cases:** adding a valid optional emissive map to Skin passes both modes with unchanged geometry. The real consumer accepts it and sampled world-space skin positions match the original exactly.
+- **4 exploratory layout cases:** moving the intact rig from under LOD0 directly under the asset root while preserving mesh variant/LOD stamps passes both modes. The runtime accepts it and sampled positions are unchanged. This is supported by the existing stamped-mesh handling in `artlib/scene.py`, so the initial rejection hypothesis is not a finding. A combined benign-edit probe also inserted an inactive orphan with explicitly invalid `asset_class=unused`; both modes reject it in the pre-existing generic naming/triangle/LOD gates, before `validate_export`. The runtime ignores that orphan and accepts the active scene. That fixture was not a valid whole-pipeline positive control, and the outcome is not attributed to the revision. Original expectations/results remain unedited in `blender-results.json`.
+- **2 R1 saved-source/codec failure cases:** detailed above. The only saved source edit was the isolated scratch missing-Muzzle fixture.
+- Three additional isolated direct-check positives preserve the exact original BIN while adding artist metadata, renaming mesh nodes, or adding inactive nodes/materials. The new `validate_export` accepts each. `direct-positive-controls.json` explicitly records that these three were not rerun through the full wrapper. This distinguishes new-checker compatibility from the older generic orphan rules.
+
+`consumer-oracle.json` contains **19 actual production-consumer cases** (nine pairs and ten mutation probes), using one CPU Basis Worker. It preserves all real materials, textures, compressed geometry and skins. Marker/hierarchy/weights faults can reach runtime attachment because runtime admission is narrower than the build contract; the saved-export gate correctly rejects those tested files. Reparenting the index chain moves sampled vertices by about 0.1224 m, while omitted inverse binds move them by about 1.4391 m; both files fail the wrapper. The rig relocation, optional Skin emission and active scene in the orphan probe preserve sampled positions. These measurements are CPU geometry evidence, not visual grading.
+
+The focused suite is **8 files / 110 tests PASS**, one Vitest worker, no file parallelism and no cache. The three Python suites are **14 + 6 + 9 = 29 tests PASS**, run sequentially after Blender. Independent controls then run sequentially. The original full-consumer and delayed A→B→A harnesses were copied to this new directory with output paths changed only; both pass. All maps decode as 2048×2048 compressed textures with 12 mip levels. The update/muzzle test covers world FOV 64/70/80, view FOV 66 and 16:9/21:9; maximum projected error is `1.1102230246251565e-16` NDC. Retired resources/skeletons are disposed exactly once and active resources are neither shared with nor disposed by retired loads. Meter stepping is stubbed only in that geometry harness; focused meter/game tests pass separately.
+
+Read and traced plan 0.3/0.4/0.9.5 and T03/T04, DESIGN 19 and relevant replacement scope, art-bible anatomy/scale/material/budget rules, both prior reports, REVISION-R1/R2, the complete revision code diff, full-task runtime diff, exporter/validator/receipt/inventory/runner and actual loader/disposal/shared-rig boundaries. Selection remains `game.build.people`; the old runtime model/load path is removed; mining and heat authority remain unchanged. Saved `.blend` sources are the editable authority; export does not import authoring, save sources, bake or generate LODs. Gameplay clip playback/state machines remain T04.
+
+**Protected identities and cleanliness**
+
+Live SHA256/lengths match inventory and Git LFS object identities. Each actual current GLB has 48,000 triangles, 35-joint skins, one LOD and required hand/marker structure; Thalune/Ixari/Ulgani contain 11/11/7 embedded 2k KTX2 images with 12 mip levels. Meshopt, quantization and Basis extensions remain required.
+
+| People | Source SHA256 | Source bytes | Export SHA256 | Export bytes |
+|---|---|---:|---|---:|
+| thalune | `46d483c8cc0b10f555dc35f60008d64f7b883d392daa4bf4e87abb91da97b1db` | 24733334 | `b4859735bd2f203bd30ca41705a156858cc362dd6de1000d308bd1e12b53e76f` | 3891516 |
+| ixari | `44c408a64b59353810119640471b2faf9506da57250bdb47e7ce067445f2c4b5` | 18934076 | `78f90acfc0087b63e97c3ae50cb7c1f5e045e447e12975b6ec21a0dd5f038abc` | 3248228 |
+| ulgani | `aabb32cb139c544d7a57f2fe22c34931fe720d2215e02936876f2dd02dd1aa3b` | 10586540 | `8319097e97e3ccf2f9fdcbbe114742ea45f1f24eb8ba98420f12678d3511e954` | 1593132 |
+
+The independent base-object audit covers 763 protected asset/preview/review files. The separate retained-package audit confirms six accepted bodies, six viewmodel assets, six previews, 745 accepted character review files and 59 prior revision/runtime/control files. Accepted body pointers also match the original task base. All 246 original R2 evidence files match the retained archive and manifest; all 36 original R1 evidence files and their archive match too. Detailed SHA256/length/Git-blob identities are in `protected-hashes.json`, `before.json`, `after.json`, `artifact-audit.json` and `retained-r1-audit.json`.
+
+Selected unchanged runtime/control hashes (also identical to the revision parent):
+
+- `packages/client/src/entities/Multitool.js`: `0ec69a4552687445d0787a29a73f8a33512591b12d0866c88d8ca17969f9e2ab`
+- `packages/tools/blender/characters/viewmodels/run_cpu.py`: `4c32d32e06014db8d3303768de12ec51f0cb6be22a639b037e4240b31a7c91f8`
+- `packages/tools/blender/characters/viewmodels/evidence.py`: `2aa347106fe4af2be998c12ec7fd0ce0f289f54f61fd2a1247771a75d273673d`
+- `packages/tools/blender/characters/viewmodels/inventory.py`: `36302d17a2d904cf20e8915483a14ff04745e5dc5ec4da683d13368e1736d553`
+- `packages/tools/blender/characters/viewmodels/viewmodel_checks.py`: `a35e2046548c4faf21f422b92e47af1ec247c0f5222a65249a7c04cd00d5a5fd`
+
+No target or parent file was edited or committed by this reviewer. Target pins and every tracked byte remain unchanged. The separate orchestration checkout `/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab` was clean at both observations but advanced externally from `35bcf088d393d5b906ab8c09fbdaae7a4575a3d9` to `f9d9cbe2e4b629a14063c9a933c331f213826906` while review ran; it is not claimed byte-unchanged. No operation here switched its branch or changed its HEAD. `final-state.json` records both checkout observations and owned-group cleanup.
+
+All generated evidence is under this new `/tmp` directory. Retained regular-file output is approximately **411 MiB**, below 512 MiB; source/body/peer fixture symlinks refer read-only to existing bytes and are excluded from the new-byte total. The Blender harness checks its output budget after each case. Temporary decode directories are cleaned. The single intentionally retained unclean marker belongs to the harmless killed-wrapper control; it does not represent a live Blender job. No global CPU lock or other worker process was touched.
+
+**Commands and exit codes**
+
+All project commands below used the target checkout as cwd. `commands.jsonl` retains exact argv, cwd, environment, exit code and elapsed time. Each recorded outer command exited 0. The recorder sets `PYTHONDONTWRITEBYTECODE=1`, `OMP_NUM_THREADS=2`, `OPENBLAS_NUM_THREADS=2`, `VECLIB_MAXIMUM_THREADS=2`, `ART_KTX_JOBS=1`, and `TMPDIR=/tmp/p1-e05-t03-r3.drfidkvh/tmp`.
+
+```sh
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py audit-before python3 /tmp/p1-e05-t03-r3.drfidkvh/audit.py before
+# exit 0; 6.104 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py focused-units pnpm exec vitest run packages/client/src/entities packages/client/src/exosuit.test.js packages/client/src/Game.test.js --maxWorkers=1 --no-file-parallelism --no-cache
+# exit 0; 22.171 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py protected-audit python3 /tmp/p1-e05-t03-r3.drfidkvh/protected_audit.py
+# exit 0; 1.084 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py blender env KTX=/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx python3 /tmp/p1-e05-t03-r3.drfidkvh/runner-copy/packages/tools/blender/characters/viewmodels/run_cpu.py /tmp/p1-e05-t03-r3.drfidkvh/blender-child.log 600 /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -t 2 --python-exit-code 1 -P /tmp/p1-e05-t03-r3.drfidkvh/blender_review.py
+# exit 0; 344.529 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py python-pipeline python3 packages/tools/blender/characters/viewmodels/test_pipeline.py
+# exit 0; 4.007 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py python-inventory python3 packages/tools/blender/characters/viewmodels/test_inventory.py
+# exit 0; 3.358 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py python-contract python3 packages/tools/blender/characters/viewmodels/test_export_contract.py
+# exit 0; 0.361 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py runner-controls python3 /tmp/p1-e05-t03-r3.drfidkvh/independent_runner.py
+# exit 0; 8.258 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py inventory-controls python3 /tmp/p1-e05-t03-r3.drfidkvh/inventory_review.py
+# exit 0; 3.343 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py consumer-oracle pnpm exec tsx /tmp/p1-e05-t03-r3.drfidkvh/consumer_oracle.mjs
+# exit 0; 3.629 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py full-consumer pnpm exec tsx /tmp/p1-e05-t03-r3.drfidkvh/full_consumer.mjs
+# exit 0; 1.222 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py actual-stale pnpm exec tsx /tmp/p1-e05-t03-r3.drfidkvh/actual_stale.mjs
+# exit 0; 1.078 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py artifact-audit python3 /tmp/p1-e05-t03-r3.drfidkvh/artifact_audit.py
+# exit 0; 0.42 seconds
+python3 /tmp/p1-e05-t03-r3.drfidkvh/run.py audit-after python3 /tmp/p1-e05-t03-r3.drfidkvh/audit.py after
+# exit 0; 9.172 seconds
+```
+
+Additional read-only Git commands: `git status --porcelain=v1`, `git branch --show-current`, `git rev-parse HEAD HEAD^{tree} HEAD^`, `git diff --check 45c172a102f1944ff00be0b6e5006eef13fd793b HEAD`, and diffs against the parent/original base all exit 0. Direct JSON-positive checks and original R1 archive audit were executed as inline Python; their outputs are retained. One unrelated read-only inspection command had a Python SyntaxError from an accidental placeholder before any statement executed; corrected inspection exited 0. `harness-notes.txt` records it. No failed product gate was changed into a passing result.
+
+The harnesses use one-time scratch layouts. For replay, copy them to a fresh directory and replace their explicit output-root constants; do not rerun over historical evidence. Boundary mutations are stored under `mutations/`; per-case reports, receipts and quarantine trees are under `cases/`. The pair receipt source/export SHA256s and consumer file identities are available for independent comparison.
+
+**Limits and outstanding parent gates**
+
+No GPU, render, bake, production export regeneration, LFS fetch, browser/native view-pass, server, DB, broad/full smoke, push, PR or merge was run. No visual grade is inferred from CPU previews, texture decoding, sampled skin math or projected muzzle alignment. No fresh full-project typecheck or lint was rerun. The source and current compressed assets are qualified only by the checks described here; this is not a universal proof against every malformed glTF edit. Post-export results prove final-path validation/quarantine on injected existing deliveries, not production exporter/compressor execution.
+
+Visual grading, actual GPU view-pass/transitions, T04 full clips and gameplay playback, full smoke and merged verification remain pending. No merge is authorized by this report.
