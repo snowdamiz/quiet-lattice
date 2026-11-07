@@ -1,0 +1,43 @@
+**PASS.** Source and CPU contracts for P1.E10.T05 hold on the pinned bytes. Residual items are advisory. This pass leaves the visual gates unrun, so it does not approve a 342-image capture.
+
+## Measured coverage
+
+38 assets, 38 distinct LOD0 shapes, four strictly descending LODs each, LOD3/LOD0 from 0.03439 to 0.03500. Decoded meshopt GLBs match the manifest on bounds, footprint, ground contact, markers, collider sets, and class budgets.
+
+| Set | Count | Measured |
+|---|---|---|
+| Low / mid / tall | 4 / 4 / 4 | Heights 8.385–13.723, 24.139–58.114, 184.128–308.053 m. Planner variants {0,1,2,3}. LOD0 35,888–57,832 tris |
+| Civic / yard | 8 | Plaza, market hall, skill house, compact office, listening house, shipyard, salvage yard, tide hall |
+| Waterfront | 11 | 3 walls, 2 gates, 2 bridges, 2 lamps, pads of radius 13.201 m and 19.202 m |
+| Props / anchor | 6 / 1 | Props 3,024–9,488 tris. Anchor 49.000 m, LOD0 79,587, min Z −0.0001 m |
+
+Walk sweeps on the decoded `COL_` meshes stay open. The narrowest sampled gap is 3.961 m and the lowest ceiling is 3.190 m, both above the 1.85 m biped and the 2.4 × 1.4 m doorway. Both bridges hit all 65 centre-line deck probes and both guardrails. The anchor file has no bridge node. Along x=0 from y=−8 to y=−4.4 the chest-height ray hits only the stone, and there is no floor collider on that line. Saved anchor blend: inscribed-face recess 3.64 cm (front Y −2.110, deepest Y −2.146), 17 glyph-core objects, 12 shoal objects, `REF_Biped` 1.850 m.
+
+Textures match the class maps: 2048 ETC1S sRGB color, linear ETC1S ORM, linear UASTC normal for buildings and kits; 1024 for props; 4096 for the anchor. Full mip chains. GPU sizes are 16 / 16 / 4 / 64 MiB. Collider triangles peak at 260, under the 512 limit. `extensionsRequired` includes `EXT_meshopt_compression`, `KHR_mesh_quantization`, and `KHR_texture_basisu`.
+
+The plaza render radius is 25.042 m. That is the 24 m authored deck plus edge trim, the 48 m module inside the planner’s 95–140 m plaza. Integration, canals, and terrain stay with E10.T01. These rays are CPU tests against exported colliders, not live engine collision.
+
+## Advisory
+
+1. Hinge Court (`thalune_low_0`) collision ceiling measures 3.190 m. `manifest.json:47` records height 3.2. `audit.py:134` stops the vertical ray 2 cm short of the declared height, so that sweep still passes. Lateral gap at 1.0 m above the floor is 4.992 m.
+2. Decoded LOD3 is 2009 triangles for `thalune_mid_2` and 2004 for `thalune_tall_2`. `manifest.json:897` and `manifest.json:1481` both say 2014. LOD0–LOD2 match. Ratios 0.03489 and 0.03481, still strictly descending and under 5%.
+3. `studio.py:106` clips roughness at 0.13, and `studio.py:107` sets the bronze lane metallic to 0.68. The art bible’s 0.2 floor on large metal can be undercut on that lane. ORM pixels were not decoded.
+4. `APPENDIX-C2.json:193` says `canonicalPreviewBytes` 10,773,992. The seven r1 PNGs on disk sum to 10,774,824. Each PNG sha256 matches the appendix list. The r2 props PNG is an additional 1,417,497 bytes.
+
+## Pins, commands, provenance
+
+HEAD `5208f10ce367d3fb179fe19458ab263423ef5432`, tree `0b00cb2bbc67bd7bddf4c8373507334490a2b949`, base `634c51d2378748c6a514af2a792ee4500b912643`. Diff is 145 files, `git diff --check` exit 0, worktree clean before and after the review. Shared exporter, client, library, and docs are untouched apart from the seven `thalune_*.glb` deliverables. Library sha256 `33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c`. Manifest sha256 `9ef5d4a980b6ba8e7837a9bbe67207ea9e11b486b00ac779910a1159f9cf2a3d`. SHA256SUMS: 144 entries, 0 mismatches. Git LFS pointer oids match the hydrated bytes with no fetch.
+
+| Command | Exit |
+|---|---|
+| `python3 /tmp/p1-e10-t05-r1/hash_check.py` | 0 |
+| `cd packages/tools && node --input-type=module < /tmp/p1-e10-t05-r1/glb-audit.mjs` | 0, two LOD catalog deltas |
+| `Blender -b -t 2 --factory-startup -P /tmp/p1-e10-t05-r1/glyph_probe.py -- thalune_anchor.blend` | 0, Blender 5.2.3 LTS `e13b728c6880` |
+
+Reports: `/tmp/p1-e10-t05-r1/hash-report.json`, `/tmp/p1-e10-t05-r1/glb-report.json`, `/tmp/p1-e10-t05-r1/glyph-report.json`.
+
+The 1371 source and 1371 export audit rows are real and clean, and the export audit records the same GLB sha256s as the current files. They are 7 stock `core.validate_path` calls plus kit predicates (678 collider-fit checks, 119 marker transforms, 25 walk sweeps, 2 bridge decks, 2 rails), not 1371 independent stock runs. `audit-source-r1.json` still records the failed `anchor_sarelun ground origin` check. `bridge-rail-amendment.json` keeps the previous amendment; the rendered digest is unchanged and the after source sha256 is the current waterfront blend. Peak RSS 2,543,472 KiB is the receipt in `export-r4-process.json:22`, not a new measurement. The five negative mutations and the 12 vitest compression tests were not re-run; their receipt bytes match SHA256SUMS.
+
+## Unexecuted gates
+
+Independent blind visual grade, in-engine three-light LOD0/LOD2/wire review, the 342-image packet, GPU appearance and performance, merged smoke, live walker collision, and canal/tide/terrain placement. CPU preview PNGs are authoring sheets. Merge was not submitted.

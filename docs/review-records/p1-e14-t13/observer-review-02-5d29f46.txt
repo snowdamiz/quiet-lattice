@@ -1,0 +1,62 @@
+REVISE — P1.E14.T13 SOURCE/CPU R2
+
+Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8`
+HEAD: `5d29f46f4bc3a29e027bcca192fbff3d61259176`; tree: `bcc5e0361d7e6111f30fc811d236d6c87963bdba`.
+Base: `07a3220bb5c46114006322a45503b9dcb79affce`; tree: `9bf4e042307c06cadf5aa590f9963016e15cfaf6`.
+Clean pins verified before and after. No repository/history/asset/source edits. All new evidence is in `/tmp/p1-e14-t13-r2-review.KnT30aiJ`.
+
+Two P2 blockers remain:
+
+- **N1 P2: Sparse arrays bypass raw evidence and completed-pass validation** — `packages/tools/src/capture/trace-observer-report.ts:207` (related lines 212, 229, 233). At the actual dispatchBrowserDiagnostic boundary, preflight.passes=Array(4) in prepare/run for every step returns observed and totals.dependentPasses=48 although Object.keys(passes).length=0. Separately, temporalBefore.jitter=Array(2) or historySizes=Array(2) at control 2 completes observed. Serialized raw arrays contain null elements. Array.every and Array.forEach skip holes; the inherited count uses passes.length. requireCompleteObserver accepts those derived totals without proving present validated elements. Required: Require every indexed array element to exist and validate it; derive completed-pass inventory from validated records. Cover sparse and partially sparse raw arrays, including temporal and preflight evidence.
+  Reproduction: `pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/finding-shapes.mts`; exit 1. CPU unknown-port input validation; no browser/native execution or production occurrence is claimed.
+
+- **N2 P2: Small mixed-sign gaps select the next workload instead of remaining inconclusive** — `packages/tools/src/capture/trace-observer-report.ts:350` (related lines 356). on=[31,29,31,29,31], off=[30,30,30,30,30], empty fences=8ms. Stable arm ranges 2ms/0ms; paired gaps [1,-1,1,-1,1]. Actual summary decision targeted-workload-next with similar=true; brief requires mixed gaps inconclusive. The similar branch accepts absolute differences <= max(range,5), with no mixed-sign exclusion. Required: Give mixed-sign pairs explicit inconclusive precedence; preserve the exact range+5 rule and stable-similar handling for cases allowed by the brief.
+  Reproduction: `pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/finding-mixed.mts`; exit 1. The diagnostic next-step decision is wrong; budgetQualified remains false.
+
+Prior findings:
+
+- **R1: PARTIAL** — All four original empty-reason cases now fail, plus 30 independent falsy-reason/phase variants and a final-host abort after all work counters completed. The message-truthiness defect is FIXED. The additionally required complete-inventory condition remains incomplete: N1 counts 48 dependent passes from absent raw entries.
+- **R2: PARTIAL** — Original fence counter increment, WAIT_FAILED/success-label contradiction, and historySizes={} are rejected at first affected step; enum/decrement/shape variants also reject. Sparse jitter/history arrays still pass (N1).
+- **R3: FIXED** — Original cross-preparation histIdx reset fails at step index 3 before the next preparation. Independent frameIdx reset and history reset fail. Supplied 90/91/600-frame positive and 90/91 negative parity controls pass.
+- **R4: FIXED** — The original +6ms gap with both ranges 4ms is inconclusive with threshold 9ms. Both signs at and above threshold behave correctly. Stable-relative-range and 20ms fence boundaries pass. N2 is the separate mixed-gap requirement.
+- **R5: FIXED** — Original after-host cancellation retains returned raw facts. Independent before/after concurrent empty abort retains cloned facts, and supplied before/after deadline/drain tests pass.
+- **late-reply-immutability: FIXED** — Original adverse replay has packetChangedAfterReturn=false and reportMatchesLateEvidence=true. Independent barriers hold prepare/run/host-before/host-after/trace-read/stream-close/trace-end beyond publication; each fails as ports-unsettled, finishedMs=null, requiresController=true. Releasing afterward changes neither the returned packet, retained report reference, nor raw/trace sink write counts.
+
+Verification:
+
+- **PASS:** supplied 332 tests / 15 files, at most two concurrent Vitest workers, no cache and scratch-only fsModuleCachePath. Actual Review/nativeWorkClassProbe/gpuCompletion/dependentOutput CPU tests are included; these use synthetic renderer/GL ports. No browser or native runtime was launched.
+- **PASS:** tools and client typechecks; committed diff check; disabled CLI proposal. `--run` exits 1 as required. Proposal retains readiness disabled, runtimeAuthorized false, null binding/grant, and cloud03 FAILED/accepted:false.
+- **FAIL (intended review assertions):** 64 independent scenarios, 60 matching expectations and four mismatches (three sparse-array variants plus mixed-sign classification). Both minimized reproducers also exit 1. Exact scripts and raw packets are retained.
+- **PASS:** 32 recovery-manifest entries match recovery hashes, the 30 non-additive recovered files are unchanged, Engine/AtmospherePass are unchanged from original base, and old browser protocol bodies match recovered source after removing only observer imports/appended code. Current Review minus the three recovered diagnostic methods/import matches original Review exactly; standard perf/warmUp/renderer code is unchanged.
+- **PASS:** original false-complete replay exits 0. The unmodified original contract fixture exits 1 only because its nominal threshold case resets history; the isolated fixture parity correction makes all six original cases pass. Both replay sets and the exact two-line correction are retained for audit.
+
+Exact commands and exits (all run in the pinned checkout):
+
+```text
+pnpm exec vitest run packages/tools/src/capture/browser-work- packages/tools/src/capture/cloud-march- packages/tools/src/capture/trace-observer packages/client/src/dev/native-work-class-probe.test.js packages/client/src/dev/dependent-output.test.js packages/client/src/dev/gpu-completion.test.js packages/client/src/dev/review.test.js --maxWorkers=2 --no-cache --fsModuleCachePath /tmp/p1-e14-t13-r2-review.KnT30aiJ/vitest-cache --configLoader runner  # exit 0
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/original/false-complete.mts  # exit 0
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/original/contract-regressions.mts  # exit 1
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/original/adverse.mts  # exit 0
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/parity-corrected/false-complete.mts  # exit 0
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/parity-corrected/contract-regressions.mts  # exit 0
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/parity-corrected/adverse.mts  # exit 0
+pnpm exec tsc -p packages/tools --noEmit --incremental false  # exit 0
+pnpm exec tsc -p packages/client --noEmit --incremental false  # exit 0
+git diff --check 07a3220bb5c46114006322a45503b9dcb79affce 5d29f46f4bc3a29e027bcca192fbff3d61259176  # exit 0
+pnpm exec tsx packages/tools/src/capture/trace-observer.ts --proposal  # exit 0
+pnpm exec tsx packages/tools/src/capture/trace-observer.ts --run  # exit 1
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/finding-shapes.mts  # exit 1
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/finding-mixed.mts  # exit 1
+pnpm exec tsx /tmp/p1-e14-t13-r2-review.KnT30aiJ/independent.mts  # exit 1
+python3 /tmp/p1-e14-t13-r2-review.KnT30aiJ/verify-protected.py  # exit 0
+```
+
+The original full suite and source proof are independent reruns, not reuse of the revision worker result. Runtime here is Node v22.23.3, pnpm 12.15.0, Darwin arm64. The revision worker reported Node v26 in its red transcript; that does not affect these recorded results.
+
+The independent late-reply cases use deterministic promise barriers and explicit deadline/drain rejection. They exercise actual dispatcher/owned-operation/report boundaries with CPU ports; no elapsed-time guess establishes settlement. Post-cutoff replies are excluded as designed. Ports-settled means JavaScript promises only; ports-unsettled keeps a null finished time and external-controller obligation. Native-port bindings, owned process controllers, and physical settlement remain explicit later prerequisites.
+
+The fixed experiment inventory is still 12 preparations, 10 control frames, 48 claimed dependent passes, 36 preflight fences, 24 control fences, 0 PNG, 0 queries; six on segments, no tracing commands in off controls. Trace aggregate bounds remain 64 MiB / 250000 events / 1024 reads. N1 is specifically why the claimed pass inventory is not yet sufficient proof of present pass records.
+
+No browser/GPU/native capture, Blender, service, DB, grant, asset hydration, push, PR, or merge was performed. No runtime authorization or 16.67ms qualification is implied. Historical cloud03 remains FAILED/accepted:false.
+
+Machine report: `/tmp/p1-e14-t13-r2-review.KnT30aiJ/review.json`. Full command manifest: `/tmp/p1-e14-t13-r2-review.KnT30aiJ/commands.json`.

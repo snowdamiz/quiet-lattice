@@ -1,0 +1,275 @@
+TASK: P1.E07.T07 — Symbiotic I–II, four R1 source-review corrections
+
+STATUS: DONE for the delegated R1 fixes and authorized CPU/private-DB verification. Whole T07 acceptance remains pending the parent's independent source review, full integration on this final pin, and integrated renderer/drawn-companion/picking proof.
+
+SUMMARY: Fixed the four reviewed lifecycle/time-accounting defects at their authority boundaries. A sleeping zone refreshes time, frame transforms and tick-keyed consumers before placement or damage; combat transfers never rewind the regeneration cursor. CastService now retains active effect lifetimes and latches ownership/eligibility loss synchronously through the existing SkillService subscription. Retired producers remove only their own status generations, and toggles use the same validity as their callbacks. This permits fresh Sear/Lance activations and prevents Bond/Big Game/Regrow/Call resurrection after refund/rebuy. No costs, cooldowns, effect magnitudes, radii or durations changed.
+
+PROVENANCE:
+```json
+{
+  "branch": "task/P1-E07-T07",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d",
+  "base": "c0b9c9ba966302b3e7b960129e1c8307e35b7667",
+  "baseTree": "1a41525cc9f0c635b5400679449421b9dfff1051",
+  "originalBase": "634c51d2378748c6a514af2a792ee4500b912643",
+  "originalBaseTree": "079eec371fa8605596700a7c80142ac9cbb95fa0",
+  "head": "52da4eff0d2f354cb18198232a7c8a37c9529a41",
+  "tree": "5ede3c7b0db032c7345c20133d5cba10d0ec3e6b",
+  "clean": true,
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "node": "v22.23.3",
+  "pnpm": "12.15.0"
+}
+```
+Commit: `P1.E07.T07: Retire stale casts and refresh sleeping zone clocks`.
+The branch stayed at c0b9 during the QA freeze. Six independent failures were reproduced with scratch-only files before release; source edits began after explicit QA RELEASE. After the release, the new gateway tests were also run against the original four runtime files from c0b9, with exact fixed-byte restoration in a finally block. Final source hashes were checked before commit; no source changed after final checks. The final commit's parent is exactly c0b9. No push, PR, main update, queue command or merge.
+
+FILES CHANGED (R1 delta: 10):
+- docs/ARCHITECTURE.md
+- packages/server/src/abilities/retirement.test.ts
+- packages/server/src/abilities/service.ts
+- packages/server/src/abilities/statuses.ts
+- packages/server/src/abilities/thermal.test.ts
+- packages/server/src/combat/zone.ts
+- packages/server/src/zones/manager.test.ts
+- packages/server/src/zones/manager.ts
+- packages/server/src/zones/regen.test.ts
+- packages/server/test/symbiotic.int.test.ts
+
+Only server abilities/combat/zones, their tests, and ARCHITECTURE changed in this round. No plan, PROGRESS, DECISIONS, VISUAL-REVIEW, client, renderer, viewmodel, ground/sites fixture, den/effects or gatewayPersistence.test.ts changes. DESIGN/shared copy fixes already at c0b9 remain intact. The cumulative original-base patch is retained separately as full-task.patch.
+
+REVIEW FINDINGS:
+- F1 FIXED: original real ZoneManager follow reproduction gained 5.25 shield in 0.05 s; now exactly 0.25 baseline and 0.375 with Symbiont Hull. A fresh 40-point hit in a just-woken zone remains 40 down through six seconds, then restores 0.25 on the next 50 ms tick. Tests use actual accepted movement/handoff and authoritative health, not a mocked destination clock. The existing manager sleep test now also asserts current wake time and no snapshot before its first normal post-join tick.
+- F2 FIXED: the retiring Sear producer clears its own burn generation, including its grace-period mark. The unchanged independent repro and a production WebSocket cast both start fresh damaging burns after cooldown. A separate real Thermal test expires Sear, starts a new Flare generation, refunds Sear and proves Flare still damages: retiring the old producer cannot delete the replacement's status.
+- F3 FIXED: the same captured lifetime governs Lance callbacks and toggle validity. Retirement ends it once, sends one off-state notification, stops old health loss, and permits the next activation to deal new beam damage. state() retains its prior filtered-view contract; step, skill notifications and cast settling perform end/notification.
+- F4 FIXED: real SkillService respec notifications visit every active lifetime synchronously. Bond and Big Game loss dismiss immediately; Regrow's old timer cannot heal after refund/rebuy; Call's herd control cannot resume. Tests include heavy quadruped/flyer Big Game loss, the actual 500-unit Bond refund, and unrelated Second Lung purchase/refund preserving Bond and the full 40-point Regrow. Gateway tests exercise real refund and rebuy protocol requests and the production subscriber. They supply only trainerAtHand=true at the documented authority seam, restoring it afterward; the NPC trainer UI is not claimed.
+
+VERIFY:
+All test commands used maxWorkers=2; jobs ran sequentially and integration files used fileParallelism=false. Final verification uses Node v22.23.3 / pnpm 12.15.0 on macOS arm64. The earliest frozen-pin and first local service runs used the then-shell Node v26.12.1; final green and gateway evidence uses Node22.
+
+- Unchanged independent repros: RED 3 files / 6 failed on c0b9; GREEN 3 files / 6 passed on final runtime. Byte equality against the reviewer's files was verified; assertions were not weakened.
+- Permanent initial regressions before the fix: RED 3 files / 6 failed / 32 passed. Expanded service green: 6 files / 163 passed before the final additional shield-rate variant.
+- New production gateway counterexamples on c0b9 runtime: RED 5 failed / 21 unselected in the Symbiotic file. Bond and Big Game retained actors; Regrow healed 40→80; fresh Sear lost no additional 2.5 HP; Lance sent no off-state. Same test assertions pass on the fixed runtime.
+- Final full units: PASS 215 files / 2,752 tests, Vitest 45.05 s, exit0. This includes all nine existing node behaviors and 12 added unit cases. Units tested final source, including the updated sleep/wake assertion.
+- Final relevant serial integrations: PASS 5 files / 48 tests, Vitest 71.11 s, exit0. Symbiotic26, Thermal5, Resonance5, ship hazards8, movement4. Shipped ability book, real WebSocket handling, movement, skills/codex/meters/fauna/combat, SQL and Redis are exercised. Production effect replies alone are not accepted as evidence.
+- Full workspace typechecks: PASS (shared/client/server/tools), sequential workspace concurrency1.
+- Scoped ESLint and Prettier: PASS all nine changed TypeScript files; git diff/check PASS. ARCHITECTURE follows existing repository document formatting and is covered by whitespace checks.
+
+Development test commands (cwd is the worktree above; expected RED exits are1):
+- Frozen independent RED and final independent GREEN use the exact reviewer-green command below, changing only runtime source under test. RED:6failed; GREEN:6passed.
+- `pnpm exec vitest run packages/server/src/zones/regen.test.ts packages/server/src/abilities/retirement.test.ts packages/server/src/abilities/thermal.test.ts --maxWorkers=2 --no-cache`: permanent initial RED,6failed/32passed.
+- `pnpm exec vitest run packages/server/src/zones/regen.test.ts packages/server/src/abilities/retirement.test.ts packages/server/src/abilities/thermal.test.ts packages/server/src/abilities/service.test.ts packages/server/src/abilities/symbiotic.test.ts packages/server/src/abilities/resonance.test.ts --maxWorkers=2 --no-cache`: first-green1failed/157passed; expanded-green163passed.
+- The initial full-unit failure and final full-unit pass used the same units command below. The initial48-test integration attempt and final integration pass used the same integration command below.
+
+Final command ledger (cwd is the worktree above):
+- `node /Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d/node_modules/vitest/vitest.mjs run --config /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/vitest.red.config.mts --maxWorkers=2 --no-cache`: exit 0, 0.65 s; `reviewer-green.log`.
+- `pnpm exec vitest run --maxWorkers=2 --no-cache --reporter=default --reporter=json --outputFile=/tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/units.json`: exit 0, 45.331 s; `units.log`.
+- `pnpm -r --workspace-concurrency=1 typecheck`: exit 0, 14.951 s; `typecheck.log`.
+- `pnpm exec eslint packages/server/src/abilities/service.ts packages/server/src/abilities/statuses.ts packages/server/src/abilities/thermal.test.ts packages/server/src/combat/zone.ts packages/server/src/zones/manager.test.ts packages/server/src/zones/manager.ts packages/server/test/symbiotic.int.test.ts packages/server/src/abilities/retirement.test.ts packages/server/src/zones/regen.test.ts`: exit 0, 1.198 s; `eslint.log`.
+- `pnpm exec prettier --check packages/server/src/abilities/service.ts packages/server/src/abilities/statuses.ts packages/server/src/abilities/thermal.test.ts packages/server/src/combat/zone.ts packages/server/src/zones/manager.test.ts packages/server/src/zones/manager.ts packages/server/test/symbiotic.int.test.ts packages/server/src/abilities/retirement.test.ts packages/server/src/zones/regen.test.ts`: exit 0, 0.559 s; `format.log`.
+- `git diff --check`: exit 0, 0.028 s; `diff-check.log`.
+- `pnpm exec vitest run packages/server/test/symbiotic.int.test.ts packages/server/test/thermal.int.test.ts packages/server/test/resonance.int.test.ts packages/server/test/shipHazards.int.test.ts packages/server/test/movement.int.test.ts --config vitest.int.config.ts --maxWorkers=2 --no-file-parallelism --passWithNoTests=false --reporter=default --reporter=json --outputFile=/tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/db/integration.json`: exit0; `db/integration.log`, `db/integration.json`, `db/result.json`. Invoked by `python3 /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/db/run.py`, which sets process-level URLs and NODE_OPTIONS before imports, probes routes, and supervises the owned process group.
+- `python3 /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/db/gateway-red.py`: expected exit1 for the five baseline failures; runtime source restored byte-for-byte. The exact filtered command is in `db/gateway-red-execution.json`.
+- `python3 /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/db/claim.py` and `python3 /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/db/cleanup.py`: exit0; exact SQL/Redis operations retained in claim.json / cleanup-commands.json.
+- `git diff --check c0b9c9ba HEAD`, clean status and final parent/tree/source-byte verification: exit0.
+
+Resolved intermediate failures, preserved rather than hidden:
+1. First local implementation green attempt: 157 passed /1 failed. Eager state() settling changed an established read contract. Removed that eager settle; shared lifetime validity still filters state and normal settle paths end/notify once.
+2. First relevant integration attempt: 47 passed /1 failed. Fresh Lance activation's final HP assertion hit the existing held-input timeout because the fixture sent no renewed beam input. Added a fresh real input and barrier before activation; the HP assertion is unchanged. Final48 pass.
+3. First full unit attempt: 2,751 passed /1 failed. Existing manager test counted only the old post-join tick. Updated it for the required pre-placement wake step, adding clock and no-premature-snapshot assertions. Final2,752 pass.
+The final report's tail appendix retains the last20 lines of each failed run in this round.
+
+DECISIONS (question → choice → why):
+- Stale destination clock → run an ordinary empty-zone step at wake, before placement/hit; retain max(previous cursor, source zone time, source combat time, destination time) on transfer → refreshes frame/cache authority together and never grants source elapsed time twice. No new shield number.
+- Retired timer owns a status → retain the status generation started by that context; remove only that generation during retirement → stopping work also clears its mark while preserving a newer producer's mark. No burn duration/power change.
+- Toggle and timer validity diverged → use the same captured lifetime in holds/settle; retain existing end/notify ownership → exactly one retirement and a real fresh activation.
+- Ownership loss restored before a tick → retain lifetimes only while they own pending callbacks, status generations, a toggle or fauna control; inspect them synchronously on existing skill notifications → loss is latched before rebuy, and unrelated operations do not cancel valid work. Completed instant casts are not retained indefinitely.
+- Companion eligibility → use existing CodexService.canBond as part of that latched lifetime, and tie dismissal to its exact context → catches Big Game loss without allowing an old context to dismiss a valid replacement.
+- Call's control outlives the cast function → keep its lifetime observable for the existing six-second run → the next fauna tick cannot resurrect a refunded/rebought command. This is bookkeeping against the existing shared duration, not a new duration.
+- Gate tests require a trainer → use only the explicit existing trainerAtHand test hook; real SkillService mutations, units, protocol handling and notifications remain in use → no invented trainer consumer or claim of live NPC UI.
+
+All prior effect choices are unchanged; copied here for the parent's numeric decision record (these are implementation choices, not a claim that the parent already accepted them):
+- Unspecified effect cadence → 0.25 s callbacks with elapsed-time integration and a final clamp → matches existing ability timer style, yields exact 40/6 s and 20 hull totals without extending lifetime. Timer due tolerance 1e-9 s only addresses floating-point scheduling.
+- Bond range → 60 m configured reach, with existing cast slack/hit spheres → natural flyers cruise 25–55 m above ground; 30 m made Big Game unusable for some real flyers. This is also an existing fauna sensing distance.
+- Companion behavior → one native creature, following to 4 m; defend hostile/threatening wild fauna within 20 m of owner, return when beyond a 40 m leash → bounded local defense with a wider return margin, using existing movement/collision rules. No teleport-to-owner substitute.
+- Flyers → 3 m extra follow tolerance, desired altitude 1 m above terrain; directed vertical approach uses existing dive descent multiplier (5 m/s ×3 =15 m/s) → accounts for hovering/body clearance and lets an actual flying companion join ground fights. Call reuses the same directed-flight altitude.
+- Companion attacks → species' first body-plan attack at its retained native herd level, existing 1 s AI attack clock, existing reach and 1.5 strike tolerance plus canonical target sphere → reuses combat data and natural fauna level scaling, never owner-level scaling. Damage/threat/events/kill credit are the existing combat path. Successful companion hits use existing 4 s threat-table taunt.
+- Replacement/lifetime → authoritative analysis/eligibility/target/phase validation before spending or replacing; one successful target replaces the old actor, preserving target health/species/level → no invalid replacement dismisses a valid companion. Companion death, owner death (including immediate suit recovery), disconnect, mode/world/zone/phase departure or loss of required Bond/Big Game eligibility dismisses it. No persistence/resurrection on reconnect.
+- Existing no-PvP policy → no companion attacks on players/companions; no player damage or control against owned companions; safe-zone/phase/frame gates remain live → no new indirect PvP route. Ordinary fauna damage to players remains E08.T02; wild retaliation against a companion is enabled now.
+- Repair Drones duration → 20 s for its existing 15 Charge /20 s cooldown → simplest bounded active matching its cooldown; 1 hull/s while mode is ship, so landing/pulse/boarding transitions cancel and cannot restart it. Max hull caps it. Dock repair remains 20 hull/s.
+- Regrow reach/ally meaning → configured 30 m initial cast range and existing sight rule; omitted target=self, otherwise a visible current party player on foot and up → uses existing party authority. Subsequent ticks retain lifecycle/party/phase checks but do not re-test the initial cast range. Heal is 40 over 6 s, max capped; native suit regeneration remains additive. Companions are protected owned actors, not an extra creature-healing API.
+- Spore magnitude → 4 poison damage/s and 4 healing/s in the specified stationary 8 m/10 s cloud → total 40, matching Regrow's existing total over a longer duration. Existing valid wild-creature targets are enemies; self/current visible party players are healable allies. No player or owned-companion damage. Terrain sight, phases, frames and node resistance handling use existing paths. No additional lingering poison duration beyond the cloud.
+- Call point → aim direction ×30 m; nearest eligible unowned herd within 40 m; 6 s travel → protocol supplies an aim vector, not a ground-point payload; fixed reach and existing terrain steering are the smallest complete consumer. Already-controlled herds and companions are excluded.
+- Call damage → 12 flat ability damage, swept 2 m contact radius plus canonical target sphere, one hit per target for the entire herd/cast → 12 is the existing grazer kick magnitude; swept contact prevents tunneling and single-hit accounting avoids unbounded herd-size damage. Damage runs through CastContext.damage, including current modifiers/resistances/authority. Stuns still prevent movement/contact.
+- Shield baseline → 5 points/s after 6 s without a positive ship hit, capped at max → explicit parent decision. Symbiont Hull multiplies maximum by1.25 and rate by1.5 (7.5/s). All alive equipped ship pools regenerate, including the parked ship on foot; suit damage does not reset the ship timer. Downed players receive no regen. Hazards run before regeneration and reset its delay. Transfer preserves hit time without catch-up. Capacity retunes preserve fractions.
+- Second Lung/Thick Hide → retain existing ×0.7 modifier consumers → their real depletion behavior already existed; duplicating consumers would double-apply effects. Thick Hide stacks multiplicatively with Hazard Weave.
+- Stale effects → session epoch + entity/presence/life generations, latched retirement, recipient generations for healing, synchronous phase notification → catches departure/return or recovery between ticks. Generic old cast contexts also retire; cooldowns remain server-run memory through reconnect. No attempt to revive paused Gravitic implementation.
+- Costs/cooldowns → unchanged shared skill data: Bond30 Heat/60 s; Drones15 Charge/20 s; Regrow20 Heat/10 s; Spore25 Heat/15 s; Call30 Heat/45 s. No Tier III riding, splitting, two-companion cap or owner-level scaling.
+
+FIXTURE ROUTING AND CLEANUP:
+- Only fresh `astra_symbiotic_fix_20261107_051713_f65e085d` was created on space-t16-pg-20261106 at127.0.0.1:53055, userastra. The existing astra database was not used. Redis DB8 at127.0.0.1:53058 was freshly verified empty, atomically claimed with `fixture:owner:symbiotic_fix_20261107_051713_f65e085d`, and reserved only for this work.
+- Before migrations/imports, every guarded process verifies effective config and actual SQL current_database/current_user/server port plus Redis CLIENT INFO db=8 and owner marker. net connect guards reject5432/6379/55432/56379 defaults before connection; Redis guards reject FLUSHDB/FLUSHALL and any other SELECT. Guard self-tests deliberately reject default ports without opening them. Zero unexpected default-route attempts occurred.
+- Live SQL session application names and Redis client names prove runtime routing; all observed runtime sockets were127.0.0.1:53055/53058. Seven actual worker-thread startup probes ran across the retained integration attempts; production terrain workers inherit the env and open no application database client. The guard's own pre-import probes are identified separately from runtime connections.
+- Cleanup checked zero owned SQL sessions and zero owned process-group members. All20 guarded process IDs were independently absent afterward. Exactly9 verified keys (owner marker and keys mapped to this database's shards) were atomically deleted with marker/keyset revalidation; no FLUSHDB. DB8 final size0. The fresh database is absent. Both named containers remain running/healthy. Final database cleanup required no forced session termination; owned process cleanup evidence is retained for the supervised runs.
+- Full cleanup result: `db/cleanup.json`; startup/runtime routing: `db/process-routes.jsonl`, `db/live-routes.jsonl`, `db/final-process-and-routes.json`; process supervision and exact env: `db/execution.json`, `db/execution-env.json`, `db/result.json`.
+
+OUT OF SCOPE FOUND / ACTUAL GATES REMAINING:
+- Parent fresh independent source review of 52da4eff0d2f354cb18198232a7c8a37c9529a41 and the full independent integration suite on that final pin remain pending. The parent's prior38-file/217-test full-suite PASS applies only to c0b9, not this commit. This worker ran the requested relevant48-test subset after fixes.
+- Integrated renderer, drawn-companion and picking proof remain parent/T09 work. No browser, GPU, full smoke, renderer capture or visual acceptance was attempted. Source health/snapshot assertions are not drawn-companion proof.
+- Parent records tuning/acceptance in plan, PROGRESS, DECISIONS and VISUAL-REVIEW; none were edited here. No final reviewer was spawned by this worker. No CI/release/production claim.
+- Existing general fauna-player combat stays with E08.T02, live trainer placement with E07.T13/E09.T05. No Void, TierIII riding/splitting/owner-level scaling, or revival/copy of paused Gravitic057099dd3. Future CastService/lifecycle conflicts may still need integration resolution.
+
+ARTIFACTS:
+- `/tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/Appendix-C.2-report.md`: this report.
+- `final-pins.json`, `final-source-hashes.json`, `patch.diff`, `full-task.patch`, `changed-files.txt`, `SHA256SUMS`: provenance and exact deltas.
+- `authoritative-red.log`, `permanent-red.log`, `first-green.log`, `expanded-green.log`, `reviewer-green.log`, `units.log`, `units.json`, `verification.json`, `typecheck.log`, `eslint.log`, `format.log`: service/final verification.
+- `db/gateway-red-*`, `db/initial-*`, `initial-units.*`: baseline and intermediate failure evidence.
+- `db/integration.*`, `db/fixture.json`, `db/route-guard.mjs`, `db/claim.*`, `db/cleanup*`, `db/final-process-and-routes.json`: real gateway/fixture proof. The fixture JSON is historical after cleanup and must not be reused as a live route.
+- Prior source-review report: /tmp/space-symbiotic-t07-source-review-r1-c0b9c9ba/review-report.md.
+- Parent prior full QA report: /tmp/space-symbiotic_qa_20261107_045650_e5808ead/report.md.
+
+FAILURE LOG TAILS (last20 lines for every retained failed run in this correction round):
+
+authoritative-red.log
+```text
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  thermal-review.test.ts > R1 independent real consumer reproductions > starts a fresh Sear burn after the retired burn cooldown ends
+AssertionError: expected 2.5 to be greater than 2.5
+ ❯ thermal-review.test.ts:196:22
+    194|     wait(1);
+    195|     console.log(JSON.stringify({case:'Sear', damageBeforeRecast:lost, …
+    196|     expect(c.lost()).toBeGreaterThan(lost);
+       |                      ^
+    197|   });
+    198| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  6 failed (6)
+   Start at  00:04:20
+   Duration  680ms (transform 60%, import 31%, tests 8%)
+
+```
+
+permanent-red.log
+```text
+
+- 60
++ 100
+
+ ❯ src/zones/regen.test.ts:40:19
+     38|     now+=0.05;zones.runTick(now,now*1000);
+     39|     const after=joined.zone.combat.playerHealth(joined.entityId)!.shie…
+     40|     expect(after).toBe(max-40);
+       |                   ^
+     41|   });
+     42| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  6 failed | 32 passed (38)
+   Start at  00:10:24
+   Duration  599ms (import 48%, transform 34%, tests 18%, worker 1%)
+
+```
+
+first-green.log
+```text
++ [
++   "lance",
++ ]
+
+ ❯ src/abilities/service.test.ts:470:19
+    468|     skills = { ...skills, slots: { ...skills.slots, ground: Array(6).f…
+    469|     expect(svc.state('c1').on).toEqual([]);
+    470|     expect(ended).toEqual([]);
+       |                   ^
+    471|     svc.skillsChanged('c1');
+    472|     expect(ended).toEqual(['lance']);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  1 failed | 157 passed (158)
+   Start at  00:11:56
+   Duration  1.98s (import 43%, tests 33%, transform 24%, worker 1%)
+
+```
+
+db/initial-integration.log
+```text
+
+ FAIL  packages/server/test/symbiotic.int.test.ts > Symbiotic gateway lifecycle and ally boundaries > a retired Lance sends off state once and its next activation deals new beam damage
+AssertionError: expected 93.2 to be less than 93.2
+ ❯ packages/server/test/symbiotic.int.test.ts:418:54
+    416|     expect(await cast(w.p, 'lance', { aim })).toMatchObject({ result: …
+    417|     advance(0.5, true);
+    418|     expect(w.zone.combat.creatureHealth(target)!.hp).toBeLessThan(hp);
+       |                                                      ^
+    419|   });
+    420|   it('Bond prevents another player from stunning its companion with Pu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 47 passed (48)
+   Start at  00:17:22
+   Duration  72.46s (tests 96%, import 4%, transform 1%)
+
+JSON report written to /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/db/integration.json
+```
+
+db/gateway-red-integration.log
+```text
+- ]
++ []
+
+ ❯ packages/server/test/symbiotic.int.test.ts:415:80
+    413|     await handled(w.p);
+    414|     expect(w.zone.combat.creatureHealth(target)!.hp).toBe(hp);
+    415|     expect(w.p.sock.received.slice(before).filter((m) => m.t === 'abil…
+       |                                                                                ^
+    416|     w.p.sock.send({ t: 'input', seq: ++w.p.seq, time: server.world.clo…
+    417|     await handled(w.p);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 21 skipped (26)
+   Start at  00:19:04
+   Duration  1.13s (tests 41%, import 38%, transform 21%)
+
+JSON report written to /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/db/gateway-red-integration.json
+```
+
+initial-units.log
+```text
+ ❯ src/zones/manager.test.ts:139:23
+    137|     expect(zones.isAsleep('sys:0')).toBe(false);
+    138|     advance(50);
+    139|     expect(zone.tick).toBe(asleepAt + 1);
+       |                       ^
+    140|     expect(s2.frames).toHaveLength(1);
+    141|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 214 passed (215)
+      Tests  1 failed | 2751 passed (2752)
+   Start at  00:20:53
+   Duration  61.09s (tests 68%, import 26%, transform 6%)
+
+    Isolate  215 workers spawned · ~66ms startup each (spawn + environment, per file)
+             at least ~7.06s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/units.json
+```

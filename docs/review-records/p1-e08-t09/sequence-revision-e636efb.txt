@@ -1,0 +1,178 @@
+TASK: P1.E08.T09 — new sequential Git-admission integration finding
+STATUS: DONE for this CPU/source revision. Whole T09 remains pending independent review, authorized runtime captures and visual grading.
+
+SUMMARY
+Candidate SHA: e636efbb1900c6426f3a2586724080b6a132e1bb
+Tree: 6cc588b6668c2289d643214f9bc328c3a3553865
+Parent: 5821809fddb241273a49d37edc2da435eee2d589
+Branch: task/P1-E08-T09-current-base
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+Patch SHA256: f61fe426296df4c31c3abd1f594675f49e186f30d280ec585a841060ad3cd267
+Readiness SHA256: 6c14b6cb0b0972ac1e5f80363b83ff5c9bbe910140363fd80a77592c67866705
+Runtime: DISABLED. No capture/GPU/browser/native job, real runtime grant, services, enablement, push/PR/main edits.
+
+This is a new sequential integration correction. The six prior R3 findings remain separately FIXED; their unchanged independent process/abort/fact controls pass on this source. It does not revise the independent R3 verdict at5821809 or claim a new independent PASS.
+
+FILES CHANGED
+- caller.py: retain the complete inspector-checked entry write manifest in the hash-bound caller result; verify exact predecessor output trees and allow only those individual untracked Git paths.
+- controls.py: extend the existing inert-helper fixture with an optional actual temporary Git repository/consume path; add15 first-success→successor cases. Existing native/helper/publication assertions remain.
+- readiness.json: fresh disabled source/dependency/executable/cache freeze and unused attempt identities. Budget/count/order unchanged.
+README, Node entry/controls, inspector, freeze implementation, all helpers, product/smoke/assets and orchestration documents are unchanged. No new supervisor infrastructure or output-copy topology.
+
+RED → GREEN
+Applied the TDD skill at /Users/andreyyurlov/.agents/skills/tdd/SKILL.md. Added and ran the actual Git regression before editing caller.py. Initial test authoring had an unclosed dict; sequence-red.log preserves that syntax failure. After fixing only the test syntax, sequence-red-actual.log shows the substantive RED: actual main/consume/run_unit succeeds for first unit, actual Git reports82 untracked files under its frozen in-repository output path, check-ignore exits1, and actual second consume rejects Worktree is not clean. No gate-only mock was used for the admission under test. red-scratch retains exact old caller/helper bytes and that test for reproduction.
+
+GREEN uses the same first/second actual consume/grant_gate/persist and real Git checkout. The existing fixture makes native/helper-command boundaries inert, generates82 small synthetic artifact files and substitutes the decoder and expensive native/source-binding probe. These bytes are CPU test fixtures, not images or visual evidence. The actual source/dependency/executable bindings in the bound checkout are checked separately by --check. Helper function bodies and real deadline guards execute unchanged. No live service or native launch is needed.
+
+A separate retained process proof starts the first actual main/run_unit/consume in an isolated pinned-Python process. Its parent observes subprocess.returncode==0, uses that OS exit plus exact result/consumption hashes in the next synthetic grant, then invokes actual second consume against the same Git repository. It succeeds with82 untracked artifacts, preserves the first consumption bytes and leaves HEAD unchanged at fixture SHA 1d2907b97065cc8bf80efb075795d21d8bac50d3. See real-git-process-result.json, process-first.json/log and retained fixture paths. The regular regression also verifies every refusal occurs before second consumption/output/evidence allocation. All commits/grants in these fixtures are confined to new scratch repositories and are explicitly inert synthetic transactions.
+
+IMPLEMENTATION / TRUST BOUNDARIES
+1. Before the independent decoder runs, caller records the existing entry-result.json writes list. After successful inspection, it requires the list to be unchanged, checks its complete file count, paths, sizes, types and actual hashes, and retains outputManifest in existing accepted-evidence/result receipts. The manifest itself is thus inside the result hash already required by the parent-observed-completion grant contract. No inspector or captureUi/screens redesign is needed.
+2. After unchanged grant_gate admission checks, verify_worktree loads each explicitly declared predecessor's result using its exact grant reference hash (the same bytes are hashed and parsed). It verifies only that predecessor's exact frozen output root. Canonical root/ancestor checks reject symlinked roots. File/directory enumeration rejects symlinks, nonregular entries, missing/extra files and extra empty directories, including ignored extras inside the output tree. Manifest paths cannot escape or duplicate; count must equal frozen fileCount. Size/type/name checks precede reading file bytes; each hash read is bounded by expected size+1 and the existing16MiB image/16KiB readout limits.
+3. Git status uses porcelain v1, NUL-separated paths, all untracked files, and no submodule-ignore shortcut. Every reported row must be an untracked individual file in that verified exact-path set. Tracked/index changes are always refused, including staging an otherwise valid predecessor artifact. No directory-prefix exemption, tracked-only check, new ignore rule or rewriting of consumed HEAD is used. Existing repository ignore semantics for unrelated preexisting ignored caches remain as before; predecessor tree verification itself ignores no entries.
+4. Single HEAD, frozen source, explicit parent-observed exit0, exact result/consumption references, predecessor ordering and all prior publication/failure checks remain. The allowance grants no authority to undeclared/current/future output files. Fresh current-unit identity allocation still occurs only after verification.
+
+No image copies, moves or new output artifacts are introduced. Manifest data is stored in existing capped receipts; total controlled metadata cap stays64MiB (32MiB per Node/Python), with no new receipt path. The repeated predecessor hash pass is CPU/read-only and revalidates files immediately before later admission.
+
+NEW SEQUENTIAL CASES
+All15 start from a fresh real Git repository and complete the first actual caller with82 artifact files. One admits the successor;14 refuse. sequence-results.json retains30 actual consume calls and source/transaction/status evidence, with failed fixtures under sequence-proofs.
+
+|Mutation|Second admission result|
+|---|---|
+|none|ADMITTED; same HEAD, first consumption unchanged|
+|unrelated|Worktree has changes outside verified predecessor artifacts|
+|quoted-untracked|Worktree has changes outside verified predecessor artifacts|
+|tracked-edit|Worktree has changes outside verified predecessor artifacts|
+|staged-edit|Worktree has changes outside verified predecessor artifacts|
+|modified-artifact|Output artifact hash changed: 16x9.png|
+|missing-artifact|Missing output artifact/directory|
+|extra-artifact|Unsafe/extra output artifact: extra.png|
+|ignored-extra|Unsafe/extra output artifact: extra.cache|
+|extra-empty-directory|Unexpected output directory: extra|
+|artifact-symlink|Unsafe/extra output artifact: 16x9.png|
+|output-symlink|Unsafe predecessor output root|
+|frames-symlink|Unsafe/extra output artifact: _frames|
+|unrelated-symlink|Worktree has changes outside verified predecessor artifacts|
+|staged-artifact|Worktree has changes outside verified predecessor artifacts|
+
+VERIFY — exact commands/exits
+The28 Python tests comprise all27 existing controls plus the new15-case sequential test. All7 Node controls pass. Copied independent R3 scripts are unchanged, operating on fresh current-source copies:8 actual child-process/publication outcomes,38 SIGALRM/KeyboardInterrupt boundaries,7 grant/reference mutations,6 producer-fact/all-sinks cases and exact close-error metadata cap pass. These are local regressions, not a fresh independent source review. commands.json is the machine-readable command ledger.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/controls.py BoundaryControls.test_real_git_successor_admission_allows_only_exact_predecessor_artifacts`
+  Exit 1: Initial test-authoring syntax error, retained; not the behavioral RED. Log: `sequence-red.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/controls.py BoundaryControls.test_real_git_successor_admission_allows_only_exact_predecessor_artifacts`
+  Exit 1: RED on unchanged5821809 caller: first success leaves82 untracked artifacts; second consume raises Worktree is not clean. Log: `sequence-red-actual.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/controls.py BoundaryControls.test_real_git_successor_admission_allows_only_exact_predecessor_artifacts`
+  Exit 0: GREEN:15 real-Git cases,1 valid successor +14 refusals. Log: `sequence-green.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B -c 'import sys,runpy;sys.path.insert(0,"/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages");runpy.run_path("packages/tools/src/capture/fauna_packet/controls.py",run_name="__main__")'`
+  Exit 0: 28/28:27 existing tests plus new sequential regression. Log: `python-controls.log`
+
+- `node --test packages/tools/src/capture/fauna_packet/controls.mjs`
+  Exit 0: 7/7, including all-six disabled zero-launch checks. Log: `node-controls-final.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/controls.py CallerControls.test_actual_disabled_entry_has_no_subprocess_helper_import_or_allocation CallerControls.test_disabled_before_grant_helper_or_allocation`
+  Exit 0: Actual pinned Python, fresh disabled readiness, all6 screens refuse before helper import/allocation. Log: `disabled-final.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-sequence-_tpq2731/retained-controls/independent-boundaries.py`
+  Exit 0: Unchanged R3 test script:8 process cases,38 real-abort boundaries,7 grant mutations PASS. Log: `prior-independent-boundaries.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-sequence-_tpq2731/retained-controls/retained-facts.py`
+  Exit 0: Unchanged R3 script:6 actual producer-fact/all-sink cases plus exact metadata cap PASS. Log: `prior-retained-facts.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-sequence-_tpq2731/retain-sequence.py`
+  Exit 0: Retained15 fresh Git repositories and30 actual consume calls;15 first successes,1 successor admission,14 refusals. Log: `retained-sequence.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-sequence-_tpq2731/real-git-process.py`
+  Exit 0: Parent observed first OS exit0; actual second consume admitted same real Git HEAD with82 untracked artifacts. Log: `real-git-process.log`
+
+- `pnpm gate:removed`
+  Exit 0: 10 enforced,15 waiting on replacement tasks. Log: `removed.log`
+
+- `pnpm exec eslint packages/tools/src/capture/fauna_packet/entry.mjs packages/tools/src/capture/fauna_packet/controls.mjs`
+  Exit 0: PASS. Log: `eslint.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/freeze.py`
+  Exit 0: Fresh disabled freeze after preserving old readiness; CPU self probe only. Log: `freeze.log`
+
+- `pnpm exec prettier --write packages/tools/src/capture/fauna_packet/readiness.json`
+  Exit 0: Format generated JSON. Log: `prettier-write.log`
+
+- `pnpm exec prettier --check packages/tools/src/capture/fauna_packet/entry.mjs packages/tools/src/capture/fauna_packet/controls.mjs packages/tools/src/capture/fauna_packet/readiness.json`
+  Exit 0: PASS. Log: `format.log`
+
+- `python3 -I -B -c 'import json,os,subprocess; p="packages/tools/src/capture/fauna_packet/"; r=json.load(open(p+"readiness.json")); subprocess.run([r["python"],"-I","-B",p+"caller.py","--check"],cwd=r["root"],env={**os.environ,"PATH":r["path"]},check=True)'`
+  Exit 0: Committed-head CPU bindings only; runtime false. Log: `check-final.log`
+
+- `python3 -I -B /private/tmp/p1-e08-t09-sequence-_tpq2731/verify.py`
+  Exit 0: Exact scope, protected hashes, immutable review/helper/history,48 absent old/new identities. Log: `verify-final.log`
+
+- `git diff --check 5821809fddb241273a49d37edc2da435eee2d589 HEAD`
+  Exit 0: PASS. Log: `diff-check.log`
+
+PROVENANCE / PROTECTED STATE
+verified.json records exact source/helper hashes and scope. All 12575 protected tracked-file hashes across product/smoke/capture definitions/assets/package/lock scopes match the prior candidate; Git object comparison against d688579ad has only the four already-authorized recovered helpers in those scopes. Each helper still matches its accepted pin/recovery6245. The retained task branch is still bb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9. Historical440 artifacts, failures/spent identities and legacy Git binding remain unchanged. No .blend or accepted assets were altered/hydrated.
+All 1737 files under /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y match review-hashes.json. No reviewer/history file was edited. The prior disabled readiness is preserved at readiness-5821809.json with SHA256349f52544e931a5109c3c887033a252b48ce492470241b8f441a7245ff3277da and in the parent commit. All48 prior/current output/evidence/grant/consumption identities are absent. candidate.json contains all8 current packet hashes and the exact patch hash; revision.patch is the three-file binary diff. Working tree is clean at the candidate commit.
+
+READINESS / INVENTORY
+Exact paths and ledger are in committed readiness.json and inventory.json. Order is unchanged:
+
+|Order|Screen|Files/images|Output cap bytes|One-unit admission bytes|
+|---|---|---|---|---|
+|1|fauna-hit-turn-day-16x9|82/81|1,358,970,880|8,925,528,064|
+|2|fauna-hit-turn-day-21x9|82/81|1,358,970,880|8,925,528,064|
+|3|fauna-hit-turn-night-16x9|82/81|1,358,970,880|8,925,528,064|
+|4|fauna-hit-turn-night-21x9|82/81|1,358,970,880|8,925,528,064|
+|5|fauna-combat|220/219|3,674,226,688|15,871,295,488|
+|6|fauna-combat-night|220/219|3,674,226,688|15,871,295,488|
+
+Total768 files/762 images:60 stills,696 frames,6 sheets,6 readouts. Four correction units remain82 files each; both broad units remain220 files each. No extra output copy or extra disk admission. Existing copy/archive/native/safety ledger,64MiB cache-copy cap/30s deadline,600s capture/60s cleanup/45s decoder limits remain unchanged. No all-six-fit claim.
+Fresh committed-head --check reports CPU_BINDINGS_ONLY/runtimeEnabled:false, 84,098,887,680 free bytes, no task-local Vite/cache owners, and 8,099,840 frozen cache bytes. This is a time-local CPU observation, not runtime admission. Launcher and self-observed app-bundle executable remain separately pinned; exact fresh CPU probe and hashes are in verified.json/readiness.json. Decoder/site dependencies remain unchanged.
+
+Full check invocation:
+```sh
+cd /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+python3 -I -B -c 'import json,os,subprocess; p="packages/tools/src/capture/fauna_packet/"; r=json.load(open(p+"readiness.json")); subprocess.run([r["python"],"-I","-B",p+"caller.py","--check"],cwd=r["root"],env={**os.environ,"PATH":r["path"]},check=True)'
+```
+
+OUT OF SCOPE / PENDING
+Fresh independent review of this new sequencing correction; actual per-unit enablement/grant and disk/GPU/cache admission; six runtime captures; capture acceptance and independent animation/visual grading; whole T09 closure. The parent reserves GPU but has not launched fauna; this work supplied no native authorization or run. Parent-reported product source/live-QA PASS is neither changed nor recertified. No push/PR/merge activity.
+
+ARTIFACTS
+REPORT.md, commands.json, candidate.json, revision.patch, verified.json, inventory.json, review-hashes.json, readiness-5821809.json; red-scratch and RED logs; sequence-results.json/sequence-proofs; real-git-process-result.json/process-first.json and actual child log; copied unchanged prior independent scripts/current-source scratch and their output evidence; all final CPU logs.
+
+FAILED-INVOCATION TAILS
+
+sequence-red.log
+```text
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py", line 860
+    next_grant = {**grant, 'unit': second_unit, 'authorizationId': next_spec['authorizationId'],
+                 ^
+SyntaxError: '{' was never closed
+```
+
+sequence-red-actual.log
+```text
+  test_real_git_successor_admission_allows_only_exact_predecessor_artifacts (__main__.BoundaryControls.test_real_git_successor_admission_allows_only_exact_predecessor_artifacts) (mutation='none') ... ERROR
+
+======================================================================
+ERROR: test_real_git_successor_admission_allows_only_exact_predecessor_artifacts (__main__.BoundaryControls.test_real_git_successor_admission_allows_only_exact_predecessor_artifacts) (mutation='none')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py", line 911, in test_real_git_successor_admission_allows_only_exact_predecessor_artifacts
+    admitted, record = caller.consume(case.ready, case.second_unit, case.next_spec['grant'])
+                       ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py", line 319, in consume
+    require(not subprocess.check_output([ready['git'], 'status', '--porcelain'], cwd=ready['root'], text=True, timeout=5).strip(), 'Worktree is not clean')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py", line 40, in require
+    raise Refused(message)
+fauna_cpu_caller.Refused: Worktree is not clean
+
+----------------------------------------------------------------------
+Ran 1 test in 3.215s
+
+FAILED (errors=1)
+```
