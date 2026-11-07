@@ -288,7 +288,7 @@ export class ZoneCombat {
       if (vitals.kind === 'player') {
         vitals.hazards.at = null;
         vitals.hazards.resting = false;
-        vitals.regen.at = target.zone.time;
+        vitals.regen.at = Math.max(vitals.regen.at, this.zone.time, this.steppedAt, target.zone.time);
       }
       target.vitals.set(nextEntity, vitals);
     }

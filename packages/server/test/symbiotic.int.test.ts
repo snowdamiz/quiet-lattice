@@ -1,5 +1,7 @@
 // Shipped gateway/book, real movement, meters, fauna, codex, Postgres and Redis; no injected ability effects.
 import { SYMBIOTIC_NUMBERS as N } from '@astra/shared/abilities';
+import { creatureSphere } from '@astra/shared/combat';
+import { Buttons } from '@astra/shared/protocol';
 import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
 import { getSkillNode } from '@astra/shared/data';
 import { faunaSpecies, frameId, type Vec3, type FaunaSpecies } from '@astra/shared/world';
@@ -15,7 +17,7 @@ import type { RunningServer } from '../src/server.ts';
 import type { Zone } from '../src/zones/zone.ts';
 import { along, dist, openGround } from './faunaWorld.ts';
 import { startTestServer, uniqueShard, waitFor } from './helpers.ts';
-import { ManualClock, Pilot } from './pilot.ts';
+import { ManualClock, Pilot, noseTo } from './pilot.ts';
 
 let server: RunningServer;
 let database: Database;
@@ -331,6 +333,92 @@ describe('Symbiotic nodes through the production gateway', () => {
 });
 
 describe('Symbiotic gateway lifecycle and ally boundaries', () => {
+  it.each(['bond', 'regrow', 'big_game'] as const)('retires %s work through gateway refund/rebuy notifications between ticks', async (node) => {
+    const w = await world(node === 'bond' ? ['bond'] : ['bond', node]);
+    const target = node === 'regrow' ? null : w.spawn(5, node === 'big_game' ? w.species.find((s) => s.bodyPlan === 'quad_heavy')! : undefined);
+    if (target !== null) {
+      expect(await analyze(w.p, target)).toMatchObject({ result: 'new' });
+      expect(await cast(w.p, 'bond', { target })).toMatchObject({ result: 'cast' });
+    } else {
+      w.zone.combat.applyDamage(null, w.p.entityId, { base: 60, kind: 'hazard' });
+      expect(await cast(w.p, 'regrow')).toMatchObject({ result: 'cast' });
+    }
+    // Trainers are not placed yet; supply only their documented authority seam. The wire handler and subscribers are production's.
+    const trainer = server.ws.skills.hooks.trainerAtHand;
+    server.ws.skills.hooks.trainerAtHand = () => true;
+    try {
+      const seq = ++sequence;
+      w.p.sock.send({ t: 'skills', seq, op: { op: 'respec', nodes: [node] } });
+      for (;;) {
+        const reply = await w.p.sock.next('skills');
+        if (reply.seq !== seq) continue;
+        expect(reply.error).toBeUndefined();
+        break;
+      }
+      if (target !== null) expect(w.zone.entity(target)).toBeUndefined();
+      const rebuy = ++sequence;
+      w.p.sock.send({ t: 'skills', seq: rebuy, op: { op: 'buy', node } });
+      for (;;) {
+        const reply = await w.p.sock.next('skills');
+        if (reply.seq !== rebuy) continue;
+        expect(reply.error).toBeUndefined();
+        break;
+      }
+      const hp = w.health().suit;
+      advance(6.1);
+      expect(w.health().suit).toBe(hp);
+      if (target !== null) expect(w.zone.entity(target)).toBeUndefined();
+    } finally {
+      server.ws.skills.hooks.trainerAtHand = trainer;
+    }
+  });
+  it('a retired Sear permits a paid fresh burn through the shipped gateway', async () => {
+    const w = await world(['lance', 'sear']);
+    const target = w.spawn(5);
+    w.zone.fauna!.stun(target, 20);
+    expect(await cast(w.p, 'sear', { target })).toMatchObject({ result: 'cast' });
+    advance(0.5);
+    const hp = w.zone.combat.creatureHealth(target)!.hp;
+    const session = server.ws.registry.holding(w.p.characterId)!;
+    w.zone.phases.phaseFor(session, 'event', { key: 'sear-retire', frame: w.frame, center: w.at(0), radius: 100 });
+    w.zone.phases.leave(session);
+    advance(7.5);
+    expect(w.zone.combat.creatureHealth(target)!.hp).toBe(hp);
+    expect(await cast(w.p, 'sear', { target })).toMatchObject({ result: 'cast' });
+    advance(0.5);
+    expect(w.zone.combat.creatureHealth(target)!.hp).toBeCloseTo(hp - 2.5, 6);
+  });
+  it('a retired Lance sends off state once and its next activation deals new beam damage', async () => {
+    const w = await world(['lance']);
+    const target = w.spawn(5);
+    w.zone.fauna!.stun(target, 20);
+    const p = w.zone.entity(w.p.entityId)!.fields.pos;
+    const c = creatureSphere(w.zone.fauna!.creature(target)!).pos;
+    const radius = Math.hypot(...p);
+    const v: Vec3 = [c[0] - p[0] - (p[0] / radius) * 1.6, c[1] - p[1] - (p[1] / radius) * 1.6, c[2] - p[2] - (p[2] / radius) * 1.6];
+    const length = Math.hypot(...v);
+    const aim: Vec3 = [v[0] / length, v[1] / length, v[2] / length];
+    w.p.sock.send({ t: 'input', seq: ++w.p.seq, time: server.world.clock.now(), pose: w.p.last, mode: 'foot', buttons: Buttons.beam, aim: noseTo(aim) });
+    await handled(w.p);
+    expect(await cast(w.p, 'lance', { aim })).toMatchObject({ result: 'cast' });
+    const initial = w.zone.combat.creatureHealth(target)!.hp;
+    advance(0.5, true);
+    const hp = w.zone.combat.creatureHealth(target)!.hp;
+    expect(hp).toBeLessThan(initial);
+    const session = server.ws.registry.holding(w.p.characterId)!;
+    w.zone.phases.phaseFor(session, 'event', { key: 'lance-retire', frame: w.frame, center: w.at(0), radius: 100 });
+    w.zone.phases.leave(session);
+    const before = w.p.sock.received.length;
+    advance(0.5, true);
+    await handled(w.p);
+    expect(w.zone.combat.creatureHealth(target)!.hp).toBe(hp);
+    expect(w.p.sock.received.slice(before).filter((m) => m.t === 'abilities')).toEqual([expect.objectContaining({ on: [] })]);
+    w.p.sock.send({ t: 'input', seq: ++w.p.seq, time: server.world.clock.now(), pose: w.p.last, mode: 'foot', buttons: Buttons.beam, aim: noseTo(aim) });
+    await handled(w.p);
+    expect(await cast(w.p, 'lance', { aim })).toMatchObject({ result: 'cast' });
+    advance(0.5, true);
+    expect(w.zone.combat.creatureHealth(target)!.hp).toBeLessThan(hp);
+  });
   it('Bond prevents another player from stunning its companion with Pulse', async () => {
     const w = await world(['bond']);
     const id = w.spawn(5);

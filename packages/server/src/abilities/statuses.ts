@@ -60,10 +60,10 @@ export class Statuses {
     return false;
   }
 
-  /** Ends the character's `id` on `target`. */
-  remove(zone: string, characterId: string, target: number, id: string): void {
+  /** Ends the character's `id` on `target`; a retiring producer may remove only its own generation. */
+  remove(zone: string, characterId: string, target: number, id: string, gen?: number): void {
     const byCharacter = this.zones.get(zone)?.get(target)?.get(id);
-    byCharacter?.delete(characterId);
+    if (gen === undefined || byCharacter?.get(characterId)?.gen === gen) byCharacter?.delete(characterId);
   }
 
   /** Ends every status the character put anywhere (it left play: nothing ticks them any more). */

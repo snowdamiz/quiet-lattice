@@ -224,7 +224,11 @@ export class ZoneManager {
       this.slots.set(id, slot);
       this.log?.info({ zone: id, system: systemIndex, seed: zone.system.seed, tier }, 'zone loaded');
     }
-    if (slot.asleep) this.log?.debug({ zone: id }, 'zone woken');
+    if (slot.asleep) {
+      // Refresh clock, frames and their tick-keyed consumers before accepting a placement or a hit.
+      slot.zone.step(this.clock.now());
+      this.log?.debug({ zone: id }, 'zone woken');
+    }
     slot.asleep = false;
     slot.emptySince = null;
     return slot.zone;

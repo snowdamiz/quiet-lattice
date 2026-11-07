@@ -1690,7 +1690,8 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   positive ship hit, capped at maximum, including a parked ship while its owner is on foot. A downed player receives no
   regeneration. Ship hits reset the delay; suit damage does not reset the parked ship's timer.
   `shipStats.shieldRegenPerS` consumes `ship.shield_regen`; Symbiont Hull makes this 7.5/s and multiplies capacity by 1.25.
-  A new zone starts on the world clock; transfers preserve the last hit and start the elapsed interval in the new zone,
+  New zones start on the world clock, and sleeping zones step to that clock before accepting a placement or hit.
+  Transfers preserve the last hit and never rewind the elapsed-time cursor, even if the destination clock is stale,
   so first ticks and handoffs grant no catch-up repair. Repair Drones adds one hull/s for 20 seconds in flight (`ship`),
   ending on leaving that mode; station crews still repair 20 hull/s. Retuning preserves each pool's fraction.
 - **Ship hazards** (P1.E06.T07) run in `ZoneCombat.step` before snapshots. `combat/environment.ts` reads the accepted
@@ -2431,6 +2432,10 @@ effects; this runtime casts them all.
   between ticks cannot revive delayed callbacks, companion orders or healing on an old recipient. The gateway supplies
   codex authority and calls `left` on session cleanup; phase placement notifies the zone directly, so dismissal does not
   depend on an ability timer observing the transient state. No companion or active effect is persisted across reconnect.
+  `CastService` retains lifetimes while they own timers, statuses, toggles or fauna control. Synchronous skill notifications
+  latch ownership or eligibility loss before a refund/rebuy can hide it; unrelated skill changes preserve valid work.
+  Retiring a producer removes only its own status generations, so a fresh burn can start without losing a newer producer's
+  mark. Toggle validity uses the same lifetime as its callbacks; retirement ends and notifies once, and the next cast activates anew.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds
