@@ -1,0 +1,95 @@
+$ pnpm --filter @astra/tools smoke -- --output /tmp/space-t16-final-smoke-results
+$ tsx src/smoke/run.ts -- --output /tmp/space-t16-final-smoke-results
+[WebServer] (node:28492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:28496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 41 tests using 1 worker
+
+(node:28541) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 src/smoke/account.spec.ts:76:1 › title → a new account → a refused name, then a character of the people picked → enter, by keyboard (2.9s)
+  ✓   2 src/smoke/account.spec.ts:149:1 › a wrong password is refused on its field; Esc steps back; the session lasts until signing out (2.6s)
+  ✓   3 src/smoke/account.spec.ts:190:1 › dev scenarios go through the dev login: ?dev#foot on foot in its home hangar (2.2s)
+  ✓   4 src/smoke/account.spec.ts:211:1 › ?dev=<name>&people=<id>: that people's dev character, in its home system (2.2s)
+  ✓   5 src/smoke/account.spec.ts:226:1 › #foot without ?dev is still the offline sandbox: no sign-in, no socket (3.0s)
+[WebServer] 10:16:05 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓   6 src/smoke/boot.spec.ts:4:1 › client boots and renders (1.5s)
+[WebServer] 10:16:06 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓   7 src/smoke/compressed.spec.ts:38:1 › a KTX2 and meshopt model loads and draws through the game loader (878ms)
+Chromium 156.0.8078.4: 974553 values compared with Node's, 0 differ (generated in 2981 ms); its own Math differs from Node's on 839 of 14000 calls
+  ✓   8 src/smoke/cross-engine.spec.ts:58:1 › world generation in Chromium gives Node’s bits (9.3s)
+Firefox cannot start here: Could not find profile folder.
+  -   9 src/smoke/cross-engine.spec.ts:67:3 › world generation in Firefox gives Node’s bits
+WebKit 27.2: 974553 values compared with Node's, 0 differ (generated in 2588 ms); its own Math differs from Node's on 1952 of 14000 calls
+  ✓  10 src/smoke/cross-engine.spec.ts:67:3 › world generation in WebKit gives Node’s bits (7.2s)
+  ✓  11 src/smoke/cutscene-online.spec.ts:69:1 › plays the test cutscene in the story phase the server places the player in (6.4s)
+  ✓  12 src/smoke/cutscene-online.spec.ts:103:1 › plays the first cutscene of a session when the server starts it from a quest step, and its done ends the step (6.0s)
+[WebServer] 10:16:39 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓  13 src/smoke/cutscene.spec.ts:23:1 › plays the test cutscene end to end, and skips it (4.0s)
+[WebServer] 10:16:43 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+den roost (predator): natural spread 4.024 m over 873 vertices, levelled spread 3.64e-7 m over 873
+den pad captures: /tmp/space-t16-final-smoke-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-before.png /tmp/space-t16-final-smoke-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-after.png
+  ✓  14 src/smoke/den-pad.spec.ts:70:1 › a Tier 1 den pad is levelled in the engine, and nothing is drawn for the den (3.7s)
+[WebServer] 10:16:46 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓  15 src/smoke/edge.spec.ts:39:1 › the galaxy map and the sky draw the Edge where the Count puts it, at three Counts (1.4s)
+[WebServer] 10:16:48 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓  16 src/smoke/edge.spec.ts:103:1 › the galaxy map marks the dark Waystations the server names, and says so for the system selected, after frames have run (1.6s)
+handoff cruise 0 sys:0 pulse
+handoff cruise 200 deep:0 pulse
+handoff cruise 400 deep:0 pulse
+handoff cruise 600 deep:0 pulse
+handoff cruise 800 deep:60 pulse
+handoff cruise 1000 deep:60 pulse
+handoff cruise 1200 deep:60 pulse
+  ✓  17 src/smoke/handoff-online.spec.ts:38:1 › flies from one star through deep space into another, then warps without duplicating its entity (1.2m)
+  -  18 src/smoke/harness-hang.spec.ts:12:1 › a page that never answers
+  -  19 src/smoke/harness-hang.spec.ts:21:1 › the next test gets a working browser
+  ✓  20 src/smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 15 s, cleanup true, CI false, and the next test still runs (22.0s)
+  ✓  21 src/smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 1 s, cleanup false, CI false, and the next test still runs (8.1s)
+  ✓  22 src/smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 1 s, cleanup true, CI true, and the next test still runs (8.0s)
+  ✓  23 src/smoke/mining-online.spec.ts:232:1 › two clients mine one node and a third watches: all see it vanish, none asks for it while it is gone, all see it grow back (26.7s)
+  ✓  24 src/smoke/movement-online.spec.ts:196:1 › takes off, flies out of the Waystation, boosts and engages the pulse drive without a correction (42.0s)
+  ✓  25 src/smoke/movement-online.spec.ts:208:1 › flies on through page stalls of 4 s and 9 s and a hidden tab’s 40 s pause without a correction (41.8s)
+  ✓  26 src/smoke/online.spec.ts:90:1 › sign up, make a character and spawn docked at the home Waystation (5.5s)
+  ✓  27 src/smoke/online.spec.ts:136:1 › a reload resumes the character where the server holds it (8.3s)
+  ✓  28 src/smoke/online.spec.ts:196:1 › a server restart: the client reconnects, its snapshot store starts over, and it stays where it was (8.2s)
+  ✓  29 src/smoke/online.spec.ts:234:1 › a page stalled for 9 s keeps its session: the snapshots it missed are acknowledged once (16.9s)
+  ✓  30 src/smoke/online.spec.ts:274:1 › a frame loop stopped for a while (a hidden tab) comes back on the server's clock at once, and so do its inputs (10.3s)
+flight {"max":0,"judged":568,"worst":null,"edge":{"max":0,"judged":140,"worst":null},"sentIn":{"docked@2981198913:station":51,"ship@2981198913:station":296,"ship@2981198913:1":296,"pulse@2981198913:1":103},"link":{"released":744,"answered":744,"lostOut":34,"lostIn":14},"rtt":200}
+  ✓  31 src/smoke/prediction-online.spec.ts:293:1 › in flight: out of the Waystation into its world’s frame, boosting and on the pulse drive, within 0.5 m of the server (41.4s)
+small {"jump":3,"shown":0.05256928893504664,"after":0.07951722876168787,"apart":2.9474307110649534,"apartAfter":0.0004164720303378999}
+large {"jump":1999.9998557434924,"shown":1999.999708628967,"after":1999.999708628967,"apart":0,"apartAfter":0}
+refused {"max":7.275957614183426e-12,"judged":199,"worst":{"ack":65,"d":7.275957614183426e-12,"mode":"ship","sentMode":"ship","frame":"2981198913:1","sentFrame":"2981198913:1"},"edge":{"max":0,"judged":0,"worst":null},"sentIn":{"ship@2981198913:1":223},"link":{"released":221,"answered":221,"lostOut":12,"lostIn":10},"rtt":200}
+rewound {"off":0,"speed":599.88883508874,"since":0.19993916526436806}
+engage {"jump":63.93046760436846,"shown":2.1668829032569192,"after":3.422312592214439,"apart":61.76358470111154,"apartAfter":0.00013888557441532612}
+shadow {"max":7.275957614183426e-12,"judged":281,"worst":{"ack":65,"d":7.275957614183426e-12,"mode":"ship","sentMode":"ship","frame":"2981198913:1","sentFrame":"2981198913:1"},"edge":{"max":0,"judged":0,"worst":null},"sentIn":{"ship@2981198913:1":309,"pulse@2981198913:1":5},"link":{"released":312,"answered":312,"lostOut":17,"lostIn":10},"rtt":200}
+  ✓  32 src/smoke/prediction-online.spec.ts:327:1 › on an empty Charge in its world’s shadow: the engage refused by the client, corrections blended or shown, a mispredicted engage rewound (20.6s)
+walked {"max":0.00006975659759334008,"judged":236,"worst":{"ack":251,"d":0.00006975659759334008,"mode":"foot","sentMode":"foot","frame":"2981198913:station","sentFrame":"2981198913:station"},"edge":{"max":0,"judged":0,"worst":null},"sentIn":{"docked@2981198913:station":43,"foot@2981198913:station":212},"link":{"released":253,"answered":253,"lostOut":12,"lostIn":7},"rtt":200}
+small {"jump":1.5000000177619761,"shown":0.026284644770912975,"after":0.03975861487665799,"apart":1.473715372991063,"apartAfter":0.00020823602053722054}
+large {"jump":38.5,"shown":38.49985591248803,"after":38.5,"apart":0,"apartAfter":0}
+  ✓  33 src/smoke/prediction-online.spec.ts:449:1 › on foot in the hangar: walking, sprinting and jumping within 0.5 m, a small correction blended and a large one shown (21.6s)
+[WebServer] 10:22:56 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships: 450 pilot marks and 294 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 4 names and 0 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 150
+  ✓  34 src/smoke/remote-markers.spec.ts:25:3 › remote-ships: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (7.4s)
+[WebServer] 10:23:04 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-crowd: 2028 pilot marks and 1468 labels in 120 frames, 6.8..6.8 px from their marks; 5 side moves, 28 names and 9 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 120
+  ✓  35 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-crowd: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (7.6s)
+[WebServer] 10:23:11 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-pads: 409 pilot marks and 402 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 2 names and 1 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 0
+  ✓  36 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-pads: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (8.5s)
+[WebServer] 10:23:20 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-surface: 288 pilot marks and 171 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 4 names and 2 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 150
+  ✓  37 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-surface: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (21.6s)
+[WebServer] 10:23:41 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-bay: 1440 pilot marks and 1200 labels in 120 frames, 6.8..6.8 px from their marks; 0 side moves, 0 names and 0 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 0
+  ✓  38 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-bay: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (8.0s)
+remote-online: station: 320 drawn, -0.026..0.021 s behind the ticks; its own clock up to 0.001 s ahead of the server's; 1: 633 drawn, -0.025..0.025 s behind the ticks; its own clock up to 0.000 s ahead of the server's; station: 1010 drawn, -0.029..0.023 s behind the ticks; its own clock up to -0.001 s ahead of the server's
+  ✓  39 src/smoke/remote-online.spec.ts:242:1 › two clients each see the other's ship move, across a frame change (18.2s)
+[WebServer] 10:24:11 PM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓  40 src/smoke/review.spec.ts:27:1 › review scene loads an asset and switches LOD (8.8s)
+  ✓  41 src/smoke/social-online.spec.ts:109:1 › two pilots chat on the shard, party up from an invite card, hand the lead on and part (14.9s)
+
+  3 skipped
+  38 passed (8.8m)

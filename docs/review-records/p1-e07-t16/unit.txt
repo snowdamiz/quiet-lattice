@@ -1,0 +1,13 @@
+$ vitest run
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+
+
+ Test Files  212 passed (212)
+      Tests  2700 passed (2700)
+   Start at  22:14:14
+   Duration  18.05s (tests 70%, import 25%, transform 4%)
+
+    Isolate  212 workers spawned · ~80ms startup each (spawn + environment, per file)
+             at least ~1.13s faster with isolate: false — reuses workers across files instead of one per file
+

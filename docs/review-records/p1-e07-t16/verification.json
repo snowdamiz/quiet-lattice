@@ -1,0 +1,101 @@
+{
+  "task": "P1.E07.T16",
+  "date": "2026-11-06",
+  "sourceCommit": "e1ed4752805ee92be561db81910ee1bc1a87b1d9",
+  "workerCommit": "7a3c9f51108eb8d453b1b6cd98cd240742092985",
+  "packagesTree": "c67e6ad628485d3dffa7a2f0569b7bbc303d862a",
+  "checks": {
+    "gatewayBefore": {
+      "failed": 3,
+      "exit": 1
+    },
+    "gatewayAfter": {
+      "passed": 3,
+      "exit": 0
+    },
+    "unit": {
+      "passed": 2700,
+      "files": 212,
+      "exit": 0
+    },
+    "integration": {
+      "passed": 196,
+      "files": 37,
+      "exit": 0,
+      "provenance": "Worker full run, identical packages and test configuration; focused gateway repeated on staged tree."
+    },
+    "typecheck": {
+      "exit": 0
+    },
+    "smoke": {
+      "passed": 38,
+      "skipped": 3,
+      "exit": 0
+    },
+    "eslint": {
+      "exit": 0,
+      "scope": "changed TypeScript files"
+    },
+    "prettier": {
+      "exit": 0,
+      "scope": "changed files"
+    },
+    "removalGate": {
+      "exit": 0,
+      "enforced": 10
+    }
+  },
+  "skips": [
+    "Firefox optional cross-engine test: Could not find profile folder",
+    "Two intentional harness-hang fixtures execute only inside the timeout-harness tests"
+  ],
+  "review": "PASS; separate baseline gatewayPersistence timing flake tracked in P1.E16.T10",
+  "notQualified": [
+    "Whole Void branch P1.E07.T08",
+    "Animation visual acceptance",
+    "Phase 1 exit",
+    "Hosted CI or deployment"
+  ],
+  "artifacts": {
+    "code-review.txt": {
+      "bytes": 2319,
+      "sha256": "b4a96e2f3c9431fbbca492bdabd808c261843ecc5557c3ea508c6b211db44d50"
+    },
+    "worker-report.txt": {
+      "bytes": 5281,
+      "sha256": "82161847b9edd9c74684842a2d0b2af8504f2299f658eb0edc4018cf8337be04"
+    },
+    "gateway-green.txt": {
+      "bytes": 294,
+      "sha256": "6c7afaf0836d44b3312a6a91fd690533e5e5fe18f7013e719f80be719387f35a"
+    },
+    "typecheck.txt": {
+      "bytes": 290,
+      "sha256": "345b88af84c29655d9899de184cac771aed956768aed0678287f2aa612301f79"
+    },
+    "routes.txt": {
+      "bytes": 315,
+      "sha256": "079cbf6dc4c0e12e8f1b882a91d981083f3bbffc75c04173e295850d31372863"
+    },
+    "smoke.txt": {
+      "bytes": 12527,
+      "sha256": "ea3cb240429de7622f7bd653f0929aa71e7657f4414d4934a814101184d29881"
+    },
+    "integration.txt": {
+      "bytes": 3804,
+      "sha256": "380fd076d13a8ea62d412c58fca01207716f1a177a084728314e5a59816db5e0"
+    },
+    "gateway-red.txt": {
+      "bytes": 3618,
+      "sha256": "0fc86b895473737f65faad2ac20d2912bdd8be22ffc047bdf02c5d1d89bf0a11"
+    },
+    "integration-provenance.txt": {
+      "bytes": 521,
+      "sha256": "dc9eba96cd9a3d59b78d76297e59880c6e5bab40b27ec0d1a86d9d82eb94d9e4"
+    },
+    "unit.txt": {
+      "bytes": 424,
+      "sha256": "21a6774c0809d2e392f1ec5daadb3b399c4a22c5aacaed44012258251cefff18"
+    }
+  }
+}

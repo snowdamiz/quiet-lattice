@@ -1,0 +1,57 @@
+TASK: P1.E07.T16
+STATUS: DONE (worker implementation; parent staged-tree QA and smoke pending)
+COMMIT: 7a3c9f51108eb8d453b1b6cd98cd240742092985
+TREE: 3624176280cf1af542bd9d8a020caeb799cfe29e
+BASE: c1b5d809ff0870cd6c9d9d2b021c05bb1ec18d5c
+WORKTREE: /Users/andreyyurlov/.t3/worktrees/space/t3-3625b176
+BRANCH: t3/P1-E07-T16-live-skill-eligibility
+SUMMARY: Connected the existing faction_rank requirement to live ReputationService.meetsRank (Reaches Deckhand at 200). Join refreshes after all persistence components load; reputation changes publish events/state, then refresh skills. Rank loss rejects gated unlocks, buys, slots and casts, clears both bars including inactive hull slots, and ends active toggles through normal notifications. Purchased nodes, unlocks, spent fragments and paid records remain for recovery. Cast admission independently reads latest standing before costs/cooldowns. Future consumers can query SkillService.eligible. No Void effects or missing actors implemented.
+FILES CHANGED:
+- docs/ARCHITECTURE.md
+- packages/server/src/abilities/eligibility.test.ts
+- packages/server/src/abilities/service.ts
+- packages/server/src/gateway/ws.ts
+- packages/server/src/skills/service.test.ts
+- packages/server/src/skills/service.ts
+- packages/server/test/skillEligibility.int.test.ts
+- packages/shared/src/skills/rules.ts
+- packages/shared/test/skillEligibility.test.ts
+VERIFY:
+- pnpm install --frozen-lockfile: PASS; local checkout dependencies installed.
+- git lfs checkout 'packages/client/public/models/characters/*': completed before full units; no tracked artifact changes.
+- Before integration imports, URL assertions proved DATABASE_URL host/port/database 127.0.0.1:53055/astra and REDIS_URL 127.0.0.1:53058/0. No default fixtures used.
+- env DATABASE_URL=postgres://astra:astra@127.0.0.1:53055/astra REDIS_URL=redis://127.0.0.1:53058/0 pnpm test:int packages/server/test/skillEligibility.int.test.ts: RED before production edits: 3 failures in 1.95 s, exit 1. Missing rank-up skills notification; stored phase slot retained at 199; met=[] at 200 instead of Deckhand. /tmp/P1-E07-T16-red.log.
+- Same focused integration command after implementation: GREEN 3/3, exit 0, 1.72 s. /tmp/P1-E07-T16-green-int.log.
+- Positive stored-slot join at 200: phase and micro_jump preserved, including ship slot 4 beyond the current hull capacity, accurate met; restart identical.
+- Negative stored-slot join at 199: phase and micro_jump cleared despite a retained Deckhand title; ungated pull retained; bought nodes and paid fragments unchanged; restart identical.
+- Live 199 -> 200 -> 199 -> reconnect -> 200: eligibility publication order, all gated action refusals, toggle end, persistence and recovery verified.
+- pnpm test packages/shared/test/skillEligibility.test.ts packages/server/src/skills/service.test.ts packages/server/src/abilities/eligibility.test.ts: PASS 22/22. /tmp/P1-E07-T16-focused-unit.log.
+- pnpm typecheck: PASS all packages, final source. /tmp/P1-E07-T16-typecheck.log.
+- pnpm test --maxWorkers=4: PASS 2700/2700, 212 files, 48.32 s. /tmp/P1-E07-T16-unit.log.
+- env DATABASE_URL=postgres://astra:astra@127.0.0.1:53055/astra REDIS_URL=redis://127.0.0.1:53058/0 pnpm test:int: PASS 196/196, 37 files, serial file execution, 356.60 s. /tmp/P1-E07-T16-integration.log. Runner exited 0; private fixtures retained for parent.
+- Scoped eslint, prettier --check and git diff --check: PASS.
+- Independent T3 review: PASS; independently reran 61 unit tests across four files with caches disabled. Review task node:delegated-task:command%3Amcp%3A2a8c4e0b-d2f3-4bde-a7e1-2cacf829c027%3Adelegate-task%3AP1-E07-T16-review-r1. Reviewed the final implementation diff and all added tests against the pinned base; no subsequent source changes.
+- pnpm smoke: DEFERRED to parent by task routing. No smoke launched here. Parent also owns fresh review/full QA after staging this commit.
+DECISIONS: Existing T16 decision followed. Existing developer unlock bypass remains; live purchases and use still require rank. Cast refusal reuses not_slotted for a currently ineligible slot, keeping protocol scope unchanged. Standalone test hooks remain usable; gateway supplies production rank truth. Missing cast requirement readers deny gated nodes.
+OUT OF SCOPE FOUND: None requiring edits. T08 must apply live eligibility to future Void passive/effect consumers. No plan/progress/decision-file edits, push, PR or main mutation.
+ARTIFACTS: This report and the six named /tmp/P1-E07-T16-*.log files. Red failure tail follows (last 20 lines):
+- ]
++ []
+
+ ❯ packages/server/test/skillEligibility.int.test.ts:159:33
+    157|     } }).where(eq(characters.id, id));
+    158|     const a = await join(server, account.token, id);
+    159|     expect(a.skills.skills.met).toEqual(standing === 200 ? [REACHES] :…
+       |                                 ^
+    160|     expect(a.skills.skills.state.slots.ground.slice(0, 2)).toEqual([st…
+    161|     expect(a.skills.skills.state.slots.ship[4]).toBe(standing === 200 …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  22:04:17
+   Duration  1.95s (transform 42%, import 36%, tests 22%)
+
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,0 +1,20 @@
+$ vitest run --config vitest.int.config.ts
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-3625b176
+
+{"event":"bot.action","action":"fly/walk/board/dock","mode":"docked","pose":{"frame":"2981198913:station","pos":[-29.999999999999996,2.4000000001234056,-21.999999999441386],"quat":[-0.7071067838090769,-3.020425125264667e-14,0,0.707106778564018],"vel":[0,0,0]},"stats":{"inputs":324,"snapshots":319,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":6.405235288646092e-10}}
+{"event":"bot.action","action":"land/walk/mine/fight","mine":{"t":"mine","seq":1,"frame":"2981198913:1","node":"2_966_1135_dihydrogen_0","result":"hit","hp":0.8557249501347541},"fire":{"t":"fire","seq":1,"result":"hit","target":29},"healthBefore":108.79999999999998,"healthAfter":97.79999999999998,"setupCorrections":2,"stats":{"inputs":136,"snapshots":130,"corrections":2,"handoffs":0,"frameChanges":0,"messages":22,"maxPoseErrorM":6.400465170639255e-10}}
+{"event":"bot.action","action":"acceptQuest/refusals","accepted":{"step":"reach","counters":{},"seen":{},"started":26795440.665941585,"since":26795440.665941585},"quest":{"t":"quests","seq":2,"quests":{"active":{"first_jobs":{"step":"land","counters":{},"seen":{},"started":26795440.64413654,"since":26795440.64413654},"wing_over_rolis_iii":{"step":"reach","counters":{},"seen":{},"started":26795440.665941585,"since":26795440.665941585}},"done":{},"flags":[],"offered":[]},"error":"not_offered"},"fire":{"t":"fire","seq":1,"result":"refused","reason":"mode"},"mine":{"t":"mine","seq":1,"frame":"2981198913:1","node":"0_0_0_ferrite_0","result":"refused","reason":"mode"},"mode":"docked","stats":{"inputs":13,"snapshots":10,"corrections":1,"handoffs":0,"frameChanges":0,"messages":23,"maxPoseErrorM":4.993442771726989e-10}}
+{"event":"bot.action","action":"frame/warp","zone":"sys:1","fuelRefusal":{"t":"warp","seq":2,"reason":"fuel"},"stats":{"inputs":17,"snapshots":14,"corrections":1,"handoffs":1,"frameChanges":2,"messages":19,"maxPoseErrorM":7.014006172527635e-10}}
+{"event":"bot.action","action":"flight zone handoff","zone":"deep:0","stats":{"inputs":15,"snapshots":13,"corrections":1,"handoffs":1,"frameChanges":0,"messages":16,"maxPoseErrorM":3.8515704658504753e-10}}
+{"event":"bot.action","action":"lost correction/silent stream","mode":"docked","healthy":false,"stats":{"inputs":13,"snapshots":2,"corrections":1,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":6.080023020536108e-10}}
+{"event":"bot.action","action":"corrected timed flight","first":"refused","result":"refused","requestedMs":4000,"correctionAfterMs":28.53595800000039,"settledAfterMs":54.5647080000017,"stats":{"inputs":3,"snapshots":2,"corrections":1,"handoffs":0,"frameChanges":0,"messages":15,"maxPoseErrorM":5.164692856751883e-10}}
+{"event":"bot.action","action":"replanned after timed flight refusal","mode":"ship","pose":{"frame":"2981198913:station","pos":[-29.999999999999986,14.000000000098181,-22.000000000300098],"quat":[0.7071067806401128,-4.218718399881918e-14,0,0.7071067817329824],"vel":[0,0,0]},"stats":{"inputs":51,"snapshots":49,"corrections":1,"handoffs":0,"frameChanges":0,"messages":15,"maxPoseErrorM":6.287099339853358e-10}}
+{"event":"bot.action","action":"completed timed flight","requestedMs":300,"elapsedMs":344.11133300000074,"stats":{"inputs":11,"snapshots":9,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":4.863244761740864e-10}}
+{"event":"bot.action","action":"closed pending timed flight","healthy":false,"mode":"ship","stats":{"inputs":3,"snapshots":2,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":4.794935853129464e-10}}
+
+ Test Files  37 passed (37)
+      Tests  196 passed (196)
+   Start at  22:07:58
+   Duration  356.60s (tests 93%, import 6%, transform 1%)
+

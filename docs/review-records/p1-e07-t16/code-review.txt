@@ -1,0 +1,24 @@
+**PASS — no blocking findings in the nine-file T16 diff.**
+
+Reviewed `e1ed4752805ee92be561db81910ee1bc1a87b1d9` against parent `f553c5477a30d9476a15db5b4be722967496b98b`. Its patch ID matches implementation commit `7a3c9f511`.
+
+The implementation satisfies the scoped contract:
+
+- Production eligibility reads current Reaches reputation, including the 200 threshold; retained titles cannot authorize access.
+- Join refresh occurs after every persistence component loads and before entering the zone or publishing skills.
+- Rank loss clears gated slots before notifying listeners, ends toggles, and rejects stale-slot casts before charge or cooldown payment.
+- Purchases, unlocks, fragment balances, and the private paid ledger survive revocation. Recovery permits reslotting without repurchasing.
+- Gateway wiring installs the authoritative rank reader and restores prior hooks on close. No client-controlled eligibility was introduced.
+
+Verification:
+
+- Initial focused selection: **101 tests passed**.
+- Expanded skills, abilities, reputation, persistence, gateway, and shared-rule selection: **306 passed, one existing intermittent failure**.
+- Server and shared TypeScript checks: **passed**.
+- Diff whitespace check: **passed**; worktree remains clean.
+
+**Nonblocking verification issue:** [gatewayPersistence.test.ts:186](/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/server/test/gatewayPersistence.test.ts:186) sometimes expects a second movement update at height `4.4` but persists `3.4`. The expanded run reproduced this; an isolated head rerun passed. Loading all four changed production modules from the parent commit through an in-memory Vitest loader reproduced the identical failure, establishing that T16 did not introduce it. No checkout edits were needed.
+
+I inspected the real gateway integration tests: they cover 199/200 notifications, refusal after loss, toggle shutdown, ledger preservation, recovery, reconnect, and restart with stored gated slots—including inaccessible hull slots. Those tests and full smoke remain **unexecuted by this reviewer**, as assigned to QA.
+
+Remaining scope boundary: T08 must apply live eligibility to future Void passive/effect consumers; ownership alone remains insufficient. This review does not qualify those effects or missing actor behavior.
